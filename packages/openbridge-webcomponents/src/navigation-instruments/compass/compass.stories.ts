@@ -1,11 +1,15 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {
+  CogArrowStyle,
   CompassDirection,
   CompassPriorityElement,
+  CompassReadoutSource,
+  HdgArrowStyle,
   ObcCompass,
   RotType,
 } from './compass.js';
 import './compass.js';
+import {ReadoutSize} from '../readout/readout.js';
 import {html} from 'lit';
 import {
   playgroundColumn,
@@ -100,6 +104,15 @@ const meta: Meta<typeof ObcCompass> = {
       control: 'select',
       options: topVessels,
     },
+    hdgArrowStyle: {
+      control: 'select',
+      options: Object.values(HdgArrowStyle),
+    },
+    cogArrowStyle: {
+      control: 'select',
+      options: Object.values(CogArrowStyle),
+    },
+    centerReadouts: {control: 'object'},
     direction: {
       control: {type: 'select'},
       options: Object.values(CompassDirection),
@@ -181,6 +194,114 @@ export const WithRateOfTurnDegreesPerMinute: Story = {
     rotMaxValue: 60,
     priorityElements: [CompassPriorityElement.hdg, CompassPriorityElement.rot],
   },
+};
+
+export const WithCenterReadout: Story = {
+  args: {
+    centerReadouts: [{source: CompassReadoutSource.hdg}],
+  },
+};
+
+export const WithTwoPrimaryReadouts: Story = {
+  args: {
+    centerReadouts: [
+      {source: CompassReadoutSource.hdg},
+      {source: CompassReadoutSource.cog, size: ReadoutSize.large},
+    ],
+  },
+};
+
+export const WithPrimarySecondaryReadouts: Story = {
+  args: {
+    centerReadouts: [
+      {source: CompassReadoutSource.hdg},
+      {source: CompassReadoutSource.cog},
+    ],
+  },
+};
+
+export const WithThreeReadouts: Story = {
+  args: {
+    rateOfTurnDegreesPerMinute: 12,
+    centerReadouts: [
+      {source: CompassReadoutSource.hdg},
+      {source: CompassReadoutSource.cog},
+      {source: CompassReadoutSource.rot},
+    ],
+  },
+};
+
+/**
+ * The "map graphics" recipe: CCRP vessel, HDG vector with beam crossbar and
+ * astern line, COG arrow head, the rate-of-turn bar, and outside NSWE labels.
+ */
+export const MapGraphics: Story = {
+  args: {
+    vesselImage: VesselImage.psvTopCcrp,
+    hdgArrowStyle: HdgArrowStyle.vector,
+    cogArrowStyle: CogArrowStyle.arrowHead,
+    rotType: RotType.bar,
+    rotPosition: RotPosition.innerCircle,
+    rateOfTurnDegreesPerMinute: 20,
+    rotMaxValue: 60,
+    showLabels: true,
+    tickmarksInside: false,
+    priorityElements: [CompassPriorityElement.hdg, CompassPriorityElement.rot],
+  },
+};
+
+export const WithHdgArrowStyles: Story = {
+  name: 'With HDG Arrow Styles',
+  parameters: {widthDecorator: false},
+  render: () => html`
+    <div style="display: flex; gap: 16px;">
+      ${Object.values(HdgArrowStyle).map(
+        (style) => html`
+          <div style="width: 240px;">
+            <div style="width: 240px; height: 240px;">
+              <obc-compass
+                .heading=${311}
+                .courseOverGround=${338}
+                .vesselImage=${VesselImage.psvTopCcrp}
+                .hdgArrowStyle=${style}
+                .cogArrowStyle=${CogArrowStyle.arrowHead}
+              ></obc-compass>
+            </div>
+            <div style="text-align: center; font-family: sans-serif;">
+              ${style}
+            </div>
+          </div>
+        `
+      )}
+    </div>
+  `,
+};
+
+export const WithCogArrowStyles: Story = {
+  name: 'With COG Arrow Styles',
+  parameters: {widthDecorator: false},
+  render: () => html`
+    <div style="display: flex; gap: 16px;">
+      ${Object.values(CogArrowStyle).map(
+        (style) => html`
+          <div style="width: 240px;">
+            <div style="width: 240px; height: 240px;">
+              <obc-compass
+                .heading=${311}
+                .courseOverGround=${338}
+                .vesselImage=${VesselImage.psvTopCcrp}
+                .hdgArrowStyle=${HdgArrowStyle.vector}
+                .cogArrowStyle=${style}
+              ></obc-compass>
+            </div>
+            <div style="text-align: center; font-family: sans-serif;">
+              ${style}
+            </div>
+          </div>
+        `
+      )}
+    </div>
+  `,
 };
 
 export const SmallContainer: Story = {

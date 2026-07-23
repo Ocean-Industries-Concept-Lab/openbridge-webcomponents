@@ -1,8 +1,20 @@
-import {LitElement, PropertyValues, css, html} from 'lit';
+import {LitElement, PropertyValues, css, html, nothing} from 'lit';
 import {property} from 'lit/decorators.js';
 import '../watch/watch.js';
 import {Tickmark, TickmarkType} from '../watch/tickmark.js';
-import {arrow, ArrowStyle} from './arrow.js';
+import {
+  CogArrowStyle,
+  HdgArrowStyle,
+  cogArrow,
+  hdgArrow,
+} from '../course-arrows/course-arrows.js';
+import {
+  CompassCenterReadout,
+  CompassReadoutSource,
+  centerReadoutStyles,
+  renderCenterReadouts,
+  resolveCompassCenterReadouts,
+} from '../readout/center-readout.js';
 import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import {
@@ -25,6 +37,9 @@ import {ROT_ZERO_DEADBAND_DEG} from '../rate-of-turn/rot-renderer.js';
 import {customElement} from '../../decorator.js';
 import {InstrumentState, Priority} from '../types.js';
 export {RotType};
+export {HdgArrowStyle, CogArrowStyle};
+export {CompassReadoutSource};
+export type {CompassCenterReadout};
 
 export enum CompassDirection {
   NorthUp = 'northUp',
@@ -74,6 +89,13 @@ export enum CompassPriorityElement {
  *   speed/direction indicators on the watch face.
  * - **Vessel image**: Configurable vessel silhouette centered on the
  *   compass, rotating with heading.
+ * - **Arrow styles**: The HDG and COG arrows each select their look via
+ *   `hdgArrowStyle` (`arrowHead` default, `needle`, `vector`, `beamLine`)
+ *   and `cogArrowStyle` (`arrowHead` default, `needle`, `vector`,
+ *   `velocityVector`).
+ * - **Center readouts**: `centerReadouts` replaces the vessel with up to
+ *   three readouts (first on top, the rest below a horizontal divider);
+ *   values bind to the instrument's own inputs per entry `source`.
  * - **Color priority**: Set `priority` to `Priority.enhanced` to use the
  *   blue/enhanced color palette instead of the default gray/regular palette
  *   (default: `Priority.regular`).
@@ -167,8 +189,23 @@ export class ObcCompass extends LitElement {
    * @availableWhen currentSpeed!=null
    */
   @property({type: Number}) currentFromDirection: number | null = null;
-  /** The image of the vessel. */
+  /** The image of the vessel. Hidden while `centerReadouts` is non-empty. */
   @property({type: String}) vesselImage: VesselImage = VesselImage.genericTop;
+  /**
+   * Center readouts replacing the vessel: the first entry renders on top,
+   * the rest side by side below a horizontal divider. Values bind per entry
+   * `source` (`hdg` → `heading`, `cog` → `courseOverGround`, `rot` →
+   * `rateOfTurnDegreesPerMinute`, a dash when unset) and colors follow
+   * `priorityElements`.
+   */
+  @property({type: Array, attribute: false})
+  centerReadouts: CompassCenterReadout[] = [];
+  /** HDG arrow style: `arrowHead` (default), `needle`, `vector`, or `beamLine`. */
+  @property({type: String}) hdgArrowStyle: HdgArrowStyle =
+    HdgArrowStyle.arrowHead;
+  /** COG arrow style: `arrowHead` (default), `needle`, `vector`, or `velocityVector`. */
+  @property({type: String}) cogArrowStyle: CogArrowStyle =
+    CogArrowStyle.arrowHead;
   /**
    * Measured rate of turn in degrees per minute (positive = starboard).
    * Drives both the bar extent and (after multiplication by
@@ -327,6 +364,21 @@ export class ObcCompass extends LitElement {
       : undefined;
   }
 
+  private readoutPriorityFor(source: CompassReadoutSource): Priority {
+    switch (source) {
+      case CompassReadoutSource.hdg:
+        return this.priorityFor(CompassPriorityElement.hdg);
+      case CompassReadoutSource.cog:
+        return this.priorityFor(CompassPriorityElement.cog);
+      case CompassReadoutSource.rot:
+        return this.priorityFor(CompassPriorityElement.rot);
+    }
+  }
+
+  private get hasCenterReadouts(): boolean {
+    return this.centerReadouts.length > 0;
+  }
+
   private getRotation(): number | undefined {
     if (this.direction === CompassDirection.NorthUp) {
       return undefined;
@@ -375,13 +427,15 @@ export class ObcCompass extends LitElement {
           .setpointOverride=${this.headingSetpointOverride}
           .priority=${this.priority}
           .animateSetpoint=${this.animateSetpoint}
-          .vessels=${[
-            {
-              size: VesselImageSize.medium,
-              vesselImage: this.vesselImage,
-              transform: `rotate(${this.heading}deg)`,
-            },
-          ]}
+          .vessels=${this.hasCenterReadouts
+            ? []
+            : [
+                {
+                  size: VesselImageSize.medium,
+                  vesselImage: this.vesselImage,
+                  transform: `rotate(${this.heading}deg)`,
+                },
+              ]}
           .windKnots=${this.currentWindSpeedKnots}
           .windFromDirectionDeg=${this.windFromDirection}
           .windColor=${this.colorFor(CompassPriorityElement.wind)}
@@ -405,46 +459,68 @@ export class ObcCompass extends LitElement {
         >
         </obc-watch>
         <svg viewBox="${viewBox}">
-          ${arrow(
-            ArrowStyle.HDG,
+          ${hdgArrow(
+            this.hdgArrowStyle,
             this.heading + (this.getRotation() ?? 0),
             this.priorityFor(CompassPriorityElement.hdg)
           )}
-          ${arrow(
-            ArrowStyle.COG,
+          ${cogArrow(
+            this.cogArrowStyle,
             this.courseOverGround + (this.getRotation() ?? 0),
             this.priorityFor(CompassPriorityElement.cog)
           )}
         </svg>
+        ${this.hasCenterReadouts
+          ? html`<div class="center-readout-overlay">
+              ${renderCenterReadouts(
+                resolveCompassCenterReadouts(this.centerReadouts, {
+                  heading: this.heading,
+                  courseOverGround: this.courseOverGround,
+                  rateOfTurnDegreesPerMinute: this.rateOfTurnDegreesPerMinute,
+                  priorityFor: (source) => this.readoutPriorityFor(source),
+                })
+              )}
+            </div>`
+          : nothing}
       </div>
     `;
   }
 
-  static override styles = css`
-    * {
-      box-sizing: border-box;
-    }
+  static override styles = [
+    centerReadoutStyles,
+    css`
+      * {
+        box-sizing: border-box;
+      }
 
-    .container {
-      position: relative;
-      width: 100%;
-      height: 100%;
-    }
+      .container {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
 
-    .container > * {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
+      .container > * {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
 
-    :host {
-      display: block;
-      width: 100%;
-      height: 100%;
-    }
-  `;
+      .center-readout-overlay {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+      }
+
+      :host {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+    `,
+  ];
 }
 
 declare global {
