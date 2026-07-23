@@ -1,5 +1,11 @@
 import {SVGTemplateResult, svg} from 'lit';
 import {Priority} from '../types.js';
+import {
+  cogVectorArt,
+  cogVelocityVectorArt,
+  hdgBeamLineArt,
+  hdgVectorArt,
+} from './course-arrows-art.js';
 
 /**
  * Shared HDG/COG arrow art for the radial course instruments
@@ -114,8 +120,19 @@ export function hdgArrow(
     case HdgArrowStyle.needle:
       return hdgNeedle(angle, colorName);
     case HdgArrowStyle.vector:
+      return svg`
+      <g transform="rotate(${angle}) translate(-256, -256)">
+        ${hdgVectorArt(colorName)}
+        <circle cx="256" cy="256" r="2" fill="var(--border-silhouette-color)"/>
+      </g>
+    `;
     case HdgArrowStyle.beamLine:
-      return svg``;
+      return svg`
+      <g transform="rotate(${angle}) translate(-256, -256)">
+        ${hdgBeamLineArt(colorName)}
+        <circle cx="256" cy="256" r="2" fill="var(--border-silhouette-color)"/>
+      </g>
+    `;
   }
 }
 
@@ -136,7 +153,16 @@ export function cogArrow(
     case CogArrowStyle.needle:
       return cogNeedle(angle, colorName);
     case CogArrowStyle.vector:
+      return svg`
+      <g transform="rotate(${angle}) translate(-256, -256)">
+        ${cogVectorArt(colorName)}
+      </g>
+    `;
     case CogArrowStyle.velocityVector:
-      return svg``;
+      return svg`
+      <g transform="rotate(${angle}) translate(-256, -256)">
+        ${cogVelocityVectorArt(colorName)}
+      </g>
+    `;
   }
 }
