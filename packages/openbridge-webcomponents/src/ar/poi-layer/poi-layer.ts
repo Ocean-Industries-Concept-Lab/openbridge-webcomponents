@@ -74,9 +74,20 @@ export enum OverlapMode {
  * ### Events
  * - `layer-resize` - Fired when computed layer height changes. Detail: `{ height: number, label: string }`.
  *
+ * ### CSS Custom Properties
+ * | Property | Default | Purpose |
+ * | --- | --- | --- |
+ * | `--obc-poi-layer-overlap-enter` | `10px` | Max horizontal gap at which ungrouped targets start grouping. |
+ * | `--obc-poi-layer-overlap-exit` | `18px` | Gap at which grouped targets leave their group. Clamped to at least the enter threshold; keep it larger than enter so jittery positions do not oscillate in and out of groups. |
+ * | `--obc-poi-layer-overlap-pre` | `16px` | Gap at which targets get the pre-grouped visual state. |
+ * | `--obc-poi-layer-overlap-behind` | `10px` | Gap at which the shortest target gets the behind visual state. |
+ * | `--obc-poi-layer-exit-delay-ms` | `140` | Delay before exiting targets lose their exit visual state. |
+ * | `--obc-poi-layer-group-removal-delay-ms` | `250` | Delay before a dissolved auto-group element is removed. |
+ * | `--obc-poi-layer-exit-lock-duration-ms` | `500` | Duration a target is locked out of pre-group/behind states after leaving a group. |
+ *
  * ### Best Practices
  * - Keep POI targets as direct descendants when possible to reduce grouping ambiguity.
- * - Use stable `x`/`y` updates for animated scenarios so grouping and crossing calculations remain predictable.
+ * - Targets may update `x`/`y` every animation frame; grouping stays stable as long as the horizontal gap between targets does not oscillate across the enter/exit band faster than the group lifecycle delays (~0.5s). Smooth noisy input coordinates or widen the enter/exit band to compensate.
  * - Avoid adding non-POI interactive wrappers inside the layer unless needed, as layer observers track POI-related descendants.
  *
  * ### Example
@@ -538,11 +549,17 @@ export class ObcPoiLayer extends LitElement {
       const behindRaw = getComputedStyle(this).getPropertyValue(
         '--obc-poi-layer-overlap-behind'
       );
-      const enterThreshold = Number.parseFloat(enterRaw) || 0;
-      const exitThreshold =
-        Number.parseFloat(exitRaw) || Math.max(enterThreshold + 8, 8);
-      const preThreshold = Number.parseFloat(preRaw) || enterThreshold;
-      const behindThreshold = Number.parseFloat(behindRaw) || enterThreshold;
+      const parseThreshold = (raw: string, fallback: number): number => {
+        const value = Number.parseFloat(raw);
+        return Number.isFinite(value) ? value : fallback;
+      };
+      const enterThreshold = parseThreshold(enterRaw, 10);
+      const exitThreshold = Math.max(
+        parseThreshold(exitRaw, enterThreshold + 8),
+        enterThreshold
+      );
+      const preThreshold = parseThreshold(preRaw, Math.max(enterThreshold, 16));
+      const behindThreshold = parseThreshold(behindRaw, enterThreshold);
 
       const currentGroupByTarget = new Map<Poi, HTMLElement>();
       targets.forEach((target) => {

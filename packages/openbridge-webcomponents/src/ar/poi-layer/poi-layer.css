@@ -12,6 +12,10 @@
   --obc-poi-layer-exit-delay-ms: 140;
   --obc-poi-layer-group-removal-delay-ms: 250;
   --obc-poi-layer-exit-lock-duration-ms: 500;
+  --obc-poi-layer-overlap-enter: 10px;
+  --obc-poi-layer-overlap-exit: 18px;
+  --obc-poi-layer-overlap-pre: 16px;
+  --obc-poi-layer-overlap-behind: 10px;
 }
 
 .wrapper.debug {
