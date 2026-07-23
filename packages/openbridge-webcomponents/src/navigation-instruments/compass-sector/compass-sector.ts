@@ -2,7 +2,11 @@ import {LitElement, PropertyValues, html, svg, unsafeCSS, nothing} from 'lit';
 import {property} from 'lit/decorators.js';
 import componentStyle from './compass-sector.css?inline';
 import '../watch/watch.js';
-import {renderInstrumentReadout} from '../readout/instrument-readout.js';
+import {
+  centerReadoutStyles,
+  renderCenterReadouts,
+} from '../readout/center-readout.js';
+import {ReadoutSize} from '../readout/readout.js';
 import instrumentReadoutStyle from '../readout/instrument-readout.css?inline';
 import {Tickmark, TickmarkType, TickmarkStyle} from '../watch/tickmark.js';
 import {arrow, ArrowStyle} from '../compass/arrow.js';
@@ -552,15 +556,18 @@ export class ObcCompassSector extends LitElement {
         </svg>
         ${this.hasReadout
           ? html`<div class="readout" style="top: ${this._readoutTopPercent}%">
-              ${renderInstrumentReadout({
-                value: this.heading,
-                priority: this.priorityFor(CompassSectorPriorityElement.hdg),
-                label: this.label,
-                unit: this.unit,
-                fractionDigits: this.fractionDigits,
-                centerValue: true,
-                centerMeta: true,
-              })}
+              ${renderCenterReadouts([
+                {
+                  value: this.heading,
+                  label: this.label,
+                  unit: this.unit,
+                  fractionDigits: this.fractionDigits,
+                  size: ReadoutSize.large,
+                  priority: this.priorityFor(CompassSectorPriorityElement.hdg),
+                  centerValue: true,
+                  centerMeta: true,
+                },
+              ])}
             </div>`
           : nothing}
       </div>
@@ -569,6 +576,7 @@ export class ObcCompassSector extends LitElement {
 
   static override styles = [
     unsafeCSS(instrumentReadoutStyle),
+    centerReadoutStyles,
     unsafeCSS(componentStyle),
   ];
 }
