@@ -1,5 +1,5 @@
 ---
-applyTo: "packages/openbridge-webcomponents/src/navigation-instruments/watch/**,packages/openbridge-webcomponents/src/navigation-instruments/compass/**,packages/openbridge-webcomponents/src/navigation-instruments/heading/**,packages/openbridge-webcomponents/src/navigation-instruments/rudder/**,packages/openbridge-webcomponents/src/navigation-instruments/wind/**,packages/openbridge-webcomponents/src/navigation-instruments/roll/**,packages/openbridge-webcomponents/src/navigation-instruments/speed-gauge/**,packages/openbridge-webcomponents/src/navigation-instruments/gauge-radial/**,packages/openbridge-webcomponents/src/navigation-instruments/rot-sector/**,packages/openbridge-webcomponents/src/navigation-instruments/azimuth-thruster/**,packages/openbridge-webcomponents/src/building-blocks/instrument-radial/**"
+applyTo: "packages/openbridge-webcomponents/src/navigation-instruments/watch/**,packages/openbridge-webcomponents/src/navigation-instruments/compass/**,packages/openbridge-webcomponents/src/navigation-instruments/heading/**,packages/openbridge-webcomponents/src/navigation-instruments/rudder/**,packages/openbridge-webcomponents/src/navigation-instruments/wind/**,packages/openbridge-webcomponents/src/navigation-instruments/roll/**,packages/openbridge-webcomponents/src/navigation-instruments/speed-gauge/**,packages/openbridge-webcomponents/src/navigation-instruments/gauge-radial/**,packages/openbridge-webcomponents/src/navigation-instruments/rot-sector/**,packages/openbridge-webcomponents/src/navigation-instruments/rate-of-turn/**,packages/openbridge-webcomponents/src/navigation-instruments/course-arrows/**,packages/openbridge-webcomponents/src/navigation-instruments/azimuth-thruster/**,packages/openbridge-webcomponents/src/building-blocks/instrument-radial/**"
 ---
 
 # GitHub Copilot Custom Instructions
@@ -95,6 +95,26 @@ When adding new features or fixing bugs:
 2. Helper modules (`tickmark.ts`, `advice.ts`, etc.) handle specific rendering concerns
 3. Navigation instruments should only handle: property declarations, domain-specific overlays, and value-to-angle mapping
 4. Avoid duplicating rendering logic across instruments
+
+### Shared sibling modules
+
+- **`course-arrows/course-arrows.ts`** — HDG/COG arrow art
+  (`HdgArrowStyle`: arrowHead, needle, vector, beamLine;
+  `CogArrowStyle`: arrowHead, needle, vector, velocityVector), consumed by
+  compass, heading and — via the deprecated `compass/arrow.ts` shim, which
+  also carries the zoom `radiusOffset` — compass-sector. The new-style art is
+  generated from Figma into `course-arrows-art.ts`; do not hand-edit its path
+  data.
+- **`readout/center-readout.ts`** — the center / below-strip readout cluster
+  (`renderCenterReadouts()`, `resolveCompassCenterReadouts()`,
+  `centerReadoutStyles`), consumed by compass, heading, compass-sector,
+  pitch-roll, rate-of-turn, compass-flat and rot-linear. It reuses the
+  existing `obc-readout` API only (closest match; no new typography knobs).
+- **Track-bar recipe** — `obc-rate-of-turn`'s `hasTrackBar` composes existing
+  `obc-watch` inputs only: `barAreas` (band fill) + `needles` (marker at the
+  bar end) + sector `tickmarks` on the `double` face. `renderBars` applies
+  its area cut mask only when `areas` exist, so band bars render reliably on
+  full-circle faces.
 
 ---
 
@@ -422,8 +442,9 @@ Common instrument CSS variables used in `watch.ts` and helpers:
 | ------------------- | --------------------- | ------------------------------------------------------- |
 | `obc-watch`         | Helper modules        | Core renderer - ALL circular rendering logic            |
 | `instrument-radial` | `obc-watch`           | Generic building block with configurable `getAngle()`   |
-| `compass`           | `obc-watch` + overlay | Full compass: HDG/COG arrows, ROT, vessel, wind/current |
-| `heading`           | `obc-watch` + overlay | Simplified compass: HDG/COG arrows only                 |
+| `compass`           | `obc-watch` + overlay | Full compass: HDG/COG arrow styles, ROT, vessel, wind/current, center readouts |
+| `heading`           | `obc-watch` + overlay | Simplified compass: HDG/COG arrow styles, optional vessel, center readouts |
+| `rate-of-turn`      | `obc-watch`           | ROT dots/bar, track bar (barAreas+needles), center readout |
 | `rudder`            | `obc-watch` + overlay | Half-circle: 40% top clipped, needle variant            |
 | `speed-gauge`       | `obc-watch` + overlay | Speed arc: custom angle mapping, full needle            |
 | `wind`              | `obc-watch` + overlay | Wind rose with histogram                                |

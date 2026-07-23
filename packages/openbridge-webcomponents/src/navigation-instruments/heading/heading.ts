@@ -131,6 +131,7 @@ export class ObcHeading extends LitElement {
    * The vessel silhouette shown in the center, rotating with heading. When
    * unset (default) no vessel is shown; hidden while `centerReadouts` is
    * non-empty.
+   * @availableWhen centerReadouts==[]
    */
   @property({type: String}) vesselImage: VesselImage | undefined;
   /**

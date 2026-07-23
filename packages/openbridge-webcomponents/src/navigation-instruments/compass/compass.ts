@@ -189,7 +189,10 @@ export class ObcCompass extends LitElement {
    * @availableWhen currentSpeed!=null
    */
   @property({type: Number}) currentFromDirection: number | null = null;
-  /** The image of the vessel. Hidden while `centerReadouts` is non-empty. */
+  /**
+   * The image of the vessel. Hidden while `centerReadouts` is non-empty.
+   * @availableWhen centerReadouts==[]
+   */
   @property({type: String}) vesselImage: VesselImage = VesselImage.genericTop;
   /**
    * Center readouts replacing the vessel: the first entry renders on top,
