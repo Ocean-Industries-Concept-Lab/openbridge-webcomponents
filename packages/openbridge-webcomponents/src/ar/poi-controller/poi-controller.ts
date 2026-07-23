@@ -6,6 +6,11 @@ import '../poi-layer-stack/poi-layer-stack.js';
 import {ObcPoiLayer} from '../poi-layer/poi-layer.js';
 import {ObcPoiData} from '../poi/poi-data.js';
 import {resolvePoiButtonTypeFromBoxSize} from '../poi-button/poi-button.js';
+import {
+  MediaFit,
+  computeMediaProjection,
+  projectPoint,
+} from '../poi-projection/poi-projection.js';
 
 export type PoiDetection = {
   x: number;
@@ -429,40 +434,17 @@ export class ObcPoiController extends LitElement {
   private mapDetection(
     det: PoiDetection
   ): {x: number; y: number; scale: number} | null {
-    if (
-      !Number.isFinite(this.mediaWidth) ||
-      !Number.isFinite(this.mediaHeight) ||
-      !Number.isFinite(this.renderWidth) ||
-      !Number.isFinite(this.renderHeight) ||
-      this.mediaWidth === 0 ||
-      this.mediaHeight === 0 ||
-      this.renderWidth === 0 ||
-      this.renderHeight === 0
-    ) {
-      return null;
-    }
+    const projection = computeMediaProjection({
+      mediaWidth: this.mediaWidth,
+      mediaHeight: this.mediaHeight,
+      renderWidth: this.renderWidth,
+      renderHeight: this.renderHeight,
+      fit: this.fit === PoiFitMode.Cover ? MediaFit.Cover : MediaFit.Contain,
+    });
+    if (!projection) return null;
 
-    const scale =
-      this.fit === PoiFitMode.Cover
-        ? Math.max(
-            this.renderWidth / this.mediaWidth,
-            this.renderHeight / this.mediaHeight
-          )
-        : Math.min(
-            this.renderWidth / this.mediaWidth,
-            this.renderHeight / this.mediaHeight
-          );
-
-    const contentWidth = this.mediaWidth * scale;
-    const contentHeight = this.mediaHeight * scale;
-    const offsetX = (this.renderWidth - contentWidth) / 2;
-    const offsetY = (this.renderHeight - contentHeight) / 2;
-
-    return {
-      x: offsetX + det.x * scale,
-      y: offsetY + det.y * scale,
-      scale,
-    };
+    const point = projectPoint(projection, det.x, det.y);
+    return {x: point.x, y: point.y, scale: projection.scale};
   }
 
   private syncTargetsToCustomStack() {
