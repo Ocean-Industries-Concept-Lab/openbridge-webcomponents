@@ -44,8 +44,8 @@ export enum HydraulicValveX2Type {
  * - `position-selected` – Fired when the user requests a position (click or
  *   arrow key). Detail: `{position: number}` (0 = first, 1 = second).
  *
- * @fires position-selected {PositionSelectedEvent} Position requested by the user.
  * @alpha
+ * @fires position-selected {PositionSelectedEvent} Position requested by the user.
  */
 @customElement('obc-hydraulic-valve-x-2')
 export class ObcHydraulicValveX2 extends ObcShuffleButtonBase {

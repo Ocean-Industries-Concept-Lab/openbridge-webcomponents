@@ -23,6 +23,9 @@ describe('clampPosition', () => {
     expect(clampPosition(3, 7)).toBe(2);
     expect(clampPosition(3, 1.4)).toBe(1);
   });
+  it('falls back to position 0 for NaN', () => {
+    expect(clampPosition(3, Number.NaN)).toBe(0);
+  });
 });
 
 describe('shuffleWindowOffset', () => {

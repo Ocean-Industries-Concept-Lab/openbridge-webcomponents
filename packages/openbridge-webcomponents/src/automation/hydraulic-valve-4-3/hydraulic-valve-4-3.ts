@@ -47,8 +47,8 @@ export enum HydraulicValve43Type {
  * - `position-selected` – Fired when the user requests a position (click or
  *   arrow key). Detail: `{position: number}` (0 = left, 1 = center, 2 = right).
  *
- * @fires position-selected {PositionSelectedEvent} Position requested by the user.
  * @alpha
+ * @fires position-selected {PositionSelectedEvent} Position requested by the user.
  */
 @customElement('obc-hydraulic-valve-4-3')
 export class ObcHydraulicValve43 extends ObcShuffleButtonBase {

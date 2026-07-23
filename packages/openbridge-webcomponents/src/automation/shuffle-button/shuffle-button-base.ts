@@ -29,9 +29,10 @@ export type PositionSelectedEvent = CustomEvent<{position: number}>;
  * Implements the WAI-ARIA radio-group pattern: one tab stop (the selected
  * thumb), arrow keys request the previous/next position with wrap-around.
  *
- * Subclasses define `positionCount` and `renderPositionIcon()`.
+ * Subclasses define `positionCount` and `renderPositionIcon()`. The
+ * `position-selected` event contract is documented (`@fires`) on each concrete
+ * component, as required for the custom-elements manifest.
  *
- * @fires position-selected {PositionSelectedEvent} Position requested by the user.
  * @ignore
  */
 export abstract class ObcShuffleButtonBase extends LitElement {
@@ -45,8 +46,11 @@ export abstract class ObcShuffleButtonBase extends LitElement {
 
   /**
    * Accessible name for the radio group (the control is icon-only).
+   * Concrete components override the default with a device-specific name.
+   *
+   * @default 'Position selector'
    */
-  @property({type: String}) override ariaLabel = '';
+  @property({type: String}) override ariaLabel = 'Position selector';
 
   protected abstract get positionCount(): number;
 

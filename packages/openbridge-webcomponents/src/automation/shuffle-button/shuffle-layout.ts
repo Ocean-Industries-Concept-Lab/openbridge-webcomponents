@@ -5,7 +5,8 @@
  */
 
 export function clampPosition(positionCount: number, position: number): number {
-  return Math.min(Math.max(Math.round(position), 0), positionCount - 1);
+  const rounded = Number.isNaN(position) ? 0 : Math.round(position);
+  return Math.min(Math.max(rounded, 0), positionCount - 1);
 }
 
 export function shuffleSlotCount(positionCount: number): number {
