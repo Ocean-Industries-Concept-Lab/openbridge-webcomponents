@@ -51,6 +51,16 @@ export enum PoiLayerSelectionMode {
  * `obc-poi-controller`'s `detections` API, which owns its targets — see the
  * `obc-poi-controller` documentation.
  *
+ * ### Selection API
+ * Selection state is fully reachable without DOM inspection:
+ * - `selectedTargets` — the currently selected POI targets.
+ * - `selectTarget(target, {selectionId?})` — select programmatically;
+ *   `selectionId` presets the stack-managed badge id.
+ * - `deselectTarget(target)` / `clearSelection()` — deselect one/all.
+ * - `selection-change` event — fired on every selection mutation
+ *   (user click, programmatic call, or bootstrap seeding) with
+ *   `{selected, added, removed}` in `detail`.
+ *
  * ### Slots
  * - Default slot for `obc-poi-layer` elements that participate in the stack.
  *
@@ -63,6 +73,7 @@ export enum PoiLayerSelectionMode {
  * ```
  *
  * @slot - Layers participating in the stack.
+ * @fires selection-change {CustomEvent<{selected: Poi[]; added: Poi | null; removed: Poi | null}>} Fired whenever the selection set changes. Bubbles, composed.
  * @experimental
  */
 @customElement('obc-poi-layer-stack')
@@ -147,17 +158,61 @@ export class ObcPoiLayerStack extends LitElement {
     if (target.hasAttribute(ObcPoiLayerStack.STACK_RETURNING_ATTR)) return;
 
     this.cleanupSelection();
-    const originLayer = this.getTargetLayer(target);
-    if (!originLayer) return;
-
-    const selectedLayer = this.getLayer('selected') ?? this.getLayer('top');
-    if (!selectedLayer) return;
-
     const existing = this.selectionMap.get(target);
     if (existing) {
       this.resetSelectionForTarget(target, existing);
       return;
     }
+    this.performSelection(target);
+  }
+
+  /** Currently selected POI targets. */
+  get selectedTargets(): Poi[] {
+    this.cleanupSelection();
+    return Array.from(this.selectionMap.keys());
+  }
+
+  /**
+   * Programmatically select a target, following the same flow as a user
+   * click. `options.selectionId` presets the badge id shown in the
+   * stack-managed header; without it the id auto-increments. Returns
+   * `false` when selection is disabled, the target is mid-transition or
+   * already selected, or no layer can host the selection.
+   */
+  selectTarget(target: Poi, options?: {selectionId?: string}): boolean {
+    if (this.selectionMode === PoiLayerSelectionMode.None) return false;
+    if (target.hasAttribute(ObcPoiLayerStack.STACK_RETURNING_ATTR)) {
+      return false;
+    }
+    this.cleanupSelection();
+    if (this.selectionMap.has(target)) return false;
+    return this.performSelection(target, options?.selectionId);
+  }
+
+  /**
+   * Programmatically deselect a target. Returns `false` when it is not
+   * selected.
+   */
+  deselectTarget(target: Poi): boolean {
+    const record = this.selectionMap.get(target);
+    if (!record) return false;
+    this.resetSelectionForTarget(target, record);
+    return true;
+  }
+
+  /** Deselect all targets. */
+  clearSelection(): void {
+    Array.from(this.selectionMap.entries()).forEach(([target, record]) => {
+      this.resetSelectionForTarget(target, record);
+    });
+  }
+
+  private performSelection(target: Poi, selectionId?: string): boolean {
+    const originLayer = this.getTargetLayer(target);
+    if (!originLayer) return false;
+
+    const selectedLayer = this.getLayer('selected') ?? this.getLayer('top');
+    if (!selectedLayer) return false;
 
     if (this.selectionMode === PoiLayerSelectionMode.Single) {
       this.clearOtherTopSelections(target);
@@ -169,11 +224,26 @@ export class ObcPoiLayerStack extends LitElement {
         ? this.inferBootstrapOriginLayer(target, selectedLayer)
         : originLayer;
 
+    if (selectionId) {
+      target.setAttribute('data-stack-selection-id', selectionId);
+    }
     this.trackSelectionTarget(target, trackedOriginLayer, true);
     const record = this.selectionMap.get(target);
-    if (!record) return;
+    if (!record) return false;
     this.activateTrackedTarget(target, record, selectedLayer);
     this.schedulePlacement();
+    this.dispatchSelectionChange(target, null);
+    return true;
+  }
+
+  private dispatchSelectionChange(added: Poi | null, removed: Poi | null) {
+    this.dispatchEvent(
+      new CustomEvent('selection-change', {
+        detail: {selected: this.selectedTargets, added, removed},
+        bubbles: true,
+        composed: true,
+      })
+    );
   }
 
   private getPoiTargetFromEvent(event: Event): Poi | null {
@@ -819,6 +889,7 @@ export class ObcPoiLayerStack extends LitElement {
       });
       target.removeAttribute('data-stack-selected');
       seededTargets.add(target);
+      this.dispatchSelectionChange(target, null);
     }
     return seededTargets;
   }
@@ -835,6 +906,7 @@ export class ObcPoiLayerStack extends LitElement {
     if (record) {
       this.selectionMap.delete(target);
       void this.animateTargetReturnToOrigin(target, record);
+      this.dispatchSelectionChange(null, target);
       return;
     }
     this.setSelectedTargetInteractivity(target, false);

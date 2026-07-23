@@ -424,3 +424,58 @@ export const MixedComponentTypes: Story = {
     await waitForStorySettle({drainTransitions: true});
   },
 };
+
+export const SelectionHandling: Story = {
+  args: {
+    selectionMode: PoiLayerSelectionMode.Single,
+  },
+  render: (args) => html`
+    <style>
+      .selection-readout {
+        margin-top: 8px;
+        font: 12px sans-serif;
+      }
+    </style>
+    <obc-poi-layer-stack
+      id="selection-handling-stack"
+      selection-mode=${args.selectionMode}
+      @selection-change=${(event: CustomEvent<{selected: unknown[]}>) => {
+        const readout = document.querySelector('#selection-readout');
+        if (readout) {
+          readout.textContent = `Selected targets: ${event.detail.selected.length}`;
+        }
+      }}
+    >
+      <obc-poi-layer
+        label="Selected"
+        is-selected
+        style="--obc-poi-layer-min-height: 140px"
+      ></obc-poi-layer>
+      <obc-poi-layer label="Vessels" style="--obc-poi-layer-min-height: 140px">
+        <obc-poi-vessel .x=${120} .y=${90}>
+          <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
+        </obc-poi-vessel>
+        <obc-poi-vessel .x=${320} .y=${110}>
+          <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
+        </obc-poi-vessel>
+      </obc-poi-layer>
+    </obc-poi-layer-stack>
+    <div id="selection-readout" class="selection-readout">
+      Selected targets: 0
+    </div>
+  `,
+  play: async () => {
+    await waitForStorySettle({drainTransitions: true});
+    const stack = document.querySelector('#selection-handling-stack') as {
+      selectTarget?: (
+        target: Element,
+        options?: {selectionId?: string}
+      ) => boolean;
+    } | null;
+    const target = document.querySelector('obc-poi-vessel');
+    if (stack?.selectTarget && target) {
+      stack.selectTarget(target, {selectionId: '7'});
+    }
+    await waitForStorySettle({drainTransitions: true});
+  },
+};
