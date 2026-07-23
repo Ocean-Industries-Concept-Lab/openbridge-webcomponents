@@ -1,6 +1,6 @@
 import {LitElement, html, unsafeCSS} from 'lit';
 import type {PropertyValues, TemplateResult} from 'lit';
-import {property} from 'lit/decorators.js';
+import {property, state} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import componentStyle from './shuffle-button.css?inline';
 import {
@@ -52,6 +52,8 @@ export abstract class ObcShuffleButtonBase extends LitElement {
    */
   @property({type: String}) override ariaLabel = 'Position selector';
 
+  @state() private suppressHover = false;
+
   protected abstract get positionCount(): number;
 
   protected abstract renderPositionIcon(position: number): TemplateResult;
@@ -66,8 +68,12 @@ export abstract class ObcShuffleButtonBase extends LitElement {
         aria-label=${this.ariaLabel}
         style="--_shuffle-slot-count: ${shuffleSlotCount(
           count
-        )}; --_shuffle-window-offset: ${shuffleWindowOffset(count, selected)};"
+        )}; --_shuffle-window-offset: ${shuffleWindowOffset(
+          count,
+          selected
+        )};${this.suppressHover ? ' --obc-can-hover: 0;' : ''}"
         @keydown=${this.handleKeydown}
+        @pointermove=${this.restoreHover}
       >
         <div class="window">
           <div class="track"></div>
@@ -101,12 +107,19 @@ export abstract class ObcShuffleButtonBase extends LitElement {
     if (position === clampPosition(this.positionCount, this.selectedPosition)) {
       return;
     }
+    // Browsers keep :hover on the thumb that shuffles away from under a
+    // stationary pointer; mute hover feedback until the pointer really moves.
+    this.suppressHover = true;
     const event: PositionSelectedEvent = new CustomEvent('position-selected', {
       detail: {position},
       bubbles: true,
       composed: true,
     });
     this.dispatchEvent(event);
+  }
+
+  private restoreHover() {
+    this.suppressHover = false;
   }
 
   private handleKeydown(event: KeyboardEvent) {

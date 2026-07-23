@@ -19,7 +19,7 @@
   transform: translateX(
     calc(var(--_shuffle-window-offset) * var(--shuffle-slot-size))
   );
-  transition: transform 150ms ease;
+  transition: transform 100ms ease-out;
 }
 
 @media (prefers-reduced-motion: reduce) {
