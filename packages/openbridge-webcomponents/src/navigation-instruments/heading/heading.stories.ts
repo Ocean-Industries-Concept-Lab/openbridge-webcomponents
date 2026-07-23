@@ -96,6 +96,7 @@ export const Enhanced: Story = {
 };
 
 export const WithVessel: Story = {
+  tags: ['6.1'],
   args: {
     vesselImage: VesselImage.psvTop,
     hdgArrowStyle: HdgArrowStyle.arrowHead,
@@ -104,6 +105,7 @@ export const WithVessel: Story = {
 };
 
 export const WithCenterReadout: Story = {
+  tags: ['6.1'],
   args: {
     centerReadouts: [
       {source: CompassReadoutSource.hdg},
@@ -116,6 +118,7 @@ export const WithCenterReadout: Story = {
 };
 
 export const WithVectorArrows: Story = {
+  tags: ['6.1'],
   args: {
     vesselImage: VesselImage.psvTop,
     hdgArrowStyle: HdgArrowStyle.vector,

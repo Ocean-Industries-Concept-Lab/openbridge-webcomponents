@@ -197,12 +197,14 @@ export const WithRateOfTurnDegreesPerMinute: Story = {
 };
 
 export const WithCenterReadout: Story = {
+  tags: ['6.1'],
   args: {
     centerReadouts: [{source: CompassReadoutSource.hdg}],
   },
 };
 
 export const WithTwoPrimaryReadouts: Story = {
+  tags: ['6.1'],
   args: {
     centerReadouts: [
       {source: CompassReadoutSource.hdg},
@@ -212,6 +214,7 @@ export const WithTwoPrimaryReadouts: Story = {
 };
 
 export const WithPrimarySecondaryReadouts: Story = {
+  tags: ['6.1'],
   args: {
     centerReadouts: [
       {source: CompassReadoutSource.hdg},
@@ -221,6 +224,7 @@ export const WithPrimarySecondaryReadouts: Story = {
 };
 
 export const WithThreeReadouts: Story = {
+  tags: ['6.1'],
   args: {
     rateOfTurnDegreesPerMinute: 12,
     centerReadouts: [
@@ -232,10 +236,11 @@ export const WithThreeReadouts: Story = {
 };
 
 /**
- * The "map graphics" recipe: CCRP vessel, HDG vector with beam crossbar and
+ * The "map graphics" recipe: vessel, HDG vector with beam crossbar and
  * astern line, COG arrow head, the rate-of-turn bar, and outside NSWE labels.
  */
 export const MapGraphics: Story = {
+  tags: ['6.1'],
   args: {
     vesselImage: VesselImage.psvTop,
     hdgArrowStyle: HdgArrowStyle.vector,
@@ -251,6 +256,7 @@ export const MapGraphics: Story = {
 };
 
 export const WithHdgArrowStyles: Story = {
+  tags: ['6.1'],
   name: 'With HDG Arrow Styles',
   parameters: {widthDecorator: false},
   render: () => html`
@@ -278,6 +284,7 @@ export const WithHdgArrowStyles: Story = {
 };
 
 export const WithCogArrowStyles: Story = {
+  tags: ['6.1'],
   name: 'With COG Arrow Styles',
   parameters: {widthDecorator: false},
   render: () => html`
