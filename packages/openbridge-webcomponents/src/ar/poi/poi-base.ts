@@ -7,7 +7,12 @@ import {
   ObcPoiButtonDataItem,
 } from '../poi-button/poi-button.js';
 import {ObcPoiHeaderState} from '../building-blocks/poi-header/poi-header.js';
-import {ObcPoiState, ObcPoiType, ObcPoiValue} from './poi.js';
+import {
+  DEFAULT_LINE_LENGTH_PX,
+  ObcPoiState,
+  ObcPoiType,
+  ObcPoiValue,
+} from './poi.js';
 import {
   ObcPoiPointerState,
   ObcPoiPointerType,
@@ -83,7 +88,7 @@ export class PoiBase extends LitElement implements Poi {
   /* ---------- Poi — position ---------- */
 
   @property({type: Number}) x = 0;
-  @property({type: Number}) y = 192;
+  @property({type: Number}) y = DEFAULT_LINE_LENGTH_PX;
   @property({type: Number, attribute: 'button-y'}) buttonY: number | null = 0;
   /**
    * Cutoff frequency (Hz) of the built-in low-pass filter applied to `x`.

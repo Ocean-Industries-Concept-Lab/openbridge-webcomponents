@@ -102,7 +102,7 @@ export enum ObcPoiState {
   Alarm = 'alarm',
 }
 
-const DEFAULT_LINE_LENGTH_PX = 96;
+export const DEFAULT_LINE_LENGTH_PX = 192;
 const POINTER_BOX_BASE_SIZE_PX = 32;
 const POINT_POINTER_OFFSET_PX = 12;
 
@@ -147,7 +147,7 @@ const POINT_POINTER_OFFSET_PX = 12;
  * Motion and layout notes:
  * - `animatePosition` (default: `false`): when true, enables short position transition timing for line/pointer movement.
  * - `x` (default: `0`): host horizontal position; sets `--obc-poi-x` as `${x}px`.
- * - `y` (default: `96`): absolute local target Y; non-finite values fall back to `0` in geometry calculations.
+ * - `y` (default: `192`): absolute local target Y; non-finite values fall back to `0` in geometry calculations. The default is shared with the top-level POI variants (`DEFAULT_LINE_LENGTH_PX`).
  * - `buttonY` (default: `0`): when `fixedTarget=false`, anchors the button at its local Y while the target is derived below it from `y`; when `fixedTarget=true`, preserves the legacy host-anchor behavior.
  * - `buttonOffsetX`/`targetOffsetX` (defaults: `0`/`0`): define connector bend delta via `targetOffsetX - buttonOffsetX`.
  * - `boxWidth`/`boxHeight` (defaults: `null`/`null`): optional pointer frame size extras; invalid/non-finite values are ignored.
