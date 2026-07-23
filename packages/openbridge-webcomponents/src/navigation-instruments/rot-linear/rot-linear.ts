@@ -84,15 +84,20 @@ export class ObcRotLinear extends LitElement {
    */
   @property({type: Number}) fractionDigits = 0;
 
+  /** `rotMaxValue` guarded against non-finite or non-positive values. */
+  private get safeMaxValue(): number {
+    return Number.isFinite(this.rotMaxValue) && this.rotMaxValue > 0
+      ? this.rotMaxValue
+      : 90;
+  }
+
   private get pxPerUnit(): number {
-    const max = this.rotMaxValue || 1;
-    return STRIP_WIDTH / 2 / max;
+    return STRIP_WIDTH / 2 / this.safeMaxValue;
   }
 
   private get barEndX(): number {
-    const max = this.rotMaxValue || 1;
     const rot = this.rateOfTurnDegreesPerMinute ?? 0;
-    const ratio = Math.max(-1, Math.min(1, rot / max));
+    const ratio = Math.max(-1, Math.min(1, rot / this.safeMaxValue));
     return ratio * (STRIP_WIDTH / 2);
   }
 
@@ -128,7 +133,7 @@ export class ObcRotLinear extends LitElement {
   }
 
   private get scaleLabels(): Label[] {
-    const max = this.rotMaxValue;
+    const max = this.safeMaxValue;
     const values = [-max, -max / 2, 0, max / 2, max];
     return values.map((value) => ({
       x: value * this.pxPerUnit,
@@ -154,8 +159,8 @@ export class ObcRotLinear extends LitElement {
     }
 
     for (
-      let value = -this.rotMaxValue;
-      value <= this.rotMaxValue;
+      let value = -this.safeMaxValue;
+      value <= this.safeMaxValue;
       value += this.tickInterval
     ) {
       const x = value * this.pxPerUnit;
