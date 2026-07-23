@@ -686,14 +686,14 @@ export class ObcWatch extends LitElement {
       </mask>`;
       return svg`
         ${mask}
-        <g mask="url(#cutMask)">
-        <path 
-          d=${arc} 
-          fill=${bar.fillColor} 
-          stroke=${bar.fillColor} 
-          stroke-width="1" 
-          vector-effect="non-scaling-stroke" 
-          mask="url(#barMask-${index})" 
+        <g mask=${this.areas.length > 0 ? 'url(#cutMask)' : nothing}>
+        <path
+          d=${arc}
+          fill=${bar.fillColor}
+          stroke=${bar.fillColor}
+          stroke-width="1"
+          vector-effect="non-scaling-stroke"
+          mask="url(#barMask-${index})"
           />
           </g>
           `;
