@@ -690,7 +690,7 @@ export class ObcPoiLayer extends LitElement {
         (group as PoiButtonGroupElement).internalSwapping =
           !!this.internalSwapping;
         group.setAttribute(
-          'positionVertical',
+          'position-vertical',
           `${this.getGroupPositionVertical(cluster, rects, layerRect, group)}px`
         );
         cluster.forEach((target) => {
@@ -900,9 +900,7 @@ export class ObcPoiLayer extends LitElement {
         (child): child is Poi => isPoi(child)
       );
       this.toggleGroupLayerHook(group, children.length > 0);
-      const hasPositionAttr =
-        group.hasAttribute('positionvertical') ||
-        group.hasAttribute('positionVertical');
+      const hasPositionAttr = group.hasAttribute('position-vertical');
       if (
         !group.hasAttribute('data-auto-group') &&
         !group.hasAttribute('data-position-mode')
@@ -926,7 +924,7 @@ export class ObcPoiLayer extends LitElement {
             ])
           );
         group.setAttribute(
-          'positionVertical',
+          'position-vertical',
           `${this.getGroupPositionVertical(children, rectMap, layerBounds, group)}px`
         );
       }

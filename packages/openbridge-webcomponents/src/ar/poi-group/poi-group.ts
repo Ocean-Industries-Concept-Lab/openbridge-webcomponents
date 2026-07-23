@@ -37,7 +37,7 @@ export type ExpandEvent = CustomEvent<{expand: boolean}>;
  * - Front-target handling: Keeps one front target visually prioritized while collapsing other targets into overlap state.
  * - Backdrop interaction: Shows a backdrop while expanded and collapses on backdrop click.
  * - Dynamic ordering: `internalSwapping` enables reordering while expanded based on current horizontal positions.
- * - Vertical placement: `positionVertical` sets the wrapper/group top offset used for collapsed positioning.
+ * - Vertical placement: `positionVertical` (attribute `position-vertical`) sets the wrapper/group top offset used for collapsed positioning.
  *
  * ### Usage Guidelines
  * - Slot only `obc-poi-data` items that should behave as one grouped target set.
@@ -62,7 +62,7 @@ export type ExpandEvent = CustomEvent<{expand: boolean}>;
  *
  * ### Example
  * ```html
- * <obc-poi-group positionVertical="240px">
+ * <obc-poi-group position-vertical="240px">
  *   <obc-poi-data x="300" button-y="240" y="240"></obc-poi-data>
  *   <obc-poi-data x="320" button-y="240" y="240"></obc-poi-data>
  *   <obc-poi-data x="340" button-y="240" y="240"></obc-poi-data>
@@ -78,7 +78,8 @@ export type ExpandEvent = CustomEvent<{expand: boolean}>;
 export class ObcPoiGroup extends LitElement {
   @property({type: Boolean}) expand = false;
   @property({type: Boolean}) collapsing = false;
-  @property({type: String}) positionVertical = '0px';
+  @property({type: String, attribute: 'position-vertical'})
+  positionVertical = '0px';
   @property({type: Boolean, attribute: 'internal-swapping'})
   internalSwapping = false;
   @state() private wrapperOffsetX = '0px';
