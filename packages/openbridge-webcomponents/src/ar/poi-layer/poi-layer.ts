@@ -75,6 +75,7 @@ export enum OverlapMode {
  *
  * ### Events
  * - `layer-resize` - Fired when computed layer height changes. Detail: `{ height: number, label: string }`.
+ * - `grouping-change` - Fired when grouping membership or front/behind/pre-group state changes. Detail: `{ clusters: Poi[][], front: Poi[], behind: Poi[], pregrouped: Poi[] }`. Subscribe to this instead of observing the layer's internal `data-*` attributes.
  *
  * ### CSS Custom Properties
  * | Property | Default | Purpose |
@@ -103,6 +104,7 @@ export enum OverlapMode {
  *
  * @slot - Default slot for POI targets and optional POI groups.
  * @fires layer-resize {CustomEvent<{height:number,label:string}>} Fired when the layer height changes.
+ * @fires grouping-change {CustomEvent<{clusters:Poi[][],front:Poi[],behind:Poi[],pregrouped:Poi[]}>} Fired when grouping membership or overlap state changes. Bubbles, composed.
  * @fires layer-selection-changed {Event} Fired when the layer's `isSelected` state changes. Bubbles.
  * @experimental
  */
@@ -124,6 +126,9 @@ export class ObcPoiLayer extends LitElement {
   private targetResizeObserver?: ResizeObserver;
   private lastHeight = 0;
   private isGrouping = false;
+  private lastGroupingSignature = '';
+  private groupingIds = new WeakMap<Poi, number>();
+  private nextGroupingId = 1;
   private targetObservers = new Map<Poi, MutationObserver>();
   private targetSizeElements = new Map<Poi, HTMLElement>();
   private groupingRaf = 0;
@@ -500,6 +505,47 @@ export class ObcPoiLayer extends LitElement {
     return next.shouldContinue;
   }
 
+  private getGroupingId(target: Poi): number {
+    let id = this.groupingIds.get(target);
+    if (id === undefined) {
+      id = this.nextGroupingId++;
+      this.groupingIds.set(target, id);
+    }
+    return id;
+  }
+
+  private notifyGroupingChange(
+    clusters: Poi[][],
+    frontTargets: Set<Poi>,
+    behindTargets: Set<Poi>,
+    preGrouped: Set<Poi>
+  ) {
+    const idsOf = (targets: Iterable<Poi>) =>
+      Array.from(targets, (target) => this.getGroupingId(target)).sort(
+        (a, b) => a - b
+      );
+    const signature = JSON.stringify({
+      clusters: clusters.map((cluster) => idsOf(cluster)).sort(),
+      front: idsOf(frontTargets),
+      behind: idsOf(behindTargets),
+      pre: idsOf(preGrouped),
+    });
+    if (signature === this.lastGroupingSignature) return;
+    this.lastGroupingSignature = signature;
+    this.dispatchEvent(
+      new CustomEvent('grouping-change', {
+        detail: {
+          clusters: clusters.map((cluster) => [...cluster]),
+          front: [...frontTargets],
+          behind: [...behindTargets],
+          pregrouped: [...preGrouped],
+        },
+        bubbles: true,
+        composed: true,
+      })
+    );
+  }
+
   private toggleGroupLayerHook(group: HTMLElement, hasTargets: boolean) {
     if (hasTargets) {
       group.setAttribute(ObcPoiLayer.GROUP_LAYER_HOOK_ATTR, '');
@@ -762,6 +808,12 @@ export class ObcPoiLayer extends LitElement {
       });
 
       this.refreshGroupPositions(layerRect, rects);
+      this.notifyGroupingChange(
+        clusters,
+        frontTargets,
+        behindTargets,
+        preGrouped
+      );
 
       requestAnimationFrame(() => {
         targets.forEach((target) => target.removeAttribute('data-front-exit'));
