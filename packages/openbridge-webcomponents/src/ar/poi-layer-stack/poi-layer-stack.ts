@@ -30,6 +30,27 @@ export enum PoiLayerSelectionMode {
  * Use `selection-mode` to control whether targets can be selected across the
  * stack (`none`, `single`, or `multi`).
  *
+ * ### Required Setup
+ * 1. Place the stack in `obc-poi-controller`'s `slot="stack"`, or manage the
+ *    stack's height and media geometry yourself.
+ * 2. Give exactly one child `obc-poi-layer` the `is-selected` attribute — the
+ *    stack moves selected targets into it and resets all selection state if
+ *    no selected layer exists.
+ * 3. Mark the background/default layer with
+ *    `data-controller-layer="background"` when the stack is used inside
+ *    `obc-poi-controller`.
+ * 4. Set `--obc-poi-layer-min-height` on layers that can start empty, so they
+ *    do not collapse to 0px height.
+ *
+ * ### Framework Notes
+ * The stack physically re-parents slotted POI elements between layers during
+ * selection (FLIP animation), and layers create/remove `obc-poi-group`
+ * elements in the light DOM. Declarative renderers (React, Vue, etc.) must
+ * not manage POI children as framework-owned elements, or reconciliation
+ * breaks when nodes move. Manage POI elements imperatively, or use
+ * `obc-poi-controller`'s `detections` API, which owns its targets — see the
+ * `obc-poi-controller` documentation.
+ *
  * ### Slots
  * - Default slot for `obc-poi-layer` elements that participate in the stack.
  *

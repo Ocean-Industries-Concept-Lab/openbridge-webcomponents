@@ -93,6 +93,17 @@ export enum PoiFitMode {
  * <obc-poi-controller detections={detections} fit="cover">
  * ```
  *
+ * ## Framework Notes
+ *
+ * The `detections` API is safe for declarative renderers (React, Vue, etc.)
+ * because the controller creates and owns the resulting `obc-poi-data`
+ * elements. Manually slotted POI children of layers are a different story:
+ * the layer stack physically re-parents them between layers during selection
+ * (FLIP animation), and layers create/remove `obc-poi-group` elements in the
+ * light DOM, which breaks framework reconciliation of those nodes. Manage
+ * manually slotted POI elements imperatively, or prefer the `detections` API.
+ * See `obc-poi-layer-stack` documentation for details.
+ *
  * ## Coordinate Model
  *
  * Detection `x` and `y` are in **media pixel space** (e.g. 0-1920 for a 1920x1080 video).

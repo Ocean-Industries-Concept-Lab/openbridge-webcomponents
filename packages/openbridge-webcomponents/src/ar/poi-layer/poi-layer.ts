@@ -62,9 +62,11 @@ export enum OverlapMode {
  * - Choose `overlapMode` based on behavior:
  *   - `grouping`: best when overlaps should collapse into expandable clusters.
  *   - `crossing`: best when targets stay independent but should separate horizontally.
- * - Listen for `layer-resize` to keep parent containers in sync with computed layer height.
+ * - Handle `layer-resize` only when using the layer standalone; inside `obc-poi-layer-stack` / `obc-poi-controller` the container handles height syncing. Example: `layer.addEventListener('layer-resize', (e) => { host.style.height = e.detail.height + 'px'; })`.
+ * - After imperatively adding, removing, or moving POI children outside the layer's own observers, call the public `requestGroupingUpdate()` method to force a recompute; it is the supported hook for imperative DOM mutations.
+ * - Set `--obc-poi-layer-min-height` when the layer starts empty, otherwise the layer collapses to 0px height until targets exist.
  * - Enable `joinWhileExpanded` only when targets should be able to join an already expanded auto-group.
- * - **TODO(designer):** Confirm intended user-visible behavior for `isSelected`, since it currently reflects an attribute but is not consumed by the layer logic here.
+ * - **TODO(designer):** Confirm intended user-visible behavior for `isSelected`, since it has no runtime layout logic in this class — it only reflects the attribute and notifies containers via `layer-selection-changed` (consumed by `obc-poi-layer-stack` to pick the selected layer).
  *
  * ### Slots
  * | Slot | Renders When... | Purpose |

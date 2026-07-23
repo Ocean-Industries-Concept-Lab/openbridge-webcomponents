@@ -101,8 +101,7 @@ export interface ObcPoiButtonDataItem {
  * - `data` (default `[]`): when non-empty, renders value/label/unit rows.
  * - `hasHeader` + `header` slot: renders a header area and syncs slotted `obc-poi-header` state.
  * - `hasRelation` (default `false`): enables optional relation content in data mode.
- * - `inExpandedGroup` (default `false`): applies `expanded` CSS class.
- * - TODO(designer): Confirm intended UX semantics for `inExpandedGroup` beyond styling.
+ * - `inExpandedGroup` (default `false`): expanded-group presentation state, applied by the owning group composition during expand/collapse orchestration; consumers should not set it directly.
  *
  * ## Usage Guidelines
  * - Use `layout="anchored"` for standalone marker buttons.
@@ -151,6 +150,11 @@ export class ObcPoiButton extends LitElement {
   @property({type: Boolean})
   overlapOpaque = false;
   @property({type: String}) type = ObcPoiButtonType.Button;
+  /**
+   * Expanded-group presentation state, applied by the owning group composition
+   * while the button is shown inside an expanded `obc-poi-group` and during
+   * its collapse animations. Consumers should not set it directly.
+   */
   @property({type: Boolean}) inExpandedGroup = false;
   @property({type: Array, attribute: false}) data: ObcPoiButtonDataItem[] = [];
   @property({type: Boolean}) hasRelation = false;

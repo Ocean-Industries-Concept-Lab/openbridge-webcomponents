@@ -51,6 +51,17 @@ const VALID_POI_STATES = new Set(Object.values(ObcPoiState));
  * Implements `Poi` and contains all positioning, X-filter,
  * layout-change dispatch, and visual-query logic so that each variant
  * only needs to override `renderContent()` and `getVisualNodes()`.
+ *
+ * ### Coordinate Model
+ * - `x` is the horizontal center position in px within the layer.
+ * - Targets are anchored at the layer's bottom edge; `y` is the connector
+ *   line length in px extending downward from that anchor to the target
+ *   point (default `192`, the shared `DEFAULT_LINE_LENGTH_PX`). The button
+ *   renders at the top of the connector, inside the layer.
+ * - `buttonY` positions the button; its interaction with `fixedTarget` is
+ *   described in the `obc-poi` documentation.
+ * - `x` updates pass through a built-in low-pass filter (see
+ *   `xFilterCutoffHz`).
  */
 export class PoiBase extends LitElement implements Poi {
   private headerObserver?: MutationObserver;

@@ -21,6 +21,7 @@ export {
  *
  * Extends `PoiBase` to provide the "vessel" variant of the POI system.
  * Renders `<obc-poi>` with a slotted `<obc-poi-button-vessel>`.
+ * See the "Coordinate Model" section in `PoiBase` (poi-base.ts) for how `x`, `y`, and `buttonY` position the marker.
  *
  * @slot - Icon content forwarded to the inner vessel object.
  * @slot turn-indicator - Optional turn indicator content for speed-rot type.
