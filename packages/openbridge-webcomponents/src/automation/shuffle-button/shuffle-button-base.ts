@@ -41,9 +41,14 @@ export type PositionSelectedEvent = CustomEvent<PositionSelectedDetail>;
  * `position-selected` event contract is documented (`@fires`) on each concrete
  * component, as required for the custom-elements manifest.
  *
+ * Not declared `abstract`: the framework wrapper generators instantiate every
+ * manifest class through a concrete `Constructor<T>` type, and an abstract
+ * class breaks the generated React wrapper build (same reason as the
+ * specialty-tank base).
+ *
  * @ignore
  */
-export abstract class ObcShuffleButtonBase extends LitElement {
+export class ObcShuffleButtonBase extends LitElement {
   /**
    * Zero-based index of the currently selected position.
    * Out-of-range values are clamped.
@@ -62,9 +67,13 @@ export abstract class ObcShuffleButtonBase extends LitElement {
 
   @state() private suppressHover = false;
 
-  protected abstract get positionCount(): number;
+  protected get positionCount(): number {
+    return 1;
+  }
 
-  protected abstract renderPositionIcon(position: number): TemplateResult;
+  protected renderPositionIcon(_position: number): TemplateResult {
+    return html``;
+  }
 
   override render() {
     const count = this.positionCount;
