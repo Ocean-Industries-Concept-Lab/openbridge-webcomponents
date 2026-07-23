@@ -117,7 +117,7 @@ export const WithCenterReadout: Story = {
 
 export const WithVectorArrows: Story = {
   args: {
-    vesselImage: VesselImage.psvTopCcrp,
+    vesselImage: VesselImage.psvTop,
     hdgArrowStyle: HdgArrowStyle.vector,
     cogArrowStyle: CogArrowStyle.vector,
   },

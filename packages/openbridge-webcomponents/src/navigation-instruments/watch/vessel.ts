@@ -21,7 +21,6 @@ import * as psvAft from './vessels/psv-aft.js';
 import * as psvFore from './vessels/psv-fore.js';
 import psvSide, {psvSideFaded} from './vessels/psv-side.js';
 import * as psvTop from './vessels/psv-top.js';
-import * as psvTopCcrp from './vessels/psv-top-ccrp.js';
 import sovSide, {sovSideFaded} from './vessels/sov-side.js';
 import * as sovTop from './vessels/sov-top.js';
 import * as tankerFore from './vessels/tanker-fore.js';
@@ -80,7 +79,6 @@ export enum VesselImage {
   psvSide = 'psv-side',
   psvSideFaded = 'psv-side-faded',
   psvTop = 'psv-top',
-  psvTopCcrp = 'psv-top-ccrp',
   sovSide = 'sov-side',
   sovSideFaded = 'sov-side-faded',
   sovTop = 'sov-top',
@@ -136,7 +134,6 @@ export const vesselImages: Record<VesselImage, SVGTemplateResult> = {
   [VesselImage.psvSide]: psvSide,
   [VesselImage.psvSideFaded]: psvSideFaded,
   [VesselImage.psvTop]: psvTop.default,
-  [VesselImage.psvTopCcrp]: psvTopCcrp.default,
   [VesselImage.sovSide]: sovSide,
   [VesselImage.sovSideFaded]: sovSideFaded,
   [VesselImage.sovTop]: sovTop.default,

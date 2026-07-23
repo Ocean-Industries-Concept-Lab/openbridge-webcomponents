@@ -237,7 +237,7 @@ export const WithThreeReadouts: Story = {
  */
 export const MapGraphics: Story = {
   args: {
-    vesselImage: VesselImage.psvTopCcrp,
+    vesselImage: VesselImage.psvTop,
     hdgArrowStyle: HdgArrowStyle.vector,
     cogArrowStyle: CogArrowStyle.arrowHead,
     rotType: RotType.bar,
@@ -262,7 +262,7 @@ export const WithHdgArrowStyles: Story = {
               <obc-compass
                 .heading=${311}
                 .courseOverGround=${338}
-                .vesselImage=${VesselImage.psvTopCcrp}
+                .vesselImage=${VesselImage.psvTop}
                 .hdgArrowStyle=${style}
                 .cogArrowStyle=${CogArrowStyle.arrowHead}
               ></obc-compass>
@@ -289,7 +289,7 @@ export const WithCogArrowStyles: Story = {
               <obc-compass
                 .heading=${311}
                 .courseOverGround=${338}
-                .vesselImage=${VesselImage.psvTopCcrp}
+                .vesselImage=${VesselImage.psvTop}
                 .hdgArrowStyle=${HdgArrowStyle.vector}
                 .cogArrowStyle=${style}
               ></obc-compass>
