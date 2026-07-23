@@ -60,6 +60,13 @@ export enum PointerDirection {
  *
  * ## Events
  * - `card-click`: Fired when the card surface is activated in interactive mode.
+ * - `close-click`: Fired when the header close button is pressed (`hasCloseButton` with the detailed header variant).
+ *
+ * ## CSS Parts
+ * - `wrapper`: Outer layout wrapper holding the pointer arrows and the card surface.
+ * - `content-box`: Card surface with background, border, and rounded corners.
+ * - `header`: The `obc-poi-card-header` element, rendered when `showHeader` is true.
+ * - `content`: Body area wrapping the default slot.
  *
  * ## Best Practices
  * - Keep `index` stable so event payloads remain predictable.
@@ -76,7 +83,12 @@ export enum PointerDirection {
  * @slot - Main card body content.
  * @slot leading-icon - Optional icon used by the regular header variant.
  * @slot poi-icon - Optional icon used by the detailed header variant.
+ * @csspart wrapper - Outer layout wrapper holding the pointer arrows and the card surface.
+ * @csspart content-box - Card surface with background, border, and rounded corners.
+ * @csspart header - The `obc-poi-card-header` element, rendered when `showHeader` is true.
+ * @csspart content - Body area wrapping the default slot.
  * @fires card-click {CustomEvent<PoiCardClickDetail>} Fired when the card is activated in interactive mode.
+ * @fires close-click {CustomEvent<void>} Fired when the header close button is pressed (`hasCloseButton` with the detailed header variant). Dispatched by the nested `obc-poi-card-header`; bubbles and is composed, so it re-targets to this element.
  * @experimental
  */
 @customElement('obc-poi-card')
@@ -233,6 +245,7 @@ export class ObcPoiCard extends LitElement {
     if (!this.showHeader) return nothing;
     return html`
       <obc-poi-card-header
+        part="header"
         variant=${this.headerVariant}
         index=${this.index}
         cardTitle=${this.cardTitle}
@@ -263,6 +276,7 @@ export class ObcPoiCard extends LitElement {
   override render() {
     return html`
       <div
+        part="wrapper"
         class=${classMap({
           wrapper: true,
           'hug-content': !this.fixedSize,
@@ -274,6 +288,7 @@ export class ObcPoiCard extends LitElement {
         <div class="center">
           ${this.renderLeftPointer()}
           <div
+            part="content-box"
             class="content-box"
             role=${this.interactive ? 'button' : nothing}
             tabindex=${this.interactive ? '0' : nothing}
@@ -283,7 +298,7 @@ export class ObcPoiCard extends LitElement {
             @keyup=${this.handleKeyUp}
           >
             ${this.renderHeader()}
-            <div class="content">
+            <div part="content" class="content">
               <slot></slot>
             </div>
             ${this.renderAlertLayer()}
