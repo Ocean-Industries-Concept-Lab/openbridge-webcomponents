@@ -1,10 +1,16 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {
+  CogArrowStyle,
   CompassDirection,
+  CompassReadoutSource,
+  HdgArrowStyle,
   HeadingPriorityElement,
   ObcHeading,
 } from './heading.js';
 import './heading.js';
+import {VesselImage} from '../watch/watch.js';
+import {topVessels} from '../watch/vessels/storybook-helper.js';
+import {ReadoutSize} from '../readout/readout.js';
 import {html} from 'lit';
 import {
   playgroundColumn,
@@ -17,7 +23,7 @@ import {Priority} from '../types.js';
 
 const meta: Meta<typeof ObcHeading> = {
   title: 'Instruments/Heading',
-  tags: ['6.0'],
+  tags: ['autodocs', '6.0'],
   component: 'obc-heading',
   args: {
     width: 512,
@@ -54,6 +60,16 @@ const meta: Meta<typeof ObcHeading> = {
     touching: {control: 'boolean'},
     showLabels: {control: 'boolean'},
     tickmarksInside: {control: 'boolean'},
+    vesselImage: {control: 'select', options: [undefined, ...topVessels]},
+    hdgArrowStyle: {
+      control: 'select',
+      options: Object.values(HdgArrowStyle),
+    },
+    cogArrowStyle: {
+      control: 'select',
+      options: Object.values(CogArrowStyle),
+    },
+    centerReadouts: {control: 'object'},
     priority: {control: 'select', options: Object.values(Priority)},
     priorityElements: {
       control: 'multi-select',
@@ -76,6 +92,34 @@ export const Enhanced: Story = {
   args: {
     priority: Priority.enhanced,
     headingSetpoint: 311,
+  },
+};
+
+export const WithVessel: Story = {
+  args: {
+    vesselImage: VesselImage.psvTop,
+    hdgArrowStyle: HdgArrowStyle.arrowHead,
+    cogArrowStyle: CogArrowStyle.arrowHead,
+  },
+};
+
+export const WithCenterReadout: Story = {
+  args: {
+    centerReadouts: [
+      {source: CompassReadoutSource.hdg},
+      {source: CompassReadoutSource.cog, size: ReadoutSize.large},
+    ],
+    hdgArrowStyle: HdgArrowStyle.arrowHead,
+    cogArrowStyle: CogArrowStyle.arrowHead,
+    priority: Priority.enhanced,
+  },
+};
+
+export const WithVectorArrows: Story = {
+  args: {
+    vesselImage: VesselImage.psvTopCcrp,
+    hdgArrowStyle: HdgArrowStyle.vector,
+    cogArrowStyle: CogArrowStyle.vector,
   },
 };
 
