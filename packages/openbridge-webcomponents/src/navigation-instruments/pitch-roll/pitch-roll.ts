@@ -14,7 +14,11 @@ import {TickmarkType} from '../watch/tickmark.js';
 import {AdviceState, AdviceType, AngleAdviceRaw} from '../watch/advice.js';
 import {customElement} from '../../decorator.js';
 import {Priority} from '../types.js';
-import {renderInstrumentReadout} from '../readout/instrument-readout.js';
+import {
+  centerReadoutStyles,
+  renderCenterReadouts,
+} from '../readout/center-readout.js';
+import {ReadoutSize} from '../readout/readout.js';
 import {
   computeZoomToFitArcFrame,
   normalizeArcAngle,
@@ -214,38 +218,27 @@ export class ObcPitchRoll extends LitElement {
           : this.renderFullWatch(areas)}
         ${this.hasReadout
           ? html`<div class="readout">
-              <div class="readout-group">
-                ${this.renderReadout(
-                  this.pitch,
-                  this.pitchLabel,
-                  PitchRollPriorityElement.pitch
-                )}
-                <div class="readout-divider"></div>
-                ${this.renderReadout(
-                  this.roll,
-                  this.rollLabel,
-                  PitchRollPriorityElement.roll
-                )}
-              </div>
+              ${renderCenterReadouts([
+                {
+                  value: this.pitch,
+                  label: this.pitchLabel,
+                  unit: this.unit,
+                  fractionDigits: this.fractionDigits,
+                  size: ReadoutSize.large,
+                  priority: this.priorityFor(PitchRollPriorityElement.pitch),
+                },
+                {
+                  value: this.roll,
+                  label: this.rollLabel,
+                  unit: this.unit,
+                  fractionDigits: this.fractionDigits,
+                  size: ReadoutSize.large,
+                  priority: this.priorityFor(PitchRollPriorityElement.roll),
+                },
+              ])}
             </div>`
           : nothing}
       </div>
-    `;
-  }
-
-  private renderReadout(
-    value: number,
-    label: string,
-    element: PitchRollPriorityElement
-  ) {
-    return html`
-      ${renderInstrumentReadout({
-        value,
-        priority: this.priorityFor(element),
-        label,
-        unit: this.unit,
-        fractionDigits: this.fractionDigits,
-      })}
     `;
   }
 
@@ -747,44 +740,34 @@ export class ObcPitchRoll extends LitElement {
     return advices;
   }
 
-  static override styles = css`
-    * {
-      box-sizing: border-box;
-    }
+  static override styles = [
+    centerReadoutStyles,
+    css`
+      * {
+        box-sizing: border-box;
+      }
 
-    .container {
-      position: relative;
-      width: 100%;
-      height: 100%;
-    }
+      .container {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
 
-    .container > * {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
+      .container > * {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
 
-    .readout {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .readout-group {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: fit-content;
-    }
-
-    .readout-divider {
-      align-self: stretch;
-      height: 1px;
-      background: var(--border-divider-color);
-    }
-  `;
+      .readout {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    `,
+  ];
 }
 
 declare global {
