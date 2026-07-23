@@ -2,6 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcPoiGroup} from './poi-group.js';
 import './poi-group.js';
 import {crossDecorator} from '../../storybook-util.js';
+import {waitForStorySettle} from '../_test-utils.js';
 import {html} from 'lit';
 import {createRef, ref} from 'lit/directives/ref.js';
 import '../poi-button/poi-button-data.js';
@@ -129,12 +130,18 @@ export default meta;
 type Story = StoryObj<PoiGroupStoryArgs>;
 
 export const Grouped: Story = {
+  play: async () => {
+    await waitForStorySettle({drainTransitions: true});
+  },
   args: {
     expand: false,
   },
 };
 
 export const GroupedWithNumbers: Story = {
+  play: async () => {
+    await waitForStorySettle({drainTransitions: true});
+  },
   args: {
     expand: false,
   },
@@ -220,6 +227,9 @@ export const GroupedWithNumbers: Story = {
 };
 
 export const GroupedWithValues: Story = {
+  play: async () => {
+    await waitForStorySettle({drainTransitions: true});
+  },
   args: {
     expand: false,
   },
@@ -320,6 +330,9 @@ export const GroupedWithValues: Story = {
 };
 
 export const GroupedMixedTypes: Story = {
+  play: async () => {
+    await waitForStorySettle({drainTransitions: true});
+  },
   args: {
     expand: false,
   },
