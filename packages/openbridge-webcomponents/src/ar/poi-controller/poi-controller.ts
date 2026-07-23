@@ -34,6 +34,15 @@ export enum PoiFitMode {
 }
 
 /**
+ * Attribute consumers set on a child `obc-poi-layer` to tell the
+ * controller which layer receives its detection-driven targets.
+ */
+export const POI_CONTROLLER_LAYER_ATTR = 'data-controller-layer';
+
+/** `data-controller-layer` value marking the background/target layer. */
+export const POI_CONTROLLER_BACKGROUND_LAYER = 'background';
+
+/**
  * `<obc-poi-controller>` — Maps detection data onto POI markers over a video or image.
  *
  * Takes detection coordinates in media pixel space (e.g. x,y in a 1920x1080 frame),
@@ -264,7 +273,7 @@ export class ObcPoiController extends LitElement {
     if (!stack) return null;
 
     const explicitLayer = stack.querySelector<ObcPoiLayer>(
-      'obc-poi-layer[data-controller-layer="background"]'
+      `obc-poi-layer[${POI_CONTROLLER_LAYER_ATTR}="${POI_CONTROLLER_BACKGROUND_LAYER}"]`
     );
     if (explicitLayer) return explicitLayer;
 
