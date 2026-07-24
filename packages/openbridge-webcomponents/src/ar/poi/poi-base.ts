@@ -395,7 +395,6 @@ export class PoiBase extends LitElement implements Poi {
       for (const mutation of mutations) {
         if (mutation.type === 'childList') {
           this.syncHeaderContent();
-          this.syncHeaderState();
           return;
         }
         if (
@@ -404,7 +403,6 @@ export class PoiBase extends LitElement implements Poi {
           mutation.target.getAttribute('slot') === 'header'
         ) {
           this.syncHeaderContent();
-          this.syncHeaderState();
           return;
         }
       }
@@ -446,12 +444,10 @@ export class PoiBase extends LitElement implements Poi {
       this.dispatchLayoutChange();
     }
     this.syncHeaderContent();
-    this.syncHeaderState();
   }
 
   protected override firstUpdated(_changedProperties: Map<string, unknown>) {
     this.syncHeaderContent();
-    this.syncHeaderState();
   }
 
   /* ---------- Vertical positioning ---------- */
@@ -718,6 +714,7 @@ export class PoiBase extends LitElement implements Poi {
         .data=${this.data}
       >
         <slot></slot>
+        <slot name="header" slot="header"></slot>
       </obc-poi-button>
     `;
   }
@@ -738,54 +735,24 @@ export class PoiBase extends LitElement implements Poi {
     }
   }
 
+  /**
+   * Auto-enable `hasHeader` when the consumer slots header content directly
+   * (outside a stack, which manages `hasHeader` itself). Header elements stay
+   * in the consumer's light DOM and reach the inner button through the
+   * `<slot name="header">` forwarding chain; their `state` is synced by
+   * `obc-poi-button`.
+   */
   private syncHeaderContent() {
-    const headerChildren = Array.from(this.children).filter(
-      (child): child is HTMLElement =>
+    if (this.hasHeader) {
+      return;
+    }
+    const hasHeaderChildren = Array.from(this.children).some(
+      (child) =>
         child instanceof HTMLElement && child.getAttribute('slot') === 'header'
     );
-
-    if (headerChildren.length === 0 && !this.hasHeader) {
-      return;
-    }
-
-    if (
-      headerChildren.length > 0 &&
-      !this.hasHeader &&
-      this.closest('obc-poi-layer-stack') === null
-    ) {
+    if (hasHeaderChildren && this.closest('obc-poi-layer-stack') === null) {
       this.hasHeader = true;
     }
-
-    const target = (this.shadowRoot?.querySelector('[slot="button"]') ??
-      this.shadowRoot?.querySelector('obc-poi')) as HTMLElement | null;
-    if (!target) {
-      return;
-    }
-
-    for (const child of headerChildren) {
-      if (child.parentElement !== target) {
-        target.appendChild(child);
-      }
-      this.applyHeaderState(child);
-    }
-  }
-
-  private applyHeaderState(root: ParentNode) {
-    const headers = [
-      ...(root instanceof Element && root.matches('obc-poi-header')
-        ? [root]
-        : []),
-      ...root.querySelectorAll('obc-poi-header'),
-    ] as HTMLElement[];
-
-    for (const header of headers) {
-      (header as {state?: ObcPoiHeaderState}).state = this.resolvedHeaderState;
-      header.setAttribute('state', this.resolvedHeaderState);
-    }
-  }
-
-  private syncHeaderState() {
-    this.applyHeaderState(this.renderRoot);
   }
 
   override render() {

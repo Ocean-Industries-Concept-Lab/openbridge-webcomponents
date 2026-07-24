@@ -161,13 +161,24 @@ export class ObcPoiButton extends LitElement {
   @property({type: String, attribute: 'header-content'}) headerContent = '';
   private headerContentObserver?: MutationObserver;
 
+  // Forwarding slots from an outer shadow tree (`<slot name="header"
+  // slot="header">` rendered by obc-poi / PoiBase variants) fire
+  // `slotchange` that bubbles through this element; re-render so
+  // `hasHeaderContent` re-evaluates the forwarded assignment.
+  private handleLightSlotChange = () => {
+    this.requestUpdate();
+    this.syncSlottedHeaderState();
+  };
+
   override connectedCallback() {
     super.connectedCallback();
+    this.addEventListener('slotchange', this.handleLightSlotChange);
     this.setupHeaderContentObserver();
   }
 
   override disconnectedCallback() {
     super.disconnectedCallback();
+    this.removeEventListener('slotchange', this.handleLightSlotChange);
     this.headerContentObserver?.disconnect();
     this.headerContentObserver = undefined;
   }
@@ -234,7 +245,16 @@ export class ObcPoiButton extends LitElement {
   }
 
   private get hasHeaderContent(): boolean {
-    return this.querySelector('[slot="header"]') !== null;
+    for (const child of this.querySelectorAll('[slot="header"]')) {
+      if (child instanceof HTMLSlotElement) {
+        if (child.assignedElements({flatten: true}).length > 0) {
+          return true;
+        }
+      } else {
+        return true;
+      }
+    }
+    return false;
   }
 
   private get hasGeneratedHeaderContent(): boolean {

@@ -71,6 +71,7 @@ export class ObcPoiVessel extends PoiBase {
         ></slot>
         <slot name="turn-indicator" slot="turn-indicator"></slot>
         <slot name="speed-indicator" slot="speed-indicator"></slot>
+        <slot name="header" slot="header"></slot>
       </obc-poi-button-vessel>
     `;
   }

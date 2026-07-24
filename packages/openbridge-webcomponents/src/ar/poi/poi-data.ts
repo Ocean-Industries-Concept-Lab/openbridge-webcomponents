@@ -61,6 +61,7 @@ export class ObcPoiData extends PoiBase {
         <slot
           ><obi-vessel-generic-default-filled></obi-vessel-generic-default-filled
         ></slot>
+        <slot name="header" slot="header"></slot>
       </obc-poi-button-data>
     `;
   }

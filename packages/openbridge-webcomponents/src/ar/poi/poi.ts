@@ -10,7 +10,6 @@ import {
   ObcPoiButtonState,
   PoiButtonVisualState,
 } from '../poi-button/poi-button.js';
-import {ObcPoiHeaderState} from '../building-blocks/poi-header/poi-header.js';
 import {POIStyle} from '../building-blocks/poi-graphic-line/poi-graphic-line.js';
 import {poiArrow} from './arrow.js';
 import '../building-blocks/poi-line/poi-line.js';
@@ -165,7 +164,7 @@ const POINT_POINTER_OFFSET_PX = 12;
  *
  * - Default slot: Main icon/content rendered inside `obc-poi-button`.
  * - `button`: Optional custom button element replacing the default `obc-poi-button`.
- * - `header`: Optional header content. Relocated into the inner `obc-poi-button` at runtime by a `MutationObserver` (there is no `<slot name="header">` element).
+ * - `header`: Optional header content, forwarded into the default `obc-poi-button` through a `<slot name="header">` chain. Content stays in the consumer's light DOM. When a custom `button` is slotted, place header content directly inside it instead.
  *
  * ## Events
  *
@@ -187,7 +186,7 @@ const POINT_POINTER_OFFSET_PX = 12;
  *
  * @slot - Default POI button content.
  * @slot button - Optional custom button element replacing the default `obc-poi-button`.
- * @slot header - Optional header content, relocated into the inner `obc-poi-button` at runtime.
+ * @slot header - Optional header content, forwarded into the default `obc-poi-button` via a `<slot name="header">` chain.
  * @experimental
  */
 @customElement('obc-poi')
@@ -227,45 +226,6 @@ export class ObcPoi extends LitElement {
   @property({type: Number, attribute: 'outside-angle'}) outsideAngle = 315;
   @property({type: Boolean, attribute: 'animate-position'})
   animatePosition = false;
-  private headerObserver?: MutationObserver;
-
-  override connectedCallback() {
-    super.connectedCallback();
-    this.setupHeaderObserver();
-  }
-
-  override disconnectedCallback() {
-    super.disconnectedCallback();
-    this.headerObserver?.disconnect();
-    this.headerObserver = undefined;
-  }
-
-  private setupHeaderObserver() {
-    this.headerObserver?.disconnect();
-    this.headerObserver = new MutationObserver((mutations) => {
-      for (const mutation of mutations) {
-        if (mutation.type === 'childList') {
-          this.syncFallbackButtonHeaderContent();
-          this.syncAttachedHeaderState();
-          return;
-        }
-        if (
-          mutation.type === 'attributes' &&
-          mutation.target instanceof HTMLElement &&
-          mutation.target.getAttribute('slot') === 'header'
-        ) {
-          this.syncFallbackButtonHeaderContent();
-          this.syncAttachedHeaderState();
-          return;
-        }
-      }
-    });
-    this.headerObserver.observe(this, {
-      childList: true,
-      attributes: true,
-      attributeFilter: ['slot'],
-    });
-  }
 
   private updatePosition() {
     this.style.removeProperty('top');
@@ -320,22 +280,6 @@ export class ObcPoi extends LitElement {
       case ObcPoiState.Enabled:
       default:
         return ObcPoiButtonState.Enabled;
-    }
-  }
-
-  private get resolvedHeaderState(): ObcPoiHeaderState {
-    switch (this.buttonState) {
-      case ObcPoiButtonState.Caution:
-        return ObcPoiHeaderState.Caution;
-      case ObcPoiButtonState.Warning:
-        return ObcPoiHeaderState.Warning;
-      case ObcPoiButtonState.Alarm:
-        return ObcPoiHeaderState.Alarm;
-      case ObcPoiButtonState.Enabled:
-      default:
-        return this.selected
-          ? ObcPoiHeaderState.Selected
-          : ObcPoiHeaderState.Enabled;
     }
   }
 
@@ -548,56 +492,17 @@ export class ObcPoi extends LitElement {
   }
 
   private handleButtonSlotChange(e: Event) {
-    const slot = e.target as HTMLSlotElement;
+    // slotchange from nested forwarding slots (e.g. the header slot inside
+    // the fallback button) bubbles through this slot — only react to the
+    // button slot's own assignment.
+    if (e.target !== e.currentTarget) {
+      return;
+    }
+    const slot = e.currentTarget as HTMLSlotElement;
     const assigned = slot.assignedElements({flatten: false});
     this.slottedButton =
       assigned.length > 0 ? (assigned[0] as HTMLElement) : null;
-    this.syncFallbackButtonHeaderContent();
     this.syncSlottedButtonProps();
-  }
-
-  private syncFallbackButtonHeaderContent() {
-    if (this.slottedButton) {
-      return;
-    }
-
-    const button = this.renderRoot.querySelector(
-      'obc-poi-button.poi-button'
-    ) as HTMLElement | null;
-    if (!button) {
-      return;
-    }
-
-    for (const child of Array.from(this.children)) {
-      if (
-        !(child instanceof HTMLElement) ||
-        child.getAttribute('slot') !== 'header'
-      ) {
-        continue;
-      }
-      if (child.parentElement !== button) {
-        button.appendChild(child);
-      }
-      this.applyHeaderState(child);
-    }
-  }
-
-  private applyHeaderState(root: ParentNode) {
-    const headers = [
-      ...(root instanceof Element && root.matches('obc-poi-header')
-        ? [root]
-        : []),
-      ...root.querySelectorAll('obc-poi-header'),
-    ] as HTMLElement[];
-
-    for (const header of headers) {
-      (header as {state?: ObcPoiHeaderState}).state = this.resolvedHeaderState;
-      header.setAttribute('state', this.resolvedHeaderState);
-    }
-  }
-
-  private syncAttachedHeaderState() {
-    this.applyHeaderState(this.renderRoot);
   }
 
   private syncSlottedButtonProps() {
@@ -634,6 +539,7 @@ export class ObcPoi extends LitElement {
           .data=${this.data}
         >
           <slot></slot>
+          <slot name="header" slot="header"></slot>
         </obc-poi-button>
       </slot>
     `;
@@ -667,11 +573,6 @@ export class ObcPoi extends LitElement {
     `;
   }
 
-  protected override firstUpdated(_changedProperties: Map<string, unknown>) {
-    this.syncFallbackButtonHeaderContent();
-    this.syncAttachedHeaderState();
-  }
-
   protected override updated(changedProperties: Map<string, unknown>) {
     super.updated(changedProperties);
     if (changedProperties.has('x')) {
@@ -685,9 +586,7 @@ export class ObcPoi extends LitElement {
     ) {
       this.updatePosition();
     }
-    this.syncFallbackButtonHeaderContent();
     this.syncSlottedButtonProps();
-    this.syncAttachedHeaderState();
   }
 
   static override styles = unsafeCSS(componentStyle);

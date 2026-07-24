@@ -62,6 +62,7 @@ export class ObcPoiAton extends PoiBase {
         .atonInteractive=${this.atonInteractive}
       >
         <slot><obi-beacon-general-east></obi-beacon-general-east></slot>
+        <slot name="header" slot="header"></slot>
       </obc-poi-button-aton>
     `;
   }
