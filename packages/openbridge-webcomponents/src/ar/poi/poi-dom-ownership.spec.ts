@@ -1,9 +1,12 @@
 import {afterEach, describe, expect, it} from 'vitest';
 import './poi.js';
 import './poi-data.js';
+import '../poi-layer/poi-layer.js';
+import '../poi-layer-stack/poi-layer-stack.js';
 import '../building-blocks/poi-header/poi-header.js';
 import type {ObcPoi} from './poi.js';
 import type {ObcPoiData} from './poi-data.js';
+import type {ObcPoiLayerStack} from '../poi-layer-stack/poi-layer-stack.js';
 
 /**
  * DOM-ownership contract: POI components must never move, create, or remove
@@ -112,6 +115,69 @@ describe('obc-poi-data header ownership', () => {
     expect(headerSlot).not.toBeNull();
     const flattened = headerSlot?.assignedElements({flatten: true}) ?? [];
     expect(flattened).toContain(header);
+  });
+
+  it('selection never re-parents targets between layers', async () => {
+    const host = mount(`
+      <obc-poi-layer-stack selection-mode="single" style="width: 640px">
+        <obc-poi-layer id="sel" is-selected style="--obc-poi-layer-min-height: 96px"></obc-poi-layer>
+        <obc-poi-layer id="vessels" style="--obc-poi-layer-min-height: 96px">
+          <obc-poi-data id="v1" x="120" y="90"></obc-poi-data>
+          <obc-poi-data id="v2" x="320" y="110"></obc-poi-data>
+        </obc-poi-layer>
+      </obc-poi-layer-stack>
+    `);
+    const stack = host.querySelector('obc-poi-layer-stack') as ObcPoiLayerStack;
+    const vesselsLayer = host.querySelector('#vessels') as HTMLElement;
+    const v1 = host.querySelector('#v1') as ObcPoiData;
+    await settle(stack, v1);
+    await new Promise((r) => setTimeout(r, 250));
+
+    const selected = stack.selectTarget(v1, {selectionId: '3'});
+    expect(selected).toBe(true);
+    await new Promise((r) => setTimeout(r, 400));
+
+    expect(v1.parentElement).toBe(vesselsLayer);
+    expect(v1.hasAttribute('data-stack-selected')).toBe(true);
+    expect(v1.style.getPropertyValue('--obc-poi-button-projection-y')).not.toBe(
+      ''
+    );
+    expect(stack.selectedTargets).toContain(v1);
+
+    const deselected = stack.deselectTarget(v1);
+    expect(deselected).toBe(true);
+    await new Promise((r) => setTimeout(r, 400));
+
+    expect(v1.parentElement).toBe(vesselsLayer);
+    expect(v1.hasAttribute('data-stack-selected')).toBe(false);
+    expect(v1.style.getPropertyValue('--obc-poi-button-projection-y')).toBe('');
+    expect(stack.selectedTargets).not.toContain(v1);
+  });
+
+  it('bootstrap targets authored in the selected layer stay there', async () => {
+    const host = mount(`
+      <obc-poi-layer-stack selection-mode="single" style="width: 640px">
+        <obc-poi-layer id="sel" is-selected style="--obc-poi-layer-min-height: 96px">
+          <obc-poi-data id="seeded" x="220" y="90"></obc-poi-data>
+        </obc-poi-layer>
+        <obc-poi-layer id="others" style="--obc-poi-layer-min-height: 96px">
+          <obc-poi-data x="120" y="110"></obc-poi-data>
+        </obc-poi-layer>
+      </obc-poi-layer-stack>
+    `);
+    const stack = host.querySelector('obc-poi-layer-stack') as ObcPoiLayerStack;
+    const selLayer = host.querySelector('#sel') as HTMLElement;
+    const seeded = host.querySelector('#seeded') as ObcPoiData;
+    await settle(stack, seeded);
+    await new Promise((r) => setTimeout(r, 400));
+
+    expect(stack.selectedTargets).toContain(seeded);
+    expect(seeded.parentElement).toBe(selLayer);
+
+    stack.deselectTarget(seeded);
+    await new Promise((r) => setTimeout(r, 400));
+    expect(seeded.parentElement).toBe(selLayer);
+    expect(stack.selectedTargets).not.toContain(seeded);
   });
 
   it('framework re-renders can replace the header node without breakage', async () => {

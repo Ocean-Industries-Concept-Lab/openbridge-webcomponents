@@ -24,6 +24,22 @@ export enum PoiLayerSelectionMode {
 }
 
 /**
+ * Tracking record for a selected target. The stack never re-parents targets;
+ * it renders selection by projecting the target's button (and, for targets
+ * authored inside the selected layer, its pointer) between layers via CSS
+ * custom properties.
+ */
+type SelectionRecord = {
+  /** The layer that owns the target in the DOM. Never modified by the stack. */
+  homeLayer: ObcPoiLayer;
+  /**
+   * The logical origin layer: equal to `homeLayer` for normal targets;
+   * inferred for targets authored directly inside the selected layer.
+   */
+  originLayer: ObcPoiLayer;
+};
+
+/**
  * `<obc-poi-layer-stack>` coordinates multiple POI layers and manages
  * selection behavior across stacked layers.
  *
@@ -42,14 +58,13 @@ export enum PoiLayerSelectionMode {
  * 4. Set `--obc-poi-layer-min-height` on layers that can start empty, so they
  *    do not collapse to 0px height.
  *
- * ### Framework Notes
- * The stack physically re-parents slotted POI elements between layers during
- * selection (FLIP animation), and layers create/remove `obc-poi-group`
- * elements in the light DOM. Declarative renderers (React, Vue, etc.) must
- * not manage POI children as framework-owned elements, or reconciliation
- * breaks when nodes move. Manage POI elements imperatively, or use
- * `obc-poi-controller`'s `detections` API, which owns its targets — see the
- * `obc-poi-controller` documentation.
+ * ### DOM Ownership
+ * The stack never moves, creates, or removes consumer-owned DOM. Selection is
+ * rendered by projecting the target's button into the selected layer via CSS
+ * custom properties (`--obc-poi-button-projection-y` /
+ * `--obc-poi-target-projection-y`); the target element stays where the
+ * consumer put it. Declarative renderers (React, Vue, Lit) can manage POI
+ * children as ordinary framework-owned elements.
  *
  * ### Selection API
  * Selection state is fully reachable without DOM inspection:
@@ -88,14 +103,14 @@ export class ObcPoiLayerStack extends LitElement {
   private handleSlotChange = () => this.schedulePlacement();
   private handleTargetLayoutChange = () => this.schedulePlacement();
   private handleLayerSelectionChanged = () => this.schedulePlacement();
-  private selectionMap = new Map<
-    Poi,
-    {
-      originLayer: ObcPoiLayer;
-      previousAnimatePosition: boolean;
-      keepInSelectedLayer: boolean;
-    }
-  >();
+  private selectionMap = new Map<Poi, SelectionRecord>();
+  /**
+   * Deselected targets that live in one layer but render in another (targets
+   * authored inside the selected layer whose logical origin is a different
+   * layer). Their projections are refreshed on every placement pass so layer
+   * resizes do not leave stale pixel offsets.
+   */
+  private displacedTargets = new Map<Poi, SelectionRecord>();
   private selectionCounter = 0;
   private placementRaf = 0;
   private mutationObserver?: MutationObserver;
@@ -148,6 +163,11 @@ export class ObcPoiLayerStack extends LitElement {
       this.requestPoiRender(target);
     });
     this.selectionMap.clear();
+    this.displacedTargets.forEach((_, target) => {
+      this.clearTargetProjectionStyles(target);
+      this.requestPoiRender(target);
+    });
+    this.displacedTargets.clear();
     this.selectionCounter = 0;
   }
 
@@ -208,8 +228,8 @@ export class ObcPoiLayerStack extends LitElement {
   }
 
   private performSelection(target: Poi, selectionId?: string): boolean {
-    const originLayer = this.getTargetLayer(target);
-    if (!originLayer) return false;
+    const homeLayer = this.getTargetLayer(target);
+    if (!homeLayer) return false;
 
     const selectedLayer = this.getLayer('selected') ?? this.getLayer('top');
     if (!selectedLayer) return false;
@@ -219,17 +239,19 @@ export class ObcPoiLayerStack extends LitElement {
       this.clearSelectionMapExcept(target);
     }
 
-    const trackedOriginLayer =
-      originLayer === selectedLayer
+    const displaced = this.displacedTargets.get(target);
+    this.displacedTargets.delete(target);
+    const originLayer =
+      displaced?.originLayer ??
+      (homeLayer === selectedLayer
         ? this.inferBootstrapOriginLayer(target, selectedLayer)
-        : originLayer;
+        : homeLayer);
 
     if (selectionId) {
       target.setAttribute('data-stack-selection-id', selectionId);
     }
-    this.trackSelectionTarget(target, trackedOriginLayer, true);
-    const record = this.selectionMap.get(target);
-    if (!record) return false;
+    const record: SelectionRecord = {homeLayer, originLayer};
+    this.selectionMap.set(target, record);
     this.activateTrackedTarget(target, record, selectedLayer);
     this.schedulePlacement();
     this.dispatchSelectionChange(target, null);
@@ -286,6 +308,11 @@ export class ObcPoiLayerStack extends LitElement {
         this.selectionMap.delete(target);
       }
     });
+    this.displacedTargets.forEach((_, target) => {
+      if (!target.isConnected) {
+        this.displacedTargets.delete(target);
+      }
+    });
   }
 
   private getLayer(
@@ -315,6 +342,7 @@ export class ObcPoiLayerStack extends LitElement {
     const topTargets = this.getLayerTargets(activeLayer);
     topTargets.forEach((other) => {
       if (other === target) return;
+      if (this.displacedTargets.has(other)) return;
       const record = this.selectionMap.get(other);
       this.resetSelectionForTarget(other, record);
     });
@@ -429,36 +457,94 @@ export class ObcPoiLayerStack extends LitElement {
     target.refreshProjectionLayout?.(trackDurationMs);
   }
 
-  private getTargetButtonProjectionOffset(target: Poi): number {
-    const raw = target.style.getPropertyValue('--obc-poi-button-projection-y');
+  private getInlineVarPx(target: Poi, name: string): number {
+    const raw = target.style.getPropertyValue(name);
     const parsed = Number.parseFloat(raw);
     return Number.isFinite(parsed) ? parsed : 0;
   }
 
-  private getLayerProjectionOffset(
-    originLayer: ObcPoiLayer,
-    destinationLayer: ObcPoiLayer | null
-  ): number {
-    if (!destinationLayer || destinationLayer === originLayer) {
+  /** Pixel delta between two layers' bottom edges (`to.bottom - from.bottom`). */
+  private layerBottomDelta(from: ObcPoiLayer, to: ObcPoiLayer): number {
+    if (from === to) {
       return 0;
     }
-
-    const originRect = originLayer.getBoundingClientRect();
-    const destinationRect = destinationLayer.getBoundingClientRect();
-    return destinationRect.bottom - originRect.bottom;
+    return (
+      to.getBoundingClientRect().bottom - from.getBoundingClientRect().bottom
+    );
   }
 
-  private getTargetProjectionOffset(
-    originLayer: ObcPoiLayer,
-    selectedLayer: ObcPoiLayer | null
-  ): number {
-    if (!selectedLayer || selectedLayer === originLayer) {
-      return 0;
+  private setProjectionVar(target: Poi, name: string, valuePx: number) {
+    if (Math.abs(valuePx) < 0.5) {
+      target.style.removeProperty(name);
+    } else {
+      target.style.setProperty(name, `${valuePx}px`);
+    }
+  }
+
+  /**
+   * Render the target at the given projection offsets without touching its
+   * DOM position. When `animate` is set and an offset actually changes, the
+   * jump is FLIP-animated via the Web Animations API.
+   */
+  private async applyTargetProjection(
+    target: Poi,
+    buttonOffsetPx: number,
+    targetOffsetPx: number,
+    animate: boolean
+  ) {
+    const currentButton = this.getInlineVarPx(
+      target,
+      '--obc-poi-button-projection-y'
+    );
+    const currentTarget = this.getInlineVarPx(
+      target,
+      '--obc-poi-target-projection-y'
+    );
+    const changed =
+      Math.abs(buttonOffsetPx - currentButton) >= 0.5 ||
+      Math.abs(targetOffsetPx - currentTarget) >= 0.5;
+
+    if (!changed) {
+      this.setProjectionVar(
+        target,
+        '--obc-poi-button-projection-y',
+        buttonOffsetPx
+      );
+      this.setProjectionVar(
+        target,
+        '--obc-poi-target-projection-y',
+        targetOffsetPx
+      );
+      this.requestPoiRender(target);
+      this.refreshTargetProjectionLayout(target);
+      return;
     }
 
-    const originRect = originLayer.getBoundingClientRect();
-    const selectedRect = selectedLayer.getBoundingClientRect();
-    return originRect.bottom - selectedRect.bottom;
+    const {button, line} = this.getAnimationElements(target);
+    const beforeButtonRect = animate
+      ? (button?.getBoundingClientRect() ?? null)
+      : null;
+    const beforeLineRect = animate
+      ? (line?.getBoundingClientRect() ?? null)
+      : null;
+
+    this.setProjectionVar(
+      target,
+      '--obc-poi-button-projection-y',
+      buttonOffsetPx
+    );
+    this.setProjectionVar(
+      target,
+      '--obc-poi-target-projection-y',
+      targetOffsetPx
+    );
+    this.requestPoiRender(target);
+    this.refreshTargetProjectionLayout(target);
+    if (!animate) {
+      return;
+    }
+    await this.waitForPoiRender(target);
+    await this.animateLayerJump(target, beforeButtonRect, beforeLineRect);
   }
 
   private detachTargetFromCurrentGroup(target: Poi): ObcPoiLayer | null {
@@ -620,158 +706,57 @@ export class ObcPoiLayerStack extends LitElement {
     }
   }
 
-  private async moveTargetIntoSelectedLayer(
-    target: Poi,
-    _originLayer: ObcPoiLayer,
-    selectedLayer: ObcPoiLayer,
-    animate = true
-  ) {
-    // BEFORE: measure button and line positions
-    const {button, line} = this.getAnimationElements(target);
-    const beforeButtonRect = button?.getBoundingClientRect() ?? null;
-    const beforeLineRect = line?.getBoundingClientRect() ?? null;
-
-    // Move to destination layer
-    if (this.getTargetLayer(target) !== selectedLayer) {
-      selectedLayer.appendChild(target);
-    }
-
-    // Render at final state (no projection variables needed)
-    this.requestPoiRender(target);
-    this.refreshTargetProjectionLayout(target);
-    await this.waitForPoiRender(target);
-
-    if (!animate) return;
-
-    // AFTER: animate from old positions to new
-    await this.animateLayerJump(target, beforeButtonRect, beforeLineRect);
-  }
-
-  private async moveTrackedTargetToSelectedLayer(
-    target: Poi,
-    record: {
-      originLayer: ObcPoiLayer;
-      previousAnimatePosition: boolean;
-      keepInSelectedLayer: boolean;
-    },
-    selectedLayer: ObcPoiLayer,
-    animateProjection: boolean
-  ) {
-    const currentLayer =
-      this.detachTargetFromCurrentGroup(target) ??
-      this.getTargetLayer(target) ??
-      record.originLayer;
-
-    clearTargetGroupingAttributes(target);
-    await this.moveTargetIntoSelectedLayer(
-      target,
-      record.originLayer,
-      selectedLayer,
-      animateProjection
-    );
-
-    if (currentLayer !== selectedLayer) {
-      currentLayer.requestGroupingUpdate();
-    }
-    selectedLayer.requestGroupingUpdate();
-  }
-
-  private async syncTargetProjection(
-    target: Poi,
-    originLayer: ObcPoiLayer,
-    selectedLayer: ObcPoiLayer | null,
-    animate = true
-  ) {
-    const nextProjectionOffset = this.getLayerProjectionOffset(
-      originLayer,
-      selectedLayer
-    );
-    const currentProjectionOffset =
-      this.getTargetButtonProjectionOffset(target);
-
-    if (Math.abs(nextProjectionOffset - currentProjectionOffset) < 0.5) {
-      if (Math.abs(nextProjectionOffset) < 0.5) {
-        target.style.removeProperty('--obc-poi-button-projection-y');
-      } else {
-        target.style.setProperty(
-          '--obc-poi-button-projection-y',
-          `${nextProjectionOffset}px`
-        );
-      }
-      this.requestPoiRender(target);
-      this.refreshTargetProjectionLayout(target);
-      return;
-    }
-
-    if (Math.abs(nextProjectionOffset) < 0.5) {
-      target.style.removeProperty('--obc-poi-button-projection-y');
-    } else {
-      target.style.setProperty(
-        '--obc-poi-button-projection-y',
-        `${nextProjectionOffset}px`
-      );
-    }
-    this.requestPoiRender(target);
-    if (animate) {
-      this.refreshTargetProjectionLayout(
-        target,
-        ObcPoiLayerStack.STACK_JUMP_DURATION_MS
-      );
-      await this.waitForPoiRender(target);
-      return;
-    }
-    this.refreshTargetProjectionLayout(target);
-  }
-
   private async animateTargetReturnToOrigin(
     target: Poi,
-    record: {
-      originLayer: ObcPoiLayer;
-      previousAnimatePosition: boolean;
-      keepInSelectedLayer: boolean;
-    }
+    record: SelectionRecord
   ) {
     target.setAttribute(ObcPoiLayerStack.STACK_RETURNING_ATTR, 'true');
 
     try {
-      const currentLayer =
-        this.detachTargetFromCurrentGroup(target) ??
-        this.getTargetLayer(target);
+      const sourceGroupLayer = this.detachTargetFromCurrentGroup(target);
 
-      // Clear grouping attributes immediately so the target doesn't
-      // arrive in the origin layer with data-grouped (which sets opacity:0).
+      // Clear grouping attributes immediately so the target doesn't render
+      // in the origin position with data-grouped (which sets opacity:0).
       clearTargetGroupingAttributes(target);
 
-      // BEFORE: measure button and line
-      const {button: beforeBtn, line: beforeLine} =
-        this.getAnimationElements(target);
-      const beforeButtonRect = beforeBtn?.getBoundingClientRect() ?? null;
-      const beforeLineRect = beforeLine?.getBoundingClientRect() ?? null;
+      // Project the whole target (button and pointer) to its logical origin
+      // layer; for normal targets that is its own layer, so both offsets
+      // resolve to 0 and the inline variables are removed.
+      const originOffset = this.layerBottomDelta(
+        record.homeLayer,
+        record.originLayer
+      );
+      await this.applyTargetProjection(
+        target,
+        originOffset,
+        originOffset,
+        true
+      );
 
-      // Clear projections, move to origin layer, render at final state
-      target.style.removeProperty('--obc-poi-target-projection-y');
-      target.style.removeProperty('--obc-poi-button-projection-y');
-      if (target.parentElement !== record.originLayer) {
-        record.originLayer.appendChild(target);
-      }
-      this.requestPoiRender(target);
-      this.refreshTargetProjectionLayout(target);
-      await this.waitForPoiRender(target);
-
-      // AFTER: animate from old positions to new
-      await this.animateLayerJump(target, beforeButtonRect, beforeLineRect);
       this.setSelectedTargetInteractivity(target, false);
       clearTargetGroupingAttributes(target);
       this.clearTargetSelectedId(target);
-      this.clearTargetProjectionStyles(target);
-      this.requestPoiRender(target);
-      if (currentLayer && currentLayer !== record.originLayer) {
-        currentLayer.requestGroupingUpdate();
+      if (record.homeLayer === record.originLayer) {
+        this.clearTargetProjectionStyles(target);
+      } else {
+        // The target stays displaced into its origin layer — keep the
+        // projection variables and track it so layer resizes refresh them.
+        target.style.removeProperty(
+          '--obc-poi-forced-target-transition-duration'
+        );
+        target.style.removeProperty('--obc-poi-layer-inactive-opacity');
+        target.style.removeProperty('z-index');
+        this.displacedTargets.set(target, record);
       }
-      record.originLayer.requestGroupingUpdate();
+      this.requestPoiRender(target);
+      if (sourceGroupLayer && sourceGroupLayer !== record.homeLayer) {
+        sourceGroupLayer.requestGroupingUpdate();
+      }
+      record.homeLayer.requestGroupingUpdate();
       this.schedulePlacement();
     } finally {
       target.removeAttribute(ObcPoiLayerStack.STACK_RETURNING_ATTR);
+      target.removeAttribute('data-stack-selected');
     }
   }
 
@@ -795,63 +780,53 @@ export class ObcPoiLayerStack extends LitElement {
     }
   }
 
-  private trackSelectionTarget(
-    target: Poi,
-    originLayer: ObcPoiLayer,
-    keepInSelectedLayer = true
-  ) {
-    this.selectionMap.set(target, {
-      originLayer,
-      previousAnimatePosition: target.animatePosition ?? false,
-      keepInSelectedLayer,
-    });
-    target.removeAttribute('data-stack-selected');
-  }
-
   private activateTrackedTarget(
     target: Poi,
-    record: {
-      originLayer: ObcPoiLayer;
-      previousAnimatePosition: boolean;
-      keepInSelectedLayer: boolean;
-    },
+    record: SelectionRecord,
     selectedLayer: ObcPoiLayer,
     animateProjection = true
   ) {
-    if (record.keepInSelectedLayer) {
-      target.removeAttribute('data-stack-selected');
-      const needsMove = this.getTargetLayer(target) !== selectedLayer;
-      if (needsMove) {
-        void this.moveTrackedTargetToSelectedLayer(
-          target,
-          record,
-          selectedLayer,
-          animateProjection
-        );
-      } else {
-        const targetProjectionOffset = this.getTargetProjectionOffset(
-          record.originLayer,
-          selectedLayer
-        );
-        if (Math.abs(targetProjectionOffset) < 0.5) {
-          target.style.removeProperty('--obc-poi-target-projection-y');
-        } else {
-          target.style.setProperty(
-            '--obc-poi-target-projection-y',
-            `${targetProjectionOffset}px`
-          );
+    if (record.homeLayer !== selectedLayer) {
+      // Cross-layer selection: the target stays a DOM child of its home
+      // layer; `data-stack-selected` excludes it from that layer's grouping
+      // and its button is projected into the selected layer. The pointer
+      // stays anchored at the origin position.
+      const sourceGroupLayer = this.detachTargetFromCurrentGroup(target);
+      clearTargetGroupingAttributes(target);
+      const firstActivation = !target.hasAttribute('data-stack-selected');
+      target.setAttribute('data-stack-selected', 'true');
+      const buttonOffset = this.layerBottomDelta(
+        record.homeLayer,
+        selectedLayer
+      );
+      const targetOffset = this.layerBottomDelta(
+        record.homeLayer,
+        record.originLayer
+      );
+      void this.applyTargetProjection(
+        target,
+        buttonOffset,
+        targetOffset,
+        animateProjection
+      );
+      if (firstActivation) {
+        if (sourceGroupLayer && sourceGroupLayer !== record.homeLayer) {
+          sourceGroupLayer.requestGroupingUpdate();
         }
-        target.style.removeProperty('--obc-poi-button-projection-y');
-        this.requestPoiRender(target);
-        this.refreshTargetProjectionLayout(target);
+        record.homeLayer.requestGroupingUpdate();
       }
     } else {
-      clearTargetGroupingAttributes(target);
-      target.setAttribute('data-stack-selected', 'true');
-      void this.syncTargetProjection(
-        target,
-        record.originLayer,
+      // Target authored inside the selected layer: it remains a normal
+      // resident there (grouped and measured as before); only its pointer
+      // projects down to the inferred origin layer.
+      const targetOffset = this.layerBottomDelta(
         selectedLayer,
+        record.originLayer
+      );
+      void this.applyTargetProjection(
+        target,
+        0,
+        targetOffset,
         animateProjection
       );
     }
@@ -874,6 +849,9 @@ export class ObcPoiLayerStack extends LitElement {
       if (this.selectionMap.has(target)) {
         continue;
       }
+      if (this.displacedTargets.has(target)) {
+        continue;
+      }
       if (
         this.selectionMode === PoiLayerSelectionMode.Single &&
         this.selectionMap.size > 0
@@ -882,33 +860,21 @@ export class ObcPoiLayerStack extends LitElement {
       }
 
       const originLayer = this.inferBootstrapOriginLayer(target, selectedLayer);
-      this.selectionMap.set(target, {
-        originLayer,
-        previousAnimatePosition: target.animatePosition ?? false,
-        keepInSelectedLayer: true,
-      });
-      target.removeAttribute('data-stack-selected');
+      this.selectionMap.set(target, {homeLayer: selectedLayer, originLayer});
       seededTargets.add(target);
       this.dispatchSelectionChange(target, null);
     }
     return seededTargets;
   }
 
-  private resetSelectionForTarget(
-    target: Poi,
-    record?: {
-      originLayer: ObcPoiLayer;
-      previousAnimatePosition: boolean;
-      keepInSelectedLayer: boolean;
-    }
-  ) {
-    target.removeAttribute('data-stack-selected');
+  private resetSelectionForTarget(target: Poi, record?: SelectionRecord) {
     if (record) {
       this.selectionMap.delete(target);
       void this.animateTargetReturnToOrigin(target, record);
       this.dispatchSelectionChange(null, target);
       return;
     }
+    target.removeAttribute('data-stack-selected');
     this.setSelectedTargetInteractivity(target, false);
     clearTargetGroupingAttributes(target);
     this.clearTargetSelectedId(target);
@@ -990,6 +956,7 @@ export class ObcPoiLayerStack extends LitElement {
       this.selectionMap.forEach((record, target) => {
         this.resetSelectionForTarget(target, record);
       });
+      this.refreshDisplacedTargets();
       return;
     }
 
@@ -1003,17 +970,39 @@ export class ObcPoiLayerStack extends LitElement {
       if (target.hasAttribute(ObcPoiLayerStack.STACK_RETURNING_ATTR)) {
         return;
       }
-      if (
-        !record.keepInSelectedLayer &&
-        !target.hasAttribute('data-stack-selected')
-      ) {
-        target.setAttribute('data-stack-selected', 'true');
-      }
       this.activateTrackedTarget(
         target,
         record,
         selectedLayer,
         !seededTargets.has(target)
+      );
+    });
+    this.refreshDisplacedTargets();
+  }
+
+  /**
+   * Keep deselected targets that render outside their DOM layer (targets
+   * authored in the selected layer whose logical origin is another layer)
+   * projected at up-to-date offsets across layer resizes.
+   */
+  private refreshDisplacedTargets() {
+    this.displacedTargets.forEach((record, target) => {
+      if (!target.isConnected) {
+        this.displacedTargets.delete(target);
+        return;
+      }
+      if (target.hasAttribute(ObcPoiLayerStack.STACK_RETURNING_ATTR)) {
+        return;
+      }
+      const originOffset = this.layerBottomDelta(
+        record.homeLayer,
+        record.originLayer
+      );
+      void this.applyTargetProjection(
+        target,
+        originOffset,
+        originOffset,
+        false
       );
     });
   }
