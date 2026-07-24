@@ -751,7 +751,13 @@ export class ObcPoiLayer extends LitElement {
       const clusters = buildClusters(targets, adjacency);
       const behindClusters = buildClusters(targets, behindAdjacency);
 
-      const existingGroups = this.getAutoGroups();
+      // Exiting groups are condemned: their members are already released and
+      // a removal timer is running. Excluding them here keeps a new grouping
+      // pass from re-disbanding them, which would reset the removal timer on
+      // every pass and leak group chrome forever under continuous churn.
+      const existingGroups = this.getAutoGroups().filter(
+        (group) => !group.hasAttribute('data-exiting')
+      );
 
       const frontTargets = new Set<Poi>();
       clusters.forEach((cluster) => {

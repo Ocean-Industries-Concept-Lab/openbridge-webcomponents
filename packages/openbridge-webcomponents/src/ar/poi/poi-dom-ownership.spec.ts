@@ -224,6 +224,43 @@ describe('obc-poi-data header ownership', () => {
     expect(g2.hasAttribute('data-grouped')).toBe(false);
   });
 
+  it('removes dissolved auto-groups while grouping keeps churning', async () => {
+    const host = mount(`
+      <obc-poi-layer style="width: 640px; --obc-poi-layer-min-height: 96px">
+        <obc-poi-data id="g1" x="100" y="90"></obc-poi-data>
+        <obc-poi-data id="g2" x="104" y="110"></obc-poi-data>
+        <obc-poi-data id="jitter" x="480" y="100"></obc-poi-data>
+      </obc-poi-layer>
+    `);
+    const layer = host.querySelector('obc-poi-layer') as ObcPoiLayer;
+    const g2 = host.querySelector('#g2') as ObcPoiData;
+    const jitter = host.querySelector('#jitter') as ObcPoiData;
+    await settle(layer, g2);
+    await new Promise((r) => setTimeout(r, 400));
+    expect(
+      layer.shadowRoot?.querySelectorAll('obc-poi-group[data-auto-group]')
+        .length
+    ).toBe(1);
+
+    // Dissolve the group, then keep the grouping engine busy with position
+    // churn on an unrelated target. Every pass used to re-condemn the
+    // exiting group and reset its 250ms removal timer, so under continuous
+    // detection churn (live video) dissolved group chrome accumulated
+    // forever. The dissolved group must disappear WHILE churn continues.
+    g2.x = 560;
+    let flip = false;
+    for (let i = 0; i < 12; i++) {
+      flip = !flip;
+      jitter.x = flip ? 483 : 477;
+      await new Promise((r) => setTimeout(r, 60));
+    }
+    // ~720ms of continuous churn — far past the 250ms removal delay.
+    expect(
+      layer.shadowRoot?.querySelectorAll('obc-poi-group[data-auto-group]')
+        .length
+    ).toBe(0);
+  });
+
   it('framework re-renders can replace and reorder grouped targets', async () => {
     const host = mount(`
       <obc-poi-layer style="width: 640px; --obc-poi-layer-min-height: 96px">
