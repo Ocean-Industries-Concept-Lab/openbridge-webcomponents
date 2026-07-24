@@ -8,10 +8,10 @@ import '../poi/poi-aton.js';
 import '../poi/poi-vessel.js';
 import '../../icons/icon-beacon-general-east.js';
 import '../../icons/icon-vessel-type-psv-outlined.js';
-
-const isVitestBrowser = Boolean(
-  (globalThis as {__vitest_browser__?: unknown}).__vitest_browser__
-);
+import {
+  isVitestBrowser,
+  waitForStorySettle as waitForSharedStorySettle,
+} from '../_test-utils.js';
 
 type PoiControllerArgs = {
   fit: PoiFitMode;
@@ -58,22 +58,7 @@ const waitForStorySettle = async (
     });
   }
 
-  if ('fonts' in document) {
-    await (document as Document & {fonts?: FontFaceSet}).fonts?.ready;
-  }
-
-  await new Promise<void>((resolve) =>
-    requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
-  );
-
-  if (options.drainTransitions && isVitestBrowser) {
-    await new Promise<void>((resolve) => {
-      setTimeout(resolve, 220);
-    });
-    await new Promise<void>((resolve) =>
-      requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
-    );
-  }
+  await waitForSharedStorySettle(options);
 };
 
 const meta: Meta<PoiControllerArgs> = {

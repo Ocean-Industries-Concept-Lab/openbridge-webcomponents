@@ -10,9 +10,7 @@ import '../../icons/icon-placeholder.js';
 import '../../icons/icon-beacon-general-east.js';
 import '../../icons/icon-vessel-type-psv-outlined.js';
 
-const isVitestBrowser = Boolean(
-  (globalThis as {__vitest_browser__?: unknown}).__vitest_browser__
-);
+import {isVitestBrowser, waitForStorySettle} from '../_test-utils.js';
 
 type PoiLayerStackArgs = {
   label: string;
@@ -72,26 +70,6 @@ const selectionMultiAnimatedSnapshotPose: AnimatedPoiSnapshotPose[] = [
   {x: 403, y: 134, boxWidth: 32, boxHeight: 35},
   {x: 119, y: 87, boxWidth: 36, boxHeight: 38},
 ];
-
-const waitForStorySettle = async (
-  options: {drainTransitions?: boolean} = {}
-) => {
-  if ('fonts' in document) {
-    await (document as Document & {fonts?: FontFaceSet}).fonts?.ready;
-  }
-  await new Promise<void>((resolve) =>
-    requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
-  );
-
-  if (options.drainTransitions && isVitestBrowser) {
-    await new Promise<void>((resolve) => {
-      setTimeout(resolve, 220);
-    });
-    await new Promise<void>((resolve) =>
-      requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
-    );
-  }
-};
 
 const renderTwoLayers = (args: PoiLayerStackArgs) => html`
   <style>

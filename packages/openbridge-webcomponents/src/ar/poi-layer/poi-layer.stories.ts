@@ -384,6 +384,9 @@ export const Overlap: Story = {
     label: 'Overlap',
     debug: true,
   },
+  play: async () => {
+    await waitForStorySettle({drainTransitions: true});
+  },
   render(args) {
     return html`
       <style>
@@ -417,6 +420,9 @@ export const OverlapWithGroup: Story = {
   args: {
     label: 'Overlap Group',
     debug: true,
+  },
+  play: async () => {
+    await waitForStorySettle({drainTransitions: true});
   },
   render(args) {
     return html`
@@ -457,6 +463,9 @@ export const OverlapWithGroupNumbers: Story = {
     label: 'Overlap Group (Numbers)',
     debug: true,
   },
+  play: async () => {
+    await waitForStorySettle({drainTransitions: true});
+  },
   render(args) {
     return html`
       <style>
@@ -496,6 +505,9 @@ export const EnterGroupFromTwo: Story = {
   args: {
     label: 'Enter Group (2)',
     debug: true,
+  },
+  play: async () => {
+    await waitForStorySettle({drainTransitions: true});
   },
   render(args) {
     const hostRef = createRef<HTMLDivElement>();
@@ -682,6 +694,9 @@ export const JoinGroup: Story = {
   args: {
     label: 'Join Group (3)',
     debug: true,
+  },
+  play: async () => {
+    await waitForStorySettle({drainTransitions: true});
   },
   render(args) {
     const hostRef = createRef<HTMLDivElement>();
