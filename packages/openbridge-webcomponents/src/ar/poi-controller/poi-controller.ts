@@ -568,12 +568,8 @@ export class ObcPoiController extends LitElement {
         target.relativeDirection = heading;
       }
 
-      if (det.state !== undefined) {
-        target.state = det.state;
-      }
-      if (det.data !== undefined) {
-        target.data = det.data;
-      }
+      target.state = det.state ?? ObcPoiState.Enabled;
+      target.data = det.data ?? [];
       if (this.xFilterCutoffHz !== null) {
         target.xFilterCutoffHz = this.xFilterCutoffHz;
       }
