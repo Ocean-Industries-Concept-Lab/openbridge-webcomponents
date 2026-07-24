@@ -139,14 +139,13 @@ export const POI_CONTROLLER_BACKGROUND_LAYER = 'background';
  *
  * ## Framework Notes
  *
- * The `detections` API is safe for declarative renderers (React, Vue, etc.)
- * because the controller creates and owns the resulting `obc-poi-data`
- * elements. Manually slotted POI children of layers are a different story:
- * the layer stack physically re-parents them between layers during selection
- * (FLIP animation), and layers create/remove `obc-poi-group` elements in the
- * light DOM, which breaks framework reconciliation of those nodes. Manage
- * manually slotted POI elements imperatively, or prefer the `detections` API.
- * See `obc-poi-layer-stack` documentation for details.
+ * Both paths are safe for declarative renderers (React, Vue, Lit): the
+ * `detections` API creates and owns the resulting `obc-poi-data` elements,
+ * and manually slotted POI children are never moved, re-parented, or
+ * modified structurally by the library — selection is rendered by CSS
+ * projection and auto-grouping happens inside the layer's shadow root via
+ * slot assignment. Frameworks can manage POI children as ordinary
+ * framework-owned elements.
  *
  * ## Coordinate Model
  *
