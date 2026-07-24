@@ -6,6 +6,7 @@ import '../poi-layer-stack/poi-layer-stack.js';
 import '../building-blocks/poi-header/poi-header.js';
 import type {ObcPoi} from './poi.js';
 import type {ObcPoiData} from './poi-data.js';
+import type {ObcPoiLayer} from '../poi-layer/poi-layer.js';
 import type {ObcPoiLayerStack} from '../poi-layer-stack/poi-layer-stack.js';
 
 /**
@@ -178,6 +179,85 @@ describe('obc-poi-data header ownership', () => {
     await new Promise((r) => setTimeout(r, 400));
     expect(seeded.parentElement).toBe(selLayer);
     expect(stack.selectedTargets).not.toContain(seeded);
+  });
+
+  it('auto-grouping never touches consumer light DOM', async () => {
+    const host = mount(`
+      <obc-poi-layer style="width: 640px; --obc-poi-layer-min-height: 96px">
+        <obc-poi-data id="g1" x="100" y="90"></obc-poi-data>
+        <obc-poi-data id="g2" x="104" y="110"></obc-poi-data>
+        <obc-poi-data id="solo" x="440" y="100"></obc-poi-data>
+      </obc-poi-layer>
+    `);
+    const layer = host.querySelector('obc-poi-layer') as ObcPoiLayer;
+    const g1 = host.querySelector('#g1') as ObcPoiData;
+    const g2 = host.querySelector('#g2') as ObcPoiData;
+    await settle(layer, g1, g2);
+    await new Promise((r) => setTimeout(r, 400));
+
+    // Light DOM untouched: targets remain direct children of the layer and
+    // no group element is injected next to them.
+    expect(g1.parentElement).toBe(layer);
+    expect(g2.parentElement).toBe(layer);
+    expect(layer.querySelector('obc-poi-group')).toBeNull();
+
+    // The auto group is shadow chrome; members are slot-assigned into it.
+    const shadowGroup = layer.shadowRoot?.querySelector(
+      'obc-poi-group[data-auto-group]'
+    );
+    expect(shadowGroup).not.toBeNull();
+    expect(g1.assignedSlot?.parentElement).toBe(shadowGroup);
+    expect(g2.assignedSlot?.parentElement).toBe(shadowGroup);
+    expect(g1.hasAttribute('data-grouped')).toBe(true);
+
+    // Separating the targets disbands the group, again without any light
+    // DOM mutation.
+    g2.x = 560;
+    await new Promise((r) => setTimeout(r, 900));
+    expect(g1.parentElement).toBe(layer);
+    expect(g2.parentElement).toBe(layer);
+    expect(layer.querySelector('obc-poi-group')).toBeNull();
+    expect(
+      layer.shadowRoot?.querySelector('obc-poi-group[data-auto-group]')
+    ).toBeNull();
+    expect(g1.hasAttribute('data-grouped')).toBe(false);
+    expect(g2.hasAttribute('data-grouped')).toBe(false);
+  });
+
+  it('framework re-renders can replace and reorder grouped targets', async () => {
+    const host = mount(`
+      <obc-poi-layer style="width: 640px; --obc-poi-layer-min-height: 96px">
+        <obc-poi-data id="g1" x="100" y="90"></obc-poi-data>
+        <obc-poi-data id="g2" x="104" y="110"></obc-poi-data>
+        <obc-poi-data id="solo" x="440" y="100"></obc-poi-data>
+      </obc-poi-layer>
+    `);
+    const layer = host.querySelector('obc-poi-layer') as ObcPoiLayer;
+    const g1 = host.querySelector('#g1') as ObcPoiData;
+    const g2 = host.querySelector('#g2') as ObcPoiData;
+    const solo = host.querySelector('#solo') as ObcPoiData;
+    await settle(layer, g1, g2);
+    await new Promise((r) => setTimeout(r, 400));
+    expect(g1.hasAttribute('data-grouped')).toBe(true);
+
+    // Reconciliation-style reorder of an ungrouped sibling.
+    layer.insertBefore(solo, g1);
+    // Replace a grouped member with a fresh node, as a keyed re-render does.
+    const replacement = document.createElement('obc-poi-data') as ObcPoiData;
+    replacement.setAttribute('x', '104');
+    replacement.setAttribute('y', '110');
+    layer.replaceChild(replacement, g2);
+    await new Promise((r) => setTimeout(r, 900));
+
+    expect(replacement.parentElement).toBe(layer);
+    expect(g2.isConnected).toBe(false);
+    const shadowGroup = layer.shadowRoot?.querySelector(
+      'obc-poi-group[data-auto-group][data-visible]'
+    );
+    expect(shadowGroup).not.toBeNull();
+    expect(g1.assignedSlot?.parentElement).toBe(shadowGroup);
+    expect(replacement.assignedSlot?.parentElement).toBe(shadowGroup);
+    expect(layer.querySelector('obc-poi-group')).toBeNull();
   });
 
   it('framework re-renders can replace the header node without breakage', async () => {

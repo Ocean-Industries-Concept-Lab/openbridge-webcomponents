@@ -50,8 +50,8 @@ type SelectionRecord = {
  * 1. Place the stack in `obc-poi-controller`'s `slot="stack"`, or manage the
  *    stack's height and media geometry yourself.
  * 2. Give exactly one child `obc-poi-layer` the `is-selected` attribute — the
- *    stack moves selected targets into it and resets all selection state if
- *    no selected layer exists.
+ *    stack projects selected targets' buttons into it and resets all
+ *    selection state if no selected layer exists.
  * 3. Mark the background/default layer with
  *    `data-controller-layer="background"` when the stack is used inside
  *    `obc-poi-controller`.
@@ -547,12 +547,25 @@ export class ObcPoiLayerStack extends LitElement {
     await this.animateLayerJump(target, beforeButtonRect, beforeLineRect);
   }
 
+  /**
+   * The group a target currently belongs to — a light-DOM parent for
+   * consumer-managed groups, or the shadow group whose member slot the
+   * target is assigned to for layer-created auto groups.
+   */
+  private getContainingGroup(target: Poi): ObcPoiGroup | null {
+    if (target.parentElement?.tagName.toLowerCase() === 'obc-poi-group') {
+      return target.parentElement as ObcPoiGroup;
+    }
+    const slotParent = target.assignedSlot?.parentElement;
+    if (slotParent?.tagName.toLowerCase() === 'obc-poi-group') {
+      return slotParent as ObcPoiGroup;
+    }
+    return null;
+  }
+
   private detachTargetFromCurrentGroup(target: Poi): ObcPoiLayer | null {
     const currentLayer = this.getTargetLayer(target);
-    const sourceGroup =
-      target.parentElement?.tagName.toLowerCase() === 'obc-poi-group'
-        ? (target.parentElement as ObcPoiGroup)
-        : null;
+    const sourceGroup = this.getContainingGroup(target);
 
     if (!sourceGroup) {
       return currentLayer;
@@ -763,7 +776,7 @@ export class ObcPoiLayerStack extends LitElement {
   private setSelectedTargetInteractivity(target: Poi, selected: boolean) {
     const isInAutoGroup =
       target.hasAttribute('data-grouped') ||
-      target.closest('obc-poi-group') !== null;
+      this.getContainingGroup(target) !== null;
 
     target.selected = selected;
     if (selected) {

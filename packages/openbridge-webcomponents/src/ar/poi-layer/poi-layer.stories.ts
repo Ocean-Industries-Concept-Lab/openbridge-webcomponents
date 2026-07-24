@@ -2,6 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
 import {createRef, ref} from 'lit/directives/ref.js';
 import {OverlapMode} from './poi-layer.js';
+import type {ObcPoiLayer} from './poi-layer.js';
 import './poi-layer.js';
 import '../poi/poi-data.js';
 import {ObcPoiData, PoiDataValue} from '../poi/poi-data.js';
@@ -842,23 +843,23 @@ export const JoinExpandedGroup: Story = {
       setTimeout(() => spawnLateTarget(hostRef.value ?? null), 0);
     }
     setTimeout(() => {
-      const layer = layerRef.value;
+      const layer = layerRef.value as ObcPoiLayer | null;
       if (!layer) return;
       const applyInitialExpand = () => {
-        const group = layer.querySelector('obc-poi-group[data-auto-group]') as {
-          expand: boolean;
-        } | null;
+        const group = layer.autoGroups[0] as
+          | (HTMLElement & {expand: boolean})
+          | undefined;
         if (!group) return false;
         group.expand = !!args.expand;
         return true;
       };
       if (applyInitialExpand()) return;
-      const observer = new MutationObserver(() => {
+      const onGroupingChange = () => {
         if (applyInitialExpand()) {
-          observer.disconnect();
+          layer.removeEventListener('grouping-change', onGroupingChange);
         }
-      });
-      observer.observe(layer, {childList: true, subtree: true});
+      };
+      layer.addEventListener('grouping-change', onGroupingChange);
     }, 0);
     return html`
       <style>
@@ -963,23 +964,23 @@ export const LeaveExpandedGroup: Story = {
       setTimeout(() => startAnimation(hostRef.value ?? null), 0);
     }
     setTimeout(() => {
-      const layer = layerRef.value;
+      const layer = layerRef.value as ObcPoiLayer | null;
       if (!layer) return;
       const applyInitialExpand = () => {
-        const group = layer.querySelector('obc-poi-group') as {
-          expand: boolean;
-        } | null;
+        const group = layer.autoGroups[0] as
+          | (HTMLElement & {expand: boolean})
+          | undefined;
         if (!group) return false;
         group.expand = !!args.expand;
         return true;
       };
       if (applyInitialExpand()) return;
-      const observer = new MutationObserver(() => {
+      const onGroupingChange = () => {
         if (applyInitialExpand()) {
-          observer.disconnect();
+          layer.removeEventListener('grouping-change', onGroupingChange);
         }
-      });
-      observer.observe(layer, {childList: true, subtree: true});
+      };
+      layer.addEventListener('grouping-change', onGroupingChange);
     }, 0);
     return html`
       <style>

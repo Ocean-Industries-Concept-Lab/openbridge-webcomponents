@@ -40,8 +40,10 @@
   pointer-events: none;
 }
 
-::slotted([data-poi-target]),
-::slotted(obc-poi-group) {
+/* ---------- Main slot: ungrouped targets and manual groups ---------- */
+
+.main::slotted([data-poi-target]),
+.main::slotted(obc-poi-group) {
   position: absolute;
   bottom: 0;
   height: 100%;
@@ -61,59 +63,105 @@
   pointer-events: auto;
 }
 
-::slotted([data-poi-target][data-grouped]) {
+.main::slotted([data-poi-target][data-grouped]) {
   opacity: 0;
 }
 
-::slotted([data-poi-target]:not([data-grouped])) {
+.main::slotted([data-poi-target]:not([data-grouped])) {
   opacity: 1;
 }
 
-::slotted([data-poi-target][data-behind]) {
+.main::slotted([data-poi-target][data-behind]) {
   opacity: 0.4;
   --poi-size: 32px;
   --obc-poi-target-icon-opacity: 0;
 }
 
-::slotted([data-poi-target][data-exiting]) {
+.main::slotted([data-poi-target][data-exiting]) {
   opacity: 0.4;
   --poi-size: 32px;
   --obc-poi-target-icon-opacity: 0;
 }
 
-::slotted([data-poi-target][data-front]) {
+.main::slotted([data-poi-target][data-front]) {
   opacity: 1;
   --poi-size: 36px;
   --obc-poi-target-icon-opacity: 1;
 }
 
-::slotted(obc-poi-group[data-auto-group]) {
-  opacity: 1;
-}
-
-::slotted(obc-poi-group) {
+.main::slotted(obc-poi-group) {
   bottom: 0;
   height: 100%;
   transform: none;
   pointer-events: none;
 }
 
-::slotted(obc-poi-group[data-auto-group]) {
+.main::slotted(obc-poi-group[data-exiting]) {
+  pointer-events: none;
+}
+
+/* ---------- Auto groups: shadow chrome, members slot-assigned ---------- */
+
+.wrapper > obc-poi-group[data-auto-group] {
   opacity: 0;
   z-index: 2;
   transition: opacity 0.1s ease-out;
 }
 
-::slotted(obc-poi-group[data-auto-group][data-visible]) {
+.wrapper > obc-poi-group[data-auto-group][data-visible] {
   opacity: 1;
 }
 
-::slotted(obc-poi-group[data-exiting]) {
+.wrapper > obc-poi-group[data-auto-group][data-exiting] {
   pointer-events: none;
 }
 
-:host([data-stack-inactive]) ::slotted([data-poi-target]:not([data-grouped])),
-:host([data-stack-inactive]) ::slotted(obc-poi-group) {
+/*
+ * Members of auto groups stay in the consumer's light DOM but are assigned
+ * to the group's member slot, so they are styled from the layer stylesheet
+ * (mirrors the grouped-target rules previously in poi-group.css).
+ */
+.auto-group-members::slotted([data-poi-target]) {
+  position: absolute;
+  top: auto;
+  bottom: 0;
+  height: 100%;
+  transform-origin: 50% 50%;
+  --obc-poi-layer-target-scale: 1;
+  --obc-poi-layer-target-shift: calc(
+    (1 - var(--obc-poi-layer-target-scale)) * 100%
+  );
+  transform: translateX(var(--obc-poi-target-offset-x, 0px))
+    translateY(calc(100% - var(--obc-poi-layer-target-shift)))
+    scale(var(--obc-poi-layer-target-scale));
+  transition: opacity 0.1s ease-out;
+  pointer-events: auto;
+}
+
+.auto-group-members::slotted([data-poi-target][data-behind]),
+.auto-group-members::slotted([data-poi-target][data-exiting]) {
+  opacity: 0.4;
+  --poi-size: 32px;
+  --obc-poi-target-icon-opacity: 0;
+}
+
+.auto-group-members::slotted([data-poi-target][data-front]) {
+  opacity: 1;
+  --poi-size: 36px;
+  --obc-poi-target-icon-opacity: 1;
+}
+
+.auto-group-members::slotted([data-poi-target][data-grouped]) {
+  opacity: 1;
+  transition: opacity 0.1s ease-out;
+}
+
+/* ---------- Inactive stack layer dimming ---------- */
+
+:host([data-stack-inactive])
+  .main::slotted([data-poi-target]:not([data-grouped])),
+:host([data-stack-inactive]) .main::slotted(obc-poi-group),
+:host([data-stack-inactive]) .wrapper > obc-poi-group[data-auto-group] {
   --obc-poi-object-frame-opacity: var(--obc-poi-layer-inactive-opacity, 0.7);
   --obc-poi-data-content-opacity: var(--obc-poi-layer-inactive-opacity, 0.7);
   --obc-poi-overlap-elements-opacity: var(

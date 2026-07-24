@@ -54,7 +54,7 @@ export type ExpandEvent = CustomEvent<{expand: boolean}>;
  * ### Events
  * - `expand` - Fired when expand state changes. Detail: `{ expand: boolean }`.
  * - `collapse-finished` - Fired when the collapse animation has fully completed.
- * - `obc-poi-group-target-released` - Fired after `releaseTarget()` moves a target out of the group and back into the group's parent element. Detail: `{ target: Poi }`.
+ * - `obc-poi-group-target-released` - Fired after `releaseTarget()` returns a target to the group's parent context: re-parented for consumer-managed groups, re-assigned to the layer's main slot for layer-created auto groups. Detail: `{ target: Poi }`.
  *
  * ### Best Practices
  * - Keep grouped targets positioned consistently so wrapper bounds and front-target selection remain stable.
@@ -73,7 +73,7 @@ export type ExpandEvent = CustomEvent<{expand: boolean}>;
  * @slot - Default slot for grouped `obc-poi-data` targets.
  * @fires expand {CustomEvent<{expand:boolean}>} Fired when the group expand state changes.
  * @fires collapse-finished {CustomEvent<void>} Fired after collapse animation completes.
- * @fires obc-poi-group-target-released {CustomEvent<{target:Poi}>} Fired after `releaseTarget()` moves a target out of the group into the group's parent element — immediately when the group is collapsed, or once the collapse animation completes. Bubbles, composed.
+ * @fires obc-poi-group-target-released {CustomEvent<{target:Poi}>} Fired after `releaseTarget()` returns a target to the group's parent context (re-parented for consumer-managed groups, re-assigned for auto groups) — immediately when the group is collapsed, or once the collapse animation completes. Bubbles, composed.
  * @experimental
  */
 @customElement('obc-poi-group')
@@ -285,10 +285,49 @@ export class ObcPoiGroup extends LitElement {
     });
   };
 
+  /**
+   * Membership check that works for both light-DOM children (manual groups)
+   * and slot-assigned members (layer-created auto groups, where the member
+   * stays in the consumer's light DOM and is assigned into this group's
+   * member slot).
+   */
+  private isMember(child: HTMLElement): boolean {
+    return (
+      child.parentElement === this || child.assignedSlot?.parentElement === this
+    );
+  }
+
+  private getMemberSlot(): HTMLSlotElement | null {
+    return this.querySelector(
+      ':scope > slot.auto-group-members'
+    ) as HTMLSlotElement | null;
+  }
+
+  /**
+   * Paint the front child on top. For light-DOM members this reorders the
+   * children; for slot-assigned members it re-assigns the member slot, which
+   * changes flattened-tree order without touching the consumer's DOM.
+   */
+  private bringChildToFront(frontChild: Poi) {
+    const memberSlot = this.getMemberSlot();
+    if (memberSlot && frontChild.assignedSlot === memberSlot) {
+      const members = memberSlot.assignedElements();
+      if (members[members.length - 1] === frontChild) return;
+      memberSlot.assign(
+        ...members.filter((el) => el !== frontChild),
+        frontChild
+      );
+      return;
+    }
+    if (frontChild.parentElement === this) {
+      this.appendChild(frontChild);
+    }
+  }
+
   private ensureFrontChildOnTop() {
     const frontChild = this.getFrontChild();
     if (frontChild && this.lastElementChild !== frontChild) {
-      this.appendChild(frontChild);
+      this.bringChildToFront(frontChild);
     }
   }
 
@@ -301,7 +340,7 @@ export class ObcPoiGroup extends LitElement {
   }
 
   public releaseTarget(target: Poi): Promise<boolean> {
-    if (target.parentElement !== this) {
+    if (!this.isMember(target)) {
       return Promise.resolve(false);
     }
 
@@ -353,7 +392,7 @@ export class ObcPoiGroup extends LitElement {
     }
 
     if (!expand && frontChild) {
-      this.appendChild(frontChild);
+      this.bringChildToFront(frontChild);
     }
 
     this.animateTopOffset(expand ? 1 : 0);
@@ -540,7 +579,7 @@ export class ObcPoiGroup extends LitElement {
     const touchAreaExpanded = progress > 0.5;
 
     this.topOffsetTargets.forEach((config, child) => {
-      if (child.parentElement !== this) {
+      if (!this.isMember(child)) {
         this.topOffsetTargets.delete(child);
         this.collapseDeltas.delete(child);
         this.lastAppliedOffsets.delete(child);
@@ -775,7 +814,7 @@ export class ObcPoiGroup extends LitElement {
     this.lastTargetOrder = orderedTargets;
 
     targets.forEach((child) => {
-      if (child.parentElement !== this) {
+      if (!this.isMember(child)) {
         this.topOffsetTargets.delete(child);
         this.lastAppliedOffsets.delete(child);
         return;
@@ -890,7 +929,7 @@ export class ObcPoiGroup extends LitElement {
   }
 
   private releaseTargetToParent(target: Poi): boolean {
-    if (target.parentElement !== this) {
+    if (!this.isMember(target)) {
       return false;
     }
 
@@ -915,6 +954,34 @@ export class ObcPoiGroup extends LitElement {
     target.style.removeProperty('--obc-poi-group-overlap-height');
     target.style.removeProperty('--obc-poi-group-overlap-shift');
     clearPoiVisualState(target);
+
+    const memberSlot = this.getMemberSlot();
+    if (memberSlot && target.assignedSlot === memberSlot) {
+      // Slot-assigned member (layer-created auto group): the target already
+      // lives in the consumer's light DOM — only the assignment changes. The
+      // host layer immediately re-assigns it to its main slot.
+      memberSlot.assign(
+        ...memberSlot.assignedElements().filter((el) => el !== target)
+      );
+      const root = this.getRootNode();
+      const host =
+        root instanceof ShadowRoot
+          ? (root.host as HTMLElement & {
+              releaseAssignedTarget?: (target: Poi) => void;
+            })
+          : null;
+      host?.releaseAssignedTarget?.(target);
+      this.updatePosition();
+
+      this.dispatchEvent(
+        new CustomEvent<{target: Poi}>('obc-poi-group-target-released', {
+          detail: {target},
+          bubbles: true,
+          composed: true,
+        })
+      );
+      return true;
+    }
 
     const parent = this.parentElement;
     if (!parent) {
