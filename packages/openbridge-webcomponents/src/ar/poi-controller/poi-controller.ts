@@ -16,6 +16,7 @@ import {
 import {
   MediaFit,
   computeMediaProjection,
+  type MediaProjection,
   projectPoint,
 } from '../poi-projection/poi-projection.js';
 
@@ -466,16 +467,20 @@ export class ObcPoiController extends LitElement {
     return frames[0] ?? null;
   }
 
-  private mapDetection(
-    det: PoiDetection
-  ): {x: number; y: number; scale: number} | null {
-    const projection = computeMediaProjection({
+  private computeCurrentProjection(): MediaProjection | null {
+    return computeMediaProjection({
       mediaWidth: this.mediaWidth,
       mediaHeight: this.mediaHeight,
       renderWidth: this.renderWidth,
       renderHeight: this.renderHeight,
       fit: this.fit === PoiFitMode.Cover ? MediaFit.Cover : MediaFit.Contain,
     });
+  }
+
+  private mapDetection(
+    det: PoiDetection,
+    projection: MediaProjection | null = this.computeCurrentProjection()
+  ): {x: number; y: number; scale: number} | null {
     if (!projection) return null;
 
     const point = projectPoint(projection, det.x, det.y);
@@ -506,9 +511,10 @@ export class ObcPoiController extends LitElement {
 
     const active = this.getActiveDetections();
     const activeKeys = new Set<string>();
+    const projection = this.computeCurrentProjection();
 
     active.forEach((det, index) => {
-      const mapped = this.mapDetection(det);
+      const mapped = this.mapDetection(det, projection);
       if (!mapped) return;
       const key =
         det.id ?? (this.keyFn ? this.keyFn(det, index) : `index:${index}`);
