@@ -30,30 +30,6 @@ import {classMap} from 'lit/directives/class-map.js';
  * @slot clock - Custom clock content, rendered when `showClock` is true
  * @slot integration-buttons - Regular vessel integration buttons
  * @slot hug-buttons - Compact vessel integration buttons; slotted integration buttons are forced to hug type
- * @property {IntegrationBarType} type - Integration bar mode for fleet/vessel presentation
- * @property {boolean} hideHomeButton - Hides the home button when true
- * @property {boolean} showClock - Toggles rendering of the clock slot
- * @property {boolean} showLinkButton - Toggles visibility of link button
- * @property {boolean} linkButtonActivated - Activated state of link button
- * @property {boolean} showUserButton - Toggles visibility of user button
- * @property {boolean} userButtonActivated - Activated state of user button
- * @property {boolean} showDimmingButton - Toggles visibility of dimming button
- * @property {boolean} dimmingButtonActivated - Activated state of dimming button
- * @property {boolean} showSystemButton - Toggles visibility of system button
- * @property {boolean} systemButtonActivated - Activated state of system button
- * @property {boolean} showScreenButton - Toggles visibility of screen button
- * @property {boolean} screenButtonActivated - Activated state of screen button
- * @property {boolean} showNotificationButton - Toggles visibility of notification button
- * @property {boolean} notificationButtonActivated - Activated state of notification button
- * @property {boolean} showAlertButton - Toggles visibility of alert button
- * @property {boolean} alertButtonActivated - Activated state of alert button
- * @property {boolean} showFleetButton - Toggles visibility of fleet button
- * @property {boolean} fleetButtonSelected - Selected state of fleet button
- * @property {boolean} fleetButtonActivated - Active state of fleet button while selection is pending
- * @property {string} fleetButtonLabel - Label for the fleet button
- * @property {string} selectedVesselValue - Selected vessel value
- * @property {string} activeVesselValue - Active vessel value while selection is pending
- * @property {{value: string; label: string}[]} vesselSelectorOptions - Available vessel options
  * @fires fleet-button-click - Fired when the fleet button is clicked
  * @fires link-button-clicked - Fired when the link button is clicked
  * @fires alert-button-clicked - Fired when the alert button is clicked
@@ -66,25 +42,45 @@ import {classMap} from 'lit/directives/class-map.js';
  */
 @customElement('obc-integration-bar')
 export class ObcIntegrationBar extends LitElement {
+  /** Hides the home button when true */
   @property({type: Boolean}) hideHomeButton = false;
+  /** Toggles rendering of the clock slot */
   @property({type: Boolean}) showClock = false;
+  /** Toggles visibility of link button */
   @property({type: Boolean}) showLinkButton = false;
+  /** Activated state of link button */
   @property({type: Boolean}) linkButtonActivated = false;
+  /** Toggles visibility of user button */
   @property({type: Boolean}) showUserButton = false;
+  /** Activated state of user button */
   @property({type: Boolean}) userButtonActivated = false;
+  /** Toggles visibility of dimming button */
   @property({type: Boolean}) showDimmingButton = false;
+  /** Activated state of dimming button */
   @property({type: Boolean}) dimmingButtonActivated = false;
+  /** Toggles visibility of system button */
   @property({type: Boolean}) showSystemButton = false;
+  /** Activated state of system button */
   @property({type: Boolean}) systemButtonActivated = false;
+  /** Toggles visibility of screen button */
   @property({type: Boolean}) showScreenButton = false;
+  /** Activated state of screen button */
   @property({type: Boolean}) screenButtonActivated = false;
+  /** Toggles visibility of notification button */
   @property({type: Boolean}) showNotificationButton = false;
+  /** Activated state of notification button */
   @property({type: Boolean}) notificationButtonActivated = false;
+  /** Toggles visibility of alert button */
   @property({type: Boolean}) showAlertButton = false;
+  /** Activated state of alert button */
   @property({type: Boolean}) alertButtonActivated = false;
+  /** Toggles visibility of fleet button */
   @property({type: Boolean}) showFleetButton = false;
+  /** Selected state of fleet button */
   @property({type: Boolean}) fleetButtonSelected = false;
+  /** Active state of fleet button while selection is pending */
   @property({type: Boolean}) fleetButtonActivated = false;
+  /** Label for the fleet button */
   @property({type: String}) fleetButtonLabel = 'Fleet';
 
   @state() private buttonsOnBar = false;

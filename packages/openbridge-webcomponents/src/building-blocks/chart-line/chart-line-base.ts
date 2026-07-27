@@ -311,32 +311,15 @@ const LINE_GRAPH_RECREATE_PROP_NAMES = [
  * </script>
  * ```
  *
- * @property {Array<{label?: string, x?: number|string|Date|TemporalLike, value: number}>} data - Single-series data array. In `category` mode each item needs `label`; in `time`/`number` mode each item needs `x` (epoch ms, ISO string, Date, or Temporal object — `label` is parsed as a fallback). Used when `datasets` is not provided. Points are drawn in array order (no sorting); Temporal Plain* values are interpreted in the system time zone.
- * @property {ChartDataset<'line', (number | {x: number|string|Date|TemporalLike; y: number})[]>[]} datasets - Multi-series Chart.js datasets. Takes precedence over `data`. Each dataset can have `label`, `data` (numeric array or `{x, y}` points), and visual properties like `borderColor`, `backgroundColor`, `fill`, etc. In `time`/`number` mode point x-values are normalized like single-series `x`.
- * @property {(string|number)[]} labels - Explicit labels for category x-axis. If omitted, labels are derived from `data` property or dataset x-values.
- * @property {string[]} colors - Custom color palette (CSS variable names or color strings). Falls back to theme default colors if not provided.
- * @property {'category'|'time'|'number'} xAxisType - X-axis mode. `'category'` for labeled, evenly spaced data points; `'time'` for time-based data positioned proportionally (numbers are always epoch ms — `xStepSize`/`xTicksLimit` operate in ms); `'number'` for plain numeric x-values. Default: `'category'`.
- * @property {'minutes'|'date'} timeDisplay - Time axis label format when `xAxisType='time'`. `'date'` shows a locale date, `'minutes'` shows minutes relative to the latest data point. Default: `'date'`.
- * @property {'left'|'right'} yAxisPosition - Single y-axis position. Use this for simple charts with one y-axis. For multiple y-axes, use `yAxes` property instead. Default: `'left'`.
- * @property {Array<{id?: string; position?: 'left'|'right'; min?: number; max?: number; grid?: boolean}>} yAxes - Multiple y-axis definitions for complex charts. Each axis can specify `id` (referenced by dataset `yAxisID`), `position`, `min`/`max` range, and `grid` visibility.
- * @property {boolean} showGrid - Show vertical grid lines (x-axis). When combined with `showGridX` and `showGridY`, controls full grid visibility. Default: `false`.
- * @property {boolean} showGridX - Show vertical grid lines (x-axis). Set to `false` to hide only vertical lines while keeping horizontal lines. Default: `false`.
- * @property {boolean} showGridY - Show horizontal grid lines (y-axis). Set to `false` to hide only horizontal lines while keeping vertical lines. Default: `false`.
- * @property {boolean} showTickMarks - Show axis tick marks and labels. Automatically hidden below 192px height threshold. Default: `false`.
- * @property {boolean} showPoints - Show point markers on data points. Default: `false`.
- * @property {boolean} fill - Enable area fill under/between lines. Use with `fillMode` to control fill style. Default: `false`.
- * @property {'semitransparent'|'solid'|'threshold'} fillMode - Fill rendering mode. `'semitransparent'` uses 50% alpha, `'solid'` uses opaque fill, `'threshold'` (single-series only) fills above/below midpoint with red/blue gradient. Default: `'semitransparent'`.
- * @property {'smooth'|'straight'|'stepped'} lineMode - Line drawing style. `'smooth'` applies bezier curve tension, `'straight'` draws straight lines, `'stepped'` creates step-like lines. Default: `'smooth'`.
- * @property {boolean} stacked - Stack multi-series datasets vertically on y-axis. Ignored for single-series and threshold fill mode. Default: `false`.
- * @property {string} unit - Unit label displayed in tooltips (e.g., 'kW', 'kg', '%'). Default: empty string.
- * @property {number} xTicksLimit - Maximum number of x-axis ticks/grid lines. Useful for matching external axes. Optional.
- * @property {number} xStepSize - Force specific interval between x-axis ticks (e.g., 1, 2, 5). Useful for matching external axes. Optional.
- * @property {number} yTicksLimit - Maximum number of y-axis ticks/grid lines. Useful for matching external axes. Optional.
- * @property {number} yStepSize - Force specific interval between y-axis ticks (e.g., 2, 5, 10). Useful for matching external axes. Optional.
- * @property {boolean} legend - Show HTML legend below chart with series labels and colors. Default: `false`.
- * @property {number} height - Chart height in pixels. Determines chart size with 1.5:1 aspect ratio (width = height × 1.5). Default: `320`.
- * @property {boolean} showDebugOverlay - Development mode: show visual debug overlay with dimension guides. Shows blue border around canvas (axis area) and red border around chart grid (data area). Default: `false`.
+ * TODO(maintainer): `fill` is documented here as a class-level `@property` tag
+ * only because tooling (the manifest, lit-analyzer, story controls) still
+ * depends on it, yet no `@property`-decorated field backs it and no render path
+ * reads `this.fill` (fill is decided by the abstract `shouldApplyFill()`). Decide
+ * whether `fill` is a real public property (add a decorated field) or obsolete
+ * (remove this tag and the `.fill=` usages in the stories/wrappers). Kept as-is
+ * here to avoid changing the public API surface in a docs-only cleanup.
  *
+ * @property {boolean} fill - Enable area fill under/between lines. Use with `fillMode` to control fill style. Default: `false`.
  * @ignore This is an abstract base class. Use concrete implementations like ObcLineGraph or ObcAreaGraph instead.
  * @experimental
  */

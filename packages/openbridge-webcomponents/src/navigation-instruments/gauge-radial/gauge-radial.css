@@ -4,6 +4,13 @@
   height: 100%;
 }
 
+/* With a pinned face the host shrink-wraps the fixed-size dial, so rows of
+   pinned instruments can sit side by side in flex layouts. */
+:host([face-diameter]) {
+  width: fit-content;
+  height: fit-content;
+}
+
 .gauge-radial-root {
   /* Readout vertical placement per layout (% of the cropped box), tuned to the
      watch geometry — re-check if the ring radii or the 448 box change. Which
@@ -24,7 +31,10 @@
   height: auto;
   max-width: 100%;
   max-height: 100%;
-  aspect-ratio: 1;
+  /* --gauge-radial-aspect is set from TS only when the frame lowered a crop
+     for the label drop (frame.clipsAdjusted); otherwise the static sector
+     aspect below applies. */
+  aspect-ratio: var(--gauge-radial-aspect, 1);
 
   /* Defaults (centered both ways); overridden by the halign-* / valign-*
      classes. Horizontal alignment uses auto margins (which reference the host
@@ -38,7 +48,7 @@
   /* 448 / 251 = the 180° crop's aspect (448 wide × 448·(1 − 44%) tall); keep in
      sync with `sectorClips` bottom=44 in gauge-radial.ts. */
   &.sector-180 {
-    aspect-ratio: 448 / 251;
+    aspect-ratio: var(--gauge-radial-aspect, 448 / 251);
   }
 
   &.halign-left {
@@ -65,6 +75,26 @@
   &.valign-bottom {
     top: 100%;
     transform: translateY(-100%);
+  }
+
+  /* faceDiameter pins the dial to a fixed intrinsic size: the inner
+     instrument sets its own px box and the root shrink-wraps it. The host
+     shrink-wraps too, so there is no slack to align within — neutralize the
+     alignment offsets (declared after the valign rules to win the cascade;
+     `top: 50%` would resolve to 0 in the auto-height host anyway while the
+     translateY still applied, shifting the dial up by half its height). */
+  &.face-pinned {
+    width: fit-content;
+    height: fit-content;
+    max-width: none;
+    max-height: none;
+    aspect-ratio: auto;
+    top: 0;
+    transform: none;
+
+    &.sector-180 {
+      aspect-ratio: auto;
+    }
   }
 
   .gauge-readout-value {

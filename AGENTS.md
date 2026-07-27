@@ -98,7 +98,7 @@ Key points:
 3. **Usage Guidelines** — when and how to use the component; contrast with similar components.
 4. **Slots** — table of slot names, conditions, and purposes.
 5. **Events** — `@fires` tags for every custom event.
-6. **No `@property` tags** in the JSDoc block — properties are documented inline above their field declarations.
+6. **No `@property` tags** in the class JSDoc block — properties are documented inline above their field declarations. A class-level `@property` tag **overrides** the inline doc in `custom-elements.json` and can inject a **ghost member** for a property that does not exist (issue #1043). Enforced by `npm run lint:slots`. (Documenting a CSS-only attribute that has no backing `@property` field via `@attr`/`@attribute` in the class block is allowed — there is no field to annotate.)
 7. **Tone:** Do NOT mention "maritime", "industrial", "bridge", or domain qualifiers; keep text domain-agnostic.
 8. If purpose is unclear, insert `**TODO(designer)**` instead of guessing.
 9. **`@availableWhen` for conditional properties** — see below.
@@ -390,7 +390,8 @@ Required modifications after pasting:
     npx vitest run --project storybook 'component-name'
     ```
 14. **Keep the main context clean.** Delegate broad codebase exploration to subagents; only read files directly in the main thread when you are about to edit them or need a few specific lines.
-15. **Never hand-edit `src/palettes/variables.css` or `src/mixins/fonts.css`.** Both are regenerated wholesale from the [obc-figma-plugin](https://github.com/Ocean-Industries-Concept-Lab/obc-figma-plugin) (`cssvariables` and `font-exports` codegens respectively); any local edit will be overwritten the next time someone pastes new plugin output. Token additions/renames must go through Figma (or the plugin's `rename()` function) first. The same caution applies to `script/figmavariables.json` (the plugin's `variables` codegen output). Hand-curated font mixins that the plugin does not produce live in `src/mixins/font-extras.css` — edit them there. Run `npm run lint:mixins` after regenerating `fonts.css`. See [IMPLEMENTATION_GUIDELINES.md § PostCSS](IMPLEMENTATION_GUIDELINES.md#-postcss).
+15. **Radial instrument geometry goes through `svghelpers/radial-frame.ts`.** Never hand-mirror viewBox constants or paddings between `obc-watch` and an overlay SVG — compute one `computeRadialFrame()` result per render and pass it to both `<obc-watch .arcFrame=...>` and the overlay `viewBox` (this also provides the width-aware label reserve and `faceDiameter` from issue #1021). Before any refactoring of a radial instrument, read [`watch-radial-instruments.instructions.md` § Shared frame computation](.github/instructions/watch-radial-instruments.instructions.md) — the helper reproduces legacy geometry byte-identically when no outside labels exist, and breaking that contract regenerates the entire radial snapshot family.
+16. **Never hand-edit `src/palettes/variables.css` or `src/mixins/fonts.css`.** Both are regenerated wholesale from the [obc-figma-plugin](https://github.com/Ocean-Industries-Concept-Lab/obc-figma-plugin) (`cssvariables` and `font-exports` codegens respectively); any local edit will be overwritten the next time someone pastes new plugin output. Token additions/renames must go through Figma (or the plugin's `rename()` function) first. The same caution applies to `script/figmavariables.json` (the plugin's `variables` codegen output). Hand-curated font mixins that the plugin does not produce live in `src/mixins/font-extras.css` — edit them there. Run `npm run lint:mixins` after regenerating `fonts.css`. See [IMPLEMENTATION_GUIDELINES.md § PostCSS](IMPLEMENTATION_GUIDELINES.md#-postcss).
 
 ---
 
@@ -400,6 +401,7 @@ Required modifications after pasting:
 | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
 | [IMPLEMENTATION_GUIDELINES.md](IMPLEMENTATION_GUIDELINES.md)                                         | Detailed architecture, PostCSS mixins, SVG practices, component creation |
 | [CONTRIBUTING.md](CONTRIBUTING.md)                                                                   | Contribution workflow, commit conventions, PR guidelines                 |
+| [.devcontainer/README.md](.devcontainer/README.md)                                                   | Dev container persistent-home volume: per-developer tooling setup & rebuild guide |
 | [packages/openbridge-webcomponents/README.md](packages/openbridge-webcomponents/README.md)           | Installation, setup, bundle usage                                        |
 | [.cursor/rules/comments.mdc](.cursor/rules/comments.mdc)                                             | Full JSDoc template and structured-tag rules                             |
 | [.github/instructions/](.github/instructions/)                                                       | Path-scoped instruction files for component families                     |

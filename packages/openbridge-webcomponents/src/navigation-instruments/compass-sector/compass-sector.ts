@@ -31,6 +31,13 @@ export enum CompassSectorPriorityElement {
   rot = 'rot',
 }
 
+// Fixed frame padding for both the zoomed and un-zoomed paths. This component
+// deliberately keeps its bespoke FOV-compression geometry and does NOT use
+// svghelpers/radial-frame.ts: the viewBox is cached per FOV (a
+// container-size-dependent label reserve would invalidate that), and the
+// 72-unit padding covers the 3-char degree labels at typical sizes.
+// TODO(#1021): adopt computeRadialFrame if degree labels ever clip when the
+// component is shrunk far below its design size.
 const PADDING = 72;
 const WATCH_TYPE = WatchCircleType.triple;
 const INNER_RADIUS = innerRingRadiusFor(WATCH_TYPE);

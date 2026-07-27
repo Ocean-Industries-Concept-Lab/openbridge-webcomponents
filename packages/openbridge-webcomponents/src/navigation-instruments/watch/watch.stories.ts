@@ -6,7 +6,12 @@ import {
   WatchCircleType,
 } from './watch.js';
 import './watch.js';
-import {widthDecorator} from '../../storybook-util.js';
+import {
+  playgroundColumn,
+  resizableStoryBox,
+  storyHint,
+  widthDecorator,
+} from '../../storybook-util.js';
 import {AdviceState, AdviceType} from './advice.js';
 import {InstrumentState, Priority} from '../types.js';
 import {TickmarkType} from './tickmark.js';
@@ -70,6 +75,11 @@ Source of truth: \`packages/openbridge-webcomponents/src/navigation-instruments/
     },
     areas: {control: {type: 'object'}},
     padding: {control: {type: 'range', min: 0, max: 100, step: 1}},
+    faceDiameter: {
+      control: {type: 'range', min: 100, max: 600, step: 10},
+      description:
+        'Pins the outer-ring diameter in px (fixed intrinsic size, equal circumference across instruments). Clear to return to fill-the-container sizing.',
+    },
     vessels: {control: {type: 'object'}},
     windKnots: {control: {type: 'range', min: 0, max: 100, step: 1}},
     windFromDirectionDeg: {control: {type: 'range', min: 0, max: 360, step: 1}},
@@ -725,6 +735,135 @@ export const TickmarksTestInsideRotation: Story = {
           )}
         </svg>
       </div>
+    `;
+  },
+};
+
+/**
+ * Regression test for label counter-scaling after a container resize: the
+ * wrapper starts at 400px and `play` shrinks it to 240px BEFORE the snapshot.
+ * The standalone watch host renders inline (no box), so its ResizeObserver
+ * only fires via the internal `<svg>` (`observeInnerBox`) — if that
+ * observation is lost, `--scale` stays at the 400px value and the labels
+ * shrink with the box (~7px on screen) instead of holding ~12px.
+ */
+export const CounterScaleAfterResize: Story = {
+  args: {
+    tickmarks: [
+      ...Array.from({length: 24}, (_, i) => ({
+        angle: i * 15,
+        type: TickmarkType.secondary,
+        text: `${i * 15}`,
+      })),
+    ],
+  },
+  parameters: {widthDecorator: false},
+  render: (args) => html`
+    <div id="counter-scale-wrap" style="width: 400px; height: 400px;">
+      <obc-watch .tickmarks=${args.tickmarks}></obc-watch>
+    </div>
+  `,
+  play: async ({canvasElement}) => {
+    const wrap = canvasElement.querySelector(
+      '#counter-scale-wrap'
+    ) as HTMLElement;
+    wrap.style.width = '240px';
+    wrap.style.height = '240px';
+    await new Promise((resolve) =>
+      requestAnimationFrame(() => requestAnimationFrame(resolve))
+    );
+    await wrap.querySelector('obc-watch')?.updateComplete;
+  },
+};
+
+type SizingPlaygroundArgs = Partial<ObcWatch> & {
+  lockFaceDiameter?: boolean;
+};
+
+/**
+ * Interactive sizing playground for the core renderer: drag the dashed box's
+ * bottom-right corner to resize it. The first watch (2-digit tick labels) is
+ * pinned to a fixed intrinsic size by the `faceDiameter` control, while the
+ * 4-digit watch and the 180° arc adapt to the remaining flex space, reserving
+ * label room adaptively (and hiding labels past the reserve cap in
+ * `svghelpers/radial-frame.ts`, issue #1021). Enable `lockFaceDiameter` to
+ * pin all three to the same circumference. Related: *Sizing Playground*
+ * stories under Building Blocks/Instrument Radial and Instruments/Gauge
+ * Radial.
+ */
+export const SizingPlayground: StoryObj<SizingPlaygroundArgs> = {
+  name: 'Sizing Playground — FaceDiameter + Resizable (Manual)',
+  tags: ['skip-test'],
+  parameters: {widthDecorator: false},
+  args: {
+    faceDiameter: 200,
+    lockFaceDiameter: false,
+  },
+  argTypes: {
+    lockFaceDiameter: {
+      control: 'boolean',
+      description:
+        'Apply faceDiameter to every instance (equal circumference) instead of only the first.',
+    },
+  },
+  render: (args) => {
+    const fullCircleTicks = (factor: number) =>
+      Array.from({length: 12}, (_, i) => ({
+        angle: i * 30,
+        type: TickmarkType.secondary,
+        text: `${i * 30 * factor}`,
+      }));
+    const instances = [
+      {label: '2-digit ticks', ticks: fullCircleTicks(1), areas: undefined},
+      {label: '4-digit ticks', ticks: fullCircleTicks(10), areas: undefined},
+      {
+        label: '180° arc',
+        ticks: Array.from({length: 7}, (_, i) => ({
+          angle: i * 30 - 90,
+          type: TickmarkType.secondary,
+          text: `${i * 30}`,
+        })),
+        areas: [
+          {
+            startAngle: -90,
+            endAngle: 90,
+            roundInsideCut: true,
+            roundOutsideCut: true,
+          },
+        ],
+      },
+    ];
+    const fd = (index: number) =>
+      index === 0 || args.lockFaceDiameter ? args.faceDiameter : undefined;
+    const caption = (index: number, label: string) =>
+      fd(index) !== undefined
+        ? `${label} — pinned ${fd(index)}px`
+        : `${label} — adaptive (flex)`;
+    return html`
+      ${storyHint(
+        'Drag the bottom-right corner of the dashed box to resize it. The first watch is pinned by the faceDiameter control; the 4-digit watch and the 180° arc adapt to the remaining flex space. Enable lockFaceDiameter to pin all three to the same circumference.'
+      )}
+      ${resizableStoryBox(
+        html`
+          ${instances.map((g, index) =>
+            playgroundColumn(
+              caption(index, g.label),
+              html`
+                <obc-watch
+                  .faceDiameter=${fd(index)}
+                  .tickmarks=${g.ticks}
+                  .areas=${g.areas ?? []}
+                  .watchCircleType=${g.areas
+                    ? WatchCircleType.double
+                    : WatchCircleType.single}
+                ></obc-watch>
+              `,
+              {pinned: fd(index) !== undefined}
+            )
+          )}
+        `,
+        {width: 760, height: 320}
+      )}
     `;
   },
 };
