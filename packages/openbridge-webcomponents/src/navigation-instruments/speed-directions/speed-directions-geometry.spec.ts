@@ -70,6 +70,16 @@ describe('chevronCell', () => {
       chevronCell(longLatArrows, compass, 'along', true)
     );
   });
+  it('keeps the standalone midship row at its Figma bow-ward offset', () => {
+    expect(
+      chevronCell(
+        SpeedDirectionsType.longLatArrows,
+        standalone,
+        'athwartMid',
+        true
+      )
+    ).toEqual({cx: 76, cy: -3, size: 64, rotationDeg: 90});
+  });
   it('matches Figma extractions', () => {
     expect(
       chevronCell(alongAthwartArrows, standalone, 'athwartBow', true)

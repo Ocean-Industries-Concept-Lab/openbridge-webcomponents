@@ -68,7 +68,10 @@ interface CellTableEntry {
   size: number;
   alongCenter: number; // |cy| of the along cells
   athwartCenter: number; // |cx| of the athwart cells
-  athwartRowY: number; // |cy| of the bow/stern athwart rows (0 for athwartMid)
+  // |cy| of the bow/stern athwart rows; for athwartMid it is the small
+  // bow-ward offset of the midship row (rendered as -athwartRowY), taken
+  // from the Figma extraction (3 in the standalone frame style, 0 in-frame).
+  athwartRowY: number;
 }
 
 const CELL_TABLE: Record<

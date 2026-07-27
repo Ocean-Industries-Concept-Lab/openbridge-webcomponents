@@ -115,28 +115,28 @@ export class ObcTopViewPropulsion extends LitElement {
   /**
    * Signed rpm in percent of the maximum: 0 at the top, positive clockwise,
    * ±100% = ±180°. Shown on the primary track.
-   * @availableWhen type==pitchRpm
+   * @availableWhen type==pitch-rpm
    */
   @property({type: Number}) rpm = 0;
-  /** @availableWhen type==pitchRpm */
+  /** @availableWhen type==pitch-rpm */
   @property({type: Number}) rpmSetpoint: number | undefined;
-  /** @availableWhen type==pitchRpm && rpmSetpoint!=undefined */
+  /** @availableWhen type==pitch-rpm && rpmSetpoint!=undefined */
   @property({type: Number}) newRpmSetpoint: number | undefined;
-  /** @availableWhen type==pitchRpm && rpmSetpoint!=undefined && autoAtRpmSetpoint==false */
+  /** @availableWhen type==pitch-rpm && rpmSetpoint!=undefined && autoAtRpmSetpoint==false */
   @property({type: Boolean}) atRpmSetpoint = false;
-  /** @availableWhen type==pitchRpm && rpmSetpoint!=undefined */
+  /** @availableWhen type==pitch-rpm && rpmSetpoint!=undefined */
   @property({type: Number}) rpmSetpointAtZeroDeadband = 0.1;
-  /** @availableWhen type==pitchRpm && rpmSetpoint!=undefined */
+  /** @availableWhen type==pitch-rpm && rpmSetpoint!=undefined */
   @property({type: Boolean}) rpmSetpointOverride = false;
-  /** @availableWhen type==pitchRpm && rpmSetpoint!=undefined */
+  /** @availableWhen type==pitch-rpm && rpmSetpoint!=undefined */
   @property({type: Boolean, attribute: false}) autoAtRpmSetpoint = true;
-  /** @availableWhen type==pitchRpm && rpmSetpoint!=undefined && autoAtRpmSetpoint==true */
+  /** @availableWhen type==pitch-rpm && rpmSetpoint!=undefined && autoAtRpmSetpoint==true */
   @property({type: Number}) autoAtRpmSetpointDeadband = 1;
 
   /**
    * Signed pitch in percent: 0 at the top, positive clockwise, ±100% = ±180°.
    * Shown as the thin secondary arc.
-   * @availableWhen type==pitchRpm
+   * @availableWhen type==pitch-rpm
    */
   @property({type: Number}) pitch = 0;
 
