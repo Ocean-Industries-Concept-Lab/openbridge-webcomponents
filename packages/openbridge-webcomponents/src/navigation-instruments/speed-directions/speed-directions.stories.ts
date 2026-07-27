@@ -8,7 +8,7 @@ import {
 
 const meta: Meta<typeof ObcSpeedDirections> = {
   title: 'Instruments/Speed Directions',
-  tags: ['autodocs', '6.0'],
+  tags: ['autodocs', '6.0', 'wip'],
   component: 'obc-speed-directions',
   args: {
     type: SpeedDirectionsType.alongAthwartArrows,
