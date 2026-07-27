@@ -59,3 +59,31 @@ export const AlongAthwartBarsStandalone: Story = {
     speedAthwartSternKnots: -0.7,
   },
 };
+
+export const AlongAthwartArrowsFramed: Story = {
+  args: {
+    frameStyle: SpeedDirectionsFrameStyle.framed,
+    speedAlongKnots: 4.2,
+    speedAthwartBowKnots: 0.8,
+    speedAthwartSternKnots: -0.6,
+  },
+};
+
+export const LongLatArrowsFramed: Story = {
+  args: {
+    type: SpeedDirectionsType.longLatArrows,
+    frameStyle: SpeedDirectionsFrameStyle.framed,
+    speedAlongKnots: 4.2,
+    speedAthwartKnots: 0.8,
+  },
+};
+
+export const AlongAthwartBarsFramed: Story = {
+  args: {
+    type: SpeedDirectionsType.alongAthwartBars,
+    frameStyle: SpeedDirectionsFrameStyle.framed,
+    speedAlongKnots: 6.5,
+    speedAthwartBowKnots: 0.7,
+    speedAthwartSternKnots: -0.7,
+  },
+};

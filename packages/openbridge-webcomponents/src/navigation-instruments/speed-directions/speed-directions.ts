@@ -3,6 +3,7 @@ import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import componentStyle from './speed-directions.css?inline';
 import {VesselImage, vesselImages} from '../watch/watch.js';
+import {rect} from '../../svghelpers/rectangular.js';
 import {
   SpeedDirectionsType,
   SpeedDirectionsFrameStyle,
@@ -13,9 +14,13 @@ import {
   ATHWART_AXIS_OFFSET,
   VESSEL_CENTER_Y,
   FLAT_VIEWBOX,
+  FRAME_HALF,
 } from './speed-directions-geometry.js';
-import {renderSpeedChevrons, renderSpeedBar} from './speed-directions-art.js';
-// (Task 5 adds renderAxisLine to this import when axis lines land.)
+import {
+  renderSpeedChevrons,
+  renderSpeedBar,
+  renderAxisLine,
+} from './speed-directions-art.js';
 
 export {SpeedDirectionsType, SpeedDirectionsFrameStyle};
 
@@ -188,6 +193,33 @@ export class ObcSpeedDirections extends LitElement {
     });
   }
 
+  private renderFrame() {
+    if (this.frameStyle !== SpeedDirectionsFrameStyle.framed) return nothing;
+    return rect('speed-directions-frame', {
+      width: FRAME_HALF * 2,
+      height: FRAME_HALF * 2,
+      strokeWidth: 1,
+      strokeColor: 'var(--instrument-frame-tertiary-color)',
+      fillColor: 'var(--instrument-frame-primary-color)',
+      borderRadius: 8,
+      strokePosition: 'inside',
+    });
+  }
+
+  private renderAxisLines() {
+    if (this.frameStyle === SpeedDirectionsFrameStyle.standalone) {
+      return nothing;
+    }
+    const lines = [renderAxisLine('v', 0)];
+    if (this.isLongLat) {
+      lines.push(renderAxisLine('h', 0));
+    } else {
+      lines.push(renderAxisLine('h', -ATHWART_AXIS_OFFSET));
+      lines.push(renderAxisLine('h', ATHWART_AXIS_OFFSET));
+    }
+    return lines;
+  }
+
   override render() {
     return html`<div class="container">
       <svg
@@ -195,7 +227,7 @@ export class ObcSpeedDirections extends LitElement {
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        ${this.renderContent()}
+        ${this.renderFrame()} ${this.renderAxisLines()} ${this.renderContent()}
       </svg>
     </div>`;
   }
