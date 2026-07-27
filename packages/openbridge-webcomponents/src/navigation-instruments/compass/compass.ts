@@ -199,7 +199,8 @@ export class ObcCompass extends LitElement {
    * the rest side by side below a horizontal divider. Values bind per entry
    * `source` (`hdg` → `heading`, `cog` → `courseOverGround`, `rot` →
    * `rateOfTurnDegreesPerMinute`, a dash when unset) and colors follow
-   * `priorityElements`.
+   * `priorityElements`. While non-empty, the crosshair's center is cut out
+   * so the readouts sit on a clean face.
    */
   @property({type: Array, attribute: false})
   centerReadouts: CompassCenterReadout[] = [];
@@ -422,6 +423,7 @@ export class ObcCompass extends LitElement {
           .showLabels=${this.showLabels && !frame.labelsHidden}
           .tickmarksInside=${this.tickmarksInside}
           .crosshairEnabled=${true}
+          .crosshairCenterCutout=${this.hasCenterReadouts}
           .northArrow=${!frame.labelsHidden}
           .angleSetpoint=${this.headingSetpoint ?? undefined}
           .newAngleSetpoint=${this.newHeadingSetpoint}
