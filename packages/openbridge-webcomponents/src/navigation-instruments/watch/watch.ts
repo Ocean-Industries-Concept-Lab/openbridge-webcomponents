@@ -52,10 +52,16 @@ import {
 import {VesselImage, VesselImageSize, vesselImages} from './vessel.js';
 import {renderCurrent, renderWind} from './environment.js';
 import {customElement} from '../../decorator.js';
+import {type ZoomToFitArcFrame} from '../../svghelpers/arc-frame.js';
 import {
-  computeZoomToFitArcFrame,
-  type ZoomToFitArcFrame,
-} from '../../svghelpers/arc-frame.js';
+  applyPinnedHostSize,
+  computeRadialFrame,
+  estimateLabelWidthPx,
+  measureContainerPx,
+  NSWE_LABEL_WIDTH_PX,
+  observeInnerBox,
+  type RadialFrame,
+} from '../../svghelpers/radial-frame.js';
 export {VesselImage, VesselImageSize, vesselImages};
 
 export enum WatchCircleType {
@@ -202,7 +208,21 @@ export class ObcWatch extends LitElement {
 
   /** Whether the setpoint CSS angle has been initialised (to skip transition on first render). */
   private _setpointCssAngleInit = false;
+  /**
+   * Explicit padding override in SVG units: the un-zoomed viewBox becomes
+   * exactly `(176 + padding) * 2`. Setting it disables the automatic
+   * width-aware label reserve (issue #1021) — the caller owns label room.
+   */
   @property({type: Number}) padding: number | undefined;
+  /**
+   * Outer-ring diameter in CSS pixels. When set, the instrument renders at a
+   * fixed intrinsic size derived from the ring, arc shape and label reserve —
+   * so instruments sharing the same value have identical ring circumference
+   * regardless of label width or arc extent (like obc-donut-chart's
+   * fixedHeight). When unset (default), the instrument fills its container.
+   */
+  @property({type: Number, attribute: 'face-diameter'})
+  faceDiameter: number | undefined;
   @property({type: Array, attribute: false}) areas: WatchArea[] = [];
   @property({type: Array, attribute: false}) barAreas: WatchBarArea[] = [];
   @property({type: Array, attribute: false}) needles: WatchNeedle[] = [];
@@ -293,9 +313,12 @@ export class ObcWatch extends LitElement {
     return this._legacyRotationsPerMinute;
   }
 
-  // @ts-expect-error TS6133: The controller ensures that the render
-  // function is called on resize of the element
   private _resizeController = new ResizeController(this, {});
+
+  override firstUpdated(changed: PropertyValues): void {
+    super.firstUpdated(changed);
+    observeInnerBox(this._resizeController, this.renderRoot);
+  }
 
   override willUpdate(changed: PropertyValues): void {
     super.willUpdate(changed);
@@ -333,6 +356,11 @@ export class ObcWatch extends LitElement {
 
   override updated(changed: PropertyValues): void {
     super.updated(changed);
+    this._hostSizePinned = applyPinnedHostSize(
+      this,
+      this.arcFrame ? undefined : this._ownFrame,
+      this._hostSizePinned
+    );
     const el = this.rotType
       ? this.renderRoot.querySelector('#rot-spinner')
       : null;
@@ -355,6 +383,18 @@ export class ObcWatch extends LitElement {
   }
 
   private _rOff = 0;
+
+  /**
+   * Set by the frame when the label reserve exceeded its cap: tick label
+   * texts are dropped instead of clipped (see radial-frame.ts).
+   */
+  private _labelsHidden = false;
+
+  /** The frame of the last render, when computed internally (no arcFrame). */
+  private _ownFrame: RadialFrame | undefined;
+
+  /** Whether the host size styles were set by applyPinnedHostSize. */
+  private _hostSizePinned = false;
 
   /**
    * Radius for a dial-band edge under zoom: additive (`base + _rOff`), keeping
@@ -680,16 +720,8 @@ export class ObcWatch extends LitElement {
   }
 
   private getScale({width, height}: {width: number; height: number}): number {
-    let clientWidth = this.clientWidth;
-    let clientHeight = this.clientHeight;
-    if (clientWidth === 0 || clientHeight === 0) {
-      const box = this.parentElement?.getBoundingClientRect();
-      if (box) {
-        clientWidth = box.width;
-        clientHeight = box.height;
-      }
-    }
-    const scale = Math.min(clientWidth / width, clientHeight / height);
+    const container = measureContainerPx(this);
+    const scale = Math.min(container.width / width, container.height / height);
     // On first paint the element and its parent can both still be zero-sized, so
     // the scale is 0 (or non-finite). That value flows into `px / scale` label
     // math and yields ±Infinity coordinates the browser rejects. Fall back to a
@@ -701,17 +733,19 @@ export class ObcWatch extends LitElement {
     return scale;
   }
 
-  private getPadding(): number {
-    if (this.padding !== undefined) {
-      return this.padding;
+  /**
+   * Pixel width of the widest outside label, feeding the frame's label
+   * reserve (issue #1021). Explicit `padding` is a hard geometry override
+   * and disables the reserve, preserving legacy consumer output.
+   */
+  private getLabelWidthPx(): number {
+    if (this.padding !== undefined || this.tickmarksInside) {
+      return 0;
     }
-    const hasTickmarksWithText =
-      this.tickmarks.length > 0 &&
-      this.tickmarks.some((t) => t.text !== undefined);
-    if (hasTickmarksWithText && !this.tickmarksInside) {
-      return 24 * 2.5;
+    if (this.showLabels) {
+      return NSWE_LABEL_WIDTH_PX;
     }
-    return 24;
+    return estimateLabelWidthPx(this.tickmarks.map((t) => t.text));
   }
 
   override render() {
@@ -721,31 +755,33 @@ export class ObcWatch extends LitElement {
 
     if (this.arcFrame) {
       this._rOff = this.arcFrame.radiusOffset;
+      this._labelsHidden = false;
+      this._ownFrame = undefined;
       width = this.arcFrame.width;
       height = this.arcFrame.height;
       viewBox = this.arcFrame.viewBox;
-    } else if (this.zoomToFitArc && this.areas.length > 0) {
-      const ext = this.getPadding();
-      const targetSize = (176 + ext) * 2;
-      const frame = computeZoomToFitArcFrame({
+    } else {
+      const frame = computeRadialFrame({
+        basePadding: this.padding ?? 24,
+        labelWidthPx: this.getLabelWidthPx(),
+        clips: {
+          top: this.clipTop,
+          bottom: this.clipBottom,
+          left: this.clipLeft,
+          right: this.clipRight,
+        },
+        containerPx: measureContainerPx(this),
+        faceDiameter: this.faceDiameter,
+        zoomToFitArc: this.zoomToFitArc,
         areas: this.areas,
-        outerRadius: OUTER_RING_RADIUS,
         innerRadius: this.innerRingRadius,
-        extension: ext,
-        targetSize,
       });
       this._rOff = frame.radiusOffset;
+      this._labelsHidden = frame.labelsHidden;
+      this._ownFrame = frame;
       width = frame.width;
       height = frame.height;
       viewBox = frame.viewBox;
-    } else {
-      this._rOff = 0;
-      const full = (176 + this.getPadding()) * 2;
-      width = full * (1 - this.clipLeft / 100 - this.clipRight / 100);
-      height = full * (1 - this.clipTop / 100 - this.clipBottom / 100);
-      const left = -full / 2 + (full * this.clipLeft) / 100;
-      const top = -full / 2 + (full * this.clipTop) / 100;
-      viewBox = `${left} ${top} ${width} ${height}`;
     }
 
     const rOff = this._rOff;
@@ -764,7 +800,7 @@ export class ObcWatch extends LitElement {
         size: t.type,
         style: this.tickmarkStyle,
         scale,
-        text: this.showLabels ? undefined : t.text,
+        text: this.showLabels || this._labelsHidden ? undefined : t.text,
         inside: this.tickmarksInside,
         textRadius,
         rotation: this.rotation,
@@ -778,10 +814,14 @@ export class ObcWatch extends LitElement {
       ? this.advices.map((a) => renderAdvice(a, rOff))
       : nothing;
 
-    // Compute label positions once – used for both rendering and crosshair knockout.
-    const insideLabels = this.tickmarksInside && this.showLabels;
+    // Compute label positions once – used for both rendering and crosshair
+    // knockout. NSWE labels and the north arrow are px-fixed outside decor,
+    // so they follow the same labelsHidden degradation as tick label texts.
+    const showNsweLabels = this.showLabels && !this._labelsHidden;
+    const showNorthArrow = this.northArrow && !this._labelsHidden;
+    const insideLabels = this.tickmarksInside && showNsweLabels;
     const includeNorth = !this.northArrow;
-    const labelPositions = this.showLabels
+    const labelPositions = showNsweLabels
       ? getLabelPositions({
           scale,
           inside: this.tickmarksInside,
@@ -799,7 +839,7 @@ export class ObcWatch extends LitElement {
           includeNorth,
         })
       : nothing;
-    const northArrowEl = this.northArrow
+    const northArrowEl = showNorthArrow
       ? renderNorthArrow({
           scale,
           rotation: this.rotation,

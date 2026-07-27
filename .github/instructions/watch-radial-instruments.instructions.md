@@ -488,13 +488,69 @@ below are undefined — verify them before relying on a specific pairing.
 
 | Property                                            | Affects                                                                                                                                                                                |
 | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `padding`                                           | Base viewBox size in the **un-zoomed** path (`(176 + padding) * 2`).                                                                                                                  |
+| `padding`                                           | **Explicit override**: un-zoomed viewBox becomes exactly `(176 + padding) * 2` and the automatic label reserve (see "Shared frame computation") is disabled — the caller owns label room. Unset, `basePadding` is 24 plus the width-aware reserve. |
+| `faceDiameter`                                      | Pins the outer-ring diameter in CSS px (`scale = faceDiameter / 368`); the host gets a fixed intrinsic size, so instruments sharing the value have equal circumference (mode b of #1021; the donut-chart `fixedHeight` counterpart). |
 | `clipTop` / `clipBottom` / `clipLeft` / `clipRight` | viewBox window in the **un-zoomed** path. Ignored under zoom (when `zoomToFitArc` is on or an `arcFrame` is supplied).                                                                                                          |
 | `zoomToFitArc`                                      | Swaps to the `computeZoomToFitArcFrame()` path (unless an `arcFrame` is already supplied); every band radius gets the additive `_rOff` (see the `_bandRadius` INVARIANT in `watch.ts`).                                           |
 | `arcFrame`                                          | Externally pre-computed zoom frame. Takes precedence when set (the `if (this.arcFrame)` branch runs first) — used directly even when `zoomToFitArc` is false, and `obc-watch` does not recompute it. If you pass it, keep it in sync with `areas` / `watchCircleType`. |
 | `endLabelsMaxMin`                                   | "Max-min" label placement: horizontal end labels (±90°) sit off the dead-center tick instead of beside it.                                                                            |
 | `tickmarksInside`                                   | Moves labels inside the ring; their `textRadius` is routed through `_bandRadius`.                                                                                                      |
 | `tickFadeAngle`                                     | (pre-existing) Tickmark fade-out near arc edges.                                                                                                                                        |
+
+### Shared frame computation (`svghelpers/radial-frame.ts`, issue #1021)
+
+All frame/viewBox geometry is centralized in `computeRadialFrame()`:
+
+- **Width-aware label reserve (mode a):** outside tick labels render at
+  `12px / scale`, so their SVG-unit footprint grows as the instrument
+  shrinks. The helper solves `side = 2·(184 + 3) / (1 − 2P/containerPx)`
+  in closed form (`P` = label pixel cost) and grows the viewBox so labels
+  never clip. With no outside labels the legacy `(176 + basePadding) * 2`
+  box is reproduced **byte-identically**.
+- **Content-aware degradation:** past `LABEL_RESERVE_MAX_FRACTION` (0.45 —
+  a 4-digit gauge hides labels below a ~182px container) the frame reports
+  `labelsHidden` and consumers strip tick texts instead of clipping.
+  Designers may later prefer a fixed px threshold (the canvas charts use
+  `MIN_HEIGHT_WITH_LABELS = 192`).
+- **Delivery pattern:** consumers call the helper once per render and pass
+  the result to `<obc-watch .arcFrame=...>` AND their overlay
+  `<svg viewBox=${frame.viewBox}>` — the two layers can no longer drift
+  apart. Do NOT hand-mirror viewBox constants (the old
+  `WATCH_DEFAULT_VIEWBOX = 448` and azimuth's `384/400/472` switch were
+  deleted in favor of this).
+- **Consumers on the helper:** watch (standalone), instrument-radial
+  (+ gauge-radial, rot-sector), speed-gauge, azimuth-thruster, compass,
+  heading, rudder. `obc-instrument-radial` exposes the frame via a
+  `frame` getter and a `frame-changed` event (gauge-radial re-anchors its
+  %-positioned readouts from it).
+- **Not on the helper:** compass-sector (bespoke FOV compression, see the
+  `PADDING` comment there), pitch/roll/pitch-roll (labels inside ⇒ no
+  reserve; the pitch-roll composite has a coupled `buildFrame` contract),
+  wind-propulsion and velocity-projection-plot (explicit `padding`
+  override path, unchanged by design).
+- Compass/heading's old empirical `72 + delta(clientSize)` padding was
+  replaced by the analytic reserve (north arrow 16px always +
+  NSWE labels 16px while `showLabels`); past the reserve cap both the
+  labels and the arrow are hidden, like tick-label degradation.
+- **Label-drop-aware sector crops:** arc end labels hang past the ±90°
+  line (`endLabelsMaxMin` ~20px, side labels ~8px), so a fixed top/bottom
+  crop (gauge-radial's 44/45% `sectorClips`) would cut them at small
+  scales. Consumers pass `labelDropPx` (`END_MAXMIN_LABEL_DROP_PX` /
+  `SIDE_LABEL_DROP_PX`) and the frame lowers the crop just enough —
+  reported via `frame.clipsAdjusted`, which gauge-radial uses to switch
+  its static sector `aspect-ratio` to the frame's (`--gauge-radial-aspect`).
+  Only pass the drop when a **labeled tick actually sits at ±90°**
+  (instrument-radial checks the tick angles — a ±60° sector like
+  rot-sector must stay byte-identical).
+- **ResizeObserver on inline hosts never fires** (permanent 0×0 box) —
+  several radial hosts have no `:host {display}` rule, so their
+  `ResizeController` must additionally observe an internal element that
+  generates a box (`observeInnerBox()` in radial-frame.ts observes the
+  shadow `<svg>` / `.container`). Without it, the frame and the `--scale`
+  font counter-scaling freeze at first paint whenever the host is not
+  blockified by a parent (watch standalone was the visible case; inside
+  `.container > * {position: absolute}` the host is blockified and the
+  host observation works).
 
 ### Radial label model (design language)
 
