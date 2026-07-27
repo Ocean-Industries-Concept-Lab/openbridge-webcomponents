@@ -15,6 +15,8 @@ import {SetpointBundle} from '../../svghelpers/setpoint-bundle.js';
 import '../watch/watch.js';
 import {
   OUTER_RING_RADIUS,
+  WatchCircleType,
+  innerRingRadiusFor,
   type WatchBarArea,
   type WatchNeedle,
 } from '../watch/watch.js';
@@ -31,6 +33,8 @@ export enum TopViewPropulsionType {
 const FULL_CIRCLE_END_ANGLE = 359.999;
 const LOADING_ARC_RADIUS = (OUTER_RING_RADIUS + 320 / 2) / 2;
 const PROPELLER_SCALE = 224 / 160;
+const SECONDARY_ARC_RADIUS = innerRingRadiusFor(WatchCircleType.double);
+const SECONDARY_NUB_LENGTH = 8;
 
 function percentToAngle(value: number): number {
   if (!Number.isFinite(value)) {
@@ -57,9 +61,12 @@ function arcPath(radius: number, startDeg: number, endDeg: number): string {
  * ## Features / Variants
  * - `power` type: signed percent value shown as a tinted arc on the inner
  *   track from the thick zero line, with a needle at the arc end.
+ * - `pitch-rpm` type: rpm on the primary track (same rendering as power)
+ *   plus pitch as a thin secondary arc at the track's inner edge with its
+ *   own zero mark and end nub.
  * - Interchangeable center propeller art (`PropellerImage`).
  * - Full setpoint support (marker, adjustment preview, at-setpoint states)
- *   for the power axis.
+ *   for the primary axis (power or rpm).
  * - Loading progress arc on the outer ring while `state` is `loading`.
  *
  * ## Usage Guidelines
@@ -74,24 +81,57 @@ export class ObcTopViewPropulsion extends LitElement {
   @property({type: String}) type: TopViewPropulsionType =
     TopViewPropulsionType.power;
 
-  /** Signed power in percent: 0 at the top, positive clockwise, ±100% = ±180°. */
+  /**
+   * Signed power in percent: 0 at the top, positive clockwise, ±100% = ±180°.
+   * @availableWhen type==power
+   */
   @property({type: Number}) power = 0;
+  /** @availableWhen type==power */
   @property({type: Number}) powerSetpoint: number | undefined;
-  /** @availableWhen powerSetpoint!=undefined */
+  /** @availableWhen type==power && powerSetpoint!=undefined */
   @property({type: Number}) newPowerSetpoint: number | undefined;
-  /** @availableWhen powerSetpoint!=undefined && autoAtPowerSetpoint==false */
+  /** @availableWhen type==power && powerSetpoint!=undefined && autoAtPowerSetpoint==false */
   @property({type: Boolean}) atPowerSetpoint = false;
-  /** @availableWhen powerSetpoint!=undefined */
+  /** @availableWhen type==power && powerSetpoint!=undefined */
   @property({type: Number}) powerSetpointAtZeroDeadband = 0.1;
-  /** @availableWhen powerSetpoint!=undefined */
+  /** @availableWhen type==power && powerSetpoint!=undefined */
   @property({type: Boolean}) powerSetpointOverride = false;
-  /** @availableWhen powerSetpoint!=undefined */
+  /** @availableWhen type==power && powerSetpoint!=undefined */
   @property({type: Boolean, attribute: false}) autoAtPowerSetpoint = true;
-  /** @availableWhen powerSetpoint!=undefined && autoAtPowerSetpoint==true */
+  /** @availableWhen type==power && powerSetpoint!=undefined && autoAtPowerSetpoint==true */
   @property({type: Number}) autoAtPowerSetpointDeadband = 1;
-  /** @availableWhen powerSetpoint!=undefined */
+
+  /**
+   * Signed rpm in percent of the maximum: 0 at the top, positive clockwise,
+   * ±100% = ±180°. Shown on the primary track.
+   * @availableWhen type==pitchRpm
+   */
+  @property({type: Number}) rpm = 0;
+  /** @availableWhen type==pitchRpm */
+  @property({type: Number}) rpmSetpoint: number | undefined;
+  /** @availableWhen type==pitchRpm && rpmSetpoint!=undefined */
+  @property({type: Number}) newRpmSetpoint: number | undefined;
+  /** @availableWhen type==pitchRpm && rpmSetpoint!=undefined && autoAtRpmSetpoint==false */
+  @property({type: Boolean}) atRpmSetpoint = false;
+  /** @availableWhen type==pitchRpm && rpmSetpoint!=undefined */
+  @property({type: Number}) rpmSetpointAtZeroDeadband = 0.1;
+  /** @availableWhen type==pitchRpm && rpmSetpoint!=undefined */
+  @property({type: Boolean}) rpmSetpointOverride = false;
+  /** @availableWhen type==pitchRpm && rpmSetpoint!=undefined */
+  @property({type: Boolean, attribute: false}) autoAtRpmSetpoint = true;
+  /** @availableWhen type==pitchRpm && rpmSetpoint!=undefined && autoAtRpmSetpoint==true */
+  @property({type: Number}) autoAtRpmSetpointDeadband = 1;
+
+  /**
+   * Signed pitch in percent: 0 at the top, positive clockwise, ±100% = ±180°.
+   * Shown as the thin secondary arc.
+   * @availableWhen type==pitchRpm
+   */
+  @property({type: Number}) pitch = 0;
+
+  /** @availableWhen powerSetpoint!=undefined || rpmSetpoint!=undefined */
   @property({type: Boolean}) touching = false;
-  /** @availableWhen powerSetpoint!=undefined */
+  /** @availableWhen powerSetpoint!=undefined || rpmSetpoint!=undefined */
   @property({type: Boolean}) animateSetpoint = false;
 
   @property({type: String}) state: InstrumentState = InstrumentState.active;
@@ -143,6 +183,11 @@ export class ObcTopViewPropulsion extends LitElement {
     defaultZeroDeadband: 0.1,
     onAnimationEnd: () => this.requestUpdate(),
   });
+  private _rpmSp = new SetpointBundle({
+    defaultDeadband: 1,
+    defaultZeroDeadband: 0.1,
+    onAnimationEnd: () => this.requestUpdate(),
+  });
 
   private _frame: RadialFrame | undefined;
   private _hostSizePinned = false;
@@ -166,6 +211,49 @@ export class ObcTopViewPropulsion extends LitElement {
       setpointOverride: this.powerSetpointOverride,
       animateSetpoint: this.animateSetpoint,
     });
+    this._rpmSp.sync({
+      setpoint: this.rpmSetpoint,
+      newSetpoint: this.newRpmSetpoint,
+      atSetpoint: this.atRpmSetpoint,
+      touching: this.touching,
+      autoAtSetpoint: this.autoAtRpmSetpoint,
+      autoAtSetpointDeadband: this.autoAtRpmSetpointDeadband,
+      setpointAtZeroDeadband: this.rpmSetpointAtZeroDeadband,
+      setpointOverride: this.rpmSetpointOverride,
+      animateSetpoint: this.animateSetpoint,
+    });
+  }
+
+  private get isPitchRpm(): boolean {
+    return this.type === TopViewPropulsionType.pitchRpm;
+  }
+
+  private get primaryValue(): number {
+    return this.isPitchRpm ? this.rpm : this.power;
+  }
+
+  private get primarySp(): SetpointBundle {
+    return this.isPitchRpm ? this._rpmSp : this._powerSp;
+  }
+
+  private get primarySetpoint(): number | undefined {
+    return this.isPitchRpm ? this.rpmSetpoint : this.powerSetpoint;
+  }
+
+  private get primaryNewSetpoint(): number | undefined {
+    return this.isPitchRpm ? this.newRpmSetpoint : this.newPowerSetpoint;
+  }
+
+  private get primaryZeroDeadband(): number {
+    return this.isPitchRpm
+      ? this.rpmSetpointAtZeroDeadband
+      : this.powerSetpointAtZeroDeadband;
+  }
+
+  private get primarySetpointOverride(): boolean {
+    return this.isPitchRpm
+      ? this.rpmSetpointOverride
+      : this.powerSetpointOverride;
   }
 
   override updated(changed: PropertyValues): void {
@@ -180,6 +268,7 @@ export class ObcTopViewPropulsion extends LitElement {
   override disconnectedCallback(): void {
     super.disconnectedCallback();
     this._powerSp.dispose();
+    this._rpmSp.dispose();
   }
 
   private get isActive(): boolean {
@@ -246,7 +335,7 @@ export class ObcTopViewPropulsion extends LitElement {
         fillColor: 'var(--instrument-frame-secondary-color)',
       },
     ];
-    const valueAngle = percentToAngle(this.power);
+    const valueAngle = percentToAngle(this.primaryValue);
     if (this.isActive && Math.abs(valueAngle) > 0.1) {
       areas.push({
         startAngle: Math.min(0, valueAngle),
@@ -272,11 +361,57 @@ export class ObcTopViewPropulsion extends LitElement {
         : 'var(--instrument-regular-tertiary-color)';
     return [
       {
-        angle: percentToAngle(this.power),
+        angle: percentToAngle(this.primaryValue),
         fillColor: fill,
         strokeColor: stroke,
       },
     ];
+  }
+
+  private get secondaryColor(): string {
+    if (!this.isActive) {
+      return 'var(--instrument-frame-tertiary-color)';
+    }
+    return this.isEnhanced
+      ? 'var(--instrument-enhanced-secondary-color)'
+      : 'var(--instrument-regular-secondary-color)';
+  }
+
+  private renderSecondaryArc() {
+    if (!this.isPitchRpm) {
+      return nothing;
+    }
+    const r = SECONDARY_ARC_RADIUS;
+    const zeroMark = svg`<line
+      x1="0" y1=${-r - SECONDARY_NUB_LENGTH / 2}
+      x2="0" y2=${-r + SECONDARY_NUB_LENGTH / 2}
+      stroke=${this.secondaryColor}
+      stroke-width="8"
+      stroke-linecap="round"
+    ></line>`;
+    const pitchAngle = percentToAngle(this.pitch);
+    if (!this.isActive || Math.abs(pitchAngle) < 0.5) {
+      return svg`${zeroMark}`;
+    }
+    const nub = svg`<line
+      x1="0" y1=${-r + SECONDARY_NUB_LENGTH / 2}
+      x2="0" y2=${-r - SECONDARY_NUB_LENGTH / 2}
+      transform="rotate(${pitchAngle})"
+      stroke=${this.secondaryColor}
+      stroke-width="8"
+      stroke-linecap="round"
+    ></line>`;
+    return svg`
+      ${zeroMark}
+      <path
+        d=${arcPath(r, Math.min(0, pitchAngle), Math.max(0, pitchAngle))}
+        fill="none"
+        stroke=${this.secondaryColor}
+        stroke-width="4"
+        stroke-linecap="round"
+      ></path>
+      ${nub}
+    `;
   }
 
   private renderLoadingArc() {
@@ -321,12 +456,12 @@ export class ObcTopViewPropulsion extends LitElement {
       : tickmarks;
 
     const setpointAngle =
-      this.powerSetpoint !== undefined
-        ? percentToAngle(this.powerSetpoint)
+      this.primarySetpoint !== undefined
+        ? percentToAngle(this.primarySetpoint)
         : undefined;
     const newSetpointAngle =
-      this.newPowerSetpoint !== undefined
-        ? percentToAngle(this.newPowerSetpoint)
+      this.primaryNewSetpoint !== undefined
+        ? percentToAngle(this.primaryNewSetpoint)
         : undefined;
 
     return html`
@@ -341,15 +476,18 @@ export class ObcTopViewPropulsion extends LitElement {
           .needles=${this.getNeedles()}
           .angleSetpoint=${setpointAngle}
           .newAngleSetpoint=${newSetpointAngle}
-          .atAngleSetpoint=${this._powerSp.computeAtSetpoint(this.power)}
-          .angleSetpointAtZeroDeadband=${this.powerSetpointAtZeroDeadband * 1.8}
-          .setpointOverride=${this.powerSetpointOverride}
+          .atAngleSetpoint=${this.primarySp.computeAtSetpoint(
+            this.primaryValue
+          )}
+          .angleSetpointAtZeroDeadband=${this.primaryZeroDeadband * 1.8}
+          .setpointOverride=${this.primarySetpointOverride}
           .animateSetpoint=${this.animateSetpoint}
           .tickmarksInside=${this.tickmarksInside}
           .tickmarkStyle=${this.tickmarkStyle}
         ></obc-watch>
         <svg viewBox=${frame.viewBox} xmlns="http://www.w3.org/2000/svg">
-          ${this.renderLoadingArc()} ${this.renderPropeller()}
+          ${this.renderLoadingArc()} ${this.renderSecondaryArc()}
+          ${this.renderPropeller()}
         </svg>
       </div>
     `;
