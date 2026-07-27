@@ -382,35 +382,39 @@ export class ObcTopViewPropulsion extends LitElement {
       return nothing;
     }
     const r = SECONDARY_ARC_RADIUS;
-    const zeroMark = svg`<line
-      x1="0" y1=${-r - SECONDARY_NUB_LENGTH / 2}
-      x2="0" y2=${-r + SECONDARY_NUB_LENGTH / 2}
-      stroke=${this.secondaryColor}
-      stroke-width="8"
-      stroke-linecap="round"
-    ></line>`;
+    const track = svg`<circle
+      r=${r}
+      fill="none"
+      stroke="var(--instrument-frame-tertiary-color)"
+      stroke-width="1"
+      vector-effect="non-scaling-stroke"
+    ></circle>`;
     const pitchAngle = percentToAngle(this.pitch);
     if (!this.isActive || Math.abs(pitchAngle) < 0.5) {
-      return svg`${zeroMark}`;
+      return svg`
+        ${track}
+        <line
+          x1="0" y1=${-r - SECONDARY_NUB_LENGTH / 2}
+          x2="0" y2=${-r + SECONDARY_NUB_LENGTH / 2}
+          stroke=${this.secondaryColor}
+          stroke-width="4"
+          stroke-linecap="round"
+        ></line>
+      `;
     }
-    const nub = svg`<line
-      x1="0" y1=${-r + SECONDARY_NUB_LENGTH / 2}
-      x2="0" y2=${-r - SECONDARY_NUB_LENGTH / 2}
-      transform="rotate(${pitchAngle})"
-      stroke=${this.secondaryColor}
-      stroke-width="8"
-      stroke-linecap="round"
-    ></line>`;
+    const toRad = ((pitchAngle - 90) * Math.PI) / 180;
+    const endX = r * Math.cos(toRad);
+    const endY = r * Math.sin(toRad);
     return svg`
-      ${zeroMark}
+      ${track}
       <path
-        d=${arcPath(r, Math.min(0, pitchAngle), Math.max(0, pitchAngle))}
+        d=${arcPath(r, 0, pitchAngle)}
         fill="none"
         stroke=${this.secondaryColor}
         stroke-width="4"
-        stroke-linecap="round"
+        stroke-linecap="butt"
       ></path>
-      ${nub}
+      <circle cx=${endX} cy=${endY} r="2" fill=${this.secondaryColor}></circle>
     `;
   }
 
