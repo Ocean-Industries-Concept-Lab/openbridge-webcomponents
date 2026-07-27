@@ -76,9 +76,9 @@ export function renderSpeedBar(
 /** Thin axis line through/parallel to the center, tick-mark tertiary color. */
 export function renderAxisLine(
   orientation: 'h' | 'v',
-  offset: number
+  offset: number,
+  half: number = AXIS_LINE_HALF
 ): SVGTemplateResult {
-  const half = AXIS_LINE_HALF;
   return orientation === 'h'
     ? svg`<line x1=${-half} y1=${offset} x2=${half} y2=${offset} stroke="var(--instrument-tick-mark-tertiary-color)" stroke-linecap="round" vector-effect="non-scaling-stroke"></line>`
     : svg`<line x1=${offset} y1=${-half} x2=${offset} y2=${half} stroke="var(--instrument-tick-mark-tertiary-color)" stroke-linecap="round" vector-effect="non-scaling-stroke"></line>`;

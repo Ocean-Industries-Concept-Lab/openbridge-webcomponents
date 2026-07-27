@@ -3,7 +3,12 @@ import {property} from 'lit/decorators.js';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import {customElement} from '../../decorator.js';
 import componentStyle from './speed-directions.css?inline';
-import {VesselImage, vesselImages, WatchCircleType} from '../watch/watch.js';
+import {
+  VesselImage,
+  vesselImages,
+  WatchCircleType,
+  innerRingRadiusFor,
+} from '../watch/watch.js';
 import {Tickmark, TickmarkType} from '../watch/tickmark.js';
 import {rect} from '../../svghelpers/rectangular.js';
 import {
@@ -22,6 +27,7 @@ import {
   VESSEL_CENTER_Y,
   FLAT_VIEWBOX,
   FRAME_HALF,
+  AXIS_LINE_HALF,
 } from './speed-directions-geometry.js';
 import {
   renderSpeedChevrons,
@@ -222,16 +228,16 @@ export class ObcSpeedDirections extends LitElement {
     });
   }
 
-  private renderAxisLines() {
+  private renderAxisLines(half: number) {
     if (this.frameStyle === SpeedDirectionsFrameStyle.standalone) {
       return nothing;
     }
-    const lines = [renderAxisLine('v', 0)];
+    const lines = [renderAxisLine('v', 0, half)];
     if (this.isLongLat) {
-      lines.push(renderAxisLine('h', 0));
+      lines.push(renderAxisLine('h', 0, half));
     } else {
-      lines.push(renderAxisLine('h', -ATHWART_AXIS_OFFSET));
-      lines.push(renderAxisLine('h', ATHWART_AXIS_OFFSET));
+      lines.push(renderAxisLine('h', -ATHWART_AXIS_OFFSET, half));
+      lines.push(renderAxisLine('h', ATHWART_AXIS_OFFSET, half));
     }
     return lines;
   }
@@ -242,6 +248,7 @@ export class ObcSpeedDirections extends LitElement {
       labelWidthPx: NORTH_ARROW_WIDTH_PX,
       containerPx: measureContainerPx(this),
     });
+    const discRadius = innerRingRadiusFor(WatchCircleType.single);
     return html`<div class="container">
       <obc-watch
         .arcFrame=${frame}
@@ -255,8 +262,11 @@ export class ObcSpeedDirections extends LitElement {
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <circle r="160" fill="var(--instrument-frame-secondary-color)"></circle>
-        ${this.renderAxisLines()} ${this.renderContent()}
+        <circle
+          r=${discRadius}
+          fill="var(--instrument-frame-secondary-color)"
+        ></circle>
+        ${this.renderAxisLines(discRadius)} ${this.renderContent()}
       </svg>
     </div>`;
   }
@@ -271,7 +281,8 @@ export class ObcSpeedDirections extends LitElement {
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        ${this.renderFrame()} ${this.renderAxisLines()} ${this.renderContent()}
+        ${this.renderFrame()} ${this.renderAxisLines(AXIS_LINE_HALF)}
+        ${this.renderContent()}
       </svg>
     </div>`;
   }
