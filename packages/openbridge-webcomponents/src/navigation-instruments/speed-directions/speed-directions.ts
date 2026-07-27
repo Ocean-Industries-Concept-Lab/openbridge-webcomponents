@@ -157,7 +157,7 @@ export class ObcSpeedDirections extends LitElement {
         : VesselImage.genericTop
       : this.vesselImage;
     const scale = standalone && !bars ? 2 : 1;
-    return svg`<g class=${scale === 2 ? 'vessel-upscaled' : 'vessel'} transform="translate(0 ${VESSEL_CENTER_Y}) scale(${scale}) translate(-80 -80)">${vesselImages[image]}</g>`;
+    return svg`<g transform="translate(0 ${VESSEL_CENTER_Y}) scale(${scale}) translate(-80 -80)">${vesselImages[image]}</g>`;
   }
 
   private renderContent() {

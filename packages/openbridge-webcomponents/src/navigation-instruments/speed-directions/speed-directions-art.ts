@@ -32,6 +32,16 @@ function chevronBands(count: number, tinted: boolean): SVGTemplateResult[] {
   return bands;
 }
 
+/* Bar-tip icons are top-anchored in their box (Figma "speed-arrows-low/
+   medium" 48-box assets): the topmost band straddles the bar tip. */
+function tipChevronBands(count: number): SVGTemplateResult[] {
+  const bands: SVGTemplateResult[] = [];
+  for (let i = 2; i > 2 - count; i--) {
+    bands.push(renderChevronBand(CHEVRON_PATHS[i], ACTIVE_FILL, ART_STROKE));
+  }
+  return bands;
+}
+
 /** Chevron stack in a placement cell; the 96-box art is scaled to the cell. */
 export function renderSpeedChevrons(
   cell: CellSpec,
@@ -59,7 +69,7 @@ export function renderSpeedBar(
   const chevronScale = 48 / 96;
   return svg`<g transform="translate(${originX} ${originY}) rotate(${rotationDeg})">
     <rect x=${-BAR_WIDTH / 2} y=${-lengthUnits} width=${BAR_WIDTH} height=${lengthUnits} fill=${BAR_FILL} stroke=${ART_STROKE} vector-effect="non-scaling-stroke" stroke-linecap="square"></rect>
-    <g transform="translate(-24 ${-lengthUnits - 12}) scale(${chevronScale})">${chevronBands(tipChevrons, false)}</g>
+    <g transform="translate(-24 ${-lengthUnits - 12}) scale(${chevronScale})">${tipChevronBands(tipChevrons)}</g>
   </g>`;
 }
 

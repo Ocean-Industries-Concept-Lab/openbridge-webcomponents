@@ -50,3 +50,12 @@ export const LongLatArrowsStandalone: Story = {
     speedAthwartKnots: 0.8,
   },
 };
+
+export const AlongAthwartBarsStandalone: Story = {
+  args: {
+    type: SpeedDirectionsType.alongAthwartBars,
+    speedAlongKnots: 6.5,
+    speedAthwartBowKnots: 0.7,
+    speedAthwartSternKnots: -0.7,
+  },
+};

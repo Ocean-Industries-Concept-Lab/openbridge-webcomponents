@@ -17,10 +17,3 @@
   width: 100%;
   height: 100%;
 }
-
-/* The upscaled simplified vessel would double its stroke widths; counter it
-   so strokes stay at 1 canvas unit like the rest of the artwork. */
-.vessel-upscaled path,
-.vessel-upscaled rect {
-  stroke-width: 0.5px;
-}
