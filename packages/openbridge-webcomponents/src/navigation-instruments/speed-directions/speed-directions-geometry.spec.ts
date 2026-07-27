@@ -5,8 +5,20 @@ import {
   speedSteps,
   barLengthUnits,
   chevronCell,
+  chordHalfLength,
   BAR_MAX_LENGTH,
 } from './speed-directions-geometry.js';
+
+describe('chordHalfLength', () => {
+  it('is the radius at center and shrinks toward the edge', () => {
+    expect(chordHalfLength(160, 0)).toBe(160);
+    expect(chordHalfLength(160, 48)).toBeCloseTo(
+      Math.sqrt(160 * 160 - 48 * 48)
+    );
+    expect(chordHalfLength(160, 160)).toBe(0);
+    expect(chordHalfLength(160, 200)).toBe(0);
+  });
+});
 
 describe('speedSteps', () => {
   it('maps knots to 0-3 chevrons via ceil(|v|/step)', () => {

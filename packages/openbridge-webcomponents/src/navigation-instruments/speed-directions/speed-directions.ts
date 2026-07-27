@@ -28,6 +28,7 @@ import {
   FLAT_VIEWBOX,
   FRAME_HALF,
   AXIS_LINE_HALF,
+  chordHalfLength,
 } from './speed-directions-geometry.js';
 import {
   renderSpeedChevrons,
@@ -228,16 +229,20 @@ export class ObcSpeedDirections extends LitElement {
     });
   }
 
-  private renderAxisLines(half: number) {
+  private renderAxisLines(halfAt: (offset: number) => number) {
     if (this.frameStyle === SpeedDirectionsFrameStyle.standalone) {
       return nothing;
     }
-    const lines = [renderAxisLine('v', 0, half)];
+    const lines = [renderAxisLine('v', 0, halfAt(0))];
     if (this.isLongLat) {
-      lines.push(renderAxisLine('h', 0, half));
+      lines.push(renderAxisLine('h', 0, halfAt(0)));
     } else {
-      lines.push(renderAxisLine('h', -ATHWART_AXIS_OFFSET, half));
-      lines.push(renderAxisLine('h', ATHWART_AXIS_OFFSET, half));
+      lines.push(
+        renderAxisLine('h', -ATHWART_AXIS_OFFSET, halfAt(-ATHWART_AXIS_OFFSET))
+      );
+      lines.push(
+        renderAxisLine('h', ATHWART_AXIS_OFFSET, halfAt(ATHWART_AXIS_OFFSET))
+      );
     }
     return lines;
   }
@@ -266,7 +271,8 @@ export class ObcSpeedDirections extends LitElement {
           r=${discRadius}
           fill="var(--instrument-frame-secondary-color)"
         ></circle>
-        ${this.renderAxisLines(discRadius)} ${this.renderContent()}
+        ${this.renderAxisLines((offset) => chordHalfLength(discRadius, offset))}
+        ${this.renderContent()}
       </svg>
     </div>`;
   }
@@ -281,7 +287,7 @@ export class ObcSpeedDirections extends LitElement {
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        ${this.renderFrame()} ${this.renderAxisLines(AXIS_LINE_HALF)}
+        ${this.renderFrame()} ${this.renderAxisLines(() => AXIS_LINE_HALF)}
         ${this.renderContent()}
       </svg>
     </div>`;

@@ -46,6 +46,11 @@ export function speedSteps(
     | 3;
 }
 
+/** Half-length of a circle chord drawn at the given offset from center. */
+export function chordHalfLength(radius: number, offset: number): number {
+  return Math.sqrt(Math.max(radius * radius - offset * offset, 0));
+}
+
 export function barLengthUnits(speedKnots: number, maxKnots: number): number {
   if (
     !Number.isFinite(speedKnots) ||
