@@ -33,8 +33,19 @@ export enum TopViewPropulsionType {
 const FULL_CIRCLE_END_ANGLE = 359.999;
 const LOADING_ARC_RADIUS = (OUTER_RING_RADIUS + 320 / 2) / 2;
 const PROPELLER_SCALE = 224 / 160;
-const SECONDARY_ARC_RADIUS = innerRingRadiusFor(WatchCircleType.double);
-const SECONDARY_NUB_LENGTH = 8;
+/* pitch-rpm subdivision of the 112..160 band (Figma: divider outer edge at
+   264 diameter): secondary pitch lane 112..120, white divider 120..128,
+   primary sub-band 128..160. */
+const BAND_INNER_RADIUS = innerRingRadiusFor(WatchCircleType.double);
+const BAND_OUTER_RADIUS = innerRingRadiusFor(WatchCircleType.single);
+const SECONDARY_LINE_WIDTH = 8;
+const DIVIDER_WIDTH = 8;
+const SECONDARY_LANE_RADIUS = BAND_INNER_RADIUS + SECONDARY_LINE_WIDTH / 2;
+const DIVIDER_RADIUS =
+  BAND_INNER_RADIUS + SECONDARY_LINE_WIDTH + DIVIDER_WIDTH / 2;
+const PRIMARY_SUBBAND_INNER_RADIUS =
+  BAND_INNER_RADIUS + SECONDARY_LINE_WIDTH + DIVIDER_WIDTH;
+const RPM_NEEDLE_LENGTH = BAND_OUTER_RADIUS - PRIMARY_SUBBAND_INNER_RADIUS;
 
 function percentToAngle(value: number): number {
   if (!Number.isFinite(value)) {
@@ -343,6 +354,7 @@ export class ObcTopViewPropulsion extends LitElement {
         fillColor: this.isEnhanced
           ? 'var(--instrument-enhanced-tertiary-color)'
           : 'var(--instrument-regular-tertiary-color)',
+        innerRadius: this.isPitchRpm ? PRIMARY_SUBBAND_INNER_RADIUS : undefined,
       });
     }
     return areas;
@@ -364,6 +376,7 @@ export class ObcTopViewPropulsion extends LitElement {
         angle: percentToAngle(this.primaryValue),
         fillColor: fill,
         strokeColor: stroke,
+        length: this.isPitchRpm ? RPM_NEEDLE_LENGTH : undefined,
       },
     ];
   }
@@ -381,40 +394,41 @@ export class ObcTopViewPropulsion extends LitElement {
     if (!this.isPitchRpm) {
       return nothing;
     }
-    const r = SECONDARY_ARC_RADIUS;
-    const track = svg`<circle
-      r=${r}
+    const r = SECONDARY_LANE_RADIUS;
+    const divider = svg`<circle
+      r=${DIVIDER_RADIUS}
       fill="none"
-      stroke="var(--instrument-frame-tertiary-color)"
-      stroke-width="1"
-      vector-effect="non-scaling-stroke"
+      stroke="var(--instrument-frame-primary-color)"
+      stroke-width=${DIVIDER_WIDTH}
     ></circle>`;
     const pitchAngle = percentToAngle(this.pitch);
     if (!this.isActive || Math.abs(pitchAngle) < 0.5) {
       return svg`
-        ${track}
-        <line
-          x1="0" y1=${-r - SECONDARY_NUB_LENGTH / 2}
-          x2="0" y2=${-r + SECONDARY_NUB_LENGTH / 2}
-          stroke=${this.secondaryColor}
-          stroke-width="4"
-          stroke-linecap="round"
-        ></line>
+        ${divider}
+        <circle
+          cx="0" cy=${-r}
+          r=${SECONDARY_LINE_WIDTH / 2}
+          fill=${this.secondaryColor}
+        ></circle>
       `;
     }
     const toRad = ((pitchAngle - 90) * Math.PI) / 180;
     const endX = r * Math.cos(toRad);
     const endY = r * Math.sin(toRad);
     return svg`
-      ${track}
+      ${divider}
       <path
         d=${arcPath(r, 0, pitchAngle)}
         fill="none"
         stroke=${this.secondaryColor}
-        stroke-width="4"
+        stroke-width=${SECONDARY_LINE_WIDTH}
         stroke-linecap="butt"
       ></path>
-      <circle cx=${endX} cy=${endY} r="2" fill=${this.secondaryColor}></circle>
+      <circle
+        cx=${endX} cy=${endY}
+        r=${SECONDARY_LINE_WIDTH / 2}
+        fill=${this.secondaryColor}
+      ></circle>
     `;
   }
 

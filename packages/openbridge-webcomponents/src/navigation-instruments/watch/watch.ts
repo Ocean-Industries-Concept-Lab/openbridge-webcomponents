@@ -82,12 +82,18 @@ export interface WatchBarArea {
   startAngle: number;
   endAngle: number;
   fillColor: string;
+  /** Outer band radius override; defaults to the second ring (160). */
+  outerRadius?: number;
+  /** Inner band radius override; defaults to the third ring (112). */
+  innerRadius?: number;
 }
 
 export interface WatchNeedle {
   angle: number;
   fillColor: string;
   strokeColor: string;
+  /** Radial length of the needle pill; defaults to 48 (the full band). */
+  length?: number;
 }
 
 export interface WatchVessel {
@@ -683,14 +689,14 @@ export class ObcWatch extends LitElement {
       const startAngle = Math.min(bar.startAngle, bar.endAngle);
       const endAngle = Math.max(bar.startAngle, bar.endAngle);
       const arc = roundedArch({
-        r: this._bandRadius(RING3_RADIUS),
-        R: this._bandRadius(RING2_RADIUS),
+        r: this._bandRadius(bar.innerRadius ?? RING3_RADIUS),
+        R: this._bandRadius(bar.outerRadius ?? RING2_RADIUS),
         startAngle: startAngle,
         endAngle: endAngle,
         roundInsideCut: false,
         roundOutsideCut: false,
       });
-      const barMaskR = RING2_RADIUS + this._rOff + 40;
+      const barMaskR = (bar.outerRadius ?? RING2_RADIUS) + this._rOff + 40;
       // The mask is a sector to cut out the stroke on the start and end of the bar
       const mask = svg`<mask id="barMask-${index}">
         <rect x="${-barMaskR}" y="${-barMaskR}" width="${barMaskR * 2}" height="${barMaskR * 2}" fill="black" />
@@ -725,10 +731,10 @@ export class ObcWatch extends LitElement {
     }
     return this.needles.map((needle) => {
       return svg`
-        <rect 
-          transform="rotate(${needle.angle})" 
-          x="-4" y="${-this._bandRadius(RING2_RADIUS)}" width="8" height="48" rx="4"
-          fill=${needle.fillColor} 
+        <rect
+          transform="rotate(${needle.angle})"
+          x="-4" y="${-this._bandRadius(RING2_RADIUS)}" width="8" height="${needle.length ?? 48}" rx="4"
+          fill=${needle.fillColor}
           stroke=${needle.strokeColor}
           stroke-width="1"
           vector-effect="non-scaling-stroke"
