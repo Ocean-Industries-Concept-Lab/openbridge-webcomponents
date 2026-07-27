@@ -31,6 +31,11 @@ import {
 
 export {SpeedDirectionsType, SpeedDirectionsFrameStyle};
 
+const COMPASS_TICKMARKS: Tickmark[] = [45, 135, 225, 315].map((angle) => ({
+  angle,
+  type: TickmarkType.main,
+}));
+
 /**
  * Speed Directions - all-in-one directional speed instrument showing a vessel
  * top view with speed indicators along the vessel axes.
@@ -51,11 +56,6 @@ export {SpeedDirectionsType, SpeedDirectionsFrameStyle};
  * @experimental The API of this component is under design review and may
  * change in a future release.
  */
-const COMPASS_TICKMARKS: Tickmark[] = [45, 135, 225, 315].map((angle) => ({
-  angle,
-  type: TickmarkType.main,
-}));
-
 @customElement('obc-speed-directions')
 export class ObcSpeedDirections extends LitElement {
   // @ts-expect-error TS6133: The controller ensures that the render
