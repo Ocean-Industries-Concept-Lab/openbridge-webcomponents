@@ -112,7 +112,12 @@ export function chevronCell(
   const rowSign = axis === 'athwartStern' ? 1 : axis === 'athwartBow' ? -1 : 0;
   return {
     cx: positive ? t.athwartCenter : -t.athwartCenter,
-    cy: rowSign === 0 ? -t.athwartRowY : rowSign * t.athwartRowY,
+    cy:
+      rowSign === 0
+        ? t.athwartRowY === 0
+          ? 0
+          : -t.athwartRowY
+        : rowSign * t.athwartRowY,
     size: t.size,
     rotationDeg: positive ? 90 : 270,
   };
