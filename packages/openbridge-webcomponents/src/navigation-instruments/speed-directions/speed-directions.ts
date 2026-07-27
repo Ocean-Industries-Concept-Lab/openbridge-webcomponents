@@ -1,9 +1,16 @@
 import {LitElement, html, svg, nothing, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
+import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import {customElement} from '../../decorator.js';
 import componentStyle from './speed-directions.css?inline';
-import {VesselImage, vesselImages} from '../watch/watch.js';
+import {VesselImage, vesselImages, WatchCircleType} from '../watch/watch.js';
+import {Tickmark, TickmarkType} from '../watch/tickmark.js';
 import {rect} from '../../svghelpers/rectangular.js';
+import {
+  computeRadialFrame,
+  measureContainerPx,
+  NORTH_ARROW_WIDTH_PX,
+} from '../../svghelpers/radial-frame.js';
 import {
   SpeedDirectionsType,
   SpeedDirectionsFrameStyle,
@@ -44,8 +51,17 @@ export {SpeedDirectionsType, SpeedDirectionsFrameStyle};
  * @experimental The API of this component is under design review and may
  * change in a future release.
  */
+const COMPASS_TICKMARKS: Tickmark[] = [45, 135, 225, 315].map((angle) => ({
+  angle,
+  type: TickmarkType.main,
+}));
+
 @customElement('obc-speed-directions')
 export class ObcSpeedDirections extends LitElement {
+  // @ts-expect-error TS6133: The controller ensures that the render
+  // function is called on resize of the element
+  private _resizeController = new ResizeController(this, {});
+
   @property({type: String})
   type: SpeedDirectionsType = SpeedDirectionsType.alongAthwartArrows;
 
@@ -220,7 +236,35 @@ export class ObcSpeedDirections extends LitElement {
     return lines;
   }
 
+  private renderCompass() {
+    const frame = computeRadialFrame({
+      basePadding: 72,
+      labelWidthPx: NORTH_ARROW_WIDTH_PX,
+      containerPx: measureContainerPx(this),
+    });
+    return html`<div class="container">
+      <obc-watch
+        .arcFrame=${frame}
+        .watchCircleType=${WatchCircleType.single}
+        .tickmarks=${COMPASS_TICKMARKS}
+        .showLabels=${false}
+        .northArrow=${!frame.labelsHidden}
+      ></obc-watch>
+      <svg
+        viewBox=${frame.viewBox}
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <circle r="160" fill="var(--instrument-frame-secondary-color)"></circle>
+        ${this.renderAxisLines()} ${this.renderContent()}
+      </svg>
+    </div>`;
+  }
+
   override render() {
+    if (this.frameStyle === SpeedDirectionsFrameStyle.compass) {
+      return this.renderCompass();
+    }
     return html`<div class="container">
       <svg
         viewBox=${FLAT_VIEWBOX}

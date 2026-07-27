@@ -87,3 +87,31 @@ export const AlongAthwartBarsFramed: Story = {
     speedAthwartSternKnots: -0.7,
   },
 };
+
+export const AlongAthwartArrowsCompass: Story = {
+  args: {
+    frameStyle: SpeedDirectionsFrameStyle.compass,
+    speedAlongKnots: 4.2,
+    speedAthwartBowKnots: 0.8,
+    speedAthwartSternKnots: -0.6,
+  },
+};
+
+export const LongLatArrowsCompass: Story = {
+  args: {
+    type: SpeedDirectionsType.longLatArrows,
+    frameStyle: SpeedDirectionsFrameStyle.compass,
+    speedAlongKnots: 4.2,
+    speedAthwartKnots: 0.8,
+  },
+};
+
+export const AlongAthwartBarsCompass: Story = {
+  args: {
+    type: SpeedDirectionsType.alongAthwartBars,
+    frameStyle: SpeedDirectionsFrameStyle.compass,
+    speedAlongKnots: 6.5,
+    speedAthwartBowKnots: 0.7,
+    speedAthwartSternKnots: -0.7,
+  },
+};
