@@ -263,8 +263,11 @@ export class ObcPitchRollYaw extends LitElement {
     if (this.type === PitchRollYawType.actualMotion) {
       return nothing;
     }
-    const extent = this.maxAvgYaw - this.minAvgYaw;
-    if (extent <= 0) {
+    let extent = this.maxAvgYaw - this.minAvgYaw;
+    if (extent < 0) {
+      extent += 360;
+    }
+    if (extent === 0) {
       return nothing;
     }
     const start = this.scalePoint(this.minAvgYaw);
