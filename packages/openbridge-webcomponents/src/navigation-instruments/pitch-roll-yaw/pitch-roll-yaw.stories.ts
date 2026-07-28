@@ -8,6 +8,7 @@ import './pitch-roll-yaw.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {Priority} from '../types.js';
 import {topVessels} from '../watch/vessels/storybook-helper.js';
+import {VesselImage} from '../watch/vessel.js';
 
 const historySamples: PitchRollSample[] = Array.from({length: 60}, (_, i) => {
   const t = i / 59;
@@ -93,6 +94,20 @@ export const HistoricalMotionEnhanced: Story = {
   args: {
     ...HistoricalMotion.args,
     priority: Priority.enhanced,
+  },
+};
+
+export const RovVessel: Story = {
+  args: {
+    ...ActualMotion.args,
+    vesselImage: VesselImage.rovTop,
+  },
+};
+
+export const DroneVessel: Story = {
+  args: {
+    ...ActualMotion.args,
+    vesselImage: VesselImage.droneMediumTop,
   },
 };
 
