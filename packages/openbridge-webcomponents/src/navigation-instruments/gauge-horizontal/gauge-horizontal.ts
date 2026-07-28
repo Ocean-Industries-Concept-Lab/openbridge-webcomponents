@@ -355,7 +355,10 @@ export class ObcGaugeHorizontal extends SetpointMixin(LitElement, {
     // In regular mode, only emit when layout-affecting properties change
     if (
       !this.fixedAspectRatio &&
-      (changed.has('side') || changed.has('showLabels'))
+      (changed.has('side') ||
+        changed.has('showLabels') ||
+        changed.has('setpoint') ||
+        changed.has('newSetpoint'))
     ) {
       this.reportDimensions();
     }
@@ -385,6 +388,10 @@ export class ObcGaugeHorizontal extends SetpointMixin(LitElement, {
       labelThickness: this.labelThickness,
       length: this.width,
       scaleType: this.scaleType,
+      hasSetpoint:
+        this.setpoint !== undefined ||
+        this.newSetpoint !== undefined ||
+        this.departingNewSetpoint !== undefined,
     });
 
     // Always report unscaled/reference dimensions.
