@@ -12,6 +12,7 @@ const meta: Meta<typeof ObcBus> = {
     size: BusSize.Small,
     variant: BusVariant.Regular,
     tint: false,
+    vertical: false,
   },
   argTypes: {
     size: {
@@ -36,6 +37,10 @@ export const MediumSize: Story = {
 
 export const Tint: Story = {
   args: {tint: true},
+};
+
+export const Vertical: Story = {
+  args: {vertical: true},
 };
 
 export const AllVariants: Story = {

@@ -7,6 +7,11 @@
   width: 200px;
 }
 
+:host([vertical]) {
+  width: auto;
+  height: 200px;
+}
+
 .bus {
   display: flex;
   align-items: center;
@@ -29,6 +34,19 @@
     border-radius: 6px;
 
     @mixin font-button;
+  }
+
+  &.vertical {
+    writing-mode: vertical-rl;
+    height: 100%;
+
+    &.size-small {
+      width: 16px;
+    }
+
+    &.size-medium {
+      width: 24px;
+    }
   }
 
   &.variant-regular {
