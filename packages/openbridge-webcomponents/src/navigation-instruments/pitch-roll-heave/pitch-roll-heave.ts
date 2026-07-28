@@ -73,6 +73,9 @@ const READOUT_CLEARANCE = 104;
  *   between the `regular` and `enhanced` palette.
  * - **Arc extents:** `pitchArcAngle` (default 30°) and `rollArcAngle`
  *   (default 45°) set each arc's half-extent.
+ * - **Vessel imagery:** `vesselImageSide`/`vesselImageFore` pick the centre
+ *   silhouettes (e.g. PSV or ROV) and `scaleForeImage` scales the fore image;
+ *   only rendered in the `single-scale` type.
  *
  * ## Usage Guidelines
  *
@@ -97,8 +100,20 @@ export class ObcPitchRollHeave extends LitElement {
   @property({type: Number}) maxTrendHeave = 0;
   /** Value range of the heave gauge; the scale spans `±heaveRange`. */
   @property({type: Number}) heaveRange = 10;
+  /**
+   * Vessel image shown from the fore (rotates with `roll`).
+   * @availableWhen type=='single-scale'
+   */
   @property({type: String}) vesselImageFore: VesselImage = VesselImage.psvFore;
+  /**
+   * Vessel image shown from the side (rotates with `pitch`).
+   * @availableWhen type=='single-scale'
+   */
   @property({type: String}) vesselImageSide: VesselImage = VesselImage.psvSide;
+  /**
+   * Scale factor for the fore vessel image, clamped to `0–2`.
+   * @availableWhen type=='single-scale'
+   */
   @property({type: Number}) scaleForeImage = 1;
   @property({type: Number}) maxPitchAdvice: number | undefined = undefined;
   @property({type: Number}) maxRollAdvice: number | undefined = undefined;
