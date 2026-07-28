@@ -10,7 +10,7 @@ import {
   innerRingRadiusFor,
   vesselImages,
 } from '../watch/watch.js';
-import {TickmarkType} from '../watch/tickmark.js';
+import {arcTickmarks, TickmarkType} from '../watch/tickmark.js';
 import {AdviceState, AdviceType, AngleAdviceRaw} from '../watch/advice.js';
 import {customElement} from '../../decorator.js';
 import {Priority} from '../types.js';
@@ -266,8 +266,6 @@ export class ObcPitchRoll extends LitElement {
    * unchanged.
    */
   private renderZoomedArcs(pitchReq: number, rollReq: number) {
-    const tickmarks = [{angle: 0, type: TickmarkType.main}];
-
     // ---- Per-axis zoom-fit frames (requested half-extents) -------------
     const ext = 48;
     const targetSize = (176 + ext) * 2;
@@ -425,6 +423,17 @@ export class ObcPitchRoll extends LitElement {
     const pitchAdvices = this.subAdvices('pitch', pitchClampedDeg);
     const rollAdvices = this.subAdvices('roll', rollClampedDeg);
 
+    // Ladders span the CLAMPED extent so ticks never fall outside the band
+    // that is actually drawn (or outside the sector clip below).
+    const pitchTickmarks = [
+      {angle: 0, type: TickmarkType.main},
+      ...arcTickmarks(0, pitchClampedDeg),
+    ];
+    const rollTickmarks = [
+      {angle: 0, type: TickmarkType.main},
+      ...arcTickmarks(0, rollClampedDeg),
+    ];
+
     // Clip each sub-watch to the angular sector actually covered by the
     // (possibly shortened) arc so the indicator pill and bar end-of-range
     // limit lines cannot leak past the visible band when the value falls
@@ -493,7 +502,8 @@ export class ObcPitchRoll extends LitElement {
       barAreas: typeof rollBars,
       needles: typeof rollNeedles,
       advices: AngleAdviceRaw[],
-      clipPath: string
+      clipPath: string,
+      tickmarks: typeof rollTickmarks
     ) => html`
       <obc-watch
         class="sub-watch"
@@ -518,7 +528,8 @@ export class ObcPitchRoll extends LitElement {
         rollBars,
         rollNeedles,
         rollAdvices,
-        rollClip
+        rollClip,
+        rollTickmarks
       )}
       ${subWatch(
         90,
@@ -527,7 +538,8 @@ export class ObcPitchRoll extends LitElement {
         pitchBars,
         pitchNeedles,
         pitchAdvices,
-        pitchClip
+        pitchClip,
+        pitchTickmarks
       )}
       ${subWatch(
         180,
@@ -536,7 +548,8 @@ export class ObcPitchRoll extends LitElement {
         rollBars,
         rollNeedles,
         rollAdvices,
-        rollClip
+        rollClip,
+        rollTickmarks
       )}
       ${subWatch(
         270,
@@ -545,7 +558,8 @@ export class ObcPitchRoll extends LitElement {
         pitchBars,
         pitchNeedles,
         pitchAdvices,
-        pitchClip
+        pitchClip,
+        pitchTickmarks
       )}
     `;
   }
@@ -657,6 +671,10 @@ export class ObcPitchRoll extends LitElement {
           {angle: 90, type: TickmarkType.main},
           {angle: 180, type: TickmarkType.main},
           {angle: 270, type: TickmarkType.main},
+          ...arcTickmarks(0, this.requestedRollArcAngle),
+          ...arcTickmarks(180, this.requestedRollArcAngle),
+          ...arcTickmarks(90, this.requestedPitchArcAngle),
+          ...arcTickmarks(270, this.requestedPitchArcAngle),
         ]}
         .advices=${this.advices}
       ></obc-watch>
