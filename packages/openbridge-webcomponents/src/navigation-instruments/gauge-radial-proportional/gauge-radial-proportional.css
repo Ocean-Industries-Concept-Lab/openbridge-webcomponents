@@ -1,0 +1,101 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* With a pinned face the host shrink-wraps the fixed-size dial, so rows of
+   pinned instruments can sit side by side in flex layouts. */
+:host([face-diameter]) {
+  width: fit-content;
+  height: fit-content;
+}
+
+.gauge-root {
+  position: relative;
+
+  /* The dial is the largest square that fits inside both the available width
+     and height of the host (no sector crops here, so the frame is always
+     square); leftover host space centers it. */
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  aspect-ratio: 1;
+  margin-left: auto;
+  margin-right: auto;
+  top: 50%;
+  transform: translateY(-50%);
+
+  &.face-pinned {
+    width: fit-content;
+    height: fit-content;
+    max-width: none;
+    max-height: none;
+    aspect-ratio: auto;
+    top: 0;
+    transform: none;
+  }
+
+  /* Medium priority: re-point the enhanced palette at the category/medium
+     color pair, so the band, needle, setpoint and readout all follow. */
+  &.priority-medium {
+    --instrument-enhanced-primary-color: var(--base-teal-500);
+    --instrument-enhanced-secondary-color: var(--base-teal-500);
+    --instrument-enhanced-tertiary-color: var(--base-teal-200);
+    --obc-readout-value-enhanced-color: var(--base-teal-500);
+  }
+}
+
+.container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.container > .layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.icon-anchor {
+  position: absolute;
+  left: 50%;
+  top: var(--icon-top, 36%);
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.readout-row {
+  position: absolute;
+  left: 50%;
+  top: var(--readout-top, 55%);
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 1;
+}
+
+.readout-divider {
+  width: 1px;
+  height: 48px;
+  background: var(--border-divider-color);
+}
+
+.gauge-name {
+  position: absolute;
+  left: 50%;
+  top: var(--name-top, 67%);
+  transform: translate(-50%, -50%);
+  @mixin font-overline;
+  color: var(--element-neutral-color);
+  white-space: nowrap;
+  z-index: 1;
+}
