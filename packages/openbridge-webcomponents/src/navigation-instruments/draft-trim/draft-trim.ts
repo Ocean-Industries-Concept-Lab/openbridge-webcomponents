@@ -114,7 +114,8 @@ export class ObcDraftTrim extends LitElement {
             vector-effect="non-scaling-stroke"
           />
           <g
-            style="transform: rotate(${this.trim}deg) scale(${vesselScale}) translate(-80px, -80px);"
+            style="transform: rotate(${this
+              .trim}deg) scale(${vesselScale}) translate(-80px, -80px);"
           >
             ${this.vesselImage ? vesselImages[this.vesselImage] : nothing}
           </g>
