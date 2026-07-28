@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {ObcHeave} from './heave.js';
+import {ObcHeave, ObcHeaveType} from './heave.js';
 import './heave.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {VesselImage} from '../watch/watch.js';
@@ -30,6 +30,7 @@ const meta: Meta<typeof ObcHeave> = {
       options: foreVessels,
     },
     priority: {control: 'select', options: Object.values(Priority)},
+    type: {control: 'select', options: Object.values(ObcHeaveType)},
   },
   decorators: [widthDecorator],
 } satisfies Meta<ObcHeave>;
@@ -56,6 +57,30 @@ export const Advice: Story = {
         type: AdviceType.caution,
         hinted: true,
       },
+      {min: 2, max: 10, type: AdviceType.caution, hinted: true},
+    ],
+  },
+};
+
+const barArgs = {
+  type: ObcHeaveType.bar,
+  width: 128,
+  height: 384,
+};
+
+export const Bar: Story = {
+  args: {...barArgs},
+};
+
+export const BarEnhanced: Story = {
+  args: {...barArgs, priority: Priority.enhanced},
+};
+
+export const BarAdvice: Story = {
+  args: {
+    ...barArgs,
+    advice: [
+      {min: -10, max: -2, type: AdviceType.caution, hinted: true},
       {min: 2, max: 10, type: AdviceType.caution, hinted: true},
     ],
   },
