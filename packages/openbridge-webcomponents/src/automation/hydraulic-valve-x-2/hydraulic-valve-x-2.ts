@@ -38,6 +38,8 @@ export enum HydraulicValveX2Type {
  *
  * ## Features / Variants
  * - `type` selects the port/position configuration: `2/2`, `3/2` or `4/2`.
+ * - `vertical` stacks the positions top to bottom and rotates the symbols to
+ *   match a vertical flow path.
  * - Controlled selection: clicking the option or pressing arrow keys fires
  *   `position-selected`; the application updates `selectedPosition` when the
  *   change is confirmed.

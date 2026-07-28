@@ -1,5 +1,6 @@
 import {LitElement, html, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
+import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
 import sharedStyle from '../shuffle-button/shuffle-button.css?inline';
 import componentStyle from './hydraulic-check-valve.css?inline';
@@ -28,9 +29,20 @@ export class ObcHydraulicCheckValve extends LitElement {
    */
   @property({type: String}) override ariaLabel = 'Check valve';
 
+  /**
+   * Rotates the symbol 90° counter-clockwise to match a vertical flow path.
+   *
+   * @default false
+   */
+  @property({type: Boolean}) vertical = false;
+
   override render() {
     return html`
-      <div class="shuffle" role="img" aria-label=${this.ariaLabel}>
+      <div
+        class=${classMap({shuffle: true, vertical: this.vertical})}
+        role="img"
+        aria-label=${this.ariaLabel}
+      >
         <div class="window">
           <div class="track"></div>
           <div class="thumb selected">

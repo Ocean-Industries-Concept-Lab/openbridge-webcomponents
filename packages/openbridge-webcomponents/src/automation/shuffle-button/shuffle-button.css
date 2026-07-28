@@ -11,6 +11,11 @@
   height: var(--shuffle-slot-size);
 }
 
+.shuffle.vertical {
+  width: var(--shuffle-slot-size);
+  height: calc(var(--_shuffle-slot-count) * var(--shuffle-slot-size));
+}
+
 .window {
   position: absolute;
   top: 0;
@@ -20,6 +25,13 @@
     calc(var(--_shuffle-window-offset) * var(--shuffle-slot-size))
   );
   transition: transform 100ms ease-out;
+}
+
+.shuffle.vertical .window {
+  flex-direction: column;
+  transform: translateY(
+    calc(var(--_shuffle-window-offset) * var(--shuffle-slot-size))
+  );
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -41,6 +53,17 @@
     0;
   border-radius: var(--global-border-radius-border-radius-base);
   box-sizing: border-box;
+}
+
+.shuffle.vertical .track {
+  inset: 0
+    calc(
+      (
+          var(--shuffle-slot-size) -
+            var(--global-size-spacing-visual-target-min)
+        ) /
+        2
+    );
 }
 
 .thumb {
@@ -83,9 +106,18 @@ button.thumb {
   color: var(--automation-device-tertiary-color);
 }
 
+.shuffle.vertical .visible-wrapper {
+  width: var(--global-size-spacing-visual-target-min);
+  height: 100%;
+}
+
 .icon-container {
   width: var(--global-size-spacing-icon-icon-size-regular);
   height: var(--global-size-spacing-icon-icon-size-regular);
+}
+
+.shuffle.vertical .icon-container {
+  transform: rotate(-90deg);
 }
 
 .icon-container > * {

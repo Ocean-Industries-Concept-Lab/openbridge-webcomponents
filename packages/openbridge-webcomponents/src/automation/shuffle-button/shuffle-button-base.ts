@@ -24,11 +24,11 @@ export interface PositionSelectedDetail {
 export type PositionSelectedEvent = CustomEvent<PositionSelectedDetail>;
 
 /**
- * Base class for "shuffle button" selectors: a horizontal control whose
- * selected thumb always occupies the fixed center slot of a (2·n−1)-slot row.
- * Option thumbs keep their logical order and redistribute to either side of
- * the selected thumb; empty spacer slots absorb the remaining width so the
- * total width never changes.
+ * Base class for "shuffle button" selectors: a control whose selected thumb
+ * always occupies the fixed center slot of a (2·n−1)-slot row (or column when
+ * `vertical`). Option thumbs keep their logical order and redistribute to
+ * either side of the selected thumb; empty spacer slots absorb the remaining
+ * length so the total size never changes.
  *
  * The control is controlled: clicking an option (or using arrow keys) only
  * fires `position-selected` — the host application decides when to update
@@ -58,6 +58,15 @@ export class ObcShuffleButtonBase extends LitElement {
   @property({type: Number}) selectedPosition = 1;
 
   /**
+   * Lays the control out vertically: positions stack top to bottom and the
+   * position symbols rotate 90° counter-clockwise to match a vertical flow
+   * path.
+   *
+   * @default false
+   */
+  @property({type: Boolean}) vertical = false;
+
+  /**
    * Accessible name for the radio group (the control is icon-only).
    * Concrete components override the default with a device-specific name.
    *
@@ -80,9 +89,10 @@ export class ObcShuffleButtonBase extends LitElement {
     const selected = clampPosition(count, this.selectedPosition);
     return html`
       <div
-        class="shuffle"
+        class=${classMap({shuffle: true, vertical: this.vertical})}
         role="radiogroup"
         aria-label=${this.ariaLabel}
+        aria-orientation=${this.vertical ? 'vertical' : 'horizontal'}
         style="--_shuffle-slot-count: ${shuffleSlotCount(
           count
         )}; --_shuffle-window-offset: ${shuffleWindowOffset(

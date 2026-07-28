@@ -14,6 +14,7 @@ const meta: Meta<typeof ObcHydraulicValve43> = {
   args: {
     type: HydraulicValve43Type.One,
     selectedPosition: 1,
+    vertical: false,
   },
   argTypes: {
     type: {
@@ -28,6 +29,7 @@ const meta: Meta<typeof ObcHydraulicValve43> = {
     <obc-hydraulic-valve-4-3
       type=${args.type}
       .selectedPosition=${args.selectedPosition}
+      ?vertical=${args.vertical}
       @position-selected=${(event: PositionSelectedEvent) => {
         (event.target as ObcHydraulicValve43).selectedPosition =
           event.detail.position;
@@ -63,4 +65,8 @@ export const PositionLeft: Story = {
 
 export const PositionRight: Story = {
   args: {selectedPosition: 2},
+};
+
+export const Vertical: Story = {
+  args: {vertical: true},
 };
