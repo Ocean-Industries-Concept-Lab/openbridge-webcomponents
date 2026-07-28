@@ -31,7 +31,7 @@ const meta: Meta<typeof ObcDraftTrim> = {
 export default meta;
 type Story = StoryObj<ObcDraftTrim>;
 
-export const Regular: Story = {
+export const Default: Story = {
   args: {},
 };
 

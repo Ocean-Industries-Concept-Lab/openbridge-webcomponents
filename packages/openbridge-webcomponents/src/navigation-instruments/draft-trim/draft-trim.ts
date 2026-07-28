@@ -34,8 +34,24 @@ const VESSEL_OFFSET_Y = 4.5;
  * side of a vessel side view, each filled from the waterline down to its
  * measured value. The difference between the two is the vessel's trim.
  *
- * The centre panel is a static reference: the vessel sits at the waterline
- * and does not pitch with the trim — the two scales carry the values.
+ * Features:
+ * - Two independent scales, `draftFore` on the right and `draftAft` on the
+ *   left, the left one mirrored so its tick lane faces outward.
+ * - Each scale spans `±instrumentRange` around the waterline, so the lower
+ *   half reads as draught and the upper half as freeboard.
+ * - Optional `advice` zones, shared by both scales and triggered
+ *   independently by each draught.
+ * - `regular` / `enhanced` palette via `priority`, and a selectable
+ *   `vesselImage`.
+ *
+ * Usage guidelines:
+ * - Values are given in the unit the scale is labelled in, positive below the
+ *   waterline; a negative value therefore reads above it.
+ * - The centre panel is a static reference. The vessel sits at the waterline
+ *   and does not pitch with the trim — the trim is read by comparing the two
+ *   scales, not from the silhouette.
+ * - Use `obc-heave` instead when a single scale against a moving vessel is
+ *   wanted; this component reuses the same scale for both of its columns.
  *
  * @element obc-draft-trim
  * @experimental

@@ -119,8 +119,9 @@ When working with building block components in this directory:
     - `resolveLinearAdvice(advice, trendMin, trendMax)` resolves each advice zone's
       hinted/regular/triggered state against a trend band.
     - `verticalScaleTickmarks(range)` returns the tick configuration for a scale
-      spanning `±range` around a zero reference: a full-width line at zero, primary
-      ticks at halves and secondary at tenths of the range.
+      spanning `±range` around a zero reference: a full-width line at zero, plus a
+      primary and a secondary ladder whose intervals step with the range — `1`/`0.5`
+      for a range of 5 or less, `5`/`1` above that.
     - `linearTickInterval(height, range, minSpacing)` picks a 1-2-5 tick step by
       on-screen spacing, for scales whose height is dictated by a surrounding layout.
     - `watchfaceLinear`'s `options.maskId` overrides the container clip-mask id.

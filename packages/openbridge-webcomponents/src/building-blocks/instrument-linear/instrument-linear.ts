@@ -200,9 +200,10 @@ export function watchfaceLinear(
 }
 
 /**
- * Tickmark configuration for a vertical draught-style scale spanning
- * `±range` around a zero reference line: a full-width line at zero, primary
- * ticks at halves of the range and secondary ticks at tenths.
+ * Tickmark configuration for a vertical draught-style scale spanning `±range`
+ * around a zero reference line: a full-width line at zero, plus a primary and
+ * a secondary ladder whose intervals step with the range — `1` / `0.5` for a
+ * range of 5 or less, `5` / `1` above that.
  *
  * Shared by `obc-heave` and `obc-draft-trim`, which render the same scale
  * against different references (the heave datum, the waterline).
