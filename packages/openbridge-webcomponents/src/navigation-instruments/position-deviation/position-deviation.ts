@@ -82,8 +82,11 @@ const PALETTES: Record<PositionDeviationPriority, DeviationPalette> = {
  * position has drifted from a position setpoint. The distance to the setpoint
  * is drawn as a filled circle around the centre, so the deviation magnitude
  * is readable regardless of direction, while a thin line with a dot marks the
- * setpoint's actual bearing and distance. Dotted and solid limit rings show
- * the caution and alarm distances.
+ * setpoint's actual bearing and distance (the dot is kept at the line's inner
+ * end for deviations too small to reach it, so it never disappears into the
+ * centre rosette). Dotted and solid limit rings show the caution and alarm
+ * distances; non-positive or non-finite limits hide their ring, and the scale
+ * anchors to the outermost valid limit.
  *
  * ## Features / Variants
  *
@@ -120,9 +123,9 @@ export class ObcPositionDeviation extends LitElement {
   @property({type: Number}) deviation = 0;
   /** Bearing from the current position towards the setpoint in degrees (0 = north, clockwise). */
   @property({type: Number}) setpointBearing = 0;
-  /** Deviation at which the dotted caution ring is drawn. */
+  /** Deviation at which the dotted caution ring is drawn; hidden when not a positive finite number. */
   @property({type: Number}) cautionLimit = 15;
-  /** Deviation at which the solid alarm ring is drawn. */
+  /** Deviation at which the solid alarm ring is drawn; hidden when not a positive finite number. */
   @property({type: Number}) alarmLimit = 20;
   /** When `false`, hides the alarm ring and anchors the scale to the caution ring. */
   @property({type: Boolean, attribute: false}) hasAlarmLimit = true;
@@ -148,17 +151,37 @@ export class ObcPositionDeviation extends LitElement {
       : Priority.regular;
   }
 
-  /** SVG units per deviation unit, anchored to the outermost visible limit ring. */
-  private get radiusPerUnit(): number {
-    const anchorLimit = this.hasAlarmLimit
+  /** `cautionLimit` when it is a positive finite number, otherwise undefined (ring hidden). */
+  private get safeCautionLimit(): number | undefined {
+    return Number.isFinite(this.cautionLimit) && this.cautionLimit > 0
+      ? this.cautionLimit
+      : undefined;
+  }
+
+  /** `alarmLimit` when shown and a positive finite number, otherwise undefined (ring hidden). */
+  private get safeAlarmLimit(): number | undefined {
+    return this.hasAlarmLimit &&
+      Number.isFinite(this.alarmLimit) &&
+      this.alarmLimit > 0
       ? this.alarmLimit
-      : this.cautionLimit;
-    const anchorRadius = this.hasAlarmLimit
-      ? ALARM_RING_RADIUS
-      : CAUTION_RING_RADIUS;
-    const safeLimit =
-      Number.isFinite(anchorLimit) && anchorLimit > 0 ? anchorLimit : 1;
-    return anchorRadius / safeLimit;
+      : undefined;
+  }
+
+  /**
+   * SVG units per deviation unit, anchored to the outermost visible limit
+   * ring. The anchor uses the largest valid limit so an inverted pair
+   * (caution above alarm) still keeps both rings on the face.
+   */
+  private get radiusPerUnit(): number {
+    const anchorLimit =
+      this.safeAlarmLimit !== undefined
+        ? Math.max(this.safeAlarmLimit, this.safeCautionLimit ?? 0)
+        : this.safeCautionLimit;
+    const anchorRadius =
+      this.safeAlarmLimit !== undefined
+        ? ALARM_RING_RADIUS
+        : CAUTION_RING_RADIUS;
+    return anchorRadius / (anchorLimit ?? 1);
   }
 
   private toRadius(value: number): number {
@@ -177,22 +200,27 @@ export class ObcPositionDeviation extends LitElement {
         stroke=${palette.fillStroke}
         vector-effect="non-scaling-stroke"
       />
-      <circle
-        cx="0"
-        cy="0"
-        r=${this.toRadius(this.cautionLimit)}
-        fill="none"
-        stroke="var(--instrument-tick-mark-tertiary-color)"
-        stroke-dasharray="2 4"
-        vector-effect="non-scaling-stroke"
-      />
       ${
-        this.hasAlarmLimit
+        this.safeCautionLimit !== undefined
           ? svg`
             <circle
               cx="0"
               cy="0"
-              r=${this.toRadius(this.alarmLimit)}
+              r=${this.toRadius(this.safeCautionLimit)}
+              fill="none"
+              stroke="var(--instrument-tick-mark-tertiary-color)"
+              stroke-dasharray="2 4"
+              vector-effect="non-scaling-stroke"
+            />`
+          : nothing
+      }
+      ${
+        this.safeAlarmLimit !== undefined
+          ? svg`
+            <circle
+              cx="0"
+              cy="0"
+              r=${this.toRadius(this.safeAlarmLimit)}
               fill="none"
               stroke="var(--instrument-tick-mark-tertiary-color)"
               vector-effect="non-scaling-stroke"
