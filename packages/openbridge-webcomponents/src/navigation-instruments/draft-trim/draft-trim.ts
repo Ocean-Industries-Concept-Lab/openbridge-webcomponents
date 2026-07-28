@@ -51,14 +51,20 @@ export class ObcDraftTrim extends LitElement {
   @property({type: Number}) vesselScale = 1;
   @property({type: String}) priority: Priority = Priority.regular;
 
+  private get safeInstrumentRange(): number {
+    return Number.isFinite(this.instrumentRange) && this.instrumentRange > 0
+      ? this.instrumentRange
+      : 10;
+  }
+
   private renderGauge(draft: number) {
     return watchfaceLinear(
       {
         height: GAUGE_HEIGHT,
         width: GAUGE_WIDTH,
         scaleWidth: SCALE_WIDTH,
-        minValue: -this.instrumentRange,
-        maxValue: this.instrumentRange,
+        minValue: -this.safeInstrumentRange,
+        maxValue: this.safeInstrumentRange,
       },
       [{min: -draft, max: 0}],
       {value: -draft},
