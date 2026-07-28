@@ -193,6 +193,46 @@ export function watchfaceLinear(
   return all;
 }
 
+/**
+ * Smallest "nice" tick step (1-2-5 decade ladder) whose on-screen spacing on a
+ * `height`-tall, `±range` gauge is at least `minSpacing` SVG units.
+ *
+ * Lets a linear scale keep a readable tick density when its height is dictated
+ * by a surrounding layout rather than chosen for the scale. The default
+ * `minSpacing` of 16 reproduces the intervals `obc-heave` uses at its natural
+ * 336-unit height (1 at ±10, 0.5 at ±5) and matches the ~15-unit spacing of the
+ * 5° ladder on the radial inclinometer arcs, so a linear and a radial scale
+ * read at the same density side by side.
+ *
+ * Returns 0 when the inputs cannot produce a ladder, which the tickmark
+ * generators treat as "no ticks".
+ */
+export function linearTickInterval(
+  height: number,
+  range: number,
+  minSpacing = 16
+): number {
+  if (
+    !Number.isFinite(height) ||
+    !Number.isFinite(range) ||
+    !Number.isFinite(minSpacing) ||
+    height <= 0 ||
+    range <= 0 ||
+    minSpacing <= 0
+  ) {
+    return 0;
+  }
+  const unitsPerValue = height / (2 * range);
+  const needed = minSpacing / unitsPerValue;
+  const decade = Math.pow(10, Math.floor(Math.log10(needed)));
+  for (const step of [1, 2, 5, 10]) {
+    if (decade * step >= needed) {
+      return decade * step;
+    }
+  }
+  return decade * 10;
+}
+
 export function valueToY(
   value: number,
   minValue: number,
