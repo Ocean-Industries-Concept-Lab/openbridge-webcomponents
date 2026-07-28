@@ -34,6 +34,16 @@ export interface CompassCenterReadout {
   size?: ReadoutSize;
 }
 
+/**
+ * How the cluster arranges its entries.
+ */
+export enum CenterReadoutArrangement {
+  /** First entry on top, one divider, then the remaining entries side by side. */
+  primarySecondary = 'primary-secondary',
+  /** Every entry stacked vertically, with a divider between each pair. */
+  stacked = 'stacked',
+}
+
 /** A resolved cluster entry, ready to render (source-agnostic). */
 export interface CenterReadoutEntry {
   value: number | null;
@@ -116,15 +126,35 @@ function renderEntry(entry: CenterReadoutEntry): TemplateResult {
 }
 
 /**
- * Renders the cluster: first entry on top; when more entries exist, a
+ * Renders the cluster.
+ *
+ * `primarySecondary` (default): first entry on top; when more entries exist, a
  * stretched 1px divider followed by the remaining entries side by side.
+ *
+ * `stacked`: every entry on its own row, separated by a stretched 1px divider —
+ * the arrangement `obc-pitch-roll-heave` uses for its Pitch / Roll / Heave
+ * column.
  */
 export function renderCenterReadouts(
-  entries: CenterReadoutEntry[]
+  entries: CenterReadoutEntry[],
+  arrangement: CenterReadoutArrangement = CenterReadoutArrangement.primarySecondary
 ): TemplateResult {
   const [first, ...rest] = entries;
   if (!first) {
     return html`${nothing}`;
+  }
+  if (arrangement === CenterReadoutArrangement.stacked) {
+    return html`
+      <div class="center-readout-group">
+        ${renderEntry(first)}
+        ${rest.map(
+          (entry) => html`
+            <div class="center-readout-divider"></div>
+            ${renderEntry(entry)}
+          `
+        )}
+      </div>
+    `;
   }
   return html`
     <div class="center-readout-group">
