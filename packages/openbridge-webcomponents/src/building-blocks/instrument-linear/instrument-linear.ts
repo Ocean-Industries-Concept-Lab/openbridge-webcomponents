@@ -63,6 +63,12 @@ export function watchfaceLinear(
     hideContainer: boolean;
     off: boolean;
     priority: Priority;
+    /**
+     * Id for the container clip mask. Only needs setting when a document holds
+     * more than one gauge — ids are document-scoped, so two gauges in the same
+     * shadow root would otherwise both resolve to the first one's mask.
+     */
+    maskId?: string;
   },
   tickmarks: {
     /** Array of values where full-width main tickmarks are drawn. */
@@ -102,7 +108,7 @@ export function watchfaceLinear(
   );
 
   const tickmarksSvg: SVGTemplateResult[] = [];
-  const maskId = 'boxMask';
+  const maskId = options.maskId ?? 'boxMask';
   const mask = options.hideContainer
     ? nothing
     : svg`
@@ -191,6 +197,26 @@ export function watchfaceLinear(
   }
 
   return all;
+}
+
+/**
+ * Tickmark configuration for a vertical draught-style scale spanning
+ * `±range` around a zero reference line: a full-width line at zero, primary
+ * ticks at halves of the range and secondary ticks at tenths.
+ *
+ * Shared by `obc-heave` and `obc-draft-trim`, which render the same scale
+ * against different references (the heave datum, the waterline).
+ */
+export function verticalScaleTickmarks(range: number): {
+  mainTickmarks: number[];
+  primaryTickmarkInterval: number;
+  secondaryTickmarkInterval: number;
+} {
+  return {
+    mainTickmarks: [0],
+    primaryTickmarkInterval: range <= 5 ? 1 : 5,
+    secondaryTickmarkInterval: range <= 5 ? 0.5 : 1,
+  };
 }
 
 /**

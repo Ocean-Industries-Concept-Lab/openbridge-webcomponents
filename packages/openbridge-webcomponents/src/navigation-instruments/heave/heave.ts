@@ -1,14 +1,16 @@
 import {LitElement, html, css, nothing, svg, type SVGTemplateResult} from 'lit';
 import {customElement} from '../../decorator.js';
-import {watchfaceLinear} from '../../building-blocks/instrument-linear/instrument-linear.js';
+import {
+  verticalScaleTickmarks,
+  watchfaceLinear,
+} from '../../building-blocks/instrument-linear/instrument-linear.js';
 import {property} from 'lit/decorators.js';
 import {VesselImage} from '../watch/watch.js';
 import {vesselImages} from '../watch/vessel.js';
 import {
   LinearAdvice,
-  LinearAdviceRaw,
+  resolveLinearAdvice,
 } from '../../building-blocks/instrument-linear/advice.js';
-import {AdviceState} from '../watch/advice.js';
 import {Priority} from '../types.js';
 
 export enum ObcHeaveType {
@@ -65,24 +67,6 @@ export class ObcHeave extends LitElement {
   _boxWidth = 336;
   _gaugeWidth = 72;
   _scaleWidth = 24;
-
-  private _getAdvice(): LinearAdviceRaw[] {
-    return this.advice.map((advice) => {
-      const isActive =
-        this.maxTrendHeave >= advice.min && this.minTrendHeave <= advice.max;
-      const state = isActive
-        ? AdviceState.triggered
-        : advice.hinted
-          ? AdviceState.hinted
-          : AdviceState.regular;
-      return {
-        ...advice,
-        min: advice.min,
-        max: advice.max,
-        state,
-      } satisfies LinearAdviceRaw;
-    });
-  }
 
   private renderFrame(): SVGTemplateResult {
     const r = 8;
@@ -163,12 +147,12 @@ export class ObcHeave extends LitElement {
               },
               {container: 'var(--instrument-frame-primary-color)'},
               {hideContainer: false, off: false, priority: this.priority},
-              {
-                mainTickmarks: [0],
-                primaryTickmarkInterval: this.instrumentRange <= 5 ? 1 : 5,
-                secondaryTickmarkInterval: this.instrumentRange <= 5 ? 0.5 : 1,
-              },
-              this._getAdvice()
+              verticalScaleTickmarks(this.instrumentRange),
+              resolveLinearAdvice(
+                this.advice,
+                this.minTrendHeave,
+                this.maxTrendHeave
+              )
             )}
           </g>
           ${isBar ? nothing : this.renderVessel()}

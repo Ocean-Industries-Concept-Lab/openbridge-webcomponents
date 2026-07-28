@@ -23,6 +23,30 @@ export interface LinearAdvice {
   hinted: boolean;
 }
 
+/**
+ * Resolves the display state of each advice zone against a trend band: an
+ * advice the band reaches into is `triggered`, otherwise it is `hinted` or
+ * `regular` as configured.
+ *
+ * Shared by the vertical draught-style scales (`obc-heave`, `obc-draft-trim`),
+ * which each evaluate their own trend band against the same advice list.
+ */
+export function resolveLinearAdvice(
+  advice: LinearAdvice[],
+  trendMin: number,
+  trendMax: number
+): LinearAdviceRaw[] {
+  return advice.map((a) => {
+    const isActive = trendMax >= a.min && trendMin <= a.max;
+    const state = isActive
+      ? AdviceState.triggered
+      : a.hinted
+        ? AdviceState.hinted
+        : AdviceState.regular;
+    return {...a, min: a.min, max: a.max, state} satisfies LinearAdviceRaw;
+  });
+}
+
 function adviceMask({
   height,
   minValue,
