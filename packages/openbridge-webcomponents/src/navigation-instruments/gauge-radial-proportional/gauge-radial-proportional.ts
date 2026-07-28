@@ -84,6 +84,9 @@ const OFF_DISC_RADIUS = BAND_OUTER_RADIUS + 24;
 /** Cap for full-circle arcs so start and end never coincide in path space. */
 const FULL_CIRCLE_EPSILON_DEG = 0.05;
 
+/** Intervals producing more tickmarks than this are ignored (runaway guard). */
+const MAX_INTERVAL_TICKMARKS = 1000;
+
 function strongerTickmarkType(
   existing: TickmarkType,
   candidate: TickmarkType
@@ -155,6 +158,8 @@ function arcPath(radius: number, startDeg: number, endDeg: number): string {
  * | ------ | ---------------------------------------------- |
  * | `icon` | Icon shown above the readout (e.g. `<obi-*>`). |
  *
+ * @slot icon - Icon shown above the readout (e.g. `<obi-*>` icons).
+ *
  * @element obc-gauge-radial-proportional
  * @experimental
  */
@@ -197,9 +202,13 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
    * `secondaryValue` is set). Default `false`.
    */
   @property({type: Boolean}) hasReadout = false;
+  /** @availableWhen hasReadout==true */
   @property({type: String}) label = '';
+  /** @availableWhen hasReadout==true */
   @property({type: String}) unit = '';
+  /** @availableWhen secondaryValue!=undefined */
   @property({type: String}) secondaryLabel = '';
+  /** @availableWhen secondaryValue!=undefined */
   @property({type: String}) secondaryUnit = '';
   @property({type: Number}) fractionDigits = 0;
   /** Name row shown under the readout (uppercase overline style). */
@@ -389,7 +398,8 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
       if (
         interval === undefined ||
         interval <= 0 ||
-        !Number.isFinite(interval)
+        !Number.isFinite(interval) ||
+        (this.maxValue - this.minValue) / interval > MAX_INTERVAL_TICKMARKS
       ) {
         return;
       }
