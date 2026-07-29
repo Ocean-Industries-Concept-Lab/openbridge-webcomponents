@@ -47,7 +47,7 @@ const meta: Meta<typeof ObcPositionDeviation> = {
 export default meta;
 type Story = StoryObj<ObcPositionDeviation>;
 
-export const NorthUpEnhanced: Story = {
+export const Default: Story = {
   args: {},
 };
 

@@ -118,6 +118,52 @@ export function renderLabels(
   `;
 }
 
+export interface RenderNorthMarkerOptions {
+  scale: number;
+  rotation: number | undefined;
+}
+
+/**
+ * North-marker triangle copied from Figma. Own 384×408.963 canvas: the ring
+ * box (384×384, r=192) starts at y=24.963 and the "N" label centre sits at
+ * (192, 16.963) — 8 units above the ring box, inside the triangle.
+ */
+const NORTH_MARKER_PATH =
+  'M212.597 22.5019C213.808 23.8852 212.665 26.0529 210.836 25.8748C204.639 25.2715 198.356 24.9628 192 24.9628C185.645 24.9628 179.362 25.2715 173.165 25.8748C171.336 26.0529 170.193 23.8852 171.404 22.502L190.495 0.68299C191.292 -0.227664 192.709 -0.227663 193.506 0.682991L212.597 22.5019Z';
+
+/**
+ * Renders the compact north marker used by heading-up watch faces: a small
+ * triangle sitting on the outer ring with an "N" on top of it, at the same
+ * radius as the outside NSEW labels (so it covers the plain top label
+ * position). The triangle rotates with the compass card while the "N"
+ * counter-rotates to stay upright, like the other labels.
+ *
+ * Both parts are px-fixed like the outside labels: the triangle is anchored
+ * to the label position and scaled by `0.75 / scale` (the design's native
+ * px-per-unit density), so the letter stays inside the triangle at any size.
+ */
+export function renderNorthMarker(
+  opts: RenderNorthMarkerOptions
+): SVGTemplateResult {
+  const {scale, rotation: rot} = opts;
+  // Keep in sync with getLabelPositions(): outside label centre radius.
+  const labelY = -(368 / 2 + 8 / scale + 16 / 2);
+  return svg`
+    <g transform="translate(0, ${labelY}) scale(${0.75 / scale}) translate(-192, -16.963)">
+      <path d=${NORTH_MARKER_PATH} fill="var(--instrument-tick-mark-secondary-color)"/>
+    </g>
+    <text
+      x="0"
+      y="${labelY}"
+      class="label north-marker"
+      transform="rotate(${-(rot ?? 0)})"
+      transform-origin="0 ${labelY}"
+    >
+      N
+    </text>
+  `;
+}
+
 export interface RenderNorthArrowOptions {
   scale: number;
   rotation: number | undefined;

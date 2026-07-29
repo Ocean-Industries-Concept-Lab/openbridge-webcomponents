@@ -91,8 +91,11 @@ const PALETTES: Record<PositionDeviationPriority, DeviationPalette> = {
  * ## Features / Variants
  *
  * - **`orientation`:** `northUp` (default) keeps north at the top and rotates
- *   the heading arrow; `headingUp` keeps the heading arrow pointing up and
- *   rotates the compass card, north arrow and all bearing indications.
+ *   the heading arrow; the N/E/S/W labels sit inside the ring and a plain
+ *   north triangle hangs from the ring top. `headingUp` keeps the heading
+ *   arrow pointing up and rotates the compass card: the labels move outside
+ *   the ring and follow the card (staying upright), and north is marked by a
+ *   compact triangle on the ring with an "N" on top.
  * - **`priority`:** `enhanced` renders the indications in the enhanced accent
  *   palette; `regular` in neutral greys; `caution` and `alarm` tint the
  *   deviation circle with the corresponding alert colors.
@@ -107,6 +110,17 @@ const PALETTES: Record<PositionDeviationPriority, DeviationPalette> = {
  * Use when station keeping or track keeping requires monitoring drift from a
  * commanded position. For heading against a compass card use `obc-compass`;
  * for combined attitude monitoring use `obc-pitch-roll-yaw`.
+ *
+ * ## Best Practices
+ *
+ * - Provide positive, finite limits with `cautionLimit < alarmLimit`; a
+ *   non-positive or non-finite limit hides its ring, and an inverted pair
+ *   anchors the scale to the larger value.
+ * - Keep `deviation` in the same unit as the limits — the component only
+ *   scales values relative to the limit rings, it does not convert units.
+ * - Choose `northUp` when the surrounding view is geographically referenced
+ *   (chart-style displays); choose `headingUp` when the operator monitors
+ *   drift relative to the vessel's own heading (conning-style displays).
  *
  * @experimental
  */
@@ -265,10 +279,9 @@ export class ObcPositionDeviation extends LitElement {
       containerPx: measureContainerPx(this),
     });
 
-    const rotation =
-      this.orientation === PositionDeviationOrientation.headingUp
-        ? -this.heading
-        : undefined;
+    const headingUp =
+      this.orientation === PositionDeviationOrientation.headingUp;
+    const rotation = headingUp ? -this.heading : undefined;
     const cardRotation = rotation ?? 0;
     const headingAngle = this.heading + cardRotation;
     const bearingAngle = this.setpointBearing + cardRotation;
@@ -280,7 +293,9 @@ export class ObcPositionDeviation extends LitElement {
           .watchCircleType=${WatchCircleType.double}
           .crosshairEnabled=${true}
           .showLabels=${this.showLabels && !frame.labelsHidden}
+          .tickmarksInside=${!headingUp}
           .northArrow=${!frame.labelsHidden}
+          .northMarker=${headingUp}
           .rotation=${rotation}
           .priority=${this.watchPriority}
         ></obc-watch>

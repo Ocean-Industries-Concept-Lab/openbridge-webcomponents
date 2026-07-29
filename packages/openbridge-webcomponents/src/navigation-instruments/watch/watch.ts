@@ -46,6 +46,7 @@ import {
 import {
   renderLabels,
   renderNorthArrow,
+  renderNorthMarker,
   getLabelPositions,
   LabelPosition,
 } from './label.js';
@@ -188,6 +189,13 @@ export class ObcWatch extends LitElement {
     WatchCircleType.single;
   @property({type: Boolean}) northArrow: boolean = false;
   @property({type: Boolean}) northArrowInside: boolean | undefined;
+  /**
+   * Replace the north arrow with the compact heading-up north marker: a small
+   * triangle on the outer ring with an upright "N" at the outside label
+   * radius. Rotates with the card via `rotation`.
+   * @availableWhen northArrow==true
+   */
+  @property({type: Boolean}) northMarker: boolean = false;
   /** Setpoint angle in degrees (0° = 12 o'clock) */
   @property({type: Number}) angleSetpoint: number | undefined;
   /** New setpoint being adjusted (focus mode) */
@@ -865,11 +873,13 @@ export class ObcWatch extends LitElement {
         })
       : nothing;
     const northArrowEl = showNorthArrow
-      ? renderNorthArrow({
-          scale,
-          rotation: this.rotation,
-          inside: this.northArrowInside ?? this.tickmarksInside,
-        })
+      ? this.northMarker
+        ? renderNorthMarker({scale, rotation: this.rotation})
+        : renderNorthArrow({
+            scale,
+            rotation: this.rotation,
+            inside: this.northArrowInside ?? this.tickmarksInside,
+          })
       : nothing;
     const wind =
       this.windKnots != null && this.windFromDirectionDeg != null
