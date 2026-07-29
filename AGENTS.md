@@ -154,6 +154,7 @@ Syntax:
 - **Enum / string inequality:** `@availableWhen state!=overlapped` — handy for "all values except one".
 - **Set membership:** `@availableWhen type in [LargeSideFlip, BottomFlip, TopFlip]` — use the **enum member identifier names**, not the string values.
 - **Non-empty string:** `@availableWhen label!=''` — for `string` props (default `''`) that gate another prop by being non-empty.
+- **Empty / non-empty array:** `@availableWhen centerReadouts==[]` (available only while the array is empty) or `@availableWhen advices!=[]` — for `Array` props whose emptiness gates another prop.
 - **Defined / non-null:** `@availableWhen courseArrowPx!=undefined` (for `X | undefined`) or `@availableWhen headingSetpoint!=null` (for `X | null`).
 - **Combine:** join with `&&` (all required) or `||` (any sufficient). Always use `==`/`!=` (never a single `=`).
 
@@ -216,7 +217,7 @@ Agents that support glob-scoped instructions should apply them automatically.
 | `circular-charts.instructions.md`          | `bars-graphs/**`, `charthelpers/**`                                                                                                                                            | Circular chart components (donut, pie, polar, radial-bar) |
 | `external-scale.instructions.md`           | `external-scale/**`, `bar-vertical/**`, `bar-horizontal/**`, `gauge-vertical/**`, `gauge-horizontal/**`                                                                        | External scale renderer and bar/gauge wrappers            |
 | `line-area-charts.instructions.md`         | `chart-line/**`, `line-graph/**`, `area-graph/**`, `gauge-trend/**`                                                                                                            | Line/area charts and composite gauge-trend component      |
-| `watch-radial-instruments.instructions.md` | `watch/**`, `compass/**`, `heading/**`, `rudder/**`, `wind/**`, `roll/**`, `speed-gauge/**`, `gauge-radial/**`, `rot-sector/**`, `azimuth-thruster/**`, `instrument-radial/**` | Circular watch-based instruments and radial gauges        |
+| `watch-radial-instruments.instructions.md` | `watch/**`, `compass/**`, `compass-sector/**`, `heading/**`, `rudder/**`, `wind/**`, `roll/**`, `pitch-roll/**`, `speed-gauge/**`, `gauge-radial/**`, `rot-sector/**`, `rate-of-turn/**`, `course-arrows/**`, `readout/**`, `watch-flat/**`, `compass-flat/**`, `rot-linear/**`, `azimuth-thruster/**`, `instrument-radial/**` | Watch-based instruments (radial core + linear strip counterparts), radial gauges, shared arrow/readout modules |
 | `setpoint.instructions.md`                 | `svghelpers/setpoint*.ts`, `building-blocks/setpoint/**`                                                                                                                       | Setpoint design layer, mixin/bundle, confirm animation    |
 | `automation-components.instructions.md`    | `automation/**`                                                                                                                                                                | Automation devices, valves, lines, tanks, badges          |
 | `ui-components.instructions.md`            | `components/**`                                                                                                                                                                | General UI components (buttons, cards, inputs, feedback)  |
@@ -371,7 +372,7 @@ Required modifications after pasting:
 3. **Respect glob-scoped instructions** (§ 4) — read the matching `.instructions.md` file when touching files in its scope.
 4. **Accessibility is required for interactive components.** Every new or modified component in `src/components/**` or `src/automation/**` must support full keyboard navigation and meet WCAG 2.1 AA. Read [`.github/instructions/a11y.instructions.md`](.github/instructions/a11y.instructions.md) for the activation-key table, ARIA rules, focus handling, and testing checklist before writing or changing an interactive component.
 5. **Do not edit auto-generated packages** (`-react`, `-vue`, `-ng`, `-svelte`). Run `npm run wrappers` instead.
-6. **Run `npm run analyze`** after adding or renaming a `@customElement` to keep `custom-elements.json` in sync.
+6. **Run `npm run analyze`** after adding or renaming a `@customElement` to keep `custom-elements.json` in sync. Storybook resolves story args to element properties through the manifest, so run it **before** testing the stories of a newly created component — without it the args silently never reach the element.
    Never hand-edit `custom-elements.json` — it is auto-generated and git-ignored. Fix manifest inaccuracies at the source (`@slot`/`@fires`/property JSDoc); see § 3 "Slots and events are manifest-critical" and run `npm run lint:slots`.
 7. **Run `npm run lint`** after code changes to catch issues early.
 8. **Insert `TODO(designer)`** for any documentation detail whose purpose is unclear from code alone.
@@ -381,9 +382,9 @@ Required modifications after pasting:
     ```bash
     npx vitest run --project storybook 'component-name'
     ```
-12. **Update baselines for a single component:**
+12. **Update baselines for a single component** — the filter must come **before** `--update`; written after the flag, the name is consumed as the flag's value and the FULL suite runs in update mode, silently rewriting unrelated flaky baselines:
     ```bash
-    npx vitest run --project storybook --update 'component-name'
+    npx vitest run --project storybook 'component-name' --update
     ```
 13. **Always verify after updating baselines** — re-run the test without `--update` to confirm the new baselines are stable:
     ```bash
