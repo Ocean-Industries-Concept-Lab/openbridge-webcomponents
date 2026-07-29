@@ -9,6 +9,14 @@ export interface RenderLabelsOptions {
   innerRadius?: number;
   /** When true, always include the "N" label regardless of scale/inside heuristic. */
   includeNorth?: boolean;
+  /**
+   * Inside placement only: anchor the px-fixed label box flush against the
+   * inner ring (`innerRadius - (labelWidth/2)/scale`) instead of the legacy
+   * `gap/scale + labelWidth/2` offset, whose unit-fixed half-width lets the
+   * labels drift toward the centre as the instrument shrinks. Matches the
+   * outside placement, which is already flush against the outer band edge.
+   */
+  insideFlush?: boolean;
 }
 
 /** Position data for a single compass label. */
@@ -31,17 +39,19 @@ export function getLabelPositions(opts: {
   innerRadius: number;
   /** When true, always include the "N" label regardless of scale/inside heuristic. */
   includeNorth?: boolean;
+  /** See {@link RenderLabelsOptions.insideFlush}. */
+  insideFlush?: boolean;
 }): LabelPosition[] {
-  const {scale, inside, innerRadius, includeNorth} = opts;
+  const {scale, inside, innerRadius, includeNorth, insideFlush} = opts;
   const labelWidth = 16;
   const gap = 8;
   const outerRadius = 368 / 2;
 
+  const insideOffset = insideFlush
+    ? innerRadius - labelWidth / 2 / scale
+    : innerRadius - gap / scale - labelWidth / 2;
   const offset = (dir: number) =>
-    dir *
-    (inside
-      ? innerRadius - gap / scale - labelWidth / 2
-      : outerRadius + gap / scale + labelWidth / 2);
+    dir * (inside ? insideOffset : outerRadius + gap / scale + labelWidth / 2);
 
   const positions: LabelPosition[] = [
     {label: 'E', x: offset(1), y: 0},
@@ -81,6 +91,7 @@ export function renderLabels(
   let inside: boolean;
   let innerRadius: number;
   let includeNorth: boolean | undefined;
+  let insideFlush: boolean | undefined;
   if (typeof scaleOrOpts === 'number') {
     scale = scaleOrOpts;
     rot = rotation;
@@ -92,6 +103,7 @@ export function renderLabels(
     inside = scaleOrOpts.inside ?? false;
     innerRadius = scaleOrOpts.innerRadius ?? 368 / 2;
     includeNorth = scaleOrOpts.includeNorth;
+    insideFlush = scaleOrOpts.insideFlush;
   }
 
   const positions = getLabelPositions({
@@ -99,6 +111,7 @@ export function renderLabels(
     inside,
     innerRadius,
     includeNorth,
+    insideFlush,
   });
 
   return svg`

@@ -253,6 +253,13 @@ export class ObcWatch extends LitElement {
    */
   @property({type: Boolean}) crosshairCenterCutout: boolean = false;
   @property({type: Boolean}) showLabels: boolean = false;
+  /**
+   * With `tickmarksInside`, anchor the NSEW label boxes flush against the
+   * inner ring (px-fixed) instead of the legacy gap that lets them drift
+   * toward the centre as the instrument shrinks.
+   * @availableWhen tickmarksInside==true
+   */
+  @property({type: Boolean}) insideLabelsFlush: boolean = false;
   @property({type: Array, attribute: false}) vessels: WatchVessel[] = [];
   @property({type: Number}) windKnots: number | null = null;
   @property({type: Number}) windFromDirectionDeg: number | null = null;
@@ -860,6 +867,7 @@ export class ObcWatch extends LitElement {
           inside: this.tickmarksInside,
           innerRadius: this.innerRingRadius + rOff,
           includeNorth,
+          insideFlush: this.insideLabelsFlush,
         })
       : undefined;
 
@@ -870,6 +878,7 @@ export class ObcWatch extends LitElement {
           inside: this.tickmarksInside,
           innerRadius: this.innerRingRadius + rOff,
           includeNorth,
+          insideFlush: this.insideLabelsFlush,
         })
       : nothing;
     const northArrowEl = showNorthArrow

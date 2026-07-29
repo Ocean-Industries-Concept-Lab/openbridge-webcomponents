@@ -294,6 +294,7 @@ export class ObcPositionDeviation extends LitElement {
           .crosshairEnabled=${true}
           .showLabels=${this.showLabels && !frame.labelsHidden}
           .tickmarksInside=${!headingUp}
+          .insideLabelsFlush=${true}
           .northArrow=${!frame.labelsHidden}
           .northMarker=${headingUp}
           .rotation=${rotation}
