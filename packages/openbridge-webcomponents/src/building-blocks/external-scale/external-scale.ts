@@ -32,6 +32,8 @@ import {
   computeAtSetpoint,
   SETPOINT_ANIMATION_CSS_VAR,
   SETPOINT_ANIMATION_DURATION_DEFAULT,
+  SETPOINT_HEIGHT,
+  SETPOINT_ZERO_OFFSET,
 } from '../../svghelpers/setpoint.js';
 
 /**
@@ -910,13 +912,15 @@ function computeAdviceBandThickness(
  * when no scale/label bands reserve the space.
  *
  * Worst case, measured outward from the bar edge (`tickBasePerp`):
- * `tickGap()` (4) + max state offset (`equalZero`, 8) + marker body (21)
- * = 33. See `renderSingleSetpoint()` for the geometry.
+ * `tickGap()` + max state offset (`equalZero`, `SETPOINT_ZERO_OFFSET`) +
+ * marker body (`SETPOINT_HEIGHT`). See `renderSingleSetpoint()` for the
+ * geometry.
  */
 export function computeSetpointBandThickness(
   config: Pick<ExternalScaleLayoutConfig, 'hasSetpoint'>
 ): number {
-  return config.hasSetpoint ? 33 : 0;
+  if (!config.hasSetpoint) return 0;
+  return tickGap() + SETPOINT_ZERO_OFFSET + SETPOINT_HEIGHT;
 }
 
 function isVertical(config: ExternalScaleConfig): boolean {

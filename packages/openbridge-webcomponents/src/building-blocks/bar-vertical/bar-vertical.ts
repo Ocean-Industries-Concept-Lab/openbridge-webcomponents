@@ -418,8 +418,7 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
       changed.has('borderRadius') ||
       changed.has('advices') ||
       changed.has('advicePosition') ||
-      changed.has('setpoint') ||
-      changed.has('newSetpoint');
+      this.setpointPresenceChanged(changed);
 
     if (!this.fixedAspectRatio || layoutChanged) {
       this.reportDimensions();

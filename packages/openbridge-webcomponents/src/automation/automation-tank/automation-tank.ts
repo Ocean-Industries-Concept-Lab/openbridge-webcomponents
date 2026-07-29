@@ -100,6 +100,14 @@ export enum TankChartMode {
 /**
  *
  *
+ * Setpoint properties are inherited from {@link SetpointMixin}
+ * (`setpoint`, `newSetpoint`, `touching`, `atSetpoint`, `autoAtSetpoint`,
+ * `autoAtSetpointDeadband`, `setpointAtZeroDeadband`, `setpointOverride`,
+ * `animateSetpoint`) and are forwarded to the embedded chart: the SVG bar in
+ * `bar` mode, or `obc-gauge-trend` in the graph modes (where the marker
+ * renders on the side bar, i.e. `graph-and-bar`). Values share the tank's
+ * `value` / `max` scale.
+ *
  * @slot badges - Custom badges to be displayed in the badge area.
  * @slot tag - Text or element for the tank's tag/label.
  * @slot readout - Replaces the entire readout content block.
@@ -114,14 +122,6 @@ export enum TankChartMode {
  * @slot alert-icon - Custom icon for the alert frame.
  * @slot alert-label - Label for the alert frame.
  * @slot alert-timer - Timer for the alert frame.
- *
- * Setpoint properties are inherited from {@link SetpointMixin}
- * (`setpoint`, `newSetpoint`, `touching`, `atSetpoint`, `autoAtSetpoint`,
- * `autoAtSetpointDeadband`, `setpointAtZeroDeadband`, `setpointOverride`,
- * `animateSetpoint`) and are forwarded to the embedded chart: the SVG bar in
- * `bar` mode, or `obc-gauge-trend` in the graph modes (where the marker
- * renders on the side bar, i.e. `graph-and-bar`). Values share the tank's
- * `value` / `max` scale.
  * @beta
  */
 @customElement('obc-automation-tank')
