@@ -2,6 +2,7 @@ import {LitElement, html, unsafeCSS} from 'lit';
 import {property, query, state} from 'lit/decorators.js';
 import componentStyle from './start-stop-switch.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
+import {ifDefined} from 'lit/directives/if-defined.js';
 import '../../icons/icon-arrow-right-google.js';
 import {customElement} from '../../decorator.js';
 
@@ -53,6 +54,7 @@ const DRAG_COMPLETE_THRESHOLD = 0.9;
  * - **Alert frame:** Optional red border to indicate alarm or critical state.
  * - **Description text:** Optional text below the switch for additional context.
  * - **Animated transitions:** Smooth CSS transitions for thumb movement and state changes.
+ * - **Keyboard accessible:** The switch is focusable and follows the ARIA switch pattern — `Enter` or `Space` toggles the state and fires the same `change` event as a completed drag.
  *
  * ### Usage Guidelines
  * Use `<obc-start-stop-switch>` when you need a prominent control for toggling between two mutually exclusive states where:
@@ -83,6 +85,7 @@ const DRAG_COMPLETE_THRESHOLD = 0.9;
  * - Use the `running` variant to indicate an actively running process.
  * - Use the `loading` variant during async operations before transitioning to `running` or `normal`.
  * - Consider using `hasAlert` when the switch controls a critical system in alarm state.
+ * - The accessible name is computed from the slotted labels; provide `aria-label` or `aria-labelledby` on the host when those labels alone are not descriptive.
  *
  * ### Example
  * ```html
@@ -274,6 +277,15 @@ export class ObcStartStopSwitch extends LitElement {
     this.requestUpdate();
   };
 
+  private handleKeydown = (e: KeyboardEvent) => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    e.preventDefault();
+    if (this.disabled) return;
+    this.checked = !this.checked;
+    this.tmpChecked = this.checked;
+    this.dispatchChangeEvent();
+  };
+
   private dispatchChangeEvent() {
     this.dispatchEvent(
       new CustomEvent('change', {
@@ -354,6 +366,10 @@ export class ObcStartStopSwitch extends LitElement {
 
   override render() {
     const isChecked = this.checked;
+    const hostAriaLabel = this.getAttribute('aria-label') ?? undefined;
+    const hostAriaLabelledBy =
+      this.getAttribute('aria-labelledby') ?? undefined;
+    const forwardedAriaLabel = hostAriaLabelledBy ? undefined : hostAriaLabel;
 
     return html`
               <div class="outer-container">
@@ -374,6 +390,12 @@ export class ObcStartStopSwitch extends LitElement {
                     'variant-loading': this.variant === 'loading',
                   })}
                   tabindex=${this.disabled ? -1 : 0}
+                  role="switch"
+                  aria-checked=${isChecked ? 'true' : 'false'}
+                  aria-disabled=${this.disabled ? 'true' : 'false'}
+                  aria-label=${ifDefined(forwardedAriaLabel)}
+                  aria-labelledby=${ifDefined(hostAriaLabelledBy)}
+                  @keydown=${this.handleKeydown}
                 >
                   <div class="button-track">
                     <button
@@ -385,9 +407,6 @@ export class ObcStartStopSwitch extends LitElement {
                       }
                       ?disabled=${this.disabled}
                       tabindex="-1"
-                      role="switch"
-                      aria-checked=${isChecked ? 'true' : 'false'}
-                      aria-disabled=${this.disabled ? 'true' : 'false'}
                     >
                       ${
                         !this.disabled
@@ -395,6 +414,7 @@ export class ObcStartStopSwitch extends LitElement {
                               <div class="button-visible">
                                 <obi-arrow-right-google
                                   class="button-icon"
+                                  aria-hidden="true"
                                 ></obi-arrow-right-google>
                                 <div class="button-label">
                                   <slot
