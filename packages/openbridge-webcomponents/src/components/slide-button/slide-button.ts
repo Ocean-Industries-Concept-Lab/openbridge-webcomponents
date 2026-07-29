@@ -37,7 +37,7 @@ export type ObcSlideButtonSlideEvent = CustomEvent<{completed: boolean}>;
  * - The leading icon is optional and can be omitted for a simpler appearance.
  * - The button will snap back if the slide is not completed past the threshold.
  * - Only one slide button should be used for a given action to avoid confusion.
- * - Keyboard users activate with `Enter`/`Space` (single press — Tab + activation is considered deliberate). Provide `aria-label` or `aria-labelledby` on the host if the slotted label is not descriptive on its own.
+ * - Keyboard users activate with `Enter`/`Space` (single press — Tab + activation is considered deliberate). Provide `aria-label` on the host if the slotted label is not descriptive on its own (`aria-labelledby` is not supported — ID references cannot cross the shadow boundary).
  *
  * **TODO(designer):** Confirm if there are recommended minimum/maximum label lengths or if there are accessibility guidelines for color contrast and drag affordance.
  *
@@ -211,21 +211,29 @@ export class ObcSlideButton extends LitElement {
     this.playKeyboardFeedback();
   };
 
+  private keyboardFeedbackTimeouts: ReturnType<typeof setTimeout>[] = [];
+
   private playKeyboardFeedback() {
+    this.keyboardFeedbackTimeouts.forEach(clearTimeout);
+    this.keyboardFeedbackTimeouts = [];
     this.trackWidth = this.visualContainerRef?.offsetWidth || 0;
     this.buttonWidth = this.buttonRef?.offsetWidth || 0;
     this.dragOffset = this.trackWidth - this.buttonWidth;
     this.animatingBack = true;
     this.requestUpdate();
     const durationMs = this.getResetDurationMs();
-    setTimeout(() => {
-      this.dragOffset = 0;
-      this.requestUpdate();
+    this.keyboardFeedbackTimeouts.push(
       setTimeout(() => {
-        this.animatingBack = false;
+        this.dragOffset = 0;
         this.requestUpdate();
-      }, durationMs);
-    }, durationMs);
+        this.keyboardFeedbackTimeouts.push(
+          setTimeout(() => {
+            this.animatingBack = false;
+            this.requestUpdate();
+          }, durationMs)
+        );
+      }, durationMs)
+    );
   }
 
   private getButtonStyle() {
@@ -266,10 +274,7 @@ export class ObcSlideButton extends LitElement {
       'has-leading-icon': this.hasLeadingIcon,
     };
 
-    const hostAriaLabel = this.getAttribute('aria-label') ?? undefined;
-    const hostAriaLabelledBy =
-      this.getAttribute('aria-labelledby') ?? undefined;
-    const forwardedAriaLabel = hostAriaLabelledBy ? undefined : hostAriaLabel;
+    const forwardedAriaLabel = this.getAttribute('aria-label') ?? undefined;
 
     return html`
       <div class=${classMap(containerClasses)}>
@@ -281,7 +286,6 @@ export class ObcSlideButton extends LitElement {
             tabindex=${this.disabled ? '-1' : '0'}
             aria-disabled=${this.disabled ? 'true' : 'false'}
             aria-label=${ifDefined(forwardedAriaLabel)}
-            aria-labelledby=${ifDefined(hostAriaLabelledBy)}
             @mousedown=${this.onDragStart}
             @touchstart=${this.onDragStart}
             @keydown=${this.handleKeydown}
