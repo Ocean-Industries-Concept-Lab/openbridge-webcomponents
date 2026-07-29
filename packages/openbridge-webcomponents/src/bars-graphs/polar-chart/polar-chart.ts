@@ -28,6 +28,7 @@ import {
   formatNumericValue,
   generateLegendHTML,
 } from '../../charthelpers/index.js';
+import type {FixedHeightChartDimensions} from '../../charthelpers/canvas-layout.js';
 
 type PolarScale = RadialLinearScaleType & {
   xCenter: number;
@@ -233,6 +234,9 @@ export class ObcPolarChart extends LitElement {
   /** @internal */
   private chart?: Chart;
 
+  /** @internal - Latest layout dimensions computed by getChartOptions() */
+  private lastDimensions?: FixedHeightChartDimensions;
+
   /** @internal */
   private themeObserver?: MutationObserver;
 
@@ -380,6 +384,9 @@ export class ObcPolarChart extends LitElement {
       host: this,
     });
 
+    // Store dimensions for explicit canvas sizing in createChart/updateChart
+    this.lastDimensions = dimensions;
+
     // Store chart diameter for plugin use
     this.calculatedChartDiameter = dimensions.chartDiameter;
     this.formattedLabels = dimensions.formattedLabels;
@@ -415,9 +422,13 @@ export class ObcPolarChart extends LitElement {
     const startAngle = this.centerFirstSector ? 0 : -anglePerSector / 2;
 
     return {
-      responsive: true,
-      maintainAspectRatio: true,
-      aspectRatio: dimensions.aspectRatio,
+      // Fixed, self-computed size: Chart.js responsive mode must stay off,
+      // it measures the wrapper (canvas + optional legend) and inflates the
+      // canvas / re-applies stale deferred resizes on hover (issue #1061).
+      // The canvas render size is set explicitly in createChart/updateChart.
+      responsive: false,
+      maintainAspectRatio: false,
+      devicePixelRatio: window.devicePixelRatio,
       layout: {
         padding: dynamicPadding ?? POLAR_BAR_DIMENSIONS.CANVAS_PADDING,
       },
@@ -602,6 +613,13 @@ export class ObcPolarChart extends LitElement {
     // Get chart options (this will populate formattedLabels and check dimensions)
     const chartOptions = this.getChartOptions();
 
+    // Non-responsive mode: set the canvas render size explicitly from the
+    // computed layout; Chart.js applies devicePixelRatio scaling on top
+    if (this.lastDimensions) {
+      this.canvasEl.width = this.lastDimensions.calculatedWidth;
+      this.canvasEl.height = this.lastDimensions.actualHeight;
+    }
+
     // Only add outer labels plugin if enabled AND canvas is large enough
     // formattedLabels will be empty if too small or outer labels disabled
     if (this.showOuterLabels && this.formattedLabels.length > 0) {
@@ -657,6 +675,15 @@ export class ObcPolarChart extends LitElement {
     const latestOptions = this.getChartOptions();
     if (this.chart.options) {
       Object.assign(this.chart.options, latestOptions);
+    }
+
+    // Non-responsive mode: apply the computed layout size explicitly
+    // (no-op when the size is unchanged)
+    if (this.lastDimensions) {
+      this.chart.resize(
+        this.lastDimensions.calculatedWidth,
+        this.lastDimensions.actualHeight
+      );
     }
 
     this.chart.update();

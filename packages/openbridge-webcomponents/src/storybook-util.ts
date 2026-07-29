@@ -166,3 +166,41 @@ export function storyHint(text: string): HTMLTemplateResult {
     ${text}
   </p>`;
 }
+
+/**
+ * Assert that a fixed-size circular chart's canvas matches the layout the
+ * component computed for itself (its `--chart-width`/`--chart-height` CSS
+ * variables). Guards against Chart.js re-sizing the canvas behind the
+ * component's back, e.g. the legend-inflated responsive resizing of
+ * issue #1061.
+ *
+ * @param canvasElement - The story's root element (from the play context)
+ * @param tagName - Tag name of the chart component, e.g. 'obc-donut-chart'
+ * @returns The canvas bounding rect, for further stability assertions
+ */
+export function expectChartCanvasToMatchComputedLayout(
+  canvasElement: HTMLElement,
+  tagName: string
+): DOMRect {
+  const chartHost = canvasElement.querySelector(tagName);
+  const canvas = chartHost?.shadowRoot?.querySelector('canvas');
+  if (!chartHost || !(chartHost instanceof HTMLElement) || !canvas) {
+    throw new Error(`${tagName} canvas not found`);
+  }
+  const cssWidth = parseFloat(
+    chartHost.style.getPropertyValue('--chart-width')
+  );
+  const cssHeight = parseFloat(
+    chartHost.style.getPropertyValue('--chart-height')
+  );
+  const rect = canvas.getBoundingClientRect();
+  if (
+    Math.abs(rect.width - cssWidth) > 1 ||
+    Math.abs(rect.height - cssHeight) > 1
+  ) {
+    throw new Error(
+      `${tagName} canvas is ${rect.width}x${rect.height} but computed layout is ${cssWidth}x${cssHeight}`
+    );
+  }
+  return rect;
+}

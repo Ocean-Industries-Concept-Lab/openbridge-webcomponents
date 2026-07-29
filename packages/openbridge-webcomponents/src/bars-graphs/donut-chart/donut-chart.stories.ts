@@ -2,6 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
 import './donut-chart.js';
 import {Priority} from '../../navigation-instruments/types.js';
+import {expectChartCanvasToMatchComputedLayout} from '../../storybook-util.js';
 
 const SAMPLE_DATA = [
   {label: 'Sector A', value: 50},
@@ -152,6 +153,51 @@ export const WithLegend: Story = {
   name: 'With Legend Donut',
   args: {
     legend: true,
+  },
+};
+
+export const HalfDonutWithLegend: Story = {
+  args: {
+    half: true,
+    legend: true,
+  },
+  // Regression test for https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/1061:
+  // the canvas must match the computed fixed layout (not be inflated by the
+  // legend width) and must not change size on the first mouse-over.
+  play: async ({canvasElement}) => {
+    const canvas = canvasElement
+      .querySelector('obc-donut-chart')
+      ?.shadowRoot?.querySelector('canvas');
+    if (!canvas) throw new Error('obc-donut-chart canvas not found');
+
+    // Settle: font loading, legend population, resize observers, animations
+    await new Promise((resolve) => setTimeout(resolve, 600));
+
+    const before = expectChartCanvasToMatchComputedLayout(
+      canvasElement,
+      'obc-donut-chart'
+    );
+    // Simulate the first mouse-over (Chart.js listens on the canvas itself)
+    canvas.dispatchEvent(
+      new MouseEvent('mousemove', {
+        clientX: before.x + before.width / 2,
+        clientY: before.y + before.height / 2,
+      })
+    );
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    const after = expectChartCanvasToMatchComputedLayout(
+      canvasElement,
+      'obc-donut-chart'
+    );
+    if (
+      Math.abs(after.width - before.width) > 0.5 ||
+      Math.abs(after.height - before.height) > 0.5
+    ) {
+      throw new Error(
+        `chart size changed on first mouse-over: ${before.width}x${before.height} -> ${after.width}x${after.height}`
+      );
+    }
   },
 };
 
