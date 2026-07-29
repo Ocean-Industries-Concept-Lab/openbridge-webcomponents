@@ -301,9 +301,9 @@ export class ObcPitchRollYaw extends LitElement {
   }
 
   /**
-   * Live yaw bar for `actual-motion`: a flat band on the scale track swept
-   * from 0° to `yaw`, its moving end rounded by a same-color dot (the
-   * design's "ROT-actual" marker). The fixed 0° end is cut flat.
+   * Live yaw bar for `actual-motion`: a tertiary-colored band on the scale
+   * track swept from 0° to `yaw`, its moving end marked by a secondary-colored
+   * dot (the design's "ROT-actual" marker). The fixed 0° end is cut flat.
    */
   private renderActualYawBar() {
     if (this.type !== PitchRollYawType.actualMotion) {
@@ -323,7 +323,7 @@ export class ObcPitchRollYaw extends LitElement {
       <path
         d="M ${start.x} ${start.y} A ${SCALE_TRACK_RADIUS} ${SCALE_TRACK_RADIUS} 0 ${largeArc} 1 ${end.x} ${end.y}"
         fill="none"
-        stroke=${this.secondaryColor}
+        stroke=${this.tertiaryColor}
         stroke-width=${BAND_HALF_THICKNESS * 2}
         stroke-linecap="butt"
       />
