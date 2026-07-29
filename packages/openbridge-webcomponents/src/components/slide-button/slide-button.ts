@@ -2,6 +2,7 @@ import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property, query, state} from 'lit/decorators.js';
 import componentStyle from './slide-button.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
+import {ifDefined} from 'lit/directives/if-defined.js';
 import '../../icons/icon-chevron-double-right-google.js';
 import {customElement} from '../../decorator.js';
 
@@ -23,6 +24,7 @@ export type ObcSlideButtonSlideEvent = CustomEvent<{completed: boolean}>;
  * - **Hug content:** The `hugContent` property allows the button to shrink to fit its content, rather than stretching to full width.
  * - **Visual feedback:** Provides animated feedback when sliding and snapping back if not completed.
  * - **Trailing icon:** Always displays a trailing double-chevron icon to indicate sliding direction.
+ * - **Keyboard accessible:** The handle is focusable; `Enter` or `Space` triggers the action (with the same `slide` event and `autoDisable` behavior as a completed drag).
  *
  * ---
  *
@@ -35,6 +37,7 @@ export type ObcSlideButtonSlideEvent = CustomEvent<{completed: boolean}>;
  * - The leading icon is optional and can be omitted for a simpler appearance.
  * - The button will snap back if the slide is not completed past the threshold.
  * - Only one slide button should be used for a given action to avoid confusion.
+ * - Keyboard users activate with `Enter`/`Space` (single press — Tab + activation is considered deliberate). Provide `aria-label` or `aria-labelledby` on the host if the slotted label is not descriptive on its own.
  *
  * **TODO(designer):** Confirm if there are recommended minimum/maximum label lengths or if there are accessibility guidelines for color contrast and drag affordance.
  *
@@ -160,43 +163,70 @@ export class ObcSlideButton extends LitElement {
     const dragProgress = Math.max(0, this.dragOffset) / maxOffset;
 
     if (dragProgress >= this.slideThreshold) {
-      /**
-       * Emitted when the slide action is completed (handle dragged past the threshold).
-       * @fires slide {ObcSlideButtonSlideEvent}
-       */
-      this.dispatchEvent(new CustomEvent('slide', {detail: {completed: true}}));
-
-      if (this.autoDisable) {
-        const resetDuration = getComputedStyle(this).getPropertyValue(
-          '--slide-button-reset-duration'
-        );
-        const durationMs = parseFloat(resetDuration) * 1000;
-
-        setTimeout(() => {
-          this.disabled = true;
-          this.requestUpdate();
-        }, durationMs);
-      }
+      this.completeSlide();
     }
 
     this.dragOffset = 0;
     this.requestUpdate();
 
-    const resetDuration = getComputedStyle(this).getPropertyValue(
-      '--slide-button-reset-duration'
-    );
-    const durationMs = parseFloat(resetDuration) * 1000;
-
     setTimeout(() => {
       this.animatingBack = false;
       this.requestUpdate();
-    }, durationMs);
+    }, this.getResetDurationMs());
 
     window.removeEventListener('mousemove', this.onDragMove);
     window.removeEventListener('touchmove', this.onDragMove);
     window.removeEventListener('mouseup', this.onDragEnd);
     window.removeEventListener('touchend', this.onDragEnd);
   };
+
+  private getResetDurationMs(): number {
+    const resetDuration = getComputedStyle(this).getPropertyValue(
+      '--slide-button-reset-duration'
+    );
+    return parseFloat(resetDuration) * 1000;
+  }
+
+  private completeSlide() {
+    /**
+     * Emitted when the slide action is completed (handle dragged past the
+     * threshold or activated via keyboard).
+     * @fires slide {ObcSlideButtonSlideEvent}
+     */
+    this.dispatchEvent(new CustomEvent('slide', {detail: {completed: true}}));
+
+    if (this.autoDisable) {
+      setTimeout(() => {
+        this.disabled = true;
+        this.requestUpdate();
+      }, this.getResetDurationMs());
+    }
+  }
+
+  private handleKeydown = (e: KeyboardEvent) => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    e.preventDefault();
+    if (this.disabled) return;
+    this.completeSlide();
+    this.playKeyboardFeedback();
+  };
+
+  private playKeyboardFeedback() {
+    this.trackWidth = this.visualContainerRef?.offsetWidth || 0;
+    this.buttonWidth = this.buttonRef?.offsetWidth || 0;
+    this.dragOffset = this.trackWidth - this.buttonWidth;
+    this.animatingBack = true;
+    this.requestUpdate();
+    const durationMs = this.getResetDurationMs();
+    setTimeout(() => {
+      this.dragOffset = 0;
+      this.requestUpdate();
+      setTimeout(() => {
+        this.animatingBack = false;
+        this.requestUpdate();
+      }, durationMs);
+    }, durationMs);
+  }
 
   private getButtonStyle() {
     if (!this.dragging && !this.animatingBack) return '';
@@ -236,18 +266,25 @@ export class ObcSlideButton extends LitElement {
       'has-leading-icon': this.hasLeadingIcon,
     };
 
+    const hostAriaLabel = this.getAttribute('aria-label') ?? undefined;
+    const hostAriaLabelledBy =
+      this.getAttribute('aria-labelledby') ?? undefined;
+    const forwardedAriaLabel = hostAriaLabelledBy ? undefined : hostAriaLabel;
+
     return html`
-      <div
-        class=${classMap(containerClasses)}
-        role="button"
-        aria-disabled=${this.disabled}
-      >
+      <div class=${classMap(containerClasses)}>
         <div class=${classMap(visualClasses)}>
           <div
             class="button-touch-target"
             style=${this.getButtonStyle()}
+            role="button"
+            tabindex=${this.disabled ? '-1' : '0'}
+            aria-disabled=${this.disabled ? 'true' : 'false'}
+            aria-label=${ifDefined(forwardedAriaLabel)}
+            aria-labelledby=${ifDefined(hostAriaLabelledBy)}
             @mousedown=${this.onDragStart}
             @touchstart=${this.onDragStart}
+            @keydown=${this.handleKeydown}
           >
             <div class=${classMap(buttonClasses)}>
               <div class="button-content">
@@ -267,6 +304,7 @@ export class ObcSlideButton extends LitElement {
           <div class="trailing-icon-area">
             <obi-chevron-double-right-google
               class="trailing-icon"
+              aria-hidden="true"
             ></obi-chevron-double-right-google>
           </div>
         </div>
