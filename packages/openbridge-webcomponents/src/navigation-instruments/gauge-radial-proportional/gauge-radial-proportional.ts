@@ -235,6 +235,8 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
    * (default), the regular single-value frame renders.
    */
   @property({type: Number}) secondaryValue: number | undefined;
+  /** Instrument state (active, loading, off). `priority: off` also renders the off face. */
+  @property({type: String}) state: InstrumentState = InstrumentState.active;
   @property({type: String}) sector: GaugeRadialProportionalSector =
     GaugeRadialProportionalSector.deg270;
   @property({type: String}) alignment: GaugeRadialProportionalAlignment =
@@ -309,12 +311,17 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
     return this.sector === GaugeRadialProportionalSector.deg360;
   }
 
+  /** The Figma off face: flat disc, regular-colored setpoint. Priority-only. */
   private get isOff(): boolean {
     return this.priority === GaugeRadialProportionalPriority.off;
   }
 
   private get isValueGraphicsHidden(): boolean {
-    return this.isOff;
+    return (
+      this.isOff ||
+      this.state === InstrumentState.off ||
+      this.state === InstrumentState.loading
+    );
   }
 
   private mapAngle(value: number): number {
@@ -887,9 +894,10 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
       this.newSetpoint !== undefined
         ? this.mapAngle(this.newSetpoint)
         : undefined;
-    const effectiveState = this.isOff
-      ? InstrumentState.off
-      : InstrumentState.active;
+    const effectiveState =
+      this.priority === GaugeRadialProportionalPriority.off
+        ? InstrumentState.off
+        : this.state;
 
     const pct = (anchorY: number) =>
       `${(((anchorY - frame.y) / frame.height) * 100).toFixed(4)}%`;
