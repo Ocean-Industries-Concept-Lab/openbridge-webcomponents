@@ -187,10 +187,12 @@ export class ObcWatch extends LitElement {
   @property({type: String}) watchCircleType: WatchCircleType =
     WatchCircleType.single;
   /**
-   * When `true`, the full watch-face circle is always drawn behind the dial —
+   * When `true`, the full watch-face circle is drawn behind the dial —
    * a frame-primary fill with a tertiary outline — so partial-sector
-   * instruments still read as a complete circle. With sector `areas`, the
-   * per-area arch outline is dropped; the face outline takes its place.
+   * instruments still read as a complete circle. In the `off` state the fill
+   * is omitted (only the outline remains), keeping the off skeleton hollow.
+   * With sector `areas`, the per-area arch outline is dropped; the face
+   * outline takes its place.
    */
   @property({type: Boolean}) hasBackgroundCircle: boolean = false;
   @property({type: Boolean}) northArrow: boolean = false;

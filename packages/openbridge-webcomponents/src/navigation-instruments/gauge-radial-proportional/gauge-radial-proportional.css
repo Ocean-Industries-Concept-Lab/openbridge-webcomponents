@@ -4,12 +4,9 @@
   height: 100%;
 }
 
-/* With a pinned face the host shrink-wraps the fixed-size dial, so rows of
-   pinned instruments can sit side by side in flex layouts. */
-:host([face-diameter]) {
-  width: fit-content;
-  height: fit-content;
-}
+/* With a pinned face the host is sized to the fixed dial box via inline px
+   styles (applyPinnedHostSize), so rows of pinned instruments can sit side by
+   side in flex layouts — no host CSS rule needed here. */
 
 .gauge-root {
   position: relative;
@@ -27,11 +24,12 @@
   top: 50%;
   transform: translateY(-50%);
 
+  /* The pinned host box is already the exact frame size, so the root fills
+     it; fit-content would collapse to 0 here because every descendant is
+     absolute/percentage-sized and provides no intrinsic content. */
   &.face-pinned {
-    width: fit-content;
-    height: fit-content;
-    max-width: none;
-    max-height: none;
+    width: 100%;
+    height: 100%;
     aspect-ratio: auto;
     top: 0;
     transform: none;
