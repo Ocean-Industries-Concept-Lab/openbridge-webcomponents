@@ -589,8 +589,7 @@ export class ObcPieChart extends LitElement {
       this.canvasEl.height = this.lastDimensions.actualHeight;
     }
 
-    const height = this.canvasEl?.clientHeight ?? 0;
-    const isTooSmall = height < CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS;
+    const isTooSmall = this.lastDimensions?.isTooSmall ?? false;
 
     this.chart = new Chart(ctx, {
       type: 'pie',

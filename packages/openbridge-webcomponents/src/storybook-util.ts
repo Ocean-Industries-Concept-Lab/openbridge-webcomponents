@@ -193,6 +193,10 @@ export function expectChartCanvasToMatchComputedLayout(
   const cssHeight = parseFloat(
     chartHost.style.getPropertyValue('--chart-height')
   );
+  // NaN would make both comparisons below false and silently pass the guard
+  if (Number.isNaN(cssWidth) || Number.isNaN(cssHeight)) {
+    throw new Error(`${tagName} --chart-width/--chart-height not set`);
+  }
   const rect = canvas.getBoundingClientRect();
   if (
     Math.abs(rect.width - cssWidth) > 1 ||

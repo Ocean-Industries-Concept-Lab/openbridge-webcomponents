@@ -292,9 +292,12 @@ export interface FixedHeightChartDimensions {
  *   - Important: Use visibleWidth (not chartDiameter) for half mode
  *
  * Step 4: Check threshold and hide labels if needed
- *   - if (actualHeight < MIN_HEIGHT_WITH_LABELS) hide labels
- *   - actualHeight is the rendered canvas height, so for half circle mode the
- *     threshold corresponds to fixedHeight ≥ 320 (rendered height ≥ 192)
+ *   - if (fixedHeight < MIN_HEIGHT_WITH_LABELS) hide labels
+ *   - fixedHeight sets the arc diameter (fixedHeight - 64) in BOTH modes, so
+ *     half and full circle charts show labels from the same arc size upward;
+ *     consumers must gate their draw-time label rendering on the returned
+ *     isTooSmall (not on the rendered canvas height, which is halved in half
+ *     mode)
  *
  * Step 5: Calculate actual rendered height and aspect ratio
  *   - For half circle: actualHeight = (fixedHeight - 64) / 2 + 64
@@ -317,10 +320,12 @@ export function calculateFixedHeightChartLayout(
     ? Math.round((config.fixedHeight - topBottomPadding) / 2 + topBottomPadding)
     : config.fixedHeight;
 
-  // Step 4: Check threshold against the height that is actually rendered, so
-  // label visibility matches the draw-time clientHeight checks in the chart
-  // plugins (for half mode the rendered height is roughly half of fixedHeight)
-  const isTooSmall = actualHeight < CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS;
+  // Step 4: Check threshold against fixedHeight, which sets the arc diameter
+  // (fixedHeight - 64) in both modes: a half donut at the same fixedHeight has
+  // the same arc size as a full donut, so labels appear from the same
+  // fixedHeight upward regardless of mode
+  const isTooSmall =
+    config.fixedHeight < CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS;
 
   // Step 1: Calculate chart diameter from fixed height
   const chartDiameter = config.isHalfMode

@@ -149,6 +149,17 @@ export const ThresholdHeight: Story = {
   },
 };
 
+export const HalfDonutThresholdHeight: Story = {
+  name: 'Threshold Height Half Donut (192px, where labels appear)',
+  // The threshold is the same as for the full donut: fixedHeight sets the arc
+  // diameter in both modes, so a half donut at 192px shows labels even though
+  // its rendered height is only about half of fixedHeight (issue #1061)
+  args: {
+    half: true,
+    fixedHeight: 192,
+  },
+};
+
 export const WithLegend: Story = {
   name: 'With Legend Donut',
   args: {
