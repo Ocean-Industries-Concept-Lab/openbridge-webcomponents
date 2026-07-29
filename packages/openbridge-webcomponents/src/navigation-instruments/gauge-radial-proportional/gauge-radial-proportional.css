@@ -61,15 +61,26 @@
   height: 100%;
 }
 
+/* Device-symbol slot: a 72/512 fraction of the face (the design's icon box),
+   so the icon scales with the dial like the rest of the watch-face graphics.
+   The percentage width resolves against .container. */
 .icon-anchor {
   position: absolute;
   left: 50%;
   top: var(--icon-top, 36%);
+  width: var(--icon-size, 14%);
+  aspect-ratio: 1;
   transform: translate(-50%, -50%);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1;
+}
+
+.icon-anchor ::slotted(*) {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .readout-row {
@@ -89,12 +100,27 @@
   background: var(--border-divider-color);
 }
 
+/* Secondary-scale max-min labels: same treatment as the watch tick labels
+   (constant on-screen size via counter-scaling; --scale is set by the host). */
+.secondary-scale-label {
+  @mixin font-body;
+  font-size: calc(12px / var(--scale, 1));
+  fill: var(--element-neutral-color);
+  dominant-baseline: central;
+}
+
 .gauge-name {
   position: absolute;
   left: 50%;
   top: var(--name-top, 67%);
   transform: translate(-50%, -50%);
-  @mixin font-overline;
+  /* UI/Overline-new: the plugin-generated mixin carries only family/weight;
+     size, line-height and letter-spacing are literal in the design (11.5/16/1)
+     and added locally, like obc-card's title does. */
+  @mixin font-overline-new;
+  font-size: 11.5px;
+  line-height: 16px;
+  letter-spacing: 1px;
   color: var(--element-neutral-color);
   white-space: nowrap;
   z-index: 1;

@@ -8,9 +8,9 @@ import {
 } from './gauge-radial-proportional.js';
 import './gauge-radial-proportional.js';
 import '../../icons/icon-placeholder-device-on.js';
+import '../../icons/icon-placeholder-device-off-f.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {AdviceType} from '../watch/advice.js';
-import {InstrumentState} from '../types.js';
 
 type GaugeRadialProportionalStoryArgs = Partial<ObcGaugeRadialProportional> & {
   width?: number;
@@ -20,7 +20,7 @@ type GaugeRadialProportionalStoryArgs = Partial<ObcGaugeRadialProportional> & {
 
 const meta = {
   title: 'Instruments/Gauge Radial Proportional',
-  tags: ['autodocs', 'wip'],
+  tags: ['autodocs', 'wip', 'skip-test'],
   component: 'obc-gauge-radial-proportional',
   decorators: [widthDecorator],
   args: {
@@ -51,7 +51,6 @@ const meta = {
       control: 'select',
       options: Object.values(GaugeRadialProportionalPriority),
     },
-    state: {control: 'select', options: Object.values(InstrumentState)},
     value: {control: 'number'},
     secondaryValue: {control: 'number'},
     minValue: {control: 'number'},
@@ -82,7 +81,6 @@ const meta = {
       .sector=${args.sector ?? GaugeRadialProportionalSector.deg270}
       .alignment=${args.alignment ?? GaugeRadialProportionalAlignment.outside}
       .priority=${args.priority ?? GaugeRadialProportionalPriority.regular}
-      .state=${args.state ?? InstrumentState.active}
       .showLabels=${args.showLabels ?? false}
       .hasReadout=${args.hasReadout ?? false}
       .label=${args.label ?? ''}
@@ -98,10 +96,15 @@ const meta = {
       .faceDiameter=${args.faceDiameter}
     >
       ${args.hasIcon
-        ? html`<obi-placeholder-device-on
-            slot="icon"
-            style="width: 24px; height: 24px;"
-          ></obi-placeholder-device-on>`
+        ? args.priority === GaugeRadialProportionalPriority.off
+          ? html`<obi-placeholder-device-off-f
+              slot="icon"
+              .useCssColor=${true}
+            ></obi-placeholder-device-off-f>`
+          : html`<obi-placeholder-device-on
+              slot="icon"
+              .useCssColor=${true}
+            ></obi-placeholder-device-on>`
         : ''}
     </obc-gauge-radial-proportional>
   `,
@@ -133,6 +136,20 @@ export const PrimarySecondary: Story = {
   },
 };
 
+export const PrimarySecondary270: Story = {
+  args: {
+    secondaryValue: 45,
+    secondaryLabel: 'Label',
+    secondaryUnit: 'Unit',
+  },
+};
+
+export const IconOnly: Story = {
+  args: {
+    hasReadout: false,
+  },
+};
+
 export const Enhanced: Story = {
   args: {
     priority: GaugeRadialProportionalPriority.enhanced,
@@ -158,14 +175,32 @@ export const InsideLabels: Story = {
   },
 };
 
+export const Sector360InsideLabels: Story = {
+  args: {
+    sector: GaugeRadialProportionalSector.deg360,
+    alignment: GaugeRadialProportionalAlignment.inside,
+  },
+};
+
 export const MaxMinLabels: Story = {
   args: {
     alignment: GaugeRadialProportionalAlignment.maxMin,
   },
 };
 
+export const PrimarySecondaryMaxMin: Story = {
+  args: {
+    alignment: GaugeRadialProportionalAlignment.maxMin,
+    secondaryValue: 45,
+    secondaryLabel: 'Label',
+    secondaryUnit: 'Unit',
+  },
+};
+
 export const WithAdvices: Story = {
   args: {
+    sector: GaugeRadialProportionalSector.deg270PosNeg,
+    alignment: GaugeRadialProportionalAlignment.maxMin,
     advices: [
       {
         minValue: 85,

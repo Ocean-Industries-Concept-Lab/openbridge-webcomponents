@@ -8,7 +8,11 @@ import {InstrumentState, Priority} from '../types.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import {AdviceState, AdviceType, AngleAdviceRaw} from '../watch/advice.js';
 import '../watch/watch.js';
-import {innerRingRadiusFor, WatchCircleType} from '../watch/watch.js';
+import {
+  innerRingRadiusFor,
+  OUTER_RING_RADIUS,
+  WatchCircleType,
+} from '../watch/watch.js';
 import type {WatchArea, WatchBarArea} from '../watch/watch.js';
 import {TickmarkStyle, TickmarkType} from '../watch/tickmark.js';
 import type {Tickmark} from '../watch/tickmark.js';
@@ -41,8 +45,9 @@ export enum GaugeRadialProportionalAlignment {
  * Color emphasis of the proportional gauge (the Figma "Priority" axis).
  * `regular`/`enhanced` map onto the shared instrument {@link Priority};
  * `medium` colors the value graphics by a category/medium color pair;
- * `off` blanks the value graphics on a silhouette face while the frame,
- * setpoint marker and readouts remain.
+ * `off` blanks the value graphics on a flat frame-secondary disc while the
+ * ticks, labels, advices, readouts and the regular-colored setpoint marker
+ * remain.
  */
 export enum GaugeRadialProportionalPriority {
   regular = 'regular',
@@ -71,14 +76,66 @@ const NEEDLE_WIDTH = 8;
 const NEEDLE_LENGTH_FULL = BAND_OUTER_RADIUS - BAND_INNER_RADIUS;
 const NEEDLE_LENGTH_SPLIT = 32;
 
-/* Center-content anchors in SVG units (center origin), from the 512-canvas
-   design: icon center at -74, readout row center at +26, name row at +88. */
-const ICON_ANCHOR_Y = -74;
-const READOUT_ANCHOR_Y = 26;
-const NAME_ANCHOR_Y = 88;
+/* Primary-secondary frame geometry: the track annulus splits into a narrowed
+   primary band lane (128..160), the secondary line lane (112..120) and a
+   face-colored gap between them (120..128). The joint 48-unit round cut the
+   watch draws at the sector ends is erased and each lane re-capped
+   individually. */
+const SPLIT_BAND_INNER_RADIUS = BAND_INNER_RADIUS + 16;
+const SPLIT_BAND_WIDTH = BAND_OUTER_RADIUS - SPLIT_BAND_INNER_RADIUS;
+const SPLIT_BAND_CENTER_RADIUS = SPLIT_BAND_INNER_RADIUS + SPLIT_BAND_WIDTH / 2;
+const LANE_GAP_WIDTH =
+  SPLIT_BAND_INNER_RADIUS - BAND_INNER_RADIUS - SECONDARY_LINE_WIDTH;
+const LANE_GAP_CENTER_RADIUS =
+  BAND_INNER_RADIUS + SECONDARY_LINE_WIDTH + LANE_GAP_WIDTH / 2;
+const TRACK_ERASE_CENTER_RADIUS = (BAND_INNER_RADIUS + BAND_OUTER_RADIUS) / 2;
+const TRACK_ERASE_WIDTH = BAND_OUTER_RADIUS - BAND_INNER_RADIUS + 1;
+/** Angular reach of the end-cut erase, covering the joint cap's full bulge. */
+const TRACK_END_OVERSHOOT_DEG = 15;
+/* The watch's sector cut is a round cap spanning the whole 112..184
+   silhouette; its circle bounds the end-cut erase so face paint never spills
+   past the outline. */
+const SILHOUETTE_CAP_RADIUS = (OUTER_RING_RADIUS - BAND_INNER_RADIUS) / 2;
+const SILHOUETTE_CAP_CENTER_RADIUS =
+  (OUTER_RING_RADIUS + BAND_INNER_RADIUS) / 2;
+/* Face-colored cover over the watch's 1px inner-edge outline at 112 (the
+   split lanes have no inner border); the lane track is redrawn on top. */
+const INNER_EDGE_COVER_RADIUS = BAND_INNER_RADIUS - 0.5;
+const INNER_EDGE_COVER_WIDTH = 3;
 
-/* Off-priority silhouette disc radius (the value graphics are blanked and the
-   face becomes a flat silhouette-colored disc). */
+/* Fill-origin anchor stub (the design's "zero-line"): a band-colored bar at
+   the origin angle spanning the band and the scale ring, overshooting each by
+   half a unit so it caps the ring strokes. It scales with the face, unlike
+   the fixed-width tickmarks. */
+const ZERO_LINE_WIDTH = 9;
+const ZERO_LINE_OUTER_RADIUS = OUTER_RING_RADIUS + 0.5;
+const ZERO_LINE_INNER_RADIUS = BAND_INNER_RADIUS - 0.5;
+
+/* Center-content anchors in SVG units (center origin), from the 512-canvas
+   design (automation-gauge-readout): icon (72x72 box) centered at -50,
+   readout row center at +26, name row at +88 on the full circle and +120 on
+   the 270 sectors (the open bottom leaves more room). Without a readout the
+   design's icon-only face centers a 144x144 icon on the dial. Icons scale
+   with the face (n/512 of the frame), unlike the fixed-px readouts. */
+const ICON_ANCHOR_Y = -50;
+const ICON_SIZE = 72;
+const ICON_ONLY_ANCHOR_Y = 0;
+const ICON_ONLY_SIZE = 144;
+const READOUT_ANCHOR_Y = 26;
+const NAME_ANCHOR_Y_360 = 88;
+const NAME_ANCHOR_Y_270 = 120;
+
+/* Secondary-scale max-min labels (the design's "Labels-secondary"): a second
+   min/max row at the secondary lane ends, outer-edge aligned at ±78.5 on the
+   +92 row — between the readout and the 270 name row. The design renders it
+   only for the max-min alignment on the open sectors (the full circle's lane
+   ends meet at 12 o'clock). */
+const SECONDARY_MAXMIN_LABEL_EDGE_X = 78.5;
+const SECONDARY_MAXMIN_LABEL_Y = 92;
+
+/* Off-priority disc radius (the value graphics are blanked and the face
+   becomes a flat frame-secondary disc — track and face merge into one color,
+   while ticks, labels, advices and the regular-colored setpoint remain). */
 const OFF_DISC_RADIUS = BAND_OUTER_RADIUS + 24;
 
 /** Cap for full-circle arcs so start and end never coincide in path space. */
@@ -128,15 +185,18 @@ function arcPath(radius: number, startDeg: number, endDeg: number): string {
  *
  * - **Sectors**: `360` (full circle, fill anchored at 12 o'clock), `270`
  *   (fill anchored at the scale start), and `270-pos-neg` (fill anchored at
- *   the scale midpoint/zero, growing toward either side).
+ *   the scale midpoint/zero, growing toward either side). The watch face is
+ *   always a complete background circle — the sector only limits the
+ *   scale/track arc inside it.
  * - **Label alignment**: `outside` (default), `inside`
  *   (labels inside the ring), and `max-min` (only the min/max labels).
  * - **Priority**: `regular`, `enhanced`, `medium` (category color pair via
  *   `--instrument-enhanced-*` overrides), `off` (silhouette face, value
  *   graphics hidden, setpoint and readouts remain).
  * - **Secondary value**: setting `secondaryValue` renders the
- *   primary-secondary frame — a thin line arc at the band's inner edge plus
- *   a second readout with a divider.
+ *   primary-secondary frame — the track splits into a narrowed primary band
+ *   lane and a secondary line lane with its own track, and a second readout
+ *   renders with a divider.
  * - **Center content**: optional readout(s) with `label`/`unit`, a `name`
  *   row, and an `icon` slot above the readout.
  * - **Setpoint via mixin**: `setpoint`, `newSetpoint`, `touching`, deadband
@@ -149,16 +209,17 @@ function arcPath(radius: number, startDeg: number, endDeg: number): string {
  *   the full-circle sector, the mid-anchored (pos/neg) fill, the secondary
  *   value lane, or the medium/off priorities.
  * - `priority: off` blanks the value graphics but keeps the instrument
- *   legible; `state: off` (from the shared instrument state) blanks the
- *   whole dial.
+ *   legible.
  *
  * ## Slots
  *
- * | Slot   | Purpose                                        |
- * | ------ | ---------------------------------------------- |
- * | `icon` | Icon shown above the readout (e.g. `<obi-*>`). |
+ * | Slot   | Purpose                                                                                                 |
+ * | ------ | ------------------------------------------------------------------------------------------------------- |
+ * | `icon` | Device symbol shown above the readout, scaled with the face (e.g. `<obi-placeholder-device-on useCssColor>`). |
  *
- * @slot icon - Icon shown above the readout (e.g. `<obi-*>` icons).
+ * @slot icon - Device symbol shown above the readout, scaled with the face
+ *   (e.g. `<obi-placeholder-device-on useCssColor>` for the device-token
+ *   styling).
  *
  * @element obc-gauge-radial-proportional
  * @experimental
@@ -180,7 +241,6 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
     GaugeRadialProportionalAlignment.outside;
   @property({type: String}) priority: GaugeRadialProportionalPriority =
     GaugeRadialProportionalPriority.regular;
-  @property({type: String}) state: InstrumentState = InstrumentState.active;
   @property({type: Boolean}) showLabels: boolean = false;
   /**
    * Interval for primary tickmarks in value units.
@@ -254,11 +314,7 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
   }
 
   private get isValueGraphicsHidden(): boolean {
-    return (
-      this.isOff ||
-      this.state === InstrumentState.loading ||
-      this.state === InstrumentState.off
-    );
+    return this.isOff;
   }
 
   private mapAngle(value: number): number {
@@ -341,8 +397,13 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
     ];
   }
 
+  /** Whether the primary-secondary (split-track) frame renders. */
+  private get isSplit(): boolean {
+    return this.secondaryValue !== undefined;
+  }
+
   private get barAreas(): WatchBarArea[] {
-    if (this.isValueGraphicsHidden) {
+    if (this.isValueGraphicsHidden || this.isSplit) {
       return [];
     }
     return [
@@ -358,9 +419,14 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
     const tickmarksByValue = new Map<number, Tickmark>();
     const normalizeValue = (value: number) =>
       Math.abs(value) < 1e-9 ? 0 : Number(value.toFixed(6));
+    // Inside labels track the inner ring, so on the full circle the bottom
+    // (180°) interval label would sit on the center name/readout cluster —
+    // the design keeps only the min label there (Inside/360 variants).
     const suppressIntervalLabels =
-      this.alignment === GaugeRadialProportionalAlignment.maxMin &&
-      !this.isFullCircle;
+      (this.alignment === GaugeRadialProportionalAlignment.maxMin &&
+        !this.isFullCircle) ||
+      (this.alignment === GaugeRadialProportionalAlignment.inside &&
+        this.isFullCircle);
 
     const upsertTickmark = (
       value: number,
@@ -433,16 +499,10 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
       TickmarkType.primary,
       true
     );
-    if (!this.isOff) {
-      addTickmarksAtInterval(
-        this.secondaryTickmarkInterval,
-        TickmarkType.secondary
-      );
-    }
-
-    if (this.sector === GaugeRadialProportionalSector.deg270PosNeg) {
-      upsertTickmark(this.fillOriginValue, TickmarkType.main);
-    }
+    addTickmarksAtInterval(
+      this.secondaryTickmarkInterval,
+      TickmarkType.secondary
+    );
 
     if (this.showLabels) {
       upsertTickmark(
@@ -484,6 +544,181 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
     });
   }
 
+  /**
+   * The fill-origin anchor stub (the design's "zero-line") — rendered
+   * whenever the origin sits away from the scale ends: the full circle
+   * (origin = min at 12 o'clock) and the pos/neg sector (origin =
+   * zero/midpoint). The plain 270 sector anchors at the scale start, which
+   * needs no stub. It follows the band color, so it repaints with priority.
+   */
+  private renderZeroLine() {
+    const hasAnchoredOrigin =
+      this.isFullCircle ||
+      this.sector === GaugeRadialProportionalSector.deg270PosNeg;
+    if (!hasAnchoredOrigin || this.isValueGraphicsHidden) {
+      return nothing;
+    }
+    // In the split frame the stub stops at the narrowed band's inner edge;
+    // the secondary lane gets its own small stub (see renderSplitFrame).
+    const innerRadius = this.isSplit
+      ? SPLIT_BAND_INNER_RADIUS - 0.5
+      : ZERO_LINE_INNER_RADIUS;
+    return svg`
+      <rect
+        transform="rotate(${this.mapAngle(this.fillOriginValue)})"
+        x="${-ZERO_LINE_WIDTH / 2}" y="${-ZERO_LINE_OUTER_RADIUS}"
+        width="${ZERO_LINE_WIDTH}"
+        height="${ZERO_LINE_OUTER_RADIUS - innerRadius}"
+        fill=${this.bandColor}
+      />
+    `;
+  }
+
+  /**
+   * Track chrome of the primary-secondary frame. The watch still draws the
+   * joint 112..160 track annulus; this repaints it into the split layout —
+   * a face-colored gap divides the lanes, the joint round end cuts are
+   * erased and each lane re-capped, the narrowed primary band is drawn at
+   * its own radii, and the secondary lane gets its own fill-origin stub.
+   */
+  private renderSplitFrame() {
+    if (!this.isSplit || this.isValueGraphicsHidden) {
+      return nothing;
+    }
+    const facePaint = 'var(--instrument-frame-primary-color)';
+    const trackPaint = 'var(--instrument-frame-secondary-color)';
+    const startAngle = this.mapAngle(this.minValue);
+    const endAngle = this.mapAngle(this.maxValue);
+    const parts = [];
+
+    if (this.isFullCircle) {
+      parts.push(svg`
+        <circle
+          r=${INNER_EDGE_COVER_RADIUS}
+          fill="none"
+          stroke=${facePaint}
+          stroke-width=${INNER_EDGE_COVER_WIDTH}
+        ></circle>
+        <circle
+          r=${SECONDARY_LANE_RADIUS}
+          fill="none"
+          stroke=${trackPaint}
+          stroke-width=${SECONDARY_LINE_WIDTH}
+        ></circle>
+        <circle
+          r=${LANE_GAP_CENTER_RADIUS}
+          fill="none"
+          stroke=${facePaint}
+          stroke-width=${LANE_GAP_WIDTH}
+        ></circle>
+      `);
+    } else {
+      // Erase the joint round cut the watch draws at each sector end. The
+      // erase is clipped to the cut's own cap circle so the face paint never
+      // spills onto the page background outside the dial silhouette.
+      parts.push(svg`<clipPath id="split-end-cut-clip">
+        <circle
+          transform="rotate(${startAngle})"
+          cy=${-SILHOUETTE_CAP_CENTER_RADIUS}
+          r=${SILHOUETTE_CAP_RADIUS + 0.5}
+        ></circle>
+        <circle
+          transform="rotate(${endAngle})"
+          cy=${-SILHOUETTE_CAP_CENTER_RADIUS}
+          r=${SILHOUETTE_CAP_RADIUS + 0.5}
+        ></circle>
+      </clipPath>`);
+      const endCuts: [number, number][] = [
+        [startAngle - TRACK_END_OVERSHOOT_DEG, startAngle],
+        [endAngle, endAngle + TRACK_END_OVERSHOOT_DEG],
+      ];
+      parts.push(svg`<g clip-path="url(#split-end-cut-clip)">
+        ${endCuts.map(
+          ([from, to]) => svg`<path
+            d=${arcPath(TRACK_ERASE_CENTER_RADIUS, from, to)}
+            fill="none"
+            stroke=${facePaint}
+            stroke-width=${TRACK_ERASE_WIDTH}
+            stroke-linecap="butt"
+          ></path>`
+        )}
+      </g>`);
+      parts.push(svg`
+        <path
+          d=${arcPath(INNER_EDGE_COVER_RADIUS, startAngle, endAngle)}
+          fill="none"
+          stroke=${facePaint}
+          stroke-width=${INNER_EDGE_COVER_WIDTH}
+          stroke-linecap="butt"
+        ></path>
+        <path
+          d=${arcPath(SECONDARY_LANE_RADIUS, startAngle, endAngle)}
+          fill="none"
+          stroke=${trackPaint}
+          stroke-width=${SECONDARY_LINE_WIDTH}
+          stroke-linecap="butt"
+        ></path>
+        <path
+          d=${arcPath(LANE_GAP_CENTER_RADIUS, startAngle, endAngle)}
+          fill="none"
+          stroke=${facePaint}
+          stroke-width=${LANE_GAP_WIDTH}
+          stroke-linecap="butt"
+        ></path>
+      `);
+      for (const angle of [startAngle, endAngle]) {
+        parts.push(svg`<g transform="rotate(${angle})">
+          <circle
+            cy=${-SPLIT_BAND_CENTER_RADIUS}
+            r=${SPLIT_BAND_WIDTH / 2}
+            fill=${trackPaint}
+          ></circle>
+          <circle
+            cy=${-SECONDARY_LANE_RADIUS}
+            r=${SECONDARY_LINE_WIDTH / 2}
+            fill=${trackPaint}
+          ></circle>
+        </g>`);
+      }
+    }
+
+    const originAngle = this.mapAngle(this.fillOriginValue);
+    const bandEndAngle = this.arcEndAngle(this.clampedValue);
+    if (Math.abs(bandEndAngle - originAngle) >= 0.5) {
+      if (this.sector === GaugeRadialProportionalSector.deg270) {
+        parts.push(svg`<circle
+          transform="rotate(${originAngle})"
+          cy=${-SPLIT_BAND_CENTER_RADIUS}
+          r=${SPLIT_BAND_WIDTH / 2}
+          fill=${this.bandColor}
+        ></circle>`);
+      }
+      parts.push(svg`<path
+        d=${arcPath(SPLIT_BAND_CENTER_RADIUS, originAngle, bandEndAngle)}
+        fill="none"
+        stroke=${this.bandColor}
+        stroke-width=${SPLIT_BAND_WIDTH}
+        stroke-linecap="butt"
+      ></path>`);
+    }
+
+    if (
+      this.isFullCircle ||
+      this.sector === GaugeRadialProportionalSector.deg270PosNeg
+    ) {
+      parts.push(svg`<rect
+        transform="rotate(${originAngle})"
+        x="${-SECONDARY_LINE_WIDTH / 2}"
+        y="${-(BAND_INNER_RADIUS + SECONDARY_LINE_WIDTH)}"
+        width="${SECONDARY_LINE_WIDTH}"
+        height="${SECONDARY_LINE_WIDTH}"
+        fill=${this.accentColor}
+      ></rect>`);
+    }
+
+    return parts;
+  }
+
   private renderNeedle() {
     if (this.isValueGraphicsHidden) {
       return nothing;
@@ -513,18 +748,28 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
     const r = SECONDARY_LANE_RADIUS;
     const originAngle = this.mapAngle(this.fillOriginValue);
     const endAngle = this.arcEndAngle(this.secondaryValue);
-    const toRad = ((endAngle - 90) * Math.PI) / 180;
-    const endX = r * Math.cos(toRad);
-    const endY = r * Math.sin(toRad);
+    // Flush round tip: a plain cap circle in the arc's own color, so the
+    // line simply ends rounded with no visible tip marker.
     const tip = svg`<circle
-      cx=${endX} cy=${endY}
+      transform="rotate(${endAngle})"
+      cy=${-r}
       r=${SECONDARY_LINE_WIDTH / 2}
       fill=${this.accentColor}
     ></circle>`;
     if (Math.abs(endAngle - originAngle) < 0.5) {
       return tip;
     }
+    const startCap =
+      this.sector === GaugeRadialProportionalSector.deg270
+        ? svg`<circle
+            transform="rotate(${originAngle})"
+            cy=${-r}
+            r=${SECONDARY_LINE_WIDTH / 2}
+            fill=${this.accentColor}
+          ></circle>`
+        : nothing;
     return svg`
+      ${startCap}
       <path
         d=${arcPath(r, originAngle, endAngle)}
         fill="none"
@@ -533,6 +778,31 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
         stroke-linecap="butt"
       ></path>
       ${tip}
+    `;
+  }
+
+  private renderSecondaryMaxMinLabels() {
+    if (
+      this.secondaryValue === undefined ||
+      !this.showLabels ||
+      this.alignment !== GaugeRadialProportionalAlignment.maxMin ||
+      this.isFullCircle
+    ) {
+      return nothing;
+    }
+    return svg`
+      <text
+        class="secondary-scale-label"
+        x=${-SECONDARY_MAXMIN_LABEL_EDGE_X}
+        y=${SECONDARY_MAXMIN_LABEL_Y}
+        text-anchor="start"
+      >${this.minValue}</text>
+      <text
+        class="secondary-scale-label"
+        x=${SECONDARY_MAXMIN_LABEL_EDGE_X}
+        y=${SECONDARY_MAXMIN_LABEL_Y}
+        text-anchor="end"
+      >${this.maxValue}</text>
     `;
   }
 
@@ -617,13 +887,21 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
       this.newSetpoint !== undefined
         ? this.mapAngle(this.newSetpoint)
         : undefined;
-    const effectiveState = this.isOff ? InstrumentState.off : this.state;
+    const effectiveState = this.isOff
+      ? InstrumentState.off
+      : InstrumentState.active;
 
     const pct = (anchorY: number) =>
       `${(((anchorY - frame.y) / frame.height) * 100).toFixed(4)}%`;
-    const anchors = `--icon-top: ${pct(ICON_ANCHOR_Y)}; --readout-top: ${pct(
+    const iconAnchorY = this.hasReadout ? ICON_ANCHOR_Y : ICON_ONLY_ANCHOR_Y;
+    const iconSize = this.hasReadout ? ICON_SIZE : ICON_ONLY_SIZE;
+    const nameAnchorY = this.isFullCircle
+      ? NAME_ANCHOR_Y_360
+      : NAME_ANCHOR_Y_270;
+    const iconSizePct = `${((iconSize / frame.width) * 100).toFixed(4)}%`;
+    const anchors = `--icon-top: ${pct(iconAnchorY)}; --icon-size: ${iconSizePct}; --readout-top: ${pct(
       READOUT_ANCHOR_Y
-    )}; --name-top: ${pct(NAME_ANCHOR_Y)};`;
+    )}; --name-top: ${pct(nameAnchorY)}; --scale: ${frame.scale};`;
 
     return html`
       <div
@@ -640,7 +918,7 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
             ? html`<svg class="layer" viewBox=${frame.viewBox}>
                 <circle
                   r=${OFF_DISC_RADIUS}
-                  fill="var(--border-silhouette-color)"
+                  fill="var(--instrument-frame-secondary-color)"
                   stroke="var(--instrument-frame-tertiary-color)"
                   stroke-width="1"
                   vector-effect="non-scaling-stroke"
@@ -655,7 +933,7 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
             .newAngleSetpoint=${newSetpointAngle}
             .atAngleSetpoint=${this.computeAtSetpoint(value)}
             .angleSetpointAtZeroDeadband=${this.setpointAtZeroDeadband}
-            .setpointOverride=${this.setpointOverride}
+            .setpointOverride=${this.setpointOverride || this.isOff}
             .animateSetpoint=${this.animateSetpoint}
             .tickmarks=${shownTickmarks}
             .tickmarksInside=${tickmarksInside}
@@ -663,12 +941,15 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
             .advices=${this._advices}
             .areas=${areas}
             .watchCircleType=${WatchCircleType.double}
+            .hasBackgroundCircle=${true}
             .barAreas=${this.barAreas}
             .endLabelsMaxMin=${endLabelsMaxMin}
             .arcFrame=${frame}
           ></obc-watch>
           <svg class="layer" viewBox=${frame.viewBox}>
+            ${this.renderSplitFrame()} ${this.renderZeroLine()}
             ${this.renderSecondaryArc()} ${this.renderNeedle()}
+            ${this.renderSecondaryMaxMinLabels()}
           </svg>
           ${this.renderCenterContent()}
         </div>

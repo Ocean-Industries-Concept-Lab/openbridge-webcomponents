@@ -186,6 +186,13 @@ export class ObcWatch extends LitElement {
   @property({type: String}) priority: Priority = Priority.regular;
   @property({type: String}) watchCircleType: WatchCircleType =
     WatchCircleType.single;
+  /**
+   * When `true`, the full watch-face circle is always drawn behind the dial —
+   * a frame-primary fill with a tertiary outline — so partial-sector
+   * instruments still read as a complete circle. With sector `areas`, the
+   * per-area arch outline is dropped; the face outline takes its place.
+   */
+  @property({type: Boolean}) hasBackgroundCircle: boolean = false;
   @property({type: Boolean}) northArrow: boolean = false;
   @property({type: Boolean}) northArrowInside: boolean | undefined;
   /** Setpoint angle in degrees (0° = 12 o'clock) */
@@ -422,6 +429,36 @@ export class ObcWatch extends LitElement {
 
   private watchCircle(): SVGTemplateResult | SVGTemplateResult[] {
     const rings = [];
+    // Full-face circle behind everything, split in two: the fill goes under
+    // the rings and the outline goes on top of them — the masked track band
+    // reaches exactly the face radius, so an outline drawn underneath would
+    // lose its inner half wherever the band overlaps it and look thinner
+    // there than across the open sector gap. In the ring branch the existing
+    // outer ring already outlines the face, so only the fill applies.
+    const faceFill =
+      this.hasBackgroundCircle && this.state !== InstrumentState.off
+        ? svg`
+        <circle
+          cx="0"
+          cy="0"
+          r="${this._bandRadius(OUTER_RING_RADIUS)}"
+          fill="var(--instrument-frame-primary-color)"
+          stroke="none"
+        />`
+        : undefined;
+    const faceOutline =
+      this.hasBackgroundCircle && this.areas.length > 0
+        ? svg`
+        <circle
+          cx="0"
+          cy="0"
+          r="${this._bandRadius(OUTER_RING_RADIUS)}"
+          fill="none"
+          stroke="var(--instrument-frame-tertiary-color)"
+          stroke-width="1"
+          vector-effect="non-scaling-stroke"
+        />`
+        : undefined;
     if (this.state !== InstrumentState.off) {
       rings.push(svg`
         <circle
@@ -491,13 +528,24 @@ export class ObcWatch extends LitElement {
             roundInsideCut: area.roundInsideCut,
           })} />`
       )}</clipPath>`;
-      result = [mask, rotClip, svg`<g mask="url(#cutMask)">${rings}</g>`];
-      areas.forEach((area) => {
-        result.push(
-          svg`<path d=${area} fill="none" stroke="var(--instrument-frame-tertiary-color)" vector-effect="non-scaling-stroke"/>`
-        );
-      });
+      result = [
+        mask,
+        rotClip,
+        ...(faceFill ? [faceFill] : []),
+        svg`<g mask="url(#cutMask)">${rings}</g>`,
+        ...(faceOutline ? [faceOutline] : []),
+      ];
+      if (!this.hasBackgroundCircle) {
+        areas.forEach((area) => {
+          result.push(
+            svg`<path d=${area} fill="none" stroke="var(--instrument-frame-tertiary-color)" vector-effect="non-scaling-stroke"/>`
+          );
+        });
+      }
     } else {
+      if (faceFill) {
+        result = [faceFill, ...rings];
+      }
       if (this.state !== InstrumentState.off) {
         result.push(
           circle('outerRing', {
