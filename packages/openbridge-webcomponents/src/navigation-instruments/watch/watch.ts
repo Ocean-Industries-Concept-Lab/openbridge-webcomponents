@@ -82,12 +82,18 @@ export interface WatchBarArea {
   startAngle: number;
   endAngle: number;
   fillColor: string;
+  /** Outer band radius override; defaults to the second ring (160). */
+  outerRadius?: number;
+  /** Inner band radius override; defaults to the third ring (112). */
+  innerRadius?: number;
 }
 
 export interface WatchNeedle {
   angle: number;
   fillColor: string;
   strokeColor: string;
+  /** Radial length of the needle pill; defaults to 48 (the full band). */
+  length?: number;
 }
 
 export interface WatchVessel {
@@ -232,6 +238,12 @@ export class ObcWatch extends LitElement {
     TickmarkStyle.regular;
   @property({type: Array, attribute: false}) advices: AngleAdviceRaw[] = [];
   @property({type: Boolean}) crosshairEnabled: boolean = false;
+  /**
+   * Cuts the crosshair out inside the inner ring, so center content (e.g.
+   * center readouts) sits on a clean face.
+   * @availableWhen crosshairEnabled==true
+   */
+  @property({type: Boolean}) crosshairCenterCutout: boolean = false;
   @property({type: Boolean}) showLabels: boolean = false;
   @property({type: Array, attribute: false}) vessels: WatchVessel[] = [];
   @property({type: Number}) windKnots: number | null = null;
@@ -582,13 +594,16 @@ export class ObcWatch extends LitElement {
       scale: number;
       /** Inner ring radius – crosshair is hidden between labelRadius and this value. */
       innerRingRadius: number;
-    }
+    },
+    centerCutoutRadius?: number
   ): SVGTemplateResult {
-    const hasMask = labelKnockouts && labelKnockouts.positions.length > 0;
+    const hasLabelKnockouts =
+      !!labelKnockouts && labelKnockouts.positions.length > 0;
+    const hasMask = hasLabelKnockouts || centerCutoutRadius !== undefined;
 
     // Radius at which labels sit (distance from centre).
     // Any position is equally valid — they're all at the same radial distance.
-    const labelRadius = hasMask
+    const labelRadius = hasLabelKnockouts
       ? Math.max(
           ...labelKnockouts!.positions.map((l) =>
             Math.abs(l.x !== 0 ? l.x : l.y)
@@ -597,7 +612,7 @@ export class ObcWatch extends LitElement {
       : 0;
     // Small extra padding so the crosshair doesn't start/end right at the
     // label edge — use the same visual pad as the letter knockouts.
-    const ringGapPad = hasMask ? 3 / labelKnockouts!.scale : 0;
+    const ringGapPad = hasLabelKnockouts ? 3 / labelKnockouts!.scale : 0;
 
     return svg`
       ${
@@ -611,6 +626,9 @@ export class ObcWatch extends LitElement {
             width="${radius * 2}" height="${radius * 2}"
           >
             <rect x="-${radius}" y="-${radius}" width="${radius * 2}" height="${radius * 2}" fill="white"/>
+            ${
+              hasLabelKnockouts
+                ? svg`
             <!-- Annular ring knockout: hide crosshair between labels and inner ring -->
             <circle cx="0" cy="0" r="${labelKnockouts!.innerRingRadius}" fill="black"/>
             <circle cx="0" cy="0" r="${labelRadius - ringGapPad}" fill="white"/>
@@ -628,7 +646,14 @@ export class ObcWatch extends LitElement {
                   transform-origin="${l.x} ${l.y}"
                 />
               `;
-            })}
+            })}`
+                : nothing
+            }
+            ${
+              centerCutoutRadius !== undefined
+                ? svg`<circle cx="0" cy="0" r="${centerCutoutRadius}" fill="black"/>`
+                : nothing
+            }
           </mask>
         </defs>`
           : nothing
@@ -664,14 +689,14 @@ export class ObcWatch extends LitElement {
       const startAngle = Math.min(bar.startAngle, bar.endAngle);
       const endAngle = Math.max(bar.startAngle, bar.endAngle);
       const arc = roundedArch({
-        r: this._bandRadius(RING3_RADIUS),
-        R: this._bandRadius(RING2_RADIUS),
+        r: this._bandRadius(bar.innerRadius ?? RING3_RADIUS),
+        R: this._bandRadius(bar.outerRadius ?? RING2_RADIUS),
         startAngle: startAngle,
         endAngle: endAngle,
         roundInsideCut: false,
         roundOutsideCut: false,
       });
-      const barMaskR = RING2_RADIUS + this._rOff + 40;
+      const barMaskR = (bar.outerRadius ?? RING2_RADIUS) + this._rOff + 40;
       // The mask is a sector to cut out the stroke on the start and end of the bar
       const mask = svg`<mask id="barMask-${index}">
         <rect x="${-barMaskR}" y="${-barMaskR}" width="${barMaskR * 2}" height="${barMaskR * 2}" fill="black" />
@@ -686,14 +711,14 @@ export class ObcWatch extends LitElement {
       </mask>`;
       return svg`
         ${mask}
-        <g mask="url(#cutMask)">
-        <path 
-          d=${arc} 
-          fill=${bar.fillColor} 
-          stroke=${bar.fillColor} 
-          stroke-width="1" 
-          vector-effect="non-scaling-stroke" 
-          mask="url(#barMask-${index})" 
+        <g mask=${this.areas.length > 0 ? 'url(#cutMask)' : nothing}>
+        <path
+          d=${arc}
+          fill=${bar.fillColor}
+          stroke=${bar.fillColor}
+          stroke-width="1"
+          vector-effect="non-scaling-stroke"
+          mask="url(#barMask-${index})"
           />
           </g>
           `;
@@ -706,10 +731,10 @@ export class ObcWatch extends LitElement {
     }
     return this.needles.map((needle) => {
       return svg`
-        <rect 
-          transform="rotate(${needle.angle})" 
-          x="-4" y="${-this._bandRadius(RING2_RADIUS)}" width="8" height="48" rx="4"
-          fill=${needle.fillColor} 
+        <rect
+          transform="rotate(${needle.angle})"
+          x="-4" y="${-this._bandRadius(RING2_RADIUS)}" width="8" height="${needle.length ?? 48}" rx="4"
+          fill=${needle.fillColor}
           stroke=${needle.strokeColor}
           stroke-width="1"
           vector-effect="non-scaling-stroke"
@@ -883,6 +908,9 @@ export class ObcWatch extends LitElement {
                     scale,
                     innerRingRadius: this.innerRingRadius + rOff,
                   }
+                : undefined,
+              this.crosshairCenterCutout
+                ? this.innerRingRadius + rOff
                 : undefined
             )
           : nothing}
