@@ -83,21 +83,14 @@
   height: 100%;
 }
 
+/* Positioning wrapper only — the readout pair itself is the shared
+   center-readout `row` arrangement (see readout/center-readout.ts). */
 .readout-row {
   position: absolute;
   left: 50%;
   top: var(--readout-top, 55%);
   transform: translate(-50%, -50%);
-  display: flex;
-  align-items: center;
-  gap: 8px;
   z-index: 1;
-}
-
-.readout-divider {
-  width: 1px;
-  height: 48px;
-  background: var(--border-divider-color);
 }
 
 /* Secondary-scale max-min labels: same treatment as the watch tick labels

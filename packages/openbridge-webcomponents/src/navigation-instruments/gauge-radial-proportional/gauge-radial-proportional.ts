@@ -34,7 +34,12 @@ import {
   SIDE_LABEL_DROP_PX,
   type RadialFrame,
 } from '../../svghelpers/radial-frame.js';
-import {renderInstrumentReadout} from '../readout/instrument-readout.js';
+import {
+  CenterReadoutArrangement,
+  centerReadoutStyles,
+  renderCenterReadouts,
+  type CenterReadoutEntry,
+} from '../readout/center-readout.js';
 import {ReadoutSize} from '../readout/readout.js';
 
 export enum GaugeRadialProportionalSector {
@@ -787,35 +792,36 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
   }
 
   private renderCenterContent() {
+    // The icon and name rows stay dial-anchored (%-positioned fractions of
+    // the face); only the readout pair uses the shared center-readout row
+    // arrangement.
     const readoutPriority = this.watchPriority;
-    const secondaryReadout =
-      this.secondaryValue !== undefined
-        ? html`
-            <div class="readout-divider"></div>
-            ${renderInstrumentReadout({
-              value: this.clamp(this.secondaryValue),
-              label: this.secondaryLabel,
-              unit: this.secondaryUnit,
-              fractionDigits: this.fractionDigits,
-              priority: readoutPriority,
-              size: ReadoutSize.large,
-            })}
-          `
-        : nothing;
+    const entries: CenterReadoutEntry[] = [
+      {
+        value: this.clampedValue,
+        label: this.label,
+        unit: this.unit,
+        fractionDigits: this.fractionDigits,
+        priority: readoutPriority,
+        size: ReadoutSize.large,
+      },
+    ];
+    if (this.secondaryValue !== undefined) {
+      entries.push({
+        value: this.clamp(this.secondaryValue),
+        label: this.secondaryLabel,
+        unit: this.secondaryUnit,
+        fractionDigits: this.fractionDigits,
+        priority: readoutPriority,
+        size: ReadoutSize.large,
+      });
+    }
     return html`
       <div class="icon-anchor"><slot name="icon"></slot></div>
       ${this.hasReadout
         ? html`
             <div class="readout-row">
-              ${renderInstrumentReadout({
-                value: this.clampedValue,
-                label: this.label,
-                unit: this.unit,
-                fractionDigits: this.fractionDigits,
-                priority: readoutPriority,
-                size: ReadoutSize.large,
-              })}
-              ${secondaryReadout}
+              ${renderCenterReadouts(entries, CenterReadoutArrangement.row)}
             </div>
           `
         : nothing}
@@ -938,7 +944,7 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
     `;
   }
 
-  static override styles = unsafeCSS(componentStyle);
+  static override styles = [unsafeCSS(componentStyle), centerReadoutStyles];
 }
 
 declare global {
