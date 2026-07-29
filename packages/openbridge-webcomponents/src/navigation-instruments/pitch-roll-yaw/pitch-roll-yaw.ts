@@ -3,8 +3,6 @@ import {property} from 'lit/decorators.js';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import '../watch/watch.js';
 import {
-  RotPosition,
-  RotType,
   VesselImage,
   VesselImageSize,
   WatchCircleType,
@@ -284,38 +282,74 @@ export class ObcPitchRollYaw extends LitElement {
     `;
   }
 
+  /** Current-yaw dot on the scale (design's "actual": face-colored 2px ring). */
   private renderYawDot() {
     if (this.type === PitchRollYawType.actualMotion) {
       return nothing;
     }
     const {x, y} = this.scalePoint(this.yaw);
     return svg`
-      <circle cx=${x} cy=${y} r=${DOT_RADIUS} fill=${this.secondaryColor} />
-    `;
-  }
-
-  private renderAttitudeDot() {
-    const {x, y} = this.attitudePoint(this.pitch, this.roll);
-    if (this.type === PitchRollYawType.level) {
-      return svg`
-        <circle cx=${x} cy=${y} r=${LEVEL_HALO_RADIUS} fill=${this.tertiaryColor} />
-        <circle cx=${x} cy=${y} r=${DOT_RADIUS} fill=${this.secondaryColor} />
-      `;
-    }
-    const stroke =
-      this.type === PitchRollYawType.actualMotion
-        ? 'var(--instrument-frame-primary-color)'
-        : 'none';
-    return svg`
       <circle
         cx=${x}
         cy=${y}
         r=${DOT_RADIUS}
         fill=${this.secondaryColor}
-        stroke=${stroke}
-        stroke-width="1.5"
+        stroke="var(--instrument-frame-primary-color)"
+        stroke-width="2"
       />
     `;
+  }
+
+  /**
+   * Live yaw bar for `actual-motion`: a flat band on the scale track swept
+   * from 0° to `yaw`, its moving end rounded by a same-color dot (the
+   * design's "ROT-actual" marker). The fixed 0° end is cut flat.
+   */
+  private renderActualYawBar() {
+    if (this.type !== PitchRollYawType.actualMotion) {
+      return nothing;
+    }
+    const {x, y} = this.scalePoint(this.yaw);
+    const dot = svg`
+      <circle cx=${x} cy=${y} r=${DOT_RADIUS} fill=${this.secondaryColor} />
+    `;
+    if (Math.abs(this.yaw) < 0.5) {
+      return dot;
+    }
+    const start = this.scalePoint(Math.min(0, this.yaw));
+    const end = this.scalePoint(Math.max(0, this.yaw));
+    const largeArc = Math.abs(this.yaw) > 180 ? 1 : 0;
+    return svg`
+      <path
+        d="M ${start.x} ${start.y} A ${SCALE_TRACK_RADIUS} ${SCALE_TRACK_RADIUS} 0 ${largeArc} 1 ${end.x} ${end.y}"
+        fill="none"
+        stroke=${this.secondaryColor}
+        stroke-width=${BAND_HALF_THICKNESS * 2}
+        stroke-linecap="butt"
+      />
+      ${dot}
+    `;
+  }
+
+  private renderAttitudeDot() {
+    const {x, y} = this.attitudePoint(this.pitch, this.roll);
+    const dot = svg`
+      <circle
+        cx=${x}
+        cy=${y}
+        r=${DOT_RADIUS}
+        fill=${this.secondaryColor}
+        stroke="var(--instrument-frame-primary-color)"
+        stroke-width="2"
+      />
+    `;
+    if (this.type === PitchRollYawType.level) {
+      return svg`
+        <circle cx=${x} cy=${y} r=${LEVEL_HALO_RADIUS} fill=${this.tertiaryColor} />
+        ${dot}
+      `;
+    }
+    return dot;
   }
 
   override render() {
@@ -332,7 +366,6 @@ export class ObcPitchRollYaw extends LitElement {
       text: showLabels ? LABEL_TEXTS[index] : undefined,
     }));
 
-    const isActualMotion = this.type === PitchRollYawType.actualMotion;
     const vessels: WatchVessel[] =
       this.type === PitchRollYawType.level
         ? []
@@ -356,15 +389,10 @@ export class ObcPitchRollYaw extends LitElement {
           .tickmarks=${tickmarks}
           .vessels=${vessels}
           .priority=${this.priority}
-          .rotType=${isActualMotion ? RotType.bar : undefined}
-          .rotPosition=${RotPosition.scale}
-          .rotStartAngle=${0}
-          .rotEndAngle=${isActualMotion ? this.yaw : 0}
-          .rotPriority=${this.priority}
         ></obc-watch>
         <svg viewBox=${frame.viewBox}>
-          ${this.renderYawBand()} ${this.renderYawDot()}
-          ${this.renderAttitudeDot()}
+          ${this.renderYawBand()} ${this.renderActualYawBar()}
+          ${this.renderYawDot()} ${this.renderAttitudeDot()}
         </svg>
       </div>
     `;
