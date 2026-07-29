@@ -8,11 +8,19 @@ import {InstrumentState, Priority} from '../types.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import {AdviceState, AdviceType, AngleAdviceRaw} from '../watch/advice.js';
 import '../watch/watch.js';
+import {OUTER_RING_RADIUS, WatchCircleType} from '../watch/watch.js';
 import {
-  innerRingRadiusFor,
-  OUTER_RING_RADIUS,
-  WatchCircleType,
-} from '../watch/watch.js';
+  BAND_INNER_RADIUS,
+  BAND_OUTER_RADIUS,
+  LANE_DIVIDER_RADIUS,
+  LANE_DIVIDER_WIDTH,
+  PRIMARY_SUBBAND_INNER_RADIUS,
+  PRIMARY_SUBBAND_NEEDLE_LENGTH,
+  SECONDARY_LANE_RADIUS,
+  SECONDARY_LINE_WIDTH,
+  arcPath,
+  renderSecondaryLine,
+} from '../watch/secondary-lane.js';
 import type {WatchArea, WatchBarArea} from '../watch/watch.js';
 import {TickmarkStyle, TickmarkType} from '../watch/tickmark.js';
 import type {Tickmark} from '../watch/tickmark.js';
@@ -64,30 +72,17 @@ export interface GaugeRadialProportionalAdvice {
 }
 
 /* Band geometry: the value band fills the track annulus between the single
-   and double inner rings (112..160), like the watch bar areas. The secondary
-   value renders as an 8-unit line lane at the band's inner edge, and the
-   primary needle pill shortens so the two lanes don't collide (the same
-   subdivision as the pitch-rpm track in the design family). */
-const BAND_INNER_RADIUS = innerRingRadiusFor(WatchCircleType.double);
-const BAND_OUTER_RADIUS = innerRingRadiusFor(WatchCircleType.single);
-const SECONDARY_LINE_WIDTH = 8;
-const SECONDARY_LANE_RADIUS = BAND_INNER_RADIUS + SECONDARY_LINE_WIDTH / 2;
+   and double inner rings (112..160), like the watch bar areas. The
+   primary-secondary frame reuses the shared pitch-rpm lane subdivision from
+   watch/secondary-lane.ts: secondary line lane (112..120), face-colored
+   divider (120..128) and a narrowed primary band lane (128..160). The joint
+   48-unit round cut the watch draws at the sector ends is erased and each
+   lane re-capped individually. */
 const NEEDLE_WIDTH = 8;
 const NEEDLE_LENGTH_FULL = BAND_OUTER_RADIUS - BAND_INNER_RADIUS;
-const NEEDLE_LENGTH_SPLIT = 32;
-
-/* Primary-secondary frame geometry: the track annulus splits into a narrowed
-   primary band lane (128..160), the secondary line lane (112..120) and a
-   face-colored gap between them (120..128). The joint 48-unit round cut the
-   watch draws at the sector ends is erased and each lane re-capped
-   individually. */
-const SPLIT_BAND_INNER_RADIUS = BAND_INNER_RADIUS + 16;
-const SPLIT_BAND_WIDTH = BAND_OUTER_RADIUS - SPLIT_BAND_INNER_RADIUS;
-const SPLIT_BAND_CENTER_RADIUS = SPLIT_BAND_INNER_RADIUS + SPLIT_BAND_WIDTH / 2;
-const LANE_GAP_WIDTH =
-  SPLIT_BAND_INNER_RADIUS - BAND_INNER_RADIUS - SECONDARY_LINE_WIDTH;
-const LANE_GAP_CENTER_RADIUS =
-  BAND_INNER_RADIUS + SECONDARY_LINE_WIDTH + LANE_GAP_WIDTH / 2;
+const SPLIT_BAND_WIDTH = BAND_OUTER_RADIUS - PRIMARY_SUBBAND_INNER_RADIUS;
+const SPLIT_BAND_CENTER_RADIUS =
+  PRIMARY_SUBBAND_INNER_RADIUS + SPLIT_BAND_WIDTH / 2;
 const TRACK_ERASE_CENTER_RADIUS = (BAND_INNER_RADIUS + BAND_OUTER_RADIUS) / 2;
 const TRACK_ERASE_WIDTH = BAND_OUTER_RADIUS - BAND_INNER_RADIUS + 1;
 /** Angular reach of the end-cut erase, covering the joint cap's full bulge. */
@@ -158,17 +153,6 @@ function strongerTickmarkType(
     [TickmarkType.textOnly]: 0,
   };
   return rank[candidate] > rank[existing] ? candidate : existing;
-}
-
-function arcPath(radius: number, startDeg: number, endDeg: number): string {
-  const toRad = (deg: number) => ((deg - 90) * Math.PI) / 180;
-  const x1 = radius * Math.cos(toRad(startDeg));
-  const y1 = radius * Math.sin(toRad(startDeg));
-  const x2 = radius * Math.cos(toRad(endDeg));
-  const y2 = radius * Math.sin(toRad(endDeg));
-  const largeArc = Math.abs(endDeg - startDeg) > 180 ? 1 : 0;
-  const sweep = endDeg > startDeg ? 1 : 0;
-  return `M ${x1} ${y1} A ${radius} ${radius} 0 ${largeArc} ${sweep} ${x2} ${y2}`;
 }
 
 /**
@@ -568,7 +552,7 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
     // In the split frame the stub stops at the narrowed band's inner edge;
     // the secondary lane gets its own small stub (see renderSplitFrame).
     const innerRadius = this.isSplit
-      ? SPLIT_BAND_INNER_RADIUS - 0.5
+      ? PRIMARY_SUBBAND_INNER_RADIUS - 0.5
       : ZERO_LINE_INNER_RADIUS;
     return svg`
       <rect
@@ -613,10 +597,10 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
           stroke-width=${SECONDARY_LINE_WIDTH}
         ></circle>
         <circle
-          r=${LANE_GAP_CENTER_RADIUS}
+          r=${LANE_DIVIDER_RADIUS}
           fill="none"
           stroke=${facePaint}
-          stroke-width=${LANE_GAP_WIDTH}
+          stroke-width=${LANE_DIVIDER_WIDTH}
         ></circle>
       `);
     } else {
@@ -666,10 +650,10 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
           stroke-linecap="butt"
         ></path>
         <path
-          d=${arcPath(LANE_GAP_CENTER_RADIUS, startAngle, endAngle)}
+          d=${arcPath(LANE_DIVIDER_RADIUS, startAngle, endAngle)}
           fill="none"
           stroke=${facePaint}
-          stroke-width=${LANE_GAP_WIDTH}
+          stroke-width=${LANE_DIVIDER_WIDTH}
           stroke-linecap="butt"
         ></path>
       `);
@@ -732,7 +716,7 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
     }
     const length =
       this.secondaryValue !== undefined
-        ? NEEDLE_LENGTH_SPLIT
+        ? PRIMARY_SUBBAND_NEEDLE_LENGTH
         : NEEDLE_LENGTH_FULL;
     return svg`
       <rect
@@ -752,39 +736,28 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
     if (this.secondaryValue === undefined || this.isValueGraphicsHidden) {
       return nothing;
     }
-    const r = SECONDARY_LANE_RADIUS;
     const originAngle = this.mapAngle(this.fillOriginValue);
     const endAngle = this.arcEndAngle(this.secondaryValue);
-    // Flush round tip: a plain cap circle in the arc's own color, so the
-    // line simply ends rounded with no visible tip marker.
-    const tip = svg`<circle
-      transform="rotate(${endAngle})"
-      cy=${-r}
-      r=${SECONDARY_LINE_WIDTH / 2}
-      fill=${this.accentColor}
-    ></circle>`;
-    if (Math.abs(endAngle - originAngle) < 0.5) {
-      return tip;
-    }
+    // Rounded start cap for the open-start sector; the shared line renders
+    // the butt-capped arc with its flush round tip (and collapses to the tip
+    // nub alone when the arc is too short to draw).
     const startCap =
-      this.sector === GaugeRadialProportionalSector.deg270
+      this.sector === GaugeRadialProportionalSector.deg270 &&
+      Math.abs(endAngle - originAngle) >= 0.5
         ? svg`<circle
             transform="rotate(${originAngle})"
-            cy=${-r}
+            cy=${-SECONDARY_LANE_RADIUS}
             r=${SECONDARY_LINE_WIDTH / 2}
             fill=${this.accentColor}
           ></circle>`
         : nothing;
     return svg`
       ${startCap}
-      <path
-        d=${arcPath(r, originAngle, endAngle)}
-        fill="none"
-        stroke=${this.accentColor}
-        stroke-width=${SECONDARY_LINE_WIDTH}
-        stroke-linecap="butt"
-      ></path>
-      ${tip}
+      ${renderSecondaryLine({
+        originAngle,
+        endAngle,
+        color: this.accentColor,
+      })}
     `;
   }
 

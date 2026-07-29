@@ -15,11 +15,17 @@ import {SetpointBundle} from '../../svghelpers/setpoint-bundle.js';
 import '../watch/watch.js';
 import {
   OUTER_RING_RADIUS,
-  WatchCircleType,
-  innerRingRadiusFor,
   type WatchBarArea,
   type WatchNeedle,
 } from '../watch/watch.js';
+import {
+  LANE_DIVIDER_RADIUS,
+  LANE_DIVIDER_WIDTH,
+  PRIMARY_SUBBAND_INNER_RADIUS,
+  PRIMARY_SUBBAND_NEEDLE_LENGTH,
+  arcPath,
+  renderSecondaryLine,
+} from '../watch/secondary-lane.js';
 import {Tickmark, TickmarkStyle, TickmarkType} from '../watch/tickmark.js';
 import {PropellerImage, propellerImages} from '../watch/propeller.js';
 import {customElement} from '../../decorator.js';
@@ -33,36 +39,12 @@ export enum TopViewPropulsionType {
 const FULL_CIRCLE_END_ANGLE = 359.999;
 const LOADING_ARC_RADIUS = (OUTER_RING_RADIUS + 320 / 2) / 2;
 const PROPELLER_SCALE = 224 / 160;
-/* pitch-rpm subdivision of the 112..160 band (Figma: divider outer edge at
-   264 diameter): secondary pitch lane 112..120, white divider 120..128,
-   primary sub-band 128..160. */
-const BAND_INNER_RADIUS = innerRingRadiusFor(WatchCircleType.double);
-const BAND_OUTER_RADIUS = innerRingRadiusFor(WatchCircleType.single);
-const SECONDARY_LINE_WIDTH = 8;
-const DIVIDER_WIDTH = 8;
-const SECONDARY_LANE_RADIUS = BAND_INNER_RADIUS + SECONDARY_LINE_WIDTH / 2;
-const DIVIDER_RADIUS =
-  BAND_INNER_RADIUS + SECONDARY_LINE_WIDTH + DIVIDER_WIDTH / 2;
-const PRIMARY_SUBBAND_INNER_RADIUS =
-  BAND_INNER_RADIUS + SECONDARY_LINE_WIDTH + DIVIDER_WIDTH;
-const RPM_NEEDLE_LENGTH = BAND_OUTER_RADIUS - PRIMARY_SUBBAND_INNER_RADIUS;
 
 function percentToAngle(value: number): number {
   if (!Number.isFinite(value)) {
     return 0;
   }
   return Math.max(-100, Math.min(100, value)) * 1.8;
-}
-
-function arcPath(radius: number, startDeg: number, endDeg: number): string {
-  const toRad = (deg: number) => ((deg - 90) * Math.PI) / 180;
-  const x1 = radius * Math.cos(toRad(startDeg));
-  const y1 = radius * Math.sin(toRad(startDeg));
-  const x2 = radius * Math.cos(toRad(endDeg));
-  const y2 = radius * Math.sin(toRad(endDeg));
-  const largeArc = Math.abs(endDeg - startDeg) > 180 ? 1 : 0;
-  const sweep = endDeg > startDeg ? 1 : 0;
-  return `M ${x1} ${y1} A ${radius} ${radius} 0 ${largeArc} ${sweep} ${x2} ${y2}`;
 }
 
 /**
@@ -376,7 +358,7 @@ export class ObcTopViewPropulsion extends LitElement {
         angle: percentToAngle(this.primaryValue),
         fillColor: fill,
         strokeColor: stroke,
-        length: this.isPitchRpm ? RPM_NEEDLE_LENGTH : undefined,
+        length: this.isPitchRpm ? PRIMARY_SUBBAND_NEEDLE_LENGTH : undefined,
       },
     ];
   }
@@ -394,41 +376,20 @@ export class ObcTopViewPropulsion extends LitElement {
     if (!this.isPitchRpm) {
       return nothing;
     }
-    const r = SECONDARY_LANE_RADIUS;
     const divider = svg`<circle
-      r=${DIVIDER_RADIUS}
+      r=${LANE_DIVIDER_RADIUS}
       fill="none"
       stroke="var(--instrument-frame-primary-color)"
-      stroke-width=${DIVIDER_WIDTH}
+      stroke-width=${LANE_DIVIDER_WIDTH}
     ></circle>`;
-    const pitchAngle = percentToAngle(this.pitch);
-    if (!this.isActive || Math.abs(pitchAngle) < 0.5) {
-      return svg`
-        ${divider}
-        <circle
-          cx="0" cy=${-r}
-          r=${SECONDARY_LINE_WIDTH / 2}
-          fill=${this.secondaryColor}
-        ></circle>
-      `;
-    }
-    const toRad = ((pitchAngle - 90) * Math.PI) / 180;
-    const endX = r * Math.cos(toRad);
-    const endY = r * Math.sin(toRad);
+    const pitchAngle = this.isActive ? percentToAngle(this.pitch) : 0;
     return svg`
       ${divider}
-      <path
-        d=${arcPath(r, 0, pitchAngle)}
-        fill="none"
-        stroke=${this.secondaryColor}
-        stroke-width=${SECONDARY_LINE_WIDTH}
-        stroke-linecap="butt"
-      ></path>
-      <circle
-        cx=${endX} cy=${endY}
-        r=${SECONDARY_LINE_WIDTH / 2}
-        fill=${this.secondaryColor}
-      ></circle>
+      ${renderSecondaryLine({
+        originAngle: 0,
+        endAngle: pitchAngle,
+        color: this.secondaryColor,
+      })}
     `;
   }
 
