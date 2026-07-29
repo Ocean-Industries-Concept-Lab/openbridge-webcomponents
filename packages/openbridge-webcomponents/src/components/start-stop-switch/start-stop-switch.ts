@@ -85,7 +85,7 @@ const DRAG_COMPLETE_THRESHOLD = 0.9;
  * - Use the `running` variant to indicate an actively running process.
  * - Use the `loading` variant during async operations before transitioning to `running` or `normal`.
  * - Consider using `hasAlert` when the switch controls a critical system in alarm state.
- * - The accessible name is computed from the slotted labels; provide `aria-label` or `aria-labelledby` on the host when those labels alone are not descriptive.
+ * - The accessible name is computed from the slotted labels; provide `aria-label` on the host when those labels alone are not descriptive (`aria-labelledby` is not supported — ID references cannot cross the shadow boundary).
  *
  * ### Example
  * ```html
@@ -366,10 +366,7 @@ export class ObcStartStopSwitch extends LitElement {
 
   override render() {
     const isChecked = this.checked;
-    const hostAriaLabel = this.getAttribute('aria-label') ?? undefined;
-    const hostAriaLabelledBy =
-      this.getAttribute('aria-labelledby') ?? undefined;
-    const forwardedAriaLabel = hostAriaLabelledBy ? undefined : hostAriaLabel;
+    const forwardedAriaLabel = this.getAttribute('aria-label') ?? undefined;
 
     return html`
               <div class="outer-container">
@@ -394,7 +391,6 @@ export class ObcStartStopSwitch extends LitElement {
                   aria-checked=${isChecked ? 'true' : 'false'}
                   aria-disabled=${this.disabled ? 'true' : 'false'}
                   aria-label=${ifDefined(forwardedAriaLabel)}
-                  aria-labelledby=${ifDefined(hostAriaLabelledBy)}
                   @keydown=${this.handleKeydown}
                 >
                   <div class="button-track">
