@@ -240,6 +240,13 @@ export class ObcWatch extends LitElement {
   faceDiameter: number | undefined;
   @property({type: Array, attribute: false}) areas: WatchArea[] = [];
   @property({type: Array, attribute: false}) barAreas: WatchBarArea[] = [];
+  /**
+   * Rounds the band track's sector end cuts at the band's own radii and clips
+   * bars to that rounded track shape (the design's track-mask model), instead
+   * of the joint silhouette cut shared with the scale ring. No effect without
+   * `areas`.
+   */
+  @property({type: Boolean}) roundBandCuts: boolean = false;
   @property({type: Array, attribute: false}) needles: WatchNeedle[] = [];
   @property({type: Array, attribute: false}) tickmarks: Tickmark[] = [];
   @property({type: Boolean}) tickmarksInside: boolean = false;
@@ -481,13 +488,29 @@ export class ObcWatch extends LitElement {
         );
         const r = (r1 + r2) / 2;
         const strokeWidth = r1 - r2;
-        rings.push(
-          svg`
+        if (this.roundBandCuts && this.areas.length > 0) {
+          rings.push(
+            ...this.areas.map(
+              (area) =>
+                svg`<path d=${roundedArch({
+                  startAngle: area.startAngle,
+                  endAngle: area.endAngle,
+                  R: r1,
+                  r: r2,
+                  roundOutsideCut: area.roundOutsideCut,
+                  roundInsideCut: area.roundInsideCut,
+                })} fill="var(--instrument-frame-secondary-color)" stroke="var(--instrument-frame-secondary-color)" stroke-width="1" vector-effect="non-scaling-stroke" />`
+            )
+          );
+        } else {
+          rings.push(
+            svg`
             <circle cx="0" cy="0" r=${r} stroke="var(--instrument-frame-secondary-color)" stroke-width=${strokeWidth} fill="none" />
             <circle cx="0" cy="0" r=${r1} stroke="var(--instrument-frame-secondary-color)" stroke-width="1" fill="none" vector-effect="non-scaling-stroke" />
             <circle cx="0" cy="0" r=${r2} stroke="var(--instrument-frame-secondary-color)" stroke-width="1" fill="none" vector-effect="non-scaling-stroke" />
         `
-        );
+          );
+        }
       }
       if (this.watchCircleType === WatchCircleType.triple) {
         const r1 = this._bandRadius(RING3_RADIUS);
@@ -759,9 +782,31 @@ export class ObcWatch extends LitElement {
           roundOutsideCut: false,
         })} fill="white" />
       </mask>`;
+      // With roundBandCuts the bar is additionally clipped to the rounded
+      // track shape, so its ends round off where they reach the sector cuts
+      // (the design's track-mask model) while mid-track ends stay square.
+      const trackMask =
+        this.roundBandCuts && this.areas.length > 0
+          ? svg`<mask id="barTrackMask-${index}">
+              <rect x="${-barMaskR}" y="${-barMaskR}" width="${barMaskR * 2}" height="${barMaskR * 2}" fill="black" />
+              ${this.areas.map(
+                (area) =>
+                  svg`<path d=${roundedArch({
+                    startAngle: area.startAngle,
+                    endAngle: area.endAngle,
+                    R: this._bandRadius(bar.outerRadius ?? RING2_RADIUS),
+                    r: this._bandRadius(bar.innerRadius ?? RING3_RADIUS),
+                    roundOutsideCut: area.roundOutsideCut,
+                    roundInsideCut: area.roundInsideCut,
+                  })} fill="white" stroke="white" stroke-width="1" vector-effect="non-scaling-stroke" />`
+              )}
+            </mask>`
+          : nothing;
       return svg`
         ${mask}
+        ${trackMask}
         <g mask=${this.areas.length > 0 ? 'url(#cutMask)' : nothing}>
+        <g mask=${trackMask !== nothing ? `url(#barTrackMask-${index})` : nothing}>
         <path
           d=${arc}
           fill=${bar.fillColor}
@@ -770,6 +815,7 @@ export class ObcWatch extends LitElement {
           vector-effect="non-scaling-stroke"
           mask="url(#barMask-${index})"
           />
+          </g>
           </g>
           `;
     });

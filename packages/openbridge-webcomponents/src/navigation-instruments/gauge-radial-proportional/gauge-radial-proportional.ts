@@ -929,6 +929,7 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
             .areas=${areas}
             .watchCircleType=${WatchCircleType.double}
             .hasBackgroundCircle=${true}
+            .roundBandCuts=${!this.isSplit}
             .barAreas=${this.barAreas}
             .endLabelsMaxMin=${endLabelsMaxMin}
             .arcFrame=${frame}
