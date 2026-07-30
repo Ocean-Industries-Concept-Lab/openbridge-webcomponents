@@ -317,10 +317,13 @@ export class ObcGaugeProportional extends SetpointMixin(LitElement) {
   @property({type: Number, attribute: 'face-diameter', reflect: true})
   faceDiameter: number | undefined;
   /**
-   * Show the full-size frame: `alignment`-controlled scale labels, in-dial
-   * readouts and the name row. When `false` (default), the compact variant
-   * renders — a cropped face with icon-only center content and a readout
-   * stack below.
+   * The design's Large variant: `alignment`-controlled scale labels, in-dial
+   * readouts and the name row. When `false` (default), the Small variant
+   * renders — the face cropped to the dial with icon-only center content and
+   * a readout stack below. Physical size always follows the container (or
+   * `faceDiameter`); this property selects the content density, so pair
+   * `large` with a correspondingly larger layout slot like the design's
+   * 512 vs 240 frames.
    */
   @property({type: Boolean}) large = false;
   /** Render the readout stack below the face in the compact variant. */
@@ -362,10 +365,30 @@ export class ObcGaugeProportional extends SetpointMixin(LitElement) {
     return this.large ? this.alignment : GaugeProportionalAlignment.maxMin;
   }
 
-  /** Compact sizes by width only (the stack extends the host downward). */
+  /**
+   * Fixed-px height the compact readout stack needs below the face — a fit
+   * allowance (column gap + 24px per value row + 16px tag line), matching
+   * the stack's fixed typography.
+   */
+  private get compactStackAllowancePx(): number {
+    if (!this.hasLabelStack) {
+      return 0;
+    }
+    return 8 + this.labelStackReadouts.length * 24 + (this.tag ? 16 : 0);
+  }
+
+  /**
+   * The compact face fits the largest square inside the container once the
+   * stack's fixed height is reserved — so a height-constrained slot never
+   * renders the compact dial larger than the large variant's dial would be.
+   * Falls back to width-driven sizing when no usable height is measured
+   * (auto-height hosts size themselves from the content).
+   */
   private get compactContainerPx(): {width: number; height: number} {
-    const {width} = measureContainerPx(this);
-    return {width, height: width};
+    const {width, height} = measureContainerPx(this);
+    const dialHeight = height - this.compactStackAllowancePx;
+    const side = dialHeight > 0 ? Math.min(width, dialHeight) : width;
+    return {width: side, height: side};
   }
 
   /** The Figma off face: flat disc, regular-colored setpoint. Priority-only. */
@@ -1023,6 +1046,7 @@ export class ObcGaugeProportional extends SetpointMixin(LitElement) {
 
   override render() {
     const tickmarks = this.tickmarks;
+    const compactBox = this.large ? undefined : this.compactContainerPx;
     const tickmarksInside =
       this.effectiveAlignment === GaugeProportionalAlignment.inside;
     const endLabelsMaxMin =
@@ -1048,9 +1072,7 @@ export class ObcGaugeProportional extends SetpointMixin(LitElement) {
             ? END_MAXMIN_LABEL_DROP_PX
             : SIDE_LABEL_DROP_PX,
       clips: {top: 0, bottom: 0, left: 0, right: 0},
-      containerPx: this.large
-        ? measureContainerPx(this)
-        : this.compactContainerPx,
+      containerPx: this.large ? measureContainerPx(this) : compactBox,
       faceDiameter: this.faceDiameter,
       zoomToFitArc: false,
       areas,
@@ -1087,9 +1109,14 @@ export class ObcGaugeProportional extends SetpointMixin(LitElement) {
       READOUT_ANCHOR_Y
     )}; --name-top: ${pct(nameAnchorY)}; --scale: ${frame.scale};`;
 
+    const facePx =
+      frame.hostWidthPx ??
+      (compactBox && compactBox.width > 0
+        ? frame.scale * frame.width
+        : undefined);
     const faceStyle =
-      !this.large && frame.hostWidthPx !== undefined
-        ? `width: ${frame.hostWidthPx}px; height: ${frame.hostWidthPx}px;`
+      !this.large && facePx !== undefined
+        ? `width: ${facePx}px; height: ${facePx}px;`
         : nothing;
     const face = html`
       <div class="container" style=${faceStyle}>
