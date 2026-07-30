@@ -20,6 +20,7 @@ import {
   getChartTooltipOptions,
   generateLegendHTML,
 } from '../../charthelpers/index.js';
+import type {FixedHeightChartDimensions} from '../../charthelpers/canvas-layout.js';
 
 // Register Chart.js components
 Chart.register(DoughnutController, ArcElement, Tooltip);
@@ -164,6 +165,9 @@ export class ObcRadialBarChart extends LitElement {
 
   /** @internal */
   private chart?: Chart;
+
+  /** @internal - Latest layout dimensions computed by getChartOptions() */
+  private lastDimensions?: FixedHeightChartDimensions;
 
   /** @internal */
   private themeObserver?: MutationObserver;
@@ -393,6 +397,9 @@ export class ObcRadialBarChart extends LitElement {
       host: this,
     });
 
+    // Store dimensions for explicit canvas sizing in createChart/updateChart
+    this.lastDimensions = dimensions;
+
     // Set CSS variables for wrapper and canvas sizing
     this.style.setProperty('--chart-width', `${dimensions.calculatedWidth}px`);
     this.style.setProperty('--chart-height', `${dimensions.actualHeight}px`);
@@ -418,9 +425,13 @@ export class ObcRadialBarChart extends LitElement {
     );
 
     return {
-      responsive: true,
-      maintainAspectRatio: true,
-      aspectRatio: dimensions.aspectRatio,
+      // Fixed, self-computed size: Chart.js responsive mode must stay off,
+      // it measures the wrapper (canvas + optional legend) and inflates the
+      // canvas / re-applies stale deferred resizes on hover (issue #1061).
+      // The canvas render size is set explicitly in createChart/updateChart.
+      responsive: false,
+      maintainAspectRatio: false,
+      devicePixelRatio: window.devicePixelRatio,
       rotation,
       circumference: this.circumference,
       cutout: `${optimalCutout}%`,
@@ -474,6 +485,14 @@ export class ObcRadialBarChart extends LitElement {
     if (!ctx) return;
 
     const {datasets} = this.prepareChartData();
+    const options = this.getChartOptions();
+
+    // Non-responsive mode: set the canvas render size explicitly from the
+    // computed layout; Chart.js applies devicePixelRatio scaling on top
+    if (this.lastDimensions) {
+      this.canvasEl.width = this.lastDimensions.calculatedWidth;
+      this.canvasEl.height = this.lastDimensions.actualHeight;
+    }
 
     this.chart = new Chart(ctx, {
       type: 'doughnut',
@@ -481,7 +500,7 @@ export class ObcRadialBarChart extends LitElement {
         labels: this.data.map((_, i) => `Ring ${i + 1}`),
         datasets,
       },
-      options: this.getChartOptions(),
+      options,
     });
 
     // Defer legend update to next tick to ensure Chart.js metadata is initialized
@@ -503,6 +522,15 @@ export class ObcRadialBarChart extends LitElement {
     if (this.chart.options) {
       // Update all dynamic options
       Object.assign(this.chart.options, newOptions);
+    }
+
+    // Non-responsive mode: apply the computed layout size explicitly
+    // (no-op when the size is unchanged)
+    if (this.lastDimensions) {
+      this.chart.resize(
+        this.lastDimensions.calculatedWidth,
+        this.lastDimensions.actualHeight
+      );
     }
 
     this.chart.update();

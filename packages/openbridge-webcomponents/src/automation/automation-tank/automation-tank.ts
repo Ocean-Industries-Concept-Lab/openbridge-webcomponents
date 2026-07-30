@@ -22,6 +22,7 @@ import '../../icons/icon-chevron-double-up-google.js';
 import '../../icons/icon-chevron-up-google.js';
 import '../../icons/icon-chevron-double-down-google.js';
 import '../../icons/icon-chevron-down-google.js';
+import '../../icons/icon-arrow-right-google.js';
 import '../../icons/icon-off.js';
 import '../../icons/icon-tank.js';
 import '../../icons/icon-energy-battery.js';
@@ -40,9 +41,11 @@ import {
   AdvicePosition,
   ExternalScaleSide,
   FillMode,
+  computeSetpointBandThickness,
 } from '../../building-blocks/external-scale/external-scale.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
+import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 
 export enum TankTrend {
   fastRising = 'fast-rising',
@@ -97,6 +100,14 @@ export enum TankChartMode {
 /**
  *
  *
+ * Setpoint properties are inherited from {@link SetpointMixin}
+ * (`setpoint`, `newSetpoint`, `touching`, `atSetpoint`, `autoAtSetpoint`,
+ * `autoAtSetpointDeadband`, `setpointAtZeroDeadband`, `setpointOverride`,
+ * `animateSetpoint`) and are forwarded to the embedded chart: the SVG bar in
+ * `bar` mode, or `obc-gauge-trend` in the graph modes (where the marker
+ * renders on the side bar, i.e. `graph-and-bar`). Values share the tank's
+ * `value` / `max` scale.
+ *
  * @slot badges - Custom badges to be displayed in the badge area.
  * @slot tag - Text or element for the tank's tag/label.
  * @slot readout - Replaces the entire readout content block.
@@ -114,7 +125,7 @@ export enum TankChartMode {
  * @beta
  */
 @customElement('obc-automation-tank')
-export class ObcAutomationTank extends LitElement {
+export class ObcAutomationTank extends SetpointMixin(LitElement) {
   @property({type: String}) medium: LineMedium = LineMedium.water;
   @property({type: Number}) value: number = 0;
   @property({type: Number}) max: number = 100;
@@ -456,8 +467,9 @@ export class ObcAutomationTank extends LitElement {
     } else if (this.trend === TankTrend.closed) {
       return html`<obi-off class="trend-icon"></obi-off>`;
     } else {
-      // stable: render no icon
-      return nothing;
+      return html`<obi-arrow-right-google
+        class="trend-icon"
+      ></obi-arrow-right-google>`;
     }
   }
 
@@ -824,6 +836,15 @@ export class ObcAutomationTank extends LitElement {
                 .advice=${this.advice}
                 .width=${this._cellWidth}
                 .height=${this._cellHeight}
+                .setpoint=${this.setpoint}
+                .newSetpoint=${this.newSetpoint}
+                .touching=${this.touching}
+                .atSetpoint=${this.atSetpoint}
+                .autoAtSetpoint=${this.autoAtSetpoint}
+                .autoAtSetpointDeadband=${this.autoAtSetpointDeadband}
+                .setpointAtZeroDeadband=${this.setpointAtZeroDeadband}
+                .setpointOverride=${this.setpointOverride}
+                .animateSetpoint=${this.animateSetpoint}
                 style="width: 100%; height: 100%;"
                 .priority=${this.priority}
               ></obc-gauge-trend>`
@@ -864,11 +885,22 @@ export class ObcAutomationTank extends LitElement {
       // cross-axis size so width-fit and height-fit ratios match exactly
       // (no horizontal gutters): viewBoxCross = cellWidth * 384 / cellHeight.
       const SCALE_REFERENCE_SIZE = 384;
-      const adviceReserveVb = this.hasAdvice ? 16 : 0;
+      // The bar's viewBox cross-axis includes an outside-bar band for advice
+      // pills and/or the setpoint marker (see computeExternalScaleLayout).
+      // Subtract the same band the bar will reserve so total viewBox width
+      // still equals viewBoxCross and the meet-scale fills the cell exactly.
+      const hasSetpointMarker =
+        this.setpoint !== undefined ||
+        this.newSetpoint !== undefined ||
+        this.departingNewSetpoint !== undefined;
+      const outsideBarReserveVb = Math.max(
+        this.hasAdvice ? 16 : 0,
+        computeSetpointBandThickness({hasSetpoint: hasSetpointMarker})
+      );
       const safeCellHeight = Math.max(1, this._cellHeight);
       const viewBoxCross =
         (this._cellWidth * SCALE_REFERENCE_SIZE) / safeCellHeight;
-      const barThickness = Math.max(0, viewBoxCross - adviceReserveVb);
+      const barThickness = Math.max(0, viewBoxCross - outsideBarReserveVb);
       // `tint` is locked in for tank bar mode: it draws a fill from 0 to
       // value plus a small marker at the value position, which mirrors the
       // legacy CSS bar's "fill + top border at value" visual idiom.
@@ -891,6 +923,15 @@ export class ObcAutomationTank extends LitElement {
         .borderRadius=${2}
         .advices=${this.hasAdvice ? this.advice : []}
         .advicePosition=${AdvicePosition.inner}
+        .setpoint=${this.setpoint}
+        .newSetpoint=${this.newSetpoint}
+        .touching=${this.touching}
+        .atSetpoint=${this.atSetpoint}
+        .autoAtSetpoint=${this.autoAtSetpoint}
+        .autoAtSetpointDeadband=${this.autoAtSetpointDeadband}
+        .setpointAtZeroDeadband=${this.setpointAtZeroDeadband}
+        .setpointOverride=${this.setpointOverride}
+        .animateSetpoint=${this.animateSetpoint}
         style="width: 100%; height: 100%;"
         .priority=${this.priority}
       ></obc-bar-vertical>`;

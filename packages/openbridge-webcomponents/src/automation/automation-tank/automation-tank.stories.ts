@@ -117,6 +117,9 @@ const renderTankEl = (args: StoryArgs, richReadout: unknown = nothing) => html`
     .badgeAlert=${args.badgeAlert}
     .badgeInterlock=${args.badgeInterlock}
     .badgeCommandLocked=${args.badgeCommandLocked}
+    .setpoint=${args.setpoint}
+    .newSetpoint=${args.newSetpoint}
+    .touching=${args.touching}
     .priority=${args.priority}
   >
     ${richReadout}
@@ -157,6 +160,9 @@ const meta: Meta<StoryArgs> = {
     badgeAlert: AutomationButtonBadgeAlert.None,
     badgeInterlock: AutomationButtonBadgeInterlock.None,
     badgeCommandLocked: AutomationButtonBadgeCommandLocked.None,
+    setpoint: undefined,
+    newSetpoint: undefined,
+    touching: false,
     priority: Priority.regular,
   },
   argTypes: {
@@ -234,6 +240,21 @@ const meta: Meta<StoryArgs> = {
     badgeCommandLocked: {
       options: Object.values(AutomationButtonBadgeCommandLocked),
       control: {type: 'select'},
+    },
+    setpoint: {
+      control: {type: 'number', min: 0, max: 10_000},
+      description:
+        'Target setpoint on the `value` / `max` scale. Renders a setpoint marker on the bar (`bar` mode) or on the side bar of the embedded `obc-gauge-trend` (`graph-and-bar` mode). `undefined` hides the marker.',
+    },
+    newSetpoint: {
+      control: {type: 'number', min: 0, max: 10_000},
+      description:
+        'Adjustment preview for the 2-step setpoint interface. When defined, the original marker dims and a focus-state preview marker is shown.',
+    },
+    touching: {
+      control: {type: 'boolean'},
+      description:
+        'User is physically interacting with the setpoint control — renders the marker in focus state and suppresses at-setpoint detection.',
     },
     priority: {
       options: Object.values(Priority),
@@ -388,6 +409,33 @@ export const BarWithAdvice: Story = {
     chartMode: TankChartMode.bar,
     hasAdvice: true,
     advice: SAMPLE_ADVICE,
+  },
+};
+
+/**
+ * Setpoint marker on the compact tank bar — the marker renders on the SVG bar
+ * via the shared setpoint system. Values share the tank's `value` / `max`
+ * scale. Matches the Figma "Tank Generic" small variant, which includes a
+ * setpoint indicator on the tank bar.
+ */
+export const CompactWithSetpoint: Story = {
+  args: {
+    compact: true,
+    type: TankType.atmospheric,
+    trend: TankTrend.stable,
+    setpoint: 7_500,
+  },
+};
+
+/**
+ * Setpoint marker in `graph-and-bar` mode — forwarded to the embedded
+ * `obc-gauge-trend`, which renders it on its side bar.
+ */
+export const GraphAndBarWithSetpoint: Story = {
+  args: {
+    type: TankType.atmospheric,
+    chartMode: TankChartMode.graphAndBar,
+    setpoint: 7_500,
   },
 };
 
