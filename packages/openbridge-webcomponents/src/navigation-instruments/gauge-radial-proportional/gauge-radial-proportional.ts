@@ -156,6 +156,14 @@ const OFF_DISC_RADIUS = BAND_OUTER_RADIUS + 24;
    outer ring — no label reserve; the end labels sit inside the dial. */
 const COMPACT_BASE_PADDING = 12;
 
+/* Compact primary max-min labels (the design's "Labels-radial-sector-end",
+   7.29%-inset layer): corner label boxes hanging under the sector-end cuts.
+   Anchors calibrated against the 240px design render — text ink spans
+   ±101.3 with its center row at +126.5 (the secondary row above uses the
+   shared ±78.5/+92 constants from the 17.71%-inset layer). */
+const COMPACT_MAXMIN_LABEL_EDGE_X = 99;
+const COMPACT_MAXMIN_LABEL_Y = 121.5;
+
 /** Cap for full-circle arcs so start and end never coincide in path space. */
 const FULL_CIRCLE_EPSILON_DEG = 0.05;
 
@@ -878,6 +886,32 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
     `;
   }
 
+  /**
+   * Compact primary min/max end labels at the design's sector-end anchors.
+   * The watch's own max-min layout sits wider and lower than the compact
+   * design, so the compact face strips tick label texts and draws these
+   * instead.
+   */
+  private renderCompactMaxMinLabels() {
+    if (this.large || !this.showLabels || this.isFullCircle) {
+      return nothing;
+    }
+    return svg`
+      <text
+        class="secondary-scale-label"
+        x=${-COMPACT_MAXMIN_LABEL_EDGE_X}
+        y=${COMPACT_MAXMIN_LABEL_Y}
+        text-anchor="start"
+      >${this.minValue}</text>
+      <text
+        class="secondary-scale-label"
+        x=${COMPACT_MAXMIN_LABEL_EDGE_X}
+        y=${COMPACT_MAXMIN_LABEL_Y}
+        text-anchor="end"
+      >${this.maxValue}</text>
+    `;
+  }
+
   private renderSecondaryMaxMinLabels() {
     if (
       this.secondaryValue === undefined ||
@@ -1006,9 +1040,10 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
       innerRadius: BAND_INNER_RADIUS,
     });
     this._frame = frame;
-    const shownTickmarks = frame.labelsHidden
-      ? tickmarks.map((t) => ({...t, text: undefined}))
-      : tickmarks;
+    const shownTickmarks =
+      frame.labelsHidden || !this.large
+        ? tickmarks.map((t) => ({...t, text: undefined}))
+        : tickmarks;
 
     const value = this.clampedValue;
     const setpointAngle =
@@ -1071,12 +1106,13 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
           .hasBackgroundCircle=${true}
           .roundBandCuts=${!this.isSplit}
           .barAreas=${this.barAreas}
-          .endLabelsMaxMin=${endLabelsMaxMin}
+          .endLabelsMaxMin=${this.large && endLabelsMaxMin}
           .arcFrame=${frame}
         ></obc-watch>
         <svg class="layer" viewBox=${frame.viewBox}>
           ${this.renderSplitFrame()} ${this.renderZeroLine()}
           ${this.renderSecondaryArc()} ${this.renderNeedle()}
+          ${this.renderCompactMaxMinLabels()}
           ${this.renderSecondaryMaxMinLabels()}
         </svg>
         ${this.renderCenterContent()}

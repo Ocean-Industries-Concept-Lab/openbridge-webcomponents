@@ -9,7 +9,7 @@ import {
 import './gauge-radial-proportional.js';
 import '../../icons/icon-placeholder-device-on.js';
 import '../../icons/icon-placeholder-device-off-f.js';
-import '../../icons/icon-diesel-generator-on.js';
+import '../../icons/icon-diesel-generator-dc.js';
 import '../../icons/icon-pump-on-horizontal.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {AdviceType} from '../watch/advice.js';
@@ -116,10 +116,10 @@ const meta = {
               .useCssColor=${true}
             ></obi-placeholder-device-off-f>`
           : args.icon === 'generator'
-            ? html`<obi-diesel-generator-on
+            ? html`<obi-diesel-generator-dc
                 slot="icon"
                 .useCssColor=${true}
-              ></obi-diesel-generator-on>`
+              ></obi-diesel-generator-dc>`
             : args.icon === 'pump'
               ? html`<obi-pump-on-horizontal
                   slot="icon"
@@ -183,6 +183,9 @@ export const Compact: Story = {
     unit: '%',
     tag: '#0001',
     icon: 'pump',
+    advices: [
+      {minValue: 90, maxValue: 100, type: AdviceType.caution, hinted: false},
+    ],
   },
 };
 
@@ -197,6 +200,9 @@ export const CompactDouble: Story = {
     secondaryUnit: '%',
     tag: '#0001',
     icon: 'pump',
+    advices: [
+      {minValue: 90, maxValue: 100, type: AdviceType.caution, hinted: false},
+    ],
   },
 };
 
