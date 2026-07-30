@@ -1,8 +1,10 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
-import {ObcGaugeMotorsAndPumps} from './gauge-motors-and-pumps.js';
+import {
+  GaugeMotorsAndPumpsType,
+  ObcGaugeMotorsAndPumps,
+} from './gauge-motors-and-pumps.js';
 import './gauge-motors-and-pumps.js';
-import {GaugeProportionalSector} from '../../navigation-instruments/gauge-proportional/gauge-proportional.js';
 import {AdviceType} from '../../navigation-instruments/watch/advice.js';
 import {widthDecorator} from '../../storybook-util.js';
 
@@ -22,7 +24,6 @@ const meta = {
     value: 65,
     setpoint: 65,
     showLabels: true,
-    hasReadout: true,
     label: 'Speed',
     unit: '%',
     name: 'Pump 1',
@@ -34,9 +35,9 @@ const meta = {
   argTypes: {
     width: {control: {type: 'range', min: 100, max: 1000, step: 1}},
     height: {control: {type: 'range', min: 100, max: 1000, step: 1}},
-    sector: {
+    type: {
       control: 'select',
-      options: Object.values(GaugeProportionalSector),
+      options: Object.values(GaugeMotorsAndPumpsType),
     },
     value: {control: 'number'},
     secondaryValue: {control: 'number'},
@@ -57,14 +58,14 @@ const meta = {
   },
   render: (args: GaugeMotorsAndPumpsStoryArgs) => html`
     <obc-gauge-motors-and-pumps
+      .type=${args.type ?? GaugeMotorsAndPumpsType.regular}
       .value=${args.value ?? 0}
       .minValue=${args.minValue ?? 0}
       .maxValue=${args.maxValue ?? 100}
       .secondaryValue=${args.secondaryValue}
-      .sector=${args.sector ?? GaugeProportionalSector.deg270}
       .setpoint=${args.setpoint}
       .showLabels=${args.showLabels ?? false}
-      .hasReadout=${args.hasReadout ?? false}
+      .hasReadout=${args.hasReadout ?? true}
       .label=${args.label ?? ''}
       .unit=${args.unit ?? ''}
       .secondaryLabel=${args.secondaryLabel ?? ''}
@@ -85,7 +86,7 @@ export const Default: Story = {};
 
 export const Negative: Story = {
   args: {
-    sector: GaugeProportionalSector.deg270PosNeg,
+    type: GaugeMotorsAndPumpsType.negative,
     minValue: -100,
     maxValue: 100,
     value: 30,
@@ -96,6 +97,7 @@ export const Negative: Story = {
 
 export const Double: Story = {
   args: {
+    type: GaugeMotorsAndPumpsType.double,
     secondaryValue: 45,
     secondaryLabel: 'Load',
     secondaryUnit: '%',
@@ -107,7 +109,6 @@ export const Compact: Story = {
     width: 240,
     height: 320,
     large: false,
-    hasReadout: false,
   },
 };
 
@@ -116,7 +117,7 @@ export const CompactDouble: Story = {
     width: 240,
     height: 320,
     large: false,
-    hasReadout: false,
+    type: GaugeMotorsAndPumpsType.double,
     secondaryValue: 45,
     secondaryUnit: '%',
   },

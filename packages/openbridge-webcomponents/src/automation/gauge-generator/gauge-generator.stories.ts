@@ -1,6 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
-import {ObcGaugeGenerator} from './gauge-generator.js';
+import {GaugeGeneratorType, ObcGaugeGenerator} from './gauge-generator.js';
 import './gauge-generator.js';
 import {widthDecorator} from '../../storybook-util.js';
 
@@ -19,7 +19,6 @@ const meta = {
     large: true,
     value: 65,
     setpoint: 65,
-    hasReadout: true,
     label: 'Load',
     unit: '%',
     name: 'DG 1',
@@ -28,6 +27,10 @@ const meta = {
   argTypes: {
     width: {control: {type: 'range', min: 100, max: 1000, step: 1}},
     height: {control: {type: 'range', min: 100, max: 1000, step: 1}},
+    type: {
+      control: 'select',
+      options: Object.values(GaugeGeneratorType),
+    },
     value: {control: 'number'},
     secondaryValue: {control: 'number'},
     setpoint: {control: 'number'},
@@ -43,10 +46,11 @@ const meta = {
   },
   render: (args: GaugeGeneratorStoryArgs) => html`
     <obc-gauge-generator
+      .type=${args.type ?? GaugeGeneratorType.regular}
       .value=${args.value ?? 0}
       .secondaryValue=${args.secondaryValue}
       .setpoint=${args.setpoint}
-      .hasReadout=${args.hasReadout ?? false}
+      .hasReadout=${args.hasReadout ?? true}
       .label=${args.label ?? ''}
       .unit=${args.unit ?? ''}
       .secondaryLabel=${args.secondaryLabel ?? ''}
@@ -66,6 +70,7 @@ export const Default: Story = {};
 
 export const Double: Story = {
   args: {
+    type: GaugeGeneratorType.double,
     secondaryValue: 45,
     secondaryLabel: 'Charge',
     secondaryUnit: '%',
@@ -77,7 +82,6 @@ export const Compact: Story = {
     width: 240,
     height: 320,
     large: false,
-    hasReadout: false,
   },
 };
 
@@ -86,7 +90,7 @@ export const CompactDouble: Story = {
     width: 240,
     height: 320,
     large: false,
-    hasReadout: false,
+    type: GaugeGeneratorType.double,
     secondaryValue: 45,
     secondaryUnit: '%',
   },

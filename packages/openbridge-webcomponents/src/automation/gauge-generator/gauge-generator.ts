@@ -1,10 +1,17 @@
 import {html, type TemplateResult} from 'lit';
+import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import '../../icons/icon-diesel-generator-dc.js';
 import {
   ObcGaugeProportional,
   GaugeProportionalSector,
 } from '../../navigation-instruments/gauge-proportional/gauge-proportional.js';
+
+/** The design's Type axis: single value or the primary-secondary frame. */
+export enum GaugeGeneratorType {
+  regular = 'regular',
+  double = 'double',
+}
 
 /**
  * `<obc-gauge-generator>` — Proportional radial gauge preset for generators
@@ -17,11 +24,15 @@ import {
  *
  * ## Features / Variants
  *
- * - Defaults to the `360` sector (generator load wraps the full dial).
+ * - `type`: `regular` (single value) or `double` (primary-secondary frame;
+ *   feed the second lane and readout row via `secondaryValue`).
+ * - Always the `360` sector (generator load wraps the full dial).
+ * - `large` shows the detailed face (readout and name row); the compact
+ *   default shows the icon-only face with the readout stack below. Unlike
+ *   the base gauge, `hasReadout` defaults to `true` so the large face is
+ *   detailed out of the box.
  * - Ships the generator symbol as slot fallback; slot `icon` to swap it
  *   (e.g. an AC variant).
- * - `secondaryValue` renders the design's Double frame; `large` toggles the
- *   full frame vs the compact face with the readout stack below.
  *
  * ## Usage Guidelines
  *
@@ -41,9 +52,18 @@ import {
  */
 @customElement('obc-gauge-generator')
 export class ObcGaugeGenerator extends ObcGaugeProportional {
+  /** The design's Type axis; `double` renders the primary-secondary frame. */
+  @property({type: String}) type: GaugeGeneratorType =
+    GaugeGeneratorType.regular;
+
   constructor() {
     super();
     this.sector = GaugeProportionalSector.deg360;
+    this.hasReadout = true;
+  }
+
+  protected override get isSplit(): boolean {
+    return this.type === GaugeGeneratorType.double || super.isSplit;
   }
 
   protected override get icon(): TemplateResult {

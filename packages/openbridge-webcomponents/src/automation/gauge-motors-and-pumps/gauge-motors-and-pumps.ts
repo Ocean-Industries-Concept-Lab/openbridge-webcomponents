@@ -1,7 +1,21 @@
-import {html, type TemplateResult} from 'lit';
+import {html, type PropertyValues, type TemplateResult} from 'lit';
+import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import '../../icons/icon-pump-on-horizontal.js';
-import {ObcGaugeProportional} from '../../navigation-instruments/gauge-proportional/gauge-proportional.js';
+import {
+  ObcGaugeProportional,
+  GaugeProportionalSector,
+} from '../../navigation-instruments/gauge-proportional/gauge-proportional.js';
+
+/**
+ * The design's Type axis: single value, bipolar (pos/neg) scale, or the
+ * primary-secondary frame.
+ */
+export enum GaugeMotorsAndPumpsType {
+  regular = 'regular',
+  negative = 'negative',
+  double = 'double',
+}
 
 /**
  * `<obc-gauge-motors-and-pumps>` — Proportional radial gauge preset for
@@ -14,12 +28,17 @@ import {ObcGaugeProportional} from '../../navigation-instruments/gauge-proportio
  *
  * ## Features / Variants
  *
- * - Defaults to the `270` sector; set `sector` to `270-pos-neg` with a
- *   negative `minValue` for the design's Negative variant.
+ * - `type`: `regular` (single value), `negative` (bipolar scale on the
+ *   pos/neg sector — pair with a negative `minValue`), or `double`
+ *   (primary-secondary frame; feed the second lane and readout row via
+ *   `secondaryValue`). The sector follows the type; do not set `sector`
+ *   directly on this component.
+ * - `large` shows the detailed face (readout and name row); the compact
+ *   default shows the icon-only face with the readout stack below. Unlike
+ *   the base gauge, `hasReadout` defaults to `true` so the large face is
+ *   detailed out of the box.
  * - Ships the pump symbol as slot fallback; slot `icon` to swap it for a
  *   motor, fan, or vertical-pump symbol.
- * - `secondaryValue` renders the design's Double frame; `large` toggles the
- *   full frame vs the compact face with the readout stack below.
  * - Overload zones render via `advices` (hatched caution arc).
  *
  * ## Usage Guidelines
@@ -42,6 +61,29 @@ import {ObcGaugeProportional} from '../../navigation-instruments/gauge-proportio
  */
 @customElement('obc-gauge-motors-and-pumps')
 export class ObcGaugeMotorsAndPumps extends ObcGaugeProportional {
+  /** The design's Type axis; drives the sector and the split frame. */
+  @property({type: String}) type: GaugeMotorsAndPumpsType =
+    GaugeMotorsAndPumpsType.regular;
+
+  constructor() {
+    super();
+    this.hasReadout = true;
+  }
+
+  protected override willUpdate(changed: PropertyValues): void {
+    super.willUpdate(changed);
+    if (changed.has('type')) {
+      this.sector =
+        this.type === GaugeMotorsAndPumpsType.negative
+          ? GaugeProportionalSector.deg270PosNeg
+          : GaugeProportionalSector.deg270;
+    }
+  }
+
+  protected override get isSplit(): boolean {
+    return this.type === GaugeMotorsAndPumpsType.double || super.isSplit;
+  }
+
   protected override get icon(): TemplateResult {
     return html`<slot name="icon">
       <obi-pump-on-horizontal usecsscolor></obi-pump-on-horizontal>

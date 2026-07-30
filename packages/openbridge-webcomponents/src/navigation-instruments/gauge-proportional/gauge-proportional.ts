@@ -461,8 +461,12 @@ export class ObcGaugeProportional extends SetpointMixin(LitElement) {
     ];
   }
 
-  /** Whether the primary-secondary (split-track) frame renders. */
-  private get isSplit(): boolean {
+  /**
+   * Whether the primary-secondary (split-track) frame renders. Device
+   * subclasses with an explicit Double type extend this so the split frame
+   * can render ahead of the secondary data.
+   */
+  protected get isSplit(): boolean {
     return this.secondaryValue !== undefined;
   }
 
@@ -838,10 +842,9 @@ export class ObcGaugeProportional extends SetpointMixin(LitElement) {
     if (this.isValueGraphicsHidden) {
       return nothing;
     }
-    const length =
-      this.secondaryValue !== undefined
-        ? PRIMARY_SUBBAND_NEEDLE_LENGTH
-        : NEEDLE_LENGTH_FULL;
+    const length = this.isSplit
+      ? PRIMARY_SUBBAND_NEEDLE_LENGTH
+      : NEEDLE_LENGTH_FULL;
     return svg`
       <rect
         transform="rotate(${this.mapAngle(this.clampedValue)})"
