@@ -51,7 +51,11 @@ import {
   LabelPosition,
 } from './label.js';
 import {VesselImage, VesselImageSize, vesselImages} from './vessel.js';
-import {renderCurrent, renderWind} from './environment.js';
+import {
+  renderCurrent,
+  renderCurrentCentered,
+  renderWind,
+} from './environment.js';
 import {customElement} from '../../decorator.js';
 import {type ZoomToFitArcFrame} from '../../svghelpers/arc-frame.js';
 import {
@@ -285,6 +289,17 @@ export class ObcWatch extends LitElement {
   @property({type: Number}) currentFromDirectionDeg: number | null = null;
   @property({type: Number}) currentSymbolRadius: number | null = null;
   @property({type: String}) currentColor: string | undefined;
+  /**
+   * Render the current icon centered on the face (direction-type layout)
+   * instead of at `currentSymbolRadius` on the periphery.
+   * @availableWhen current!=null && currentFromDirectionDeg!=null
+   */
+  @property({type: Boolean}) currentIconCentered: boolean = false;
+  /**
+   * Scale factor for the centered current icon.
+   * @availableWhen currentIconCentered==true
+   */
+  @property({type: Number}) scaleCurrentIcon: number = 1;
   @property({type: Boolean}) starboardPortIndicator: boolean = false;
   /** Top clip, % of height. Ignored when `zoomToFitArc` is true. */
   @property({type: Number}) clipTop: number = 0;
@@ -997,12 +1012,19 @@ export class ObcWatch extends LitElement {
         : nothing;
     const current =
       this.current != null && this.currentFromDirectionDeg != null
-        ? renderCurrent({
-            current: this.current,
-            fromDirectionDeg: this.currentFromDirectionDeg,
-            radius: this.currentSymbolRadius ?? 192,
-            color: this.currentColor,
-          })
+        ? this.currentIconCentered
+          ? renderCurrentCentered({
+              current: this.current,
+              fromDirectionDeg: this.currentFromDirectionDeg,
+              scale: this.scaleCurrentIcon,
+              color: this.currentColor,
+            })
+          : renderCurrent({
+              current: this.current,
+              fromDirectionDeg: this.currentFromDirectionDeg,
+              radius: this.currentSymbolRadius ?? 192,
+              color: this.currentColor,
+            })
         : nothing;
     return html`
       <svg
