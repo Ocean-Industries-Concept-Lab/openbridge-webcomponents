@@ -115,6 +115,23 @@ When working with building block components in this directory:
     - Height defines the visual size and coordinate system scale
     - Padding (top/bottom or left/right) is typically added outside the main drawing area
 
+12. **`instrument-linear` shared helpers** (consumed by `obc-heave`, `obc-draft-trim`):
+    - `resolveLinearAdvice(advice, trendMin, trendMax)` resolves each advice zone's
+      hinted/regular/triggered state against a trend band.
+    - `verticalScaleTickmarks(range)` returns the tick configuration for a scale
+      spanning `±range` around a zero reference: a full-width line at zero, plus a
+      primary and a secondary ladder whose intervals step with the range — `1`/`0.5`
+      for a range of 5 or less, `5`/`1` above that.
+    - `linearTickInterval(height, range, minSpacing)` picks a 1-2-5 tick step by
+      on-screen spacing, for scales whose height is dictated by a surrounding layout.
+    - `watchfaceLinear`'s `options.maskId` overrides the container clip-mask id.
+      **Ids are document-scoped**, so any component rendering more than one gauge in
+      a single shadow root MUST give each a distinct id — otherwise every gauge
+      resolves to the first one's mask.
+    - **Scale space is positive-up.** A quantity measured downward (a draught) has to
+      be negated, and so do its advice bounds — which additionally swap, since
+      negating an interval reverses it: `{min, max}` → `{min: -max, max: -min}`.
+
 ### `packages/openbridge-webcomponents/src/svghelpers/**`
 
 When working with SVG helper utilities:

@@ -1,5 +1,5 @@
 ---
-applyTo: "packages/openbridge-webcomponents/src/navigation-instruments/watch/**,packages/openbridge-webcomponents/src/navigation-instruments/compass/**,packages/openbridge-webcomponents/src/navigation-instruments/heading/**,packages/openbridge-webcomponents/src/navigation-instruments/rudder/**,packages/openbridge-webcomponents/src/navigation-instruments/wind/**,packages/openbridge-webcomponents/src/navigation-instruments/roll/**,packages/openbridge-webcomponents/src/navigation-instruments/speed-gauge/**,packages/openbridge-webcomponents/src/navigation-instruments/gauge-radial/**,packages/openbridge-webcomponents/src/navigation-instruments/rot-sector/**,packages/openbridge-webcomponents/src/navigation-instruments/azimuth-thruster/**,packages/openbridge-webcomponents/src/building-blocks/instrument-radial/**"
+applyTo: "packages/openbridge-webcomponents/src/navigation-instruments/watch/**,packages/openbridge-webcomponents/src/navigation-instruments/compass/**,packages/openbridge-webcomponents/src/navigation-instruments/compass-sector/**,packages/openbridge-webcomponents/src/navigation-instruments/heading/**,packages/openbridge-webcomponents/src/navigation-instruments/rudder/**,packages/openbridge-webcomponents/src/navigation-instruments/wind/**,packages/openbridge-webcomponents/src/navigation-instruments/pitch/**,packages/openbridge-webcomponents/src/navigation-instruments/roll/**,packages/openbridge-webcomponents/src/navigation-instruments/pitch-roll/**,packages/openbridge-webcomponents/src/navigation-instruments/pitch-roll-heave/**,packages/openbridge-webcomponents/src/building-blocks/single-axis-inclinometer/**,packages/openbridge-webcomponents/src/navigation-instruments/speed-gauge/**,packages/openbridge-webcomponents/src/navigation-instruments/gauge-radial/**,packages/openbridge-webcomponents/src/navigation-instruments/rot-sector/**,packages/openbridge-webcomponents/src/navigation-instruments/rate-of-turn/**,packages/openbridge-webcomponents/src/navigation-instruments/course-arrows/**,packages/openbridge-webcomponents/src/navigation-instruments/readout/**,packages/openbridge-webcomponents/src/navigation-instruments/watch-flat/**,packages/openbridge-webcomponents/src/navigation-instruments/compass-flat/**,packages/openbridge-webcomponents/src/navigation-instruments/rot-linear/**,packages/openbridge-webcomponents/src/navigation-instruments/azimuth-thruster/**,packages/openbridge-webcomponents/src/building-blocks/instrument-radial/**"
 ---
 
 # GitHub Copilot Custom Instructions
@@ -95,6 +95,46 @@ When adding new features or fixing bugs:
 2. Helper modules (`tickmark.ts`, `advice.ts`, etc.) handle specific rendering concerns
 3. Navigation instruments should only handle: property declarations, domain-specific overlays, and value-to-angle mapping
 4. Avoid duplicating rendering logic across instruments
+
+### Shared sibling modules
+
+- **`course-arrows/course-arrows.ts`** — HDG/COG arrow art
+  (`HdgArrowStyle`: arrowHead, needle, vector, beamLine;
+  `CogArrowStyle`: arrowHead, needle, vector, velocityVector), consumed by
+  compass, heading and — via the deprecated `compass/arrow.ts` shim, which
+  also carries the zoom `radiusOffset` — compass-sector. The new-style art is
+  generated from Figma into `course-arrows-art.ts`; do not hand-edit its path
+  data.
+- **`readout/center-readout.ts`** — the center / below-strip readout cluster
+  (`renderCenterReadouts()`, `resolveCompassCenterReadouts()`,
+  `centerReadoutStyles`), consumed by compass, heading, compass-sector,
+  pitch-roll, pitch-roll-heave, rate-of-turn, compass-flat and rot-linear. It
+  reuses the existing `obc-readout` API only (closest match; no new typography
+  knobs). Two arrangements via `CenterReadoutArrangement`:
+  `primarySecondary` (default — first entry, one divider, then the rest side by
+  side) and `stacked` (a divider between every entry, used by
+  pitch-roll-heave's Pitch/Roll/Heave column). **The default must stay
+  `primarySecondary`** — every other consumer depends on it.
+- **Arc tick ladder** — `tickmark.ts`'s `arcTickmarks()` emits the `secondary`
+  ladder that runs along an arc band (default interval 5°),
+  skipping the arc centre (which carries its own `main` mark) and the ends
+  (the rounded end cap already reads as a boundary). Shared by the
+  inclinometer family: `single-axis-inclinometer` (pitch, roll), `pitch-roll`
+  (both the full-watch and zoomed paths) and `pitch-roll-heave`. The zoomed
+  paths must pass the **clamped** half-extent, not the requested one, so ticks
+  never fall outside the band that is actually drawn.
+- **`building-blocks/instrument-linear/instrument-linear.ts`** —
+  `linearTickInterval(height, range, minSpacing = 16)` picks a 1-2-5 tick step
+  whose on-screen spacing clears `minSpacing`, so a linear scale whose height
+  is dictated by a surrounding layout keeps a readable density. It reproduces
+  the intervals `obc-heave` hard-codes at its natural 336-unit height, which is
+  what fixes the constant; `obc-heave` itself still uses its literals so its
+  baselines do not move.
+- **Track-bar recipe** — `obc-rate-of-turn`'s `hasTrackBar` composes existing
+  `obc-watch` inputs only: `barAreas` (band fill) + `needles` (marker at the
+  bar end) + sector `tickmarks` on the `double` face. `renderBars` applies
+  its area cut mask only when `areas` exist, so band bars render reliably on
+  full-circle faces.
 
 ---
 
@@ -418,19 +458,22 @@ Common instrument CSS variables used in `watch.ts` and helpers:
 
 ## Component Quick Reference
 
-| Component           | Uses                  | Key Features                                            |
-| ------------------- | --------------------- | ------------------------------------------------------- |
-| `obc-watch`         | Helper modules        | Core renderer - ALL circular rendering logic            |
-| `instrument-radial` | `obc-watch`           | Generic building block with configurable `getAngle()`   |
-| `compass`           | `obc-watch` + overlay | Full compass: HDG/COG arrows, ROT, vessel, wind/current |
-| `heading`           | `obc-watch` + overlay | Simplified compass: HDG/COG arrows only                 |
-| `rudder`            | `obc-watch` + overlay | Half-circle: 40% top clipped, needle variant            |
-| `speed-gauge`       | `obc-watch` + overlay | Speed arc: custom angle mapping, full needle            |
-| `wind`              | `obc-watch` + overlay | Wind rose with histogram                                |
-| `roll`              | `obc-watch`           | Roll indicator with vessel                              |
-| `gauge-radial`      | `instrument-radial`   | Thin wrapper adding `enhanced` prop                     |
-| `rot-sector`        | `instrument-radial`   | Rate of turn sector gauge                               |
-| `azimuth-thruster`  | `obc-watch` + overlay | Thruster with angle setpoint and thrust bar             |
+| Component           | Uses                                     | Key Features                                                                                              |
+| ------------------- | ---------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| `obc-watch`         | Helper modules                           | Core renderer - ALL circular rendering logic                                                              |
+| `instrument-radial` | `obc-watch`                              | Generic building block with configurable `getAngle()`                                                     |
+| `compass`           | `obc-watch` + overlay                    | Full compass: HDG/COG arrow styles, ROT, vessel, wind/current, center readouts                            |
+| `heading`           | `obc-watch` + overlay                    | Simplified compass: HDG/COG arrow styles, optional vessel, center readouts                                |
+| `rate-of-turn`      | `obc-watch`                              | ROT dots/bar, track bar (barAreas+needles), center readout                                                |
+| `rudder`            | `obc-watch` + overlay                    | Half-circle: 40% top clipped, needle variant                                                              |
+| `speed-gauge`       | `obc-watch` + overlay                    | Speed arc: custom angle mapping, full needle                                                              |
+| `wind`              | `obc-watch` + overlay                    | Wind rose with histogram                                                                                  |
+| `pitch` / `roll`    | `single-axis-inclinometer` → `obc-watch` | Single-axis inclinometer: side arc scale, single/dual scale, optional center readout                      |
+| `pitch-roll`        | `obc-watch`                              | Pitch + roll on one face; 4 arcs, optional zoomed sub-watches                                             |
+| `pitch-roll-heave`  | `obc-watch` + `watchfaceLinear`          | Pitch arc + roll arc + linear heave column in the band slot; single/dual scale, optional stacked readouts |
+| `gauge-radial`      | `instrument-radial`                      | Thin wrapper adding `enhanced` prop                                                                       |
+| `rot-sector`        | `instrument-radial`                      | Rate of turn sector gauge                                                                                 |
+| `azimuth-thruster`  | `obc-watch` + overlay                    | Thruster with angle setpoint and thrust bar                                                               |
 
 ---
 
@@ -488,13 +531,70 @@ below are undefined — verify them before relying on a specific pairing.
 
 | Property                                            | Affects                                                                                                                                                                                |
 | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `padding`                                           | Base viewBox size in the **un-zoomed** path (`(176 + padding) * 2`).                                                                                                                  |
+| `padding`                                           | **Explicit override**: un-zoomed viewBox becomes exactly `(176 + padding) * 2` and the automatic label reserve (see "Shared frame computation") is disabled — the caller owns label room. Unset, `basePadding` is 24 plus the width-aware reserve. |
+| `faceDiameter`                                      | Pins the outer-ring diameter in CSS px (`scale = faceDiameter / 368`); the host gets a fixed intrinsic size, so instruments sharing the value have equal circumference (mode b of #1021; the donut-chart `fixedHeight` counterpart). |
 | `clipTop` / `clipBottom` / `clipLeft` / `clipRight` | viewBox window in the **un-zoomed** path. Ignored under zoom (when `zoomToFitArc` is on or an `arcFrame` is supplied).                                                                                                          |
 | `zoomToFitArc`                                      | Swaps to the `computeZoomToFitArcFrame()` path (unless an `arcFrame` is already supplied); every band radius gets the additive `_rOff` (see the `_bandRadius` INVARIANT in `watch.ts`).                                           |
 | `arcFrame`                                          | Externally pre-computed zoom frame. Takes precedence when set (the `if (this.arcFrame)` branch runs first) — used directly even when `zoomToFitArc` is false, and `obc-watch` does not recompute it. If you pass it, keep it in sync with `areas` / `watchCircleType`. |
 | `endLabelsMaxMin`                                   | "Max-min" label placement: horizontal end labels (±90°) sit off the dead-center tick instead of beside it.                                                                            |
 | `tickmarksInside`                                   | Moves labels inside the ring; their `textRadius` is routed through `_bandRadius`.                                                                                                      |
 | `tickFadeAngle`                                     | (pre-existing) Tickmark fade-out near arc edges.                                                                                                                                        |
+
+### Shared frame computation (`svghelpers/radial-frame.ts`, issue #1021)
+
+All frame/viewBox geometry is centralized in `computeRadialFrame()`:
+
+- **Width-aware label reserve (mode a):** outside tick labels render at
+  `12px / scale`, so their SVG-unit footprint grows as the instrument
+  shrinks. The helper solves `side = 2·(184 + 3) / (1 − 2P/containerPx)`
+  in closed form (`P` = label pixel cost) and grows the viewBox so labels
+  never clip. With no outside labels the legacy `(176 + basePadding) * 2`
+  box is reproduced **byte-identically**.
+- **Content-aware degradation:** past `LABEL_RESERVE_MAX_FRACTION` (0.45 —
+  a 4-digit gauge hides labels below a ~182px container) the frame reports
+  `labelsHidden` and consumers strip tick texts instead of clipping.
+  Designers may later prefer a fixed px threshold (the canvas charts use
+  `MIN_HEIGHT_WITH_LABELS = 192`).
+- **Delivery pattern:** consumers call the helper once per render and pass
+  the result to `<obc-watch .arcFrame=...>` AND their overlay
+  `<svg viewBox=${frame.viewBox}>` — the two layers can no longer drift
+  apart. Do NOT hand-mirror viewBox constants (the old
+  `WATCH_DEFAULT_VIEWBOX = 448` and azimuth's `384/400/472` switch were
+  deleted in favor of this).
+- **Consumers on the helper:** watch (standalone), instrument-radial
+  (+ gauge-radial, rot-sector), speed-gauge, azimuth-thruster, compass,
+  heading, rudder. `obc-instrument-radial` exposes the frame via a
+  `frame` getter and a `frame-changed` event (gauge-radial re-anchors its
+  %-positioned readouts from it).
+- **Not on the helper:** compass-sector (bespoke FOV compression, see the
+  `PADDING` comment there), pitch/roll/pitch-roll (labels inside ⇒ no
+  reserve; the pitch-roll composite has a coupled `buildFrame` contract),
+  wind-propulsion and velocity-projection-plot (explicit `padding`
+  override path, unchanged by design). pitch-roll-heave follows pitch-roll
+  here: same `buildFrame` contract, same coupled zoom math.
+- Compass/heading's old empirical `72 + delta(clientSize)` padding was
+  replaced by the analytic reserve (north arrow 16px always +
+  NSWE labels 16px while `showLabels`); past the reserve cap both the
+  labels and the arrow are hidden, like tick-label degradation.
+- **Label-drop-aware sector crops:** arc end labels hang past the ±90°
+  line (`endLabelsMaxMin` ~20px, side labels ~8px), so a fixed top/bottom
+  crop (gauge-radial's 44/45% `sectorClips`) would cut them at small
+  scales. Consumers pass `labelDropPx` (`END_MAXMIN_LABEL_DROP_PX` /
+  `SIDE_LABEL_DROP_PX`) and the frame lowers the crop just enough —
+  reported via `frame.clipsAdjusted`, which gauge-radial uses to switch
+  its static sector `aspect-ratio` to the frame's (`--gauge-radial-aspect`).
+  Only pass the drop when a **labeled tick actually sits at ±90°**
+  (instrument-radial checks the tick angles — a ±60° sector like
+  rot-sector must stay byte-identical).
+- **ResizeObserver on inline hosts never fires** (permanent 0×0 box) —
+  several radial hosts have no `:host {display}` rule, so their
+  `ResizeController` must additionally observe an internal element that
+  generates a box (`observeInnerBox()` in radial-frame.ts observes the
+  shadow `<svg>` / `.container`). Without it, the frame and the `--scale`
+  font counter-scaling freeze at first paint whenever the host is not
+  blockified by a parent (watch standalone was the visible case; inside
+  `.container > * {position: absolute}` the host is blockified and the
+  host observation works).
 
 ### Radial label model (design language)
 
@@ -504,10 +604,59 @@ Labels follow the design model with three placements:
 - **Internal** — labels inside the ring (`tickmarksInside`).
 - **Max-min** — labels at the arc ends (`endLabelsMaxMin`), e.g. the 180° gauge.
 
-> **Validated combinations:** pitch/roll use `zoomToFitArc` + `shiftArcFrameToOuterEdge`;
+> **Validated combinations:** pitch/roll/pitch-roll-heave use `zoomToFitArc` + `shiftArcFrameToOuterEdge`;
 > `gauge-radial` uses per-sector `clip*` and `endLabelsMaxMin` on the 180° sector.
 > Pairings like `clip*` + `zoomToFitArc` or `endLabelsMaxMin` + `zoomToFitArc` are not
 > currently validated.
+
+---
+
+## `obc-pitch-roll-heave` geometry contract
+
+The heave column is **not** independently sized — its dimensions fall out of the
+arc geometry, and the whole layout is determined by the two half-extents
+`θp` (`pitchArcAngle`, default 30) and `θr` (`rollArcAngle`, default 45):
+
+```text
+column width  = bandOuterRadius - bandInnerRadius   (= band thickness, 72 un-zoomed)
+column height = 2 · capRadius · sin(θp)             (= 184 un-zoomed)
+```
+
+`capRadius` is the radius of the pitch arc's outer edge **about its own
+origin** — un-zoomed that equals the outer ring, but under zoom the arc sits on
+a shifted sub-watch, so the two differ. Measuring the height against it is what
+keeps the column's top and bottom edges level with the pitch arc's end caps.
+
+Everything else follows:
+
+| Feature                         | Angular span                 | At the defaults |
+| ------------------------------- | ---------------------------- | --------------- |
+| pitch arc                       | `[90−θp, 90+θp]`             | 60°–120°        |
+| roll arc                        | `[180−θr, 180+θr]`           | 135°–225°       |
+| heave column at the ring radius | `[270−θp, 270+θp]`           | 240°–300°       |
+| both diagonal gaps              | `90 − θp − θr` each          | 15°             |
+| complement ring                 | `[270+θp, 90−θp]` through 0° | 300°→60°        |
+
+`θr` is clamped to `90 − θp` so the arcs cannot meet. **If you change the height
+rule, the complement ring's endpoints move with it** — the ring starts exactly
+where the column's top edge crosses the outer ring, which only coincides with
+`270+θp` because of the `sin(θp)` term.
+
+Two clearance passes run **only** under zoom, after the frames are built and
+left untouched (band thickness, position and zoom level are preserved):
+
+1. pitch vs roll at the diagonal — ratio-preserving bisection, identical to
+   `obc-pitch-roll`;
+2. roll vs the heave column (`single-scale`) — shortens the roll arc alone,
+   using point-to-**rectangle** distance rather than the corner-to-corner
+   `signedDist` used between two arcs, because a corner can clear a rectangle
+   on one axis alone.
+
+`dual-scale` instead clamps the centred column's **height only** (never its
+width, which reads as a match for the band thickness) to keep
+`HEAVE_CENTRE_GAP_PX` clear of the surrounding band. All three rules are
+no-ops at the un-zoomed defaults, which is what reproduces the design exactly —
+verify that before retuning any of the constants.
 
 ---
 

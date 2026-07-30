@@ -93,14 +93,17 @@ obc-readout-block {
 .readout.direction-vertical.alignment-left {
   align-items: flex-start;
 }
+
 .readout.direction-vertical.alignment-center {
   align-items: center;
 }
+
 .readout.direction-vertical.alignment-left
   :is(.value-cluster, .advice-row, .setpoint-row, .value-row) {
   align-items: flex-start;
   justify-content: flex-start;
 }
+
 .readout.direction-vertical.alignment-center
   :is(.value-cluster, .advice-row, .setpoint-row, .value-row) {
   align-items: center;
@@ -146,19 +149,23 @@ obc-readout-block {
   align-items: end;
   justify-items: end;
 }
+
 .readout.direction-vertical.setpoint-dynamic
   :is(.setpoint-row, .value-row)
   > * {
   grid-area: 1 / 1;
 }
+
 .readout.direction-vertical.alignment-left.setpoint-dynamic
   :is(.setpoint-row, .value-row) {
   justify-items: start;
 }
+
 .readout.direction-vertical.alignment-center.setpoint-dynamic
   :is(.setpoint-row, .value-row) {
   justify-items: center;
 }
+
 .setpoint-width-reserve {
   visibility: hidden;
   display: inline-flex;
@@ -197,10 +204,12 @@ obc-readout-block {
   outline: 1px solid;
   border-radius: var(--global-border-radius-border-radius-check);
 }
+
 .value-reading.data-low-integrity {
   background: var(--alert-low-integrity-background-color);
   outline-color: var(--alert-low-integrity-border-color);
 }
+
 .value-reading.data-invalid {
   background: var(--alert-invalid-background-color);
   outline-color: var(--alert-invalid-border-color);
@@ -248,18 +257,22 @@ obc-readout-block {
   display: inline-flex;
   padding-inline: var(--_readout-trim);
 }
+
 .meta.meta-inline {
   flex-direction: row;
   align-items: flex-start;
   gap: var(--global-size-spacing-target-padding);
 }
+
 .meta.meta-stacked {
   flex-direction: column;
   align-items: flex-end;
 }
+
 .readout.direction-vertical.alignment-left .meta.meta-stacked {
   align-items: flex-start;
 }
+
 .readout.direction-vertical.alignment-center .meta.meta-stacked {
   align-items: center;
 }
@@ -269,14 +282,24 @@ obc-readout-block {
 .readout.direction-horizontal .meta.meta-stacked {
   align-items: flex-start;
   align-self: center;
+
+  &.label-only {
+    align-self: flex-start;
+  }
+
+  &.unit-only {
+    align-self: flex-end;
+  }
 }
 
 .label {
   color: var(--obc-readout-label-color, var(--element-neutral-color));
 }
+
 .unit {
   color: var(--obc-readout-unit-color, var(--element-neutral-color));
 }
+
 .source {
   color: var(--obc-readout-source-color, var(--element-neutral-color));
 }
@@ -292,11 +315,13 @@ obc-readout-block {
   outline: 1px solid;
   border-radius: var(--global-border-radius-border-radius-check);
 }
+
 .source.data-low-integrity,
 .source-button.data-low-integrity {
   background: var(--alert-low-integrity-background-color);
   outline-color: var(--alert-low-integrity-border-color);
 }
+
 .source.data-invalid,
 .source-button.data-invalid {
   background: var(--alert-invalid-background-color);
@@ -314,11 +339,13 @@ obc-readout-block {
   flex: none;
   background-color: var(--border-divider-color);
 }
+
 .divider.divider-horizontal {
   inline-size: 100%;
   block-size: 1px;
   margin-block: var(--_readout-divider-pad);
 }
+
 .divider.divider-vertical {
   inline-size: 1px;
   align-self: stretch;
@@ -350,27 +377,32 @@ obc-readout-block {
   overflow: clip;
   color: var(--obc-readout-value-color, var(--element-neutral-color));
 }
+
 .degree-column.tone-enhanced {
   color: var(
     --obc-readout-value-enhanced-color,
     var(--element-neutral-enhanced-color)
   );
 }
+
 .degree-column.degree-xs {
   --_readout-degree-width: var(
     --global-typography-instrument-value-small-degree-unit-width
   );
 }
+
 .degree-column.degree-s {
   --_readout-degree-width: var(
     --global-typography-instrument-value-regular-degree-unit-width
   );
 }
+
 .degree-column.degree-m {
   --_readout-degree-width: var(
     --global-typography-instrument-value-medium-degree-unit-width
   );
 }
+
 .degree-column.degree-l,
 .degree-column.degree-xl {
   --_readout-degree-width: var(
@@ -383,16 +415,19 @@ obc-readout-block {
   align-self: stretch;
   inline-size: var(--_readout-degree-spacer-width, 0);
 }
+
 .size-small .degree-spacer {
   --_readout-degree-spacer-width: var(
     --instrument-components-readout-new-general-regular-degree-compensation-padding
   );
 }
+
 .size-medium .degree-spacer {
   --_readout-degree-spacer-width: var(
     --instrument-components-readout-new-general-medium-degree-compensation-padding
   );
 }
+
 .size-large .degree-spacer {
   --_readout-degree-spacer-width: var(
     --instrument-components-readout-new-general-large-degree-compensation-padding
@@ -408,10 +443,12 @@ obc-readout-block {
   background: var(--_readout-data-background);
   border-radius: var(--global-border-radius-border-radius-check);
 }
+
 .readout.data-low-integrity {
   --_readout-data-background: var(--alert-low-integrity-background-color);
   --_readout-data-border: var(--alert-low-integrity-border-color);
 }
+
 .readout.data-invalid {
   --_readout-data-background: var(--alert-invalid-background-color);
   --_readout-data-border: var(--alert-invalid-border-color);
@@ -430,11 +467,13 @@ obc-readout-block {
     --global-typography-instrument-value-regular-container-height
   );
 }
+
 .readout.size-medium {
   --_readout-primary-height: var(
     --global-typography-instrument-value-medium-container-height
   );
 }
+
 .readout.size-large {
   --_readout-primary-height: var(
     --global-typography-instrument-value-large-container-height
@@ -465,6 +504,7 @@ obc-readout-block {
     --instrument-components-readout-new-group-vertical-regular-container-min-height
   );
 }
+
 /* The medium tiers set no `--_readout-min-height`: Figma defines the
  * container-min-height token only for the regular and enhanced tiers, so
  * medium readouts intentionally fall back to `min-block-size: auto`. */
@@ -488,6 +528,7 @@ obc-readout-block {
     --instrument-components-readout-new-group-vertical-medium-divider-padding
   );
 }
+
 .readout.direction-vertical.stacking-inline.size-large {
   --_readout-pad-h: var(
     --instrument-components-readout-new-group-vertical-enhanced-container-padding-horizontal
@@ -536,6 +577,7 @@ obc-readout-block {
     --instrument-components-readout-new-stack-regular-container-min-height
   );
 }
+
 .readout.direction-vertical.stacking-stacked.size-medium {
   --_readout-pad-h: var(
     --instrument-components-readout-new-stack-medium-container-padding-horizontal
@@ -556,6 +598,7 @@ obc-readout-block {
     --instrument-components-readout-new-stack-medium-divider-padding
   );
 }
+
 .readout.direction-vertical.stacking-stacked.size-large {
   --_readout-pad-h: var(
     --instrument-components-readout-new-stack-enhanced-container-padding-horizontal
@@ -591,19 +634,18 @@ obc-readout-block {
   --_readout-trim: var(
     --instrument-components-readout-new-group-horizontal-regular-horizontal-trim-padding
   );
-  --_readout-value-gap: var(
-    --instrument-components-readout-new-group-horizontal-regular-horizontal-value-container-gap
-  );
+  /* TODO: verify this with designers */
+  --_readout-value-gap: 0;
   --_readout-value-pad-v: var(
     --instrument-components-readout-new-group-horizontal-regular-value-container-padding-vertical
   );
   --_readout-divider-pad: var(
     --instrument-components-readout-new-group-horizontal-regular-divider-padding
   );
-  --_readout-min-height: var(
-    --instrument-components-readout-new-group-horizontal-regular-container-min-height
-  );
+  /* TODO: verify this with designers, this needs to work also when only a unit is present*/
+  --_readout-min-height: auto;
 }
+
 .readout.direction-horizontal.size-medium {
   --_readout-pad-h: var(
     --instrument-components-readout-new-group-horizontal-medium-container-padding-horizontal
@@ -614,9 +656,8 @@ obc-readout-block {
   --_readout-trim: var(
     --instrument-components-readout-new-group-horizontal-medium-horizontal-trim-padding
   );
-  --_readout-value-gap: var(
-    --instrument-components-readout-new-group-horizontal-medium-horizontal-value-container-gap
-  );
+  /* TODO: verify this with designers */
+  --_readout-value-gap: 0;
   --_readout-value-pad-v: var(
     --instrument-components-readout-new-group-horizontal-medium-value-container-padding-vertical
   );
@@ -624,6 +665,7 @@ obc-readout-block {
     --instrument-components-readout-new-group-horizontal-medium-divider-padding
   );
 }
+
 .readout.direction-horizontal.size-large {
   --_readout-pad-h: var(
     --instrument-components-readout-new-group-horizontal-enhanced-container-padding-horizontal
@@ -634,9 +676,8 @@ obc-readout-block {
   --_readout-trim: var(
     --instrument-components-readout-new-group-horizontal-enhanced-horizontal-trim-padding
   );
-  --_readout-value-gap: var(
-    --instrument-components-readout-new-group-horizontal-enhanced-value-container-gap
-  );
+  /* TODO: verify this with designers */
+  --_readout-value-gap: 4px;
   --_readout-value-pad-v: var(
     --instrument-components-readout-new-group-horizontal-enhanced-value-container-padding
   );
@@ -656,11 +697,13 @@ obc-readout-block {
   outline: 1px solid rgba(220, 0, 0, 0.7);
   outline-offset: -1px;
 }
+
 :host([showDebugOverlay]) obc-readout-block::part(degree),
 :host([showDebugOverlay]) .degree-column {
   outline: 1px solid rgba(0, 0, 220, 0.7);
   outline-offset: -1px;
 }
+
 :host([showDebugOverlay]) .degree-spacer {
   outline: 1px solid rgba(0, 160, 0, 0.8);
   outline-offset: -1px;

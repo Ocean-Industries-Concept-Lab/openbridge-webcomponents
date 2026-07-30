@@ -115,11 +115,6 @@ export {FillMode, ScaleType};
  * ></obc-gauge-trend>
  * ```
  *
- * @property {number} width - Chart width in pixels (defines aspect ratio)
- * @property {number} height - Chart height in pixels (defines aspect ratio)
- * @property {boolean} enhanced - Use enhanced color palette for chart and scales
- * @property {InstrumentState} state - Instrument state (automatically applied to scale)
- * @property {boolean} chartFill - Enable chart area fill (default: false for line-only)
  *
  * Setpoint properties are inherited from {@link SetpointMixin}.
  * These are forwarded to the internal `obc-bar-vertical` scale:
