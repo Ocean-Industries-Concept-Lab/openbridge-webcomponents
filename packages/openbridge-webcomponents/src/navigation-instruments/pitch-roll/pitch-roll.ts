@@ -10,11 +10,15 @@ import {
   innerRingRadiusFor,
   vesselImages,
 } from '../watch/watch.js';
-import {TickmarkType} from '../watch/tickmark.js';
+import {arcTickmarks, TickmarkType} from '../watch/tickmark.js';
 import {AdviceState, AdviceType, AngleAdviceRaw} from '../watch/advice.js';
 import {customElement} from '../../decorator.js';
 import {Priority} from '../types.js';
-import {renderInstrumentReadout} from '../readout/instrument-readout.js';
+import {
+  centerReadoutStyles,
+  renderCenterReadouts,
+} from '../readout/center-readout.js';
+import {ReadoutSize} from '../readout/readout.js';
 import {
   computeZoomToFitArcFrame,
   normalizeArcAngle,
@@ -24,6 +28,20 @@ import {
 export enum PitchRollPriorityElement {
   pitch = 'pitch',
   roll = 'roll',
+}
+
+export enum PitchRollType {
+  /**
+   * Pitch and roll arcs on both opposing sides (default). Unlike
+   * `obc-pitch`/`obc-roll` this is the default, because it is the historical
+   * behaviour of `obc-pitch-roll`.
+   */
+  dualScale = 'dual-scale',
+  /**
+   * One pitch arc on the right and one roll arc at the bottom, with a thin
+   * ring completing the circle and rotating indicator lines in the centre.
+   */
+  singleScale = 'single-scale',
 }
 
 /** Half-side of the centre overlay viewBox in SVG units. */
@@ -50,6 +68,12 @@ const MIN_ARC_HALF_DEG = 2;
  */
 @customElement('obc-pitch-roll')
 export class ObcPitchRoll extends LitElement {
+  /**
+   * `dual-scale` (default) shows pitch and roll arcs on both opposing sides;
+   * `single-scale` shows one pitch arc on the right and one roll arc at the
+   * bottom, completed by a thin ring.
+   */
+  @property({type: String}) type: PitchRollType = PitchRollType.dualScale;
   @property({type: Number}) pitch = 0;
   @property({type: Number}) roll = 0;
   @property({type: Number}) minAvgPitch = 0;
@@ -151,25 +175,17 @@ export class ObcPitchRoll extends LitElement {
     return normalizeArcAngle(this.rollArcAngle ?? this.arcAngle, 30);
   }
 
+  private get isSingleScale(): boolean {
+    return this.type === PitchRollType.singleScale;
+  }
+
   override render() {
     const pitchReq = this.requestedPitchArcAngle;
     const rollReq = this.requestedRollArcAngle;
-    const areas = [
+    const areas: WatchArea[] = [
       {
         startAngle: 90 - pitchReq,
         endAngle: 90 + pitchReq,
-        roundOutsideCut: true,
-        roundInsideCut: true,
-      },
-      {
-        startAngle: 270 - pitchReq,
-        endAngle: 270 + pitchReq,
-        roundOutsideCut: true,
-        roundInsideCut: true,
-      },
-      {
-        startAngle: 360 - rollReq,
-        endAngle: rollReq,
         roundOutsideCut: true,
         roundInsideCut: true,
       },
@@ -180,6 +196,22 @@ export class ObcPitchRoll extends LitElement {
         roundInsideCut: true,
       },
     ];
+    if (!this.isSingleScale) {
+      areas.push(
+        {
+          startAngle: 270 - pitchReq,
+          endAngle: 270 + pitchReq,
+          roundOutsideCut: true,
+          roundInsideCut: true,
+        },
+        {
+          startAngle: 360 - rollReq,
+          endAngle: rollReq,
+          roundOutsideCut: true,
+          roundInsideCut: true,
+        }
+      );
+    }
 
     const overlayViewBox = `-${CENTRE_HALF} -${CENTRE_HALF} ${CENTRE_HALF * 2} ${CENTRE_HALF * 2}`;
     const vesselScale = 224 / 160;
@@ -187,16 +219,56 @@ export class ObcPitchRoll extends LitElement {
     return html`
       <div class="container">
         <svg viewBox="${overlayViewBox}">
+          ${this.isSingleScale && !this.zoomToFitArc
+            ? this.renderRingComplement(pitchReq, rollReq)
+            : nothing}
           ${this.hasReadout
             ? nothing
             : svg`
-            <line
-              x1="-150"
-              y1="0"
-              x2="150"
-              y2="0"
-              stroke="var(--instrument-frame-tertiary-color)"
-            />
+            ${
+              this.isSingleScale
+                ? svg`
+                  <line
+                    x1=${-OUTER_RING_RADIUS}
+                    y1="0"
+                    x2=${OUTER_RING_RADIUS}
+                    y2="0"
+                    stroke="var(--instrument-frame-tertiary-color)"
+                  />
+                  <line
+                    x1="0"
+                    y1=${-OUTER_RING_RADIUS}
+                    x2="0"
+                    y2=${OUTER_RING_RADIUS}
+                    stroke="var(--instrument-frame-tertiary-color)"
+                  />
+                  <line
+                    x1="0"
+                    y1="0"
+                    x2=${OUTER_RING_RADIUS - 10}
+                    y2="0"
+                    stroke="${this.needleColor(PitchRollPriorityElement.pitch)}"
+                    transform="rotate(${this.pitch} 0 0)"
+                  />
+                  <line
+                    x1="0"
+                    y1="0"
+                    x2="0"
+                    y2=${OUTER_RING_RADIUS - 10}
+                    stroke="${this.needleColor(PitchRollPriorityElement.roll)}"
+                    transform="rotate(${this.roll} 0 0)"
+                  />
+                `
+                : svg`
+                  <line
+                    x1="-150"
+                    y1="0"
+                    x2="150"
+                    y2="0"
+                    stroke="var(--instrument-frame-tertiary-color)"
+                  />
+                `
+            }
             <g
               style="transform: rotate(${this.pitch}deg) scale(${vesselScale}) translate(-80px, -80px);"
             >
@@ -214,38 +286,59 @@ export class ObcPitchRoll extends LitElement {
           : this.renderFullWatch(areas)}
         ${this.hasReadout
           ? html`<div class="readout">
-              <div class="readout-group">
-                ${this.renderReadout(
-                  this.pitch,
-                  this.pitchLabel,
-                  PitchRollPriorityElement.pitch
-                )}
-                <div class="readout-divider"></div>
-                ${this.renderReadout(
-                  this.roll,
-                  this.rollLabel,
-                  PitchRollPriorityElement.roll
-                )}
-              </div>
+              ${renderCenterReadouts([
+                {
+                  value: this.pitch,
+                  label: this.pitchLabel,
+                  unit: this.unit,
+                  fractionDigits: this.fractionDigits,
+                  size: ReadoutSize.large,
+                  priority: this.priorityFor(PitchRollPriorityElement.pitch),
+                },
+                {
+                  value: this.roll,
+                  label: this.rollLabel,
+                  unit: this.unit,
+                  fractionDigits: this.fractionDigits,
+                  size: ReadoutSize.large,
+                  priority: this.priorityFor(PitchRollPriorityElement.roll),
+                },
+              ])}
             </div>`
           : nothing}
       </div>
     `;
   }
 
-  private renderReadout(
-    value: number,
-    label: string,
-    element: PitchRollPriorityElement
-  ) {
-    return html`
-      ${renderInstrumentReadout({
-        value,
-        priority: this.priorityFor(element),
-        label,
-        unit: this.unit,
-        fractionDigits: this.fractionDigits,
-      })}
+  /**
+   * Thin ring segments completing the circle between the single-scale arcs:
+   * one short segment between the pitch (right) and roll (bottom) arcs, and
+   * one long segment the other way around (left and top).
+   */
+  private renderRingComplement(pitchArc: number, rollArc: number) {
+    const r = OUTER_RING_RADIUS;
+    const pt = (deg: number): [number, number] => {
+      const rad = ((deg - 90) * Math.PI) / 180;
+      return [r * Math.cos(rad), r * Math.sin(rad)];
+    };
+    const segment = (from: number, to: number) => {
+      if (to - from <= 0) {
+        return nothing;
+      }
+      const [x1, y1] = pt(from);
+      const [x2, y2] = pt(to);
+      const large = to - from > 180 ? 1 : 0;
+      return svg`
+        <path
+          d="M ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2}"
+          fill="none"
+          stroke="var(--instrument-frame-tertiary-color)"
+        />
+      `;
+    };
+    return svg`
+      ${segment(90 + pitchArc, 180 - rollArc)}
+      ${segment(180 + rollArc, 450 - pitchArc)}
     `;
   }
 
@@ -273,8 +366,6 @@ export class ObcPitchRoll extends LitElement {
    * unchanged.
    */
   private renderZoomedArcs(pitchReq: number, rollReq: number) {
-    const tickmarks = [{angle: 0, type: TickmarkType.main}];
-
     // ---- Per-axis zoom-fit frames (requested half-extents) -------------
     const ext = 48;
     const targetSize = (176 + ext) * 2;
@@ -432,6 +523,17 @@ export class ObcPitchRoll extends LitElement {
     const pitchAdvices = this.subAdvices('pitch', pitchClampedDeg);
     const rollAdvices = this.subAdvices('roll', rollClampedDeg);
 
+    // Ladders span the CLAMPED extent so ticks never fall outside the band
+    // that is actually drawn (or outside the sector clip below).
+    const pitchTickmarks = [
+      {angle: 0, type: TickmarkType.main},
+      ...arcTickmarks(0, pitchClampedDeg),
+    ];
+    const rollTickmarks = [
+      {angle: 0, type: TickmarkType.main},
+      ...arcTickmarks(0, rollClampedDeg),
+    ];
+
     // Clip each sub-watch to the angular sector actually covered by the
     // (possibly shortened) arc so the indicator pill and bar end-of-range
     // limit lines cannot leak past the visible band when the value falls
@@ -500,7 +602,8 @@ export class ObcPitchRoll extends LitElement {
       barAreas: typeof rollBars,
       needles: typeof rollNeedles,
       advices: AngleAdviceRaw[],
-      clipPath: string
+      clipPath: string,
+      tickmarks: typeof rollTickmarks
     ) => html`
       <obc-watch
         class="sub-watch"
@@ -518,15 +621,18 @@ export class ObcPitchRoll extends LitElement {
     `;
 
     return html`
-      ${subWatch(
-        0,
-        rollFrame.subArcFrame,
-        rollAreas,
-        rollBars,
-        rollNeedles,
-        rollAdvices,
-        rollClip
-      )}
+      ${this.isSingleScale
+        ? nothing
+        : subWatch(
+            0,
+            rollFrame.subArcFrame,
+            rollAreas,
+            rollBars,
+            rollNeedles,
+            rollAdvices,
+            rollClip,
+            rollTickmarks
+          )}
       ${subWatch(
         90,
         pitchFrame.subArcFrame,
@@ -534,7 +640,8 @@ export class ObcPitchRoll extends LitElement {
         pitchBars,
         pitchNeedles,
         pitchAdvices,
-        pitchClip
+        pitchClip,
+        pitchTickmarks
       )}
       ${subWatch(
         180,
@@ -543,17 +650,21 @@ export class ObcPitchRoll extends LitElement {
         rollBars,
         rollNeedles,
         rollAdvices,
-        rollClip
+        rollClip,
+        rollTickmarks
       )}
-      ${subWatch(
-        270,
-        pitchFrame.subArcFrame,
-        pitchAreas,
-        pitchBars,
-        pitchNeedles,
-        pitchAdvices,
-        pitchClip
-      )}
+      ${this.isSingleScale
+        ? nothing
+        : subWatch(
+            270,
+            pitchFrame.subArcFrame,
+            pitchAreas,
+            pitchBars,
+            pitchNeedles,
+            pitchAdvices,
+            pitchClip,
+            pitchTickmarks
+          )}
     `;
   }
 
@@ -596,55 +707,76 @@ export class ObcPitchRoll extends LitElement {
 
   /** Full unzoomed watch — original single-instance render. */
   private renderFullWatch(areas: WatchArea[]) {
+    const barAreas = [
+      {
+        startAngle: 180 + this.minAvgRoll,
+        endAngle: 180 + this.maxAvgRoll,
+        fillColor: this.barColor(PitchRollPriorityElement.roll),
+      },
+      {
+        startAngle: 90 + this.minAvgPitch,
+        endAngle: 90 + this.maxAvgPitch,
+        fillColor: this.barColor(PitchRollPriorityElement.pitch),
+      },
+    ];
+    const needles = [
+      {
+        angle: 180 + this.roll,
+        fillColor: this.needleColor(PitchRollPriorityElement.roll),
+        strokeColor: 'var(--border-silhouette-color)',
+      },
+      {
+        angle: 90 + this.pitch,
+        fillColor: this.needleColor(PitchRollPriorityElement.pitch),
+        strokeColor: 'var(--border-silhouette-color)',
+      },
+    ];
+    const tickmarks = [
+      {angle: 90, type: TickmarkType.main},
+      {angle: 180, type: TickmarkType.main},
+      ...arcTickmarks(90, this.requestedPitchArcAngle),
+      ...arcTickmarks(180, this.requestedRollArcAngle),
+    ];
+    if (!this.isSingleScale) {
+      barAreas.push(
+        {
+          startAngle: this.minAvgRoll,
+          endAngle: this.maxAvgRoll,
+          fillColor: this.barColor(PitchRollPriorityElement.roll),
+        },
+        {
+          startAngle: 270 + this.minAvgPitch,
+          endAngle: 270 + this.maxAvgPitch,
+          fillColor: this.barColor(PitchRollPriorityElement.pitch),
+        }
+      );
+      needles.push(
+        {
+          angle: this.roll,
+          fillColor: this.needleColor(PitchRollPriorityElement.roll),
+          strokeColor: 'var(--border-silhouette-color)',
+        },
+        {
+          angle: 270 + this.pitch,
+          fillColor: this.needleColor(PitchRollPriorityElement.pitch),
+          strokeColor: 'var(--border-silhouette-color)',
+        }
+      );
+      tickmarks.push(
+        {angle: 0, type: TickmarkType.main},
+        {angle: 270, type: TickmarkType.main},
+        ...arcTickmarks(0, this.requestedRollArcAngle),
+        ...arcTickmarks(270, this.requestedPitchArcAngle)
+      );
+    }
+
     return html`
       <obc-watch
         .watchCircleType=${WatchCircleType.double}
         .zoomToFitArc=${false}
         .areas=${areas}
-        .barAreas=${[
-          {
-            startAngle: this.minAvgRoll,
-            endAngle: this.maxAvgRoll,
-            fillColor: this.barColor(PitchRollPriorityElement.roll),
-          },
-          {
-            startAngle: 180 + this.minAvgRoll,
-            endAngle: 180 + this.maxAvgRoll,
-            fillColor: this.barColor(PitchRollPriorityElement.roll),
-          },
-          {
-            startAngle: 90 + this.minAvgPitch,
-            endAngle: 90 + this.maxAvgPitch,
-            fillColor: this.barColor(PitchRollPriorityElement.pitch),
-          },
-          {
-            startAngle: 270 + this.minAvgPitch,
-            endAngle: 270 + this.maxAvgPitch,
-            fillColor: this.barColor(PitchRollPriorityElement.pitch),
-          },
-        ]}
-        .needles=${[
-          {
-            angle: this.roll,
-            fillColor: this.needleColor(PitchRollPriorityElement.roll),
-            strokeColor: 'var(--border-silhouette-color)',
-          },
-          {
-            angle: 180 + this.roll,
-            fillColor: this.needleColor(PitchRollPriorityElement.roll),
-            strokeColor: 'var(--border-silhouette-color)',
-          },
-          {
-            angle: 90 + this.pitch,
-            fillColor: this.needleColor(PitchRollPriorityElement.pitch),
-            strokeColor: 'var(--border-silhouette-color)',
-          },
-          {
-            angle: 270 + this.pitch,
-            fillColor: this.needleColor(PitchRollPriorityElement.pitch),
-            strokeColor: 'var(--border-silhouette-color)',
-          },
-        ]}
+        .barAreas=${barAreas}
+        .needles=${needles}
         .vessels=${this.hasReadout
           ? []
           : [
@@ -659,12 +791,7 @@ export class ObcPitchRoll extends LitElement {
                 transform: `rotate(${this.roll}deg) scale(${this.normalizedScaleForeImage})`,
               },
             ]}
-        .tickmarks=${[
-          {angle: 0, type: TickmarkType.main},
-          {angle: 90, type: TickmarkType.main},
-          {angle: 180, type: TickmarkType.main},
-          {angle: 270, type: TickmarkType.main},
-        ]}
+        .tickmarks=${tickmarks}
         .advices=${this.advices}
       ></obc-watch>
     `;
@@ -694,20 +821,22 @@ export class ObcPitchRoll extends LitElement {
         state: state,
         hideMaxTickmark: true,
       });
-      advices.push({
-        minAngle: 270 - outer,
-        maxAngle: 270 - inner,
-        type: AdviceType.caution,
-        state: state,
-        hideMinTickmark: true,
-      });
-      advices.push({
-        minAngle: 270 + inner,
-        maxAngle: 270 + outer,
-        type: AdviceType.caution,
-        state: state,
-        hideMaxTickmark: true,
-      });
+      if (!this.isSingleScale) {
+        advices.push({
+          minAngle: 270 - outer,
+          maxAngle: 270 - inner,
+          type: AdviceType.caution,
+          state: state,
+          hideMinTickmark: true,
+        });
+        advices.push({
+          minAngle: 270 + inner,
+          maxAngle: 270 + outer,
+          type: AdviceType.caution,
+          state: state,
+          hideMaxTickmark: true,
+        });
+      }
     }
     if (this.maxRollAdvice !== undefined) {
       const outer = Math.min(rollReq, 45);
@@ -715,20 +844,6 @@ export class ObcPitchRoll extends LitElement {
       const state = this.triggerRollAdvice
         ? AdviceState.triggered
         : AdviceState.regular;
-      advices.push({
-        minAngle: -outer,
-        maxAngle: -inner,
-        type: AdviceType.caution,
-        state: state,
-        hideMinTickmark: true,
-      });
-      advices.push({
-        minAngle: inner,
-        maxAngle: outer,
-        type: AdviceType.caution,
-        state: state,
-        hideMaxTickmark: true,
-      });
       advices.push({
         minAngle: 180 - outer,
         maxAngle: 180 - inner,
@@ -743,48 +858,54 @@ export class ObcPitchRoll extends LitElement {
         state: state,
         hideMaxTickmark: true,
       });
+      if (!this.isSingleScale) {
+        advices.push({
+          minAngle: -outer,
+          maxAngle: -inner,
+          type: AdviceType.caution,
+          state: state,
+          hideMinTickmark: true,
+        });
+        advices.push({
+          minAngle: inner,
+          maxAngle: outer,
+          type: AdviceType.caution,
+          state: state,
+          hideMaxTickmark: true,
+        });
+      }
     }
     return advices;
   }
 
-  static override styles = css`
-    * {
-      box-sizing: border-box;
-    }
+  static override styles = [
+    centerReadoutStyles,
+    css`
+      * {
+        box-sizing: border-box;
+      }
 
-    .container {
-      position: relative;
-      width: 100%;
-      height: 100%;
-    }
+      .container {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
 
-    .container > * {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
+      .container > * {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
 
-    .readout {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .readout-group {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: fit-content;
-    }
-
-    .readout-divider {
-      align-self: stretch;
-      height: 1px;
-      background: var(--border-divider-color);
-    }
-  `;
+      .readout {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    `,
+  ];
 }
 
 declare global {
