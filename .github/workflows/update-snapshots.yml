@@ -24,7 +24,7 @@ jobs:
     steps:
       - name: Validate permissions and resolve PR branch
         id: pr
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const allowed = ['OWNER', 'MEMBER', 'COLLABORATOR'];
@@ -96,7 +96,7 @@ jobs:
 
       - name: Comment result
         if: always()
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const status = '${{ job.status }}';
