@@ -216,6 +216,29 @@ export function renderCurrent(options: {
   });
 }
 
+/**
+ * Render a current icon centered on the watch face (the direction-type
+ * layout): the 24-unit `current-N` glyph is scaled about the face center and
+ * rotated so the chevrons point with the flow (same orientation convention
+ * as the peripheral `renderCurrent`).
+ */
+export function renderCurrentCentered(options: {
+  current: number;
+  fromDirectionDeg: number;
+  scale: number;
+  color?: string;
+}): SVGTemplateResult {
+  const {current, fromDirectionDeg, scale, color} = options;
+  const symbol = environmentSvgs[`current-${current}.svg`];
+  if (!symbol) {
+    return svg``;
+  }
+  const styles = color ? {'--instrument-regular-secondary-color': color} : {};
+  return svg`<g style=${styleMap(styles)} transform="rotate(${180 + fromDirectionDeg}) scale(${scale}) translate(-12 -12)">
+    ${symbol}
+  </g>`;
+}
+
 function renderEnvironment(options: {
   filename: string;
   fromDirectionDeg: number;
