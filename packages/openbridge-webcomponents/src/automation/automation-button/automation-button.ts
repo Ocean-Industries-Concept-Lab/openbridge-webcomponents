@@ -97,6 +97,15 @@ export enum AutomationButtonPositioning {
 }
 
 /**
+ * @slot badge-top-right - Content projected into the top-right badge position of the button.
+ * @slot badge-top-left - Content projected into the top-left badge position of the button.
+ * @slot badge-bottom-left - Content projected into the bottom-left badge position of the button.
+ * @slot badge-bottom-right - Content projected into the bottom-right badge position of the button.
+ * @slot icon - Primary icon shown inside the button (regular, double, flat and square variants).
+ * @slot icon-silhouette - Silhouette/outline icon shown behind the primary icon (flat variant only).
+ * @slot alert-icon - Custom icon for the alert frame, shown when alert==true and positioning=="point".
+ * @slot alert-label - Label for the alert frame, shown when alert==true and positioning=="point".
+ * @slot alert-timer - Timer for the alert frame, shown when alert==true and positioning=="point".
  * @stable
  */
 @customElement('obc-automation-button')
@@ -106,6 +115,8 @@ export class ObcAutomationButton extends LitElement {
   @property({type: String}) state: AutomationButtonState =
     AutomationButtonState.open;
   @property({type: Boolean}) static: boolean = false;
+  /** Enables the activated background color, used to indicate that the button is activated/selected. */
+  @property({type: Boolean}) activated: boolean = false;
   @property({type: Boolean, attribute: false}) showReadoutStack: boolean = true;
   /** @availableWhen showReadoutStack==true */
   @property({type: Array, attribute: false})
@@ -171,6 +182,7 @@ export class ObcAutomationButton extends LitElement {
           alert: this.alert,
           progress: this.progress,
           static: this.static,
+          activated: this.activated,
         })}
       >
         <div class="icon-touch-target">

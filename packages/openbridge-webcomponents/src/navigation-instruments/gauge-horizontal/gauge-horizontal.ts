@@ -353,9 +353,12 @@ export class ObcGaugeHorizontal extends SetpointMixin(LitElement, {
     // Report dimensions to parent chart
     // In fixedAspectRatio mode, we report after resize events trigger _scale updates
     // In regular mode, only emit when layout-affecting properties change
+    // Setpoint presence changes the reported thickness (reserved marker band),
+    // so it must re-report in both aspect-ratio modes.
     if (
-      !this.fixedAspectRatio &&
-      (changed.has('side') || changed.has('showLabels'))
+      (!this.fixedAspectRatio &&
+        (changed.has('side') || changed.has('showLabels'))) ||
+      this.setpointPresenceChanged(changed)
     ) {
       this.reportDimensions();
     }
@@ -385,6 +388,10 @@ export class ObcGaugeHorizontal extends SetpointMixin(LitElement, {
       labelThickness: this.labelThickness,
       length: this.width,
       scaleType: this.scaleType,
+      hasSetpoint:
+        this.setpoint !== undefined ||
+        this.newSetpoint !== undefined ||
+        this.departingNewSetpoint !== undefined,
     });
 
     // Always report unscaled/reference dimensions.

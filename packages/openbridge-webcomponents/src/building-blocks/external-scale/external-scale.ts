@@ -32,6 +32,8 @@ import {
   computeAtSetpoint,
   SETPOINT_ANIMATION_CSS_VAR,
   SETPOINT_ANIMATION_DURATION_DEFAULT,
+  SETPOINT_HEIGHT,
+  SETPOINT_ZERO_OFFSET,
 } from '../../svghelpers/setpoint.js';
 
 /**
@@ -678,6 +680,16 @@ export type ExternalScaleLayoutConfig = Pick<
    * inset correctly to keep the pill visible inside the cell.
    */
   hasAdvice?: boolean;
+  /**
+   * Whether a setpoint marker (original, new, or departing) is present.
+   *
+   * The setpoint marker renders in perpendicular space outside the bar band
+   * (tip at `tickBase + 4` plus a state offset of up to 8, body extending a
+   * further 21 outward). When the scale/label bands don't already provide
+   * enough room — e.g. `hasScale=false` side bars — the layout reserves an
+   * extra band so the marker is not clipped by the viewBox.
+   */
+  hasSetpoint?: boolean;
 };
 
 export interface ExternalScaleViewBox {
@@ -704,6 +716,10 @@ export function toExternalScaleLayoutConfig(
     scaleType: config.scaleType,
     advicePosition: config.advicePosition,
     hasAdvice: !!config.advices && config.advices.length > 0,
+    hasSetpoint:
+      config.setpoint !== undefined ||
+      config.newSetpoint !== undefined ||
+      config.departingNewSetpoint !== undefined,
   };
 }
 
@@ -837,7 +853,12 @@ export function computeExternalScaleLayout(
   // is 8px wide with a 4px offset from its anchor edge, plus a small visual
   // buffer so the pill doesn't touch the viewBox edge.
   const adviceSpace = computeAdviceBandThickness(config);
-  const outsideBarSpace = Math.max(scaleSpace + labelSpace, adviceSpace);
+  const setpointSpace = computeSetpointBandThickness(config);
+  const outsideBarSpace = Math.max(
+    scaleSpace + labelSpace,
+    adviceSpace,
+    setpointSpace
+  );
   const thickness = barSpace + outsideBarSpace;
 
   const isOutwardPositive =
@@ -884,6 +905,22 @@ function computeAdviceBandThickness(
   if (position === AdvicePosition.center) return 0;
   if (position === AdvicePosition.outer) return 24;
   return 16;
+}
+
+/**
+ * Perpendicular band needed to keep a setpoint marker inside the viewBox
+ * when no scale/label bands reserve the space.
+ *
+ * Worst case, measured outward from the bar edge (`tickBasePerp`):
+ * `tickGap()` + max state offset (`equalZero`, `SETPOINT_ZERO_OFFSET`) +
+ * marker body (`SETPOINT_HEIGHT`). See `renderSingleSetpoint()` for the
+ * geometry.
+ */
+export function computeSetpointBandThickness(
+  config: Pick<ExternalScaleLayoutConfig, 'hasSetpoint'>
+): number {
+  if (!config.hasSetpoint) return 0;
+  return tickGap() + SETPOINT_ZERO_OFFSET + SETPOINT_HEIGHT;
 }
 
 function isVertical(config: ExternalScaleConfig): boolean {

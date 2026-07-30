@@ -4,6 +4,7 @@ import compentStyle from './integration-tabs.css?inline';
 import {property} from 'lit/decorators.js';
 
 /**
+ * @slot - Tab label content
  * @experimental
  */
 @customElement('obc-integration-tabs')

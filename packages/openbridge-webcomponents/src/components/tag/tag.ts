@@ -23,6 +23,7 @@ export enum TagSize {
 }
 
 /**
+ * @slot - Leading icon content (shown when `hasIcon` is true).
  * @stable
  */
 @customElement('obc-tag')

@@ -1,191 +1,306 @@
-import {LitElement, html, nothing, unsafeCSS} from 'lit';
+import {LitElement, html, nothing, unsafeCSS, type TemplateResult} from 'lit';
 import {property, query, state} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import componentStyle from './readout.css?inline';
 import {customElement} from '../../decorator.js';
+import '../../components/textbox/textbox.js';
+import {
+  ObcTextboxSize,
+  ObcTextboxFontWeight,
+} from '../../components/textbox/textbox.js';
+import '../../building-blocks/readout-block/readout-block.js';
+import {
+  ReadoutBlockVariant,
+  ReadoutBlockSize,
+  ReadoutBlockDataQuality,
+  ReadoutBlockHidePhase,
+} from '../../building-blocks/readout-block/readout-block.js';
+import {
+  ReadoutListItemSetpointInteraction,
+  type ReadoutBlockState,
+  type ReadoutValueOptions,
+  type ReadoutSetpointOptions,
+  type ReadoutAdviceOptions,
+  type ReadoutReserverOptions,
+  type ReadoutSrcOptions,
+} from '../readout-list-item/readout-list-item.js';
+import {Priority} from '../types.js';
+import {type ReadoutNumericFormatOptions} from './readout-formatters.js';
+import {
+  isDisplayedAtSetpoint,
+  readoutNumericFormatOptions,
+  readoutPrimarySize,
+  readoutSecondarySize,
+  readoutSetpointWeight,
+  readoutDataQualityClasses,
+  resolveSetpointHidePhase,
+} from './readout-shared.js';
+import {
+  type AlertFrameConfig,
+  wrapWithAlertFrame,
+  ObcAlertFrameType,
+  ObcAlertFrameThickness,
+  ObcAlertFrameMode,
+} from '../../components/alert-frame/alert-frame.js';
+import {AlertType} from '../../types.js';
+import '../../components/button/button.js';
 import '../../components/context-menu-input/context-menu-input.js';
 import {
   ContextMenuType,
   type ContextMenuOption,
   type ObcContextMenuInputItemClickEvent,
 } from '../../components/context-menu-input/context-menu-input.js';
-import {Priority} from '../types.js';
-import '../../icons/icon-input-right.js';
-import '../../icons/icon-placeholder.js';
-import {
-  ReadoutAdviceState,
-  ReadoutAdviceFormat,
-} from '../readout-advice/readout-advice.js';
-import '../readout-advice/readout-advice.js';
-import {
-  renderReadoutLabelZone,
-  renderReadoutMetaZone,
-  renderReadoutUnitZone,
-} from './readout-meta.js';
-import {
-  ReadoutSourceType,
-  renderReadoutSource,
-  supportsReadoutSourcePicker,
-} from './readout-source.js';
-import {
-  ReadoutSetpointMode,
-  ReadoutSetpointFormat,
-  ReadoutSetpointVariant,
-  ReadoutSetpointSize,
-} from '../readout-setpoint/readout-setpoint.js';
-import '../readout-setpoint/readout-setpoint.js';
-import {
-  type AlertFrameConfig,
-  wrapWithAlertFrame,
-} from '../../components/alert-frame/alert-frame.js';
+import '../../icons/icon-chevron-right-google.js';
+import '../../icons/icon-drop-down-google.js';
 
-export enum ReadoutVariant {
-  regular = 'regular',
-  enhanced = 'enhanced',
-  stack = 'stack',
-}
+// Re-exported so consumers configure the readout without a second import path.
+// The option interfaces and enums are shared with `obc-readout-list-item` on
+// purpose: the two components are layout variants of the same primitives +
+// per-block options API and may merge in a future release.
+export {ObcTextboxFontWeight} from '../../components/textbox/textbox.js';
+export type {
+  ReadoutBlockState,
+  ReadoutValueOptions,
+  ReadoutSetpointOptions,
+  ReadoutAdviceOptions,
+  ReadoutReserverOptions,
+  ReadoutSrcOptions,
+} from '../readout-list-item/readout-list-item.js';
 
-export enum ReadoutDataState {
-  none = 'none',
-  lowIntegrity = 'low-integrity',
-  invalid = 'invalid',
-}
+/**
+ * Density/size scale of the readout (an alias of `ReadoutBlockSize`).
+ * - `small`: regular value typography (smallest, densest).
+ * - `medium`: medium value typography.
+ * - `large`: large value typography.
+ */
+export const ReadoutSize = ReadoutBlockSize;
+export type ReadoutSize = ReadoutBlockSize;
 
-export enum ReadoutSetpointInteraction {
-  alwaysVisible = 'always-visible',
-  flipFlop = 'flip-flop',
-  popUp = 'pop-up',
-}
+/**
+ * Colour emphasis of the value (an alias of the shared instrument `Priority`;
+ * same values as `ReadoutListItemPriority`).
+ * - `regular`: neutral.
+ * - `enhanced`: accented (in-command) colour.
+ */
+export const ReadoutPriority = Priority;
+export type ReadoutPriority = Priority;
 
+/**
+ * Measurement quality of the value (an alias of `ReadoutBlockDataQuality`).
+ * Orthogonal to the readout-level `alert` – a low-integrity or invalid value
+ * can also sit inside an alert frame.
+ */
+export const ReadoutDataQuality = ReadoutBlockDataQuality;
+export type ReadoutDataQuality = ReadoutBlockDataQuality;
+
+/**
+ * How the setpoint segment behaves relative to the value (an alias of
+ * `ReadoutListItemSetpointInteraction`).
+ * - `always-visible` (default): the setpoint is always shown.
+ * - `flip-flop`: value and setpoint swap emphasis (size) as the value reaches
+ *   the setpoint.
+ * - `pop-up`: the setpoint is shown only while the value has not reached it,
+ *   then fades out (100ms) once value === setpoint.
+ */
+export const ReadoutSetpointInteraction = ReadoutListItemSetpointInteraction;
+export type ReadoutSetpointInteraction = ReadoutListItemSetpointInteraction;
+
+/**
+ * Flow direction of the readout.
+ * - `vertical` (default): advice / setpoint / value stack on top of the
+ *   label+unit meta zone and the source row (Figma "Readout Group / Vertical"
+ *   and "Readout Stack").
+ * - `horizontal`: all segments flow on one cap-height-aligned row, with the
+ *   label stacked over the unit beside the value (Figma "Readout Group /
+ *   Horizontal").
+ */
 export enum ReadoutDirection {
   vertical = 'vertical',
   horizontal = 'horizontal',
 }
 
-export enum ReadoutStackVerticalAlignment {
-  left = 'left',
-  center = 'center',
-  vertical = 'vertical',
+/**
+ * Arrangement of the label/unit meta zone in a vertical readout.
+ * - `inline` (default): label and unit share one row below the value (Figma
+ *   "Readout Group / Vertical").
+ * - `stacked`: label and unit render on separate rows (Figma "Readout Stack"),
+ *   arranged by `alignment`.
+ */
+export enum ReadoutStacking {
+  inline = 'inline',
+  stacked = 'stacked',
 }
 
-export {ReadoutSourceType};
+/**
+ * Cross-axis alignment of a stacked vertical readout (Figma "Readout Stack"
+ * Alignment axis).
+ * - `vertical` (default): right-aligned column.
+ * - `left`: left-aligned column.
+ * - `center`: centered column.
+ */
+export enum ReadoutAlignment {
+  vertical = 'vertical',
+  left = 'left',
+  center = 'center',
+}
 
 /**
- * `<obc-readout>` – A component for displaying navigation instrument data.
+ * Interactivity of the source row.
+ * - `none` (default): plain source text (same rendering as
+ *   `obc-readout-list-item`).
+ * - `picker`: a flat button with a drop-down icon that opens a context menu
+ *   built from the `src-picker-content` slot; selecting an option fires
+ *   `source-change`.
+ * - `flyout`: a flat button with a chevron icon that fires
+ *   `source-flyout-click`.
+ */
+export enum ReadoutSourceInteraction {
+  none = 'none',
+  picker = 'picker',
+  flyout = 'flyout',
+}
+
+/**
+ * Per-source options. Extends the shared per-block state (data quality, alert,
+ * space reserver) with the readout's source interactivity.
+ */
+export interface ReadoutSourceOptions extends ReadoutSrcOptions {
+  /** Interactivity of the source row (default `none`). */
+  interaction?: ReadoutSourceInteraction;
+}
+
+/**
+ * `<obc-readout>` – An instrument readout: a value with optional setpoint,
+ * advice, label, unit, and source, arranged vertically or horizontally.
  *
- * This component is used to show a primary value, optional advice and setpoint segments, units, a label, and a source (e.g., GPS, Gyro).
- * It supports different readout styles, horizontal/vertical layouts, and configurable numeric formatting.
+ * A layout sibling of `<obc-readout-list-item>` built from the same
+ * cap-height "readout building blocks" (`obc-readout-block`): dynamic data is
+ * passed as top-level primitives (`value`, `setpoint`, `advice`, `label`,
+ * `unit`, `src`), global layout/format via top-level props (`size`,
+ * `priority`, `direction`, `stacking`, `alignment`, `hasDegree`,
+ * `dataQuality`, `alert`, …) and per-block tweaks via one object per block
+ * (`valueOptions`, `setpointOptions`, `adviceOptions`, `unitOptions`,
+ * `srcOptions`).
  *
  * ### Features
- * - **Readout Styles:** Supports `regular`, `enhanced`, and `stack` presentations.
- * - **Segments:** Optional advice, setpoint, and leading icon display in addition to the main value.
- * - **Source:** Optional source display with `small`, `regular`, `delta`, and `flyout` variants.
- * - **Source Picker:** Optional source selection with a dropdown and context menu.
- * - **Formatting:** Customizable integer and fraction digits, dashed fallback values, and optional zero padding.
- * - **Layouts:** Can be oriented horizontally or vertically, with optional dividers and segment spacing controls.
+ * - **Building blocks:** value, optional setpoint, and optional advice
+ *   segments, each cap-height-aligned and able to reserve a stable width.
+ * - **Sizes:** `small`, `medium`, `large` density scales.
+ * - **Direction:** `vertical` (blocks above a label+unit meta zone and source
+ *   row) or `horizontal` (all segments on one row).
+ * - **Stacking & alignment:** vertical readouts arrange label/unit `inline`
+ *   or `stacked`; stacked readouts align `vertical` (right), `left`, or
+ *   `center`.
+ * - **Priority:** `regular`/`enhanced` colour emphasis; per-value `weight`
+ *   is independent of colour.
+ * - **Setpoint interactions:** `always-visible`, `flip-flop` (emphasis swap),
+ *   and `pop-up` (fade-out at setpoint), plus the `touching` focus state.
+ * - **Data quality:** `low-integrity`/`invalid` styling, per block or for the
+ *   whole readout, combinable with `alert`.
+ * - **Alert frame:** optional `alert` wrapper (caution/warning/alarm/level).
+ * - **Source:** plain text by default; opt-in `picker` (context menu) or
+ *   `flyout` interactivity via `srcOptions.interaction`.
+ * - **Formatting:** shared `fractionDigits`, width reservation via
+ *   `maxDigits` and per-segment `hintedZeros`; a `null` value renders a dash.
+ *
+ * ### Usage Guidelines
+ * Use for stand-alone instrument readouts and readouts embedded in
+ * instruments. Prefer `<obc-readout-list-item>` for dense rows in
+ * lists/tables (label left, value right) and `<obc-readout-list>` for
+ * auto-aligned groups of rows.
+ *
+ * @experimental Part of the primitives + per-block options Readout API pilot;
+ * the API may change in a future release.
  *
  * ### Slots
- * | Slot Name           | Purpose                                                                    |
- * |---------------------|----------------------------------------------------------------------------|
- * | advice              | Replaces the fallback advice segment when `hasAdvice` is true.             |
- * | advice-icon         | Replaces the fallback advice icon when `hasAdvice` is true.                |
- * | setpoint            | Replaces the fallback setpoint segment when `hasSetpoint` is true.         |
- * | setpoint-icon       | Replaces the fallback setpoint icon when `hasSetpoint` is true.            |
- * | leading-icon        | Replaces the fallback leading icon beside the main value.                  |
- * | value               | Replaces the formatted main value content.                                 |
- * | label               | Replaces the label content.                                                |
- * | unit                | Replaces the unit content.                                                 |
- * | source              | Replaces the source row content.                                           |
- * | src-picker-content  | Content for the source picker context menu (e.g., a list of sources).      |
+ * | Slot Name          | Renders When                          | Purpose                              |
+ * |--------------------|---------------------------------------|--------------------------------------|
+ * | value-icon         | `valueOptions.hasIcon`                | Icon before the value.               |
+ * | setpoint-icon      | `hasSetpoint`                         | Overrides the default setpoint icon. |
+ * | advice-icon        | `hasAdvice`                           | Overrides the default advice icon.   |
+ * | src-picker-content | `srcOptions.interaction == 'picker'`  | Source picker context-menu content.  |
  *
- * @fires source-flyout-click {CustomEvent<{src: string, sourceType?: ReadoutSourceType}>} Fired when the source row is clicked while `sourceType="flyout"`.
  * @fires source-change {CustomEvent<{value: string, label?: string}>} Fired when a source picker option is selected.
+ * @fires source-flyout-click {CustomEvent<{src: string}>} Fired when the source row is clicked while `srcOptions.interaction == 'flyout'`.
  *
- * @slot advice - Replaces the fallback advice segment.
- * @slot advice-icon - Replaces the fallback advice icon.
- * @slot setpoint - Replaces the fallback setpoint segment.
- * @slot setpoint-icon - Replaces the fallback setpoint icon.
- * @slot leading-icon - Replaces the fallback leading icon beside the value.
- * @slot value - Replaces the formatted main value content.
- * @slot label - Replaces the label content.
- * @slot unit - Replaces the unit content.
- * @slot source - Replaces the source row content.
+ * @slot value-icon - Icon before the value.
+ * @slot setpoint-icon - Overrides the default setpoint icon.
+ * @slot advice-icon - Overrides the default advice icon.
  * @slot src-picker-content - Provides the source picker context menu content.
- * @experimental
  */
 @customElement('obc-readout')
 export class ObcReadout extends LitElement {
-  @property({type: Number}) value?: number;
-  @property({type: Boolean}) hasSetpoint = false;
-  @property({type: Number}) setpointValue?: number;
-  @property({type: String}) variant: ReadoutVariant = ReadoutVariant.regular;
-  @property({type: Boolean}) hasDegree = false;
-  @property({type: String}) label = '';
+  // Primitives (dynamic data)
+  @property({type: String}) label?: string;
   @property({type: String}) unit?: string;
   @property({type: String}) src?: string;
-  @property({type: Boolean}) off = false;
-  @property({type: String}) valuePriority?: Priority;
-  @property({type: String}) dataState: ReadoutDataState = ReadoutDataState.none;
-  @property({type: String}) setpointInteraction: ReadoutSetpointInteraction =
-    ReadoutSetpointInteraction.alwaysVisible;
-  @property({type: String}) direction: ReadoutDirection =
-    ReadoutDirection.vertical;
 
   /**
-   * Override the size of the setpoint segment (when `hasSetpoint` is true).
-   *
-   * - In `alwaysVisible` and `popUp` interaction modes: any size value applies.
-   * - In `flipFlop` mode: the override is honored only when strictly smaller
-   *   than the variant's base size (medium for `regular`, large for
-   *   `enhanced`/`stack`). Larger overrides are ignored, falling back to the
-   *   default secondary size to preserve the flip-flop visual effect and
-   *   prevent setpoint/value overlap.
-   *
-   * When unset, the setpoint size is derived from `variant` (and adjusted for
-   * multi-line formats).
+   * Layout switch: `false` renders a deliberately value-less (label-only)
+   * readout that hugs its remaining parts. For a temporarily missing value
+   * keep `hasValue` and set `value` to `null` instead — the dash keeps the
+   * value block at full size, so the layout does not shift when data arrives.
    */
-  @property({type: String}) setpointSize?: ReadoutSetpointSize;
-  @property({type: String})
-  alignment: ReadoutStackVerticalAlignment =
-    ReadoutStackVerticalAlignment.vertical;
-  @property({type: Boolean}) hug = false;
-  @property({type: Boolean}) hasSetpointDivider = false;
-  @property({type: Boolean}) hasSourceDivider = false;
-  @property({type: Boolean}) showZeroPadding = false;
-  @property({type: Number}) fractionDigits = 0;
-  @property({type: Number}) minValueLength = 0;
-  @property({type: Boolean}) valueHasHintedZeros = false;
+  @property({type: Boolean, attribute: false}) hasValue = true;
+  @property({type: Number}) value: number | null = null;
+  /** Render the value as `offText` (e.g. equipment powered down). Affects the value only. */
+  @property({type: Boolean}) off = false;
+  /** Text shown in place of the value when `off` is true. @availableWhen off==true */
+  @property({type: String}) offText = 'OFF';
 
-  @property({type: Boolean}) labelOnly = false;
-  @property({type: Boolean}) hasSrcPicker = false;
-  @property({type: Number}) sourceDeltaValue = 0;
-  @property({type: String}) sourceType?: ReadoutSourceType;
-  @property({type: Boolean}) hasLeadingIcon = false;
+  @property({type: Boolean}) hasSetpoint = false;
+  /** @availableWhen hasSetpoint==true */
+  @property({type: Number}) setpoint?: number;
 
-  @property({type: Object}) alert: AlertFrameConfig | boolean = false;
-
-  @property({type: Boolean, attribute: false}) sourceHug = true;
-  @property({type: Boolean}) hasSourceLeadingIcon = false;
-  @property({type: Boolean, attribute: false}) hasSourceTrailingIcon = true;
   @property({type: Boolean}) hasAdvice = false;
-  @property({type: Number}) adviceValue?: number;
-  @property({type: String}) adviceFormat: ReadoutAdviceFormat =
-    ReadoutAdviceFormat.regular;
-  @property({type: String}) adviceState: ReadoutAdviceState =
-    ReadoutAdviceState.enabled;
-  @property({type: Number}) adviceSecondaryValue: number | undefined =
-    undefined;
-  @property({type: String}) adviceDescription = '';
-  @property({type: Boolean}) adviceHasHintedZeros = false;
-  @property({type: String}) setpointFormat: ReadoutSetpointFormat =
-    ReadoutSetpointFormat.regular;
-  @property({type: Number}) setpointSecondaryValue: number | undefined =
-    undefined;
-  @property({type: String}) setpointDescription = '';
-  @property({type: Boolean}) setpointHasHintedZeros = false;
+  /** @availableWhen hasAdvice==true */
+  @property({type: Number}) advice?: number;
 
-  @state()
-  private deferredSetpointHidePhase: 'none' | 'hiding' | 'hidden' = 'none';
+  // Global layout/format (each defaults via its `resolved*` getter where useful).
+  @property({type: String}) size?: ReadoutSize;
+  @property({type: String}) priority?: ReadoutPriority;
+  @property({type: String}) direction?: ReadoutDirection;
+  /** @availableWhen direction==vertical */
+  @property({type: String}) stacking?: ReadoutStacking;
+  /** @availableWhen direction==vertical && stacking==stacked */
+  @property({type: String}) alignment?: ReadoutAlignment;
+  @property({type: Boolean}) hasDegree = false;
+  /** @availableWhen hasDegree==false */
+  @property({type: Boolean}) hasDegreeSpacer = false;
+  @property({type: Number}) fractionDigits = 0;
+  @property({type: Number}) maxDigits = 0;
+  @property({type: String}) dataQuality?: ReadoutDataQuality;
+  // `boolean | …` (not `false | …`): the generated Angular wrapper widens a
+  // literal-`false` union to `boolean`, which then won't assign back to a
+  // `false`-typed element property. `wrapWithAlertFrame` treats any non-object
+  // (incl. `true`) as "no frame", so accepting `boolean` is harmless.
+  @property({type: Object}) alert: boolean | AlertFrameConfig = false;
+
+  // Per-block configuration — one object per block (see the Readout*Options types).
+  /** @availableWhen hasValue==true */
+  @property({type: Object}) valueOptions?: ReadoutValueOptions;
+  /** @availableWhen hasSetpoint==true */
+  @property({type: Object}) setpointOptions?: ReadoutSetpointOptions;
+  /** @availableWhen hasAdvice==true */
+  @property({type: Object}) adviceOptions?: ReadoutAdviceOptions;
+  /** @availableWhen unit!='' */
+  @property({type: Object}) unitOptions?: ReadoutReserverOptions;
+  /** @availableWhen src!='' */
+  @property({type: Object}) srcOptions?: ReadoutSourceOptions;
+
+  /**
+   * Development aid: outline the readout building blocks (red), the degree
+   * columns (blue) and the degree spacer (green) so reserver widths / alignment
+   * are visible. Off by default.
+   */
+  @property({type: Boolean, reflect: true}) showDebugOverlay = false;
+
+  /** Pop-up deferred-hide phase for the setpoint (see {@link updated}). */
+  @state() private deferredSetpointHidePhase: ReadoutBlockHidePhase =
+    ReadoutBlockHidePhase.none;
+  private deferredSetpointHideTimer?: number;
+  private hasCompletedFirstUpdate = false;
+
   @state() private sourcePickerContentVisible = false;
   @state() private sourcePickerOptions: ContextMenuOption[] = [];
 
@@ -196,367 +311,542 @@ export class ObcReadout extends LitElement {
     if (!this.sourcePickerContentVisible) {
       return;
     }
-
-    const path = event.composedPath();
-    if (path.includes(this)) {
+    if (event.composedPath().includes(this)) {
       return;
     }
-
     this.sourcePickerContentVisible = false;
   };
 
-  private deferredSetpointHideTimer: number | undefined;
-
-  private hasCompletedFirstUpdate = false;
-
-  private get isHorizontal() {
-    return this.direction === ReadoutDirection.horizontal;
+  private get resolvedSize(): ReadoutSize {
+    return this.size ?? ReadoutSize.small;
   }
 
-  private get isVertical() {
-    return this.direction === ReadoutDirection.vertical;
+  private get resolvedPriority(): ReadoutPriority {
+    return this.priority ?? ReadoutPriority.regular;
   }
 
-  private get isEnhanced() {
-    return this.variant === ReadoutVariant.enhanced;
+  private get resolvedDirection(): ReadoutDirection {
+    return this.direction ?? ReadoutDirection.vertical;
   }
 
-  private get isStack() {
-    return this.variant === ReadoutVariant.stack;
+  private get resolvedStacking(): ReadoutStacking {
+    return this.stacking ?? ReadoutStacking.inline;
   }
 
-  private get hasSrc() {
+  private get resolvedAlignment(): ReadoutAlignment {
+    return this.alignment ?? ReadoutAlignment.vertical;
+  }
+
+  private get isHorizontal(): boolean {
+    return this.resolvedDirection === ReadoutDirection.horizontal;
+  }
+
+  private get resolvedFractionDigits(): number {
+    return this.fractionDigits ?? 0;
+  }
+
+  private get resolvedMaxDigits(): number {
+    return this.maxDigits ?? 0;
+  }
+
+  private get hasSrc(): boolean {
     return this.src !== undefined && this.src.trim() !== '';
   }
 
-  private get showAdviceDivider() {
-    return this.isHorizontal && this.hasAdvice && this.hasSetpoint;
+  private get resolvedSourceInteraction(): ReadoutSourceInteraction {
+    return this.srcOptions?.interaction ?? ReadoutSourceInteraction.none;
   }
 
-  private get showSetpointDivider() {
-    return (
-      this.hasSetpointDivider &&
-      this.hasSetpoint &&
-      (this.setpointRendered || this.setpointLayoutReserved)
-    );
-  }
-
-  private get showSourceDivider() {
-    return this.hasSourceDivider && this.hasSrc;
-  }
-
-  private get showUnitZone() {
-    return this.variant === ReadoutVariant.regular && this.isHorizontal;
-  }
-
-  private get shouldRenderReadoutMetaZone(): boolean {
-    return Boolean(this.label || this.unit || this.labelOnly);
-  }
-
-  private resolvedValueMode(): ReadoutSetpointMode | undefined {
-    if (!this.setpointInteractionRendered) {
-      return undefined;
-    }
-
-    if (!this.isHorizontal) {
-      return undefined;
-    }
-
-    if (this.interactionMode === ReadoutSetpointInteraction.alwaysVisible) {
-      return ReadoutSetpointMode.setpoint;
-    }
-
-    if (this.interactionMode === ReadoutSetpointInteraction.popUp) {
-      return undefined;
-    }
-
-    return undefined;
-  }
-
-  private resolvedSetpointModeForInteraction():
-    | ReadoutSetpointMode
-    | undefined {
-    if (this.isHorizontal) {
-      if (this.interactionMode === ReadoutSetpointInteraction.alwaysVisible) {
-        return undefined;
-      }
-
-      if (this.interactionMode === ReadoutSetpointInteraction.popUp) {
-        return ReadoutSetpointMode.setpoint;
-      }
-    }
-
-    return undefined;
-  }
-
-  private resolveSetpointFormat(): ReadoutSetpointFormat | undefined {
-    return this.setpointFormat;
-  }
-
-  private get interactionMode(): ReadoutSetpointInteraction {
-    return this.setpointInteraction;
-  }
-
-  private get isSetpointReached(): boolean {
-    return this.value === this.setpointValue;
-  }
-
-  private get flipFlopValueFocused(): boolean {
-    return (
-      this.interactionMode === ReadoutSetpointInteraction.flipFlop &&
-      this.isSetpointReached
-    );
-  }
-
-  private get flipFlopSetpointFocused(): boolean {
-    return (
-      this.interactionMode === ReadoutSetpointInteraction.flipFlop &&
-      !this.isSetpointReached
-    );
-  }
-
-  private get shouldHideSetpointForInteraction(): boolean {
-    if (!this.setpointInteractionEnabled) {
-      return false;
-    }
-
-    if (this.interactionMode === ReadoutSetpointInteraction.alwaysVisible) {
-      return false;
-    }
-
-    if (this.interactionMode === ReadoutSetpointInteraction.popUp) {
-      return (
-        this.isSetpointReached && this.deferredSetpointHidePhase === 'hidden'
-      );
-    }
-
-    return false;
-  }
-
-  private resolvedSetpointVisible(): boolean {
+  private get isAtSetpoint(): boolean {
     if (!this.hasSetpoint) {
       return false;
     }
-
-    return true;
-  }
-
-  private get setpointInteractionEnabled(): boolean {
-    return this.resolvedSetpointVisible();
-  }
-
-  private get setpointRendered(): boolean {
-    return (
-      this.resolvedSetpointVisible() && !this.shouldHideSetpointForInteraction
+    return isDisplayedAtSetpoint(
+      this.value,
+      this.setpoint,
+      this.numericFormatOptions(this.resolvedMaxDigits)
     );
   }
 
-  private get setpointInteractionRendered(): boolean {
-    return this.setpointInteractionEnabled && this.setpointRendered;
+  private get resolvedSetpointInteraction(): ReadoutSetpointInteraction {
+    return (
+      this.setpointOptions?.interaction ??
+      ReadoutSetpointInteraction.alwaysVisible
+    );
   }
 
-  private get setpointLayoutReserved(): boolean {
-    if (
-      !this.setpointInteractionEnabled ||
-      this.interactionMode !== ReadoutSetpointInteraction.popUp
-    ) {
-      return false;
-    }
-
-    if (this.isHorizontal && this.deferredSetpointHidePhase === 'hidden') {
-      return false;
-    }
-
-    return true;
+  private get isFlipFlop(): boolean {
+    return (
+      this.resolvedSetpointInteraction === ReadoutSetpointInteraction.flipFlop
+    );
   }
 
-  private get hasInteractiveSetpointContext(): boolean {
-    if (this.interactionMode === ReadoutSetpointInteraction.flipFlop) {
-      return this.hasSetpoint;
-    }
+  private get isPopUp(): boolean {
+    return (
+      this.resolvedSetpointInteraction === ReadoutSetpointInteraction.popUp
+    );
+  }
 
-    if (this.setpointInteractionRendered || this.setpointLayoutReserved) {
+  private get setpointTouching(): boolean {
+    return this.setpointOptions?.touching ?? false;
+  }
+
+  /**
+   * Whether the setpoint interaction re-sizes or hides blocks at runtime —
+   * flip-flop (emphasis swap) and pop-up (touch swap + fade-out) — the modes
+   * that need the width/height reservation so the readout never shifts (see
+   * {@link renderSetpointWidthReserve}).
+   */
+  private get hasDynamicSetpoint(): boolean {
+    return this.hasSetpoint && (this.isFlipFlop || this.isPopUp);
+  }
+
+  /**
+   * The setpoint is rendered "emphasised" (primary size + SemiBold weight) when
+   * it is the focus of attention: while actively adjusting (`touching`), or while
+   * a flip-flop has the value away from the setpoint. Otherwise it is a secondary
+   * (smaller, regular-weight) reference next to the value.
+   */
+  private get isSetpointEmphasized(): boolean {
+    if (!this.hasSetpoint) {
+      return false;
+    }
+    if (this.setpointTouching) {
       return true;
     }
-
-    return (
-      this.setpointInteractionEnabled &&
-      this.isHorizontal &&
-      this.interactionMode === ReadoutSetpointInteraction.popUp &&
-      this.deferredSetpointHidePhase === 'hidden'
-    );
-  }
-
-  private get resolvedSetpointPriority(): Priority {
-    return this.resolvedValuePriority ?? Priority.regular;
-  }
-
-  private get baseSize(): ReadoutSetpointSize {
-    return this.variant === ReadoutVariant.regular
-      ? ReadoutSetpointSize.medium
-      : ReadoutSetpointSize.large;
-  }
-
-  private stepDownSize(size: ReadoutSetpointSize): ReadoutSetpointSize {
-    switch (size) {
-      case ReadoutSetpointSize.large:
-        return ReadoutSetpointSize.medium;
-      case ReadoutSetpointSize.medium:
-        return ReadoutSetpointSize.regular;
-      case ReadoutSetpointSize.regular:
-        return ReadoutSetpointSize.small;
-      default:
-        return ReadoutSetpointSize.small;
-    }
-  }
-
-  private static readonly READOUT_SETPOINT_SIZE_ORDER: ReadoutSetpointSize[] = [
-    ReadoutSetpointSize.small,
-    ReadoutSetpointSize.regular,
-    ReadoutSetpointSize.medium,
-    ReadoutSetpointSize.large,
-  ];
-
-  private sizeRank(size: ReadoutSetpointSize): number {
-    return ObcReadout.READOUT_SETPOINT_SIZE_ORDER.indexOf(size);
-  }
-
-  private get isMultiLineSetpointFormat(): boolean {
-    return (
-      this.setpointFormat === ReadoutSetpointFormat.description ||
-      this.setpointFormat === ReadoutSetpointFormat.range
-    );
-  }
-
-  private get resolvedSetpointSegmentSize(): ReadoutSetpointSize {
-    if (this.interactionMode === ReadoutSetpointInteraction.flipFlop) {
-      if (this.flipFlopSetpointFocused) {
-        return this.baseSize;
-      }
-
-      const secondarySize =
-        this.variant === ReadoutVariant.regular
-          ? ReadoutSetpointSize.small
-          : this.stepDownSize(this.baseSize);
-
-      if (
-        this.setpointSize &&
-        this.sizeRank(this.setpointSize) < this.sizeRank(this.baseSize)
-      ) {
-        return this.setpointSize;
-      }
-
-      return secondarySize;
-    }
-
-    if (this.setpointSize) {
-      return this.setpointSize;
-    }
-
-    if (
-      this.isMultiLineSetpointFormat &&
-      this.variant !== ReadoutVariant.regular
-    ) {
-      return this.stepDownSize(this.baseSize);
-    }
-
-    return this.baseSize;
-  }
-
-  private get resolvedValueSetpointSize(): ReadoutSetpointSize {
-    if (this.interactionMode === ReadoutSetpointInteraction.flipFlop) {
-      const secondarySize =
-        this.variant === ReadoutVariant.regular
-          ? ReadoutSetpointSize.small
-          : this.stepDownSize(this.baseSize);
-      return this.flipFlopValueFocused ? this.baseSize : secondarySize;
-    }
-
-    return this.baseSize;
-  }
-
-  private get resolvedValuePriority(): Priority | undefined {
-    if (this.valuePriority) {
-      return this.valuePriority;
-    }
-
-    if (!this.hasInteractiveSetpointContext) {
-      return this.variant === ReadoutVariant.enhanced
-        ? Priority.enhanced
-        : undefined;
-    }
-
-    if (this.interactionMode === ReadoutSetpointInteraction.alwaysVisible) {
-      return Priority.enhanced;
-    }
-
-    if (this.interactionMode === ReadoutSetpointInteraction.flipFlop) {
-      return Priority.enhanced;
-    }
-
-    if (this.interactionMode === ReadoutSetpointInteraction.popUp) {
-      return Priority.enhanced;
-    }
-
-    if (this.variant === ReadoutVariant.enhanced) {
-      return Priority.enhanced;
-    }
-
-    return undefined;
+    return this.isFlipFlop && !this.isAtSetpoint;
   }
 
   /**
-   * Segment size mapping for nested setpoint/advice segments.
-   *
-   * Mapping table (variant × direction):
-   * - regular × vertical   → regular
-   * - regular × horizontal → regular
-   * - enhanced × vertical  → medium
-   * - enhanced × horizontal→ medium
-   * - stack × vertical     → medium
-   * - stack × horizontal   → medium
-   *
-   * Rationale:
-   * - Container must not rely on segment defaults (which are `small`).
-   * - `regular` presentation uses regular-sized segments.
-   * - `enhanced/stack` presentations use a larger segment baseline.
+   * The readout's enhanced (in-command) colour state, applied uniformly to BOTH
+   * the value and the setpoint — they are always either both neutral or both
+   * enhanced (never a blue setpoint next to a grey value). Driven by `priority`
+   * only; `valueOptions.weight` changes weight, not colour.
    */
-  private get resolvedSegmentSize(): ReadoutSetpointSize {
-    return this.variant === ReadoutVariant.regular
-      ? ReadoutSetpointSize.regular
-      : ReadoutSetpointSize.medium;
+  private get rowEnhanced(): boolean {
+    return this.resolvedPriority === ReadoutPriority.enhanced;
+  }
+
+  /** Primary value-typography size for the current density tier. */
+  private get primarySize(): ObcTextboxSize {
+    return readoutPrimarySize(this.resolvedSize);
+  }
+
+  /** Secondary (de-emphasised) value-typography size for the current density tier. */
+  private get secondarySize(): ObcTextboxSize {
+    return readoutSecondarySize(this.resolvedSize);
+  }
+
+  private get valueSize(): ObcTextboxSize {
+    // The value de-emphasises (secondary size) whenever the setpoint is the
+    // focus — while actively adjusting (`touching`) or while a flip-flop holds
+    // the value away from the setpoint — mirroring the flip-flop convention.
+    if (this.isSetpointEmphasized) {
+      return this.secondarySize;
+    }
+    return this.primarySize;
+  }
+
+  private get setpointSize(): ObcTextboxSize {
+    return this.isSetpointEmphasized ? this.primarySize : this.secondarySize;
+  }
+
+  /** Value font weight passes straight to obc-textbox; regular when unset. Colour is separate. */
+  private get valueWeight(): ObcTextboxFontWeight {
+    return this.valueOptions?.weight ?? ObcTextboxFontWeight.regular;
+  }
+
+  /** Setpoint is SemiBold only while emphasised, otherwise regular weight. */
+  private get setpointWeight(): ObcTextboxFontWeight {
+    return readoutSetpointWeight(this.isSetpointEmphasized);
+  }
+
+  private numericFormatOptions(maxDigits: number): ReadoutNumericFormatOptions {
+    return readoutNumericFormatOptions(maxDigits, this.resolvedFractionDigits);
+  }
+
+  /** classMap fragment for a block / source carrying per-block data quality. */
+  private dataQualityClasses(
+    dataQuality: ReadoutDataQuality | undefined
+  ): Record<string, boolean> {
+    return readoutDataQualityClasses(dataQuality);
   }
 
   /**
-   * Container-level layout decision for nested setpoint/advice segments.
-   *
-   * - **Enhanced**: nested segments use full-width layout (`hugContent` off)
-   *   regardless of readout `hug` (icon at the left edge, value at the right).
-   * - **Regular / stack**: nested segments follow readout `hug` — compact when
-   *   `hug` is true, stretched when `hug` is false.
+   * Forward the matching readout icon slot into the block's single `icon`
+   * slot. The variant's default marker lives in `obc-readout-block` and shows
+   * when nothing is assigned here (an empty forwarded slot flattens to nothing).
    */
-  private get shouldHugNestedSegments(): boolean {
-    if (this.variant === ReadoutVariant.enhanced) {
-      return false;
+  private renderForwardedIcon(variant: ReadoutBlockVariant): TemplateResult {
+    if (variant === ReadoutBlockVariant.setpoint) {
+      return html`<slot name="setpoint-icon" slot="icon"></slot>`;
     }
-
-    return this.hug;
+    if (variant === ReadoutBlockVariant.advice) {
+      return html`<slot name="advice-icon" slot="icon"></slot>`;
+    }
+    return html`<slot name="value-icon" slot="icon"></slot>`;
   }
 
-  private get resolvedSourceType(): ReadoutSourceType {
-    if (this.sourceType) {
-      return this.sourceType;
-    }
-
-    return this.variant === ReadoutVariant.regular ||
-      ((this.variant === ReadoutVariant.enhanced ||
-        this.variant === ReadoutVariant.stack) &&
-        this.isVertical)
-      ? ReadoutSourceType.small
-      : ReadoutSourceType.regular;
+  private renderBlock(config: {
+    variant: ReadoutBlockVariant;
+    value: number | null | undefined;
+    valueSize: ObcTextboxSize;
+    enhanced: boolean;
+    weight: ObcTextboxFontWeight;
+    hintedZeros: boolean;
+    spaceReserver?: string;
+    off?: boolean;
+    hasDegree?: boolean;
+    hasIcon?: boolean;
+    touching?: boolean;
+    hidePhase?: ReadoutBlockHidePhase;
+    dataQuality?: ReadoutBlockDataQuality;
+    alert?: false | AlertFrameConfig;
+    /**
+     * Invisible width-reserving duplicate (see
+     * {@link renderSetpointWidthReserve}): skips the forwarded icon slot so
+     * the visible block keeps the slotted content — the block's default
+     * marker has the same fixed tier width.
+     */
+    ghost?: boolean;
+  }): TemplateResult {
+    // The block owns the formatting, hinted zeros, reserver, degree and icon; the
+    // readout keeps the density tier (`size`) and the resolved per-block number
+    // size (`valueSize`) so flip-flop/pop-up emphasis stays a readout decision.
+    return html`
+      <obc-readout-block
+        exportparts="block, block-content, block-text, block-icon, degree"
+        .variant=${config.variant}
+        .value=${config.value ?? null}
+        .size=${this.resolvedSize}
+        .valueSize=${config.valueSize}
+        .enhanced=${config.enhanced}
+        .weight=${config.weight}
+        .hasDegree=${config.hasDegree ?? false}
+        .hasIcon=${config.hasIcon ?? false}
+        .fractionDigits=${this.resolvedFractionDigits}
+        .maxDigits=${this.resolvedMaxDigits}
+        .hintedZeros=${config.hintedZeros}
+        .spaceReserver=${config.spaceReserver}
+        .off=${config.off ?? false}
+        .offText=${this.offText}
+        .touching=${config.touching ?? false}
+        .hidePhase=${config.hidePhase ?? ReadoutBlockHidePhase.none}
+        .dataQuality=${config.dataQuality}
+        .alert=${config.alert ?? false}
+      >
+        ${config.ghost ? nothing : this.renderForwardedIcon(config.variant)}
+      </obc-readout-block>
+    `;
   }
 
-  private getSourcePickerNavigationItems() {
+  /**
+   * A cap-height `°` column whose width scales with the value size, rendered
+   * after the value block. Setpoint / advice blocks render their own degree via
+   * `obc-readout-block`.
+   */
+  private renderDegreeGlyph(size: ObcTextboxSize): TemplateResult {
+    return html`
+      <span
+        class=${classMap({
+          'degree-column': true,
+          [`degree-${size}`]: true,
+          'tone-enhanced': this.rowEnhanced,
+        })}
+        part="degree"
+      >
+        <obc-textbox class="degree-glyph" .size=${size} alignment="center"
+          >°</obc-textbox
+        >
+      </span>
+    `;
+  }
+
+  /**
+   * The column rendered after the value digits:
+   *
+   * - `hasDegree`: a cap-height `°` column whose width scales with the value size.
+   * - `hasDegreeSpacer` (non-degree readouts): an invisible reserve of the same
+   *   width, so this readout's value digits stay aligned with degree readouts
+   *   in the same column.
+   */
+  private renderDegreeColumn(
+    size: ObcTextboxSize = this.valueSize
+  ): TemplateResult | typeof nothing {
+    if ((this.hasDegree ?? false) && !this.off) {
+      return this.renderDegreeGlyph(size);
+    }
+    if (this.hasDegreeSpacer ?? false) {
+      return html`<span
+        class="degree-spacer"
+        part="degree-spacer"
+        aria-hidden="true"
+      ></span>`;
+    }
+    return nothing;
+  }
+
+  private renderTextbox(
+    role: 'label' | 'unit' | 'source',
+    text: string,
+    reserver?: string,
+    blockState?: ReadoutBlockState
+  ): TemplateResult {
+    const weight =
+      role === 'label'
+        ? ObcTextboxFontWeight.semibold
+        : ObcTextboxFontWeight.regular;
+    const box = html`
+      <obc-textbox
+        class=${classMap({
+          [role]: true,
+          ...this.dataQualityClasses(blockState?.dataQuality),
+        })}
+        part=${role}
+        .size=${ObcTextboxSize.xs}
+        .fontWeight=${weight}
+        alignment="left"
+      >
+        ${text}
+        ${reserver ? html`<span slot="length">${reserver}</span>` : nothing}
+      </obc-textbox>
+    `;
+    return wrapWithAlertFrame(blockState?.alert ?? false, box);
+  }
+
+  private get setpointHidePhase(): ReadoutBlockHidePhase {
+    const popUpAtSetpoint =
+      this.isPopUp && this.isAtSetpoint && !this.setpointTouching;
+    return resolveSetpointHidePhase(
+      popUpAtSetpoint,
+      this.deferredSetpointHidePhase
+    );
+  }
+
+  private renderAdviceBlock(): TemplateResult {
+    return this.renderBlock({
+      variant: ReadoutBlockVariant.advice,
+      value: this.advice,
+      valueSize: this.secondarySize,
+      enhanced: false,
+      weight: ObcTextboxFontWeight.regular,
+      hintedZeros: this.adviceOptions?.hintedZeros ?? false,
+      spaceReserver: this.adviceOptions?.spaceReserver,
+      hasDegree: this.hasDegree ?? false,
+      dataQuality: this.adviceOptions?.dataQuality,
+      alert: this.adviceOptions?.alert,
+    });
+  }
+
+  private renderSetpointBlock(): TemplateResult {
+    return this.renderBlock({
+      variant: ReadoutBlockVariant.setpoint,
+      value: this.setpoint,
+      valueSize: this.setpointSize,
+      // Value and setpoint share the enhanced colour state (both neutral
+      // or both enhanced); the setpoint is bold only while emphasised.
+      enhanced: this.rowEnhanced,
+      weight: this.setpointWeight,
+      hintedZeros: this.setpointOptions?.hintedZeros ?? false,
+      spaceReserver: this.setpointOptions?.spaceReserver,
+      hasDegree: this.hasDegree ?? false,
+      touching: this.setpointTouching,
+      hidePhase: this.setpointHidePhase,
+      dataQuality: this.setpointOptions?.dataQuality,
+      alert: this.setpointOptions?.alert,
+    });
+  }
+
+  /**
+   * The value reading: the value block and its degree column (or spacer)
+   * grouped in one relatively-positioned wrapper so the value alert frame AND
+   * the value data-quality chip can wrap both together. Unlike
+   * `obc-readout-list-item` the unit is not part of the reading — it lives in
+   * the label/unit meta zone.
+   */
+  private renderValueReading(): TemplateResult {
+    return html`
+      <div
+        class=${classMap({
+          'value-reading': true,
+          ...this.dataQualityClasses(this.valueOptions?.dataQuality),
+        })}
+        part="value-reading"
+      >
+        ${this.renderBlock({
+          variant: ReadoutBlockVariant.value,
+          value: this.value,
+          valueSize: this.valueSize,
+          enhanced: this.rowEnhanced,
+          weight: this.valueWeight,
+          hintedZeros: this.valueOptions?.hintedZeros ?? false,
+          spaceReserver: this.valueOptions?.spaceReserver,
+          off: this.off,
+          hasIcon: this.valueOptions?.hasIcon ?? false,
+        })}
+        ${this.renderDegreeColumn()} ${this.renderValueAlertOverlay()}
+      </div>
+    `;
+  }
+
+  /**
+   * The value alert frame, drawn as a pure overlay around the value reading
+   * (value + degree). It reserves no space — the `obc-alert-frame` sits in an
+   * absolutely-positioned box offset outward (see `.value-alert-overlay` in the
+   * CSS) so its stroke is centred on the 4px/2px padding line and toggling it
+   * never shifts content. Renders only when `valueOptions.alert` is a config
+   * object.
+   */
+  private renderValueAlertOverlay(): TemplateResult | typeof nothing {
+    const alert = this.valueOptions?.alert;
+    if (typeof alert !== 'object' || alert === null) {
+      return nothing;
+    }
+    const thickness = alert.thickness ?? ObcAlertFrameThickness.Small;
+    return html`
+      <div
+        class=${classMap({
+          'value-alert-overlay': true,
+          // The outward offset is thickness-dependent (see the CSS): large frames
+          // draw a wider outline, so the box must sit further out to stay centred.
+          'thickness-large': thickness === ObcAlertFrameThickness.Large,
+        })}
+        aria-hidden="true"
+      >
+        <obc-alert-frame
+          part="value-alert-frame"
+          .type=${alert.type ?? ObcAlertFrameType.Regular}
+          .thickness=${thickness}
+          .status=${alert.status ?? AlertType.Alarm}
+          .mode=${alert.mode ?? ObcAlertFrameMode.ackedActive}
+          .showIcon=${alert.showIcon ?? false}
+          .showAlertCategoryIcon=${alert.showAlertCategoryIcon ?? true}
+          .wrapContent=${false}
+          .fullWidth=${false}
+        ></obc-alert-frame>
+      </div>
+    `;
+  }
+
+  /** The label/unit meta zone; `stacking` picks the inline or stacked arrangement. */
+  private renderMetaZone(): TemplateResult | typeof nothing {
+    if (!this.label && !this.unit) {
+      return nothing;
+    }
+    // Horizontal readouts always stack the label over the unit beside the value.
+    const stacked =
+      this.isHorizontal || this.resolvedStacking === ReadoutStacking.stacked;
+    return html`
+      <div
+        class=${classMap({
+          meta: true,
+          'meta-inline': !stacked,
+          'meta-stacked': stacked,
+          'label-only': !!this.label && !this.unit,
+          'unit-only': !!this.unit && !this.label,
+        })}
+        part="meta-wrapper"
+      >
+        ${this.label ? this.renderTextbox('label', this.label) : nothing}
+        ${this.unit
+          ? this.renderTextbox(
+              'unit',
+              this.unit,
+              this.unitOptions?.spaceReserver
+            )
+          : nothing}
+      </div>
+    `;
+  }
+
+  private renderSourceContent(): TemplateResult {
+    const interaction = this.resolvedSourceInteraction;
+    const src = this.src ?? '';
+
+    // The interactive variants keep the source's per-block state: the
+    // data-quality chip moves onto the button and the alert frame wraps it,
+    // matching the plain-text branch (renderTextbox) below.
+    const buttonClasses = classMap({
+      'source-button': true,
+      ...this.dataQualityClasses(this.srcOptions?.dataQuality),
+    });
+
+    if (interaction === ReadoutSourceInteraction.picker) {
+      const button = html`
+        <obc-button
+          class=${buttonClasses}
+          variant="flat"
+          .fullWidth=${false}
+          showTrailingIcon
+          @click=${() => {
+            this.sourcePickerContentVisible = !this.sourcePickerContentVisible;
+          }}
+        >
+          <obi-drop-down-google slot="trailing-icon"></obi-drop-down-google>
+          ${src}
+        </obc-button>
+      `;
+      return wrapWithAlertFrame(this.srcOptions?.alert ?? false, button);
+    }
+
+    if (interaction === ReadoutSourceInteraction.flyout) {
+      const button = html`
+        <obc-button
+          class=${buttonClasses}
+          variant="flat"
+          .fullWidth=${false}
+          showTrailingIcon
+          @click=${() => {
+            this.dispatchEvent(
+              new CustomEvent('source-flyout-click', {
+                bubbles: true,
+                composed: true,
+                detail: {src},
+              })
+            );
+          }}
+        >
+          <obi-chevron-right-google
+            slot="trailing-icon"
+          ></obi-chevron-right-google>
+          ${src}
+        </obc-button>
+      `;
+      return wrapWithAlertFrame(this.srcOptions?.alert ?? false, button);
+    }
+
+    return this.renderTextbox(
+      'source',
+      src,
+      this.srcOptions?.spaceReserver,
+      this.srcOptions
+    );
+  }
+
+  /** The source row (vertical) / segment (horizontal), with its auto divider. */
+  private renderSource(): TemplateResult | typeof nothing {
+    if (!this.hasSrc) {
+      return nothing;
+    }
+    return html`
+      <div
+        class=${classMap({
+          divider: true,
+          'divider-horizontal': !this.isHorizontal,
+          'divider-vertical': this.isHorizontal,
+        })}
+        part="divider"
+        aria-hidden="true"
+      ></div>
+      <div class="source-row" part="source-wrapper">
+        ${this.renderSourceContent()}
+      </div>
+    `;
+  }
+
+  // ---------- Source picker (context menu built from src-picker-content) ----------
+
+  private getSourcePickerNavigationItems(): HTMLElement[] {
     const assignedElements =
       this.sourcePickerSlot?.assignedElements({flatten: true}) ?? [];
 
@@ -564,22 +854,20 @@ export class ObcReadout extends LitElement {
       if (!(element instanceof HTMLElement)) {
         return [];
       }
-
       if (element.localName === 'obc-navigation-item') {
         return [element];
       }
-
-      return Array.from(element.querySelectorAll('obc-navigation-item'));
+      return Array.from(
+        element.querySelectorAll<HTMLElement>('obc-navigation-item')
+      );
     });
   }
 
   private createSourcePickerOptionIcon(element: HTMLElement) {
     const iconElement = element.querySelector('[slot="icon"]');
-
     if (!(iconElement instanceof HTMLElement)) {
       return undefined;
     }
-
     return html`${iconElement.cloneNode(true)}`;
   }
 
@@ -610,19 +898,21 @@ export class ObcReadout extends LitElement {
     return undefined;
   }
 
-  private syncSourcePickerOptions() {
-    const navigationItems = this.getSourcePickerNavigationItems();
-
-    this.sourcePickerOptions = navigationItems.map((item, index) => {
-      const {itemLabel, itemValue} = this.getSourcePickerItemInfo(item, index);
-
-      return {
-        value: itemValue,
-        label: itemLabel,
-        icon: this.createSourcePickerOptionIcon(item),
-      };
-    });
-  }
+  private syncSourcePickerOptions = () => {
+    this.sourcePickerOptions = this.getSourcePickerNavigationItems().map(
+      (item, index) => {
+        const {itemLabel, itemValue} = this.getSourcePickerItemInfo(
+          item,
+          index
+        );
+        return {
+          value: itemValue,
+          label: itemLabel,
+          icon: this.createSourcePickerOptionIcon(item),
+        };
+      }
+    );
+  };
 
   private handleSourcePickerItemClick(
     event: ObcContextMenuInputItemClickEvent
@@ -641,11 +931,168 @@ export class ObcReadout extends LitElement {
     this.sourcePickerContentVisible = false;
   }
 
-  override updated(changedProperties: Map<string, unknown>) {
-    super.updated(changedProperties);
+  /**
+   * The context menu highlights options by their VALUE, while `src` holds the
+   * displayed source text — which may be an option's label when the two
+   * differ (e.g. `data-value="gps-1"` with label "GPS 1"). Resolve the current
+   * source to the matching option's value (by value or label) so the open
+   * picker always highlights the active source.
+   */
+  private get selectedSourceValues(): string[] {
+    if (!this.src) {
+      return [];
+    }
+    const match = this.sourcePickerOptions.find(
+      (option) => option.value === this.src || option.label === this.src
+    );
+    return [match?.value ?? this.src];
+  }
 
-    if (changedProperties.has('sourcePickerContentVisible')) {
-      // TODO: Implement this in html instead.
+  private renderSourcePickerContent(): TemplateResult | typeof nothing {
+    if (
+      this.resolvedSourceInteraction !== ReadoutSourceInteraction.picker ||
+      !this.sourcePickerContentVisible
+    ) {
+      return nothing;
+    }
+    return html`
+      <obc-context-menu-input
+        .type=${ContextMenuType.Regular}
+        .options=${this.sourcePickerOptions}
+        .selectedValues=${this.selectedSourceValues}
+        class="source-picker-content"
+        @item-click=${this.handleSourcePickerItemClick}
+        @close=${() => {
+          this.sourcePickerContentVisible = false;
+        }}
+      ></obc-context-menu-input>
+    `;
+  }
+
+  private renderSourcePickerSlot(): TemplateResult {
+    return html`
+      <slot
+        name="src-picker-content"
+        hidden
+        @slotchange=${this.syncSourcePickerOptions}
+      ></slot>
+    `;
+  }
+
+  // ---------- Layouts ----------
+
+  /**
+   * An invisible primary-size duplicate of a dynamic setpoint row's content,
+   * stacked under the visible block in the same grid cell purely to reserve
+   * width. With both rows permanently holding their emphasised width, the
+   * widest row — and therefore the readout's total width — stays constant
+   * while a flip-flop swaps the value/setpoint sizes, while a touch swap
+   * runs, and while a pop-up setpoint fades out, so the meta zone and source
+   * never shift. This is the vertical analogue of the horizontal arrangement,
+   * where the swapped pair sits on one row and its summed width is constant
+   * by construction (the designer's flip-flop invariant). Only the vertical
+   * direction needs it; `always-visible` layouts are untouched.
+   */
+  private renderSetpointWidthReserve(
+    kind: 'setpoint' | 'value'
+  ): TemplateResult | typeof nothing {
+    if (!this.hasDynamicSetpoint || this.isHorizontal) {
+      return nothing;
+    }
+    const content =
+      kind === 'setpoint'
+        ? this.renderBlock({
+            variant: ReadoutBlockVariant.setpoint,
+            value: this.setpoint,
+            valueSize: this.primarySize,
+            enhanced: false,
+            // The emphasised setpoint is SemiBold — reserve its widest form.
+            weight: ObcTextboxFontWeight.semibold,
+            hintedZeros: this.setpointOptions?.hintedZeros ?? false,
+            spaceReserver: this.setpointOptions?.spaceReserver,
+            hasDegree: this.hasDegree ?? false,
+            alert: this.setpointOptions?.alert,
+            ghost: true,
+          })
+        : html`${this.renderBlock({
+            variant: ReadoutBlockVariant.value,
+            value: this.value,
+            valueSize: this.primarySize,
+            enhanced: false,
+            weight: this.valueWeight,
+            hintedZeros: this.valueOptions?.hintedZeros ?? false,
+            spaceReserver: this.valueOptions?.spaceReserver,
+            off: this.off,
+            hasIcon: this.valueOptions?.hasIcon ?? false,
+            ghost: true,
+          })}${this.renderDegreeColumn(this.primarySize)}`;
+    return html`<div class="setpoint-width-reserve" aria-hidden="true">
+      ${content}
+    </div>`;
+  }
+
+  /**
+   * Vertical: advice / setpoint / value rows right-aligned in a cluster, the
+   * label+unit meta zone below, then the source row under an auto divider.
+   * `alignment` re-aligns the whole column for stacked readouts.
+   */
+  private renderVerticalLayout(): TemplateResult {
+    return html`
+      <div class="value-cluster" part="value-cluster">
+        ${this.hasAdvice
+          ? html`<div class="advice-row" part="advice-wrapper">
+              ${this.renderAdviceBlock()}
+            </div>`
+          : nothing}
+        ${this.hasSetpoint
+          ? html`<div class="setpoint-row" part="setpoint-wrapper">
+              ${this.renderSetpointBlock()}
+              ${this.renderSetpointWidthReserve('setpoint')}
+            </div>`
+          : nothing}
+        ${this.hasValue
+          ? html`<div class="value-row" part="value-wrapper">
+              ${this.renderValueReading()}
+              ${this.renderSetpointWidthReserve('value')}
+            </div>`
+          : nothing}
+      </div>
+      ${this.renderMetaZone()} ${this.renderSource()}
+    `;
+  }
+
+  /**
+   * Horizontal: advice, setpoint, value and the stacked label/unit meta flow on
+   * one cap-height-aligned row, with the source at the end after an auto
+   * divider.
+   */
+  private renderHorizontalLayout(): TemplateResult {
+    return html`
+      <div class="inline-row" part="value-cluster">
+        ${this.hasAdvice
+          ? html`<div class="advice-row" part="advice-wrapper">
+              ${this.renderAdviceBlock()}
+            </div>`
+          : nothing}
+        ${this.hasSetpoint
+          ? html`<div class="setpoint-row" part="setpoint-wrapper">
+              ${this.renderSetpointBlock()}
+            </div>`
+          : nothing}
+        ${this.hasValue
+          ? html`<div class="value-row" part="value-wrapper">
+              ${this.renderValueReading()}
+            </div>`
+          : nothing}
+        ${this.renderMetaZone()} ${this.renderSource()}
+      </div>
+    `;
+  }
+
+  override updated(changed: Map<string, unknown>): void {
+    super.updated(changed);
+
+    if (changed.has('sourcePickerContentVisible')) {
       if (this.sourcePickerContentVisible) {
         window.addEventListener('pointerdown', this.onWindowPointerDown, true);
       } else {
@@ -657,455 +1104,99 @@ export class ObcReadout extends LitElement {
       }
     }
 
-    if (
-      !(
-        changedProperties.has('value') ||
-        changedProperties.has('setpointValue') ||
-        changedProperties.has('hasSetpoint') ||
-        changedProperties.has('setpointInteraction')
-      )
-    ) {
+    const firstUpdate = !this.hasCompletedFirstUpdate;
+    this.hasCompletedFirstUpdate = true;
+
+    // Pop-up: hide the setpoint shortly after the value reaches it. `touching`
+    // and the non-pop-up modes keep the setpoint visible.
+    if (!this.isPopUp || this.setpointTouching) {
+      this.clearDeferredSetpointHide();
       return;
     }
 
-    if (this.interactionMode !== ReadoutSetpointInteraction.popUp) {
-      this.deferredSetpointHidePhase = 'none';
-      window.clearTimeout(this.deferredSetpointHideTimer);
-      this.deferredSetpointHideTimer = undefined;
+    const shouldHide = this.hasSetpoint && this.isAtSetpoint;
+
+    if (firstUpdate) {
+      // Settle to the resting state on mount without animating.
+      this.deferredSetpointHidePhase = shouldHide
+        ? ReadoutBlockHidePhase.hidden
+        : ReadoutBlockHidePhase.none;
       return;
     }
 
-    const shouldHideSetpoint = this.hasSetpoint && this.isSetpointReached;
-
-    if (!this.hasCompletedFirstUpdate) {
-      this.deferredSetpointHidePhase = shouldHideSetpoint ? 'hidden' : 'none';
+    if (!shouldHide) {
+      this.clearDeferredSetpointHide();
       return;
     }
 
-    if (!shouldHideSetpoint) {
-      this.deferredSetpointHidePhase = 'none';
-      window.clearTimeout(this.deferredSetpointHideTimer);
-      this.deferredSetpointHideTimer = undefined;
+    if (this.deferredSetpointHidePhase !== ReadoutBlockHidePhase.none) {
       return;
     }
 
-    if (this.deferredSetpointHidePhase !== 'none') {
-      return;
-    }
-
-    this.deferredSetpointHidePhase = 'hiding';
+    this.deferredSetpointHidePhase = ReadoutBlockHidePhase.hiding;
     window.clearTimeout(this.deferredSetpointHideTimer);
     this.deferredSetpointHideTimer = window.setTimeout(() => {
-      this.deferredSetpointHidePhase = 'hidden';
+      this.deferredSetpointHidePhase = ReadoutBlockHidePhase.hidden;
       this.deferredSetpointHideTimer = undefined;
-    }, 160);
+    }, 100);
   }
 
-  override firstUpdated() {
-    this.hasCompletedFirstUpdate = true;
-  }
-
-  private renderAdvice() {
-    if (!this.hasAdvice) {
-      return nothing;
+  private clearDeferredSetpointHide(): void {
+    if (this.deferredSetpointHidePhase !== ReadoutBlockHidePhase.none) {
+      this.deferredSetpointHidePhase = ReadoutBlockHidePhase.none;
     }
-
-    const adviceSegmentSize =
-      this.variant === ReadoutVariant.regular && this.isHorizontal
-        ? this.resolvedSetpointSegmentSize
-        : this.resolvedSegmentSize;
-
-    return html`
-      <div class="readout-segment-wrapper readout-advice" part="advice-wrapper">
-        <slot name="advice">
-          <obc-readout-advice
-            data-obc-value-typography=${this.variant ===
-              ReadoutVariant.regular && this.isVertical
-              ? 'medium'
-              : nothing}
-            .readoutStyle=${this.variant}
-            .direction=${this.direction}
-            .size=${adviceSegmentSize}
-            .hugContent=${this.shouldHugNestedSegments}
-            .priority=${this.resolvedValuePriority}
-            .format=${this.adviceFormat}
-            .state=${this.adviceState}
-            .value=${this.adviceValue}
-            .secondaryValue=${this.adviceSecondaryValue}
-            .description=${this.adviceDescription}
-            .minValueLength=${this.minValueLength}
-            .hasHintedZeros=${this.adviceHasHintedZeros}
-            .fractionDigits=${this.fractionDigits}
-            .hasDegree=${this.hasDegree}
-          >
-            <slot name="advice-icon" slot="icon">
-              <obi-placeholder slot="icon"></obi-placeholder>
-            </slot>
-          </obc-readout-advice>
-        </slot>
-      </div>
-    `;
+    window.clearTimeout(this.deferredSetpointHideTimer);
+    this.deferredSetpointHideTimer = undefined;
   }
 
-  private renderSetpoint() {
-    if (!this.hasSetpoint) {
-      return nothing;
+  override disconnectedCallback(): void {
+    window.removeEventListener('pointerdown', this.onWindowPointerDown, true);
+    window.clearTimeout(this.deferredSetpointHideTimer);
+    this.deferredSetpointHideTimer = undefined;
+    // Settle a mid-flight hide to its end state. Without this, disconnecting
+    // during the 100ms window leaves the phase stuck at 'hiding' (the timer that
+    // would advance it to 'hidden' is gone), so a later reconnect never resolves.
+    if (this.deferredSetpointHidePhase === ReadoutBlockHidePhase.hiding) {
+      this.deferredSetpointHidePhase = ReadoutBlockHidePhase.hidden;
     }
-
-    if (!this.setpointRendered && !this.setpointLayoutReserved) {
-      return nothing;
-    }
-
-    const setpointReadoutStyle =
-      this.isHorizontal &&
-      this.interactionMode === ReadoutSetpointInteraction.alwaysVisible
-        ? ReadoutVariant.regular
-        : this.variant;
-    const setpointMode = this.resolvedSetpointModeForInteraction();
-
-    return html`
-      <div
-        class=${classMap({
-          'readout-segment-wrapper': true,
-          'readout-setpoint': true,
-          'setpoint-hiding':
-            this.interactionMode === ReadoutSetpointInteraction.popUp &&
-            this.deferredSetpointHidePhase === 'hiding',
-          'setpoint-hidden':
-            this.interactionMode === ReadoutSetpointInteraction.popUp &&
-            this.deferredSetpointHidePhase === 'hidden',
-          'setpoint-active':
-            this.setpointInteractionEnabled &&
-            this.interactionMode === ReadoutSetpointInteraction.popUp,
-        })}
-        part="setpoint-wrapper"
-      >
-        <slot name="setpoint">
-          <obc-readout-setpoint
-            .reserveSpaceForIcon=${this.alignment !==
-            ReadoutStackVerticalAlignment.center}
-            data-obc-value-typography=${this.variant ===
-              ReadoutVariant.regular &&
-            this.isVertical &&
-            this.resolvedSetpointSegmentSize === ReadoutSetpointSize.medium
-              ? 'medium'
-              : nothing}
-            ?data-obc-tabular-nums=${this.interactionMode ===
-            ReadoutSetpointInteraction.flipFlop}
-            .readoutStyle=${setpointReadoutStyle}
-            .direction=${this.direction}
-            .size=${this.resolvedSetpointSegmentSize}
-            .format=${this.resolveSetpointFormat()}
-            .mode=${setpointMode}
-            .priority=${this.resolvedSetpointPriority}
-            .hugContent=${this.shouldHugNestedSegments}
-            .value=${this.setpointValue}
-            .secondaryValue=${this.setpointSecondaryValue}
-            .description=${this.setpointDescription}
-            .minValueLength=${this.minValueLength}
-            .hasHintedZeros=${this.setpointHasHintedZeros}
-            .fractionDigits=${this.fractionDigits}
-            .hasDegree=${this.hasDegree}
-          >
-            <slot name="setpoint-icon" slot="icon">
-              <obi-input-right slot="icon"></obi-input-right>
-            </slot>
-          </obc-readout-setpoint>
-        </slot>
-      </div>
-    `;
-  }
-
-  private renderSetpointDivider() {
-    if (!this.showSetpointDivider) {
-      return nothing;
-    }
-
-    return html`<div class="setpoint-divider" part="setpoint-divider"></div>`;
-  }
-
-  private renderAdviceDivider() {
-    if (!this.showAdviceDivider) {
-      return nothing;
-    }
-
-    return html`<div class="advice-divider" part="advice-divider"></div>`;
-  }
-
-  private renderSourceDivider() {
-    if (!this.showSourceDivider) {
-      return nothing;
-    }
-
-    return html`<div class="source-divider" part="source-divider"></div>`;
-  }
-
-  private renderValueZone() {
-    return html`
-      <div
-        class=${classMap({
-          'readout-segment-wrapper': true,
-          'readout-value-wrapper': true,
-          'value-active':
-            this.setpointInteractionRendered &&
-            (this.interactionMode ===
-              ReadoutSetpointInteraction.alwaysVisible ||
-              this.flipFlopValueFocused),
-        })}
-        part="value-wrapper"
-      >
-        ${this.renderValueInput()}
-      </div>
-    `;
-  }
-
-  private renderSource() {
-    if (!this.hasSrc) {
-      return nothing;
-    }
-
-    return renderReadoutSource({
-      hasSrc: this.hasSrc,
-      hasSrcPicker:
-        this.hasSrcPicker &&
-        supportsReadoutSourcePicker(this.resolvedSourceType),
-      src: this.src ?? '',
-      sourceDeltaValue: this.sourceDeltaValue,
-      sourceType: this.resolvedSourceType,
-      readoutType: this.variant,
-      readoutDirection: this.direction,
-      sourceHug: this.sourceHug,
-      hasSourceLeadingIcon: this.hasSourceLeadingIcon,
-      hasSourceTrailingIcon: this.hasSourceTrailingIcon,
-      fractionDigits: this.fractionDigits,
-      onTogglePicker: () => {
-        this.sourcePickerContentVisible = !this.sourcePickerContentVisible;
-      },
-      onFlyoutClick: () => {
-        this.dispatchEvent(
-          new CustomEvent('source-flyout-click', {
-            bubbles: true,
-            composed: true,
-            detail: {
-              src: this.src ?? '',
-              sourceType: this.resolvedSourceType,
-            },
-          })
-        );
-      },
-    });
-  }
-
-  private renderSourcePickerContent() {
-    if (
-      !(
-        this.hasSrcPicker &&
-        supportsReadoutSourcePicker(this.resolvedSourceType)
-      ) ||
-      !this.sourcePickerContentVisible
-    ) {
-      return nothing;
-    }
-
-    return html`
-      <obc-context-menu-input
-        .type=${ContextMenuType.Regular}
-        .options=${this.sourcePickerOptions}
-        .selectedValues=${this.src ? [this.src] : []}
-        class="source-picker-content"
-        @item-click=${this.handleSourcePickerItemClick}
-        @close=${() => {
-          this.sourcePickerContentVisible = false;
-        }}
-      ></obc-context-menu-input>
-    `;
-  }
-
-  private renderSourcePickerSlot() {
-    return html`
-      <slot
-        name="src-picker-content"
-        hidden
-        @slotchange=${this.syncSourcePickerOptions}
-      ></slot>
-    `;
-  }
-
-  private renderValueInput() {
-    const elevateValueTypography =
-      this.variant === ReadoutVariant.regular && this.isVertical;
-    const valuePriority = this.resolvedValuePriority;
-    const scopeValuePriority = valuePriority === Priority.enhanced;
-    const valueReadoutStyle =
-      (this.hasInteractiveSetpointContext &&
-        this.interactionMode === ReadoutSetpointInteraction.flipFlop) ||
-      (this.hasInteractiveSetpointContext &&
-        this.isHorizontal &&
-        this.interactionMode === ReadoutSetpointInteraction.popUp)
-        ? ReadoutVariant.regular
-        : this.variant;
-    const valueMode = this.resolvedValueMode();
-
-    return html`
-      <obc-readout-setpoint
-        .variant=${ReadoutSetpointVariant.value}
-        .readoutStyle=${valueReadoutStyle}
-        .direction=${this.direction}
-        .size=${this.resolvedValueSetpointSize}
-        .mode=${valueMode}
-        .hugContent=${this.shouldHugNestedSegments}
-        data-obc-value-typography=${elevateValueTypography ? 'medium' : nothing}
-        ?data-obc-tabular-nums=${this.interactionMode ===
-        ReadoutSetpointInteraction.flipFlop}
-        ?data-obc-priority-scoped=${scopeValuePriority}
-        .priority=${valuePriority}
-        .value=${this.value}
-        .showZeroPadding=${this.showZeroPadding}
-        .minValueLength=${this.minValueLength}
-        .fractionDigits=${this.fractionDigits}
-        .hasHintedZeros=${this.valueHasHintedZeros}
-        .hasDegree=${this.hasDegree}
-        .off=${this.off}
-      >
-        ${this.hasLeadingIcon
-          ? html`
-              <slot name="leading-icon" slot="icon">
-                <obi-placeholder slot="icon"></obi-placeholder>
-              </slot>
-            `
-          : nothing}
-        ${this.querySelector('[slot="value"]') !== null
-          ? html`<slot name="value" slot="value"></slot>`
-          : nothing}
-      </obc-readout-setpoint>
-    `;
-  }
-
-  private renderHorizontalValueUnitZone(hasUnit: boolean) {
-    return html`
-      <div
-        class="readout-segment-wrapper readout-value-unit-wrapper"
-        part="value-unit-wrapper"
-      >
-        ${this.renderValueInput()}
-        ${hasUnit && this.unit ? renderReadoutUnitZone(this.unit) : nothing}
-      </div>
-    `;
-  }
-
-  private renderHorizontalLayout() {
-    return html`
-      <div
-        class="readout-segment-wrapper readout-horizontal-layout"
-        part="horizontal-layout"
-      >
-        ${this.variant === ReadoutVariant.regular && this.isHorizontal
-          ? renderReadoutLabelZone(this.label)
-          : nothing}
-        ${this.isEnhanced &&
-        this.isHorizontal &&
-        this.shouldRenderReadoutMetaZone
-          ? renderReadoutMetaZone({
-              labelValue: this.label,
-              unitValue: this.unit,
-            })
-          : nothing}
-        <div
-          class="readout-segment-wrapper readout-inline-value-wrapper"
-          part="inline-value-wrapper"
-        >
-          ${this.hasAdvice ? this.renderAdvice() : nothing}
-          ${this.hasAdvice ? this.renderAdviceDivider() : nothing}
-          ${this.renderSetpoint()} ${this.renderSetpointDivider()}
-          ${this.showUnitZone
-            ? this.renderHorizontalValueUnitZone(true)
-            : html`${this.renderValueInput()}`}
-          ${this.isStack &&
-          this.isHorizontal &&
-          this.shouldRenderReadoutMetaZone
-            ? renderReadoutMetaZone({
-                labelValue: this.label,
-                unitValue: this.unit,
-              })
-            : nothing}
-          ${this.hasSrc ? this.renderSourceDivider() : nothing}
-          ${this.hasSrc ? this.renderSource() : nothing}
-        </div>
-      </div>
-    `;
+    super.disconnectedCallback();
   }
 
   override render() {
-    return wrapWithAlertFrame(
-      this.alert,
-      html`
-        <div
-          class=${classMap({
-            readout: true,
-            [this.variant]: true,
-            [this.direction]: true,
-            'alignment-left': this.alignment === 'left',
-            'alignment-center': this.alignment === 'center',
-            'alignment-vertical': this.alignment === 'vertical',
-            'interaction-always-visible':
-              this.interactionMode === ReadoutSetpointInteraction.alwaysVisible,
-            'interaction-flip-flop':
-              this.setpointInteractionEnabled &&
-              this.interactionMode === ReadoutSetpointInteraction.flipFlop,
-            'interaction-pop-up':
-              this.setpointInteractionEnabled &&
-              this.interactionMode === ReadoutSetpointInteraction.popUp,
-            'focus-setpoint':
-              this.setpointInteractionEnabled && this.flipFlopSetpointFocused,
-            'focus-value':
-              this.setpointInteractionEnabled && this.flipFlopValueFocused,
-            'data-none': this.dataState === ReadoutDataState.none,
-            'data-low-integrity':
-              this.dataState === ReadoutDataState.lowIntegrity,
-            'data-invalid': this.dataState === ReadoutDataState.invalid,
-            'has-source': this.hasSrc,
-            'has-setpoint': this.hasSetpoint,
-            'has-setpoint-button':
-              this.isHorizontal &&
-              this.setpointFormat === ReadoutSetpointFormat.button,
-            'no-hug': !this.hug,
-            'label-only': this.labelOnly,
-          })}
-        >
-          ${!this.labelOnly && this.isVertical ? this.renderAdvice() : nothing}
-          ${!this.labelOnly && this.isVertical
-            ? this.renderSetpoint()
-            : nothing}
-          ${!this.labelOnly && this.isVertical
-            ? this.renderValueZone()
-            : nothing}
-          ${(this.labelOnly || this.isVertical) &&
-          this.shouldRenderReadoutMetaZone
-            ? renderReadoutMetaZone({
-                labelValue: this.label,
-                unitValue: this.unit,
-              })
-            : nothing}
-          ${!this.labelOnly && this.hasSrc && this.isVertical
-            ? this.renderSource()
-            : nothing}
-          ${!this.labelOnly && this.isHorizontal
-            ? this.renderHorizontalLayout()
-            : nothing}
-          ${this.renderSourcePickerSlot()}
-        </div>
-        ${this.renderSourcePickerContent()}
-      `
-    );
+    const dataQuality = this.dataQuality;
+    const classes = classMap({
+      readout: true,
+      [`size-${this.resolvedSize}`]: true,
+      [`direction-${this.resolvedDirection}`]: true,
+      [`stacking-${this.resolvedStacking}`]: true,
+      [`alignment-${this.resolvedAlignment}`]: true,
+      [`priority-${this.resolvedPriority}`]: true,
+      'data-low-integrity': dataQuality === ReadoutDataQuality.lowIntegrity,
+      'data-invalid': dataQuality === ReadoutDataQuality.invalid,
+      'flip-flop': this.isFlipFlop,
+      'setpoint-dynamic': this.hasDynamicSetpoint,
+    });
+
+    const root = html`
+      <div class=${classes} part="root">
+        ${this.isHorizontal
+          ? this.renderHorizontalLayout()
+          : this.renderVerticalLayout()}
+        ${this.renderSourcePickerSlot()}
+      </div>
+      ${this.renderSourcePickerContent()}
+    `;
+
+    // `alert` accepts `boolean` (so the generated Angular wrapper's widened
+    // `boolean` type assigns cleanly), but `wrapWithAlertFrame` ignores
+    // non-object truthy values. Normalise `true` → a default frame `{}` so it
+    // isn't a silent no-op; `false`/object pass through. The frame hugs the
+    // readout (no fullWidth), matching the previous behaviour.
+    const alert = this.alert === true ? {} : this.alert;
+    return wrapWithAlertFrame(alert, root);
   }
 
   static override styles = unsafeCSS(componentStyle);
-
-  override disconnectedCallback() {
-    window.removeEventListener('pointerdown', this.onWindowPointerDown, true);
-    window.clearTimeout(this.deferredSetpointHideTimer);
-    super.disconnectedCallback();
-  }
 }
 
 declare global {

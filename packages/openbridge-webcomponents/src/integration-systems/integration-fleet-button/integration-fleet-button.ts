@@ -13,6 +13,7 @@ export interface IntegrationFleetButtonReadout {
 }
 
 /**
+ * @slot alert-topic-icon - Icon shown alongside the alert topic
  * @experimental
  */
 @customElement('obc-integration-fleet-button')

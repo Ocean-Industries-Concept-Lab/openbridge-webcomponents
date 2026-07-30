@@ -63,6 +63,8 @@ export {
  * Set `priority` to `Priority.enhanced` to use the blue/enhanced color palette
  * for bar fill and setpoint instead of the default gray/regular palette
  * (default: `Priority.regular`).
+ *
+ * @fires scale-dimensions-changed {CustomEvent} Fired when the scale's computed layout thickness changes; a parent chart listens for this to reserve space for the scale. Bubbles and is composed.
  * @beta
  */
 @customElement('obc-bar-horizontal')
@@ -436,7 +438,8 @@ export class ObcBarHorizontal extends SetpointMixin(LitElement, {
       changed.has('borderRadiusPosition') ||
       changed.has('borderRadius') ||
       changed.has('advices') ||
-      changed.has('advicePosition');
+      changed.has('advicePosition') ||
+      this.setpointPresenceChanged(changed);
 
     if (!this.fixedAspectRatio || layoutChanged) {
       this.reportDimensions();
@@ -476,6 +479,10 @@ export class ObcBarHorizontal extends SetpointMixin(LitElement, {
       scaleType: this.scaleType,
       advicePosition: this.advicePosition,
       hasAdvice: !!this.advices && this.advices.length > 0,
+      hasSetpoint:
+        this.setpoint !== undefined ||
+        this.newSetpoint !== undefined ||
+        this.departingNewSetpoint !== undefined,
     });
 
     // When fixedAspectRatio=true, the SVG scales proportionally via preserveAspectRatio="meet".

@@ -84,6 +84,12 @@ const ALLOWED_CHARS_PATTERN = `^[${ALLOWED_CHARS.map((c) =>
 ).join('')}]*$`;
 
 /**
+ * `<obc-keyboard-numeric>` – An on-screen numeric keyboard with optional calculation and symbol modes.
+ *
+ * @slot leading-icon - Custom leading icon shown inside the input field (rendered when `hasLeadingIcon` is true).
+ * @fires close-click {CustomEvent} Fired when the close button (or Escape) dismisses the keyboard.
+ * @fires value-change {CustomEvent<{value: string}>} Fired whenever the current value changes.
+ * @fires done-click {CustomEvent<{value: string}>} Fired when the DONE button (or Enter) is pressed.
  * @beta
  */
 @customElement('obc-keyboard-numeric')

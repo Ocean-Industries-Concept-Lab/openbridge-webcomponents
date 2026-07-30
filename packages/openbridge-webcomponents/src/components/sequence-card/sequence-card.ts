@@ -97,6 +97,15 @@ export enum ObcSequenceCardState {
  * ```
  *
  * Keywords: timeline, step, progress, sequence, card, event, status.
+ *
+ * @slot leading-icon - Icon before the title (shown when `hasLeadingIcon` is true).
+ * @slot title - Title text (falls back to `cardTitle`).
+ * @slot subtitle - Subtitle/description (falls back to `subtitle`).
+ * @slot time-stamp - Header timestamp (falls back to `timeLabel` + `time`).
+ * @slot header-actions - Optional header actions (e.g., close button).
+ * @slot left-time-stamp - Left rail timestamp (falls back to `leftTime`).
+ * @slot actions - Actions row content (shown when `hasActions` is true).
+ * @slot - Main content area (shown when `hasContent` is true).
  * @experimental
  */
 @customElement('obc-sequence-card')

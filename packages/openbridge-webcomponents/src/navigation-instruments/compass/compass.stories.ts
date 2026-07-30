@@ -1,12 +1,22 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {
+  CogArrowStyle,
   CompassDirection,
   CompassPriorityElement,
+  CompassReadoutSource,
+  HdgArrowStyle,
   ObcCompass,
   RotType,
 } from './compass.js';
 import './compass.js';
-import {widthDecorator} from '../../storybook-util.js';
+import {ReadoutSize} from '../readout/readout.js';
+import {html} from 'lit';
+import {
+  playgroundColumn,
+  resizableStoryBox,
+  storyHint,
+  widthDecorator,
+} from '../../storybook-util.js';
 import {AdviceType} from '../watch/advice.js';
 import {VesselImage} from '../watch/watch.js';
 import {topVessels} from '../watch/vessels/storybook-helper.js';
@@ -48,6 +58,11 @@ const meta: Meta<typeof ObcCompass> = {
   },
   argTypes: {
     width: {control: {type: 'range', min: 32, max: 1028, step: 1}},
+    faceDiameter: {
+      control: {type: 'range', min: 100, max: 600, step: 10},
+      description:
+        'Pins the outer-ring diameter in px (fixed intrinsic size, equal circumference across instruments). Clear to return to fill-the-container sizing.',
+    },
     heading: {control: {type: 'range', min: 0, max: 360, step: 1}},
     courseOverGround: {control: {type: 'range', min: 0, max: 360, step: 1}},
     headingSetpoint: {control: {type: 'range', min: 0, max: 360, step: 1}},
@@ -89,6 +104,15 @@ const meta: Meta<typeof ObcCompass> = {
       control: 'select',
       options: topVessels,
     },
+    hdgArrowStyle: {
+      control: 'select',
+      options: Object.values(HdgArrowStyle),
+    },
+    cogArrowStyle: {
+      control: 'select',
+      options: Object.values(CogArrowStyle),
+    },
+    centerReadouts: {control: 'object'},
     direction: {
       control: {type: 'select'},
       options: Object.values(CompassDirection),
@@ -169,5 +193,196 @@ export const WithRateOfTurnDegreesPerMinute: Story = {
     rotDotAnimationFactor: 18,
     rotMaxValue: 60,
     priorityElements: [CompassPriorityElement.hdg, CompassPriorityElement.rot],
+  },
+};
+
+export const WithCenterReadout: Story = {
+  tags: ['6.1'],
+  args: {
+    centerReadouts: [{source: CompassReadoutSource.hdg}],
+  },
+};
+
+export const WithTwoPrimaryReadouts: Story = {
+  tags: ['6.1'],
+  args: {
+    centerReadouts: [
+      {source: CompassReadoutSource.hdg},
+      {source: CompassReadoutSource.cog, size: ReadoutSize.large},
+    ],
+  },
+};
+
+export const WithPrimarySecondaryReadouts: Story = {
+  tags: ['6.1'],
+  args: {
+    centerReadouts: [
+      {source: CompassReadoutSource.hdg},
+      {source: CompassReadoutSource.cog},
+    ],
+  },
+};
+
+export const WithThreeReadouts: Story = {
+  tags: ['6.1'],
+  args: {
+    rateOfTurnDegreesPerMinute: 12,
+    centerReadouts: [
+      {source: CompassReadoutSource.hdg},
+      {source: CompassReadoutSource.cog},
+      {source: CompassReadoutSource.rot},
+    ],
+  },
+};
+
+/**
+ * The "map graphics" recipe: vessel, HDG vector with beam crossbar and
+ * astern line, COG arrow head, the rate-of-turn bar, and outside NSWE labels.
+ */
+export const MapGraphics: Story = {
+  tags: ['6.1'],
+  args: {
+    vesselImage: VesselImage.psvTop,
+    hdgArrowStyle: HdgArrowStyle.vector,
+    cogArrowStyle: CogArrowStyle.arrowHead,
+    rotType: RotType.bar,
+    rotPosition: RotPosition.innerCircle,
+    rateOfTurnDegreesPerMinute: 20,
+    rotMaxValue: 60,
+    showLabels: true,
+    tickmarksInside: false,
+    priorityElements: [CompassPriorityElement.hdg, CompassPriorityElement.rot],
+  },
+};
+
+export const WithHdgArrowStyles: Story = {
+  tags: ['6.1'],
+  name: 'With HDG Arrow Styles',
+  parameters: {widthDecorator: false},
+  render: () => html`
+    <div style="display: flex; gap: 16px;">
+      ${Object.values(HdgArrowStyle).map(
+        (style) => html`
+          <div style="width: 240px;">
+            <div style="width: 240px; height: 240px;">
+              <obc-compass
+                .heading=${311}
+                .courseOverGround=${338}
+                .vesselImage=${VesselImage.psvTop}
+                .hdgArrowStyle=${style}
+                .cogArrowStyle=${CogArrowStyle.arrowHead}
+              ></obc-compass>
+            </div>
+            <div style="text-align: center; font-family: sans-serif;">
+              ${style}
+            </div>
+          </div>
+        `
+      )}
+    </div>
+  `,
+};
+
+export const WithCogArrowStyles: Story = {
+  tags: ['6.1'],
+  name: 'With COG Arrow Styles',
+  parameters: {widthDecorator: false},
+  render: () => html`
+    <div style="display: flex; gap: 16px;">
+      ${Object.values(CogArrowStyle).map(
+        (style) => html`
+          <div style="width: 240px;">
+            <div style="width: 240px; height: 240px;">
+              <obc-compass
+                .heading=${311}
+                .courseOverGround=${338}
+                .vesselImage=${VesselImage.psvTop}
+                .hdgArrowStyle=${HdgArrowStyle.vector}
+                .cogArrowStyle=${style}
+              ></obc-compass>
+            </div>
+            <div style="text-align: center; font-family: sans-serif;">
+              ${style}
+            </div>
+          </div>
+        `
+      )}
+    </div>
+  `,
+};
+
+export const SmallContainer: Story = {
+  name: 'Small Container (250px, Labels + Decor Reserve)',
+  args: {
+    width: 250,
+  },
+};
+
+type SizingPlaygroundArgs = Partial<ObcCompass> & {
+  lockFaceDiameter?: boolean;
+};
+
+/**
+ * Interactive sizing playground: drag the dashed box's bottom-right corner to
+ * resize it. The first compass is pinned to a fixed intrinsic size by the
+ * `faceDiameter` control, while the second adapts to the remaining flex
+ * space, reserving room for the NSWE labels, north arrow and wind symbols
+ * adaptively (issue #1021). Enable `lockFaceDiameter` to pin both to the same
+ * circumference. Related: *Sizing Playground* stories under Building
+ * Blocks/Watch, Building Blocks/Instrument Radial and Instruments/Gauge
+ * Radial.
+ */
+export const SizingPlayground: StoryObj<SizingPlaygroundArgs> = {
+  name: 'Sizing Playground — FaceDiameter + Resizable (Manual)',
+  tags: ['skip-test'],
+  parameters: {widthDecorator: false},
+  args: {
+    faceDiameter: 240,
+    lockFaceDiameter: false,
+  },
+  argTypes: {
+    lockFaceDiameter: {
+      control: 'boolean',
+      description:
+        'Apply faceDiameter to every instance (equal circumference) instead of only the first.',
+    },
+  },
+  render: (args) => {
+    const instances = [
+      {label: 'compass A', heading: 311},
+      {label: 'compass B', heading: 45},
+    ];
+    const fd = (index: number) =>
+      index === 0 || args.lockFaceDiameter ? args.faceDiameter : undefined;
+    const caption = (index: number, label: string) =>
+      fd(index) !== undefined
+        ? `${label} — pinned ${fd(index)}px`
+        : `${label} — adaptive (flex)`;
+    return html`
+      ${storyHint(
+        'Drag the bottom-right corner of the dashed box to resize it. The first compass is pinned by the faceDiameter control; the second adapts to the remaining flex space. Enable lockFaceDiameter to pin both to the same circumference.'
+      )}
+      ${resizableStoryBox(
+        html`
+          ${instances.map((g, index) =>
+            playgroundColumn(
+              caption(index, g.label),
+              html`
+                <obc-compass
+                  .heading=${g.heading}
+                  .courseOverGround=${g.heading + 27}
+                  .currentWindSpeedKnots=${20}
+                  .windFromDirection=${45}
+                  .showLabels=${true}
+                  .faceDiameter=${fd(index)}
+                ></obc-compass>
+              `,
+              {pinned: fd(index) !== undefined}
+            )
+          )}
+        `,
+        {width: 680, height: 400}
+      )}
+    `;
   },
 };

@@ -16,6 +16,17 @@
 	// "forwardPorts": [],
 	// Use 'postCreateCommand' to run commands after the container is created.
 	"postCreateCommand": "npm install && npm run build:lib && cd packages/openbridge-webcomponents && npx playwright install --with-deps chromium",
+	// Persist the container user's home directory across rebuilds (named Docker
+	// volume). Tool-agnostic developer convenience: anything installed into
+	// $HOME survives "Rebuild Container" — per-developer AI/CLI tooling and its
+	// auth/plugins/history (e.g. Claude Code, Codex, aider), gh auth, VS Code
+	// Server + extensions, shell history, npm and Playwright caches (faster
+	// rebuilds). Developers who install nothing extra are unaffected.
+	// Factory reset: docker volume rm openbridge-webcomponents-home
+	// Full guide: .devcontainer/README.md
+	"mounts": [
+		"source=openbridge-webcomponents-home,target=/home/vscode,type=volume"
+	],
 	// Configure tool-specific properties.
 	"customizations": {
 		"vscode": {

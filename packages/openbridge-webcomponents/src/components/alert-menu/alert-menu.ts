@@ -50,15 +50,9 @@ export type ObcAckAllVisibleClickEvent = CustomEvent<{
  * | Slot Name                        | Renders When...                  | Purpose                                                        |
  * |----------------------------------|----------------------------------|----------------------------------------------------------------|
  * | (default)                        | Always                           | Place one or more `<obc-alert-menu-item>` elements as alert rows. |
- * | empty-unacked-title              | Unacked tab, when empty          | Custom title for empty unacknowledged alerts.                  |
- * | empty-unacked-description        | Unacked tab, when empty          | Custom description for empty unacknowledged alerts.            |
- * | empty-unacked-icon               | Unacked tab, when empty          | Custom icon for empty unacknowledged alerts.                   |
- * | empty-all-title                  | Active tab, when empty    | Custom title for empty active alerts.                          |
- * | empty-all-description            | Active tab, when empty    | Custom description for empty active alerts.                    |
- * | empty-all-icon                   | Active tab, when empty    | Custom icon for empty active alerts.                           |
- * | empty-shelved-title              | Shelved tab, when empty          | Custom title for empty shelved alerts.                         |
- * | empty-shelved-description        | Shelved tab, when empty          | Custom description for empty shelved alerts.                   |
- * | empty-shelved-icon               | Shelved tab, when empty          | Custom icon for empty shelved alerts.                          |
+ * | empty-<tab>-title                | Selected tab is empty            | Custom title for the empty state (`<tab>` is one of `unacked`, `all`, `shelved`). |
+ * | empty-<tab>-description          | Selected tab is empty            | Custom description for the empty state (`<tab>` is one of `unacked`, `all`, `shelved`). |
+ * | empty-<tab>-icon                 | Selected tab is empty            | Custom icon for the empty state (`<tab>` is one of `unacked`, `all`, `shelved`). |
  *
  * ### Properties
  * - `hasShelved` (boolean): If true, displays the "Shelved" tab and enables shelving support. Default: false.
@@ -68,7 +62,6 @@ export type ObcAckAllVisibleClickEvent = CustomEvent<{
  *
  * ### Events
  * - **ack-all-visible-click** – Fired when the "ACK visible" button is clicked. The event detail includes the list of visible alert elements and the current tab name.
- * - **alert-list-click** – Fired when the "Alerts" navigation button is clicked.
  * - **silence-click** – Fired when the "Silence" button is clicked.
  * - **go-to-alert-list-click** – Fired when the "Alerts" navigation button is clicked.
  *
@@ -92,17 +85,10 @@ export type ObcAckAllVisibleClickEvent = CustomEvent<{
  * ```
  *
  * @slot - The alerts items as ObcAlertMenuItem
- * @slot empty-unacked-title - Custom title for empty unacknowledged alerts (Unacked tab)
- * @slot empty-unacked-description - Custom description for empty unacknowledged alerts (Unacked tab)
- * @slot empty-unacked-icon - Custom icon for empty unacknowledged alerts (Unacked tab)
- * @slot empty-all-title - Custom title for empty active alerts (Active tab)
- * @slot empty-all-description - Custom description for empty active alerts (Active tab)
- * @slot empty-all-icon - Custom icon for empty active alerts (Active tab)
- * @slot empty-shelved-title - Custom title for empty shelved alerts (Shelved tab)
- * @slot empty-shelved-description - Custom description for empty shelved alerts (Shelved tab)
- * @slot empty-shelved-icon - Custom icon for empty shelved alerts (Shelved tab)
+ * @slot empty-<tab>-title - Custom empty-state title for the selected tab (`<tab>` is one of `unacked`, `all`, `shelved`)
+ * @slot empty-<tab>-description - Custom empty-state description for the selected tab (`<tab>` is one of `unacked`, `all`, `shelved`)
+ * @slot empty-<tab>-icon - Custom empty-state icon for the selected tab (`<tab>` is one of `unacked`, `all`, `shelved`)
  * @fires ack-all-visible-click {ObcAckAllVisibleClickEvent} - Fired when the ack all visible button is clicked
- * @fires alert-list-click {CustomEvent} - Fired when the alert list button is clicked
  * @fires silence-click {CustomEvent} - Fired when the silence button is clicked
  * @fires go-to-alert-list-click {CustomEvent} - Fired when the go to alert list button is clicked
  */

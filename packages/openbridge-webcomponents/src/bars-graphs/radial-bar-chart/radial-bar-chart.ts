@@ -20,6 +20,7 @@ import {
   getChartTooltipOptions,
   generateLegendHTML,
 } from '../../charthelpers/index.js';
+import type {FixedHeightChartDimensions} from '../../charthelpers/canvas-layout.js';
 
 // Register Chart.js components
 Chart.register(DoughnutController, ArcElement, Tooltip);
@@ -125,32 +126,32 @@ const RADIAL_BAR_WATCHED_PROP_NAMES = [
  * </script>
  * ```
  *
- * @property {number[]} data - Array of values for each ring (set via JavaScript)
- * @property {string[]} colors - Custom ring colors (set via JavaScript) with fallback to theme palette
- * @property {number} max - Maximum value for calculating remaining empty area, default: 100
- * @property {number} circumference - Arc span in degrees: 360 for full circle, 270 for 3/4 circle, default: 270
- * @property {boolean} showDebugOverlay - Show debug overlay for development, default: false
- * @property {number} fixedHeight - Fixed height of the chart in pixels (mandatory, determines chart circumference), default: 320. The chart's circumference is always based on this fixed height to match other radial instruments.
- * @property {number} minRingThickness - Minimum thickness of each ring in pixels, excluding borders, default: 16
- * @property {boolean} legend - Whether to display the legend below the chart, default: false
  * @beta
  */
 @customElement('obc-radial-bar-chart')
 export class ObcRadialBarChart extends LitElement {
+  /** Array of values for each ring (set via JavaScript) */
   @property({type: Array, attribute: false}) data: number[] = [];
+  /** Custom ring colors (set via JavaScript) with fallback to theme palette */
   @property({type: Array, attribute: false}) colors: string[] = [];
   @property({type: String})
   priority: Priority = Priority.regular;
+  /** Maximum value for calculating remaining empty area, default: 100 */
   @property({type: Number})
   max = 100;
+  /** Arc span in degrees: 360 for full circle, 270 for 3/4 circle, default: 270 */
   @property({type: Number})
   circumference = 270;
+  /** Whether to display the legend below the chart, default: false */
   @property({type: Boolean, reflect: true})
   legend = false;
+  /** Show debug overlay for development, default: false */
   @property({type: Boolean, reflect: true})
   showDebugOverlay = false;
+  /** Fixed height of the chart in pixels (determines chart circumference), default: 320. The chart's circumference is always based on this fixed height to match other radial instruments. */
   @property({type: Number, reflect: true})
   fixedHeight = 320;
+  /** Minimum thickness of each ring in pixels, excluding borders, default: 16 */
   @property({
     type: Number,
   })
@@ -164,6 +165,9 @@ export class ObcRadialBarChart extends LitElement {
 
   /** @internal */
   private chart?: Chart;
+
+  /** @internal - Latest layout dimensions computed by getChartOptions() */
+  private lastDimensions?: FixedHeightChartDimensions;
 
   /** @internal */
   private themeObserver?: MutationObserver;
@@ -393,6 +397,9 @@ export class ObcRadialBarChart extends LitElement {
       host: this,
     });
 
+    // Store dimensions for explicit canvas sizing in createChart/updateChart
+    this.lastDimensions = dimensions;
+
     // Set CSS variables for wrapper and canvas sizing
     this.style.setProperty('--chart-width', `${dimensions.calculatedWidth}px`);
     this.style.setProperty('--chart-height', `${dimensions.actualHeight}px`);
@@ -418,9 +425,13 @@ export class ObcRadialBarChart extends LitElement {
     );
 
     return {
-      responsive: true,
-      maintainAspectRatio: true,
-      aspectRatio: dimensions.aspectRatio,
+      // Fixed, self-computed size: Chart.js responsive mode must stay off,
+      // it measures the wrapper (canvas + optional legend) and inflates the
+      // canvas / re-applies stale deferred resizes on hover (issue #1061).
+      // The canvas render size is set explicitly in createChart/updateChart.
+      responsive: false,
+      maintainAspectRatio: false,
+      devicePixelRatio: window.devicePixelRatio,
       rotation,
       circumference: this.circumference,
       cutout: `${optimalCutout}%`,
@@ -474,6 +485,14 @@ export class ObcRadialBarChart extends LitElement {
     if (!ctx) return;
 
     const {datasets} = this.prepareChartData();
+    const options = this.getChartOptions();
+
+    // Non-responsive mode: set the canvas render size explicitly from the
+    // computed layout; Chart.js applies devicePixelRatio scaling on top
+    if (this.lastDimensions) {
+      this.canvasEl.width = this.lastDimensions.calculatedWidth;
+      this.canvasEl.height = this.lastDimensions.actualHeight;
+    }
 
     this.chart = new Chart(ctx, {
       type: 'doughnut',
@@ -481,7 +500,7 @@ export class ObcRadialBarChart extends LitElement {
         labels: this.data.map((_, i) => `Ring ${i + 1}`),
         datasets,
       },
-      options: this.getChartOptions(),
+      options,
     });
 
     // Defer legend update to next tick to ensure Chart.js metadata is initialized
@@ -503,6 +522,15 @@ export class ObcRadialBarChart extends LitElement {
     if (this.chart.options) {
       // Update all dynamic options
       Object.assign(this.chart.options, newOptions);
+    }
+
+    // Non-responsive mode: apply the computed layout size explicitly
+    // (no-op when the size is unchanged)
+    if (this.lastDimensions) {
+      this.chart.resize(
+        this.lastDimensions.calculatedWidth,
+        this.lastDimensions.actualHeight
+      );
     }
 
     this.chart.update();

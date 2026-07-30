@@ -1,5 +1,11 @@
 import {LitElement, html, svg, SVGTemplateResult, unsafeCSS} from 'lit';
 import componentStyle from './compass-flat.css?inline';
+import instrumentReadoutStyle from '../readout/instrument-readout.css?inline';
+import {
+  centerReadoutStyles,
+  renderCenterReadouts,
+} from '../readout/center-readout.js';
+import {ReadoutSize} from '../readout/readout.js';
 import {property, state} from 'lit/decorators.js';
 import {Tickmark, TickmarkType} from '../watch-flat/tickmark-flat.js';
 import '../watch-flat/watch-flat.js';
@@ -55,17 +61,11 @@ export interface Label {
  * - **Rate of turn**: Animated linear ROT indicator (spinning dots or
  *   horizontal bar) via `rotType`. When enabled, a bottom bar is added to
  *   the strip to house the indicator.
+ * - **Readout**: `hasReadout` shows a centered heading readout below the
+ *   strip (label `HDG`, unit `DEG` by default).
  * - **Color priority**: Per-element priority for HDG, COG, and ROT via
  *   `priorityElements`.
  *
- * @property {number} heading - Current heading in degrees.
- * @property {number} courseOverGround - Current COG in degrees.
- * @property {RotType|undefined} rotType - ROT display mode: `'dots'`, `'bar'`, or `undefined` (hidden).
- * @property {number|undefined} rateOfTurnDegreesPerMinute - Measured rate of turn in degrees per minute (positive = starboard). Drives the bar extent and (after `× rotDotAnimationFactor`) the dot animation.
- * @property {number} rotDotAnimationFactor - Visual amplification for the dot animation only. Default `18` (≈1 rpm at 20°/min).
- * @property {number} rotationsPerMinute - **Deprecated.** Use `rateOfTurnDegreesPerMinute` instead.
- * @property {number} rotMaxValue - Bar-extent reference value in **degrees per minute**. Default `60` per ES-TRIN 2025/1 Art. 3.02.
- * @property {number} rotArcExtent - Degrees of bar arc per max-value ROT (default 60).
  *
  * @ignition-base-height: 170px
  * @ignition-base-width: 512px
@@ -74,7 +74,9 @@ export interface Label {
 @customElement('obc-compass-flat')
 export class ObcCompassFlat extends LitElement {
   @property({type: Boolean}) FOVIndicator: boolean = false;
+  /** Current heading in degrees. */
   @property({type: Number}) heading = 0;
+  /** Current COG in degrees. */
   @property({type: Number}) courseOverGround = 0;
   @property({type: Number}) tickInterval = 5;
   @property({type: Number}) FOV = 45;
@@ -85,6 +87,7 @@ export class ObcCompassFlat extends LitElement {
   priorityElements: CompassFlatPriorityElement[] = [
     CompassFlatPriorityElement.hdg,
   ];
+  /** ROT display mode: `'dots'`, `'bar'`, or `undefined` (hidden). */
   @property({type: String}) rotType: RotType | undefined;
   /**
    * Measured rate of turn in degrees per minute (positive = starboard).
@@ -98,6 +101,7 @@ export class ObcCompassFlat extends LitElement {
    */
   @property({type: Number}) rotDotAnimationFactor: number = 18;
   /**
+   * **Deprecated.** Use `rateOfTurnDegreesPerMinute` instead.
    * @deprecated Use `rateOfTurnDegreesPerMinute` instead.
    * @availableWhen rotType!=undefined
    */
@@ -108,26 +112,65 @@ export class ObcCompassFlat extends LitElement {
    * @availableWhen rotType!=undefined
    */
   @property({type: Number}) rotMaxValue: number = 60;
-  /** @availableWhen rotType!=undefined */
+  /**
+   * Degrees of bar arc per max-value ROT (default 60).
+   * @availableWhen rotType!=undefined
+   */
   @property({type: Number}) rotArcExtent: number = 60;
   /** @availableWhen rotType!=undefined */
   @property({type: Boolean}) rotPortStarboard: boolean = false;
   /** @availableWhen rotType!=undefined */
   @property({type: Number}) rotAtZeroDeadband: number = ROT_ZERO_DEADBAND_DEG;
+  /**
+   * When `true`, shows a centered `<obc-readout>` below the strip displaying
+   * the heading (label `HDG`, unit `DEG`). The value color follows the HDG
+   * entry in `priorityElements`.
+   */
+  @property({type: Boolean}) hasReadout: boolean = false;
+  /**
+   * Readout label. Default `HDG`.
+   * @availableWhen hasReadout==true
+   */
+  @property({type: String}) label = 'HDG';
+  /**
+   * Readout unit. Default `DEG`.
+   * @availableWhen hasReadout==true
+   */
+  @property({type: String}) unit = 'DEG';
+  /**
+   * Number of fraction digits shown in the readout. Default `0`.
+   * @availableWhen hasReadout==true
+   */
+  @property({type: Number}) fractionDigits = 0;
 
-  @state() private containerWidth = 0;
-  @state() private maxContainerWidth = 0;
+  @state() private hostWidth = 0;
+  @state() private hostHeight = 0;
 
   private resizeObserver: ResizeObserver = new ResizeObserver((entries) => {
     for (const entry of entries) {
-      // Made by chatGPT so that the text is inside the wrapper
-      this.maxContainerWidth = -125.36 + 3.79 * entry.contentRect.height;
-      this.containerWidth = Math.min(
-        entry.contentRect.width,
-        this.maxContainerWidth
-      );
+      this.hostWidth = entry.contentRect.width;
+      this.hostHeight = entry.contentRect.height;
     }
   });
+
+  /** Vertical space reserved for the readout block below the strip. */
+  private static readonly READOUT_RESERVE_PX = 56;
+
+  private get stripHeight(): number {
+    return (
+      this.hostHeight -
+      (this.hasReadout ? ObcCompassFlat.READOUT_RESERVE_PX : 0)
+    );
+  }
+
+  // Made by chatGPT so that the text is inside the wrapper
+  private get maxContainerWidth(): number {
+    return -125.36 + 3.79 * this.stripHeight;
+  }
+
+  private get containerWidth(): number {
+    return Math.min(this.hostWidth, this.maxContainerWidth);
+  }
 
   override connectedCallback() {
     super.connectedCallback();
@@ -324,7 +367,7 @@ export class ObcCompassFlat extends LitElement {
       : -128;
     const viewBox = `-192 ${arrowViewBoxY} 384 128`;
 
-    return html`
+    const strip = html`
       <div class="container" style="max-width:${this.maxContainerWidth}px">
         <obc-watch-flat
           .FOVIndicator=${this.FOVIndicator ? this.renderFOVIndicator() : []}
@@ -351,9 +394,36 @@ export class ObcCompassFlat extends LitElement {
         </svg>
       </div>
     `;
+
+    if (!this.hasReadout) {
+      return strip;
+    }
+    return html`
+      <div class="with-readout">
+        ${strip}
+        <div class="flat-readout">
+          ${renderCenterReadouts([
+            {
+              value: this.heading,
+              label: this.label,
+              unit: this.unit,
+              fractionDigits: this.fractionDigits,
+              size: ReadoutSize.large,
+              priority: this.priorityFor(CompassFlatPriorityElement.hdg),
+              centerValue: true,
+              centerMeta: true,
+            },
+          ])}
+        </div>
+      </div>
+    `;
   }
 
-  static override styles = unsafeCSS(componentStyle);
+  static override styles = [
+    unsafeCSS(instrumentReadoutStyle),
+    centerReadoutStyles,
+    unsafeCSS(componentStyle),
+  ];
 }
 
 declare global {

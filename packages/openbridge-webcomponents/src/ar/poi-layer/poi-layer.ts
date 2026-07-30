@@ -90,6 +90,7 @@ export enum OverlapMode {
  *
  * @slot - Default slot for POI targets and optional POI groups.
  * @fires layer-resize {CustomEvent<{height:number,label:string}>} Fired when the layer height changes.
+ * @fires layer-selection-changed {Event} Fired when the layer's `isSelected` state changes. Bubbles.
  * @experimental
  */
 @customElement('obc-poi-layer')
