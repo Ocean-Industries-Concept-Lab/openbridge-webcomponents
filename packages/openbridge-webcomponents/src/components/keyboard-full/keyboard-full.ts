@@ -11,6 +11,7 @@ import '../../icons/icon-arrow-left-google.js';
 import '../../icons/icon-shift-lock.js';
 import '../text-input-field/text-input-field.js';
 import {
+  HTMLInputTypeAttribute,
   ObcTextInputField,
   ObcTextInputFieldSize,
 } from '../text-input-field/text-input-field.js';
@@ -143,10 +144,16 @@ export enum ObcKeyboardFullMode {
  * </obc-keyboard-full>
  * ```
  *
- * **Flat keyboard with number row for password input:**
+ * **Masked password entry:**
+ *
+ * Set `inputType="password"` to mask the entered value in the input field. A
+ * show/hide toggle appears inside the field so users can reveal what they typed.
+ * The `value-change` and `done-click` events still carry the real (unmasked)
+ * string.
  * ```html
  * <obc-keyboard-full
  *   type="flat"
+ *   inputType="password"
  *   parameterName="Password"
  *   placeholder="Enter password"
  *   showNumberRow
@@ -189,6 +196,13 @@ export class ObcKeyboardFull extends LitElement {
   @property({type: Boolean}) showNumberRow = false;
   @property({type: String}) inputSize: ObcTextInputFieldSize =
     ObcTextInputFieldSize.Large;
+
+  /**
+   * Input type forwarded to the embedded input field. Set to `password` to mask
+   * the entered value (a show/hide toggle is then shown inside the field).
+   */
+  @property({type: String}) inputType: HTMLInputTypeAttribute =
+    HTMLInputTypeAttribute.Text;
 
   @state() private mode: ObcKeyboardFullMode = ObcKeyboardFullMode.ABC;
   @state() private capsLock = false;
@@ -691,6 +705,7 @@ export class ObcKeyboardFull extends LitElement {
               .value=${this.value}
               .placeholder=${this.placeholder}
               .size=${this.inputSize}
+              .type=${this.inputType}
               @input=${this.onInputFieldValueChanged}
             >
             </obc-text-input-field>
