@@ -3,6 +3,7 @@ import {ObcSpeedDirections} from './speed-directions.js';
 import './speed-directions.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {topVessels} from '../watch/vessels/storybook-helper.js';
+import {VesselImage} from '../watch/vessel.js';
 import {
   SpeedDirectionsType,
   SpeedDirectionsFrameStyle,
@@ -42,6 +43,15 @@ type Story = StoryObj<ObcSpeedDirections>;
 
 export const AlongAthwartArrowsStandalone: Story = {
   args: {
+    speedAlongKnots: 4.2,
+    speedAthwartBowKnots: 0.8,
+    speedAthwartSternKnots: -0.6,
+  },
+};
+
+export const StandaloneCustomVessel: Story = {
+  args: {
+    vesselImage: VesselImage.cargoTop,
     speedAlongKnots: 4.2,
     speedAthwartBowKnots: 0.8,
     speedAthwartSternKnots: -0.6,
