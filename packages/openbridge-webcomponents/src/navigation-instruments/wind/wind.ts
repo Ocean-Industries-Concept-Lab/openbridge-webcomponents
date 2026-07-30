@@ -137,7 +137,7 @@ export class ObcWind extends LitElement {
         ? []
         : [
             {
-              size: VesselImageSize.small,
+              size: VesselImageSize.medium,
               transform: `rotate(${this.vesselHeadingDeg}deg)`,
               vesselImage: this.vesselImage,
             },
@@ -156,6 +156,8 @@ export class ObcWind extends LitElement {
           crosshairEnabled
           northArrow
           tickmarksInside
+          .showLabels=${true}
+          .insideLabelsFlush=${true}
           .vessels=${vessels}
         ></obc-watch>
       </div>
@@ -271,25 +273,24 @@ function resolveHistogramMaxRadius(variant: ResolvedWindVariant): number {
  * Per-variant placement of the wind arrow inside `<obc-watch>`.
  *
  * `windSymbolRadius` is the distance from the watch center where the arrow
- * is placed (in watch SVG units, where the outer ring sits at 184).
- * `scaleWindIcon` scales the arrow glyph (and its offset).
+ * tip is anchored (in watch SVG units, where the outer ring sits at 184);
+ * `scaleWindIcon` scales the arrow glyph — and, because the scale group wraps
+ * the translated glyph, the effective tip radius is `radius × scale`.
  *
- * These values are visual-tuning starting points; adjust as needed.
+ * Values measured from the OpenBridge 6.1 Figma (node 6552-102891):
+ * large tip ≈119 (inner-ring edge), medium ≈93, small ≈8 (touching center).
  */
-function resolveWindArrowPlacement(variant: ResolvedWindVariant): {
+export function resolveWindArrowPlacement(variant: ResolvedWindVariant): {
   windSymbolRadius: number;
   scaleWindIcon: number;
 } {
   switch (variant) {
     case WindVariant.large:
-      // Sits inside the inner ring of the double layout (matches pre-variant behavior).
-      return {windSymbolRadius: 145, scaleWindIcon: 0.8};
+      return {windSymbolRadius: 119, scaleWindIcon: 1.0};
     case WindVariant.medium:
-      // Sits just inside the single outer ring.
-      return {windSymbolRadius: 60, scaleWindIcon: 1.4};
+      return {windSymbolRadius: 62, scaleWindIcon: 1.5};
     case WindVariant.small:
-      // Compact layout: arrow tip close to centered, enlarged for best legibility.
-      return {windSymbolRadius: 10, scaleWindIcon: 2.3};
+      return {windSymbolRadius: 3, scaleWindIcon: 2.667};
   }
 }
 
