@@ -5,6 +5,7 @@ export function roundedArch({
   R,
   roundOutsideCut,
   roundInsideCut,
+  roundRadius = 8,
 }: {
   startAngle: number;
   R: number;
@@ -12,6 +13,9 @@ export function roundedArch({
   endAngle: number;
   roundOutsideCut: boolean;
   roundInsideCut: boolean;
+  /** Corner fillet radius of the rounded cuts; at half the arch width the
+   * flat cut edge vanishes and the end becomes an inscribed round tip. */
+  roundRadius?: number;
 }) {
   const a1 = (startAngle * Math.PI) / 180;
   const a2 = (endAngle * Math.PI) / 180;
@@ -24,7 +28,6 @@ export function roundedArch({
   const Y2 = -Math.cos(a2) * R;
   const x2 = Math.sin(a2) * r;
   const y2 = -Math.cos(a2) * r;
-  const roundRadius = 8;
 
   // Guard against degenerate radii: corner rounding requires the ring
   // radius to be at least `roundRadius`, otherwise Math.asin(roundRadius/r)

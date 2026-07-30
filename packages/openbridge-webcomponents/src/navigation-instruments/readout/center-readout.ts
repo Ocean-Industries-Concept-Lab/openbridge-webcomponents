@@ -42,6 +42,11 @@ export enum CenterReadoutArrangement {
   primarySecondary = 'primary-secondary',
   /** Every entry stacked vertically, with a divider between each pair. */
   stacked = 'stacked',
+  /**
+   * Every entry side by side, with a vertical divider between each pair —
+   * the paired readout row of the proportional watch-face gauge.
+   */
+  row = 'row',
 }
 
 /** A resolved cluster entry, ready to render (source-agnostic). */
@@ -134,6 +139,9 @@ function renderEntry(entry: CenterReadoutEntry): TemplateResult {
  * `stacked`: every entry on its own row, separated by a stretched 1px divider —
  * the arrangement `obc-pitch-roll-heave` uses for its Pitch / Roll / Heave
  * column.
+ *
+ * `row`: every entry side by side, separated by a 48px-tall vertical 1px
+ * divider (the Figma "Readout" pair of the proportional watch-face gauge).
  */
 export function renderCenterReadouts(
   entries: CenterReadoutEntry[],
@@ -142,6 +150,19 @@ export function renderCenterReadouts(
   const [first, ...rest] = entries;
   if (!first) {
     return html`${nothing}`;
+  }
+  if (arrangement === CenterReadoutArrangement.row) {
+    return html`
+      <div class="center-readout-row">
+        ${renderEntry(first)}
+        ${rest.map(
+          (entry) => html`
+            <div class="center-readout-vertical-divider"></div>
+            ${renderEntry(entry)}
+          `
+        )}
+      </div>
+    `;
   }
   if (arrangement === CenterReadoutArrangement.stacked) {
     return html`
@@ -192,5 +213,17 @@ export const centerReadoutStyles: CSSResult = css`
     align-items: flex-start;
     justify-content: center;
     gap: 8px;
+  }
+
+  .center-readout-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .center-readout-vertical-divider {
+    width: 1px;
+    height: 48px;
+    background: var(--border-divider-color);
   }
 `;
