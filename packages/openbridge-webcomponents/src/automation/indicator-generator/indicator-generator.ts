@@ -130,7 +130,7 @@ export class ObcIndicatorGenerator extends LitElement {
     const showRings = this.value !== IndicatorGeneratorValue.off;
     const size = doubleBar ? 56 : 48;
     return html`
-      <svg viewBox="0 0 ${size} ${size}" role="img">
+      <svg viewBox="0 0 ${size} ${size}" aria-hidden="true">
         ${this.variant === IndicatorGeneratorVariant.button
           ? svg`<circle class="silhouette" cx=${c} cy=${c} r=${BUTTON_SILHOUETTE_RADIUS} />`
           : nothing}

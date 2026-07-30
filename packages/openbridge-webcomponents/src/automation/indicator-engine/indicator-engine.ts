@@ -60,7 +60,7 @@ export class ObcIndicatorEngine extends LitElement {
 
   override render() {
     return html`
-      <svg viewBox="0 0 48 48" role="img">
+      <svg viewBox="0 0 48 48" aria-hidden="true">
         ${this.direction === IndicatorDirection.horizontal
           ? this.renderHorizontal()
           : this.renderVertical()}

@@ -47,6 +47,16 @@ const FRAME_PATH =
  * full-featured tank cell with readouts, badges and setpoints, use
  * `obc-automation-tank` instead.
  *
+ * ## Best Practices / Constraints
+ * - `level` and `data` values are clamped to 0–100; values outside that
+ *   range are pinned to the nearest bound.
+ * - The `trend` variant needs at least two `data` samples to draw a line;
+ *   with fewer it shows only the current-value micro-bar.
+ * - The `icon` slot renders only in the `bar` variant; it is ignored in
+ *   `trend`.
+ * - Display-only: the root SVG is `aria-hidden`; convey tank level to
+ *   assistive tech through adjacent text if it is not otherwise available.
+ *
  * ## Slots
  * | Slot   | Condition                     | Purpose                        |
  * | ------ | ----------------------------- | ------------------------------ |
@@ -96,7 +106,7 @@ export class ObcIndicatorTankAtmospheric extends LitElement {
     const showIcon =
       this.hasIcon && this.variant === IndicatorTankAtmosphericVariant.bar;
     return html`
-      <svg viewBox="0 0 48 48" role="img">
+      <svg viewBox="0 0 48 48" aria-hidden="true">
         <g transform=${frameTransform}>
           <path class="frame" d=${FRAME_PATH} />
         </g>

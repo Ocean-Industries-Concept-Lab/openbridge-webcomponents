@@ -50,6 +50,16 @@ const VERTICAL_TIP_PATH = 'M18 6 V4 A2 2 0 0 1 20 2 H28 A2 2 0 0 1 30 4 V6 Z';
  * full-featured tank/battery cell with readouts, badges and setpoints, use
  * `obc-automation-tank` (type `battery`) instead.
  *
+ * ## Best Practices / Constraints
+ * - `level` and `data` values are clamped to 0–100; values outside that
+ *   range are pinned to the nearest bound.
+ * - The `trend` variant needs at least two `data` samples to draw a line;
+ *   with fewer it shows only the current-value micro-bar.
+ * - The `icon` slot renders only in the `bar` variant; it is ignored in
+ *   `trend`.
+ * - Display-only: the root SVG is `aria-hidden`; convey battery state to
+ *   assistive tech through adjacent text if it is not otherwise available.
+ *
  * ## Slots
  * | Slot   | Condition                     | Purpose                        |
  * | ------ | ----------------------------- | ------------------------------ |
@@ -96,7 +106,7 @@ export class ObcIndicatorBattery extends LitElement {
     const showIcon =
       this.hasIcon && this.variant === IndicatorBatteryVariant.bar;
     return html`
-      <svg viewBox="0 0 48 48" role="img">
+      <svg viewBox="0 0 48 48" aria-hidden="true">
         <path
           class="tip"
           d=${horizontal ? HORIZONTAL_TIP_PATH : VERTICAL_TIP_PATH}

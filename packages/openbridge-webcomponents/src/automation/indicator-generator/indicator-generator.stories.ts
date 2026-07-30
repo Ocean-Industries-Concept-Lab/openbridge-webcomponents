@@ -77,9 +77,27 @@ export const BarCategorical: Story = {
   },
 };
 
+export const ButtonFilled: Story = {
+  args: {value: IndicatorGeneratorValue.filled},
+};
+
+export const BarFilled: Story = {
+  args: {
+    variant: IndicatorGeneratorVariant.bar,
+    value: IndicatorGeneratorValue.filled,
+  },
+};
+
 export const DoubleBar: Story = {
   args: {
     variant: IndicatorGeneratorVariant.doubleBar,
     value: IndicatorGeneratorValue.regular,
+  },
+};
+
+export const DoubleBarFilled: Story = {
+  args: {
+    variant: IndicatorGeneratorVariant.doubleBar,
+    value: IndicatorGeneratorValue.filled,
   },
 };
