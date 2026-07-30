@@ -46,6 +46,7 @@ import {
 import {
   renderLabels,
   renderNorthArrow,
+  renderNorthMarker,
   getLabelPositions,
   LabelPosition,
 } from './label.js';
@@ -188,6 +189,13 @@ export class ObcWatch extends LitElement {
     WatchCircleType.single;
   @property({type: Boolean}) northArrow: boolean = false;
   @property({type: Boolean}) northArrowInside: boolean | undefined;
+  /**
+   * Replace the north arrow with the compact heading-up north marker: a small
+   * triangle on the outer ring with an upright "N" at the outside label
+   * radius. Rotates with the card via `rotation`.
+   * @availableWhen northArrow==true
+   */
+  @property({type: Boolean}) northMarker: boolean = false;
   /** Setpoint angle in degrees (0° = 12 o'clock) */
   @property({type: Number}) angleSetpoint: number | undefined;
   /** New setpoint being adjusted (focus mode) */
@@ -245,6 +253,13 @@ export class ObcWatch extends LitElement {
    */
   @property({type: Boolean}) crosshairCenterCutout: boolean = false;
   @property({type: Boolean}) showLabels: boolean = false;
+  /**
+   * With `tickmarksInside`, anchor the NSEW label boxes flush against the
+   * inner ring (px-fixed) instead of the legacy gap that lets them drift
+   * toward the centre as the instrument shrinks.
+   * @availableWhen tickmarksInside==true
+   */
+  @property({type: Boolean}) insideLabelsFlush: boolean = false;
   @property({type: Array, attribute: false}) vessels: WatchVessel[] = [];
   @property({type: Number}) windKnots: number | null = null;
   @property({type: Number}) windFromDirectionDeg: number | null = null;
@@ -852,6 +867,7 @@ export class ObcWatch extends LitElement {
           inside: this.tickmarksInside,
           innerRadius: this.innerRingRadius + rOff,
           includeNorth,
+          insideFlush: this.insideLabelsFlush,
         })
       : undefined;
 
@@ -862,14 +878,17 @@ export class ObcWatch extends LitElement {
           inside: this.tickmarksInside,
           innerRadius: this.innerRingRadius + rOff,
           includeNorth,
+          insideFlush: this.insideLabelsFlush,
         })
       : nothing;
     const northArrowEl = showNorthArrow
-      ? renderNorthArrow({
-          scale,
-          rotation: this.rotation,
-          inside: this.northArrowInside ?? this.tickmarksInside,
-        })
+      ? this.northMarker
+        ? renderNorthMarker({scale, rotation: this.rotation})
+        : renderNorthArrow({
+            scale,
+            rotation: this.rotation,
+            inside: this.northArrowInside ?? this.tickmarksInside,
+          })
       : nothing;
     const wind =
       this.windKnots != null && this.windFromDirectionDeg != null
