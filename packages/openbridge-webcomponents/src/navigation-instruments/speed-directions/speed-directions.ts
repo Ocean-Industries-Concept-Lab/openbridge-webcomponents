@@ -55,6 +55,7 @@ const COMPASS_TICKMARKS: Tickmark[] = [45, 135, 225, 315].map((angle) => ({
  *   cross lines), `compass` (watch face with main tickmarks and north arrow).
  * - Value-driven: signed speeds in knots; an indicator renders only when its
  *   speed property is defined.
+ * - Configurable vessel image in every frame style via `vesselImage`.
  *
  * ## Usage Guidelines
  * Use for docking/maneuvering speed overviews. For a single stepped-arrow
@@ -130,9 +131,8 @@ export class ObcSpeedDirections extends LitElement {
   tintedArrows = false;
 
   /**
-   * Vessel image for the framed and compass styles; the standalone style
-   * follows the design's fixed per-type vessel.
-   * @availableWhen frameStyle!=standalone
+   * Vessel image drawn at the center of the instrument. The standalone style
+   * draws it at twice the size for the chevron types, as in the design.
    */
   @property({type: String})
   vesselImage: VesselImage = VesselImage.psvTop;
@@ -179,13 +179,8 @@ export class ObcSpeedDirections extends LitElement {
   private renderVessel() {
     const standalone = this.frameStyle === SpeedDirectionsFrameStyle.standalone;
     const bars = this.type === SpeedDirectionsType.alongAthwartBars;
-    const image = standalone
-      ? bars
-        ? VesselImage.psvTop
-        : VesselImage.genericTop
-      : this.vesselImage;
     const scale = standalone && !bars ? 2 : 1;
-    return svg`<g transform="translate(0 ${VESSEL_CENTER_Y}) scale(${scale}) translate(-80 -80)">${vesselImages[image]}</g>`;
+    return svg`<g transform="translate(0 ${VESSEL_CENTER_Y}) scale(${scale}) translate(-80 -80)">${vesselImages[this.vesselImage]}</g>`;
   }
 
   private renderContent() {
