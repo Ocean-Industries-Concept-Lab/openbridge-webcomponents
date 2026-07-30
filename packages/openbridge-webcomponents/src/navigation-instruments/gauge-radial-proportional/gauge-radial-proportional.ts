@@ -22,6 +22,7 @@ import {
   renderSecondaryLine,
 } from '../watch/secondary-lane.js';
 import type {WatchArea, WatchBarArea} from '../watch/watch.js';
+import {roundedArch} from '../../svghelpers/roundedArch.js';
 import {TickmarkStyle, TickmarkType} from '../watch/tickmark.js';
 import type {Tickmark} from '../watch/tickmark.js';
 import {
@@ -82,7 +83,9 @@ export interface GaugeRadialProportionalAdvice {
    watch/secondary-lane.ts: secondary line lane (112..120), face-colored
    divider (120..128) and a narrowed primary band lane (128..160). The joint
    48-unit round cut the watch draws at the sector ends is erased and each
-   lane re-capped individually. */
+   lane redrawn as a rounded arch — flush sector cuts with the design's
+   corner fillets (8 on the primary lane, half the line width on the
+   secondary lane, where the cut collapses to an inscribed round tip). */
 const NEEDLE_WIDTH = 8;
 const NEEDLE_LENGTH_FULL = BAND_OUTER_RADIUS - BAND_INNER_RADIUS;
 const SPLIT_BAND_WIDTH = BAND_OUTER_RADIUS - PRIMARY_SUBBAND_INNER_RADIUS;
@@ -92,6 +95,12 @@ const TRACK_ERASE_CENTER_RADIUS = (BAND_INNER_RADIUS + BAND_OUTER_RADIUS) / 2;
 const TRACK_ERASE_WIDTH = BAND_OUTER_RADIUS - BAND_INNER_RADIUS + 1;
 /** Angular reach of the end-cut erase, covering the joint cap's full bulge. */
 const TRACK_END_OVERSHOOT_DEG = 15;
+/* Angular reach of the erase past the cut into the sector, clearing the
+   square lane corners so the redrawn arches' fillets show; must exceed the
+   widest fillet's angular extent (asin(8/136) ≈ 3.4°). Also the overshoot
+   the split value bar/line gets when an end sits on a sector cut, so the
+   lane-arch clip trims it flush instead of leaving an antialiasing seam. */
+const TRACK_END_CUT_INSET_DEG = 4;
 /* The watch's sector cut is a round cap spanning the whole 112..184
    silhouette; its circle bounds the end-cut erase so face paint never spills
    past the outline. */
@@ -571,11 +580,29 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
   }
 
   /**
+   * The secondary lane's track silhouette: a rounded arch whose half-width
+   * fillets collapse the sector cuts to an inscribed round tip. Shared by
+   * the lane track redraw and the secondary value line's clip.
+   */
+  private get secondaryLaneArch(): string {
+    return roundedArch({
+      startAngle: this.mapAngle(this.minValue),
+      endAngle: this.mapAngle(this.maxValue),
+      R: BAND_INNER_RADIUS + SECONDARY_LINE_WIDTH,
+      r: BAND_INNER_RADIUS,
+      roundOutsideCut: true,
+      roundInsideCut: true,
+      roundRadius: SECONDARY_LINE_WIDTH / 2,
+    });
+  }
+
+  /**
    * Track chrome of the primary-secondary frame. The watch still draws the
    * joint 112..160 track annulus; this repaints it into the split layout —
    * a face-colored gap divides the lanes, the joint round end cuts are
-   * erased and each lane re-capped, the narrowed primary band is drawn at
-   * its own radii, and the secondary lane gets its own fill-origin stub.
+   * erased and each lane is redrawn as a rounded arch with the design's
+   * flush fillet cuts, and the narrowed primary value bar is clipped to its
+   * lane arch.
    */
   private renderSplitFrame() {
     if (!this.isSplit || this.isValueGraphicsHidden) {
@@ -586,6 +613,15 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
     const startAngle = this.mapAngle(this.minValue);
     const endAngle = this.mapAngle(this.maxValue);
     const parts = [];
+
+    const primaryLaneArch = roundedArch({
+      startAngle,
+      endAngle,
+      R: BAND_OUTER_RADIUS,
+      r: PRIMARY_SUBBAND_INNER_RADIUS,
+      roundOutsideCut: true,
+      roundInsideCut: true,
+    });
 
     if (this.isFullCircle) {
       parts.push(svg`
@@ -609,9 +645,11 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
         ></circle>
       `);
     } else {
-      // Erase the joint round cut the watch draws at each sector end. The
-      // erase is clipped to the cut's own cap circle so the face paint never
-      // spills onto the page background outside the dial silhouette.
+      // Erase the joint round cut the watch draws at each sector end,
+      // reaching past the cut into the sector to clear the square lane
+      // corners the arch fillets replace. The erase is clipped to the cut's
+      // own cap circle so the face paint never spills onto the page
+      // background outside the dial silhouette.
       parts.push(svg`<clipPath id="split-end-cut-clip">
         <circle
           transform="rotate(${startAngle})"
@@ -625,8 +663,14 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
         ></circle>
       </clipPath>`);
       const endCuts: [number, number][] = [
-        [startAngle - TRACK_END_OVERSHOOT_DEG, startAngle],
-        [endAngle, endAngle + TRACK_END_OVERSHOOT_DEG],
+        [
+          startAngle - TRACK_END_OVERSHOOT_DEG,
+          startAngle + TRACK_END_CUT_INSET_DEG,
+        ],
+        [
+          endAngle - TRACK_END_CUT_INSET_DEG,
+          endAngle + TRACK_END_OVERSHOOT_DEG,
+        ],
       ];
       parts.push(svg`<g clip-path="url(#split-end-cut-clip)">
         ${endCuts.map(
@@ -639,6 +683,9 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
           ></path>`
         )}
       </g>`);
+      // Redraw each lane track as a rounded arch — flush sector cuts with
+      // the design's corner fillets; the face-colored divider keeps its
+      // butt ends underneath the arches.
       parts.push(svg`
         <path
           d=${arcPath(INNER_EDGE_COVER_RADIUS, startAngle, endAngle)}
@@ -648,11 +695,11 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
           stroke-linecap="butt"
         ></path>
         <path
-          d=${arcPath(SECONDARY_LANE_RADIUS, startAngle, endAngle)}
-          fill="none"
+          d=${this.secondaryLaneArch}
+          fill=${trackPaint}
           stroke=${trackPaint}
-          stroke-width=${SECONDARY_LINE_WIDTH}
-          stroke-linecap="butt"
+          stroke-width="1"
+          vector-effect="non-scaling-stroke"
         ></path>
         <path
           d=${arcPath(LANE_DIVIDER_RADIUS, startAngle, endAngle)}
@@ -661,41 +708,55 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
           stroke-width=${LANE_DIVIDER_WIDTH}
           stroke-linecap="butt"
         ></path>
+        <path
+          d=${primaryLaneArch}
+          fill=${trackPaint}
+          stroke=${trackPaint}
+          stroke-width="1"
+          vector-effect="non-scaling-stroke"
+        ></path>
       `);
-      for (const angle of [startAngle, endAngle]) {
-        parts.push(svg`<g transform="rotate(${angle})">
-          <circle
-            cy=${-SPLIT_BAND_CENTER_RADIUS}
-            r=${SPLIT_BAND_WIDTH / 2}
-            fill=${trackPaint}
-          ></circle>
-          <circle
-            cy=${-SECONDARY_LANE_RADIUS}
-            r=${SECONDARY_LINE_WIDTH / 2}
-            fill=${trackPaint}
-          ></circle>
-        </g>`);
-      }
     }
 
     const originAngle = this.mapAngle(this.fillOriginValue);
     const bandEndAngle = this.arcEndAngle(this.clampedValue);
     if (Math.abs(bandEndAngle - originAngle) >= 0.5) {
-      if (this.sector === GaugeRadialProportionalSector.deg270) {
-        parts.push(svg`<circle
-          transform="rotate(${originAngle})"
-          cy=${-SPLIT_BAND_CENTER_RADIUS}
-          r=${SPLIT_BAND_WIDTH / 2}
-          fill=${this.bandColor}
-        ></circle>`);
+      if (this.isFullCircle) {
+        parts.push(svg`<path
+          d=${arcPath(SPLIT_BAND_CENTER_RADIUS, originAngle, bandEndAngle)}
+          fill="none"
+          stroke=${this.bandColor}
+          stroke-width=${SPLIT_BAND_WIDTH}
+          stroke-linecap="butt"
+        ></path>`);
+      } else {
+        // The bar is clipped to the lane arch (the design's track-mask
+        // model): an end sitting on a sector cut overshoots it and is
+        // trimmed flush into the arch's fillets, while mid-track ends stay
+        // square.
+        let barFrom = Math.min(originAngle, bandEndAngle);
+        let barTo = Math.max(originAngle, bandEndAngle);
+        if (barFrom <= startAngle + 0.01) {
+          barFrom -= TRACK_END_CUT_INSET_DEG;
+        }
+        if (barTo >= endAngle - 0.01) {
+          barTo += TRACK_END_CUT_INSET_DEG;
+        }
+        parts.push(svg`
+          <clipPath id="split-primary-lane-clip">
+            <path d=${primaryLaneArch}></path>
+          </clipPath>
+          <g clip-path="url(#split-primary-lane-clip)">
+            <path
+              d=${arcPath(SPLIT_BAND_CENTER_RADIUS, barFrom, barTo)}
+              fill="none"
+              stroke=${this.bandColor}
+              stroke-width=${SPLIT_BAND_WIDTH}
+              stroke-linecap="butt"
+            ></path>
+          </g>
+        `);
       }
-      parts.push(svg`<path
-        d=${arcPath(SPLIT_BAND_CENTER_RADIUS, originAngle, bandEndAngle)}
-        fill="none"
-        stroke=${this.bandColor}
-        stroke-width=${SPLIT_BAND_WIDTH}
-        stroke-linecap="butt"
-      ></path>`);
     }
 
     if (
@@ -743,26 +804,32 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
     }
     const originAngle = this.mapAngle(this.fillOriginValue);
     const endAngle = this.arcEndAngle(this.secondaryValue);
-    // Rounded start cap for the open-start sector; the shared line renders
-    // the butt-capped arc with its flush round tip (and collapses to the tip
-    // nub alone when the arc is too short to draw).
-    const startCap =
-      this.sector === GaugeRadialProportionalSector.deg270 &&
-      Math.abs(endAngle - originAngle) >= 0.5
-        ? svg`<circle
-            transform="rotate(${originAngle})"
-            cy=${-SECONDARY_LANE_RADIUS}
-            r=${SECONDARY_LINE_WIDTH / 2}
-            fill=${this.accentColor}
-          ></circle>`
-        : nothing;
-    return svg`
-      ${startCap}
-      ${renderSecondaryLine({
+    if (this.isFullCircle) {
+      return renderSecondaryLine({
         originAngle,
         endAngle,
         color: this.accentColor,
-      })}
+      });
+    }
+    // Clipped to the lane arch (the design's track-mask model): the open
+    // 270 sector's origin overshoots the cut and is trimmed flush into the
+    // arch's inscribed round tip, as is the value-end tip circle when it
+    // protrudes past a cut.
+    const drawOriginAngle =
+      this.sector === GaugeRadialProportionalSector.deg270
+        ? originAngle - TRACK_END_CUT_INSET_DEG
+        : originAngle;
+    return svg`
+      <clipPath id="split-secondary-lane-clip">
+        <path d=${this.secondaryLaneArch}></path>
+      </clipPath>
+      <g clip-path="url(#split-secondary-lane-clip)">
+        ${renderSecondaryLine({
+          originAngle: drawOriginAngle,
+          endAngle,
+          color: this.accentColor,
+        })}
+      </g>
     `;
   }
 
