@@ -42,6 +42,10 @@ import {
   type CenterReadoutEntry,
 } from '../readout/center-readout.js';
 import {ReadoutSize} from '../readout/readout.js';
+import {
+  IdTagOrientation,
+  type AutomationButtonReadoutStack,
+} from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 
 export enum GaugeRadialProportionalSector {
   deg360 = '360',
@@ -147,6 +151,11 @@ const SECONDARY_MAXMIN_LABEL_Y = 92;
    while ticks, labels, advices and the regular-colored setpoint remain). */
 const OFF_DISC_RADIUS = BAND_OUTER_RADIUS + 24;
 
+/* Compact face crop: the design crops the 512 watch canvas to ~392 units
+   (512 × (1 − 2 × 0.1542)), i.e. 12 units of padding beyond the 184-unit
+   outer ring — no label reserve; the end labels sit inside the dial. */
+const COMPACT_BASE_PADDING = 12;
+
 /** Cap for full-circle arcs so start and end never coincide in path space. */
 const FULL_CIRCLE_EPSILON_DEG = 0.05;
 
@@ -197,6 +206,10 @@ function strongerTickmarkType(
  *   renders with a divider.
  * - **Center content**: optional readout(s) with `label`/`unit`, a `name`
  *   row, and an `icon` slot above the readout.
+ * - **Sizes**: `large` renders the full frame with scale labels, in-dial
+ *   readout(s) and name row. The compact default crops the face to the dial,
+ *   keeps icon, band, ticks, min/max end labels and setpoint, and renders a
+ *   readout stack below (`hasLabelStack`, `tag`) — one value row per value.
  * - **Setpoint via mixin**: `setpoint`, `newSetpoint`, `touching`, deadband
  *   tuning and confirm animation are inherited from `SetpointMixin`.
  *
@@ -208,6 +221,9 @@ function strongerTickmarkType(
  *   value lane, or the medium/off priorities.
  * - `priority: off` blanks the value graphics but keeps the instrument
  *   legible.
+ * - The compact stack renders whole-number value rows only, and no setpoint
+ *   row. **TODO(designer)**: setpoint row and secondary-row device icon
+ *   (e.g. battery) need obc-automation-button-readout-stack support.
  *
  * ## Slots
  *
@@ -237,6 +253,7 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
   @property({type: String}) state: InstrumentState = InstrumentState.active;
   @property({type: String}) sector: GaugeRadialProportionalSector =
     GaugeRadialProportionalSector.deg270;
+  /** @availableWhen large==true */
   @property({type: String}) alignment: GaugeRadialProportionalAlignment =
     GaugeRadialProportionalAlignment.outside;
   @property({type: String}) priority: GaugeRadialProportionalPriority =
@@ -260,18 +277,22 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
   /**
    * When `true`, shows the center readout (and the secondary readout when
    * `secondaryValue` is set). Default `false`.
+   * @availableWhen large==true
    */
   @property({type: Boolean}) hasReadout = false;
   /** @availableWhen hasReadout==true */
   @property({type: String}) label = '';
-  /** @availableWhen hasReadout==true */
+  /** Unit for the in-dial readout (large) and the compact stack rows. */
   @property({type: String}) unit = '';
   /** @availableWhen secondaryValue!=undefined */
   @property({type: String}) secondaryLabel = '';
   /** @availableWhen secondaryValue!=undefined */
   @property({type: String}) secondaryUnit = '';
   @property({type: Number}) fractionDigits = 0;
-  /** Name row shown under the readout (uppercase overline style). */
+  /**
+   * Name row shown under the readout (uppercase overline style).
+   * @availableWhen large==true
+   */
   @property({type: String}) name = '';
   /**
    * Outer-ring diameter in CSS pixels. When set, the instrument renders at a
@@ -279,6 +300,17 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
    */
   @property({type: Number, attribute: 'face-diameter', reflect: true})
   faceDiameter: number | undefined;
+  /**
+   * Show the full-size frame: `alignment`-controlled scale labels, in-dial
+   * readouts and the name row. When `false` (default), the compact variant
+   * renders — a cropped face with icon-only center content and a readout
+   * stack below.
+   */
+  @property({type: Boolean}) large = false;
+  /** Render the readout stack below the face in the compact variant. */
+  @property({type: Boolean, attribute: false}) hasLabelStack = true;
+  /** Identifier line under the compact readout stack, e.g. '#0001'. */
+  @property({type: String}) tag = '';
 
   private _frame: RadialFrame | undefined;
   private _hostSizePinned = false;
@@ -293,7 +325,7 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
     super.updated(changed);
     this._hostSizePinned = applyPinnedHostSize(
       this,
-      this._frame,
+      this.large ? this._frame : undefined,
       this._hostSizePinned
     );
   }
@@ -307,6 +339,19 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
 
   private get isFullCircle(): boolean {
     return this.sector === GaugeRadialProportionalSector.deg360;
+  }
+
+  /** Compact always uses the max-min end-label layout; `alignment` applies when large. */
+  private get effectiveAlignment(): GaugeRadialProportionalAlignment {
+    return this.large
+      ? this.alignment
+      : GaugeRadialProportionalAlignment.maxMin;
+  }
+
+  /** Compact sizes by width only (the stack extends the host downward). */
+  private get compactContainerPx(): {width: number; height: number} {
+    const {width} = measureContainerPx(this);
+    return {width, height: width};
   }
 
   /** The Figma off face: flat disc, regular-colored setpoint. Priority-only. */
@@ -428,9 +473,9 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
     // (180°) interval label would sit on the center name/readout cluster —
     // the design keeps only the min label there (Inside/360 variants).
     const suppressIntervalLabels =
-      (this.alignment === GaugeRadialProportionalAlignment.maxMin &&
+      (this.effectiveAlignment === GaugeRadialProportionalAlignment.maxMin &&
         !this.isFullCircle) ||
-      (this.alignment === GaugeRadialProportionalAlignment.inside &&
+      (this.effectiveAlignment === GaugeRadialProportionalAlignment.inside &&
         this.isFullCircle);
 
     const upsertTickmark = (
@@ -837,7 +882,7 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
     if (
       this.secondaryValue === undefined ||
       !this.showLabels ||
-      this.alignment !== GaugeRadialProportionalAlignment.maxMin ||
+      this.effectiveAlignment !== GaugeRadialProportionalAlignment.maxMin ||
       this.isFullCircle
     ) {
       return nothing;
@@ -856,6 +901,33 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
         text-anchor="end"
       >${this.maxValue}</text>
     `;
+  }
+
+  private get labelStackReadouts(): AutomationButtonReadoutStack[] {
+    const readouts: AutomationButtonReadoutStack[] = [
+      {
+        type: 'value',
+        value: this.clampedValue,
+        nDigits: 3,
+        unit: this.unit,
+        direction: 'right',
+        icon: 'chevron',
+      },
+    ];
+    if (this.secondaryValue !== undefined) {
+      // TODO(designer): the design shows a device-specific icon (e.g. battery)
+      // on the secondary row; obc-automation-button-readout-stack has no such
+      // icon option yet.
+      readouts.push({
+        type: 'value',
+        value: this.clamp(this.secondaryValue),
+        nDigits: 3,
+        unit: this.secondaryUnit,
+        direction: 'right',
+        icon: 'none',
+      });
+    }
+    return readouts;
   }
 
   private renderCenterContent() {
@@ -885,23 +957,25 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
     }
     return html`
       <div class="icon-anchor"><slot name="icon"></slot></div>
-      ${this.hasReadout
+      ${this.large && this.hasReadout
         ? html`
             <div class="readout-row">
               ${renderCenterReadouts(entries, CenterReadoutArrangement.row)}
             </div>
           `
         : nothing}
-      ${this.name ? html`<div class="gauge-name">${this.name}</div>` : nothing}
+      ${this.large && this.name
+        ? html`<div class="gauge-name">${this.name}</div>`
+        : nothing}
     `;
   }
 
   override render() {
     const tickmarks = this.tickmarks;
     const tickmarksInside =
-      this.alignment === GaugeRadialProportionalAlignment.inside;
+      this.effectiveAlignment === GaugeRadialProportionalAlignment.inside;
     const endLabelsMaxMin =
-      this.alignment === GaugeRadialProportionalAlignment.maxMin;
+      this.effectiveAlignment === GaugeRadialProportionalAlignment.maxMin;
     const areas = this.areas;
     const hasHorizontalEndLabels = tickmarks.some((t) => {
       if (t.text === undefined) {
@@ -911,18 +985,21 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
       return Math.abs(angle - 90) < 1 || Math.abs(angle - 270) < 1;
     });
     const frame = computeRadialFrame({
-      basePadding: 48,
-      labelWidthPx: tickmarksInside
-        ? 0
-        : estimateLabelWidthPx(tickmarks.map((t) => t.text)),
+      basePadding: this.large ? 48 : COMPACT_BASE_PADDING,
+      labelWidthPx:
+        !this.large || tickmarksInside
+          ? 0
+          : estimateLabelWidthPx(tickmarks.map((t) => t.text)),
       labelDropPx:
-        tickmarksInside || !hasHorizontalEndLabels
+        !this.large || tickmarksInside || !hasHorizontalEndLabels
           ? 0
           : endLabelsMaxMin
             ? END_MAXMIN_LABEL_DROP_PX
             : SIDE_LABEL_DROP_PX,
       clips: {top: 0, bottom: 0, left: 0, right: 0},
-      containerPx: measureContainerPx(this),
+      containerPx: this.large
+        ? measureContainerPx(this)
+        : this.compactContainerPx,
       faceDiameter: this.faceDiameter,
       zoomToFitArc: false,
       areas,
@@ -947,8 +1024,9 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
 
     const pct = (anchorY: number) =>
       `${(((anchorY - frame.y) / frame.height) * 100).toFixed(4)}%`;
-    const iconAnchorY = this.hasReadout ? ICON_ANCHOR_Y : ICON_ONLY_ANCHOR_Y;
-    const iconSize = this.hasReadout ? ICON_SIZE : ICON_ONLY_SIZE;
+    const iconAnchorY =
+      this.large && this.hasReadout ? ICON_ANCHOR_Y : ICON_ONLY_ANCHOR_Y;
+    const iconSize = this.large && this.hasReadout ? ICON_SIZE : ICON_ONLY_SIZE;
     const nameAnchorY = this.isFullCircle
       ? NAME_ANCHOR_Y_360
       : NAME_ANCHOR_Y_270;
@@ -957,57 +1035,81 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
       READOUT_ANCHOR_Y
     )}; --name-top: ${pct(nameAnchorY)}; --scale: ${frame.scale};`;
 
+    const faceStyle =
+      !this.large && frame.hostWidthPx !== undefined
+        ? `width: ${frame.hostWidthPx}px; height: ${frame.hostWidthPx}px;`
+        : nothing;
+    const face = html`
+      <div class="container" style=${faceStyle}>
+        ${this.isOff
+          ? html`<svg class="layer" viewBox=${frame.viewBox}>
+              <circle
+                r=${OFF_DISC_RADIUS}
+                fill="var(--instrument-frame-secondary-color)"
+                stroke="var(--instrument-frame-tertiary-color)"
+                stroke-width="1"
+                vector-effect="non-scaling-stroke"
+              ></circle>
+            </svg>`
+          : nothing}
+        <obc-watch
+          class="layer"
+          .state=${effectiveState}
+          .priority=${this.watchPriority}
+          .angleSetpoint=${setpointAngle}
+          .newAngleSetpoint=${newSetpointAngle}
+          .atAngleSetpoint=${this.computeAtSetpoint(value)}
+          .angleSetpointAtZeroDeadband=${this.setpointAtZeroDeadband}
+          .setpointOverride=${this.setpointOverride || this.isOff}
+          .animateSetpoint=${this.animateSetpoint}
+          .tickmarks=${shownTickmarks}
+          .tickmarksInside=${tickmarksInside}
+          .tickmarkStyle=${this.tickmarkStyle}
+          .advices=${this._advices}
+          .areas=${areas}
+          .watchCircleType=${WatchCircleType.double}
+          .hasBackgroundCircle=${true}
+          .roundBandCuts=${!this.isSplit}
+          .barAreas=${this.barAreas}
+          .endLabelsMaxMin=${endLabelsMaxMin}
+          .arcFrame=${frame}
+        ></obc-watch>
+        <svg class="layer" viewBox=${frame.viewBox}>
+          ${this.renderSplitFrame()} ${this.renderZeroLine()}
+          ${this.renderSecondaryArc()} ${this.renderNeedle()}
+          ${this.renderSecondaryMaxMinLabels()}
+        </svg>
+        ${this.renderCenterContent()}
+      </div>
+    `;
     return html`
       <div
         class=${classMap({
           'gauge-root': true,
-          'face-pinned': this.faceDiameter !== undefined,
+          compact: !this.large,
+          'face-pinned': this.large && this.faceDiameter !== undefined,
           'priority-medium':
             this.priority === GaugeRadialProportionalPriority.medium,
         })}
         style=${anchors}
       >
-        <div class="container">
-          ${this.isOff
-            ? html`<svg class="layer" viewBox=${frame.viewBox}>
-                <circle
-                  r=${OFF_DISC_RADIUS}
-                  fill="var(--instrument-frame-secondary-color)"
-                  stroke="var(--instrument-frame-tertiary-color)"
-                  stroke-width="1"
-                  vector-effect="non-scaling-stroke"
-                ></circle>
-              </svg>`
-            : nothing}
-          <obc-watch
-            class="layer"
-            .state=${effectiveState}
-            .priority=${this.watchPriority}
-            .angleSetpoint=${setpointAngle}
-            .newAngleSetpoint=${newSetpointAngle}
-            .atAngleSetpoint=${this.computeAtSetpoint(value)}
-            .angleSetpointAtZeroDeadband=${this.setpointAtZeroDeadband}
-            .setpointOverride=${this.setpointOverride || this.isOff}
-            .animateSetpoint=${this.animateSetpoint}
-            .tickmarks=${shownTickmarks}
-            .tickmarksInside=${tickmarksInside}
-            .tickmarkStyle=${this.tickmarkStyle}
-            .advices=${this._advices}
-            .areas=${areas}
-            .watchCircleType=${WatchCircleType.double}
-            .hasBackgroundCircle=${true}
-            .roundBandCuts=${!this.isSplit}
-            .barAreas=${this.barAreas}
-            .endLabelsMaxMin=${endLabelsMaxMin}
-            .arcFrame=${frame}
-          ></obc-watch>
-          <svg class="layer" viewBox=${frame.viewBox}>
-            ${this.renderSplitFrame()} ${this.renderZeroLine()}
-            ${this.renderSecondaryArc()} ${this.renderNeedle()}
-            ${this.renderSecondaryMaxMinLabels()}
-          </svg>
-          ${this.renderCenterContent()}
-        </div>
+        ${this.large
+          ? face
+          : html`
+              <div class="compact-column">
+                ${face}
+                ${this.hasLabelStack
+                  ? html`
+                      <obc-automation-button-readout-stack
+                        class="label-stack"
+                        .readouts=${this.labelStackReadouts}
+                        .tag=${this.tag || null}
+                        .idTagOrientation=${IdTagOrientation.bottom}
+                      ></obc-automation-button-readout-stack>
+                    `
+                  : nothing}
+              </div>
+            `}
       </div>
     `;
   }

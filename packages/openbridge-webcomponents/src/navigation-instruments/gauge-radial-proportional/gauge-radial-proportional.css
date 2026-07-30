@@ -116,3 +116,28 @@
   white-space: nowrap;
   z-index: 1;
 }
+
+/* ---------- Compact variant ----------
+ * Width-driven flex column: square face on top, readout stack below (design
+ * gap 8px). The dial is no longer height-fitted, so the square-fit rules of
+ * the large layout are reset. */
+.gauge-root.compact {
+  width: 100%;
+  max-height: none;
+  aspect-ratio: auto;
+  top: 0;
+  transform: none;
+}
+
+.compact-column {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  width: 100%;
+}
+
+.compact-column .container {
+  width: 100%;
+  aspect-ratio: 1;
+}

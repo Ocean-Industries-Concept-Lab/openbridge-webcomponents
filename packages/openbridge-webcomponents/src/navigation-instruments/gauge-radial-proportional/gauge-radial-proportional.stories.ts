@@ -9,6 +9,8 @@ import {
 import './gauge-radial-proportional.js';
 import '../../icons/icon-placeholder-device-on.js';
 import '../../icons/icon-placeholder-device-off-f.js';
+import '../../icons/icon-diesel-generator-on.js';
+import '../../icons/icon-pump-on-horizontal.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {AdviceType} from '../watch/advice.js';
 
@@ -16,6 +18,7 @@ type GaugeRadialProportionalStoryArgs = Partial<ObcGaugeRadialProportional> & {
   width?: number;
   height?: number;
   hasIcon?: boolean;
+  icon?: 'device' | 'generator' | 'pump';
 };
 
 const meta = {
@@ -25,6 +28,7 @@ const meta = {
   decorators: [widthDecorator],
   args: {
     width: 400,
+    large: true,
     value: 65,
     minValue: 0,
     maxValue: 100,
@@ -62,6 +66,13 @@ const meta = {
     showLabels: {control: 'boolean'},
     hasReadout: {control: 'boolean'},
     hasIcon: {control: 'boolean'},
+    large: {control: 'boolean'},
+    hasLabelStack: {control: 'boolean'},
+    tag: {control: 'text'},
+    icon: {
+      control: 'select',
+      options: ['device', 'generator', 'pump'],
+    },
     label: {control: 'text'},
     unit: {control: 'text'},
     secondaryLabel: {control: 'text'},
@@ -94,6 +105,9 @@ const meta = {
       .secondaryTickmarkInterval=${args.secondaryTickmarkInterval ?? 10}
       .advices=${args.advices ?? []}
       .faceDiameter=${args.faceDiameter}
+      .large=${args.large ?? false}
+      .hasLabelStack=${args.hasLabelStack ?? true}
+      .tag=${args.tag ?? ''}
     >
       ${args.hasIcon
         ? args.priority === GaugeRadialProportionalPriority.off
@@ -101,10 +115,20 @@ const meta = {
               slot="icon"
               .useCssColor=${true}
             ></obi-placeholder-device-off-f>`
-          : html`<obi-placeholder-device-on
-              slot="icon"
-              .useCssColor=${true}
-            ></obi-placeholder-device-on>`
+          : args.icon === 'generator'
+            ? html`<obi-diesel-generator-on
+                slot="icon"
+                .useCssColor=${true}
+              ></obi-diesel-generator-on>`
+            : args.icon === 'pump'
+              ? html`<obi-pump-on-horizontal
+                  slot="icon"
+                  .useCssColor=${true}
+                ></obi-pump-on-horizontal>`
+              : html`<obi-placeholder-device-on
+                  slot="icon"
+                  .useCssColor=${true}
+                ></obi-placeholder-device-on>`
         : ''}
     </obc-gauge-radial-proportional>
   `,
@@ -147,6 +171,54 @@ export const PrimarySecondary270: Story = {
 export const IconOnly: Story = {
   args: {
     hasReadout: false,
+  },
+};
+
+export const Compact: Story = {
+  args: {
+    width: 240,
+    height: 320,
+    large: false,
+    hasReadout: false,
+    unit: '%',
+    tag: '#0001',
+    icon: 'pump',
+  },
+};
+
+export const CompactDouble: Story = {
+  args: {
+    width: 240,
+    height: 320,
+    large: false,
+    hasReadout: false,
+    unit: '%',
+    secondaryValue: 45,
+    secondaryUnit: '%',
+    tag: '#0001',
+    icon: 'pump',
+  },
+};
+
+export const Generator: Story = {
+  args: {
+    sector: GaugeRadialProportionalSector.deg360,
+    icon: 'generator',
+    unit: '%',
+    label: 'Load',
+    name: 'DG 1',
+  },
+};
+
+export const MotorsAndPumps: Story = {
+  args: {
+    icon: 'pump',
+    unit: '%',
+    label: 'Speed',
+    name: 'Pump 1',
+    advices: [
+      {minValue: 90, maxValue: 100, type: AdviceType.caution, hinted: false},
+    ],
   },
 };
 
