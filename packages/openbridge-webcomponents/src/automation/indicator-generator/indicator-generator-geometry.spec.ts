@@ -3,7 +3,7 @@ import {
   arcPath,
   progressSweep,
   polarPoint,
-} from './indicator-generator-geometry';
+} from './indicator-generator-geometry.js';
 
 describe('progressSweep', () => {
   it('is 0 at level 0', () => {

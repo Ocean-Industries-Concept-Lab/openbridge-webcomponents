@@ -5,7 +5,7 @@ import {
   fillHeight,
   trendPolylinePoints,
   roundedLeftRectPath,
-} from './linear-indicator';
+} from './linear-indicator.js';
 
 describe('clampPercent', () => {
   it('clamps below 0 to 0', () => {
