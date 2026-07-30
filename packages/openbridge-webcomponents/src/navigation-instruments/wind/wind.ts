@@ -7,6 +7,8 @@ import {
   WatchCircleType,
   innerRingRadiusFor,
 } from '../watch/watch.js';
+import {renderWindForcePattern} from '../watch/force-pattern.js';
+import {Priority} from '../types.js';
 import {customElement} from '../../decorator.js';
 
 export interface WindHistogramData {
@@ -21,6 +23,11 @@ export enum WindVariant {
   large = 'large',
 }
 
+export enum WindVisualization {
+  histogram = 'histogram',
+  forceGraphics = 'forceGraphics',
+}
+
 type ResolvedWindVariant =
   | WindVariant.small
   | WindVariant.medium
@@ -29,6 +36,8 @@ type ResolvedWindVariant =
 const WIND_SMALL_MAX_PX_DEFAULT = 96;
 const WIND_MEDIUM_MAX_PX_DEFAULT = 200;
 const WIND_HISTOGRAM_MIN_RADIUS = 50;
+const WIND_PATTERN_SCALE_DOUBLE = 0.875;
+const WIND_PATTERN_SCALE_SINGLE = 1.28125;
 
 /**
  * @stable
@@ -44,6 +53,11 @@ export class ObcWind extends LitElement {
   @property({type: String}) variant: WindVariant = WindVariant.auto;
   @property({type: Number}) smallVariantMaxPx = WIND_SMALL_MAX_PX_DEFAULT;
   @property({type: Number}) mediumVariantMaxPx = WIND_MEDIUM_MAX_PX_DEFAULT;
+  /** Center visualization: wind histogram (default) or the force-graphics streak field. */
+  @property({type: String}) visualization: WindVisualization =
+    WindVisualization.histogram;
+  /** Color priority: `Priority.enhanced` uses the blue/enhanced palette (default: `Priority.regular`). */
+  @property({type: String}) priority: Priority = Priority.regular;
 
   @state() private _autoVariant: ResolvedWindVariant = WindVariant.medium;
 
@@ -146,11 +160,15 @@ export class ObcWind extends LitElement {
       resolveWindArrowPlacement(variant);
     return html`
       <div class="wrapper variant-${variant}">
-        ${this.renderWindHistogram(variant)}
+        ${this.renderVisualizationLayer(variant)}
         <obc-watch
           .watchCircleType=${watchCircleType}
+          .priority=${this.priority}
           .windKnots=${this.currentWindSpeedKnots}
           .windFromDirectionDeg=${this.currentWindFromDirection}
+          .windColor=${this.priority === Priority.enhanced
+            ? 'var(--instrument-enhanced-secondary-color)'
+            : undefined}
           .windSymbolRadius=${windSymbolRadius}
           .scaleWindIcon=${scaleWindIcon}
           crosshairEnabled
@@ -162,6 +180,31 @@ export class ObcWind extends LitElement {
         ></obc-watch>
       </div>
     `;
+  }
+
+  private get visualizationColor(): string {
+    return this.priority === Priority.enhanced
+      ? 'var(--instrument-enhanced-tertiary-color)'
+      : 'var(--instrument-regular-tertiary-color)';
+  }
+
+  private renderVisualizationLayer(variant: ResolvedWindVariant) {
+    if (this.visualization === WindVisualization.forceGraphics) {
+      return html`
+        <svg width="100%" height="100%" viewBox="-200 -200 400 400">
+          ${renderWindForcePattern({
+            fromDirectionDeg: this.currentWindFromDirection,
+            radius: resolveHistogramMaxRadius(variant),
+            patternScale:
+              variant === WindVariant.large
+                ? WIND_PATTERN_SCALE_DOUBLE
+                : WIND_PATTERN_SCALE_SINGLE,
+            color: this.visualizationColor,
+          })}
+        </svg>
+      `;
+    }
+    return this.renderWindHistogram(variant);
   }
 
   private renderWindHistogram(variant: ResolvedWindVariant) {
@@ -239,9 +282,9 @@ export class ObcWind extends LitElement {
           cy="0"
           r="${maxRadius}"
           vector-effect="non-scaling-stroke"
-          stroke="var(--instrument-regular-tertiary-color)"
+          stroke="${this.visualizationColor}"
           stroke-width="1"
-          fill="var(--instrument-regular-tertiary-color)"
+          fill="${this.visualizationColor}"
           mask="url(#mask)"
         />
       </svg>
