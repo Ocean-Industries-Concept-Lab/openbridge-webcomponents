@@ -1,5 +1,9 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {ObcPitchRoll, PitchRollPriorityElement} from './pitch-roll.js';
+import {
+  ObcPitchRoll,
+  PitchRollPriorityElement,
+  PitchRollType,
+} from './pitch-roll.js';
 import './pitch-roll.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {Priority} from '../types.js';
@@ -34,6 +38,8 @@ const meta: Meta<typeof ObcPitchRoll> = {
   },
   argTypes: {
     width: {control: {type: 'range', min: 100, max: 1000, step: 1}},
+    type: {control: 'select', options: Object.values(PitchRollType)},
+    isSingleScale: {control: false, table: {disable: true}},
     pitch: {control: {type: 'range', min: -10, max: 10, step: 0.1}},
     roll: {control: {type: 'range', min: -10, max: 10, step: 0.1}},
     scaleForeImage: {control: {type: 'range', min: 0, max: 2, step: 0.01}},
@@ -130,5 +136,25 @@ export const ZoomedInRectangular: Story = {
     maxAvgRoll: 10,
     maxPitchAdvice: 4,
     maxRollAdvice: 12,
+  },
+};
+
+export const SingleScale: Story = {
+  args: {
+    type: PitchRollType.singleScale,
+  },
+};
+
+export const SingleScaleWithReadout: Story = {
+  args: {
+    type: PitchRollType.singleScale,
+    hasReadout: true,
+  },
+};
+
+export const SingleScaleZoomedIn: Story = {
+  args: {
+    type: PitchRollType.singleScale,
+    zoomToFitArc: true,
   },
 };
