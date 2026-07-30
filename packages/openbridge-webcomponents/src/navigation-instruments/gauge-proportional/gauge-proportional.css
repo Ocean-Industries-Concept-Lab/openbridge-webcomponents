@@ -75,7 +75,13 @@
   z-index: 1;
 }
 
-.icon-anchor ::slotted(*) {
+.icon-anchor slot {
+  display: contents;
+}
+
+/* Sizes both slotted icons and the device subclasses' slot-fallback icons. */
+.icon-anchor ::slotted(*),
+.icon-anchor slot > * {
   display: block;
   width: 100%;
   height: 100%;

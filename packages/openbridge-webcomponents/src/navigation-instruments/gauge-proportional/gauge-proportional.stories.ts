@@ -1,30 +1,27 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
 import {
-  GaugeRadialProportionalAlignment,
-  GaugeRadialProportionalPriority,
-  GaugeRadialProportionalSector,
-  ObcGaugeRadialProportional,
-} from './gauge-radial-proportional.js';
-import './gauge-radial-proportional.js';
+  GaugeProportionalAlignment,
+  GaugeProportionalPriority,
+  GaugeProportionalSector,
+  ObcGaugeProportional,
+} from './gauge-proportional.js';
+import './gauge-proportional.js';
 import '../../icons/icon-placeholder-device-on.js';
 import '../../icons/icon-placeholder-device-off-f.js';
-import '../../icons/icon-diesel-generator-dc.js';
-import '../../icons/icon-pump-on-horizontal.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {AdviceType} from '../watch/advice.js';
 
-type GaugeRadialProportionalStoryArgs = Partial<ObcGaugeRadialProportional> & {
+type GaugeProportionalStoryArgs = Partial<ObcGaugeProportional> & {
   width?: number;
   height?: number;
   hasIcon?: boolean;
-  icon?: 'device' | 'generator' | 'pump';
 };
 
 const meta = {
-  title: 'Instruments/Gauge Radial Proportional',
+  title: 'Instruments/Gauge Proportional',
   tags: ['autodocs', 'wip', 'skip-test'],
-  component: 'obc-gauge-radial-proportional',
+  component: 'obc-gauge-proportional',
   decorators: [widthDecorator],
   args: {
     width: 400,
@@ -45,15 +42,15 @@ const meta = {
     height: {control: {type: 'range', min: 100, max: 1000, step: 1}},
     sector: {
       control: 'select',
-      options: Object.values(GaugeRadialProportionalSector),
+      options: Object.values(GaugeProportionalSector),
     },
     alignment: {
       control: 'select',
-      options: Object.values(GaugeRadialProportionalAlignment),
+      options: Object.values(GaugeProportionalAlignment),
     },
     priority: {
       control: 'select',
-      options: Object.values(GaugeRadialProportionalPriority),
+      options: Object.values(GaugeProportionalPriority),
     },
     value: {control: 'number'},
     secondaryValue: {control: 'number'},
@@ -69,10 +66,6 @@ const meta = {
     large: {control: 'boolean'},
     hasLabelStack: {control: 'boolean'},
     tag: {control: 'text'},
-    icon: {
-      control: 'select',
-      options: ['device', 'generator', 'pump'],
-    },
     label: {control: 'text'},
     unit: {control: 'text'},
     secondaryLabel: {control: 'text'},
@@ -83,15 +76,15 @@ const meta = {
     },
     advices: {control: 'object'},
   },
-  render: (args: GaugeRadialProportionalStoryArgs) => html`
-    <obc-gauge-radial-proportional
+  render: (args: GaugeProportionalStoryArgs) => html`
+    <obc-gauge-proportional
       .value=${args.value ?? 0}
       .minValue=${args.minValue ?? 0}
       .maxValue=${args.maxValue ?? 100}
       .secondaryValue=${args.secondaryValue}
-      .sector=${args.sector ?? GaugeRadialProportionalSector.deg270}
-      .alignment=${args.alignment ?? GaugeRadialProportionalAlignment.outside}
-      .priority=${args.priority ?? GaugeRadialProportionalPriority.regular}
+      .sector=${args.sector ?? GaugeProportionalSector.deg270}
+      .alignment=${args.alignment ?? GaugeProportionalAlignment.outside}
+      .priority=${args.priority ?? GaugeProportionalPriority.regular}
       .showLabels=${args.showLabels ?? false}
       .hasReadout=${args.hasReadout ?? false}
       .label=${args.label ?? ''}
@@ -110,50 +103,40 @@ const meta = {
       .tag=${args.tag ?? ''}
     >
       ${args.hasIcon
-        ? args.priority === GaugeRadialProportionalPriority.off
+        ? args.priority === GaugeProportionalPriority.off
           ? html`<obi-placeholder-device-off-f
               slot="icon"
               .useCssColor=${true}
             ></obi-placeholder-device-off-f>`
-          : args.icon === 'generator'
-            ? html`<obi-diesel-generator-dc
-                slot="icon"
-                .useCssColor=${true}
-              ></obi-diesel-generator-dc>`
-            : args.icon === 'pump'
-              ? html`<obi-pump-on-horizontal
-                  slot="icon"
-                  .useCssColor=${true}
-                ></obi-pump-on-horizontal>`
-              : html`<obi-placeholder-device-on
-                  slot="icon"
-                  .useCssColor=${true}
-                ></obi-placeholder-device-on>`
+          : html`<obi-placeholder-device-on
+              slot="icon"
+              .useCssColor=${true}
+            ></obi-placeholder-device-on>`
         : ''}
-    </obc-gauge-radial-proportional>
+    </obc-gauge-proportional>
   `,
-} satisfies Meta<GaugeRadialProportionalStoryArgs>;
+} satisfies Meta<GaugeProportionalStoryArgs>;
 
 export default meta;
-type Story = StoryObj<GaugeRadialProportionalStoryArgs>;
+type Story = StoryObj<GaugeProportionalStoryArgs>;
 
 export const Default: Story = {};
 
 export const Sector360: Story = {
   args: {
-    sector: GaugeRadialProportionalSector.deg360,
+    sector: GaugeProportionalSector.deg360,
   },
 };
 
 export const Sector270PosNeg: Story = {
   args: {
-    sector: GaugeRadialProportionalSector.deg270PosNeg,
+    sector: GaugeProportionalSector.deg270PosNeg,
   },
 };
 
 export const PrimarySecondary: Story = {
   args: {
-    sector: GaugeRadialProportionalSector.deg360,
+    sector: GaugeProportionalSector.deg360,
     secondaryValue: 45,
     secondaryLabel: 'Label',
     secondaryUnit: 'Unit',
@@ -182,7 +165,6 @@ export const Compact: Story = {
     hasReadout: false,
     unit: '%',
     tag: '#0001',
-    icon: 'pump',
     advices: [
       {minValue: 90, maxValue: 100, type: AdviceType.caution, hinted: false},
     ],
@@ -199,29 +181,6 @@ export const CompactDouble: Story = {
     secondaryValue: 45,
     secondaryUnit: '%',
     tag: '#0001',
-    icon: 'pump',
-    advices: [
-      {minValue: 90, maxValue: 100, type: AdviceType.caution, hinted: false},
-    ],
-  },
-};
-
-export const Generator: Story = {
-  args: {
-    sector: GaugeRadialProportionalSector.deg360,
-    icon: 'generator',
-    unit: '%',
-    label: 'Load',
-    name: 'DG 1',
-  },
-};
-
-export const MotorsAndPumps: Story = {
-  args: {
-    icon: 'pump',
-    unit: '%',
-    label: 'Speed',
-    name: 'Pump 1',
     advices: [
       {minValue: 90, maxValue: 100, type: AdviceType.caution, hinted: false},
     ],
@@ -230,45 +189,45 @@ export const MotorsAndPumps: Story = {
 
 export const Enhanced: Story = {
   args: {
-    priority: GaugeRadialProportionalPriority.enhanced,
+    priority: GaugeProportionalPriority.enhanced,
   },
 };
 
 export const Medium: Story = {
   args: {
-    priority: GaugeRadialProportionalPriority.medium,
+    priority: GaugeProportionalPriority.medium,
   },
 };
 
 export const Off: Story = {
   args: {
-    sector: GaugeRadialProportionalSector.deg360,
-    priority: GaugeRadialProportionalPriority.off,
+    sector: GaugeProportionalSector.deg360,
+    priority: GaugeProportionalPriority.off,
   },
 };
 
 export const InsideLabels: Story = {
   args: {
-    alignment: GaugeRadialProportionalAlignment.inside,
+    alignment: GaugeProportionalAlignment.inside,
   },
 };
 
 export const Sector360InsideLabels: Story = {
   args: {
-    sector: GaugeRadialProportionalSector.deg360,
-    alignment: GaugeRadialProportionalAlignment.inside,
+    sector: GaugeProportionalSector.deg360,
+    alignment: GaugeProportionalAlignment.inside,
   },
 };
 
 export const MaxMinLabels: Story = {
   args: {
-    alignment: GaugeRadialProportionalAlignment.maxMin,
+    alignment: GaugeProportionalAlignment.maxMin,
   },
 };
 
 export const PrimarySecondaryMaxMin: Story = {
   args: {
-    alignment: GaugeRadialProportionalAlignment.maxMin,
+    alignment: GaugeProportionalAlignment.maxMin,
     secondaryValue: 45,
     secondaryLabel: 'Label',
     secondaryUnit: 'Unit',
@@ -277,8 +236,8 @@ export const PrimarySecondaryMaxMin: Story = {
 
 export const WithAdvices: Story = {
   args: {
-    sector: GaugeRadialProportionalSector.deg270PosNeg,
-    alignment: GaugeRadialProportionalAlignment.maxMin,
+    sector: GaugeProportionalSector.deg270PosNeg,
+    alignment: GaugeProportionalAlignment.maxMin,
     advices: [
       {
         minValue: 85,
@@ -292,7 +251,7 @@ export const WithAdvices: Story = {
 
 export const BipolarPosNeg: Story = {
   args: {
-    sector: GaugeRadialProportionalSector.deg270PosNeg,
+    sector: GaugeProportionalSector.deg270PosNeg,
     minValue: -100,
     maxValue: 100,
     value: 30,

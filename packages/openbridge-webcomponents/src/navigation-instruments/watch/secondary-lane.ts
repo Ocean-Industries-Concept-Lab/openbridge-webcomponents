@@ -6,7 +6,7 @@ import {WatchCircleType, innerRingRadiusFor} from './watch.js';
  * "pitch-rpm" split, Figma: divider outer edge at 264 diameter): a thin
  * secondary value line at the band's inner edge, a face-colored divider, and
  * a narrowed primary sub-band. Used by `obc-top-view-propulsion` (pitch-rpm)
- * and `obc-gauge-radial-proportional` (primary-secondary frame) so the lane
+ * and `obc-gauge-proportional` (primary-secondary frame) so the lane
  * geometry stays identical across instruments.
  */
 export const BAND_INNER_RADIUS = innerRingRadiusFor(WatchCircleType.double);

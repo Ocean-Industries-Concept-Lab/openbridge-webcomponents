@@ -1,8 +1,16 @@
-import {html, LitElement, nothing, PropertyValues, svg, unsafeCSS} from 'lit';
+import {
+  html,
+  LitElement,
+  nothing,
+  PropertyValues,
+  svg,
+  unsafeCSS,
+  type TemplateResult,
+} from 'lit';
 import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
-import componentStyle from './gauge-radial-proportional.css?inline';
+import componentStyle from './gauge-proportional.css?inline';
 import {customElement} from '../../decorator.js';
 import {InstrumentState, Priority} from '../types.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
@@ -47,13 +55,13 @@ import {
   type AutomationButtonReadoutStack,
 } from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 
-export enum GaugeRadialProportionalSector {
+export enum GaugeProportionalSector {
   deg360 = '360',
   deg270 = '270',
   deg270PosNeg = '270-pos-neg',
 }
 
-export enum GaugeRadialProportionalAlignment {
+export enum GaugeProportionalAlignment {
   outside = 'outside',
   inside = 'inside',
   maxMin = 'max-min',
@@ -67,14 +75,14 @@ export enum GaugeRadialProportionalAlignment {
  * ticks, labels, advices, readouts and the regular-colored setpoint marker
  * remain.
  */
-export enum GaugeRadialProportionalPriority {
+export enum GaugeProportionalPriority {
   regular = 'regular',
   enhanced = 'enhanced',
   medium = 'medium',
   off = 'off',
 }
 
-export interface GaugeRadialProportionalAdvice {
+export interface GaugeProportionalAdvice {
   minValue: number;
   maxValue: number;
   type: AdviceType;
@@ -187,7 +195,7 @@ function strongerTickmarkType(
 }
 
 /**
- * `<obc-gauge-radial-proportional>` — Radial gauge whose fill band length is
+ * `<obc-gauge-proportional>` — Radial gauge whose fill band length is
  * proportional to the value, with an optional secondary value lane and a
  * center readout cluster (the "Watch-face-gauge-proportional" design).
  *
@@ -243,11 +251,11 @@ function strongerTickmarkType(
  *   (e.g. `<obi-placeholder-device-on useCssColor>` for the device-token
  *   styling).
  *
- * @element obc-gauge-radial-proportional
+ * @element obc-gauge-proportional
  * @experimental
  */
-@customElement('obc-gauge-radial-proportional')
-export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
+@customElement('obc-gauge-proportional')
+export class ObcGaugeProportional extends SetpointMixin(LitElement) {
   @property({type: Number}) value = 0;
   @property({type: Number}) maxValue = 100;
   @property({type: Number}) minValue = 0;
@@ -259,13 +267,13 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
   @property({type: Number}) secondaryValue: number | undefined;
   /** Instrument state (active, loading, off). `priority: off` also renders the off face. */
   @property({type: String}) state: InstrumentState = InstrumentState.active;
-  @property({type: String}) sector: GaugeRadialProportionalSector =
-    GaugeRadialProportionalSector.deg270;
+  @property({type: String}) sector: GaugeProportionalSector =
+    GaugeProportionalSector.deg270;
   /** @availableWhen large==true */
-  @property({type: String}) alignment: GaugeRadialProportionalAlignment =
-    GaugeRadialProportionalAlignment.outside;
-  @property({type: String}) priority: GaugeRadialProportionalPriority =
-    GaugeRadialProportionalPriority.regular;
+  @property({type: String}) alignment: GaugeProportionalAlignment =
+    GaugeProportionalAlignment.outside;
+  @property({type: String}) priority: GaugeProportionalPriority =
+    GaugeProportionalPriority.regular;
   @property({type: Boolean}) showLabels: boolean = false;
   /**
    * Interval for primary tickmarks in value units.
@@ -281,7 +289,7 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
     TickmarkStyle.regular;
   /** Caution/alert arcs in value units. */
   @property({type: Array, attribute: false})
-  advices: GaugeRadialProportionalAdvice[] = [];
+  advices: GaugeProportionalAdvice[] = [];
   /**
    * When `true`, shows the center readout (and the secondary readout when
    * `secondaryValue` is set). Default `false`.
@@ -339,21 +347,19 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
   }
 
   private get sectorAngles(): {sweep: number; start: number} {
-    if (this.sector === GaugeRadialProportionalSector.deg360) {
+    if (this.sector === GaugeProportionalSector.deg360) {
       return {sweep: 360, start: 0};
     }
     return {sweep: 270, start: -135};
   }
 
   private get isFullCircle(): boolean {
-    return this.sector === GaugeRadialProportionalSector.deg360;
+    return this.sector === GaugeProportionalSector.deg360;
   }
 
   /** Compact always uses the max-min end-label layout; `alignment` applies when large. */
-  private get effectiveAlignment(): GaugeRadialProportionalAlignment {
-    return this.large
-      ? this.alignment
-      : GaugeRadialProportionalAlignment.maxMin;
+  private get effectiveAlignment(): GaugeProportionalAlignment {
+    return this.large ? this.alignment : GaugeProportionalAlignment.maxMin;
   }
 
   /** Compact sizes by width only (the stack extends the host downward). */
@@ -364,7 +370,7 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
 
   /** The Figma off face: flat disc, regular-colored setpoint. Priority-only. */
   private get isOff(): boolean {
-    return this.priority === GaugeRadialProportionalPriority.off;
+    return this.priority === GaugeProportionalPriority.off;
   }
 
   private get isValueGraphicsHidden(): boolean {
@@ -400,7 +406,7 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
    * pos/neg sector.
    */
   private get fillOriginValue(): number {
-    if (this.sector !== GaugeRadialProportionalSector.deg270PosNeg) {
+    if (this.sector !== GaugeProportionalSector.deg270PosNeg) {
       return this.minValue;
     }
     if (this.minValue < 0 && this.maxValue > 0) {
@@ -410,8 +416,8 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
   }
 
   private get watchPriority(): Priority {
-    return this.priority === GaugeRadialProportionalPriority.enhanced ||
-      this.priority === GaugeRadialProportionalPriority.medium
+    return this.priority === GaugeProportionalPriority.enhanced ||
+      this.priority === GaugeProportionalPriority.medium
       ? Priority.enhanced
       : Priority.regular;
   }
@@ -481,9 +487,9 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
     // (180°) interval label would sit on the center name/readout cluster —
     // the design keeps only the min label there (Inside/360 variants).
     const suppressIntervalLabels =
-      (this.effectiveAlignment === GaugeRadialProportionalAlignment.maxMin &&
+      (this.effectiveAlignment === GaugeProportionalAlignment.maxMin &&
         !this.isFullCircle) ||
-      (this.effectiveAlignment === GaugeRadialProportionalAlignment.inside &&
+      (this.effectiveAlignment === GaugeProportionalAlignment.inside &&
         this.isFullCircle);
 
     const upsertTickmark = (
@@ -611,8 +617,7 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
    */
   private renderZeroLine() {
     const hasAnchoredOrigin =
-      this.isFullCircle ||
-      this.sector === GaugeRadialProportionalSector.deg270PosNeg;
+      this.isFullCircle || this.sector === GaugeProportionalSector.deg270PosNeg;
     if (!hasAnchoredOrigin || this.isValueGraphicsHidden) {
       return nothing;
     }
@@ -814,7 +819,7 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
 
     if (
       this.isFullCircle ||
-      this.sector === GaugeRadialProportionalSector.deg270PosNeg
+      this.sector === GaugeProportionalSector.deg270PosNeg
     ) {
       parts.push(svg`<rect
         transform="rotate(${originAngle})"
@@ -869,7 +874,7 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
     // arch's inscribed round tip, as is the value-end tip circle when it
     // protrudes past a cut.
     const drawOriginAngle =
-      this.sector === GaugeRadialProportionalSector.deg270
+      this.sector === GaugeProportionalSector.deg270
         ? originAngle - TRACK_END_CUT_INSET_DEG
         : originAngle;
     return svg`
@@ -916,7 +921,7 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
     if (
       this.secondaryValue === undefined ||
       !this.showLabels ||
-      this.effectiveAlignment !== GaugeRadialProportionalAlignment.maxMin ||
+      this.effectiveAlignment !== GaugeProportionalAlignment.maxMin ||
       this.isFullCircle
     ) {
       return nothing;
@@ -935,6 +940,15 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
         text-anchor="end"
       >${this.maxValue}</text>
     `;
+  }
+
+  /**
+   * Center device symbol. The base exposes the `icon` slot; device-specific
+   * subclasses (`obc-gauge-generator`, `obc-gauge-motors-and-pumps`) override
+   * this to provide slot fallback content with their baked-in icon.
+   */
+  protected get icon(): TemplateResult {
+    return html`<slot name="icon"></slot>`;
   }
 
   private get labelStackReadouts(): AutomationButtonReadoutStack[] {
@@ -990,7 +1004,7 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
       });
     }
     return html`
-      <div class="icon-anchor"><slot name="icon"></slot></div>
+      <div class="icon-anchor">${this.icon}</div>
       ${this.large && this.hasReadout
         ? html`
             <div class="readout-row">
@@ -1007,9 +1021,9 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
   override render() {
     const tickmarks = this.tickmarks;
     const tickmarksInside =
-      this.effectiveAlignment === GaugeRadialProportionalAlignment.inside;
+      this.effectiveAlignment === GaugeProportionalAlignment.inside;
     const endLabelsMaxMin =
-      this.effectiveAlignment === GaugeRadialProportionalAlignment.maxMin;
+      this.effectiveAlignment === GaugeProportionalAlignment.maxMin;
     const areas = this.areas;
     const hasHorizontalEndLabels = tickmarks.some((t) => {
       if (t.text === undefined) {
@@ -1053,7 +1067,7 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
         ? this.mapAngle(this.newSetpoint)
         : undefined;
     const effectiveState =
-      this.priority === GaugeRadialProportionalPriority.off
+      this.priority === GaugeProportionalPriority.off
         ? InstrumentState.off
         : this.state;
 
@@ -1124,8 +1138,7 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
           'gauge-root': true,
           compact: !this.large,
           'face-pinned': this.large && this.faceDiameter !== undefined,
-          'priority-medium':
-            this.priority === GaugeRadialProportionalPriority.medium,
+          'priority-medium': this.priority === GaugeProportionalPriority.medium,
         })}
         style=${anchors}
       >
@@ -1155,6 +1168,6 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obc-gauge-radial-proportional': ObcGaugeRadialProportional;
+    'obc-gauge-proportional': ObcGaugeProportional;
   }
 }
