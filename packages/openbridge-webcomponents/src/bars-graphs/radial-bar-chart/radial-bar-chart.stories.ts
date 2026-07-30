@@ -3,6 +3,7 @@ import {html} from 'lit';
 import './radial-bar-chart.js';
 import {ObcRadialBarChart} from './radial-bar-chart.js';
 import {Priority} from '../../navigation-instruments/types.js';
+import {expectChartCanvasToMatchComputedLayout} from '../../storybook-util.js';
 
 const SAMPLE_DATA = [70, 50, 30];
 
@@ -103,6 +104,14 @@ export const WithLegend: Story = {
   name: 'With Legend Radial Bar',
   args: {
     legend: true,
+  },
+  // Regression test for issue #1061: the legend must not inflate the canvas
+  play: async ({canvasElement}) => {
+    await new Promise((resolve) => setTimeout(resolve, 600));
+    expectChartCanvasToMatchComputedLayout(
+      canvasElement,
+      'obc-radial-bar-chart'
+    );
   },
 };
 
