@@ -85,10 +85,7 @@ export class ObcCurrent extends LitElement {
    * @availableWhen currentFromDirection!=null
    */
   @property({type: Number}) currentSpeed: number | null = null;
-  /**
-   * The direction the current is coming from in degrees.
-   * @availableWhen currentSpeed!=null
-   */
+  /** The direction the current is coming from in degrees. */
   @property({type: Number}) currentFromDirection: number | null = null;
   /** Color priority: `Priority.enhanced` uses the blue/enhanced palette (default: `Priority.regular`). */
   @property({type: String}) priority: Priority = Priority.regular;

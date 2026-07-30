@@ -7,7 +7,7 @@ import {topVessels} from '../watch/vessels/storybook-helper.js';
 
 const meta: Meta<typeof ObcCurrent> = {
   title: 'Instruments/Current',
-  tags: ['autodocs', '6.0'],
+  tags: ['autodocs', 'wip'],
   component: 'obc-current',
   decorators: [widthDecorator],
   args: {
@@ -44,7 +44,7 @@ const meta: Meta<typeof ObcCurrent> = {
 export default meta;
 type Story = StoryObj<ObcCurrent>;
 
-export const Vessel: Story = {
+export const Default: Story = {
   args: {},
 };
 
