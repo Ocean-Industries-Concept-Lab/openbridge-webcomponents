@@ -1,0 +1,87 @@
+* {
+  box-sizing: border-box;
+}
+
+:host {
+  display: block;
+  width: 200px;
+}
+
+:host([vertical]) {
+  width: auto;
+  height: 200px;
+}
+
+.bus {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  border: 1px solid;
+
+  &.size-small {
+    height: 16px;
+    border-radius: 4px;
+
+    @mixin font-instrument-label;
+    font-weight: var(--global-typography-instrument-label-font-weight);
+  }
+
+  &.size-medium {
+    height: 24px;
+    border-radius: 6px;
+
+    @mixin font-button;
+  }
+
+  &.vertical {
+    writing-mode: vertical-rl;
+    height: 100%;
+
+    &.size-small {
+      width: 16px;
+    }
+
+    &.size-medium {
+      width: 24px;
+    }
+  }
+
+  &.variant-regular {
+    background-color: var(--base-gray-500);
+    border-color: var(--base-gray-600);
+    color: var(--base-gray-050);
+
+    &.tint {
+      background-color: var(--base-gray-100);
+      border-color: var(--base-gray-500);
+      color: var(--base-gray-600);
+    }
+  }
+
+  &.variant-enhanced {
+    background-color: var(--base-blue-500);
+    border-color: var(--base-blue-600);
+    color: var(--element-active-inverted-color);
+
+    &.tint {
+      background-color: var(--base-blue-100);
+      border-color: var(--base-blue-500);
+      color: var(--base-blue-600);
+    }
+  }
+
+  &.variant-medium {
+    background-color: var(--base-teal-400);
+    border-color: var(--base-teal-500);
+    color: var(--base-teal-050);
+
+    &.tint {
+      background-color: var(--base-teal-100);
+      border-color: var(--base-teal-500);
+      color: var(--base-teal-600);
+    }
+  }
+}

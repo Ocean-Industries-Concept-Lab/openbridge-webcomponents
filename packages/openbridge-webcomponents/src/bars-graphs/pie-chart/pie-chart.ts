@@ -30,6 +30,7 @@ import {
   getChartTooltipOptions,
   generateLegendHTML,
 } from '../../charthelpers/index.js';
+import type {FixedHeightChartDimensions} from '../../charthelpers/canvas-layout.js';
 
 // Register Chart.js components
 Chart.register(PieController, DoughnutController, ArcElement, Tooltip);
@@ -231,6 +232,9 @@ export class ObcPieChart extends LitElement {
 
   /** @internal */
   private chart?: Chart;
+
+  /** @internal - Latest layout dimensions computed by getChartOptions() */
+  private lastDimensions?: FixedHeightChartDimensions;
 
   /** @internal */
   private themeObserver?: MutationObserver;
@@ -461,6 +465,9 @@ export class ObcPieChart extends LitElement {
       host: this,
     });
 
+    // Store dimensions for explicit canvas sizing in createChart/updateChart
+    this.lastDimensions = dimensions;
+
     // Store formatted labels for use in plugins
     this.formattedLabels = dimensions.formattedLabels;
 
@@ -479,9 +486,13 @@ export class ObcPieChart extends LitElement {
         };
 
     return {
-      responsive: true,
-      maintainAspectRatio: true,
-      aspectRatio: dimensions.aspectRatio,
+      // Fixed, self-computed size: Chart.js responsive mode must stay off,
+      // it measures the wrapper (canvas + optional legend) and inflates the
+      // canvas / re-applies stale deferred resizes on hover (issue #1061).
+      // The canvas render size is set explicitly in createChart/updateChart.
+      responsive: false,
+      maintainAspectRatio: false,
+      devicePixelRatio: window.devicePixelRatio,
       radius: `${radiusPercentage}%`,
       layout: {
         padding: dynamicPadding ?? PIE_DIMENSIONS.CANVAS_PADDING,
@@ -569,8 +580,16 @@ export class ObcPieChart extends LitElement {
       },
     ];
 
-    const height = this.canvasEl?.clientHeight ?? 0;
-    const isTooSmall = height < CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS;
+    const options = this.getChartOptions();
+
+    // Non-responsive mode: set the canvas render size explicitly from the
+    // computed layout; Chart.js applies devicePixelRatio scaling on top
+    if (this.lastDimensions) {
+      this.canvasEl.width = this.lastDimensions.calculatedWidth;
+      this.canvasEl.height = this.lastDimensions.actualHeight;
+    }
+
+    const isTooSmall = this.lastDimensions?.isTooSmall ?? false;
 
     this.chart = new Chart(ctx, {
       type: 'pie',
@@ -578,7 +597,7 @@ export class ObcPieChart extends LitElement {
         labels,
         datasets,
       },
-      options: this.getChartOptions(),
+      options,
       plugins: [
         // Only show outer labels if enabled AND height is large enough
         ...(this.showOuterLabels && !isTooSmall
@@ -759,6 +778,15 @@ export class ObcPieChart extends LitElement {
   private updateChart() {
     // Guard: Verify chart and canvas still exist and are connected
     if (!this.chart || !this.canvasEl || !this.canvasEl.isConnected) return;
+
+    // Non-responsive mode: apply the computed layout size explicitly
+    // (no-op when the size is unchanged)
+    if (this.lastDimensions) {
+      this.chart.resize(
+        this.lastDimensions.calculatedWidth,
+        this.lastDimensions.actualHeight
+      );
+    }
 
     this.chart.update();
 
