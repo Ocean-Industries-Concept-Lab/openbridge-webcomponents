@@ -65,6 +65,7 @@ export enum Colors {
   elementSymbolColor = 'var(--element-symbol-color)',
   alertAlarmColor = 'var(--alert-alarm-color)',
   alertCautionColor = 'var(--alert-caution-color)',
+  alertRunningColor = 'var(--alert-running-color)',
   alertAlarmOutlineColor = 'var(--alert-alarm-outline-color)',
   alertCautionOutlineColor = 'var(--alert-caution-outline-color)',
   alertLowIntegrity = 'var(--alert-low-integrity-background-color)',

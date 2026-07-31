@@ -442,6 +442,6 @@ export class Vessel extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'ob-vessel': Vessel;
+    'ob-vessel-view': Vessel;
   }
 }
