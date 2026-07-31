@@ -9,6 +9,10 @@ export type ObcToggleSwitchInputEvent = CustomEvent<{
   checked: boolean;
 }>;
 
+export type ObcToggleSwitchChangeEvent = CustomEvent<{
+  checked: boolean;
+}>;
+
 /**
  * `<obc-toggle-switch>` – A toggle switch component for binary on/off selection (also known as a switch, toggle, or enable/disable control).
  *
@@ -56,6 +60,7 @@ export type ObcToggleSwitchInputEvent = CustomEvent<{
  *
  * ### Events
  * - `input` – Fired when the toggle state changes (checked/unchecked).
+ * - `change` – Fired when the toggle state changes by user interaction.
  *
  * ---
  *
@@ -85,7 +90,7 @@ export type ObcToggleSwitchInputEvent = CustomEvent<{
  *
  * @slot icon - Leading icon slot (shown when `hasIcon` is true)
  * @fires input - {ObcToggleSwitchInputEvent} Dispatched when the value of the input changes
- * @fires change - Dispatched when the value of the input changes by user interaction
+ * @fires change - {ObcToggleSwitchChangeEvent} Dispatched when the value of the input changes by user interaction
  * @stable
  */
 @customElement('obc-toggle-switch')
@@ -156,6 +161,8 @@ export class ObcToggleSwitch extends LitElement {
     this.dispatchEvent(
       new CustomEvent('input', {
         detail: {checked: nextChecked},
+        bubbles: true,
+        composed: true,
       })
     );
 
@@ -169,7 +176,13 @@ export class ObcToggleSwitch extends LitElement {
       e.preventDefault();
       return;
     }
-    this.dispatchEvent(new CustomEvent('change'));
+    this.dispatchEvent(
+      new CustomEvent('change', {
+        detail: {checked: this.checked},
+        bubbles: true,
+        composed: true,
+      })
+    );
   }
 
   override render() {

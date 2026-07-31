@@ -53,6 +53,36 @@ describe('obc-toggle-switch', () => {
       expect(event.detail).toEqual({checked: true});
     });
 
+    // Events must bubble out of the host so framework wrappers relying on
+    // event delegation (Svelte 5) receive them — see issue #1086.
+    it('input event bubbles and is composed', async () => {
+      const handler = vi.fn();
+      el.addEventListener('input', handler);
+
+      input.click();
+      await el.updateComplete;
+
+      const event = handler.mock.calls[0]?.[0] as CustomEvent;
+      expect(event.bubbles).toBe(true);
+      expect(event.composed).toBe(true);
+    });
+
+    it('dispatches change event with checked detail, bubbling and composed', async () => {
+      const handler = vi.fn();
+      el.addEventListener('change', handler);
+
+      input.click();
+      await el.updateComplete;
+
+      expect(handler).toHaveBeenCalledTimes(1);
+      const event = handler.mock.calls[0]?.[0] as CustomEvent<{
+        checked: boolean;
+      }>;
+      expect(event.detail).toEqual({checked: true});
+      expect(event.bubbles).toBe(true);
+      expect(event.composed).toBe(true);
+    });
+
     it('combination of click and js control', async () => {
       el.checked = true;
       await el.updateComplete;

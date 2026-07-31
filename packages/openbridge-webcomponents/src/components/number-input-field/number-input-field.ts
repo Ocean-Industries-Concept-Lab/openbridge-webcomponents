@@ -246,6 +246,8 @@ export class ObcNumberInputField extends LitElement {
     this.dispatchEvent(
       new CustomEvent('input', {
         detail: {value: this.value},
+        bubbles: true,
+        composed: true,
       })
     );
   }
@@ -254,6 +256,8 @@ export class ObcNumberInputField extends LitElement {
     this.dispatchEvent(
       new CustomEvent('change', {
         detail: {value: this.value},
+        bubbles: true,
+        composed: true,
       })
     );
   }

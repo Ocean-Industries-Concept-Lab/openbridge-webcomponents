@@ -480,9 +480,7 @@ export class ObcTextareaField extends LitElement {
     this.value = target.value;
     this._previousInputElementValue = this.value;
     e.stopPropagation();
-    this.dispatchEvent(
-      new CustomEvent('input', {detail: {value: target.value}})
-    );
+    this.emit('input', {value: target.value});
   }
 
   private handleKeyDown(e: KeyboardEvent) {
@@ -640,9 +638,7 @@ export class ObcTextareaField extends LitElement {
 
   private fireChangeEvent(e: Event) {
     const target = e.target as HTMLTextAreaElement;
-    this.dispatchEvent(
-      new CustomEvent('change', {detail: {value: target.value}})
-    );
+    this.emit('change', {value: target.value});
   }
 
   private renderAttachments() {
