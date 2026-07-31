@@ -62,6 +62,11 @@ export type ObcToggleSwitchChangeEvent = CustomEvent<{
  * - `input` – Fired when the toggle state changes (checked/unchecked).
  * - `change` – Fired when the toggle state changes by user interaction.
  *
+ * Both events report the state the user selected. When `externalControl` is
+ * true the component does not update itself; the consumer decides whether to
+ * apply the reported state to `checked` and may reject the interaction by
+ * leaving `checked` unchanged.
+ *
  * ---
  *
  * ### Best Practices
@@ -147,6 +152,13 @@ export class ObcToggleSwitch extends LitElement {
    * @param e {InputEvent}
    * @fires input - Dispatched when the value of the input changes
    */
+  /**
+   * The state the user selected in the most recent interaction. In
+   * externalControl mode this can differ from `checked` until the consumer
+   * accepts the change, so the change event reports it instead of `checked`.
+   */
+  private _userSelectedChecked?: boolean;
+
   private _tryChange(e: InputEvent) {
     if (this.disabled) {
       e.preventDefault();
@@ -154,6 +166,7 @@ export class ObcToggleSwitch extends LitElement {
     }
 
     const nextChecked = !this.checked;
+    this._userSelectedChecked = nextChecked;
     if (!this.externalControl) {
       this.checked = nextChecked;
     }
@@ -178,7 +191,7 @@ export class ObcToggleSwitch extends LitElement {
     }
     this.dispatchEvent(
       new CustomEvent('change', {
-        detail: {checked: this.checked},
+        detail: {checked: this._userSelectedChecked ?? this.checked},
         bubbles: true,
         composed: true,
       })
