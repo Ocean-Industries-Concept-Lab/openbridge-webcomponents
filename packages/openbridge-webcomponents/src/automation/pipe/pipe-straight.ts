@@ -1,8 +1,9 @@
-import {LitElement, html, svg, unsafeCSS, type TemplateResult} from 'lit';
+import {LitElement, html, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
-import {resolvePipeStroke, GRID, type PipeStroke} from './pipe-styles.js';
+import {resolvePipeStroke, GRID} from './pipe-styles.js';
 import {straightPath} from './pipe-geometry.js';
+import {renderPipeStrokes} from './pipe-render.js';
 import type {PipeValue, PipeSize, MediumColor} from './pipe-types.js';
 import componentStyle from './pipe.css?inline';
 
@@ -50,19 +51,6 @@ export class ObcPipeStraight extends LitElement {
   @property({type: String}) orientation: 'horizontal' | 'vertical' =
     'horizontal';
 
-  private renderStroke(d: string, stroke: PipeStroke): TemplateResult[] {
-    const parts: TemplateResult[] = [
-      svg`<path d=${d} fill="none" vector-effect="non-scaling-stroke"
-        stroke="var(${stroke.outlineVar})" stroke-width=${stroke.outlineWeight}
-        stroke-dasharray=${stroke.dashPattern.join(' ')} />`,
-    ];
-    if (stroke.fillVar !== null && stroke.fillWeight !== null) {
-      parts.push(svg`<path d=${d} fill="none" vector-effect="non-scaling-stroke"
-        stroke="var(${stroke.fillVar})" stroke-width=${stroke.fillWeight} />`);
-    }
-    return parts;
-  }
-
   override render() {
     const stroke = resolvePipeStroke(this.value, this.size, this.mediumColor);
     const span = this.length * GRID;
@@ -77,7 +65,7 @@ export class ObcPipeStraight extends LitElement {
         viewBox="0 0 ${width} ${height}"
         xmlns="http://www.w3.org/2000/svg"
       >
-        ${this.renderStroke(d, stroke)}
+        ${renderPipeStrokes(d, stroke)}
       </svg>
     `;
   }
