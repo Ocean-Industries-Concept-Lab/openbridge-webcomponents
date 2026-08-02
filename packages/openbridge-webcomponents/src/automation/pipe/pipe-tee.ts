@@ -3,7 +3,6 @@ import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import {resolvePipeStroke, GRID} from './pipe-styles.js';
 import {teePath} from './pipe-geometry.js';
-import {renderPipeStrokes} from './pipe-render.js';
 import type {PipeValue, PipeSize, PipeDirection, MediumColor} from './pipe-types.js';
 import componentStyle from './pipe.css?inline';
 
@@ -24,10 +23,12 @@ const ROTATION_BY_DIRECTION: Record<PipeDirection, number> = {
  *
  * Draws the shared tee geometry — a full-width straight run with a
  * perpendicular branch, its inner corners rounded to match
- * `obc-pipe-corner` — rotated so the branch points toward `direction`. Uses
- * the same outline-plus-fill stroke pattern as the other `obc-pipe-*`
- * components (via the shared `renderPipeStrokes` helper) so it reads as one
- * continuous run when combined with straights and corners.
+ * `obc-pipe-corner` — rotated so the branch points toward `direction`. The
+ * geometry is a closed silhouette polygon, rendered as a single filled
+ * shape with a 1px border (fill-plus-border, not the centerline
+ * outline-plus-fill stroke pattern used by the straight/corner/endpoint/
+ * arrow components) so it reads as one continuous run when combined with
+ * straights and corners.
  *
  * ## Features
  * - **Value states:** `open-flow` and `open-generic` (default open pipe),
@@ -63,6 +64,8 @@ export class ObcPipeTee extends LitElement {
     const stroke = resolvePipeStroke(this.value, this.size, this.mediumColor);
     const d = teePath(this.size);
     const rotation = ROTATION_BY_DIRECTION[this.direction];
+    const isClosed = this.value === 'closed' || this.value === 'closed-dash';
+    const fill = isClosed ? stroke.outlineVar : stroke.fillVar;
     return html`
       <svg
         class="pipe"
@@ -72,7 +75,12 @@ export class ObcPipeTee extends LitElement {
         xmlns="http://www.w3.org/2000/svg"
         transform="rotate(${rotation} ${GRID / 2} ${GRID / 2})"
       >
-        ${renderPipeStrokes(d, stroke)}
+        <path
+          d=${d}
+          fill="var(${fill})"
+          stroke=${isClosed ? 'none' : `var(${stroke.outlineVar})`}
+          stroke-width="1"
+        />
       </svg>
     `;
   }

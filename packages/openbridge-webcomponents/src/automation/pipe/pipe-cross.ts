@@ -3,7 +3,6 @@ import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import {resolvePipeStroke, GRID} from './pipe-styles.js';
 import {crossPath} from './pipe-geometry.js';
-import {renderPipeStrokes} from './pipe-render.js';
 import type {PipeValue, PipeSize, MediumColor} from './pipe-types.js';
 import componentStyle from './pipe.css?inline';
 
@@ -11,12 +10,13 @@ import componentStyle from './pipe.css?inline';
  * `<obc-pipe-cross>` – A four-way junction connecting a horizontal run to a
  * crossing vertical run on a process diagram grid.
  *
- * Draws two perpendicular full-width bars meeting at the grid centre, using
- * the same outline-plus-fill stroke pattern as the other `obc-pipe-*`
- * components (via the shared `renderPipeStrokes` helper) so it reads as one
- * continuous run when combined with straights and corners. Unlike
- * `obc-pipe-tee`, the crossing is symmetric on all four sides, so the
- * component has no `direction` property.
+ * Draws two perpendicular full-width bars meeting at the grid centre as a
+ * closed silhouette polygon, rendered as a single filled shape with a 1px
+ * border (fill-plus-border, not the centerline outline-plus-fill stroke
+ * pattern used by the straight/corner/endpoint/arrow components) so it
+ * reads as one continuous run when combined with straights and corners.
+ * Unlike `obc-pipe-tee`, the crossing is symmetric on all four sides, so
+ * the component has no `direction` property.
  *
  * ## Features
  * - **Value states:** `open-flow` and `open-generic` (default open pipe),
@@ -48,6 +48,8 @@ export class ObcPipeCross extends LitElement {
   override render() {
     const stroke = resolvePipeStroke(this.value, this.size, this.mediumColor);
     const d = crossPath(this.size);
+    const isClosed = this.value === 'closed' || this.value === 'closed-dash';
+    const fill = isClosed ? stroke.outlineVar : stroke.fillVar;
     return html`
       <svg
         class="pipe"
@@ -56,7 +58,12 @@ export class ObcPipeCross extends LitElement {
         viewBox="0 0 ${GRID} ${GRID}"
         xmlns="http://www.w3.org/2000/svg"
       >
-        ${renderPipeStrokes(d, stroke)}
+        <path
+          d=${d}
+          fill="var(${fill})"
+          stroke=${isClosed ? 'none' : `var(${stroke.outlineVar})`}
+          stroke-width="1"
+        />
       </svg>
     `;
   }

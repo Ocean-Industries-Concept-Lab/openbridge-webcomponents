@@ -3,7 +3,6 @@ import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import {resolvePipeStroke, GRID, STROKE_WEIGHTS} from './pipe-styles.js';
 import {overlapPath} from './pipe-geometry.js';
-import {renderPipeStrokes} from './pipe-render.js';
 import type {PipeValue, PipeSize, MediumColor} from './pipe-types.js';
 import componentStyle from './pipe.css?inline';
 
@@ -30,13 +29,15 @@ function solidRunPath(size: PipeSize): string {
  *
  * Draws one run as a solid, uninterrupted bar and the other as two
  * segments split around a gap at the crossing point, so the two runs read
- * as passing over one another rather than joining. Uses the same
- * outline-plus-fill stroke pattern as the other `obc-pipe-*` components
- * (via the shared `renderPipeStrokes` helper). The gapped run's geometry
- * comes from `overlapPath`, which returns the gapped run pre-rotated to
- * run vertically; the solid run is composed alongside it as a plain
- * full-width bar, and the whole pair rotates 90 degrees when `direction`
- * is `horizontal` so the *other* run becomes the one with the gap.
+ * as passing over one another rather than joining. All three bars are
+ * closed silhouette polygons, combined into a single filled shape with a
+ * 1px border (fill-plus-border, not the centerline outline-plus-fill
+ * stroke pattern used by the straight/corner/endpoint/arrow components).
+ * The gapped run's geometry comes from `overlapPath`, which returns the
+ * gapped run pre-rotated to run vertically; the solid run is composed
+ * alongside it as a plain full-width bar, and the whole pair rotates 90
+ * degrees when `direction` is `horizontal` so the *other* run becomes the
+ * one with the gap.
  *
  * ## Features
  * - **Value states:** `open-flow` and `open-generic` (default open pipe),
@@ -74,6 +75,8 @@ export class ObcPipeOverlap extends LitElement {
     const stroke = resolvePipeStroke(this.value, this.size, this.mediumColor);
     const d = `${solidRunPath(this.size)} ${overlapPath(this.size)}`;
     const rotation = this.direction === 'horizontal' ? 90 : 0;
+    const isClosed = this.value === 'closed' || this.value === 'closed-dash';
+    const fill = isClosed ? stroke.outlineVar : stroke.fillVar;
     return html`
       <svg
         class="pipe"
@@ -83,7 +86,12 @@ export class ObcPipeOverlap extends LitElement {
         xmlns="http://www.w3.org/2000/svg"
         transform="rotate(${rotation} ${GRID / 2} ${GRID / 2})"
       >
-        ${renderPipeStrokes(d, stroke)}
+        <path
+          d=${d}
+          fill="var(${fill})"
+          stroke=${isClosed ? 'none' : `var(${stroke.outlineVar})`}
+          stroke-width="1"
+        />
       </svg>
     `;
   }

@@ -152,3 +152,12 @@ export const XlClosed: Story = {
     value: 'closed',
   },
 };
+
+export const XlClosedArrowIn: Story = {
+  args: {
+    ...Default.args,
+    size: 'xl',
+    value: 'closed',
+    flow: 'arrow-in',
+  },
+};
