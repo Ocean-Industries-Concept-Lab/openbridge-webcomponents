@@ -1,3 +1,10 @@
+export type {
+  PipeValue,
+  PipeSize,
+  PipeDirection,
+  MediumColor,
+} from './pipe/pipe-types.js';
+
 export enum LineMedium {
   normal = 'normal',
   empty = 'empty',
