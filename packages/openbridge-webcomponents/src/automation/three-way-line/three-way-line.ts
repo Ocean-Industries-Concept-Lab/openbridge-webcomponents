@@ -11,7 +11,7 @@ export enum ThreeWayLineDirection {
 }
 
 /**
- * @deprecated
+ * @deprecated Use `obc-pipe-tee`.
  */
 @customElement('obc-three-way-line')
 export class ObcThreeWayLine extends LitElement {

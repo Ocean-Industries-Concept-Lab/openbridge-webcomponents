@@ -4,7 +4,7 @@ import {LineMedium, LineType, lineColor, lineWidth} from '../index.js';
 import {customElement} from '../../decorator.js';
 
 /**
- * @deprecated
+ * @deprecated Use `obc-pipe-cross`.
  */
 @customElement('obc-line-cross')
 export class ObcLineCross extends LitElement {

@@ -4,7 +4,7 @@ import {LineMedium, LineType, lineColor, lineWidth} from '../index.js';
 import {customElement} from '../../decorator.js';
 
 /**
- * @deprecated
+ * @deprecated Use `obc-pipe-arrow`.
  */
 @customElement('obc-direction-line')
 export class ObcDirectionLine extends LitElement {

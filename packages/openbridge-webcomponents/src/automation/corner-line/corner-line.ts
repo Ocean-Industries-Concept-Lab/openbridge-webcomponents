@@ -11,7 +11,7 @@ export enum CornerLineDirection {
 }
 
 /**
- * @deprecated
+ * @deprecated Use `obc-pipe-corner`.
  */
 @customElement('obc-corner-line')
 export class ObcCornerLine extends LitElement {

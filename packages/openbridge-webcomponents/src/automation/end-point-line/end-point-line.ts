@@ -10,7 +10,7 @@ export enum EndPointDirection {
 }
 
 /**
- * @deprecated
+ * @deprecated Use `obc-pipe-endpoint`.
  */
 @customElement('obc-end-point-line')
 export class ObcEndPointLine extends LitElement {

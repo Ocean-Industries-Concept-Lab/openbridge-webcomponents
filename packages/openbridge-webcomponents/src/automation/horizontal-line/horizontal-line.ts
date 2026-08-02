@@ -4,7 +4,7 @@ import {LineMedium, lineColor, LineType, lineWidth} from '../index.js';
 import {customElement} from '../../decorator.js';
 
 /**
- * @deprecated
+ * @deprecated Use `obc-pipe-straight` (orientation="horizontal").
  */
 @customElement('obc-horizontal-line')
 export class ObcHorizontalLine extends LitElement {

@@ -4,7 +4,7 @@ import {LineMedium, LineType, lineColor, lineWidth} from '../index.js';
 import {customElement} from '../../decorator.js';
 
 /**
- * @deprecated
+ * @deprecated Use `obc-pipe-overlap`.
  */
 @customElement('obc-line-overlap')
 export class ObcLineOverlap extends LitElement {

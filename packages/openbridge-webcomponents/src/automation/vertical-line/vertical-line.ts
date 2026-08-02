@@ -6,7 +6,7 @@ import {customElement} from '../../decorator.js';
 /* Vertical line component
  *
  * The vertical line is 24px * length + 1px. +1 px to make sure that connecting lines are overlapping, to hide the gap between them.
- * @deprecated
+ * @deprecated Use `obc-pipe-straight` (orientation="vertical").
  */
 @customElement('obc-vertical-line')
 export class ObcVerticalLine extends LitElement {
