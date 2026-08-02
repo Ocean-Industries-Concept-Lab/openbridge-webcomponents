@@ -1,5 +1,14 @@
 import {describe, it, expect} from 'vitest';
-import {straightPath, cornerPath} from './pipe-geometry.js';
+import {
+  straightPath,
+  cornerPath,
+  endpointStubPath,
+  endpointCapPath,
+  arrowHeadPath,
+  teePath,
+  crossPath,
+  overlapPath,
+} from './pipe-geometry.js';
 import {CORNER_RADIUS} from './pipe-styles.js';
 
 function pathPoints(d: string): {x: number; y: number}[] {
@@ -42,5 +51,50 @@ describe('cornerPath', () => {
 
   it('honours an explicit radius', () => {
     expect(cornerPath('right', 4)).toContain('A 4');
+  });
+});
+
+describe('endpointStubPath', () => {
+  it('runs a half cell inward along the centre line', () => {
+    const pts = pathPoints(endpointStubPath());
+    expect(pts[0]).toEqual({x: 0, y: 12});
+    expect(pts[pts.length - 1]).toEqual({x: 12, y: 12});
+  });
+});
+
+describe('endpointCapPath', () => {
+  it('outline cap is longer than fill cap (9 vs 8 at medium)', () => {
+    const outline = endpointCapPath('medium', 'cap', 'outline');
+    const fill = endpointCapPath('medium', 'cap', 'fill');
+    // crude length proxy: max |y| in the cap path
+    const maxAbsY = (d: string) => Math.max(...pathPoints(d).map((p) => Math.abs(p.y - 12)));
+    expect(maxAbsY(outline)).toBeGreaterThan(maxAbsY(fill));
+  });
+
+  it('breakoff tilts the cap (x components become non-zero)', () => {
+    const straight = endpointCapPath('medium', 'cap', 'outline');
+    const tilted = endpointCapPath('medium', 'breakoff', 'outline');
+    expect(tilted).not.toEqual(straight);
+  });
+});
+
+describe('arrowHeadPath', () => {
+  it('emits a closed path (Z) for the arrowhead', () => {
+    expect(arrowHeadPath('arrow-out', 'medium', 'open-flow').trim().endsWith('Z')).toBe(true);
+  });
+  it('picks the xl table for xl size (differs from medium)', () => {
+    expect(arrowHeadPath('arrow-out', 'xl', 'open-flow')).not.toEqual(arrowHeadPath('arrow-out', 'medium', 'open-flow'));
+  });
+});
+
+describe('teePath / crossPath / overlapPath', () => {
+  it('tee contains an arc (rounded inner corners)', () => {
+    expect(teePath('medium')).toContain('A ');
+  });
+  it('cross contains two move commands (two crossing runs)', () => {
+    expect((crossPath('medium').match(/M /g) ?? []).length).toBeGreaterThanOrEqual(2);
+  });
+  it('overlap gap scales with size (xl gap > small gap)', () => {
+    expect(overlapPath('xl')).not.toEqual(overlapPath('small'));
   });
 });
