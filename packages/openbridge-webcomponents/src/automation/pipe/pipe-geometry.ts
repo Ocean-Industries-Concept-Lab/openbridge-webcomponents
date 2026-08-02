@@ -278,12 +278,18 @@ export function crossPath(size: PipeSize): string {
 // Mirrors the deprecated line-overlap's mask rect: gap at
 // `y = 12 - 2 - h`, height `width + 4`, sized here by OVERLAP_HALF_GAP
 // instead of the fixed `2`/`4` constants so the gap scales with pipe size.
+// The natural half-span (margin + h) can exceed the grid centre at
+// large/xl stroke weights, which would collapse or invert the two visible
+// vertical segments; clamp it so at least 1px of visible pipe survives on
+// each side of the gap (mirrors the `Math.min(radius, C - h)` clamp in
+// teePath).
 export function overlapPath(size: PipeSize): string {
   const w = STROKE_WEIGHTS[size].outline;
   const h = w / 2;
   const margin = OVERLAP_HALF_GAP[size];
-  const gapTop = C - margin - h;
-  const gapBottom = C + margin + h;
+  const halfSpan = Math.min(margin + h, C - 1);
+  const gapTop = C - halfSpan;
+  const gapBottom = C + halfSpan;
   const left = C - h;
   const right = C + h;
   return (

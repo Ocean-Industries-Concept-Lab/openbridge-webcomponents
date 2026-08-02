@@ -9,7 +9,8 @@ import {
   crossPath,
   overlapPath,
 } from './pipe-geometry.js';
-import {CORNER_RADIUS} from './pipe-styles.js';
+import {CORNER_RADIUS, GRID} from './pipe-styles.js';
+import type {PipeSize} from './pipe-types.js';
 
 function pathPoints(d: string): {x: number; y: number}[] {
   const points: {x: number; y: number}[] = [];
@@ -97,4 +98,28 @@ describe('teePath / crossPath / overlapPath', () => {
   it('overlap gap scales with size (xl gap > small gap)', () => {
     expect(overlapPath('xl')).not.toEqual(overlapPath('small'));
   });
+
+  it.each<PipeSize>(['small', 'medium', 'large', 'xl'])(
+    'overlap gap stays within the viewport with a visible segment on each side (%s)',
+    (size) => {
+      // Two vertical subpaths: "M left 0 L left gapTop L right gapTop L right 0 Z"
+      // and "M left gapBottom L left GRID L right GRID L right gapBottom Z".
+      const subpaths = overlapPath(size)
+        .split('Z')
+        .map((s) => s.trim())
+        .filter(Boolean);
+      expect(subpaths).toHaveLength(2);
+
+      const ys = (d: string) => pathPoints(`${d} Z`).map((p) => p.y);
+      const topSegmentYs = ys(subpaths[0]);
+      const bottomSegmentYs = ys(subpaths[1]);
+
+      const gapTop = Math.max(...topSegmentYs);
+      const gapBottom = Math.min(...bottomSegmentYs);
+
+      expect(gapTop).toBeGreaterThan(0);
+      expect(gapBottom).toBeLessThan(GRID);
+      expect(gapBottom).toBeGreaterThan(gapTop);
+    }
+  );
 });
