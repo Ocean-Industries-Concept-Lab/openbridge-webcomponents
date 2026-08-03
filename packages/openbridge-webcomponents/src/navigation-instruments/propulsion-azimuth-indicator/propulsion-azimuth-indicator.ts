@@ -7,6 +7,12 @@ import {
   radToDeg,
   clamp,
 } from '../../svghelpers/math.js';
+import {
+  PortStarboardElement,
+  PortStarboardShade,
+  portStarboardSignOf,
+  resolvePortStarboardColor,
+} from '../../svghelpers/port-starboard.js';
 import {InstrumentState} from '../types.js';
 
 export enum PropulsionAzimuthIndicatorType {
@@ -116,6 +122,12 @@ export class ObcPropulsionAzimuthIndicator extends LitElement {
 
   @property({type: String}) state: InstrumentState = InstrumentState.active;
 
+  /**
+   * Enables the maritime PORT/STBD (red/green) color mode: positive thrust
+   * renders green, negative red.
+   */
+  @property({type: Boolean}) portStarboard = false;
+
   static override styles = css`
     :host {
       display: block;
@@ -134,6 +146,14 @@ export class ObcPropulsionAzimuthIndicator extends LitElement {
   `;
 
   private get accentColor(): string {
+    const portStarboard = resolvePortStarboardColor({
+      enabled: this.portStarboard,
+      elements: undefined,
+      element: PortStarboardElement.bar,
+      sign: portStarboardSignOf(this.value),
+      shade: PortStarboardShade.dark,
+    });
+    if (portStarboard) return portStarboard;
     return this.type === PropulsionAzimuthIndicatorType.regular
       ? 'var(--instrument-regular-secondary-color)'
       : 'var(--instrument-enhanced-secondary-color)';
