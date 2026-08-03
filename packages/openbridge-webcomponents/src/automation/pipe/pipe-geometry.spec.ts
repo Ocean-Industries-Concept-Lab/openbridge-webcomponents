@@ -153,18 +153,30 @@ describe('endpointChannel', () => {
     }
   );
 
-  it('walls extend all the way to the grid centre, overlapping into the cap so no seam shows', () => {
-    const {walls} = endpointChannel('medium');
-    for (const wall of walls) {
-      const pts = pathPoints(wall);
-      const minX = Math.min(...pts.map((p) => p.x));
-      // The cap's near edge (`endpointCapOutlinePath`) is open across the
-      // channel band, so the stub is free to run all the way to the grid
-      // centre (12) — INTO the cap's fill/near-edge region — with no gap.
-      expect(minX).toBe(12);
-      expect(minX).toBeLessThan(GRID);
-    }
+  it('the interior fill line extends to the grid centre, overlapping into the cap so no seam shows', () => {
+    const {inner} = endpointChannel('medium');
+    const pts = pathPoints(inner);
+    const minX = Math.min(...pts.map((p) => p.x));
+    expect(minX).toBe(12);
   });
+
+  it.each<PipeSize>(['small', 'medium', 'large', 'xl'])(
+    "walls end FLUSH at the cap's near wall (T-joint) — never overshoot past it into the cap interior (%s)",
+    (size) => {
+      const {walls} = endpointChannel(size);
+      const capHalfWidth = {small: 2, medium: 3, large: 4, xl: 5}[size];
+      const capNearEdge = 12 - capHalfWidth;
+      for (const wall of walls) {
+        const pts = pathPoints(wall);
+        const minX = Math.min(...pts.map((p) => p.x));
+        // A T-joint (a wall ending against another wall) ends exactly at the
+        // met wall's edge, never past it — overshooting past capNearEdge
+        // leaves a dark tick mark inside the cap's white interior.
+        expect(minX).toBe(capNearEdge);
+        expect(minX).toBeLessThan(GRID);
+      }
+    }
+  );
 });
 
 describe('endpointCapPath', () => {
@@ -532,4 +544,123 @@ describe('crossJunction / teeJunction / overlapJunction (open mouths, walls brea
     expect(teeJunction('medium').interior).toContain('Z');
     expect(overlapJunction('medium').interior).toContain('Z');
   });
+});
+
+// Wall-joint cleanup (JOINT-CLEANUP.md): two perpendicular 1px butt-capped
+// strokes that both stop exactly AT their shared corner point leave a
+// quarter-pixel notch there (verified against the rendered Figma reference
+// and a zoomed capture of the pre-fix bug) — each segment's inner end must
+// extend by JOINT_OVERLAP (0.5, half the corner pixel) past the corner so
+// the two strokes' rectangular coverage fully paints it, with the resulting
+// same-color 1px overlap being invisible.
+describe('cross/tee inner L-joints are flush (no corner notch)', () => {
+  // A segment "reaches into" a corner along `axis` if one of its endpoints
+  // sits strictly past `corner` by at least `minOverlap` (not just AT it).
+  function reachesPastCorner(
+    walls: string[],
+    corner: number,
+    axis: 'x' | 'y',
+    direction: 'positive' | 'negative',
+    minOverlap = 0.4
+  ): boolean {
+    return walls.some((w) => {
+      const pts = pathPoints(w);
+      return pts.some((p) => {
+        const v = axis === 'x' ? p.x : p.y;
+        return direction === 'positive' ? v >= corner + minOverlap : v <= corner - minOverlap;
+      });
+    });
+  }
+
+  function anyWallSpans(walls: string[], from: number, to: number, axis: 'x' | 'y'): boolean {
+    return walls.some((w) => {
+      const pts = pathPoints(w);
+      if (pts.length < 2) return false;
+      const a = axis === 'x' ? pts[0].x : pts[0].y;
+      const b = axis === 'x' ? pts[1].x : pts[1].y;
+      const lo = Math.min(a, b);
+      const hi = Math.max(a, b);
+      return lo <= from && hi >= to;
+    });
+  }
+
+  it.each<PipeSize>(['small', 'medium', 'large', 'xl'])(
+    'cross: every one of the 4 inner corners is reached (past, not just at) by BOTH a horizontal and a vertical wall (%s)',
+    (size) => {
+      const {walls} = crossJunction(size);
+      const o = STROKE_WEIGHTS[size].fill / 2 + 0.5;
+      const top = 12 - o;
+      const bottom = 12 + o;
+      const horizontalWalls = walls.filter((w) => {
+        const pts = pathPoints(w);
+        return pts.every((p) => p.y === pts[0].y);
+      });
+      const verticalWalls = walls.filter((w) => {
+        const pts = pathPoints(w);
+        return pts.every((p) => p.x === pts[0].x);
+      });
+      // Top-left corner (top,top): horizontal wall must reach x >= top+0.4,
+      // vertical wall must reach y >= top+0.4.
+      expect(reachesPastCorner(horizontalWalls, top, 'x', 'positive')).toBe(true);
+      expect(reachesPastCorner(verticalWalls, top, 'y', 'positive')).toBe(true);
+      // Top-right corner (bottom,top): horizontal wall reaches x <= bottom-0.4,
+      // vertical wall reaches y >= top+0.4.
+      expect(reachesPastCorner(horizontalWalls, bottom, 'x', 'negative')).toBe(true);
+      // Bottom-left corner (top,bottom): vertical wall reaches y <= bottom-0.4.
+      expect(reachesPastCorner(verticalWalls, bottom, 'y', 'negative')).toBe(true);
+    }
+  );
+
+  it.each<PipeSize>(['small', 'medium', 'large', 'xl'])(
+    'cross: walls still break at the junction — no segment spans the full opposite-arm opening (JOINT_OVERLAP does not reintroduce a closed mouth) (%s)',
+    (size) => {
+      const {walls} = crossJunction(size);
+      const o = STROKE_WEIGHTS[size].fill / 2 + 0.5;
+      const top = 12 - o;
+      const bottom = 12 + o;
+      expect(anyWallSpans(walls, top, bottom, 'x')).toBe(false);
+      expect(anyWallSpans(walls, top, bottom, 'y')).toBe(false);
+    }
+  );
+
+  it.each<PipeSize>(['small', 'medium', 'large', 'xl'])(
+    "tee: the bar's broken bottom wall and each stub wall both reach (past, not just at) their shared corner (%s)",
+    (size) => {
+      const {walls} = teeJunction(size);
+      const o = STROKE_WEIGHTS[size].fill / 2 + 0.5;
+      const stubLeft = 12 - o;
+      const stubRight = 12 + o;
+      const bottomY = 12 + o;
+      const barWalls = walls.filter((w) => {
+        const pts = pathPoints(w);
+        return pts.every((p) => p.y === bottomY) && pts.length === 2;
+      });
+      const stubWalls = walls.filter((w) => {
+        const pts = pathPoints(w);
+        return pts.every((p) => p.x === stubLeft || p.x === stubRight);
+      });
+      // Left corner (stubLeft, bottomY): bar wall reaches x >= stubLeft+0.4,
+      // stub-left wall reaches y <= bottomY-0.4.
+      expect(reachesPastCorner(barWalls, stubLeft, 'x', 'positive')).toBe(true);
+      expect(reachesPastCorner(stubWalls, bottomY, 'y', 'negative')).toBe(true);
+      // Right corner (stubRight, bottomY): bar wall reaches x <= stubRight-0.4.
+      expect(reachesPastCorner(barWalls, stubRight, 'x', 'negative')).toBe(true);
+    }
+  );
+
+  it.each<PipeSize>(['small', 'medium', 'large', 'xl'])(
+    "tee: the bar's stub-side wall still breaks over the stub opening (JOINT_OVERLAP does not reintroduce a closed mouth) (%s)",
+    (size) => {
+      const {walls} = teeJunction(size);
+      const o = STROKE_WEIGHTS[size].fill / 2 + 0.5;
+      const stubLeft = 12 - o;
+      const stubRight = 12 + o;
+      const bottomY = 12 + o;
+      const bottomWalls = walls.filter((w) => {
+        const pts = pathPoints(w);
+        return pts.every((p) => p.y === bottomY);
+      });
+      expect(anyWallSpans(bottomWalls, stubLeft, stubRight, 'x')).toBe(false);
+    }
+  );
 });

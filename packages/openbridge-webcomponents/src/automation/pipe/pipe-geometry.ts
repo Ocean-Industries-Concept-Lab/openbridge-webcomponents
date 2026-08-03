@@ -147,23 +147,26 @@ const CAP_CORNER_RADIUS = 2;
 
 // The endpoint's pipe stub: an open-mouth walls+interior channel identical in
 // convention to `straightChannel` (same `wallOffset` formula, so it lines up
-// with a `obc-pipe-straight` run at the same size), spanning from the grid
-// edge (mouth, OPEN) all the way to the grid centre — past the cap's near
-// edge and slightly INTO the cap body. The cap's fill silhouette
-// (`endpointCapPath`) is drawn UNDER this in the render layer (see
-// `pipe-endpoint.ts`), so overlapping here just guarantees no hairline seam
-// between the stub's interior/walls and the cap's interior — matching the
-// measured Figma ground truth, where the stub wall row runs continuously
-// from the tile edge straight through into the cap's own flat side (no wall
-// segment closes off the join) and the interior is one unbroken white region
-// from the tile edge through into the cap interior.
+// with a `obc-pipe-straight` run at the same size). The INTERIOR fill line
+// (`inner`) spans from the grid edge (mouth, OPEN) all the way to the grid
+// centre — past the cap's near edge and slightly INTO the cap body — so it
+// blends seamlessly with the cap's own fill (same color, drawn under it;
+// see `pipe-endpoint.ts`), matching the measured Figma ground truth where
+// the interior is one unbroken white region from the tile edge through into
+// the cap interior. The WALLS, unlike the interior, must NOT overshoot past
+// the cap's near wall (a T-joint: a wall ending against another wall ends
+// flush, never past it — overshooting leaves visible dark tick marks poking
+// into the cap's white interior) — so they stop exactly at the cap's near
+// edge (`C - CAP_HALF_WIDTH[size]`), the same x the open end of
+// `endpointCapOutlinePath`'s break sits at.
 export function endpointChannel(size: PipeSize): PipeChannel {
   const fill = STROKE_WEIGHTS[size].fill;
   const wallOffset = fill / 2 + 0.5;
+  const capNearEdge = C - CAP_HALF_WIDTH[size];
   const inner = `M ${GRID} ${C} L ${C} ${C}`;
   const walls: [string, string] = [
-    `M ${GRID} ${C - wallOffset} L ${C} ${C - wallOffset}`,
-    `M ${GRID} ${C + wallOffset} L ${C} ${C + wallOffset}`,
+    `M ${GRID} ${C - wallOffset} L ${capNearEdge} ${C - wallOffset}`,
+    `M ${GRID} ${C + wallOffset} L ${capNearEdge} ${C + wallOffset}`,
   ];
   return {inner, walls};
 }
@@ -508,27 +511,46 @@ function wallOffset(size: PipeSize): number {
   return STROKE_WEIGHTS[size].fill / 2 + 0.5;
 }
 
+// Half the 1px wall stroke's own width — the amount each wall segment's
+// INNER endpoint (the end meeting a perpendicular wall at a junction corner,
+// as opposed to the OUTER end reaching the open tile-edge mouth) must extend
+// past the shared corner point so the two perpendicular 1px strokes'
+// rectangular coverage fully paints the corner pixel with no notch. Two butt-
+// capped 1px strokes that both stop exactly AT their shared corner point
+// leave the far quarter of that corner pixel uncovered (verified: horizontal
+// band covers x<=corner in the corner row, vertical band covers y<=corner in
+// the corner column, so the quadrant beyond both stops is covered by
+// neither) — extending each by `JOINT_OVERLAP` closes it, and the 1px
+// same-color overlap this creates is invisible.
+const JOINT_OVERLAP = 0.5;
+
 // Four arms, each with two parallel wall segments running from the tile
 // edge inward and STOPPING at the opposite arm's fill-width boundary (`top`/
 // `bottom`), so every mouth is open (segments reach x=0/x=24/y=0/y=24 with
 // nothing drawn across them) and every wall breaks at the junction (no
-// segment spans the crossing). Interior is the plus fill silhouette, drawn
-// with no stroke so the crossing itself has no wall.
+// segment spans the crossing). Each segment's inner end is extended by
+// `JOINT_OVERLAP` past the corner it meets (see above) so the four inner
+// L-joints are flush, with no notch. Interior is the plus fill silhouette,
+// drawn with no stroke so the crossing itself has no wall.
 export function crossJunction(size: PipeSize): PipeJunction {
   const o = wallOffset(size);
   const top = C - o;
   const bottom = C + o;
   const walls: string[] = [
-    // Horizontal walls (y = top, y = bottom), broken over the vertical arm.
-    `M 0 ${top} L ${top} ${top}`,
-    `M ${bottom} ${top} L ${GRID} ${top}`,
-    `M 0 ${bottom} L ${top} ${bottom}`,
-    `M ${bottom} ${bottom} L ${GRID} ${bottom}`,
-    // Vertical walls (x = top, x = bottom), broken over the horizontal arm.
-    `M ${top} 0 L ${top} ${top}`,
-    `M ${top} ${bottom} L ${top} ${GRID}`,
-    `M ${bottom} 0 L ${bottom} ${top}`,
-    `M ${bottom} ${bottom} L ${bottom} ${GRID}`,
+    // Horizontal walls (y = top, y = bottom), broken over the vertical arm;
+    // inner ends extended by JOINT_OVERLAP into the corner they share with a
+    // vertical wall.
+    `M 0 ${top} L ${top + JOINT_OVERLAP} ${top}`,
+    `M ${bottom - JOINT_OVERLAP} ${top} L ${GRID} ${top}`,
+    `M 0 ${bottom} L ${top + JOINT_OVERLAP} ${bottom}`,
+    `M ${bottom - JOINT_OVERLAP} ${bottom} L ${GRID} ${bottom}`,
+    // Vertical walls (x = top, x = bottom), broken over the horizontal arm;
+    // inner ends extended by JOINT_OVERLAP into the corner they share with a
+    // horizontal wall.
+    `M ${top} 0 L ${top} ${top + JOINT_OVERLAP}`,
+    `M ${top} ${bottom - JOINT_OVERLAP} L ${top} ${GRID}`,
+    `M ${bottom} 0 L ${bottom} ${top + JOINT_OVERLAP}`,
+    `M ${bottom} ${bottom - JOINT_OVERLAP} L ${bottom} ${GRID}`,
   ];
   return {interior: crossInteriorPath(size), walls};
 }
@@ -541,7 +563,11 @@ export function crossJunction(size: PipeSize): PipeJunction {
 // open mouth (grid edge) up to the bar, open at the bottom and simply
 // ENDING where they meet the bar's interior (no cap drawn there — the bar's
 // fill silhouette already covers that seam, so nothing perpendicular closes
-// it off).
+// it off). The two inner L-joints (where the bar's broken bottom wall meets
+// each stub wall) get the same `JOINT_OVERLAP` extension as `crossJunction`'s
+// inner corners, for the same reason: two butt-capped 1px strokes that both
+// stop exactly at their shared corner point leave a quarter-pixel notch/step
+// there otherwise.
 export function teeJunction(size: PipeSize): PipeJunction {
   const o = wallOffset(size);
   const top = C - o;
@@ -552,13 +578,15 @@ export function teeJunction(size: PipeSize): PipeJunction {
     // Bar top wall: full span, open mouths at both edges (no stub opens
     // into the top of the bar, so it does not need to break).
     `M 0 ${top} L ${GRID} ${top}`,
-    // Bar bottom wall: BREAKS over the stub opening.
-    `M 0 ${bottom} L ${stubLeft} ${bottom}`,
-    `M ${stubRight} ${bottom} L ${GRID} ${bottom}`,
+    // Bar bottom wall: BREAKS over the stub opening; inner ends extended by
+    // JOINT_OVERLAP into the corner shared with each stub wall.
+    `M 0 ${bottom} L ${stubLeft + JOINT_OVERLAP} ${bottom}`,
+    `M ${stubRight - JOINT_OVERLAP} ${bottom} L ${GRID} ${bottom}`,
     // Stub walls: run from the bar's bottom-wall row down to the open
-    // bottom mouth (grid edge) — nothing caps the far end.
-    `M ${stubLeft} ${bottom} L ${stubLeft} ${GRID}`,
-    `M ${stubRight} ${bottom} L ${stubRight} ${GRID}`,
+    // bottom mouth (grid edge) — nothing caps the far end. Inner ends
+    // extended by JOINT_OVERLAP up into the corner shared with the bar wall.
+    `M ${stubLeft} ${bottom - JOINT_OVERLAP} L ${stubLeft} ${GRID}`,
+    `M ${stubRight} ${bottom - JOINT_OVERLAP} L ${stubRight} ${GRID}`,
   ];
   return {interior: teeInteriorPath(size), walls};
 }
