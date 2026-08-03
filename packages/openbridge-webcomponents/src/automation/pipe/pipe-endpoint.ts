@@ -38,8 +38,8 @@ const BREAKOFF_TILT = 30;
  * Draws a T — a pipe stub meeting a perpendicular bar at the terminus —
  * stroked with the same two-pass model as the rest of the family: an
  * outline-weight pass, then (for states with a fill) a fill-weight pass over
- * it. The bar's ends are rounded at `medium`/`xl` (round linecap) and square
- * at `small`/`large`, matching the Figma endpoint glyph. `closed` and
+ * it. The bar's ends are rounded at `medium` (round linecap) and square at
+ * `small`/`large`/`xl`, matching the Figma endpoint glyph. `closed` and
  * `closed-dash` collapse to the single outline-color pass, matching those
  * values' shut-off appearance elsewhere in the family.
  *
@@ -89,8 +89,9 @@ export class ObcPipeEndpoint extends LitElement {
     // outline-weight pass, then — for states with a fill — a fill-weight pass
     // over it. The stub and bar are drawn as SEPARATE strokes so the
     // `breakoff` variant can tilt just the bar (30°) around the terminus while
-    // the stub stays axis-aligned. Round linecaps (medium & xl) round the bar
-    // ends; small & large use butt caps. Matches the Figma endpoint vectors.
+    // the stub stays axis-aligned. Only medium uses a round linecap (rounding
+    // the bar ends); small, large & xl use butt caps. Matches the Figma
+    // endpoint vectors.
     const c = GRID / 2;
     const stub = `M 0 ${c} L ${c} ${c}`;
     const barTransform = `rotate(${barTilt} ${c} ${c})`;

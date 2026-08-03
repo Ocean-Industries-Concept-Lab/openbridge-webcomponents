@@ -138,11 +138,11 @@ describe('endpoint bar geometry (Figma T-path model)', () => {
     });
   });
 
-  it('uses round linecaps for medium & xl and butt for small & large (per Figma)', () => {
+  it('uses a round linecap only for medium; small, large & xl are butt (per Figma)', () => {
     expect(endpointLineCap('small')).toBe('butt');
     expect(endpointLineCap('large')).toBe('butt');
+    expect(endpointLineCap('xl')).toBe('butt');
     expect(endpointLineCap('medium')).toBe('round');
-    expect(endpointLineCap('xl')).toBe('round');
   });
 
   it.each<[PipeSize, number, number]>([

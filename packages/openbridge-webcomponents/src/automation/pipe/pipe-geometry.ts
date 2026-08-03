@@ -138,8 +138,8 @@ export function endpointStubPath(end: number = C): string {
 // OUTLINE and FILL passes (the two passes use slightly different bar lengths
 // in Figma). Combined with the linecap these reproduce the exact bar extent:
 // e.g. medium outline bar spans y=12±8 with a round cap of half-width 3, so
-// the visible bar reaches y=1..23 ≈ the measured 21px-tall bar; small/large
-// use butt caps so the path endpoint IS the visible end.
+// the visible bar reaches y=1..23; small, large & xl use butt caps so the
+// path endpoint IS the visible end (xl half=11 -> visible y=1..23).
 export const ENDPOINT_BAR_HALF_OUTLINE: Record<PipeSize, number> = {
   small: 9,
   medium: 8,
@@ -153,10 +153,13 @@ export const ENDPOINT_BAR_HALF_FILL: Record<PipeSize, number> = {
   xl: 10,
 };
 
-// Figma uses round linecaps for medium & xl (giving the bar rounded ends) and
-// butt caps for small & large.
+// Only the medium Figma endpoint bar uses a round linecap; small, large, and
+// xl use butt caps (verified against the raw endpoint `outline` vectors —
+// only the medium SVG carries `stroke-linecap="round"`). A round cap on xl,
+// whose 14px stroke would add a 7px radius past each bar end, balloons the
+// bar well outside the 24px tile.
 export function endpointLineCap(size: PipeSize): 'round' | 'butt' {
-  return size === 'medium' || size === 'xl' ? 'round' : 'butt';
+  return size === 'medium' ? 'round' : 'butt';
 }
 
 // ---------------------------------------------------------------------------
