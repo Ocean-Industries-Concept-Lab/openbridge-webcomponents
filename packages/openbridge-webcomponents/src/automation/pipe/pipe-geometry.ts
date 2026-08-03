@@ -131,19 +131,25 @@ export function endpointStubPath(end: number = C): string {
   return `M 0 ${C} L ${end} ${C}`;
 }
 
-// Cap bar half-width/half-height per size — measured against the Figma
-// reference (medium: half-width 3 -> 6px-wide bar spanning x=9..15;
-// half-height ~10.5 -> ~21px-tall bar spanning y~1.5..22.5, taller than the
-// pipe channel itself) and scaled with the fill stroke weight for the other
-// sizes so the cap grows with the pipe.
-const CAP_HALF_WIDTH: Record<PipeSize, number> = {small: 2, medium: 3, large: 4, xl: 5};
+// Cap bar dimensions — measured per size against the Figma
+// "Type=endpoint, Value=open flow" variants (24px tiles). The half-WIDTH
+// equals the channel wall offset (`fill/2 + 0.5`) at EVERY size, so the
+// cap's two side walls land exactly on the columns a connecting run's walls
+// arrive at (small: x=10/13, medium: 9/14, large: 7/16, xl: 5/18) and the
+// stub's walls merge flush into the cap's near wall. The half-HEIGHT does
+// not scale monotonically — measured caps are 17px tall for small/large and
+// 21px tall for medium/xl.
 const CAP_HALF_HEIGHT: Record<PipeSize, number> = {
-  small: 10,
+  small: 8.5,
   medium: 10.5,
-  large: 9.5,
-  xl: 8.5,
+  large: 8.5,
+  xl: 10.5,
 };
 const CAP_CORNER_RADIUS = 2;
+
+function capHalfWidth(size: PipeSize): number {
+  return STROKE_WEIGHTS[size].fill / 2 + 0.5;
+}
 
 // The endpoint's pipe stub: an open-mouth walls+interior channel identical in
 // convention to `straightChannel` (same `wallOffset` formula, so it lines up
@@ -162,7 +168,7 @@ const CAP_CORNER_RADIUS = 2;
 export function endpointChannel(size: PipeSize): PipeChannel {
   const fill = STROKE_WEIGHTS[size].fill;
   const wallOffset = fill / 2 + 0.5;
-  const capNearEdge = C - CAP_HALF_WIDTH[size];
+  const capNearEdge = C - capHalfWidth(size);
   const inner = `M ${GRID} ${C} L ${C} ${C}`;
   const walls: [string, string] = [
     `M ${GRID} ${C - wallOffset} L ${capNearEdge} ${C - wallOffset}`,
@@ -179,7 +185,7 @@ export function endpointChannel(size: PipeSize): PipeChannel {
 // edge gets a border that Figma does not have. Use `endpointCapOutlinePath`
 // for the 1px border stroke instead.
 export function endpointCapPath(size: PipeSize): string {
-  const hw = CAP_HALF_WIDTH[size];
+  const hw = capHalfWidth(size);
   const hh = CAP_HALF_HEIGHT[size];
   const r = Math.min(CAP_CORNER_RADIUS, hw, hh);
   const left = C - hw;
@@ -210,7 +216,7 @@ export function endpointCapPath(size: PipeSize): string {
 export function endpointCapOutlinePath(size: PipeSize, wallOffsetOverride?: number): string {
   const fill = STROKE_WEIGHTS[size].fill;
   const wallOffset = wallOffsetOverride ?? fill / 2 + 0.5;
-  const hw = CAP_HALF_WIDTH[size];
+  const hw = capHalfWidth(size);
   const hh = CAP_HALF_HEIGHT[size];
   const r = Math.min(CAP_CORNER_RADIUS, hw, hh);
   const left = C - hw;

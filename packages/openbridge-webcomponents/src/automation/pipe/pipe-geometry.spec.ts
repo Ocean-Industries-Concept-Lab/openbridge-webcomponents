@@ -164,7 +164,9 @@ describe('endpointChannel', () => {
     "walls end FLUSH at the cap's near wall (T-joint) — never overshoot past it into the cap interior (%s)",
     (size) => {
       const {walls} = endpointChannel(size);
-      const capHalfWidth = {small: 2, medium: 3, large: 4, xl: 5}[size];
+      // Cap half-width = channel wall offset (measured from Figma), so the
+      // stub's walls end exactly on the cap's near-wall centreline.
+      const capHalfWidth = STROKE_WEIGHTS[size].fill / 2 + 0.5;
       const capNearEdge = 12 - capHalfWidth;
       for (const wall of walls) {
         const pts = pathPoints(wall);

@@ -150,42 +150,42 @@ function familyRow() {
 
 /**
  * A small connected schematic built entirely from `obc-pipe-*` components,
- * placed on the 24px grid with absolute positioning. Each component's
- * connection anchor sits at its host's top-left corner, so positioning a
- * component at `left/top = n*24` snaps it onto the grid; adjacent open mouths
- * abut into one continuous run.
+ * placed on the 24px grid with absolute positioning.
  *
- * Layout (grid cells, 24px each):
- * - A horizontal supply run enters top-left and reaches a tee.
- * - The tee branches downward; the branch turns right through a corner and
- *   ends in a flow arrow.
- * - The supply run continues right into a cross; the cross's vertical arms
- *   carry short stubs capped by endpoints.
+ * Composition rules (also spelled out inline below):
+ * - Every fitting (tee, cross, corner, endpoint, arrow) occupies ONE 24px
+ *   tile centred on its anchor, with its arm mouths open at the tile edges.
+ * - A straight run spans from its anchor exactly `length` cells. A run
+ *   connecting to a fitting must STOP AT THE FITTING'S TILE EDGE (half a
+ *   cell from the fitting's anchor) — a run drawn into the fitting's tile
+ *   redraws walls across the fitting's open mouths and interior. That is
+ *   why runs sit at fractional grid positions with fractional lengths.
+ * - Two fittings whose tiles abut (anchors one cell apart) connect directly
+ *   with no run between them, like the cross's endpoints here.
  */
 function connectedDemo() {
   // Every obc-pipe-* component anchors its connection point at the host's
-  // top-left origin, so a component placed at grid cell (c, r) has its
-  // connection point at grid coordinate (c, r). Pieces connect by sharing a
-  // grid coordinate. One grid cell = 24px.
+  // top-left origin, so a component placed at `left/top = n*24` has its
+  // anchor at grid coordinate n. One grid cell = 24px.
   const G = 24;
   const at = (col: number, row: number) =>
     `position:absolute; left:${col * G}px; top:${row * G}px;`;
-  const blue = html``; // placeholder to keep prettier happy
-  void blue;
   return html`
     <div
       style="position:relative; width:${10 * G}px; height:${6 *
-      G}px; margin:8px 0 16px;"
+      G}px; padding:24px; margin:8px 0 16px; overflow:visible;"
     >
-      <!-- Supply run enters at (0,1) and runs 3 cells to the tee at (3,1). -->
+      <!-- Supply run enters at (0,1) and stops at the tee's tile edge
+           (2.5,1). -->
       <obc-pipe-straight
         style=${at(0, 1)}
         value="medium-flow"
         medium-color="Blue"
-        .length=${3}
+        .length=${2.5}
       ></obc-pipe-straight>
 
-      <!-- Tee at (3,1): through-run left↔right, branch down. -->
+      <!-- Tee at (3,1): through-run left↔right, branch down. Its tile spans
+           (2.5,1)..(3.5,1). -->
       <obc-pipe-tee
         style=${at(3, 1)}
         value="medium-flow"
@@ -193,12 +193,13 @@ function connectedDemo() {
         direction="bottom"
       ></obc-pipe-tee>
 
-      <!-- Supply continues (3,1)→(6,1) into the cross. -->
+      <!-- Supply continues from the tee's right tile edge (3.5,1) to the
+           cross's left tile edge (5.5,1). -->
       <obc-pipe-straight
-        style=${at(3, 1)}
+        style=${at(3.5, 1)}
         value="medium-flow"
         medium-color="Blue"
-        .length=${3}
+        .length=${2}
       ></obc-pipe-straight>
 
       <!-- Cross at (6,1). -->
@@ -208,12 +209,13 @@ function connectedDemo() {
         medium-color="Blue"
       ></obc-pipe-cross>
 
-      <!-- Cross right arm (6,1)→(8,1) ending in an endpoint cap at (8,1). -->
+      <!-- Cross right arm: run from the cross's right tile edge (6.5,1) to
+           the endpoint's tile edge (7.5,1), capped at (8,1). -->
       <obc-pipe-straight
-        style=${at(6, 1)}
+        style=${at(6.5, 1)}
         value="medium-flow"
         medium-color="Blue"
-        .length=${2}
+        .length=${1}
       ></obc-pipe-straight>
       <obc-pipe-endpoint
         style=${at(8, 1)}
@@ -222,14 +224,15 @@ function connectedDemo() {
         direction="right"
       ></obc-pipe-endpoint>
 
-      <!-- Cross bottom arm: short vertical stub (6,1)→(6,2) capped at (6,2). -->
-      <obc-pipe-straight
-        style=${at(6, 1)}
+      <!-- Cross top/bottom arms: the endpoint tiles at (6,0) and (6,2) abut
+           the cross's tile edges directly — no run needed between two
+           fittings whose tiles touch. -->
+      <obc-pipe-endpoint
+        style=${at(6, 0)}
         value="medium-flow"
         medium-color="Blue"
-        orientation="vertical"
-        .length=${1}
-      ></obc-pipe-straight>
+        direction="top"
+      ></obc-pipe-endpoint>
       <obc-pipe-endpoint
         style=${at(6, 2)}
         value="medium-flow"
@@ -237,31 +240,14 @@ function connectedDemo() {
         direction="bottom"
       ></obc-pipe-endpoint>
 
-      <!-- Cross top arm: short vertical stub (6,0)→(6,1) capped at (6,0). -->
+      <!-- Branch: vertical run from the tee's bottom tile edge (3,1.5) to
+           the corner's top tile edge (3,2.5). -->
       <obc-pipe-straight
-        style=${at(6, 0)}
+        style=${at(3, 1.5)}
         value="medium-flow"
         medium-color="Blue"
         orientation="vertical"
         .length=${1}
-      ></obc-pipe-straight>
-      <obc-pipe-endpoint
-        style=${at(6, 0)}
-        value="medium-flow"
-        medium-color="Blue"
-        direction="top"
-      ></obc-pipe-endpoint>
-
-      <!-- Branch: vertical run down the tee, stopping at the corner's top
-           mouth. A corner's bend arcs fill the middle of its tile, so
-           connecting runs stop at the tile edge (half a cell short of the
-           bend point) — hence the fractional length. -->
-      <obc-pipe-straight
-        style=${at(3, 1)}
-        value="medium-flow"
-        medium-color="Blue"
-        orientation="vertical"
-        .length=${1.5}
       ></obc-pipe-straight>
 
       <!-- Corner at (3,3): receives from top, turns to the right. -->
@@ -272,8 +258,8 @@ function connectedDemo() {
         direction="top"
       ></obc-pipe-corner>
 
-      <!-- Run right from the corner's right mouth (3.5,3) to the arrow's
-           stub mouth (4.5,3) — again stopping at the tile edges. -->
+      <!-- Run from the corner's right tile edge (3.5,3) to the arrow's tile
+           edge (4.5,3). -->
       <obc-pipe-straight
         style=${at(3.5, 3)}
         value="medium-flow"
