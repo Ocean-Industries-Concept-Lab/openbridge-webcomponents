@@ -10,6 +10,7 @@ import {
 } from '../../storybook-util.js';
 import {TickmarkStyle} from '../watch/tickmark.js';
 import {InstrumentState, Priority} from '../types.js';
+import {PortStarboardElement} from '../../svghelpers/port-starboard.js';
 const meta: Meta<typeof ObcRudder> = {
   title: 'Instruments/Rudder',
   tags: ['autodocs', '6.0'],
@@ -58,6 +59,55 @@ export const Primary: Story = {
 export const Needle: Story = {
   args: {
     variant: ObcRudderVariant.Needle,
+  },
+};
+
+export const PortStarboardStarboard: Story = {
+  args: {
+    angle: 25,
+    maxAngle: 45,
+    priority: Priority.enhanced,
+    state: InstrumentState.active,
+    portStarboard: true,
+  },
+};
+
+export const PortStarboardPort: Story = {
+  args: {
+    angle: -25,
+    maxAngle: 45,
+    priority: Priority.enhanced,
+    state: InstrumentState.active,
+    portStarboard: true,
+  },
+};
+
+export const PortStarboardNeedle: Story = {
+  args: {
+    angle: -25,
+    maxAngle: 45,
+    variant: ObcRudderVariant.Needle,
+    priority: Priority.enhanced,
+    state: InstrumentState.active,
+    portStarboard: true,
+  },
+};
+
+export const PortStarboardWithSetpoint: Story = {
+  args: {
+    angle: 25,
+    setpoint: 35,
+    maxAngle: 45,
+    priority: Priority.enhanced,
+    state: InstrumentState.active,
+    portStarboard: true,
+    portStarboardElements: [
+      PortStarboardElement.face,
+      PortStarboardElement.bar,
+      PortStarboardElement.needle,
+      PortStarboardElement.zeroLine,
+      PortStarboardElement.setpoint,
+    ],
   },
 };
 
