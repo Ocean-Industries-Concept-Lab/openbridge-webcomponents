@@ -2,7 +2,8 @@ import {LitElement, html, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import {resolvePipeStroke, GRID} from './pipe-styles.js';
-import {crossPath} from './pipe-geometry.js';
+import {crossJunction} from './pipe-geometry.js';
+import {renderPipeJunction} from './pipe-render.js';
 import type {PipeValue, PipeSize, MediumColor} from './pipe-types.js';
 import componentStyle from './pipe.css?inline';
 
@@ -11,12 +12,14 @@ import componentStyle from './pipe.css?inline';
  * crossing vertical run on a process diagram grid.
  *
  * Draws two perpendicular full-width bars meeting at the grid centre as a
- * closed silhouette polygon, rendered as a single filled shape with a 1px
- * border (fill-plus-border, not the centerline outline-plus-fill stroke
- * pattern used by the straight/corner/endpoint/arrow components) so it
- * reads as one continuous run when combined with straights and corners.
- * Unlike `obc-pipe-tee`, the crossing is symmetric on all four sides, so
- * the component has no `direction` property.
+ * continuous filled interior (the plus-shaped union of both bars, in the
+ * fill color) with 1px wall segments along each arm's long edges. Each wall
+ * segment runs from the tile edge inward and stops at the crossing, so
+ * every arm mouth is open (pipes connect across it) and the walls break at
+ * the junction instead of capping across it — the interior reads as one
+ * continuous region so flow passes straight through the crossing. Unlike
+ * `obc-pipe-tee`, the crossing is symmetric on all four sides, so the
+ * component has no `direction` property.
  *
  * ## Features
  * - **Value states:** `open-flow` and `open-generic` (default open pipe),
@@ -47,9 +50,7 @@ export class ObcPipeCross extends LitElement {
 
   override render() {
     const stroke = resolvePipeStroke(this.value, this.size, this.mediumColor);
-    const d = crossPath(this.size);
-    const isClosed = this.value === 'closed' || this.value === 'closed-dash';
-    const fill = isClosed ? stroke.outlineVar : stroke.fillVar;
+    const junction = crossJunction(this.size);
     return html`
       <svg
         class="pipe"
@@ -58,12 +59,7 @@ export class ObcPipeCross extends LitElement {
         viewBox="0 0 ${GRID} ${GRID}"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <path
-          d=${d}
-          fill="var(${fill})"
-          stroke=${isClosed ? 'none' : `var(${stroke.outlineVar})`}
-          stroke-width="1"
-        />
+        ${renderPipeJunction(junction, stroke)}
       </svg>
     `;
   }

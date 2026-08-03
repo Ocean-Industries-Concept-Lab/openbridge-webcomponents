@@ -2,7 +2,8 @@ import {LitElement, html, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import {resolvePipeStroke, GRID} from './pipe-styles.js';
-import {teePath} from './pipe-geometry.js';
+import {teeJunction} from './pipe-geometry.js';
+import {renderPipeJunction} from './pipe-render.js';
 import type {PipeValue, PipeSize, PipeDirection, MediumColor} from './pipe-types.js';
 import componentStyle from './pipe.css?inline';
 
@@ -24,11 +25,12 @@ const ROTATION_BY_DIRECTION: Record<PipeDirection, number> = {
  * Draws the shared tee geometry — a full-width straight run with a
  * perpendicular branch, its inner corners rounded to match
  * `obc-pipe-corner` — rotated so the branch points toward `direction`. The
- * geometry is a closed silhouette polygon, rendered as a single filled
- * shape with a 1px border (fill-plus-border, not the centerline
- * outline-plus-fill stroke pattern used by the straight/corner/endpoint/
- * arrow components) so it reads as one continuous run when combined with
- * straights and corners.
+ * geometry is a continuous filled interior (the T-shaped union of the bar
+ * and the stub, in the fill color) with 1px wall segments along each arm's
+ * long edges; the bar's wall on the stub side breaks over the stub opening
+ * so interior flows freely between the bar and the branch, and every arm
+ * mouth is left open at the tile edge so it reads as one continuous run
+ * when combined with straights and corners.
  *
  * ## Features
  * - **Value states:** `open-flow` and `open-generic` (default open pipe),
@@ -62,10 +64,8 @@ export class ObcPipeTee extends LitElement {
 
   override render() {
     const stroke = resolvePipeStroke(this.value, this.size, this.mediumColor);
-    const d = teePath(this.size);
+    const junction = teeJunction(this.size);
     const rotation = ROTATION_BY_DIRECTION[this.direction];
-    const isClosed = this.value === 'closed' || this.value === 'closed-dash';
-    const fill = isClosed ? stroke.outlineVar : stroke.fillVar;
     return html`
       <svg
         class="pipe"
@@ -75,12 +75,7 @@ export class ObcPipeTee extends LitElement {
         xmlns="http://www.w3.org/2000/svg"
         transform="rotate(${rotation} ${GRID / 2} ${GRID / 2})"
       >
-        <path
-          d=${d}
-          fill="var(${fill})"
-          stroke=${isClosed ? 'none' : `var(${stroke.outlineVar})`}
-          stroke-width="1"
-        />
+        ${renderPipeJunction(junction, stroke)}
       </svg>
     `;
   }

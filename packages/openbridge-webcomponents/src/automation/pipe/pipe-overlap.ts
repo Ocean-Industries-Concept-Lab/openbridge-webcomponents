@@ -1,43 +1,26 @@
 import {LitElement, html, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
-import {resolvePipeStroke, GRID, STROKE_WEIGHTS} from './pipe-styles.js';
-import {overlapPath} from './pipe-geometry.js';
+import {resolvePipeStroke, GRID} from './pipe-styles.js';
+import {overlapJunction} from './pipe-geometry.js';
+import {renderPipeJunction} from './pipe-render.js';
 import type {PipeValue, PipeSize, MediumColor} from './pipe-types.js';
 import componentStyle from './pipe.css?inline';
-
-const C = GRID / 2;
-
-// The solid, uninterrupted run crossing perpendicular to the gapped run
-// returned by `overlapPath`. `overlapPath` only supplies the masked
-// (vertical, when `direction` is `vertical`) run's geometry — the continuous
-// crossing run is a plain rect at the INTERIOR (fill) width using the same
-// `C - h` / `C + h` footprint math as the gapped run's bars, so both read
-// as one consistent stroke weight once the shared 1px border is applied.
-// Mirrors `crossPath`'s horizontal-bar subpath.
-function solidRunPath(size: PipeSize): string {
-  const fill = STROKE_WEIGHTS[size].fill;
-  const h = fill / 2;
-  const top = C - h;
-  const bottom = C + h;
-  return `M 0 ${top} L ${GRID} ${top} L ${GRID} ${bottom} L 0 ${bottom} Z`;
-}
 
 /**
  * `<obc-pipe-overlap>` – A crossing where one pipe run hops over another
  * without connecting, on a process diagram grid.
  *
- * Draws one run as a solid, uninterrupted bar and the other as two
- * segments split around a gap at the crossing point, so the two runs read
- * as passing over one another rather than joining. All three bars are
- * closed silhouette polygons, combined into a single filled shape with a
- * 1px border (fill-plus-border, not the centerline outline-plus-fill
- * stroke pattern used by the straight/corner/endpoint/arrow components).
- * The gapped run's geometry comes from `overlapPath`, which returns the
- * gapped run pre-rotated to run vertically; the solid run is composed
- * alongside it as a plain full-width bar, and the whole pair rotates 90
- * degrees when `direction` is `horizontal` so the *other* run becomes the
- * one with the gap.
+ * Draws one run as a solid, uninterrupted bar with open mouths at both
+ * edges and unbroken walls, and the other as two segments split around a
+ * gap at the crossing point (each segment's own mouth open at its tile
+ * edge, nothing capping the gap end), so the two runs read as passing over
+ * one another rather than joining. The interior of both runs is a single
+ * continuous fill; only the gapped run's walls break, at the gap rather
+ * than a shared junction. The gapped run's geometry comes from
+ * `overlapJunction`, which returns it pre-rotated to run vertically; the
+ * whole pair rotates 90 degrees when `direction` is `horizontal` so the
+ * *other* run becomes the one with the gap.
  *
  * ## Features
  * - **Value states:** `open-flow` and `open-generic` (default open pipe),
@@ -73,10 +56,8 @@ export class ObcPipeOverlap extends LitElement {
 
   override render() {
     const stroke = resolvePipeStroke(this.value, this.size, this.mediumColor);
-    const d = `${solidRunPath(this.size)} ${overlapPath(this.size)}`;
+    const junction = overlapJunction(this.size);
     const rotation = this.direction === 'horizontal' ? 90 : 0;
-    const isClosed = this.value === 'closed' || this.value === 'closed-dash';
-    const fill = isClosed ? stroke.outlineVar : stroke.fillVar;
     return html`
       <svg
         class="pipe"
@@ -86,12 +67,7 @@ export class ObcPipeOverlap extends LitElement {
         xmlns="http://www.w3.org/2000/svg"
         transform="rotate(${rotation} ${GRID / 2} ${GRID / 2})"
       >
-        <path
-          d=${d}
-          fill="var(${fill})"
-          stroke=${isClosed ? 'none' : `var(${stroke.outlineVar})`}
-          stroke-width="1"
-        />
+        ${renderPipeJunction(junction, stroke)}
       </svg>
     `;
   }

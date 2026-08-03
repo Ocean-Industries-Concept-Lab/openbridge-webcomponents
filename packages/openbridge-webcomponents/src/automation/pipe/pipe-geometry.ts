@@ -299,32 +299,39 @@ export function arrowHeadPath(flow: 'arrow-in' | 'arrow-out', size: PipeSize, va
 }
 
 // ---------------------------------------------------------------------------
-// Junctions: tee, cross, overlap. Each is a SINGLE union-silhouette path at
-// the pipe's INTERIOR (fill) width — mirroring the deprecated
-// three-way-line / line-cross / line-overlap components' topology, per
-// FIGMA-GROUND-TRUTH.md's "junctions = union silhouette" decision. The
-// component layer fills the silhouette with `fillVar` and strokes it with a
-// flat 1px `outlineVar` border; because each shape has ONE connected outer
-// boundary (not independently-closed overlapping rects), the 1px wall only
-// ever appears on that outer boundary and the interior reads as one
-// continuous fill region through the junction. `w`/`h` below are the
-// INTERIOR half-width (`STROKE_WEIGHTS[size].fill / 2`) — the 1px stroke
-// straddles the path border (0.5px in, 0.5px out), so the rendered total
-// width is `fill + 1` per side = `fill + 2` = `STROKE_WEIGHTS[size].outline`,
-// matching the measured wall rows at every size.
+// Junctions: tee, cross, overlap. Per OPEN-ENDINGS-CORRECTION.md, each arm
+// mouth (where the junction meets the tile edge) must be OPEN — two 1px
+// walls run to the edge with NOTHING across the opening — and the interior
+// is ONE continuous fill region with no internal walls crossing it. This
+// replaces the earlier closed-silhouette model (a single filled+stroked
+// polygon), which capped every mouth with a wall and blocked pipe
+// connections.
+//
+// A `PipeJunction` separates the two concerns:
+// - `interior`: a single filled path (the union of the arms at the fill
+//   width) in `fillVar`, drawn with NO stroke — this is what makes the
+//   interior continuous through the crossing/T (no wall can appear inside
+//   it because there's nothing stroked there).
+// - `walls`: a flat list of 1px-stroke path segments in `outlineVar`. Each
+//   segment runs from a tile edge INWARD and STOPS at the fill-width
+//   boundary of the crossing arm, so the wall breaks exactly where another
+//   arm's interior opens into it (mirrors `line-cross.ts`'s CONNECTOR
+//   variant: many short wall segments, never one drawn straight across an
+//   opening).
 // ---------------------------------------------------------------------------
 
-// A full-width straight run with a perpendicular stub dropping from the
-// centre band to one edge — a true T, not a bucket: the stub is only as
-// wide as the interior fill width, and its rounding radius is clamped to
-// HALF its own half-width (`h / 2`) so a flat shoulder always survives on
-// the bar's far edge before the fillet starts. Clamping to the full `h` (as
-// the original bug did, via `C - h`) lets the two corner fillets meet at
-// the stub's centreline and erase the shoulder entirely, turning the T into
-// a smooth dome/bucket instead of a recognisable stub (visually confirmed
-// at xl, where `h = 6`: a `min(radius, h)` clamp allows `r = 6 = h`, and the
-// fillet swallows the whole corner).
-export function teePath(size: PipeSize, radius: number = CORNER_RADIUS): string {
+export interface PipeJunction {
+  interior: string;
+  walls: string[];
+}
+
+// Full-width bar (the straight run) union a half-height stub dropping to
+// one edge — a true T silhouette used as the JOINT INTERIOR fill (no
+// stroke). Corners of the stub are rounded to match the corner radius, but
+// clamped to half the stub's own half-width so a flat shoulder always
+// survives on the bar's far edge before the fillet starts (see historical
+// note below).
+function teeInteriorPath(size: PipeSize, radius: number = CORNER_RADIUS): string {
   const fill = STROKE_WEIGHTS[size].fill;
   const h = fill / 2;
   const r = Math.min(radius, h / 2);
@@ -347,15 +354,17 @@ export function teePath(size: PipeSize, radius: number = CORNER_RADIUS): string 
   );
 }
 
-// Two straights crossing at the grid centre, traced as ONE closed loop
-// around the outer boundary of the plus shape (12 corners, square — the
-// pipe cross has no rounded corners at the junction), mirroring
-// `line-cross.ts`'s single-path topology. Because it is one connected
-// boundary, the interior at the crossing has no edge to stroke — the walls
-// break there by construction instead of the previous two-independent-rects
-// approach, whose separately-closed boundaries drew a wall straight across
-// the junction.
-export function crossPath(size: PipeSize): string {
+// Backward-compatible alias: some callers/tests still refer to `teePath` as
+// the shape to fill. It is now only the INTERIOR fill silhouette; the walls
+// are drawn separately (see `teeJunction`) so mouths stay open.
+export function teePath(size: PipeSize, radius: number = CORNER_RADIUS): string {
+  return teeInteriorPath(size, radius);
+}
+
+// Plus-shaped union of a horizontal and vertical bar at the fill width —
+// the JOINT INTERIOR fill (no stroke) for a cross. Square inner corners (no
+// rounding at the crossing, matching the measured Figma cross).
+function crossInteriorPath(size: PipeSize): string {
   const fill = STROKE_WEIGHTS[size].fill;
   const h = fill / 2;
   const top = C - h;
@@ -377,20 +386,116 @@ export function crossPath(size: PipeSize): string {
   );
 }
 
-// Vertical run hopping over a horizontal run: the horizontal run is solid,
-// the vertical run is a single path with a gap around the crossing so the
-// two visible segments read as passing UNDER the horizontal run rather than
-// joining it (unlike cross/tee, the continuous run's own long edges are
-// meant to stroke straight through the crossing — that is what makes it
-// read as a hop, not a union — so this keeps the deprecated line-overlap's
-// separately-closed-subpaths topology). Mirrors the deprecated
-// line-overlap's mask rect: gap at `y = 12 - 2 - h`, height `width + 4`,
-// sized here by OVERLAP_HALF_GAP instead of the fixed `2`/`4` constants so
-// the gap scales with pipe size. The natural half-span (margin + h) can
-// exceed the grid centre at large/xl stroke weights, which would collapse
-// or invert the two visible vertical segments; clamp it so at least 1px of
-// visible pipe survives on each side of the gap (mirrors the
-// `Math.min(radius, h)` clamp in teePath).
+// Backward-compatible alias: interior-only fill silhouette for a cross; see
+// `crossJunction` for the open-mouth walls.
+export function crossPath(size: PipeSize): string {
+  return crossInteriorPath(size);
+}
+
+// Wall offset from the centreline for a given size — same convention as
+// `straightChannel`/`cornerChannel`: fill half-width plus the 1px stroke's
+// own half-width, landing the wall's outer edge on the measured outline
+// row.
+function wallOffset(size: PipeSize): number {
+  return STROKE_WEIGHTS[size].fill / 2 + 0.5;
+}
+
+// Four arms, each with two parallel wall segments running from the tile
+// edge inward and STOPPING at the opposite arm's fill-width boundary (`top`/
+// `bottom`), so every mouth is open (segments reach x=0/x=24/y=0/y=24 with
+// nothing drawn across them) and every wall breaks at the junction (no
+// segment spans the crossing). Interior is the plus fill silhouette, drawn
+// with no stroke so the crossing itself has no wall.
+export function crossJunction(size: PipeSize): PipeJunction {
+  const o = wallOffset(size);
+  const top = C - o;
+  const bottom = C + o;
+  const walls: string[] = [
+    // Horizontal walls (y = top, y = bottom), broken over the vertical arm.
+    `M 0 ${top} L ${top} ${top}`,
+    `M ${bottom} ${top} L ${GRID} ${top}`,
+    `M 0 ${bottom} L ${top} ${bottom}`,
+    `M ${bottom} ${bottom} L ${GRID} ${bottom}`,
+    // Vertical walls (x = top, x = bottom), broken over the horizontal arm.
+    `M ${top} 0 L ${top} ${top}`,
+    `M ${top} ${bottom} L ${top} ${GRID}`,
+    `M ${bottom} 0 L ${bottom} ${top}`,
+    `M ${bottom} ${bottom} L ${bottom} ${GRID}`,
+  ];
+  return {interior: crossInteriorPath(size), walls};
+}
+
+// Straight bar (left/right arms) plus one perpendicular stub (bottom arm,
+// canonical orientation — rotated by the component for other directions).
+// The bar's two long walls (top/bottom of the bar) run edge-to-edge but
+// BREAK over the stub opening on the bottom wall, so the bar's interior
+// flows freely into the stub; the stub's own two walls run from the stub's
+// open mouth (grid edge) up to the bar, open at the bottom and simply
+// ENDING where they meet the bar's interior (no cap drawn there — the bar's
+// fill silhouette already covers that seam, so nothing perpendicular closes
+// it off).
+export function teeJunction(size: PipeSize): PipeJunction {
+  const o = wallOffset(size);
+  const top = C - o;
+  const bottom = C + o;
+  const stubLeft = C - o;
+  const stubRight = C + o;
+  const walls: string[] = [
+    // Bar top wall: full span, open mouths at both edges (no stub opens
+    // into the top of the bar, so it does not need to break).
+    `M 0 ${top} L ${GRID} ${top}`,
+    // Bar bottom wall: BREAKS over the stub opening.
+    `M 0 ${bottom} L ${stubLeft} ${bottom}`,
+    `M ${stubRight} ${bottom} L ${GRID} ${bottom}`,
+    // Stub walls: run from the bar's bottom-wall row down to the open
+    // bottom mouth (grid edge) — nothing caps the far end.
+    `M ${stubLeft} ${bottom} L ${stubLeft} ${GRID}`,
+    `M ${stubRight} ${bottom} L ${stubRight} ${GRID}`,
+  ];
+  return {interior: teeInteriorPath(size), walls};
+}
+
+// Continuous run (both mouths open, walls run edge-to-edge unbroken since
+// nothing crosses it) plus the other run split into two segments around a
+// gap where it passes under (each segment's mouth is open at its own tile
+// edge; the gap end is left open too — nothing caps it, so it reads as
+// tucking under the continuous run rather than terminating). Mirrors the
+// deprecated line-overlap's mask-rect gap sizing (`OVERLAP_HALF_GAP`),
+// clamped so at least 1px of visible pipe survives on each side of the gap
+// at large/xl stroke weights.
+export function overlapJunction(size: PipeSize): PipeJunction {
+  const o = wallOffset(size);
+  const fill = STROKE_WEIGHTS[size].fill;
+  const h = fill / 2;
+  const margin = OVERLAP_HALF_GAP[size];
+  const halfSpan = Math.min(margin + h, C - 1);
+  const gapTop = C - halfSpan;
+  const gapBottom = C + halfSpan;
+  const left = C - o;
+  const right = C + o;
+  const crossTop = C - o;
+  const crossBottom = C + o;
+  const walls: string[] = [
+    // Continuous (horizontal) run walls: edge-to-edge, unbroken.
+    `M 0 ${crossTop} L ${GRID} ${crossTop}`,
+    `M 0 ${crossBottom} L ${GRID} ${crossBottom}`,
+    // Gapped (vertical) run walls: two segments each, open at the grid edge
+    // and open at the gap (nothing spans the gap).
+    `M ${left} 0 L ${left} ${gapTop}`,
+    `M ${right} 0 L ${right} ${gapTop}`,
+    `M ${left} ${gapBottom} L ${left} ${GRID}`,
+    `M ${right} ${gapBottom} L ${right} ${GRID}`,
+  ];
+  const interior =
+    `M 0 ${crossTop} L ${GRID} ${crossTop} L ${GRID} ${crossBottom} L 0 ${crossBottom} Z ` +
+    `M ${left} 0 L ${right} 0 L ${right} ${gapTop} L ${left} ${gapTop} Z ` +
+    `M ${left} ${gapBottom} L ${right} ${gapBottom} L ${right} ${GRID} L ${left} ${GRID} Z`;
+  return {interior, walls};
+}
+
+// Backward-compatible alias returning just the gapped-run interior
+// silhouette (the piece `overlapJunction` composes into `interior` above),
+// kept for any existing callers/tests of the raw gap geometry.
 export function overlapPath(size: PipeSize): string {
   const fill = STROKE_WEIGHTS[size].fill;
   const h = fill / 2;

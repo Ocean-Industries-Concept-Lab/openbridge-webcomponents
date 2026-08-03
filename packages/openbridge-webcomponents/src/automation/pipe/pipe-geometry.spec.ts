@@ -10,6 +10,9 @@ import {
   teePath,
   crossPath,
   overlapPath,
+  crossJunction,
+  teeJunction,
+  overlapJunction,
 } from './pipe-geometry.js';
 import {CORNER_RADIUS, GRID, STROKE_WEIGHTS} from './pipe-styles.js';
 import type {PipeSize} from './pipe-types.js';
@@ -253,4 +256,135 @@ describe('teePath / crossPath / overlapPath', () => {
       expect(gapBottom).toBeGreaterThan(gapTop);
     }
   );
+});
+
+// Open-mouth junction model (OPEN-ENDINGS-CORRECTION.md): unlike the closed
+// silhouette these replace, every arm mouth at a tile edge must be OPEN (no
+// wall segment spans it) and every wall must BREAK at the junction (no
+// segment crosses another arm's opening).
+describe('crossJunction / teeJunction / overlapJunction (open mouths, walls break at junction)', () => {
+  function wallReachesEdge(walls: string[], edge: number, axis: 'x' | 'y'): boolean {
+    return walls.some((w) => {
+      const pts = pathPoints(w);
+      return pts.some((p) => (axis === 'x' ? p.x : p.y) === edge);
+    });
+  }
+
+  function anyWallSpans(walls: string[], from: number, to: number, axis: 'x' | 'y'): boolean {
+    return walls.some((w) => {
+      const pts = pathPoints(w);
+      if (pts.length < 2) return false;
+      const a = axis === 'x' ? pts[0].x : pts[0].y;
+      const b = axis === 'x' ? pts[1].x : pts[1].y;
+      const lo = Math.min(a, b);
+      const hi = Math.max(a, b);
+      return lo <= from && hi >= to;
+    });
+  }
+
+  it.each<PipeSize>(['small', 'medium', 'large', 'xl'])(
+    'cross: all four mouths are open — walls reach every tile edge, none spans the opposite arm opening (%s)',
+    (size) => {
+      const {walls} = crossJunction(size);
+      const o = STROKE_WEIGHTS[size].fill / 2 + 0.5;
+      const top = 12 - o;
+      const bottom = 12 + o;
+
+      // Walls reach all four tile edges (mouths are open, not capped).
+      expect(wallReachesEdge(walls, 0, 'x')).toBe(true);
+      expect(wallReachesEdge(walls, GRID, 'x')).toBe(true);
+      expect(wallReachesEdge(walls, 0, 'y')).toBe(true);
+      expect(wallReachesEdge(walls, GRID, 'y')).toBe(true);
+
+      // No horizontal wall spans the vertical arm's opening (top..bottom in
+      // x), and no vertical wall spans the horizontal arm's opening (top..
+      // bottom in y) — this is the "walls break at the junction" invariant.
+      expect(anyWallSpans(walls, top, bottom, 'x')).toBe(false);
+      expect(anyWallSpans(walls, top, bottom, 'y')).toBe(false);
+    }
+  );
+
+  it('cross: exactly 8 wall segments (2 per arm x 4 arms), each a simple two-point line', () => {
+    const {walls} = crossJunction('medium');
+    expect(walls).toHaveLength(8);
+    for (const wall of walls) {
+      expect(pathPoints(wall)).toHaveLength(2);
+    }
+  });
+
+  it.each<PipeSize>(['small', 'medium', 'large', 'xl'])(
+    'tee: bar mouths (left/right) and stub mouth (bottom) are all open (%s)',
+    (size) => {
+      const {walls} = teeJunction(size);
+      expect(wallReachesEdge(walls, 0, 'x')).toBe(true); // left mouth
+      expect(wallReachesEdge(walls, GRID, 'x')).toBe(true); // right mouth
+      expect(wallReachesEdge(walls, GRID, 'y')).toBe(true); // stub mouth
+    }
+  );
+
+  it.each<PipeSize>(['small', 'medium', 'large', 'xl'])(
+    "tee: the bar's stub-side wall breaks over the stub opening (interior flows bar<->stub) (%s)",
+    (size) => {
+      const {walls} = teeJunction(size);
+      const o = STROKE_WEIGHTS[size].fill / 2 + 0.5;
+      const stubLeft = 12 - o;
+      const stubRight = 12 + o;
+      // The bottom-side bar wall(s) must not form one continuous segment
+      // spanning stubLeft..stubRight (that would cap the stub mouth off from
+      // the bar).
+      const bottomY = 12 + o;
+      const bottomWalls = walls.filter((w) => {
+        const pts = pathPoints(w);
+        return pts.every((p) => p.y === bottomY);
+      });
+      expect(anyWallSpans(bottomWalls, stubLeft, stubRight, 'x')).toBe(false);
+    }
+  );
+
+  it('tee: exactly 5 wall segments (2 full-span top + 2 broken bottom + 2 stub, minus the shared corner)', () => {
+    const {walls} = teeJunction('medium');
+    expect(walls).toHaveLength(5);
+  });
+
+  it.each<PipeSize>(['small', 'medium', 'large', 'xl'])(
+    'overlap: continuous run mouths open + unbroken; gapped run mouths open + broken at the gap (%s)',
+    (size) => {
+      const {walls} = overlapJunction(size);
+      // Continuous run: walls reach both x-edges (open mouths).
+      expect(wallReachesEdge(walls, 0, 'x')).toBe(true);
+      expect(wallReachesEdge(walls, GRID, 'x')).toBe(true);
+      // The continuous run's two walls are each a single unbroken segment
+      // spanning the full width (no split at the crossing).
+      const fullSpanWalls = walls.filter((w) => {
+        const pts = pathPoints(w);
+        return pts.length === 2 && pts.every((p) => p.y === pts[0].y);
+      });
+      expect(fullSpanWalls).toHaveLength(2);
+      for (const w of fullSpanWalls) {
+        const pts = pathPoints(w);
+        expect(Math.min(pts[0].x, pts[1].x)).toBe(0);
+        expect(Math.max(pts[0].x, pts[1].x)).toBe(GRID);
+      }
+      // Gapped run: walls reach both y-edges (open mouths) and no single
+      // gapped-run wall segment spans the gap itself.
+      expect(wallReachesEdge(walls, 0, 'y')).toBe(true);
+      expect(wallReachesEdge(walls, GRID, 'y')).toBe(true);
+      const gappedWalls = walls.filter((w) => {
+        const pts = pathPoints(w);
+        return pts.length === 2 && pts.every((p) => p.x === pts[0].x);
+      });
+      expect(gappedWalls).toHaveLength(4);
+      for (const w of gappedWalls) {
+        const pts = pathPoints(w);
+        const span = Math.abs(pts[0].y - pts[1].y);
+        expect(span).toBeLessThan(GRID);
+      }
+    }
+  );
+
+  it('cross/tee/overlap interiors are unstroked fills (drawn separately from the wall segments)', () => {
+    expect(crossJunction('medium').interior).toContain('Z');
+    expect(teeJunction('medium').interior).toContain('Z');
+    expect(overlapJunction('medium').interior).toContain('Z');
+  });
 });
