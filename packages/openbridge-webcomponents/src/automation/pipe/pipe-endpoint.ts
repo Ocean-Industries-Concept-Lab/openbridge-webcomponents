@@ -27,10 +27,6 @@ const ROTATION_BY_DIRECTION: Record<PipeDirection, number> = {
   bottom: 270,
 };
 
-// Additional tilt applied to the cap bar (on top of `direction`'s rotation)
-// for the `breakoff` variant, degrees.
-const BREAKOFF_TILT = 30;
-
 /**
  * `<obc-pipe-endpoint>` – A terminating open-stub-and-cap glyph closing off
  * one end of a process diagram pipe run.
@@ -55,9 +51,6 @@ const BREAKOFF_TILT = 30;
  *   bar, and stroke weights together.
  * - **Direction:** `direction` selects which edge the terminus faces —
  *   `top`, `right` (default), `bottom`, or `left`.
- * - **Cap variant:** `variant` selects a straight `cap` (default, cap
- *   perpendicular to the stub) or a `breakoff` cap (tilted ~30 degrees, for
- *   a broken/disconnected look).
  *
  * ## Usage Guidelines
  * Use `obc-pipe-endpoint` to close off a pipe run that does not continue to
@@ -74,33 +67,24 @@ export class ObcPipeEndpoint extends LitElement {
   @property({type: String, attribute: 'medium-color'})
   mediumColor?: MediumColor;
   @property({type: String}) direction: PipeDirection = 'right';
-  // eslint-disable-next-line openbridge/prefer-enum-over-string-literal-union
-  @property({type: String}) variant: 'cap' | 'breakoff' = 'cap';
 
   override render() {
     const stroke = resolvePipeStroke(this.value, this.size, this.mediumColor);
     const rotation = ROTATION_BY_DIRECTION[this.direction];
-    const isBreakoff = this.variant === 'breakoff';
-    const barTilt = isBreakoff ? BREAKOFF_TILT : 0;
     const cap = endpointLineCap(this.size);
     const hasFill = stroke.fillVar !== null && stroke.fillWeight !== null;
 
     // The endpoint is a T (stub + perpendicular bar) stroked twice: an
     // outline-weight pass, then — for states with a fill — a fill-weight pass
-    // over it. The stub and bar are drawn as SEPARATE strokes so the
-    // `breakoff` variant can tilt just the bar (30°) around the terminus while
-    // the stub stays axis-aligned. Only medium uses a round linecap (rounding
-    // the bar ends); small, large & xl use butt caps. Matches the Figma
-    // endpoint vectors.
+    // over it. Only medium uses a round linecap (rounding the bar ends);
+    // small, large & xl use butt caps. Matches the Figma endpoint vectors.
     const c = GRID / 2;
     const stub = `M 0 ${c} L ${c} ${c}`;
-    const barTransform = `rotate(${barTilt} ${c} ${c})`;
 
     const bar = (half: number, weight: number, colorVar: string) =>
       svg`<path d=${`M ${c} ${c - half} L ${c} ${c + half}`} fill="none"
         stroke="var(${colorVar})" stroke-width=${weight}
-        stroke-linecap=${cap} vector-effect="non-scaling-stroke"
-        transform=${barTransform} />`;
+        stroke-linecap=${cap} vector-effect="non-scaling-stroke" />`;
     const stubLine = (weight: number, colorVar: string, dash: number[]) =>
       svg`<path d=${stub} fill="none" stroke="var(${colorVar})"
         stroke-width=${weight} vector-effect="non-scaling-stroke"

@@ -124,7 +124,6 @@ function familyRow() {
           value="open-flow"
           size="medium"
           direction="right"
-          variant="cap"
         ></obc-pipe-endpoint>
       </div>
       <div style=${cellStyle}>

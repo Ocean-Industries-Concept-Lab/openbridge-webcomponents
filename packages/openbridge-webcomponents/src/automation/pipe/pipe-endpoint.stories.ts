@@ -46,10 +46,6 @@ const meta: Meta<typeof ObcPipeEndpoint> = {
       options: ['top', 'right', 'bottom', 'left'],
       control: {type: 'radio'},
     },
-    variant: {
-      options: ['cap', 'breakoff'],
-      control: {type: 'radio'},
-    },
   },
 } satisfies Meta<ObcPipeEndpoint>;
 
@@ -61,21 +57,6 @@ export const Default: Story = {
     value: 'open-flow',
     size: 'medium',
     direction: 'right',
-    variant: 'cap',
-  },
-};
-
-export const Cap: Story = {
-  args: {
-    ...Default.args,
-    variant: 'cap',
-  },
-};
-
-export const Breakoff: Story = {
-  args: {
-    ...Default.args,
-    variant: 'breakoff',
   },
 };
 
