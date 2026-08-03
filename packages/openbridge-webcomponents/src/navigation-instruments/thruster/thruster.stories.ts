@@ -5,6 +5,7 @@ import {InstrumentState, Priority} from '../types.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {AdviceType} from '../watch/advice.js';
 import {PropellerType} from './propeller.js';
+import {PortStarboardElement} from '../../svghelpers/port-starboard.js';
 
 const meta: Meta<typeof ObcThruster> = {
   title: 'Instruments/Thruster',
@@ -40,6 +41,50 @@ export const InCommand: Story = {
     setpoint: 30,
     state: InstrumentState.active,
     priority: Priority.enhanced,
+  },
+};
+
+export const PortStarboardAhead: Story = {
+  args: {
+    thrust: 70,
+    priority: Priority.enhanced,
+    state: InstrumentState.active,
+    portStarboard: true,
+  },
+};
+
+export const PortStarboardAstern: Story = {
+  args: {
+    thrust: -70,
+    priority: Priority.enhanced,
+    state: InstrumentState.active,
+    portStarboard: true,
+  },
+};
+
+export const PortStarboardWithSetpoint: Story = {
+  args: {
+    thrust: 70,
+    setpoint: 85,
+    priority: Priority.enhanced,
+    state: InstrumentState.active,
+    portStarboard: true,
+    portStarboardElements: [
+      PortStarboardElement.bar,
+      PortStarboardElement.zeroLine,
+      PortStarboardElement.arrow,
+      PortStarboardElement.setpoint,
+    ],
+  },
+};
+
+export const PortStarboardTunnel: Story = {
+  args: {
+    thrust: -60,
+    tunnel: true,
+    priority: Priority.enhanced,
+    state: InstrumentState.active,
+    portStarboard: true,
   },
 };
 
