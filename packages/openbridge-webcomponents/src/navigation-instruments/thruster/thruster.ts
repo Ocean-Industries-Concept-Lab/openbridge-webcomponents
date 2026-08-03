@@ -72,8 +72,9 @@ export class ObcThruster extends SetpointMixin(LitElement, {
    * @availableWhen portStarboard==true
    */
   @property({type: Array, attribute: false})
-  portStarboardElements: PortStarboardElement[] =
-    PORT_STARBOARD_DEFAULT_ELEMENTS;
+  portStarboardElements: PortStarboardElement[] = [
+    ...PORT_STARBOARD_DEFAULT_ELEMENTS,
+  ];
 
   override render() {
     return html`<div class="container">

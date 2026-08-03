@@ -12,11 +12,11 @@
  * word "bar" means the light track in the rate-of-turn family but the dark
  * value fill in the azimuth thruster:
  *
- * | Normal-mode color                           | PORT/STBD replacement                     |
- * |---------------------------------------------|-------------------------------------------|
- * | `--instrument-{enhanced,regular}-tertiary`  | `--instrument-{starboard,port}-secondary` |
- * | `--instrument-{enhanced,regular}-secondary` | `--instrument-{starboard,port}-primary`   |
- * | `--instrument-{enhanced,regular}-primary`   | `--instrument-{starboard,port}-primary`   |
+ * | Normal-mode color                                 | PORT/STBD replacement                           |
+ * |---------------------------------------------------|-------------------------------------------------|
+ * | `--instrument-{enhanced,regular}-tertiary-color`  | `--instrument-{starboard,port}-secondary-color` |
+ * | `--instrument-{enhanced,regular}-secondary-color` | `--instrument-{starboard,port}-primary-color`   |
+ * | `--instrument-{enhanced,regular}-primary-color`   | `--instrument-{starboard,port}-primary-color`   |
  *
  * This reproduces the rule already used by `watch.getRotColors()`,
  * `watch-flat.getRotColors()`, `rate-of-turn`, `rot-linear` and `rot-sector`,
