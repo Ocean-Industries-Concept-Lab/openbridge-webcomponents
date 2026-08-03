@@ -5,6 +5,7 @@ import {
   cornerPath,
   cornerChannel,
   endpointStubPath,
+  endpointChannel,
   endpointCapPath,
   arrowHeadPath,
   teePath,
@@ -126,20 +127,73 @@ describe('endpointStubPath', () => {
   });
 });
 
-describe('endpointCapPath', () => {
-  it('outline cap is longer than fill cap (9 vs 8 at medium)', () => {
-    const outline = endpointCapPath('medium', 'cap', 'outline');
-    const fill = endpointCapPath('medium', 'cap', 'fill');
-    // crude length proxy: max |y| in the cap path
-    const maxAbsY = (d: string) => Math.max(...pathPoints(d).map((p) => Math.abs(p.y - 12)));
-    expect(maxAbsY(outline)).toBeGreaterThan(maxAbsY(fill));
+describe('endpointChannel', () => {
+  it('mouth is OPEN at the grid edge (x=GRID) — matches the Figma ground truth', () => {
+    const {inner, walls} = endpointChannel('medium');
+    const innerPts = pathPoints(inner);
+    expect(innerPts[0].x).toBe(GRID);
+    for (const wall of walls) {
+      const pts = pathPoints(wall);
+      expect(pts[0].x).toBe(GRID);
+    }
   });
 
-  it('breakoff tilts the cap (x components become non-zero)', () => {
-    const straight = endpointCapPath('medium', 'cap', 'outline');
-    const tilted = endpointCapPath('medium', 'breakoff', 'outline');
-    expect(tilted).not.toEqual(straight);
+  it.each<PipeSize>(['small', 'medium', 'large', 'xl'])(
+    'wall offset matches straightChannel at the same size (%s) so it lines up with a straight run',
+    (size) => {
+      const {walls} = endpointChannel(size);
+      const {walls: straightWalls} = straightChannel(1, 'horizontal', size);
+      const expectedOffset = STROKE_WEIGHTS[size].fill / 2 + 0.5;
+      expect(walls[0]).toContain(`${12 - expectedOffset}`);
+      expect(walls[1]).toContain(`${12 + expectedOffset}`);
+      // Sanity: same offset convention as the straight run's own walls.
+      expect(straightWalls[0]).toContain(`${12 - expectedOffset}`);
+    }
+  );
+
+  it('walls stop at the cap edge and never cross into/past the cap band', () => {
+    const {walls} = endpointChannel('medium');
+    for (const wall of walls) {
+      const pts = pathPoints(wall);
+      const minX = Math.min(...pts.map((p) => p.x));
+      expect(minX).toBeGreaterThan(12); // strictly short of/at the grid centre
+      expect(minX).toBeLessThan(GRID);
+    }
   });
+});
+
+describe('endpointCapPath', () => {
+  it('is a single closed rounded-rectangle path centred on the grid centre', () => {
+    const d = endpointCapPath('medium');
+    expect((d.match(/M /g) ?? []).length).toBe(1);
+    expect(d.trim().endsWith('Z')).toBe(true);
+    expect(d).toContain('A ');
+    const pts = pathPoints(d);
+    const xs = pts.map((p) => p.x);
+    const ys = pts.map((p) => p.y);
+    const midX = (Math.min(...xs) + Math.max(...xs)) / 2;
+    const midY = (Math.min(...ys) + Math.max(...ys)) / 2;
+    expect(midX).toBeCloseTo(12, 5);
+    expect(midY).toBeCloseTo(12, 5);
+  });
+
+  it('cap is taller than the pipe channel (spans well beyond the wall offset)', () => {
+    const capD = endpointCapPath('medium');
+    const capYs = pathPoints(capD).map((p) => p.y);
+    const capHalfHeight = (Math.max(...capYs) - Math.min(...capYs)) / 2;
+    const wallOffsetMedium = STROKE_WEIGHTS.medium.fill / 2 + 0.5;
+    expect(capHalfHeight).toBeGreaterThan(wallOffsetMedium);
+  });
+
+  it.each<PipeSize>(['small', 'medium', 'large', 'xl'])(
+    'cap grows with size (%s)',
+    (size) => {
+      const d = endpointCapPath(size);
+      const xs = pathPoints(d).map((p) => p.x);
+      const halfWidth = (Math.max(...xs) - Math.min(...xs)) / 2;
+      expect(halfWidth).toBeGreaterThan(0);
+    }
+  );
 });
 
 describe('arrowHeadPath', () => {

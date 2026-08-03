@@ -2,8 +2,8 @@ import {LitElement, html, svg, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import {resolvePipeStroke, GRID} from './pipe-styles.js';
-import {endpointStubPath, endpointCapPath} from './pipe-geometry.js';
-import {renderPipeStrokes} from './pipe-render.js';
+import {endpointChannel, endpointCapPath} from './pipe-geometry.js';
+import {renderPipeChannel} from './pipe-render.js';
 import type {
   PipeValue,
   PipeSize,
@@ -12,8 +12,8 @@ import type {
 } from './pipe-types.js';
 import componentStyle from './pipe.css?inline';
 
-// Degrees to rotate the canonical endpoint (terminus at the left edge,
-// x=0, stub running inward toward the centre) around the viewBox centre
+// Degrees to rotate the canonical endpoint (cap toward the left half of the
+// cell, stub mouth OPEN at the right edge, x=GRID) around the viewBox centre
 // (12,12) so the terminus faces `direction`. Matches the corner's
 // rotate-about-centre approach so the shape stays inside the 24x24 canvas
 // at every step.
@@ -24,17 +24,21 @@ const ROTATION_BY_DIRECTION: Record<PipeDirection, number> = {
   bottom: 270,
 };
 
+// Additional tilt applied to the cap bar (on top of `direction`'s rotation)
+// for the `breakoff` variant, degrees.
+const BREAKOFF_TILT = 30;
+
 /**
- * `<obc-pipe-endpoint>` – A terminating stub-and-cap glyph closing off one
- * end of a process diagram pipe run.
+ * `<obc-pipe-endpoint>` – A terminating open-stub-and-cap glyph closing off
+ * one end of a process diagram pipe run.
  *
- * Draws the shared half-cell inward stub plus a perpendicular (or tilted
- * "breakoff") cap stroke at the terminus, using the same outline-plus-fill
- * stroke pattern as `obc-pipe-straight` and `obc-pipe-corner`. The stub and
- * cap are each rendered as an outline pass followed by a fill pass so the
- * two pieces read as one continuous glyph; `closed` and `closed-dash`
- * collapse to a single stroke per piece, matching those values' shut-off
- * appearance elsewhere in the family.
+ * Draws an open-mouth pipe stub — the same walled-channel model as
+ * `obc-pipe-straight` (a fill-width interior band bordered by two 1px
+ * walls), open at the connecting grid edge — meeting a perpendicular
+ * rounded-rectangle cap bar at the terminus, filled with the resolved fill
+ * color and bordered with a 1px outline stroke. `closed` and `closed-dash`
+ * collapse both pieces to a single stroke/fill in the outline color,
+ * matching those values' shut-off appearance elsewhere in the family.
  *
  * ## Features
  * - **Value states:** `open-flow` and `open-generic` (default open pipe),
@@ -72,34 +76,19 @@ export class ObcPipeEndpoint extends LitElement {
 
   override render() {
     const stroke = resolvePipeStroke(this.value, this.size, this.mediumColor);
-    const stub = endpointStubPath();
-    const outlineCap = endpointCapPath(this.size, this.variant, 'outline');
+    const channel = endpointChannel(this.size);
+    const cap = endpointCapPath(this.size);
     const rotation = ROTATION_BY_DIRECTION[this.direction];
+    const capTilt = this.variant === 'breakoff' ? BREAKOFF_TILT : 0;
 
-    // The stub shares one `d` across both layers, so `renderPipeStrokes`'s
-    // outline path (index 0) fits it directly. The cap has a different `d`
-    // per layer (the fill cap is shorter than the outline cap), so its two
-    // layers are drawn by hand: outline pass (stub, then cap) followed by a
-    // fill pass — matching the canvas glyph's draw order — and the fill
-    // pass is skipped entirely when the resolved stroke has no fill
-    // (closed / closed-dash), leaving a single stroke.
-    const outlinePass = [
-      renderPipeStrokes(stub, stroke)[0],
-      svg`<path d=${outlineCap} fill="none" vector-effect="non-scaling-stroke"
-        stroke="var(${stroke.outlineVar})" stroke-width=${stroke.outlineWeight}
-        stroke-dasharray=${stroke.dashPattern.join(' ')} />`,
-    ];
-
-    const fillPass =
-      stroke.fillVar !== null && stroke.fillWeight !== null
-        ? [
-            svg`<path d=${stub} fill="none" vector-effect="non-scaling-stroke"
-              stroke="var(${stroke.fillVar})" stroke-width=${stroke.fillWeight} />`,
-            svg`<path d=${endpointCapPath(this.size, this.variant, 'fill')} fill="none"
-              vector-effect="non-scaling-stroke" stroke="var(${stroke.fillVar})"
-              stroke-width=${stroke.fillWeight} />`,
-          ]
-        : [];
+    const capLayer =
+      stroke.fillVar === null || stroke.fillWeight === null
+        ? svg`<path d=${cap} fill="var(${stroke.outlineVar})" stroke="none"
+            transform="rotate(${capTilt} ${GRID / 2} ${GRID / 2})" />`
+        : svg`<path d=${cap} fill="var(${stroke.fillVar})"
+            stroke="var(${stroke.outlineVar})" stroke-width="1"
+            vector-effect="non-scaling-stroke"
+            transform="rotate(${capTilt} ${GRID / 2} ${GRID / 2})" />`;
 
     return html`
       <svg
@@ -110,7 +99,7 @@ export class ObcPipeEndpoint extends LitElement {
         xmlns="http://www.w3.org/2000/svg"
         transform="translate(-12 -12) rotate(${rotation} ${GRID / 2} ${GRID / 2})"
       >
-        ${outlinePass}${fillPass}
+        ${renderPipeChannel(channel, stroke)}${capLayer}
       </svg>
     `;
   }

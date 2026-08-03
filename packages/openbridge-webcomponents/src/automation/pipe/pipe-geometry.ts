@@ -108,34 +108,79 @@ export function cornerChannel(
 }
 
 // ---------------------------------------------------------------------------
-// Endpoint cap: pipe stub (half cell, inward) + perpendicular cap at terminus.
-// Ported from connector-diagram/src/drawing/glyphs.ts (drawEndpoint).
+// Endpoint: an open-mouth pipe stub (walls+interior channel, matching
+// `straightChannel`) meeting a perpendicular rounded-rectangle cap bar at the
+// terminus — the Figma "medium open-flow endpoint" ground truth. Canonical
+// orientation (direction 'left', unrotated): the cap bar is centred on the
+// grid centre (12,12) toward the LEFT half of the cell, the stub's mouth is
+// OPEN at the grid edge x=GRID (the connecting side), and the stub's walls
+// run from that edge inward, stopping exactly at the cap's near edge (they
+// never cross into or past the cap — the bug this replaces let the walls
+// overshoot the cap and land the cap off-centre).
 // ---------------------------------------------------------------------------
-
-const ENDPOINT_OUT_CAP: Record<PipeSize, number> = {small: 9, medium: 9, large: 9, xl: 11};
-const ENDPOINT_FILL_CAP: Record<PipeSize, number> = {small: 8, medium: 8, large: 8, xl: 10};
 
 // The half-cell inward stub, shared by the endpoint cap and the arrowhead.
 // Canonical orientation: terminus at x=0, running inward to x=12 along y=12.
+// NOTE: kept as-is for `obc-pipe-arrow`, which strokes this centreline
+// directly (outline+fill pair, no wall split) and is not part of this fix.
 export function endpointStubPath(): string {
   return `M 0 ${C} L ${C} ${C}`;
 }
 
-// The perpendicular (or breakoff-tilted) cap stroke at the terminus (x=0).
-// `layer` selects the OUT (outline) or FILL half-length; `variant` selects a
-// straight ('cap') or ~30°-tilted ('breakoff') cap.
-export function endpointCapPath(
-  size: PipeSize,
-  variant: 'cap' | 'breakoff' = 'cap',
-  layer: 'outline' | 'fill' = 'outline'
-): string {
-  const halfLength = layer === 'fill' ? ENDPOINT_FILL_CAP[size] : ENDPOINT_OUT_CAP[size];
-  const tilt = variant === 'breakoff' ? Math.PI / 6 : 0;
-  const scale = 1 / Math.cos(tilt);
-  const c = halfLength * scale;
-  const dx = Math.sin(tilt) * c;
-  const dy = Math.cos(tilt) * c;
-  return `M ${dx} ${C - dy} L ${-dx} ${C + dy}`;
+// Cap bar half-width/half-height per size — measured against the Figma
+// reference (medium: half-width 3 -> 6px-wide bar spanning x=9..15;
+// half-height ~10.5 -> ~21px-tall bar spanning y~1.5..22.5, taller than the
+// pipe channel itself) and scaled with the fill stroke weight for the other
+// sizes so the cap grows with the pipe.
+const CAP_HALF_WIDTH: Record<PipeSize, number> = {small: 2, medium: 3, large: 4, xl: 5};
+const CAP_HALF_HEIGHT: Record<PipeSize, number> = {
+  small: 10,
+  medium: 10.5,
+  large: 9.5,
+  xl: 8.5,
+};
+const CAP_CORNER_RADIUS = 2;
+
+// The endpoint's pipe stub: an open-mouth walls+interior channel identical in
+// convention to `straightChannel` (same `wallOffset` formula, so it lines up
+// with a `obc-pipe-straight` run at the same size), but only spanning from
+// the grid edge (mouth, OPEN) in to the cap's near edge — never past it.
+export function endpointChannel(size: PipeSize): PipeChannel {
+  const fill = STROKE_WEIGHTS[size].fill;
+  const wallOffset = fill / 2 + 0.5;
+  const capNearEdge = C + CAP_HALF_WIDTH[size];
+  const inner = `M ${GRID} ${C} L ${capNearEdge} ${C}`;
+  const walls: [string, string] = [
+    `M ${GRID} ${C - wallOffset} L ${capNearEdge} ${C - wallOffset}`,
+    `M ${GRID} ${C + wallOffset} L ${capNearEdge} ${C + wallOffset}`,
+  ];
+  return {inner, walls};
+}
+
+// The perpendicular cap bar at the terminus: a rounded-rectangle centred on
+// the grid centre (12,12), `2*CAP_HALF_WIDTH` wide and `2*CAP_HALF_HEIGHT`
+// tall, with rounded outer corners. Returned as a single closed path so it
+// can be filled (interior) and stroked (1px border) like the other pieces'
+// fill/outline pairs.
+export function endpointCapPath(size: PipeSize): string {
+  const hw = CAP_HALF_WIDTH[size];
+  const hh = CAP_HALF_HEIGHT[size];
+  const r = Math.min(CAP_CORNER_RADIUS, hw, hh);
+  const left = C - hw;
+  const right = C + hw;
+  const top = C - hh;
+  const bottom = C + hh;
+  return (
+    `M ${left} ${top + r} ` +
+    `A ${r} ${r} 0 0 1 ${left + r} ${top} ` +
+    `L ${right - r} ${top} ` +
+    `A ${r} ${r} 0 0 1 ${right} ${top + r} ` +
+    `L ${right} ${bottom - r} ` +
+    `A ${r} ${r} 0 0 1 ${right - r} ${bottom} ` +
+    `L ${left + r} ${bottom} ` +
+    `A ${r} ${r} 0 0 1 ${left} ${bottom - r} ` +
+    `Z`
+  );
 }
 
 // ---------------------------------------------------------------------------
