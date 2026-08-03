@@ -208,8 +208,11 @@ function connectedDemo() {
         medium-color="Blue"
       ></obc-pipe-cross>
 
-      <!-- Cross right arm: run from the cross's right tile edge (6.5,1) to
-           the endpoint's tile edge (7.5,1), capped at (8,1). -->
+      <!-- Cross right arm: run from the cross's right tile edge (6.5,1) to the
+           endpoint at (8,1). An endpoint's bar sits on its anchor and its mouth
+           opens on the direction side — so to terminate a run reaching to the
+           RIGHT, the endpoint's mouth must face LEFT (direction="left") with
+           its anchor one cell past the run's end. -->
       <obc-pipe-straight
         style=${at(6.5, 1)}
         value="medium-flow"
@@ -220,23 +223,23 @@ function connectedDemo() {
         style=${at(8, 1)}
         value="medium-flow"
         medium-color="Blue"
-        direction="right"
+        direction="left"
       ></obc-pipe-endpoint>
 
-      <!-- Cross top/bottom arms: the endpoint tiles at (6,0) and (6,2) abut
-           the cross's tile edges directly — no run needed between two
-           fittings whose tiles touch. -->
+      <!-- Cross top/bottom arms: the endpoint anchors sit at (6,0) and (6,2),
+           one cell out from the cross centre, with their mouths facing back
+           toward the cross (down / up respectively). -->
       <obc-pipe-endpoint
         style=${at(6, 0)}
         value="medium-flow"
         medium-color="Blue"
-        direction="top"
+        direction="bottom"
       ></obc-pipe-endpoint>
       <obc-pipe-endpoint
         style=${at(6, 2)}
         value="medium-flow"
         medium-color="Blue"
-        direction="bottom"
+        direction="top"
       ></obc-pipe-endpoint>
 
       <!-- Branch: vertical run from the tee's bottom tile edge (3,1.5) to
