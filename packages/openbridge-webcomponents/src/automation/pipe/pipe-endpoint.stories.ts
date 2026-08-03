@@ -1,13 +1,12 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcPipeEndpoint} from './pipe-endpoint.js';
 import './pipe-endpoint.js';
-import {crossDecorator} from '../../storybook-util.js';
 
 const meta: Meta<typeof ObcPipeEndpoint> = {
   title: 'Automation/Pipe/Endpoint',
   component: 'obc-pipe-endpoint',
   tags: ['autodocs', '6.0'],
-  decorators: [crossDecorator],
+  parameters: {layout: 'centered'},
   argTypes: {
     value: {
       options: [

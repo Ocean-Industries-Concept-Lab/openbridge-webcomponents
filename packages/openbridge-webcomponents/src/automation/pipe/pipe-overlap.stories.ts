@@ -1,13 +1,12 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcPipeOverlap} from './pipe-overlap.js';
 import './pipe-overlap.js';
-import {crossDecorator} from '../../storybook-util.js';
 
 const meta: Meta<typeof ObcPipeOverlap> = {
   title: 'Automation/Pipe/Overlap',
   component: 'obc-pipe-overlap',
   tags: ['autodocs', '6.0'],
-  decorators: [crossDecorator],
+  parameters: {layout: 'centered'},
   argTypes: {
     value: {
       options: [

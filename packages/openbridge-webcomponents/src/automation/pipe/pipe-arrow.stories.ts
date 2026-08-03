@@ -1,13 +1,12 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcPipeArrow} from './pipe-arrow.js';
 import './pipe-arrow.js';
-import {crossDecorator} from '../../storybook-util.js';
 
 const meta: Meta<typeof ObcPipeArrow> = {
   title: 'Automation/Pipe/Arrow',
   component: 'obc-pipe-arrow',
   tags: ['autodocs', '6.0'],
-  decorators: [crossDecorator],
+  parameters: {layout: 'centered'},
   argTypes: {
     value: {
       options: [

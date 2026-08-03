@@ -1,13 +1,12 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcPipeStraight} from './pipe-straight.js';
 import './pipe-straight.js';
-import {crossDecorator} from '../../storybook-util.js';
 
 const meta: Meta<typeof ObcPipeStraight> = {
   title: 'Automation/Pipe/Straight',
   component: 'obc-pipe-straight',
   tags: ['autodocs', '6.0'],
-  decorators: [crossDecorator],
+  parameters: {layout: 'centered'},
   argTypes: {
     value: {
       options: [

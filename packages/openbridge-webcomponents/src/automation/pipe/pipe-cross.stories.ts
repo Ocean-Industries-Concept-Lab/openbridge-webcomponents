@@ -1,13 +1,12 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcPipeCross} from './pipe-cross.js';
 import './pipe-cross.js';
-import {crossDecorator} from '../../storybook-util.js';
 
 const meta: Meta<typeof ObcPipeCross> = {
   title: 'Automation/Pipe/Cross',
   component: 'obc-pipe-cross',
   tags: ['autodocs', '6.0'],
-  decorators: [crossDecorator],
+  parameters: {layout: 'centered'},
   argTypes: {
     value: {
       options: [
