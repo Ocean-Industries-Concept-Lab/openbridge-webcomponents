@@ -29,6 +29,7 @@ import {
   PortStarboardElement,
   PortStarboardShade,
   type PortStarboardSign,
+  portStarboardSignOf,
 } from '../../svghelpers/port-starboard.js';
 export {PortStarboardElement};
 export type {PortStarboardSign};
@@ -349,12 +350,16 @@ export class ObcWatch extends LitElement {
     ...PORT_STARBOARD_DEFAULT_ELEMENTS,
   ];
   /**
-   * Direction sign for the setpoint marker while the `setpoint` element is
-   * enabled. Wrappers supply e.g. `Math.sign(thrustSetpoint)`; `0` keeps the
-   * priority-derived color.
+   * Direction for the setpoint marker while the `setpoint` element is enabled.
+   * Only the sign is read, so a raw setpoint value works as well as `-1`/`1`;
+   * `0` (and any non-finite value) keeps the priority-derived color.
+   *
+   * Declared as `number` rather than the narrower `PortStarboardSign` because
+   * the framework wrapper generators type `@property({type: Number})` setters
+   * as `number` — a union type alias here breaks the Angular package build.
    * @availableWhen portStarboard==true
    */
-  @property({type: Number}) setpointPortStarboardSign: PortStarboardSign = 0;
+  @property({type: Number}) setpointPortStarboardSign: number = 0;
   /** Top clip, % of height. Ignored when `zoomToFitArc` is true. */
   @property({type: Number}) clipTop: number = 0;
   /** Bottom clip, % of height. Ignored when `zoomToFitArc` is true. */
@@ -1253,7 +1258,7 @@ export class ObcWatch extends LitElement {
       this.portStarboardElements,
       PortStarboardElement.setpoint
     )
-      ? this.setpointPortStarboardSign
+      ? portStarboardSignOf(this.setpointPortStarboardSign)
       : 0;
 
     const outwardOffset = getSetpointOutwardOffset(visualState);
