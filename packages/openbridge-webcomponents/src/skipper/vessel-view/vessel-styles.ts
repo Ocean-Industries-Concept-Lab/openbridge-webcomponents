@@ -1,0 +1,85 @@
+import {css} from 'lit';
+export const vesselStyles = css`
+  .container {
+    height: 100%;
+    width: 100%;
+  }
+
+  .container > svg {
+    height: 100%;
+    width: 100%;
+  }
+
+  .satellite-label {
+    fill: var(--element-active-inverted-color);
+    font-size: 16px;
+    font-family: sans-serif;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    pointer-events: none;
+  }
+
+  .ring {
+    fill: var(--instrument-enhanced-secondary-color);
+  }
+
+  .ring-dark {
+    fill-opacity: 0.75;
+  }
+
+  .ring-mid {
+    fill-opacity: 0.55;
+  }
+
+  .ring-light {
+    fill-opacity: 0.35;
+  }
+
+  .circle-dashed {
+    fill: none;
+    stroke: var(--instrument-frame-primary-color);
+    stroke-width: 1.2;
+    stroke-dasharray: 6 6;
+  }
+
+  .circle-solid {
+    fill: none;
+    stroke: var(--element-active-color);
+    stroke-width: 2;
+  }
+
+  .axis {
+    stroke: var(--instrument-frame-primary-color);
+    stroke-width: 1.4;
+  }
+
+  .label {
+    fill: var(--element-active-color);
+    font-size: 14px;
+    font-family: sans-serif;
+    text-anchor: middle;
+    dominant-baseline: middle;
+  }
+
+  .both-views {
+    width: 400px;
+    overflow-x: hidden;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .both-views-inner {
+    transform: scale(0.69);
+    transform-origin: center;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .top-down-view {
+    margin-left: 60px;
+  }
+`;
