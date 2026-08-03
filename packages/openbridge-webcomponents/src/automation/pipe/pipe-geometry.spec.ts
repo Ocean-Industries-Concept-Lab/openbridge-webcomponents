@@ -7,6 +7,7 @@ import {
   endpointStubPath,
   endpointChannel,
   endpointCapPath,
+  endpointCapOutlinePath,
   arrowHeadPath,
   teePath,
   crossPath,
@@ -151,12 +152,15 @@ describe('endpointChannel', () => {
     }
   );
 
-  it('walls stop at the cap edge and never cross into/past the cap band', () => {
+  it('walls extend all the way to the grid centre, overlapping into the cap so no seam shows', () => {
     const {walls} = endpointChannel('medium');
     for (const wall of walls) {
       const pts = pathPoints(wall);
       const minX = Math.min(...pts.map((p) => p.x));
-      expect(minX).toBeGreaterThan(12); // strictly short of/at the grid centre
+      // The cap's near edge (`endpointCapOutlinePath`) is open across the
+      // channel band, so the stub is free to run all the way to the grid
+      // centre (12) — INTO the cap's fill/near-edge region — with no gap.
+      expect(minX).toBe(12);
       expect(minX).toBeLessThan(GRID);
     }
   });
@@ -194,6 +198,38 @@ describe('endpointCapPath', () => {
       expect(halfWidth).toBeGreaterThan(0);
     }
   );
+});
+
+describe('endpointCapOutlinePath', () => {
+  it('is an OPEN path (no trailing Z) — the near edge is left unstroked', () => {
+    const d = endpointCapOutlinePath('medium');
+    expect(d.trim().endsWith('Z')).toBe(false);
+  });
+
+  it.each<PipeSize>(['small', 'medium', 'large', 'xl'])(
+    'the break in the near edge spans exactly the channel band (fill/2 + 0.5) (%s)',
+    (size) => {
+      const d = endpointCapOutlinePath(size);
+      const wallOffset = STROKE_WEIGHTS[size].fill / 2 + 0.5;
+      const pts = pathPoints(d);
+      // First and last points are both on the near edge (x = 12 - CAP_HALF_WIDTH),
+      // at the top and bottom of the channel band, matching endpointChannel's walls.
+      expect(pts[0].y).toBeCloseTo(12 - wallOffset, 5);
+      expect(pts[pts.length - 1].y).toBeCloseTo(12 + wallOffset, 5);
+      expect(pts[0].x).toBe(pts[pts.length - 1].x);
+    }
+  );
+
+  it('never crosses the near edge across the channel band (no point falls strictly between the break y-values at the near-edge x)', () => {
+    const d = endpointCapOutlinePath('medium');
+    const wallOffset = STROKE_WEIGHTS.medium.fill / 2 + 0.5;
+    const pts = pathPoints(d);
+    const nearX = pts[0].x;
+    const midBreakPts = pts.filter(
+      (p) => p.x === nearX && p.y > 12 - wallOffset && p.y < 12 + wallOffset
+    );
+    expect(midBreakPts).toHaveLength(0);
+  });
 });
 
 describe('arrowHeadPath', () => {

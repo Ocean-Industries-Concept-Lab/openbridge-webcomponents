@@ -143,16 +143,23 @@ const CAP_CORNER_RADIUS = 2;
 
 // The endpoint's pipe stub: an open-mouth walls+interior channel identical in
 // convention to `straightChannel` (same `wallOffset` formula, so it lines up
-// with a `obc-pipe-straight` run at the same size), but only spanning from
-// the grid edge (mouth, OPEN) in to the cap's near edge — never past it.
+// with a `obc-pipe-straight` run at the same size), spanning from the grid
+// edge (mouth, OPEN) all the way to the grid centre — past the cap's near
+// edge and slightly INTO the cap body. The cap's fill silhouette
+// (`endpointCapPath`) is drawn UNDER this in the render layer (see
+// `pipe-endpoint.ts`), so overlapping here just guarantees no hairline seam
+// between the stub's interior/walls and the cap's interior — matching the
+// measured Figma ground truth, where the stub wall row runs continuously
+// from the tile edge straight through into the cap's own flat side (no wall
+// segment closes off the join) and the interior is one unbroken white region
+// from the tile edge through into the cap interior.
 export function endpointChannel(size: PipeSize): PipeChannel {
   const fill = STROKE_WEIGHTS[size].fill;
   const wallOffset = fill / 2 + 0.5;
-  const capNearEdge = C + CAP_HALF_WIDTH[size];
-  const inner = `M ${GRID} ${C} L ${capNearEdge} ${C}`;
+  const inner = `M ${GRID} ${C} L ${C} ${C}`;
   const walls: [string, string] = [
-    `M ${GRID} ${C - wallOffset} L ${capNearEdge} ${C - wallOffset}`,
-    `M ${GRID} ${C + wallOffset} L ${capNearEdge} ${C + wallOffset}`,
+    `M ${GRID} ${C - wallOffset} L ${C} ${C - wallOffset}`,
+    `M ${GRID} ${C + wallOffset} L ${C} ${C + wallOffset}`,
   ];
   return {inner, walls};
 }
@@ -160,8 +167,10 @@ export function endpointChannel(size: PipeSize): PipeChannel {
 // The perpendicular cap bar at the terminus: a rounded-rectangle centred on
 // the grid centre (12,12), `2*CAP_HALF_WIDTH` wide and `2*CAP_HALF_HEIGHT`
 // tall, with rounded outer corners. Returned as a single closed path so it
-// can be filled (interior) and stroked (1px border) like the other pieces'
-// fill/outline pairs.
+// can be filled like the other pieces' interior silhouettes. NOTE: this is
+// the FILL shape only — do not stroke it directly, or the near (stub-facing)
+// edge gets a border that Figma does not have. Use `endpointCapOutlinePath`
+// for the 1px border stroke instead.
 export function endpointCapPath(size: PipeSize): string {
   const hw = CAP_HALF_WIDTH[size];
   const hh = CAP_HALF_HEIGHT[size];
@@ -180,6 +189,44 @@ export function endpointCapPath(size: PipeSize): string {
     `L ${left + r} ${bottom} ` +
     `A ${r} ${r} 0 0 1 ${left} ${bottom - r} ` +
     `Z`
+  );
+}
+
+// The cap bar's 1px BORDER stroke — an OPEN path that omits the near
+// (stub-facing) edge across the height of the connecting pipe channel, so no
+// wall line crosses the join and the stub's interior flows continuously into
+// the cap's interior. Matches the measured Figma ground truth: the cap's
+// near edge only carries a border above/below the channel band (where the
+// cap is taller than the pipe), never across it. `wallOffset` is the same
+// half-channel-height used by `endpointChannel`'s walls, so the break lines
+// up exactly with where the stub's walls meet the cap.
+export function endpointCapOutlinePath(size: PipeSize, wallOffsetOverride?: number): string {
+  const fill = STROKE_WEIGHTS[size].fill;
+  const wallOffset = wallOffsetOverride ?? fill / 2 + 0.5;
+  const hw = CAP_HALF_WIDTH[size];
+  const hh = CAP_HALF_HEIGHT[size];
+  const r = Math.min(CAP_CORNER_RADIUS, hw, hh);
+  const left = C - hw;
+  const right = C + hw;
+  const top = C - hh;
+  const bottom = C + hh;
+  const channelTop = C - wallOffset;
+  const channelBottom = C + wallOffset;
+  // Two open subpaths, each starting at the break (channel band on the near
+  // edge) and running the long way around (far edge + both rounded corner
+  // pairs) back to the other side of the break — leaving the near edge
+  // unstroked exactly across `channelTop`..`channelBottom`.
+  return (
+    `M ${left} ${channelTop} ` +
+    `L ${left} ${top + r} ` +
+    `A ${r} ${r} 0 0 1 ${left + r} ${top} ` +
+    `L ${right - r} ${top} ` +
+    `A ${r} ${r} 0 0 1 ${right} ${top + r} ` +
+    `L ${right} ${bottom - r} ` +
+    `A ${r} ${r} 0 0 1 ${right - r} ${bottom} ` +
+    `L ${left + r} ${bottom} ` +
+    `A ${r} ${r} 0 0 1 ${left} ${bottom - r} ` +
+    `L ${left} ${channelBottom}`
   );
 }
 

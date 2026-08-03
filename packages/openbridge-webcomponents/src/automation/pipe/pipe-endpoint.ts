@@ -2,7 +2,7 @@ import {LitElement, html, svg, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import {resolvePipeStroke, GRID} from './pipe-styles.js';
-import {endpointChannel, endpointCapPath} from './pipe-geometry.js';
+import {endpointChannel, endpointCapPath, endpointCapOutlinePath} from './pipe-geometry.js';
 import {renderPipeChannel} from './pipe-render.js';
 import type {
   PipeValue,
@@ -79,16 +79,26 @@ export class ObcPipeEndpoint extends LitElement {
     const channel = endpointChannel(this.size);
     const cap = endpointCapPath(this.size);
     const rotation = ROTATION_BY_DIRECTION[this.direction];
-    const capTilt = this.variant === 'breakoff' ? BREAKOFF_TILT : 0;
+    const isBreakoff = this.variant === 'breakoff';
+    const capTilt = isBreakoff ? BREAKOFF_TILT : 0;
+    const hasFill = stroke.fillVar !== null && stroke.fillWeight !== null;
 
+    // Default `cap` variant: the cap's near (stub-facing) edge is left
+    // unstroked across the channel band so the stub's interior/walls flow
+    // straight into the cap with no seam (see `endpointCapOutlinePath`).
+    // `breakoff` tilts the cap away from the stub, so that alignment no
+    // longer holds — it keeps the prior fully-closed outline, matching its
+    // intentionally disconnected look.
+    const capOutline = isBreakoff ? cap : endpointCapOutlinePath(this.size);
+    const capFill = svg`<path d=${cap} fill="var(${hasFill ? stroke.fillVar : stroke.outlineVar})" stroke="none"
+      transform="rotate(${capTilt} ${GRID / 2} ${GRID / 2})" />`;
     const capLayer =
-      stroke.fillVar === null || stroke.fillWeight === null
-        ? svg`<path d=${cap} fill="var(${stroke.outlineVar})" stroke="none"
-            transform="rotate(${capTilt} ${GRID / 2} ${GRID / 2})" />`
-        : svg`<path d=${cap} fill="var(${stroke.fillVar})"
+      hasFill
+        ? svg`${capFill}<path d=${capOutline} fill="none"
             stroke="var(${stroke.outlineVar})" stroke-width="1"
             vector-effect="non-scaling-stroke"
-            transform="rotate(${capTilt} ${GRID / 2} ${GRID / 2})" />`;
+            transform="rotate(${capTilt} ${GRID / 2} ${GRID / 2})" />`
+        : capFill;
 
     return html`
       <svg
@@ -99,7 +109,7 @@ export class ObcPipeEndpoint extends LitElement {
         xmlns="http://www.w3.org/2000/svg"
         transform="translate(-12 -12) rotate(${rotation} ${GRID / 2} ${GRID / 2})"
       >
-        ${renderPipeChannel(channel, stroke)}${capLayer}
+        ${capLayer}${renderPipeChannel(channel, stroke)}
       </svg>
     `;
   }
