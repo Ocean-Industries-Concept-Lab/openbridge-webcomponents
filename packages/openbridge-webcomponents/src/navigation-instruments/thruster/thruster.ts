@@ -17,9 +17,12 @@ import {
 } from '../../svghelpers/setpoint.js';
 import {customElement} from '../../decorator.js';
 import {
+  hasPortStarboardElement,
+  PORT_STARBOARD_DEFAULT_ELEMENTS,
   PortStarboardElement,
   PortStarboardShade,
   type PortStarboardSign,
+  portStarboardSignOf,
   resolvePortStarboardColor,
 } from '../../svghelpers/port-starboard.js';
 
@@ -57,6 +60,20 @@ export class ObcThruster extends SetpointMixin(LitElement, {
   @property({type: Array}) advices: LinearAdvice[] = [];
   @property({type: String}) topPropeller: PropellerType = PropellerType.none;
   @property({type: String}) bottomPropeller: PropellerType = PropellerType.none;
+  /**
+   * Enables the maritime PORT/STBD (red/green) color mode: forward thrust
+   * renders green, reverse red. Additional to `priority` — parts not listed in
+   * `portStarboardElements` keep their regular/enhanced colors.
+   */
+  @property({type: Boolean}) portStarboard: boolean = false;
+  /**
+   * Which parts take part while `portStarboard` is on.
+   * Defaults to everything except the setpoint.
+   * @availableWhen portStarboard==true
+   */
+  @property({type: Array, attribute: false})
+  portStarboardElements: PortStarboardElement[] =
+    PORT_STARBOARD_DEFAULT_ELEMENTS;
 
   override render() {
     return html`<div class="container">
@@ -76,6 +93,18 @@ export class ObcThruster extends SetpointMixin(LitElement, {
         narrow: !this.tunnel,
         newSetpoint: this.newSetpoint,
         setpointId: this._setpointId,
+        portStarboard: {
+          enabled: this.portStarboard,
+          elements: this.portStarboardElements,
+          sign: portStarboardSignOf(this.thrust),
+        },
+        portStarboardSetpointSign: hasPortStarboardElement(
+          this.portStarboard,
+          this.portStarboardElements,
+          PortStarboardElement.setpoint
+        )
+          ? portStarboardSignOf(this.setpoint)
+          : 0,
       })}
     </div>`;
   }
