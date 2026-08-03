@@ -19,6 +19,7 @@ import {
   FillMode,
   BorderRadiusPosition,
 } from '../bar-vertical/bar-vertical.js';
+import {PortStarboardElement} from '../../svghelpers/port-starboard.js';
 
 /**
  * Setpoint Marker Visual States
@@ -1499,5 +1500,129 @@ export const SetpointAzimuthThrusterFlow: StoryObj<{
     ) as HTMLElement | null;
     const longestDur = parseFloat(wrapperEl?.dataset.angleDuration ?? '10');
     await new Promise((r) => setTimeout(r, longestDur * 1000 + 1000));
+  },
+};
+
+/**
+ * **PORT/STBD Sweep** — the concept demo for issue #1093.
+ *
+ * Sweeps thrust +100 → −100 so the bar, fore arrow and (opted-in) setpoint
+ * flip green → red through zero, while the azimuth angle rotates through the
+ * port half — the "moving forward but to port side" case from the design
+ * discussion. The final phase sets `touching` to show that the focus state
+ * deliberately stays blue in this mode.
+ */
+export const PortStarboardSweep: StoryObj = {
+  tags: ['skip-test'],
+  name: 'PORT/STBD Sweep (interactive)',
+  render: () => html`
+    <div style="display: flex; flex-direction: column; gap: 24px;">
+      <div style="font-size: 14px; color: #888;">
+        Click "Play" in the Interactions panel, or use the buttons below.
+      </div>
+      <div style="width: 280px; height: 280px;">
+        <obc-azimuth-thruster
+          id="ps-demo"
+          .angle=${0}
+          .thrust=${100}
+          .angleSetpoint=${0}
+          .thrustSetpoint=${100}
+          .state=${InstrumentState.active}
+          .priority=${Priority.enhanced}
+          .portStarboard=${true}
+          .portStarboardElements=${[
+            PortStarboardElement.face,
+            PortStarboardElement.bar,
+            PortStarboardElement.arrow,
+            PortStarboardElement.zeroLine,
+            PortStarboardElement.setpoint,
+          ]}
+          .primaryTickmarkInterval=${45}
+          .showLabels=${true}
+          .tickmarksInside=${true}
+        ></obc-azimuth-thruster>
+      </div>
+      <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+        <button id="btn-ps-sweep" style="padding: 8px 16px; cursor: pointer;">
+          Sweep thrust +100 → −100
+        </button>
+        <button id="btn-ps-port" style="padding: 8px 16px; cursor: pointer;">
+          Rotate to port
+        </button>
+        <button id="btn-ps-touch" style="padding: 8px 16px; cursor: pointer;">
+          Toggle touching
+        </button>
+      </div>
+      <div
+        id="ps-status"
+        style="font-size: 12px; color: #666; font-family: monospace;"
+      >
+        thrust=100, angle=0°, touching=false
+      </div>
+    </div>
+  `,
+  play: async ({canvasElement}) => {
+    const canvas = within(canvasElement);
+    await new Promise((r) => setTimeout(r, 500));
+
+    const at = canvasElement.querySelector('#ps-demo') as HTMLElement & {
+      angle: number;
+      angleSetpoint: number | undefined;
+      thrust: number;
+      thrustSetpoint: number | undefined;
+      touching: boolean;
+    };
+    const status = canvasElement.querySelector('#ps-status') as HTMLElement;
+    if (!at || !status) return;
+
+    const anim = {thrust: 100, angle: 0};
+    const update = () => {
+      status.textContent = `thrust=${Math.round(anim.thrust)}, angle=${Math.round(anim.angle)}°, touching=${at.touching}`;
+    };
+
+    const btnSweep = canvas.getByRole('button', {name: /Sweep/});
+    const btnPort = canvas.getByRole('button', {name: /port/});
+    const btnTouch = canvas.getByRole('button', {name: /touching/});
+
+    btnSweep.onclick = () => {
+      gsap.killTweensOf(anim);
+      anim.thrust = 100;
+      gsap.to(anim, {
+        thrust: -100,
+        duration: 4,
+        ease: 'sine.inOut',
+        onUpdate: () => {
+          at.thrust = anim.thrust;
+          at.thrustSetpoint = anim.thrust;
+          update();
+        },
+      });
+    };
+
+    btnPort.onclick = () => {
+      gsap.killTweensOf(anim);
+      gsap.to(anim, {
+        angle: 300,
+        duration: 3,
+        ease: 'sine.inOut',
+        onUpdate: () => {
+          at.angle = anim.angle;
+          at.angleSetpoint = anim.angle;
+          update();
+        },
+      });
+    };
+
+    btnTouch.onclick = () => {
+      at.touching = !at.touching;
+      update();
+    };
+
+    await userEvent.click(btnSweep);
+    await new Promise((r) => setTimeout(r, 4500));
+    await userEvent.click(btnPort);
+    await new Promise((r) => setTimeout(r, 3500));
+    await userEvent.click(btnTouch);
+    await new Promise((r) => setTimeout(r, 1500));
   },
 };

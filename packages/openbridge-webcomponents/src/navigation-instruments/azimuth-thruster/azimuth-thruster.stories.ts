@@ -12,7 +12,11 @@ import {
 import {AdviceType} from '../watch/advice.js';
 import {TickmarkStyle} from '../watch/tickmark.js';
 import {PropellerType} from '../thruster/propeller.js';
-import {PortStarboardElement} from '../../svghelpers/port-starboard.js';
+import '../rate-of-turn/rate-of-turn.js';
+import {
+  PORT_STARBOARD_DEFAULT_ELEMENTS,
+  PortStarboardElement,
+} from '../../svghelpers/port-starboard.js';
 
 const meta: Meta<typeof ObcAzimuthThruster> = {
   title: 'Instruments/Azimuth Thruster',
@@ -166,6 +170,94 @@ export const PortStarboardBarsOnly: Story = {
       PortStarboardElement.arrow,
     ],
   },
+};
+
+/**
+ * A/B grid for the open design question "should the setpoint follow the
+ * PORT/STBD colors?". Columns: default elements (setpoint stays blue), with
+ * the setpoint opted in, and face-only. Rows: regular and enhanced priority.
+ */
+export const PortStarboardComparison: Story = {
+  parameters: {widthDecorator: false},
+  render: () => {
+    const columns: {label: string; elements: PortStarboardElement[]}[] = [
+      {
+        label: 'default (setpoint blue)',
+        elements: PORT_STARBOARD_DEFAULT_ELEMENTS,
+      },
+      {
+        label: '+ setpoint',
+        elements: [
+          ...PORT_STARBOARD_DEFAULT_ELEMENTS,
+          PortStarboardElement.setpoint,
+        ],
+      },
+      {label: 'face only', elements: [PortStarboardElement.face]},
+    ];
+    return html`
+      <div
+        style="display: grid; grid-template-columns: 90px repeat(3, 1fr); gap: 8px; align-items: center; justify-items: center;"
+      >
+        <div></div>
+        ${columns.map(
+          (column) =>
+            html`<div style="font-size: 12px; color: #888;">
+              ${column.label}
+            </div>`
+        )}
+        ${[Priority.regular, Priority.enhanced].map(
+          (priority) => html`
+            <div style="font-size: 12px; color: #888;">${priority}</div>
+            ${columns.map(
+              (column) => html`
+                <div style="width: 180px; height: 180px;">
+                  <obc-azimuth-thruster
+                    .angle=${30}
+                    .thrust=${60}
+                    .angleSetpoint=${45}
+                    .thrustSetpoint=${80}
+                    .priority=${priority}
+                    .state=${InstrumentState.active}
+                    .portStarboard=${true}
+                    .portStarboardElements=${column.elements}
+                  ></obc-azimuth-thruster>
+                </div>
+              `
+            )}
+          `
+        )}
+      </div>
+    `;
+  },
+};
+
+/**
+ * Consistency check: the new mode next to an existing `rotPortStarboard`
+ * instrument. Both resolve to the same two token pairs.
+ */
+export const PortStarboardConsistencyWithRot: Story = {
+  parameters: {widthDecorator: false},
+  render: () => html`
+    <div style="display: flex; gap: 24px; align-items: center;">
+      <div style="width: 200px; height: 200px;">
+        <obc-azimuth-thruster
+          .angle=${30}
+          .thrust=${60}
+          .priority=${Priority.enhanced}
+          .state=${InstrumentState.active}
+          .portStarboard=${true}
+        ></obc-azimuth-thruster>
+      </div>
+      <div style="width: 200px; height: 200px;">
+        <obc-rate-of-turn
+          .rateOfTurnDegreesPerMinute=${40}
+          .rotPortStarboard=${true}
+          .hasTrackBar=${true}
+          .priority=${Priority.enhanced}
+        ></obc-rate-of-turn>
+      </div>
+    </div>
+  `,
 };
 
 export const InCommandDetailedTickmarks: Story = {
