@@ -12,6 +12,10 @@ export interface IntegrationFleetButtonReadout {
   unit: string;
 }
 
+/**
+ * @slot alert-topic-icon - Icon shown alongside the alert topic
+ * @experimental
+ */
 @customElement('obc-integration-fleet-button')
 export class ObcIntegrationFleetButton extends LitElement {
   @property({type: Boolean}) selected: boolean = false;

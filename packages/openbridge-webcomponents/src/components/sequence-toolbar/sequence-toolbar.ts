@@ -76,6 +76,7 @@ export enum SequenceToolbarType {
  * @fires prev-click
  * @fires next-click
  * @fires add-click
+ * @beta
  */
 @customElement('obc-sequence-toolbar')
 export class ObcSequenceToolbar extends LitElement {

@@ -61,6 +61,7 @@ export enum ObcTextInputFieldPlacement {
  * @fires change - Standard change event on value change
  * @fires clear - Fired when the clear button is clicked
  * @fires blur - Fired when the input field is blurred
+ * @stable
  */
 @customElement('obc-text-input-field')
 export class ObcTextInputField extends LitElement {

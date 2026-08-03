@@ -8,6 +8,7 @@ import {MotorizedVariant} from './abstract-automation-button-motorized.js';
 import {
   AutomationButtonDirection,
   AutomationButtonLabelDirection,
+  AutomationButtonOrientation,
   AutomationButtonPositioning,
 } from './automation-button.js';
 import {CircularProgressMode} from '../../building-blocks/circular-progress/circular-progress.js';
@@ -89,6 +90,10 @@ export const argTypesAbstractAutomationButtonPassiveSquare = {
   ...argTypesAbstractAutomationButton,
   variant: {
     options: ['square', 'flat'],
+    control: {type: 'radio'},
+  },
+  orientation: {
+    options: Object.values(AutomationButtonOrientation),
     control: {type: 'radio'},
   },
 };

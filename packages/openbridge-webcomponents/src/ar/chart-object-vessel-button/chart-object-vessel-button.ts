@@ -88,6 +88,7 @@ export enum Type {
  * @slot number - Optional content for the number badge.
  * @slot name - Optional content for the name badge.
  * @slot vessel-image - Optional vessel image content used when `vesselImage` is not set.
+ * @experimental
  */
 @customElement('obc-chart-object-vessel-button')
 export class ObcChartObjectVesselButton extends LitElement {

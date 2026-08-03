@@ -119,6 +119,7 @@ export enum ObcMessageMenuItemSize {
  * @fires message-click {CustomEvent<{open: boolean}>} Fired when the message item is clicked.
  * @fires primary-action-click {CustomEvent<void>} Fired when the primary action button is clicked.
  * @fires secondary-action-click {CustomEvent<void>} Fired when the secondary action button is clicked.
+ * @beta
  */
 @customElement('obc-message-menu-item')
 export class ObcMessageMenuItem extends LitElement {

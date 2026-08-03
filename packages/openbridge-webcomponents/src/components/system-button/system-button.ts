@@ -145,6 +145,7 @@ export interface SystemState {
  * @fires microphone-panel-open {CustomEvent<void>} When the microphone action segment is activated
  * @fires volume-panel-open {CustomEvent<void>} When the volume action segment is activated
  * @fires system-icons-panel-open {CustomEvent<void>} When the system icons action segment is activated
+ * @stable
  */
 @customElement('obc-system-button')
 export class ObcSystemButton extends LitElement {

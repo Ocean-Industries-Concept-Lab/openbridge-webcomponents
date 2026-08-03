@@ -1,4 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
+import {expect, waitFor} from 'storybook/test';
 import {ObcCommandMenu} from './command-menu.js';
 import type {ObcCommandMenuChangeEvent} from './command-menu.js';
 import './command-menu.js';
@@ -99,5 +100,24 @@ export const InCommand: Story = {
 export const NoCommand: Story = {
   args: {
     inCommand: false,
+  },
+};
+
+export const KeyboardToggle: Story = {
+  args: {
+    inCommand: false,
+  },
+  play: async ({canvasElement, userEvent}) => {
+    const menu = canvasElement.querySelector('obc-command-menu')!;
+    const swtch = menu.shadowRoot!.querySelector('obc-start-stop-switch')!;
+    const wrapper = swtch.shadowRoot!.querySelector<HTMLElement>('.wrapper')!;
+    await expect(wrapper.getAttribute('role')).toBe('switch');
+    await expect(wrapper.getAttribute('aria-checked')).toBe('false');
+    wrapper.focus();
+    await userEvent.keyboard(' ');
+    await expect(menu.inCommand).toBe(true);
+    const status = canvasElement.querySelector('[slot="command-status"]')!;
+    await waitFor(() => expect(status.textContent?.trim()).toBe('Joystick'));
+    await expect(wrapper.getAttribute('aria-checked')).toBe('true');
   },
 };

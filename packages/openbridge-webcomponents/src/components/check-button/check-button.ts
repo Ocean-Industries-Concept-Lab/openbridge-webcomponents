@@ -93,6 +93,7 @@ export enum CheckButtonCheckboxAppearance {
  * @slot checked-icon - Custom icon for checked state (checkbox mode)
  * @slot unchecked-icon - Custom icon for unchecked state (checkbox mode)
  * @fires check-button-click {CustomEvent<{checked: boolean, type: string}>}
+ * @stable
  */
 @customElement('obc-check-button')
 export class ObcCheckButton extends LitElement {

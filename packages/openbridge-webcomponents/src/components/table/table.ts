@@ -242,6 +242,7 @@ function cssPart(value: ObcTableCellData, subpart: string): string | undefined {
  * @fires cell-checkbox-change {ObcTableCellCheckboxChangeEvent} - Fired when a cell checkbox is changed.
  * @fires cell-tag-click {ObcTableCellTagClickEvent} - Fired when a tag inside a cell is clicked.
  * @fires selection-change {ObcTableSelectionChangeEvent} - Fired when row selection changes.
+ * @beta
  */
 @customElement('obc-table')
 export class ObcTable extends LitElement {

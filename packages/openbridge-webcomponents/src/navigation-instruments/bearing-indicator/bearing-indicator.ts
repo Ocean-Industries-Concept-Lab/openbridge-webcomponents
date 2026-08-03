@@ -3,6 +3,9 @@ import {property} from 'lit/decorators.js';
 import compentStyle from './bearing-indicator.css?inline';
 import {customElement} from '../../decorator.js';
 
+/**
+ * @stable
+ */
 @customElement('obc-bearing-indicator')
 export class ObcBearingIndicator extends LitElement {
   @property({type: Number})

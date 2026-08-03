@@ -198,6 +198,7 @@ export interface Attachment {
  * @fires attachment-click {CustomEvent<void>} Fired when the attachment button is clicked.
  * @fires voice-action {CustomEvent<VoiceActionDetail>} Fired for all voice recording actions. Check detail.action for the action type.
  * @fires attachment-remove {CustomEvent<{id: string}>} Fired when an attachment chip is removed.
+ * @stable
  */
 @customElement('obc-textarea-field')
 @localized()

@@ -42,7 +42,10 @@ export class ObcAbstractAutomationButtonMotorized extends ObcAbstractAutomationB
           nDigits: this.speedMaxDigits,
           unit: this.speedUnit,
           direction: this.labelDirection,
-          icon: 'chevron',
+          icon:
+            this.labelDirection === AutomationButtonLabelDirection.none
+              ? 'none'
+              : 'chevron',
         },
       ];
     } else if (!this.on) {

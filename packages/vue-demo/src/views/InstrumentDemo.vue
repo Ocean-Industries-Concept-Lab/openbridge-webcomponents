@@ -82,11 +82,10 @@ onUnmounted(() => {
           :value="sim.vessel.speedForwardThroughWaterKnots.value"
           unit="KN"
           label="STW"
-          :has-input="false"
-          :valuePriority.prop="'regular'"
-          variant="enhanced"
-          :fraction-digits="1"
-          :max-digits="2"
+          :priority.prop="'regular'"
+          size="large"
+          :fractionDigits.prop="1"
+          :maxDigits.prop="2"
         />
       </div>
     </ObcCard>
@@ -108,19 +107,17 @@ onUnmounted(() => {
           :value="sim.pitchRoll.pitch.value"
           unit="DEG"
           label="Pitch"
-          :has-input="false"
-          variant="regular"
-          :fraction-digits="0"
-          :max-digits="2"
+          size="medium"
+          :fractionDigits.prop="0"
+          :maxDigits.prop="2"
         />
         <obc-readout
           :value="sim.pitchRoll.roll.value"
           unit="DEG"
           label="Roll"
-          :has-input="false"
-          variant="regular"
-          :fraction-digits="0"
-          :max-digits="2"
+          size="medium"
+          :fractionDigits.prop="0"
+          :maxDigits.prop="2"
         />
       </div>
     </ObcCard>

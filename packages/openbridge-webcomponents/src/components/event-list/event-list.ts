@@ -41,6 +41,7 @@ export type {DateItemEvent};
  * - `locale` (string): Locale for date formatting (e.g., 'en-US', 'nb-NO'). Uses browser default if not specified.
  *
  * @slot - No slots. All content is provided via properties.
+ * @beta
  */
 @customElement('obc-event-list')
 export class ObcEventList extends LitElement {

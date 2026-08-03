@@ -136,6 +136,7 @@ export enum ObcElevatedCardTag {
  * @slot action - Content for the action button (shown when `hasAction` is true)
  * @slot trailing-icon - Icon displayed after the content (shown when `hasTrailingIcon` is true)
  * @fires action-click - Fired when the action button is clicked
+ * @stable
  */
 @customElement('obc-elevated-card')
 export class ObcElevatedCard extends LitElement {

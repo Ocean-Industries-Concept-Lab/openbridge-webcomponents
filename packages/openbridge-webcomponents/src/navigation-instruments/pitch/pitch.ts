@@ -30,6 +30,7 @@ export enum ObcPitchType {
  * palette.
  *
  * @element obc-pitch
+ * @stable
  */
 @customElement('obc-pitch')
 export class ObcPitch extends SingleAxisInclinometer {

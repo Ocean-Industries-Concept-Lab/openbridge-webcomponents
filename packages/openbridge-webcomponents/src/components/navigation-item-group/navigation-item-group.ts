@@ -111,7 +111,7 @@ export class ObcNavigationItemGroup extends LitElement {
   /**
    * Per-severity alert counts shown as trailing badge(s) on the group header
    * (Tree variant only). Forwarded to the underlying `obc-tree-navigation-item`;
-   * typically `{aggregate: true, ...}` so the header totals the rows beneath it.
+   * typically `{combine: true, ...}` so the header totals the rows beneath it.
    * See {@link TreeNavigationItemAlerts}.
    */
   @property({type: Object}) alerts?: TreeNavigationItemAlerts;

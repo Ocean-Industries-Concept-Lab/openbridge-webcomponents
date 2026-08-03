@@ -36,6 +36,12 @@ export default defineConfig({
         test: {
           name: 'storybook',
           setupFiles: ['./.storybook/vitest.setup.ts'],
+          // Retry flaky visual snapshots. A retry re-renders the story and takes
+          // a fresh screenshot, which is what lets render-time flakiness (e.g.
+          // sub-pixel anti-aliasing of <canvas> charts) settle. See the matching
+          // beforeEach in .storybook/vitest.setup.ts, which keeps the retry from
+          // masking genuine snapshot regressions.
+          retry: 3,
           // Enable browser mode
           browser: {
             enabled: true,

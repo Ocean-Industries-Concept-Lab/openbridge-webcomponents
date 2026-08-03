@@ -86,6 +86,7 @@ export enum AreaFillMode {
  *   ];
  * </script>
  * ```
+ * @beta
  */
 @customElement('obc-area-graph')
 export class ObcAreaGraph extends ObcChartLineBase {

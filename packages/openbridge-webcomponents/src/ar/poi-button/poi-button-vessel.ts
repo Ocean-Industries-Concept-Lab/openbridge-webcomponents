@@ -28,6 +28,7 @@ export {
  * @slot speed-indicator - Optional speed indicator content for speed-rot type.
  * @slot header - Optional header content.
  * @slot relation - Optional relation icon/content in data mode.
+ * @experimental
  */
 @customElement('obc-poi-button-vessel')
 export class ObcPoiButtonVessel extends ObcPoiButton {

@@ -41,6 +41,13 @@ const meta: Meta<typeof ObcRateOfTurn> = {
     barStartAngle: {control: {type: 'range', min: -180, max: 180, step: 1}},
     barEndAngle: {control: {type: 'range', min: -180, max: 180, step: 1}},
     width: {control: {type: 'range', min: 100, max: 1000, step: 1}},
+    hasTrackBar: {control: 'boolean'},
+    rotMaxValue: {control: {type: 'range', min: 1, max: 180, step: 1}},
+    rotArcExtent: {control: {type: 'range', min: 10, max: 180, step: 5}},
+    hasReadout: {control: 'boolean'},
+    label: {control: 'text'},
+    unit: {control: 'text'},
+    fractionDigits: {control: 'number'},
     dotColor: {table: {disable: true}},
     barBgColor: {table: {disable: true}},
   },
@@ -106,6 +113,49 @@ export const BarEnhancedInnerCirclePortStarboardPort: Story = {
     priority: Priority.enhanced,
     rotPortStarboard: true,
     rotationsPerMinute: -1,
+  },
+};
+
+export const WithReadout: Story = {
+  tags: ['6.1'],
+  args: {
+    rateOfTurnDegreesPerMinute: 20,
+    hasReadout: true,
+  },
+};
+
+export const WithTrackBar: Story = {
+  tags: ['6.1'],
+  args: {
+    hasTrackBar: true,
+    hasReadout: true,
+    rateOfTurnDegreesPerMinute: 45,
+    rotPosition: RotPosition.innerCircle,
+    watchCircleType: WatchCircleType.double,
+  },
+};
+
+export const WithTrackBarEnhanced: Story = {
+  tags: ['6.1'],
+  args: {
+    hasTrackBar: true,
+    hasReadout: true,
+    rateOfTurnDegreesPerMinute: 45,
+    rotPosition: RotPosition.innerCircle,
+    watchCircleType: WatchCircleType.double,
+    priority: Priority.enhanced,
+  },
+};
+
+export const WithTrackBarPortStarboard: Story = {
+  tags: ['6.1'],
+  args: {
+    hasTrackBar: true,
+    hasReadout: true,
+    rateOfTurnDegreesPerMinute: 45,
+    rotPosition: RotPosition.innerCircle,
+    watchCircleType: WatchCircleType.double,
+    rotPortStarboard: true,
   },
 };
 

@@ -251,6 +251,7 @@ function pointOnArc(
  * Use when the UI needs a compact rudder cue next to readouts or controls. Use
  * `obc-rudder` when the full semicircular scale, labels, and watch-based
  * setpoint treatment are required.
+ * @stable
  */
 @customElement('obc-rudder-indicator')
 export class ObcRudderIndicator extends LitElement {

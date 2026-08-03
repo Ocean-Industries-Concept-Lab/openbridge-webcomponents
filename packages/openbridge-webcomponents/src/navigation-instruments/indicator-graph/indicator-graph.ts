@@ -26,17 +26,18 @@ export interface ObcIndicatorGraphLayout {
  * @element obc-indicator-graph
  * @description A mini graph component
  *
- * @property {Array} data - The data to display in the graph, first array is the x values, second array is the y values
+ * @beta
  */
 @customElement('obc-indicator-graph')
 export class ObcIndicatorGraph extends LitElement {
+  /** The data to display in the graph, first array is the x values, second array is the y values */
   @property({type: Array})
   data: [number[], number[]] = [[], []];
 
   @property({type: Object})
   layout: ObcIndicatorGraphLayout = {};
 
-  @query('.chart-container')
+  @query('#chart')
   private chart!: HTMLDivElement;
 
   @state()
@@ -214,6 +215,7 @@ export class ObcIndicatorGraph extends LitElement {
         class="chart-container ${this._effectivePriority} ${this
           ._effectiveSize}"
       >
+        <div id="chart"></div>
         <div
           id="zero-line"
           style="transform: translateY(${-(this.zeroLineY ?? 0)}px);

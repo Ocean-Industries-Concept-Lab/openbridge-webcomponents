@@ -91,6 +91,7 @@ export type AdviceButtonClickEvent = CustomEvent<{
  *
  * @slot icon - Custom icon slot (replaces the default advice icon)
  * @fires obc-click {AdviceButtonClickEvent} Fired when the button is clicked.
+ * @stable
  */
 @customElement('obc-advice-button')
 export class ObcAdviceButton extends LitElement {

@@ -186,6 +186,20 @@
     height: var(--automation-components-button-icon-size-flat);
     z-index: -1;
   }
+
+  &.orientation-verticalRight {
+    .icon-primary,
+    .icon-silhouette {
+      transform: rotate(90deg);
+    }
+  }
+
+  &.orientation-verticalLeft {
+    .icon-primary,
+    .icon-silhouette {
+      transform: rotate(-90deg);
+    }
+  }
 }
 
 .badge-top-right {

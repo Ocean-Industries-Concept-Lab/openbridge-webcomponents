@@ -106,6 +106,7 @@ export enum Position {
  * @slot alert-label - Label text for the alert overlay (used when `hasAlert` is true)
  * @slot alert-timer - Timer/duration text for the alert overlay (used when `hasAlert` is true)
  * @fires accordion-toggle {CustomEvent<{expanded: boolean, cardTitle: string}>} Fired when the accordion is expanded or collapsed
+ * @stable
  */
 @customElement('obc-accordion-card')
 export class ObcAccordionCard extends LitElement {

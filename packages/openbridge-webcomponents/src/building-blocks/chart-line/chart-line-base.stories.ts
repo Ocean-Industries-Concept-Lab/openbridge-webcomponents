@@ -210,7 +210,7 @@ Abstract base class for line and area chart components built on Chart.js.
     // Axis and layout
     xAxisType: {
       control: {type: 'radio'},
-      options: [XAxisType.category, XAxisType.time],
+      options: [XAxisType.category, XAxisType.time, XAxisType.number],
     },
     yAxisPosition: {
       control: {type: 'radio'},

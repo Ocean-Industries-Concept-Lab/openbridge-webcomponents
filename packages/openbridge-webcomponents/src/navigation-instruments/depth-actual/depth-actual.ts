@@ -11,6 +11,9 @@ import {
 import {AdviceState} from '../watch/advice.js';
 import {Priority} from '../types.js';
 
+/**
+ * @stable
+ */
 @customElement('obc-depth-actual')
 export class ObcDepthActual extends LitElement {
   @property({type: Number}) depth = 0;

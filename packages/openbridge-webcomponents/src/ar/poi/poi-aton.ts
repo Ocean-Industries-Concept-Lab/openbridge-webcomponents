@@ -22,6 +22,7 @@ export {ObcPoiObjectState as ObcPoiObjectAtonState};
  * @slot - Icon content forwarded to the inner aton diamond.
  * @slot header - Optional header content forwarded to the poi button.
  * @fires obc-poi-data-layout-change {CustomEvent<void>} Fired when layout-driving properties change.
+ * @experimental
  */
 @customElement('obc-poi-aton')
 export class ObcPoiAton extends PoiBase {

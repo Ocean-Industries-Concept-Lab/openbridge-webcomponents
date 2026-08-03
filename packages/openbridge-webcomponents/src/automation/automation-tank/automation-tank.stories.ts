@@ -6,10 +6,11 @@ import {
   TankPositioning,
   TankTrend,
   TankType,
-  type TankReadoutItem,
 } from './automation-tank.js';
 import './automation-tank.js';
-import {html} from 'lit';
+import '../../navigation-instruments/readout-list/readout-list.js';
+import '../../navigation-instruments/readout-list-item/readout-list-item.js';
+import {html, nothing} from 'lit';
 import {crossDecorator} from '../../storybook-util.js';
 import {AdviceType} from '../../navigation-instruments/watch/advice.js';
 import type {LinearAdvice} from '../../building-blocks/instrument-linear/advice.js';
@@ -57,13 +58,37 @@ const SAMPLE_ADVICE: LinearAdvice[] = [
   {min: 7500, max: 9000, type: AdviceType.advice, hinted: false},
 ];
 
-const SAMPLE_READOUT: TankReadoutItem[] = [
-  {label: 'Temperature', value: 45, hasDegree: true, unit: 'C'},
-  {label: 'Pressure', value: 45, unit: 'Pa'},
-  {label: 'Flow speed', value: 45, unit: 'm/s'},
-];
+// Canonical rich-detail content for the tank: an `<obc-readout-list>` of
+// `<obc-readout-list-item>` rows slotted into `slot="rich"`. The list owns the
+// cross-row column alignment and cap-height typography, replacing the tank's
+// former hand-rolled `.rich` grid.
+const renderRichReadout = () => html`
+  <obc-readout-list slot="rich">
+    <obc-readout-list-item
+      .label=${'Temperature'}
+      .value=${45}
+      .hasDegree=${true}
+      .unit=${'C'}
+    ></obc-readout-list-item>
+    <obc-readout-list-item
+      .label=${'Pressure'}
+      .value=${45}
+      .unit=${'Pa'}
+    ></obc-readout-list-item>
+    <obc-readout-list-item
+      .label=${'Flow speed'}
+      .value=${45}
+      .unit=${'m/s'}
+    ></obc-readout-list-item>
+  </obc-readout-list>
+`;
 
-const renderTank = (args: StoryArgs) => html`
+// `richReadout` is slotted into `slot="rich"`; defaults to `nothing` so most
+// stories render no detail rows. Kept as a separate helper (not the meta
+// `render`) because Storybook calls `render(args, context)` with a second
+// argument — `renderTank` below wraps it so that extra arg can't leak in as
+// slotted content.
+const renderTankEl = (args: StoryArgs, richReadout: unknown = nothing) => html`
   <obc-automation-tank
     .value=${args.value}
     .max=${args.max}
@@ -73,6 +98,7 @@ const renderTank = (args: StoryArgs) => html`
     .orientation=${args.orientation}
     .compact=${args.compact}
     .static=${args.static}
+    ?activated=${args.activated}
     .positioning=${args.positioning}
     .chartMode=${args.chartMode}
     .chartData=${args.chartData}
@@ -81,7 +107,6 @@ const renderTank = (args: StoryArgs) => html`
     .hasGraphIcon=${args.hasGraphIcon}
     .showTrendSymbol=${args.showTrendSymbol}
     .percentFractionDigits=${args.percentFractionDigits}
-    .readout=${args.readout}
     ?alert=${args.alert}
     .alertFrameType=${args.alertFrameType}
     .alertFrameThickness=${args.alertFrameThickness}
@@ -92,10 +117,16 @@ const renderTank = (args: StoryArgs) => html`
     .badgeAlert=${args.badgeAlert}
     .badgeInterlock=${args.badgeInterlock}
     .badgeCommandLocked=${args.badgeCommandLocked}
+    .setpoint=${args.setpoint}
+    .newSetpoint=${args.newSetpoint}
+    .touching=${args.touching}
     .priority=${args.priority}
   >
+    ${richReadout}
   </obc-automation-tank>
 `;
+
+const renderTank = (args: StoryArgs) => renderTankEl(args);
 
 const meta: Meta<StoryArgs> = {
   title: 'Automation/Tanks/Tank',
@@ -110,6 +141,7 @@ const meta: Meta<StoryArgs> = {
     orientation: TankOrientation.vertical,
     compact: false,
     static: false,
+    activated: false,
     positioning: TankPositioning.point,
     chartMode: TankChartMode.bar,
     chartData: SAMPLE_DATA,
@@ -118,7 +150,6 @@ const meta: Meta<StoryArgs> = {
     hasGraphIcon: false,
     showTrendSymbol: true,
     percentFractionDigits: 0,
-    readout: [],
     alert: false,
     alertFrameType: ObcAlertFrameType.SmallSideFlip,
     alertFrameThickness: ObcAlertFrameThickness.Small,
@@ -129,6 +160,9 @@ const meta: Meta<StoryArgs> = {
     badgeAlert: AutomationButtonBadgeAlert.None,
     badgeInterlock: AutomationButtonBadgeInterlock.None,
     badgeCommandLocked: AutomationButtonBadgeCommandLocked.None,
+    setpoint: undefined,
+    newSetpoint: undefined,
+    touching: false,
     priority: Priority.regular,
   },
   argTypes: {
@@ -163,6 +197,11 @@ const meta: Meta<StoryArgs> = {
     static: {
       control: {type: 'boolean'},
     },
+    activated: {
+      control: {type: 'boolean'},
+      description:
+        'Enables the activated background color, used to indicate that the tank is activated/selected.',
+    },
     hasAdvice: {
       control: {type: 'boolean'},
     },
@@ -186,11 +225,6 @@ const meta: Meta<StoryArgs> = {
       description:
         'Advice overlay bands. `min`/`max` are in the same units as `max`. Toggle visibility with `hasAdvice`. Works in all three `chartMode` variants — `bar` overlays advice pills on the static bar, `graph` and `graph-and-bar` forward them to the embedded `obc-gauge-trend`.',
     },
-    readout: {
-      control: {type: 'object'},
-      description:
-        'Rich detail rows shown below the main percent/value block in the regular (non-compact, non-static) layout, separated by a divider. Each row: `{label, value, hasDegree?, hasPercentage?, unit}`. Empty array — nothing is rendered. Values use `percentFractionDigits` for formatting. Override the whole block via `slot="rich"`.',
-    },
     badgeControl: {
       options: Object.values(AutomationButtonBadgeControl),
       control: {type: 'select'},
@@ -206,6 +240,21 @@ const meta: Meta<StoryArgs> = {
     badgeCommandLocked: {
       options: Object.values(AutomationButtonBadgeCommandLocked),
       control: {type: 'select'},
+    },
+    setpoint: {
+      control: {type: 'number', min: 0, max: 10_000},
+      description:
+        'Target setpoint on the `value` / `max` scale. Renders a setpoint marker on the bar (`bar` mode) or on the side bar of the embedded `obc-gauge-trend` (`graph-and-bar` mode). `undefined` hides the marker.',
+    },
+    newSetpoint: {
+      control: {type: 'number', min: 0, max: 10_000},
+      description:
+        'Adjustment preview for the 2-step setpoint interface. When defined, the original marker dims and a focus-state preview marker is shown.',
+    },
+    touching: {
+      control: {type: 'boolean'},
+      description:
+        'User is physically interacting with the setpoint control — renders the marker in focus state and suppresses at-setpoint detection.',
     },
     priority: {
       options: Object.values(Priority),
@@ -254,6 +303,31 @@ export const Pressurized: Story = {
 
 export const Battery: Story = {
   args: {type: TankType.battery},
+};
+
+/**
+ * Activated tank — the `activated` background color is painted on the halo
+ * surround to indicate the tank is activated/selected. Mirrors the
+ * `activated` state of `obc-automation-button`.
+ */
+export const Activated: Story = {
+  args: {
+    type: TankType.atmospheric,
+    activated: true,
+  },
+};
+
+/**
+ * Compact activated tank — the activated background color also applies in the
+ * compact layout, where the halo wraps the badges, tank-frame, readout and
+ * tag cells.
+ */
+export const CompactActivated: Story = {
+  args: {
+    compact: true,
+    type: TankType.atmospheric,
+    activated: true,
+  },
 };
 
 export const CompactAtmospheric: Story = {
@@ -338,6 +412,33 @@ export const BarWithAdvice: Story = {
   },
 };
 
+/**
+ * Setpoint marker on the compact tank bar — the marker renders on the SVG bar
+ * via the shared setpoint system. Values share the tank's `value` / `max`
+ * scale. Matches the Figma "Tank Generic" small variant, which includes a
+ * setpoint indicator on the tank bar.
+ */
+export const CompactWithSetpoint: Story = {
+  args: {
+    compact: true,
+    type: TankType.atmospheric,
+    trend: TankTrend.stable,
+    setpoint: 7_500,
+  },
+};
+
+/**
+ * Setpoint marker in `graph-and-bar` mode — forwarded to the embedded
+ * `obc-gauge-trend`, which renders it on its side bar.
+ */
+export const GraphAndBarWithSetpoint: Story = {
+  args: {
+    type: TankType.atmospheric,
+    chartMode: TankChartMode.graphAndBar,
+    setpoint: 7_500,
+  },
+};
+
 export const BarWithGraphIcon: Story = {
   args: {
     type: TankType.atmospheric,
@@ -373,8 +474,8 @@ export const Rich: Story = {
   args: {
     type: TankType.atmospheric,
     chartMode: TankChartMode.graphAndBar,
-    readout: SAMPLE_READOUT,
   },
+  render: (args) => renderTankEl(args, renderRichReadout()),
 };
 
 export const HorizontalRich: Story = {
@@ -382,8 +483,8 @@ export const HorizontalRich: Story = {
     type: TankType.atmospheric,
     orientation: TankOrientation.horizontal,
     chartMode: TankChartMode.graphAndBar,
-    readout: SAMPLE_READOUT,
   },
+  render: (args) => renderTankEl(args, renderRichReadout()),
 };
 
 /**
@@ -399,9 +500,9 @@ export const HorizontalRich: Story = {
  * and always render it as an integer to keep their fixed-width footprint
  * stable, so fraction-digit control only applies to the non-compact layout.
  *
- * `percentFractionDigits` is also applied uniformly to every row of the
- * `readout` rich list (see the `Rich` story) — all rows share one digit
- * count so the right-aligned numeric column stays visually consistent.
+ * The rich detail rows are now consumer-slotted (`slot="rich"`, canonically an
+ * `<obc-readout-list>`); each `<obc-readout-list-item>` owns its own
+ * `fractionDigits`, so `percentFractionDigits` no longer affects them.
  */
 export const WithFractionDigits: Story = {
   args: {
@@ -431,7 +532,6 @@ export const WithFractionDigits: Story = {
       .showTrendSymbol=${args.showTrendSymbol}
       .priority=${args.priority}
       .percentFractionDigits=${args.percentFractionDigits}
-      .readout=${args.readout}
     >
       <span slot="current-value">${args.value.toFixed(2)}</span>
       <span slot="max-value">${args.max.toFixed(2)}</span>
@@ -470,7 +570,6 @@ export const WithAlertAlarm: Story = {
       .hasGraphIcon=${args.hasGraphIcon}
       .showTrendSymbol=${args.showTrendSymbol}
       .percentFractionDigits=${args.percentFractionDigits}
-      .readout=${args.readout}
       ?alert=${args.alert}
       .alertFrameType=${args.alertFrameType}
       .alertFrameThickness=${args.alertFrameThickness}
@@ -593,7 +692,6 @@ export const Responsive: Story = {
           .hasGraphIcon=${args.hasGraphIcon}
           .showTrendSymbol=${args.showTrendSymbol}
           .percentFractionDigits=${args.percentFractionDigits}
-          .readout=${args.readout}
           ?alert=${args.alert}
           .alertFrameType=${args.alertFrameType}
           .alertFrameThickness=${args.alertFrameThickness}

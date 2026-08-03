@@ -15,6 +15,7 @@ export enum DigitalValveVariant {
  * @ignition-base-height: 82px
  * @ignition-base-width: 66px
  * @ignition-center
+ * @stable
  */
 @customElement('obc-digital-valve')
 export class ObcDigitalValve extends ObcAbstractAutomationButton {

@@ -9,6 +9,9 @@ export enum EndPointDirection {
   left = 'left',
 }
 
+/**
+ * @deprecated
+ */
 @customElement('obc-end-point-line')
 export class ObcEndPointLine extends LitElement {
   @property({type: String}) medium: LineMedium = LineMedium.normal;

@@ -95,6 +95,7 @@ export enum ObcPoiObjectState {
  * ```
  *
  * @slot - Icon/content displayed inside the marker frame.
+ * @experimental
  */
 @customElement('obc-poi-object')
 export class ObcPoiObject extends LitElement {

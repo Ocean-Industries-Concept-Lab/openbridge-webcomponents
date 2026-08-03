@@ -113,6 +113,7 @@ export function canAckFilter(filter: (alert: Alert) => boolean) {
 /**
  * @fires ack-click {ObcAckClickEvent} - Fired when the user clicks the "ACK" button.
  * @fires row-click {ObcRowClickEvent} - Fired when the user clicks a row.
+ * @stable
  */
 @customElement('obc-alert-list-details')
 export class ObcAlertListDetails extends LitElement {

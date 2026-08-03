@@ -40,6 +40,7 @@ export enum InstrumentFieldSize {
  *
  * @csspart label - The container for the tag and unit.
  * @csspart tag - The tag text element.
+ * @deprecated
  */
 @customElement('obc-instrument-field')
 export class ObcInstrumentField extends LitElement {

@@ -52,6 +52,7 @@ const baseFontSize = 16;
  * @slot helper-icon - Icon displayed before helper or error text (when `hasHelperIcon` is true)
  * @fires input {CustomEvent<{value: number}>} When the numeric value changes during editing
  * @fires change {CustomEvent<{value: number}>} When the value is committed on blur
+ * @stable
  */
 @customElement('obc-number-input-field')
 export class ObcNumberInputField extends LitElement {

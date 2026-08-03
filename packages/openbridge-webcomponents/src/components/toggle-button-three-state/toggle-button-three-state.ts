@@ -29,6 +29,7 @@ export type ObcToggleButtonThreeStateChangeEvent = CustomEvent<{
  * selection changes. Use `disabled` to make it non-interactive.
  *
  * @fires change {ObcToggleButtonThreeStateChangeEvent} Fired when the state changes.
+ * @beta
  */
 @customElement('obc-toggle-button-three-state')
 export class ObcToggleButtonThreeState extends LitElement {

@@ -57,7 +57,7 @@
     --global-size-spacing-touch-target-min
   );
   --menu-navigation-components-navigation-item-padding-horizontal: var(
-    --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item
+    --global-size-spacing-nav-item-and-menus-padding-horizontal-list-item
   );
   --menu-navigation-components-navigation-item-margin-horizontal-icon-button: 4px;
   --ui-components-checkbox-touch-target-size: var(
@@ -101,7 +101,7 @@
     --global-size-spacing-touch-target-min
   );
   --ui-components-checkbox-padding-horizontal: var(
-    --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item
+    --global-size-spacing-nav-item-and-menus-padding-horizontal-list-item
   );
   --ui-components-toggle-switch-item-padding-horizontal: 8px;
   --ui-components-radio-button-thumb-size: 8px;
@@ -109,7 +109,7 @@
     --global-size-spacing-icon-icon-size-regular
   );
   --ui-components-radio-button-padding-horizontal: var(
-    --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item
+    --global-size-spacing-nav-item-and-menus-padding-horizontal-list-item
   );
   --ui-components-button-visual-size: var(
     --global-size-spacing-visual-target-min
@@ -174,7 +174,7 @@
     --global-size-spacing-visual-target-min
   );
   --global-size-spacing-border-weight-alertframe: 4px;
-  --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item: 12px;
+  --global-size-spacing-nav-item-and-menus-padding-horizontal-list-item: 12px;
   --global-size-spacing-nav-item-and-menus-margin-horizontal-list-item: 0px;
   --ui-components-radio-button-margin: var(
     --global-size-spacing-nav-item-and-menus-margin-horizontal-list-item
@@ -361,7 +361,7 @@
   );
   --menu-navigation-components-table-item-label-spacing: 8px;
   --menu-navigation-components-table-item-padding-horizontal: var(
-    --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item
+    --global-size-spacing-nav-item-and-menus-padding-horizontal-list-item
   );
   --menu-navigation-components-table-item-border-radius: var(
     --global-border-radius-border-radius-base
@@ -406,16 +406,16 @@
   --global-typography-ui-button-two-line-line-height: var(--line-height-050);
   --global-typography-ui-button-two-line-font-weight: var(--font-weight-bold);
   --global-typography-ui-button-two-line-letter-spacing: 0.30000001192092896px;
-  --ui-components-keyboard-nummeric-button-size-min: var(
+  --ui-components-keyboard-numeric-button-size-min: var(
     --global-size-spacing-touch-target-min
   );
-  --ui-components-keyboard-nummeric-button-spacing: 8px;
-  --ui-components-keyboard-nummeric-section-spacing: 16px;
+  --ui-components-keyboard-numeric-button-spacing: 8px;
+  --ui-components-keyboard-numeric-section-spacing: 16px;
   --ui-components-slider-regular-thumb-width: 12px;
   --ui-components-slider-enhanced-track-height: 32px;
   --ui-components-slider-enhanced-thumb-height: 32px;
   --ui-components-slider-enhanced-thumb-width: 12px;
-  --ui-components-keyboard-nummeric-top-bar-height: var(
+  --ui-components-keyboard-numeric-top-bar-height: var(
     --global-size-spacing-touch-target-min
   );
   --ui-components-toggle-button-icon-toggle-button-horizontal-item-touch-target-size: var(
@@ -453,9 +453,9 @@
   --ui-components-elevated-card-border-radius: var(
     --global-border-radius-border-radius-base
   );
-  --ui-components-keyboard-nummeric-action-button-width: 104px;
-  --ui-components-keyboard-nummeric-component-width-min: 304px;
-  --ui-components-keyboard-nummeric-keys-section-width-min: 160px;
+  --ui-components-keyboard-numeric-action-button-width: 104px;
+  --ui-components-keyboard-numeric-component-width-min: 304px;
+  --ui-components-keyboard-numeric-keys-section-width-min: 160px;
   --ui-components-keyboard-button-size-min: var(
     --global-size-spacing-touch-target-min
   );
@@ -471,8 +471,8 @@
   --ui-components-keyboard-border-radius: var(
     --global-border-radius-border-radius-base
   );
-  --ui-components-keyboard-nummeric-padding-spacer: 28px;
-  --ui-components-keyboard-nummeric-border-radius: var(
+  --ui-components-keyboard-numeric-padding-spacer: 28px;
+  --ui-components-keyboard-numeric-border-radius: var(
     --global-border-radius-border-radius-base
   );
   --menu-navigation-components-branch-icon-size-mask: var(
@@ -2770,7 +2770,7 @@
     --global-size-spacing-touch-target-min
   );
   --menu-navigation-components-navigation-item-padding-horizontal: var(
-    --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item
+    --global-size-spacing-nav-item-and-menus-padding-horizontal-list-item
   );
   --menu-navigation-components-navigation-item-margin-horizontal-icon-button: 4px;
   --ui-components-checkbox-touch-target-size: var(
@@ -2814,7 +2814,7 @@
     --global-size-spacing-touch-target-min
   );
   --ui-components-checkbox-padding-horizontal: var(
-    --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item
+    --global-size-spacing-nav-item-and-menus-padding-horizontal-list-item
   );
   --ui-components-toggle-switch-item-padding-horizontal: 8px;
   --ui-components-radio-button-thumb-size: 10px;
@@ -2822,7 +2822,7 @@
     --global-size-spacing-icon-icon-size-regular
   );
   --ui-components-radio-button-padding-horizontal: var(
-    --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item
+    --global-size-spacing-nav-item-and-menus-padding-horizontal-list-item
   );
   --ui-components-button-visual-size: var(
     --global-size-spacing-visual-target-min
@@ -2887,7 +2887,7 @@
     --global-size-spacing-visual-target-min
   );
   --global-size-spacing-border-weight-alertframe: 4px;
-  --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item: 12px;
+  --global-size-spacing-nav-item-and-menus-padding-horizontal-list-item: 12px;
   --global-size-spacing-nav-item-and-menus-margin-horizontal-list-item: 0px;
   --ui-components-radio-button-margin: var(
     --global-size-spacing-nav-item-and-menus-margin-horizontal-list-item
@@ -3074,7 +3074,7 @@
   );
   --menu-navigation-components-table-item-label-spacing: 8px;
   --menu-navigation-components-table-item-padding-horizontal: var(
-    --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item
+    --global-size-spacing-nav-item-and-menus-padding-horizontal-list-item
   );
   --menu-navigation-components-table-item-border-radius: var(
     --global-border-radius-border-radius-base
@@ -3123,16 +3123,16 @@
   --global-typography-ui-button-two-line-line-height: var(--line-height-075);
   --global-typography-ui-button-two-line-font-weight: var(--font-weight-bold);
   --global-typography-ui-button-two-line-letter-spacing: 0.5px;
-  --ui-components-keyboard-nummeric-button-size-min: var(
+  --ui-components-keyboard-numeric-button-size-min: var(
     --global-size-spacing-touch-target-min
   );
-  --ui-components-keyboard-nummeric-button-spacing: 8px;
-  --ui-components-keyboard-nummeric-section-spacing: 16px;
+  --ui-components-keyboard-numeric-button-spacing: 8px;
+  --ui-components-keyboard-numeric-section-spacing: 16px;
   --ui-components-slider-regular-thumb-width: 12px;
   --ui-components-slider-enhanced-track-height: 32px;
   --ui-components-slider-enhanced-thumb-height: 32px;
   --ui-components-slider-enhanced-thumb-width: 12px;
-  --ui-components-keyboard-nummeric-top-bar-height: var(
+  --ui-components-keyboard-numeric-top-bar-height: var(
     --global-size-spacing-touch-target-min
   );
   --ui-components-toggle-button-icon-toggle-button-horizontal-item-touch-target-size: var(
@@ -3170,9 +3170,9 @@
   --ui-components-elevated-card-border-radius: var(
     --global-border-radius-border-radius-base
   );
-  --ui-components-keyboard-nummeric-action-button-width: 136px;
-  --ui-components-keyboard-nummeric-component-width-min: 368px;
-  --ui-components-keyboard-nummeric-keys-section-width-min: 184px;
+  --ui-components-keyboard-numeric-action-button-width: 136px;
+  --ui-components-keyboard-numeric-component-width-min: 368px;
+  --ui-components-keyboard-numeric-keys-section-width-min: 184px;
   --ui-components-keyboard-button-size-min: var(
     --global-size-spacing-touch-target-min
   );
@@ -3188,8 +3188,8 @@
   --ui-components-keyboard-border-radius: var(
     --global-border-radius-border-radius-base
   );
-  --ui-components-keyboard-nummeric-padding-spacer: 32px;
-  --ui-components-keyboard-nummeric-border-radius: var(
+  --ui-components-keyboard-numeric-padding-spacer: 32px;
+  --ui-components-keyboard-numeric-border-radius: var(
     --global-border-radius-border-radius-base
   );
   --menu-navigation-components-branch-icon-size-mask: var(
@@ -3389,7 +3389,7 @@
   );
   --ui-components-accordion-item-label-spacing: 8px;
   --ui-components-accordion-item-padding-horizontal: var(
-    --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item
+    --global-size-spacing-nav-item-and-menus-padding-horizontal-list-item
   );
   --ui-components-accordion-item-border-radius: var(--border-radius-br-0);
   --ui-components-accordion-item-margin-horizontal: var(
@@ -5405,7 +5405,7 @@
     --global-size-spacing-touch-target-min
   );
   --menu-navigation-components-navigation-item-padding-horizontal: var(
-    --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item
+    --global-size-spacing-nav-item-and-menus-padding-horizontal-list-item
   );
   --menu-navigation-components-navigation-item-margin-horizontal-icon-button: 6px;
   --ui-components-checkbox-touch-target-size: var(
@@ -5449,7 +5449,7 @@
     --global-size-spacing-touch-target-min
   );
   --ui-components-checkbox-padding-horizontal: var(
-    --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item
+    --global-size-spacing-nav-item-and-menus-padding-horizontal-list-item
   );
   --ui-components-toggle-switch-item-padding-horizontal: 12px;
   --ui-components-radio-button-thumb-size: 12px;
@@ -5457,7 +5457,7 @@
     --global-size-spacing-icon-icon-size-regular
   );
   --ui-components-radio-button-padding-horizontal: var(
-    --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item
+    --global-size-spacing-nav-item-and-menus-padding-horizontal-list-item
   );
   --ui-components-button-visual-size: var(
     --global-size-spacing-visual-target-min
@@ -5522,7 +5522,7 @@
     --global-size-spacing-visual-target-min
   );
   --global-size-spacing-border-weight-alertframe: 6px;
-  --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item: 16px;
+  --global-size-spacing-nav-item-and-menus-padding-horizontal-list-item: 16px;
   --global-size-spacing-nav-item-and-menus-margin-horizontal-list-item: 0px;
   --ui-components-radio-button-margin: var(
     --global-size-spacing-nav-item-and-menus-margin-horizontal-list-item
@@ -5709,7 +5709,7 @@
   );
   --menu-navigation-components-table-item-label-spacing: 12px;
   --menu-navigation-components-table-item-padding-horizontal: var(
-    --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item
+    --global-size-spacing-nav-item-and-menus-padding-horizontal-list-item
   );
   --menu-navigation-components-table-item-border-radius: var(
     --global-border-radius-border-radius-base
@@ -5758,16 +5758,16 @@
   --global-typography-ui-button-two-line-line-height: var(--line-height-100);
   --global-typography-ui-button-two-line-font-weight: var(--font-weight-bold);
   --global-typography-ui-button-two-line-letter-spacing: 0.699999988079071px;
-  --ui-components-keyboard-nummeric-button-size-min: var(
+  --ui-components-keyboard-numeric-button-size-min: var(
     --global-size-spacing-touch-target-min
   );
-  --ui-components-keyboard-nummeric-button-spacing: 12px;
-  --ui-components-keyboard-nummeric-section-spacing: 24px;
+  --ui-components-keyboard-numeric-button-spacing: 12px;
+  --ui-components-keyboard-numeric-section-spacing: 24px;
   --ui-components-slider-regular-thumb-width: 16px;
   --ui-components-slider-enhanced-track-height: 48px;
   --ui-components-slider-enhanced-thumb-height: 48px;
   --ui-components-slider-enhanced-thumb-width: 18px;
-  --ui-components-keyboard-nummeric-top-bar-height: var(
+  --ui-components-keyboard-numeric-top-bar-height: var(
     --global-size-spacing-touch-target-min
   );
   --ui-components-toggle-button-icon-toggle-button-horizontal-item-touch-target-size: var(
@@ -5807,9 +5807,9 @@
   --ui-components-elevated-card-border-radius: var(
     --global-border-radius-border-radius-base
   );
-  --ui-components-keyboard-nummeric-action-button-width: 156px;
-  --ui-components-keyboard-nummeric-component-width-min: 468px;
-  --ui-components-keyboard-nummeric-keys-section-width-min: 240px;
+  --ui-components-keyboard-numeric-action-button-width: 156px;
+  --ui-components-keyboard-numeric-component-width-min: 468px;
+  --ui-components-keyboard-numeric-keys-section-width-min: 240px;
   --ui-components-keyboard-button-size-min: var(
     --global-size-spacing-touch-target-min
   );
@@ -5825,8 +5825,8 @@
   --ui-components-keyboard-border-radius: var(
     --global-border-radius-border-radius-base
   );
-  --ui-components-keyboard-nummeric-padding-spacer: 48px;
-  --ui-components-keyboard-nummeric-border-radius: var(
+  --ui-components-keyboard-numeric-padding-spacer: 48px;
+  --ui-components-keyboard-numeric-border-radius: var(
     --global-border-radius-border-radius-base
   );
   --menu-navigation-components-branch-icon-size-mask: var(
@@ -6026,7 +6026,7 @@
   );
   --ui-components-accordion-item-label-spacing: 12px;
   --ui-components-accordion-item-padding-horizontal: var(
-    --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item
+    --global-size-spacing-nav-item-and-menus-padding-horizontal-list-item
   );
   --ui-components-accordion-item-border-radius: var(--border-radius-br-0);
   --ui-components-accordion-item-margin-horizontal: var(
@@ -8030,7 +8030,7 @@
     --global-size-spacing-touch-target-min
   );
   --menu-navigation-components-navigation-item-padding-horizontal: var(
-    --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item
+    --global-size-spacing-nav-item-and-menus-padding-horizontal-list-item
   );
   --menu-navigation-components-navigation-item-margin-horizontal-icon-button: 8px;
   --ui-components-checkbox-touch-target-size: var(
@@ -8074,7 +8074,7 @@
     --global-size-spacing-touch-target-min
   );
   --ui-components-checkbox-padding-horizontal: var(
-    --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item
+    --global-size-spacing-nav-item-and-menus-padding-horizontal-list-item
   );
   --ui-components-toggle-switch-item-padding-horizontal: 16px;
   --ui-components-radio-button-thumb-size: 16px;
@@ -8082,7 +8082,7 @@
     --global-size-spacing-icon-icon-size-regular
   );
   --ui-components-radio-button-padding-horizontal: var(
-    --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item
+    --global-size-spacing-nav-item-and-menus-padding-horizontal-list-item
   );
   --ui-components-button-visual-size: var(
     --global-size-spacing-visual-target-min
@@ -8147,7 +8147,7 @@
     --global-size-spacing-visual-target-min
   );
   --global-size-spacing-border-weight-alertframe: 8px;
-  --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item: 24px;
+  --global-size-spacing-nav-item-and-menus-padding-horizontal-list-item: 24px;
   --global-size-spacing-nav-item-and-menus-margin-horizontal-list-item: 0px;
   --ui-components-radio-button-margin: var(
     --global-size-spacing-nav-item-and-menus-margin-horizontal-list-item
@@ -8334,7 +8334,7 @@
   );
   --menu-navigation-components-table-item-label-spacing: 16px;
   --menu-navigation-components-table-item-padding-horizontal: var(
-    --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item
+    --global-size-spacing-nav-item-and-menus-padding-horizontal-list-item
   );
   --menu-navigation-components-table-item-border-radius: var(
     --global-border-radius-border-radius-base
@@ -8383,16 +8383,16 @@
   --global-typography-ui-button-two-line-line-height: var(--line-height-150);
   --global-typography-ui-button-two-line-font-weight: var(--font-weight-bold);
   --global-typography-ui-button-two-line-letter-spacing: 0.8999999761581421px;
-  --ui-components-keyboard-nummeric-button-size-min: var(
+  --ui-components-keyboard-numeric-button-size-min: var(
     --global-size-spacing-touch-target-min
   );
-  --ui-components-keyboard-nummeric-button-spacing: 16px;
-  --ui-components-keyboard-nummeric-section-spacing: 32px;
+  --ui-components-keyboard-numeric-button-spacing: 16px;
+  --ui-components-keyboard-numeric-section-spacing: 32px;
   --ui-components-slider-regular-thumb-width: 18px;
   --ui-components-slider-enhanced-track-height: 64px;
   --ui-components-slider-enhanced-thumb-height: 64px;
   --ui-components-slider-enhanced-thumb-width: 24px;
-  --ui-components-keyboard-nummeric-top-bar-height: var(
+  --ui-components-keyboard-numeric-top-bar-height: var(
     --global-size-spacing-touch-target-min
   );
   --ui-components-toggle-button-icon-toggle-button-horizontal-item-touch-target-size: var(
@@ -8432,9 +8432,9 @@
   --ui-components-elevated-card-border-radius: var(
     --global-border-radius-border-radius-base
   );
-  --ui-components-keyboard-nummeric-action-button-width: 208px;
-  --ui-components-keyboard-nummeric-component-width-min: 624px;
-  --ui-components-keyboard-nummeric-keys-section-width-min: 320px;
+  --ui-components-keyboard-numeric-action-button-width: 208px;
+  --ui-components-keyboard-numeric-component-width-min: 624px;
+  --ui-components-keyboard-numeric-keys-section-width-min: 320px;
   --ui-components-keyboard-button-size-min: var(
     --global-size-spacing-touch-target-min
   );
@@ -8450,8 +8450,8 @@
   --ui-components-keyboard-border-radius: var(
     --global-border-radius-border-radius-base
   );
-  --ui-components-keyboard-nummeric-padding-spacer: 56px;
-  --ui-components-keyboard-nummeric-border-radius: var(
+  --ui-components-keyboard-numeric-padding-spacer: 56px;
+  --ui-components-keyboard-numeric-border-radius: var(
     --global-border-radius-border-radius-base
   );
   --menu-navigation-components-branch-icon-size-mask: var(
@@ -8651,7 +8651,7 @@
   );
   --ui-components-accordion-item-label-spacing: 16px;
   --ui-components-accordion-item-padding-horizontal: var(
-    --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item
+    --global-size-spacing-nav-item-and-menus-padding-horizontal-list-item
   );
   --ui-components-accordion-item-border-radius: var(--border-radius-br-0);
   --ui-components-accordion-item-margin-horizontal: var(
@@ -10640,6 +10640,54 @@
   --font-weight-semibold: 570;
   --font-weight-bold: 670;
   --line-height-050: 12px;
+  --typography-primitives-font-family-main: "Noto Sans";
+  --typography-primitives-font-size-071: 11.5px;
+  --typography-primitives-font-size-100: 16.5px;
+  --typography-primitives-font-size-150: 23px;
+  --typography-primitives-font-size-200: 34px;
+  --typography-primitives-font-size-250: 39px;
+  --typography-primitives-font-size-300: 45px;
+  --typography-primitives-font-size-350: 57px;
+  --typography-primitives-font-size-400: 68px;
+  --typography-primitives-font-size-450: 73px;
+  --typography-primitives-font-size-500: 78px;
+  --typography-primitives-line-height-071: 16px;
+  --typography-primitives-line-height-100: 20px;
+  --typography-primitives-line-height-150: 24px;
+  --typography-primitives-line-height-200: 32px;
+  --typography-primitives-line-height-250: 36px;
+  --typography-primitives-line-height-300: 40px;
+  --typography-primitives-line-height-350: 36px;
+  --typography-primitives-line-height-400: 64px;
+  --typography-primitives-line-height-450: 68px;
+  --typography-primitives-line-height-500: 72px;
+  --typography-primitives-font-weight-300: 370;
+  --typography-primitives-font-weight-500: 570;
+  --typography-primitives-font-weight-600: 670;
+  --typography-primitives-font-weight-200: 270;
+  --typography-primitives-font-weight-400: 470;
+  --typography-primitives-baseline-offset-071: 0px;
+  --typography-primitives-baseline-offset-100: 0px;
+  --typography-primitives-baseline-offset-150: 2px;
+  --typography-primitives-baseline-offset-200: 2px;
+  --typography-primitives-baseline-offset-250: 2px;
+  --typography-primitives-baseline-offset-300: 2px;
+  --typography-primitives-baseline-offset-350: 4px;
+  --typography-primitives-baseline-offset-400: 4px;
+  --typography-primitives-baseline-offset-450: 4px;
+  --typography-primitives-baseline-offset-500: 4px;
+  --typography-primitives-letter-spacing-071: 0px;
+  --typography-primitives-letter-spacing-100: 0px;
+  --typography-primitives-letter-spacing-150: 0px;
+  --typography-primitives-letter-spacing-200: 0.0024999999441206455px;
+  --typography-primitives-letter-spacing-250: -0.5px;
+  --typography-primitives-letter-spacing-300: -0.5px;
+  --typography-primitives-letter-spacing-350: -0.5px;
+  --typography-primitives-letter-spacing-400: -1px;
+  --typography-primitives-letter-spacing-450: -1px;
+  --typography-primitives-letter-spacing-500: -1px;
+  --weight-demo: "470";
+  --weight-demo-2: 470px;
   --button-border-radius-top-left: var(--ui-components-button-border-radius);
   --button-border-radius-top-right: var(--ui-components-button-border-radius);
   --button-border-radius-bottom-right: var(
@@ -11115,7 +11163,7 @@
   --data-weather-sun-primary-color: rgb(163, 97, 28);
   --data-weather-sun-secondary-color: rgb(244, 215, 191);
   --data-weather-cloud-light-primary-color: rgb(142, 142, 142);
-  --data-weather-cloud-light-seconday-color: rgb(221, 221, 221);
+  --data-weather-cloud-light-secondary-color: rgb(221, 221, 221);
   --data-weather-cloud-rain-primary-color: rgb(112, 112, 112);
   --data-weather-cloud-rain-secondary-color: rgb(190, 190, 190);
   --data-weather-cloud-heavy-secondary-color: rgb(112, 112, 112);
@@ -11149,7 +11197,7 @@
   --instrument-enhanced-primary-color: rgb(29, 60, 103);
   --instrument-enhanced-secondary-dif-color: rgb(93, 143, 213);
   --instrument-regular-primary-color: rgb(61, 61, 61);
-  --data-weather-cloud-seconday-color: rgb(221, 221, 221);
+  --data-weather-cloud-secondary-color: rgb(221, 221, 221);
   --data-weather-cloud-primary-color: rgb(142, 142, 142);
   --data-weather-moon-secondary-color: rgb(142, 142, 142);
   --automation-device-primary-color: rgb(255, 255, 255);
@@ -11912,8 +11960,8 @@
 :root[data-obc-theme="dusk"] {
   --icon-02-chevron-up: url('data:image/svg+xml,<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M6 14.0002L7.41 15.4102L12 10.8302L16.59 15.4102L18 14.0002L12 8.00016L6 14.0002Z" fill="rgba(255, 255, 255, .550)"/></svg>');
   --icon-02-chevron-down: url('data:image/svg+xml,<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M18 9.41L16.59 8L12 12.58L7.41 8L6 9.41L12 15.41L18 9.41Z" fill="rgba(255, 255, 255, .550)"/></svg>');
-  --element-active-color: rgb(233, 233, 233);
-  --element-neutral-color: rgb(176, 176, 176);
+  --element-active-color: rgb(253, 253, 253);
+  --element-neutral-color: rgb(192, 192, 192);
   --element-inactive-color: rgb(140, 140, 140);
   --element-disabled-color: rgb(80, 80, 80);
   --container-global-color: rgb(46, 46, 46);
@@ -11964,8 +12012,8 @@
   --normal-disabled-background-color: rgb(255, 255, 255, 0);
   --raised-enabled-background-color: rgb(150, 196, 254);
   --raised-enabled-border-color: rgb(177, 214, 255);
-  --raised-hover-background-color: rgb(150, 196, 254);
-  --raised-hover-border-color: rgb(177, 214, 255);
+  --raised-hover-background-color: rgb(177, 214, 255);
+  --raised-hover-border-color: rgb(215, 235, 255);
   --raised-pressed-background-color: rgb(132, 179, 239);
   --raised-pressed-border-color: rgb(150, 196, 254);
   --raised-focused-background-color: rgb(177, 214, 255);
@@ -12055,7 +12103,7 @@
   --data-weather-sun-primary-color: rgb(179, 131, 80);
   --data-weather-sun-secondary-color: rgb(68, 52, 35);
   --data-weather-cloud-light-primary-color: rgb(140, 140, 140);
-  --data-weather-cloud-light-seconday-color: rgb(65, 65, 65);
+  --data-weather-cloud-light-secondary-color: rgb(65, 65, 65);
   --data-weather-cloud-rain-primary-color: rgb(140, 140, 140);
   --data-weather-cloud-rain-secondary-color: rgb(80, 80, 80);
   --data-weather-cloud-heavy-secondary-color: rgb(140, 140, 140);
@@ -12089,7 +12137,7 @@
   --instrument-enhanced-primary-color: rgb(177, 214, 255);
   --instrument-enhanced-secondary-dif-color: rgb(82, 113, 154);
   --instrument-regular-primary-color: rgb(255, 255, 255);
-  --data-weather-cloud-seconday-color: rgb(55, 55, 55);
+  --data-weather-cloud-secondary-color: rgb(55, 55, 55);
   --data-weather-cloud-primary-color: rgb(111, 111, 111);
   --data-weather-moon-secondary-color: rgb(111, 111, 111);
   --automation-device-primary-color: rgb(253, 253, 253);
@@ -13010,7 +13058,7 @@
   --data-weather-sun-primary-color: rgb(120, 83, 44);
   --data-weather-sun-secondary-color: rgb(25, 17, 9);
   --data-weather-cloud-light-primary-color: rgb(90, 90, 90);
-  --data-weather-cloud-light-seconday-color: rgb(116, 116, 116);
+  --data-weather-cloud-light-secondary-color: rgb(116, 116, 116);
   --data-weather-cloud-rain-primary-color: rgb(116, 116, 116);
   --data-weather-cloud-rain-secondary-color: rgb(56, 56, 56);
   --data-weather-cloud-heavy-secondary-color: rgb(30, 30, 30);
@@ -13044,7 +13092,7 @@
   --instrument-enhanced-primary-color: rgb(88, 200, 162);
   --instrument-enhanced-secondary-dif-color: rgb(40, 101, 80);
   --instrument-regular-primary-color: rgb(234, 167, 94);
-  --data-weather-cloud-seconday-color: rgb(30, 30, 30);
+  --data-weather-cloud-secondary-color: rgb(30, 30, 30);
   --data-weather-cloud-primary-color: rgb(90, 90, 90);
   --data-weather-moon-secondary-color: rgb(120, 83, 44);
   --automation-device-primary-color: rgb(255, 211, 167);
@@ -13164,19 +13212,19 @@
   --shadow-flat-x: 0px;
   --shadow-flat-y: 0px;
   --shadow-flat-blur: 0px;
-  --shadow-flat-color: rgb(230, 175, 112, 0);
+  --shadow-flat-color: rgb(55, 40, 25);
   --shadow-raised-x: 0px;
   --shadow-raised-y: 0px;
   --shadow-raised-blur: 0px;
-  --shadow-raised-color: rgb(71, 71, 0, 0.20000000298023224);
+  --shadow-raised-color: rgb(55, 40, 25);
   --shadow-floating-x: 0px;
   --shadow-floating-y: 0px;
   --shadow-floating-blur: 0px;
-  --shadow-floating-color: rgb(71, 71, 0, 0.20000000298023224);
+  --shadow-floating-color: rgb(55, 40, 25);
   --shadow-overlay-x: 0px;
   --shadow-overlay-y: 0px;
   --shadow-overlay-blur: 0px;
-  --shadow-overlay-color: rgb(71, 71, 0, 0.20000000298023224);
+  --shadow-overlay-color: rgb(55, 40, 25);
   --shadow-flat-spread: 0px;
   --shadow-raised-spread: 1px;
   --shadow-floating-spread: 1px;
@@ -13910,7 +13958,7 @@
   --data-weather-sun-primary-color: rgb(163, 97, 28);
   --data-weather-sun-secondary-color: rgb(244, 215, 191);
   --data-weather-cloud-light-primary-color: rgb(142, 142, 142);
-  --data-weather-cloud-light-seconday-color: rgb(240, 240, 240);
+  --data-weather-cloud-light-secondary-color: rgb(240, 240, 240);
   --data-weather-cloud-rain-primary-color: rgb(112, 112, 112);
   --data-weather-cloud-rain-secondary-color: rgb(190, 190, 190);
   --data-weather-cloud-heavy-secondary-color: rgb(112, 112, 112);
@@ -13944,7 +13992,7 @@
   --instrument-enhanced-primary-color: rgb(29, 60, 103);
   --instrument-enhanced-secondary-dif-color: rgb(93, 143, 213);
   --instrument-regular-primary-color: rgb(61, 61, 61);
-  --data-weather-cloud-seconday-color: rgb(252, 252, 252);
+  --data-weather-cloud-secondary-color: rgb(252, 252, 252);
   --data-weather-cloud-primary-color: rgb(142, 142, 142);
   --data-weather-moon-secondary-color: rgb(142, 142, 142);
   --automation-device-primary-color: rgb(255, 255, 255);

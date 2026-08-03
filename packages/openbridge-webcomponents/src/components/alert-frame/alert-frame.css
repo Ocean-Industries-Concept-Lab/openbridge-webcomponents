@@ -9,6 +9,11 @@
   height: fit-content;
 }
 
+:host([fullwidth]) {
+  display: block;
+  width: 100%;
+}
+
 .wrapper {
   --bg-color: var(--alert-alarm-color);
   --thickness: var(--global-size-spacing-border-weight-alertframe);
@@ -31,6 +36,10 @@
   &.wrap-content {
     width: fit-content;
     height: fit-content;
+  }
+
+  &.full-width {
+    width: 100%;
   }
 
   --blink-width-dynamic: calc(var(--blink-width) * var(--blink-on));

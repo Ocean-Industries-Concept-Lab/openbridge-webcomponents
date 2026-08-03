@@ -62,17 +62,12 @@ export enum ObcAdviceMessageItemSize {
  * ---
  *
  * ### Slots
- * | Slot Name         | Renders When...                                 | Purpose                                                      |
- * |-------------------|------------------------------------------------|--------------------------------------------------------------|
- * | `primary-icon`    | Always                                          | Main icon representing the advice (default: advice icon).    |
- * | `secondary-icon`  | `hasSecondaryIcon` is true                     | Optional overlay icon for additional status or category.      |
- * | `title`           | `hasTitle` is true and `title` is set          | Title or heading of the advice message.                      |
- * | `description`     | `hasDescription` is true and `description` set | Detailed message text.                                       |
- * | `time`            | `hasTimestamp` is true and `time` is set       | Primary timestamp (e.g., time of advice).                    |
- * | `time-secondary`  | `hasTimestamp2` is true and `timeSecondary` set| Secondary timestamp (e.g., duration, relative time).         |
- * | `action-text`     | `type="with-button"`                           | Label for the primary action button.                         |
- * | `action-icon`     | `type="with-icon-button"`                      | Icon for the action button (default: close icon).            |
- * | `empty`           | `type="inactive"` or `empty` is true           | Text to display in the empty/inactive state.                 |
+ * | Slot Name         | Renders When...            | Purpose                                                  |
+ * |-------------------|----------------------------|----------------------------------------------------------|
+ * | `secondary-icon`  | `hasSecondaryIcon` is true | Optional overlay icon for additional status or category. |
+ *
+ * All other content (title, description, timestamps, action label/icon, empty-state
+ * text) is driven by properties and rendered internally; it is not exposed as slots.
  *
  * ---
  *
@@ -104,17 +99,10 @@ export enum ObcAdviceMessageItemSize {
  *
  * In this example, the advice message displays a title, description, timestamp, and a "View" action button.
  *
- * @slot primary-icon - Main icon representing the advice (always present)
  * @slot secondary-icon - Optional overlay icon for additional status/category (shown when `hasSecondaryIcon` is true)
- * @slot title - Title or heading of the advice (shown when `hasTitle` is true)
- * @slot description - Detailed message text (shown when `hasDescription` is true)
- * @slot time - Primary timestamp (shown when `hasTimestamp` is true)
- * @slot time-secondary - Secondary timestamp (shown when `hasTimestamp2` is true)
- * @slot action-text - Label for the action button (when `type="with-button"`)
- * @slot action-icon - Icon for the action button (when `type="with-icon-button"`)
- * @slot empty - Text to display in the empty/inactive state (when `type="inactive"` or `empty` is true)
  * @fires message-click {CustomEvent<void>} When the main message area is clicked
  * @fires action-click {CustomEvent<void>} When the action button (text or icon) is clicked
+ * @beta
  */
 @customElement('obc-advice-message-item')
 export class ObcAdviceMessageItem extends LitElement {

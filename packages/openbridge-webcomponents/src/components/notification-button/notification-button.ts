@@ -91,6 +91,7 @@ export interface NotificationButtonClickEvent {
  *
  * @slot icon - Custom icon to display in place of the default notification icon.
  * @fires obc-click {CustomEvent<NotificationButtonClickEvent>} Fired when the button is clicked, with the current count and new active state.
+ * @stable
  */
 @customElement('obc-notification-button')
 export class ObcNotificationButton extends LitElement {

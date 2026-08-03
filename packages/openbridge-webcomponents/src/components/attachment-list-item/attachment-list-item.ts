@@ -54,6 +54,7 @@ import componentStyle from './attachment-list-item.css?inline';
  * @slot leading-icon - Icon displayed before the file name.
  * @slot tag - Tag element displayed after the file name.
  * @slot trailing-action - Trailing action button.
+ * @beta
  */
 @customElement('obc-attachment-list-item')
 export class ObcAttachmentListItem extends LitElement {

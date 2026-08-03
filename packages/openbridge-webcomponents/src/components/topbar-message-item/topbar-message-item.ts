@@ -130,6 +130,7 @@ export enum ObcTopbarMessageItemSize {
  * @slot empty - Content for the empty/inactive state (shown if type is `inactive` or `empty` is true).
  * @fires message-click {CustomEvent<void>} Fired when the main message area is clicked.
  * @fires action-click {CustomEvent<void>} Fired when the action button (text or icon) is clicked.
+ * @stable
  */
 @customElement('obc-topbar-message-item')
 export class ObcTopbarMessageItem extends LitElement {

@@ -269,7 +269,7 @@ export const Tree: Story = {
           hasIcon
           defaultOpen
           .alerts=${{
-            aggregate: true,
+            combine: true,
             countLevelCritical: 1,
             countLevelHigh: 1,
             countLevelMedium: 2,
@@ -283,7 +283,7 @@ export const Tree: Story = {
             defaultOpen
             terminalType="aggregated-header"
             .alerts=${{
-              aggregate: true,
+              combine: true,
               countLevelCritical: 1,
               countLevelHigh: 1,
             }}
@@ -308,7 +308,7 @@ export const Tree: Story = {
           <obc-navigation-item-group
             label="Bridge"
             hasIcon
-            .alerts=${{aggregate: true, countLevelMedium: 2, countLevelLow: 1}}
+            .alerts=${{combine: true, countLevelMedium: 2, countLevelLow: 1}}
           >
             <obi-placeholder slot="icon"></obi-placeholder>
             <obc-navigation-item

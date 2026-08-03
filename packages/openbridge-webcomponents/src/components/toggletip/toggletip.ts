@@ -84,10 +84,10 @@ export enum ToggletipVariant {
  * ## Properties and Configuration
  *
  * - `variant`: Controls the visual style and semantic meaning (see Features above for all options).
- * - `title`: Sets the header text (shown if `hasTitleContainer` is true).
- * - `description`: Sets the main message text (shown if `hasDescription` is true).
- * - `hasTitleContainer`, `hasDescription`, `hasContent`, `hasActions`: Toggle visibility of each section.
- * - `hasLeadingIcon`, `hasTrailingIcon`: Toggle visibility of icon slots.
+ * - `title`: Sets the header text. The header is shown only when `title` is a non-empty string.
+ * - `description`: Sets the main message text. Shown whenever `description` is defined.
+ * - `hasContent`, `hasActions`: Toggle visibility of the custom content area and the action buttons.
+ * - `hasLeadingIcon`, `hasTrailingIcon`: Toggle visibility of icon slots (only effective when a `title` is set).
  * - `primaryButtonLabel`, `secondaryButtonLabel`: Set labels for action buttons (shown if `hasActions` is true).
  * - `customWidth`: Sets a custom width for the toggletip (in pixels).
  *
@@ -129,6 +129,7 @@ export enum ToggletipVariant {
  *
  * @fires {CustomEvent} primary-action - Fired when the primary action button is clicked
  * @fires {CustomEvent} secondary-action - Fired when the secondary action button is clicked
+ * @beta
  */
 @customElement('obc-toggletip')
 export class ObcToggletip extends LitElement {

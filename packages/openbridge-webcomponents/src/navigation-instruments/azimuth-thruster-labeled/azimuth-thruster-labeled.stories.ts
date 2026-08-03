@@ -10,7 +10,7 @@ import {AdviceType} from '../watch/advice.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {PropellerType} from '../thruster/propeller.js';
 import {TickmarkStyle} from '../watch/tickmark.js';
-import {ReadoutVariant} from '../readout/readout.js';
+import {ReadoutSize} from '../readout/readout.js';
 
 function renderAzimuthThrusterLabeled(
   args: Partial<ObcAzimuthThrusterLabeled>
@@ -18,7 +18,7 @@ function renderAzimuthThrusterLabeled(
   return html`
     <obc-azimuth-thruster-labeled
       .size=${args.size ?? AzimuthThrusterLabeledSize.medium}
-      .readoutVariant=${args.readoutVariant ?? ReadoutVariant.regular}
+      .readoutSize=${args.readoutSize ?? ReadoutSize.medium}
       .label=${args.label ?? ''}
       .commandStatus=${args.commandStatus ?? CommandStatus.InCommand}
       .angle=${args.angle ?? 0}
@@ -67,7 +67,7 @@ const meta: Meta<typeof ObcAzimuthThrusterLabeled> = {
       {min: 75, max: 100, type: AdviceType.caution, hinted: true},
       {min: -100, max: -75, type: AdviceType.caution, hinted: true},
     ],
-    readoutVariant: ReadoutVariant.regular,
+    readoutSize: ReadoutSize.medium,
   },
   decorators: [widthDecorator],
   argTypes: {
@@ -83,9 +83,9 @@ const meta: Meta<typeof ObcAzimuthThrusterLabeled> = {
     size: {
       options: Object.values(AzimuthThrusterLabeledSize),
     },
-    readoutVariant: {
+    readoutSize: {
       control: 'select',
-      options: Object.values(ReadoutVariant),
+      options: Object.values(ReadoutSize),
     },
     width: {
       control: {type: 'range', min: 100, max: 2000, step: 1},
@@ -103,7 +103,7 @@ type Story = StoryObj<ObcAzimuthThrusterLabeled>;
 export const Medium: Story = {
   args: {
     size: AzimuthThrusterLabeledSize.medium,
-    readoutVariant: ReadoutVariant.regular,
+    readoutSize: ReadoutSize.medium,
     width: 384,
   },
 };
@@ -111,7 +111,7 @@ export const Medium: Story = {
 export const Large: Story = {
   args: {
     size: AzimuthThrusterLabeledSize.large,
-    readoutVariant: ReadoutVariant.enhanced,
+    readoutSize: ReadoutSize.large,
     width: 640,
   },
 };
@@ -119,7 +119,7 @@ export const Large: Story = {
 export const NotInCommand: Story = {
   args: {
     size: AzimuthThrusterLabeledSize.medium,
-    readoutVariant: ReadoutVariant.regular,
+    readoutSize: ReadoutSize.medium,
     width: 384,
     commandStatus: CommandStatus.NoCommand,
   },

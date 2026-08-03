@@ -1,7 +1,10 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
 import {ObcKeyboardFull, ObcKeyboardFullType} from './keyboard-full.js';
-import {ObcTextInputFieldSize} from '../text-input-field/text-input-field.js';
+import {
+  HTMLInputTypeAttribute,
+  ObcTextInputFieldSize,
+} from '../text-input-field/text-input-field.js';
 import './keyboard-full.js';
 
 const meta: Meta<typeof ObcKeyboardFull> = {
@@ -87,6 +90,15 @@ Ideal for touch-screen interfaces where a custom keyboard is needed for text ent
         defaultValue: {summary: 'large'},
       },
     },
+    inputType: {
+      control: 'select',
+      options: Object.values(HTMLInputTypeAttribute),
+      description:
+        'Input type forwarded to the field. Use `password` to mask the value.',
+      table: {
+        defaultValue: {summary: 'text'},
+      },
+    },
   },
   args: {
     type: ObcKeyboardFullType.Floating,
@@ -96,6 +108,7 @@ Ideal for touch-screen interfaces where a custom keyboard is needed for text ent
     placeholder: 'Placeholder',
     showNumberRow: false,
     inputSize: ObcTextInputFieldSize.Large,
+    inputType: HTMLInputTypeAttribute.Text,
   },
 } satisfies Meta<ObcKeyboardFull>;
 
@@ -111,6 +124,7 @@ const renderKeyboard = (args: ObcKeyboardFull) => html`
     .placeholder=${args.placeholder}
     .showNumberRow=${args.showNumberRow}
     .inputSize=${args.inputSize}
+    .inputType=${args.inputType}
     @value-change=${(e: CustomEvent) =>
       console.log('value-change:', e.detail.value)}
     @done-click=${(e: CustomEvent) =>
@@ -163,6 +177,26 @@ export const WithNumberRow: Story = {
       description: {
         story:
           'Keyboard with number row (1-9, 0) and symbols layout. Ideal for password or mixed alphanumeric input. Cursor navigation arrows appear in the action buttons area.',
+      },
+    },
+  },
+};
+
+export const Password: Story = {
+  args: {
+    type: ObcKeyboardFullType.Floating,
+    parameterName: 'Password',
+    placeholder: 'Enter password...',
+    value: 'secret123',
+    showNumberRow: true,
+    inputType: HTMLInputTypeAttribute.Password,
+  },
+  render: renderKeyboard,
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Sets `inputType="password"` to mask the entered value. A show/hide toggle appears inside the input field, and the `value-change`/`done-click` events still emit the real (unmasked) string.',
       },
     },
   },

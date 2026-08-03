@@ -112,7 +112,10 @@ const meta: Meta = {
     labels: {control: 'object'},
 
     // Axis and layout
-    xAxisType: {control: {type: 'radio'}, options: ['category', 'time']},
+    xAxisType: {
+      control: {type: 'radio'},
+      options: ['category', 'time', 'number'],
+    },
     yAxisPosition: {control: {type: 'radio'}, options: ['left', 'right']},
     showGrid: {control: 'boolean'},
     showGridX: {control: 'boolean'},
@@ -175,6 +178,85 @@ type Story = StoryObj;
 
 export const Semitransparent: Story = {
   name: 'Semitransparent Area Graph (default)',
+};
+
+const UNEVEN_TIME_DATA = [
+  {x: '2026-07-06T10:00:00Z', value: 10},
+  {x: '2026-07-06T10:02:00Z', value: 14},
+  {x: '2026-07-06T10:03:00Z', value: 12},
+  {x: '2026-07-06T10:10:00Z', value: 18},
+  {x: '2026-07-06T10:30:00Z', value: 8},
+  {x: '2026-07-06T11:00:00Z', value: 15},
+];
+
+export const UnevenTimeIntervals: Story = {
+  name: 'Uneven Time Intervals (Time Axis)',
+  play: async ({canvasElement}) => {
+    await document.fonts.ready;
+    const chart = canvasElement.querySelector('obc-area-graph') as
+      | (HTMLElement & {chart?: {update(): void}})
+      | null;
+    chart?.chart?.update();
+  },
+  args: {
+    xAxisType: 'time',
+    timeDisplay: 'minutes',
+  },
+  render: (_args) => html`
+    <obc-area-graph
+      .data=${UNEVEN_TIME_DATA}
+      .lineMode=${_args.lineMode}
+      .xAxisType=${_args.xAxisType}
+      .timeDisplay=${_args.timeDisplay}
+      .showGrid=${_args.showGrid}
+      .showGridX=${_args.showGridX}
+      .showGridY=${_args.showGridY}
+      .showTickMarks=${_args.showTickMarks}
+      .showPoints=${_args.showPoints}
+      .fillMode=${_args.fillMode}
+      .priority=${_args.priority}
+      .width=${_args.width}
+      .height=${_args.height}
+    ></obc-area-graph>
+  `,
+};
+
+const NUMBER_AXIS_DATA = [
+  {x: 0, value: 2},
+  {x: 1, value: 5},
+  {x: 2.5, value: 3},
+  {x: 7, value: 9},
+  {x: 10, value: 6},
+];
+
+export const NumberAxis: Story = {
+  name: 'Number X-Axis',
+  play: async ({canvasElement}) => {
+    await document.fonts.ready;
+    const chart = canvasElement.querySelector('obc-area-graph') as
+      | (HTMLElement & {chart?: {update(): void}})
+      | null;
+    chart?.chart?.update();
+  },
+  args: {
+    xAxisType: 'number',
+  },
+  render: (_args) => html`
+    <obc-area-graph
+      .data=${NUMBER_AXIS_DATA}
+      .lineMode=${_args.lineMode}
+      .xAxisType=${_args.xAxisType}
+      .showGrid=${_args.showGrid}
+      .showGridX=${_args.showGridX}
+      .showGridY=${_args.showGridY}
+      .showTickMarks=${_args.showTickMarks}
+      .showPoints=${_args.showPoints}
+      .fillMode=${_args.fillMode}
+      .priority=${_args.priority}
+      .width=${_args.width}
+      .height=${_args.height}
+    ></obc-area-graph>
+  `,
 };
 
 export const SemitransparentExternalScales: Story = {

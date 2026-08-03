@@ -101,7 +101,7 @@ export const WithAlertBadge: Story = {
 };
 
 /**
- * Several severities at once. With `aggregate` unset, each non-zero count
+ * Several severities at once. With `combine` unset, each non-zero count
  * renders its own badge, ordered most to least severe and spaced by
  * `var(--app-components-alert-counter-item-badge-spacing)`.
  */
@@ -117,14 +117,14 @@ export const MultipleAlertBadges: Story = {
 };
 
 /**
- * The same counts as `MultipleAlertBadges`, but `aggregate: true` collapses them
+ * The same counts as `MultipleAlertBadges`, but `combine: true` collapses them
  * into one badge: the number is the combined total (18) and the style is the
  * highest category present (level-critical).
  */
 export const AggregatedAlertBadge: Story = {
   args: {
     alerts: {
-      aggregate: true,
+      combine: true,
       countLevelCritical: 1,
       countLevelHigh: 3,
       countLevelMedium: 12,

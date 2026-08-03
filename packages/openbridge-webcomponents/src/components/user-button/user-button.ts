@@ -83,6 +83,7 @@ export enum Variant {
  * ```
  *
  * @slot icon - Custom icon for the user button (used only in `icon` variant; defaults to <obi-user> if not provided)
+ * @stable
  */
 @customElement('obc-user-button')
 export class ObcUserButton extends LitElement {
