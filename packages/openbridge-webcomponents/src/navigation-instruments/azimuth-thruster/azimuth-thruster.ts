@@ -161,8 +161,9 @@ export class ObcAzimuthThruster extends LitElement {
    * @availableWhen portStarboard==true
    */
   @property({type: Array, attribute: false})
-  portStarboardElements: PortStarboardElement[] =
-    PORT_STARBOARD_DEFAULT_ELEMENTS;
+  portStarboardElements: PortStarboardElement[] = [
+    ...PORT_STARBOARD_DEFAULT_ELEMENTS,
+  ];
   @property({type: Number, attribute: 'face-diameter'})
   faceDiameter: number | undefined;
 
@@ -215,7 +216,12 @@ export class ObcAzimuthThruster extends LitElement {
    * (0°, 180°), port for (180°, 360°), neutral exactly fore or aft.
    */
   private get angleSetpointPortStarboardSign(): PortStarboardSign {
-    if (this.angleSetpoint === undefined) return 0;
+    if (
+      this.angleSetpoint === undefined ||
+      !Number.isFinite(this.angleSetpoint)
+    ) {
+      return 0;
+    }
     const angle = mapAngle0to360(this.angleSetpoint);
     if (angle === 0 || angle === 180) return 0;
     return angle < 180 ? 1 : -1;

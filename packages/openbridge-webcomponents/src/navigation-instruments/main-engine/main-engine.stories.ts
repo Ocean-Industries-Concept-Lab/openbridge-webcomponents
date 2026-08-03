@@ -3,6 +3,7 @@ import {ObcMainEngine} from './main-engine.js';
 import './main-engine.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {InstrumentState, Priority} from '../types.js';
+import {PortStarboardElement} from '../../svghelpers/port-starboard.js';
 
 const meta: Meta<typeof ObcMainEngine> = {
   title: 'Instruments/Main Engine',
@@ -65,6 +66,28 @@ export const PortStarboardAstern: Story = {
     priority: Priority.enhanced,
     state: InstrumentState.active,
     portStarboard: true,
+  },
+};
+
+/**
+ * `setpoint` opted in: both setpoint markers follow their own column's
+ * direction instead of staying priority-coloured.
+ */
+export const PortStarboardWithSetpoint: Story = {
+  args: {
+    thrust: -70,
+    thrustSetpoint: -85,
+    speed: 20,
+    speedSetpoint: 30,
+    priority: Priority.enhanced,
+    state: InstrumentState.active,
+    portStarboard: true,
+    portStarboardElements: [
+      PortStarboardElement.bar,
+      PortStarboardElement.zeroLine,
+      PortStarboardElement.arrow,
+      PortStarboardElement.setpoint,
+    ],
   },
 };
 
