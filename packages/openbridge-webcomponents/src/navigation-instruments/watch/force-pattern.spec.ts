@@ -96,4 +96,33 @@ describe('renderCurrentForcePattern', () => {
     );
     expect(flat).toContain(String(-(256 * 1.39) / 2 + 104 * 1.39));
   });
+
+  it('honors wave tuning: length scales the tile, height caps opacity, speed drifts', () => {
+    const flat = flatten(
+      renderCurrentForcePattern({
+        fromDirectionDeg: 0,
+        radius: 112,
+        patternScale: 2.0,
+        waveLength: 0.75,
+        waveHeight: 0.6,
+        waveSpeed: 0.4,
+      })
+    );
+    expect(flat).toContain(`width=${48 * 2.0 * 0.75}`);
+    expect(flat).toContain('stop-opacity=0.6');
+    expect(flat).toContain('animateTransform');
+    expect(flat).toContain('dur="2.5s"');
+  });
+
+  it('is static at full intensity without wave options', () => {
+    const flat = flatten(
+      renderCurrentForcePattern({
+        fromDirectionDeg: 0,
+        radius: 112,
+        patternScale: 1.39,
+      })
+    );
+    expect(flat).not.toContain('animateTransform');
+    expect(flat).toContain('stop-opacity=1');
+  });
 });

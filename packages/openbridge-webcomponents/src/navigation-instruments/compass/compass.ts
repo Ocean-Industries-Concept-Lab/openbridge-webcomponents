@@ -424,7 +424,7 @@ export class ObcCompass extends LitElement {
           .tickmarksInside=${this.tickmarksInside}
           .crosshairEnabled=${true}
           .crosshairCenterCutout=${this.hasCenterReadouts}
-          .northArrow=${!frame.labelsHidden}
+          .northArrow=${true}
           .angleSetpoint=${this.headingSetpoint ?? undefined}
           .newAngleSetpoint=${this.newHeadingSetpoint}
           .atAngleSetpoint=${this._headingSp.computeAtSetpoint(this.heading)}
