@@ -1,5 +1,10 @@
 import {describe, it, expect} from 'vitest';
-import {resolvePipeStroke, STROKE_WEIGHTS, mediumBorderVar, mediumBackgroundVar} from './pipe-styles.js';
+import {
+  resolvePipeStroke,
+  STROKE_WEIGHTS,
+  mediumBorderVar,
+  mediumBackgroundVar,
+} from './pipe-styles.js';
 
 describe('STROKE_WEIGHTS', () => {
   it('matches the ported table', () => {
@@ -21,7 +26,9 @@ describe('resolvePipeStroke', () => {
   });
 
   it('open-generic resolves identically to open-flow', () => {
-    expect(resolvePipeStroke('open-generic', 'large')).toEqual(resolvePipeStroke('open-flow', 'large'));
+    expect(resolvePipeStroke('open-generic', 'large')).toEqual(
+      resolvePipeStroke('open-flow', 'large')
+    );
   });
 
   it('empty → inverted pair', () => {
@@ -31,8 +38,12 @@ describe('resolvePipeStroke', () => {
   });
 
   it('enhanced and running use their medium tokens', () => {
-    expect(resolvePipeStroke('enhanced', 'medium').fillVar).toBe('--automation-medium-enhanced-background');
-    expect(resolvePipeStroke('running', 'medium').outlineVar).toBe('--automation-medium-running-border');
+    expect(resolvePipeStroke('enhanced', 'medium').fillVar).toBe(
+      '--automation-medium-enhanced-background'
+    );
+    expect(resolvePipeStroke('running', 'medium').outlineVar).toBe(
+      '--automation-medium-running-border'
+    );
   });
 
   it('closed → single mid-grey stroke at fill weight, no fill layer', () => {
@@ -46,7 +57,10 @@ describe('resolvePipeStroke', () => {
 
   it('closed-dash → square dashes = fill weight on/off', () => {
     const s = resolvePipeStroke('closed-dash', 'medium');
-    expect(s.dashPattern).toEqual([STROKE_WEIGHTS.medium.fill, STROKE_WEIGHTS.medium.fill]);
+    expect(s.dashPattern).toEqual([
+      STROKE_WEIGHTS.medium.fill,
+      STROKE_WEIGHTS.medium.fill,
+    ]);
   });
 
   it('medium-flow with no color defaults to the generic Teal pair (border via indirection)', () => {
@@ -71,7 +85,11 @@ describe('medium var helpers', () => {
     expect(mediumBackgroundVar('Green')).toBe('--base-running-200');
     // Enhanced has no base family: border is the automation token directly
     // (no dusk adjustment), background likewise.
-    expect(mediumBorderVar('Enhanced')).toBe('--automation-medium-enhanced-border');
-    expect(mediumBackgroundVar('Enhanced')).toBe('--automation-medium-enhanced-background');
+    expect(mediumBorderVar('Enhanced')).toBe(
+      '--automation-medium-enhanced-border'
+    );
+    expect(mediumBackgroundVar('Enhanced')).toBe(
+      '--automation-medium-enhanced-background'
+    );
   });
 });

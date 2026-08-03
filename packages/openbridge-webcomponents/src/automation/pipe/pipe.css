@@ -24,31 +24,8 @@ svg.pipe-rotated {
   transform-origin: 0 0;
 }
 
-/* medium-flow border reads --base-<family>-600 by default; dusk's base scales
-   run inverted, so its border reads -500. Confined to CSS to keep the family
-   JS-free and theme-reactive. */
-.pipe {
-  --pipe-medium-border-blue: var(--base-blue-600);
-  --pipe-medium-border-cyan: var(--base-cyan-600);
-  --pipe-medium-border-teal: var(--base-teal-600);
-  --pipe-medium-border-running: var(--base-running-600);
-  --pipe-medium-border-yellow: var(--base-yellow-600);
-  --pipe-medium-border-orange: var(--base-orange-600);
-  --pipe-medium-border-red: var(--base-red-600);
-  --pipe-medium-border-purple: var(--base-purple-600);
-  --pipe-medium-border-indigo: var(--base-indigo-600);
-  --pipe-medium-border-gray: var(--base-gray-600);
-}
-
-:host-context([data-obc-theme="dusk"]) .pipe {
-  --pipe-medium-border-blue: var(--base-blue-500);
-  --pipe-medium-border-cyan: var(--base-cyan-500);
-  --pipe-medium-border-teal: var(--base-teal-500);
-  --pipe-medium-border-running: var(--base-running-500);
-  --pipe-medium-border-yellow: var(--base-yellow-500);
-  --pipe-medium-border-orange: var(--base-orange-500);
-  --pipe-medium-border-red: var(--base-red-500);
-  --pipe-medium-border-purple: var(--base-purple-500);
-  --pipe-medium-border-indigo: var(--base-indigo-500);
-  --pipe-medium-border-gray: var(--base-gray-500);
-}
+/* The --pipe-medium-border-<family> tokens consumed by medium-flow strokes
+   are defined per theme in palettes/manual.css (dusk reads -500 where every
+   other theme reads -600) and inherit through the shadow boundary. They must
+   NOT be redeclared here: a :host/.pipe declaration would shadow the
+   inherited per-theme value. */

@@ -2,7 +2,12 @@ import {LitElement, html, svg, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import {resolvePipeStroke, GRID} from './pipe-styles.js';
-import {arrowHeadPath, arrowStubEnd, endpointStubPath} from './pipe-geometry.js';
+import {
+  arrowHeadPath,
+  arrowStubEnd,
+  endpointStubPath,
+} from './pipe-geometry.js';
+import {renderPipeStrokes} from './pipe-render.js';
 import type {
   PipeValue,
   PipeSize,
@@ -15,13 +20,11 @@ function isClosedValue(value: PipeValue): boolean {
   return value === 'closed' || value === 'closed-dash';
 }
 
-// Degrees to rotate the canonical arrowhead (tip pointing toward the right
-// edge) around the viewBox centre (12,12) so the tip faces `direction`.
-// `arrowHeadPath`'s own coordinate space places the tip toward +x with no
-// rotation applied, mirroring the `right: 0` entry of the canvas reference's
-// `angleMap` in connector-diagram/src/drawing/glyphs.ts (`drawArrow`) — the
-// opposite canonical edge from `obc-pipe-endpoint`'s cap glyph, which faces
-// `left` unrotated.
+// Degrees to rotate the canonical arrowhead around the viewBox centre
+// (12,12). Canonical orientation (rotation 0 = direction 'right'): the mouth
+// is at the LEFT edge (x=0) and the arrow-out tip points toward +x — the
+// opposite canonical edge from `obc-pipe-endpoint`, whose mouth faces `left`
+// unrotated.
 const ROTATION_BY_DIRECTION: Record<PipeDirection, number> = {
   right: 0,
   bottom: 90,
@@ -35,12 +38,11 @@ const ROTATION_BY_DIRECTION: Record<PipeDirection, number> = {
  *
  * Draws a filled, rounded-triangle arrowhead (exact vector geometry from the
  * shared Figma glyph table) with the connecting half-cell stub layered on
- * top, matching the canvas reference's `drawArrow` composition: the head is
- * painted first — filled with the resolved fill color (falling back to the
- * outline color when the state has no fill, for example `closed`) and, for
- * every non-`closed` state, outlined with a 1px stroke — then the stub is
- * drawn over it as an outline-weight pass followed by a fill-weight pass,
- * blending the head's base into the rest of the pipe run.
+ * top: the head is painted first — filled with the resolved fill color
+ * (falling back to the outline color when the state has no fill, for example
+ * `closed`) and, for every non-`closed` state, outlined with a 1px stroke —
+ * then the stub is drawn over it as an outline-weight pass followed by a
+ * fill-weight pass, blending the head's base into the rest of the pipe run.
  *
  * ## Features
  * - **Value states:** `open-flow` and `open-generic` (default open pipe),
@@ -54,8 +56,15 @@ const ROTATION_BY_DIRECTION: Record<PipeDirection, number> = {
  * - **Sizes:** `small`, `medium` (default), `large`, `xl` — scale the stub
  *   and stroke weights together; `xl` also selects a distinct, larger
  *   arrowhead glyph rather than a scaled-up copy of the others.
- * - **Direction:** `direction` selects which edge the arrowhead points
- *   toward — `top`, `right` (default), `bottom`, or `left`.
+ * - **Direction:** `direction` selects which tile edge the glyph's terminus
+ *   occupies — `top`, `right` (default), `bottom`, or `left` — i.e. the
+ *   side the connecting run does NOT attach on. With the default
+ *   `flow="arrow-out"` the arrowhead's tip points toward the `direction`
+ *   edge; with `flow="arrow-in"` the head is mirrored, so the tip points
+ *   back toward the connecting run instead. The mouth (where the run
+ *   attaches) is always on the side opposite `direction`, regardless of
+ *   `flow`. (Note this is the opposite convention from
+ *   `obc-pipe-endpoint`, whose `direction` names the mouth side.)
  * - **Flow:** `flow` selects whether the arrow represents flow leaving
  *   (`arrow-out`, default) or entering (`arrow-in`) at this endpoint, which
  *   selects a mirrored head shape from the glyph table.
@@ -83,7 +92,9 @@ export class ObcPipeArrow extends LitElement {
     const stroke = resolvePipeStroke(this.value, this.size, this.mediumColor);
     const closed = isClosedValue(this.value);
     const head = arrowHeadPath(this.flow, this.size, this.value);
-    const stub = endpointStubPath(arrowStubEnd(this.flow, this.size, this.value));
+    const stub = endpointStubPath(
+      arrowStubEnd(this.flow, this.size, this.value)
+    );
     const rotation = ROTATION_BY_DIRECTION[this.direction];
     const headFillVar = stroke.fillVar ?? stroke.outlineVar;
 
@@ -91,7 +102,7 @@ export class ObcPipeArrow extends LitElement {
     // undo arrowHeadPath's terminus-at-origin shift and land it back in the
     // shared 0-24 viewBox. Filled with the resolved fill color, falling back
     // to the outline color when the state has no fill; a 1px outline stroke
-    // is added for every non-closed state, matching the canvas reference.
+    // is added for every non-closed state, matching the Figma head vectors.
     const headLayer = svg`
       <g transform="translate(${GRID / 2} ${GRID / 2})">
         <path
@@ -104,18 +115,10 @@ export class ObcPipeArrow extends LitElement {
       </g>
     `;
 
-    // Stub on top, blending the head's base into the rest of the pipe run:
-    // an outline-weight pass, then a fill-weight pass when the resolved
-    // stroke has fill (skipped for closed / closed-dash, matching the head).
-    const stubLayers = [
-      svg`<path d=${stub} fill="none" vector-effect="non-scaling-stroke"
-        stroke="var(${stroke.outlineVar})" stroke-width=${stroke.outlineWeight}
-        stroke-dasharray=${stroke.dashPattern.join(' ')} />`,
-    ];
-    if (!closed && stroke.fillVar !== null && stroke.fillWeight !== null) {
-      stubLayers.push(svg`<path d=${stub} fill="none" vector-effect="non-scaling-stroke"
-        stroke="var(${stroke.fillVar})" stroke-width=${stroke.fillWeight} />`);
-    }
+    // Stub on top, blending the head's base into the rest of the pipe run.
+    // For closed / closed-dash the resolved stroke already has a null fill,
+    // so the shared renderer emits only the (dashed) outline pass.
+    const stubLayers = renderPipeStrokes(stub, stroke);
 
     return html`
       <svg
@@ -124,7 +127,8 @@ export class ObcPipeArrow extends LitElement {
         height=${GRID}
         viewBox="0 0 ${GRID} ${GRID}"
         xmlns="http://www.w3.org/2000/svg"
-        transform="translate(-12 -12) rotate(${rotation} ${GRID / 2} ${GRID / 2})"
+        transform="translate(-12 -12) rotate(${rotation} ${GRID / 2} ${GRID /
+        2})"
       >
         ${headLayer}${stubLayers}
       </svg>

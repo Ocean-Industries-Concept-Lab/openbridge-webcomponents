@@ -1,8 +1,9 @@
-import {LitElement, html, svg, unsafeCSS} from 'lit';
+import {LitElement, html, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import {resolvePipeStroke, GRID} from './pipe-styles.js';
 import {overlapPaths} from './pipe-geometry.js';
+import {renderLayeredPipeStrokes} from './pipe-render.js';
 import type {PipeValue, PipeSize, MediumColor} from './pipe-types.js';
 import componentStyle from './pipe.css?inline';
 
@@ -53,27 +54,11 @@ export class ObcPipeOverlap extends LitElement {
     const stroke = resolvePipeStroke(this.value, this.size, this.mediumColor);
     const {continuous, gapped} = overlapPaths(this.size);
     const rotation = this.direction === 'horizontal' ? 90 : 0;
-    const hasFill = stroke.fillVar !== null && stroke.fillWeight !== null;
 
-    // Stroke order reproduces the Figma vector: an outline-weight pass over
-    // both runs, then a fill-weight pass over both. The gapped (under) run is
-    // drawn before the continuous (over) run in each pass so the continuous
-    // run's strokes cover the crossing, making it read as lying on top.
-    const line = (d: string, weight: number, colorVar: string, dash: number[]) =>
-      svg`<path d=${d} fill="none" vector-effect="non-scaling-stroke"
-        stroke="var(${colorVar})" stroke-width=${weight}
-        stroke-dasharray=${dash.join(' ')} />`;
-
-    const layers = [
-      line(gapped, stroke.outlineWeight, stroke.outlineVar, stroke.dashPattern),
-      line(continuous, stroke.outlineWeight, stroke.outlineVar, stroke.dashPattern),
-    ];
-    if (hasFill) {
-      layers.push(
-        line(gapped, stroke.fillWeight as number, stroke.fillVar as string, []),
-        line(continuous, stroke.fillWeight as number, stroke.fillVar as string, [])
-      );
-    }
+    // The gapped (under) run is listed before the continuous (over) run, so
+    // the shared layered renderer draws the continuous run's strokes last in
+    // each pass and its fill covers the crossing — it reads as lying on top.
+    const layers = renderLayeredPipeStrokes([gapped, continuous], stroke);
 
     return html`
       <svg
@@ -82,7 +67,8 @@ export class ObcPipeOverlap extends LitElement {
         height=${GRID}
         viewBox="0 0 ${GRID} ${GRID}"
         xmlns="http://www.w3.org/2000/svg"
-        transform="translate(-12 -12) rotate(${rotation} ${GRID / 2} ${GRID / 2})"
+        transform="translate(-12 -12) rotate(${rotation} ${GRID / 2} ${GRID /
+        2})"
       >
         ${layers}
       </svg>

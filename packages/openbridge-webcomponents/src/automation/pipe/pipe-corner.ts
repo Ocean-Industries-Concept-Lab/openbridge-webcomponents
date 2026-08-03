@@ -2,9 +2,14 @@ import {LitElement, html, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import {resolvePipeStroke, GRID} from './pipe-styles.js';
-import {cornerChannel} from './pipe-geometry.js';
-import {renderPipeChannel} from './pipe-render.js';
-import type {PipeValue, PipeSize, PipeDirection, MediumColor} from './pipe-types.js';
+import {cornerPath} from './pipe-geometry.js';
+import {renderPipeStrokes} from './pipe-render.js';
+import type {
+  PipeValue,
+  PipeSize,
+  PipeDirection,
+  MediumColor,
+} from './pipe-types.js';
 import componentStyle from './pipe.css?inline';
 
 // Degrees to rotate the canonical corner (enters left edge, leaves bottom
@@ -60,7 +65,6 @@ export class ObcPipeCorner extends LitElement {
 
   override render() {
     const stroke = resolvePipeStroke(this.value, this.size, this.mediumColor);
-    const channel = cornerChannel(this.direction, this.size);
     const rotation = ROTATION_BY_DIRECTION[this.direction];
     return html`
       <svg
@@ -69,9 +73,10 @@ export class ObcPipeCorner extends LitElement {
         height=${GRID}
         viewBox="0 0 ${GRID} ${GRID}"
         xmlns="http://www.w3.org/2000/svg"
-        transform="translate(-12 -12) rotate(${rotation} ${GRID / 2} ${GRID / 2})"
+        transform="translate(-12 -12) rotate(${rotation} ${GRID / 2} ${GRID /
+        2})"
       >
-        ${renderPipeChannel(channel, stroke)}
+        ${renderPipeStrokes(cornerPath(), stroke)}
       </svg>
     `;
   }

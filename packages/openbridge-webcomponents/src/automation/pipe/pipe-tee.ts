@@ -2,9 +2,14 @@ import {LitElement, html, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import {resolvePipeStroke, GRID} from './pipe-styles.js';
-import {teeJunction} from './pipe-geometry.js';
-import {renderPipeJunction} from './pipe-render.js';
-import type {PipeValue, PipeSize, PipeDirection, MediumColor} from './pipe-types.js';
+import {teePath} from './pipe-geometry.js';
+import {renderPipeStrokes} from './pipe-render.js';
+import type {
+  PipeValue,
+  PipeSize,
+  PipeDirection,
+  MediumColor,
+} from './pipe-types.js';
 import componentStyle from './pipe.css?inline';
 
 // Degrees to rotate the canonical tee (straight run left-right, branch
@@ -22,15 +27,12 @@ const ROTATION_BY_DIRECTION: Record<PipeDirection, number> = {
  * `<obc-pipe-tee>` – A three-way junction connecting a straight run to a
  * perpendicular branch on a process diagram grid.
  *
- * Draws the shared tee geometry — a full-width straight run with a
- * perpendicular branch, its inner corners rounded to match
- * `obc-pipe-corner` — rotated so the branch points toward `direction`. The
- * geometry is a continuous filled interior (the T-shaped union of the bar
- * and the stub, in the fill color) with 1px wall segments along each arm's
- * long edges; the bar's wall on the stub side breaks over the stub opening
- * so interior flows freely between the bar and the branch, and every arm
- * mouth is left open at the tile edge so it reads as one continuous run
- * when combined with straights and corners.
+ * Draws the T-shaped centreline (a full-width straight run with a
+ * perpendicular branch) with the shared two-pass pipe stroke model — an
+ * outline-weight pass then a fill-weight pass — rotated so the branch
+ * points toward `direction`. The strokes end flush at the tile edges, so
+ * every arm mouth is open and the junction reads as one continuous run when
+ * combined with straights and corners.
  *
  * ## Features
  * - **Value states:** `open-flow` and `open-generic` (default open pipe),
@@ -64,7 +66,6 @@ export class ObcPipeTee extends LitElement {
 
   override render() {
     const stroke = resolvePipeStroke(this.value, this.size, this.mediumColor);
-    const junction = teeJunction(this.size);
     const rotation = ROTATION_BY_DIRECTION[this.direction];
     return html`
       <svg
@@ -73,9 +74,10 @@ export class ObcPipeTee extends LitElement {
         height=${GRID}
         viewBox="0 0 ${GRID} ${GRID}"
         xmlns="http://www.w3.org/2000/svg"
-        transform="translate(-12 -12) rotate(${rotation} ${GRID / 2} ${GRID / 2})"
+        transform="translate(-12 -12) rotate(${rotation} ${GRID / 2} ${GRID /
+        2})"
       >
-        ${renderPipeJunction(junction, stroke)}
+        ${renderPipeStrokes(teePath(), stroke)}
       </svg>
     `;
   }

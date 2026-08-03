@@ -2,8 +2,8 @@ import {LitElement, html, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import {resolvePipeStroke, GRID} from './pipe-styles.js';
-import {crossJunction} from './pipe-geometry.js';
-import {renderPipeJunction} from './pipe-render.js';
+import {crossPath} from './pipe-geometry.js';
+import {renderPipeStrokes} from './pipe-render.js';
 import type {PipeValue, PipeSize, MediumColor} from './pipe-types.js';
 import componentStyle from './pipe.css?inline';
 
@@ -11,13 +11,11 @@ import componentStyle from './pipe.css?inline';
  * `<obc-pipe-cross>` – A four-way junction connecting a horizontal run to a
  * crossing vertical run on a process diagram grid.
  *
- * Draws two perpendicular full-width bars meeting at the grid centre as a
- * continuous filled interior (the plus-shaped union of both bars, in the
- * fill color) with 1px wall segments along each arm's long edges. Each wall
- * segment runs from the tile edge inward and stops at the crossing, so
- * every arm mouth is open (pipes connect across it) and the walls break at
- * the junction instead of capping across it — the interior reads as one
- * continuous region so flow passes straight through the crossing. Unlike
+ * Draws the plus-shaped centreline (two perpendicular full-width runs
+ * meeting at the grid centre) with the shared two-pass pipe stroke model —
+ * an outline-weight pass then a fill-weight pass. The strokes end flush at
+ * the tile edges, so every arm mouth is open (pipes connect across it) and
+ * flow reads as passing straight through the crossing. Unlike
  * `obc-pipe-tee`, the crossing is symmetric on all four sides, so the
  * component has no `direction` property.
  *
@@ -50,7 +48,6 @@ export class ObcPipeCross extends LitElement {
 
   override render() {
     const stroke = resolvePipeStroke(this.value, this.size, this.mediumColor);
-    const junction = crossJunction(this.size);
     return html`
       <svg
         class="pipe"
@@ -59,7 +56,7 @@ export class ObcPipeCross extends LitElement {
         viewBox="0 0 ${GRID} ${GRID}"
         xmlns="http://www.w3.org/2000/svg"
       >
-        ${renderPipeJunction(junction, stroke)}
+        ${renderPipeStrokes(crossPath(), stroke)}
       </svg>
     `;
   }

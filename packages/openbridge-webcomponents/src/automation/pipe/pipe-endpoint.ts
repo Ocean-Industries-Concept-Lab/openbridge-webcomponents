@@ -4,6 +4,7 @@ import {customElement} from '../../decorator.js';
 import {resolvePipeStroke, GRID} from './pipe-styles.js';
 import {
   endpointLineCap,
+  endpointStubPath,
   ENDPOINT_BAR_HALF_OUTLINE,
   ENDPOINT_BAR_HALF_FILL,
 } from './pipe-geometry.js';
@@ -15,11 +16,12 @@ import type {
 } from './pipe-types.js';
 import componentStyle from './pipe.css?inline';
 
-// Degrees to rotate the canonical endpoint (cap toward the left half of the
-// cell, stub mouth OPEN at the right edge, x=GRID) around the viewBox centre
-// (12,12) so the terminus faces `direction`. Matches the corner's
-// rotate-about-centre approach so the shape stays inside the 24x24 canvas
-// at every step.
+// Degrees to rotate the canonical endpoint (stub mouth OPEN at the LEFT
+// edge, x=0, running inward to the bar at the grid centre — see
+// `endpointStubPath`) around the viewBox centre (12,12) so the OPEN MOUTH
+// faces `direction`: the connecting run attaches on the `direction` side,
+// and the bar sits on the anchor. Matches the corner's rotate-about-centre
+// approach so the shape stays inside the 24x24 canvas at every step.
 const ROTATION_BY_DIRECTION: Record<PipeDirection, number> = {
   left: 0,
   top: 90,
@@ -49,8 +51,12 @@ const ROTATION_BY_DIRECTION: Record<PipeDirection, number> = {
  *   `Teal` when unset. Ignored for other values.
  * - **Sizes:** `small`, `medium` (default), `large`, `xl` — scale the stub,
  *   bar, and stroke weights together.
- * - **Direction:** `direction` selects which edge the terminus faces —
- *   `top`, `right` (default), `bottom`, or `left`.
+ * - **Direction:** `direction` selects which tile edge the OPEN MOUTH faces
+ *   — `top`, `right` (default), `bottom`, or `left`. The connecting run
+ *   attaches on the `direction` side; the terminating bar sits at the tile
+ *   centre. To cap a run arriving from the left, use `direction="left"`.
+ *   (Note this is the opposite convention from `obc-pipe-arrow`, whose
+ *   `direction` names the edge its arrow-out tip points toward.)
  *
  * ## Usage Guidelines
  * Use `obc-pipe-endpoint` to close off a pipe run that does not continue to
@@ -74,12 +80,12 @@ export class ObcPipeEndpoint extends LitElement {
     const cap = endpointLineCap(this.size);
     const hasFill = stroke.fillVar !== null && stroke.fillWeight !== null;
 
-    // The endpoint is a T (stub + perpendicular bar) stroked twice: an
-    // outline-weight pass, then — for states with a fill — a fill-weight pass
-    // over it. Only medium uses a round linecap (rounding the bar ends);
-    // small, large & xl use butt caps. Matches the Figma endpoint vectors.
+    // Not `renderPipeStrokes`: the T's two passes must interleave per part
+    // (stub outline, bar outline, stub fill, bar fill) so the stub's fill
+    // pass covers the bar's outline where they meet, keeping the interior
+    // seamless — and the bar's path length and linecap differ per pass.
     const c = GRID / 2;
-    const stub = `M 0 ${c} L ${c} ${c}`;
+    const stub = endpointStubPath();
 
     const bar = (half: number, weight: number, colorVar: string) =>
       svg`<path d=${`M ${c} ${c - half} L ${c} ${c + half}`} fill="none"
@@ -111,7 +117,8 @@ export class ObcPipeEndpoint extends LitElement {
         height=${GRID}
         viewBox="0 0 ${GRID} ${GRID}"
         xmlns="http://www.w3.org/2000/svg"
-        transform="translate(-12 -12) rotate(${rotation} ${GRID / 2} ${GRID / 2})"
+        transform="translate(-12 -12) rotate(${rotation} ${GRID / 2} ${GRID /
+        2})"
       >
         ${layers}
       </svg>
