@@ -148,6 +148,132 @@ function familyRow() {
   `;
 }
 
+/**
+ * A small connected schematic built entirely from `obc-pipe-*` components,
+ * placed on the 24px grid with absolute positioning. Each component's
+ * connection anchor sits at its host's top-left corner, so positioning a
+ * component at `left/top = n*24` snaps it onto the grid; adjacent open mouths
+ * abut into one continuous run.
+ *
+ * Layout (grid cells, 24px each):
+ * - A horizontal supply run enters top-left and reaches a tee.
+ * - The tee branches downward; the branch turns right through a corner and
+ *   ends in a flow arrow.
+ * - The supply run continues right into a cross; the cross's vertical arms
+ *   carry short stubs capped by endpoints.
+ */
+function connectedDemo() {
+  // Every obc-pipe-* component anchors its connection point at the host's
+  // top-left origin, so a component placed at grid cell (c, r) has its
+  // connection point at grid coordinate (c, r). Pieces connect by sharing a
+  // grid coordinate. One grid cell = 24px.
+  const G = 24;
+  const at = (col: number, row: number) =>
+    `position:absolute; left:${col * G}px; top:${row * G}px;`;
+  const blue = html``; // placeholder to keep prettier happy
+  void blue;
+  return html`
+    <div
+      style="position:relative; width:${10 * G}px; height:${6 *
+      G}px; margin:8px 0 16px;"
+    >
+      <!-- Supply run enters at (0,1) and runs 3 cells to the tee at (3,1). -->
+      <obc-pipe-straight
+        style=${at(0, 1)}
+        value="medium-flow"
+        medium-color="Blue"
+        .length=${3}
+      ></obc-pipe-straight>
+
+      <!-- Tee at (3,1): through-run left↔right, branch down. -->
+      <obc-pipe-tee
+        style=${at(3, 1)}
+        value="medium-flow"
+        medium-color="Blue"
+        direction="bottom"
+      ></obc-pipe-tee>
+
+      <!-- Supply continues (3,1)→(6,1) into the cross. -->
+      <obc-pipe-straight
+        style=${at(3, 1)}
+        value="medium-flow"
+        medium-color="Blue"
+        .length=${3}
+      ></obc-pipe-straight>
+
+      <!-- Cross at (6,1). -->
+      <obc-pipe-cross
+        style=${at(6, 1)}
+        value="medium-flow"
+        medium-color="Blue"
+      ></obc-pipe-cross>
+
+      <!-- Cross right arm (6,1)→(8,1) ending in an endpoint cap at (8,1). -->
+      <obc-pipe-straight
+        style=${at(6, 1)}
+        value="medium-flow"
+        medium-color="Blue"
+        .length=${2}
+      ></obc-pipe-straight>
+      <obc-pipe-endpoint
+        style=${at(8, 1)}
+        value="medium-flow"
+        medium-color="Blue"
+        direction="right"
+      ></obc-pipe-endpoint>
+
+      <!-- Cross top arm: short vertical stub (6,0)→(6,1) capped at (6,0). -->
+      <obc-pipe-straight
+        style=${at(6, 0)}
+        value="medium-flow"
+        medium-color="Blue"
+        orientation="vertical"
+        .length=${1}
+      ></obc-pipe-straight>
+      <obc-pipe-endpoint
+        style=${at(6, 0)}
+        value="medium-flow"
+        medium-color="Blue"
+        direction="top"
+      ></obc-pipe-endpoint>
+
+      <!-- Branch: vertical run down the tee (3,1)→(3,3). -->
+      <obc-pipe-straight
+        style=${at(3, 1)}
+        value="medium-flow"
+        medium-color="Blue"
+        orientation="vertical"
+        .length=${2}
+      ></obc-pipe-straight>
+
+      <!-- Corner at (3,3): receives from top, turns to the right. -->
+      <obc-pipe-corner
+        style=${at(3, 3)}
+        value="medium-flow"
+        medium-color="Blue"
+        direction="top"
+      ></obc-pipe-corner>
+
+      <!-- Run right from the corner (3,3)→(5,3). -->
+      <obc-pipe-straight
+        style=${at(3, 3)}
+        value="medium-flow"
+        medium-color="Blue"
+        .length=${2}
+      ></obc-pipe-straight>
+
+      <!-- Flow arrow terminating the branch at (5,3). -->
+      <obc-pipe-arrow
+        style=${at(5, 3)}
+        value="medium-flow"
+        medium-color="Blue"
+        direction="right"
+        flow="arrow-out"
+      ></obc-pipe-arrow>
+    </div>
+  `;
+}
+
 export const Overview: Story = {
   render: () => html`
     <div>
@@ -155,6 +281,8 @@ export const Overview: Story = {
       ${straightGrid()}
       <div style=${sectionTitleStyle}>Family — one representative each</div>
       ${familyRow()}
+      <div style=${sectionTitleStyle}>Connected example</div>
+      ${connectedDemo()}
     </div>
   `,
 };
