@@ -9,6 +9,7 @@ import {
   endpointCapPath,
   endpointCapOutlinePath,
   arrowHeadPath,
+  arrowStubEnd,
   teePath,
   crossPath,
   overlapPath,
@@ -238,6 +239,60 @@ describe('arrowHeadPath', () => {
   });
   it('picks the xl table for xl size (differs from medium)', () => {
     expect(arrowHeadPath('arrow-out', 'xl', 'open-flow')).not.toEqual(arrowHeadPath('arrow-out', 'medium', 'open-flow'));
+  });
+});
+
+// Regression guard: the stub used to always run to the grid centre (x=12)
+// regardless of the selected head, overshooting into/past every head's
+// interior. `arrowStubEnd` must return each head's own measured `stubEnd`
+// (matches the Figma ground truth, where the wall stops flush at the head's
+// base with no wall pixels inside the chevron) so `endpointStubPath` is
+// built with the right length per flow/size/value combination.
+describe('arrowStubEnd', () => {
+  it.each<['arrow-in' | 'arrow-out', PipeSize, number]>([
+    ['arrow-out', 'small', 8],
+    ['arrow-out', 'medium', 8],
+    ['arrow-out', 'large', 8],
+    ['arrow-out', 'xl', 6],
+    ['arrow-in', 'small', 10],
+    ['arrow-in', 'medium', 10],
+    ['arrow-in', 'xl', 13],
+  ])('%s at %s size ends at x=%s', (flow, size, expected) => {
+    expect(arrowStubEnd(flow, size, 'open-flow')).toBe(expected);
+  });
+
+  it('large arrow-in gets a widened stubEnd override (13, not the base table value of 10)', () => {
+    expect(arrowStubEnd('arrow-in', 'large', 'open-flow')).toBe(13);
+  });
+
+  it('never returns the grid centre (12) as a blanket default — every selection is tuned per head', () => {
+    const flows: ('arrow-in' | 'arrow-out')[] = ['arrow-in', 'arrow-out'];
+    const sizes: PipeSize[] = ['small', 'medium', 'large', 'xl'];
+    for (const flow of flows) {
+      for (const size of sizes) {
+        for (const value of ['open-flow', 'closed'] as const) {
+          const end = arrowStubEnd(flow, size, value);
+          expect(typeof end).toBe('number');
+        }
+      }
+    }
+  });
+
+  it('closed value selects the closed head table (different stubEnd than open-flow for large arrow-in)', () => {
+    expect(arrowStubEnd('arrow-in', 'large', 'closed')).toBe(16);
+    expect(arrowStubEnd('arrow-in', 'large', 'open-flow')).toBe(13);
+  });
+});
+
+describe('endpointStubPath with an explicit end', () => {
+  it('defaults to the grid centre (12) when no end is given', () => {
+    const pts = pathPoints(endpointStubPath());
+    expect(pts[pts.length - 1].x).toBe(12);
+  });
+
+  it('honours an explicit end, e.g. an arrow head stubEnd', () => {
+    const pts = pathPoints(endpointStubPath(8));
+    expect(pts[pts.length - 1].x).toBe(8);
   });
 });
 

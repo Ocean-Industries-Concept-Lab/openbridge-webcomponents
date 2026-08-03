@@ -2,7 +2,7 @@ import {LitElement, html, svg, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import {resolvePipeStroke, GRID} from './pipe-styles.js';
-import {arrowHeadPath, endpointStubPath} from './pipe-geometry.js';
+import {arrowHeadPath, arrowStubEnd, endpointStubPath} from './pipe-geometry.js';
 import type {
   PipeValue,
   PipeSize,
@@ -83,7 +83,7 @@ export class ObcPipeArrow extends LitElement {
     const stroke = resolvePipeStroke(this.value, this.size, this.mediumColor);
     const closed = isClosedValue(this.value);
     const head = arrowHeadPath(this.flow, this.size, this.value);
-    const stub = endpointStubPath();
+    const stub = endpointStubPath(arrowStubEnd(this.flow, this.size, this.value));
     const rotation = ROTATION_BY_DIRECTION[this.direction];
     const headFillVar = stroke.fillVar ?? stroke.outlineVar;
 

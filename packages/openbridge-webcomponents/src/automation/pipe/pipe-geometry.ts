@@ -120,11 +120,15 @@ export function cornerChannel(
 // ---------------------------------------------------------------------------
 
 // The half-cell inward stub, shared by the endpoint cap and the arrowhead.
-// Canonical orientation: terminus at x=0, running inward to x=12 along y=12.
-// NOTE: kept as-is for `obc-pipe-arrow`, which strokes this centreline
-// directly (outline+fill pair, no wall split) and is not part of this fix.
-export function endpointStubPath(): string {
-  return `M 0 ${C} L ${C} ${C}`;
+// Canonical orientation: terminus at x=0, running inward along y=12 to `end`
+// (defaults to the grid centre, x=12, for the endpoint cap's use). For
+// `obc-pipe-arrow`, callers must pass the selected head's `stubEnd` (see
+// `arrowStubEnd`) instead of the default — the stub must stop AT the head's
+// base column, not overshoot into/past the head's interior (measured against
+// the Figma ground truth: the wall ends cleanly where the head begins, no
+// wall pixels inside the chevron).
+export function endpointStubPath(end: number = C): string {
+  return `M 0 ${C} L ${end} ${C}`;
 }
 
 // Cap bar half-width/half-height per size — measured against the Figma
@@ -364,6 +368,18 @@ function selectArrowHead(kind: 'arrow-out' | 'arrow-in', size: PipeSize, value: 
   if (kind === 'arrow-out') return size === 'xl' ? HEAD_GT_XL : HEAD_GT_NONXL;
   if (size === 'xl') return HEAD_CF_XL;
   return size === 'large' ? {...HEAD_CF_NONXL, stubEnd: 13} : HEAD_CF_NONXL;
+}
+
+// The x-coordinate (in the shared endpoint/stub 0-24 coordinate space, same
+// convention as `endpointStubPath` — NOT shifted, unlike `arrowHeadPath`'s
+// own path data) where the blending stub must end for the given head
+// selection — measured against the Figma ground truth, where the stub wall
+// stops exactly at the head's base/tip transition with no wall pixels
+// overshooting into the head's interior. Callers pass this straight into
+// `endpointStubPath(end)`; do not default to the grid centre for arrow heads
+// (that overshoots every head shape).
+export function arrowStubEnd(flow: 'arrow-in' | 'arrow-out', size: PipeSize, value: PipeValue): number {
+  return selectArrowHead(flow, size, value).stubEnd;
 }
 
 // Builds the arrowhead `d` string (closed bezier shape only; the blending
