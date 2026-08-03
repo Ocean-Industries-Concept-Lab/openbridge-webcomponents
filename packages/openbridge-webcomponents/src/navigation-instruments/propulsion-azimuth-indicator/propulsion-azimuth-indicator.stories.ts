@@ -16,6 +16,7 @@ interface PropulsionAzimuthIndicatorStoryArgs {
   azimuth: number;
   value: number;
   hasSilhouette: boolean;
+  portStarboard?: boolean;
 }
 
 function toComponentArgs(visualState: VisualState) {
@@ -65,6 +66,7 @@ const meta = {
       .azimuth=${args.azimuth}
       .value=${args.value}
       .hasSilhouette=${args.hasSilhouette}
+      .portStarboard=${args.portStarboard ?? false}
     ></obc-propulsion-azimuth-indicator>`;
   },
   args: {
@@ -107,6 +109,26 @@ export const Default = {
     azimuth: 0,
     value: -0.35,
     hasSilhouette: false,
+  },
+} satisfies Story;
+
+export const PortStarboardPositive = {
+  args: {
+    visualState: VisualState.InCommand,
+    azimuth: 0,
+    value: 0.35,
+    hasSilhouette: false,
+    portStarboard: true,
+  },
+} satisfies Story;
+
+export const PortStarboardNegative = {
+  args: {
+    visualState: VisualState.InCommand,
+    azimuth: 0,
+    value: -0.35,
+    hasSilhouette: false,
+    portStarboard: true,
   },
 } satisfies Story;
 
