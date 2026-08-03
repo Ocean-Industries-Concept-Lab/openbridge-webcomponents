@@ -299,68 +299,101 @@ export function arrowHeadPath(flow: 'arrow-in' | 'arrow-out', size: PipeSize, va
 }
 
 // ---------------------------------------------------------------------------
-// Junctions: tee, cross, overlap. Adapted from the deprecated
-// three-way-line / line-cross / line-overlap components, whose footprint math
-// used `width = lineWidth + 1`, `h = width / 2`; here `width` is the pipe's
-// outline stroke weight (STROKE_WEIGHTS[size].outline) and the tee's inner
-// corners are rounded by CORNER_RADIUS instead of left square.
+// Junctions: tee, cross, overlap. Each is a SINGLE union-silhouette path at
+// the pipe's INTERIOR (fill) width — mirroring the deprecated
+// three-way-line / line-cross / line-overlap components' topology, per
+// FIGMA-GROUND-TRUTH.md's "junctions = union silhouette" decision. The
+// component layer fills the silhouette with `fillVar` and strokes it with a
+// flat 1px `outlineVar` border; because each shape has ONE connected outer
+// boundary (not independently-closed overlapping rects), the 1px wall only
+// ever appears on that outer boundary and the interior reads as one
+// continuous fill region through the junction. `w`/`h` below are the
+// INTERIOR half-width (`STROKE_WEIGHTS[size].fill / 2`) — the 1px stroke
+// straddles the path border (0.5px in, 0.5px out), so the rendered total
+// width is `fill + 1` per side = `fill + 2` = `STROKE_WEIGHTS[size].outline`,
+// matching the measured wall rows at every size.
 // ---------------------------------------------------------------------------
 
-// Straight run (full grid width) with a perpendicular branch dropping from
-// the centre band to the bottom edge. Footprint 24x24, anchored at centre.
-// Mirrors the deprecated three-way-line's `c = 13 - h` inner-corner-length
-// trick, but rounds the inner corners with `radius` instead of a hard turn.
+// A full-width straight run with a perpendicular stub dropping from the
+// centre band to one edge — a true T, not a bucket: the stub is only as
+// wide as the interior fill width, and its rounding radius is clamped to
+// HALF its own half-width (`h / 2`) so a flat shoulder always survives on
+// the bar's far edge before the fillet starts. Clamping to the full `h` (as
+// the original bug did, via `C - h`) lets the two corner fillets meet at
+// the stub's centreline and erase the shoulder entirely, turning the T into
+// a smooth dome/bucket instead of a recognisable stub (visually confirmed
+// at xl, where `h = 6`: a `min(radius, h)` clamp allows `r = 6 = h`, and the
+// fillet swallows the whole corner).
 export function teePath(size: PipeSize, radius: number = CORNER_RADIUS): string {
-  const w = STROKE_WEIGHTS[size].outline;
-  const h = w / 2;
-  const r = Math.min(radius, C - h);
+  const fill = STROKE_WEIGHTS[size].fill;
+  const h = fill / 2;
+  const r = Math.min(radius, h / 2);
   const top = C - h;
   const bottom = C + h;
-  const branchLeft = C - h;
-  const branchRight = C + h;
+  const stubLeft = C - h;
+  const stubRight = C + h;
   return (
     `M 0 ${top} ` +
     `L ${GRID} ${top} ` +
     `L ${GRID} ${bottom} ` +
-    `L ${branchRight + r} ${bottom} ` +
-    `A ${r} ${r} 0 0 1 ${branchRight} ${bottom + r} ` +
-    `L ${branchRight} ${GRID} ` +
-    `L ${branchLeft} ${GRID} ` +
-    `L ${branchLeft} ${bottom + r} ` +
-    `A ${r} ${r} 0 0 1 ${branchLeft - r} ${bottom} ` +
+    `L ${stubRight + r} ${bottom} ` +
+    `A ${r} ${r} 0 0 1 ${stubRight} ${bottom + r} ` +
+    `L ${stubRight} ${GRID} ` +
+    `L ${stubLeft} ${GRID} ` +
+    `L ${stubLeft} ${bottom + r} ` +
+    `A ${r} ${r} 0 0 1 ${stubLeft - r} ${bottom} ` +
     `L 0 ${bottom} ` +
     `Z`
   );
 }
 
-// Two straights crossing at the grid centre, returned as a single `d` with
-// two subpaths (horizontal bar, then vertical bar) — mirrors the deprecated
-// line-cross's plus-shaped outline but kept as two overlapping rects rather
-// than one rounded plus, since the pipe cross has no rounded corners.
+// Two straights crossing at the grid centre, traced as ONE closed loop
+// around the outer boundary of the plus shape (12 corners, square — the
+// pipe cross has no rounded corners at the junction), mirroring
+// `line-cross.ts`'s single-path topology. Because it is one connected
+// boundary, the interior at the crossing has no edge to stroke — the walls
+// break there by construction instead of the previous two-independent-rects
+// approach, whose separately-closed boundaries drew a wall straight across
+// the junction.
 export function crossPath(size: PipeSize): string {
-  const w = STROKE_WEIGHTS[size].outline;
-  const h = w / 2;
+  const fill = STROKE_WEIGHTS[size].fill;
+  const h = fill / 2;
   const top = C - h;
   const bottom = C + h;
   return (
-    `M 0 ${top} L ${GRID} ${top} L ${GRID} ${bottom} L 0 ${bottom} Z ` +
-    `M ${top} 0 L ${bottom} 0 L ${bottom} ${GRID} L ${top} ${GRID} Z`
+    `M 0 ${top} ` +
+    `L ${top} ${top} ` +
+    `L ${top} 0 ` +
+    `L ${bottom} 0 ` +
+    `L ${bottom} ${top} ` +
+    `L ${GRID} ${top} ` +
+    `L ${GRID} ${bottom} ` +
+    `L ${bottom} ${bottom} ` +
+    `L ${bottom} ${GRID} ` +
+    `L ${top} ${GRID} ` +
+    `L ${top} ${bottom} ` +
+    `L 0 ${bottom} ` +
+    `Z`
   );
 }
 
 // Vertical run hopping over a horizontal run: the horizontal run is solid,
-// the vertical run is a single masked path with a gap around the crossing.
-// Mirrors the deprecated line-overlap's mask rect: gap at
-// `y = 12 - 2 - h`, height `width + 4`, sized here by OVERLAP_HALF_GAP
-// instead of the fixed `2`/`4` constants so the gap scales with pipe size.
-// The natural half-span (margin + h) can exceed the grid centre at
-// large/xl stroke weights, which would collapse or invert the two visible
-// vertical segments; clamp it so at least 1px of visible pipe survives on
-// each side of the gap (mirrors the `Math.min(radius, C - h)` clamp in
-// teePath).
+// the vertical run is a single path with a gap around the crossing so the
+// two visible segments read as passing UNDER the horizontal run rather than
+// joining it (unlike cross/tee, the continuous run's own long edges are
+// meant to stroke straight through the crossing — that is what makes it
+// read as a hop, not a union — so this keeps the deprecated line-overlap's
+// separately-closed-subpaths topology). Mirrors the deprecated
+// line-overlap's mask rect: gap at `y = 12 - 2 - h`, height `width + 4`,
+// sized here by OVERLAP_HALF_GAP instead of the fixed `2`/`4` constants so
+// the gap scales with pipe size. The natural half-span (margin + h) can
+// exceed the grid centre at large/xl stroke weights, which would collapse
+// or invert the two visible vertical segments; clamp it so at least 1px of
+// visible pipe survives on each side of the gap (mirrors the
+// `Math.min(radius, h)` clamp in teePath).
 export function overlapPath(size: PipeSize): string {
-  const w = STROKE_WEIGHTS[size].outline;
-  const h = w / 2;
+  const fill = STROKE_WEIGHTS[size].fill;
+  const h = fill / 2;
   const margin = OVERLAP_HALF_GAP[size];
   const halfSpan = Math.min(margin + h, C - 1);
   const gapTop = C - halfSpan;

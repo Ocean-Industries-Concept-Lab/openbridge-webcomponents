@@ -10,14 +10,14 @@ const C = GRID / 2;
 
 // The solid, uninterrupted run crossing perpendicular to the gapped run
 // returned by `overlapPath`. `overlapPath` only supplies the masked
-// (vertical, when `direction` is `vertical`) run's geometry — per Task 3's
-// decision, the continuous crossing run is a plain full-width rect using
-// the same `C - h` / `C + h` footprint math as the gapped run's bars, so
-// both read as one consistent stroke weight. Mirrors `crossPath`'s
-// horizontal-bar subpath.
+// (vertical, when `direction` is `vertical`) run's geometry — the continuous
+// crossing run is a plain rect at the INTERIOR (fill) width using the same
+// `C - h` / `C + h` footprint math as the gapped run's bars, so both read
+// as one consistent stroke weight once the shared 1px border is applied.
+// Mirrors `crossPath`'s horizontal-bar subpath.
 function solidRunPath(size: PipeSize): string {
-  const w = STROKE_WEIGHTS[size].outline;
-  const h = w / 2;
+  const fill = STROKE_WEIGHTS[size].fill;
+  const h = fill / 2;
   const top = C - h;
   const bottom = C + h;
   return `M 0 ${top} L ${GRID} ${top} L ${GRID} ${bottom} L 0 ${bottom} Z`;

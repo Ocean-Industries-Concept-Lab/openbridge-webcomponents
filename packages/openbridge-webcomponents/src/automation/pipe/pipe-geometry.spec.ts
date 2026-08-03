@@ -152,9 +152,80 @@ describe('teePath / crossPath / overlapPath', () => {
   it('tee contains an arc (rounded inner corners)', () => {
     expect(teePath('medium')).toContain('A ');
   });
-  it('cross contains two move commands (two crossing runs)', () => {
-    expect((crossPath('medium').match(/M /g) ?? []).length).toBeGreaterThanOrEqual(2);
+
+  it.each<PipeSize>(['small', 'medium', 'large', 'xl'])(
+    'tee is a T: the stub only extends BELOW the straight run, never above it (%s)',
+    (size) => {
+      const fill = STROKE_WEIGHTS[size].fill;
+      const h = fill / 2;
+      const pts = pathPoints(teePath(size));
+      const ys = pts.map((p) => p.y);
+      // The straight run spans the full top edge at y = 12-h; nothing in the
+      // path may go above that (a bucket/U would additionally close across
+      // the bottom back up past the top edge on both sides).
+      expect(Math.min(...ys)).toBeCloseTo(12 - h, 5);
+      // The stub reaches all the way to the bottom grid edge (24) — a real
+      // downward branch, not a shape that turns back before reaching it.
+      expect(Math.max(...ys)).toBeCloseTo(24, 5);
+    }
+  );
+
+  it.each<PipeSize>(['small', 'medium', 'large', 'xl'])(
+    'tee rounding radius always leaves a flat shoulder on the bar edge, never a wide bucket-style bulge (%s)',
+    (size) => {
+      // Regression guard for the original bug: radius was clamped to `C - h`
+      // (~9 at medium), letting an 8-radius arc balloon far past the 4px-wide
+      // stub into a rounded bucket. A clamp to the FULL stub half-width
+      // (`h`) still fails at xl (`h=6`, `r=6=h`): the two corner fillets
+      // meet at the stub centreline with no flat shoulder left, producing a
+      // smooth dome instead of a T. The radius must clamp to HALF the
+      // stub's half-width (`h / 2`) so a flat shoulder always survives.
+      const fill = STROKE_WEIGHTS[size].fill;
+      const h = fill / 2;
+      const d = teePath(size, CORNER_RADIUS);
+      const arcMatch = d.match(/A\s+([\d.]+)\s+([\d.]+)/);
+      expect(arcMatch).not.toBeNull();
+      const r = Number(arcMatch![1]);
+      expect(r).toBeLessThanOrEqual(h / 2);
+      // The flat shoulder itself: the stub's outer edge (`stubRight`) must
+      // appear as its own point before the arc starts (i.e. r < h strictly,
+      // so `stubRight + r < GRID` leaves room for a straight segment).
+      expect(r).toBeLessThan(h);
+    }
+  );
+
+  it('tee is a single closed path (one union silhouette, not disjoint subpaths)', () => {
+    const d = teePath('medium');
+    expect((d.match(/M /g) ?? []).length).toBe(1);
+    expect((d.match(/Z/g) ?? []).length).toBe(1);
   });
+
+  it('cross is a single closed union-silhouette path (walls only on the outer boundary)', () => {
+    const d = crossPath('medium');
+    expect((d.match(/M /g) ?? []).length).toBe(1);
+    expect((d.match(/Z/g) ?? []).length).toBe(1);
+  });
+
+  it.each<PipeSize>(['small', 'medium', 'large', 'xl'])(
+    'cross is symmetric: the plus silhouette spans the full grid on both axes and is centred (%s)',
+    (size) => {
+      const fill = STROKE_WEIGHTS[size].fill;
+      const h = fill / 2;
+      const pts = pathPoints(crossPath(size));
+      const xs = pts.map((p) => p.x);
+      const ys = pts.map((p) => p.y);
+      expect(Math.min(...xs)).toBe(0);
+      expect(Math.max(...xs)).toBe(GRID);
+      expect(Math.min(...ys)).toBe(0);
+      expect(Math.max(...ys)).toBe(GRID);
+      // The inner concave corners of the plus sit at 12±h on both axes.
+      expect(xs).toContain(12 - h);
+      expect(xs).toContain(12 + h);
+      expect(ys).toContain(12 - h);
+      expect(ys).toContain(12 + h);
+    }
+  );
+
   it('overlap gap scales with size (xl gap > small gap)', () => {
     expect(overlapPath('xl')).not.toEqual(overlapPath('small'));
   });
