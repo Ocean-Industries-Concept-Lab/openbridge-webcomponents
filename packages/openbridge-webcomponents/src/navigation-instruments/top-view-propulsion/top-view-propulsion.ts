@@ -15,6 +15,7 @@ import {SetpointBundle} from '../../svghelpers/setpoint-bundle.js';
 import '../watch/watch.js';
 import {
   OUTER_RING_RADIUS,
+  WatchCircleType,
   type WatchBarArea,
   type WatchNeedle,
 } from '../watch/watch.js';
@@ -464,6 +465,7 @@ export class ObcTopViewPropulsion extends LitElement {
         <obc-watch
           .touching=${this.touching}
           .arcFrame=${frame}
+          .watchCircleType=${WatchCircleType.double}
           .tickmarks=${shownTickmarks}
           .state=${this.state}
           .priority=${this.priority}

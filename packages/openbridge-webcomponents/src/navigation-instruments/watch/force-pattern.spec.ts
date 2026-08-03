@@ -125,4 +125,17 @@ describe('renderCurrentForcePattern', () => {
     expect(flat).not.toContain('animateTransform');
     expect(flat).toContain('stop-opacity=1');
   });
+
+  it('falls back to full intensity for a non-finite waveHeight', () => {
+    const flat = flatten(
+      renderCurrentForcePattern({
+        fromDirectionDeg: 0,
+        radius: 112,
+        patternScale: 1.39,
+        waveHeight: Number.NaN,
+      })
+    );
+    expect(flat).toContain('stop-opacity=1');
+    expect(flat).not.toContain('NaN');
+  });
 });

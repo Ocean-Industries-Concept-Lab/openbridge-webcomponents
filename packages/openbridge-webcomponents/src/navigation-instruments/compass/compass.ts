@@ -262,7 +262,7 @@ export class ObcCompass extends LitElement {
   /** @availableWhen priority==enhanced */
   @property({type: Array, attribute: false})
   priorityElements: CompassPriorityElement[] = [CompassPriorityElement.hdg];
-  /** Show compass NSEW labels and north arrow. */
+  /** Show compass NSEW labels. The north arrow is always shown, independent of this flag. */
   @property({type: Boolean}) showLabels: boolean = false;
   /** When true, labels and north arrow are placed inside the outer ring. */
   @property({type: Boolean}) tickmarksInside: boolean = false;

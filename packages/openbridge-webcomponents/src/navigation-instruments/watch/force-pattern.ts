@@ -94,7 +94,9 @@ export function renderCurrentForcePattern(
     Number.isFinite(options.waveLength) && options.waveLength! > 0
       ? options.waveLength!
       : 1;
-  const intensity = Math.max(0, Math.min(1, options.waveHeight ?? 1));
+  const intensity = Number.isFinite(options.waveHeight)
+    ? Math.max(0, Math.min(1, options.waveHeight!))
+    : 1;
   const speed = Number.isFinite(options.waveSpeed) ? options.waveSpeed! : 0;
   const tile = CURRENT_TILE * patternScale * lengthScale;
   const side = DESIGN_PATTERN_SQUARE * patternScale;
