@@ -207,8 +207,9 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
    * @availableWhen portStarboard==true
    */
   @property({type: Array, attribute: false})
-  portStarboardElements: PortStarboardElement[] =
-    PORT_STARBOARD_DEFAULT_ELEMENTS;
+  portStarboardElements: PortStarboardElement[] = [
+    ...PORT_STARBOARD_DEFAULT_ELEMENTS,
+  ];
 
   private _radiusOffset = 0;
   private _frame: RadialFrame | undefined;

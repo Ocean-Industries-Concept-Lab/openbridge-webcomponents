@@ -334,7 +334,9 @@ export class ObcWatch extends LitElement {
    * rings. Both may be enabled together.
    *
    * Do not enable the `face` element on an instrument that renders a center
-   * readout — the tint would sit behind the text.
+   * readout — the tint would sit behind the text. It is likewise not
+   * combinable with `hasBackgroundCircle`, whose opaque face fill is painted
+   * over it.
    */
   @property({type: Boolean}) portStarboard: boolean = false;
   /**
@@ -343,8 +345,9 @@ export class ObcWatch extends LitElement {
    * @availableWhen portStarboard==true
    */
   @property({type: Array, attribute: false})
-  portStarboardElements: PortStarboardElement[] =
-    PORT_STARBOARD_DEFAULT_ELEMENTS;
+  portStarboardElements: PortStarboardElement[] = [
+    ...PORT_STARBOARD_DEFAULT_ELEMENTS,
+  ];
   /**
    * Direction sign for the setpoint marker while the `setpoint` element is
    * enabled. Wrappers supply e.g. `Math.sign(thrustSetpoint)`; `0` keeps the
@@ -1088,7 +1091,7 @@ export class ObcWatch extends LitElement {
         style="--scale: ${scale}"
         transform="rotate(${this.rotation ?? 0})"
       >
-        ${this.watchCircle()} ${this.renderPortStarboardFace()}
+        ${this.renderPortStarboardFace()} ${this.watchCircle()}
         ${this.renderBars()}
         ${this.crosshairEnabled
           ? this.renderCrosshair(
@@ -1388,9 +1391,11 @@ export class ObcWatch extends LitElement {
   /**
    * Half-area tints on the open face inside the rings: starboard (green)
    * spans 0–180°, port (red) 180–360°. Anchored to `innerRingRadius` so it
-   * never covers a frame band for any `watchCircleType`, and rendered under
-   * every content layer. With sector `areas` it is clipped to the wedge —
-   * center included — matching the design's tinted rudder face.
+   * never covers a frame band for any `watchCircleType`, and rendered before
+   * the rings so the ring outlines — whose 1px strokes straddle that exact
+   * radius — stay crisp even with a saturated tint (the night theme's
+   * port/starboard colors are dark). With sector `areas` it is clipped to the
+   * wedge — center included — matching the design's tinted rudder face.
    */
   private renderPortStarboardFace(): SVGTemplateResult | typeof nothing {
     if (

@@ -12,9 +12,11 @@ import {
 import {LinearAdvice} from '../thruster/advice.js';
 import {customElement} from '../../decorator.js';
 import {
+  hasPortStarboardElement,
   PORT_STARBOARD_DEFAULT_ELEMENTS,
   PortStarboardElement,
   PortStarboardShade,
+  type PortStarboardSign,
   portStarboardSignOf,
   resolvePortStarboardColor,
 } from '../../svghelpers/port-starboard.js';
@@ -57,8 +59,23 @@ export class ObcMainEngine extends LitElement {
    * @availableWhen portStarboard==true
    */
   @property({type: Array, attribute: false})
-  portStarboardElements: PortStarboardElement[] =
-    PORT_STARBOARD_DEFAULT_ELEMENTS;
+  portStarboardElements: PortStarboardElement[] = [
+    ...PORT_STARBOARD_DEFAULT_ELEMENTS,
+  ];
+
+  /**
+   * Setpoint-marker sign for one axis, gated on the `setpoint` element opt-in.
+   * Each column signs from its own value, matching its bar.
+   */
+  private setpointPortStarboardSign(value: number): PortStarboardSign {
+    return hasPortStarboardElement(
+      this.portStarboard,
+      this.portStarboardElements,
+      PortStarboardElement.setpoint
+    )
+      ? portStarboardSignOf(value)
+      : 0;
+  }
 
   override render() {
     const thrustAtSetpoint = atSetpoint(this.thrust, this.thrustSetpoint, {
@@ -148,6 +165,7 @@ export class ObcMainEngine extends LitElement {
               singleSided: true,
               narrow: false,
               id: this._thrustSetpointId,
+              portStarboardSign: this.setpointPortStarboardSign(this.thrust),
             }
           )}</g>`
         : nothing;
@@ -182,6 +200,7 @@ export class ObcMainEngine extends LitElement {
               singleSided: true,
               narrow: false,
               id: this._speedSetpointId,
+              portStarboardSign: this.setpointPortStarboardSign(this.speed),
             }
           )}</g>`
         : nothing;

@@ -32,9 +32,11 @@ import {Tickmark, TickmarkStyle, TickmarkType} from '../watch/tickmark.js';
 import {PropellerImage, propellerImages} from '../watch/propeller.js';
 import {customElement} from '../../decorator.js';
 import {
+  hasPortStarboardElement,
   PORT_STARBOARD_DEFAULT_ELEMENTS,
   PortStarboardElement,
   PortStarboardShade,
+  type PortStarboardSign,
   portStarboardSignOf,
   resolvePortStarboardColor,
 } from '../../svghelpers/port-starboard.js';
@@ -94,8 +96,9 @@ export class ObcTopViewPropulsion extends LitElement {
    * @availableWhen portStarboard==true
    */
   @property({type: Array, attribute: false})
-  portStarboardElements: PortStarboardElement[] =
-    PORT_STARBOARD_DEFAULT_ELEMENTS;
+  portStarboardElements: PortStarboardElement[] = [
+    ...PORT_STARBOARD_DEFAULT_ELEMENTS,
+  ];
 
   /**
    * Signed power in percent: 0 at the top, positive clockwise, ±100% = ±180°.
@@ -242,6 +245,26 @@ export class ObcTopViewPropulsion extends LitElement {
 
   private get isPitchRpm(): boolean {
     return this.type === TopViewPropulsionType.pitchRpm;
+  }
+
+  /**
+   * The centre carries the propeller art, so the face is never tinted.
+   */
+  private get watchPortStarboardElements(): PortStarboardElement[] {
+    return this.portStarboardElements.filter(
+      (element) => element !== PortStarboardElement.face
+    );
+  }
+
+  /** Setpoint-marker sign, gated on the `setpoint` element opt-in. */
+  private get setpointPortStarboardSign(): PortStarboardSign {
+    return hasPortStarboardElement(
+      this.portStarboard,
+      this.portStarboardElements,
+      PortStarboardElement.setpoint
+    )
+      ? portStarboardSignOf(this.primaryValue)
+      : 0;
   }
 
   /**
@@ -543,6 +566,9 @@ export class ObcTopViewPropulsion extends LitElement {
           .animateSetpoint=${this.animateSetpoint}
           .tickmarksInside=${this.tickmarksInside}
           .tickmarkStyle=${this.tickmarkStyle}
+          .portStarboard=${this.portStarboard}
+          .portStarboardElements=${this.watchPortStarboardElements}
+          .setpointPortStarboardSign=${this.setpointPortStarboardSign}
         ></obc-watch>
         <svg viewBox=${frame.viewBox} xmlns="http://www.w3.org/2000/svg">
           ${this.renderInnerRingLine()} ${this.renderLoadingArc()}
