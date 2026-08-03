@@ -12,12 +12,16 @@ import {
   arrowStubEnd,
   teePath,
   crossPath,
-  overlapPath,
+  overlapPaths,
   crossJunction,
   teeJunction,
-  overlapJunction,
 } from './pipe-geometry.js';
-import {CORNER_RADIUS, GRID, STROKE_WEIGHTS} from './pipe-styles.js';
+import {
+  CORNER_RADIUS,
+  GRID,
+  STROKE_WEIGHTS,
+  OVERLAP_HALF_GAP,
+} from './pipe-styles.js';
 import type {PipeSize} from './pipe-types.js';
 
 function pathPoints(d: string): {x: number; y: number}[] {
@@ -220,7 +224,7 @@ describe('endpointStubPath with an explicit end', () => {
   });
 });
 
-describe('teePath / crossPath / overlapPath', () => {
+describe('teePath / crossPath', () => {
   it('tee contains an arc (rounded inner corners)', () => {
     expect(teePath('medium')).toContain('A ');
   });
@@ -298,40 +302,48 @@ describe('teePath / crossPath / overlapPath', () => {
     }
   );
 
-  it('overlap gap scales with size (xl gap > small gap)', () => {
-    expect(overlapPath('xl')).not.toEqual(overlapPath('small'));
+});
+
+describe('overlapPaths (Figma two-stroke model)', () => {
+  it('continuous run is a single full-height vertical line through the centre', () => {
+    const {continuous} = overlapPaths('medium');
+    expect((continuous.match(/M /g) ?? []).length).toBe(1);
+    const pts = pathPoints(continuous);
+    expect(pts.every((p) => p.x === 12)).toBe(true);
+    expect(Math.min(...pts.map((p) => p.y))).toBe(0);
+    expect(Math.max(...pts.map((p) => p.y))).toBe(GRID);
   });
 
   it.each<PipeSize>(['small', 'medium', 'large', 'xl'])(
-    'overlap gap stays within the viewport with a visible segment on each side (%s)',
+    'gapped run is two horizontal segments with a centred gap of half-width OVERLAP_HALF_GAP (%s)',
     (size) => {
-      // Two vertical subpaths: "M left 0 L left gapTop L right gapTop L right 0 Z"
-      // and "M left gapBottom L left GRID L right GRID L right gapBottom Z".
-      const subpaths = overlapPath(size)
-        .split('Z')
-        .map((s) => s.trim())
-        .filter(Boolean);
-      expect(subpaths).toHaveLength(2);
-
-      const ys = (d: string) => pathPoints(`${d} Z`).map((p) => p.y);
-      const topSegmentYs = ys(subpaths[0]);
-      const bottomSegmentYs = ys(subpaths[1]);
-
-      const gapTop = Math.max(...topSegmentYs);
-      const gapBottom = Math.min(...bottomSegmentYs);
-
-      expect(gapTop).toBeGreaterThan(0);
-      expect(gapBottom).toBeLessThan(GRID);
-      expect(gapBottom).toBeGreaterThan(gapTop);
+      const {gapped} = overlapPaths(size);
+      // Two subpaths (each "M x 12 L x 12"): from each x-edge inward to the gap.
+      expect((gapped.match(/M /g) ?? []).length).toBe(2);
+      const pts = pathPoints(gapped);
+      // All on the centre row.
+      expect(pts.every((p) => p.y === 12)).toBe(true);
+      // Mouths open at both x-edges.
+      const xs = pts.map((p) => p.x);
+      expect(xs).toContain(0);
+      expect(xs).toContain(GRID);
+      // The inner ends sit at 12 ± gap (the gap the continuous run passes over).
+      const gap = OVERLAP_HALF_GAP[size];
+      expect(xs).toContain(12 - gap);
+      expect(xs).toContain(12 + gap);
     }
   );
+
+  it('gap scales with size (xl gap wider than small)', () => {
+    expect(OVERLAP_HALF_GAP.xl).toBeGreaterThan(OVERLAP_HALF_GAP.small);
+  });
 });
 
 // Open-mouth junction model (OPEN-ENDINGS-CORRECTION.md): unlike the closed
 // silhouette these replace, every arm mouth at a tile edge must be OPEN (no
 // wall segment spans it) and every wall must BREAK at the junction (no
 // segment crosses another arm's opening).
-describe('crossJunction / teeJunction / overlapJunction (open mouths, walls break at junction)', () => {
+describe('crossJunction / teeJunction (open mouths, walls break at junction)', () => {
   function wallReachesEdge(walls: string[], edge: number, axis: 'x' | 'y'): boolean {
     return walls.some((w) => {
       const pts = pathPoints(w);
@@ -415,46 +427,9 @@ describe('crossJunction / teeJunction / overlapJunction (open mouths, walls brea
     expect(walls).toHaveLength(5);
   });
 
-  it.each<PipeSize>(['small', 'medium', 'large', 'xl'])(
-    'overlap: continuous run mouths open + unbroken; gapped run mouths open + broken at the gap (%s)',
-    (size) => {
-      const {walls} = overlapJunction(size);
-      // Continuous run: walls reach both x-edges (open mouths).
-      expect(wallReachesEdge(walls, 0, 'x')).toBe(true);
-      expect(wallReachesEdge(walls, GRID, 'x')).toBe(true);
-      // The continuous run's two walls are each a single unbroken segment
-      // spanning the full width (no split at the crossing).
-      const fullSpanWalls = walls.filter((w) => {
-        const pts = pathPoints(w);
-        return pts.length === 2 && pts.every((p) => p.y === pts[0].y);
-      });
-      expect(fullSpanWalls).toHaveLength(2);
-      for (const w of fullSpanWalls) {
-        const pts = pathPoints(w);
-        expect(Math.min(pts[0].x, pts[1].x)).toBe(0);
-        expect(Math.max(pts[0].x, pts[1].x)).toBe(GRID);
-      }
-      // Gapped run: walls reach both y-edges (open mouths) and no single
-      // gapped-run wall segment spans the gap itself.
-      expect(wallReachesEdge(walls, 0, 'y')).toBe(true);
-      expect(wallReachesEdge(walls, GRID, 'y')).toBe(true);
-      const gappedWalls = walls.filter((w) => {
-        const pts = pathPoints(w);
-        return pts.length === 2 && pts.every((p) => p.x === pts[0].x);
-      });
-      expect(gappedWalls).toHaveLength(4);
-      for (const w of gappedWalls) {
-        const pts = pathPoints(w);
-        const span = Math.abs(pts[0].y - pts[1].y);
-        expect(span).toBeLessThan(GRID);
-      }
-    }
-  );
-
-  it('cross/tee/overlap interiors are unstroked fills (drawn separately from the wall segments)', () => {
+  it('cross/tee interiors are unstroked fills (drawn separately from the wall segments)', () => {
     expect(crossJunction('medium').interior).toContain('Z');
     expect(teeJunction('medium').interior).toContain('Z');
-    expect(overlapJunction('medium').interior).toContain('Z');
   });
 });
 

@@ -516,66 +516,29 @@ export function teeJunction(size: PipeSize): PipeJunction {
   return {interior: teeInteriorPath(size), walls};
 }
 
-// Continuous run (both mouths open, walls run edge-to-edge unbroken since
-// nothing crosses it) plus the other run split into two segments around a
-// gap where it passes under (each segment's mouth is open at its own tile
-// edge; the gap end is left open too — nothing caps it, so it reads as
-// tucking under the continuous run rather than terminating). Mirrors the
-// deprecated line-overlap's mask-rect gap sizing (`OVERLAP_HALF_GAP`),
-// clamped so at least 1px of visible pipe survives on each side of the gap
-// at large/xl stroke weights.
-export function overlapJunction(size: PipeSize): PipeJunction {
-  const o = wallOffset(size);
-  const fill = STROKE_WEIGHTS[size].fill;
-  const h = fill / 2;
-  const margin = OVERLAP_HALF_GAP[size];
-  const halfSpan = Math.min(margin + h, C - 1);
-  const gapTop = C - halfSpan;
-  const gapBottom = C + halfSpan;
-  const left = C - o;
-  const right = C + o;
-  const crossTop = C - o;
-  const crossBottom = C + o;
-  const walls: string[] = [
-    // Continuous (horizontal) run walls: edge-to-edge, unbroken.
-    `M 0 ${crossTop} L ${GRID} ${crossTop}`,
-    `M 0 ${crossBottom} L ${GRID} ${crossBottom}`,
-    // Gapped (vertical) run walls: two segments each, open at the grid edge
-    // and open at the gap (nothing spans the gap).
-    `M ${left} 0 L ${left} ${gapTop}`,
-    `M ${right} 0 L ${right} ${gapTop}`,
-    `M ${left} ${gapBottom} L ${left} ${GRID}`,
-    `M ${right} ${gapBottom} L ${right} ${GRID}`,
-  ];
-  const interior =
-    `M 0 ${crossTop} L ${GRID} ${crossTop} L ${GRID} ${crossBottom} L 0 ${crossBottom} Z ` +
-    `M ${left} 0 L ${right} 0 L ${right} ${gapTop} L ${left} ${gapTop} Z ` +
-    `M ${left} ${gapBottom} L ${right} ${gapBottom} L ${right} ${GRID} L ${left} ${GRID} Z`;
-  return {interior, walls};
+// Overlap: a crossing where one run passes over the other without
+// connecting. Per the Figma "overlap" vectors (all four sizes), it is TWO
+// paths stroked twice (outline-weight pass then fill-weight pass), the same
+// stroke model as the straight/endpoint:
+//   - `continuous`: the run that passes OVER — a full-length line through the
+//     tile centre, unbroken.
+//   - `gapped`: the run that passes UNDER — the same line split into two
+//     segments with a gap at the centre, so the continuous run reads as
+//     lying on top.
+// Canonical orientation (matches the Figma vector): the VERTICAL run is
+// continuous, the HORIZONTAL run is gapped. The gap half-width is
+// `OVERLAP_HALF_GAP[size]` (small 4, medium 5, large 7, xl 9 — measured: the
+// horizontal segments end at x = 12 ± that value). The component rotates the
+// pair 90° for the other `direction`.
+export interface OverlapPaths {
+  continuous: string;
+  gapped: string;
 }
 
-// Backward-compatible alias returning just the gapped-run interior
-// silhouette (the piece `overlapJunction` composes into `interior` above),
-// kept for any existing callers/tests of the raw gap geometry.
-export function overlapPath(size: PipeSize): string {
-  const fill = STROKE_WEIGHTS[size].fill;
-  const h = fill / 2;
-  const margin = OVERLAP_HALF_GAP[size];
-  const halfSpan = Math.min(margin + h, C - 1);
-  const gapTop = C - halfSpan;
-  const gapBottom = C + halfSpan;
-  const left = C - h;
-  const right = C + h;
-  return (
-    `M ${left} 0 ` +
-    `L ${left} ${gapTop} ` +
-    `L ${right} ${gapTop} ` +
-    `L ${right} 0 ` +
-    `Z ` +
-    `M ${left} ${gapBottom} ` +
-    `L ${left} ${GRID} ` +
-    `L ${right} ${GRID} ` +
-    `L ${right} ${gapBottom} ` +
-    `Z`
-  );
+export function overlapPaths(size: PipeSize): OverlapPaths {
+  const gap = OVERLAP_HALF_GAP[size];
+  return {
+    continuous: `M ${C} 0 L ${C} ${GRID}`,
+    gapped: `M ${GRID} ${C} L ${C + gap} ${C} M ${C - gap} ${C} L 0 ${C}`,
+  };
 }
