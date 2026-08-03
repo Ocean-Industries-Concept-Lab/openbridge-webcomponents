@@ -1,6 +1,12 @@
 import {LitElement, html, nothing, svg, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
+import {
+  PortStarboardElement,
+  PortStarboardShade,
+  portStarboardSignOf,
+  resolvePortStarboardColor,
+} from '../../svghelpers/port-starboard.js';
 
 const componentStyle = `:host {
   display: inline-block;
@@ -113,6 +119,12 @@ export class ObcTunnelThruster extends LitElement {
   @property({type: Boolean})
   hasSilhouette = false;
 
+  /**
+   * Enables the maritime PORT/STBD (red/green) color mode: positive thrust
+   * renders green, negative red.
+   */
+  @property({type: Boolean}) portStarboard = false;
+
   static override styles = unsafeCSS(componentStyle);
 
   private get normalizedValue(): number {
@@ -136,6 +148,15 @@ export class ObcTunnelThruster extends LitElement {
     if (!this.isActive) {
       return 'var(--instrument-frame-tertiary-color)';
     }
+
+    const portStarboard = resolvePortStarboardColor({
+      enabled: this.portStarboard,
+      elements: undefined,
+      element: PortStarboardElement.bar,
+      sign: portStarboardSignOf(this.value),
+      shade: PortStarboardShade.dark,
+    });
+    if (portStarboard) return portStarboard;
 
     return this.isInCommand
       ? 'var(--instrument-enhanced-secondary-color)'
