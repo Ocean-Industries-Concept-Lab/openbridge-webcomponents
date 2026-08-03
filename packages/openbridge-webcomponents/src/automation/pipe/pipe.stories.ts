@@ -222,6 +222,21 @@ function connectedDemo() {
         direction="right"
       ></obc-pipe-endpoint>
 
+      <!-- Cross bottom arm: short vertical stub (6,1)→(6,2) capped at (6,2). -->
+      <obc-pipe-straight
+        style=${at(6, 1)}
+        value="medium-flow"
+        medium-color="Blue"
+        orientation="vertical"
+        .length=${1}
+      ></obc-pipe-straight>
+      <obc-pipe-endpoint
+        style=${at(6, 2)}
+        value="medium-flow"
+        medium-color="Blue"
+        direction="bottom"
+      ></obc-pipe-endpoint>
+
       <!-- Cross top arm: short vertical stub (6,0)→(6,1) capped at (6,0). -->
       <obc-pipe-straight
         style=${at(6, 0)}
@@ -237,13 +252,16 @@ function connectedDemo() {
         direction="top"
       ></obc-pipe-endpoint>
 
-      <!-- Branch: vertical run down the tee (3,1)→(3,3). -->
+      <!-- Branch: vertical run down the tee, stopping at the corner's top
+           mouth. A corner's bend arcs fill the middle of its tile, so
+           connecting runs stop at the tile edge (half a cell short of the
+           bend point) — hence the fractional length. -->
       <obc-pipe-straight
         style=${at(3, 1)}
         value="medium-flow"
         medium-color="Blue"
         orientation="vertical"
-        .length=${2}
+        .length=${1.5}
       ></obc-pipe-straight>
 
       <!-- Corner at (3,3): receives from top, turns to the right. -->
@@ -254,12 +272,13 @@ function connectedDemo() {
         direction="top"
       ></obc-pipe-corner>
 
-      <!-- Run right from the corner (3,3)→(5,3). -->
+      <!-- Run right from the corner's right mouth (3.5,3) to the arrow's
+           stub mouth (4.5,3) — again stopping at the tile edges. -->
       <obc-pipe-straight
-        style=${at(3, 3)}
+        style=${at(3.5, 3)}
         value="medium-flow"
         medium-color="Blue"
-        .length=${2}
+        .length=${1}
       ></obc-pipe-straight>
 
       <!-- Flow arrow terminating the branch at (5,3). -->
