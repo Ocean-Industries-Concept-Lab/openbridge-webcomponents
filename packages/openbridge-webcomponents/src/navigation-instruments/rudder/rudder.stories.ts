@@ -111,6 +111,25 @@ export const PortStarboardWithSetpoint: Story = {
   },
 };
 
+/**
+ * `bar` selected without `zeroLine`: the band follows the rudder angle while
+ * the thick zero-line tickmark keeps its priority color.
+ */
+export const PortStarboardBarWithoutZeroLine: Story = {
+  args: {
+    angle: -25,
+    maxAngle: 45,
+    priority: Priority.enhanced,
+    state: InstrumentState.active,
+    portStarboard: true,
+    portStarboardElements: [
+      PortStarboardElement.face,
+      PortStarboardElement.bar,
+      PortStarboardElement.needle,
+    ],
+  },
+};
+
 export const ZoomedIn: Story = {
   args: {
     maxAngle: 45,

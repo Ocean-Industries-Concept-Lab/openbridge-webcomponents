@@ -87,8 +87,9 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
    * @availableWhen portStarboard==true
    */
   @property({type: Array, attribute: false})
-  portStarboardElements: PortStarboardElement[] =
-    PORT_STARBOARD_DEFAULT_ELEMENTS;
+  portStarboardElements: PortStarboardElement[] = [
+    ...PORT_STARBOARD_DEFAULT_ELEMENTS,
+  ];
 
   override render() {
     let state: InstrumentState = InstrumentState.active;
