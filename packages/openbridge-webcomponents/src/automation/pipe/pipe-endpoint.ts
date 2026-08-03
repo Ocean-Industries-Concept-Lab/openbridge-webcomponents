@@ -2,8 +2,11 @@ import {LitElement, html, svg, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import {resolvePipeStroke, GRID} from './pipe-styles.js';
-import {endpointChannel, endpointCapPath, endpointCapOutlinePath} from './pipe-geometry.js';
-import {renderPipeChannel} from './pipe-render.js';
+import {
+  endpointLineCap,
+  ENDPOINT_BAR_HALF_OUTLINE,
+  ENDPOINT_BAR_HALF_FILL,
+} from './pipe-geometry.js';
 import type {
   PipeValue,
   PipeSize,
@@ -32,13 +35,13 @@ const BREAKOFF_TILT = 30;
  * `<obc-pipe-endpoint>` – A terminating open-stub-and-cap glyph closing off
  * one end of a process diagram pipe run.
  *
- * Draws an open-mouth pipe stub — the same walled-channel model as
- * `obc-pipe-straight` (a fill-width interior band bordered by two 1px
- * walls), open at the connecting grid edge — meeting a perpendicular
- * rounded-rectangle cap bar at the terminus, filled with the resolved fill
- * color and bordered with a 1px outline stroke. `closed` and `closed-dash`
- * collapse both pieces to a single stroke/fill in the outline color,
- * matching those values' shut-off appearance elsewhere in the family.
+ * Draws a T — a pipe stub meeting a perpendicular bar at the terminus —
+ * stroked with the same two-pass model as the rest of the family: an
+ * outline-weight pass, then (for states with a fill) a fill-weight pass over
+ * it. The bar's ends are rounded at `medium`/`xl` (round linecap) and square
+ * at `small`/`large`, matching the Figma endpoint glyph. `closed` and
+ * `closed-dash` collapse to the single outline-color pass, matching those
+ * values' shut-off appearance elsewhere in the family.
  *
  * ## Features
  * - **Value states:** `open-flow` and `open-generic` (default open pipe),
@@ -49,7 +52,7 @@ const BREAKOFF_TILT = 30;
  *   the fill/border family (for example `Blue`, `Teal`, `Red`); defaults to
  *   `Teal` when unset. Ignored for other values.
  * - **Sizes:** `small`, `medium` (default), `large`, `xl` — scale the stub,
- *   cap, and stroke weights together.
+ *   bar, and stroke weights together.
  * - **Direction:** `direction` selects which edge the terminus faces —
  *   `top`, `right` (default), `bottom`, or `left`.
  * - **Cap variant:** `variant` selects a straight `cap` (default, cap
@@ -76,29 +79,45 @@ export class ObcPipeEndpoint extends LitElement {
 
   override render() {
     const stroke = resolvePipeStroke(this.value, this.size, this.mediumColor);
-    const channel = endpointChannel(this.size);
-    const cap = endpointCapPath(this.size);
     const rotation = ROTATION_BY_DIRECTION[this.direction];
     const isBreakoff = this.variant === 'breakoff';
-    const capTilt = isBreakoff ? BREAKOFF_TILT : 0;
+    const barTilt = isBreakoff ? BREAKOFF_TILT : 0;
+    const cap = endpointLineCap(this.size);
     const hasFill = stroke.fillVar !== null && stroke.fillWeight !== null;
 
-    // Default `cap` variant: the cap's near (stub-facing) edge is left
-    // unstroked across the channel band so the stub's interior/walls flow
-    // straight into the cap with no seam (see `endpointCapOutlinePath`).
-    // `breakoff` tilts the cap away from the stub, so that alignment no
-    // longer holds — it keeps the prior fully-closed outline, matching its
-    // intentionally disconnected look.
-    const capOutline = isBreakoff ? cap : endpointCapOutlinePath(this.size);
-    const capFill = svg`<path d=${cap} fill="var(${hasFill ? stroke.fillVar : stroke.outlineVar})" stroke="none"
-      transform="rotate(${capTilt} ${GRID / 2} ${GRID / 2})" />`;
-    const capLayer =
-      hasFill
-        ? svg`${capFill}<path d=${capOutline} fill="none"
-            stroke="var(${stroke.outlineVar})" stroke-width="1"
-            vector-effect="non-scaling-stroke"
-            transform="rotate(${capTilt} ${GRID / 2} ${GRID / 2})" />`
-        : capFill;
+    // The endpoint is a T (stub + perpendicular bar) stroked twice: an
+    // outline-weight pass, then — for states with a fill — a fill-weight pass
+    // over it. The stub and bar are drawn as SEPARATE strokes so the
+    // `breakoff` variant can tilt just the bar (30°) around the terminus while
+    // the stub stays axis-aligned. Round linecaps (medium & xl) round the bar
+    // ends; small & large use butt caps. Matches the Figma endpoint vectors.
+    const c = GRID / 2;
+    const stub = `M 0 ${c} L ${c} ${c}`;
+    const barTransform = `rotate(${barTilt} ${c} ${c})`;
+
+    const bar = (half: number, weight: number, colorVar: string) =>
+      svg`<path d=${`M ${c} ${c - half} L ${c} ${c + half}`} fill="none"
+        stroke="var(${colorVar})" stroke-width=${weight}
+        stroke-linecap=${cap} vector-effect="non-scaling-stroke"
+        transform=${barTransform} />`;
+    const stubLine = (weight: number, colorVar: string, dash: number[]) =>
+      svg`<path d=${stub} fill="none" stroke="var(${colorVar})"
+        stroke-width=${weight} vector-effect="non-scaling-stroke"
+        stroke-dasharray=${dash.join(' ')} />`;
+
+    const outlineHalf = ENDPOINT_BAR_HALF_OUTLINE[this.size];
+    const layers = [
+      // Outline pass (stub + bar).
+      stubLine(stroke.outlineWeight, stroke.outlineVar, stroke.dashPattern),
+      bar(outlineHalf, stroke.outlineWeight, stroke.outlineVar),
+    ];
+    if (hasFill) {
+      const fillHalf = ENDPOINT_BAR_HALF_FILL[this.size];
+      layers.push(
+        stubLine(stroke.fillWeight as number, stroke.fillVar as string, []),
+        bar(fillHalf, stroke.fillWeight as number, stroke.fillVar as string)
+      );
+    }
 
     return html`
       <svg
@@ -109,7 +128,7 @@ export class ObcPipeEndpoint extends LitElement {
         xmlns="http://www.w3.org/2000/svg"
         transform="translate(-12 -12) rotate(${rotation} ${GRID / 2} ${GRID / 2})"
       >
-        ${capLayer}${renderPipeChannel(channel, stroke)}
+        ${layers}
       </svg>
     `;
   }

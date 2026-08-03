@@ -5,9 +5,9 @@ import {
   cornerPath,
   cornerChannel,
   endpointStubPath,
-  endpointChannel,
-  endpointCapPath,
-  endpointCapOutlinePath,
+  endpointLineCap,
+  ENDPOINT_BAR_HALF_OUTLINE,
+  ENDPOINT_BAR_HALF_FILL,
   arrowHeadPath,
   arrowStubEnd,
   teePath,
@@ -129,121 +129,31 @@ describe('endpointStubPath', () => {
   });
 });
 
-describe('endpointChannel', () => {
-  it('mouth is OPEN at the grid edge (x=GRID) — matches the Figma ground truth', () => {
-    const {inner, walls} = endpointChannel('medium');
-    const innerPts = pathPoints(inner);
-    expect(innerPts[0].x).toBe(GRID);
-    for (const wall of walls) {
-      const pts = pathPoints(wall);
-      expect(pts[0].x).toBe(GRID);
-    }
+describe('endpoint bar geometry (Figma T-path model)', () => {
+  it('outline bar is at least as long as the fill bar at every size (fill sits inside outline)', () => {
+    (['small', 'medium', 'large', 'xl'] as PipeSize[]).forEach((size) => {
+      expect(ENDPOINT_BAR_HALF_OUTLINE[size]).toBeGreaterThanOrEqual(
+        ENDPOINT_BAR_HALF_FILL[size]
+      );
+    });
   });
 
-  it.each<PipeSize>(['small', 'medium', 'large', 'xl'])(
-    'wall offset matches straightChannel at the same size (%s) so it lines up with a straight run',
-    (size) => {
-      const {walls} = endpointChannel(size);
-      const {walls: straightWalls} = straightChannel(1, 'horizontal', size);
-      const expectedOffset = STROKE_WEIGHTS[size].fill / 2 + 0.5;
-      expect(walls[0]).toContain(`${12 - expectedOffset}`);
-      expect(walls[1]).toContain(`${12 + expectedOffset}`);
-      // Sanity: same offset convention as the straight run's own walls.
-      expect(straightWalls[0]).toContain(`${12 - expectedOffset}`);
-    }
-  );
-
-  it('the interior fill line extends to the grid centre, overlapping into the cap so no seam shows', () => {
-    const {inner} = endpointChannel('medium');
-    const pts = pathPoints(inner);
-    const minX = Math.min(...pts.map((p) => p.x));
-    expect(minX).toBe(12);
+  it('uses round linecaps for medium & xl and butt for small & large (per Figma)', () => {
+    expect(endpointLineCap('small')).toBe('butt');
+    expect(endpointLineCap('large')).toBe('butt');
+    expect(endpointLineCap('medium')).toBe('round');
+    expect(endpointLineCap('xl')).toBe('round');
   });
 
-  it.each<PipeSize>(['small', 'medium', 'large', 'xl'])(
-    "walls end FLUSH at the cap's near wall (T-joint) — never overshoot past it into the cap interior (%s)",
-    (size) => {
-      const {walls} = endpointChannel(size);
-      // Cap half-width = channel wall offset (measured from Figma), so the
-      // stub's walls end exactly on the cap's near-wall centreline.
-      const capHalfWidth = STROKE_WEIGHTS[size].fill / 2 + 0.5;
-      const capNearEdge = 12 - capHalfWidth;
-      for (const wall of walls) {
-        const pts = pathPoints(wall);
-        const minX = Math.min(...pts.map((p) => p.x));
-        // A T-joint (a wall ending against another wall) ends exactly at the
-        // met wall's edge, never past it — overshooting past capNearEdge
-        // leaves a dark tick mark inside the cap's white interior.
-        expect(minX).toBe(capNearEdge);
-        expect(minX).toBeLessThan(GRID);
-      }
-    }
-  );
-});
-
-describe('endpointCapPath', () => {
-  it('is a single closed rounded-rectangle path centred on the grid centre', () => {
-    const d = endpointCapPath('medium');
-    expect((d.match(/M /g) ?? []).length).toBe(1);
-    expect(d.trim().endsWith('Z')).toBe(true);
-    expect(d).toContain('A ');
-    const pts = pathPoints(d);
-    const xs = pts.map((p) => p.x);
-    const ys = pts.map((p) => p.y);
-    const midX = (Math.min(...xs) + Math.max(...xs)) / 2;
-    const midY = (Math.min(...ys) + Math.max(...ys)) / 2;
-    expect(midX).toBeCloseTo(12, 5);
-    expect(midY).toBeCloseTo(12, 5);
-  });
-
-  it('cap is taller than the pipe channel (spans well beyond the wall offset)', () => {
-    const capD = endpointCapPath('medium');
-    const capYs = pathPoints(capD).map((p) => p.y);
-    const capHalfHeight = (Math.max(...capYs) - Math.min(...capYs)) / 2;
-    const wallOffsetMedium = STROKE_WEIGHTS.medium.fill / 2 + 0.5;
-    expect(capHalfHeight).toBeGreaterThan(wallOffsetMedium);
-  });
-
-  it.each<PipeSize>(['small', 'medium', 'large', 'xl'])(
-    'cap grows with size (%s)',
-    (size) => {
-      const d = endpointCapPath(size);
-      const xs = pathPoints(d).map((p) => p.x);
-      const halfWidth = (Math.max(...xs) - Math.min(...xs)) / 2;
-      expect(halfWidth).toBeGreaterThan(0);
-    }
-  );
-});
-
-describe('endpointCapOutlinePath', () => {
-  it('is an OPEN path (no trailing Z) — the near edge is left unstroked', () => {
-    const d = endpointCapOutlinePath('medium');
-    expect(d.trim().endsWith('Z')).toBe(false);
-  });
-
-  it.each<PipeSize>(['small', 'medium', 'large', 'xl'])(
-    'the break in the near edge spans exactly the channel band (fill/2 + 0.5) (%s)',
-    (size) => {
-      const d = endpointCapOutlinePath(size);
-      const wallOffset = STROKE_WEIGHTS[size].fill / 2 + 0.5;
-      const pts = pathPoints(d);
-      // First and last points are both on the near edge (x = 12 - CAP_HALF_WIDTH),
-      // at the top and bottom of the channel band, matching endpointChannel's walls.
-      expect(pts[0].y).toBeCloseTo(12 - wallOffset, 5);
-      expect(pts[pts.length - 1].y).toBeCloseTo(12 + wallOffset, 5);
-      expect(pts[0].x).toBe(pts[pts.length - 1].x);
-    }
-  );
-
-  it('never crosses the near edge across the channel band (no point falls strictly between the break y-values at the near-edge x)', () => {
-    const d = endpointCapOutlinePath('medium');
-    const wallOffset = STROKE_WEIGHTS.medium.fill / 2 + 0.5;
-    const pts = pathPoints(d);
-    const nearX = pts[0].x;
-    const midBreakPts = pts.filter(
-      (p) => p.x === nearX && p.y > 12 - wallOffset && p.y < 12 + wallOffset
-    );
-    expect(midBreakPts).toHaveLength(0);
+  it.each<[PipeSize, number, number]>([
+    // [size, outline half, fill half] — the exact Figma-measured bar lengths.
+    ['small', 9, 8],
+    ['medium', 8, 8],
+    ['large', 9, 8],
+    ['xl', 11, 10],
+  ])('bar half-lengths match the Figma vectors (%s)', (size, o, f) => {
+    expect(ENDPOINT_BAR_HALF_OUTLINE[size]).toBe(o);
+    expect(ENDPOINT_BAR_HALF_FILL[size]).toBe(f);
   });
 });
 

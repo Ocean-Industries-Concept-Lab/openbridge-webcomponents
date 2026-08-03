@@ -108,139 +108,55 @@ export function cornerChannel(
 }
 
 // ---------------------------------------------------------------------------
-// Endpoint: an open-mouth pipe stub (walls+interior channel, matching
-// `straightChannel`) meeting a perpendicular rounded-rectangle cap bar at the
-// terminus — the Figma "medium open-flow endpoint" ground truth. Canonical
-// orientation (direction 'left', unrotated): the cap bar is centred on the
-// grid centre (12,12) toward the LEFT half of the cell, the stub's mouth is
-// OPEN at the grid edge x=GRID (the connecting side), and the stub's walls
-// run from that edge inward, stopping exactly at the cap's near edge (they
-// never cross into or past the cap — the bug this replaces let the walls
-// overshoot the cap and land the cap off-centre).
+// Endpoint: a pipe stub meeting a perpendicular BAR at the terminus, both
+// drawn as ONE T-shaped path stroked twice — an outline-weight pass then a
+// fill-weight pass — exactly the walled-channel model every other pipe piece
+// uses (verified against the Figma "Type=endpoint, Value=open flow" vectors,
+// all four sizes: the glyph is literally `M<mouth> H<centre> V<barTop>
+// M<centre> V<barBottom>` stroked at the size's outline then fill weight).
+// The bar's rounded ends come from `stroke-linecap="round"` (medium & xl);
+// small & large use butt caps. This replaces the earlier rounded-rectangle
+// "cap" model, which drew the cap as a separate filled shape and left a seam
+// where its fill met the stub's fill.
+//
+// Canonical orientation (direction 'left', unrotated): the connection mouth
+// is OPEN at the LEFT grid edge (x=0), the stub runs inward along y=12 to the
+// bar at the grid centre (x=12), and the bar runs vertically through (12,12).
 // ---------------------------------------------------------------------------
 
-// The half-cell inward stub, shared by the endpoint cap and the arrowhead.
-// Canonical orientation: terminus at x=0, running inward along y=12 to `end`
-// (defaults to the grid centre, x=12, for the endpoint cap's use). For
-// `obc-pipe-arrow`, callers must pass the selected head's `stubEnd` (see
-// `arrowStubEnd`) instead of the default — the stub must stop AT the head's
-// base column, not overshoot into/past the head's interior (measured against
-// the Figma ground truth: the wall ends cleanly where the head begins, no
-// wall pixels inside the chevron).
+// The half-cell inward stub, shared by the endpoint and the arrowhead.
+// Canonical orientation: mouth at x=0, running inward along y=12 to `end`
+// (defaults to the grid centre, x=12). For `obc-pipe-arrow`, callers pass the
+// selected head's `stubEnd` (see `arrowStubEnd`) so the stub stops at the
+// head's base column, not overshooting into the chevron.
 export function endpointStubPath(end: number = C): string {
   return `M 0 ${C} L ${end} ${C}`;
 }
 
-// Cap bar dimensions — measured per size against the Figma
-// "Type=endpoint, Value=open flow" variants (24px tiles). The half-WIDTH
-// equals the channel wall offset (`fill/2 + 0.5`) at EVERY size, so the
-// cap's two side walls land exactly on the columns a connecting run's walls
-// arrive at (small: x=10/13, medium: 9/14, large: 7/16, xl: 5/18) and the
-// stub's walls merge flush into the cap's near wall. The half-HEIGHT does
-// not scale monotonically — measured caps are 17px tall for small/large and
-// 21px tall for medium/xl.
-const CAP_HALF_HEIGHT: Record<PipeSize, number> = {
-  small: 8.5,
-  medium: 10.5,
-  large: 8.5,
-  xl: 10.5,
+// Per-size bar half-length (path endpoint distance from the grid centre)
+// measured directly from the Figma endpoint vectors, separately for the
+// OUTLINE and FILL passes (the two passes use slightly different bar lengths
+// in Figma). Combined with the linecap these reproduce the exact bar extent:
+// e.g. medium outline bar spans y=12±8 with a round cap of half-width 3, so
+// the visible bar reaches y=1..23 ≈ the measured 21px-tall bar; small/large
+// use butt caps so the path endpoint IS the visible end.
+export const ENDPOINT_BAR_HALF_OUTLINE: Record<PipeSize, number> = {
+  small: 9,
+  medium: 8,
+  large: 9,
+  xl: 11,
 };
-const CAP_CORNER_RADIUS = 2;
+export const ENDPOINT_BAR_HALF_FILL: Record<PipeSize, number> = {
+  small: 8,
+  medium: 8,
+  large: 8,
+  xl: 10,
+};
 
-function capHalfWidth(size: PipeSize): number {
-  return STROKE_WEIGHTS[size].fill / 2 + 0.5;
-}
-
-// The endpoint's pipe stub: an open-mouth walls+interior channel identical in
-// convention to `straightChannel` (same `wallOffset` formula, so it lines up
-// with a `obc-pipe-straight` run at the same size). The INTERIOR fill line
-// (`inner`) spans from the grid edge (mouth, OPEN) all the way to the grid
-// centre — past the cap's near edge and slightly INTO the cap body — so it
-// blends seamlessly with the cap's own fill (same color, drawn under it;
-// see `pipe-endpoint.ts`), matching the measured Figma ground truth where
-// the interior is one unbroken white region from the tile edge through into
-// the cap interior. The WALLS, unlike the interior, must NOT overshoot past
-// the cap's near wall (a T-joint: a wall ending against another wall ends
-// flush, never past it — overshooting leaves visible dark tick marks poking
-// into the cap's white interior) — so they stop exactly at the cap's near
-// edge (`C - CAP_HALF_WIDTH[size]`), the same x the open end of
-// `endpointCapOutlinePath`'s break sits at.
-export function endpointChannel(size: PipeSize): PipeChannel {
-  const fill = STROKE_WEIGHTS[size].fill;
-  const wallOffset = fill / 2 + 0.5;
-  const capNearEdge = C - capHalfWidth(size);
-  const inner = `M ${GRID} ${C} L ${C} ${C}`;
-  const walls: [string, string] = [
-    `M ${GRID} ${C - wallOffset} L ${capNearEdge} ${C - wallOffset}`,
-    `M ${GRID} ${C + wallOffset} L ${capNearEdge} ${C + wallOffset}`,
-  ];
-  return {inner, walls};
-}
-
-// The perpendicular cap bar at the terminus: a rounded-rectangle centred on
-// the grid centre (12,12), `2*CAP_HALF_WIDTH` wide and `2*CAP_HALF_HEIGHT`
-// tall, with rounded outer corners. Returned as a single closed path so it
-// can be filled like the other pieces' interior silhouettes. NOTE: this is
-// the FILL shape only — do not stroke it directly, or the near (stub-facing)
-// edge gets a border that Figma does not have. Use `endpointCapOutlinePath`
-// for the 1px border stroke instead.
-export function endpointCapPath(size: PipeSize): string {
-  const hw = capHalfWidth(size);
-  const hh = CAP_HALF_HEIGHT[size];
-  const r = Math.min(CAP_CORNER_RADIUS, hw, hh);
-  const left = C - hw;
-  const right = C + hw;
-  const top = C - hh;
-  const bottom = C + hh;
-  return (
-    `M ${left} ${top + r} ` +
-    `A ${r} ${r} 0 0 1 ${left + r} ${top} ` +
-    `L ${right - r} ${top} ` +
-    `A ${r} ${r} 0 0 1 ${right} ${top + r} ` +
-    `L ${right} ${bottom - r} ` +
-    `A ${r} ${r} 0 0 1 ${right - r} ${bottom} ` +
-    `L ${left + r} ${bottom} ` +
-    `A ${r} ${r} 0 0 1 ${left} ${bottom - r} ` +
-    `Z`
-  );
-}
-
-// The cap bar's 1px BORDER stroke — an OPEN path that omits the near
-// (stub-facing) edge across the height of the connecting pipe channel, so no
-// wall line crosses the join and the stub's interior flows continuously into
-// the cap's interior. Matches the measured Figma ground truth: the cap's
-// near edge only carries a border above/below the channel band (where the
-// cap is taller than the pipe), never across it. `wallOffset` is the same
-// half-channel-height used by `endpointChannel`'s walls, so the break lines
-// up exactly with where the stub's walls meet the cap.
-export function endpointCapOutlinePath(size: PipeSize, wallOffsetOverride?: number): string {
-  const fill = STROKE_WEIGHTS[size].fill;
-  const wallOffset = wallOffsetOverride ?? fill / 2 + 0.5;
-  const hw = capHalfWidth(size);
-  const hh = CAP_HALF_HEIGHT[size];
-  const r = Math.min(CAP_CORNER_RADIUS, hw, hh);
-  const left = C - hw;
-  const right = C + hw;
-  const top = C - hh;
-  const bottom = C + hh;
-  const channelTop = C - wallOffset;
-  const channelBottom = C + wallOffset;
-  // Two open subpaths, each starting at the break (channel band on the near
-  // edge) and running the long way around (far edge + both rounded corner
-  // pairs) back to the other side of the break — leaving the near edge
-  // unstroked exactly across `channelTop`..`channelBottom`.
-  return (
-    `M ${left} ${channelTop} ` +
-    `L ${left} ${top + r} ` +
-    `A ${r} ${r} 0 0 1 ${left + r} ${top} ` +
-    `L ${right - r} ${top} ` +
-    `A ${r} ${r} 0 0 1 ${right} ${top + r} ` +
-    `L ${right} ${bottom - r} ` +
-    `A ${r} ${r} 0 0 1 ${right - r} ${bottom} ` +
-    `L ${left + r} ${bottom} ` +
-    `A ${r} ${r} 0 0 1 ${left} ${bottom - r} ` +
-    `L ${left} ${channelBottom}`
-  );
+// Figma uses round linecaps for medium & xl (giving the bar rounded ends) and
+// butt caps for small & large.
+export function endpointLineCap(size: PipeSize): 'round' | 'butt' {
+  return size === 'medium' || size === 'xl' ? 'round' : 'butt';
 }
 
 // ---------------------------------------------------------------------------
