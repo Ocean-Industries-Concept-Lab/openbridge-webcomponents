@@ -108,6 +108,17 @@ export const Medium: Story = {
   },
 };
 
+export const PortStarboard: Story = {
+  args: {
+    size: AzimuthThrusterLabeledSize.medium,
+    readoutSize: ReadoutSize.medium,
+    width: 384,
+    angle: 30,
+    thrust: 60,
+    portStarboard: true,
+  },
+};
+
 export const Large: Story = {
   args: {
     size: AzimuthThrusterLabeledSize.large,

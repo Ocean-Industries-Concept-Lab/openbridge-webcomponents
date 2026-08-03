@@ -15,6 +15,10 @@ import {PropellerType} from '../thruster/propeller.js';
 import {TickmarkStyle} from '../watch/tickmark.js';
 import {customElement} from '../../decorator.js';
 import {stopPropagation} from '../../internal/events.js';
+import {
+  PORT_STARBOARD_DEFAULT_ELEMENTS,
+  PortStarboardElement,
+} from '../../svghelpers/port-starboard.js';
 
 export enum AzimuthThrusterLabeledSize {
   medium = 'medium',
@@ -74,6 +78,19 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
   @property({type: Boolean}) singleDirection: boolean = false;
   @property({type: String}) topPropeller: PropellerType = PropellerType.none;
   @property({type: String}) bottomPropeller: PropellerType = PropellerType.none;
+  /**
+   * Enables the maritime PORT/STBD (red/green) color mode on the embedded
+   * azimuth thruster.
+   */
+  @property({type: Boolean}) portStarboard: boolean = false;
+  /**
+   * Which parts take part while `portStarboard` is on.
+   * Defaults to everything except the setpoint.
+   * @availableWhen portStarboard==true
+   */
+  @property({type: Array, attribute: false})
+  portStarboardElements: PortStarboardElement[] =
+    PORT_STARBOARD_DEFAULT_ELEMENTS;
 
   override render() {
     let state: InstrumentState = InstrumentState.active;
@@ -188,6 +205,8 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
           .tickmarkStyle=${this.tickmarkStyle}
           .topPropeller=${this.topPropeller}
           .bottomPropeller=${this.bottomPropeller}
+          .portStarboard=${this.portStarboard}
+          .portStarboardElements=${this.portStarboardElements}
         ></obc-azimuth-thruster>
       </div>
     `;
