@@ -9,6 +9,15 @@ import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
 import {customElement} from '../../decorator.js';
 import {
+  hasPortStarboardElement,
+  PORT_STARBOARD_DEFAULT_ELEMENTS,
+  PortStarboardElement,
+  PortStarboardShade,
+  type PortStarboardSign,
+  portStarboardSignOf,
+  resolvePortStarboardColor,
+} from '../../svghelpers/port-starboard.js';
+import {
   applyPinnedHostSize,
   computeRadialFrame,
   estimateLabelWidthPx,
@@ -95,6 +104,19 @@ export class ObcRudder extends SetpointMixin(LitElement) {
   @property({type: String}) tickmarkStyle: TickmarkStyle =
     TickmarkStyle.regular;
   @property({type: Array, attribute: false}) advices: AngleAdvice[] = [];
+  /**
+   * Enables the maritime PORT/STBD (red/green) color mode: starboard rudder
+   * renders green, port red, and the face is split behind the arc.
+   */
+  @property({type: Boolean}) portStarboard: boolean = false;
+  /**
+   * Which parts take part while `portStarboard` is on.
+   * Defaults to everything except the setpoint.
+   * @availableWhen portStarboard==true
+   */
+  @property({type: Array, attribute: false})
+  portStarboardElements: PortStarboardElement[] =
+    PORT_STARBOARD_DEFAULT_ELEMENTS;
   @property({type: Boolean}) zoomToFitArc: boolean = false;
   /**
    * Outer-ring diameter in CSS pixels. When set, the instrument renders at a
@@ -140,7 +162,38 @@ export class ObcRudder extends SetpointMixin(LitElement) {
     return 180 - value;
   }
 
+  /** Setpoint-marker sign, gated on the `setpoint` element opt-in. */
+  private get setpointPortStarboardSign(): PortStarboardSign {
+    return hasPortStarboardElement(
+      this.portStarboard,
+      this.portStarboardElements,
+      PortStarboardElement.setpoint
+    )
+      ? portStarboardSignOf(this.setpoint)
+      : 0;
+  }
+
   get barColor() {
+    // The band is a light track in the needle variant and the dark value fill
+    // in the bar variant, so the shade role differs while the element stays
+    // `bar`. Loading/off keep precedence below.
+    if (
+      this.state !== InstrumentState.loading &&
+      this.state !== InstrumentState.off
+    ) {
+      const portStarboard = resolvePortStarboardColor({
+        enabled: this.portStarboard,
+        elements: this.portStarboardElements,
+        element: PortStarboardElement.bar,
+        sign: portStarboardSignOf(this.angle),
+        shade:
+          this.variant === ObcRudderVariant.Needle
+            ? PortStarboardShade.light
+            : PortStarboardShade.dark,
+        neutralDark: true,
+      });
+      if (portStarboard) return portStarboard;
+    }
     if (this.variant === ObcRudderVariant.Needle) {
       if (
         this.state === InstrumentState.loading ||
@@ -169,11 +222,21 @@ export class ObcRudder extends SetpointMixin(LitElement) {
       return nothing;
     }
     let color: string;
+    const portStarboardNeedle = resolvePortStarboardColor({
+      enabled: this.portStarboard,
+      elements: this.portStarboardElements,
+      element: PortStarboardElement.needle,
+      sign: portStarboardSignOf(this.angle),
+      shade: PortStarboardShade.dark,
+      neutralDark: true,
+    });
     if (
       this.state === InstrumentState.loading ||
       this.state === InstrumentState.off
     ) {
       color = 'var(--instrument-frame-tertiary-color)';
+    } else if (portStarboardNeedle) {
+      color = portStarboardNeedle;
     } else {
       color =
         this.priority === Priority.enhanced
@@ -315,6 +378,9 @@ export class ObcRudder extends SetpointMixin(LitElement) {
           .state=${this.state}
           .priority=${this.priority}
           .advices=${advices}
+          .portStarboard=${this.portStarboard}
+          .portStarboardElements=${this.portStarboardElements}
+          .setpointPortStarboardSign=${this.setpointPortStarboardSign}
         ></obc-watch>
         <svg viewBox="${overlayViewBox}">${this.renderNeedle()}</svg>
       </div>
