@@ -41,6 +41,33 @@ export const InCommand: Story = {
   },
 };
 
+export const PortStarboardAhead: Story = {
+  args: {
+    thrust: 70,
+    speed: 70,
+    priority: Priority.enhanced,
+    state: InstrumentState.active,
+    portStarboard: true,
+  },
+};
+
+/**
+ * Engine astern while the vessel is still making way ahead: the thrust column
+ * reads red, the speed column green. `speed` is a unipolar 0–100 scale (only
+ * `thrust` is bipolar), so it never renders red.
+ */
+export const PortStarboardAstern: Story = {
+  args: {
+    thrust: -70,
+    thrustSetpoint: -70,
+    speed: 20,
+    speedSetpoint: 20,
+    priority: Priority.enhanced,
+    state: InstrumentState.active,
+    portStarboard: true,
+  },
+};
+
 export const NotInCommand: Story = {
   args: {
     state: InstrumentState.active,
