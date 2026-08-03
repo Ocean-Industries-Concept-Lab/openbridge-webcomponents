@@ -12,6 +12,7 @@ import {
 import {AdviceType} from '../watch/advice.js';
 import {TickmarkStyle} from '../watch/tickmark.js';
 import {PropellerType} from '../thruster/propeller.js';
+import {PortStarboardElement} from '../../svghelpers/port-starboard.js';
 
 const meta: Meta<typeof ObcAzimuthThruster> = {
   title: 'Instruments/Azimuth Thruster',
@@ -92,6 +93,77 @@ export const InCommand: Story = {
       {min: 20, max: 50, type: AdviceType.advice, hinted: true},
       {min: 75, max: 100, type: AdviceType.caution, hinted: true},
       {min: -100, max: -75, type: AdviceType.caution, hinted: true},
+    ],
+  },
+};
+
+export const PortStarboardAheadStarboard: Story = {
+  args: {
+    angle: 30,
+    thrust: 60,
+    angleSetpoint: 30,
+    thrustSetpoint: 60,
+    priority: Priority.enhanced,
+    state: InstrumentState.active,
+    portStarboard: true,
+  },
+};
+
+export const PortStarboardAheadPort: Story = {
+  args: {
+    angle: 330,
+    thrust: 60,
+    angleSetpoint: 330,
+    thrustSetpoint: 60,
+    priority: Priority.enhanced,
+    state: InstrumentState.active,
+    portStarboard: true,
+  },
+};
+
+export const PortStarboardAstern: Story = {
+  args: {
+    angle: 200,
+    thrust: -60,
+    angleSetpoint: 200,
+    thrustSetpoint: -60,
+    priority: Priority.enhanced,
+    state: InstrumentState.active,
+    portStarboard: true,
+  },
+};
+
+export const PortStarboardWithSetpoint: Story = {
+  args: {
+    angle: 30,
+    thrust: 60,
+    angleSetpoint: 45,
+    thrustSetpoint: 80,
+    priority: Priority.enhanced,
+    state: InstrumentState.active,
+    portStarboard: true,
+    portStarboardElements: [
+      PortStarboardElement.face,
+      PortStarboardElement.bar,
+      PortStarboardElement.arrow,
+      PortStarboardElement.zeroLine,
+      PortStarboardElement.setpoint,
+    ],
+  },
+};
+
+export const PortStarboardBarsOnly: Story = {
+  args: {
+    angle: 30,
+    thrust: 60,
+    angleSetpoint: 45,
+    thrustSetpoint: 80,
+    priority: Priority.enhanced,
+    state: InstrumentState.active,
+    portStarboard: true,
+    portStarboardElements: [
+      PortStarboardElement.bar,
+      PortStarboardElement.arrow,
     ],
   },
 };
