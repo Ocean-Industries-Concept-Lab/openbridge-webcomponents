@@ -61,7 +61,6 @@ const meta: Meta<typeof ObcTransmitter> = {
     },
     size: {
       options: [
-        TransmitterButtonSize.small,
         TransmitterButtonSize.regular,
         TransmitterButtonSize.medium,
         TransmitterButtonSize.large,

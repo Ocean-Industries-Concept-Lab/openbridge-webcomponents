@@ -9,13 +9,10 @@ import {
   type ReadoutNumericFormatOptions,
 } from '../../navigation-instruments/readout/readout-formatters.js';
 import {
-  ReadoutSetpointMode,
-  ReadoutSetpointSize,
-  ReadoutSetpointVariant,
-} from '../../navigation-instruments/readout-setpoint/readout-setpoint.js';
-import '../../navigation-instruments/readout-setpoint/readout-setpoint.js';
-import '../../navigation-instruments/readout-advice/readout-advice.js';
-import '../../icons/icon-input-right.js';
+  ReadoutBlockVariant,
+  ReadoutBlockSize,
+} from '../../building-blocks/readout-block/readout-block.js';
+import '../../building-blocks/readout-block/readout-block.js';
 
 export enum TransmitterButtonVariant {
   value = 'value',
@@ -23,17 +20,17 @@ export enum TransmitterButtonVariant {
 }
 
 export enum TransmitterButtonSize {
-  small = 'small',
   regular = 'regular',
   medium = 'medium',
   large = 'large',
 }
 
-const readoutSizeBySize: Record<TransmitterButtonSize, ReadoutSetpointSize> = {
-  [TransmitterButtonSize.small]: ReadoutSetpointSize.small,
-  [TransmitterButtonSize.regular]: ReadoutSetpointSize.regular,
-  [TransmitterButtonSize.medium]: ReadoutSetpointSize.medium,
-  [TransmitterButtonSize.large]: ReadoutSetpointSize.large,
+// ReadoutBlockSize.small is the block's 16px tier — it reads the `regular`
+// design token, so it is the counterpart of this component's `regular`.
+const readoutSizeBySize: Record<TransmitterButtonSize, ReadoutBlockSize> = {
+  [TransmitterButtonSize.regular]: ReadoutBlockSize.small,
+  [TransmitterButtonSize.medium]: ReadoutBlockSize.medium,
+  [TransmitterButtonSize.large]: ReadoutBlockSize.large,
 };
 
 /**
@@ -41,12 +38,11 @@ const readoutSizeBySize: Record<TransmitterButtonSize, ReadoutSetpointSize> = {
  * transmitter on a process diagram.
  *
  * The value content (leading icon, optional advice and setpoint segments,
- * value, unit) is laid out inline. Numeric formatting follows the
- * readout-setpoint convention via the shared `readout-formatters` helpers, so it
- * supports fixed-width values and muted leading zeros. The leading icon is
- * slotted so the consumer provides the type-specific content; the advice and
- * setpoint segments reuse `<obc-readout-advice>` and `<obc-readout-setpoint>`
- * and share the value's numeric formatting.
+ * value, unit) is laid out inline. Numeric formatting follows the readout
+ * convention via the shared `readout-formatters` helpers, so it supports
+ * fixed-width values and muted leading zeros. The leading icon is slotted so the
+ * consumer provides the type-specific content; the advice and setpoint segments
+ * are `<obc-readout-block>` instances and share the value's numeric formatting.
  *
  * ### Features / Variants
  * - **`value`** – white, bordered box showing an icon, value and unit. Opt into a
@@ -54,9 +50,9 @@ const readoutSizeBySize: Record<TransmitterButtonSize, ReadoutSetpointSize> = {
  *   with `hasSetPoint`/`setpointValue`.
  * - **`tag`** – a static rounded pill showing a short identifier (e.g. `TT`)
  *   from the `label` property, with no live value.
- * - **`size`** – `small`, `regular`, `medium` or `large`, scaling the value text,
- *   the icon glyph and the advice/setpoint segments. The unit stays at a fixed
- *   size across all sizes.
+ * - **`size`** – `regular`, `medium` or `large`, scaling the value text, the icon
+ *   glyph and the advice/setpoint segments. The unit stays at a fixed size across
+ *   all sizes.
  * - **Formatting** – `fractionDigits` sets the decimal precision, `minValueLength`
  *   reserves a minimum total digit count, and `hasHintedZeros` renders the
  *   reserved leading positions as muted zeros (e.g. `0012.3`). `showZeroPadding`
@@ -147,14 +143,15 @@ export class ObcTransmitterButton extends LitElement {
       return nothing;
     }
     return html`
-      <obc-readout-advice
+      <obc-readout-block
         class="advice"
+        .variant=${ReadoutBlockVariant.advice}
         .size=${readoutSizeBySize[this.size]}
-        .value=${this.adviceValue}
+        .value=${this.adviceValue ?? null}
         .fractionDigits=${this.fractionDigits}
-        .minValueLength=${this.minValueLength}
-        .hasHintedZeros=${this.hasHintedZeros}
-      ></obc-readout-advice>
+        .maxDigits=${this.minValueLength}
+        .hintedZeros=${this.hasHintedZeros}
+      ></obc-readout-block>
     `;
   }
 
@@ -163,18 +160,15 @@ export class ObcTransmitterButton extends LitElement {
       return nothing;
     }
     return html`
-      <obc-readout-setpoint
+      <obc-readout-block
         class="setpoint"
-        .variant=${ReadoutSetpointVariant.setpoint}
-        .mode=${ReadoutSetpointMode.display}
+        .variant=${ReadoutBlockVariant.setpoint}
         .size=${readoutSizeBySize[this.size]}
-        .value=${this.setpointValue}
+        .value=${this.setpointValue ?? null}
         .fractionDigits=${this.fractionDigits}
-        .minValueLength=${this.minValueLength}
-        .hasHintedZeros=${this.hasHintedZeros}
-      >
-        <obi-input-right slot="icon"></obi-input-right>
-      </obc-readout-setpoint>
+        .maxDigits=${this.minValueLength}
+        .hintedZeros=${this.hasHintedZeros}
+      ></obc-readout-block>
     `;
   }
 

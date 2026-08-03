@@ -69,11 +69,6 @@
   color: var(--element-neutral-color);
 }
 
-.size-small .icon ::slotted(*) {
-  width: 12px;
-  height: 12px;
-}
-
 .size-regular .icon ::slotted(*) {
   width: 16px;
   height: 16px;
@@ -87,10 +82,6 @@
 .size-large .icon ::slotted(*) {
   width: 24px;
   height: 24px;
-}
-
-.size-small .value {
-  @mixin font-instrument-value-small-neutral;
 }
 
 .size-regular .value {

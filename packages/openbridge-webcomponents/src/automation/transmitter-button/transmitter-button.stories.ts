@@ -35,7 +35,6 @@ const meta: Meta<typeof ObcTransmitterButton> = {
     },
     size: {
       options: [
-        TransmitterButtonSize.small,
         TransmitterButtonSize.regular,
         TransmitterButtonSize.medium,
         TransmitterButtonSize.large,
@@ -95,11 +94,6 @@ export const WithSetpoint: Story = {
 
 export const WithAdviceAndSetpoint: Story = {
   args: {hasIcon: true, hasAdvice: true, hasSetPoint: true},
-  render: (args) => renderComponent(args as ObcTransmitterButton),
-};
-
-export const Small: Story = {
-  args: {size: TransmitterButtonSize.small, hasIcon: true},
   render: (args) => renderComponent(args as ObcTransmitterButton),
 };
 
