@@ -34,13 +34,15 @@ const headerRowStyle = 'display: flex; align-items: center;';
 const bodyRowStyle = 'display: flex; align-items: center;';
 
 /**
- * Overview catalog of the `obc-pipe-*` component family: straight runs,
- * corners, junctions (tee, cross), terminators (endpoint, arrow), and
- * non-connecting crossings (overlap). This story has no single backing
- * component — it renders every member of the family side by side so the
- * shared value/size/medium-color vocabulary can be compared at a glance.
- * See each component's own story (`Automation/Pipe/Straight`,
- * `Automation/Pipe/Corner`, etc.) for the full interactive controls.
+ * Overview catalog and usage guide for the `obc-pipe-*` component family:
+ * straight runs, corners, junctions (tee, cross), terminators (endpoint,
+ * arrow), and non-connecting crossings (overlap). This story has no single
+ * backing component — it renders every member of the family side by side so
+ * the shared value/size/medium-color vocabulary can be compared at a glance,
+ * and its docs page carries the grid-placement rules for composing members
+ * into a connected diagram. See each component's own story
+ * (`Automation/Pipe/Straight`, `Automation/Pipe/Corner`, etc.) for the full
+ * interactive controls.
  */
 const meta: Meta = {
   title: 'Automation/Pipe/Overview',
@@ -48,8 +50,32 @@ const meta: Meta = {
   parameters: {
     docs: {
       description: {
-        component:
-          'Visual catalog of the `obc-pipe-*` family. The top grid shows every `value` × every `size` for `obc-pipe-straight`; the rows below show one representative size/value/direction combination for each of the other family members: `obc-pipe-corner`, `obc-pipe-tee`, `obc-pipe-cross`, `obc-pipe-endpoint`, `obc-pipe-arrow`, and `obc-pipe-overlap`.',
+        component: [
+          'Visual catalog and usage guide for the `obc-pipe-*` family. The top grid shows every `value` × every `size` for `obc-pipe-straight`; the family row shows one representative of each other member; the connected example is a copy-paste starting point for composing a diagram.',
+          '',
+          '## Choosing a member',
+          '',
+          '| Component | Use for |',
+          '| --- | --- |',
+          '| `obc-pipe-straight` | A run of pipe, any whole or fractional number of cells long |',
+          '| `obc-pipe-corner` | A 90° bend |',
+          '| `obc-pipe-tee` | Three-way junction |',
+          '| `obc-pipe-cross` | Four-way junction |',
+          '| `obc-pipe-endpoint` | Terminating a run with a capped end |',
+          '| `obc-pipe-arrow` | Terminating a run with a flow-direction arrowhead (`flow` selects in/out) |',
+          '| `obc-pipe-overlap` | Two runs crossing *without* connecting |',
+          '',
+          'All members share the same `value`, `size`, and `medium-color` vocabulary, so a diagram changes state or scale by updating the same props everywhere.',
+          '',
+          '## Placing components on the grid',
+          '',
+          'Components compose on a 24px grid. Each host anchors its connection point at its own top-left origin, so absolute-position each piece at `left/top = column/row × 24px`:',
+          '',
+          '- **Fittings** (corner, tee, cross, endpoint, arrow, overlap) anchor at their tile **centre**; their open mouths sit half a cell (12px) out from the anchor, at the tile edges.',
+          '- **Straights** anchor at their **start mouth** and extend `length` cells toward `orientation`.',
+          '- A run connecting to a fitting must **stop at the fitting’s tile edge** — half a cell short of the fitting’s anchor — so runs sit at fractional positions with fractional lengths (see the connected example).',
+          '- Two fittings whose tiles abut (anchors one cell apart) connect directly with no run between them.',
+        ].join('\n'),
       },
     },
   },
