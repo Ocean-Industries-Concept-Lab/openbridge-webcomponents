@@ -13,6 +13,7 @@ import {
   widthDecorator,
 } from '../../storybook-util.js';
 import {AdviceState, AdviceType} from './advice.js';
+import {PortStarboardElement} from '../../svghelpers/port-starboard.js';
 import {InstrumentState, Priority} from '../types.js';
 import {TickmarkType} from './tickmark.js';
 import {html, svg} from 'lit';
@@ -199,6 +200,55 @@ export const WithStarboardPortIndicator: Story = {
     state: InstrumentState.active,
     priority: Priority.enhanced,
     starboardPortIndicator: true,
+  },
+};
+
+export const PortStarboardFace: Story = {
+  args: {
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
+    portStarboard: true,
+    angleSetpoint: 45,
+  },
+};
+
+export const PortStarboardFaceSector: Story = {
+  args: {
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
+    portStarboard: true,
+    watchCircleType: WatchCircleType.double,
+    areas: [
+      {
+        startAngle: 90,
+        endAngle: 270,
+        roundInsideCut: true,
+        roundOutsideCut: true,
+      },
+    ],
+  },
+};
+
+export const PortStarboardFaceRotated: Story = {
+  args: {
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
+    portStarboard: true,
+    rotation: 45,
+  },
+};
+
+export const PortStarboardSetpoint: Story = {
+  args: {
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
+    portStarboard: true,
+    portStarboardElements: [
+      PortStarboardElement.face,
+      PortStarboardElement.setpoint,
+    ],
+    angleSetpoint: 45,
+    setpointPortStarboardSign: 1,
   },
 };
 
