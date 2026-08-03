@@ -64,12 +64,12 @@ export class ObcPipeCorner extends LitElement {
     const rotation = ROTATION_BY_DIRECTION[this.direction];
     return html`
       <svg
-        class="pipe"
+        class="pipe pipe-rotated"
         width=${GRID}
         height=${GRID}
         viewBox="0 0 ${GRID} ${GRID}"
         xmlns="http://www.w3.org/2000/svg"
-        transform="rotate(${rotation} ${GRID / 2} ${GRID / 2})"
+        transform="translate(-12 -12) rotate(${rotation} ${GRID / 2} ${GRID / 2})"
       >
         ${renderPipeChannel(channel, stroke)}
       </svg>

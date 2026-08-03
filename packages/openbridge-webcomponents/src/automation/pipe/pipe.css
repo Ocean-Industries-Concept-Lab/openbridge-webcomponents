@@ -10,6 +10,20 @@ svg {
   overflow: visible;
 }
 
+/* `rotate(...)` on the svg itself (used by every direction-aware pipe piece
+   to reuse one drawn shape for all four orientations) rotates the box's
+   rendered position too, so the `top/left: -12px` above — tuned for the
+   unrotated case — would land at a different host-relative offset per
+   rotation angle. Rotated pieces cancel that out by folding the -12,-12
+   anchor into their own `transform` attribute (as an outer `translate`,
+   unaffected by their own `rotate`) instead, so this class removes the
+   CSS-level offset that would otherwise double up with it. */
+svg.pipe-rotated {
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+}
+
 /* medium-flow border reads --base-<family>-600 by default; dusk's base scales
    run inverted, so its border reads -500. Confined to CSS to keep the family
    JS-free and theme-reactive. */
