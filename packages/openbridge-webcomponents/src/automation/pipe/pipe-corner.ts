@@ -2,8 +2,8 @@ import {LitElement, html, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import {resolvePipeStroke, GRID} from './pipe-styles.js';
-import {cornerPath} from './pipe-geometry.js';
-import {renderPipeStrokes} from './pipe-render.js';
+import {cornerChannel} from './pipe-geometry.js';
+import {renderPipeChannel} from './pipe-render.js';
 import type {PipeValue, PipeSize, PipeDirection, MediumColor} from './pipe-types.js';
 import componentStyle from './pipe.css?inline';
 
@@ -60,7 +60,7 @@ export class ObcPipeCorner extends LitElement {
 
   override render() {
     const stroke = resolvePipeStroke(this.value, this.size, this.mediumColor);
-    const d = cornerPath(this.direction);
+    const channel = cornerChannel(this.direction, this.size);
     const rotation = ROTATION_BY_DIRECTION[this.direction];
     return html`
       <svg
@@ -71,7 +71,7 @@ export class ObcPipeCorner extends LitElement {
         xmlns="http://www.w3.org/2000/svg"
         transform="rotate(${rotation} ${GRID / 2} ${GRID / 2})"
       >
-        ${renderPipeStrokes(d, stroke)}
+        ${renderPipeChannel(channel, stroke)}
       </svg>
     `;
   }

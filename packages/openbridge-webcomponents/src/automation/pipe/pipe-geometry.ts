@@ -10,6 +10,42 @@ export function straightPath(length: number, orientation: 'horizontal' | 'vertic
     : `M ${C} ${C} L ${C} ${C + span}`;
 }
 
+// A pipe channel: the centreline `inner` path (stroked at the fill width, in
+// the fill color) plus the two `walls` paths flanking it (each stroked at
+// 1px, in the outline color) — the walled-channel render model from
+// FIGMA-GROUND-TRUTH.md. `wallOffset` is the perpendicular distance from the
+// centreline to each wall's own centreline: `fill/2 + 0.5`, which lands the
+// 1px wall stroke's outer edge exactly on the measured outline width.
+export interface PipeChannel {
+  inner: string;
+  walls: [string, string];
+}
+
+// Straight channel: the centreline plus two parallel offset lines. For a
+// horizontal run the walls are horizontal lines offset in y; for a vertical
+// run they are offset in x.
+export function straightChannel(
+  length: number,
+  orientation: 'horizontal' | 'vertical',
+  size: PipeSize
+): PipeChannel {
+  const span = length * GRID;
+  const fill = STROKE_WEIGHTS[size].fill;
+  const wallOffset = fill / 2 + 0.5;
+  const inner = straightPath(length, orientation);
+  const walls: [string, string] =
+    orientation === 'horizontal'
+      ? [
+          `M ${C} ${C - wallOffset} L ${C + span} ${C - wallOffset}`,
+          `M ${C} ${C + wallOffset} L ${C + span} ${C + wallOffset}`,
+        ]
+      : [
+          `M ${C - wallOffset} ${C} L ${C - wallOffset} ${C + span}`,
+          `M ${C + wallOffset} ${C} L ${C + wallOffset} ${C + span}`,
+        ];
+  return {inner, walls};
+}
+
 // Corner: pipe enters from the grid edge toward the centre, bends by `radius`,
 // leaves toward `direction`. `sweep` chosen so the arc bulges away from the
 // inner corner. Legs are one grid cell long.
@@ -30,6 +66,45 @@ export function cornerPath(_direction: PipeDirection, radius: number = CORNER_RA
     `A ${radius} ${radius} 0 0 ${sweep} ${bendX} ${bendY + radius} ` +
     `L ${bendX} ${leaveY}`
   );
+}
+
+// Corner channel: the centreline arc plus two concentric wall arcs sharing
+// the SAME arc centre `(bendX-radius, bendY+radius)` as the centreline arc
+// (verified: an arc of radius `r±wallOffset` from that shared centre, with
+// the horizontal leg y-shifted and the vertical leg x-shifted by
+// `wallOffset`, stays exactly `wallOffset` from the centreline everywhere).
+// The INNER wall (radius `r1 = r - wallOffset`, hugging the pivot) shifts
+// its horizontal leg toward the centre (`y = bendY + wallOffset`) and its
+// vertical leg toward the centre (`x = bendX - wallOffset`); the OUTER wall
+// (radius `r2 = r + wallOffset`) shifts the opposite way. Mirrors
+// `corner-line.ts`'s `r1`/`r2` pattern, adapted to this file's enter-left/
+// leave-bottom canonical orientation.
+export function cornerChannel(
+  _direction: PipeDirection,
+  size: PipeSize,
+  radius: number = CORNER_RADIUS
+): PipeChannel {
+  const fill = STROKE_WEIGHTS[size].fill;
+  const wallOffset = fill / 2 + 0.5;
+  const r1 = radius - wallOffset;
+  const r2 = radius + wallOffset;
+  const enterX = 0;
+  const bendX = C;
+  const bendY = C;
+  const leaveY = GRID;
+  const sweep = 1;
+  const inner = cornerPath(_direction, radius);
+  const walls: [string, string] = [
+    `M ${enterX} ${bendY + wallOffset} ` +
+      `L ${bendX - radius} ${bendY + wallOffset} ` +
+      `A ${r1} ${r1} 0 0 ${sweep} ${bendX - wallOffset} ${bendY + radius} ` +
+      `L ${bendX - wallOffset} ${leaveY}`,
+    `M ${enterX} ${bendY - wallOffset} ` +
+      `L ${bendX - radius} ${bendY - wallOffset} ` +
+      `A ${r2} ${r2} 0 0 ${sweep} ${bendX + wallOffset} ${bendY + radius} ` +
+      `L ${bendX + wallOffset} ${leaveY}`,
+  ];
+  return {inner, walls};
 }
 
 // ---------------------------------------------------------------------------

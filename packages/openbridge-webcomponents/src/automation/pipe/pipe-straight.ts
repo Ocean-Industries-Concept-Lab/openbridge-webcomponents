@@ -2,8 +2,8 @@ import {LitElement, html, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import {resolvePipeStroke, GRID} from './pipe-styles.js';
-import {straightPath} from './pipe-geometry.js';
-import {renderPipeStrokes} from './pipe-render.js';
+import {straightChannel} from './pipe-geometry.js';
+import {renderPipeChannel} from './pipe-render.js';
 import type {PipeValue, PipeSize, MediumColor} from './pipe-types.js';
 import componentStyle from './pipe.css?inline';
 
@@ -56,7 +56,7 @@ export class ObcPipeStraight extends LitElement {
     const span = this.length * GRID;
     const width = this.orientation === 'horizontal' ? GRID + span : GRID;
     const height = this.orientation === 'horizontal' ? GRID : GRID + span;
-    const d = straightPath(this.length, this.orientation);
+    const channel = straightChannel(this.length, this.orientation, this.size);
     return html`
       <svg
         class="pipe"
@@ -65,7 +65,7 @@ export class ObcPipeStraight extends LitElement {
         viewBox="0 0 ${width} ${height}"
         xmlns="http://www.w3.org/2000/svg"
       >
-        ${renderPipeStrokes(d, stroke)}
+        ${renderPipeChannel(channel, stroke)}
       </svg>
     `;
   }

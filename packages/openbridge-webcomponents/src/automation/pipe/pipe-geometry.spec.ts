@@ -1,7 +1,9 @@
 import {describe, it, expect} from 'vitest';
 import {
   straightPath,
+  straightChannel,
   cornerPath,
+  cornerChannel,
   endpointStubPath,
   endpointCapPath,
   arrowHeadPath,
@@ -9,7 +11,7 @@ import {
   crossPath,
   overlapPath,
 } from './pipe-geometry.js';
-import {CORNER_RADIUS, GRID} from './pipe-styles.js';
+import {CORNER_RADIUS, GRID, STROKE_WEIGHTS} from './pipe-styles.js';
 import type {PipeSize} from './pipe-types.js';
 
 function pathPoints(d: string): {x: number; y: number}[] {
@@ -52,6 +54,64 @@ describe('cornerPath', () => {
 
   it('honours an explicit radius', () => {
     expect(cornerPath('right', 4)).toContain('A 4');
+  });
+});
+
+describe('straightChannel', () => {
+  it('medium: walls sit at y=9 and y=14 either side of the y=12 centreline', () => {
+    const {inner, walls} = straightChannel(1, 'horizontal', 'medium');
+    expect(inner).toEqual(straightPath(1, 'horizontal'));
+    // wallOffset = fill/2 + 0.5 = 4/2 + 0.5 = 2.5 -> 12-2.5=9.5, 12+2.5=14.5
+    // (ground truth's "y=9 and y=14" are pixel ROWS the 1px-centred stroke
+    // covers; the wall centreline itself sits at the half-integer midpoint).
+    expect(walls[0]).toContain('9.5');
+    expect(walls[1]).toContain('14.5');
+  });
+
+  it('walls run parallel to the centreline for the full span', () => {
+    const {walls} = straightChannel(2, 'horizontal', 'medium');
+    for (const wall of walls) {
+      expect(wall).toContain(`${12 + 2 * GRID}`);
+    }
+  });
+
+  it('vertical orientation offsets the walls in x instead of y', () => {
+    const {walls} = straightChannel(1, 'vertical', 'medium');
+    expect(walls[0]).toContain('9.5 12');
+    expect(walls[1]).toContain('14.5 12');
+  });
+
+  it.each<PipeSize>(['small', 'medium', 'large', 'xl'])(
+    'wall offset is fill/2 + 0.5 at every size (%s)',
+    (size) => {
+      const {walls} = straightChannel(1, 'horizontal', size);
+      const expectedOffset = STROKE_WEIGHTS[size].fill / 2 + 0.5;
+      expect(walls[0]).toContain(`${12 - expectedOffset}`);
+      expect(walls[1]).toContain(`${12 + expectedOffset}`);
+    }
+  );
+});
+
+describe('cornerChannel', () => {
+  it('inner matches cornerPath for the same direction/radius', () => {
+    const {inner} = cornerChannel('top', 'medium');
+    expect(inner).toEqual(cornerPath('top'));
+  });
+
+  it('both wall arcs are centred on the same arc centre as the centreline (equidistant radii)', () => {
+    const size: PipeSize = 'medium';
+    const radius = CORNER_RADIUS;
+    const fill = STROKE_WEIGHTS[size].fill;
+    const wallOffset = fill / 2 + 0.5;
+    const {walls} = cornerChannel('top', size, radius);
+    expect(walls[0]).toContain(`A ${radius - wallOffset} ${radius - wallOffset}`);
+    expect(walls[1]).toContain(`A ${radius + wallOffset} ${radius + wallOffset}`);
+  });
+
+  it('honours an explicit radius', () => {
+    const {walls} = cornerChannel('right', 'medium', 4);
+    expect(walls[0]).toContain('A 1.5 1.5');
+    expect(walls[1]).toContain('A 6.5 6.5');
   });
 });
 
