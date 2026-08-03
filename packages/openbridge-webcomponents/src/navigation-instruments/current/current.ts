@@ -18,8 +18,14 @@ export enum CurrentType {
 
 const CURRENT_PATTERN_SCALE_VESSEL = 1.39;
 const CURRENT_PATTERN_SCALE_DIRECTION = 2.0;
-/** Chevron-tip anchor radius for the peripheral icon (vessel type), from Figma. */
-const CURRENT_ICON_PERIPHERY_RADIUS = 116;
+/**
+ * Chevron-tip anchor radius for the peripheral icon (vessel type): the tip
+ * sits on the track band's inner edge (112), so the 48-unit glyph box fills
+ * the band (112–160) exactly, per the OpenBridge 6.1 design.
+ */
+const CURRENT_ICON_PERIPHERY_RADIUS = innerRingRadiusFor(
+  WatchCircleType.double
+);
 /** Scale of the centered 24-unit chevron glyph (direction type), from Figma (168/24). */
 const CURRENT_DIRECTION_ICON_SCALE = 7;
 
@@ -56,6 +62,9 @@ export function clampCurrentSpeed(value: number | null): number | null {
  *   the enhanced (blue) palette.
  * - **Vessel image**: configurable silhouette rotating with
  *   `vesselHeadingDeg` (vessel type).
+ * - **Pattern toggle & wave tuning**: `hasPattern` switches the band pattern
+ *   off; `waveLength`, `waveHeight` and `waveSpeed` tune the band spacing,
+ *   intensity and drift motion.
  *
  * ## Usage Guidelines
  *
@@ -89,6 +98,28 @@ export class ObcCurrent extends LitElement {
   @property({type: Number}) currentFromDirection: number | null = null;
   /** Color priority: `Priority.enhanced` uses the blue/enhanced palette (default: `Priority.regular`). */
   @property({type: String}) priority: Priority = Priority.regular;
+  /**
+   * Show the force-graphics band pattern behind the watch face.
+   * @availableWhen currentFromDirection!=null
+   */
+  @property({type: Boolean, attribute: false}) hasPattern = true;
+  /**
+   * Wavelength of the pattern bands as a multiplier on the design spacing
+   * (1 = design, 0.5 = twice as dense).
+   * @availableWhen hasPattern==true && currentFromDirection!=null
+   */
+  @property({type: Number}) waveLength = 1;
+  /**
+   * Wave intensity: the peak opacity the pattern bands fade up to (0–1).
+   * @availableWhen hasPattern==true && currentFromDirection!=null
+   */
+  @property({type: Number}) waveHeight = 1;
+  /**
+   * Drift speed of the pattern in wavelengths per second, moving with the
+   * flow (negative drifts against it); 0 keeps the pattern static.
+   * @availableWhen hasPattern==true && currentFromDirection!=null
+   */
+  @property({type: Number}) waveSpeed = 0;
   /**
    * The image of the vessel.
    * @availableWhen type==vessel
@@ -148,7 +179,7 @@ export class ObcCurrent extends LitElement {
   }
 
   private renderForcePattern(watchCircleType: WatchCircleType) {
-    if (this.currentFromDirection == null) {
+    if (!this.hasPattern || this.currentFromDirection == null) {
       return nothing;
     }
     return html`
@@ -162,6 +193,9 @@ export class ObcCurrent extends LitElement {
           color: this.enhanced
             ? 'var(--instrument-enhanced-tertiary-color)'
             : undefined,
+          waveLength: this.waveLength,
+          waveHeight: this.waveHeight,
+          waveSpeed: this.waveSpeed,
         })}
       </svg>
     `;

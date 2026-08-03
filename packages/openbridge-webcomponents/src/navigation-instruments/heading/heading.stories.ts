@@ -128,12 +128,14 @@ export const WithVectorArrows: Story = {
 
 /**
  * Below the label-reserve cap (~200px for the NSWE + north-arrow decor) the
- * frame reports `labelsHidden` and the instrument drops the labels and the
- * north arrow instead of letting them clip — the same graceful degradation
- * the tick-label instruments use (issue #1021).
+ * frame reports `labelsHidden` and the instrument drops the labels instead
+ * of letting them clip — the same graceful degradation the tick-label
+ * instruments use (issue #1021). The north arrow stays visible on even the
+ * smallest face: below the small-scale threshold it renders as a compact
+ * triangle at the ring that scales with the face, so it never clips.
  */
 export const SmallContainerDegraded: Story = {
-  name: 'Small Container (160px, Labels + Arrow Hidden Past Cap)',
+  name: 'Small Container (160px, Labels Hidden Past Cap)',
   args: {
     width: 160,
   },

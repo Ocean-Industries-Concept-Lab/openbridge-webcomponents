@@ -15,10 +15,12 @@ import {SetpointBundle} from '../../svghelpers/setpoint-bundle.js';
 import '../watch/watch.js';
 import {
   OUTER_RING_RADIUS,
+  WatchCircleType,
   type WatchBarArea,
   type WatchNeedle,
 } from '../watch/watch.js';
 import {
+  BAND_INNER_RADIUS,
   LANE_DIVIDER_RADIUS,
   LANE_DIVIDER_WIDTH,
   PRIMARY_SUBBAND_INNER_RADIUS,
@@ -411,6 +413,21 @@ export class ObcTopViewPropulsion extends LitElement {
     ></path>`;
   }
 
+  /**
+   * Thin outline on the track band's inner edge, always shown per the
+   * design's track face. Drawn on the overlay because the watch paints its
+   * band bars over the ring circles, which would swallow a watch-side line.
+   */
+  private renderInnerRingLine() {
+    return svg`<circle
+      r=${BAND_INNER_RADIUS}
+      fill="none"
+      stroke="var(--instrument-frame-tertiary-color)"
+      stroke-width="1"
+      vector-effect="non-scaling-stroke"
+    ></circle>`;
+  }
+
   private renderPropeller() {
     return svg`<g transform="scale(${PROPELLER_SCALE}) translate(-80 -80)">${
       propellerImages[this.propeller]
@@ -448,6 +465,7 @@ export class ObcTopViewPropulsion extends LitElement {
         <obc-watch
           .touching=${this.touching}
           .arcFrame=${frame}
+          .watchCircleType=${WatchCircleType.double}
           .tickmarks=${shownTickmarks}
           .state=${this.state}
           .priority=${this.priority}
@@ -465,8 +483,8 @@ export class ObcTopViewPropulsion extends LitElement {
           .tickmarkStyle=${this.tickmarkStyle}
         ></obc-watch>
         <svg viewBox=${frame.viewBox} xmlns="http://www.w3.org/2000/svg">
-          ${this.renderLoadingArc()} ${this.renderSecondaryArc()}
-          ${this.renderPropeller()}
+          ${this.renderInnerRingLine()} ${this.renderLoadingArc()}
+          ${this.renderSecondaryArc()} ${this.renderPropeller()}
         </svg>
       </div>
     `;
