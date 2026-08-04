@@ -172,6 +172,12 @@ const COMPACT_BASE_PADDING = 12;
 const COMPACT_MAXMIN_LABEL_EDGE_X = 99;
 const COMPACT_MAXMIN_LABEL_Y = 121.5;
 
+/* The design's Small variant is a fixed 240×240 dial box (the 314px face
+   cropped to the dial) — it never grows with its slot, so the compact face
+   caps here and stays visibly smaller than a Large face in the same slot.
+   `faceDiameter` still overrides via the pinned-scale path. */
+const COMPACT_NATURAL_BOX_PX = 240;
+
 /** Cap for full-circle arcs so start and end never coincide in path space. */
 const FULL_CIRCLE_EPSILON_DEG = 0.05;
 
@@ -320,10 +326,10 @@ export class ObcGaugeProportional extends SetpointMixin(LitElement) {
    * The design's Large variant: `alignment`-controlled scale labels, in-dial
    * readouts and the name row. When `false` (default), the Small variant
    * renders — the face cropped to the dial with icon-only center content and
-   * a readout stack below. Physical size always follows the container (or
-   * `faceDiameter`); this property selects the content density, so pair
-   * `large` with a correspondingly larger layout slot like the design's
-   * 512 vs 240 frames.
+   * a readout stack below. The Large face fills its container (or
+   * `faceDiameter`); the Small face shrinks with a tight slot but caps at
+   * the design's natural 240px dial box, so it always reads smaller than a
+   * Large face in the same slot.
    */
   @property({type: Boolean}) large = false;
   /** Render the readout stack below the face in the compact variant. */
@@ -379,15 +385,17 @@ export class ObcGaugeProportional extends SetpointMixin(LitElement) {
 
   /**
    * The compact face fits the largest square inside the container once the
-   * stack's fixed height is reserved — so a height-constrained slot never
-   * renders the compact dial larger than the large variant's dial would be.
-   * Falls back to width-driven sizing when no usable height is measured
-   * (auto-height hosts size themselves from the content).
+   * stack's fixed height is reserved, capped at the design's natural
+   * 240px dial box — the Small variant shrinks with a tight slot but never
+   * grows past its design size, keeping it smaller than a Large face in the
+   * same slot. Falls back to width-driven sizing when no usable height is
+   * measured (auto-height hosts size themselves from the content).
    */
   private get compactContainerPx(): {width: number; height: number} {
     const {width, height} = measureContainerPx(this);
     const dialHeight = height - this.compactStackAllowancePx;
-    const side = dialHeight > 0 ? Math.min(width, dialHeight) : width;
+    const fit = dialHeight > 0 ? Math.min(width, dialHeight) : width;
+    const side = Math.min(fit, COMPACT_NATURAL_BOX_PX);
     return {width: side, height: side};
   }
 
