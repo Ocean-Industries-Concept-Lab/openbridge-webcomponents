@@ -97,6 +97,10 @@ export class ObcAutomationButtonReadoutStack extends LitElement {
 
   renderValue(readout: AutomationButtonReadoutStackValue): HTMLTemplateResult {
     const v = readout.value.toFixed(0);
+    // The minus sign occupies a digit slot, so every readout is nDigits wide;
+    // it renders before the dimmed padding ("-05", not "0-5").
+    const sign = v.startsWith('-') ? '-' : '';
+    const digits = sign ? v.slice(1) : v;
     const zeroPadding =
       v.length < readout.nDigits ? '0'.repeat(readout.nDigits - v.length) : '';
 
@@ -148,9 +152,9 @@ export class ObcAutomationButtonReadoutStack extends LitElement {
     }
     const content = html`
       <span class="value-text"
-        >${zeroPadding
+        >${sign}${zeroPadding
           ? html`<span class="pad">${zeroPadding}</span>`
-          : nothing}${v}</span
+          : nothing}${digits}</span
       >
       <span class="unit">${readout.unit}</span>
     `;

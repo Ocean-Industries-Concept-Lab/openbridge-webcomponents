@@ -27,6 +27,7 @@ packages/openbridge-webcomponents-svelte/*
 **/.junie/
 **/settings.local.json
 packages/openbridge-webcomponents/__vis__/darwin/
+packages/openbridge-webcomponents/__vis__/win32/
 .idea/
 **/.idea/
 CLAUDE.md

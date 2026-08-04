@@ -1000,7 +1000,10 @@ export class ObcGaugeProportional extends SetpointMixin(LitElement) {
     if (this.secondaryValue !== undefined) {
       // TODO(designer): the design shows a device-specific icon (e.g. battery)
       // on the secondary row; obc-automation-button-readout-stack has no such
-      // icon option yet.
+      // icon option yet. The stack also cannot render a dashed placeholder
+      // row (its value type is a plain number), so unlike the in-dial
+      // readouts this row appears only once secondaryValue arrives — a brief
+      // dial/stack mismatch for split-type devices awaiting data.
       readouts.push({
         type: 'value',
         value: this.clamp(this.secondaryValue),
