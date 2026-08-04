@@ -1328,14 +1328,14 @@ export const TestCases: Story = {
           .size=${ReadoutSize.small}
           .direction=${ReadoutDirection.horizontal}
           .value=${'Thermo On'}
-          .valueType=${'string'}
+          .valueType=${ReadoutValueType.string}
           .label=${'Operating mode'}
         ></obc-readout>
         <obc-readout
           .size=${ReadoutSize.small}
           .direction=${ReadoutDirection.horizontal}
           .value=${'Normal'}
-          .valueType=${'string'}
+          .valueType=${ReadoutValueType.string}
           .label=${'Status'}
         ></obc-readout>
       </div>`;

@@ -117,13 +117,15 @@ export const Default: Story = {
 
 /**
  * **Mixed text and numeric rows.** Rows with `valueType="string"` render their
- * value verbatim and are **excluded** from the auto-computed numeric reserver,
- * so a long string like "Thermo On" does not inflate the shared value column —
- * the numeric rows still align with each other, and each text row sizes to its
- * own content.
+ * value verbatim and are **excluded from the auto-computed numeric reserver in
+ * both directions**:
  *
- * The list owns the reservers, so a text row that *should* join the shared
- * column needs an explicit `valueOptions.spaceReserver` set by the consumer.
+ * - they do not *contribute* to it, so a long string like "Thermo On" cannot
+ *   inflate the shared value column for every numeric row;
+ * - they do not *receive* it either, so a short string like "Auto" is not padded
+ *   out to a digit width. Each text row's value block sizes to its own content.
+ *
+ * A text row's setpoint / advice blocks stay numeric and are reserved normally.
  */
 const TEXT_ROWS: Row[] = [
   {
@@ -135,6 +137,15 @@ const TEXT_ROWS: Row[] = [
   {
     label: 'Status',
     value: 'Normal',
+    valueType: ReadoutValueType.string,
+    unit: '',
+  },
+  // Deliberately shorter than the numeric reserve ("0000.0"), so this row
+  // demonstrates that a text value hugs its content instead of being padded
+  // out to the digit column's width.
+  {
+    label: 'Mode',
+    value: 'Auto',
     valueType: ReadoutValueType.string,
     unit: '',
   },
@@ -241,6 +252,14 @@ export const TestTextRowAttributes: Story = {
           valuetype="string"
         ></obc-readout-list-item>
         <obc-readout-list-item
+          id="short-text-row"
+          label="Mode"
+          value="Auto"
+          valuetype="string"
+          maxdigits="8"
+          fractiondigits="3"
+        ></obc-readout-list-item>
+        <obc-readout-list-item
           id="numeric-row"
           label="Pressure"
           unit="Pa"
@@ -257,6 +276,9 @@ export const TestTextRowAttributes: Story = {
       valueType: ReadoutValueType;
       valueOptions?: ReadoutValueOptions;
     };
+    const shortTextRow = canvasElement.querySelector(
+      '#short-text-row'
+    ) as HTMLElement & {valueOptions?: ReadoutValueOptions};
     const numericRow = canvasElement.querySelector(
       '#numeric-row'
     ) as HTMLElement & {valueOptions?: ReadoutValueOptions};
@@ -267,9 +289,17 @@ export const TestTextRowAttributes: Story = {
     // shadow root, so reach through it rather than the row's own.
     const block = textRow.shadowRoot?.querySelector('obc-readout-block');
     await expect(block?.shadowRoot?.textContent).toContain('Thermo On');
-    // The reserver is driven by the 4-digit numeric row, NOT by "Thermo On" —
-    // proving the text row is excluded from the numeric width computation.
+
+    // The reserve is driven by the 4-digit numeric row only. Neither the long
+    // text ("Thermo On") nor the text row's own maxdigits=8 / fractiondigits=3
+    // inflate it — a text block ignores those, so counting them would pad every
+    // numeric row for nothing.
     await expect(numericRow.valueOptions?.spaceReserver).toBe('0000');
+
+    // Text rows do not RECEIVE the numeric reserve either: it is a width in
+    // digits, so it would pad "Auto" out to the numeric column's width.
+    await expect(textRow.valueOptions?.spaceReserver).toBeUndefined();
+    await expect(shortTextRow.valueOptions?.spaceReserver).toBeUndefined();
   },
 };
 

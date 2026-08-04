@@ -20,7 +20,7 @@ const NONE = 'none';
 
 type BlockArgs = {
   variant: ReadoutBlockVariant;
-  value: number | string;
+  value: number | string | null;
   valueType: ReadoutValueType;
   size: ReadoutBlockSize;
   enhanced: boolean;
@@ -297,7 +297,7 @@ export const TextValue: Story = {
       },
       {
         title: 'null → dash',
-        args: {value: undefined, valueType: ReadoutValueType.string},
+        args: {value: null, valueType: ReadoutValueType.string},
       },
       {
         title: 'numeric string in number mode',
@@ -389,7 +389,7 @@ export const DataQuality: Story = {
         title: 'invalid',
         args: {value: 123, dataQuality: ReadoutBlockDataQuality.invalid},
       },
-      {title: 'null (dash)', args: {value: undefined}},
+      {title: 'null (dash)', args: {value: null}},
     ]),
 };
 

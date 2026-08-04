@@ -286,9 +286,17 @@ export class ObcReadout extends LitElement {
   @property({type: Boolean}) hasDegree = false;
   /** @availableWhen hasDegree==false */
   @property({type: Boolean}) hasDegreeSpacer = false;
-  /** @availableWhen valueType==number */
+  /**
+   * Also formats the numeric setpoint / advice blocks, which stay numeric
+   * even when the value is text.
+   * @availableWhen valueType==number || hasSetpoint==true || hasAdvice==true
+   */
   @property({type: Number}) fractionDigits = 0;
-  /** @availableWhen valueType==number */
+  /**
+   * Also formats the numeric setpoint / advice blocks, which stay numeric
+   * even when the value is text.
+   * @availableWhen valueType==number || hasSetpoint==true || hasAdvice==true
+   */
   @property({type: Number}) maxDigits = 0;
   @property({type: String}) dataQuality?: ReadoutDataQuality;
   // `boolean | …` (not `false | …`): the generated Angular wrapper widens a

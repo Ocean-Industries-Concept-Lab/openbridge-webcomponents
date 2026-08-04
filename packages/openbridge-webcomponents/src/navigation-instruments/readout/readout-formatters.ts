@@ -14,12 +14,26 @@ export enum ReadoutValueType {
   string = 'string',
 }
 
+const READOUT_VALUE_TYPES: readonly string[] = Object.values(ReadoutValueType);
+
+/** Whether `value` is one of the supported {@link ReadoutValueType} values. */
+export function isReadoutValueType(value: unknown): value is ReadoutValueType {
+  return typeof value === 'string' && READOUT_VALUE_TYPES.includes(value);
+}
+
 function isBlank(value: string): boolean {
   return value.trim() === '';
 }
 
 /**
- * Throws when `value` is text but `valueType` is `number`.
+ * Throws when `valueType` is not a supported value, or when `value` is text but
+ * `valueType` is `number`.
+ *
+ * `valueType` is validated first because an attribute carries an unchecked
+ * string: a typo such as `valuetype="strng"` matches neither mode, so every
+ * mode check falls through and the readout silently renders the unavailable
+ * dash — the opposite of the loud failure this contract exists to give.
+ * `undefined`/`null` are allowed and mean "use the default".
  *
  * Attributes are always strings, so a numeric-looking string (`value="10.12"`)
  * is accepted and parsed. Blank strings resolve to the unavailable dash rather
@@ -31,8 +45,18 @@ export function assertReadoutValueType(
   value: number | string | null | undefined,
   valueType: ReadoutValueType
 ): void {
+  // `undefined`/`null` mean "use the default", matching how the components and
+  // the resolvers treat an unset `valueType`.
+  const resolved = valueType ?? ReadoutValueType.number;
+  if (!isReadoutValueType(resolved)) {
+    throw new TypeError(
+      `<${tagName}>: valueType must be ` +
+        `${READOUT_VALUE_TYPES.map((t) => `"${t}"`).join(' or ')} ` +
+        `(got ${JSON.stringify(valueType)}).`
+    );
+  }
   if (
-    valueType !== ReadoutValueType.number ||
+    resolved !== ReadoutValueType.number ||
     typeof value !== 'string' ||
     isBlank(value)
   ) {

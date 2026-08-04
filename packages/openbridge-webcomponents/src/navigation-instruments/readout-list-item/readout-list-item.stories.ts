@@ -482,7 +482,7 @@ export const Off: Story = {
  * quantities ("Thermo On", "Auto", "Normal").
  *
  * The first section reproduces the reference design: two status rows sharing a
- * bar, each a label with a semibold text value, separated by a vertical divider.
+ * bar, each a label with a bold text value, separated by a vertical divider.
  *
  * Under `valueType="string"` the numeric format options (`fractionDigits`,
  * `maxDigits`, `hintedZeros`) are ignored; an explicit `spaceReserver` still

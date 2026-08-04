@@ -3,6 +3,7 @@ import {
   assertReadoutValueType,
   resolveReadoutNumericValue,
   resolveReadoutTextValue,
+  isReadoutValueType,
   ReadoutValueType,
 } from './readout-formatters.js';
 
@@ -73,6 +74,63 @@ describe('assertReadoutValueType', () => {
     expect(() =>
       assertReadoutValueType('obc-readout', 12.4, ReadoutValueType.string)
     ).not.toThrow();
+  });
+
+  // An attribute carries an unchecked string, so a typo matches neither mode.
+  // Without this it falls through every check and silently renders a dash.
+  it('throws for an unrecognised valueType', () => {
+    expect(() =>
+      assertReadoutValueType(
+        'obc-readout',
+        'Auto',
+        'strng' as unknown as ReadoutValueType
+      )
+    ).toThrow(/valueType must be "number" or "string".*"strng"/s);
+  });
+
+  it('throws for an unrecognised valueType even with a numeric value', () => {
+    expect(() =>
+      assertReadoutValueType(
+        'obc-readout',
+        12.4,
+        'STRING' as unknown as ReadoutValueType
+      )
+    ).toThrow(TypeError);
+  });
+
+  // undefined/null mean "use the default", so they must still enforce the
+  // number contract rather than skipping validation entirely.
+  it('treats an unset valueType as number', () => {
+    expect(() =>
+      assertReadoutValueType(
+        'obc-readout',
+        'Auto',
+        undefined as unknown as ReadoutValueType
+      )
+    ).toThrow(TypeError);
+    expect(() =>
+      assertReadoutValueType(
+        'obc-readout',
+        12.4,
+        undefined as unknown as ReadoutValueType
+      )
+    ).not.toThrow();
+  });
+});
+
+describe('isReadoutValueType', () => {
+  it('accepts the supported values', () => {
+    expect(isReadoutValueType('number')).toBe(true);
+    expect(isReadoutValueType('string')).toBe(true);
+  });
+
+  it('rejects anything else', () => {
+    expect(isReadoutValueType('strng')).toBe(false);
+    expect(isReadoutValueType('Number')).toBe(false);
+    expect(isReadoutValueType('')).toBe(false);
+    expect(isReadoutValueType(undefined)).toBe(false);
+    expect(isReadoutValueType(null)).toBe(false);
+    expect(isReadoutValueType(0)).toBe(false);
   });
 });
 
