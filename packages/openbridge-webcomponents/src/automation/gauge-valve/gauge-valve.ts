@@ -1,5 +1,7 @@
 import {LitElement, html, svg, unsafeCSS, nothing} from 'lit';
+import type {PropertyValues} from 'lit';
 import {property} from 'lit/decorators.js';
+import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import compentStyle from './gauge-valve.css?inline';
 import {customElement} from '../../decorator.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
@@ -10,6 +12,13 @@ import {
   SETPOINT_HEIGHT,
   SETPOINT_PATH_FILLED,
 } from '../../svghelpers/setpoint.js';
+import {roundedArch} from '../../svghelpers/roundedArch.js';
+import {
+  computeRadialFrame,
+  estimateLabelWidthPx,
+  measureContainerPx,
+  observeInnerBox,
+} from '../../svghelpers/radial-frame.js';
 import {InstrumentState, Priority} from '../../navigation-instruments/types.js';
 import {renderInstrumentReadout} from '../../navigation-instruments/readout/instrument-readout.js';
 import {ReadoutSize} from '../../navigation-instruments/readout/readout.js';
@@ -18,7 +27,6 @@ import '../../icons/icon-arrow-right-google.js';
 import '../../icons/icon-arrow-down-google.js';
 import '../../icons/icon-off.js';
 import {
-  CENTER,
   SCALE_RADIUS,
   TRACK_INNER_RADIUS,
   TRACK_OUTER_RADIUS,
@@ -26,7 +34,6 @@ import {
   TRACK_HALF_SPANS,
   CAP_INNER_RADIUS,
   CAP_OUTER_RADIUS,
-  annularSectorPath,
   radialLinePath,
   clampPercent,
   inletPercent,
@@ -35,24 +42,25 @@ import {
 } from './gauge-valve-geometry.js';
 
 /**
- * Radial distance (px from center) of the setpoint marker BASE (outer edge).
- * The marker is anchored by its base — ~3px inside the r 188 outline in every
- * visual state — so the outline stroke always passes uninterrupted above it
- * (per the Figma refs); the tip position follows from the state's scale.
+ * Radial distance (SVG units from center) of the setpoint marker BASE (outer
+ * edge). The marker is anchored by its base — ~3 units inside the r 184
+ * outline in every visual state — so the outline stroke always passes
+ * uninterrupted above it (per the Figma refs); the tip position follows from
+ * the state's scale.
  */
-const SETPOINT_BASE_RADIUS = 185;
+const SETPOINT_BASE_RADIUS = 181;
 
-/** Radial distance (px from center) of the 0/50/100 scale labels. */
-const SCALE_LABEL_RADIUS = 202;
+/** Radial distance (SVG units from center) of the 0/50/100 scale labels. */
+const SCALE_LABEL_RADIUS = 198;
 
 /**
- * Radial distance (px from center) of the common inner baseline that all
- * scale ticks grow outward from, inside the face.
+ * Radial distance (SVG units from center) of the common inner baseline that
+ * all scale ticks grow outward from, inside the face.
  */
-const TICK_BASELINE_RADIUS = 168;
+const TICK_BASELINE_RADIUS = 164;
 
-/** Outer radius (px from center) of the minor scale ticks. */
-const TICK_SECONDARY_OUTER_RADIUS = 176;
+/** Outer radius (SVG units from center) of the minor scale ticks. */
+const TICK_SECONDARY_OUTER_RADIUS = 172;
 
 /** Major ticks run from the baseline out to the outline circle. */
 const TICK_PRIMARY_OUTER_RADIUS = SCALE_RADIUS;
@@ -62,6 +70,27 @@ const TICK_SECONDARY_STEP = 5;
 
 /** Scale interval (%) between major ticks. */
 const TICK_PRIMARY_STEP = 25;
+
+/** Side of the center actuator-icon box in SVG units (96/512 of the design). */
+const ICON_SIZE = 96;
+
+/** Top edge (SVG y) of the large-variant readout container per valve type. */
+const READOUT_ANCHOR_Y: Record<'twoWay' | 'threeWay', number> = {
+  twoWay: -144,
+  threeWay: -136,
+};
+
+/**
+ * Base padding passed to `computeRadialFrame`. Large reproduces the Figma 512
+ * canvas — `(176 + 80) * 2` — leaving room for the scale, labels and readout;
+ * compact crops to the face with one unit of margin for the outline stroke.
+ */
+const BASE_PADDING: Record<'large' | 'compact', number> = {
+  large: 80,
+  compact: 9,
+};
+
+const SCALE_LABEL_VALUES = [0, 50, 100];
 
 export enum GaugeValveType {
   twoWay = 'two-way',
@@ -104,6 +133,15 @@ export enum GaugeValveStyle {
  * - `hasLabelStack`: toggles the compact-variant readout stack (an optional
  *   setpoint row, one value row per port, plus an optional `tag` identifier
  *   line); has no effect when `large`
+ *
+ * ## Sizing
+ * The face contain-fits both axes of the host (the largest square that fits;
+ * the compact label stack keeps its fixed text size below the face), like the
+ * other radial instruments. Set `faceDiameter` to pin the ring to a fixed
+ * pixel diameter instead — instruments sharing a `faceDiameter` have equal
+ * ring circumference regardless of variant, matching
+ * `obc-gauge-radial-proportional`. The frame geometry comes from the shared
+ * `computeRadialFrame()`.
  *
  * ## Usage Guidelines
  * Use for analog valve position/flow visualization on overview displays. For
@@ -161,6 +199,20 @@ export class ObcGaugeValve extends SetpointMixin(LitElement) {
    * @availableWhen large==false
    */
   @property({type: Boolean, attribute: false}) hasLabelStack = true;
+  /**
+   * Ring diameter in CSS pixels. When set, the face renders at a fixed
+   * intrinsic size (equal circumference across instruments sharing the
+   * value); when unset (default), the face contain-fits its container.
+   */
+  @property({type: Number, attribute: 'face-diameter', reflect: true})
+  faceDiameter: number | undefined;
+
+  private _resizeController = new ResizeController(this, {});
+
+  override firstUpdated(changed: PropertyValues): void {
+    super.firstUpdated(changed);
+    observeInnerBox(this._resizeController, this.renderRoot);
+  }
 
   /**
    * The shared instrument Priority tier for the setpoint marker and readout.
@@ -181,19 +233,30 @@ export class ObcGaugeValve extends SetpointMixin(LitElement) {
         : TRACK_HALF_SPANS.twoWay;
     const pct = clampPercent(fillPercent);
     const capHalf = (halfSpan * pct) / 100;
+    const barCorner = Math.min(
+      TRACK_CORNER_RADIUS,
+      (capHalf * Math.PI * TRACK_INNER_RADIUS) / 180
+    );
+    const sector = (halfExtent: number, cornerRadius: number) =>
+      roundedArch({
+        startAngle: centerAngle - halfExtent,
+        endAngle: centerAngle + halfExtent,
+        r: TRACK_INNER_RADIUS,
+        R: TRACK_OUTER_RADIUS,
+        roundOutsideCut: true,
+        roundInsideCut: true,
+        roundRadius: cornerRadius,
+      });
     return svg`
       <path
         class="track"
         vector-effect="non-scaling-stroke"
-        d=${annularSectorPath(TRACK_INNER_RADIUS, TRACK_OUTER_RADIUS, centerAngle - halfSpan, centerAngle + halfSpan, TRACK_CORNER_RADIUS)}
+        d=${sector(halfSpan, TRACK_CORNER_RADIUS)}
       />
       ${
         pct > 0
           ? svg`
-        <path
-          class="bar"
-          d=${annularSectorPath(TRACK_INNER_RADIUS, TRACK_OUTER_RADIUS, centerAngle - capHalf, centerAngle + capHalf, TRACK_CORNER_RADIUS)}
-        />
+        <path class="bar" d=${sector(capHalf, barCorner)} />
         ${[centerAngle - capHalf, centerAngle + capHalf].map(
           (angle) => svg`
             <path class="cap-back" d=${radialLinePath(CAP_INNER_RADIUS, CAP_OUTER_RADIUS, angle)} />
@@ -277,13 +340,14 @@ export class ObcGaugeValve extends SetpointMixin(LitElement) {
     `;
   }
 
-  private renderScale() {
+  private renderScale(labelsHidden: boolean) {
     const ticks = [];
     for (let pct = 0; pct <= 100; pct += TICK_SECONDARY_STEP) {
       if (pct % TICK_PRIMARY_STEP === 0) continue;
       ticks.push(svg`
         <path
           class="tick-secondary"
+          vector-effect="non-scaling-stroke"
           d=${radialLinePath(TICK_BASELINE_RADIUS, TICK_SECONDARY_OUTER_RADIUS, scaleAngle(pct))}
         />
       `);
@@ -292,14 +356,17 @@ export class ObcGaugeValve extends SetpointMixin(LitElement) {
       ticks.push(svg`
         <path
           class="tick-primary"
+          vector-effect="non-scaling-stroke"
           d=${radialLinePath(TICK_BASELINE_RADIUS, TICK_PRIMARY_OUTER_RADIUS, scaleAngle(pct))}
         />
       `);
     }
-    const labels = [0, 50, 100].map((pct) => {
-      const pos = polarToCartesian(SCALE_LABEL_RADIUS, scaleAngle(pct));
-      return svg`<text class="scale-label" x=${pos.x} y=${pos.y}>${pct}</text>`;
-    });
+    const labels = labelsHidden
+      ? nothing
+      : SCALE_LABEL_VALUES.map((pct) => {
+          const pos = polarToCartesian(SCALE_LABEL_RADIUS, scaleAngle(pct));
+          return svg`<text class="scale-label" x=${pos.x} y=${pos.y}>${pct}</text>`;
+        });
     return svg`
       ${ticks}
       ${labels}
@@ -332,7 +399,7 @@ export class ObcGaugeValve extends SetpointMixin(LitElement) {
     return svg`
       <g
         class="setpoint-rotor"
-        style="transform: translate(${CENTER}px, ${CENTER}px) rotate(${angle + 90}deg) translateX(${-radius}px) rotate(270deg);"
+        style="transform: rotate(${angle + 90}deg) translateX(${-radius}px) rotate(270deg);"
       >
         ${marker}
       </g>
@@ -365,35 +432,66 @@ export class ObcGaugeValve extends SetpointMixin(LitElement) {
   }
 
   override render() {
-    const viewBox = this.large ? '0 0 512 512' : '67 67 378 378';
+    const frame = computeRadialFrame({
+      basePadding: this.large ? BASE_PADDING.large : BASE_PADDING.compact,
+      labelWidthPx: this.large
+        ? estimateLabelWidthPx(SCALE_LABEL_VALUES.map(String))
+        : 0,
+      clips: {top: 0, bottom: 0, left: 0, right: 0},
+      containerPx: measureContainerPx(this),
+      faceDiameter: this.faceDiameter,
+    });
     const isOff = this.priority === GaugeValvePriority.off;
+    const pct = (y: number) =>
+      `${(((y - frame.y) / frame.height) * 100).toFixed(4)}%`;
+    const readoutY =
+      this.type === GaugeValveType.threeWay
+        ? READOUT_ANCHOR_Y.threeWay
+        : READOUT_ANCHOR_Y.twoWay;
+    const anchors = `--scale: ${frame.scale}; --icon-size: ${(
+      (ICON_SIZE / frame.width) *
+      100
+    ).toFixed(4)}%; --readout-top: ${pct(readoutY)};`;
+    const faceBoxStyle =
+      frame.hostWidthPx !== undefined
+        ? `width: ${frame.hostWidthPx}px; height: ${frame.hostHeightPx}px;`
+        : nothing;
     return html`
       <div
         class="root ${this.large ? 'large' : 'small'} ${this.type ===
         GaugeValveType.threeWay
           ? 'three-way'
           : 'two-way'} priority-${this.priority} style-${this.barStyle}"
+        style=${anchors}
       >
-        <div class="face-wrapper">
-          <svg viewBox=${viewBox}>
-            <circle class="face" cx=${CENTER} cy=${CENTER} r=${SCALE_RADIUS} />
-            <circle
-              class="outline"
-              cx=${CENTER}
-              cy=${CENTER}
-              r=${SCALE_RADIUS}
-            />
-            ${isOff ? nothing : this.renderTrack(90, clampPercent(this.value))}
-            ${isOff ? nothing : this.renderTrack(270, this.inletFillPercent)}
-            ${!isOff && this.type === GaugeValveType.threeWay
-              ? this.renderTrack(180, clampPercent(this.bottomValue))
-              : nothing}
-            ${this.large ? this.renderScale() : nothing}
-            ${this.large ? this.renderSetpoint() : nothing}
-          </svg>
-          <div class="icon"><slot name="icon"></slot></div>
+        <div class="face-area">
+          <div
+            class="face-box ${this.faceDiameter !== undefined
+              ? 'face-pinned'
+              : ''}"
+            style=${faceBoxStyle}
+          >
+            <svg class="layer" viewBox=${frame.viewBox}>
+              <circle class="face" r=${SCALE_RADIUS} />
+              <circle
+                class="outline"
+                vector-effect="non-scaling-stroke"
+                r=${SCALE_RADIUS}
+              />
+              ${isOff
+                ? nothing
+                : this.renderTrack(90, clampPercent(this.value))}
+              ${isOff ? nothing : this.renderTrack(270, this.inletFillPercent)}
+              ${!isOff && this.type === GaugeValveType.threeWay
+                ? this.renderTrack(180, clampPercent(this.bottomValue))
+                : nothing}
+              ${this.large ? this.renderScale(frame.labelsHidden) : nothing}
+              ${this.large ? this.renderSetpoint() : nothing}
+            </svg>
+            <div class="icon"><slot name="icon"></slot></div>
+            ${this.large ? this.renderReadout() : nothing}
+          </div>
         </div>
-        ${this.large ? this.renderReadout() : nothing}
         ${!this.large && this.hasLabelStack ? this.renderLabelStack() : nothing}
       </div>
     `;

@@ -1,5 +1,7 @@
 :host {
   display: block;
+  width: 100%;
+  height: 100%;
 }
 
 /* ---------- Priority / style colour model ----------
@@ -12,6 +14,7 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
+  height: 100%;
   --gauge-valve-strong-color: var(--instrument-regular-secondary-color);
   --gauge-valve-tint-color: var(--instrument-frame-tertiary-color);
   --gauge-valve-bar-color: var(--gauge-valve-tint-color);
@@ -35,15 +38,45 @@
   --gauge-valve-cap-border-color: var(--instrument-frame-secondary-color);
 }
 
-.face-wrapper {
-  position: relative;
+/* ---------- Contain-fit sizing shell ----------
+ * Same model as gauge-radial-proportional: the face is the largest square
+ * that fits inside both axes of the space left by the (compact) label stack;
+ * leftover space centers it. With `faceDiameter` the face-box gets an exact
+ * inline pixel size instead (`.face-pinned`). */
+.face-area {
+  flex: 1 1 auto;
+  min-height: 0;
   width: 100%;
+  position: relative;
 }
 
-svg {
-  display: block;
-  width: 100%;
+.face-box {
+  position: relative;
+  width: auto;
   height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  aspect-ratio: 1;
+  margin-left: auto;
+  margin-right: auto;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.face-box.face-pinned {
+  max-width: none;
+  max-height: none;
+  aspect-ratio: auto;
+  top: 0;
+  transform: none;
+}
+
+.face-box > .layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .face {
@@ -86,20 +119,19 @@ svg {
   stroke-linecap: round;
 }
 
+/* The icon box is a fixed fraction of the frame (96 SVG units), so it scales
+ * with the face like the rest of the watch-face graphics; the host sets
+ * --icon-size per frame. */
 .icon {
   position: absolute;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: 25.4%;
+  width: var(--icon-size, 18.75%);
   aspect-ratio: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.root.large .icon {
-  width: 18.75%;
 }
 
 /* Off state keeps the actuator icon dark-on-gray (near-black glyph with a
@@ -127,8 +159,11 @@ svg {
   stroke-width: 1;
 }
 
+/* Constant on-screen label size via counter-scaling, like the watch tick
+ * labels; --scale is set by the host from the shared radial frame. */
 .scale-label {
   @mixin font-instrument-tick-mark;
+  font-size: calc(12px / var(--scale, 1));
   fill: var(--instrument-tick-mark-label-secondary-color);
   text-anchor: middle;
   dominant-baseline: middle;
@@ -149,12 +184,8 @@ svg {
 .gauge-valve-readout {
   position: absolute;
   left: 50%;
-  top: 21.88%;
+  top: var(--readout-top, 21.88%);
   transform: translateX(-50%);
-}
-
-.root.three-way .gauge-valve-readout {
-  top: 23.44%;
 }
 
 /* ---------- Compact label stack ----------
