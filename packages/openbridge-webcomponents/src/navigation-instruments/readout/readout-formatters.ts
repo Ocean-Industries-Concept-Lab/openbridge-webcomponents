@@ -130,8 +130,10 @@ export function resolveReadoutTextValue(
  * previously read as a total width, which made a fractional reading collapse to
  * a single integer dash (`-.---` where `----.---` was reserved).
  *
- * With `showZeroPadding` off, or no `maxDigits` to fill, this stays the single
- * dash it has always been.
+ * With `showZeroPadding` off, or with no `maxDigits` to fill, only the INTEGER
+ * part falls back to the single dash it has always been — `-` at
+ * `fractionDigits` 0, `-.--` at 2. The fraction placeholder is always present
+ * whenever `fractionDigits > 0`; it is never collapsed away.
  */
 function dashedGenerator({
   showZeroPadding,
