@@ -13,9 +13,11 @@ const C = GRID / 2; // 12 — the grid-centre anchor
 // every size, the visible border is always 1px per side. Subpaths end flush
 // (butt caps) at the tile edges, so every mouth is open — an abutting piece's
 // strokes continue seamlessly across the boundary. For `closed`/`closed-dash`
-// (no fill pass) the single outline-weight pass carries the dash pattern, and
-// the arm subpaths are drawn from the tile edge INWARD so the dash phase is
-// anchored at the mouths, matching the Figma closed-dash vectors.
+// (no fill pass) the single outline-weight pass carries the dash pattern. The
+// HORIZONTAL arm subpaths are drawn from the tile edge inward so their dash
+// phase is anchored at the run mouths (matching the Figma closed-dash
+// vectors); vertical/branch arms are drawn centre-out — see the local notes
+// on `teePath`/`crossPath`.
 // ---------------------------------------------------------------------------
 
 export function straightPath(

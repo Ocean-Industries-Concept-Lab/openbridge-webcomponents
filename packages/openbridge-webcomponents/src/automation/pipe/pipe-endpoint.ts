@@ -87,10 +87,16 @@ export class ObcPipeEndpoint extends LitElement {
     const c = GRID / 2;
     const stub = endpointStubPath();
 
-    const bar = (half: number, weight: number, colorVar: string) =>
+    const bar = (
+      half: number,
+      weight: number,
+      colorVar: string,
+      dash: number[]
+    ) =>
       svg`<path d=${`M ${c} ${c - half} L ${c} ${c + half}`} fill="none"
         stroke="var(${colorVar})" stroke-width=${weight}
-        stroke-linecap=${cap} vector-effect="non-scaling-stroke" />`;
+        stroke-linecap=${cap} vector-effect="non-scaling-stroke"
+        stroke-dasharray=${dash.join(' ')} />`;
     const stubLine = (weight: number, colorVar: string, dash: number[]) =>
       svg`<path d=${stub} fill="none" stroke="var(${colorVar})"
         stroke-width=${weight} vector-effect="non-scaling-stroke"
@@ -100,13 +106,13 @@ export class ObcPipeEndpoint extends LitElement {
     const layers = [
       // Outline pass (stub + bar).
       stubLine(stroke.outlineWeight, stroke.outlineVar, stroke.dashPattern),
-      bar(outlineHalf, stroke.outlineWeight, stroke.outlineVar),
+      bar(outlineHalf, stroke.outlineWeight, stroke.outlineVar, stroke.dashPattern),
     ];
     if (hasFill) {
       const fillHalf = ENDPOINT_BAR_HALF_FILL[this.size];
       layers.push(
         stubLine(stroke.fillWeight as number, stroke.fillVar as string, []),
-        bar(fillHalf, stroke.fillWeight as number, stroke.fillVar as string)
+        bar(fillHalf, stroke.fillWeight as number, stroke.fillVar as string, [])
       );
     }
 
