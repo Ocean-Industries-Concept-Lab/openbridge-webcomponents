@@ -1271,7 +1271,7 @@ export const TextValue: Story = {
             },
           },
           {
-            label: 'null in string mode (dash)',
+            label: 'null in text mode (dash)',
             config: {
               label: 'Mode',
               unit: '',

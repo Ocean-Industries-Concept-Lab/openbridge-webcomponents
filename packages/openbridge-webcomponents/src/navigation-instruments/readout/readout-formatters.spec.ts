@@ -67,7 +67,7 @@ describe('assertReadoutValueType', () => {
     ).toThrow(TypeError);
   });
 
-  it('never throws when valueType is string', () => {
+  it('never throws when valueType is text', () => {
     expect(() =>
       assertReadoutValueType('obc-readout', 'Auto', ReadoutValueType.text)
     ).not.toThrow();
@@ -172,7 +172,7 @@ describe('resolveReadoutNumericValue', () => {
   });
 
   // Text rows must contribute nothing to obc-readout-list's shared reserver.
-  it('is undefined in string mode even for a numeric value', () => {
+  it('is undefined in text mode even for a numeric value', () => {
     expect(
       resolveReadoutNumericValue(12.4, ReadoutValueType.text)
     ).toBeUndefined();
@@ -190,18 +190,18 @@ describe('resolveReadoutNumericValue', () => {
 });
 
 describe('resolveReadoutTextValue', () => {
-  it('returns the text verbatim in string mode', () => {
+  it('returns the text verbatim in text mode', () => {
     expect(resolveReadoutTextValue('Thermo On', ReadoutValueType.text)).toBe(
       'Thermo On'
     );
   });
 
   // The reason a converter was rejected: it would have parsed this to 1.5.
-  it('preserves trailing zeros in string mode', () => {
+  it('preserves trailing zeros in text mode', () => {
     expect(resolveReadoutTextValue('1.50', ReadoutValueType.text)).toBe('1.50');
   });
 
-  it('coerces a number to text in string mode', () => {
+  it('coerces a number to text in text mode', () => {
     expect(resolveReadoutTextValue(12.4, ReadoutValueType.text)).toBe('12.4');
   });
 

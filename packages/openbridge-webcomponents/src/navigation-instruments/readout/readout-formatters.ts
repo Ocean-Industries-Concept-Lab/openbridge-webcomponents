@@ -93,7 +93,7 @@ export function resolveReadoutNumericValue(
   return Number.isFinite(parsed) ? parsed : undefined;
 }
 
-/** The value as display text, or `undefined` when not in string mode / blank. */
+/** The value as display text, or `undefined` when not in text mode / blank. */
 export function resolveReadoutTextValue(
   value: number | string | null | undefined,
   valueType: ReadoutValueType
