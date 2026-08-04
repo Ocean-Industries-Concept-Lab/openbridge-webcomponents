@@ -143,6 +143,19 @@
   width: 100%;
 }
 
+/* Secondary-row stack icon: the stack sizes the holder div; the projected
+   icon (host-slotted or subclass fallback) fills that box. */
+.secondary-icon-holder slot {
+  display: contents;
+}
+
+.secondary-icon-holder slot > *,
+.secondary-icon-holder ::slotted(*) {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 .compact-column .container {
   width: 100%;
   aspect-ratio: 1;

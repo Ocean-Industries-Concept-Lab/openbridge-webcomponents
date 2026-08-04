@@ -2,6 +2,7 @@ import {html, type PropertyValues, type TemplateResult} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import '../../icons/icon-pump-on-horizontal.js';
+import '../../icons/icon-energy-battery.js';
 import {
   ObcGaugeProportional,
   GaugeProportionalSector,
@@ -38,7 +39,8 @@ export enum GaugeMotorsAndPumpsType {
  *   the base gauge, `hasReadout` defaults to `true` so the large face is
  *   detailed out of the box.
  * - Ships the pump symbol as slot fallback; slot `icon` to swap it for a
- *   motor, fan, or vertical-pump symbol.
+ *   motor, fan, or vertical-pump symbol. The compact stack's secondary row
+ *   ships the design's battery icon the same way (slot `secondary-icon`).
  * - Overload zones render via `advices` (hatched caution arc).
  *
  * ## Usage Guidelines
@@ -50,11 +52,13 @@ export enum GaugeMotorsAndPumpsType {
  *
  * ## Slots
  *
- * | Slot   | Purpose                                         |
- * | ------ | ----------------------------------------------- |
- * | `icon` | Replaces the default pump symbol (`obi-*` icon) |
+ * | Slot             | Purpose                                                        |
+ * | ---------------- | -------------------------------------------------------------- |
+ * | `icon`           | Replaces the default pump symbol (`obi-*` icon)                |
+ * | `secondary-icon` | Replaces the battery icon on the compact stack's secondary row |
  *
  * @slot icon - Replaces the default pump symbol (`obi-*` icon)
+ * @slot secondary-icon - Replaces the battery icon on the compact stack's secondary row
  *
  * @element obc-gauge-motors-and-pumps
  * @experimental
@@ -88,6 +92,10 @@ export class ObcGaugeMotorsAndPumps extends ObcGaugeProportional {
     return html`<slot name="icon">
       <obi-pump-on-horizontal usecsscolor></obi-pump-on-horizontal>
     </slot>`;
+  }
+
+  protected override get secondaryIconFallback(): TemplateResult {
+    return html`<obi-energy-battery usecsscolor></obi-energy-battery>`;
   }
 }
 

@@ -15,7 +15,7 @@ type GaugeMotorsAndPumpsStoryArgs = Partial<ObcGaugeMotorsAndPumps> & {
 
 const meta = {
   title: 'Automation/Gauge Motors and Pumps',
-  tags: ['autodocs', 'wip', 'skip-test'],
+  tags: ['autodocs', 'alpha', 'skip-test'],
   component: 'obc-gauge-motors-and-pumps',
   decorators: [widthDecorator],
   args: {

@@ -244,15 +244,18 @@ function strongerTickmarkType(
  * - `priority: off` blanks the value graphics but keeps the instrument
  *   legible.
  * - The compact stack renders whole-number value rows only, and no setpoint
- *   row. **TODO(designer)**: setpoint row and secondary-row device icon
- *   (e.g. battery) need obc-automation-button-readout-stack support.
+ *   row. **TODO(designer)**: the setpoint row needs
+ *   obc-automation-button-readout-stack support. The secondary row's device
+ *   icon projects through the `secondary-icon` slot.
  *
  * ## Slots
  *
- * | Slot   | Purpose                                                                                                 |
- * | ------ | ------------------------------------------------------------------------------------------------------- |
- * | `icon` | Device symbol shown above the readout, scaled with the face (e.g. `<obi-placeholder-device-on useCssColor>`). |
+ * | Slot             | Purpose                                                                                                 |
+ * | ---------------- | ------------------------------------------------------------------------------------------------------- |
+ * | `icon`           | Device symbol shown above the readout, scaled with the face (e.g. `<obi-placeholder-device-on useCssColor>`). |
+ * | `secondary-icon` | Device-specific icon on the compact stack's secondary value row (e.g. a battery icon).                  |
  *
+ * @slot secondary-icon - Device-specific icon on the compact stack's secondary value row
  * @slot icon - Device symbol shown above the readout, scaled with the face
  *   (e.g. `<obi-placeholder-device-on useCssColor>` for the device-token
  *   styling).
@@ -311,6 +314,7 @@ export class ObcGaugeProportional extends SetpointMixin(LitElement) {
   @property({type: String}) secondaryLabel = '';
   /** @availableWhen secondaryValue!=undefined */
   @property({type: String}) secondaryUnit = '';
+  /** @availableWhen hasReadout==true */
   @property({type: Number}) fractionDigits = 0;
   /**
    * Name row shown under the readout (uppercase overline style).
@@ -333,9 +337,15 @@ export class ObcGaugeProportional extends SetpointMixin(LitElement) {
    * Large face in the same slot.
    */
   @property({type: Boolean}) large = false;
-  /** Render the readout stack below the face in the compact variant. */
+  /**
+   * Render the readout stack below the face in the compact variant.
+   * @availableWhen large==false
+   */
   @property({type: Boolean, attribute: false}) hasLabelStack = true;
-  /** Identifier line under the compact readout stack, e.g. '#0001'. */
+  /**
+   * Identifier line under the compact readout stack, e.g. '#0001'.
+   * @availableWhen large==false
+   */
   @property({type: String}) tag = '';
 
   private _frame: RadialFrame | undefined;
@@ -395,7 +405,7 @@ export class ObcGaugeProportional extends SetpointMixin(LitElement) {
   private get compactContainerPx(): {width: number; height: number} {
     const {width, height} = measureContainerPx(this);
     const dialHeight = height - this.compactStackAllowancePx;
-    const fit = dialHeight > 0 ? Math.min(width, dialHeight) : width;
+    const fit = height > 0 ? Math.min(width, Math.max(0, dialHeight)) : width;
     const side = Math.min(fit, COMPACT_NATURAL_BOX_PX);
     return {width: side, height: side};
   }
@@ -986,6 +996,38 @@ export class ObcGaugeProportional extends SetpointMixin(LitElement) {
     return html`<slot name="icon"></slot>`;
   }
 
+  /**
+   * Fallback icon for the compact stack's secondary value row when nothing
+   * is slotted into `secondary-icon`. Device subclasses override this with
+   * their baked-in symbol (e.g. the design's battery icon).
+   */
+  protected get secondaryIconFallback(): TemplateResult | typeof nothing {
+    return nothing;
+  }
+
+  /** The secondary row shows an icon when a subclass bakes one or the host slots one. */
+  private get hasSecondaryStackIcon(): boolean {
+    return (
+      this.secondaryIconFallback !== nothing ||
+      this.querySelector('[slot="secondary-icon"]') !== null
+    );
+  }
+
+  /**
+   * Icon on the compact stack's secondary value row: a sized holder the
+   * stack's `slot`-type row icon projects (a bare forwarded `<slot>` cannot
+   * be sized from the stack — slot elements keep `display: contents`),
+   * exposing the gauge's own `secondary-icon` slot inside.
+   */
+  private get secondaryStackIcon(): TemplateResult | typeof nothing {
+    if (!this.hasSecondaryStackIcon) {
+      return nothing;
+    }
+    return html`<div slot="secondary-icon" class="secondary-icon-holder">
+      <slot name="secondary-icon">${this.secondaryIconFallback}</slot>
+    </div>`;
+  }
+
   private get labelStackReadouts(): AutomationButtonReadoutStack[] {
     const readouts: AutomationButtonReadoutStack[] = [
       {
@@ -998,11 +1040,9 @@ export class ObcGaugeProportional extends SetpointMixin(LitElement) {
       },
     ];
     if (this.secondaryValue !== undefined) {
-      // TODO(designer): the design shows a device-specific icon (e.g. battery)
-      // on the secondary row; obc-automation-button-readout-stack has no such
-      // icon option yet. The stack also cannot render a dashed placeholder
-      // row (its value type is a plain number), so unlike the in-dial
-      // readouts this row appears only once secondaryValue arrives — a brief
+      // TODO(designer): the stack cannot render a dashed placeholder row
+      // (its value type is a plain number), so unlike the in-dial readouts
+      // this row appears only once secondaryValue arrives — a brief
       // dial/stack mismatch for split-type devices awaiting data.
       readouts.push({
         type: 'value',
@@ -1010,7 +1050,8 @@ export class ObcGaugeProportional extends SetpointMixin(LitElement) {
         nDigits: 3,
         unit: this.secondaryUnit,
         direction: 'right',
-        icon: 'none',
+        icon: this.hasSecondaryStackIcon ? 'slot' : 'none',
+        slotName: 'secondary-icon',
       });
     }
     return readouts;
@@ -1199,7 +1240,8 @@ export class ObcGaugeProportional extends SetpointMixin(LitElement) {
                         .readouts=${this.labelStackReadouts}
                         .tag=${this.tag || null}
                         .idTagOrientation=${IdTagOrientation.bottom}
-                      ></obc-automation-button-readout-stack>
+                        >${this.secondaryStackIcon}</obc-automation-button-readout-stack
+                      >
                     `
                   : nothing}
               </div>

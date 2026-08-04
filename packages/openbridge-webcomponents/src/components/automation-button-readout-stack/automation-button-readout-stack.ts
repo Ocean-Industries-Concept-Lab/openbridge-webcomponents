@@ -32,7 +32,13 @@ export interface AutomationButtonReadoutStackValue {
   nDigits: number;
   unit: string;
   direction: 'up' | 'down' | 'left' | 'right' | 'none';
-  icon: 'none' | 'arrow' | 'chevron';
+  icon: 'none' | 'arrow' | 'chevron' | 'slot';
+  /**
+   * Host slot the row's icon is projected from when `icon` is `'slot'` —
+   * consumers place any icon element with this slot name in the stack's
+   * light DOM (e.g. a device-specific `<obi-*>` icon).
+   */
+  slotName?: string;
 }
 
 export interface AutomationButtonReadoutStackStateOn {
@@ -149,6 +155,8 @@ export class ObcAutomationButtonReadoutStack extends LitElement {
           useCssColor
         ></obi-chevron-double-right-google>`;
       }
+    } else if (readout.icon == 'slot' && readout.slotName) {
+      directionIcon = html`<slot class="icon" name=${readout.slotName}></slot>`;
     }
     const content = html`
       <span class="value-text"

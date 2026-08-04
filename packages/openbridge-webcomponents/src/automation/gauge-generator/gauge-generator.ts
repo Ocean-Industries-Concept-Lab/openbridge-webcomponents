@@ -2,6 +2,7 @@ import {html, type TemplateResult} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import '../../icons/icon-diesel-generator-dc.js';
+import '../../icons/icon-energy-battery.js';
 import {
   ObcGaugeProportional,
   GaugeProportionalSector,
@@ -32,7 +33,8 @@ export enum GaugeGeneratorType {
  *   the base gauge, `hasReadout` defaults to `true` so the large face is
  *   detailed out of the box.
  * - Ships the generator symbol as slot fallback; slot `icon` to swap it
- *   (e.g. an AC variant).
+ *   (e.g. an AC variant). The compact stack's secondary row ships the
+ *   design's battery icon the same way (slot `secondary-icon`).
  *
  * ## Usage Guidelines
  *
@@ -41,11 +43,13 @@ export enum GaugeGeneratorType {
  *
  * ## Slots
  *
- * | Slot   | Purpose                                              |
- * | ------ | ---------------------------------------------------- |
- * | `icon` | Replaces the default generator symbol (`obi-*` icon) |
+ * | Slot             | Purpose                                                            |
+ * | ---------------- | ------------------------------------------------------------------ |
+ * | `icon`           | Replaces the default generator symbol (`obi-*` icon)               |
+ * | `secondary-icon` | Replaces the battery icon on the compact stack's secondary row     |
  *
  * @slot icon - Replaces the default generator symbol (`obi-*` icon)
+ * @slot secondary-icon - Replaces the battery icon on the compact stack's secondary row
  *
  * @element obc-gauge-generator
  * @experimental
@@ -70,6 +74,10 @@ export class ObcGaugeGenerator extends ObcGaugeProportional {
     return html`<slot name="icon">
       <obi-diesel-generator-dc usecsscolor></obi-diesel-generator-dc>
     </slot>`;
+  }
+
+  protected override get secondaryIconFallback(): TemplateResult {
+    return html`<obi-energy-battery usecsscolor></obi-energy-battery>`;
   }
 }
 

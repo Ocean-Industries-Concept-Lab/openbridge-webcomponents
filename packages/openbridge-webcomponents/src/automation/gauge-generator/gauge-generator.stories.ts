@@ -11,7 +11,7 @@ type GaugeGeneratorStoryArgs = Partial<ObcGaugeGenerator> & {
 
 const meta = {
   title: 'Automation/Gauge Generator',
-  tags: ['autodocs', 'wip', 'skip-test'],
+  tags: ['autodocs', 'alpha', 'skip-test'],
   component: 'obc-gauge-generator',
   decorators: [widthDecorator],
   args: {
