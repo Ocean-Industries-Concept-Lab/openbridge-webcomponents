@@ -61,6 +61,7 @@ const meta = {
       .unit=${args.unit}
       .tag=${args.tag ?? ''}
       .setpoint=${args.setpoint}
+      .faceDiameter=${args.faceDiameter}
       .hasLabelStack=${args.hasLabelStack ?? true}
     >
       <obi-twoway-acuator-general-75
@@ -101,6 +102,7 @@ export const ThreeWay: Story = {
       .unit=${args.unit}
       .tag=${args.tag ?? ''}
       .setpoint=${args.setpoint}
+      .faceDiameter=${args.faceDiameter}
       .hasLabelStack=${args.hasLabelStack ?? true}
     >
       <obi-threeway-acuator-generic-inleft-left-75
@@ -154,6 +156,7 @@ export const Closed: Story = {
       .unit=${args.unit}
       .tag=${args.tag ?? ''}
       .setpoint=${args.setpoint}
+      .faceDiameter=${args.faceDiameter}
       .hasLabelStack=${args.hasLabelStack ?? true}
     >
       <obi-twoway-acuator-general-closed
@@ -214,6 +217,7 @@ export const OffState: Story = {
       .unit=${args.unit}
       .tag=${args.tag ?? ''}
       .setpoint=${args.setpoint}
+      .faceDiameter=${args.faceDiameter}
       .hasLabelStack=${args.hasLabelStack ?? true}
     >
       <obi-twoway-acuator-general-closed

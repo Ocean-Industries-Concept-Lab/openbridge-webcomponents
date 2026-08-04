@@ -192,7 +192,7 @@ export class ObcGaugeValve extends SetpointMixin(LitElement) {
   @property({type: String}) unit = '';
   /**
    * Identifier line under the compact readout stack, e.g. '#0001'.
-   * @availableWhen large==false
+   * @availableWhen large==false && hasLabelStack==true
    */
   @property({type: String}) tag = '';
   /**
