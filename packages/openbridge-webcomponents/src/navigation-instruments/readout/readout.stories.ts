@@ -1303,6 +1303,93 @@ export const TextValue: Story = {
     ]),
 };
 
+/**
+ * **Unavailable values in a full readout — for design review.**
+ *
+ * The same change as `Building Blocks/Readout Block → Unavailable Values`, shown
+ * with a label and unit so the placeholder can be judged in the context an
+ * instrument actually renders.
+ *
+ * - The dash fills the reserved digits (`----.-` rather than a lone `-` at the
+ *   right edge of the reserved box). `maxDigits` reserves that width either way,
+ *   so no readout changes width.
+ * - `NaN` / `±Infinity` render the dash instead of the literal text `NaN` /
+ *   `Infinity`.
+ *
+ * The right-hand column is a live reading under identical settings, so the
+ * placeholder and the value can be compared directly.
+ */
+export const UnavailableValues: Story = {
+  render: () =>
+    renderShowcase([
+      {
+        title: 'Unavailable vs. a Reading (maxDigits 4, Fraction 1)',
+        columns: 4,
+        cases: [
+          {
+            label: 'null → dash',
+            config: {
+              label: 'SOG',
+              unit: 'kn',
+              value: null,
+              options: {maxDigits: 4, fractionDigits: 1},
+            },
+          },
+          {
+            label: 'NaN → dash (was "NaN")',
+            config: {
+              label: 'SOG',
+              unit: 'kn',
+              value: Number.NaN,
+              options: {maxDigits: 4, fractionDigits: 1},
+            },
+          },
+          {
+            label: 'null + hinted zeros',
+            config: {
+              label: 'SOG',
+              unit: 'kn',
+              value: null,
+              options: {
+                maxDigits: 4,
+                fractionDigits: 1,
+                value: {hintedZeros: true},
+              },
+            },
+          },
+          {
+            label: 'reading, same settings',
+            config: {
+              label: 'SOG',
+              unit: 'kn',
+              value: 12.4,
+              options: {maxDigits: 4, fractionDigits: 1},
+            },
+          },
+        ],
+      },
+      {
+        title: 'No maxDigits — Unchanged, Nothing to Fill',
+        columns: 2,
+        cases: [
+          {
+            label: 'null',
+            config: {label: 'SOG', unit: 'kn', value: null, options: {}},
+          },
+          {
+            label: 'null / fraction 1',
+            config: {
+              label: 'SOG',
+              unit: 'kn',
+              value: null,
+              options: {fractionDigits: 1},
+            },
+          },
+        ],
+      },
+    ]),
+};
+
 export const TestCases: Story = {
   render: () => {
     return html` <style>

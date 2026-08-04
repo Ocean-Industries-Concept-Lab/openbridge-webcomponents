@@ -415,6 +415,184 @@ export const TestValidationSurvivesUnrelatedUpdate: Story = {
   },
 };
 
+// Each row states what the case rendered BEFORE this change as literal text,
+// beside the live component rendering it now. The `was` strings are recorded
+// from the previous implementation, not produced by it.
+const UNAVAILABLE_CASES: {
+  label: string;
+  was: string;
+  args: Partial<BlockArgs>;
+}[] = [
+  {
+    label: 'null · no maxDigits',
+    was: '-',
+    args: {value: null},
+  },
+  {
+    label: 'null · maxDigits 4',
+    was: '-',
+    args: {value: null, maxDigits: 4},
+  },
+  {
+    label: 'null · maxDigits 4 · fraction 3',
+    was: '-.---',
+    args: {value: null, maxDigits: 4, fractionDigits: 3},
+  },
+  {
+    label: 'null · maxDigits 3 · fraction 1',
+    was: '-.-',
+    args: {value: null, maxDigits: 3, fractionDigits: 1},
+  },
+  {
+    label: 'NaN · maxDigits 4 · fraction 1',
+    was: 'NaN',
+    args: {value: Number.NaN, maxDigits: 4, fractionDigits: 1},
+  },
+  {
+    label: 'Infinity · maxDigits 4 · fraction 1',
+    was: 'Infinity',
+    args: {value: Number.POSITIVE_INFINITY, maxDigits: 4, fractionDigits: 1},
+  },
+  {
+    label: 'null · hinted zeros',
+    was: '-.-',
+    args: {value: null, maxDigits: 4, fractionDigits: 1, hintedZeros: true},
+  },
+  {
+    label: 'a reading, for reference',
+    was: '0012.4',
+    args: {value: 12.4, maxDigits: 4, fractionDigits: 1, hintedZeros: true},
+  },
+];
+
+// The designer's specification, verbatim:
+//   format: 000.00 · readout: 12.30 · hinted: 012.30 · Not available: ---.--
+// `format: 000.00` maps to maxDigits 3 + fractionDigits 2.
+const DESIGNER_SPEC_CASES: {
+  label: string;
+  expected: string;
+  args: Partial<BlockArgs>;
+}[] = [
+  {
+    label: 'readout',
+    expected: '12.30',
+    args: {value: 12.3, maxDigits: 3, fractionDigits: 2},
+  },
+  {
+    label: 'readout with hinted',
+    expected: '012.30',
+    args: {value: 12.3, maxDigits: 3, fractionDigits: 2, hintedZeros: true},
+  },
+  {
+    label: 'not available',
+    expected: '---.--',
+    args: {value: null, maxDigits: 3, fractionDigits: 2},
+  },
+  {
+    label: 'not available, hinted enabled',
+    expected: '---.--',
+    args: {value: null, maxDigits: 3, fractionDigits: 2, hintedZeros: true},
+  },
+];
+
+/**
+ * **Unavailable values — for design review.**
+ *
+ * Two changes, shown against what each case rendered before.
+ *
+ * 1. **The dash fills the reserved digits.** `maxDigits` reserves the width
+ *    either way, so the placeholder now takes the shape of the reading it
+ *    stands in for (`----.---`) instead of sitting as a lone `-` at the right
+ *    edge of an otherwise empty box. This changes glyphs only — no block
+ *    changes width — and with no `maxDigits` there is nothing to fill, so the
+ *    single dash stays.
+ * 2. **`NaN` and `±Infinity` count as unavailable.** They previously rendered
+ *    as the literal text `NaN` / `Infinity` in place of a reading. They are a
+ *    runtime data condition (sensor dropout, `0/0`, a bad parse) rather than a
+ *    programmer error, so they resolve to the dash rather than throwing.
+ *
+ * The last row is a real reading under the same settings, for width comparison.
+ * Hinted zeros are suppressed for an unavailable value, so nothing reads
+ * `----Na.N`.
+ */
+export const UnavailableValues: Story = {
+  render: () => html`
+    <style>
+      .rb-unavail {
+        display: grid;
+        grid-template-columns: max-content max-content max-content;
+        gap: 8px 24px;
+        align-items: center;
+      }
+      .rb-unavail-head {
+        font: 10px/1.2 var(--global-typography-ui-label-font-family, sans-serif);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--element-neutral-color, #777);
+      }
+      .rb-unavail-label {
+        font: 12px/1.4 var(--global-typography-ui-label-font-family, sans-serif);
+        color: var(--element-neutral-color, #777);
+      }
+      .rb-unavail-spec {
+        margin: 20px 0 8px;
+        font: 12px/1.2 var(--global-typography-ui-label-font-family, sans-serif);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--element-neutral-color, #777);
+      }
+      .rb-unavail-spec-value {
+        font:
+          13px/1.4 ui-monospace,
+          monospace;
+        color: var(--element-neutral-color, #777);
+      }
+      .rb-unavail-was {
+        font:
+          13px/1.4 ui-monospace,
+          monospace;
+        color: var(--element-neutral-color, #999);
+        text-decoration: line-through;
+      }
+      .rb-unavail-now {
+        outline: 1px dashed rgba(0, 0, 0, 0.12);
+        width: max-content;
+      }
+    </style>
+    <div class="rb-unavail-spec">Designer specification — format 000.00</div>
+    <div class="rb-unavail">
+      <div class="rb-unavail-head">Case</div>
+      <div class="rb-unavail-head">Specified</div>
+      <div class="rb-unavail-head">Rendered</div>
+      ${DESIGNER_SPEC_CASES.map(
+        (c) => html`
+          <div class="rb-unavail-label">${c.label}</div>
+          <div class="rb-unavail-spec-value">${c.expected}</div>
+          <div class="rb-unavail-now">
+            ${renderBlock({size: ReadoutBlockSize.medium, ...c.args})}
+          </div>
+        `
+      )}
+    </div>
+
+    <div class="rb-unavail-spec">Change against previous behaviour</div>
+    <div class="rb-unavail">
+      <div class="rb-unavail-head">Case</div>
+      <div class="rb-unavail-head">Was</div>
+      <div class="rb-unavail-head">Now</div>
+      ${UNAVAILABLE_CASES.map(
+        (c) => html`
+          <div class="rb-unavail-label">${c.label}</div>
+          <div class="rb-unavail-was">${c.was}</div>
+          <div class="rb-unavail-now">
+            ${renderBlock({size: ReadoutBlockSize.medium, ...c.args})}
+          </div>
+        `
+      )}
+    </div>
+  `,
+};
+
 export const DataQuality: Story = {
   render: () =>
     renderShowcase([

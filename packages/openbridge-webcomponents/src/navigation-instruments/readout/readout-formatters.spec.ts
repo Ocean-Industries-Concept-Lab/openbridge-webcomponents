@@ -3,6 +3,7 @@ import {
   assertReadoutValueType,
   resolveReadoutNumericValue,
   resolveReadoutTextValue,
+  formatNumericValue,
   isReadoutValueType,
   ReadoutValueType,
 } from './readout-formatters.js';
@@ -181,11 +182,39 @@ describe('resolveReadoutNumericValue', () => {
     ).toBeUndefined();
   });
 
-  // Pre-existing behaviour, deliberately preserved: NaN reaches the formatter.
-  it('passes NaN through in number mode', () => {
+  // A non-finite number is unavailable, not a reading: `toFixed` would render
+  // the literal text "NaN" / "Infinity" in place of a value.
+  it('is undefined for a non-finite number', () => {
     expect(
       resolveReadoutNumericValue(Number.NaN, ReadoutValueType.number)
-    ).toBeNaN();
+    ).toBeUndefined();
+    expect(
+      resolveReadoutNumericValue(
+        Number.POSITIVE_INFINITY,
+        ReadoutValueType.number
+      )
+    ).toBeUndefined();
+    expect(
+      resolveReadoutNumericValue(
+        Number.NEGATIVE_INFINITY,
+        ReadoutValueType.number
+      )
+    ).toBeUndefined();
+  });
+
+  // Before this, the same logical input resolved differently depending on how
+  // it was bound: `<obc-readout value="NaN">` (attribute → string) gave a dash,
+  // while `.value=${NaN}` (property → number) gave the literal text "NaN".
+  it('resolves a non-finite value identically as a number and as a string', () => {
+    expect(
+      resolveReadoutNumericValue(Number.NaN, ReadoutValueType.number)
+    ).toBe(resolveReadoutNumericValue('NaN', ReadoutValueType.number));
+    expect(
+      resolveReadoutNumericValue(
+        Number.POSITIVE_INFINITY,
+        ReadoutValueType.number
+      )
+    ).toBe(resolveReadoutNumericValue('Infinity', ReadoutValueType.number));
   });
 });
 
@@ -225,5 +254,91 @@ describe('resolveReadoutTextValue', () => {
     expect(
       resolveReadoutTextValue(12.4, ReadoutValueType.number)
     ).toBeUndefined();
+  });
+});
+
+describe('formatNumericValue — unavailable value', () => {
+  const opts = (minValueLength: number, fractionDigits: number) => ({
+    showZeroPadding: true,
+    minValueLength,
+    fractionDigits,
+  });
+
+  // One dash per reserved digit position, so the placeholder takes the same
+  // shape as the reading it stands in for.
+  it('fills the reserved integer digits', () => {
+    expect(formatNumericValue(undefined, opts(4, 0))).toBe('----');
+  });
+
+  // `minValueLength` counts INTEGER digits only (matching `maxDigits`); the
+  // point and fraction are added on top. This previously read as a total width,
+  // collapsing to '-.---' where '----.---' was reserved.
+  it('adds the fraction on top of the integer digits', () => {
+    expect(formatNumericValue(undefined, opts(4, 3))).toBe('----.---');
+    expect(formatNumericValue(undefined, opts(3, 1))).toBe('---.-');
+  });
+
+  it('matches the width of the value it replaces', () => {
+    const [maxDigits, fractionDigits] = [4, 3];
+    const reserve = '0'.repeat(maxDigits) + '.' + '0'.repeat(fractionDigits);
+    expect(
+      formatNumericValue(undefined, opts(maxDigits, fractionDigits)).length
+    ).toBe(reserve.length);
+  });
+
+  it('keeps a single dash when there are no digits to fill', () => {
+    expect(formatNumericValue(undefined, opts(0, 0))).toBe('-');
+    expect(formatNumericValue(undefined, opts(0, 2))).toBe('-.--');
+  });
+
+  it('keeps a single integer dash when padding is off', () => {
+    expect(
+      formatNumericValue(undefined, {
+        showZeroPadding: false,
+        minValueLength: 4,
+        fractionDigits: 3,
+      })
+    ).toBe('-.---');
+  });
+
+  // The whole point of routing non-finite numbers through the same path.
+  it('renders a non-finite number as the unavailable dash', () => {
+    const resolved = resolveReadoutNumericValue(
+      Number.NaN,
+      ReadoutValueType.number
+    );
+    expect(formatNumericValue(resolved, opts(4, 1))).toBe('----.-');
+  });
+});
+
+// The designer's specification, verbatim:
+//   format: 000.00
+//   readout: 12.30
+//   readout with hinted: 012.30  (hinted colour on the first zero)
+//   Not available: ---.--
+// `format: 000.00` is maxDigits 3 + fractionDigits 2.
+describe("designer's format specification (000.00)", () => {
+  const MAX_DIGITS = 3;
+  const FRACTION_DIGITS = 2;
+  const opts = {
+    showZeroPadding: true,
+    minValueLength: MAX_DIGITS,
+    fractionDigits: FRACTION_DIGITS,
+  };
+
+  it('renders a reading as 12.30', () => {
+    expect(formatNumericValue(12.3, opts)).toBe('12.30');
+  });
+
+  // The specification's hinted line (`012.30`) is covered by the hinted-zeros
+  // change, not here — this PR only owns the unavailable placeholder. The
+  // rendered hinted case is still shown in the story for the designer.
+
+  it('renders an unavailable value as ---.--', () => {
+    expect(formatNumericValue(undefined, opts)).toBe('---.--');
+  });
+
+  it('gives the unavailable placeholder the same width as the reading', () => {
+    expect(formatNumericValue(undefined, opts)).toHaveLength('012.30'.length);
   });
 });

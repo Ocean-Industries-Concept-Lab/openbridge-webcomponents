@@ -47,6 +47,9 @@ export function readoutNumericFormatOptions(
   fractionDigits: number
 ): ReadoutNumericFormatOptions {
   return {
+    // Comparison-only (see `isDisplayedAtSetpoint`), so the unavailable-dash
+    // padding never applies here: both operands are defined numbers by the time
+    // they are formatted. `obc-readout-block` enables it for its render path.
     showZeroPadding: false,
     minValueLength: maxDigits,
     fractionDigits,

@@ -71,7 +71,18 @@ export function assertReadoutValueType(
   );
 }
 
-/** The value as a number, or `undefined` when it is text / unavailable. */
+/**
+ * The value as a number, or `undefined` when it is text / unavailable.
+ *
+ * A non-finite number (`NaN`, `±Infinity`) counts as unavailable and renders the
+ * dash, the same as `null`. `NaN` is a runtime data condition — a sensor
+ * dropout, a `0/0`, a bad parse — not a programmer error, so it must not throw;
+ * and `value.toFixed()` would otherwise render the literal text `"NaN"` /
+ * `"Infinity"` in place of a reading. This also makes the number path agree with
+ * the string path below, which has always resolved a non-finite string to
+ * `undefined` — before this, `<obc-readout value="NaN">` rendered a dash while
+ * `.value=${NaN}` rendered `"NaN"`.
+ */
 export function resolveReadoutNumericValue(
   value: number | string | null | undefined,
   valueType: ReadoutValueType
@@ -84,7 +95,7 @@ export function resolveReadoutNumericValue(
     return undefined;
   }
   if (typeof value === 'number') {
-    return value;
+    return Number.isFinite(value) ? value : undefined;
   }
   if (isBlank(value)) {
     return undefined;
@@ -109,22 +120,31 @@ export function resolveReadoutTextValue(
   return isBlank(text) ? undefined : text;
 }
 
+/**
+ * The unavailable ("no reading") text: one dash per reserved digit position, so
+ * it takes the same shape as the value it stands in for — `maxDigits` 4 with
+ * `fractionDigits` 3 gives `----.---`.
+ *
+ * `minValueLength` counts INTEGER digits only, matching `maxDigits`; the decimal
+ * point and the fraction digits are added on top and never count toward it. It
+ * previously read as a total width, which made a fractional reading collapse to
+ * a single integer dash (`-.---` where `----.---` was reserved).
+ *
+ * With `showZeroPadding` off, or no `maxDigits` to fill, this stays the single
+ * dash it has always been.
+ */
 function dashedGenerator({
   showZeroPadding,
   minValueLength,
   fractionDigits,
 }: ReadoutNumericFormatOptions): string {
-  const visibleDigits = showZeroPadding ? Math.max(minValueLength, 1) : 1;
+  const integerDigits = showZeroPadding ? Math.max(minValueLength, 1) : 1;
 
   if (fractionDigits < 1) {
-    return '-'.repeat(visibleDigits);
+    return '-'.repeat(integerDigits);
   }
 
-  const integerDigits = visibleDigits - fractionDigits;
-
-  return (
-    '-'.repeat(Math.max(integerDigits, 1)) + '.' + '-'.repeat(fractionDigits)
-  );
+  return '-'.repeat(integerDigits) + '.' + '-'.repeat(fractionDigits);
 }
 
 export function formatNumericValue(
