@@ -4,14 +4,21 @@ import componentStyle from './readout-list.css?inline';
 import {customElement} from '../../decorator.js';
 import '../readout-list-item/readout-list-item.js';
 import {ObcReadoutListItem} from '../readout-list-item/readout-list-item.js';
+import {
+  resolveReadoutNumericValue,
+  ReadoutValueType,
+} from '../readout/readout-formatters.js';
 
 const ITEM_TAG = 'obc-readout-list-item';
 
+// Lit lowercases a property name to derive its attribute (it does not
+// kebab-case), so multi-word properties are observed as one lowercase word.
 /** Child attributes whose change should re-trigger alignment (HTML-attribute usage). */
 const OBSERVED_ATTRIBUTES = [
   'unit',
   'src',
   'value',
+  'valuetype',
   'setpoint',
   'advice',
   'max-digits',
@@ -45,7 +52,10 @@ function integerDigitCount(value: number | null | undefined): number {
  * - **Value / setpoint / advice:** the widest numeric width (max integer digits +
  *   max fraction digits across rows, derived from each row's `maxDigits` /
  *   `fractionDigits` / current values) is reserved on every row's numeric blocks.
- *   Reserving off digit counts keeps it stable as live values update.
+ *   Reserving off digit counts keeps it stable as live values update. Rows with
+ *   `valueType="string"` are excluded, so a long text value does not inflate the
+ *   numeric column; such a row sizes to its own content unless it is given an
+ *   explicit `valueOptions.spaceReserver`.
  * - **Source:** the longest `src` becomes every row's source space-reserver.
  * - **Degree:** if any row has a degree, non-degree rows reserve the degree column
  *   (`hasDegreeSpacer`) so their digits line up with the degree rows; the spacer is
@@ -124,10 +134,20 @@ export class ObcReadoutList extends LitElement {
 
     for (const item of items) {
       maxFractionDigits = Math.max(maxFractionDigits, item.fractionDigits ?? 0);
+      // A text row contributes nothing to the numeric reserver — resolving it
+      // yields `undefined`, so `integerDigitCount` returns 0 and the row sizes
+      // to its own content instead of inflating every numeric column. Numeric
+      // rows driven by HTML attributes resolve back to numbers here, so they
+      // still take part.
       maxIntegerDigits = Math.max(
         maxIntegerDigits,
         item.maxDigits ?? 0,
-        integerDigitCount(item.value),
+        integerDigitCount(
+          resolveReadoutNumericValue(
+            item.value,
+            item.valueType ?? ReadoutValueType.number
+          )
+        ),
         item.hasSetpoint ? integerDigitCount(item.setpoint) : 0,
         item.hasAdvice ? integerDigitCount(item.advice) : 0
       );

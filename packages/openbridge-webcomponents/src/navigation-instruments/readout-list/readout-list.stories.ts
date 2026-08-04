@@ -7,6 +7,7 @@ import {
   ReadoutListItemPriority,
   ReadoutListItemDataQuality,
   type ReadoutValueOptions,
+  ReadoutValueType,
 } from '../readout-list-item/readout-list-item.js';
 import '../readout-list-item/readout-list-item.js';
 import type {AlertFrameConfig} from '../../components/alert-frame/alert-frame.js';
@@ -22,7 +23,8 @@ type ListArgs = {
 
 type Row = {
   label: string;
-  value: number | null;
+  value: number | string | null;
+  valueType?: ReadoutValueType;
   unit: string;
   size?: ReadoutListItemSize;
   hasDegree?: boolean;
@@ -55,6 +57,7 @@ function renderRow(row: Row) {
       .label=${row.label}
       .unit=${row.unit}
       .value=${row.value}
+      .valueType=${row.valueType ?? ReadoutValueType.number}
       .size=${row.size ?? ReadoutListItemSize.small}
       .hasDegree=${row.hasDegree ?? false}
       .fractionDigits=${row.fractionDigits ?? 0}
@@ -110,6 +113,38 @@ const MIXED_ROWS: Row[] = [
 
 export const Default: Story = {
   render: (args) => renderList(MIXED_ROWS, args.showDebugOverlay),
+};
+
+/**
+ * **Mixed text and numeric rows.** Rows with `valueType="string"` render their
+ * value verbatim and are **excluded** from the auto-computed numeric reserver,
+ * so a long string like "Thermo On" does not inflate the shared value column —
+ * the numeric rows still align with each other, and each text row sizes to its
+ * own content.
+ *
+ * The list owns the reservers, so a text row that *should* join the shared
+ * column needs an explicit `valueOptions.spaceReserver` set by the consumer.
+ */
+const TEXT_ROWS: Row[] = [
+  {
+    label: 'Operating mode',
+    value: 'Thermo On',
+    valueType: ReadoutValueType.string,
+    unit: '',
+  },
+  {
+    label: 'Status',
+    value: 'Normal',
+    valueType: ReadoutValueType.string,
+    unit: '',
+  },
+  {label: 'Temperature', value: 45, unit: 'C', hasDegree: true},
+  {label: 'Pressure', value: 1013, unit: 'Pa', fractionDigits: 1},
+  {label: 'Speed', value: 18.4, unit: 'kn', fractionDigits: 1},
+];
+
+export const TextValues: Story = {
+  render: (args) => renderList(TEXT_ROWS, args.showDebugOverlay),
 };
 
 const DEGREE_ROWS: Row[] = [
@@ -180,6 +215,62 @@ export const WithSetpoints: Story = {
       ],
       args.showDebugOverlay
     ),
+};
+
+/**
+ * Attribute-driven regression test for text rows. Uses plain HTML attributes
+ * (not property bindings) so it covers the path where `value` arrives as a raw
+ * string: `valuetype="string"` must render verbatim and stay out of the shared
+ * numeric reserver, while a numeric `value="1013"` under the default value type
+ * must still resolve to a number and drive the reserver.
+ *
+ * Note the attribute is `valuetype`, all lowercase — Lit lowercases a property
+ * name to derive its attribute rather than kebab-casing it.
+ */
+export const TestTextRowAttributes: Story = {
+  render: () => html`
+    <div
+      data-obc-theme="day"
+      style="background: var(--container-background-color); padding: 16px; width: 360px; box-sizing: border-box;"
+    >
+      <obc-readout-list>
+        <obc-readout-list-item
+          id="text-row"
+          label="Operating mode"
+          value="Thermo On"
+          valuetype="string"
+        ></obc-readout-list-item>
+        <obc-readout-list-item
+          id="numeric-row"
+          label="Pressure"
+          unit="Pa"
+          value="1013"
+        ></obc-readout-list-item>
+      </obc-readout-list>
+    </div>
+  `,
+  play: async ({canvasElement}) => {
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+
+    const textRow = canvasElement.querySelector('#text-row') as HTMLElement & {
+      valueType: ReadoutValueType;
+      valueOptions?: ReadoutValueOptions;
+    };
+    const numericRow = canvasElement.querySelector(
+      '#numeric-row'
+    ) as HTMLElement & {valueOptions?: ReadoutValueOptions};
+
+    // The attribute reached the property as the enum value.
+    await expect(textRow.valueType).toBe(ReadoutValueType.string);
+    // Text renders verbatim. The value lives in the nested obc-readout-block's
+    // shadow root, so reach through it rather than the row's own.
+    const block = textRow.shadowRoot?.querySelector('obc-readout-block');
+    await expect(block?.shadowRoot?.textContent).toContain('Thermo On');
+    // The reserver is driven by the 4-digit numeric row, NOT by "Thermo On" —
+    // proving the text row is excluded from the numeric width computation.
+    await expect(numericRow.valueOptions?.spaceReserver).toBe('0000');
+  },
 };
 
 export const TestDynamicRow: Story = {

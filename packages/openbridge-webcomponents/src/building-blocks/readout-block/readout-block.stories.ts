@@ -6,6 +6,7 @@ import {
   ReadoutBlockDataQuality,
   ObcTextboxFontWeight,
   ObcTextboxAlignment,
+  ReadoutValueType,
 } from './readout-block.js';
 import './readout-block.js';
 import '../../icons/icon-placeholder.js';
@@ -19,7 +20,8 @@ const NONE = 'none';
 
 type BlockArgs = {
   variant: ReadoutBlockVariant;
-  value: number;
+  value: number | string;
+  valueType: ReadoutValueType;
   size: ReadoutBlockSize;
   enhanced: boolean;
   weight: ObcTextboxFontWeight;
@@ -43,6 +45,7 @@ function renderBlock(args: Partial<BlockArgs>) {
     <obc-readout-block
       .variant=${args.variant ?? ReadoutBlockVariant.value}
       .value=${args.value ?? null}
+      .valueType=${args.valueType ?? ReadoutValueType.number}
       .size=${args.size ?? ReadoutBlockSize.small}
       .enhanced=${args.enhanced ?? false}
       .weight=${args.weight ?? ObcTextboxFontWeight.regular}
@@ -128,6 +131,7 @@ const meta = {
   args: {
     variant: ReadoutBlockVariant.value,
     value: 123,
+    valueType: ReadoutValueType.number,
     size: ReadoutBlockSize.small,
     enhanced: false,
     weight: ObcTextboxFontWeight.regular,
@@ -143,7 +147,14 @@ const meta = {
     dataQuality: NONE,
   },
   argTypes: {
-    value: {control: {type: 'number'}},
+    // Text control (not number) so both value types are exercisable. Under
+    // valueType=number a numeric string resolves back to a number; entering
+    // non-numeric text there throws, which is the intended contract.
+    value: {control: {type: 'text'}},
+    valueType: {
+      control: {type: 'inline-radio'},
+      options: Object.values(ReadoutValueType),
+    },
     variant: {
       control: {type: 'select'},
       options: Object.values(ReadoutBlockVariant),
@@ -240,6 +251,66 @@ export const OffText: Story = {
     renderShowcase([
       {title: 'OFF (default)', args: {off: true}},
       {title: 'custom', args: {off: true, offText: 'unavailable'}},
+    ]),
+};
+
+/**
+ * `valueType="string"` renders `value` verbatim instead of formatting it as a
+ * number — for readings that are states rather than quantities.
+ *
+ * The numeric format options (`fractionDigits`, `maxDigits`, `hintedZeros`) are
+ * ignored in this mode; an explicit `spaceReserver` still applies. Passing text
+ * while `valueType` is `number` throws a `TypeError` rather than rendering
+ * `NaN`, while a numeric-looking string such as `"12.4"` is accepted and parsed
+ * so plain-HTML `value="12.4"` keeps working.
+ */
+export const TextValue: Story = {
+  render: () =>
+    renderShowcase([
+      {
+        title: 'text',
+        args: {value: 'Auto', valueType: ReadoutValueType.string},
+      },
+      {
+        title: 'longer text',
+        args: {value: 'Thermo On', valueType: ReadoutValueType.string},
+      },
+      {
+        title: 'verbatim "1.50"',
+        args: {
+          value: '1.50',
+          valueType: ReadoutValueType.string,
+          fractionDigits: 1,
+        },
+      },
+      {
+        title: 'maxDigits ignored',
+        args: {value: 'Auto', valueType: ReadoutValueType.string, maxDigits: 4},
+      },
+      {
+        title: 'spaceReserver honoured',
+        args: {
+          value: 'Auto',
+          valueType: ReadoutValueType.string,
+          spaceReserver: 'Thermo On',
+        },
+      },
+      {
+        title: 'null → dash',
+        args: {value: undefined, valueType: ReadoutValueType.string},
+      },
+      {
+        title: 'numeric string in number mode',
+        args: {value: '12.4', fractionDigits: 1},
+      },
+      {
+        title: 'text + degree',
+        args: {
+          value: 'Auto',
+          valueType: ReadoutValueType.string,
+          hasDegree: true,
+        },
+      },
     ]),
 };
 

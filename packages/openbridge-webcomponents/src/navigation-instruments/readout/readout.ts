@@ -25,7 +25,12 @@ import {
   type ReadoutSrcOptions,
 } from '../readout-list-item/readout-list-item.js';
 import {Priority} from '../types.js';
-import {type ReadoutNumericFormatOptions} from './readout-formatters.js';
+import {
+  assertReadoutValueType,
+  resolveReadoutNumericValue,
+  ReadoutValueType,
+  type ReadoutNumericFormatOptions,
+} from './readout-formatters.js';
 import {
   isDisplayedAtSetpoint,
   readoutNumericFormatOptions,
@@ -58,6 +63,7 @@ import '../../icons/icon-drop-down-google.js';
 // purpose: the two components are layout variants of the same primitives +
 // per-block options API and may merge in a future release.
 export {ObcTextboxFontWeight} from '../../components/textbox/textbox.js';
+export {ReadoutValueType} from './readout-formatters.js';
 export type {
   ReadoutBlockState,
   ReadoutValueOptions,
@@ -202,6 +208,8 @@ export interface ReadoutSourceOptions extends ReadoutSrcOptions {
  *   `flyout` interactivity via `srcOptions.interaction`.
  * - **Formatting:** shared `fractionDigits`, width reservation via
  *   `maxDigits` and per-segment `hintedZeros`; a `null` value renders a dash.
+ * - **Text values:** `valueType="string"` renders `value` verbatim (e.g.
+ *   `"Auto"`) instead of formatting it as a number.
  *
  * ### Usage Guidelines
  * Use for stand-alone instrument readouts and readouts embedded in
@@ -242,7 +250,18 @@ export class ObcReadout extends LitElement {
    * value block at full size, so the layout does not shift when data arrives.
    */
   @property({type: Boolean, attribute: false}) hasValue = true;
-  @property({type: Number}) value: number | null = null;
+  /**
+   * The value; `null` renders a dash. A number by default, or text when
+   * {@link valueType} is `string`.
+   */
+  @property({type: String}) value: number | string | null = null;
+  /**
+   * How {@link value} is interpreted. `number` (default) formats it via
+   * `fractionDigits`; `string` renders it verbatim and ignores the numeric
+   * format options. Passing text while this is `number` throws.
+   */
+  @property({type: String}) valueType: ReadoutValueType =
+    ReadoutValueType.number;
   /** Render the value as `offText` (e.g. equipment powered down). Affects the value only. */
   @property({type: Boolean}) off = false;
   /** Text shown in place of the value when `off` is true. @availableWhen off==true */
@@ -267,7 +286,9 @@ export class ObcReadout extends LitElement {
   @property({type: Boolean}) hasDegree = false;
   /** @availableWhen hasDegree==false */
   @property({type: Boolean}) hasDegreeSpacer = false;
+  /** @availableWhen valueType==number */
   @property({type: Number}) fractionDigits = 0;
+  /** @availableWhen valueType==number */
   @property({type: Number}) maxDigits = 0;
   @property({type: String}) dataQuality?: ReadoutDataQuality;
   // `boolean | …` (not `false | …`): the generated Angular wrapper widens a
@@ -361,8 +382,10 @@ export class ObcReadout extends LitElement {
     if (!this.hasSetpoint) {
       return false;
     }
+    // A text value never compares equal to a setpoint, so flip-flop / pop-up
+    // stay dormant for `valueType="string"`.
     return isDisplayedAtSetpoint(
-      this.value,
+      resolveReadoutNumericValue(this.value, this.valueType) ?? null,
       this.setpoint,
       this.numericFormatOptions(this.resolvedMaxDigits)
     );
@@ -489,7 +512,9 @@ export class ObcReadout extends LitElement {
 
   private renderBlock(config: {
     variant: ReadoutBlockVariant;
-    value: number | null | undefined;
+    value: number | string | null | undefined;
+    /** Only the value block is ever text; setpoint / advice stay numeric. */
+    valueType?: ReadoutValueType;
     valueSize: ObcTextboxSize;
     enhanced: boolean;
     weight: ObcTextboxFontWeight;
@@ -518,6 +543,7 @@ export class ObcReadout extends LitElement {
         exportparts="block, block-content, block-text, block-icon, degree"
         .variant=${config.variant}
         .value=${config.value ?? null}
+        .valueType=${config.valueType ?? ReadoutValueType.number}
         .size=${this.resolvedSize}
         .valueSize=${config.valueSize}
         .enhanced=${config.enhanced}
@@ -676,6 +702,7 @@ export class ObcReadout extends LitElement {
         ${this.renderBlock({
           variant: ReadoutBlockVariant.value,
           value: this.value,
+          valueType: this.valueType,
           valueSize: this.valueSize,
           enhanced: this.rowEnhanced,
           weight: this.valueWeight,
@@ -1017,6 +1044,7 @@ export class ObcReadout extends LitElement {
         : html`${this.renderBlock({
             variant: ReadoutBlockVariant.value,
             value: this.value,
+            valueType: this.valueType,
             valueSize: this.primarySize,
             enhanced: false,
             weight: this.valueWeight,
@@ -1087,6 +1115,13 @@ export class ObcReadout extends LitElement {
         ${this.renderMetaZone()} ${this.renderSource()}
       </div>
     `;
+  }
+
+  protected override willUpdate(changed: Map<string, unknown>): void {
+    super.willUpdate(changed);
+    if (changed.has('value') || changed.has('valueType')) {
+      assertReadoutValueType('obc-readout', this.value, this.valueType);
+    }
   }
 
   override updated(changed: Map<string, unknown>): void {
