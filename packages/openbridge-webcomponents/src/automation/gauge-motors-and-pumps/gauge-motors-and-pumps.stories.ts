@@ -112,6 +112,20 @@ export const Compact: Story = {
   },
 };
 
+export const CompactNegative: Story = {
+  args: {
+    width: 240,
+    height: 320,
+    large: false,
+    type: GaugeMotorsAndPumpsType.negative,
+    minValue: -100,
+    maxValue: 100,
+    value: 30,
+    setpoint: 30,
+    advices: [],
+  },
+};
+
 export const CompactDouble: Story = {
   args: {
     width: 240,
