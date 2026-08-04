@@ -4,10 +4,10 @@ import {classMap} from 'lit/directives/class-map.js';
 import componentStyle from './transmitter-button.css?inline';
 import {customElement} from '../../decorator.js';
 import {
-  ReadoutBlockVariant,
-  ReadoutBlockSize,
-} from '../../building-blocks/readout-block/readout-block.js';
-import '../../building-blocks/readout-block/readout-block.js';
+  TransmitterReadoutSize,
+  TransmitterReadoutVariant,
+  renderTransmitterReadout,
+} from './transmitter-readout.js';
 
 export enum TransmitterButtonVariant {
   value = 'value',
@@ -20,32 +20,22 @@ export enum TransmitterButtonSize {
   large = 'large',
 }
 
-// ReadoutBlockSize.small is the block's 16px tier — it reads the `regular`
-// design token, so it is the counterpart of this component's `regular`.
-const readoutSizeBySize: Record<TransmitterButtonSize, ReadoutBlockSize> = {
-  [TransmitterButtonSize.regular]: ReadoutBlockSize.small,
-  [TransmitterButtonSize.medium]: ReadoutBlockSize.medium,
-  [TransmitterButtonSize.large]: ReadoutBlockSize.large,
-};
-
-function normalizeNumericValue(
-  value: number | null | undefined
-): number | undefined {
-  if (value === null || value === undefined || Number.isNaN(value)) {
-    return undefined;
-  }
-  return value;
-}
+const readoutSizeBySize: Record<TransmitterButtonSize, TransmitterReadoutSize> =
+  {
+    [TransmitterButtonSize.regular]: TransmitterReadoutSize.regular,
+    [TransmitterButtonSize.medium]: TransmitterReadoutSize.medium,
+    [TransmitterButtonSize.large]: TransmitterReadoutSize.large,
+  };
 
 /**
  * `<obc-transmitter-button>` – The pressable readout chip used as the core of a
  * transmitter on a process diagram.
  *
  * The value content (leading icon, optional advice and setpoint segments,
- * value, unit) is laid out inline. The value, advice and setpoint segments are
- * all `<obc-readout-block>` instances sharing one numeric format, so they
- * support fixed-width values and muted leading zeros identically. The leading
- * icon is slotted so the consumer provides the type-specific content.
+ * value, unit) is laid out inline. The value, advice and setpoint segments all
+ * share one numeric format, so they support fixed-width values and muted
+ * leading zeros identically. The leading icon is slotted so the consumer
+ * provides the type-specific content.
  *
  * ### Features / Variants
  * - **`value`** – white, bordered box showing an icon, value and unit. Opt into a
@@ -110,32 +100,24 @@ export class ObcTransmitterButton extends LitElement {
   }
 
   private renderBlock(
-    blockClass: string,
-    variant: ReadoutBlockVariant,
+    variant: TransmitterReadoutVariant,
     value: number | null | undefined
   ) {
-    return html`
-      <obc-readout-block
-        class=${blockClass}
-        .variant=${variant}
-        .size=${readoutSizeBySize[this.size]}
-        .value=${normalizeNumericValue(value) ?? null}
-        .fractionDigits=${this.fractionDigits}
-        .maxDigits=${this.maxDigits}
-        .hintedZeros=${this.hintedZeros}
-      ></obc-readout-block>
-    `;
+    return renderTransmitterReadout({
+      variant,
+      size: readoutSizeBySize[this.size],
+      value,
+      fractionDigits: this.fractionDigits,
+      maxDigits: this.maxDigits,
+      hintedZeros: this.hintedZeros,
+    });
   }
 
   private renderAdvice() {
     if (!this.hasAdvice) {
       return nothing;
     }
-    return this.renderBlock(
-      'advice',
-      ReadoutBlockVariant.advice,
-      this.adviceValue
-    );
+    return this.renderBlock(TransmitterReadoutVariant.advice, this.adviceValue);
   }
 
   private renderSetpoint() {
@@ -143,8 +125,7 @@ export class ObcTransmitterButton extends LitElement {
       return nothing;
     }
     return this.renderBlock(
-      'setpoint',
-      ReadoutBlockVariant.setpoint,
+      TransmitterReadoutVariant.setpoint,
       this.setpointValue
     );
   }
@@ -160,7 +141,7 @@ export class ObcTransmitterButton extends LitElement {
         ${this.hasIcon
           ? html`<div class="icon"><slot name="icon"></slot></div>`
           : nothing}
-        ${this.renderBlock('value', ReadoutBlockVariant.value, this.value)}
+        ${this.renderBlock(TransmitterReadoutVariant.value, this.value)}
         ${this.unit ? html`<span class="unit">${this.unit}</span>` : nothing}
       </div>
     `;

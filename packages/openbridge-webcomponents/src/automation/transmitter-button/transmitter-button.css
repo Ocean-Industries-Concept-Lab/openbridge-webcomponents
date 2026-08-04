@@ -43,12 +43,30 @@
   justify-content: center;
 }
 
-.advice,
-.setpoint,
-.value {
+.readout {
+  display: inline-flex;
+  align-items: flex-end;
+  color: var(--element-neutral-color);
+}
+
+.readout-icon {
   display: inline-flex;
   align-items: center;
-  --obc-readout-block-hinted-color: var(--border-outline-color);
+  justify-content: center;
+  flex: none;
+  align-self: center;
+  color: inherit;
+}
+
+.readout-icon obi-input-right,
+.readout-icon obi-notification-advice {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+.hinted-zero {
+  color: var(--border-outline-color);
 }
 
 .unit {
@@ -82,6 +100,39 @@
 
 .size-large .value {
   @mixin font-instrument-value-enhanced-neutral;
+}
+
+.size-regular .readout {
+  gap: var(--instrument-components-readout-new-general-regular-icon-gap);
+}
+
+.size-regular .readout-icon {
+  inline-size: var(
+    --instrument-components-readout-new-general-regular-icon-size
+  );
+  block-size: var(
+    --instrument-components-readout-new-general-regular-icon-size
+  );
+}
+
+.size-medium .readout {
+  gap: var(--instrument-components-readout-new-general-medium-icon-gap);
+}
+
+.size-medium .readout-icon {
+  inline-size: var(
+    --instrument-components-readout-new-general-medium-icon-size
+  );
+  block-size: var(--instrument-components-readout-new-general-medium-icon-size);
+}
+
+.size-large .readout {
+  gap: var(--instrument-components-readout-new-general-large-icon-gap);
+}
+
+.size-large .readout-icon {
+  inline-size: var(--instrument-components-readout-new-general-large-icon-size);
+  block-size: var(--instrument-components-readout-new-general-large-icon-size);
 }
 
 .size-medium .visible-wrapper:not(.tag),
