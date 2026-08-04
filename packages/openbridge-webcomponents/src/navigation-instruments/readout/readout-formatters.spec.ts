@@ -286,7 +286,9 @@ describe('formatNumericValue — unavailable value', () => {
     ).toBe(reserve.length);
   });
 
-  it('keeps a single dash when there are no digits to fill', () => {
+  // Only the INTEGER part falls back to one dash; the fraction placeholder is
+  // always kept, so this is `-.--` rather than a bare `-` at fractionDigits 2.
+  it('falls back to a single integer dash when there are no digits to fill', () => {
     expect(formatNumericValue(undefined, opts(0, 0))).toBe('-');
     expect(formatNumericValue(undefined, opts(0, 2))).toBe('-.--');
   });

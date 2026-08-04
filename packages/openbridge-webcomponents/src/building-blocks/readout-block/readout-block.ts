@@ -217,9 +217,10 @@ export class ObcReadoutBlock extends LitElement {
     return {
       // The unavailable dash fills the reserved digit positions (`----.---`)
       // rather than sitting as a lone `-` in an otherwise empty reserve. This
-      // does not change the block's width — `maxDigits` already reserves it —
-      // and with `maxDigits` 0 there is nothing to fill, so the single dash
-      // stays.
+      // does not change the block's width — `maxDigits` already reserves it.
+      // With `maxDigits` 0 there is nothing to fill, so only the integer part
+      // falls back to a single dash: `-`, or `-.--` at `fractionDigits` 2 —
+      // the fraction placeholder is always kept.
       showZeroPadding: true,
       minValueLength: this.maxDigits,
       fractionDigits: this.fractionDigits,
