@@ -134,18 +134,45 @@ export class ObcGaugeValve extends SetpointMixin(LitElement) {
   @property({type: String}) barStyle: GaugeValveStyle = GaugeValveStyle.tint;
   /** Through-flow of the right outlet port, 0-100 (%) */
   @property({type: Number}) value = 0;
-  /** Bottom outlet flow, 0-100 (%). Only used when type is three-way */
+  /**
+   * Bottom outlet flow, 0-100 (%).
+   * @availableWhen type==three-way
+   */
   @property({type: Number}) bottomValue = 0;
   /** Show scale, labels, readout and setpoint layer */
   @property({type: Boolean}) large = false;
-  /** Readout label text, shown when large */
+  /**
+   * Readout label text.
+   * @availableWhen large==true
+   */
   @property({type: String}) label = '';
-  /** Readout unit text, shown when large */
+  /**
+   * Readout unit text.
+   * @availableWhen large==true
+   */
   @property({type: String}) unit = '';
-  /** Identifier line under the compact readout stack, e.g. '#0001' */
+  /**
+   * Identifier line under the compact readout stack, e.g. '#0001'.
+   * @availableWhen large==false
+   */
   @property({type: String}) tag = '';
-  /** Render the readout stack below the face in the compact variant */
+  /**
+   * Render the readout stack below the face in the compact variant.
+   * @availableWhen large==false
+   */
   @property({type: Boolean, attribute: false}) hasLabelStack = true;
+
+  /**
+   * The shared instrument Priority tier for the setpoint marker and readout.
+   * Only `enhanced` maps through; `medium` has no shared-Priority tier, so its
+   * teal emphasis stays confined to the bars while marker and readout render
+   * regular.
+   */
+  private get sharedPriority(): Priority {
+    return this.priority === GaugeValvePriority.enhanced
+      ? Priority.enhanced
+      : Priority.regular;
+  }
 
   private renderTrack(centerAngle: number, fillPercent: number) {
     const halfSpan =
@@ -286,7 +313,7 @@ export class ObcGaugeValve extends SetpointMixin(LitElement) {
         this.priority === GaugeValvePriority.off
           ? InstrumentState.off
           : InstrumentState.active,
-      priority: Priority.regular,
+      priority: this.sharedPriority,
       atSetpoint: this.computeAtSetpoint(this.value),
       angleSetpoint: scaleAngle(this.setpoint),
       touching: this.touching,
@@ -333,6 +360,7 @@ export class ObcGaugeValve extends SetpointMixin(LitElement) {
       label: this.label,
       unit: this.unit,
       fractionDigits: 0,
+      priority: this.sharedPriority,
     });
   }
 

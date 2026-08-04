@@ -31,6 +31,7 @@ const meta = {
     value: 75,
     bottomValue: 0,
     large: false,
+    hasLabelStack: true,
   },
   argTypes: {
     type: {
@@ -60,6 +61,7 @@ const meta = {
       .unit=${args.unit}
       .tag=${args.tag ?? ''}
       .setpoint=${args.setpoint}
+      .hasLabelStack=${args.hasLabelStack ?? true}
     >
       <obi-twoway-acuator-general-75
         slot="icon"
@@ -99,6 +101,7 @@ export const ThreeWay: Story = {
       .unit=${args.unit}
       .tag=${args.tag ?? ''}
       .setpoint=${args.setpoint}
+      .hasLabelStack=${args.hasLabelStack ?? true}
     >
       <obi-threeway-acuator-generic-inleft-left-75
         slot="icon"
@@ -139,6 +142,26 @@ export const WithSetpoint: Story = {
 
 export const Closed: Story = {
   args: {value: 0},
+  render: (args) => html`
+    <obc-gauge-valve
+      .type=${args.type}
+      .priority=${args.priority ?? GaugeValvePriority.regular}
+      .barStyle=${args.barStyle ?? GaugeValveStyle.tint}
+      .value=${args.value}
+      .bottomValue=${args.bottomValue}
+      .large=${args.large}
+      .label=${args.label}
+      .unit=${args.unit}
+      .tag=${args.tag ?? ''}
+      .setpoint=${args.setpoint}
+      .hasLabelStack=${args.hasLabelStack ?? true}
+    >
+      <obi-twoway-acuator-general-closed
+        slot="icon"
+        usecsscolor
+      ></obi-twoway-acuator-general-closed>
+    </obc-gauge-valve>
+  `,
 };
 
 export const Enhanced: Story = {
@@ -191,6 +214,7 @@ export const OffState: Story = {
       .unit=${args.unit}
       .tag=${args.tag ?? ''}
       .setpoint=${args.setpoint}
+      .hasLabelStack=${args.hasLabelStack ?? true}
     >
       <obi-twoway-acuator-general-closed
         slot="icon"
