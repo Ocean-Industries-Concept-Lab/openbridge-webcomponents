@@ -298,7 +298,8 @@ export class ObcGaugeProportional extends SetpointMixin(LitElement) {
   advices: GaugeProportionalAdvice[] = [];
   /**
    * When `true`, shows the center readout (and the secondary readout when
-   * `secondaryValue` is set). Default `false`.
+   * the split frame renders — dashed until `secondaryValue` is set).
+   * Default `false`.
    * @availableWhen large==true
    */
   @property({type: Boolean}) hasReadout = false;
@@ -953,7 +954,7 @@ export class ObcGaugeProportional extends SetpointMixin(LitElement) {
 
   private renderSecondaryMaxMinLabels() {
     if (
-      this.secondaryValue === undefined ||
+      !this.isSplit ||
       !this.showLabels ||
       this.effectiveAlignment !== GaugeProportionalAlignment.maxMin ||
       this.isFullCircle
@@ -1027,9 +1028,12 @@ export class ObcGaugeProportional extends SetpointMixin(LitElement) {
         size: ReadoutSize.large,
       },
     ];
-    if (this.secondaryValue !== undefined) {
+    if (this.isSplit) {
       entries.push({
-        value: this.clamp(this.secondaryValue),
+        value:
+          this.secondaryValue === undefined
+            ? null
+            : this.clamp(this.secondaryValue),
         label: this.secondaryLabel,
         unit: this.secondaryUnit,
         fractionDigits: this.fractionDigits,
