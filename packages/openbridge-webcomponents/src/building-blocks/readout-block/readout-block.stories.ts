@@ -1,5 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html, nothing} from 'lit';
+import {expect} from 'storybook/test';
 import {
   ReadoutBlockVariant,
   ReadoutBlockSize,
@@ -375,6 +376,43 @@ export const Alignment: Story = {
         args: {value: 12, alignment, spaceReserver: '00000'},
       }))
     ),
+};
+
+/**
+ * Regression test for a validation hole, not a visual case.
+ *
+ * When `willUpdate` throws, Lit's `performUpdate` catch calls `__markUpdated()`,
+ * which clears the changed-properties map. Validation used to be gated on
+ * `changed.has('value') || changed.has('valueType')`, so the NEXT update —
+ * driven by any other property, e.g. `obc-readout-list.align()` writing the
+ * shared reservers — saw an empty map, skipped the check, and rendered the
+ * invalid value as a plain dash. Loud once, then silent forever.
+ *
+ * An EMPTY changed map is exactly what Lit leaves behind after a throw, so
+ * `willUpdate` is invoked directly with one. The element is deliberately left
+ * detached: an unconnected `LitElement` never starts its update cycle, so this
+ * exercises the guard without the real throw escaping the scheduler as an
+ * unhandled rejection.
+ */
+export const TestValidationSurvivesUnrelatedUpdate: Story = {
+  render: () => html`<span>Regression test — see the play function.</span>`,
+  play: async () => {
+    type Probe = HTMLElement & {
+      value: number | string | null;
+      willUpdate: (changed: Map<string, unknown>) => void;
+    };
+    const el = document.createElement('obc-readout-block') as Probe;
+    const validateWithNoChanges = () => el.willUpdate(new Map());
+
+    el.value = 'Auto';
+    await expect(validateWithNoChanges).toThrow(/value must be a number/);
+
+    el.value = 12.4;
+    await expect(validateWithNoChanges).not.toThrow();
+
+    el.value = null;
+    await expect(validateWithNoChanges).not.toThrow();
+  },
 };
 
 export const DataQuality: Story = {

@@ -860,13 +860,14 @@ export class ObcReadoutListItem extends LitElement {
 
   protected override willUpdate(changed: Map<string, unknown>): void {
     super.willUpdate(changed);
-    if (changed.has('value') || changed.has('valueType')) {
-      assertReadoutValueType(
-        'obc-readout-list-item',
-        this.value,
-        this.valueType
-      );
-    }
+    // Validated on EVERY update, deliberately NOT gated on `value`/`valueType`
+    // appearing in `changed`. When this assertion throws, Lit's `performUpdate`
+    // catch calls `__markUpdated()`, which clears the changed-properties map. A
+    // later update driven by any OTHER property — inside `obc-readout-list`,
+    // `align()` writing the shared reservers — would then see no `value` in
+    // `changed`, skip the check, and render the invalid value as a plain dash:
+    // exactly the silent failure this assertion exists to prevent.
+    assertReadoutValueType('obc-readout-list-item', this.value, this.valueType);
   }
 
   override updated(changed: Map<string, unknown>): void {
