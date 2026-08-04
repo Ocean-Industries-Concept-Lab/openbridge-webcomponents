@@ -27,9 +27,8 @@ const meta: Meta<typeof ObcTransmitter> = {
     value: 12.3,
     unit: '°C',
     fractionDigits: 1,
-    minValueLength: 0,
-    hasHintedZeros: false,
-    showZeroPadding: false,
+    maxDigits: 0,
+    hintedZeros: false,
     hasIcon: true,
     hasAdvice: false,
     adviceValue: 123,
@@ -93,9 +92,8 @@ function renderComponent(args: ObcTransmitter) {
       .value=${args.value}
       .unit=${args.unit}
       .fractionDigits=${args.fractionDigits}
-      .minValueLength=${args.minValueLength}
-      .hasHintedZeros=${args.hasHintedZeros}
-      .showZeroPadding=${args.showZeroPadding}
+      .maxDigits=${args.maxDigits}
+      .hintedZeros=${args.hintedZeros}
       .hasIcon=${args.hasIcon}
       .hasAdvice=${args.hasAdvice}
       .adviceValue=${args.adviceValue}
@@ -147,8 +145,8 @@ export const ZeroPadded: Story = {
     type: TransmitterType.value,
     value: 12.3,
     fractionDigits: 1,
-    minValueLength: 5,
-    hasHintedZeros: true,
+    maxDigits: 4,
+    hintedZeros: true,
   },
   render: (args) => renderComponent(args as ObcTransmitter),
 };

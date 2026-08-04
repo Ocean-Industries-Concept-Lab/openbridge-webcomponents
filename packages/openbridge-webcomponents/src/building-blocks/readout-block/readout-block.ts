@@ -11,11 +11,7 @@ import {
 } from '../../components/textbox/textbox.js';
 import '../../icons/icon-input-right.js';
 import '../../icons/icon-notification-advice.js';
-import {
-  formatNumericValue,
-  readoutFormattedInteger,
-  type ReadoutNumericFormatOptions,
-} from '../../navigation-instruments/readout/readout-formatters.js';
+import {formatHintedValue} from '../../navigation-instruments/readout/readout-formatters.js';
 import {
   type AlertFrameConfig,
   wrapWithAlertFrame,
@@ -134,10 +130,17 @@ export class ObcReadoutBlock extends LitElement {
   /** Number of fraction digits. */
   @property({type: Number}) fractionDigits = 0;
 
-  /** Integer digits to reserve / hint (independent of `fractionDigits`). */
+  /**
+   * Integer digits to reserve / hint (independent of `fractionDigits`). A
+   * negative value's minus sign occupies one of them, so it renders at the same
+   * width as a positive value.
+   */
   @property({type: Number}) maxDigits = 0;
 
-  /** Render muted leading zeros filling the integer part to `maxDigits`. */
+  /**
+   * Render muted leading zeros filling the integer part to `maxDigits`. A
+   * missing value fills the same width with dashes instead.
+   */
   @property({type: Boolean}) hintedZeros = false;
 
   /** Explicit longest string to reserve width for (e.g. `"0000.0"`). */
@@ -183,14 +186,6 @@ export class ObcReadoutBlock extends LitElement {
       default:
         return ObcTextboxSize.s;
     }
-  }
-
-  private get numericFormatOptions(): ReadoutNumericFormatOptions {
-    return {
-      showZeroPadding: false,
-      minValueLength: this.maxDigits,
-      fractionDigits: this.fractionDigits,
-    };
   }
 
   /** Widest possible value string for width reservation (e.g. `"000.0"`). */
@@ -282,23 +277,13 @@ export class ObcReadoutBlock extends LitElement {
 
   override render() {
     const valueSize = this.resolvedValueSize;
-    const formatOptions = this.numericFormatOptions;
-    const valueForFormat = this.value ?? undefined;
-    const text = this.off
-      ? this.offText
-      : formatNumericValue(valueForFormat, formatOptions);
-    // Hinted zeros pad the INTEGER part up to `maxDigits`, independent of
-    // `fractionDigits` (the decimal point and fraction digits never count toward
-    // `maxDigits`). Negative / dashed values are not padded. Example: value 1.2,
-    // maxDigits 3, fractionDigits 1 → "001.2".
-    const hintCount =
-      this.off ||
-      !this.hintedZeros ||
-      valueForFormat === undefined ||
-      valueForFormat < 0
-        ? 0
-        : Math.max(this.maxDigits - readoutFormattedInteger(text), 0);
-    const hinted = hintCount > 0 ? '0'.repeat(hintCount) : '';
+    const {sign, hint, text} = this.off
+      ? {sign: '', hint: '', text: this.offText}
+      : formatHintedValue(this.value ?? undefined, {
+          maxDigits: this.maxDigits,
+          fractionDigits: this.fractionDigits,
+          hintedZeros: this.hintedZeros,
+        });
     // Hinted zeros own the width — they already fill to `maxDigits` — so when
     // `hintedZeros` is enabled an explicit `spaceReserver` is ignored (it has
     // higher priority). Otherwise the wider of the explicit reserver and the
@@ -331,9 +316,9 @@ export class ObcReadoutBlock extends LitElement {
             .alignment=${this.alignment}
             .tabularNums=${true}
           >
-            ${hinted
+            ${sign}${hint
               ? html`<span class="hinted-zero" aria-hidden="true"
-                  >${hinted}</span
+                  >${hint}</span
                 >`
               : nothing}${text}
             ${reserver ? html`<span slot="length">${reserver}</span>` : nothing}

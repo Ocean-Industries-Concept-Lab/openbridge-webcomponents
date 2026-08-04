@@ -273,6 +273,29 @@ export const HintedZeros: Story = {
 };
 
 /**
+ * A negative value's minus sign takes one of the reserved positions, so it
+ * renders at the same width as a positive value. A missing value fills the whole
+ * reserved width with dashes rather than zeros.
+ */
+export const HintedZerosSignAndMissingValue: Story = {
+  render: () =>
+    renderShowcase([
+      {
+        title: 'positive',
+        args: {value: 1.2, maxDigits: 4, fractionDigits: 1, hintedZeros: true},
+      },
+      {
+        title: 'negative',
+        args: {value: -1.2, maxDigits: 4, fractionDigits: 1, hintedZeros: true},
+      },
+      {
+        title: 'missing',
+        args: {value: null, maxDigits: 4, fractionDigits: 1, hintedZeros: true},
+      },
+    ]),
+};
+
+/**
  * `maxDigits` reserves INTEGER digits only — independent of `fractionDigits`
  * (the decimal point and fraction digits never count toward `maxDigits`).
  */

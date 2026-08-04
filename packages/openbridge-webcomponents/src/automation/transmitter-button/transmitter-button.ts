@@ -4,11 +4,6 @@ import {classMap} from 'lit/directives/class-map.js';
 import componentStyle from './transmitter-button.css?inline';
 import {customElement} from '../../decorator.js';
 import {
-  formatNumericValue,
-  getHintZeros,
-  type ReadoutNumericFormatOptions,
-} from '../../navigation-instruments/readout/readout-formatters.js';
-import {
   ReadoutBlockVariant,
   ReadoutBlockSize,
 } from '../../building-blocks/readout-block/readout-block.js';
@@ -47,11 +42,10 @@ function normalizeNumericValue(
  * transmitter on a process diagram.
  *
  * The value content (leading icon, optional advice and setpoint segments,
- * value, unit) is laid out inline. Numeric formatting follows the readout
- * convention via the shared `readout-formatters` helpers, so it supports
- * fixed-width values and muted leading zeros. The leading icon is slotted so the
- * consumer provides the type-specific content; the advice and setpoint segments
- * are `<obc-readout-block>` instances and share the value's numeric formatting.
+ * value, unit) is laid out inline. The value, advice and setpoint segments are
+ * all `<obc-readout-block>` instances sharing one numeric format, so they
+ * support fixed-width values and muted leading zeros identically. The leading
+ * icon is slotted so the consumer provides the type-specific content.
  *
  * ### Features / Variants
  * - **`value`** – white, bordered box showing an icon, value and unit. Opt into a
@@ -62,13 +56,14 @@ function normalizeNumericValue(
  * - **`size`** – `regular`, `medium` or `large`, scaling the value text, the icon
  *   glyph and the advice/setpoint segments. The unit stays at a fixed size across
  *   all sizes.
- * - **Formatting** – `fractionDigits` sets the decimal precision, `minValueLength`
- *   reserves a minimum total digit count, and `hasHintedZeros` renders the
- *   reserved leading positions as muted zeros (e.g. `0012.3`). `showZeroPadding`
- *   pads the dashed fallback shown when no value is set. The advice and setpoint
- *   segments reuse `fractionDigits`, `minValueLength` and `hasHintedZeros`.
+ * - **Formatting** – `fractionDigits` sets the decimal precision, `maxDigits`
+ *   reserves a number of integer digits, and `hintedZeros` renders the reserved
+ *   leading positions as muted zeros (e.g. `0012.3`). A negative value's minus
+ *   sign takes one of the reserved positions, so it stays the same width as a
+ *   positive one (`-012.3`). All three segments share this formatting.
  * - **Missing values** – `value`, `adviceValue` and `setpointValue` each render
- *   the dashed fallback when they are `NaN`, `null` or `undefined`.
+ *   dashes when they are `NaN`, `null` or `undefined`; with `hintedZeros` the
+ *   dashes fill the whole reserved width (e.g. `---.-`).
  *
  * ### Usage Guidelines
  * Use as a building block for `<obc-transmitter>`; it is the part that carries
@@ -79,6 +74,8 @@ function normalizeNumericValue(
  * | Slot Name | Conditions                    | Purpose                        |
  * |-----------|-------------------------------|--------------------------------|
  * | icon      | `value` variant and `hasIcon` | Leading icon beside the value. |
+ *
+ * @slot icon - Leading icon beside the value.
  */
 @customElement('obc-transmitter-button')
 export class ObcTransmitterButton extends LitElement {
@@ -89,9 +86,11 @@ export class ObcTransmitterButton extends LitElement {
   @property({type: Number}) value?: number | null;
   @property({type: String}) unit = '';
   @property({type: Number}) fractionDigits = 1;
-  @property({type: Number}) minValueLength = 0;
-  @property({type: Boolean}) hasHintedZeros = false;
-  @property({type: Boolean}) showZeroPadding = false;
+
+  /** Integer digits to reserve / hint (independent of `fractionDigits`). */
+  @property({type: Number}) maxDigits = 0;
+
+  @property({type: Boolean}) hintedZeros = false;
   @property({type: Boolean}) hasIcon = false;
   @property({type: Boolean}) hasAdvice = false;
 
@@ -110,74 +109,44 @@ export class ObcTransmitterButton extends LitElement {
     return this.variant === TransmitterButtonVariant.tag;
   }
 
-  private get numericFormatOptions(): ReadoutNumericFormatOptions {
-    return {
-      showZeroPadding: this.showZeroPadding,
-      minValueLength: this.minValueLength,
-      fractionDigits: this.fractionDigits,
-    };
-  }
-
-  private get normalizedValue(): number | undefined {
-    return normalizeNumericValue(this.value);
-  }
-
-  private renderValue() {
-    const hintedText = getHintZeros(
-      this.normalizedValue,
-      this.numericFormatOptions
-    );
-    const valueText = formatNumericValue(
-      this.normalizedValue,
-      this.numericFormatOptions
-    );
-
-    return html`<span class="value"
-      >${hintedText
-        ? html`<span
-            class=${classMap({
-              'hinted-zero': true,
-              'is-hidden': !this.hasHintedZeros,
-            })}
-            aria-hidden="true"
-            >${hintedText}</span
-          >`
-        : nothing}<span class="value-text">${valueText}</span></span
-    >`;
+  private renderBlock(
+    blockClass: string,
+    variant: ReadoutBlockVariant,
+    value: number | null | undefined
+  ) {
+    return html`
+      <obc-readout-block
+        class=${blockClass}
+        .variant=${variant}
+        .size=${readoutSizeBySize[this.size]}
+        .value=${normalizeNumericValue(value) ?? null}
+        .fractionDigits=${this.fractionDigits}
+        .maxDigits=${this.maxDigits}
+        .hintedZeros=${this.hintedZeros}
+      ></obc-readout-block>
+    `;
   }
 
   private renderAdvice() {
     if (!this.hasAdvice) {
       return nothing;
     }
-    return html`
-      <obc-readout-block
-        class="advice"
-        .variant=${ReadoutBlockVariant.advice}
-        .size=${readoutSizeBySize[this.size]}
-        .value=${normalizeNumericValue(this.adviceValue) ?? null}
-        .fractionDigits=${this.fractionDigits}
-        .maxDigits=${this.minValueLength}
-        .hintedZeros=${this.hasHintedZeros}
-      ></obc-readout-block>
-    `;
+    return this.renderBlock(
+      'advice',
+      ReadoutBlockVariant.advice,
+      this.adviceValue
+    );
   }
 
   private renderSetpoint() {
     if (!this.hasSetPoint) {
       return nothing;
     }
-    return html`
-      <obc-readout-block
-        class="setpoint"
-        .variant=${ReadoutBlockVariant.setpoint}
-        .size=${readoutSizeBySize[this.size]}
-        .value=${normalizeNumericValue(this.setpointValue) ?? null}
-        .fractionDigits=${this.fractionDigits}
-        .maxDigits=${this.minValueLength}
-        .hintedZeros=${this.hasHintedZeros}
-      ></obc-readout-block>
-    `;
+    return this.renderBlock(
+      'setpoint',
+      ReadoutBlockVariant.setpoint,
+      this.setpointValue
+    );
   }
 
   private renderContent() {
@@ -191,7 +160,7 @@ export class ObcTransmitterButton extends LitElement {
         ${this.hasIcon
           ? html`<div class="icon"><slot name="icon"></slot></div>`
           : nothing}
-        ${this.renderValue()}
+        ${this.renderBlock('value', ReadoutBlockVariant.value, this.value)}
         ${this.unit ? html`<span class="unit">${this.unit}</span>` : nothing}
       </div>
     `;

@@ -18,9 +18,8 @@ const meta: Meta<typeof ObcTransmitterButton> = {
     value: 12.3,
     unit: '°C',
     fractionDigits: 1,
-    minValueLength: 0,
-    hasHintedZeros: false,
-    showZeroPadding: false,
+    maxDigits: 0,
+    hintedZeros: false,
     hasIcon: false,
     hasAdvice: false,
     adviceValue: 123,
@@ -41,7 +40,29 @@ const meta: Meta<typeof ObcTransmitterButton> = {
       ],
       control: {type: 'radio'},
     },
-    value: {control: {type: 'range', min: -99, max: 999, step: 0.1}},
+    value: {
+      options: [
+        'NaN',
+        'undefined',
+        'null',
+        '-12.34',
+        '0.0',
+        '1.0000',
+        '12.3400',
+        '123.4567',
+      ],
+      mapping: {
+        NaN: NaN,
+        undefined: undefined,
+        null: null,
+        '0.0': 0.0,
+        '-12.34': -12.34,
+        '1.0000': 1.0,
+        '12.3400': 12.34,
+        '123.4567': 123.4567,
+      },
+      control: {type: 'select'},
+    },
   },
 } satisfies Meta<ObcTransmitterButton>;
 
@@ -56,9 +77,8 @@ function renderComponent(args: ObcTransmitterButton) {
       .value=${args.value}
       .unit=${args.unit}
       .fractionDigits=${args.fractionDigits}
-      .minValueLength=${args.minValueLength}
-      .hasHintedZeros=${args.hasHintedZeros}
-      .showZeroPadding=${args.showZeroPadding}
+      .maxDigits=${args.maxDigits}
+      .hintedZeros=${args.hintedZeros}
       .hasIcon=${args.hasIcon}
       .hasAdvice=${args.hasAdvice}
       .adviceValue=${args.adviceValue}
@@ -136,8 +156,30 @@ export const ZeroPadded: Story = {
   args: {
     value: 12.3,
     fractionDigits: 1,
-    minValueLength: 5,
-    hasHintedZeros: true,
+    maxDigits: 4,
+    hintedZeros: true,
+    hasIcon: true,
+  },
+  render: (args) => renderComponent(args as ObcTransmitterButton),
+};
+
+export const ZeroPaddedNegativeValue: Story = {
+  args: {
+    value: -12.3,
+    fractionDigits: 1,
+    maxDigits: 4,
+    hintedZeros: true,
+    hasIcon: true,
+  },
+  render: (args) => renderComponent(args as ObcTransmitterButton),
+};
+
+export const ZeroPaddedMissingValue: Story = {
+  args: {
+    value: NaN,
+    fractionDigits: 1,
+    maxDigits: 4,
+    hintedZeros: true,
     hasIcon: true,
   },
   render: (args) => renderComponent(args as ObcTransmitterButton),

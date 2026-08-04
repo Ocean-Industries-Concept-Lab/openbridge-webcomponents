@@ -44,23 +44,11 @@
 }
 
 .advice,
-.setpoint {
+.setpoint,
+.value {
   display: inline-flex;
   align-items: center;
-}
-
-.value {
-  color: var(--element-neutral-color);
-  text-align: right;
-}
-
-.hinted-zero {
-  color: var(--border-outline-color);
-  pointer-events: none;
-
-  &.is-hidden {
-    opacity: 0;
-  }
+  --obc-readout-block-hinted-color: var(--border-outline-color);
 }
 
 .unit {
