@@ -7,6 +7,9 @@ import './pipe-cross.js';
 import './pipe-endpoint.js';
 import './pipe-arrow.js';
 import './pipe-overlap.js';
+import '../pump/pump.js';
+import '../analog-valve/analog-valve.js';
+import '../automation-tank/automation-tank.js';
 import type {PipeValue, PipeSize} from './pipe-types.js';
 
 const VALUES: PipeValue[] = [
@@ -307,6 +310,99 @@ function connectedDemo() {
   `;
 }
 
+/**
+ * A larger working example: pipe runs connecting real automation devices
+ * (pump, analog valve, tank) on the shared 24px grid.
+ *
+ * Composition rules beyond the fitting rules above:
+ * - Devices anchor per the P&ID anchor model: pump/valve at the icon centre,
+ *   tank at the top-centre of its body. Position each device so its anchor
+ *   sits on the pipe centreline coordinate.
+ * - A run may pass UNDER a device anchor (devices render after the pipes, so
+ *   the device art covers the joint) — unlike fittings, no half-cell stop is
+ *   needed at a device.
+ */
+function deviceDemo() {
+  const G = 24;
+  // +1 col/row base offset: fittings overhang half a tile past their anchor,
+  // so a fitting on column 0 would clip at the snapshot canvas edge.
+  const at = (col: number, row: number) =>
+    `position:absolute; left:${(col + 1) * G}px; top:${(row + 1) * G}px;`;
+  return html`
+    <div
+      style="position:relative; width:${22 * G}px; height:${17 *
+      G}px; margin:8px 0 16px; overflow:visible;"
+    >
+      <!-- Source: capped end at (0,2), mouth facing right. -->
+      <obc-pipe-endpoint
+        style=${at(0, 2)}
+        value="medium-flow"
+        medium-color="Blue"
+        direction="right"
+      ></obc-pipe-endpoint>
+
+      <!-- Main run from the endpoint's tile edge (0.5,2) through the pump
+           and valve anchors to the tee's tile edge (13.5,2). Device art
+           covers the run where they overlap. -->
+      <obc-pipe-straight
+        style=${at(0.5, 2)}
+        value="medium-flow"
+        medium-color="Blue"
+        .length=${13}
+      ></obc-pipe-straight>
+
+      <!-- Tee at (14,2): main run continues right, branch drops to the tank. -->
+      <obc-pipe-tee
+        style=${at(14, 2)}
+        value="medium-flow"
+        medium-color="Blue"
+        direction="bottom"
+      ></obc-pipe-tee>
+
+      <!-- Outfall: run from the tee's right tile edge to the flow arrow. -->
+      <obc-pipe-straight
+        style=${at(14.5, 2)}
+        value="medium-flow"
+        medium-color="Blue"
+        .length=${2.5}
+      ></obc-pipe-straight>
+      <obc-pipe-arrow
+        style=${at(17.5, 2)}
+        value="medium-flow"
+        medium-color="Blue"
+        direction="right"
+        flow="arrow-out"
+      ></obc-pipe-arrow>
+
+      <!-- Branch: vertical run from the tee's bottom tile edge (14,2.5)
+           down to the tank's top-centre anchor at (14,6). -->
+      <obc-pipe-straight
+        style=${at(14, 2.5)}
+        value="medium-flow"
+        medium-color="Blue"
+        orientation="vertical"
+        .length=${3.5}
+      ></obc-pipe-straight>
+
+      <!-- Devices last, so their art renders above the pipe runs.
+           Readout labels point up/left to keep the pipe row clear. -->
+      <obc-pump style=${at(4.5, 2.5)} .on=${true} .speed=${80}></obc-pump>
+      <obc-analog-valve
+        style=${at(9.5, 2.5)}
+        .open=${true}
+        .value=${75}
+      ></obc-analog-valve>
+      <obc-automation-tank
+        style="${at(11, 6)} width:${7 * G}px; height:${7 * G}px;"
+        .value=${66}
+        .max=${100}
+        .compact=${true}
+        tag="#T-101"
+      ></obc-automation-tank>
+    </div>
+  `;
+}
+
 export const Overview: Story = {
   render: () => html`
     <div>
@@ -316,6 +412,17 @@ export const Overview: Story = {
       ${familyRow()}
       <div style=${sectionTitleStyle}>Connected example</div>
       ${connectedDemo()}
+    </div>
+  `,
+};
+
+export const ConnectedWithComponents: Story = {
+  render: () => html`
+    <div>
+      <div style=${sectionTitleStyle}>
+        Pipes connecting automation components
+      </div>
+      ${deviceDemo()}
     </div>
   `,
 };
