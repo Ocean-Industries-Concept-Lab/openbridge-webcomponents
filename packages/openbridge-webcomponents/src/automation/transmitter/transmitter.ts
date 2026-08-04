@@ -52,7 +52,9 @@ export enum TransmitterType {
  * - **Formatting** – `fractionDigits`, `minValueLength`, `hasHintedZeros` and
  *   `showZeroPadding` are forwarded to the value chip to control decimal
  *   precision and muted leading-zero padding (e.g. `0012.3`). The advice and
- *   setpoint segments reuse the same formatting.
+ *   setpoint segments reuse the same formatting. `value`, `adviceValue` and
+ *   `setpointValue` render the dashed fallback when they are `NaN`, `null` or
+ *   `undefined`.
  *
  * ### Slots
  * | Slot Name | Conditions              | Purpose                         |
@@ -66,7 +68,7 @@ export class ObcTransmitter extends LitElement {
   @property({type: String}) type: TransmitterType = TransmitterType.value;
   @property({type: String}) lineType: LineType | undefined = undefined;
 
-  @property({type: Number}) value?: number;
+  @property({type: Number}) value?: number | null;
   @property({type: String}) unit = '';
   @property({type: Number}) fractionDigits = 1;
   @property({type: Number}) minValueLength = 0;
@@ -81,12 +83,12 @@ export class ObcTransmitter extends LitElement {
   @property({type: Boolean}) hasAlert = false;
 
   /** Advisory value shown in the leading advice segment when `hasAdvice`. */
-  @property({type: Number}) adviceValue?: number;
+  @property({type: Number}) adviceValue?: number | null;
 
   @property({type: Boolean}) hasSetPoint = false;
 
   /** Target value shown in the setpoint segment when `hasSetPoint`. */
-  @property({type: Number}) setpointValue?: number;
+  @property({type: Number}) setpointValue?: number | null;
 
   /** Tag identifier shown when `type` is `indicator` (e.g. `TT`). */
   @property({type: String}) tag = '';

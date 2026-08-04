@@ -33,6 +33,15 @@ const readoutSizeBySize: Record<TransmitterButtonSize, ReadoutBlockSize> = {
   [TransmitterButtonSize.large]: ReadoutBlockSize.large,
 };
 
+function normalizeNumericValue(
+  value: number | null | undefined
+): number | undefined {
+  if (value === null || value === undefined || Number.isNaN(value)) {
+    return undefined;
+  }
+  return value;
+}
+
 /**
  * `<obc-transmitter-button>` – The pressable readout chip used as the core of a
  * transmitter on a process diagram.
@@ -58,6 +67,8 @@ const readoutSizeBySize: Record<TransmitterButtonSize, ReadoutBlockSize> = {
  *   reserved leading positions as muted zeros (e.g. `0012.3`). `showZeroPadding`
  *   pads the dashed fallback shown when no value is set. The advice and setpoint
  *   segments reuse `fractionDigits`, `minValueLength` and `hasHintedZeros`.
+ * - **Missing values** – `value`, `adviceValue` and `setpointValue` each render
+ *   the dashed fallback when they are `NaN`, `null` or `undefined`.
  *
  * ### Usage Guidelines
  * Use as a building block for `<obc-transmitter>`; it is the part that carries
@@ -75,7 +86,7 @@ export class ObcTransmitterButton extends LitElement {
     TransmitterButtonVariant.value;
   @property({type: String}) size: TransmitterButtonSize =
     TransmitterButtonSize.regular;
-  @property({type: Number}) value?: number;
+  @property({type: Number}) value?: number | null;
   @property({type: String}) unit = '';
   @property({type: Number}) fractionDigits = 1;
   @property({type: Number}) minValueLength = 0;
@@ -85,12 +96,12 @@ export class ObcTransmitterButton extends LitElement {
   @property({type: Boolean}) hasAdvice = false;
 
   /** Advisory value shown in the leading advice segment when `hasAdvice`. */
-  @property({type: Number}) adviceValue?: number;
+  @property({type: Number}) adviceValue?: number | null;
 
   @property({type: Boolean}) hasSetPoint = false;
 
   /** Target value shown in the setpoint segment when `hasSetPoint`. */
-  @property({type: Number}) setpointValue?: number;
+  @property({type: Number}) setpointValue?: number | null;
 
   /** Short tag identifier shown in the `tag` variant (e.g. `TT`). */
   @property({type: String}) label = '';
@@ -108,10 +119,7 @@ export class ObcTransmitterButton extends LitElement {
   }
 
   private get normalizedValue(): number | undefined {
-    if (this.value === undefined || Number.isNaN(this.value)) {
-      return undefined;
-    }
-    return this.value;
+    return normalizeNumericValue(this.value);
   }
 
   private renderValue() {
@@ -147,7 +155,7 @@ export class ObcTransmitterButton extends LitElement {
         class="advice"
         .variant=${ReadoutBlockVariant.advice}
         .size=${readoutSizeBySize[this.size]}
-        .value=${this.adviceValue ?? null}
+        .value=${normalizeNumericValue(this.adviceValue) ?? null}
         .fractionDigits=${this.fractionDigits}
         .maxDigits=${this.minValueLength}
         .hintedZeros=${this.hasHintedZeros}
@@ -164,7 +172,7 @@ export class ObcTransmitterButton extends LitElement {
         class="setpoint"
         .variant=${ReadoutBlockVariant.setpoint}
         .size=${readoutSizeBySize[this.size]}
-        .value=${this.setpointValue ?? null}
+        .value=${normalizeNumericValue(this.setpointValue) ?? null}
         .fractionDigits=${this.fractionDigits}
         .maxDigits=${this.minValueLength}
         .hintedZeros=${this.hasHintedZeros}

@@ -117,6 +117,21 @@ export const Tag: Story = {
   render: (args) => renderComponent(args as ObcTransmitterButton),
 };
 
+export const MissingValue: Story = {
+  args: {hasIcon: true, value: NaN},
+  render: (args) => renderComponent(args as ObcTransmitterButton),
+};
+
+export const MissingAdviceValue: Story = {
+  args: {hasIcon: true, hasAdvice: true, adviceValue: null},
+  render: (args) => renderComponent(args as ObcTransmitterButton),
+};
+
+export const MissingSetpointValue: Story = {
+  args: {hasIcon: true, hasSetPoint: true, setpointValue: undefined},
+  render: (args) => renderComponent(args as ObcTransmitterButton),
+};
+
 export const ZeroPadded: Story = {
   args: {
     value: 12.3,
