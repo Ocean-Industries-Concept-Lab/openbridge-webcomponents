@@ -1240,7 +1240,8 @@ export class ObcGaugeProportional extends SetpointMixin(LitElement) {
                         .readouts=${this.labelStackReadouts}
                         .tag=${this.tag || null}
                         .idTagOrientation=${IdTagOrientation.bottom}
-                        >${this.secondaryStackIcon}</obc-automation-button-readout-stack
+                        >${this
+                          .secondaryStackIcon}</obc-automation-button-readout-stack
                       >
                     `
                   : nothing}
