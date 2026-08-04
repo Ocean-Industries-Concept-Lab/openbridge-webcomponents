@@ -47,9 +47,10 @@ export function readoutNumericFormatOptions(
   fractionDigits: number
 ): ReadoutNumericFormatOptions {
   return {
-    // Comparison-only (see `isDisplayedAtSetpoint`), so the unavailable-dash
-    // padding never applies here: both operands are defined numbers by the time
-    // they are formatted. `obc-readout-block` enables it for its render path.
+    // Comparison-only (see `isDisplayedAtSetpoint`), which returns early unless
+    // both operands are finite numbers — so `formatNumericValue` never reaches
+    // its unavailable-dash branch here and the padding would have no effect.
+    // `obc-readout-block` enables it for its render path.
     showZeroPadding: false,
     minValueLength: maxDigits,
     fractionDigits,
@@ -67,6 +68,16 @@ export function isDisplayedAtSetpoint(
   formatOptions: ReadoutNumericFormatOptions
 ): boolean {
   if (value === null || setpoint === undefined) {
+    return false;
+  }
+  // An unavailable reading is never "at" the setpoint. Callers normalise
+  // `value` (via `resolveReadoutNumericValue`) but pass `setpoint` raw, so a
+  // non-finite setpoint would otherwise be formatted as the literal "NaN" /
+  // "Infinity" and compared as a string. The comparison result happens to be
+  // correct either way — a normalised `value` can never also format to "NaN" —
+  // but guarding both keeps the two operands symmetric and the invariant below
+  // honest.
+  if (!Number.isFinite(value) || !Number.isFinite(setpoint)) {
     return false;
   }
   return (
