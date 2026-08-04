@@ -15,8 +15,9 @@ const meta = {
   component: 'obc-gauge-generator',
   decorators: [widthDecorator],
   args: {
-    width: 400,
-    large: true,
+    width: 240,
+    height: 320,
+    large: false,
     value: 65,
     setpoint: 65,
     label: 'Load',
@@ -72,26 +73,26 @@ export const Double: Story = {
   args: {
     type: GaugeGeneratorType.double,
     secondaryValue: 45,
-    secondaryLabel: 'Charge',
     secondaryUnit: '%',
   },
 };
 
-export const Compact: Story = {
+export const LargeRegular: Story = {
   args: {
-    width: 240,
-    height: 320,
-    large: false,
+    width: 400,
+    height: 400,
+    large: true,
   },
 };
 
-export const CompactDouble: Story = {
+export const LargeDouble: Story = {
   args: {
-    width: 240,
-    height: 320,
-    large: false,
+    width: 400,
+    height: 400,
+    large: true,
     type: GaugeGeneratorType.double,
     secondaryValue: 45,
+    secondaryLabel: 'Charge',
     secondaryUnit: '%',
   },
 };

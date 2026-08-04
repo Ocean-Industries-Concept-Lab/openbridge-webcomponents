@@ -19,8 +19,9 @@ const meta = {
   component: 'obc-gauge-motors-and-pumps',
   decorators: [widthDecorator],
   args: {
-    width: 400,
-    large: true,
+    width: 240,
+    height: 320,
+    large: false,
     value: 65,
     setpoint: 65,
     showLabels: true,
@@ -99,24 +100,23 @@ export const Double: Story = {
   args: {
     type: GaugeMotorsAndPumpsType.double,
     secondaryValue: 45,
-    secondaryLabel: 'Load',
     secondaryUnit: '%',
   },
 };
 
-export const Compact: Story = {
+export const LargeRegular: Story = {
   args: {
-    width: 240,
-    height: 320,
-    large: false,
+    width: 400,
+    height: 400,
+    large: true,
   },
 };
 
-export const CompactNegative: Story = {
+export const LargeNegative: Story = {
   args: {
-    width: 240,
-    height: 320,
-    large: false,
+    width: 400,
+    height: 400,
+    large: true,
     type: GaugeMotorsAndPumpsType.negative,
     minValue: -100,
     maxValue: 100,
@@ -126,13 +126,14 @@ export const CompactNegative: Story = {
   },
 };
 
-export const CompactDouble: Story = {
+export const LargeDouble: Story = {
   args: {
-    width: 240,
-    height: 320,
-    large: false,
+    width: 400,
+    height: 400,
+    large: true,
     type: GaugeMotorsAndPumpsType.double,
     secondaryValue: 45,
+    secondaryLabel: 'Load',
     secondaryUnit: '%',
   },
 };

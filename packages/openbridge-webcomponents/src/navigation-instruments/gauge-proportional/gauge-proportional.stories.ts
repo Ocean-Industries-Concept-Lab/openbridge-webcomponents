@@ -157,7 +157,7 @@ export const IconOnly: Story = {
   },
 };
 
-export const Compact: Story = {
+export const Small: Story = {
   args: {
     width: 240,
     height: 320,
@@ -171,7 +171,7 @@ export const Compact: Story = {
   },
 };
 
-export const CompactDouble: Story = {
+export const SmallDouble: Story = {
   args: {
     width: 240,
     height: 320,
