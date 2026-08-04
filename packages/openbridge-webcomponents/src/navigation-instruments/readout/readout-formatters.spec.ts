@@ -9,6 +9,7 @@ import {
   resolveReadoutTextValue,
   formatNumericValue,
   isReadoutValueType,
+  splitHintedValue,
   ReadoutValueType,
   READOUT_UNAVAILABLE_DASH,
 } from './readout-formatters.js';
@@ -570,5 +571,83 @@ describe('formatNumericValue — missing precision', () => {
   it('still formats normally with a precision that arrived', () => {
     expect(formatNumericValue(0.4, opts(1))).toBe('0.4');
     expect(formatNumericValue(12.3, opts(2))).toBe('12.30');
+  });
+});
+
+describe('splitHintedValue', () => {
+  // Rendered width = sign + hinted + magnitude; it must not change across zero.
+  const width = (v: string, maxDigits: number) => {
+    const {sign, hinted, magnitude} = splitHintedValue(v, maxDigits);
+    return (sign + hinted + magnitude).length;
+  };
+
+  it('pads a positive value to maxDigits', () => {
+    expect(splitHintedValue('12', 4)).toEqual({
+      sign: '',
+      hinted: '00',
+      magnitude: '12',
+    });
+  });
+
+  // The bug this fixes: the sign must come out separately, so the caller can
+  // render it BEFORE the muted zeros ("-012", never "00-12").
+  it('hoists the sign of a negative value out of the magnitude', () => {
+    expect(splitHintedValue('-12', 4)).toEqual({
+      sign: '-',
+      hinted: '0',
+      magnitude: '12',
+    });
+  });
+
+  it('lets the sign consume the leading zero so width is unchanged', () => {
+    expect(width('12', 4)).toBe(width('-12', 4));
+    expect(width('8', 4)).toBe(width('-8', 4));
+    expect(width('1.2', 3)).toBe(width('-1.2', 3));
+  });
+
+  it('counts only integer digits, ignoring the fraction', () => {
+    expect(splitHintedValue('1.2', 3)).toEqual({
+      sign: '',
+      hinted: '00',
+      magnitude: '1.2',
+    });
+    expect(splitHintedValue('-1.2', 3)).toEqual({
+      sign: '-',
+      hinted: '0',
+      magnitude: '1.2',
+    });
+  });
+
+  it('emits no zeros when the magnitude already fills maxDigits', () => {
+    expect(splitHintedValue('1234', 4).hinted).toBe('');
+    expect(splitHintedValue('-1234', 4).hinted).toBe('');
+  });
+
+  // No zero is left for the sign to consume, so a negative overflows by one —
+  // consumers reserve a sign column via spaceReserver (e.g. "-0000").
+  it('is one wider than the reserve for a negative at full magnitude', () => {
+    expect(width('-1234', 4)).toBe(5);
+    expect(width('1234', 4)).toBe(4);
+  });
+
+  // Without the digit guard the leading `-` would be read as a sign and padded
+  // to "-000". render() also never hints an unavailable value, but the helper
+  // must not be able to produce that on its own.
+  it('passes a dashed (unavailable) value through unpadded', () => {
+    expect(splitHintedValue('-', 4)).toEqual({
+      sign: '',
+      hinted: '',
+      magnitude: '-',
+    });
+    expect(splitHintedValue('--.-', 4)).toEqual({
+      sign: '',
+      hinted: '',
+      magnitude: '--.-',
+    });
+  });
+
+  it('handles maxDigits of 0', () => {
+    expect(splitHintedValue('12', 0).hinted).toBe('');
+    expect(splitHintedValue('-12', 0).hinted).toBe('');
   });
 });

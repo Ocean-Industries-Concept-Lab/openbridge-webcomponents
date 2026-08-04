@@ -313,6 +313,57 @@ export function readoutFormattedInteger(valueText: string): number {
   return dot === -1 ? rest.length : dot;
 }
 
+/** A formatted value split into the parts a hinted-zero readout renders. */
+export interface ReadoutHintedValue {
+  /** A leading `-`, hoisted ahead of the muted zeros, or `''`. */
+  sign: string;
+  /** The muted leading zeros that pad the integer part to `maxDigits`. */
+  hinted: string;
+  /** The value text with its sign removed. */
+  magnitude: string;
+}
+
+/**
+ * Splits a formatted value for hinted-zero rendering.
+ *
+ * The sign is returned separately so the caller can render it BEFORE the muted
+ * zeros — emitting the raw text after them would read `00-12` instead of
+ * `-012`.
+ *
+ * A negative value keeps its hinted zeros, with the minus sign taking the place
+ * of the leading zero, so the rendered width does not change across zero:
+ * at `maxDigits` 4, `12` → `0012` and `-12` → `-012`. Only fills the INTEGER
+ * part; the decimal point and fraction digits never count toward `maxDigits`.
+ *
+ * When the magnitude already fills `maxDigits` there is no zero for the sign to
+ * consume, so a negative value is one character wider than the `maxDigits`
+ * reserve — pass a `spaceReserver` that includes a sign column (e.g. `"-0000"`)
+ * to reserve room for it.
+ *
+ * @example
+ * splitHintedValue('-1.2', 3); // {sign: '-', hinted: '0', magnitude: '1.2'}
+ */
+export function splitHintedValue(
+  valueText: string,
+  maxDigits: number
+): ReadoutHintedValue {
+  // Only pad something that actually has digits. A dashed (unavailable) value
+  // would otherwise read its leading `-` as a sign and pad it to `-000`.
+  if (!/\d/.test(valueText)) {
+    return {sign: '', hinted: '', magnitude: valueText};
+  }
+  const negative = valueText.startsWith('-');
+  const hintCount = Math.max(
+    maxDigits - readoutFormattedInteger(valueText) - (negative ? 1 : 0),
+    0
+  );
+  return {
+    sign: negative ? '-' : '',
+    hinted: hintCount > 0 ? '0'.repeat(hintCount) : '',
+    magnitude: negative ? valueText.slice(1) : valueText,
+  };
+}
+
 export function getHintZeros(
   value: number | undefined,
   {showZeroPadding, minValueLength, fractionDigits}: ReadoutNumericFormatOptions
