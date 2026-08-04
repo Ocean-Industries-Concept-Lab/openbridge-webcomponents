@@ -126,9 +126,10 @@ export enum GaugeValveStyle {
  *   a flat disc, disables the setpoint marker, and replaces the value readout
  *   with an "Off" state row; consumers should also swap the slotted actuator
  *   icon to its closed/off variant when setting `priority` to `off`
- * - `barStyle`: bar colour weight — `tint` (default) fills the bar with the
- *   priority's tint colour, `fill` uses the strong colour and inverts the cap
- *   pills to light
+ * - `barStyle`: `tint` (default) fills the bar with the priority's tint
+ *   colour and marks the fill edges with strong cap pills; `fill` paints the
+ *   bar in the strong colour without cap pills (matching the fill mode of
+ *   `obc-bar-vertical` and `obc-gauge-radial`)
  * - Setpoint support via the shared setpoint API (`setpoint`, `newSetpoint`, …)
  * - `hasLabelStack`: toggles the compact-variant readout stack (an optional
  *   setpoint row, one value row per port, plus an optional `tag` identifier
@@ -168,7 +169,7 @@ export class ObcGaugeValve extends SetpointMixin(LitElement) {
   /** Colour emphasis of the value graphics (the Figma "Type" axis); `off` blanks them on a flat disc */
   @property({type: String}) priority: GaugeValvePriority =
     GaugeValvePriority.regular;
-  /** Bar colour weight (the Figma "Style" axis): tint (default) or fill */
+  /** Bar rendering (the Figma "Style" axis): tint (default) shows a tint bar with strong cap pills, fill a strong bar without pills */
   @property({type: String}) barStyle: GaugeValveStyle = GaugeValveStyle.tint;
   /** Through-flow of the right outlet port, 0-100 (%) */
   @property({type: Number}) value = 0;
@@ -247,6 +248,7 @@ export class ObcGaugeValve extends SetpointMixin(LitElement) {
         roundInsideCut: true,
         roundRadius: cornerRadius,
       });
+    const hasCaps = this.barStyle !== GaugeValveStyle.fill;
     return svg`
       <path
         class="track"
@@ -257,12 +259,16 @@ export class ObcGaugeValve extends SetpointMixin(LitElement) {
         pct > 0
           ? svg`
         <path class="bar" d=${sector(capHalf, barCorner)} />
-        ${[centerAngle - capHalf, centerAngle + capHalf].map(
-          (angle) => svg`
+        ${
+          hasCaps
+            ? [centerAngle - capHalf, centerAngle + capHalf].map(
+                (angle) => svg`
             <path class="cap-back" d=${radialLinePath(CAP_INNER_RADIUS, CAP_OUTER_RADIUS, angle)} />
             <path class="cap-front" d=${radialLinePath(CAP_INNER_RADIUS, CAP_OUTER_RADIUS, angle)} />
           `
-        )}
+              )
+            : nothing
+        }
       `
           : nothing
       }

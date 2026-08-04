@@ -32,10 +32,10 @@
   --gauge-valve-tint-color: var(--base-teal-200);
 }
 
+/* Fill style paints the bar in the strong colour; cap pills are not rendered
+ * (matching the fill mode of bar-vertical and gauge-radial). */
 .root.style-fill {
   --gauge-valve-bar-color: var(--gauge-valve-strong-color);
-  --gauge-valve-cap-fill-color: var(--instrument-frame-primary-color);
-  --gauge-valve-cap-border-color: var(--instrument-frame-secondary-color);
 }
 
 /* ---------- Contain-fit sizing shell ----------
