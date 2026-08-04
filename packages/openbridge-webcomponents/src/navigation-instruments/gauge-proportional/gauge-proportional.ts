@@ -255,13 +255,13 @@ function strongerTickmarkType(
  * | `icon`           | Device symbol shown above the readout, scaled with the face (e.g. `<obi-placeholder-device-on useCssColor>`). |
  * | `secondary-icon` | Device-specific icon on the compact stack's secondary value row (e.g. a battery icon).                  |
  *
- * @slot secondary-icon - Device-specific icon on the compact stack's secondary value row
+ * @element obc-gauge-proportional
+ * @experimental
+ *
  * @slot icon - Device symbol shown above the readout, scaled with the face
  *   (e.g. `<obi-placeholder-device-on useCssColor>` for the device-token
  *   styling).
- *
- * @element obc-gauge-proportional
- * @experimental
+ * @slot secondary-icon - Device-specific icon on the compact stack's secondary value row
  */
 @customElement('obc-gauge-proportional')
 export class ObcGaugeProportional extends SetpointMixin(LitElement) {
@@ -1213,7 +1213,7 @@ export class ObcGaugeProportional extends SetpointMixin(LitElement) {
           ${this.renderSplitFrame()} ${this.renderZeroLine()}
           ${this.renderSecondaryArc()} ${this.renderNeedle()}
           ${this.renderCompactMaxMinLabels()}
-          ${this.renderSecondaryMaxMinLabels()}
+          ${frame.labelsHidden ? nothing : this.renderSecondaryMaxMinLabels()}
         </svg>
         ${this.renderCenterContent()}
       </div>

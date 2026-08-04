@@ -58,11 +58,11 @@ export enum GaugeMotorsAndPumpsType {
  * | `icon`           | Replaces the default pump symbol (`obi-*` icon)                |
  * | `secondary-icon` | Replaces the battery icon on the compact stack's secondary row |
  *
- * @slot icon - Replaces the default pump symbol (`obi-*` icon)
- * @slot secondary-icon - Replaces the battery icon on the compact stack's secondary row
- *
  * @element obc-gauge-motors-and-pumps
  * @experimental
+ *
+ * @slot icon - Replaces the default pump symbol (`obi-*` icon)
+ * @slot secondary-icon - Replaces the battery icon on the compact stack's secondary row
  */
 @customElement('obc-gauge-motors-and-pumps')
 export class ObcGaugeMotorsAndPumps extends ObcGaugeProportional {
