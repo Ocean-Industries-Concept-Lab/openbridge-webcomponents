@@ -1,0 +1,295 @@
+:host {
+  display: block;
+}
+
+/* ---------- Priority / style colour model ----------
+ * Each priority owns a (strong, tint) colour pair; barStyle picks which of
+ * the two paints the bar and whether the cap pills invert to light. The
+ * defaults reproduce the regular/tint variant exactly. */
+.root {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  --gauge-valve-strong-color: var(--instrument-regular-secondary-color);
+  --gauge-valve-tint-color: var(--instrument-frame-tertiary-color);
+  --gauge-valve-bar-color: var(--gauge-valve-tint-color);
+  --gauge-valve-cap-fill-color: var(--gauge-valve-strong-color);
+  --gauge-valve-cap-border-color: var(--gauge-valve-tint-color);
+}
+
+.root.priority-enhanced {
+  --gauge-valve-strong-color: var(--instrument-enhanced-secondary-color);
+  --gauge-valve-tint-color: var(--instrument-enhanced-tertiary-color);
+}
+
+.root.priority-medium {
+  --gauge-valve-strong-color: var(--base-teal-500);
+  --gauge-valve-tint-color: var(--base-teal-200);
+}
+
+.root.style-fill {
+  --gauge-valve-bar-color: var(--gauge-valve-strong-color);
+  --gauge-valve-cap-fill-color: var(--instrument-frame-primary-color);
+  --gauge-valve-cap-border-color: var(--instrument-frame-secondary-color);
+}
+
+.face-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.face {
+  fill: var(--instrument-frame-primary-color);
+}
+
+.root.priority-off .face {
+  fill: var(--instrument-frame-secondary-color);
+}
+
+.outline {
+  fill: none;
+  stroke: var(--instrument-frame-tertiary-color);
+  stroke-width: 1;
+}
+
+/* Non-scaling 1px stroke (vector-effect on the path) so the track edge stays
+ * visible at every render size, matching the ~1px edge in the design. */
+.track {
+  fill: var(--instrument-frame-secondary-color);
+  stroke: var(--instrument-frame-tertiary-color);
+  stroke-width: 1;
+}
+
+.bar {
+  fill: var(--gauge-valve-bar-color);
+}
+
+.cap-back {
+  fill: none;
+  stroke: var(--gauge-valve-cap-border-color);
+  stroke-width: 8;
+  stroke-linecap: round;
+}
+
+.cap-front {
+  fill: none;
+  stroke: var(--gauge-valve-cap-fill-color);
+  stroke-width: 6;
+  stroke-linecap: round;
+}
+
+.icon {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 25.4%;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.root.large .icon {
+  width: 18.75%;
+}
+
+/* Off state keeps the actuator icon dark-on-gray (near-black glyph with a
+ * light halo, per the Figma Off master) instead of the default inverted grays
+ * that closed/off `obi-*` icon variants ship with. */
+.root.priority-off .icon {
+  --automation-device-primary-inverted-color: var(--element-active-color);
+  --automation-device-tertiary-inverted-color: var(
+    --instrument-frame-tertiary-color
+  );
+}
+
+.icon ::slotted(*) {
+  width: 100%;
+  height: 100%;
+}
+
+.tick-primary {
+  stroke: var(--instrument-tick-mark-tertiary-color);
+  stroke-width: 2;
+}
+
+.tick-secondary {
+  stroke: var(--instrument-tick-mark-tertiary-color);
+  stroke-width: 1;
+}
+
+.scale-label {
+  @mixin font-instrument-tick-mark;
+  fill: var(--instrument-tick-mark-label-secondary-color);
+  text-anchor: middle;
+  dominant-baseline: middle;
+}
+
+.setpoint-rotor {
+  transition: transform var(--setpoint-animation-duration, 300ms) ease-out;
+}
+
+/* Off state renders the setpoint marker dark charcoal (per the Figma Off
+ * master) rather than the disabled tertiary gray. Only the filled use
+ * (stroke="none") is re-coloured; the silhouette stroke overlay keeps its
+ * fill:none. */
+.root.priority-off .setpoint-rotor use[stroke="none"] {
+  fill: var(--instrument-regular-secondary-color);
+}
+
+.gauge-valve-readout {
+  position: absolute;
+  left: 50%;
+  top: 21.88%;
+  transform: translateX(-50%);
+}
+
+.root.three-way .gauge-valve-readout {
+  top: 23.44%;
+}
+
+/* ---------- Compact label stack ----------
+ * One shared grid (icon | value | unit) so the value column keeps a common
+ * right edge across the setpoint row and both value rows. Cells carry
+ * explicit grid-column placement, so rows without a unit cell (setpoint row)
+ * still wrap correctly. The 4px spacer under each row is cell padding so the
+ * grid row keeps bottom alignment intact. */
+.label-stack {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: end;
+  margin-top: 4px;
+}
+
+.label-stack > * {
+  box-sizing: border-box;
+}
+
+.icon-cell {
+  grid-column: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 2px;
+  padding-bottom: 4px;
+  color: var(--element-neutral-color);
+}
+
+.icon-cell.value-row {
+  height: 28px;
+}
+
+/* The setpoint row is a bare 16px line box (no 4px spacer): the ref gap from
+ * setpoint digits down to the through-flow digits is ~9px, carried by the
+ * fonts' own leading alone. */
+.icon-cell.setpoint-row {
+  height: 16px;
+  padding-bottom: 0;
+}
+
+.value-cell.setpoint-row {
+  padding-bottom: 0;
+}
+
+.row-icon {
+  width: 20px;
+  height: 20px;
+}
+
+/* Tiny caret: the design renders the setpoint glyph as a ~4x5px triangle
+ * contained well within the small value text height. */
+.setpoint-glyph {
+  width: 4px;
+  height: 5px;
+  fill: var(--element-neutral-color);
+}
+
+.value-cell {
+  grid-column: 2;
+  text-align: right;
+  padding-bottom: 4px;
+  color: var(--element-neutral-color);
+}
+
+.value-cell .pad {
+  color: var(--element-disabled-color);
+}
+
+.setpoint-value {
+  @mixin font-instrument-value-small-neutral;
+  font-weight: var(
+    --global-typography-instrument-value-small-font-weight-regular
+  );
+}
+
+.value-primary {
+  @mixin font-instrument-value-m-active;
+  font-weight: var(
+    --global-typography-instrument-value-medium-font-weight-active
+  );
+}
+
+/* The single two-way value row renders Regular; only the three-way
+ * through-flow row is emphasised (per the Figma compact references). */
+.root.two-way .value-primary {
+  font-weight: var(
+    --global-typography-instrument-value-medium-font-weight-regular
+  );
+}
+
+.value-secondary {
+  @mixin font-instrument-value-m-neutral;
+  font-weight: var(
+    --global-typography-instrument-value-medium-font-weight-regular
+  );
+}
+
+.icon-cell.off-row {
+  color: var(--element-inactive-color);
+}
+
+.value-cell.off-state {
+  @mixin font-instrument-value-m-neutral;
+  font-weight: var(
+    --global-typography-instrument-value-medium-font-weight-regular
+  );
+  color: var(--element-inactive-color);
+}
+
+.unit-cell {
+  grid-column: 3;
+  align-self: end;
+  padding-left: 2px;
+  padding-right: 2px;
+  padding-bottom: 4px;
+  @mixin font-instrument-unit;
+  font-weight: var(--global-typography-instrument-unit-font-weight);
+  color: var(--element-neutral-color);
+}
+
+/* No top margin: the value cells above already carry the 4px spacer as
+ * bottom padding, giving the ref's 24px row + 4px + 1px divider + 4px pitch. */
+.stack-divider {
+  grid-column: 1 / -1;
+  justify-self: stretch;
+  height: 1px;
+  margin-bottom: 4px;
+  background-color: var(--border-divider-color);
+}
+
+.tag-row {
+  grid-column: 1 / -1;
+  text-align: center;
+  @mixin font-instrument-label;
+  font-weight: var(--global-typography-instrument-label-font-weight);
+  color: var(--element-neutral-color);
+}
