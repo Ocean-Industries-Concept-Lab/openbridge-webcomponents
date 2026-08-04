@@ -18,7 +18,7 @@
   border: none;
   cursor: pointer;
 
-  @mixin style style=normal className=value visibleWrapperClass=.visible-wrapper;
+  @mixin style style=normal visibleWrapperClass=.visible-wrapper;
 }
 
 .visible-wrapper {
