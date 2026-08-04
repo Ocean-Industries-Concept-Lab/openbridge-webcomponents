@@ -88,8 +88,6 @@ export const Default: Story = {};
 export const Negative: Story = {
   args: {
     type: GaugeMotorsAndPumpsType.negative,
-    minValue: -100,
-    maxValue: 100,
     value: 30,
     setpoint: 30,
     advices: [],
@@ -118,8 +116,6 @@ export const LargeNegative: Story = {
     height: 400,
     large: true,
     type: GaugeMotorsAndPumpsType.negative,
-    minValue: -100,
-    maxValue: 100,
     value: 30,
     setpoint: 30,
     advices: [],

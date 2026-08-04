@@ -30,10 +30,11 @@ export enum GaugeMotorsAndPumpsType {
  * ## Features / Variants
  *
  * - `type`: `regular` (single value), `negative` (bipolar scale on the
- *   pos/neg sector — pair with a negative `minValue`), or `double`
- *   (primary-secondary frame; feed the second lane and readout row via
- *   `secondaryValue`). The sector follows the type; do not set `sector`
- *   directly on this component.
+ *   pos/neg sector — `minValue` defaults to `-maxValue`; set `minValue`
+ *   yourself for an asymmetric scale), or `double` (primary-secondary
+ *   frame; feed the second lane and readout row via `secondaryValue`).
+ *   The sector follows the type; do not set `sector` directly on this
+ *   component.
  * - `large` shows the detailed face (readout and name row); the compact
  *   default shows the icon-only face with the readout stack below. Unlike
  *   the base gauge, `hasReadout` defaults to `true` so the large face is
@@ -74,6 +75,10 @@ export class ObcGaugeMotorsAndPumps extends ObcGaugeProportional {
     this.hasReadout = true;
   }
 
+  /* The minValue this component last derived itself — distinguishes the
+     mirrored default from a consumer's explicit (asymmetric) minValue. */
+  private autoMinValue: number | undefined;
+
   protected override willUpdate(changed: PropertyValues): void {
     super.willUpdate(changed);
     if (changed.has('type')) {
@@ -81,6 +86,25 @@ export class ObcGaugeMotorsAndPumps extends ObcGaugeProportional {
         this.type === GaugeMotorsAndPumpsType.negative
           ? GaugeProportionalSector.deg270PosNeg
           : GaugeProportionalSector.deg270;
+      if (
+        this.type !== GaugeMotorsAndPumpsType.negative &&
+        this.autoMinValue !== undefined
+      ) {
+        if (this.minValue === this.autoMinValue) {
+          this.minValue = 0;
+        }
+        this.autoMinValue = undefined;
+      }
+    }
+    // The design's negative type mirrors the scale: minValue defaults to
+    // -maxValue unless the consumer set an asymmetric minValue themselves.
+    if (this.type === GaugeMotorsAndPumpsType.negative) {
+      const minValueIsDerived =
+        this.minValue === 0 || this.minValue === this.autoMinValue;
+      if (minValueIsDerived && this.minValue !== -this.maxValue) {
+        this.autoMinValue = -this.maxValue;
+        this.minValue = this.autoMinValue;
+      }
     }
   }
 
