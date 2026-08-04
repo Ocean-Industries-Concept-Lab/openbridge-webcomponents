@@ -1316,15 +1316,15 @@ export const TextValue: Story = {
  * - `NaN` / `±Infinity` render the dash instead of the literal text `NaN` /
  *   `Infinity`.
  *
- * The right-hand column is a live reading under identical settings, so the
- * placeholder and the value can be compared directly.
+ * Each section pairs the placeholder with a live reading under identical
+ * settings, so the two can be compared directly.
  */
 export const UnavailableValues: Story = {
   render: () =>
     renderShowcase([
       {
         title: 'Unavailable vs. a Reading (maxDigits 4, Fraction 1)',
-        columns: 4,
+        columns: 3,
         cases: [
           {
             label: 'null → dash',
@@ -1345,6 +1345,23 @@ export const UnavailableValues: Story = {
             },
           },
           {
+            label: 'reading, identical settings',
+            config: {
+              label: 'SOG',
+              unit: 'kn',
+              value: 12.4,
+              options: {maxDigits: 4, fractionDigits: 1},
+            },
+          },
+        ],
+      },
+      {
+        // Both cards enable hintedZeros, so the placeholder and the reading are
+        // compared under identical settings here too.
+        title: 'With Hinted Zeros (maxDigits 4, Fraction 1)',
+        columns: 2,
+        cases: [
+          {
             label: 'null + hinted zeros',
             config: {
               label: 'SOG',
@@ -1358,12 +1375,16 @@ export const UnavailableValues: Story = {
             },
           },
           {
-            label: 'reading, same settings',
+            label: 'reading + hinted zeros',
             config: {
               label: 'SOG',
               unit: 'kn',
               value: 12.4,
-              options: {maxDigits: 4, fractionDigits: 1},
+              options: {
+                maxDigits: 4,
+                fractionDigits: 1,
+                value: {hintedZeros: true},
+              },
             },
           },
         ],
