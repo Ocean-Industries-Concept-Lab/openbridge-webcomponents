@@ -88,7 +88,7 @@ export enum ReadoutBlockHidePhase {
  * role default), an optional trailing degree glyph, an `off`/unavailable text
  * state, per-block data-quality and an optional per-block alert frame.
  *
- * Setting `valueType` to `string` renders `value` as verbatim text (e.g.
+ * Setting `valueType` to `text` renders `value` verbatim (e.g.
  * `"Auto"`) instead of a formatted number.
  *
  * This is a building block used inside `obc-readout-list-item` (and, in a future
@@ -115,13 +115,13 @@ export class ObcReadoutBlock extends LitElement {
 
   /**
    * The value; `null`/`undefined` renders a dash. A number by default, or text
-   * when {@link valueType} is `string`.
+   * when {@link valueType} is `text`.
    */
   @property({type: String}) value: number | string | null = null;
 
   /**
    * How {@link value} is interpreted. `number` (default) formats it via
-   * `fractionDigits`; `string` renders it verbatim and ignores the numeric
+   * `fractionDigits`; `text` renders it verbatim and ignores the numeric
    * format options. Passing text while this is `number` throws.
    */
   @property({type: String}) valueType: ReadoutValueType =
@@ -323,7 +323,7 @@ export class ObcReadoutBlock extends LitElement {
   override render() {
     const valueSize = this.resolvedValueSize;
     const formatOptions = this.numericFormatOptions;
-    const isTextMode = this.valueType === ReadoutValueType.string;
+    const isTextMode = this.valueType === ReadoutValueType.text;
     const valueForFormat = resolveReadoutNumericValue(
       this.value,
       this.valueType

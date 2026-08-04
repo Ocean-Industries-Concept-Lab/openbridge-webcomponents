@@ -1169,7 +1169,7 @@ export const DebugOverlay: StoryObj<
 };
 
 /**
- * **Text values** — `valueType="string"` renders `value` verbatim instead of
+ * **Text values** — `valueType="text"` renders `value` verbatim instead of
  * formatting it as a number, for readings that are states rather than
  * quantities ("Auto", "Thermo On", "Standby").
  *
@@ -1192,7 +1192,7 @@ export const TextValue: Story = {
               label: 'Mode',
               unit: '',
               value: 'Auto',
-              valueType: ReadoutValueType.string,
+              valueType: ReadoutValueType.text,
             },
           },
           {
@@ -1201,7 +1201,7 @@ export const TextValue: Story = {
               label: 'Thruster',
               unit: '',
               value: 'Standby',
-              valueType: ReadoutValueType.string,
+              valueType: ReadoutValueType.text,
               src: 'CTRL',
             },
           },
@@ -1211,7 +1211,7 @@ export const TextValue: Story = {
               label: 'Status',
               unit: '',
               value: 'Normal',
-              valueType: ReadoutValueType.string,
+              valueType: ReadoutValueType.text,
               options: {stacking: ReadoutStacking.stacked},
             },
           },
@@ -1227,7 +1227,7 @@ export const TextValue: Story = {
               label: 'Mode',
               unit: '',
               value: 'Auto',
-              valueType: ReadoutValueType.string,
+              valueType: ReadoutValueType.text,
               options: {direction: ReadoutDirection.horizontal},
             },
           },
@@ -1237,7 +1237,7 @@ export const TextValue: Story = {
               label: 'Thruster',
               unit: '',
               value: 'Standby',
-              valueType: ReadoutValueType.string,
+              valueType: ReadoutValueType.text,
               src: 'CTRL',
               options: {direction: ReadoutDirection.horizontal},
             },
@@ -1266,7 +1266,7 @@ export const TextValue: Story = {
               label: 'Bearing',
               unit: '',
               value: '1.50',
-              valueType: ReadoutValueType.string,
+              valueType: ReadoutValueType.text,
               options: {fractionDigits: 1},
             },
           },
@@ -1276,7 +1276,7 @@ export const TextValue: Story = {
               label: 'Mode',
               unit: '',
               value: null,
-              valueType: ReadoutValueType.string,
+              valueType: ReadoutValueType.text,
             },
           },
           {
@@ -1294,7 +1294,7 @@ export const TextValue: Story = {
               label: 'Mode',
               unit: '',
               value: 'Auto',
-              valueType: ReadoutValueType.string,
+              valueType: ReadoutValueType.text,
               options: {hasDegree: true},
             },
           },
@@ -1328,14 +1328,14 @@ export const TestCases: Story = {
           .size=${ReadoutSize.small}
           .direction=${ReadoutDirection.horizontal}
           .value=${'Thermo On'}
-          .valueType=${ReadoutValueType.string}
+          .valueType=${ReadoutValueType.text}
           .label=${'Operating mode'}
         ></obc-readout>
         <obc-readout
           .size=${ReadoutSize.small}
           .direction=${ReadoutDirection.horizontal}
           .value=${'Normal'}
-          .valueType=${ReadoutValueType.string}
+          .valueType=${ReadoutValueType.text}
           .label=${'Status'}
         ></obc-readout>
       </div>`;

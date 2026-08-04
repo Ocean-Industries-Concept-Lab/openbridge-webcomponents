@@ -116,7 +116,7 @@ export const Default: Story = {
 };
 
 /**
- * **Mixed text and numeric rows.** Rows with `valueType="string"` render their
+ * **Mixed text and numeric rows.** Rows with `valueType="text"` render their
  * value verbatim and are **excluded from the auto-computed numeric reserver in
  * both directions**:
  *
@@ -131,13 +131,13 @@ const TEXT_ROWS: Row[] = [
   {
     label: 'Operating mode',
     value: 'Thermo On',
-    valueType: ReadoutValueType.string,
+    valueType: ReadoutValueType.text,
     unit: '',
   },
   {
     label: 'Status',
     value: 'Normal',
-    valueType: ReadoutValueType.string,
+    valueType: ReadoutValueType.text,
     unit: '',
   },
   // Deliberately shorter than the numeric reserve ("0000.0"), so this row
@@ -146,7 +146,7 @@ const TEXT_ROWS: Row[] = [
   {
     label: 'Mode',
     value: 'Auto',
-    valueType: ReadoutValueType.string,
+    valueType: ReadoutValueType.text,
     unit: '',
   },
   {label: 'Temperature', value: 45, unit: 'C', hasDegree: true},
@@ -231,7 +231,7 @@ export const WithSetpoints: Story = {
 /**
  * Attribute-driven regression test for text rows. Uses plain HTML attributes
  * (not property bindings) so it covers the path where `value` arrives as a raw
- * string: `valuetype="string"` must render verbatim and stay out of the shared
+ * string: `valuetype="text"` must render verbatim and stay out of the shared
  * numeric reserver, while a numeric `value="1013"` under the default value type
  * must still resolve to a number and drive the reserver.
  *
@@ -249,13 +249,13 @@ export const TestTextRowAttributes: Story = {
           id="text-row"
           label="Operating mode"
           value="Thermo On"
-          valuetype="string"
+          valuetype="text"
         ></obc-readout-list-item>
         <obc-readout-list-item
           id="short-text-row"
           label="Mode"
           value="Auto"
-          valuetype="string"
+          valuetype="text"
           maxdigits="8"
           fractiondigits="3"
         ></obc-readout-list-item>
@@ -284,7 +284,7 @@ export const TestTextRowAttributes: Story = {
     ) as HTMLElement & {valueOptions?: ReadoutValueOptions};
 
     // The attribute reached the property as the enum value.
-    await expect(textRow.valueType).toBe(ReadoutValueType.string);
+    await expect(textRow.valueType).toBe(ReadoutValueType.text);
     // Text renders verbatim. The value lives in the nested obc-readout-block's
     // shadow root, so reach through it rather than the row's own.
     const block = textRow.shadowRoot?.querySelector('obc-readout-block');

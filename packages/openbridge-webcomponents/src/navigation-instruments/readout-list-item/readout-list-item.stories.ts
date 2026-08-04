@@ -477,14 +477,14 @@ export const Off: Story = {
 };
 
 /**
- * **Text values** — `valueType="string"` renders `value` verbatim instead of
+ * **Text values** — `valueType="text"` renders `value` verbatim instead of
  * formatting it as a number, for readings that are states rather than
  * quantities ("Thermo On", "Auto", "Normal").
  *
  * The first section reproduces the reference design: two status rows sharing a
  * bar, each a label with a bold text value, separated by a vertical divider.
  *
- * Under `valueType="string"` the numeric format options (`fractionDigits`,
+ * Under `valueType="text"` the numeric format options (`fractionDigits`,
  * `maxDigits`, `hintedZeros`) are ignored; an explicit `spaceReserver` still
  * applies. Passing text while `valueType` is `number` throws a `TypeError`
  * rather than rendering `NaN`.
@@ -529,7 +529,7 @@ export const TextValue: Story = {
             ${renderItem({
               label: row.label,
               value: row.value,
-              valueType: ReadoutValueType.string,
+              valueType: ReadoutValueType.text,
               options: {
                 size: ReadoutListItemSize.medium,
                 value: {weight: ObcTextboxFontWeight.bold},
@@ -541,16 +541,16 @@ export const TextValue: Story = {
     </div>
     <div class="rli-text-grid">
       ${[
-        {label: 'Mode', value: 'Auto', valueType: ReadoutValueType.string},
+        {label: 'Mode', value: 'Auto', valueType: ReadoutValueType.text},
         {
           label: 'Thruster',
           value: 'Standby',
-          valueType: ReadoutValueType.string,
+          valueType: ReadoutValueType.text,
         },
         // Numeric rows for contrast — the same component, unchanged.
         {label: 'Speed', value: 12.4, valueType: ReadoutValueType.number},
         // Verbatim text preserves formatting a number could not round-trip.
-        {label: 'Bearing', value: '1.50', valueType: ReadoutValueType.string},
+        {label: 'Bearing', value: '1.50', valueType: ReadoutValueType.text},
       ].map((row) =>
         renderItem({
           label: row.label,
@@ -1828,17 +1828,17 @@ const ALIGNMENT_ROWS: AlignmentRow[] = [
       type: ObcAlertFrameType.Regular,
     },
   },
-  // text value — `valueType="string"` renders verbatim and ignores maxDigits /
+  // text value — `valueType="text"` renders verbatim and ignores maxDigits /
   // fractionDigits, but still honours an explicit `spaceReserver`. So these
   // rows hug their text in the left column and join the shared value column in
   // the right one, confirming text does not disturb the numeric alignment.
   // (Inside `obc-readout-list`, which owns the reservers, text rows are instead
   // excluded from the computed numeric width — see that component's stories.)
-  {label: 'Mode', value: 'Auto', valueType: ReadoutValueType.string, unit: ''},
+  {label: 'Mode', value: 'Auto', valueType: ReadoutValueType.text, unit: ''},
   {
     label: 'Thruster',
     value: 'Standby',
-    valueType: ReadoutValueType.string,
+    valueType: ReadoutValueType.text,
     unit: '',
   },
   // size variants — value digit edges do NOT fully align cross-size (the degree

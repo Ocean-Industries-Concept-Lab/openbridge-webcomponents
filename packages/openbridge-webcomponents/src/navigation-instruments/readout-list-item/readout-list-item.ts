@@ -215,7 +215,7 @@ export interface ReadoutSrcOptions extends ReadoutBlockState {
  *   `round-corners`, or `round` corners.
  * - **Formatting:** shared `fractionDigits`, width reservation via `maxDigits`
  *   and per-segment `hintedZeros`; a `null` value renders a dash (`-`).
- * - **Text values:** `valueType="string"` renders `value` verbatim (e.g.
+ * - **Text values:** `valueType="text"` renders `value` verbatim (e.g.
  *   `"Thermo On"`) instead of formatting it as a number.
  *
  * ### Usage Guidelines
@@ -254,12 +254,12 @@ export class ObcReadoutListItem extends LitElement {
   @property({type: Boolean, attribute: false}) hasValue = true;
   /**
    * The value; `null` renders a dash. A number by default, or text when
-   * {@link valueType} is `string`.
+   * {@link valueType} is `text`.
    */
   @property({type: String}) value: number | string | null = null;
   /**
    * How {@link value} is interpreted. `number` (default) formats it via
-   * `fractionDigits`; `string` renders it verbatim and ignores the numeric
+   * `fractionDigits`; `text` renders it verbatim and ignores the numeric
    * format options. Passing text while this is `number` throws.
    */
   @property({type: String}) valueType: ReadoutValueType =
@@ -361,7 +361,7 @@ export class ObcReadoutListItem extends LitElement {
       return false;
     }
     // A text value never compares equal to a setpoint, so flip-flop / pop-up
-    // stay dormant for `valueType="string"`.
+    // stay dormant for `valueType="text"`.
     return isDisplayedAtSetpoint(
       resolveReadoutNumericValue(this.value, this.valueType) ?? null,
       this.setpoint,

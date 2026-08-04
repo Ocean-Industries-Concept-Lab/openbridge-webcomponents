@@ -38,7 +38,7 @@ const OBSERVED_ATTRIBUTES = [
 
 /** Whether a row renders its value as verbatim text rather than a number. */
 function isTextValueRow(item: ObcReadoutListItem): boolean {
-  return item.valueType === ReadoutValueType.string;
+  return item.valueType === ReadoutValueType.text;
 }
 
 /** Integer-digit count of a numeric value (sign and fraction excluded). */
@@ -66,7 +66,7 @@ function integerDigitCount(value: number | null | undefined): number {
  *   max fraction digits across rows, derived from each row's `maxDigits` /
  *   `fractionDigits` / current values) is reserved on every row's numeric blocks.
  *   Reserving off digit counts keeps it stable as live values update. A row with
- *   `valueType="string"` is excluded in both directions — it neither contributes
+ *   `valueType="text"` is excluded in both directions — it neither contributes
  *   to the reserve (so a long text value cannot inflate the numeric column) nor
  *   receives it (so short text is not padded to a digit width); its value block
  *   sizes to its own content. Its setpoint / advice blocks stay numeric and are

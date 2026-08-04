@@ -7,11 +7,11 @@ export type ReadoutNumericFormatOptions = {
 /**
  * How a readout's `value` is interpreted.
  * - `number`: formatted via `fractionDigits` / `maxDigits`.
- * - `string`: rendered verbatim, with the numeric format options ignored.
+ * - `text`: rendered verbatim, with the numeric format options ignored.
  */
 export enum ReadoutValueType {
   number = 'number',
-  string = 'string',
+  text = 'text',
 }
 
 const READOUT_VALUE_TYPES: readonly string[] = Object.values(ReadoutValueType);
@@ -67,7 +67,7 @@ export function assertReadoutValueType(
   }
   throw new TypeError(
     `<${tagName}>: value must be a number when valueType is "number" ` +
-      `(got ${JSON.stringify(value)}). Set valueType="string" to render text.`
+      `(got ${JSON.stringify(value)}). Set valueType="text" to render text.`
   );
 }
 
@@ -77,7 +77,7 @@ export function resolveReadoutNumericValue(
   valueType: ReadoutValueType
 ): number | undefined {
   if (
-    valueType === ReadoutValueType.string ||
+    valueType === ReadoutValueType.text ||
     value === null ||
     value === undefined
   ) {
@@ -99,7 +99,7 @@ export function resolveReadoutTextValue(
   valueType: ReadoutValueType
 ): string | undefined {
   if (
-    valueType !== ReadoutValueType.string ||
+    valueType !== ReadoutValueType.text ||
     value === null ||
     value === undefined
   ) {

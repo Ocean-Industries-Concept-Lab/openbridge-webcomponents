@@ -256,7 +256,7 @@ export const OffText: Story = {
 };
 
 /**
- * `valueType="string"` renders `value` verbatim instead of formatting it as a
+ * `valueType="text"` renders `value` verbatim instead of formatting it as a
  * number — for readings that are states rather than quantities.
  *
  * The numeric format options (`fractionDigits`, `maxDigits`, `hintedZeros`) are
@@ -270,35 +270,35 @@ export const TextValue: Story = {
     renderShowcase([
       {
         title: 'text',
-        args: {value: 'Auto', valueType: ReadoutValueType.string},
+        args: {value: 'Auto', valueType: ReadoutValueType.text},
       },
       {
         title: 'longer text',
-        args: {value: 'Thermo On', valueType: ReadoutValueType.string},
+        args: {value: 'Thermo On', valueType: ReadoutValueType.text},
       },
       {
         title: 'verbatim "1.50"',
         args: {
           value: '1.50',
-          valueType: ReadoutValueType.string,
+          valueType: ReadoutValueType.text,
           fractionDigits: 1,
         },
       },
       {
         title: 'maxDigits ignored',
-        args: {value: 'Auto', valueType: ReadoutValueType.string, maxDigits: 4},
+        args: {value: 'Auto', valueType: ReadoutValueType.text, maxDigits: 4},
       },
       {
         title: 'spaceReserver honoured',
         args: {
           value: 'Auto',
-          valueType: ReadoutValueType.string,
+          valueType: ReadoutValueType.text,
           spaceReserver: 'Thermo On',
         },
       },
       {
         title: 'null → dash',
-        args: {value: null, valueType: ReadoutValueType.string},
+        args: {value: null, valueType: ReadoutValueType.text},
       },
       {
         title: 'numeric string in number mode',
@@ -308,7 +308,7 @@ export const TextValue: Story = {
         title: 'text + degree',
         args: {
           value: 'Auto',
-          valueType: ReadoutValueType.string,
+          valueType: ReadoutValueType.text,
           hasDegree: true,
         },
       },

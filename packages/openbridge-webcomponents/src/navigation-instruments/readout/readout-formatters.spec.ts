@@ -58,7 +58,7 @@ describe('assertReadoutValueType', () => {
         'Thermo On',
         ReadoutValueType.number
       )
-    ).toThrow(/obc-readout-list-item.*Thermo On.*valueType="string"/s);
+    ).toThrow(/obc-readout-list-item.*Thermo On.*valueType="text"/s);
   });
 
   it('throws for a partially numeric string when valueType is number', () => {
@@ -69,10 +69,10 @@ describe('assertReadoutValueType', () => {
 
   it('never throws when valueType is string', () => {
     expect(() =>
-      assertReadoutValueType('obc-readout', 'Auto', ReadoutValueType.string)
+      assertReadoutValueType('obc-readout', 'Auto', ReadoutValueType.text)
     ).not.toThrow();
     expect(() =>
-      assertReadoutValueType('obc-readout', 12.4, ReadoutValueType.string)
+      assertReadoutValueType('obc-readout', 12.4, ReadoutValueType.text)
     ).not.toThrow();
   });
 
@@ -85,7 +85,7 @@ describe('assertReadoutValueType', () => {
         'Auto',
         'strng' as unknown as ReadoutValueType
       )
-    ).toThrow(/valueType must be "number" or "string".*"strng"/s);
+    ).toThrow(/valueType must be "number" or "text".*"strng"/s);
   });
 
   it('throws for an unrecognised valueType even with a numeric value', () => {
@@ -121,10 +121,13 @@ describe('assertReadoutValueType', () => {
 describe('isReadoutValueType', () => {
   it('accepts the supported values', () => {
     expect(isReadoutValueType('number')).toBe(true);
-    expect(isReadoutValueType('string')).toBe(true);
+    expect(isReadoutValueType('text')).toBe(true);
   });
 
   it('rejects anything else', () => {
+    // `string` names the JS type rather than the mode, and is the likely
+    // mistake for anyone reaching for the TypeScript word.
+    expect(isReadoutValueType('string')).toBe(false);
     expect(isReadoutValueType('strng')).toBe(false);
     expect(isReadoutValueType('Number')).toBe(false);
     expect(isReadoutValueType('')).toBe(false);
@@ -171,10 +174,10 @@ describe('resolveReadoutNumericValue', () => {
   // Text rows must contribute nothing to obc-readout-list's shared reserver.
   it('is undefined in string mode even for a numeric value', () => {
     expect(
-      resolveReadoutNumericValue(12.4, ReadoutValueType.string)
+      resolveReadoutNumericValue(12.4, ReadoutValueType.text)
     ).toBeUndefined();
     expect(
-      resolveReadoutNumericValue('12.4', ReadoutValueType.string)
+      resolveReadoutNumericValue('12.4', ReadoutValueType.text)
     ).toBeUndefined();
   });
 
@@ -188,34 +191,30 @@ describe('resolveReadoutNumericValue', () => {
 
 describe('resolveReadoutTextValue', () => {
   it('returns the text verbatim in string mode', () => {
-    expect(resolveReadoutTextValue('Thermo On', ReadoutValueType.string)).toBe(
+    expect(resolveReadoutTextValue('Thermo On', ReadoutValueType.text)).toBe(
       'Thermo On'
     );
   });
 
   // The reason a converter was rejected: it would have parsed this to 1.5.
   it('preserves trailing zeros in string mode', () => {
-    expect(resolveReadoutTextValue('1.50', ReadoutValueType.string)).toBe(
-      '1.50'
-    );
+    expect(resolveReadoutTextValue('1.50', ReadoutValueType.text)).toBe('1.50');
   });
 
   it('coerces a number to text in string mode', () => {
-    expect(resolveReadoutTextValue(12.4, ReadoutValueType.string)).toBe('12.4');
+    expect(resolveReadoutTextValue(12.4, ReadoutValueType.text)).toBe('12.4');
   });
 
   it('is undefined for null, undefined and blank strings', () => {
     expect(
-      resolveReadoutTextValue(null, ReadoutValueType.string)
+      resolveReadoutTextValue(null, ReadoutValueType.text)
     ).toBeUndefined();
     expect(
-      resolveReadoutTextValue(undefined, ReadoutValueType.string)
+      resolveReadoutTextValue(undefined, ReadoutValueType.text)
     ).toBeUndefined();
+    expect(resolveReadoutTextValue('', ReadoutValueType.text)).toBeUndefined();
     expect(
-      resolveReadoutTextValue('', ReadoutValueType.string)
-    ).toBeUndefined();
-    expect(
-      resolveReadoutTextValue('   ', ReadoutValueType.string)
+      resolveReadoutTextValue('   ', ReadoutValueType.text)
     ).toBeUndefined();
   });
 
