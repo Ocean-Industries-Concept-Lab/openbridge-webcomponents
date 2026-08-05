@@ -1,6 +1,9 @@
 import {describe, it, expect} from 'vitest';
 import {
   assertReadoutValueType,
+  assertReadoutFractionDigits,
+  resolveReadoutMaxDigits,
+  READOUT_MAX_DIGITS,
   resolveReadoutNumericValue,
   resolveReadoutTextValue,
   formatNumericValue,
@@ -365,5 +368,112 @@ describe("designer's format specification (000.00)", () => {
     expect(formatNumericValue(undefined, opts).length).toBeLessThan(
       '012.30'.length
     );
+  });
+});
+
+describe('assertReadoutFractionDigits', () => {
+  // `fractionDigits` reaches `Number.prototype.toFixed` unchanged, which throws
+  // outside 0…100. These are the values that already crash today, now reported
+  // against the component instead of as a bare RangeError.
+  it('throws below 0 and above the maximum', () => {
+    expect(() => assertReadoutFractionDigits('obc-readout', -1)).toThrow(
+      RangeError
+    );
+    expect(() =>
+      assertReadoutFractionDigits('obc-readout', READOUT_MAX_DIGITS + 1)
+    ).toThrow(RangeError);
+    expect(() =>
+      assertReadoutFractionDigits('obc-readout', Number.POSITIVE_INFINITY)
+    ).toThrow(RangeError);
+  });
+
+  it('names the component and the offending value', () => {
+    expect(() =>
+      assertReadoutFractionDigits('obc-readout-list-item', -1)
+    ).toThrow(/obc-readout-list-item.*between 0 and 100.*-1/s);
+  });
+
+  it('accepts the whole supported range', () => {
+    expect(() => assertReadoutFractionDigits('obc-readout', 0)).not.toThrow();
+    expect(() =>
+      assertReadoutFractionDigits('obc-readout', READOUT_MAX_DIGITS)
+    ).not.toThrow();
+  });
+
+  // Values `toFixed` itself tolerates are left alone rather than rejected.
+  it('tolerates what toFixed tolerates', () => {
+    expect(() => assertReadoutFractionDigits('obc-readout', 2.7)).not.toThrow();
+    expect(() =>
+      assertReadoutFractionDigits('obc-readout', Number.NaN)
+    ).not.toThrow();
+  });
+
+  // The assertion must agree with the runtime it is protecting.
+  it('accepts exactly the values toFixed accepts', () => {
+    for (const digits of [0, 1, 2.7, Number.NaN, READOUT_MAX_DIGITS]) {
+      let assertionThrew = false;
+      let toFixedThrew = false;
+      try {
+        assertReadoutFractionDigits('obc-readout', digits);
+      } catch {
+        assertionThrew = true;
+      }
+      try {
+        (12.3).toFixed(digits);
+      } catch {
+        toFixedThrew = true;
+      }
+      expect(assertionThrew).toBe(toFixedThrew);
+    }
+  });
+});
+
+describe('resolveReadoutMaxDigits', () => {
+  it('passes a usable count through', () => {
+    expect(resolveReadoutMaxDigits(4)).toBe(4);
+    expect(resolveReadoutMaxDigits(0)).toBe(0);
+  });
+
+  // `Infinity` is the value that throws out of `String.prototype.repeat`.
+  it('caps Infinity rather than throwing', () => {
+    expect(resolveReadoutMaxDigits(Number.POSITIVE_INFINITY)).toBe(
+      READOUT_MAX_DIGITS
+    );
+    expect(() =>
+      '0'.repeat(resolveReadoutMaxDigits(Number.POSITIVE_INFINITY))
+    ).not.toThrow();
+  });
+
+  it('caps a large finite count so the reserver stays bounded', () => {
+    expect(resolveReadoutMaxDigits(1_000_000)).toBe(READOUT_MAX_DIGITS);
+  });
+
+  // Matches what the existing guards already did with these: reserve nothing.
+  it('is 0 for negative, NaN, null and undefined', () => {
+    expect(resolveReadoutMaxDigits(-5)).toBe(0);
+    expect(resolveReadoutMaxDigits(Number.NEGATIVE_INFINITY)).toBe(0);
+    expect(resolveReadoutMaxDigits(Number.NaN)).toBe(0);
+    expect(resolveReadoutMaxDigits(null)).toBe(0);
+    expect(resolveReadoutMaxDigits(undefined)).toBe(0);
+  });
+
+  it('truncates a fractional count', () => {
+    expect(resolveReadoutMaxDigits(2.7)).toBe(2);
+  });
+
+  // Whatever comes back must be safe to hand to `repeat`.
+  it('always returns a count repeat() accepts', () => {
+    for (const input of [
+      -5,
+      0,
+      2.7,
+      4,
+      1_000_000,
+      Number.NaN,
+      Number.POSITIVE_INFINITY,
+      Number.NEGATIVE_INFINITY,
+    ]) {
+      expect(() => '0'.repeat(resolveReadoutMaxDigits(input))).not.toThrow();
+    }
   });
 });

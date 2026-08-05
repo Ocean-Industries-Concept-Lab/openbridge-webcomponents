@@ -27,6 +27,8 @@ import {
 import {Priority} from '../types.js';
 import {
   assertReadoutValueType,
+  assertReadoutFractionDigits,
+  resolveReadoutMaxDigits,
   resolveReadoutNumericValue,
   ReadoutValueType,
   type ReadoutNumericFormatOptions,
@@ -288,13 +290,15 @@ export class ObcReadout extends LitElement {
   @property({type: Boolean}) hasDegreeSpacer = false;
   /**
    * Also formats the numeric setpoint / advice blocks, which stay numeric
-   * even when the value is text.
+   * even when the value is text. Must be between 0 and 100 — the range
+   * `Number.prototype.toFixed` accepts; outside it throws a `RangeError`.
    * @availableWhen valueType==number || hasSetpoint==true || hasAdvice==true
    */
   @property({type: Number}) fractionDigits = 0;
   /**
    * Also formats the numeric setpoint / advice blocks, which stay numeric
-   * even when the value is text.
+   * even when the value is text. Values above 100 are capped, and a negative /
+   * `NaN` count reserves nothing.
    * @availableWhen valueType==number || hasSetpoint==true || hasAdvice==true
    */
   @property({type: Number}) maxDigits = 0;
@@ -375,7 +379,7 @@ export class ObcReadout extends LitElement {
   }
 
   private get resolvedMaxDigits(): number {
-    return this.maxDigits ?? 0;
+    return resolveReadoutMaxDigits(this.maxDigits);
   }
 
   private get hasSrc(): boolean {
@@ -1135,6 +1139,7 @@ export class ObcReadout extends LitElement {
     // `changed`, skip the check, and render the invalid value as a plain dash:
     // exactly the silent failure this assertion exists to prevent.
     assertReadoutValueType('obc-readout', this.value, this.valueType);
+    assertReadoutFractionDigits('obc-readout', this.fractionDigits);
   }
 
   override updated(changed: Map<string, unknown>): void {

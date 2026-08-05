@@ -4,6 +4,7 @@ import componentStyle from './readout-list.css?inline';
 import {customElement} from '../../decorator.js';
 import '../readout-list-item/readout-list-item.js';
 import {ObcReadoutListItem} from '../readout-list-item/readout-list-item.js';
+import {resolveReadoutMaxDigits} from '../readout/readout-formatters.js';
 import {
   resolveReadoutNumericValue,
   ReadoutValueType,
@@ -158,12 +159,19 @@ export class ObcReadoutList extends LitElement {
       // here, so they take part as usual.
       const hasNumericBlock =
         !isTextValueRow(item) || item.hasSetpoint || item.hasAdvice;
+      // Bounded per row: the list builds its own reserver string from these
+      // counts, so an `Infinity` or absurdly large value on any single row
+      // would otherwise throw out of `String.prototype.repeat` below — inside a
+      // MutationObserver callback, where the stack says nothing useful.
       if (hasNumericBlock) {
         maxFractionDigits = Math.max(
           maxFractionDigits,
-          item.fractionDigits ?? 0
+          resolveReadoutMaxDigits(item.fractionDigits)
         );
-        maxIntegerDigits = Math.max(maxIntegerDigits, item.maxDigits ?? 0);
+        maxIntegerDigits = Math.max(
+          maxIntegerDigits,
+          resolveReadoutMaxDigits(item.maxDigits)
+        );
       }
       maxIntegerDigits = Math.max(
         maxIntegerDigits,

@@ -15,6 +15,8 @@ import {
   formatNumericValue,
   readoutFormattedInteger,
   assertReadoutValueType,
+  assertReadoutFractionDigits,
+  resolveReadoutMaxDigits,
   resolveReadoutNumericValue,
   resolveReadoutTextValue,
   READOUT_UNAVAILABLE_DASH,
@@ -152,13 +154,16 @@ export class ObcReadoutBlock extends LitElement {
   @property({type: Boolean}) hasIcon = false;
 
   /**
-   * Number of fraction digits.
+   * Number of fraction digits. Must be between 0 and 100 — the range
+   * `Number.prototype.toFixed` accepts; outside it throws a `RangeError`.
    * @availableWhen valueType==number
    */
   @property({type: Number}) fractionDigits = 0;
 
   /**
    * Integer digits to reserve / hint (independent of `fractionDigits`).
+   * Values above 100 are
+   * capped, and a negative / `NaN` count reserves nothing.
    * @availableWhen valueType==number
    */
   @property({type: Number}) maxDigits = 0;
@@ -214,24 +219,33 @@ export class ObcReadoutBlock extends LitElement {
     }
   }
 
+  /**
+   * `maxDigits` bounded to a usable count. Every width calculation below goes
+   * through this rather than the raw property, so an `Infinity` (or absurdly
+   * large) value cannot reach `String.prototype.repeat`.
+   */
+  private get resolvedMaxDigits(): number {
+    return resolveReadoutMaxDigits(this.maxDigits);
+  }
+
   private get numericFormatOptions(): ReadoutNumericFormatOptions {
     return {
       // The unavailable placeholder stays short (`\u2012.\u2012\u2012`) rather than
       // spelling out every reserved digit position — `maxDigits` already
       // reserves the width, so it simply sits at the right edge of it.
       showZeroPadding: false,
-      minValueLength: this.maxDigits,
+      minValueLength: this.resolvedMaxDigits,
       fractionDigits: this.fractionDigits,
     };
   }
 
   /** Widest possible value string for width reservation (e.g. `"000.0"`). */
   private get reserverText(): string {
-    const maxDigits = this.maxDigits;
+    const maxDigits = this.resolvedMaxDigits;
     if (maxDigits <= 0) {
       return '';
     }
-    const integer = '0'.repeat(Math.max(maxDigits, 1));
+    const integer = '0'.repeat(maxDigits);
     return this.fractionDigits > 0
       ? `${integer}.${'0'.repeat(this.fractionDigits)}`
       : integer;
@@ -322,6 +336,7 @@ export class ObcReadoutBlock extends LitElement {
     // `changed`, skip the check, and render the invalid value as a plain dash:
     // exactly the silent failure this assertion exists to prevent.
     assertReadoutValueType('obc-readout-block', this.value, this.valueType);
+    assertReadoutFractionDigits('obc-readout-block', this.fractionDigits);
   }
 
   override render() {
@@ -351,7 +366,7 @@ export class ObcReadoutBlock extends LitElement {
       valueForFormat === undefined ||
       valueForFormat < 0
         ? 0
-        : Math.max(this.maxDigits - readoutFormattedInteger(text), 0);
+        : Math.max(this.resolvedMaxDigits - readoutFormattedInteger(text), 0);
     const hinted = hintCount > 0 ? '0'.repeat(hintCount) : '';
     // Hinted zeros own the width — they already fill to `maxDigits` — so when
     // `hintedZeros` is enabled an explicit `spaceReserver` is ignored (it has

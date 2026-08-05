@@ -21,6 +21,72 @@ export function isReadoutValueType(value: unknown): value is ReadoutValueType {
   return typeof value === 'string' && READOUT_VALUE_TYPES.includes(value);
 }
 
+/**
+ * The largest `fractionDigits` `Number.prototype.toFixed` accepts. Reused as the
+ * `maxDigits` ceiling so the two bounds stay symmetric — a wider reserve than
+ * this is meaningless anyway, and an unbounded one builds a huge string.
+ */
+export const READOUT_MAX_DIGITS = 100;
+
+/** `fractionDigits` as `toFixed` will actually read it (NaN counts as 0). */
+function effectiveFractionDigits(fractionDigits: number): number {
+  return Number.isNaN(fractionDigits) ? 0 : Math.trunc(fractionDigits);
+}
+
+/**
+ * Throws when `fractionDigits` is outside the range `toFixed` accepts.
+ *
+ * It is a public property that reaches `Number.prototype.toFixed` unchanged, so
+ * `-1`, `101` or `Infinity` already throw a bare
+ * `RangeError: toFixed() digits argument must be between 0 and 100` from inside
+ * the update cycle. This replaces that with an error naming the component and
+ * the offending value.
+ *
+ * Deliberately not clamped: `fractionDigits` sets the PRECISION of a reading, so
+ * quietly turning `-1` into `0` would drop decimals from a displayed value
+ * without telling anyone. It is a configuration mistake, fixable only in code —
+ * the same class as a bad `valueType`, and treated the same way.
+ *
+ * Values `toFixed` itself tolerates are left alone: `NaN` reads as `0`, and a
+ * fractional count truncates (`2.7` → `2`).
+ */
+export function assertReadoutFractionDigits(
+  tagName: string,
+  fractionDigits: number
+): void {
+  const digits = effectiveFractionDigits(fractionDigits);
+  if (Number.isFinite(digits) && digits >= 0 && digits <= READOUT_MAX_DIGITS) {
+    return;
+  }
+  throw new RangeError(
+    `<${tagName}>: fractionDigits must be between 0 and ${READOUT_MAX_DIGITS} ` +
+      `(got ${JSON.stringify(fractionDigits)}).`
+  );
+}
+
+/**
+ * `maxDigits` normalised to a non-negative integer no greater than
+ * {@link READOUT_MAX_DIGITS}.
+ *
+ * Unlike `fractionDigits` this IS clamped rather than rejected: it only reserves
+ * width, so bounding it changes no reading's meaning, and the surrounding code
+ * already absorbs bad values silently (`Math.max(maxDigits, 1)`, `NaN` repeating
+ * to `''`). What is not absorbed is `Infinity`, which throws out of
+ * `String.prototype.repeat`, and a large finite count, which builds a reserver
+ * string long enough to matter — both are capped here.
+ */
+export function resolveReadoutMaxDigits(
+  maxDigits: number | null | undefined
+): number {
+  const digits = Math.trunc(maxDigits ?? 0);
+  if (Number.isNaN(digits) || digits <= 0) {
+    // Matches what the existing guards already do with these: reserve nothing.
+    return 0;
+  }
+  // `Infinity` lands on the cap — "as wide as possible" — rather than throwing.
+  return Math.min(digits, READOUT_MAX_DIGITS);
+}
+
 function isBlank(value: string): boolean {
   return value.trim() === '';
 }
