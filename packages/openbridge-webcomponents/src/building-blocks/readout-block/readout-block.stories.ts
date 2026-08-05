@@ -10,6 +10,7 @@ import {
   ReadoutValueType,
 } from './readout-block.js';
 import './readout-block.js';
+import '../../components/textbox/textbox.js';
 import '../../icons/icon-placeholder.js';
 import {
   ObcAlertFrameMode,
@@ -415,58 +416,9 @@ export const TestValidationSurvivesUnrelatedUpdate: Story = {
   },
 };
 
-// Each row states what the case rendered BEFORE this change as literal text,
-// beside the live component rendering it now. The `was` strings are recorded
-// from the previous implementation, not produced by it.
-const UNAVAILABLE_CASES: {
-  label: string;
-  was: string;
-  args: Partial<BlockArgs>;
-}[] = [
-  {
-    label: 'null · no maxDigits',
-    was: '-',
-    args: {value: null},
-  },
-  {
-    label: 'null · maxDigits 4',
-    was: '-',
-    args: {value: null, maxDigits: 4},
-  },
-  {
-    label: 'null · maxDigits 4 · fraction 3',
-    was: '-.---',
-    args: {value: null, maxDigits: 4, fractionDigits: 3},
-  },
-  {
-    label: 'null · maxDigits 3 · fraction 1',
-    was: '-.-',
-    args: {value: null, maxDigits: 3, fractionDigits: 1},
-  },
-  {
-    label: 'NaN · maxDigits 4 · fraction 1',
-    was: 'NaN',
-    args: {value: Number.NaN, maxDigits: 4, fractionDigits: 1},
-  },
-  {
-    label: 'Infinity · maxDigits 4 · fraction 1',
-    was: 'Infinity',
-    args: {value: Number.POSITIVE_INFINITY, maxDigits: 4, fractionDigits: 1},
-  },
-  {
-    label: 'null · hinted zeros',
-    was: '-.-',
-    args: {value: null, maxDigits: 4, fractionDigits: 1, hintedZeros: true},
-  },
-  {
-    label: 'a reading, for reference',
-    was: '0012.4',
-    args: {value: 12.4, maxDigits: 4, fractionDigits: 1, hintedZeros: true},
-  },
-];
-
-// The designer's specification, verbatim:
-//   format: 000.00 · readout: 12.30 · hinted: 012.30 · Not available: ---.--
+// The designer's specification, revised in review: the unavailable placeholder
+// stays SHORT (`-.--`, not `---.--`) and sits at the right of the reserved width.
+//   format: 000.00 · readout: 12.30 · hinted: 012.30 · not available: -.--
 // `format: 000.00` maps to maxDigits 3 + fractionDigits 2.
 const DESIGNER_SPEC_CASES: {
   label: string;
@@ -485,35 +437,82 @@ const DESIGNER_SPEC_CASES: {
   },
   {
     label: 'not available',
-    expected: '---.--',
+    expected: '-.--',
     args: {value: null, maxDigits: 3, fractionDigits: 2},
   },
   {
     label: 'not available, hinted enabled',
-    expected: '---.--',
+    expected: '-.--',
     args: {value: null, maxDigits: 3, fractionDigits: 2, hintedZeros: true},
   },
+];
+
+// What each case rendered BEFORE this change, as literal text beside the live
+// component. The `was` strings are recorded from the previous implementation,
+// not produced by it.
+const UNAVAILABLE_CASES: {
+  label: string;
+  was: string;
+  args: Partial<BlockArgs>;
+}[] = [
+  {
+    label: 'NaN — was the literal text',
+    was: 'NaN',
+    args: {value: Number.NaN, maxDigits: 3, fractionDigits: 2},
+  },
+  {
+    label: 'Infinity — was the literal text',
+    was: 'Infinity',
+    args: {value: Number.POSITIVE_INFINITY, maxDigits: 3, fractionDigits: 2},
+  },
+  {
+    label: 'null — dash is now digit-width',
+    was: '-.--',
+    args: {value: null, maxDigits: 3, fractionDigits: 2},
+  },
+  {
+    label: 'null · no fraction',
+    was: '-',
+    args: {value: null, maxDigits: 3},
+  },
+];
+
+// Stacked in one column under identical settings so the decimal points and the
+// fraction positions can be checked against each other by eye.
+const ALIGNMENT_CASES: Partial<BlockArgs>[] = [
+  {value: 12.3, maxDigits: 3, fractionDigits: 2},
+  {value: 4.5, maxDigits: 3, fractionDigits: 2},
+  {value: null, maxDigits: 3, fractionDigits: 2},
+  {value: Number.NaN, maxDigits: 3, fractionDigits: 2},
 ];
 
 /**
  * **Unavailable values — for design review.**
  *
- * Two changes, shown against what each case rendered before.
- *
- * 1. **The dash fills the reserved digits.** `maxDigits` reserves the width
- *    either way, so the placeholder now takes the shape of the reading it
- *    stands in for (`----.---`) instead of sitting as a lone `-` at the right
- *    edge of an otherwise empty box. This changes glyphs only — no block
- *    changes width — and with no `maxDigits` there is nothing to fill, so the
- *    single dash stays.
- * 2. **`NaN` and `±Infinity` count as unavailable.** They previously rendered
- *    as the literal text `NaN` / `Infinity` in place of a reading. They are a
+ * 1. **The placeholder is short.** `-.--` for `format: 000.00`, not `---.--`:
+ *    `maxDigits` already reserves the width, so the dash sits at the right edge
+ *    of the reserve rather than spelling out every reserved digit position.
+ * 2. **The dash is digit-width.** It is U+2012 FIGURE DASH, not the ASCII
+ *    hyphen-minus. Measured in Noto Sans with tabular figures, a digit is
+ *    13.02px and U+2012 is 13.02px, while U+002D is 7.02px — so with a hyphen
+ *    the placeholder's decimal point missed the reading's. `tabular-nums` does
+ *    not help here: it equalises figures with each other and leaves punctuation
+ *    untouched (measured identical with the feature on and off).
+ * 3. **`NaN` and `±Infinity` count as unavailable.** They previously rendered as
+ *    the literal text `NaN` / `Infinity` in place of a reading. They are a
  *    runtime data condition (sensor dropout, `0/0`, a bad parse) rather than a
  *    programmer error, so they resolve to the dash rather than throwing.
  *
- * The last row is a real reading under the same settings, for width comparison.
- * Hinted zeros are suppressed for an unavailable value, so nothing reads
- * `----Na.N`.
+ * Hinted zeros are suppressed for an unavailable value, so the two "not
+ * available" rows are identical and nothing reads `----Na.N`.
+ *
+ * **Open question — dash treatment.** U+2012 is exactly digit-width, which is
+ * what makes the columns line up, but two adjacent dashes then run together
+ * into one bar. The last section renders the alternatives at a readable size:
+ * (A) the figure dash as implemented, (B) an ASCII hyphen centred in a
+ * digit-width cell — separated and still aligned, at the cost of a lighter,
+ * sparser look — and (C) the previous plain hyphen, for reference. Delete that
+ * section once the choice is made.
  */
 export const UnavailableValues: Story = {
   render: () => html`
@@ -541,22 +540,40 @@ export const UnavailableValues: Story = {
         letter-spacing: 0.06em;
         color: var(--element-neutral-color, #777);
       }
-      .rb-unavail-spec-value {
+      .rb-unavail-spec-value,
+      .rb-unavail-was {
         font:
           13px/1.4 ui-monospace,
           monospace;
         color: var(--element-neutral-color, #777);
       }
       .rb-unavail-was {
-        font:
-          13px/1.4 ui-monospace,
-          monospace;
         color: var(--element-neutral-color, #999);
         text-decoration: line-through;
       }
       .rb-unavail-now {
         outline: 1px dashed rgba(0, 0, 0, 0.12);
         width: max-content;
+      }
+      .rb-dash-options {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        width: max-content;
+      }
+      .rb-cellspan {
+        display: inline-block;
+        width: 1ch;
+        text-align: center;
+      }
+      /* One column, so the decimal points can be compared down the stack. */
+      .rb-align {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+        width: max-content;
+        outline: 1px dashed rgba(0, 0, 0, 0.12);
       }
     </style>
     <div class="rb-unavail-spec">Designer specification — format 000.00</div>
@@ -573,6 +590,49 @@ export const UnavailableValues: Story = {
           </div>
         `
       )}
+    </div>
+
+    <div class="rb-unavail-spec">
+      Alignment — decimal points and fraction positions line up
+    </div>
+    <div class="rb-align">
+      ${ALIGNMENT_CASES.map((args) =>
+        renderBlock({size: ReadoutBlockSize.medium, ...args})
+      )}
+    </div>
+
+    <div class="rb-unavail-spec">
+      Dash treatment — open question for the designer
+    </div>
+    <div class="rb-dash-options">
+      <div>
+        <div class="rb-unavail-label">reading, for reference</div>
+        <obc-textbox size="l" .tabularNums=${true}>12.30</obc-textbox>
+      </div>
+      <div>
+        <div class="rb-unavail-label">
+          A — U+2012 figure dash (implemented): digit-width, but adjacent dashes
+          run together
+        </div>
+        <obc-textbox size="l" .tabularNums=${true}
+          >&#8210;.&#8210;&#8210;</obc-textbox
+        >
+      </div>
+      <div>
+        <div class="rb-unavail-label">
+          B — hyphen in digit-width cells: separated, but lighter and sparser
+        </div>
+        <obc-textbox size="l" .tabularNums=${true}>
+          <span class="rb-cellspan">-</span>.<span class="rb-cellspan">-</span
+          ><span class="rb-cellspan">-</span>
+        </obc-textbox>
+      </div>
+      <div>
+        <div class="rb-unavail-label">
+          C — ASCII hyphen (previous): narrower than a digit, does not align
+        </div>
+        <obc-textbox size="l" .tabularNums=${true}>-.--</obc-textbox>
+      </div>
     </div>
 
     <div class="rb-unavail-spec">Change against previous behaviour</div>

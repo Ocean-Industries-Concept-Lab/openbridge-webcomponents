@@ -1310,9 +1310,11 @@ export const TextValue: Story = {
  * with a label and unit so the placeholder can be judged in the context an
  * instrument actually renders.
  *
- * - The dash fills the reserved digits (`----.-` rather than a lone `-` at the
- *   right edge of the reserved box). `maxDigits` reserves that width either way,
- *   so no readout changes width.
+ * - The placeholder stays short (`-.-`) and sits at the right edge of the width
+ *   `maxDigits` reserves, rather than spelling out every reserved position.
+ * - The dash is U+2012 FIGURE DASH, which is digit-width, so its decimal point
+ *   and fraction positions line up with the reading it replaces. The ASCII
+ *   hyphen is 46% narrower and did not align.
  * - `NaN` / `±Infinity` render the dash instead of the literal text `NaN` /
  *   `Infinity`.
  *
@@ -1390,7 +1392,7 @@ export const UnavailableValues: Story = {
         ],
       },
       {
-        title: 'No maxDigits — Unchanged, Nothing to Fill',
+        title: 'No maxDigits — Same Placeholder, Narrower Reserve',
         columns: 2,
         cases: [
           {
