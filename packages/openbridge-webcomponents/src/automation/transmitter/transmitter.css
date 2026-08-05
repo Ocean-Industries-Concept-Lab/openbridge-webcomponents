@@ -136,6 +136,13 @@
 }
 
 .id-tag {
-  @mixin font-instrument-label;
   color: var(--element-neutral-color);
+  color: var(--element-neutral-color);
+  font-variant-numeric: lining-nums tabular-nums;
+  font-feature-settings: "ss04" on;
+  font-family: var(--global-typography-font-family);
+  font-size: var(--global-typography-instrument-label-font-size);
+  font-style: normal;
+  font-weight: 570;
+  line-height: var(--global-typography-instrument-label-line-height);
 }
