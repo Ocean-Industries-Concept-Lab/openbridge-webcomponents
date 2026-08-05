@@ -19,6 +19,7 @@ import {
   measureContainerPx,
   observeInnerBox,
 } from '../../svghelpers/radial-frame.js';
+import {CHART_DIMENSIONS} from '../../charthelpers/constants.js';
 import {InstrumentState, Priority} from '../../navigation-instruments/types.js';
 import {renderInstrumentReadout} from '../../navigation-instruments/readout/instrument-readout.js';
 import {ReadoutSize} from '../../navigation-instruments/readout/readout.js';
@@ -144,6 +145,13 @@ export enum GaugeValveStyle {
  * ring circumference regardless of variant, matching
  * `obc-gauge-radial-proportional`. The frame geometry comes from the shared
  * `computeRadialFrame()`.
+ *
+ * Readout text keeps a constant on-screen size (the instrument typography
+ * contract), so the large variant hides its readout when the rendered ring
+ * diameter drops below 192px (`CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS`) —
+ * the same small-size breakpoint the donut and pie charts use to drop their
+ * center readouts and labels. Scale tick labels degrade separately via the
+ * radial frame's `labelsHidden` reserve cap.
  *
  * ## Usage Guidelines
  * Use for analog valve position/flow visualization on overview displays. For
@@ -460,6 +468,8 @@ export class ObcGaugeValve extends SetpointMixin(LitElement) {
       faceDiameter: this.faceDiameter,
     });
     const isOff = this.priority === GaugeValvePriority.off;
+    const facePx = 2 * SCALE_RADIUS * frame.scale;
+    const readoutVisible = facePx >= CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS;
     const pct = (y: number) =>
       `${(((y - frame.y) / frame.height) * 100).toFixed(4)}%`;
     const readoutY =
@@ -510,7 +520,7 @@ export class ObcGaugeValve extends SetpointMixin(LitElement) {
               ${this.large ? this.renderSetpoint() : nothing}
             </svg>
             <div class="icon"><slot name="icon"></slot></div>
-            ${this.large ? this.renderReadout() : nothing}
+            ${this.large && readoutVisible ? this.renderReadout() : nothing}
           </div>
         </div>
         ${!this.large && this.hasLabelStack ? this.renderLabelStack() : nothing}
