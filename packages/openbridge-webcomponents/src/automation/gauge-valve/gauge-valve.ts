@@ -128,8 +128,9 @@ export enum GaugeValveStyle {
  *   icon to its closed/off variant when setting `priority` to `off`
  * - `barStyle`: `tint` (default) fills the bar with the priority's tint
  *   colour and marks the fill edges with strong cap pills; `fill` paints the
- *   bar in the strong colour without cap pills (matching the fill mode of
- *   `obc-bar-vertical` and `obc-gauge-radial`)
+ *   bar in the strong colour with square value edges, no cap pills, clipped
+ *   to the track silhouette (matching the fill mode of `obc-bar-vertical`
+ *   and `obc-gauge-radial`)
  * - Setpoint support via the shared setpoint API (`setpoint`, `newSetpoint`, …)
  * - `hasLabelStack`: toggles the compact-variant readout stack (an optional
  *   setpoint row, one value row per port, plus an optional `tag` identifier
@@ -244,30 +245,41 @@ export class ObcGaugeValve extends SetpointMixin(LitElement) {
         endAngle: centerAngle + halfExtent,
         r: TRACK_INNER_RADIUS,
         R: TRACK_OUTER_RADIUS,
-        roundOutsideCut: true,
-        roundInsideCut: true,
+        roundOutsideCut: cornerRadius > 0,
+        roundInsideCut: cornerRadius > 0,
         roundRadius: cornerRadius,
       });
-    const hasCaps = this.barStyle !== GaugeValveStyle.fill;
+    const isFill = this.barStyle === GaugeValveStyle.fill;
+    const trackPath = sector(halfSpan, TRACK_CORNER_RADIUS);
+    const clipId = `gauge-valve-track-clip-${centerAngle}`;
     return svg`
       <path
         class="track"
         vector-effect="non-scaling-stroke"
-        d=${sector(halfSpan, TRACK_CORNER_RADIUS)}
+        d=${trackPath}
       />
       ${
         pct > 0
           ? svg`
-        <path class="bar" d=${sector(capHalf, barCorner)} />
         ${
-          hasCaps
-            ? [centerAngle - capHalf, centerAngle + capHalf].map(
+          isFill
+            ? svg`<clipPath id=${clipId}><path d=${trackPath} /></clipPath>`
+            : nothing
+        }
+        <path
+          class="bar"
+          clip-path=${isFill ? `url(#${clipId})` : nothing}
+          d=${isFill ? sector(capHalf, 0) : sector(capHalf, barCorner)}
+        />
+        ${
+          isFill
+            ? nothing
+            : [centerAngle - capHalf, centerAngle + capHalf].map(
                 (angle) => svg`
             <path class="cap-back" d=${radialLinePath(CAP_INNER_RADIUS, CAP_OUTER_RADIUS, angle)} />
             <path class="cap-front" d=${radialLinePath(CAP_INNER_RADIUS, CAP_OUTER_RADIUS, angle)} />
           `
               )
-            : nothing
         }
       `
           : nothing

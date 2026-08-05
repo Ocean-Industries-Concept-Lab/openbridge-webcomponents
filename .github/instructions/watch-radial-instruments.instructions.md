@@ -1,5 +1,5 @@
 ---
-applyTo: "packages/openbridge-webcomponents/src/navigation-instruments/watch/**,packages/openbridge-webcomponents/src/navigation-instruments/compass/**,packages/openbridge-webcomponents/src/navigation-instruments/compass-sector/**,packages/openbridge-webcomponents/src/navigation-instruments/heading/**,packages/openbridge-webcomponents/src/navigation-instruments/rudder/**,packages/openbridge-webcomponents/src/navigation-instruments/wind/**,packages/openbridge-webcomponents/src/navigation-instruments/pitch/**,packages/openbridge-webcomponents/src/navigation-instruments/roll/**,packages/openbridge-webcomponents/src/navigation-instruments/pitch-roll/**,packages/openbridge-webcomponents/src/navigation-instruments/pitch-roll-heave/**,packages/openbridge-webcomponents/src/building-blocks/single-axis-inclinometer/**,packages/openbridge-webcomponents/src/navigation-instruments/speed-gauge/**,packages/openbridge-webcomponents/src/navigation-instruments/gauge-radial/**,packages/openbridge-webcomponents/src/navigation-instruments/rot-sector/**,packages/openbridge-webcomponents/src/navigation-instruments/rate-of-turn/**,packages/openbridge-webcomponents/src/navigation-instruments/course-arrows/**,packages/openbridge-webcomponents/src/navigation-instruments/readout/**,packages/openbridge-webcomponents/src/navigation-instruments/watch-flat/**,packages/openbridge-webcomponents/src/navigation-instruments/compass-flat/**,packages/openbridge-webcomponents/src/navigation-instruments/rot-linear/**,packages/openbridge-webcomponents/src/navigation-instruments/azimuth-thruster/**,packages/openbridge-webcomponents/src/building-blocks/instrument-radial/**"
+applyTo: "packages/openbridge-webcomponents/src/navigation-instruments/watch/**,packages/openbridge-webcomponents/src/navigation-instruments/compass/**,packages/openbridge-webcomponents/src/navigation-instruments/compass-sector/**,packages/openbridge-webcomponents/src/navigation-instruments/heading/**,packages/openbridge-webcomponents/src/navigation-instruments/rudder/**,packages/openbridge-webcomponents/src/navigation-instruments/wind/**,packages/openbridge-webcomponents/src/navigation-instruments/pitch/**,packages/openbridge-webcomponents/src/navigation-instruments/roll/**,packages/openbridge-webcomponents/src/navigation-instruments/pitch-roll/**,packages/openbridge-webcomponents/src/navigation-instruments/pitch-roll-heave/**,packages/openbridge-webcomponents/src/building-blocks/single-axis-inclinometer/**,packages/openbridge-webcomponents/src/navigation-instruments/speed-gauge/**,packages/openbridge-webcomponents/src/navigation-instruments/gauge-radial/**,packages/openbridge-webcomponents/src/navigation-instruments/rot-sector/**,packages/openbridge-webcomponents/src/navigation-instruments/rate-of-turn/**,packages/openbridge-webcomponents/src/navigation-instruments/course-arrows/**,packages/openbridge-webcomponents/src/navigation-instruments/readout/**,packages/openbridge-webcomponents/src/navigation-instruments/watch-flat/**,packages/openbridge-webcomponents/src/navigation-instruments/compass-flat/**,packages/openbridge-webcomponents/src/navigation-instruments/rot-linear/**,packages/openbridge-webcomponents/src/navigation-instruments/azimuth-thruster/**,packages/openbridge-webcomponents/src/building-blocks/instrument-radial/**,packages/openbridge-webcomponents/src/navigation-instruments/gauge-radial-proportional/**,packages/openbridge-webcomponents/src/automation/gauge-valve/**"
 ---
 
 # GitHub Copilot Custom Instructions
@@ -472,8 +472,23 @@ Common instrument CSS variables used in `watch.ts` and helpers:
 | `pitch-roll`        | `obc-watch`                              | Pitch + roll on one face; 4 arcs, optional zoomed sub-watches                                             |
 | `pitch-roll-heave`  | `obc-watch` + `watchfaceLinear`          | Pitch arc + roll arc + linear heave column in the band slot; single/dual scale, optional stacked readouts |
 | `gauge-radial`      | `instrument-radial`                      | Thin wrapper adding `enhanced` prop                                                                       |
+| `gauge-radial-proportional` | `obc-watch` + overlay            | Proportional band gauge: split frame, secondary scale, medium priority, `faceDiameter`                    |
 | `rot-sector`        | `instrument-radial`                      | Rate of turn sector gauge                                                                                 |
 | `azimuth-thruster`  | `obc-watch` + overlay                    | Thruster with angle setpoint and thrust bar                                                               |
+
+### Partial-reuse exception: `automation/gauge-valve`
+
+`obc-gauge-valve` (in `src/automation/`) shares the sizing/coordinate layer of
+this stack — `computeRadialFrame()` (contain-fit, label reserve,
+`faceDiameter`), the watch coordinate space (center-origin, outer ring r 184),
+`roundedArch()`, the setpoint layer and `renderInstrumentReadout` — but draws
+its face bespoke instead of composing `obc-watch`: its three fixed-angle port
+tracks sit at a band radius (112–160) `watch.ts` cannot currently render, and
+its 0–100 scale spans a fixed 60° top arc. **TODO:** fold band-radius
+overrides and fixed-angle sector tracks into `watch.ts` options (cf. the
+rate-of-turn track-bar recipe) and rebuild the gauge-valve face on `obc-watch`;
+until then treat gauge-valve as the documented exception, not a precedent for
+new bespoke renderers.
 
 ---
 
