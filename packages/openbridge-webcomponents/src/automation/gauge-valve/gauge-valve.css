@@ -50,6 +50,17 @@
   position: relative;
 }
 
+/* With a pinned face the area shrink-wraps the fixed box instead of flexing,
+ * so the compact label stack stays clustered under the face; the root then
+ * centers the face+stack group in the leftover host space. */
+.root.pinned {
+  justify-content: center;
+}
+
+.root.pinned .face-area {
+  flex: 0 0 auto;
+}
+
 .face-box {
   position: relative;
   width: auto;

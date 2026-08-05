@@ -479,7 +479,10 @@ export class ObcGaugeValve extends SetpointMixin(LitElement) {
         class="root ${this.large ? 'large' : 'small'} ${this.type ===
         GaugeValveType.threeWay
           ? 'three-way'
-          : 'two-way'} priority-${this.priority} style-${this.barStyle}"
+          : 'two-way'} priority-${this.priority} style-${this.barStyle} ${this
+          .faceDiameter !== undefined
+          ? 'pinned'
+          : ''}"
         style=${anchors}
       >
         <div class="face-area">
