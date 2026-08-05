@@ -11,7 +11,15 @@ import {
 } from '../../components/textbox/textbox.js';
 import '../../icons/icon-input-right.js';
 import '../../icons/icon-notification-advice.js';
-import {formatHintedValue} from '../../navigation-instruments/readout/readout-formatters.js';
+import {
+  formatNumericValue,
+  readoutFormattedInteger,
+  assertReadoutValueType,
+  resolveReadoutNumericValue,
+  resolveReadoutTextValue,
+  ReadoutValueType,
+  type ReadoutNumericFormatOptions,
+} from '../../navigation-instruments/readout/readout-formatters.js';
 import {
   type AlertFrameConfig,
   wrapWithAlertFrame,
@@ -23,6 +31,7 @@ export {
   ObcTextboxFontWeight,
   ObcTextboxAlignment,
 } from '../../components/textbox/textbox.js';
+export {ReadoutValueType} from '../../navigation-instruments/readout/readout-formatters.js';
 
 /**
  * Semantic variant of the block. Drives the default marker icon and the
@@ -79,6 +88,9 @@ export enum ReadoutBlockHidePhase {
  * role default), an optional trailing degree glyph, an `off`/unavailable text
  * state, per-block data-quality and an optional per-block alert frame.
  *
+ * Setting `valueType` to `text` renders `value` verbatim (e.g.
+ * `"Auto"`) instead of a formatted number.
+ *
  * This is a building block used inside `obc-readout-list-item` (and, in a future
  * refactor, inside `obc-readout`); it is not normally used on its own. Colour is
  * inherited from the host context (the parent sets the role colour), so the
@@ -101,8 +113,19 @@ export class ObcReadoutBlock extends LitElement {
   @property({type: String}) variant: ReadoutBlockVariant =
     ReadoutBlockVariant.value;
 
-  /** The numeric value; `null`/`undefined` renders a dash. */
-  @property({type: Number}) value: number | null = null;
+  /**
+   * The value; `null`/`undefined` renders a dash. A number by default, or text
+   * when {@link valueType} is `text`.
+   */
+  @property({type: String}) value: number | string | null = null;
+
+  /**
+   * How {@link value} is interpreted. `number` (default) formats it via
+   * `fractionDigits`; `text` renders it verbatim and ignores the numeric
+   * format options. Passing text while this is `number` throws.
+   */
+  @property({type: String}) valueType: ReadoutValueType =
+    ReadoutValueType.number;
 
   /** Density tier — icon size, gap, degree tier. */
   @property({type: String}) size: ReadoutBlockSize = ReadoutBlockSize.small;
@@ -127,19 +150,21 @@ export class ObcReadoutBlock extends LitElement {
   /** Show the leading marker-icon container (always on for setpoint/advice). */
   @property({type: Boolean}) hasIcon = false;
 
-  /** Number of fraction digits. */
+  /**
+   * Number of fraction digits.
+   * @availableWhen valueType==number
+   */
   @property({type: Number}) fractionDigits = 0;
 
   /**
-   * Integer digits to reserve / hint (independent of `fractionDigits`). A
-   * negative value's minus sign occupies one of them, so it renders at the same
-   * width as a positive value.
+   * Integer digits to reserve / hint (independent of `fractionDigits`).
+   * @availableWhen valueType==number
    */
   @property({type: Number}) maxDigits = 0;
 
   /**
-   * Render muted leading zeros filling the integer part to `maxDigits`. A
-   * missing value fills the same width with dashes instead.
+   * Render muted leading zeros filling the integer part to `maxDigits`.
+   * @availableWhen valueType==number
    */
   @property({type: Boolean}) hintedZeros = false;
 
@@ -275,22 +300,58 @@ export class ObcReadoutBlock extends LitElement {
     `;
   }
 
+  protected override willUpdate(changed: Map<string, unknown>): void {
+    super.willUpdate(changed);
+    // Validated on EVERY update, deliberately NOT gated on `value`/`valueType`
+    // appearing in `changed`. When this assertion throws, Lit's `performUpdate`
+    // catch calls `__markUpdated()`, which clears the changed-properties map. A
+    // later update driven by any OTHER property — inside `obc-readout-list`,
+    // `align()` writing the shared reservers — would then see no `value` in
+    // `changed`, skip the check, and render the invalid value as a plain dash:
+    // exactly the silent failure this assertion exists to prevent.
+    assertReadoutValueType('obc-readout-block', this.value, this.valueType);
+  }
+
   override render() {
     const valueSize = this.resolvedValueSize;
-    const {sign, hint, text} = this.off
-      ? {sign: '', hint: '', text: this.offText}
-      : formatHintedValue(this.value ?? undefined, {
-          maxDigits: this.maxDigits,
-          fractionDigits: this.fractionDigits,
-          hintedZeros: this.hintedZeros,
-        });
+    const formatOptions = this.numericFormatOptions;
+    const isTextMode = this.valueType === ReadoutValueType.text;
+    const valueForFormat = resolveReadoutNumericValue(
+      this.value,
+      this.valueType
+    );
+    const textValue = resolveReadoutTextValue(this.value, this.valueType);
+    // Text mode renders verbatim and ignores the numeric format options; a
+    // blank / missing text value still falls back to the unavailable dash.
+    const text = this.off
+      ? this.offText
+      : isTextMode
+        ? (textValue ?? '-')
+        : formatNumericValue(valueForFormat, formatOptions);
+    // Hinted zeros pad the INTEGER part up to `maxDigits`, independent of
+    // `fractionDigits` (the decimal point and fraction digits never count toward
+    // `maxDigits`). Negative / dashed values are not padded. Example: value 1.2,
+    // maxDigits 3, fractionDigits 1 → "001.2".
+    const hintCount =
+      this.off ||
+      isTextMode ||
+      !this.hintedZeros ||
+      valueForFormat === undefined ||
+      valueForFormat < 0
+        ? 0
+        : Math.max(this.maxDigits - readoutFormattedInteger(text), 0);
+    const hinted = hintCount > 0 ? '0'.repeat(hintCount) : '';
     // Hinted zeros own the width — they already fill to `maxDigits` — so when
     // `hintedZeros` is enabled an explicit `spaceReserver` is ignored (it has
     // higher priority). Otherwise the wider of the explicit reserver and the
     // `maxDigits`-derived reserve wins.
-    const reserver = this.hintedZeros
-      ? this.reserverText
-      : this.widerReserver(this.spaceReserver, this.reserverText);
+    // Text mode ignores the `maxDigits`-derived numeric reserve — only an
+    // explicit `spaceReserver` still applies.
+    const reserver = isTextMode
+      ? (this.spaceReserver ?? '')
+      : this.hintedZeros
+        ? this.reserverText
+        : this.widerReserver(this.spaceReserver, this.reserverText);
 
     const block = html`
       <div

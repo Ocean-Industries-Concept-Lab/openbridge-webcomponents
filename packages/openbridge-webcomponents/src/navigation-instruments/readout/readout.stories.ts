@@ -20,6 +20,7 @@ import {
   type ReadoutAdviceOptions,
   type ReadoutReserverOptions,
   type ReadoutSourceOptions,
+  ReadoutValueType,
 } from './readout.js';
 import {
   type AlertFrameConfig,
@@ -36,7 +37,8 @@ type ReadoutStoryArgs = {
   unit: string;
   src: string;
   hasValue: boolean;
-  value: number;
+  value: number | string;
+  valueType: ReadoutValueType;
   off: boolean;
   hasSetpoint: boolean;
   setpoint: number;
@@ -90,7 +92,8 @@ type ReadoutConfig = {
   unit?: string;
   src?: string;
   hasValue?: boolean;
-  value?: number | null;
+  value?: number | string | null;
+  valueType?: ReadoutValueType;
   off?: boolean;
   hasSetpoint?: boolean;
   setpoint?: number;
@@ -159,6 +162,7 @@ function renderReadout(config: ReadoutConfig) {
       .src=${config.src}
       .hasValue=${config.hasValue ?? true}
       .value=${config.value ?? null}
+      .valueType=${config.valueType ?? ReadoutValueType.number}
       .off=${config.off ?? false}
       .hasSetpoint=${config.hasSetpoint ?? false}
       .setpoint=${config.setpoint}
@@ -241,6 +245,7 @@ const defaultArgs: ReadoutStoryArgs = {
   src: '',
   hasValue: true,
   value: 123,
+  valueType: ReadoutValueType.number,
   off: false,
   hasSetpoint: false,
   setpoint: 120,
@@ -306,6 +311,7 @@ const meta = {
       src: args.src,
       hasValue: args.hasValue,
       value: args.value,
+      valueType: args.valueType,
       off: args.off,
       hasSetpoint: args.hasSetpoint,
       setpoint: args.setpoint,
@@ -322,7 +328,16 @@ const meta = {
     hasValue: {name: 'Has Value', table: {category: 'Data'}},
     value: {
       name: 'Value',
-      control: {type: 'number'},
+      // Text control (not number) so both value types are exercisable. Under
+      // valueType=number a numeric string resolves back to a number; entering
+      // non-numeric text there throws, which is the intended contract.
+      control: {type: 'text'},
+      table: {category: 'Data'},
+    },
+    valueType: {
+      name: 'Value Type',
+      control: {type: 'inline-radio'},
+      options: Object.values(ReadoutValueType),
       table: {category: 'Data'},
     },
     off: {name: 'Off', table: {category: 'Data'}},
@@ -1153,6 +1168,141 @@ export const DebugOverlay: StoryObj<
   `,
 };
 
+/**
+ * **Text values** — `valueType="text"` renders `value` verbatim instead of
+ * formatting it as a number, for readings that are states rather than
+ * quantities ("Auto", "Thermo On", "Standby").
+ *
+ * The numeric format options (`fractionDigits`, `maxDigits`, `hintedZeros`) are
+ * ignored in this mode; an explicit `spaceReserver` still applies. Passing text
+ * while `valueType` is `number` throws a `TypeError` rather than rendering
+ * `NaN` — a numeric-looking string such as `"12.4"` is still accepted and
+ * parsed, so plain-HTML `value="12.4"` keeps working.
+ */
+export const TextValue: Story = {
+  render: () =>
+    renderShowcase([
+      {
+        title: 'Text Value — Vertical',
+        columns: 3,
+        cases: [
+          {
+            label: 'text',
+            config: {
+              label: 'Mode',
+              unit: '',
+              value: 'Auto',
+              valueType: ReadoutValueType.text,
+            },
+          },
+          {
+            label: 'text + source',
+            config: {
+              label: 'Thruster',
+              unit: '',
+              value: 'Standby',
+              valueType: ReadoutValueType.text,
+              src: 'CTRL',
+            },
+          },
+          {
+            label: 'text + stacked meta',
+            config: {
+              label: 'Status',
+              unit: '',
+              value: 'Normal',
+              valueType: ReadoutValueType.text,
+              options: {stacking: ReadoutStacking.stacked},
+            },
+          },
+        ],
+      },
+      {
+        title: 'Text Value — Horizontal',
+        columns: 3,
+        cases: [
+          {
+            label: 'text',
+            config: {
+              label: 'Mode',
+              unit: '',
+              value: 'Auto',
+              valueType: ReadoutValueType.text,
+              options: {direction: ReadoutDirection.horizontal},
+            },
+          },
+          {
+            label: 'text + source',
+            config: {
+              label: 'Thruster',
+              unit: '',
+              value: 'Standby',
+              valueType: ReadoutValueType.text,
+              src: 'CTRL',
+              options: {direction: ReadoutDirection.horizontal},
+            },
+          },
+          {
+            label: 'numeric (contrast)',
+            config: {
+              label: 'SOG',
+              unit: 'kn',
+              value: 12.4,
+              options: {
+                direction: ReadoutDirection.horizontal,
+                fractionDigits: 1,
+              },
+            },
+          },
+        ],
+      },
+      {
+        title: 'Value Resolution — Sizes and Edge Cases',
+        columns: 4,
+        cases: [
+          {
+            label: 'verbatim "1.50" (trailing zero kept)',
+            config: {
+              label: 'Bearing',
+              unit: '',
+              value: '1.50',
+              valueType: ReadoutValueType.text,
+              options: {fractionDigits: 1},
+            },
+          },
+          {
+            label: 'null in text mode (dash)',
+            config: {
+              label: 'Mode',
+              unit: '',
+              value: null,
+              valueType: ReadoutValueType.text,
+            },
+          },
+          {
+            label: 'numeric string in number mode → 12.4',
+            config: {
+              label: 'SOG',
+              unit: 'kn',
+              value: '12.4',
+              options: {fractionDigits: 1},
+            },
+          },
+          {
+            label: 'text + degree (hasDegree honoured)',
+            config: {
+              label: 'Mode',
+              unit: '',
+              value: 'Auto',
+              valueType: ReadoutValueType.text,
+              options: {hasDegree: true},
+            },
+          },
+        ],
+      },
+    ]),
+};
+
 export const TestCases: Story = {
   render: () => {
     return html` <style>
@@ -1173,6 +1323,20 @@ export const TestCases: Story = {
           .direction=${ReadoutDirection.horizontal}
           .value=${123}
           .unit=${'kn'}
+        ></obc-readout>
+        <obc-readout
+          .size=${ReadoutSize.small}
+          .direction=${ReadoutDirection.horizontal}
+          .value=${'Thermo On'}
+          .valueType=${ReadoutValueType.text}
+          .label=${'Operating mode'}
+        ></obc-readout>
+        <obc-readout
+          .size=${ReadoutSize.small}
+          .direction=${ReadoutDirection.horizontal}
+          .value=${'Normal'}
+          .valueType=${ReadoutValueType.text}
+          .label=${'Status'}
         ></obc-readout>
       </div>`;
   },
