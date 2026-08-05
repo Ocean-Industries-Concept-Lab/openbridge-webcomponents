@@ -7,6 +7,7 @@ import {
   WatchCircleType,
   innerRingRadiusFor,
 } from '../watch/watch.js';
+import {WIND_ICON_TIP_TO_BOX_INNER} from '../watch/environment.js';
 import {renderWindForcePattern} from '../watch/force-pattern.js';
 import {Priority} from '../types.js';
 import {customElement} from '../../decorator.js';
@@ -320,8 +321,11 @@ function resolveHistogramMaxRadius(variant: ResolvedWindVariant): number {
  * `scaleWindIcon` scales the arrow glyph — and, because the scale group wraps
  * the translated glyph, the effective tip radius is `radius × scale`.
  *
- * Values measured from the OpenBridge 6.1 Figma (node 6552-102891):
- * large tip ≈119 (inner-ring edge), medium ≈93, small ≈8 (touching center).
+ * Large places the 48-unit icon box exactly inside the double-face track
+ * band (112–160), per the OpenBridge 6.1 design (the icon box spans the
+ * band, node 19663-140867); the tip anchor is the box inner edge plus the
+ * glyph's inward overhang. Medium ≈93 and small ≈8 (touching center) are
+ * measured from the Figma variants (node 6552-102891).
  */
 export function resolveWindArrowPlacement(variant: ResolvedWindVariant): {
   windSymbolRadius: number;
@@ -329,7 +333,12 @@ export function resolveWindArrowPlacement(variant: ResolvedWindVariant): {
 } {
   switch (variant) {
     case WindVariant.large:
-      return {windSymbolRadius: 119, scaleWindIcon: 1.0};
+      return {
+        windSymbolRadius:
+          innerRingRadiusFor(WatchCircleType.double) +
+          WIND_ICON_TIP_TO_BOX_INNER,
+        scaleWindIcon: 1.0,
+      };
     case WindVariant.medium:
       return {windSymbolRadius: 62, scaleWindIcon: 1.5};
     case WindVariant.small:

@@ -35,7 +35,8 @@ export {RotType, RotPosition};
  * - **Track bar** (`hasTrackBar`): A bar in the ring band growing from the
  *   twelve o'clock position to the measured rate of turn, with a needle
  *   marker at its end and sector tickmarks (pairs with
- *   `watchCircleType="double"` for the banded face).
+ *   `watchCircleType="double"` for the banded face, or `"triple"` when the
+ *   ROT dots sit on the inner circle).
  * - **Center readout** (`hasReadout`): A centered readout showing the
  *   measured rate of turn (label `ROT`, unit `DEG/min` by default).
  * - **Color priority**: Uses `priority` to select regular or enhanced color
@@ -91,7 +92,9 @@ export class ObcRateOfTurn extends LitElement {
    * When `true`, shows a bar in the ring band from the twelve o'clock
    * position to the measured rate of turn, with a needle marker at its end
    * and sector tickmarks. Pairs with `watchCircleType="double"` for the
-   * banded face. Driven by `rateOfTurnDegreesPerMinute` only.
+   * banded face — or `"triple"` when `rotPosition` is `innerCircle`, so the
+   * dots get their inner track too. Driven by `rateOfTurnDegreesPerMinute`
+   * only.
    */
   @property({type: Boolean}) hasTrackBar: boolean = false;
   /**
