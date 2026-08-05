@@ -213,6 +213,14 @@ export class ObcReadoutBlock extends LitElement {
     }
   }
 
+  private get numericFormatOptions(): ReadoutNumericFormatOptions {
+    return {
+      showZeroPadding: false,
+      minValueLength: this.maxDigits,
+      fractionDigits: this.fractionDigits,
+    };
+  }
+
   /** Widest possible value string for width reservation (e.g. `"000.0"`). */
   private get reserverText(): string {
     const maxDigits = this.maxDigits;
@@ -377,9 +385,9 @@ export class ObcReadoutBlock extends LitElement {
             .alignment=${this.alignment}
             .tabularNums=${true}
           >
-            ${sign}${hint
+            ${hinted
               ? html`<span class="hinted-zero" aria-hidden="true"
-                  >${hint}</span
+                  >${hinted}</span
                 >`
               : nothing}${text}
             ${reserver ? html`<span slot="length">${reserver}</span>` : nothing}

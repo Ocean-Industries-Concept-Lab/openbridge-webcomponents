@@ -2,7 +2,8 @@
  * @module Transmitter Readout
  *
  * A deliberate local copy of the parts of `<obc-readout-block>` that
- * `<obc-transmitter-button>` renders, trimmed to the options it actually uses.
+ * `<obc-transmitter-button>` renders, trimmed to the options it actually uses,
+ * including its own sign-aware hinted-zero formatting.
  *
  * The block is `@experimental` and still changing; this copy keeps the
  * transmitter button stable in the meantime. Delete this module and restore the
@@ -12,7 +13,10 @@
  * styles live in `transmitter-button.css` rather than here.
  */
 import {html, nothing, type TemplateResult} from 'lit';
-import {formatHintedValue} from '../../navigation-instruments/readout/readout-formatters.js';
+import {
+  formatNumericValue,
+  readoutFormattedInteger,
+} from '../../navigation-instruments/readout/readout-formatters.js';
 import '../../components/textbox/textbox.js';
 import {
   ObcTextboxAlignment,
@@ -55,6 +59,64 @@ function normalizeNumericValue(
     return undefined;
   }
   return value;
+}
+
+type HintedValueOptions = {
+  /** Integer digits to reserve / hint. The fraction digits never count. */
+  maxDigits: number;
+  fractionDigits: number;
+  hintedZeros: boolean;
+};
+
+type HintedValueParts = {
+  /** `-` for a negative value, otherwise empty. */
+  sign: string;
+  /** Muted leading zeros filling the integer part up to `maxDigits`. */
+  hint: string;
+  /** The formatted number without its sign, or the dashed fallback. */
+  text: string;
+};
+
+function dashedValue(maxDigits: number, fractionDigits: number): string {
+  const integer = '-'.repeat(Math.max(maxDigits, 1));
+  return fractionDigits > 0
+    ? `${integer}.${'-'.repeat(fractionDigits)}`
+    : integer;
+}
+
+/**
+ * The sign occupies one of the `maxDigits` reserved positions, so a negative
+ * value renders at the same width as a positive one. A missing value with
+ * `hintedZeros` renders as dashes across the whole reserved width instead of
+ * dashes preceded by zeros.
+ */
+function formatHintedValue(
+  value: number | undefined,
+  {maxDigits, fractionDigits, hintedZeros}: HintedValueOptions
+): HintedValueParts {
+  const formatOptions = {
+    showZeroPadding: false,
+    minValueLength: maxDigits,
+    fractionDigits,
+  };
+
+  if (value === undefined) {
+    return {
+      sign: '',
+      hint: '',
+      text: hintedZeros
+        ? dashedValue(maxDigits, fractionDigits)
+        : formatNumericValue(undefined, formatOptions),
+    };
+  }
+
+  const sign = value < 0 ? '-' : '';
+  const text = formatNumericValue(Math.abs(value), formatOptions);
+  const hintCount = hintedZeros
+    ? Math.max(maxDigits - readoutFormattedInteger(text) - sign.length, 0)
+    : 0;
+
+  return {sign, hint: '0'.repeat(hintCount), text};
 }
 
 /** Widest possible value string for width reservation (e.g. `"000.0"`). */
