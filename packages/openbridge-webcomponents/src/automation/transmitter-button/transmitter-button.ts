@@ -149,7 +149,7 @@ export class ObcTransmitterButton extends LitElement {
 
   override render() {
     return html`
-      <button class="button ${this.variant} size-${this.size}">
+      <button type="button" class="button ${this.variant} size-${this.size}">
         <div
           part="button"
           class=${classMap({
