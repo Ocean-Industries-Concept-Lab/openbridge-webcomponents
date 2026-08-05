@@ -290,6 +290,25 @@ describe('formatNumericValue — unavailable value', () => {
     );
   });
 
+  // `formatNumericValue` is exported, so it must hold the line itself rather
+  // than trusting every caller to have normalised first — `NaN.toFixed()`
+  // would otherwise put the literal text "NaN" where a reading belongs.
+  it('treats a non-finite argument as unavailable without normalisation', () => {
+    expect(formatNumericValue(Number.NaN, opts(3, 2))).toBe(`${D}.${D}${D}`);
+    expect(formatNumericValue(Number.POSITIVE_INFINITY, opts(3, 2))).toBe(
+      `${D}.${D}${D}`
+    );
+    expect(formatNumericValue(Number.NEGATIVE_INFINITY, opts(3, 2))).toBe(
+      `${D}.${D}${D}`
+    );
+  });
+
+  it('still formats a finite value', () => {
+    expect(formatNumericValue(12.3, opts(3, 2))).toBe('12.30');
+    expect(formatNumericValue(0, opts(0, 0))).toBe('0');
+    expect(formatNumericValue(-4.5, opts(3, 1))).toBe('-4.5');
+  });
+
   // The whole point of routing non-finite numbers through the same path.
   it('renders a non-finite number as the unavailable dash', () => {
     const resolved = resolveReadoutNumericValue(

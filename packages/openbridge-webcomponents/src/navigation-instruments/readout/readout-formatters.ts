@@ -165,7 +165,11 @@ export function formatNumericValue(
   value: number | undefined,
   options: ReadoutNumericFormatOptions
 ): string {
-  if (value === undefined) {
+  // Non-finite counts as unavailable here too, not only in
+  // `resolveReadoutNumericValue`. Every caller normalises today, but this
+  // function is exported, and `NaN.toFixed()` would put the literal text
+  // "NaN" where a reading belongs — the exact failure this change removes.
+  if (value === undefined || !Number.isFinite(value)) {
     return dashedGenerator(options);
   }
 

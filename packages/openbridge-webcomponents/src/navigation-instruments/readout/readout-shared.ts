@@ -50,7 +50,9 @@ export function readoutNumericFormatOptions(
     // Comparison-only (see `isDisplayedAtSetpoint`), which returns early unless
     // both operands are finite numbers — so `formatNumericValue` never reaches
     // its unavailable-dash branch here and the padding would have no effect.
-    // `obc-readout-block` enables it for its render path.
+    // `obc-readout-block` sets it to `false` for rendering as well, since the
+    // unavailable placeholder is deliberately short rather than filled out to
+    // `maxDigits`. Nothing enables it today.
     showZeroPadding: false,
     minValueLength: maxDigits,
     fractionDigits,
