@@ -2,7 +2,7 @@ import {describe, it, expect} from 'vitest';
 import {
   assertReadoutValueType,
   assertReadoutFractionDigits,
-  resolveReadoutMaxDigits,
+  resolveReadoutDigitCount,
   READOUT_MAX_DIGITS,
   resolveReadoutNumericValue,
   resolveReadoutTextValue,
@@ -393,6 +393,28 @@ describe('assertReadoutFractionDigits', () => {
     ).toThrow(/obc-readout-list-item.*between 0 and 100.*-1/s);
   });
 
+  // `JSON.stringify` serialises these to `null`, which would hide the very
+  // value being rejected.
+  it('reports non-finite values verbatim in the message', () => {
+    expect(() =>
+      assertReadoutFractionDigits('obc-readout', Number.POSITIVE_INFINITY)
+    ).toThrow(/got Infinity/);
+    expect(() =>
+      assertReadoutFractionDigits('obc-readout', Number.NEGATIVE_INFINITY)
+    ).toThrow(/got -Infinity/);
+  });
+
+  // The components read `fractionDigits ?? 0` and `toFixed(undefined)` behaves
+  // as `toFixed(0)`, so clearing the property must not throw.
+  it('accepts an unset value', () => {
+    expect(() =>
+      assertReadoutFractionDigits('obc-readout', undefined as unknown as number)
+    ).not.toThrow();
+    expect(() =>
+      assertReadoutFractionDigits('obc-readout', null as unknown as number)
+    ).not.toThrow();
+  });
+
   it('accepts the whole supported range', () => {
     expect(() => assertReadoutFractionDigits('obc-readout', 0)).not.toThrow();
     expect(() =>
@@ -410,7 +432,14 @@ describe('assertReadoutFractionDigits', () => {
 
   // The assertion must agree with the runtime it is protecting.
   it('accepts exactly the values toFixed accepts', () => {
-    for (const digits of [0, 1, 2.7, Number.NaN, READOUT_MAX_DIGITS]) {
+    for (const digits of [
+      0,
+      1,
+      2.7,
+      Number.NaN,
+      undefined,
+      READOUT_MAX_DIGITS,
+    ] as number[]) {
       let assertionThrew = false;
       let toFixedThrew = false;
       try {
@@ -428,37 +457,37 @@ describe('assertReadoutFractionDigits', () => {
   });
 });
 
-describe('resolveReadoutMaxDigits', () => {
+describe('resolveReadoutDigitCount', () => {
   it('passes a usable count through', () => {
-    expect(resolveReadoutMaxDigits(4)).toBe(4);
-    expect(resolveReadoutMaxDigits(0)).toBe(0);
+    expect(resolveReadoutDigitCount(4)).toBe(4);
+    expect(resolveReadoutDigitCount(0)).toBe(0);
   });
 
   // `Infinity` is the value that throws out of `String.prototype.repeat`.
   it('caps Infinity rather than throwing', () => {
-    expect(resolveReadoutMaxDigits(Number.POSITIVE_INFINITY)).toBe(
+    expect(resolveReadoutDigitCount(Number.POSITIVE_INFINITY)).toBe(
       READOUT_MAX_DIGITS
     );
     expect(() =>
-      '0'.repeat(resolveReadoutMaxDigits(Number.POSITIVE_INFINITY))
+      '0'.repeat(resolveReadoutDigitCount(Number.POSITIVE_INFINITY))
     ).not.toThrow();
   });
 
   it('caps a large finite count so the reserver stays bounded', () => {
-    expect(resolveReadoutMaxDigits(1_000_000)).toBe(READOUT_MAX_DIGITS);
+    expect(resolveReadoutDigitCount(1_000_000)).toBe(READOUT_MAX_DIGITS);
   });
 
   // Matches what the existing guards already did with these: reserve nothing.
   it('is 0 for negative, NaN, null and undefined', () => {
-    expect(resolveReadoutMaxDigits(-5)).toBe(0);
-    expect(resolveReadoutMaxDigits(Number.NEGATIVE_INFINITY)).toBe(0);
-    expect(resolveReadoutMaxDigits(Number.NaN)).toBe(0);
-    expect(resolveReadoutMaxDigits(null)).toBe(0);
-    expect(resolveReadoutMaxDigits(undefined)).toBe(0);
+    expect(resolveReadoutDigitCount(-5)).toBe(0);
+    expect(resolveReadoutDigitCount(Number.NEGATIVE_INFINITY)).toBe(0);
+    expect(resolveReadoutDigitCount(Number.NaN)).toBe(0);
+    expect(resolveReadoutDigitCount(null)).toBe(0);
+    expect(resolveReadoutDigitCount(undefined)).toBe(0);
   });
 
   it('truncates a fractional count', () => {
-    expect(resolveReadoutMaxDigits(2.7)).toBe(2);
+    expect(resolveReadoutDigitCount(2.7)).toBe(2);
   });
 
   // Whatever comes back must be safe to hand to `repeat`.
@@ -473,7 +502,7 @@ describe('resolveReadoutMaxDigits', () => {
       Number.POSITIVE_INFINITY,
       Number.NEGATIVE_INFINITY,
     ]) {
-      expect(() => '0'.repeat(resolveReadoutMaxDigits(input))).not.toThrow();
+      expect(() => '0'.repeat(resolveReadoutDigitCount(input))).not.toThrow();
     }
   });
 });

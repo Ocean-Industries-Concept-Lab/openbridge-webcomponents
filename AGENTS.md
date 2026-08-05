@@ -26,24 +26,24 @@ Framework wrappers are **auto-generated** — never edit them directly.
 
 All paths below are relative to `packages/openbridge-webcomponents/`.
 
-| Directory                     | Contents                                                                         |
-| ----------------------------- | -------------------------------------------------------------------------------- |
-| `src/components/`             | General UI components (buttons, cards, top-bar, etc.)                            |
-| `src/navigation-instruments/` | Instruments (compass, heading, gauge, etc.) and indicators (bearing, speed, ROT) |
-| `src/building-blocks/`        | SVG-based low-level instrument pieces (scales, bars, chart bases)                |
-| `src/bars-graphs/`            | Chart components (line graph, area graph, donut, pie, polar, radial-bar)         |
-| `src/automation/`             | Automation system components (valves, pumps, motors, etc.)                       |
-| `src/ar/`                     | Augmented reality components                                                     |
-| `src/icons/`                  | Auto-generated icon components (do not edit manually)                            |
-| `src/svghelpers/`             | Shared SVG utility functions and mixins                                          |
-| `src/charthelpers/`           | Shared chart utility functions                                                   |
-| `src/integration-systems/`    | Integration system components                                                    |
-| `src/internal/`               | Shared internal helpers (e.g. `tree-roving-navigator.ts`)                        |
-| `src/pages/`                  | Full-page composite examples                                                     |
-| `src/mixins/`                 | PostCSS mixins — `fonts.css` is generated, the rest are hand-written             |
-| `src/palettes/`               | Colour tokens — `variables.css` is generated, `manual.css` is hand-written       |
-| `src/generated/`              | Generated localisation output (do not edit manually)                             |
-| `src/manual-icon/`            | **Hand-written** icon components — unlike `src/icons/`, these are not generated  |
+| Directory                     | Contents                                                                                                       |
+| ----------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `src/components/`             | General UI components (buttons, cards, top-bar, etc.)                                                          |
+| `src/navigation-instruments/` | Instruments (compass, heading, gauge, etc.) and indicators (bearing, speed, ROT)                               |
+| `src/building-blocks/`        | Low-level instrument pieces (scales, bars, chart bases) — mostly SVG; some are plain DOM, e.g. `readout-block` |
+| `src/bars-graphs/`            | Chart components (line graph, area graph, donut, pie, polar, radial-bar)                                       |
+| `src/automation/`             | Automation system components (valves, pumps, motors, etc.)                                                     |
+| `src/ar/`                     | Augmented reality components                                                                                   |
+| `src/icons/`                  | Auto-generated icon components (do not edit manually)                                                          |
+| `src/svghelpers/`             | Shared SVG utility functions and mixins                                                                        |
+| `src/charthelpers/`           | Shared chart utility functions                                                                                 |
+| `src/integration-systems/`    | Integration system components                                                                                  |
+| `src/internal/`               | Shared internal helpers (e.g. `tree-roving-navigator.ts`)                                                      |
+| `src/pages/`                  | Full-page composite examples                                                                                   |
+| `src/mixins/`                 | PostCSS mixins — `fonts.css` is generated, the rest are hand-written                                           |
+| `src/palettes/`               | Colour tokens — `variables.css` is generated, `manual.css` is hand-written                                     |
+| `src/generated/`              | Generated localisation output (do not edit manually)                                                           |
+| `src/manual-icon/`            | **Hand-written** icon components — unlike `src/icons/`, these are not generated                                |
 
 ---
 
@@ -332,8 +332,9 @@ automatically when editing a `.css` file.
     ```
 14. **Keep the main context clean.** Delegate broad codebase exploration to subagents; only read files directly in the main thread when you are about to edit them or need a few specific lines.
 15. **Radial instrument geometry goes through `svghelpers/radial-frame.ts`.** Never hand-mirror viewBox constants or paddings between `obc-watch` and an overlay SVG — compute one `computeRadialFrame()` result per render and pass it to both `<obc-watch .arcFrame=...>` and the overlay `viewBox` (this also provides the width-aware label reserve and `faceDiameter` from issue #1021). Before any refactoring of a radial instrument, read [`watch-radial-instruments.instructions.md` § Shared frame computation](.github/instructions/watch-radial-instruments.instructions.md) — the helper reproduces legacy geometry byte-identically when no outside labels exist, and breaking that contract regenerates the entire radial snapshot family.
-16. **Never hand-edit `src/palettes/variables.css` or `src/mixins/fonts.css`.** Both are regenerated wholesale from the [obc-figma-plugin](https://github.com/Ocean-Industries-Concept-Lab/obc-figma-plugin) (`cssvariables` and `font-exports` codegens respectively); any local edit will be overwritten the next time someone pastes new plugin output. Token additions/renames must go through Figma (or the plugin's `rename()` function) first. The same caution applies to `script/figmavariables.json` (the plugin's `variables` codegen output). Hand-curated font mixins that the plugin does not produce live in `src/mixins/font-extras.css` — edit them there. Run `npm run lint:mixins` after regenerating `fonts.css`. See [IMPLEMENTATION_GUIDELINES.md § PostCSS](IMPLEMENTATION_GUIDELINES.md#-postcss).
-17. **Do not commit planning documents or specs.** Design notes, implementation plans and scratch specs stay out of the repository — the design record belongs in the pull request body, where reviewers actually read it and where it stays attached to the change. This applies to any agent's planning output, whatever directory it lands in.
+16. **The readout family is four nested layers, not one component.** `obc-textbox` → `obc-readout-block` → `obc-readout-list-item` → `obc-readout-list`, with `obc-readout` as a second layout over the same block (used mostly inside radial instruments). A change to a lower layer reaches every layer above it, so touching `obc-textbox` or `obc-readout-block` means re-running the instrument snapshots too, not just the readout ones. Value/format helpers belong in `readout-formatters.ts` (which imports nothing) — putting them in `readout-shared.ts` and importing back into the block creates a circular import. Read [`docs/agents/readout-components.md`](docs/agents/readout-components.md) before editing any of them: it documents the validation invariants (validate on every update, never gated on `changed`), the throw-vs-clamp rule for bad configuration, and the four `String.prototype.repeat` sites that must be bounded at the property boundary.
+17. **Never hand-edit `src/palettes/variables.css` or `src/mixins/fonts.css`.** Both are regenerated wholesale from the [obc-figma-plugin](https://github.com/Ocean-Industries-Concept-Lab/obc-figma-plugin) (`cssvariables` and `font-exports` codegens respectively); any local edit will be overwritten the next time someone pastes new plugin output. Token additions/renames must go through Figma (or the plugin's `rename()` function) first. The same caution applies to `script/figmavariables.json` (the plugin's `variables` codegen output). Hand-curated font mixins that the plugin does not produce live in `src/mixins/font-extras.css` — edit them there. Run `npm run lint:mixins` after regenerating `fonts.css`. See [IMPLEMENTATION_GUIDELINES.md § PostCSS](IMPLEMENTATION_GUIDELINES.md#-postcss).
+18. **Do not commit planning documents or specs.** Design notes, implementation plans and scratch specs stay out of the repository — the design record belongs in the pull request body, where reviewers actually read it and where it stays attached to the change. This applies to any agent's planning output, whatever directory it lands in.
 
 ---
 

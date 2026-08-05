@@ -4,7 +4,7 @@ import componentStyle from './readout-list.css?inline';
 import {customElement} from '../../decorator.js';
 import '../readout-list-item/readout-list-item.js';
 import {ObcReadoutListItem} from '../readout-list-item/readout-list-item.js';
-import {resolveReadoutMaxDigits} from '../readout/readout-formatters.js';
+import {resolveReadoutDigitCount} from '../readout/readout-formatters.js';
 import {
   resolveReadoutNumericValue,
   ReadoutValueType,
@@ -166,11 +166,11 @@ export class ObcReadoutList extends LitElement {
       if (hasNumericBlock) {
         maxFractionDigits = Math.max(
           maxFractionDigits,
-          resolveReadoutMaxDigits(item.fractionDigits)
+          resolveReadoutDigitCount(item.fractionDigits)
         );
         maxIntegerDigits = Math.max(
           maxIntegerDigits,
-          resolveReadoutMaxDigits(item.maxDigits)
+          resolveReadoutDigitCount(item.maxDigits)
         );
       }
       maxIntegerDigits = Math.max(

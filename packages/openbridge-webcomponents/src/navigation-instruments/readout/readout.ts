@@ -28,7 +28,7 @@ import {Priority} from '../types.js';
 import {
   assertReadoutValueType,
   assertReadoutFractionDigits,
-  resolveReadoutMaxDigits,
+  resolveReadoutDigitCount,
   resolveReadoutNumericValue,
   ReadoutValueType,
   type ReadoutNumericFormatOptions,
@@ -292,13 +292,15 @@ export class ObcReadout extends LitElement {
    * Also formats the numeric setpoint / advice blocks, which stay numeric
    * even when the value is text. Must be between 0 and 100 — the range
    * `Number.prototype.toFixed` accepts; outside it throws a `RangeError`.
+   * A fractional count truncates (`2.7` → `2`); `NaN` or unset reads as `0`.
    * @availableWhen valueType==number || hasSetpoint==true || hasAdvice==true
    */
   @property({type: Number}) fractionDigits = 0;
   /**
    * Also formats the numeric setpoint / advice blocks, which stay numeric
-   * even when the value is text. Values above 100 are capped, and a negative /
-   * `NaN` count reserves nothing.
+   * even when the value is text. Bounded before use: a fractional count
+   * truncates (`2.7` → `2`), anything above 100 — including `Infinity` —
+   * caps at 100, and a negative or `NaN` count reserves nothing.
    * @availableWhen valueType==number || hasSetpoint==true || hasAdvice==true
    */
   @property({type: Number}) maxDigits = 0;
@@ -379,7 +381,7 @@ export class ObcReadout extends LitElement {
   }
 
   private get resolvedMaxDigits(): number {
-    return resolveReadoutMaxDigits(this.maxDigits);
+    return resolveReadoutDigitCount(this.maxDigits);
   }
 
   private get hasSrc(): boolean {

@@ -16,7 +16,7 @@ import {
   readoutFormattedInteger,
   assertReadoutValueType,
   assertReadoutFractionDigits,
-  resolveReadoutMaxDigits,
+  resolveReadoutDigitCount,
   resolveReadoutNumericValue,
   resolveReadoutTextValue,
   READOUT_UNAVAILABLE_DASH,
@@ -156,14 +156,16 @@ export class ObcReadoutBlock extends LitElement {
   /**
    * Number of fraction digits. Must be between 0 and 100 — the range
    * `Number.prototype.toFixed` accepts; outside it throws a `RangeError`.
+   * A fractional count truncates (`2.7` → `2`); `NaN` or unset reads as `0`.
    * @availableWhen valueType==number
    */
   @property({type: Number}) fractionDigits = 0;
 
   /**
    * Integer digits to reserve / hint (independent of `fractionDigits`).
-   * Values above 100 are
-   * capped, and a negative / `NaN` count reserves nothing.
+   * Bounded before use: a fractional count
+   * truncates (`2.7` → `2`), anything above 100 — including `Infinity` —
+   * caps at 100, and a negative or `NaN` count reserves nothing.
    * @availableWhen valueType==number
    */
   @property({type: Number}) maxDigits = 0;
@@ -225,7 +227,7 @@ export class ObcReadoutBlock extends LitElement {
    * large) value cannot reach `String.prototype.repeat`.
    */
   private get resolvedMaxDigits(): number {
-    return resolveReadoutMaxDigits(this.maxDigits);
+    return resolveReadoutDigitCount(this.maxDigits);
   }
 
   private get numericFormatOptions(): ReadoutNumericFormatOptions {

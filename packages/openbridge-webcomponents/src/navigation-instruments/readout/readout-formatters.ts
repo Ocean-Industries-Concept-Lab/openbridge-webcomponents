@@ -28,8 +28,19 @@ export function isReadoutValueType(value: unknown): value is ReadoutValueType {
  */
 export const READOUT_MAX_DIGITS = 100;
 
-/** `fractionDigits` as `toFixed` will actually read it (NaN counts as 0). */
-function effectiveFractionDigits(fractionDigits: number): number {
+/**
+ * `fractionDigits` as `toFixed` will actually read it: `NaN` and an unset value
+ * count as 0, and a fractional count truncates.
+ */
+function effectiveFractionDigits(
+  fractionDigits: number | null | undefined
+): number {
+  // `toFixed(undefined)` behaves as `toFixed(0)`, and the components read
+  // `fractionDigits ?? 0`, so an unset value must not be rejected here — the
+  // assertion has to accept exactly what the runtime accepts.
+  if (fractionDigits === null || fractionDigits === undefined) {
+    return 0;
+  }
   return Number.isNaN(fractionDigits) ? 0 : Math.trunc(fractionDigits);
 }
 
@@ -52,33 +63,41 @@ function effectiveFractionDigits(fractionDigits: number): number {
  */
 export function assertReadoutFractionDigits(
   tagName: string,
-  fractionDigits: number
+  fractionDigits: number | null | undefined
 ): void {
   const digits = effectiveFractionDigits(fractionDigits);
   if (Number.isFinite(digits) && digits >= 0 && digits <= READOUT_MAX_DIGITS) {
     return;
   }
   throw new RangeError(
+    // `String`, not `JSON.stringify`: the latter serialises `Infinity` and
+    // `NaN` to `null`, hiding the very value being rejected.
     `<${tagName}>: fractionDigits must be between 0 and ${READOUT_MAX_DIGITS} ` +
-      `(got ${JSON.stringify(fractionDigits)}).`
+      `(got ${String(fractionDigits)}).`
   );
 }
 
 /**
- * `maxDigits` normalised to a non-negative integer no greater than
- * {@link READOUT_MAX_DIGITS}.
+ * A digit count used for WIDTH RESERVATION, normalised to a non-negative integer
+ * no greater than {@link READOUT_MAX_DIGITS}.
  *
- * Unlike `fractionDigits` this IS clamped rather than rejected: it only reserves
- * width, so bounding it changes no reading's meaning, and the surrounding code
- * already absorbs bad values silently (`Math.max(maxDigits, 1)`, `NaN` repeating
- * to `''`). What is not absorbed is `Infinity`, which throws out of
- * `String.prototype.repeat`, and a large finite count, which builds a reserver
- * string long enough to matter — both are capped here.
+ * Deliberately named for the role rather than for `maxDigits`: both `maxDigits`
+ * and the fraction count `obc-readout-list` reserves with are the same kind of
+ * input — a count handed to `String.prototype.repeat` — and must be bounded the
+ * same way. `fractionDigits` as a FORMAT input is a different contract and is
+ * rejected instead; see {@link assertReadoutFractionDigits}.
+ *
+ * Clamped rather than rejected because it only reserves width, so bounding it
+ * changes no reading's meaning, and the surrounding code already absorbs bad
+ * values silently (`Math.max(count, 1)`, `NaN` repeating to `''`). What is not
+ * absorbed is `Infinity`, which throws out of `String.prototype.repeat`, and a
+ * large finite count, which builds a reserver string long enough to matter —
+ * both are capped here.
  */
-export function resolveReadoutMaxDigits(
-  maxDigits: number | null | undefined
+export function resolveReadoutDigitCount(
+  count: number | null | undefined
 ): number {
-  const digits = Math.trunc(maxDigits ?? 0);
+  const digits = Math.trunc(count ?? 0);
   if (Number.isNaN(digits) || digits <= 0) {
     // Matches what the existing guards already do with these: reserve nothing.
     return 0;
