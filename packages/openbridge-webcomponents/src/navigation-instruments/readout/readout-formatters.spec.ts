@@ -432,13 +432,23 @@ describe('assertReadoutFractionDigits', () => {
 
   // The assertion must agree with the runtime it is protecting.
   it('accepts exactly the values toFixed accepts', () => {
+    // Covers both sides of the boundary, including the truncation cases the
+    // instruction file documents: 100.9 -> 100 and -0.5 -> -0 are accepted,
+    // while -1, 101 and the infinities are not.
     for (const digits of [
       0,
       1,
       2.7,
+      -0.5,
+      100.9,
       Number.NaN,
       undefined,
+      null,
       READOUT_MAX_DIGITS,
+      -1,
+      READOUT_MAX_DIGITS + 1,
+      Number.POSITIVE_INFINITY,
+      Number.NEGATIVE_INFINITY,
     ] as number[]) {
       let assertionThrew = false;
       let toFixedThrew = false;

@@ -1,5 +1,5 @@
 ---
-applyTo: "packages/openbridge-webcomponents/src/components/textbox/**,packages/openbridge-webcomponents/src/building-blocks/readout-block/**,packages/openbridge-webcomponents/src/navigation-instruments/readout-list-item/**,packages/openbridge-webcomponents/src/navigation-instruments/readout-list/**,packages/openbridge-webcomponents/src/navigation-instruments/readout/readout-formatters.ts,packages/openbridge-webcomponents/src/navigation-instruments/readout/readout-shared.ts"
+applyTo: "packages/openbridge-webcomponents/src/components/textbox/**,packages/openbridge-webcomponents/src/building-blocks/readout-block/**,packages/openbridge-webcomponents/src/navigation-instruments/readout-list-item/**,packages/openbridge-webcomponents/src/navigation-instruments/readout-list/**,packages/openbridge-webcomponents/src/navigation-instruments/readout/readout.ts,packages/openbridge-webcomponents/src/navigation-instruments/readout/readout-formatters.ts,packages/openbridge-webcomponents/src/navigation-instruments/readout/readout-shared.ts"
 ---
 
 # GitHub Copilot Custom Instructions
@@ -14,7 +14,7 @@ render a value, and the two layout components built on them.
 > Every readout is the same primitive wrapped twice. A change to a lower layer
 > reaches every layer above it:
 >
-> ```
+> ```text
 > obc-textbox                 components/textbox/
 >   └─ obc-readout-block      building-blocks/readout-block/
 >        ├─ obc-readout-list-item   navigation-instruments/readout-list-item/
@@ -86,12 +86,18 @@ then silent forever. Covered by
 
 Two different failure classes, treated differently on purpose:
 
-| Input                                             | Treatment                    | Why                                                                                                          |
-| ------------------------------------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `valueType` typo, text under `valueType="number"` | **throws**                   | Programmer error, fixable only in code                                                                       |
-| `fractionDigits` outside `0…100`                  | **throws**                   | Sets the PRECISION of a reading — silently clamping would drop decimals from a displayed value               |
-| `maxDigits` out of range                          | **clamped**                  | Only reserves width; bounding changes no reading's meaning                                                   |
-| `NaN` / `±Infinity` **value**                     | renders the unavailable dash | Runtime data condition (sensor dropout, `0/0`) — throwing would take a display down over a transient reading |
+| Input                                                                | Treatment                    | Why                                                                                                          |
+| -------------------------------------------------------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `valueType` typo, text under `valueType="number"`                    | **throws**                   | Programmer error, fixable only in code                                                                       |
+| `fractionDigits` whose **effective precision** falls outside `0…100` | **throws**                   | Sets the PRECISION of a reading — silently clamping would drop decimals from a displayed value               |
+| `maxDigits` out of range                                             | **clamped**                  | Only reserves width; bounding changes no reading's meaning                                                   |
+| `NaN` / `±Infinity` **value**                                        | renders the unavailable dash | Runtime data condition (sensor dropout, `0/0`) — throwing would take a display down over a transient reading |
+
+"Effective precision" is what `toFixed` will actually read: `null`, `undefined`
+and `NaN` count as `0`, and a fractional count truncates — so `2.7` (→ 2),
+`100.9` (→ 100) and `-0.5` (→ -0) are all accepted, while `-1`, `101` and
+`±Infinity` throw. `assertReadoutFractionDigits` is unit-tested to accept
+exactly the set `toFixed` accepts, so the two cannot drift apart.
 
 When adding a new numeric property, decide which column it belongs in before
 implementing.
