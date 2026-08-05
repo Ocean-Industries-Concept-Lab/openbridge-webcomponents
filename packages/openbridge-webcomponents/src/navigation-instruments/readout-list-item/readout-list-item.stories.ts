@@ -16,6 +16,7 @@ import {
   type ReadoutAdviceOptions,
   type ReadoutReserverOptions,
   type ReadoutSrcOptions,
+  ReadoutValueType,
 } from './readout-list-item.js';
 import type {AlertFrameConfig} from '../../components/alert-frame/alert-frame.js';
 import {
@@ -36,7 +37,8 @@ type ReadoutListItemStoryArgs = {
   unit: string;
   src: string;
   hasValue: boolean;
-  value: number;
+  value: number | string;
+  valueType: ReadoutValueType;
   off: boolean;
   hasSetpoint: boolean;
   setpoint: number;
@@ -90,7 +92,8 @@ type ReadoutItemConfig = {
   unit?: string;
   src?: string;
   hasValue?: boolean;
-  value?: number | null;
+  value?: number | string | null;
+  valueType?: ReadoutValueType;
   off?: boolean;
   hasSetpoint?: boolean;
   setpoint?: number;
@@ -159,6 +162,7 @@ function renderItem(config: ReadoutItemConfig) {
       .src=${config.src}
       .hasValue=${config.hasValue ?? true}
       .value=${config.value ?? null}
+      .valueType=${config.valueType ?? ReadoutValueType.number}
       .off=${config.off ?? false}
       .hasSetpoint=${config.hasSetpoint ?? false}
       .setpoint=${config.setpoint}
@@ -245,6 +249,7 @@ const defaultArgs: ReadoutListItemStoryArgs = {
   src: 'SRC',
   hasValue: true,
   value: 123,
+  valueType: ReadoutValueType.number,
   off: false,
   hasSetpoint: false,
   setpoint: 120,
@@ -313,6 +318,7 @@ const meta = {
         src: args.src,
         hasValue: args.hasValue,
         value: args.value,
+        valueType: args.valueType,
         off: args.off,
         hasSetpoint: args.hasSetpoint,
         setpoint: args.setpoint,
@@ -331,7 +337,16 @@ const meta = {
     hasValue: {name: 'Has Value', table: {category: 'Data'}},
     value: {
       name: 'Value',
-      control: {type: 'number'},
+      // Text control (not number) so both value types are exercisable. Under
+      // valueType=number a numeric string resolves back to a number; entering
+      // non-numeric text there throws, which is the intended contract.
+      control: {type: 'text'},
+      table: {category: 'Data'},
+    },
+    valueType: {
+      name: 'Value Type',
+      control: {type: 'inline-radio'},
+      options: Object.values(ReadoutValueType),
       table: {category: 'Data'},
     },
     off: {name: 'Off', table: {category: 'Data'}},
@@ -459,6 +474,96 @@ export const Off: Story = {
         ],
       },
     ]),
+};
+
+/**
+ * **Text values** — `valueType="text"` renders `value` verbatim instead of
+ * formatting it as a number, for readings that are states rather than
+ * quantities ("Thermo On", "Auto", "Normal").
+ *
+ * The first section reproduces the reference design: two status rows sharing a
+ * bar, each a label with a bold text value, separated by a vertical divider.
+ *
+ * Under `valueType="text"` the numeric format options (`fractionDigits`,
+ * `maxDigits`, `hintedZeros`) are ignored; an explicit `spaceReserver` still
+ * applies. Passing text while `valueType` is `number` throws a `TypeError`
+ * rather than rendering `NaN`.
+ */
+const STATUS_BAR_ROWS: {label: string; value: string}[] = [
+  {label: 'Operating mode', value: 'Thermo On'},
+  {label: 'Status', value: 'Normal'},
+];
+
+export const TextValue: Story = {
+  render: () => html`
+    <style>
+      .rli-status-bar {
+        display: flex;
+        align-items: stretch;
+        width: 100%;
+        background: var(--container-background-color);
+      }
+      .rli-status-cell {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        padding: 0 16px;
+      }
+      .rli-status-cell + .rli-status-cell {
+        border-left: 1px solid var(--border-divider-color, #ccc);
+      }
+      .rli-status-cell > obc-readout-list-item {
+        width: 100%;
+      }
+      .rli-text-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(240px, max-content));
+        gap: 12px 24px;
+        margin-top: 32px;
+      }
+    </style>
+    <div class="rli-status-bar">
+      ${STATUS_BAR_ROWS.map(
+        (row) => html`
+          <div class="rli-status-cell">
+            ${renderItem({
+              label: row.label,
+              value: row.value,
+              valueType: ReadoutValueType.text,
+              options: {
+                size: ReadoutListItemSize.medium,
+                value: {weight: ObcTextboxFontWeight.bold},
+              },
+            })}
+          </div>
+        `
+      )}
+    </div>
+    <div class="rli-text-grid">
+      ${[
+        {label: 'Mode', value: 'Auto', valueType: ReadoutValueType.text},
+        {
+          label: 'Thruster',
+          value: 'Standby',
+          valueType: ReadoutValueType.text,
+        },
+        // Numeric rows for contrast — the same component, unchanged.
+        {label: 'Speed', value: 12.4, valueType: ReadoutValueType.number},
+        // Verbatim text preserves formatting a number could not round-trip.
+        {label: 'Bearing', value: '1.50', valueType: ReadoutValueType.text},
+      ].map((row) =>
+        renderItem({
+          label: row.label,
+          value: row.value,
+          valueType: row.valueType,
+          options: {
+            size: ReadoutListItemSize.medium,
+            fractionDigits: 1,
+          },
+        })
+      )}
+    </div>
+  `,
 };
 
 const SIZES = [
@@ -1596,7 +1701,8 @@ export const MissingParts: Story = {
  */
 type AlignmentRow = {
   label: string;
-  value: number | null;
+  value: number | string | null;
+  valueType?: ReadoutValueType;
   unit: string;
   size?: ReadoutListItemSize;
   hasDegree?: boolean;
@@ -1722,6 +1828,19 @@ const ALIGNMENT_ROWS: AlignmentRow[] = [
       type: ObcAlertFrameType.Regular,
     },
   },
+  // text value — `valueType="text"` renders verbatim and ignores maxDigits /
+  // fractionDigits, but still honours an explicit `spaceReserver`. So these
+  // rows hug their text in the left column and join the shared value column in
+  // the right one, confirming text does not disturb the numeric alignment.
+  // (Inside `obc-readout-list`, which owns the reservers, text rows are instead
+  // excluded from the computed numeric width — see that component's stories.)
+  {label: 'Mode', value: 'Auto', valueType: ReadoutValueType.text, unit: ''},
+  {
+    label: 'Thruster',
+    value: 'Standby',
+    valueType: ReadoutValueType.text,
+    unit: '',
+  },
   // size variants — value digit edges do NOT fully align cross-size (the degree
   // column scales 6/8/12px with the value size); see the ColumnAlignment doc.
 
@@ -1771,6 +1890,7 @@ function renderAlignmentColumn(aligned: boolean, showDebugOverlay: boolean) {
           unit: row.unit,
           src: '',
           value: row.value,
+          valueType: row.valueType,
           hasSetpoint: row.hasSetpoint,
           setpoint: row.setpoint,
           hasAdvice: row.hasAdvice,

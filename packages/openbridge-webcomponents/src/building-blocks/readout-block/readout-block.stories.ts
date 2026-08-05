@@ -1,11 +1,13 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html, nothing} from 'lit';
+import {expect} from 'storybook/test';
 import {
   ReadoutBlockVariant,
   ReadoutBlockSize,
   ReadoutBlockDataQuality,
   ObcTextboxFontWeight,
   ObcTextboxAlignment,
+  ReadoutValueType,
 } from './readout-block.js';
 import './readout-block.js';
 import '../../icons/icon-placeholder.js';
@@ -19,7 +21,8 @@ const NONE = 'none';
 
 type BlockArgs = {
   variant: ReadoutBlockVariant;
-  value: number;
+  value: number | string | null;
+  valueType: ReadoutValueType;
   size: ReadoutBlockSize;
   enhanced: boolean;
   weight: ObcTextboxFontWeight;
@@ -43,6 +46,7 @@ function renderBlock(args: Partial<BlockArgs>) {
     <obc-readout-block
       .variant=${args.variant ?? ReadoutBlockVariant.value}
       .value=${args.value ?? null}
+      .valueType=${args.valueType ?? ReadoutValueType.number}
       .size=${args.size ?? ReadoutBlockSize.small}
       .enhanced=${args.enhanced ?? false}
       .weight=${args.weight ?? ObcTextboxFontWeight.regular}
@@ -128,6 +132,7 @@ const meta = {
   args: {
     variant: ReadoutBlockVariant.value,
     value: 123,
+    valueType: ReadoutValueType.number,
     size: ReadoutBlockSize.small,
     enhanced: false,
     weight: ObcTextboxFontWeight.regular,
@@ -143,7 +148,14 @@ const meta = {
     dataQuality: NONE,
   },
   argTypes: {
-    value: {control: {type: 'number'}},
+    // Text control (not number) so both value types are exercisable. Under
+    // valueType=number a numeric string resolves back to a number; entering
+    // non-numeric text there throws, which is the intended contract.
+    value: {control: {type: 'text'}},
+    valueType: {
+      control: {type: 'inline-radio'},
+      options: Object.values(ReadoutValueType),
+    },
     variant: {
       control: {type: 'select'},
       options: Object.values(ReadoutBlockVariant),
@@ -244,6 +256,66 @@ export const OffText: Story = {
 };
 
 /**
+ * `valueType="text"` renders `value` verbatim instead of formatting it as a
+ * number — for readings that are states rather than quantities.
+ *
+ * The numeric format options (`fractionDigits`, `maxDigits`, `hintedZeros`) are
+ * ignored in this mode; an explicit `spaceReserver` still applies. Passing text
+ * while `valueType` is `number` throws a `TypeError` rather than rendering
+ * `NaN`, while a numeric-looking string such as `"12.4"` is accepted and parsed
+ * so plain-HTML `value="12.4"` keeps working.
+ */
+export const TextValue: Story = {
+  render: () =>
+    renderShowcase([
+      {
+        title: 'text',
+        args: {value: 'Auto', valueType: ReadoutValueType.text},
+      },
+      {
+        title: 'longer text',
+        args: {value: 'Thermo On', valueType: ReadoutValueType.text},
+      },
+      {
+        title: 'verbatim "1.50"',
+        args: {
+          value: '1.50',
+          valueType: ReadoutValueType.text,
+          fractionDigits: 1,
+        },
+      },
+      {
+        title: 'maxDigits ignored',
+        args: {value: 'Auto', valueType: ReadoutValueType.text, maxDigits: 4},
+      },
+      {
+        title: 'spaceReserver honoured',
+        args: {
+          value: 'Auto',
+          valueType: ReadoutValueType.text,
+          spaceReserver: 'Thermo On',
+        },
+      },
+      {
+        title: 'null → dash',
+        args: {value: null, valueType: ReadoutValueType.text},
+      },
+      {
+        title: 'numeric string in number mode',
+        args: {value: '12.4', fractionDigits: 1},
+      },
+      {
+        title: 'text + degree',
+        args: {
+          value: 'Auto',
+          valueType: ReadoutValueType.text,
+          hasDegree: true,
+        },
+      },
+    ]),
+};
+
+/**
  * Hinted zeros pad the integer part up to `maxDigits` as muted leading zeros.
  * When enabled they take priority over `spaceReserver` (they already fill to
  * `maxDigits`, so an explicit reserver is ignored).
@@ -306,6 +378,43 @@ export const Alignment: Story = {
     ),
 };
 
+/**
+ * Regression test for a validation hole, not a visual case.
+ *
+ * When `willUpdate` throws, Lit's `performUpdate` catch calls `__markUpdated()`,
+ * which clears the changed-properties map. Validation used to be gated on
+ * `changed.has('value') || changed.has('valueType')`, so the NEXT update —
+ * driven by any other property, e.g. `obc-readout-list.align()` writing the
+ * shared reservers — saw an empty map, skipped the check, and rendered the
+ * invalid value as a plain dash. Loud once, then silent forever.
+ *
+ * An EMPTY changed map is exactly what Lit leaves behind after a throw, so
+ * `willUpdate` is invoked directly with one. The element is deliberately left
+ * detached: an unconnected `LitElement` never starts its update cycle, so this
+ * exercises the guard without the real throw escaping the scheduler as an
+ * unhandled rejection.
+ */
+export const TestValidationSurvivesUnrelatedUpdate: Story = {
+  render: () => html`<span>Regression test — see the play function.</span>`,
+  play: async () => {
+    type Probe = HTMLElement & {
+      value: number | string | null;
+      willUpdate: (changed: Map<string, unknown>) => void;
+    };
+    const el = document.createElement('obc-readout-block') as Probe;
+    const validateWithNoChanges = () => el.willUpdate(new Map());
+
+    el.value = 'Auto';
+    await expect(validateWithNoChanges).toThrow(/value must be a number/);
+
+    el.value = 12.4;
+    await expect(validateWithNoChanges).not.toThrow();
+
+    el.value = null;
+    await expect(validateWithNoChanges).not.toThrow();
+  },
+};
+
 export const DataQuality: Story = {
   render: () =>
     renderShowcase([
@@ -318,7 +427,7 @@ export const DataQuality: Story = {
         title: 'invalid',
         args: {value: 123, dataQuality: ReadoutBlockDataQuality.invalid},
       },
-      {title: 'null (dash)', args: {value: undefined}},
+      {title: 'null (dash)', args: {value: null}},
     ]),
 };
 
