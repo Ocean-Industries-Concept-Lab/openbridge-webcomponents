@@ -147,18 +147,18 @@ export class ObcToggleSwitch extends LitElement {
   @property({type: Boolean}) externalControl = false;
 
   /**
-   * Handles input events to change the toggle state.
-   * Prevents changes if the toggle is disabled.
-   * @param e {InputEvent}
-   * @fires input - Dispatched when the value of the input changes
-   */
-  /**
    * The state the user selected in the most recent interaction. In
    * externalControl mode this can differ from `checked` until the consumer
    * accepts the change, so the change event reports it instead of `checked`.
    */
   private _userSelectedChecked?: boolean;
 
+  /**
+   * Handles input events to change the toggle state.
+   * Prevents changes if the toggle is disabled.
+   * @param e {InputEvent}
+   * @fires input - Dispatched when the value of the input changes
+   */
   private _tryChange(e: InputEvent) {
     if (this.disabled) {
       e.preventDefault();
@@ -174,8 +174,6 @@ export class ObcToggleSwitch extends LitElement {
     this.dispatchEvent(
       new CustomEvent('input', {
         detail: {checked: nextChecked},
-        bubbles: true,
-        composed: true,
       })
     );
 
@@ -192,8 +190,6 @@ export class ObcToggleSwitch extends LitElement {
     this.dispatchEvent(
       new CustomEvent('change', {
         detail: {checked: this._userSelectedChecked ?? this.checked},
-        bubbles: true,
-        composed: true,
       })
     );
   }

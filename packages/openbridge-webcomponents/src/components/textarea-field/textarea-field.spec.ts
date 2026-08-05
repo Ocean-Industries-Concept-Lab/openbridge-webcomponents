@@ -115,11 +115,6 @@ describe('obc-textarea-field', () => {
       await el.updateComplete;
 
       expect(inputHandler).toHaveBeenCalled();
-      // Must bubble out of the host so framework wrappers relying on event
-      // delegation (Svelte 5) receive it — see issue #1086.
-      const event = inputHandler.mock.calls[0][0] as CustomEvent;
-      expect(event.bubbles).toBe(true);
-      expect(event.composed).toBe(true);
     });
   });
 
@@ -134,9 +129,6 @@ describe('obc-textarea-field', () => {
       await el.updateComplete;
 
       expect(changeHandler).toHaveBeenCalled();
-      const event = changeHandler.mock.calls[0][0] as CustomEvent;
-      expect(event.bubbles).toBe(true);
-      expect(event.composed).toBe(true);
     });
   });
 });

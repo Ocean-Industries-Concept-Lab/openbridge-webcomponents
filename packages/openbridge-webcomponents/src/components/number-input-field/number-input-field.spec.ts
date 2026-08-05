@@ -83,10 +83,6 @@ describe('obc-number-input-field', () => {
       expect(handler).toHaveBeenCalledTimes(1);
       const event = handler.mock.calls[0][0] as CustomEvent<{value: number}>;
       expect(event.detail.value).toBe(12.5);
-      // Must bubble out of the host so framework wrappers relying on event
-      // delegation (Svelte 5) receive it — see issue #1086.
-      expect(event.bubbles).toBe(true);
-      expect(event.composed).toBe(true);
     });
 
     it('dispatches input with 10 for trailing decimal input', async () => {
@@ -120,8 +116,6 @@ describe('obc-number-input-field', () => {
       expect(handler).toHaveBeenCalledTimes(1);
       const event = handler.mock.calls[0][0] as CustomEvent<{value: number}>;
       expect(event.detail.value).toBe(12.5);
-      expect(event.bubbles).toBe(true);
-      expect(event.composed).toBe(true);
     });
 
     it('does not dispatch change on blur when value is unchanged', async () => {

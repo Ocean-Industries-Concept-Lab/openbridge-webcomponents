@@ -58,7 +58,7 @@ export enum ObcTextInputFieldPlacement {
  * @slot label-icon - Icon displayed before the label text (when `hasLabelIcon` is true)
  * @slot helper-icon - Icon displayed before helper or error text (when `hasHelperIcon` is true)
  * @fires input - Standard input event on value change
- * @fires change - Standard change event on value change
+ * @fires change - {CustomEvent<{value: string}>} Dispatched on value change, carrying the committed value
  * @fires clear - Fired when the clear button is clicked
  * @fires blur - Fired when the input field is blurred
  * @stable
@@ -198,8 +198,11 @@ export class ObcTextInputField extends LitElement {
     </div>`;
   }
 
-  private fireChangeEvent() {
-    this.dispatchEvent(new CustomEvent('change'));
+  private fireChangeEvent(e: Event) {
+    const target = e.target as HTMLInputElement;
+    this.dispatchEvent(
+      new CustomEvent('change', {detail: {value: target.value}})
+    );
   }
 
   private get shouldUpdateValue(): boolean {
