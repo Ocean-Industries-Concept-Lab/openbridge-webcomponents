@@ -121,32 +121,44 @@ export function resolveReadoutTextValue(
 }
 
 /**
- * The unavailable ("no reading") text: one dash per reserved digit position, so
- * it takes the same shape as the value it stands in for — `maxDigits` 4 with
- * `fractionDigits` 3 gives `----.---`.
+ * The character used for an unavailable ("no reading") value.
  *
- * `minValueLength` counts INTEGER digits only, matching `maxDigits`; the decimal
- * point and the fraction digits are added on top and never count toward it. It
- * previously read as a total width, which made a fractional reading collapse to
- * a single integer dash (`-.---` where `----.---` was reserved).
+ * U+2012 FIGURE DASH, not the ASCII hyphen-minus: it is defined to be the same
+ * width as a digit, so the placeholder lines up with the reading it stands in
+ * for. Measured in Noto Sans with tabular figures at `size="m"` — digit 13.02px,
+ * U+2012 13.02px, U+002D 7.02px, en dash 11.02px, em dash 22.02px. With a
+ * hyphen, `-.--` sat 46% narrow per character and its decimal point missed the
+ * reading's; with U+2012 the point and every fraction position align exactly.
+ */
+export const READOUT_UNAVAILABLE_DASH = '\u2012';
+
+/**
+ * The unavailable ("no reading") text: a single integer dash plus one dash per
+ * fraction digit — `\u2012` at `fractionDigits` 0, `\u2012.\u2012\u2012` at 2.
  *
- * With `showZeroPadding` off, or with no `maxDigits` to fill, only the INTEGER
- * part falls back to the single dash it has always been — `-` at
- * `fractionDigits` 0, `-.--` at 2. The fraction placeholder is always present
- * whenever `fractionDigits > 0`; it is never collapsed away.
+ * Deliberately NOT filled out to `maxDigits`: the placeholder stays short and
+ * sits at the right edge of the reserved width, rather than spelling out every
+ * reserved digit position. `maxDigits` still reserves the width, so nothing
+ * shifts when a reading arrives.
  */
 function dashedGenerator({
   showZeroPadding,
   minValueLength,
   fractionDigits,
 }: ReadoutNumericFormatOptions): string {
-  const integerDigits = showZeroPadding ? Math.max(minValueLength, 1) : 1;
+  const visibleDigits = showZeroPadding ? Math.max(minValueLength, 1) : 1;
 
   if (fractionDigits < 1) {
-    return '-'.repeat(integerDigits);
+    return READOUT_UNAVAILABLE_DASH.repeat(visibleDigits);
   }
 
-  return '-'.repeat(integerDigits) + '.' + '-'.repeat(fractionDigits);
+  const integerDigits = visibleDigits - fractionDigits;
+
+  return (
+    READOUT_UNAVAILABLE_DASH.repeat(Math.max(integerDigits, 1)) +
+    '.' +
+    READOUT_UNAVAILABLE_DASH.repeat(fractionDigits)
+  );
 }
 
 export function formatNumericValue(
