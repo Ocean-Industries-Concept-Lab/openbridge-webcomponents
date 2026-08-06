@@ -58,6 +58,19 @@ describe('isDisplayedAtSetpoint', () => {
       isDisplayedAtSetpoint(30, undefined, readoutNumericFormatOptions(0, 0))
     ).toBe(false);
   });
+
+  // Callers normalise `value` but pass `setpoint` raw, so a non-finite setpoint
+  // would otherwise be formatted as the literal "NaN" / "Infinity" and compared
+  // as a string. An unavailable reading is never "at" a setpoint.
+  it('is false when either side is non-finite', () => {
+    const format = readoutNumericFormatOptions(0, 0);
+    expect(isDisplayedAtSetpoint(30, Number.NaN, format)).toBe(false);
+    expect(isDisplayedAtSetpoint(30, Number.POSITIVE_INFINITY, format)).toBe(
+      false
+    );
+    expect(isDisplayedAtSetpoint(Number.NaN, 30, format)).toBe(false);
+    expect(isDisplayedAtSetpoint(Number.NaN, Number.NaN, format)).toBe(false);
+  });
 });
 
 describe('readoutPrimarySize / readoutSecondarySize', () => {

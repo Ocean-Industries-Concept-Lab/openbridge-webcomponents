@@ -71,7 +71,18 @@ export function assertReadoutValueType(
   );
 }
 
-/** The value as a number, or `undefined` when it is text / unavailable. */
+/**
+ * The value as a number, or `undefined` when it is text / unavailable.
+ *
+ * A non-finite number (`NaN`, `±Infinity`) counts as unavailable and renders the
+ * dash, the same as `null`. `NaN` is a runtime data condition — a sensor
+ * dropout, a `0/0`, a bad parse — not a programmer error, so it must not throw;
+ * and `value.toFixed()` would otherwise render the literal text `"NaN"` /
+ * `"Infinity"` in place of a reading. This also makes the number path agree with
+ * the string path below, which has always resolved a non-finite string to
+ * `undefined` — before this, `<obc-readout value="NaN">` rendered a dash while
+ * `.value=${NaN}` rendered `"NaN"`.
+ */
 export function resolveReadoutNumericValue(
   value: number | string | null | undefined,
   valueType: ReadoutValueType
@@ -84,7 +95,7 @@ export function resolveReadoutNumericValue(
     return undefined;
   }
   if (typeof value === 'number') {
-    return value;
+    return Number.isFinite(value) ? value : undefined;
   }
   if (isBlank(value)) {
     return undefined;
@@ -109,6 +120,27 @@ export function resolveReadoutTextValue(
   return isBlank(text) ? undefined : text;
 }
 
+/**
+ * The character used for an unavailable ("no reading") value.
+ *
+ * U+2012 FIGURE DASH, not the ASCII hyphen-minus: it is defined to be the same
+ * width as a digit, so the placeholder lines up with the reading it stands in
+ * for. Measured in Noto Sans with tabular figures at `size="m"` — digit 13.02px,
+ * U+2012 13.02px, U+002D 7.02px, en dash 11.02px, em dash 22.02px. With a
+ * hyphen, `-.--` sat 46% narrow per character and its decimal point missed the
+ * reading's; with U+2012 the point and every fraction position align exactly.
+ */
+export const READOUT_UNAVAILABLE_DASH = '\u2012';
+
+/**
+ * The unavailable ("no reading") text: a single integer dash plus one dash per
+ * fraction digit — `\u2012` at `fractionDigits` 0, `\u2012.\u2012\u2012` at 2.
+ *
+ * Deliberately NOT filled out to `maxDigits`: the placeholder stays short and
+ * sits at the right edge of the reserved width, rather than spelling out every
+ * reserved digit position. `maxDigits` still reserves the width, so nothing
+ * shifts when a reading arrives.
+ */
 function dashedGenerator({
   showZeroPadding,
   minValueLength,
@@ -117,13 +149,15 @@ function dashedGenerator({
   const visibleDigits = showZeroPadding ? Math.max(minValueLength, 1) : 1;
 
   if (fractionDigits < 1) {
-    return '-'.repeat(visibleDigits);
+    return READOUT_UNAVAILABLE_DASH.repeat(visibleDigits);
   }
 
   const integerDigits = visibleDigits - fractionDigits;
 
   return (
-    '-'.repeat(Math.max(integerDigits, 1)) + '.' + '-'.repeat(fractionDigits)
+    READOUT_UNAVAILABLE_DASH.repeat(Math.max(integerDigits, 1)) +
+    '.' +
+    READOUT_UNAVAILABLE_DASH.repeat(fractionDigits)
   );
 }
 
@@ -131,7 +165,11 @@ export function formatNumericValue(
   value: number | undefined,
   options: ReadoutNumericFormatOptions
 ): string {
-  if (value === undefined) {
+  // Non-finite counts as unavailable here too, not only in
+  // `resolveReadoutNumericValue`. Every caller normalises today, but this
+  // function is exported, and `NaN.toFixed()` would put the literal text
+  // "NaN" where a reading belongs — the exact failure this change removes.
+  if (value === undefined || !Number.isFinite(value)) {
     return dashedGenerator(options);
   }
 
