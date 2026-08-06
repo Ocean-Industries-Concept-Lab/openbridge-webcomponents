@@ -42,11 +42,18 @@ type BlockArgs = {
 // A faithful single-block render. The block inherits its colour from the host
 // context (the list-item normally drives it), so standalone it shows the neutral
 // default tone; `enhanced` switches to the accent tone.
+//
+// `value` is passed through as given, deliberately NOT as `args.value ?? null`:
+// one unavailable case IS `undefined`, and coercing here would quietly turn it
+// into the `null` case. `undefined` sits outside the declared `value` type —
+// consumers should pass `null` — but an unset property arrives as `undefined` in
+// practice and has to read the same, so the cast is what the case is testing
+// rather than a way around the type checker.
 function renderBlock(args: Partial<BlockArgs>) {
   return html`
     <obc-readout-block
       .variant=${args.variant ?? ReadoutBlockVariant.value}
-      .value=${args.value ?? null}
+      .value=${args.value as number | string | null}
       .valueType=${args.valueType ?? ReadoutValueType.number}
       .size=${args.size ?? ReadoutBlockSize.small}
       .enhanced=${args.enhanced ?? false}
@@ -447,32 +454,31 @@ const DESIGNER_SPEC_CASES: {
   },
 ];
 
-// What each case rendered BEFORE this change, as literal text beside the live
-// component. The `was` strings are recorded from the previous implementation,
-// not produced by it.
+// Every input that reads as "no reading". All four of the first rows are the
+// same placeholder — that IS the point: whichever way a reading goes missing,
+// the readout looks identical.
 const UNAVAILABLE_CASES: {
   label: string;
-  was: string;
   args: Partial<BlockArgs>;
 }[] = [
   {
-    label: 'NaN — was the literal text',
-    was: 'NaN',
+    label: 'NaN',
     args: {value: Number.NaN, maxDigits: 3, fractionDigits: 2},
   },
   {
-    label: 'Infinity — was the literal text',
-    was: 'Infinity',
+    label: 'Infinity',
     args: {value: Number.POSITIVE_INFINITY, maxDigits: 3, fractionDigits: 2},
   },
   {
-    label: 'null — dash is now digit-width',
-    was: '-.--',
+    label: 'null',
     args: {value: null, maxDigits: 3, fractionDigits: 2},
   },
   {
-    label: 'null · no fraction',
-    was: '-',
+    label: 'undefined — an unset value, same as null',
+    args: {value: undefined, maxDigits: 3, fractionDigits: 2},
+  },
+  {
+    label: 'null · no fraction digits',
     args: {value: null, maxDigits: 3},
   },
 ];
@@ -523,6 +529,9 @@ export const UnavailableValues: Story = {
         gap: 8px 24px;
         align-items: center;
       }
+      .rb-unavail-2col {
+        grid-template-columns: max-content max-content;
+      }
       .rb-unavail-head {
         font: 10px/1.2 var(--global-typography-ui-label-font-family, sans-serif);
         text-transform: uppercase;
@@ -540,16 +549,11 @@ export const UnavailableValues: Story = {
         letter-spacing: 0.06em;
         color: var(--element-neutral-color, #777);
       }
-      .rb-unavail-spec-value,
-      .rb-unavail-was {
+      .rb-unavail-spec-value {
         font:
           13px/1.4 ui-monospace,
           monospace;
         color: var(--element-neutral-color, #777);
-      }
-      .rb-unavail-was {
-        color: var(--element-neutral-color, #999);
-        text-decoration: line-through;
       }
       .rb-unavail-now {
         outline: 1px dashed rgba(0, 0, 0, 0.12);
@@ -635,15 +639,15 @@ export const UnavailableValues: Story = {
       </div>
     </div>
 
-    <div class="rb-unavail-spec">Change against previous behaviour</div>
-    <div class="rb-unavail">
-      <div class="rb-unavail-head">Case</div>
-      <div class="rb-unavail-head">Was</div>
-      <div class="rb-unavail-head">Now</div>
+    <div class="rb-unavail-spec">
+      Unavailable values — every unreadable input
+    </div>
+    <div class="rb-unavail rb-unavail-2col">
+      <div class="rb-unavail-head">Value</div>
+      <div class="rb-unavail-head">Rendered</div>
       ${UNAVAILABLE_CASES.map(
         (c) => html`
           <div class="rb-unavail-label">${c.label}</div>
-          <div class="rb-unavail-was">${c.was}</div>
           <div class="rb-unavail-now">
             ${renderBlock({size: ReadoutBlockSize.medium, ...c.args})}
           </div>

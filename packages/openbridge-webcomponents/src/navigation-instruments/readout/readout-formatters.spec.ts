@@ -203,6 +203,17 @@ describe('resolveReadoutNumericValue', () => {
     ).toBeUndefined();
   });
 
+  // `.value=${undefined}` reaches the property uncoerced, so an unset value must
+  // read exactly like an explicit `null` — both are "no reading".
+  it('treats undefined and null identically', () => {
+    expect(resolveReadoutNumericValue(undefined, ReadoutValueType.number)).toBe(
+      resolveReadoutNumericValue(null, ReadoutValueType.number)
+    );
+    expect(resolveReadoutTextValue(undefined, ReadoutValueType.text)).toBe(
+      resolveReadoutTextValue(null, ReadoutValueType.text)
+    );
+  });
+
   // Before this, the same logical input resolved differently depending on how
   // it was bound: `<obc-readout value="NaN">` (attribute → string) gave a dash,
   // while `.value=${NaN}` (property → number) gave the literal text "NaN".
