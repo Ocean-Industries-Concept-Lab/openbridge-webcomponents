@@ -116,8 +116,8 @@ export interface ObcPoiButtonDataItem {
  * - `relation`: Optional relation icon/content rendered when `hasRelation` is true in data mode.
  *
  * ## Events
- * This component does not emit custom events.
- * - Emits a standard `click` event (`onClick` handler in framework wrappers) when activated.
+ * This component emits no custom events. A standard `click` bubbles from the
+ * internal `<button>` (`onClick` in the framework wrappers).
  *
  * ## Best Practices
  * - Keep `value`, `state`, and `selected` synchronized to avoid conflicting visual states.

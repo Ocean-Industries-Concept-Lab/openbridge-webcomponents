@@ -174,7 +174,8 @@ export class ObcTabbedCard extends LitElement {
   private setSelectedTab(index: number) {
     this.selectedTab = index;
     /**
-     * @fires {CustomEvent<{tab:number}>} tab-change - Fired when the selected tab changes.
+     * Fired when the selected tab changes.
+     * @fires tab-change {CustomEvent<{tab:number}>}
      */
     this.dispatchEvent(new CustomEvent('tab-change', {detail: {tab: index}}));
   }

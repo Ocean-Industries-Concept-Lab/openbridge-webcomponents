@@ -212,7 +212,8 @@ export class ObcBrillianceMenu extends LitElement {
   }
 
   /**
-   * @fires palette-changed - Handles palette selection changes and emits `palette-changed`.
+   * Handles palette selection changes and emits `palette-changed`.
+   * @fires palette-changed
    * @param {CustomEvent} event
    */
   onPaletteChanged(event: CustomEvent) {
@@ -225,7 +226,8 @@ export class ObcBrillianceMenu extends LitElement {
   }
 
   /**
-   * @fires brightness-changed - Handles brightness slider changes and emits `brightness-changed`.
+   * Handles brightness slider changes and emits `brightness-changed`.
+   * @fires brightness-changed
    * @param {CustomEvent} event
    */
   handleBrightnessChanged(event: CustomEvent) {
@@ -258,7 +260,8 @@ export class ObcBrillianceMenu extends LitElement {
   }
 
   /**
-   * @fires link-palette-changed - Handles link palette changes and emits `link-palette-changed`.
+   * Handles link palette changes and emits `link-palette-changed`.
+   * @fires link-palette-changed
    * @param {CustomEvent} event
    */
   onLinkPaletteChanged(event: CustomEvent) {
@@ -270,7 +273,8 @@ export class ObcBrillianceMenu extends LitElement {
   }
 
   /**
-   * @fires link-brightness-changed - Handles link brightness changes and emits `link-brightness-changed`.
+   * Handles link brightness changes and emits `link-brightness-changed`.
+   * @fires link-brightness-changed
    * @param {CustomEvent} event
    */
   onLinkBrightnessChanged(event: CustomEvent) {

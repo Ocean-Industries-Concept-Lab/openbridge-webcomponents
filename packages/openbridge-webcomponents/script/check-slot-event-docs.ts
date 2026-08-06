@@ -189,6 +189,16 @@ interface TagDoc {
   hasDescription: boolean;
 }
 
+/**
+ * Only the unindented docblocks — the class-level ones whose tags `cem analyze`
+ * and `lit labs gen` actually read. Tags in indented (method-level) blocks reach
+ * neither, so demanding a description there is noise: the description belongs on
+ * the class tag, and the method block's own summary line describes the method.
+ */
+function topLevelDocblocks(source: string): string {
+  return (source.match(/^\/\*\*[\s\S]*?\*\//gm) ?? []).join('\n');
+}
+
 /** A plausible slot/event name (identifier or kebab-case), or `-` for default. */
 function isValidTagName(name: string): boolean {
   return name === '-' || /^[A-Za-z][\w-]*$/.test(name);
@@ -326,14 +336,15 @@ async function run(): Promise<void> {
     }
 
     // Empty description (warning) — a @slot/@fires tag with only a name produces
-    // a blank cell in the manifest / Storybook controls.
-    for (const tag of parseSlotTags(source)) {
+    // a blank cell in the manifest / Storybook controls. Class-level tags only.
+    const classDocs = topLevelDocblocks(source);
+    for (const tag of parseSlotTags(classDocs)) {
       if (!tag.hasDescription) {
         const label = tag.name === '-' ? 'default slot' : `@slot ${tag.name}`;
         warnings.push({file: rel, message: `${label} has no description`});
       }
     }
-    for (const tag of parseEventTags(source)) {
+    for (const tag of parseEventTags(classDocs)) {
       if (!tag.hasDescription) {
         warnings.push({
           file: rel,
