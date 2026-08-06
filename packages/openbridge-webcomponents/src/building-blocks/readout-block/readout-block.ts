@@ -17,6 +17,7 @@ import {
   assertReadoutValueType,
   resolveReadoutNumericValue,
   resolveReadoutTextValue,
+  READOUT_UNAVAILABLE_DASH,
   ReadoutValueType,
   type ReadoutNumericFormatOptions,
 } from '../../navigation-instruments/readout/readout-formatters.js';
@@ -215,6 +216,9 @@ export class ObcReadoutBlock extends LitElement {
 
   private get numericFormatOptions(): ReadoutNumericFormatOptions {
     return {
+      // The unavailable placeholder stays short (`\u2012.\u2012\u2012`) rather than
+      // spelling out every reserved digit position — `maxDigits` already
+      // reserves the width, so it simply sits at the right edge of it.
       showZeroPadding: false,
       minValueLength: this.maxDigits,
       fractionDigits: this.fractionDigits,
@@ -334,7 +338,7 @@ export class ObcReadoutBlock extends LitElement {
     const text = this.off
       ? this.offText
       : isTextMode
-        ? (textValue ?? '-')
+        ? (textValue ?? READOUT_UNAVAILABLE_DASH)
         : formatNumericValue(valueForFormat, formatOptions);
     // Hinted zeros pad the INTEGER part up to `maxDigits`, independent of
     // `fractionDigits` (the decimal point and fraction digits never count toward
