@@ -142,6 +142,20 @@ function findDispatchedEvents(code: string): Set<string> {
   return events;
 }
 
+/**
+ * Unqualified `dispatchEvent(...)` calls. Inside a class method these resolve to
+ * `globalThis.dispatchEvent`, so the event lands on `window` and no consumer of
+ * the element ever receives it — almost always a missing `this.`.
+ */
+function findBareDispatchCalls(code: string): Set<string> {
+  const events = new Set<string>();
+  const re =
+    /(^|[^.\w$])dispatchEvent\(\s*new\s+(?:Custom)?Event\s*(?:<(?:[^<>]|<[^<>]*>)*>)?\s*\(\s*['"]([^'"]+)['"]/g;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(code)) !== null) events.add(m[2]);
+  return events;
+}
+
 /** Documented slot names from `@slot name` tags (`-` denotes the default slot). */
 function findDocumentedSlots(source: string): {
   names: Set<string>;
@@ -278,6 +292,14 @@ async function run(): Promise<void> {
           message: `dispatches a '${name}' event but has no matching @fires ${name} tag`,
         });
       }
+    }
+
+    // Bare `dispatchEvent(...)` — dispatches on `window`, not the element.
+    for (const name of findBareDispatchCalls(code)) {
+      errors.push({
+        file: rel,
+        message: `calls dispatchEvent(new …Event('${name}')) without \`this.\` — this dispatches on window, so the event never reaches consumers of the element`,
+      });
     }
 
     // Phantom @slot — only for direct LitElement subclasses without dynamic
