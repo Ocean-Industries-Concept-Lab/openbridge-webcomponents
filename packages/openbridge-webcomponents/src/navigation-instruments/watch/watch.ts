@@ -46,16 +46,28 @@ import {
 import {
   renderLabels,
   renderNorthArrow,
+  renderNorthMarker,
   getLabelPositions,
   LabelPosition,
 } from './label.js';
 import {VesselImage, VesselImageSize, vesselImages} from './vessel.js';
-import {renderCurrent, renderWind} from './environment.js';
-import {customElement} from '../../decorator.js';
 import {
-  computeZoomToFitArcFrame,
-  type ZoomToFitArcFrame,
-} from '../../svghelpers/arc-frame.js';
+  renderCurrent,
+  renderCurrentCentered,
+  renderWind,
+  WIND_ICON_TIP_TO_BOX_INNER,
+} from './environment.js';
+import {customElement} from '../../decorator.js';
+import {type ZoomToFitArcFrame} from '../../svghelpers/arc-frame.js';
+import {
+  applyPinnedHostSize,
+  computeRadialFrame,
+  estimateLabelWidthPx,
+  measureContainerPx,
+  NSWE_LABEL_WIDTH_PX,
+  observeInnerBox,
+  type RadialFrame,
+} from '../../svghelpers/radial-frame.js';
 export {VesselImage, VesselImageSize, vesselImages};
 
 export enum WatchCircleType {
@@ -76,12 +88,18 @@ export interface WatchBarArea {
   startAngle: number;
   endAngle: number;
   fillColor: string;
+  /** Outer band radius override; defaults to the second ring (160). */
+  outerRadius?: number;
+  /** Inner band radius override; defaults to the third ring (112). */
+  innerRadius?: number;
 }
 
 export interface WatchNeedle {
   angle: number;
   fillColor: string;
   strokeColor: string;
+  /** Radial length of the needle pill; defaults to 48 (the full band). */
+  length?: number;
 }
 
 export interface WatchVessel {
@@ -112,6 +130,17 @@ export function innerRingRadiusFor(type: WatchCircleType): number {
 }
 
 const RADIAL_SETPOINT_INWARD_ADJUST = 4;
+
+/**
+ * Default anchors for the wind/current icons outside the outer ring (the
+ * compass layout): the 48-unit icon box sits 4 units off the ring, spanning
+ * 188–236 (OpenBridge 6.1 compass, node 19846-157200). The current chevron
+ * anchors by its tip at the box inner edge; the wind anchor adds the glyph's
+ * inward overhang so its box starts at the same edge.
+ */
+const CURRENT_ICON_OUTSIDE_RADIUS = OUTER_RING_RADIUS + 4;
+const WIND_ICON_OUTSIDE_RADIUS =
+  CURRENT_ICON_OUTSIDE_RADIUS + WIND_ICON_TIP_TO_BOX_INNER;
 
 /**
  * `<obc-watch>` - Core SVG renderer for circular/radial watch-based instruments.
@@ -161,38 +190,46 @@ const RADIAL_SETPOINT_INWARD_ADJUST = 4;
  * `_setpointCssAngle` tracks the accumulated CSS angle to avoid long-way-around
  * transitions across the 0°/360° boundary.
  *
- * @property {InstrumentState} state - Instrument state (active, loading, off)
- * @property {Priority} priority - Color priority (enhanced = blue palette, regular = gray palette)
- * @property {number|undefined} angleSetpoint - Setpoint angle in degrees (0° = 12 o'clock)
- * @property {number|undefined} newAngleSetpoint - New setpoint being adjusted (focus mode)
- * @property {boolean} atAngleSetpoint - Whether value matches setpoint (within deadband)
- * @property {number} angleSetpointAtZeroDeadband - Deadband for zero detection (default 0.5°)
- * @property {boolean} setpointOverride - Override to derive setpoint color from priority regardless of state
- * @property {RotType|undefined} rotType - ROT visualization type: `'dots'` (spinning dots) or `'bar'` (arc bar with clipped dots). Undefined hides the ROT layer.
- * @property {RotPosition} rotPosition - Track on which ROT elements are placed: `'scale'` (on the outer ring) or `'innerCircle'` (default, inside the inner ring)
- * @property {number} rotStartAngle - Start angle of the ROT bar arc in degrees (0° = 12 o'clock, clockwise). Only used when `rotType` is `'bar'`.
- * @property {number} rotEndAngle - End angle of the ROT bar arc in degrees. The bar is hidden when the difference from `rotStartAngle` is less than 0.1°.
- * @property {Priority|undefined} rotPriority - Override priority for ROT color derivation. When set, ROT colors use this instead of the main `priority`. Useful when the ROT element has independent priority (e.g. compass per-element priority).
- * @property {number|undefined} rateOfTurnDegreesPerMinute - Measured rate of turn in degrees per minute (the maritime/AIS convention, see ES-TRIN 2025/1 Art. 3.02 and ITU-R M.1371). Sign controls direction (positive = starboard/clockwise). When defined, this drives both the dot animation (multiplied by `rotDotAnimationFactor`) and the port/starboard direction sign.
- * @property {number} rotDotAnimationFactor - Visual amplification factor applied only to the spinning-dot animation (not to bar extent). Default `18` keeps the legacy visual feel (≈1 rpm at 20°/min).
- * @property {number} rotationsPerMinute - **Deprecated.** Spin speed of the ROT dot ring in rotations per minute. Sign controls direction (positive = clockwise). Use `rateOfTurnDegreesPerMinute` instead.
- * @property {ZoomToFitArcFrame|undefined} arcFrame - Pre-computed zoom-to-fit arc frame. When set, the watch skips its own `computeZoomToFitArcFrame()` call and uses these values directly. Consumer instruments (e.g. rudder, instrument-radial) should compute the frame once and pass it here to avoid redundant computation. If you pass `arcFrame`, you own keeping it in sync with `areas` / `watchCircleType` — obc-watch will NOT recompute it, so a stale frame renders stale geometry.
+ * @experimental
  */
 @customElement('obc-watch')
 export class ObcWatch extends LitElement {
   private _setpointId = `watch-setpoint-${Math.random().toString(36).slice(2, 9)}`;
   private _newSetpointId = `watch-new-setpoint-${Math.random().toString(36).slice(2, 9)}`;
 
+  /** Instrument state (active, loading, off) */
   @property({type: String}) state: InstrumentState = InstrumentState.active;
+  /** Color priority (enhanced = blue palette, regular = gray palette) */
   @property({type: String}) priority: Priority = Priority.regular;
   @property({type: String}) watchCircleType: WatchCircleType =
     WatchCircleType.single;
+  /**
+   * When `true`, the full watch-face circle is drawn behind the dial —
+   * a frame-primary fill with a tertiary outline — so partial-sector
+   * instruments still read as a complete circle. In the `off` state the fill
+   * is omitted (only the outline remains), keeping the off skeleton hollow.
+   * With sector `areas`, the per-area arch outline is dropped; the face
+   * outline takes its place.
+   */
+  @property({type: Boolean}) hasBackgroundCircle: boolean = false;
   @property({type: Boolean}) northArrow: boolean = false;
   @property({type: Boolean}) northArrowInside: boolean | undefined;
+  /**
+   * Replace the north arrow with the compact heading-up north marker: a small
+   * triangle on the outer ring with an upright "N" at the outside label
+   * radius. Rotates with the card via `rotation`.
+   * @availableWhen northArrow==true
+   */
+  @property({type: Boolean}) northMarker: boolean = false;
+  /** Setpoint angle in degrees (0° = 12 o'clock) */
   @property({type: Number}) angleSetpoint: number | undefined;
+  /** New setpoint being adjusted (focus mode) */
   @property({type: Number}) newAngleSetpoint: number | undefined;
+  /** Whether value matches setpoint (within deadband) */
   @property({type: Boolean}) atAngleSetpoint: boolean = false;
+  /** Deadband for zero detection (default 0.5°) */
   @property({type: Number}) angleSetpointAtZeroDeadband: number = 0.5;
+  /** Override to derive setpoint color from priority regardless of state */
   @property({type: Boolean}) setpointOverride: boolean = false;
   @property({type: Boolean}) touching: boolean = false;
 
@@ -210,9 +247,30 @@ export class ObcWatch extends LitElement {
 
   /** Whether the setpoint CSS angle has been initialised (to skip transition on first render). */
   private _setpointCssAngleInit = false;
+  /**
+   * Explicit padding override in SVG units: the un-zoomed viewBox becomes
+   * exactly `(176 + padding) * 2`. Setting it disables the automatic
+   * width-aware label reserve (issue #1021) — the caller owns label room.
+   */
   @property({type: Number}) padding: number | undefined;
+  /**
+   * Outer-ring diameter in CSS pixels. When set, the instrument renders at a
+   * fixed intrinsic size derived from the ring, arc shape and label reserve —
+   * so instruments sharing the same value have identical ring circumference
+   * regardless of label width or arc extent (like obc-donut-chart's
+   * fixedHeight). When unset (default), the instrument fills its container.
+   */
+  @property({type: Number, attribute: 'face-diameter'})
+  faceDiameter: number | undefined;
   @property({type: Array, attribute: false}) areas: WatchArea[] = [];
   @property({type: Array, attribute: false}) barAreas: WatchBarArea[] = [];
+  /**
+   * Rounds the band track's sector end cuts at the band's own radii and clips
+   * bars to that rounded track shape (the design's track-mask model), instead
+   * of the joint silhouette cut shared with the scale ring. No effect without
+   * `areas`.
+   */
+  @property({type: Boolean}) roundBandCuts: boolean = false;
   @property({type: Array, attribute: false}) needles: WatchNeedle[] = [];
   @property({type: Array, attribute: false}) tickmarks: Tickmark[] = [];
   @property({type: Boolean}) tickmarksInside: boolean = false;
@@ -220,7 +278,20 @@ export class ObcWatch extends LitElement {
     TickmarkStyle.regular;
   @property({type: Array, attribute: false}) advices: AngleAdviceRaw[] = [];
   @property({type: Boolean}) crosshairEnabled: boolean = false;
+  /**
+   * Cuts the crosshair out inside the inner ring, so center content (e.g.
+   * center readouts) sits on a clean face.
+   * @availableWhen crosshairEnabled==true
+   */
+  @property({type: Boolean}) crosshairCenterCutout: boolean = false;
   @property({type: Boolean}) showLabels: boolean = false;
+  /**
+   * With `tickmarksInside`, anchor the NSEW label boxes flush against the
+   * inner ring (px-fixed) instead of the legacy gap that lets them drift
+   * toward the centre as the instrument shrinks.
+   * @availableWhen tickmarksInside==true
+   */
+  @property({type: Boolean}) insideLabelsFlush: boolean = false;
   @property({type: Array, attribute: false}) vessels: WatchVessel[] = [];
   @property({type: Number}) windKnots: number | null = null;
   @property({type: Number}) windFromDirectionDeg: number | null = null;
@@ -230,6 +301,17 @@ export class ObcWatch extends LitElement {
   @property({type: Number}) currentFromDirectionDeg: number | null = null;
   @property({type: Number}) currentSymbolRadius: number | null = null;
   @property({type: String}) currentColor: string | undefined;
+  /**
+   * Render the current icon centered on the face (direction-type layout)
+   * instead of at `currentSymbolRadius` on the periphery.
+   * @availableWhen current!=null && currentFromDirectionDeg!=null
+   */
+  @property({type: Boolean}) currentIconCentered: boolean = false;
+  /**
+   * Scale factor for the centered current icon.
+   * @availableWhen currentIconCentered==true
+   */
+  @property({type: Number}) scaleCurrentIcon: number = 1;
   @property({type: Boolean}) starboardPortIndicator: boolean = false;
   /** Top clip, % of height. Ignored when `zoomToFitArc` is true. */
   @property({type: Number}) clipTop: number = 0;
@@ -249,17 +331,25 @@ export class ObcWatch extends LitElement {
   @property({type: Number}) scaleWindIcon: number = 1;
   @property({type: Number}) rotation: number | undefined;
   @property({type: Boolean}) zoomToFitArc: boolean = false;
+  /** Pre-computed zoom-to-fit arc frame. When set, the watch skips its own `computeZoomToFitArcFrame()` call and uses these values directly. Consumer instruments (e.g. rudder, instrument-radial) should compute the frame once and pass it here to avoid redundant computation. If you pass `arcFrame`, you own keeping it in sync with `areas` / `watchCircleType` — obc-watch will NOT recompute it, so a stale frame renders stale geometry. */
   @property({attribute: false}) arcFrame: ZoomToFitArcFrame | undefined;
   @property({type: Number}) tickFadeAngle: number = 0;
 
+  /** ROT visualization type: `'dots'` (spinning dots) or `'bar'` (arc bar with clipped dots). Undefined hides the ROT layer. */
   @property({type: String}) rotType: RotType | undefined;
+  /** Track on which ROT elements are placed: `'scale'` (on the outer ring) or `'innerCircle'` (default, inside the inner ring) */
   @property({type: String}) rotPosition: RotPosition = RotPosition.innerCircle;
+  /** Start angle of the ROT bar arc in degrees (0° = 12 o'clock, clockwise). Only used when `rotType` is `'bar'`. */
   @property({type: Number}) rotStartAngle: number = 0;
+  /** End angle of the ROT bar arc in degrees. The bar is hidden when the difference from `rotStartAngle` is less than 0.1°. */
   @property({type: Number}) rotEndAngle: number = 0;
+  /** Override priority for ROT color derivation. When set, ROT colors use this instead of the main `priority`. Useful when the ROT element has independent priority (e.g. compass per-element priority). */
   @property({type: String}) rotPriority: Priority | undefined;
   @property({type: Boolean}) rotPortStarboard: boolean = false;
   @property({type: Number}) rotAtZeroDeadband: number = ROT_ZERO_DEADBAND_DEG;
+  /** Measured rate of turn in degrees per minute (the maritime/AIS convention, see ES-TRIN 2025/1 Art. 3.02 and ITU-R M.1371). Sign controls direction (positive = starboard/clockwise). When defined, this drives both the dot animation (multiplied by `rotDotAnimationFactor`) and the port/starboard direction sign. */
   @property({type: Number}) rateOfTurnDegreesPerMinute: number | undefined;
+  /** Visual amplification factor applied only to the spinning-dot animation (not to bar extent). Default `18` keeps the legacy visual feel (≈1 rpm at 20°/min). */
   @property({type: Number}) rotDotAnimationFactor: number = 18;
   /**
    * @deprecated Use `rateOfTurnDegreesPerMinute` (and optionally `rotDotAnimationFactor`) instead.
@@ -270,6 +360,7 @@ export class ObcWatch extends LitElement {
   set rotationsPerMinute(value: number) {
     this._legacyRotationsPerMinute = value;
   }
+  /** Legacy spin speed of the ROT dot ring, in rotations per minute (sign controls direction; positive = clockwise). */
   get rotationsPerMinute() {
     return this._legacyRotationsPerMinute;
   }
@@ -292,9 +383,12 @@ export class ObcWatch extends LitElement {
     return this._legacyRotationsPerMinute;
   }
 
-  // @ts-expect-error TS6133: The controller ensures that the render
-  // function is called on resize of the element
   private _resizeController = new ResizeController(this, {});
+
+  override firstUpdated(changed: PropertyValues): void {
+    super.firstUpdated(changed);
+    observeInnerBox(this._resizeController, this.renderRoot);
+  }
 
   override willUpdate(changed: PropertyValues): void {
     super.willUpdate(changed);
@@ -332,6 +426,11 @@ export class ObcWatch extends LitElement {
 
   override updated(changed: PropertyValues): void {
     super.updated(changed);
+    this._hostSizePinned = applyPinnedHostSize(
+      this,
+      this.arcFrame ? undefined : this._ownFrame,
+      this._hostSizePinned
+    );
     const el = this.rotType
       ? this.renderRoot.querySelector('#rot-spinner')
       : null;
@@ -356,6 +455,18 @@ export class ObcWatch extends LitElement {
   private _rOff = 0;
 
   /**
+   * Set by the frame when the label reserve exceeded its cap: tick label
+   * texts are dropped instead of clipped (see radial-frame.ts).
+   */
+  private _labelsHidden = false;
+
+  /** The frame of the last render, when computed internally (no arcFrame). */
+  private _ownFrame: RadialFrame | undefined;
+
+  /** Whether the host size styles were set by applyPinnedHostSize. */
+  private _hostSizePinned = false;
+
+  /**
    * Radius for a dial-band edge under zoom: additive (`base + _rOff`), keeping
    * band thickness constant in SVG units. INVARIANT: every band-edge radius
    * (rings, value arc, bars, needles, inside-label `textRadius`) must go through
@@ -369,6 +480,36 @@ export class ObcWatch extends LitElement {
 
   private watchCircle(): SVGTemplateResult | SVGTemplateResult[] {
     const rings = [];
+    // Full-face circle behind everything, split in two: the fill goes under
+    // the rings and the outline goes on top of them — the masked track band
+    // reaches exactly the face radius, so an outline drawn underneath would
+    // lose its inner half wherever the band overlaps it and look thinner
+    // there than across the open sector gap. In the ring branch the existing
+    // outer ring already outlines the face, so only the fill applies.
+    const faceFill =
+      this.hasBackgroundCircle && this.state !== InstrumentState.off
+        ? svg`
+        <circle
+          cx="0"
+          cy="0"
+          r="${this._bandRadius(OUTER_RING_RADIUS)}"
+          fill="var(--instrument-frame-primary-color)"
+          stroke="none"
+        />`
+        : undefined;
+    const faceOutline =
+      this.hasBackgroundCircle && this.areas.length > 0
+        ? svg`
+        <circle
+          cx="0"
+          cy="0"
+          r="${this._bandRadius(OUTER_RING_RADIUS)}"
+          fill="none"
+          stroke="var(--instrument-frame-tertiary-color)"
+          stroke-width="1"
+          vector-effect="non-scaling-stroke"
+        />`
+        : undefined;
     if (this.state !== InstrumentState.off) {
       rings.push(svg`
         <circle
@@ -389,13 +530,29 @@ export class ObcWatch extends LitElement {
         );
         const r = (r1 + r2) / 2;
         const strokeWidth = r1 - r2;
-        rings.push(
-          svg`
+        if (this.roundBandCuts && this.areas.length > 0) {
+          rings.push(
+            ...this.areas.map(
+              (area) =>
+                svg`<path d=${roundedArch({
+                  startAngle: area.startAngle,
+                  endAngle: area.endAngle,
+                  R: r1,
+                  r: r2,
+                  roundOutsideCut: area.roundOutsideCut,
+                  roundInsideCut: area.roundInsideCut,
+                })} fill="var(--instrument-frame-secondary-color)" stroke="var(--instrument-frame-secondary-color)" stroke-width="1" vector-effect="non-scaling-stroke" />`
+            )
+          );
+        } else {
+          rings.push(
+            svg`
             <circle cx="0" cy="0" r=${r} stroke="var(--instrument-frame-secondary-color)" stroke-width=${strokeWidth} fill="none" />
             <circle cx="0" cy="0" r=${r1} stroke="var(--instrument-frame-secondary-color)" stroke-width="1" fill="none" vector-effect="non-scaling-stroke" />
             <circle cx="0" cy="0" r=${r2} stroke="var(--instrument-frame-secondary-color)" stroke-width="1" fill="none" vector-effect="non-scaling-stroke" />
         `
-        );
+          );
+        }
       }
       if (this.watchCircleType === WatchCircleType.triple) {
         const r1 = this._bandRadius(RING3_RADIUS);
@@ -438,13 +595,24 @@ export class ObcWatch extends LitElement {
             roundInsideCut: area.roundInsideCut,
           })} />`
       )}</clipPath>`;
-      result = [mask, rotClip, svg`<g mask="url(#cutMask)">${rings}</g>`];
-      areas.forEach((area) => {
-        result.push(
-          svg`<path d=${area} fill="none" stroke="var(--instrument-frame-tertiary-color)" vector-effect="non-scaling-stroke"/>`
-        );
-      });
+      result = [
+        mask,
+        rotClip,
+        ...(faceFill ? [faceFill] : []),
+        svg`<g mask="url(#cutMask)">${rings}</g>`,
+        ...(faceOutline ? [faceOutline] : []),
+      ];
+      if (!this.hasBackgroundCircle) {
+        areas.forEach((area) => {
+          result.push(
+            svg`<path d=${area} fill="none" stroke="var(--instrument-frame-tertiary-color)" vector-effect="non-scaling-stroke"/>`
+          );
+        });
+      }
     } else {
+      if (faceFill) {
+        result = [faceFill, ...rings];
+      }
       if (this.state !== InstrumentState.off) {
         result.push(
           circle('outerRing', {
@@ -541,13 +709,16 @@ export class ObcWatch extends LitElement {
       scale: number;
       /** Inner ring radius – crosshair is hidden between labelRadius and this value. */
       innerRingRadius: number;
-    }
+    },
+    centerCutoutRadius?: number
   ): SVGTemplateResult {
-    const hasMask = labelKnockouts && labelKnockouts.positions.length > 0;
+    const hasLabelKnockouts =
+      !!labelKnockouts && labelKnockouts.positions.length > 0;
+    const hasMask = hasLabelKnockouts || centerCutoutRadius !== undefined;
 
     // Radius at which labels sit (distance from centre).
     // Any position is equally valid — they're all at the same radial distance.
-    const labelRadius = hasMask
+    const labelRadius = hasLabelKnockouts
       ? Math.max(
           ...labelKnockouts!.positions.map((l) =>
             Math.abs(l.x !== 0 ? l.x : l.y)
@@ -556,7 +727,7 @@ export class ObcWatch extends LitElement {
       : 0;
     // Small extra padding so the crosshair doesn't start/end right at the
     // label edge — use the same visual pad as the letter knockouts.
-    const ringGapPad = hasMask ? 3 / labelKnockouts!.scale : 0;
+    const ringGapPad = hasLabelKnockouts ? 3 / labelKnockouts!.scale : 0;
 
     return svg`
       ${
@@ -570,6 +741,9 @@ export class ObcWatch extends LitElement {
             width="${radius * 2}" height="${radius * 2}"
           >
             <rect x="-${radius}" y="-${radius}" width="${radius * 2}" height="${radius * 2}" fill="white"/>
+            ${
+              hasLabelKnockouts
+                ? svg`
             <!-- Annular ring knockout: hide crosshair between labels and inner ring -->
             <circle cx="0" cy="0" r="${labelKnockouts!.innerRingRadius}" fill="black"/>
             <circle cx="0" cy="0" r="${labelRadius - ringGapPad}" fill="white"/>
@@ -587,7 +761,14 @@ export class ObcWatch extends LitElement {
                   transform-origin="${l.x} ${l.y}"
                 />
               `;
-            })}
+            })}`
+                : nothing
+            }
+            ${
+              centerCutoutRadius !== undefined
+                ? svg`<circle cx="0" cy="0" r="${centerCutoutRadius}" fill="black"/>`
+                : nothing
+            }
           </mask>
         </defs>`
           : nothing
@@ -623,14 +804,14 @@ export class ObcWatch extends LitElement {
       const startAngle = Math.min(bar.startAngle, bar.endAngle);
       const endAngle = Math.max(bar.startAngle, bar.endAngle);
       const arc = roundedArch({
-        r: this._bandRadius(RING3_RADIUS),
-        R: this._bandRadius(RING2_RADIUS),
+        r: this._bandRadius(bar.innerRadius ?? RING3_RADIUS),
+        R: this._bandRadius(bar.outerRadius ?? RING2_RADIUS),
         startAngle: startAngle,
         endAngle: endAngle,
         roundInsideCut: false,
         roundOutsideCut: false,
       });
-      const barMaskR = RING2_RADIUS + this._rOff + 40;
+      const barMaskR = (bar.outerRadius ?? RING2_RADIUS) + this._rOff + 40;
       // The mask is a sector to cut out the stroke on the start and end of the bar
       const mask = svg`<mask id="barMask-${index}">
         <rect x="${-barMaskR}" y="${-barMaskR}" width="${barMaskR * 2}" height="${barMaskR * 2}" fill="black" />
@@ -643,17 +824,40 @@ export class ObcWatch extends LitElement {
           roundOutsideCut: false,
         })} fill="white" />
       </mask>`;
+      // With roundBandCuts the bar is additionally clipped to the rounded
+      // track shape, so its ends round off where they reach the sector cuts
+      // (the design's track-mask model) while mid-track ends stay square.
+      const trackMask =
+        this.roundBandCuts && this.areas.length > 0
+          ? svg`<mask id="barTrackMask-${index}">
+              <rect x="${-barMaskR}" y="${-barMaskR}" width="${barMaskR * 2}" height="${barMaskR * 2}" fill="black" />
+              ${this.areas.map(
+                (area) =>
+                  svg`<path d=${roundedArch({
+                    startAngle: area.startAngle,
+                    endAngle: area.endAngle,
+                    R: this._bandRadius(bar.outerRadius ?? RING2_RADIUS),
+                    r: this._bandRadius(bar.innerRadius ?? RING3_RADIUS),
+                    roundOutsideCut: area.roundOutsideCut,
+                    roundInsideCut: area.roundInsideCut,
+                  })} fill="white" stroke="white" stroke-width="1" vector-effect="non-scaling-stroke" />`
+              )}
+            </mask>`
+          : nothing;
       return svg`
         ${mask}
-        <g mask="url(#cutMask)">
-        <path 
-          d=${arc} 
-          fill=${bar.fillColor} 
-          stroke=${bar.fillColor} 
-          stroke-width="1" 
-          vector-effect="non-scaling-stroke" 
-          mask="url(#barMask-${index})" 
+        ${trackMask}
+        <g mask=${this.areas.length > 0 ? 'url(#cutMask)' : nothing}>
+        <g mask=${trackMask !== nothing ? `url(#barTrackMask-${index})` : nothing}>
+        <path
+          d=${arc}
+          fill=${bar.fillColor}
+          stroke=${bar.fillColor}
+          stroke-width="1"
+          vector-effect="non-scaling-stroke"
+          mask="url(#barMask-${index})"
           />
+          </g>
           </g>
           `;
     });
@@ -665,10 +869,10 @@ export class ObcWatch extends LitElement {
     }
     return this.needles.map((needle) => {
       return svg`
-        <rect 
-          transform="rotate(${needle.angle})" 
-          x="-4" y="${-this._bandRadius(RING2_RADIUS)}" width="8" height="48" rx="4"
-          fill=${needle.fillColor} 
+        <rect
+          transform="rotate(${needle.angle})"
+          x="-4" y="${-this._bandRadius(RING2_RADIUS)}" width="8" height="${needle.length ?? 48}" rx="4"
+          fill=${needle.fillColor}
           stroke=${needle.strokeColor}
           stroke-width="1"
           vector-effect="non-scaling-stroke"
@@ -679,33 +883,32 @@ export class ObcWatch extends LitElement {
   }
 
   private getScale({width, height}: {width: number; height: number}): number {
-    let clientWidth = this.clientWidth;
-    let clientHeight = this.clientHeight;
-    if (clientWidth === 0 || clientHeight === 0) {
-      const box = this.parentElement?.getBoundingClientRect();
-      if (box) {
-        clientWidth = box.width;
-        clientHeight = box.height;
-      }
-    }
-    const scale = Math.min(clientWidth / width, clientHeight / height);
-    if (scale === Infinity || scale < 0) {
-      throw new Error('Watch scale is not valid');
+    const container = measureContainerPx(this);
+    const scale = Math.min(container.width / width, container.height / height);
+    // On first paint the element and its parent can both still be zero-sized, so
+    // the scale is 0 (or non-finite). That value flows into `px / scale` label
+    // math and yields ±Infinity coordinates the browser rejects. Fall back to a
+    // 1:1 scale until a real size is available; the ResizeController re-renders
+    // with the true scale once the element is laid out (issue #1032).
+    if (!Number.isFinite(scale) || scale <= 0) {
+      return 1;
     }
     return scale;
   }
 
-  private getPadding(): number {
-    if (this.padding !== undefined) {
-      return this.padding;
+  /**
+   * Pixel width of the widest outside label, feeding the frame's label
+   * reserve (issue #1021). Explicit `padding` is a hard geometry override
+   * and disables the reserve, preserving legacy consumer output.
+   */
+  private getLabelWidthPx(): number {
+    if (this.padding !== undefined || this.tickmarksInside) {
+      return 0;
     }
-    const hasTickmarksWithText =
-      this.tickmarks.length > 0 &&
-      this.tickmarks.some((t) => t.text !== undefined);
-    if (hasTickmarksWithText && !this.tickmarksInside) {
-      return 24 * 2.5;
+    if (this.showLabels) {
+      return NSWE_LABEL_WIDTH_PX;
     }
-    return 24;
+    return estimateLabelWidthPx(this.tickmarks.map((t) => t.text));
   }
 
   override render() {
@@ -715,31 +918,33 @@ export class ObcWatch extends LitElement {
 
     if (this.arcFrame) {
       this._rOff = this.arcFrame.radiusOffset;
+      this._labelsHidden = false;
+      this._ownFrame = undefined;
       width = this.arcFrame.width;
       height = this.arcFrame.height;
       viewBox = this.arcFrame.viewBox;
-    } else if (this.zoomToFitArc && this.areas.length > 0) {
-      const ext = this.getPadding();
-      const targetSize = (176 + ext) * 2;
-      const frame = computeZoomToFitArcFrame({
+    } else {
+      const frame = computeRadialFrame({
+        basePadding: this.padding ?? 24,
+        labelWidthPx: this.getLabelWidthPx(),
+        clips: {
+          top: this.clipTop,
+          bottom: this.clipBottom,
+          left: this.clipLeft,
+          right: this.clipRight,
+        },
+        containerPx: measureContainerPx(this),
+        faceDiameter: this.faceDiameter,
+        zoomToFitArc: this.zoomToFitArc,
         areas: this.areas,
-        outerRadius: OUTER_RING_RADIUS,
         innerRadius: this.innerRingRadius,
-        extension: ext,
-        targetSize,
       });
       this._rOff = frame.radiusOffset;
+      this._labelsHidden = frame.labelsHidden;
+      this._ownFrame = frame;
       width = frame.width;
       height = frame.height;
       viewBox = frame.viewBox;
-    } else {
-      this._rOff = 0;
-      const full = (176 + this.getPadding()) * 2;
-      width = full * (1 - this.clipLeft / 100 - this.clipRight / 100);
-      height = full * (1 - this.clipTop / 100 - this.clipBottom / 100);
-      const left = -full / 2 + (full * this.clipLeft) / 100;
-      const top = -full / 2 + (full * this.clipTop) / 100;
-      viewBox = `${left} ${top} ${width} ${height}`;
     }
 
     const rOff = this._rOff;
@@ -758,7 +963,7 @@ export class ObcWatch extends LitElement {
         size: t.type,
         style: this.tickmarkStyle,
         scale,
-        text: this.showLabels ? undefined : t.text,
+        text: this.showLabels || this._labelsHidden ? undefined : t.text,
         inside: this.tickmarksInside,
         textRadius,
         rotation: this.rotation,
@@ -772,15 +977,23 @@ export class ObcWatch extends LitElement {
       ? this.advices.map((a) => renderAdvice(a, rOff))
       : nothing;
 
-    // Compute label positions once – used for both rendering and crosshair knockout.
-    const insideLabels = this.tickmarksInside && this.showLabels;
+    // Compute label positions once – used for both rendering and crosshair
+    // knockout. NSWE labels are px-fixed outside decor, so they follow the
+    // same labelsHidden degradation as tick label texts. The north arrow is
+    // exempt: below the small-scale threshold it renders as a compact
+    // triangle at the ring that scales with the face, so it stays visible
+    // on the smallest faces without clipping.
+    const showNsweLabels = this.showLabels && !this._labelsHidden;
+    const showNorthArrow = this.northArrow;
+    const insideLabels = this.tickmarksInside && showNsweLabels;
     const includeNorth = !this.northArrow;
-    const labelPositions = this.showLabels
+    const labelPositions = showNsweLabels
       ? getLabelPositions({
           scale,
           inside: this.tickmarksInside,
           innerRadius: this.innerRingRadius + rOff,
           includeNorth,
+          insideFlush: this.insideLabelsFlush,
         })
       : undefined;
 
@@ -791,32 +1004,42 @@ export class ObcWatch extends LitElement {
           inside: this.tickmarksInside,
           innerRadius: this.innerRingRadius + rOff,
           includeNorth,
+          insideFlush: this.insideLabelsFlush,
         })
       : nothing;
-    const northArrowEl = this.northArrow
-      ? renderNorthArrow({
-          scale,
-          rotation: this.rotation,
-          inside: this.northArrowInside ?? this.tickmarksInside,
-        })
+    const northArrowEl = showNorthArrow
+      ? this.northMarker
+        ? renderNorthMarker({scale, rotation: this.rotation})
+        : renderNorthArrow({
+            scale,
+            rotation: this.rotation,
+            inside: this.northArrowInside ?? this.tickmarksInside,
+          })
       : nothing;
     const wind =
       this.windKnots != null && this.windFromDirectionDeg != null
         ? svg`<g transform="scale(${this.scaleWindIcon})">${renderWind({
             windKnots: this.windKnots,
             fromDirectionDeg: this.windFromDirectionDeg,
-            radius: this.windSymbolRadius ?? 192,
+            radius: this.windSymbolRadius ?? WIND_ICON_OUTSIDE_RADIUS,
             color: this.windColor,
           })}</g>`
         : nothing;
     const current =
       this.current != null && this.currentFromDirectionDeg != null
-        ? renderCurrent({
-            current: this.current,
-            fromDirectionDeg: this.currentFromDirectionDeg,
-            radius: this.currentSymbolRadius ?? 192,
-            color: this.currentColor,
-          })
+        ? this.currentIconCentered
+          ? renderCurrentCentered({
+              current: this.current,
+              fromDirectionDeg: this.currentFromDirectionDeg,
+              scale: this.scaleCurrentIcon,
+              color: this.currentColor,
+            })
+          : renderCurrent({
+              current: this.current,
+              fromDirectionDeg: this.currentFromDirectionDeg,
+              radius: this.currentSymbolRadius ?? CURRENT_ICON_OUTSIDE_RADIUS,
+              color: this.currentColor,
+            })
         : nothing;
     return html`
       <svg
@@ -837,6 +1060,9 @@ export class ObcWatch extends LitElement {
                     scale,
                     innerRingRadius: this.innerRingRadius + rOff,
                   }
+                : undefined,
+              this.crosshairCenterCutout
+                ? this.innerRingRadius + rOff
                 : undefined
             )
           : nothing}

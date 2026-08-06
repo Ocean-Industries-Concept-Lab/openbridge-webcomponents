@@ -118,6 +118,9 @@ export type ObcLinkBrightnessChangeEvent = CustomEvent<{value: boolean}>;
  * @fires screen-control-link-clicked {CustomEvent} When the screen control link is clicked
  */
 @localized()
+/**
+ * @stable
+ */
 @customElement('obc-brilliance-menu')
 export class ObcBrillianceMenu extends LitElement {
   /**

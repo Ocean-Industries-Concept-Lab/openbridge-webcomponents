@@ -91,6 +91,7 @@ export interface NotificationButtonClickEvent {
  *
  * @slot icon - Custom icon to display in place of the default notification icon.
  * @fires obc-click {CustomEvent<NotificationButtonClickEvent>} Fired when the button is clicked, with the current count and new active state.
+ * @stable
  */
 @customElement('obc-notification-button')
 export class ObcNotificationButton extends LitElement {
@@ -102,6 +103,8 @@ export class ObcNotificationButton extends LitElement {
    * - `enhanced`: Emphasized style with background and accent color. Counter badge appears if `showCount` is true and `isActive` is true.
    *
    * Defaults to `flat`.
+   *
+   * @availableWhen isActive==true
    */
   @property({type: String}) buttonStyle: NotificationButtonStyle =
     NotificationButtonStyle.Flat;
@@ -113,6 +116,8 @@ export class ObcNotificationButton extends LitElement {
    * Ignored in `flat` style.
    *
    * Defaults to 0.
+   *
+   * @availableWhen isActive==true && showCount==true && buttonStyle in [Normal, Enhanced]
    */
   @property({type: Number}) count = 0;
 
@@ -123,6 +128,8 @@ export class ObcNotificationButton extends LitElement {
    * Has no effect in `flat` style.
    *
    * Defaults to false.
+   *
+   * @availableWhen isActive==true && buttonStyle in [Normal, Enhanced]
    */
   @property({type: Boolean}) showCount = false;
 

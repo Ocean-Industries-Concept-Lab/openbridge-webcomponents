@@ -104,10 +104,12 @@ export type ObcUserMenuSignedInAction = {
  * ></obc-user-menu>
  * ```
  *
+ * @slot signed-in-action-icon-<id> - Optional icon for a signed-in action, one per action; `<id>` is the normalized action id (shown in the `signed-in` type).
  * @fires sign-in-click {CustomEvent<{username: string, password: string}>}
  * @fires sign-out-click
  * @fires signed-in-action-click {CustomEvent<{id: string, label: string}>}
  * @fires recent-user-click {CustomEvent<{initials: string, label: string}>}
+ * @stable
  */
 @customElement('obc-user-menu')
 @localized()
@@ -124,37 +126,44 @@ export class ObcUserMenu extends LitElement {
 
   /**
    * Toggles the "Recently signed in" section visibility.
+   * @availableWhen type in [signIn, userSignIn]
    */
   @property({type: Boolean})
   hasRecentlySignedIn = false;
 
   /**
    * Current username value for sign-in layouts.
+   * @availableWhen type==signIn
    */
   @property({type: String}) username = '';
 
   /**
    * Current password value for sign-in layouts.
+   * @availableWhen type in [signIn, userSignIn]
    */
   @property({type: String}) password = '';
 
   /**
    * Error message for the username field.
+   * @availableWhen type==signIn
    */
   @property({type: String}) usernameError = '';
 
   /**
    * Error message for the password field.
+   * @availableWhen type in [signIn, userSignIn]
    */
   @property({type: String}) passwordError = '';
 
   /**
    * Initials for the primary user profile.
+   * @availableWhen type!=signIn
    */
   @property({type: String}) userInitials?: string;
 
   /**
    * Label for the primary user profile.
+   * @availableWhen type!=signIn
    */
   @property({type: String}) userLabel?: string;
 
@@ -166,6 +175,7 @@ export class ObcUserMenu extends LitElement {
 
   /**
    * Actions shown in the signed-in navigation list.
+   * @availableWhen type==signedIn
    */
   @property({type: Array, attribute: false})
   signedInActions: ObcUserMenuSignedInAction[] = [];

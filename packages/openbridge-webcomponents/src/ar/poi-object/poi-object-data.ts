@@ -20,6 +20,7 @@ export {ObcPoiObjectState as ObcPoiObjectDataState};
  * and `obc-poi-object-vessel`.
  *
  * @slot - Icon content rendered inside the POI object.
+ * @experimental
  */
 @customElement('obc-poi-object-data')
 export class ObcPoiObjectData extends AbstractPoiObject {

@@ -102,34 +102,46 @@ const renderAlarms = () => html`
   </obc-alert-menu-item>
 `;
 
+const renderButtons = () => html`
+  <obc-button slot="buttons" ?fullWidth=${true}>Action 1</obc-button>
+  <obc-button slot="buttons" ?fullWidth=${true}>Ac. 2</obc-button>
+  <obc-button slot="buttons" ?fullWidth=${true}>Action number 3</obc-button>
+`;
+
+const renderContent = () => html`
+  <div slot="content" style="padding: 16px;">
+    <p style="margin: 0;">Content area</p>
+  </div>
+`;
+
 const meta: Meta<ObcIntegrationVesselMenu> = {
   title: 'Integration Systems/Integration Vessel Menu',
   component: 'obc-integration-vessel-menu',
   tags: ['alpha'],
-  args: {numberOfButtons: 3},
+  args: {hasActions: true, hasAlertList: true, hasContent: true},
   argTypes: {
-    numberOfButtons: {
-      control: 'number',
-      min: 0,
-      max: 3,
-      step: 1,
+    hasActions: {
+      control: 'boolean',
+    },
+    hasAlertList: {
+      control: 'boolean',
+    },
+    hasContent: {
+      control: 'boolean',
     },
   },
   parameters: {
     layout: 'centered',
   },
-  decorators: [
-    (story) => html`
-      <div style="height: 400px; display: flex;">${story()}</div>
-    `,
-  ],
 };
 
 export default meta;
 type Story = StoryObj<ObcIntegrationVesselMenu>;
 
 interface IntegrationVesselMenuArgs {
-  numberOfButtons: number;
+  hasActions: boolean;
+  hasAlertList: boolean;
+  hasContent: boolean;
 }
 
 type IntegrationVesselMenuTemplate = (
@@ -138,36 +150,36 @@ type IntegrationVesselMenuTemplate = (
 
 const template: IntegrationVesselMenuTemplate = (args) => html`
   <obc-integration-vessel-menu
-    .numberOfButtons=${args.numberOfButtons}
-    @button-1-click=${() => console.log('Button 1 clicked')}
-    @button-2-click=${() => console.log('Button 2 clicked')}
-    @button-3-click=${() => console.log('Button 3 clicked')}
+    style="width: 400px;"
+    .hasActions=${args.hasActions}
+    .hasAlertList=${args.hasAlertList}
+    .hasContent=${args.hasContent}
   >
-    <div slot="content" style="padding: 24px;">
-      <div style="width: 496px; height: 256;">
-        <p>Content area</p>
-      </div>
-    </div>
-    <obi-placeholder slot="button-1-leading-icon"></obi-placeholder>
-    <div slot="button-1-label">Action 1</div>
-    <obi-placeholder slot="button-2-leading-icon"></obi-placeholder>
-    <div slot="button-2-label">Ac. 2</div>
-    <obi-placeholder slot="button-3-leading-icon"></obi-placeholder>
-    <div slot="button-3-label">Action number 3</div>
-    ${renderAlarms()}
+    ${renderButtons()} ${renderContent()} ${renderAlarms()}
   </obc-integration-vessel-menu>
 `;
 
-const templateWithoutAlarms: IntegrationVesselMenuTemplate = (args) => html`
+const templateWrappedButtons: IntegrationVesselMenuTemplate = (args) => html`
   <obc-integration-vessel-menu
-    .numberOfButtons=${args.numberOfButtons}
-    @button-1-click=${() => console.log('Button 1 clicked')}
-    @button-2-click=${() => console.log('Button 2 clicked')}
-    @button-3-click=${() => console.log('Button 3 clicked')}
+    style="width: 600px; height: 400px;"
+    .hasActions=${args.hasActions}
+    .hasAlertList=${args.hasAlertList}
+    .hasContent=${args.hasContent}
   >
-    <div slot="content" style="padding: 24px;">
-      <p>Add content here</p>
+    <div slot="buttons">
+      <div style="display: contents;">
+        <obc-button ?fullWidth=${true}>Open</obc-button>
+      </div>
+      <div style="display: contents;">
+        <obc-button ?fullWidth=${true}>Alerts</obc-button>
+      </div>
     </div>
+    <div slot="content" style="padding: 24px;">
+      <div style="width: 320px;">
+        <p>Content area</p>
+      </div>
+    </div>
+    ${renderAlarms()}
   </obc-integration-vessel-menu>
 `;
 
@@ -175,6 +187,76 @@ export const Default: Story = {
   render: template,
 };
 
-export const WithoutAlarms: Story = {
-  render: templateWithoutAlarms,
+export const NoActions: Story = {
+  render: template,
+  args: {hasActions: false},
+};
+
+export const NoContent: Story = {
+  render: template,
+  args: {hasContent: false},
+};
+
+export const NoAlertList: Story = {
+  render: template,
+  args: {hasAlertList: false},
+};
+
+// Recommended bounded usage: the consumer caps the menu by setting a height on
+// the host element. The menu fills that height and the alert list scrolls within
+// the remaining space automatically — no per-slot sizing required.
+const templateConstrained: IntegrationVesselMenuTemplate = (args) => html`
+  <obc-integration-vessel-menu
+    style="width: 400px; height: 500px;"
+    .hasActions=${args.hasActions}
+    .hasAlertList=${args.hasAlertList}
+    .hasContent=${args.hasContent}
+  >
+    ${renderButtons()} ${renderContent()} ${renderAlarms()}
+  </obc-integration-vessel-menu>
+`;
+
+export const Constrained: Story = {
+  render: templateConstrained,
+};
+
+// Without consumer bounding, tall content grows the whole menu unbounded.
+const templateLongContent: IntegrationVesselMenuTemplate = (args) => html`
+  <obc-integration-vessel-menu
+    style="width: 400px;"
+    .hasActions=${args.hasActions}
+    .hasAlertList=${args.hasAlertList}
+    .hasContent=${args.hasContent}
+  >
+    ${renderButtons()}
+    <div slot="content" style="padding: 16px;">
+      <div style="height: 600px;">
+        <p style="margin: 0;">Tall content with no height cap</p>
+      </div>
+    </div>
+  </obc-integration-vessel-menu>
+`;
+
+export const LongContentOverflow: Story = {
+  render: templateLongContent,
+  args: {hasAlertList: false},
+};
+
+export const WithButtonsWrappedInDivWithoutStyling: Story = {
+  render: templateWrappedButtons,
+};
+
+const templateNoAlerts: IntegrationVesselMenuTemplate = (args) => html`
+  <obc-integration-vessel-menu
+    style="width: 400px;"
+    .hasActions=${args.hasActions}
+    .hasAlertList=${args.hasAlertList}
+    .hasContent=${args.hasContent}
+  >
+    ${renderButtons()} ${renderContent()}
+  </obc-integration-vessel-menu>
+`;
+
+export const NoAlerts: Story = {
+  render: templateNoAlerts,
 };

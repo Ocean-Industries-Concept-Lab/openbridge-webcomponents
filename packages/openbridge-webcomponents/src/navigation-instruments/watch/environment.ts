@@ -70,6 +70,16 @@ const WIND_ICON_SCALE = 2;
 const WIND_ICON_TIP_X = 12;
 const WIND_ICON_TIP_Y = 22.4453;
 
+/**
+ * Radial overhang of the rendered (2×, 48-unit) wind icon box past the tip
+ * anchor toward the watch center: the glyph tip sits at y=22.4453 of the
+ * 24-unit box, so the scaled box extends `(24 − 22.4453) × 2 ≈ 3.11` units
+ * inside the anchor radius. Add it to a desired box inner-edge radius to get
+ * the `windSymbolRadius` that makes the box start exactly there.
+ */
+export const WIND_ICON_TIP_TO_BOX_INNER =
+  (24 - WIND_ICON_TIP_Y) * WIND_ICON_SCALE;
+
 const windIconCache = new Map<string, SVGTemplateResult>();
 
 function getWindIconSvg(bucket: number): SVGTemplateResult | null {
@@ -214,6 +224,29 @@ export function renderCurrent(options: {
     radius: options.radius,
     color: options.color,
   });
+}
+
+/**
+ * Render a current icon centered on the watch face (the direction-type
+ * layout): the 24-unit `current-N` glyph is scaled about the face center and
+ * rotated so the chevrons point with the flow (same orientation convention
+ * as the peripheral `renderCurrent`).
+ */
+export function renderCurrentCentered(options: {
+  current: number;
+  fromDirectionDeg: number;
+  scale: number;
+  color?: string;
+}): SVGTemplateResult {
+  const {current, fromDirectionDeg, scale, color} = options;
+  const symbol = environmentSvgs[`current-${current}.svg`];
+  if (!symbol) {
+    return svg``;
+  }
+  const styles = color ? {'--instrument-regular-secondary-color': color} : {};
+  return svg`<g style=${styleMap(styles)} transform="rotate(${180 + fromDirectionDeg}) scale(${scale}) translate(-12 -12)">
+    ${symbol}
+  </g>`;
 }
 
 function renderEnvironment(options: {

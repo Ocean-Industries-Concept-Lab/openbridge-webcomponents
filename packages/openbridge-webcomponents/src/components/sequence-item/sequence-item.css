@@ -57,7 +57,7 @@
       .title-row,
       .meta-row {
         padding: var(
-            --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item
+            --global-size-spacing-nav-item-and-menus-padding-horizontal-list-item
           )
           0;
       }
@@ -138,7 +138,7 @@
   .title-row {
     display: flex;
     gap: var(
-      --global-size-spacing-nav-item-and-menus-padding-horizonal-list-item
+      --global-size-spacing-nav-item-and-menus-padding-horizontal-list-item
     );
     justify-content: space-between;
     align-items: flex-start;

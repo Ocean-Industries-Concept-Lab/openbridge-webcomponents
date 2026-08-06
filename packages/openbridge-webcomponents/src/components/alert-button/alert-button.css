@@ -89,7 +89,7 @@ button {
     }
   }
 
-  .type-enhanced.alert-type-isa-critical & {
+  .type-enhanced.alert-type-level-critical & {
     @mixin style style=normal visibleWrapperClass=.blink;
     @mixin style style=critical visibleWrapperClass=.visible-wrapper;
     & .visible-wrapper {
@@ -97,7 +97,7 @@ button {
     }
   }
 
-  .type-enhanced.alert-type-isa-high & {
+  .type-enhanced.alert-type-level-high & {
     @mixin style style=normal visibleWrapperClass=.blink;
     @mixin style style=alarm visibleWrapperClass=.visible-wrapper;
     & .visible-wrapper {
@@ -105,7 +105,7 @@ button {
     }
   }
 
-  .type-enhanced.alert-type-isa-medium & {
+  .type-enhanced.alert-type-level-medium & {
     @mixin style style=normal visibleWrapperClass=.blink;
     @mixin style style=warning visibleWrapperClass=.visible-wrapper;
     & .visible-wrapper {
@@ -113,7 +113,7 @@ button {
     }
   }
 
-  .type-enhanced.alert-type-isa-low & {
+  .type-enhanced.alert-type-level-low & {
     @mixin style style=normal visibleWrapperClass=.blink;
     @mixin style style=caution visibleWrapperClass=.visible-wrapper;
     & .visible-wrapper {
@@ -121,7 +121,7 @@ button {
     }
   }
 
-  .type-enhanced.alert-type-isa-diagnostic & {
+  .type-enhanced.alert-type-level-diagnostic & {
     @mixin style style=normal visibleWrapperClass=.blink;
     @mixin style style=notification visibleWrapperClass=.visible-wrapper;
     & .visible-wrapper {
@@ -168,7 +168,7 @@ button {
 }
 
 .blinking.alert-type-warning .alert-button,
-.blinking.alert-type-isa-medium .alert-button {
+.blinking.alert-type-level-medium .alert-button {
   .visible-wrapper {
     opacity: var(--warning-blink-on);
   }
@@ -178,7 +178,7 @@ button {
   }
 }
 
-.blinking.alert-type-isa-critical .alert-button {
+.blinking.alert-type-level-critical .alert-button {
   .visible-wrapper {
     opacity: var(--critical-blink-on);
   }
@@ -189,7 +189,7 @@ button {
 }
 
 .blinking.alert-type-alarm .alert-button,
-.blinking.alert-type-isa-high .alert-button {
+.blinking.alert-type-level-high .alert-button {
   .visible-wrapper {
     opacity: var(--alarm-blink-on);
   }
@@ -200,7 +200,7 @@ button {
 }
 
 .blinking.alert-type-caution .alert-button,
-.blinking.alert-type-isa-low .alert-button {
+.blinking.alert-type-level-low .alert-button {
   .visible-wrapper {
     opacity: var(--low-blink-on);
   }
@@ -227,27 +227,27 @@ button {
 }
 
 .alert-type-caution,
-.alert-type-isa-low {
+.alert-type-level-low {
   --icon-fill: var(--caution-enabled-background-color);
   --icon-stroke: var(--caution-pressed-border-color);
 }
 
-.alert-type-isa-critical {
+.alert-type-level-critical {
   --icon-fill: var(--alert-critical-color);
   --icon-stroke: var(--alert-critical-outline-color);
 }
 
-.alert-type-isa-high {
+.alert-type-level-high {
   --icon-fill: var(--alarm-enabled-background-color);
   --icon-stroke: var(--alarm-pressed-border-color);
 }
 
-.alert-type-isa-medium {
+.alert-type-level-medium {
   --icon-fill: var(--warning-enabled-background-color);
   --icon-stroke: var(--warning-pressed-border-color);
 }
 
-.alert-type-isa-diagnostic {
+.alert-type-level-diagnostic {
   --icon-fill: var(--alert-diagnostic-color);
   --icon-stroke: var(--alert-diagnostic-outline-color);
 }

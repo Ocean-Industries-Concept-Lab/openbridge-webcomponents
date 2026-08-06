@@ -76,6 +76,7 @@ import {customElement} from '../../decorator.js';
  * @slot - Default slot for main card content.
  * @slot dialog-title - Dialog overlay header/title (shown when `hasDialog` is true).
  * @slot dialog-content - Dialog overlay content (shown when `hasDialog` is true).
+ * @stable
  */
 @customElement('obc-card')
 export class ObcCard extends LitElement {
@@ -95,6 +96,7 @@ export class ObcCard extends LitElement {
    * When greater than zero, the dialog closes after this duration unless reset by user activity. The countdown indicator appears for the last `dialogVisibleTimerSeconds` seconds.
    *
    * @default 20
+   * @availableWhen hasDialog==true
    */
   @property({type: Number}) dialogTimeOutSeconds = 20;
 
@@ -104,6 +106,7 @@ export class ObcCard extends LitElement {
    * The countdown indicator is visible for the last `dialogVisibleTimerSeconds` seconds of the dialog's lifetime when auto-close is enabled. User activity resets the timer.
    *
    * @default 10
+   * @availableWhen hasDialog==true
    */
   @property({type: Number}) dialogVisibleTimerSeconds = 10;
 

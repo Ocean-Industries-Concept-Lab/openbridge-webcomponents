@@ -47,11 +47,17 @@ export enum SequenceVariant {
   toolbarPrev = 'toolbar-prev',
 }
 
+/**
+ * @beta
+ */
 @customElement('obc-sequence-step')
 /**
  * `<obc-sequence-step>` renders the visual node of a sequence diagram.
  * Supports three sizes, multiple styles (regular/point/connector), and can show
  * leading/trailing connectors as well as state-specific icons.
+ *
+ * @slot leading-icon - Custom leading state icon (shown for medium/large regular steps with `hasIcon`, when the value has no built-in icon).
+ * @slot - Step label content (shown for non-small steps).
  */
 export class ObcSequenceStep extends LitElement {
   @property({type: String}) orientation: SequenceOrientation =
@@ -60,7 +66,10 @@ export class ObcSequenceStep extends LitElement {
   @property({type: String}) styleType: SequenceStyle = SequenceStyle.regular;
   @property({type: String}) value: SequenceValue = SequenceValue.regular;
   @property({type: String, reflect: true}) variant?: SequenceVariant;
-  /** Displays the built-in state icon for medium/large regular steps. */
+  /**
+   * Displays the built-in state icon for medium/large regular steps.
+   * @availableWhen styleType==regular && type in [medium, large]
+   */
   @property({type: Boolean}) hasIcon = false;
   @property({type: Boolean, attribute: false}) showStepInputConnector: boolean =
     true;
@@ -69,6 +78,7 @@ export class ObcSequenceStep extends LitElement {
   /**
    * Extends the input connector to match the height/width of multi-line content.
    * Applies only when `hasInputConnector` is true.
+   * @availableWhen showStepInputConnector==true
    */
   @property({type: Boolean}) inputConnectorExtended = false;
 

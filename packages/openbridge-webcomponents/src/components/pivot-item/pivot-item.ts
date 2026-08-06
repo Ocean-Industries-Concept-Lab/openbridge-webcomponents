@@ -63,6 +63,7 @@ export enum ObcPivotItemDirection {
  *
  * @slot icon - Leading icon slot (shown when `hasLeadingIcon` is true)
  * @fires selected {CustomEvent<{value: string}>} When the item is clicked and becomes selected
+ * @stable
  */
 @customElement('obc-pivot-item')
 export class ObcPivotItem extends LitElement {

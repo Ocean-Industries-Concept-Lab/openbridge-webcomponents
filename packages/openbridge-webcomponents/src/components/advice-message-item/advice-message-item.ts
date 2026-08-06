@@ -62,17 +62,12 @@ export enum ObcAdviceMessageItemSize {
  * ---
  *
  * ### Slots
- * | Slot Name         | Renders When...                                 | Purpose                                                      |
- * |-------------------|------------------------------------------------|--------------------------------------------------------------|
- * | `primary-icon`    | Always                                          | Main icon representing the advice (default: advice icon).    |
- * | `secondary-icon`  | `hasSecondaryIcon` is true                     | Optional overlay icon for additional status or category.      |
- * | `title`           | `hasTitle` is true and `title` is set          | Title or heading of the advice message.                      |
- * | `description`     | `hasDescription` is true and `description` set | Detailed message text.                                       |
- * | `time`            | `hasTimestamp` is true and `time` is set       | Primary timestamp (e.g., time of advice).                    |
- * | `time-secondary`  | `hasTimestamp2` is true and `timeSecondary` set| Secondary timestamp (e.g., duration, relative time).         |
- * | `action-text`     | `type="with-button"`                           | Label for the primary action button.                         |
- * | `action-icon`     | `type="with-icon-button"`                      | Icon for the action button (default: close icon).            |
- * | `empty`           | `type="inactive"` or `empty` is true           | Text to display in the empty/inactive state.                 |
+ * | Slot Name         | Renders When...            | Purpose                                                  |
+ * |-------------------|----------------------------|----------------------------------------------------------|
+ * | `secondary-icon`  | `hasSecondaryIcon` is true | Optional overlay icon for additional status or category. |
+ *
+ * All other content (title, description, timestamps, action label/icon, empty-state
+ * text) is driven by properties and rendered internally; it is not exposed as slots.
  *
  * ---
  *
@@ -104,47 +99,45 @@ export enum ObcAdviceMessageItemSize {
  *
  * In this example, the advice message displays a title, description, timestamp, and a "View" action button.
  *
- * @slot primary-icon - Main icon representing the advice (always present)
  * @slot secondary-icon - Optional overlay icon for additional status/category (shown when `hasSecondaryIcon` is true)
- * @slot title - Title or heading of the advice (shown when `hasTitle` is true)
- * @slot description - Detailed message text (shown when `hasDescription` is true)
- * @slot time - Primary timestamp (shown when `hasTimestamp` is true)
- * @slot time-secondary - Secondary timestamp (shown when `hasTimestamp2` is true)
- * @slot action-text - Label for the action button (when `type="with-button"`)
- * @slot action-icon - Icon for the action button (when `type="with-icon-button"`)
- * @slot empty - Text to display in the empty/inactive state (when `type="inactive"` or `empty` is true)
  * @fires message-click {CustomEvent<void>} When the main message area is clicked
  * @fires action-click {CustomEvent<void>} When the action button (text or icon) is clicked
+ * @beta
  */
 @customElement('obc-advice-message-item')
 export class ObcAdviceMessageItem extends LitElement {
   /**
    * Title or heading of the advice message.
    * Shown in the `title` slot if `hasTitle` is true.
+   * @availableWhen showTitle==true && type!=Inactive
    */
   @property({type: String}) override title = '';
 
   /**
    * Detailed message text for the advice.
    * Shown in the `description` slot if `hasDescription` is true.
+   * @availableWhen showDescription==true && type!=Inactive
    */
   @property({type: String}) description = '';
 
   /**
    * Primary timestamp to display (e.g., time of advice).
    * Shown in the `time` slot if `hasTimestamp` is true.
+   * @availableWhen showTimestamp==true && type!=Inactive
    */
   @property({type: String}) time = '';
 
   /**
    * Secondary timestamp (e.g., duration, relative time).
    * Shown in the `time-secondary` slot if `hasTimestamp2` is true.
+   * @availableWhen hasTimestamp2==true && type!=Inactive
    */
   @property({type: String}) timeSecondary = '';
 
   /**
    * Label for the action button (when `type` is "with-button").
    * Shown in the `action-text` slot.
+   * @availableWhen type==WithButton
    */
   @property({type: String}) actionLabel = 'View';
 
@@ -173,36 +166,42 @@ export class ObcAdviceMessageItem extends LitElement {
   /**
    * Whether to show the title.
    * If false, the title is hidden even if set.
+   * @availableWhen type!=Inactive
    */
   @property({type: Boolean, attribute: false}) showTitle: boolean = true;
 
   /**
    * Whether to show the description.
    * If false, the description is hidden even if set.
+   * @availableWhen type!=Inactive
    */
   @property({type: Boolean, attribute: false}) showDescription: boolean = true;
 
   /**
    * Whether to show the primary timestamp.
    * If false, the `time` slot is not rendered.
+   * @availableWhen type!=Inactive
    */
   @property({type: Boolean, attribute: false}) showTimestamp: boolean = true;
 
   /**
    * Whether to show the secondary timestamp.
    * If true, the `time-secondary` slot is rendered.
+   * @availableWhen type!=Inactive
    */
   @property({type: Boolean}) hasTimestamp2 = false;
 
   /**
    * Whether to show the secondary icon overlay.
    * If true, the `secondary-icon` slot is rendered.
+   * @availableWhen type!=Inactive
    */
   @property({type: Boolean}) hasSecondaryIcon = false;
 
   /**
    * Text to display in the empty/inactive state.
    * Shown in the `empty` slot when `type="inactive"` or `empty` is true.
+   * @availableWhen type==Inactive
    */
   @property({type: String}) emptyText = 'No active advice';
 

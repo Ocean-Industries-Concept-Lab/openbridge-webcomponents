@@ -58,12 +58,14 @@ export enum AppButtonSize {
  * ```
  *
  * @slot icon - Displays the leading icon for the button.
+ * @stable
  */
 @customElement('obc-app-button')
 export class ObcAppButton extends LitElement {
   /**
    * Sets the button's text label.
    * @default "Button"
+   * @availableWhen showLabel==true
    */
   @property({type: String}) label = 'Button';
 

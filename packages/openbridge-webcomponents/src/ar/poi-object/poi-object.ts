@@ -95,6 +95,7 @@ export enum ObcPoiObjectState {
  * ```
  *
  * @slot - Icon/content displayed inside the marker frame.
+ * @experimental
  */
 @customElement('obc-poi-object')
 export class ObcPoiObject extends LitElement {
@@ -107,6 +108,7 @@ export class ObcPoiObject extends LitElement {
   @property({type: String}) state: ObcPoiObjectState =
     ObcPoiObjectState.Unchecked;
 
+  /** @availableWhen state!=overlapped */
   @property({type: Boolean}) interactive = false;
 
   @state() private hasPlaceholderIcon = false;

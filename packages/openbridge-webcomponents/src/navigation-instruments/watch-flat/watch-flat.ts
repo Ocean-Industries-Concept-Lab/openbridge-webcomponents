@@ -32,6 +32,23 @@ import {
 
 export {RotType, LinearRotPosition};
 
+/** Filled segment of the track band, in SVG user-space x-coordinates (center-origin). */
+export interface WatchFlatBarArea {
+  startX: number;
+  endX: number;
+  fillColor: string;
+}
+
+/** Needle marker spanning the track band at `x` (center-origin). */
+export interface WatchFlatNeedle {
+  x: number;
+  fillColor: string;
+  strokeColor: string;
+}
+
+/**
+ * @experimental
+ */
 @customElement('obc-watch-flat')
 export class ObcWatchFlat extends LitElement {
   @property({type: Number}) width = 352;
@@ -48,26 +65,43 @@ export class ObcWatchFlat extends LitElement {
   @property({type: Number}) ticksHeight = this.height - this.trackHeight;
   @property({type: Number}) borderRadius = 8;
   @property({type: Boolean}) bottomBar = false;
+  /** Filled segments rendered inside the track band (the linear counterpart of the radial bar areas). */
+  @property({type: Array, attribute: false}) barAreas: WatchFlatBarArea[] = [];
+  /** Needle markers spanning the track band (the linear counterpart of the radial needles). */
+  @property({type: Array, attribute: false}) needles: WatchFlatNeedle[] = [];
 
   @property({type: String}) rotType: RotType | undefined;
+  /** @availableWhen rotType!=undefined */
   @property({type: String}) rotPosition: LinearRotPosition =
     LinearRotPosition.track;
-  /** Bar start position in SVG user-space x-coordinates (center-origin). Computed by the parent instrument. */
+  /**
+   * Bar start position in SVG user-space x-coordinates (center-origin). Computed by the parent instrument.
+   * @availableWhen rotType!=undefined
+   */
   @property({type: Number}) rotStartX: number = 0;
-  /** Bar end position in SVG user-space x-coordinates (center-origin). Computed by the parent instrument. */
+  /**
+   * Bar end position in SVG user-space x-coordinates (center-origin). Computed by the parent instrument.
+   * @availableWhen rotType!=undefined
+   */
   @property({type: Number}) rotEndX: number = 0;
   /**
    * Pixel spacing between adjacent dots in the linear ROT strip.
    * Must be > 0 to enable animation; the default `0` intentionally disables
    * the spinning dots so the parent instrument must supply a meaningful value
    * derived from the current scale (e.g. `LINEAR_DOT_ANGLE_SPACING * translationScale`).
+   * @availableWhen rotType!=undefined
    */
   @property({type: Number}) rotDotSpacing: number = 0;
+  /** @availableWhen rotType!=undefined */
   @property({type: String}) rotPriority: Priority = Priority.regular;
+  /** @availableWhen rotType!=undefined */
   @property({type: Boolean}) rotPortStarboard: boolean = false;
+  /** @availableWhen rotType!=undefined */
   @property({type: Number}) rotAtZeroDeadband: number = ROT_ZERO_DEADBAND_PX;
 
+  /** @availableWhen rotType!=undefined */
   @property({type: Number}) rateOfTurnDegreesPerMinute: number | undefined;
+  /** @availableWhen rotType!=undefined */
   @property({type: Number}) rotDotAnimationFactor: number = 18;
 
   /**
@@ -201,6 +235,54 @@ export class ObcWatchFlat extends LitElement {
         borderRadius: this.borderRadius,
       })}
     `;
+  }
+
+  /** Top edge of the track band in SVG user space. */
+  private get trackBandY(): number {
+    return (
+      this.totalHeight / 2 -
+      this.trackHeight -
+      (this.bottomBar ? this.ticksHeight : 0)
+    );
+  }
+
+  private renderBandBars(): SVGTemplateResult[] | typeof nothing {
+    if (this.barAreas.length === 0) {
+      return nothing;
+    }
+    return this.barAreas.map(
+      (bar) => svg`
+        <rect
+          x="${Math.min(bar.startX, bar.endX)}"
+          y="${this.trackBandY}"
+          width="${Math.abs(bar.endX - bar.startX)}"
+          height="${this.trackHeight}"
+          fill=${bar.fillColor}
+        />
+      `
+    );
+  }
+
+  private renderBandNeedles(): SVGTemplateResult[] | typeof nothing {
+    if (this.needles.length === 0) {
+      return nothing;
+    }
+    return this.needles.map(
+      (needle) => svg`
+        <rect
+          x="${needle.x - 4}"
+          y="${this.trackBandY}"
+          width="8"
+          height="${this.trackHeight}"
+          rx="4"
+          fill=${needle.fillColor}
+          stroke=${needle.strokeColor}
+          stroke-width="1"
+          vector-effect="non-scaling-stroke"
+          paint-order="stroke fill"
+        />
+      `
+    );
   }
 
   // ---------------------------------------------------------------------------
@@ -369,6 +451,9 @@ export class ObcWatchFlat extends LitElement {
         style="--scale: ${scale}"
       >
         ${this.watchFace()} ${this.renderLabelMask()}
+        <g clip-path="url(#frameClipPath)">
+          ${this.renderBandBars()} ${this.renderBandNeedles()}
+        </g>
 
         <g transform="translate(0, ${contentOffsetY})">
           <g clip-path="url(#frameClipPath)">

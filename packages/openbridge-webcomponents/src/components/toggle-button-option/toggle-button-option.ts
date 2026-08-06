@@ -140,6 +140,8 @@ export class ObcToggleButtonOption extends LitElement {
 
   /**
    * If true, button width shrinks to fit label content.
+   *
+   * @availableWhen type!=icon-text-under
    */
   @property({type: Boolean}) hugText = false;
 
@@ -156,6 +158,8 @@ export class ObcToggleButtonOption extends LitElement {
 
   /**
    * If true, the option uses a larger size.
+   *
+   * @availableWhen type!=icon-text-under
    */
   @property({type: Boolean, reflect: true}) large = false;
 

@@ -2,8 +2,12 @@ import {LitElement, PropertyValues, html, svg, unsafeCSS, nothing} from 'lit';
 import {property} from 'lit/decorators.js';
 import componentStyle from './compass-sector.css?inline';
 import '../watch/watch.js';
-import '../readout/readout.js';
-import {ReadoutDirection, ReadoutVariant} from '../readout/readout.js';
+import {
+  centerReadoutStyles,
+  renderCenterReadouts,
+} from '../readout/center-readout.js';
+import {ReadoutSize} from '../readout/readout.js';
+import instrumentReadoutStyle from '../readout/instrument-readout.css?inline';
 import {Tickmark, TickmarkType, TickmarkStyle} from '../watch/tickmark.js';
 import {arrow, ArrowStyle} from '../compass/arrow.js';
 import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
@@ -31,6 +35,13 @@ export enum CompassSectorPriorityElement {
   rot = 'rot',
 }
 
+// Fixed frame padding for both the zoomed and un-zoomed paths. This component
+// deliberately keeps its bespoke FOV-compression geometry and does NOT use
+// svghelpers/radial-frame.ts: the viewBox is cached per FOV (a
+// container-size-dependent label reserve would invalidate that), and the
+// 72-unit padding covers the 3-char degree labels at typical sizes.
+// TODO(#1021): adopt computeRadialFrame if degree labels ever clip when the
+// component is shrunk far below its design size.
 const PADDING = 72;
 const WATCH_TYPE = WatchCircleType.triple;
 const INNER_RADIUS = innerRingRadiusFor(WATCH_TYPE);
@@ -96,7 +107,7 @@ function normalizeAngle(a: number): number {
  * - Enable `zoomToFitArc` to enlarge the arc to fill the viewport.
  * - For a full‑circle compass, use `<obc-compass>` instead.
  *
- * @fires None
+ * @stable
  */
 @customElement('obc-compass-sector')
 export class ObcCompassSector extends LitElement {
@@ -104,37 +115,49 @@ export class ObcCompassSector extends LitElement {
   @property({type: Number}) courseOverGround = 0;
 
   @property({type: Number}) headingSetpoint: number | null = null;
+  /** @availableWhen headingSetpoint!=null */
   @property({type: Number}) newHeadingSetpoint: number | undefined;
+  /** @availableWhen headingSetpoint!=null && autoAtHeadingSetpoint==false */
   @property({type: Boolean}) atHeadingSetpoint: boolean = false;
+  /** @availableWhen headingSetpoint!=null */
   @property({type: Number}) headingSetpointAtZeroDeadband: number = 0.5;
+  /** @availableWhen headingSetpoint!=null */
   @property({type: Boolean}) headingSetpointOverride: boolean = false;
+  /** @availableWhen headingSetpoint!=null */
   @property({type: Boolean, attribute: false}) autoAtHeadingSetpoint = true;
+  /** @availableWhen headingSetpoint!=null && autoAtHeadingSetpoint==true */
   @property({type: Number}) autoAtHeadingSetpointDeadband: number = 2;
+  /** @availableWhen headingSetpoint!=null */
   @property({type: Boolean}) animateSetpoint: boolean = false;
+  /** @availableWhen headingSetpoint!=null */
   @property({type: Boolean}) touching: boolean = false;
   @property({type: Array, attribute: false}) headingAdvices: AngleAdvice[] = [];
 
   @property({type: Number}) minFOV: number = 30;
 
   @property({type: String}) rotType: RotType | undefined;
+  /** @availableWhen rotType!=undefined */
   @property({type: String}) rotPosition: RotPosition = RotPosition.innerCircle;
   /**
    * Measured rate of turn in degrees per minute (positive = starboard).
    * Drives both the bar extent and (after multiplication by
    * `rotDotAnimationFactor`) the spinning dot animation. When `undefined`,
    * falls back to the deprecated `rotationsPerMinute`.
+   * @availableWhen rotType!=undefined
    */
   @property({type: Number}) rateOfTurnDegreesPerMinute: number | undefined;
   /**
    * Visual amplification applied only to the spinning dot animation
    * (not to the bar extent). Default `18` keeps the legacy visual feel
    * (≈1 rpm at 20°/min).
+   * @availableWhen rotType!=undefined
    */
   @property({type: Number}) rotDotAnimationFactor: number = 18;
   /**
    * @deprecated Use `rateOfTurnDegreesPerMinute` (and optionally
    * `rotDotAnimationFactor`) instead. Takes effect only when
    * `rateOfTurnDegreesPerMinute` is `undefined`.
+   * @availableWhen rotType!=undefined && rateOfTurnDegreesPerMinute==undefined
    */
   @property({type: Number}) rotationsPerMinute: number = 1;
   /**
@@ -144,13 +167,17 @@ export class ObcCompassSector extends LitElement {
    *
    * Note: the unit changed from rotations per minute to degrees per minute
    * with the introduction of `rateOfTurnDegreesPerMinute`.
+   * @availableWhen rotType==bar
    */
   @property({type: Number}) rotMaxValue: number = 60;
+  /** @availableWhen rotType!=undefined */
   @property({type: Boolean}) rotPortStarboard: boolean = false;
+  /** @availableWhen rotType==bar */
   @property({type: Number}) rotAtZeroDeadband: number = ROT_ZERO_DEADBAND_DEG;
 
   @property({type: String}) state: InstrumentState = InstrumentState.active;
   @property({type: String}) priority: Priority = Priority.regular;
+  /** @availableWhen priority==enhanced */
   @property({type: Array, attribute: false})
   priorityElements: CompassSectorPriorityElement[] = [
     CompassSectorPriorityElement.hdg,
@@ -163,6 +190,21 @@ export class ObcCompassSector extends LitElement {
    * `priorityElements`, matching the HDG arrow.
    */
   @property({type: Boolean}) hasReadout: boolean = false;
+  /**
+   * Readout label. Default `HDG`.
+   * @availableWhen hasReadout==true
+   */
+  @property({type: String}) label = 'HDG';
+  /**
+   * Readout unit. Default `DEG`.
+   * @availableWhen hasReadout==true
+   */
+  @property({type: String}) unit = 'DEG';
+  /**
+   * Number of fraction digits shown in the readout. Default `0`.
+   * @availableWhen hasReadout==true
+   */
+  @property({type: Number}) fractionDigits = 0;
 
   private _headingSp = new SetpointBundle({
     angularWraparound: true,
@@ -514,26 +556,29 @@ export class ObcCompassSector extends LitElement {
         </svg>
         ${this.hasReadout
           ? html`<div class="readout" style="top: ${this._readoutTopPercent}%">
-              <obc-readout
-                .variant=${ReadoutVariant.enhanced}
-                .direction=${ReadoutDirection.vertical}
-                .hasSetpoint=${false}
-                .hasAdvice=${false}
-                .value=${this.heading}
-                .fractionDigits=${0}
-                .valuePriority=${this.priorityFor(
-                  CompassSectorPriorityElement.hdg
-                )}
-                label="HDG"
-                unit="DEG"
-              ></obc-readout>
+              ${renderCenterReadouts([
+                {
+                  value: this.heading,
+                  label: this.label,
+                  unit: this.unit,
+                  fractionDigits: this.fractionDigits,
+                  size: ReadoutSize.large,
+                  priority: this.priorityFor(CompassSectorPriorityElement.hdg),
+                  centerValue: true,
+                  centerMeta: true,
+                },
+              ])}
             </div>`
           : nothing}
       </div>
     `;
   }
 
-  static override styles = unsafeCSS(componentStyle);
+  static override styles = [
+    unsafeCSS(instrumentReadoutStyle),
+    centerReadoutStyles,
+    unsafeCSS(componentStyle),
+  ];
 }
 
 declare global {

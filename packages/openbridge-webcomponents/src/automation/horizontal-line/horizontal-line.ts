@@ -3,6 +3,9 @@ import {property} from 'lit/decorators.js';
 import {LineMedium, lineColor, LineType, lineWidth} from '../index.js';
 import {customElement} from '../../decorator.js';
 
+/**
+ * @deprecated
+ */
 @customElement('obc-horizontal-line')
 export class ObcHorizontalLine extends LitElement {
   @property({type: String}) medium: LineMedium = LineMedium.normal;

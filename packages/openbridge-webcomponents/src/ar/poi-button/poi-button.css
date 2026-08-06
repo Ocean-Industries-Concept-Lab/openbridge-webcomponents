@@ -120,7 +120,7 @@
   }
 
   &.alert-alarm,
-  &.alert-isa-high {
+  &.alert-level-high {
     .alert-ring {
       background: var(--alert-alarm-color);
       border-color: var(--alert-alarm-outline-color);
@@ -128,7 +128,7 @@
     }
   }
 
-  &.alert-isa-critical {
+  &.alert-level-critical {
     .alert-ring {
       background: var(--critical-enabled-background-color);
       border-color: var(--critical-enabled-border-color);
@@ -137,7 +137,7 @@
   }
 
   &.alert-warning,
-  &.alert-isa-medium {
+  &.alert-level-medium {
     .alert-ring {
       background: var(--alert-warning-color);
       border-color: var(--alert-warning-outline-color);
@@ -146,7 +146,7 @@
   }
 
   &.alert-caution,
-  &.alert-isa-low {
+  &.alert-level-low {
     .alert-ring {
       background: var(--alert-caution-color);
       border-color: var(--alert-caution-outline-color);
@@ -154,7 +154,7 @@
     }
   }
 
-  &.alert-isa-diagnostic {
+  &.alert-level-diagnostic {
     .alert-ring {
       background: var(--notification-enabled-background-color);
       border-color: var(--notification-enabled-border-color);
@@ -265,25 +265,25 @@
 /* Overlap alert color styles */
 .wrapper.value-overlapped {
   &.alert-alarm,
-  &.alert-isa-high {
+  &.alert-level-high {
     --overlay-container-background-color: var(--alert-alarm-color, #e30019);
     --overlay-border-outline-color: var(--alert-alarm-outline-color);
   }
 
   &.alert-alarm .poi-object,
-  &.alert-isa-high .poi-object {
+  &.alert-level-high .poi-object {
     --overlay-container-background-color: var(--alert-alarm-color, #e30019);
     --overlay-border-outline-color: var(--alert-alarm-outline-color);
   }
 
-  &.alert-isa-critical {
+  &.alert-level-critical {
     --overlay-container-background-color: var(
       --critical-enabled-background-color
     );
     --overlay-border-outline-color: var(--critical-enabled-border-color);
   }
 
-  &.alert-isa-critical .poi-object {
+  &.alert-level-critical .poi-object {
     --overlay-container-background-color: var(
       --critical-enabled-background-color
     );
@@ -291,37 +291,37 @@
   }
 
   &.alert-warning,
-  &.alert-isa-medium {
+  &.alert-level-medium {
     --overlay-container-background-color: var(--alert-warning-color, #fe9413);
     --overlay-border-outline-color: var(--alert-warning-outline-color);
   }
 
   &.alert-warning .poi-object,
-  &.alert-isa-medium .poi-object {
+  &.alert-level-medium .poi-object {
     --overlay-container-background-color: var(--alert-warning-color, #fe9413);
     --overlay-border-outline-color: var(--alert-warning-outline-color);
   }
 
   &.alert-caution,
-  &.alert-isa-low {
+  &.alert-level-low {
     --overlay-container-background-color: var(--alert-caution-color, #ffdb42);
     --overlay-border-outline-color: var(--alert-caution-outline-color);
   }
 
   &.alert-caution .poi-object,
-  &.alert-isa-low .poi-object {
+  &.alert-level-low .poi-object {
     --overlay-container-background-color: var(--alert-caution-color, #ffdb42);
     --overlay-border-outline-color: var(--alert-caution-outline-color);
   }
 
-  &.alert-isa-diagnostic {
+  &.alert-level-diagnostic {
     --overlay-container-background-color: var(
       --notification-enabled-background-color
     );
     --overlay-border-outline-color: var(--notification-enabled-border-color);
   }
 
-  &.alert-isa-diagnostic .poi-object {
+  &.alert-level-diagnostic .poi-object {
     --overlay-container-background-color: var(
       --notification-enabled-background-color
     );
@@ -330,30 +330,31 @@
 }
 
 .wrapper.value-overlapped.alert-caution .poi-object::part(background-frame),
-.wrapper.value-overlapped.alert-isa-low .poi-object::part(background-frame) {
+.wrapper.value-overlapped.alert-level-low .poi-object::part(background-frame) {
   background-color: var(--alert-caution-color, #ffdb42);
   border-color: var(--alert-caution-outline-color);
 }
 
 .wrapper.value-overlapped.alert-warning .poi-object::part(background-frame),
-.wrapper.value-overlapped.alert-isa-medium .poi-object::part(background-frame) {
+.wrapper.value-overlapped.alert-level-medium
+  .poi-object::part(background-frame) {
   background-color: var(--alert-warning-color, #fe9413);
   border-color: var(--alert-warning-outline-color);
 }
 
 .wrapper.value-overlapped.alert-alarm .poi-object::part(background-frame),
-.wrapper.value-overlapped.alert-isa-high .poi-object::part(background-frame) {
+.wrapper.value-overlapped.alert-level-high .poi-object::part(background-frame) {
   background-color: var(--alert-alarm-color, #e30019);
   border-color: var(--alert-alarm-outline-color);
 }
 
-.wrapper.value-overlapped.alert-isa-critical
+.wrapper.value-overlapped.alert-level-critical
   .poi-object::part(background-frame) {
   background-color: var(--critical-enabled-background-color);
   border-color: var(--critical-enabled-border-color);
 }
 
-.wrapper.value-overlapped.alert-isa-diagnostic
+.wrapper.value-overlapped.alert-level-diagnostic
   .poi-object::part(background-frame) {
   background-color: var(--notification-enabled-background-color);
   border-color: var(--notification-enabled-border-color);
@@ -386,29 +387,29 @@
     }
 
     .alert-caution &,
-    .alert-isa-low & {
+    .alert-level-low & {
       border-color: var(--alert-caution-outline-color);
       outline-color: var(--alert-caution-color);
     }
 
     .alert-warning &,
-    .alert-isa-medium & {
+    .alert-level-medium & {
       border-color: var(--alert-warning-outline-color);
       outline-color: var(--alert-warning-color);
     }
 
     .alert-alarm &,
-    .alert-isa-high & {
+    .alert-level-high & {
       border-color: var(--alert-alarm-outline-color);
       outline-color: var(--alert-alarm-color);
     }
 
-    .alert-isa-critical & {
+    .alert-level-critical & {
       border-color: var(--critical-enabled-border-color);
       outline-color: var(--critical-enabled-background-color);
     }
 
-    .alert-isa-diagnostic & {
+    .alert-level-diagnostic & {
       border-color: var(--notification-enabled-border-color);
       outline-color: var(--notification-enabled-background-color);
     }
@@ -487,29 +488,29 @@
 }
 
 .wrapper.value-overlapped.has-data.alert-caution,
-.wrapper.value-overlapped.has-data.alert-isa-low {
+.wrapper.value-overlapped.has-data.alert-level-low {
   background: var(--alert-caution-color, #ffdb42);
   border-color: var(--alert-caution-outline-color);
 }
 
 .wrapper.value-overlapped.has-data.alert-warning,
-.wrapper.value-overlapped.has-data.alert-isa-medium {
+.wrapper.value-overlapped.has-data.alert-level-medium {
   background: var(--alert-warning-color, #fe9413);
   border-color: var(--alert-warning-outline-color);
 }
 
 .wrapper.value-overlapped.has-data.alert-alarm,
-.wrapper.value-overlapped.has-data.alert-isa-high {
+.wrapper.value-overlapped.has-data.alert-level-high {
   background: var(--alert-alarm-color, #e30019);
   border-color: var(--alert-alarm-outline-color);
 }
 
-.wrapper.value-overlapped.has-data.alert-isa-critical {
+.wrapper.value-overlapped.has-data.alert-level-critical {
   background: var(--critical-enabled-background-color);
   border-color: var(--critical-enabled-border-color);
 }
 
-.wrapper.value-overlapped.has-data.alert-isa-diagnostic {
+.wrapper.value-overlapped.has-data.alert-level-diagnostic {
   background: var(--notification-enabled-background-color);
   border-color: var(--notification-enabled-border-color);
 }

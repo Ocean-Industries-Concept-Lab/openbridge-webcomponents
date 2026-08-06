@@ -18,6 +18,9 @@ export enum SwitchAlternativeIcon {
   s3 = 's3',
 }
 
+/**
+ * @stable
+ */
 @customElement('obc-switch')
 export class ObcSwitch extends ObcAbstractAutomationButtonSquared {
   @property({type: String}) alternativeIcon: SwitchAlternativeIcon =

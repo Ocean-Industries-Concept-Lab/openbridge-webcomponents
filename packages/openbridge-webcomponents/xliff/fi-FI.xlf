@@ -50,10 +50,6 @@
   <source>Go to the 'Alert list' for more details or to manage existing alerts.</source>
   <target>Siirry 'Hälytyslistaan' saadaksesi lisätietoja tai hallitaksesi olemassa olevia hälytyksiä.</target>
 </trans-unit>
-<trans-unit id="s3cd891731e99f7e6">
-  <source>Active alerts</source>
-  <target>Aktiiviset hälytykset</target>
-</trans-unit>
 <trans-unit id="sa6ef04345891fb38">
   <source>ACK visible</source>
   <target>Vahvistus näkyvissä</target>

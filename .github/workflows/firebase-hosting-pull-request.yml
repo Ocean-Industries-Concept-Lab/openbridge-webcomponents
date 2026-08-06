@@ -30,7 +30,7 @@ jobs:
       - name: Build vue-demo
         run: cd packages/vue-demo && npm run build
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: vue-demo
           path: packages/vue-demo/dist/
@@ -53,7 +53,7 @@ jobs:
         env:
           NODE_OPTIONS: --max-old-space-size=6144
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: storybook
           path: packages/openbridge-webcomponents/storybook-static/
@@ -65,7 +65,7 @@ jobs:
           mkdir -p ./pr
           echo ${{ github.event.number }} > ./pr/NR
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: pr
           path: pr/

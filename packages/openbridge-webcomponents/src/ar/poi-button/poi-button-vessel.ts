@@ -28,6 +28,7 @@ export {
  * @slot speed-indicator - Optional speed indicator content for speed-rot type.
  * @slot header - Optional header content.
  * @slot relation - Optional relation icon/content in data mode.
+ * @experimental
  */
 @customElement('obc-poi-button-vessel')
 export class ObcPoiButtonVessel extends ObcPoiButton {
@@ -40,6 +41,7 @@ export class ObcPoiButtonVessel extends ObcPoiButton {
   @property({type: String, attribute: 'vessel-state'})
   vesselState: ObcPoiObjectVesselState | null = null;
 
+  /** @availableWhen vesselState!=overlapped && (vesselState!=null || value!=overlapped) */
   @property({type: Boolean, attribute: 'vessel-interactive'})
   vesselInteractive = false;
 

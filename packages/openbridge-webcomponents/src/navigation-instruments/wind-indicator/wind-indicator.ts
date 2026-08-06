@@ -224,6 +224,7 @@ const LABELED_ARROW_TPL = svg`
  * Pass the wind speed in knots through `currentWindSpeedKnots`, matching
  * the convention used by `<obc-wind>`, `<obc-wind-propulsion>` and
  * `<obc-compass>`.
+ * @stable
  */
 @customElement('obc-wind-indicator')
 export class ObcWindIndicator extends LitElement {

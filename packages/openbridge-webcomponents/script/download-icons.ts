@@ -15,6 +15,7 @@ import {
   getSingleColorIcon,
   getStylesForNode,
   kebabToUpperCamelCase,
+  writeUnresolvedFigmaVariablesReport,
 } from './convert-icons.js';
 
 dotenv.config();
@@ -23,12 +24,16 @@ interface IconRef {
   name: string;
   id: string;
   javascriptName: string;
-  styles: {[colorCode: string]: {cssClass: string}};
+  styles: {[colorCode: string]: {cssClass: string | undefined}};
   categories: string[];
 }
 const documentId = 'IkDwOtza6OdjLbIdWA7mI7';
 
-const useCache = false;
+// Opt-in: set OBC_USE_CACHE=1 to reuse the on-disk Figma file cache and the
+// per-icon SVG cache instead of re-fetching from the Figma API. Useful when
+// iterating on the converter (`convert-icons.ts`) or refreshing
+// `figmavariables.json` without burning API quota.
+const useCache = process.env.OBC_USE_CACHE === '1';
 
 function recursiveFindNodeByPath(
   node: CanvasNode | FrameNode,
@@ -143,25 +148,47 @@ export async function main() {
   // ensure SVG cache dir exists (download step writes here)
   fs.mkdirSync('./script/.cache/icons', {recursive: true});
 
-  const api_token = process.env.FIGMA_TOKEN;
-  if (!api_token) {
-    throw new Error('FIGMA_TOKEN is not set, please set it in the .env file');
-  }
-
-  const api = new Api({
-    personalAccessToken: api_token,
-  });
-
   const cachepath = './script/.cache-figma.json';
   let file: GetFileResponse;
   const cacheExists = fs.existsSync(cachepath);
   const cacheIsOld =
     cacheExists &&
     fs.statSync(cachepath).mtime.getTime() < Date.now() - 1000 * 60 * 60;
-  if (cacheExists && useCache && !cacheIsOld) {
+  const willUseCachedFile = cacheExists && useCache;
+
+  // FIGMA_TOKEN is only required when we'll actually call the Figma API.
+  // With OBC_USE_CACHE=1 and a fully populated cache, the run is offline.
+  const api_token = process.env.FIGMA_TOKEN;
+  if (!api_token && !willUseCachedFile) {
+    throw new Error('FIGMA_TOKEN is not set, please set it in the .env file');
+  }
+  // Lazily build the API client only when a network call is actually needed.
+  // `getApi()` throws if a call is required but FIGMA_TOKEN was not provided,
+  // which can happen with OBC_USE_CACHE=1 when the per-icon SVG cache is
+  // incomplete (cache hit on the document, miss on individual icons).
+  let _api: Api | null = null;
+  const getApi = (): Api => {
+    if (_api) return _api;
+    if (!api_token) {
+      throw new Error(
+        'FIGMA_TOKEN is required: OBC_USE_CACHE=1 was set but the cache is\n' +
+          '            incomplete and a Figma API call is needed. Either provide\n' +
+          '            FIGMA_TOKEN in .env or pre-populate ./script/.cache/icons/.'
+      );
+    }
+    _api = new Api({personalAccessToken: api_token});
+    return _api;
+  };
+
+  if (willUseCachedFile && !cacheIsOld) {
+    file = JSON.parse(fs.readFileSync(cachepath, 'utf8'));
+  } else if (willUseCachedFile) {
+    console.log(
+      `[download-icons] OBC_USE_CACHE=1: using stale Figma cache (${cachepath})`
+    );
     file = JSON.parse(fs.readFileSync(cachepath, 'utf8'));
   } else {
-    file = await api.getFile({file_key: documentId});
+    file = await getApi().getFile({file_key: documentId});
     // save to cache
     fs.writeFileSync(cachepath, JSON.stringify(file));
   }
@@ -200,7 +227,7 @@ export async function main() {
   for (let i = 0; i < iconsToDownload.length; i += split) {
     console.log('Got images', i);
     const iconChunks = iconsToDownload.slice(i, i + split);
-    const images = await api.getImages(
+    const images = await getApi().getImages(
       {file_key: documentId},
       {
         ids: iconChunks.map((icon) => icon.id).join(','),
@@ -290,7 +317,19 @@ declare global {
   fileImport.sort();
   fileImport.push('export { ObiIcon } from "./icon.js";');
   fs.writeFileSync('./src/icons/index.ts', fileImport.join('\n'));
+  const unresolvedCount = writeUnresolvedFigmaVariablesReport(
+    './script/.cache/unknown-variables.json'
+  );
   console.log('done');
+  if (unresolvedCount > 0 && process.env.OBC_ALLOW_UNRESOLVED_VARS !== '1') {
+    console.error(
+      `[download-icons] ${unresolvedCount} Figma variable id(s) could not be resolved.\n` +
+        '            Add the missing mapping(s) to script/figmavariables.json,\n' +
+        '            or set OBC_ALLOW_UNRESOLVED_VARS=1 to bypass (e.g. for a\n' +
+        '            one-off iteration). See script/.cache/unknown-variables.json.'
+    );
+    process.exit(1);
+  }
 }
 
 main();

@@ -28,6 +28,7 @@ const meta: Meta<ObcTabItem> = {
       .badgeShowNumber=${args.badgeShowNumber}
       .showLeadingBadgeIcon=${args.showLeadingBadgeIcon}
       .centerContent=${args.centerContent}
+      .badges=${args.badges ?? []}
     >
       ${args.hasLeadingIcon
         ? html`<obi-placeholder slot="leading-icon"></obi-placeholder>`
@@ -35,6 +36,14 @@ const meta: Meta<ObcTabItem> = {
       ${args.hasBadge
         ? html`<obi-placeholder slot="badge-icon"></obi-placeholder>`
         : null}
+      ${(args.badges ?? [])
+        .filter((badge) => badge.iconSlotName)
+        .map(
+          (badge) =>
+            html`<obi-placeholder
+              slot=${badge.iconSlotName!}
+            ></obi-placeholder>`
+        )}
     </obc-tab-item>
   `,
   args: {
@@ -56,6 +65,7 @@ const meta: Meta<ObcTabItem> = {
     badgeShowNumber: true,
     showLeadingBadgeIcon: false,
     centerContent: false,
+    badges: [],
   },
 } satisfies Meta<ObcTabItem>;
 
@@ -311,6 +321,26 @@ export const HighBadgeCount = {
     title: 'High Alarm Count',
   },
 };
+export const MultipleBadges = {
+  args: {
+    hug: false,
+    hasLeadingIcon: true,
+    hasClose: false,
+    centerContent: false,
+    title: 'Multiple Badges',
+    badges: [
+      {type: BadgeType.alarm, size: BadgeSize.regular, count: 3},
+      {type: BadgeType.warning, size: BadgeSize.regular, count: 12},
+      {
+        type: BadgeType.notification,
+        size: BadgeSize.regular,
+        showIcon: true,
+        iconSlotName: 'notification-icon',
+      },
+    ],
+  },
+};
+
 export const BadgeHideNumber = {
   args: {
     hug: false,

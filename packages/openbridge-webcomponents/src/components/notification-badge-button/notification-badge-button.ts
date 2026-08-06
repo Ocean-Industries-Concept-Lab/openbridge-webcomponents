@@ -50,6 +50,7 @@ import {customElement} from '../../decorator.js';
  * ```
  *
  * @slot - Main content slot for icon or text label.
+ * @deprecated
  */
 @customElement('obc-notification-badge-button')
 export class ObcNotificationBadgeButton extends LitElement {

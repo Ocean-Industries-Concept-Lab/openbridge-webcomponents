@@ -106,6 +106,7 @@ export enum Position {
  * @slot alert-label - Label text for the alert overlay (used when `hasAlert` is true)
  * @slot alert-timer - Timer/duration text for the alert overlay (used when `hasAlert` is true)
  * @fires accordion-toggle {CustomEvent<{expanded: boolean, cardTitle: string}>} Fired when the accordion is expanded or collapsed
+ * @stable
  */
 @customElement('obc-accordion-card')
 export class ObcAccordionCard extends LitElement {
@@ -116,11 +117,13 @@ export class ObcAccordionCard extends LitElement {
 
   /**
    * Supporting description text shown under the title (only in large size and if `hasDescription` is true).
+   * @availableWhen size==large && hasDescription==true
    */
   @property({type: String}) description = '';
 
   /**
    * Optional status label displayed in the header (shown if `hasStatusLabel` is true).
+   * @availableWhen hasStatusLabel==true
    */
   @property({type: String}) statusLabel = '';
 
@@ -173,6 +176,7 @@ export class ObcAccordionCard extends LitElement {
   /**
    * Type of the alert frame overlay (used when `hasAlert` is true).
    * See `obc-alert-frame` for available types.
+   * @availableWhen hasAlert==true
    */
   @property({type: String}) alertFrameType: ObcAlertFrameType =
     ObcAlertFrameType.Regular;
@@ -180,6 +184,7 @@ export class ObcAccordionCard extends LitElement {
   /**
    * Thickness of the alert frame overlay (used when `hasAlert` is true).
    * See `obc-alert-frame` for available thickness values.
+   * @availableWhen hasAlert==true
    */
   @property({type: String}) alertFrameThickness: ObcAlertFrameThickness =
     ObcAlertFrameThickness.Small;
@@ -187,6 +192,7 @@ export class ObcAccordionCard extends LitElement {
   /**
    * Status of the alert frame overlay (used when `hasAlert` is true).
    * See `obc-alert-frame` for available statuses.
+   * @availableWhen hasAlert==true
    */
   @property({type: String}) alertFrameStatus: AlertType = AlertType.Alarm;
 

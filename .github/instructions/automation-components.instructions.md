@@ -12,7 +12,7 @@ Choose the correct base class when creating a new automation device:
 
 | Use case | Base class | State properties |
 |----------|-----------|------------------|
-| Motorized device (on + speed) | `ObcAbstractAutomationButtonMotorized` | `on`, `speedInPercent` (0–100) |
+| Motorized device (on + speed) | `ObcAbstractAutomationButtonMotorized` | `on`, `speed` + `speedUnit` (default `%`) + `speedMaxDigits` (default 3); `speedInPercent` is deprecated |
 | Binary on/off device | `ObcAbstractAutomationButtonSquared` | `on` |
 | Analog device with value | `ObcAbstractAutomationButton` + custom logic | `open`, `value` (0–100) |
 | Pure display (no button) | `LitElement` directly | N/A |

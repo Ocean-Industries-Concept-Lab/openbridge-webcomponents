@@ -100,6 +100,7 @@ export enum segmentPosition {
  * @slot - Default slot for button label text (required for accessibility)
  * @slot leading-icon - Slot for an icon to appear before the label (shown when `showLeadingIcon` is true)
  * @slot trailing-icon - Slot for an icon to appear after the label (shown when `showTrailingIcon` is true)
+ * @stable
  */
 @customElement('obc-button')
 export class ObcButton extends LitElement {

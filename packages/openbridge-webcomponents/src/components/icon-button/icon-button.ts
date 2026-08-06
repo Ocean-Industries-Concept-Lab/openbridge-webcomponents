@@ -83,6 +83,7 @@ export enum IconButtonVariant {
  * @slot - Icon slot (default): Place an icon such as <obi-search> here.
  * @slot label - Optional label shown below the icon when `hasLabel` is true.
  * @fires click - Fired when the button is clicked (if not disabled).
+ * @stable
  */
 @customElement('obc-icon-button')
 export class ObcIconButton extends LitElement {

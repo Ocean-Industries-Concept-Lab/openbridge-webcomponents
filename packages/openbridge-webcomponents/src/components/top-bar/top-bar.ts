@@ -149,6 +149,7 @@ export enum ObcTopBarMenuButtonIcon {
  * @fires emergency-brightness-start - Fired when the menu button is held for 500ms. This should increase the brightness of the screen slowly. Used when the screen is too dark.
  * @fires emergency-brightness-stop - Fired when the menu button is released.
  * @fires breadcrumb-click {BreadcrumbClickEvent} - Fired when a breadcrumb item is clicked.
+ * @stable
  */
 @customElement('obc-top-bar')
 export class ObcTopBar extends LitElement {
@@ -163,15 +164,18 @@ export class ObcTopBar extends LitElement {
    * Sets the current page or section name displayed in the top bar.
    * @type {string}
    * @default "Page"
+   * @availableWhen settings==false
    */
   @property({type: String}) pageName = 'Page';
 
+  /** @availableWhen settings==false && inactive==false */
   @property({type: String}) menuButtonIcon = ObcTopBarMenuButtonIcon.Menu;
 
   /**
    * Highlights the menu button as active.
    * @type {boolean}
    * @default false
+   * @availableWhen settings==false && inactive==false
    */
   @property({type: Boolean})
   menuButtonActivated = false;
@@ -180,6 +184,7 @@ export class ObcTopBar extends LitElement {
    * Highlights the dimming (day/night) button as active.
    * @type {boolean}
    * @default false
+   * @availableWhen showDimmingButton==true && inactive==false
    */
   @property({type: Boolean})
   dimmingButtonActivated = false;
@@ -188,6 +193,7 @@ export class ObcTopBar extends LitElement {
    * Highlights the apps button as active.
    * @type {boolean}
    * @default false
+   * @availableWhen showAppsButton==true && inactive==false
    */
   @property({type: Boolean})
   appsButtonActivated = false;
@@ -196,6 +202,7 @@ export class ObcTopBar extends LitElement {
    * Highlights the left more button as active.
    * @type {boolean}
    * @default false
+   * @availableWhen inactive==false
    */
   @property({type: Boolean})
   leftMoreButtonActivated = false;
@@ -204,6 +211,7 @@ export class ObcTopBar extends LitElement {
    * Highlights the user/profile button as active.
    * @type {boolean}
    * @default false
+   * @availableWhen showUserButton==true && inactive==false
    */
   @property({type: Boolean})
   userButtonActivated = false;
@@ -212,6 +220,7 @@ export class ObcTopBar extends LitElement {
    * Disables the user/profile button.
    * @type {boolean}
    * @default false
+   * @availableWhen showUserButton==true && inactive==false
    */
   @property({type: Boolean})
   userButtonDisabled = false;
@@ -227,6 +236,7 @@ export class ObcTopBar extends LitElement {
    * Expands the menu button for wide-rail layouts.
    * @type {boolean}
    * @default false
+   * @availableWhen settings==false && inactive==false
    */
   @property({type: Boolean}) wideMenuButton = false;
 
@@ -331,6 +341,7 @@ export class ObcTopBar extends LitElement {
    * Array of breadcrumb items for navigation (used in settings mode).
    * @type {BreadcrumbItem[]}
    * @default []
+   * @availableWhen settings==true
    */
   @property({type: Array})
   breadcrumbItems: BreadcrumbItem[] = [];
@@ -426,7 +437,6 @@ export class ObcTopBar extends LitElement {
           </obc-icon-button>
         </div>`
       );
-      leftGroup.push(html`<div class="divider"></div>`);
       leftGroup.push(
         html`<obc-icon-button
           variant="flat"

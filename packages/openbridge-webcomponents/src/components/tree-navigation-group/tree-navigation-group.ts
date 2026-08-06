@@ -7,8 +7,8 @@ import {
   TreeBranchType,
   TreeTerminalType,
 } from '../tree-navigation-item/tree-navigation-item.js';
+import type {TreeNavigationItemAlerts} from '../tree-navigation-item/tree-navigation-item.js';
 import '../tree-navigation-item/tree-navigation-item.js';
-import {BadgeType} from '../badge/badge.js';
 
 /**
  * `<obc-tree-navigation-group>` – An expandable parent row in a tree-navigation
@@ -16,7 +16,7 @@ import {BadgeType} from '../badge/badge.js';
  * child rows it discloses.
  *
  * A group renders an `<obc-tree-navigation-item>` header (carrying its own label,
- * icon, terminal type, and alert badge) followed by its slotted children. When
+ * icon, terminal type, and alert badges) followed by its slotted children. When
  * placed inside `<obc-tree-navigation>`, the container computes and assigns the
  * `branches` guide lines for every row automatically from each row's position —
  * a group does not need its depth configured by hand.
@@ -29,8 +29,7 @@ import {BadgeType} from '../badge/badge.js';
  * - **Disclosure:** A chevron in the header toggles the slotted children. The open
  *   state is held in `expanded` and reflected so the container and CSS can react.
  * - **Header presentation:** `label`, the `icon` slot, `terminalType`, and the
- *   alert badge (`hasAlertBadge`, `alertCount`, `alertType`) are forwarded to the
- *   header row.
+ *   `alerts` count map are forwarded to the header row.
  * - **Selection:** `checked` marks the group's header as the current item.
  * - **Automatic guides:** Inside `<obc-tree-navigation>`, the header's `branches`
  *   are assigned by the container; nested groups continue the guide columns down.
@@ -83,14 +82,13 @@ export class ObcTreeNavigationGroup extends LitElement {
    */
   @property({type: String}) terminalType: string = TreeTerminalType.regular;
 
-  /** Whether a trailing alert counter badge is shown on the header row. */
-  @property({type: Boolean}) hasAlertBadge = false;
-
-  /** The number shown in the header's alert badge when `hasAlertBadge` is true. */
-  @property({type: Number}) alertCount = 0;
-
-  /** The severity/type of the header's alert badge. One of the `obc-badge` types (default `alarm`). */
-  @property({type: String}) alertType: string = BadgeType.alarm;
+  /**
+   * Per-severity alert counts shown as trailing badge(s) on the header row.
+   * Forwarded verbatim to the header `<obc-tree-navigation-item>` — typically a
+   * group sets `{combine: true, ...}` so its header shows one badge totalling
+   * the alerts of the rows beneath it. See {@link TreeNavigationItemAlerts}.
+   */
+  @property({type: Object}) alerts?: TreeNavigationItemAlerts;
 
   /**
    * The URL to navigate to when the header is activated. If set, the header row
@@ -131,9 +129,7 @@ export class ObcTreeNavigationGroup extends LitElement {
         ?disabled=${this.disabled}
         .hasLeadingIcon=${this.hasIcon}
         .terminalType=${this.terminalType}
-        ?hasAlertBadge=${this.hasAlertBadge}
-        .alertCount=${this.alertCount}
-        .alertType=${this.alertType}
+        .alerts=${this.expanded ? undefined : this.alerts}
         .href=${this.href}
         @expand-toggle=${this.onHeaderToggle}
       >

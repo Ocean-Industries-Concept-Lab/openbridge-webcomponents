@@ -59,6 +59,7 @@ export type IntegrationDropdownOption = {
  *
  * @slot fleet - Fleet button displayed when `hasFleet` is true.
  * @fires change {ObcIntegrationDropdownButtonChangeEvent} - Fires when the value of the select changes
+ * @experimental
  */
 @customElement('obc-integration-dropdown-button')
 export class ObcIntegrationDropdownButton extends LitElement {

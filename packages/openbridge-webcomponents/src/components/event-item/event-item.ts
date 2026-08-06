@@ -77,17 +77,21 @@ export interface DateItemEvent {
  *
  * @fires {CustomEvent<{title: string, startTime: string, endTime: string}>} event-click - Fired when the event item is clicked. Contains event title, start time, and end time.
  * @slot - No slots. All content is provided via properties.
+ * @beta
  */
 @customElement('obc-event-item')
 export class ObcEventItem extends LitElement {
   @property({type: String}) override title = '';
+  /** @availableWhen eventItemType==DoubleLine */
   @property({type: String}) description = '';
   @property({type: String}) startTime = '';
   @property({type: String}) endTime = '';
   @property({type: String}) eventItemType = EventItemType.SingleLine;
   @property({type: Boolean}) hasArrow = false;
   @property({type: Boolean}) hasTime = false;
+  /** @availableWhen hasTime==true */
   @property({type: Boolean}) hasEndTime = false;
+  /** @availableWhen eventItemType==Aggregated */
   @property({type: Number}) aggregatedCount = 0;
   @property({type: Boolean}) colorCoded = false;
   @property({type: Boolean}) disabled = false;

@@ -22,6 +22,45 @@ export enum TickmarkStyle {
   enhanced = 'enhanced',
 }
 
+/**
+ * Secondary tickmark ladder spanning a watch arc.
+ *
+ * Emits a `secondary` mark every `interval` degrees strictly inside the arc,
+ * skipping the arc centre — which carries its own `main` mark — and the arc
+ * ends, where the band's rounded end cap already reads as a boundary. Angles
+ * are returned signed relative to `centerAngle`, matching the convention the
+ * inclinometers already use for needles and bar areas.
+ *
+ * @param centerAngle Watch angle the arc is centred on.
+ * @param halfExtent Half-extent of the arc in degrees; the arc spans `centerAngle ± halfExtent`.
+ * @param interval Spacing between ladder marks in degrees.
+ */
+export function arcTickmarks(
+  centerAngle: number,
+  halfExtent: number,
+  interval = 5
+): Tickmark[] {
+  if (
+    !Number.isFinite(centerAngle) ||
+    !Number.isFinite(halfExtent) ||
+    !Number.isFinite(interval) ||
+    interval <= 0
+  ) {
+    return [];
+  }
+  const marks: Tickmark[] = [];
+  const epsilon = 1e-6;
+  for (
+    let offset = interval;
+    offset < halfExtent - epsilon;
+    offset += interval
+  ) {
+    marks.push({angle: centerAngle - offset, type: TickmarkType.secondary});
+    marks.push({angle: centerAngle + offset, type: TickmarkType.secondary});
+  }
+  return marks;
+}
+
 export function tickmarkColor(
   style: TickmarkStyle,
   tickmarkType?: TickmarkType
@@ -64,14 +103,15 @@ export function tickmark(
     endLabelsMaxMin?: boolean;
   }
 ): SVGTemplateResult | SVGTemplateResult[] {
-  // check if scale is not infinite
-  if (scale === Infinity || scale < 0) {
-    throw new Error('Tick scale is not valid');
-  }
+  // Before layout settles the caller can pass a scale of 0 (or a non-finite
+  // value). Label offsets are computed as `px / scale`, so a 0 scale would emit
+  // ±Infinity coordinates that the browser rejects. Fall back to a 1:1 scale
+  // until a real one is available (issue #1032).
+  const safeScale = Number.isFinite(scale) && scale > 0 ? scale : 1;
   const rOff = radiusOffset;
   let innerRadius: number;
   let outerRadius: number;
-  textRadius = textRadius + (3 / scale + 3) * (inside ? -1 : 1);
+  textRadius = textRadius + (3 / safeScale + 3) * (inside ? -1 : 1);
   const rad = (angle * Math.PI) / 180;
   if (size === TickmarkType.primary) {
     innerRadius = 328 / 2 + rOff;
@@ -90,7 +130,13 @@ export function tickmark(
     outerRadius = 336 / 2 + rOff;
   } else {
     return [
-      textSvg(text ?? '', {angle, inside, scale, textRadius, endLabelsMaxMin}),
+      textSvg(text ?? '', {
+        angle,
+        inside,
+        scale: safeScale,
+        textRadius,
+        endLabelsMaxMin,
+      }),
     ];
   }
 
@@ -121,11 +167,17 @@ export function tickmark(
     if (rotation === undefined) {
       return [
         tick,
-        textSvg(text, {angle, inside, scale, textRadius, endLabelsMaxMin}),
+        textSvg(text, {
+          angle,
+          inside,
+          scale: safeScale,
+          textRadius,
+          endLabelsMaxMin,
+        }),
       ];
     } else {
       const newRadius =
-        textRadius + ((4 / scale + 5) * (inside ? -1 : 1) * maxDigits) / 2;
+        textRadius + ((4 / safeScale + 5) * (inside ? -1 : 1) * maxDigits) / 2;
       const textX = Math.sin(rad) * newRadius;
       const textY = -Math.cos(rad) * newRadius;
       return [

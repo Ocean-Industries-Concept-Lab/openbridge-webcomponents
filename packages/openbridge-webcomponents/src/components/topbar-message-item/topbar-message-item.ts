@@ -130,6 +130,7 @@ export enum ObcTopbarMessageItemSize {
  * @slot empty - Content for the empty/inactive state (shown if type is `inactive` or `empty` is true).
  * @fires message-click {CustomEvent<void>} Fired when the main message area is clicked.
  * @fires action-click {CustomEvent<void>} Fired when the action button (text or icon) is clicked.
+ * @stable
  */
 @customElement('obc-topbar-message-item')
 export class ObcTopbarMessageItem extends LitElement {
@@ -159,26 +160,31 @@ export class ObcTopbarMessageItem extends LitElement {
 
   /**
    * Whether to show the title slot.
+   * @availableWhen type!=Inactive
    */
   @property({type: Boolean, attribute: false}) showTitle: boolean = true;
 
   /**
    * Whether to show the description slot.
+   * @availableWhen type!=Inactive
    */
   @property({type: Boolean, attribute: false}) showDescription: boolean = true;
 
   /**
    * Whether to show the primary timestamp slot.
+   * @availableWhen type!=Inactive
    */
   @property({type: Boolean, attribute: false}) showTimestamp: boolean = true;
 
   /**
    * Whether to display the secondary timestamp slot.
+   * @availableWhen type!=Inactive
    */
   @property({type: Boolean}) hasTimestamp2 = false;
 
   /**
    * Whether to display the secondary icon slot.
+   * @availableWhen type!=Inactive
    */
   @property({type: Boolean}) hasSecondaryIcon = false;
 

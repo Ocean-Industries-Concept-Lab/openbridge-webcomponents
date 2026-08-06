@@ -242,18 +242,23 @@ function cssPart(value: ObcTableCellData, subpart: string): string | undefined {
  * @fires cell-checkbox-change {ObcTableCellCheckboxChangeEvent} - Fired when a cell checkbox is changed.
  * @fires cell-tag-click {ObcTableCellTagClickEvent} - Fired when a tag inside a cell is clicked.
  * @fires selection-change {ObcTableSelectionChangeEvent} - Fired when row selection changes.
+ * @beta
  */
 @customElement('obc-table')
 export class ObcTable extends LitElement {
   @property({type: Array}) data: ObcTableRow[] = [];
   @property({type: Array}) columns: ObcTableColumn[] = [];
   @property({type: Boolean}) rowDivider = false;
+  /** @availableWhen showHeader==true */
   @property({type: Boolean}) narrowHeader = false;
   @property({type: Boolean, attribute: false}) showHeader = true;
   @property({type: Boolean}) striped = false;
   @property({type: Boolean}) selectable = false;
+  /** @availableWhen selectable==true */
   @property({type: Array}) selectedRowIds?: string[];
+  /** @availableWhen selectable==true && selectedRowIds==undefined */
   @property({type: Array}) defaultSelectedRowIds?: string[];
+  /** @availableWhen selectable==true && showHeader==true */
   @property({type: String}) selectAllAriaLabel = 'Select all rows';
 
   @state()

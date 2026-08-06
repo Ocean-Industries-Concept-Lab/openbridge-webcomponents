@@ -63,6 +63,7 @@ enum ObcPoiSelectionCornerPosition {
  *   box-height="12"
  * ></obc-poi-selection-frame>
  * ```
+ * @experimental
  */
 @customElement('obc-poi-selection-frame')
 export class ObcPoiSelectionFrame extends LitElement {

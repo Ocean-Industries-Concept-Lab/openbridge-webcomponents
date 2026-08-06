@@ -3,7 +3,7 @@ import {property} from 'lit/decorators.js';
 import {customElement} from '../decorator.js';
 
 /**
- * `<obi-alerts-critical-twotone>` – Two-tone bell icon for the ISA "critical" alert severity.
+ * `<obi-alerts-critical-twotone>` – Two-tone bell icon for the level "critical" alert severity.
  *
  * Renders the alert (bell) glyph as a layered two-tone shape so the silhouette and
  * fill can be tinted independently. Used wherever a critical-severity alert needs an

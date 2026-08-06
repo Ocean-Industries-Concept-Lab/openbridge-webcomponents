@@ -13,6 +13,7 @@ import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
 import {
   formatNumberForDisplay,
+  isAllowedIntermediateInput,
   NumberInputFormatOptions,
   parseNumberInput,
   removeGroupingFromDisplay,
@@ -51,6 +52,7 @@ const baseFontSize = 16;
  * @slot helper-icon - Icon displayed before helper or error text (when `hasHelperIcon` is true)
  * @fires input {CustomEvent<{value: number}>} When the numeric value changes during editing
  * @fires change {CustomEvent<{value: number}>} When the value is committed on blur
+ * @stable
  */
 @customElement('obc-number-input-field')
 export class ObcNumberInputField extends LitElement {
@@ -63,6 +65,7 @@ export class ObcNumberInputField extends LitElement {
   @property({type: Boolean, reflect: true}) disabled = false;
   @property({type: Boolean, reflect: true}) readonly = false;
   @property({type: Boolean, reflect: true}) error = false;
+  /** @availableWhen error==true */
   @property({type: String}) errorText = '';
   /** If true, the input field will not update its value on focus */
   @property({type: Boolean}) rejectUpdatesOnFocus = false;
@@ -91,11 +94,15 @@ export class ObcNumberInputField extends LitElement {
 
   @property({type: String}) label = '';
   @property({type: Boolean}) required = false;
+  /** @availableWhen label!='' */
   @property({type: Boolean}) hasLabelIcon = false;
+  /** @availableWhen label!='' */
   @property({type: String}) labelPlacement: ObcNumberInputFieldPlacement =
     ObcNumberInputFieldPlacement.Left;
 
+  /** @availableWhen helperText!='' || (error==true && errorText!='') */
   @property({type: Boolean}) hasHelperIcon = false;
+  /** @availableWhen helperText!='' || (error==true && errorText!='') */
   @property({type: String}) helperPlacement: ObcNumberInputFieldPlacement =
     ObcNumberInputFieldPlacement.Left;
 
@@ -112,6 +119,14 @@ export class ObcNumberInputField extends LitElement {
   @property({type: String}) groupSeparator?: string;
   @property({type: Number}) minFractionDigits = 0;
   @property({type: Number}) maxFractionDigits?: number | undefined;
+
+  /**
+   * Optional regex pattern. When set, any keystroke or paste whose resulting
+   * value does not match this pattern is blocked at the `beforeinput` stage.
+   * When unset, a permissive numeric filter (digits, sign, active separators,
+   * whitespace) is applied instead.
+   */
+  @property({type: String}) validationPattern = '';
 
   @state() private hasFocus = false;
   @state() private displayText = '';
@@ -148,6 +163,43 @@ export class ObcNumberInputField extends LitElement {
     this.previousDisplayText = raw;
     this.updateCenterAlignedInputWidth(raw);
     this.dispatchInput();
+  }
+
+  private isProjectedValueAllowed(projected: string): boolean {
+    if (this.validationPattern) {
+      let regex: RegExp;
+      try {
+        // Anchor the consumer pattern so it must match the whole projected
+        // value rather than any substring (e.g. `[0-9]` must not pass `a1`).
+        regex = new RegExp(`^(?:${this.validationPattern})$`);
+      } catch {
+        // Invalid pattern: fall back to the numeric filter instead of
+        // allowing arbitrary input.
+        return isAllowedIntermediateInput(projected, this.getFormatOptions());
+      }
+      return regex.test(projected);
+    }
+    return isAllowedIntermediateInput(projected, this.getFormatOptions());
+  }
+
+  private onBeforeInput(e: InputEvent) {
+    if (this.disabled || this.readonly) return;
+    const input = e.target as HTMLInputElement;
+
+    const incoming = e.data ?? e.dataTransfer?.getData('text/plain') ?? null;
+    // Deletions, history, and formatting (`insertLineBreak`, `historyUndo`,
+    // `deleteContentBackward`, etc.) have `data === null` and no transferable
+    // text — always allow them.
+    if (incoming === null) return;
+
+    const start = input.selectionStart ?? input.value.length;
+    const end = input.selectionEnd ?? input.value.length;
+    const projected =
+      input.value.slice(0, start) + incoming + input.value.slice(end);
+
+    if (!this.isProjectedValueAllowed(projected)) {
+      e.preventDefault();
+    }
   }
 
   private onFocus() {
@@ -444,6 +496,7 @@ export class ObcNumberInputField extends LitElement {
                   hasHelperOrError ? 'helper-text' : undefined
                 )}
                 autocomplete="off"
+                @beforeinput=${this.onBeforeInput}
                 @input=${this.onInput}
               />
               ${unitInside

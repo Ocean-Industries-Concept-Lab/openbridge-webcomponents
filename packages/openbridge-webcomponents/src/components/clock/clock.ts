@@ -44,6 +44,7 @@ import {classMap} from 'lit/directives/class-map.js';
  * ---
  *
  * @slot - (No named slots) – All content is rendered by the component; no slots are used.
+ * @stable
  */
 @customElement('obc-clock')
 export class ObcClock extends LitElement {
@@ -72,8 +73,11 @@ export class ObcClock extends LitElement {
   @property({type: Number}) timeZoneOffsetHours = 0;
 
   @property({type: Boolean, attribute: false}) isClickable: boolean = true;
+  /** @availableWhen showDate==true */
   @property({type: Boolean}) showYear = false;
+  /** @availableWhen showDate==true */
   @property({type: Boolean}) showWeekday = false;
+  /** @availableWhen showDate==true */
   @property({type: String}) locale = 'en-GB';
   @property({type: Boolean}) hour12 = false;
   @property({type: Boolean}) selected = false;

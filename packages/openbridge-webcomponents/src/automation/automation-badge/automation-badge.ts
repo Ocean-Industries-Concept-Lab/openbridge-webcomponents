@@ -32,24 +32,29 @@ export enum ObcAutomationBadgeType {
   Caution = 'caution',
   Warning = 'warning',
   Alarm = 'alarm',
-  IsaCritical = 'isa-critical',
-  IsaHigh = 'isa-high',
-  IsaMedium = 'isa-medium',
-  IsaLow = 'isa-low',
-  IsaDiagnostic = 'isa-diagnostic',
+  LevelCritical = 'level-critical',
+  LevelHigh = 'level-high',
+  LevelMedium = 'level-medium',
+  LevelLow = 'level-low',
+  LevelDiagnostic = 'level-diagnostic',
 }
 
 const ALERT_BADGE_TYPES: ObcAutomationBadgeType[] = [
   ObcAutomationBadgeType.Caution,
   ObcAutomationBadgeType.Warning,
   ObcAutomationBadgeType.Alarm,
-  ObcAutomationBadgeType.IsaCritical,
-  ObcAutomationBadgeType.IsaHigh,
-  ObcAutomationBadgeType.IsaMedium,
-  ObcAutomationBadgeType.IsaLow,
-  ObcAutomationBadgeType.IsaDiagnostic,
+  ObcAutomationBadgeType.LevelCritical,
+  ObcAutomationBadgeType.LevelHigh,
+  ObcAutomationBadgeType.LevelMedium,
+  ObcAutomationBadgeType.LevelLow,
+  ObcAutomationBadgeType.LevelDiagnostic,
 ];
 
+/**
+ * @slot icon-silhouette - Custom silhouette/outline icon, rendered behind the default slot content when no built-in badge type matches.
+ * @slot - Default slot for custom badge content, rendered when no built-in badge type matches.
+ * @stable
+ */
 @customElement('obc-automation-badge')
 export class ObcAutomationBadge extends LitElement {
   @property({type: String}) mode: ObcAutomationBadgeMode =
@@ -69,7 +74,7 @@ export class ObcAutomationBadge extends LitElement {
     return !!this.type && types.includes(this.type);
   }
 
-  private renderIsaCriticalIcon(flat: boolean) {
+  private renderLevelCriticalIcon(flat: boolean) {
     if (flat) {
       return html`<svg
         width="16"
@@ -118,7 +123,7 @@ export class ObcAutomationBadge extends LitElement {
     </svg>`;
   }
 
-  private renderIsaDiagnosticIcon() {
+  private renderLevelDiagnosticIcon() {
     return html`<svg
       width="16"
       height="16"
@@ -166,16 +171,16 @@ export class ObcAutomationBadge extends LitElement {
           class="icon siluette"
         ></obi-alert-off-filled
         ><obi-alert-off-filled class="icon"></obi-alert-off-filled>`;
-    } else if (this.type === ObcAutomationBadgeType.IsaCritical) {
-      return this.renderIsaCriticalIcon(
+    } else if (this.type === ObcAutomationBadgeType.LevelCritical) {
+      return this.renderLevelCriticalIcon(
         this.effectiveMode === ObcAutomationBadgeMode.Flat
       );
-    } else if (this.type === ObcAutomationBadgeType.IsaDiagnostic) {
-      return this.renderIsaDiagnosticIcon();
+    } else if (this.type === ObcAutomationBadgeType.LevelDiagnostic) {
+      return this.renderLevelDiagnosticIcon();
     } else if (
       this.isAlertType(
         ObcAutomationBadgeType.Caution,
-        ObcAutomationBadgeType.IsaLow
+        ObcAutomationBadgeType.LevelLow
       ) &&
       this.effectiveMode === ObcAutomationBadgeMode.Flat
     ) {
@@ -227,7 +232,7 @@ export class ObcAutomationBadge extends LitElement {
     } else if (
       this.isAlertType(
         ObcAutomationBadgeType.Caution,
-        ObcAutomationBadgeType.IsaLow
+        ObcAutomationBadgeType.LevelLow
       )
     ) {
       return html`<svg
@@ -253,7 +258,7 @@ export class ObcAutomationBadge extends LitElement {
     } else if (
       this.isAlertType(
         ObcAutomationBadgeType.Warning,
-        ObcAutomationBadgeType.IsaMedium
+        ObcAutomationBadgeType.LevelMedium
       ) &&
       this.effectiveMode === ObcAutomationBadgeMode.Flat
     ) {
@@ -315,7 +320,7 @@ export class ObcAutomationBadge extends LitElement {
     } else if (
       this.isAlertType(
         ObcAutomationBadgeType.Warning,
-        ObcAutomationBadgeType.IsaMedium
+        ObcAutomationBadgeType.LevelMedium
       )
     ) {
       return html`<svg
@@ -338,7 +343,7 @@ export class ObcAutomationBadge extends LitElement {
     } else if (
       this.isAlertType(
         ObcAutomationBadgeType.Alarm,
-        ObcAutomationBadgeType.IsaHigh
+        ObcAutomationBadgeType.LevelHigh
       ) &&
       this.effectiveMode === ObcAutomationBadgeMode.Flat
     ) {
@@ -390,7 +395,7 @@ export class ObcAutomationBadge extends LitElement {
     } else if (
       this.isAlertType(
         ObcAutomationBadgeType.Alarm,
-        ObcAutomationBadgeType.IsaHigh
+        ObcAutomationBadgeType.LevelHigh
       )
     ) {
       return html`

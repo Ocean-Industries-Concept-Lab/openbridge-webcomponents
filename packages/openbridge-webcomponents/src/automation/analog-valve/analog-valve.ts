@@ -11,11 +11,15 @@ export enum AnalogValveVariant {
   flat = 'flat',
 }
 
+/**
+ * @stable
+ */
 @customElement('obc-analog-valve')
 export class ObcAnalogValve extends ObcAbstractAutomationButton {
   @property({type: Boolean}) open: boolean = false;
   @property({type: Number}) value: number = 0;
   @property({type: Boolean}) vertical: boolean = false;
+  /** @availableWhen open==true */
   @property({type: String}) labelDirection: AutomationButtonLabelDirection =
     AutomationButtonLabelDirection.right;
   @property({type: String}) variant: AnalogValveVariant =
@@ -26,7 +30,10 @@ export class ObcAnalogValve extends ObcAbstractAutomationButton {
       return [
         {
           type: 'value',
-          icon: 'arrow',
+          icon:
+            this.labelDirection === AutomationButtonLabelDirection.none
+              ? 'none'
+              : 'arrow',
           value: this.value,
           nDigits: 3,
           unit: '%',

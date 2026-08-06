@@ -12,6 +12,9 @@ export enum AutomationReadoutPosition {
   Bottom = 'bottom',
 }
 
+/**
+ * @experimental
+ */
 @customElement('obc-automation-readout')
 export class ObcAutomationReadout extends LitElement {
   @property({type: Number}) value = 0;

@@ -36,6 +36,8 @@ const meta: Meta<ObcMessageMenuItem> = {
     time: {control: 'text'},
     primaryActionLabel: {control: 'text'},
     secondaryActionLabel: {control: 'text'},
+    enablePrimaryAction: {control: 'boolean'},
+    enableSecondaryAction: {control: 'boolean'},
     // Icon slots
     hasPrimaryIcon: {control: 'boolean'},
     hasSecondaryIcon: {control: 'boolean'},
@@ -57,6 +59,8 @@ const meta: Meta<ObcMessageMenuItem> = {
     time: '',
     primaryActionLabel: '',
     secondaryActionLabel: '',
+    enablePrimaryAction: true,
+    enableSecondaryAction: true,
     hasPrimaryIcon: false,
     hasSecondaryIcon: false,
     hasTrailingIcon: false,
@@ -75,6 +79,8 @@ const meta: Meta<ObcMessageMenuItem> = {
         .time=${args.time}
         .primaryActionLabel=${args.primaryActionLabel}
         .secondaryActionLabel=${args.secondaryActionLabel}
+        .enablePrimaryAction=${args.enablePrimaryAction}
+        .enableSecondaryAction=${args.enableSecondaryAction}
         .hasPrimaryIcon=${args.hasPrimaryIcon}
         .hasSecondaryIcon=${args.hasSecondaryIcon}
         .hasTrailingIcon=${args.hasTrailingIcon}
@@ -256,6 +262,18 @@ export const HorizontalWithTwoActions: Story = {
     time: '09:12:34',
     primaryActionLabel: 'Action',
     secondaryActionLabel: 'Action 2',
+  },
+};
+
+export const HorizontalWithOneDisabledAction: Story = {
+  args: {
+    size: ObcMessageMenuItemSize.DoubleLine,
+    hasPrimaryIcon: true,
+    day: 'Yesterday',
+    time: '09:12:34',
+    primaryActionLabel: 'Action',
+    secondaryActionLabel: 'Action 2',
+    enableSecondaryAction: false,
   },
 };
 

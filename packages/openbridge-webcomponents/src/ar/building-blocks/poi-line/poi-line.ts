@@ -49,6 +49,7 @@ import {customElement} from '../../../decorator.js';
  *   .hasPointer=${true}
  * ></obc-poi-line>
  * ```
+ * @experimental
  */
 @customElement('obc-poi-line')
 export class ObcPoiLine extends LitElement {

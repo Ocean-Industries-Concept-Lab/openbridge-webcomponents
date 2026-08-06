@@ -61,6 +61,9 @@ export {
  * Set `priority` to `Priority.enhanced` to use the blue/enhanced color palette
  * for bar fill and setpoint instead of the default gray/regular palette
  * (default: `Priority.regular`).
+ *
+ * @fires scale-dimensions-changed {CustomEvent} Fired when the scale's computed layout thickness changes; a parent chart listens for this to reserve space for the scale. Bubbles and is composed.
+ * @beta
  */
 @customElement('obc-bar-vertical')
 export class ObcBarVertical extends SetpointMixin(LitElement, {
@@ -98,6 +101,7 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
    * At this height, the scale renders at native 1:1 (matches Figma design).
    * Above this height, the scale grows proportionally; below, it shrinks.
    * @default 384
+   * @availableWhen fixedAspectRatio==true
    */
   @property({type: Number})
   scaleReferenceSize = 384;
@@ -150,6 +154,7 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
    * Bar container background style.
    * When undefined, defaults based on scaleBackground.
    * Set explicitly to override: 'primary' (lighter) or 'secondary' (gray).
+   * @availableWhen hasBar==true
    */
   @property({type: String})
   barContainerStyle?: BarContainerStyle = undefined;
@@ -185,7 +190,10 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
   @property({type: String}) scaleType: ScaleType = ScaleType.regular;
   /** Frame style: regular (4px gap for all), flat (main tickmarks touch edge), framed, or instrument */
   @property({type: String}) frameStyle: FrameStyle = FrameStyle.regular;
-  /** Border radius position based on component layout */
+  /**
+   * Border radius position based on component layout
+   * @availableWhen hasBar==true
+   */
   @property({type: String})
   borderRadiusPosition?: BorderRadiusPosition = undefined;
 
@@ -202,6 +210,7 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
    * Explicit border radius value in pixels.
    * When instrumentMode=true, this value is used directly (defaults to 8px for regular, 4px for condensed).
    * When instrumentMode=false, this is ignored and border radius is read from CSS variable.
+   * @availableWhen instrumentMode==true
    */
   @property({type: Number})
   borderRadius?: number = undefined;
@@ -224,11 +233,20 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
   // Values
   /** Color priority: enhanced uses blue instrument colors for bar fill and setpoint */
   @property({type: String}) priority: Priority = Priority.regular;
-  /** Fill visualization mode: fill or tint */
+  /**
+   * Fill visualization mode: fill or tint
+   * @availableWhen hasBar==true && value!=undefined
+   */
   @property({type: String}) fillMode: FillMode = FillMode.fill;
-  /** Minimum fill value for tint mode (defaults to 0) */
+  /**
+   * Minimum fill value for tint mode (defaults to 0)
+   * @availableWhen hasBar==true && value!=undefined
+   */
   @property({type: Number}) fillMin?: number = undefined;
-  /** Maximum fill value for tint mode (defaults to value) */
+  /**
+   * Maximum fill value for tint mode (defaults to value)
+   * @availableWhen hasBar==true && value!=undefined
+   */
   @property({type: Number}) fillMax?: number = undefined;
   /** Current value (bar fill level) */
   @property({type: Number}) value?: number = undefined;
@@ -237,7 +255,10 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
   @property({type: String}) state: InstrumentState = InstrumentState.active;
 
   // Advice
-  /** Advice overlay positioning: center (in bar), inner (covers minor ticks), outer (no overlap) */
+  /**
+   * Advice overlay positioning: center (in bar), inner (covers minor ticks), outer (no overlap)
+   * @availableWhen hasBar==true
+   */
   @property({type: String}) advicePosition: AdvicePosition =
     AdvicePosition.inner;
   /**
@@ -396,7 +417,8 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
       changed.has('borderRadiusPosition') ||
       changed.has('borderRadius') ||
       changed.has('advices') ||
-      changed.has('advicePosition');
+      changed.has('advicePosition') ||
+      this.setpointPresenceChanged(changed);
 
     if (!this.fixedAspectRatio || layoutChanged) {
       this.reportDimensions();
@@ -436,6 +458,10 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
       scaleType: this.scaleType,
       advicePosition: this.advicePosition,
       hasAdvice: !!this.advices && this.advices.length > 0,
+      hasSetpoint:
+        this.setpoint !== undefined ||
+        this.newSetpoint !== undefined ||
+        this.departingNewSetpoint !== undefined,
     });
 
     // When fixedAspectRatio=true, the SVG scales proportionally via preserveAspectRatio="meet".

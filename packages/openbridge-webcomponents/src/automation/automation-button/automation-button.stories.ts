@@ -51,6 +51,9 @@ const meta: Meta<typeof ObcAutomationButton> = {
     alert: {
       control: {type: 'boolean'},
     },
+    activated: {
+      control: {type: 'boolean'},
+    },
     positioning: {
       options: Object.values(AutomationButtonPositioning),
       control: {type: 'select'},
@@ -135,6 +138,67 @@ export const ValveFlat: Story = {
   ...ValveOpen,
   args: {
     variant: AutomationButtonVariant.flat,
+  },
+};
+
+export const ValveActivated: Story = {
+  args: {
+    activated: true,
+  },
+  render(args) {
+    const readouts: AutomationButtonReadoutStack[] = [];
+    const tag: string | null = '#0000';
+    return html`<obc-automation-button
+      state="open"
+      .showReadoutStack=${args.showReadoutStack}
+      .readouts=${readouts}
+      .tag=${tag}
+      .variant=${args.variant}
+      .positioning=${args.positioning}
+      ?activated=${args.activated}
+      ?alert=${args.alert}
+      ?progress=${args.progress}
+      .progressMode=${args.progressMode}
+      .progressValue=${args.progressValue}
+    >
+      <obi-twoway-digital-open
+        usecsscolor
+        slot="icon"
+        style="display: block; transform: rotate(90deg); line-height: 0;"
+      ></obi-twoway-digital-open>
+    </obc-automation-button>`;
+  },
+};
+
+export const SwitchActivated: Story = {
+  args: {
+    activated: true,
+    variant: AutomationButtonVariant.square,
+  },
+  render(args) {
+    const readouts: AutomationButtonReadoutStack[] = [
+      {type: 'state-on', value: 'On', hasIcon: true},
+    ];
+    const tag: string | null = '#0000';
+    return html`<obc-automation-button
+      state="open"
+      .showReadoutStack=${args.showReadoutStack}
+      .readouts=${readouts}
+      .tag=${tag}
+      .variant=${args.variant}
+      .positioning=${args.positioning}
+      ?activated=${args.activated}
+      ?alert=${args.alert}
+      ?progress=${args.progress}
+      .progressMode=${args.progressMode}
+      .progressValue=${args.progressValue}
+    >
+      <obi-switch-horizontal-on
+        usecsscolor
+        slot="icon"
+        style="display: block; line-height: 0;"
+      ></obi-switch-horizontal-on>
+    </obc-automation-button>`;
   },
 };
 

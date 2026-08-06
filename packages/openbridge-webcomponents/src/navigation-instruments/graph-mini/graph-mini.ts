@@ -8,10 +8,11 @@ import {customElement} from '../../decorator.js';
  * @element obc-graph-mini
  * @description A mini graph component
  *
- * @property {Array} data - The data to display in the graph, first array is the x values, second array is the y values
+ * @beta
  */
 @customElement('obc-graph-mini')
 export class ObcGraphMini extends LitElement {
+  /** The data to display in the graph, first array is the x values, second array is the y values */
   @property({type: Array})
   data: [number[], number[]] = [[], []];
 
@@ -36,8 +37,8 @@ export class ObcGraphMini extends LitElement {
 
   override firstUpdated() {
     const opts = {
-      width: 48,
-      height: 48,
+      width: 32,
+      height: 32,
       scales: {
         x: {time: false, show: false},
         y: {
@@ -61,7 +62,7 @@ export class ObcGraphMini extends LitElement {
         {},
         {
           stroke: this.getCssColor('--element-neutral-color'),
-          width: 2,
+          width: 1,
           points: {show: false},
         },
       ],
@@ -83,7 +84,7 @@ export class ObcGraphMini extends LitElement {
     }
     const stroke = this.getCssColor('--element-neutral-color');
     // @ts-expect-error - stroke is not a property of the Series interface
-    this.uplot.setSeries(1, {stroke: stroke, width: 2, points: {show: false}});
+    this.uplot.setSeries(1, {stroke: stroke, width: 1, points: {show: false}});
   }
 
   private updateY() {
@@ -107,7 +108,9 @@ export class ObcGraphMini extends LitElement {
   override render() {
     return html`
       <div class="chart-container">
-        <div id="chart"><div id="dot" style="bottom: ${this.y}px; "></div></div>
+        <div id="chart">
+          <div id="dot" style="transform: translateY(${-this.y}px);"></div>
+        </div>
       </div>
     `;
   }

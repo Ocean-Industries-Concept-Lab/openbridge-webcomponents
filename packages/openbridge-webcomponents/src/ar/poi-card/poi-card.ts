@@ -77,6 +77,7 @@ export enum PointerDirection {
  * @slot leading-icon - Optional icon used by the regular header variant.
  * @slot poi-icon - Optional icon used by the detailed header variant.
  * @fires card-click {CustomEvent<PoiCardClickDetail>} Fired when the card is activated in interactive mode.
+ * @experimental
  */
 @customElement('obc-poi-card')
 export class ObcPoiCard extends LitElement {
@@ -88,32 +89,52 @@ export class ObcPoiCard extends LitElement {
 
   @property({type: Boolean, attribute: false}) showHeader = true;
 
+  /** @availableWhen showHeader==true */
   @property({type: String}) headerVariant: ObcPoiCardHeaderVariant =
     ObcPoiCardHeaderVariant.Condensed;
 
   @property({type: String}) index = '1';
 
+  /** @availableWhen showHeader==true && headerVariant!=tag */
   @property({type: String}) cardTitle = '';
 
-  /** Passed to header (detailed variant only). */
+  /**
+   * Passed to header (detailed variant only).
+   * @availableWhen showHeader==true && headerVariant==detailed
+   */
   @property({type: String}) description = '';
 
-  /** Source badge text (e.g., "AIS", "RADAR"). Hidden when empty. */
+  /**
+   * Source badge text (e.g., "AIS", "RADAR"). Hidden when empty.
+   * @availableWhen showHeader==true && headerVariant!=tag
+   */
   @property({type: String}) source = '';
 
-  /** Passed to header (detailed variant only). */
+  /**
+   * Passed to header (detailed variant only).
+   * @availableWhen showHeader==true && headerVariant==detailed
+   */
   @property({type: String}) timestamp = '';
 
-  /** Enables the leading-icon slot (regular header variant only). */
+  /**
+   * Enables the leading-icon slot (regular header variant only).
+   * @availableWhen showHeader==true && headerVariant==regular
+   */
   @property({type: Boolean}) hasLeadingIcon = false;
 
-  /** Enables the close button (detailed header variant only). */
+  /**
+   * Enables the close button (detailed header variant only).
+   * @availableWhen showHeader==true && headerVariant==detailed
+   */
   @property({type: Boolean}) hasCloseButton = false;
 
   /** Enables click events, keyboard focus, and alert border support. */
   @property({type: Boolean}) interactive = false;
 
-  /** Shows alert/caution border rings. Requires `interactive` to be true. */
+  /**
+   * Shows alert/caution border rings. Requires `interactive` to be true.
+   * @availableWhen interactive==true
+   */
   @property({type: Boolean}) hasAlert = false;
 
   private handleCardClick() {

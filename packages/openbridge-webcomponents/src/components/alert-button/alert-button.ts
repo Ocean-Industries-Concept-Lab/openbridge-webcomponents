@@ -111,6 +111,7 @@ export enum ObcAlertButtonType {
  * @slot - No content slots. All content is provided via properties.
  * @fires click-alert {CustomEvent<void>} Fired when the main alert button is clicked.
  * @fires click-silence {CustomEvent<void>} Fired when the silence button is clicked.
+ * @stable
  */
 @customElement('obc-alert-button')
 export class ObcAlertButton extends LitElement {
@@ -153,6 +154,8 @@ export class ObcAlertButton extends LitElement {
 
   /**
    * Disables the silence button when true.
+   *
+   * @availableWhen showSilenceButton==true
    */
   @property({type: Boolean}) silenceButtonDisabled = false;
 
@@ -175,6 +178,8 @@ export class ObcAlertButton extends LitElement {
    *
    * If the available width is less than this value, the button switches to flat mode.
    * Only applies when `type` is set to `normal` or `enhanced`.
+   *
+   * @availableWhen type!=flat
    */
   @property({type: Number}) flatMaxBreakpointPx = 0;
 
@@ -183,6 +188,8 @@ export class ObcAlertButton extends LitElement {
    *
    * If the available width is less than this value, the silence button is hidden.
    * Only applies when `showSilenceButton` is true.
+   *
+   * @availableWhen showSilenceButton==true
    */
   @property({type: Number}) silenceButtonMinBreakpointPx = 0;
 
@@ -281,7 +288,7 @@ export class ObcAlertButton extends LitElement {
       this.blinking &&
       hasAlerts &&
       this.alertType !== undefined &&
-      supportsBlinking(this.alertType);
+      supportsBlinking(this.alertType, false);
     return html`
       <div
         class=${classMap({

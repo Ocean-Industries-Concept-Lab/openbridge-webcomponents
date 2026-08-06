@@ -98,6 +98,7 @@ export type ObcCheckboxChangeEvent = CustomEvent<{
  * @slot - No named slots.
  * @fires change {ObcCheckboxChangeEvent} – Emitted when the status changes.
  * @fires disabled {ObcCheckboxChangeEvent} – Emitted when the disabled state changes.
+ * @stable
  */
 @customElement('obc-checkbox')
 export class ObcCheckbox extends LitElement {

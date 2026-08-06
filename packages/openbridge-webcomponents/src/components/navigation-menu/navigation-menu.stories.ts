@@ -268,6 +268,13 @@ export const Tree: Story = {
           label="Vessel"
           hasIcon
           defaultOpen
+          .alerts=${{
+            combine: true,
+            countLevelCritical: 1,
+            countLevelHigh: 1,
+            countLevelMedium: 2,
+            countLevelLow: 1,
+          }}
         >
           <obi-placeholder slot="icon"></obi-placeholder>
           <obc-navigation-item-group
@@ -275,26 +282,47 @@ export const Tree: Story = {
             hasIcon
             defaultOpen
             terminalType="aggregated-header"
+            .alerts=${{
+              combine: true,
+              countLevelCritical: 1,
+              countLevelHigh: 1,
+            }}
           >
             <obi-placeholder slot="icon"></obi-placeholder>
-            <obc-navigation-item label="Main engine" hasIcon checked>
+            <obc-navigation-item
+              label="Main engine"
+              hasIcon
+              checked
+              .alerts=${{countLevelHigh: 1}}
+            >
               <obi-placeholder slot="icon"></obi-placeholder>
             </obc-navigation-item>
             <obc-navigation-item
               label="Cooling system"
               hasIcon
-              hasAlertBadge
-              .alertCount=${3}
+              .alerts=${{countLevelCritical: 1}}
             >
               <obi-placeholder slot="icon"></obi-placeholder>
             </obc-navigation-item>
           </obc-navigation-item-group>
-          <obc-navigation-item-group label="Bridge" hasIcon>
+          <obc-navigation-item-group
+            label="Bridge"
+            hasIcon
+            .alerts=${{combine: true, countLevelMedium: 2, countLevelLow: 1}}
+          >
             <obi-placeholder slot="icon"></obi-placeholder>
-            <obc-navigation-item label="Radar" hasIcon>
+            <obc-navigation-item
+              label="Radar"
+              hasIcon
+              .alerts=${{countLevelMedium: 2}}
+            >
               <obi-placeholder slot="icon"></obi-placeholder>
             </obc-navigation-item>
-            <obc-navigation-item label="Autopilot" hasIcon>
+            <obc-navigation-item
+              label="Autopilot"
+              hasIcon
+              .alerts=${{countLevelLow: 1}}
+            >
               <obi-placeholder slot="icon"></obi-placeholder>
             </obc-navigation-item>
           </obc-navigation-item-group>
