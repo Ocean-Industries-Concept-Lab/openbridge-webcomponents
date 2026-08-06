@@ -27,6 +27,9 @@
 .touch-target {
   @mixin style style=integration-normal visibleWrapperClass=.content-container;
   @mixin font-body;
+  --leading-icon-size: var(
+    --app-components-integration-system-navigation-item-horizontal-icon-size
+  );
   anchor-name: --touch-target;
   display: flex;
   align-items: center;
@@ -169,20 +172,23 @@
     color: var(--integration-on-normal-neutral-color);
   }
 
+  &.has-status {
+    --leading-icon-size: var(
+      --app-components-integration-system-navigation-item-horizontal-icon-size-large
+    );
+  }
+
   .icon.leading {
-    width: var(
-      --app-components-integration-system-navigation-item-horizontal-icon-size
-    );
-    height: var(
-      --app-components-integration-system-navigation-item-horizontal-icon-size
-    );
-    min-width: var(
-      --app-components-integration-system-navigation-item-horizontal-icon-size
-    );
-    flex: 0 0
-      var(
-        --app-components-integration-system-navigation-item-horizontal-icon-size
-      );
+    width: var(--leading-icon-size);
+    height: var(--leading-icon-size);
+    min-width: var(--leading-icon-size);
+    flex: 0 0 var(--leading-icon-size);
+
+    & ::slotted(*) {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
   }
 
   .icon.trailing {
