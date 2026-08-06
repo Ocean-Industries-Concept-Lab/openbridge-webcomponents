@@ -41,7 +41,7 @@
     "lint:icons": "tsx ./script/check-icon-hex-leaks.ts",
     "lint:eslint": "eslint 'src/**/*.ts'",
     "lint:lit-analyzer": "lit-analyzer --strict --maxWarnings 0",
-    "lint:fix": "eslint 'src/**/*.ts' --fix",
+    "lint:fix:stories": "eslint 'src/**/*.stories.ts' --fix",
     "test:rules": "vitest run --project rules",
     "fix-imports": "node fix-imports.mjs",
     "fix-imports:check": "node fix-imports.mjs --dry-run",

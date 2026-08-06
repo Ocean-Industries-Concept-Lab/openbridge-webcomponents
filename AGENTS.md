@@ -154,8 +154,13 @@ code-side tag instead.
 class, then let the lint rule write the story:
 
 ```bash
-npx eslint 'src/**/*.stories.ts' --fix
+npm run lint:fix:stories
 ```
+
+That script is deliberately scoped to `src/**/*.stories.ts`. Do **not** run a
+repo-wide `eslint 'src/**/*.ts' --fix`: `--fix` applies every fixable rule at
+every severity, so it silently rewrites unrelated files (today it strips
+`eslint-disable` directives out of the generated `src/generated/locales/*`).
 
 Two ESLint rules enforce this, both part of `npm run lint:eslint`:
 
@@ -357,7 +362,7 @@ npm run typecheck
 # Lint
 npm run lint              # css mixins/variables/icons + slots + lit-analyzer + eslint
 npm run lint:eslint       # eslint only (includes the lifecycle-tag rules, § 3)
-npm run lint:fix          # eslint --fix (rewrites meta.tags lifecycle entries)
+npm run lint:fix:stories  # eslint --fix on stories only (rewrites meta.tags lifecycle entries)
 npm run lint:slots        # audit @slot/@fires JSDoc vs templates & dispatched events
 npm run test:rules        # unit tests for the repo's custom ESLint rules
 
@@ -444,8 +449,8 @@ Commits that fail lint or format checks are blocked automatically.
    - Do **not** hand-write a lifecycle tag here — see step 6.
 5. Write JSDoc following the three-pattern strategy (see § 3), including
    exactly one lifecycle tag on the class (see § 3 Component lifecycle tags).
-6. Run `npx eslint 'src/**/*.stories.ts' --fix` to populate the story's
-   lifecycle tag from that class JSDoc.
+6. Run `npm run lint:fix:stories` to populate the story's lifecycle tag from
+   that class JSDoc.
 7. Run `npm run analyze` to update `custom-elements.json`.
 8. Run `npm run lint && npm run typecheck` to validate.
 
