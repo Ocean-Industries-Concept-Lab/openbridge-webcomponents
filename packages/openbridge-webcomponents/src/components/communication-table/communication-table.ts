@@ -28,7 +28,7 @@ export type ObcCommunicationTableRowClickEvent = CustomEvent<{
 
 /**
  *
- * @fires row-click {ObcCommunicationTableRowClickEvent} When a row is clicked.
+ * @fires {ObcCommunicationTableRowClickEvent} row-click - When a row is clicked.
  * @beta
  */
 @customElement('obc-communication-table')

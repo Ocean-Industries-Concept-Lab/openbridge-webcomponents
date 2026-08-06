@@ -98,7 +98,7 @@ enum NavigationItemRole {
  *
  * @slot icon - Leading icon slot (optional, shown if provided). Set `hasIcon` to `true` to show the icon.
  * @slot trailing-icon - Trailing icon slot (optional, shown if provided). Set `hasTrailingIcon` to `true` to show.
- * @fires click {CustomEvent<void>} Fired when the navigation item is clicked.
+ * @fires {CustomEvent<void>} click - Fired when the navigation item is clicked.
  * @stable
  */
 
@@ -178,7 +178,7 @@ export class ObcNavigationItem extends LitElement {
 
   /**
    * Fired when the navigation item is clicked (either as a link or button).
-   * @fires click {CustomEvent<void>}
+   * @fires {CustomEvent<void>} click
    */
   onClick() {
     dispatchEvent(new CustomEvent('click'));

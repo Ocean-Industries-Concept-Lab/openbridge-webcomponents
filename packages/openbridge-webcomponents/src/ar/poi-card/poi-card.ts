@@ -76,7 +76,7 @@ export enum PointerDirection {
  * @slot - Main card body content.
  * @slot leading-icon - Optional icon used by the regular header variant.
  * @slot poi-icon - Optional icon used by the detailed header variant.
- * @fires card-click {CustomEvent<PoiCardClickDetail>} Fired when the card is activated in interactive mode.
+ * @fires {CustomEvent<PoiCardClickDetail>} card-click - Fired when the card is activated in interactive mode.
  * @experimental
  */
 @customElement('obc-poi-card')

@@ -109,8 +109,8 @@ export enum ObcAlertButtonType {
  * In this example, the button shows an alarm icon, a counter badge with "3", is styled as enhanced, blinks to indicate urgency, and includes a silence button if the width allows.
  *
  * @slot - No content slots. All content is provided via properties.
- * @fires click-alert {CustomEvent<void>} Fired when the main alert button is clicked.
- * @fires click-silence {CustomEvent<void>} Fired when the silence button is clicked.
+ * @fires {CustomEvent<void>} click-alert - Fired when the main alert button is clicked.
+ * @fires {CustomEvent<void>} click-silence - Fired when the silence button is clicked.
  * @stable
  */
 @customElement('obc-alert-button')

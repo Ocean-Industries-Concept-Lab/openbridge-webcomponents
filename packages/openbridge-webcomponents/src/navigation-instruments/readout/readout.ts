@@ -228,8 +228,8 @@ export interface ReadoutSourceOptions extends ReadoutSrcOptions {
  * | advice-icon        | `hasAdvice`                           | Overrides the default advice icon.   |
  * | src-picker-content | `srcOptions.interaction == 'picker'`  | Source picker context-menu content.  |
  *
- * @fires source-change {CustomEvent<{value: string, label?: string}>} Fired when a source picker option is selected.
- * @fires source-flyout-click {CustomEvent<{src: string}>} Fired when the source row is clicked while `srcOptions.interaction == 'flyout'`.
+ * @fires {CustomEvent<{value: string, label?: string}>} source-change - Fired when a source picker option is selected.
+ * @fires {CustomEvent<{src: string}>} source-flyout-click - Fired when the source row is clicked while `srcOptions.interaction == 'flyout'`.
  *
  * @slot value-icon - Icon before the value.
  * @slot setpoint-icon - Overrides the default setpoint icon.

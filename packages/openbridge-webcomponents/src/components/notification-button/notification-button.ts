@@ -90,7 +90,7 @@ export interface NotificationButtonClickEvent {
  * In this example, the button appears in the normal style, is active, and displays a counter badge with the value 5.
  *
  * @slot icon - Custom icon to display in place of the default notification icon.
- * @fires obc-click {CustomEvent<NotificationButtonClickEvent>} Fired when the button is clicked, with the current count and new active state.
+ * @fires {CustomEvent<NotificationButtonClickEvent>} obc-click - Fired when the button is clicked, with the current count and new active state.
  * @stable
  */
 @customElement('obc-notification-button')
@@ -207,7 +207,7 @@ export class ObcNotificationButton extends LitElement {
   /**
    * Handles click events on the button and dispatches the `obc-click` custom event.
    *
-   * @fires obc-click {CustomEvent<NotificationButtonClickEvent>} Fired with the current count and new active state.
+   * @fires {CustomEvent<NotificationButtonClickEvent>} obc-click - Fired with the current count and new active state.
    */
   private handleClick() {
     const event = new CustomEvent<NotificationButtonClickEvent>('obc-click', {

@@ -116,9 +116,9 @@ export enum ObcMessageMenuItemSize {
  * @slot primary-icon - Main icon representing the message type or status (shown when `hasPrimaryIcon` is true).
  * @slot secondary-icon - Additional icon for secondary status/context (shown when `hasSecondaryIcon` is true).
  * @slot trailing-icon - Icon after action buttons, horizontal layout only (shown when `hasTrailingIcon` is true).
- * @fires message-click {CustomEvent<{open: boolean}>} Fired when the message item is clicked.
- * @fires primary-action-click {CustomEvent<void>} Fired when the primary action button is clicked.
- * @fires secondary-action-click {CustomEvent<void>} Fired when the secondary action button is clicked.
+ * @fires {CustomEvent<{open: boolean}>} message-click - Fired when the message item is clicked.
+ * @fires {CustomEvent<void>} primary-action-click - Fired when the primary action button is clicked.
+ * @fires {CustomEvent<void>} secondary-action-click - Fired when the secondary action button is clicked.
  * @beta
  */
 @customElement('obc-message-menu-item')

@@ -14,7 +14,7 @@ export type ObcFormFooterActionClickEvent = CustomEvent<{
  * - actions row (slotted action elements)
  *
  * @slot - Action elements (typically `obc-icon-button`) rendered in the footer row.
- * @fires action-click {ObcFormFooterActionClickEvent} Fired when a slotted action element is clicked.
+ * @fires {ObcFormFooterActionClickEvent} action-click - Fired when a slotted action element is clicked.
  * @beta
  */
 @customElement('obc-form-footer-container')
