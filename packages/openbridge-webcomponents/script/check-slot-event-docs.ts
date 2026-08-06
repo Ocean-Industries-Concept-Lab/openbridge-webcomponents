@@ -275,7 +275,7 @@ async function run(): Promise<void> {
       if (!docEvents.has(name)) {
         errors.push({
           file: rel,
-          message: `dispatches CustomEvent('${name}') but has no matching @fires ${name} tag`,
+          message: `dispatches a '${name}' event but has no matching @fires ${name} tag`,
         });
       }
     }

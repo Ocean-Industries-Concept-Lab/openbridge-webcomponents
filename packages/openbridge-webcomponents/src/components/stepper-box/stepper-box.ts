@@ -62,7 +62,7 @@ export enum ObcStepperBoxType {
  * @fires {CustomEvent<{value: number}>} down - Fired when the decrement (left or down) button is clicked
  * @fires {CustomEvent<{value: number}>} up - Fired when the increment (right or up) button is clicked
  * @fires {CustomEvent<{value: string}>} input - Fired when the user types in the number input field
- * @fires {CustomEvent<{value: number | null}>} change - Fired when the numeric value changes from any source
+ * @fires {CustomEvent<{value: number | null}>} change - Fired when the value changes through the input field or the increment/decrement buttons; programmatic assignment to `value` does not dispatch it
  * @stable
  */
 @customElement('obc-stepper-box')
