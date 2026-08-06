@@ -98,7 +98,7 @@ export interface ProgressButtonClickEvent {
  * @slot leading-icon - Icon before the label (`type="linear"` && `hasLeadingIcon`).
  * @slot trailing-icon - Icon after the label (`type="linear"` && `hasTrailingIcon`).
  * @slot icon - Central icon for the circular variant (`type="circular"`).
- * @fires {CustomEvent<ProgressButtonClickEvent>} obc-click - When the button is activated; detail holds the current `value`.
+ * @fires obc-click {CustomEvent<ProgressButtonClickEvent>} When the button is activated; detail holds the current `value`.
  * @stable
  */
 @customElement('obc-progress-button')

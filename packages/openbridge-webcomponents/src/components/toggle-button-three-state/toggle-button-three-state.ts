@@ -28,7 +28,7 @@ export type ObcToggleButtonThreeStateChangeEvent = CustomEvent<{
  * The component manages its own `state` and emits a `change` event when the
  * selection changes. Use `disabled` to make it non-interactive.
  *
- * @fires {ObcToggleButtonThreeStateChangeEvent} change - Fired when the state changes.
+ * @fires change {ObcToggleButtonThreeStateChangeEvent} Fired when the state changes.
  * @beta
  */
 @customElement('obc-toggle-button-three-state')

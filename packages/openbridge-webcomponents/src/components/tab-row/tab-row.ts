@@ -113,9 +113,9 @@ export interface TabData {
  *
  * @slot tab-<id>-icon - Leading icon slot for each tab (shown when `hasLeadingIcon` is true for that tab)
  * @slot tab-<id>-<iconSlotName> - Custom badge icon slot for each tab, one per badge that declares an `iconSlotName`. The deprecated single-badge path uses `tab-<id>-badge-icon`.
- * @fires {CustomEvent<{tab: TabData, id: string, index: number}>} tab-selected - Fired when a tab is selected.
- * @fires {CustomEvent<{tab: TabData, id: string, index: number}>} tab-closed - Fired when a tab's close button is clicked.
- * @fires {CustomEvent<void>} add-new-tab - Fired when the "add new tab" button is clicked.
+ * @fires tab-selected {CustomEvent<{tab: TabData, id: string, index: number}>} Fired when a tab is selected.
+ * @fires tab-closed {CustomEvent<{tab: TabData, id: string, index: number}>} Fired when a tab's close button is clicked.
+ * @fires add-new-tab {CustomEvent<void>} Fired when the "add new tab" button is clicked.
  * @stable
  */
 @customElement('obc-tab-row')

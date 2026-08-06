@@ -55,9 +55,9 @@ import {customElement} from '../../decorator.js';
  * ```
  *
  * @slot icon - Secondary icon (shown when `hasIcon` is true).
- * @fires {CustomEvent<void>} primary-action-click - Fired when the primary action button is clicked.
- * @fires {CustomEvent<void>} secondary-action-click - Fired when the secondary action button is clicked.
- * @fires {CustomEvent<{open: boolean}>} item-click - Fired when the item is clicked.
+ * @fires primary-action-click {CustomEvent<void>} Fired when the primary action button is clicked.
+ * @fires secondary-action-click {CustomEvent<void>} Fired when the secondary action button is clicked.
+ * @fires item-click {CustomEvent<{open: boolean}>} Fired when the item is clicked.
  * @beta
  */
 @customElement('obc-advice-menu-item')

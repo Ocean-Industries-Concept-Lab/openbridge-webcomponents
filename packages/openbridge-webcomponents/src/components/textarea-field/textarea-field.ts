@@ -188,16 +188,16 @@ export interface Attachment {
  *
  * @slot leading-icon - Displays a contextual icon before the input when `hasLeadingIcon` is true.
  *
- * @fires {CustomEvent<{value: string}>} change - Fired on change when value has changed.
- * @fires {CustomEvent<{value: string}>} input - Fired on input when value changes.
- * @fires {CustomEvent<void>} blur - Fired on blur.
- * @fires {CustomEvent<{value: string}>} send-click - Fired when the send button is clicked (Message type only).
- * @fires {CustomEvent<void>} add-click - Fired when the add (+) button is clicked.
- * @fires {CustomEvent<void>} screenshot-click - Fired when the screenshot button is clicked.
- * @fires {CustomEvent<void>} image-click - Fired when the image button is clicked.
- * @fires {CustomEvent<void>} attachment-click - Fired when the attachment button is clicked.
- * @fires {CustomEvent<VoiceActionDetail>} voice-action - Fired for all voice recording actions. Check detail.action for the action type.
- * @fires {CustomEvent<{id: string}>} attachment-remove - Fired when an attachment chip is removed.
+ * @fires change {CustomEvent<{value: string}>} Fired on change when value has changed.
+ * @fires input {CustomEvent<{value: string}>} Fired on input when value changes.
+ * @fires blur {CustomEvent<void>} Fired on blur.
+ * @fires send-click {CustomEvent<{value: string}>} Fired when the send button is clicked (Message type only).
+ * @fires add-click {CustomEvent<void>} Fired when the add (+) button is clicked.
+ * @fires screenshot-click {CustomEvent<void>} Fired when the screenshot button is clicked.
+ * @fires image-click {CustomEvent<void>} Fired when the image button is clicked.
+ * @fires attachment-click {CustomEvent<void>} Fired when the attachment button is clicked.
+ * @fires voice-action {CustomEvent<VoiceActionDetail>} Fired for all voice recording actions. Check detail.action for the action type.
+ * @fires attachment-remove {CustomEvent<{id: string}>} Fired when an attachment chip is removed.
  * @stable
  */
 @customElement('obc-textarea-field')

@@ -67,10 +67,10 @@ export enum ObcModalWindowSize {
  * </obc-modal-window>
  * ```
  *
- * @fires {CustomEvent} close-click - Fired when the close button is clicked.
- * @fires {CustomEvent} cancel-click - Fired when the cancel button is clicked.
- * @fires {CustomEvent} done-click - Fired when the done button is clicked.
- * @fires {CustomEvent} option-click - Fired when the optional action button is clicked.
+ * @fires close-click - {CustomEvent} - Fired when the close button is clicked.
+ * @fires cancel-click - {CustomEvent} - Fired when the cancel button is clicked.
+ * @fires done-click - {CustomEvent} - Fired when the done button is clicked.
+ * @fires option-click - {CustomEvent} - Fired when the optional action button is clicked.
  *
  * @slot leading-icon - Slot for an icon to appear before the title (shown when `hasLeadingIcon` is true)
  * @slot title - Slot for the modal title text

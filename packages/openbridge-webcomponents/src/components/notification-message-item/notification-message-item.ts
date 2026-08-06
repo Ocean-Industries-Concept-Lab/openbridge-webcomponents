@@ -90,8 +90,8 @@ export enum ObcNotificationMessageItemSize {
  * ```
  *
  * @slot secondary-icon - Additional icon for status/priority (shown when `hasSecondaryIcon` is true).
- * @fires {CustomEvent<void>} message-click - Fired when the notification item is clicked.
- * @fires {CustomEvent<void>} action-click - Fired when the action button or icon is clicked.
+ * @fires message-click {CustomEvent<void>} Fired when the notification item is clicked.
+ * @fires action-click {CustomEvent<void>} Fired when the action button or icon is clicked.
  * @beta
  */
 @customElement('obc-notification-message-item')
@@ -230,14 +230,16 @@ export class ObcNotificationMessageItem extends LitElement {
   }
 
   /**
-   * @event message-click - Fired when the notification item is clicked (excluding the action area).
+   * Fired when the notification item is clicked (excluding the action area).
+   * @event message-click
    */
   private handleMessageClick() {
     this.dispatchEvent(new CustomEvent('message-click'));
   }
 
   /**
-   * @event action-click - Fired when the action button or icon is clicked.
+   * Fired when the action button or icon is clicked.
+   * @event action-click
    */
   private handleActionClick() {
     this.dispatchEvent(new CustomEvent('action-click'));

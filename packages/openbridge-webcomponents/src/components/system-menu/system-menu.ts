@@ -95,7 +95,7 @@ export type VolumeChangeEvent = CustomEvent<number>;
 /**
  * @fires wifi-click - When the Wi-Fi button is clicked
  * @fires audio-click - When the Audio button is clicked
- * @fires {VolumeChangeEvent} audio-volume-change - When the Audio volume is changed
+ * @fires audio-volume-change - {VolumeChangeEvent} - When the Audio volume is changed
  * @fires microphone-click - When the Microphone button is clicked
  * @fires push-to-talk-change - When the push-to-talk toggle is changed
  * @fires battery-usage-click - When the Battery usage button is clicked

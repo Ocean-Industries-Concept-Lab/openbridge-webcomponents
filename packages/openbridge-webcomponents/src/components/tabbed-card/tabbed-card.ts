@@ -114,7 +114,7 @@ export type ObcTabbedCardChangeEvent = CustomEvent<{
  * @slot tab-icon-2 - Icon for the third tab
  * @slot tab-icon-3 - Icon for the fourth tab
  * @slot tab-icon-4 - Icon for the fifth tab
- * @fires {CustomEvent<{tab:number}>} tab-change - Fired when the selected tab changes
+ * @fires tab-change {CustomEvent<{tab:number}>} Fired when the selected tab changes
  * @stable
  */
 @customElement('obc-tabbed-card')
@@ -174,7 +174,8 @@ export class ObcTabbedCard extends LitElement {
   private setSelectedTab(index: number) {
     this.selectedTab = index;
     /**
-     * @fires {CustomEvent<{tab:number}>} tab-change - Fired when the selected tab changes.
+     * Fired when the selected tab changes.
+     * @fires tab-change {CustomEvent<{tab:number}>}
      */
     this.dispatchEvent(new CustomEvent('tab-change', {detail: {tab: index}}));
   }

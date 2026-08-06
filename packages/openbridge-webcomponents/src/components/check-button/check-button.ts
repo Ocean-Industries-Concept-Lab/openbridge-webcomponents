@@ -92,7 +92,7 @@ export enum CheckButtonCheckboxAppearance {
  * @slot icon - Icon before label (regular mode, if showIcon is true)
  * @slot checked-icon - Custom icon for checked state (checkbox mode)
  * @slot unchecked-icon - Custom icon for unchecked state (checkbox mode)
- * @fires {CustomEvent<{checked: boolean, type: string}>} check-button-click - Fired after the user toggles the control.
+ * @fires check-button-click {CustomEvent<{checked: boolean, type: string}>}
  * @stable
  */
 @customElement('obc-check-button')
@@ -197,7 +197,7 @@ export class ObcCheckButton extends LitElement {
      * Fired after the user toggles the check button.
      * The event detail includes the new checked state and the type of the button.
      *
-     * @fires {CustomEvent<{checked: boolean, type: string}>} check-button-click - Fired after the user toggles the control.
+     * @fires check-button-click {CustomEvent<{checked: boolean, type: string}>}
      */
     this.dispatchEvent(
       new CustomEvent('check-button-click', {

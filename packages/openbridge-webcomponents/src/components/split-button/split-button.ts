@@ -95,8 +95,8 @@ export type ObcSplitButtonChangeEvent = CustomEvent<{
  * In this example, the split button shows a "Save" action with a leading icon, and a dropdown menu with "Save As..." and "Export" options.
  *
  * @slot icon - Leading icon for the primary button (shown when `hasIcon` is true)
- * @fires {ObcSplitButtonClickEvent} click - Fired when the primary or dropdown button is clicked.
- * @fires {ObcSplitButtonChangeEvent} change - Fired when the dropdown menu selection changes.
+ * @fires click {ObcSplitButtonClickEvent} Fired when the primary or dropdown button is clicked.
+ * @fires change {ObcSplitButtonChangeEvent} Fired when the dropdown menu selection changes.
  * @beta
  */
 @customElement('obc-split-button')

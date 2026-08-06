@@ -58,7 +58,7 @@ export type IntegrationDropdownOption = {
  * ```
  *
  * @slot fleet - Fleet button displayed when `hasFleet` is true.
- * @fires {ObcIntegrationDropdownButtonChangeEvent} change - Fires when the value of the select changes
+ * @fires change {ObcIntegrationDropdownButtonChangeEvent} - Fires when the value of the select changes
  * @experimental
  */
 @customElement('obc-integration-dropdown-button')
@@ -182,9 +182,10 @@ export class ObcIntegrationDropdownButton extends LitElement {
   }
 
   /**
-   * Handles the change event when a new option is selected. Updates the selected value and label, and dispatches a `change` event with the new selection.
+   * Handles the dropdown-change and change event when a new option is selected. Updates the selected value and label, and dispatches a `dropdown-change` and 'change' event with the new selection.
    *
-   * @fires {ObcIntegrationDropdownButtonChangeEvent} change - Fired when the user selects a different option.
+   * @fires dropdown-change {ObcIntegrationDropdownButtonChangeEvent} - Fired when the user selects a different option.
+   * @fires change {ObcIntegrationDropdownButtonChangeEvent} - Fired when the user selects a different option.
    */
   private changeHandler(event: Event) {
     const target = event.target as HTMLSelectElement;

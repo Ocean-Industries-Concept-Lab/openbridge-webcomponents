@@ -81,9 +81,9 @@ import {
  * @slot day - Day label (e.g., "Yesterday").
  * @slot action - Primary action button label/content.
  * @slot action2 - Secondary action button label/content.
- * @fires {CustomEvent<void>} action-click - When the primary action button is clicked.
- * @fires {CustomEvent<void>} action2-click - When the secondary action button is clicked.
- * @fires {CustomEvent<void>} dismiss-click - When the advice message is dismissed.
+ * @fires action-click {CustomEvent<void>} When the primary action button is clicked.
+ * @fires action2-click {CustomEvent<void>} When the secondary action button is clicked.
+ * @fires dismiss-click {CustomEvent<void>} When the advice message is dismissed.
  * @beta
  */
 @customElement('obc-advice-floating-item')

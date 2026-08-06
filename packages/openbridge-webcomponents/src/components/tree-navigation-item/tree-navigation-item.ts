@@ -131,8 +131,8 @@ export interface TreeNavigationItemAlerts {
  * | icon           | `hasLeadingIcon` is true        | Leading icon for the row, e.g. `<obi-placeholder slot="icon">`.         |
  *
  * @slot icon - Leading icon slot (shown when `hasLeadingIcon` is true).
- * @fires {CustomEvent<boolean>} expand-toggle - Fired when an expandable row is activated; detail is the next `expanded` value.
- * @fires {CustomEvent<void>} click - Fired when the row is activated.
+ * @fires expand-toggle {CustomEvent<boolean>} Fired when an expandable row is activated; detail is the next `expanded` value.
+ * @fires click {CustomEvent<void>} Fired when the row is activated.
  * @beta
  */
 @customElement('obc-tree-navigation-item')

@@ -73,9 +73,9 @@ export enum SequenceToolbarType {
  * @slot condensed-current - Current step label for condensed mode.
  * @slot condensed-total - Total steps label for condensed mode.
  *
- * @fires {CustomEvent<void>} prev-click - Fired when the built-in Previous control is clicked.
- * @fires {CustomEvent<void>} next-click - Fired when the built-in Next control is clicked.
- * @fires {CustomEvent<void>} add-click - Fired when the built-in Add control is clicked.
+ * @fires prev-click
+ * @fires next-click
+ * @fires add-click
  * @beta
  */
 @customElement('obc-sequence-toolbar')

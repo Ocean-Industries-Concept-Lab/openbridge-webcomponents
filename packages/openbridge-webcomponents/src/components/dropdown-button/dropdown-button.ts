@@ -77,8 +77,8 @@ export type DropdownButtonOption = {
  *
  * @slot - (No named slots; all content is provided via properties)
  * @slot icon - Icon displayed at the start of the button when `type` is `icon` or `label-icon`.
- * @fires {ObcDropdownButtonChangeEvent} dropdown-change - Fires when the value of the select changes
- * @fires {ObcDropdownButtonChangeEvent} change - Fires when the value of the select changes
+ * @fires dropdown-change {ObcDropdownButtonChangeEvent} - Fires when the value of the select changes
+ * @fires change {ObcDropdownButtonChangeEvent} - Fires when the value of the select changes
  * @stable
  */
 @customElement('obc-dropdown-button')
@@ -224,8 +224,8 @@ export class ObcDropdownButton extends LitElement {
   /**
    * Handles the dropdown-change and change event when a new option is selected. Updates the selected value and label, and dispatches a `dropdown-change` and 'change' event with the new selection.
    *
-   * @fires {ObcDropdownButtonChangeEvent} dropdown-change - Fired when the user selects a different option.
-   * @fires {ObcDropdownButtonChangeEvent} change - Fired when the user selects a different option.
+   * @fires dropdown-change {ObcDropdownButtonChangeEvent} - Fired when the user selects a different option.
+   * @fires change {ObcDropdownButtonChangeEvent} - Fired when the user selects a different option.
    */
   private changeHandler(event: Event) {
     const target = event.target as HTMLSelectElement;

@@ -52,7 +52,7 @@ import {customElement} from '../../decorator.js';
  * ```
  *
  * @slot icon - Main icon representing the toggle action or state.
- * @fires {CustomEvent<{checked: boolean}>} icon-check-button-click - Fired when the button is clicked and the checked state changes.
+ * @fires icon-check-button-click {CustomEvent<{checked: boolean}>} Fired when the button is clicked and the checked state changes.
  * @stable
  */
 @customElement('obc-icon-check-button')

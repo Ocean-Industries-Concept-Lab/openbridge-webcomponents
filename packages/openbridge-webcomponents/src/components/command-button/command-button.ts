@@ -37,7 +37,6 @@ import {customElement} from '../../decorator.js';
  * - Pair with a tooltip or label if the icon meaning is not self-evident.
  *
  * @slot - (none; icon is determined by state, no external slot)
- * @fires click - Fired when the button is clicked.
  * @beta
  */
 @customElement('obc-command-button')

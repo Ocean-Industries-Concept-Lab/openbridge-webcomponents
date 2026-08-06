@@ -59,10 +59,10 @@ export enum ObcStepperBoxType {
  * <obc-stepper-box type="up-down" value="5" unit="kg" helperText="Set weight"></obc-stepper-box>
  * ```
  *
- * @fires {CustomEvent<{value: number}>} down - Fired when the decrement (left or down) button is clicked
- * @fires {CustomEvent<{value: number}>} up - Fired when the increment (right or up) button is clicked
- * @fires {CustomEvent<{value: string}>} input - Fired when the user types in the number input field
- * @fires {CustomEvent<{value: number | null}>} change - Fired when the value changes through the input field or the increment/decrement buttons; programmatic assignment to `value` does not dispatch it
+ * @fires down {CustomEvent<{value: number}>} Fired when the decrement (left or down) button is clicked
+ * @fires up {CustomEvent<{value: number}>} Fired when the increment (right or up) button is clicked
+ * @fires input {CustomEvent<{value: string}>} Fired when the user types in the number input field
+ * @fires change {CustomEvent<{value: number | null}>} Fired when the numeric value changes from any source
  * @stable
  */
 @customElement('obc-stepper-box')
@@ -280,7 +280,8 @@ export class ObcStepperBox extends LitElement {
   }
 
   /**
-   * @fires down - Dispatches the `down` event when the decrement button is clicked.
+   * Dispatches the `down` event when the decrement button is clicked.
+   * @fires down
    */
   down() {
     if (this.downDisabled) {
@@ -300,7 +301,8 @@ export class ObcStepperBox extends LitElement {
   }
 
   /**
-   * @fires up - Dispatches the `up` event when the increment button is clicked.
+   * Dispatches the `up` event when the increment button is clicked.
+   * @fires up
    */
   up() {
     if (this.upDisabled) {

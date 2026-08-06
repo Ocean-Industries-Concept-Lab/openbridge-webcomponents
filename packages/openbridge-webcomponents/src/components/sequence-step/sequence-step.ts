@@ -48,7 +48,6 @@ export enum SequenceVariant {
 }
 
 /**
- * @fires click - Fired when the step is activated. Only fired when the step renders as a button, i.e. `type="large"` with the `regular` or `point` style; other combinations render a non-interactive wrapper.
  * @beta
  */
 @customElement('obc-sequence-step')

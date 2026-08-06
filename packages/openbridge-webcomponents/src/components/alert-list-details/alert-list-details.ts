@@ -111,8 +111,8 @@ export function canAckFilter(filter: (alert: Alert) => boolean) {
 }
 
 /**
- * @fires {ObcAckClickEvent} ack-click - Fired when the user clicks the "ACK" button.
- * @fires {ObcRowClickEvent} row-click - Fired when the user clicks a row.
+ * @fires ack-click {ObcAckClickEvent} - Fired when the user clicks the "ACK" button.
+ * @fires row-click {ObcRowClickEvent} - Fired when the user clicks a row.
  * @stable
  */
 @customElement('obc-alert-list-details')

@@ -46,9 +46,6 @@ const VALID_POI_STATES = new Set(Object.values(ObcPoiState));
  * Implements `Poi` and contains all positioning, X-filter,
  * layout-change dispatch, and visual-query logic so that each variant
  * only needs to override `renderContent()` and `getVisualNodes()`.
- *
- * @fires {CustomEvent<void>} obc-poi-data-layout-change - Fired when layout-driving properties change. Bubbles and is composed.
- * @ignore
  */
 export class PoiBase extends LitElement implements Poi {
   private headerObserver?: MutationObserver;

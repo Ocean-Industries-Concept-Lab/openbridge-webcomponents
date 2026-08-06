@@ -88,9 +88,9 @@ export type ObcAckAllVisibleClickEvent = CustomEvent<{
  * @slot empty-<tab>-title - Custom empty-state title for the selected tab (`<tab>` is one of `unacked`, `all`, `shelved`)
  * @slot empty-<tab>-description - Custom empty-state description for the selected tab (`<tab>` is one of `unacked`, `all`, `shelved`)
  * @slot empty-<tab>-icon - Custom empty-state icon for the selected tab (`<tab>` is one of `unacked`, `all`, `shelved`)
- * @fires {ObcAckAllVisibleClickEvent} ack-all-visible-click - Fired when the ack all visible button is clicked
- * @fires {CustomEvent} silence-click - Fired when the silence button is clicked
- * @fires {CustomEvent} go-to-alert-list-click - Fired when the go to alert list button is clicked
+ * @fires ack-all-visible-click {ObcAckAllVisibleClickEvent} - Fired when the ack all visible button is clicked
+ * @fires silence-click {CustomEvent} - Fired when the silence button is clicked
+ * @fires go-to-alert-list-click {CustomEvent} - Fired when the go to alert list button is clicked
  */
 @localized()
 /**

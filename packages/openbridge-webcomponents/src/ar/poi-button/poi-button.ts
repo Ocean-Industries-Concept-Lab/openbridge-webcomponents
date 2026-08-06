@@ -117,7 +117,7 @@ export interface ObcPoiButtonDataItem {
  *
  * ## Events
  * This component does not emit custom events.
- * - Emits a standard `click` event (`onClick` handler in framework wrappers) when activated.
+ * Native `click` is available from the internal `<button>`.
  *
  * ## Best Practices
  * - Keep `value`, `state`, and `selected` synchronized to avoid conflicting visual states.
@@ -134,7 +134,6 @@ export interface ObcPoiButtonDataItem {
  * @slot - Icon/content rendered inside `obc-poi-object`.
  * @slot header - Optional header content rendered above the marker body.
  * @slot relation - Optional relation icon/content in data mode when `hasRelation` is true.
- * @fires click - Fired when the marker is clicked.
  * @experimental
  */
 @customElement('obc-poi-button')

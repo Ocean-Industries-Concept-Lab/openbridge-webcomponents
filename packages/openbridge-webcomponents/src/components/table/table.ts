@@ -237,11 +237,11 @@ function cssPart(value: ObcTableCellData, subpart: string): string | undefined {
  * ></obc-table>`;
  * ```
  *
- * @fires {ObcTableRowClickEvent} row-click - Fired when a row is clicked.
- * @fires {ObcTableCellClickEvent} cell-button-click - Fired when a cell button is clicked.
- * @fires {ObcTableCellCheckboxChangeEvent} cell-checkbox-change - Fired when a cell checkbox is changed.
- * @fires {ObcTableCellTagClickEvent} cell-tag-click - Fired when a tag inside a cell is clicked.
- * @fires {ObcTableSelectionChangeEvent} selection-change - Fired when row selection changes.
+ * @fires row-click {ObcTableRowClickEvent} - Fired when a row is clicked.
+ * @fires cell-button-click {ObcTableCellClickEvent} - Fired when a cell button is clicked.
+ * @fires cell-checkbox-change {ObcTableCellCheckboxChangeEvent} - Fired when a cell checkbox is changed.
+ * @fires cell-tag-click {ObcTableCellTagClickEvent} - Fired when a tag inside a cell is clicked.
+ * @fires selection-change {ObcTableSelectionChangeEvent} - Fired when row selection changes.
  * @beta
  */
 @customElement('obc-table')

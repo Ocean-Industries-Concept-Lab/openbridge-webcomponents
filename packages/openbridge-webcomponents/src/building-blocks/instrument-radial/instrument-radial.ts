@@ -115,7 +115,7 @@ function defaultGaugeAngle(
 }
 
 /**
- * @fires {CustomEvent<RadialFrame>} frame-changed - Fired after render when the
+ * @fires frame-changed {CustomEvent<RadialFrame>} Fired after render when the
  *   computed radial frame changed (viewBox, label visibility, or pinned host
  *   size). Wrappers use it to align sibling overlays/readouts with the dial.
  * @experimental

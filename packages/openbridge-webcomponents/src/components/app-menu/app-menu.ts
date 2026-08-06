@@ -47,7 +47,7 @@ import '../../icons/icon-search.js';
  * In this example, the menu displays a search bar and a grid of app buttons, each with an icon.
  *
  * @slot - Default slot for app buttons or custom menu items
- * @fires {CustomEvent<string>} search - Fired when the search input value changes, with the current value in `detail`.
+ * @fires search {CustomEvent<string>} Fired when the search input value changes, with the current value in `detail`.
  * @stable
  */
 @customElement('obc-app-menu')
@@ -56,7 +56,7 @@ export class ObcAppMenu extends LitElement {
    * Handles input events from the search field and emits a `search` event with the current value.
    *
    * @param e - The input event from the search field.
-   * @fires {CustomEvent<string>} search - Fired when the search input value changes.
+   * @fires search {CustomEvent<string>} Fired when the search input value changes.
    */
   onSearchInput(e: Event) {
     this.dispatchEvent(

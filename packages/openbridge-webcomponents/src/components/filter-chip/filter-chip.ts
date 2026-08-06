@@ -75,7 +75,7 @@ export type ObcFilterChipChangeEvent = CustomEvent<{
  * In this example, the chip is checked and displays a checkmark and a placeholder icon.
  *
  * @slot - Default leading-icon slot (shown when `showIcon` is true)
- * @fires {ObcFilterChipChangeEvent} chip-toggle - Fired when the chip is toggled.
+ * @fires chip-toggle {ObcFilterChipChangeEvent} - Fired when the chip is toggled.
  * @stable
  */
 @customElement('obc-filter-chip')

@@ -86,7 +86,7 @@ export type ElevatedCardRadioGroupOption = {
  * In this example, "Option B" is pre-selected, and the group is required.
  *
  * @slot - No named slots. All content is provided via the `options` property.
- * @fires {ObcElevatedCardRadioGroupChangeEvent} change - Dispatched when the value changes
+ * @fires change {ObcElevatedCardRadioGroupChangeEvent} - Dispatched when the value changes
  * @stable
  */
 @customElement('obc-elevated-card-radio-group')

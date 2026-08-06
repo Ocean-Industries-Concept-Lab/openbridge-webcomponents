@@ -105,8 +105,8 @@ export interface TabItemBadge {
  * @slot leading-icon - Slot for the leading icon (shown when `hasLeadingIcon` is true)
  * @slot title - Slot for the tab's label/title (shown when `hasTitle` is true)
  * @slot badge-icon - Slot for an icon inside the badge (shown when `hasBadge` and `showLeadingBadgeIcon` are true)
- * @fires {CustomEvent<{title: string}>} tab-click - When the tab is clicked or activated via keyboard
- * @fires {CustomEvent<{title: string}>} tab-close - When the close button is clicked
+ * @fires tab-click {CustomEvent<{title: string}>} When the tab is clicked or activated via keyboard
+ * @fires tab-close {CustomEvent<{title: string}>} When the close button is clicked
  * @stable
  */
 @customElement('obc-tab-item')

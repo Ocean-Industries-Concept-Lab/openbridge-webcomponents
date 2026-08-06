@@ -104,7 +104,7 @@ const DRAG_COMPLETE_THRESHOLD = 0.9;
  * @slot unchecked-state-label - Label for the unchecked state (e.g., "Stopped", "Disabled").
  * @slot to-checked-action-label - Action label on thumb when unchecked (e.g., "Start", "Enable").
  * @slot to-unchecked-action-label - Action label on thumb when checked (e.g., "Stop", "Disable").
- * @fires {ObcStartStopSwitchChangeEvent} change - Emitted when the switch is toggled via drag interaction.
+ * @fires change {ObcStartStopSwitchChangeEvent} - Emitted when the switch is toggled via drag interaction.
  * @stable
  */
 @customElement('obc-start-stop-switch')

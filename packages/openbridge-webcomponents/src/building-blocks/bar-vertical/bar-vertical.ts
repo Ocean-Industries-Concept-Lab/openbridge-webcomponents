@@ -62,7 +62,7 @@ export {
  * for bar fill and setpoint instead of the default gray/regular palette
  * (default: `Priority.regular`).
  *
- * @fires {CustomEvent} scale-dimensions-changed - Fired when the scale's computed layout thickness changes; a parent chart listens for this to reserve space for the scale. Bubbles and is composed.
+ * @fires scale-dimensions-changed {CustomEvent} Fired when the scale's computed layout thickness changes; a parent chart listens for this to reserve space for the scale. Bubbles and is composed.
  * @beta
  */
 @customElement('obc-bar-vertical')

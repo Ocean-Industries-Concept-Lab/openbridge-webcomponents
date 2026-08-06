@@ -14,7 +14,6 @@ export interface IntegrationFleetButtonReadout {
 
 /**
  * @slot alert-topic-icon - Icon shown alongside the alert topic
- * @fires click - Fired when the button is clicked.
  * @experimental
  */
 @customElement('obc-integration-fleet-button')

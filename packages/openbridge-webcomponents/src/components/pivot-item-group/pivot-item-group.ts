@@ -50,7 +50,7 @@ import {ObcPivotItemDirection, ObcPivotItem} from '../pivot-item/pivot-item.js';
  * ```
  *
  * @slot - Default slot for one or more `<obc-pivot-item>` elements.
- * @fires {CustomEvent<{selectedValue: string}>} change - Fired when the selected value changes.
+ * @fires change {CustomEvent<{selectedValue: string}>} Fired when the selected value changes.
  */
 @customElement('obc-pivot-item-group')
 export class ObcPivotItemGroup extends LitElement {

@@ -58,7 +58,7 @@ export enum ObcTextInputFieldPlacement {
  * @slot label-icon - Icon displayed before the label text (when `hasLabelIcon` is true)
  * @slot helper-icon - Icon displayed before helper or error text (when `hasHelperIcon` is true)
  * @fires input - Standard input event on value change
- * @fires {CustomEvent<{value: string}>} change - Dispatched on value change, carrying the committed value
+ * @fires change - {CustomEvent<{value: string}>} Dispatched on value change, carrying the committed value
  * @fires clear - Fired when the clear button is clicked
  * @fires blur - Fired when the input field is blurred
  * @stable
