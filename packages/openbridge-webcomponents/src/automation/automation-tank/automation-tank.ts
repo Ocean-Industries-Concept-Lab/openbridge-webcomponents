@@ -122,6 +122,7 @@ export enum TankChartMode {
  * @slot alert-icon - Custom icon for the alert frame.
  * @slot alert-label - Label for the alert frame.
  * @slot alert-timer - Timer for the alert frame.
+ * @fires click - Fired when the tank is clicked. Not fired when `static` is set, which renders a non-interactive `<div role="img">` instead of a `<button>`.
  * @beta
  */
 @customElement('obc-automation-tank')
