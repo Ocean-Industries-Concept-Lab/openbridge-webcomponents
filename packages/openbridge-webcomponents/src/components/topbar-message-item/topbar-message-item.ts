@@ -192,7 +192,7 @@ export class ObcTopbarMessageItem extends LitElement {
     /**
      * Fired when the main message area is clicked.
      *
-     * @event message-click
+     * @event message-click - Fired when the main message area is clicked.
      */
     this.dispatchEvent(new CustomEvent('message-click'));
   }
@@ -201,7 +201,7 @@ export class ObcTopbarMessageItem extends LitElement {
     /**
      * Fired when the action button (text or icon) is clicked.
      *
-     * @event action-click
+     * @event action-click - Fired when the action button (text or icon) is clicked.
      */
     this.dispatchEvent(new CustomEvent('action-click'));
   }

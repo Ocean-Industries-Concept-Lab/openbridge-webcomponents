@@ -177,8 +177,7 @@ export class ObcNavigationItem extends LitElement {
   @query('obc-tree-navigation-item') private treeItemElement?: HTMLElement;
 
   /**
-   * Fired when the navigation item is clicked (either as a link or button).
-   * @fires {CustomEvent<void>} click
+   * @fires {CustomEvent<void>} click - Fired when the navigation item is clicked (either as a link or button).
    */
   onClick() {
     dispatchEvent(new CustomEvent('click'));

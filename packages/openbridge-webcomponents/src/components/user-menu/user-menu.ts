@@ -105,10 +105,10 @@ export type ObcUserMenuSignedInAction = {
  * ```
  *
  * @slot signed-in-action-icon-<id> - Optional icon for a signed-in action, one per action; `<id>` is the normalized action id (shown in the `signed-in` type).
- * @fires {CustomEvent<{username: string, password: string}>} sign-in-click
- * @fires sign-out-click
- * @fires {CustomEvent<{id: string, label: string}>} signed-in-action-click
- * @fires {CustomEvent<{initials: string, label: string}>} recent-user-click
+ * @fires {CustomEvent<{username: string, password: string}>} sign-in-click - Fired when a sign-in button is clicked.
+ * @fires {CustomEvent<void>} sign-out-click - Fired when the sign-out button is clicked.
+ * @fires {CustomEvent<{id: string, label: string}>} signed-in-action-click - Fired when a signed-in action is clicked.
+ * @fires {CustomEvent<{initials: string, label: string}>} recent-user-click - Fired when a recent user button is clicked.
  * @stable
  */
 @customElement('obc-user-menu')

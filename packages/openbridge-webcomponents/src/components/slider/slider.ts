@@ -235,7 +235,7 @@ export class ObcSlider extends LitElement {
    * Fires the `value` event with the new value.
    *
    * @param value - The new value to set.
-   * @fires value
+   * @fires value - Fired when the value is changed
    */
   onInput(value: number) {
     this.value = value;
@@ -245,7 +245,7 @@ export class ObcSlider extends LitElement {
   /**
    * Fires the `change` event with the current value.
    *
-   * @fires change
+   * @fires change - Fired when user interaction completes and value has changed
    */
   private fireChangeEvent() {
     this.dispatchEvent(

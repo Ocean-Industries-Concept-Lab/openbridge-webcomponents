@@ -146,8 +146,7 @@ export class ObcNavigationItemGroup extends LitElement {
   }
 
   /**
-   * Opens the flyout panel and emits the `open` event.
-   * @fires open
+   * @fires open - Opens the flyout panel and emits the `open` event.
    */
   open() {
     this.openContainer = true;

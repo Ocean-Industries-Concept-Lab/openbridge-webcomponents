@@ -230,16 +230,14 @@ export class ObcNotificationMessageItem extends LitElement {
   }
 
   /**
-   * Fired when the notification item is clicked (excluding the action area).
-   * @event message-click
+   * @event message-click - Fired when the notification item is clicked (excluding the action area).
    */
   private handleMessageClick() {
     this.dispatchEvent(new CustomEvent('message-click'));
   }
 
   /**
-   * Fired when the action button or icon is clicked.
-   * @event action-click
+   * @event action-click - Fired when the action button or icon is clicked.
    */
   private handleActionClick() {
     this.dispatchEvent(new CustomEvent('action-click'));

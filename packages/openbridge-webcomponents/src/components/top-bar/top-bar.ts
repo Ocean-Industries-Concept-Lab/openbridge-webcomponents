@@ -348,32 +348,28 @@ export class ObcTopBar extends LitElement {
 
   private dimmingButtonClicked() {
     /**
-     * Fired when the dimming (day/night) button is clicked.
-     * @event dimming-button-clicked
+     * @event dimming-button-clicked - Fired when the dimming (day/night) button is clicked.
      */
     this.dispatchEvent(new CustomEvent('dimming-button-clicked'));
   }
 
   private appsButtonClicked() {
     /**
-     * Fired when the apps button is clicked.
-     * @event apps-button-clicked
+     * @event apps-button-clicked - Fired when the apps button is clicked.
      */
     this.dispatchEvent(new CustomEvent('apps-button-clicked'));
   }
 
   private leftMoreButtonClicked() {
     /**
-     * Fired when the left more button is clicked.
-     * @event left-more-button-clicked
+     * @event left-more-button-clicked - Fired when the left more button is clicked.
      */
     this.dispatchEvent(new CustomEvent('left-more-button-clicked'));
   }
 
   private userButtonClicked() {
     /**
-     * Fired when the user/profile button is clicked.
-     * @event user-button-clicked
+     * @event user-button-clicked - Fired when the user/profile button is clicked.
      */
     this.dispatchEvent(new CustomEvent('user-button-clicked'));
   }

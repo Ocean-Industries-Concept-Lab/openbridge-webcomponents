@@ -234,7 +234,7 @@ export class ObcToggleButtonVerticalGroup extends LitElement {
        * The event detail contains the new value and the previous value:
        * `{ value: string, previousValue: string }`
        *
-       * @event value
+       * @event value - Fired when the selected value changes.
        */
       this.dispatchEvent(
         new CustomEvent('value', {
@@ -250,7 +250,7 @@ export class ObcToggleButtonVerticalGroup extends LitElement {
        * The event detail contains the new value:
        * `{ value: string }`
        *
-       * @event change
+       * @event change - Fired when the selected value changes by user interaction.
        */
       this.dispatchEvent(
         new CustomEvent('change', {
