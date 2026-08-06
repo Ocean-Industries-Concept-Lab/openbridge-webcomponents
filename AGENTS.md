@@ -500,7 +500,7 @@ Required modifications after pasting:
    Never hand-edit `custom-elements.json` — it is auto-generated and git-ignored. Fix manifest inaccuracies at the source (`@slot`/`@fires`/property JSDoc); see § 3 "Slots and events are manifest-critical" and run `npm run lint:slots`.
 7. **Run `npm run lint`** after code changes to catch issues early.
 8. **Insert `TODO(designer)`** for any documentation detail whose purpose is unclear from code alone.
-9. **Keep stories tagged** with `['autodocs', '6.0']` for documented OB 6.0 components; `['skip-test']` to exclude from visual tests. The lifecycle entry (`beta` / `experimental` / `deprecated`) is **never hand-written** — put `@stable`/`@beta`/`@experimental`/`@deprecated` on the component class and run `npx eslint … --fix`. The old `'wip'` and `'alpha'` tags are retired; see [§ 3 Component lifecycle tags](#component-lifecycle-tags-stable--beta--experimental--deprecated).
+9. **Keep stories tagged** with `['autodocs', '6.0']` for documented OB 6.0 components; `['skip-test']` to exclude from visual tests. The lifecycle entry (`beta` / `experimental` / `deprecated`) is **never hand-written** — put `@stable`/`@beta`/`@experimental`/`@deprecated` on the component class and run `npm run lint:fix:stories`. The old `'wip'` and `'alpha'` tags are retired; see [§ 3 Component lifecycle tags](#component-lifecycle-tags-stable--beta--experimental--deprecated).
 10. **Do not run full builds or start Storybook automatically.** Avoid `npm run build`, `npm run storybook` unless the user explicitly requests it. These are expensive, long-running operations.
 11. **Run visual tests for a single component** instead of the full suite:
     ```bash
