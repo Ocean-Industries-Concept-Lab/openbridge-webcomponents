@@ -5,9 +5,22 @@ import {html} from 'lit';
 import '../../components/navigation-item/navigation-item.js';
 
 const meta: Meta<typeof ObcInstrumentField> = {
-  title: 'Instruments/Instrument Field',
+  title: 'Instruments/Instrument Field (deprecated)',
   tags: ['autodocs', '6.0', 'deprecated'],
   component: 'obc-instrument-field',
+  parameters: {
+    docs: {
+      description: {
+        component: `\`<obc-instrument-field>\` is **deprecated**. Use
+[\`<obc-readout>\`](/docs/instruments-readout--docs) instead.
+
+Every story below is reproduced side by side against its \`<obc-readout>\`
+equivalent — with a verdict on what matches, what differs and what is not yet
+reachable — in
+[Instrument Field (deprecated) — Readout Comparison](/docs/instruments-instrument-field-deprecated-readout-comparison--docs).`,
+      },
+    },
+  },
   args: {
     setpoint: 0,
     value: 0,
