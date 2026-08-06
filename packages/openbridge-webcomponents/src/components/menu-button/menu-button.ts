@@ -122,10 +122,10 @@ export type ObcMenuButtonItemClickEvent = CustomEvent<{
  * In this example, the button displays an icon and label, and opens a menu with two options (one with an icon).
  *
  * @slot icon - Icon displayed at the start of the button when `hasIcon` is true.
- * @fires change {ObcSplitButtonChangeEvent} Fired when the menu selection changes.
- * @fires item-click {ObcMenuButtonItemClickEvent} Fired when a menu item is clicked.
- * @fires open {CustomEvent<void>} Fired when the menu is opened.
- * @fires close {CustomEvent<void>} Fired when the menu is closed.
+ * @fires {ObcSplitButtonChangeEvent} change - Fired when the menu selection changes.
+ * @fires {ObcMenuButtonItemClickEvent} item-click - Fired when a menu item is clicked.
+ * @fires {CustomEvent<void>} open - Fired when the menu is opened.
+ * @fires {CustomEvent<void>} close - Fired when the menu is closed.
  * @beta
  */
 @customElement('obc-menu-button')
@@ -266,8 +266,7 @@ export class ObcMenuButton extends LitElement {
     if (e.newState === 'open') {
       void this.focusMenuAfterOpen();
       /**
-       * Fired when the menu is opened.
-       * @event open
+       * @event open - Fired when the menu is opened.
        * @type {CustomEvent<void>}
        */
       this.dispatchEvent(new CustomEvent('open'));
@@ -278,8 +277,7 @@ export class ObcMenuButton extends LitElement {
         this.triggerButton?.focus();
       }
       /**
-       * Fired when the menu is closed.
-       * @event close
+       * @event close - Fired when the menu is closed.
        * @type {CustomEvent<void>}
        */
       this.dispatchEvent(new CustomEvent('close'));
@@ -339,8 +337,7 @@ export class ObcMenuButton extends LitElement {
     this.selectedValues = e.detail.selectedValues;
 
     /**
-     * Fired when the menu selection changes.
-     * @event change
+     * @event change - Fired when the menu selection changes.
      * @type {CustomEvent<{selectedValues: string[], selectedOptions: Array<ContextMenuOption>}>}
      */
     this.dispatchEvent(new CustomEvent('change', {detail: e.detail}));
@@ -353,8 +350,7 @@ export class ObcMenuButton extends LitElement {
     e: CustomEvent<{value: string; option: ContextMenuOption}>
   ) {
     /**
-     * Fired when a menu item is clicked.
-     * @event item-click
+     * @event item-click - Fired when a menu item is clicked.
      * @type {CustomEvent<{value: string, option: ContextMenuOption}>}
      */
     this.dispatchEvent(new CustomEvent('item-click', {detail: e.detail}));

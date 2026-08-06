@@ -100,8 +100,8 @@ export enum ObcAdviceMessageItemSize {
  * In this example, the advice message displays a title, description, timestamp, and a "View" action button.
  *
  * @slot secondary-icon - Optional overlay icon for additional status/category (shown when `hasSecondaryIcon` is true)
- * @fires message-click {CustomEvent<void>} When the main message area is clicked
- * @fires action-click {CustomEvent<void>} When the action button (text or icon) is clicked
+ * @fires {CustomEvent<void>} message-click - When the main message area is clicked
+ * @fires {CustomEvent<void>} action-click - When the action button (text or icon) is clicked
  * @beta
  */
 @customElement('obc-advice-message-item')
@@ -223,16 +223,14 @@ export class ObcAdviceMessageItem extends LitElement {
   }
 
   /**
-   * Fired when the main message area is clicked.
-   * @fires message-click {CustomEvent<void>}
+   * @fires {CustomEvent<void>} message-click - Fired when the main message area is clicked.
    */
   private handleMessageClick() {
     this.dispatchEvent(new CustomEvent('message-click'));
   }
 
   /**
-   * Fired when the action button (text or icon) is clicked.
-   * @fires action-click {CustomEvent<void>}
+   * @fires {CustomEvent<void>} action-click - Fired when the action button (text or icon) is clicked.
    */
   private handleActionClick() {
     this.dispatchEvent(new CustomEvent('action-click'));

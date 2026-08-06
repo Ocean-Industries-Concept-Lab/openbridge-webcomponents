@@ -202,9 +202,9 @@ export enum ContextMenuType {
  * In this example, a flyout menu is shown with a title bar, group icons, and a selected child option.
  *
  * @slot - Optionally used for custom icons in options (e.g., `<obi-placeholder slot="icon"></obi-placeholder>`)
- * @fires change {ObcContextMenuInputChangeEvent} Fired when the selection changes.
- * @fires item-click {ObcContextMenuInputItemClickEvent} Fired when a menu item is clicked.
- * @fires close {CustomEvent<void>} Fired when the close button is clicked.
+ * @fires {ObcContextMenuInputChangeEvent} change - Fired when the selection changes.
+ * @fires {ObcContextMenuInputItemClickEvent} item-click - Fired when a menu item is clicked.
+ * @fires {CustomEvent<void>} close - Fired when the close button is clicked.
  * @beta
  */
 @customElement('obc-context-menu-input')

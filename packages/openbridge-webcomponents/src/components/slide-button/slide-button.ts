@@ -77,7 +77,7 @@ export type ObcSlideButtonSlideEvent = CustomEvent<{completed: boolean}>;
  *
  * @slot leading-icon - The icon to display at the start of the button content (shown when `hasLeadingIcon` is true).
  * @slot label - The label text to display in the button.
- * @fires slide {ObcSlideButtonSlideEvent} - Emitted when the slide action is completed.
+ * @fires {ObcSlideButtonSlideEvent} slide - Emitted when the slide action is completed.
  * @experimental
  */
 @customElement('obc-slide-button')
@@ -190,8 +190,7 @@ export class ObcSlideButton extends LitElement {
   private completeSlide() {
     /**
      * Emitted when the slide action is completed (handle dragged past the
-     * threshold or activated via keyboard).
-     * @fires slide {ObcSlideButtonSlideEvent}
+     * @fires {ObcSlideButtonSlideEvent} slide - threshold or activated via keyboard).
      */
     this.dispatchEvent(new CustomEvent('slide', {detail: {completed: true}}));
 

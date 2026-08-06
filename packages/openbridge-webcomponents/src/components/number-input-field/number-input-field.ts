@@ -50,8 +50,8 @@ const baseFontSize = 16;
  * @slot leading-icon - Icon displayed before the input value (when `hasLeadingIcon` is true)
  * @slot label-icon - Icon displayed before the label text (when `hasLabelIcon` is true)
  * @slot helper-icon - Icon displayed before helper or error text (when `hasHelperIcon` is true)
- * @fires input {CustomEvent<{value: number}>} When the numeric value changes during editing
- * @fires change {CustomEvent<{value: number}>} When the value is committed on blur
+ * @fires {CustomEvent<{value: number}>} input - When the numeric value changes during editing
+ * @fires {CustomEvent<{value: number}>} change - When the value is committed on blur
  * @stable
  */
 @customElement('obc-number-input-field')

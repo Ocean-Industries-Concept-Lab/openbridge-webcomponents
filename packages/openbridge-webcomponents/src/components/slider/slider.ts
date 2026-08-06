@@ -127,8 +127,8 @@ export type ObcSliderChangeEvent = CustomEvent<number>;
  * @slot icon-left - Slot for the left icon button (shown when `hasLeftIcon` is true)
  * @slot icon-right - Slot for the right icon button (shown when `hasRightIcon` is true)
  * @attr hugcontainer - If set, the slider will not have any spacing between the slider icons and the container
- * @fires value {ObcSliderValueEvent} - Fired when the value is changed
- * @fires change {ObcSliderChangeEvent} - Fired when user interaction completes and value has changed
+ * @fires {ObcSliderValueEvent} value - Fired when the value is changed
+ * @fires {ObcSliderChangeEvent} change - Fired when user interaction completes; dispatched on release even if the value did not change
  * @stable
  */
 @customElement('obc-slider')
@@ -235,7 +235,7 @@ export class ObcSlider extends LitElement {
    * Fires the `value` event with the new value.
    *
    * @param value - The new value to set.
-   * @fires value
+   * @fires value - Fired when the value is changed
    */
   onInput(value: number) {
     this.value = value;
@@ -245,7 +245,7 @@ export class ObcSlider extends LitElement {
   /**
    * Fires the `change` event with the current value.
    *
-   * @fires change
+   * @fires change - Fired when user interaction completes; dispatched on release even if the value did not change
    */
   private fireChangeEvent() {
     this.dispatchEvent(

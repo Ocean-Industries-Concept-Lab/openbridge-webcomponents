@@ -126,8 +126,8 @@ export type ObcSliderDoubleChangeEvent = CustomEvent<{
  *
  * @slot left-readout - Custom content for the left (low) readout label (rendered when `showLeftReadout` is true)
  * @slot right-readout - Custom content for the right (high) readout label (rendered when `showRightReadout` is true)
- * @fires value {ObcSliderDoubleValueEvent} - Fires when the value is changed
- * @fires change {ObcSliderDoubleChangeEvent} - Fires when user interaction completes
+ * @fires {ObcSliderDoubleValueEvent} value - Fires when the value is changed
+ * @fires {ObcSliderDoubleChangeEvent} change - Fires when user interaction completes
  * @stable
  */
 @customElement('obc-slider-double')
@@ -269,7 +269,7 @@ export class ObcSliderDouble extends LitElement {
    * Handles input changes from the slider thumbs.
    * Updates the low and high values and emits the `value` event.
    *
-   * @fires value {ObcSliderDoubleValueEvent}
+   * @fires {ObcSliderDoubleValueEvent} value - Fires when the value is changed
    */
   onInput() {
     let newLow = parseFloat(this.minInput.value);
@@ -292,7 +292,7 @@ export class ObcSliderDouble extends LitElement {
   /**
    * Fires the `change` event with the current low and high values.
    *
-   * @fires change
+   * @fires change - Fires when user interaction completes
    */
   private fireChangeEvent() {
     this.dispatchEvent(

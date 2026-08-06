@@ -62,7 +62,7 @@ export enum ObcPivotItemDirection {
  * In this example, the item displays a home icon and a label. When clicked (and not already selected/disabled), it emits a `selected` event.
  *
  * @slot icon - Leading icon slot (shown when `hasLeadingIcon` is true)
- * @fires selected {CustomEvent<{value: string}>} When the item is clicked and becomes selected
+ * @fires {CustomEvent<{value: string}>} selected - When the item is clicked and becomes selected
  * @stable
  */
 @customElement('obc-pivot-item')
@@ -121,7 +121,7 @@ export class ObcPivotItem extends LitElement {
   /**
    * Handles click events. Emits `selected` when the item is not disabled or already selected.
    *
-   * @fires selected {CustomEvent<{value: string}>} When the item is clicked and becomes selected
+   * @fires {CustomEvent<{value: string}>} selected - When the item is clicked and becomes selected
    */
   private onClick() {
     // Don't allow clicking if disabled OR already selected

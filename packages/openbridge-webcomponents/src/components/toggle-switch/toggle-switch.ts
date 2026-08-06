@@ -94,8 +94,8 @@ export type ObcToggleSwitchChangeEvent = CustomEvent<{
  * In this example, the toggle switch displays a label, an icon, and a description, and is in the checked state.
  *
  * @slot icon - Leading icon slot (shown when `hasIcon` is true)
- * @fires input - {ObcToggleSwitchInputEvent} Dispatched when the value of the input changes
- * @fires change - {ObcToggleSwitchChangeEvent} Dispatched when the value of the input changes by user interaction
+ * @fires {ObcToggleSwitchInputEvent} input - Dispatched when the value of the input changes
+ * @fires {ObcToggleSwitchChangeEvent} change - Dispatched when the value of the input changes by user interaction
  * @stable
  */
 @customElement('obc-toggle-switch')

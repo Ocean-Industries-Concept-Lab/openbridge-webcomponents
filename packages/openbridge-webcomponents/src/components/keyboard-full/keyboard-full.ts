@@ -173,12 +173,12 @@ export enum ObcKeyboardFullMode {
  * </obc-keyboard-full>
  * ```
  *
- * @fires value-change {CustomEvent<{value: string}>} Dispatched whenever the text value changes
+ * @fires {CustomEvent<{value: string}>} value-change - Dispatched whenever the text value changes
  *   (on key press, backspace, space, or direct input field editing). The `detail.value` contains
  *   the complete current text string.
- * @fires done-click {CustomEvent<{value: string}>} Dispatched when the DONE button is clicked,
+ * @fires {CustomEvent<{value: string}>} done-click - Dispatched when the DONE button is clicked,
  *   indicating the user has completed text entry. The `detail.value` contains the final text string.
- * @fires close-click {CustomEvent<void>} Dispatched when the close button (in top bar) is clicked,
+ * @fires {CustomEvent<void>} close-click - Dispatched when the close button (in top bar) is clicked,
  *   allowing the application to dismiss the keyboard without submitting the value.
  * @beta
  */

@@ -13,6 +13,7 @@ export enum AutomationReadoutPosition {
 }
 
 /**
+ * @fires click - Fired when the readout is clicked.
  * @experimental
  */
 @customElement('obc-automation-readout')
