@@ -15,7 +15,7 @@ type TitleContainerArgs = {
 
 const meta = {
   title: 'UI Components/Forms/Title Container',
-  tags: ['!autodocs'],
+  tags: ['!autodocs', 'beta'],
   component: 'obc-title-container',
   decorators: [
     (story) =>

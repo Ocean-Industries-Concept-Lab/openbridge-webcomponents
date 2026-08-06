@@ -11,7 +11,7 @@ import {
 
 const meta: Meta<typeof ObcSpeedDirections> = {
   title: 'Instruments/Speed Directions',
-  tags: ['autodocs', '6.0', 'wip'],
+  tags: ['autodocs', '6.0', 'experimental'],
   component: 'obc-speed-directions',
   args: {
     width: 384,

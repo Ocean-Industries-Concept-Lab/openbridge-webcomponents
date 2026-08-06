@@ -18,7 +18,7 @@ interface PoiCardHeaderArgs {
 
 const meta: Meta<PoiCardHeaderArgs> = {
   title: 'AR/POI Card Header',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'experimental'],
   component: 'obc-poi-card-header',
   args: {
     variant: ObcPoiCardHeaderVariant.Regular,

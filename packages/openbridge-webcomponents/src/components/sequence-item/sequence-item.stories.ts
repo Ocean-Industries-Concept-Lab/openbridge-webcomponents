@@ -53,6 +53,7 @@ const defaultArgs: SequenceItemArgs = {
 
 const meta: Meta = {
   title: 'Automation/Sequence Item',
+  tags: ['beta'],
   component: 'obc-sequence-item',
   parameters: {
     layout: 'centered',

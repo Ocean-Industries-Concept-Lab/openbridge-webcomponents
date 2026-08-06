@@ -117,7 +117,7 @@ const renderContent = () => html`
 const meta: Meta<ObcIntegrationVesselMenu> = {
   title: 'Integration Systems/Integration Vessel Menu',
   component: 'obc-integration-vessel-menu',
-  tags: ['alpha'],
+  tags: ['experimental'],
   args: {hasActions: true, hasAlertList: true, hasContent: true},
   argTypes: {
     hasActions: {

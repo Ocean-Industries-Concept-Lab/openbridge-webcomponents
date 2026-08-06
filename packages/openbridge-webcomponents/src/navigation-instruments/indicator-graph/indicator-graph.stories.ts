@@ -8,7 +8,7 @@ import './indicator-graph.js';
 import {widthDecorator} from '../../storybook-util.js';
 const meta: Meta<typeof ObcIndicatorGraph> = {
   title: 'Bars and Graphs/Indicator Graph',
-  tags: ['6.0', 'autodocs'],
+  tags: ['6.0', 'autodocs', 'beta'],
   component: 'obc-indicator-graph',
   decorators: [widthDecorator],
   args: {

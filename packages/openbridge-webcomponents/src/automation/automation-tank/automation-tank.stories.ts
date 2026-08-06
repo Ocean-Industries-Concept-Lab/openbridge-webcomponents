@@ -130,7 +130,7 @@ const renderTank = (args: StoryArgs) => renderTankEl(args);
 
 const meta: Meta<StoryArgs> = {
   title: 'Automation/Tanks/Tank',
-  tags: ['autodocs', '6.0'],
+  tags: ['autodocs', '6.0', 'beta'],
   component: 'obc-automation-tank',
   args: {
     value: 9_000,

@@ -8,7 +8,7 @@ import '../integration-button/integration-button.js';
 
 const meta: Meta<ObcIntegrationDropdownButton> = {
   title: 'Integration Systems/Integration Dropdown Button',
-  tags: ['alpha'],
+  tags: ['experimental'],
   component: 'obc-integration-dropdown-button',
   globals: {
     backgrounds: {

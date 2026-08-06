@@ -13,7 +13,7 @@ import {html} from 'lit';
 
 const meta: Meta<typeof ObcAlertFrame> = {
   title: 'UI Components/Message and Alerts/Alert Frame',
-  tags: ['autodocs', '6.0'],
+  tags: ['autodocs', '6.0', 'beta'],
   component: 'obc-alert-frame',
   args: {
     type: ObcAlertFrameType.SmallSideFlip,
