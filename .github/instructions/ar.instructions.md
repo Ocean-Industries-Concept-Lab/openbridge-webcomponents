@@ -1,0 +1,133 @@
+---
+applyTo: "packages/openbridge-webcomponents/src/ar/**"
+---
+
+<!-- GENERATED FILE — DO NOT EDIT.
+     Source: docs/agents/ar.md
+     Regenerate: npm run agents:sync -w packages/openbridge-webcomponents -->
+
+# AR / POI Overlay Components
+
+The AR family renders **points of interest** over a live video or still image:
+markers that track detected objects, resolve their own overlaps, and expand into
+cards on interaction.
+
+Every component here carries full class JSDoc, and Storybook autodocs surfaces
+it. This file covers what no single component's JSDoc can: how the pieces
+compose, and the traps that only show up across the family.
+
+## Layering
+
+Five levels, outermost first. Each owns exactly one concern; pushing logic up or
+down the stack is the usual cause of bugs here.
+
+```text
+<obc-poi-controller>          geometry: maps detection coordinates onto the media
+  └─ media slot: <video> / <img>
+  └─ <obc-poi-layer-stack>    selection across layers
+       └─ <obc-poi-layer>     overlap resolution + layer height
+            ├─ <obc-poi-data> a target
+            └─ <obc-poi-group> a cluster of targets
+```
+
+- **`obc-poi-controller`** — the only component that knows about the media. It
+  observes the slotted `<video>`/`<img>`, tracks natural vs rendered size, and
+  applies `fit` (`contain` | `cover`) so marker coordinates land on the right
+  pixels. It also filters `detections` by `confidenceMin` and `classFilter`, and
+  drives `frameIndex` for frame-by-frame playback. Nothing below it should read
+  media dimensions.
+- **`obc-poi-layer-stack`** — coordinates selection across sibling layers via
+  `selection-mode`, emitting `layer-selection-changed`.
+- **`obc-poi-layer`** — resolves overlaps and reports its computed height. This
+  is where most layout behaviour lives.
+- **`obc-poi-group`** — one cluster: collapsed trigger ↔ expanded spread.
+- **`obc-poi-data` / `-vessel` / `-aton`** — individual targets.
+
+## Overlap resolution: two strategies, not one
+
+`obc-poi-layer`'s `overlapMode` picks between two genuinely different algorithms,
+each with its own helper module. They do not share state, and a change to one
+does not affect the other:
+
+| Mode                 | Helper                                  | Behaviour                                                                                                                                                                     |
+| -------------------- | --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `grouping` (default) | `poi-layer/poi-layer-grouping-utils.ts` | Builds overlap clusters and creates/removes **auto-groups**, preserving front / behind / pre-group states across the transition. Threshold set: enter, exit, pre, behind.     |
+| `crossing`           | `poi-layer/poi-layer-crossing-utils.ts` | Leaves targets independent and continuously nudges their horizontal offsets so they stop crossing. Tracks previous positions, crossing order and last effective X per target. |
+
+Auto-groups are created _by the layer_, not authored. A hand-placed
+`<obc-poi-group>` is respected and left alone; `joinWhileExpanded` is the opt-in
+that lets nearby targets join an already-expanded auto-group.
+
+Consumers must listen for **`layer-resize`** to keep their own container height
+in sync — the layer cannot size its parent.
+
+## Composition chain
+
+A target is not one element. `obc-poi-data` extends `PoiBase` and renders:
+
+```text
+<obc-poi-data>            state + grouping attributes
+  └─ <obc-poi>            positioning, line, pointer
+       ├─ <obc-poi-button-data>   the interactive control
+       └─ <obc-poi-line>          the leader line to the anchor point
+```
+
+`obc-poi-object*` is the **visual marker** (icon, frame, size variant);
+`obc-poi-button*` is the **interactive control**. They are different layers —
+`obc-poi-object` has an `indicator` variant with no background frame at all,
+which is display-only.
+
+`poi-object/abstract-poi-object.ts` is the shared base: subclasses override only
+the `icon` and `baseType` getters. New POI object variants belong there, not as
+a fresh LitElement.
+
+## Shared helper modules
+
+| Module                         | Role                                                                                                                                                                  |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `poi/poi-css-vars.ts`          | Reads touch/visual target sizes from CSS variables at runtime (`getTouchTargetSize`, `getVisualTargetSize`). Layout maths must go through these, never hard-coded px. |
+| `poi/poi-visual-state.ts`      | `applyPoiVisualState` / `clearPoiVisualState` — the single place overlap visual state is written to a target.                                                         |
+| `poi/poi-position.ts`          | `getEffectivePoiX` — a target's true horizontal position including any crossing offset. Both overlap strategies depend on it.                                         |
+| `poi/poi-grouping-attrs.ts`    | `clearTargetGroupingAttributes` / `clearTargetGroupingStyles` — teardown when a target leaves a group. Skipping these strands attributes on the element.              |
+| `poi-group/animation-utils.ts` | Expand/collapse animation timing.                                                                                                                                     |
+
+## Traps
+
+**The `header` slot is not a `<slot>` element.** `obc-poi` documents
+`@slot header`, but there is no `<slot name="header">` in its template — a
+`MutationObserver` relocates slotted header content into the inner
+`obc-poi-button` at runtime. This is a deliberate exception to the rule in
+[`jsdoc.md`](jsdoc.md) that `@slot` tags must correspond to real `<slot>`
+elements. Do not "fix" it by deleting the tag: the slot is real to consumers,
+just implemented differently. Equally, do not copy the pattern without reason.
+
+**`poi-line` reaches for raw colour primitives.** `building-blocks/poi-line/poi-line.css`
+sets `--obc-poi-line-line-color: var(--base-blue-500)` and
+`--obc-poi-line-outline-color: var(--base-blue-050)` — raw primitives rather
+than semantic tokens. This is one of the handful of documented hot spots in the
+two-layer colour model (see [`css-postcss.md`](css-postcss.md)), and it means a
+consumer re-theming only the semantic layer will not repaint the POI line.
+
+**`obc-poi-group` is the worked example of the missing-wrapper bug.** Its
+`obc-poi-group-target-released` event was inferred by `cem analyze` from the
+`dispatchEvent(...)` call and appeared in `custom-elements.json`, while the React
+wrapper had **no binding for it at all** — because `lit labs gen` reads only
+class-level JSDoc tags (issue #1109, fixed in PR #1110). The `@fires` tag is
+present now. When adding an event anywhere in this family, tag it on the class:
+a correct manifest is not evidence the wrappers can see it. See
+[`jsdoc.md`](jsdoc.md).
+
+**Events dispatched here bubble and compose deliberately.**
+`obc-poi-group-target-released` crosses the shadow boundary so the layer can
+re-insert the released target. Changing `bubbles`/`composed` on AR events breaks
+layer coordination, not just consumer listeners.
+
+## Testing
+
+`_test-utils.ts` holds the shared AR test helpers. Overlap behaviour depends on
+measured geometry, so stories that exercise grouping or crossing need stable
+sizes — verify with the single-component visual test rather than the full suite:
+
+```bash
+npx vitest run --project storybook 'poi'
+```
