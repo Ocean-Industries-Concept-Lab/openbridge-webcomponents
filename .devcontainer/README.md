@@ -116,6 +116,9 @@ committing them to the repo, add them to the **user-level** VS Code setting
   propagate to existing volumes (factory reset if ever needed).
 - Git config and repo-level agent config are unaffected: `.claude/` and
   `CLAUDE.md` stay gitignored, [AGENTS.md](../AGENTS.md) remains the canonical
-  agent instruction file.
+  agent instruction file. `CLAUDE.md` is now **generated** from
+  [`docs/agents/claude.md`](../docs/agents/claude.md) by `npm run agents:sync`,
+  which root `prepare` runs — so it reappears after `npm install` without being
+  committed. Do not hand-edit it; edit the source and re-sync.
 - **GitHub Codespaces:** this mechanism targets local Dev Containers; volume
   persistence semantics on Codespaces differ and are not guaranteed.
