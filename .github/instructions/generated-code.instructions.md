@@ -1,16 +1,21 @@
 ---
-applyTo: "packages/openbridge-webcomponents/src/icons/**,packages/openbridge-webcomponents/src/generated/**,packages/openbridge-webcomponents/src/palettes/variables.css,packages/openbridge-webcomponents/src/mixins/fonts.css,packages/openbridge-webcomponents/script/figmavariables.json,packages/openbridge-webcomponents-react/**,packages/openbridge-webcomponents-vue/**,packages/openbridge-webcomponents-ng/**,packages/openbridge-webcomponents-svelte/**"
+applyTo: "packages/openbridge-webcomponents/src/icons/**,packages/openbridge-webcomponents/src/generated/**,packages/openbridge-webcomponents/src/manual-icon/**,packages/openbridge-webcomponents/src/palettes/variables.css,packages/openbridge-webcomponents/src/mixins/fonts.css,packages/openbridge-webcomponents/script/figmavariables.json,packages/openbridge-webcomponents-react/**,packages/openbridge-webcomponents-vue/**,packages/openbridge-webcomponents-ng/**,packages/openbridge-webcomponents-svelte/**"
 ---
 
 <!-- GENERATED FILE — DO NOT EDIT.
      Source: docs/agents/generated-code.md
      Regenerate: npm run agents:sync -w packages/openbridge-webcomponents -->
 
-# Generated Code — Do Not Hand-Edit
+# Generated Code — What Is, What Isn't
 
-Everything in scope here is **produced by a generator**. A local edit is not a
-fix: it survives until the next regeneration and is then silently discarded,
-taking the change with it. Fix the problem at its source instead.
+Most files in scope here are **produced by a generator**. A local edit to one is
+not a fix: it survives until the next regeneration and is then silently
+discarded, taking the change with it. Fix the problem at its source instead.
+
+This file also attaches to the look-alikes — `src/manual-icon/` above all —
+precisely so the difference is stated at the point of editing. If you are in a
+file listed under [What is NOT generated](#what-is-not-generated), edit it
+normally.
 
 ## What is generated, and by what
 
