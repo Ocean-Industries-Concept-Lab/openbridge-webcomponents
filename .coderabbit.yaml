@@ -1,0 +1,145 @@
+# CodeRabbit configuration
+# Schema: https://docs.coderabbit.ai/getting-started/yaml-configuration
+#
+# Scope first, rules second.
+#
+# Most of the value here is `path_filters`. A large fraction of this repository
+# is generated — 2000+ icon components, four framework wrapper packages, the
+# design tokens, the agent-instruction adapters — and reviewing generated output
+# is worse than noise: acting on a comment there is actively wrong, because the
+# edit is discarded on the next regeneration and the real fix belongs in the
+# source. See docs/agents/generated-code.md for the full inventory.
+#
+# `path_instructions` is deliberately short. It encodes only failure modes with
+# incident history in this repo, plus one repo-specific fact that reviewers
+# (human and machine) have got wrong. It is NOT a copy of docs/agents/ — that
+# tree is the canonical source and duplicating it here would recreate exactly
+# the drift that PR #1118 removed.
+
+reviews:
+  # Signal-to-noise at `chill` has been good. Raising it is not the goal.
+  profile: chill
+
+  path_filters:
+    # ── Generated: agent-instruction adapters ────────────────────────────────
+    # Rendered from docs/agents/*.md by `npm run agents:sync`; `npm run
+    # lint:agents` fails CI if they drift. Editing them is a no-op.
+    - "!.github/instructions/**"
+    - "!.github/copilot-instructions.md"
+
+    # ── Generated: icons and translations ────────────────────────────────────
+    # `npm run download:icons` (from Figma) and `npm run build:translations`.
+    - "!packages/openbridge-webcomponents/src/icons/**"
+    - "!packages/openbridge-webcomponents/src/generated/**"
+
+    # ── Generated: framework wrappers ────────────────────────────────────────
+    # `npm run wrappers` regenerates these wholesale from the core package's
+    # source JSDoc. A wrong wrapper binding is a symptom; fix the @fires/@slot
+    # tag on the component class instead.
+    # (This also skips the hand-written README.md / AGENTS.md in those packages,
+    # which are five-line pointers — an acceptable trade for excluding the rest.)
+    - "!packages/openbridge-webcomponents-*/**"
+
+    # ── Generated: design tokens ─────────────────────────────────────────────
+    # Emitted wholesale by the obc-figma-plugin. Hand edits are overwritten on
+    # the next paste. Note src/mixins/*.css other than fonts.css, and
+    # src/palettes/manual.css, ARE hand-written and stay in review.
+    - "!packages/openbridge-webcomponents/src/palettes/variables.css"
+    - "!packages/openbridge-webcomponents/src/mixins/fonts.css"
+    - "!packages/openbridge-webcomponents/script/figmavariables.json"
+
+    # ── Generated: build and release output ──────────────────────────────────
+    - "!packages/openbridge-webcomponents/__vis__/**"
+    - "!packages/openbridge-webcomponents/CHANGELOG.md"
+
+  path_instructions:
+    # ── The repo's most-repeated real defect ─────────────────────────────────
+    # Four separate incidents: issues #1033 and #1109, PRs #1110 and #1112.
+    - path: "packages/openbridge-webcomponents/src/**/*.ts"
+      instructions: |
+        JSDoc tags on `@customElement` classes are consumer-critical, and getting
+        them wrong fails silently. Two tools read them and they do NOT read the
+        same thing: `cem analyze` produces custom-elements.json, while
+        `lit labs gen` produces the framework wrappers by parsing the source
+        JSDoc, class-level tags only. A correct manifest is not evidence the
+        wrappers work.
+
+        Flag:
+        - a dispatched event with no class-level `@fires` tag (the wrapper gets
+          no `onX` binding at all);
+        - `@fires name {Type}` written name-first — the type must come FIRST,
+          as `@fires {Type} name - description`;
+        - a `@fires` or `@slot` tag on a method or an unregistered base class
+          rather than on the concrete `@customElement` class;
+        - a bare `dispatchEvent(...)` inside a class method — it must be
+          `this.dispatchEvent(...)`, otherwise it fires on `window`;
+        - a rendered `<slot>` with no matching `@slot` tag, or an `@slot` tag for
+          a `slot="x"` projection (that is a phantom slot, not a real one);
+        - a class-level `@property` tag (properties are documented inline).
+
+        Every `@customElement` class carries exactly one lifecycle tag
+        (`@stable` / `@beta` / `@experimental` / `@deprecated`), last in the
+        block. Never hand-write the lifecycle entry in a story's `meta.tags` —
+        it is derived from the class JSDoc by `npm run lint:fix:stories`.
+
+        Boolean properties use positive names (`showLabels`, not `hideLabels`).
+        A boolean defaulting to `true` must declare `attribute: false`, since a
+        present-means-true HTML attribute cannot express it.
+
+        Canonical reference: docs/agents/jsdoc.md.
+
+    # ── A repo-specific fact reviewers get wrong ─────────────────────────────
+    # A prior review flagged a correct coordinate mapping as a bug by assuming
+    # a top-left SVG origin.
+    - path: "packages/openbridge-webcomponents/src/{navigation-instruments,building-blocks}/**"
+      instructions: |
+        SVG instruments use a CENTER-ORIGIN viewBox (e.g. "-200 -200 400 400"),
+        so 0 is the centre and negative Y is up. Do not evaluate coordinate
+        arithmetic as if the origin were top-left — a mapping that sends the
+        maximum value to a negative Y is correct here, not inverted.
+
+        Radial geometry goes through `computeRadialFrame()` in
+        svghelpers/radial-frame.ts: one result per render, passed to BOTH
+        `<obc-watch .arcFrame=…>` and the overlay `<svg viewBox=…>`. Flag any
+        consumer that recomputes `(176 + padding) * 2` or otherwise hand-mirrors
+        the viewBox — the two layers drift the moment either side changes.
+
+        Shared circular rendering belongs in watch.ts. Component-specific logic
+        (compass-sector's FOV compression, the pitch/roll buildFrame contracts)
+        deliberately stays local; do not suggest consolidating it.
+
+        Canonical reference: docs/agents/watch-radial-instruments.md.
+
+    # ── Accessibility, required for interactive components ───────────────────
+    - path: "packages/openbridge-webcomponents/src/{components,automation}/**"
+      instructions: |
+        Interactive components must be fully keyboard-operable and meet
+        WCAG 2.1 AA, following the matching WAI-ARIA APG pattern.
+
+        Flag: a click handler with no keyboard equivalent; a custom control with
+        no `role` and no mirrored state attribute (`aria-pressed`,
+        `aria-expanded`, `aria-selected`, `aria-checked`); an icon-only control
+        with no `aria-label`; `tabindex` greater than 0; `outline: none` with no
+        visible replacement; a modal that does not trap focus, restore focus on
+        close, or close on `Escape`.
+
+        Do NOT suggest swapping a non-native element for a native one in an
+        existing component — that breaks layout, event bubbling and visual
+        baselines. It needs a deliberate decision, not a review nit.
+
+        Canonical reference: docs/agents/a11y.md.
+
+    # ── Story conventions ────────────────────────────────────────────────────
+    - path: "packages/openbridge-webcomponents/src/**/*.stories.ts"
+      instructions: |
+        Story `title` and `name` use Title Case (enforced by the ESLint rule
+        `openbridge/storybook-title-case`).
+
+        The lifecycle entry in `meta.tags` is derived from the component class
+        JSDoc — flag any hand-written `beta` / `experimental` / `deprecated`.
+        The `wip` and `alpha` tags are retired. Version tags (`6.0`, `6.1`) and
+        tooling tags (`autodocs`, `skip-test`, `!snapshot`) stay hand-written.
+
+        A new component needs `npm run analyze` before its stories work —
+        Storybook resolves story args to element properties through
+        custom-elements.json.
