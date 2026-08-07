@@ -35,6 +35,8 @@
     "format": "prettier \"**/*.{cjs,html,js,json,md,ts,css}\"  --write",
     "format:check": "prettier \"**/*.{cjs,html,js,json,md,ts,css}\"  --check",
     "lint": "npm run lint:mixins && npm run lint:variables && npm run lint:icons && npm run lint:slots && npm run lint:lit-analyzer && npm run lint:eslint",
+    "agents:sync": "tsx ./script/sync-agent-docs.ts",
+    "lint:agents": "tsx ./script/sync-agent-docs.ts --check",
     "lint:mixins": "tsx ./script/check-css-mixins.ts",
     "lint:slots": "tsx ./script/check-slot-event-docs.ts",
     "lint:variables": "tsx ./script/check-css-variables.ts",
