@@ -179,7 +179,9 @@ The class has rich JSDoc and `@property` declarations, but it cannot be instanti
 ● After all Markdown sections, append a short **tag block** that contains only:
 
 - one `@slot` tag for each content slot
-- one `@fires` (or `@event`) tag for each custom event
+- one `@fires` (or `@event`) tag for each event the component exposes — custom
+  events **and** native ones that cross the shadow boundary, such as the `click`
+  from a passthrough `<button>`
 
 ● **Why this matters — two separate tools read these tags, and they do not read
 the same thing.** `cem analyze` generates `custom-elements.json`, which feeds IDE
