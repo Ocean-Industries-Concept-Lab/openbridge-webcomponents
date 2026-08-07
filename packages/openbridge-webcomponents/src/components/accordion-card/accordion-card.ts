@@ -211,7 +211,7 @@ export class ObcAccordionCard extends LitElement {
 
     /**
      * Fired when the accordion is expanded or collapsed.
-     * @fires accordion-toggle {CustomEvent<{expanded: boolean, cardTitle: string}>}
+     * @fires accordion-toggle
      */
     this.dispatchEvent(
       new CustomEvent('accordion-toggle', {

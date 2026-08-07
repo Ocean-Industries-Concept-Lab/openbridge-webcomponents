@@ -207,7 +207,7 @@ export class ObcNotificationButton extends LitElement {
   /**
    * Handles click events on the button and dispatches the `obc-click` custom event.
    *
-   * @fires {CustomEvent<NotificationButtonClickEvent>} obc-click - Fired with the current count and new active state.
+   * @fires obc-click
    */
   private handleClick() {
     const event = new CustomEvent<NotificationButtonClickEvent>('obc-click', {

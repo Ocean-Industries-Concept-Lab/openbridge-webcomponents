@@ -56,7 +56,7 @@ export class ObcAppMenu extends LitElement {
    * Handles input events from the search field and emits a `search` event with the current value.
    *
    * @param e - The input event from the search field.
-   * @fires {CustomEvent<string>} search - Fired when the search input value changes.
+   * @fires search
    */
   onSearchInput(e: Event) {
     this.dispatchEvent(

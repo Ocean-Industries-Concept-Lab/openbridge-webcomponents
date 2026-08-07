@@ -165,7 +165,7 @@ export class ObcToggleButtonOption extends LitElement {
 
   /**
    * Fired when the option is clicked and not already selected.
-   * @fires selected {CustomEvent<{value: string}>}
+   * @fires selected
    */
   onClick(event: Event) {
     if (this.disabled) {

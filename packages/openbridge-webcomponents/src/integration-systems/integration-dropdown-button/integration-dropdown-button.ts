@@ -184,7 +184,7 @@ export class ObcIntegrationDropdownButton extends LitElement {
   /**
    * Handles the change event when a new option is selected. Updates the selected value and label, and dispatches a `change` event with the new selection.
    *
-   * @fires {ObcIntegrationDropdownButtonChangeEvent} change - Fired when the user selects a different option.
+   * @fires change
    */
   private changeHandler(event: Event) {
     const target = event.target as HTMLSelectElement;

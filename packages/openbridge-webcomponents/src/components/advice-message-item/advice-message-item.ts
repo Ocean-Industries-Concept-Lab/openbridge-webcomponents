@@ -224,7 +224,7 @@ export class ObcAdviceMessageItem extends LitElement {
 
   /**
    * Fired when the main message area is clicked.
-   * @fires message-click {CustomEvent<void>}
+   * @fires message-click
    */
   private handleMessageClick() {
     this.dispatchEvent(new CustomEvent('message-click'));
@@ -232,7 +232,7 @@ export class ObcAdviceMessageItem extends LitElement {
 
   /**
    * Fired when the action button (text or icon) is clicked.
-   * @fires action-click {CustomEvent<void>}
+   * @fires action-click
    */
   private handleActionClick() {
     this.dispatchEvent(new CustomEvent('action-click'));

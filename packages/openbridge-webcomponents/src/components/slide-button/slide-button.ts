@@ -191,7 +191,7 @@ export class ObcSlideButton extends LitElement {
     /**
      * Emitted when the slide action is completed (handle dragged past the
      * threshold or activated via keyboard).
-     * @fires slide {ObcSlideButtonSlideEvent}
+     * @fires slide
      */
     this.dispatchEvent(new CustomEvent('slide', {detail: {completed: true}}));
 

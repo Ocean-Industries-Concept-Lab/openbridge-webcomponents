@@ -177,7 +177,7 @@ export class ObcCommandMenu extends LitElement {
   /**
    * Handles the toggle change event from the start-stop switch and emits a `change` event with the new command state.
    *
-   * @fires {CustomEvent<{inCommand: boolean}>} change - Fired when the command state is toggled.
+   * @fires change
    */
   private onChange(event: ObcStartStopSwitchChangeEvent) {
     // Stop the start-stop-switch's composed event from leaking through
