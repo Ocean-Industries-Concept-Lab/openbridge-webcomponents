@@ -346,7 +346,7 @@ export class ObcAlertIcon extends LitElement {
 
   private _blinkAnimationCancel?: () => void;
 
-  override updated(changedProperties: Map<string, unknown>): void {
+  override updated(): void {
     if (this._blinkAnimationCancel) {
       this._blinkAnimationCancel();
       this._blinkAnimationCancel = undefined;
