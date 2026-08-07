@@ -203,6 +203,9 @@ export class ObcAlertButton extends LitElement {
   override connectedCallback() {
     super.connectedCallback();
     window.addEventListener('resize', this.resizeListener);
+    if (this.hasUpdated) {
+      this.installBlinking();
+    }
   }
 
   override disconnectedCallback() {
@@ -284,9 +287,13 @@ export class ObcAlertButton extends LitElement {
 
   private _blinkAnimationCancel?: () => void;
 
-  override firstUpdated() {
+  private installBlinking() {
     this._blinkAnimationCancel?.();
     this._blinkAnimationCancel = blinkingAll(this);
+  }
+
+  override updated() {
+    this.installBlinking();
   }
 
   override render() {

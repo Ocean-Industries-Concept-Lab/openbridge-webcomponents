@@ -259,16 +259,38 @@ export class ObcAlertFrame extends LitElement {
 
   private _blinkAnimationCancel?: () => void;
 
-  override firstUpdated() {
-    this._blinkAnimationCancel?.();
-    if (this.mode === ObcAlertFrameMode.unackedActive) {
+  private syncBlinking() {
+    if (
+      this.mode !== ObcAlertFrameMode.unackedActive &&
+      this._blinkAnimationCancel
+    ) {
+      this._blinkAnimationCancel();
+      this._blinkAnimationCancel = undefined;
+    }
+
+    if (
+      this.mode === ObcAlertFrameMode.unackedActive &&
+      !this._blinkAnimationCancel
+    ) {
       this._blinkAnimationCancel = blinkingAll(this);
     }
+  }
+
+  override connectedCallback() {
+    super.connectedCallback();
+    if (this.hasUpdated) {
+      this.syncBlinking();
+    }
+  }
+
+  override updated() {
+    this.syncBlinking();
   }
 
   override disconnectedCallback() {
     super.disconnectedCallback();
     this._blinkAnimationCancel?.();
+    this._blinkAnimationCancel = undefined;
   }
 
   private flap() {

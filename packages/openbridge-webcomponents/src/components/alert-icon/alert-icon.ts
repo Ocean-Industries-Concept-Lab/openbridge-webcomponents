@@ -346,26 +346,36 @@ export class ObcAlertIcon extends LitElement {
 
   private _blinkAnimationCancel?: () => void;
 
-  override updated(): void {
-    if (this._blinkAnimationCancel) {
+  private syncBlinking(): void {
+    if (
+      this._blinkAnimationCancel &&
+      !supportsBlinking(this._effectiveType, this.acknowledged ?? false)
+    ) {
       this._blinkAnimationCancel();
       this._blinkAnimationCancel = undefined;
-      console.log('blink animation stopped');
     }
-    if (supportsBlinking(this._effectiveType, this.acknowledged ?? false)) {
-      const el = this.shadowRoot!.querySelector('.wrapper');
-      if (!el) {
-        throw new Error('No wrapper element found');
-      }
-      this._blinkAnimationCancel = blinkingAll(el as HTMLElement);
-      console.log('blink animation started');
+    if (
+      !this._blinkAnimationCancel &&
+      supportsBlinking(this._effectiveType, this.acknowledged ?? false)
+    ) {
+      this._blinkAnimationCancel = blinkingAll(this);
     }
+  }
+
+  override connectedCallback(): void {
+    super.connectedCallback();
+    if (this.hasUpdated) {
+      this.syncBlinking();
+    }
+  }
+
+  override updated(): void {
+    this.syncBlinking();
   }
 
   override disconnectedCallback(): void {
     super.disconnectedCallback();
     if (this._blinkAnimationCancel) {
-      console.log('blink animation stopped');
       this._blinkAnimationCancel();
       this._blinkAnimationCancel = undefined;
     }
