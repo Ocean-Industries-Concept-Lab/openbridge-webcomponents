@@ -5,6 +5,10 @@ globs:
   - .github/workflows/**
   - .releaserc.json
   - scripts/**
+  - package.json
+  - packages/openbridge-webcomponents/package.json
+  - packages/openbridge-webcomponents/script/**
+  - '!packages/openbridge-webcomponents/script/docgen/**'
 ---
 
 # CI and Release

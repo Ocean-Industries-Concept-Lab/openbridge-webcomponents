@@ -8,9 +8,7 @@ globs:
   - packages/openbridge-webcomponents/src/navigation-instruments/gauge-trend/**
 ---
 
-# GitHub Copilot Custom Instructions
-
-## Path-Specific Instructions for Line/Area Charts & Gauge Trend
+# Line/Area Charts & Gauge Trend
 
 These instructions apply to the Chart.js-based line/area chart system and the composite gauge-trend component.
 

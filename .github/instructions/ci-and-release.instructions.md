@@ -1,5 +1,5 @@
 ---
-applyTo: ".github/workflows/**,.releaserc.json,scripts/**"
+applyTo: ".github/workflows/**,.releaserc.json,scripts/**,package.json,packages/openbridge-webcomponents/package.json,packages/openbridge-webcomponents/script/**,!packages/openbridge-webcomponents/script/docgen/**"
 ---
 
 <!-- GENERATED FILE — DO NOT EDIT.

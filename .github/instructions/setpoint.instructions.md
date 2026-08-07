@@ -6,9 +6,7 @@ applyTo: "packages/openbridge-webcomponents/src/svghelpers/setpoint.ts,packages/
      Source: docs/agents/setpoint.md
      Regenerate: npm run agents:sync -w packages/openbridge-webcomponents -->
 
-# GitHub Copilot Custom Instructions
-
-## Path-Specific Instructions for Setpoint System
+# Setpoint System
 
 These instructions apply to the **setpoint subsystem** — the cross-cutting design layer, state management, and animation logic used by all instrument components that display a setpoint marker.
 

@@ -8,9 +8,7 @@ globs:
   - packages/openbridge-webcomponents/src/building-blocks/setpoint/**
 ---
 
-# GitHub Copilot Custom Instructions
-
-## Path-Specific Instructions for Setpoint System
+# Setpoint System
 
 These instructions apply to the **setpoint subsystem** — the cross-cutting design layer, state management, and animation logic used by all instrument components that display a setpoint marker.
 

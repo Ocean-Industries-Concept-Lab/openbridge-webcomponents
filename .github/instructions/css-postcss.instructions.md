@@ -23,7 +23,7 @@ applyTo: "packages/openbridge-webcomponents/src/**/*.css"
 - **Color token convention:** Surface colors follow `--{variant}-{state}-background-color` / `--{variant}-{state}-border-color`. Text/icon colors follow `--on-{variant}-{role}-color` (roles: `active`, `neutral`, `disabled`).
 - **Size variants:** `.obc-component-size-regular` (default) / `-medium` / `-large` / `-xl` classes on an ancestor scale all `--ui-components-*` sizing tokens via CSS variable inheritance.
 - **Font mixins:** Three families — UI (`font-button`, `font-label`, `font-body`, etc.), Instrument (`font-instrument-value-*`, `font-instrument-label`, etc.), Automation (`font-automation-value-*`). Full list in `IMPLEMENTATION_GUIDELINES.md`.
-- **Alert mixins:** `alert-alarm`, `alert-critical`, `alert-caution` in `src/mixins/alert.css`. Alarm blink animation uses CSS `@property` registered `--alarm-blink-on/off` and `--warning-blink-on/off`.
+- **Alert mixins:** `alert-alarm`, `alert-critical`, `alert-caution` in `src/mixins/alert.css`. Blink animation drives the CSS `@property` registered `--alarm-blink-on/off` and `--warning-blink-on/off`, but is **driven from TypeScript** via the Web Animations API in `src/palettes/blinking.ts` (`blinkingInstall()`), not by a CSS `@keyframes` — see `alert-frame`, `alert-icon` and `alert-button` for the call sites. Components bind opacity to those custom properties; the periods live in `blinking.ts`.
 - **`--obc-can-hover`:** CSS variable kill-switch for hover feedback (defined in `src/main.css`, consumed by `@mixin style` via `color-mix()`).
 - **Icon slots:** use `<obi-placeholder></obi-placeholder>` or other `<obi-*>` icons (1000+ available).
 

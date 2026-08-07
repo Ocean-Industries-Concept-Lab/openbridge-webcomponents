@@ -34,9 +34,7 @@ globs:
   - packages/openbridge-webcomponents/src/navigation-instruments/wind-propulsion/**
 ---
 
-# GitHub Copilot Custom Instructions
-
-## Path-Specific Instructions for Watch & Radial Instruments
+# Watch & Radial Instruments
 
 These instructions apply to the circular/radial watch-based instrument system, including the core `obc-watch` renderer and all navigation instruments that use it.
 
@@ -48,7 +46,7 @@ These instructions apply to the circular/radial watch-based instrument system, i
 >
 > **When implementing a new feature or changing existing behavior:**
 >
-> 1. **All rendering logic should live in `watch.ts`** - it is the single source of truth for circular instrument rendering
+> 1. **Shared circular rendering belongs in `watch.ts`** - it is the single source of truth for anything more than one instrument draws. Genuinely component-specific logic stays local: `compass-sector` owns its bespoke FOV compression, and pitch/roll/pitch-roll/pitch-roll-heave own their coupled `buildFrame` contracts (see "Shared frame computation"). Do not move those into the shared renderer — doing so changes every other instrument.
 > 2. Changes to `watch.ts` affect ALL instruments that use it
 > 3. If adding a new visual element, add it to `watch.ts` as a configurable option, not to individual instruments
 > 4. Navigation instruments are thin wrappers that configure `obc-watch` and add domain-specific overlays
@@ -232,14 +230,24 @@ const viewBox = `-${width / 2} ${top} ${width} ${height}`;
 
 ### Matching ViewBox in Consumer Instruments
 
-Consumer instruments MUST calculate the **same viewBox** for their overlay SVG:
+Consumer instruments need the **same viewBox** for their overlay SVG — but do
+**not** recompute it. Call `computeRadialFrame()` once per render and pass the
+one result to both layers:
 
 ```typescript
 // In compass.ts, heading.ts, etc.
-const padding = this.getPadding(); // Same calculation as watch!
-const width = (176 + padding) * 2;
-const viewBox = `-${width / 2} -${width / 2} ${width} ${width}`;
+const frame = computeRadialFrame({...});
+return html`
+  <obc-watch .arcFrame=${frame}></obc-watch>
+  <svg viewBox=${frame.viewBox}>…</svg>
+`;
 ```
+
+Hand-mirroring the `(176 + padding) * 2` arithmetic in a consumer is what the
+shared helper exists to prevent — the two layers drift the moment either side
+changes. See [Shared frame computation](#shared-frame-computation-svghelpersradial-framets-issue-1021)
+below, and `AGENTS.md` § 8 rule 15. The block above documents what `watch.ts`
+does internally; it is not a recipe to copy.
 
 ### ViewBox Mismatch = Misalignment
 

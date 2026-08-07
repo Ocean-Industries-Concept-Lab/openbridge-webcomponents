@@ -6,9 +6,7 @@ applyTo: "packages/openbridge-webcomponents/src/building-blocks/chart-line/**,pa
      Source: docs/agents/line-area-charts.md
      Regenerate: npm run agents:sync -w packages/openbridge-webcomponents -->
 
-# GitHub Copilot Custom Instructions
-
-## Path-Specific Instructions for Line/Area Charts & Gauge Trend
+# Line/Area Charts & Gauge Trend
 
 These instructions apply to the Chart.js-based line/area chart system and the composite gauge-trend component.
 

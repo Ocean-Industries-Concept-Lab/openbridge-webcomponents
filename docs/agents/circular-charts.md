@@ -6,9 +6,7 @@ globs:
   - packages/openbridge-webcomponents/src/charthelpers/**
 ---
 
-# GitHub Copilot Custom Instructions
-
-## Path-Specific Instructions for Circular Charts & Chart Helpers
+# Circular Charts & Chart Helpers
 
 These instructions apply to circular chart components (donut, pie, polar, radial-bar) and their shared helper utilities.
 

@@ -6,9 +6,7 @@ applyTo: "packages/openbridge-webcomponents/src/building-blocks/**,packages/open
      Source: docs/agents/building-blocks.md
      Regenerate: npm run agents:sync -w packages/openbridge-webcomponents -->
 
-# GitHub Copilot Custom Instructions
-
-## Path-Specific Instructions for Building Blocks & SVG Helpers
+# Building Blocks & SVG Helpers
 
 These instructions apply to SVG-based building block components (instrument-linear, bar-vertical, etc.) and their shared SVG helper utilities.
 

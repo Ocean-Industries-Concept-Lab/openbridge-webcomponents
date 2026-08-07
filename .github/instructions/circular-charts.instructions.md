@@ -6,9 +6,7 @@ applyTo: "packages/openbridge-webcomponents/src/bars-graphs/**,packages/openbrid
      Source: docs/agents/circular-charts.md
      Regenerate: npm run agents:sync -w packages/openbridge-webcomponents -->
 
-# GitHub Copilot Custom Instructions
-
-## Path-Specific Instructions for Circular Charts & Chart Helpers
+# Circular Charts & Chart Helpers
 
 These instructions apply to circular chart components (donut, pie, polar, radial-bar) and their shared helper utilities.
 

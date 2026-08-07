@@ -6,9 +6,7 @@ globs:
   - packages/openbridge-webcomponents/src/svghelpers/**
 ---
 
-# GitHub Copilot Custom Instructions
-
-## Path-Specific Instructions for Building Blocks & SVG Helpers
+# Building Blocks & SVG Helpers
 
 These instructions apply to SVG-based building block components (instrument-linear, bar-vertical, etc.) and their shared SVG helper utilities.
 

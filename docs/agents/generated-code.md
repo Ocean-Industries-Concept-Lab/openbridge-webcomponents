@@ -87,6 +87,16 @@ forbid editing files the guidelines explicitly tell you to edit.
 ## The wrapper packages
 
 `packages/openbridge-webcomponents-{react,vue,ng,svelte}/` are regenerated
-wholesale by `npm run wrappers`. Only `README.md` and `AGENTS.md` are preserved
-across `npm run clean:full`; everything else in those directories is disposable
-output.
+wholesale by `npm run wrappers`, with **two exceptions that are not generated at
+all**:
+
+| File | Provenance |
+| --- | --- |
+| `README.md` | hand-written |
+| `AGENTS.md` | hand-written do-not-edit marker pointing here |
+
+Both are preserved across `npm run clean:full` and negated in `.gitignore` so
+they can be committed; everything else in those directories is disposable
+output. Note the wrapper `AGENTS.md` files are **not** produced by
+`npm run agents:sync` — that command generates the root `CLAUDE.md` and
+`.github/instructions/`, not these markers. Edit them directly.

@@ -299,7 +299,7 @@ If a component’s usage is not immediately obvious, consider providing a small 
   Material Design Guidelines: Before writing a component’s doc, check Material Design documentation (Material 3 or Material 2 specs) for that type of component. For instance, Material Design has detailed guidance on snackbars, buttons, checkboxes, etc. Extract key points such as recommended usage, constraints (e.g., “Snackbars should appear at the bottom of the screen and only one at a time”), and any terminology (like “snackbars (toasts) are for brief messages to the user”). Incorporate these in our description in our own words and adapted to OpenBridge context. This ensures our docs carry well-established best practices.
   Other Design Systems: If Material doesn’t cover it or for a second perspective, look at systems like Fluent UI, Ant Design, or Lightning (Salesforce) for how they describe similar components. Sometimes they highlight different considerations (accessibility tips, etc.).
   Web Platform Standards: For form controls (checkbox, radio), also consider HTML’s default behavior (we saw in obc-radio that it uses light DOM for native grouping). If the component leverages or mimics a native element, mention how it stays consistent (e.g., “This wraps an underlying <input type="radio"> to ensure proper group behavior via the native browser mechanics.”).
-  By scraping or researching these external sources first, the documentation generator script can gather a pool of facts and recommendations to include. Just make sure to adapt the tone to match OpenBridge’s professional context (e.g., focusing on maritime/industrial reliability if relevant) without explicitly naming OpenBridge or being too generic. The description should feel specific to the component at hand.
+  By scraping or researching these external sources first, the documentation generator script can gather a pool of facts and recommendations to include. Just make sure to adapt the tone to match the project’s professional context — emphasising reliability and clarity where relevant — without explicitly naming OpenBridge, without domain qualifiers (see the tone rule above: no “maritime”, “industrial” or “bridge”), and without being too generic. The description should feel specific to the component at hand.
   Questions to Clarify with Designers
   When the code or external docs don’t provide enough insight, the script should insert TODO questions for designers within the output (clearly marked so they can be found). These questions ensure that any missing piece of information can be filled in by a human. Common things to ask designers include:
   Component Purpose and Context: “What specific real-world scenario was this component designed for?” (If we aren’t sure about its role or if it overlaps with another component’s usage.) For example, “Is obc-floating-item meant to replace standard toast notifications system-wide, or is it for in-app chat messages?”
@@ -382,12 +382,20 @@ The class has rich JSDoc and `@property` declarations, but it cannot be instanti
 | Rendering in story                     | Direct `<obc-tag>`        | Throwaway inline wrapper               | Concrete subclass element                  |
 ## Structured-tag rules (apply to EVERY component)
 
-● After all Markdown sections, append a short **tag block** that contains only:
+● After all Markdown sections, append a short **tag block**, in this order:
 
-- one `@slot` tag for each content slot
-- one `@fires` (or `@event`) tag for each event the component exposes — custom
-  events **and** native ones that cross the shadow boundary, such as the `click`
-  from a passthrough `<button>`
+1. one `@slot` tag for each content slot
+2. one `@fires` (or `@event`) tag for each event the component exposes — custom
+   events **and** native ones that cross the shadow boundary, such as the `click`
+   from a passthrough `<button>`
+3. `@ignore` — **abstract base classes only** (see
+   [c) Abstract base classes](#c-abstract-base-classes))
+4. exactly one lifecycle tag, **last** — `@stable` / `@beta` / `@experimental` /
+   `@deprecated` (see
+   [Component lifecycle tags](#component-lifecycle-tags-stable--beta--experimental--deprecated))
+
+Items 1 and 2 are the block's content; 3 and 4 are required by their own rules
+and belong in the same block, after them. Nothing else goes here.
 
 ● **Why this matters — two separate tools read these tags, and they do not read
 the same thing.** The full contract, including the two-consumer table, the
@@ -414,8 +422,23 @@ documented inline above their field declarations.
  *
  * @slot - Default leading-icon slot (shown when `showIcon` is true)
  * @fires {CustomEvent<{label:string}>} remove-chip - Fired when the chip's remove button is clicked.
+ * @stable
  */
-
-● When you're using icons as examples, instead of writing emojis, use <obi-placeholder></obi-placeholder>, or other similar icons. OpenBridge has 1000+ icons and you can use them in slots by using this format. Another working icon import example: <obi-arrow></obi-arrow>, <obi-search></obi-search>.
-
 ```
+
+For an abstract base class, `@ignore` precedes the lifecycle tag:
+
+```js
+/**
+ * <markdown sections …>
+ *
+ * @slot - Default slot rendered by this base class's `render()`.
+ * @ignore
+ * @experimental
+ */
+```
+
+● When you're using icons as examples, instead of writing emojis, use
+`<obi-placeholder></obi-placeholder>`, or other similar icons. OpenBridge has
+1000+ icons and you can use them in slots by using this format. Another working
+icon import example: `<obi-arrow></obi-arrow>`, `<obi-search></obi-search>`.

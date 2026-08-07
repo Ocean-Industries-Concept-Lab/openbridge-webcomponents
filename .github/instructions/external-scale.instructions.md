@@ -6,9 +6,7 @@ applyTo: "packages/openbridge-webcomponents/src/building-blocks/external-scale/*
      Source: docs/agents/external-scale.md
      Regenerate: npm run agents:sync -w packages/openbridge-webcomponents -->
 
-# GitHub Copilot Custom Instructions
-
-## Path-Specific Instructions for External Scale & Bar/Gauge Components
+# External Scale & Bar/Gauge Components
 
 These instructions apply to the external scale renderer and its thin wrapper components (bar-vertical, bar-horizontal, gauge-vertical, gauge-horizontal, gauge-trend).
 

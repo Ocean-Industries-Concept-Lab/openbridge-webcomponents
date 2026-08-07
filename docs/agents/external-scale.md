@@ -10,9 +10,7 @@ globs:
   - packages/openbridge-webcomponents/src/navigation-instruments/gauge-trend/**
 ---
 
-# GitHub Copilot Custom Instructions
-
-## Path-Specific Instructions for External Scale & Bar/Gauge Components
+# External Scale & Bar/Gauge Components
 
 These instructions apply to the external scale renderer and its thin wrapper components (bar-vertical, bar-horizontal, gauge-vertical, gauge-horizontal, gauge-trend).
 
