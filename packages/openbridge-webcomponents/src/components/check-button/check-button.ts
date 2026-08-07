@@ -197,7 +197,7 @@ export class ObcCheckButton extends LitElement {
      * Fired after the user toggles the check button.
      * The event detail includes the new checked state and the type of the button.
      *
-     * @fires {CustomEvent<{checked: boolean, type: string}>} check-button-click - Fired after the user toggles the control.
+     * @fires check-button-click
      */
     this.dispatchEvent(
       new CustomEvent('check-button-click', {

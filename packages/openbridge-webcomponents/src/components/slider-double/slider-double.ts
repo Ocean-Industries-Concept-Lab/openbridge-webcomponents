@@ -269,7 +269,7 @@ export class ObcSliderDouble extends LitElement {
    * Handles input changes from the slider thumbs.
    * Updates the low and high values and emits the `value` event.
    *
-   * @fires {ObcSliderDoubleValueEvent} value - Fires when the value is changed
+   * @fires value
    */
   onInput() {
     let newLow = parseFloat(this.minInput.value);
@@ -292,7 +292,7 @@ export class ObcSliderDouble extends LitElement {
   /**
    * Fires the `change` event with the current low and high values.
    *
-   * @fires change - Fires when user interaction completes
+   * @fires change
    */
   private fireChangeEvent() {
     this.dispatchEvent(

@@ -280,7 +280,8 @@ export class ObcStepperBox extends LitElement {
   }
 
   /**
-   * @fires down - Dispatches the `down` event when the decrement button is clicked.
+   * Dispatches the `down` event when the decrement button is clicked.
+   * @fires down
    */
   down() {
     if (this.downDisabled) {
@@ -300,7 +301,8 @@ export class ObcStepperBox extends LitElement {
   }
 
   /**
-   * @fires up - Dispatches the `up` event when the increment button is clicked.
+   * Dispatches the `up` event when the increment button is clicked.
+   * @fires up
    */
   up() {
     if (this.upDisabled) {

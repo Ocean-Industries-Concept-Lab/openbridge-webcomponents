@@ -121,7 +121,7 @@ export class ObcPivotItem extends LitElement {
   /**
    * Handles click events. Emits `selected` when the item is not disabled or already selected.
    *
-   * @fires {CustomEvent<{value: string}>} selected - When the item is clicked and becomes selected
+   * @fires selected
    */
   private onClick() {
     // Don't allow clicking if disabled OR already selected

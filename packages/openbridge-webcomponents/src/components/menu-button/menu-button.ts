@@ -266,7 +266,8 @@ export class ObcMenuButton extends LitElement {
     if (e.newState === 'open') {
       void this.focusMenuAfterOpen();
       /**
-       * @event open - Fired when the menu is opened.
+       * Fired when the menu is opened.
+       * @event open
        * @type {CustomEvent<void>}
        */
       this.dispatchEvent(new CustomEvent('open'));
@@ -277,7 +278,8 @@ export class ObcMenuButton extends LitElement {
         this.triggerButton?.focus();
       }
       /**
-       * @event close - Fired when the menu is closed.
+       * Fired when the menu is closed.
+       * @event close
        * @type {CustomEvent<void>}
        */
       this.dispatchEvent(new CustomEvent('close'));
@@ -337,7 +339,8 @@ export class ObcMenuButton extends LitElement {
     this.selectedValues = e.detail.selectedValues;
 
     /**
-     * @event change - Fired when the menu selection changes.
+     * Fired when the menu selection changes.
+     * @event change
      * @type {CustomEvent<{selectedValues: string[], selectedOptions: Array<ContextMenuOption>}>}
      */
     this.dispatchEvent(new CustomEvent('change', {detail: e.detail}));
@@ -350,7 +353,8 @@ export class ObcMenuButton extends LitElement {
     e: CustomEvent<{value: string; option: ContextMenuOption}>
   ) {
     /**
-     * @event item-click - Fired when a menu item is clicked.
+     * Fired when a menu item is clicked.
+     * @event item-click
      * @type {CustomEvent<{value: string, option: ContextMenuOption}>}
      */
     this.dispatchEvent(new CustomEvent('item-click', {detail: e.detail}));

@@ -197,7 +197,7 @@ export class ObcSystemButton extends LitElement {
     /**
      * Fired when the expanded variant is toggled open or closed.
      *
-     * @event menu-toggle - When the expanded variant is toggled open or closed
+     * @event menu-toggle
      * @type {CustomEvent<{open: boolean}>}
      */
     this.dispatchEvent(
@@ -212,7 +212,7 @@ export class ObcSystemButton extends LitElement {
    * Called by the System Menu component.
    *
    * @param newState Partial system state to merge with the current state.
-   * @fires {CustomEvent<{state: SystemState}>} system-state-change - When the system state is updated
+   * @fires system-state-change
    */
   public updateSystemState(newState: Partial<SystemState>) {
     this.systemState = {...this.systemState, ...newState};
@@ -238,7 +238,7 @@ export class ObcSystemButton extends LitElement {
     /**
      * Fired when the microphone action segment is activated.
      *
-     * @event microphone-panel-open - When the microphone action segment is activated
+     * @event microphone-panel-open
      * @type {CustomEvent<void>}
      */
     this.dispatchEvent(new CustomEvent('microphone-panel-open'));
@@ -250,7 +250,7 @@ export class ObcSystemButton extends LitElement {
     /**
      * Fired when the volume action segment is activated.
      *
-     * @event volume-panel-open - When the volume action segment is activated
+     * @event volume-panel-open
      * @type {CustomEvent<void>}
      */
     this.dispatchEvent(new CustomEvent('volume-panel-open'));
@@ -262,7 +262,7 @@ export class ObcSystemButton extends LitElement {
     /**
      * Fired when the system icons action segment is activated.
      *
-     * @event system-icons-panel-open - When the system icons action segment is activated
+     * @event system-icons-panel-open
      * @type {CustomEvent<void>}
      */
     this.dispatchEvent(new CustomEvent('system-icons-panel-open'));

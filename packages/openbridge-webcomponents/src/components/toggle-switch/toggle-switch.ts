@@ -157,7 +157,7 @@ export class ObcToggleSwitch extends LitElement {
    * Handles input events to change the toggle state.
    * Prevents changes if the toggle is disabled.
    * @param e {InputEvent}
-   * @fires input - Dispatched when the value of the input changes
+   * @fires input
    */
   private _tryChange(e: InputEvent) {
     if (this.disabled) {
