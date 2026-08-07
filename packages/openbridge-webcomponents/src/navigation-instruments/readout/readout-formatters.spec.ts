@@ -630,20 +630,21 @@ describe('splitHintedValue', () => {
     expect(width('1234', 4)).toBe(4);
   });
 
-  // Without the digit guard the leading `-` would be read as a sign and padded
-  // to "-000". render() also never hints an unavailable value, but the helper
-  // must not be able to produce that on its own.
+  // The guard is "has no digits", not "does not start with a hyphen", so it
+  // holds for whichever character the unavailable placeholder uses. The real
+  // placeholder is now U+2012 FIGURE DASH, which `startsWith('-')` would miss
+  // entirely; the ASCII forms are kept because the helper is exported and must
+  // not be able to produce "-000" from a dashed value on its own, whoever calls
+  // it. render() never hints an unavailable value in the first place.
   it('passes a dashed (unavailable) value through unpadded', () => {
-    expect(splitHintedValue('-', 4)).toEqual({
-      sign: '',
-      hinted: '',
-      magnitude: '-',
-    });
-    expect(splitHintedValue('--.-', 4)).toEqual({
-      sign: '',
-      hinted: '',
-      magnitude: '--.-',
-    });
+    const D = READOUT_UNAVAILABLE_DASH;
+    for (const dashed of [D, `${D}.${D}${D}`, '-', '--.-']) {
+      expect(splitHintedValue(dashed, 4)).toEqual({
+        sign: '',
+        hinted: '',
+        magnitude: dashed,
+      });
+    }
   });
 
   it('handles maxDigits of 0', () => {
