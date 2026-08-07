@@ -2,7 +2,10 @@
 name: circular-charts
 description: Circular chart components (donut, pie, polar, radial-bar)
 globs:
-  - packages/openbridge-webcomponents/src/bars-graphs/**
+  - packages/openbridge-webcomponents/src/bars-graphs/donut-chart/**
+  - packages/openbridge-webcomponents/src/bars-graphs/pie-chart/**
+  - packages/openbridge-webcomponents/src/bars-graphs/polar-chart/**
+  - packages/openbridge-webcomponents/src/bars-graphs/radial-bar-chart/**
   - packages/openbridge-webcomponents/src/charthelpers/**
 ---
 

@@ -171,13 +171,13 @@ A confirm is detected when:
 
 ### What Animates
 
-| Element                       | Animation                                           | Duration         |
-| ----------------------------- | --------------------------------------------------- | ---------------- |
-| Original setpoint marker      | Slides from old position to new position            | 300ms `ease-out` |
-| Original setpoint marker      | Opacity `0.75 → 1.0` (was dimmed during adjustment) | 300ms `ease-out` |
-| Departing new-setpoint marker | Fades out `opacity: 1 → 0`                          | 300ms `ease-out` |
+| Element                       | Animation                                           | Duration             |
+| ----------------------------- | --------------------------------------------------- | -------------------- |
+| Original setpoint marker      | Slides from old position to new position            | duration, `ease-out` |
+| Original setpoint marker      | Opacity `0.75 → 1.0` (was dimmed during adjustment) | duration, `ease-out` |
+| Departing new-setpoint marker | Fades out `opacity: 1 → 0`                          | duration, `ease-out` |
 
-After 300ms, the departing marker is removed from DOM.
+After the effective animation duration (300 ms by default — see the caveat below), the departing marker is removed from the DOM.
 
 ### CSS Implementation
 
@@ -201,7 +201,7 @@ obc-gauge-horizontal {
 
 ### The "Departing" Pattern
 
-When a confirm occurs, the new-setpoint marker needs to stay in the DOM for 300ms to complete its fade-out. The pattern:
+When a confirm occurs, the new-setpoint marker needs to stay in the DOM for the effective animation duration (300 ms by default) to complete its fade-out. The pattern:
 
 1. **Detect confirm** in `willUpdate()` (mixin) or `sync()` (bundle)
 2. **Store** the old `newSetpoint` value as `departingNewSetpoint`
