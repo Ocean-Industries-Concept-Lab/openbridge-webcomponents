@@ -264,10 +264,10 @@ export const RectifiedUnactive: Story = {
 
 export const CriticalUnacked: Story = {
   args: {
-    type: 'small-side-flip',
-    thickness: 'small',
-    status: 'level-critical',
-    mode: 'unacked-active',
+    type: ObcAlertFrameType.SmallSideFlip,
+    thickness: ObcAlertFrameThickness.Small,
+    status: ObcAlertFrameStatus.LevelCritical,
+    mode: ObcAlertFrameMode.unackedActive,
     demoWidth: 200,
     showIcon: true,
     showAlertCategoryIcon: true,

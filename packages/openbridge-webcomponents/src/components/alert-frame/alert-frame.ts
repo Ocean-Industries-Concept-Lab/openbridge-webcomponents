@@ -20,7 +20,7 @@ import {
   getAlertBadgeComponent,
   AlertBadgeComponent,
 } from '../../alert-severity.js';
-import {blinkingAll} from '../../palettes/blinking';
+import {blinkingAll} from '../../palettes/blinking.js';
 
 export {AlertType as ObcAlertFrameStatus} from '../../types.js';
 

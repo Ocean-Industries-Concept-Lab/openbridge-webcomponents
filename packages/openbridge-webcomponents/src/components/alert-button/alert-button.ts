@@ -20,7 +20,7 @@ import {
 } from '../../alert-severity.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
-import {blinkingAll} from '../../palettes/blinking';
+import {blinkingAll} from '../../palettes/blinking.js';
 
 /**
  * `ObcAlertButtonType` – Enum for alert button visual and behavioral variants.
