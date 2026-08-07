@@ -32,7 +32,7 @@ normally.
 | `.github/instructions/**`                | `npm run agents:sync`            | `docs/agents/*.md`                                         |
 | `.github/copilot-instructions.md`        | `npm run agents:sync`            | `docs/agents/*.md`                                         |
 | `.cursor/rules/**`                       | `npm run agents:sync`            | `docs/agents/*.md`                                         |
-| `CLAUDE.md` _(gitignored)_               | `npm run agents:sync`            | `docs/agents/claude.md`                                    |
+| `CLAUDE.md` _(gitignored)_               | `npm run agents:sync`            | pointer only — carries no rules of its own                 |
 | `AGENTS.md` § 4 routing table            | `npm run agents:sync`            | the `globs` frontmatter of every `docs/agents/*.md`        |
 
 `custom-elements.json` is also **gitignored** — it is regenerated per checkout

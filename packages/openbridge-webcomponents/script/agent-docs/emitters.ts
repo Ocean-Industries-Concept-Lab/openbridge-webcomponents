@@ -104,20 +104,29 @@ export function renderCopilotInstructions(docs: AgentDoc[]): string {
   ].join('\n');
 }
 
-/** Claude Code entry point. Generated locally; stays gitignored. */
-export function renderClaudeMd(doc: AgentDoc): string {
+/**
+ * Claude Code entry point. Generated locally; stays gitignored.
+ *
+ * A pure pointer by design. Claude Code reads `CLAUDE.md` by convention, so the
+ * file exists to route it to the canonical instructions — it deliberately holds
+ * no rules of its own. Anything that applies to the whole team belongs in
+ * `AGENTS.md`; anything path-scoped belongs in `docs/agents/`. Neither is
+ * tool-specific, so neither belongs here.
+ */
+export function renderClaudeMd(): string {
   return [
-    banner(doc.sourcePath),
+    banner('the agents:sync generator'),
     '',
     '# CLAUDE.md',
     '',
     'All repository instructions live in **[AGENTS.md](AGENTS.md)** — read and',
-    'follow it, plus the path-scoped rules in [`docs/agents/`](docs/agents/).',
+    'follow it, including the path-scoped rules in',
+    '[`docs/agents/`](docs/agents/) that it routes to.',
     '',
-    'The rules below are Claude-specific additions. Where they conflict with',
-    'AGENTS.md, these win.',
+    'This file intentionally adds nothing of its own. It exists because Claude',
+    'Code reads `CLAUDE.md` by convention; the instructions are tool-neutral and',
+    'shared with every other agent.',
     '',
-    doc.body.replace(/\n*$/, '\n'),
   ].join('\n');
 }
 

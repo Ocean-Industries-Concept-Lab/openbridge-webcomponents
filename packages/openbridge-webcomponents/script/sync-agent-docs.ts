@@ -80,8 +80,7 @@ const docs = loadDocs();
 checkGlobs(docs);
 checkOrphans(docs);
 
-// `claude` has no path-scoped adapter and no routing row — it renders CLAUDE.md.
-const routable = docs.filter((d) => d.name !== 'claude');
+const routable = docs;
 
 for (const doc of routable) {
   plan(
@@ -105,14 +104,7 @@ plan(
   )
 );
 
-const claude = docs.find((d) => d.name === 'claude');
-if (!claude) {
-  problems.push(
-    'docs/agents/claude.md is missing — CLAUDE.md cannot be generated'
-  );
-} else {
-  plan(path.join(ROOT, 'CLAUDE.md'), renderClaudeMd(claude));
-}
+plan(path.join(ROOT, 'CLAUDE.md'), renderClaudeMd());
 
 /**
  * Runs generated Markdown through Prettier before writing or comparing.

@@ -191,16 +191,19 @@ describe('replaceMarkedBlock', () => {
 });
 
 describe('renderClaudeMd', () => {
-  it('points at AGENTS.md and carries the claude body', () => {
-    const out = renderClaudeMd({
-      ...DOC,
-      name: 'claude',
-      sourcePath: 'docs/agents/claude.md',
-      body: '## Claude-specific rules\n\n1. Rule.\n',
-    });
+  it('points at AGENTS.md and docs/agents', () => {
+    const out = renderClaudeMd();
     expect(out).toContain('AGENTS.md');
-    expect(out).toContain('1. Rule.');
+    expect(out).toContain('docs/agents/');
     expect(out).toContain('GENERATED FILE — DO NOT EDIT');
+  });
+
+  it('carries no rules of its own — it is a pointer, not a source', () => {
+    const out = renderClaudeMd();
+    expect(out).toContain('intentionally adds nothing of its own');
+    // No numbered rule list: team rules belong in AGENTS.md, path-scoped rules
+    // in docs/agents/. Neither is tool-specific.
+    expect(out).not.toMatch(/^\d+\. \*\*/m);
   });
 });
 
