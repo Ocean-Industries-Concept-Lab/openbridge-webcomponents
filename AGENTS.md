@@ -86,6 +86,10 @@ When refactoring an existing negative boolean, also rename it in the interface, 
 Story `title` and `name` fields must use **Title Case** — enforced by ESLint rule `openbridge/storybook-title-case` (auto-fixable).
 See [IMPLEMENTATION_GUIDELINES.md § Storybook stories](IMPLEMENTATION_GUIDELINES.md#-storybook-stories) for the full convention.
 
+The lifecycle entry in `meta.tags` (`beta` / `experimental` / `deprecated`) is
+**derived from the component's class JSDoc** and must never be hand-written —
+see [§ 3 Component lifecycle tags](#component-lifecycle-tags-stable--beta--experimental--deprecated).
+
 ---
 
 ## 3. Documentation Rules (JSDoc)
@@ -102,6 +106,75 @@ Key points:
 7. **Tone:** Do NOT mention "maritime", "industrial", "bridge", or domain qualifiers; keep text domain-agnostic.
 8. If purpose is unclear, insert `**TODO(designer)**` instead of guessing.
 9. **`@availableWhen` for conditional properties** — see below.
+10. **Exactly one lifecycle tag** on every `@customElement` class — see below.
+
+### Component lifecycle tags (`@stable` / `@beta` / `@experimental` / `@deprecated`)
+
+Every class registered with `@customElement` carries **exactly one** lifecycle
+tag in its class JSDoc. This tag is the **single source of truth** for the
+component's API maturity — Storybook mirrors it, never the other way around.
+
+| Tag             | Meaning                                |
+| --------------- | -------------------------------------- |
+| `@stable`       | Production-ready, stable API           |
+| `@beta`         | Feature-complete, API may still change |
+| `@experimental` | Early stage, API likely to change      |
+| `@deprecated`   | Slated for removal                     |
+
+```ts
+/**
+ * Speed readout.
+ *
+ * @slot value-icon - Icon shown beside the value.
+ * @fires change {CustomEvent<{value: number}>} When the value changes.
+ * @experimental
+ */
+@customElement("obc-readout")
+export class ObcReadout extends LitElement {}
+```
+
+Put the tag **last** in the block, after `@slot` / `@fires`. It must be in a
+real JSDoc block (`/** … */`) — a plain `/* … */` comment is invisible to
+`cem analyze` and to the lint rules.
+
+**Mapping to Storybook `meta.tags`:**
+
+| Class JSDoc     | `meta.tags` entry | Sidebar badge |
+| --------------- | ----------------- | ------------- |
+| `@stable`       | _(none)_          | —             |
+| `@beta`         | `'beta'`          | Beta          |
+| `@experimental` | `'experimental'`  | Experimental  |
+| `@deprecated`   | `'deprecated'`    | Deprecated    |
+
+`@stable` deliberately emits no story tag, so a badge always means "there is a
+caveat here". The retired `'wip'` and `'alpha'` tags no longer exist — use the
+code-side tag instead.
+
+**Never hand-write the lifecycle entry in `meta.tags`.** Set the tag on the
+class, then let the lint rule write the story:
+
+```bash
+npm run lint:fix:stories
+```
+
+That script is deliberately scoped to `src/**/*.stories.ts`. Do **not** run a
+repo-wide `eslint 'src/**/*.ts' --fix`: `--fix` applies every fixable rule at
+every severity, so it silently rewrites unrelated files (today it strips
+`eslint-disable` directives out of the generated `src/generated/locales/*`).
+
+Two ESLint rules enforce this, both part of `npm run lint:eslint`:
+
+- **`openbridge/component-lifecycle-tag`** (warning) — fires on a source file
+  whose `@customElement` class has no lifecycle tag, or more than one. Not
+  auto-fixable: classifying a component is a human decision.
+- **`openbridge/story-lifecycle-tags`** (error, auto-fixable) — fires on a
+  `*.stories.ts` whose `meta.tags` disagrees with the class JSDoc of its
+  `meta.component`. Stories without a `meta.component` (the pure function
+  module pattern below) are skipped.
+
+Version tags (`'6.0'`, `'6.1'`) and tooling tags (`'autodocs'`, `'skip-test'`,
+`'!snapshot'`) are unrelated to lifecycle, stay hand-written, and are preserved
+by the autofix.
 
 ### Slots and events are consumer-critical (`@slot` / `@fires`)
 
@@ -288,8 +361,10 @@ npm run typecheck
 
 # Lint
 npm run lint              # css mixins/variables/icons + slots + lit-analyzer + eslint
-npm run lint:eslint       # eslint only
+npm run lint:eslint       # eslint only (includes the lifecycle-tag rules, § 3)
+npm run lint:fix:stories  # eslint --fix on stories only (rewrites meta.tags lifecycle entries)
 npm run lint:slots        # audit @slot/@fires JSDoc vs templates & dispatched events
+npm run test:rules        # unit tests for the repo's custom ESLint rules
 
 # Format
 npm run format            # prettier write
@@ -371,9 +446,13 @@ Commits that fail lint or format checks are blocked automatically.
    - Add `tags: ['autodocs', '6.0']` for documented OB 6.0 components.
    - Export a `Default` story plus stories for key states and variants.
    - Use Title Case for story titles (see § 2).
-5. Write JSDoc following the three-pattern strategy (see § 3).
-6. Run `npm run analyze` to update `custom-elements.json`.
-7. Run `npm run lint && npm run typecheck` to validate.
+   - Do **not** hand-write a lifecycle tag here — see step 6.
+5. Write JSDoc following the three-pattern strategy (see § 3), including
+   exactly one lifecycle tag on the class (see § 3 Component lifecycle tags).
+6. Run `npm run lint:fix:stories` to populate the story's lifecycle tag from
+   that class JSDoc.
+7. Run `npm run analyze` to update `custom-elements.json`.
+8. Run `npm run lint && npm run typecheck` to validate.
 
 ---
 
@@ -421,7 +500,7 @@ Required modifications after pasting:
    Never hand-edit `custom-elements.json` — it is auto-generated and git-ignored. Fix manifest inaccuracies at the source (`@slot`/`@fires`/property JSDoc); see § 3 "Slots and events are manifest-critical" and run `npm run lint:slots`.
 7. **Run `npm run lint`** after code changes to catch issues early.
 8. **Insert `TODO(designer)`** for any documentation detail whose purpose is unclear from code alone.
-9. **Keep stories tagged** with `['autodocs', '6.0']` for documented OB 6.0 components; `['alpha']` for in-development; `['skip-test']` to exclude from visual tests.
+9. **Keep stories tagged** with `['autodocs', '6.0']` for documented OB 6.0 components; `['skip-test']` to exclude from visual tests. The lifecycle entry (`beta` / `experimental` / `deprecated`) is **never hand-written** — put `@stable`/`@beta`/`@experimental`/`@deprecated` on the component class and run `npm run lint:fix:stories`. The old `'wip'` and `'alpha'` tags are retired; see [§ 3 Component lifecycle tags](#component-lifecycle-tags-stable--beta--experimental--deprecated).
 10. **Do not run full builds or start Storybook automatically.** Avoid `npm run build`, `npm run storybook` unless the user explicitly requests it. These are expensive, long-running operations.
 11. **Run visual tests for a single component** instead of the full suite:
     ```bash

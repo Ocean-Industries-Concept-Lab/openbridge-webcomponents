@@ -8,7 +8,7 @@ import {sideVessels} from '../watch/vessels/storybook-helper.js';
 
 const meta: Meta<typeof ObcDraftTrim> = {
   title: 'Instruments/Draft Trim',
-  tags: ['autodocs', '6.0', 'wip'],
+  tags: ['autodocs', '6.0', 'experimental'],
   component: 'obc-draft-trim',
   args: {
     width: 384,

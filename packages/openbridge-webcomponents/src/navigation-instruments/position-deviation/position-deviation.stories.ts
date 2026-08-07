@@ -9,7 +9,7 @@ import {widthDecorator} from '../../storybook-util.js';
 
 const meta: Meta<typeof ObcPositionDeviation> = {
   title: 'Instruments/Position Deviation',
-  tags: ['autodocs', 'wip'],
+  tags: ['autodocs', 'experimental'],
   component: 'obc-position-deviation',
   args: {
     width: 400,

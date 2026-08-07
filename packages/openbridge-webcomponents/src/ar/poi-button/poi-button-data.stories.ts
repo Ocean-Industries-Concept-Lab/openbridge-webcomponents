@@ -15,7 +15,7 @@ import {crossDecorator} from '../../storybook-util.js';
 
 const meta: Meta<ObcPoiButtonData> = {
   title: 'AR/POI Button/POI Button Data',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'experimental'],
   component: 'obc-poi-button-data',
   decorators: [crossDecorator],
   args: {

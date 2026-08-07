@@ -74,7 +74,7 @@ const defaultArgs: FormItemArgs = {
 
 const meta = {
   title: 'UI Components/Forms/Form Item',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'beta'],
   component: 'obc-form-item',
   decorators: [
     (story) =>

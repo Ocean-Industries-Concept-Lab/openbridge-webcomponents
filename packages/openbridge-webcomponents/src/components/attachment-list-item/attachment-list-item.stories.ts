@@ -8,7 +8,7 @@ import {html} from 'lit';
 
 const meta: Meta<ObcAttachmentListItem> = {
   title: 'UI Components/Tables and Lists/Attachment List Item',
-  tags: ['autodocs', '6.1'],
+  tags: ['autodocs', '6.1', 'beta'],
   component: 'obc-attachment-list-item',
   args: {
     label: 'Document.pdf',

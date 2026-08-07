@@ -21,7 +21,7 @@ const alert: Alert = {
 
 const meta: Meta<typeof ObcAlertDetailPage> = {
   title: 'Pages/Alert Detail Page',
-  tags: ['6.0'],
+  tags: ['6.0', 'beta'],
   component: 'obc-alert-detail-page',
   args: {
     hasActions: true,

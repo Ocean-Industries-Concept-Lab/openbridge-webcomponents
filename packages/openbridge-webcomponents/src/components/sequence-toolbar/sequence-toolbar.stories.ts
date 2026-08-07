@@ -16,6 +16,7 @@ type SequenceToolbarArgs = {
 
 const meta: Meta<SequenceToolbarArgs> = {
   title: 'Automation/Sequence Toolbar',
+  tags: ['beta'],
   component: 'obc-sequence-toolbar',
   parameters: {
     layout: 'centered',
