@@ -23,9 +23,11 @@ reviews:
   path_filters:
     # ── Generated: agent-instruction adapters ────────────────────────────────
     # Rendered from docs/agents/*.md by `npm run agents:sync`; `npm run
-    # lint:agents` fails CI if they drift. Editing them is a no-op.
+    # lint:agents` fails CI if they drift. Editing them is a no-op — three
+    # vendor adapters, one canonical source.
     - "!.github/instructions/**"
     - "!.github/copilot-instructions.md"
+    - "!.cursor/rules/**"
 
     # ── Generated: icons and translations ────────────────────────────────────
     # `npm run download:icons` (from Figma) and `npm run build:translations`.
