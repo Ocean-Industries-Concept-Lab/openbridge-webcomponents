@@ -20,6 +20,7 @@ import {
 } from '../../alert-severity.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
+import {blinkingAll} from '../../palettes/blinking';
 
 /**
  * `ObcAlertButtonType` – Enum for alert button visual and behavioral variants.
@@ -206,6 +207,7 @@ export class ObcAlertButton extends LitElement {
 
   override disconnectedCallback() {
     window.removeEventListener('resize', this.resizeListener);
+    this._blinkAnimationCancel?.();
     super.disconnectedCallback();
   }
 
@@ -278,6 +280,13 @@ export class ObcAlertButton extends LitElement {
       this.width >= this.silenceButtonMinBreakpointPx &&
       this.activeType !== ObcAlertButtonType.Flat
     );
+  }
+
+  private _blinkAnimationCancel?: () => void;
+
+  override firstUpdated() {
+    this._blinkAnimationCancel?.();
+    this._blinkAnimationCancel = blinkingAll(this);
   }
 
   override render() {

@@ -50,6 +50,7 @@ import {
 import {lowSilencedA, lowSilencedB} from './icons/icon-low-silenced.js';
 import {lowRectifiedA, lowRectifiedB} from './icons/icon-low-rectified.js';
 import {lowAcknowledged} from './icons/icon-low-acknowledged.js';
+import {blinkingAll} from '../../palettes/blinking.js';
 
 enum AlertIconState {
   Silenced = 'silenced',
@@ -341,6 +342,33 @@ export class ObcAlertIcon extends LitElement {
       `;
     }
     return html`<div class="wrapper">${this.renderStaticIcon()}</div>`;
+  }
+
+  private _blinkAnimationCancel?: () => void;
+
+  override updated(changedProperties: Map<string, unknown>): void {
+    if (this._blinkAnimationCancel) {
+      this._blinkAnimationCancel();
+      this._blinkAnimationCancel = undefined;
+      console.log('blink animation stopped');
+    }
+    if (supportsBlinking(this._effectiveType, this.acknowledged ?? false)) {
+      const el = this.shadowRoot!.querySelector('.wrapper');
+      if (!el) {
+        throw new Error('No wrapper element found');
+      }
+      this._blinkAnimationCancel = blinkingAll(el as HTMLElement);
+      console.log('blink animation started');
+    }
+  }
+
+  override disconnectedCallback(): void {
+    super.disconnectedCallback();
+    if (this._blinkAnimationCancel) {
+      console.log('blink animation stopped');
+      this._blinkAnimationCancel();
+      this._blinkAnimationCancel = undefined;
+    }
   }
 
   static override styles = css`

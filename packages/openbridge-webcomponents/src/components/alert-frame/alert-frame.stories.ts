@@ -261,3 +261,15 @@ export const RectifiedUnactive: Story = {
     mode: ObcAlertFrameMode.unackedRectified,
   },
 };
+
+export const CriticalUnacked: Story = {
+  args: {
+    type: 'small-side-flip',
+    thickness: 'small',
+    status: 'level-critical',
+    mode: 'unacked-active',
+    demoWidth: 200,
+    showIcon: true,
+    showAlertCategoryIcon: true,
+  },
+};
