@@ -35,6 +35,11 @@ normally.
 | `script/figmavariables.json`             | obc-figma-plugin `variables map`    | OpenBridge **Icons** Figma file — not the main design file  |
 | `packages/openbridge-webcomponents-*/**` | `npm run wrappers`                  | The core package's source JSDoc, via `lit labs gen`         |
 | `custom-elements.json`                   | `npm run analyze`                   | The core package's source JSDoc, via `cem analyze`          |
+| `.github/instructions/**`                | `npm run agents:sync`               | `docs/agents/*.md`                                          |
+| `.github/copilot-instructions.md`        | `npm run agents:sync`               | `docs/agents/*.md`                                          |
+| `.cursor/rules/**`                       | `npm run agents:sync`               | `docs/agents/*.md`                                          |
+| `CLAUDE.md` *(gitignored)*               | `npm run agents:sync`               | `docs/agents/claude.md`                                     |
+| `AGENTS.md` § 4 routing table            | `npm run agents:sync`               | the `globs` frontmatter of every `docs/agents/*.md`         |
 
 `custom-elements.json` is also **gitignored** — it is regenerated per checkout
 rather than committed.

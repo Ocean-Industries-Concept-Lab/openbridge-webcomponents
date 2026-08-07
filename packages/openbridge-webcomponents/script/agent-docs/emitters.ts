@@ -29,6 +29,35 @@ export function renderInstructionsFile(doc: AgentDoc): string {
   ].join('\n');
 }
 
+/**
+ * Cursor rule: `globs` + `alwaysApply: false` is Cursor's "Apply to Specific
+ * Files" type — the direct equivalent of Copilot's `applyTo`.
+ *
+ * `description` is deliberately omitted. Cursor's four rule types are distinct
+ * frontmatter combinations, and adding a description alongside globs selects
+ * "Apply Intelligently" (the agent decides) instead of deterministic
+ * attachment. The description still reaches the reader: the body opens with the
+ * document's own heading.
+ *
+ * Negative globs are dropped. Cursor documents `globs` as a comma-separated
+ * list and says nothing about `!` negation, so a pattern it cannot parse could
+ * take the whole line with it. The only doc affected is `jsdoc.md`, whose
+ * exclusions are generated directories a developer rarely opens by hand.
+ */
+export function renderCursorRule(doc: AgentDoc): string {
+  const globs = doc.globs.filter((g) => !g.startsWith('!'));
+  return [
+    '---',
+    `globs: ${globs.join(',')}`,
+    'alwaysApply: false',
+    '---',
+    '',
+    banner(doc.sourcePath),
+    '',
+    doc.body.replace(/\n*$/, '\n'),
+  ].join('\n');
+}
+
 /** Shared routing table (no markers) for AGENTS.md and copilot-instructions.md. */
 export function renderRoutingTable(docs: AgentDoc[]): string {
   const rows = [...docs]

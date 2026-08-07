@@ -125,9 +125,16 @@ Key points:
 
 Detailed component-family rules live in [`docs/agents/`](docs/agents/) — the
 canonical, tool-neutral source, readable by any agent. Agents that support
-glob-scoped instructions pick them up automatically from
-`.github/instructions/`, which is **generated** from `docs/agents/` by
-`npm run agents:sync`.
+glob-scoped instructions pick them up automatically from generated adapters:
+
+| Adapter                                              | Consumer       |
+| ---------------------------------------------------- | -------------- |
+| `.github/instructions/*.instructions.md` (`applyTo`) | GitHub Copilot |
+| `.cursor/rules/*.mdc` (`globs`)                      | Cursor         |
+| `CLAUDE.md` (gitignored, generated on `npm install`) | Claude Code    |
+
+All are produced by `npm run agents:sync` and verified by `npm run lint:agents`.
+Every other agent reads this file and fetches `docs/agents/` on demand.
 
 The table below is generated too. Edit `docs/agents/*.md`, never this block.
 

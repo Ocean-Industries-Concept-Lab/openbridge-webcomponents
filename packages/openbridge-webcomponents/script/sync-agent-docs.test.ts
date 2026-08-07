@@ -5,6 +5,7 @@ import {
   ROUTING_MARKER,
   renderClaudeMd,
   renderCopilotInstructions,
+  renderCursorRule,
   renderInstructionsFile,
   renderRoutingTable,
   replaceMarkedBlock,
@@ -215,5 +216,38 @@ describe('CLI failure semantics', () => {
   it('only skips negative globs in the resolution check', () => {
     const src = readFileSync(cli, 'utf8');
     expect(src).toContain("if (g.startsWith('!')) continue;");
+  });
+});
+
+describe('renderCursorRule', () => {
+  it('emits globs + alwaysApply:false — Cursor\'s "Apply to Specific Files" type', () => {
+    const out = renderCursorRule(DOC);
+    expect(out.startsWith('---\n')).toBe(true);
+    expect(out).toContain(
+      'globs: packages/openbridge-webcomponents/src/components/**'
+    );
+    expect(out).toContain('alwaysApply: false');
+  });
+
+  it('omits description, which would select "Apply Intelligently" instead', () => {
+    expect(renderCursorRule(DOC)).not.toContain('description:');
+  });
+
+  it('joins multiple globs with commas', () => {
+    expect(renderCursorRule({...DOC, globs: ['a/**', 'b/**']})).toContain(
+      'globs: a/**,b/**'
+    );
+  });
+
+  it('drops negative globs, which Cursor does not document', () => {
+    const out = renderCursorRule({...DOC, globs: ['a/**', '!b/**', 'c/**']});
+    expect(out).toContain('globs: a/**,c/**');
+    expect(out).not.toContain('!b/**');
+  });
+
+  it('keeps the body verbatim and carries the do-not-edit banner', () => {
+    const out = renderCursorRule(DOC);
+    expect(out).toContain('# Accessibility\n\nBody.\n');
+    expect(out).toContain('GENERATED FILE — DO NOT EDIT');
   });
 });

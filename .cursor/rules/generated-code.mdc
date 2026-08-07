@@ -1,5 +1,6 @@
 ---
-applyTo: "packages/openbridge-webcomponents/src/icons/**,packages/openbridge-webcomponents/src/manual-icon/**,packages/openbridge-webcomponents/src/palettes/variables.css,packages/openbridge-webcomponents/src/mixins/fonts.css,packages/openbridge-webcomponents/script/figmavariables.json,packages/openbridge-webcomponents-react/**,packages/openbridge-webcomponents-vue/**,packages/openbridge-webcomponents-ng/**,packages/openbridge-webcomponents-svelte/**"
+globs: packages/openbridge-webcomponents/src/icons/**,packages/openbridge-webcomponents/src/manual-icon/**,packages/openbridge-webcomponents/src/palettes/variables.css,packages/openbridge-webcomponents/src/mixins/fonts.css,packages/openbridge-webcomponents/script/figmavariables.json,packages/openbridge-webcomponents-react/**,packages/openbridge-webcomponents-vue/**,packages/openbridge-webcomponents-ng/**,packages/openbridge-webcomponents-svelte/**
+alwaysApply: false
 ---
 
 <!-- GENERATED FILE — DO NOT EDIT.

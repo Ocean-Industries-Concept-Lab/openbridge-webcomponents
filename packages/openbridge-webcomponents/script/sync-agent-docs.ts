@@ -7,6 +7,7 @@ import {
   ROUTING_MARKER,
   renderClaudeMd,
   renderCopilotInstructions,
+  renderCursorRule,
   renderInstructionsFile,
   renderRoutingTable,
   replaceMarkedBlock,
@@ -15,6 +16,7 @@ import {
 const ROOT = path.resolve(import.meta.dirname, '../../..');
 const AGENTS_DIR = path.join(ROOT, 'docs/agents');
 const INSTRUCTIONS_DIR = path.join(ROOT, '.github/instructions');
+const CURSOR_RULES_DIR = path.join(ROOT, '.cursor/rules');
 const CHECK = process.argv.includes('--check');
 
 const problems: string[] = [];
@@ -55,15 +57,21 @@ function checkGlobs(docs: AgentDoc[]): void {
   }
 }
 
-/** Check 4 — no generated instruction file without a canonical source. */
+/** Check 4 — no generated adapter without a canonical source. */
 function checkOrphans(docs: AgentDoc[]): void {
-  const expected = new Set(docs.map((d) => `${d.name}.instructions.md`));
-  if (!fs.existsSync(INSTRUCTIONS_DIR)) return;
-  for (const f of fs.readdirSync(INSTRUCTIONS_DIR)) {
-    if (f.endsWith('.instructions.md') && !expected.has(f)) {
-      problems.push(
-        `.github/instructions/${f}: no matching docs/agents/ source (delete it or add the source)`
-      );
+  const adapters: [string, string, string][] = [
+    [INSTRUCTIONS_DIR, '.instructions.md', '.github/instructions'],
+    [CURSOR_RULES_DIR, '.mdc', '.cursor/rules'],
+  ];
+  for (const [dir, ext, rel] of adapters) {
+    if (!fs.existsSync(dir)) continue;
+    const expected = new Set(docs.map((d) => `${d.name}${ext}`));
+    for (const f of fs.readdirSync(dir)) {
+      if (f.endsWith(ext) && !expected.has(f)) {
+        problems.push(
+          `${rel}/${f}: no matching docs/agents/ source (delete it or add the source)`
+        );
+      }
     }
   }
 }
@@ -80,6 +88,7 @@ for (const doc of routable) {
     path.join(INSTRUCTIONS_DIR, `${doc.name}.instructions.md`),
     renderInstructionsFile(doc)
   );
+  plan(path.join(CURSOR_RULES_DIR, `${doc.name}.mdc`), renderCursorRule(doc));
 }
 plan(
   path.join(ROOT, '.github/copilot-instructions.md'),
