@@ -1,7 +1,213 @@
 ---
-description: Comment styles
-alwaysApply: true
+name: jsdoc
+description: JSDoc template, slot/event tags, lifecycle tags, and the three documentation patterns
+globs:
+  - packages/openbridge-webcomponents/src/**/*.ts
+  - '!packages/openbridge-webcomponents/src/icons/**'
+  - '!packages/openbridge-webcomponents/src/generated/**'
+  - '!packages/openbridge-webcomponents/src/manual-icon/**'
 ---
+
+# JSDoc Documentation Rules
+
+The full JSDoc template, the `@slot`/`@fires` contract, `@availableWhen`,
+component lifecycle tags, and the three documentation patterns. `AGENTS.md` § 3
+carries the summary; this file is the source of truth.
+
+Key points:
+
+1. **One-line summary** with the tag name and a brief description.
+2. **Features / Variants** — bullet list of capabilities and configuration options.
+3. **Usage Guidelines** — when and how to use the component; contrast with similar components.
+4. **Slots** — table of slot names, conditions, and purposes.
+5. **Events** — a `@fires` tag for every event the component exposes, custom **and** native (a passthrough `<button>`'s `click` included). See below.
+6. **No `@property` tags** in the class JSDoc block — properties are documented inline above their field declarations. A class-level `@property` tag **overrides** the inline doc in `custom-elements.json` and can inject a **ghost member** for a property that does not exist (issue #1043). Enforced by `npm run lint:slots`. (Documenting a CSS-only attribute that has no backing `@property` field via `@attr`/`@attribute` in the class block is allowed — there is no field to annotate.)
+7. **Tone:** Do NOT mention "maritime", "industrial", "bridge", or domain qualifiers; keep text domain-agnostic.
+8. If purpose is unclear, insert `**TODO(designer)**` instead of guessing.
+9. **`@availableWhen` for conditional properties** — see below.
+10. **Exactly one lifecycle tag** on every `@customElement` class — see below.
+
+### Component lifecycle tags (`@stable` / `@beta` / `@experimental` / `@deprecated`)
+
+Every class registered with `@customElement` carries **exactly one** lifecycle
+tag in its class JSDoc. This tag is the **single source of truth** for the
+component's API maturity — Storybook mirrors it, never the other way around.
+
+| Tag             | Meaning                                |
+| --------------- | -------------------------------------- |
+| `@stable`       | Production-ready, stable API           |
+| `@beta`         | Feature-complete, API may still change |
+| `@experimental` | Early stage, API likely to change      |
+| `@deprecated`   | Slated for removal                     |
+
+```ts
+/**
+ * Speed readout.
+ *
+ * @slot value-icon - Icon shown beside the value.
+ * @fires change {CustomEvent<{value: number}>} When the value changes.
+ * @experimental
+ */
+@customElement("obc-readout")
+export class ObcReadout extends LitElement {}
+```
+
+Put the tag **last** in the block, after `@slot` / `@fires`. It must be in a
+real JSDoc block (`/** … */`) — a plain `/* … */` comment is invisible to
+`cem analyze` and to the lint rules.
+
+**Mapping to Storybook `meta.tags`:**
+
+| Class JSDoc     | `meta.tags` entry | Sidebar badge |
+| --------------- | ----------------- | ------------- |
+| `@stable`       | _(none)_          | —             |
+| `@beta`         | `'beta'`          | Beta          |
+| `@experimental` | `'experimental'`  | Experimental  |
+| `@deprecated`   | `'deprecated'`    | Deprecated    |
+
+`@stable` deliberately emits no story tag, so a badge always means "there is a
+caveat here". The retired `'wip'` and `'alpha'` tags no longer exist — use the
+code-side tag instead.
+
+**Never hand-write the lifecycle entry in `meta.tags`.** Set the tag on the
+class, then let the lint rule write the story:
+
+```bash
+npm run lint:fix:stories
+```
+
+That script is deliberately scoped to `src/**/*.stories.ts`. Do **not** run a
+repo-wide `eslint 'src/**/*.ts' --fix`: `--fix` applies every fixable rule at
+every severity, so it silently rewrites unrelated files (today it strips
+`eslint-disable` directives out of the generated `src/generated/locales/*`).
+
+Two ESLint rules enforce this, both part of `npm run lint:eslint`:
+
+- **`openbridge/component-lifecycle-tag`** (warning) — fires on a source file
+  whose `@customElement` class has no lifecycle tag, or more than one. Not
+  auto-fixable: classifying a component is a human decision.
+- **`openbridge/story-lifecycle-tags`** (error, auto-fixable) — fires on a
+  `*.stories.ts` whose `meta.tags` disagrees with the class JSDoc of its
+  `meta.component`. Stories without a `meta.component` (the pure function
+  module pattern below) are skipped.
+
+Version tags (`'6.0'`, `'6.1'`) and tooling tags (`'autodocs'`, `'skip-test'`,
+`'!snapshot'`) are unrelated to lifecycle, stay hand-written, and are preserved
+by the autofix.
+
+### Slots and events are consumer-critical (`@slot` / `@fires`)
+
+Two independent tools read these tags, and they do **not** read the same thing.
+This is the single most important fact in this section:
+
+| Consumer                                                                                                       | Reads                                       | Consequence of a missing/malformed tag                                                             |
+| -------------------------------------------------------------------------------------------------------------- | ------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `lit labs gen` (`npm run wrappers`) → `-react`, `-vue`, `-ng`, `-svelte`                                       | the **source JSDoc**, class-level tags only | the wrapper has **no `onX` binding at all** — the event is unreachable from the framework packages |
+| `cem analyze` (`npm run analyze`) → `custom-elements.json` → IDE autocomplete, Storybook autodocs, playgrounds | the source, but more leniently              | blank or type-polluted entry in the manifest                                                       |
+
+**The wrappers do not read `custom-elements.json`.** A correct manifest is
+therefore _not_ evidence that a component is correctly documented. `obc-poi-group`
+demonstrated this: `cem analyze` inferred `obc-poi-group-target-released` from the
+`dispatchEvent(...)` call and listed it in the manifest, while the React wrapper
+had no binding for it whatsoever (issue #1109, PR #1110).
+
+The two tags behave differently, and both are easy to get silently wrong
+(issue #1033):
+
+- **Slots are detected ONLY from `@slot` tags.** The analyzer never reads
+  `<slot>` elements in the template. A `<slot name="leading-icon">` with no
+  `@slot leading-icon` tag is **invisible** to every consumer even though it
+  works at runtime — this is the exact "wrappers don't know about the slot" bug.
+  Every rendered `<slot>`/`<slot name="…">` needs a matching `@slot` tag (`@slot -`
+  for the default slot).
+- **Do not confuse a slot with a projection.** `<slot name="x">` **exposes** a
+  slot to _your_ consumers. `<el slot="x">` (a `slot` attribute on a non-`<slot>`
+  element) **projects** that element _into a child_ component's slot — it exposes
+  nothing. Writing `@slot x` for a projection creates a **phantom** slot (a
+  documented control that does nothing). Only tag real `<slot>` elements.
+- **Dynamic slot names** (`<slot name="tab-${id}-icon">`) can't be enumerated;
+  document them once with a placeholder, e.g. `@slot tab-<id>-icon`.
+- **An untagged event costs you the wrapper, not just a description.**
+  `cem analyze` infers events from `this.dispatchEvent(new CustomEvent('x'))`, so
+  an untagged event still reaches the manifest (with an empty description) — but
+  `lit labs gen` infers nothing, so the framework wrappers get **no binding**.
+  Every event a component dispatches needs an explicit `@fires` tag.
+- **Write the type first: `@fires {Type} name - description`.** `lit labs gen`
+  parses either order, but `cem analyze` only strips `{Type}` when it _precedes_
+  the name. The name-first form `@fires name {Type} desc` leaves a literal
+  `{Type}` at the head of the manifest description and drops the payload type
+  from the `type` field. PR #1110 normalized 190 tags for this reason — do not
+  reintroduce the name-first form.
+- **Tags must be class-level.** Only the JSDoc block attached to the
+  `@customElement` class is read. A `@fires` tag inside a method docblock reaches
+  **neither** tool. Document the event on the class; if a method docblock also
+  mentions it, keep the method's own summary line and leave the tag bare
+  (`@fires name`) so the two do not compete.
+- **Inherited slots/events:** the `@slot`/`@fires` tag must live on the concrete
+  `@customElement` class, because CEM emits one manifest entry per registered
+  element. A subclass that renders slots via its base class's `render()` still
+  needs its own tags. A tag on an unregistered base class documents the dispatch
+  site only — it produces no manifest entry and no wrapper binding.
+- **Native `click` needs a tag too.** A component whose template is a passthrough
+  `<button>`/`<a>` with no `dispatchEvent` still has a public activation event:
+  the native `click` is `composed`, so it crosses the shadow boundary. Tag it
+  untyped — `@fires click - Fired when the button is clicked.` — matching
+  `obc-button` and `obc-icon-button`. Do **not** type it as `{CustomEvent<…>}`;
+  what consumers receive is the native event.
+  **React consequence:** in `@lit/react`, any prop named in the generated `events`
+  map is attached with `addEventListener` instead of being forwarded to
+  `React.createElement`. Declaring `@fires click` therefore moves `onClick` off
+  React's synthetic delegation onto a direct DOM listener — handlers receive a
+  native `PointerEvent`, and `stopPropagation()` inside one will stop the event
+  before React's root delegation, killing `onClick` on React ancestors. This is a
+  public-API change; note it in the release notes when adding the tag to an
+  existing component.
+- **Always dispatch with `this.`.** A bare `dispatchEvent(new CustomEvent('x'))`
+  inside a class method resolves to `globalThis.dispatchEvent`, firing the event
+  on `window` where no consumer of the element can observe it (fixed in
+  `obc-navigation-item`, PR #1112). Caught by `npm run lint:slots`.
+
+Run **`npm run lint:slots`** (part of `npm run lint`) to catch missing/phantom
+`@slot` tags, undocumented events, and bare `dispatchEvent(` calls automatically.
+It reports empty descriptions as warnings for class-level tags only.
+
+### Conditional properties (`@availableWhen`)
+
+A property whose value only has an observable effect when **another** property is set a certain way is a _conditional property_. Document the dependency with an `@availableWhen` tag in the property's inline JSDoc, directly above its `@property` declaration:
+
+```ts
+@property({type: Boolean}) alert = false;
+/** @availableWhen alert==true */
+@property({type: String}) alertFrameStatus: AlertType = AlertType.Alarm;
+/** @availableWhen alert==true && alertFrameType in [LargeSideFlip, BottomFlip, TopFlip] */
+@property({type: Boolean, attribute: false}) showAlertCategoryIcon = true;
+```
+
+Syntax:
+
+- **Boolean:** `@availableWhen showFoo==true` or `@availableWhen showFoo==false`.
+- **Enum / string equality:** `@availableWhen type==label` — use the declared value, **no quotes**.
+- **Enum / string inequality:** `@availableWhen state!=overlapped` — handy for "all values except one".
+- **Set membership:** `@availableWhen type in [LargeSideFlip, BottomFlip, TopFlip]` — use the **enum member identifier names**, not the string values.
+- **Non-empty string:** `@availableWhen label!=''` — for `string` props (default `''`) that gate another prop by being non-empty.
+- **Empty / non-empty array:** `@availableWhen centerReadouts==[]` (available only while the array is empty) or `@availableWhen advices!=[]` — for `Array` props whose emptiness gates another prop.
+- **Defined / non-null:** `@availableWhen courseArrowPx!=undefined` (for `X | undefined`) or `@availableWhen headingSetpoint!=null` (for `X | null`).
+- **Combine:** join with `&&` (all required) or `||` (any sufficient). Always use `==`/`!=` (never a single `=`).
+
+Rules:
+
+- **Never annotate the gate itself** — only the dependent property. In the example, `alert` is the gate and stays unannotated.
+- **Self-gated props are not conditional** — a prop that does nothing when its _own_ value is `0`/`''`/`undefined` is not `@availableWhen` (that dependency is on itself, not another property).
+- **Multi-path props are not conditional** — if a prop still has an observable effect via some always-on path (e.g. it is also emitted in an event or applied as a CSS class regardless of the gate), do not annotate it.
+- The condition must hold against the **actual render/behavior logic** (trace into helpers, getters, and child components the prop is forwarded to), not just the prop's name.
+- For properties added by `SetpointMixin`, the `@availableWhen` tags live in `svghelpers/setpoint-mixin.ts`; components that consume the mixin inherit them and must not re-annotate.
+
+> The three documentation patterns (concrete components, pure function modules,
+> abstract base classes) are covered in full below — see
+> [Documentation by code pattern](#documentation-by-code-pattern-regular-components-pure-functions-abstract-classes).
+
+---
+
 
 - Use english comments only
 - No comments in code whatsoever unless the code is extremely unusual and impossible to understand without explanation
@@ -184,41 +390,13 @@ The class has rich JSDoc and `@property` declarations, but it cannot be instanti
   from a passthrough `<button>`
 
 ● **Why this matters — two separate tools read these tags, and they do not read
-the same thing.** `cem analyze` generates `custom-elements.json`, which feeds IDE
-autocomplete, Storybook autodocs, and code playgrounds. The framework wrappers do
-**not** read that manifest: `lit labs gen` parses the source JSDoc directly, and
-only class-level tags. So a correct manifest is not evidence that a component is
-correctly documented — an event can be present in `custom-elements.json` and still
-be completely absent from the React/Vue/Angular/Svelte wrappers (issue #1109).
-Getting the tags wrong produces the exact symptoms in issue #1033 (ghost
-attribute, missing slot, phantom slot):
-
-- **Slots are detected ONLY from `@slot` tags — never from the template.** Every
-  rendered `<slot>` / `<slot name="…">` needs a matching tag (`@slot -` for the
-  default slot), or consumers can't see it even though it works at runtime.
-- **A `<slot>` is not a projection.** `<slot name="x">` exposes a slot to _your_
-  consumers; `<el slot="x">` projects `el` _into a child_ component and exposes
-  nothing. Never write `@slot x` for a `slot="x"` projection — that is a phantom.
-- **Dynamic slot names** (`<slot name="tab-${id}-icon">`) → one placeholder tag:
-  `@slot tab-<id>-icon`.
-- **An untagged event costs you the wrapper, not just a description.**
-  `cem analyze` auto-detects events from `this.dispatchEvent(new CustomEvent('x'))`,
-  so they land in the manifest even without a tag (with an empty description) —
-  but `lit labs gen` detects nothing, so the wrappers get **no `onX` binding at
-  all**. Every dispatched event needs an explicit `@fires` tag.
-- **Write the type first: `@fires {Type} name - description`.** `lit labs gen`
-  parses either order, but `cem analyze` only strips `{Type}` when it *precedes*
-  the name — the name-first form `@fires name {Type} desc` leaves a literal
-  `{Type}` at the head of the manifest description and loses the payload type.
-- **Native `click` needs a tag too.** A passthrough `<button>`/`<a>` with no
-  `dispatchEvent` still has a public activation event, because the native `click`
-  is `composed`. Tag it untyped: `@fires click - Fired when the button is clicked.`
-- **Always dispatch with `this.`** — a bare `dispatchEvent(...)` in a class method
-  fires on `window`, where no consumer of the element can observe it.
-- Tags must live on the concrete `@customElement` class (one manifest entry per
-  registered element), even when a base class renders the slots or fires the event.
-  A `@fires` tag inside a **method** docblock reaches neither tool; keep the
-  method's own summary line and leave any such tag bare (`@fires name`).
+the same thing.** The full contract, including the two-consumer table, the
+`obc-poi-group` worked example, inherited slots/events, and the React
+`onClick` consequence of tagging native `click`, is in
+[Slots and events are consumer-critical](#slots-and-events-are-consumer-critical-slot--fires)
+above. Getting the tags wrong produces the exact symptoms in issue #1033
+(ghost attribute, missing slot, phantom slot) and issue #1109 (an event present
+in `custom-elements.json` but absent from every framework wrapper).
 
 ● Run `npm run lint:slots` (`script/check-slot-event-docs.ts`, part of
 `npm run lint`) to automatically catch missing/phantom `@slot` tags, undocumented
