@@ -141,7 +141,11 @@ for (const [absPath, raw] of writes) {
 
 if (problems.length > 0) {
   console.error(`\nagent-docs: ${problems.length} problem(s)`);
-  for (const p of problems) console.error(`  ✗ ${p}`);
-  process.exit(1);
+  for (const p of problems) console.error(`  ${CHECK ? '✗' : 'warning:'} ${p}`);
+  // Write mode reports but never fails. `agents:sync` runs from the root
+  // `prepare` script, so a stale glob or a missing source must not be able to
+  // break `npm ci` for everyone. `lint:agents` is the gate; it runs in CI after
+  // the build steps, when any generated paths actually exist.
+  if (CHECK) process.exit(1);
 }
 console.log(CHECK ? 'agent-docs: up to date' : 'agent-docs: sync complete');

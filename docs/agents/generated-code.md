@@ -3,7 +3,6 @@ name: generated-code
 description: Generated files that must never be hand-edited, and the command that regenerates each
 globs:
   - packages/openbridge-webcomponents/src/icons/**
-  - packages/openbridge-webcomponents/src/generated/**
   - packages/openbridge-webcomponents/src/manual-icon/**
   - packages/openbridge-webcomponents/src/palettes/variables.css
   - packages/openbridge-webcomponents/src/mixins/fonts.css
@@ -30,7 +29,7 @@ normally.
 | Path                                     | Regenerate with                     | Source of truth                                             |
 | ---------------------------------------- | ----------------------------------- | ----------------------------------------------------------- |
 | `src/icons/**` (2000+ components)        | `npm run download:icons`            | The OpenBridge Icons Figma file                             |
-| `src/generated/**`                       | `npm run build:translations`        | `lit localize` extraction from `msg()` calls in source      |
+| `src/generated/**` *(gitignored)*        | `npm run build:translations`        | `lit localize` extraction from `msg()` calls in source      |
 | `src/palettes/variables.css`             | obc-figma-plugin `cssvariables`     | OpenBridge 6.1 Figma file (variable definitions)            |
 | `src/mixins/fonts.css`                   | obc-figma-plugin `font-exports`     | OpenBridge 6.1 Figma file (text styles)                     |
 | `script/figmavariables.json`             | obc-figma-plugin `variables map`    | OpenBridge **Icons** Figma file — not the main design file  |

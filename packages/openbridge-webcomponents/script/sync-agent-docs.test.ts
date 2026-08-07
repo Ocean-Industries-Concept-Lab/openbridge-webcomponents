@@ -1,3 +1,4 @@
+import {readFileSync} from 'node:fs';
 import {describe, expect, it} from 'vitest';
 import {parseAgentDoc, type AgentDoc} from './agent-docs/frontmatter.js';
 import {
@@ -199,5 +200,20 @@ describe('renderClaudeMd', () => {
     expect(out).toContain('AGENTS.md');
     expect(out).toContain('1. Rule.');
     expect(out).toContain('GENERATED FILE — DO NOT EDIT');
+  });
+});
+
+describe('CLI failure semantics', () => {
+  const cli = 'script/sync-agent-docs.ts';
+
+  it('write mode never exits non-zero, so `prepare` cannot break npm ci', () => {
+    const src = readFileSync(cli, 'utf8');
+    expect(src).toContain('if (CHECK) process.exit(1);');
+    expect(src).not.toMatch(/^\s*process\.exit\(1\);\s*$/m);
+  });
+
+  it('only skips negative globs in the resolution check', () => {
+    const src = readFileSync(cli, 'utf8');
+    expect(src).toContain("if (g.startsWith('!')) continue;");
   });
 });
