@@ -1,5 +1,13 @@
 import {describe, expect, it} from 'vitest';
-import {parseAgentDoc} from './agent-docs/frontmatter.js';
+import {parseAgentDoc, type AgentDoc} from './agent-docs/frontmatter.js';
+import {
+  ROUTING_MARKER,
+  renderClaudeMd,
+  renderCopilotInstructions,
+  renderInstructionsFile,
+  renderRoutingTable,
+  replaceMarkedBlock,
+} from './agent-docs/emitters.js';
 
 const VALID = `---
 name: a11y
@@ -85,5 +93,111 @@ body
     expect(() =>
       parseAgentDoc('# no frontmatter\n', 'docs/agents/x.md')
     ).toThrow(/must start with a "---" frontmatter block/);
+  });
+});
+
+const DOC: AgentDoc = {
+  name: 'a11y',
+  description: 'Accessibility (WCAG 2.1 AA)',
+  globs: ['packages/openbridge-webcomponents/src/components/**'],
+  body: '# Accessibility\n\nBody.\n',
+  sourcePath: 'docs/agents/a11y.md',
+};
+
+describe('renderInstructionsFile', () => {
+  it('writes applyTo from globs and keeps the body verbatim', () => {
+    const out = renderInstructionsFile(DOC);
+    expect(out).toContain(
+      'applyTo: "packages/openbridge-webcomponents/src/components/**"'
+    );
+    expect(out).toContain('# Accessibility\n\nBody.\n');
+  });
+
+  it('joins multiple globs with commas', () => {
+    const out = renderInstructionsFile({...DOC, globs: ['a/**', 'b/**']});
+    expect(out).toContain('applyTo: "a/**,b/**"');
+  });
+
+  it('includes a do-not-edit banner naming the source and the command', () => {
+    const out = renderInstructionsFile(DOC);
+    expect(out).toContain('GENERATED FILE — DO NOT EDIT');
+    expect(out).toContain('docs/agents/a11y.md');
+    expect(out).toContain('npm run agents:sync');
+  });
+
+  it('puts the frontmatter first so Copilot can read applyTo', () => {
+    expect(renderInstructionsFile(DOC).startsWith('---\napplyTo:')).toBe(true);
+  });
+});
+
+describe('renderRoutingTable', () => {
+  it('emits one row per doc with description and globs', () => {
+    const table = renderRoutingTable([DOC]);
+    expect(table).toContain('[a11y](docs/agents/a11y.md)');
+    expect(table).toContain('Accessibility (WCAG 2.1 AA)');
+    expect(table).toContain(
+      '`packages/openbridge-webcomponents/src/components/**`'
+    );
+  });
+
+  it('sorts rows by name regardless of input order', () => {
+    const z: AgentDoc = {
+      ...DOC,
+      name: 'zebra',
+      sourcePath: 'docs/agents/zebra.md',
+    };
+    const table = renderRoutingTable([z, DOC]);
+    expect(table.indexOf('[a11y]')).toBeLessThan(table.indexOf('[zebra]'));
+  });
+});
+
+describe('renderCopilotInstructions', () => {
+  it('points at AGENTS.md and carries the routing table but no bodies', () => {
+    const out = renderCopilotInstructions([DOC]);
+    expect(out).toContain('AGENTS.md');
+    expect(out).toContain('[a11y](docs/agents/a11y.md)');
+    expect(out).not.toContain('Body.');
+  });
+});
+
+describe('replaceMarkedBlock', () => {
+  it('replaces only the content between the markers', () => {
+    const content = [
+      'before',
+      `<!-- ${ROUTING_MARKER}:start -->`,
+      'OLD',
+      `<!-- ${ROUTING_MARKER}:end -->`,
+      'after',
+    ].join('\n');
+    const out = replaceMarkedBlock(content, ROUTING_MARKER, 'NEW');
+    expect(out).toBe(
+      [
+        'before',
+        `<!-- ${ROUTING_MARKER}:start -->`,
+        'NEW',
+        `<!-- ${ROUTING_MARKER}:end -->`,
+        'after',
+      ].join('\n')
+    );
+  });
+
+  it('throws when the markers are missing', () => {
+    expect(() => replaceMarkedBlock('no markers', ROUTING_MARKER, 'x')).toThrow(
+      /markers .* not found/
+    );
+  });
+});
+
+describe('renderClaudeMd', () => {
+  it('points at AGENTS.md and carries the claude body', () => {
+    const out = renderClaudeMd({
+      ...DOC,
+      name: 'claude',
+      sourcePath: 'docs/agents/claude.md',
+      body: '## Claude-specific rules\n\n1. Rule.\n',
+    });
+    expect(out).toContain('AGENTS.md');
+    expect(out).toContain('1. Rule.');
+    expect(out).toContain('GENERATED FILE — DO NOT EDIT');
   });
 });

@@ -1,0 +1,115 @@
+import type {AgentDoc} from './frontmatter.js';
+
+export const ROUTING_MARKER = 'agents:routing';
+
+const SYNC_CMD = 'npm run agents:sync -w packages/openbridge-webcomponents';
+
+function banner(source: string): string {
+  return [
+    '<!-- GENERATED FILE — DO NOT EDIT.',
+    `     Source: ${source}`,
+    `     Regenerate: ${SYNC_CMD} -->`,
+  ].join('\n');
+}
+
+/**
+ * Copilot path-scoped instruction file: `applyTo` frontmatter plus the full
+ * body. The body is copied rather than referenced because a pointer would
+ * defeat the glob auto-attachment this file exists to provide.
+ */
+export function renderInstructionsFile(doc: AgentDoc): string {
+  return [
+    '---',
+    `applyTo: "${doc.globs.join(',')}"`,
+    '---',
+    '',
+    banner(doc.sourcePath),
+    '',
+    doc.body.replace(/\n*$/, '\n'),
+  ].join('\n');
+}
+
+/** Shared routing table (no markers) for AGENTS.md and copilot-instructions.md. */
+export function renderRoutingTable(docs: AgentDoc[]): string {
+  const rows = [...docs]
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map((doc) => {
+      const scope = doc.globs.map((g) => `\`${g}\``).join('<br>');
+      return `| [${doc.name}](${doc.sourcePath}) | ${scope} | ${doc.description} |`;
+    });
+  return [
+    '| Doc | Scope (globs) | Description |',
+    '| --- | --- | --- |',
+    ...rows,
+  ].join('\n');
+}
+
+/**
+ * Repo-wide Copilot entry point. Unlike the path-scoped files this one carries
+ * no bodies — it has no globs of its own, so a pointer costs nothing here.
+ */
+export function renderCopilotInstructions(docs: AgentDoc[]): string {
+  return [
+    banner('docs/agents/*.md'),
+    '',
+    '# GitHub Copilot Custom Instructions',
+    '',
+    '> **Canonical instructions live in [`AGENTS.md`](../AGENTS.md)**, and the',
+    '> path-scoped rules in [`docs/agents/`](../docs/agents/). This file exists',
+    '> because Copilot reads `.github/copilot-instructions.md` by convention.',
+    '',
+    'This repository contains the Openbridge Web Components library, a collection',
+    'of maritime navigation and automation UI components built with Lit and',
+    'TypeScript.',
+    '',
+    '- **Start here →** [`AGENTS.md`](../AGENTS.md).',
+    '- Path-scoped rules are auto-attached from `.github/instructions/`, which is',
+    '  generated from `docs/agents/`. Read the canonical file, not the copy.',
+    '- Ask for clarification (e.g. a list of questions) before implementing',
+    '  significant changes.',
+    '',
+    '## Available Instruction Files',
+    '',
+    renderRoutingTable(docs),
+    '',
+  ].join('\n');
+}
+
+/** Claude Code entry point. Generated locally; stays gitignored. */
+export function renderClaudeMd(doc: AgentDoc): string {
+  return [
+    banner(doc.sourcePath),
+    '',
+    '# CLAUDE.md',
+    '',
+    'All repository instructions live in **[AGENTS.md](AGENTS.md)** — read and',
+    'follow it, plus the path-scoped rules in [`docs/agents/`](docs/agents/).',
+    '',
+    'The rules below are Claude-specific additions. Where they conflict with',
+    'AGENTS.md, these win.',
+    '',
+    doc.body.replace(/\n*$/, '\n'),
+  ].join('\n');
+}
+
+/** Replaces the text between `<!-- marker:start -->` and `<!-- marker:end -->`. */
+export function replaceMarkedBlock(
+  content: string,
+  marker: string,
+  replacement: string
+): string {
+  const start = `<!-- ${marker}:start -->`;
+  const end = `<!-- ${marker}:end -->`;
+  const startIdx = content.indexOf(start);
+  const endIdx = content.indexOf(end);
+  if (startIdx === -1 || endIdx === -1 || endIdx < startIdx) {
+    throw new Error(`markers "${start}" / "${end}" not found`);
+  }
+  return (
+    content.slice(0, startIdx + start.length) +
+    '\n' +
+    replacement +
+    '\n' +
+    content.slice(endIdx)
+  );
+}
