@@ -14,12 +14,16 @@ packages/vue-demo-electron/dist/
 packages/openbridge-webcomponents/custom-elements.json
 packages/openbridge-webcomponents-vue/*
 !packages/openbridge-webcomponents-vue/README.md
+!packages/openbridge-webcomponents-vue/AGENTS.md
 packages/openbridge-webcomponents-ng/*
 !packages/openbridge-webcomponents-ng/README.md
+!packages/openbridge-webcomponents-ng/AGENTS.md
 packages/openbridge-webcomponents-react/*
 !packages/openbridge-webcomponents-react/README.md
+!packages/openbridge-webcomponents-react/AGENTS.md
 packages/openbridge-webcomponents-svelte/*
 !packages/openbridge-webcomponents-svelte/README.md
+!packages/openbridge-webcomponents-svelte/AGENTS.md
 
 .claude/
 **/.claude/
