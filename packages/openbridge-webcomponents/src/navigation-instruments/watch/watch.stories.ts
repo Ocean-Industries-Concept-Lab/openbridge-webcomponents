@@ -19,7 +19,7 @@ import {html, svg} from 'lit';
 
 const meta: Meta<typeof ObcWatch> = {
   title: 'Building Blocks/Watch',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'experimental'],
   component: 'obc-watch',
   parameters: {
     docs: {

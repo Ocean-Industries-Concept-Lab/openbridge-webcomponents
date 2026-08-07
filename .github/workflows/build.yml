@@ -73,6 +73,10 @@ jobs:
         run: npm run test:browser
         working-directory: packages/openbridge-webcomponents
 
+      - name: Run ESLint rule tests openbridge-webcomponents
+        run: npm run test:rules
+        working-directory: packages/openbridge-webcomponents
+
   build:
     runs-on: ubuntu-latest
     steps:

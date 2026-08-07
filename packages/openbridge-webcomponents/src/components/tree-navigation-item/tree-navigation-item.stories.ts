@@ -10,7 +10,7 @@ import {html} from 'lit';
 
 const meta: Meta<typeof ObcTreeNavigationItem> = {
   title: 'UI Components/Menus and Navigation/Tree Navigation Item',
-  tags: ['autodocs', '6.0'],
+  tags: ['autodocs', '6.0', 'beta'],
   component: 'obc-tree-navigation-item',
   args: {
     label: 'List item',

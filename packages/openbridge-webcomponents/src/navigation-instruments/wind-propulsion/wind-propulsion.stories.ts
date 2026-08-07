@@ -10,7 +10,7 @@ import {WindPropulsionPriorityElement} from './wind-propulsion.js';
 
 const meta: Meta<typeof ObcWindPropulsion> = {
   title: 'Instruments/Wind Propulsion',
-  tags: ['autodocs', '6.0'],
+  tags: ['autodocs', '6.0', 'beta'],
   component: 'obc-wind-propulsion',
   argTypes: {
     forceAngle: {control: {type: 'range', min: -180, max: 180, step: 1}},
