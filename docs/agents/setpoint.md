@@ -207,10 +207,28 @@ When a confirm occurs, the new-setpoint marker needs to stay in the DOM for 300m
 
 1. **Detect confirm** in `willUpdate()` (mixin) or `sync()` (bundle)
 2. **Store** the old `newSetpoint` value as `departingNewSetpoint`
-3. **Start a `setTimeout`** for `SETPOINT_ANIMATION_DURATION_MS` (300ms)
+3. **Start a `setTimeout`** for the animation duration — see the caveat below
 4. **Renderer** checks `departingNewSetpoint` and renders a fading marker
 5. **Timer fires** → clear `departingNewSetpoint` → remove marker from DOM
 6. **Bundle only:** call `onAnimationEnd()` callback → `requestUpdate()` to re-render
+
+> **⚠️ The two paths do not agree on step 3, and the bundle path has a latent bug.**
+>
+> | Path | Timer source | Honours `--setpoint-animation-duration`? |
+> | --- | --- | --- |
+> | `SetpointMixin` (`setpoint-mixin.ts:435`) | `getSetpointAnimationDurationMs(this)` | ✅ yes |
+> | `SetpointBundle` (`setpoint-bundle.ts:235`) | `SETPOINT_ANIMATION_DURATION_MS` (fixed 300 ms) | ❌ no |
+>
+> With an override of `500ms`, a bundle-based instrument (`compass`, `heading`,
+> `azimuth-thruster`) removes the departing marker 200 ms **before** its CSS
+> transition finishes, cutting the fade short. Treat 300 ms as the *default*,
+> not the contract.
+>
+> Fixing this means routing the bundle's timer through
+> `getSetpointAnimationDurationMs()` too, which needs the host element the
+> bundle does not currently hold. That is a behaviour change with snapshot
+> implications, so it is recorded here rather than changed in passing — if you
+> are touching `setpoint-bundle.ts`, fix it properly and drop this note.
 
 ### `cssSafeAngle()` for Short-Path Rotation (Radial Only)
 

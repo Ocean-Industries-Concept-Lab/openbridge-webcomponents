@@ -39,7 +39,7 @@ The watch-based instrument system follows a **core renderer + thin wrapper** pat
 ```text
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │                              watch.ts (obc-watch)                               │
-│                    (Core SVG renderer - ALL logic lives here)                   │
+│              (Core SVG renderer - shared circular rendering lives here)         │
 │                                                                                 │
 │  Renders:                                                                       │
 │  • Circular rings (single/double/doubleThin/triple)                            │
@@ -87,7 +87,7 @@ The watch-based instrument system follows a **core renderer + thin wrapper** pat
 
 ### Key Principle: Logic in `watch.ts`, Instruments Stay Thin
 
-- **`watch.ts`**: Contains ALL circular rendering logic, coordinate calculations, and theming. This is the source of truth.
+- **`watch.ts`**: Owns the **shared** circular rendering, coordinate calculations and theming — anything more than one instrument draws. It is the source of truth for those. Component-specific logic stays local (see the exceptions above).
 - **`instrument-radial.ts`**: Reusable building block that wraps `watch.ts` for generic radial gauges with configurable angle mapping.
 - **Navigation instruments** (compass, heading, rudder, etc.): Thin wrappers that configure `obc-watch` and add domain-specific SVG overlays (arrows, needles, ROT indicators).
 
@@ -472,7 +472,7 @@ Common instrument CSS variables used in `watch.ts` and helpers:
 
 | Component           | Uses                                     | Key Features                                                                                              |
 | ------------------- | ---------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| `obc-watch`         | Helper modules                           | Core renderer - ALL circular rendering logic                                                              |
+| `obc-watch`         | Helper modules                           | Core renderer - shared circular rendering logic                                                           |
 | `instrument-radial` | `obc-watch`                              | Generic building block with configurable `getAngle()`                                                     |
 | `compass`           | `obc-watch` + overlay                    | Full compass: HDG/COG arrow styles, ROT, vessel, wind/current, center readouts                            |
 | `heading`           | `obc-watch` + overlay                    | Simplified compass: HDG/COG arrow styles, optional vessel, center readouts                                |

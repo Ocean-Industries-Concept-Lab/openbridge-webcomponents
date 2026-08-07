@@ -10,7 +10,7 @@ globs:
 
 These instructions apply to circular chart components (donut, pie, polar, radial-bar) and their shared helper utilities.
 
-### `packages/openbridge-webcomponents/src/bars-graphs/**`
+## `packages/openbridge-webcomponents/src/bars-graphs/**`
 
 When working with circular chart components in this directory:
 
@@ -90,7 +90,7 @@ When working with circular chart components in this directory:
    - Example: `import componentStyle from './chart-name.css?inline'`
    - Applied with: `static override styles = unsafeCSS(componentStyle)`
 
-### `packages/openbridge-webcomponents/src/charthelpers/**`
+## `packages/openbridge-webcomponents/src/charthelpers/**`
 
 When working with chart helper utilities:
 

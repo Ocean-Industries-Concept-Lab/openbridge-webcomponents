@@ -25,7 +25,7 @@ Key points:
 9. **`@availableWhen` for conditional properties** — see below.
 10. **Exactly one lifecycle tag** on every `@customElement` class — see below.
 
-### Component lifecycle tags (`@stable` / `@beta` / `@experimental` / `@deprecated`)
+## Component lifecycle tags (`@stable` / `@beta` / `@experimental` / `@deprecated`)
 
 Every class registered with `@customElement` carries **exactly one** lifecycle
 tag in its class JSDoc. This tag is the **single source of truth** for the
@@ -93,7 +93,7 @@ Version tags (`'6.0'`, `'6.1'`) and tooling tags (`'autodocs'`, `'skip-test'`,
 `'!snapshot'`) are unrelated to lifecycle, stay hand-written, and are preserved
 by the autofix.
 
-### Slots and events are consumer-critical (`@slot` / `@fires`)
+## Slots and events are consumer-critical (`@slot` / `@fires`)
 
 Two independent tools read these tags, and they do **not** read the same thing.
 This is the single most important fact in this section:
@@ -169,7 +169,7 @@ Run **`npm run lint:slots`** (part of `npm run lint`) to catch missing/phantom
 `@slot` tags, undocumented events, and bare `dispatchEvent(` calls automatically.
 It reports empty descriptions as warnings for class-level tags only.
 
-### Conditional properties (`@availableWhen`)
+## Conditional properties (`@availableWhen`)
 
 A property whose value only has an observable effect when **another** property is set a certain way is a _conditional property_. Document the dependency with an `@availableWhen` tag in the property's inline JSDoc, directly above its `@property` declaration:
 
