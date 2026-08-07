@@ -1,10 +1,10 @@
 ---
-applyTo: "packages/openbridge-webcomponents/src/building-blocks/**,packages/openbridge-webcomponents/src/svghelpers/**"
+name: building-blocks
+description: SVG-based building block components and shared utilities
+globs:
+  - packages/openbridge-webcomponents/src/building-blocks/**
+  - packages/openbridge-webcomponents/src/svghelpers/**
 ---
-
-<!-- GENERATED FILE — DO NOT EDIT.
-     Source: docs/agents/building-blocks.md
-     Regenerate: npm run agents:sync -w packages/openbridge-webcomponents -->
 
 # GitHub Copilot Custom Instructions
 
@@ -71,7 +71,7 @@ When working with building block components in this directory:
        value: number,
        minValue: number,
        maxValue: number,
-       height: number,
+       height: number
      ): number {
        const range = maxValue - minValue;
        return ((-value + minValue) * height) / range + height / 2;

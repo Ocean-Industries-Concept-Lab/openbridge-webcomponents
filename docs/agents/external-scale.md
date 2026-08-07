@@ -1,10 +1,14 @@
 ---
-applyTo: "packages/openbridge-webcomponents/src/building-blocks/external-scale/**,packages/openbridge-webcomponents/src/building-blocks/bar-vertical/**,packages/openbridge-webcomponents/src/building-blocks/bar-horizontal/**,packages/openbridge-webcomponents/src/navigation-instruments/gauge-vertical/**,packages/openbridge-webcomponents/src/navigation-instruments/gauge-horizontal/**,packages/openbridge-webcomponents/src/navigation-instruments/gauge-trend/**"
+name: external-scale
+description: External scale renderer and bar/gauge wrappers
+globs:
+  - packages/openbridge-webcomponents/src/building-blocks/external-scale/**
+  - packages/openbridge-webcomponents/src/building-blocks/bar-vertical/**
+  - packages/openbridge-webcomponents/src/building-blocks/bar-horizontal/**
+  - packages/openbridge-webcomponents/src/navigation-instruments/gauge-vertical/**
+  - packages/openbridge-webcomponents/src/navigation-instruments/gauge-horizontal/**
+  - packages/openbridge-webcomponents/src/navigation-instruments/gauge-trend/**
 ---
-
-<!-- GENERATED FILE — DO NOT EDIT.
-     Source: docs/agents/external-scale.md
-     Regenerate: npm run agents:sync -w packages/openbridge-webcomponents -->
 
 # GitHub Copilot Custom Instructions
 

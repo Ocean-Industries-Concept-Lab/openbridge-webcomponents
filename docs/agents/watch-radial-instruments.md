@@ -1,10 +1,30 @@
 ---
-applyTo: "packages/openbridge-webcomponents/src/navigation-instruments/watch/**,packages/openbridge-webcomponents/src/navigation-instruments/compass/**,packages/openbridge-webcomponents/src/navigation-instruments/compass-sector/**,packages/openbridge-webcomponents/src/navigation-instruments/heading/**,packages/openbridge-webcomponents/src/navigation-instruments/rudder/**,packages/openbridge-webcomponents/src/navigation-instruments/wind/**,packages/openbridge-webcomponents/src/navigation-instruments/pitch/**,packages/openbridge-webcomponents/src/navigation-instruments/roll/**,packages/openbridge-webcomponents/src/navigation-instruments/pitch-roll/**,packages/openbridge-webcomponents/src/navigation-instruments/pitch-roll-heave/**,packages/openbridge-webcomponents/src/building-blocks/single-axis-inclinometer/**,packages/openbridge-webcomponents/src/navigation-instruments/speed-gauge/**,packages/openbridge-webcomponents/src/navigation-instruments/gauge-radial/**,packages/openbridge-webcomponents/src/navigation-instruments/rot-sector/**,packages/openbridge-webcomponents/src/navigation-instruments/rate-of-turn/**,packages/openbridge-webcomponents/src/navigation-instruments/course-arrows/**,packages/openbridge-webcomponents/src/navigation-instruments/readout/**,packages/openbridge-webcomponents/src/navigation-instruments/watch-flat/**,packages/openbridge-webcomponents/src/navigation-instruments/compass-flat/**,packages/openbridge-webcomponents/src/navigation-instruments/rot-linear/**,packages/openbridge-webcomponents/src/navigation-instruments/azimuth-thruster/**,packages/openbridge-webcomponents/src/building-blocks/instrument-radial/**"
+name: watch-radial-instruments
+description: Watch-based instruments (radial core + linear strip counterparts), radial gauges, shared arrow/readout modules
+globs:
+  - packages/openbridge-webcomponents/src/navigation-instruments/watch/**
+  - packages/openbridge-webcomponents/src/navigation-instruments/compass/**
+  - packages/openbridge-webcomponents/src/navigation-instruments/compass-sector/**
+  - packages/openbridge-webcomponents/src/navigation-instruments/heading/**
+  - packages/openbridge-webcomponents/src/navigation-instruments/rudder/**
+  - packages/openbridge-webcomponents/src/navigation-instruments/wind/**
+  - packages/openbridge-webcomponents/src/navigation-instruments/pitch/**
+  - packages/openbridge-webcomponents/src/navigation-instruments/roll/**
+  - packages/openbridge-webcomponents/src/navigation-instruments/pitch-roll/**
+  - packages/openbridge-webcomponents/src/navigation-instruments/pitch-roll-heave/**
+  - packages/openbridge-webcomponents/src/building-blocks/single-axis-inclinometer/**
+  - packages/openbridge-webcomponents/src/navigation-instruments/speed-gauge/**
+  - packages/openbridge-webcomponents/src/navigation-instruments/gauge-radial/**
+  - packages/openbridge-webcomponents/src/navigation-instruments/rot-sector/**
+  - packages/openbridge-webcomponents/src/navigation-instruments/rate-of-turn/**
+  - packages/openbridge-webcomponents/src/navigation-instruments/course-arrows/**
+  - packages/openbridge-webcomponents/src/navigation-instruments/readout/**
+  - packages/openbridge-webcomponents/src/navigation-instruments/watch-flat/**
+  - packages/openbridge-webcomponents/src/navigation-instruments/compass-flat/**
+  - packages/openbridge-webcomponents/src/navigation-instruments/rot-linear/**
+  - packages/openbridge-webcomponents/src/navigation-instruments/azimuth-thruster/**
+  - packages/openbridge-webcomponents/src/building-blocks/instrument-radial/**
 ---
-
-<!-- GENERATED FILE — DO NOT EDIT.
-     Source: docs/agents/watch-radial-instruments.md
-     Regenerate: npm run agents:sync -w packages/openbridge-webcomponents -->
 
 # GitHub Copilot Custom Instructions
 

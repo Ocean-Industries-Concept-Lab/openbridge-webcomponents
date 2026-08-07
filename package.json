@@ -6,7 +6,7 @@
     "clean:full": "npm run clean && rm -rf packages/openbridge-webcomponents/.full-bundle-publish && find packages/openbridge-webcomponents-ng packages/openbridge-webcomponents-react packages/openbridge-webcomponents-svelte packages/openbridge-webcomponents-vue -mindepth 1 ! -name 'README.md' -exec rm -rf {} + || true",
     "format:all": "npm run format --workspaces --if-present",
     "build:docker-for-storybook-testing": "docker build -t openbridge-webcomponents-storybook .",
-    "prepare": "husky"
+    "prepare": "husky && npm run agents:sync -w packages/openbridge-webcomponents"
   },
   "workspaces": [
     "packages/*"

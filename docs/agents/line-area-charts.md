@@ -1,10 +1,12 @@
 ---
-applyTo: "packages/openbridge-webcomponents/src/building-blocks/chart-line/**,packages/openbridge-webcomponents/src/bars-graphs/line-graph/**,packages/openbridge-webcomponents/src/bars-graphs/area-graph/**,packages/openbridge-webcomponents/src/navigation-instruments/gauge-trend/**"
+name: line-area-charts
+description: Line/area charts and composite gauge-trend component
+globs:
+  - packages/openbridge-webcomponents/src/building-blocks/chart-line/**
+  - packages/openbridge-webcomponents/src/bars-graphs/line-graph/**
+  - packages/openbridge-webcomponents/src/bars-graphs/area-graph/**
+  - packages/openbridge-webcomponents/src/navigation-instruments/gauge-trend/**
 ---
-
-<!-- GENERATED FILE — DO NOT EDIT.
-     Source: docs/agents/line-area-charts.md
-     Regenerate: npm run agents:sync -w packages/openbridge-webcomponents -->
 
 # GitHub Copilot Custom Instructions
 

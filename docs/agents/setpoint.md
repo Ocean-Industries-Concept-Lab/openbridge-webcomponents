@@ -1,10 +1,12 @@
 ---
-applyTo: "packages/openbridge-webcomponents/src/svghelpers/setpoint.ts,packages/openbridge-webcomponents/src/svghelpers/setpoint-mixin.ts,packages/openbridge-webcomponents/src/svghelpers/setpoint-bundle.ts,packages/openbridge-webcomponents/src/building-blocks/setpoint/**"
+name: setpoint
+description: Setpoint design layer, mixin/bundle, confirm animation
+globs:
+  - packages/openbridge-webcomponents/src/svghelpers/setpoint.ts
+  - packages/openbridge-webcomponents/src/svghelpers/setpoint-mixin.ts
+  - packages/openbridge-webcomponents/src/svghelpers/setpoint-bundle.ts
+  - packages/openbridge-webcomponents/src/building-blocks/setpoint/**
 ---
-
-<!-- GENERATED FILE — DO NOT EDIT.
-     Source: docs/agents/setpoint.md
-     Regenerate: npm run agents:sync -w packages/openbridge-webcomponents -->
 
 # GitHub Copilot Custom Instructions
 

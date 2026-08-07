@@ -1,10 +1,9 @@
 ---
-applyTo: "packages/openbridge-webcomponents/src/components/**"
+name: ui-components
+description: General UI components (buttons, cards, inputs, feedback)
+globs:
+  - packages/openbridge-webcomponents/src/components/**
 ---
-
-<!-- GENERATED FILE — DO NOT EDIT.
-     Source: docs/agents/ui-components.md
-     Regenerate: npm run agents:sync -w packages/openbridge-webcomponents -->
 
 # UI Components Instructions
 
@@ -40,13 +39,13 @@ Most interactive components support elevation variants (`flat`, `normal`, `raise
 
 ## Slot Conventions
 
-| Pattern                                      | Usage                                  |
-| -------------------------------------------- | -------------------------------------- |
-| `leading-icon`, `trailing-icon`              | Icon positions in buttons and inputs   |
-| `icon`, `icon-left`, `icon-right`            | Generic icon containers                |
-| `title`, `content`                           | Main content areas in cards and modals |
-| `dialog-title`, `dialog-content`             | Dialog-specific content                |
-| `cancel-label`, `done-label`, `option-label` | Action button labels in modals         |
+| Pattern | Usage |
+|---------|-------|
+| `leading-icon`, `trailing-icon` | Icon positions in buttons and inputs |
+| `icon`, `icon-left`, `icon-right` | Generic icon containers |
+| `title`, `content` | Main content areas in cards and modals |
+| `dialog-title`, `dialog-content` | Dialog-specific content |
+| `cancel-label`, `done-label`, `option-label` | Action button labels in modals |
 
 Slot visibility is controlled by boolean properties (e.g. `showLeadingIcon`). Always check the property in the template before rendering the slot.
 
@@ -64,11 +63,7 @@ Slot visibility is controlled by boolean properties (e.g. `showLeadingIcon`). Al
 Each component defines its own variant enum — these are not shared across components:
 
 ```ts
-enum ButtonVariant {
-  normal = "normal",
-  raised = "raised",
-  flat = "flat",
-}
+enum ButtonVariant { normal = 'normal', raised = 'raised', flat = 'flat' }
 ```
 
 - Use enums (not string literal unions) for `@property({type: String})` fields — enforced by ESLint rule `prefer-enum-over-string-literal-union`
@@ -106,12 +101,8 @@ argTypes: {
 Components that participate in grouped layouts (e.g. form items) use host data attributes set programmatically:
 
 ```css
-:host([data-group-item-not-first]) .content-container {
-  /* grouped styling */
-}
-:host([data-group-item-focused]) .wrapper {
-  /* focused state in group */
-}
+:host([data-group-item-not-first]) .content-container { /* grouped styling */ }
+:host([data-group-item-focused]) .wrapper { /* focused state in group */ }
 ```
 
 These attributes are set by a parent component — do not set them internally.
