@@ -98,5 +98,25 @@ describe('obc-alert-frame blinking lifecycle', () => {
 
       expect(el.getAnimations()).toHaveLength(0);
     });
+
+    it('does not blink after disconnection when mode became unacked-active while detached', async () => {
+      const el = await setup(ObcAlertFrameMode.ackedActive);
+      const parent = el.parentElement!;
+
+      parent.removeChild(el);
+      await el.updateComplete;
+
+      expect(el.getAnimations().length).toBe(0);
+
+      el.mode = ObcAlertFrameMode.unackedActive;
+      await el.updateComplete;
+
+      expect(el.getAnimations().length).toBe(0);
+
+      parent.appendChild(el);
+      await el.updateComplete;
+
+      expect(el.getAnimations().length).toBeGreaterThan(0);
+    });
   });
 });
