@@ -233,7 +233,7 @@ When adding new features or fixing bugs:
 
 ### Setpoint Properties
 
-The setpoint marker rendering (including confirm animation) is handled inside `external-scale.ts` via `renderSingleSetpoint()`. For the full setpoint architecture (mixin vs bundle, animation, property cascade), see **`setpoint.instructions.md`**.
+The setpoint marker rendering (including confirm animation) is handled inside `external-scale.ts` via `renderSingleSetpoint()`. For the full setpoint architecture (mixin vs bundle, animation, property cascade), see **`setpoint.md`**.
 
 ### Layout vs Rendering — Multiple Paths to Reason About
 

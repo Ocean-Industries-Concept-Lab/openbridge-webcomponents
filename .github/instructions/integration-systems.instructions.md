@@ -23,19 +23,19 @@ Add a shared visual or interaction concern **to the primitive**, not to each
 consumer. The relationship mirrors `obc-watch` in the radial family: one place
 owns the appearance, the rest configure it.
 
-The remaining five — `integration-app-bar`, `integration-fleet-button`,
+The remaining four — `integration-app-bar`, `integration-fleet-button`,
 `integration-tabs`, `integration-vessel-menu` — stand alone.
 
 ## Conventions
 
 - The boolean slot flags follow the repo's **positive naming** rule, so they
   default to `false` and read naturally in templates. Adding a slot means adding
-  a matching `hasX` flag and a `@slot` tag — see [`jsdoc.md`](jsdoc.md).
+  a matching `hasX` flag and a `@slot` tag — see [`jsdoc.md`](../../docs/agents/jsdoc.md).
 - These are interactive controls, so the keyboard and ARIA obligations in
-  [`a11y.md`](a11y.md) apply. Dropdowns need arrow-key navigation, `Enter` to
+  [`a11y.md`](../../docs/agents/a11y.md) apply. Dropdowns need arrow-key navigation, `Enter` to
   select and `Escape` to close, per the APG menu pattern.
 - Styling follows the standard two-layer touch/visual target model — see
-  [`css-postcss.md`](css-postcss.md).
+  [`css-postcss.md`](../../docs/agents/css-postcss.md).
 
 ## Icon-heavy stories
 

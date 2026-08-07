@@ -4,6 +4,36 @@ export const ROUTING_MARKER = 'agents:routing';
 
 const SYNC_CMD = 'npm run agents:sync -w packages/openbridge-webcomponents';
 
+/**
+ * Rewrites sibling links so they still resolve from an adapter directory.
+ *
+ * Canonical docs link to each other by bare filename — `[jsdoc.md](jsdoc.md)` —
+ * which is correct inside `docs/agents/` and broken once the body is copied
+ * into `.github/instructions/` or `.cursor/rules/`, where the sibling is named
+ * `jsdoc.instructions.md` / `jsdoc.mdc` or does not exist at all.
+ *
+ * They are repointed at the canonical file rather than at the neighbouring
+ * adapter: the canonical doc is the thing a reader should land on, and one
+ * rewrite then works for every adapter. `.github/instructions/`, `.cursor/rules/`
+ * and `docs/agents/` are all two levels below the repository root, so links
+ * already written as `../../…` need no adjustment.
+ *
+ * Only names in `siblings` are touched, so an unrelated bare `.md` link is left
+ * alone instead of being silently repointed at a file that does not exist.
+ */
+export function rewriteSiblingLinks(
+  body: string,
+  siblings: ReadonlySet<string>
+): string {
+  return body.replace(
+    /\]\((?!\.\.\/|\/|https?:)([A-Za-z0-9._-]+)\.md(#[^)]*)?\)/g,
+    (match, name: string, hash: string | undefined) =>
+      siblings.has(name)
+        ? `](../../docs/agents/${name}.md${hash ?? ''})`
+        : match
+  );
+}
+
 function banner(source: string): string {
   return [
     '<!-- GENERATED FILE — DO NOT EDIT.',
@@ -17,7 +47,10 @@ function banner(source: string): string {
  * body. The body is copied rather than referenced because a pointer would
  * defeat the glob auto-attachment this file exists to provide.
  */
-export function renderInstructionsFile(doc: AgentDoc): string {
+export function renderInstructionsFile(
+  doc: AgentDoc,
+  siblings: ReadonlySet<string> = new Set()
+): string {
   return [
     '---',
     `applyTo: "${doc.globs.join(',')}"`,
@@ -25,7 +58,7 @@ export function renderInstructionsFile(doc: AgentDoc): string {
     '',
     banner(doc.sourcePath),
     '',
-    doc.body.replace(/\n*$/, '\n'),
+    rewriteSiblingLinks(doc.body, siblings).replace(/\n*$/, '\n'),
   ].join('\n');
 }
 
@@ -44,7 +77,10 @@ export function renderInstructionsFile(doc: AgentDoc): string {
  * take the whole line with it. The only doc affected is `jsdoc.md`, whose
  * exclusions are generated directories a developer rarely opens by hand.
  */
-export function renderCursorRule(doc: AgentDoc): string {
+export function renderCursorRule(
+  doc: AgentDoc,
+  siblings: ReadonlySet<string> = new Set()
+): string {
   const globs = doc.globs.filter((g) => !g.startsWith('!'));
   return [
     '---',
@@ -54,7 +90,7 @@ export function renderCursorRule(doc: AgentDoc): string {
     '',
     banner(doc.sourcePath),
     '',
-    doc.body.replace(/\n*$/, '\n'),
+    rewriteSiblingLinks(doc.body, siblings).replace(/\n*$/, '\n'),
   ].join('\n');
 }
 

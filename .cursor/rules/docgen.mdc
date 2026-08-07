@@ -32,7 +32,7 @@ pre-commit hook, and do not commit `*.generated.ts` files.
 ## Keep the prompt aligned with the rules
 
 `prompt-system.txt` encodes the same conventions as
-[`jsdoc.md`](jsdoc.md) — the section order, the tone rule that forbids
+[`jsdoc.md`](../../docs/agents/jsdoc.md) — the section order, the tone rule that forbids
 domain qualifiers, the `TODO(designer)` placeholder, and the structured
 `@slot` / `@fires` tag block.
 

@@ -48,7 +48,7 @@ reject.
 uses and pushes the result to the PR branch. Locally, the Docker route is
 `npm run test-storybook:docker` — see
 [IMPLEMENTATION_GUIDELINES.md § Docker Testing](../../IMPLEMENTATION_GUIDELINES.md#docker-testing)
-and [`ci-and-release.md`](ci-and-release.md).
+and [`ci-and-release.md`](../../docs/agents/ci-and-release.md).
 
 ## Storybook config
 
@@ -62,7 +62,7 @@ Two facts that bite:
   resolves story args to element properties through `custom-elements.json`;
   without it the args silently never reach the element.
 - **Lifecycle badges are derived, never hand-written.** `meta.tags` mirrors the
-  class JSDoc — see [`jsdoc.md`](jsdoc.md). Tooling tags (`autodocs`,
+  class JSDoc — see [`jsdoc.md`](../../docs/agents/jsdoc.md). Tooling tags (`autodocs`,
   `skip-test`, `!snapshot`) and version tags (`6.0`, `6.1`) stay hand-written.
 
 Use `skip-test` to exclude a story from snapshot testing — appropriate for

@@ -18,7 +18,7 @@ These instructions apply to the Chart.js-based line/area chart system and the co
 >
 > - `chart-line-base.ts` ↔ `line-graph.ts` ↔ `area-graph.ts` ↔ `gauge-trend.ts`
 >
-> Additionally, `gauge-trend.ts` **bridges to the external-scale system** (see `external-scale.instructions.md`):
+> Additionally, `gauge-trend.ts` **bridges to the external-scale system** (see `external-scale.md`):
 >
 > - `gauge-trend.ts` → creates and manages → `bar-vertical.ts` (and possibly `bar-horizontal.ts`) → uses → `external-scale.ts`
 >
@@ -202,7 +202,7 @@ When adding new features or fixing bugs:
 
 ### Feature Goes in External Scale If:
 
-- It's about SVG scale rendering (see external-scale.instructions.md)
+- It's about SVG scale rendering (see external-scale.md)
 
 ### Padding & Label-Visibility Cascade (read before adding chart-level layout flags)
 
@@ -212,7 +212,7 @@ Chart padding has **multiple independent code paths** that must stay in sync. Wh
 2. **`updateScaleProperties(padding)`** — pushes derived state (`showLabels`, padding offsets) down to slotted bar children. Cascade flags here so the bar renders the matching geometry (e.g. `showLabels=false` collapses the bar's `labelThickness` band).
 3. **`getChartOptions()` / `buildScalesConfig()`** — Chart.js axis tick/label visibility and padding. Must honor the flag so Chart.js doesn't draw labels into space the layout doesn't reserve.
 4. **Watched-properties list** (`LINE_GRAPH_WATCHED_PROP_NAMES` / `LINE_GRAPH_RECREATE_PROP_NAMES`) — add the new property so changes trigger re-evaluation.
-5. **Slotted bar `reportDimensions` predicate** — see `external-scale.instructions.md`; if the cascaded property changes the bar's reported thickness, the bar must dispatch a fresh `scale-dimensions-changed` event.
+5. **Slotted bar `reportDimensions` predicate** — see `external-scale.md`; if the cascaded property changes the bar's reported thickness, the bar must dispatch a fresh `scale-dimensions-changed` event.
 
 **Lesson from past bugs:**
 
@@ -336,6 +336,6 @@ private _updateBarVerticalProperties() {
 
 ## Relationship to Other Instructions
 
-- **Building Blocks** (`building-blocks.instructions.md`): General SVG component patterns
-- **External Scale** (`external-scale.instructions.md`): The `bar-vertical` used by gauge-trend
-- **Circular Charts** (`circular-charts.instructions.md`): Similar Chart.js patterns but for donut/pie/polar charts
+- **Building Blocks** (`building-blocks.md`): General SVG component patterns
+- **External Scale** (`external-scale.md`): The `bar-vertical` used by gauge-trend
+- **Circular Charts** (`circular-charts.md`): Similar Chart.js patterns but for donut/pie/polar charts

@@ -9,6 +9,7 @@ import {
   renderInstructionsFile,
   renderRoutingTable,
   replaceMarkedBlock,
+  rewriteSiblingLinks,
 } from './agent-docs/emitters.js';
 
 const VALID = `---
@@ -252,5 +253,46 @@ describe('renderCursorRule', () => {
     const out = renderCursorRule(DOC);
     expect(out).toContain('# Accessibility\n\nBody.\n');
     expect(out).toContain('GENERATED FILE — DO NOT EDIT');
+  });
+});
+
+describe('rewriteSiblingLinks', () => {
+  const siblings = new Set(['jsdoc', 'a11y', 'css-postcss']);
+
+  it('repoints bare sibling links at the canonical doc', () => {
+    expect(rewriteSiblingLinks('see [`jsdoc.md`](jsdoc.md).', siblings)).toBe(
+      'see [`jsdoc.md`](../../docs/agents/jsdoc.md).'
+    );
+  });
+
+  it('preserves anchors', () => {
+    expect(rewriteSiblingLinks('[x](a11y.md#section-2)', siblings)).toBe(
+      '[x](../../docs/agents/a11y.md#section-2)'
+    );
+  });
+
+  it('leaves ../../ links alone — they already resolve from every adapter dir', () => {
+    const link = '[g](../../IMPLEMENTATION_GUIDELINES.md#-postcss)';
+    expect(rewriteSiblingLinks(link, siblings)).toBe(link);
+  });
+
+  it('leaves external and absolute links alone', () => {
+    const body = '[a](https://example.com/x.md) [b](/abs/y.md)';
+    expect(rewriteSiblingLinks(body, siblings)).toBe(body);
+  });
+
+  it('leaves bare links that are not canonical docs alone', () => {
+    const link = '[r](README.md)';
+    expect(rewriteSiblingLinks(link, siblings)).toBe(link);
+  });
+
+  it('is applied by both adapter renderers', () => {
+    const doc = {...DOC, body: 'see [`jsdoc.md`](jsdoc.md).\n'};
+    expect(renderInstructionsFile(doc, siblings)).toContain(
+      '](../../docs/agents/jsdoc.md)'
+    );
+    expect(renderCursorRule(doc, siblings)).toContain(
+      '](../../docs/agents/jsdoc.md)'
+    );
   });
 });

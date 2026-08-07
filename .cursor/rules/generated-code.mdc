@@ -57,7 +57,7 @@ rather than committed.
 - **A wrong wrapper binding** (a missing `onX` prop, an undocumented slot) →
   the wrapper is a symptom. `lit labs gen` reads the **source JSDoc**, so the
   fix is a `@fires` or `@slot` tag on the component class, followed by
-  `npm run wrappers`. See [`jsdoc.md`](jsdoc.md).
+  `npm run wrappers`. See [`jsdoc.md`](../../docs/agents/jsdoc.md).
 - **A wrong entry in `custom-elements.json`** → same: fix the source JSDoc and
   run `npm run analyze`. Never hand-edit the manifest.
 

@@ -43,7 +43,7 @@ A release commits back as `chore(release): <version> [skip ci]`, updating
 `package-lock.json`.
 
 **CHANGELOG.md is generated** by `@semantic-release/changelog` — never hand-edit
-it. See [`generated-code.md`](generated-code.md).
+it. See [`generated-code.md`](../../docs/agents/generated-code.md).
 
 One release publishes **six** npm packages: the core, the vue / svelte / react
 wrappers, `openbridge-webcomponents-ng/dist`, and the full-bundle directory. The

@@ -91,7 +91,7 @@ which uses wind as its worked example.
 
 ## Related
 
-- [`watch-radial-instruments.md`](watch-radial-instruments.md) — the full-size
+- [`watch-radial-instruments.md`](../../docs/agents/watch-radial-instruments.md) — the full-size
   radial counterparts and the shared `obc-watch` renderer.
-- [`instruments-misc.md`](instruments-misc.md) — the remaining `Instruments/`
+- [`instruments-misc.md`](../../docs/agents/instruments-misc.md) — the remaining `Instruments/`
   members.

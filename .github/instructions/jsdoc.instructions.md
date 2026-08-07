@@ -206,6 +206,11 @@ Rules:
 
 ---
 
+## Comment style
+
+These govern **implementation** comments. The class/module JSDoc described
+below is separate and always required.
+
 - Use english comments only
 - No comments in code whatsoever unless the code is extremely unusual and impossible to understand without explanation
 - Only add comment to a property if the name is not self-explaining.

@@ -97,7 +97,7 @@ a fresh LitElement.
 `@slot header`, but there is no `<slot name="header">` in its template — a
 `MutationObserver` relocates slotted header content into the inner
 `obc-poi-button` at runtime. This is a deliberate exception to the rule in
-[`jsdoc.md`](jsdoc.md) that `@slot` tags must correspond to real `<slot>`
+[`jsdoc.md`](../../docs/agents/jsdoc.md) that `@slot` tags must correspond to real `<slot>`
 elements. Do not "fix" it by deleting the tag: the slot is real to consumers,
 just implemented differently. Equally, do not copy the pattern without reason.
 
@@ -105,7 +105,7 @@ just implemented differently. Equally, do not copy the pattern without reason.
 sets `--obc-poi-line-line-color: var(--base-blue-500)` and
 `--obc-poi-line-outline-color: var(--base-blue-050)` — raw primitives rather
 than semantic tokens. This is one of the handful of documented hot spots in the
-two-layer colour model (see [`css-postcss.md`](css-postcss.md)), and it means a
+two-layer colour model (see [`css-postcss.md`](../../docs/agents/css-postcss.md)), and it means a
 consumer re-theming only the semantic layer will not repaint the POI line.
 
 **`obc-poi-group` is the worked example of the missing-wrapper bug.** Its
@@ -115,7 +115,7 @@ wrapper had **no binding for it at all** — because `lit labs gen` reads only
 class-level JSDoc tags (issue #1109, fixed in PR #1110). The `@fires` tag is
 present now. When adding an event anywhere in this family, tag it on the class:
 a correct manifest is not evidence the wrappers can see it. See
-[`jsdoc.md`](jsdoc.md).
+[`jsdoc.md`](../../docs/agents/jsdoc.md).
 
 **Events dispatched here bubble and compose deliberately.**
 `obc-poi-group-target-released` crosses the shadow boundary so the layer can

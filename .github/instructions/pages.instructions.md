@@ -34,7 +34,7 @@ npx vitest run --project storybook 'page'
 
 ## Related
 
-- [`ui-components.md`](ui-components.md) — the alert, list and card components
+- [`ui-components.md`](../../docs/agents/ui-components.md) — the alert, list and card components
   these pages assemble.
-- [`a11y.md`](a11y.md) — page-level composites are where focus order and modal
+- [`a11y.md`](../../docs/agents/a11y.md) — page-level composites are where focus order and modal
   focus trapping actually get exercised.

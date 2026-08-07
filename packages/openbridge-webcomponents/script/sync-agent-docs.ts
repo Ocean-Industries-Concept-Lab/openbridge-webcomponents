@@ -81,13 +81,17 @@ checkGlobs(docs);
 checkOrphans(docs);
 
 const routable = docs;
+const docNames = new Set(docs.map((d) => d.name));
 
 for (const doc of routable) {
   plan(
     path.join(INSTRUCTIONS_DIR, `${doc.name}.instructions.md`),
-    renderInstructionsFile(doc)
+    renderInstructionsFile(doc, docNames)
   );
-  plan(path.join(CURSOR_RULES_DIR, `${doc.name}.mdc`), renderCursorRule(doc));
+  plan(
+    path.join(CURSOR_RULES_DIR, `${doc.name}.mdc`),
+    renderCursorRule(doc, docNames)
+  );
 }
 plan(
   path.join(ROOT, '.github/copilot-instructions.md'),

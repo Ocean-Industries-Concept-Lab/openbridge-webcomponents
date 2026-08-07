@@ -34,6 +34,12 @@ packages/openbridge-webcomponents/__vis__/darwin/
 .idea/
 **/.idea/
 CLAUDE.md
+
+# Agent planning output — AGENTS.md § 8 rule 17. The design record belongs in
+# the pull request body, not in the repository. `git add -f` still works if a
+# specific document is genuinely meant to be committed.
+docs/superpowers/
+
 /.env
 packages/openbridge-webcomponents/screenshots/
 .playwright-mcp

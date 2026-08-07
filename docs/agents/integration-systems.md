@@ -22,7 +22,7 @@ Add a shared visual or interaction concern **to the primitive**, not to each
 consumer. The relationship mirrors `obc-watch` in the radial family: one place
 owns the appearance, the rest configure it.
 
-The remaining five — `integration-app-bar`, `integration-fleet-button`,
+The remaining four — `integration-app-bar`, `integration-fleet-button`,
 `integration-tabs`, `integration-vessel-menu` — stand alone.
 
 ## Conventions

@@ -364,7 +364,7 @@ used for quadrant (90°) sectors.
 
 Location: `watch.ts` → `renderSetpoint()` method
 
-> **See `setpoint.instructions.md`** for the full setpoint architecture (design layer, mixin vs bundle, confirm animation, `cssSafeAngle()` short-path rotation, CSS transition pattern).
+> **See `setpoint.md`** for the full setpoint architecture (design layer, mixin vs bundle, confirm animation, `cssSafeAngle()` short-path rotation, CSS transition pattern).
 
 ```typescript
 // Triangle shape (SVG path) coming from svghelpers/setpoint.ts

@@ -10,7 +10,7 @@ applyTo: "packages/openbridge-webcomponents/src/navigation-instruments/azimuth-t
 
 The `Instruments/` members that are **not** driven by `obc-watch`. Anything that
 renders `<obc-watch>` belongs to
-[`watch-radial-instruments.md`](watch-radial-instruments.md) instead — check
+[`watch-radial-instruments.md`](../../docs/agents/watch-radial-instruments.md) instead — check
 before assuming a component lives here.
 
 Two distinct groups sit in this file.
@@ -47,7 +47,7 @@ as a layout shell over those parts rather than an instrument in its own right.
   panels. Two sizes via `InstrumentFieldSize` (`regular`, `enhanced`). It
   composes `obc-button`, `obc-navigation-item` and the drop-down icon, so it is
   interactive: keyboard and ARIA obligations from
-  [`a11y.md`](a11y.md) apply, unlike the display-only instruments around it.
+  [`a11y.md`](../../docs/agents/a11y.md) apply, unlike the display-only instruments around it.
 - **`obc-readout-list` / `obc-readout-list-item`** — a dense row format for
   tables and lists. The list is a thin container over the items; put shared
   presentation on the item, not the container.
@@ -61,15 +61,15 @@ as a layout shell over those parts rather than an instrument in its own right.
 Membership here follows the Storybook `Instruments/` taxonomy, and names are an
 unreliable guide to it. `propulsion-tunnel-thruster` looks like it belongs with
 `thruster` but is grouped under `Indicators/` — see
-[`instrument-indicators.md`](instrument-indicators.md). Read the story `title`,
+[`instrument-indicators.md`](../../docs/agents/instrument-indicators.md). Read the story `title`,
 not the directory name.
 
 ## Related
 
-- [`watch-radial-instruments.md`](watch-radial-instruments.md) — everything
+- [`watch-radial-instruments.md`](../../docs/agents/watch-radial-instruments.md) — everything
   rendering `obc-watch`, including the shared helper modules these components
   borrow from.
-- [`instrument-indicators.md`](instrument-indicators.md) — the compact glyph
+- [`instrument-indicators.md`](../../docs/agents/instrument-indicators.md) — the compact glyph
   family.
-- [`external-scale.md`](external-scale.md) — bar and gauge instruments driven by
+- [`external-scale.md`](../../docs/agents/external-scale.md) — bar and gauge instruments driven by
   the linear scale renderer.
