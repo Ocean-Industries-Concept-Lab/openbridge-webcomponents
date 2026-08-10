@@ -82,6 +82,16 @@ export enum TankOrientation {
  *   slot — the parent controls the footprint and the tank renders
  *   responsively inside it, just like a regular button. Compact / static
  *   inner layout still applies; only the host box is changed.
+ *
+ *   If the parent leaves an axis indefinite — a flex/grid slot sized with
+ *   `min-height`/`max-height` rather than `height`, or a cross axis freed by
+ *   `align-self: center` — the corresponding `100%` computes to `auto` and the
+ *   tank falls back to the design aspect ratio of the matching `point`
+ *   footprint (256×376 vertical, 420×256 horizontal, 170×282 compact/static,
+ *   244×208 horizontal compact/static). It never sizes to its own content,
+ *   because the chart cell derives its size from the cell it was measured in
+ *   and would make the constraint circular (issue #1121). Give the parent a
+ *   definite size on both axes whenever the exact footprint matters.
  */
 export enum TankPositioning {
   point = 'point',
@@ -137,9 +147,10 @@ export class ObcAutomationTank extends SetpointMixin(LitElement) {
   @property({type: Boolean, reflect: true}) compact: boolean = false;
   /**
    * Host positioning model — see `TankPositioning` for details. Defaults to
-   * `button` (host fills parent container, 100% × 100%, no anchor offset).
-   * Set to `point` for the legacy P&ID canvas mode (fixed default dimensions
-   * + top-center anchor offset).
+   * `button` (host fills parent container, 100% × 100%, falling back to the
+   * design aspect ratio on any axis the parent leaves indefinite, no anchor
+   * offset). Set to `point` for the legacy P&ID canvas mode (fixed default
+   * dimensions + top-center anchor offset).
    */
   @property({type: String, reflect: true}) positioning: TankPositioning =
     TankPositioning.button;
