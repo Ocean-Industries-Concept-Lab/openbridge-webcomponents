@@ -6,7 +6,7 @@ import '../../components/navigation-item/navigation-item.js';
 
 const meta: Meta<typeof ObcInstrumentField> = {
   title: 'Instruments/Instrument Field',
-  tags: ['autodocs', '6.0'],
+  tags: ['autodocs', '6.0', 'deprecated'],
   component: 'obc-instrument-field',
   args: {
     setpoint: 0,

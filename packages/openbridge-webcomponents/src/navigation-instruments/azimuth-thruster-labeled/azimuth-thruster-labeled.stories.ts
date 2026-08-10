@@ -49,7 +49,7 @@ function renderAzimuthThrusterLabeled(
 
 const meta: Meta<typeof ObcAzimuthThrusterLabeled> = {
   title: 'Instruments/Azimuth Thruster Labeled',
-  tags: ['autodocs', '6.0'],
+  tags: ['autodocs', '6.0', 'deprecated'],
   component: 'obc-azimuth-thruster-labeled',
   render: (args) => renderAzimuthThrusterLabeled(args),
   args: {

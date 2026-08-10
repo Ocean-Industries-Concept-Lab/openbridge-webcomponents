@@ -80,7 +80,7 @@ export enum AudioRecordingStatus {
  *
  * ---
  *
- * @fires status-toggle {CustomEvent<{isPlaying: boolean}>} Fired when the play/pause button is clicked, containing the desired isPlaying state.
+ * @fires {CustomEvent<{isPlaying: boolean}>} status-toggle - Fired when the play/pause button is clicked, containing the desired isPlaying state.
  * @beta
  */
 @customElement('obc-audio-recording-item')

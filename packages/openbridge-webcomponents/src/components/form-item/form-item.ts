@@ -91,7 +91,7 @@ export type ObcFormItemActionChangeEvent = CustomEvent<{
  *
  * @slot icon - Optional leading icon content.
  * @slot - Main row text or content.
- * @fires action-change {ObcFormItemActionChangeEvent} Fired when the internal checkbox state changes.
+ * @fires {ObcFormItemActionChangeEvent} action-change - Fired when the internal checkbox state changes.
  * @beta
  */
 @customElement('obc-form-item')

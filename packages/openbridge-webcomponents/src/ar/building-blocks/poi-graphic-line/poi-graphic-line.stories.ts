@@ -12,7 +12,7 @@ import {
 
 const meta: Meta<ObcPoiGraphicLine> = {
   title: 'AR/Building Blocks/POI Graphic Line',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'experimental'],
   component: 'obc-poi-graphic-line',
   argTypes: {
     lineStyle: {

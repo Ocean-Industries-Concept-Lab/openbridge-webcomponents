@@ -5,7 +5,7 @@ import {html} from 'lit';
 
 const meta: Meta<typeof ObcBus> = {
   title: 'Automation/Automation Devices/Bus',
-  tags: ['autodocs', '6.1', 'wip'],
+  tags: ['autodocs', '6.1', 'beta'],
   component: 'obc-bus',
   args: {
     label: 'Title',

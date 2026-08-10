@@ -70,8 +70,9 @@ export type ExpandEvent = CustomEvent<{expand: boolean}>;
  * ```
  *
  * @slot - Default slot for grouped `obc-poi-data` targets.
- * @fires expand {CustomEvent<{expand:boolean}>} Fired when the group expand state changes.
- * @fires collapse-finished {CustomEvent<void>} Fired after collapse animation completes.
+ * @fires {CustomEvent<{expand:boolean}>} expand - Fired when the group expand state changes.
+ * @fires {CustomEvent<void>} collapse-finished - Fired after collapse animation completes.
+ * @fires {CustomEvent<{target: Poi}>} obc-poi-group-target-released - Fired after a target leaves the group and has been re-inserted before it in the parent. Bubbles and is composed.
  * @experimental
  */
 @customElement('obc-poi-group')

@@ -60,7 +60,7 @@ import {
  *
  * @slot icon - Custom icon displayed next to the group label.
  * @slot - Default slot for flyout content (typically navigation items).
- * @fires open {CustomEvent<void>} When the group is expanded and the flyout is shown.
+ * @fires {CustomEvent<void>} open - When the group is expanded and the flyout is shown.
  */
 @customElement('obc-navigation-item-group')
 export class ObcNavigationItemGroup extends LitElement {

@@ -36,7 +36,7 @@ const renderButton = (args: ObcIntegrationButton, statusText: string) => html`
 
 const meta: Meta<ObcIntegrationButton> = {
   title: 'Integration Systems/Integration Button',
-  tags: ['alpha'],
+  tags: ['experimental'],
   component: 'obc-integration-button',
   args: {
     hasLeadingIcon: true,

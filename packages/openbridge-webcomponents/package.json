@@ -1,6 +1,6 @@
 {
   "name": "@oicl/openbridge-webcomponents",
-  "version": "2.0.0-next.115",
+  "version": "2.0.0-next.120",
   "type": "module",
   "repository": {
     "type": "git",
@@ -41,6 +41,8 @@
     "lint:icons": "tsx ./script/check-icon-hex-leaks.ts",
     "lint:eslint": "eslint 'src/**/*.ts'",
     "lint:lit-analyzer": "lit-analyzer --strict --maxWarnings 0",
+    "lint:fix:stories": "eslint 'src/**/*.stories.ts' --fix",
+    "test:rules": "vitest run --project rules",
     "fix-imports": "node fix-imports.mjs",
     "fix-imports:check": "node fix-imports.mjs --dry-run",
     "test:browser": "vitest --config=vitest.browser.config.ts",

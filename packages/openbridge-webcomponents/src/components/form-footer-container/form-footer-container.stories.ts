@@ -12,6 +12,7 @@ type FormFooterContainerArgs = {
 
 const meta = {
   title: 'UI Components/Forms/Form Footer Container',
+  tags: ['beta'],
   component: 'obc-form-footer-container',
   decorators: [
     (story) =>
