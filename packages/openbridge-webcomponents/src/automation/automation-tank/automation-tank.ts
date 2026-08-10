@@ -122,7 +122,7 @@ export enum TankChartMode {
  * @slot alert-icon - Custom icon for the alert frame.
  * @slot alert-label - Label for the alert frame.
  * @slot alert-timer - Timer for the alert frame.
- * @fires click - Fired when the tank is clicked. With `clickable="false"` the tank renders a plain `<div>`, and in `static` mode a `<div role="img">`, instead of a `<button>` — in both cases it is not focusable or keyboard-activatable; pointer clicks still reach the host.
+ * @fires click - Fired when the tank is clicked. When `clickable` is `false` the tank renders a plain `<div>`, and in `static` mode a `<div role="img">`, instead of a `<button>` — in both cases it is not focusable or keyboard-activatable; pointer clicks still reach the host.
  * @beta
  */
 @customElement('obc-automation-tank')
@@ -172,7 +172,13 @@ export class ObcAutomationTank extends SetpointMixin(LitElement) {
    * the compact footprint.
    *
    * `static` is already non-interactive, so this has no effect there.
-   * `attribute: false` per the repo's positive-default-true boolean convention.
+   *
+   * Property-only (`attribute: false`, per the repo's positive-default-true
+   * boolean convention — a `true` default cannot round-trip through an HTML
+   * boolean attribute). Set it as a property: `el.clickable = false`,
+   * `.clickable=${false}` in a Lit template, or the equivalent binding in the
+   * React / Vue / Angular / Svelte wrappers. A `clickable="false"` attribute in
+   * plain HTML is **not** observed and leaves the tank interactive.
    */
   @property({type: Boolean, attribute: false}) clickable: boolean = true;
   /**
@@ -1049,7 +1055,7 @@ export class ObcAutomationTank extends SetpointMixin(LitElement) {
     // Three root shapes:
     //   - static:            <div role="img"> — an opaque graphic standing in
     //     for a device whose state is unknown, named by its tag.
-    //   - clickable="false": a plain <div>. Deliberately no `role="img"` and no
+    //   - clickable false:  a plain <div>. Deliberately no `role="img"` and no
     //     `aria-label` here: unlike a static tank this one still shows live
     //     data, and both would collapse the readout into a single opaque name
     //     and hide the percent / value / tag from screen readers. The visible

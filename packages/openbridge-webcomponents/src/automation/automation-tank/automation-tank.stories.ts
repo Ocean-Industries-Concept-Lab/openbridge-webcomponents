@@ -338,7 +338,10 @@ export const CompactActivated: Story = {
 };
 
 /**
- * Display-only tank — `clickable="false"`. The root renders as a `<div>`
+ * Display-only tank — `.clickable=${false}`. `clickable` is property-only
+ * (`attribute: false`), so it has to be set as a property; a
+ * `clickable="false"` attribute in plain HTML is not observed. The root
+ * renders as a `<div>`
  * instead of a `<button>`, so there is no hover, pressed or focus-visible
  * state and the tank is out of the tab order. Everything else is untouched:
  * the resting surface keeps the same colors and the same 1px border box (the

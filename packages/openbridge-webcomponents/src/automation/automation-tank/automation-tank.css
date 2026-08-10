@@ -145,8 +145,8 @@
   @mixin style style=flat visibleWrapperClass=.halo;
 }
 
-/* Non-interactive (`clickable="false"`, and `static`, which is display-only by
- * definition): the mixin's `noClick` variant emits the enabled state ONLY, so
+/* Non-interactive (`clickable` is `false`, and `static`, which is display-only
+ * by definition): the mixin's `noClick` variant emits the enabled state ONLY, so
  * the halo keeps exactly the same resting colors and the same 1px border box
  * — no layout shift, nothing else in the tank changes — while hover, pressed
  * and focus-visible disappear. The root is a `<div>` in this case, so there is
@@ -178,9 +178,9 @@
 
 /* Static is display-only, so it never gets the `.clickable` class and the
  * hover/pressed visuals are already gone via the `noClick` rule above. Static
- * additionally refuses pointer events outright — unlike a `clickable="false"`
- * tank, which still lets clicks reach the host so a consumer can opt into
- * handling them. */
+ * additionally refuses pointer events outright — unlike a non-clickable tank,
+ * which still lets clicks reach the host so a consumer can opt into handling
+ * them. */
 :host([static]) .root {
   pointer-events: none;
 }
