@@ -122,7 +122,7 @@ export enum TankChartMode {
  * @slot alert-icon - Custom icon for the alert frame.
  * @slot alert-label - Label for the alert frame.
  * @slot alert-timer - Timer for the alert frame.
- * @fires click - Fired when the tank is clicked. In `static` mode the tank renders a `<div role="img">` instead of a `<button>`, so it is not focusable or keyboard-activatable; pointer clicks still reach the host.
+ * @fires click - Fired when the tank is clicked. With `clickable="false"` the tank renders a plain `<div>`, and in `static` mode a `<div role="img">`, instead of a `<button>` — in both cases it is not focusable or keyboard-activatable; pointer clicks still reach the host.
  * @beta
  */
 @customElement('obc-automation-tank')
@@ -156,7 +156,32 @@ export class ObcAutomationTank extends SetpointMixin(LitElement) {
    * activatable controls.
    */
   @property({type: Boolean, reflect: true}) static: boolean = false;
-  /** Enables the activated background color, used to indicate that the tank is activated/selected. */
+  /**
+   * Whether the tank is interactive. `true` (default) renders the root as a
+   * `<button>` with the full flat-mixin interaction surface. `false` renders a
+   * non-interactive `<div>` — the resting appearance is unchanged (same
+   * enabled-state colors and the same 1px border box, via the mixin's
+   * `noClick` variant), but the hover / pressed / focus-visible states are
+   * gone and the tank leaves the tab order.
+   *
+   * Everything else keeps rendering: the chart / bar, badges, readout, tag and
+   * the `alert` frame all behave exactly as they do on a clickable tank. Use
+   * this for a display-only tank that still shows live data — e.g. a row total
+   * aggregating the tanks beside it. For "device present, current state
+   * unknown" use `static` instead, which also hides the chart and shrinks to
+   * the compact footprint.
+   *
+   * `static` is already non-interactive, so this has no effect there.
+   * `attribute: false` per the repo's positive-default-true boolean convention.
+   */
+  @property({type: Boolean, attribute: false}) clickable: boolean = true;
+  /**
+   * Enables the activated background color, used to indicate that the tank is
+   * activated/selected. Requires an interactive tank — the `noClick` mixin
+   * variant used when `clickable` is `false` only paints the enabled state, so
+   * a non-clickable tank ignores this (matching `obc-elevated-card`).
+   * @availableWhen clickable==true
+   */
   @property({type: Boolean}) activated: boolean = false;
   @property({type: String}) tag: string = '';
 
@@ -1001,7 +1026,18 @@ export class ObcAutomationTank extends SetpointMixin(LitElement) {
     // The `activated` class goes on the interactive `.root` so the shared
     // `flat` style mixin paints the activated background/border on `.halo`
     // (its `visibleWrapperClass`), same as the mixin's hover/pressed states.
-    const rootClasses = classMap({root: true, activated: this.activated});
+    //
+    // `.clickable` selects between the two flat-mixin variants in CSS: the
+    // full six-state one, or the `noClick` one that paints only the resting
+    // enabled state. `static` is already display-only, so it never counts as
+    // clickable. Same shape as `obc-elevated-card`'s `.not-clickable` split
+    // and `obc-readout-list-item`'s `.root.clickable`.
+    const isClickable = this.clickable && !this.static;
+    const rootClasses = classMap({
+      root: true,
+      activated: this.activated,
+      clickable: isClickable,
+    });
 
     // `aria-live="polite"` + `aria-atomic="true"` on the root so the
     // slotted alert label (and any state change of the alert frame) is
@@ -1010,27 +1046,47 @@ export class ObcAutomationTank extends SetpointMixin(LitElement) {
     // TODO(a11y): the rest of the automation component family still lacks
     // this live-region announcement; consolidate when alert support is
     // factored into a shared mixin.
-    return html`
-      ${this.static
-        ? html`<div
-            class=${rootClasses}
-            role="img"
-            aria-label=${this.tag || 'Tank'}
-            aria-live="polite"
-            aria-atomic="true"
-          >
-            ${halo}
-          </div>`
-        : html`<button
-            class=${rootClasses}
-            type="button"
-            aria-label=${this.tag || 'Tank'}
-            aria-live="polite"
-            aria-atomic="true"
-          >
-            ${halo}
-          </button>`}
-    `;
+    // Three root shapes:
+    //   - static:            <div role="img"> — an opaque graphic standing in
+    //     for a device whose state is unknown, named by its tag.
+    //   - clickable="false": a plain <div>. Deliberately no `role="img"` and no
+    //     `aria-label` here: unlike a static tank this one still shows live
+    //     data, and both would collapse the readout into a single opaque name
+    //     and hide the percent / value / tag from screen readers. The visible
+    //     content is the accessible content. (Same reasoning as the non-
+    //     clickable branch of `obc-readout-list-item`.)
+    //   - default:           <button>.
+    // The live region stays on all three so an `alert` label is announced
+    // regardless of interactivity.
+    if (this.static) {
+      return html`<div
+        class=${rootClasses}
+        role="img"
+        aria-label=${this.tag || 'Tank'}
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        ${halo}
+      </div>`;
+    }
+    if (!isClickable) {
+      return html`<div
+        class=${rootClasses}
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        ${halo}
+      </div>`;
+    }
+    return html`<button
+      class=${rootClasses}
+      type="button"
+      aria-label=${this.tag || 'Tank'}
+      aria-live="polite"
+      aria-atomic="true"
+    >
+      ${halo}
+    </button>`;
   }
 
   static override styles = unsafeCSS(compentStyle);
