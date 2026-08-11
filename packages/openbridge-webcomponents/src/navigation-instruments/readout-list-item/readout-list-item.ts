@@ -18,6 +18,7 @@ import {
 import {
   assertReadoutValueType,
   assertReadoutFractionDigits,
+  isReadoutDigitCountMissing,
   resolveReadoutDigitCount,
   resolveReadoutNumericValue,
   ReadoutValueType,
@@ -293,7 +294,10 @@ export class ObcReadoutListItem extends LitElement {
    * Also formats the numeric setpoint / advice blocks, which stay numeric
    * even when the value is text. Must be between 0 and 100 — the range
    * `Number.prototype.toFixed` accepts; outside it throws a `RangeError`.
-   * A fractional count truncates (`2.7` → `2`); `NaN` or unset reads as `0`.
+   * A fractional count truncates (`2.7` → `2`). A count that never arrived
+   * (`NaN`, `null` or unset) renders the reading as the unavailable dash —
+   * formatting with a precision the author never chose would let a critical
+   * `0.4` pass for a healthy `0`.
    * @availableWhen valueType==number || hasSetpoint==true || hasAdvice==true
    */
   @property({type: Number}) fractionDigits = 0;
@@ -301,7 +305,9 @@ export class ObcReadoutListItem extends LitElement {
    * Also formats the numeric setpoint / advice blocks, which stay numeric
    * even when the value is text. Bounded before use: a fractional count
    * truncates (`2.7` → `2`), anything above 100 — including `Infinity` —
-   * caps at 100, and a negative or `NaN` count reserves nothing.
+   * caps at 100, and a negative count reserves nothing. A count that never
+   * arrived (`NaN`, `null` or unset) renders the reading as the unavailable
+   * dash, consistent with `fractionDigits`.
    * @availableWhen valueType==number || hasSetpoint==true || hasAdvice==true
    */
   @property({type: Number}) maxDigits = 0;
@@ -352,6 +358,20 @@ export class ObcReadoutListItem extends LitElement {
     return resolveReadoutDigitCount(this.maxDigits);
   }
 
+  /**
+   * Whether a digit knob failed to arrive (`NaN` / `null` / `undefined`).
+   * The raw knobs are forwarded to the blocks, which render the reading as
+   * the unavailable dash (see `obc-readout-block.digitCountsMissing`); this
+   * getter only keeps the setpoint comparison in agreement with what is
+   * displayed.
+   */
+  private get digitCountsMissing(): boolean {
+    return (
+      isReadoutDigitCountMissing(this.fractionDigits) ||
+      isReadoutDigitCountMissing(this.maxDigits)
+    );
+  }
+
   private get resolvedClickable(): false | Required<ReadoutListItemClickable> {
     const clickable = this.clickable;
     if (!clickable) {
@@ -365,6 +385,12 @@ export class ObcReadoutListItem extends LitElement {
 
   private get isAtSetpoint(): boolean {
     if (!this.hasSetpoint) {
+      return false;
+    }
+    // A missing digit knob renders every numeric block as the dash; two
+    // dashes must not read as "at the setpoint", so the comparison stays off
+    // entirely while the configuration is untrustworthy.
+    if (this.digitCountsMissing) {
       return false;
     }
     // A text value never compares equal to a setpoint, so flip-flop / pop-up
@@ -522,8 +548,8 @@ export class ObcReadoutListItem extends LitElement {
         .weight=${config.weight}
         .hasDegree=${config.hasDegree ?? false}
         .hasIcon=${config.hasIcon ?? false}
-        .fractionDigits=${this.resolvedFractionDigits}
-        .maxDigits=${this.resolvedMaxDigits}
+        .fractionDigits=${this.fractionDigits}
+        .maxDigits=${this.maxDigits}
         .hintedZeros=${config.hintedZeros}
         .spaceReserver=${config.spaceReserver}
         .off=${config.off ?? false}

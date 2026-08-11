@@ -2,6 +2,7 @@ import {describe, it, expect} from 'vitest';
 import {
   assertReadoutValueType,
   assertReadoutFractionDigits,
+  isReadoutDigitCountMissing,
   resolveReadoutDigitCount,
   READOUT_MAX_DIGITS,
   resolveReadoutNumericValue,
@@ -514,5 +515,60 @@ describe('resolveReadoutDigitCount', () => {
     ]) {
       expect(() => '0'.repeat(resolveReadoutDigitCount(input))).not.toThrow();
     }
+  });
+});
+
+describe('isReadoutDigitCountMissing', () => {
+  // The third contract besides throw and clamp: a knob that never arrived is
+  // a runtime data condition, and the reading renders as the dash rather than
+  // silently formatting with a default the author never chose.
+  it('is true for NaN, null and undefined', () => {
+    expect(isReadoutDigitCountMissing(Number.NaN)).toBe(true);
+    expect(isReadoutDigitCountMissing(null)).toBe(true);
+    expect(isReadoutDigitCountMissing(undefined)).toBe(true);
+  });
+
+  // A number that ARRIVED wrong is a different contract: out-of-range
+  // `fractionDigits` throws (`assertReadoutFractionDigits`), out-of-range
+  // `maxDigits` clamps (`resolveReadoutDigitCount`). Neither is "missing".
+  it('is false for any number that arrived, however wrong', () => {
+    expect(isReadoutDigitCountMissing(0)).toBe(false);
+    expect(isReadoutDigitCountMissing(2)).toBe(false);
+    expect(isReadoutDigitCountMissing(2.7)).toBe(false);
+    expect(isReadoutDigitCountMissing(-1)).toBe(false);
+    expect(isReadoutDigitCountMissing(101)).toBe(false);
+    expect(isReadoutDigitCountMissing(Number.POSITIVE_INFINITY)).toBe(false);
+    expect(isReadoutDigitCountMissing(Number.NEGATIVE_INFINITY)).toBe(false);
+  });
+});
+
+// The review that introduced this: a system writing `fractionDigits` at
+// runtime can fail and produce `NaN` — `toFixed(NaN)` then formats with zero
+// decimals, so a critical `0.4` prints as a plausible-looking `0` and an
+// operator cannot tell the readout is broken. The dash makes it visible.
+describe('formatNumericValue — missing precision', () => {
+  const opts = (fractionDigits: number) => ({
+    showZeroPadding: false,
+    minValueLength: 3,
+    fractionDigits,
+  });
+  const D = READOUT_UNAVAILABLE_DASH;
+
+  it('renders the dash, not a zero-decimal number', () => {
+    expect(formatNumericValue(0.4, opts(Number.NaN))).toBe(D);
+    expect(formatNumericValue(12.3, opts(Number.NaN))).toBe(D);
+  });
+
+  // Regression: `NaN < 1` is false, so the placeholder generator used to fall
+  // into its fraction branch where both `repeat(NaN)` calls produce '', and
+  // an unavailable value with a missing precision degenerated to a lone ".".
+  it('shapes the placeholder as zero fraction digits, not a lone dot', () => {
+    expect(formatNumericValue(undefined, opts(Number.NaN))).toBe(D);
+    expect(formatNumericValue(undefined, opts(Number.NaN))).not.toBe('.');
+  });
+
+  it('still formats normally with a precision that arrived', () => {
+    expect(formatNumericValue(0.4, opts(1))).toBe('0.4');
+    expect(formatNumericValue(12.3, opts(2))).toBe('12.30');
   });
 });
