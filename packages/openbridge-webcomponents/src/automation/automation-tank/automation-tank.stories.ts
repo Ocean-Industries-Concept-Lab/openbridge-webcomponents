@@ -703,6 +703,91 @@ export const WithAlertLevelDiagnostic: Story = {
  * story, which gives the host fixed default dimensions and a P&ID
  * top-center anchor for placement on a pipe-grid coordinate.
  */
+/**
+ * A dashboard row of tanks in a flex container — the layout family that
+ * `positioning="button"` exists for, and the one that regressed in issue #1121.
+ *
+ * Each cell is a flex item sized with `min-height` / `max-height` rather than
+ * `height`, and the tank inside it is centered on the cross axis. Both of those
+ * leave an axis indefinite, so the tank cannot take its size from the parent
+ * alone; it falls back to the design aspect ratio instead of sizing to its own
+ * content. Sizing to content would be circular — the chart derives its pixel
+ * size from the cell it was measured in — and used to surface as tanks that
+ * collapsed, grew without bound, or oscillated by a few pixels forever.
+ *
+ * Pin both axes on the parent whenever the exact footprint matters; the
+ * fallback keeps the layout stable, it does not guess the size you wanted.
+ */
+export const DashboardRow: Story = {
+  args: {
+    type: TankType.generic,
+    chartMode: TankChartMode.graphAndBar,
+    positioning: TankPositioning.button,
+    showTrendSymbol: false,
+    percentFractionDigits: 1,
+  },
+  decorators: [],
+  render(args) {
+    const tanks = [
+      {tag: 'FO TOT', value: 61.4, max: 76.21},
+      {tag: 'FO SERV SB', value: 0.82, max: 1.06},
+      {tag: 'FO SERV PS', value: 0.41, max: 1.06},
+      {tag: 'OVERFLOW', value: 2.3, max: 17.4},
+      {tag: 'AFT SB FO', value: 14.9, max: 17.4},
+      {tag: 'UREA', value: 3.9, max: 5.5},
+    ];
+    // Each tank has its own capacity, so the series has to be built on that
+    // tank's scale — a shared fixture would render off-axis.
+    const series = (value: number, max: number, seed: number) =>
+      Array.from({length: 16}, (_, i) => ({
+        label: String(i).padStart(2, '0'),
+        value: Math.min(
+          max,
+          Math.max(0, value * (0.55 + 0.03 * ((i + seed) % 15)))
+        ),
+      }));
+    // `position: static` opts out of the shared `crossDecorator`'s
+    // `position: absolute; top: 50%; left: 50%`, which would push a full-width
+    // row into the bottom-right quadrant.
+    return html`
+      <div
+        style="position: static; display: flex; align-items: stretch; gap: 8px;"
+      >
+        ${tanks.map(
+          (tank, index) => html`
+            <div
+              style="
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                flex: 1 1 auto;
+                min-width: 0;
+                min-height: 340px;
+                max-height: 340px;
+                border: 1px solid var(--border-divider-color);
+              "
+            >
+              <obc-automation-tank
+                style="align-self: center; flex: 1 1 auto; min-width: 0;"
+                .value=${tank.value}
+                .max=${tank.max}
+                .tag=${tank.tag}
+                .type=${args.type}
+                .positioning=${args.positioning}
+                .chartMode=${args.chartMode}
+                .chartData=${series(tank.value, tank.max, index)}
+                .showTrendSymbol=${args.showTrendSymbol}
+                .percentFractionDigits=${args.percentFractionDigits}
+                .priority=${args.priority}
+              ></obc-automation-tank>
+            </div>
+          `
+        )}
+      </div>
+    `;
+  },
+};
+
 export const Responsive: Story = {
   args: {
     type: TankType.atmospheric,

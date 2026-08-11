@@ -82,6 +82,22 @@ export enum TankOrientation {
  *   slot — the parent controls the footprint and the tank renders
  *   responsively inside it, just like a regular button. Compact / static
  *   inner layout still applies; only the host box is changed.
+ *
+ *   If the parent leaves *one* axis indefinite — a flex/grid slot sized with
+ *   `min-height`/`max-height` rather than `height`, or a cross axis freed by
+ *   `align-self: center` — the corresponding `100%` computes to `auto` and the
+ *   tank derives that axis from the other one through the design aspect ratio
+ *   of the matching `point` footprint (256×376 vertical, 420×256 horizontal,
+ *   170×282 compact/static, 244×208 horizontal compact/static). The size then
+ *   does not depend on the chart cell, which takes its own size from the cell
+ *   it was measured in and would otherwise make the constraint circular
+ *   (issue #1121).
+ *
+ *   If *both* axes are indefinite (a shrink-to-fit parent, e.g. an unsized
+ *   `inline-block`) there is no axis left to derive from, so the host falls
+ *   back to its text content. That is stable and non-circular, but much
+ *   smaller than the design footprint — give the parent a definite size on at
+ *   least one axis, and on both whenever the exact footprint matters.
  */
 export enum TankPositioning {
   point = 'point',
@@ -137,9 +153,10 @@ export class ObcAutomationTank extends SetpointMixin(LitElement) {
   @property({type: Boolean, reflect: true}) compact: boolean = false;
   /**
    * Host positioning model — see `TankPositioning` for details. Defaults to
-   * `button` (host fills parent container, 100% × 100%, no anchor offset).
-   * Set to `point` for the legacy P&ID canvas mode (fixed default dimensions
-   * + top-center anchor offset).
+   * `button` (host fills parent container, 100% × 100%, falling back to the
+   * design aspect ratio on any axis the parent leaves indefinite, no anchor
+   * offset). Set to `point` for the legacy P&ID canvas mode (fixed default
+   * dimensions + top-center anchor offset).
    */
   @property({type: String, reflect: true}) positioning: TankPositioning =
     TankPositioning.button;
