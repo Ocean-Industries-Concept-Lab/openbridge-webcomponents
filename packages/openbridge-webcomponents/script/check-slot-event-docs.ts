@@ -56,7 +56,7 @@
  * Dynamic slot names (`<slot name="${expr}">` or `<slot name="pre-${id}-post">`)
  * are skipped for the missing-slot check because their concrete names cannot be
  * known statically; document them with a placeholder tag such as
- * `@slot tab-<id>-icon` (see .cursor/rules/comments.mdc § Structured-tag rules).
+ * `@slot tab-<id>-icon` (see docs/agents/jsdoc.md § Structured-tag rules).
  *
  * Usage:
  * ```bash
@@ -413,7 +413,7 @@ async function run(): Promise<void> {
     printByFile(errors, (m) => console.error(m));
     console.error(
       `\n❌ Slot & event documentation audit failed. Add the missing @slot/@fires ` +
-        `tags (or remove the phantom ones). See .cursor/rules/comments.mdc.`
+        `tags (or remove the phantom ones). See docs/agents/jsdoc.md.`
     );
     process.exitCode = 1;
     return;
