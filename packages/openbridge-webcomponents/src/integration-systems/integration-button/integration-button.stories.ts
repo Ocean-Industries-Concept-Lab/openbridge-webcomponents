@@ -20,7 +20,10 @@ const renderButton = (args: ObcIntegrationButton, statusText: string) => html`
     .hasStatus=${args.hasStatus}
     .readouts=${args.readouts}
     .selected=${args.selected}
+    .activated=${args.activated}
     .disabled=${args.disabled}
+    .dividerBottom=${args.dividerBottom}
+    .dividerRight=${args.dividerRight}
     .variant=${args.variant}
     .type=${args.type}
   >
