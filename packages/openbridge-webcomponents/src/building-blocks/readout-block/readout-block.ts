@@ -15,6 +15,9 @@ import {
   formatNumericValue,
   readoutFormattedInteger,
   assertReadoutValueType,
+  assertReadoutFractionDigits,
+  isReadoutDigitCountMissing,
+  resolveReadoutDigitCount,
   resolveReadoutNumericValue,
   resolveReadoutTextValue,
   READOUT_UNAVAILABLE_DASH,
@@ -152,13 +155,23 @@ export class ObcReadoutBlock extends LitElement {
   @property({type: Boolean}) hasIcon = false;
 
   /**
-   * Number of fraction digits.
+   * Number of fraction digits. Must be between 0 and 100 — the range
+   * `Number.prototype.toFixed` accepts; outside it throws a `RangeError`.
+   * A fractional count truncates (`2.7` → `2`). A count that never arrived
+   * (`NaN`, `null` or unset) renders the reading as the unavailable dash —
+   * formatting with a precision the author never chose would let a critical
+   * `0.4` pass for a healthy `0`.
    * @availableWhen valueType==number
    */
   @property({type: Number}) fractionDigits = 0;
 
   /**
    * Integer digits to reserve / hint (independent of `fractionDigits`).
+   * Bounded before use: a fractional count
+   * truncates (`2.7` → `2`), anything above 100 — including `Infinity` —
+   * caps at 100, and a negative count reserves nothing. A count that never
+   * arrived (`NaN`, `null` or unset) renders the reading as the unavailable
+   * dash, consistent with `fractionDigits`.
    * @availableWhen valueType==number
    */
   @property({type: Number}) maxDigits = 0;
@@ -214,24 +227,54 @@ export class ObcReadoutBlock extends LitElement {
     }
   }
 
+  /**
+   * `maxDigits` bounded to a usable count. Every width calculation below goes
+   * through this rather than the raw property, so an `Infinity` (or absurdly
+   * large) value cannot reach `String.prototype.repeat`.
+   */
+  private get resolvedMaxDigits(): number {
+    return resolveReadoutDigitCount(this.maxDigits);
+  }
+
+  /**
+   * Whether a digit knob failed to arrive (`NaN` / `null` / `undefined`).
+   * The reading then renders as the unavailable dash rather than silently
+   * formatting with a default the author never chose — a critical `0.4`
+   * formatted with a failed `fractionDigits` would otherwise print as a
+   * plausible-looking `0`. A missing `maxDigits` dashes too, for consistency:
+   * either knob arriving broken means the row's configuration cannot be
+   * trusted.
+   */
+  private get digitCountsMissing(): boolean {
+    return (
+      isReadoutDigitCountMissing(this.fractionDigits) ||
+      isReadoutDigitCountMissing(this.maxDigits)
+    );
+  }
+
   private get numericFormatOptions(): ReadoutNumericFormatOptions {
     return {
       // The unavailable placeholder stays short (`\u2012.\u2012\u2012`) rather than
       // spelling out every reserved digit position — `maxDigits` already
       // reserves the width, so it simply sits at the right edge of it.
       showZeroPadding: false,
-      minValueLength: this.maxDigits,
-      fractionDigits: this.fractionDigits,
+      minValueLength: this.resolvedMaxDigits,
+      // A missing precision shapes the placeholder as zero fraction digits (a
+      // single dash) — and keeps a runtime `undefined`/`null` out of the
+      // options object, which is typed `number` throughout the formatters.
+      fractionDigits: isReadoutDigitCountMissing(this.fractionDigits)
+        ? 0
+        : this.fractionDigits,
     };
   }
 
   /** Widest possible value string for width reservation (e.g. `"000.0"`). */
   private get reserverText(): string {
-    const maxDigits = this.maxDigits;
+    const maxDigits = this.resolvedMaxDigits;
     if (maxDigits <= 0) {
       return '';
     }
-    const integer = '0'.repeat(Math.max(maxDigits, 1));
+    const integer = '0'.repeat(maxDigits);
     return this.fractionDigits > 0
       ? `${integer}.${'0'.repeat(this.fractionDigits)}`
       : integer;
@@ -322,16 +365,19 @@ export class ObcReadoutBlock extends LitElement {
     // `changed`, skip the check, and render the invalid value as a plain dash:
     // exactly the silent failure this assertion exists to prevent.
     assertReadoutValueType('obc-readout-block', this.value, this.valueType);
+    assertReadoutFractionDigits('obc-readout-block', this.fractionDigits);
   }
 
   override render() {
     const valueSize = this.resolvedValueSize;
     const formatOptions = this.numericFormatOptions;
     const isTextMode = this.valueType === ReadoutValueType.text;
-    const valueForFormat = resolveReadoutNumericValue(
-      this.value,
-      this.valueType
-    );
+    // A missing digit knob makes the reading untrustworthy, so it resolves to
+    // "no reading" and renders the dash (see `digitCountsMissing`). Text mode
+    // is unaffected — it ignores the numeric knobs entirely.
+    const valueForFormat = this.digitCountsMissing
+      ? undefined
+      : resolveReadoutNumericValue(this.value, this.valueType);
     const textValue = resolveReadoutTextValue(this.value, this.valueType);
     // Text mode renders verbatim and ignores the numeric format options; a
     // blank / missing text value still falls back to the unavailable dash.
@@ -351,7 +397,7 @@ export class ObcReadoutBlock extends LitElement {
       valueForFormat === undefined ||
       valueForFormat < 0
         ? 0
-        : Math.max(this.maxDigits - readoutFormattedInteger(text), 0);
+        : Math.max(this.resolvedMaxDigits - readoutFormattedInteger(text), 0);
     const hinted = hintCount > 0 ? '0'.repeat(hintCount) : '';
     // Hinted zeros own the width — they already fill to `maxDigits` — so when
     // `hintedZeros` is enabled an explicit `spaceReserver` is ignored (it has
