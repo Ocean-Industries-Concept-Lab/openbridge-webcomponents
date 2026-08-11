@@ -13,7 +13,7 @@ import {html} from 'lit';
 
 const meta: Meta<typeof ObcAlertFrame> = {
   title: 'UI Components/Message and Alerts/Alert Frame',
-  tags: ['autodocs', '6.0'],
+  tags: ['autodocs', '6.0', 'beta'],
   component: 'obc-alert-frame',
   args: {
     type: ObcAlertFrameType.SmallSideFlip,
@@ -259,5 +259,17 @@ export const RectifiedUnactive: Story = {
     showIcon: true,
     showAlertCategoryIcon: true,
     mode: ObcAlertFrameMode.unackedRectified,
+  },
+};
+
+export const CriticalUnacked: Story = {
+  args: {
+    type: ObcAlertFrameType.SmallSideFlip,
+    thickness: ObcAlertFrameThickness.Small,
+    status: ObcAlertFrameStatus.LevelCritical,
+    mode: ObcAlertFrameMode.unackedActive,
+    demoWidth: 200,
+    showIcon: true,
+    showAlertCategoryIcon: true,
   },
 };

@@ -1,10 +1,12 @@
 ---
-applyTo: "packages/openbridge-webcomponents/src/navigation-instruments/watch/**,packages/openbridge-webcomponents/src/navigation-instruments/compass/**,packages/openbridge-webcomponents/src/navigation-instruments/compass-sector/**,packages/openbridge-webcomponents/src/navigation-instruments/heading/**,packages/openbridge-webcomponents/src/navigation-instruments/rudder/**,packages/openbridge-webcomponents/src/navigation-instruments/wind/**,packages/openbridge-webcomponents/src/navigation-instruments/pitch/**,packages/openbridge-webcomponents/src/navigation-instruments/roll/**,packages/openbridge-webcomponents/src/navigation-instruments/pitch-roll/**,packages/openbridge-webcomponents/src/navigation-instruments/pitch-roll-heave/**,packages/openbridge-webcomponents/src/building-blocks/single-axis-inclinometer/**,packages/openbridge-webcomponents/src/navigation-instruments/speed-gauge/**,packages/openbridge-webcomponents/src/navigation-instruments/gauge-radial/**,packages/openbridge-webcomponents/src/navigation-instruments/rot-sector/**,packages/openbridge-webcomponents/src/navigation-instruments/rate-of-turn/**,packages/openbridge-webcomponents/src/navigation-instruments/course-arrows/**,packages/openbridge-webcomponents/src/navigation-instruments/readout/**,packages/openbridge-webcomponents/src/navigation-instruments/watch-flat/**,packages/openbridge-webcomponents/src/navigation-instruments/compass-flat/**,packages/openbridge-webcomponents/src/navigation-instruments/rot-linear/**,packages/openbridge-webcomponents/src/navigation-instruments/azimuth-thruster/**,packages/openbridge-webcomponents/src/building-blocks/instrument-radial/**,packages/openbridge-webcomponents/src/navigation-instruments/gauge-radial-proportional/**,packages/openbridge-webcomponents/src/automation/gauge-valve/**"
+applyTo: "packages/openbridge-webcomponents/src/navigation-instruments/watch/**,packages/openbridge-webcomponents/src/navigation-instruments/compass/**,packages/openbridge-webcomponents/src/navigation-instruments/compass-sector/**,packages/openbridge-webcomponents/src/navigation-instruments/heading/**,packages/openbridge-webcomponents/src/navigation-instruments/rudder/**,packages/openbridge-webcomponents/src/navigation-instruments/wind/**,packages/openbridge-webcomponents/src/navigation-instruments/pitch/**,packages/openbridge-webcomponents/src/navigation-instruments/roll/**,packages/openbridge-webcomponents/src/navigation-instruments/pitch-roll/**,packages/openbridge-webcomponents/src/navigation-instruments/pitch-roll-heave/**,packages/openbridge-webcomponents/src/building-blocks/single-axis-inclinometer/**,packages/openbridge-webcomponents/src/navigation-instruments/speed-gauge/**,packages/openbridge-webcomponents/src/navigation-instruments/gauge-radial/**,packages/openbridge-webcomponents/src/navigation-instruments/rot-sector/**,packages/openbridge-webcomponents/src/navigation-instruments/rate-of-turn/**,packages/openbridge-webcomponents/src/navigation-instruments/course-arrows/**,packages/openbridge-webcomponents/src/navigation-instruments/readout/**,packages/openbridge-webcomponents/src/navigation-instruments/watch-flat/**,packages/openbridge-webcomponents/src/navigation-instruments/compass-flat/**,packages/openbridge-webcomponents/src/navigation-instruments/rot-linear/**,packages/openbridge-webcomponents/src/navigation-instruments/azimuth-thruster/**,packages/openbridge-webcomponents/src/building-blocks/instrument-radial/**,packages/openbridge-webcomponents/src/navigation-instruments/current/**,packages/openbridge-webcomponents/src/navigation-instruments/gauge-radial-proportional/**,packages/openbridge-webcomponents/src/navigation-instruments/pitch-roll-yaw/**,packages/openbridge-webcomponents/src/navigation-instruments/position-deviation/**,packages/openbridge-webcomponents/src/navigation-instruments/speed-directions/**,packages/openbridge-webcomponents/src/navigation-instruments/top-view-propulsion/**,packages/openbridge-webcomponents/src/navigation-instruments/velocity-projection-plot/**,packages/openbridge-webcomponents/src/navigation-instruments/wind-propulsion/**,packages/openbridge-webcomponents/src/automation/gauge-valve/**"
 ---
 
-# GitHub Copilot Custom Instructions
+<!-- GENERATED FILE — DO NOT EDIT.
+     Source: docs/agents/watch-radial-instruments.md
+     Regenerate: npm run agents:sync -w packages/openbridge-webcomponents -->
 
-## Path-Specific Instructions for Watch & Radial Instruments
+# Watch & Radial Instruments
 
 These instructions apply to the circular/radial watch-based instrument system, including the core `obc-watch` renderer and all navigation instruments that use it.
 
@@ -16,7 +18,7 @@ These instructions apply to the circular/radial watch-based instrument system, i
 >
 > **When implementing a new feature or changing existing behavior:**
 >
-> 1. **All rendering logic should live in `watch.ts`** - it is the single source of truth for circular instrument rendering
+> 1. **Shared circular rendering belongs in `watch.ts`** - it is the single source of truth for anything more than one instrument draws. Genuinely component-specific logic stays local: `compass-sector` owns its bespoke FOV compression, and pitch/roll/pitch-roll/pitch-roll-heave own their coupled `buildFrame` contracts (see "Shared frame computation"). Do not move those into the shared renderer — doing so changes every other instrument.
 > 2. Changes to `watch.ts` affect ALL instruments that use it
 > 3. If adding a new visual element, add it to `watch.ts` as a configurable option, not to individual instruments
 > 4. Navigation instruments are thin wrappers that configure `obc-watch` and add domain-specific overlays
@@ -37,7 +39,7 @@ The watch-based instrument system follows a **core renderer + thin wrapper** pat
 ```text
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │                              watch.ts (obc-watch)                               │
-│                    (Core SVG renderer - ALL logic lives here)                   │
+│              (Core SVG renderer - shared circular rendering lives here)         │
 │                                                                                 │
 │  Renders:                                                                       │
 │  • Circular rings (single/double/doubleThin/triple)                            │
@@ -85,7 +87,7 @@ The watch-based instrument system follows a **core renderer + thin wrapper** pat
 
 ### Key Principle: Logic in `watch.ts`, Instruments Stay Thin
 
-- **`watch.ts`**: Contains ALL circular rendering logic, coordinate calculations, and theming. This is the source of truth.
+- **`watch.ts`**: Owns the **shared** circular rendering, coordinate calculations and theming — anything more than one instrument draws. It is the source of truth for those. Component-specific logic stays local (see the exceptions above).
 - **`instrument-radial.ts`**: Reusable building block that wraps `watch.ts` for generic radial gauges with configurable angle mapping.
 - **Navigation instruments** (compass, heading, rudder, etc.): Thin wrappers that configure `obc-watch` and add domain-specific SVG overlays (arrows, needles, ROT indicators).
 
@@ -200,14 +202,24 @@ const viewBox = `-${width / 2} ${top} ${width} ${height}`;
 
 ### Matching ViewBox in Consumer Instruments
 
-Consumer instruments MUST calculate the **same viewBox** for their overlay SVG:
+Consumer instruments need the **same viewBox** for their overlay SVG — but do
+**not** recompute it. Call `computeRadialFrame()` once per render and pass the
+one result to both layers:
 
 ```typescript
 // In compass.ts, heading.ts, etc.
-const padding = this.getPadding(); // Same calculation as watch!
-const width = (176 + padding) * 2;
-const viewBox = `-${width / 2} -${width / 2} ${width} ${width}`;
+const frame = computeRadialFrame({...});
+return html`
+  <obc-watch .arcFrame=${frame}></obc-watch>
+  <svg viewBox=${frame.viewBox}>…</svg>
+`;
 ```
+
+Hand-mirroring the `(176 + padding) * 2` arithmetic in a consumer is what the
+shared helper exists to prevent — the two layers drift the moment either side
+changes. See [Shared frame computation](#shared-frame-computation-svghelpersradial-framets-issue-1021)
+below, and `AGENTS.md` § 8 rule 15. The block above documents what `watch.ts`
+does internally; it is not a recipe to copy.
 
 ### ViewBox Mismatch = Misalignment
 
@@ -352,7 +364,7 @@ used for quadrant (90°) sectors.
 
 Location: `watch.ts` → `renderSetpoint()` method
 
-> **See `setpoint.instructions.md`** for the full setpoint architecture (design layer, mixin vs bundle, confirm animation, `cssSafeAngle()` short-path rotation, CSS transition pattern).
+> **See `setpoint.md`** for the full setpoint architecture (design layer, mixin vs bundle, confirm animation, `cssSafeAngle()` short-path rotation, CSS transition pattern).
 
 ```typescript
 // Triangle shape (SVG path) coming from svghelpers/setpoint.ts
@@ -458,23 +470,23 @@ Common instrument CSS variables used in `watch.ts` and helpers:
 
 ## Component Quick Reference
 
-| Component           | Uses                                     | Key Features                                                                                              |
-| ------------------- | ---------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| `obc-watch`         | Helper modules                           | Core renderer - ALL circular rendering logic                                                              |
-| `instrument-radial` | `obc-watch`                              | Generic building block with configurable `getAngle()`                                                     |
-| `compass`           | `obc-watch` + overlay                    | Full compass: HDG/COG arrow styles, ROT, vessel, wind/current, center readouts                            |
-| `heading`           | `obc-watch` + overlay                    | Simplified compass: HDG/COG arrow styles, optional vessel, center readouts                                |
-| `rate-of-turn`      | `obc-watch`                              | ROT dots/bar, track bar (barAreas+needles), center readout                                                |
-| `rudder`            | `obc-watch` + overlay                    | Half-circle: 40% top clipped, needle variant                                                              |
-| `speed-gauge`       | `obc-watch` + overlay                    | Speed arc: custom angle mapping, full needle                                                              |
-| `wind`              | `obc-watch` + overlay                    | Wind rose with histogram                                                                                  |
-| `pitch` / `roll`    | `single-axis-inclinometer` → `obc-watch` | Single-axis inclinometer: side arc scale, single/dual scale, optional center readout                      |
-| `pitch-roll`        | `obc-watch`                              | Pitch + roll on one face; 4 arcs, optional zoomed sub-watches                                             |
-| `pitch-roll-heave`  | `obc-watch` + `watchfaceLinear`          | Pitch arc + roll arc + linear heave column in the band slot; single/dual scale, optional stacked readouts |
-| `gauge-radial`      | `instrument-radial`                      | Thin wrapper adding `enhanced` prop                                                                       |
-| `gauge-radial-proportional` | `obc-watch` + overlay            | Proportional band gauge: split frame, secondary scale, medium priority, `faceDiameter`                    |
-| `rot-sector`        | `instrument-radial`                      | Rate of turn sector gauge                                                                                 |
-| `azimuth-thruster`  | `obc-watch` + overlay                    | Thruster with angle setpoint and thrust bar                                                               |
+| Component                   | Uses                                     | Key Features                                                                                              |
+| --------------------------- | ---------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| `obc-watch`                 | Helper modules                           | Core renderer - shared circular rendering logic                                                           |
+| `instrument-radial`         | `obc-watch`                              | Generic building block with configurable `getAngle()`                                                     |
+| `compass`                   | `obc-watch` + overlay                    | Full compass: HDG/COG arrow styles, ROT, vessel, wind/current, center readouts                            |
+| `heading`                   | `obc-watch` + overlay                    | Simplified compass: HDG/COG arrow styles, optional vessel, center readouts                                |
+| `rate-of-turn`              | `obc-watch`                              | ROT dots/bar, track bar (barAreas+needles), center readout                                                |
+| `rudder`                    | `obc-watch` + overlay                    | Half-circle: 40% top clipped, needle variant                                                              |
+| `speed-gauge`               | `obc-watch` + overlay                    | Speed arc: custom angle mapping, full needle                                                              |
+| `wind`                      | `obc-watch` + overlay                    | Wind rose with histogram                                                                                  |
+| `pitch` / `roll`            | `single-axis-inclinometer` → `obc-watch` | Single-axis inclinometer: side arc scale, single/dual scale, optional center readout                      |
+| `pitch-roll`                | `obc-watch`                              | Pitch + roll on one face; 4 arcs, optional zoomed sub-watches                                             |
+| `pitch-roll-heave`          | `obc-watch` + `watchfaceLinear`          | Pitch arc + roll arc + linear heave column in the band slot; single/dual scale, optional stacked readouts |
+| `gauge-radial`              | `instrument-radial`                      | Thin wrapper adding `enhanced` prop                                                                       |
+| `gauge-radial-proportional` | `obc-watch` + overlay                    | Proportional band gauge: split frame, secondary scale, medium priority, `faceDiameter`                    |
+| `rot-sector`                | `instrument-radial`                      | Rate of turn sector gauge                                                                                 |
+| `azimuth-thruster`          | `obc-watch` + overlay                    | Thruster with angle setpoint and thrust bar                                                               |
 
 ### Partial-reuse exception: `automation/gauge-valve`
 

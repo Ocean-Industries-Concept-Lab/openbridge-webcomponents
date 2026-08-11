@@ -50,7 +50,7 @@ import '../tree-navigation-item/tree-navigation-item.js';
  *
  * @slot icon - Leading icon for the group header (shown when `hasIcon` is true).
  * @slot - Child rows disclosed when the group is expanded.
- * @fires expand-toggle {CustomEvent<boolean>} Fired when the header is activated; detail is the next `expanded` value.
+ * @fires {CustomEvent<boolean>} expand-toggle - Fired when the header is activated; detail is the next `expanded` value.
  */
 @customElement('obc-tree-navigation-group')
 export class ObcTreeNavigationGroup extends LitElement {

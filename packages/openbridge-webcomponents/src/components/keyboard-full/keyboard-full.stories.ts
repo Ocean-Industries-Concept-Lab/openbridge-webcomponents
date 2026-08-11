@@ -9,7 +9,7 @@ import './keyboard-full.js';
 
 const meta: Meta<typeof ObcKeyboardFull> = {
   title: 'Application Components/Input/Keyboard Full',
-  tags: ['6.0'],
+  tags: ['6.0', 'beta'],
   component: 'obc-keyboard-full',
   parameters: {
     docs: {

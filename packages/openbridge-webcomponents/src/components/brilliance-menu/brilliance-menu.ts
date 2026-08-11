@@ -111,11 +111,11 @@ export type ObcLinkBrightnessChangeEvent = CustomEvent<{value: boolean}>;
  * ```
  * In this example, both auto toggles are visible, the palette is set to dusk, and brightness is set to 75.
  *
- * @fires palette-changed {ObcPaletteChangeEvent} When the palette is changed
- * @fires brightness-changed {ObcBrightnessChangeEvent} When the brightness is changed
- * @fires link-palette-changed {ObcLinkPaletteChangeEvent} When the link palette toggle is changed
- * @fires link-brightness-changed {ObcLinkBrightnessChangeEvent} When the link brightness toggle is changed
- * @fires screen-control-link-clicked {CustomEvent} When the screen control link is clicked
+ * @fires {ObcPaletteChangeEvent} palette-changed - When the palette is changed
+ * @fires {ObcBrightnessChangeEvent} brightness-changed - When the brightness is changed
+ * @fires {ObcLinkPaletteChangeEvent} link-palette-changed - When the link palette toggle is changed
+ * @fires {ObcLinkBrightnessChangeEvent} link-brightness-changed - When the link brightness toggle is changed
+ * @fires {CustomEvent} screen-control-link-clicked - When the screen control link is clicked
  */
 @localized()
 /**

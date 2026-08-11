@@ -90,8 +90,8 @@ export enum ObcNotificationMessageItemSize {
  * ```
  *
  * @slot secondary-icon - Additional icon for status/priority (shown when `hasSecondaryIcon` is true).
- * @fires message-click {CustomEvent<void>} Fired when the notification item is clicked.
- * @fires action-click {CustomEvent<void>} Fired when the action button or icon is clicked.
+ * @fires {CustomEvent<void>} message-click - Fired when the notification item is clicked.
+ * @fires {CustomEvent<void>} action-click - Fired when the action button or icon is clicked.
  * @beta
  */
 @customElement('obc-notification-message-item')

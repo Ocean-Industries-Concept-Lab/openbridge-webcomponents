@@ -78,6 +78,7 @@
 
   &.level-critical {
     --bg-color: var(--critical-enabled-background-color);
+    --blink-on: var(--critical-blink-on);
     color: var(--on-critical-active-color);
   }
 

@@ -41,7 +41,7 @@ export type BreadcrumbClickEvent = CustomEvent<BreadcrumbItem>;
  * ```
  * This will render: Home › Section › Subsection
  *
- * @fires breadcrumb-click {BreadcrumbClickEvent} - Fired when a breadcrumb item is clicked.
+ * @fires {BreadcrumbClickEvent} breadcrumb-click - Fired when a breadcrumb item is clicked.
  * @slot - (none) This component does not use slots; all content is provided via the `items` property.
  * @stable
  */

@@ -140,11 +140,11 @@ export interface SystemState {
  * </obc-system-button>
  * ```
  *
- * @fires menu-toggle {CustomEvent<{open: boolean}>} When the expanded variant is toggled open or closed
- * @fires system-state-change {CustomEvent<{state: SystemState}>} When the system state is updated
- * @fires microphone-panel-open {CustomEvent<void>} When the microphone action segment is activated
- * @fires volume-panel-open {CustomEvent<void>} When the volume action segment is activated
- * @fires system-icons-panel-open {CustomEvent<void>} When the system icons action segment is activated
+ * @fires {CustomEvent<{open: boolean}>} menu-toggle - When the expanded variant is toggled open or closed
+ * @fires {CustomEvent<{state: SystemState}>} system-state-change - When the system state is updated
+ * @fires {CustomEvent<void>} microphone-panel-open - When the microphone action segment is activated
+ * @fires {CustomEvent<void>} volume-panel-open - When the volume action segment is activated
+ * @fires {CustomEvent<void>} system-icons-panel-open - When the system icons action segment is activated
  * @stable
  */
 @customElement('obc-system-button')
@@ -212,7 +212,7 @@ export class ObcSystemButton extends LitElement {
    * Called by the System Menu component.
    *
    * @param newState Partial system state to merge with the current state.
-   * @fires system-state-change {CustomEvent<{state: SystemState}>} When the system state is updated
+   * @fires system-state-change
    */
   public updateSystemState(newState: Partial<SystemState>) {
     this.systemState = {...this.systemState, ...newState};

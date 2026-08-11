@@ -101,7 +101,7 @@ const renderPoiAton = (args: ObcPoiAton) => html`
 
 const meta: Meta<ObcPoiAton> = {
   title: 'AR/POI/POI AtoN',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'experimental'],
   component: 'obc-poi-aton',
   args: {
     type: ObcPoiType.Line,
