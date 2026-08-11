@@ -99,6 +99,7 @@ const renderTankEl = (args: StoryArgs, richReadout: unknown = nothing) => html`
     .compact=${args.compact}
     .static=${args.static}
     ?activated=${args.activated}
+    .clickable=${args.clickable}
     .positioning=${args.positioning}
     .chartMode=${args.chartMode}
     .chartData=${args.chartData}
@@ -142,6 +143,7 @@ const meta: Meta<StoryArgs> = {
     compact: false,
     static: false,
     activated: false,
+    clickable: true,
     positioning: TankPositioning.point,
     chartMode: TankChartMode.bar,
     chartData: SAMPLE_DATA,
@@ -200,7 +202,12 @@ const meta: Meta<StoryArgs> = {
     activated: {
       control: {type: 'boolean'},
       description:
-        'Enables the activated background color, used to indicate that the tank is activated/selected.',
+        'Enables the activated background color, used to indicate that the tank is activated/selected. Requires `clickable` — a non-clickable tank only paints the resting enabled state.',
+    },
+    clickable: {
+      control: {type: 'boolean'},
+      description:
+        'Whether the tank is interactive. Default `true`. Set to `false` for a display-only tank that still shows live data: the resting appearance, chart, badges, readout, tag and alert frame are unchanged, but hover / pressed / focus states are removed and the tank leaves the tab order. Unlike `static`, the chart keeps rendering.',
     },
     hasAdvice: {
       control: {type: 'boolean'},
@@ -327,6 +334,32 @@ export const CompactActivated: Story = {
     compact: true,
     type: TankType.atmospheric,
     activated: true,
+  },
+};
+
+/**
+ * Display-only tank — `.clickable=${false}`. `clickable` is property-only
+ * (`attribute: false`), so it has to be set as a property; a
+ * `clickable="false"` attribute in plain HTML is not observed. The root
+ * renders as a `<div>`
+ * instead of a `<button>`, so there is no hover, pressed or focus-visible
+ * state and the tank is out of the tab order. Everything else is untouched:
+ * the resting surface keeps the same colors and the same 1px border box (the
+ * flat mixin's `noClick` variant paints the enabled state only), and the
+ * chart, badges, readout and tag all render exactly as on a clickable tank.
+ *
+ * Use this for a tank that aggregates the ones beside it — a row total that
+ * still shows live data but has nothing to open. Contrast with `static`,
+ * which represents "device present, current state unknown": that one also
+ * hides the chart, swaps the percent for capacity, and shrinks to the compact
+ * footprint.
+ */
+export const NotClickable: Story = {
+  args: {
+    type: TankType.atmospheric,
+    chartMode: TankChartMode.graphAndBar,
+    tag: 'TOTAL',
+    clickable: false,
   },
 };
 
@@ -523,6 +556,7 @@ export const WithFractionDigits: Story = {
       .orientation=${args.orientation}
       .compact=${args.compact}
       .static=${args.static}
+      .clickable=${args.clickable}
       .positioning=${args.positioning}
       .chartMode=${args.chartMode}
       .chartData=${args.chartData}
@@ -562,6 +596,7 @@ export const WithAlertAlarm: Story = {
       .orientation=${args.orientation}
       .compact=${args.compact}
       .static=${args.static}
+      .clickable=${args.clickable}
       .positioning=${args.positioning}
       .chartMode=${args.chartMode}
       .chartData=${args.chartData}
@@ -581,6 +616,24 @@ export const WithAlertAlarm: Story = {
       <span slot="alert-label">Fire alert</span>
     </obc-automation-tank>
   `,
+};
+
+/**
+ * A non-clickable tank still raises its alert frame — `clickable` governs the
+ * interaction surface only, not what the tank is allowed to display. The chart
+ * keeps rendering too, which is the difference from `static`.
+ */
+export const NotClickableWithAlert: Story = {
+  ...WithAlertAlarm,
+  args: {
+    type: TankType.atmospheric,
+    chartMode: TankChartMode.graphAndBar,
+    tag: 'TOTAL',
+    clickable: false,
+    alert: true,
+    alertFrameStatus: ObcAlertFrameStatus.Warning,
+    alertFrameType: ObcAlertFrameType.SmallSideFlip,
+  },
 };
 
 /**
@@ -769,6 +822,7 @@ export const Responsive: Story = {
           .orientation=${args.orientation}
           .compact=${args.compact}
           .static=${args.static}
+          .clickable=${args.clickable}
           .positioning=${args.positioning}
           .chartMode=${args.chartMode}
           .chartData=${args.chartData}
