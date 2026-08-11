@@ -33,6 +33,7 @@
   anchor-name: --touch-target;
   display: flex;
   align-items: center;
+  text-align: left;
   gap: 4px;
   flex: 1;
   min-height: var(
