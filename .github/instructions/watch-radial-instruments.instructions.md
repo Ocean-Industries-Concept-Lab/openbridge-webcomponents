@@ -731,3 +731,5 @@ verify that before retuning any of the constants.
 - [ ] Does it use absolute coordinates? → Use `translate(-256, -256)` pattern
 - [ ] Does it need to scale? → Use `calc(Xpx / var(--scale))` or `vector-effect="non-scaling-stroke"`
 - [ ] Is it a partial circle? → Use `clipTop`/`clipBottom` and adjust viewBox
+- [ ] Rotating an `<svg>` **element box** (`transform="rotate(...)"` on the element)? → The host must clip: `:host { overflow: hidden }` — see "Host clipping & the arrow-apex shave"
+- [ ] Rendering an in-flow `<svg>` (not absolutely positioned)? → Give it `display: block`, or the inline line-box adds ~3–5px of phantom height
