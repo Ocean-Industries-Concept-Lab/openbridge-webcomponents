@@ -45,3 +45,20 @@ beforeEach((context) => {
     context.task.result.errors = [];
   }
 });
+
+// Chart components measure their label widths with ctx.measureText() at chart
+// creation and never re-measure when a web font finishes loading afterwards.
+// Without this, the measured label padding — and with it the whole canvas
+// width — depends on whether Noto Sans happened to be loaded yet, and visual
+// snapshots flip between two render states from run to run (observed as a
+// ~4px wider/narrower default-pie). Forcing every registered font face to
+// load before a story renders makes the measurement deterministic; the faces
+// are cached after the first test, so subsequent hooks are effectively free.
+beforeEach(async () => {
+  await Promise.all(
+    Array.from(document.fonts, (fontFace) =>
+      fontFace.load().catch(() => undefined)
+    )
+  );
+  await document.fonts.ready;
+});

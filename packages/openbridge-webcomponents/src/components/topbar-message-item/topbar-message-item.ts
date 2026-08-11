@@ -128,8 +128,8 @@ export enum ObcTopbarMessageItemSize {
  * @slot action-text - Content for the text action button (shown if type is `with-button`).
  * @slot action-icon - Icon for the icon action button (shown if type is `with-icon-button`).
  * @slot empty - Content for the empty/inactive state (shown if type is `inactive` or `empty` is true).
- * @fires message-click {CustomEvent<void>} Fired when the main message area is clicked.
- * @fires action-click {CustomEvent<void>} Fired when the action button (text or icon) is clicked.
+ * @fires {CustomEvent<void>} message-click - Fired when the main message area is clicked.
+ * @fires {CustomEvent<void>} action-click - Fired when the action button (text or icon) is clicked.
  * @stable
  */
 @customElement('obc-topbar-message-item')

@@ -21,9 +21,9 @@ import {
  * @slot day - Day label (e.g., "Yesterday").
  * @slot action - Primary action button label/content.
  * @slot action2 - Secondary action button label/content.
- * @fires action-click {CustomEvent} When the primary action button is clicked.
- * @fires action2-click {CustomEvent} When the secondary action button is clicked.
- * @fires dismiss-click {CustomEvent} When the alert message is dismissed.
+ * @fires {CustomEvent} action-click - When the primary action button is clicked.
+ * @fires {CustomEvent} action2-click - When the secondary action button is clicked.
+ * @fires {CustomEvent} dismiss-click - When the alert message is dismissed.
  * @stable
  */
 @customElement('obc-alert-floating-item')

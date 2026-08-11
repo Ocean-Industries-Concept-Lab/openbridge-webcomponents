@@ -10,7 +10,10 @@ import {
 } from '../../navigation-instruments/watch/watch.js';
 import {renderInstrumentReadout} from '../../navigation-instruments/readout/instrument-readout.js';
 import {Priority} from '../../navigation-instruments/types.js';
-import {TickmarkType} from '../../navigation-instruments/watch/tickmark.js';
+import {
+  arcTickmarks,
+  TickmarkType,
+} from '../../navigation-instruments/watch/tickmark.js';
 import {
   AdviceState,
   AdviceType,
@@ -233,6 +236,7 @@ export class SingleAxisInclinometer extends LitElement {
   // keeps the zoomed `arcFrame` correct.
   protected renderScale(areas: WatchArea[], opposite: boolean) {
     const centerAngle = this.centerAngle;
+    const arcAngle = normalizeArcAngle(this.arcAngle, 45);
     return html`
       <obc-watch
         class=${opposite ? 'scale-opposite' : nothing}
@@ -259,7 +263,10 @@ export class SingleAxisInclinometer extends LitElement {
         .vessels=${opposite || this.zoomToFitArc || this.hasReadout
           ? []
           : this.scaleVessels}
-        .tickmarks=${[{angle: centerAngle, type: TickmarkType.main}]}
+        .tickmarks=${[
+          {angle: centerAngle, type: TickmarkType.main},
+          ...arcTickmarks(centerAngle, arcAngle),
+        ]}
         .advices=${this.advices}
       ></obc-watch>
     `;

@@ -99,9 +99,9 @@ export enum ObcFloatingItemLineType {
  * @slot day - Day label (e.g., "Mon").
  * @slot action - Label for the primary action button.
  * @slot action2 - Label for the secondary action button.
- * @fires action-click {CustomEvent<void>} Fired when the first action button is clicked.
- * @fires action2-click {CustomEvent<void>} Fired when the second action button is clicked.
- * @fires dismiss-click {CustomEvent<void>} Fired when the close icon is clicked.
+ * @fires {CustomEvent<void>} action-click - Fired when the first action button is clicked.
+ * @fires {CustomEvent<void>} action2-click - Fired when the second action button is clicked.
+ * @fires {CustomEvent<void>} dismiss-click - Fired when the close icon is clicked.
  * @stable
  */
 @customElement('obc-floating-item')

@@ -5,7 +5,7 @@ import {crossDecorator} from '../../storybook-util.js';
 
 const meta: Meta<typeof ObcThreeWayLine> = {
   title: 'Automation/Line/Three Way Line',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'deprecated'],
   component: 'obc-three-way-line',
   decorators: [crossDecorator],
   argTypes: {

@@ -26,6 +26,10 @@ svg {
   }
 }
 
+.label.north-marker {
+  fill: var(--element-active-inverted-color);
+}
+
 .label.inside {
   &.left {
     text-anchor: start;

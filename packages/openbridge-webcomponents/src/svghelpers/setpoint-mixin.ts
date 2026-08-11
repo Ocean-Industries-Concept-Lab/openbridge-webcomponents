@@ -225,6 +225,20 @@ export declare class SetpointMixinInterface {
    * @returns Whether `currentValue` is within deadband of the setpoint
    */
   computeAtSetpoint(currentValue: number | undefined): boolean;
+
+  /**
+   * Whether this update cycle changed setpoint-marker presence
+   * (`setpoint`, `newSetpoint`, or the mixin-managed departing marker
+   * clearing after the confirm animation).
+   *
+   * Wrappers that report layout dimensions to a parent (e.g. reserved
+   * marker band thickness) should re-report when this returns true —
+   * checking only `setpoint`/`newSetpoint` misses the departing-marker
+   * clear, leaving the parent with a stale layout reservation.
+   *
+   * @param changed - The `PropertyValues` from `willUpdate`/`updated`
+   */
+  setpointPresenceChanged(changed: PropertyValues): boolean;
 }
 
 // ============================================================================
@@ -362,6 +376,15 @@ export function SetpointMixin<T extends Constructor<LitElement>>(
     /** Public getter for renderers/wrappers to access the departing value. */
     get departingNewSetpoint(): number | undefined {
       return this._departingNewSetpoint;
+    }
+
+    /** @see SetpointMixinInterface.setpointPresenceChanged */
+    setpointPresenceChanged(changed: PropertyValues): boolean {
+      return (
+        changed.has('setpoint') ||
+        changed.has('newSetpoint') ||
+        changed.has('_departingNewSetpoint')
+      );
     }
 
     // ------------------------------------------------------------------

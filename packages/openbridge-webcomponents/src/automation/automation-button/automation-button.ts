@@ -106,6 +106,7 @@ export enum AutomationButtonPositioning {
  * @slot alert-icon - Custom icon for the alert frame, shown when alert==true and positioning=="point".
  * @slot alert-label - Label for the alert frame, shown when alert==true and positioning=="point".
  * @slot alert-timer - Timer for the alert frame, shown when alert==true and positioning=="point".
+ * @fires click - Fired when the button is clicked.
  * @stable
  */
 @customElement('obc-automation-button')

@@ -72,7 +72,7 @@ import {customElement} from '../../decorator.js';
  * **TODO(designer):** Confirm if there are recommended maximum label lengths or visual constraints for chip content.
  *
  * @slot - Default leading-icon slot (shown when `showIcon` is true)
- * @fires remove-chip {CustomEvent<{label: string}>} Fired when the chip is removed (via close icon click). Event detail contains the chip's label.
+ * @fires {CustomEvent<{label: string}>} remove-chip - Fired when the chip is removed (via close icon click). Event detail contains the chip's label.
  * @stable
  */
 @customElement('obc-input-chip')

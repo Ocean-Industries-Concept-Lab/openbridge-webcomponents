@@ -91,7 +91,7 @@ export type ObcCommandMenuChangeEvent = CustomEvent<{inCommand: boolean}>;
  * @slot toogle-state-in-command-label - Status label when in "in command" state.
  * @slot toogle-state-no-command-label - Status label when in "no command" state.
  * @slot toogle-state-in-command-icon - Icon for the "in command" state (defaults to `<obi-command-in>`).
- * @fires change {CustomEvent<{inCommand: boolean}>} Fired when the command state is toggled.
+ * @fires {CustomEvent<{inCommand: boolean}>} change - Fired when the command state is toggled.
  * @beta
  */
 @customElement('obc-command-menu')
@@ -177,7 +177,7 @@ export class ObcCommandMenu extends LitElement {
   /**
    * Handles the toggle change event from the start-stop switch and emits a `change` event with the new command state.
    *
-   * @fires change {CustomEvent<{inCommand: boolean}>} Fired when the command state is toggled.
+   * @fires change
    */
   private onChange(event: ObcStartStopSwitchChangeEvent) {
     // Stop the start-stop-switch's composed event from leaking through

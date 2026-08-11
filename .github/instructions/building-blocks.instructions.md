@@ -2,9 +2,11 @@
 applyTo: "packages/openbridge-webcomponents/src/building-blocks/**,packages/openbridge-webcomponents/src/svghelpers/**"
 ---
 
-# GitHub Copilot Custom Instructions
+<!-- GENERATED FILE — DO NOT EDIT.
+     Source: docs/agents/building-blocks.md
+     Regenerate: npm run agents:sync -w packages/openbridge-webcomponents -->
 
-## Path-Specific Instructions for Building Blocks & SVG Helpers
+# Building Blocks & SVG Helpers
 
 These instructions apply to SVG-based building block components (instrument-linear, bar-vertical, etc.) and their shared SVG helper utilities.
 
@@ -67,7 +69,7 @@ When working with building block components in this directory:
        value: number,
        minValue: number,
        maxValue: number,
-       height: number
+       height: number,
      ): number {
        const range = maxValue - minValue;
        return ((-value + minValue) * height) / range + height / 2;
@@ -115,6 +117,23 @@ When working with building block components in this directory:
     - Height defines the visual size and coordinate system scale
     - Padding (top/bottom or left/right) is typically added outside the main drawing area
 
+12. **`instrument-linear` shared helpers** (consumed by `obc-heave`, `obc-draft-trim`):
+    - `resolveLinearAdvice(advice, trendMin, trendMax)` resolves each advice zone's
+      hinted/regular/triggered state against a trend band.
+    - `verticalScaleTickmarks(range)` returns the tick configuration for a scale
+      spanning `±range` around a zero reference: a full-width line at zero, plus a
+      primary and a secondary ladder whose intervals step with the range — `1`/`0.5`
+      for a range of 5 or less, `5`/`1` above that.
+    - `linearTickInterval(height, range, minSpacing)` picks a 1-2-5 tick step by
+      on-screen spacing, for scales whose height is dictated by a surrounding layout.
+    - `watchfaceLinear`'s `options.maskId` overrides the container clip-mask id.
+      **Ids are document-scoped**, so any component rendering more than one gauge in
+      a single shadow root MUST give each a distinct id — otherwise every gauge
+      resolves to the first one's mask.
+    - **Scale space is positive-up.** A quantity measured downward (a draught) has to
+      be negated, and so do its advice bounds — which additionally swap, since
+      negating an interval reverses it: `{min, max}` → `{min: -max, max: -min}`.
+
 ### `packages/openbridge-webcomponents/src/svghelpers/**`
 
 When working with SVG helper utilities:
@@ -130,7 +149,7 @@ When working with SVG helper utilities:
    - `rectangular.ts`: Helpers for rectangular shapes and layouts
    - `circle.ts`: Helpers for circular/radial shapes
    - `roundedArch.ts`: Helpers for rounded arch paths
-   - `setpoint.ts`, `setpoint-mixin.ts`, `setpoint-bundle.ts`: Setpoint marker design layer, state management, and animation. See `setpoint.instructions.md` for full documentation.
+   - `setpoint.ts`, `setpoint-mixin.ts`, `setpoint-bundle.ts`: Setpoint marker design layer, state management, and animation. See `setpoint.md` for full documentation.
    - `index.ts`: Export all helpers for convenient importing
    - Organize helpers by shape/concept, not by component
 

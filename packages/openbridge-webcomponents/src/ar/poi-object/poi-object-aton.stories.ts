@@ -11,7 +11,7 @@ import '../../icons/icon-beacon-general-east.js';
 const meta: Meta = {
   title: 'AR/POI Object/POI Object AtoN',
   component: 'obc-poi-object-aton',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'experimental'],
   argTypes: {
     type: {
       control: 'select',

@@ -85,7 +85,7 @@ const SAMPLE_MULTI_DATASETS = [
 const meta: Meta = {
   title: 'Building Blocks/Line Area Chart Base',
   component: 'obc-area-graph',
-  tags: ['autodocs', '6.0'],
+  tags: ['autodocs', '6.0', 'beta'],
   parameters: {
     docs: {
       description: {
