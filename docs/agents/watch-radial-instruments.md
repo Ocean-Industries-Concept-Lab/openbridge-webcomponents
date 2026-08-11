@@ -655,9 +655,15 @@ origin-centred square viewBox is rotation-invariant, so nothing new is exposed
 when it turns — compass-sector leaks because its sector crop leaves painted
 arc in the corners of a wide, short box. Rotating an inner `<g>` instead of
 the element would keep the box axis-aligned and let the svg's own viewport
-clip contain everything by construction, but it refactors the rotation path
-of the shared core (`watch.ts` plus the compass-sector overlay), risks
-AA-level baseline churn across every rotating instrument, and buys no visual
+clip contain everything by construction — but this was **measured and
+rejected** (issue #1129, 2026-08-11): an element-level `transform` update
+reuses the display list (only re-raster runs), while mutating a `<g>` inside
+dirties the SVG content and rebuilds it — ~3× the main-thread `Paint` time at
+10 Hz heading updates (raster cost equal, both 60 fps on desktop hardware).
+It is also only a drop-in where the viewBox is origin-centred: the element
+rotates about its **box centre**, an inner `<g>` about the **user-space
+origin** — on compass-sector's cropped frame the two differ and a naive swap
+visibly displaces the arc (11 of 12 baselines). And it buys no visual
 improvement — the apex shave below happens either way at the same box edge.
 
 **Known, deliberate trade-off:** in compass-sector's current framing the
