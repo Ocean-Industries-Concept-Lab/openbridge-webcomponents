@@ -31,11 +31,18 @@ function fixPackageJson(packageName, directory) {
     access: 'public',
   };
 
-  if (!packageJson.files) {
-    packageJson.files = [];
-  }
-  if (packageJson.files && !packageJson.files.includes('README.md')) {
-    packageJson.files.push('README.md');
+  // Angular publishes from dist/, which ng-packagr builds to contain exactly
+  // the right output. ng-packagr copies `files` through to dist/package.json,
+  // so setting it here would cap the published package at just those entries.
+  if (packageName !== 'angular') {
+    if (!packageJson.files) {
+      packageJson.files = [];
+    }
+    if (packageJson.files && !packageJson.files.includes('README.md')) {
+      packageJson.files.push('README.md');
+    }
+  } else {
+    delete packageJson.files;
   }
 
   if (packageName === 'vue') {
