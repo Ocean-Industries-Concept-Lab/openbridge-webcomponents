@@ -300,15 +300,18 @@ export const UndefinedSetpoint: Story = {
           <code>undefined</code>.
         </p>
         <p>
-          They agree here because the legacy <code>maxDigits</code> default is 1
-          with padding off, so its <code>dashedGenerator</code> also emits a
-          single <code>-</code>. With padding on they diverge: legacy widens the
-          run to <code>maxDigits</code> (<code>---</code>) while
+          Both emit a single dash here because the legacy
+          <code>maxDigits</code> default is 1 with padding off. The glyphs
+          differ deliberately: legacy renders the ASCII hyphen, while
+          <code>obc-readout</code> renders the digit-width U+2012 figure dash
+          (#1105), so its placeholder aligns with the digits it stands in for.
+          With padding on they also diverge in count: legacy widens the run to
+          <code>maxDigits</code> (<code>---</code>) while
           <code>obc-readout</code> always renders one dash —
           <code>readoutNumericFormatOptions()</code> hardcodes
           <code>showZeroPadding: false</code>. The reserved width is unchanged
-          either way, so nothing shifts. Flagged as under design review in
-          <code>readout-components.instructions.md</code>.
+          either way, so nothing shifts. The contracts live in
+          <code>docs/agents/readout-components.md</code>.
         </p>
       `,
     }),
