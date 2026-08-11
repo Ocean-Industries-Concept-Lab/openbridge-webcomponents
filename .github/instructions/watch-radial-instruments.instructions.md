@@ -622,6 +622,16 @@ pixels over neighboring UI in wide layouts. The clip is the fix; the sibling
 issue — the inline-SVG line-box gap that added ~3–5px of phantom height below
 the graphic (mystery scrollbars in `overflow: auto` cells).
 
+The leak needs a **cropped** frame to show: a full-circle face in its
+origin-centred square viewBox is rotation-invariant, so nothing new is exposed
+when it turns — compass-sector leaks because its sector crop leaves painted
+arc in the corners of a wide, short box. Rotating an inner `<g>` instead of
+the element would keep the box axis-aligned and let the svg's own viewport
+clip contain everything by construction, but it refactors the rotation path
+of the shared core (`watch.ts` plus the compass-sector overlay), risks
+AA-level baseline churn across every rotating instrument, and buys no visual
+improvement — the apex shave below happens either way at the same box edge.
+
 **Known, deliberate trade-off:** in compass-sector's current framing the
 HDG/COG **arrow apexes extend 1–2px past the host's top edge**. Before #1016
 those pixels painted _outside_ the component (`overflow: visible` default) and
@@ -639,10 +649,10 @@ Cautions for whoever picks this up:
   shave-only change moved 8), and the readout `_readoutTopPercent` anchors
   must be re-derived.
 - compass-sector is **not** on `computeRadialFrame()` (bespoke `PADDING = 72`
-  - per-FOV cached viewBox). Adding headroom by touching `PADDING` — or by
-    migrating it onto the helper — interacts with the #1021/#1049 label-reserve
-    geometry: `basePadding` feeds the closed-form reserve, so re-validate label
-    padding at small sizes after any change.
+  plus a per-FOV cached viewBox). Adding headroom by touching `PADDING` — or
+  by migrating it onto the helper — interacts with the #1021/#1049
+  label-reserve geometry: `basePadding` feeds the closed-form reserve, so
+  re-validate label padding at small sizes after any change.
 - The same decision applies family-wide: `obc-watch` has clipped since #994,
   so any "tips must never be cut" ruling should audit watch-based instruments
   (setpoint markers and arrows near the box edge), not just compass-sector.

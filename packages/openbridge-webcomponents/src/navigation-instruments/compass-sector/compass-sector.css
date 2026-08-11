@@ -34,7 +34,7 @@
      now shaved flat at the box edge — imperceptible at normal viewing.
      TODO(designer): if the shave is unwanted, the frame needs headroom so
      the arrow tips fit inside the box — see "Host clipping & the arrow-apex
-     shave" in watch-radial-instruments.instructions.md before changing
+     shave" in docs/agents/watch-radial-instruments.md before changing
      (interacts with the #1021/#1049 label-reserve geometry). */
   overflow: hidden;
 }
