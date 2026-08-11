@@ -99,7 +99,6 @@ export const IdOnly: Story = {
   },
 };
 
-
 export const VariantDoubleSizeLarge: Story = {
   args: {
     on: true,

@@ -61,12 +61,12 @@ export class ObcAbstractAutomationButton extends LitElement {
   /** @availableWhen showReadoutStack==true */
   @property({type: String}) readoutPosition: AutomationButtonReadoutPosition =
     AutomationButtonReadoutPosition.bottom;
-    /** @availableWhen showReadoutStack==true */
+  /** @availableWhen showReadoutStack==true */
   @property({type: Boolean, attribute: false}) showStatus: boolean = true;
-    /** @availableWhen showReadoutStack==true */
+  /** @availableWhen showReadoutStack==true */
   @property({type: String}) readoutSize: AutomationButtonReadoutStackSize =
     AutomationButtonReadoutStackSize.regular;
-    /** @availableWhen showReadoutStack==true */
+  /** @availableWhen showReadoutStack==true */
   @property({type: String}) tag: string | null = null;
 
   @property({type: String}) positioning: AutomationButtonPositioning =
