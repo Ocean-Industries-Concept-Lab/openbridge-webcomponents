@@ -481,6 +481,19 @@ const UNAVAILABLE_CASES: {
     label: 'null · no fraction digits',
     args: {value: null, maxDigits: 3},
   },
+  // The knobs, not the value: a `fractionDigits` written by a failed runtime
+  // (`NaN`) must not silently format with zero decimals — a critical 0.4
+  // printed as a plausible-looking "0" reads as healthy. The reading dashes
+  // instead. A missing `maxDigits` dashes too, for consistency; with the
+  // precision still known, the placeholder keeps its fraction shape.
+  {
+    label: 'value 0.4 · fractionDigits NaN — precision failed to arrive',
+    args: {value: 0.4, maxDigits: 3, fractionDigits: Number.NaN},
+  },
+  {
+    label: 'value 0.4 · maxDigits NaN — same, for consistency',
+    args: {value: 0.4, maxDigits: Number.NaN, fractionDigits: 1},
+  },
 ];
 
 // Stacked in one column under identical settings so the decimal points and the
@@ -508,6 +521,13 @@ const ALIGNMENT_CASES: Partial<BlockArgs>[] = [
  *    the literal text `NaN` / `Infinity` in place of a reading. They are a
  *    runtime data condition (sensor dropout, `0/0`, a bad parse) rather than a
  *    programmer error, so they resolve to the dash rather than throwing.
+ *
+ * 4. **A digit knob that never arrived dashes the reading too.** `NaN`,
+ *    `null` or `undefined` in `fractionDigits` / `maxDigits` is a runtime
+ *    failure of the writing system, and formatting with a default the author
+ *    never chose would let a critical `0.4` pass for a healthy `0`. Finite
+ *    out-of-range values are different: `fractionDigits` throws (programmer
+ *    error), `maxDigits` clamps (width-only).
  *
  * Hinted zeros are suppressed for an unavailable value, so the two "not
  * available" rows are identical and nothing reads `----Na.N`.
