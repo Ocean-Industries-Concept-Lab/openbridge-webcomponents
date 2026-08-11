@@ -1,6 +1,10 @@
 import {describe, it, expect} from 'vitest';
 import {
   assertReadoutValueType,
+  assertReadoutFractionDigits,
+  isReadoutDigitCountMissing,
+  resolveReadoutDigitCount,
+  READOUT_MAX_DIGITS,
   resolveReadoutNumericValue,
   resolveReadoutTextValue,
   formatNumericValue,
@@ -365,5 +369,206 @@ describe("designer's format specification (000.00)", () => {
     expect(formatNumericValue(undefined, opts).length).toBeLessThan(
       '012.30'.length
     );
+  });
+});
+
+describe('assertReadoutFractionDigits', () => {
+  // `fractionDigits` reaches `Number.prototype.toFixed` unchanged, which throws
+  // outside 0…100. These are the values that already crash today, now reported
+  // against the component instead of as a bare RangeError.
+  it('throws below 0 and above the maximum', () => {
+    expect(() => assertReadoutFractionDigits('obc-readout', -1)).toThrow(
+      RangeError
+    );
+    expect(() =>
+      assertReadoutFractionDigits('obc-readout', READOUT_MAX_DIGITS + 1)
+    ).toThrow(RangeError);
+    expect(() =>
+      assertReadoutFractionDigits('obc-readout', Number.POSITIVE_INFINITY)
+    ).toThrow(RangeError);
+  });
+
+  it('names the component and the offending value', () => {
+    expect(() =>
+      assertReadoutFractionDigits('obc-readout-list-item', -1)
+    ).toThrow(/obc-readout-list-item.*between 0 and 100.*-1/s);
+  });
+
+  // `JSON.stringify` serialises these to `null`, which would hide the very
+  // value being rejected.
+  it('reports non-finite values verbatim in the message', () => {
+    expect(() =>
+      assertReadoutFractionDigits('obc-readout', Number.POSITIVE_INFINITY)
+    ).toThrow(/got Infinity/);
+    expect(() =>
+      assertReadoutFractionDigits('obc-readout', Number.NEGATIVE_INFINITY)
+    ).toThrow(/got -Infinity/);
+  });
+
+  // The components read `fractionDigits ?? 0` and `toFixed(undefined)` behaves
+  // as `toFixed(0)`, so clearing the property must not throw.
+  it('accepts an unset value', () => {
+    expect(() =>
+      assertReadoutFractionDigits('obc-readout', undefined as unknown as number)
+    ).not.toThrow();
+    expect(() =>
+      assertReadoutFractionDigits('obc-readout', null as unknown as number)
+    ).not.toThrow();
+  });
+
+  it('accepts the whole supported range', () => {
+    expect(() => assertReadoutFractionDigits('obc-readout', 0)).not.toThrow();
+    expect(() =>
+      assertReadoutFractionDigits('obc-readout', READOUT_MAX_DIGITS)
+    ).not.toThrow();
+  });
+
+  // Values `toFixed` itself tolerates are left alone rather than rejected.
+  it('tolerates what toFixed tolerates', () => {
+    expect(() => assertReadoutFractionDigits('obc-readout', 2.7)).not.toThrow();
+    expect(() =>
+      assertReadoutFractionDigits('obc-readout', Number.NaN)
+    ).not.toThrow();
+  });
+
+  // The assertion must agree with the runtime it is protecting.
+  it('accepts exactly the values toFixed accepts', () => {
+    // Covers both sides of the boundary, including the truncation cases the
+    // instruction file documents: 100.9 -> 100 and -0.5 -> -0 are accepted,
+    // while -1, 101 and the infinities are not.
+    for (const digits of [
+      0,
+      1,
+      2.7,
+      -0.5,
+      100.9,
+      Number.NaN,
+      undefined,
+      null,
+      READOUT_MAX_DIGITS,
+      -1,
+      READOUT_MAX_DIGITS + 1,
+      Number.POSITIVE_INFINITY,
+      Number.NEGATIVE_INFINITY,
+    ] as number[]) {
+      let assertionThrew = false;
+      let toFixedThrew = false;
+      try {
+        assertReadoutFractionDigits('obc-readout', digits);
+      } catch {
+        assertionThrew = true;
+      }
+      try {
+        (12.3).toFixed(digits);
+      } catch {
+        toFixedThrew = true;
+      }
+      expect(assertionThrew).toBe(toFixedThrew);
+    }
+  });
+});
+
+describe('resolveReadoutDigitCount', () => {
+  it('passes a usable count through', () => {
+    expect(resolveReadoutDigitCount(4)).toBe(4);
+    expect(resolveReadoutDigitCount(0)).toBe(0);
+  });
+
+  // `Infinity` is the value that throws out of `String.prototype.repeat`.
+  it('caps Infinity rather than throwing', () => {
+    expect(resolveReadoutDigitCount(Number.POSITIVE_INFINITY)).toBe(
+      READOUT_MAX_DIGITS
+    );
+    expect(() =>
+      '0'.repeat(resolveReadoutDigitCount(Number.POSITIVE_INFINITY))
+    ).not.toThrow();
+  });
+
+  it('caps a large finite count so the reserver stays bounded', () => {
+    expect(resolveReadoutDigitCount(1_000_000)).toBe(READOUT_MAX_DIGITS);
+  });
+
+  // Matches what the existing guards already did with these: reserve nothing.
+  it('is 0 for negative, NaN, null and undefined', () => {
+    expect(resolveReadoutDigitCount(-5)).toBe(0);
+    expect(resolveReadoutDigitCount(Number.NEGATIVE_INFINITY)).toBe(0);
+    expect(resolveReadoutDigitCount(Number.NaN)).toBe(0);
+    expect(resolveReadoutDigitCount(null)).toBe(0);
+    expect(resolveReadoutDigitCount(undefined)).toBe(0);
+  });
+
+  it('truncates a fractional count', () => {
+    expect(resolveReadoutDigitCount(2.7)).toBe(2);
+  });
+
+  // Whatever comes back must be safe to hand to `repeat`.
+  it('always returns a count repeat() accepts', () => {
+    for (const input of [
+      -5,
+      0,
+      2.7,
+      4,
+      1_000_000,
+      Number.NaN,
+      Number.POSITIVE_INFINITY,
+      Number.NEGATIVE_INFINITY,
+    ]) {
+      expect(() => '0'.repeat(resolveReadoutDigitCount(input))).not.toThrow();
+    }
+  });
+});
+
+describe('isReadoutDigitCountMissing', () => {
+  // The third contract besides throw and clamp: a knob that never arrived is
+  // a runtime data condition, and the reading renders as the dash rather than
+  // silently formatting with a default the author never chose.
+  it('is true for NaN, null and undefined', () => {
+    expect(isReadoutDigitCountMissing(Number.NaN)).toBe(true);
+    expect(isReadoutDigitCountMissing(null)).toBe(true);
+    expect(isReadoutDigitCountMissing(undefined)).toBe(true);
+  });
+
+  // A number that ARRIVED wrong is a different contract: out-of-range
+  // `fractionDigits` throws (`assertReadoutFractionDigits`), out-of-range
+  // `maxDigits` clamps (`resolveReadoutDigitCount`). Neither is "missing".
+  it('is false for any number that arrived, however wrong', () => {
+    expect(isReadoutDigitCountMissing(0)).toBe(false);
+    expect(isReadoutDigitCountMissing(2)).toBe(false);
+    expect(isReadoutDigitCountMissing(2.7)).toBe(false);
+    expect(isReadoutDigitCountMissing(-1)).toBe(false);
+    expect(isReadoutDigitCountMissing(101)).toBe(false);
+    expect(isReadoutDigitCountMissing(Number.POSITIVE_INFINITY)).toBe(false);
+    expect(isReadoutDigitCountMissing(Number.NEGATIVE_INFINITY)).toBe(false);
+  });
+});
+
+// The review that introduced this: a system writing `fractionDigits` at
+// runtime can fail and produce `NaN` — `toFixed(NaN)` then formats with zero
+// decimals, so a critical `0.4` prints as a plausible-looking `0` and an
+// operator cannot tell the readout is broken. The dash makes it visible.
+describe('formatNumericValue — missing precision', () => {
+  const opts = (fractionDigits: number) => ({
+    showZeroPadding: false,
+    minValueLength: 3,
+    fractionDigits,
+  });
+  const D = READOUT_UNAVAILABLE_DASH;
+
+  it('renders the dash, not a zero-decimal number', () => {
+    expect(formatNumericValue(0.4, opts(Number.NaN))).toBe(D);
+    expect(formatNumericValue(12.3, opts(Number.NaN))).toBe(D);
+  });
+
+  // Regression: `NaN < 1` is false, so the placeholder generator used to fall
+  // into its fraction branch where both `repeat(NaN)` calls produce '', and
+  // an unavailable value with a missing precision degenerated to a lone ".".
+  it('shapes the placeholder as zero fraction digits, not a lone dot', () => {
+    expect(formatNumericValue(undefined, opts(Number.NaN))).toBe(D);
+    expect(formatNumericValue(undefined, opts(Number.NaN))).not.toBe('.');
+  });
+
+  it('still formats normally with a precision that arrived', () => {
+    expect(formatNumericValue(0.4, opts(1))).toBe('0.4');
+    expect(formatNumericValue(12.3, opts(2))).toBe('12.30');
   });
 });
