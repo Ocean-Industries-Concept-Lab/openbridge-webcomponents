@@ -127,7 +127,8 @@ All other CSS code should be kept in the `*.css` files in the component folders.
 > `component-primitives` + shadow composites), the four
 > `:root[data-obc-theme="…"]` blocks (from the `Palette` collection, with
 > variable alias chains flattened to literal `rgb(…)` values per theme), and
-> the `@property` / `@keyframes warning-blink` machinery at the bottom.
+> the `@property` blink registrations at the bottom (the animation itself is
+> driven from `src/palettes/blinking.ts`, not from CSS keyframes).
 >
 > **Do not hand-edit `variables.css`.** Any local change will be silently
 > overwritten the next time someone pastes new plugin output. To add,
@@ -469,10 +470,21 @@ Each generates `enabled`, `hover`, `active`, and `focus-visible` states — same
 }
 ```
 
-A shared `@keyframes warning-blink` orchestrates two blink rates:
+The animation itself is driven from TypeScript, **not** from a CSS `@keyframes`.
+`src/palettes/blinking.ts` exports `blinkingInstall()`, which uses the Web
+Animations API (`el.animate()`) to alternate the `-on` / `-off` pair over a
+per-severity period:
 
-- **Alarm** blinks 4× per cycle (fast)
-- **Warning** blinks 2× per cycle (slow)
+| Severity | Period |
+| -------- | ------ |
+| Critical | 1000 ms |
+| Alarm    | 2000 ms |
+| Warning  | 4000 ms |
+| Low      | 8000 ms |
+
+Call sites: `alert-frame`, `alert-icon` and `alert-button`. (Before PR #1116
+this was a shared `@keyframes warning-blink` in `variables.css`; that keyframes
+no longer exists.)
 
 Components apply the animation by binding opacity to these properties:
 
