@@ -171,6 +171,8 @@ export enum GaugeValveStyle {
  * | `icon` | always    | Center actuator icon (`obi-*` component) |
  *
  * @slot icon - Center actuator icon (`obi-*` component)
+ *
+ * @experimental
  */
 @customElement('obc-gauge-valve')
 export class ObcGaugeValve extends SetpointMixin(LitElement) {

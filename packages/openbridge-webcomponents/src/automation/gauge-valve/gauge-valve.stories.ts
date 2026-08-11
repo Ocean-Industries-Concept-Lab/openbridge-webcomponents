@@ -26,7 +26,7 @@ type GaugeValveStoryArgs = Partial<ObcGaugeValve> & {
 const meta = {
   title: 'Automation/Instruments/Gauge Valve',
   component: 'obc-gauge-valve',
-  tags: ['autodocs', '6.0'],
+  tags: ['autodocs', '6.0', 'experimental'],
   decorators: [widthDecorator],
   args: {
     width: 240,
