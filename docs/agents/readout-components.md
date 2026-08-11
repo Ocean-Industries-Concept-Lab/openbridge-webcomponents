@@ -1,11 +1,15 @@
 ---
-applyTo: "packages/openbridge-webcomponents/src/components/textbox/**,packages/openbridge-webcomponents/src/building-blocks/readout-block/**,packages/openbridge-webcomponents/src/navigation-instruments/readout-list-item/**,packages/openbridge-webcomponents/src/navigation-instruments/readout-list/**,packages/openbridge-webcomponents/src/navigation-instruments/readout/readout.ts,packages/openbridge-webcomponents/src/navigation-instruments/readout/readout-formatters.ts,packages/openbridge-webcomponents/src/navigation-instruments/readout/readout-shared.ts"
+name: readout-components
+description: Readout composition stack (textbox → block → list-item → list) and its value/format contracts
+globs:
+  - packages/openbridge-webcomponents/src/components/textbox/**
+  - packages/openbridge-webcomponents/src/building-blocks/readout-block/**
+  - packages/openbridge-webcomponents/src/navigation-instruments/readout-list-item/**
+  - packages/openbridge-webcomponents/src/navigation-instruments/readout-list/**
+  - packages/openbridge-webcomponents/src/navigation-instruments/readout/readout.ts
+  - packages/openbridge-webcomponents/src/navigation-instruments/readout/readout-formatters.ts
+  - packages/openbridge-webcomponents/src/navigation-instruments/readout/readout-shared.ts
 ---
-
-<!-- GENERATED FILE — DO NOT EDIT.
-     Source: docs/agents/readout-components.md
-     Regenerate: npm run agents:sync -w packages/openbridge-webcomponents -->
-
 # Readout Components
 
 These instructions apply to the **readout composition stack** — the primitives that
@@ -27,7 +31,7 @@ render a value, and the two layout components built on them.
 > `obc-readout` is the same block in a different layout, used mostly **inside
 > radial instruments** (compass, gauge, pitch-roll, …) via
 > `instrument-readout.ts` / `center-readout.ts`. It is covered by
-> [`watch-radial-instruments.md`](../../docs/agents/watch-radial-instruments.md)
+> [`watch-radial-instruments.md`](watch-radial-instruments.md)
 > for its instrument-embedding concerns, and by this file for the value/format
 > contracts it shares with the list stack.
 >

@@ -1,5 +1,6 @@
 ---
-applyTo: "packages/openbridge-webcomponents/src/components/textbox/**,packages/openbridge-webcomponents/src/building-blocks/readout-block/**,packages/openbridge-webcomponents/src/navigation-instruments/readout-list-item/**,packages/openbridge-webcomponents/src/navigation-instruments/readout-list/**,packages/openbridge-webcomponents/src/navigation-instruments/readout/readout.ts,packages/openbridge-webcomponents/src/navigation-instruments/readout/readout-formatters.ts,packages/openbridge-webcomponents/src/navigation-instruments/readout/readout-shared.ts"
+globs: packages/openbridge-webcomponents/src/components/textbox/**,packages/openbridge-webcomponents/src/building-blocks/readout-block/**,packages/openbridge-webcomponents/src/navigation-instruments/readout-list-item/**,packages/openbridge-webcomponents/src/navigation-instruments/readout-list/**,packages/openbridge-webcomponents/src/navigation-instruments/readout/readout.ts,packages/openbridge-webcomponents/src/navigation-instruments/readout/readout-formatters.ts,packages/openbridge-webcomponents/src/navigation-instruments/readout/readout-shared.ts
+alwaysApply: false
 ---
 
 <!-- GENERATED FILE — DO NOT EDIT.
