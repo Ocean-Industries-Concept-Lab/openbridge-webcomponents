@@ -77,6 +77,39 @@
   min-width: 0;
   min-height: 0;
 }
+
+/* Indefinite-axis fallback.
+ *
+ * `width`/`height: 100%` only resolve when the parent's corresponding axis is
+ * definite. In a flex/grid dashboard slot one axis is very often left to
+ * content — `align-self: center` makes the cross axis shrink-to-fit, and a
+ * parent sized with `min-height`/`max-height` (rather than `height`) leaves the
+ * block axis indefinite. In those cases the percentage computes to `auto` and
+ * the tank would size to its own content, which includes the chart cell — and
+ * the chart sizes itself from the cell it was measured in. That is a circular
+ * constraint, and it resolves as a collapsed cell, unbounded growth or
+ * pixel-level ringing depending on the loop gain (issue #1121).
+ *
+ * `aspect-ratio` supplies the missing axis from the design footprint the
+ * `point` variant uses above, so an indefinite axis lands on a definite value
+ * that no longer depends on the tank's own content. It is inert when the parent
+ * makes both axes definite, so the normal "fill my slot" behavior is unchanged.
+ */
+:host([positioning="button"]) {
+  aspect-ratio: 256 / 376;
+}
+:host([positioning="button"][orientation="horizontal"]) {
+  aspect-ratio: 420 / 256;
+}
+:host([positioning="button"][compact]),
+:host([positioning="button"][static]) {
+  aspect-ratio: 170 / 282;
+}
+:host([positioning="button"][orientation="horizontal"][compact]),
+:host([positioning="button"][orientation="horizontal"][static]) {
+  aspect-ratio: 244 / 208;
+}
+
 :host([positioning="button"]) .root {
   position: static;
   top: auto;
@@ -510,9 +543,21 @@
   overflow: hidden;
 }
 
+/* The renderers are taken out of flow so the cell sizes them, never the other
+ * way round. Both of them derive a pixel size from the box they are measured
+ * in — `obc-gauge-trend` publishes an inline `--chart-height` computed from its
+ * own measured width, and `obc-bar-vertical` writes `height: 100%; width: auto`
+ * onto its own host — so while they are in flow the cell's content height is a
+ * function of the cell's own height. Absolute positioning severs that return
+ * path: `.bar-container` is `position: relative`, so `inset: 0` pins the
+ * renderer to the cell the tank's grid/flex layout already decided on, and a
+ * rounding difference between the two can no longer relayout the tank
+ * (issue #1121). */
 .bar-container > obc-gauge-trend,
 .bar-container > obc-bar-vertical {
   display: block;
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
 }
