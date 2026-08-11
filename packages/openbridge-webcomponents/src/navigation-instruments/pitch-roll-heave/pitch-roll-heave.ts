@@ -351,9 +351,16 @@ export class ObcPitchRollHeave extends LitElement {
    * `obc-watch` renders its crosshair after the bands, i.e. on top of them.
    * Drawing it here puts it under the watch layer, so the bands and the heave
    * column mask it naturally.
+   *
+   * In `single-scale` nothing frames the segment above the vessel (the other
+   * three arms end under the pitch band, roll band and heave column), so the
+   * vertical arm stops at the centre instead of continuing upward. In
+   * `dual-scale` the top roll band gives it a natural endpoint, so the full
+   * arm is kept.
    */
   private renderCrosshair(): SVGTemplateResult {
     const r = OUTER_RING_RADIUS;
+    const yTop = this.isDualScale ? -r : 0;
     return svg`
       <line
         x1=${-r} y1="0" x2=${r} y2="0"
@@ -361,7 +368,7 @@ export class ObcPitchRollHeave extends LitElement {
         vector-effect="non-scaling-stroke"
       />
       <line
-        x1="0" y1=${-r} x2="0" y2=${r}
+        x1="0" y1=${yTop} x2="0" y2=${r}
         stroke="var(--instrument-frame-tertiary-color)"
         vector-effect="non-scaling-stroke"
       />

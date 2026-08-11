@@ -98,7 +98,7 @@ enum NavigationItemRole {
  *
  * @slot icon - Leading icon slot (optional, shown if provided). Set `hasIcon` to `true` to show the icon.
  * @slot trailing-icon - Trailing icon slot (optional, shown if provided). Set `hasTrailingIcon` to `true` to show.
- * @fires click {CustomEvent<void>} Fired when the navigation item is clicked.
+ * @fires click - Fired when the navigation item is clicked, either as a link or as a button.
  * @stable
  */
 
@@ -176,14 +176,6 @@ export class ObcNavigationItem extends LitElement {
   // In tree mode the row renders an `obc-tree-navigation-item` instead of an `<a>`.
   @query('obc-tree-navigation-item') private treeItemElement?: HTMLElement;
 
-  /**
-   * Fired when the navigation item is clicked (either as a link or button).
-   * @fires click {CustomEvent<void>}
-   */
-  onClick() {
-    dispatchEvent(new CustomEvent('click'));
-  }
-
   private handleKeydown(event: KeyboardEvent) {
     const isMenuItem =
       this.getAttribute('role') === NavigationItemRole.MenuItem;
@@ -234,7 +226,6 @@ export class ObcNavigationItem extends LitElement {
           .href=${this.href}
           .terminalType=${this.terminalType}
           .alerts=${this.alerts}
-          @click=${this.onClick}
         >
           ${this.hasIcon
             ? html`<slot name="icon" slot="icon"></slot>`
@@ -257,7 +248,6 @@ export class ObcNavigationItem extends LitElement {
           [this.variant]: true,
         })}"
         href=${ifDefined(this.href)}
-        @click=${this.onClick}
         @keydown=${this.handleKeydown}
         tabindex=${ifDefined(this.getItemTabIndex())}
         role=${ifDefined(this.getItemRole())}

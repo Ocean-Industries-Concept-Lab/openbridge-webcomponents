@@ -20,6 +20,7 @@ import {
   getAlertBadgeComponent,
   AlertBadgeComponent,
 } from '../../alert-severity.js';
+import {blinkingAll} from '../../palettes/blinking.js';
 
 export {AlertType as ObcAlertFrameStatus} from '../../types.js';
 
@@ -254,6 +255,42 @@ export class ObcAlertFrame extends LitElement {
         ${this.flap()}
       </div>
     `;
+  }
+
+  private _blinkAnimationCancel?: () => void;
+
+  private syncBlinking() {
+    if (
+      this.mode !== ObcAlertFrameMode.unackedActive &&
+      this._blinkAnimationCancel
+    ) {
+      this._blinkAnimationCancel();
+      this._blinkAnimationCancel = undefined;
+    }
+
+    if (
+      this.mode === ObcAlertFrameMode.unackedActive &&
+      !this._blinkAnimationCancel
+    ) {
+      this._blinkAnimationCancel = blinkingAll(this);
+    }
+  }
+
+  override connectedCallback() {
+    super.connectedCallback();
+    if (this.hasUpdated) {
+      this.syncBlinking();
+    }
+  }
+
+  override updated() {
+    this.syncBlinking();
+  }
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    this._blinkAnimationCancel?.();
+    this._blinkAnimationCancel = undefined;
   }
 
   private flap() {

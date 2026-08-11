@@ -15,7 +15,15 @@ import {
   ReadoutBlockDataQuality,
   ReadoutBlockHidePhase,
 } from '../../building-blocks/readout-block/readout-block.js';
-import {type ReadoutNumericFormatOptions} from '../readout/readout-formatters.js';
+import {
+  assertReadoutValueType,
+  assertReadoutFractionDigits,
+  isReadoutDigitCountMissing,
+  resolveReadoutDigitCount,
+  resolveReadoutNumericValue,
+  ReadoutValueType,
+  type ReadoutNumericFormatOptions,
+} from '../readout/readout-formatters.js';
 import {
   isDisplayedAtSetpoint,
   readoutNumericFormatOptions,
@@ -38,6 +46,9 @@ import {AlertType} from '../../types.js';
 // semibold / bold). Re-exported so consumers can set `valueOptions.weight`
 // without a second import path.
 export {ObcTextboxFontWeight} from '../../components/textbox/textbox.js';
+
+// Re-exported so consumers can type `valueType` without a second import path.
+export {ReadoutValueType} from '../readout/readout-formatters.js';
 
 /**
  * Density/size scale of the readout row (an alias of `ReadoutBlockSize`).
@@ -207,6 +218,8 @@ export interface ReadoutSrcOptions extends ReadoutBlockState {
  *   `round-corners`, or `round` corners.
  * - **Formatting:** shared `fractionDigits`, width reservation via `maxDigits`
  *   and per-segment `hintedZeros`; a `null` value renders a dash (`-`).
+ * - **Text values:** `valueType="text"` renders `value` verbatim (e.g.
+ *   `"Thermo On"`) instead of formatting it as a number.
  *
  * ### Usage Guidelines
  * Use for dense readout rows in lists/tables. Prefer `<obc-readout>` for rich
@@ -227,6 +240,7 @@ export interface ReadoutSrcOptions extends ReadoutBlockState {
  * @slot value-icon - Icon before the value.
  * @slot setpoint-icon - Overrides the default setpoint icon.
  * @slot advice-icon - Overrides the default advice icon.
+ * @fires click - Fired when the item is activated. Only fired when `clickable` is set; otherwise the item renders as a non-interactive `<div>`.
  */
 @customElement('obc-readout-list-item')
 export class ObcReadoutListItem extends LitElement {
@@ -242,7 +256,18 @@ export class ObcReadoutListItem extends LitElement {
    * block at full size, so the row does not shift when data arrives.
    */
   @property({type: Boolean, attribute: false}) hasValue = true;
-  @property({type: Number}) value: number | null = null;
+  /**
+   * The value; `null` renders a dash. A number by default, or text when
+   * {@link valueType} is `text`.
+   */
+  @property({type: String}) value: number | string | null = null;
+  /**
+   * How {@link value} is interpreted. `number` (default) formats it via
+   * `fractionDigits`; `text` renders it verbatim and ignores the numeric
+   * format options. Passing text while this is `number` throws.
+   */
+  @property({type: String}) valueType: ReadoutValueType =
+    ReadoutValueType.number;
   /** Render the value as `offText` (e.g. equipment powered down). Affects the value only. */
   @property({type: Boolean}) off = false;
   /** Text shown in place of the value when `off` is true. @availableWhen off==true */
@@ -265,7 +290,26 @@ export class ObcReadoutListItem extends LitElement {
   @property({type: Boolean}) hasLeadingIcon = false;
   @property({type: Boolean}) hasDegree = false;
   @property({type: Boolean}) hasDegreeSpacer = false;
+  /**
+   * Also formats the numeric setpoint / advice blocks, which stay numeric
+   * even when the value is text. Must be between 0 and 100 — the range
+   * `Number.prototype.toFixed` accepts; outside it throws a `RangeError`.
+   * A fractional count truncates (`2.7` → `2`). A count that never arrived
+   * (`NaN`, `null` or unset) renders the reading as the unavailable dash —
+   * formatting with a precision the author never chose would let a critical
+   * `0.4` pass for a healthy `0`.
+   * @availableWhen valueType==number || hasSetpoint==true || hasAdvice==true
+   */
   @property({type: Number}) fractionDigits = 0;
+  /**
+   * Also formats the numeric setpoint / advice blocks, which stay numeric
+   * even when the value is text. Bounded before use: a fractional count
+   * truncates (`2.7` → `2`), anything above 100 — including `Infinity` —
+   * caps at 100, and a negative count reserves nothing. A count that never
+   * arrived (`NaN`, `null` or unset) renders the reading as the unavailable
+   * dash, consistent with `fractionDigits`.
+   * @availableWhen valueType==number || hasSetpoint==true || hasAdvice==true
+   */
   @property({type: Number}) maxDigits = 0;
   @property({type: String}) dataQuality?: ReadoutListItemDataQuality;
   // `boolean | …` (not `false | …`): the generated Angular wrapper widens a
@@ -311,7 +355,21 @@ export class ObcReadoutListItem extends LitElement {
   }
 
   private get resolvedMaxDigits(): number {
-    return this.maxDigits ?? 0;
+    return resolveReadoutDigitCount(this.maxDigits);
+  }
+
+  /**
+   * Whether a digit knob failed to arrive (`NaN` / `null` / `undefined`).
+   * The raw knobs are forwarded to the blocks, which render the reading as
+   * the unavailable dash (see `obc-readout-block.digitCountsMissing`); this
+   * getter only keeps the setpoint comparison in agreement with what is
+   * displayed.
+   */
+  private get digitCountsMissing(): boolean {
+    return (
+      isReadoutDigitCountMissing(this.fractionDigits) ||
+      isReadoutDigitCountMissing(this.maxDigits)
+    );
   }
 
   private get resolvedClickable(): false | Required<ReadoutListItemClickable> {
@@ -329,8 +387,16 @@ export class ObcReadoutListItem extends LitElement {
     if (!this.hasSetpoint) {
       return false;
     }
+    // A missing digit knob renders every numeric block as the dash; two
+    // dashes must not read as "at the setpoint", so the comparison stays off
+    // entirely while the configuration is untrustworthy.
+    if (this.digitCountsMissing) {
+      return false;
+    }
+    // A text value never compares equal to a setpoint, so flip-flop / pop-up
+    // stay dormant for `valueType="text"`.
     return isDisplayedAtSetpoint(
-      this.value,
+      resolveReadoutNumericValue(this.value, this.valueType) ?? null,
       this.setpoint,
       this.numericFormatOptions(this.resolvedMaxDigits)
     );
@@ -451,7 +517,9 @@ export class ObcReadoutListItem extends LitElement {
 
   private renderBlock(config: {
     variant: ReadoutBlockVariant;
-    value: number | null | undefined;
+    value: number | string | null | undefined;
+    /** Only the value block is ever text; setpoint / advice stay numeric. */
+    valueType?: ReadoutValueType;
     valueSize: ObcTextboxSize;
     enhanced: boolean;
     weight: ObcTextboxFontWeight;
@@ -473,14 +541,15 @@ export class ObcReadoutListItem extends LitElement {
         exportparts="block, block-content, block-text, block-icon, degree"
         .variant=${config.variant}
         .value=${config.value ?? null}
+        .valueType=${config.valueType ?? ReadoutValueType.number}
         .size=${this.resolvedSize}
         .valueSize=${config.valueSize}
         .enhanced=${config.enhanced}
         .weight=${config.weight}
         .hasDegree=${config.hasDegree ?? false}
         .hasIcon=${config.hasIcon ?? false}
-        .fractionDigits=${this.resolvedFractionDigits}
-        .maxDigits=${this.resolvedMaxDigits}
+        .fractionDigits=${this.fractionDigits}
+        .maxDigits=${this.maxDigits}
         .hintedZeros=${config.hintedZeros}
         .spaceReserver=${config.spaceReserver}
         .off=${config.off ?? false}
@@ -684,6 +753,7 @@ export class ObcReadoutListItem extends LitElement {
           ? this.renderBlock({
               variant: ReadoutBlockVariant.value,
               value: this.value,
+              valueType: this.valueType,
               valueSize: this.valueSize,
               enhanced: this.rowEnhanced,
               weight: this.valueWeight,
@@ -819,6 +889,19 @@ export class ObcReadoutListItem extends LitElement {
         ${this.renderTrailingSource()}
       </div>
     `;
+  }
+
+  protected override willUpdate(changed: Map<string, unknown>): void {
+    super.willUpdate(changed);
+    // Validated on EVERY update, deliberately NOT gated on `value`/`valueType`
+    // appearing in `changed`. When this assertion throws, Lit's `performUpdate`
+    // catch calls `__markUpdated()`, which clears the changed-properties map. A
+    // later update driven by any OTHER property — inside `obc-readout-list`,
+    // `align()` writing the shared reservers — would then see no `value` in
+    // `changed`, skip the check, and render the invalid value as a plain dash:
+    // exactly the silent failure this assertion exists to prevent.
+    assertReadoutValueType('obc-readout-list-item', this.value, this.valueType);
+    assertReadoutFractionDigits('obc-readout-list-item', this.fractionDigits);
   }
 
   override updated(changed: Map<string, unknown>): void {

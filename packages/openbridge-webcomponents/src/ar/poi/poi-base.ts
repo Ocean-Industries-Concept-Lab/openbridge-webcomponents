@@ -46,6 +46,15 @@ const VALID_POI_STATES = new Set(Object.values(ObcPoiState));
  * Implements `Poi` and contains all positioning, X-filter,
  * layout-change dispatch, and visual-query logic so that each variant
  * only needs to override `renderContent()` and `getVisualNodes()`.
+ *
+ * The `@fires` tag below documents the dispatch site, which lives here rather
+ * than in the variants. It is deliberately duplicated on each concrete
+ * subclass — that is where `custom-elements.json` and the framework wrappers
+ * pick the event up, since this class is not registered. Do not remove it from
+ * the subclasses. `@ignore` keeps this class out of the generated docs.
+ *
+ * @fires {CustomEvent<void>} obc-poi-data-layout-change - Fired when layout-driving properties change. Bubbles and is composed.
+ * @ignore
  */
 export class PoiBase extends LitElement implements Poi {
   private headerObserver?: MutationObserver;

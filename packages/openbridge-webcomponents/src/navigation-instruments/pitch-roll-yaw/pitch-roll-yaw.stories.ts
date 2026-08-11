@@ -20,7 +20,7 @@ const historySamples: PitchRollSample[] = Array.from({length: 60}, (_, i) => {
 
 const meta: Meta<typeof ObcPitchRollYaw> = {
   title: 'Instruments/Pitch Roll Yaw',
-  tags: ['autodocs', '6.0', 'wip'],
+  tags: ['autodocs', '6.0', 'experimental'],
   component: 'obc-pitch-roll-yaw',
   args: {
     width: 400,

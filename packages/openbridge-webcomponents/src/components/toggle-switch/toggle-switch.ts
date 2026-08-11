@@ -9,6 +9,10 @@ export type ObcToggleSwitchInputEvent = CustomEvent<{
   checked: boolean;
 }>;
 
+export type ObcToggleSwitchChangeEvent = CustomEvent<{
+  checked: boolean;
+}>;
+
 /**
  * `<obc-toggle-switch>` – A toggle switch component for binary on/off selection (also known as a switch, toggle, or enable/disable control).
  *
@@ -56,6 +60,12 @@ export type ObcToggleSwitchInputEvent = CustomEvent<{
  *
  * ### Events
  * - `input` – Fired when the toggle state changes (checked/unchecked).
+ * - `change` – Fired when the toggle state changes by user interaction.
+ *
+ * Both events report the state the user selected. When `externalControl` is
+ * true the component does not update itself; the consumer decides whether to
+ * apply the reported state to `checked` and may reject the interaction by
+ * leaving `checked` unchanged.
  *
  * ---
  *
@@ -84,8 +94,8 @@ export type ObcToggleSwitchInputEvent = CustomEvent<{
  * In this example, the toggle switch displays a label, an icon, and a description, and is in the checked state.
  *
  * @slot icon - Leading icon slot (shown when `hasIcon` is true)
- * @fires input - {ObcToggleSwitchInputEvent} Dispatched when the value of the input changes
- * @fires change - Dispatched when the value of the input changes by user interaction
+ * @fires {ObcToggleSwitchInputEvent} input - Dispatched when the value of the input changes
+ * @fires {ObcToggleSwitchChangeEvent} change - Dispatched when the value of the input changes by user interaction
  * @stable
  */
 @customElement('obc-toggle-switch')
@@ -137,10 +147,17 @@ export class ObcToggleSwitch extends LitElement {
   @property({type: Boolean}) externalControl = false;
 
   /**
+   * The state the user selected in the most recent interaction. In
+   * externalControl mode this can differ from `checked` until the consumer
+   * accepts the change, so the change event reports it instead of `checked`.
+   */
+  private _userSelectedChecked?: boolean;
+
+  /**
    * Handles input events to change the toggle state.
    * Prevents changes if the toggle is disabled.
    * @param e {InputEvent}
-   * @fires input - Dispatched when the value of the input changes
+   * @fires input
    */
   private _tryChange(e: InputEvent) {
     if (this.disabled) {
@@ -149,6 +166,7 @@ export class ObcToggleSwitch extends LitElement {
     }
 
     const nextChecked = !this.checked;
+    this._userSelectedChecked = nextChecked;
     if (!this.externalControl) {
       this.checked = nextChecked;
     }
@@ -169,7 +187,11 @@ export class ObcToggleSwitch extends LitElement {
       e.preventDefault();
       return;
     }
-    this.dispatchEvent(new CustomEvent('change'));
+    this.dispatchEvent(
+      new CustomEvent('change', {
+        detail: {checked: this._userSelectedChecked ?? this.checked},
+      })
+    );
   }
 
   override render() {

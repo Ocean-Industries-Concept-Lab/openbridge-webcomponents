@@ -70,6 +70,16 @@ const WIND_ICON_SCALE = 2;
 const WIND_ICON_TIP_X = 12;
 const WIND_ICON_TIP_Y = 22.4453;
 
+/**
+ * Radial overhang of the rendered (2×, 48-unit) wind icon box past the tip
+ * anchor toward the watch center: the glyph tip sits at y=22.4453 of the
+ * 24-unit box, so the scaled box extends `(24 − 22.4453) × 2 ≈ 3.11` units
+ * inside the anchor radius. Add it to a desired box inner-edge radius to get
+ * the `windSymbolRadius` that makes the box start exactly there.
+ */
+export const WIND_ICON_TIP_TO_BOX_INNER =
+  (24 - WIND_ICON_TIP_Y) * WIND_ICON_SCALE;
+
 const windIconCache = new Map<string, SVGTemplateResult>();
 
 function getWindIconSvg(bucket: number): SVGTemplateResult | null {

@@ -89,9 +89,9 @@ import {
  * @slot day - Day label (e.g., "Yesterday").
  * @slot action - Label/content for the primary action button.
  * @slot action2 - Label/content for the secondary action button.
- * @fires action-click {CustomEvent<void>} When the primary action button is clicked.
- * @fires action2-click {CustomEvent<void>} When the secondary action button is clicked.
- * @fires dismiss-click {CustomEvent<void>} When the notification is dismissed.
+ * @fires {CustomEvent<void>} action-click - When the primary action button is clicked.
+ * @fires {CustomEvent<void>} action2-click - When the secondary action button is clicked.
+ * @fires {CustomEvent<void>} dismiss-click - When the notification is dismissed.
  * @beta
  */
 @customElement('obc-notification-floating-item')

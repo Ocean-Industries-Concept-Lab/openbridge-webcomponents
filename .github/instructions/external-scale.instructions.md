@@ -2,9 +2,11 @@
 applyTo: "packages/openbridge-webcomponents/src/building-blocks/external-scale/**,packages/openbridge-webcomponents/src/building-blocks/bar-vertical/**,packages/openbridge-webcomponents/src/building-blocks/bar-horizontal/**,packages/openbridge-webcomponents/src/navigation-instruments/gauge-vertical/**,packages/openbridge-webcomponents/src/navigation-instruments/gauge-horizontal/**,packages/openbridge-webcomponents/src/navigation-instruments/gauge-trend/**"
 ---
 
-# GitHub Copilot Custom Instructions
+<!-- GENERATED FILE — DO NOT EDIT.
+     Source: docs/agents/external-scale.md
+     Regenerate: npm run agents:sync -w packages/openbridge-webcomponents -->
 
-## Path-Specific Instructions for External Scale & Bar/Gauge Components
+# External Scale & Bar/Gauge Components
 
 These instructions apply to the external scale renderer and its thin wrapper components (bar-vertical, bar-horizontal, gauge-vertical, gauge-horizontal, gauge-trend).
 
@@ -227,7 +229,7 @@ When adding new features or fixing bugs:
 
 ### Setpoint Properties
 
-The setpoint marker rendering (including confirm animation) is handled inside `external-scale.ts` via `renderSingleSetpoint()`. For the full setpoint architecture (mixin vs bundle, animation, property cascade), see **`setpoint.instructions.md`**.
+The setpoint marker rendering (including confirm animation) is handled inside `external-scale.ts` via `renderSingleSetpoint()`. For the full setpoint architecture (mixin vs bundle, animation, property cascade), see **`setpoint.md`**.
 
 ### Layout vs Rendering — Multiple Paths to Reason About
 

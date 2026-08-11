@@ -125,7 +125,7 @@ export {
  * ></obc-gauge-horizontal>
  * ```
  *
- * @fires scale-dimensions-changed {CustomEvent} Fired when layout-affecting properties change, providing dimension info for parent chart integration.
+ * @fires {CustomEvent} scale-dimensions-changed - Fired when layout-affecting properties change, providing dimension info for parent chart integration.
  * @stable
  */
 @customElement('obc-gauge-horizontal')

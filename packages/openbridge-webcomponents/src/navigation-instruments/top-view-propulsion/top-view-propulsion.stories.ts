@@ -11,7 +11,7 @@ import {TickmarkStyle} from '../watch/tickmark.js';
 
 const meta: Meta<typeof ObcTopViewPropulsion> = {
   title: 'Instruments/Top View Propulsion',
-  tags: ['autodocs', '6.0', 'wip'],
+  tags: ['autodocs', '6.0', 'experimental'],
   component: 'obc-top-view-propulsion',
   args: {
     width: 384,

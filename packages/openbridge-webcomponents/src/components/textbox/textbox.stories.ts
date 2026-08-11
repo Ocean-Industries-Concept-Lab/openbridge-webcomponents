@@ -15,7 +15,7 @@ interface TextboxStoryArgs extends Partial<ObcTextbox> {
 
 const meta: Meta<TextboxStoryArgs> = {
   title: 'Building Blocks/Textbox',
-  tags: ['autodocs', '6.0'],
+  tags: ['autodocs', '6.0', 'experimental'],
   component: 'obc-textbox',
   args: {
     size: ObcTextboxSize.m,

@@ -9,7 +9,7 @@ import {html} from 'lit';
 
 const meta: Meta<typeof ObcSlideButton> = {
   title: 'UI Components/Buttons/Slide Button',
-  tags: ['6.0'],
+  tags: ['6.0', 'experimental'],
   component: 'obc-slide-button',
   args: {},
   render: (args) => {

@@ -23,7 +23,7 @@ type InstrumentRadialStoryArgs = Partial<ObcInstrumentRadial> & {
 
 const meta: Meta<InstrumentRadialStoryArgs> = {
   title: 'Building Blocks/Instrument Radial',
-  tags: ['6.0'],
+  tags: ['6.0', 'experimental'],
   component: 'obc-instrument-radial',
   decorators: [widthDecorator],
   args: {
