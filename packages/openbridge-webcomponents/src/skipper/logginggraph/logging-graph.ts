@@ -145,7 +145,7 @@ export class LoggingGraph extends LitElement {
   ];
   @property({type: String}) nameOfFunctionOne = 'Speed Calibrated Long';
   @property({type: String}) nameOfFunctionTwo = 'Function green';
-  @property({type: Boolean}) showFunctionOne = true;
+  @property({type: Boolean}) showFunctionOne = false;
   @property({type: Boolean}) showFunctionTwo = false;
   @property({type: String}) showVerticalSelectedLine = false;
   @property({type: Number}) xPositionSelectedLine = 0;
@@ -601,6 +601,7 @@ export class LoggingGraph extends LitElement {
   `;
 }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   createPolyline(listPoints: any): string {
     let polyline = "";
 
@@ -622,8 +623,9 @@ export class LoggingGraph extends LitElement {
     point.x = event.clientX;
     point.y = event.clientY;
     return point.matrixTransform(svg.getScreenCTM()?.inverse());
-}
+  }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   splitPolyline(points: any) {
     const segments = [];
     let currentSegment = [];
