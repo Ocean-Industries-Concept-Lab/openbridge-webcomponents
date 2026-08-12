@@ -3,6 +3,12 @@ import {property, query} from 'lit/decorators.js';
 import componentStyle from './rot-indicator.css?inline';
 import {RateOfTurnController} from '../rate-of-turn/rate-of-turn.controller.js';
 import {customElement} from '../../decorator.js';
+import {
+  PORT_STARBOARD_NEUTRAL_DARK_COLOR,
+  PortStarboardShade,
+  portStarboardColor,
+  portStarboardSignOf,
+} from '../../svghelpers/port-starboard.js';
 
 export enum RotIndicatorType {
   radial = 'radial',
@@ -205,6 +211,18 @@ export class ObcRotIndicator extends LitElement {
     const segmentRightX = segmentX + segmentWidth;
     const segmentBottomY = segmentY + segmentHeight;
 
+    // The marker moves left for a port turn and right for a starboard one, so
+    // its color has to follow the same sign. The light segment and the dark dot
+    // take the two shades of the side's palette; a vessel that is not turning
+    // gets the neutral gray rather than implying a direction.
+    const sign = portStarboardSignOf(this._effectiveRpm);
+    const segmentColor =
+      portStarboardColor(sign, PortStarboardShade.light) ??
+      'var(--instrument-regular-tertiary-color)';
+    const dotColor =
+      portStarboardColor(sign, PortStarboardShade.dark) ??
+      PORT_STARBOARD_NEUTRAL_DARK_COLOR;
+
     return html`
       <svg
         width="100%"
@@ -234,14 +252,9 @@ export class ObcRotIndicator extends LitElement {
              A ${segmentRadius} ${segmentRadius} 0 0 1 ${segmentX +
           segmentRadius} ${segmentY}
              Z"
-          fill="var(--instrument-port-secondary-color)"
+          fill=${segmentColor}
         />
-        <circle
-          cx=${dotCx}
-          cy=${dotCy}
-          r=${dotR}
-          fill="var(--instrument-port-primary-color)"
-        />
+        <circle cx=${dotCx} cy=${dotCy} r=${dotR} fill=${dotColor} />
       </svg>
     `;
   }

@@ -16,6 +16,7 @@ import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import {
   hasPortStarboardElement,
   PORT_STARBOARD_DEFAULT_ELEMENTS,
+  PortStarboardSides,
   PortStarboardElement,
   PortStarboardShade,
   type PortStarboardSign,
@@ -210,6 +211,12 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
   portStarboardElements: PortStarboardElement[] = [
     ...PORT_STARBOARD_DEFAULT_ELEMENTS,
   ];
+  /**
+   * Which halves the region tints paint while `portStarboard` is on.
+   * @availableWhen portStarboard==true
+   */
+  @property({type: String}) portStarboardSides: PortStarboardSides =
+    PortStarboardSides.both;
 
   private _radiusOffset = 0;
   private _frame: RadialFrame | undefined;
@@ -284,6 +291,11 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
       left: this.clipLeft,
       right: this.clipRight,
     });
+  }
+
+  /** Direction of this instrument's own value, for `portStarboardSides="active"`. */
+  private get portStarboardValueSign(): PortStarboardSign {
+    return portStarboardSignOf(this.clampedValue);
   }
 
   /** Setpoint-marker sign, gated on the `setpoint` element opt-in. */
@@ -441,6 +453,8 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
           .arcFrame=${frame}
           .portStarboard=${this.portStarboard}
           .portStarboardElements=${this.portStarboardElements}
+          .portStarboardSides=${this.portStarboardSides}
+          .portStarboardValueSign=${this.portStarboardValueSign}
           .setpointPortStarboardSign=${this.setpointPortStarboardSign}
         ></obc-watch>
         <svg class="gauge-radial" viewBox=${frame.viewBox}>${this._needle}</svg>

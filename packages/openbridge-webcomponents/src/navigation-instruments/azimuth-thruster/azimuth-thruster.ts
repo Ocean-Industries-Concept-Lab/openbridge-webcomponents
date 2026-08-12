@@ -23,6 +23,7 @@ import {customElement} from '../../decorator.js';
 import {
   hasPortStarboardElement,
   PORT_STARBOARD_DEFAULT_ELEMENTS,
+  PortStarboardSides,
   PortStarboardElement,
   type PortStarboardSign,
   portStarboardSignOf,
@@ -166,6 +167,12 @@ export class ObcAzimuthThruster extends LitElement {
     ...PORT_STARBOARD_DEFAULT_ELEMENTS,
   ];
   /**
+   * Which halves the region tints paint while `portStarboard` is on.
+   * @availableWhen portStarboard==true
+   */
+  @property({type: String}) portStarboardSides: PortStarboardSides =
+    PortStarboardSides.both;
+  /**
    * Outer-ring diameter in CSS pixels. When set, the instrument renders at a
    * fixed intrinsic size derived from the ring, arc shape and label reserve —
    * so instruments sharing the same value have identical ring circumference
@@ -233,6 +240,11 @@ export class ObcAzimuthThruster extends LitElement {
     const angle = mapAngle0to360(this.angleSetpoint);
     if (angle === 0 || angle === 180) return 0;
     return angle < 180 ? 1 : -1;
+  }
+
+  /** Direction of this instrument's own value, for `portStarboardSides="active"`. */
+  private get portStarboardValueSign(): PortStarboardSign {
+    return portStarboardSignOf(this.thrust);
   }
 
   /** Thrust-setpoint sign, gated on the `setpoint` element opt-in. */
@@ -359,6 +371,8 @@ export class ObcAzimuthThruster extends LitElement {
           .starboardPortIndicator=${this.starboardPortIndicator}
           .portStarboard=${this.portStarboard}
           .portStarboardElements=${this.portStarboardElements}
+          .portStarboardSides=${this.portStarboardSides}
+          .portStarboardValueSign=${this.portStarboardValueSign}
           .setpointPortStarboardSign=${this.angleSetpointPortStarboardSign}
         ></obc-watch>
         <svg viewBox=${viewBox} xmlns="http://www.w3.org/2000/svg">

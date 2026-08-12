@@ -32,6 +32,12 @@
 export enum PortStarboardElement {
   /** Half-area tints: the radial face inside the rings, or a linear track's halves. */
   face = 'face',
+  /** The outer thin scale band (the ring carrying the tickmarks). */
+  outerBand = 'outerBand',
+  /** The middle thick band. Absent on a `single` watch face. */
+  middleBand = 'middleBand',
+  /** The inner thin band. Only present on a `triple` watch face. */
+  innerBand = 'innerBand',
   /** Value fills and bands. */
   bar = 'bar',
   /** Needles and pointers. */
@@ -46,7 +52,9 @@ export enum PortStarboardElement {
 
 /**
  * Everything except {@link PortStarboardElement.setpoint}, which stays opt-in
- * while the design question "should the setpoint follow?" is open.
+ * while the design question "should the setpoint follow?" is open, and the
+ * three band tints, which are opt-in because a face and a band tint are
+ * alternative treatments rather than a combination.
  */
 export const PORT_STARBOARD_DEFAULT_ELEMENTS: PortStarboardElement[] = [
   PortStarboardElement.face,
@@ -58,6 +66,44 @@ export const PORT_STARBOARD_DEFAULT_ELEMENTS: PortStarboardElement[] = [
 
 /** `1` = starboard/forward (green), `-1` = port/reverse (red), `0` = neutral. */
 export type PortStarboardSign = -1 | 0 | 1;
+
+/**
+ * The region tints ({@link PortStarboardElement.face} and the three bands) are
+ * split into a starboard and a port half. This selects which halves paint.
+ *
+ * @experimental Concept-stage: the design is still exploring one-sided and
+ * two-sided treatments, so all four modes are available. Expect this to narrow
+ * once the direction is settled.
+ */
+export enum PortStarboardSides {
+  /** Green starboard half and red port half. */
+  both = 'both',
+  /** Only the starboard (green) half. */
+  starboard = 'starboard',
+  /** Only the port (red) half. */
+  port = 'port',
+  /** Only the half matching the value's direction; both halves at neutral. */
+  active = 'active',
+}
+
+/** Which halves a region tint paints, for a given mode and value direction. */
+export function portStarboardTintedSides(
+  sides: PortStarboardSides,
+  sign: PortStarboardSign
+): {starboard: boolean; port: boolean} {
+  switch (sides) {
+    case PortStarboardSides.starboard:
+      return {starboard: true, port: false};
+    case PortStarboardSides.port:
+      return {starboard: false, port: true};
+    case PortStarboardSides.active:
+      if (sign > 0) return {starboard: true, port: false};
+      if (sign < 0) return {starboard: false, port: true};
+      return {starboard: true, port: true};
+    default:
+      return {starboard: true, port: true};
+  }
+}
 
 /** Which token pair applies, per the shade rule in the module docs. */
 export enum PortStarboardShade {

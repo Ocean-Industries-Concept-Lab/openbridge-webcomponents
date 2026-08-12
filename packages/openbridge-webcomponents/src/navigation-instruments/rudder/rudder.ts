@@ -11,6 +11,7 @@ import {customElement} from '../../decorator.js';
 import {
   hasPortStarboardElement,
   PORT_STARBOARD_DEFAULT_ELEMENTS,
+  PortStarboardSides,
   PortStarboardElement,
   PortStarboardShade,
   type PortStarboardSign,
@@ -118,6 +119,12 @@ export class ObcRudder extends SetpointMixin(LitElement) {
   portStarboardElements: PortStarboardElement[] = [
     ...PORT_STARBOARD_DEFAULT_ELEMENTS,
   ];
+  /**
+   * Which halves the region tints paint while `portStarboard` is on.
+   * @availableWhen portStarboard==true
+   */
+  @property({type: String}) portStarboardSides: PortStarboardSides =
+    PortStarboardSides.both;
   @property({type: Boolean}) zoomToFitArc: boolean = false;
   /**
    * Outer-ring diameter in CSS pixels. When set, the instrument renders at a
@@ -161,6 +168,11 @@ export class ObcRudder extends SetpointMixin(LitElement) {
 
   getAngle(value: number) {
     return 180 - value;
+  }
+
+  /** Direction of this instrument's own value, for `portStarboardSides="active"`. */
+  private get portStarboardValueSign(): PortStarboardSign {
+    return portStarboardSignOf(this.angle);
   }
 
   /** Setpoint-marker sign, gated on the `setpoint` element opt-in. */
@@ -409,6 +421,8 @@ export class ObcRudder extends SetpointMixin(LitElement) {
           .advices=${advices}
           .portStarboard=${this.portStarboard}
           .portStarboardElements=${this.portStarboardElements}
+          .portStarboardSides=${this.portStarboardSides}
+          .portStarboardValueSign=${this.portStarboardValueSign}
           .setpointPortStarboardSign=${this.setpointPortStarboardSign}
         ></obc-watch>
         <svg viewBox="${overlayViewBox}">${this.renderNeedle()}</svg>

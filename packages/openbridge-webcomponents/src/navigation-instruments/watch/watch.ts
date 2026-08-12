@@ -30,8 +30,10 @@ import {
   PortStarboardShade,
   type PortStarboardSign,
   portStarboardSignOf,
+  PortStarboardSides,
+  portStarboardTintedSides,
 } from '../../svghelpers/port-starboard.js';
-export {PortStarboardElement};
+export {PortStarboardElement, PortStarboardSides};
 export type {PortStarboardSign};
 import compentStyle from './watch.css?inline';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
@@ -360,6 +362,24 @@ export class ObcWatch extends LitElement {
    * @availableWhen portStarboard==true
    */
   @property({type: Number}) setpointPortStarboardSign: number = 0;
+  /**
+   * Which halves the region tints (`face` and the three bands) paint. Defaults
+   * to both, i.e. a green starboard half and a red port half.
+   * @availableWhen portStarboard==true
+   */
+  @property({type: String}) portStarboardSides: PortStarboardSides =
+    PortStarboardSides.both;
+  /**
+   * Direction of the instrument's own value, used only by
+   * `portStarboardSides="active"` to pick the half to paint. Only the sign is
+   * read, so a raw value works; `0` (or non-finite) paints both halves.
+   *
+   * Declared as `number` rather than `PortStarboardSign` for the same reason as
+   * `setpointPortStarboardSign` — the wrapper generators type `type: Number`
+   * setters as `number`.
+   * @availableWhen portStarboard==true && portStarboardSides==active
+   */
+  @property({type: Number}) portStarboardValueSign: number = 0;
   /** Top clip, % of height. Ignored when `zoomToFitArc` is true. */
   @property({type: Number}) clipTop: number = 0;
   /** Bottom clip, % of height. Ignored when `zoomToFitArc` is true. */
@@ -525,6 +545,53 @@ export class ObcWatch extends LitElement {
     return base + this._rOff;
   }
 
+  /**
+   * Half-annulus tint for one of the watch face's existing bands. Returns an
+   * empty array when the element is not selected, the band does not exist for
+   * the current `watchCircleType`, or the instrument is not active.
+   *
+   * Callers insert the result into the ring list immediately after that band's
+   * own fill and before its outline strokes, so the frame lines stay crisp and
+   * the sector `areas` cut mask applies to the tint for free.
+   */
+  private portStarboardBandTint(
+    element: PortStarboardElement,
+    innerRadius: number,
+    outerRadius: number
+  ): SVGTemplateResult[] {
+    if (
+      !hasPortStarboardElement(
+        this.portStarboard,
+        this.portStarboardElements,
+        element
+      ) ||
+      this.state !== InstrumentState.active
+    ) {
+      return [];
+    }
+    const sides = portStarboardTintedSides(
+      this.portStarboardSides,
+      portStarboardSignOf(this.portStarboardValueSign)
+    );
+    const half = (startAngle: number, endAngle: number, sign: 1 | -1) =>
+      svg`<path
+        d=${roundedArch({
+          startAngle,
+          endAngle,
+          R: outerRadius,
+          r: innerRadius,
+          roundOutsideCut: false,
+          roundInsideCut: false,
+        })}
+        fill=${portStarboardColor(sign, PortStarboardShade.light)}
+        stroke="none"
+      />`;
+    const halves: SVGTemplateResult[] = [];
+    if (sides.starboard) halves.push(half(0, 180, 1));
+    if (sides.port) halves.push(half(180, 360, -1));
+    return halves;
+  }
+
   private watchCircle(): SVGTemplateResult | SVGTemplateResult[] {
     const rings = [];
     // Full-face circle behind everything, split in two: the fill goes under
@@ -567,6 +634,13 @@ export class ObcWatch extends LitElement {
           fill="none"
           stroke-width="24"
         />`);
+      rings.push(
+        ...this.portStarboardBandTint(
+          PortStarboardElement.outerBand,
+          this._bandRadius(RING2_RADIUS),
+          this._bandRadius(OUTER_RING_RADIUS)
+        )
+      );
 
       if (this.watchCircleType !== WatchCircleType.single) {
         const r1 = this._bandRadius(RING2_RADIUS);
@@ -594,7 +668,17 @@ export class ObcWatch extends LitElement {
         } else {
           rings.push(
             svg`
-            <circle cx="0" cy="0" r=${r} stroke="var(--instrument-frame-secondary-color)" stroke-width=${strokeWidth} fill="none" />
+            <circle cx="0" cy="0" r=${r} stroke="var(--instrument-frame-secondary-color)" stroke-width=${strokeWidth} fill="none" />`
+          );
+          rings.push(
+            ...this.portStarboardBandTint(
+              PortStarboardElement.middleBand,
+              r2,
+              r1
+            )
+          );
+          rings.push(
+            svg`
             <circle cx="0" cy="0" r=${r1} stroke="var(--instrument-frame-secondary-color)" stroke-width="1" fill="none" vector-effect="non-scaling-stroke" />
             <circle cx="0" cy="0" r=${r2} stroke="var(--instrument-frame-secondary-color)" stroke-width="1" fill="none" vector-effect="non-scaling-stroke" />
         `
@@ -608,6 +692,9 @@ export class ObcWatch extends LitElement {
         const strokeWidth = r1 - r2;
         rings.push(
           svg`<circle cx="0" cy="0" r=${r} stroke="var(--instrument-frame-primary-color)" stroke-width=${strokeWidth} fill="none" />`
+        );
+        rings.push(
+          ...this.portStarboardBandTint(PortStarboardElement.innerBand, r2, r1)
         );
       }
     }
@@ -1414,17 +1501,29 @@ export class ObcWatch extends LitElement {
       return nothing;
     }
     const r = this._bandRadius(this.innerRingRadius);
+    const sides = portStarboardTintedSides(
+      this.portStarboardSides,
+      portStarboardSignOf(this.portStarboardValueSign)
+    );
     const halves = svg`
-      <path
+      ${
+        sides.starboard
+          ? svg`<path
         d="M 0 ${-r} A ${r} ${r} 0 0 1 0 ${r} Z"
         fill=${portStarboardColor(1, PortStarboardShade.light)}
         stroke="none"
-      />
-      <path
+      />`
+          : nothing
+      }
+      ${
+        sides.port
+          ? svg`<path
         d="M 0 ${r} A ${r} ${r} 0 0 1 0 ${-r} Z"
         fill=${portStarboardColor(-1, PortStarboardShade.light)}
         stroke="none"
-      />
+      />`
+          : nothing
+      }
     `;
     if (this.areas.length === 0) {
       return halves;

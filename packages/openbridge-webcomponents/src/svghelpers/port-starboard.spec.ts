@@ -8,6 +8,8 @@ import {
   portStarboardSignOf,
   PortStarboardShade,
   resolvePortStarboardColor,
+  PortStarboardSides,
+  portStarboardTintedSides,
 } from './port-starboard.js';
 
 describe('portStarboardSignOf', () => {
@@ -145,5 +147,44 @@ describe('resolvePortStarboardColor', () => {
         neutralDark: true,
       })
     ).toBeUndefined();
+  });
+});
+
+describe('portStarboardTintedSides', () => {
+  it('paints both halves by default', () => {
+    expect(portStarboardTintedSides(PortStarboardSides.both, 1)).toEqual({
+      starboard: true,
+      port: true,
+    });
+    expect(portStarboardTintedSides(PortStarboardSides.both, -1)).toEqual({
+      starboard: true,
+      port: true,
+    });
+  });
+
+  it('paints a single fixed half regardless of the value', () => {
+    expect(portStarboardTintedSides(PortStarboardSides.starboard, -1)).toEqual({
+      starboard: true,
+      port: false,
+    });
+    expect(portStarboardTintedSides(PortStarboardSides.port, 1)).toEqual({
+      starboard: false,
+      port: true,
+    });
+  });
+
+  it('follows the value direction in active mode, both halves at neutral', () => {
+    expect(portStarboardTintedSides(PortStarboardSides.active, 1)).toEqual({
+      starboard: true,
+      port: false,
+    });
+    expect(portStarboardTintedSides(PortStarboardSides.active, -1)).toEqual({
+      starboard: false,
+      port: true,
+    });
+    expect(portStarboardTintedSides(PortStarboardSides.active, 0)).toEqual({
+      starboard: true,
+      port: true,
+    });
   });
 });

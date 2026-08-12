@@ -112,6 +112,53 @@ export const PortStarboardWithSetpoint: Story = {
 };
 
 /**
+ * The band-only treatment: the band segment between zero and the angle takes
+ * the light PORT/STBD color and the needle and setpoint the dark one, while the
+ * face keeps its regular fill. Leaving `face` out of the list is all it takes —
+ * the shade rule already gives the Needle variant's band the light shade.
+ */
+export const PortStarboardTrackWithoutFace: Story = {
+  args: {
+    angle: 25,
+    setpoint: 35,
+    maxAngle: 45,
+    variant: ObcRudderVariant.Needle,
+    priority: Priority.enhanced,
+    state: InstrumentState.active,
+    portStarboard: true,
+    portStarboardElements: [
+      PortStarboardElement.bar,
+      PortStarboardElement.needle,
+      PortStarboardElement.zeroLine,
+      PortStarboardElement.setpoint,
+    ],
+  },
+};
+
+/**
+ * At a zero angle there is no direction to signal, so the needle falls back to
+ * gray rather than picking a side and no band is tinted. The setpoint sits at
+ * zero too, so it keeps its (here regular/gray) priority color.
+ */
+export const PortStarboardNeutral: Story = {
+  args: {
+    angle: 0,
+    setpoint: 0,
+    maxAngle: 45,
+    variant: ObcRudderVariant.Needle,
+    priority: Priority.regular,
+    state: InstrumentState.active,
+    portStarboard: true,
+    portStarboardElements: [
+      PortStarboardElement.bar,
+      PortStarboardElement.needle,
+      PortStarboardElement.zeroLine,
+      PortStarboardElement.setpoint,
+    ],
+  },
+};
+
+/**
  * `bar` selected without `zeroLine`: the band follows the rudder angle while
  * the thick zero-line tickmark keeps its priority color.
  */
