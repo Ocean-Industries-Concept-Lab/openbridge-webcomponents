@@ -229,6 +229,30 @@ export const PortStarboardFaceSector: Story = {
   },
 };
 
+/**
+ * The `middleBand` tint with `roundBandCuts`, where the band is drawn as
+ * rounded sector arches rather than a full ring. The tint has to be emitted on
+ * that path too, and the sector `cutMask` trims it to the arch.
+ */
+export const PortStarboardMiddleBandRoundedCuts: Story = {
+  args: {
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
+    portStarboard: true,
+    watchCircleType: WatchCircleType.double,
+    roundBandCuts: true,
+    portStarboardElements: [PortStarboardElement.middleBand],
+    areas: [
+      {
+        startAngle: 45,
+        endAngle: 315,
+        roundInsideCut: true,
+        roundOutsideCut: true,
+      },
+    ],
+  },
+};
+
 export const PortStarboardFaceRotated: Story = {
   args: {
     state: InstrumentState.active,

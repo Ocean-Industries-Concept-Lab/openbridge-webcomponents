@@ -686,6 +686,16 @@ export class ObcWatch extends LitElement {
                 } stroke-width="1" vector-effect="non-scaling-stroke" />`
             )
           );
+          // Same tint as the branch below. It is emitted here too so that
+          // `middleBand` still works when the band is drawn as rounded sector
+          // arches; the `cutMask` built from `areas` trims it to the sectors.
+          rings.push(
+            ...this.portStarboardBandTint(
+              PortStarboardElement.middleBand,
+              r2,
+              r1
+            )
+          );
         } else {
           rings.push(
             svg`
