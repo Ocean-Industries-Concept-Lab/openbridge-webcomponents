@@ -45,8 +45,9 @@ function renderAzimuthThrusterLabeled(
       .topPropeller=${args.topPropeller ?? PropellerType.none}
       .bottomPropeller=${args.bottomPropeller ?? PropellerType.none}
       .portStarboard=${args.portStarboard ?? false}
-      .portStarboardElements=${args.portStarboardElements ??
-      PORT_STARBOARD_DEFAULT_ELEMENTS}
+      .portStarboardElements=${
+        args.portStarboardElements ?? PORT_STARBOARD_DEFAULT_ELEMENTS
+      }
     ></obc-azimuth-thruster-labeled>
   `;
 }

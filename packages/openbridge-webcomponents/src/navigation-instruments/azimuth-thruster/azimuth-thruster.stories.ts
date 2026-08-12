@@ -16,6 +16,7 @@ import '../rate-of-turn/rate-of-turn.js';
 import {
   PORT_STARBOARD_DEFAULT_ELEMENTS,
   PortStarboardElement,
+  PortStarboardSides,
 } from '../../svghelpers/port-starboard.js';
 
 const meta: Meta<typeof ObcAzimuthThruster> = {
@@ -134,6 +135,79 @@ export const PortStarboardAstern: Story = {
     priority: Priority.enhanced,
     state: InstrumentState.active,
     portStarboard: true,
+  },
+};
+
+/**
+ * Centre tint on the active side only — the port half stays untinted while the
+ * unit thrusts to starboard.
+ */
+export const PortStarboardFaceActiveSide: Story = {
+  args: {
+    angle: 30,
+    thrust: 60,
+    angleSetpoint: 45,
+    thrustSetpoint: 80,
+    priority: Priority.enhanced,
+    state: InstrumentState.active,
+    portStarboard: true,
+    portStarboardSides: PortStarboardSides.active,
+  },
+};
+
+/**
+ * Track tint: the outer scale band split red/green, centre left untinted.
+ * The band already exists on the watch face — this colours it for the first
+ * time, inserted under the band's own outline strokes.
+ */
+export const PortStarboardOuterBand: Story = {
+  args: {
+    angle: 30,
+    thrust: 60,
+    angleSetpoint: 45,
+    thrustSetpoint: 80,
+    priority: Priority.enhanced,
+    state: InstrumentState.active,
+    portStarboard: true,
+    portStarboardElements: [
+      PortStarboardElement.outerBand,
+      PortStarboardElement.bar,
+      PortStarboardElement.arrow,
+      PortStarboardElement.zeroLine,
+    ],
+  },
+};
+
+/** Track tint on the active side only. */
+export const PortStarboardOuterBandActiveSide: Story = {
+  args: {
+    angle: 30,
+    thrust: 60,
+    angleSetpoint: 45,
+    thrustSetpoint: 80,
+    priority: Priority.enhanced,
+    state: InstrumentState.active,
+    portStarboard: true,
+    portStarboardSides: PortStarboardSides.active,
+    portStarboardElements: [
+      PortStarboardElement.outerBand,
+      PortStarboardElement.bar,
+      PortStarboardElement.arrow,
+      PortStarboardElement.zeroLine,
+    ],
+  },
+};
+
+/** Track tint at neutral: both halves, regular priority, grey value elements. */
+export const PortStarboardOuterBandNeutral: Story = {
+  args: {
+    angle: 0,
+    thrust: 0,
+    angleSetpoint: 0,
+    priority: Priority.regular,
+    state: InstrumentState.active,
+    portStarboard: true,
+    portStarboardElements: [PortStarboardElement.outerBand],
   },
 };
 
