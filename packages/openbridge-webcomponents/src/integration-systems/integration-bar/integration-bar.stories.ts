@@ -265,7 +265,7 @@ function renderIntegrationButtons({
 
 const meta: Meta<IntegrationBarStoryArgs> = {
   title: 'Integration Systems/Integration Bar',
-  tags: ['alpha'],
+  tags: ['experimental'],
   component: 'obc-integration-bar',
   globals: {
     viewport: {value: 'desktop'},

@@ -122,10 +122,10 @@ export type ObcMenuButtonItemClickEvent = CustomEvent<{
  * In this example, the button displays an icon and label, and opens a menu with two options (one with an icon).
  *
  * @slot icon - Icon displayed at the start of the button when `hasIcon` is true.
- * @fires change {ObcSplitButtonChangeEvent} Fired when the menu selection changes.
- * @fires item-click {ObcMenuButtonItemClickEvent} Fired when a menu item is clicked.
- * @fires open {CustomEvent<void>} Fired when the menu is opened.
- * @fires close {CustomEvent<void>} Fired when the menu is closed.
+ * @fires {ObcSplitButtonChangeEvent} change - Fired when the menu selection changes.
+ * @fires {ObcMenuButtonItemClickEvent} item-click - Fired when a menu item is clicked.
+ * @fires {CustomEvent<void>} open - Fired when the menu is opened.
+ * @fires {CustomEvent<void>} close - Fired when the menu is closed.
  * @beta
  */
 @customElement('obc-menu-button')

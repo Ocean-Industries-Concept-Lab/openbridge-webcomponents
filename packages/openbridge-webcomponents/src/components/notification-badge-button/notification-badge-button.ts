@@ -50,6 +50,7 @@ import {customElement} from '../../decorator.js';
  * ```
  *
  * @slot - Main content slot for icon or text label.
+ * @fires click - Fired when the button is clicked (if not disabled).
  * @deprecated
  */
 @customElement('obc-notification-badge-button')

@@ -72,7 +72,7 @@ customElements.define('command-menu-story-wrapper', CommandMenuStoryWrapper);
 
 const meta: Meta<typeof ObcCommandMenu> = {
   title: 'Application Components/Menus/Command Menu',
-  tags: ['6.0'],
+  tags: ['6.0', 'beta'],
   component: 'obc-command-menu',
   args: {
     showLocation: true,

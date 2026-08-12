@@ -58,7 +58,7 @@ export enum ObcTextInputFieldPlacement {
  * @slot label-icon - Icon displayed before the label text (when `hasLabelIcon` is true)
  * @slot helper-icon - Icon displayed before helper or error text (when `hasHelperIcon` is true)
  * @fires input - Standard input event on value change
- * @fires change - Standard change event on value change
+ * @fires {CustomEvent<{value: string}>} change - Dispatched on value change, carrying the committed value
  * @fires clear - Fired when the clear button is clicked
  * @fires blur - Fired when the input field is blurred
  * @stable
@@ -198,8 +198,11 @@ export class ObcTextInputField extends LitElement {
     </div>`;
   }
 
-  private fireChangeEvent() {
-    this.dispatchEvent(new CustomEvent('change'));
+  private fireChangeEvent(e: Event) {
+    const target = e.target as HTMLInputElement;
+    this.dispatchEvent(
+      new CustomEvent('change', {detail: {value: target.value}})
+    );
   }
 
   private get shouldUpdateValue(): boolean {
@@ -243,7 +246,10 @@ export class ObcTextInputField extends LitElement {
     const hasHelperOrError =
       Boolean(this.helperText) || Boolean(this.error && this.errorText);
     const showClearButton =
-      this.hasClearButton && this.value.length > 0 && !this.disabled;
+      this.hasClearButton &&
+      this.value.length > 0 &&
+      !this.disabled &&
+      !this.readonly;
     const isPasswordField = this.type === HTMLInputTypeAttribute.Password;
     const showPasswordToggle = isPasswordField && !this.disabled;
     const isClearButtonVisible = showClearButton && !showPasswordToggle;
@@ -269,6 +275,7 @@ export class ObcTextInputField extends LitElement {
           [`size-${this.size}`]: true,
           error: this.error,
           disabled: this.disabled,
+          readonly: this.readonly,
           empty: this.isEmpty,
           helpertext: hasHelperOrError,
           haslabel: Boolean(this.label),

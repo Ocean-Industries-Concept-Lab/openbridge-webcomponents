@@ -55,6 +55,7 @@ import {
   renderCurrent,
   renderCurrentCentered,
   renderWind,
+  WIND_ICON_TIP_TO_BOX_INNER,
 } from './environment.js';
 import {customElement} from '../../decorator.js';
 import {type ZoomToFitArcFrame} from '../../svghelpers/arc-frame.js';
@@ -129,6 +130,17 @@ export function innerRingRadiusFor(type: WatchCircleType): number {
 }
 
 const RADIAL_SETPOINT_INWARD_ADJUST = 4;
+
+/**
+ * Default anchors for the wind/current icons outside the outer ring (the
+ * compass layout): the 48-unit icon box sits 4 units off the ring, spanning
+ * 188–236 (OpenBridge 6.1 compass, node 19846-157200). The current chevron
+ * anchors by its tip at the box inner edge; the wind anchor adds the glyph's
+ * inward overhang so its box starts at the same edge.
+ */
+const CURRENT_ICON_OUTSIDE_RADIUS = OUTER_RING_RADIUS + 4;
+const WIND_ICON_OUTSIDE_RADIUS =
+  CURRENT_ICON_OUTSIDE_RADIUS + WIND_ICON_TIP_TO_BOX_INNER;
 
 /**
  * `<obc-watch>` - Core SVG renderer for circular/radial watch-based instruments.
@@ -966,10 +978,13 @@ export class ObcWatch extends LitElement {
       : nothing;
 
     // Compute label positions once – used for both rendering and crosshair
-    // knockout. NSWE labels and the north arrow are px-fixed outside decor,
-    // so they follow the same labelsHidden degradation as tick label texts.
+    // knockout. NSWE labels are px-fixed outside decor, so they follow the
+    // same labelsHidden degradation as tick label texts. The north arrow is
+    // exempt: below the small-scale threshold it renders as a compact
+    // triangle at the ring that scales with the face, so it stays visible
+    // on the smallest faces without clipping.
     const showNsweLabels = this.showLabels && !this._labelsHidden;
-    const showNorthArrow = this.northArrow && !this._labelsHidden;
+    const showNorthArrow = this.northArrow;
     const insideLabels = this.tickmarksInside && showNsweLabels;
     const includeNorth = !this.northArrow;
     const labelPositions = showNsweLabels
@@ -1006,7 +1021,7 @@ export class ObcWatch extends LitElement {
         ? svg`<g transform="scale(${this.scaleWindIcon})">${renderWind({
             windKnots: this.windKnots,
             fromDirectionDeg: this.windFromDirectionDeg,
-            radius: this.windSymbolRadius ?? 192,
+            radius: this.windSymbolRadius ?? WIND_ICON_OUTSIDE_RADIUS,
             color: this.windColor,
           })}</g>`
         : nothing;
@@ -1022,7 +1037,7 @@ export class ObcWatch extends LitElement {
           : renderCurrent({
               current: this.current,
               fromDirectionDeg: this.currentFromDirectionDeg,
-              radius: this.currentSymbolRadius ?? 192,
+              radius: this.currentSymbolRadius ?? CURRENT_ICON_OUTSIDE_RADIUS,
               color: this.currentColor,
             })
         : nothing;

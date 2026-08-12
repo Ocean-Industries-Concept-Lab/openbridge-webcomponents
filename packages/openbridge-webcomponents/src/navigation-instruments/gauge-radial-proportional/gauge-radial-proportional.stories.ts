@@ -20,7 +20,7 @@ type GaugeRadialProportionalStoryArgs = Partial<ObcGaugeRadialProportional> & {
 
 const meta = {
   title: 'Instruments/Gauge Radial Proportional',
-  tags: ['autodocs', 'wip', 'skip-test'],
+  tags: ['autodocs', 'skip-test', 'experimental'],
   component: 'obc-gauge-radial-proportional',
   decorators: [widthDecorator],
   args: {

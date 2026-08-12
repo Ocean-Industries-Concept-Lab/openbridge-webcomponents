@@ -1,10 +1,12 @@
 ---
-applyTo: "packages/openbridge-webcomponents/src/navigation-instruments/watch/**,packages/openbridge-webcomponents/src/navigation-instruments/compass/**,packages/openbridge-webcomponents/src/navigation-instruments/compass-sector/**,packages/openbridge-webcomponents/src/navigation-instruments/heading/**,packages/openbridge-webcomponents/src/navigation-instruments/rudder/**,packages/openbridge-webcomponents/src/navigation-instruments/wind/**,packages/openbridge-webcomponents/src/navigation-instruments/pitch/**,packages/openbridge-webcomponents/src/navigation-instruments/roll/**,packages/openbridge-webcomponents/src/navigation-instruments/pitch-roll/**,packages/openbridge-webcomponents/src/navigation-instruments/pitch-roll-heave/**,packages/openbridge-webcomponents/src/building-blocks/single-axis-inclinometer/**,packages/openbridge-webcomponents/src/navigation-instruments/speed-gauge/**,packages/openbridge-webcomponents/src/navigation-instruments/gauge-radial/**,packages/openbridge-webcomponents/src/navigation-instruments/rot-sector/**,packages/openbridge-webcomponents/src/navigation-instruments/rate-of-turn/**,packages/openbridge-webcomponents/src/navigation-instruments/course-arrows/**,packages/openbridge-webcomponents/src/navigation-instruments/readout/**,packages/openbridge-webcomponents/src/navigation-instruments/watch-flat/**,packages/openbridge-webcomponents/src/navigation-instruments/compass-flat/**,packages/openbridge-webcomponents/src/navigation-instruments/rot-linear/**,packages/openbridge-webcomponents/src/navigation-instruments/azimuth-thruster/**,packages/openbridge-webcomponents/src/building-blocks/instrument-radial/**"
+applyTo: "packages/openbridge-webcomponents/src/navigation-instruments/watch/**,packages/openbridge-webcomponents/src/navigation-instruments/compass/**,packages/openbridge-webcomponents/src/navigation-instruments/compass-sector/**,packages/openbridge-webcomponents/src/navigation-instruments/heading/**,packages/openbridge-webcomponents/src/navigation-instruments/rudder/**,packages/openbridge-webcomponents/src/navigation-instruments/wind/**,packages/openbridge-webcomponents/src/navigation-instruments/pitch/**,packages/openbridge-webcomponents/src/navigation-instruments/roll/**,packages/openbridge-webcomponents/src/navigation-instruments/pitch-roll/**,packages/openbridge-webcomponents/src/navigation-instruments/pitch-roll-heave/**,packages/openbridge-webcomponents/src/building-blocks/single-axis-inclinometer/**,packages/openbridge-webcomponents/src/navigation-instruments/speed-gauge/**,packages/openbridge-webcomponents/src/navigation-instruments/gauge-radial/**,packages/openbridge-webcomponents/src/navigation-instruments/rot-sector/**,packages/openbridge-webcomponents/src/navigation-instruments/rate-of-turn/**,packages/openbridge-webcomponents/src/navigation-instruments/course-arrows/**,packages/openbridge-webcomponents/src/navigation-instruments/readout/**,packages/openbridge-webcomponents/src/navigation-instruments/watch-flat/**,packages/openbridge-webcomponents/src/navigation-instruments/compass-flat/**,packages/openbridge-webcomponents/src/navigation-instruments/rot-linear/**,packages/openbridge-webcomponents/src/navigation-instruments/azimuth-thruster/**,packages/openbridge-webcomponents/src/building-blocks/instrument-radial/**,packages/openbridge-webcomponents/src/navigation-instruments/current/**,packages/openbridge-webcomponents/src/navigation-instruments/gauge-radial-proportional/**,packages/openbridge-webcomponents/src/navigation-instruments/pitch-roll-yaw/**,packages/openbridge-webcomponents/src/navigation-instruments/position-deviation/**,packages/openbridge-webcomponents/src/navigation-instruments/speed-directions/**,packages/openbridge-webcomponents/src/navigation-instruments/top-view-propulsion/**,packages/openbridge-webcomponents/src/navigation-instruments/velocity-projection-plot/**,packages/openbridge-webcomponents/src/navigation-instruments/wind-propulsion/**"
 ---
 
-# GitHub Copilot Custom Instructions
+<!-- GENERATED FILE — DO NOT EDIT.
+     Source: docs/agents/watch-radial-instruments.md
+     Regenerate: npm run agents:sync -w packages/openbridge-webcomponents -->
 
-## Path-Specific Instructions for Watch & Radial Instruments
+# Watch & Radial Instruments
 
 These instructions apply to the circular/radial watch-based instrument system, including the core `obc-watch` renderer and all navigation instruments that use it.
 
@@ -16,7 +18,7 @@ These instructions apply to the circular/radial watch-based instrument system, i
 >
 > **When implementing a new feature or changing existing behavior:**
 >
-> 1. **All rendering logic should live in `watch.ts`** - it is the single source of truth for circular instrument rendering
+> 1. **Shared circular rendering belongs in `watch.ts`** - it is the single source of truth for anything more than one instrument draws. Genuinely component-specific logic stays local: `compass-sector` owns its bespoke FOV compression, and pitch/roll/pitch-roll/pitch-roll-heave own their coupled `buildFrame` contracts (see "Shared frame computation"). Do not move those into the shared renderer — doing so changes every other instrument.
 > 2. Changes to `watch.ts` affect ALL instruments that use it
 > 3. If adding a new visual element, add it to `watch.ts` as a configurable option, not to individual instruments
 > 4. Navigation instruments are thin wrappers that configure `obc-watch` and add domain-specific overlays
@@ -37,7 +39,7 @@ The watch-based instrument system follows a **core renderer + thin wrapper** pat
 ```text
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │                              watch.ts (obc-watch)                               │
-│                    (Core SVG renderer - ALL logic lives here)                   │
+│              (Core SVG renderer - shared circular rendering lives here)         │
 │                                                                                 │
 │  Renders:                                                                       │
 │  • Circular rings (single/double/doubleThin/triple)                            │
@@ -85,7 +87,7 @@ The watch-based instrument system follows a **core renderer + thin wrapper** pat
 
 ### Key Principle: Logic in `watch.ts`, Instruments Stay Thin
 
-- **`watch.ts`**: Contains ALL circular rendering logic, coordinate calculations, and theming. This is the source of truth.
+- **`watch.ts`**: Owns the **shared** circular rendering, coordinate calculations and theming — anything more than one instrument draws. It is the source of truth for those. Component-specific logic stays local (see the exceptions above).
 - **`instrument-radial.ts`**: Reusable building block that wraps `watch.ts` for generic radial gauges with configurable angle mapping.
 - **Navigation instruments** (compass, heading, rudder, etc.): Thin wrappers that configure `obc-watch` and add domain-specific SVG overlays (arrows, needles, ROT indicators).
 
@@ -200,14 +202,24 @@ const viewBox = `-${width / 2} ${top} ${width} ${height}`;
 
 ### Matching ViewBox in Consumer Instruments
 
-Consumer instruments MUST calculate the **same viewBox** for their overlay SVG:
+Consumer instruments need the **same viewBox** for their overlay SVG — but do
+**not** recompute it. Call `computeRadialFrame()` once per render and pass the
+one result to both layers:
 
 ```typescript
 // In compass.ts, heading.ts, etc.
-const padding = this.getPadding(); // Same calculation as watch!
-const width = (176 + padding) * 2;
-const viewBox = `-${width / 2} -${width / 2} ${width} ${width}`;
+const frame = computeRadialFrame({...});
+return html`
+  <obc-watch .arcFrame=${frame}></obc-watch>
+  <svg viewBox=${frame.viewBox}>…</svg>
+`;
 ```
+
+Hand-mirroring the `(176 + padding) * 2` arithmetic in a consumer is what the
+shared helper exists to prevent — the two layers drift the moment either side
+changes. See [Shared frame computation](#shared-frame-computation-svghelpersradial-framets-issue-1021)
+below, and `AGENTS.md` § 8 rule 15. The block above documents what `watch.ts`
+does internally; it is not a recipe to copy.
 
 ### ViewBox Mismatch = Misalignment
 
@@ -352,7 +364,7 @@ used for quadrant (90°) sectors.
 
 Location: `watch.ts` → `renderSetpoint()` method
 
-> **See `setpoint.instructions.md`** for the full setpoint architecture (design layer, mixin vs bundle, confirm animation, `cssSafeAngle()` short-path rotation, CSS transition pattern).
+> **See `setpoint.md`** for the full setpoint architecture (design layer, mixin vs bundle, confirm animation, `cssSafeAngle()` short-path rotation, CSS transition pattern).
 
 ```typescript
 // Triangle shape (SVG path) coming from svghelpers/setpoint.ts
@@ -460,7 +472,7 @@ Common instrument CSS variables used in `watch.ts` and helpers:
 
 | Component           | Uses                                     | Key Features                                                                                              |
 | ------------------- | ---------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| `obc-watch`         | Helper modules                           | Core renderer - ALL circular rendering logic                                                              |
+| `obc-watch`         | Helper modules                           | Core renderer - shared circular rendering logic                                                           |
 | `instrument-radial` | `obc-watch`                              | Generic building block with configurable `getAngle()`                                                     |
 | `compass`           | `obc-watch` + overlay                    | Full compass: HDG/COG arrow styles, ROT, vessel, wind/current, center readouts                            |
 | `heading`           | `obc-watch` + overlay                    | Simplified compass: HDG/COG arrow styles, optional vessel, center readouts                                |
@@ -529,16 +541,16 @@ The offset flows through the rendering pipeline:
 quick reference for which knob does what. Combinations not listed under "validated"
 below are undefined — verify them before relying on a specific pairing.
 
-| Property                                            | Affects                                                                                                                                                                                |
-| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `padding`                                           | **Explicit override**: un-zoomed viewBox becomes exactly `(176 + padding) * 2` and the automatic label reserve (see "Shared frame computation") is disabled — the caller owns label room. Unset, `basePadding` is 24 plus the width-aware reserve. |
-| `faceDiameter`                                      | Pins the outer-ring diameter in CSS px (`scale = faceDiameter / 368`); the host gets a fixed intrinsic size, so instruments sharing the value have equal circumference (mode b of #1021; the donut-chart `fixedHeight` counterpart). |
-| `clipTop` / `clipBottom` / `clipLeft` / `clipRight` | viewBox window in the **un-zoomed** path. Ignored under zoom (when `zoomToFitArc` is on or an `arcFrame` is supplied).                                                                                                          |
-| `zoomToFitArc`                                      | Swaps to the `computeZoomToFitArcFrame()` path (unless an `arcFrame` is already supplied); every band radius gets the additive `_rOff` (see the `_bandRadius` INVARIANT in `watch.ts`).                                           |
+| Property                                            | Affects                                                                                                                                                                                                                                                                |
+| --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `padding`                                           | **Explicit override**: un-zoomed viewBox becomes exactly `(176 + padding) * 2` and the automatic label reserve (see "Shared frame computation") is disabled — the caller owns label room. Unset, `basePadding` is 24 plus the width-aware reserve.                     |
+| `faceDiameter`                                      | Pins the outer-ring diameter in CSS px (`scale = faceDiameter / 368`); the host gets a fixed intrinsic size, so instruments sharing the value have equal circumference (mode b of #1021; the donut-chart `fixedHeight` counterpart).                                   |
+| `clipTop` / `clipBottom` / `clipLeft` / `clipRight` | viewBox window in the **un-zoomed** path. Ignored under zoom (when `zoomToFitArc` is on or an `arcFrame` is supplied).                                                                                                                                                 |
+| `zoomToFitArc`                                      | Swaps to the `computeZoomToFitArcFrame()` path (unless an `arcFrame` is already supplied); every band radius gets the additive `_rOff` (see the `_bandRadius` INVARIANT in `watch.ts`).                                                                                |
 | `arcFrame`                                          | Externally pre-computed zoom frame. Takes precedence when set (the `if (this.arcFrame)` branch runs first) — used directly even when `zoomToFitArc` is false, and `obc-watch` does not recompute it. If you pass it, keep it in sync with `areas` / `watchCircleType`. |
-| `endLabelsMaxMin`                                   | "Max-min" label placement: horizontal end labels (±90°) sit off the dead-center tick instead of beside it.                                                                            |
-| `tickmarksInside`                                   | Moves labels inside the ring; their `textRadius` is routed through `_bandRadius`.                                                                                                      |
-| `tickFadeAngle`                                     | (pre-existing) Tickmark fade-out near arc edges.                                                                                                                                        |
+| `endLabelsMaxMin`                                   | "Max-min" label placement: horizontal end labels (±90°) sit off the dead-center tick instead of beside it.                                                                                                                                                             |
+| `tickmarksInside`                                   | Moves labels inside the ring; their `textRadius` is routed through `_bandRadius`.                                                                                                                                                                                      |
+| `tickFadeAngle`                                     | (pre-existing) Tickmark fade-out near arc edges.                                                                                                                                                                                                                       |
 
 ### Shared frame computation (`svghelpers/radial-frame.ts`, issue #1021)
 
@@ -574,8 +586,11 @@ All frame/viewBox geometry is centralized in `computeRadialFrame()`:
   here: same `buildFrame` contract, same coupled zoom math.
 - Compass/heading's old empirical `72 + delta(clientSize)` padding was
   replaced by the analytic reserve (north arrow 16px always +
-  NSWE labels 16px while `showLabels`); past the reserve cap both the
-  labels and the arrow are hidden, like tick-label degradation.
+  NSWE labels 16px while `showLabels`); past the reserve cap the labels
+  are hidden, like tick-label degradation. The north arrow is exempt: it
+  must stay visible on even the smallest face, degrading to the compact
+  in-ring triangle (which scales with the face and cannot clip) below the
+  small-scale threshold in `label.ts`.
 - **Label-drop-aware sector crops:** arc end labels hang past the ±90°
   line (`endLabelsMaxMin` ~20px, side labels ~8px), so a fixed top/bottom
   crop (gauge-radial's 44/45% `sectorClips`) would cut them at small
@@ -595,6 +610,52 @@ All frame/viewBox geometry is centralized in `computeRadialFrame()`:
   blockified by a parent (watch standalone was the visible case; inside
   `.container > * {position: absolute}` the host is blockified and the
   host observation works).
+
+### Host clipping & the arrow-apex shave (PR #1016)
+
+`obc-watch` (since #994) and `obc-compass-sector` (since #1016) set
+`:host { overflow: hidden }` because both rotate their `<svg>` **element box**
+(`transform="rotate(...)"` on the element, not an inner `<g>`): a rotated
+100%-sized box swings its corners outside the host and leaks visible arc
+pixels over neighboring UI in wide layouts. The clip is the fix; the sibling
+`svg { display: block }` rules (watch, watch-flat, thruster) fix a different
+issue — the inline-SVG line-box gap that added ~3–5px of phantom height below
+the graphic (mystery scrollbars in `overflow: auto` cells).
+
+The leak needs a **cropped** frame to show: a full-circle face in its
+origin-centred square viewBox is rotation-invariant, so nothing new is exposed
+when it turns — compass-sector leaks because its sector crop leaves painted
+arc in the corners of a wide, short box. Rotating an inner `<g>` instead of
+the element would keep the box axis-aligned and let the svg's own viewport
+clip contain everything by construction, but it refactors the rotation path
+of the shared core (`watch.ts` plus the compass-sector overlay), risks
+AA-level baseline churn across every rotating instrument, and buys no visual
+improvement — the apex shave below happens either way at the same box edge.
+
+**Known, deliberate trade-off:** in compass-sector's current framing the
+HDG/COG **arrow apexes extend 1–2px past the host's top edge**. Before #1016
+those pixels painted _outside_ the component (`overflow: visible` default) and
+the arrow looked complete; with the clip they are shaved flat at the box edge.
+This is imperceptible at normal viewing (an anti-aliased point) and was
+accepted because the same "allowed to escape" mechanism is what leaked whole
+arc chunks in wide containers.
+
+**TODO(designer):** if the shaved tips are ever unacceptable, the zero-cut fix
+is giving the frame headroom so the arrow tips fit _inside_ the box — do NOT
+simply remove the `overflow: hidden` (that re-opens the wide-layout leak).
+Cautions for whoever picks this up:
+
+- Headroom re-frames the arc: **all** compass-sector baselines move (the
+  shave-only change moved 8), and the readout `_readoutTopPercent` anchors
+  must be re-derived.
+- compass-sector is **not** on `computeRadialFrame()` (bespoke `PADDING = 72`
+  plus a per-FOV cached viewBox). Adding headroom by touching `PADDING` — or
+  by migrating it onto the helper — interacts with the #1021/#1049
+  label-reserve geometry: `basePadding` feeds the closed-form reserve, so
+  re-validate label padding at small sizes after any change.
+- The same decision applies family-wide: `obc-watch` has clipped since #994,
+  so any "tips must never be cut" ruling should audit watch-based instruments
+  (setpoint markers and arrows near the box edge), not just compass-sector.
 
 ### Radial label model (design language)
 

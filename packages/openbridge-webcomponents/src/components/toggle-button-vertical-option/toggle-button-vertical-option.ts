@@ -98,7 +98,7 @@ export enum ObcToggleButtonLabelPlacement {
  * ```
  *
  * @slot icon - Icon content for the option (when hasIcon is true).
- * @fires selected {CustomEvent<{value: string}>} Fired when the option is clicked.
+ * @fires {CustomEvent<{value: string}>} selected - Fired when the option is clicked.
  */
 @customElement('obc-toggle-button-vertical-option')
 export class ObcToggleButtonVerticalOption extends LitElement {

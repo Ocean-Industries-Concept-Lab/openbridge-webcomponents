@@ -50,8 +50,8 @@ const baseFontSize = 16;
  * @slot leading-icon - Icon displayed before the input value (when `hasLeadingIcon` is true)
  * @slot label-icon - Icon displayed before the label text (when `hasLabelIcon` is true)
  * @slot helper-icon - Icon displayed before helper or error text (when `hasHelperIcon` is true)
- * @fires input {CustomEvent<{value: number}>} When the numeric value changes during editing
- * @fires change {CustomEvent<{value: number}>} When the value is committed on blur
+ * @fires {CustomEvent<{value: number}>} input - When the numeric value changes during editing
+ * @fires {CustomEvent<{value: number}>} change - When the value is committed on blur
  * @stable
  */
 @customElement('obc-number-input-field')
@@ -204,6 +204,9 @@ export class ObcNumberInputField extends LitElement {
 
   private onFocus() {
     this.hasFocus = true;
+    // A read-only field has nothing to edit, so it keeps its formatted display
+    // instead of switching to the ungrouped editing representation.
+    if (this.readonly) return;
     const source = this.displayOverride || this.displayText;
     this.displayText = removeGroupingFromDisplay(
       source,
@@ -214,6 +217,7 @@ export class ObcNumberInputField extends LitElement {
 
   private onBlur() {
     this.hasFocus = false;
+    if (this.readonly) return;
     this.commitDisplay();
     if (!valuesEqual(this.value, this.lastCommittedValue)) {
       this.lastCommittedValue = this.value;
@@ -443,6 +447,7 @@ export class ObcNumberInputField extends LitElement {
           [`size-${this.size}`]: true,
           error: this.error,
           disabled: this.disabled,
+          readonly: this.readonly,
           empty: this.isEmpty,
           helpertext: hasHelperOrError,
           haslabel: Boolean(this.label),

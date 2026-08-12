@@ -5,6 +5,7 @@ import {property} from 'lit/decorators.js';
 
 /**
  * @slot - Tab label content
+ * @fires click - Fired when the tab is clicked. The event carries no payload identifying the tab; read the `selected` property of the clicked element, or attach the handler per tab.
  * @experimental
  */
 @customElement('obc-integration-tabs')
