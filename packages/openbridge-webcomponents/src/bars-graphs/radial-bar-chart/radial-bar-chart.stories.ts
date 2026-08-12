@@ -10,7 +10,7 @@ const SAMPLE_DATA = [70, 50, 30];
 const meta: Meta = {
   title: 'Bars and Graphs/Radial Bar Chart',
   component: 'obc-radial-bar-chart',
-  tags: ['autodocs', '6.0'],
+  tags: ['autodocs', '6.0', 'beta'],
   argTypes: {
     fixedHeight: {
       control: {type: 'range', min: 48, max: 512, step: 8},

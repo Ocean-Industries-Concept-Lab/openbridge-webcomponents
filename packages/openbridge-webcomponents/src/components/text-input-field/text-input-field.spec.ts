@@ -173,6 +173,21 @@ describe('obc-text-input-field', () => {
 
       expect(changeHandler).toHaveBeenCalled();
     });
+
+    it('carries the committed value in the change detail', async () => {
+      const changeHandler = vi.fn();
+      el.addEventListener('change', changeHandler);
+
+      input.value = 'new value';
+      input.dispatchEvent(new InputEvent('input', {bubbles: true}));
+      input.dispatchEvent(new Event('change', {bubbles: true}));
+      await el.updateComplete;
+
+      const event = changeHandler.mock.calls[0][0] as CustomEvent<{
+        value: string;
+      }>;
+      expect(event.detail).toEqual({value: 'new value'});
+    });
   });
 
   describe('password visibility', () => {

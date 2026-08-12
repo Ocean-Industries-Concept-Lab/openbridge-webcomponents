@@ -10,6 +10,7 @@ import {
   ReadoutValueType,
 } from './readout-block.js';
 import './readout-block.js';
+import '../../components/textbox/textbox.js';
 import '../../icons/icon-placeholder.js';
 import {
   ObcAlertFrameMode,
@@ -41,11 +42,18 @@ type BlockArgs = {
 // A faithful single-block render. The block inherits its colour from the host
 // context (the list-item normally drives it), so standalone it shows the neutral
 // default tone; `enhanced` switches to the accent tone.
+//
+// `value` is passed through as given, deliberately NOT as `args.value ?? null`:
+// one unavailable case IS `undefined`, and coercing here would quietly turn it
+// into the `null` case. `undefined` sits outside the declared `value` type —
+// consumers should pass `null` — but an unset property arrives as `undefined` in
+// practice and has to read the same, so the cast is what the case is testing
+// rather than a way around the type checker.
 function renderBlock(args: Partial<BlockArgs>) {
   return html`
     <obc-readout-block
       .variant=${args.variant ?? ReadoutBlockVariant.value}
-      .value=${args.value ?? null}
+      .value=${args.value as number | string | null}
       .valueType=${args.valueType ?? ReadoutValueType.number}
       .size=${args.size ?? ReadoutBlockSize.small}
       .enhanced=${args.enhanced ?? false}
@@ -112,7 +120,7 @@ function renderShowcase(cards: ShowcaseCard[]) {
 
 const meta = {
   title: 'Building Blocks/Readout Block',
-  tags: ['autodocs', '6.0', 'wip'],
+  tags: ['autodocs', '6.0', 'experimental'],
   component: 'obc-readout-block',
   decorators: [themedDecorator],
   parameters: {
@@ -413,6 +421,260 @@ export const TestValidationSurvivesUnrelatedUpdate: Story = {
     el.value = null;
     await expect(validateWithNoChanges).not.toThrow();
   },
+};
+
+// The designer's specification, revised in review: the unavailable placeholder
+// stays SHORT (`-.--`, not `---.--`) and sits at the right of the reserved width.
+//   format: 000.00 · readout: 12.30 · hinted: 012.30 · not available: -.--
+// `format: 000.00` maps to maxDigits 3 + fractionDigits 2.
+const DESIGNER_SPEC_CASES: {
+  label: string;
+  expected: string;
+  args: Partial<BlockArgs>;
+}[] = [
+  {
+    label: 'readout',
+    expected: '12.30',
+    args: {value: 12.3, maxDigits: 3, fractionDigits: 2},
+  },
+  {
+    label: 'readout with hinted',
+    expected: '012.30',
+    args: {value: 12.3, maxDigits: 3, fractionDigits: 2, hintedZeros: true},
+  },
+  {
+    label: 'not available',
+    expected: '-.--',
+    args: {value: null, maxDigits: 3, fractionDigits: 2},
+  },
+  {
+    label: 'not available, hinted enabled',
+    expected: '-.--',
+    args: {value: null, maxDigits: 3, fractionDigits: 2, hintedZeros: true},
+  },
+];
+
+// Every input that reads as "no reading". All four of the first rows are the
+// same placeholder — that IS the point: whichever way a reading goes missing,
+// the readout looks identical.
+const UNAVAILABLE_CASES: {
+  label: string;
+  args: Partial<BlockArgs>;
+}[] = [
+  {
+    label: 'NaN',
+    args: {value: Number.NaN, maxDigits: 3, fractionDigits: 2},
+  },
+  {
+    label: 'Infinity',
+    args: {value: Number.POSITIVE_INFINITY, maxDigits: 3, fractionDigits: 2},
+  },
+  {
+    label: 'null',
+    args: {value: null, maxDigits: 3, fractionDigits: 2},
+  },
+  {
+    label: 'undefined — an unset value, same as null',
+    args: {value: undefined, maxDigits: 3, fractionDigits: 2},
+  },
+  {
+    label: 'null · no fraction digits',
+    args: {value: null, maxDigits: 3},
+  },
+  // The knobs, not the value: a `fractionDigits` written by a failed runtime
+  // (`NaN`) must not silently format with zero decimals — a critical 0.4
+  // printed as a plausible-looking "0" reads as healthy. The reading dashes
+  // instead. A missing `maxDigits` dashes too, for consistency; with the
+  // precision still known, the placeholder keeps its fraction shape.
+  {
+    label: 'value 0.4 · fractionDigits NaN — precision failed to arrive',
+    args: {value: 0.4, maxDigits: 3, fractionDigits: Number.NaN},
+  },
+  {
+    label: 'value 0.4 · maxDigits NaN — same, for consistency',
+    args: {value: 0.4, maxDigits: Number.NaN, fractionDigits: 1},
+  },
+];
+
+// Stacked in one column under identical settings so the decimal points and the
+// fraction positions can be checked against each other by eye.
+const ALIGNMENT_CASES: Partial<BlockArgs>[] = [
+  {value: 12.3, maxDigits: 3, fractionDigits: 2},
+  {value: 4.5, maxDigits: 3, fractionDigits: 2},
+  {value: null, maxDigits: 3, fractionDigits: 2},
+  {value: Number.NaN, maxDigits: 3, fractionDigits: 2},
+];
+
+/**
+ * **Unavailable values — for design review.**
+ *
+ * 1. **The placeholder is short.** `-.--` for `format: 000.00`, not `---.--`:
+ *    `maxDigits` already reserves the width, so the dash sits at the right edge
+ *    of the reserve rather than spelling out every reserved digit position.
+ * 2. **The dash is digit-width.** It is U+2012 FIGURE DASH, not the ASCII
+ *    hyphen-minus. Measured in Noto Sans with tabular figures, a digit is
+ *    13.02px and U+2012 is 13.02px, while U+002D is 7.02px — so with a hyphen
+ *    the placeholder's decimal point missed the reading's. `tabular-nums` does
+ *    not help here: it equalises figures with each other and leaves punctuation
+ *    untouched (measured identical with the feature on and off).
+ * 3. **`NaN` and `±Infinity` count as unavailable.** They previously rendered as
+ *    the literal text `NaN` / `Infinity` in place of a reading. They are a
+ *    runtime data condition (sensor dropout, `0/0`, a bad parse) rather than a
+ *    programmer error, so they resolve to the dash rather than throwing.
+ *
+ * 4. **A digit knob that never arrived dashes the reading too.** `NaN`,
+ *    `null` or `undefined` in `fractionDigits` / `maxDigits` is a runtime
+ *    failure of the writing system, and formatting with a default the author
+ *    never chose would let a critical `0.4` pass for a healthy `0`. Finite
+ *    out-of-range values are different: `fractionDigits` throws (programmer
+ *    error), `maxDigits` clamps (width-only).
+ *
+ * Hinted zeros are suppressed for an unavailable value, so the two "not
+ * available" rows are identical and nothing reads `----Na.N`.
+ *
+ * **Open question — dash treatment.** U+2012 is exactly digit-width, which is
+ * what makes the columns line up, but two adjacent dashes then run together
+ * into one bar. The last section renders the alternatives at a readable size:
+ * (A) the figure dash as implemented, (B) an ASCII hyphen centred in a
+ * digit-width cell — separated and still aligned, at the cost of a lighter,
+ * sparser look — and (C) the previous plain hyphen, for reference. Delete that
+ * section once the choice is made.
+ */
+export const UnavailableValues: Story = {
+  render: () => html`
+    <style>
+      .rb-unavail {
+        display: grid;
+        grid-template-columns: max-content max-content max-content;
+        gap: 8px 24px;
+        align-items: center;
+      }
+      .rb-unavail-2col {
+        grid-template-columns: max-content max-content;
+      }
+      .rb-unavail-head {
+        font: 10px/1.2 var(--global-typography-ui-label-font-family, sans-serif);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--element-neutral-color, #777);
+      }
+      .rb-unavail-label {
+        font: 12px/1.4 var(--global-typography-ui-label-font-family, sans-serif);
+        color: var(--element-neutral-color, #777);
+      }
+      .rb-unavail-spec {
+        margin: 20px 0 8px;
+        font: 12px/1.2 var(--global-typography-ui-label-font-family, sans-serif);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--element-neutral-color, #777);
+      }
+      .rb-unavail-spec-value {
+        font:
+          13px/1.4 ui-monospace,
+          monospace;
+        color: var(--element-neutral-color, #777);
+      }
+      .rb-unavail-now {
+        outline: 1px dashed rgba(0, 0, 0, 0.12);
+        width: max-content;
+      }
+      .rb-dash-options {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        width: max-content;
+      }
+      .rb-cellspan {
+        display: inline-block;
+        width: 1ch;
+        text-align: center;
+      }
+      /* One column, so the decimal points can be compared down the stack. */
+      .rb-align {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+        width: max-content;
+        outline: 1px dashed rgba(0, 0, 0, 0.12);
+      }
+    </style>
+    <div class="rb-unavail-spec">Designer specification — format 000.00</div>
+    <div class="rb-unavail">
+      <div class="rb-unavail-head">Case</div>
+      <div class="rb-unavail-head">Specified</div>
+      <div class="rb-unavail-head">Rendered</div>
+      ${DESIGNER_SPEC_CASES.map(
+        (c) => html`
+          <div class="rb-unavail-label">${c.label}</div>
+          <div class="rb-unavail-spec-value">${c.expected}</div>
+          <div class="rb-unavail-now">
+            ${renderBlock({size: ReadoutBlockSize.medium, ...c.args})}
+          </div>
+        `
+      )}
+    </div>
+
+    <div class="rb-unavail-spec">
+      Alignment — decimal points and fraction positions line up
+    </div>
+    <div class="rb-align">
+      ${ALIGNMENT_CASES.map((args) =>
+        renderBlock({size: ReadoutBlockSize.medium, ...args})
+      )}
+    </div>
+
+    <div class="rb-unavail-spec">
+      Dash treatment — open question for the designer
+    </div>
+    <div class="rb-dash-options">
+      <div>
+        <div class="rb-unavail-label">reading, for reference</div>
+        <obc-textbox size="l" .tabularNums=${true}>12.30</obc-textbox>
+      </div>
+      <div>
+        <div class="rb-unavail-label">
+          A — U+2012 figure dash (implemented): digit-width, but adjacent dashes
+          run together
+        </div>
+        <obc-textbox size="l" .tabularNums=${true}
+          >&#8210;.&#8210;&#8210;</obc-textbox
+        >
+      </div>
+      <div>
+        <div class="rb-unavail-label">
+          B — hyphen in digit-width cells: separated, but lighter and sparser
+        </div>
+        <obc-textbox size="l" .tabularNums=${true}>
+          <span class="rb-cellspan">-</span>.<span class="rb-cellspan">-</span
+          ><span class="rb-cellspan">-</span>
+        </obc-textbox>
+      </div>
+      <div>
+        <div class="rb-unavail-label">
+          C — ASCII hyphen (previous): narrower than a digit, does not align
+        </div>
+        <obc-textbox size="l" .tabularNums=${true}>-.--</obc-textbox>
+      </div>
+    </div>
+
+    <div class="rb-unavail-spec">
+      Unavailable values — every unreadable input
+    </div>
+    <div class="rb-unavail rb-unavail-2col">
+      <div class="rb-unavail-head">Value</div>
+      <div class="rb-unavail-head">Rendered</div>
+      ${UNAVAILABLE_CASES.map(
+        (c) => html`
+          <div class="rb-unavail-label">${c.label}</div>
+          <div class="rb-unavail-now">
+            ${renderBlock({size: ReadoutBlockSize.medium, ...c.args})}
+          </div>
+        `
+      )}
+    </div>
+  `,
 };
 
 export const DataQuality: Story = {

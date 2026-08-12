@@ -15,7 +15,7 @@ import {
 
 const meta: Meta<typeof ObcPitchRollHeave> = {
   title: 'Instruments/Pitch Roll Heave',
-  tags: ['autodocs', '6.0', 'wip'],
+  tags: ['autodocs', '6.0', 'experimental'],
   component: 'obc-pitch-roll-heave',
   args: {
     width: 384,

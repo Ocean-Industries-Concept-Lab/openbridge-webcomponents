@@ -24,7 +24,7 @@ export enum IntegrationButtonType {
 /**
  * `<obc-integration-button>` – A button component for integration systems.
  *
- * @slot leading-icon - Icon before label (shown when `hasLeadingIcon` is true)
+ * @slot leading-icon - Icon before label (shown when `hasLeadingIcon` is true); rendered at the large icon size when `hasStatus` is true
  * @slot trailing-icon - Icon after label (shown when `hasTrailingIcon` is true)
  * @slot trailing-icon2 - Icon after label (shown when `hasTrailingIcon2` is true)
  * @slot label - Label text
@@ -76,7 +76,7 @@ export class ObcIntegrationButton extends LitElement {
       selected: this.selected,
       activated: this.activated,
       disabled: this.disabled,
-      'has-description': this.hasStatus,
+      'has-status': this.hasStatus,
       ['variant-' + this.variant]: true,
       ['type-' + this.type]: true,
     };

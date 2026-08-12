@@ -100,9 +100,9 @@ export enum ObcAlertMenuItemActionState {
  * @slot description - Description content; falls back to the `description` property when empty.
  * @slot icon - Optional secondary icon (e.g., source/system).
  *
- * @fires ack-click {CustomEvent<void>} Fired when the ACK action button is clicked.
- * @fires ack-secondary-click {CustomEvent<void>} Fired when the secondary action button is clicked.
- * @fires item-click {CustomEvent<void>} Fired when the alert menu item is clicked.
+ * @fires {CustomEvent<void>} ack-click - Fired when the ACK action button is clicked.
+ * @fires {CustomEvent<void>} ack-secondary-click - Fired when the secondary action button is clicked.
+ * @fires {CustomEvent<void>} item-click - Fired when the alert menu item is clicked.
  * @stable
  */
 @customElement('obc-alert-menu-item')

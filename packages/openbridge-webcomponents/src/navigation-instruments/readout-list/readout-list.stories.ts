@@ -90,7 +90,7 @@ function renderList(rows: Row[], showDebugOverlay: boolean) {
 
 const meta = {
   title: 'Instruments/Readout List',
-  tags: ['autodocs', '6.0', 'wip'],
+  tags: ['autodocs', '6.0', 'experimental'],
   component: 'obc-readout-list',
   args: {
     showDebugOverlay: true,

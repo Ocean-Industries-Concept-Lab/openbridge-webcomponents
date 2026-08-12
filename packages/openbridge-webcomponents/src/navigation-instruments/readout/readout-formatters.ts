@@ -21,6 +21,115 @@ export function isReadoutValueType(value: unknown): value is ReadoutValueType {
   return typeof value === 'string' && READOUT_VALUE_TYPES.includes(value);
 }
 
+/**
+ * The largest `fractionDigits` `Number.prototype.toFixed` accepts. Reused as the
+ * `maxDigits` ceiling so the two bounds stay symmetric — a wider reserve than
+ * this is meaningless anyway, and an unbounded one builds a huge string.
+ */
+export const READOUT_MAX_DIGITS = 100;
+
+/**
+ * `fractionDigits` as `toFixed` will actually read it: `NaN` and an unset value
+ * count as 0, and a fractional count truncates.
+ */
+function effectiveFractionDigits(
+  fractionDigits: number | null | undefined
+): number {
+  // `toFixed(undefined)` behaves as `toFixed(0)`, and the components read
+  // `fractionDigits ?? 0`, so an unset value must not be rejected here — the
+  // assertion has to accept exactly what the runtime accepts.
+  if (fractionDigits === null || fractionDigits === undefined) {
+    return 0;
+  }
+  return Number.isNaN(fractionDigits) ? 0 : Math.trunc(fractionDigits);
+}
+
+/**
+ * Throws when `fractionDigits` is outside the range `toFixed` accepts.
+ *
+ * It is a public property that reaches `Number.prototype.toFixed` unchanged, so
+ * `-1`, `101` or `Infinity` already throw a bare
+ * `RangeError: toFixed() digits argument must be between 0 and 100` from inside
+ * the update cycle. This replaces that with an error naming the component and
+ * the offending value.
+ *
+ * Deliberately not clamped: `fractionDigits` sets the PRECISION of a reading, so
+ * quietly turning `-1` into `0` would drop decimals from a displayed value
+ * without telling anyone. It is a configuration mistake, fixable only in code —
+ * the same class as a bad `valueType`, and treated the same way.
+ *
+ * Values `toFixed` itself tolerates are left alone: `NaN` reads as `0`, and a
+ * fractional count truncates (`2.7` → `2`).
+ */
+export function assertReadoutFractionDigits(
+  tagName: string,
+  fractionDigits: number | null | undefined
+): void {
+  const digits = effectiveFractionDigits(fractionDigits);
+  if (Number.isFinite(digits) && digits >= 0 && digits <= READOUT_MAX_DIGITS) {
+    return;
+  }
+  throw new RangeError(
+    // `String`, not `JSON.stringify`: the latter serialises `Infinity` and
+    // `NaN` to `null`, hiding the very value being rejected.
+    `<${tagName}>: fractionDigits must be between 0 and ${READOUT_MAX_DIGITS} ` +
+      `(got ${String(fractionDigits)}).`
+  );
+}
+
+/**
+ * A digit count used for WIDTH RESERVATION, normalised to a non-negative integer
+ * no greater than {@link READOUT_MAX_DIGITS}.
+ *
+ * Deliberately named for the role rather than for `maxDigits`: both `maxDigits`
+ * and the fraction count `obc-readout-list` reserves with are the same kind of
+ * input — a count handed to `String.prototype.repeat` — and must be bounded the
+ * same way. `fractionDigits` as a FORMAT input is a different contract and is
+ * rejected instead; see {@link assertReadoutFractionDigits}.
+ *
+ * Clamped rather than rejected because it only reserves width, so bounding it
+ * changes no reading's meaning, and the surrounding code already absorbs bad
+ * values silently (`Math.max(count, 1)`, `NaN` repeating to `''`). What is not
+ * absorbed is `Infinity`, which throws out of `String.prototype.repeat`, and a
+ * large finite count, which builds a reserver string long enough to matter —
+ * both are capped here.
+ */
+export function resolveReadoutDigitCount(
+  count: number | null | undefined
+): number {
+  const digits = Math.trunc(count ?? 0);
+  if (Number.isNaN(digits) || digits <= 0) {
+    // Matches what the existing guards already do with these: reserve nothing.
+    return 0;
+  }
+  // `Infinity` lands on the cap — "as wide as possible" — rather than throwing.
+  return Math.min(digits, READOUT_MAX_DIGITS);
+}
+
+/**
+ * Whether a digit-count knob failed to arrive as a number: `null`, `undefined`
+ * or `NaN`.
+ *
+ * A missing knob renders the READING unavailable (the dash) rather than
+ * silently formatting with a default the author never chose. `fractionDigits`
+ * is typically written by the consuming system, and a runtime failure there
+ * produces exactly these values — formatting with `0` instead would print a
+ * critical `0.4` as a plausible-looking `0`, which an operator cannot tell
+ * apart from a healthy reading. The dash makes the failure visible.
+ *
+ * This is a third contract besides throw and clamp: a finite out-of-range
+ * `fractionDigits` is a programmer error and throws
+ * ({@link assertReadoutFractionDigits}); a finite out-of-range `maxDigits` is
+ * width-only and clamps ({@link resolveReadoutDigitCount}); a knob that never
+ * arrived is a runtime data condition and dashes the reading, the same class
+ * as a `NaN` value.
+ */
+export function isReadoutDigitCountMissing(
+  count: number | null | undefined
+): boolean {
+  return count === null || count === undefined || Number.isNaN(count);
+}
+
 function isBlank(value: string): boolean {
   return value.trim() === '';
 }
@@ -71,7 +180,18 @@ export function assertReadoutValueType(
   );
 }
 
-/** The value as a number, or `undefined` when it is text / unavailable. */
+/**
+ * The value as a number, or `undefined` when it is text / unavailable.
+ *
+ * A non-finite number (`NaN`, `±Infinity`) counts as unavailable and renders the
+ * dash, the same as `null`. `NaN` is a runtime data condition — a sensor
+ * dropout, a `0/0`, a bad parse — not a programmer error, so it must not throw;
+ * and `value.toFixed()` would otherwise render the literal text `"NaN"` /
+ * `"Infinity"` in place of a reading. This also makes the number path agree with
+ * the string path below, which has always resolved a non-finite string to
+ * `undefined` — before this, `<obc-readout value="NaN">` rendered a dash while
+ * `.value=${NaN}` rendered `"NaN"`.
+ */
 export function resolveReadoutNumericValue(
   value: number | string | null | undefined,
   valueType: ReadoutValueType
@@ -84,7 +204,7 @@ export function resolveReadoutNumericValue(
     return undefined;
   }
   if (typeof value === 'number') {
-    return value;
+    return Number.isFinite(value) ? value : undefined;
   }
   if (isBlank(value)) {
     return undefined;
@@ -109,21 +229,52 @@ export function resolveReadoutTextValue(
   return isBlank(text) ? undefined : text;
 }
 
+/**
+ * The character used for an unavailable ("no reading") value.
+ *
+ * U+2012 FIGURE DASH, not the ASCII hyphen-minus: it is defined to be the same
+ * width as a digit, so the placeholder lines up with the reading it stands in
+ * for. Measured in Noto Sans with tabular figures at `size="m"` — digit 13.02px,
+ * U+2012 13.02px, U+002D 7.02px, en dash 11.02px, em dash 22.02px. With a
+ * hyphen, `-.--` sat 46% narrow per character and its decimal point missed the
+ * reading's; with U+2012 the point and every fraction position align exactly.
+ */
+export const READOUT_UNAVAILABLE_DASH = '\u2012';
+
+/**
+ * The unavailable ("no reading") text: a single integer dash plus one dash per
+ * fraction digit — `\u2012` at `fractionDigits` 0, `\u2012.\u2012\u2012` at 2.
+ *
+ * Deliberately NOT filled out to `maxDigits`: the placeholder stays short and
+ * sits at the right edge of the reserved width, rather than spelling out every
+ * reserved digit position. `maxDigits` still reserves the width, so nothing
+ * shifts when a reading arrives.
+ */
 function dashedGenerator({
   showZeroPadding,
   minValueLength,
-  fractionDigits,
+  fractionDigits: rawFractionDigits,
 }: ReadoutNumericFormatOptions): string {
   const visibleDigits = showZeroPadding ? Math.max(minValueLength, 1) : 1;
 
+  // A missing precision shapes the placeholder as zero fraction digits — a
+  // single dash. Without this, `NaN < 1` is false, both `repeat(NaN)` calls
+  // below produce the empty string, and the placeholder degenerates to a
+  // lone `"."`.
+  const fractionDigits = Number.isNaN(rawFractionDigits)
+    ? 0
+    : rawFractionDigits;
+
   if (fractionDigits < 1) {
-    return '-'.repeat(visibleDigits);
+    return READOUT_UNAVAILABLE_DASH.repeat(visibleDigits);
   }
 
   const integerDigits = visibleDigits - fractionDigits;
 
   return (
-    '-'.repeat(Math.max(integerDigits, 1)) + '.' + '-'.repeat(fractionDigits)
+    READOUT_UNAVAILABLE_DASH.repeat(Math.max(integerDigits, 1)) +
+    '.' +
+    READOUT_UNAVAILABLE_DASH.repeat(fractionDigits)
   );
 }
 
@@ -131,7 +282,20 @@ export function formatNumericValue(
   value: number | undefined,
   options: ReadoutNumericFormatOptions
 ): string {
-  if (value === undefined) {
+  // Non-finite counts as unavailable here too, not only in
+  // `resolveReadoutNumericValue`. Every caller normalises today, but this
+  // function is exported, and `NaN.toFixed()` would put the literal text
+  // "NaN" where a reading belongs — the exact failure this change removes.
+  //
+  // A missing precision (`NaN` fractionDigits) is the same class of failure
+  // from the other operand: `value.toFixed(NaN)` silently formats with zero
+  // decimals, printing a critical `0.4` as a plausible-looking `0`. The
+  // reading is untrustworthy without its precision, so it dashes too.
+  if (
+    value === undefined ||
+    !Number.isFinite(value) ||
+    Number.isNaN(options.fractionDigits)
+  ) {
     return dashedGenerator(options);
   }
 
