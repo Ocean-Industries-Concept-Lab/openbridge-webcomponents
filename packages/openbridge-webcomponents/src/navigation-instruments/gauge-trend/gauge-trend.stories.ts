@@ -1,5 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
+import {ref} from 'lit/directives/ref.js';
 import './gauge-trend.js';
 import {AdviceType} from '../watch/advice.js';
 import {
@@ -1130,4 +1131,219 @@ export const RealtimeShifting: Story = {
 
     return wrapper;
   },
+};
+
+// Host boxes straddling the 2:1 ratio. Every box is a definite pixel size and
+// the gauge is told the same width/height, so nothing here is ambiguous.
+const CLAMP_CASES = [
+  {width: 600, height: 400},
+  {width: 800, height: 400},
+  {width: 1000, height: 400},
+  {width: 1600, height: 400},
+  {width: 1600, height: 640},
+];
+
+const clampProbes = new Set<number>();
+
+/** Live box-vs-canvas readout, so the clamp is a number rather than an impression. */
+const measureClamp = (root?: Element) => {
+  if (!(root instanceof HTMLElement)) {
+    clampProbes.forEach((id) => clearInterval(id));
+    clampProbes.clear();
+    return;
+  }
+  const paint = () => {
+    root.querySelectorAll('[data-clamp-box]').forEach((node) => {
+      const box = node as HTMLElement;
+      const canvas = box
+        .querySelector('obc-gauge-trend')
+        ?.shadowRoot?.querySelector('canvas');
+      const out = box.previousElementSibling as HTMLElement | null;
+      if (!canvas || !out) return;
+      const b = box.getBoundingClientRect();
+      const c = canvas.getBoundingClientRect();
+      const unused = Math.round(b.width - c.width);
+      out.textContent =
+        `box ${Math.round(b.width)}×${Math.round(b.height)} ` +
+        `(${(b.width / b.height).toFixed(2)}:1)` +
+        `   canvas ${Math.round(c.width)}×${Math.round(c.height)} ` +
+        `(${(c.width / c.height).toFixed(2)}:1)` +
+        `   unused width ${unused}px` +
+        (unused > 1 ? '   ← clamped' : '   ✓ fills');
+    });
+  };
+  paint();
+  clampProbes.add(window.setInterval(paint, 500));
+};
+
+/**
+ * **Bug — the chart canvas never grows past 2 × its own height.**
+ *
+ * Each dashed box below has a definite pixel size and the gauge is given the
+ * matching `width` / `height`. Up to a 2:1 box the canvas fills it exactly.
+ * Past 2:1 the canvas stops at `height × 2` and is centred by
+ * `chart-common.css .wrapper { justify-content: center; align-items: center }`,
+ * so the remainder shows up as symmetric empty margins. At 4:1 two thirds of
+ * the box is blank.
+ *
+ * The numbers above each box are measured live from the DOM.
+ *
+ * Why 2:1: `.wrapper` centres on the cross axis, so
+ * `.canvas-and-slots-container` is shrink-to-fit and `canvas { width: 100% }`
+ * has no definite basis to resolve against. Chart.js then falls back to its
+ * default `aspectRatio: 2` — `chart.aspectRatio === 2` on the clamped charts
+ * even though `chart-line-base` sets `maintainAspectRatio: false` and never
+ * sets `aspectRatio`. Below 2:1 the height constraint binds first, which is
+ * why the default portrait instruments never show it.
+ *
+ * Surfaced through `obc-automation-tank` in `graph` / `graph-and-bar` mode on a
+ * wide dashboard tile — the tank's chart cell inherits the gap. `bar` mode has
+ * no canvas and is unaffected.
+ */
+export const BugCanvasClampedToTwoToOne: Story = {
+  name: 'BUG: Canvas Never Exceeds 2 × Its Height',
+  args: {browserContainerWidth: 1700},
+  parameters: {controls: {disable: true}},
+  render: () => html`
+    <div
+      style="display: flex; flex-direction: column; gap: 16px; padding: 8px; overflow: auto;"
+      ${ref(measureClamp)}
+    >
+      ${CLAMP_CASES.map(
+        (size) => html`
+          <div>
+            <code
+              style="display: block; margin-bottom: 4px; font: 12px/1.6 monospace; color: var(--element-neutral-color);"
+              >measuring…</code
+            >
+            <div
+              data-clamp-box
+              style="
+                width: ${size.width}px;
+                height: ${size.height}px;
+                box-sizing: border-box;
+                outline: 1px dashed var(--border-divider-color);
+              "
+            >
+              <obc-gauge-trend
+                style="width: 100%; height: 100%;"
+                .data=${SAMPLE_DATA}
+                .width=${size.width}
+                .height=${size.height}
+                .minValue=${0}
+                .maxValue=${100}
+                .value=${40}
+                .hasBar=${true}
+                .hasScale=${false}
+                .hasLabelPadding=${false}
+                .chartFill=${true}
+              ></obc-gauge-trend>
+            </div>
+          </div>
+        `
+      )}
+    </div>
+  `,
+};
+
+// Portrait host, well under the 2:1 clamp, so zoom is the only variable.
+const ZOOM_CASES = [1, 0.8, 0.5, 1.25];
+
+const zoomProbes = new Set<number>();
+
+const measureZoom = (root?: Element) => {
+  if (!(root instanceof HTMLElement)) {
+    zoomProbes.forEach((id) => clearInterval(id));
+    zoomProbes.clear();
+    return;
+  }
+  const paint = () => {
+    root.querySelectorAll('[data-zoom-box]').forEach((node) => {
+      const box = node as HTMLElement;
+      const canvas = box
+        .querySelector('obc-gauge-trend')
+        ?.shadowRoot?.querySelector('canvas');
+      const out = box.previousElementSibling as HTMLElement | null;
+      if (!canvas || !out) return;
+      // Both rects are in the same (zoomed) space, so the ratio is honest.
+      const b = box.getBoundingClientRect();
+      const c = canvas.getBoundingClientRect();
+      const zoom = Number(box.dataset.zoomBox);
+      out.textContent =
+        `zoom ${zoom}` +
+        `   box ${Math.round(b.width)}×${Math.round(b.height)}` +
+        `   canvas ${Math.round(c.width)}×${Math.round(c.height)}` +
+        `   canvas/box ${(c.width / b.width).toFixed(2)}` +
+        `   (zoom² = ${(zoom * zoom).toFixed(2)})` +
+        (Math.abs(c.width / b.width - 1) < 0.01 ? '   ✓' : '   ←');
+    });
+  };
+  paint();
+  zoomProbes.add(window.setInterval(paint, 500));
+};
+
+/**
+ * **Bug — CSS `zoom` is applied twice to the chart canvas.**
+ *
+ * Each dashed box is 200×165 with a different `zoom`. The canvas comes out at
+ * `zoom²` of its box: 64% at `zoom: 0.8`, 25% at `zoom: 0.5`, and it overflows
+ * at `zoom: 1.25`. The host is portrait, far from the 2:1 clamp, so zoom is
+ * the only variable.
+ *
+ * Chart.js measures the container with `getBoundingClientRect()`, which is
+ * already zoom-scaled, then writes that number back as a CSS-pixel inline
+ * `style` on the canvas — which the browser then scales again. At `zoom: 0.8`
+ * the inline style reads `width: 128px` for a box whose CSS width is 200px.
+ *
+ * `zoom` is not exotic: a whole-application `html { zoom: … }` is a common way
+ * to fit a fixed layout to a display, and it silently shrinks every gauge on
+ * the page.
+ *
+ * The numbers above each box are measured live from the DOM.
+ */
+export const BugCssZoomAppliedTwice: Story = {
+  name: 'BUG: CSS Zoom Shrinks The Chart Canvas',
+  args: {browserContainerWidth: 900},
+  parameters: {controls: {disable: true}},
+  render: () => html`
+    <div
+      style="display: flex; flex-direction: column; gap: 16px; padding: 8px;"
+      ${ref(measureZoom)}
+    >
+      ${ZOOM_CASES.map(
+        (zoom) => html`
+          <div>
+            <code
+              style="display: block; margin-bottom: 4px; font: 12px/1.6 monospace; color: var(--element-neutral-color);"
+              >measuring…</code
+            >
+            <div
+              data-zoom-box=${zoom}
+              style="
+                zoom: ${zoom};
+                width: 200px;
+                height: 165px;
+                box-sizing: border-box;
+                outline: 1px dashed var(--border-divider-color);
+              "
+            >
+              <obc-gauge-trend
+                style="width: 100%; height: 100%;"
+                .data=${SAMPLE_DATA}
+                .width=${200}
+                .height=${165}
+                .minValue=${0}
+                .maxValue=${100}
+                .value=${40}
+                .hasBar=${true}
+                .hasScale=${false}
+                .hasLabelPadding=${false}
+                .chartFill=${true}
+              ></obc-gauge-trend>
+            </div>
+          </div>
+        `
+      )}
+    </div>
+  `,
 };

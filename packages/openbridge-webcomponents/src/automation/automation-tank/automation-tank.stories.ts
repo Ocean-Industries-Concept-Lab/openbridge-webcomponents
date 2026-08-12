@@ -1434,3 +1434,129 @@ export const BugHorizontalRinging: Story = {
       `
     ),
 };
+
+// Two independent ways the chart ends up smaller than the cell it was given:
+// a `zoom`ed ancestor (any tank size), and a chart cell wider than 2:1.
+// `zoom: 0.8` is what the Perspective workstation stylesheet sets globally.
+const CHART_FILL_CASES = [
+  {width: 256, height: 376, zoom: 1},
+  {width: 200, height: 352, zoom: 0.8},
+  {width: 200, height: 352, zoom: 0.5},
+  {width: 1600, height: 640, zoom: 1},
+  {width: 1600, height: 640, zoom: 0.8},
+];
+
+const chartFillProbes = new Set<number>();
+
+/** Live cell-vs-canvas readout, so the gap is a number rather than an impression. */
+const measureChartFill = (root?: Element): void => {
+  if (!(root instanceof HTMLElement)) {
+    chartFillProbes.forEach((id) => clearInterval(id));
+    chartFillProbes.clear();
+    return;
+  }
+  const paint = () => {
+    root.querySelectorAll('[data-fill-box]').forEach((node) => {
+      const shadow = node.querySelector('obc-automation-tank')?.shadowRoot;
+      const cell = shadow?.querySelector('.bar-container');
+      const canvas = shadow
+        ?.querySelector('obc-gauge-trend')
+        ?.shadowRoot?.querySelector('canvas');
+      const out = node.previousElementSibling as HTMLElement | null;
+      if (!cell || !canvas || !out) return;
+      // Both rects are in the same (zoomed) space, so the ratio is honest.
+      const b = cell.getBoundingClientRect();
+      const c = canvas.getBoundingClientRect();
+      const fill = (c.width * c.height) / (b.width * b.height);
+      out.textContent =
+        `zoom ${node.getAttribute('data-zoom')}` +
+        `   cell ${Math.round(b.width)}×${Math.round(b.height)} ` +
+        `(${(b.width / b.height).toFixed(2)}:1)` +
+        `   canvas ${Math.round(c.width)}×${Math.round(c.height)}` +
+        `   unused ${Math.round(b.width - c.width)}×${Math.round(b.height - c.height)}px` +
+        `   fills ${(fill * 100).toFixed(0)}% of the cell` +
+        (fill > 0.99 ? '   ✓' : '   ←');
+    });
+  };
+  paint();
+  chartFillProbes.add(window.setInterval(paint, 500));
+};
+
+/**
+ * **Bug — the chart canvas does not fill the chart cell.**
+ *
+ * Every box below has a definite pixel size and the tank fills its slot
+ * correctly; the chart inside the tank frame does not. Two independent causes,
+ * either of which is enough on its own:
+ *
+ * 1. **A `zoom`ed ancestor.** The canvas comes out at `zoom²` of the cell —
+ *    64% of the width and height at `zoom: 0.8`, i.e. 41% of the area — at any
+ *    tank size or aspect. Chart.js measures the container with
+ *    `getBoundingClientRect()`, which is already zoom-scaled, then writes that
+ *    number back as a CSS-pixel inline `style` on the canvas, so the browser
+ *    scales it a second time. At `zoom > 1` the canvas overflows instead.
+ * 2. **A chart cell wider than 2:1.** The canvas stops at `cell height × 2`.
+ *
+ * The rows are the two shapes seen in the field: a small portrait tank in a
+ * dashboard row under the workstation's global `zoom: 0.8`, and a single wide
+ * tank on a full-width page. The last row has both.
+ *
+ * The numbers above each box are measured live from the DOM. `bar` mode has no
+ * canvas and is unaffected; `graph` behaves the same as `graph-and-bar`.
+ *
+ * Both causes are isolated without any tank in
+ * `Instruments/Gauge Trend → BUG: CSS Zoom Shrinks The Chart Canvas` and
+ * `→ BUG: Canvas Never Exceeds 2 × Its Height`.
+ */
+export const BugChartCanvasDoesNotFillCell: Story = {
+  name: 'BUG: Chart Canvas Does Not Fill The Chart Cell',
+  args: {
+    type: TankType.generic,
+    chartMode: TankChartMode.graphAndBar,
+    positioning: TankPositioning.button,
+    showTrendSymbol: false,
+    percentFractionDigits: 1,
+  },
+  decorators: [],
+  parameters: {controls: {disable: true}},
+  render: (args) => html`
+    <div
+      style="position: static; display: flex; flex-direction: column; gap: 16px; padding: 8px; overflow: auto;"
+      ${ref(measureChartFill)}
+    >
+      ${CHART_FILL_CASES.map(
+        (size) => html`
+          <div>
+            <code
+              style="display: block; margin-bottom: 4px; font: 12px/1.6 monospace; color: var(--element-neutral-color);"
+              >measuring…</code
+            >
+            <div
+              data-fill-box
+              data-zoom=${size.zoom}
+              style="
+                zoom: ${size.zoom};
+                width: ${size.width}px;
+                height: ${size.height}px;
+                box-sizing: border-box;
+                outline: 1px dashed var(--border-divider-color);
+              "
+            >
+              <obc-automation-tank
+                .value=${args.value}
+                .max=${args.max}
+                .tag=${`${size.width}×${size.height} @ ${size.zoom}`}
+                .type=${args.type}
+                .positioning=${args.positioning}
+                .chartMode=${args.chartMode}
+                .chartData=${SAMPLE_DATA}
+                .showTrendSymbol=${args.showTrendSymbol}
+                .percentFractionDigits=${args.percentFractionDigits}
+              ></obc-automation-tank>
+            </div>
+          </div>
+        `
+      )}
+    </div>
+  `,
+};
