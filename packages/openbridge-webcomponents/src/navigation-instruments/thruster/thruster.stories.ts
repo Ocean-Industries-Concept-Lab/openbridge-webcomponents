@@ -88,6 +88,22 @@ export const PortStarboardTunnel: Story = {
   },
 };
 
+/**
+ * Tunnel thruster running to starboard with a setpoint left out of the element
+ * list: the dark value fill takes the starboard color while the setpoint marker
+ * keeps its priority color.
+ */
+export const PortStarboardTunnelWithSetpoint: Story = {
+  args: {
+    thrust: 60,
+    setpoint: 75,
+    tunnel: true,
+    priority: Priority.regular,
+    state: InstrumentState.active,
+    portStarboard: true,
+  },
+};
+
 export const SingleSided: Story = {
   args: {
     thrust: 50,
