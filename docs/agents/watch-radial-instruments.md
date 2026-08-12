@@ -639,6 +639,58 @@ All frame/viewBox geometry is centralized in `computeRadialFrame()`:
   `.container > * {position: absolute}` the host is blockified and the
   host observation works).
 
+### Host clipping & the arrow-apex shave (PR #1016)
+
+`obc-watch` (since #994) and `obc-compass-sector` (since #1016) set
+`:host { overflow: hidden }` because both rotate their `<svg>` **element box**
+(`transform="rotate(...)"` on the element, not an inner `<g>`): a rotated
+100%-sized box swings its corners outside the host and leaks visible arc
+pixels over neighboring UI in wide layouts. The clip is the fix; the sibling
+`svg { display: block }` rules (watch, watch-flat, thruster) fix a different
+issue — the inline-SVG line-box gap that added ~3–5px of phantom height below
+the graphic (mystery scrollbars in `overflow: auto` cells).
+
+The leak needs a **cropped** frame to show: a full-circle face in its
+origin-centred square viewBox is rotation-invariant, so nothing new is exposed
+when it turns — compass-sector leaks because its sector crop leaves painted
+arc in the corners of a wide, short box. Rotating an inner `<g>` instead of
+the element would keep the box axis-aligned and let the svg's own viewport
+clip contain everything by construction — but this was **measured and
+rejected** (issue #1129, 2026-08-11): an element-level `transform` update
+reuses the display list (only re-raster runs), while mutating a `<g>` inside
+dirties the SVG content and rebuilds it — ~3× the main-thread `Paint` time at
+10 Hz heading updates (raster cost equal, both 60 fps on desktop hardware).
+It is also only a drop-in where the viewBox is origin-centred: the element
+rotates about its **box centre**, an inner `<g>` about the **user-space
+origin** — on compass-sector's cropped frame the two differ and a naive swap
+visibly displaces the arc (11 of 12 baselines). And it buys no visual
+improvement — the apex shave below happens either way at the same box edge.
+
+**Known, deliberate trade-off:** in compass-sector's current framing the
+HDG/COG **arrow apexes extend 1–2px past the host's top edge**. Before #1016
+those pixels painted _outside_ the component (`overflow: visible` default) and
+the arrow looked complete; with the clip they are shaved flat at the box edge.
+This is imperceptible at normal viewing (an anti-aliased point) and was
+accepted because the same "allowed to escape" mechanism is what leaked whole
+arc chunks in wide containers.
+
+**TODO(designer):** if the shaved tips are ever unacceptable, the zero-cut fix
+is giving the frame headroom so the arrow tips fit _inside_ the box — do NOT
+simply remove the `overflow: hidden` (that re-opens the wide-layout leak).
+Cautions for whoever picks this up:
+
+- Headroom re-frames the arc: **all** compass-sector baselines move (the
+  shave-only change moved 8), and the readout `_readoutTopPercent` anchors
+  must be re-derived.
+- compass-sector is **not** on `computeRadialFrame()` (bespoke `PADDING = 72`
+  plus a per-FOV cached viewBox). Adding headroom by touching `PADDING` — or
+  by migrating it onto the helper — interacts with the #1021/#1049
+  label-reserve geometry: `basePadding` feeds the closed-form reserve, so
+  re-validate label padding at small sizes after any change.
+- The same decision applies family-wide: `obc-watch` has clipped since #994,
+  so any "tips must never be cut" ruling should audit watch-based instruments
+  (setpoint markers and arrows near the box edge), not just compass-sector.
+
 ### Radial label model (design language)
 
 Labels follow the design model with three placements:
@@ -713,3 +765,5 @@ verify that before retuning any of the constants.
 - [ ] Does it use absolute coordinates? → Use `translate(-256, -256)` pattern
 - [ ] Does it need to scale? → Use `calc(Xpx / var(--scale))` or `vector-effect="non-scaling-stroke"`
 - [ ] Is it a partial circle? → Use `clipTop`/`clipBottom` and adjust viewBox
+- [ ] Rotating an `<svg>` **element box** (`transform="rotate(...)"` on the element)? → The host must clip: `:host { overflow: hidden }` — see "Host clipping & the arrow-apex shave"
+- [ ] Rendering an in-flow `<svg>` (not absolutely positioned)? → Give it `display: block`, or the inline line-box adds ~3–5px of phantom height
