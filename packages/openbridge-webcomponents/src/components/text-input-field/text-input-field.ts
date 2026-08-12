@@ -246,7 +246,10 @@ export class ObcTextInputField extends LitElement {
     const hasHelperOrError =
       Boolean(this.helperText) || Boolean(this.error && this.errorText);
     const showClearButton =
-      this.hasClearButton && this.value.length > 0 && !this.disabled;
+      this.hasClearButton &&
+      this.value.length > 0 &&
+      !this.disabled &&
+      !this.readonly;
     const isPasswordField = this.type === HTMLInputTypeAttribute.Password;
     const showPasswordToggle = isPasswordField && !this.disabled;
     const isClearButtonVisible = showClearButton && !showPasswordToggle;
@@ -272,6 +275,7 @@ export class ObcTextInputField extends LitElement {
           [`size-${this.size}`]: true,
           error: this.error,
           disabled: this.disabled,
+          readonly: this.readonly,
           empty: this.isEmpty,
           helpertext: hasHelperOrError,
           haslabel: Boolean(this.label),
