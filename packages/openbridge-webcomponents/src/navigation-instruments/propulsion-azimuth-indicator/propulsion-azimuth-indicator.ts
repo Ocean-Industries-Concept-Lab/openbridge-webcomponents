@@ -10,7 +10,8 @@ import {
 import {
   PortStarboardElement,
   PortStarboardShade,
-  portStarboardSignOf,
+  PortStarboardSource,
+  portStarboardSourceSign,
   resolvePortStarboardColor,
 } from '../../svghelpers/port-starboard.js';
 import {InstrumentState} from '../types.js';
@@ -128,6 +129,18 @@ export class ObcPropulsionAzimuthIndicator extends LitElement {
    */
   @property({type: Boolean}) portStarboard = false;
 
+  /**
+   * Which quantity decides the side: the value alone (`value`, the default),
+   * the azimuth orientation alone (`orientation`), or the two combined into the
+   * direction actually being pushed (`resultant`). Mirrors the option on
+   * `obc-azimuth-thruster`.
+   *
+   * @availableWhen portStarboard==true
+   * @experimental
+   */
+  @property({type: String}) portStarboardSource: PortStarboardSource =
+    PortStarboardSource.value;
+
   static override styles = css`
     :host {
       display: block;
@@ -150,7 +163,11 @@ export class ObcPropulsionAzimuthIndicator extends LitElement {
       enabled: this.portStarboard,
       elements: undefined,
       element: PortStarboardElement.bar,
-      sign: portStarboardSignOf(this.value),
+      sign: portStarboardSourceSign(
+        this.portStarboardSource,
+        this.azimuth,
+        this.value
+      ),
       shade: PortStarboardShade.dark,
     });
     if (portStarboard) return portStarboard;
