@@ -34,6 +34,7 @@ import {customElement} from '../../decorator.js';
 import {
   hasPortStarboardElement,
   PORT_STARBOARD_DEFAULT_ELEMENTS,
+  PortStarboardSides,
   PortStarboardElement,
   PortStarboardShade,
   type PortStarboardSign,
@@ -136,6 +137,12 @@ export class ObcTopViewPropulsion extends LitElement {
   portStarboardElements: PortStarboardElement[] = [
     ...PORT_STARBOARD_DEFAULT_ELEMENTS,
   ];
+  /**
+   * Which halves the region tints paint while `portStarboard` is on.
+   * @availableWhen portStarboard==true
+   */
+  @property({type: String}) portStarboardSides: PortStarboardSides =
+    PortStarboardSides.both;
 
   @property({type: Number}) power = 0;
   @property({type: Number}) powerSetpoint: number | undefined;
@@ -238,6 +245,11 @@ export class ObcTopViewPropulsion extends LitElement {
     return this.portStarboardElements.filter(
       (element) => element !== PortStarboardElement.face
     );
+  }
+
+  /** Direction of this instrument's own value, for `portStarboardSides="active"`. */
+  private get portStarboardValueSign(): PortStarboardSign {
+    return portStarboardSignOf(this.primaryValue);
   }
 
   /** Setpoint-marker sign, gated on the `setpoint` element opt-in. */
@@ -552,6 +564,8 @@ export class ObcTopViewPropulsion extends LitElement {
           .tickmarkStyle=${this.tickmarkStyle}
           .portStarboard=${this.portStarboard}
           .portStarboardElements=${this.watchPortStarboardElements}
+          .portStarboardSides=${this.portStarboardSides}
+          .portStarboardValueSign=${this.portStarboardValueSign}
           .setpointPortStarboardSign=${this.setpointPortStarboardSign}
         ></obc-watch>
         <svg viewBox=${frame.viewBox} xmlns="http://www.w3.org/2000/svg">

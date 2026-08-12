@@ -20,6 +20,7 @@ import {customElement} from '../../decorator.js';
 import {
   hasPortStarboardElement,
   PORT_STARBOARD_DEFAULT_ELEMENTS,
+  PortStarboardSides,
   PortStarboardElement,
   PortStarboardShade,
   type PortStarboardSign,
@@ -155,6 +156,12 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
   portStarboardElements: PortStarboardElement[] = [
     ...PORT_STARBOARD_DEFAULT_ELEMENTS,
   ];
+  /**
+   * Which halves the region tints paint while `portStarboard` is on.
+   * @availableWhen portStarboard==true
+   */
+  @property({type: String}) portStarboardSides: PortStarboardSides =
+    PortStarboardSides.both;
 
   private _frame: RadialFrame | undefined;
 
@@ -163,6 +170,11 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
     return this.portStarboardElements.filter(
       (element) => element !== PortStarboardElement.face
     );
+  }
+
+  /** Direction of this instrument's own value, for `portStarboardSides="active"`. */
+  private get portStarboardValueSign(): PortStarboardSign {
+    return portStarboardSignOf(this.speed);
   }
 
   /** Setpoint-marker sign, gated on the `setpoint` element opt-in. */
@@ -278,6 +290,8 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
           .watchCircleType=${WatchCircleType.double}
           .portStarboard=${this.portStarboard}
           .portStarboardElements=${this.watchPortStarboardElements}
+          .portStarboardSides=${this.portStarboardSides}
+          .portStarboardValueSign=${this.portStarboardValueSign}
           .setpointPortStarboardSign=${this.setpointPortStarboardSign}
           .barAreas=${[
             {
