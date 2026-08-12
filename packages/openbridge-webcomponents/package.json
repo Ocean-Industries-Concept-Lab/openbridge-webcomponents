@@ -80,7 +80,7 @@
     "@oicl-lit/gen-wrapper-angular": "0.1.6",
     "@oicl-lit/gen-wrapper-react": "0.3.6",
     "@oicl-lit/gen-wrapper-svelte": "0.1.0",
-    "@oicl-lit/gen-wrapper-vue": "0.4.3",
+    "@oicl-lit/gen-wrapper-vue": "0.4.4",
     "@open-wc/lit-helpers": "^0.7.0",
     "@playwright/test": "1.60.0",
     "@semantic-release/changelog": "^6.0.3",
