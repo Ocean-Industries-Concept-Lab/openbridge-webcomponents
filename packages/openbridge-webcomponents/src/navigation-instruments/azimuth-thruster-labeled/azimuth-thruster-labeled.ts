@@ -16,6 +16,7 @@ import {TickmarkStyle} from '../watch/tickmark.js';
 import {customElement} from '../../decorator.js';
 import {
   PORT_STARBOARD_DEFAULT_ELEMENTS,
+  PortStarboardSource,
   PortStarboardElement,
 } from '../../svghelpers/port-starboard.js';
 
@@ -90,6 +91,16 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
   portStarboardElements: PortStarboardElement[] = [
     ...PORT_STARBOARD_DEFAULT_ELEMENTS,
   ];
+  /**
+   * Which quantity decides the side on the embedded azimuth thruster: the
+   * thrust alone (`value`, the default), the pod orientation alone
+   * (`orientation`), or the two combined (`resultant`).
+   *
+   * @availableWhen portStarboard==true
+   * @experimental
+   */
+  @property({type: String}) portStarboardSource: PortStarboardSource =
+    PortStarboardSource.value;
 
   override render() {
     let state: InstrumentState = InstrumentState.active;
@@ -202,6 +213,7 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
           .bottomPropeller=${this.bottomPropeller}
           .portStarboard=${this.portStarboard}
           .portStarboardElements=${this.portStarboardElements}
+          .portStarboardSource=${this.portStarboardSource}
         ></obc-azimuth-thruster>
       </div>
     `;

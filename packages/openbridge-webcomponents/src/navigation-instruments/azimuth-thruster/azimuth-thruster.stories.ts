@@ -17,6 +17,7 @@ import {
   PORT_STARBOARD_DEFAULT_ELEMENTS,
   PortStarboardElement,
   PortStarboardSides,
+  PortStarboardSource,
 } from '../../svghelpers/port-starboard.js';
 
 const meta: Meta<typeof ObcAzimuthThruster> = {
@@ -66,6 +67,29 @@ const meta: Meta<typeof ObcAzimuthThruster> = {
     },
     touching: {control: 'boolean'},
     priority: {control: 'select', options: Object.values(Priority)},
+    portStarboard: {
+      control: 'boolean',
+      description:
+        'Master switch for the maritime PORT/STBD (red/green) color mode.',
+    },
+    portStarboardSource: {
+      control: 'select',
+      options: Object.values(PortStarboardSource),
+      description:
+        'Which quantity decides the side: `value` = thrust alone (green ahead, red astern), `orientation` = pod angle alone, `resultant` = the side actually being pushed. Try it with the pod at 90° and negative thrust — that is where the three differ.',
+    },
+    portStarboardSides: {
+      control: 'select',
+      options: Object.values(PortStarboardSides),
+      description:
+        'Which halves the region tints (face and bands) paint. `active` paints only the half matching the direction.',
+    },
+    portStarboardElements: {
+      control: 'check',
+      options: Object.values(PortStarboardElement),
+      description:
+        'Which parts take part. `face` tints the centre; `outerBand` / `middleBand` / `innerBand` tint the scale bands. Defaults to everything except the setpoint and the bands.',
+    },
   },
   args: {
     width: 512,
@@ -208,6 +232,91 @@ export const PortStarboardOuterBandNeutral: Story = {
     state: InstrumentState.active,
     portStarboard: true,
     portStarboardElements: [PortStarboardElement.outerBand],
+  },
+};
+
+/**
+ * `portStarboardSource` picks which quantity decides the side. All three
+ * stories below share the same state — the pod aimed 90° to **starboard** while
+ * running **astern** — because that is the case where the three answers differ.
+ *
+ * `value` (the default) reads the thrust alone, so astern renders red even
+ * though the pod points to starboard.
+ */
+export const PortStarboardSourceValue: Story = {
+  args: {
+    angle: 90,
+    thrust: -60,
+    priority: Priority.enhanced,
+    state: InstrumentState.active,
+    portStarboard: true,
+    portStarboardSource: PortStarboardSource.value,
+  },
+};
+
+/**
+ * `orientation` reads the pod angle alone, ignoring whether the thrust is ahead
+ * or astern: aimed to starboard, so green.
+ */
+export const PortStarboardSourceOrientation: Story = {
+  args: {
+    angle: 90,
+    thrust: -60,
+    priority: Priority.enhanced,
+    state: InstrumentState.active,
+    portStarboard: true,
+    portStarboardSource: PortStarboardSource.orientation,
+  },
+};
+
+/**
+ * `resultant` combines the two into the side actually being pushed. A pod aimed
+ * to starboard running astern pushes to **port**, so it reads red — the same
+ * color as `value` here, but for a different and physically correct reason.
+ * Swing the pod to 270° and it turns green.
+ */
+export const PortStarboardSourceResultant: Story = {
+  args: {
+    angle: 90,
+    thrust: -60,
+    priority: Priority.enhanced,
+    state: InstrumentState.active,
+    portStarboard: true,
+    portStarboardSource: PortStarboardSource.resultant,
+  },
+};
+
+/**
+ * Everything in the PORT/STBD mode, toggleable from the Controls panel — start
+ * here to explore the concept.
+ *
+ * It opens on the case that separates the three `portStarboardSource` answers:
+ * the pod aimed **90° to starboard** while running **astern**.
+ *
+ * - `portStarboardSource` — `value` reads the thrust alone (red, astern),
+ *   `orientation` the pod angle alone (green, aimed starboard), `resultant` the
+ *   side actually being pushed (red — aimed starboard but pushing port). Swing
+ *   `angle` to 270 and `resultant` turns green while `orientation` turns red.
+ * - `portStarboardElements` — tick `face` for the centre tint, or
+ *   `outerBand` / `middleBand` / `innerBand` for the track tints. `setpoint` is
+ *   off by default.
+ * - `portStarboardSides` — `both`, one side only, or `active` for just the half
+ *   matching the direction.
+ */
+export const PortStarboardPlayground: Story = {
+  name: 'PORT/STBD Playground (Manual)',
+  tags: ['skip-test'],
+  args: {
+    angle: 90,
+    thrust: -60,
+    angleSetpoint: 90,
+    thrustSetpoint: -60,
+    priority: Priority.enhanced,
+    state: InstrumentState.active,
+    portStarboard: true,
+    portStarboardSource: PortStarboardSource.value,
+    portStarboardSides: PortStarboardSides.both,
+    portStarboardElements: [...PORT_STARBOARD_DEFAULT_ELEMENTS],
   },
 };
 

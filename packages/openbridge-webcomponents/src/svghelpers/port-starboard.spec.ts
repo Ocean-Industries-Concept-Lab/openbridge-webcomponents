@@ -10,6 +10,9 @@ import {
   resolvePortStarboardColor,
   PortStarboardSides,
   portStarboardTintedSides,
+  portStarboardOrientationSign,
+  portStarboardSourceSign,
+  PortStarboardSource,
 } from './port-starboard.js';
 
 describe('portStarboardSignOf', () => {
@@ -186,5 +189,79 @@ describe('portStarboardTintedSides', () => {
       starboard: true,
       port: true,
     });
+  });
+});
+
+describe('portStarboardOrientationSign', () => {
+  it('splits the dial at fore and aft', () => {
+    expect(portStarboardOrientationSign(90)).toBe(1);
+    expect(portStarboardOrientationSign(270)).toBe(-1);
+    expect(portStarboardOrientationSign(0)).toBe(0);
+    expect(portStarboardOrientationSign(180)).toBe(0);
+  });
+
+  it('normalizes angles outside 0-360', () => {
+    expect(portStarboardOrientationSign(-90)).toBe(-1);
+    expect(portStarboardOrientationSign(450)).toBe(1);
+    expect(portStarboardOrientationSign(-270)).toBe(1);
+  });
+
+  it('treats missing and non-finite angles as neutral', () => {
+    expect(portStarboardOrientationSign(undefined)).toBe(0);
+    expect(portStarboardOrientationSign(null)).toBe(0);
+    expect(portStarboardOrientationSign(NaN)).toBe(0);
+  });
+});
+
+describe('portStarboardSourceSign', () => {
+  it('reads the magnitude alone for the value source', () => {
+    expect(portStarboardSourceSign(PortStarboardSource.value, 270, 50)).toBe(1);
+    expect(portStarboardSourceSign(PortStarboardSource.value, 90, -50)).toBe(
+      -1
+    );
+    expect(portStarboardSourceSign(PortStarboardSource.value, 90, 0)).toBe(0);
+  });
+
+  it('reads the orientation alone for the orientation source', () => {
+    expect(
+      portStarboardSourceSign(PortStarboardSource.orientation, 90, -50)
+    ).toBe(1);
+    expect(
+      portStarboardSourceSign(PortStarboardSource.orientation, 270, 50)
+    ).toBe(-1);
+    // Still starboard with no thrust at all: the pod is aimed that way.
+    expect(
+      portStarboardSourceSign(PortStarboardSource.orientation, 90, 0)
+    ).toBe(1);
+  });
+
+  it('flips the orientation when the magnitude is astern for the resultant source', () => {
+    // Aimed to starboard, pushing ahead -> pushes to starboard.
+    expect(portStarboardSourceSign(PortStarboardSource.resultant, 90, 50)).toBe(
+      1
+    );
+    // Aimed to starboard, pushing astern -> actually pushes to port.
+    expect(
+      portStarboardSourceSign(PortStarboardSource.resultant, 90, -50)
+    ).toBe(-1);
+    // Aimed to port, pushing astern -> actually pushes to starboard.
+    expect(
+      portStarboardSourceSign(PortStarboardSource.resultant, 270, -50)
+    ).toBe(1);
+  });
+
+  it('is neutral with no magnitude for the resultant source', () => {
+    expect(portStarboardSourceSign(PortStarboardSource.resultant, 90, 0)).toBe(
+      0
+    );
+  });
+
+  it('is neutral dead fore and aft for the resultant source', () => {
+    expect(portStarboardSourceSign(PortStarboardSource.resultant, 0, 50)).toBe(
+      0
+    );
+    expect(
+      portStarboardSourceSign(PortStarboardSource.resultant, 180, 50)
+    ).toBe(0);
   });
 });

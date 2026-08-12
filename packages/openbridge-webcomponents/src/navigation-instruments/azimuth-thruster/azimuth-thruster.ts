@@ -27,6 +27,8 @@ import {
   PortStarboardElement,
   type PortStarboardSign,
   portStarboardSignOf,
+  PortStarboardSource,
+  portStarboardSourceSign,
 } from '../../svghelpers/port-starboard.js';
 
 function mapAngle0to360(angle: number): number {
@@ -167,6 +169,16 @@ export class ObcAzimuthThruster extends LitElement {
     ...PORT_STARBOARD_DEFAULT_ELEMENTS,
   ];
   /**
+   * Which quantity decides the side: the thrust alone (`value`, the default —
+   * green ahead, red astern), the pod orientation alone (`orientation`), or the
+   * two combined into the direction actually being pushed (`resultant`).
+   *
+   * @availableWhen portStarboard==true
+   * @experimental
+   */
+  @property({type: String}) portStarboardSource: PortStarboardSource =
+    PortStarboardSource.value;
+  /**
    * Which halves the region tints paint while `portStarboard` is on.
    * @availableWhen portStarboard==true
    */
@@ -242,9 +254,19 @@ export class ObcAzimuthThruster extends LitElement {
     return angle < 180 ? 1 : -1;
   }
 
-  /** Direction of this instrument's own value, for `portStarboardSides="active"`. */
+  /**
+   * The side this instrument reads as, per {@link portStarboardSource}. Drives
+   * the thrust bar and, through `portStarboardSides="active"`, the face and
+   * band tints. The setpoint markers keep deriving from their own quantity —
+   * the angle setpoint from where it sits on the dial, the thrust setpoint from
+   * its own sign.
+   */
   private get portStarboardValueSign(): PortStarboardSign {
-    return portStarboardSignOf(this.thrust);
+    return portStarboardSourceSign(
+      this.portStarboardSource,
+      this.angle,
+      this.thrust
+    );
   }
 
   /** Thrust-setpoint sign, gated on the `setpoint` element opt-in. */
@@ -404,7 +426,7 @@ export class ObcAzimuthThruster extends LitElement {
                 portStarboard: {
                   enabled: this.portStarboard,
                   elements: this.portStarboardElements,
-                  sign: portStarboardSignOf(this.thrust),
+                  sign: this.portStarboardValueSign,
                 },
                 portStarboardSetpointSign: this.thrustSetpointPortStarboardSign,
               }
