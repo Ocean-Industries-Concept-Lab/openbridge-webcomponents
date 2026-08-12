@@ -16,7 +16,7 @@ const sineData: [number[], number[]] = [
 
 const meta: Meta<typeof ObcTransmitter> = {
   title: 'Automation/Transmitter/Transmitter',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'experimental'],
   component: 'obc-transmitter',
   decorators: [crossDecorator],
   args: {

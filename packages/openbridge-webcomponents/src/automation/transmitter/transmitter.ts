@@ -62,7 +62,7 @@ export enum TransmitterType {
  *
  * @slot icon - Leading icon in the value chip.
  *
- * @Experimental
+ * @experimental
  */
 @customElement('obc-transmitter')
 export class ObcTransmitter extends LitElement {

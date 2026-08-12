@@ -10,7 +10,7 @@ import '../../icons/icon-temperature-air.js';
 
 const meta: Meta<typeof ObcTransmitterButton> = {
   title: 'Automation/Transmitter/Transmitter Button',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'experimental'],
   component: 'obc-transmitter-button',
   args: {
     variant: TransmitterButtonVariant.value,
