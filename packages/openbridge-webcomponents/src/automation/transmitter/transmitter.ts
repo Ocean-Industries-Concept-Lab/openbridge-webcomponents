@@ -61,6 +61,8 @@ export enum TransmitterType {
  * | icon      | value/graph + `hasIcon` | Leading icon in the value chip. |
  *
  * @slot icon - Leading icon in the value chip.
+ *
+ * @Experimental
  */
 @customElement('obc-transmitter')
 export class ObcTransmitter extends LitElement {

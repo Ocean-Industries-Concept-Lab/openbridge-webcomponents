@@ -66,6 +66,8 @@ const readoutSizeBySize: Record<TransmitterButtonSize, TransmitterReadoutSize> =
  * | icon      | `value` variant and `hasIcon` | Leading icon beside the value. |
  *
  * @slot icon - Leading icon beside the value.
+ *
+ * @Experimental
  */
 @customElement('obc-transmitter-button')
 export class ObcTransmitterButton extends LitElement {
