@@ -105,6 +105,82 @@ export function portStarboardTintedSides(
   }
 }
 
+/**
+ * Which quantity decides the side, for instruments that have both a magnitude
+ * and an orientation (an azimuth thruster's thrust and pod angle, say).
+ *
+ * The three answers correspond to the open design question of whether the color
+ * should express fore/aft, port/starboard, or both at once.
+ *
+ * @experimental Concept-stage, and the reason this is a separate axis from
+ * {@link PortStarboardSides}: which quantity is read, versus which halves paint.
+ */
+export enum PortStarboardSource {
+  /**
+   * Sign of the magnitude alone — green ahead, red astern. The orientation is
+   * ignored. This is the default and the original behavior.
+   */
+  value = 'value',
+  /**
+   * Which half of the dial the orientation points at, regardless of whether the
+   * magnitude is positive or negative.
+   */
+  orientation = 'orientation',
+  /**
+   * Orientation combined with the magnitude's sign: the side the instrument is
+   * actually pushing towards. A pod aimed to starboard running astern pushes to
+   * port, so it reads red. Neutral at zero magnitude, since nothing is pushed.
+   */
+  resultant = 'resultant',
+}
+
+/** Normalize any angle into `[0, 360)`. */
+function normalizeAngle(angle: number): number {
+  const a = angle % 360;
+  return a < 0 ? a + 360 : a;
+}
+
+/**
+ * Side of the dial an orientation points at: starboard on `(0°, 180°)`, port on
+ * `(180°, 360°)`, neutral exactly fore or aft.
+ */
+export function portStarboardOrientationSign(
+  angle: number | undefined | null
+): PortStarboardSign {
+  if (angle === undefined || angle === null || !Number.isFinite(angle)) {
+    return 0;
+  }
+  const a = normalizeAngle(angle);
+  if (a === 0 || a === 180) return 0;
+  return a < 180 ? 1 : -1;
+}
+
+/**
+ * Resolve the side for a {@link PortStarboardSource}. `angle` is the
+ * orientation in degrees (0 = fore) and `value` the signed magnitude.
+ */
+export function portStarboardSourceSign(
+  source: PortStarboardSource,
+  angle: number | undefined | null,
+  value: number | undefined | null
+): PortStarboardSign {
+  switch (source) {
+    case PortStarboardSource.orientation:
+      return portStarboardOrientationSign(angle);
+    case PortStarboardSource.resultant: {
+      const magnitude = portStarboardSignOf(value);
+      if (magnitude === 0) return 0;
+      const effective =
+        angle === undefined || angle === null || !Number.isFinite(angle)
+          ? 0
+          : angle + (magnitude < 0 ? 180 : 0);
+      return portStarboardOrientationSign(effective);
+    }
+    default:
+      return portStarboardSignOf(value);
+  }
+}
+
 /** Which token pair applies, per the shade rule in the module docs. */
 export enum PortStarboardShade {
   /** Light band/track fills — maps to the `-secondary-color` tokens. */
