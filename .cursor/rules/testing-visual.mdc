@@ -91,6 +91,26 @@ npm run test:visual           # ALWAYS re-run to confirm stability
 - Baselines live in `e2e/visual/__screenshots__/<platform>/` and are
   environment-sensitive in the same way as the core suite.
 
+## Live harness stories (not snapshots)
+
+Some behaviour cannot be pinned by a snapshot because it only appears at a
+container shape, a zoom level or a resize sequence that no single story
+captures. For those there are **live harness stories**: they measure the DOM on
+an interval and print their own PASS/FAIL, and they carry `skip-test` so they
+add no baselines and never run in CI.
+
+- **Building Blocks → Chart Sizing Battleground** — every chart subject
+  (`gauge-trend` in five configurations, line/area graph, `automation-tank` in
+  its chart modes, the bar and gauge building blocks) across nine container
+  shapes, six zoom levels, and a resize sweep that counts distinct rendered
+  sizes per step to catch a layout that rings instead of settling. Check it
+  after any change to chart sizing or `chart-common.css`; see
+  `line-area-charts.md` for the invariants it guards.
+
+When adding one, keep the interval probes per-story and clear them before
+starting new ones — a rerender otherwise leaves two probe loops running and the
+readouts fight each other.
+
 ## Stuck browsers
 
 Spawned Chromium processes sometimes hang and stall a run. Kill the strays and
