@@ -182,6 +182,16 @@ const LINE_GRAPH_RECREATE_PROP_NAMES = [
 ] as const;
 
 /**
+ * Properties that define the chart's reference size, and therefore invalidate
+ * the derived `computedWidth` / `computedHeight` pair.
+ */
+const LINE_GRAPH_DIMENSION_PROP_NAMES = [
+  'width',
+  'height',
+  'fixedAspectRatioScaling',
+] as const;
+
+/**
  * Abstract base class for line and area chart components built on Chart.js.
  *
  * ## Features
@@ -1678,6 +1688,17 @@ export class ObcChartLineBase extends LitElement {
       return;
     }
 
+    // `computedWidth` / `computedHeight` are the pixel size everything below
+    // derives from (`--chart-height`, the slotted scales' height, the padding
+    // scale factor). They were only ever refreshed from the wrapper's
+    // ResizeObserver, so re-assigning `width` / `height` rebuilt the chart
+    // against the *previous* aspect ratio and the new one only took effect on
+    // the next container resize (issue #1138).
+    if (this.hasAnyChanged(changed, LINE_GRAPH_DIMENSION_PROP_NAMES)) {
+      // Recreates the chart itself when the derived size actually moved.
+      if (this.updateComputedDimensions()) return;
+    }
+
     const needsRecreation = this.hasAnyChanged(
       changed,
       LINE_GRAPH_RECREATE_PROP_NAMES
@@ -1791,22 +1812,25 @@ export class ObcChartLineBase extends LitElement {
   /**
    * Calculate actual dimensions based on parent width and aspect ratio.
    * Only used when fixedAspectRatioScaling is true.
+   *
+   * @returns `true` when the change was significant enough that the chart was
+   * rebuilt here, so the caller must not rebuild it a second time.
    */
-  private updateComputedDimensions() {
+  private updateComputedDimensions(): boolean {
     if (!this.fixedAspectRatioScaling) {
       // In pixel mode, use width/height directly
       this.computedWidth = this.width;
       this.computedHeight = this.height;
-      return;
+      return false;
     }
 
     // Get the wrapper element
     const wrapper = this.renderRoot.querySelector('.wrapper') as HTMLElement;
-    if (!wrapper) return;
+    if (!wrapper) return false;
 
     // Get parent's available width
     const parentWidth = wrapper.clientWidth;
-    if (parentWidth <= 0) return;
+    if (parentWidth <= 0) return false;
 
     // Calculate aspect ratio from width/height properties
     const aspectRatio = this.width / this.height;
@@ -1837,12 +1861,15 @@ export class ObcChartLineBase extends LitElement {
       // so we only call createChart() directly when there are no external scales.
       if (this.hasExternalScales()) {
         this.syncScalesAndChart();
+        return true;
       } else if (this.chart) {
         // No external scales - just recreate chart
         this.chart.destroy();
         this.createChart();
+        return true;
       }
     }
+    return false;
   }
 
   /**
