@@ -335,11 +335,12 @@ function feedCellSize(cell: HTMLElement, subject: Element) {
 function createMeasure(): (root?: Element) => void {
   let probe: number | undefined;
   return (root?: Element) => {
-    if (!(root instanceof HTMLElement)) {
-      if (probe !== undefined) clearInterval(probe);
-      probe = undefined;
-      return;
-    }
+    // Cleared unconditionally, not only on unmount: a re-invocation with a
+    // mounted root (a rerender, or HMR) would otherwise leave the previous
+    // interval running forever alongside the new one.
+    if (probe !== undefined) clearInterval(probe);
+    probe = undefined;
+    if (!(root instanceof HTMLElement)) return;
 
     const paint = () => {
       let pass = 0;
@@ -567,11 +568,11 @@ export const ResizeStress: Story = {
     let timer: number | undefined;
     const drive = (root?: Element) => {
       createdMeasure(root);
-      if (!(root instanceof HTMLElement)) {
-        if (timer !== undefined) clearInterval(timer);
-        timer = undefined;
-        return;
-      }
+      // Same reasoning as createMeasure(): clear before starting, so a
+      // rerender cannot leave two sweeps fighting over the same cells.
+      if (timer !== undefined) clearInterval(timer);
+      timer = undefined;
+      if (!(root instanceof HTMLElement)) return;
       const steps = [
         [300, 200],
         [300, 340],

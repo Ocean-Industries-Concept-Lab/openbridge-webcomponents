@@ -1678,6 +1678,24 @@ export class ObcChartLineBase extends LitElement {
       return;
     }
 
+    // `computedWidth` / `computedHeight` are the pixel size everything below
+    // derives from (`--chart-height`, the slotted scales' height, the padding
+    // scale factor). They were only ever refreshed from the wrapper's
+    // ResizeObserver, so re-assigning `width` / `height` rebuilt the chart
+    // against the *previous* aspect ratio and the new one only took effect on
+    // the next container resize (issue #1138).
+    //
+    // This runs before the `hasLabelPadding` branch below: the two can change
+    // in the same update (the tank sets both on its embedded gauge-trend), and
+    // taking the label-padding path first would rebuild against a stale
+    // derived size. Nothing is lost by going through here instead — a rebuild
+    // from `updateComputedDimensions()` goes via `syncScalesAndChart()`, which
+    // performs the same `updateScaleProperties()` cascade.
+    if (this.hasAnyChanged(changed, LINE_GRAPH_DIMENSION_PROP_NAMES)) {
+      // Recreates the chart itself when the derived size actually moved.
+      if (this.updateComputedDimensions()) return;
+    }
+
     // `hasLabelPadding` cascades into slotted scales via `updateScaleProperties()`
     // (toggles `showLabels`, which collapses/expands the bar's label band and
     // changes its reported thickness). That path only runs through
@@ -1687,17 +1705,6 @@ export class ObcChartLineBase extends LitElement {
     if (changed.has('hasLabelPadding') && this.hasExternalScales()) {
       this.syncScalesAndChart();
       return;
-    }
-
-    // `computedWidth` / `computedHeight` are the pixel size everything below
-    // derives from (`--chart-height`, the slotted scales' height, the padding
-    // scale factor). They were only ever refreshed from the wrapper's
-    // ResizeObserver, so re-assigning `width` / `height` rebuilt the chart
-    // against the *previous* aspect ratio and the new one only took effect on
-    // the next container resize (issue #1138).
-    if (this.hasAnyChanged(changed, LINE_GRAPH_DIMENSION_PROP_NAMES)) {
-      // Recreates the chart itself when the derived size actually moved.
-      if (this.updateComputedDimensions()) return;
     }
 
     const needsRecreation = this.hasAnyChanged(
@@ -1811,8 +1818,13 @@ export class ObcChartLineBase extends LitElement {
   }
 
   /**
-   * Calculate actual dimensions based on parent width and aspect ratio.
-   * Only used when fixedAspectRatioScaling is true.
+   * Refresh `computedWidth` / `computedHeight`, the derived pixel size the
+   * chart and its slotted scales are laid out from.
+   *
+   * In pixel mode they simply mirror `width` / `height`. Only in
+   * `fixedAspectRatioScaling` mode are they derived — from the wrapper's
+   * measured width and the aspect ratio the `width` / `height` pair defines —
+   * and only then can this rebuild the chart.
    *
    * @returns `true` when the change was significant enough that the chart was
    * rebuilt here, so the caller must not rebuild it a second time.
