@@ -204,6 +204,9 @@ export class ObcNumberInputField extends LitElement {
 
   private onFocus() {
     this.hasFocus = true;
+    // A read-only field has nothing to edit, so it keeps its formatted display
+    // instead of switching to the ungrouped editing representation.
+    if (this.readonly) return;
     const source = this.displayOverride || this.displayText;
     this.displayText = removeGroupingFromDisplay(
       source,
@@ -214,6 +217,7 @@ export class ObcNumberInputField extends LitElement {
 
   private onBlur() {
     this.hasFocus = false;
+    if (this.readonly) return;
     this.commitDisplay();
     if (!valuesEqual(this.value, this.lastCommittedValue)) {
       this.lastCommittedValue = this.value;
@@ -443,6 +447,7 @@ export class ObcNumberInputField extends LitElement {
           [`size-${this.size}`]: true,
           error: this.error,
           disabled: this.disabled,
+          readonly: this.readonly,
           empty: this.isEmpty,
           helpertext: hasHelperOrError,
           haslabel: Boolean(this.label),
