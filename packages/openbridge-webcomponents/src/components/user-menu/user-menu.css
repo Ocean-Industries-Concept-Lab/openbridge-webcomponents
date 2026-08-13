@@ -48,8 +48,8 @@
     padding: var(--app-components-user-menu-padding-vertical)
       calc(var(--app-components-user-menu-padding-horizontal) * 2) 0
       calc(var(--app-components-user-menu-padding-horizontal) * 2);
-    
-      &.signin-only {
+
+    &.signin-only {
       padding-bottom: var(--app-components-user-menu-padding-vertical);
     }
   }

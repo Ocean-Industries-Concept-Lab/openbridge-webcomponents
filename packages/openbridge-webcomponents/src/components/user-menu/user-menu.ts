@@ -389,21 +389,30 @@ export class ObcUserMenu extends LitElement {
       <div class="title-container">
         <h3 class="title">${msg('Sign in')}</h3>
       </div>
-      <div class=${classMap({ 'login-container': true, 'signin-only': !this.hasRecentlySignedIn })}>
-        ${this.showUsername ? this.renderTextInput(
-          msg('Username'),
-          HTMLInputTypeAttribute.Text,
-          this.username,
-          this.handleUsernameInput.bind(this),
-          this.usernameError
-        ) : nothing}
-        ${this.showPassword ? this.renderTextInput(
-          msg('Password'),
-          HTMLInputTypeAttribute.Password,
-          this.password,
-          this.handlePasswordInput.bind(this),
-          this.passwordError
-        ) : nothing}
+      <div
+        class=${classMap({
+          'login-container': true,
+          'signin-only': !this.hasRecentlySignedIn,
+        })}
+      >
+        ${this.showUsername
+          ? this.renderTextInput(
+              msg('Username'),
+              HTMLInputTypeAttribute.Text,
+              this.username,
+              this.handleUsernameInput.bind(this),
+              this.usernameError
+            )
+          : nothing}
+        ${this.showPassword
+          ? this.renderTextInput(
+              msg('Password'),
+              HTMLInputTypeAttribute.Password,
+              this.password,
+              this.handlePasswordInput.bind(this),
+              this.passwordError
+            )
+          : nothing}
         <obc-button
           variant=${ButtonVariant.raised}
           fullWidth
@@ -432,21 +441,30 @@ export class ObcUserMenu extends LitElement {
       <div class="title-container">
         <h3 class="title">${msg('Sign in')}</h3>
       </div>
-      <div class=${classMap({ 'login-container': true, 'signin-only': !this.hasRecentlySignedIn })}>
-        ${this.showUsername ? this.renderTextInput(
-          msg('Username'),
-          HTMLInputTypeAttribute.Text,
-          this.username,
-          this.handleUsernameInput.bind(this),
-          this.usernameError
-        ) : nothing}
-        ${this.showPassword ? this.renderTextInput(
-          msg('Password'),
-          HTMLInputTypeAttribute.Password,
-          this.password,
-          this.handlePasswordInput.bind(this),
-          this.passwordError
-        ) : nothing}
+      <div
+        class=${classMap({
+          'login-container': true,
+          'signin-only': !this.hasRecentlySignedIn,
+        })}
+      >
+        ${this.showUsername
+          ? this.renderTextInput(
+              msg('Username'),
+              HTMLInputTypeAttribute.Text,
+              this.username,
+              this.handleUsernameInput.bind(this),
+              this.usernameError
+            )
+          : nothing}
+        ${this.showPassword
+          ? this.renderTextInput(
+              msg('Password'),
+              HTMLInputTypeAttribute.Password,
+              this.password,
+              this.handlePasswordInput.bind(this),
+              this.passwordError
+            )
+          : nothing}
         <obc-button
           variant=${ButtonVariant.raised}
           fullWidth
@@ -476,7 +494,12 @@ export class ObcUserMenu extends LitElement {
       <div class="title-container">
         <h3 class="title">${msg('Sign in')}</h3>
       </div>
-      <div class=${classMap({ 'login-container': true, 'signin-only': !this.hasRecentlySignedIn })}>
+      <div
+        class=${classMap({
+          'login-container': true,
+          'signin-only': !this.hasRecentlySignedIn,
+        })}
+      >
         <div class="user-primary">
           ${this.renderUserProfile('vertical', 'large')}
         </div>
@@ -520,14 +543,21 @@ export class ObcUserMenu extends LitElement {
       <div class="user-container">
         ${this.renderUserProfile('horizontal', 'regular')}
       </div>
-      <div class=${classMap({ 'login-container': true, 'signin-only': !this.hasRecentlySignedIn })}>
-        ${this.showUsername ? this.renderTextInput(
-          msg('Password'),
-          HTMLInputTypeAttribute.Password,
-          this.password,
-          this.handlePasswordInput.bind(this),
-          this.passwordError
-        ): nothing}
+      <div
+        class=${classMap({
+          'login-container': true,
+          'signin-only': !this.hasRecentlySignedIn,
+        })}
+      >
+        ${this.showUsername
+          ? this.renderTextInput(
+              msg('Password'),
+              HTMLInputTypeAttribute.Password,
+              this.password,
+              this.handlePasswordInput.bind(this),
+              this.passwordError
+            )
+          : nothing}
         <obc-button
           variant=${ButtonVariant.raised}
           fullWidth
