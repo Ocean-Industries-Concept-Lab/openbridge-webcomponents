@@ -327,7 +327,9 @@ export class ObcGaugeVertical extends SetpointMixin(LitElement, {
         height=${this.fixedAspectRatio ? '100%' : `${this.height}px`}
         viewBox="${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}"
         preserveAspectRatio="${preserveAspectRatio}"
-        style="--scale: ${this.fixedAspectRatio ? this._scale : 1};"
+        style="--scale: ${this.fixedAspectRatio
+          ? this._scale
+          : 1}; display: block;"
         part="svg"
       >
         ${parts.barContainer} ${parts.barFill} ${parts.scaleBackground}
