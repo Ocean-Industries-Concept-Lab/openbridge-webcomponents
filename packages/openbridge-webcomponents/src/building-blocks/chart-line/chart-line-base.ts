@@ -1274,8 +1274,8 @@ export class ObcChartLineBase extends LitElement {
    * Synchronize scale and chart dimensions/data
    * This is the main coordination function
    */
-  private syncScalesAndChart() {
-    if (this.isUpdatingScales) return;
+  private syncScalesAndChart(): boolean {
+    if (this.isUpdatingScales) return false;
     this.isUpdatingScales = true;
 
     // console.debug(`[chart-line-base] Syncing scales and chart`, {
@@ -1308,7 +1308,7 @@ export class ObcChartLineBase extends LitElement {
           effectiveWidth,
           effectiveHeight,
         });
-        return;
+        return false;
       }
 
       // Step 3: Update slotted scales with coordinated properties
@@ -1320,6 +1320,7 @@ export class ObcChartLineBase extends LitElement {
         this.chart.destroy();
       }
       this.createChart();
+      return true;
     } finally {
       this.isUpdatingScales = false;
     }
@@ -1860,8 +1861,10 @@ export class ObcChartLineBase extends LitElement {
       // Note: syncScalesAndChart() handles chart destruction and creation internally,
       // so we only call createChart() directly when there are no external scales.
       if (this.hasExternalScales()) {
-        this.syncScalesAndChart();
-        return true;
+        // syncScalesAndChart() bails without rebuilding when a sync is already
+        // in flight or the effective chart area is degenerate; reporting its
+        // real outcome keeps the caller's own rebuild as the fallback.
+        return this.syncScalesAndChart();
       } else if (this.chart) {
         // No external scales - just recreate chart
         this.chart.destroy();
