@@ -48,6 +48,10 @@
     padding: var(--app-components-user-menu-padding-vertical)
       calc(var(--app-components-user-menu-padding-horizontal) * 2) 0
       calc(var(--app-components-user-menu-padding-horizontal) * 2);
+    
+      &.signin-only {
+      padding-bottom: var(--app-components-user-menu-padding-vertical);
+    }
   }
 
   &.size-small.type-sign-in .login-container,

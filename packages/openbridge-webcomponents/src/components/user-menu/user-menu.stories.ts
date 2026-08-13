@@ -28,27 +28,6 @@ const meta: Meta<ObcUserMenu> = {
       control: {type: 'select'},
       options: Object.values(ObcUserMenuSize),
     },
-    hasRecentlySignedIn: {
-      control: {type: 'boolean'},
-    },
-    username: {
-      control: {type: 'text'},
-    },
-    password: {
-      control: {type: 'text'},
-    },
-    usernameError: {
-      control: {type: 'text'},
-    },
-    passwordError: {
-      control: {type: 'text'},
-    },
-    userInitials: {
-      control: {type: 'text'},
-    },
-    userLabel: {
-      control: {type: 'text'},
-    },
     recentUsers: {
       control: {type: 'object'},
     },
@@ -78,24 +57,6 @@ const meta: Meta<ObcUserMenu> = {
       {id: 'user-account', label: 'User account'},
     ],
   },
-  render: (args) => {
-    return html`
-      <obc-user-menu
-        type=${args.type}
-        size=${args.size}
-        ?hasRecentlySignedIn=${args.hasRecentlySignedIn}
-        username=${args.username}
-        password=${args.password}
-        usernameError=${args.usernameError}
-        passwordError=${args.passwordError}
-        .userInitials=${args.userInitials}
-        .userLabel=${args.userLabel}
-        .recentUsers=${args.recentUsers}
-        .signedInActions=${args.signedInActions}
-      ></obc-user-menu>
-    `;
-  },
-  decorators: [withActions],
 } satisfies Meta<ObcUserMenu>;
 
 export default meta;
@@ -160,5 +121,14 @@ export const UserSignInSmall: Story = {
     type: ObcUserMenuType.userSignIn,
     size: ObcUserMenuSize.small,
     hasRecentlySignedIn: true,
+  },
+};
+
+export const SignInWithoutFileds: Story = {
+  args: {
+    type: ObcUserMenuType.signIn,
+    size: ObcUserMenuSize.small,
+    showUsername: false,
+    showPassword: false,
   },
 };
