@@ -231,8 +231,13 @@ fills its container's width and derives its height as
 is never consulted**. So a consumer that wants the chart to fill a box must
 feed that box's measured size back as `width` / `height` — this is what
 `obc-automation-tank` does with a `ResizeObserver` on its chart cell. Leaving
-the 384×384 default in a 900×200 box renders a 900×600 chart that overflows;
-that is the contract working, not a bug.
+the inherited 480×320 default (1.5:1) in a 900×200 box renders a 900×600 chart
+that overflows; that is the contract working, not a bug.
+
+Do not confuse that ratio with `scaleReferenceSize` (default 384). The ratio
+decides the component's own box; `scaleReferenceSize` is the size at which a
+slotted external scale draws 1:1 with the Figma design, and only scales the
+decorations inside it. They are unrelated numbers that both look like sizes.
 
 **The three CSS invariants**, all in `charthelpers/chart-common.css` and all
 scoped to `:host([fixedaspectratioscaling])`:

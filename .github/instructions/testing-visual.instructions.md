@@ -96,7 +96,12 @@ Some behaviour cannot be pinned by a snapshot because it only appears at a
 container shape, a zoom level or a resize sequence that no single story
 captures. For those there are **live harness stories**: they measure the DOM on
 an interval and print their own PASS/FAIL, and they carry `skip-test` so they
-add no baselines and never run in CI.
+add no baselines.
+
+`skip-test` is narrower than it sounds — it is a tag exclusion on the Storybook
+**snapshot project** (`tags.exclude` in `vitest.config.ts`) and nothing else.
+These stories are still bundled by `build_storybook`, still type-checked and
+still linted, so a module-scope error in one breaks CI like any other file.
 
 - **Building Blocks → Chart Sizing Battleground** — every chart subject
   (`gauge-trend` in five configurations, line/area graph, `automation-tank` in
