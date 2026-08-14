@@ -90,6 +90,31 @@ npm run test:visual           # ALWAYS re-run to confirm stability
 - Baselines live in `e2e/visual/__screenshots__/<platform>/` and are
   environment-sensitive in the same way as the core suite.
 
+## Live harness stories (not snapshots)
+
+Some behaviour cannot be pinned by a snapshot because it only appears at a
+container shape, a zoom level or a resize sequence that no single story
+captures. For those there are **live harness stories**: they measure the DOM on
+an interval and print their own PASS/FAIL, and they carry `skip-test` so they
+add no baselines.
+
+`skip-test` is narrower than it sounds — it is a tag exclusion on the Storybook
+**snapshot project** (`tags.exclude` in `vitest.config.ts`) and nothing else.
+These stories are still bundled by `build_storybook`, still type-checked and
+still linted, so a module-scope error in one breaks CI like any other file.
+
+- **Building Blocks → Chart Sizing Battleground** — every chart subject
+  (`gauge-trend` in five configurations, line/area graph, `automation-tank` in
+  its chart modes, the bar and gauge building blocks) across nine container
+  shapes, six zoom levels, and a resize sweep that counts distinct rendered
+  sizes per step to catch a layout that rings instead of settling. Check it
+  after any change to chart sizing or `chart-common.css`; see
+  `line-area-charts.md` for the invariants it guards.
+
+When adding one, keep the interval probes per-story and clear them before
+starting new ones — a rerender otherwise leaves two probe loops running and the
+readouts fight each other.
+
 ## Stuck browsers
 
 Spawned Chromium processes sometimes hang and stall a run. Kill the strays and
