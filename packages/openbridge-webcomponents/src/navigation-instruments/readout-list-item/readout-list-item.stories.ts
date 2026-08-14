@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {html, nothing} from 'lit';
+import {html, nothing, type TemplateResult} from 'lit';
 import {userEvent} from 'storybook/test';
 import {gsap} from 'gsap';
 import {
@@ -30,6 +30,9 @@ import {
 } from '../../components/alert-frame/alert-frame.js';
 import {AlertType} from '../../types.js';
 import './readout-list-item.js';
+import '../pitch-indicator/pitch-indicator.js';
+import '../roll-indicator/roll-indicator.js';
+import '../graph-mini/graph-mini.js';
 import '../../icons/icon-placeholder.js';
 import '../azimuth-thruster/azimuth-thruster.js';
 import {InstrumentState, Priority} from '../types.js';
@@ -86,6 +89,8 @@ type StoryOptions = {
   stacking?: ReadoutListItemStacking;
   clickable?: boolean | ReadoutListItemClickable;
   hasLeadingIcon?: boolean;
+  hasLeadingContentSpacer?: boolean;
+  hasTrailingContentSpacer?: boolean;
   hasDegree?: boolean;
   hasDegreeSpacer?: boolean;
   fractionDigits?: number;
@@ -115,6 +120,10 @@ type ReadoutItemConfig = {
   options?: StoryOptions;
   hasLeadingIcon?: boolean;
   hasValueIcon?: boolean;
+  // Free content columns — arbitrary slotted markup. The row reserves the
+  // column and nothing else: no state is forwarded into what you slot in.
+  leadingContent?: TemplateResult;
+  trailingContent?: TemplateResult;
   showDebugOverlay?: boolean;
 };
 
@@ -186,6 +195,8 @@ function renderItem(config: ReadoutItemConfig) {
       .stacking=${o.stacking}
       .clickable=${o.clickable ?? false}
       .hasLeadingIcon=${o.hasLeadingIcon ?? false}
+      .hasLeadingContentSpacer=${o.hasLeadingContentSpacer ?? false}
+      .hasTrailingContentSpacer=${o.hasTrailingContentSpacer ?? false}
       .hasDegree=${o.hasDegree ?? false}
       .hasDegreeSpacer=${o.hasDegreeSpacer ?? false}
       .fractionDigits=${o.fractionDigits ?? 0}
@@ -206,6 +217,7 @@ function renderItem(config: ReadoutItemConfig) {
       ${config.hasValueIcon
         ? html`<obi-placeholder slot="value-icon"></obi-placeholder>`
         : nothing}
+      ${config.leadingContent ?? nothing} ${config.trailingContent ?? nothing}
     </obc-readout-list-item>
   `;
 }
@@ -2313,4 +2325,222 @@ export const FigmaMatrix: Story = {
         ),
       }))
     ),
+};
+
+// ---------------------------------------------------------------------------
+// Free content columns — `leading-content` / `trailing-content`
+// ---------------------------------------------------------------------------
+
+// Fixed series: visual snapshots must be deterministic, so no Math.random.
+const MINI_TREND: [number[], number[]] = [
+  Array.from({length: 40}, (_, i) => i),
+  Array.from(
+    {length: 40},
+    (_, i) => 50 + 22 * Math.sin(i / 5) + 9 * Math.sin(i / 1.7)
+  ),
+];
+
+const leadingIndicator = (value: number) =>
+  html`<obc-pitch-indicator
+    slot="leading-content"
+    .value=${value}
+  ></obc-pitch-indicator>`;
+
+const trailingChart = () =>
+  html`<obc-graph-mini
+    slot="trailing-content"
+    .data=${MINI_TREND}
+  ></obc-graph-mini>`;
+
+/**
+ * **Free content columns.** `leading-content` and `trailing-content` take
+ * arbitrary content — an indicator, a mini chart, anything — in a fixed-width
+ * column at either end of the row. The width comes from
+ * `--obc-readout-list-item-leading-content-width` /
+ * `--obc-readout-list-item-trailing-content-width` (both default to the 48px
+ * minimum touch target), NOT from what you slot in, so the column is the same on
+ * every row regardless of the content's own size.
+ *
+ * Note what the slot does **not** do: nothing forwards the row's `value` into
+ * the slotted component. Each card below binds the same number twice — once on
+ * the row, once on the indicator — and keeping those two in step is the
+ * consumer's job. That is the trade for accepting arbitrary content.
+ *
+ * These are stand-alone rows. Inside `<obc-readout-list>` the cross-row reserve
+ * is automatic; see `ColumnAlignmentWithContent` below for the manual form.
+ */
+export const SlottedContent: Story = {
+  render: () =>
+    renderShowcase([
+      {
+        title: 'Columns',
+        cases: [
+          {
+            label: 'Leading indicator',
+            config: {
+              label: 'Pitch',
+              unit: '',
+              src: '',
+              value: 12,
+              options: {hasDegree: true},
+              leadingContent: leadingIndicator(12),
+            },
+          },
+          {
+            label: 'Trailing chart',
+            config: {
+              label: 'Speed',
+              unit: 'kn',
+              src: '',
+              value: 18,
+              trailingContent: trailingChart(),
+            },
+          },
+          {
+            label: 'Both',
+            config: {
+              label: 'Pitch',
+              unit: '',
+              src: '',
+              value: 12,
+              options: {hasDegree: true},
+              leadingContent: leadingIndicator(12),
+              trailingContent: trailingChart(),
+            },
+          },
+          {
+            label: 'Neither, both reserved',
+            config: {
+              label: 'Depth',
+              unit: 'm',
+              src: '',
+              value: 124,
+              showDebugOverlay: true,
+              options: {
+                hasLeadingContentSpacer: true,
+                hasTrailingContentSpacer: true,
+              },
+            },
+          },
+        ],
+      },
+      {
+        title: 'Sizes — the column width does not follow the density tier',
+        columns: 3,
+        cases: (
+          [
+            ReadoutListItemSize.small,
+            ReadoutListItemSize.medium,
+            ReadoutListItemSize.large,
+          ] as const
+        ).map((size) => ({
+          label: size,
+          config: {
+            label: 'Pitch',
+            unit: '',
+            src: '',
+            value: 12,
+            options: {size, hasDegree: true},
+            leadingContent: leadingIndicator(12),
+            trailingContent: trailingChart(),
+          },
+        })),
+      },
+    ]),
+};
+
+const CONTENT_ALIGNMENT_ROWS: {
+  label: string;
+  value: number;
+  unit: string;
+  hasDegree?: boolean;
+  fractionDigits?: number;
+  leading?: boolean;
+  trailing?: boolean;
+}[] = [
+  {label: 'Pitch', value: 12, unit: '', hasDegree: true, leading: true},
+  {label: 'Roll', value: -7, unit: '', hasDegree: true, leading: true},
+  {label: 'Speed', value: 18.4, unit: 'kn', fractionDigits: 1, trailing: true},
+  {label: 'Depth', value: 124, unit: 'm'},
+];
+
+function renderContentAlignmentColumn(
+  reserved: boolean,
+  showDebugOverlay: boolean
+) {
+  return html`
+    <div class="rli-align-col">
+      ${CONTENT_ALIGNMENT_ROWS.map((row) =>
+        renderItem({
+          label: row.label,
+          unit: row.unit,
+          src: '',
+          value: row.value,
+          showDebugOverlay,
+          leadingContent: row.leading ? leadingIndicator(row.value) : undefined,
+          trailingContent: row.trailing ? trailingChart() : undefined,
+          options: {
+            hasDegree: row.hasDegree ?? false,
+            fractionDigits: row.fractionDigits ?? 0,
+            // Every row that leaves a column empty reserves its width, so the
+            // label and value columns do not step in and out row by row. This
+            // is what `obc-readout-list` sets for you.
+            ...(reserved
+              ? {
+                  hasLeadingContentSpacer: !row.leading,
+                  hasTrailingContentSpacer: !row.trailing,
+                }
+              : {}),
+          },
+        })
+      )}
+    </div>
+  `;
+}
+
+/**
+ * **Cross-row alignment with free content columns.** Slotted content is light
+ * DOM, so no reserver can be derived from it the way the unit / value / source
+ * reservers are derived from data — the only lever is occupancy plus a shared
+ * width.
+ *
+ * Top: rows that slot nothing start their label at the row edge while rows with
+ * an indicator start 48px in, so the whole list staircases. Bottom: the same
+ * rows with `hasLeadingContentSpacer` / `hasTrailingContentSpacer` set on the
+ * rows that leave a column empty. Under the debug overlay a filled column is a
+ * solid purple outline and a reserve is dashed.
+ *
+ * Doing this by hand is only necessary for stand-alone rows — `obc-readout-list`
+ * computes both spacers on every alignment pass.
+ */
+export const ColumnAlignmentWithContent: StoryObj<
+  ReadoutListItemStoryArgs & {showDebugOverlay: boolean}
+> = {
+  args: {showDebugOverlay: true},
+  argTypes: {
+    showDebugOverlay: {
+      name: 'Show Debug Overlay',
+      control: {type: 'boolean'},
+      table: {category: 'Debug'},
+    },
+  },
+  render: (args) => html`
+    <style>
+      ${alignmentStyle}
+    </style>
+    <div class="rli-align-wrap">
+      <section class="rli-align-section">
+        <h3 class="rli-align-section-title">
+          Without reserves — rows step in and out by the column width
+        </h3>
+        ${renderContentAlignmentColumn(false, args.showDebugOverlay)}
+      </section>
+      <section class="rli-align-section">
+        <h3 class="rli-align-section-title">
+          With reserves — labels and values hold one line
+        </h3>
+        ${renderContentAlignmentColumn(true, args.showDebugOverlay)}
+      </section>
+    </div>
+  `,
 };

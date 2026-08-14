@@ -295,17 +295,39 @@ export interface ReadoutSrcOptions extends ReadoutBlockState {
  * options Readout API; its API may change in a future release.
  *
  * ### Slots
- * | Slot Name     | Renders When                  | Purpose                                  |
- * |---------------|-------------------------------|------------------------------------------|
- * | leading-icon  | `hasLeadingIcon`              | Icon before the label.                   |
- * | value-icon    | `valueOptions.hasIcon`        | Icon before the value.                   |
- * | setpoint-icon | `hasSetpoint`                 | Overrides the default setpoint icon.     |
- * | advice-icon   | `hasAdvice`                   | Overrides the default advice icon.       |
+ * | Slot Name        | Renders When                  | Purpose                                    |
+ * |------------------|-------------------------------|--------------------------------------------|
+ * | leading-content  | always                        | Free content column before the label.      |
+ * | leading-icon     | `hasLeadingIcon`              | Icon before the label.                     |
+ * | value-icon       | `valueOptions.hasIcon`        | Icon before the value.                     |
+ * | setpoint-icon    | `hasSetpoint`                 | Overrides the default setpoint icon.       |
+ * | advice-icon      | `hasAdvice`                   | Overrides the default advice icon.         |
+ * | trailing-content | always                        | Free content column after the source.      |
  *
+ * ### Free content columns
+ * `leading-content` / `trailing-content` take arbitrary content — an indicator,
+ * a mini chart, anything — in a fixed-width column at either end of the row.
+ * Width comes from `--obc-readout-list-item-leading-content-width` /
+ * `--obc-readout-list-item-trailing-content-width` (both default to the minimum
+ * touch target, 48px), NOT from the content's own size, so the column stays
+ * predictable across rows.
+ *
+ * Slotted content is display only: the row renders it and reserves its column,
+ * but pushes no state into it. A slotted indicator's `value` (and its state /
+ * priority / data quality) is a separate binding the consumer owns, so keep it
+ * in step with the row's own `value` — nothing here does that for you.
+ *
+ * An empty slot generates no box and therefore no gap, so rows that slot
+ * nothing are laid out exactly as before. Rows that leave a column empty while
+ * their neighbours fill it must reserve the same width to stay aligned — see
+ * {@link hasLeadingContentSpacer}. Inside `obc-readout-list` that is automatic.
+ *
+ * @slot leading-content - Free content column before the label (e.g. an indicator).
  * @slot leading-icon - Icon before the label.
  * @slot value-icon - Icon before the value.
  * @slot setpoint-icon - Overrides the default setpoint icon.
  * @slot advice-icon - Overrides the default advice icon.
+ * @slot trailing-content - Free content column after the source (e.g. a mini chart).
  * @fires click - Fired when the item is activated. Only fired when `clickable` is set; otherwise the item renders as a non-interactive `<div>`.
  */
 @customElement('obc-readout-list-item')
@@ -357,6 +379,16 @@ export class ObcReadoutListItem extends LitElement {
   @property({type: Boolean}) hasDegree = false;
   @property({type: Boolean}) hasDegreeSpacer = false;
   /**
+   * Reserve the `leading-content` column on a row that slots nothing into it, so
+   * its label and value stay aligned with the rows that do. The reserve is the
+   * same width the column would have, and is ignored while the row has its own
+   * leading content. `obc-readout-list` sets this for you; set it by hand for a
+   * stand-alone group of rows.
+   */
+  @property({type: Boolean}) hasLeadingContentSpacer = false;
+  /** Reserve the `trailing-content` column; see {@link hasLeadingContentSpacer}. */
+  @property({type: Boolean}) hasTrailingContentSpacer = false;
+  /**
    * Also formats the numeric setpoint / advice blocks, which stay numeric
    * even when the value is text. Must be between 0 and 100 — the range
    * `Number.prototype.toFixed` accepts; outside it throws a `RangeError`.
@@ -398,6 +430,14 @@ export class ObcReadoutListItem extends LitElement {
    * are visible. Off by default.
    */
   @property({type: Boolean, reflect: true}) showDebugOverlay = false;
+
+  /**
+   * Whether either free content column currently has slotted content. Tracked
+   * only to suppress the matching spacer — a row that fills the column must not
+   * also reserve a second one when a stale `has*ContentSpacer` is left set.
+   */
+  @state() private hasSlottedLeadingContent = false;
+  @state() private hasSlottedTrailingContent = false;
 
   /** Pop-up deferred-hide phase for the setpoint (see {@link updated}). */
   @state() private deferredSetpointHidePhase: ReadoutBlockHidePhase =
@@ -1023,14 +1063,72 @@ export class ObcReadoutListItem extends LitElement {
     `;
   }
 
+  /**
+   * A free content column at either end of the row.
+   *
+   * The `<slot>` is rendered unconditionally: an unfilled slot is
+   * `display: contents`, so it generates no box and — crucially — no
+   * `.content` gap, leaving a row that slots nothing laid out exactly as it was
+   * before these columns existed. When content IS assigned, the slotted element
+   * becomes the flex item itself and the CSS gives it the column width, so the
+   * row never has to measure it.
+   *
+   * The spacer is a separate empty box of the same width, rendered only for a
+   * row that reserves the column without filling it (see
+   * {@link hasLeadingContentSpacer}) — the same trick as
+   * {@link renderDegreeSpacer}, one column further out.
+   */
+  private renderSlottedColumn(
+    position: 'leading' | 'trailing'
+  ): TemplateResult {
+    const isLeading = position === 'leading';
+    const hasContent = isLeading
+      ? this.hasSlottedLeadingContent
+      : this.hasSlottedTrailingContent;
+    const reserve = isLeading
+      ? this.hasLeadingContentSpacer
+      : this.hasTrailingContentSpacer;
+    const spacer =
+      reserve && !hasContent
+        ? html`<span
+            class="content-spacer ${position}-content-spacer"
+            part="${position}-content-spacer"
+            aria-hidden="true"
+          ></span>`
+        : nothing;
+    const slot = html`<slot
+      name="${position}-content"
+      @slotchange=${this.handleContentSlotChange}
+    ></slot>`;
+    // The spacer stands in for the column, so it sits on the same side of the
+    // row the column itself would occupy.
+    return isLeading ? html`${spacer}${slot}` : html`${slot}${spacer}`;
+  }
+
+  private handleContentSlotChange = (event: Event): void => {
+    const slot = event.target as HTMLSlotElement;
+    const filled = slot
+      .assignedNodes({flatten: true})
+      .some(
+        (node) =>
+          node.nodeType === Node.ELEMENT_NODE ||
+          (node.textContent ?? '').trim() !== ''
+      );
+    if (slot.name === 'leading-content') {
+      this.hasSlottedLeadingContent = filled;
+    } else {
+      this.hasSlottedTrailingContent = filled;
+    }
+  };
+
   private renderContent(): TemplateResult {
     return html`
       <div class="content" part="content">
-        ${this.renderLabelContainer()}
+        ${this.renderSlottedColumn('leading')} ${this.renderLabelContainer()}
         <div class="value-area" part="value-area">
           ${this.renderValueCluster()}
         </div>
-        ${this.renderTrailingSource()}
+        ${this.renderTrailingSource()} ${this.renderSlottedColumn('trailing')}
       </div>
     `;
   }

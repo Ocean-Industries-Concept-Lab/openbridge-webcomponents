@@ -29,6 +29,9 @@ const OBSERVED_ATTRIBUTES = [
   'valuetype',
   'setpoint',
   'advice',
+  // Moving a child in or out of a free content column changes which rows must
+  // reserve that column. Single-word, so unlike the entries below this one is live.
+  'slot',
   // ⚠ inert — see the note above; the real names have no hyphens.
   'max-digits',
   'fraction-digits',
@@ -40,6 +43,18 @@ const OBSERVED_ATTRIBUTES = [
 /** Whether a row renders its value as verbatim text rather than a number. */
 function isTextValueRow(item: ObcReadoutListItem): boolean {
   return item.valueType === ReadoutValueType.text;
+}
+
+/**
+ * Whether a row fills one of the free content columns. Slotted content is light
+ * DOM the list cannot derive a width from, so occupancy is all it reads: the
+ * column's width is a custom property, identical on every row.
+ */
+function hasSlottedContent(
+  item: ObcReadoutListItem,
+  position: 'leading' | 'trailing'
+): boolean {
+  return item.querySelector(`:scope > [slot="${position}-content"]`) !== null;
 }
 
 /** Integer-digit count of a numeric value (sign and fraction excluded). */
@@ -76,6 +91,19 @@ function integerDigitCount(value: number | null | undefined): number {
  * - **Degree:** if any row has a degree, non-degree rows reserve the degree column
  *   (`hasDegreeSpacer`) so their digits line up with the degree rows; the spacer is
  *   cleared once no degree rows remain.
+ * - **Free content columns:** if any row slots content into `leading-content` /
+ *   `trailing-content`, the rows that do not reserve the same column width
+ *   (`hasLeadingContentSpacer` / `hasTrailingContentSpacer`), so a row with an
+ *   indicator and a row without keep their labels and values aligned. Only
+ *   occupancy is read — the width is the shared
+ *   `--obc-readout-list-item-leading-content-width` /
+ *   `--obc-readout-list-item-trailing-content-width`, so the list never measures
+ *   slotted light DOM. Set the custom property on the list to change the column
+ *   width for every row and its spacers at once.
+ *
+ * Slotted content is display only. The list reserves its column but pushes no
+ * data into it: a slotted indicator's `value` is a binding the consumer owns and
+ * must keep in step with the row's own `value`.
  *
  * The list **owns** these reservers: it recomputes them from the rows' data on
  * every pass (and clears stale reservers / spacers when rows change), so a
@@ -147,6 +175,8 @@ export class ObcReadoutList extends LitElement {
     let longestUnit = '';
     let longestSrc = '';
     let anyDegree = false;
+    let anyLeadingContent = false;
+    let anyTrailingContent = false;
 
     for (const item of items) {
       // A text value renders verbatim, so it contributes nothing to the numeric
@@ -193,6 +223,8 @@ export class ObcReadoutList extends LitElement {
       if (item.hasDegree) {
         anyDegree = true;
       }
+      anyLeadingContent ||= hasSlottedContent(item, 'leading');
+      anyTrailingContent ||= hasSlottedContent(item, 'trailing');
     }
 
     const numericReserver =
@@ -233,6 +265,14 @@ export class ObcReadoutList extends LitElement {
         spaceReserver: longestSrc || undefined,
       };
       item.hasDegreeSpacer = anyDegree && !item.hasDegree;
+      // Free content columns: a row that slots nothing reserves the width of the
+      // rows that do, so the label / value / unit columns do not shift between
+      // them. Occupancy is the only thing read — the width itself is a shared
+      // custom property, so nothing here measures the light DOM.
+      item.hasLeadingContentSpacer =
+        anyLeadingContent && !hasSlottedContent(item, 'leading');
+      item.hasTrailingContentSpacer =
+        anyTrailingContent && !hasSlottedContent(item, 'trailing');
       item.showDebugOverlay = this.showDebugOverlay;
     }
     this.observeChildren();
