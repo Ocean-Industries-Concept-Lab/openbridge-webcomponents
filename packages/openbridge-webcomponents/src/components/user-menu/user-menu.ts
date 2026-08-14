@@ -354,14 +354,17 @@ export class ObcUserMenu extends LitElement {
 
   private validateSignIn() {
     let valid = true;
-    const needsUsername = this.type === ObcUserMenuType.signIn;
+    const needsUsername =
+      this.type === ObcUserMenuType.signIn && this.showUsername;
+    const needsPassword =
+      this.type === ObcUserMenuType.signIn ? this.showPassword : true;
 
     if (needsUsername && !this.username) {
       this.usernameError = msg('Username is required');
       valid = false;
     }
 
-    if (!this.password) {
+    if (needsPassword && !this.password) {
       this.passwordError = msg('Password is required');
       valid = false;
     }
