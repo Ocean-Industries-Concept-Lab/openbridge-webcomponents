@@ -112,6 +112,22 @@ export function readoutSecondarySize(size: ReadoutBlockSize): ObcTextboxSize {
   }
 }
 
+/**
+ * The setpoint block's typography size: primary while emphasised (touching /
+ * flip-flop away from setpoint) or in the `equal-size` interaction, secondary
+ * otherwise.
+ */
+export function readoutSetpointSize(options: {
+  primary: ObcTextboxSize;
+  secondary: ObcTextboxSize;
+  emphasized: boolean;
+  equalSize: boolean;
+}): ObcTextboxSize {
+  return options.emphasized || options.equalSize
+    ? options.primary
+    : options.secondary;
+}
+
 /** Setpoint is SemiBold only while emphasised, otherwise regular weight. */
 export function readoutSetpointWeight(
   emphasized: boolean

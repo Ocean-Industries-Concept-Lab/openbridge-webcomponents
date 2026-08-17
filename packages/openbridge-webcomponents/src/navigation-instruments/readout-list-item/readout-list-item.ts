@@ -9,11 +9,13 @@ import {
   ObcTextboxFontWeight,
 } from '../../components/textbox/textbox.js';
 import '../../building-blocks/readout-block/readout-block.js';
+import '../../icons/icon-delta.js';
 import {
   ReadoutBlockVariant,
   ReadoutBlockSize,
   ReadoutBlockDataQuality,
   ReadoutBlockHidePhase,
+  ReadoutAdviceCategory,
 } from '../../building-blocks/readout-block/readout-block.js';
 import {
   assertReadoutValueType,
@@ -29,6 +31,7 @@ import {
   readoutNumericFormatOptions,
   readoutPrimarySize,
   readoutSecondarySize,
+  readoutSetpointSize,
   readoutSetpointWeight,
   readoutDataQualityClasses,
   resolveSetpointHidePhase,
@@ -49,6 +52,10 @@ export {ObcTextboxFontWeight} from '../../components/textbox/textbox.js';
 
 // Re-exported so consumers can type `valueType` without a second import path.
 export {ReadoutValueType} from '../readout/readout-formatters.js';
+
+// Re-exported so consumers can set `adviceOptions.category` without a second
+// import path.
+export {ReadoutAdviceCategory} from '../../building-blocks/readout-block/readout-block.js';
 
 /**
  * Density/size scale of the readout row (an alias of `ReadoutBlockSize`).
@@ -151,11 +158,21 @@ export interface ReadoutValueOptions extends ReadoutBlockState {
  * - `always-visible` (default): the setpoint is always shown.
  * - `flip-flop`: value and setpoint swap emphasis (size) as the value reaches
  *   the setpoint.
+ * - `equal-size`: value and setpoint are always shown at the same (primary)
+ *   size (Figma 6.1 "Equal size").
  * - `pop-up`: the setpoint is shown only while the value has not reached it,
  *   then fades out (100ms) once value === setpoint.
+ *
+ * TODO(designer): in pop-up mode the designer is considering keeping the
+ * setpoint arrow visible while the setpoint itself is hidden, so an
+ * at-setpoint reading still reads as "a value you are in control of". Until
+ * that is decided, the `value-icon` slot already covers it — slot an
+ * `<obi-input-right>` into the value block (see the
+ * `SetpointPopUpWithValueArrow` story).
  */
 export enum ReadoutListItemSetpointInteraction {
   alwaysVisible = 'always-visible',
+  equalSize = 'equal-size',
   flipFlop = 'flip-flop',
   popUp = 'pop-up',
 }
@@ -177,6 +194,13 @@ export interface ReadoutSetpointOptions extends ReadoutBlockState {
 
 export interface ReadoutAdviceOptions extends ReadoutBlockState {
   hintedZeros?: boolean;
+  /**
+   * Semantic category (Figma 6.1) — picks the default marker icon and the
+   * `active` styling; `regular` when unset.
+   */
+  category?: ReadoutAdviceCategory;
+  /** The advice is triggered — filled/status icon + triggered text styling. */
+  active?: boolean;
   /** Longest value string to reserve width for; see {@link ReadoutValueOptions.spaceReserver}. */
   spaceReserver?: string;
 }
@@ -186,9 +210,49 @@ export interface ReadoutReserverOptions {
   spaceReserver?: string;
 }
 
+/**
+ * Per-label ("readout-block-title") options.
+ *
+ * The label size follows the designer's Figma 6.1 title block, which carries an
+ * `xs`/`s` primary-size axis: `s` is the default for stand-alone readouts (a
+ * scannable label should not sit at the smallest permitted size), `xs` the
+ * default for dense list rows. Values outside `xs`/`s` are not part of the
+ * design and are not rejected, but their metrics are unspecified.
+ */
+export interface ReadoutLabelOptions {
+  /** Label typography size — `xs` (dense rows) or `s` (stand-alone readouts). */
+  size?: ObcTextboxSize;
+  /** Longest expected label to reserve width for (aligns stacked readouts). */
+  spaceReserver?: string;
+}
+
+/**
+ * Emphasis / alert state of the source chip (Figma 6.1 "Readout-block-source"
+ * State axis; `static`/`enabled` map to `regular`).
+ * TODO(designer): the sheet also carries a `Tag` type (xs chip) and an alarm
+ * state is absent by design; both left out here.
+ */
+export enum ReadoutSourceState {
+  regular = 'regular',
+  enhanced = 'enhanced',
+  caution = 'caution',
+  warning = 'warning',
+}
+
 export interface ReadoutSrcOptions extends ReadoutBlockState {
   /** Longest expected source string to reserve width for; see {@link ReadoutReserverOptions.spaceReserver}. */
   spaceReserver?: string;
+  /**
+   * Emphasis / alert state of the source: `enhanced` renders the amplified
+   * chip, `caution` / `warning` the matching alert chip. Like the
+   * data-quality chip it uses `outline`, so toggling it never shifts the row.
+   */
+  state?: ReadoutSourceState;
+  /**
+   * Source deviation (Figma "Source-deviation"): renders a Δ + value line
+   * under the source name. A non-finite value renders no line.
+   */
+  deviation?: number;
 }
 
 /**
@@ -322,6 +386,7 @@ export class ObcReadoutListItem extends LitElement {
   @property({type: Object}) valueOptions?: ReadoutValueOptions;
   @property({type: Object}) setpointOptions?: ReadoutSetpointOptions;
   @property({type: Object}) adviceOptions?: ReadoutAdviceOptions;
+  @property({type: Object}) labelOptions?: ReadoutLabelOptions;
   @property({type: Object}) unitOptions?: ReadoutReserverOptions;
   @property({type: Object}) srcOptions?: ReadoutSrcOptions;
 
@@ -416,6 +481,13 @@ export class ObcReadoutListItem extends LitElement {
     );
   }
 
+  private get isEqualSize(): boolean {
+    return (
+      this.resolvedSetpointInteraction ===
+      ReadoutListItemSetpointInteraction.equalSize
+    );
+  }
+
   private get isPopUp(): boolean {
     return (
       this.resolvedSetpointInteraction ===
@@ -476,12 +548,33 @@ export class ObcReadoutListItem extends LitElement {
   }
 
   private get setpointSize(): ObcTextboxSize {
-    return this.isSetpointEmphasized ? this.primarySize : this.secondarySize;
+    return readoutSetpointSize({
+      primary: this.primarySize,
+      secondary: this.secondarySize,
+      emphasized: this.isSetpointEmphasized,
+      equalSize: this.isEqualSize,
+    });
   }
 
   /** Value font weight passes straight to obc-textbox; regular when unset. Colour is separate. */
   private get valueWeight(): ObcTextboxFontWeight {
     return this.valueOptions?.weight ?? ObcTextboxFontWeight.regular;
+  }
+
+  /** Label size: `xs` for dense list rows unless overridden (see {@link ReadoutLabelOptions}). */
+  private get labelSize(): ObcTextboxSize {
+    return this.labelOptions?.size ?? ObcTextboxSize.xs;
+  }
+
+  /**
+   * Label weight: SemiBold only for enhanced (in-command) rows, regular
+   * otherwise — the designer reduced the amount of semibold in the interface
+   * (Figma 6.1 review).
+   */
+  private get labelWeight(): ObcTextboxFontWeight {
+    return this.rowEnhanced
+      ? ObcTextboxFontWeight.semibold
+      : ObcTextboxFontWeight.regular;
   }
 
   /** Setpoint is SemiBold only while emphasised, otherwise regular weight. */
@@ -532,6 +625,9 @@ export class ObcReadoutListItem extends LitElement {
     hidePhase?: ReadoutBlockHidePhase;
     dataQuality?: ReadoutBlockDataQuality;
     alert?: false | AlertFrameConfig;
+    /** Advice-only: semantic category + triggered state. */
+    category?: ReadoutAdviceCategory;
+    active?: boolean;
   }): TemplateResult {
     // The block owns the formatting, hinted zeros, reserver, degree and icon; the
     // row keeps the density tier (`size`) and the resolved per-block number size
@@ -558,6 +654,8 @@ export class ObcReadoutListItem extends LitElement {
         .hidePhase=${config.hidePhase ?? ReadoutBlockHidePhase.none}
         .dataQuality=${config.dataQuality}
         .alert=${config.alert ?? false}
+        .category=${config.category ?? ReadoutAdviceCategory.regular}
+        .active=${config.active ?? false}
       >
         ${this.renderForwardedIcon(config.variant)}
       </obc-readout-block>
@@ -658,10 +756,11 @@ export class ObcReadoutListItem extends LitElement {
     reserver?: string,
     state?: ReadoutBlockState
   ): TemplateResult {
+    // The label carries its own size (labelOptions) and priority-driven weight;
+    // unit and source stay xs / regular.
     const weight =
-      role === 'label'
-        ? ObcTextboxFontWeight.semibold
-        : ObcTextboxFontWeight.regular;
+      role === 'label' ? this.labelWeight : ObcTextboxFontWeight.regular;
+    const size = role === 'label' ? this.labelSize : ObcTextboxSize.xs;
     const box = html`
       <obc-textbox
         class=${classMap({
@@ -669,7 +768,7 @@ export class ObcReadoutListItem extends LitElement {
           ...this.dataQualityClasses(state?.dataQuality),
         })}
         part=${role}
-        .size=${ObcTextboxSize.xs}
+        .size=${size}
         .fontWeight=${weight}
         alignment="left"
       >
@@ -701,6 +800,8 @@ export class ObcReadoutListItem extends LitElement {
               hasDegree: this.hasDegree ?? false,
               dataQuality: this.adviceOptions?.dataQuality,
               alert: this.adviceOptions?.alert,
+              category: this.adviceOptions?.category,
+              active: this.adviceOptions?.active,
             })
           : nothing}
         ${this.hasSetpoint
@@ -826,7 +927,13 @@ export class ObcReadoutListItem extends LitElement {
             ></span>`
           : nothing}
         <div class="label-stack" part="label-stack">
-          ${this.label ? this.renderTextbox('label', this.label) : nothing}
+          ${this.label
+            ? this.renderTextbox(
+                'label',
+                this.label,
+                this.labelOptions?.spaceReserver
+              )
+            : nothing}
           ${showLeadingUnit
             ? this.renderTextbox(
                 'unit',
@@ -834,14 +941,7 @@ export class ObcReadoutListItem extends LitElement {
                 this.unitOptions?.spaceReserver
               )
             : nothing}
-          ${showLeadingSrc
-            ? this.renderTextbox(
-                'source',
-                this.src ?? '',
-                this.srcOptions?.spaceReserver,
-                this.srcOptions
-              )
-            : nothing}
+          ${showLeadingSrc ? this.renderSourceBlock() : nothing}
         </div>
       </div>
     `;
@@ -861,6 +961,50 @@ export class ObcReadoutListItem extends LitElement {
     );
   }
 
+  /**
+   * The source text plus its optional state chip and deviation line. The
+   * plain (regular, no-deviation) case renders the bare textbox — byte-for-
+   * byte the pre-6.1 output; a state or a deviation wraps it in the
+   * `.source-block` stack.
+   */
+  private renderSourceBlock(): TemplateResult {
+    const state = this.srcOptions?.state ?? ReadoutSourceState.regular;
+    const deviation = this.srcOptions?.deviation;
+    const hasDeviation = deviation !== undefined && Number.isFinite(deviation);
+    const box = this.renderTextbox(
+      'source',
+      this.src ?? '',
+      this.srcOptions?.spaceReserver,
+      this.srcOptions
+    );
+    if (state === ReadoutSourceState.regular && !hasDeviation) {
+      return box;
+    }
+    return html`
+      <div
+        class=${classMap({
+          'source-block': true,
+          [`source-state-${state}`]: state !== ReadoutSourceState.regular,
+        })}
+        part="source-block"
+      >
+        ${box}
+        ${hasDeviation
+          ? html`<span class="source-deviation">
+              <obi-delta aria-hidden="true"></obi-delta>
+              <obc-textbox
+                class="source-deviation-value"
+                .size=${ObcTextboxSize.xs}
+                .tabularNums=${true}
+                alignment="left"
+                >${deviation}</obc-textbox
+              >
+            </span>`
+          : nothing}
+      </div>
+    `;
+  }
+
   private renderTrailingSource(): TemplateResult | typeof nothing {
     if (
       this.resolvedStacking === ReadoutListItemStacking.leadingSrc ||
@@ -870,12 +1014,7 @@ export class ObcReadoutListItem extends LitElement {
     }
     return html`
       <div class="divider" part="divider" aria-hidden="true"></div>
-      ${this.renderTextbox(
-        'source',
-        this.src,
-        this.srcOptions?.spaceReserver,
-        this.srcOptions
-      )}
+      ${this.renderSourceBlock()}
     `;
   }
 

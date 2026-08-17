@@ -9,15 +9,20 @@ import {
   ReadoutListItemDataQuality,
   ReadoutListItemBorder,
   ReadoutListItemSetpointInteraction,
+  ReadoutAdviceCategory,
+  ReadoutSourceState,
   ObcTextboxFontWeight,
   type ReadoutListItemClickable,
   type ReadoutValueOptions,
   type ReadoutSetpointOptions,
   type ReadoutAdviceOptions,
+  type ReadoutLabelOptions,
   type ReadoutReserverOptions,
   type ReadoutSrcOptions,
   ReadoutValueType,
 } from './readout-list-item.js';
+import {ObcTextboxSize} from '../../components/textbox/textbox.js';
+import '../../icons/icon-input-right.js';
 import type {AlertFrameConfig} from '../../components/alert-frame/alert-frame.js';
 import {
   ObcAlertFrameMode,
@@ -83,6 +88,7 @@ type StoryOptions = {
   value?: ReadoutValueOptions;
   setpoint?: ReadoutSetpointOptions;
   advice?: ReadoutAdviceOptions;
+  label?: ReadoutLabelOptions;
   unit?: ReadoutReserverOptions;
   src?: ReadoutSrcOptions;
 };
@@ -182,6 +188,7 @@ function renderItem(config: ReadoutItemConfig) {
       .valueOptions=${o.value}
       .setpointOptions=${o.setpoint}
       .adviceOptions=${o.advice}
+      .labelOptions=${o.label}
       .unitOptions=${o.unit}
       .srcOptions=${o.src}
       .showDebugOverlay=${config.showDebugOverlay ?? false}
@@ -1970,6 +1977,172 @@ export const ColumnAlignment: StoryObj<
         </h3>
         ${renderAlignmentColumn(true, args.showDebugOverlay)}
       </section>
+    </div>
+  `,
+};
+
+/**
+ * Figma 6.1 "Equal size": value and setpoint always share the primary size —
+ * the fourth interaction beside primary-secondary, flip-flop and pop-up.
+ */
+export const SetpointEqualSize: Story = {
+  render: () =>
+    renderShowcase([
+      {
+        title: 'Equal Size — Off/At Setpoint × Size',
+        columns: 2,
+        cases: [
+          ReadoutListItemSize.small,
+          ReadoutListItemSize.medium,
+          ReadoutListItemSize.large,
+        ].flatMap((size) =>
+          [123, 120].map((value) => ({
+            label: `${size} / ${value === 120 ? 'at' : 'off'} setpoint`,
+            config: {
+              value,
+              hasSetpoint: true,
+              setpoint: 120,
+              options: {
+                size,
+                priority: ReadoutListItemPriority.enhanced,
+                setpoint: {
+                  interaction: ReadoutListItemSetpointInteraction.equalSize,
+                },
+              },
+            },
+          }))
+        ),
+      },
+    ]),
+};
+
+/**
+ * Advice semantic categories in a row context (Figma 6.1). The full per-block
+ * matrix lives in the Readout Block `AdviceCategories` story.
+ */
+export const AdviceCategories: Story = {
+  render: () =>
+    renderShowcase([
+      {
+        title: 'Advice categories — resting vs active',
+        columns: 2,
+        cases: Object.values(ReadoutAdviceCategory).flatMap((category) =>
+          [false, true].map((active) => ({
+            label: `${category}${active ? ' / active' : ''}`,
+            config: {
+              hasAdvice: true,
+              options: {advice: {category, active}},
+            },
+          }))
+        ),
+      },
+    ]),
+};
+
+/**
+ * Source states + deviation (Figma 6.1 Readout-block-source): `enhanced`
+ * renders the amplified chip, `caution` / `warning` the alert chip;
+ * `deviation` adds the Δ line under the source name. Outline-based, so a live
+ * state change never shifts the row.
+ */
+export const SourceStates: Story = {
+  render: () =>
+    renderShowcase([
+      {
+        title: 'Trailing source — state × deviation',
+        columns: 2,
+        cases: Object.values(ReadoutSourceState).flatMap((state) =>
+          [undefined, 0.5].map((deviation) => ({
+            label: `${state}${deviation !== undefined ? ' / Δ' : ''}`,
+            config: {
+              src: 'GPS 1',
+              options: {src: {state, deviation}},
+            },
+          }))
+        ),
+      },
+      {
+        title: 'Leading source — state chip in the label stack',
+        columns: 1,
+        cases: [
+          {
+            label: 'leading-src / warning / Δ',
+            config: {
+              src: 'GPS 1',
+              options: {
+                stacking: ReadoutListItemStacking.leadingSrc,
+                src: {state: ReadoutSourceState.warning, deviation: 0.5},
+              },
+            },
+          },
+        ],
+      },
+    ]),
+};
+
+/**
+ * `labelOptions`: dense rows default the label to `xs`; `size: 's'` opts a
+ * row into the larger title (Figma 6.1 gives large stand-alone readouts `s`
+ * by default — rows stay dense). The label is SemiBold only on enhanced rows.
+ */
+export const LabelSize: Story = {
+  render: () =>
+    renderShowcase([
+      {
+        title: 'Label size — default (xs) vs s override × priority',
+        columns: 2,
+        cases: [undefined, ObcTextboxSize.s].flatMap((size) =>
+          [
+            ReadoutListItemPriority.regular,
+            ReadoutListItemPriority.enhanced,
+          ].map((priority) => ({
+            label: `${size ?? 'default xs'} / ${priority}`,
+            config: {
+              options: {
+                priority,
+                label: size ? {size} : undefined,
+              },
+            },
+          }))
+        ),
+      },
+    ]),
+};
+
+/**
+ * TODO(designer): open question from the 6.1 review — while a pop-up setpoint
+ * is hidden at-setpoint, should the reading keep a setpoint arrow so it still
+ * reads as "a value you are in control of"? The existing `value-icon` slot
+ * already expresses that today, demonstrated here; no new API until decided.
+ */
+export const SetpointPopUpWithValueArrow: Story = {
+  render: () => html`
+    <style>
+      ${showcaseStyle}
+    </style>
+    <div class="rli-sections">
+      <p
+        style="margin: 0; font: 12px/1.5 var(--global-typography-ui-label-font-family, inherit); color: var(--element-neutral-color, #777);"
+      >
+        Pop-up at setpoint, with an <code>obi-input-right</code> slotted into
+        <code>value-icon</code> so the collapsed reading keeps the in-control
+        marker.
+      </p>
+      <obc-readout-list-item
+        .label=${'HDG'}
+        .unit=${'/min'}
+        .src=${'Source'}
+        .value=${10}
+        .hasSetpoint=${true}
+        .setpoint=${10}
+        .priority=${ReadoutListItemPriority.enhanced}
+        .setpointOptions=${{
+          interaction: ReadoutListItemSetpointInteraction.popUp,
+        }}
+        .valueOptions=${{hasIcon: true}}
+      >
+        <obi-input-right slot="value-icon"></obi-input-right>
+      </obc-readout-list-item>
     </div>
   `,
 };

@@ -14,13 +14,16 @@ import {
   ReadoutBlockSize,
   ReadoutBlockDataQuality,
   ReadoutBlockHidePhase,
+  ReadoutAdviceCategory,
 } from '../../building-blocks/readout-block/readout-block.js';
 import {
   ReadoutListItemSetpointInteraction,
+  ReadoutSourceState,
   type ReadoutBlockState,
   type ReadoutValueOptions,
   type ReadoutSetpointOptions,
   type ReadoutAdviceOptions,
+  type ReadoutLabelOptions,
   type ReadoutReserverOptions,
   type ReadoutSrcOptions,
 } from '../readout-list-item/readout-list-item.js';
@@ -39,6 +42,7 @@ import {
   readoutNumericFormatOptions,
   readoutPrimarySize,
   readoutSecondarySize,
+  readoutSetpointSize,
   readoutSetpointWeight,
   readoutDataQualityClasses,
   resolveSetpointHidePhase,
@@ -60,6 +64,7 @@ import {
 } from '../../components/context-menu-input/context-menu-input.js';
 import '../../icons/icon-chevron-right-google.js';
 import '../../icons/icon-drop-down-google.js';
+import '../../icons/icon-delta.js';
 
 // Re-exported so consumers configure the readout without a second import path.
 // The option interfaces and enums are shared with `obc-readout-list-item` on
@@ -67,11 +72,14 @@ import '../../icons/icon-drop-down-google.js';
 // per-block options API and may merge in a future release.
 export {ObcTextboxFontWeight} from '../../components/textbox/textbox.js';
 export {ReadoutValueType} from './readout-formatters.js';
+export {ReadoutAdviceCategory} from '../../building-blocks/readout-block/readout-block.js';
+export {ReadoutSourceState} from '../readout-list-item/readout-list-item.js';
 export type {
   ReadoutBlockState,
   ReadoutValueOptions,
   ReadoutSetpointOptions,
   ReadoutAdviceOptions,
+  ReadoutLabelOptions,
   ReadoutReserverOptions,
   ReadoutSrcOptions,
 } from '../readout-list-item/readout-list-item.js';
@@ -106,6 +114,8 @@ export type ReadoutDataQuality = ReadoutBlockDataQuality;
  * How the setpoint segment behaves relative to the value (an alias of
  * `ReadoutListItemSetpointInteraction`).
  * - `always-visible` (default): the setpoint is always shown.
+ * - `equal-size`: value and setpoint are always shown at the same (primary)
+ *   size (Figma 6.1 "Equal size").
  * - `flip-flop`: value and setpoint swap emphasis (size) as the value reaches
  *   the setpoint.
  * - `pop-up`: the setpoint is shown only while the value has not reached it,
@@ -226,6 +236,7 @@ export interface ReadoutSourceOptions extends ReadoutSrcOptions {
  * ### Slots
  * | Slot Name          | Renders When                          | Purpose                              |
  * |--------------------|---------------------------------------|--------------------------------------|
+ * | leading-icon       | `hasLeadingIcon`                      | Icon before the label/unit meta zone.|
  * | value-icon         | `valueOptions.hasIcon`                | Icon before the value.               |
  * | setpoint-icon      | `hasSetpoint`                         | Overrides the default setpoint icon. |
  * | advice-icon        | `hasAdvice`                           | Overrides the default advice icon.   |
@@ -234,6 +245,7 @@ export interface ReadoutSourceOptions extends ReadoutSrcOptions {
  * @fires {CustomEvent<{value: string, label?: string}>} source-change - Fired when a source picker option is selected.
  * @fires {CustomEvent<{src: string}>} source-flyout-click - Fired when the source row is clicked while `srcOptions.interaction == 'flyout'`.
  *
+ * @slot leading-icon - Icon before the label/unit meta zone.
  * @slot value-icon - Icon before the value.
  * @slot setpoint-icon - Overrides the default setpoint icon.
  * @slot advice-icon - Overrides the default advice icon.
@@ -289,6 +301,8 @@ export class ObcReadout extends LitElement {
   @property({type: Boolean}) hasDegree = false;
   /** @availableWhen hasDegree==false */
   @property({type: Boolean}) hasDegreeSpacer = false;
+  /** Show the `leading-icon` slot before the label/unit meta zone. */
+  @property({type: Boolean}) hasLeadingIcon = false;
   /**
    * Also formats the numeric setpoint / advice blocks, which stay numeric
    * even when the value is text. Must be between 0 and 100 — the range
@@ -324,6 +338,8 @@ export class ObcReadout extends LitElement {
   @property({type: Object}) setpointOptions?: ReadoutSetpointOptions;
   /** @availableWhen hasAdvice==true */
   @property({type: Object}) adviceOptions?: ReadoutAdviceOptions;
+  /** @availableWhen label!='' */
+  @property({type: Object}) labelOptions?: ReadoutLabelOptions;
   /** @availableWhen unit!='' */
   @property({type: Object}) unitOptions?: ReadoutReserverOptions;
   /** @availableWhen src!='' */
@@ -444,6 +460,12 @@ export class ObcReadout extends LitElement {
     );
   }
 
+  private get isEqualSize(): boolean {
+    return (
+      this.resolvedSetpointInteraction === ReadoutSetpointInteraction.equalSize
+    );
+  }
+
   private get isPopUp(): boolean {
     return (
       this.resolvedSetpointInteraction === ReadoutSetpointInteraction.popUp
@@ -511,12 +533,46 @@ export class ObcReadout extends LitElement {
   }
 
   private get setpointSize(): ObcTextboxSize {
-    return this.isSetpointEmphasized ? this.primarySize : this.secondarySize;
+    return readoutSetpointSize({
+      primary: this.primarySize,
+      secondary: this.secondarySize,
+      emphasized: this.isSetpointEmphasized,
+      equalSize: this.isEqualSize,
+    });
   }
 
   /** Value font weight passes straight to obc-textbox; regular when unset. Colour is separate. */
   private get valueWeight(): ObcTextboxFontWeight {
     return this.valueOptions?.weight ?? ObcTextboxFontWeight.regular;
+  }
+
+  /**
+   * Label size. The Figma 6.1 title block defaults large readouts to `s` — a
+   * scannable label should not sit at the smallest permitted size — while
+   * small/medium tiers stay `xs`; `labelOptions.size` overrides either way
+   * (per the design team, for context / density / secondary instruments).
+   * The `s` default was confirmed by the design team (2026-08-17).
+   * TODO(designer): the medium-tier default is unverified in the new sheets
+   * (only XS and S exist on the title's size axis).
+   */
+  private get labelSize(): ObcTextboxSize {
+    return (
+      this.labelOptions?.size ??
+      (this.resolvedSize === ReadoutSize.large
+        ? ObcTextboxSize.s
+        : ObcTextboxSize.xs)
+    );
+  }
+
+  /**
+   * Label weight: SemiBold only for enhanced (in-command) readouts, regular
+   * otherwise — the designer reduced the amount of semibold in the interface
+   * (Figma 6.1 review).
+   */
+  private get labelWeight(): ObcTextboxFontWeight {
+    return this.rowEnhanced
+      ? ObcTextboxFontWeight.semibold
+      : ObcTextboxFontWeight.regular;
   }
 
   /** Setpoint is SemiBold only while emphasised, otherwise regular weight. */
@@ -567,6 +623,9 @@ export class ObcReadout extends LitElement {
     hidePhase?: ReadoutBlockHidePhase;
     dataQuality?: ReadoutBlockDataQuality;
     alert?: false | AlertFrameConfig;
+    /** Advice-only: semantic category + triggered state. */
+    category?: ReadoutAdviceCategory;
+    active?: boolean;
     /**
      * Invisible width-reserving duplicate (see
      * {@link renderSetpointWidthReserve}): skips the forwarded icon slot so
@@ -600,6 +659,8 @@ export class ObcReadout extends LitElement {
         .hidePhase=${config.hidePhase ?? ReadoutBlockHidePhase.none}
         .dataQuality=${config.dataQuality}
         .alert=${config.alert ?? false}
+        .category=${config.category ?? ReadoutAdviceCategory.regular}
+        .active=${config.active ?? false}
       >
         ${config.ghost ? nothing : this.renderForwardedIcon(config.variant)}
       </obc-readout-block>
@@ -658,10 +719,11 @@ export class ObcReadout extends LitElement {
     reserver?: string,
     blockState?: ReadoutBlockState
   ): TemplateResult {
+    // The label carries its own size (labelOptions / tier default) and
+    // priority-driven weight; unit and source stay xs / regular.
     const weight =
-      role === 'label'
-        ? ObcTextboxFontWeight.semibold
-        : ObcTextboxFontWeight.regular;
+      role === 'label' ? this.labelWeight : ObcTextboxFontWeight.regular;
+    const size = role === 'label' ? this.labelSize : ObcTextboxSize.xs;
     const box = html`
       <obc-textbox
         class=${classMap({
@@ -669,7 +731,7 @@ export class ObcReadout extends LitElement {
           ...this.dataQualityClasses(blockState?.dataQuality),
         })}
         part=${role}
-        .size=${ObcTextboxSize.xs}
+        .size=${size}
         .fontWeight=${weight}
         alignment="left"
       >
@@ -701,6 +763,8 @@ export class ObcReadout extends LitElement {
       hasDegree: this.hasDegree ?? false,
       dataQuality: this.adviceOptions?.dataQuality,
       alert: this.adviceOptions?.alert,
+      category: this.adviceOptions?.category,
+      active: this.adviceOptions?.active,
     });
   }
 
@@ -814,14 +878,27 @@ export class ObcReadout extends LitElement {
         })}
         part="meta-wrapper"
       >
-        ${this.label ? this.renderTextbox('label', this.label) : nothing}
-        ${this.unit
-          ? this.renderTextbox(
-              'unit',
-              this.unit,
-              this.unitOptions?.spaceReserver
-            )
+        ${this.hasLeadingIcon
+          ? html`<span class="leading-icon" aria-hidden="true"
+              ><slot name="leading-icon"></slot
+            ></span>`
           : nothing}
+        <div class="meta-labels" part="meta-labels">
+          ${this.label
+            ? this.renderTextbox(
+                'label',
+                this.label,
+                this.labelOptions?.spaceReserver
+              )
+            : nothing}
+          ${this.unit
+            ? this.renderTextbox(
+                'unit',
+                this.unit,
+                this.unitOptions?.spaceReserver
+              )
+            : nothing}
+        </div>
       </div>
     `;
   }
@@ -882,29 +959,73 @@ export class ObcReadout extends LitElement {
       return wrapWithAlertFrame(this.srcOptions?.alert ?? false, button);
     }
 
-    return this.renderTextbox(
+    return this.renderSourceBlock(src);
+  }
+
+  /**
+   * The plain (non-interactive) source: the textbox plus its optional state
+   * chip and deviation line. The regular no-deviation case renders the bare
+   * textbox — the pre-6.1 output; a state or deviation wraps it in the
+   * `.source-block` stack. The picker / flyout button variants do not carry
+   * state / deviation yet — TODO(designer): undefined in the 6.1 sheets.
+   */
+  private renderSourceBlock(src: string): TemplateResult {
+    const state = this.srcOptions?.state ?? ReadoutSourceState.regular;
+    const deviation = this.srcOptions?.deviation;
+    const hasDeviation = deviation !== undefined && Number.isFinite(deviation);
+    const box = this.renderTextbox(
       'source',
       src,
       this.srcOptions?.spaceReserver,
       this.srcOptions
     );
+    if (state === ReadoutSourceState.regular && !hasDeviation) {
+      return box;
+    }
+    return html`
+      <div
+        class=${classMap({
+          'source-block': true,
+          [`source-state-${state}`]: state !== ReadoutSourceState.regular,
+        })}
+        part="source-block"
+      >
+        ${box}
+        ${hasDeviation
+          ? html`<span class="source-deviation">
+              <obi-delta aria-hidden="true"></obi-delta>
+              <obc-textbox
+                class="source-deviation-value"
+                .size=${ObcTextboxSize.xs}
+                .tabularNums=${true}
+                alignment="left"
+                >${deviation}</obc-textbox
+              >
+            </span>`
+          : nothing}
+      </div>
+    `;
   }
 
-  /** The source row (vertical) / segment (horizontal), with its auto divider. */
+  /**
+   * The source row (vertical) / segment (horizontal). Only the horizontal
+   * direction draws an auto divider before the source — the Figma 6.1 review
+   * (node 95:24490 "remove dividers", 95:26891 "Source-divider are there")
+   * keeps the vertical source row divider-free while the horizontal flow
+   * separates the source with a vertical rule.
+   */
   private renderSource(): TemplateResult | typeof nothing {
     if (!this.hasSrc) {
       return nothing;
     }
     return html`
-      <div
-        class=${classMap({
-          divider: true,
-          'divider-horizontal': !this.isHorizontal,
-          'divider-vertical': this.isHorizontal,
-        })}
-        part="divider"
-        aria-hidden="true"
-      ></div>
+      ${this.isHorizontal
+        ? html`<div
+            class="divider divider-vertical"
+            part="divider"
+            aria-hidden="true"
+          ></div>`
+        : nothing}
       <div class="source-row" part="source-wrapper">
         ${this.renderSourceContent()}
       </div>

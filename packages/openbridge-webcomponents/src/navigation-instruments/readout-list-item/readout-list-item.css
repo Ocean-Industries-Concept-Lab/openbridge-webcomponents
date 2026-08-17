@@ -41,7 +41,7 @@ obc-readout-block {
   );
   --obc-readout-block-hinted-color: var(
     --obc-readout-list-item-hinted-color,
-    var(--element-inactive-color)
+    var(--element-disabled-color)
   );
 }
 
@@ -300,6 +300,60 @@ obc-readout-block {
 .source.data-invalid {
   background: var(--alert-invalid-background-color);
   outline-color: var(--alert-invalid-border-color);
+}
+
+/* ---------- Source state chip & deviation (Figma 6.1 Readout-block-source)
+ * `enhanced` renders the amplified chip, `caution`/`warning` the alert chip.
+ * Like the data-quality chip these use `outline`, so toggling a state never
+ * shifts the row. TODO(designer): Figma pads the chip 4px; a padding here
+ * would shift the row on live state changes, so the chip hugs the text like
+ * the data-quality chip does. */
+.source-block {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.source-block.source-state-enhanced,
+.source-block.source-state-caution,
+.source-block.source-state-warning {
+  outline: 1px solid;
+  border-radius: var(--global-border-radius-border-radius-check);
+}
+.source-block.source-state-enhanced {
+  background: var(--amplified-enabled-background-color);
+  outline-color: var(--amplified-enabled-border-color);
+}
+.source-block.source-state-enhanced .source,
+.source-block.source-state-enhanced .source-deviation {
+  color: var(--on-amplified-active-color);
+}
+.source-block.source-state-caution {
+  background: var(--alert-caution-color);
+  outline-color: var(--alert-caution-outline-color);
+}
+.source-block.source-state-caution .source,
+.source-block.source-state-caution .source-deviation {
+  color: var(--on-caution-active-color);
+}
+.source-block.source-state-warning {
+  background: var(--alert-warning-color);
+  outline-color: var(--alert-warning-outline-color);
+}
+.source-block.source-state-warning .source,
+.source-block.source-state-warning .source-deviation {
+  color: var(--on-warning-active-color);
+}
+
+.source-deviation {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  color: var(--element-inactive-color);
+}
+.source-deviation obi-delta {
+  display: block;
+  inline-size: 12px;
+  block-size: 12px;
 }
 
 .leading-icon {

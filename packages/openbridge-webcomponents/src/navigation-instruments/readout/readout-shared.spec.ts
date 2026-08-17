@@ -13,6 +13,7 @@ import {
   isDisplayedAtSetpoint,
   readoutPrimarySize,
   readoutSecondarySize,
+  readoutSetpointSize,
   readoutSetpointWeight,
   readoutDataQualityClasses,
   resolveSetpointHidePhase,
@@ -88,6 +89,29 @@ describe('readoutPrimarySize / readoutSecondarySize', () => {
       ObcTextboxSize.s
     );
     expect(readoutSecondarySize(ReadoutBlockSize.large)).toBe(ObcTextboxSize.s);
+  });
+});
+
+describe('readoutSetpointSize', () => {
+  const sizes = {primary: ObcTextboxSize.l, secondary: ObcTextboxSize.s};
+
+  it('is secondary at rest (primary-secondary convention)', () => {
+    expect(
+      readoutSetpointSize({...sizes, emphasized: false, equalSize: false})
+    ).toBe(ObcTextboxSize.s);
+  });
+
+  it('is primary while emphasised OR in equal-size, including both at once', () => {
+    expect(
+      readoutSetpointSize({...sizes, emphasized: true, equalSize: false})
+    ).toBe(ObcTextboxSize.l);
+    expect(
+      readoutSetpointSize({...sizes, emphasized: false, equalSize: true})
+    ).toBe(ObcTextboxSize.l);
+    // Touching an equal-size setpoint must not demote it.
+    expect(
+      readoutSetpointSize({...sizes, emphasized: true, equalSize: true})
+    ).toBe(ObcTextboxSize.l);
   });
 });
 

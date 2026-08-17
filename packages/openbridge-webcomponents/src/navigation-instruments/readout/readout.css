@@ -41,7 +41,7 @@ obc-readout-block {
   );
   --obc-readout-block-hinted-color: var(
     --obc-readout-hinted-color,
-    var(--element-inactive-color)
+    var(--element-disabled-color)
   );
 }
 
@@ -252,36 +252,82 @@ obc-readout-block {
   );
 }
 
-/* ---------- Meta zone (label + unit) ---------- */
+/* ---------- Meta zone (label + unit) ----------
+ * `.meta` is a row hosting the optional leading icon and `.meta-labels`; the
+ * inline/stacked arrangement applies to `.meta-labels` (the label/unit pair). */
 .meta {
   display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--instrument-components-readout-new-general-regular-icon-gap);
   padding-inline: var(--_readout-trim);
 }
 
-.meta.meta-inline {
+.meta .leading-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  color: var(--element-neutral-color);
+}
+.meta .leading-icon ::slotted(*) {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+}
+.readout.size-small .meta .leading-icon {
+  inline-size: var(
+    --instrument-components-readout-new-general-regular-icon-size
+  );
+  block-size: var(
+    --instrument-components-readout-new-general-regular-icon-size
+  );
+}
+.readout.size-medium .meta .leading-icon {
+  inline-size: var(
+    --instrument-components-readout-new-general-medium-icon-size
+  );
+  block-size: var(--instrument-components-readout-new-general-medium-icon-size);
+}
+.readout.size-large .meta .leading-icon {
+  inline-size: var(--instrument-components-readout-new-general-large-icon-size);
+  block-size: var(--instrument-components-readout-new-general-large-icon-size);
+}
+
+.meta-labels {
+  display: inline-flex;
+}
+
+.meta-inline .meta-labels {
   flex-direction: row;
-  align-items: flex-start;
+  /* Bottom-align so an `s` label and its `xs` unit share a baseline (the
+     Figma title block is items-end); identical to the old flex-start while
+     both were `xs`. */
+  align-items: flex-end;
   gap: var(--global-size-spacing-target-padding);
 }
 
-.meta.meta-stacked {
+.meta-stacked .meta-labels {
   flex-direction: column;
   align-items: flex-end;
 }
 
-.readout.direction-vertical.alignment-left .meta.meta-stacked {
+.readout.direction-vertical.alignment-left .meta-stacked .meta-labels {
   align-items: flex-start;
 }
 
-.readout.direction-vertical.alignment-center .meta.meta-stacked {
+.readout.direction-vertical.alignment-center .meta-stacked .meta-labels {
   align-items: center;
 }
 
 /* Horizontal: the label/unit column sits beside the value, top-aligned within
    the row so the label reads first. */
 .readout.direction-horizontal .meta.meta-stacked {
-  align-items: flex-start;
   align-self: center;
+
+  & .meta-labels {
+    align-items: flex-start;
+  }
 
   &.label-only {
     align-self: flex-start;
@@ -328,6 +374,60 @@ obc-readout-block {
   outline-color: var(--alert-invalid-border-color);
 }
 
+/* ---------- Source state chip & deviation (Figma 6.1 Readout-block-source)
+ * `enhanced` renders the amplified chip, `caution`/`warning` the alert chip.
+ * Like the data-quality chip these use `outline`, so toggling a state never
+ * shifts the layout. TODO(designer): Figma pads the chip 4px; a padding here
+ * would shift the layout on live state changes, so the chip hugs the text
+ * like the data-quality chip does. */
+.source-block {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.source-block.source-state-enhanced,
+.source-block.source-state-caution,
+.source-block.source-state-warning {
+  outline: 1px solid;
+  border-radius: var(--global-border-radius-border-radius-check);
+}
+.source-block.source-state-enhanced {
+  background: var(--amplified-enabled-background-color);
+  outline-color: var(--amplified-enabled-border-color);
+}
+.source-block.source-state-enhanced .source,
+.source-block.source-state-enhanced .source-deviation {
+  color: var(--on-amplified-active-color);
+}
+.source-block.source-state-caution {
+  background: var(--alert-caution-color);
+  outline-color: var(--alert-caution-outline-color);
+}
+.source-block.source-state-caution .source,
+.source-block.source-state-caution .source-deviation {
+  color: var(--on-caution-active-color);
+}
+.source-block.source-state-warning {
+  background: var(--alert-warning-color);
+  outline-color: var(--alert-warning-outline-color);
+}
+.source-block.source-state-warning .source,
+.source-block.source-state-warning .source-deviation {
+  color: var(--on-warning-active-color);
+}
+
+.source-deviation {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  color: var(--element-inactive-color);
+}
+.source-deviation obi-delta {
+  display: block;
+  inline-size: 12px;
+  block-size: 12px;
+}
+
 /* ---------- Source row & auto divider ---------- */
 .source-row {
   display: inline-flex;
@@ -340,12 +440,8 @@ obc-readout-block {
   background-color: var(--border-divider-color);
 }
 
-.divider.divider-horizontal {
-  inline-size: 100%;
-  block-size: 1px;
-  margin-block: var(--_readout-divider-pad);
-}
-
+/* Only the horizontal direction draws a source divider (Figma 6.1: vertical
+   readouts have no rule above the source). */
 .divider.divider-vertical {
   inline-size: 1px;
   align-self: stretch;
@@ -497,9 +593,6 @@ obc-readout-block {
   --_readout-value-pad-v: var(
     --instrument-components-readout-new-group-vertical-regular-value-container-padding-vertical
   );
-  --_readout-divider-pad: var(
-    --instrument-components-readout-new-group-vertical-regular-divider-padding
-  );
   --_readout-min-height: var(
     --instrument-components-readout-new-group-vertical-regular-container-min-height
   );
@@ -524,9 +617,6 @@ obc-readout-block {
   --_readout-value-pad-v: var(
     --instrument-components-readout-new-group-vertical-medium-value-container-padding-vertical
   );
-  --_readout-divider-pad: var(
-    --instrument-components-readout-new-group-vertical-medium-divider-padding
-  );
 }
 
 .readout.direction-vertical.stacking-inline.size-large {
@@ -544,9 +634,6 @@ obc-readout-block {
   );
   --_readout-value-pad-v: var(
     --instrument-components-readout-new-group-vertical-enhanced-vertical-value-container-padding-vertical
-  );
-  --_readout-divider-pad: var(
-    --instrument-components-readout-new-group-vertical-enhanced-divider-padding
   );
   --_readout-min-height: var(
     --instrument-components-readout-new-group-vertical-enhanced-container-min-height
@@ -570,9 +657,6 @@ obc-readout-block {
   --_readout-value-pad-v: var(
     --instrument-components-readout-new-stack-regular-value-container-padding-vertical
   );
-  --_readout-divider-pad: var(
-    --instrument-components-readout-new-stack-regular-divider-padding
-  );
   --_readout-min-height: var(
     --instrument-components-readout-new-stack-regular-container-min-height
   );
@@ -594,9 +678,6 @@ obc-readout-block {
   --_readout-value-pad-v: var(
     --instrument-components-readout-new-stack-medium-value-container-padding-vertical
   );
-  --_readout-divider-pad: var(
-    --instrument-components-readout-new-stack-medium-divider-padding
-  );
 }
 
 .readout.direction-vertical.stacking-stacked.size-large {
@@ -614,9 +695,6 @@ obc-readout-block {
   );
   --_readout-value-pad-v: var(
     --instrument-components-readout-new-stack-enhanced-vertical-value-container-padding-vertical
-  );
-  --_readout-divider-pad: var(
-    --instrument-components-readout-new-stack-enhanced-divider-padding
   );
   --_readout-min-height: var(
     --instrument-components-readout-new-stack-enhanced-container-min-height
