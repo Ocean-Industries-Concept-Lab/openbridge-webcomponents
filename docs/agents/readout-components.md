@@ -229,9 +229,9 @@ Do not treat these as settled when editing:
 - The large-tier label-`s` default and the regular-weight label are
   **confirmed** by the design team (2026-08-17); only the medium-tier label
   default remains unverified (`labelSize` carries the TODO).
-- Advice categories: the optimal/eco triggered tint covers the whole diamond
-  (Figma tints only the inner plus — needs a two-tone asset), and the advice
-  `Enhanced` (indent chip) state is not implemented. Designer flagged
+- Advice categories: for triggered optimal / eco the tint covers the whole
+  diamond (Figma tints only the inner plus — needs a two-tone asset), and the
+  advice `Enhanced` (indent chip) state is not implemented. Designer flagged
   category icons/colours as "may change; structure stable".
 - Source: the Figma `Tag` type and the 4px chip padding are not implemented
   (the chip hugs like the data-quality chip so live state flips don't shift

@@ -182,6 +182,11 @@ export enum ReadoutSourceInteraction {
 /**
  * Per-source options. Extends the shared per-block state (data quality, alert,
  * space reserver) with the readout's source interactivity.
+ *
+ * `state` and `deviation` apply to the plain (non-interactive) source only —
+ * the Figma 6.1 sheets do not define them on the picker / flyout buttons, so
+ * those branches render without a state chip or deviation line
+ * (TODO(designer): pending a design for interactive source states).
  */
 export interface ReadoutSourceOptions extends ReadoutSrcOptions {
   /** Interactivity of the source row (default `none`). */
