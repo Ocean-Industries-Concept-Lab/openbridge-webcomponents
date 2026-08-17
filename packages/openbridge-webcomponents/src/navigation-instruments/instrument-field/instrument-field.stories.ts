@@ -317,8 +317,11 @@ export const UndefinedSetpoint: Story = {
       notes: html`
         <p>
           Both render the unavailable dash for value and setpoint. Note the
-          spelling: a missing readout value is <code>null</code>, not
-          <code>undefined</code>.
+          spelling — the two properties differ: a missing
+          <code>value</code> is <code>null</code> (its type is
+          <code>number | string | null</code>), while a missing
+          <code>setpoint</code> stays <code>undefined</code> (declared
+          <code>setpoint?: number</code>; it does not accept <code>null</code>).
         </p>
         <p>
           Both emit a single dash here because the legacy
