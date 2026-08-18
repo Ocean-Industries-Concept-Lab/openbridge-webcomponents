@@ -11,6 +11,15 @@ import {
 } from '../../components/textbox/textbox.js';
 import '../../icons/icon-input-right.js';
 import '../../icons/icon-notification-advice.js';
+import '../../icons/icon-notification-advice-active.js';
+import '../../icons/icon-caution-google.js';
+import '../../icons/icon-caution-color-iec.js';
+import '../../icons/icon-warning-unacknowledged-outlined.js';
+import '../../icons/icon-warning-unacknowledged-iec.js';
+import '../../icons/icon-alarm.js';
+import '../../icons/icon-alarm-unacknowledged-iec.js';
+import '../../icons/icon-running.js';
+import '../../icons/icon-running-color-iec.js';
 import {
   formatNumericValue,
   readoutFormattedInteger,
@@ -70,6 +79,32 @@ export enum ReadoutBlockSize {
 export enum ReadoutBlockDataQuality {
   lowIntegrity = 'low-integrity',
   invalid = 'invalid',
+}
+
+/**
+ * Semantic category of an advice block (Figma 6.1 "Readout-block-advice"
+ * Value axis). Drives the default marker icon and — while {@link
+ * ObcReadoutBlock.active} — the triggered styling:
+ * - `regular` / `optimal` / `eco`: the advice diamond; triggered renders the
+ *   filled diamond (tinted enhanced-blue / mint for optimal / eco) and a
+ *   SemiBold number.
+ * - `caution` / `warning` / `alarm` / `running`: the matching neutral outline
+ *   icon; triggered swaps in the filled IEC status icon and the active text
+ *   colour.
+ *
+ * TODO(designer): the optimal / eco triggered tint covers the whole diamond
+ * glyph — the Figma icon tints only the inner plus, which needs a two-tone
+ * icon asset; and the advice "Enhanced" state (indent background chip) is not
+ * implemented yet. Both flagged as "may change" in the 6.1 review.
+ */
+export enum ReadoutAdviceCategory {
+  regular = 'regular',
+  optimal = 'optimal',
+  eco = 'eco',
+  caution = 'caution',
+  warning = 'warning',
+  alarm = 'alarm',
+  running = 'running',
 }
 
 /**
@@ -194,6 +229,23 @@ export class ObcReadoutBlock extends LitElement {
   /** Text alignment of the number within its reserved width. */
   @property({type: String}) alignment: ObcTextboxAlignment =
     ObcTextboxAlignment.Right;
+
+  /**
+   * Semantic category of an advice block — picks the default marker icon and
+   * the {@link active} styling. Only meaningful for `variant="advice"`.
+   * @availableWhen variant==advice
+   */
+  @property({type: String}) category: ReadoutAdviceCategory =
+    ReadoutAdviceCategory.regular;
+
+  /**
+   * The advice is triggered: the marker swaps to its filled/status icon and
+   * the number takes the category's triggered styling (SemiBold for
+   * regular/optimal/eco, active text colour for the alert categories). Only
+   * meaningful for `variant="advice"`.
+   * @availableWhen variant==advice
+   */
+  @property({type: Boolean}) active = false;
 
   /** Per-block measurement quality (outline chip). */
   @property({type: String}) dataQuality?: ReadoutBlockDataQuality;
@@ -326,12 +378,46 @@ export class ObcReadoutBlock extends LitElement {
     if (this.variant === ReadoutBlockVariant.setpoint) {
       fallback = html`<obi-input-right></obi-input-right>`;
     } else if (this.variant === ReadoutBlockVariant.advice) {
-      fallback = html`<obi-notification-advice></obi-notification-advice>`;
+      fallback = this.adviceFallbackIcon();
     }
     return html`<span class="block-icon" part="block-icon" aria-hidden="true">
       <slot name="icon" @slotchange=${this.onIconSlotChange}></slot>
       ${this.hasAssignedIcon ? nothing : fallback}
     </span>`;
+  }
+
+  /**
+   * The advice marker for the current category / triggered state. Resting
+   * categories carry a neutral outline glyph (tinted via `currentColor`);
+   * triggered alert categories swap to the filled IEC status icon, whose
+   * colours are fixed fills and ignore `currentColor` by design.
+   */
+  private adviceFallbackIcon(): TemplateResult {
+    const active = this.active;
+    switch (this.category) {
+      case ReadoutAdviceCategory.caution:
+        return active
+          ? html`<obi-caution-color-iec></obi-caution-color-iec>`
+          : html`<obi-caution-google></obi-caution-google>`;
+      case ReadoutAdviceCategory.warning:
+        return active
+          ? html`<obi-warning-unacknowledged-iec></obi-warning-unacknowledged-iec>`
+          : html`<obi-warning-unacknowledged-outlined></obi-warning-unacknowledged-outlined>`;
+      case ReadoutAdviceCategory.alarm:
+        return active
+          ? html`<obi-alarm-unacknowledged-iec></obi-alarm-unacknowledged-iec>`
+          : html`<obi-alarm></obi-alarm>`;
+      case ReadoutAdviceCategory.running:
+        return active
+          ? html`<obi-running-color-iec></obi-running-color-iec>`
+          : html`<obi-running></obi-running>`;
+      default:
+        // regular / optimal / eco share the advice diamond; the triggered tint
+        // is applied via CSS on `.block-icon` (see `advice-*` classes).
+        return active
+          ? html`<obi-notification-advice-active></obi-notification-advice-active>`
+          : html`<obi-notification-advice></obi-notification-advice>`;
+    }
   }
 
   /**
@@ -370,6 +456,16 @@ export class ObcReadoutBlock extends LitElement {
 
   override render() {
     const valueSize = this.resolvedValueSize;
+    const isAdvice = this.variant === ReadoutBlockVariant.advice;
+    // Triggered regular/optimal/eco advice renders SemiBold (Figma 6.1); the
+    // alert categories keep the caller's weight and change colour instead.
+    const adviceSemibold =
+      isAdvice &&
+      this.active &&
+      (this.category === ReadoutAdviceCategory.regular ||
+        this.category === ReadoutAdviceCategory.optimal ||
+        this.category === ReadoutAdviceCategory.eco);
+    const weight = adviceSemibold ? ObcTextboxFontWeight.semibold : this.weight;
     const formatOptions = this.numericFormatOptions;
     const isTextMode = this.valueType === ReadoutValueType.text;
     // A missing digit knob makes the reading untrustworthy, so it resolves to
@@ -417,6 +513,9 @@ export class ObcReadoutBlock extends LitElement {
           block: true,
           [`block-${this.variant}`]: true,
           [`size-${this.size}`]: true,
+          [`value-size-${valueSize}`]: true,
+          [`advice-${this.category}`]: isAdvice,
+          'advice-active': isAdvice && this.active,
           'tone-enhanced': this.enhanced,
           touching: this.touching,
           'is-hiding': this.hidePhase === ReadoutBlockHidePhase.hiding,
@@ -431,7 +530,7 @@ export class ObcReadoutBlock extends LitElement {
             class="block-text"
             part="block-text"
             .size=${valueSize}
-            .fontWeight=${this.weight}
+            .fontWeight=${weight}
             .alignment=${this.alignment}
             .tabularNums=${true}
           >

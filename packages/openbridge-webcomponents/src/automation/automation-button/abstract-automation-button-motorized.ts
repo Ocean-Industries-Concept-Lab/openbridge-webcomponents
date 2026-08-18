@@ -34,6 +34,9 @@ export class ObcAbstractAutomationButtonMotorized extends ObcAbstractAutomationB
 
   override get extraReadouts(): AutomationButtonReadoutStack[] {
     const speed = this.speed ?? this.speedInPercent;
+    if (!this.showStatus) {
+      return [];
+    }
     if (speed !== undefined && speed !== null && this.on) {
       return [
         {

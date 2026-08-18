@@ -182,6 +182,16 @@ const LINE_GRAPH_RECREATE_PROP_NAMES = [
 ] as const;
 
 /**
+ * Properties that define the chart's reference size, and therefore invalidate
+ * the derived `computedWidth` / `computedHeight` pair.
+ */
+const LINE_GRAPH_DIMENSION_PROP_NAMES = [
+  'width',
+  'height',
+  'fixedAspectRatioScaling',
+] as const;
+
+/**
  * Abstract base class for line and area chart components built on Chart.js.
  *
  * ## Features
@@ -1264,8 +1274,8 @@ export class ObcChartLineBase extends LitElement {
    * Synchronize scale and chart dimensions/data
    * This is the main coordination function
    */
-  private syncScalesAndChart() {
-    if (this.isUpdatingScales) return;
+  private syncScalesAndChart(): boolean {
+    if (this.isUpdatingScales) return false;
     this.isUpdatingScales = true;
 
     // console.debug(`[chart-line-base] Syncing scales and chart`, {
@@ -1298,7 +1308,7 @@ export class ObcChartLineBase extends LitElement {
           effectiveWidth,
           effectiveHeight,
         });
-        return;
+        return false;
       }
 
       // Step 3: Update slotted scales with coordinated properties
@@ -1310,6 +1320,7 @@ export class ObcChartLineBase extends LitElement {
         this.chart.destroy();
       }
       this.createChart();
+      return true;
     } finally {
       this.isUpdatingScales = false;
     }
@@ -1667,6 +1678,24 @@ export class ObcChartLineBase extends LitElement {
       return;
     }
 
+    // `computedWidth` / `computedHeight` are the pixel size everything below
+    // derives from (`--chart-height`, the slotted scales' height, the padding
+    // scale factor). They were only ever refreshed from the wrapper's
+    // ResizeObserver, so re-assigning `width` / `height` rebuilt the chart
+    // against the *previous* aspect ratio and the new one only took effect on
+    // the next container resize (issue #1138).
+    //
+    // This runs before the `hasLabelPadding` branch below: the two can change
+    // in the same update (the tank sets both on its embedded gauge-trend), and
+    // taking the label-padding path first would rebuild against a stale
+    // derived size. Nothing is lost by going through here instead — a rebuild
+    // from `updateComputedDimensions()` goes via `syncScalesAndChart()`, which
+    // performs the same `updateScaleProperties()` cascade.
+    if (this.hasAnyChanged(changed, LINE_GRAPH_DIMENSION_PROP_NAMES)) {
+      // Recreates the chart itself when the derived size actually moved.
+      if (this.updateComputedDimensions()) return;
+    }
+
     // `hasLabelPadding` cascades into slotted scales via `updateScaleProperties()`
     // (toggles `showLabels`, which collapses/expands the bar's label band and
     // changes its reported thickness). That path only runs through
@@ -1789,24 +1818,32 @@ export class ObcChartLineBase extends LitElement {
   }
 
   /**
-   * Calculate actual dimensions based on parent width and aspect ratio.
-   * Only used when fixedAspectRatioScaling is true.
+   * Refresh `computedWidth` / `computedHeight`, the derived pixel size the
+   * chart and its slotted scales are laid out from.
+   *
+   * In pixel mode they simply mirror `width` / `height`. Only in
+   * `fixedAspectRatioScaling` mode are they derived — from the wrapper's
+   * measured width and the aspect ratio the `width` / `height` pair defines —
+   * and only then can this rebuild the chart.
+   *
+   * @returns `true` when the change was significant enough that the chart was
+   * rebuilt here, so the caller must not rebuild it a second time.
    */
-  private updateComputedDimensions() {
+  private updateComputedDimensions(): boolean {
     if (!this.fixedAspectRatioScaling) {
       // In pixel mode, use width/height directly
       this.computedWidth = this.width;
       this.computedHeight = this.height;
-      return;
+      return false;
     }
 
     // Get the wrapper element
     const wrapper = this.renderRoot.querySelector('.wrapper') as HTMLElement;
-    if (!wrapper) return;
+    if (!wrapper) return false;
 
     // Get parent's available width
     const parentWidth = wrapper.clientWidth;
-    if (parentWidth <= 0) return;
+    if (parentWidth <= 0) return false;
 
     // Calculate aspect ratio from width/height properties
     const aspectRatio = this.width / this.height;
@@ -1836,13 +1873,18 @@ export class ObcChartLineBase extends LitElement {
       // Note: syncScalesAndChart() handles chart destruction and creation internally,
       // so we only call createChart() directly when there are no external scales.
       if (this.hasExternalScales()) {
-        this.syncScalesAndChart();
+        // syncScalesAndChart() bails without rebuilding when a sync is already
+        // in flight or the effective chart area is degenerate; reporting its
+        // real outcome keeps the caller's own rebuild as the fallback.
+        return this.syncScalesAndChart();
       } else if (this.chart) {
         // No external scales - just recreate chart
         this.chart.destroy();
         this.createChart();
+        return true;
       }
     }
+    return false;
   }
 
   /**
