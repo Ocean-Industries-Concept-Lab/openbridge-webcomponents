@@ -401,8 +401,11 @@ const meta = {
     },
     'options.size': {
       name: 'Size',
+      description:
+        'Vertical only — the horizontal arrangement exists in the large tier alone.',
       control: {type: 'select'},
       options: Object.values(ReadoutSize),
+      if: {arg: 'options.direction', eq: ReadoutDirection.vertical},
       table: {category: 'Layout'},
     },
     'options.priority': {
@@ -521,15 +524,11 @@ const meta = {
         'Applies to the plain source only — picker / flyout buttons carry no state chip.',
       control: {type: 'select'},
       options: Object.values(ReadoutSourceState),
-      if: {arg: 'options.src.interaction', eq: ReadoutSourceInteraction.none},
       table: {category: 'Source'},
     },
     'options.src.deviation': {
       name: 'Source Deviation (Δ)',
-      description:
-        'Applies to the plain source only — picker / flyout buttons carry no deviation line.',
       control: {type: 'number'},
-      if: {arg: 'options.src.interaction', eq: ReadoutSourceInteraction.none},
       table: {category: 'Source'},
     },
     'options.src.spaceReserver': {
@@ -559,8 +558,11 @@ const SIZES = [
 const INTERACTIONS = Object.values(ReadoutSetpointInteraction);
 
 /** One row per size; columns = interaction modes × value≠/=setpoint. */
-function interactionMatrix(direction: ReadoutDirection): ShowcaseCase[] {
-  return SIZES.flatMap((size) =>
+function interactionMatrix(
+  direction: ReadoutDirection,
+  sizes: readonly ReadoutSize[] = SIZES
+): ShowcaseCase[] {
+  return sizes.flatMap((size) =>
     INTERACTIONS.flatMap((interaction) =>
       [123, 120].map((value) => ({
         label: `${size} / ${interaction} / ${
@@ -605,31 +607,36 @@ export const Vertical: Story = {
     ]),
 };
 
+/**
+ * The horizontal arrangement exists in the large tier only (Figma 6.1: it
+ * relies on the label+unit stack aligning with the L-size value caps — label
+ * cap top and unit cap bottom line up with the value's cap edges). `size` is
+ * ignored when `direction` is `horizontal`.
+ */
 export const Horizontal: Story = {
   render: () =>
     renderShowcase([
       {
-        title: 'Horizontal — Sizes × Priority',
+        title: 'Horizontal (large Only) — Priority',
         columns: 2,
-        cases: SIZES.flatMap((size) =>
-          [ReadoutPriority.regular, ReadoutPriority.enhanced].map(
-            (priority) => ({
-              label: `${size} / ${priority}`,
-              config: {
-                options: {
-                  size,
-                  priority,
-                  direction: ReadoutDirection.horizontal,
-                },
+        cases: [ReadoutPriority.regular, ReadoutPriority.enhanced].map(
+          (priority) => ({
+            label: `large / ${priority}`,
+            config: {
+              options: {
+                priority,
+                direction: ReadoutDirection.horizontal,
               },
-            })
-          )
+            },
+          })
         ),
       },
       {
         title: 'Horizontal — Setpoint Interactions',
         columns: 8,
-        cases: interactionMatrix(ReadoutDirection.horizontal),
+        cases: interactionMatrix(ReadoutDirection.horizontal, [
+          ReadoutSize.large,
+        ]),
       },
     ]),
 };
@@ -1040,6 +1047,11 @@ export const SetpointEqualSizeAnimated: Story = {
   tags: ['skip-test'],
 };
 
+/**
+ * The degree glyph renders on the ACTUAL VALUE only — setpoint and advice
+ * blocks never carry one (Figma 6.1 review: the unit is written once for the
+ * readout, and the degree follows the same rule).
+ */
 export const Degree: Story = {
   render: () =>
     renderShowcase([
@@ -1066,6 +1078,35 @@ export const Degree: Story = {
           {
             label: 'plain',
             config: {label: 'HDG', unit: 'DEG', options: {}},
+          },
+        ],
+      },
+      {
+        title: 'Degree on The Actual Value Only (setpoint / Advice Carry None)',
+        columns: 2,
+        cases: [
+          {
+            label: 'vertical / setpoint + advice',
+            config: {
+              label: 'HDG',
+              unit: 'DEG',
+              hasSetpoint: true,
+              hasAdvice: true,
+              options: {hasDegree: true},
+            },
+          },
+          {
+            label: 'horizontal / setpoint + advice',
+            config: {
+              label: 'HDG',
+              unit: 'DEG',
+              hasSetpoint: true,
+              hasAdvice: true,
+              options: {
+                hasDegree: true,
+                direction: ReadoutDirection.horizontal,
+              },
+            },
           },
         ],
       },
@@ -1810,4 +1851,120 @@ export const SetpointPopUpWithValueArrow: Story = {
       </obc-readout>
     </div>
   `,
+};
+
+// ---------------------------------------------------------------------------
+// Figma 6.1 bird's-eye matrices — static expansions of the design file's
+// component sheets (parent node 46596-102878), so every combination can be
+// reviewed at a glance without touching controls:
+// - Readout-vertical-trailing-title (46390-197995): Size × Priority ×
+//   Value priority × State × has Degree — split into one story per
+//   interaction below so each snapshot stays a reviewable size. The
+//   `has Leading icon` axis is covered by the LeadingIcon story, and the
+//   Readout-vertical-block sheet (46551-303919) differs only in title sizing
+//   (tracked by the medium-tier label TODO); the leading-title sheet
+//   (46551-341292) is marked WIP in Figma and deliberately not expanded.
+// - Readout-horizontal (46471-75814): large-only, one story. Its
+//   leading-label stacking column is obc-readout-list-item's job (see the
+//   Readout List Item FigmaMatrix story).
+// ---------------------------------------------------------------------------
+
+const MATRIX_PRIORITIES = [
+  ReadoutPriority.regular,
+  ReadoutPriority.enhanced,
+] as const;
+
+/** The composite sheets' State axis (At/Not-at setpoint, Low integrity, Invalid). */
+const MATRIX_STATES: {
+  key: string;
+  value: number;
+  dataQuality?: ReadoutDataQuality;
+}[] = [
+  {key: 'off setpoint', value: 123},
+  {key: 'at setpoint', value: 120},
+  {
+    key: 'low-integrity',
+    value: 123,
+    dataQuality: ReadoutDataQuality.lowIntegrity,
+  },
+  {key: 'invalid', value: 123, dataQuality: ReadoutDataQuality.invalid},
+];
+
+function verticalMatrixStory(
+  interaction: ReadoutSetpointInteraction
+): Story['render'] {
+  return () =>
+    renderShowcase(
+      MATRIX_STATES.map((state) => ({
+        title: `${interaction} — ${state.key}`,
+        columns: 4,
+        cases: SIZES.flatMap((size) =>
+          MATRIX_PRIORITIES.flatMap((priority) =>
+            [false, true].map((hasDegree) => ({
+              label: `${size} / ${priority}${hasDegree ? ' / °' : ''}`,
+              config: {
+                value: state.value,
+                hasSetpoint: true,
+                setpoint: 120,
+                hasAdvice: true,
+                options: {
+                  size,
+                  priority,
+                  hasDegree,
+                  dataQuality: state.dataQuality,
+                  setpoint: {interaction},
+                },
+              },
+            }))
+          )
+        ),
+      }))
+    );
+}
+
+export const FigmaMatrixVerticalAlwaysVisible: Story = {
+  render: verticalMatrixStory(ReadoutSetpointInteraction.alwaysVisible),
+};
+
+export const FigmaMatrixVerticalEqualSize: Story = {
+  render: verticalMatrixStory(ReadoutSetpointInteraction.equalSize),
+};
+
+export const FigmaMatrixVerticalFlipFlop: Story = {
+  render: verticalMatrixStory(ReadoutSetpointInteraction.flipFlop),
+};
+
+export const FigmaMatrixVerticalPopUp: Story = {
+  render: verticalMatrixStory(ReadoutSetpointInteraction.popUp),
+};
+
+export const FigmaMatrixHorizontal: Story = {
+  render: () =>
+    renderShowcase(
+      INTERACTIONS.map((interaction) => ({
+        title: `${interaction}`,
+        columns: 4,
+        cases: MATRIX_STATES.flatMap((state) =>
+          MATRIX_PRIORITIES.flatMap((priority) =>
+            [false, true].map((hasDegree) => ({
+              label: `${state.key} / ${priority}${hasDegree ? ' / °' : ''}`,
+              config: {
+                value: state.value,
+                hasSetpoint: true,
+                setpoint: 120,
+                hasAdvice: true,
+                src: 'GPS 1',
+                options: {
+                  direction: ReadoutDirection.horizontal,
+                  priority,
+                  hasDegree,
+                  dataQuality: state.dataQuality,
+                  setpoint: {interaction},
+                },
+              },
+            }))
+          )
+        ),
+      }))
+    ),
 };

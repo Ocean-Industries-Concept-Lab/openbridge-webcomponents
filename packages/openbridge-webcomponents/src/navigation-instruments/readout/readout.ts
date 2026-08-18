@@ -298,6 +298,13 @@ export class ObcReadout extends LitElement {
   @property({type: Number}) advice?: number;
 
   // Global layout/format (each defaults via its `resolved*` getter where useful).
+  /**
+   * Density tier. Applies to the vertical direction only — the horizontal
+   * arrangement exists in the large tier alone (Figma 6.1: it relies on the
+   * label+unit stack aligning with the L-size value caps), so `size` is
+   * ignored when `direction` is `horizontal`.
+   * @availableWhen direction==vertical
+   */
   @property({type: String}) size?: ReadoutSize;
   @property({type: String}) priority?: ReadoutPriority;
   @property({type: String}) direction?: ReadoutDirection;
@@ -305,6 +312,11 @@ export class ObcReadout extends LitElement {
   @property({type: String}) stacking?: ReadoutStacking;
   /** @availableWhen direction==vertical && stacking==stacked */
   @property({type: String}) alignment?: ReadoutAlignment;
+  /**
+   * Render the cap-height degree glyph (`°`) after the ACTUAL VALUE only —
+   * the setpoint / advice blocks never carry one (Figma 6.1 review: the unit
+   * is written once for the readout, and the degree follows the same rule).
+   */
   @property({type: Boolean}) hasDegree = false;
   /** @availableWhen hasDegree==false */
   @property({type: Boolean}) hasDegreeSpacer = false;
@@ -382,6 +394,12 @@ export class ObcReadout extends LitElement {
   };
 
   private get resolvedSize(): ReadoutSize {
+    // The horizontal arrangement exists only in the large tier (Figma 6.1 /
+    // design review 2026-08-18): it relies on the label+unit stack aligning
+    // with the L-size value caps, so `size` is ignored when horizontal.
+    if (this.isHorizontal) {
+      return ReadoutSize.large;
+    }
     return this.size ?? ReadoutSize.small;
   }
 
@@ -761,6 +779,11 @@ export class ObcReadout extends LitElement {
     );
   }
 
+  // `hasDegree` is deliberately NOT forwarded to the advice / setpoint blocks:
+  // the degree glyph renders on the actual value only (Figma 6.1 review,
+  // 2026-08-18) — the unit is written once for the whole readout, and the
+  // degree follows the same rule; the setpoint / advice implicitly share it.
+  // `obc-readout-list-item` keeps its own per-row convention.
   private renderAdviceBlock(): TemplateResult {
     return this.renderBlock({
       variant: ReadoutBlockVariant.advice,
@@ -770,7 +793,6 @@ export class ObcReadout extends LitElement {
       weight: ObcTextboxFontWeight.regular,
       hintedZeros: this.adviceOptions?.hintedZeros ?? false,
       spaceReserver: this.adviceOptions?.spaceReserver,
-      hasDegree: this.hasDegree ?? false,
       dataQuality: this.adviceOptions?.dataQuality,
       alert: this.adviceOptions?.alert,
       category: this.adviceOptions?.category,
@@ -789,7 +811,6 @@ export class ObcReadout extends LitElement {
       weight: this.setpointWeight,
       hintedZeros: this.setpointOptions?.hintedZeros ?? false,
       spaceReserver: this.setpointOptions?.spaceReserver,
-      hasDegree: this.hasDegree ?? false,
       touching: this.setpointTouching,
       hidePhase: this.setpointHidePhase,
       dataQuality: this.setpointOptions?.dataQuality,
@@ -1205,10 +1226,11 @@ export class ObcReadout extends LitElement {
             valueSize: this.primarySize,
             enhanced: false,
             // The emphasised setpoint is SemiBold — reserve its widest form.
+            // No degree: the visible setpoint block carries none (the degree
+            // renders on the actual value only), so the ghost mirrors it.
             weight: ObcTextboxFontWeight.semibold,
             hintedZeros: this.setpointOptions?.hintedZeros ?? false,
             spaceReserver: this.setpointOptions?.spaceReserver,
-            hasDegree: this.hasDegree ?? false,
             alert: this.setpointOptions?.alert,
             ghost: true,
           })

@@ -212,6 +212,15 @@ Decisions carried into code from the 6.1 review (2026-08):
 - Label defaults: `s` on large `obc-readout` (scannability), `xs` in the
   dense list item; SemiBold only when enhanced. Both overridable via
   `labelOptions`.
+- Degree renders on the **actual value only** in `obc-readout` — setpoint /
+  advice blocks never carry one (the unit is written once per readout; the
+  degree follows the same rule, 2026-08-18). `obc-readout-list-item`
+  deliberately keeps its own per-row convention.
+- The horizontal `obc-readout` exists in the **large tier only** — `size` is
+  ignored when `direction="horizontal"`. Its label+unit stack is pinned to
+  the value's container height (`--_readout-primary-height`,
+  space-between), so the label cap top and unit cap bottom align with the
+  value's cap edges.
 
 ## Open / in flux
 

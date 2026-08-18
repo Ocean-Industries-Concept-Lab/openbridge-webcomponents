@@ -2248,3 +2248,69 @@ export const SetpointPopUpWithValueArrow: Story = {
     </div>
   `,
 };
+
+/**
+ * Figma 6.1 bird's-eye matrix — a static expansion of the Readout-list-item
+ * sheet (node 46544-270931): Size (3) × Priority (2) × Reference priority /
+ * interaction (4, one section each) × State (4) = the sheet's 96 variants,
+ * reviewable at a glance without touching controls. Degree is on throughout,
+ * matching the sheet's instances. Note the list item keeps its own per-row
+ * degree convention (setpoint / advice carry the degree too) — the
+ * degree-on-the-actual-value-only rule from the 6.1 review applies to
+ * `obc-readout` only.
+ */
+export const FigmaMatrix: Story = {
+  render: () =>
+    renderShowcase(
+      Object.values(ReadoutListItemSetpointInteraction).map((interaction) => ({
+        title: `${interaction}`,
+        columns: 8,
+        cases: [
+          ReadoutListItemSize.small,
+          ReadoutListItemSize.medium,
+          ReadoutListItemSize.large,
+        ].flatMap((size) =>
+          [
+            ReadoutListItemPriority.regular,
+            ReadoutListItemPriority.enhanced,
+          ].flatMap((priority) =>
+            (
+              [
+                {key: 'off setpoint', value: 123},
+                {key: 'at setpoint', value: 120},
+                {
+                  key: 'low-integrity',
+                  value: 123,
+                  dataQuality: ReadoutListItemDataQuality.lowIntegrity,
+                },
+                {
+                  key: 'invalid',
+                  value: 123,
+                  dataQuality: ReadoutListItemDataQuality.invalid,
+                },
+              ] as {
+                key: string;
+                value: number;
+                dataQuality?: ReadoutListItemDataQuality;
+              }[]
+            ).map((state) => ({
+              label: `${size} / ${priority} / ${state.key}`,
+              config: {
+                value: state.value,
+                hasSetpoint: true,
+                setpoint: 120,
+                hasAdvice: true,
+                options: {
+                  size,
+                  priority,
+                  hasDegree: true,
+                  dataQuality: state.dataQuality,
+                  setpoint: {interaction},
+                },
+              },
+            }))
+          )
+        ),
+      }))
+    ),
+};

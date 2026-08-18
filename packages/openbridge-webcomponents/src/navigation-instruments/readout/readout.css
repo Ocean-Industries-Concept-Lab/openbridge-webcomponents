@@ -338,6 +338,20 @@ obc-readout-block {
   }
 }
 
+/* Cap alignment beside the value (Figma 6.1 review): the label's cap TOP and
+   the unit's cap BOTTOM line up with the value's cap edges. The stack is
+   pinned to the value's container height with space-between — every textbox
+   carries a fixed 4px pad above/below its cap, exactly like the value box, so
+   pinning the boxes to the container edges aligns the caps for any label/unit
+   size. Only when both lines exist: a single line keeps its edge alignment
+   from the rules above. */
+.readout.direction-horizontal
+  .meta.meta-stacked:not(.label-only):not(.unit-only)
+  .meta-labels {
+  block-size: var(--_readout-primary-height);
+  justify-content: space-between;
+}
+
 .label {
   color: var(--obc-readout-label-color, var(--element-neutral-color));
 }
