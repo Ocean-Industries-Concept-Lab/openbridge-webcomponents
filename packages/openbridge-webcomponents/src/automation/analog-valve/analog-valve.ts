@@ -26,6 +26,9 @@ export class ObcAnalogValve extends ObcAbstractAutomationButton {
     AnalogValveVariant.regular;
 
   override get extraReadouts(): AutomationButtonReadoutStack[] {
+    if (!this.showStatus) {
+      return [];
+    }
     if (this.open) {
       return [
         {
