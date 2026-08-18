@@ -521,11 +521,15 @@ const meta = {
         'Applies to the plain source only — picker / flyout buttons carry no state chip.',
       control: {type: 'select'},
       options: Object.values(ReadoutSourceState),
+      if: {arg: 'options.src.interaction', eq: ReadoutSourceInteraction.none},
       table: {category: 'Source'},
     },
     'options.src.deviation': {
       name: 'Source Deviation (Δ)',
+      description:
+        'Applies to the plain source only — picker / flyout buttons carry no deviation line.',
       control: {type: 'number'},
+      if: {arg: 'options.src.interaction', eq: ReadoutSourceInteraction.none},
       table: {category: 'Source'},
     },
     'options.src.spaceReserver': {
