@@ -60,12 +60,20 @@ type ReadoutStoryArgs = {
   'options.fractionDigits': number;
   'options.maxDigits': number;
   'options.dataQuality': ReadoutDataQuality | typeof NONE;
+  'options.hasLeadingIcon': boolean;
   'options.value.weight': ObcTextboxFontWeight;
   'options.value.hasIcon': boolean;
   'options.value.hintedZeros': boolean;
   'options.setpoint.interaction': ReadoutSetpointInteraction;
   'options.setpoint.touching': boolean;
+  'options.advice.category': ReadoutAdviceCategory;
+  'options.advice.active': boolean;
+  'options.label.size': ObcTextboxSize | typeof NONE;
+  'options.label.spaceReserver': string;
   'options.src.interaction': ReadoutSourceInteraction;
+  'options.src.state': ReadoutSourceState;
+  'options.src.deviation'?: number;
+  'options.src.spaceReserver': string;
   'options.unit.spaceReserver': string;
 };
 
@@ -273,12 +281,19 @@ const defaultArgs: ReadoutStoryArgs = {
   'options.fractionDigits': 0,
   'options.maxDigits': 0,
   'options.dataQuality': NONE,
+  'options.hasLeadingIcon': false,
   'options.value.weight': ObcTextboxFontWeight.regular,
   'options.value.hasIcon': false,
   'options.value.hintedZeros': false,
   'options.setpoint.interaction': ReadoutSetpointInteraction.alwaysVisible,
   'options.setpoint.touching': false,
+  'options.advice.category': ReadoutAdviceCategory.regular,
+  'options.advice.active': false,
+  'options.label.size': NONE,
+  'options.label.spaceReserver': '',
   'options.src.interaction': ReadoutSourceInteraction.none,
+  'options.src.state': ReadoutSourceState.regular,
+  'options.src.spaceReserver': '',
   'options.unit.spaceReserver': '',
 };
 
@@ -297,6 +312,7 @@ function argsToOptions(args: ReadoutStoryArgs): StoryOptions {
       args['options.dataQuality'] === NONE
         ? undefined
         : args['options.dataQuality'],
+    hasLeadingIcon: args['options.hasLeadingIcon'],
     value: {
       weight: args['options.value.weight'],
       hasIcon: args['options.value.hasIcon'],
@@ -306,7 +322,23 @@ function argsToOptions(args: ReadoutStoryArgs): StoryOptions {
       interaction: args['options.setpoint.interaction'],
       touching: args['options.setpoint.touching'],
     },
-    src: {interaction: args['options.src.interaction']},
+    advice: {
+      category: args['options.advice.category'],
+      active: args['options.advice.active'],
+    },
+    label: {
+      size:
+        args['options.label.size'] === NONE
+          ? undefined
+          : args['options.label.size'],
+      spaceReserver: args['options.label.spaceReserver'] || undefined,
+    },
+    src: {
+      interaction: args['options.src.interaction'],
+      state: args['options.src.state'],
+      deviation: args['options.src.deviation'],
+      spaceReserver: args['options.src.spaceReserver'] || undefined,
+    },
     unit: {spaceReserver: args['options.unit.spaceReserver'] || undefined},
   };
 }
@@ -448,10 +480,57 @@ const meta = {
       if: {arg: 'hasSetpoint', truthy: true},
       table: {category: 'Setpoint'},
     },
+    'options.hasLeadingIcon': {
+      name: 'Has Leading Icon',
+      table: {category: 'Label'},
+    },
+    'options.label.size': {
+      name: 'Label Size',
+      description:
+        'Default derives from the tier (large → s, otherwise xs); the design defines xs and s.',
+      control: {type: 'select'},
+      options: [NONE, ObcTextboxSize.xs, ObcTextboxSize.s],
+      table: {category: 'Label'},
+    },
+    'options.label.spaceReserver': {
+      name: 'Label Space Reserver',
+      control: {type: 'text'},
+      table: {category: 'Label'},
+    },
+    'options.advice.category': {
+      name: 'Advice Category',
+      control: {type: 'select'},
+      options: Object.values(ReadoutAdviceCategory),
+      if: {arg: 'hasAdvice', truthy: true},
+      table: {category: 'Advice'},
+    },
+    'options.advice.active': {
+      name: 'Advice Active (triggered)',
+      if: {arg: 'hasAdvice', truthy: true},
+      table: {category: 'Advice'},
+    },
     'options.src.interaction': {
       name: 'Source Interaction',
       control: {type: 'select'},
       options: Object.values(ReadoutSourceInteraction),
+      table: {category: 'Source'},
+    },
+    'options.src.state': {
+      name: 'Source State',
+      description:
+        'Applies to the plain source only — picker / flyout buttons carry no state chip.',
+      control: {type: 'select'},
+      options: Object.values(ReadoutSourceState),
+      table: {category: 'Source'},
+    },
+    'options.src.deviation': {
+      name: 'Source Deviation (Δ)',
+      control: {type: 'number'},
+      table: {category: 'Source'},
+    },
+    'options.src.spaceReserver': {
+      name: 'Source Space Reserver',
+      control: {type: 'text'},
       table: {category: 'Source'},
     },
     'options.unit.spaceReserver': {
@@ -928,6 +1007,30 @@ export const SetpointPopUpAnimated: Story = {
     intro:
       'Pop-up: the setpoint shows while the value differs, then fades out (100ms) once the value reaches it. Press Play, or use the buttons.',
     awayLabel: 'Leave setpoint (124)',
+    reachLabel: 'Reach setpoint (120)',
+  }),
+  tags: ['skip-test'],
+};
+
+export const SetpointAlwaysVisibleAnimated: Story = {
+  ...animatedInteractionStory({
+    name: 'Always-Visible (Animated)',
+    interaction: ReadoutSetpointInteraction.alwaysVisible,
+    intro:
+      'Always-visible (the default, Figma "Primary secondary"): the setpoint stays at the secondary size in both states — nothing resizes or hides as the value reaches the setpoint (120); only the touch highlight shows during the sweep. Contrast with flip-flop / pop-up. Press Play, or use the buttons.',
+    awayLabel: 'Away (124)',
+    reachLabel: 'Reach setpoint (120)',
+  }),
+  tags: ['skip-test'],
+};
+
+export const SetpointEqualSizeAnimated: Story = {
+  ...animatedInteractionStory({
+    name: 'Equal-Size (Animated)',
+    interaction: ReadoutSetpointInteraction.equalSize,
+    intro:
+      'Equal-size (Figma 6.1 "Equal size"): value and setpoint share the primary size in both states — like always-visible, nothing resizes or hides as the value reaches the setpoint (120); only the touch highlight shows during the sweep. Press Play, or use the buttons.',
+    awayLabel: 'Away (124)',
     reachLabel: 'Reach setpoint (120)',
   }),
   tags: ['skip-test'],
@@ -1466,8 +1569,15 @@ export const TestCases: Story = {
 
 /**
  * Figma 6.1 "Equal size": value and setpoint always share the primary size —
- * the missing fourth mode beside primary-secondary, flip-flop and pop-up.
- * Static in both states; only flip-flop / pop-up resize or hide at runtime.
+ * the missing fourth mode beside primary-secondary (`always-visible`),
+ * flip-flop and pop-up. Static in both states; only flip-flop / pop-up
+ * resize or hide at runtime — see the `SetpointEqualSizeAnimated` story for
+ * the in-motion contrast. `touching` keeps the setpoint at the primary size
+ * (it only adds the SemiBold focus weight and marker highlight), and the
+ * marker arrow follows the block's rendered size, so an equal-size setpoint
+ * carries the large arrow. The sizing rule lives in `readoutSetpointSize()`
+ * (`readout-shared.ts`, unit-tested), shared with `obc-readout-list-item` /
+ * `obc-readout`.
  */
 export const SetpointEqualSize: Story = {
   render: () =>
