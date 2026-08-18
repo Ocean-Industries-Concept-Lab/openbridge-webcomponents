@@ -775,7 +775,6 @@ export const HorizontalRegular: Story = {
       modern: html`
         <obc-readout
           .direction=${ReadoutDirection.horizontal}
-          .size=${ReadoutSize.small}
           .priority=${ReadoutPriority.enhanced}
           hasSetpoint
           .setpoint=${123}
