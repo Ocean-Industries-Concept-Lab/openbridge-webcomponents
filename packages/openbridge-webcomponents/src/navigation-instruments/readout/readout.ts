@@ -43,6 +43,7 @@ import {
   readoutPrimarySize,
   readoutSecondarySize,
   readoutSetpointSize,
+  readoutValueSize,
   readoutSetpointWeight,
   readoutDataQualityClasses,
   resolveSetpointHidePhase,
@@ -115,7 +116,8 @@ export type ReadoutDataQuality = ReadoutBlockDataQuality;
  * `ReadoutListItemSetpointInteraction`).
  * - `always-visible` (default): the setpoint is always shown.
  * - `equal-size`: value and setpoint are always shown at the same (primary)
- *   size (Figma 6.1 "Equal size").
+ *   size (Figma 6.1 "Equal size") — the value does not demote while
+ *   `touching`, unlike the other modes.
  * - `flip-flop`: value and setpoint swap emphasis (size) as the value reaches
  *   the setpoint.
  * - `pop-up`: the setpoint is shown only while the value has not reached it,
@@ -530,11 +532,14 @@ export class ObcReadout extends LitElement {
   private get valueSize(): ObcTextboxSize {
     // The value de-emphasises (secondary size) whenever the setpoint is the
     // focus — while actively adjusting (`touching`) or while a flip-flop holds
-    // the value away from the setpoint — mirroring the flip-flop convention.
-    if (this.isSetpointEmphasized) {
-      return this.secondarySize;
-    }
-    return this.primarySize;
+    // the value away from the setpoint — except in `equal-size`, where both
+    // blocks always hold the primary size (even while touching).
+    return readoutValueSize({
+      primary: this.primarySize,
+      secondary: this.secondarySize,
+      setpointEmphasized: this.isSetpointEmphasized,
+      equalSize: this.isEqualSize,
+    });
   }
 
   private get setpointSize(): ObcTextboxSize {

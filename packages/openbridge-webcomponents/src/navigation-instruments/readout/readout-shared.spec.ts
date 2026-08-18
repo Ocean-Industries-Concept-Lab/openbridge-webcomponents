@@ -14,6 +14,7 @@ import {
   readoutPrimarySize,
   readoutSecondarySize,
   readoutSetpointSize,
+  readoutValueSize,
   readoutSetpointWeight,
   readoutDataQualityClasses,
   resolveSetpointHidePhase,
@@ -111,6 +112,31 @@ describe('readoutSetpointSize', () => {
     // Touching an equal-size setpoint must not demote it.
     expect(
       readoutSetpointSize({...sizes, emphasized: true, equalSize: true})
+    ).toBe(ObcTextboxSize.l);
+  });
+});
+
+describe('readoutValueSize', () => {
+  const sizes = {primary: ObcTextboxSize.l, secondary: ObcTextboxSize.s};
+
+  it('is primary at rest and secondary while the setpoint is emphasised', () => {
+    expect(
+      readoutValueSize({...sizes, setpointEmphasized: false, equalSize: false})
+    ).toBe(ObcTextboxSize.l);
+    expect(
+      readoutValueSize({...sizes, setpointEmphasized: true, equalSize: false})
+    ).toBe(ObcTextboxSize.s);
+  });
+
+  it('never demotes in equal-size — not even while touching', () => {
+    // Both blocks holding the primary size IS the mode; a touch-driven
+    // demotion would silently turn equal-size into primary-secondary for the
+    // whole adjustment.
+    expect(
+      readoutValueSize({...sizes, setpointEmphasized: true, equalSize: true})
+    ).toBe(ObcTextboxSize.l);
+    expect(
+      readoutValueSize({...sizes, setpointEmphasized: false, equalSize: true})
     ).toBe(ObcTextboxSize.l);
   });
 });
