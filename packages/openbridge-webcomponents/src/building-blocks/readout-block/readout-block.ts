@@ -389,27 +389,38 @@ export class ObcReadoutBlock extends LitElement {
   /**
    * The advice marker for the current category / triggered state. Resting
    * categories carry a neutral outline glyph (tinted via `currentColor`);
-   * triggered alert categories swap to the filled IEC status icon, whose
-   * colours are fixed fills and ignore `currentColor` by design.
+   * triggered alert categories swap to the filled IEC status icon rendered
+   * with `useCssColor`, which selects the icon's token-coloured variant
+   * (alert fill + on-alert glyph, e.g. `--alert-caution-color` +
+   * `--on-caution-active-color`) — without it the same icon is a
+   * single-colour `currentColor` silhouette. This mirrors `obc-alert-icon`.
+   * The resting icons and the advice diamond deliberately stay on
+   * `currentColor`: their css-colour variants hard-code
+   * `--element-active-color`, which would defeat the neutral tint and the
+   * optimal / eco triggered tint applied from CSS.
    */
   private adviceFallbackIcon(): TemplateResult {
     const active = this.active;
     switch (this.category) {
       case ReadoutAdviceCategory.caution:
         return active
-          ? html`<obi-caution-color-iec></obi-caution-color-iec>`
+          ? html`<obi-caution-color-iec useCssColor></obi-caution-color-iec>`
           : html`<obi-caution-google></obi-caution-google>`;
       case ReadoutAdviceCategory.warning:
         return active
-          ? html`<obi-warning-unacknowledged-iec></obi-warning-unacknowledged-iec>`
+          ? html`<obi-warning-unacknowledged-iec
+              useCssColor
+            ></obi-warning-unacknowledged-iec>`
           : html`<obi-warning-unacknowledged-outlined></obi-warning-unacknowledged-outlined>`;
       case ReadoutAdviceCategory.alarm:
         return active
-          ? html`<obi-alarm-unacknowledged-iec></obi-alarm-unacknowledged-iec>`
+          ? html`<obi-alarm-unacknowledged-iec
+              useCssColor
+            ></obi-alarm-unacknowledged-iec>`
           : html`<obi-alarm></obi-alarm>`;
       case ReadoutAdviceCategory.running:
         return active
-          ? html`<obi-running-color-iec></obi-running-color-iec>`
+          ? html`<obi-running-color-iec useCssColor></obi-running-color-iec>`
           : html`<obi-running></obi-running>`;
       default:
         // regular / optimal / eco share the advice diamond; the triggered tint
