@@ -5,6 +5,7 @@ import {
   ProgressBarMode,
   ProgressBarType,
   CircularProgressState,
+  Priority,
 } from './progress-bar.js';
 import './progress-bar.js';
 
@@ -19,6 +20,7 @@ const meta: Meta<typeof ObcProgressBar> = {
   args: {
     type: ProgressBarType.linear,
     mode: ProgressBarMode.determinate,
+    priority: Priority.enhanced,
     circularState: CircularProgressState.determinate,
     value: 40,
     showValue: false,
@@ -45,6 +47,16 @@ const meta: Meta<typeof ObcProgressBar> = {
         'Progress mode for linear type (determinate or indeterminate)',
       table: {
         defaultValue: {summary: ProgressBarMode.determinate},
+      },
+      if: {arg: 'type', eq: ProgressBarType.linear},
+    },
+    priority: {
+      control: {type: 'select'},
+      options: Object.values(Priority),
+      description:
+        'Color emphasis of the bar fill: enhanced (blue) or regular (gray)',
+      table: {
+        defaultValue: {summary: Priority.enhanced},
       },
       if: {arg: 'type', eq: ProgressBarType.linear},
     },
@@ -169,6 +181,17 @@ export const LinearPrimary: Story = {
   args: {
     type: ProgressBarType.linear,
     value: 40,
+  },
+};
+
+export const LinearRegular: Story = {
+  name: 'Linear - Regular Priority',
+  args: {
+    type: ProgressBarType.linear,
+    mode: ProgressBarMode.determinate,
+    priority: Priority.regular,
+    value: 40,
+    showValue: true,
   },
 };
 
