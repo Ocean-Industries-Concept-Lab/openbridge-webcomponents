@@ -1,10 +1,14 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
+import {classMap} from 'lit/directives/class-map.js';
 import {styleMap} from 'lit/directives/style-map.js';
 import componentStyle from './progress-bar.css?inline';
 import {customElement} from '../../decorator.js';
 import '../../icons/icon-placeholder.js';
 import {CircularProgressMode} from '../../building-blocks/circular-progress/circular-progress.js';
+import {Priority} from '../../navigation-instruments/types.js';
+
+export {Priority};
 
 export enum ProgressBarType {
   linear = 'linear',
@@ -43,6 +47,10 @@ export enum CircularProgressState {
  *   rounded percentage.
  * - **Indeterminate**: Animated, looping fill for work of unknown duration; the label shows
  *   "Loading".
+ *
+ * **Color priority (`priority`)**
+ * - **Enhanced** (default): Blue fill, for a bar that reads as the primary value.
+ * - **Regular**: Neutral gray fill, for a bar that should recede as ancillary status.
  *
  * **Circular states (`circularState`)**
  * - **Determinate**: Ring fills to `value`, with the rounded number (and optional `%` unit) centered.
@@ -98,6 +106,11 @@ export class ObcProgressBar extends LitElement {
    */
   @property({type: String}) circularState: CircularProgressState =
     CircularProgressState.determinate;
+  /**
+   * Color emphasis of the bar fill: `regular` (gray) or `enhanced` (blue).
+   * @availableWhen type==linear
+   */
+  @property({type: String}) priority: Priority = Priority.enhanced;
   /** Progress percentage (0–100); clamped when rendered. */
   @property({type: Number}) value = 0;
   /**
@@ -222,12 +235,16 @@ export class ObcProgressBar extends LitElement {
   private renderLinearProgress() {
     const clampedValue = Math.max(0, Math.min(100, this.value));
     const progressWidth = `${clampedValue}%`;
+    const barClasses = {
+      bar: true,
+      'priority-regular': this.priority === Priority.regular,
+    };
 
     return html`
       <div class="wrapper">
         ${this.showValue ? this.renderLabel() : ''}
 
-        <div class="bar">
+        <div class=${classMap(barClasses)}>
           ${this.mode === ProgressBarMode.determinate
             ? html`
                 <div
