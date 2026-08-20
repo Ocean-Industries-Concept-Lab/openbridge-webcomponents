@@ -60,6 +60,7 @@ terminal.
 <html lang="en" data-obc-theme="day">
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>OpenBridge Hello World</title>
 
     <!-- The OpenBridge colour palettes -->
@@ -93,7 +94,24 @@ terminal.
         display: flex;
       }
       main {
+        flex: 1;
         padding: 24px;
+      }
+      #compass {
+        width: 260px;
+        height: 260px;
+      }
+      /* On a narrow screen the side bar starts hidden and opens over the page */
+      @media (max-width: 700px) {
+        .row {
+          position: relative;
+        }
+        obc-navigation-menu {
+          display: none;
+          position: absolute;
+          inset: 0 auto 0 0;
+          z-index: 1;
+        }
       }
     </style>
   </head>
@@ -126,11 +144,7 @@ terminal.
       </obc-navigation-menu>
 
       <main>
-        <obc-compass
-          id="compass"
-          heading="45"
-          style="width: 260px; height: 260px"
-        ></obc-compass>
+        <obc-compass id="compass" heading="45"></obc-compass>
         <obc-button id="turn">Turn 15&deg; to starboard</obc-button>
       </main>
     </div>
@@ -147,7 +161,8 @@ terminal.
 
       // React to a component event
       topBar.addEventListener('menu-button-clicked', () => {
-        menu.style.display = menu.style.display === 'none' ? '' : 'none';
+        const hidden = getComputedStyle(menu).display === 'none';
+        menu.style.display = hidden ? 'block' : 'none';
       });
 
       topBar.addEventListener('dimming-button-clicked', () => {
@@ -165,6 +180,11 @@ terminal.
 Try it: the button turns the compass, the ☰ button hides the side bar, and the
 dimming button in the top-right switches between the `day` and `night`
 palettes.
+
+It works on a phone as well. The `viewport` meta tag is what makes the browser
+lay the page out at the real screen width instead of pretending to be a desktop,
+and the one media query in the styles keeps the side bar out of the way until
+☰ is pressed.
 
 If your browser refuses to open a local file like this, put it in its own folder
 and serve that folder instead — `npx serve` if you have Node.js, or the "Live
@@ -200,11 +220,14 @@ Two things to know when writing plain HTML:
 
 - Attribute names are all lowercase — the `showDimmingButton` property is
   written `showdimmingbutton`.
-- Only text and numbers work as attributes. Lists and objects have to be set
-  from JavaScript, the way `compass.heading` is in the script above.
+- Attributes carry simple values only: text, numbers, and on/off flags whose
+  presence means on (`showdimmingbutton`, `checked`). Richer values such as
+  lists and objects have to be set from JavaScript.
 
 > **Which version?** The example uses the `next` channel because the current
-> `latest` bundle fails to load in a browser. The bundle holds every component
+> `latest` bundle fails to load in a browser. A channel always serves the newest
+> release on it, which is what a getting-started page wants; pin an exact
+> version in anything you keep. The bundle holds every component
 > (~1.4 MB gzipped), which is ideal for trying things out; for a real
 > application install the package instead, so your build ships only what you
 > use.
