@@ -34,7 +34,9 @@ const meta = {
   },
   decorators: [
     (story) => html`
-      <div style="width: 600px; height: 400px; display: flex;">${story()}</div>
+      <div style="width: 600px; display: flex; align-items: flex-start;">
+        ${story()}
+      </div>
     `,
   ],
 } satisfies Meta<ModalWindowArgs>;
@@ -144,4 +146,36 @@ export const WithoutCancelAndClose: Story = {
     hasCloseAction: false,
     hasOptionalAction: false,
   },
+};
+
+const longContent = html`
+  <div slot="content" style="padding: 24px;">
+    ${Array.from(
+      {length: 12},
+      (_, i) => html`<p>Content paragraph ${i + 1}.</p>`
+    )}
+  </div>
+`;
+
+export const SizedByContainer: Story = {
+  render: (args) => html`
+    <div style="height: 400px; display: flex;">
+      <obc-modal-window
+        .size=${args.size}
+        .hasOptionalAction=${args.hasOptionalAction}
+        .hasLeadingIcon=${args.hasLeadingIcon}
+        .hasCancelAction=${args.hasCancelAction}
+        .hasCloseAction=${args.hasCloseAction}
+      >
+        ${args.hasLeadingIcon
+          ? html`<obi-placeholder slot="leading-icon"></obi-placeholder>`
+          : ''}
+        <span slot="title">Modal Title</span>
+        ${longContent}
+        <span slot="option-label">Option</span>
+        <span slot="cancel-label">Cancel</span>
+        <span slot="done-label">Done</span>
+      </obc-modal-window>
+    </div>
+  `,
 };
