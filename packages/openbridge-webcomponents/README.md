@@ -42,6 +42,180 @@ The Live Demo is an application showcase: it shows how components work together 
 | **Stable** (`stable` branch, npm `latest`) | [openbridge-storybook.web.app](https://openbridge-storybook.web.app)           | [openbridge-demo.web.app](https://openbridge-demo.web.app/)           |
 | **Develop** (`develop` branch, npm `next`) | [openbridge-next-storybook.web.app](https://openbridge-next-storybook.web.app) | [openbridge-next-demo.web.app](https://openbridge-next-demo.web.app/) |
 
+## 👋 Hello World
+
+One file, no installation, no build step — a running OpenBridge app with a top
+bar, a side bar and a live instrument.
+
+**You need:** a text editor (Notepad, TextEdit or
+[VS Code](https://code.visualstudio.com/)) and a web browser. No Node.js, no
+terminal.
+
+**1.** Create a file called `hello-openbridge.html`.
+
+**2.** Paste this into it and save:
+
+```html
+<!doctype html>
+<html lang="en" data-obc-theme="day">
+  <head>
+    <meta charset="utf-8" />
+    <title>OpenBridge Hello World</title>
+
+    <!-- The OpenBridge colour palettes -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@oicl/openbridge-webcomponents@next/dist/openbridge.css"
+    />
+    <!-- The font OpenBridge is designed with -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600&display=swap"
+    />
+    <!-- Every OpenBridge component, in one file -->
+    <script
+      type="module"
+      src="https://cdn.jsdelivr.net/npm/@oicl/openbridge-webcomponents@next/bundle/openbridge-webcomponents.bundle.js"
+    ></script>
+
+    <style>
+      body {
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        font-family: 'Noto Sans', sans-serif;
+        background-color: var(--container-backdrop-color);
+        color: var(--element-active-color);
+      }
+      .row {
+        flex: 1;
+        display: flex;
+      }
+      main {
+        padding: 24px;
+      }
+    </style>
+  </head>
+
+  <body class="obc-component-size-regular">
+    <obc-top-bar
+      apptitle="Hello World"
+      pagename="Compass"
+      showdimmingbutton
+    ></obc-top-bar>
+
+    <div class="row">
+      <obc-navigation-menu>
+        <obc-navigation-item
+          slot="main"
+          label="Compass"
+          href="#"
+          checked
+        ></obc-navigation-item>
+        <obc-navigation-item
+          slot="main"
+          label="Engine"
+          href="#"
+        ></obc-navigation-item>
+        <obc-navigation-item
+          slot="footer"
+          label="Settings"
+          href="#"
+        ></obc-navigation-item>
+      </obc-navigation-menu>
+
+      <main>
+        <obc-compass
+          id="compass"
+          heading="45"
+          style="width: 260px; height: 260px"
+        ></obc-compass>
+        <obc-button id="turn">Turn 15&deg; to starboard</obc-button>
+      </main>
+    </div>
+
+    <script>
+      const topBar = document.querySelector('obc-top-bar');
+      const menu = document.querySelector('obc-navigation-menu');
+      const compass = document.querySelector('#compass');
+
+      // Set a property from JavaScript
+      document.querySelector('#turn').onclick = () => {
+        compass.heading = (compass.heading + 15) % 360;
+      };
+
+      // React to a component event
+      topBar.addEventListener('menu-button-clicked', () => {
+        menu.style.display = menu.style.display === 'none' ? '' : 'none';
+      });
+
+      topBar.addEventListener('dimming-button-clicked', () => {
+        const root = document.documentElement;
+        root.dataset.obcTheme =
+          root.dataset.obcTheme === 'day' ? 'night' : 'day';
+      });
+    </script>
+  </body>
+</html>
+```
+
+**3.** Double-click the file. It opens in your browser and the app is running.
+
+Try it: the button turns the compass, the ☰ button hides the side bar, and the
+dimming button in the top-right switches between the `day` and `night`
+palettes.
+
+If your browser refuses to open a local file like this, put it in its own folder
+and serve that folder instead — `npx serve` if you have Node.js, or the "Live
+Server" extension in VS Code — then open the address it prints.
+
+### The four setup lines
+
+| What                                             | Why                                                                                         |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------- |
+| `openbridge.css`                                 | The colour palettes. Every component takes its colours from here.                           |
+| `data-obc-theme` on `<html>`                     | Which palette: `bright`, `day`, `dusk` or `night`.                                          |
+| `class="obc-component-size-regular"` on `<body>` | How large components are drawn: `regular`, `medium`, `large` or `xl`.                       |
+| The bundle `<script>`                            | Every OpenBridge component. Once it has loaded, tags like `<obc-top-bar>` work on the page. |
+
+### Adding more components
+
+Every component is a tag starting with `obc-`. Find one in
+[Storybook](https://openbridge-next-storybook.web.app), copy its tag and drop it
+in — here a clock, in the top bar's `clock` slot:
+
+```html
+<obc-top-bar
+  apptitle="Hello World"
+  pagename="Compass"
+  showdimmingbutton
+  showclock
+>
+  <obc-clock slot="clock" date="2026-01-01T12:00:00Z"></obc-clock>
+</obc-top-bar>
+```
+
+Two things to know when writing plain HTML:
+
+- Attribute names are all lowercase — the `showDimmingButton` property is
+  written `showdimmingbutton`.
+- Only text and numbers work as attributes. Lists and objects have to be set
+  from JavaScript, the way `compass.heading` is in the script above.
+
+> **Which version?** The example uses the `next` channel because the current
+> `latest` bundle fails to load in a browser. The bundle holds every component
+> (~1.4 MB gzipped), which is ideal for trying things out; for a real
+> application install the package instead, so your build ships only what you
+> use.
+
+When one file is no longer enough, carry on with
+[Installation](#-installation) below, or pick a framework and follow the full
+tutorial for
+[React](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/blob/develop/docs/getting-started-react.md)
+or
+[Angular](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/blob/develop/docs/getting-started-angular.md).
+
 ## 💾 Installation
 
 To use the components in your project, install the package from npm:
@@ -111,14 +285,19 @@ Use them in your HTML:
 
 ### Bundle Version (CDN / Prototyping)
 
-For quick prototyping, you can use the bundled version:
+For quick prototyping, load the bundled version — every component in a single
+file, straight from a CDN:
 
 ```html
 <script
   type="module"
-  src="node_modules/@oicl/openbridge-webcomponents/dist/openbridge-webcomponents.bundle.js"
+  src="https://cdn.jsdelivr.net/npm/@oicl/openbridge-webcomponents@next/bundle/openbridge-webcomponents.bundle.js"
 ></script>
 ```
+
+From an installed package the same file lives at
+`node_modules/@oicl/openbridge-webcomponents/bundle/openbridge-webcomponents.bundle.js`.
+See [Hello World](#-hello-world) for a complete page built on it.
 
 ## 📦 Framework Wrappers
 
