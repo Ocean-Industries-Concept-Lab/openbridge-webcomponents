@@ -119,6 +119,7 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for bran
 | [docs/agents/](docs/agents/) | Path-scoped rules per component family — the canonical, tool-neutral source for every AI agent. |
 | [IMPLEMENTATION_GUIDELINES.md](IMPLEMENTATION_GUIDELINES.md) | Architecture, PostCSS mixins, SVG practices. |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | Contribution workflow and standards. |
+| [Getting Started: HTML](packages/openbridge-webcomponents/README.md#-hello-world) | Tutorial: one HTML file, no build tools — the quickest way to see components running. |
 | [Getting Started: React](docs/getting-started-react.md) | Tutorial: build a multi-view React app with the React wrapper. |
 | [Getting Started: Angular](docs/getting-started-angular.md) | Tutorial: build a multi-view Angular app with the Angular wrapper. |
 | [Charts and Graphs](docs/graph.md) | Custom Chart.js plots with OpenBridge theming. |
