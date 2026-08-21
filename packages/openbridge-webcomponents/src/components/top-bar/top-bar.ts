@@ -493,47 +493,46 @@ export class ObcTopBar extends LitElement {
 
     return html`
       <style>
-                @media (max-width: ${breakpointMoreButton}px) {
-                  .left-more-button {
-                    display: revert !important;
-        import { customElement } from '../../decorator.js';
-                  }
+        @media (max-width: ${breakpointMoreButton}px) {
+          .left-more-button {
+            display: revert !important;
+          }
 
-                  .group.left > * {
-                    margin-right: 4px;
-                    margin-left: 4px;
-                  }
-                }
+          .group.left > * {
+            margin-right: 4px;
+            margin-left: 4px;
+          }
+        }
 
-                @media (max-width: ${this.appButtonBreakpointPx}px) {
-                  .apps-button {
-                    display: none;
-                  }
-                }
+        @media (max-width: ${this.appButtonBreakpointPx}px) {
+          .apps-button {
+            display: none;
+          }
+        }
 
-                @media (max-width: ${this.dimmingButtonBreakpointPx}px) {
-                  .dimming-button {
-                    display: none;
-                  }
-                }
+        @media (max-width: ${this.dimmingButtonBreakpointPx}px) {
+          .dimming-button {
+            display: none;
+          }
+        }
 
-                @media (max-width: ${this.appTitleBreakpointPx}px) {
-                  .title {
-                    display: none;
-                  }
-                }
+        @media (max-width: ${this.appTitleBreakpointPx}px) {
+          .title {
+            display: none;
+          }
+        }
 
-                @media (max-width: ${this.userButtonBreakpointPx}px) {
-                  .user-button {
-                    display: none;
-                  }
-                }
+        @media (max-width: ${this.userButtonBreakpointPx}px) {
+          .user-button {
+            display: none;
+          }
+        }
 
-                @media (max-width: ${this.appIconBreakpointPx}px) {
-                  .app-icon {
-                    display: none;
-                  }
-                }
+        @media (max-width: ${this.appIconBreakpointPx}px) {
+          .app-icon {
+            display: none;
+          }
+        }
       </style>
       <nav
         class=${classMap({
