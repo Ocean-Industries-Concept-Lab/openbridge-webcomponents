@@ -54,6 +54,13 @@ export enum ObcModalWindowSize {
  * - `done-click`: Fired when the done button is clicked.
  * - `option-click`: Fired when the optional action button is clicked.
  *
+ * ### Sizing
+ * By default the modal is as tall as its content, capped at `90vh`. To give it
+ * an explicit height, set the `--obc-modal-window-height` custom property on
+ * the element — either a fixed value (`--obc-modal-window-height: 360px`) or
+ * `100%` to fill a host element that is sized by its container. The `90vh` cap
+ * always applies, and the content area scrolls when the content does not fit.
+ *
  * ### Example:
  * ```html
  * <obc-modal-window size="medium" hasLeadingIcon>
@@ -78,6 +85,7 @@ export enum ObcModalWindowSize {
  * @slot option-label - Slot for the label of the optional action button (shown when `hasOptionalAction` is true)
  * @slot cancel-label - Slot for the label of the cancel button (shown when `hasCancelAction` is true)
  * @slot done-label - Slot for the label of the done button
+ * @cssprop [--obc-modal-window-height=auto] - Height of the modal window. Defaults to content height (capped at 90vh); set a fixed value or `100%` to size the modal externally.
  * @stable
  */
 @customElement('obc-modal-window')

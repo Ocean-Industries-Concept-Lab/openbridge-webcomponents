@@ -236,7 +236,11 @@ Do not treat these as settled when editing:
   default remains unverified (`labelSize` carries the TODO).
 - Advice categories: for triggered optimal / eco the tint covers the whole
   diamond (Figma tints only the inner plus — needs a two-tone asset), and the
-  advice `Enhanced` (indent chip) state is not implemented. Designer flagged
+  advice `Enhanced` (indent chip) state is not implemented. The triggered
+  alert icons (`obi-*-iec`) are existing repo assets rendered with
+  `useCssColor` — that attribute selects their token-coloured variant; without
+  it the same icon is a single-colour `currentColor` silhouette (the resting
+  icons and the advice diamond stay on `currentColor` on purpose). Designer flagged
   category icons/colours as "may change; structure stable".
 - Source: the Figma `Tag` type and the 4px chip padding are not implemented
   (the chip hugs like the data-quality chip so live state flips don't shift
