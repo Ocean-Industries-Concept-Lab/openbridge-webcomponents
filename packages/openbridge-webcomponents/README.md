@@ -292,11 +292,12 @@ The library uses **Noto Sans**. You should ensure it is available in your projec
 
 ## 📐 Scaling & Touch Targets
 
-All sizes are CSS pixels. Every interactive component has an invisible touch
-area of at least **48 × 48 px** in the `regular` size class — twice the
+All sizes are CSS pixels. Interactive components follow a standard invisible
+touch area of at least **48 × 48 px** in the `regular` size class — twice the
 24 px minimum that [WCAG 2.2](https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html)
-requires. The size classes scale it up: 48 px (`regular`), 56 px (`medium`),
-72 px (`large`), 96 px (`xl`).
+requires. The size classes scale the standard tokens up: 48 px (`regular`),
+56 px (`medium`), 72 px (`large`), 96 px (`xl`); individual components may
+follow their own, larger curve.
 
 Two things to know:
 
