@@ -290,6 +290,25 @@ The library uses **Noto Sans**. You should ensure it is available in your projec
 }
 ```
 
+## 📐 Scaling & Touch Targets
+
+All sizes are CSS pixels. Every interactive component has an invisible touch
+area of at least **48 × 48 px** in the `regular` size class — twice the
+24 px minimum that [WCAG 2.2](https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html)
+requires. The size classes scale it up: 48 px (`regular`), 56 px (`medium`),
+72 px (`large`), 96 px (`xl`).
+
+Two things to know:
+
+- **On phones and tablets**, keep the viewport tag from the
+  [Hello World](#-hello-world) (`<meta name="viewport" content="width=device-width, initial-scale=1" />`).
+  Without it the browser shrinks the whole page and the touch areas with it.
+- **For type-approved equipment** (IEC 62288 / IEC 60945, which require
+  15 mm touch targets), compliance comes from calibrating the screen, not
+  from a component setting: 15 mm ÷ 48 px = 0.3125 mm, so set the display
+  scaling or browser zoom of each installation so one CSS pixel is at least
+  0.3125 mm — or use a larger size class.
+
 ## 🧩 Usage
 
 ### Standard Web Components
