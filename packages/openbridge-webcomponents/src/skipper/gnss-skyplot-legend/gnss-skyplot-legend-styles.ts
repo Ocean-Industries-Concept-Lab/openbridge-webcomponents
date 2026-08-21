@@ -2,18 +2,18 @@ import { css } from 'lit';
 export const skyplotStyles = css`
   .container {
     height: 100%;
-    width: 100%;
+    width: 140px;
   }
     
   .container > svg {
     height: 100%;
-    width: 100%;
+    width: 140px;
   }
 
   .satellite-label {
     fill: var(--element-active-inverted-color);
     font-size: 16px;
-    font-family: sans-serif;
+    font-family: noto-sans;
     text-anchor: middle;
     dominant-baseline: middle;
     pointer-events: none;
@@ -55,8 +55,8 @@ export const skyplotStyles = css`
 
   .label {
     fill: var(--element-active-color);
-    font-size: 14px;
-    font-family: sans-serif;
+    font-size: 16px;
+    font-family: noto-sans;
     text-anchor: middle;
     dominant-baseline: middle;
   }
@@ -64,9 +64,10 @@ export const skyplotStyles = css`
   .signal-strength-legend {
     display: flex;
     flex-direction: column;
-    width: 140px;
-    padding: 8px 8px;
-    border: 1px solid red;
+    width: 110px;
+    height: 150px;
+    margin: 8px;
+    border: 1px solid var(--border-outline-color);
     border-radius: 8px;
     box-sizing: border-box;
 
@@ -74,9 +75,9 @@ export const skyplotStyles = css`
   }
 
   .signal-strength-title {
-    font-size: 16px;
+    font-size: 12px;
     font-weight: bold;
-    margin-bottom: 4px;
+    padding: 8px;
     white-space: nowrap;
     color: var(--element-active-color);
   }
@@ -102,7 +103,7 @@ export const skyplotStyles = css`
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 14px;
 
     height: 0px;
 
@@ -111,6 +112,8 @@ export const skyplotStyles = css`
 
   .signal-strength-label {
     position: relative;
+    font-size: 12px;
+    width: auto;
   }
 
 `;

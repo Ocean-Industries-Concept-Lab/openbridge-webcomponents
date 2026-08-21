@@ -3,4 +3,5 @@ export * from './long-lat/long-lat-environmental.js';
 export * from './speedometer/speedometer.js';
 export * from './true-relative/true-relative.js';
 export * from './gnss-skyplot/gnss-skyplot.js';
+export * from './gnss-skyplot-legend/gnss-skyplot-legend.js';
 export * from './logginggraph/logging-graph.js';

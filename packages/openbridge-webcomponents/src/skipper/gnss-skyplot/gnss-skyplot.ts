@@ -41,6 +41,20 @@ export interface Satellite {
   spoJamConfirmed: boolean;
 }
 
+export interface SignalIconOptions {
+  id?: number;
+  x?: number;
+  y?: number;
+  strength: number;
+  scale?: number;
+}
+
+export enum ViewingOptions {
+  SatelliteIDs = 0,
+  StrongSignalsOnly = 1,
+  ActiveSatellitesOnly = 2
+}
+
 @customElement('ob-gnss-skyplot')
 export class GnssSkyplot extends LitElement {
   @property({type: Array}) satellites: SatelliteData[] = [ // this is just for test
@@ -66,6 +80,10 @@ export class GnssSkyplot extends LitElement {
   @property({type: Boolean}) showGlonassSatellites: boolean = false;
   @property({type: Boolean}) showGalileioSatellites: boolean = false;
   @property({type: Boolean}) showBeiDouSatellites: boolean = false;
+
+  @property({type: Boolean}) showSatelliteIDs: boolean = false;
+  @property({type: Boolean}) showStrongSignalsOnly: boolean = false;
+  @property({type: Boolean}) showActiveSatellitesOnly: boolean = false;
 
   override render() {
     // this.satellites = this.mapSatellitesToCircle(this.generateRandomSatellites());
@@ -136,7 +154,7 @@ export class GnssSkyplot extends LitElement {
 
   getGnssSkylot() {
     return svg`
-      <svg width="512" height="512" viewBox="16 164 600 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg width="512" height="512" viewBox="16 132 600 572" fill="none" xmlns="http://www.w3.org/2000/svg">
 
         <g clip-path="url(#clip0_2673_56153)">
           ${this.getLabels()}
@@ -205,13 +223,34 @@ export class GnssSkyplot extends LitElement {
   }
 
   private renderSignalIcon({
+    id,
+    x = 0,
+    y = 0,
+    strength = 1,
+    scale = 1
+  }: SignalIconOptions)
+  {
+    return svg`
+      <g transform="translate(${x}, ${y}) scale(${scale})"
+        @click=${() => this.showSatelliteIDs && id !== undefined ?  this.handleClickOnSatellite(id) : nothing}>
+
+        ${this.getStrengthFeature(strength)}
+
+        ${this.showSatelliteIDs && id !== undefined ? this.getText(id, strength) : ''}
+      </g>
+    `;
+  }
+
+  /*
+  private renderSignalIcon({
     id = 0,
     x = 0,
     y = 0,
     strength = 1,
     spoofing = false,
     jamming = false,
-    spoJamConfirmed = false
+    spoJamConfirmed = false,
+    scale = 1
   }) 
   {
     const spoofingStroke = spoofing ? Colors.alertAlarmColor : Colors.instrumentEnhancedTertiary;
@@ -219,8 +258,8 @@ export class GnssSkyplot extends LitElement {
     const slashVisible = spoJamConfirmed;
 
     return svg`
-      <g transform="translate(${x}, ${y})"
-        @click=${() => this.handleClickOnSatellite(id)}>
+      <g transform="translate(${x}, ${y}) scale(${scale})"
+        @click=${() => this.handleClickOnSatellite(id ?? 0)}>
 
         ${this.getStrengthFeature(strength)}
 
@@ -232,7 +271,9 @@ export class GnssSkyplot extends LitElement {
       </g>
     `;
   }
+  */
 
+  /*
   private getSpoofing(spoofing: boolean, spoofingStroke: string) {
     if (spoofing) {
       return svg`
@@ -295,6 +336,7 @@ export class GnssSkyplot extends LitElement {
       return nothing;
     }
   }
+  */
 
   private getText(id: number, strength: number) {
     return svg`
@@ -405,23 +447,91 @@ export class GnssSkyplot extends LitElement {
   private getSatellites() {
     return svg`
       ${this.satellites.map(s => {
-        if (s.type == SatelliteType.GPS && this.showGpsSatellites == true) {
-          return this.renderSignalIcon(s);
+        if (this.showStrongSignalsOnly == true) {
+          if (s.strength == Strength.Strong)
+            return this.renderSignalIcon(s);
         }
-        else if (s.type == SatelliteType.GLONASS && this.showGlonassSatellites == true) {
-          return this.renderSignalIcon(s);
-        }
-        else if (s.type == SatelliteType.Galileio && this.showGalileioSatellites == true) {
-          return this.renderSignalIcon(s);
-        }
-        else if (s.type == SatelliteType.BeiDou && this.showBeiDouSatellites == true) {
-          return this.renderSignalIcon(s);
+        else {
+          if (s.type == SatelliteType.GPS && this.showGpsSatellites == true) {
+            return this.renderSignalIcon(s);
+          }
+          else if (s.type == SatelliteType.GLONASS && this.showGlonassSatellites == true) {
+            return this.renderSignalIcon(s);
+          }
+          else if (s.type == SatelliteType.Galileio && this.showGalileioSatellites == true) {
+            return this.renderSignalIcon(s);
+          }
+          else if (s.type == SatelliteType.BeiDou && this.showBeiDouSatellites == true) {
+            return this.renderSignalIcon(s);
+          }
         }
         return nothing;
         })
       }
     `;
   }
+
+  /*
+  private getSignalStrengthLegend() {
+    return html`
+      <div class="signal-strength-legend">
+        <div class="signal-strength-title">
+          Signal strength
+        </div>
+
+        <svg
+          width="120"
+          height="160"
+          viewBox="0 0 120 160"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          ${this.renderSignalIcon({
+            x: -205,
+            y: -125,
+            scale: 0.6,
+            strength: 3
+          })}
+
+          ${this.renderSignalIcon({
+            x: -205,
+            y: -85,
+            scale: 0.6,
+            strength: 2
+          })}
+
+          ${this.renderSignalIcon({
+            x: -205,
+            y: -45,
+            scale: 0.6,
+            strength: 1
+          })}
+
+          ${this.renderSignalIcon({
+            x: -205,
+            y: -5,
+            scale: 0.6,
+            strength: 0
+          })}
+        </svg>
+
+        <div class="signal-labels" style="transform: translate(${50}px, ${-155}px);">
+          <span class="signal-strength-label">
+            ${'Strong'}
+          </span>
+          <span class="signal-strength-label">
+            ${'Medium'}
+          </span>
+          <span class="signal-strength-label">
+            ${'Weak'}
+          </span>
+          <span class="signal-strength-label">
+            ${'None'}
+          </span>
+        </div>
+      </div>
+    `;
+  }
+  */
 
   /*
   private generateRandomSatellites(count = 30): SatelliteData[] {
