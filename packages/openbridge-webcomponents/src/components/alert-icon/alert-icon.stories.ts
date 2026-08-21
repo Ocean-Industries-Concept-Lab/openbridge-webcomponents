@@ -12,11 +12,12 @@ const meta: Meta<typeof ObcAlertIcon> = {
     type: AlertType.Alarm,
     acknowledged: false,
     active: true,
-    outline: false,
+    silenced: false
   },
   argTypes: {
     type: {
-      control: {type: 'select', options: Object.values(AlertType)},
+      options: Object.values(AlertType),
+      control: {type: 'select'}
     },
     acknowledged: {
       control: {type: 'boolean'},
@@ -24,6 +25,9 @@ const meta: Meta<typeof ObcAlertIcon> = {
     active: {
       control: {type: 'boolean'},
     },
+    silenced: {
+      control: {type: 'boolean'},
+    }
   },
   render: (args) =>
     html` <div style="width:64px;height:64px">
@@ -31,6 +35,7 @@ const meta: Meta<typeof ObcAlertIcon> = {
         .type=${args.type}
         .acknowledged=${args.acknowledged}
         .active=${args.active}
+        .silenced=${args.silenced}
       ></obc-alert-icon>
     </div>`,
 } satisfies Meta<ObcAlertIcon>;

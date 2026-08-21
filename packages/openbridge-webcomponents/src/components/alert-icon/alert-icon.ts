@@ -255,12 +255,15 @@ export class ObcAlertIcon extends LitElement {
           return null;
       }
     } else if (this.bamType === AlertType.Warning) {
-      if (this.active === false) {
-        return mapping[AlertIconName.WarningRectified];
-      } else if (this.acknowledged) {
-        return mapping[AlertIconName.WarningSilenced];
-      } else {
-        return mapping[AlertIconName.WarningUnack];
+      switch (this._effectiveState) {
+        case AlertIconState.Rectified:
+          return mapping[AlertIconName.WarningRectified];
+        case AlertIconState.Silenced:
+          return mapping[AlertIconName.WarningSilenced];
+        case AlertIconState.Unacknowledged:
+          return mapping[AlertIconName.WarningUnack];
+        default:
+          return null;
       }
     }
 
