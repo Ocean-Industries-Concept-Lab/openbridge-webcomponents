@@ -10,7 +10,10 @@ import '../../icons/icon-chevron-right-google.js';
 import '../../icons/icon-chevron-left-google.js';
 import {customElement} from '../../decorator.js';
 import '../number-input-field/number-input-field.js';
-import {ObcNumberInputFieldTextAlign} from '../number-input-field/number-input-field.js';
+import {
+  ObcNumberInputField,
+  ObcNumberInputFieldTextAlign,
+} from '../number-input-field/number-input-field.js';
 
 /**
  * The visual and behavioral variant of the stepper box.
@@ -48,6 +51,8 @@ export enum ObcStepperBoxType {
  * ### Events
  * - `down` – Fired when the decrement (left or down) button is clicked.
  * - `up` – Fired when the increment (right or up) button is clicked.
+ * - `input` – Fired while the user edits the number input field.
+ * - `change` – Fired when the edit is committed, or when a step button is used.
  *
  * ### Best Practices
  * - Use the type that best matches the adjustment direction (e.g., `up-down` for vertical, `left-right` for horizontal, `plus-minus` for generic increment/decrement).
@@ -73,7 +78,7 @@ export enum ObcStepperBoxType {
  * @fires {CustomEvent<{value: number}>} down - Fired when the decrement (left or down) button is clicked
  * @fires {CustomEvent<{value: number}>} up - Fired when the increment (right or up) button is clicked
  * @fires {CustomEvent<{value: string}>} input - Fired when the user types in the number input field
- * @fires {CustomEvent<{value: number | null}>} change - Fired when the value changes through the input field or the increment/decrement buttons; programmatic assignment to `value` does not dispatch it
+ * @fires {CustomEvent<{value: number | null}>} change - Fired when the edit is committed on blur, or when the increment/decrement buttons are used; programmatic assignment to `value` does not dispatch it
  * @stable
  */
 @customElement('obc-stepper-box')
@@ -108,6 +113,17 @@ export class ObcStepperBox extends LitElement {
   @property({type: String}) placeholder = '';
 
   @property({type: Boolean}) readonly = false;
+
+  /** If true, the input field will not update its value on focus */
+  @property({type: Boolean}) rejectUpdatesOnFocus = false;
+
+  /** If true, the value will only be initially set, and not updated on change */
+  @property({type: Boolean}) rejectUpdates = false;
+
+  /** If true, the input field will not update its value if the value is the same as the previous value
+   * This is useful to avoid React re-rendering to reset the value.
+   */
+  @property({type: Boolean}) rejectDuplicateUpdates = false;
 
   private get downDisabled(): boolean {
     return (
@@ -203,7 +219,11 @@ export class ObcStepperBox extends LitElement {
               .textAlign=${ObcNumberInputFieldTextAlign.Center}
               ?disabled=${this.disabled}
               ?readonly=${this.readonly}
+              .rejectUpdatesOnFocus=${this.rejectUpdatesOnFocus}
+              .rejectUpdates=${this.rejectUpdates}
+              .rejectDuplicateUpdates=${this.rejectDuplicateUpdates}
               @input=${this.onNumberFieldInput}
+              @change=${this.onNumberFieldChange}
             ></obc-number-input-field>
           </div>
           <obc-icon-button
@@ -223,30 +243,27 @@ export class ObcStepperBox extends LitElement {
   }
 
   private onNumberFieldInput(e: Event) {
-    const input = e.target as HTMLInputElement;
-    const raw = input.value;
+    const field = e.target as ObcNumberInputField;
+
     this.dispatchEvent(
       new CustomEvent('input', {
-        detail: {value: raw},
+        detail: {value: field.displayValue},
         bubbles: true,
         composed: true,
       })
     );
 
-    if (raw.trim() === '') {
-      return;
+    if (Number.isFinite(field.value)) {
+      this.value = field.value;
     }
+  }
 
-    const parsed = Number(raw);
-    if (!Number.isFinite(parsed)) {
-      return;
-    }
+  private onNumberFieldChange(e: Event) {
+    const value = (e as CustomEvent<{value: number}>).detail.value;
+    const committed = Number.isFinite(value) ? value : null;
 
-    const previous = this.value;
-    this.value = parsed;
-    if (previous !== this.value) {
-      this.dispatchChange(this.value);
-    }
+    this.value = committed;
+    this.dispatchChange(committed);
   }
 
   private dispatchChange(value: number | null) {
