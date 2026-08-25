@@ -159,15 +159,28 @@ export type PolarChartDataItem = {
  * </script>
  * ```
  *
+ * @property data - Chart data segments (set via JavaScript)
+ * @property colors - Custom segment colors (set via JavaScript) with fallback to theme palette
+ * @property monochrome - Use single color for all sectors (uses first color from array, default: false)
+ * @availableWhen monochrome discreteColorStops==false
+ * @property discreteColorStops - Draw sectors as radial color bands from center outward using the colors array as threshold steps (default: false)
+ * @property showSectorLabels - When true, display sector labels from data (e.g. "Sector A"). When false, display angle values (0°, 30°, etc.). Default: false
+ * @property showUnit - Whether to show unit in angle or outer labels, default: false
+ * @property showOuterLabels - Show outer labels, default: false
+ * @property outerLabelUnit - Unit string to append to outer labels, default: "°"
+ * @property outerLabelMaxLength - Maximum character length for labels before trim (0 = no limit), default: 0
+ * @availableWhen outerLabelMaxLength showOuterLabels==true
+ * @property outerLabelDecimalPlaces - Number of decimal places in labels, default: 0
+ * @property fixedHeight - Fixed height of the chart in pixels (determines chart circumference), default: 320. The chart's circumference is always based on this fixed height to match other radial instruments.
+ * @property legend - Whether to display the legend below the chart, default: false
+ * @property showDebugOverlay - Show debug overlay for development, default: false
  * @beta
  */
 @customElement('obc-polar-chart')
 export class ObcPolarChart extends LitElement {
-  /** Chart data segments (set via JavaScript) */
   @property({type: Array, attribute: false})
   data: PolarChartDataItem[] = [];
 
-  /** Custom segment colors (set via JavaScript) with fallback to theme palette */
   @property({type: Array, attribute: false}) colors: string[] = [];
 
   /** @internal */
@@ -176,45 +189,28 @@ export class ObcPolarChart extends LitElement {
   @property({type: String})
   priority: Priority = Priority.regular;
 
-  /**
-   * Use single color for all sectors (uses first color from array, default: false)
-   * @availableWhen discreteColorStops==false
-   */
   @property({type: Boolean}) monochrome = false;
-  /** Draw sectors as radial color bands from center outward using the colors array as threshold steps (default: false) */
   @property({type: Boolean})
   discreteColorStops = false;
-  /** When true, display sector labels from data (e.g. "Sector A"). When false, display angle values (0°, 30°, etc.). Default: false */
   @property({type: Boolean})
   showSectorLabels = false; // Default: false (angles shown by default)
-  /** Whether to show unit in angle or outer labels, default: false */
   @property({type: Boolean})
   showUnit = false;
-  /** Show outer labels, default: false */
   @property({type: Boolean})
   showOuterLabels = false;
-  /** Unit string to append to outer labels, default: "°" */
   @property({type: String})
   outerLabelUnit = '°';
-  /**
-   * Maximum character length for labels before trim (0 = no limit), default: 0
-   * @availableWhen showOuterLabels==true
-   */
   @property({type: Number})
   outerLabelMaxLength = 0;
-  /** Number of decimal places in labels, default: 0 */
   @property({type: Number})
   outerLabelDecimalPlaces = 0;
 
-  /** Fixed height of the chart in pixels (determines chart circumference), default: 320. The chart's circumference is always based on this fixed height to match other radial instruments. */
   @property({type: Number, reflect: true})
   fixedHeight = 320;
 
-  /** Whether to display the legend below the chart, default: false */
   @property({type: Boolean, reflect: true})
   legend = false;
 
-  /** Show debug overlay for development, default: false */
   @property({type: Boolean, reflect: true})
   showDebugOverlay = false;
 
