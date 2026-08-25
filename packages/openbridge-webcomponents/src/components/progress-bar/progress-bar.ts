@@ -87,51 +87,42 @@ export enum CircularProgressState {
  * ></obc-progress-bar>
  * ```
  *
+ * @property type - Layout type: `linear` (horizontal bar) or `circular` (ring).
+ * @property mode - Progress mode: `determinate` tracks `value`, `indeterminate` loops indefinitely.
+ * @availableWhen mode type==linear
+ * @property circularState - Circular display state: `determinate` (numeric ring), `indeterminate` (animated ring with
+ *   icon), or `icon` (ring framing the icon slot).
+ * @availableWhen circularState type==circular
+ * @property priority - Color emphasis of the bar fill: `regular` (gray) or `enhanced` (blue).
+ * @availableWhen priority type==linear
+ * @property value - Progress percentage (0–100); clamped when rendered.
+ * @property showValue - Shows the value label above the bar (percentage when determinate, "Loading" when indeterminate).
+ * @availableWhen showValue type==linear
+ * @property showUnit - Appends a `%` unit next to the centered value.
+ * @availableWhen showUnit type==circular && (progressiveIndeterminate==true || circularState==determinate)
+ * @property hasDescription - Shows the `description` text below the bar.
+ * @availableWhen hasDescription type==linear
+ * @property description - Description text rendered below the bar.
+ * @availableWhen description type==linear && hasDescription==true
+ * @property stateLabel - Text shown alongside the value when `showState` is enabled.
+ * @availableWhen stateLabel type==linear && showValue==true && mode==determinate && showState==true
+ * @property progressiveIndeterminate - Uses a progressive indeterminate ring (spinning arc that grows with `value`); takes
+ *   precedence over `circularState`.
+ * @availableWhen progressiveIndeterminate type==circular
  * @slot icon - Centered icon for the circular `indeterminate` and `icon` states.
  * @stable
  */
 @customElement('obc-progress-bar')
 export class ObcProgressBar extends LitElement {
-  /** Layout type: `linear` (horizontal bar) or `circular` (ring). */
   @property({type: String}) type: ProgressBarType = ProgressBarType.linear;
-  /**
-   * Progress mode: `determinate` tracks `value`, `indeterminate` loops indefinitely.
-   * @availableWhen type==linear
-   */
   @property({type: String}) mode: ProgressBarMode = ProgressBarMode.determinate;
-  /**
-   * Circular display state: `determinate` (numeric ring), `indeterminate` (animated ring with
-   * icon), or `icon` (ring framing the icon slot).
-   * @availableWhen type==circular
-   */
   @property({type: String}) circularState: CircularProgressState =
     CircularProgressState.determinate;
-  /**
-   * Color emphasis of the bar fill: `regular` (gray) or `enhanced` (blue).
-   * @availableWhen type==linear
-   */
   @property({type: String}) priority: Priority = Priority.enhanced;
-  /** Progress percentage (0–100); clamped when rendered. */
   @property({type: Number}) value = 0;
-  /**
-   * Shows the value label above the bar (percentage when determinate, "Loading" when indeterminate).
-   * @availableWhen type==linear
-   */
   @property({type: Boolean}) showValue = false;
-  /**
-   * Appends a `%` unit next to the centered value.
-   * @availableWhen type==circular && (progressiveIndeterminate==true || circularState==determinate)
-   */
   @property({type: Boolean}) showUnit = false;
-  /**
-   * Shows the `description` text below the bar.
-   * @availableWhen type==linear
-   */
   @property({type: Boolean}) hasDescription = false;
-  /**
-   * Description text rendered below the bar.
-   * @availableWhen type==linear && hasDescription==true
-   */
   @property({type: String}) description = 'Description text';
   /**
    * Shows the `stateLabel` next to the value.
@@ -141,16 +132,7 @@ export class ObcProgressBar extends LitElement {
    * @availableWhen type==linear && showValue==true && mode==determinate
    */
   @property({type: Boolean}) showState = false;
-  /**
-   * Text shown alongside the value when `showState` is enabled.
-   * @availableWhen type==linear && showValue==true && mode==determinate && showState==true
-   */
   @property({type: String}) stateLabel = 'Open';
-  /**
-   * Uses a progressive indeterminate ring (spinning arc that grows with `value`); takes
-   * precedence over `circularState`.
-   * @availableWhen type==circular
-   */
   @property({type: Boolean}) progressiveIndeterminate = false;
 
   override render() {

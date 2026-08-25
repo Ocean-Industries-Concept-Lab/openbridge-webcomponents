@@ -98,6 +98,11 @@ export type ObcTabbedCardChangeEvent = CustomEvent<{
  *
  * In this example, three tabs are shown, each with its own title and content panel.
  *
+ * @property nTabs - Number of tabs to display (1–5). Determines how many tab-title/content slot pairs are rendered.
+ * @property selectedTab - Index of the currently selected tab (zero-based). Updates automatically on user interaction.
+ * @property hasDefaultSlotOnly - If true, only the default slot is rendered for tab content, and the consumer is responsible for toggling content based on the selected tab.
+ *   When false (default), each tab uses its own named slots for title and content.
+ * @property hasTabIcons - If true, each tab will have an icon slot.
  * @slot - Default slot for tab content (used only when `hasDefaultSlotOnly` is true)
  * @slot tab-title-0 - Title for the first tab
  * @slot tab-content-0 - Content for the first tab
@@ -119,29 +124,12 @@ export type ObcTabbedCardChangeEvent = CustomEvent<{
  */
 @customElement('obc-tabbed-card')
 export class ObcTabbedCard extends LitElement {
-  /**
-   * Number of tabs to display (1–5). Determines how many tab-title/content slot pairs are rendered.
-   * @default 1
-   */
   @property({type: Number}) nTabs: number = 1;
 
-  /**
-   * Index of the currently selected tab (zero-based). Updates automatically on user interaction.
-   * @default 0
-   */
   @property({type: Number}) selectedTab: number = 0;
 
-  /**
-   * If true, only the default slot is rendered for tab content, and the consumer is responsible for toggling content based on the selected tab.
-   * When false (default), each tab uses its own named slots for title and content.
-   * @default false
-   */
   @property({type: Boolean}) hasDefaultSlotOnly: boolean = false;
 
-  /**
-   * If true, each tab will have an icon slot.
-   * @default false
-   */
   @property({type: Boolean}) hasTabIcons: boolean = false;
 
   private _handleKeyDown(e: KeyboardEvent) {

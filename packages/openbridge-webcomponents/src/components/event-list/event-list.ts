@@ -40,27 +40,20 @@ export type {DateItemEvent};
  * - `showHeader` (boolean): Whether to show the date header. Default: `true`.
  * - `locale` (string): Locale for date formatting (e.g., 'en-US', 'nb-NO'). Uses browser default if not specified.
  *
+ * @property showHeader - Whether to hide the date header.
+ * @property date - The date to display in the header. The component will extract
+ *   day name, month name, date number, and year from this Date object.
+ *   Also accepts a timestamp (number) for compatibility with Storybook.
+ * @property events - Array of events to display in the list.
  * @slot - No slots. All content is provided via properties.
  * @beta
  */
 @customElement('obc-event-list')
 export class ObcEventList extends LitElement {
-  /**
-   * Whether to hide the date header.
-   * @default false
-   */
   @property({type: Boolean, attribute: false}) showHeader: boolean = true;
 
-  /**
-   * The date to display in the header. The component will extract
-   * day name, month name, date number, and year from this Date object.
-   * Also accepts a timestamp (number) for compatibility with Storybook.
-   */
   @property({attribute: false}) date: Date | number = new Date();
 
-  /**
-   * Array of events to display in the list.
-   */
   @property({type: Array, attribute: false}) events: DateItemEvent[] = [];
 
   /**

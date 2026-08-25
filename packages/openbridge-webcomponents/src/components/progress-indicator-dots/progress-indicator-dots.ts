@@ -40,28 +40,23 @@ import {property} from 'lit/decorators.js';
  * ```
  *
  * /**
+ *
+ * @property totalSteps - Sets the total number of steps/dots to display.
+ *   Must be at least 1. Defaults to 5.
+ * @property currentStep - Indicates the currently active step (1-based index).
+ *   Values outside the valid range are clamped to [1, totalSteps].
+ *   Defaults to 1.
+ * @property fullwidth - If true, the indicator stretches to fill the container width.
+ *   If false, uses a compact layout sized to its content.
+ *   Defaults to false.
  * @slot - (none) This component does not use content slots.
  */
 @customElement('obc-progress-indicator-dots')
 export class ObcProgressIndicatorDots extends LitElement {
-  /**
-   * Sets the total number of steps/dots to display.
-   * Must be at least 1. Defaults to 5.
-   */
   @property({type: Number}) totalSteps = 5;
 
-  /**
-   * Indicates the currently active step (1-based index).
-   * Values outside the valid range are clamped to [1, totalSteps].
-   * Defaults to 1.
-   */
   @property({type: Number}) currentStep = 1;
 
-  /**
-   * If true, the indicator stretches to fill the container width.
-   * If false, uses a compact layout sized to its content.
-   * Defaults to false.
-   */
   @property({type: Boolean}) fullwidth = false;
 
   private get validCurrentStep() {

@@ -124,6 +124,28 @@ export type ObcSliderDoubleChangeEvent = CustomEvent<{
  *
  * In this example, the slider allows selection of a percentage range from 0 to 100, with 5% increments, enhanced styling, and seeking enabled.
  *
+ * @property low - The current lower bound of the selected range.
+ *   Must be greater than or equal to `min` and less than or equal to `high`.
+ * @property high - The current upper bound of the selected range.
+ *   Must be less than or equal to `max` and greater than or equal to `low`.
+ * @property min - The minimum allowed value for the slider.
+ *   Default is 0.
+ * @property max - The maximum allowed value for the slider.
+ *   Default is 100.
+ * @property step - The increment for value changes.
+ *   If not set, defaults to 1.
+ * @property stepClick - Step size for keyboard or button-based changes.
+ *   Default is 10.
+ * @property allowSeeking - If true, clicking the slider track animates the thumb to the clicked position.
+ *   Enables seeking mode for rapid value changes.
+ * @property seekingSpeed - Animation speed for seeking, in inverse seconds.
+ *   The value will go from min to max in 1 / seekingSpeed seconds.
+ *   Default is 1/3 (i.e., 3 seconds for full range).
+ * @property labelUnit - Unit label appended to value labels (e.g., "%", "kn").
+ * @property labelDecimals - Number of decimal places to display in value labels.
+ * @property labelWidth - CSS width for value labels (e.g., "5ch", "60px").
+ * @property hugContainer - Removes spacing between the slider and its container edges for seamless
+ *   layout integration. Reflected to the `hugcontainer` HTML attribute.
  * @slot left-readout - Custom content for the left (low) readout label (rendered when `showLeftReadout` is true)
  * @slot right-readout - Custom content for the right (high) readout label (rendered when `showRightReadout` is true)
  * @fires {ObcSliderDoubleValueEvent} value - Fires when the value is changed
@@ -132,40 +154,16 @@ export type ObcSliderDoubleChangeEvent = CustomEvent<{
  */
 @customElement('obc-slider-double')
 export class ObcSliderDouble extends LitElement {
-  /**
-   * The current lower bound of the selected range.
-   * Must be greater than or equal to `min` and less than or equal to `high`.
-   */
   @property({type: Number}) low = 0;
 
-  /**
-   * The current upper bound of the selected range.
-   * Must be less than or equal to `max` and greater than or equal to `low`.
-   */
   @property({type: Number}) high = 100;
 
-  /**
-   * The minimum allowed value for the slider.
-   * Default is 0.
-   */
   @property({type: Number}) min = 0;
 
-  /**
-   * The maximum allowed value for the slider.
-   * Default is 100.
-   */
   @property({type: Number}) max = 100;
 
-  /**
-   * The increment for value changes.
-   * If not set, defaults to 1.
-   */
   @property({type: Number}) step: number | undefined;
 
-  /**
-   * Step size for keyboard or button-based changes.
-   * Default is 10.
-   */
   @property({type: Number}) stepClick = 10;
 
   /**
@@ -178,34 +176,16 @@ export class ObcSliderDouble extends LitElement {
   @property({type: String}) variant: ObcSliderDoubleVariant =
     ObcSliderDoubleVariant.Normal;
 
-  /**
-   * If true, clicking the slider track animates the thumb to the clicked position.
-   * Enables seeking mode for rapid value changes.
-   */
   @property({type: Boolean}) allowSeeking = false;
 
   @property({type: Boolean}) disabled = false;
 
-  /**
-   * Animation speed for seeking, in inverse seconds.
-   * The value will go from min to max in 1 / seekingSpeed seconds.
-   * Default is 1/3 (i.e., 3 seconds for full range).
-   */
   @property({type: Number}) seekingSpeed = 1 / 3;
 
-  /**
-   * Unit label appended to value labels (e.g., "%", "kn").
-   */
   @property({type: String}) labelUnit = '';
 
-  /**
-   * Number of decimal places to display in value labels.
-   */
   @property({type: Number}) labelDecimals = 0;
 
-  /**
-   * CSS width for value labels (e.g., "5ch", "60px").
-   */
   @property({type: String}) labelWidth = '60px';
 
   /**
@@ -228,10 +208,6 @@ export class ObcSliderDouble extends LitElement {
    */
   @property({type: Boolean, attribute: false}) showRightReadout = true;
 
-  /**
-   * Removes spacing between the slider and its container edges for seamless
-   * layout integration. Reflected to the `hugcontainer` HTML attribute.
-   */
   @property({type: Boolean, reflect: true, attribute: 'hugcontainer'})
   hugContainer = false;
 

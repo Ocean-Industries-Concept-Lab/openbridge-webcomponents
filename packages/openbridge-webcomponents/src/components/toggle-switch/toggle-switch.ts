@@ -93,6 +93,20 @@ export type ObcToggleSwitchChangeEvent = CustomEvent<{
  *
  * In this example, the toggle switch displays a label, an icon, and a description, and is in the checked state.
  *
+ * @property label - Main label for the toggle switch. Should clearly describe the setting being toggled.
+ * @property checked - Whether the toggle is in the "on" (checked) state.
+ *   Set to true to display as active/on.
+ * @property disabled - Disables the toggle, preventing user interaction and applying a disabled style.
+ * @property hasDescription - If true, displays the description text below the label.
+ * @property description - Supplementary description text shown when `hasDescription` is true.
+ *   Use to clarify the effect or details of the toggle.
+ * @availableWhen description hasDescription==true
+ * @property hasBottomDivider - If true, renders a divider below the toggle switch.
+ *   Useful for visually separating items in a list.
+ * @property hasIcon - If true, displays a leading icon before the label.
+ *   Provide icon content via the `icon` slot.
+ * @property externalControl - If true, the toggle is controlled externally.
+ *   Use to control the toggle state from outside the component.
  * @slot icon - Leading icon slot (shown when `hasIcon` is true)
  * @fires {ObcToggleSwitchInputEvent} input - Dispatched when the value of the input changes
  * @fires {ObcToggleSwitchChangeEvent} change - Dispatched when the value of the input changes by user interaction
@@ -100,50 +114,20 @@ export type ObcToggleSwitchChangeEvent = CustomEvent<{
  */
 @customElement('obc-toggle-switch')
 export class ObcToggleSwitch extends LitElement {
-  /**
-   * Main label for the toggle switch. Should clearly describe the setting being toggled.
-   */
   @property({type: String}) label = 'Label';
 
-  /**
-   * Whether the toggle is in the "on" (checked) state.
-   * Set to true to display as active/on.
-   */
   @property({type: Boolean}) checked = false;
 
-  /**
-   * Disables the toggle, preventing user interaction and applying a disabled style.
-   */
   @property({type: Boolean}) disabled = false;
 
-  /**
-   * If true, displays the description text below the label.
-   */
   @property({type: Boolean}) hasDescription = false;
 
-  /**
-   * Supplementary description text shown when `hasDescription` is true.
-   * Use to clarify the effect or details of the toggle.
-   * @availableWhen hasDescription==true
-   */
   @property({type: String}) description = '';
 
-  /**
-   * If true, renders a divider below the toggle switch.
-   * Useful for visually separating items in a list.
-   */
   @property({type: Boolean}) hasBottomDivider = false;
 
-  /**
-   * If true, displays a leading icon before the label.
-   * Provide icon content via the `icon` slot.
-   */
   @property({type: Boolean}) hasIcon = false;
 
-  /**
-   * If true, the toggle is controlled externally.
-   * Use to control the toggle state from outside the component.
-   */
   @property({type: Boolean}) externalControl = false;
 
   /**
