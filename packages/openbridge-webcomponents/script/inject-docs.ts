@@ -62,14 +62,16 @@ const FIELD_RE =
 // never be a field line — FIELD_RE requires an identifier first — but its
 // prose might contain a stray, unbalanced brace (e.g. "press the { key").
 // Such lines are excluded so they can't desync the depth count for every
-// line that follows; so are quoted literals (`mode: "{"`), which are types,
-// not nesting.
+// line that follows; so are quoted literals (`mode: "{"`) and trailing
+// comments (`value: number; // }`), which are types and prose, not nesting.
 const QUOTED_RE = /"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|`(?:[^`\\]|\\.)*`/g;
+const TRAILING_COMMENT_RE = /\/\/.*$|\/\*.*?\*\//g;
 function braceDelta(line: string): number {
   const t = line.trim();
   if (t.startsWith('*') || t.startsWith('/*') || t.startsWith('//')) return 0;
   let delta = 0;
-  for (const ch of line.replace(QUOTED_RE, '')) {
+  const code = line.replace(QUOTED_RE, '').replace(TRAILING_COMMENT_RE, '');
+  for (const ch of code) {
     if (ch === '{') delta++;
     else if (ch === '}') delta--;
   }

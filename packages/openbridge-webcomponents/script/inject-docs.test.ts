@@ -189,6 +189,30 @@ describe('injectDts', () => {
       'export declare class ObcF extends LitElement {\n    mode: "{" | \'}\';\n    /** The second field. */\n    second: number;\n}\n'
     );
   });
+
+  it('ignores braces inside a trailing line or block comment when tracking brace depth', () => {
+    const docs = docsFromManifest({
+      modules: [
+        {
+          path: 'src/g.ts',
+          declarations: [
+            {
+              kind: 'class',
+              name: 'ObcG',
+              members: [
+                {kind: 'field', name: 'third', description: 'The third field.'},
+              ],
+            },
+          ],
+        },
+      ],
+    });
+    const src =
+      'export declare class ObcG extends LitElement {\n    first: number; // }\n    second: string; /* { */\n    third: number;\n}\n';
+    expect(injectDts(src, docs)).toBe(
+      'export declare class ObcG extends LitElement {\n    first: number; // }\n    second: string; /* { */\n    /** The third field. */\n    third: number;\n}\n'
+    );
+  });
 });
 
 describe('injectSvelte', () => {
