@@ -1084,7 +1084,7 @@ function calculateAtSetpoint(config: ExternalScaleConfig): boolean {
  * Note: `focus` visual state is only triggered by the `touching` property
  * (user actively adjusting via touch/drag), not by InstrumentState.
  */
-function deriveSetpointVisualState(
+export function deriveSetpointVisualState(
   config: ExternalScaleConfig
 ): SetpointVisualState {
   // Priority 1: Focus state
