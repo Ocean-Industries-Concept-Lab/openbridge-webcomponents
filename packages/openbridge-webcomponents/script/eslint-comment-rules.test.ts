@@ -134,4 +134,16 @@ describe('comment-style', () => {
       ],
     });
   });
+
+  it('detects the "Overall" opener on a JSDoc continuation line', () => {
+    tester.run('comment-style', commentRules['comment-style'], {
+      valid: ['// The fix works well overall.\nconst a = 1;'],
+      invalid: [
+        {
+          code: '/**\n * Overall, this component handles X.\n */\nconst a = 1;',
+          errors: [{messageId: 'phrase'}],
+        },
+      ],
+    });
+  });
 });

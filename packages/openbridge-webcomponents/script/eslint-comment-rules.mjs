@@ -4,7 +4,7 @@ const BANNED = [
   ['it is important to', 'It is important to'],
   ['it is worth noting', 'It is worth noting'],
   ['in summary', 'In summary'],
-  ['^\\s*overall\\b|\\.\\s+overall\\b', 'filler opener'],
+  ['(?:^|\\n)\\s*\\*?\\s*overall\\b|\\.\\s+overall\\b', 'filler opener'],
   ['in order to', 'in order to (use "to")'],
   ['ensures? that', 'ensures that'],
   ['comprehensive', 'comprehensive'],
@@ -22,11 +22,12 @@ const BANNED = [
   ['let me', 'chatbot artefact'],
   ["i've", 'chatbot artefact'],
 ];
-// A source starting with `^` supplies its own boundaries and is used as-is.
-// Otherwise: a leading `\b`, plus a trailing `\b` only when the source ends
-// on a word character or a group's `)` — `\b` can never follow e.g. `[,!]`.
+// A source starting with `^` or `(?:^` supplies its own boundaries and is
+// used as-is. Otherwise: a leading `\b`, plus a trailing `\b` only when the
+// source ends on a word character or a group's `)` (never after e.g. `[,!]`).
+const isAnchored = (source) => source.startsWith('^') || source.startsWith('(?:^');
 const BANNED_RE = BANNED.map(([re, label]) => {
-  if (re.startsWith('^')) return [new RegExp(re, 'i'), label];
+  if (isAnchored(re)) return [new RegExp(re, 'i'), label];
   const trailingBoundary = /[\w)]$/.test(re) ? '\\b' : '';
   return [new RegExp(`\\b${re}${trailingBoundary}`, 'i'), label];
 });
