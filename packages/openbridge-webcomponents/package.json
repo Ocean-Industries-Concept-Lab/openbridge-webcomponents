@@ -43,7 +43,7 @@
     "lint:icons": "tsx ./script/check-icon-hex-leaks.ts",
     "lint:eslint": "eslint 'src/**/*.ts'",
     "lint:comments": "eslint -c eslint.comments.config.mjs 'src/**/*.ts'",
-    "comments:rewrite": "claude -p \"/comment-pass $npm_config_path\" --allowedTools \"Read,Edit,Grep,Glob\"",
+    "comments:rewrite": "tsx ./script/comment-pass.ts",
     "lint:lit-analyzer": "lit-analyzer --strict --maxWarnings 0",
     "lint:fix:stories": "eslint 'src/**/*.stories.ts' --fix",
     "lint:fix:property-docs": "eslint -c eslint.comments.config.mjs --fix 'src/**/*.ts'",
