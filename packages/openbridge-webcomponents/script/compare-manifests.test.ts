@@ -13,8 +13,12 @@ const decl = (members: unknown[]) => ({
 
 describe('compareManifests', () => {
   it('reports no difference when only whitespace inside a description differs', () => {
-    const a = decl([{kind: 'field', name: 'x', description: 'Line one\nline two'}]);
-    const b = decl([{kind: 'field', name: 'x', description: 'Line one line two'}]);
+    const a = decl([
+      {kind: 'field', name: 'x', description: 'Line one\nline two'},
+    ]);
+    const b = decl([
+      {kind: 'field', name: 'x', description: 'Line one line two'},
+    ]);
     expect(compareManifests(a, b)).toEqual([]);
   });
 
@@ -30,7 +34,12 @@ describe('compareManifests', () => {
     const a = decl([{kind: 'field', name: 'x', type: {text: 'number'}}]);
     const b = decl([{kind: 'field', name: 'x', type: {text: 'string'}}]);
     expect(compareManifests(a, b)).toEqual([
-      {path: 'src/a.ts > ObcA > members[x].type.text', kind: 'changed', before: 'number', after: 'string'},
+      {
+        path: 'src/a.ts > ObcA > members[x].type.text',
+        kind: 'changed',
+        before: 'number',
+        after: 'string',
+      },
     ]);
   });
 });
