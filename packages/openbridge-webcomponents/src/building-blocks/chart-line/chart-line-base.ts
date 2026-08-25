@@ -291,7 +291,6 @@ const LINE_GRAPH_DIMENSION_PROP_NAMES = [
  *     {label: 'Series B', data: [1, 2, 3, 2, 4]},
  *     {label: 'Series C', data: [3, 2, 1, 2, 3]}
  *   ];
- *   chart.fill = true;
  *   chart.fillMode = 'solid';
  *   chart.stacked = true;
  *   chart.legend = true;
@@ -304,7 +303,6 @@ const LINE_GRAPH_DIMENSION_PROP_NAMES = [
  * <script>
  *   const chart = document.querySelector('obc-line-graph');
  *   chart.data = [{label: '1', value: 20}, {label: '2', value: 45}, {label: '3', value: 35}];
- *   chart.fill = true;
  *   chart.fillMode = 'threshold';
  * </script>
  * ```

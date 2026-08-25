@@ -112,7 +112,6 @@ const meta: Meta = {
       .yTicksLimit=${_args.yTicksLimit}
       .yStepSize=${_args.yStepSize}
       .showPoints=${_args.showPoints}
-      .fill=${_args.fill}
       .fillMode=${_args.fillMode}
       .stacked=${_args.stacked}
       .legend=${_args.legend}
@@ -185,7 +184,11 @@ const meta: Meta = {
       control: 'boolean',
       description: 'Show point markers (default: false)',
     },
-    fill: {control: 'boolean'},
+    fill: {
+      control: 'boolean',
+      description:
+        'Story-only toggle that enables the fillMode control (not a component property).',
+    },
     fillMode: {
       control: {type: 'radio'},
       options: [
@@ -555,7 +558,6 @@ export const ExternalScalesBottomRight: Story = {
       .showGridY=${true}
       .width=${480}
       .height=${320}
-      .fill=${true}
       .fillMode=${_args.fillMode}
       .showPoints=${_args.showPoints}
       .priority=${_args.priority}
@@ -880,7 +882,6 @@ export const ExternalScalesMinimal: Story = {
       .showGridY=${true}
       .width=${192}
       .height=${192}
-      .fill=${true}
       .fillMode=${_args.fillMode}
       .showPoints=${_args.showPoints}
       .priority=${_args.priority}
@@ -1010,7 +1011,6 @@ export const FixedAspectRatioScaling: StoryObj = {
             .showGrid=${true}
             .showGridX=${true}
             .showGridY=${true}
-            .fill=${true}
             .fillMode=${'semitransparent'}
             .showPoints=${true}
             .priority=${Priority.regular}
@@ -1031,7 +1031,6 @@ export const FixedAspectRatioScaling: StoryObj = {
             .showGrid=${true}
             .showGridX=${true}
             .showGridY=${true}
-            .fill=${true}
             .fillMode=${'semitransparent'}
             .showPoints=${true}
             .priority=${Priority.enhanced}
