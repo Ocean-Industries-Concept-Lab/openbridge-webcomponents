@@ -117,6 +117,7 @@ export enum ObcToggleButtonOptionVariant {
  * @property disabled - If true, the option is disabled and cannot be interacted with.
  * @property large - If true, the option uses a larger size.
  * @availableWhen large type!=icon-text-under
+ * @property showDivider - If true, renders the divider between options.
  * @slot - Text label content for the option (when type includes text).
  * @slot icon - Icon content for the option (when type includes icons).
  * @fires {CustomEvent<{value: string}>} selected - Fired when the option is clicked and not already selected.
@@ -135,9 +136,6 @@ export class ObcToggleButtonOption extends LitElement {
 
   @property({type: Boolean}) hugText = false;
 
-  /**
-   * If true, renders the divider between options.
-   */
   // eslint-disable-next-line openbridge/prefer-boolean-property-default-false -- reflected attribute used by parent CSS
   @property({type: Boolean, reflect: true}) showDivider: boolean = true;
 

@@ -116,6 +116,18 @@ describe('property-docs-in-class-jsdoc — reports', () => {
             '  @property({type: Number}) value = 0;'
           ),
         },
+        {
+          // A line comment (typically an eslint-disable directive) between the field JSDoc and its decorator survives the hoist.
+          code: cls(
+            ' * Thing.\n * @stable',
+            '  /** Shows the divider. */\n  // reflected attribute used by parent CSS\n  @property({type: Boolean, reflect: true}) showDivider = true;'
+          ),
+          errors: [{messageId: 'hoist'}, {messageId: 'inline'}],
+          output: cls(
+            ' * Thing.\n *\n * @property showDivider - Shows the divider.\n * @stable',
+            '  // reflected attribute used by parent CSS\n  @property({type: Boolean, reflect: true}) showDivider = true;'
+          ),
+        },
       ],
     });
   });

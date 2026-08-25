@@ -106,6 +106,8 @@ export enum ObcToggleButtonLabelPlacement {
  * @property label - Text label for the option.
  *   Displayed next to or below the icon based on labelPlacement.
  * @property disabled - If true, the option is disabled and cannot be interacted with.
+ * @property showDivider - If true, renders the divider after this option.
+ *   Managed by the parent group.
  * @slot icon - Icon content for the option (when hasIcon is true).
  * @fires {CustomEvent<{value: string}>} selected - Fired when the option is clicked.
  */
@@ -117,10 +119,6 @@ export class ObcToggleButtonVerticalOption extends LitElement {
 
   @property({type: String}) type = ObcToggleButtonVerticalOptionType.regular;
 
-  /**
-   * If true, renders the divider after this option.
-   * Managed by the parent group.
-   */
   // eslint-disable-next-line openbridge/prefer-boolean-property-default-false -- reflected attribute used by parent CSS
   @property({type: Boolean, reflect: true}) showDivider: boolean = true;
 

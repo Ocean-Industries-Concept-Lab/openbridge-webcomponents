@@ -114,13 +114,21 @@ function leadingJsDoc(sourceCode, node) {
     node.parent.declaration === node;
   const first = node.decorators && node.decorators.length ? node.decorators[0] : exported ? node.parent : node;
   const comments = sourceCode.getCommentsBefore(first);
-  const last = comments[comments.length - 1];
+  // A trailing run of line comments (an `eslint-disable-next-line` aimed at
+  // the decorator) may sit between the doc and its anchor; look past it.
+  let i = comments.length - 1;
+  while (i >= 0 && comments[i].type === 'Line') i--;
+  const last = comments[i];
   if (!last || !isJsDoc(last)) return null;
-  // Tolerate blank lines between the doc and its anchor (decorator, export
-  // keyword, or the node itself) — reject only when something else (code,
-  // another comment) sits in the gap.
-  if (sourceCode.text.slice(last.range[1], first.range[0]).trim() !== '') return null;
-  return {comment: last, first};
+  // Tolerate blank lines and those line comments between the doc and its
+  // anchor (decorator, export keyword, or the node itself) — reject only when
+  // something else (code, a block comment) sits in the gap.
+  const gap = sourceCode.text.slice(last.range[1], first.range[0]);
+  if (gap.replace(/\/\/[^\n]*/g, '').trim() !== '') return null;
+  // The hoist fixer removes the doc and the whitespace after it, never the
+  // line comments, which still apply to the field.
+  const removeEnd = last.range[1] + /^\s*/.exec(gap)[0].length;
+  return {comment: last, first, removeEnd};
 }
 
 export const propertyDocsRule = {
@@ -184,7 +192,7 @@ export const propertyDocsRule = {
             continue;
           }
           context.report({loc: doc.comment.loc, messageId: 'inline', data: {name: f.key.name}});
-          hoistable.push({name: f.key.name, doc: cls, comment: doc.comment, first: doc.first});
+          hoistable.push({name: f.key.name, doc: cls, comment: doc.comment, removeEnd: doc.removeEnd});
         }
         if (hoistable.length) {
           context.report({node: node.id ?? node, messageId: 'hoist', data: {count: hoistable.length}, fix: buildHoistFix(classDoc.comment, headerLines, hoistable)});
@@ -203,7 +211,7 @@ export function buildHoistFix(classComment, headerLines, hoistable) {
     const text = ['/**', ...lines.map((l) => (l === '' ? `${indent} *` : `${indent} * ${l}`)), `${indent} */`].join('\n');
     return [
       fixer.replaceText(classComment, text),
-      ...hoistable.map((h) => fixer.removeRange([h.comment.range[0], h.first.range[0]])),
+      ...hoistable.map((h) => fixer.removeRange([h.comment.range[0], h.removeEnd])),
     ];
   };
 }
