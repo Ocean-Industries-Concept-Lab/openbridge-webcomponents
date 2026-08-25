@@ -64,11 +64,18 @@ function decoratorName(d) {
 }
 
 function leadingJsDoc(sourceCode, node) {
-  const first = node.decorators && node.decorators.length ? node.decorators[0] : node;
+  const exported =
+    node.parent &&
+    (node.parent.type === 'ExportNamedDeclaration' || node.parent.type === 'ExportDefaultDeclaration') &&
+    node.parent.declaration === node;
+  const first = node.decorators && node.decorators.length ? node.decorators[0] : exported ? node.parent : node;
   const comments = sourceCode.getCommentsBefore(first);
   const last = comments[comments.length - 1];
   if (!last || !isJsDoc(last)) return null;
-  if (last.loc.end.line < first.loc.start.line - 1) return null;
+  // Tolerate blank lines between the doc and its anchor (decorator, export
+  // keyword, or the node itself) — reject only when something else (code,
+  // another comment) sits in the gap.
+  if (sourceCode.text.slice(last.range[1], first.range[0]).trim() !== '') return null;
   return {comment: last, first};
 }
 

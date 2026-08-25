@@ -57,6 +57,38 @@ describe('property-docs-in-class-jsdoc — reports', () => {
     });
   });
 
+  it('finds the class JSDoc on an undecorated export and across a blank line before the decorator', () => {
+    tester.run('property-docs', propertyDocsRule, {
+      valid: [],
+      invalid: [
+        {
+          // No class decorator at all — the JSDoc sits directly before `export`.
+          code: "import {LitElement} from 'lit';\n/**\n * Thing.\n * @property {number} value - The value.\n * @stable\n */\nexport class ObcX extends LitElement {\n  @property({type: Number}) value = 0;\n}\n",
+          errors: [{messageId: 'typed'}],
+          output: null,
+        },
+        {
+          // No class decorator; a header @property naming no real field.
+          code: "import {LitElement} from 'lit';\n/**\n * Thing.\n * @property ghost - x\n * @stable\n */\nexport class ObcX extends LitElement {\n  @property({type: Number}) value = 0;\n}\n",
+          errors: [{messageId: 'ghost'}],
+          output: null,
+        },
+        {
+          // Class decorator present, but a blank line separates it from the JSDoc above.
+          code: "import {LitElement} from 'lit';\n/**\n * Thing.\n * @stable\n */\n\n@customElement('obc-x')\nexport class ObcX extends LitElement {\n  /** The value. */\n  @property({type: Number}) value = 0;\n}\n",
+          errors: [{messageId: 'hoist'}, {messageId: 'inline'}],
+          output: null,
+        },
+        {
+          // Field JSDoc separated from its own @property() decorator by a blank line.
+          code: cls(' * Thing.\n * @stable', '  /** The value. */\n\n  @property({type: Number}) value = 0;'),
+          errors: [{messageId: 'hoist'}, {messageId: 'inline'}],
+          output: null,
+        },
+      ],
+    });
+  });
+
   // The fixer lands in Task 6 (buildHoistFix currently returns null); this
   // case exercises the hoist output and stays skipped until then.
   it.skip('hoists an inline doc into the header (fixer lands in Task 6)', () => {
