@@ -90,6 +90,9 @@ export function compareManifests(a: Json, b: Json): Difference[] {
         diffValue(`${base} > ${key}`, va, vb, out);
       }
     }
+    for (const declB of db)
+      if (!da.some((d) => d.name === declB.name))
+        out.push({path: `${p} > ${declB.name}`, kind: 'extra'});
   }
   for (const p of mb.keys()) if (!ma.has(p)) out.push({path: p, kind: 'extra'});
   return out;

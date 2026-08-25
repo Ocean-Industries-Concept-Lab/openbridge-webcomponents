@@ -42,4 +42,31 @@ describe('compareManifests', () => {
       },
     ]);
   });
+
+  it('reports an extra declaration only present in b', () => {
+    const a = {
+      modules: [
+        {
+          path: 'src/a.ts',
+          declarations: [
+            {kind: 'class', name: 'ObcA', tagName: 'obc-a', members: []},
+          ],
+        },
+      ],
+    };
+    const b = {
+      modules: [
+        {
+          path: 'src/a.ts',
+          declarations: [
+            {kind: 'class', name: 'ObcA', tagName: 'obc-a', members: []},
+            {kind: 'class', name: 'ObcB', tagName: 'obc-b', members: []},
+          ],
+        },
+      ],
+    };
+    expect(compareManifests(a, b)).toEqual([
+      {path: 'src/a.ts > ObcB', kind: 'extra'},
+    ]);
+  });
 });
