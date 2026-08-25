@@ -329,99 +329,109 @@ const LINE_GRAPH_DIMENSION_PROP_NAMES = [
  * (remove this tag and the `.fill=` usages in the stories/wrappers). Kept as-is
  * here to avoid changing the public API surface in a docs-only cleanup.
  *
+ * @property data - Simple single-series data. `{label, value}` items for the category axis;
+ *   `{x, value}` items for time/number axes (x: epoch ms, ISO string, Date,
+ *   or Temporal object). Points are drawn in array order (no sorting).
+ * @property datasets - Chart.js-style datasets for multi-series use. If provided, takes precedence over `data`.
+ * @property labels - Optional explicit labels for the x-axis (category mode). If omitted labels are derived from `data`
+ * @property colors - Custom color palette (CSS variable names or color strings).
+ * @property legend - Show HTML legend below chart with series labels and colors.
+ * @property showDebugOverlay - Development mode: show visual debug overlay with dimension guides.
+ * @property width - Width of the chart in pixels. Default: 480.
+ * @property height - Height of the chart in pixels. Default: 320.
+ * @property fixedAspectRatioScaling - Enable fixed aspect ratio scaling mode.
+ *   When true, width/height properties define the aspect ratio (not actual pixels).
+ *   The component fills 100% of parent width and calculates height from aspect ratio.
+ *   When false (default), width/height are used as actual pixel dimensions.
+ * @property scaleReferenceSize - Reference size for external scales when using fixedAspectRatioScaling.
+ *   This value is passed down to external scales to determine their 1:1 Figma design size.
+ *   At this reference size, scales render at native size; above/below they scale proportionally.
+ *   Default: 384 (matches Figma design baseline).
+ * @property xAxisType - X-axis mode: 'category' for labeled, evenly spaced data points; 'time'
+ *   for time-based data positioned proportionally; 'number' for plain
+ *   numeric x-values.
+ * @property yAxisPosition - Single y-axis position ('left' or 'right'). For multiple y-axes, use yAxes instead.
+ * @property yAxes - Multiple y-axis definitions for complex multi-axis charts.
+ * @property showGrid - Show grid lines.
+ * @property showGridX - Show vertical grid lines (x-axis). Default: false.
+ * @availableWhen showGridX showGrid==true
+ * @property showGridY - Show horizontal grid lines (y-axis). Default: false.
+ * @availableWhen showGridY showGrid==true
+ * @property showTickMarks - Show axis tick marks and labels.
+ * @property showPoints - Show point markers on data points. Default: false.
+ * @property lineMode - Line drawing style: 'smooth' (curved), 'straight', or 'stepped'.
+ * @property unit - Unit label displayed in tooltips (e.g., 'kW', 'kg', '%').
+ * @property timeDisplay - Time axis label format: 'date' (full date/time) or 'minutes' (relative).
+ * @availableWhen timeDisplay xAxisType==time
+ * @property xTicksLimit - Max number of x-axis ticks/grid lines. Useful for matching external axes.
+ * @property xStepSize - Force x-axis tick interval. Useful for matching external axes.
+ * @property yTicksLimit - Max number of y-axis ticks/grid lines. Useful for matching external axes.
+ * @property yStepSize - Force y-axis tick interval. Useful for matching external axes.
+ * @property state - Instrument state affecting colors of external scales.
+ * @property priority - Color priority: enhanced uses blue palette instead of default gray.
+ * @property frameStyle - Frame style for chart and external scales.
+ * @property borderRadiusPosition - Border radius position for the chart's own border.
+ * @property borderRadiusPositionExternalScales - Border radius position for external scales based on layout.
+ * @property instrumentMode - When true, the chart is used inside an instrument (e.g., gauge-trend).
+ *   In this mode, only label font size responds to .obc-component-size-* CSS classes.
+ *   Border radius uses the explicit `borderRadius` property value (or defaults to 8px),
+ *   rather than reading from CSS variables.
+ * @property borderRadius - Explicit border radius value in pixels.
+ *   When instrumentMode=true, this value is used directly (defaults to 8px).
+ *   When instrumentMode=false, this is ignored and border radius is read from CSS variable.
+ * @availableWhen borderRadius instrumentMode==true
  * @ignore This is an abstract base class. Use concrete implementations like ObcLineGraph or ObcAreaGraph instead.
  * @experimental
  */
 export class ObcChartLineBase extends LitElement {
-  /**
-   * Simple single-series data. `{label, value}` items for the category axis;
-   * `{x, value}` items for time/number axes (x: epoch ms, ISO string, Date,
-   * or Temporal object). Points are drawn in array order (no sorting).
-   */
   @property({type: Array, attribute: false})
   data: ChartLineDataItem[] = [];
 
-  /** Chart.js-style datasets for multi-series use. If provided, takes precedence over `data`. */
   @property({type: Array, attribute: false})
   datasets?: ChartDataset<'line', ChartLinePoint[]>[] = undefined;
 
-  /** Optional explicit labels for the x-axis (category mode). If omitted labels are derived from `data` */
   @property({type: Array, attribute: false})
   labels?: (string | number)[] = undefined;
 
-  /** Custom color palette (CSS variable names or color strings). */
   @property({type: Array, attribute: false})
   colors: string[] = [];
 
-  /** Show HTML legend below chart with series labels and colors. */
   @property({type: Boolean, reflect: true})
   legend = false;
 
-  /** Development mode: show visual debug overlay with dimension guides. */
   @property({type: Boolean, reflect: true})
   showDebugOverlay = false;
 
-  /** Width of the chart in pixels. Default: 480. */
   @property({type: Number, reflect: true})
   width = 480;
 
-  /** Height of the chart in pixels. Default: 320. */
   @property({type: Number, reflect: true})
   height = 320;
 
-  /**
-   * Enable fixed aspect ratio scaling mode.
-   * When true, width/height properties define the aspect ratio (not actual pixels).
-   * The component fills 100% of parent width and calculates height from aspect ratio.
-   * When false (default), width/height are used as actual pixel dimensions.
-   */
   @property({type: Boolean, reflect: true})
   fixedAspectRatioScaling = false;
 
-  /**
-   * Reference size for external scales when using fixedAspectRatioScaling.
-   * This value is passed down to external scales to determine their 1:1 Figma design size.
-   * At this reference size, scales render at native size; above/below they scale proportionally.
-   * Default: 384 (matches Figma design baseline).
-   */
   @property({type: Number})
   scaleReferenceSize = 384;
 
-  /**
-   * X-axis mode: 'category' for labeled, evenly spaced data points; 'time'
-   * for time-based data positioned proportionally; 'number' for plain
-   * numeric x-values.
-   */
   @property({type: String})
   xAxisType: XAxisType = XAxisType.category;
 
-  /** Single y-axis position ('left' or 'right'). For multiple y-axes, use yAxes instead. */
   @property({type: String})
   yAxisPosition: YAxisPosition = YAxisPosition.left;
 
-  /** Multiple y-axis definitions for complex multi-axis charts. */
   @property({type: Array, attribute: false})
   yAxes?: ChartLineYAxisConfig[] = undefined;
 
-  /** Show grid lines. */
   @property({type: Boolean})
   showGrid = false;
 
-  /**
-   * Show vertical grid lines (x-axis). Default: false.
-   * @availableWhen showGrid==true
-   */
   @property({type: Boolean})
   showGridX = false;
 
-  /**
-   * Show horizontal grid lines (y-axis). Default: false.
-   * @availableWhen showGrid==true
-   */
   @property({type: Boolean})
   showGridY = false;
 
-  /** Show axis tick marks and labels. */
   @property({type: Boolean})
   showTickMarks = false;
 
@@ -478,77 +488,48 @@ export class ObcChartLineBase extends LitElement {
   // Internal default point radius when points are shown.
   private readonly POINT_RADIUS = 3;
 
-  /** Show point markers on data points. Default: false. */
   @property({type: Boolean})
   showPoints = false;
 
-  /** Line drawing style: 'smooth' (curved), 'straight', or 'stepped'. */
   @property({type: String})
   lineMode: LineMode = LineMode.smooth;
 
-  /** Unit label displayed in tooltips (e.g., 'kW', 'kg', '%'). */
   @property({type: String})
   unit = '';
 
-  /**
-   * Time axis label format: 'date' (full date/time) or 'minutes' (relative).
-   * @availableWhen xAxisType==time
-   */
   @property({type: String})
   timeDisplay: TimeDisplay = TimeDisplay.date;
 
-  /** Max number of x-axis ticks/grid lines. Useful for matching external axes. */
   @property({type: Number})
   xTicksLimit?: number = undefined;
 
-  /** Force x-axis tick interval. Useful for matching external axes. */
   @property({type: Number})
   xStepSize?: number = undefined;
 
-  /** Max number of y-axis ticks/grid lines. Useful for matching external axes. */
   @property({type: Number})
   yTicksLimit?: number = undefined;
 
-  /** Force y-axis tick interval. Useful for matching external axes. */
   @property({type: Number})
   yStepSize?: number = undefined;
 
-  /** Instrument state affecting colors of external scales. */
   @property({type: String})
   state: InstrumentState = InstrumentState.active;
 
-  /** Color priority: enhanced uses blue palette instead of default gray. */
   @property({type: String})
   priority: Priority = Priority.regular;
 
-  /** Frame style for chart and external scales. */
   @property({type: String})
   frameStyle: FrameStyle = FrameStyle.regular;
 
-  /** Border radius position for the chart's own border. */
   @property({type: String})
   borderRadiusPosition?: BorderRadiusPosition = undefined;
 
-  /** Border radius position for external scales based on layout. */
   @property({type: String})
   borderRadiusPositionExternalScales?: BorderRadiusPosition = undefined;
 
-  /**
-   * When true, the chart is used inside an instrument (e.g., gauge-trend).
-   * In this mode, only label font size responds to .obc-component-size-* CSS classes.
-   * Border radius uses the explicit `borderRadius` property value (or defaults to 8px),
-   * rather than reading from CSS variables.
-   * @default false
-   */
   @property({type: Boolean})
   instrumentMode = false;
 
-  /**
-   * Explicit border radius value in pixels.
-   * When instrumentMode=true, this value is used directly (defaults to 8px).
-   * When instrumentMode=false, this is ignored and border radius is read from CSS variable.
-   * @availableWhen instrumentMode==true
-   */
   @property({type: Number})
   borderRadius?: number = undefined;
 
