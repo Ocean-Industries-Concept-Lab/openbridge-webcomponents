@@ -77,21 +77,20 @@ describe('property-docs-in-class-jsdoc — reports', () => {
           // Class decorator present, but a blank line separates it from the JSDoc above.
           code: "import {LitElement} from 'lit';\n/**\n * Thing.\n * @stable\n */\n\n@customElement('obc-x')\nexport class ObcX extends LitElement {\n  /** The value. */\n  @property({type: Number}) value = 0;\n}\n",
           errors: [{messageId: 'hoist'}, {messageId: 'inline'}],
-          output: null,
+          output: "import {LitElement} from 'lit';\n/**\n * Thing.\n *\n * @property value - The value.\n * @stable\n */\n\n@customElement('obc-x')\nexport class ObcX extends LitElement {\n  @property({type: Number}) value = 0;\n}\n",
         },
         {
           // Field JSDoc separated from its own @property() decorator by a blank line.
           code: cls(' * Thing.\n * @stable', '  /** The value. */\n\n  @property({type: Number}) value = 0;'),
           errors: [{messageId: 'hoist'}, {messageId: 'inline'}],
-          output: null,
+          output: cls(' * Thing.\n *\n * @property value - The value.\n * @stable', '  @property({type: Number}) value = 0;'),
         },
       ],
     });
   });
 
-  // The fixer lands in Task 6 (buildHoistFix currently returns null); this
-  // case exercises the hoist output and stays skipped until then.
-  it.skip('hoists an inline doc into the header (fixer lands in Task 6)', () => {
+  // Exercises the hoist output now that buildHoistFix is implemented (Task 6).
+  it('hoists an inline doc into the header', () => {
     tester.run('property-docs', propertyDocsRule, {
       valid: [],
       invalid: [
@@ -99,6 +98,32 @@ describe('property-docs-in-class-jsdoc — reports', () => {
           code: cls(' * Thing.\n * @stable', '  /** The value. */\n  @property({type: Number}) value = 0;'),
           errors: [{messageId: 'hoist'}, {messageId: 'inline'}],
           output: cls(' * Thing.\n *\n * @property value - The value.\n * @stable', '  @property({type: Number}) value = 0;'),
+        },
+      ],
+    });
+  });
+});
+
+describe('property-docs-in-class-jsdoc — fixer', () => {
+  it('hoists multi-line text with continuation lines and @availableWhen; drops @default', () => {
+    tester.run('property-docs', propertyDocsRule, {
+      valid: [],
+      invalid: [
+        {
+          code: cls(
+            ' * Thing.\n *\n * @slot - Content.\n * @stable',
+            '  /**\n   * Reference size.\n   * Second line.\n   * @default 384\n   * @availableWhen fixedAspectRatio==true\n   */\n  @property({type: Number}) scaleReferenceSize = 384;\n  @property({type: Boolean}) fixedAspectRatio = false;'
+          ),
+          errors: [{messageId: 'hoist'}, {messageId: 'inline'}],
+          output: cls(
+            ' * Thing.\n *\n * @property scaleReferenceSize - Reference size.\n *   Second line.\n * @availableWhen scaleReferenceSize fixedAspectRatio==true\n * @slot - Content.\n * @stable',
+            '  @property({type: Number}) scaleReferenceSize = 384;\n  @property({type: Boolean}) fixedAspectRatio = false;'
+          ),
+        },
+        {
+          code: cls(' * Thing.\n *\n * @property a - A.\n * @stable', '  /** B. */\n  @property({type: Number}) b = 0;\n  @property({type: Number}) a = 0;'),
+          errors: [{messageId: 'hoist'}, {messageId: 'inline'}],
+          output: cls(' * Thing.\n *\n * @property a - A.\n * @property b - B.\n * @stable', '  @property({type: Number}) b = 0;\n  @property({type: Number}) a = 0;'),
         },
       ],
     });

@@ -45,6 +45,7 @@
     "lint:comments": "eslint -c eslint.comments.config.mjs 'src/**/*.ts'",
     "lint:lit-analyzer": "lit-analyzer --strict --maxWarnings 0",
     "lint:fix:stories": "eslint 'src/**/*.stories.ts' --fix",
+    "lint:fix:property-docs": "eslint -c eslint.comments.config.mjs --fix 'src/**/*.ts'",
     "test:rules": "vitest run --project rules",
     "fix-imports": "node fix-imports.mjs",
     "fix-imports:check": "node fix-imports.mjs --dry-run",

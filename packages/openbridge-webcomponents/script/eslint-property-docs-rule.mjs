@@ -145,6 +145,16 @@ export const propertyDocsRule = {
   },
 };
 
-export function buildHoistFix() {
-  return null; // Task 6
+export function buildHoistFix(classComment, headerLines, hoistable) {
+  return (fixer) => {
+    const {insertAt, needsBlank} = insertionPoint(headerLines);
+    const added = hoistable.flatMap((h) => tagLinesFor(h.name, h.doc));
+    const lines = [...headerLines.slice(0, insertAt), ...(needsBlank ? [''] : []), ...added, ...headerLines.slice(insertAt)];
+    const indent = ' '.repeat(classComment.loc.start.column);
+    const text = ['/**', ...lines.map((l) => (l === '' ? `${indent} *` : `${indent} * ${l}`)), `${indent} */`].join('\n');
+    return [
+      fixer.replaceText(classComment, text),
+      ...hoistable.map((h) => fixer.removeRange([h.comment.range[0], h.first.range[0]])),
+    ];
+  };
 }
