@@ -57,6 +57,9 @@ export type IntegrationDropdownOption = {
  * </obc-integration-dropdown-button>
  * ```
  *
+ * @property value - The value of the currently selected option.
+ * @property fullWidth - If true, the select expands to fill the width of its container. Default is false.
+ * @property openTop - If true, the dropdown menu opens above the button.
  * @slot fleet - Fleet button displayed when `hasFleet` is true.
  * @fires {ObcIntegrationDropdownButtonChangeEvent} change - Fires when the value of the select changes
  * @experimental
@@ -77,21 +80,12 @@ export class ObcIntegrationDropdownButton extends LitElement {
   @property({type: Boolean}) hasFleet: boolean = false;
   @property({type: String}) fleetLabel: string = '';
 
-  /**
-   * The value of the currently selected option.
-   */
   @property({type: String}) value: string | undefined;
   @property({type: String}) placeholder: string = '';
   @property({type: Boolean}) disabled: boolean = false;
 
-  /**
-   * If true, the select expands to fill the width of its container. Default is false.
-   */
   @property({type: Boolean}) fullWidth = false;
 
-  /**
-   * If true, the dropdown menu opens above the button.
-   */
   @property({type: Boolean}) openTop = false;
 
   private get selectedItem():
