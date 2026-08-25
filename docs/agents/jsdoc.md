@@ -6,6 +6,8 @@ globs:
   - "!packages/openbridge-webcomponents/src/icons/**"
   - "!packages/openbridge-webcomponents/src/generated/**"
   - "!packages/openbridge-webcomponents/src/manual-icon/**"
+  - '!packages/openbridge-webcomponents/src/**/*.stories.ts'
+  - '!packages/openbridge-webcomponents/src/**/*.spec.ts'
 ---
 
 # JSDoc Documentation Rules

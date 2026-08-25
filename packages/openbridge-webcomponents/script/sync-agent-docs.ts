@@ -6,6 +6,7 @@ import {parseAgentDoc, type AgentDoc} from './agent-docs/frontmatter.js';
 import {
   ROUTING_MARKER,
   renderClaudeMd,
+  renderClaudeRule,
   renderCopilotInstructions,
   renderCursorRule,
   renderInstructionsFile,
@@ -17,6 +18,7 @@ const ROOT = path.resolve(import.meta.dirname, '../../..');
 const AGENTS_DIR = path.join(ROOT, 'docs/agents');
 const INSTRUCTIONS_DIR = path.join(ROOT, '.github/instructions');
 const CURSOR_RULES_DIR = path.join(ROOT, '.cursor/rules');
+const CLAUDE_RULES_DIR = path.join(ROOT, '.claude/rules');
 const CHECK = process.argv.includes('--check');
 
 const problems: string[] = [];
@@ -38,10 +40,17 @@ function loadDocs(): AgentDoc[] {
     .sort()
     .map((f) => {
       const rel = path.posix.join('docs/agents', f);
-      return parseAgentDoc(
+      const doc = parseAgentDoc(
         fs.readFileSync(path.join(AGENTS_DIR, f), 'utf8'),
         rel
       );
+      const lineCount = doc.body.split('\n').length;
+      if (lineCount > 300) {
+        console.warn(
+          `agent-docs: ${doc.sourcePath} has ${lineCount} lines — target is under 300 (split by sub-family)`
+        );
+      }
+      return doc;
     });
 }
 
@@ -62,6 +71,7 @@ function checkOrphans(docs: AgentDoc[]): void {
   const adapters: [string, string, string][] = [
     [INSTRUCTIONS_DIR, '.instructions.md', '.github/instructions'],
     [CURSOR_RULES_DIR, '.mdc', '.cursor/rules'],
+    [CLAUDE_RULES_DIR, '.md', '.claude/rules'],
   ];
   for (const [dir, ext, rel] of adapters) {
     if (!fs.existsSync(dir)) continue;
@@ -91,6 +101,10 @@ for (const doc of routable) {
   plan(
     path.join(CURSOR_RULES_DIR, `${doc.name}.mdc`),
     renderCursorRule(doc, docNames)
+  );
+  plan(
+    path.join(CLAUDE_RULES_DIR, `${doc.name}.md`),
+    renderClaudeRule(doc, docNames)
   );
 }
 plan(

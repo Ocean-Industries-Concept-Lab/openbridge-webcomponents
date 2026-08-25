@@ -1,5 +1,6 @@
 ---
-applyTo: "packages/openbridge-webcomponents/src/**/*.ts,!packages/openbridge-webcomponents/src/icons/**,!packages/openbridge-webcomponents/src/generated/**,!packages/openbridge-webcomponents/src/manual-icon/**,!packages/openbridge-webcomponents/src/**/*.stories.ts,!packages/openbridge-webcomponents/src/**/*.spec.ts"
+paths:
+  - "packages/openbridge-webcomponents/src/**/*.ts"
 ---
 
 <!-- GENERATED FILE — DO NOT EDIT.

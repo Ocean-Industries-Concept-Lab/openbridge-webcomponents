@@ -4,6 +4,7 @@ import {parseAgentDoc, type AgentDoc} from './agent-docs/frontmatter.js';
 import {
   ROUTING_MARKER,
   renderClaudeMd,
+  renderClaudeRule,
   renderCopilotInstructions,
   renderCursorRule,
   renderInstructionsFile,
@@ -294,5 +295,30 @@ describe('rewriteSiblingLinks', () => {
     expect(renderCursorRule(doc, siblings)).toContain(
       '](../../docs/agents/jsdoc.md)'
     );
+  });
+});
+
+describe('renderClaudeRule', () => {
+  it('emits a paths: front-matter with the positive globs only', () => {
+    const doc = parseAgentDoc(
+      VALID.replace(
+        '  - packages/openbridge-webcomponents/src/automation/**',
+        "  - packages/openbridge-webcomponents/src/automation/**\n  - '!packages/openbridge-webcomponents/src/automation/skip/**'"
+      ),
+      'docs/agents/a11y.md'
+    );
+    const out = renderClaudeRule(doc);
+    expect(out.startsWith('---\npaths:\n  - "packages/openbridge-webcomponents/src/components/**"\n  - "packages/openbridge-webcomponents/src/automation/**"\n---\n')).toBe(true);
+    expect(out).not.toContain('skip/**');
+    expect(out).toContain('# Accessibility Instructions');
+  });
+});
+
+describe('renderRoutingTable', () => {
+  it('is wrapped in prettier range-ignore comments', () => {
+    const doc = parseAgentDoc(VALID, 'docs/agents/a11y.md');
+    const table = renderRoutingTable([doc]);
+    expect(table.startsWith('<!-- prettier-ignore-start -->\n')).toBe(true);
+    expect(table.endsWith('\n<!-- prettier-ignore-end -->')).toBe(true);
   });
 });

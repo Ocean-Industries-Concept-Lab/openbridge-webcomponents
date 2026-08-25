@@ -94,7 +94,41 @@ export function renderCursorRule(
   ].join('\n');
 }
 
-/** Shared routing table (no markers) for AGENTS.md and copilot-instructions.md. */
+/**
+ * Claude Code path-scoped rule: `.claude/rules/<name>.md` (`paths:` = positive globs).
+ *
+ * Negative globs are dropped for the same reason `renderCursorRule` drops
+ * them: Claude Code's `paths:` frontmatter is a plain list of glob patterns
+ * with no documented `!` negation, so the only doc affected (`jsdoc.md`)
+ * loses its generated-directory exclusions here but keeps the rest of its
+ * scope.
+ */
+export function renderClaudeRule(
+  doc: AgentDoc,
+  siblings: ReadonlySet<string> = new Set()
+): string {
+  const globs = doc.globs.filter((g) => !g.startsWith('!'));
+  return [
+    '---',
+    'paths:',
+    ...globs.map((g) => `  - "${g}"`),
+    '---',
+    '',
+    banner(doc.sourcePath),
+    '',
+    rewriteSiblingLinks(doc.body, siblings).replace(/\n*$/, '\n'),
+  ].join('\n');
+}
+
+/**
+ * Shared routing table (no markers) for AGENTS.md and copilot-instructions.md.
+ *
+ * Wrapped in Prettier's range-ignore comments: the table's glob column packs
+ * every pattern for a doc into one cell, and Prettier's Markdown table
+ * formatter pads every cell in a column to the widest one, which turned a
+ * compact table into tens of kilobytes of alignment spaces. Range-ignoring it
+ * keeps the generator's own compact layout instead.
+ */
 export function renderRoutingTable(docs: AgentDoc[]): string {
   const rows = [...docs]
     .sort((a, b) => a.name.localeCompare(b.name))
@@ -103,9 +137,11 @@ export function renderRoutingTable(docs: AgentDoc[]): string {
       return `| [${doc.name}](${doc.sourcePath}) | ${scope} | ${doc.description} |`;
     });
   return [
+    '<!-- prettier-ignore-start -->',
     '| Doc | Scope (globs) | Description |',
     '| --- | --- | --- |',
     ...rows,
+    '<!-- prettier-ignore-end -->',
   ].join('\n');
 }
 
