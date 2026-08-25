@@ -62,12 +62,14 @@ const FIELD_RE =
 // never be a field line — FIELD_RE requires an identifier first — but its
 // prose might contain a stray, unbalanced brace (e.g. "press the { key").
 // Such lines are excluded so they can't desync the depth count for every
-// line that follows.
+// line that follows; so are quoted literals (`mode: "{"`), which are types,
+// not nesting.
+const QUOTED_RE = /"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|`(?:[^`\\]|\\.)*`/g;
 function braceDelta(line: string): number {
   const t = line.trim();
   if (t.startsWith('*') || t.startsWith('/*') || t.startsWith('//')) return 0;
   let delta = 0;
-  for (const ch of line) {
+  for (const ch of line.replace(QUOTED_RE, '')) {
     if (ch === '{') delta++;
     else if (ch === '}') delta--;
   }

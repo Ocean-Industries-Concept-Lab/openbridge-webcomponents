@@ -161,6 +161,30 @@ describe('injectDts', () => {
     );
     expect(out.endsWith('}\n')).toBe(true);
   });
+
+  it('ignores braces inside a string-literal type when tracking brace depth', () => {
+    const docs = docsFromManifest({
+      modules: [
+        {
+          path: 'src/f.ts',
+          declarations: [
+            {
+              kind: 'class',
+              name: 'ObcF',
+              members: [
+                {kind: 'field', name: 'second', description: 'The second field.'},
+              ],
+            },
+          ],
+        },
+      ],
+    });
+    const src =
+      'export declare class ObcF extends LitElement {\n    mode: "{" | \'}\';\n    second: number;\n}\n';
+    expect(injectDts(src, docs)).toBe(
+      'export declare class ObcF extends LitElement {\n    mode: "{" | \'}\';\n    /** The second field. */\n    second: number;\n}\n'
+    );
+  });
 });
 
 describe('injectSvelte', () => {
