@@ -65,6 +65,10 @@ const readoutSizeBySize: Record<TransmitterButtonSize, TransmitterReadoutSize> =
  * |-----------|-------------------------------|--------------------------------|
  * | icon      | `value` variant and `hasIcon` | Leading icon beside the value. |
  *
+ * @property maxDigits - Integer digits to reserve / hint (independent of `fractionDigits`).
+ * @property adviceValue - Advisory value shown in the leading advice segment when `hasAdvice`.
+ * @property setpointValue - Target value shown in the setpoint segment when `hasSetPoint`.
+ * @property label - Short tag identifier shown in the `tag` variant (e.g. `TT`).
  * @slot icon - Leading icon beside the value.
  *
  * @experimental
@@ -79,22 +83,18 @@ export class ObcTransmitterButton extends LitElement {
   @property({type: String}) unit = '';
   @property({type: Number}) fractionDigits = 1;
 
-  /** Integer digits to reserve / hint (independent of `fractionDigits`). */
   @property({type: Number}) maxDigits = 0;
 
   @property({type: Boolean}) hintedZeros = false;
   @property({type: Boolean}) hasIcon = false;
   @property({type: Boolean}) hasAdvice = false;
 
-  /** Advisory value shown in the leading advice segment when `hasAdvice`. */
   @property({type: Number}) adviceValue?: number | null;
 
   @property({type: Boolean}) hasSetPoint = false;
 
-  /** Target value shown in the setpoint segment when `hasSetPoint`. */
   @property({type: Number}) setpointValue?: number | null;
 
-  /** Short tag identifier shown in the `tag` variant (e.g. `TT`). */
   @property({type: String}) label = '';
 
   private get isTag() {
