@@ -27,7 +27,6 @@ The project is divided into three main parts:
 Each component's `*.stories.ts` file should:
 
 - Use `tags: ['autodocs', '6.0']` for documented OpenBridge 6.0 components
-- Use `tags: ['alpha']` for components still in development
 - Use `tags: ['skip-test']` to exclude a story from visual snapshot testing
 - Export a `Default` story and additional stories for key states and variants
 
@@ -475,8 +474,8 @@ The animation itself is driven from TypeScript, **not** from a CSS `@keyframes`.
 Animations API (`el.animate()`) to alternate the `-on` / `-off` pair over a
 per-severity period:
 
-| Severity | Period |
-| -------- | ------ |
+| Severity | Period  |
+| -------- | ------- |
 | Critical | 1000 ms |
 | Alarm    | 2000 ms |
 | Warning  | 4000 ms |

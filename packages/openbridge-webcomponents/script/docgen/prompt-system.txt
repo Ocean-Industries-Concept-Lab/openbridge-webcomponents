@@ -113,8 +113,11 @@ By following this layout for each component, we’ll create consistent, rich doc
   - one `@slot` tag for each content slot
   - one `@fires` (or `@event`) tag for each custom event
 
-● Do **NOT** include `@property` tags in that block—properties are already
-  documented inline above their field declarations.
+● Include one `@property name - description` tag per public property in
+  that block (no type — the TypeScript declaration is the type), before
+  the `@slot`/`@fires` tags; a conditional property adds `@availableWhen
+  name condition` on the next line. Do NOT write JSDoc above the field
+  declarations.
 
 ● Do **NOT** mix Markdown headings inside the tag block.  
   Example skeleton:

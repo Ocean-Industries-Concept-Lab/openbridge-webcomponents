@@ -27,3 +27,7 @@ globs:
 - **Icon slots:** use `<obi-placeholder></obi-placeholder>` or other `<obi-*>` icons (1000+ available).
 
 ---
+
+## Comments
+
+One short line per non-obvious declaration — see `AGENTS.md` § 2 _CSS_.

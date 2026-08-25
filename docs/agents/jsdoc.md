@@ -3,9 +3,9 @@ name: jsdoc
 description: JSDoc template, slot/event tags, lifecycle tags, and the three documentation patterns
 globs:
   - packages/openbridge-webcomponents/src/**/*.ts
-  - '!packages/openbridge-webcomponents/src/icons/**'
-  - '!packages/openbridge-webcomponents/src/generated/**'
-  - '!packages/openbridge-webcomponents/src/manual-icon/**'
+  - "!packages/openbridge-webcomponents/src/icons/**"
+  - "!packages/openbridge-webcomponents/src/generated/**"
+  - "!packages/openbridge-webcomponents/src/manual-icon/**"
 ---
 
 # JSDoc Documentation Rules
@@ -21,7 +21,7 @@ Key points:
 3. **Usage Guidelines** — when and how to use the component; contrast with similar components.
 4. **Slots** — table of slot names, conditions, and purposes.
 5. **Events** — a `@fires` tag for every event the component exposes, custom **and** native (a passthrough `<button>`'s `click` included). See below.
-6. **No `@property` tags** in the class JSDoc block — properties are documented inline above their field declarations. A class-level `@property` tag **overrides** the inline doc in `custom-elements.json` and can inject a **ghost member** for a property that does not exist (issue #1043). Enforced by `npm run lint:slots`. (Documenting a CSS-only attribute that has no backing `@property` field via `@attr`/`@attribute` in the class block is allowed — there is no field to annotate.)
+6. **Properties are documented in the class JSDoc**, one tag per public property, without a type — `@property name - description` — placed after the Markdown sections and before `@slot`/`@fires`. Conditional properties add a line `@availableWhen name condition` directly under their tag. No inline JSDoc above `@property()` fields (`npm run lint:comments` warns; `--fix` hoists them). A tag naming a property that does not exist is a ghost manifest member — `npm run lint:slots` fails on it. Mixin-provided properties (`svghelpers/setpoint-mixin.ts`) keep their inline docs.
 7. **Tone:** Do NOT mention "maritime", "industrial", "bridge", or domain qualifiers; keep text domain-agnostic.
 8. If purpose is unclear, insert `**TODO(designer)**` instead of guessing.
 9. **`@availableWhen` for conditional properties** — see below.
@@ -210,123 +210,15 @@ Rules:
 
 ## Comment style
 
-These govern **implementation** comments. The class/module JSDoc described
-below is separate and always required.
+Implementation comments follow `AGENTS.md` § 2 _Comments_ (why-only, three
+lines, no history, state-then-cite, CSS one-liners, writing style). The class
+and module JSDoc described in this file is separate and always required.
 
-- Use english comments only
-- No comments in code whatsoever unless the code is extremely unusual and impossible to understand without explanation
-- Only add comment to a property if the name is not self-explaining.
-- Comment the component class using the format explain below.
+The JSDoc _content_ template (overview, features, usage, slots, events,
+example) is maintained in `script/docgen/prompt-system.txt`, which the docgen
+CLI feeds to the model — edit it there; this file only carries the rules the
+tooling enforces.
 
-Each component’s JSDoc should start with a clear, one-line summary that identifies what the component is and its primary purpose. Use the component’s tag name and a brief description (including a common synonym if the name is non-standard). For example:
-/\*\*
-
-- `<obc-floating-item>` – A transient toast notification component for brief messages.
--
-- ...
-  \*/
-  This opening line helps developers quickly recognize the component (e.g., “floating message” is essentially a toast/snackbar notification). It also ensures the description contains searchable keywords (like toast, notification, snackbar) so that a RAG system can retrieve it for relevant queries. After the one-liner, include 1-2 sentences expanding on the component’s purpose and context. This should cover the what and why: what the component does and in what scenario it’s used. Emphasize practical use cases without repeating the OpenBridge domain context (assume it is already known).
-  **Tone rule:** Do NOT mention “maritime”, “industrial”, “bridge”, or similar environmental qualifiers; keep text domain-agnostic. For example: “Appears temporarily to display non-critical feedback or status updates, floating above the UI so it doesn’t interrupt the user’s workflow.”
-  Key Features and Variants
-  Use a “Features” section with bullet points (or sub-sections) to highlight the component’s main capabilities, configuration options, and variants. This makes it easy to scan. For instance:
-  Variants or Types: List distinct visual/behavioral variants (e.g., regular vs. application messages, checked vs. unchecked states, etc.). If the component has named types (perhaps via an enum), mention each and what it means.
-  State or Style Options: Note major style configurations (like horizontal vs. vertical layout, single-line vs. multi-line content, palette variations, size options, etc.).
-  Interactive Elements: Include if it supports actions (like buttons or icons) or dynamic content.
-  Notable Behaviors: For example, auto-dismiss timing, focus handling, or responsiveness. Anything the component does automatically (or expects from the developer) should be called out here.
-  Each bullet should be concise but descriptive. E.g.: “Layout directions: Supports horizontal (side-by-side layout) or vertical (stacked layout) to adapt to available space.” This section gives a quick feature summary at a glance. If the component has multiple distinct modes or sub-variants, you can break them out with subheadings or bold labels for clarity. For example, for a toggle component like obc-check-button, you might have:
-  Regular mode: Description…
-  Checkbox mode: Description…
-  Detail what each mode is meant for and how they differ (as in the user’s draft, where Regular Type vs Checkbox Type are explained in separate paragraphs). This helps a reader understand the nuances of each variant.
-  Usage Guidelines and Use Cases
-
-* important! When describing a property, base the explanation strictly on its code usage or story; if the purpose is unclear, insert **TODO(designer)** instead of guessing. This is IMPORTANT for all the documentation. If a bit unsure, write TODO so it's easy to catch and have a designer write the indended purpose.
-  After features, provide guidance on when and how to use the component. This can be a short paragraph or a list of use cases. Frame it as advice: what scenarios is this component ideal for, and how it fits into the UI/UX. For example:
-  “Use obc-floating-item for brief, transient feedback (e.g., form submissions, status updates). It’s ideal when you need to confirm an action or show a non-critical alert without disrupting the workflow. Avoid using it for persistent or critical alerts – those might require a dialog or an alert banner.”
-  If relevant, contrast the component with similar ones to clarify choices. For instance: “Unlike a standard obc-alert banner that stays in the content flow, a floating message is ephemeral and overlays other content.” This helps developers decide if this is the right component for their need, which is crucial for the RAG model to answer “What component should I use for X?”. Include searchable keywords and synonyms in these explanations. (E.g., for a filter chip component, mention terms like “tag”, “pill”, or “token” if those are common synonyms.) This improves discovery via search queries.
-  Slots and Content Structure
-  For Web Components, document all content slots clearly in a Slots section (preferably as a table for readability). List each slot name, conditions when it’s used, and its purpose:
-  Slot Name Renders When... Purpose
-  primary-icon Always (for all messages) Main icon to represent the message’s category.
-  secondary-icon type="application" only Additional icon for application-type messages.
-  title Always Title or heading of the message.
-  description Always Detailed message text.
-  time If hasTimestamp is true Timestamp label (e.g., “12:45”).
-  day If hasTimestamp && hasDay Day label (e.g., “Mon”).
-  action If action property is true Label for the primary action button.
-  action2 If action2 is true Label for the secondary action button.
-
-This example (based on obc-floating-item) shows how to communicate what each slot is for and under what conditions it appears. It’s crucial for developers to understand how to supply content (icons, text, etc.) to the component. If a component doesn’t use slots (for example, a plain <obc-radio> might just have a text label property instead), you can omit this section or mention how content is provided (e.g., “text content is set via the label attribute”).
-Properties and Attributes
-Even though each property will have its own JSDoc comment in code, the component’s main description should highlight any particularly important or complex properties that affect usage. For example:
-Configuration Flags: e.g., hasTimestamp or action2 – explain what turning them on/off does in practical terms (like “enabling action2 adds a second action button, but only if action (primary) is enabled first”). This manages expectations for how properties interact.
-Enum Properties: If a property uses an enum (like type or direction), ensure the Features or Variants section already explains each possible value. You might not need a separate list here if it’s covered above.
-Defaults: It’s helpful to mention default values or behaviors (“by default, type is regular”). This can be in parentheses after describing the feature.
-Any Special Cases: For example, if a certain property combination is not allowed or if some attribute must be set for another to take effect. Document those clearly to prevent misuse.
-By covering key properties in the narrative, you ensure that even if someone skims the top comments (or searches the docs) they catch the crucial configuration info. The full API (with every property and method) will still be in code, but the description should tie it all together in plain language.
-Events and Custom Events
-If the component emits custom events, include an Events section listing each event name and when it fires. For clarity, use a bullet list format:
-action-click – Fired when the primary action button is clicked.
-action2-click – Fired when the secondary action button is clicked.
-dismiss-click – Fired when the component is dismissed (e.g., close icon clicked or auto-hide, if applicable).
-Also use the JSDoc @fires annotation for each event (as in the code snippet) so that IDEs and documentation generators capture the event contract. Write the type **before** the name, followed by ` - ` and the description. For example:
-
-- @fires {CustomEvent<void>} action-click - Fired when the first action button is clicked.
-
-Documenting events is important for developers to know how to listen for interactions. It’s also helpful for the RAG model – if a user asks “How do I know when the toast is dismissed?”, the documentation should make it clear that a dismiss-click event is dispatched.
-Best Practices and Constraints
-Include any dos and don’ts or design constraints that aren’t obvious from the API. This may be a short note or embedded in the usage section. For example: “Only use one primary action in a toast to keep the interaction simple (Material Design recommends at most one action in a snackbar). Use the second action sparingly, e.g., for an extra ‘Undo’ alongside a primary confirmation.” Such guidance might come from Material Design or OpenBridge’s own design rules. Mention timing or auto-dismiss behavior if relevant (e.g., “Floating messages should typically auto-close after a few seconds unless they require user dismissal” — if that’s a design guideline the component supports or expects). For form elements, note things like “for group behavior, ensure all obc-radio in a group share the same name attribute”, or “use obc-checkbox for independent binary choices, and obc-radio when only one selection is allowed in a set.” These practical tips help prevent misuse and answer common usage questions.
-Example Usage (Optional)
-If a component’s usage is not immediately obvious, consider providing a small code example in the JSDoc. This is especially useful for complex components or ones that require multiple slots/properties to work together. For instance:
-
-- **Example:**
-- <obc-floating-item type="regular" hasTimestamp action>
-- <span slot="primary-icon">ℹ️</span>
-- <span slot="title">Network Connected</span>
-- <span slot="description">You are now online.</span>
-- <span slot="time">14:32</span>
-- <button slot="action">View</button>
-- </obc-floating-item>
-- In this example, the message appears with an info icon, a title, description, timestamp, and a single action button.
-  Ensure the example is concise and focused on a primary use case. Not every primitive needs an example (simple ones like a basic radio might be self-evident), but if there’s any potential confusion (like how to supply icons to a custom checkbox, or how to structure actions in a card), an example can clarify it immediately.
-  Consistency and Formatting
-  Use Markdown headings and lists within the JSDoc comment to structure the information (as shown above). This improves readability in generated docs and in code editors that render JSDoc Markdown. Key sections to include when applicable (in this order):
-  Overview: One-liner and short description (as covered in Overview and Purpose).
-  Features/Variants: Bullet list of main features, or sub-sections for each variant.
-  Usage Guidelines: When to use (and when not to), common scenarios.
-  Slots/Content: Table or list of slots and their purpose (if the component uses slots).
-  Events: List of custom events (if any).
-  Any special Best Practices: (optional, if not already woven into above sections).
-  Example: (optional, if needed for clarity).
-  Not every component will need all these sections – for example, a simple obc-radio might omit Slots (no slots) and perhaps just have Overview, Usage, and maybe a note on grouping by name. But maintaining a consistent order and format helps users quickly find the info they need across all component docs.
-  Leveraging External Design Guidelines
-  Because OpenBridge UI components align with common UI patterns, pull in standard usage rules from design systems like Material Design or similar resources:
-  Material Design Guidelines: Before writing a component’s doc, check Material Design documentation (Material 3 or Material 2 specs) for that type of component. For instance, Material Design has detailed guidance on snackbars, buttons, checkboxes, etc. Extract key points such as recommended usage, constraints (e.g., “Snackbars should appear at the bottom of the screen and only one at a time”), and any terminology (like “snackbars (toasts) are for brief messages to the user”). Incorporate these in our description in our own words and adapted to OpenBridge context. This ensures our docs carry well-established best practices.
-  Other Design Systems: If Material doesn’t cover it or for a second perspective, look at systems like Fluent UI, Ant Design, or Lightning (Salesforce) for how they describe similar components. Sometimes they highlight different considerations (accessibility tips, etc.).
-  Web Platform Standards: For form controls (checkbox, radio), also consider HTML’s default behavior (we saw in obc-radio that it uses light DOM for native grouping). If the component leverages or mimics a native element, mention how it stays consistent (e.g., “This wraps an underlying <input type="radio"> to ensure proper group behavior via the native browser mechanics.”).
-  By scraping or researching these external sources first, the documentation generator script can gather a pool of facts and recommendations to include. Just make sure to adapt the tone to match the project’s professional context — emphasising reliability and clarity where relevant — without explicitly naming OpenBridge, without domain qualifiers (see the tone rule above: no “maritime”, “industrial” or “bridge”), and without being too generic. The description should feel specific to the component at hand.
-  Questions to Clarify with Designers
-  When the code or external docs don’t provide enough insight, the script should insert TODO questions for designers within the output (clearly marked so they can be found). These questions ensure that any missing piece of information can be filled in by a human. Common things to ask designers include:
-  Component Purpose and Context: “What specific real-world scenario was this component designed for?” (If we aren’t sure about its role or if it overlaps with another component’s usage.) For example, “Is obc-floating-item meant to replace standard toast notifications system-wide, or is it for in-app chat messages?”
-  Design Intents for Variants: “When should a developer use type=application vs. regular? What does ‘application’ signify visually or contextually?” If an enum or variant isn’t obvious, get the design rationale to document it correctly.
-  Default Behaviors: “Should this component auto-dismiss after a timeout? If so, how long? Or is it always manual dismiss?” – If the code doesn’t clearly enforce something that might be a guideline, ask. Similarly, “Are there recommended default icons or colors for the different states?” (e.g., should a warning icon be used with a certain variant by default?).
-  Content Limitations: “Is there a character limit or preferred length for the title/description text?” (Designers might have guidelines like keep toast messages short and one-line if possible.)
-  Interaction Design: “Can two action buttons truly be used simultaneously, or is one meant to be primary? Are there any rules about using the second action?” Clarify anything that might be a design convention not enforced by code.
-  Relation to Other Components: “We have obc-check-button and obc-checkbox – in what situations should each be used so we can note the difference?” This ensures our documentation can guide users to the right choice. If a component is a foundation (like obc-elevated-card being the basis for card variants), confirm that understanding so the docs can mention it accurately.
-  By collecting answers to these questions, you can enrich the JSDoc comments with authoritative information. The script might output a placeholder like:
-  /\*\*
-- **TODO (Designer):** Confirm whether the floating message should automatically disappear after a few seconds, or only close on user action.
-  \*/
-  Having these in the interim documentation will remind the team to get clarifications, and they can be replaced with actual info later. It’s better to ask and be accurate than to guess, especially since this content will be used by an AI assistant to answer user queries.
-  Conclusion
-  In summary, a good component description layout for OpenBridge UI components should be comprehensive yet structured for easy reading. It must include:
-  A clear summary of the component and its purpose.
-  Detailed features/variants explanation.
-  Usage guidelines and real-world use cases (so developers know when to use it).
-  Technical specifics like slots and events listings for full understanding of its API.
-  Inclusion of standard UI/UX guidelines (via Material Design or similar) to reinforce best practices.
-  Pointers to related components or differences to avoid confusion.
-  All written in a way that surfaces important keywords for searchability.
-  By following this layout for each component, we’ll create consistent, rich documentation. This will not only assist developers directly but also feed our embeddings for the RAG model, enabling it to answer user questions like “Which component should I use for X?” or “How do I properly implement Y component?” with accurate, context-aware information. We’ll refine this structure as we generate a few and get feedback, but this provides a strong starting template for our automated JSDoc generation process.
 ## Documentation by code pattern (regular components, pure functions, abstract classes)
 
 Not all code in this repo is a concrete Lit web component. The three main patterns require different documentation approaches because Storybook's autodocs system relies on the `custom-elements.json` manifest, which only contains entries for registered custom elements.
@@ -336,6 +228,7 @@ Not all code in this repo is a concrete Lit web component. The three main patter
 Examples: `obc-area-graph`, `obc-line-graph`, `obc-bar-vertical`
 
 - JSDoc lives **on the class** (following the full template above).
+- Properties are documented in the class JSDoc tag block (`@property name - description`); Storybook reads them from the manifest exactly as it read inline docs.
 - The story meta uses `component: 'obc-tag-name'` to link Storybook autodocs to the `custom-elements.json` entry.
 - Storybook **automatically extracts** the class JSDoc, `@property` types, `@slot` tags, and `@fires` events.
 - The story file does **not** need `parameters.docs.description.component` — autodocs handles it.
@@ -349,15 +242,14 @@ Examples: `external-scale.ts` (exports `renderExternalScale()`, `computeExternal
 These modules export pure functions that return `SVGTemplateResult` fragments, not a LitElement. There is no custom element tag and no `custom-elements.json` entry, so autodocs cannot extract anything automatically.
 
 **Source file:**
+
 - Place a comprehensive JSDoc block comment at the **top of the module** (above the first export). Use the same structure as a component JSDoc (overview, features, usage examples) — but write it as a module description rather than a component description.
 
 **Story file:**
-- **Omit** `component:` from the story meta (there is no tag to point to).
-- **Provide** the full documentation via `parameters.docs.description.component` as a Markdown string.
-- **Manually define** all `argTypes` (since there is no manifest to auto-extract from).
-- If the module's functions need a DOM host to render, create a minimal **throwaway inline wrapper** element to give Storybook a renderable surface (see `external-scale.stories.ts` for the pattern).
 
-**Keeping docs in sync:** The module-level JSDoc is the **source of truth**. The story's `parameters.docs.description.component` should mirror it. When updating one, update the other. A lightweight way to stay consistent: write the docs in the source file first, then copy the relevant subset into the story Markdown.
+- **Omit** `component:` (there is no tag to point to).
+- Read the module JSDoc from the manifest: `parameters: {docs: {description: {component: moduleDocs('building-blocks/external-scale/external-scale.ts')}}}` (`moduleDocs` from `.storybook/manifest-docs.js`). The `/** @module … */` block at the top of the source is the single source; `npm run analyze` copies it into `custom-elements.json`.
+- **Manually define** `argTypes` (no manifest members to extract from).
 
 ### c) Abstract base classes
 
@@ -366,24 +258,25 @@ Examples: `ObcChartLineBase` (abstract base for `obc-line-graph` and `obc-area-g
 The class has rich JSDoc and `@property` declarations, but it cannot be instantiated and is not registered as a custom element. Storybook cannot auto-extract its docs via `custom-elements.json`.
 
 **Source file:**
-- Place the full JSDoc on the abstract class just like a regular component, but append `@ignore` at the end of the JSDoc tag block. This signals to doc generators that the class is not meant to appear as a standalone API entry.
+
+- Place the full JSDoc on the abstract class just like a regular component. Do **not** add `@ignore` — the class must stay in the manifest so subclasses inherit its property docs and stories can read its description with `classDocs('ObcChartLineBase')`.
 
 **Story file:**
-- Set `component:` to a **concrete subclass tag** (e.g., `'obc-area-graph'`) so Storybook can at least resolve property controls.
-- **Override** the auto-extracted description with `parameters.docs.description.component` containing the base class documentation as Markdown.
-- This is necessary because the concrete subclass's own JSDoc is typically minimal ("Extends base with fill=true"), and the real docs live on the abstract class.
+
+- Set `component:` to a concrete subclass tag and `parameters.docs.description.component: classDocs('ObcChartLineBase')`.
 
 **Keeping docs in sync:** Same as pure functions — the abstract class JSDoc is the source of truth, and the story description should mirror/replicate it. Update both when making changes.
 
 ### Summary table
 
-| Aspect                                 | Concrete component         | Pure function module                    | Abstract base class                       |
-|----------------------------------------|---------------------------|-----------------------------------------|-------------------------------------------|
-| JSDoc location                         | On the class              | Module-level block comment              | On the abstract class (with `@ignore`)     |
-| Story `meta.component`                 | `'obc-tag-name'`          | Omitted                                | Concrete subclass tag                      |
-| Story `parameters.docs.description`    | Not needed (auto)         | Required (full Markdown)               | Required (override with base class docs)   |
-| `argTypes`                             | Auto from manifest        | Manual                                 | Partially auto (from concrete subclass)    |
-| Rendering in story                     | Direct `<obc-tag>`        | Throwaway inline wrapper               | Concrete subclass element                  |
+| Aspect                              | Concrete component | Pure function module       | Abstract base class                     |
+| ----------------------------------- | ------------------ | -------------------------- | --------------------------------------- |
+| JSDoc location                      | On the class       | Module-level block comment | On the abstract class (no `@ignore`)    |
+| Story `meta.component`              | `'obc-tag-name'`   | Omitted                    | Concrete subclass tag                   |
+| Story `parameters.docs.description` | Not needed (auto)  | `moduleDocs()`             | `classDocs()`                           |
+| `argTypes`                          | Auto from manifest | Manual                     | Partially auto (from concrete subclass) |
+| Rendering in story                  | Direct `<obc-tag>` | Throwaway inline wrapper   | Concrete subclass element               |
+
 ## Structured-tag rules (apply to EVERY component)
 
 ● After all Markdown sections, append a short **tag block**, in this order:
@@ -414,8 +307,8 @@ in `custom-elements.json` but absent from every framework wrapper).
 `npm run lint`) to automatically catch missing/phantom `@slot` tags, undocumented
 events, and bare `dispatchEvent(` calls.
 
-● Do **NOT** include `@property` tags in that block—properties are already
-documented inline above their field declarations.
+● `@property name - description` tags go in this block, before `@slot`/`@fires`;
+conditional properties add `@availableWhen name condition` on the next line.
 
 ● Do **NOT** mix Markdown headings inside the tag block.  
  Example skeleton:
@@ -424,6 +317,7 @@ documented inline above their field declarations.
 /**
  * <markdown sections …>
  *
+ * @property showIcon - Whether to show the leading-icon slot.
  * @slot - Default leading-icon slot (shown when `showIcon` is true)
  * @fires {CustomEvent<{label:string}>} remove-chip - Fired when the chip's remove button is clicked.
  * @stable

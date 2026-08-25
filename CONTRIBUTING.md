@@ -88,6 +88,7 @@ Go to the repository on GitHub, and you'll see a prompt to submit a pull request
 We enforce [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) for Pull Request titles. An automated check will validate your PR title. If it doesn't follow the rules, the check will fail.
 
 Examples:
+
 - `feat: add new button component`
 - `fix: resolve gauge alignment issue`
 - `feat!: breaking change in the component API` (use `!` for breaking changes)
@@ -104,7 +105,7 @@ Please ensure your title is clear and follows the syntax.
 
 - Include screenshots and animated GIFs in your pull request whenever possible.
 - Follow the coding conventions of the project.
-- Document new code based on the Documentation Styleguide.
+- Document new code following `AGENTS.md` § 2 (comments) and § 3 (JSDoc). Before committing, `npm run lint:comments` reports comment-style warnings; `npm run comments:rewrite -- <folder>` (Claude Code, uses your own seat) rewrites them. Claude Code users may prefer the `Concise` output style (`/config` → Output style).
 - End all files with a newline.
 
 ## Styleguides
