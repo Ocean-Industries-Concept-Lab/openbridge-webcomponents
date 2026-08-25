@@ -119,6 +119,40 @@ export class ObcThing extends LitElement {
       d.members.find((m: any) => m.name === 'size').availableWhenIf
     ).toEqual({arg: 'hasSize', truthy: true});
   });
+  it('applies availableWhen to mixin members and propagates through a mixin consumer', () => {
+    const mixinSrc = `
+import {LitElement} from 'lit';
+import {property} from 'lit/decorators.js';
+export function ThingMixin(superClass) {
+  class ThingMixinClass extends superClass {
+    /** @availableWhen hasSize==true */
+    @property({type: Number}) size = 0;
+    @property({type: Boolean}) hasSize = false;
+  }
+  return ThingMixinClass;
+}
+`;
+    const userSrc = `import {LitElement} from 'lit';\nimport {ThingMixin} from './thing-mixin.js';\n/** User. @stable */\n@customElement('obc-user')\nexport class ObcUser extends ThingMixin(LitElement) {}\n`;
+    const d = decl(
+      analyze({'src/thing-mixin.ts': mixinSrc, 'src/user.ts': userSrc}),
+      'obc-user'
+    );
+    expect(
+      d.members.find((m: any) => m.name === 'size').availableWhenIf
+    ).toEqual({arg: 'hasSize', truthy: true});
+  });
+  it('applies the sentence exactly once when a property carries both a class-level and a field-level tag', () => {
+    const both = src.replace(
+      "@property({type: String}) mode = 'a';",
+      "/** @availableWhen kind==linear */\n  @property({type: String}) mode = 'a';"
+    );
+    const d = decl(analyze({'src/thing-both.ts': both}), 'obc-thing');
+    const mode = d.members.find((m: any) => m.name === 'mode');
+    expect((mode.description.match(/Available when/g) ?? []).length).toBe(1);
+    expect(mode.description).toBe(
+      'The mode.\n\nAvailable when `kind==linear`.'
+    );
+  });
 });
 
 describe('moduleDocsPlugin', () => {

@@ -31,6 +31,31 @@ function tagText(tag) {
   ).trim();
 }
 
+// A Lit mixin factory (`function XMixin(superClass) { class XMixinClass
+// extends superClass {…} return XMixinClass; }`) is registered in the
+// manifest under the *outer* function's name with `kind: 'mixin'` — CEM's
+// own class-plugin also pushes a second, `kind: 'class'` entry for the
+// inner class declaration while walking the same AST, but that entry is
+// unexported and dropped by CEM's post-processing before the manifest is
+// written. Mutating it (a lookup by `node.name.text` alone would find it)
+// is silently thrown away, so walk up to the enclosing factory and target
+// the surviving mixin declaration instead.
+function enclosingMixinName(ts, node) {
+  for (let n = node.parent; n; n = n.parent) {
+    if (ts.isFunctionDeclaration(n) && n.name) return n.name.text;
+    if (
+      ts.isVariableDeclaration(n) &&
+      n.name &&
+      ts.isIdentifier(n.name) &&
+      n.initializer &&
+      (ts.isArrowFunction(n.initializer) ||
+        ts.isFunctionExpression(n.initializer))
+    )
+      return n.name.text;
+  }
+  return undefined;
+}
+
 export function collectEnums(ts, sourceFile, seen = new Set()) {
   const map = new Map();
   ts.forEachChild(sourceFile, (n) => {
@@ -85,18 +110,20 @@ export function availableWhenPlugin() {
     name: 'obc-available-when',
     analyzePhase({ts, node, moduleDoc}) {
       if (!ts.isClassDeclaration(node) || !node.name) return;
-      const classDoc = moduleDoc.declarations?.find(
-        (d) => d.name === node.name.text
-      );
+      const mixinName = enclosingMixinName(ts, node);
+      const classDoc =
+        (mixinName &&
+          moduleDoc.declarations?.find(
+            (d) => d.kind === 'mixin' && d.name === mixinName
+          )) ||
+        moduleDoc.declarations?.find((d) => d.name === node.name.text);
       if (!classDoc) return;
-      const tags = [];
-      for (const jsDoc of node.jsDoc ?? []) {
-        for (const tag of jsDoc.tags ?? []) {
-          if (tag.tagName.text !== 'availableWhen') continue;
-          const m = /^([\w$]+)\s+(.+)$/.exec(tagText(tag));
-          if (m) tags.push({name: m[1], cond: m[2]});
-        }
-      }
+      // Field-level tags first, class-level second: a Map keeps one entry
+      // per property name, and the later (class-level) write for the same
+      // name overwrites the earlier (field-level) one — so a property
+      // documented both ways (a transitional file the Task 8 hoist left
+      // partially inline) is applied exactly once, from the class-level tag.
+      const tags = new Map();
       for (const member of node.members) {
         if (
           !ts.isPropertyDeclaration(member) ||
@@ -107,25 +134,39 @@ export function availableWhenPlugin() {
         for (const jsDoc of member.jsDoc ?? []) {
           for (const tag of jsDoc.tags ?? []) {
             if (tag.tagName.text === 'availableWhen')
-              tags.push({name: member.name.text, cond: tagText(tag)});
+              tags.set(member.name.text, tagText(tag));
           }
         }
       }
-      if (!tags.length) return;
+      for (const jsDoc of node.jsDoc ?? []) {
+        for (const tag of jsDoc.tags ?? []) {
+          if (tag.tagName.text !== 'availableWhen') continue;
+          const m = /^([\w$]+)\s+(.+)$/.exec(tagText(tag));
+          if (m) tags.set(m[1], m[2]);
+        }
+      }
+      if (!tags.size) return;
       const sf = node.getSourceFile();
       if (!enumCache.has(sf.fileName))
         enumCache.set(sf.fileName, collectEnums(ts, sf));
       const enums = enumCache.get(sf.fileName);
-      for (const {name, cond} of tags) {
+      for (const [name, cond] of tags) {
         const member = classDoc.members?.find((m) => m.name === name);
         if (!member) continue;
         const sentence = `Available when \`${cond}\`.`;
         member.availableWhen = cond;
-        member.description = member.description
-          ? `${member.description}\n\n${sentence}`
-          : sentence;
+        if (!member.description || !member.description.endsWith(sentence)) {
+          member.description = member.description
+            ? `${member.description}\n\n${sentence}`
+            : sentence;
+        }
         const attr = classDoc.attributes?.find((a) => a.fieldName === name);
-        if (attr) attr.description = member.description;
+        if (
+          attr &&
+          (!attr.description || !attr.description.endsWith(sentence))
+        ) {
+          attr.description = member.description;
+        }
         const mapped = parseCondition(cond, (id) => enums.get(id));
         if (mapped) member.availableWhenIf = mapped;
       }
