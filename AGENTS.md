@@ -52,8 +52,69 @@ All paths below are relative to `packages/openbridge-webcomponents/`.
 - **Language:** TypeScript strict mode. English-only identifiers and comments.
 - **Components:** Extend `LitElement`; register with `@customElement('obc-…')`. Import `customElement` from `src/decorator.js` (local wrapper), **not** from `lit/decorators.js` — enforced by ESLint rule `prefer-local-decorator`.
 - **Styles:** PostCSS (`.css` files). One global palette in `src/palettes/variables.css`; all other CSS in component folders. Use `@mixin style` for elevation variants. Text: `@mixin font-body`, `@mixin font-label`, etc.
-- **No inline comments** unless the code is extremely unusual and impossible to understand without explanation.
-- **Only comment a property** if the name is not self-explanatory.
+
+### Comments
+
+Write for a developer reading this file in a month, not for the reviewer of
+this PR. If they would get it from the code, don't write it.
+
+- **WHY, never WHAT.** A comment that restates the code is deleted.
+- **Explanation belongs on the declaration.** Document a class, property or
+  method in its JSDoc. A comment inside a method body is allowed only for a
+  why that has no declaration to live on (a guard that looks removable, a
+  coupling to another file) — three lines at most.
+- **Three lines, at most.** Longer explanations are not comments:
+  - behaviour → a `.spec.ts` test that pins it
+  - CSS / layout / visual behaviour → a Storybook story; the snapshot is the doc
+  - still needs prose → the story's `parameters.docs.description.story`
+- **A title line, then a short paragraph** — in JSDoc, docs and CSS blocks.
+  Two words of heading usually replace four lines of prose.
+- **No history, no dates, no change narration** — no "previously did X",
+  "since #994", "confirmed 2026-08-17", "added to fix Y". The why of a change
+  goes in the commit message and the PR body; `git log` and `git blame` are
+  first-class sources — use them before writing a comment.
+- **State, then cite.** If a reference is used, the sentence stands alone and
+  `(#1234)` is a trailing pointer, never the explanation. One per comment.
+- `TODO(designer): …` marks an open design question. Any other TODO carries an
+  issue: `TODO(#1234): …`.
+- **Keep existing comments when refactoring** unless the change makes them
+  obsolete.
+- **Comment pass before done:** re-read the comments in your diff against
+  these rules; delete what does not earn its lines. `npm run lint:comments`
+  reports the rest.
+
+#### CSS
+
+Comments are expected here — a declaration has no name, type or test to carry
+its intent. One short line per non-obvious declaration, the reason not the
+effect: `overflow: hidden; /* rotated <svg> box leaks arc pixels in wide
+layouts */`. Usual suspects: `overflow`, a `position` that is really a
+containing block, `display: block` on an `<svg>`, `min-width: 0`,
+`!important`, `z-index`, `aspect-ratio`, and any value that must match
+something elsewhere (an outline width, what a ResizeObserver or Chart.js
+measures, a Figma spec). Name magic numbers as custom properties instead of
+commenting them. A one-line `/* ---- Section ---- */` banner is fine in files
+over ~150 lines. Same limits as TS: three lines, no history, no commented-out
+declarations. Delete placeholder-only CSS files.
+
+#### Writing style (comments, JSDoc, docs, PR and issue text)
+
+Write like a developer with two sentences to spare. Not allowed:
+
+- filler openers and closers: "Note that", "It's important to", "It is worth
+  noting", "In summary", "Overall", a closing line that restates the block
+- inflated vocabulary: comprehensive, robust, seamless, leverage, utilize,
+  streamline, delve, ensure(s) that, in order to, essentially, simply
+- restating the name: "`getValue()` gets the value"
+- decoration: emoji, bold on every other phrase, more than one em dash per
+  sentence, a list of three where one item is the point
+- hedging: "might potentially", "it should be noted that this may"
+- chatbot artefacts: "Great question", "Certainly", "Let me", "I've"
+
+**PRs:** summary and screenshot first, long-form at the end if needed. The PR
+body is where root cause, alternatives and verification belong — long is fine
+there, inline in the code it is not.
+
 - **Conventional Commits** for git messages and **Pull Request titles** (`feat:`, `fix:`, `feat!:`, etc.). An automated linting process validates PR titles.
 - Ask for clarification (e.g. a list of questions) before implementing significant changes.
 
@@ -109,7 +170,14 @@ Key points:
 3. **Usage Guidelines** — when and how to use the component; contrast with similar components.
 4. **Slots** — table of slot names, conditions, and purposes.
 5. **Events** — a `@fires` tag for every event the component exposes, custom **and** native (a passthrough `<button>`'s `click` included). See [`docs/agents/jsdoc.md`](docs/agents/jsdoc.md).
-6. **No `@property` tags** in the class JSDoc block — properties are documented inline above their field declarations. A class-level `@property` tag **overrides** the inline doc in `custom-elements.json` and can inject a **ghost member** for a property that does not exist (issue #1043). Enforced by `npm run lint:slots`. (Documenting a CSS-only attribute that has no backing `@property` field via `@attr`/`@attribute` in the class block is allowed — there is no field to annotate.)
+6. **Properties are documented in the class JSDoc**, one tag per public property,
+   without a type — `@property name - description` — placed after the Markdown
+   sections and before `@slot`/`@fires`. Conditional properties add a line
+   `@availableWhen name condition` directly under their tag. No inline JSDoc
+   above `@property()` fields (`npm run lint:comments` warns; `--fix` hoists
+   them). A tag naming a property that does not exist is a ghost manifest
+   member — `npm run lint:slots` fails on it. Mixin-provided properties
+   (`svghelpers/setpoint-mixin.ts`) keep their inline docs.
 7. **Tone:** Do NOT mention "maritime", "industrial", "bridge", or domain qualifiers; keep text domain-agnostic.
 8. If purpose is unclear, insert `**TODO(designer)**` instead of guessing.
 9. **`@availableWhen` for conditional properties** — see [`docs/agents/jsdoc.md`](docs/agents/jsdoc.md).
@@ -135,6 +203,19 @@ glob-scoped instructions pick them up automatically from generated adapters:
 
 All are produced by `npm run agents:sync` and verified by `npm run lint:agents`.
 Every other agent reads this file and fetches `docs/agents/` on demand.
+
+A family doc is a rulebook with the explanation an editor needs — not a
+changelog, a plan, or a status board.
+
+- Rules for editing the family; the architecture an editor must hold;
+  invariants that are easy to break, each with the test or story that guards
+  it. Present tense. No dates, no "previously", no PR narrative.
+- A settled trade-off is a rule line with a trailing reference — never a story.
+- `## Open` — one line per open question, each pointing at an issue. The only
+  status content allowed.
+- Under 300 lines (`lint:agents` warns). Split by sub-family when it grows.
+- One home per fact: if it is explained here, the code carries a pointer, not
+  a copy. Update the doc in the PR that changes the behaviour.
 
 The table below is generated too. Edit `docs/agents/*.md`, never this block.
 
@@ -310,8 +391,8 @@ automatically when editing a `.css` file.
 
 1. **Read before writing.** Always read the relevant source, story, and instruction file before modifying a component.
 2. **Follow the three-pattern strategy** (§ 3) when writing or updating JSDoc.
-3. **Respect glob-scoped instructions** (§ 4) — read the matching `.instructions.md` file when touching files in its scope.
-4. **Accessibility is required for interactive components.** Every new or modified component in `src/components/**` or `src/automation/**` must support full keyboard navigation and meet WCAG 2.1 AA. Keyboard behaviour should follow the [WAI-ARIA APG patterns](https://www.w3.org/WAI/ARIA/apg/patterns/) — start from the matching pattern, or the closest one, and design your own only when nothing applies. Read [`.github/instructions/a11y.instructions.md`](.github/instructions/a11y.instructions.md) for that ladder, the activation-key table, ARIA rules, focus handling, and testing checklist before writing or changing an interactive component.
+3. **Respect glob-scoped instructions** (§ 4) — read the matching `docs/agents/*.md` file when touching files in its scope.
+4. **Accessibility is required for interactive components.** Every new or modified component in `src/components/**` or `src/automation/**` must support full keyboard navigation and meet WCAG 2.1 AA. Keyboard behaviour should follow the [WAI-ARIA APG patterns](https://www.w3.org/WAI/ARIA/apg/patterns/) — start from the matching pattern, or the closest one, and design your own only when nothing applies. Read [`docs/agents/a11y.md`](docs/agents/a11y.md) for that ladder, the activation-key table, ARIA rules, focus handling, and testing checklist before writing or changing an interactive component.
 5. **Do not edit auto-generated packages** (`-react`, `-vue`, `-ng`, `-svelte`). Run `npm run wrappers` instead.
 6. **Run `npm run analyze`** after adding or renaming a `@customElement` to keep `custom-elements.json` in sync. Storybook resolves story args to element properties through the manifest, so run it **before** testing the stories of a newly created component — without it the args silently never reach the element.
    Never hand-edit `custom-elements.json` — it is auto-generated and git-ignored. Fix manifest inaccuracies at the source (`@slot`/`@fires`/property JSDoc); see § 3 "Slots and events are manifest-critical" and run `npm run lint:slots`.
@@ -332,10 +413,16 @@ automatically when editing a `.css` file.
     npx vitest run --project storybook 'component-name'
     ```
 14. **Keep the main context clean.** Delegate broad codebase exploration to subagents; only read files directly in the main thread when you are about to edit them or need a few specific lines.
-15. **Radial instrument geometry goes through `svghelpers/radial-frame.ts`.** Never hand-mirror viewBox constants or paddings between `obc-watch` and an overlay SVG — compute one `computeRadialFrame()` result per render and pass it to both `<obc-watch .arcFrame=...>` and the overlay `viewBox` (this also provides the width-aware label reserve and `faceDiameter` from issue #1021). Before any refactoring of a radial instrument, read [`watch-radial-instruments.instructions.md` § Shared frame computation](.github/instructions/watch-radial-instruments.instructions.md) — the helper reproduces legacy geometry byte-identically when no outside labels exist, and breaking that contract regenerates the entire radial snapshot family.
+15. **Radial instrument geometry goes through `svghelpers/radial-frame.ts`.** Never hand-mirror viewBox constants or paddings between `obc-watch` and an overlay SVG — compute one `computeRadialFrame()` result per render and pass it to both `<obc-watch .arcFrame=...>` and the overlay `viewBox` (this also provides the width-aware label reserve and `faceDiameter` from issue #1021). Before any refactoring of a radial instrument, read [`docs/agents/watch-radial-instruments.md` § Shared frame computation](docs/agents/watch-radial-instruments.md) — the helper reproduces legacy geometry byte-identically when no outside labels exist, and breaking that contract regenerates the entire radial snapshot family.
 16. **The readout family is four nested layers, not one component.** `obc-textbox` → `obc-readout-block` → `obc-readout-list-item` → `obc-readout-list`, with `obc-readout` as a second layout over the same block (used mostly inside radial instruments). A change to a lower layer reaches every layer above it, so touching `obc-textbox` or `obc-readout-block` means re-running the instrument snapshots too, not just the readout ones. Value/format helpers belong in `readout-formatters.ts` (which imports nothing) — putting them in `readout-shared.ts` and importing back into the block creates a circular import. Read [`docs/agents/readout-components.md`](docs/agents/readout-components.md) before editing any of them: it documents the validation invariants (validate on every update, never gated on `changed`), the throw-vs-clamp rule for bad configuration, and the four `String.prototype.repeat` sites that must be bounded at the property boundary.
 17. **Never hand-edit `src/palettes/variables.css` or `src/mixins/fonts.css`.** Both are regenerated wholesale from the [obc-figma-plugin](https://github.com/Ocean-Industries-Concept-Lab/obc-figma-plugin) (`cssvariables` and `font-exports` codegens respectively); any local edit will be overwritten the next time someone pastes new plugin output. Token additions/renames must go through Figma (or the plugin's `rename()` function) first. The same caution applies to `script/figmavariables.json` (the plugin's `variables` codegen output). Hand-curated font mixins that the plugin does not produce live in `src/mixins/font-extras.css` — edit them there. Run `npm run lint:mixins` after regenerating `fonts.css`. See [IMPLEMENTATION_GUIDELINES.md § PostCSS](IMPLEMENTATION_GUIDELINES.md#-postcss).
 18. **Do not commit planning documents or specs.** Design notes, implementation plans and scratch specs stay out of the repository — the design record belongs in the pull request body, where reviewers actually read it and where it stays attached to the change. This applies to any agent's planning output, whatever directory it lands in.
+19. **Check for parallel work before you start.** Read the issue
+    (`gh issue view N`); look for open PRs or branches touching the same
+    component (`gh pr list --search "<component>"`). Auto-memory and local plan
+    files are private to one developer — never a coordination surface.
+20. **Open a draft PR early** with the design record in the body.
+21. **Comment pass is part of done** (§ 2 Comments).
 
 ---
 
