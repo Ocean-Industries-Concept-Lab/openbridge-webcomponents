@@ -75,7 +75,8 @@ export type DropdownButtonOption = {
  * ></obc-dropdown-button>
  * ```
  *
- * @property value - The value of the currently selected option. If not set, defaults to the first option in the list.
+ * @property value - The value of the currently selected option. If not set, defaults to the first option in the list
+ *   unless `allowEmptySelection` is true.
  * @property fullWidth - If true, the select expands to fill the width of its container. Default is false.
  * @property allowEmptySelection - If true, a `value` that does not match any option leaves the button with no option selected,
  *   showing `placeholder` instead of defaulting to the first option. Default is false.

@@ -280,7 +280,7 @@ export interface ReadoutSourceOptions extends ReadoutSrcOptions {
  * @availableWhen unitOptions unit!=''
  * @availableWhen srcOptions src!=''
  * @property showDebugOverlay - Development aid: outline the readout building blocks (red), the degree
- *   columns (blue) and the degree spacer (green) so reserver widths / alignment
+ *   columns (blue) and the degree spacer (green) so reserved widths / alignment
  *   are visible. Off by default.
  * @experimental Part of the primitives + per-block options Readout API pilot;
  * the API may change in a future release.

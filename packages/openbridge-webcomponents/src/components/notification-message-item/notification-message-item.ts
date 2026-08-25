@@ -90,18 +90,18 @@ export enum ObcNotificationMessageItemSize {
  * ```
  *
  * @property title - Title or heading for the notification.
- *   Shown in the title slot if `hasTitle` is true.
+ *   Shown in the title slot if `showTitle` is true.
  * @availableWhen title showTitle==true && type!=Inactive && empty==false
  * @property description - Detailed message text for the notification.
- *   Shown in the description slot if `hasDescription` is true.
+ *   Shown in the description slot if `showDescription` is true.
  * @availableWhen description showDescription==true && type!=Inactive && empty==false
  * @property time - Primary timestamp to display (e.g., "09:12:46").
- *   Shown in the time slot if `hasTimestamp` is true.
+ *   Shown in the time slot if `showTimestamp` is true.
  * @availableWhen time showTimestamp==true && type!=Inactive && empty==false
  * @property timeSecondary - Secondary timestamp (e.g., relative time like "2m ago").
  *   Shown in the time-secondary slot if `hasTimestamp2` is true.
  * @availableWhen timeSecondary hasTimestamp2==true && type!=Inactive && empty==false
- * @property actionLabel - Label for the action button (used when `actionType` is "button").
+ * @property actionLabel - Label for the action button (used when `type` is `WithButton`).
  * @availableWhen actionLabel type==WithButton
  * @property showTitle - Whether to show the title.
  * @availableWhen showTitle type!=Inactive && empty==false

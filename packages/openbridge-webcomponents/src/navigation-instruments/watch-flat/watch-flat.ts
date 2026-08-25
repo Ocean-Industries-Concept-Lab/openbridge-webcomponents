@@ -61,7 +61,7 @@ export interface WatchFlatNeedle {
  * @availableWhen rotDotSpacing rotType!=undefined
  * @availableWhen rotPriority rotType!=undefined
  * @availableWhen rotPortStarboard rotType!=undefined
- * @availableWhen rotAtZeroDeadband rotType!=undefined
+ * @availableWhen rotAtZeroDeadband rotType==bar
  * @availableWhen rateOfTurnDegreesPerMinute rotType!=undefined
  * @availableWhen rotDotAnimationFactor rotType!=undefined
  * @experimental

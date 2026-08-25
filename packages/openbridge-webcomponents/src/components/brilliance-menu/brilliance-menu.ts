@@ -118,7 +118,7 @@ export type ObcLinkBrightnessChangeEvent = CustomEvent<{value: boolean}>;
  * @property showLinkPalette - If true, displays the link palette toggle below the palette selector.
  * @property showBrightness - If true, shows the brightness slider and auto brightness toggle in the menu.
  * @property showPalette - If true, shows the palette selector and link palette toggle in the menu.
- * @property variant - The variant of the menu. Possible values: `'normal'`, `'compact'`.
+ * @property variant - The variant of the menu. Possible values: `'normal'`, `'compact'`, `'tabbed'`.
  *   Defaults to `'normal'`.
  * @property brightnessUnit - The unit of the brightness value.
  * @property brightnessMax - The maximum value of the brightness slider.

@@ -39,8 +39,6 @@ import {property} from 'lit/decorators.js';
  * <obc-progress-indicator-dots totalSteps="4" currentStep="2" fullwidth></obc-progress-indicator-dots>
  * ```
  *
- * /**
- *
  * @property totalSteps - Sets the total number of steps/dots to display.
  *   Must be at least 1. Defaults to 5.
  * @property currentStep - Indicates the currently active step (1-based index).

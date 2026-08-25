@@ -35,8 +35,6 @@ import {customElement} from '../../decorator.js';
  * ```
  * In this example, four bars are highlighted to indicate a medium volume level.
  *
- * /**
- *
  * @property volume - The volume level to display, represented as the number of highlighted bars (0–8).
  *   Set to 0 for muted/no volume, up to 8 for maximum volume.
  * @property disabled - If true, the component is visually muted and indicates a disabled or non-interactive state.

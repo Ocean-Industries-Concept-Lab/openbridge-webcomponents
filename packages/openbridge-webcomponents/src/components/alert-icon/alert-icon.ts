@@ -179,8 +179,8 @@ const mapping = {
  * <obc-alert-icon .alarmType=${alarm.type} .alarmStatus=${alarm.status}></obc-alert-icon>
  * ```
  *
- * @availableWhen acknowledged type in [Alarm, Warning, LevelHigh, LevelMedium, LevelLow]
- * @availableWhen active type in [Alarm, Warning, LevelHigh, LevelMedium, LevelLow]
+ * @availableWhen acknowledged type in [Alarm, Warning, LevelCritical, LevelHigh, LevelMedium, LevelLow]
+ * @availableWhen active type in [Alarm, Warning, LevelCritical, LevelHigh, LevelMedium, LevelLow]
  * @stable
  */
 @customElement('obc-alert-icon')

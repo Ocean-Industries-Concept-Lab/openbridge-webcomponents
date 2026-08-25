@@ -161,7 +161,7 @@ export type PieChartDataItem = {
  * @property colors - Custom segment colors (set via JavaScript) with fallback to theme palette
  * @property showOuterLabels - Show outer labels, default: false
  * @property showUnit - Whether to show unit in labels, default: false
- * @property sunburst - Enable sunburst mode with interactive children subsegments, default: false
+ * @property sunburst - Enable sunburst mode: clicking a segment expands or collapses its children as an outer ring, default: false
  * @property outerLabelUnit - Unit string to append to outer labels, default: "%"
  * @property outerLabelMaxLength - Maximum character length for labels before trim (0 = no limit), default: 0
  * @availableWhen outerLabelMaxLength showOuterLabels==true
