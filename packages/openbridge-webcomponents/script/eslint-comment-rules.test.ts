@@ -35,6 +35,8 @@ describe('no-commented-out-code', () => {
     tester.run('no-commented-out-code', commentRules['no-commented-out-code'], {
       valid: [
         '// Fall back to 1:1 until the element is laid out\nconst a = 1;',
+        '// import path.\nconst a = 1;',
+        '// return the cached value when present\nconst a = 1;',
       ],
       invalid: [
         {
@@ -46,6 +48,11 @@ describe('no-commented-out-code', () => {
           errors: [{messageId: 'code'}],
         },
         {code: '// const x = 1;\nconst a = 1;', errors: [{messageId: 'code'}]},
+        {
+          code: "// import {x} from './x.js';\nconst a = 1;",
+          errors: [{messageId: 'code'}],
+        },
+        {code: '// return value;\nconst a = 1;', errors: [{messageId: 'code'}]},
       ],
     });
   });
@@ -85,6 +92,44 @@ describe('comment-style', () => {
         {
           code: '/** Leverage the comprehensive helper */\nconst a = 1;',
           errors: [{messageId: 'phrase'}, {messageId: 'phrase'}],
+        },
+      ],
+    });
+  });
+
+  it('anchors punctuation-adjacent and short bans to real word boundaries', () => {
+    tester.run('comment-style', commentRules['comment-style'], {
+      valid: ['// simplyfy this later\nconst a = 1;'],
+      invalid: [
+        {
+          code: '// Certainly, this works\nconst a = 1;',
+          errors: [{messageId: 'phrase'}],
+        },
+        {
+          code: '// simply return\nconst a = 1;',
+          errors: [{messageId: 'phrase'}],
+        },
+      ],
+    });
+  });
+
+  it('flags the three phrases AGENTS.md § 2 lists that were missing', () => {
+    tester.run('comment-style', commentRules['comment-style'], {
+      valid: [
+        '// The fallback keeps the old value until layout settles\nconst a = 1;',
+      ],
+      invalid: [
+        {
+          code: '// Overall, the layout adapts.\nconst a = 1;',
+          errors: [{messageId: 'phrase'}],
+        },
+        {
+          code: '// Let me explain the fallback.\nconst a = 1;',
+          errors: [{messageId: 'phrase'}],
+        },
+        {
+          code: "// I've updated the cache key.\nconst a = 1;",
+          errors: [{messageId: 'phrase'}],
         },
       ],
     });

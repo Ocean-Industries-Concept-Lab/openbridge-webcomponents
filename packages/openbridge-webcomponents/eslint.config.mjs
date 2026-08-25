@@ -924,9 +924,9 @@ export default [
   },
 ];
 
-// ESLint reads only the default export. These named exports exist so the
-// lifecycle-tag rules can be unit-tested (script/eslint-rules.test.ts) without
-// depending on the real state of src/.
+// ESLint reads only the default export. These named exports exist for two
+// consumers: script/eslint-rules.test.ts unit-tests the lifecycle-tag rules,
+// and eslint.comments.config.mjs reuses openbridgePlugin for rule resolution.
 export const __testables = {
   openbridgePlugin,
   extractComponents,

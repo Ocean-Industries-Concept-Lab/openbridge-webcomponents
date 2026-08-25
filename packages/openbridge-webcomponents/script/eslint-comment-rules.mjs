@@ -4,6 +4,7 @@ const BANNED = [
   ['it is important to', 'It is important to'],
   ['it is worth noting', 'It is worth noting'],
   ['in summary', 'In summary'],
+  ['^\\s*overall\\b|\\.\\s+overall\\b', 'filler opener'],
   ['in order to', 'in order to (use "to")'],
   ['ensures? that', 'ensures that'],
   ['comprehensive', 'comprehensive'],
@@ -14,12 +15,21 @@ const BANNED = [
   ['streamlin(?:e|es|ing)', 'streamline'],
   ['delv(?:e|es|ing)', 'delve'],
   ['essentially', 'essentially'],
-  ['\\bsimply\\b', 'simply'],
+  ['simply', 'simply'],
   ['great question', 'chatbot artefact'],
   ['certainly[,!]', 'chatbot artefact'],
   ['might potentially', 'hedging'],
+  ['let me', 'chatbot artefact'],
+  ["i've", 'chatbot artefact'],
 ];
-const BANNED_RE = BANNED.map(([re, label]) => [new RegExp(`\\b${re}\\b`, 'i'), label]);
+// A source starting with `^` supplies its own boundaries and is used as-is.
+// Otherwise: a leading `\b`, plus a trailing `\b` only when the source ends
+// on a word character or a group's `)` — `\b` can never follow e.g. `[,!]`.
+const BANNED_RE = BANNED.map(([re, label]) => {
+  if (re.startsWith('^')) return [new RegExp(re, 'i'), label];
+  const trailingBoundary = /[\w)]$/.test(re) ? '\\b' : '';
+  return [new RegExp(`\\b${re}${trailingBoundary}`, 'i'), label];
+});
 
 const isJsDoc = (c) => c.type === 'Block' && c.value.startsWith('*');
 
@@ -71,12 +81,19 @@ export const commentRules = {
     },
     create(context) {
       const sourceCode = context.sourceCode ?? context.getSourceCode();
-      const CODE = /^\s*(console\.|this\.|const |let |var |return\b|await |if \(|for \(|while \(|import |export |\}\s*;?\s*$|\)\s*;\s*$)/;
+      // console./this. calls and a bare closing `}`/`);` line are code on their
+      // own; the other keywords also start ordinary sentences, so they only
+      // count when the line also ends like code (`;`, `{`, `}` or `)`).
+      const ALWAYS_CODE = /^\s*(console\.|this\.|\}\s*;?\s*$|\)\s*;\s*$)/;
+      const KEYWORD = /^\s*(const |let |var |return\b|await |if \(|for \(|while \(|import |export )/;
+      const ENDS_LIKE_CODE = /[;{})]\s*$/;
+      const isCommentedOutCode = (value) =>
+        ALWAYS_CODE.test(value) || (KEYWORD.test(value) && ENDS_LIKE_CODE.test(value));
       return {
         Program() {
           for (const c of sourceCode.getAllComments()) {
             if (c.type !== 'Line') continue;
-            if (CODE.test(c.value)) context.report({loc: c.loc, messageId: 'code'});
+            if (isCommentedOutCode(c.value)) context.report({loc: c.loc, messageId: 'code'});
           }
         },
       };
