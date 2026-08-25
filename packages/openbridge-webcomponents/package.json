@@ -17,7 +17,7 @@
     "build:ts:watch": "vite build --watch",
     "build:bundle": "tsx ./script/generate-bundle-entry.ts && vite build --mode bundle",
     "build:translations": "lit localize build",
-    "prepack": "npm run build && npm run build:bundle && npm run analyze",
+    "prepack": "npm run build && npm run build:bundle && npm run analyze && npm run inject:dts",
     "📚_STORYBOOK_________________________________________________": "echo _____",
     "storybook": "npm run analyze && storybook dev -p 6006 --no-open",
     "test-storybook": "vitest --project=storybook",
