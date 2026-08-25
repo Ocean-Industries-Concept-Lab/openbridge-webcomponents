@@ -97,25 +97,24 @@ export enum ObcToggleButtonLabelPlacement {
  * </obc-toggle-button-vertical-group>
  * ```
  *
+ * @property value - Value associated with this option. Used in selection events.
+ * @property selected - Whether this option is currently selected (toggles visual state).
+ * @property type - The visual variant of the toggle button option.
+ *   One of: "flat", "regular", "normal".
+ * @property hasIcon - If true, the option expects icon content in the icon slot.
+ *   Controls layout and spacing for icon display.
+ * @property label - Text label for the option.
+ *   Displayed next to or below the icon based on labelPlacement.
+ * @property disabled - If true, the option is disabled and cannot be interacted with.
  * @slot icon - Icon content for the option (when hasIcon is true).
  * @fires {CustomEvent<{value: string}>} selected - Fired when the option is clicked.
  */
 @customElement('obc-toggle-button-vertical-option')
 export class ObcToggleButtonVerticalOption extends LitElement {
-  /**
-   * Value associated with this option. Used in selection events.
-   */
   @property({type: String}) value = '';
 
-  /**
-   * Whether this option is currently selected (toggles visual state).
-   */
   @property({type: Boolean, reflect: true}) selected = false;
 
-  /**
-   * The visual variant of the toggle button option.
-   * One of: "flat", "regular", "normal".
-   */
   @property({type: String}) type = ObcToggleButtonVerticalOptionType.regular;
 
   /**
@@ -125,21 +124,10 @@ export class ObcToggleButtonVerticalOption extends LitElement {
   // eslint-disable-next-line openbridge/prefer-boolean-property-default-false -- reflected attribute used by parent CSS
   @property({type: Boolean, reflect: true}) showDivider: boolean = true;
 
-  /**
-   * If true, the option expects icon content in the icon slot.
-   * Controls layout and spacing for icon display.
-   */
   @property({type: Boolean}) hasIcon = false;
 
-  /**
-   * Text label for the option.
-   * Displayed next to or below the icon based on labelPlacement.
-   */
   @property({type: String}) label = '';
 
-  /**
-   * If true, the option is disabled and cannot be interacted with.
-   */
   @property({type: Boolean, reflect: true}) disabled = false;
 
   /**
