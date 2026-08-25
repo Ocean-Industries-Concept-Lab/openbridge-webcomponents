@@ -150,8 +150,9 @@ export enum ObcElevatedCardTag {
  *   The graphic is provided via the `graphic` slot.
  * @property hasStatus - If true, displays a status indicator in the card.
  *   The status content is provided via the `status` slot.
- * @property href - URL the card links to. A clickable card with an `href` renders as `<a>`;
- *   `isClickable=false`, `hasAction` or `overrideTag` select another tag, on which the URL has no effect.
+ * @property href - URL the card links to. It applies whenever the rendered tag is `<a>` — the default
+ *   for a clickable card with an `href`, or `overrideTag="a"`; `isClickable=false`, `hasAction` or another
+ *   `overrideTag` render a tag on which the URL has no effect.
  * @property target - Specifies the target for the link when `href` is set (e.g., `_blank`).
  * @slot graphic - Prominent graphic or illustration at the top of the card (shown when `hasGraphic` is true)
  * @slot leading-icon - Icon displayed before the label (shown when `hasLeadingIcon` is true)

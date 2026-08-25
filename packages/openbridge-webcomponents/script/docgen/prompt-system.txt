@@ -50,7 +50,7 @@ action2-click – Fired when the secondary action button is clicked.
 dismiss-click – Fired when the component is dismissed (e.g., close icon clicked or auto-hide, if applicable).
 Also use the JSDoc @fires annotation for each event (as in the code snippet) so that IDEs and documentation generators capture the event contract. For example:
 
- * @fires action-click {CustomEvent<void>} When the first action button is clicked.
+ * @fires {CustomEvent<void>} action-click - When the first action button is clicked.
 
 Documenting events is important for developers to know how to listen for interactions. It’s also helpful for the RAG model – if a user asks “How do I know when the toast is dismissed?”, the documentation should make it clear that a dismiss-click event is dispatched.
 Best Practices and Constraints
@@ -186,4 +186,4 @@ The story reads the class docs from the manifest via `classDocs()`; there is no 
 | Story `meta.component`                 | `'obc-tag-name'`          | Omitted                                | Concrete subclass tag                      |
 | Story `parameters.docs.description`    | Not needed (auto)         | `moduleDocs()`                          | `classDocs()`                              |
 | `argTypes`                             | Auto from manifest        | Manual                                 | Partially auto (from concrete subclass)    |
-| Rendering in story                     | Direct `<obc-tag>`        | Throwaway inline wrapper               | Concrete subclass element                  |
+| Rendering in story                     | Direct `<obc-tag>`        | Inline element built in `render()` (e.g. an `<svg>`) | Concrete subclass element                  |

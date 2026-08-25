@@ -14,7 +14,7 @@ globs:
 
 The full JSDoc template, the `@slot`/`@fires` contract, `@availableWhen`,
 component lifecycle tags, and the three documentation patterns. `AGENTS.md` § 3
-carries the summary; this file is the source of truth.
+carries the summary; `docs/agents/jsdoc.md` is the source of truth.
 
 Key points:
 
@@ -294,13 +294,13 @@ The story reads the class docs from the manifest via `classDocs()`; there is no 
 
 ### Summary table
 
-| Aspect                              | Concrete component | Pure function module       | Abstract base class                     |
-| ----------------------------------- | ------------------ | -------------------------- | --------------------------------------- |
-| JSDoc location                      | On the class       | Module-level block comment | On the abstract class (no `@ignore`)    |
-| Story `meta.component`              | `'obc-tag-name'`   | Omitted                    | Concrete subclass tag                   |
-| Story `parameters.docs.description` | Not needed (auto)  | `moduleDocs()`             | `classDocs()`                           |
-| `argTypes`                          | Auto from manifest | Manual                     | Partially auto (from concrete subclass) |
-| Rendering in story                  | Direct `<obc-tag>` | Throwaway inline wrapper   | Concrete subclass element               |
+| Aspect                              | Concrete component | Pure function module                                 | Abstract base class                     |
+| ----------------------------------- | ------------------ | ---------------------------------------------------- | --------------------------------------- |
+| JSDoc location                      | On the class       | Module-level block comment                           | On the abstract class (no `@ignore`)    |
+| Story `meta.component`              | `'obc-tag-name'`   | Omitted                                              | Concrete subclass tag                   |
+| Story `parameters.docs.description` | Not needed (auto)  | `moduleDocs()`                                       | `classDocs()`                           |
+| `argTypes`                          | Auto from manifest | Manual                                               | Partially auto (from concrete subclass) |
+| Rendering in story                  | Direct `<obc-tag>` | Inline element built in `render()` (e.g. an `<svg>`) | Concrete subclass element               |
 
 ## Structured-tag rules (apply to EVERY component)
 

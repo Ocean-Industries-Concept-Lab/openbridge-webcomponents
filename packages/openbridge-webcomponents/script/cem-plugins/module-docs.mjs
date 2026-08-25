@@ -3,8 +3,8 @@ export function moduleDocsPlugin() {
     name: 'obc-module-docs',
     analyzePhase({ts, node, moduleDoc}) {
       if (!ts.isSourceFile(node)) return;
-      // The block may sit at the file start or after the imports, in front of
-      // the first real statement.
+      // jsdoc.md allows the block above the first export, which may be below
+      // the imports.
       const positions = new Set([0]);
       for (const stmt of node.statements) {
         positions.add(stmt.getFullStart());

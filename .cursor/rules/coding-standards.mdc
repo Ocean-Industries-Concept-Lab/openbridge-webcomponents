@@ -9,8 +9,9 @@ alwaysApply: false
 
 # Coding Standards
 
-`AGENTS.md` § 2 carries the summary; this file is the source of truth for
-comments, CSS comments, writing style, boolean naming and Storybook titles.
+`AGENTS.md` § 2 carries the summary; `docs/agents/coding-standards.md` is the
+source of truth for comments, CSS comments, writing style, boolean naming and
+Storybook titles.
 `npm run lint:comments` reports what breaks the comment rules.
 
 ## Comments
@@ -77,7 +78,7 @@ there, inline in the code it is not.
 
 ## Boolean property naming
 
-Always name boolean properties and parameters using **positive** (affirmative) phrasing so that the default value is `false` and the "opt-in" value is `true`.
+Always name boolean properties and parameters using **positive** (affirmative) phrasing — `true` means the feature is on — whatever the default is. Most positive booleans default to `false` (opt-in); the ones below default to `true`, which is why they also need the `attribute: false` rule further down.
 
 | Bad (negative)                  | Good (positive)         |
 | ------------------------------- | ----------------------- |
