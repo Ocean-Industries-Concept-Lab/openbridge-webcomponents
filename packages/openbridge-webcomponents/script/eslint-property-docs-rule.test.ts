@@ -190,6 +190,59 @@ describe('property-docs-in-class-jsdoc — reports', () => {
       ],
     });
   });
+
+  it('treats a matching @default on a non-literal initializer as manual', () => {
+    tester.run('property-docs', propertyDocsRule, {
+      valid: [],
+      invalid: [
+        {
+          // The tag text matches the initializer verbatim, so it's not a
+          // *wrong* @default — but cem only reads `default` from a literal
+          // declaration, so dropping this tag would lose it from the
+          // manifest entirely (unlike `@default 384` over `= 384`, where
+          // cem reads the literal `384` itself once the tag is gone).
+          code: cls(
+            ' * Thing.\n * @stable',
+            '  /**\n   * Size.\n   * @default Size.normal\n   */\n  @property({type: String}) size = Size.normal;'
+          ),
+          errors: [
+            {
+              messageId: 'manual',
+              data: {
+                name: 'size',
+                reason: '@default on a non-literal initializer',
+              },
+            },
+          ],
+          output: null,
+        },
+      ],
+    });
+  });
+
+  it('treats a description containing {@link} as manual, not hoistable', () => {
+    tester.run('property-docs', propertyDocsRule, {
+      valid: [],
+      invalid: [
+        {
+          // TypeScript's field-JSDoc rendering resolves {@link X} to plain
+          // text; the class-header tag rendering doesn't — hoisting would
+          // change the manifest description's text.
+          code: cls(
+            ' * Thing.\n * @stable',
+            '  /** See {@link ObcButton}. */\n  @property({type: Number}) value = 0;'
+          ),
+          errors: [
+            {
+              messageId: 'manual',
+              data: {name: 'value', reason: 'contains {@link}'},
+            },
+          ],
+          output: null,
+        },
+      ],
+    });
+  });
 });
 
 describe('property-docs-in-class-jsdoc — fixer', () => {
@@ -271,7 +324,7 @@ describe('classifyFieldDoc', () => {
       text: ['Desc.'],
       availableWhen: 'off==true',
     });
-    expect(classifyFieldDoc(["Desc. @default 'x'"], "'x'")).toEqual({
+    expect(classifyFieldDoc(["Desc. @default 'x'"], "'x'", true)).toEqual({
       ok: true,
       text: ['Desc.'],
       availableWhen: null,
@@ -284,7 +337,7 @@ describe('classifyFieldDoc', () => {
       ok: false,
       reason: '@default differs from the initializer',
     });
-    expect(classifyFieldDoc(['Desc.', '@default 384'], '384')).toEqual({
+    expect(classifyFieldDoc(['Desc.', '@default 384'], '384', true)).toEqual({
       ok: true,
       text: ['Desc.'],
       availableWhen: null,
@@ -292,6 +345,27 @@ describe('classifyFieldDoc', () => {
     // No initializerText argument at all (as the pre-Task-8 call sites used)
     // means "not checked", not "no initializer" — stays hoistable.
     expect(classifyFieldDoc(['Desc.', '@default 384']).ok).toBe(true);
+  });
+  it('rejects a matching @default on a non-literal initializer, accepts on a literal one', () => {
+    expect(
+      classifyFieldDoc(['Desc.', '@default Size.normal'], 'Size.normal', false)
+    ).toEqual({
+      ok: false,
+      reason: '@default on a non-literal initializer',
+    });
+    expect(classifyFieldDoc(['Desc.', '@default 384'], '384', true)).toEqual({
+      ok: true,
+      text: ['Desc.'],
+      availableWhen: null,
+    });
+  });
+  it('rejects a description referencing {@link}, {@linkcode}, or {@linkplain}', () => {
+    expect(classifyFieldDoc(['See {@link ObcButton}.'])).toEqual({
+      ok: false,
+      reason: 'contains {@link}',
+    });
+    expect(classifyFieldDoc(['See {@linkcode ObcButton}.']).ok).toBe(false);
+    expect(classifyFieldDoc(['See {@linkplain ObcButton}.']).ok).toBe(false);
   });
 });
 

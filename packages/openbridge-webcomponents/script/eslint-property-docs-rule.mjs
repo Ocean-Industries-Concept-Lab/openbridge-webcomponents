@@ -8,6 +8,11 @@ const TYPEDEF_RE = /^@typedef\b/;
 // `/** Desc. @availableWhen off==true */`) — split it off before tag
 // detection, since ANY_TAG_RE only recognizes a tag at the start of a line.
 const INLINE_TAG_RE = / (@availableWhen|@default)(?=\s)/;
+// TypeScript's own field-JSDoc rendering resolves {@link X} differently than
+// the class-header tag rendering does, so the manifest text would change —
+// leave any doc that references one inline rather than hoist a description
+// that reads differently in the manifest.
+const LINK_TAG_RE = /\{@link(?:code|plain)?\b/;
 
 export const isJsDoc = (c) => c.type === 'Block' && c.value.startsWith('*');
 
@@ -18,7 +23,7 @@ export function jsDocLines(comment) {
   return lines;
 }
 
-export function classifyFieldDoc(lines, initializerText) {
+export function classifyFieldDoc(lines, initializerText, initializerIsLiteral) {
   // Pull any same-line `@availableWhen`/`@default` off the end of a
   // description (`'Desc. @availableWhen x==true'` -> two lines) so the
   // line-anchored tag detection below sees it as a tag, not prose.
@@ -37,6 +42,7 @@ export function classifyFieldDoc(lines, initializerText) {
   const foreign = tags.find((t) => t.tag !== 'availableWhen' && t.tag !== 'default');
   if (foreign) return {ok: false, reason: `contains @${foreign.tag}`};
   if (text.some((l) => MARKDOWN_RE.test(l))) return {ok: false, reason: 'markdown structure'};
+  if (text.some((l) => LINK_TAG_RE.test(l))) return {ok: false, reason: 'contains {@link}'};
   while (text.length && text[text.length - 1] === '') text.pop();
   if (text.some((l) => l === '')) return {ok: false, reason: 'multiple paragraphs'};
   const def = tags.find((t) => t.tag === 'default');
@@ -44,8 +50,17 @@ export function classifyFieldDoc(lines, initializerText) {
   // unit tests of classifyFieldDoc omit it — so `undefined` means "not
   // checked" rather than "no initializer" — that's `null`, which never
   // matches a present @default tag and correctly falls through to `manual`.
-  if (def && initializerText !== undefined && def.rest.trim() !== (initializerText ?? '').trim()) {
-    return {ok: false, reason: '@default differs from the initializer'};
+  if (def && initializerText !== undefined) {
+    if (def.rest.trim() !== (initializerText ?? '').trim()) {
+      return {ok: false, reason: '@default differs from the initializer'};
+    }
+    // cem only emits `default` from the declaration for literal initializers
+    // (`384`, `'x'`, `-1`, …); for anything else (an enum member, a shared
+    // constant, …) the now-dropped @default tag was the manifest's only
+    // source of `.default`, so hoisting would silently lose it.
+    if (!initializerIsLiteral) {
+      return {ok: false, reason: '@default on a non-literal initializer'};
+    }
   }
   const avail = tags.find((t) => t.tag === 'availableWhen');
   return {ok: true, text, availableWhen: avail ? avail.rest.trim() : null};
@@ -81,6 +96,15 @@ function decoratorName(d) {
   const e = d.expression;
   if (e.type === 'CallExpression') return e.callee.type === 'Identifier' ? e.callee.name : null;
   return e.type === 'Identifier' ? e.name : null;
+}
+
+// Literal initializers (`384`, `'x'`, `` `x` ``, `-1`) are what cem reads
+// `default` from directly; anything else (`Size.normal`, `computeDefault()`,
+// a shared constant) is not — see the mismatch check in classifyFieldDoc.
+function isLiteralInitializer(v) {
+  if (!v) return false;
+  if (v.type === 'Literal' || v.type === 'TemplateLiteral') return true;
+  return v.type === 'UnaryExpression' && v.argument?.type === 'Literal';
 }
 
 function leadingJsDoc(sourceCode, node) {
@@ -153,7 +177,7 @@ export const propertyDocsRule = {
         for (const f of fields) {
           const doc = leadingJsDoc(sourceCode, f);
           if (!doc) continue;
-          const cls = classifyFieldDoc(jsDocLines(doc.comment), f.value ? sourceCode.getText(f.value) : null);
+          const cls = classifyFieldDoc(jsDocLines(doc.comment), f.value ? sourceCode.getText(f.value) : null, isLiteralInitializer(f.value));
           if (!cls.ok || !classDoc || hasTypedef) {
             const reason = !classDoc ? 'class has no JSDoc' : hasTypedef ? 'class JSDoc contains @typedef' : cls.reason;
             context.report({loc: doc.comment.loc, messageId: 'manual', data: {name: f.key.name, reason}});
