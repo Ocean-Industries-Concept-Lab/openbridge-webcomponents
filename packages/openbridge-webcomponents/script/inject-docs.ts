@@ -2,16 +2,36 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {globSync} from 'glob';
 
-type Member = {kind?: string; name: string; description?: string; privacy?: string};
-type Manifest = {modules: Array<{declarations?: Array<{kind: string; name?: string; members?: Member[]}>}>};
+type Member = {
+  kind?: string;
+  name: string;
+  description?: string;
+  privacy?: string;
+};
+type Manifest = {
+  modules: Array<{
+    declarations?: Array<{kind: string; name?: string; members?: Member[]}>;
+  }>;
+};
 
-export function docsFromManifest(manifest: Manifest): Map<string, Map<string, string>> {
+export function docsFromManifest(
+  manifest: Manifest
+): Map<string, Map<string, string>> {
   const out = new Map<string, Map<string, string>>();
   for (const mod of manifest.modules) {
     for (const d of mod.declarations ?? []) {
       if (d.kind !== 'class' || !d.name) continue;
-      const fields = (d.members ?? []).filter((m) => m.kind === 'field' && m.description && m.privacy !== 'private' && m.privacy !== 'protected');
-      out.set(d.name, new Map(fields.map((m) => [m.name, m.description as string])));
+      const fields = (d.members ?? []).filter(
+        (m) =>
+          m.kind === 'field' &&
+          m.description &&
+          m.privacy !== 'private' &&
+          m.privacy !== 'protected'
+      );
+      out.set(
+        d.name,
+        new Map(fields.map((m) => [m.name, m.description as string]))
+      );
     }
   }
   return out;
@@ -24,13 +44,18 @@ const escapeComment = (s: string) => s.replace(/\*\//g, '*\\/');
 function jsDocBlock(indent: string, description: string): string[] {
   const lines = escapeComment(description).split('\n');
   if (lines.length === 1) return [`${indent}/** ${lines[0]} */`];
-  return [`${indent}/**`, ...lines.map((l) => `${indent} * ${l}`.replace(/\s+$/, '')), `${indent} */`];
+  return [
+    `${indent}/**`,
+    ...lines.map((l) => `${indent} * ${l}`.replace(/\s+$/, '')),
+    `${indent} */`,
+  ];
 }
 
 // An identifier immediately followed by `(` (a method signature, e.g.
 // `render(): unknown;`) can't also be immediately followed by `:`/`?:`, so
 // FIELD_RE already excludes methods without a separate check.
-const FIELD_RE = /^(\s*)(?:readonly |static |override |accessor )*([A-Za-z_$][\w$]*)\??:/;
+const FIELD_RE =
+  /^(\s*)(?:readonly |static |override |accessor )*([A-Za-z_$][\w$]*)\??:/;
 
 // Net brace change on a line, used to track nesting depth. A comment line
 // (a JSDoc/TSDoc continuation `* ...`, or a `/**`/`/*`/`//` opener) can
@@ -73,7 +98,12 @@ function lastNonBlank(out: string[]): string {
   return '';
 }
 
-function injectMembers(lines: string[], from: number, to: number, docs: Map<string, string>): string[] {
+function injectMembers(
+  lines: string[],
+  from: number,
+  to: number,
+  docs: Map<string, string>
+): string[] {
   const out: string[] = [];
   let depth = 0;
   for (let i = 0; i < lines.length; i++) {
@@ -97,21 +127,36 @@ function injectMembers(lines: string[], from: number, to: number, docs: Map<stri
   return out;
 }
 
-export function injectDts(source: string, docsByClass: Map<string, Map<string, string>>): string {
+export function injectDts(
+  source: string,
+  docsByClass: Map<string, Map<string, string>>
+): string {
   let lines = source.split('\n');
   let i = 0;
   while (i < lines.length) {
     const m = /^export declare (?:abstract )?class (Obc\w+)/.exec(lines[i]);
-    if (!m || !docsByClass.has(m[1])) { i++; continue; }
+    if (!m || !docsByClass.has(m[1])) {
+      i++;
+      continue;
+    }
     const end = findBodyEnd(lines, i);
     const before = lines.length;
-    lines = injectMembers(lines, i, end, docsByClass.get(m[1]) as Map<string, string>);
+    lines = injectMembers(
+      lines,
+      i,
+      end,
+      docsByClass.get(m[1]) as Map<string, string>
+    );
     i = end + (lines.length - before) + 1;
   }
   return lines.join('\n');
 }
 
-export function injectSvelte(source: string, className: string, docsByClass: Map<string, Map<string, string>>): string {
+export function injectSvelte(
+  source: string,
+  className: string,
+  docsByClass: Map<string, Map<string, string>>
+): string {
   const docs = docsByClass.get(className);
   if (!docs) return source;
   const lines = source.split('\n');
@@ -122,22 +167,32 @@ export function injectSvelte(source: string, className: string, docsByClass: Map
 }
 
 function main() {
-  const manifest = JSON.parse(fs.readFileSync('custom-elements.json', 'utf8')) as Manifest;
+  const manifest = JSON.parse(
+    fs.readFileSync('custom-elements.json', 'utf8')
+  ) as Manifest;
   const docs = docsFromManifest(manifest);
   if (process.argv.includes('--dts')) {
     let n = 0;
     for (const f of globSync('dist/**/*.d.ts')) {
       const src = fs.readFileSync(f, 'utf8');
       const out = injectDts(src, docs);
-      if (out !== src) { fs.writeFileSync(f, out); n++; }
+      if (out !== src) {
+        fs.writeFileSync(f, out);
+        n++;
+      }
     }
     console.log(`inject-docs: updated ${n} .d.ts file(s)`);
   } else if (process.argv.includes('--svelte')) {
     let n = 0;
-    for (const f of globSync('../openbridge-webcomponents-svelte/src/lib/**/*.svelte')) {
+    for (const f of globSync(
+      '../openbridge-webcomponents-svelte/src/lib/**/*.svelte'
+    )) {
       const src = fs.readFileSync(f, 'utf8');
       const out = injectSvelte(src, path.basename(f, '.svelte'), docs);
-      if (out !== src) { fs.writeFileSync(f, out); n++; }
+      if (out !== src) {
+        fs.writeFileSync(f, out);
+        n++;
+      }
     }
     console.log(`inject-docs: updated ${n} .svelte file(s)`);
   } else {
