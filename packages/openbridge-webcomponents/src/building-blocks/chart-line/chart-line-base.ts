@@ -194,6 +194,10 @@ const LINE_GRAPH_DIMENSION_PROP_NAMES = [
 /**
  * Abstract base class for line and area chart components built on Chart.js.
  *
+ * ## Concrete implementations
+ * - `<obc-line-graph>`: Line chart (non-filled)
+ * - `<obc-area-graph>`: Area chart with fill modes (semitransparent, solid, threshold)
+ *
  * ## Features
  * - **Single or multi-series**: Use `data` for simple single-series or `datasets` for multi-series charts
  * - **Category, time and number axes**: `category` (labels, evenly spaced), `time` (epoch ms,
@@ -321,14 +325,6 @@ const LINE_GRAPH_DIMENSION_PROP_NAMES = [
  * </script>
  * ```
  *
- * TODO(maintainer): `fill` is documented here as a class-level `@property` tag
- * only because tooling (the manifest, lit-analyzer, story controls) still
- * depends on it, yet no `@property`-decorated field backs it and no render path
- * reads `this.fill` (fill is decided by the abstract `shouldApplyFill()`). Decide
- * whether `fill` is a real public property (add a decorated field) or obsolete
- * (remove this tag and the `.fill=` usages in the stories/wrappers). Kept as-is
- * here to avoid changing the public API surface in a docs-only cleanup.
- *
  * @property data - Simple single-series data. `{label, value}` items for the category axis;
  *   `{x, value}` items for time/number axes (x: epoch ms, ISO string, Date,
  *   or Temporal object). Points are drawn in array order (no sorting).
@@ -380,7 +376,6 @@ const LINE_GRAPH_DIMENSION_PROP_NAMES = [
  *   When instrumentMode=true, this value is used directly (defaults to 8px).
  *   When instrumentMode=false, this is ignored and border radius is read from CSS variable.
  * @availableWhen borderRadius instrumentMode==true
- * @ignore This is an abstract base class. Use concrete implementations like ObcLineGraph or ObcAreaGraph instead.
  * @experimental
  */
 export class ObcChartLineBase extends LitElement {
