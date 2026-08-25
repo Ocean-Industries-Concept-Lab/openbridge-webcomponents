@@ -47,7 +47,7 @@ component's API maturity — Storybook mirrors it, never the other way around.
  * Speed readout.
  *
  * @slot value-icon - Icon shown beside the value.
- * @fires change {CustomEvent<{value: number}>} When the value changes.
+ * @fires {CustomEvent<{value: number}>} change - When the value changes.
  * @experimental
  */
 @customElement("obc-readout")
@@ -193,7 +193,7 @@ export class ObcAutomationButton extends LitElement {
 Condition grammar (the part after the property name):
 
 - **Boolean:** `showFoo==true` or `showFoo==false`.
-- **Enum / string equality:** `type==label` — use the declared value, **no quotes**.
+- **Enum / string equality:** `type==label` — the enum member name or its string value, **no quotes**.
 - **Enum / string inequality:** `state!=overlapped` — handy for "all values except one".
 - **Set membership:** `type in [LargeSideFlip, BottomFlip, TopFlip]` — use the **enum member identifier names**, not the string values.
 - **Non-empty string:** `label!=''` — for `string` props (default `''`) that gate another prop by being non-empty.
@@ -207,6 +207,7 @@ Rules:
 - **Self-gated props are not conditional** — a prop that does nothing when its _own_ value is `0`/`''`/`undefined` is not `@availableWhen` (that dependency is on itself, not another property).
 - **Multi-path props are not conditional** — if a prop still has an observable effect via some always-on path (e.g. it is also emitted in an event or applied as a CSS class regardless of the gate), do not annotate it.
 - The condition must hold against the **actual render/behavior logic** (trace into helpers, getters, and child components the prop is forwarded to), not just the prop's name.
+- **A property without a `@property` tag** (undocumented, or documented inline for a reason `lint:comments` accepts) still gets its `@availableWhen` line in the class JSDoc, on its own — the tools key on the property name, not on the line's position.
 - For properties added by `SetpointMixin`, the `@availableWhen` tags live in `svghelpers/setpoint-mixin.ts`; components that consume the mixin inherit them and must not re-annotate.
 
 ### What the tag does in Storybook
@@ -305,16 +306,17 @@ The story reads the class docs from the manifest via `classDocs()`; there is no 
 
 ● After all Markdown sections, append a short **tag block**, in this order:
 
-1. one `@slot` tag for each content slot
-2. one `@fires` (or `@event`) tag for each event the component exposes — custom
+1. one `@property name - description` tag per public property (no type), a
+   conditional property followed by its `@availableWhen name condition` line
+2. one `@slot` tag for each content slot
+3. one `@fires` (or `@event`) tag for each event the component exposes — custom
    events **and** native ones that cross the shadow boundary, such as the `click`
    from a passthrough `<button>`
-3. exactly one lifecycle tag, **last** — `@stable` / `@beta` / `@experimental` /
+4. exactly one lifecycle tag, **last** — `@stable` / `@beta` / `@experimental` /
    `@deprecated` (see
    [Component lifecycle tags](#component-lifecycle-tags-stable--beta--experimental--deprecated))
 
-Items 1 and 2 are the block's content; 3 is required by its own rule and
-belongs in the same block, after them. Nothing else goes here.
+Nothing else goes in the block.
 
 ● **Why this matters — two separate tools read these tags, and they do not read
 the same thing.** The full contract, including the two-consumer table, the
@@ -328,9 +330,6 @@ in `custom-elements.json` but absent from every framework wrapper).
 ● Run `npm run lint:slots` (`script/check-slot-event-docs.ts`, part of
 `npm run lint`) to automatically catch missing/phantom `@slot` tags, undocumented
 events, and bare `dispatchEvent(` calls.
-
-● `@property name - description` tags go in this block, before `@slot`/`@fires`;
-conditional properties add `@availableWhen name condition` on the next line.
 
 ● Do **NOT** mix Markdown headings inside the tag block.  
  Example skeleton:

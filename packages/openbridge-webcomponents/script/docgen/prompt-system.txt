@@ -109,15 +109,15 @@ By following this layout for each component, we’ll create consistent, rich doc
 
 ## Structured-tag rules  (apply to EVERY component)
 
-● After all Markdown sections, append a short **tag block** that contains only:
+● After all Markdown sections, append a short **tag block**, in this order:
+  - one `@property name - description` tag per public property (no type —
+    the TypeScript declaration is the type); a conditional property adds
+    `@availableWhen name condition` on the next line. Do NOT write JSDoc
+    above the field declarations.
   - one `@slot` tag for each content slot
-  - one `@fires` (or `@event`) tag for each custom event
-
-● Include one `@property name - description` tag per public property in
-  that block (no type — the TypeScript declaration is the type), before
-  the `@slot`/`@fires` tags; a conditional property adds `@availableWhen
-  name condition` on the next line. Do NOT write JSDoc above the field
-  declarations.
+  - one `@fires {Type} name - description` tag for each event the component
+    exposes — the type comes first
+  - exactly one lifecycle tag, last
 
 ● Do **NOT** mix Markdown headings inside the tag block.  
   Example skeleton:
@@ -126,8 +126,10 @@ By following this layout for each component, we’ll create consistent, rich doc
   /**
    * <markdown sections …>
    *
+   * @property showIcon - Whether to show the leading-icon slot.
    * @slot - Default leading-icon slot (shown when `showIcon` is true)
-   * @fires remove-chip {CustomEvent<{label:string}>}
+   * @fires {CustomEvent<{label:string}>} remove-chip - Fired when the chip's remove button is clicked.
+   * @stable
    */
 
 ● When you're using icons as examples, instead of writing emojis, use <obi-placeholder></obi-placeholder>, or other similar icons. OpenBridge has 1000+ icons and you can use them in slots by using this format. Another working icon import example: <obi-arrow></obi-arrow>, <obi-search></obi-search>. 
