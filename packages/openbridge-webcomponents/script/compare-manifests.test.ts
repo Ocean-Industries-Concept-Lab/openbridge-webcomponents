@@ -1,4 +1,3 @@
-// script/compare-manifests.test.ts
 import {describe, expect, it} from 'vitest';
 import {compareManifests} from './compare-manifests.js';
 

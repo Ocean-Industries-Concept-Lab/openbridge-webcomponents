@@ -1,4 +1,3 @@
-// script/cem-plugins.test.ts
 import {describe, expect, it} from 'vitest';
 import {create, ts} from '@custom-elements-manifest/analyzer';
 // @ts-expect-error - untyped JavaScript modules

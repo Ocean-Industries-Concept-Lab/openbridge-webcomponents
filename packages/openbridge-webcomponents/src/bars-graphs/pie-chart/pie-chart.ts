@@ -799,7 +799,6 @@ export class ObcPieChart extends LitElement {
 
     const {colors, sunburstColors} = this.prepareChartData();
 
-    // Update dataset colors
     if (this.chart.data.datasets[0]) {
       this.chart.data.datasets[0].backgroundColor = colors;
     }

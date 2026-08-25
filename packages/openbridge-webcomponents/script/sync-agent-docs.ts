@@ -45,7 +45,7 @@ function loadDocs(): AgentDoc[] {
         rel
       );
       const lineCount = doc.body.split('\n').length;
-      if (lineCount > 300) {
+      if (CHECK && lineCount > 300) {
         console.warn(
           `agent-docs: ${doc.sourcePath} has ${lineCount} lines — target is under 300 (split by sub-family)`
         );

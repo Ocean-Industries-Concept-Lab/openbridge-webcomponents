@@ -1,4 +1,3 @@
-// script/eslint-comment-rules.test.ts
 import {describe, it} from 'vitest';
 import {RuleTester} from 'eslint';
 import tsParser from '@typescript-eslint/parser';

@@ -1,4 +1,3 @@
-// script/eslint-property-docs-rule.test.ts
 import {describe, expect, it} from 'vitest';
 import {RuleTester} from 'eslint';
 import tsParser from '@typescript-eslint/parser';

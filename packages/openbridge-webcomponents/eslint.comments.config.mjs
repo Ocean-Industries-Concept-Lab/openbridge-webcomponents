@@ -5,7 +5,7 @@ import {propertyDocsRule} from './script/eslint-property-docs-rule.mjs';
 // Reuses the main config's rule objects (not its rule selection): source files
 // carry `eslint-disable` comments for @typescript-eslint/openbridge rules, and
 // those directives fail to resolve here without this registration.
-import {__testables} from './eslint.config.mjs';
+import {openbridgePlugin} from './eslint.config.mjs';
 
 export default [
   {
@@ -20,7 +20,7 @@ export default [
     linterOptions: {reportUnusedDisableDirectives: 'off'},
     plugins: {
       '@typescript-eslint': typescriptEslint,
-      openbridge: __testables.openbridgePlugin,
+      openbridge: openbridgePlugin,
       'openbridge-comments': {rules: {...commentRules, 'property-docs-in-class-jsdoc': propertyDocsRule}},
     },
     rules: {

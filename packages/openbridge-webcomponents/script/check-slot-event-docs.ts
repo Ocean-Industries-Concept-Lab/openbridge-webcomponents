@@ -44,9 +44,11 @@
  *   `@property`/`@prop` tag in the class JSDoc whose name is not a
  *   `@property()`-decorated field anywhere in `src/` (a global set — mixins
  *   and base classes count) injects a ghost member into `custom-elements.json`
- *   (issue #1043). A class-level `@attr`/`@attribute` that documents a
- *   CSS-only attribute with no backing `@property` field is allowed and is
- *   not flagged.
+ *   (issue #1043). The field set is global rather than per class: a tag
+ *   passes as soon as some class in `src/` declares a field of that name, so a
+ *   tag on the wrong class is not caught. A class-level `@attr`/`@attribute`
+ *   that documents a CSS-only attribute with no backing `@property` field is
+ *   allowed and is not flagged.
  *
  * There is deliberately no phantom-`@fires` *error*: unlike slots (which must be
  * a `<slot>` element in the component's own shadow DOM), a documented event may

@@ -1,4 +1,3 @@
-// script/inject-docs.test.ts
 import {describe, expect, it} from 'vitest';
 import {docsFromManifest, injectDts, injectSvelte} from './inject-docs.js';
 

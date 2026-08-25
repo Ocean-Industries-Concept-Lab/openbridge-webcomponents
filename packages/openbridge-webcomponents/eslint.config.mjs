@@ -328,8 +328,9 @@ function quoteList(names) {
   return names.map((name) => `'${name}'`).join(', ');
 }
 
-// Custom plugin for local OpenBridge lint rules
-const openbridgePlugin = {
+// Custom plugin for local OpenBridge lint rules. Exported so
+// eslint.comments.config.mjs can register the same rule objects.
+export const openbridgePlugin = {
   rules: {
     'storybook-title-case': {
       meta: {
@@ -924,9 +925,8 @@ export default [
   },
 ];
 
-// ESLint reads only the default export. These named exports exist for two
-// consumers: script/eslint-rules.test.ts unit-tests the lifecycle-tag rules,
-// and eslint.comments.config.mjs reuses openbridgePlugin for rule resolution.
+// ESLint reads only the default export. These named exports exist for
+// script/eslint-rules.test.ts, which unit-tests the lifecycle-tag rules.
 export const __testables = {
   openbridgePlugin,
   extractComponents,
