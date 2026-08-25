@@ -52,6 +52,8 @@ All paths below are relative to `packages/openbridge-webcomponents/`.
 - **Language:** TypeScript strict mode. English-only identifiers and comments.
 - **Components:** Extend `LitElement`; register with `@customElement('obc-…')`. Import `customElement` from `src/decorator.js` (local wrapper), **not** from `lit/decorators.js` — enforced by ESLint rule `prefer-local-decorator`.
 - **Styles:** PostCSS (`.css` files). One global palette in `src/palettes/variables.css`; all other CSS in component folders. Use `@mixin style` for elevation variants. Text: `@mixin font-body`, `@mixin font-label`, etc.
+- **Conventional Commits** for git messages and **Pull Request titles** (`feat:`, `fix:`, `feat!:`, etc.). An automated linting process validates PR titles.
+- Ask for clarification (e.g. a list of questions) before implementing significant changes.
 
 ### Comments
 
@@ -115,9 +117,6 @@ Write like a developer with two sentences to spare. Not allowed:
 body is where root cause, alternatives and verification belong — long is fine
 there, inline in the code it is not.
 
-- **Conventional Commits** for git messages and **Pull Request titles** (`feat:`, `fix:`, `feat!:`, etc.). An automated linting process validates PR titles.
-- Ask for clarification (e.g. a list of questions) before implementing significant changes.
-
 ### Boolean property naming
 
 Always name boolean properties and parameters using **positive** (affirmative) phrasing so that the default value is `false` and the "opt-in" value is `true`.
@@ -177,7 +176,8 @@ Key points:
    above `@property()` fields (`npm run lint:comments` warns; `--fix` hoists
    them). A tag naming a property that does not exist is a ghost manifest
    member — `npm run lint:slots` fails on it. Mixin-provided properties
-   (`svghelpers/setpoint-mixin.ts`) keep their inline docs.
+   (`svghelpers/setpoint-mixin.ts`, `svghelpers/setpoint-bundle.ts`) keep their
+   inline docs.
 7. **Tone:** Do NOT mention "maritime", "industrial", "bridge", or domain qualifiers; keep text domain-agnostic.
 8. If purpose is unclear, insert `**TODO(designer)**` instead of guessing.
 9. **`@availableWhen` for conditional properties** — see [`docs/agents/jsdoc.md`](docs/agents/jsdoc.md).
@@ -200,6 +200,7 @@ glob-scoped instructions pick them up automatically from generated adapters:
 | `.github/instructions/*.instructions.md` (`applyTo`) | GitHub Copilot |
 | `.cursor/rules/*.mdc` (`globs`)                      | Cursor         |
 | `CLAUDE.md` (gitignored, generated on `npm install`) | Claude Code    |
+| `.claude/rules/*.md` (`paths`)                       | Claude Code    |
 
 All are produced by `npm run agents:sync` and verified by `npm run lint:agents`.
 Every other agent reads this file and fetches `docs/agents/` on demand.

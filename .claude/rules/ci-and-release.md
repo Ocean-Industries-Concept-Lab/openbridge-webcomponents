@@ -98,6 +98,30 @@ no-op `echo` entries that exist purely to group the script list.
 A new script goes **inside the matching section**, not appended at the end. No
 other package in the monorepo uses this convention.
 
+## Documentation tooling in the build
+
+The manifest is the single source for property docs, so several steps hang off
+`npm run analyze` (`cem analyze` + `script/sort-custom-element-manifest.ts`):
+
+| Piece                            | What it does                                                                                             |
+| -------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `script/cem-plugins/`            | `available-when.mjs` resolves `@availableWhen` into `availableWhenIf`; `module-docs.mjs` lifts `@module` |
+| `script/inject-docs.ts`          | writes manifest descriptions into `dist/**/*.d.ts` (`--dts`) and the Svelte wrappers (`--svelte`)        |
+| `script/compare-manifests.ts`    | diffs two `custom-elements.json` files — the guard for "docs moved, manifest unchanged" refactors        |
+| `npm run lint:comments`          | the warn-only comment-style ESLint config (`eslint.comments.config.mjs`)                                 |
+| `npm run lint:fix:property-docs` | the same config with `--fix`; hoists inline property JSDoc into the class header                         |
+
+Order matters: injection reads the manifest and writes into build output, so it
+runs **after** both. `build:full` ends `... build:ts && analyze && inject:dts &&
+wrappers` (the wrapper step's `post-fix` runs the `--svelte` pass), and `prepack`
+ends `... build:bundle && analyze && inject:dts`. Putting `inject:dts` before a
+`vite build` throws the injected docs away — that build regenerates the `.d.ts`
+files from source.
+
+`lint:comments` and `lint:slots` run in `build.yml`'s **lint** job; `test:rules`
+runs in **test-browser**, which has no `analyze` step — tooling tests must not
+import the manifest.
+
 ## Local equivalents of the CI gates
 
 ```bash

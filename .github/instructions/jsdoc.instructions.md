@@ -19,7 +19,7 @@ Key points:
 3. **Usage Guidelines** — when and how to use the component; contrast with similar components.
 4. **Slots** — table of slot names, conditions, and purposes.
 5. **Events** — a `@fires` tag for every event the component exposes, custom **and** native (a passthrough `<button>`'s `click` included). See below.
-6. **Properties are documented in the class JSDoc**, one tag per public property, without a type — `@property name - description` — placed after the Markdown sections and before `@slot`/`@fires`. Conditional properties add a line `@availableWhen name condition` directly under their tag. No inline JSDoc above `@property()` fields (`npm run lint:comments` warns; `--fix` hoists them). A tag naming a property that does not exist is a ghost manifest member — `npm run lint:slots` fails on it. Mixin-provided properties (`svghelpers/setpoint-mixin.ts`) keep their inline docs.
+6. **Properties are documented in the class JSDoc**, one tag per public property, without a type — `@property name - description` — placed after the Markdown sections and before `@slot`/`@fires`. Conditional properties add a line `@availableWhen name condition` directly under their tag. No inline JSDoc above `@property()` fields (`npm run lint:comments` warns; `--fix` hoists them). A tag naming a property that does not exist is a ghost manifest member — `npm run lint:slots` fails on it. Mixin-provided properties (`svghelpers/setpoint-mixin.ts`, `svghelpers/setpoint-bundle.ts`) keep their inline docs.
 7. **Tone:** Do NOT mention "maritime", "industrial", "bridge", or domain qualifiers; keep text domain-agnostic.
 8. If purpose is unclear, insert `**TODO(designer)**` instead of guessing.
 9. **`@availableWhen` for conditional properties** — see below.
@@ -171,14 +171,19 @@ It reports empty descriptions as warnings for class-level tags only.
 
 ## Conditional properties (`@availableWhen`)
 
-A property whose value only has an observable effect when **another** property is set a certain way is a _conditional property_. Document the dependency with an `@availableWhen` tag in the property's inline JSDoc, directly above its `@property` declaration:
+A property whose value only has an observable effect when **another** property is set a certain way is a _conditional property_. Document the dependency in the **class JSDoc**, on an `@availableWhen name condition` line directly under that property's `@property` tag. The tag names the dependent property first, then the condition — it is not inline JSDoc above the field:
 
 ```ts
-@property({type: Boolean}) alert = false;
-/** @availableWhen alert==true */
-@property({type: String}) alertFrameStatus: AlertType = AlertType.Alarm;
-/** @availableWhen alert==true && alertFrameType in [LargeSideFlip, BottomFlip, TopFlip] */
-@property({type: Boolean, attribute: false}) showAlertCategoryIcon = true;
+/**
+ * ...
+ * @property alert - Wraps the button in an alert frame.
+ * @property alertFrameStatus - Alert status the frame is coloured for.
+ * @availableWhen alertFrameStatus alert==true
+ * @property showAlertCategoryIcon - Shows the alert category icon inside the frame.
+ * @availableWhen showAlertCategoryIcon alert==true && alertFrameType in [LargeSideFlip, BottomFlip, TopFlip]
+ */
+@customElement('obc-automation-button')
+export class ObcAutomationButton extends LitElement {
 ```
 
 Syntax:
@@ -200,6 +205,22 @@ Rules:
 - The condition must hold against the **actual render/behavior logic** (trace into helpers, getters, and child components the prop is forwarded to), not just the prop's name.
 - For properties added by `SetpointMixin`, the `@availableWhen` tags live in `svghelpers/setpoint-mixin.ts`; components that consume the mixin inherit them and must not re-annotate.
 
+### What the tag does in Storybook
+
+`npm run analyze` resolves each condition it can into an `availableWhenIf`
+entry on the manifest member, and the `availableWhenEnhancer` in
+`.storybook/manifest-docs.ts` turns that into the argType's `if:`. The
+enhancer applies a gate **only when the story itself sets the gate arg**
+(in its own `args` or the meta's). Storybook never seeds args from the
+component's own property defaults, and an arg whose `if` is false is removed
+from `render()` entirely — not merely hidden in the controls panel — so
+gating on an arg the story leaves unset would silently drop properties the
+story does set. Set the gate arg in the story when you want the control to
+appear and disappear with it. Conditions the plugin cannot resolve —
+`in [...]`, `&&`, `||`, and enum values it cannot look up — never reach the
+manifest; write a manual `if:` in the story's `argTypes` if that control has
+to be hidden.
+
 > The three documentation patterns (concrete components, pure function modules,
 > abstract base classes) are covered in full below — see
 > [Documentation by code pattern](#documentation-by-code-pattern-regular-components-pure-functions-abstract-classes).
@@ -219,7 +240,7 @@ tooling enforces.
 
 ## Documentation by code pattern (regular components, pure functions, abstract classes)
 
-Not all code in this repo is a concrete Lit web component. The three main patterns require different documentation approaches because Storybook's autodocs system relies on the `custom-elements.json` manifest, which only contains entries for registered custom elements.
+Not all code in this repo is a concrete Lit web component. The three main patterns require different documentation approaches because Storybook's autodocs resolves a story to its docs through the `custom-elements.json` entry that carries a `tagName`; modules and abstract bases are in the manifest too, but only a registered custom element is found automatically.
 
 ### a) Regular concrete components (default case)
 
@@ -237,7 +258,7 @@ This is the standard path. The template sections above (Overview, Features, Slot
 
 Examples: `external-scale.ts` (exports `renderExternalScale()`, `computeExternalScaleLayout()`, etc.)
 
-These modules export pure functions that return `SVGTemplateResult` fragments, not a LitElement. There is no custom element tag and no `custom-elements.json` entry, so autodocs cannot extract anything automatically.
+These modules export pure functions that return `SVGTemplateResult` fragments, not a LitElement. The manifest does carry the module (its `/** @module ... */` description and each exported function), but there is no custom element tag, so autodocs cannot wire the docs to a component on its own.
 
 **Source file:**
 
@@ -253,7 +274,7 @@ These modules export pure functions that return `SVGTemplateResult` fragments, n
 
 Examples: `ObcChartLineBase` (abstract base for `obc-line-graph` and `obc-area-graph`)
 
-The class has rich JSDoc and `@property` declarations, but it cannot be instantiated and is not registered as a custom element. Storybook cannot auto-extract its docs via `custom-elements.json`.
+The class has rich JSDoc and `@property` declarations, but it cannot be instantiated and is not registered as a custom element. It is in the manifest — description and members included — yet with no `tagName` for autodocs to resolve, the story has to point at the entry itself.
 
 **Source file:**
 
