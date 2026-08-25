@@ -3,6 +3,7 @@ import {create, ts} from '@custom-elements-manifest/analyzer';
 // @ts-expect-error - untyped JavaScript modules
 import {
   availableWhenPlugin,
+  collectEnums,
   parseCondition,
 } from './cem-plugins/available-when.mjs';
 // @ts-expect-error - untyped JavaScript modules
@@ -154,6 +155,26 @@ export function ThingMixin(superClass) {
   });
 });
 
+describe('collectEnums', () => {
+  it('resolves a member by name, by qualified name and by string value', () => {
+    const enums = collectEnums(
+      ts,
+      sf('src/t.ts', "export enum T {\n  Linear = 'linear',\n  Circular = 'circular',\n}\n")
+    );
+    expect(enums.get('Linear')).toBe('linear');
+    expect(enums.get('T.Linear')).toBe('linear');
+    expect(enums.get('linear')).toBe('linear');
+  });
+
+  it('never lets a string value shadow a member name', () => {
+    const enums = collectEnums(
+      ts,
+      sf('src/t.ts', "export enum T {\n  x = 'y',\n  y = 'z',\n}\n")
+    );
+    expect(enums.get('y')).toBe('z');
+  });
+});
+
 describe('moduleDocsPlugin', () => {
   it('captures the leading @module block into module.description', () => {
     const m = analyze({
@@ -164,5 +185,14 @@ describe('moduleDocsPlugin', () => {
     expect(m.modules[0].description).toBe(
       'Renders scales.\n\n## Usage\nCall `render()`.'
     );
+  });
+
+  it('finds a @module block placed after the imports', () => {
+    const m = analyze({
+      'src/scale.ts':
+        "import {svg} from 'lit';\n\n/**\n * @module External Scale\n *\n * Renders scales.\n */\nexport function render() { return svg``; }\n",
+    });
+    expect(m.modules[0].summary).toBe('External Scale');
+    expect(m.modules[0].description).toBe('Renders scales.');
   });
 });

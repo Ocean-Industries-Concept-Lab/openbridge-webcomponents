@@ -56,8 +56,11 @@ function enclosingMixinName(ts, node) {
   return undefined;
 }
 
+// Keys are member names (`Linear`, `T.Linear`) and, when nothing else claims
+// the name, string values (`linear`) — the grammar allows either spelling.
 export function collectEnums(ts, sourceFile, seen = new Set()) {
   const map = new Map();
+  const values = [];
   ts.forEachChild(sourceFile, (n) => {
     if (!ts.isEnumDeclaration(n)) return;
     let auto = 0;
@@ -76,8 +79,10 @@ export function collectEnums(ts, sourceFile, seen = new Set()) {
       if (value === undefined) continue;
       if (!map.has(key)) map.set(key, value);
       map.set(`${n.name.text}.${key}`, value);
+      if (typeof value === 'string') values.push(value);
     }
   });
+  for (const v of values) if (!map.has(v)) map.set(v, v);
   if (seen.size === 0) {
     seen.add(sourceFile.fileName);
     ts.forEachChild(sourceFile, (n) => {

@@ -3,7 +3,17 @@ export function moduleDocsPlugin() {
     name: 'obc-module-docs',
     analyzePhase({ts, node, moduleDoc}) {
       if (!ts.isSourceFile(node)) return;
-      for (const r of ts.getLeadingCommentRanges(node.text, 0) ?? []) {
+      // The block may sit at the file start or after the imports, in front of
+      // the first real statement.
+      const positions = new Set([0]);
+      for (const stmt of node.statements) {
+        positions.add(stmt.getFullStart());
+        if (!ts.isImportDeclaration(stmt)) break;
+      }
+      const ranges = [...positions].flatMap(
+        (pos) => ts.getLeadingCommentRanges(node.text, pos) ?? []
+      );
+      for (const r of ranges) {
         const raw = node.text.slice(r.pos, r.end);
         if (!raw.startsWith('/**') || !/@module\b/.test(raw)) continue;
         const lines = raw
