@@ -58,7 +58,7 @@ The script auto-detects three patterns and tailors the GPT prompt accordingly:
 
 | Pattern                  | Detection heuristic                                        | Prompt behavior                                                                                  |
 | ------------------------ | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| **Concrete component**   | Has `@customElement(...)` decorator                        | JSDoc on class + properties; `@slot`/`@fires` tags                                               |
+| **Concrete component**   | Has `@customElement(...)` decorator                        | JSDoc on class; properties as `@property` tags; `@slot`/`@fires` tags                            |
 | **Pure function module** | No class or no LitElement - only exported functions        | Module-level JSDoc at top of file; short JSDoc per exported function/type                        |
 | **Abstract base class**  | Has `class ... extends LitElement` but no `@customElement` | JSDoc on class (no `@ignore`); properties as `@property` tags; stories read it via `classDocs()` |
 
@@ -67,9 +67,8 @@ The script auto-detects three patterns and tailors the GPT prompt accordingly:
 ## What gets added
 
 - Component/module-level doc block (Overview, Features, Usage, Slots, etc.)
-- Inline `/** ... */` for each `@property`
+- One `@property name - description` tag per public property in the class JSDoc tag block (no type, no inline comment above the field)
 - Final tag block with `@slot` and `@fires` so `custom-elements.json` stays complete
-- _(No extra `@property` tags - the inline comments cover those)_
 - Executable code is **never** modified.
 
 ---

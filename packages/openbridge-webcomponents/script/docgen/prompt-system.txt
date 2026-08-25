@@ -37,7 +37,7 @@ action2	If action2 is true	Label for the secondary action button.
 
 This example (based on obc-floating-item) shows how to communicate what each slot is for and under what conditions it appears. It’s crucial for developers to understand how to supply content (icons, text, etc.) to the component. If a component doesn’t use slots (for example, a plain <obc-radio> might just have a text label property instead), you can omit this section or mention how content is provided (e.g., “text content is set via the label attribute”).
 Properties and Attributes
-Even though each property will have its own JSDoc comment in code, the component’s main description should highlight any particularly important or complex properties that affect usage. For example:
+Even though each property is documented by its `@property` tag in the class JSDoc, the component’s main description should highlight any particularly important or complex properties that affect usage. For example:
 Configuration Flags: e.g., hasTimestamp or action2 – explain what turning them on/off does in practical terms (like “enabling action2 adds a second action button, but only if action (primary) is enabled first”). This manages expectations for how properties interact.
 Enum Properties: If a property uses an enum (like type or direction), ensure the Features or Variants section already explains each possible value. You might not need a separate list here if it’s covered above.
 Defaults: It’s helpful to mention default values or behaviors (“by default, type is regular”). This can be in parentheses after describing the feature.

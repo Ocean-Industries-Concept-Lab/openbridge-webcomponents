@@ -74,7 +74,7 @@ function patternInstructions(pattern: CodePattern): string {
         'Insert JSDoc for the class and every public property/event.',
         "The JSDoc should go right before @customElement('name').",
         'Use @slot and @fires tags at the end of the class JSDoc.',
-        'Do NOT include @property tags in the tag block.',
+        'Document each public property as `@property name - description` in the tag block (no type); never above the field.',
       ].join('\n');
 
     case CodePattern.pureFunctionModule:
