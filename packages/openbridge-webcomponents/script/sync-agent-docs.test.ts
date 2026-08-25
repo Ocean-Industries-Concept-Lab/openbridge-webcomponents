@@ -308,7 +308,11 @@ describe('renderClaudeRule', () => {
       'docs/agents/a11y.md'
     );
     const out = renderClaudeRule(doc);
-    expect(out.startsWith('---\npaths:\n  - "packages/openbridge-webcomponents/src/components/**"\n  - "packages/openbridge-webcomponents/src/automation/**"\n---\n')).toBe(true);
+    expect(
+      out.startsWith(
+        '---\npaths:\n  - "packages/openbridge-webcomponents/src/components/**"\n  - "packages/openbridge-webcomponents/src/automation/**"\n---\n'
+      )
+    ).toBe(true);
     expect(out).not.toContain('skip/**');
     expect(out).toContain('# Accessibility Instructions');
   });
