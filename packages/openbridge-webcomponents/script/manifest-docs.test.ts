@@ -1,6 +1,6 @@
 // script/manifest-docs.test.ts
 import {describe, expect, it} from 'vitest';
-import {createManifestDocs} from '../.storybook/manifest-docs.js';
+import {createManifestDocs} from '../.storybook/manifest-docs-core.js';
 
 const manifest = {
   modules: [
