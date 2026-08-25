@@ -1620,9 +1620,8 @@ function generateBarContainer(
     let rectWidth = config.barThickness;
     let rectHeight = dLen;
 
-    // When scaleBackground=true, the bar's edge that touches the scale should NOT be
-    // adjusted inward (because it's not a true viewBox boundary - the scale will cover it).
-    // We achieve this by passing adjusted min/max that exclude the touching edge.
+    // The edge touching the scale is not adjusted inward for stroke: it
+    // isn't a true viewBox boundary, since the scale covers it.
     const isRight = config.side === 'right';
     let viewBoxMinX: number;
     let viewBoxMaxX: number;
@@ -1722,27 +1721,19 @@ function generateBarContainer(
     const h = rectHeight;
 
     let path = `M ${x + (shouldRoundTopLeft ? r : 0)} ${y}`;
-    // Top edge
     path += ` L ${x + w - (shouldRoundTopRight ? r : 0)} ${y}`;
-    // Top-right corner
     if (shouldRoundTopRight) {
       path += ` Q ${x + w} ${y} ${x + w} ${y + r}`;
     }
-    // Right edge
     path += ` L ${x + w} ${y + h - (shouldRoundBottomRight ? r : 0)}`;
-    // Bottom-right corner
     if (shouldRoundBottomRight) {
       path += ` Q ${x + w} ${y + h} ${x + w - r} ${y + h}`;
     }
-    // Bottom edge
     path += ` L ${x + (shouldRoundBottomLeft ? r : 0)} ${y + h}`;
-    // Bottom-left corner
     if (shouldRoundBottomLeft) {
       path += ` Q ${x} ${y + h} ${x} ${y + h - r}`;
     }
-    // Left edge
     path += ` L ${x} ${y + (shouldRoundTopLeft ? r : 0)}`;
-    // Top-left corner
     if (shouldRoundTopLeft) {
       path += ` Q ${x} ${y} ${x + r} ${y}`;
     }
@@ -1799,8 +1790,6 @@ function generateBarContainer(
   let rectWidth = dLen;
   let rectHeight = config.barThickness;
 
-  // When scaleBackground=true, the bar's edge that touches the scale should NOT be
-  // adjusted inward (because it's not a true viewBox boundary - the scale will cover it).
   const isBottom = config.side === 'bottom';
   let viewBoxMinY: number;
   let viewBoxMaxY: number;
@@ -1902,27 +1891,19 @@ function generateBarContainer(
   const h = rectHeight;
 
   let path = `M ${x + (shouldRoundTopLeft ? r : 0)} ${y}`;
-  // Top edge
   path += ` L ${x + w - (shouldRoundTopRight ? r : 0)} ${y}`;
-  // Top-right corner
   if (shouldRoundTopRight) {
     path += ` Q ${x + w} ${y} ${x + w} ${y + r}`;
   }
-  // Right edge
   path += ` L ${x + w} ${y + h - (shouldRoundBottomRight ? r : 0)}`;
-  // Bottom-right corner
   if (shouldRoundBottomRight) {
     path += ` Q ${x + w} ${y + h} ${x + w - r} ${y + h}`;
   }
-  // Bottom edge
   path += ` L ${x + (shouldRoundBottomLeft ? r : 0)} ${y + h}`;
-  // Bottom-left corner
   if (shouldRoundBottomLeft) {
     path += ` Q ${x} ${y + h} ${x} ${y + h - r}`;
   }
-  // Left edge
   path += ` L ${x} ${y + (shouldRoundTopLeft ? r : 0)}`;
-  // Top-left corner
   if (shouldRoundTopLeft) {
     path += ` Q ${x} ${y} ${x + r} ${y}`;
   }
@@ -2259,8 +2240,6 @@ function generateScaleBackground(
     let rectWidth = backgroundThickness;
     let rectHeight = dLen;
 
-    // When hasBar=true, the scale's inner edge (touching the bar) should NOT be
-    // adjusted inward (because it's not a true viewBox boundary - the bar covers it).
     const isRight = config.side === 'right';
     let viewBoxMinX: number;
     let viewBoxMaxX: number;
@@ -2310,27 +2289,19 @@ function generateScaleBackground(
 
     // Path construction: start top-left, go clockwise
     let path = `M ${x + (shouldRoundTopLeft ? r : 0)} ${y}`;
-    // Top edge
     path += ` L ${x + w - (shouldRoundTopRight ? r : 0)} ${y}`;
-    // Top-right corner
     if (shouldRoundTopRight) {
       path += ` Q ${x + w} ${y} ${x + w} ${y + r}`;
     }
-    // Right edge
     path += ` L ${x + w} ${y + h - (shouldRoundBottomRight ? r : 0)}`;
-    // Bottom-right corner
     if (shouldRoundBottomRight) {
       path += ` Q ${x + w} ${y + h} ${x + w - r} ${y + h}`;
     }
-    // Bottom edge
     path += ` L ${x + (shouldRoundBottomLeft ? r : 0)} ${y + h}`;
-    // Bottom-left corner
     if (shouldRoundBottomLeft) {
       path += ` Q ${x} ${y + h} ${x} ${y + h - r}`;
     }
-    // Left edge
     path += ` L ${x} ${y + (shouldRoundTopLeft ? r : 0)}`;
-    // Top-left corner
     if (shouldRoundTopLeft) {
       path += ` Q ${x} ${y} ${x + r} ${y}`;
     }
@@ -2359,8 +2330,6 @@ function generateScaleBackground(
   let rectWidth = dLen;
   let rectHeight = backgroundThickness;
 
-  // When hasBar=true, the scale's inner edge (touching the bar) should NOT be
-  // adjusted inward (because it's not a true viewBox boundary - the bar covers it).
   const isBottom = config.side === 'bottom';
   let viewBoxMinY: number;
   let viewBoxMaxY: number;
@@ -2411,27 +2380,19 @@ function generateScaleBackground(
 
   // Path construction: start top-left, go clockwise
   let path = `M ${x + (shouldRoundTopLeft ? r : 0)} ${y}`;
-  // Top edge
   path += ` L ${x + w - (shouldRoundTopRight ? r : 0)} ${y}`;
-  // Top-right corner
   if (shouldRoundTopRight) {
     path += ` Q ${x + w} ${y} ${x + w} ${y + r}`;
   }
-  // Right edge
   path += ` L ${x + w} ${y + h - (shouldRoundBottomRight ? r : 0)}`;
-  // Bottom-right corner
   if (shouldRoundBottomRight) {
     path += ` Q ${x + w} ${y + h} ${x + w - r} ${y + h}`;
   }
-  // Bottom edge
   path += ` L ${x + (shouldRoundBottomLeft ? r : 0)} ${y + h}`;
-  // Bottom-left corner
   if (shouldRoundBottomLeft) {
     path += ` Q ${x} ${y + h} ${x} ${y + h - r}`;
   }
-  // Left edge
   path += ` L ${x} ${y + (shouldRoundTopLeft ? r : 0)}`;
-  // Top-left corner
   if (shouldRoundTopLeft) {
     path += ` Q ${x} ${y} ${x + r} ${y}`;
   }
@@ -2662,7 +2623,6 @@ function generateCurrentValueDot(
     return nothing;
   }
 
-  // Dot dimensions
   const dotDiameter = 12; // Inner fill diameter
   const strokeWidth = 2;
   // Total visual size: stroke is centered on path, so adds strokeWidth/2 to each side
@@ -2690,7 +2650,6 @@ function generateCurrentValueDot(
     ? base + visualRadius
     : base - visualRadius;
 
-  // Colors
   const c = colors(config);
   // Use secondary color for fill (same as markerFillColor from colors function)
   const fillColor = c.markerFillColor;

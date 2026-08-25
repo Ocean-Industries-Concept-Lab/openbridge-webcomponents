@@ -418,12 +418,9 @@ export class ObcDonutChart extends LitElement {
         };
 
     return {
-      // The chart has a fixed, self-computed size (fixedHeight ⇒ fixed
-      // circumference). Chart.js responsive mode must stay off: it measures
-      // the wrapper, whose size derives from the canvas itself (plus the
-      // optional legend), which inflates the canvas and re-applies stale
-      // deferred resizes on the first mouse-over (issue #1061). The canvas
-      // render size is set explicitly in createChart/updateChart instead.
+      // Chart.js responsive mode must stay off: it measures the wrapper,
+      // whose size derives from the canvas, and re-applies stale deferred
+      // resizes on the first mouse-over (#1061).
       responsive: false,
       maintainAspectRatio: false,
       devicePixelRatio: window.devicePixelRatio,
@@ -642,7 +639,6 @@ export class ObcDonutChart extends LitElement {
         const unitWidth = unitMetrics.width;
         const totalWidth =
           labelWidth + (centerReadoutUnitText ? spaceWidth + unitWidth : 0);
-        // Draw label
         ctx.font = `${labelFontWeight} ${labelFontSize} ${fontFamily}`;
         ctx.fillStyle = labelColor;
         ctx.fillText(
@@ -789,7 +785,6 @@ export class ObcDonutChart extends LitElement {
 
     const {colors} = this.prepareChartData();
 
-    // Update dataset colors
     if (this.chart.data.datasets[0]) {
       this.chart.data.datasets[0].backgroundColor = colors;
       this.chart.data.datasets[0].borderColor = getCssVariableValue(
@@ -814,13 +809,11 @@ export class ObcDonutChart extends LitElement {
     // Guard: Check if chart metadata is available
     const meta = this.chart.getDatasetMeta(0);
     if (!meta || !meta.controller) {
-      // console.debug('[obc-donut-chart] updateLegend: skipped - chart metadata not yet initialized');
       return;
     }
 
     // Guard: Check if dataset has data
     if (!this.data || this.data.length === 0) {
-      // console.debug('[obc-donut-chart] updateLegend: skipped - no data available');
       this.legendDiv.innerHTML = '';
       return;
     }

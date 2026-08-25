@@ -850,34 +850,26 @@ export class ObcChartLineBase extends LitElement {
       // Start at top-left corner (accounting for radius)
       ctx.moveTo(x + (corners.topLeft ? r : 0), y);
 
-      // Top edge
       ctx.lineTo(x + width - (corners.topRight ? r : 0), y);
 
-      // Top-right corner
       if (corners.topRight) {
         ctx.arcTo(x + width, y, x + width, y + r, r);
       }
 
-      // Right edge
       ctx.lineTo(x + width, y + height - (corners.bottomRight ? r : 0));
 
-      // Bottom-right corner
       if (corners.bottomRight) {
         ctx.arcTo(x + width, y + height, x + width - r, y + height, r);
       }
 
-      // Bottom edge
       ctx.lineTo(x + (corners.bottomLeft ? r : 0), y + height);
 
-      // Bottom-left corner
       if (corners.bottomLeft) {
         ctx.arcTo(x, y + height, x, y + height - r, r);
       }
 
-      // Left edge
       ctx.lineTo(x, y + (corners.topLeft ? r : 0));
 
-      // Top-left corner
       if (corners.topLeft) {
         ctx.arcTo(x, y, x + r, y, r);
       }
@@ -1059,28 +1051,24 @@ export class ObcChartLineBase extends LitElement {
           }
 
           // Draw corners separately (only if adjacent edges are both drawn)
-          // Top-left corner
           if (!skipTop && !skipLeft && corners.topLeft) {
             ctx.beginPath();
             ctx.arc(x + r, y + r, r, Math.PI, Math.PI * 1.5);
             ctx.stroke();
           }
 
-          // Top-right corner
           if (!skipTop && !skipRight && corners.topRight) {
             ctx.beginPath();
             ctx.arc(x + width - r, y + r, r, Math.PI * 1.5, Math.PI * 2);
             ctx.stroke();
           }
 
-          // Bottom-right corner
           if (!skipRight && !skipBottom && corners.bottomRight) {
             ctx.beginPath();
             ctx.arc(x + width - r, y + height - r, r, 0, Math.PI * 0.5);
             ctx.stroke();
           }
 
-          // Bottom-left corner
           if (!skipBottom && !skipLeft && corners.bottomLeft) {
             ctx.beginPath();
             ctx.arc(x + r, y + height - r, r, Math.PI * 0.5, Math.PI);
@@ -1161,13 +1149,6 @@ export class ObcChartLineBase extends LitElement {
 
     const event = e as CustomEvent<ExternalScaleDimensions>;
     const {side, thickness} = event.detail;
-
-    // console.debug(`[chart-line-base] Scale dimension changed:`, {
-    //   side,
-    //   thickness,
-    //   previousThickness: this.externalScaleDimensions.get(side),
-    //   isUpdatingScales: this.isUpdatingScales,
-    // });
 
     // Update dimension tracking
     const previousThickness = this.externalScaleDimensions.get(side);
@@ -1253,26 +1234,13 @@ export class ObcChartLineBase extends LitElement {
     if (this.isUpdatingScales) return false;
     this.isUpdatingScales = true;
 
-    // console.debug(`[chart-line-base] Syncing scales and chart`, {
-    //   width: this.width,
-    //   height: this.height,
-    //   scaleDimensions: Array.from(this.externalScaleDimensions.entries()),
-    // });
-
     try {
       // Step 1: Calculate padding from scale dimensions
       const padding = this.calculatePaddingFromScales();
 
-      // console.debug(`[chart-line-base] Calculated padding:`, padding);
-
       // Step 2: Calculate effective chart area
       const effectiveWidth = this.width - padding.left - padding.right;
       const effectiveHeight = this.height - padding.top - padding.bottom;
-
-      // console.debug(`[chart-line-base] Effective dimensions:`, {
-      //   effectiveWidth,
-      //   effectiveHeight,
-      // });
 
       // Guard against invalid dimensions
       if (effectiveWidth <= 0 || effectiveHeight <= 0) {
@@ -1287,7 +1255,6 @@ export class ObcChartLineBase extends LitElement {
       }
 
       // Step 3: Update slotted scales with coordinated properties
-      // this.updateScaleProperties(padding, effectiveWidth, effectiveHeight);
       this.updateScaleProperties(padding);
 
       // Step 4: Force recreation of chart with new padding
@@ -1323,25 +1290,18 @@ export class ObcChartLineBase extends LitElement {
       left: this.externalScaleDimensions.get('left') ?? defaultPadding,
     };
 
-    // console.debug(`[chart-line-base] calculatePaddingFromScales:`, {
-    //   fixedAspectRatioScaling: this.fixedAspectRatioScaling,
-    //   scaleReferenceSize: this.scaleReferenceSize,
-    //   externalScaleDimensions: Object.fromEntries(this.externalScaleDimensions),
-    //   defaultPadding,
-    //   calculatedPadding: padding,
-    // });
-
     return padding;
   }
 
   /**
    * Update properties on slotted scale elements
    */
-  private updateScaleProperties(
-    padding: {top: number; right: number; bottom: number; left: number}
-    // effectiveWidth: number,
-    // effectiveHeight: number
-  ) {
+  private updateScaleProperties(padding: {
+    top: number;
+    right: number;
+    bottom: number;
+    left: number;
+  }) {
     // Get chart scales for min/max values
     const yMin = this.chart?.scales['y']?.min ?? 0;
     const yMax = this.chart?.scales['y']?.max ?? 100;
@@ -1389,20 +1349,6 @@ export class ObcChartLineBase extends LitElement {
           ),
         }
       : {left: padding.left, right: padding.right};
-
-    // console.debug(`[chart-line-base] updateScaleProperties:`, {
-    //   fixedAspectRatioScaling: this.fixedAspectRatioScaling,
-    //   referenceWidth: this.width,
-    //   referenceHeight: this.height,
-    //   scaleReferenceSize: this.scaleReferenceSize,
-    //   effectiveWidth,
-    //   effectiveHeight,
-    //   scaleFactor: this.getScaleFactor(),
-    //   basePadding: padding,
-    //   verticalViewBoxPadding,
-    //   horizontalViewBoxPadding,
-    //   showLabels,
-    // });
 
     // Update each slotted scale
     const updates: Array<
@@ -1534,9 +1480,7 @@ export class ObcChartLineBase extends LitElement {
     }
 
     // Apply all updates
-    // console.debug(`[chart-line-base] Applying ${updates.length} scale updates`);
     updates.forEach(([_slot, scale, props]) => {
-      // console.debug(`  - Updating scale:`, props);
       Object.assign(scale, props);
     });
   }
@@ -1812,7 +1756,6 @@ export class ObcChartLineBase extends LitElement {
       return false;
     }
 
-    // Get the wrapper element
     const wrapper = this.renderRoot.querySelector('.wrapper') as HTMLElement;
     if (!wrapper) return false;
 
@@ -1826,18 +1769,6 @@ export class ObcChartLineBase extends LitElement {
     // Use parent width as actual width, calculate height from aspect ratio
     const newWidth = parentWidth;
     const newHeight = Math.round(parentWidth / aspectRatio);
-
-    // console.debug(`[chart-line-base] updateComputedDimensions:`, {
-    //   fixedAspectRatioScaling: this.fixedAspectRatioScaling,
-    //   referenceWidth: this.width,
-    //   referenceHeight: this.height,
-    //   scaleReferenceSize: this.scaleReferenceSize,
-    //   parentWidth,
-    //   aspectRatio,
-    //   newWidth,
-    //   newHeight,
-    //   scaleFactor: newWidth / this.width,
-    // });
 
     // Only update if dimensions changed
     if (this.computedWidth !== newWidth || this.computedHeight !== newHeight) {
@@ -2187,19 +2118,6 @@ export class ObcChartLineBase extends LitElement {
       };
     }
 
-    // console.debug(`[chart-line-base] getChartOptions:`, {
-    //   fixedAspectRatioScaling: this.fixedAspectRatioScaling,
-    //   referenceWidth: this.width,
-    //   referenceHeight: this.height,
-    //   effectiveWidth,
-    //   effectiveHeight,
-    //   scaleFactor,
-    //   scaleReferenceSize: this.scaleReferenceSize,
-    //   padding,
-    //   externalScaleDimensions: Object.fromEntries(this.externalScaleDimensions),
-    //   hasExternalScales: this.hasExternalScales(),
-    // });
-
     // Set CSS variables for wrapper and canvas sizing
     if (this.fixedAspectRatioScaling) {
       // In responsive mode, use 100% width, computed height
@@ -2534,7 +2452,6 @@ export class ObcChartLineBase extends LitElement {
 
     // Guard: Check if chart has datasets
     if (!this.chart.data.datasets || this.chart.data.datasets.length === 0) {
-      // console.debug('[chart-line-base] updateLegend: skipped - no datasets available');
       this.legendDiv.innerHTML = '';
       return;
     }
@@ -2546,7 +2463,6 @@ export class ObcChartLineBase extends LitElement {
 
           // Guard: Check if metadata and controller are available
           if (!meta || !meta.controller) {
-            // console.debug(`[chart-line-base] updateLegend: dataset ${i} metadata not yet initialized`);
             return null;
           }
 

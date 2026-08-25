@@ -179,14 +179,6 @@ export class ObcBarHorizontal extends SetpointMixin(LitElement, {
         scaleReferenceSize: this.scaleReferenceSize,
       });
 
-      // console.debug(`[bar-horizontal] ResizeController:`, {
-      //   fixedAspectRatio: this.fixedAspectRatio,
-      //   containerWidth: containerMainAxisSize,
-      //   scaleReferenceSize: this.scaleReferenceSize,
-      //   computedScale: this._scale,
-      //   width: this.width,
-      // });
-
       // Report scaled dimensions to parent chart
       this.reportDimensions();
     },
@@ -264,16 +256,6 @@ export class ObcBarHorizontal extends SetpointMixin(LitElement, {
     // viewBox padding values when fixedAspectRatioScaling is enabled. The padding is
     // pre-scaled to: basePadding * scaleReferenceSize / referenceWidth
     // This ensures the visual padding matches the chart's Canvas padding at any aspect ratio.
-
-    // console.debug(`[bar-horizontal] render:`, {
-    //   fixedAspectRatio: this.fixedAspectRatio,
-    //   width: this.width,
-    //   scaleReferenceSize: this.scaleReferenceSize,
-    //   effectiveLength,
-    //   scale: this._scale,
-    //   paddingLeft: this.paddingLeft,
-    //   paddingRight: this.paddingRight,
-    // });
 
     const config: ExternalScaleConfig = {
       orientation: ExternalScaleOrientation.horizontal,
@@ -449,22 +431,6 @@ export class ObcBarHorizontal extends SetpointMixin(LitElement, {
           thickness: Math.round(baseDimensions.thickness * this._scale),
         }
       : baseDimensions;
-
-    // console.debug(`[bar-horizontal] reportDimensions:`, {
-    //   fixedAspectRatio: this.fixedAspectRatio,
-    //   side: dimensions.side,
-    //   thickness: dimensions.thickness,
-    //   scale: this._scale,
-    //   width: this.width,
-    //   scaleReferenceSize: this.scaleReferenceSize,
-    //   effectiveLength,
-    //   hasBar: this.hasBar,
-    //   hasScale: this.hasScale,
-    //   showLabels: this.showLabels,
-    //   barThickness: this.barThickness,
-    //   tickThickness: this.tickThickness,
-    //   labelThickness: this.labelThickness,
-    // });
 
     this.dispatchEvent(
       new CustomEvent('scale-dimensions-changed', {

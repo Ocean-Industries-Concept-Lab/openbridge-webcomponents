@@ -484,10 +484,7 @@ export class ObcPieChart extends LitElement {
         };
 
     return {
-      // Fixed, self-computed size: Chart.js responsive mode must stay off,
-      // it measures the wrapper (canvas + optional legend) and inflates the
-      // canvas / re-applies stale deferred resizes on hover (issue #1061).
-      // The canvas render size is set explicitly in createChart/updateChart.
+      // Chart.js responsive mode stays off — see the note in donut-chart.ts (#1061).
       responsive: false,
       maintainAspectRatio: false,
       devicePixelRatio: window.devicePixelRatio,
@@ -829,13 +826,11 @@ export class ObcPieChart extends LitElement {
     // Guard: Check if chart metadata is available
     const meta = this.chart.getDatasetMeta(0);
     if (!meta || !meta.controller) {
-      // console.debug('[obc-pie-chart] updateLegend: skipped - chart metadata not yet initialized');
       return;
     }
 
     // Guard: Check if dataset has data
     if (!this.data || this.data.length === 0) {
-      // console.debug('[obc-pie-chart] updateLegend: skipped - no data available');
       this.legendDiv.innerHTML = '';
       return;
     }
