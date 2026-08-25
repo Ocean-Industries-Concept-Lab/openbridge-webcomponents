@@ -3,6 +3,7 @@ import {describe, expect, it} from 'vitest';
 import {parseAgentDoc, type AgentDoc} from './agent-docs/frontmatter.js';
 import {
   ROUTING_MARKER,
+  compactGlobs,
   renderClaudeMd,
   renderClaudeRule,
   renderCopilotInstructions,
@@ -134,13 +135,42 @@ describe('renderInstructionsFile', () => {
   });
 });
 
+describe('compactGlobs', () => {
+  it('groups siblings that share a parent and a suffix, in first-seen order', () => {
+    expect(
+      compactGlobs(['a/x/**', 'b/q.ts', 'a/y/**', '!a/z/**', 'b/r.ts'])
+    ).toEqual(['a/{x,y}/**', 'b/{q.ts,r.ts}', '!a/z/**']);
+  });
+
+  it('leaves single patterns and root-level files alone', () => {
+    expect(compactGlobs(['package.json', 'src/**/*.css'])).toEqual([
+      'package.json',
+      'src/**/*.css',
+    ]);
+  });
+});
+
 describe('renderRoutingTable', () => {
-  it('emits one row per doc with description and globs', () => {
-    const table = renderRoutingTable([DOC]);
+  it('emits one row per doc with description and grouped globs', () => {
+    const table = renderRoutingTable([
+      {
+        ...DOC,
+        globs: [
+          'packages/openbridge-webcomponents/src/components/**',
+          'packages/openbridge-webcomponents/src/automation/**',
+        ],
+      },
+    ]);
     expect(table).toContain('[a11y](docs/agents/a11y.md)');
     expect(table).toContain('Accessibility (WCAG 2.1 AA)');
     expect(table).toContain(
-      '`packages/openbridge-webcomponents/src/components/**`'
+      '`packages/openbridge-webcomponents/src/{components,automation}/**`'
+    );
+  });
+
+  it('prefixes the doc links for a table rendered outside the repo root', () => {
+    expect(renderRoutingTable([DOC], '../')).toContain(
+      '[a11y](../docs/agents/a11y.md)'
     );
   });
 
@@ -159,7 +189,8 @@ describe('renderCopilotInstructions', () => {
   it('points at AGENTS.md and carries the routing table but no bodies', () => {
     const out = renderCopilotInstructions([DOC]);
     expect(out).toContain('AGENTS.md');
-    expect(out).toContain('[a11y](docs/agents/a11y.md)');
+    // The file lives in .github/, so the links climb one level.
+    expect(out).toContain('[a11y](../docs/agents/a11y.md)');
     expect(out).not.toContain('Body.');
   });
 });
