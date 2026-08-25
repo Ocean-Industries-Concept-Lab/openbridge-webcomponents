@@ -57,105 +57,28 @@ All paths below are relative to `packages/openbridge-webcomponents/`.
 
 ### Comments
 
-Write for a developer reading this file in a month, not for the reviewer of
-this PR. If they would get it from the code, don't write it.
-
-- **WHY, never WHAT.** A comment that restates the code is deleted.
-- **Explanation belongs on the declaration.** Document a class, property or
-  method in its JSDoc. A comment inside a method body is allowed only for a
-  why that has no declaration to live on (a guard that looks removable, a
-  coupling to another file) — three lines at most.
-- **Three lines, at most.** Longer explanations are not comments:
-  - behaviour → a `.spec.ts` test that pins it
-  - CSS / layout / visual behaviour → a Storybook story; the snapshot is the doc
-  - still needs prose → the story's `parameters.docs.description.story`
-- **A title line, then a short paragraph** — in JSDoc, docs and CSS blocks.
-  Two words of heading usually replace four lines of prose.
-- **No history, no dates, no change narration** — no "previously did X",
-  "since #994", "confirmed 2026-08-17", "added to fix Y". The why of a change
-  goes in the commit message and the PR body; `git log` and `git blame` are
-  first-class sources — use them before writing a comment.
-- **State, then cite.** If a reference is used, the sentence stands alone and
-  `(#1234)` is a trailing pointer, never the explanation. One per comment.
-- `TODO(designer): …` marks an open design question. Any other TODO carries an
-  issue: `TODO(#1234): …`.
-- **Keep existing comments when refactoring** unless the change makes them
-  obsolete.
-- **Comment pass before done:** re-read the comments in your diff against
-  these rules; delete what does not earn its lines. `npm run lint:comments`
-  reports the rest.
-
-#### CSS
-
-Comments are expected here — a declaration has no name, type or test to carry
-its intent. One short line per non-obvious declaration, the reason not the
-effect: `overflow: hidden; /* rotated <svg> box leaks arc pixels in wide
-layouts */`. Usual suspects: `overflow`, a `position` that is really a
-containing block, `display: block` on an `<svg>`, `min-width: 0`,
-`!important`, `z-index`, `aspect-ratio`, and any value that must match
-something elsewhere (an outline width, what a ResizeObserver or Chart.js
-measures, a Figma spec). Name magic numbers as custom properties instead of
-commenting them. A one-line `/* ---- Section ---- */` banner is fine in files
-over ~150 lines. Same limits as TS: three lines, no history, no commented-out
-declarations. Delete placeholder-only CSS files.
-
-#### Writing style (comments, JSDoc, docs, PR and issue text)
-
-Write like a developer with two sentences to spare. Not allowed:
-
-- filler openers and closers: "Note that", "It's important to", "It is worth
-  noting", "In summary", "Overall", a closing line that restates the block
-- inflated vocabulary: comprehensive, robust, seamless, leverage, utilize,
-  streamline, delve, ensure(s) that, in order to, essentially, simply
-- restating the name: "`getValue()` gets the value"
-- decoration: emoji, bold on every other phrase, more than one em dash per
-  sentence, a list of three where one item is the point
-- hedging: "might potentially", "it should be noted that this may"
-- chatbot artefacts: "Great question", "Certainly", "Let me", "I've"
-
-**PRs:** summary and screenshot first, long-form at the end if needed. The PR
-body is where root cause, alternatives and verification belong — long is fine
-there, inline in the code it is not.
+WHY, never WHAT. Explanation lives on the declaration's JSDoc; a comment in a
+method body is for a why with no declaration to live on, three lines at most.
+No history, dates or change narration — `git log` carries those. A reference
+is a trailing `(#1234)` pointer, never the explanation. CSS gets one short why
+per non-obvious declaration. No filler, inflated vocabulary or chatbot
+phrasing. The full rules, the writing-style ban list and the PR exemption are
+in [`docs/agents/coding-standards.md`](docs/agents/coding-standards.md);
+`npm run lint:comments` reports what breaks them.
 
 ### Boolean property naming
 
-Always name boolean properties and parameters using **positive** (affirmative) phrasing so that the default value is `false` and the "opt-in" value is `true`.
-
-| Bad (negative)                  | Good (positive)         |
-| ------------------------------- | ----------------------- |
-| `disableAutoAtSetpoint = false` | `autoAtSetpoint = true` |
-| `hideLabels = false`            | `showLabels = true`     |
-| `hideBar = false`               | `hasBar = true`         |
-| `noTooltip = false`             | `showTooltip = true`    |
-
-**Why:** Negative booleans create double-negation confusion (`if (!disableFoo)`) and violate the Lit convention that HTML boolean attributes are absent-means-false. A positive name makes template bindings and story controls read naturally:
-
-```html
-<!-- Clear intent -->
-<obc-gauge showLabels></obc-gauge>
-
-<!-- Confusing double negative -->
-<obc-gauge .hideLabels="${false}"></obc-gauge>
-```
-
-**`attribute: false` for `true`-default booleans:** Because the positive name defaults to `true`, it cannot work as an HTML boolean attribute (presence = true, absence = false — the opposite of what you want). Declare these properties with `attribute: false` so they are only settable via JavaScript:
-
-```ts
-@property({type: Boolean, attribute: false}) autoAtSetpoint = true;
-```
-
-Framework wrappers (React, Vue, Angular, Svelte) always set values via properties, so removing the attribute has no effect on wrapper consumers. For plain HTML usage, the property must be set via JavaScript (`el.autoAtSetpoint = false`).
-
-When refactoring an existing negative boolean, also rename it in the interface, mixin/bundle, stories, and all consumer components to keep the public API consistent.
+Positive names (`showLabels`, never `hideLabels`); a `true`-default boolean is
+declared with `attribute: false`. Rule and examples:
+[`docs/agents/coding-standards.md` § Boolean property naming](docs/agents/coding-standards.md#boolean-property-naming).
 
 ### Storybook title conventions
 
-Story `title` and `name` fields must use **Title Case** — enforced by ESLint rule `openbridge/storybook-title-case` (auto-fixable).
-See [IMPLEMENTATION_GUIDELINES.md § Storybook stories](IMPLEMENTATION_GUIDELINES.md#-storybook-stories) for the full convention.
-
-The lifecycle entry in `meta.tags` (`beta` / `experimental` / `deprecated`) is
-**derived from the component's class JSDoc** and must never be hand-written —
-see [`docs/agents/jsdoc.md` § Component lifecycle tags](docs/agents/jsdoc.md).
+Story `title` and `name` use Title Case (ESLint `openbridge/storybook-title-case`,
+auto-fixable). The lifecycle entry in `meta.tags` is derived from the class
+JSDoc and never hand-written — see
+[`docs/agents/coding-standards.md`](docs/agents/coding-standards.md#storybook-title-conventions)
+and [`docs/agents/jsdoc.md` § Component lifecycle tags](docs/agents/jsdoc.md).
 
 ---
 
@@ -230,6 +153,7 @@ The table below is generated too. Edit `docs/agents/*.md`, never this block.
 | [building-blocks](docs/agents/building-blocks.md) | `packages/openbridge-webcomponents/src/{building-blocks,svghelpers}/**` | SVG-based building block components and shared utilities |
 | [ci-and-release](docs/agents/ci-and-release.md) | `.github/workflows/**`<br>`{.releaserc.json,package.json}`<br>`scripts/**`<br>`packages/openbridge-webcomponents/package.json`<br>`packages/openbridge-webcomponents/script/**`<br>`!packages/openbridge-webcomponents/script/docgen/**` | CI workflows, the semantic-release model, which commit types ship a release, and the two script directories |
 | [circular-charts](docs/agents/circular-charts.md) | `packages/openbridge-webcomponents/src/bars-graphs/{donut-chart,pie-chart,polar-chart,radial-bar-chart}/**`<br>`packages/openbridge-webcomponents/src/charthelpers/**` | Circular chart components (donut, pie, polar, radial-bar) |
+| [coding-standards](docs/agents/coding-standards.md) | `packages/openbridge-webcomponents/src/**/{*.ts,*.css}`<br>`packages/openbridge-webcomponents/script/**/{*.ts,*.mjs}`<br>`packages/openbridge-webcomponents/.storybook/**/*.ts`<br>`!packages/openbridge-webcomponents/src/{icons,generated,manual-icon}/**` | Comment rules, CSS why-comments, the writing-style ban list, boolean naming and Storybook titles |
 | [css-postcss](docs/agents/css-postcss.md) | `packages/openbridge-webcomponents/src/**/*.css` | PostCSS mixins, the two-layer colour model, size variants and font mixins |
 | [docgen](docs/agents/docgen.md) | `packages/openbridge-webcomponents/script/docgen/**` | The OpenAI-backed JSDoc generation CLI and its review-copy workflow |
 | [external-scale](docs/agents/external-scale.md) | `packages/openbridge-webcomponents/src/building-blocks/{external-scale,bar-vertical,bar-horizontal}/**`<br>`packages/openbridge-webcomponents/src/navigation-instruments/{gauge-vertical,gauge-horizontal,gauge-trend}/**` | External scale renderer and bar/gauge wrappers |
@@ -308,33 +232,10 @@ Snapshot baselines: `__vis__/linux/__baselines__/` (CI) and `__vis__/darwin/__ba
 
 ### vue-demo visual smoke tests
 
-Run from `packages/vue-demo/`. A Playwright suite snapshots the demo screens to
-catch visual regressions in OpenBridge components during updates. It reuses the
-package's existing `@playwright/test` (no new dependency).
-
-```bash
-npm run test:visual          # compare screens against committed baselines
-npm run test:visual:update   # regenerate baselines after an intended change
-npm run test:visual          # ALWAYS re-run after updating to confirm stability
-```
-
-- Tests live in `e2e/visual/`; baselines are committed under
-  `e2e/visual/__screenshots__/<platform>/` (per-platform, like the core suite).
-- The suite is its own Playwright project (`--project=visual`); the functional
-  e2e suite (`npm run test:e2e`) ignores it and needs no baselines.
-- **Determinism** (see `e2e/visual/helpers.ts`): each test freezes `Date` via
-  `page.clock`, neutralizes repeating animation sources (`setInterval` and
-  `requestAnimationFrame`) so simulations render a fixed initial state, stubs
-  external data (weather, logos, QR) and blocks other external origins, waits
-  for network idle, and captures with `page.screenshot({ animations: 'disabled' })`
-  so CSS transitions inside web-component shadow DOM settle.
-- **Coverage:** 11 routes plus 3 interactive overlays (command menu, alert menu,
-  depth dialog) opened via Playwright locators.
-- **Skipped:** `/ecdis` (live WebGL map + AIS network stream) and `/ar` (CDN HLS
-  video) cannot be frozen into a deterministic frame.
-- Pixel baselines are environment-sensitive; regenerate them in the CI image
-  (the repo already uses Docker for the core package's snapshot tests) to keep
-  CI stable.
+A Playwright suite in `packages/vue-demo/e2e/visual/` snapshots the demo
+screens (`npm run test:visual` / `npm run test:visual:update` from that
+package). How it stays deterministic, what it skips and where the baselines
+live: [`docs/agents/testing-visual.md` § vue-demo Playwright suite](docs/agents/testing-visual.md#vue-demo-playwright-suite).
 
 ### Pre-commit Hooks
 
@@ -423,7 +324,7 @@ automatically when editing a `.css` file.
     component (`gh pr list --search "<component>"`). Auto-memory and local plan
     files are private to one developer — never a coordination surface.
 20. **Open a draft PR early** with the design record in the body.
-21. **Comment pass is part of done** (§ 2 Comments).
+21. **Comment pass is part of done** (§ 2; [`docs/agents/coding-standards.md`](docs/agents/coding-standards.md)).
 
 ---
 

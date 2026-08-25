@@ -126,7 +126,7 @@ export const commentRules = {
       type: 'suggestion',
       docs: {description: 'No filler, inflated vocabulary or chatbot artefacts in comments and JSDoc.'},
       schema: [],
-      messages: {phrase: 'Comment contains "{{phrase}}" — say it plainly or delete it (AGENTS.md § 2 Writing style).'},
+      messages: {phrase: 'Comment contains "{{phrase}}" — say it plainly or delete it (docs/agents/coding-standards.md § Writing style).'},
     },
     create(context) {
       const sourceCode = context.sourceCode ?? context.getSourceCode();

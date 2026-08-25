@@ -622,7 +622,7 @@ export const openbridgePlugin = {
             );
             if (!propertyDecorator) return;
             // Check if the property decorator has attribute: false — that's the
-            // accepted escape hatch for true-default booleans (see AGENTS.md § 2).
+            // accepted escape hatch for true-default booleans (see docs/agents/coding-standards.md).
             const property =
               propertyDecorator.expression?.arguments[0]?.properties?.find(
                 (p) =>

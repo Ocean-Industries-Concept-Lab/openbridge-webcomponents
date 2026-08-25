@@ -888,7 +888,7 @@ Booleans that default to `true` must use `attribute: false` to remove the HTML a
 
 Framework wrappers (React, Vue, etc.) always set values via properties, so removing the attribute has no effect on wrapper consumers.
 
-See [AGENTS.md § 2](AGENTS.md#2-coding-standards) for the full rule and examples.
+See [docs/agents/coding-standards.md § Boolean property naming](docs/agents/coding-standards.md#boolean-property-naming) for the full rule and examples.
 
 ## 🧭 SVG based components
 

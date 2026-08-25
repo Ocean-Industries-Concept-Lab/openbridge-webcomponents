@@ -105,7 +105,7 @@ Please ensure your title is clear and follows the syntax.
 
 - Include screenshots and animated GIFs in your pull request whenever possible.
 - Follow the coding conventions of the project.
-- Document new code following `AGENTS.md` § 2 (comments) and § 3 (JSDoc). Before committing, `npm run lint:comments` reports comment-style warnings; `npm run comments:rewrite -- <folder>` (Claude Code, uses your own tokens) rewrites them. Claude Code users may prefer the `Concise` output style (`/config` → Output style).
+- Document new code following [`docs/agents/coding-standards.md`](docs/agents/coding-standards.md) (comments) and [`docs/agents/jsdoc.md`](docs/agents/jsdoc.md) (JSDoc). Before committing, `npm run lint:comments` reports comment-style warnings; `npm run comments:rewrite -- <folder>` (Claude Code, uses your own tokens) rewrites them. Claude Code users may prefer the `Concise` output style (`/config` → Output style).
 - End all files with a newline.
 
 ## Styleguides

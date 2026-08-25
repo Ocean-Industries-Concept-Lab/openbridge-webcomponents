@@ -112,7 +112,7 @@ describe('comment-style', () => {
     });
   });
 
-  it('flags the three phrases AGENTS.md § 2 lists that were missing', () => {
+  it('flags the three phrases the writing-style ban list was missing', () => {
     tester.run('comment-style', commentRules['comment-style'], {
       valid: [
         '// The fallback keeps the old value until layout settles\nconst a = 1;',

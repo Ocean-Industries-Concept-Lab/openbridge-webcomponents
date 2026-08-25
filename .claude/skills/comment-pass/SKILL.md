@@ -5,7 +5,7 @@ disable-model-invocation: true
 allowed-tools: Read, Edit, Grep, Glob
 ---
 
-Apply `AGENTS.md` § 2 *Comments* (including *CSS* and *Writing style*) to every
+Apply `docs/agents/coding-standards.md` (*Comments*, *CSS*, *Writing style*) to every
 `.ts` and `.css` file under `$ARGUMENTS`.
 
 Procedure, per file:

@@ -232,7 +232,7 @@ reaches the manifest and the description. Write a manual `if:` in the story's
 
 ## Comment style
 
-Implementation comments follow `AGENTS.md` § 2 _Comments_ (why-only, three
+Implementation comments follow [`coding-standards.md`](../../docs/agents/coding-standards.md) (why-only, three
 lines, no history, state-then-cite, CSS one-liners, writing style). The class
 and module JSDoc described in this file is separate and always required.
 

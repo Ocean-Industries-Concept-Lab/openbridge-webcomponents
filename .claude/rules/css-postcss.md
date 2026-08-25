@@ -32,4 +32,4 @@ paths:
 
 ## Comments
 
-One short line per non-obvious declaration — see `AGENTS.md` § 2 _CSS_.
+One short line per non-obvious declaration — see [`coding-standards.md` § CSS](../../docs/agents/coding-standards.md#css).
