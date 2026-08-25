@@ -90,7 +90,7 @@ function patternInstructions(pattern: CodePattern): string {
       return [
         'This file is an ABSTRACT BASE CLASS (not registered as a custom element).',
         'Insert JSDoc for the class and every public property/event.',
-        'At the end of the class JSDoc tag block, include @ignore to signal this is not a standalone API.',
+        'Do not add @ignore: the class must stay in the manifest so subclasses inherit its property docs and stories can read its description.',
         'Document which concrete subclasses use this base (if visible from imports/comments).',
         'Include @slot and @fires tags as usual.',
       ].join('\n');

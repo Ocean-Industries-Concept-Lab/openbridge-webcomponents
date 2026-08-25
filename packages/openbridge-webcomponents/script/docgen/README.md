@@ -56,11 +56,11 @@ Inspect the diff, then rename or copy the new JSDoc into the real file.
 
 The script auto-detects three patterns and tailors the GPT prompt accordingly:
 
-| Pattern                  | Detection heuristic                                        | Prompt behavior                                                           |
-| ------------------------ | ---------------------------------------------------------- | ------------------------------------------------------------------------- |
-| **Concrete component**   | Has `@customElement(...)` decorator                        | JSDoc on class + properties; `@slot`/`@fires` tags                        |
-| **Pure function module** | No class or no LitElement - only exported functions        | Module-level JSDoc at top of file; short JSDoc per exported function/type |
-| **Abstract base class**  | Has `class ... extends LitElement` but no `@customElement` | JSDoc on class + properties; `@ignore` tag; documents concrete subclasses |
+| Pattern                  | Detection heuristic                                        | Prompt behavior                                                                                  |
+| ------------------------ | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| **Concrete component**   | Has `@customElement(...)` decorator                        | JSDoc on class + properties; `@slot`/`@fires` tags                                               |
+| **Pure function module** | No class or no LitElement - only exported functions        | Module-level JSDoc at top of file; short JSDoc per exported function/type                        |
+| **Abstract base class**  | Has `class ... extends LitElement` but no `@customElement` | JSDoc on class (no `@ignore`); properties as `@property` tags; stories read it via `classDocs()` |
 
 ---
 

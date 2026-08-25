@@ -174,7 +174,7 @@ The class has rich JSDoc and `@property` declarations, but it cannot be instanti
 **Story file:**
 - Set `component:` to a concrete subclass tag and `parameters.docs.description.component: classDocs('ObcChartLineBase')`.
 
-**Keeping docs in sync:** Same as pure functions — the abstract class JSDoc is the source of truth, and the story description should mirror/replicate it.
+The story reads the class docs from the manifest via `classDocs()`; there is no copy to keep in sync.
 
 ### Summary table
 
