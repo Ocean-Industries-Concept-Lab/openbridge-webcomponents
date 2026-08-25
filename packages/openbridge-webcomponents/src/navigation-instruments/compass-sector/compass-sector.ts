@@ -107,6 +107,36 @@ function normalizeAngle(a: number): number {
  * - Enable `zoomToFitArc` to enlarge the arc to fill the viewport.
  * - For a full‑circle compass, use `<obc-compass>` instead.
  *
+ * @availableWhen newHeadingSetpoint headingSetpoint!=null
+ * @availableWhen atHeadingSetpoint headingSetpoint!=null && autoAtHeadingSetpoint==false
+ * @availableWhen headingSetpointAtZeroDeadband headingSetpoint!=null
+ * @availableWhen headingSetpointOverride headingSetpoint!=null
+ * @availableWhen autoAtHeadingSetpoint headingSetpoint!=null
+ * @availableWhen autoAtHeadingSetpointDeadband headingSetpoint!=null && autoAtHeadingSetpoint==true
+ * @availableWhen animateSetpoint headingSetpoint!=null
+ * @availableWhen touching headingSetpoint!=null
+ * @availableWhen rotPosition rotType!=undefined
+ * @property rateOfTurnDegreesPerMinute - Measured rate of turn in degrees per minute (positive = starboard).
+ *   Drives both the bar extent and (after multiplication by
+ *   `rotDotAnimationFactor`) the spinning dot animation. When `undefined`,
+ *   falls back to the deprecated `rotationsPerMinute`.
+ * @availableWhen rateOfTurnDegreesPerMinute rotType!=undefined
+ * @property rotDotAnimationFactor - Visual amplification applied only to the spinning dot animation
+ *   (not to the bar extent). Default `18` keeps the legacy visual feel
+ *   (≈1 rpm at 20°/min).
+ * @availableWhen rotDotAnimationFactor rotType!=undefined
+ * @availableWhen rotPortStarboard rotType!=undefined
+ * @availableWhen rotAtZeroDeadband rotType==bar
+ * @availableWhen priorityElements priority==enhanced
+ * @property hasReadout - When `true`, shows a centered `<obc-readout>` under the arc displaying the
+ *   heading (label `HDG`, unit `DEG`). The value color follows the HDG entry in
+ *   `priorityElements`, matching the HDG arrow.
+ * @property label - Readout label. Default `HDG`.
+ * @availableWhen label hasReadout==true
+ * @property unit - Readout unit. Default `DEG`.
+ * @availableWhen unit hasReadout==true
+ * @property fractionDigits - Number of fraction digits shown in the readout. Default `0`.
+ * @availableWhen fractionDigits hasReadout==true
  * @stable
  */
 @customElement('obc-compass-sector')
@@ -115,43 +145,21 @@ export class ObcCompassSector extends LitElement {
   @property({type: Number}) courseOverGround = 0;
 
   @property({type: Number}) headingSetpoint: number | null = null;
-  /** @availableWhen headingSetpoint!=null */
   @property({type: Number}) newHeadingSetpoint: number | undefined;
-  /** @availableWhen headingSetpoint!=null && autoAtHeadingSetpoint==false */
   @property({type: Boolean}) atHeadingSetpoint: boolean = false;
-  /** @availableWhen headingSetpoint!=null */
   @property({type: Number}) headingSetpointAtZeroDeadband: number = 0.5;
-  /** @availableWhen headingSetpoint!=null */
   @property({type: Boolean}) headingSetpointOverride: boolean = false;
-  /** @availableWhen headingSetpoint!=null */
   @property({type: Boolean, attribute: false}) autoAtHeadingSetpoint = true;
-  /** @availableWhen headingSetpoint!=null && autoAtHeadingSetpoint==true */
   @property({type: Number}) autoAtHeadingSetpointDeadband: number = 2;
-  /** @availableWhen headingSetpoint!=null */
   @property({type: Boolean}) animateSetpoint: boolean = false;
-  /** @availableWhen headingSetpoint!=null */
   @property({type: Boolean}) touching: boolean = false;
   @property({type: Array, attribute: false}) headingAdvices: AngleAdvice[] = [];
 
   @property({type: Number}) minFOV: number = 30;
 
   @property({type: String}) rotType: RotType | undefined;
-  /** @availableWhen rotType!=undefined */
   @property({type: String}) rotPosition: RotPosition = RotPosition.innerCircle;
-  /**
-   * Measured rate of turn in degrees per minute (positive = starboard).
-   * Drives both the bar extent and (after multiplication by
-   * `rotDotAnimationFactor`) the spinning dot animation. When `undefined`,
-   * falls back to the deprecated `rotationsPerMinute`.
-   * @availableWhen rotType!=undefined
-   */
   @property({type: Number}) rateOfTurnDegreesPerMinute: number | undefined;
-  /**
-   * Visual amplification applied only to the spinning dot animation
-   * (not to the bar extent). Default `18` keeps the legacy visual feel
-   * (≈1 rpm at 20°/min).
-   * @availableWhen rotType!=undefined
-   */
   @property({type: Number}) rotDotAnimationFactor: number = 18;
   /**
    * @deprecated Use `rateOfTurnDegreesPerMinute` (and optionally
@@ -170,40 +178,20 @@ export class ObcCompassSector extends LitElement {
    * @availableWhen rotType==bar
    */
   @property({type: Number}) rotMaxValue: number = 60;
-  /** @availableWhen rotType!=undefined */
   @property({type: Boolean}) rotPortStarboard: boolean = false;
-  /** @availableWhen rotType==bar */
   @property({type: Number}) rotAtZeroDeadband: number = ROT_ZERO_DEADBAND_DEG;
 
   @property({type: String}) state: InstrumentState = InstrumentState.active;
   @property({type: String}) priority: Priority = Priority.regular;
-  /** @availableWhen priority==enhanced */
   @property({type: Array, attribute: false})
   priorityElements: CompassSectorPriorityElement[] = [
     CompassSectorPriorityElement.hdg,
   ];
   @property({type: Boolean}) tickmarksInside: boolean = false;
   @property({type: Boolean}) zoomToFitArc: boolean = false;
-  /**
-   * When `true`, shows a centered `<obc-readout>` under the arc displaying the
-   * heading (label `HDG`, unit `DEG`). The value color follows the HDG entry in
-   * `priorityElements`, matching the HDG arrow.
-   */
   @property({type: Boolean}) hasReadout: boolean = false;
-  /**
-   * Readout label. Default `HDG`.
-   * @availableWhen hasReadout==true
-   */
   @property({type: String}) label = 'HDG';
-  /**
-   * Readout unit. Default `DEG`.
-   * @availableWhen hasReadout==true
-   */
   @property({type: String}) unit = 'DEG';
-  /**
-   * Number of fraction digits shown in the readout. Default `0`.
-   * @availableWhen hasReadout==true
-   */
   @property({type: Number}) fractionDigits = 0;
 
   private _headingSp = new SetpointBundle({
