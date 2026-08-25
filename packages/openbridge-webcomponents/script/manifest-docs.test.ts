@@ -1,4 +1,3 @@
-// script/manifest-docs.test.ts
 import {describe, expect, it} from 'vitest';
 import {createManifestDocs} from '../.storybook/manifest-docs-core.js';
 
@@ -19,6 +18,7 @@ const manifest = {
           tagName: 'obc-x',
           members: [
             {name: 'mode', availableWhenIf: {arg: 'kind', eq: 'linear'}},
+            {name: 'size', availableWhenIf: {arg: 'stacked', truthy: true}},
             {name: 'plain'},
           ],
         },
@@ -38,13 +38,32 @@ describe('manifest docs helpers', () => {
     expect(classDocs('ObcBase')).toBe('Base docs.');
     expect(classDocs('Nope')).toBe('');
   });
-  it('adds if: from availableWhenIf without overriding a story-level if', () => {
-    const ctx = {
+
+  it('leaves the argType alone when the story does not set the gate arg', () => {
+    const out = availableWhenEnhancer({
       component: 'obc-x',
-      argTypes: {mode: {name: 'mode'}, plain: {name: 'plain', if: {arg: 'z'}}},
-    } as never;
-    const out = availableWhenEnhancer(ctx);
+      initialArgs: {mode: 'linear'},
+      argTypes: {mode: {name: 'mode'}},
+    } as never);
+    expect(out.mode.if).toBeUndefined();
+  });
+
+  it('adds if: when the story sets the gate arg', () => {
+    const out = availableWhenEnhancer({
+      component: 'obc-x',
+      initialArgs: {kind: 'linear', stacked: false},
+      argTypes: {mode: {name: 'mode'}, size: {name: 'size'}},
+    } as never);
     expect(out.mode.if).toEqual({arg: 'kind', eq: 'linear'});
-    expect(out.plain.if).toEqual({arg: 'z'});
+    expect(out.size.if).toEqual({arg: 'stacked', truthy: true});
+  });
+
+  it('keeps a story-level if over the manifest condition', () => {
+    const out = availableWhenEnhancer({
+      component: 'obc-x',
+      initialArgs: {kind: 'linear'},
+      argTypes: {mode: {name: 'mode', if: {arg: 'other'}}},
+    } as never);
+    expect(out.mode.if).toEqual({arg: 'other'});
   });
 });

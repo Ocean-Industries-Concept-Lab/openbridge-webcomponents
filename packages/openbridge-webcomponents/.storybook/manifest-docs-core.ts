@@ -35,6 +35,17 @@ export function createManifestDocs(manifest: Manifest) {
     for (const m of decl.members) {
       const existing = out[m.name];
       if (!m.availableWhenIf || !existing || existing.if) continue;
+      // Storybook drops every arg whose `if` evaluates false from `render()`
+      // and hides its control, and it never seeds args from the component's
+      // own defaults. Gating on an arg the story leaves unset would therefore
+      // evaluate against `undefined` and delete properties the story does set,
+      // so a gate applies only when the story supplies the gate arg itself.
+      const gate = (m.availableWhenIf as {arg?: unknown}).arg;
+      if (
+        typeof gate !== 'string' ||
+        !Object.hasOwn(context.initialArgs ?? {}, gate)
+      )
+        continue;
       out[m.name] = {
         ...existing,
         if: m.availableWhenIf as StrictArgTypes[string]['if'],
