@@ -112,7 +112,7 @@ const meta: Meta = {
       .yTicksLimit=${_args.yTicksLimit}
       .yStepSize=${_args.yStepSize}
       .showPoints=${_args.showPoints}
-      .fillMode=${_args.fillMode}
+      .fillMode=${_args.fill ? _args.fillMode : undefined}
       .stacked=${_args.stacked}
       .legend=${_args.legend}
       .priority=${_args.priority}
@@ -187,7 +187,7 @@ const meta: Meta = {
     fill: {
       control: 'boolean',
       description:
-        'Story-only toggle that enables the fillMode control (not a component property).',
+        'Story-only toggle (not a component property): off leaves `fillMode` unset so the area renders unfilled; on applies `fillMode`.',
     },
     fillMode: {
       control: {type: 'radio'},
