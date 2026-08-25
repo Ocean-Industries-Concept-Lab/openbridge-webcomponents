@@ -329,7 +329,6 @@ const LINE_GRAPH_DIMENSION_PROP_NAMES = [
  * (remove this tag and the `.fill=` usages in the stories/wrappers). Kept as-is
  * here to avoid changing the public API surface in a docs-only cleanup.
  *
- * @property {boolean} fill - Enable area fill under/between lines. Use with `fillMode` to control fill style. Default: `false`.
  * @ignore This is an abstract base class. Use concrete implementations like ObcLineGraph or ObcAreaGraph instead.
  * @experimental
  */

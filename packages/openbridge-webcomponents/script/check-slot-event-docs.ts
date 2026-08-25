@@ -39,13 +39,14 @@
  * - **Empty description (warning):** a `@slot`/`@fires` tag with only a name and
  *   no descriptive text. These become blank cells in the manifest / Storybook
  *   controls; warnings do not fail CI.
- * - **Class-level `@property` tag (error):** properties must be documented
- *   inline above their field declarations (AGENTS.md §3.6). A tag in the class
- *   JSDoc block overrides the inline doc and can inject a ghost member for a
- *   non-existent property (issue #1043). A short allowlist covers documented
- *   exceptions (property-injecting mixins, one legacy chart-base tag). A
- *   class-level `@attr`/`@attribute` that documents a CSS-only attribute with
- *   no backing `@property` field is allowed and is not flagged.
+ * - **Ghost class-level `@property` tag (error):** class-level `@property`
+ *   tags are the documentation home for properties (AGENTS.md §3.6). A
+ *   `@property`/`@prop` tag in the class JSDoc whose name is not a
+ *   `@property()`-decorated field anywhere in `src/` (a global set — mixins
+ *   and base classes count) injects a ghost member into `custom-elements.json`
+ *   (issue #1043). A class-level `@attr`/`@attribute` that documents a
+ *   CSS-only attribute with no backing `@property` field is allowed and is
+ *   not flagged.
  *
  * There is deliberately no phantom-`@fires` *error*: unlike slots (which must be
  * a `<slot>` element in the component's own shadow DOM), a documented event may
@@ -354,31 +355,27 @@ async function run(): Promise<void> {
     }
   }
 
-  // Class-level @property / @attr JSDoc tags (AGENTS.md §3.6): properties must be
-  // documented inline above their field declarations. A class-level tag overrides
-  // the inline doc and can inject a ghost member for a property that does not
-  // exist (issue #1043). Allowlisted files are documented exceptions: mixins that
-  // inject properties into consumers, and one legacy `fill` tag on the chart base.
-  const PROPERTY_TAG_ALLOWLIST = [
-    'svghelpers/setpoint-mixin.ts',
-    'svghelpers/setpoint-bundle.ts',
-    'building-blocks/chart-line/chart-line-base.ts',
-  ];
-  // Only `@property` is flagged. `@attr`/`@attribute` in a class block is the
-  // legitimate way to document a CSS-only attribute that has no backing
-  // `@property` field (e.g. slider's `hugcontainer`), so it is not an error.
-  // Matches both the multi-line (` * @property`) and single-line
-  // (`/** @property`) JSDoc block-comment forms.
-  const propTagRe = /^[ \t]*(?:\/\*\*|\*)[ \t]*@property\b/gm;
-  for (const rel of files.sort()) {
-    if (PROPERTY_TAG_ALLOWLIST.some((a) => rel.endsWith(a))) continue;
+  // Class-level `@property` tags are the documentation home for properties
+  // (AGENTS.md § 3.6). A tag naming a property that exists nowhere injects a
+  // ghost member into custom-elements.json (issue #1043) — error.
+  const decoratedFieldRe =
+    /@property\([^)]*\)\s*(?:accessor\s+|override\s+|public\s+|readonly\s+)*([\w$]+)\??\s*[:=;]/g;
+  const knownFields = new Set<string>();
+  for (const rel of files) {
     const source = fs.readFileSync(path.join(cwd, rel), 'utf8');
-    const matches = source.match(propTagRe);
-    if (matches && matches.length > 0) {
-      errors.push({
-        file: rel,
-        message: `has ${matches.length} class-level @property JSDoc tag(s) — document each property inline above its field declaration instead (AGENTS.md §3.6; these override inline docs and can create ghost manifest members)`,
-      });
+    for (const m of source.matchAll(decoratedFieldRe)) knownFields.add(m[1]);
+  }
+  const headerPropRe =
+    /^[ \t]*(?:\/\*\*|\*)[ \t]*@(?:property|prop)\s+(?:\{[^}]*\}\s+)?([\w$]+)/gm;
+  for (const rel of files.sort()) {
+    const source = fs.readFileSync(path.join(cwd, rel), 'utf8');
+    for (const m of source.matchAll(headerPropRe)) {
+      if (!knownFields.has(m[1])) {
+        errors.push({
+          file: rel,
+          message: `class-level @property "${m[1]}" names no @property() field in src/ — ghost manifest member (AGENTS.md §3.6)`,
+        });
+      }
     }
   }
 
