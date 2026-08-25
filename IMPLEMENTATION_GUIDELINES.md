@@ -580,7 +580,15 @@ All size-dependent tokens are defined four times in `variables.css`, once per si
 | `:root`, `.obc-component-size-regular` | 48 px        | 32 px         | 24 px     |
 | `.obc-component-size-medium`           | 56 px        | 40 px         | 32 px     |
 | `.obc-component-size-large`            | 72 px        | 56 px         | 40 px     |
-| `.obc-component-size-xl`               | (larger)     | (larger)      | (larger)  |
+| `.obc-component-size-xl`               | 96 px        | 72 px         | 48 px     |
+
+`regular` is the smallest size class, and `:root` carries the same values, so
+48 px is the touch-target floor even when no size class is set. Individual
+components may follow their own scaling curve through their per-component
+tokens (e.g. `--automation-components-button-touch-target-size` is 48/72/96/96
+across the four classes), but no class takes any touch target below 48 px.
+Minimum-size rules and the standards behind them live in
+[`docs/agents/a11y.md` § Touch & pointer target size](docs/agents/a11y.md).
 
 Each class overrides the same variable names (`--global-size-spacing-touch-target-min`, `--global-size-spacing-visual-target-min`, `--global-size-spacing-icon-icon-size-regular`, all `--ui-components-*` sizing tokens, typography tokens, etc.) with scaled values.
 
