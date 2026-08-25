@@ -208,9 +208,9 @@ describe('injectDts', () => {
       ],
     });
     const src =
-      'export declare class ObcG extends LitElement {\n    first: number; // }\n    second: string; /* { */\n    third: number;\n}\n';
+      'export declare class ObcG extends LitElement {\n    first: number; /* { */\n    second: string; // }\n    third: number;\n}\n';
     expect(injectDts(src, docs)).toBe(
-      'export declare class ObcG extends LitElement {\n    first: number; // }\n    second: string; /* { */\n    /** The third field. */\n    third: number;\n}\n'
+      'export declare class ObcG extends LitElement {\n    first: number; /* { */\n    second: string; // }\n    /** The third field. */\n    third: number;\n}\n'
     );
   });
 });
