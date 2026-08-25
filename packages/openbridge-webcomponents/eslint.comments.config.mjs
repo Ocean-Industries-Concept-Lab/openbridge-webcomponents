@@ -12,6 +12,12 @@ export default [
     files: ['src/**/*.ts'],
     ignores: ['src/icons/**', 'src/generated/**', 'src/manual-icon/**'],
     languageOptions: {parser: tsParser, ecmaVersion: 2022, sourceType: 'module'},
+    // This config only ever registers the five openbridge-comments/* rules, so
+    // an eslint-disable comment for any main-config rule (@typescript-eslint/*,
+    // openbridge/*) looks "unused" here even though the main config needs it.
+    // Without this, `--fix` deletes those directives (issue found in the
+    // Task 8 migration trial).
+    linterOptions: {reportUnusedDisableDirectives: 'off'},
     plugins: {
       '@typescript-eslint': typescriptEslint,
       openbridge: __testables.openbridgePlugin,

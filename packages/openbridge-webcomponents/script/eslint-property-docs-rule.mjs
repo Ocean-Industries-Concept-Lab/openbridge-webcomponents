@@ -3,6 +3,11 @@ const PROP_LINE_RE = /^@(?:property|prop)\s+(\{[^}]*\}\s+)?([\w$]+)/;
 const AVAIL_LINE_RE = /^@availableWhen\s+([\w$]+)\s+(.+)$/;
 const ANY_TAG_RE = /^@(\w+)(?:\s+(.*))?$/;
 const MARKDOWN_RE = /^(\s*[-*+] |\s*\d+\. |\s*\||#|```)/;
+const TYPEDEF_RE = /^@typedef\b/;
+// A tag glued onto the end of a description on the same physical line (e.g.
+// `/** Desc. @availableWhen off==true */`) — split it off before tag
+// detection, since ANY_TAG_RE only recognizes a tag at the start of a line.
+const INLINE_TAG_RE = / (@availableWhen|@default)(?=\s)/;
 
 export const isJsDoc = (c) => c.type === 'Block' && c.value.startsWith('*');
 
@@ -13,10 +18,17 @@ export function jsDocLines(comment) {
   return lines;
 }
 
-export function classifyFieldDoc(lines) {
+export function classifyFieldDoc(lines, initializerText) {
+  // Pull any same-line `@availableWhen`/`@default` off the end of a
+  // description (`'Desc. @availableWhen x==true'` -> two lines) so the
+  // line-anchored tag detection below sees it as a tag, not prose.
+  const split = lines.flatMap((l) => {
+    const m = INLINE_TAG_RE.exec(l);
+    return m ? [l.slice(0, m.index), l.slice(m.index + 1)] : [l];
+  });
   const text = [];
   const tags = [];
-  for (const l of lines) {
+  for (const l of split) {
     const m = ANY_TAG_RE.exec(l.trim());
     if (m) tags.push({tag: m[1], rest: m[2] || ''});
     else if (tags.length) tags[tags.length - 1].rest += ' ' + l.trim();
@@ -27,6 +39,14 @@ export function classifyFieldDoc(lines) {
   if (text.some((l) => MARKDOWN_RE.test(l))) return {ok: false, reason: 'markdown structure'};
   while (text.length && text[text.length - 1] === '') text.pop();
   if (text.some((l) => l === '')) return {ok: false, reason: 'multiple paragraphs'};
+  const def = tags.find((t) => t.tag === 'default');
+  // `initializerText` is only supplied by the rule's own call site — direct
+  // unit tests of classifyFieldDoc omit it — so `undefined` means "not
+  // checked" rather than "no initializer" — that's `null`, which never
+  // matches a present @default tag and correctly falls through to `manual`.
+  if (def && initializerText !== undefined && def.rest.trim() !== (initializerText ?? '').trim()) {
+    return {ok: false, reason: '@default differs from the initializer'};
+  }
   const avail = tags.find((t) => t.tag === 'availableWhen');
   return {ok: true, text, availableWhen: avail ? avail.rest.trim() : null};
 }
@@ -108,6 +128,10 @@ export const propertyDocsRule = {
         const direct = node.superClass && node.superClass.type === 'Identifier' && node.superClass.name === 'LitElement';
         const classDoc = leadingJsDoc(sourceCode, node);
         const headerLines = classDoc ? jsDocLines(classDoc.comment) : [];
+        // cem ignores every class-level tag of a JSDoc block that contains
+        // @typedef, so hoisting @property tags into such a header produces
+        // empty manifest descriptions. Treat it like "no usable class doc".
+        const hasTypedef = headerLines.some((l) => TYPEDEF_RE.test(l));
         const seen = new Set();
         headerLines.forEach((l) => {
           const p = PROP_LINE_RE.exec(l);
@@ -129,9 +153,10 @@ export const propertyDocsRule = {
         for (const f of fields) {
           const doc = leadingJsDoc(sourceCode, f);
           if (!doc) continue;
-          const cls = classifyFieldDoc(jsDocLines(doc.comment));
-          if (!cls.ok || !classDoc) {
-            context.report({loc: doc.comment.loc, messageId: 'manual', data: {name: f.key.name, reason: classDoc ? cls.reason : 'class has no JSDoc'}});
+          const cls = classifyFieldDoc(jsDocLines(doc.comment), f.value ? sourceCode.getText(f.value) : null);
+          if (!cls.ok || !classDoc || hasTypedef) {
+            const reason = !classDoc ? 'class has no JSDoc' : hasTypedef ? 'class JSDoc contains @typedef' : cls.reason;
+            context.report({loc: doc.comment.loc, messageId: 'manual', data: {name: f.key.name, reason}});
             continue;
           }
           context.report({loc: doc.comment.loc, messageId: 'inline', data: {name: f.key.name}});
