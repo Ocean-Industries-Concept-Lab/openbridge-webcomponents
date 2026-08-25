@@ -159,7 +159,10 @@ describe('collectEnums', () => {
   it('resolves a member by name, by qualified name and by string value', () => {
     const enums = collectEnums(
       ts,
-      sf('src/t.ts', "export enum T {\n  Linear = 'linear',\n  Circular = 'circular',\n}\n")
+      sf(
+        'src/t.ts',
+        "export enum T {\n  Linear = 'linear',\n  Circular = 'circular',\n}\n"
+      )
     );
     expect(enums.get('Linear')).toBe('linear');
     expect(enums.get('T.Linear')).toBe('linear');

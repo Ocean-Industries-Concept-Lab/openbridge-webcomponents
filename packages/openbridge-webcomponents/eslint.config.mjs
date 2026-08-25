@@ -307,7 +307,8 @@ function unwrapTypeExpression(node) {
   let current = node;
   while (
     current &&
-    (current.type === 'TSSatisfiesExpression' || current.type === 'TSAsExpression')
+    (current.type === 'TSSatisfiesExpression' ||
+      current.type === 'TSAsExpression')
   ) {
     current = current.expression;
   }
@@ -492,7 +493,8 @@ export const openbridgePlugin = {
 
         return {
           VariableDeclarator(node) {
-            if (node.id.type !== 'Identifier' || node.id.name !== 'meta') return;
+            if (node.id.type !== 'Identifier' || node.id.name !== 'meta')
+              return;
 
             const meta = unwrapTypeExpression(node.init);
             if (!meta || meta.type !== 'ObjectExpression') return;
@@ -529,7 +531,10 @@ export const openbridgePlugin = {
                   if (titleProperty) {
                     const next = sourceCode.getTokenAfter(titleProperty);
                     return next && next.value === ','
-                      ? fixer.insertTextAfter(next, `\n  tags: ['${expected}'],`)
+                      ? fixer.insertTextAfter(
+                          next,
+                          `\n  tags: ['${expected}'],`
+                        )
                       : fixer.insertTextAfter(
                           titleProperty,
                           `,\n  tags: ['${expected}']`

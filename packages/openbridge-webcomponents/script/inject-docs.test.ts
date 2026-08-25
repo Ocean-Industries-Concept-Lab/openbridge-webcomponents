@@ -172,7 +172,11 @@ describe('injectDts', () => {
               kind: 'class',
               name: 'ObcF',
               members: [
-                {kind: 'field', name: 'second', description: 'The second field.'},
+                {
+                  kind: 'field',
+                  name: 'second',
+                  description: 'The second field.',
+                },
               ],
             },
           ],
