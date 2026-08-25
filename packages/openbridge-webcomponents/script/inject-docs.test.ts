@@ -51,6 +51,18 @@ describe('injectDts', () => {
     const src = 'export declare class ObcD extends LitElement {\n    a: number;\n    get icon(): {\n        a: string;\n        b: string;\n    } | null;\n}\n';
     expect(injectDts(src, nestedDocs)).toBe('export declare class ObcD extends LitElement {\n    /** The real field. */\n    a: number;\n    get icon(): {\n        a: string;\n        b: string;\n    } | null;\n}\n');
   });
+
+  it('ignores a stray `{` inside an existing comment when tracking brace depth', () => {
+    const secondDocs = docsFromManifest({
+      modules: [{path: 'src/e.ts', declarations: [{kind: 'class', name: 'ObcE', members: [
+        {kind: 'field', name: 'second', description: 'The second field.'},
+      ]}]}],
+    });
+    const src = 'export declare class ObcE extends LitElement {\n    /**\n     * Example: press the { key to expand.\n     */\n    first: string;\n    second: number;\n}\n';
+    const out = injectDts(src, secondDocs);
+    expect(out).toBe('export declare class ObcE extends LitElement {\n    /**\n     * Example: press the { key to expand.\n     */\n    first: string;\n    /** The second field. */\n    second: number;\n}\n');
+    expect(out.endsWith('}\n')).toBe(true);
+  });
 });
 
 describe('injectSvelte', () => {

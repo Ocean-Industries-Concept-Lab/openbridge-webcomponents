@@ -32,11 +32,15 @@ function jsDocBlock(indent: string, description: string): string[] {
 // FIELD_RE already excludes methods without a separate check.
 const FIELD_RE = /^(\s*)(?:readonly |static |override |accessor )*([A-Za-z_$][\w$]*)\??:/;
 
-// Net brace change on a line — used to track nesting depth. `.d.ts` and the
-// generated Svelte `Props` interface never put braces inside strings or
-// comments in a way that would confuse this, so plain per-line counting is
-// enough (no need to parse tokens).
+// Net brace change on a line, used to track nesting depth. A comment line
+// (a JSDoc/TSDoc continuation `* ...`, or a `/**`/`/*`/`//` opener) can
+// never be a field line — FIELD_RE requires an identifier first — but its
+// prose might contain a stray, unbalanced brace (e.g. "press the { key").
+// Such lines are excluded so they can't desync the depth count for every
+// line that follows.
 function braceDelta(line: string): number {
+  const t = line.trim();
+  if (t.startsWith('*') || t.startsWith('/*') || t.startsWith('//')) return 0;
   let delta = 0;
   for (const ch of line) {
     if (ch === '{') delta++;
