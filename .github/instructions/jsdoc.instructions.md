@@ -283,14 +283,12 @@ The class has rich JSDoc and `@property` declarations, but it cannot be instanti
 2. one `@fires` (or `@event`) tag for each event the component exposes — custom
    events **and** native ones that cross the shadow boundary, such as the `click`
    from a passthrough `<button>`
-3. `@ignore` — **abstract base classes only** (see
-   [c) Abstract base classes](#c-abstract-base-classes))
-4. exactly one lifecycle tag, **last** — `@stable` / `@beta` / `@experimental` /
+3. exactly one lifecycle tag, **last** — `@stable` / `@beta` / `@experimental` /
    `@deprecated` (see
    [Component lifecycle tags](#component-lifecycle-tags-stable--beta--experimental--deprecated))
 
-Items 1 and 2 are the block's content; 3 and 4 are required by their own rules
-and belong in the same block, after them. Nothing else goes here.
+Items 1 and 2 are the block's content; 3 is required by its own rule and
+belongs in the same block, after them. Nothing else goes here.
 
 ● **Why this matters — two separate tools read these tags, and they do not read
 the same thing.** The full contract, including the two-consumer table, the
@@ -319,18 +317,6 @@ conditional properties add `@availableWhen name condition` on the next line.
  * @slot - Default leading-icon slot (shown when `showIcon` is true)
  * @fires {CustomEvent<{label:string}>} remove-chip - Fired when the chip's remove button is clicked.
  * @stable
- */
-```
-
-For an abstract base class, `@ignore` precedes the lifecycle tag:
-
-```js
-/**
- * <markdown sections …>
- *
- * @slot - Default slot rendered by this base class's `render()`.
- * @ignore
- * @experimental
  */
 ```
 

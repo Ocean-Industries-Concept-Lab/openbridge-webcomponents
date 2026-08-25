@@ -141,6 +141,7 @@ Not all code in this repo is a concrete Lit web component. The three main patter
 Examples: `obc-area-graph`, `obc-line-graph`, `obc-bar-vertical`
 
 - JSDoc lives **on the class** (following the full template above).
+- Properties are documented in the class JSDoc tag block (`@property name - description`); Storybook reads them from the manifest exactly as it read inline docs.
 - The story meta uses `component: 'obc-tag-name'` to link Storybook autodocs to the `custom-elements.json` entry.
 - Storybook **automatically extracts** the class JSDoc, `@property` types, `@slot` tags, and `@fires` events.
 - The story file does **not** need `parameters.docs.description.component` — autodocs handles it.
@@ -157,12 +158,9 @@ These modules export pure functions that return `SVGTemplateResult` fragments, n
 - Place a comprehensive JSDoc block comment at the **top of the module** (above the first export). Use the same structure as a component JSDoc (overview, features, usage examples) — but write it as a module description rather than a component description.
 
 **Story file:**
-- **Omit** `component:` from the story meta (there is no tag to point to).
-- **Provide** the full documentation via `parameters.docs.description.component` as a Markdown string.
-- **Manually define** all `argTypes` (since there is no manifest to auto-extract from).
-- If the module's functions need a DOM host to render, create a minimal **throwaway inline wrapper** element to give Storybook a renderable surface.
-
-**Keeping docs in sync:** The module-level JSDoc is the **source of truth**. The story's `parameters.docs.description.component` should mirror it.
+- **Omit** `component:` (there is no tag to point to).
+- Read the module JSDoc from the manifest: `parameters: {docs: {description: {component: moduleDocs('building-blocks/external-scale/external-scale.ts')}}}` (`moduleDocs` from `.storybook/manifest-docs.js`). The `/** @module … */` block at the top of the source is the single source; `npm run analyze` copies it into `custom-elements.json`.
+- **Manually define** `argTypes` (no manifest members to extract from).
 
 ### c) Abstract base classes
 
@@ -171,11 +169,10 @@ Examples: `ObcChartLineBase` (abstract base for `obc-line-graph` and `obc-area-g
 The class has rich JSDoc and `@property` declarations, but it cannot be instantiated and is not registered as a custom element. Storybook cannot auto-extract its docs via `custom-elements.json`.
 
 **Source file:**
-- Place the full JSDoc on the abstract class just like a regular component, but append `@ignore` at the end of the JSDoc tag block. This signals to doc generators that the class is not meant to appear as a standalone API entry.
+- Place the full JSDoc on the abstract class just like a regular component. Do **not** add `@ignore` — the class must stay in the manifest so subclasses inherit its property docs and stories can read its description with `classDocs('ObcChartLineBase')`.
 
 **Story file:**
-- Set `component:` to a **concrete subclass tag** (e.g., `'obc-area-graph'`) so Storybook can at least resolve property controls.
-- **Override** the auto-extracted description with `parameters.docs.description.component` containing the base class documentation as Markdown.
+- Set `component:` to a concrete subclass tag and `parameters.docs.description.component: classDocs('ObcChartLineBase')`.
 
 **Keeping docs in sync:** Same as pure functions — the abstract class JSDoc is the source of truth, and the story description should mirror/replicate it.
 
@@ -183,8 +180,8 @@ The class has rich JSDoc and `@property` declarations, but it cannot be instanti
 
 | Aspect                                 | Concrete component         | Pure function module                    | Abstract base class                       |
 |----------------------------------------|---------------------------|-----------------------------------------|-------------------------------------------|
-| JSDoc location                         | On the class              | Module-level block comment              | On the abstract class (with `@ignore`)     |
+| JSDoc location                         | On the class              | Module-level block comment              | On the abstract class (no `@ignore`)       |
 | Story `meta.component`                 | `'obc-tag-name'`          | Omitted                                | Concrete subclass tag                      |
-| Story `parameters.docs.description`    | Not needed (auto)         | Required (full Markdown)               | Required (override with base class docs)   |
+| Story `parameters.docs.description`    | Not needed (auto)         | `moduleDocs()`                          | `classDocs()`                              |
 | `argTypes`                             | Auto from manifest        | Manual                                 | Partially auto (from concrete subclass)    |
 | Rendering in story                     | Direct `<obc-tag>`        | Throwaway inline wrapper               | Concrete subclass element                  |
