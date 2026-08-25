@@ -41,10 +41,7 @@ export function createManifestDocs(manifest: Manifest) {
       // evaluate against `undefined` and delete properties the story does set,
       // so a gate applies only when the story supplies the gate arg itself.
       const gate = (m.availableWhenIf as {arg?: unknown}).arg;
-      if (
-        typeof gate !== 'string' ||
-        !Object.hasOwn(context.initialArgs ?? {}, gate)
-      )
+      if (typeof gate !== 'string' || !(gate in (context.initialArgs ?? {})))
         continue;
       out[m.name] = {
         ...existing,

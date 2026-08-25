@@ -186,15 +186,15 @@ A property whose value only has an observable effect when **another** property i
 export class ObcAutomationButton extends LitElement {
 ```
 
-Syntax:
+Condition grammar (the part after the property name):
 
-- **Boolean:** `@availableWhen showFoo==true` or `@availableWhen showFoo==false`.
-- **Enum / string equality:** `@availableWhen type==label` — use the declared value, **no quotes**.
-- **Enum / string inequality:** `@availableWhen state!=overlapped` — handy for "all values except one".
-- **Set membership:** `@availableWhen type in [LargeSideFlip, BottomFlip, TopFlip]` — use the **enum member identifier names**, not the string values.
-- **Non-empty string:** `@availableWhen label!=''` — for `string` props (default `''`) that gate another prop by being non-empty.
-- **Empty / non-empty array:** `@availableWhen centerReadouts==[]` (available only while the array is empty) or `@availableWhen advices!=[]` — for `Array` props whose emptiness gates another prop.
-- **Defined / non-null:** `@availableWhen courseArrowPx!=undefined` (for `X | undefined`) or `@availableWhen headingSetpoint!=null` (for `X | null`).
+- **Boolean:** `showFoo==true` or `showFoo==false`.
+- **Enum / string equality:** `type==label` — use the declared value, **no quotes**.
+- **Enum / string inequality:** `state!=overlapped` — handy for "all values except one".
+- **Set membership:** `type in [LargeSideFlip, BottomFlip, TopFlip]` — use the **enum member identifier names**, not the string values.
+- **Non-empty string:** `label!=''` — for `string` props (default `''`) that gate another prop by being non-empty.
+- **Empty / non-empty array:** `centerReadouts==[]` (available only while the array is empty) or `advices!=[]` — for `Array` props whose emptiness gates another prop.
+- **Defined / non-null:** `courseArrowPx!=undefined` (for `X | undefined`) or `headingSetpoint!=null` (for `X | null`).
 - **Combine:** join with `&&` (all required) or `||` (any sufficient). Always use `==`/`!=` (never a single `=`).
 
 Rules:
@@ -217,9 +217,10 @@ from `render()` entirely — not merely hidden in the controls panel — so
 gating on an arg the story leaves unset would silently drop properties the
 story does set. Set the gate arg in the story when you want the control to
 appear and disappear with it. Conditions the plugin cannot resolve —
-`in [...]`, `&&`, `||`, and enum values it cannot look up — never reach the
-manifest; write a manual `if:` in the story's `argTypes` if that control has
-to be hidden.
+`in [...]`, `&&`, `||`, and enum values it cannot look up — never produce an
+`availableWhenIf`, so no control is hidden for them; the condition text still
+reaches the manifest and the description. Write a manual `if:` in the story's
+`argTypes` if that control has to be hidden.
 
 > The three documentation patterns (concrete components, pure function modules,
 > abstract base classes) are covered in full below — see

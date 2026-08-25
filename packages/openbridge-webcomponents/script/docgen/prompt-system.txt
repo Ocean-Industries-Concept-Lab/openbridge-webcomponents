@@ -134,7 +134,7 @@ By following this layout for each component, we’ll create consistent, rich doc
 
 ## Documentation by code pattern (regular components, pure functions, abstract classes)
 
-Not all code in this repo is a concrete Lit web component. The three main patterns require different documentation approaches because Storybook's autodocs system relies on the `custom-elements.json` manifest, which only contains entries for registered custom elements.
+Not all code in this repo is a concrete Lit web component. The three main patterns require different documentation approaches because Storybook's autodocs resolves a story to its docs through the `custom-elements.json` entry that carries a `tagName`; modules and abstract bases are in the manifest too, but only a registered custom element is found automatically.
 
 ### a) Regular concrete components (default case)
 
@@ -152,7 +152,7 @@ This is the standard path. The template sections above (Overview, Features, Slot
 
 Examples: `external-scale.ts` (exports `renderExternalScale()`, `computeExternalScaleLayout()`, etc.)
 
-These modules export pure functions that return `SVGTemplateResult` fragments, not a LitElement. There is no custom element tag and no `custom-elements.json` entry, so autodocs cannot extract anything automatically.
+These modules export pure functions that return `SVGTemplateResult` fragments, not a LitElement. The manifest does carry the module (its `/** @module … */` description and each exported function), but there is no custom element tag, so autodocs cannot wire the docs to a component on its own.
 
 **Source file:**
 - Place a comprehensive JSDoc block comment at the **top of the module** (above the first export). Use the same structure as a component JSDoc (overview, features, usage examples) — but write it as a module description rather than a component description.
@@ -166,7 +166,7 @@ These modules export pure functions that return `SVGTemplateResult` fragments, n
 
 Examples: `ObcChartLineBase` (abstract base for `obc-line-graph` and `obc-area-graph`)
 
-The class has rich JSDoc and `@property` declarations, but it cannot be instantiated and is not registered as a custom element. Storybook cannot auto-extract its docs via `custom-elements.json`.
+The class has rich JSDoc and `@property` declarations, but it cannot be instantiated and is not registered as a custom element. It is in the manifest — description and members included — yet with no `tagName` for autodocs to resolve, the story reads it with `classDocs()`.
 
 **Source file:**
 - Place the full JSDoc on the abstract class just like a regular component. Do **not** add `@ignore` — the class must stay in the manifest so subclasses inherit its property docs and stories can read its description with `classDocs('ObcChartLineBase')`.
