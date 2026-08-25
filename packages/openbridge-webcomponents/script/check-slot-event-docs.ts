@@ -359,21 +359,21 @@ async function run(): Promise<void> {
   // (AGENTS.md § 3.6). A tag naming a property that exists nowhere injects a
   // ghost member into custom-elements.json (issue #1043) — error.
   const decoratedFieldRe =
-    /@property\([^)]*\)\s*(?:accessor\s+|override\s+|public\s+|readonly\s+)*([\w$]+)\??\s*[:=;]/g;
+    /@property\([^)]*\)\s*(?:accessor\s+|override\s+|public\s+|readonly\s+)*([\w$]+)[?!]?\s*[:=;]/g;
   const knownFields = new Set<string>();
   for (const rel of files) {
     const source = fs.readFileSync(path.join(cwd, rel), 'utf8');
     for (const m of source.matchAll(decoratedFieldRe)) knownFields.add(m[1]);
   }
   const headerPropRe =
-    /^[ \t]*(?:\/\*\*|\*)[ \t]*@(?:property|prop)\s+(?:\{[^}]*\}\s+)?([\w$]+)/gm;
+    /^[ \t]*(?:\/\*\*|\*)[ \t]*@(property|prop)\s+(?:\{[^}]*\}\s+)?([\w$]+)/gm;
   for (const rel of files.sort()) {
     const source = fs.readFileSync(path.join(cwd, rel), 'utf8');
     for (const m of source.matchAll(headerPropRe)) {
-      if (!knownFields.has(m[1])) {
+      if (!knownFields.has(m[2])) {
         errors.push({
           file: rel,
-          message: `class-level @property "${m[1]}" names no @property() field in src/ — ghost manifest member (AGENTS.md §3.6)`,
+          message: `class-level @${m[1]} "${m[2]}" names no @property() field in src/ — ghost manifest member (AGENTS.md §3.6)`,
         });
       }
     }
