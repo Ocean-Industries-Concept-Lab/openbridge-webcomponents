@@ -52,7 +52,14 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 10px;
+    gap: 0;
+  }
+
+  /* Ghost zeros: leading zero-padding renders in the disabled color so the
+     significant digits read at a glance (the design's transparent-pad
+     value). */
+  .value-text .pad {
+    color: var(--element-disabled-color);
   }
 
   &.small .readout-item {

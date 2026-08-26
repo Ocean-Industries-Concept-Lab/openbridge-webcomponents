@@ -99,7 +99,6 @@ export class ObcAutomationButtonReadoutStack extends LitElement {
     const v = readout.value.toFixed(0);
     const zeroPadding =
       v.length < readout.nDigits ? '0'.repeat(readout.nDigits - v.length) : '';
-    const paddedValue = zeroPadding + v;
 
     let directionIcon: HTMLTemplateResult | typeof nothing = nothing;
     if (readout.icon == 'arrow') {
@@ -148,7 +147,11 @@ export class ObcAutomationButtonReadoutStack extends LitElement {
       }
     }
     const content = html`
-      ${this.renderValueText(paddedValue)}
+      <span class="value-text"
+        >${zeroPadding
+          ? html`<span class="pad">${zeroPadding}</span>`
+          : nothing}${v}</span
+      >
       <span class="unit">${readout.unit}</span>
     `;
 
