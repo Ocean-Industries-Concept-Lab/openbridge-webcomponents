@@ -291,6 +291,38 @@ export interface ReadoutSrcOptions extends ReadoutBlockState {
  * Use for dense readout rows in lists/tables. Prefer `<obc-readout>` for rich
  * multi-segment instrument layouts, source pickers, or flyout behaviour.
  *
+ * @property hasValue - Layout switch: `false` renders a deliberately value-less (label-only)
+ *   row that hugs its remaining parts. For a temporarily missing value keep
+ *   `hasValue` and set `value` to `null` instead — the dash keeps the value
+ *   block at full size, so the row does not shift when data arrives.
+ * @property off - Render the value as `offText` (e.g. equipment powered down). Affects the value only.
+ * @property offText - Text shown in place of the value when `off` is true.
+ * @availableWhen offText off==true
+ * @availableWhen setpoint hasSetpoint==true
+ * @availableWhen advice hasAdvice==true
+ * @property fractionDigits - Also formats the numeric setpoint / advice blocks, which stay numeric
+ *   even when the value is text. Must be between 0 and 100 — the range
+ *   `Number.prototype.toFixed` accepts; outside it throws a `RangeError`.
+ *   A fractional count truncates (`2.7` → `2`). A count that never arrived
+ *   (`NaN`, `null` or unset) renders the reading as the unavailable dash —
+ *   formatting with a precision the author never chose would let a critical
+ *   `0.4` pass for a healthy `0`.
+ * @availableWhen fractionDigits valueType==number || hasSetpoint==true || hasAdvice==true
+ * @property maxDigits - Also formats the numeric setpoint / advice blocks, which stay numeric
+ *   even when the value is text. Bounded before use: a fractional count
+ *   truncates (`2.7` → `2`), anything above 100 — including `Infinity` —
+ *   caps at 100, and a negative count reserves nothing. A count that never
+ *   arrived (`NaN`, `null` or unset) renders the reading as the unavailable
+ *   dash, consistent with `fractionDigits`.
+ * @availableWhen maxDigits valueType==number || hasSetpoint==true || hasAdvice==true
+ * @property showDebugOverlay - Development aid: outline the readout building blocks (red), the degree
+ *   columns (blue) and the degree spacer (green) so reserver widths / alignment
+ *   are visible. Off by default.
+ * @property hasLeadingContentSpacer - Reserve the `leading-content` column on a row that slots nothing into it, so
+ *   its label and value stay aligned with the rows that do. The reserve is the
+ *   same width the column would have, and is ignored while the row has its own
+ *   leading content. `obc-readout-list` sets this for you; set it by hand for a
+ *   stand-alone group of rows.
  * @experimental This component is the pilot for the new primitives + per-block
  * options Readout API; its API may change in a future release.
  *
@@ -337,12 +369,6 @@ export class ObcReadoutListItem extends LitElement {
   @property({type: String}) unit?: string;
   @property({type: String}) src?: string;
 
-  /**
-   * Layout switch: `false` renders a deliberately value-less (label-only)
-   * row that hugs its remaining parts. For a temporarily missing value keep
-   * `hasValue` and set `value` to `null` instead — the dash keeps the value
-   * block at full size, so the row does not shift when data arrives.
-   */
   @property({type: Boolean, attribute: false}) hasValue = true;
   /**
    * The value; `null` renders a dash. A number by default, or text when
@@ -356,17 +382,13 @@ export class ObcReadoutListItem extends LitElement {
    */
   @property({type: String}) valueType: ReadoutValueType =
     ReadoutValueType.number;
-  /** Render the value as `offText` (e.g. equipment powered down). Affects the value only. */
   @property({type: Boolean}) off = false;
-  /** Text shown in place of the value when `off` is true. @availableWhen off==true */
   @property({type: String}) offText = 'OFF';
 
   @property({type: Boolean}) hasSetpoint = false;
-  /** @availableWhen hasSetpoint==true */
   @property({type: Number}) setpoint?: number;
 
   @property({type: Boolean}) hasAdvice = false;
-  /** @availableWhen hasAdvice==true */
   @property({type: Number}) advice?: number;
 
   // Global layout/format (each defaults via its `resolved*` getter where useful).
@@ -378,36 +400,10 @@ export class ObcReadoutListItem extends LitElement {
   @property({type: Boolean}) hasLeadingIcon = false;
   @property({type: Boolean}) hasDegree = false;
   @property({type: Boolean}) hasDegreeSpacer = false;
-  /**
-   * Reserve the `leading-content` column on a row that slots nothing into it, so
-   * its label and value stay aligned with the rows that do. The reserve is the
-   * same width the column would have, and is ignored while the row has its own
-   * leading content. `obc-readout-list` sets this for you; set it by hand for a
-   * stand-alone group of rows.
-   */
   @property({type: Boolean}) hasLeadingContentSpacer = false;
   /** Reserve the `trailing-content` column; see {@link hasLeadingContentSpacer}. */
   @property({type: Boolean}) hasTrailingContentSpacer = false;
-  /**
-   * Also formats the numeric setpoint / advice blocks, which stay numeric
-   * even when the value is text. Must be between 0 and 100 — the range
-   * `Number.prototype.toFixed` accepts; outside it throws a `RangeError`.
-   * A fractional count truncates (`2.7` → `2`). A count that never arrived
-   * (`NaN`, `null` or unset) renders the reading as the unavailable dash —
-   * formatting with a precision the author never chose would let a critical
-   * `0.4` pass for a healthy `0`.
-   * @availableWhen valueType==number || hasSetpoint==true || hasAdvice==true
-   */
   @property({type: Number}) fractionDigits = 0;
-  /**
-   * Also formats the numeric setpoint / advice blocks, which stay numeric
-   * even when the value is text. Bounded before use: a fractional count
-   * truncates (`2.7` → `2`), anything above 100 — including `Infinity` —
-   * caps at 100, and a negative count reserves nothing. A count that never
-   * arrived (`NaN`, `null` or unset) renders the reading as the unavailable
-   * dash, consistent with `fractionDigits`.
-   * @availableWhen valueType==number || hasSetpoint==true || hasAdvice==true
-   */
   @property({type: Number}) maxDigits = 0;
   @property({type: String}) dataQuality?: ReadoutListItemDataQuality;
   // `boolean | …` (not `false | …`): the generated Angular wrapper widens a
@@ -424,11 +420,6 @@ export class ObcReadoutListItem extends LitElement {
   @property({type: Object}) unitOptions?: ReadoutReserverOptions;
   @property({type: Object}) srcOptions?: ReadoutSrcOptions;
 
-  /**
-   * Development aid: outline the readout building blocks (red), the degree
-   * columns (blue) and the degree spacer (green) so reserver widths / alignment
-   * are visible. Off by default.
-   */
   @property({type: Boolean, reflect: true}) showDebugOverlay = false;
 
   /**

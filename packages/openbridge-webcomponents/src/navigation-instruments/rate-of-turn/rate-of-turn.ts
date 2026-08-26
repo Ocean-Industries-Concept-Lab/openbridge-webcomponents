@@ -56,20 +56,37 @@ export {RotType, RotPosition};
  *   (e.g. `triple` for compass contexts).
  *
  * @element obc-rate-of-turn
+ *
+ * @property rateOfTurnDegreesPerMinute - Measured rate of turn in degrees per minute (positive = starboard).
+ *   When `undefined`, the legacy `rotationsPerMinute` value is used.
+ * @property rotDotAnimationFactor - Visual amplification applied to the spinning dot animation. Default `18`
+ *   keeps the legacy visual feel (≈1 rpm at 20°/min).
+ * @property hasTrackBar - When `true`, shows a bar in the ring band from the twelve o'clock
+ *   position to the measured rate of turn, with a needle marker at its end
+ *   and sector tickmarks. Pairs with `watchCircleType="double"` for the
+ *   banded face — or `"triple"` when `rotPosition` is `innerCircle`, so the
+ *   dots get their inner track too. Driven by `rateOfTurnDegreesPerMinute`
+ *   only.
+ * @property rotMaxValue - Bar-extent reference value in **degrees per minute**: the track bar
+ *   reaches ±`rotArcExtent` when the measured ROT equals ±`rotMaxValue`.
+ *   Default `60` aligns with ES-TRIN 2025/1 Art. 3.02.
+ * @availableWhen rotMaxValue hasTrackBar==true
+ * @property rotArcExtent - Arc extent of the track bar in degrees per direction. Default `60`.
+ * @availableWhen rotArcExtent hasTrackBar==true
+ * @property hasReadout - When `true`, shows a centered `<obc-readout>` with the measured rate of
+ *   turn. Shows a dash while `rateOfTurnDegreesPerMinute` is unset.
+ * @property label - Readout label. Default `ROT`.
+ * @availableWhen label hasReadout==true
+ * @property unit - Readout unit. Default `DEG/min`.
+ * @availableWhen unit hasReadout==true
+ * @property fractionDigits - Number of fraction digits shown in the readout. Default `0`.
+ * @availableWhen fractionDigits hasReadout==true
  * @stable
  */
 @customElement('obc-rate-of-turn')
 export class ObcRateOfTurn extends LitElement {
-  /**
-   * Measured rate of turn in degrees per minute (positive = starboard).
-   * When `undefined`, the legacy `rotationsPerMinute` value is used.
-   */
   @property({type: Number}) rateOfTurnDegreesPerMinute: number | undefined;
 
-  /**
-   * Visual amplification applied to the spinning dot animation. Default `18`
-   * keeps the legacy visual feel (≈1 rpm at 20°/min).
-   */
   @property({type: Number}) rotDotAnimationFactor: number = 18;
 
   /**
@@ -88,46 +105,12 @@ export class ObcRateOfTurn extends LitElement {
     WatchCircleType.single;
   @property({type: Boolean}) rotPortStarboard: boolean = false;
   @property({type: Number}) rotAtZeroDeadband: number = ROT_ZERO_DEADBAND_DEG;
-  /**
-   * When `true`, shows a bar in the ring band from the twelve o'clock
-   * position to the measured rate of turn, with a needle marker at its end
-   * and sector tickmarks. Pairs with `watchCircleType="double"` for the
-   * banded face — or `"triple"` when `rotPosition` is `innerCircle`, so the
-   * dots get their inner track too. Driven by `rateOfTurnDegreesPerMinute`
-   * only.
-   */
   @property({type: Boolean}) hasTrackBar: boolean = false;
-  /**
-   * Bar-extent reference value in **degrees per minute**: the track bar
-   * reaches ±`rotArcExtent` when the measured ROT equals ±`rotMaxValue`.
-   * Default `60` aligns with ES-TRIN 2025/1 Art. 3.02.
-   * @availableWhen hasTrackBar==true
-   */
   @property({type: Number}) rotMaxValue: number = 60;
-  /**
-   * Arc extent of the track bar in degrees per direction. Default `60`.
-   * @availableWhen hasTrackBar==true
-   */
   @property({type: Number}) rotArcExtent: number = 60;
-  /**
-   * When `true`, shows a centered `<obc-readout>` with the measured rate of
-   * turn. Shows a dash while `rateOfTurnDegreesPerMinute` is unset.
-   */
   @property({type: Boolean}) hasReadout: boolean = false;
-  /**
-   * Readout label. Default `ROT`.
-   * @availableWhen hasReadout==true
-   */
   @property({type: String}) label = 'ROT';
-  /**
-   * Readout unit. Default `DEG/min`.
-   * @availableWhen hasReadout==true
-   */
   @property({type: String}) unit = 'DEG/min';
-  /**
-   * Number of fraction digits shown in the readout. Default `0`.
-   * @availableWhen hasReadout==true
-   */
   @property({type: Number}) fractionDigits = 0;
 
   private get trackBarAngle(): number {

@@ -402,14 +402,12 @@ const meta = {
     setpoint: {
       name: 'Setpoint',
       control: {type: 'number'},
-      if: {arg: 'hasSetpoint', truthy: true},
       table: {category: 'Data'},
     },
     hasAdvice: {name: 'Has Advice', table: {category: 'Data'}},
     advice: {
       name: 'Advice',
       control: {type: 'number'},
-      if: {arg: 'hasAdvice', truthy: true},
       table: {category: 'Data'},
     },
     'options.size': {

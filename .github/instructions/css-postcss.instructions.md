@@ -28,3 +28,7 @@ applyTo: "packages/openbridge-webcomponents/src/**/*.css"
 - **Icon slots:** use `<obi-placeholder></obi-placeholder>` or other `<obi-*>` icons (1000+ available).
 
 ---
+
+## Comments
+
+One short line per non-obvious declaration — see [`coding-standards.md` § CSS](../../docs/agents/coding-standards.md#css).

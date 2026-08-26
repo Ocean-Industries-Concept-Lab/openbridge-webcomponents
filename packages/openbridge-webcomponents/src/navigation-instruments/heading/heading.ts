@@ -95,6 +95,35 @@ export enum HeadingPriorityElement {
  *
  * @ignition-base-height: 512px
  * @ignition-base-width: 512px
+ *
+ * @availableWhen newHeadingSetpoint headingSetpoint!=null
+ * @availableWhen atHeadingSetpoint headingSetpoint!=null && autoAtHeadingSetpoint==false
+ * @availableWhen headingSetpointAtZeroDeadband headingSetpoint!=null
+ * @availableWhen headingSetpointOverride headingSetpoint!=null
+ * @availableWhen autoAtHeadingSetpoint headingSetpoint!=null
+ * @availableWhen autoAtHeadingSetpointDeadband headingSetpoint!=null && autoAtHeadingSetpoint==true
+ * @availableWhen animateSetpoint headingSetpoint!=null
+ * @availableWhen touching headingSetpoint!=null
+ * @availableWhen priorityElements priority==enhanced
+ * @property vesselImage - The vessel silhouette shown in the center, rotating with heading. When
+ *   unset (default) no vessel is shown; hidden while `centerReadouts` is
+ *   non-empty.
+ * @availableWhen vesselImage centerReadouts==[]
+ * @property centerReadouts - Center readouts replacing the vessel: the first entry renders on top,
+ *   the rest side by side below a horizontal divider. Values bind per entry
+ *   `source` (`hdg` → `heading`, `cog` → `courseOverGround`; `rot` has no
+ *   input on this instrument and renders a dash) and colors follow
+ *   `priorityElements`. While non-empty, the crosshair's center is cut out
+ *   so the readouts sit on a clean face.
+ * @property hdgArrowStyle - HDG arrow style: `needle` (default), `arrowHead`, `vector`, or `beamLine`.
+ * @property cogArrowStyle - COG arrow style: `needle` (default), `arrowHead`, `vector`, or `velocityVector`.
+ * @property showLabels - Show compass NSEW labels.
+ * @property tickmarksInside - When true, labels and north arrow are placed inside the outer ring.
+ * @property faceDiameter - Outer-ring diameter in CSS pixels. When set, the instrument renders at a
+ *   fixed intrinsic size derived from the ring, arc shape and label reserve —
+ *   so instruments sharing the same value have identical ring circumference
+ *   regardless of label width or arc extent (like obc-donut-chart's
+ *   fixedHeight). When unset (default), the instrument fills its container.
  * @stable
  */
 @customElement('obc-heading')
@@ -103,62 +132,28 @@ export class ObcHeading extends LitElement {
   @property({type: Number}) courseOverGround = 0;
 
   @property({type: Number}) headingSetpoint: number | null = null;
-  /** @availableWhen headingSetpoint!=null */
   @property({type: Number}) newHeadingSetpoint: number | undefined;
-  /** @availableWhen headingSetpoint!=null && autoAtHeadingSetpoint==false */
   @property({type: Boolean}) atHeadingSetpoint: boolean = false;
-  /** @availableWhen headingSetpoint!=null */
   @property({type: Number}) headingSetpointAtZeroDeadband: number = 0.5;
-  /** @availableWhen headingSetpoint!=null */
   @property({type: Boolean}) headingSetpointOverride: boolean = false;
-  /** @availableWhen headingSetpoint!=null */
   @property({type: Boolean, attribute: false}) autoAtHeadingSetpoint: boolean =
     true;
-  /** @availableWhen headingSetpoint!=null && autoAtHeadingSetpoint==true */
   @property({type: Number}) autoAtHeadingSetpointDeadband: number = 2;
-  /** @availableWhen headingSetpoint!=null */
   @property({type: Boolean}) animateSetpoint: boolean = false;
-  /** @availableWhen headingSetpoint!=null */
   @property({type: Boolean}) touching: boolean = false;
   @property({type: Array, attribute: false}) headingAdvices: AngleAdvice[] = [];
   @property({type: String}) direction: CompassDirection =
     CompassDirection.NorthUp;
   @property({type: String}) priority: Priority = Priority.regular;
-  /** @availableWhen priority==enhanced */
   @property({type: Array, attribute: false})
   priorityElements: HeadingPriorityElement[] = [HeadingPriorityElement.hdg];
-  /**
-   * The vessel silhouette shown in the center, rotating with heading. When
-   * unset (default) no vessel is shown; hidden while `centerReadouts` is
-   * non-empty.
-   * @availableWhen centerReadouts==[]
-   */
   @property({type: String}) vesselImage: VesselImage | undefined;
-  /**
-   * Center readouts replacing the vessel: the first entry renders on top,
-   * the rest side by side below a horizontal divider. Values bind per entry
-   * `source` (`hdg` → `heading`, `cog` → `courseOverGround`; `rot` has no
-   * input on this instrument and renders a dash) and colors follow
-   * `priorityElements`. While non-empty, the crosshair's center is cut out
-   * so the readouts sit on a clean face.
-   */
   @property({type: Array, attribute: false})
   centerReadouts: CompassCenterReadout[] = [];
-  /** HDG arrow style: `needle` (default), `arrowHead`, `vector`, or `beamLine`. */
   @property({type: String}) hdgArrowStyle: HdgArrowStyle = HdgArrowStyle.needle;
-  /** COG arrow style: `needle` (default), `arrowHead`, `vector`, or `velocityVector`. */
   @property({type: String}) cogArrowStyle: CogArrowStyle = CogArrowStyle.needle;
-  /** Show compass NSEW labels. */
   @property({type: Boolean}) showLabels: boolean = false;
-  /** When true, labels and north arrow are placed inside the outer ring. */
   @property({type: Boolean}) tickmarksInside: boolean = false;
-  /**
-   * Outer-ring diameter in CSS pixels. When set, the instrument renders at a
-   * fixed intrinsic size derived from the ring, arc shape and label reserve —
-   * so instruments sharing the same value have identical ring circumference
-   * regardless of label width or arc extent (like obc-donut-chart's
-   * fixedHeight). When unset (default), the instrument fills its container.
-   */
   @property({type: Number, attribute: 'face-diameter'})
   faceDiameter: number | undefined;
 
