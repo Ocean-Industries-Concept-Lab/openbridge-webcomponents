@@ -10,6 +10,7 @@ globs:
   - packages/openbridge-webcomponents/src/navigation-instruments/readout/readout-formatters.ts
   - packages/openbridge-webcomponents/src/navigation-instruments/readout/readout-shared.ts
 ---
+
 # Readout Components
 
 These instructions apply to the **readout composition stack** — the primitives that
@@ -92,12 +93,12 @@ then silent forever. Covered by
 
 Two different failure classes, treated differently on purpose:
 
-| Input                                                                | Treatment                    | Why                                                                                                          |
-| -------------------------------------------------------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `valueType` typo, text under `valueType="number"`                    | **throws**                   | Programmer error, fixable only in code                                                                       |
-| `fractionDigits` whose **effective precision** falls outside `0…100` | **throws**                   | Sets the PRECISION of a reading — silently clamping would drop decimals from a displayed value               |
-| `maxDigits` out of range                                             | **clamped**                  | Only reserves width; bounding changes no reading's meaning                                                   |
-| `NaN` / `±Infinity` **value**                                        | renders the unavailable dash | Runtime data condition (sensor dropout, `0/0`) — throwing would take a display down over a transient reading |
+| Input                                                                                             | Treatment                    | Why                                                                                                                                                                                              |
+| ------------------------------------------------------------------------------------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `valueType` typo, text under `valueType="number"`                                                 | **throws**                   | Programmer error, fixable only in code                                                                                                                                                           |
+| `fractionDigits` whose **effective precision** falls outside `0…100`                              | **throws**                   | Sets the PRECISION of a reading — silently clamping would drop decimals from a displayed value                                                                                                   |
+| `maxDigits` out of range                                                                          | **clamped**                  | Only reserves width; bounding changes no reading's meaning                                                                                                                                       |
+| `NaN` / `±Infinity` **value**                                                                     | renders the unavailable dash | Runtime data condition (sensor dropout, `0/0`) — throwing would take a display down over a transient reading                                                                                     |
 | A digit knob that **never arrived** (`NaN`/`null`/`undefined` in `fractionDigits` or `maxDigits`) | renders the unavailable dash | A failed runtime write must not masquerade as configuration: `0.4` formatted with a defaulted precision prints as a healthy-looking `0`, which an operator cannot tell apart from a real reading |
 
 "Effective precision" is what `toFixed` will actually read: `null`, `undefined`
@@ -194,6 +195,37 @@ what activating five dormant code paths does to alignment.
 
 ---
 
+## Figma 6.1 vocabulary map
+
+The 6.1 design file names the same stack differently — use this when reading
+design references: Figma `Actual` = the value block, `Title` = the label/unit
+meta zone (`Readout-block-label`), `Source` = src (`Readout-block-source`),
+`Readout-block-generic/-setpoint/-advice` = `obc-readout-block` variants. The
+setpoint-emphasis axis is `Primary secondary | Equal size | Flip flop | Pop
+up` = our `always-visible | equal-size | flip-flop | pop-up`. **The Figma
+pop-up variant hides the value and keeps the setpoint — that is a design-file
+animation convenience, not the intent**; the designer confirmed the
+implemented behaviour (value stays, setpoint fades) is correct.
+
+Decisions carried into code from the 6.1 review (2026-08):
+
+- Hinted zeros: `--element-disabled-color`, always regular weight.
+- Vertical readouts draw **no divider** above the source; horizontal keeps
+  its vertical source divider (so does the list item).
+- Marker icons size by the block's **rendered value size**, not the tier.
+- Label defaults: `s` on large `obc-readout` (scannability), `xs` in the
+  dense list item; SemiBold only when enhanced. Both overridable via
+  `labelOptions`.
+- Degree renders on the **actual value only** in `obc-readout` — setpoint /
+  advice blocks never carry one (the unit is written once per readout; the
+  degree follows the same rule, 2026-08-18). `obc-readout-list-item`
+  deliberately keeps its own per-row convention.
+- The horizontal `obc-readout` exists in the **large tier only** — `size` is
+  ignored when `direction="horizontal"`. Its label+unit stack is pinned to
+  the value's container height (`--_readout-primary-height`,
+  space-between), so the label cap top and unit cap bottom align with the
+  value's cap edges.
+
 ## Open / in flux
 
 Do not treat these as settled when editing:
@@ -204,3 +236,20 @@ Do not treat these as settled when editing:
   **may merge**. Keep shared behaviour in `readout-shared.ts` so the merge stays
   cheap — do not re-inline it per component.
 - The whole family is `@experimental`.
+- The large-tier label-`s` default and the regular-weight label are
+  **confirmed** by the design team (2026-08-17); only the medium-tier label
+  default remains unverified (`labelSize` carries the TODO).
+- Advice categories: for triggered optimal / eco the tint covers the whole
+  diamond (Figma tints only the inner plus — needs a two-tone asset), and the
+  advice `Enhanced` (indent chip) state is not implemented. The triggered
+  alert icons (`obi-*-iec`) are existing repo assets rendered with
+  `useCssColor` — that attribute selects their token-coloured variant; without
+  it the same icon is a single-colour `currentColor` silhouette (the resting
+  icons and the advice diamond stay on `currentColor` on purpose). Designer flagged
+  category icons/colours as "may change; structure stable".
+- Source: the Figma `Tag` type and the 4px chip padding are not implemented
+  (the chip hugs like the data-quality chip so live state flips don't shift
+  rows); picker/flyout sources carry no state/deviation yet.
+- Pop-up: whether the collapsed at-setpoint reading should keep a setpoint
+  arrow is an open designer question — the `SetpointPopUpWithValueArrow`
+  stories show the slot-based answer available today.

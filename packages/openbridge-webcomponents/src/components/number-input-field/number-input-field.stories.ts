@@ -38,6 +38,11 @@ const meta: Meta<typeof ObcNumberInputField> = {
       control: {type: 'boolean'},
       description: 'Disables the input field',
     },
+    readonly: {
+      control: {type: 'boolean'},
+      description:
+        'Makes the value selectable and copyable but not editable, and removes the hover and pressed states',
+    },
     error: {
       control: {type: 'boolean'},
       description: 'Displays error styling and sets aria-invalid',
@@ -105,6 +110,7 @@ const meta: Meta<typeof ObcNumberInputField> = {
           .textAlign=${args.textAlign ?? ObcNumberInputFieldTextAlign.Right}
           .size=${args.size ?? ObcNumberInputFieldSize.Regular}
           ?disabled=${args.disabled}
+          ?readonly=${args.readonly}
           ?error=${args.error}
           .errorText=${args.errorText ?? ''}
           ?hasLeadingIcon=${args.hasLeadingIcon}
@@ -349,6 +355,23 @@ export const Disabled: Story = {
     unit: '%',
     label: 'Throttle Position',
     disabled: true,
+  },
+};
+
+export const Readonly: Story = {
+  args: {
+    value: 50,
+    unit: '%',
+    label: 'Throttle Position',
+    readonly: true,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Read-only fields allow selection and copying but prevent editing.',
+      },
+    },
   },
 };
 

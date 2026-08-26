@@ -77,7 +77,6 @@ const meta: Meta<typeof ObcAutomationButton> = {
     progressMode: {
       options: Object.values(CircularProgressMode),
       control: {type: 'select'},
-      if: {arg: 'progress'},
     },
     progressValue: {
       control: {type: 'range', min: 0, max: 100, step: 1},

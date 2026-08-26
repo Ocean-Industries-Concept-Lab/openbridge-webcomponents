@@ -68,6 +68,28 @@ Two facts that bite:
 Use `skip-test` to exclude a story from snapshot testing — appropriate for
 anything genuinely non-deterministic rather than papering over a flake.
 
+## Manifest-driven docs and controls
+
+`.storybook/manifest-docs-core.ts` holds the helpers; `manifest-docs.ts` binds
+them to `custom-elements.json` and is what stories import. The split keeps the
+helpers testable without the gitignored manifest — `script/manifest-docs.test.ts`
+imports the core module, and the `rules` project runs in a CI job that never
+calls `analyze`.
+
+- `moduleDocs('path/suffix.ts')` — a pure-function module's `@module` block, for
+  a story with no `component:` to resolve.
+- `classDocs('ObcChartLineBase')` — an abstract base's description, for a story
+  whose `component:` points at a concrete subclass.
+- `availableWhenEnhancer` — registered in `preview.tsx`; turns a member's
+  `availableWhenIf` into the argType's `if:`.
+
+**The enhancer's contract:** a gate applies only when the story itself sets the
+gate arg. Storybook never seeds args from component defaults, and an arg whose
+`if` is false is dropped from `render()`, not just hidden in the controls panel
+— so gating on an unset arg would delete properties the story does set. See
+[`jsdoc.md`](../../docs/agents/jsdoc.md) for the tag and the conditions the CEM plugin cannot
+resolve.
+
 ## vue-demo Playwright suite
 
 `packages/vue-demo/e2e/` runs from that package:
@@ -90,6 +112,31 @@ npm run test:visual           # ALWAYS re-run to confirm stability
   stream, and CDN HLS video, cannot be frozen into a deterministic frame.
 - Baselines live in `e2e/visual/__screenshots__/<platform>/` and are
   environment-sensitive in the same way as the core suite.
+
+## Live harness stories (not snapshots)
+
+Some behaviour cannot be pinned by a snapshot because it only appears at a
+container shape, a zoom level or a resize sequence that no single story
+captures. For those there are **live harness stories**: they measure the DOM on
+an interval and print their own PASS/FAIL, and they carry `skip-test` so they
+add no baselines.
+
+`skip-test` is narrower than it sounds — it is a tag exclusion on the Storybook
+**snapshot project** (`tags.exclude` in `vitest.config.ts`) and nothing else.
+These stories are still bundled by `build_storybook`, still type-checked and
+still linted, so a module-scope error in one breaks CI like any other file.
+
+- **Building Blocks → Chart Sizing Battleground** — every chart subject
+  (`gauge-trend` in five configurations, line/area graph, `automation-tank` in
+  its chart modes, the bar and gauge building blocks) across nine container
+  shapes, six zoom levels, and a resize sweep that counts distinct rendered
+  sizes per step to catch a layout that rings instead of settling. Check it
+  after any change to chart sizing or `chart-common.css`; see
+  `line-area-charts.md` for the invariants it guards.
+
+When adding one, keep the interval probes per-story and clear them before
+starting new ones — a rerender otherwise leaves two probe loops running and the
+readouts fight each other.
 
 ## Stuck browsers
 

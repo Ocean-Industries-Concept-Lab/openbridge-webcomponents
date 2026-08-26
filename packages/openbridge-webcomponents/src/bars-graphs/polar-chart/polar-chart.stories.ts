@@ -32,7 +32,6 @@ const meta: Meta = {
     },
     monochrome: {
       control: 'boolean',
-      if: {arg: 'discreteColorStops', truthy: false},
     },
     discreteColorStops: {control: 'boolean'},
     showSectorLabels: {control: 'boolean'},

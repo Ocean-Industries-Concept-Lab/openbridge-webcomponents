@@ -85,6 +85,10 @@ export type ElevatedCardRadioGroupOption = {
  * ```
  * In this example, "Option B" is pre-selected, and the group is required.
  *
+ * @property value - The currently selected value. Setting this will pre-select the corresponding card radio.
+ * @property disabled - Disables all options in the group when true.
+ * @property required - Marks the group as required for form validation.
+ * @property top - If true, applies "top" styling to the first card (e.g., for rounded corners). The last card always receives "bottom" styling.
  * @slot - No named slots. All content is provided via the `options` property.
  * @fires {ObcElevatedCardRadioGroupChangeEvent} change - Dispatched when the value changes
  * @stable
@@ -105,24 +109,12 @@ export class ObcElevatedCardRadioGroup extends LitElement {
    */
   @property({type: String}) name: string = 'default';
 
-  /**
-   * The currently selected value. Setting this will pre-select the corresponding card radio.
-   */
   @property({type: String}) value: string = '';
 
-  /**
-   * Disables all options in the group when true.
-   */
   @property({type: Boolean}) disabled: boolean = false;
 
-  /**
-   * Marks the group as required for form validation.
-   */
   @property({type: Boolean}) required: boolean = false;
 
-  /**
-   * If true, applies "top" styling to the first card (e.g., for rounded corners). The last card always receives "bottom" styling.
-   */
   @property({type: Boolean}) top: boolean = false;
 
   private _handleValueChange(params: InputEvent) {

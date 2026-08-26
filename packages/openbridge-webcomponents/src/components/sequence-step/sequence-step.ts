@@ -48,6 +48,11 @@ export enum SequenceVariant {
 }
 
 /**
+ * @property hasIcon - Displays the built-in state icon for medium/large regular steps.
+ * @availableWhen hasIcon styleType==regular && type in [medium, large]
+ * @property inputConnectorExtended - Extends the input connector to match the height/width of multi-line content.
+ *   Applies only when `hasInputConnector` is true.
+ * @availableWhen inputConnectorExtended showStepInputConnector==true
  * @fires click - Fired when the step is activated. Only fired when the step renders as a button, i.e. `type="large"` with the `regular` or `point` style; other combinations render a non-interactive wrapper.
  * @beta
  */
@@ -67,20 +72,11 @@ export class ObcSequenceStep extends LitElement {
   @property({type: String}) styleType: SequenceStyle = SequenceStyle.regular;
   @property({type: String}) value: SequenceValue = SequenceValue.regular;
   @property({type: String, reflect: true}) variant?: SequenceVariant;
-  /**
-   * Displays the built-in state icon for medium/large regular steps.
-   * @availableWhen styleType==regular && type in [medium, large]
-   */
   @property({type: Boolean}) hasIcon = false;
   @property({type: Boolean, attribute: false}) showStepInputConnector: boolean =
     true;
   @property({type: Boolean, attribute: false})
   showStepOutputConnector: boolean = true;
-  /**
-   * Extends the input connector to match the height/width of multi-line content.
-   * Applies only when `hasInputConnector` is true.
-   * @availableWhen showStepInputConnector==true
-   */
   @property({type: Boolean}) inputConnectorExtended = false;
 
   private get isVertical() {

@@ -91,6 +91,18 @@ export enum ObcFloatingItemLineType {
  *
  * ---
  *
+ * @property hasTimestamp - Shows a timestamp (slot `time`) when `true`.
+ *   Enable to display a time label next to the title.
+ * @property hasDay - Shows a day chip (slot `day`) next to the timestamp when `true`.
+ *   Only applied when `hasTimestamp` is also `true`.
+ *   Use to provide additional context for the timestamp.
+ * @availableWhen hasDay hasTimestamp==true
+ * @property action - Renders a primary action button (slot `action`) when `true`.
+ *   Use for the main action the user can take in response to the message.
+ * @property action2 - Enables a secondary action button (slot `action2`).
+ *   Only applied when `action` is also `true`.
+ *   Use sparingly for secondary actions (e.g., "Undo").
+ * @availableWhen action2 action==true
  * @slot primary-icon - Main icon to represent the message’s category.
  * @slot secondary-icon - Additional icon for application-type messages.
  * @slot title - Title or heading of the message.
@@ -124,32 +136,12 @@ export class ObcFloatingItem extends LitElement {
    */
   @property({type: String}) direction = ObcFloatingItemDirection.horizontal;
 
-  /**
-   * Shows a timestamp (slot `time`) when `true`.
-   * Enable to display a time label next to the title.
-   */
   @property({type: Boolean}) hasTimestamp = false;
 
-  /**
-   * Shows a day chip (slot `day`) next to the timestamp when `true`.
-   * Only applied when `hasTimestamp` is also `true`.
-   * Use to provide additional context for the timestamp.
-   * @availableWhen hasTimestamp==true
-   */
   @property({type: Boolean}) hasDay = false;
 
-  /**
-   * Renders a primary action button (slot `action`) when `true`.
-   * Use for the main action the user can take in response to the message.
-   */
   @property({type: Boolean}) action = false;
 
-  /**
-   * Enables a secondary action button (slot `action2`).
-   * Only applied when `action` is also `true`.
-   * Use sparingly for secondary actions (e.g., "Undo").
-   * @availableWhen action==true
-   */
   @property({type: Boolean}) action2 = false;
 
   /**

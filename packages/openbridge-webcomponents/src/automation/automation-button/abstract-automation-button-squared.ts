@@ -19,6 +19,9 @@ export class ObcAbstractAutomationButtonSquared extends ObcAbstractAutomationBut
   }
 
   override get extraReadouts(): AutomationButtonReadoutStack[] {
+    if (!this.showStatus) {
+      return [];
+    }
     if (this.on) {
       return [
         {

@@ -12,6 +12,7 @@ import {AdviceState} from '../watch/advice.js';
 import {Priority} from '../types.js';
 
 /**
+ * @availableWhen vesselScale vesselImage!=''
  * @stable
  */
 @customElement('obc-depth-actual')
@@ -19,7 +20,6 @@ export class ObcDepthActual extends LitElement {
   @property({type: Number}) depth = 0;
   @property({type: Number}) draft = 0;
   @property({type: Array}) advice: LinearAdvice[] = [];
-  /** @availableWhen vesselImage!='' */
   @property({type: Number}) vesselScale = 1;
 
   @property({type: Number}) instrumentRange = 10;

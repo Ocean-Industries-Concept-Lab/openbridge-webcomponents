@@ -38,27 +38,26 @@ const BAR_VIEW_BOX = '-64 -192 128 384';
  *   narrow strip. The host is 128×384 rather than square.
  *
  * @element obc-heave
+ *
+ * @availableWhen gainScale type==vessel
+ * @availableWhen draftOffset type==vessel
+ * @availableWhen vesselImage type==vessel
+ * @property type - `vessel` (default) frames the scale next to a vessel silhouette; `bar`
+ *   renders the scale column on its own.
  * @stable
  */
 @customElement('obc-heave')
 export class ObcHeave extends LitElement {
   @property({type: Number}) heave = 0;
-  /** @availableWhen type==vessel */
   @property({type: Number}) gainScale = 10;
   @property({type: Number}) minTrendHeave = 0;
   @property({type: Number}) maxTrendHeave = 0;
-  /** @availableWhen type==vessel */
   @property({type: Number}) draftOffset = 0;
   @property({type: Array}) advice: LinearAdvice[] = [];
 
   @property({type: Number}) instrumentRange = 10;
-  /** @availableWhen type==vessel */
   @property({type: String}) vesselImage: VesselImage = VesselImage.psvFore;
   @property({type: String}) priority: Priority = Priority.regular;
-  /**
-   * `vessel` (default) frames the scale next to a vessel silhouette; `bar`
-   * renders the scale column on its own.
-   */
   @property({type: String}) type: ObcHeaveType = ObcHeaveType.vessel;
 
   private _toTranslatedValue(value: number) {

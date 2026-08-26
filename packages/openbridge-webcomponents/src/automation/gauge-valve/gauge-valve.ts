@@ -170,6 +170,23 @@ export enum GaugeValveStyle {
  * | ------ | --------- | ---------------------------------------- |
  * | `icon` | always    | Center actuator icon (`obi-*` component) |
  *
+ * @property priority - Colour emphasis of the value graphics (the Figma "Type" axis); `off` blanks them on a flat disc
+ * @property barStyle - Bar rendering (the Figma "Style" axis): tint (default) shows a tint bar with strong cap pills, fill a strong bar without pills
+ * @property value - Through-flow of the right outlet port, 0-100 (%)
+ * @property bottomValue - Bottom outlet flow, 0-100 (%).
+ * @availableWhen bottomValue type==three-way
+ * @property large - Show scale, labels, readout and setpoint layer
+ * @property label - Readout label text.
+ * @availableWhen label large==true
+ * @property unit - Readout unit text.
+ * @availableWhen unit large==true
+ * @property tag - Identifier line under the compact readout stack, e.g. '#0001'.
+ * @availableWhen tag large==false && hasLabelStack==true
+ * @property hasLabelStack - Render the readout stack below the face in the compact variant.
+ * @availableWhen hasLabelStack large==false
+ * @property faceDiameter - Ring diameter in CSS pixels. When set, the face renders at a fixed
+ *   intrinsic size (equal circumference across instruments sharing the
+ *   value); when unset (default), the face contain-fits its container.
  * @slot icon - Center actuator icon (`obi-*` component)
  *
  * @experimental
@@ -177,45 +194,16 @@ export enum GaugeValveStyle {
 @customElement('obc-gauge-valve')
 export class ObcGaugeValve extends SetpointMixin(LitElement) {
   @property({type: String}) type: GaugeValveType = GaugeValveType.twoWay;
-  /** Colour emphasis of the value graphics (the Figma "Type" axis); `off` blanks them on a flat disc */
   @property({type: String}) priority: GaugeValvePriority =
     GaugeValvePriority.regular;
-  /** Bar rendering (the Figma "Style" axis): tint (default) shows a tint bar with strong cap pills, fill a strong bar without pills */
   @property({type: String}) barStyle: GaugeValveStyle = GaugeValveStyle.tint;
-  /** Through-flow of the right outlet port, 0-100 (%) */
   @property({type: Number}) value = 0;
-  /**
-   * Bottom outlet flow, 0-100 (%).
-   * @availableWhen type==three-way
-   */
   @property({type: Number}) bottomValue = 0;
-  /** Show scale, labels, readout and setpoint layer */
   @property({type: Boolean}) large = false;
-  /**
-   * Readout label text.
-   * @availableWhen large==true
-   */
   @property({type: String}) label = '';
-  /**
-   * Readout unit text.
-   * @availableWhen large==true
-   */
   @property({type: String}) unit = '';
-  /**
-   * Identifier line under the compact readout stack, e.g. '#0001'.
-   * @availableWhen large==false && hasLabelStack==true
-   */
   @property({type: String}) tag = '';
-  /**
-   * Render the readout stack below the face in the compact variant.
-   * @availableWhen large==false
-   */
   @property({type: Boolean, attribute: false}) hasLabelStack = true;
-  /**
-   * Ring diameter in CSS pixels. When set, the face renders at a fixed
-   * intrinsic size (equal circumference across instruments sharing the
-   * value); when unset (default), the face contain-fits its container.
-   */
   @property({type: Number, attribute: 'face-diameter', reflect: true})
   faceDiameter: number | undefined;
 
