@@ -1,26 +1,16 @@
 import {svg, SVGTemplateResult} from 'lit';
-import {WatchCircleType, innerRingRadiusFor} from './watch.js';
+import {SECONDARY_LANE_RADIUS, SECONDARY_LINE_WIDTH} from './watch.js';
 
-/**
- * Shared dual-lane subdivision of the 112..160 track annulus (the design's
- * "pitch-rpm" split, Figma: divider outer edge at 264 diameter): a thin
- * secondary value line at the band's inner edge, a face-colored divider, and
- * a narrowed primary sub-band. Used by `obc-top-view-propulsion` (pitch-rpm)
- * and `obc-gauge-proportional` (primary-secondary frame) so the lane
- * geometry stays identical across instruments.
- */
-export const BAND_INNER_RADIUS = innerRingRadiusFor(WatchCircleType.double);
-export const BAND_OUTER_RADIUS = innerRingRadiusFor(WatchCircleType.single);
-export const SECONDARY_LINE_WIDTH = 8;
-export const LANE_DIVIDER_WIDTH = 8;
-export const SECONDARY_LANE_RADIUS =
-  BAND_INNER_RADIUS + SECONDARY_LINE_WIDTH / 2;
-export const LANE_DIVIDER_RADIUS =
-  BAND_INNER_RADIUS + SECONDARY_LINE_WIDTH + LANE_DIVIDER_WIDTH / 2;
-export const PRIMARY_SUBBAND_INNER_RADIUS =
-  BAND_INNER_RADIUS + SECONDARY_LINE_WIDTH + LANE_DIVIDER_WIDTH;
-export const PRIMARY_SUBBAND_NEEDLE_LENGTH =
-  BAND_OUTER_RADIUS - PRIMARY_SUBBAND_INNER_RADIUS;
+export {
+  BAND_INNER_RADIUS,
+  BAND_OUTER_RADIUS,
+  SECONDARY_LINE_WIDTH,
+  LANE_DIVIDER_WIDTH,
+  SECONDARY_LANE_RADIUS,
+  LANE_DIVIDER_RADIUS,
+  PRIMARY_SUBBAND_INNER_RADIUS,
+  PRIMARY_SUBBAND_NEEDLE_LENGTH,
+} from './watch.js';
 
 /** A circular arc path (center origin, 0° = 12 o'clock, clockwise positive). */
 export function arcPath(
