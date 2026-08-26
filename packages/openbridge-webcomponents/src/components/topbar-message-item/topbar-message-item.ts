@@ -119,6 +119,16 @@ export enum ObcTopbarMessageItemSize {
  * </obc-topbar-message-item>
  * ```
  *
+ * @property showTitle - Whether to show the title slot.
+ * @availableWhen showTitle type!=Inactive
+ * @property showDescription - Whether to show the description slot.
+ * @availableWhen showDescription type!=Inactive
+ * @property showTimestamp - Whether to show the primary timestamp slot.
+ * @availableWhen showTimestamp type!=Inactive
+ * @property hasTimestamp2 - Whether to display the secondary timestamp slot.
+ * @availableWhen hasTimestamp2 type!=Inactive
+ * @property hasSecondaryIcon - Whether to display the secondary icon slot.
+ * @availableWhen hasSecondaryIcon type!=Inactive
  * @slot primary-icon - Main icon representing the message type or status.
  * @slot secondary-icon - Additional icon for context or severity (shown if `hasSecondaryIcon` is true).
  * @slot title - Title or heading of the message (shown if `showTitle` is true).
@@ -158,34 +168,14 @@ export class ObcTopbarMessageItem extends LitElement {
   @property({type: String}) size: ObcTopbarMessageItemSize =
     ObcTopbarMessageItemSize.Regular;
 
-  /**
-   * Whether to show the title slot.
-   * @availableWhen type!=Inactive
-   */
   @property({type: Boolean, attribute: false}) showTitle: boolean = true;
 
-  /**
-   * Whether to show the description slot.
-   * @availableWhen type!=Inactive
-   */
   @property({type: Boolean, attribute: false}) showDescription: boolean = true;
 
-  /**
-   * Whether to show the primary timestamp slot.
-   * @availableWhen type!=Inactive
-   */
   @property({type: Boolean, attribute: false}) showTimestamp: boolean = true;
 
-  /**
-   * Whether to display the secondary timestamp slot.
-   * @availableWhen type!=Inactive
-   */
   @property({type: Boolean}) hasTimestamp2 = false;
 
-  /**
-   * Whether to display the secondary icon slot.
-   * @availableWhen type!=Inactive
-   */
   @property({type: Boolean}) hasSecondaryIcon = false;
 
   private onMessageClick() {

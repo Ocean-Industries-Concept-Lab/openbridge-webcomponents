@@ -68,6 +68,43 @@ function percentToAngle(value: number): number {
  * Use for a propulsion unit overview. For an azimuthing unit with a
  * direction bar, use `obc-azimuth-thruster` instead.
  *
+ * @property power - Signed power in percent: 0 at the top, positive clockwise, ±100% = ±180°.
+ * @availableWhen power type==power
+ * @availableWhen powerSetpoint type==power
+ * @availableWhen newPowerSetpoint type==power && powerSetpoint!=undefined
+ * @availableWhen atPowerSetpoint type==power && powerSetpoint!=undefined && autoAtPowerSetpoint==false
+ * @availableWhen powerSetpointAtZeroDeadband type==power && powerSetpoint!=undefined
+ * @availableWhen powerSetpointOverride type==power && powerSetpoint!=undefined
+ * @availableWhen autoAtPowerSetpoint type==power && powerSetpoint!=undefined
+ * @availableWhen autoAtPowerSetpointDeadband type==power && powerSetpoint!=undefined && autoAtPowerSetpoint==true
+ * @property rpm - Signed rpm in percent of the maximum: 0 at the top, positive clockwise,
+ *   ±100% = ±180°. Shown on the primary track.
+ * @availableWhen rpm type==pitch-rpm
+ * @availableWhen rpmSetpoint type==pitch-rpm
+ * @availableWhen newRpmSetpoint type==pitch-rpm && rpmSetpoint!=undefined
+ * @availableWhen atRpmSetpoint type==pitch-rpm && rpmSetpoint!=undefined && autoAtRpmSetpoint==false
+ * @availableWhen rpmSetpointAtZeroDeadband type==pitch-rpm && rpmSetpoint!=undefined
+ * @availableWhen rpmSetpointOverride type==pitch-rpm && rpmSetpoint!=undefined
+ * @availableWhen autoAtRpmSetpoint type==pitch-rpm && rpmSetpoint!=undefined
+ * @availableWhen autoAtRpmSetpointDeadband type==pitch-rpm && rpmSetpoint!=undefined && autoAtRpmSetpoint==true
+ * @property pitch - Signed pitch in percent: 0 at the top, positive clockwise, ±100% = ±180°.
+ *   Shown as the thin secondary arc.
+ * @availableWhen pitch type==pitch-rpm
+ * @availableWhen touching powerSetpoint!=undefined || rpmSetpoint!=undefined
+ * @availableWhen animateSetpoint powerSetpoint!=undefined || rpmSetpoint!=undefined
+ * @property loading - Loading progress in percent, shown as an arc on the outer ring.
+ * @availableWhen loading state==loading
+ * @property primaryTickmarkInterval - Interval (in degrees) for primary tickmarks.
+ *   When undefined or <= 0, no primary tickmarks are shown (only the zero line).
+ * @property secondaryTickmarkInterval - Interval (in degrees) for secondary tickmarks.
+ *   When undefined or <= 0, no secondary tickmarks are shown.
+ * @property tertiaryTickmarkInterval - Interval (in degrees) for tertiary tickmarks.
+ *   When undefined or <= 0, no tertiary tickmarks are shown.
+ * @property faceDiameter - Outer-ring diameter in CSS pixels. When set, the instrument renders at a
+ *   fixed intrinsic size derived from the ring, arc shape and label reserve —
+ *   so instruments sharing the same value have identical ring circumference
+ *   regardless of label width or arc extent (like obc-donut-chart's
+ *   fixedHeight). When unset (default), the instrument fills its container.
  * @experimental The API of this component is under design review and may
  * change in a future release.
  */
@@ -76,82 +113,36 @@ export class ObcTopViewPropulsion extends LitElement {
   @property({type: String}) type: TopViewPropulsionType =
     TopViewPropulsionType.power;
 
-  /**
-   * Signed power in percent: 0 at the top, positive clockwise, ±100% = ±180°.
-   * @availableWhen type==power
-   */
   @property({type: Number}) power = 0;
-  /** @availableWhen type==power */
   @property({type: Number}) powerSetpoint: number | undefined;
-  /** @availableWhen type==power && powerSetpoint!=undefined */
   @property({type: Number}) newPowerSetpoint: number | undefined;
-  /** @availableWhen type==power && powerSetpoint!=undefined && autoAtPowerSetpoint==false */
   @property({type: Boolean}) atPowerSetpoint = false;
-  /** @availableWhen type==power && powerSetpoint!=undefined */
   @property({type: Number}) powerSetpointAtZeroDeadband = 0.1;
-  /** @availableWhen type==power && powerSetpoint!=undefined */
   @property({type: Boolean}) powerSetpointOverride = false;
-  /** @availableWhen type==power && powerSetpoint!=undefined */
   @property({type: Boolean, attribute: false}) autoAtPowerSetpoint = true;
-  /** @availableWhen type==power && powerSetpoint!=undefined && autoAtPowerSetpoint==true */
   @property({type: Number}) autoAtPowerSetpointDeadband = 1;
 
-  /**
-   * Signed rpm in percent of the maximum: 0 at the top, positive clockwise,
-   * ±100% = ±180°. Shown on the primary track.
-   * @availableWhen type==pitch-rpm
-   */
   @property({type: Number}) rpm = 0;
-  /** @availableWhen type==pitch-rpm */
   @property({type: Number}) rpmSetpoint: number | undefined;
-  /** @availableWhen type==pitch-rpm && rpmSetpoint!=undefined */
   @property({type: Number}) newRpmSetpoint: number | undefined;
-  /** @availableWhen type==pitch-rpm && rpmSetpoint!=undefined && autoAtRpmSetpoint==false */
   @property({type: Boolean}) atRpmSetpoint = false;
-  /** @availableWhen type==pitch-rpm && rpmSetpoint!=undefined */
   @property({type: Number}) rpmSetpointAtZeroDeadband = 0.1;
-  /** @availableWhen type==pitch-rpm && rpmSetpoint!=undefined */
   @property({type: Boolean}) rpmSetpointOverride = false;
-  /** @availableWhen type==pitch-rpm && rpmSetpoint!=undefined */
   @property({type: Boolean, attribute: false}) autoAtRpmSetpoint = true;
-  /** @availableWhen type==pitch-rpm && rpmSetpoint!=undefined && autoAtRpmSetpoint==true */
   @property({type: Number}) autoAtRpmSetpointDeadband = 1;
 
-  /**
-   * Signed pitch in percent: 0 at the top, positive clockwise, ±100% = ±180°.
-   * Shown as the thin secondary arc.
-   * @availableWhen type==pitch-rpm
-   */
   @property({type: Number}) pitch = 0;
 
-  /** @availableWhen powerSetpoint!=undefined || rpmSetpoint!=undefined */
   @property({type: Boolean}) touching = false;
-  /** @availableWhen powerSetpoint!=undefined || rpmSetpoint!=undefined */
   @property({type: Boolean}) animateSetpoint = false;
 
   @property({type: String}) state: InstrumentState = InstrumentState.active;
   @property({type: String}) priority: Priority = Priority.regular;
-  /**
-   * Loading progress in percent, shown as an arc on the outer ring.
-   * @availableWhen state==loading
-   */
   @property({type: Number}) loading = 0;
 
-  /**
-   * Interval (in degrees) for primary tickmarks.
-   * When undefined or <= 0, no primary tickmarks are shown (only the zero line).
-   */
   @property({type: Number}) primaryTickmarkInterval: number | undefined = 90;
-  /**
-   * Interval (in degrees) for secondary tickmarks.
-   * When undefined or <= 0, no secondary tickmarks are shown.
-   */
   @property({type: Number}) secondaryTickmarkInterval: number | undefined =
     undefined;
-  /**
-   * Interval (in degrees) for tertiary tickmarks.
-   * When undefined or <= 0, no tertiary tickmarks are shown.
-   */
   @property({type: Number}) tertiaryTickmarkInterval: number | undefined =
     undefined;
   @property({type: Boolean}) showLabels = false;
@@ -163,13 +154,6 @@ export class ObcTopViewPropulsion extends LitElement {
   @property({type: String}) propeller: PropellerImage =
     PropellerImage.fourBlade;
 
-  /**
-   * Outer-ring diameter in CSS pixels. When set, the instrument renders at a
-   * fixed intrinsic size derived from the ring, arc shape and label reserve —
-   * so instruments sharing the same value have identical ring circumference
-   * regardless of label width or arc extent (like obc-donut-chart's
-   * fixedHeight). When unset (default), the instrument fills its container.
-   */
   @property({type: Number, attribute: 'face-diameter'})
   faceDiameter: number | undefined;
 

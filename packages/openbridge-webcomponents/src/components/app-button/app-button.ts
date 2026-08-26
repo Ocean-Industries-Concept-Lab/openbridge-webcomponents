@@ -60,6 +60,9 @@ export enum AppButtonSize {
  * </obc-app-button>
  * ```
  *
+ * @property checked - If true, applies the "checked" visual style to indicate selection or active state.
+ * @property showLabel - If true, shows the button's label.
+ * @property integration - If true, applies integration styles for the integration app bar.
  * @fires click - Fired when the button is clicked (if not disabled).
  *
  * @slot icon - Displays the leading icon for the button.
@@ -74,22 +77,10 @@ export class ObcAppButton extends LitElement {
    */
   @property({type: String}) label = 'Button';
 
-  /**
-   * If true, applies the "checked" visual style to indicate selection or active state.
-   * @default false
-   */
   @property({type: Boolean}) checked = false;
 
-  /**
-   * If true, shows the button's label.
-   * @default true
-   */
   @property({type: Boolean, attribute: false}) showLabel: boolean = true;
 
-  /**
-   * If true, applies integration styles for the integration app bar.
-   * @default false
-   */
   @property({type: Boolean}) integration = false;
 
   /**

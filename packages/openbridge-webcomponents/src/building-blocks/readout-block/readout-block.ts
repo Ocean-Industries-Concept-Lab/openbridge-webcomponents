@@ -135,6 +135,44 @@ export enum ReadoutBlockHidePhase {
  * inherited from the host context (the parent sets the role colour), so the
  * block stays neutral until placed.
  *
+ * @property variant - Semantic variant (value / setpoint / advice).
+ * @property size - Density tier — icon size, gap, degree tier.
+ * @property valueSize - Resolved number-typography size. When unset it is derived from `size`
+ *   (small→s, medium→m, large→l), so a parent that de-emphasises a block (e.g.
+ *   a secondary setpoint) can pass a smaller size without changing the tier.
+ * @property enhanced - Accent (in-command) colour tone.
+ * @property weight - Number font weight (regular / semibold / bold); colour is independent.
+ * @property hasDegree - Render the trailing cap-height degree glyph (`°`).
+ * @property hasIcon - Show the leading marker-icon container (always on for setpoint/advice).
+ * @property fractionDigits - Number of fraction digits. Must be between 0 and 100 — the range
+ *   `Number.prototype.toFixed` accepts; outside it throws a `RangeError`.
+ *   A fractional count truncates (`2.7` → `2`). A count that never arrived
+ *   (`NaN`, `null` or unset) renders the reading as the unavailable dash —
+ *   formatting with a precision the author never chose would let a critical
+ *   `0.4` pass for a healthy `0`.
+ * @availableWhen fractionDigits valueType==number
+ * @property maxDigits - Integer digits to reserve / hint (independent of `fractionDigits`).
+ *   Bounded before use: a fractional count
+ *   truncates (`2.7` → `2`), anything above 100 — including `Infinity` —
+ *   caps at 100, and a negative count reserves nothing. A count that never
+ *   arrived (`NaN`, `null` or unset) renders the reading as the unavailable
+ *   dash, consistent with `fractionDigits`.
+ * @availableWhen maxDigits valueType==number
+ * @property hintedZeros - Render muted leading zeros filling the integer part to `maxDigits`.
+ * @availableWhen hintedZeros valueType==number
+ * @property spaceReserver - Explicit longest string to reserve width for (e.g. `"0000.0"`).
+ * @property off - Render `offText` instead of a number (e.g. equipment powered down).
+ * @property offText - Text shown when `off` is true.
+ * @property alignment - Text alignment of the number within its reserved width.
+ * @property active - The advice is triggered: the marker swaps to its filled/status icon and
+ *   the number takes the category's triggered styling (SemiBold for
+ *   regular/optimal/eco, active text colour for the alert categories). Only
+ *   meaningful for `variant="advice"`.
+ * @availableWhen active variant==advice
+ * @property dataQuality - Per-block measurement quality (outline chip).
+ * @property alert - Per-block alert frame; nests inside any parent alert frame.
+ * @property touching - Setpoint focus (touch) state — only meaningful for `role="setpoint"`.
+ * @property hidePhase - Setpoint pop-up fade phase — only meaningful for `role="setpoint"`.
  * @experimental Pilot for the new primitives + per-block options Readout API; the
  * API may change in a future release.
  *
@@ -148,7 +186,6 @@ export enum ReadoutBlockHidePhase {
  */
 @customElement('obc-readout-block')
 export class ObcReadoutBlock extends LitElement {
-  /** Semantic variant (value / setpoint / advice). */
   @property({type: String}) variant: ReadoutBlockVariant =
     ReadoutBlockVariant.value;
 
@@ -166,67 +203,31 @@ export class ObcReadoutBlock extends LitElement {
   @property({type: String}) valueType: ReadoutValueType =
     ReadoutValueType.number;
 
-  /** Density tier — icon size, gap, degree tier. */
   @property({type: String}) size: ReadoutBlockSize = ReadoutBlockSize.small;
 
-  /**
-   * Resolved number-typography size. When unset it is derived from `size`
-   * (small→s, medium→m, large→l), so a parent that de-emphasises a block (e.g.
-   * a secondary setpoint) can pass a smaller size without changing the tier.
-   */
   @property({type: String}) valueSize?: ObcTextboxSize;
 
-  /** Accent (in-command) colour tone. */
   @property({type: Boolean}) enhanced = false;
 
-  /** Number font weight (regular / semibold / bold); colour is independent. */
   @property({type: String}) weight: ObcTextboxFontWeight =
     ObcTextboxFontWeight.regular;
 
-  /** Render the trailing cap-height degree glyph (`°`). */
   @property({type: Boolean}) hasDegree = false;
 
-  /** Show the leading marker-icon container (always on for setpoint/advice). */
   @property({type: Boolean}) hasIcon = false;
 
-  /**
-   * Number of fraction digits. Must be between 0 and 100 — the range
-   * `Number.prototype.toFixed` accepts; outside it throws a `RangeError`.
-   * A fractional count truncates (`2.7` → `2`). A count that never arrived
-   * (`NaN`, `null` or unset) renders the reading as the unavailable dash —
-   * formatting with a precision the author never chose would let a critical
-   * `0.4` pass for a healthy `0`.
-   * @availableWhen valueType==number
-   */
   @property({type: Number}) fractionDigits = 0;
 
-  /**
-   * Integer digits to reserve / hint (independent of `fractionDigits`).
-   * Bounded before use: a fractional count
-   * truncates (`2.7` → `2`), anything above 100 — including `Infinity` —
-   * caps at 100, and a negative count reserves nothing. A count that never
-   * arrived (`NaN`, `null` or unset) renders the reading as the unavailable
-   * dash, consistent with `fractionDigits`.
-   * @availableWhen valueType==number
-   */
   @property({type: Number}) maxDigits = 0;
 
-  /**
-   * Render muted leading zeros filling the integer part to `maxDigits`.
-   * @availableWhen valueType==number
-   */
   @property({type: Boolean}) hintedZeros = false;
 
-  /** Explicit longest string to reserve width for (e.g. `"0000.0"`). */
   @property({type: String}) spaceReserver?: string;
 
-  /** Render `offText` instead of a number (e.g. equipment powered down). */
   @property({type: Boolean}) off = false;
 
-  /** Text shown when `off` is true. */
   @property({type: String}) offText = 'OFF';
 
-  /** Text alignment of the number within its reserved width. */
   @property({type: String}) alignment: ObcTextboxAlignment =
     ObcTextboxAlignment.Right;
 
@@ -238,28 +239,17 @@ export class ObcReadoutBlock extends LitElement {
   @property({type: String}) category: ReadoutAdviceCategory =
     ReadoutAdviceCategory.regular;
 
-  /**
-   * The advice is triggered: the marker swaps to its filled/status icon and
-   * the number takes the category's triggered styling (SemiBold for
-   * regular/optimal/eco, active text colour for the alert categories). Only
-   * meaningful for `variant="advice"`.
-   * @availableWhen variant==advice
-   */
   @property({type: Boolean}) active = false;
 
-  /** Per-block measurement quality (outline chip). */
   @property({type: String}) dataQuality?: ReadoutBlockDataQuality;
 
   // `boolean | …` (not `false | …`): the generated Angular wrapper widens a
   // literal-`false` union to `boolean`. `wrapWithAlertFrame` treats any
   // non-object as "no frame", so accepting `boolean` is harmless.
-  /** Per-block alert frame; nests inside any parent alert frame. */
   @property({type: Object}) alert: boolean | AlertFrameConfig = false;
 
-  /** Setpoint focus (touch) state — only meaningful for `role="setpoint"`. */
   @property({type: Boolean}) touching = false;
 
-  /** Setpoint pop-up fade phase — only meaningful for `role="setpoint"`. */
   @property({type: String}) hidePhase: ReadoutBlockHidePhase =
     ReadoutBlockHidePhase.none;
 

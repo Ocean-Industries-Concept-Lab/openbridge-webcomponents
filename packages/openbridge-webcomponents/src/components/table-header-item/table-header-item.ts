@@ -20,6 +20,7 @@ export enum ObcTableHeaderItemSortDirection {
 }
 
 /**
+ * @availableWhen sortDirection sortable==true
  * @slot leading-icon - Leading icon (shown when `hasLeadingIcon` is true).
  * @slot - Header label content (hidden when `type` is `IconOnly`).
  * @beta
@@ -30,7 +31,6 @@ export class ObcTableHeaderItem extends LitElement {
     ObcTableHeaderItemType.Regular;
   @property({type: Boolean}) disabled = false;
   @property({type: Boolean}) hasLeadingIcon = false;
-  /** @availableWhen sortable==true */
   @property({type: String}) sortDirection: ObcTableHeaderItemSortDirection =
     ObcTableHeaderItemSortDirection.None;
   @property({type: Boolean}) showDivider = false;

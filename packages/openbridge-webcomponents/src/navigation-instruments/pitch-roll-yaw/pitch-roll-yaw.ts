@@ -82,44 +82,38 @@ const LABEL_TEXTS = ['0', '90', '180', '-90'] as const;
  * `obc-pitch-roll-heave`; for heading against a compass card use
  * `obc-compass`.
  *
+ * @property pitch - Pitch in degrees; positive moves the attitude dot up.
+ * @property roll - Roll in degrees; positive moves the attitude dot right.
+ * @property yaw - Yaw deviation in degrees on the ±180° scale (0° = top, positive =
+ *   clockwise). Shown as a dot on the scale in the `level` and
+ *   `historical-motion` variants and as the end of the live yaw bar in the
+ *   `actual-motion` variant.
+ * @availableWhen minAvgYaw type!='actual-motion'
+ * @availableWhen maxAvgYaw type!='actual-motion'
+ * @property range - Pitch/roll value at the outermost grid circle. Default `20`.
+ * @property motionRadius - Radius of the motion-envelope circle in the same unit as `pitch`/`roll`.
+ *   Hidden when `0`.
+ * @availableWhen motionRadius type=='actual-motion'
+ * @property motionHistory - Past attitude samples, oldest first; rendered as a fading trail.
+ * @availableWhen motionHistory type=='historical-motion'
+ * @availableWhen vesselImage type!='level'
+ * @property showLabels - When `true`, shows 0/90/180/-90 labels outside the scale.
  * @experimental
  */
 @customElement('obc-pitch-roll-yaw')
 export class ObcPitchRollYaw extends LitElement {
   @property({type: String}) type: PitchRollYawType = PitchRollYawType.level;
-  /** Pitch in degrees; positive moves the attitude dot up. */
   @property({type: Number}) pitch = 0;
-  /** Roll in degrees; positive moves the attitude dot right. */
   @property({type: Number}) roll = 0;
-  /**
-   * Yaw deviation in degrees on the ±180° scale (0° = top, positive =
-   * clockwise). Shown as a dot on the scale in the `level` and
-   * `historical-motion` variants and as the end of the live yaw bar in the
-   * `actual-motion` variant.
-   */
   @property({type: Number}) yaw = 0;
-  /** @availableWhen type!='actual-motion' */
   @property({type: Number}) minAvgYaw = 0;
-  /** @availableWhen type!='actual-motion' */
   @property({type: Number}) maxAvgYaw = 0;
-  /** Pitch/roll value at the outermost grid circle. Default `20`. */
   @property({type: Number}) range = 20;
-  /**
-   * Radius of the motion-envelope circle in the same unit as `pitch`/`roll`.
-   * Hidden when `0`.
-   * @availableWhen type=='actual-motion'
-   */
   @property({type: Number}) motionRadius = 0;
-  /**
-   * Past attitude samples, oldest first; rendered as a fading trail.
-   * @availableWhen type=='historical-motion'
-   */
   @property({type: Array, attribute: false})
   motionHistory: PitchRollSample[] = [];
-  /** @availableWhen type!='level' */
   @property({type: String}) vesselImage: VesselImage = VesselImage.psvTop;
   @property({type: String}) priority: Priority = Priority.regular;
-  /** When `true`, shows 0/90/180/-90 labels outside the scale. */
   @property({type: Boolean}) showLabels = false;
 
   private _resizeController = new ResizeController(this, {});

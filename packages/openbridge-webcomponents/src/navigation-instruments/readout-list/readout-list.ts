@@ -87,6 +87,9 @@ function integerDigitCount(value: number | null | undefined): number {
  * HTML-attribute changes). When rows are updated via JS **properties** only (no
  * attribute/DOM mutation), call {@link align} to recompute.
  *
+ * @property showDebugOverlay - Development aid: outline each row's readout building blocks (red), degree
+ *   columns (blue) and degree spacer (green) so the reserved column widths are
+ *   visible. Propagated to every row. Off by default.
  * @experimental Pilot for the new primitives + per-block options Readout API; the
  * API may change in a future release.
  *
@@ -96,11 +99,6 @@ function integerDigitCount(value: number | null | undefined): number {
  */
 @customElement('obc-readout-list')
 export class ObcReadoutList extends LitElement {
-  /**
-   * Development aid: outline each row's readout building blocks (red), degree
-   * columns (blue) and degree spacer (green) so the reserved column widths are
-   * visible. Propagated to every row. Off by default.
-   */
   @property({type: Boolean, reflect: true}) showDebugOverlay = false;
 
   private mutationObserver?: MutationObserver;
