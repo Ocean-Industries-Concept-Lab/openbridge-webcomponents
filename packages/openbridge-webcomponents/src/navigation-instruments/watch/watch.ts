@@ -82,6 +82,10 @@ export interface WatchArea {
   endAngle: number;
   roundOutsideCut: boolean;
   roundInsideCut: boolean;
+  /** Corner fillet radius of the rounded cuts; `roundedArch`'s default when unset. */
+  roundRadius?: number;
+  /** Outline the roundBandCuts band arch with the tertiary frame color instead of self-colored. */
+  outlined?: boolean;
 }
 
 export interface WatchBarArea {
@@ -521,7 +525,12 @@ export class ObcWatch extends LitElement {
                   r: r2,
                   roundOutsideCut: area.roundOutsideCut,
                   roundInsideCut: area.roundInsideCut,
-                })} fill="var(--instrument-frame-secondary-color)" stroke="var(--instrument-frame-secondary-color)" stroke-width="1" vector-effect="non-scaling-stroke" />`
+                  roundRadius: area.roundRadius,
+                })} fill="var(--instrument-frame-secondary-color)" stroke=${
+                  area.outlined
+                    ? 'var(--instrument-frame-tertiary-color)'
+                    : 'var(--instrument-frame-secondary-color)'
+                } stroke-width="1" vector-effect="non-scaling-stroke" />`
             )
           );
         } else {
@@ -556,6 +565,7 @@ export class ObcWatch extends LitElement {
           r: this._bandRadius(this.innerRingRadius),
           roundOutsideCut: area.roundOutsideCut,
           roundInsideCut: area.roundInsideCut,
+          roundRadius: area.roundRadius,
         });
         return svgPath;
       });
@@ -820,6 +830,7 @@ export class ObcWatch extends LitElement {
                     r: this._bandRadius(bar.innerRadius ?? RING3_RADIUS),
                     roundOutsideCut: area.roundOutsideCut,
                     roundInsideCut: area.roundInsideCut,
+                    roundRadius: area.roundRadius,
                   })} fill="white" stroke="white" stroke-width="1" vector-effect="non-scaling-stroke" />`
               )}
             </mask>`
