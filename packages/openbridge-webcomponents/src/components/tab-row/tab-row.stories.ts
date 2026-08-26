@@ -41,6 +41,7 @@ interface TabRowStoryArgs {
   hug?: boolean;
   showSubtitle?: boolean;
   hasAddNewTab?: boolean;
+  centerContent?: boolean;
 }
 
 function InteractiveTabRow(args: TabRowStoryArgs) {
@@ -58,6 +59,7 @@ function InteractiveTabRow(args: TabRowStoryArgs) {
   tabRow.hug = args.hug ?? false;
   tabRow.showSubtitle = args.showSubtitle ?? false;
   tabRow.hasAddNewTab = args.hasAddNewTab ?? true;
+  tabRow.centerContent = args.centerContent ?? false;
 
   tabRow.addEventListener('tab-selected', (e: Event) => {
     const detail = (e as CustomEvent<{id: string}>).detail;
@@ -109,6 +111,18 @@ export const HugMode: Story = {
   render: InteractiveTabRow,
 };
 
+export const CenterContent: Story = {
+  args: {
+    tabs: defaultTabs,
+    hug: false,
+    hasClose: true,
+    hasAddNewTab: true,
+    selectedTabId: 'tab2',
+    centerContent: true,
+  },
+  render: InteractiveTabRow,
+};
+
 export const NoClose: Story = {
   args: {
     tabs: defaultTabs,
@@ -148,24 +162,20 @@ export const WithBadges: Story = {
       {
         id: 'tab1',
         title: 'Inbox',
-        hasBadge: true,
-        badgeCount: 12,
-        badgeType: BadgeType.notification,
+        badges: [{type: BadgeType.warning, size: BadgeSize.regular, count: 12}],
       },
       {
         id: 'tab2',
         title: 'Notifications',
-        hasBadge: true,
-        badgeCount: 3,
-        badgeType: BadgeType.alarm,
+        badges: [
+          {type: BadgeType.alarm, size: BadgeSize.regular, count: 3},
+          {type: BadgeType.warning, size: BadgeSize.regular, count: 7},
+        ],
       },
       {
         id: 'tab3',
         title: 'Updates',
-        hasBadge: true,
-        badgeCount: 99,
-        badgeType: BadgeType.enhance,
-        badgeSize: BadgeSize.large,
+        badges: [{type: BadgeType.caution, size: BadgeSize.regular, count: 99}],
       },
       {id: 'tab4', title: 'Messages'},
     ],

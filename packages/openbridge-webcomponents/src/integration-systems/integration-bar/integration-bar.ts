@@ -27,34 +27,29 @@ import {classMap} from 'lit/directives/class-map.js';
  * Provides a configurable integration bar with home/navigation controls, optional fleet and vessel selection,
  * and optional utility actions such as alerts, notifications, screen, system, dimming, user, and clock.
  *
+ * @property hideHomeButton - Hides the home button when true
+ * @property showClock - Toggles rendering of the clock slot
+ * @property showLinkButton - Toggles visibility of link button
+ * @property linkButtonActivated - Activated state of link button
+ * @property showUserButton - Toggles visibility of user button
+ * @property userButtonActivated - Activated state of user button
+ * @property showDimmingButton - Toggles visibility of dimming button
+ * @property dimmingButtonActivated - Activated state of dimming button
+ * @property showSystemButton - Toggles visibility of system button
+ * @property systemButtonActivated - Activated state of system button
+ * @property showScreenButton - Toggles visibility of screen button
+ * @property screenButtonActivated - Activated state of screen button
+ * @property showNotificationButton - Toggles visibility of notification button
+ * @property notificationButtonActivated - Activated state of notification button
+ * @property showAlertButton - Toggles visibility of alert button
+ * @property alertButtonActivated - Activated state of alert button
+ * @property showFleetButton - Toggles visibility of fleet button
+ * @property fleetButtonSelected - Selected state of fleet button
+ * @property fleetButtonActivated - Active state of fleet button while selection is pending
+ * @property fleetButtonLabel - Label for the fleet button
  * @slot clock - Custom clock content, rendered when `showClock` is true
  * @slot integration-buttons - Regular vessel integration buttons
  * @slot hug-buttons - Compact vessel integration buttons; slotted integration buttons are forced to hug type
- * @slot vessel-integration-menu - Modal that will appear achored below the fleet/vessel button. Typically an obc-integration-vessel-menu
- * @property {IntegrationBarType} type - Integration bar mode for fleet/vessel presentation
- * @property {boolean} hideHomeButton - Hides the home button when true
- * @property {boolean} showClock - Toggles rendering of the clock slot
- * @property {boolean} showLinkButton - Toggles visibility of link button
- * @property {boolean} linkButtonActivated - Activated state of link button
- * @property {boolean} showUserButton - Toggles visibility of user button
- * @property {boolean} userButtonActivated - Activated state of user button
- * @property {boolean} showDimmingButton - Toggles visibility of dimming button
- * @property {boolean} dimmingButtonActivated - Activated state of dimming button
- * @property {boolean} showSystemButton - Toggles visibility of system button
- * @property {boolean} systemButtonActivated - Activated state of system button
- * @property {boolean} showScreenButton - Toggles visibility of screen button
- * @property {boolean} screenButtonActivated - Activated state of screen button
- * @property {boolean} showNotificationButton - Toggles visibility of notification button
- * @property {boolean} notificationButtonActivated - Activated state of notification button
- * @property {boolean} showAlertButton - Toggles visibility of alert button
- * @property {boolean} alertButtonActivated - Activated state of alert button
- * @property {boolean} showFleetButton - Toggles visibility of fleet button
- * @property {boolean} fleetButtonSelected - Selected state of fleet button
- * @property {boolean} fleetButtonActivated - Active state of fleet button while selection is pending
- * @property {string} fleetButtonLabel - Label for the fleet button
- * @property {string} selectedVesselValue - Selected vessel value
- * @property {string} activeVesselValue - Active vessel value while selection is pending
- * @property {{value: string; label: string}[]} vesselSelectorOptions - Available vessel options
  * @fires fleet-button-click - Fired when the fleet button is clicked
  * @fires link-button-clicked - Fired when the link button is clicked
  * @fires alert-button-clicked - Fired when the alert button is clicked
@@ -63,6 +58,7 @@ import {classMap} from 'lit/directives/class-map.js';
  * @fires system-button-clicked - Fired when the system button is clicked
  * @fires dimming-button-clicked - Fired when the dimming button is clicked
  * @fires user-button-clicked - Fired when the user button is clicked
+ * @experimental
  */
 @customElement('obc-integration-bar')
 export class ObcIntegrationBar extends LitElement {

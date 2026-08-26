@@ -82,7 +82,14 @@ export enum Variant {
  * </obc-user-button>
  * ```
  *
+ * @property static - If true, renders the button as a static (non-interactive) element using a `<div>`.
+ *   Use for decorative or read-only contexts where user interaction is not required.
+ * @property disabled - Disables the button, preventing user interaction and applying a disabled style.
+ * @availableWhen disabled static==false
+ * @property label - Optional label text to display next to the button (not shown in static mode).
+ * @availableWhen label static==false
  * @slot icon - Custom icon for the user button (used only in `icon` variant; defaults to <obi-user> if not provided)
+ * @stable
  */
 @customElement('obc-user-button')
 export class ObcUserButton extends LitElement {
@@ -102,16 +109,8 @@ export class ObcUserButton extends LitElement {
    */
   @property({type: String}) styleType: StyleType = StyleType.flat;
 
-  /**
-   * If true, renders the button as a static (non-interactive) element using a `<div>`.
-   * Use for decorative or read-only contexts where user interaction is not required.
-   */
   @property({type: Boolean}) static: boolean = false;
 
-  /**
-   * Disables the button, preventing user interaction and applying a disabled style.
-   * @availableWhen static==false
-   */
   @property({type: Boolean}) disabled: boolean = false;
 
   /**
@@ -121,10 +120,6 @@ export class ObcUserButton extends LitElement {
    */
   @property({type: String}) initials: string = '';
 
-  /**
-   * Optional label text to display next to the button (not shown in static mode).
-   * @availableWhen static==false
-   */
   @property({type: String}) label?: string;
 
   private get formattedInitials() {

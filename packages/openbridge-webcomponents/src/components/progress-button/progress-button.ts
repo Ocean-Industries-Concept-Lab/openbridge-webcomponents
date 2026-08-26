@@ -95,55 +95,44 @@ export interface ProgressButtonClickEvent {
  * </obc-progress-button>
  * ```
  *
+ * @property type - Layout type of the button: `linear` (label + bar) or `circular` (icon + ring).
+ * @property buttonStyle - Elevation style of the button surface.
+ * @availableWhen buttonStyle type==linear
+ * @property mode - Progress mode: `determinate` tracks `value`, `indeterminate` loops indefinitely.
+ * @availableWhen mode showProgress==true
+ * @property value - Progress percentage (0–100); clamped when rendered.
+ * @property label - Text shown in the button (linear) or below it (circular, when `showLabel`).
+ * @property disabled - Blocks interaction and suppresses the `obc-click` event.
+ * @property showProgress - Reveals the progress bar/ring.
+ * @property hasLeadingIcon - Renders the `leading-icon` slot.
+ * @availableWhen hasLeadingIcon type==linear
+ * @property hasTrailingIcon - Renders the `trailing-icon` slot.
+ * @availableWhen hasTrailingIcon type==linear
+ * @property hasAlert - Shows an alert (error) ring/border around the button.
+ * @property progressiveIndeterminate - Uses a progressive indeterminate ring that animates while advancing toward `value`.
+ * @availableWhen progressiveIndeterminate type==circular && showProgress==true
+ * @property showLabel - Shows the `label` below the circular button.
+ * @availableWhen showLabel type==circular
  * @slot leading-icon - Icon before the label (`type="linear"` && `hasLeadingIcon`).
  * @slot trailing-icon - Icon after the label (`type="linear"` && `hasTrailingIcon`).
  * @slot icon - Central icon for the circular variant (`type="circular"`).
- * @fires obc-click {CustomEvent<ProgressButtonClickEvent>} When the button is activated; detail holds the current `value`.
+ * @fires {CustomEvent<ProgressButtonClickEvent>} obc-click - When the button is activated; detail holds the current `value`.
+ * @stable
  */
 @customElement('obc-progress-button')
 export class ObcProgressButton extends LitElement {
-  /** Layout type of the button: `linear` (label + bar) or `circular` (icon + ring). */
   @property({type: String}) type: ProgressButtonType =
     ProgressButtonType.Linear;
-  /**
-   * Elevation style of the button surface.
-   * @availableWhen type==linear
-   */
   @property({type: String}) buttonStyle: ButtonStyle = ButtonStyle.Regular;
-  /**
-   * Progress mode: `determinate` tracks `value`, `indeterminate` loops indefinitely.
-   * @availableWhen showProgress==true
-   */
   @property({type: String}) mode: ProgressMode = ProgressMode.Determinate;
-  /** Progress percentage (0–100); clamped when rendered. */
   @property({type: Number}) value = 0;
-  /** Text shown in the button (linear) or below it (circular, when `showLabel`). */
   @property({type: String}) label = '';
-  /** Blocks interaction and suppresses the `obc-click` event. */
   @property({type: Boolean}) disabled = false;
-  /** Reveals the progress bar/ring. */
   @property({type: Boolean}) showProgress = false;
-  /**
-   * Renders the `leading-icon` slot.
-   * @availableWhen type==linear
-   */
   @property({type: Boolean}) hasLeadingIcon = false;
-  /**
-   * Renders the `trailing-icon` slot.
-   * @availableWhen type==linear
-   */
   @property({type: Boolean}) hasTrailingIcon = false;
-  /** Shows an alert (error) ring/border around the button. */
   @property({type: Boolean}) hasAlert = false;
-  /**
-   * Uses a progressive indeterminate ring that animates while advancing toward `value`.
-   * @availableWhen type==circular && showProgress==true
-   */
   @property({type: Boolean}) progressiveIndeterminate = false;
-  /**
-   * Shows the `label` below the circular button.
-   * @availableWhen type==circular
-   */
   @property({type: Boolean}) showLabel = false;
 
   override render() {

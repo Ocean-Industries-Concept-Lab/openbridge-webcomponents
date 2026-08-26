@@ -72,6 +72,7 @@ const TRAVEL_HALF_PX = Math.min(
  * ## Usage Guidelines
  *
  * Use when you need a small heave cue next to other compact indicators.
+ * @stable
  */
 @customElement('obc-heave-indicator')
 export class ObcHeaveIndicator extends LitElement {

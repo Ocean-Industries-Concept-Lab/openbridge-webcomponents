@@ -104,77 +104,57 @@ export type ObcUserMenuSignedInAction = {
  * ></obc-user-menu>
  * ```
  *
- * @fires sign-in-click {CustomEvent<{username: string, password: string}>}
- * @fires sign-out-click
- * @fires signed-in-action-click {CustomEvent<{id: string, label: string}>}
- * @fires recent-user-click {CustomEvent<{initials: string, label: string}>}
+ * @property type - Controls the visual layout of the user menu.
+ * @property size - Controls the overall size of the user menu.
+ * @property hasRecentlySignedIn - Toggles the "Recently signed in" section visibility.
+ * @availableWhen hasRecentlySignedIn type in [signIn, userSignIn]
+ * @property username - Current username value for sign-in layouts.
+ * @availableWhen username type==signIn
+ * @property password - Current password value for sign-in layouts.
+ * @availableWhen password type in [signIn, userSignIn]
+ * @property usernameError - Error message for the username field.
+ * @availableWhen usernameError type==signIn
+ * @property passwordError - Error message for the password field.
+ * @availableWhen passwordError type in [signIn, userSignIn]
+ * @property userInitials - Initials for the primary user profile.
+ * @availableWhen userInitials type!=signIn
+ * @property userLabel - Label for the primary user profile.
+ * @availableWhen userLabel type!=signIn
+ * @property recentUsers - Recent users for the "Recently signed in" section.
+ * @property signedInActions - Actions shown in the signed-in navigation list.
+ * @availableWhen signedInActions type==signedIn
+ * @slot signed-in-action-icon-<id> - Optional icon for a signed-in action, one per action; `<id>` is the normalized action id (shown in the `signed-in` type).
+ * @fires {CustomEvent<{username: string, password: string}>} sign-in-click - Fired when a sign-in button is clicked.
+ * @fires {CustomEvent<void>} sign-out-click - Fired when the sign-out button is clicked.
+ * @fires {CustomEvent<{id: string, label: string}>} signed-in-action-click - Fired when a signed-in action is clicked.
+ * @fires {CustomEvent<{initials: string, label: string}>} recent-user-click - Fired when a recent user button is clicked.
+ * @stable
  */
 @customElement('obc-user-menu')
 @localized()
 export class ObcUserMenu extends LitElement {
-  /**
-   * Controls the visual layout of the user menu.
-   */
   @property({type: String}) type: ObcUserMenuType = ObcUserMenuType.signIn;
 
-  /**
-   * Controls the overall size of the user menu.
-   */
   @property({type: String}) size: ObcUserMenuSize = ObcUserMenuSize.regular;
 
-  /**
-   * Toggles the "Recently signed in" section visibility.
-   * @availableWhen type in [signIn, userSignIn]
-   */
   @property({type: Boolean})
   hasRecentlySignedIn = false;
 
-  /**
-   * Current username value for sign-in layouts.
-   * @availableWhen type==signIn
-   */
   @property({type: String}) username = '';
 
-  /**
-   * Current password value for sign-in layouts.
-   * @availableWhen type in [signIn, userSignIn]
-   */
   @property({type: String}) password = '';
 
-  /**
-   * Error message for the username field.
-   * @availableWhen type==signIn
-   */
   @property({type: String}) usernameError = '';
 
-  /**
-   * Error message for the password field.
-   * @availableWhen type in [signIn, userSignIn]
-   */
   @property({type: String}) passwordError = '';
 
-  /**
-   * Initials for the primary user profile.
-   * @availableWhen type!=signIn
-   */
   @property({type: String}) userInitials?: string;
 
-  /**
-   * Label for the primary user profile.
-   * @availableWhen type!=signIn
-   */
   @property({type: String}) userLabel?: string;
 
-  /**
-   * Recent users for the "Recently signed in" section.
-   */
   @property({type: Array, attribute: false})
   recentUsers: ObcUserMenuUser[] = [];
 
-  /**
-   * Actions shown in the signed-in navigation list.
-   * @availableWhen type==signedIn
-   */
   @property({type: Array, attribute: false})
   signedInActions: ObcUserMenuSignedInAction[] = [];
 

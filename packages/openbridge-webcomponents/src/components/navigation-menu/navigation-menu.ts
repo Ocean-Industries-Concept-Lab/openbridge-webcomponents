@@ -150,9 +150,14 @@ export enum ObcNavigationMenuFlyoutVariant {
  *
  * In this example, the menu displays a group with sub-items in the main navigation, several footer actions, and a logo.
  *
+ * @property flyoutVariant - Visual variant of the flyout.
+ *   One of `Full` (default) or `Compact`.
+ * @availableWhen flyoutVariant variant==Full
+ * @property smallScreen - When `true`, adapts the layout for small screens (e.g., moves logo into the footer area and adjusts item layout).
  * @slot main - Slot for primary navigation items and groups.
  * @slot footer - Slot for secondary navigation items (e.g., settings, help).
  * @slot logo - Slot for branding/logo area.
+ * @stable
  */
 @customElement('obc-navigation-menu')
 export class ObcNavigationMenu extends LitElement {
@@ -168,17 +173,9 @@ export class ObcNavigationMenu extends LitElement {
   @property({type: String}) variant: ObcNavigationMenuVariant =
     ObcNavigationMenuVariant.Full;
 
-  /**
-   * Visual variant of the flyout.
-   * One of `Full` (default) or `Compact`.
-   * @availableWhen variant==Full
-   */
   @property({type: String}) flyoutVariant: ObcNavigationMenuFlyoutVariant =
     ObcNavigationMenuFlyoutVariant.Full;
 
-  /**
-   * When `true`, adapts the layout for small screens (e.g., moves logo into the footer area and adjusts item layout).
-   */
   @property({type: Boolean}) smallScreen = false;
 
   private slotObservers: MutationObserver[] = [];

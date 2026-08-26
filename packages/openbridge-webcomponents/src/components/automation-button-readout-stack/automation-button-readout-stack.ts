@@ -60,6 +60,9 @@ export type AutomationButtonReadoutStack =
   | AutomationButtonReadoutStackStateOff
   | AutomationButtonReadoutStackButton;
 
+/**
+ * @experimental
+ */
 @customElement('obc-automation-button-readout-stack')
 export class ObcAutomationButtonReadoutStack extends LitElement {
   @property({type: Array, attribute: false})

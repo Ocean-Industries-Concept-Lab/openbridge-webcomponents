@@ -36,66 +36,67 @@ export enum InstrumentFieldSize {
  * |---------------------|-------------------------------------------------------------------------|
  * | off-value           | Content to display when the `off` property is true (defaults to "OFF"). |
  *
+ * @property size - The size of the instrument field.
+ * @property setpoint - The setpoint value to display.
+ * @property hasSetpoint - Whether to show the setpoint.
+ * @property hasSrc - Whether to show the source (src) field.
+ * @property value - The primary value to display.
+ * @property maxDigits - The maximum number of integer digits to show (for zero padding).
+ * @property showZeroPadding - Whether to show leading zeros up to `maxDigits`.
+ * @property fractionDigits - The number of decimal places to display.
+ * @property tag - The tag or label for the data (e.g., "HDG", "SPD").
+ * @property unit - The unit of measurement (e.g., "DEG", "KN").
+ * @property src - The current source name (e.g., "GPS 1").
+ * @property neutralColor - If true, uses a neutral color scheme instead of the default instrument color.
+ * @property horizontal - If true, uses a horizontal layout.
+ * @property center - If true, centers the content.
+ * @property labelOnly - If true, only the label (tag and unit) is displayed.
+ * @property off - If true, displays the "off" state (e.g., showing "OFF" instead of value).
+ * @property autoHideSetpoint - If true, automatically hides the setpoint when the value is close to it.
+ * @property autoHideDeadband - The deadband within which the setpoint is hidden if `autoHideSetpoint` is true.
  * @slot off-value - Content to display when the `off` property is true (defaults to "OFF").
  *
  * @csspart label - The container for the tag and unit.
  * @csspart tag - The tag text element.
+ * @deprecated
  */
 @customElement('obc-instrument-field')
 export class ObcInstrumentField extends LitElement {
-  /** The size of the instrument field. */
   @property({type: String}) size: InstrumentFieldSize =
     InstrumentFieldSize.regular;
 
-  /** The setpoint value to display. */
   @property({type: Number}) setpoint: number | undefined;
 
-  /** Whether to show the setpoint. */
   @property({type: Boolean}) hasSetpoint = false;
 
-  /** Whether to show the source (src) field. */
   @property({type: Boolean}) hasSrc = false;
 
-  /** The primary value to display. */
   @property({type: Number}) value: number | undefined;
 
-  /** The maximum number of integer digits to show (for zero padding). */
   @property({type: Number}) maxDigits = 1;
 
-  /** Whether to show leading zeros up to `maxDigits`. */
   @property({type: Boolean}) showZeroPadding = false;
 
-  /** The number of decimal places to display. */
   @property({type: Number}) fractionDigits = 0;
 
-  /** The tag or label for the data (e.g., "HDG", "SPD"). */
   @property({type: String}) tag = '';
 
-  /** The unit of measurement (e.g., "DEG", "KN"). */
   @property({type: String}) unit = '';
 
-  /** The current source name (e.g., "GPS 1"). */
   @property({type: String}) src = '';
 
-  /** If true, uses a neutral color scheme instead of the default instrument color. */
   @property({type: Boolean}) neutralColor = false;
 
-  /** If true, uses a horizontal layout. */
   @property({type: Boolean}) horizontal = false;
 
-  /** If true, centers the content. */
   @property({type: Boolean}) center = false;
 
-  /** If true, only the label (tag and unit) is displayed. */
   @property({type: Boolean}) labelOnly = false;
 
-  /** If true, displays the "off" state (e.g., showing "OFF" instead of value). */
   @property({type: Boolean}) off = false;
 
-  /** If true, automatically hides the setpoint when the value is close to it. */
   @property({type: Boolean}) autoHideSetpoint = false;
 
-  /** The deadband within which the setpoint is hidden if `autoHideSetpoint` is true. */
   @property({type: Number}) autoHideDeadband = 0;
 
   /**

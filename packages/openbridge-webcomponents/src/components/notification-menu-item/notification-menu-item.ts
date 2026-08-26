@@ -54,14 +54,16 @@ import {customElement} from '../../decorator.js';
  * </obc-notification-menu-item>
  * ```
  *
+ * @property hasIcon - When true, renders the `icon` slot for a secondary icon.
+ * @property size - Layout size: `single-line` (default) or `double-line`.
  * @slot icon - Secondary icon (shown when `hasIcon` is true).
- * @fires primary-action-click {CustomEvent<void>} Fired when the primary action button is clicked.
- * @fires secondary-action-click {CustomEvent<void>} Fired when the secondary action button is clicked.
- * @fires item-click {CustomEvent<{open: boolean}>} Fired when the item is clicked.
+ * @fires {CustomEvent<void>} primary-action-click - Fired when the primary action button is clicked.
+ * @fires {CustomEvent<void>} secondary-action-click - Fired when the secondary action button is clicked.
+ * @fires {CustomEvent<{open: boolean}>} item-click - Fired when the item is clicked.
+ * @beta
  */
 @customElement('obc-notification-menu-item')
 export class ObcNotificationMenuItem extends LitElement {
-  /** When true, renders the `icon` slot for a secondary icon. */
   @property({type: Boolean}) hasIcon = false;
 
   @property({type: String}) override title = '';
@@ -69,7 +71,6 @@ export class ObcNotificationMenuItem extends LitElement {
   @property({type: String}) day = '';
   @property({type: String}) time = '';
   @property({type: Boolean}) open = false;
-  /** Layout size: `single-line` (default) or `double-line`. */
   @property({type: String}) size: ObcMessageMenuItemSize =
     ObcMessageMenuItemSize.SingleLine;
   @property({type: String}) primaryActionLabel = '';

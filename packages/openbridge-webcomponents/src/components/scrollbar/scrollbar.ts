@@ -36,6 +36,7 @@ import compentStyle from './scrollbar.css?inline';
  * - Use only one scrollbar per scrollable region to avoid nested scrollbars, which can confuse users.
  *
  * @slot - Default slot for scrollable content (renders all children inside the scrollable area)
+ * @stable
  */
 @customElement('obc-scrollbar')
 export class ObcScrollbar extends LitElement {

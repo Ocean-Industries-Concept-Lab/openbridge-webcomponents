@@ -135,6 +135,7 @@ export enum ObcTopBarMenuButtonIcon {
  * </obc-top-bar>
  * ```
  *
+ * @availableWhen menuButtonIcon settings==false && inactive==false
  * @slot app-icon - Custom icon representing the application or brand (shown when `showAppIcon` is true)
  * @slot command-button - Primary command/action button for the current context
  * @slot alerts - Area for alert indicators, notification badges, or alert items
@@ -148,7 +149,8 @@ export enum ObcTopBarMenuButtonIcon {
  * @fires back - Fired in settings mode when the back button is clicked
  * @fires emergency-brightness-start - Fired when the menu button is held for 500ms. This should increase the brightness of the screen slowly. Used when the screen is too dark.
  * @fires emergency-brightness-stop - Fired when the menu button is released.
- * @fires breadcrumb-click {BreadcrumbClickEvent} - Fired when a breadcrumb item is clicked.
+ * @fires {BreadcrumbClickEvent} breadcrumb-click - Fired when a breadcrumb item is clicked.
+ * @stable
  */
 @customElement('obc-top-bar')
 export class ObcTopBar extends LitElement {
@@ -167,7 +169,6 @@ export class ObcTopBar extends LitElement {
    */
   @property({type: String}) pageName = 'Page';
 
-  /** @availableWhen settings==false && inactive==false */
   @property({type: String}) menuButtonIcon = ObcTopBarMenuButtonIcon.Menu;
 
   /**
@@ -436,7 +437,6 @@ export class ObcTopBar extends LitElement {
           </obc-icon-button>
         </div>`
       );
-      leftGroup.push(html`<div class="divider"></div>`);
       leftGroup.push(
         html`<obc-icon-button
           variant="flat"
@@ -493,47 +493,46 @@ export class ObcTopBar extends LitElement {
 
     return html`
       <style>
-                @media (max-width: ${breakpointMoreButton}px) {
-                  .left-more-button {
-                    display: revert !important;
-        import { customElement } from '../../decorator.js';
-                  }
+        @media (max-width: ${breakpointMoreButton}px) {
+          .left-more-button {
+            display: revert !important;
+          }
 
-                  .group.left > * {
-                    margin-right: 4px;
-                    margin-left: 4px;
-                  }
-                }
+          .group.left > * {
+            margin-right: 4px;
+            margin-left: 4px;
+          }
+        }
 
-                @media (max-width: ${this.appButtonBreakpointPx}px) {
-                  .apps-button {
-                    display: none;
-                  }
-                }
+        @media (max-width: ${this.appButtonBreakpointPx}px) {
+          .apps-button {
+            display: none;
+          }
+        }
 
-                @media (max-width: ${this.dimmingButtonBreakpointPx}px) {
-                  .dimming-button {
-                    display: none;
-                  }
-                }
+        @media (max-width: ${this.dimmingButtonBreakpointPx}px) {
+          .dimming-button {
+            display: none;
+          }
+        }
 
-                @media (max-width: ${this.appTitleBreakpointPx}px) {
-                  .title {
-                    display: none;
-                  }
-                }
+        @media (max-width: ${this.appTitleBreakpointPx}px) {
+          .title {
+            display: none;
+          }
+        }
 
-                @media (max-width: ${this.userButtonBreakpointPx}px) {
-                  .user-button {
-                    display: none;
-                  }
-                }
+        @media (max-width: ${this.userButtonBreakpointPx}px) {
+          .user-button {
+            display: none;
+          }
+        }
 
-                @media (max-width: ${this.appIconBreakpointPx}px) {
-                  .app-icon {
-                    display: none;
-                  }
-                }
+        @media (max-width: ${this.appIconBreakpointPx}px) {
+          .app-icon {
+            display: none;
+          }
+        }
       </style>
       <nav
         class=${classMap({

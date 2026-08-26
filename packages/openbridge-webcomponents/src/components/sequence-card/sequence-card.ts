@@ -97,6 +97,24 @@ export enum ObcSequenceCardState {
  * ```
  *
  * Keywords: timeline, step, progress, sequence, card, event, status.
+ *
+ * @availableWhen subtitle titleType!=Single
+ * @availableWhen timeLabel hasTimeStamp==true
+ * @availableWhen time hasTimeStamp==true
+ * @availableWhen progressLabel progressType==Centered && (titleType!=Single || indicatorTypeOverride!=undefined)
+ * @availableWhen progressValue (showConnector==true && progressType==Centered && horizontal==false) || (showConnector==true && horizontal==true && progressType!=LeftSide)
+ * @availableWhen leftTime progressType==LeftSide && horizontal==false && hasTimeStamp==true
+ * @availableWhen indicatorTypeOverride progressType==Centered
+ * @availableWhen indicatorStyleOverride progressType==Centered
+ * @slot leading-icon - Icon before the title (shown when `hasLeadingIcon` is true).
+ * @slot title - Title text (falls back to `cardTitle`).
+ * @slot subtitle - Subtitle/description (falls back to `subtitle`).
+ * @slot time-stamp - Header timestamp (falls back to `timeLabel` + `time`).
+ * @slot header-actions - Optional header actions (e.g., close button).
+ * @slot left-time-stamp - Left rail timestamp (falls back to `leftTime`).
+ * @slot actions - Actions row content (shown when `hasActions` is true).
+ * @slot - Main content area (shown when `hasContent` is true).
+ * @experimental
  */
 @customElement('obc-sequence-card')
 export class ObcSequenceCard extends LitElement {
@@ -117,30 +135,22 @@ export class ObcSequenceCard extends LitElement {
 
   @property({type: Boolean}) hasLeadingIcon = false;
   @property({type: String}) cardTitle = 'Title';
-  /** @availableWhen titleType!=Single */
   @property({type: String}) subtitle = 'Subtitle';
 
   @property({type: Boolean}) hasTimeStamp = false;
-  /** @availableWhen hasTimeStamp==true */
   @property({type: String}) timeLabel = 'TWOL';
-  /** @availableWhen hasTimeStamp==true */
   @property({type: String}) time = '00:00:00';
 
   @property({type: Boolean}) hasContent = false;
   @property({type: Boolean}) hasActions = false;
 
-  /** @availableWhen progressType==Centered && (titleType!=Single || indicatorTypeOverride!=undefined) */
   @property({type: String}) progressLabel = '1';
-  /** @availableWhen (showConnector==true && progressType==Centered && horizontal==false) || (showConnector==true && horizontal==true && progressType!=LeftSide) */
   @property({type: String}) progressValue: SequenceValue =
     SequenceValue.regular;
 
-  /** @availableWhen progressType==LeftSide && horizontal==false && hasTimeStamp==true */
   @property({type: String}) leftTime = '00:00';
 
-  /** @availableWhen progressType==Centered */
   @property({type: String}) indicatorTypeOverride?: SequenceType;
-  /** @availableWhen progressType==Centered */
   @property({type: String}) indicatorStyleOverride?: SequenceStyle;
 
   private get showSubtitle() {

@@ -83,11 +83,14 @@ export {
  * ></obc-calendar>
  * ```
  *
+ * @availableWhen footerLabel hasFooter==true && type!=XLarge
+ * @availableWhen footerHref hasFooter==true && type!=XLarge
  * @fires {CustomEvent<{date: Date}>} month-change - Fired when the displayed month changes via navigation.
  * @fires {CustomEvent<{date: Date, events: CalendarEvent[]}>} date-select - Fired when a date cell is clicked.
  * @fires {CustomEvent<void>} today-click - Fired when the "Today" button is clicked.
  * @fires {CustomEvent<void>} new-event-click - Fired when the "+ New event" button is clicked (Large/XLarge only).
  * @fires {CustomEvent<void>} calendar-click - Fired when the footer "Calendar" navigation link is clicked.
+ * @beta
  */
 @customElement('obc-calendar')
 export class ObcCalendar extends LitElement {
@@ -99,9 +102,7 @@ export class ObcCalendar extends LitElement {
   @property({type: Boolean, attribute: false}) hasFooter = true;
   @property({type: String}) locale?: string;
   @property({type: Number}) firstDayOfWeek = 1;
-  /** @availableWhen hasFooter==true && type!=XLarge */
   @property({type: String}) footerLabel = 'Calendar';
-  /** @availableWhen hasFooter==true && type!=XLarge */
   @property({type: String}) footerHref?: string;
 
   @state() private _displayMonth: Date = new Date();

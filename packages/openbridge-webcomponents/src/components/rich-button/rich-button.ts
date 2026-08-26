@@ -62,20 +62,20 @@ export enum RichButtonDirection {
  * </obc-rich-button>
  * ```
  *
+ * @property label - The main label text displayed on the button (single line, truncated if too long).
+ * @property description - Optional supporting description text (up to two lines, truncated if too long).
+ * @property hasLeadingIcon - If true, displays the leading icon slot before the label.
+ * @property hasTrailingIcon - If true, displays the trailing icon slot after the description.
+ * @property disabled - If true, the button is disabled and cannot be interacted with.
  * @slot leading-icon - Icon displayed before the label (shown when `hasLeadingIcon` is true)
  * @slot trailing-icon - Icon displayed after the description (shown when `hasTrailingIcon` is true)
- * @fires rich-button-click {CustomEvent<{label: string, description: string}>} When the button is clicked and not disabled
+ * @fires {CustomEvent<{label: string, description: string}>} rich-button-click - When the button is clicked and not disabled
+ * @beta
  */
 @customElement('obc-rich-button')
 export class ObcRichButton extends LitElement {
-  /**
-   * The main label text displayed on the button (single line, truncated if too long).
-   */
   @property({type: String}) label: string | HTMLTemplateResult = '';
 
-  /**
-   * Optional supporting description text (up to two lines, truncated if too long).
-   */
   @property({type: String}) description = '';
 
   /**
@@ -86,19 +86,10 @@ export class ObcRichButton extends LitElement {
   @property({type: String}) direction: RichButtonDirection =
     RichButtonDirection.Vertical;
 
-  /**
-   * If true, displays the leading icon slot before the label.
-   */
   @property({type: Boolean}) hasLeadingIcon = false;
 
-  /**
-   * If true, displays the trailing icon slot after the description.
-   */
   @property({type: Boolean}) hasTrailingIcon = false;
 
-  /**
-   * If true, the button is disabled and cannot be interacted with.
-   */
   @property({type: Boolean}) disabled = false;
 
   @property({type: Boolean}) fullWidth = false;

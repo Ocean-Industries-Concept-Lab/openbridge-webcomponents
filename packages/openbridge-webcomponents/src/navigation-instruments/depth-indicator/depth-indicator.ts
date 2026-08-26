@@ -19,6 +19,7 @@ const DOT_R = 3;
  *
  * Renders a framed mini line indicator driven by pre-normalized values (0–1),
  * with an optional filled area above the line.
+ * @stable
  */
 @customElement('obc-depth-indicator')
 export class ObcDepthIndicator extends LitElement {

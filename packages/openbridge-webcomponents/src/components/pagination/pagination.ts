@@ -107,9 +107,10 @@ export type ObcPaginationSelectPageEvent = CustomEvent<{
  * - `navigate` – Fired when a navigation arrow (first, previous, next, last) is clicked.
  * - `select-page` – Fired when a specific page is selected.
  *
- * @fires value {ObcPaginationValueChangeEvent} Emitted whenever the current page changes.
- * @fires navigate {ObcPaginationNavigateEvent} Emitted when a navigation arrow is clicked.
- * @fires select-page {ObcPaginationSelectPageEvent} Emitted when a specific page is selected.
+ * @fires {ObcPaginationValueChangeEvent} value - Emitted whenever the current page changes.
+ * @fires {ObcPaginationNavigateEvent} navigate - Emitted when a navigation arrow is clicked.
+ * @fires {ObcPaginationSelectPageEvent} select-page - Emitted when a specific page is selected.
+ * @stable
  */
 @customElement('obc-pagination')
 export class ObcPagination extends LitElement {

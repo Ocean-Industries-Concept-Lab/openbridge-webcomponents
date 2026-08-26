@@ -77,6 +77,39 @@
   min-width: 0;
   min-height: 0;
 }
+
+/* Indefinite-axis fallback.
+ *
+ * `width`/`height: 100%` only resolve when the parent's corresponding axis is
+ * definite. In a flex/grid dashboard slot one axis is very often left to
+ * content — `align-self: center` makes the cross axis shrink-to-fit, and a
+ * parent sized with `min-height`/`max-height` (rather than `height`) leaves the
+ * block axis indefinite. In those cases the percentage computes to `auto` and
+ * the tank would size to its own content, which includes the chart cell — and
+ * the chart sizes itself from the cell it was measured in. That is a circular
+ * constraint, and it resolves as a collapsed cell, unbounded growth or
+ * pixel-level ringing depending on the loop gain (issue #1121).
+ *
+ * `aspect-ratio` supplies the missing axis from the design footprint the
+ * `point` variant uses above, so an indefinite axis lands on a definite value
+ * that no longer depends on the tank's own content. It is inert when the parent
+ * makes both axes definite, so the normal "fill my slot" behavior is unchanged.
+ */
+:host([positioning="button"]) {
+  aspect-ratio: 256 / 376;
+}
+:host([positioning="button"][orientation="horizontal"]) {
+  aspect-ratio: 420 / 256;
+}
+:host([positioning="button"][compact]),
+:host([positioning="button"][static]) {
+  aspect-ratio: 170 / 282;
+}
+:host([positioning="button"][orientation="horizontal"][compact]),
+:host([positioning="button"][orientation="horizontal"][static]) {
+  aspect-ratio: 244 / 208;
+}
+
 :host([positioning="button"]) .root {
   position: static;
   top: auto;
@@ -134,10 +167,30 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+}
+
+/* Interactive (`clickable`, the default): the full six-state flat mixin —
+ * enabled, activated, hover, pressed, focus-visible, disabled — painted on
+ * `.halo`. */
+.root.clickable {
   cursor: pointer;
   /* prettier-ignore */
   @mixin style style=flat visibleWrapperClass=.halo;
 }
+
+/* Non-interactive (`clickable` is `false`, and `static`, which is display-only
+ * by definition): the mixin's `noClick` variant emits the enabled state ONLY, so
+ * the halo keeps exactly the same resting colors and the same 1px border box
+ * — no layout shift, nothing else in the tank changes — while hover, pressed
+ * and focus-visible disappear. The root is a `<div>` in this case, so there is
+ * no focus ring or tab stop to suppress either. Same split as
+ * `obc-elevated-card`'s `.not-clickable` / `:not(.not-clickable)` pair. */
+.root:not(.clickable) {
+  cursor: default;
+  /* prettier-ignore */
+  @mixin style style=flat noClick visibleWrapperClass=.halo;
+}
+
 .root:focus {
   outline: none;
 }
@@ -156,10 +209,12 @@
   top: auto;
 }
 
-/* Static is display-only: not focusable (rendered as <div>) and not
- * interactive — disable :hover/:active visuals from the flat-mixin rules. */
+/* Static is display-only, so it never gets the `.clickable` class and the
+ * hover/pressed visuals are already gone via the `noClick` rule above. Static
+ * additionally refuses pointer events outright — unlike a non-clickable tank,
+ * which still lets clicks reach the host so a consumer can opt into handling
+ * them. */
 :host([static]) .root {
-  cursor: default;
   pointer-events: none;
 }
 
@@ -488,70 +543,14 @@
   margin-top: 8px;
 }
 
-.rich {
-  display: grid;
-  /* label takes remaining space; value (right-aligned) and suffix
-   * (left-aligned) form fixed content columns so digit right edges and
-   * suffix left edges align vertically across all rows. */
-  grid-template-columns: 1fr auto auto;
-  align-items: baseline;
-  row-gap: 4px;
-  padding-top: 8px;
-  white-space: nowrap;
-  @mixin font-instrument-unit;
-}
-
-.rich-row {
-  display: grid;
-  grid-template-columns: subgrid;
-  grid-column: 1 / -1;
-  align-items: baseline;
-  padding-left: var(
-    --instrument-components-readout-new-list-item-regular-container-padding-horizontal
-  );
-  padding-right: var(
-    --instrument-components-readout-new-list-item-regular-container-padding-horizontal
-  );
-}
-
-.rich-label {
-  @mixin font-instrument-label;
-  color: var(--element-inactive-color);
-  padding-right: 8px;
-  text-align: left;
-}
-
-.rich-value {
-  @mixin font-instrument-value-regular-neutral;
-  color: var(--element-neutral-color);
-  font-variant-numeric: tabular-nums;
-  text-align: right;
-}
-
-.rich-suffix {
-  display: inline-flex;
-  align-items: baseline;
-  /* Default 2px gap between value and unit when there is no degree/percent
-   * glyph. When a glyph is present it sits flush against the value and the
-   * unit follows flush after the glyph (see `.rich-glyph + .rich-unit`). */
-  padding-left: 2px;
-}
-
-.rich-suffix:has(.rich-glyph) {
-  padding-left: 0;
-}
-
-.rich-glyph {
-  @mixin font-instrument-value-regular-neutral;
-  color: var(--element-neutral-color);
-}
-
-.rich-unit {
-  color: var(--element-inactive-color);
-}
-
-.rich-glyph + .rich-unit {
-  padding-left: 0;
+/* Rich detail rows are consumer-slotted into `slot="rich"` — canonical usage is
+ * an `<obc-readout-list>` of `<obc-readout-list-item>` rows, which owns its own
+ * cap-height (textbox) typography and cross-row column alignment. The tank only
+ * spaces the slotted content below the divider; the divider itself is shown only
+ * when the slot is filled (`?hidden` bound to `_hasRichSlot`). */
+::slotted(obc-readout-list) {
+  display: block;
+  margin-top: 8px;
 }
 
 /* The chart cell is a plain sizing/clipping box. Both child renderers —
@@ -566,9 +565,21 @@
   overflow: hidden;
 }
 
+/* The renderers are taken out of flow so the cell sizes them, never the other
+ * way round. Both of them derive a pixel size from the box they are measured
+ * in — `obc-gauge-trend` publishes an inline `--chart-height` computed from its
+ * own measured width, and `obc-bar-vertical` writes `height: 100%; width: auto`
+ * onto its own host — so while they are in flow the cell's content height is a
+ * function of the cell's own height. Absolute positioning severs that return
+ * path: `.bar-container` is `position: relative`, so `inset: 0` pins the
+ * renderer to the cell the tank's grid/flex layout already decided on, and a
+ * rounding difference between the two can no longer relayout the tank
+ * (issue #1121). */
 .bar-container > obc-gauge-trend,
 .bar-container > obc-bar-vertical {
   display: block;
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
 }

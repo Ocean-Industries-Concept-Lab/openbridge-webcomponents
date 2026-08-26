@@ -43,6 +43,19 @@ const SAMPLE_DATA = [
   {label: '30', value: 50},
 ];
 
+const UNEVEN_TIME_DATA = [
+  {x: '2026-07-06T10:00:00Z', value: 45},
+  {x: '2026-07-06T10:02:00Z', value: 52},
+  {x: '2026-07-06T10:03:00Z', value: 48},
+  {x: '2026-07-06T10:10:00Z', value: 55},
+  {x: '2026-07-06T10:11:00Z', value: 62},
+  {x: '2026-07-06T10:25:00Z', value: 58},
+  {x: '2026-07-06T10:26:00Z', value: 52},
+  {x: '2026-07-06T10:40:00Z', value: 40},
+  {x: '2026-07-06T11:20:00Z', value: 35},
+  {x: '2026-07-06T11:21:00Z', value: 50},
+];
+
 const meta: Meta = {
   title: 'Instruments/Gauge Trend',
   tags: ['autodocs', '6.0'],
@@ -248,6 +261,35 @@ export const GaugeTrend: Story = {
       .primaryTickmarkInterval=${50}
       .secondaryTickmarkInterval=${5}
       .scaleReferenceSize=${_args.scaleReferenceSize}
+    >
+    </obc-gauge-trend>
+  `,
+};
+
+export const UnevenTimeIntervals: Story = {
+  name: 'Uneven Time Intervals (Auto Time Axis)',
+  play: async () => {
+    // Wait for rendering to complete before snapshot
+    await new Promise((resolve) => setTimeout(resolve, 300));
+  },
+  render: (_args) => html`
+    <obc-gauge-trend
+      .data=${UNEVEN_TIME_DATA}
+      .width=${_args.width}
+      .height=${_args.height}
+      .priority=${_args.priority}
+      .chartFill=${_args.chartFill}
+      .minValue=${_args.minValue ?? 0}
+      .maxValue=${_args.maxValue ?? 100}
+      .value=${_args.value}
+      .setpoint=${_args.setpoint}
+      .touching=${_args.touching}
+      .hasBar=${_args.hasBar}
+      .hasScale=${_args.hasScale}
+      .fillMode=${_args.fillMode}
+      .fillMin=${_args.fillMin}
+      .primaryTickmarkInterval=${10}
+      .secondaryTickmarkInterval=${5}
     >
     </obc-gauge-trend>
   `,

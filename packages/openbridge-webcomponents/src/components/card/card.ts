@@ -76,6 +76,7 @@ import {customElement} from '../../decorator.js';
  * @slot - Default slot for main card content.
  * @slot dialog-title - Dialog overlay header/title (shown when `hasDialog` is true).
  * @slot dialog-content - Dialog overlay content (shown when `hasDialog` is true).
+ * @stable
  */
 @customElement('obc-card')
 export class ObcCard extends LitElement {

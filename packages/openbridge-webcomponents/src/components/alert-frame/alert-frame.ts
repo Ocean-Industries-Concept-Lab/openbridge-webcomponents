@@ -20,6 +20,7 @@ import {
   getAlertBadgeComponent,
   AlertBadgeComponent,
 } from '../../alert-severity.js';
+import {blinkingAll} from '../../palettes/blinking.js';
 
 export {AlertType as ObcAlertFrameStatus} from '../../types.js';
 
@@ -147,10 +148,19 @@ export interface AlertFrameConfig {
  * </obc-alert-frame>
  * ```
  *
+ * @property wrapContent - When true, the frame wraps and sizes itself to its slotted content instead
+ *   of overlaying a fixed region. Reflected to an attribute for CSS styling.
+ * @property fullWidth - When true, the frame stretches to fill the full width of its container
+ *   instead of hugging its content. Reflected to an attribute for CSS styling.
+ * @property sharpEdgeTopLeft - If true, the top-left corner will be sharp (not rounded).
+ * @property sharpEdgeTopRight - If true, the top-right corner will be sharp (not rounded).
+ * @property sharpEdgeBottomLeft - If true, the bottom-left corner will be sharp (not rounded).
+ * @property sharpEdgeBottomRight - If true, the bottom-right corner will be sharp (not rounded).
  * @slot - Default slot for main alert content.
  * @slot icon - Custom icon for the flap (large-side-flip, bottom-flip).
  * @slot label - Label text for the bottom flap (bottom-flip only).
  * @slot timer - Timer or time label for the bottom flap (bottom-flip only).
+ * @beta
  */
 @customElement('obc-alert-frame')
 export class ObcAlertFrame extends LitElement {
@@ -192,36 +202,16 @@ export class ObcAlertFrame extends LitElement {
   @property({type: String}) mode: ObcAlertFrameMode =
     ObcAlertFrameMode.ackedActive;
 
-  /**
-   * When true, the frame wraps and sizes itself to its slotted content instead
-   * of overlaying a fixed region. Reflected to an attribute for CSS styling.
-   */
   @property({type: Boolean, reflect: true}) wrapContent: boolean = false;
 
-  /**
-   * When true, the frame stretches to fill the full width of its container
-   * instead of hugging its content. Reflected to an attribute for CSS styling.
-   */
   @property({type: Boolean, reflect: true}) fullWidth: boolean = false;
 
-  /**
-   * If true, the top-left corner will be sharp (not rounded).
-   */
   @property({type: Boolean}) sharpEdgeTopLeft: boolean = false;
 
-  /**
-   * If true, the top-right corner will be sharp (not rounded).
-   */
   @property({type: Boolean}) sharpEdgeTopRight: boolean = false;
 
-  /**
-   * If true, the bottom-left corner will be sharp (not rounded).
-   */
   @property({type: Boolean}) sharpEdgeBottomLeft: boolean = false;
 
-  /**
-   * If true, the bottom-right corner will be sharp (not rounded).
-   */
   @property({type: Boolean}) sharpEdgeBottomRight: boolean = false;
 
   @property({type: String}) textSize: AlertFrameTextSize =
@@ -253,6 +243,42 @@ export class ObcAlertFrame extends LitElement {
         ${this.flap()}
       </div>
     `;
+  }
+
+  private _blinkAnimationCancel?: () => void;
+
+  private syncBlinking() {
+    if (
+      this.mode !== ObcAlertFrameMode.unackedActive &&
+      this._blinkAnimationCancel
+    ) {
+      this._blinkAnimationCancel();
+      this._blinkAnimationCancel = undefined;
+    }
+
+    if (
+      this.mode === ObcAlertFrameMode.unackedActive &&
+      !this._blinkAnimationCancel
+    ) {
+      this._blinkAnimationCancel = blinkingAll(this);
+    }
+  }
+
+  override connectedCallback() {
+    super.connectedCallback();
+    if (this.hasUpdated) {
+      this.syncBlinking();
+    }
+  }
+
+  override updated() {
+    this.syncBlinking();
+  }
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    this._blinkAnimationCancel?.();
+    this._blinkAnimationCancel = undefined;
   }
 
   private flap() {

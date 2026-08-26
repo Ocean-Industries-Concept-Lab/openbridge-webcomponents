@@ -6,6 +6,13 @@ import '../../components/scrollbar/scrollbar.js';
 import {ObcScrollbar} from '../../components/scrollbar/scrollbar.js';
 import {ObcAlertMenuItem} from '../../components/alert-menu-item/alert-menu-item.js';
 
+/**
+ * @slot - Default slot for the alert list items.
+ * @slot empty-icon - Icon shown when the list is empty.
+ * @slot empty-title - Title shown when the list is empty.
+ * @slot empty-description - Description shown when the list is empty.
+ * @stable
+ */
 @customElement('obc-alert-list')
 export class ObcAlertList extends LitElement {
   @property({attribute: false}) filter: (item: HTMLElement) => boolean = () =>
@@ -119,11 +126,11 @@ export class ObcAlertList extends LitElement {
   private handleElementsChange() {
     // Take records to ensure the observer is not triggered again
     this.mutationObserver?.takeRecords();
+    this.updateEmpty();
     if (!this.checkVisibility()) {
       return;
     }
 
-    this.updateEmpty();
     const elements = this.getAlertItems();
     // Animate the elements to their new positions
     const oldElementTop: Map<HTMLElement, number> = new Map(this.oldElementTop);

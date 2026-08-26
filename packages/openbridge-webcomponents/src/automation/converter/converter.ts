@@ -18,6 +18,9 @@ export enum ConverterAlternativeIcon {
   converterFilter1 = 'converterFilter1',
 }
 
+/**
+ * @stable
+ */
 @customElement('obc-converter')
 export class ObcConverter extends ObcAbstractAutomationButtonSquared {
   @property({type: String}) alternativeIcon: ConverterAlternativeIcon =

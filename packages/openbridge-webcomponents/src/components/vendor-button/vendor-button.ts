@@ -40,6 +40,8 @@ import {customElement} from '../../decorator.js';
  * ```
  *
  * @slot - (none; content is provided via properties)
+ * @fires click - Fired when the button is clicked.
+ * @stable
  */
 @customElement('obc-vendor-button')
 export class ObcVendorButton extends LitElement {

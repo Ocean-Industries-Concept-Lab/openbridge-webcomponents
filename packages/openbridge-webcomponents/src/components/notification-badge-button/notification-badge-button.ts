@@ -49,49 +49,37 @@ import {customElement} from '../../decorator.js';
  * <obc-notification-badge-button>ACK</obc-notification-badge-button>
  * ```
  *
+ * @property openRight - Removes the right border for seamless grouping with adjacent buttons.
+ *   Use when this button is not the last in a horizontal group.
+ * @property openLeft - Removes the left border for seamless grouping with adjacent buttons.
+ *   Use when this button is not the first in a horizontal group.
+ * @property cornerLeft - Applies rounded corners to the left side of the button.
+ *   Use for the first button in a group or when aligning to a container's left edge.
+ * @property cornerRight - Applies rounded corners to the right side of the button.
+ *   Use for the last button in a group or when aligning to a container's right edge.
+ * @property icon - Applies icon-specific styling for icon-only buttons.
+ *   When true, supply an icon in the default slot.
+ * @property disabled - Disables the button, preventing user interaction and applying a muted style.
+ * @property indent - Applies an indented background style for emphasis or grouping.
+ *   Useful for visually separating the button from others or indicating a secondary action.
  * @slot - Main content slot for icon or text label.
+ * @fires click - Fired when the button is clicked (if not disabled).
+ * @deprecated
  */
 @customElement('obc-notification-badge-button')
 export class ObcNotificationBadgeButton extends LitElement {
-  /**
-   * Removes the right border for seamless grouping with adjacent buttons.
-   * Use when this button is not the last in a horizontal group.
-   */
   @property({type: Boolean}) openRight = false;
 
-  /**
-   * Removes the left border for seamless grouping with adjacent buttons.
-   * Use when this button is not the first in a horizontal group.
-   */
   @property({type: Boolean}) openLeft = false;
 
-  /**
-   * Applies rounded corners to the left side of the button.
-   * Use for the first button in a group or when aligning to a container's left edge.
-   */
   @property({type: Boolean}) cornerLeft = false;
 
-  /**
-   * Applies rounded corners to the right side of the button.
-   * Use for the last button in a group or when aligning to a container's right edge.
-   */
   @property({type: Boolean}) cornerRight = false;
 
-  /**
-   * Applies icon-specific styling for icon-only buttons.
-   * When true, supply an icon in the default slot.
-   */
   @property({type: Boolean}) icon = false;
 
-  /**
-   * Disables the button, preventing user interaction and applying a muted style.
-   */
   @property({type: Boolean}) disabled = false;
 
-  /**
-   * Applies an indented background style for emphasis or grouping.
-   * Useful for visually separating the button from others or indicating a secondary action.
-   */
   @property({type: Boolean}) indent = false;
 
   override render() {

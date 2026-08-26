@@ -8,6 +8,10 @@ import { useSim } from '../composables/useSim'
 import { computed } from 'vue'
 const sim = useSim()
 
+// Stable reference: obc-readout uses identity-based change detection, so a
+// shared constant avoids re-triggering updates on every render.
+const hintedZerosValueOptions = { hintedZeros: true }
+
 defineProps<{
   vessel: 'psv' | 'ferry'
 }>()
@@ -133,40 +137,31 @@ function formatSpeedValue(value: number) {
       :value.prop="Number(formatSpeedValue(sim.vessel.speedForwardOverGroundKnots.value))"
       :maxDigits.prop="2"
       :fractionDigits.prop="0"
-      :valueHasFixedLength.prop="true"
-      :valueLength.prop="'00'"
-      :valueHasHintedZeros.prop="true"
-      :hasInput.prop="false"
-      variant="enhanced"
-      :valuePriority.prop="'regular'"
+      :valueOptions.prop="hintedZerosValueOptions"
+      size="large"
+      :priority.prop="'regular'"
       label="Bow"
       unit="kn"
     />
     <obc-readout
       class="speed-readout bow-sideways"
-      variant="enhanced"
-      :valuePriority.prop="'regular'"
+      size="large"
+      :priority.prop="'regular'"
       :value.prop="Number(formatSpeedValue(sim.vessel.speedSidewaysOverGroundKnotsAtBow.value))"
       :maxDigits.prop="2"
       :fractionDigits.prop="0"
-      :valueHasFixedLength.prop="true"
-      :valueLength.prop="'00'"
-      :valueHasHintedZeros.prop="true"
-      :hasInput.prop="false"
+      :valueOptions.prop="hintedZerosValueOptions"
       label="Bow"
       unit="kn"
     />
     <obc-readout
       class="speed-readout stern-sideways"
-      variant="enhanced"
-      :valuePriority.prop="'regular'"
+      size="large"
+      :priority.prop="'regular'"
       :value.prop="Number(formatSpeedValue(sim.vessel.speedSidewaysOverGroundKnotsAtStern.value))"
       :maxDigits.prop="2"
       :fractionDigits.prop="0"
-      :valueHasFixedLength.prop="true"
-      :valueLength.prop="'00'"
-      :valueHasHintedZeros.prop="true"
-      :hasInput.prop="false"
+      :valueOptions.prop="hintedZerosValueOptions"
       label="Aft"
       unit="kn"
     />

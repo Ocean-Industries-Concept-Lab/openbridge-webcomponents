@@ -30,6 +30,13 @@ export enum ObcPitchType {
  * palette.
  *
  * @element obc-pitch
+ *
+ * @property label - Readout label. Default `Pitch`.
+ * @property unit - Readout unit. Default `DEG`.
+ * @property fractionDigits - Number of fraction digits shown in the readout. Default `0`.
+ * @property type - `single-scale` shows one arc on the right (default); `dual-scale` also
+ *   shows the scale on the opposite (left) arc (the indicator's opposite end).
+ * @stable
  */
 @customElement('obc-pitch')
 export class ObcPitch extends SingleAxisInclinometer {
@@ -39,16 +46,9 @@ export class ObcPitch extends SingleAxisInclinometer {
   @property({type: String}) vesselImageSide: VesselImage = VesselImage.psvSide;
   @property({type: Number}) maxPitchAdvice: number | undefined = undefined;
   @property({type: Boolean}) triggerPitchAdvice = false;
-  /** Readout label. Default `Pitch`. */
   @property({type: String}) override label = 'Pitch';
-  /** Readout unit. Default `DEG`. */
   @property({type: String}) override unit = 'DEG';
-  /** Number of fraction digits shown in the readout. Default `0`. */
   @property({type: Number}) override fractionDigits = 0;
-  /**
-   * `single-scale` shows one arc on the right (default); `dual-scale` also
-   * shows the scale on the opposite (left) arc (the indicator's opposite end).
-   */
   @property({type: String}) type: ObcPitchType = ObcPitchType.singleScale;
 
   protected override get centerAngle(): number {

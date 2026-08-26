@@ -24,7 +24,20 @@ export enum IntegrationButtonType {
 /**
  * `<obc-integration-button>` – A button component for integration systems.
  *
- * @slot leading-icon - Icon before label (shown when `hasLeadingIcon` is true)
+ * @property hasTrailingIcon - Shows the `trailing-icon` slot.
+ * @property hasTrailingIcon2 - Shows the `trailing-icon2` slot.
+ * @availableWhen hasTrailingIcon2 hasTrailingIcon==true
+ * @property hasLeadingIcon - Shows the `leading-icon` slot.
+ * @property hasStatus - Shows the `status` slot.
+ * @property readouts - List of readout items shown in the rich type.
+ * @property disabled - Disables the internal button.
+ * @property activated - Applies active state styling while a selection is pending.
+ * @property selected - Applies selected state styling.
+ * @property dividerBottom - Shows a bottom divider under the button.
+ * @property dividerRight - Shows a right divider to separate from adjacent buttons.
+ * @property variant - Visual variant (`normal` or `flat`).
+ * @property type - Layout type (`hug`, `regular`, or `rich`).
+ * @slot leading-icon - Icon before label (shown when `hasLeadingIcon` is true); rendered at the large icon size when `hasStatus` is true
  * @slot trailing-icon - Icon after label (shown when `hasTrailingIcon` is true)
  * @slot trailing-icon2 - Icon after label (shown when `hasTrailingIcon2` is true)
  * @slot label - Label text
@@ -35,23 +48,11 @@ export enum IntegrationButtonType {
  *
  * @fires click - Fired when the internal button is activated.
  *
- * @property {boolean} hasTrailingIcon - Shows the `trailing-icon` slot.
- * @property {boolean} hasTrailingIcon2 - Shows the `trailing-icon2` slot.
- * @property {boolean} hasLeadingIcon - Shows the `leading-icon` slot.
- * @property {boolean} hasstatus - Shows the `status` slot.
- * @property {IntegrationButtonReadout[]} readouts - List of readout items shown in the rich type.
- * @property {boolean} disabled - Disables the internal button.
- * @property {boolean} activated - Applies active state styling while a selection is pending.
- * @property {boolean} selected - Applies selected state styling.
- * @property {boolean} dividerBottom - Shows a bottom divider under the button.
- * @property {boolean} dividerRight - Shows a right divider to separate from adjacent buttons.
- * @property {IntegrationButtonVariant} variant - Visual variant (`normal` or `flat`).
- * @property {IntegrationButtonType} type - Layout type (`hug`, `regular`, or `rich`).
+ * @experimental
  */
 @customElement('obc-integration-button')
 export class ObcIntegrationButton extends LitElement {
   @property({type: Boolean}) hasTrailingIcon = false;
-  /** @availableWhen hasTrailingIcon==true */
   @property({type: Boolean}) hasTrailingIcon2 = false;
   @property({type: Boolean}) hasLeadingIcon = false;
   @property({type: Boolean}) hasStatus = false;
@@ -73,7 +74,7 @@ export class ObcIntegrationButton extends LitElement {
       selected: this.selected,
       activated: this.activated,
       disabled: this.disabled,
-      'has-description': this.hasStatus,
+      'has-status': this.hasStatus,
       ['variant-' + this.variant]: true,
       ['type-' + this.type]: true,
     };

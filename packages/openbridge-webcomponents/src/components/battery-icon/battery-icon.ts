@@ -3,6 +3,9 @@ import {customElement} from '../../decorator.js';
 import {property} from 'lit/decorators.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
 
+/**
+ * @stable
+ */
 @customElement('obc-battery-icon')
 export class ObcBatteryIcon extends LitElement {
   @property({type: Number}) level = 0; // 0-100

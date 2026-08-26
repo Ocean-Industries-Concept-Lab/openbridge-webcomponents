@@ -9,7 +9,7 @@ import {html} from 'lit';
 
 const meta: Meta = {
   title: 'Building Blocks/Automation Button Readout Stack',
-  tags: ['6.0'],
+  tags: ['6.0', 'experimental'],
   component: 'obc-automation-button-readout-stack',
   args: {
     tag: '#0000',
