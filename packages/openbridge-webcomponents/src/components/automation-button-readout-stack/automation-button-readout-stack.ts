@@ -32,7 +32,13 @@ export interface AutomationButtonReadoutStackValue {
   nDigits: number;
   unit: string;
   direction: 'up' | 'down' | 'left' | 'right' | 'none';
-  icon: 'none' | 'arrow' | 'chevron';
+  icon: 'none' | 'arrow' | 'chevron' | 'slot';
+  /**
+   * Host slot the row's icon is projected from when `icon` is `'slot'` —
+   * consumers place any icon element with this slot name in the stack's
+   * light DOM (e.g. a device-specific `<obi-*>` icon).
+   */
+  slotName?: string;
 }
 
 export interface AutomationButtonReadoutStackStateOn {
@@ -97,9 +103,12 @@ export class ObcAutomationButtonReadoutStack extends LitElement {
 
   renderValue(readout: AutomationButtonReadoutStackValue): HTMLTemplateResult {
     const v = readout.value.toFixed(0);
+    // The minus sign occupies a digit slot, so every readout is nDigits wide;
+    // it renders before the dimmed padding ("-05", not "0-5").
+    const sign = v.startsWith('-') ? '-' : '';
+    const digits = sign ? v.slice(1) : v;
     const zeroPadding =
       v.length < readout.nDigits ? '0'.repeat(readout.nDigits - v.length) : '';
-    const paddedValue = zeroPadding + v;
 
     let directionIcon: HTMLTemplateResult | typeof nothing = nothing;
     if (readout.icon == 'arrow') {
@@ -146,9 +155,15 @@ export class ObcAutomationButtonReadoutStack extends LitElement {
           useCssColor
         ></obi-chevron-double-right-google>`;
       }
+    } else if (readout.icon == 'slot' && readout.slotName) {
+      directionIcon = html`<slot class="icon" name=${readout.slotName}></slot>`;
     }
     const content = html`
-      ${this.renderValueText(paddedValue)}
+      <span class="value-text"
+        >${sign}${zeroPadding
+          ? html`<span class="pad">${zeroPadding}</span>`
+          : nothing}${digits}</span
+      >
       <span class="unit">${readout.unit}</span>
     `;
 

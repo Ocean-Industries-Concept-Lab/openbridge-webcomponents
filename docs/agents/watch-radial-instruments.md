@@ -25,7 +25,7 @@ globs:
   - packages/openbridge-webcomponents/src/navigation-instruments/azimuth-thruster/**
   - packages/openbridge-webcomponents/src/building-blocks/instrument-radial/**
   - packages/openbridge-webcomponents/src/navigation-instruments/current/**
-  - packages/openbridge-webcomponents/src/navigation-instruments/gauge-radial-proportional/**
+  - packages/openbridge-webcomponents/src/navigation-instruments/gauge-proportional/**
   - packages/openbridge-webcomponents/src/navigation-instruments/pitch-roll-yaw/**
   - packages/openbridge-webcomponents/src/navigation-instruments/position-deviation/**
   - packages/openbridge-webcomponents/src/navigation-instruments/speed-directions/**
