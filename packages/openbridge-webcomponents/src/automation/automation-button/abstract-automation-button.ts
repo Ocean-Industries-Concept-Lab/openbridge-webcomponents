@@ -12,6 +12,7 @@ import {
 import {
   AutomationButtonReadoutStack,
   AutomationButtonReadoutStackSize,
+  AutomationButtonReadoutStackValue,
 } from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 import {
   ObcAlertFrameThickness,
@@ -56,6 +57,13 @@ export enum AutomationButtonBadgeCommandLocked {
   CommandLocked = 'command-locked',
 }
 
+export interface AutomationButtonReadoutValue {
+  value: number;
+  fractionDigits?: number;
+  nDigits?: number;
+  unit: string;
+}
+
 export class ObcAbstractAutomationButton extends LitElement {
   @property({type: Boolean, attribute: false}) showReadoutStack: boolean = true;
   /** @availableWhen showReadoutStack==true */
@@ -68,6 +76,9 @@ export class ObcAbstractAutomationButton extends LitElement {
     AutomationButtonReadoutStackSize.regular;
   /** @availableWhen showReadoutStack==true */
   @property({type: String}) tag: string | null = null;
+  /** @availableWhen showReadoutStack==true */
+  @property({type: Array, attribute: false})
+  readoutValues?: AutomationButtonReadoutValue[];
 
   @property({type: String}) positioning: AutomationButtonPositioning =
     AutomationButtonPositioning.point;
@@ -237,7 +248,21 @@ export class ObcAbstractAutomationButton extends LitElement {
   }
 
   override render() {
-    const readouts: AutomationButtonReadoutStack[] = [...this.extraReadouts];
+    const readoutValues: AutomationButtonReadoutStackValue[] = (
+      this.readoutValues ?? []
+    ).map((value) => ({
+      type: 'value',
+      value: value.value,
+      nDigits: value.nDigits ?? 0,
+      fractionDigits: value.fractionDigits ?? 0,
+      unit: value.unit,
+      direction: 'none',
+      icon: 'none',
+    }));
+    const readouts: AutomationButtonReadoutStack[] = [
+      ...this.extraReadouts,
+      ...readoutValues,
+    ];
     const badgeAlertType = this.getBadgeAlertType();
     const badgeControlType = this.getBadgeControlType();
     const badgeInterlockType = this.getBadgeInterlockType();

@@ -30,6 +30,7 @@ export interface AutomationButtonReadoutStackValue {
   type: 'value';
   value: number;
   nDigits: number;
+  fractionDigits?: number;
   unit: string;
   direction: 'up' | 'down' | 'left' | 'right' | 'none';
   icon: 'none' | 'arrow' | 'chevron';
@@ -96,7 +97,7 @@ export class ObcAutomationButtonReadoutStack extends LitElement {
   }
 
   renderValue(readout: AutomationButtonReadoutStackValue): HTMLTemplateResult {
-    const v = readout.value.toFixed(0);
+    const v = readout.value.toFixed(readout.fractionDigits ?? 0);
     const zeroPadding =
       v.length < readout.nDigits ? '0'.repeat(readout.nDigits - v.length) : '';
     const paddedValue = zeroPadding + v;
