@@ -20,16 +20,12 @@ import {OUTER_RING_RADIUS, WatchCircleType} from '../watch/watch.js';
 import {
   BAND_INNER_RADIUS,
   BAND_OUTER_RADIUS,
-  LANE_DIVIDER_RADIUS,
-  LANE_DIVIDER_WIDTH,
   PRIMARY_SUBBAND_INNER_RADIUS,
   PRIMARY_SUBBAND_NEEDLE_LENGTH,
-  SECONDARY_LANE_RADIUS,
   SECONDARY_LINE_WIDTH,
-  arcPath,
   renderSecondaryLine,
 } from '../watch/secondary-lane.js';
-import type {WatchArea, WatchBarArea} from '../watch/watch.js';
+import type {WatchArea, WatchBarArea, WatchNeedle} from '../watch/watch.js';
 import {roundedArch} from '../../svghelpers/roundedArch.js';
 import {buildIntervalTickmarks, TickmarkStyle} from '../watch/tickmark.js';
 import type {Tickmark} from '../watch/tickmark.js';
@@ -89,40 +85,10 @@ export interface GaugeProportionalAdvice {
   hinted: boolean;
 }
 
-/* Band geometry: the value band fills the track annulus between the single
-   and double inner rings (112..160), like the watch bar areas. The
-   primary-secondary frame reuses the shared pitch-rpm lane subdivision from
-   watch/secondary-lane.ts: secondary line lane (112..120), face-colored
-   divider (120..128) and a narrowed primary band lane (128..160). The joint
-   48-unit round cut the watch draws at the sector ends is erased and each
-   lane redrawn as a rounded arch — flush sector cuts with the design's
-   corner fillets (8 on the primary lane, half the line width on the
-   secondary lane, where the cut collapses to an inscribed round tip). */
-const NEEDLE_WIDTH = 8;
-const NEEDLE_LENGTH_FULL = BAND_OUTER_RADIUS - BAND_INNER_RADIUS;
-const SPLIT_BAND_WIDTH = BAND_OUTER_RADIUS - PRIMARY_SUBBAND_INNER_RADIUS;
-const SPLIT_BAND_CENTER_RADIUS =
-  PRIMARY_SUBBAND_INNER_RADIUS + SPLIT_BAND_WIDTH / 2;
-const TRACK_ERASE_CENTER_RADIUS = (BAND_INNER_RADIUS + BAND_OUTER_RADIUS) / 2;
-const TRACK_ERASE_WIDTH = BAND_OUTER_RADIUS - BAND_INNER_RADIUS + 1;
-/** Angular reach of the end-cut erase, covering the joint cap's full bulge. */
-const TRACK_END_OVERSHOOT_DEG = 15;
-/* Angular reach of the erase past the cut into the sector, clearing the
-   square lane corners so the redrawn arches' fillets show; must exceed the
-   widest fillet's angular extent (asin(8/136) ≈ 3.4°). Also the overshoot
-   the split value bar/line gets when an end sits on a sector cut, so the
-   lane-arch clip trims it flush instead of leaving an antialiasing seam. */
-const TRACK_END_CUT_INSET_DEG = 4;
-/* The watch's sector cut is a round cap spanning the whole 112..184
-   silhouette; its circle bounds the end-cut erase so face paint never spills
-   past the outline. */
-const SILHOUETTE_CAP_RADIUS = (OUTER_RING_RADIUS - BAND_INNER_RADIUS) / 2;
-const SILHOUETTE_CAP_CENTER_RADIUS =
-  (OUTER_RING_RADIUS + BAND_INNER_RADIUS) / 2;
-/* Face-colored cover over the watch's 1px inner-edge outline at 112 (the
-   split lanes have no inner border); the lane track is redrawn on top. */
-const INNER_EDGE_COVER_RADIUS = BAND_INNER_RADIUS - 0.5;
-const INNER_EDGE_COVER_WIDTH = 3;
+/* Band geometry: the value band fills the 112..160 track annulus, like the
+   watch bar areas. The primary-secondary frame renders through the watch's
+   `splitBand` lane tracks (secondary line 112..120, face divider 120..128,
+   narrowed primary lane 128..160), with bars and needle as watch inputs. */
 
 /* Fill-origin anchor stub (the design's "zero-line"): a band-colored bar at
    the origin angle spanning the band and the scale ring, overshooting each by
@@ -133,11 +99,9 @@ const ZERO_LINE_OUTER_RADIUS = OUTER_RING_RADIUS + 0.5;
 const ZERO_LINE_INNER_RADIUS = BAND_INNER_RADIUS - 0.5;
 
 /* Center-content anchors in SVG units (center origin), from the 512-canvas
-   design (automation-gauge-readout): icon (72x72 box) centered at -50,
-   readout row center at +26, name row at +88 on the full circle and +120 on
-   the 270 sectors (the open bottom leaves more room). Without a readout the
-   design's icon-only face centers a 144x144 icon on the dial. Icons scale
-   with the face (n/512 of the frame), unlike the fixed-px readouts. */
+   design (automation-gauge-readout): icon (72x72) at -50, readout row at
+   +26, name row at +88 (full circle) / +120 (270 sectors). Icon-only faces
+   center a 144x144 icon. Icons scale with the face, readouts are fixed-px. */
 const ICON_ANCHOR_Y = -50;
 const ICON_SIZE = 72;
 const ICON_ONLY_ANCHOR_Y = 0;
@@ -224,10 +188,9 @@ const FULL_CIRCLE_EPSILON_DEG = 0.05;
  *   value lane, or the medium/off priorities.
  * - `priority: off` blanks the value graphics but keeps the instrument
  *   legible.
- * - The compact stack renders whole-number value rows only, and no setpoint
- *   row. **TODO(designer)**: the setpoint row needs
- *   obc-automation-button-readout-stack support. The secondary row's device
- *   icon projects through the `secondary-icon` slot.
+ * - The compact stack renders whole-number value rows, plus a setpoint row
+ *   when `setpoint` is set. The secondary row's device icon projects
+ *   through the `secondary-icon` slot.
  *
  * ## Slots
  *
@@ -261,6 +224,19 @@ const FULL_CIRCLE_EPSILON_DEG = 0.05;
  * @availableWhen name large==true
  * @property faceDiameter - Outer-ring diameter in CSS pixels. When set, the instrument renders at a
  *   fixed intrinsic size; when unset (default), it fills its container.
+ * @availableWhen alignment large==true
+ * @availableWhen fractionDigits hasReadout==true
+ * @property large - The design's Large variant: `alignment`-controlled scale labels, in-dial
+ *   readouts and the name row. When `false` (default), the Small variant
+ *   renders — the face cropped to the dial with icon-only center content and
+ *   a readout stack below. The Large face fills its container (or
+ *   `faceDiameter`); the Small face shrinks with a tight slot but caps at
+ *   the design's natural 240px dial box, so it always reads smaller than a
+ *   Large face in the same slot.
+ * @property hasLabelStack - Render the readout stack below the face in the compact variant.
+ * @availableWhen hasLabelStack large==false
+ * @property tag - Identifier line under the compact readout stack, e.g. '#0001'.
+ * @availableWhen tag large==false
  * @slot icon - Device symbol shown above the readout, scaled with the face
  *   (e.g. `<obi-placeholder-device-on useCssColor>` for the device-token
  *   styling).
@@ -275,7 +251,6 @@ export class ObcGaugeProportional extends SetpointMixin(LitElement) {
   @property({type: String}) state: InstrumentState = InstrumentState.active;
   @property({type: String}) sector: GaugeProportionalSector =
     GaugeProportionalSector.deg270;
-  /** @availableWhen large==true */
   @property({type: String}) alignment: GaugeProportionalAlignment =
     GaugeProportionalAlignment.outside;
   @property({type: String}) priority: GaugeProportionalPriority =
@@ -292,30 +267,12 @@ export class ObcGaugeProportional extends SetpointMixin(LitElement) {
   @property({type: String}) unit = '';
   @property({type: String}) secondaryLabel = '';
   @property({type: String}) secondaryUnit = '';
-  /** @availableWhen hasReadout==true */
   @property({type: Number}) fractionDigits = 0;
   @property({type: String}) name = '';
   @property({type: Number, attribute: 'face-diameter', reflect: true})
   faceDiameter: number | undefined;
-  /**
-   * The design's Large variant: `alignment`-controlled scale labels, in-dial
-   * readouts and the name row. When `false` (default), the Small variant
-   * renders — the face cropped to the dial with icon-only center content and
-   * a readout stack below. The Large face fills its container (or
-   * `faceDiameter`); the Small face shrinks with a tight slot but caps at
-   * the design's natural 240px dial box, so it always reads smaller than a
-   * Large face in the same slot.
-   */
   @property({type: Boolean}) large = false;
-  /**
-   * Render the readout stack below the face in the compact variant.
-   * @availableWhen large==false
-   */
   @property({type: Boolean, attribute: false}) hasLabelStack = true;
-  /**
-   * Identifier line under the compact readout stack, e.g. '#0001'.
-   * @availableWhen large==false
-   */
   @property({type: String}) tag = '';
 
   private _frame: RadialFrame | undefined;
@@ -354,14 +311,19 @@ export class ObcGaugeProportional extends SetpointMixin(LitElement) {
 
   /**
    * Fixed-px height the compact readout stack needs below the face — a fit
-   * allowance (column gap + 24px per value row + 16px tag line), matching
-   * the stack's fixed typography.
+   * allowance (column gap + 16px setpoint row + 24px per value row + 16px
+   * tag line), matching the stack's fixed typography.
    */
   private get compactStackAllowancePx(): number {
     if (!this.hasLabelStack) {
       return 0;
     }
-    return 8 + this.labelStackReadouts.length * 24 + (this.tag ? 16 : 0);
+    return (
+      8 +
+      (this.setpoint !== undefined ? 16 : 0) +
+      this.labelStackReadouts.filter((r) => r.type === 'value').length * 24 +
+      (this.tag ? 16 : 0)
+    );
   }
 
   /**
@@ -483,16 +445,27 @@ export class ObcGaugeProportional extends SetpointMixin(LitElement) {
   }
 
   private get barAreas(): WatchBarArea[] {
-    if (this.isValueGraphicsHidden || this.isSplit) {
+    if (this.isValueGraphicsHidden) {
       return [];
     }
-    return [
-      {
-        startAngle: this.mapAngle(this.fillOriginValue),
-        endAngle: this.arcEndAngle(this.clampedValue),
-        fillColor: this.bandColor,
-      },
-    ];
+    const startAngle = this.mapAngle(this.fillOriginValue);
+    const endAngle = this.arcEndAngle(this.clampedValue);
+    if (this.isSplit) {
+      // The watch clips split bars to the primary lane and overshoots sector
+      // cuts, so the flush fillet trim needs no consumer geometry.
+      if (Math.abs(endAngle - startAngle) < 0.5) {
+        return [];
+      }
+      return [
+        {
+          startAngle,
+          endAngle,
+          fillColor: this.bandColor,
+          innerRadius: PRIMARY_SUBBAND_INNER_RADIUS,
+        },
+      ];
+    }
+    return [{startAngle, endAngle, fillColor: this.bandColor}];
   }
 
   private get tickmarks(): Tickmark[] {
@@ -550,7 +523,7 @@ export class ObcGaugeProportional extends SetpointMixin(LitElement) {
       return nothing;
     }
     // In the split frame the stub stops at the narrowed band's inner edge;
-    // the secondary lane gets its own small stub (see renderSplitFrame).
+    // the secondary lane gets its own small stub (renderSecondaryOriginNub).
     const innerRadius = this.isSplit
       ? PRIMARY_SUBBAND_INNER_RADIUS - 0.5
       : ZERO_LINE_INNER_RADIUS;
@@ -582,205 +555,38 @@ export class ObcGaugeProportional extends SetpointMixin(LitElement) {
     });
   }
 
-  /**
-   * Track chrome of the primary-secondary frame. The watch still draws the
-   * joint 112..160 track annulus; this repaints it into the split layout —
-   * a face-colored gap divides the lanes, the joint round end cuts are
-   * erased and each lane is redrawn as a rounded arch with the design's
-   * flush fillet cuts, and the narrowed primary value bar is clipped to its
-   * lane arch.
-   */
-  private renderSplitFrame() {
-    if (!this.isSplit || this.isValueGraphicsHidden) {
+  /** The secondary lane's fill-origin nub (full circle and pos/neg sectors). */
+  private renderSecondaryOriginNub() {
+    if (
+      !this.isSplit ||
+      this.isValueGraphicsHidden ||
+      (!this.isFullCircle &&
+        this.sector !== GaugeProportionalSector.deg270PosNeg)
+    ) {
       return nothing;
     }
-    const facePaint = 'var(--instrument-frame-primary-color)';
-    const trackPaint = 'var(--instrument-frame-secondary-color)';
-    const startAngle = this.mapAngle(this.minValue);
-    const endAngle = this.mapAngle(this.maxValue);
-    const parts = [];
-
-    const primaryLaneArch = roundedArch({
-      startAngle,
-      endAngle,
-      R: BAND_OUTER_RADIUS,
-      r: PRIMARY_SUBBAND_INNER_RADIUS,
-      roundOutsideCut: true,
-      roundInsideCut: true,
-    });
-
-    if (this.isFullCircle) {
-      parts.push(svg`
-        <circle
-          r=${INNER_EDGE_COVER_RADIUS}
-          fill="none"
-          stroke=${facePaint}
-          stroke-width=${INNER_EDGE_COVER_WIDTH}
-        ></circle>
-        <circle
-          r=${SECONDARY_LANE_RADIUS}
-          fill="none"
-          stroke=${trackPaint}
-          stroke-width=${SECONDARY_LINE_WIDTH}
-        ></circle>
-        <circle
-          r=${LANE_DIVIDER_RADIUS}
-          fill="none"
-          stroke=${facePaint}
-          stroke-width=${LANE_DIVIDER_WIDTH}
-        ></circle>
-      `);
-    } else {
-      // Erase the joint round cut the watch draws at each sector end,
-      // reaching past the cut into the sector to clear the square lane
-      // corners the arch fillets replace. The erase is clipped to the cut's
-      // own cap circle so the face paint never spills onto the page
-      // background outside the dial silhouette.
-      parts.push(svg`<clipPath id="split-end-cut-clip">
-        <circle
-          transform="rotate(${startAngle})"
-          cy=${-SILHOUETTE_CAP_CENTER_RADIUS}
-          r=${SILHOUETTE_CAP_RADIUS + 0.5}
-        ></circle>
-        <circle
-          transform="rotate(${endAngle})"
-          cy=${-SILHOUETTE_CAP_CENTER_RADIUS}
-          r=${SILHOUETTE_CAP_RADIUS + 0.5}
-        ></circle>
-      </clipPath>`);
-      const endCuts: [number, number][] = [
-        [
-          startAngle - TRACK_END_OVERSHOOT_DEG,
-          startAngle + TRACK_END_CUT_INSET_DEG,
-        ],
-        [
-          endAngle - TRACK_END_CUT_INSET_DEG,
-          endAngle + TRACK_END_OVERSHOOT_DEG,
-        ],
-      ];
-      parts.push(svg`<g clip-path="url(#split-end-cut-clip)">
-        ${endCuts.map(
-          ([from, to]) => svg`<path
-            d=${arcPath(TRACK_ERASE_CENTER_RADIUS, from, to)}
-            fill="none"
-            stroke=${facePaint}
-            stroke-width=${TRACK_ERASE_WIDTH}
-            stroke-linecap="butt"
-          ></path>`
-        )}
-      </g>`);
-      // Redraw each lane track as a rounded arch — flush sector cuts with
-      // the design's corner fillets; the face-colored divider keeps its
-      // butt ends underneath the arches.
-      parts.push(svg`
-        <path
-          d=${arcPath(INNER_EDGE_COVER_RADIUS, startAngle, endAngle)}
-          fill="none"
-          stroke=${facePaint}
-          stroke-width=${INNER_EDGE_COVER_WIDTH}
-          stroke-linecap="butt"
-        ></path>
-        <path
-          d=${this.secondaryLaneArch}
-          fill=${trackPaint}
-          stroke=${trackPaint}
-          stroke-width="1"
-          vector-effect="non-scaling-stroke"
-        ></path>
-        <path
-          d=${arcPath(LANE_DIVIDER_RADIUS, startAngle, endAngle)}
-          fill="none"
-          stroke=${facePaint}
-          stroke-width=${LANE_DIVIDER_WIDTH}
-          stroke-linecap="butt"
-        ></path>
-        <path
-          d=${primaryLaneArch}
-          fill=${trackPaint}
-          stroke=${trackPaint}
-          stroke-width="1"
-          vector-effect="non-scaling-stroke"
-        ></path>
-      `);
-    }
-
-    const originAngle = this.mapAngle(this.fillOriginValue);
-    const bandEndAngle = this.arcEndAngle(this.clampedValue);
-    if (Math.abs(bandEndAngle - originAngle) >= 0.5) {
-      if (this.isFullCircle) {
-        parts.push(svg`<path
-          d=${arcPath(SPLIT_BAND_CENTER_RADIUS, originAngle, bandEndAngle)}
-          fill="none"
-          stroke=${this.bandColor}
-          stroke-width=${SPLIT_BAND_WIDTH}
-          stroke-linecap="butt"
-        ></path>`);
-      } else {
-        // The bar is clipped to the lane arch (the design's track-mask
-        // model): an end sitting on a sector cut overshoots it and is
-        // trimmed flush into the arch's fillets, while mid-track ends stay
-        // square.
-        let barFrom = Math.min(originAngle, bandEndAngle);
-        let barTo = Math.max(originAngle, bandEndAngle);
-        if (barFrom <= startAngle + 0.01) {
-          barFrom -= TRACK_END_CUT_INSET_DEG;
-        }
-        if (barTo >= endAngle - 0.01) {
-          barTo += TRACK_END_CUT_INSET_DEG;
-        }
-        parts.push(svg`
-          <clipPath id="split-primary-lane-clip">
-            <path d=${primaryLaneArch}></path>
-          </clipPath>
-          <g clip-path="url(#split-primary-lane-clip)">
-            <path
-              d=${arcPath(SPLIT_BAND_CENTER_RADIUS, barFrom, barTo)}
-              fill="none"
-              stroke=${this.bandColor}
-              stroke-width=${SPLIT_BAND_WIDTH}
-              stroke-linecap="butt"
-            ></path>
-          </g>
-        `);
-      }
-    }
-
-    if (
-      this.isFullCircle ||
-      this.sector === GaugeProportionalSector.deg270PosNeg
-    ) {
-      parts.push(svg`<rect
-        transform="rotate(${originAngle})"
-        x="${-SECONDARY_LINE_WIDTH / 2}"
-        y="${-(BAND_INNER_RADIUS + SECONDARY_LINE_WIDTH)}"
-        width="${SECONDARY_LINE_WIDTH}"
-        height="${SECONDARY_LINE_WIDTH}"
-        fill=${this.accentColor}
-      ></rect>`);
-    }
-
-    return parts;
+    return svg`<rect
+      transform="rotate(${this.mapAngle(this.fillOriginValue)})"
+      x="${-SECONDARY_LINE_WIDTH / 2}"
+      y="${-(BAND_INNER_RADIUS + SECONDARY_LINE_WIDTH)}"
+      width="${SECONDARY_LINE_WIDTH}"
+      height="${SECONDARY_LINE_WIDTH}"
+      fill=${this.accentColor}
+    ></rect>`;
   }
 
-  private renderNeedle() {
+  private get needles(): WatchNeedle[] {
     if (this.isValueGraphicsHidden) {
-      return nothing;
+      return [];
     }
-    const length = this.isSplit
-      ? PRIMARY_SUBBAND_NEEDLE_LENGTH
-      : NEEDLE_LENGTH_FULL;
-    return svg`
-      <rect
-        transform="rotate(${this.mapAngle(this.clampedValue)})"
-        x="${-NEEDLE_WIDTH / 2}" y="${-BAND_OUTER_RADIUS}"
-        width="${NEEDLE_WIDTH}" height="${length}" rx="${NEEDLE_WIDTH / 2}"
-        fill=${this.accentColor}
-        stroke=${this.bandColor}
-        stroke-width="1"
-        vector-effect="non-scaling-stroke"
-        paint-order="stroke fill"
-      />
-    `;
+    return [
+      {
+        angle: this.mapAngle(this.clampedValue),
+        fillColor: this.accentColor,
+        strokeColor: this.bandColor,
+        ...(this.isSplit ? {length: PRIMARY_SUBBAND_NEEDLE_LENGTH} : {}),
+      },
+    ];
   }
 
   private renderSecondaryArc() {
@@ -796,13 +602,11 @@ export class ObcGaugeProportional extends SetpointMixin(LitElement) {
         color: this.accentColor,
       });
     }
-    // Clipped to the lane arch (the design's track-mask model): the open
-    // 270 sector's origin overshoots the cut and is trimmed flush into the
-    // arch's inscribed round tip, as is the value-end tip circle when it
-    // protrudes past a cut.
+    // Overshoot the sector cut by the same 4° the watch uses for split
+    // bars, so the lane clip trims the line flush into the arch tip.
     const drawOriginAngle =
       this.sector === GaugeProportionalSector.deg270
-        ? originAngle - TRACK_END_CUT_INSET_DEG
+        ? originAngle - 4
         : originAngle;
     return svg`
       <clipPath id="split-secondary-lane-clip">
@@ -911,16 +715,22 @@ export class ObcGaugeProportional extends SetpointMixin(LitElement) {
   }
 
   private get labelStackReadouts(): AutomationButtonReadoutStack[] {
-    const readouts: AutomationButtonReadoutStack[] = [
-      {
-        type: 'value',
-        value: this.clampedValue,
+    const readouts: AutomationButtonReadoutStack[] = [];
+    if (this.setpoint !== undefined) {
+      readouts.push({
+        type: 'setpoint',
+        value: this.clamp(this.setpoint),
         nDigits: 3,
-        unit: this.unit,
-        direction: 'right',
-        icon: 'chevron',
-      },
-    ];
+      });
+    }
+    readouts.push({
+      type: 'value',
+      value: this.clampedValue,
+      nDigits: 3,
+      unit: this.unit,
+      direction: 'right',
+      icon: 'chevron',
+    });
     if (this.secondaryValue !== undefined) {
       // TODO(designer): the stack cannot render a dashed placeholder row
       // (its value type is a plain number), so unlike the in-dial readouts
@@ -1087,14 +897,15 @@ export class ObcGaugeProportional extends SetpointMixin(LitElement) {
           .watchCircleType=${WatchCircleType.double}
           .hasBackgroundCircle=${true}
           .roundBandCuts=${!this.isSplit}
+          .splitBand=${this.isSplit && !this.isValueGraphicsHidden}
           .barAreas=${this.barAreas}
+          .needles=${this.needles}
           .endLabelsMaxMin=${this.large && endLabelsMaxMin}
           .arcFrame=${frame}
         ></obc-watch>
         <svg class="layer" viewBox=${frame.viewBox}>
-          ${this.renderSplitFrame()} ${this.renderZeroLine()}
-          ${this.renderSecondaryArc()} ${this.renderNeedle()}
-          ${this.renderCompactMaxMinLabels()}
+          ${this.renderZeroLine()} ${this.renderSecondaryOriginNub()}
+          ${this.renderSecondaryArc()} ${this.renderCompactMaxMinLabels()}
           ${frame.labelsHidden ? nothing : this.renderSecondaryMaxMinLabels()}
         </svg>
         ${this.renderCenterContent()}
