@@ -1,8 +1,10 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
+import {expect} from 'storybook/test';
 import {
   ObcStartStopSwitch,
   StartStopSwitchVariant,
   StartStopSwitchSize,
+  type ObcStartStopSwitchChangeEvent,
 } from './start-stop-switch.js';
 import './start-stop-switch.js';
 import '../../icons/icon-placeholder.js';
@@ -364,5 +366,80 @@ export const LoadingToRunning: Story = {
       <div slot="to-checked-action-label">Start</div>
       <div slot="to-unchecked-action-label">Stop</div>
     </obc-start-stop-switch>`;
+  },
+};
+
+export const KeyboardToggle: Story = {
+  args: {
+    checked: false,
+  },
+  render: (args) => {
+    const onChange = (e: ObcStartStopSwitchChangeEvent) => {
+      const status = document.getElementById('keyboard-toggle-status');
+      if (status) status.textContent = `checked: ${e.detail.checked}`;
+    };
+    return html`
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+        <obc-start-stop-switch .checked=${args.checked} @change=${onChange}>
+          <div slot="checked-state-label">Running</div>
+          <div slot="unchecked-state-label">Stopped</div>
+          <div slot="to-checked-action-label">Start</div>
+          <div slot="to-unchecked-action-label">Stop</div>
+        </obc-start-stop-switch>
+        <div id="keyboard-toggle-status">no change yet</div>
+      </div>
+    `;
+  },
+  play: async ({canvasElement, userEvent}) => {
+    const el = canvasElement.querySelector('obc-start-stop-switch')!;
+    const wrapper = el.shadowRoot!.querySelector<HTMLElement>('.wrapper')!;
+    await expect(wrapper.getAttribute('role')).toBe('switch');
+    await expect(wrapper.getAttribute('aria-checked')).toBe('false');
+    wrapper.focus();
+    await expect(el.shadowRoot!.activeElement).toBe(wrapper);
+    await userEvent.keyboard(' ');
+    const status = canvasElement.querySelector('#keyboard-toggle-status')!;
+    await expect(status.textContent).toBe('checked: true');
+    await expect(wrapper.getAttribute('aria-checked')).toBe('true');
+    await userEvent.keyboard('{Enter}');
+    await expect(status.textContent).toBe('checked: false');
+    await expect(wrapper.getAttribute('aria-checked')).toBe('false');
+  },
+};
+
+export const KeyboardDisabled: Story = {
+  args: {
+    checked: false,
+    disabled: true,
+  },
+  render: (args) => {
+    const onChange = () => {
+      const status = document.getElementById('keyboard-disabled-status');
+      if (status) status.textContent = 'change fired';
+    };
+    return html`
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+        <obc-start-stop-switch
+          .checked=${args.checked}
+          .disabled=${args.disabled}
+          @change=${onChange}
+        >
+          <div slot="checked-state-label">Running</div>
+          <div slot="unchecked-state-label">Stopped</div>
+          <div slot="to-checked-action-label">Start</div>
+          <div slot="to-unchecked-action-label">Stop</div>
+        </obc-start-stop-switch>
+        <div id="keyboard-disabled-status">no change yet</div>
+      </div>
+    `;
+  },
+  play: async ({canvasElement, userEvent}) => {
+    const el = canvasElement.querySelector('obc-start-stop-switch')!;
+    const wrapper = el.shadowRoot!.querySelector<HTMLElement>('.wrapper')!;
+    await expect(wrapper.getAttribute('tabindex')).toBe('-1');
+    wrapper.focus();
+    await userEvent.keyboard(' ');
+    const status = canvasElement.querySelector('#keyboard-disabled-status')!;
+    await expect(status.textContent).toBe('no change yet');
   },
 };

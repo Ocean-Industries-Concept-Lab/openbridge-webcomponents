@@ -1,0 +1,111 @@
+:host {
+  display: block;
+  position: relative;
+  width: 48px;
+  height: 48px;
+}
+
+:host([variant="double-bar"]) {
+  width: 56px;
+  height: 56px;
+}
+
+svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.silhouette {
+  fill: var(--instrument-frame-primary-color);
+  stroke: var(--border-silhouette-color);
+}
+
+.silhouette-ring {
+  fill: none;
+  stroke: var(--border-silhouette-color);
+}
+
+.disc {
+  fill: var(--instrument-frame-primary-color);
+  stroke: var(--instrument-frame-tertiary-color);
+}
+
+:host([value="off"]) .disc {
+  fill: var(--automation-button-off-background-color);
+  stroke: var(--automation-button-off-border-color);
+}
+
+:host([value="filled"]) .disc {
+  stroke: var(--element-neutral-color);
+}
+
+:host([value="filled"][variant="double-bar"]) .disc {
+  fill: var(--element-neutral-color);
+  stroke: var(--element-neutral-color);
+}
+
+:host([value="enhanced"]) .disc {
+  fill: var(--element-neutral-enhanced-color);
+  stroke: var(--base-blue-600);
+}
+
+:host([value="categorical"]) .disc {
+  fill: var(--base-teal-400);
+  stroke: var(--base-teal-500);
+}
+
+.outline {
+  fill: none;
+  stroke: var(--border-silhouette-color);
+}
+
+.ring-track {
+  fill: none;
+  stroke: var(--border-divider-color);
+}
+
+.ring-progress {
+  fill: none;
+  stroke: var(--element-neutral-color);
+}
+
+:host([value="enhanced"]) .ring-progress {
+  stroke: var(--element-neutral-enhanced-color);
+}
+
+:host([value="categorical"]) .ring-progress {
+  stroke: var(--base-teal-400);
+}
+
+.icon-wrapper {
+  position: absolute;
+  inset: 12px;
+  color: var(--element-neutral-color);
+  pointer-events: none;
+}
+
+:host([variant="double-bar"]) .icon-wrapper {
+  inset: 16px;
+}
+
+:host([value="off"]) .icon-wrapper {
+  color: var(--instrument-frame-tertiary-color);
+}
+
+:host([value="filled"]) .icon-wrapper,
+:host([value="enhanced"]) .icon-wrapper,
+:host([value="categorical"]) .icon-wrapper {
+  color: var(--instrument-frame-primary-color);
+}
+
+.icon-wrapper ::slotted(*),
+.default-icon {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.default-icon path {
+  fill: currentColor;
+}

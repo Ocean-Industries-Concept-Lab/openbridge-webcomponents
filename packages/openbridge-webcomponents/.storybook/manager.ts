@@ -19,17 +19,20 @@ addons.setConfig({
     collapsedRoots: ['other'],
   },
 
-  // Tag badges for version indicators
+  // Lifecycle badges. These mirror the class-level JSDoc tag on the component
+  // (@beta / @experimental / @deprecated) and are maintained by the
+  // `openbridge/story-lifecycle-tags` ESLint rule — see AGENTS.md § 3.
+  // `@stable` deliberately has no badge, so a badge always means "caveat here".
   tagBadges: [
     {
-      tags: '5.0',
+      tags: 'beta',
       badge: {
-        text: '5.0',
+        text: 'Beta',
         style: {
-          backgroundColor: 'rgb(255, 219, 55)',
-          color: '#000',
+          backgroundColor: 'rgb(66, 113, 179)',
+          color: '#fff',
         },
-        tooltip: 'OpenBridge 5.0',
+        tooltip: 'Feature-complete, but the API may still change.',
       },
       display: {
         sidebar: ['component'],
@@ -37,14 +40,14 @@ addons.setConfig({
       },
     },
     {
-      tags: 'alpha',
+      tags: 'experimental',
       badge: {
-        text: '6.0 Alpha',
+        text: 'Experimental',
         style: {
-          backgroundColor: 'rgb(255, 219, 55)',
+          backgroundColor: 'rgb(255, 219, 66)',
           color: '#000',
         },
-        tooltip: 'Alpha components are still under design and may change.',
+        tooltip: 'Early stage — the API is likely to change.',
       },
       display: {
         sidebar: ['component'],
@@ -52,15 +55,14 @@ addons.setConfig({
       },
     },
     {
-      tags: 'wip',
+      tags: 'deprecated',
       badge: {
-        text: 'WIP',
+        text: 'Deprecated',
         style: {
-          backgroundColor: 'rgb(255, 219, 55)',
-          color: '#000',
+          backgroundColor: 'rgb(227, 0, 25)',
+          color: '#fff',
         },
-        tooltip:
-          'Work in progress components are still under development and may change.',
+        tooltip: 'Slated for removal. Do not use in new work.',
       },
       display: {
         sidebar: ['component'],

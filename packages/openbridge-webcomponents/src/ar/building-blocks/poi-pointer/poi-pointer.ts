@@ -84,6 +84,7 @@ const BOX_FILTER_DEADBAND_PX = 0.25;
  *   box-height="8"
  * ></obc-poi-pointer>
  * ```
+ * @experimental
  */
 @customElement('obc-poi-pointer')
 export class ObcPoiPointer extends LitElement {

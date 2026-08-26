@@ -27,6 +27,12 @@ export enum ObcSliderVariant {
 export type ObcSliderValueEvent = CustomEvent<number>;
 
 /**
+ * Custom event type for slider change event (fired after user interaction completes).
+ * The event detail contains the new numeric value.
+ */
+export type ObcSliderChangeEvent = CustomEvent<number>;
+
+/**
  * `<obc-slider>` – A horizontal slider component for selecting a numeric value within a defined range.
  *
  * Provides a visual and interactive way for users to adjust values such as volume, brightness, or other continuous settings. The slider supports optional step increments, left/right icon buttons for quick adjustments, and can be configured for read-only display or enhanced visual prominence.
@@ -85,7 +91,8 @@ export type ObcSliderValueEvent = CustomEvent<number>;
  * ---
  *
  * ### Events
- * - `value` – Fired when the slider value changes, either by user interaction or programmatically. The event detail contains the new value as a number.
+ * - `value` – Fired continuously when the slider value changes during user interaction or programmatically. The event detail contains the new value as a number.
+ * - `change` – Fired only after user interaction completes (mouse/touch release or button click). The event detail contains the new value as a number.
  *
  * ---
  *
@@ -120,7 +127,9 @@ export type ObcSliderValueEvent = CustomEvent<number>;
  * @slot icon-left - Slot for the left icon button (shown when `hasLeftIcon` is true)
  * @slot icon-right - Slot for the right icon button (shown when `hasRightIcon` is true)
  * @attr hugcontainer - If set, the slider will not have any spacing between the slider icons and the container
- * @fires value {ObcSliderValueEvent} - Fired when the value is changed
+ * @fires {ObcSliderValueEvent} value - Fired when the value is changed
+ * @fires {ObcSliderChangeEvent} change - Fired when user interaction completes; dispatched on release even if the value did not change
+ * @stable
  */
 @customElement('obc-slider')
 export class ObcSlider extends LitElement {
@@ -234,11 +243,23 @@ export class ObcSlider extends LitElement {
   }
 
   /**
+   * Fires the `change` event with the current value.
+   *
+   * @fires change
+   */
+  private fireChangeEvent() {
+    this.dispatchEvent(
+      new CustomEvent('change', {detail: this.value}) as ObcSliderChangeEvent
+    );
+  }
+
+  /**
    * Decrements the value by `stepClick` when the left icon button is clicked.
    */
   onReduceClick() {
     if (this.disabled) return;
     this.onInput(Math.max(this.value - this.stepClick, this.min));
+    this.fireChangeEvent();
   }
 
   /**
@@ -247,6 +268,7 @@ export class ObcSlider extends LitElement {
   onIncreaseClick() {
     if (this.disabled) return;
     this.onInput(Math.min(this.value + this.stepClick, this.max));
+    this.fireChangeEvent();
   }
 
   private get slider(): HTMLInputElement {
@@ -329,6 +351,7 @@ export class ObcSlider extends LitElement {
     window.removeEventListener('mousemove', this.onWindowMouseMove);
     window.removeEventListener('mouseup', this.onWindowMouseUp);
     this.stopAnimation();
+    this.fireChangeEvent();
   }
 
   private onTouchEnd() {
@@ -336,6 +359,7 @@ export class ObcSlider extends LitElement {
     window.removeEventListener('touchmove', this.onWindowTouchMove);
     window.removeEventListener('touchend', this.onWindowTouchEnd);
     this.stopAnimation();
+    this.fireChangeEvent();
   }
 
   private updateTargetValue(e: MouseEvent | TouchEvent) {
@@ -453,6 +477,9 @@ export class ObcSlider extends LitElement {
           @input=${(event: Event) => {
             this.value = Number((event.target as HTMLInputElement).value);
             this.dispatchEvent(new CustomEvent('value', {detail: this.value}));
+          }}
+          @change=${() => {
+            this.fireChangeEvent();
           }}
           @mousedown=${this.onMouseDown}
           @touchstart=${this.onTouchStart}

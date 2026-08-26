@@ -61,6 +61,7 @@ export enum SequenceConnectorDirection {
  * ```
  *
  * Keywords: sequence, connector, progress, timeline, stepper, loading, horizontal, vertical.
+ * @beta
  */
 @customElement('obc-sequence-connector')
 export class ObcSequenceConnector extends LitElement {

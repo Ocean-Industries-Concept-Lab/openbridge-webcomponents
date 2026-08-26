@@ -30,6 +30,13 @@ export enum ObcRollType {
  * individual properties for details.
  *
  * @element obc-roll
+ *
+ * @property label - Readout label. Default `Roll`.
+ * @property unit - Readout unit. Default `DEG`.
+ * @property fractionDigits - Number of fraction digits shown in the readout. Default `0`.
+ * @property type - `single-scale` shows one arc at the bottom (default); `dual-scale` also
+ *   shows the scale on the top arc (the indicator's opposite end).
+ * @stable
  */
 @customElement('obc-roll')
 export class ObcRoll extends SingleAxisInclinometer {
@@ -40,16 +47,9 @@ export class ObcRoll extends SingleAxisInclinometer {
   @property({type: Number}) scaleForeImage = 1;
   @property({type: Number}) maxRollAdvice: number | undefined = undefined;
   @property({type: Boolean}) triggerRollAdvice = false;
-  /** Readout label. Default `Roll`. */
   @property({type: String}) override label = 'Roll';
-  /** Readout unit. Default `DEG`. */
   @property({type: String}) override unit = 'DEG';
-  /** Number of fraction digits shown in the readout. Default `0`. */
   @property({type: Number}) override fractionDigits = 0;
-  /**
-   * `single-scale` shows one arc at the bottom (default); `dual-scale` also
-   * shows the scale on the top arc (the indicator's opposite end).
-   */
   @property({type: String}) type: ObcRollType = ObcRollType.singleScale;
 
   private get normalizedScaleForeImage(): number {

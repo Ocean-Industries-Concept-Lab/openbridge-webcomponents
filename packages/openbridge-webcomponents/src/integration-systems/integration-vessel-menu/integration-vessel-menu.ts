@@ -36,6 +36,7 @@ import '../../building-blocks/alert-list/alert-list.js';
  * @slot buttons - Buttons shown in the footer.
  * @slot content - Main content shown in the content area.
  * @slot alarms - Alarm items rendered inside the alert list.
+ * @experimental
  */
 
 @customElement('obc-integration-vessel-menu')

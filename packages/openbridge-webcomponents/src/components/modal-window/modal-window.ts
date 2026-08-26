@@ -54,6 +54,13 @@ export enum ObcModalWindowSize {
  * - `done-click`: Fired when the done button is clicked.
  * - `option-click`: Fired when the optional action button is clicked.
  *
+ * ### Sizing
+ * By default the modal is as tall as its content, capped at `90vh`. To give it
+ * an explicit height, set the `--obc-modal-window-height` custom property on
+ * the element — either a fixed value (`--obc-modal-window-height: 360px`) or
+ * `100%` to fill a host element that is sized by its container. The `90vh` cap
+ * always applies, and the content area scrolls when the content does not fit.
+ *
  * ### Example:
  * ```html
  * <obc-modal-window size="medium" hasLeadingIcon>
@@ -67,10 +74,15 @@ export enum ObcModalWindowSize {
  * </obc-modal-window>
  * ```
  *
- * @fires close-click - {CustomEvent} - Fired when the close button is clicked.
- * @fires cancel-click - {CustomEvent} - Fired when the cancel button is clicked.
- * @fires done-click - {CustomEvent} - Fired when the done button is clicked.
- * @fires option-click - {CustomEvent} - Fired when the optional action button is clicked.
+ * @property size - Controls the modal window size and action button layout.
+ * @property hasOptionalAction - Whether to show an optional third action button.
+ * @property hasLeadingIcon - Whether to show the leading icon slot in the header.
+ * @property hasCancelAction - Whether to show the footer cancel button.
+ * @property hasCloseAction - Whether to show the header close (X) button.
+ * @fires {CustomEvent} close-click - Fired when the close button is clicked.
+ * @fires {CustomEvent} cancel-click - Fired when the cancel button is clicked.
+ * @fires {CustomEvent} done-click - Fired when the done button is clicked.
+ * @fires {CustomEvent} option-click - Fired when the optional action button is clicked.
  *
  * @slot leading-icon - Slot for an icon to appear before the title (shown when `hasLeadingIcon` is true)
  * @slot title - Slot for the modal title text
@@ -78,32 +90,19 @@ export enum ObcModalWindowSize {
  * @slot option-label - Slot for the label of the optional action button (shown when `hasOptionalAction` is true)
  * @slot cancel-label - Slot for the label of the cancel button (shown when `hasCancelAction` is true)
  * @slot done-label - Slot for the label of the done button
+ * @cssprop [--obc-modal-window-height=auto] - Height of the modal window. Defaults to content height (capped at 90vh); set a fixed value or `100%` to size the modal externally.
+ * @stable
  */
 @customElement('obc-modal-window')
 export class ObcModalWindow extends LitElement {
-  /**
-   * Controls the modal window size and action button layout.
-   */
   @property({type: String}) size = ObcModalWindowSize.Large;
 
-  /**
-   * Whether to show an optional third action button.
-   */
   @property({type: Boolean}) hasOptionalAction = false;
 
-  /**
-   * Whether to show the leading icon slot in the header.
-   */
   @property({type: Boolean}) hasLeadingIcon = false;
 
-  /**
-   * Whether to show the footer cancel button.
-   */
   @property({type: Boolean, attribute: false}) hasCancelAction = true;
 
-  /**
-   * Whether to show the header close (X) button.
-   */
   @property({type: Boolean, attribute: false}) hasCloseAction = true;
 
   private onCloseClick = () =>

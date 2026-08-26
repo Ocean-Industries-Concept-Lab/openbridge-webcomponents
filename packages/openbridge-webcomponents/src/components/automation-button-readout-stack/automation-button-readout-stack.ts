@@ -31,7 +31,7 @@ export interface AutomationButtonReadoutStackValue {
   value: number;
   nDigits: number;
   unit: string;
-  direction: 'up' | 'down' | 'left' | 'right';
+  direction: 'up' | 'down' | 'left' | 'right' | 'none';
   icon: 'none' | 'arrow' | 'chevron';
 }
 
@@ -60,6 +60,9 @@ export type AutomationButtonReadoutStack =
   | AutomationButtonReadoutStackStateOff
   | AutomationButtonReadoutStackButton;
 
+/**
+ * @experimental
+ */
 @customElement('obc-automation-button-readout-stack')
 export class ObcAutomationButtonReadoutStack extends LitElement {
   @property({type: Array, attribute: false})

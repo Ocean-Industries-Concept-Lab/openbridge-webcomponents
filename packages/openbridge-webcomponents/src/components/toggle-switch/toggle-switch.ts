@@ -9,6 +9,10 @@ export type ObcToggleSwitchInputEvent = CustomEvent<{
   checked: boolean;
 }>;
 
+export type ObcToggleSwitchChangeEvent = CustomEvent<{
+  checked: boolean;
+}>;
+
 /**
  * `<obc-toggle-switch>` – A toggle switch component for binary on/off selection (also known as a switch, toggle, or enable/disable control).
  *
@@ -56,6 +60,12 @@ export type ObcToggleSwitchInputEvent = CustomEvent<{
  *
  * ### Events
  * - `input` – Fired when the toggle state changes (checked/unchecked).
+ * - `change` – Fired when the toggle state changes by user interaction.
+ *
+ * Both events report the state the user selected. When `externalControl` is
+ * true the component does not update itself; the consumer decides whether to
+ * apply the reported state to `checked` and may reject the interaction by
+ * leaving `checked` unchanged.
  *
  * ---
  *
@@ -83,62 +93,55 @@ export type ObcToggleSwitchInputEvent = CustomEvent<{
  *
  * In this example, the toggle switch displays a label, an icon, and a description, and is in the checked state.
  *
+ * @property label - Main label for the toggle switch. Should clearly describe the setting being toggled.
+ * @property checked - Whether the toggle is in the "on" (checked) state.
+ *   Set to true to display as active/on.
+ * @property disabled - Disables the toggle, preventing user interaction and applying a disabled style.
+ * @property hasDescription - If true, displays the description text below the label.
+ * @property description - Supplementary description text shown when `hasDescription` is true.
+ *   Use to clarify the effect or details of the toggle.
+ * @availableWhen description hasDescription==true
+ * @property hasBottomDivider - If true, renders a divider below the toggle switch.
+ *   Useful for visually separating items in a list.
+ * @property hasIcon - If true, displays a leading icon before the label.
+ *   Provide icon content via the `icon` slot.
+ * @property externalControl - If true, the toggle is controlled externally.
+ *   Use to control the toggle state from outside the component.
  * @slot icon - Leading icon slot (shown when `hasIcon` is true)
- * @fires input - {ObcToggleSwitchInputEvent} Dispatched when the value of the input changes
+ * @fires {ObcToggleSwitchInputEvent} input - Dispatched when the value of the input changes
+ * @fires {ObcToggleSwitchChangeEvent} change - Dispatched when the value of the input changes by user interaction
+ * @stable
  */
 @customElement('obc-toggle-switch')
 export class ObcToggleSwitch extends LitElement {
-  /**
-   * Main label for the toggle switch. Should clearly describe the setting being toggled.
-   */
   @property({type: String}) label = 'Label';
 
-  /**
-   * Whether the toggle is in the "on" (checked) state.
-   * Set to true to display as active/on.
-   */
   @property({type: Boolean}) checked = false;
 
-  /**
-   * Disables the toggle, preventing user interaction and applying a disabled style.
-   */
   @property({type: Boolean}) disabled = false;
 
-  /**
-   * If true, displays the description text below the label.
-   */
   @property({type: Boolean}) hasDescription = false;
 
-  /**
-   * Supplementary description text shown when `hasDescription` is true.
-   * Use to clarify the effect or details of the toggle.
-   * @availableWhen hasDescription==true
-   */
   @property({type: String}) description = '';
 
-  /**
-   * If true, renders a divider below the toggle switch.
-   * Useful for visually separating items in a list.
-   */
   @property({type: Boolean}) hasBottomDivider = false;
 
-  /**
-   * If true, displays a leading icon before the label.
-   * Provide icon content via the `icon` slot.
-   */
   @property({type: Boolean}) hasIcon = false;
 
-  /**
-   * If true, the toggle is controlled externally.
-   * Use to control the toggle state from outside the component.
-   */
   @property({type: Boolean}) externalControl = false;
+
+  /**
+   * The state the user selected in the most recent interaction. In
+   * externalControl mode this can differ from `checked` until the consumer
+   * accepts the change, so the change event reports it instead of `checked`.
+   */
+  private _userSelectedChecked?: boolean;
 
   /**
    * Handles input events to change the toggle state.
    * Prevents changes if the toggle is disabled.
    * @param e {InputEvent}
-   * @fires input - Dispatched when the value of the input changes
+   * @fires input
    */
   private _tryChange(e: InputEvent) {
     if (this.disabled) {
@@ -147,6 +150,7 @@ export class ObcToggleSwitch extends LitElement {
     }
 
     const nextChecked = !this.checked;
+    this._userSelectedChecked = nextChecked;
     if (!this.externalControl) {
       this.checked = nextChecked;
     }
@@ -160,6 +164,18 @@ export class ObcToggleSwitch extends LitElement {
     if (this.externalControl) {
       (e.target as HTMLInputElement).checked = this.checked;
     }
+  }
+
+  private _fireChangeEvent(e: Event) {
+    if (this.disabled) {
+      e.preventDefault();
+      return;
+    }
+    this.dispatchEvent(
+      new CustomEvent('change', {
+        detail: {checked: this._userSelectedChecked ?? this.checked},
+      })
+    );
   }
 
   override render() {
@@ -190,6 +206,7 @@ export class ObcToggleSwitch extends LitElement {
               .checked=${this.checked}
               ?disabled=${this.disabled}
               @input=${this._tryChange}
+              @change=${this._fireChangeEvent}
             />
           </div>
         </div>

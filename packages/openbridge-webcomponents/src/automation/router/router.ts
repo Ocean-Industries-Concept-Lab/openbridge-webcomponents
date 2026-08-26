@@ -12,6 +12,9 @@ export enum RouterAlternativeIcon {
   router2 = 'router2',
 }
 
+/**
+ * @stable
+ */
 @customElement('obc-router')
 export class ObcRouter extends ObcAbstractAutomationButtonSquared {
   @property({type: String}) alternativeIcon: RouterAlternativeIcon =

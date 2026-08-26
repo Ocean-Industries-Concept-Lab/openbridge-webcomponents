@@ -1,5 +1,6 @@
-import {css, LitElement, html, svg, nothing} from 'lit';
+import {css, LitElement, PropertyValues, html, svg, nothing} from 'lit';
 import {property} from 'lit/decorators.js';
+import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import {customElement} from '../../decorator.js';
 import {
   AdviceState,
@@ -12,18 +13,17 @@ import {TickmarkType} from '../../navigation-instruments/watch/tickmark.js';
 import {TickmarkStyle} from '../../navigation-instruments/watch/tickmark.js';
 import {InstrumentState, Priority} from '../../navigation-instruments/types.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
+import {innerRingRadiusFor} from '../../navigation-instruments/watch/watch.js';
 import {
-  OUTER_RING_RADIUS,
-  innerRingRadiusFor,
-} from '../../navigation-instruments/watch/watch.js';
-import {
-  computeZoomToFitArcFrame,
-  type ZoomToFitArcFrame,
-} from '../../svghelpers/arc-frame.js';
-
-// Must match obc-watch's un-zoomed viewBox `(176 + getPadding()) * 2`
-// (default padding 48 → 448); instrument-radial overlays obc-watch 1:1.
-const WATCH_DEFAULT_VIEWBOX = 448;
+  applyPinnedHostSize,
+  computeRadialFrame,
+  END_MAXMIN_LABEL_DROP_PX,
+  estimateLabelWidthPx,
+  measureContainerPx,
+  observeInnerBox,
+  SIDE_LABEL_DROP_PX,
+  type RadialFrame,
+} from '../../svghelpers/radial-frame.js';
 
 export enum ObcGaugeRadialType {
   filled = 'filled',
@@ -114,6 +114,32 @@ function defaultGaugeAngle(
   return ((value - minValue) / span) * 270 - 135;
 }
 
+/**
+ * @availableWhen needleColor type!=filled
+ * @availableWhen barColor type!=needle
+ * @property primaryTickmarkInterval - Interval for primary tickmarks in value units.
+ *   When undefined or <= 0, no primary tickmarks are shown.
+ * @property secondaryTickmarkInterval - Interval for secondary tickmarks in value units.
+ *   When undefined or <= 0, no secondary tickmarks are shown.
+ * @property tertiaryTickmarkInterval - Interval for tertiary tickmarks in value units.
+ *   When undefined or <= 0, no tertiary tickmarks are shown.
+ * @availableWhen clipTop zoomToFitArc==false
+ * @availableWhen clipBottom zoomToFitArc==false
+ * @availableWhen clipLeft zoomToFitArc==false
+ * @availableWhen clipRight zoomToFitArc==false
+ * @property endLabelsMaxMin - Place the horizontal end labels (±90°, e.g. min/max) below the tick instead
+ *   of beside it — the "Max-min" placement from the radial label model
+ *   (External / Internal / Max-min). See PR #903 / design discussion.
+ * @property faceDiameter - Outer-ring diameter in CSS pixels. When set, the instrument renders at a
+ *   fixed intrinsic size derived from the ring, arc shape and label reserve —
+ *   so instruments sharing the same value have identical ring circumference
+ *   regardless of label width or arc extent (like obc-donut-chart's
+ *   fixedHeight). When unset (default), the instrument fills its container.
+ * @fires {CustomEvent<RadialFrame>} frame-changed - Fired after render when the
+ *   computed radial frame changed (viewBox, label visibility, or pinned host
+ *   size). Wrappers use it to align sibling overlays/readouts with the dial.
+ * @experimental
+ */
 @customElement('obc-instrument-radial')
 export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
   // setpoint, newSetpoint, atSetpoint, touching, autoAtSetpoint,
@@ -127,25 +153,11 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
   @property({type: Number}) maxValue = 100;
   @property({type: Number}) minValue = 0;
   @property({attribute: false}) getAngle!: (v: number) => number;
-  /** @availableWhen type!=filled */
   @property({type: String}) needleColor: string | undefined;
-  /** @availableWhen type!=needle */
   @property({type: String}) barColor: string | undefined;
   @property({type: Boolean}) showLabels: boolean = false;
-  /**
-   * Interval for primary tickmarks in value units.
-   * When undefined or <= 0, no primary tickmarks are shown.
-   */
   @property({type: Number}) primaryTickmarkInterval: number | undefined = 50;
-  /**
-   * Interval for secondary tickmarks in value units.
-   * When undefined or <= 0, no secondary tickmarks are shown.
-   */
   @property({type: Number}) secondaryTickmarkInterval: number | undefined = 10;
-  /**
-   * Interval for tertiary tickmarks in value units.
-   * When undefined or <= 0, no tertiary tickmarks are shown.
-   */
   @property({type: Number}) tertiaryTickmarkInterval: number | undefined =
     undefined;
   @property({type: String}) type: ObcGaugeRadialType =
@@ -156,24 +168,53 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
   @property({type: String}) tickmarkStyle: TickmarkStyle =
     TickmarkStyle.regular;
   @property({type: Array, attribute: false}) advices: GaugeRadialAdvice[] = [];
-  /** @availableWhen zoomToFitArc==false */
   @property({type: Number}) clipTop: number = 0; // in percent of height
-  /** @availableWhen zoomToFitArc==false */
   @property({type: Number}) clipBottom: number = 0; // in percent of height
-  /** @availableWhen zoomToFitArc==false */
   @property({type: Number}) clipLeft: number = 0; // in percent of width
-  /** @availableWhen zoomToFitArc==false */
   @property({type: Number}) clipRight: number = 0; // in percent of width
-  /**
-   * Place the horizontal end labels (±90°, e.g. min/max) below the tick instead
-   * of beside it — the "Max-min" placement from the radial label model
-   * (External / Internal / Max-min). See PR #903 / design discussion.
-   */
   @property({type: Boolean}) endLabelsMaxMin: boolean = false;
   @property({type: Boolean}) zoomToFitArc: boolean = false;
+  @property({type: Number, attribute: 'face-diameter'})
+  faceDiameter: number | undefined;
 
   private _radiusOffset = 0;
-  private _arcFrame: ZoomToFitArcFrame | undefined;
+  private _frame: RadialFrame | undefined;
+  private _lastFrameKey = '';
+
+  private _resizeController = new ResizeController(this, {});
+
+  override firstUpdated(changed: PropertyValues): void {
+    super.firstUpdated(changed);
+    observeInnerBox(this._resizeController, this.renderRoot);
+  }
+
+  /** The frame computed for the current render (viewBox, label reserve …). */
+  get frame(): RadialFrame | undefined {
+    return this._frame;
+  }
+
+  /** Whether the host size styles were set by applyPinnedHostSize. */
+  private _hostSizePinned = false;
+
+  override updated(changed: PropertyValues): void {
+    super.updated(changed);
+    this._hostSizePinned = applyPinnedHostSize(
+      this,
+      this._frame,
+      this._hostSizePinned
+    );
+    const frame = this._frame;
+    if (!frame) {
+      return;
+    }
+    const key = `${frame.viewBox}|${frame.labelsHidden}|${frame.hostWidthPx ?? ''}|${frame.hostHeightPx ?? ''}`;
+    if (key !== this._lastFrameKey) {
+      this._lastFrameKey = key;
+      this.dispatchEvent(
+        new CustomEvent<RadialFrame>('frame-changed', {detail: frame})
+      );
+    }
+  }
 
   private get clampedValue(): number {
     const lowerBound = Math.min(this.minValue, this.maxValue);
@@ -276,31 +317,40 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
         ? WatchCircleType.single
         : WatchCircleType.double;
 
-    const clips = this.safeClips;
-    let viewBox: string;
-    if (this.zoomToFitArc) {
-      const ext = 48;
-      const targetSize = (176 + ext) * 2;
-      const frame = computeZoomToFitArcFrame({
-        areas,
-        outerRadius: OUTER_RING_RADIUS,
-        innerRadius: innerRingRadiusFor(watchCircleType),
-        extension: ext,
-        targetSize,
-      });
-      this._radiusOffset = frame.radiusOffset;
-      viewBox = frame.viewBox;
-      this._arcFrame = frame;
-    } else {
-      this._radiusOffset = 0;
-      this._arcFrame = undefined;
-      const full = WATCH_DEFAULT_VIEWBOX;
-      const w = full * (1 - clips.left / 100 - clips.right / 100);
-      const h = full * (1 - clips.top / 100 - clips.bottom / 100);
-      const left = -full / 2 + (full * clips.left) / 100;
-      const top = -full / 2 + (full * clips.top) / 100;
-      viewBox = `${left} ${top} ${w} ${h}`;
-    }
+    const tickmarks = this.tickmarks;
+    // Labels hang past the ±90° line only when a labeled tick actually sits
+    // there (e.g. the 180°/90° sector ends) — a ±60° sector like rot-sector
+    // must not reserve a drop it never uses.
+    const hasHorizontalEndLabels = tickmarks.some((t) => {
+      if (t.text === undefined) {
+        return false;
+      }
+      const angle = ((t.angle % 360) + 360) % 360;
+      return Math.abs(angle - 90) < 1 || Math.abs(angle - 270) < 1;
+    });
+    const frame = computeRadialFrame({
+      basePadding: 48,
+      labelWidthPx: this.tickmarksInside
+        ? 0
+        : estimateLabelWidthPx(tickmarks.map((t) => t.text)),
+      labelDropPx:
+        this.tickmarksInside || !hasHorizontalEndLabels
+          ? 0
+          : this.endLabelsMaxMin
+            ? END_MAXMIN_LABEL_DROP_PX
+            : SIDE_LABEL_DROP_PX,
+      clips: this.zoomToFitArc ? undefined : this.safeClips,
+      containerPx: measureContainerPx(this),
+      faceDiameter: this.faceDiameter,
+      zoomToFitArc: this.zoomToFitArc,
+      areas,
+      innerRadius: innerRingRadiusFor(watchCircleType),
+    });
+    this._radiusOffset = frame.radiusOffset;
+    this._frame = frame;
+    const shownTickmarks = frame.labelsHidden
+      ? tickmarks.map((t) => ({...t, text: undefined}))
+      : tickmarks;
 
     return html`
       <div class="container">
@@ -313,23 +363,17 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
           .angleSetpointAtZeroDeadband=${this.setpointAtZeroDeadband}
           .setpointOverride=${this.setpointOverride}
           .animateSetpoint=${this.animateSetpoint}
-          .padding=${48}
-          .tickmarks=${this.tickmarks}
+          .tickmarks=${shownTickmarks}
           .tickmarksInside=${this.tickmarksInside}
           .tickmarkStyle=${this.tickmarkStyle}
           .advices=${this._advices}
           .areas=${areas}
           .watchCircleType=${watchCircleType}
           .barAreas=${barAreas}
-          .clipTop=${this.zoomToFitArc ? 0 : clips.top}
-          .clipBottom=${this.zoomToFitArc ? 0 : clips.bottom}
-          .clipLeft=${this.zoomToFitArc ? 0 : clips.left}
-          .clipRight=${this.zoomToFitArc ? 0 : clips.right}
           .endLabelsMaxMin=${this.endLabelsMaxMin}
-          .zoomToFitArc=${this.zoomToFitArc}
-          .arcFrame=${this._arcFrame}
+          .arcFrame=${frame}
         ></obc-watch>
-        <svg class="gauge-radial" viewBox=${viewBox}>${this._needle}</svg>
+        <svg class="gauge-radial" viewBox=${frame.viewBox}>${this._needle}</svg>
       </div>
     `;
   }

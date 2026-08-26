@@ -352,4 +352,41 @@ describe('obc-number-input-field', () => {
       expect(event.defaultPrevented).toBe(false);
     });
   });
+
+  describe('readonly', () => {
+    beforeEach(async () => {
+      el.groupSeparator = ' ';
+      el.decimalSeparator = '.';
+      el.value = 1234.5;
+      el.readonly = true;
+      await el.updateComplete;
+    });
+
+    it('marks the native input readonly', () => {
+      expect(input.readOnly).toBe(true);
+    });
+
+    it('flags the wrapper so the hover and pressed states are suppressed', () => {
+      const wrapper = el.shadowRoot!.querySelector('.wrapper') as HTMLElement;
+      expect(wrapper.classList.contains('readonly')).toBe(true);
+    });
+
+    it('keeps the grouped display on focus', async () => {
+      const before = input.value;
+      input.focus();
+      await el.updateComplete;
+
+      expect(input.value).toBe(before);
+      expect(input.value).toContain(' ');
+    });
+
+    it('keeps its value across a focus/blur round trip', async () => {
+      input.focus();
+      await el.updateComplete;
+      input.blur();
+      await el.updateComplete;
+
+      expect(el.value).toBe(1234.5);
+    });
+  });
 });

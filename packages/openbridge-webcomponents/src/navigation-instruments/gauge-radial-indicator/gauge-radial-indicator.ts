@@ -119,6 +119,7 @@ function describeSectorPathAtRadius(
  * | `icon` | `hasIcon` is true | Replaces the default icon rendered from the `icon` property. |
  *
  * @slot icon - Optional icon element rendered at the bottom anchor of the indicator.
+ * @stable
  */
 @customElement('obc-gauge-radial-indicator')
 export class ObcGaugeRadialIndicator extends LitElement {

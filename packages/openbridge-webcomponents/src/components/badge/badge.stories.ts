@@ -8,7 +8,7 @@ import '../../icons/icon-alarm-badge.js';
 
 const meta: Meta<typeof ObcBadge> = {
   title: 'UI Components/Message and Alerts/Badge',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'beta'],
   component: 'obc-badge',
   args: {
     number: 9,

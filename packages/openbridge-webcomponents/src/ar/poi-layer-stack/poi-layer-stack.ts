@@ -42,6 +42,7 @@ export enum PoiLayerSelectionMode {
  * ```
  *
  * @slot - Layers participating in the stack.
+ * @experimental
  */
 @customElement('obc-poi-layer-stack')
 export class ObcPoiLayerStack extends LitElement {

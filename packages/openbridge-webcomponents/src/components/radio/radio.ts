@@ -48,49 +48,37 @@ import {classMap} from 'lit/directives/class-map.js';
  * <obc-radio label="Option B" name="group1" value="B" inputId="radioB"></obc-radio>
  * ```
  * In this example, only one radio can be selected at a time within the "group1" group.
+ *
+ * @property label - The label text displayed next to the radio button.
+ *   If omitted, the radio renders without a label.
+ * @property name - The name attribute for grouping radios.
+ *   Radios with the same name are grouped, allowing only one to be selected at a time.
+ * @property value - The value submitted with the form when this radio is selected.
+ * @property checked - Whether the radio is currently selected.
+ *   Only one radio in a group should be checked at a time.
+ * @property disabled - Disables the radio button, preventing user interaction.
+ * @property required - Marks the radio as required for form validation.
+ *   At least one radio in a group should be required if selection is mandatory.
+ * @property inputId - The id attribute for the underlying input element.
+ *   Should be unique within the document and used to associate the label for accessibility.
  * @fires change - Fired when the radio is changed.
  * @slot - No named slots; content is provided via properties.
+ * @stable
  */
 @customElement('obc-radio')
 export class ObcRadio extends LitElement {
-  /**
-   * The label text displayed next to the radio button.
-   * If omitted, the radio renders without a label.
-   */
   @property({type: String}) label: string | undefined;
 
-  /**
-   * The name attribute for grouping radios.
-   * Radios with the same name are grouped, allowing only one to be selected at a time.
-   */
   @property({type: String}) name: string | undefined;
 
-  /**
-   * The value submitted with the form when this radio is selected.
-   */
   @property({type: String}) value: string | undefined;
 
-  /**
-   * Whether the radio is currently selected.
-   * Only one radio in a group should be checked at a time.
-   */
   @property({type: Boolean}) checked: boolean = false;
 
-  /**
-   * Disables the radio button, preventing user interaction.
-   */
   @property({type: Boolean}) disabled: boolean = false;
 
-  /**
-   * Marks the radio as required for form validation.
-   * At least one radio in a group should be required if selection is mandatory.
-   */
   @property({type: Boolean}) required: boolean = false;
 
-  /**
-   * The id attribute for the underlying input element.
-   * Should be unique within the document and used to associate the label for accessibility.
-   */
   @property({type: String}) inputId: string = '';
 
   private static stylesInjected = false;

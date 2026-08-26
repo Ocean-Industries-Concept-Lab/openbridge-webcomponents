@@ -34,6 +34,9 @@ export class ObcAbstractAutomationButtonMotorized extends ObcAbstractAutomationB
 
   override get extraReadouts(): AutomationButtonReadoutStack[] {
     const speed = this.speed ?? this.speedInPercent;
+    if (!this.showStatus) {
+      return [];
+    }
     if (speed !== undefined && speed !== null && this.on) {
       return [
         {
@@ -42,7 +45,10 @@ export class ObcAbstractAutomationButtonMotorized extends ObcAbstractAutomationB
           nDigits: this.speedMaxDigits,
           unit: this.speedUnit,
           direction: this.labelDirection,
-          icon: 'chevron',
+          icon:
+            this.labelDirection === AutomationButtonLabelDirection.none
+              ? 'none'
+              : 'chevron',
         },
       ];
     } else if (!this.on) {

@@ -10,8 +10,8 @@
  *     map/video overlays.
  *   - `font-instrument-*-box` family — flex container shells that pair with
  *     the generated `font-instrument-*` mixins to align numeric readouts to
- *     their baseline padding tokens. Consumed by `readout`, `readout-list-item`,
- *     `readout-setpoint`, and `ar/poi-header`.
+ *     their baseline padding tokens. Consumed by `ar/poi-header` (and kept
+ *     available for external consumers of the readout typography).
  *
  * Auto-loaded by `postcss-mixins` (see `postcss.config.mjs` → `mixinsDir`)
  * and audited by `npm run lint:mixins`.

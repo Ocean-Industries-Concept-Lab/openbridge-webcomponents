@@ -6,10 +6,14 @@
    Positioning of the readout stays local to each instrument (top%, CSS
    variables, anchors); only these part-centering overrides are shared. */
 
+.instrument-readout-center-value::part(value-cluster) {
+  align-self: stretch;
+}
+
 .instrument-readout-center-value::part(value-wrapper) {
-  justify-self: center;
+  align-self: center;
 }
 
 .instrument-readout-center-meta::part(meta-wrapper) {
-  justify-self: center;
+  align-self: center;
 }

@@ -2,6 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
 import './pie-chart.js';
 import {Priority} from '../../navigation-instruments/types.js';
+import {expectChartCanvasToMatchComputedLayout} from '../../storybook-util.js';
 
 const SUNBURST_DATA = [
   {
@@ -42,7 +43,7 @@ const SUNBURST_DATA = [
 const meta: Meta = {
   title: 'Bars and Graphs/Pie Chart',
   component: 'obc-pie-chart',
-  tags: ['autodocs', '6.0'],
+  tags: ['autodocs', '6.0', 'beta'],
   argTypes: {
     fixedHeight: {
       control: {type: 'range', min: 48, max: 512},
@@ -163,6 +164,11 @@ export const WithLegend: Story = {
   name: 'With Legend Pie',
   args: {
     legend: true,
+  },
+  // Regression test for issue #1061: the legend must not inflate the canvas
+  play: async ({canvasElement}) => {
+    await new Promise((resolve) => setTimeout(resolve, 600));
+    expectChartCanvasToMatchComputedLayout(canvasElement, 'obc-pie-chart');
   },
 };
 

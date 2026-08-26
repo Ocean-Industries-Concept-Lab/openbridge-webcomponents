@@ -23,11 +23,13 @@ export {
  * Inherits all selection frame, header, data, and alert behavior from
  * `obc-poi-button`.
  *
+ * @availableWhen vesselInteractive vesselState!=overlapped && (vesselState!=null || value!=overlapped)
  * @slot - Icon content forwarded to the inner vessel object.
  * @slot turn-indicator - Optional turn indicator content for speed-rot type.
  * @slot speed-indicator - Optional speed indicator content for speed-rot type.
  * @slot header - Optional header content.
  * @slot relation - Optional relation icon/content in data mode.
+ * @experimental
  */
 @customElement('obc-poi-button-vessel')
 export class ObcPoiButtonVessel extends ObcPoiButton {
@@ -40,7 +42,6 @@ export class ObcPoiButtonVessel extends ObcPoiButton {
   @property({type: String, attribute: 'vessel-state'})
   vesselState: ObcPoiObjectVesselState | null = null;
 
-  /** @availableWhen vesselState!=overlapped && (vesselState!=null || value!=overlapped) */
   @property({type: Boolean, attribute: 'vessel-interactive'})
   vesselInteractive = false;
 

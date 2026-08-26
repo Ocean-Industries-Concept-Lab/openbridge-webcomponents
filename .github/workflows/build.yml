@@ -40,8 +40,11 @@ jobs:
       - name: Lint CSS variables openbridge-webcomponents
         run: cd packages/openbridge-webcomponents && npm run lint:variables
 
+      - name: Check agent docs are in sync
+        run: cd packages/openbridge-webcomponents && npm run lint:agents
+
       - name: Lint openbridge-webcomponents
-        run: cd packages/openbridge-webcomponents && npm run lint:lit-analyzer && npm run lint:eslint
+        run: cd packages/openbridge-webcomponents && npm run lint:lit-analyzer && npm run lint:eslint && npm run lint:slots && npm run lint:comments
 
       - name: Check formatting openbridge-webcomponents
         run: cd packages/openbridge-webcomponents && npm run format:check
@@ -71,6 +74,10 @@ jobs:
 
       - name: Run unit tests openbridge-webcomponents
         run: npm run test:browser
+        working-directory: packages/openbridge-webcomponents
+
+      - name: Run ESLint rule tests openbridge-webcomponents
+        run: npm run test:rules
         working-directory: packages/openbridge-webcomponents
 
   build:

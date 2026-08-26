@@ -50,6 +50,7 @@ export enum CompassIndicatorDirection {
  *   nearest cardinal direction as text.
  * - Set `northUp` to `false` to render a heading-up / course-up presentation
  *   where the arrow stays vertical and the compass face rotates instead.
+ * @stable
  */
 @customElement('obc-compass-indicator')
 export class ObcCompassIndicator extends LitElement {

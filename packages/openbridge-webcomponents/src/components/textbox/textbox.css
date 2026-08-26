@@ -28,6 +28,11 @@
   justify-content: var(--alignment-justify, flex-end);
   height: var(--height);
   overflow: hidden;
+  /* Opt-in: animate a `size` change (height + font-size below). Defaults to 0s
+     (instant, current behavior) so existing usages and snapshots are unchanged;
+     a consumer sets `--obc-textbox-size-transition` (e.g. 300ms) to animate the
+     swap — used by readout-list-item's setpoint flip-flop. */
+  transition: height var(--obc-textbox-size-transition, 0s) ease;
 }
 
 /* The spacer must share the content's exact font metrics so the width it
@@ -38,6 +43,8 @@
   font-size: calc(var(--height) - 2 * var(--padding));
   font-size-adjust: cap-height 1;
   white-space: nowrap;
+  /* Opt-in size animation — see `.inner-wrapper`. */
+  transition: font-size var(--obc-textbox-size-transition, 0s) ease;
 }
 
 .content {
@@ -45,23 +52,38 @@
   text-box-edge: cap alphabetic;
 }
 
-.wrapper.size-xs .inner-wrapper {
+/* Opt-in numeric mode: fixed-width lining numerals so values stay
+   column-aligned and width-stable. Applied to the spacer too so the reserved
+   width matches the rendered digits exactly. */
+.wrapper.tabular-nums .content,
+.wrapper.tabular-nums .length-spacer {
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings:
+    "ss04" on,
+    "tnum" on,
+    "lnum" on;
+}
+
+/* Size override is set on `.wrapper` (not `.inner-wrapper`) so it reaches BOTH
+   the visible `.content` AND the sibling `.length-spacer`; otherwise the spacer
+   keeps the default (m) `--height` and reserves width at the wrong font size. */
+.wrapper.size-xs {
   --height: 16px;
 }
 
-.wrapper.size-s .inner-wrapper {
+.wrapper.size-s {
   --height: 20px;
 }
 
-.wrapper.size-m .inner-wrapper {
+.wrapper.size-m {
   --height: 24px;
 }
 
-.wrapper.size-l .inner-wrapper {
+.wrapper.size-l {
   --height: 32px;
 }
 
-.wrapper.size-xl .inner-wrapper {
+.wrapper.size-xl {
   --height: 40px;
 }
 

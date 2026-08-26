@@ -75,10 +75,19 @@ export type DropdownButtonOption = {
  * ></obc-dropdown-button>
  * ```
  *
+ * @property value - The value of the currently selected option. If not set, defaults to the first option in the list
+ *   unless `allowEmptySelection` is true.
+ * @property fullWidth - If true, the select expands to fill the width of its container. Default is false.
+ * @property allowEmptySelection - If true, a `value` that does not match any option leaves the button with no option selected,
+ *   showing `placeholder` instead of defaulting to the first option. Default is false.
+ * @property placeholder - Text shown when nothing is selected and `allowEmptySelection` is true. Default is an empty string.
+ * @property openTop - If true, the dropdown menu opens above the button.
+ * @property integration - If true, the select is integration style. Default is false, only for integration bar.
  * @slot - (No named slots; all content is provided via properties)
  * @slot icon - Icon displayed at the start of the button when `type` is `icon` or `label-icon`.
- * @fires dropdown-change {ObcDropdownButtonChangeEvent} - Fires when the value of the select changes
- * @fires change {ObcDropdownButtonChangeEvent} - Fires when the value of the select changes
+ * @fires {ObcDropdownButtonChangeEvent} dropdown-change - Fires when the value of the select changes
+ * @fires {ObcDropdownButtonChangeEvent} change - Fires when the value of the select changes
+ * @stable
  */
 @customElement('obc-dropdown-button')
 export class ObcDropdownButton extends LitElement {
@@ -93,26 +102,13 @@ export class ObcDropdownButton extends LitElement {
    */
   @property({type: Array}) options: DropdownButtonOption[] = [];
 
-  /**
-   * The value of the currently selected option. If not set, defaults to the first option in the list.
-   */
   @property({type: String}) value: string | undefined;
   @property({type: Boolean}) disabled: boolean = false;
 
-  /**
-   * If true, the select expands to fill the width of its container. Default is false.
-   */
   @property({type: Boolean}) fullWidth = false;
 
-  /**
-   * If true, a `value` that does not match any option leaves the button with no option selected,
-   * showing `placeholder` instead of defaulting to the first option. Default is false.
-   */
   @property({type: Boolean}) allowEmptySelection = false;
 
-  /**
-   * Text shown when nothing is selected and `allowEmptySelection` is true. Default is an empty string.
-   */
   @property({type: String}) placeholder = '';
 
   /**
@@ -123,14 +119,8 @@ export class ObcDropdownButton extends LitElement {
    */
   @property({type: String}) type: DropdownButtonType = DropdownButtonType.label;
 
-  /**
-   * If true, the dropdown menu opens above the button.
-   */
   @property({type: Boolean}) openTop = false;
 
-  /**
-   * If true, the select is integration style. Default is false, only for integration bar.
-   */
   @property({type: Boolean}) integration = false;
 
   @property({type: Boolean}) flat = false;
@@ -223,8 +213,8 @@ export class ObcDropdownButton extends LitElement {
   /**
    * Handles the dropdown-change and change event when a new option is selected. Updates the selected value and label, and dispatches a `dropdown-change` and 'change' event with the new selection.
    *
-   * @fires dropdown-change {ObcDropdownButtonChangeEvent} - Fired when the user selects a different option.
-   * @fires change {ObcDropdownButtonChangeEvent} - Fired when the user selects a different option.
+   * @fires dropdown-change
+   * @fires change
    */
   private changeHandler(event: Event) {
     const target = event.target as HTMLSelectElement;

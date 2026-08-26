@@ -1,10 +1,14 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
+import {classMap} from 'lit/directives/class-map.js';
 import {styleMap} from 'lit/directives/style-map.js';
 import componentStyle from './progress-bar.css?inline';
 import {customElement} from '../../decorator.js';
 import '../../icons/icon-placeholder.js';
 import {CircularProgressMode} from '../../building-blocks/circular-progress/circular-progress.js';
+import {Priority} from '../../navigation-instruments/types.js';
+
+export {Priority};
 
 export enum ProgressBarType {
   linear = 'linear',
@@ -22,28 +26,113 @@ export enum CircularProgressState {
   icon = 'icon',
 }
 
+/**
+ * `<obc-progress-bar>` – A status-only progress indicator (progress meter / spinner /
+ * loading indicator) for visualizing how far a task has advanced.
+ *
+ * Displays the progress of an ongoing operation either as a horizontal bar or as a circular
+ * ring. Unlike `<obc-progress-button>`, this is a passive, non-interactive display element:
+ * it shows status only and emits no events. Use it to communicate determinate progress
+ * (a known percentage) or an open-ended "working" state.
+ *
+ * ## Features / Variants
+ *
+ * **Layout types (`type`)**
+ * - **Linear** (default): A horizontal bar with an optional value label above and an optional
+ *   description below. Best inline within content where horizontal space is available.
+ * - **Circular**: A ring with centered content. Best for compact, icon-led, or centered status.
+ *
+ * **Linear modes (`mode`)**
+ * - **Determinate** (default): Fills proportionally to `value` (0–100); the label shows the
+ *   rounded percentage.
+ * - **Indeterminate**: Animated, looping fill for work of unknown duration; the label shows
+ *   "Loading".
+ *
+ * **Color priority (`priority`)**
+ * - **Enhanced** (default): Blue fill, for a bar that reads as the primary value.
+ * - **Regular**: Neutral gray fill, for a bar that should recede as ancillary status.
+ *
+ * **Circular states (`circularState`)**
+ * - **Determinate**: Ring fills to `value`, with the rounded number (and optional `%` unit) centered.
+ * - **Indeterminate**: Animated ring with the `icon` slot centered.
+ * - **Icon**: A full ring acting as a frame around the centered `icon` slot (defaults to a placeholder).
+ *
+ * **Circular progressive indeterminate (`progressiveIndeterminate`)**
+ * - A spinning arc that also grows with `value`, blending an indeterminate animation with a
+ *   numeric readout. Takes precedence over `circularState` when enabled.
+ *
+ * ## Usage Guidelines
+ *
+ * Use a progress bar to report the status of a task the user is waiting on. Choose
+ * **determinate** when the completion percentage is known and **indeterminate** when it is not.
+ * Pick the **linear** type for inline, full-width contexts and the **circular** type for compact
+ * or centered placements. Because this component is display-only, pair it with a separate
+ * control (such as `<obc-progress-button>`) when the user also needs to trigger or cancel the action.
+ *
+ * ## Slots
+ *
+ * | Slot   | Renders When...                                              | Purpose                                   |
+ * | ------ | ----------------------------------------------------------- | ----------------------------------------- |
+ * | `icon` | `type="circular"` && `circularState` is `indeterminate` or `icon` | Centered icon inside the circular ring. |
+ *
+ * @example
+ * ```html
+ * <obc-progress-bar
+ *   type="linear"
+ *   mode="determinate"
+ *   value="65"
+ *   showValue
+ *   hasDescription
+ *   description="Uploading files..."
+ * ></obc-progress-bar>
+ * ```
+ *
+ * @property type - Layout type: `linear` (horizontal bar) or `circular` (ring).
+ * @property mode - Progress mode: `determinate` tracks `value`, `indeterminate` loops indefinitely.
+ * @availableWhen mode type==linear
+ * @property circularState - Circular display state: `determinate` (numeric ring), `indeterminate` (animated ring with
+ *   icon), or `icon` (ring framing the icon slot).
+ * @availableWhen circularState type==circular
+ * @property priority - Color emphasis of the bar fill: `regular` (gray) or `enhanced` (blue).
+ * @availableWhen priority type==linear
+ * @property value - Progress percentage (0–100); clamped when rendered.
+ * @property showValue - Shows the value label above the bar (percentage when determinate, "Loading" when indeterminate).
+ * @availableWhen showValue type==linear
+ * @property showUnit - Appends a `%` unit next to the centered value.
+ * @availableWhen showUnit type==circular && (progressiveIndeterminate==true || circularState==determinate)
+ * @property hasDescription - Shows the `description` text below the bar.
+ * @availableWhen hasDescription type==linear
+ * @property description - Description text rendered below the bar.
+ * @availableWhen description type==linear && hasDescription==true
+ * @property stateLabel - Text shown alongside the value when `showState` is enabled.
+ * @availableWhen stateLabel type==linear && showValue==true && mode==determinate && showState==true
+ * @property progressiveIndeterminate - Uses a progressive indeterminate ring (spinning arc that grows with `value`); takes
+ *   precedence over `circularState`.
+ * @availableWhen progressiveIndeterminate type==circular
+ * @slot icon - Centered icon for the circular `indeterminate` and `icon` states.
+ * @stable
+ */
 @customElement('obc-progress-bar')
 export class ObcProgressBar extends LitElement {
   @property({type: String}) type: ProgressBarType = ProgressBarType.linear;
-  /** @availableWhen type==linear */
   @property({type: String}) mode: ProgressBarMode = ProgressBarMode.determinate;
-  /** @availableWhen type==circular */
   @property({type: String}) circularState: CircularProgressState =
     CircularProgressState.determinate;
+  @property({type: String}) priority: Priority = Priority.enhanced;
   @property({type: Number}) value = 0;
-  /** @availableWhen type==linear */
   @property({type: Boolean}) showValue = false;
-  /** @availableWhen type==circular && (progressiveIndeterminate==true || circularState==determinate) */
   @property({type: Boolean}) showUnit = false;
-  /** @availableWhen type==linear */
   @property({type: Boolean}) hasDescription = false;
-  /** @availableWhen type==linear && hasDescription==true */
   @property({type: String}) description = 'Description text';
-  /** @availableWhen type==linear && showValue==true && mode==determinate */
+  /**
+   * Shows the `stateLabel` next to the value.
+   *
+   * **TODO(designer):** Confirm the intended purpose of the state indicator — the story labels
+   * this a "future feature".
+   * @availableWhen type==linear && showValue==true && mode==determinate
+   */
   @property({type: Boolean}) showState = false;
-  /** @availableWhen type==linear && showValue==true && mode==determinate && showState==true */
   @property({type: String}) stateLabel = 'Open';
-  /** @availableWhen type==circular */
   @property({type: Boolean}) progressiveIndeterminate = false;
 
   override render() {
@@ -128,12 +217,16 @@ export class ObcProgressBar extends LitElement {
   private renderLinearProgress() {
     const clampedValue = Math.max(0, Math.min(100, this.value));
     const progressWidth = `${clampedValue}%`;
+    const barClasses = {
+      bar: true,
+      'priority-regular': this.priority === Priority.regular,
+    };
 
     return html`
       <div class="wrapper">
         ${this.showValue ? this.renderLabel() : ''}
 
-        <div class="bar">
+        <div class=${classMap(barClasses)}>
           ${this.mode === ProgressBarMode.determinate
             ? html`
                 <div

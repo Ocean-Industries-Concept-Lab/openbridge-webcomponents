@@ -78,6 +78,7 @@ function createFramePath() {
  *   different range than the right-edge value indicator.
  *
  * @element obc-gauge-trend-indicator
+ * @stable
  */
 @customElement('obc-gauge-trend-indicator')
 export class ObcGaugeTrendIndicator extends LitElement {

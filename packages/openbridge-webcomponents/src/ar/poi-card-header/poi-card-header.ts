@@ -70,9 +70,21 @@ export enum ObcPoiCardHeaderVariant {
  * </obc-poi-card-header>
  * ```
  *
+ * @availableWhen cardTitle variant in [Condensed, Regular, Detailed]
+ * @property description - Shown only in detailed variant.
+ * @availableWhen description variant==detailed
+ * @property source - Source badge text (e.g., "AIS", "RADAR"). Hidden when empty.
+ * @availableWhen source variant in [Condensed, Regular, Detailed]
+ * @property timestamp - Shown only in detailed variant.
+ * @availableWhen timestamp variant==detailed
+ * @property hasLeadingIcon - Enables the leading-icon slot (regular variant only).
+ * @availableWhen hasLeadingIcon variant==regular
+ * @property hasCloseButton - Enables the close button (detailed variant only).
+ * @availableWhen hasCloseButton variant==detailed
  * @slot leading-icon - Optional icon for the regular variant.
  * @slot poi-icon - Optional icon for the detailed variant POI target.
- * @fires close-click {CustomEvent<void>} Fired when the close button is pressed.
+ * @fires {CustomEvent<void>} close-click - Fired when the close button is pressed.
+ * @experimental
  */
 @customElement('obc-poi-card-header')
 export class ObcPoiCardHeader extends LitElement {
@@ -81,37 +93,16 @@ export class ObcPoiCardHeader extends LitElement {
 
   @property({type: String}) index = '1';
 
-  /** @availableWhen variant in [Condensed, Regular, Detailed] */
   @property({type: String}) cardTitle = '';
 
-  /**
-   * Shown only in detailed variant.
-   * @availableWhen variant==detailed
-   */
   @property({type: String}) description = '';
 
-  /**
-   * Source badge text (e.g., "AIS", "RADAR"). Hidden when empty.
-   * @availableWhen variant in [Condensed, Regular, Detailed]
-   */
   @property({type: String}) source = '';
 
-  /**
-   * Shown only in detailed variant.
-   * @availableWhen variant==detailed
-   */
   @property({type: String}) timestamp = '';
 
-  /**
-   * Enables the leading-icon slot (regular variant only).
-   * @availableWhen variant==regular
-   */
   @property({type: Boolean}) hasLeadingIcon = false;
 
-  /**
-   * Enables the close button (detailed variant only).
-   * @availableWhen variant==detailed
-   */
   @property({type: Boolean}) hasCloseButton = false;
 
   private get hasSource() {

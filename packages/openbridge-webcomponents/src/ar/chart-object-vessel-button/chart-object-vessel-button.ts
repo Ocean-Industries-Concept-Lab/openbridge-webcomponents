@@ -83,24 +83,23 @@ export enum Type {
  * </obc-chart-object-vessel-button>
  * ```
  *
+ * @property heading - Heading in degrees
+ * @property course - Course over ground in degrees
+ * @availableWhen course courseArrowPx!=undefined
+ * @availableWhen speedIndicator type in [ButtonSpeedRot, FlatSpeedRot]
+ * @availableWhen turnRate type in [ButtonSpeedRot, FlatSpeedRot]
  * @slot - Primary vessel icon.
  * @slot silhouette - Optional secondary vessel silhouette icon.
  * @slot number - Optional content for the number badge.
  * @slot name - Optional content for the name badge.
  * @slot vessel-image - Optional vessel image content used when `vesselImage` is not set.
+ * @experimental
  */
 @customElement('obc-chart-object-vessel-button')
 export class ObcChartObjectVesselButton extends LitElement {
-  /** Heading in degrees */
   @property({type: Number}) heading = 0;
-  /**
-   * Course over ground in degrees
-   * @availableWhen courseArrowPx!=undefined
-   */
   @property({type: Number}) course = 0;
-  /** @availableWhen type in [ButtonSpeedRot, FlatSpeedRot] */
   @property({type: String}) speedIndicator: SpeedIndicator = SpeedIndicator.Two;
-  /** @availableWhen type in [ButtonSpeedRot, FlatSpeedRot] */
   @property({type: Number}) turnRate = 0; // -100 (PORT) to 100 (STBD)
   @property({type: Number}) number: number | undefined = undefined;
   @property({type: String}) name: string | undefined = undefined;

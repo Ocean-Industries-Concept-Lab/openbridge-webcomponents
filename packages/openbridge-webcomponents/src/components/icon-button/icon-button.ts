@@ -80,9 +80,25 @@ export enum IconButtonVariant {
  * </obc-icon-button>
  * ```
  *
+ * @property activated - Whether the button is in an activated (selected/toggled) state.
+ *   Visually highlights the button to indicate selection.
+ * @property cornerLeft - If true, aligns the button to the left edge and removes left border radius.
+ *   Useful for grouping or edge-aligned layouts.
+ * @property cornerRight - If true, aligns the button to the right edge and removes right border radius.
+ *   Useful for grouping or edge-aligned layouts.
+ * @property activeColor - Applies an accent color to the button for emphasis.
+ *   Used to visually distinguish active or important actions.
+ * @property wide - Increases the button's width for larger touch targets or visual balance.
+ * @property disabled - Disables the button, preventing user interaction and dimming its appearance.
+ * @property progress - Shows a circular progress indicator overlay when set (0–100).
+ *   Use to indicate ongoing actions or loading states.
+ *   If undefined, no progress indicator is shown.
+ * @property hasLabel - If true, displays a label below the icon using the `label` slot.
+ * @property showDivider - If false, and cornerLeft or cornerRight is true, the divider is not shown.
  * @slot - Icon slot (default): Place an icon such as <obi-search> here.
  * @slot label - Optional label shown below the icon when `hasLabel` is true.
  * @fires click - Fired when the button is clicked (if not disabled).
+ * @stable
  */
 @customElement('obc-icon-button')
 export class ObcIconButton extends LitElement {
@@ -95,53 +111,22 @@ export class ObcIconButton extends LitElement {
   @property({type: String}) variant: IconButtonVariant =
     IconButtonVariant.normal;
 
-  /**
-   * Whether the button is in an activated (selected/toggled) state.
-   * Visually highlights the button to indicate selection.
-   */
   @property({type: Boolean}) activated = false;
 
-  /**
-   * If true, aligns the button to the left edge and removes left border radius.
-   * Useful for grouping or edge-aligned layouts.
-   */
   @property({type: Boolean}) cornerLeft = false;
 
-  /**
-   * If true, aligns the button to the right edge and removes right border radius.
-   * Useful for grouping or edge-aligned layouts.
-   */
   @property({type: Boolean}) cornerRight = false;
 
-  /**
-   * Applies an accent color to the button for emphasis.
-   * Used to visually distinguish active or important actions.
-   */
   @property({type: Boolean}) activeColor = false;
 
-  /**
-   * Increases the button's width for larger touch targets or visual balance.
-   */
   @property({type: Boolean}) wide = false;
 
-  /**
-   * Disables the button, preventing user interaction and dimming its appearance.
-   */
   @property({type: Boolean}) disabled = false;
 
-  /**
-   * Shows a circular progress indicator overlay when set (0–100).
-   * Use to indicate ongoing actions or loading states.
-   * If undefined, no progress indicator is shown.
-   */
   @property({type: Number}) progress: undefined | number = undefined;
 
-  /**
-   * If true, displays a label below the icon using the `label` slot.
-   */
   @property({type: Boolean}) hasLabel: boolean = false;
 
-  /** If false, and cornerLeft or cornerRight is true, the divider is not shown. */
   @property({type: Boolean, attribute: false}) showDivider = true;
 
   get progressSpinner() {
