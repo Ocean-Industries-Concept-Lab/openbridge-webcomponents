@@ -95,6 +95,16 @@ export enum segmentPosition {
  * </obc-button>
  * ```
  *
+ * @property fullWidth - Expands the button to fill the width of its container when true.
+ * @property disabled - Disables the button or link, preventing user interaction and applying disabled styling.
+ * @property showLeadingIcon - Whether to show the leading icon slot (`slot="leading-icon"`).
+ *   When true, content in the `leading-icon` slot will be displayed before the label.
+ * @property showTrailingIcon - Whether to show the trailing icon slot (`slot="trailing-icon"`).
+ *   When true, content in the `trailing-icon` slot will be displayed after the label.
+ * @property href - When provided, renders the button as an anchor link (`<a>`) instead of a native button.
+ *   Use for navigation actions.
+ * @property target - Specifies the target for the anchor link (only applies when `href` is set).
+ *   Common values: `_blank`, `_self`, `_parent`, `_top`.
  * @fires click - Fired when the button is clicked (if not disabled).
  *
  * @slot - Default slot for button label text (required for accessibility)
@@ -112,38 +122,16 @@ export class ObcButton extends LitElement {
    */
   @property({type: String}) variant: ButtonVariant = ButtonVariant.normal;
 
-  /**
-   * Expands the button to fill the width of its container when true.
-   */
   @property({type: Boolean, reflect: true}) fullWidth = false;
 
-  /**
-   * Disables the button or link, preventing user interaction and applying disabled styling.
-   */
   @property({type: Boolean}) disabled = false;
 
-  /**
-   * Whether to show the leading icon slot (`slot="leading-icon"`).
-   * When true, content in the `leading-icon` slot will be displayed before the label.
-   */
   @property({type: Boolean}) showLeadingIcon = false;
 
-  /**
-   * Whether to show the trailing icon slot (`slot="trailing-icon"`).
-   * When true, content in the `trailing-icon` slot will be displayed after the label.
-   */
   @property({type: Boolean}) showTrailingIcon = false;
 
-  /**
-   * When provided, renders the button as an anchor link (`<a>`) instead of a native button.
-   * Use for navigation actions.
-   */
   @property({type: String}) href?: string = undefined;
 
-  /**
-   * Specifies the target for the anchor link (only applies when `href` is set).
-   * Common values: `_blank`, `_self`, `_parent`, `_top`.
-   */
   @property({type: String}) target?: string = undefined;
 
   /**

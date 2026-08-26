@@ -140,6 +140,10 @@ export interface SystemState {
  * </obc-system-button>
  * ```
  *
+ * @property disabled - Disables all interactions and renders the button(s) in a disabled state.
+ * @property menuOpen - Indicates whether a system panel is currently open (used internally for expanded/actions variants).
+ * @property activePanel - Indicates which panel (if any) is currently active.
+ *   One of: `'microphone'`, `'volume'`, `'system-icons'`, or `null`.
  * @fires {CustomEvent<{open: boolean}>} menu-toggle - When the expanded variant is toggled open or closed
  * @fires {CustomEvent<{state: SystemState}>} system-state-change - When the system state is updated
  * @fires {CustomEvent<void>} microphone-panel-open - When the microphone action segment is activated
@@ -161,9 +165,6 @@ export class ObcSystemButton extends LitElement {
   @property({type: String}) variant: SystemButtonVariant =
     SystemButtonVariant.condensed;
 
-  /**
-   * Disables all interactions and renders the button(s) in a disabled state.
-   */
   @property({type: Boolean}) disabled = false;
 
   /**
@@ -181,15 +182,8 @@ export class ObcSystemButton extends LitElement {
     gps: {connected: false, quality: 'medium'},
   };
 
-  /**
-   * Indicates whether a system panel is currently open (used internally for expanded/actions variants).
-   */
   @property({type: Boolean}) menuOpen = false;
 
-  /**
-   * Indicates which panel (if any) is currently active.
-   * One of: `'microphone'`, `'volume'`, `'system-icons'`, or `null`.
-   */
   @property({type: String}) activePanel: ActivePanel | null = null;
 
   private _handleExpandedTypeClick() {

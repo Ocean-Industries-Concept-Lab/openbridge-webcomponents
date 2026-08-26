@@ -8,7 +8,7 @@ globs:
   - package.json
   - packages/openbridge-webcomponents/package.json
   - packages/openbridge-webcomponents/script/**
-  - '!packages/openbridge-webcomponents/script/docgen/**'
+  - "!packages/openbridge-webcomponents/script/docgen/**"
 ---
 
 # CI and Release
@@ -18,11 +18,11 @@ globs:
 `.releaserc.json` drives semantic-release, and its `releaseRules` mean most
 commit types produce **no release at all**:
 
-| Commit type                                                | Release   |
-| ---------------------------------------------------------- | --------- |
-| `feat!:` / any `BREAKING CHANGE:`                          | **major** |
-| `feat:`                                                    | **minor** |
-| `fix:` · `perf:` · `revert:`                               | **patch** |
+| Commit type                                                              | Release   |
+| ------------------------------------------------------------------------ | --------- |
+| `feat!:` / any `BREAKING CHANGE:`                                        | **major** |
+| `feat:`                                                                  | **minor** |
+| `fix:` · `perf:` · `revert:`                                             | **patch** |
 | `docs:` · `style:` · `refactor:` · `test:` · `build:` · `ci:` · `chore:` | **none**  |
 
 Pick the type for the effect you want. A user-visible fix committed as
@@ -36,10 +36,10 @@ semantic-release reads, so the title matters more than the individual commits.
 
 ## Release model
 
-| Branch   | npm dist-tag | Version shape          |
-| -------- | ------------ | ---------------------- |
-| `stable` | `latest`     | `2.0.0`                |
-| `develop`| `next`       | `2.0.0-next.N` (prerelease) |
+| Branch    | npm dist-tag | Version shape               |
+| --------- | ------------ | --------------------------- |
+| `stable`  | `latest`     | `2.0.0`                     |
+| `develop` | `next`       | `2.0.0-next.N` (prerelease) |
 
 `release.yml` runs on push to **`develop`** and on manual `workflow_dispatch`.
 A release commits back as `chore(release): <version> [skip ci]`, updating
@@ -55,16 +55,16 @@ wrapper versions are synced first by `scripts/prepare-wrappers.js` (see below).
 
 ## The eight workflows
 
-| Workflow                                  | Trigger                                      | Purpose |
-| ----------------------------------------- | -------------------------------------------- | ------- |
-| `build.yml`                               | push + PR, all branches                      | typecheck, `analyze`, the `lint:*` suite including `lint:agents`, `format:check`, `fix-imports:check` |
-| `visual-testing.yml`                      | push + PR on `develop` / `stable`            | Playwright snapshot suite |
-| `update-snapshots.yml`                    | **PR comment containing `/update-snapshots`** | rebuilds baselines in the Docker image and pushes to the PR branch |
-| `pr-title-lint.yml`                       | PR opened / edited / synchronize / reopened  | Conventional Commits check on the PR title |
-| `release.yml`                             | push to `develop`, or manual                 | `build:full` then `semantic-release` |
-| `firebase-hosting-merge.yml`              | push to `develop`                            | deploys the demo |
-| `firebase-hosting-pull-request.yml`       | PR                                           | builds the demo preview |
-| `firebase-hosting-pull-request-deploy.yml`| after the build workflow completes           | publishes the preview |
+| Workflow                                   | Trigger                                       | Purpose                                                                                               |
+| ------------------------------------------ | --------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `build.yml`                                | push + PR, all branches                       | typecheck, `analyze`, the `lint:*` suite including `lint:agents`, `format:check`, `fix-imports:check` |
+| `visual-testing.yml`                       | push + PR on `develop` / `stable`             | Playwright snapshot suite                                                                             |
+| `update-snapshots.yml`                     | **PR comment containing `/update-snapshots`** | rebuilds baselines in the Docker image and pushes to the PR branch                                    |
+| `pr-title-lint.yml`                        | PR opened / edited / synchronize / reopened   | Conventional Commits check on the PR title                                                            |
+| `release.yml`                              | push to `develop`, or manual                  | `build:full` then `semantic-release`                                                                  |
+| `firebase-hosting-merge.yml`               | push to `develop`                             | deploys the demo                                                                                      |
+| `firebase-hosting-pull-request.yml`        | PR                                            | builds the demo preview                                                                               |
+| `firebase-hosting-pull-request-deploy.yml` | after the build workflow completes            | publishes the preview                                                                                 |
 
 **`/update-snapshots` is the one to remember.** Snapshot baselines are
 environment-sensitive, so regenerating them locally on a non-Linux machine
@@ -74,10 +74,10 @@ it over committing locally-generated baselines.
 
 ## Two script directories, and they are not interchangeable
 
-| Directory                                     | Contents | Reached from |
-| --------------------------------------------- | -------- | ------------ |
-| `scripts/` (repo root, **plural**)            | `prepare-wrappers.js` only | `.releaserc.json`'s `prepareCmd`, during a release |
-| `packages/openbridge-webcomponents/script/` (**singular**) | the `check-*`, `convert-*`, `download-*`, `sync-agent-docs` tooling | `npm run` scripts in the core package |
+| Directory                                                  | Contents                                                            | Reached from                                       |
+| ---------------------------------------------------------- | ------------------------------------------------------------------- | -------------------------------------------------- |
+| `scripts/` (repo root, **plural**)                         | `prepare-wrappers.js` only                                          | `.releaserc.json`'s `prepareCmd`, during a release |
+| `packages/openbridge-webcomponents/script/` (**singular**) | the `check-*`, `convert-*`, `download-*`, `sync-agent-docs` tooling | `npm run` scripts in the core package              |
 
 `scripts/prepare-wrappers.js` stamps the release version into each wrapper
 package and builds it; the Angular wrapper additionally gets the version written
@@ -96,6 +96,30 @@ no-op `echo` entries that exist purely to group the script list.
 
 A new script goes **inside the matching section**, not appended at the end. No
 other package in the monorepo uses this convention.
+
+## Documentation tooling in the build
+
+The manifest is the single source for property docs, so several steps hang off
+`npm run analyze` (`cem analyze` + `script/sort-custom-element-manifest.ts`):
+
+| Piece                            | What it does                                                                                             |
+| -------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `script/cem-plugins/`            | `available-when.mjs` resolves `@availableWhen` into `availableWhenIf`; `module-docs.mjs` lifts `@module` |
+| `script/inject-docs.ts`          | writes manifest descriptions into `dist/**/*.d.ts` (`--dts`) and the Svelte wrappers (`--svelte`)        |
+| `script/compare-manifests.ts`    | diffs two `custom-elements.json` files — the guard for "docs moved, manifest unchanged" refactors        |
+| `npm run lint:comments`          | the warn-only comment-style ESLint config (`eslint.comments.config.mjs`)                                 |
+| `npm run lint:fix:property-docs` | the same config with `--fix`; hoists inline property JSDoc into the class header                         |
+
+Order matters: injection reads the manifest and writes into build output, so it
+runs **after** both. `build:full` ends `... build:ts && analyze && inject:dts &&
+wrappers` (the wrapper step's `post-fix` runs the `--svelte` pass), and `prepack`
+ends `... build:bundle && analyze && inject:dts`. Putting `inject:dts` before a
+`vite build` throws the injected docs away — that build regenerates the `.d.ts`
+files from source.
+
+`lint:comments` and `lint:slots` run in `build.yml`'s **lint** job; `test:rules`
+runs in **test-browser**, which has no `analyze` step — tooling tests must not
+import the manifest.
 
 ## Local equivalents of the CI gates
 

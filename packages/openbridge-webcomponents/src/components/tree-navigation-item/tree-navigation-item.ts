@@ -130,6 +130,23 @@ export interface TreeNavigationItemAlerts {
  * |----------------|---------------------------------|-------------------------------------------------------------------------|
  * | icon           | `hasLeadingIcon` is true        | Leading icon for the row, e.g. `<obi-placeholder slot="icon">`.         |
  *
+ * @property label - The text label displayed for the row.
+ * @property branches - Guide line for each ancestor level, outermost first; one 32px column per
+ *   entry. Computed by `obc-tree-navigation` — rarely set by hand.
+ * @property expandable - Whether the row shows an expand/collapse chevron. Leave false for leaf nodes.
+ * @property expanded - Whether the node is expanded. Rotates the chevron and sets `aria-expanded`.
+ * @property checked - Whether the row is the current selection. Applies the amplified style and
+ *   makes the row inert to re-selection (no hover/pressed feedback, no `click`
+ *   or navigation); it remains keyboard-focusable. An expandable checked row
+ *   still fires `expand-toggle` so a selected group can open and close.
+ * @property disabled - Disables the row, removing it from the tab order and dimming its appearance.
+ * @property focusable - Whether the row is in the tab order. A tree container manages this as a
+ *   roving tabindex (one row focusable at a time); standalone rows stay tabbable.
+ * @property hasLeadingIcon - Whether the row shows a leading icon (provided via the `icon` slot).
+ * @property terminalType - Terminal type, controlling the alert-header marker shown in the terminal.
+ *   One of `regular` (default), `aggregated-header`, or `group-header`.
+ * @property href - The URL to navigate to when the row is activated. If set, the row renders as
+ *   a link; otherwise it acts as a button.
  * @slot icon - Leading icon slot (shown when `hasLeadingIcon` is true).
  * @fires {CustomEvent<boolean>} expand-toggle - Fired when an expandable row is activated; detail is the next `expanded` value.
  * @fires {CustomEvent<void>} click - Fired when the row is activated.
@@ -137,47 +154,22 @@ export interface TreeNavigationItemAlerts {
  */
 @customElement('obc-tree-navigation-item')
 export class ObcTreeNavigationItem extends LitElement {
-  /** The text label displayed for the row. */
   @property({type: String}) label = 'List item';
 
-  /**
-   * Guide line for each ancestor level, outermost first; one 32px column per
-   * entry. Computed by `obc-tree-navigation` — rarely set by hand.
-   */
   @property({type: Array}) branches: TreeBranchType[] = [];
 
-  /** Whether the row shows an expand/collapse chevron. Leave false for leaf nodes. */
   @property({type: Boolean}) expandable = false;
 
-  /** Whether the node is expanded. Rotates the chevron and sets `aria-expanded`. */
   @property({type: Boolean, reflect: true}) expanded = false;
 
-  /**
-   * Whether the row is the current selection. Applies the amplified style and
-   * makes the row inert to re-selection (no hover/pressed feedback, no `click`
-   * or navigation); it remains keyboard-focusable. An expandable checked row
-   * still fires `expand-toggle` so a selected group can open and close.
-   */
   @property({type: Boolean, reflect: true}) checked = false;
 
-  /** Disables the row, removing it from the tab order and dimming its appearance. */
   @property({type: Boolean, reflect: true}) disabled = false;
 
-  /**
-   * Whether the row is in the tab order. A tree container manages this as a
-   * roving tabindex (one row focusable at a time); standalone rows stay tabbable.
-   */
   @property({type: Boolean, attribute: false}) focusable = true;
 
-  /**
-   * Whether the row shows a leading icon (provided via the `icon` slot).
-   */
   @property({type: Boolean, attribute: false}) hasLeadingIcon = true;
 
-  /**
-   * Terminal type, controlling the alert-header marker shown in the terminal.
-   * One of `regular` (default), `aggregated-header`, or `group-header`.
-   */
   @property({type: String}) terminalType: string = TreeTerminalType.regular;
 
   /**
@@ -192,10 +184,6 @@ export class ObcTreeNavigationItem extends LitElement {
    */
   @property({type: Object}) alerts?: TreeNavigationItemAlerts;
 
-  /**
-   * The URL to navigate to when the row is activated. If set, the row renders as
-   * a link; otherwise it acts as a button.
-   */
   @property({type: String}) href: string | undefined;
 
   @query('.wrapper') private wrapperElement?: HTMLElement;

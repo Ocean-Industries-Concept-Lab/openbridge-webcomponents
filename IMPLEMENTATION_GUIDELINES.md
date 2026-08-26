@@ -27,7 +27,6 @@ The project is divided into three main parts:
 Each component's `*.stories.ts` file should:
 
 - Use `tags: ['autodocs', '6.0']` for documented OpenBridge 6.0 components
-- Use `tags: ['alpha']` for components still in development
 - Use `tags: ['skip-test']` to exclude a story from visual snapshot testing
 - Export a `Default` story and additional stories for key states and variants
 
@@ -475,8 +474,8 @@ The animation itself is driven from TypeScript, **not** from a CSS `@keyframes`.
 Animations API (`el.animate()`) to alternate the `-on` / `-off` pair over a
 per-severity period:
 
-| Severity | Period |
-| -------- | ------ |
+| Severity | Period  |
+| -------- | ------- |
 | Critical | 1000 ms |
 | Alarm    | 2000 ms |
 | Warning  | 4000 ms |
@@ -580,7 +579,15 @@ All size-dependent tokens are defined four times in `variables.css`, once per si
 | `:root`, `.obc-component-size-regular` | 48 px        | 32 px         | 24 px     |
 | `.obc-component-size-medium`           | 56 px        | 40 px         | 32 px     |
 | `.obc-component-size-large`            | 72 px        | 56 px         | 40 px     |
-| `.obc-component-size-xl`               | (larger)     | (larger)      | (larger)  |
+| `.obc-component-size-xl`               | 96 px        | 72 px         | 48 px     |
+
+`regular` is the smallest size class, and `:root` carries the same values, so
+48 px is the touch-target floor even when no size class is set. Individual
+components may follow their own scaling curve through their per-component
+tokens (e.g. `--automation-components-button-touch-target-size` is 48/72/96/96
+across the four classes), but no class takes any touch target below 48 px.
+Minimum-size rules and the standards behind them live in
+[`docs/agents/a11y.md` § Touch & pointer target size](docs/agents/a11y.md).
 
 Each class overrides the same variable names (`--global-size-spacing-touch-target-min`, `--global-size-spacing-visual-target-min`, `--global-size-spacing-icon-icon-size-regular`, all `--ui-components-*` sizing tokens, typography tokens, etc.) with scaled values.
 
@@ -881,7 +888,7 @@ Booleans that default to `true` must use `attribute: false` to remove the HTML a
 
 Framework wrappers (React, Vue, etc.) always set values via properties, so removing the attribute has no effect on wrapper consumers.
 
-See [AGENTS.md § 2](AGENTS.md#2-coding-standards) for the full rule and examples.
+See [docs/agents/coding-standards.md § Boolean property naming](docs/agents/coding-standards.md#boolean-property-naming) for the full rule and examples.
 
 ## 🧭 SVG based components
 

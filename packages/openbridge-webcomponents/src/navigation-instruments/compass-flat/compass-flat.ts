@@ -69,14 +69,37 @@ export interface Label {
  *
  * @ignition-base-height: 170px
  * @ignition-base-width: 512px
+ *
+ * @property heading - Current heading in degrees.
+ * @property courseOverGround - Current COG in degrees.
+ * @property rotType - ROT display mode: `'dots'`, `'bar'`, or `undefined` (hidden).
+ * @property rateOfTurnDegreesPerMinute - Measured rate of turn in degrees per minute (positive = starboard).
+ *   When `undefined`, falls back to the deprecated `rotationsPerMinute`.
+ * @availableWhen rateOfTurnDegreesPerMinute rotType!=undefined
+ * @property rotDotAnimationFactor - Visual amplification applied only to the spinning dot animation.
+ * @availableWhen rotDotAnimationFactor rotType!=undefined
+ * @property rotMaxValue - Bar-extent reference value in **degrees per minute**. Default `60`
+ *   per ES-TRIN 2025/1 Art. 3.02.
+ * @availableWhen rotMaxValue rotType!=undefined
+ * @property rotArcExtent - Degrees of bar arc per max-value ROT (default 60).
+ * @availableWhen rotArcExtent rotType!=undefined
+ * @availableWhen rotPortStarboard rotType!=undefined
+ * @availableWhen rotAtZeroDeadband rotType!=undefined
+ * @property hasReadout - When `true`, shows a centered `<obc-readout>` below the strip displaying
+ *   the heading (label `HDG`, unit `DEG`). The value color follows the HDG
+ *   entry in `priorityElements`.
+ * @property label - Readout label. Default `HDG`.
+ * @availableWhen label hasReadout==true
+ * @property unit - Readout unit. Default `DEG`.
+ * @availableWhen unit hasReadout==true
+ * @property fractionDigits - Number of fraction digits shown in the readout. Default `0`.
+ * @availableWhen fractionDigits hasReadout==true
  * @stable
  */
 @customElement('obc-compass-flat')
 export class ObcCompassFlat extends LitElement {
   @property({type: Boolean}) FOVIndicator: boolean = false;
-  /** Current heading in degrees. */
   @property({type: Number}) heading = 0;
-  /** Current COG in degrees. */
   @property({type: Number}) courseOverGround = 0;
   @property({type: Number}) tickInterval = 5;
   @property({type: Number}) FOV = 45;
@@ -87,18 +110,8 @@ export class ObcCompassFlat extends LitElement {
   priorityElements: CompassFlatPriorityElement[] = [
     CompassFlatPriorityElement.hdg,
   ];
-  /** ROT display mode: `'dots'`, `'bar'`, or `undefined` (hidden). */
   @property({type: String}) rotType: RotType | undefined;
-  /**
-   * Measured rate of turn in degrees per minute (positive = starboard).
-   * When `undefined`, falls back to the deprecated `rotationsPerMinute`.
-   * @availableWhen rotType!=undefined
-   */
   @property({type: Number}) rateOfTurnDegreesPerMinute: number | undefined;
-  /**
-   * Visual amplification applied only to the spinning dot animation.
-   * @availableWhen rotType!=undefined
-   */
   @property({type: Number}) rotDotAnimationFactor: number = 18;
   /**
    * **Deprecated.** Use `rateOfTurnDegreesPerMinute` instead.
@@ -106,41 +119,13 @@ export class ObcCompassFlat extends LitElement {
    * @availableWhen rotType!=undefined
    */
   @property({type: Number}) rotationsPerMinute: number = 1;
-  /**
-   * Bar-extent reference value in **degrees per minute**. Default `60`
-   * per ES-TRIN 2025/1 Art. 3.02.
-   * @availableWhen rotType!=undefined
-   */
   @property({type: Number}) rotMaxValue: number = 60;
-  /**
-   * Degrees of bar arc per max-value ROT (default 60).
-   * @availableWhen rotType!=undefined
-   */
   @property({type: Number}) rotArcExtent: number = 60;
-  /** @availableWhen rotType!=undefined */
   @property({type: Boolean}) rotPortStarboard: boolean = false;
-  /** @availableWhen rotType!=undefined */
   @property({type: Number}) rotAtZeroDeadband: number = ROT_ZERO_DEADBAND_DEG;
-  /**
-   * When `true`, shows a centered `<obc-readout>` below the strip displaying
-   * the heading (label `HDG`, unit `DEG`). The value color follows the HDG
-   * entry in `priorityElements`.
-   */
   @property({type: Boolean}) hasReadout: boolean = false;
-  /**
-   * Readout label. Default `HDG`.
-   * @availableWhen hasReadout==true
-   */
   @property({type: String}) label = 'HDG';
-  /**
-   * Readout unit. Default `DEG`.
-   * @availableWhen hasReadout==true
-   */
   @property({type: String}) unit = 'DEG';
-  /**
-   * Number of fraction digits shown in the readout. Default `0`.
-   * @availableWhen hasReadout==true
-   */
   @property({type: Number}) fractionDigits = 0;
 
   @state() private hostWidth = 0;

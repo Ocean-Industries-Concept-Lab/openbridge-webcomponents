@@ -26,20 +26,20 @@ normally.
 
 ## What is generated, and by what
 
-| Path                                     | Regenerate with                     | Source of truth                                             |
-| ---------------------------------------- | ----------------------------------- | ----------------------------------------------------------- |
-| `src/icons/**` (2000+ components)        | `npm run download:icons`            | The OpenBridge Icons Figma file                             |
-| `src/generated/**` *(gitignored)*        | `npm run build:translations`        | `lit localize` extraction from `msg()` calls in source      |
-| `src/palettes/variables.css`             | obc-figma-plugin `cssvariables`     | OpenBridge 6.1 Figma file (variable definitions)            |
-| `src/mixins/fonts.css`                   | obc-figma-plugin `font-exports`     | OpenBridge 6.1 Figma file (text styles)                     |
-| `script/figmavariables.json`             | obc-figma-plugin `variables map`    | OpenBridge **Icons** Figma file — not the main design file  |
-| `packages/openbridge-webcomponents-*/**` | `npm run wrappers`                  | The core package's source JSDoc, via `lit labs gen`         |
-| `custom-elements.json`                   | `npm run analyze`                   | The core package's source JSDoc, via `cem analyze`          |
-| `.github/instructions/**`                | `npm run agents:sync`               | `docs/agents/*.md`                                          |
-| `.github/copilot-instructions.md`        | `npm run agents:sync`               | `docs/agents/*.md`                                          |
-| `.cursor/rules/**`                       | `npm run agents:sync`               | `docs/agents/*.md`                                          |
-| `CLAUDE.md` *(gitignored)*               | `npm run agents:sync`               | pointer only — carries no rules of its own                  |
-| `AGENTS.md` § 4 routing table            | `npm run agents:sync`               | the `globs` frontmatter of every `docs/agents/*.md`         |
+| Path                                     | Regenerate with                  | Source of truth                                            |
+| ---------------------------------------- | -------------------------------- | ---------------------------------------------------------- |
+| `src/icons/**` (2000+ components)        | `npm run download:icons`         | The OpenBridge Icons Figma file                            |
+| `src/generated/**` _(gitignored)_        | `npm run build:translations`     | `lit localize` extraction from `msg()` calls in source     |
+| `src/palettes/variables.css`             | obc-figma-plugin `cssvariables`  | OpenBridge 6.1 Figma file (variable definitions)           |
+| `src/mixins/fonts.css`                   | obc-figma-plugin `font-exports`  | OpenBridge 6.1 Figma file (text styles)                    |
+| `script/figmavariables.json`             | obc-figma-plugin `variables map` | OpenBridge **Icons** Figma file — not the main design file |
+| `packages/openbridge-webcomponents-*/**` | `npm run wrappers`               | The core package's source JSDoc, via `lit labs gen`        |
+| `custom-elements.json`                   | `npm run analyze`                | The core package's source JSDoc, via `cem analyze`         |
+| `.github/instructions/**`                | `npm run agents:sync`            | `docs/agents/*.md`                                         |
+| `.github/copilot-instructions.md`        | `npm run agents:sync`            | `docs/agents/*.md`                                         |
+| `.cursor/rules/**`                       | `npm run agents:sync`            | `docs/agents/*.md`                                         |
+| `CLAUDE.md` _(gitignored)_               | `npm run agents:sync`            | pointer only — carries no rules of its own                 |
+| `AGENTS.md` § 4 routing table            | `npm run agents:sync`            | the `globs` frontmatter of every `docs/agents/*.md`        |
 
 `custom-elements.json` is also **gitignored** — it is regenerated per checkout
 rather than committed.
@@ -72,17 +72,17 @@ rather than committed.
 The directory names invite the wrong assumption. These are hand-written and
 should be edited normally:
 
-| Path                                  | Status                                                             |
-| ------------------------------------- | ------------------------------------------------------------------ |
-| `src/manual-icon/**`                  | **Hand-written** Lit components. No generator writes here — the name means "manual", in contrast to `src/icons/`. |
-| `src/palettes/manual.css`             | Hand-maintained tokens the Figma plugin does not emit              |
-| `src/palettes/critical.md`            | Hand-written notes                                                 |
-| `src/mixins/font-extras.css`          | Hand-curated font mixins the plugin does not produce               |
-| `src/mixins/alert.css`                | Hand-written alert/alarm mixins                                    |
-| `src/mixins/base-input-field.css`     | Hand-written input-field chrome                                    |
-| `src/mixins/card.css`                 | Hand-written card surface mixin                                    |
-| `src/mixins/outline-inward.css`       | Hand-written focus-outline mixin                                   |
-| `src/mixins/scrollbar.css`            | Hand-written scrollbar mixin                                       |
+| Path                              | Status                                                                                                            |
+| --------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `src/manual-icon/**`              | **Hand-written** Lit components. No generator writes here — the name means "manual", in contrast to `src/icons/`. |
+| `src/palettes/manual.css`         | Hand-maintained tokens the Figma plugin does not emit                                                             |
+| `src/palettes/critical.md`        | Hand-written notes                                                                                                |
+| `src/mixins/font-extras.css`      | Hand-curated font mixins the plugin does not produce                                                              |
+| `src/mixins/alert.css`            | Hand-written alert/alarm mixins                                                                                   |
+| `src/mixins/base-input-field.css` | Hand-written input-field chrome                                                                                   |
+| `src/mixins/card.css`             | Hand-written card surface mixin                                                                                   |
+| `src/mixins/outline-inward.css`   | Hand-written focus-outline mixin                                                                                  |
+| `src/mixins/scrollbar.css`        | Hand-written scrollbar mixin                                                                                      |
 
 Of `src/mixins/`'s seven files only `fonts.css` is generated, and of
 `src/palettes/`'s three only `variables.css` is. That is why this guard is
@@ -95,9 +95,9 @@ forbid editing files the guidelines explicitly tell you to edit.
 wholesale by `npm run wrappers`, with **two exceptions that are not generated at
 all**:
 
-| File | Provenance |
-| --- | --- |
-| `README.md` | hand-written |
+| File        | Provenance                                    |
+| ----------- | --------------------------------------------- |
+| `README.md` | hand-written                                  |
 | `AGENTS.md` | hand-written do-not-edit marker pointing here |
 
 Both are preserved across `npm run clean:full` and negated in `.gitignore` so

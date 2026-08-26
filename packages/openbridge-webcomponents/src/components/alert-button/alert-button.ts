@@ -109,6 +109,8 @@ export enum ObcAlertButtonType {
  *
  * In this example, the button shows an alarm icon, a counter badge with "3", is styled as enhanced, blinks to indicate urgency, and includes a silence button if the width allows.
  *
+ * @property silenceButtonDisabled - Disables the silence button when true.
+ * @availableWhen silenceButtonDisabled showSilenceButton==true
  * @slot - No content slots. All content is provided via properties.
  * @fires {CustomEvent<void>} click-alert - Fired when the main alert button is clicked.
  * @fires {CustomEvent<void>} click-silence - Fired when the silence button is clicked.
@@ -153,11 +155,6 @@ export class ObcAlertButton extends LitElement {
    */
   @property({type: Boolean}) showSilenceButton = false;
 
-  /**
-   * Disables the silence button when true.
-   *
-   * @availableWhen showSilenceButton==true
-   */
   @property({type: Boolean}) silenceButtonDisabled = false;
 
   /**
