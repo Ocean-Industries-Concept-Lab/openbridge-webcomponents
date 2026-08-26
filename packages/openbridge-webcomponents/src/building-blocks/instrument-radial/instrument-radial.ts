@@ -115,7 +115,27 @@ function defaultGaugeAngle(
 }
 
 /**
- * @fires frame-changed {CustomEvent<RadialFrame>} Fired after render when the
+ * @availableWhen needleColor type!=filled
+ * @availableWhen barColor type!=needle
+ * @property primaryTickmarkInterval - Interval for primary tickmarks in value units.
+ *   When undefined or <= 0, no primary tickmarks are shown.
+ * @property secondaryTickmarkInterval - Interval for secondary tickmarks in value units.
+ *   When undefined or <= 0, no secondary tickmarks are shown.
+ * @property tertiaryTickmarkInterval - Interval for tertiary tickmarks in value units.
+ *   When undefined or <= 0, no tertiary tickmarks are shown.
+ * @availableWhen clipTop zoomToFitArc==false
+ * @availableWhen clipBottom zoomToFitArc==false
+ * @availableWhen clipLeft zoomToFitArc==false
+ * @availableWhen clipRight zoomToFitArc==false
+ * @property endLabelsMaxMin - Place the horizontal end labels (±90°, e.g. min/max) below the tick instead
+ *   of beside it — the "Max-min" placement from the radial label model
+ *   (External / Internal / Max-min). See PR #903 / design discussion.
+ * @property faceDiameter - Outer-ring diameter in CSS pixels. When set, the instrument renders at a
+ *   fixed intrinsic size derived from the ring, arc shape and label reserve —
+ *   so instruments sharing the same value have identical ring circumference
+ *   regardless of label width or arc extent (like obc-donut-chart's
+ *   fixedHeight). When unset (default), the instrument fills its container.
+ * @fires {CustomEvent<RadialFrame>} frame-changed - Fired after render when the
  *   computed radial frame changed (viewBox, label visibility, or pinned host
  *   size). Wrappers use it to align sibling overlays/readouts with the dial.
  * @experimental
@@ -133,25 +153,11 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
   @property({type: Number}) maxValue = 100;
   @property({type: Number}) minValue = 0;
   @property({attribute: false}) getAngle!: (v: number) => number;
-  /** @availableWhen type!=filled */
   @property({type: String}) needleColor: string | undefined;
-  /** @availableWhen type!=needle */
   @property({type: String}) barColor: string | undefined;
   @property({type: Boolean}) showLabels: boolean = false;
-  /**
-   * Interval for primary tickmarks in value units.
-   * When undefined or <= 0, no primary tickmarks are shown.
-   */
   @property({type: Number}) primaryTickmarkInterval: number | undefined = 50;
-  /**
-   * Interval for secondary tickmarks in value units.
-   * When undefined or <= 0, no secondary tickmarks are shown.
-   */
   @property({type: Number}) secondaryTickmarkInterval: number | undefined = 10;
-  /**
-   * Interval for tertiary tickmarks in value units.
-   * When undefined or <= 0, no tertiary tickmarks are shown.
-   */
   @property({type: Number}) tertiaryTickmarkInterval: number | undefined =
     undefined;
   @property({type: String}) type: ObcGaugeRadialType =
@@ -162,28 +168,12 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
   @property({type: String}) tickmarkStyle: TickmarkStyle =
     TickmarkStyle.regular;
   @property({type: Array, attribute: false}) advices: GaugeRadialAdvice[] = [];
-  /** @availableWhen zoomToFitArc==false */
   @property({type: Number}) clipTop: number = 0; // in percent of height
-  /** @availableWhen zoomToFitArc==false */
   @property({type: Number}) clipBottom: number = 0; // in percent of height
-  /** @availableWhen zoomToFitArc==false */
   @property({type: Number}) clipLeft: number = 0; // in percent of width
-  /** @availableWhen zoomToFitArc==false */
   @property({type: Number}) clipRight: number = 0; // in percent of width
-  /**
-   * Place the horizontal end labels (±90°, e.g. min/max) below the tick instead
-   * of beside it — the "Max-min" placement from the radial label model
-   * (External / Internal / Max-min). See PR #903 / design discussion.
-   */
   @property({type: Boolean}) endLabelsMaxMin: boolean = false;
   @property({type: Boolean}) zoomToFitArc: boolean = false;
-  /**
-   * Outer-ring diameter in CSS pixels. When set, the instrument renders at a
-   * fixed intrinsic size derived from the ring, arc shape and label reserve —
-   * so instruments sharing the same value have identical ring circumference
-   * regardless of label width or arc extent (like obc-donut-chart's
-   * fixedHeight). When unset (default), the instrument fills its container.
-   */
   @property({type: Number, attribute: 'face-diameter'})
   faceDiameter: number | undefined;
 

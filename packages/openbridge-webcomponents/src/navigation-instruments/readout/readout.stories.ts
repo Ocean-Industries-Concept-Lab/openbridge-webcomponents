@@ -14,14 +14,19 @@ import {
   ReadoutDataQuality,
   ReadoutSetpointInteraction,
   ReadoutSourceInteraction,
+  ReadoutAdviceCategory,
+  ReadoutSourceState,
   ObcTextboxFontWeight,
   type ReadoutValueOptions,
   type ReadoutSetpointOptions,
   type ReadoutAdviceOptions,
+  type ReadoutLabelOptions,
   type ReadoutReserverOptions,
   type ReadoutSourceOptions,
   ReadoutValueType,
 } from './readout.js';
+import {ObcTextboxSize} from '../../components/textbox/textbox.js';
+import '../../icons/icon-input-right.js';
 import {
   type AlertFrameConfig,
   ObcAlertFrameMode,
@@ -55,12 +60,20 @@ type ReadoutStoryArgs = {
   'options.fractionDigits': number;
   'options.maxDigits': number;
   'options.dataQuality': ReadoutDataQuality | typeof NONE;
+  'options.hasLeadingIcon': boolean;
   'options.value.weight': ObcTextboxFontWeight;
   'options.value.hasIcon': boolean;
   'options.value.hintedZeros': boolean;
   'options.setpoint.interaction': ReadoutSetpointInteraction;
   'options.setpoint.touching': boolean;
+  'options.advice.category': ReadoutAdviceCategory;
+  'options.advice.active': boolean;
+  'options.label.size': ObcTextboxSize | typeof NONE;
+  'options.label.spaceReserver': string;
   'options.src.interaction': ReadoutSourceInteraction;
+  'options.src.state': ReadoutSourceState;
+  'options.src.deviation'?: number;
+  'options.src.spaceReserver': string;
   'options.unit.spaceReserver': string;
 };
 
@@ -80,9 +93,11 @@ type StoryOptions = {
   maxDigits?: number;
   dataQuality?: ReadoutDataQuality;
   alert?: false | AlertFrameConfig;
+  hasLeadingIcon?: boolean;
   value?: ReadoutValueOptions;
   setpoint?: ReadoutSetpointOptions;
   advice?: ReadoutAdviceOptions;
+  label?: ReadoutLabelOptions;
   unit?: ReadoutReserverOptions;
   src?: ReadoutSourceOptions;
 };
@@ -179,15 +194,20 @@ function renderReadout(config: ReadoutConfig) {
       .maxDigits=${o.maxDigits ?? 0}
       .dataQuality=${o.dataQuality}
       .alert=${o.alert ?? false}
+      .hasLeadingIcon=${o.hasLeadingIcon ?? false}
       .valueOptions=${o.value}
       .setpointOptions=${o.setpoint}
       .adviceOptions=${o.advice}
+      .labelOptions=${o.label}
       .unitOptions=${o.unit}
       .srcOptions=${o.src}
       .showDebugOverlay=${config.showDebugOverlay ?? false}
     >
       ${config.hasValueIcon
         ? html`<obi-placeholder slot="value-icon"></obi-placeholder>`
+        : nothing}
+      ${o.hasLeadingIcon
+        ? html`<obi-placeholder slot="leading-icon"></obi-placeholder>`
         : nothing}
     </obc-readout>
   `;
@@ -261,12 +281,19 @@ const defaultArgs: ReadoutStoryArgs = {
   'options.fractionDigits': 0,
   'options.maxDigits': 0,
   'options.dataQuality': NONE,
+  'options.hasLeadingIcon': false,
   'options.value.weight': ObcTextboxFontWeight.regular,
   'options.value.hasIcon': false,
   'options.value.hintedZeros': false,
   'options.setpoint.interaction': ReadoutSetpointInteraction.alwaysVisible,
   'options.setpoint.touching': false,
+  'options.advice.category': ReadoutAdviceCategory.regular,
+  'options.advice.active': false,
+  'options.label.size': NONE,
+  'options.label.spaceReserver': '',
   'options.src.interaction': ReadoutSourceInteraction.none,
+  'options.src.state': ReadoutSourceState.regular,
+  'options.src.spaceReserver': '',
   'options.unit.spaceReserver': '',
 };
 
@@ -285,6 +312,7 @@ function argsToOptions(args: ReadoutStoryArgs): StoryOptions {
       args['options.dataQuality'] === NONE
         ? undefined
         : args['options.dataQuality'],
+    hasLeadingIcon: args['options.hasLeadingIcon'],
     value: {
       weight: args['options.value.weight'],
       hasIcon: args['options.value.hasIcon'],
@@ -294,14 +322,30 @@ function argsToOptions(args: ReadoutStoryArgs): StoryOptions {
       interaction: args['options.setpoint.interaction'],
       touching: args['options.setpoint.touching'],
     },
-    src: {interaction: args['options.src.interaction']},
+    advice: {
+      category: args['options.advice.category'],
+      active: args['options.advice.active'],
+    },
+    label: {
+      size:
+        args['options.label.size'] === NONE
+          ? undefined
+          : args['options.label.size'],
+      spaceReserver: args['options.label.spaceReserver'] || undefined,
+    },
+    src: {
+      interaction: args['options.src.interaction'],
+      state: args['options.src.state'],
+      deviation: args['options.src.deviation'],
+      spaceReserver: args['options.src.spaceReserver'] || undefined,
+    },
     unit: {spaceReserver: args['options.unit.spaceReserver'] || undefined},
   };
 }
 
 const meta = {
   title: 'Instruments/Readout',
-  tags: ['autodocs', '6.0', 'wip'],
+  tags: ['autodocs', '6.0', 'experimental'],
   component: 'obc-readout',
   decorators: [centeredCanvasDecorator],
   render: (args) =>
@@ -345,20 +389,21 @@ const meta = {
     setpoint: {
       name: 'Setpoint',
       control: {type: 'number'},
-      if: {arg: 'hasSetpoint', truthy: true},
       table: {category: 'Data'},
     },
     hasAdvice: {name: 'Has Advice', table: {category: 'Data'}},
     advice: {
       name: 'Advice',
       control: {type: 'number'},
-      if: {arg: 'hasAdvice', truthy: true},
       table: {category: 'Data'},
     },
     'options.size': {
       name: 'Size',
+      description:
+        'Vertical only — the horizontal arrangement exists in the large tier alone.',
       control: {type: 'select'},
       options: Object.values(ReadoutSize),
+      if: {arg: 'options.direction', eq: ReadoutDirection.vertical},
       table: {category: 'Layout'},
     },
     'options.priority': {
@@ -436,10 +481,57 @@ const meta = {
       if: {arg: 'hasSetpoint', truthy: true},
       table: {category: 'Setpoint'},
     },
+    'options.hasLeadingIcon': {
+      name: 'Has Leading Icon',
+      table: {category: 'Label'},
+    },
+    'options.label.size': {
+      name: 'Label Size',
+      description:
+        'Default derives from the tier (large → s, otherwise xs); the design defines xs and s.',
+      control: {type: 'select'},
+      options: [NONE, ObcTextboxSize.xs, ObcTextboxSize.s],
+      table: {category: 'Label'},
+    },
+    'options.label.spaceReserver': {
+      name: 'Label Space Reserver',
+      control: {type: 'text'},
+      table: {category: 'Label'},
+    },
+    'options.advice.category': {
+      name: 'Advice Category',
+      control: {type: 'select'},
+      options: Object.values(ReadoutAdviceCategory),
+      if: {arg: 'hasAdvice', truthy: true},
+      table: {category: 'Advice'},
+    },
+    'options.advice.active': {
+      name: 'Advice Active (triggered)',
+      if: {arg: 'hasAdvice', truthy: true},
+      table: {category: 'Advice'},
+    },
     'options.src.interaction': {
       name: 'Source Interaction',
       control: {type: 'select'},
       options: Object.values(ReadoutSourceInteraction),
+      table: {category: 'Source'},
+    },
+    'options.src.state': {
+      name: 'Source State',
+      description:
+        'Applies to the plain source only — picker / flyout buttons carry no state chip.',
+      control: {type: 'select'},
+      options: Object.values(ReadoutSourceState),
+      table: {category: 'Source'},
+    },
+    'options.src.deviation': {
+      name: 'Source Deviation (Δ)',
+      control: {type: 'number'},
+      table: {category: 'Source'},
+    },
+    'options.src.spaceReserver': {
+      name: 'Source Space Reserver',
+      control: {type: 'text'},
       table: {category: 'Source'},
     },
     'options.unit.spaceReserver': {
@@ -464,8 +556,11 @@ const SIZES = [
 const INTERACTIONS = Object.values(ReadoutSetpointInteraction);
 
 /** One row per size; columns = interaction modes × value≠/=setpoint. */
-function interactionMatrix(direction: ReadoutDirection): ShowcaseCase[] {
-  return SIZES.flatMap((size) =>
+function interactionMatrix(
+  direction: ReadoutDirection,
+  sizes: readonly ReadoutSize[] = SIZES
+): ShowcaseCase[] {
+  return sizes.flatMap((size) =>
     INTERACTIONS.flatMap((interaction) =>
       [123, 120].map((value) => ({
         label: `${size} / ${interaction} / ${
@@ -504,37 +599,42 @@ export const Vertical: Story = {
       },
       {
         title: 'Vertical — Setpoint Interactions',
-        columns: 6,
+        columns: 8,
         cases: interactionMatrix(ReadoutDirection.vertical),
       },
     ]),
 };
 
+/**
+ * The horizontal arrangement exists in the large tier only (Figma 6.1: it
+ * relies on the label+unit stack aligning with the L-size value caps — label
+ * cap top and unit cap bottom line up with the value's cap edges). `size` is
+ * ignored when `direction` is `horizontal`.
+ */
 export const Horizontal: Story = {
   render: () =>
     renderShowcase([
       {
-        title: 'Horizontal — Sizes × Priority',
+        title: 'Horizontal (large Only) — Priority',
         columns: 2,
-        cases: SIZES.flatMap((size) =>
-          [ReadoutPriority.regular, ReadoutPriority.enhanced].map(
-            (priority) => ({
-              label: `${size} / ${priority}`,
-              config: {
-                options: {
-                  size,
-                  priority,
-                  direction: ReadoutDirection.horizontal,
-                },
+        cases: [ReadoutPriority.regular, ReadoutPriority.enhanced].map(
+          (priority) => ({
+            label: `large / ${priority}`,
+            config: {
+              options: {
+                priority,
+                direction: ReadoutDirection.horizontal,
               },
-            })
-          )
+            },
+          })
         ),
       },
       {
         title: 'Horizontal — Setpoint Interactions',
-        columns: 6,
-        cases: interactionMatrix(ReadoutDirection.horizontal),
+        columns: 8,
+        cases: interactionMatrix(ReadoutDirection.horizontal, [
+          ReadoutSize.large,
+        ]),
       },
     ]),
 };
@@ -921,6 +1021,35 @@ export const SetpointPopUpAnimated: Story = {
   tags: ['skip-test'],
 };
 
+export const SetpointAlwaysVisibleAnimated: Story = {
+  ...animatedInteractionStory({
+    name: 'Always-Visible (Animated)',
+    interaction: ReadoutSetpointInteraction.alwaysVisible,
+    intro:
+      'Always-visible (the default, Figma "Primary secondary"): the setpoint stays at the secondary size in both states — nothing resizes or hides as the value reaches the setpoint (120); only the touch highlight shows during the sweep. Contrast with flip-flop / pop-up. Press Play, or use the buttons.',
+    awayLabel: 'Away (124)',
+    reachLabel: 'Reach setpoint (120)',
+  }),
+  tags: ['skip-test'],
+};
+
+export const SetpointEqualSizeAnimated: Story = {
+  ...animatedInteractionStory({
+    name: 'Equal-Size (Animated)',
+    interaction: ReadoutSetpointInteraction.equalSize,
+    intro:
+      'Equal-size (Figma 6.1 "Equal size"): value and setpoint share the primary size in both states — like always-visible, nothing resizes or hides as the value reaches the setpoint (120); only the touch highlight shows during the sweep. Press Play, or use the buttons.',
+    awayLabel: 'Away (124)',
+    reachLabel: 'Reach setpoint (120)',
+  }),
+  tags: ['skip-test'],
+};
+
+/**
+ * The degree glyph renders on the ACTUAL VALUE only — setpoint and advice
+ * blocks never carry one (Figma 6.1 review: the unit is written once for the
+ * readout, and the degree follows the same rule).
+ */
 export const Degree: Story = {
   render: () =>
     renderShowcase([
@@ -947,6 +1076,35 @@ export const Degree: Story = {
           {
             label: 'plain',
             config: {label: 'HDG', unit: 'DEG', options: {}},
+          },
+        ],
+      },
+      {
+        title: 'Degree on The Actual Value Only (setpoint / Advice Carry None)',
+        columns: 2,
+        cases: [
+          {
+            label: 'vertical / setpoint + advice',
+            config: {
+              label: 'HDG',
+              unit: 'DEG',
+              hasSetpoint: true,
+              hasAdvice: true,
+              options: {hasDegree: true},
+            },
+          },
+          {
+            label: 'horizontal / setpoint + advice',
+            config: {
+              label: 'HDG',
+              unit: 'DEG',
+              hasSetpoint: true,
+              hasAdvice: true,
+              options: {
+                hasDegree: true,
+                direction: ReadoutDirection.horizontal,
+              },
+            },
           },
         ],
       },
@@ -1303,6 +1461,116 @@ export const TextValue: Story = {
     ]),
 };
 
+/**
+ * **Unavailable values in a full readout — for design review.**
+ *
+ * The same change as `Building Blocks/Readout Block → Unavailable Values`, shown
+ * with a label and unit so the placeholder can be judged in the context an
+ * instrument actually renders.
+ *
+ * - The placeholder stays short (`-.-`) and sits at the right edge of the width
+ *   `maxDigits` reserves, rather than spelling out every reserved position.
+ * - The dash is U+2012 FIGURE DASH, which is digit-width, so its decimal point
+ *   and fraction positions line up with the reading it replaces. The ASCII
+ *   hyphen is 46% narrower and did not align.
+ * - `NaN` / `±Infinity` render the dash instead of the literal text `NaN` /
+ *   `Infinity`.
+ *
+ * Each section pairs the placeholder with a live reading under identical
+ * settings, so the two can be compared directly.
+ */
+export const UnavailableValues: Story = {
+  render: () =>
+    renderShowcase([
+      {
+        title: 'Unavailable vs. a Reading (maxDigits 4, Fraction 1)',
+        columns: 3,
+        cases: [
+          {
+            label: 'null → dash',
+            config: {
+              label: 'SOG',
+              unit: 'kn',
+              value: null,
+              options: {maxDigits: 4, fractionDigits: 1},
+            },
+          },
+          {
+            label: 'NaN → dash (was "NaN")',
+            config: {
+              label: 'SOG',
+              unit: 'kn',
+              value: Number.NaN,
+              options: {maxDigits: 4, fractionDigits: 1},
+            },
+          },
+          {
+            label: 'reading, identical settings',
+            config: {
+              label: 'SOG',
+              unit: 'kn',
+              value: 12.4,
+              options: {maxDigits: 4, fractionDigits: 1},
+            },
+          },
+        ],
+      },
+      {
+        // Both cards enable hintedZeros, so the placeholder and the reading are
+        // compared under identical settings here too.
+        title: 'With Hinted Zeros (maxDigits 4, Fraction 1)',
+        columns: 2,
+        cases: [
+          {
+            label: 'null + hinted zeros',
+            config: {
+              label: 'SOG',
+              unit: 'kn',
+              value: null,
+              options: {
+                maxDigits: 4,
+                fractionDigits: 1,
+                value: {hintedZeros: true},
+              },
+            },
+          },
+          {
+            label: 'reading + hinted zeros',
+            config: {
+              label: 'SOG',
+              unit: 'kn',
+              value: 12.4,
+              options: {
+                maxDigits: 4,
+                fractionDigits: 1,
+                value: {hintedZeros: true},
+              },
+            },
+          },
+        ],
+      },
+      {
+        title: 'No maxDigits — Same Placeholder, Narrower Reserve',
+        columns: 2,
+        cases: [
+          {
+            label: 'null',
+            config: {label: 'SOG', unit: 'kn', value: null, options: {}},
+          },
+          {
+            label: 'null / fraction 1',
+            config: {
+              label: 'SOG',
+              unit: 'kn',
+              value: null,
+              options: {fractionDigits: 1},
+            },
+          },
+        ],
+      },
+    ]),
+};
+
 export const TestCases: Story = {
   render: () => {
     return html` <style>
@@ -1340,4 +1608,361 @@ export const TestCases: Story = {
         ></obc-readout>
       </div>`;
   },
+};
+
+/**
+ * Figma 6.1 "Equal size": value and setpoint always share the primary size —
+ * the missing fourth mode beside primary-secondary (`always-visible`),
+ * flip-flop and pop-up. Static in both states; only flip-flop / pop-up
+ * resize or hide at runtime — see the `SetpointEqualSizeAnimated` story for
+ * the in-motion contrast. `touching` keeps the setpoint at the primary size
+ * (it only adds the SemiBold focus weight and marker highlight), and the
+ * marker arrow follows the block's rendered size, so an equal-size setpoint
+ * carries the large arrow. The sizing rule lives in `readoutSetpointSize()`
+ * (`readout-shared.ts`, unit-tested), shared with `obc-readout-list-item` /
+ * `obc-readout`.
+ */
+export const SetpointEqualSize: Story = {
+  render: () =>
+    renderShowcase([
+      {
+        title: 'Equal Size — Off/At Setpoint × Direction',
+        columns: 2,
+        cases: [ReadoutDirection.vertical, ReadoutDirection.horizontal].flatMap(
+          (direction) =>
+            [123, 120].map((value) => ({
+              label: `${direction} / ${value === 120 ? 'at' : 'off'} setpoint`,
+              config: {
+                value,
+                hasSetpoint: true,
+                setpoint: 120,
+                options: {
+                  size: ReadoutSize.large,
+                  priority: ReadoutPriority.enhanced,
+                  direction,
+                  setpoint: {
+                    interaction: ReadoutSetpointInteraction.equalSize,
+                  },
+                },
+              },
+            }))
+        ),
+      },
+    ]),
+};
+
+/**
+ * Label ("readout-block-title") options — Figma 6.1. Large readouts default
+ * the label to textbox `s` (a scannable label should not sit at the smallest
+ * size); `labelOptions.size` opts a tight layout back down to `xs`, and
+ * `labelOptions.spaceReserver` aligns ragged labels across stacked readouts
+ * (the legacy `AlignMultiple` gap). The label is SemiBold only on enhanced
+ * readouts.
+ */
+export const LabelOptions: Story = {
+  render: () =>
+    renderShowcase([
+      {
+        title: 'Label size — tier default vs explicit',
+        columns: 3,
+        cases: [
+          {
+            label: 'large / default (s)',
+            config: {options: {size: ReadoutSize.large}},
+          },
+          {
+            label: 'large / xs override',
+            config: {
+              options: {
+                size: ReadoutSize.large,
+                label: {size: ObcTextboxSize.xs},
+              },
+            },
+          },
+          {
+            label: 'small / default (xs)',
+            config: {options: {size: ReadoutSize.small}},
+          },
+        ],
+      },
+      {
+        title: 'Label weight — regular vs enhanced priority',
+        columns: 2,
+        cases: [
+          {
+            label: 'regular (label regular)',
+            config: {
+              options: {
+                size: ReadoutSize.large,
+                priority: ReadoutPriority.regular,
+              },
+            },
+          },
+          {
+            label: 'enhanced (label semibold)',
+            config: {
+              options: {
+                size: ReadoutSize.large,
+                priority: ReadoutPriority.enhanced,
+              },
+            },
+          },
+        ],
+      },
+      {
+        title: 'Label reserver — stacked readouts align',
+        columns: 1,
+        cases: [
+          {
+            label: 'labelOptions.spaceReserver: "DEPTH"',
+            config: {
+              label: 'SOG',
+              options: {
+                size: ReadoutSize.large,
+                stacking: ReadoutStacking.stacked,
+                label: {spaceReserver: 'DEPTH'},
+              },
+            },
+          },
+        ],
+      },
+    ]),
+};
+
+/** The `leading-icon` slot before the label/unit meta zone (Figma `has Leading icon`). */
+export const LeadingIcon: Story = {
+  render: () =>
+    renderShowcase([
+      {
+        title: 'Leading icon × size',
+        columns: 3,
+        cases: SIZES.map((size) => ({
+          label: size,
+          config: {options: {size, hasLeadingIcon: true}},
+        })),
+      },
+      {
+        title: 'Leading icon — horizontal',
+        columns: 1,
+        cases: [
+          {
+            label: 'horizontal / large',
+            config: {
+              options: {
+                size: ReadoutSize.large,
+                direction: ReadoutDirection.horizontal,
+                hasLeadingIcon: true,
+              },
+            },
+          },
+        ],
+      },
+    ]),
+};
+
+/**
+ * Advice semantic categories (Figma 6.1 Readout-block-advice): resting
+ * categories carry a neutral outline marker; `active` swaps in the filled /
+ * status icon and the triggered text styling. See the Readout Block
+ * `AdviceCategories` story for the full per-block matrix.
+ */
+export const AdviceCategories: Story = {
+  render: () =>
+    renderShowcase([
+      {
+        title: 'Advice categories — resting vs active',
+        columns: 7,
+        cases: Object.values(ReadoutAdviceCategory).flatMap((category) =>
+          [false, true].map((active) => ({
+            label: `${category}${active ? ' / active' : ''}`,
+            config: {
+              hasAdvice: true,
+              options: {
+                size: ReadoutSize.large,
+                advice: {category, active},
+              },
+            },
+          }))
+        ),
+      },
+    ]),
+};
+
+/**
+ * Source states + deviation (Figma 6.1 Readout-block-source): `enhanced`
+ * renders the amplified chip, `caution` / `warning` the alert chip, and
+ * `deviation` adds the Δ line under the source name. The chips use `outline`
+ * so a live state change never shifts the layout.
+ */
+export const SourceStates: Story = {
+  render: () =>
+    renderShowcase([
+      {
+        title: 'Source state × deviation',
+        columns: 4,
+        cases: Object.values(ReadoutSourceState).flatMap((state) =>
+          [undefined, 0.5].map((deviation) => ({
+            label: `${state}${deviation !== undefined ? ' / Δ' : ''}`,
+            config: {
+              src: 'GPS 1',
+              options: {
+                size: ReadoutSize.large,
+                src: {state, deviation},
+              },
+            },
+          }))
+        ),
+      },
+    ]),
+};
+
+/**
+ * TODO(designer): open question from the 6.1 review — while a pop-up setpoint
+ * is hidden at-setpoint, should the reading keep a setpoint arrow so it still
+ * reads as "a value you are in control of"? The existing `value-icon` slot
+ * already expresses that today, demonstrated here; no new API until decided.
+ */
+export const SetpointPopUpWithValueArrow: Story = {
+  render: () => html`
+    <style>
+      ${showcaseStyle}
+    </style>
+    <div class="ro-sections">
+      <p class="ro-note">
+        Pop-up at setpoint, with an <code>obi-input-right</code> slotted into
+        <code>value-icon</code> so the collapsed reading keeps the in-control
+        marker.
+      </p>
+      <obc-readout
+        .label=${'HDG'}
+        .unit=${'/min'}
+        .src=${'Source'}
+        .value=${10}
+        .hasSetpoint=${true}
+        .setpoint=${10}
+        .size=${ReadoutSize.large}
+        .priority=${ReadoutPriority.enhanced}
+        .setpointOptions=${{interaction: ReadoutSetpointInteraction.popUp}}
+        .valueOptions=${{hasIcon: true}}
+      >
+        <obi-input-right slot="value-icon"></obi-input-right>
+      </obc-readout>
+    </div>
+  `,
+};
+
+// ---------------------------------------------------------------------------
+// Figma 6.1 bird's-eye matrices — static expansions of the design file's
+// component sheets (parent node 46596-102878), so every combination can be
+// reviewed at a glance without touching controls:
+// - Readout-vertical-trailing-title (46390-197995): Size × Priority ×
+//   Value priority × State × has Degree — split into one story per
+//   interaction below so each snapshot stays a reviewable size. The
+//   `has Leading icon` axis is covered by the LeadingIcon story, and the
+//   Readout-vertical-block sheet (46551-303919) differs only in title sizing
+//   (tracked by the medium-tier label TODO); the leading-title sheet
+//   (46551-341292) is marked WIP in Figma and deliberately not expanded.
+// - Readout-horizontal (46471-75814): large-only, one story. Its
+//   leading-label stacking column is obc-readout-list-item's job (see the
+//   Readout List Item FigmaMatrix story).
+// ---------------------------------------------------------------------------
+
+const MATRIX_PRIORITIES = [
+  ReadoutPriority.regular,
+  ReadoutPriority.enhanced,
+] as const;
+
+/** The composite sheets' State axis (At/Not-at setpoint, Low integrity, Invalid). */
+const MATRIX_STATES: {
+  key: string;
+  value: number;
+  dataQuality?: ReadoutDataQuality;
+}[] = [
+  {key: 'off setpoint', value: 123},
+  {key: 'at setpoint', value: 120},
+  {
+    key: 'low-integrity',
+    value: 123,
+    dataQuality: ReadoutDataQuality.lowIntegrity,
+  },
+  {key: 'invalid', value: 123, dataQuality: ReadoutDataQuality.invalid},
+];
+
+function verticalMatrixStory(
+  interaction: ReadoutSetpointInteraction
+): Story['render'] {
+  return () =>
+    renderShowcase(
+      MATRIX_STATES.map((state) => ({
+        title: `${interaction} — ${state.key}`,
+        columns: 4,
+        cases: SIZES.flatMap((size) =>
+          MATRIX_PRIORITIES.flatMap((priority) =>
+            [false, true].map((hasDegree) => ({
+              label: `${size} / ${priority}${hasDegree ? ' / °' : ''}`,
+              config: {
+                value: state.value,
+                hasSetpoint: true,
+                setpoint: 120,
+                hasAdvice: true,
+                options: {
+                  size,
+                  priority,
+                  hasDegree,
+                  dataQuality: state.dataQuality,
+                  setpoint: {interaction},
+                },
+              },
+            }))
+          )
+        ),
+      }))
+    );
+}
+
+export const FigmaMatrixVerticalAlwaysVisible: Story = {
+  render: verticalMatrixStory(ReadoutSetpointInteraction.alwaysVisible),
+};
+
+export const FigmaMatrixVerticalEqualSize: Story = {
+  render: verticalMatrixStory(ReadoutSetpointInteraction.equalSize),
+};
+
+export const FigmaMatrixVerticalFlipFlop: Story = {
+  render: verticalMatrixStory(ReadoutSetpointInteraction.flipFlop),
+};
+
+export const FigmaMatrixVerticalPopUp: Story = {
+  render: verticalMatrixStory(ReadoutSetpointInteraction.popUp),
+};
+
+export const FigmaMatrixHorizontal: Story = {
+  render: () =>
+    renderShowcase(
+      INTERACTIONS.map((interaction) => ({
+        title: `${interaction}`,
+        columns: 4,
+        cases: MATRIX_STATES.flatMap((state) =>
+          MATRIX_PRIORITIES.flatMap((priority) =>
+            [false, true].map((hasDegree) => ({
+              label: `${state.key} / ${priority}${hasDegree ? ' / °' : ''}`,
+              config: {
+                value: state.value,
+                hasSetpoint: true,
+                setpoint: 120,
+                hasAdvice: true,
+                src: 'GPS 1',
+                options: {
+                  direction: ReadoutDirection.horizontal,
+                  priority,
+                  hasDegree,
+                  dataQuality: state.dataQuality,
+                  setpoint: {interaction},
+                },
+              },
+            }))
+          )
+        ),
+      }))
+    ),
 };

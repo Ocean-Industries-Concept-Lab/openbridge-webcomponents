@@ -125,23 +125,39 @@ export {
  * ></obc-gauge-horizontal>
  * ```
  *
- * @fires scale-dimensions-changed {CustomEvent} Fired when layout-affecting properties change, providing dimension info for parent chart integration.
+ * @property minValue - Minimum scale value
+ * @property maxValue - Maximum scale value
+ * @property side - Which side of the chart area this scale lives on (top or bottom)
+ * @property showLabels - Show numerical value labels at primary tickmarks
+ * @property mainTickmarks - Array of values for main tickmarks. When undefined, no main tickmarks shown. When empty array [], defaults to [minValue, 0, maxValue].
+ * @property primaryTickmarkInterval - Interval for primary (longest) tickmarks with labels
+ * @property secondaryTickmarkInterval - Interval for secondary (medium) tickmarks
+ * @property tertiaryTickmarkInterval - Interval for tertiary (shortest) tickmarks
+ * @property borderRadiusPosition - Border radius position based on component layout
+ * @property priority - Color priority: enhanced uses blue instrument colors for bar fill and setpoint
+ * @property fillMode - Fill visualization mode: 'fill' shows bar from fillMin to fillMax; 'tint' adds a marker at the value position
+ * @property fillMin - Minimum fill value (defaults to 0)
+ * @property fillMax - Maximum fill value (defaults to value)
+ * @property value - Current value (bar fill level)
+ * @property state - Instrument state: active, loading, or off
+ * @property advices - Advice/alert overlays with min, max, type, and hinted state. When undefined or empty, no advice shown.
+ * @property highlightCurrentValue - When true, displays a dot indicator at the current value position.
+ *   The dot is rendered in the scale band, touching its inner edge (towards the chart).
+ *   This provides an alternative to bar fill for highlighting the current value.
+ * @fires {CustomEvent} scale-dimensions-changed - Fired when layout-affecting properties change, providing dimension info for parent chart integration.
  * @stable
  */
 @customElement('obc-gauge-horizontal')
 export class ObcGaugeHorizontal extends SetpointMixin(LitElement, {
   defaultDeadband: 1,
 }) {
-  /** Minimum scale value */
   @property({type: Number}) minValue = 0;
-  /** Maximum scale value */
   @property({type: Number}) maxValue = 100;
 
   private readonly width = 384;
   private readonly paddingLeft = CHART_DIMENSIONS.CANVAS_PADDING;
   private readonly paddingRight = CHART_DIMENSIONS.CANVAS_PADDING;
 
-  /** Which side of the chart area this scale lives on (top or bottom) */
   @property({type: String}) side: ExternalScaleSide = ExternalScaleSide.bottom;
 
   /**
@@ -191,23 +207,17 @@ export class ObcGaugeHorizontal extends SetpointMixin(LitElement, {
     },
   });
 
-  /** Show numerical value labels at primary tickmarks */
   @property({type: Boolean, attribute: false}) showLabels = true;
   private readonly barThickness = 48;
   private readonly tickThickness = 24;
   private readonly labelThickness = 60;
 
-  /** Array of values for main tickmarks. When undefined, no main tickmarks shown. When empty array [], defaults to [minValue, 0, maxValue]. */
   @property({type: Array, attribute: false}) mainTickmarks?: number[] = [];
-  /** Interval for primary (longest) tickmarks with labels */
   @property({type: Number}) primaryTickmarkInterval?: number = undefined;
-  /** Interval for secondary (medium) tickmarks */
   @property({type: Number}) secondaryTickmarkInterval?: number = undefined;
-  /** Interval for tertiary (shortest) tickmarks */
   @property({type: Number}) tertiaryTickmarkInterval?: number = undefined;
   private readonly scaleType: ScaleType = ScaleType.regular;
   private readonly frameStyle: FrameStyle = FrameStyle.regular;
-  /** Border radius position based on component layout */
   @property({type: String, attribute: false})
   borderRadiusPosition?: BorderRadiusPosition =
     BorderRadiusPosition.innerFirstChild;
@@ -226,18 +236,12 @@ export class ObcGaugeHorizontal extends SetpointMixin(LitElement, {
     return true;
   }
 
-  /** Color priority: enhanced uses blue instrument colors for bar fill and setpoint */
   @property({type: String}) priority: Priority = Priority.regular;
-  /** Fill visualization mode: 'fill' shows bar from fillMin to fillMax; 'tint' adds a marker at the value position */
   @property({type: String}) fillMode: FillMode = FillMode.fill;
-  /** Minimum fill value (defaults to 0) */
   @property({type: Number}) fillMin?: number = undefined;
-  /** Maximum fill value (defaults to value) */
   @property({type: Number}) fillMax?: number = undefined;
-  /** Current value (bar fill level) */
   @property({type: Number}) value?: number = undefined;
 
-  /** Instrument state: active, loading, or off */
   @property({type: String}) state: InstrumentState = InstrumentState.active;
 
   /**
@@ -247,15 +251,8 @@ export class ObcGaugeHorizontal extends SetpointMixin(LitElement, {
   @property({type: Boolean}) focused = false;
 
   private readonly advicePosition: AdvicePosition = AdvicePosition.inner;
-  /** Advice/alert overlays with min, max, type, and hinted state. When undefined or empty, no advice shown. */
   @property({type: Array, attribute: false}) advices?: LinearAdvice[] = [];
 
-  /**
-   * When true, displays a dot indicator at the current value position.
-   * The dot is rendered in the scale band, touching its inner edge (towards the chart).
-   * This provides an alternative to bar fill for highlighting the current value.
-   * @default false
-   */
   @property({type: Boolean}) highlightCurrentValue = false;
 
   override render() {
@@ -327,7 +324,9 @@ export class ObcGaugeHorizontal extends SetpointMixin(LitElement, {
         height=${this.fixedAspectRatio ? '100%' : `${viewBox.height}px`}
         viewBox="${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}"
         preserveAspectRatio="${preserveAspectRatio}"
-        style="--scale: ${this.fixedAspectRatio ? this._scale : 1};"
+        style="--scale: ${this.fixedAspectRatio
+          ? this._scale
+          : 1}; display: block;"
         part="svg"
       >
         ${parts.barContainer} ${parts.barFill} ${parts.scaleBackground}

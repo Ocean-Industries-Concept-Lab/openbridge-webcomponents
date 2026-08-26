@@ -48,38 +48,36 @@ import '../tree-navigation-item/tree-navigation-item.js';
  * | icon      | `hasIcon` is true        | Leading icon for the group header row.                       |
  * | (default) | Always                   | Child rows (`obc-tree-navigation-item` / `-group`).          |
  *
+ * @property label - The text label displayed for the group header row.
+ * @property branches - Guide line to draw for each ancestor level of the header row. Normally set by
+ *   the parent `<obc-tree-navigation>` container from the group's position; only
+ *   set it manually when using a group outside the container.
+ * @property expanded - Whether the group is expanded, disclosing its children. Rotates the chevron.
+ * @property checked - Whether the group header is the current selection.
+ * @property disabled - Disables the group header, removing it from the tab order and dimming it.
+ * @property hasIcon - Whether the group header shows a leading icon (provided via the `icon` slot).
+ * @property terminalType - Terminal type for the header row, controlling the alert-header marker shown in
+ *   the terminal. One of `regular` (default), `aggregated-header`, or `group-header`.
+ * @property href - The URL to navigate to when the header is activated. If set, the header row
+ *   renders as a link; otherwise it acts as a button.
  * @slot icon - Leading icon for the group header (shown when `hasIcon` is true).
  * @slot - Child rows disclosed when the group is expanded.
- * @fires expand-toggle {CustomEvent<boolean>} Fired when the header is activated; detail is the next `expanded` value.
+ * @fires {CustomEvent<boolean>} expand-toggle - Fired when the header is activated; detail is the next `expanded` value.
  */
 @customElement('obc-tree-navigation-group')
 export class ObcTreeNavigationGroup extends LitElement {
-  /** The text label displayed for the group header row. */
   @property({type: String}) label = 'Group';
 
-  /**
-   * Guide line to draw for each ancestor level of the header row. Normally set by
-   * the parent `<obc-tree-navigation>` container from the group's position; only
-   * set it manually when using a group outside the container.
-   */
   @property({type: Array}) branches: TreeBranchType[] = [];
 
-  /** Whether the group is expanded, disclosing its children. Rotates the chevron. */
   @property({type: Boolean, reflect: true}) expanded = false;
 
-  /** Whether the group header is the current selection. */
   @property({type: Boolean, reflect: true}) checked = false;
 
-  /** Disables the group header, removing it from the tab order and dimming it. */
   @property({type: Boolean, reflect: true}) disabled = false;
 
-  /** Whether the group header shows a leading icon (provided via the `icon` slot). */
   @property({type: Boolean, attribute: false}) hasIcon = true;
 
-  /**
-   * Terminal type for the header row, controlling the alert-header marker shown in
-   * the terminal. One of `regular` (default), `aggregated-header`, or `group-header`.
-   */
   @property({type: String}) terminalType: string = TreeTerminalType.regular;
 
   /**
@@ -90,10 +88,6 @@ export class ObcTreeNavigationGroup extends LitElement {
    */
   @property({type: Object}) alerts?: TreeNavigationItemAlerts;
 
-  /**
-   * The URL to navigate to when the header is activated. If set, the header row
-   * renders as a link; otherwise it acts as a button.
-   */
   @property({type: String}) href: string | undefined;
 
   @query('obc-tree-navigation-item') private headerItem?: ObcTreeNavigationItem;

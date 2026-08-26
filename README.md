@@ -20,12 +20,14 @@ We are thrilled if you would like to support the OpenBridge Web Components proje
 We invite industry partners to join our Joint Industry Project. By becoming a donor, you help secure the future of the project and gain influence over the roadmap.
 
 ### Donor Benefits
+
 By becoming a donor, you aren’t just supporting code—you’re joining a collaborative movement. To show our appreciation, donors receive a specialized benefits package valid for 12 months upon receipt of payment:
 
 - **Proudly Show Your Support:** You are authorized to use the official "OpenBridge Member" logo in your marketing materials and corporate communications.
 - **Early & Easy Access:** You gain the right to use all new releases of the project’s software components directly under the Apache License 2.0.
 
 ### How to Support
+
 If you are interested in supporting the project, please fill out this **[Support Form](https://docs.google.com/forms/d/e/1FAIpQLSc6JVRyyIease2PkUArirNkG0DeTB__YnWEovjVwISlaYdktA/viewform?usp=header)**.
 
 For more information, please contact **Torstein A. Bø** at [torstein.bo@openstudio.no](mailto:torstein.bo@openstudio.no) or contact us on [Slack](https://join.slack.com/t/openbridgegroup/shared_invite/zt-2e4clvl6s-uZLkN5L3g8O~c1UZCN1reQ).
@@ -67,15 +69,15 @@ We have made a [short introduction to the library](https://www.youtube.com/watch
 
 This repository uses npm workspaces and is organized as follows:
 
-| Package | Description |
-| --- | --- |
-| [`packages/openbridge-webcomponents`](packages/openbridge-webcomponents) | Core Lit-based web components (Source of truth). |
-| [`packages/openbridge-webcomponents-vue`](packages/openbridge-webcomponents-vue) | Auto-generated Vue.js wrappers. |
-| [`packages/openbridge-webcomponents-react`](packages/openbridge-webcomponents-react) | Auto-generated React wrappers. |
-| [`packages/openbridge-webcomponents-ng`](packages/openbridge-webcomponents-ng) | Auto-generated Angular wrappers. |
-| [`packages/openbridge-webcomponents-svelte`](packages/openbridge-webcomponents-svelte) | Auto-generated Svelte wrappers. |
-| `packages/vue-demo` | Demo application using Vue.js. |
-| `packages/react-demo` | Demo application using React. |
+| Package                                                                                | Description                                      |
+| -------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| [`packages/openbridge-webcomponents`](packages/openbridge-webcomponents)               | Core Lit-based web components (Source of truth). |
+| [`packages/openbridge-webcomponents-vue`](packages/openbridge-webcomponents-vue)       | Auto-generated Vue.js wrappers.                  |
+| [`packages/openbridge-webcomponents-react`](packages/openbridge-webcomponents-react)   | Auto-generated React wrappers.                   |
+| [`packages/openbridge-webcomponents-ng`](packages/openbridge-webcomponents-ng)         | Auto-generated Angular wrappers.                 |
+| [`packages/openbridge-webcomponents-svelte`](packages/openbridge-webcomponents-svelte) | Auto-generated Svelte wrappers.                  |
+| `packages/vue-demo`                                                                    | Demo application using Vue.js.                   |
+| `packages/react-demo`                                                                  | Demo application using React.                    |
 
 ## 📚 Storybook & Demo
 
@@ -83,7 +85,7 @@ Storybook is the component reference: it shows each component in isolation with 
 The Live Demo is an application showcase: it shows how components work together in realistic page flows.
 
 | Channel                                    | Storybook                                                                      | Live Demo                                                             |
-|--------------------------------------------|--------------------------------------------------------------------------------|-----------------------------------------------------------------------|
+| ------------------------------------------ | ------------------------------------------------------------------------------ | --------------------------------------------------------------------- |
 | **Stable** (`stable` branch, npm `latest`) | [openbridge-storybook.web.app](https://openbridge-storybook.web.app)           | [openbridge-demo.web.app](https://openbridge-demo.web.app/)           |
 | **Develop** (`develop` branch, npm `next`) | [openbridge-next-storybook.web.app](https://openbridge-next-storybook.web.app) | [openbridge-next-demo.web.app](https://openbridge-next-demo.web.app/) |
 
@@ -113,15 +115,20 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for bran
 
 ## 📄 Documentation Index
 
-| Document | Description |
-| --- | --- |
-| [AGENTS.md](AGENTS.md) | **Crucial for AI agents** and developers: coding standards, JSDoc, and build rules. |
-| [IMPLEMENTATION_GUIDELINES.md](IMPLEMENTATION_GUIDELINES.md) | Architecture, PostCSS mixins, SVG practices. |
-| [CONTRIBUTING.md](CONTRIBUTING.md) | Contribution workflow and standards. |
-| [CORE_README](packages/openbridge-webcomponents/README.md) | Usage and installation for the core package. |
-| [Vue Wrapper](packages/openbridge-webcomponents-vue/README.md) | Usage and installation for Vue.js. |
-| [React Wrapper](packages/openbridge-webcomponents-react/README.md) | Usage and installation for React. |
-| [Angular Wrapper](packages/openbridge-webcomponents-ng/README.md) | Usage and installation for Angular. |
-| [Svelte Wrapper](packages/openbridge-webcomponents-svelte/README.md) | Usage and installation for Svelte. |
-| [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) | Contributor Covenant Code of Conduct. |
-| [LICENSE.TXT](LICENSE.TXT) | Apache 2.0 license. |
+| Document                                                                          | Description                                                                                     |
+| --------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| [AGENTS.md](AGENTS.md)                                                            | **Crucial for AI agents** and developers: coding standards, JSDoc, and build rules.             |
+| [docs/agents/](docs/agents/)                                                      | Path-scoped rules per component family — the canonical, tool-neutral source for every AI agent. |
+| [IMPLEMENTATION_GUIDELINES.md](IMPLEMENTATION_GUIDELINES.md)                      | Architecture, PostCSS mixins, SVG practices.                                                    |
+| [CONTRIBUTING.md](CONTRIBUTING.md)                                                | Contribution workflow and standards.                                                            |
+| [Getting Started: HTML](packages/openbridge-webcomponents/README.md#-hello-world) | Tutorial: one HTML file, no build tools — the quickest way to see components running.           |
+| [Getting Started: React](docs/getting-started-react.md)                           | Tutorial: build a multi-view React app with the React wrapper.                                  |
+| [Getting Started: Angular](docs/getting-started-angular.md)                       | Tutorial: build a multi-view Angular app with the Angular wrapper.                              |
+| [Charts and Graphs](docs/graph.md)                                                | Custom Chart.js plots with OpenBridge theming.                                                  |
+| [CORE_README](packages/openbridge-webcomponents/README.md)                        | Usage and installation for the core package.                                                    |
+| [Vue Wrapper](packages/openbridge-webcomponents-vue/README.md)                    | Usage and installation for Vue.js.                                                              |
+| [React Wrapper](packages/openbridge-webcomponents-react/README.md)                | Usage and installation for React.                                                               |
+| [Angular Wrapper](packages/openbridge-webcomponents-ng/README.md)                 | Usage and installation for Angular.                                                             |
+| [Svelte Wrapper](packages/openbridge-webcomponents-svelte/README.md)              | Usage and installation for Svelte.                                                              |
+| [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)                                          | Contributor Covenant Code of Conduct.                                                           |
+| [LICENSE.TXT](LICENSE.TXT)                                                        | Apache 2.0 license.                                                                             |

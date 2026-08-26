@@ -173,12 +173,15 @@ export enum ObcKeyboardFullMode {
  * </obc-keyboard-full>
  * ```
  *
- * @fires value-change {CustomEvent<{value: string}>} Dispatched whenever the text value changes
+ * @availableWhen parameterName showTopBar==true
+ * @property inputType - Input type forwarded to the embedded input field. Set to `password` to mask
+ *   the entered value (a show/hide toggle is then shown inside the field).
+ * @fires {CustomEvent<{value: string}>} value-change - Dispatched whenever the text value changes
  *   (on key press, backspace, space, or direct input field editing). The `detail.value` contains
  *   the complete current text string.
- * @fires done-click {CustomEvent<{value: string}>} Dispatched when the DONE button is clicked,
+ * @fires {CustomEvent<{value: string}>} done-click - Dispatched when the DONE button is clicked,
  *   indicating the user has completed text entry. The `detail.value` contains the final text string.
- * @fires close-click {CustomEvent<void>} Dispatched when the close button (in top bar) is clicked,
+ * @fires {CustomEvent<void>} close-click - Dispatched when the close button (in top bar) is clicked,
  *   allowing the application to dismiss the keyboard without submitting the value.
  * @beta
  */
@@ -188,7 +191,6 @@ export class ObcKeyboardFull extends LitElement {
     ObcKeyboardFullType.Floating;
 
   @property({type: Boolean}) showTopBar = false;
-  /** @availableWhen showTopBar==true */
   @property({type: String}) parameterName = 'Parameter name';
 
   @property({type: String}) value = '';
@@ -197,10 +199,6 @@ export class ObcKeyboardFull extends LitElement {
   @property({type: String}) inputSize: ObcTextInputFieldSize =
     ObcTextInputFieldSize.Large;
 
-  /**
-   * Input type forwarded to the embedded input field. Set to `password` to mask
-   * the entered value (a show/hide toggle is then shown inside the field).
-   */
   @property({type: String}) inputType: HTMLInputTypeAttribute =
     HTMLInputTypeAttribute.Text;
 
@@ -261,14 +259,7 @@ export class ObcKeyboardFull extends LitElement {
     e.preventDefault();
   };
 
-  private onKeyPress = async (key: string) => {
-    const char =
-      this.capsLock &&
-      this.mode === ObcKeyboardFullMode.ABC &&
-      !this.showNumberRow
-        ? key.toUpperCase()
-        : key.toLowerCase();
-
+  private onKeyPress = async (char: string) => {
     const inputElement = this.inputField?.shadowRoot?.querySelector(
       'input'
     ) as HTMLInputElement | null;
@@ -337,6 +328,14 @@ export class ObcKeyboardFull extends LitElement {
   private onToggleCaps = () => {
     this.capsLock = !this.capsLock;
   };
+
+  /**
+   * The character a letter key both shows and inserts. CAPS applies wherever
+   * the alphabetic layout is rendered, including the number-row variant.
+   */
+  private letterKeyLabel(key: string): string {
+    return this.capsLock ? key.toUpperCase() : key.toLowerCase();
+  }
 
   private onToggleMode = (mode: ObcKeyboardFullMode) => {
     this.mode = mode;
@@ -537,18 +536,19 @@ export class ObcKeyboardFull extends LitElement {
                         () => html`<div class="key-button-placeholder"></div>`
                       )
                   : nothing}
-                ${row.map(
-                  (key) => html`
+                ${row.map((key) => {
+                  const label = this.letterKeyLabel(key);
+                  return html`
                     <obc-button
                       class="key-button"
                       variant="normal"
                       @mousedown=${this.preventFocusLoss}
-                      @click=${() => this.onKeyPress(key)}
+                      @click=${() => this.onKeyPress(label)}
                     >
-                      ${this.capsLock ? key.toUpperCase() : key.toLowerCase()}
+                      ${label}
                     </obc-button>
-                  `
-                )}
+                  `;
+                })}
               </div>
             `
           )}

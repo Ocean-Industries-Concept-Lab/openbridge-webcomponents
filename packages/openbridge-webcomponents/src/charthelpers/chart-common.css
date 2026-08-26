@@ -35,8 +35,32 @@ canvas {
   display: block;
 }
 
-/* Fixed aspect ratio scaling mode: canvas fills wrapper */
-:host([fixedaspectratioscaling]) canvas {
+/* Fixed aspect ratio scaling mode: the canvas container must be a definite
+   box, not shrink-to-fit. The wrapper is a column flex with align-items:
+   center, so the container would otherwise size to the canvas' max-content
+   width — and a canvas with an auto width and a definite height resolves
+   against its intrinsic 2:1 ratio, capping the chart at height * 2. */
+:host([fixedaspectratioscaling]) .canvas-and-slots-container {
   width: 100%;
-  height: var(--chart-height, auto);
+}
+
+/* Fixed aspect ratio scaling mode: canvas fills wrapper.
+
+   `!important` is load-bearing, not a shortcut. Chart.js measures the
+   container with getBoundingClientRect() — which is scaled by any ancestor
+   CSS `zoom` — and writes that number straight back as an inline
+   `style="width/height: Npx"`. The browser then scales that CSS-pixel value
+   by the same zoom a second time, so the canvas lands at zoom² of its cell
+   (64% at zoom 0.8, 156% at zoom 1.25). Overriding the inline style pins the
+   canvas to the box the layout actually gave it at every zoom level; Chart.js
+   keeps using its own measurement for the drawing buffer, which only affects
+   raster resolution, not geometry.
+
+   No auto margins here either: Chart.js subtracts the canvas' resolved
+   margins from the container width, so centring it with `margin: 0 auto`
+   makes the leftover space permanently unavailable to it. */
+:host([fixedaspectratioscaling]) canvas {
+  width: 100% !important;
+  height: var(--chart-height, auto) !important;
+  margin: 0;
 }

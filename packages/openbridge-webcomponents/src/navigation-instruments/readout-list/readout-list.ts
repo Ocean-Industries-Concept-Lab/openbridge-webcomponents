@@ -4,6 +4,7 @@ import componentStyle from './readout-list.css?inline';
 import {customElement} from '../../decorator.js';
 import '../readout-list-item/readout-list-item.js';
 import {ObcReadoutListItem} from '../readout-list-item/readout-list-item.js';
+import {resolveReadoutDigitCount} from '../readout/readout-formatters.js';
 import {
   resolveReadoutNumericValue,
   ReadoutValueType,
@@ -86,6 +87,9 @@ function integerDigitCount(value: number | null | undefined): number {
  * HTML-attribute changes). When rows are updated via JS **properties** only (no
  * attribute/DOM mutation), call {@link align} to recompute.
  *
+ * @property showDebugOverlay - Development aid: outline each row's readout building blocks (red), degree
+ *   columns (blue) and degree spacer (green) so the reserved column widths are
+ *   visible. Propagated to every row. Off by default.
  * @experimental Pilot for the new primitives + per-block options Readout API; the
  * API may change in a future release.
  *
@@ -95,11 +99,6 @@ function integerDigitCount(value: number | null | undefined): number {
  */
 @customElement('obc-readout-list')
 export class ObcReadoutList extends LitElement {
-  /**
-   * Development aid: outline each row's readout building blocks (red), degree
-   * columns (blue) and degree spacer (green) so the reserved column widths are
-   * visible. Propagated to every row. Off by default.
-   */
   @property({type: Boolean, reflect: true}) showDebugOverlay = false;
 
   private mutationObserver?: MutationObserver;
@@ -158,12 +157,19 @@ export class ObcReadoutList extends LitElement {
       // here, so they take part as usual.
       const hasNumericBlock =
         !isTextValueRow(item) || item.hasSetpoint || item.hasAdvice;
+      // Bounded per row: the list builds its own reserver string from these
+      // counts, so an `Infinity` or absurdly large value on any single row
+      // would otherwise throw out of `String.prototype.repeat` below — inside a
+      // MutationObserver callback, where the stack says nothing useful.
       if (hasNumericBlock) {
         maxFractionDigits = Math.max(
           maxFractionDigits,
-          item.fractionDigits ?? 0
+          resolveReadoutDigitCount(item.fractionDigits)
         );
-        maxIntegerDigits = Math.max(maxIntegerDigits, item.maxDigits ?? 0);
+        maxIntegerDigits = Math.max(
+          maxIntegerDigits,
+          resolveReadoutDigitCount(item.maxDigits)
+        );
       }
       maxIntegerDigits = Math.max(
         maxIntegerDigits,

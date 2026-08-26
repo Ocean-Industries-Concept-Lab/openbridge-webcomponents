@@ -95,9 +95,10 @@ export type ObcCheckboxChangeEvent = CustomEvent<{
  * ></obc-checkbox>
  * ```
  *
+ * @property hasHoverEffects - Internal: controls hover effects on the checkbox. Used by wrapper components such as `obc-checkbox-item`.
  * @slot - No named slots.
- * @fires change {ObcCheckboxChangeEvent} – Emitted when the status changes.
- * @fires disabled {ObcCheckboxChangeEvent} – Emitted when the disabled state changes.
+ * @fires {ObcCheckboxChangeEvent} change - Emitted when the status changes.
+ * @fires {ObcCheckboxChangeEvent} disabled - Emitted when the disabled state changes.
  * @stable
  */
 @customElement('obc-checkbox')
@@ -124,7 +125,6 @@ export class ObcCheckbox extends LitElement {
    */
   @property({type: Boolean}) disabled = false;
 
-  /** Internal: controls hover effects on the checkbox. Used by wrapper components such as `obc-checkbox-item`. */
   @property({type: Boolean, attribute: false}) hasHoverEffects = true;
 
   @query('.visually-hidden') private checkboxControl?: HTMLDivElement;

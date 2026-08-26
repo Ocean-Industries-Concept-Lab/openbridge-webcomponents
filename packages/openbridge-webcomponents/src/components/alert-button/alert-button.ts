@@ -20,6 +20,7 @@ import {
 } from '../../alert-severity.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
+import {blinkingAll} from '../../palettes/blinking.js';
 
 /**
  * `ObcAlertButtonType` – Enum for alert button visual and behavioral variants.
@@ -108,9 +109,11 @@ export enum ObcAlertButtonType {
  *
  * In this example, the button shows an alarm icon, a counter badge with "3", is styled as enhanced, blinks to indicate urgency, and includes a silence button if the width allows.
  *
+ * @property silenceButtonDisabled - Disables the silence button when true.
+ * @availableWhen silenceButtonDisabled showSilenceButton==true
  * @slot - No content slots. All content is provided via properties.
- * @fires click-alert {CustomEvent<void>} Fired when the main alert button is clicked.
- * @fires click-silence {CustomEvent<void>} Fired when the silence button is clicked.
+ * @fires {CustomEvent<void>} click-alert - Fired when the main alert button is clicked.
+ * @fires {CustomEvent<void>} click-silence - Fired when the silence button is clicked.
  * @stable
  */
 @customElement('obc-alert-button')
@@ -152,11 +155,6 @@ export class ObcAlertButton extends LitElement {
    */
   @property({type: Boolean}) showSilenceButton = false;
 
-  /**
-   * Disables the silence button when true.
-   *
-   * @availableWhen showSilenceButton==true
-   */
   @property({type: Boolean}) silenceButtonDisabled = false;
 
   /**
@@ -202,10 +200,14 @@ export class ObcAlertButton extends LitElement {
   override connectedCallback() {
     super.connectedCallback();
     window.addEventListener('resize', this.resizeListener);
+    if (this.hasUpdated) {
+      this.installBlinking();
+    }
   }
 
   override disconnectedCallback() {
     window.removeEventListener('resize', this.resizeListener);
+    this._blinkAnimationCancel?.();
     super.disconnectedCallback();
   }
 
@@ -278,6 +280,17 @@ export class ObcAlertButton extends LitElement {
       this.width >= this.silenceButtonMinBreakpointPx &&
       this.activeType !== ObcAlertButtonType.Flat
     );
+  }
+
+  private _blinkAnimationCancel?: () => void;
+
+  private installBlinking() {
+    this._blinkAnimationCancel?.();
+    this._blinkAnimationCancel = blinkingAll(this);
+  }
+
+  override updated() {
+    this.installBlinking();
   }
 
   override render() {

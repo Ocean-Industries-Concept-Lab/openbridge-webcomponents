@@ -14,11 +14,11 @@ import '../../icons/icon-joystick.js';
  * Re-renders slotted icon and status content in response to the command-menu's
  * toggle events, which Storybook's static template cannot do on its own.
  *
- * @property {boolean} inCommand - Whether the station is in command.
+ * @property inCommand - Whether the station is in command.
  *   When `true` the wrapper slots a joystick icon and "Joystick" status;
  *   when `false` it slots a no-command icon and "NO CMD" status.
  *   Default: `false`.
- * @property {boolean} showLocation - Forwarded to `<obc-command-menu>` to
+ * @property showLocation - Forwarded to `<obc-command-menu>` to
  *   hide or show the command location slot. Default: `true`.
  *
  * @example
@@ -72,7 +72,7 @@ customElements.define('command-menu-story-wrapper', CommandMenuStoryWrapper);
 
 const meta: Meta<typeof ObcCommandMenu> = {
   title: 'Application Components/Menus/Command Menu',
-  tags: ['6.0'],
+  tags: ['6.0', 'beta'],
   component: 'obc-command-menu',
   args: {
     showLocation: true,

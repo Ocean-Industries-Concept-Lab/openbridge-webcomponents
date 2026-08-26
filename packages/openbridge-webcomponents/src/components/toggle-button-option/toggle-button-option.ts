@@ -104,68 +104,48 @@ export enum ObcToggleButtonOptionVariant {
  * </obc-toggle-button-group>
  * ```
  *
+ * @property value - Value associated with this option. Used in selection events.
+ * @property selected - Whether this option is currently selected (toggles visual state).
+ * @property activated - Whether this option is currently activated (toggles visual state).
+ * @property type - Layout of icon and label.
+ *   One of: "icon", "text", "icon-text-under", "text-icon".
+ *   Controls which slots/content are displayed and their arrangement.
+ * @property variant - The visual variant of the toggle button option.
+ *   One of: "flat", "regular", "normal".
+ * @property hugText - If true, button width shrinks to fit label content.
+ * @availableWhen hugText type!=icon-text-under
+ * @property disabled - If true, the option is disabled and cannot be interacted with.
+ * @property large - If true, the option uses a larger size.
+ * @availableWhen large type!=icon-text-under
+ * @property showDivider - If true, renders the divider between options.
  * @slot - Text label content for the option (when type includes text).
  * @slot icon - Icon content for the option (when type includes icons).
- * @fires selected {CustomEvent<{value: string}>} Fired when the option is clicked and not already selected.
+ * @fires {CustomEvent<{value: string}>} selected - Fired when the option is clicked and not already selected.
  */
 @customElement('obc-toggle-button-option')
 export class ObcToggleButtonOption extends LitElement {
-  /**
-   * Value associated with this option. Used in selection events.
-   */
   @property({type: String}) value = 'value';
 
-  /**
-   * Whether this option is currently selected (toggles visual state).
-   */
   @property({type: Boolean, reflect: true}) selected = false;
 
-  /**
-   * Whether this option is currently activated (toggles visual state).
-   */
   @property({type: Boolean, reflect: true}) activated = false;
 
-  /**
-   * Layout of icon and label.
-   * One of: "icon", "text", "icon-text-under", "text-icon".
-   * Controls which slots/content are displayed and their arrangement.
-   */
   @property({type: String}) type = ObcToggleButtonOptionType.text;
 
-  /**
-   * The visual variant of the toggle button option.
-   * One of: "flat", "regular", "normal".
-   */
   @property({type: String}) variant = ObcToggleButtonOptionVariant.regular;
 
-  /**
-   * If true, button width shrinks to fit label content.
-   *
-   * @availableWhen type!=icon-text-under
-   */
   @property({type: Boolean}) hugText = false;
 
-  /**
-   * If true, renders the divider between options.
-   */
   // eslint-disable-next-line openbridge/prefer-boolean-property-default-false -- reflected attribute used by parent CSS
   @property({type: Boolean, reflect: true}) showDivider: boolean = true;
 
-  /**
-   * If true, the option is disabled and cannot be interacted with.
-   */
   @property({type: Boolean, reflect: true}) disabled = false;
 
-  /**
-   * If true, the option uses a larger size.
-   *
-   * @availableWhen type!=icon-text-under
-   */
   @property({type: Boolean, reflect: true}) large = false;
 
   /**
    * Fired when the option is clicked and not already selected.
-   * @fires selected {CustomEvent<{value: string}>}
+   * @fires selected
    */
   onClick(event: Event) {
     if (this.disabled) {

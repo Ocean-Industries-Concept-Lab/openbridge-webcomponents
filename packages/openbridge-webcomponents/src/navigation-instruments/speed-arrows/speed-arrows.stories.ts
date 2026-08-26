@@ -4,7 +4,7 @@ import './speed-arrows.js';
 
 const meta: Meta<typeof ObcSpeedArrows> = {
   title: 'Instruments/Speed Arrows',
-  tags: ['6.0'],
+  tags: ['6.0', 'beta'],
   component: 'obc-speed-arrows',
   args: {
     tintedArrows: true,

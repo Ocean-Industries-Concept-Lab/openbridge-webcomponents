@@ -27,7 +27,6 @@ The project is divided into three main parts:
 Each component's `*.stories.ts` file should:
 
 - Use `tags: ['autodocs', '6.0']` for documented OpenBridge 6.0 components
-- Use `tags: ['alpha']` for components still in development
 - Use `tags: ['skip-test']` to exclude a story from visual snapshot testing
 - Export a `Default` story and additional stories for key states and variants
 
@@ -127,7 +126,8 @@ All other CSS code should be kept in the `*.css` files in the component folders.
 > `component-primitives` + shadow composites), the four
 > `:root[data-obc-theme="…"]` blocks (from the `Palette` collection, with
 > variable alias chains flattened to literal `rgb(…)` values per theme), and
-> the `@property` / `@keyframes warning-blink` machinery at the bottom.
+> the `@property` blink registrations at the bottom (the animation itself is
+> driven from `src/palettes/blinking.ts`, not from CSS keyframes).
 >
 > **Do not hand-edit `variables.css`.** Any local change will be silently
 > overwritten the next time someone pastes new plugin output. To add,
@@ -469,10 +469,21 @@ Each generates `enabled`, `hover`, `active`, and `focus-visible` states — same
 }
 ```
 
-A shared `@keyframes warning-blink` orchestrates two blink rates:
+The animation itself is driven from TypeScript, **not** from a CSS `@keyframes`.
+`src/palettes/blinking.ts` exports `blinkingInstall()`, which uses the Web
+Animations API (`el.animate()`) to alternate the `-on` / `-off` pair over a
+per-severity period:
 
-- **Alarm** blinks 4× per cycle (fast)
-- **Warning** blinks 2× per cycle (slow)
+| Severity | Period  |
+| -------- | ------- |
+| Critical | 1000 ms |
+| Alarm    | 2000 ms |
+| Warning  | 4000 ms |
+| Low      | 8000 ms |
+
+Call sites: `alert-frame`, `alert-icon` and `alert-button`. (Before PR #1116
+this was a shared `@keyframes warning-blink` in `variables.css`; that keyframes
+no longer exists.)
 
 Components apply the animation by binding opacity to these properties:
 
@@ -568,7 +579,15 @@ All size-dependent tokens are defined four times in `variables.css`, once per si
 | `:root`, `.obc-component-size-regular` | 48 px        | 32 px         | 24 px     |
 | `.obc-component-size-medium`           | 56 px        | 40 px         | 32 px     |
 | `.obc-component-size-large`            | 72 px        | 56 px         | 40 px     |
-| `.obc-component-size-xl`               | (larger)     | (larger)      | (larger)  |
+| `.obc-component-size-xl`               | 96 px        | 72 px         | 48 px     |
+
+`regular` is the smallest size class, and `:root` carries the same values, so
+48 px is the touch-target floor even when no size class is set. Individual
+components may follow their own scaling curve through their per-component
+tokens (e.g. `--automation-components-button-touch-target-size` is 48/72/96/96
+across the four classes), but no class takes any touch target below 48 px.
+Minimum-size rules and the standards behind them live in
+[`docs/agents/a11y.md` § Touch & pointer target size](docs/agents/a11y.md).
 
 Each class overrides the same variable names (`--global-size-spacing-touch-target-min`, `--global-size-spacing-visual-target-min`, `--global-size-spacing-icon-icon-size-regular`, all `--ui-components-*` sizing tokens, typography tokens, etc.) with scaled values.
 
@@ -869,7 +888,7 @@ Booleans that default to `true` must use `attribute: false` to remove the HTML a
 
 Framework wrappers (React, Vue, etc.) always set values via properties, so removing the attribute has no effect on wrapper consumers.
 
-See [AGENTS.md § 2](AGENTS.md#2-coding-standards) for the full rule and examples.
+See [docs/agents/coding-standards.md § Boolean property naming](docs/agents/coding-standards.md#boolean-property-naming) for the full rule and examples.
 
 ## 🧭 SVG based components
 

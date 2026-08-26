@@ -72,14 +72,13 @@ export enum ObcAlertSubsystemCounterOrientation {
  * </obc-alert-subsystem-counter>
  * ```
  *
+ * @property label - The subsystem label. Pass a full title or an abbreviation as plain text.
+ * @property emptyText - Text shown in the trailing area when `hasAlert` is `false`.
  * @slot icon - Optional leading 24px icon.
  * @slot badges - Count badges shown when `hasAlert` is true.
  */
 @customElement('obc-alert-subsystem-counter')
 export class ObcAlertSubsystemCounter extends LitElement {
-  /**
-   * The subsystem label. Pass a full title or an abbreviation as plain text.
-   */
   @property({type: String}) label = '';
 
   /**
@@ -100,9 +99,6 @@ export class ObcAlertSubsystemCounter extends LitElement {
    */
   @property({type: Boolean}) hasAlert = false;
 
-  /**
-   * Text shown in the trailing area when `hasAlert` is `false`.
-   */
   @property({type: String}) emptyText = 'No alerts';
 
   @state() private hasIcon = false;
