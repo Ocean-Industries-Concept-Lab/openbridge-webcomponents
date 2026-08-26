@@ -31,7 +31,7 @@ import {
 } from '../watch/secondary-lane.js';
 import type {WatchArea, WatchBarArea} from '../watch/watch.js';
 import {roundedArch} from '../../svghelpers/roundedArch.js';
-import {TickmarkStyle, TickmarkType} from '../watch/tickmark.js';
+import {buildIntervalTickmarks, TickmarkStyle} from '../watch/tickmark.js';
 import type {Tickmark} from '../watch/tickmark.js';
 import {
   applyPinnedHostSize,
@@ -180,25 +180,6 @@ const COMPACT_NATURAL_BOX_PX = 240;
 
 /** Cap for full-circle arcs so start and end never coincide in path space. */
 const FULL_CIRCLE_EPSILON_DEG = 0.05;
-
-/** Intervals producing more tickmarks than this are ignored (runaway guard). */
-const MAX_INTERVAL_TICKMARKS = 1000;
-
-function strongerTickmarkType(
-  existing: TickmarkType,
-  candidate: TickmarkType
-): TickmarkType {
-  const rank: Record<TickmarkType, number> = {
-    [TickmarkType.zeroLineThick]: 6,
-    [TickmarkType.zeroLine]: 5,
-    [TickmarkType.main]: 4,
-    [TickmarkType.primary]: 3,
-    [TickmarkType.secondary]: 2,
-    [TickmarkType.tertiary]: 1,
-    [TickmarkType.textOnly]: 0,
-  };
-  return rank[candidate] > rank[existing] ? candidate : existing;
-}
 
 /**
  * `<obc-gauge-proportional>` — Radial gauge whose fill band length is
@@ -515,9 +496,6 @@ export class ObcGaugeProportional extends SetpointMixin(LitElement) {
   }
 
   private get tickmarks(): Tickmark[] {
-    const tickmarksByValue = new Map<number, Tickmark>();
-    const normalizeValue = (value: number) =>
-      Math.abs(value) < 1e-9 ? 0 : Number(value.toFixed(6));
     // Inside labels track the inner ring, so on the full circle the bottom
     // (180°) interval label would sit on the center name/readout cluster —
     // the design keeps only the min label there (Inside/360 variants).
@@ -526,101 +504,16 @@ export class ObcGaugeProportional extends SetpointMixin(LitElement) {
         !this.isFullCircle) ||
       (this.effectiveAlignment === GaugeProportionalAlignment.inside &&
         this.isFullCircle);
-
-    const upsertTickmark = (
-      value: number,
-      type: TickmarkType,
-      text?: string
-    ) => {
-      if (
-        !Number.isFinite(value) ||
-        value < this.minValue ||
-        value > this.maxValue
-      ) {
-        return;
-      }
-      const normalizedValue = normalizeValue(value);
-      const existing = tickmarksByValue.get(normalizedValue);
-      if (existing) {
-        existing.type = strongerTickmarkType(existing.type, type);
-        if (text !== undefined) {
-          existing.text = text;
-        }
-        return;
-      }
-      tickmarksByValue.set(normalizedValue, {
-        angle: this.mapAngle(normalizedValue),
-        type,
-        text,
-      });
-    };
-
-    const addTickmarksAtInterval = (
-      interval: number | undefined,
-      type: TickmarkType,
-      withLabels = false
-    ) => {
-      if (
-        interval === undefined ||
-        interval <= 0 ||
-        !Number.isFinite(interval) ||
-        (this.maxValue - this.minValue) / interval > MAX_INTERVAL_TICKMARKS
-      ) {
-        return;
-      }
-      const epsilon = Math.abs(interval) * 1e-6;
-      const startValue =
-        Math.ceil((this.minValue - epsilon) / interval) * interval;
-      for (
-        let value = startValue;
-        value < this.maxValue - epsilon;
-        value += interval
-      ) {
-        const normalizedValue = normalizeValue(value);
-        if (
-          normalizedValue <= this.minValue + epsilon ||
-          normalizedValue >= this.maxValue - epsilon
-        ) {
-          continue;
-        }
-        upsertTickmark(
-          normalizedValue,
-          type,
-          withLabels && this.showLabels && !suppressIntervalLabels
-            ? normalizedValue.toString()
-            : undefined
-        );
-      }
-    };
-
-    addTickmarksAtInterval(
-      this.primaryTickmarkInterval,
-      TickmarkType.primary,
-      true
-    );
-    addTickmarksAtInterval(
-      this.secondaryTickmarkInterval,
-      TickmarkType.secondary
-    );
-
-    if (this.showLabels) {
-      upsertTickmark(
-        this.minValue,
-        TickmarkType.textOnly,
-        this.minValue.toString()
-      );
-      // On the full circle the max tick coincides with the min tick at
-      // 12 o'clock, so only the min label renders there.
-      if (!this.isFullCircle) {
-        upsertTickmark(
-          this.maxValue,
-          TickmarkType.textOnly,
-          this.maxValue.toString()
-        );
-      }
-    }
-
-    return [...tickmarksByValue.values()].sort((a, b) => a.angle - b.angle);
+    return buildIntervalTickmarks({
+      minValue: this.minValue,
+      maxValue: this.maxValue,
+      mapAngle: (v) => this.mapAngle(v),
+      primaryInterval: this.primaryTickmarkInterval,
+      secondaryInterval: this.secondaryTickmarkInterval,
+      showLabels: this.showLabels,
+      suppressIntervalLabels,
+      suppressMaxEndLabel: this.isFullCircle,
+    });
   }
 
   private get _advices(): AngleAdviceRaw[] {
