@@ -10,6 +10,7 @@ globs:
   - packages/openbridge-webcomponents/src/navigation-instruments/readout/readout-formatters.ts
   - packages/openbridge-webcomponents/src/navigation-instruments/readout/readout-shared.ts
 ---
+
 # Readout Components
 
 These instructions apply to the **readout composition stack** — the primitives that
@@ -92,12 +93,12 @@ then silent forever. Covered by
 
 Two different failure classes, treated differently on purpose:
 
-| Input                                                                | Treatment                    | Why                                                                                                          |
-| -------------------------------------------------------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `valueType` typo, text under `valueType="number"`                    | **throws**                   | Programmer error, fixable only in code                                                                       |
-| `fractionDigits` whose **effective precision** falls outside `0…100` | **throws**                   | Sets the PRECISION of a reading — silently clamping would drop decimals from a displayed value               |
-| `maxDigits` out of range                                             | **clamped**                  | Only reserves width; bounding changes no reading's meaning                                                   |
-| `NaN` / `±Infinity` **value**                                        | renders the unavailable dash | Runtime data condition (sensor dropout, `0/0`) — throwing would take a display down over a transient reading |
+| Input                                                                                             | Treatment                    | Why                                                                                                                                                                                              |
+| ------------------------------------------------------------------------------------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `valueType` typo, text under `valueType="number"`                                                 | **throws**                   | Programmer error, fixable only in code                                                                                                                                                           |
+| `fractionDigits` whose **effective precision** falls outside `0…100`                              | **throws**                   | Sets the PRECISION of a reading — silently clamping would drop decimals from a displayed value                                                                                                   |
+| `maxDigits` out of range                                                                          | **clamped**                  | Only reserves width; bounding changes no reading's meaning                                                                                                                                       |
+| `NaN` / `±Infinity` **value**                                                                     | renders the unavailable dash | Runtime data condition (sensor dropout, `0/0`) — throwing would take a display down over a transient reading                                                                                     |
 | A digit knob that **never arrived** (`NaN`/`null`/`undefined` in `fractionDigits` or `maxDigits`) | renders the unavailable dash | A failed runtime write must not masquerade as configuration: `0.4` formatted with a defaulted precision prints as a healthy-looking `0`, which an operator cannot tell apart from a real reading |
 
 "Effective precision" is what `toFixed` will actually read: `null`, `undefined`
@@ -251,7 +252,11 @@ Do not treat these as settled when editing:
   default remains unverified (`labelSize` carries the TODO).
 - Advice categories: for triggered optimal / eco the tint covers the whole
   diamond (Figma tints only the inner plus — needs a two-tone asset), and the
-  advice `Enhanced` (indent chip) state is not implemented. Designer flagged
+  advice `Enhanced` (indent chip) state is not implemented. The triggered
+  alert icons (`obi-*-iec`) are existing repo assets rendered with
+  `useCssColor` — that attribute selects their token-coloured variant; without
+  it the same icon is a single-colour `currentColor` silhouette (the resting
+  icons and the advice diamond stay on `currentColor` on purpose). Designer flagged
   category icons/colours as "may change; structure stable".
 - Source: the Figma `Tag` type and the 4px chip padding are not implemented
   (the chip hugs like the data-quality chip so live state flips don't shift

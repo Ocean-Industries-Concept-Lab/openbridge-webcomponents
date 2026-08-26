@@ -59,6 +59,17 @@ export enum ObcStepperBoxType {
  * <obc-stepper-box type="up-down" value="5" unit="kg" helperText="Set weight"></obc-stepper-box>
  * ```
  *
+ * @property disabled - If true, the stepper box is disabled and the buttons are not clickable.
+ * @property value - The current numeric value displayed in the field.
+ *   Pass `null` to clear the value and show the `placeholder` instead.
+ * @property min - Optional lower bound; decrement button disables at this value.
+ * @property max - Optional upper bound; increment button disables at this value.
+ * @property stepUp - Increment step size (default 1).
+ * @property stepDown - Decrement step size (default 1).
+ * @property unit - Unit text displayed inside the field.
+ * @property helperText - Helper text displayed below the stepper. When set, the helper text is shown.
+ * @property placeholder - Placeholder text shown when the input is empty.
+ * @property readonly - If true, the input is non-editable; programmatic value changes still apply.
  * @fires {CustomEvent<{value: number}>} down - Fired when the decrement (left or down) button is clicked
  * @fires {CustomEvent<{value: number}>} up - Fired when the increment (right or up) button is clicked
  * @fires {CustomEvent<{value: string}>} input - Fired when the user types in the number input field
@@ -78,55 +89,24 @@ export class ObcStepperBox extends LitElement {
   @property({type: String}) type: ObcStepperBoxType =
     ObcStepperBoxType.plusMinus;
 
-  /**
-   * If true, the stepper box is disabled and the buttons are not clickable.
-   */
   @property({type: Boolean, reflect: true}) disabled = false;
 
-  /**
-   * The current numeric value displayed in the field.
-   * Pass `null` to clear the value and show the `placeholder` instead.
-   */
   @property({type: Number}) value: number | null = 1;
 
-  /**
-   * Optional lower bound; decrement button disables at this value.
-   */
   @property({type: Number}) min?: number;
 
-  /**
-   * Optional upper bound; increment button disables at this value.
-   */
   @property({type: Number}) max?: number;
 
-  /**
-   * Increment step size (default 1).
-   */
   @property({type: Number}) stepUp = 1;
 
-  /**
-   * Decrement step size (default 1).
-   */
   @property({type: Number}) stepDown = 1;
 
-  /**
-   * Unit text displayed inside the field.
-   */
   @property({type: String}) unit = '';
 
-  /**
-   * Helper text displayed below the stepper. When set, the helper text is shown.
-   */
   @property({type: String}) helperText = '';
 
-  /**
-   * Placeholder text shown when the input is empty.
-   */
   @property({type: String}) placeholder = '';
 
-  /**
-   * If true, the input is non-editable; programmatic value changes still apply.
-   */
   @property({type: Boolean}) readonly = false;
 
   private get downDisabled(): boolean {

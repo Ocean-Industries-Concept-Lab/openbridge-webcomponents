@@ -68,6 +68,28 @@ Two facts that bite:
 Use `skip-test` to exclude a story from snapshot testing — appropriate for
 anything genuinely non-deterministic rather than papering over a flake.
 
+## Manifest-driven docs and controls
+
+`.storybook/manifest-docs-core.ts` holds the helpers; `manifest-docs.ts` binds
+them to `custom-elements.json` and is what stories import. The split keeps the
+helpers testable without the gitignored manifest — `script/manifest-docs.test.ts`
+imports the core module, and the `rules` project runs in a CI job that never
+calls `analyze`.
+
+- `moduleDocs('path/suffix.ts')` — a pure-function module's `@module` block, for
+  a story with no `component:` to resolve.
+- `classDocs('ObcChartLineBase')` — an abstract base's description, for a story
+  whose `component:` points at a concrete subclass.
+- `availableWhenEnhancer` — registered in `preview.tsx`; turns a member's
+  `availableWhenIf` into the argType's `if:`.
+
+**The enhancer's contract:** a gate applies only when the story itself sets the
+gate arg. Storybook never seeds args from component defaults, and an arg whose
+`if` is false is dropped from `render()`, not just hidden in the controls panel
+— so gating on an unset arg would delete properties the story does set. See
+[`jsdoc.md`](../../docs/agents/jsdoc.md) for the tag and the conditions the CEM plugin cannot
+resolve.
+
 ## vue-demo Playwright suite
 
 `packages/vue-demo/e2e/` runs from that package:

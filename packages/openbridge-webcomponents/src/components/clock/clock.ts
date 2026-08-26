@@ -43,56 +43,44 @@ import {classMap} from 'lit/directives/class-map.js';
  *
  * ---
  *
+ * @property date - The ISO date/time string to display in the clock.
+ *   Controls both the time (HH:MM) and the date (if `showDate` is true).
+ * @property showDate - If true, displays the date (day and abbreviated month) after the time.
+ *   Defaults to `false`.
+ * @property showTimezone - If true, displays the timezone after the time.
+ *   Defaults to `false`.
+ * @property timeZoneOffsetHours - Timezone offset in hours, from UTC.
+ *   Defaults to `0`.
+ * @availableWhen showYear showDate==true
+ * @availableWhen showWeekday showDate==true
+ * @availableWhen locale showDate==true
+ * @property activated - If true, the clock as a button is activated. For example, when the calendar is open, the clock is activated.
+ * @property blinkOnlyBreakpointPx - The pixel width at which the component switches to blink-only mode.
+ *   When the viewport width is less than or equal to this value, only the blinking colon is shown.
+ *   Defaults to `0` (never switches to blink-only).
  * @slot - (No named slots) – All content is rendered by the component; no slots are used.
  * @stable
  */
 @customElement('obc-clock')
 export class ObcClock extends LitElement {
-  /**
-   * The ISO date/time string to display in the clock.
-   * Controls both the time (HH:MM) and the date (if `showDate` is true).
-   */
   @property({type: String}) date!: string;
   @property({type: Boolean}) showSeconds = false;
-  /**
-   * If true, displays the date (day and abbreviated month) after the time.
-   * Defaults to `false`.
-   */
   @property({type: Boolean}) showDate = false;
 
-  /**
-   * If true, displays the timezone after the time.
-   * Defaults to `false`.
-   */
   @property({type: Boolean}) showTimezone = false;
 
-  /**
-   * Timezone offset in hours, from UTC.
-   * Defaults to `0`.
-   */
   @property({type: Number}) timeZoneOffsetHours = 0;
 
   @property({type: Boolean, attribute: false}) isClickable: boolean = true;
-  /** @availableWhen showDate==true */
   @property({type: Boolean}) showYear = false;
-  /** @availableWhen showDate==true */
   @property({type: Boolean}) showWeekday = false;
-  /** @availableWhen showDate==true */
   @property({type: String}) locale = 'en-GB';
   @property({type: Boolean}) hour12 = false;
   @property({type: Boolean}) selected = false;
   @property({type: Boolean}) double = false;
-  /**
-   * If true, the clock as a button is activated. For example, when the calendar is open, the clock is activated.
-   */
   @property({type: Boolean}) activated = false;
   @property({type: Boolean}) integrationBarMode = false;
 
-  /**
-   * The pixel width at which the component switches to blink-only mode.
-   * When the viewport width is less than or equal to this value, only the blinking colon is shown.
-   * Defaults to `0` (never switches to blink-only).
-   */
   @property({type: Number})
   blinkOnlyBreakpointPx = 0;
 

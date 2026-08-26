@@ -8,6 +8,7 @@ import {
 
 import customElements from '../custom-elements.json';
 import {withActions} from './action-handler.js';
+import {availableWhenEnhancer} from './manifest-docs.js';
 
 setCustomElementsManifest(customElements);
 
@@ -124,6 +125,7 @@ const preview: Preview = {
   initialGlobals: {
     componentSize: 'obc-component-size-regular',
   },
+  argTypesEnhancers: [availableWhenEnhancer],
 };
 
 export default preview;
