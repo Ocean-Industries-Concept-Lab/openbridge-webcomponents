@@ -4,7 +4,7 @@ import compentStyle from './integration-app-bar.css?inline';
 
 /**
  * @slot apps - Application buttons; every button is laid out at the width of the widest one
- * @cssprop [--obc-integration-app-bar-app-width=max-content] - Width of each app button. Defaults to the width of the widest button; set a length to pin them all to that width instead.
+ * @cssprop [--obc-integration-app-bar-app-width=max-content] - Minimum width of each app-button grid track. Tracks may grow equally to fit wider content.
  * @experimental
  */
 @customElement('obc-integration-app-bar')
