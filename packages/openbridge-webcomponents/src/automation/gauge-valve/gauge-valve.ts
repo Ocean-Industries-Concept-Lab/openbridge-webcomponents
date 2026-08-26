@@ -1,18 +1,10 @@
-import {LitElement, html, svg, unsafeCSS, nothing} from 'lit';
+import {LitElement, html, unsafeCSS, nothing} from 'lit';
 import type {PropertyValues} from 'lit';
 import {property} from 'lit/decorators.js';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import compentStyle from './gauge-valve.css?inline';
 import {customElement} from '../../decorator.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
-import {
-  drawSetpointMarker,
-  deriveRadialSetpointConfig,
-  getSetpointScale,
-  SETPOINT_HEIGHT,
-  SETPOINT_PATH_FILLED,
-} from '../../svghelpers/setpoint.js';
-import {roundedArch} from '../../svghelpers/roundedArch.js';
 import {
   computeRadialFrame,
   estimateLabelWidthPx,
@@ -24,47 +16,33 @@ import {InstrumentState, Priority} from '../../navigation-instruments/types.js';
 import {renderInstrumentReadout} from '../../navigation-instruments/readout/instrument-readout.js';
 import {ReadoutSize} from '../../navigation-instruments/readout/readout.js';
 import '../../navigation-instruments/readout/readout.js';
-import '../../icons/icon-arrow-right-google.js';
-import '../../icons/icon-arrow-down-google.js';
-import '../../icons/icon-off.js';
+import '../../navigation-instruments/watch/watch.js';
 import {
-  SCALE_RADIUS,
-  TRACK_INNER_RADIUS,
-  TRACK_OUTER_RADIUS,
-  TRACK_CORNER_RADIUS,
+  OUTER_RING_RADIUS,
+  WatchCircleType,
+} from '../../navigation-instruments/watch/watch.js';
+import type {
+  WatchBarArea,
+  WatchNeedle,
+} from '../../navigation-instruments/watch/watch.js';
+import {TickmarkType} from '../../navigation-instruments/watch/tickmark.js';
+import type {Tickmark} from '../../navigation-instruments/watch/tickmark.js';
+import '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
+import {
+  IdTagOrientation,
+  type AutomationButtonReadoutStack,
+} from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
+import {
+  GaugeValveScalePosition,
+  SCALE_ROTATION_DEG,
   TRACK_HALF_SPANS,
-  CAP_INNER_RADIUS,
-  CAP_OUTER_RADIUS,
-  radialLinePath,
+  type ValvePort,
   clampPercent,
   inletPercent,
-  polarToCartesian,
   scaleAngle,
+  valveAreas,
+  valvePorts,
 } from './gauge-valve-geometry.js';
-
-/**
- * Radial distance (SVG units from center) of the setpoint marker BASE (outer
- * edge). The marker is anchored by its base — ~3 units inside the r 184
- * outline in every visual state — so the outline stroke always passes
- * uninterrupted above it (per the Figma refs); the tip position follows from
- * the state's scale.
- */
-const SETPOINT_BASE_RADIUS = 181;
-
-/** Radial distance (SVG units from center) of the 0/50/100 scale labels. */
-const SCALE_LABEL_RADIUS = 198;
-
-/**
- * Radial distance (SVG units from center) of the common inner baseline that
- * all scale ticks grow outward from, inside the face.
- */
-const TICK_BASELINE_RADIUS = 164;
-
-/** Outer radius (SVG units from center) of the minor scale ticks. */
-const TICK_SECONDARY_OUTER_RADIUS = 172;
-
-/** Major ticks run from the baseline out to the outline circle. */
-const TICK_PRIMARY_OUTER_RADIUS = SCALE_RADIUS;
 
 /** Scale interval (%) between minor ticks. */
 const TICK_SECONDARY_STEP = 5;
@@ -75,10 +53,10 @@ const TICK_PRIMARY_STEP = 25;
 /** Side of the center actuator-icon box in SVG units (96/512 of the design). */
 const ICON_SIZE = 96;
 
-/** Top edge (SVG y) of the large-variant readout container per valve type. */
-const READOUT_ANCHOR_Y: Record<'twoWay' | 'threeWay', number> = {
-  twoWay: -144,
-  threeWay: -136,
+/** Near-edge anchor (SVG units from center) of the large-variant readout box. */
+const READOUT_ANCHOR: Record<'twoWay' | 'threeWay', number> = {
+  twoWay: 144,
+  threeWay: 136,
 };
 
 /**
@@ -113,15 +91,16 @@ export enum GaugeValveStyle {
 /**
  * Radial position gauge for analog valves.
  *
- * Circular face with one track arc per port (90° sweep for two-way, 60° for
- * three-way) whose fill bar shows the flow through that port, and a center
- * slot for an actuator icon.
+ * An `obc-watch` face with one track arc per port (90° sweep for two-way,
+ * 60° for three-way) whose fill bar shows the flow through that port, and a
+ * center slot for an actuator icon. Tracks, bars, cap pills, scale and
+ * setpoint are all watch inputs.
  *
  * ## Features / Variants
  * - `type`: two-way (left + right tracks) or three-way (adds a bottom track)
- * - `large`: adds a top scale with tick labels, a setpoint marker, and a
- *   value readout; the compact default instead shows a label stack below
- *   the face with a percentage readout per port
+ * - `large`: adds a scale with tick labels, a setpoint marker, and a value
+ *   readout; the compact default instead shows the shared readout stack
+ *   below the face with a percentage readout per port
  * - `priority`: colour emphasis of the value graphics — `regular` (default),
  *   `enhanced`, `medium`, or `off`. `off` blanks the tracks, bars and caps on
  *   a flat disc, disables the setpoint marker, and replaces the value readout
@@ -129,10 +108,12 @@ export enum GaugeValveStyle {
  *   icon to its closed/off variant when setting `priority` to `off`
  * - `barStyle`: `tint` (default) fills the bar with the priority's tint
  *   colour and marks the fill edges with strong cap pills; `fill` paints the
- *   bar in the strong colour with square value edges, no cap pills, clipped
- *   to the track silhouette (matching the fill mode of `obc-bar-vertical`
- *   and `obc-gauge-radial`)
- * - Setpoint support via the shared setpoint API (`setpoint`, `newSetpoint`, …)
+ *   bar in the strong colour with square value edges, no cap pills (matching
+ *   the fill mode of `obc-bar-vertical` and `obc-gauge-radial`)
+ * - `scalePosition`: rotates the whole layout in 90° steps; consumers slot
+ *   the orientation-matched actuator icon variant
+ * - Setpoint support via the shared setpoint API (`setpoint`, `newSetpoint`,
+ *   confirm animation included)
  * - `hasLabelStack`: toggles the compact-variant readout stack (an optional
  *   setpoint row, one value row per port, plus an optional `tag` identifier
  *   line); has no effect when `large`
@@ -143,7 +124,7 @@ export enum GaugeValveStyle {
  * other radial instruments. Set `faceDiameter` to pin the ring to a fixed
  * pixel diameter instead — instruments sharing a `faceDiameter` have equal
  * ring circumference regardless of variant, matching
- * `obc-gauge-radial-proportional`. The frame geometry comes from the shared
+ * `obc-gauge-proportional`. The frame geometry comes from the shared
  * `computeRadialFrame()`.
  *
  * Readout text keeps a constant on-screen size (the instrument typography
@@ -158,13 +139,6 @@ export enum GaugeValveStyle {
  * schematic (P&ID) placement with button behavior, use `obc-analog-valve`
  * instead.
  *
- * The `newSetpoint` confirm animation is not yet supported by the large
- * variant's setpoint marker; only the plain `setpoint` marker is rendered.
- *
- * The compact label stack is rendered inline by this component (per the
- * "Automation label stack" design); it is a candidate for extraction into
- * its own component later.
- *
  * ## Slots
  * | Slot   | Condition | Purpose                                  |
  * | ------ | --------- | ---------------------------------------- |
@@ -172,6 +146,7 @@ export enum GaugeValveStyle {
  *
  * @property priority - Colour emphasis of the value graphics (the Figma "Type" axis); `off` blanks them on a flat disc
  * @property barStyle - Bar rendering (the Figma "Style" axis): tint (default) shows a tint bar with strong cap pills, fill a strong bar without pills
+ * @property scalePosition - Rotates the whole layout — ports, scale, setpoint and readout side (the designs' two-way Direction / three-way Scale axis)
  * @property value - Through-flow of the right outlet port, 0-100 (%)
  * @property bottomValue - Bottom outlet flow, 0-100 (%).
  * @availableWhen bottomValue type==three-way
@@ -197,6 +172,8 @@ export class ObcGaugeValve extends SetpointMixin(LitElement) {
   @property({type: String}) priority: GaugeValvePriority =
     GaugeValvePriority.regular;
   @property({type: String}) barStyle: GaugeValveStyle = GaugeValveStyle.tint;
+  @property({type: String}) scalePosition: GaugeValveScalePosition =
+    GaugeValveScalePosition.top;
   @property({type: Number}) value = 0;
   @property({type: Number}) bottomValue = 0;
   @property({type: Boolean}) large = false;
@@ -214,6 +191,18 @@ export class ObcGaugeValve extends SetpointMixin(LitElement) {
     observeInnerBox(this._resizeController, this.renderRoot);
   }
 
+  private get isThreeWay(): boolean {
+    return this.type === GaugeValveType.threeWay;
+  }
+
+  private get isOff(): boolean {
+    return this.priority === GaugeValvePriority.off;
+  }
+
+  private get rotation(): number {
+    return SCALE_ROTATION_DEG[this.scalePosition];
+  }
+
   /**
    * The shared instrument Priority tier for the setpoint marker and readout.
    * Only `enhanced` maps through; `medium` has no shared-Priority tier, so its
@@ -226,204 +215,108 @@ export class ObcGaugeValve extends SetpointMixin(LitElement) {
       : Priority.regular;
   }
 
-  private renderTrack(centerAngle: number, fillPercent: number) {
-    const halfSpan =
-      this.type === GaugeValveType.threeWay
-        ? TRACK_HALF_SPANS.threeWay
-        : TRACK_HALF_SPANS.twoWay;
-    const pct = clampPercent(fillPercent);
-    const capHalf = (halfSpan * pct) / 100;
-    const barCorner = Math.min(
-      TRACK_CORNER_RADIUS,
-      (capHalf * Math.PI * TRACK_INNER_RADIUS) / 180
-    );
-    const sector = (halfExtent: number, cornerRadius: number) =>
-      roundedArch({
-        startAngle: centerAngle - halfExtent,
-        endAngle: centerAngle + halfExtent,
-        r: TRACK_INNER_RADIUS,
-        R: TRACK_OUTER_RADIUS,
-        roundOutsideCut: cornerRadius > 0,
-        roundInsideCut: cornerRadius > 0,
-        roundRadius: cornerRadius,
-      });
-    const isFill = this.barStyle === GaugeValveStyle.fill;
-    const trackPath = sector(halfSpan, TRACK_CORNER_RADIUS);
-    const clipId = `gauge-valve-track-clip-${centerAngle}`;
-    return svg`
-      <path
-        class="track"
-        vector-effect="non-scaling-stroke"
-        d=${trackPath}
-      />
-      ${
-        pct > 0
-          ? svg`
-        ${
-          isFill
-            ? svg`<clipPath id=${clipId}><path d=${trackPath} /></clipPath>`
-            : nothing
-        }
-        <path
-          class="bar"
-          clip-path=${isFill ? `url(#${clipId})` : nothing}
-          d=${isFill ? sector(capHalf, 0) : sector(capHalf, barCorner)}
-        />
-        ${
-          isFill
-            ? nothing
-            : [centerAngle - capHalf, centerAngle + capHalf].map(
-                (angle) => svg`
-            <path class="cap-back" d=${radialLinePath(CAP_INNER_RADIUS, CAP_OUTER_RADIUS, angle)} />
-            <path class="cap-front" d=${radialLinePath(CAP_INNER_RADIUS, CAP_OUTER_RADIUS, angle)} />
-          `
-              )
-        }
-      `
-          : nothing
-      }
-    `;
-  }
-
-  private get inletFillPercent(): number {
-    return this.type === GaugeValveType.threeWay
+  private fillPercentFor(role: ValvePort['role']): number {
+    if (role === 'through') return clampPercent(this.value);
+    if (role === 'bottom') return clampPercent(this.bottomValue);
+    return this.isThreeWay
       ? inletPercent(this.value, this.bottomValue)
       : clampPercent(this.value);
   }
 
-  private renderPaddedValue(value: number) {
-    const digits = String(Math.round(clampPercent(value)));
-    const pad = '0'.repeat(Math.max(0, 3 - digits.length));
-    return html`${pad ? html`<span class="pad">${pad}</span>` : nothing}<span
-        >${digits}</span
-      >`;
+  private get halfSpan(): number {
+    return this.isThreeWay
+      ? TRACK_HALF_SPANS.threeWay
+      : TRACK_HALF_SPANS.twoWay;
+  }
+
+  private get barAreas(): WatchBarArea[] {
+    if (this.isOff) return [];
+    return valvePorts(this.isThreeWay, this.rotation).flatMap((port) => {
+      const capHalf = (this.halfSpan * this.fillPercentFor(port.role)) / 100;
+      if (capHalf <= 0) return [];
+      return [
+        {
+          startAngle: port.centerAngle - capHalf,
+          endAngle: port.centerAngle + capHalf,
+          fillColor: 'var(--gauge-valve-bar-color)',
+        },
+      ];
+    });
+  }
+
+  private get capNeedles(): WatchNeedle[] {
+    if (this.isOff || this.barStyle !== GaugeValveStyle.tint) return [];
+    return valvePorts(this.isThreeWay, this.rotation).flatMap((port) => {
+      const capHalf = (this.halfSpan * this.fillPercentFor(port.role)) / 100;
+      if (capHalf <= 0) return [];
+      return [port.centerAngle - capHalf, port.centerAngle + capHalf].map(
+        (angle) => ({
+          angle,
+          fillColor: 'var(--gauge-valve-cap-fill-color)',
+          strokeColor: 'var(--gauge-valve-cap-border-color)',
+        })
+      );
+    });
+  }
+
+  private scaleTickmarks(): Tickmark[] {
+    if (!this.large) return [];
+    const ticks: Tickmark[] = [];
+    for (let pct = 0; pct <= 100; pct += TICK_SECONDARY_STEP) {
+      const primary = pct % TICK_PRIMARY_STEP === 0;
+      ticks.push({
+        angle: scaleAngle(pct, this.rotation),
+        type: primary ? TickmarkType.primary : TickmarkType.secondary,
+        text: SCALE_LABEL_VALUES.includes(pct) ? String(pct) : undefined,
+      });
+    }
+    return ticks;
+  }
+
+  private get labelStackReadouts(): AutomationButtonReadoutStack[] {
+    if (this.isOff) {
+      return [{type: 'state-off', value: 'Off', hasIcon: true}];
+    }
+    const readouts: AutomationButtonReadoutStack[] = [];
+    if (this.setpoint !== undefined) {
+      readouts.push({
+        type: 'setpoint',
+        value: clampPercent(this.setpoint),
+        nDigits: 3,
+      });
+    }
+    readouts.push({
+      type: 'value',
+      value: clampPercent(this.value),
+      nDigits: 3,
+      unit: '%',
+      direction: 'right',
+      icon: 'arrow',
+    });
+    if (this.isThreeWay) {
+      readouts.push({
+        type: 'value',
+        value: clampPercent(this.bottomValue),
+        nDigits: 3,
+        unit: '%',
+        direction: 'down',
+        icon: 'arrow',
+      });
+    }
+    return readouts;
   }
 
   private renderLabelStack() {
-    if (this.priority === GaugeValvePriority.off) {
-      return html`
-        <div class="label-stack">
-          <div class="icon-cell value-row off-row">
-            <obi-off class="row-icon"></obi-off>
-          </div>
-          <div class="value-cell value-row off-state">Off</div>
-          ${this.tag ? html`<div class="tag-row">${this.tag}</div>` : nothing}
-        </div>
-      `;
-    }
-    return html`
-      <div class="label-stack">
-        ${this.setpoint !== undefined
-          ? html`
-              <div class="icon-cell setpoint-row">
-                <svg
-                  class="setpoint-glyph"
-                  viewBox="2.5 -2.5 21 26"
-                  aria-hidden="true"
-                >
-                  <path
-                    d=${SETPOINT_PATH_FILLED}
-                    transform="rotate(-90 13 10.5)"
-                  />
-                </svg>
-              </div>
-              <div class="value-cell setpoint-row setpoint-value">
-                ${this.renderPaddedValue(this.setpoint)}
-              </div>
-            `
-          : nothing}
-        <div class="icon-cell value-row">
-          <obi-arrow-right-google class="row-icon"></obi-arrow-right-google>
-        </div>
-        <div class="value-cell value-row value-primary">
-          ${this.renderPaddedValue(this.value)}
-        </div>
-        <div class="unit-cell value-row">%</div>
-        ${this.type === GaugeValveType.threeWay
-          ? html`
-              <div class="stack-divider"></div>
-              <div class="icon-cell value-row">
-                <obi-arrow-down-google class="row-icon"></obi-arrow-down-google>
-              </div>
-              <div class="value-cell value-row value-secondary">
-                ${this.renderPaddedValue(this.bottomValue)}
-              </div>
-              <div class="unit-cell value-row">%</div>
-            `
-          : nothing}
-        ${this.tag ? html`<div class="tag-row">${this.tag}</div>` : nothing}
-      </div>
-    `;
-  }
-
-  private renderScale(labelsHidden: boolean) {
-    const ticks = [];
-    for (let pct = 0; pct <= 100; pct += TICK_SECONDARY_STEP) {
-      if (pct % TICK_PRIMARY_STEP === 0) continue;
-      ticks.push(svg`
-        <path
-          class="tick-secondary"
-          vector-effect="non-scaling-stroke"
-          d=${radialLinePath(TICK_BASELINE_RADIUS, TICK_SECONDARY_OUTER_RADIUS, scaleAngle(pct))}
-        />
-      `);
-    }
-    for (let pct = 0; pct <= 100; pct += TICK_PRIMARY_STEP) {
-      ticks.push(svg`
-        <path
-          class="tick-primary"
-          vector-effect="non-scaling-stroke"
-          d=${radialLinePath(TICK_BASELINE_RADIUS, TICK_PRIMARY_OUTER_RADIUS, scaleAngle(pct))}
-        />
-      `);
-    }
-    const labels = labelsHidden
-      ? nothing
-      : SCALE_LABEL_VALUES.map((pct) => {
-          const pos = polarToCartesian(SCALE_LABEL_RADIUS, scaleAngle(pct));
-          return svg`<text class="scale-label" x=${pos.x} y=${pos.y}>${pct}</text>`;
-        });
-    return svg`
-      ${ticks}
-      ${labels}
-    `;
-  }
-
-  private renderSetpoint() {
-    if (this.setpoint === undefined) return nothing;
-    const derived = deriveRadialSetpointConfig({
-      state:
-        this.priority === GaugeValvePriority.off
-          ? InstrumentState.off
-          : InstrumentState.active,
-      priority: this.sharedPriority,
-      atSetpoint: this.computeAtSetpoint(this.value),
-      angleSetpoint: scaleAngle(this.setpoint),
-      touching: this.touching,
-      setpointOverride: this.setpointOverride,
-    });
-    const angle = scaleAngle(this.setpoint);
-    const radius =
-      SETPOINT_BASE_RADIUS -
-      SETPOINT_HEIGHT * getSetpointScale(derived.visualState);
-    const marker = drawSetpointMarker({
-      visualState: derived.visualState,
-      colorMode: derived.colorMode,
-      disabled: derived.disabled,
-      id: 'gauge-valve-setpoint',
-    });
-    return svg`
-      <g
-        class="setpoint-rotor"
-        style="transform: rotate(${angle + 90}deg) translateX(${-radius}px) rotate(270deg);"
-      >
-        ${marker}
-      </g>
-    `;
+    return html`<obc-automation-button-readout-stack
+      class="label-stack"
+      .readouts=${this.labelStackReadouts}
+      .tag=${this.tag || null}
+      .idTagOrientation=${IdTagOrientation.bottom}
+    ></obc-automation-button-readout-stack>`;
   }
 
   private renderReadout() {
-    if (this.priority === GaugeValvePriority.off) {
+    if (this.isOff) {
       return html`
         <obc-readout
           class="gauge-valve-readout"
@@ -457,30 +350,43 @@ export class ObcGaugeValve extends SetpointMixin(LitElement) {
       containerPx: measureContainerPx(this),
       faceDiameter: this.faceDiameter,
     });
-    const isOff = this.priority === GaugeValvePriority.off;
-    const facePx = 2 * SCALE_RADIUS * frame.scale;
+    const facePx = 2 * OUTER_RING_RADIUS * frame.scale;
     const readoutVisible = facePx >= CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS;
-    const pct = (y: number) =>
-      `${(((y - frame.y) / frame.height) * 100).toFixed(4)}%`;
-    const readoutY =
-      this.type === GaugeValveType.threeWay
-        ? READOUT_ANCHOR_Y.threeWay
-        : READOUT_ANCHOR_Y.twoWay;
+    const tickmarks = frame.labelsHidden
+      ? this.scaleTickmarks().map((t) => ({...t, text: undefined}))
+      : this.scaleTickmarks();
+    const setpointAngle =
+      this.large && this.setpoint !== undefined
+        ? scaleAngle(this.setpoint, this.rotation)
+        : undefined;
+    const newSetpointAngle =
+      this.large && this.newSetpoint !== undefined
+        ? scaleAngle(this.newSetpoint, this.rotation)
+        : undefined;
+    // Near-edge % offset of the readout box from the scale-side frame edge;
+    // the frame is symmetric, so one offset serves all four scale positions.
+    const readoutAnchor = this.isThreeWay
+      ? READOUT_ANCHOR.threeWay
+      : READOUT_ANCHOR.twoWay;
+    const readoutEdgePct = (
+      ((-readoutAnchor - frame.y) / frame.height) *
+      100
+    ).toFixed(4);
     const anchors = `--scale: ${frame.scale}; --icon-size: ${(
       (ICON_SIZE / frame.width) *
       100
-    ).toFixed(4)}%; --readout-top: ${pct(readoutY)};`;
+    ).toFixed(4)}%; --readout-edge: ${readoutEdgePct}%;`;
     const faceBoxStyle =
       frame.hostWidthPx !== undefined
         ? `width: ${frame.hostWidthPx}px; height: ${frame.hostHeightPx}px;`
         : nothing;
     return html`
       <div
-        class="root ${this.large ? 'large' : 'small'} ${this.type ===
-        GaugeValveType.threeWay
+        class="root ${this.large ? 'large' : 'small'} ${this.isThreeWay
           ? 'three-way'
-          : 'two-way'} priority-${this.priority} style-${this.barStyle} ${this
-          .faceDiameter !== undefined
+          : 'two-way'} priority-${this.priority} style-${this
+          .barStyle} scale-${this.scalePosition} ${this.faceDiameter !==
+        undefined
           ? 'pinned'
           : ''}"
         style=${anchors}
@@ -492,23 +398,40 @@ export class ObcGaugeValve extends SetpointMixin(LitElement) {
               : ''}"
             style=${faceBoxStyle}
           >
-            <svg class="layer" viewBox=${frame.viewBox}>
-              <circle class="face" r=${SCALE_RADIUS} />
-              <circle
-                class="outline"
-                vector-effect="non-scaling-stroke"
-                r=${SCALE_RADIUS}
-              />
-              ${isOff
-                ? nothing
-                : this.renderTrack(90, clampPercent(this.value))}
-              ${isOff ? nothing : this.renderTrack(270, this.inletFillPercent)}
-              ${!isOff && this.type === GaugeValveType.threeWay
-                ? this.renderTrack(180, clampPercent(this.bottomValue))
-                : nothing}
-              ${this.large ? this.renderScale(frame.labelsHidden) : nothing}
-              ${this.large ? this.renderSetpoint() : nothing}
-            </svg>
+            ${this.isOff
+              ? html`<svg class="layer" viewBox=${frame.viewBox}>
+                  <circle
+                    r=${OUTER_RING_RADIUS}
+                    fill="var(--instrument-frame-secondary-color)"
+                  />
+                </svg>`
+              : nothing}
+            <obc-watch
+              class="layer"
+              .state=${this.isOff
+                ? InstrumentState.off
+                : InstrumentState.active}
+              .priority=${this.sharedPriority}
+              .watchCircleType=${WatchCircleType.double}
+              .hasBackgroundCircle=${!this.isOff}
+              .areas=${this.isOff
+                ? []
+                : valveAreas(this.isThreeWay, this.rotation)}
+              .roundBandCuts=${true}
+              .barAreas=${this.barAreas}
+              .needles=${this.capNeedles}
+              .tickmarks=${tickmarks}
+              .angleSetpoint=${setpointAngle}
+              .newAngleSetpoint=${newSetpointAngle}
+              .atAngleSetpoint=${this.computeAtSetpoint(
+                clampPercent(this.value)
+              )}
+              .angleSetpointAtZeroDeadband=${this.setpointAtZeroDeadband}
+              .setpointOverride=${this.setpointOverride}
+              .touching=${this.touching}
+              .animateSetpoint=${this.animateSetpoint}
+              .arcFrame=${frame}
+            ></obc-watch>
             <div class="icon"><slot name="icon"></slot></div>
             ${this.large && readoutVisible ? this.renderReadout() : nothing}
           </div>

@@ -6,6 +6,7 @@ import {
   GaugeValvePriority,
   GaugeValveStyle,
 } from './gauge-valve.js';
+import {GaugeValveScalePosition} from './gauge-valve-geometry.js';
 import './gauge-valve.js';
 import '../../icons/icon-twoway-acuator-general-75.js';
 import '../../icons/icon-twoway-acuator-general-closed.js';
@@ -34,6 +35,7 @@ const meta = {
     type: GaugeValveType.twoWay,
     priority: GaugeValvePriority.regular,
     barStyle: GaugeValveStyle.tint,
+    scalePosition: GaugeValveScalePosition.top,
     value: 75,
     bottomValue: 0,
     large: false,
@@ -52,6 +54,10 @@ const meta = {
       control: 'select',
       options: Object.values(GaugeValveStyle),
     },
+    scalePosition: {
+      control: 'select',
+      options: Object.values(GaugeValveScalePosition),
+    },
     value: {control: {type: 'range', min: 0, max: 100}},
     bottomValue: {control: {type: 'range', min: 0, max: 100}},
   },
@@ -60,6 +66,7 @@ const meta = {
       .type=${args.type}
       .priority=${args.priority ?? GaugeValvePriority.regular}
       .barStyle=${args.barStyle ?? GaugeValveStyle.tint}
+      .scalePosition=${args.scalePosition ?? GaugeValveScalePosition.top}
       .value=${args.value}
       .bottomValue=${args.bottomValue}
       .large=${args.large}
@@ -101,6 +108,7 @@ export const ThreeWay: Story = {
       .type=${args.type}
       .priority=${args.priority ?? GaugeValvePriority.regular}
       .barStyle=${args.barStyle ?? GaugeValveStyle.tint}
+      .scalePosition=${args.scalePosition ?? GaugeValveScalePosition.top}
       .value=${args.value}
       .bottomValue=${args.bottomValue}
       .large=${args.large}
@@ -155,6 +163,7 @@ export const Closed: Story = {
       .type=${args.type}
       .priority=${args.priority ?? GaugeValvePriority.regular}
       .barStyle=${args.barStyle ?? GaugeValveStyle.tint}
+      .scalePosition=${args.scalePosition ?? GaugeValveScalePosition.top}
       .value=${args.value}
       .bottomValue=${args.bottomValue}
       .large=${args.large}
@@ -216,6 +225,7 @@ export const OffState: Story = {
       .type=${args.type}
       .priority=${args.priority ?? GaugeValvePriority.regular}
       .barStyle=${args.barStyle ?? GaugeValveStyle.tint}
+      .scalePosition=${args.scalePosition ?? GaugeValveScalePosition.top}
       .value=${args.value}
       .bottomValue=${args.bottomValue}
       .large=${args.large}
@@ -342,4 +352,24 @@ export const SizingPlayground: Story = {
       )}
     `;
   },
+};
+
+export const ScaleLeftVertical: Story = {
+  name: 'Scale Left (Vertical Two Way)',
+  args: {...TwoWayLarge.args, scalePosition: GaugeValveScalePosition.left},
+};
+
+export const ThreeWayScaleRight: Story = {
+  ...ThreeWayLarge,
+  args: {...ThreeWayLarge.args, scalePosition: GaugeValveScalePosition.right},
+};
+
+/**
+ * `newSetpoint` runs the shared confirm animation (marker travels from
+ * `setpoint` to `newSetpoint` and back); excluded from visual baselines
+ * because the animation timing is nondeterministic.
+ */
+export const SetpointConfirmAnimation: Story = {
+  tags: ['skip-test'],
+  args: {...WithSetpoint.args, animateSetpoint: true, newSetpoint: 80},
 };

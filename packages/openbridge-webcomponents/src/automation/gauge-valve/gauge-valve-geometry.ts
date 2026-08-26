@@ -1,35 +1,36 @@
 /**
- * Geometry for `obc-gauge-valve`, expressed in the shared watch coordinate
- * space: center-origin, outer ring at r 184 (watch.ts OUTER_RING_RADIUS), the
- * space `computeRadialFrame()` builds viewBoxes for. The Figma 6.1 canvas
- * draws the same art on a 512 box whose radii are these values +4; that
- * constant offset is normalized away here so the valve shares the radial
- * instruments' coordinate conventions instead of forking them.
+ * Geometry for `obc-gauge-valve` in the watch coordinate space (center
+ * origin, outer ring r 184). Ports and scale are one rigid layout rotated by
+ * `scalePosition`; all drawing is done by `obc-watch` inputs built from
+ * these angles.
  */
+import type {WatchArea} from '../../navigation-instruments/watch/watch.js';
 
-/** Face/outline radius — the watch outer ring. */
-export const SCALE_RADIUS = 184;
-export const TRACK_INNER_RADIUS = 112;
-export const TRACK_OUTER_RADIUS = 160;
+export enum GaugeValveScalePosition {
+  top = 'top',
+  right = 'right',
+  bottom = 'bottom',
+  left = 'left',
+}
+
+export const SCALE_ROTATION_DEG: Record<GaugeValveScalePosition, number> = {
+  [GaugeValveScalePosition.top]: 0,
+  [GaugeValveScalePosition.right]: 90,
+  [GaugeValveScalePosition.bottom]: 180,
+  [GaugeValveScalePosition.left]: 270,
+};
+
 export const TRACK_CORNER_RADIUS = 5;
 
-/**
- * Endpoints of the cap pill's stroked centerline. The strokes use round
- * linecaps, so the 8px-wide back stroke extends 4px past each endpoint,
- * making the finished pill cover radii 112-160 — flush with the track.
- */
-export const CAP_INNER_RADIUS = 116;
-export const CAP_OUTER_RADIUS = 156;
+/** Half-span (deg) of each port track sector. */
+export const TRACK_HALF_SPANS = {twoWay: 45, threeWay: 30} as const;
 
-/**
- * Half-span (deg) of each track sector. The light track, the fill bar and the
- * cap pills all share this span so the pill stays flush with the bar end at
- * every value.
- */
-export const TRACK_HALF_SPANS: Record<'twoWay' | 'threeWay', number> = {
-  twoWay: 45,
-  threeWay: 30,
-};
+export interface ValvePort {
+  /** Sector center angle in degrees (0° = 12 o'clock). */
+  centerAngle: number;
+  /** Which flow value fills this port's track. */
+  role: 'through' | 'inlet' | 'bottom';
+}
 
 export function clampPercent(value: number): number {
   if (Number.isNaN(value)) return 0;
@@ -40,27 +41,39 @@ export function inletPercent(value: number, bottomValue: number): number {
   return clampPercent(clampPercent(value) + clampPercent(bottomValue));
 }
 
-export function polarToCartesian(
-  radius: number,
-  angleDeg: number
-): {x: number; y: number} {
-  const rad = (angleDeg * Math.PI) / 180;
-  return {
-    x: Math.round(radius * Math.sin(rad) * 1000) / 1000,
-    y: Math.round(-radius * Math.cos(rad) * 1000) / 1000,
-  };
+/** Scale angle for a percent on the 60° top arc, rotated with the layout. */
+export function scaleAngle(percent: number, rotationDeg = 0): number {
+  return -30 + 0.6 * clampPercent(percent) + rotationDeg;
 }
 
-export function radialLinePath(
-  innerRadius: number,
-  outerRadius: number,
-  angleDeg: number
-): string {
-  const inner = polarToCartesian(innerRadius, angleDeg);
-  const outer = polarToCartesian(outerRadius, angleDeg);
-  return `M ${inner.x} ${inner.y} L ${outer.x} ${outer.y}`;
+/** Port sectors for a valve type, rotated with the layout. */
+export function valvePorts(
+  isThreeWay: boolean,
+  rotationDeg: number
+): ValvePort[] {
+  const ports: ValvePort[] = [
+    {centerAngle: 90 + rotationDeg, role: 'through'},
+    {centerAngle: 270 + rotationDeg, role: 'inlet'},
+  ];
+  if (isThreeWay) {
+    ports.splice(1, 0, {centerAngle: 180 + rotationDeg, role: 'bottom'});
+  }
+  return ports;
 }
 
-export function scaleAngle(percent: number): number {
-  return -30 + 0.6 * clampPercent(percent);
+export function valveAreas(
+  isThreeWay: boolean,
+  rotationDeg: number
+): WatchArea[] {
+  const halfSpan = isThreeWay
+    ? TRACK_HALF_SPANS.threeWay
+    : TRACK_HALF_SPANS.twoWay;
+  return valvePorts(isThreeWay, rotationDeg).map((port) => ({
+    startAngle: port.centerAngle - halfSpan,
+    endAngle: port.centerAngle + halfSpan,
+    roundOutsideCut: true,
+    roundInsideCut: true,
+    roundRadius: TRACK_CORNER_RADIUS,
+    outlined: true,
+  }));
 }

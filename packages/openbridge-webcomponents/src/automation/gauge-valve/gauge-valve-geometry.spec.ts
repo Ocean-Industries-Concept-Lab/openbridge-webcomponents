@@ -1,17 +1,14 @@
 import {describe, it, expect} from 'vitest';
 import {
-  SCALE_RADIUS,
-  TRACK_INNER_RADIUS,
-  TRACK_OUTER_RADIUS,
+  GaugeValveScalePosition,
+  SCALE_ROTATION_DEG,
   TRACK_CORNER_RADIUS,
-  CAP_INNER_RADIUS,
-  CAP_OUTER_RADIUS,
   TRACK_HALF_SPANS,
   clampPercent,
   inletPercent,
-  polarToCartesian,
-  radialLinePath,
   scaleAngle,
+  valveAreas,
+  valvePorts,
 } from './gauge-valve-geometry.js';
 
 describe('clampPercent', () => {
@@ -37,27 +34,6 @@ describe('inletPercent', () => {
   });
 });
 
-describe('polarToCartesian', () => {
-  it("0 deg is 12 o'clock, center-origin", () => {
-    const p = polarToCartesian(100, 0);
-    expect(p.x).toBeCloseTo(0);
-    expect(p.y).toBeCloseTo(-100);
-  });
-  it("90 deg is 3 o'clock", () => {
-    const p = polarToCartesian(100, 90);
-    expect(p.x).toBeCloseTo(100);
-    expect(p.y).toBeCloseTo(0);
-  });
-});
-
-describe('radialLinePath', () => {
-  it('runs from inner to outer radius along one angle', () => {
-    const d = radialLinePath(120, 160, 90);
-    expect(d.startsWith('M 120 0')).toBe(true);
-    expect(d.endsWith('L 160 0')).toBe(true);
-  });
-});
-
 describe('TRACK_HALF_SPANS', () => {
   it('gives two-way tracks a 45 deg half-span', () => {
     expect(TRACK_HALF_SPANS.twoWay).toBe(45);
@@ -67,25 +43,48 @@ describe('TRACK_HALF_SPANS', () => {
   });
 });
 
-describe('radii (watch coordinate space)', () => {
-  it('places the outline on the shared watch outer ring', () => {
-    expect(SCALE_RADIUS).toBe(184);
-  });
-  it('uses a 5px corner radius for track and bar sectors', () => {
-    expect(TRACK_CORNER_RADIUS).toBe(5);
-  });
-  it('keeps the finished cap pill flush with the track annulus', () => {
-    // Round linecaps extend the 8px-wide back stroke 4 units past each
-    // endpoint, so the pill covers exactly the track's radial extent.
-    expect(CAP_INNER_RADIUS - 4).toBe(TRACK_INNER_RADIUS);
-    expect(CAP_OUTER_RADIUS + 4).toBe(TRACK_OUTER_RADIUS);
-  });
-});
-
 describe('scaleAngle', () => {
   it('maps 0/50/100 to -30/0/30', () => {
     expect(scaleAngle(0)).toBe(-30);
     expect(scaleAngle(50)).toBe(0);
     expect(scaleAngle(100)).toBe(30);
+  });
+  it('rotates with the layout', () => {
+    expect(
+      scaleAngle(50, SCALE_ROTATION_DEG[GaugeValveScalePosition.right])
+    ).toBe(90);
+    expect(scaleAngle(0, 180)).toBe(150);
+  });
+});
+
+describe('valvePorts', () => {
+  it('orders three-way ports through, bottom, inlet', () => {
+    expect(valvePorts(true, 0).map((p) => p.role)).toEqual([
+      'through',
+      'bottom',
+      'inlet',
+    ]);
+  });
+  it('rotates every port with the layout', () => {
+    expect(valvePorts(false, 90).map((p) => p.centerAngle)).toEqual([180, 360]);
+  });
+});
+
+describe('valveAreas', () => {
+  it('spans each port by its half-span with the valve corner treatment', () => {
+    const [through] = valveAreas(false, 0);
+    expect(through).toEqual({
+      startAngle: 45,
+      endAngle: 135,
+      roundOutsideCut: true,
+      roundInsideCut: true,
+      roundRadius: TRACK_CORNER_RADIUS,
+      outlined: true,
+    });
+  });
+  it('rotates sectors with the layout', () => {
+    const [through] = valveAreas(false, 270);
+    expect(through.startAngle).toBe(315);
+    expect(through.endAngle).toBe(405);
   });
 });
