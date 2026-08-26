@@ -2,6 +2,12 @@ import {LitElement, PropertyValues, html, svg, unsafeCSS, nothing} from 'lit';
 import {property} from 'lit/decorators.js';
 import componentStyle from './compass-sector.css?inline';
 import '../watch/watch.js';
+import {
+  centerReadoutStyles,
+  renderCenterReadouts,
+} from '../readout/center-readout.js';
+import {ReadoutSize} from '../readout/readout.js';
+import instrumentReadoutStyle from '../readout/instrument-readout.css?inline';
 import {Tickmark, TickmarkType, TickmarkStyle} from '../watch/tickmark.js';
 import {arrow, ArrowStyle} from '../compass/arrow.js';
 import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
@@ -29,6 +35,13 @@ export enum CompassSectorPriorityElement {
   rot = 'rot',
 }
 
+// Fixed frame padding for both the zoomed and un-zoomed paths. This component
+// deliberately keeps its bespoke FOV-compression geometry and does NOT use
+// svghelpers/radial-frame.ts: the viewBox is cached per FOV (a
+// container-size-dependent label reserve would invalidate that), and the
+// 72-unit padding covers the 3-char degree labels at typical sizes.
+// TODO(#1021): adopt computeRadialFrame if degree labels ever clip when the
+// component is shrunk far below its design size.
 const PADDING = 72;
 const WATCH_TYPE = WatchCircleType.triple;
 const INNER_RADIUS = innerRingRadiusFor(WATCH_TYPE);
@@ -94,7 +107,37 @@ function normalizeAngle(a: number): number {
  * - Enable `zoomToFitArc` to enlarge the arc to fill the viewport.
  * - For a full‑circle compass, use `<obc-compass>` instead.
  *
- * @fires None
+ * @availableWhen newHeadingSetpoint headingSetpoint!=null
+ * @availableWhen atHeadingSetpoint headingSetpoint!=null && autoAtHeadingSetpoint==false
+ * @availableWhen headingSetpointAtZeroDeadband headingSetpoint!=null
+ * @availableWhen headingSetpointOverride headingSetpoint!=null
+ * @availableWhen autoAtHeadingSetpoint headingSetpoint!=null
+ * @availableWhen autoAtHeadingSetpointDeadband headingSetpoint!=null && autoAtHeadingSetpoint==true
+ * @availableWhen animateSetpoint headingSetpoint!=null
+ * @availableWhen touching headingSetpoint!=null
+ * @availableWhen rotPosition rotType!=undefined
+ * @property rateOfTurnDegreesPerMinute - Measured rate of turn in degrees per minute (positive = starboard).
+ *   Drives both the bar extent and (after multiplication by
+ *   `rotDotAnimationFactor`) the spinning dot animation. When `undefined`,
+ *   falls back to the deprecated `rotationsPerMinute`.
+ * @availableWhen rateOfTurnDegreesPerMinute rotType!=undefined
+ * @property rotDotAnimationFactor - Visual amplification applied only to the spinning dot animation
+ *   (not to the bar extent). Default `18` keeps the legacy visual feel
+ *   (≈1 rpm at 20°/min).
+ * @availableWhen rotDotAnimationFactor rotType!=undefined
+ * @availableWhen rotPortStarboard rotType!=undefined
+ * @availableWhen rotAtZeroDeadband rotType==bar
+ * @availableWhen priorityElements priority==enhanced
+ * @property hasReadout - When `true`, shows a centered `<obc-readout>` under the arc displaying the
+ *   heading (label `HDG`, unit `DEG`). The value color follows the HDG entry in
+ *   `priorityElements`, matching the HDG arrow.
+ * @property label - Readout label. Default `HDG`.
+ * @availableWhen label hasReadout==true
+ * @property unit - Readout unit. Default `DEG`.
+ * @availableWhen unit hasReadout==true
+ * @property fractionDigits - Number of fraction digits shown in the readout. Default `0`.
+ * @availableWhen fractionDigits hasReadout==true
+ * @stable
  */
 @customElement('obc-compass-sector')
 export class ObcCompassSector extends LitElement {
@@ -116,23 +159,13 @@ export class ObcCompassSector extends LitElement {
 
   @property({type: String}) rotType: RotType | undefined;
   @property({type: String}) rotPosition: RotPosition = RotPosition.innerCircle;
-  /**
-   * Measured rate of turn in degrees per minute (positive = starboard).
-   * Drives both the bar extent and (after multiplication by
-   * `rotDotAnimationFactor`) the spinning dot animation. When `undefined`,
-   * falls back to the deprecated `rotationsPerMinute`.
-   */
   @property({type: Number}) rateOfTurnDegreesPerMinute: number | undefined;
-  /**
-   * Visual amplification applied only to the spinning dot animation
-   * (not to the bar extent). Default `18` keeps the legacy visual feel
-   * (≈1 rpm at 20°/min).
-   */
   @property({type: Number}) rotDotAnimationFactor: number = 18;
   /**
    * @deprecated Use `rateOfTurnDegreesPerMinute` (and optionally
    * `rotDotAnimationFactor`) instead. Takes effect only when
    * `rateOfTurnDegreesPerMinute` is `undefined`.
+   * @availableWhen rotType!=undefined && rateOfTurnDegreesPerMinute==undefined
    */
   @property({type: Number}) rotationsPerMinute: number = 1;
   /**
@@ -142,6 +175,7 @@ export class ObcCompassSector extends LitElement {
    *
    * Note: the unit changed from rotations per minute to degrees per minute
    * with the introduction of `rateOfTurnDegreesPerMinute`.
+   * @availableWhen rotType==bar
    */
   @property({type: Number}) rotMaxValue: number = 60;
   @property({type: Boolean}) rotPortStarboard: boolean = false;
@@ -155,6 +189,10 @@ export class ObcCompassSector extends LitElement {
   ];
   @property({type: Boolean}) tickmarksInside: boolean = false;
   @property({type: Boolean}) zoomToFitArc: boolean = false;
+  @property({type: Boolean}) hasReadout: boolean = false;
+  @property({type: String}) label = 'HDG';
+  @property({type: String}) unit = 'DEG';
+  @property({type: Number}) fractionDigits = 0;
 
   private _headingSp = new SetpointBundle({
     angularWraparound: true,
@@ -396,6 +434,33 @@ export class ObcCompassSector extends LitElement {
     return selected.includes(element) ? this.priority : Priority.regular;
   }
 
+  /**
+   * Vertical placement of the readout as a percentage of the host height.
+   *
+   * With `zoomToFitArc` the arc is reframed by `computeZoomToFitArcFrame`, whose
+   * `radiusOffset`/`viewBox` depend on the arc's *absolute* orientation (which
+   * cardinal axes its bounding box crosses), not just its bend. The arc itself
+   * is always rotated back to the top, so it stays put on screen — but a
+   * frame-derived offset would swing wildly as `heading` rotates the bbox around
+   * the circle. So in zoom we use a fixed offset, which keeps the readout steady
+   * under the (stationary) arc regardless of heading.
+   *
+   * Without zoom the viewBox is the fixed, origin-symmetric 120° framing, so the
+   * geometry is orientation-independent: place the readout halfway down the inner
+   * radius from the watch center toward the arc's inner edge.
+   */
+  private get _readoutTopPercent(): number {
+    if (this.zoomToFitArc) {
+      return 70;
+    }
+    const [, vy, , vh] = this._cachedViewBox.split(' ').map(Number);
+    if (!vh || Number.isNaN(vy)) {
+      return 50;
+    }
+    const anchorY = -INNER_RADIUS * 0.5;
+    return Math.round(((anchorY - vy) / vh) * 1000) / 10;
+  }
+
   // ---------------------------------------------------------------------------
   // Render
   // ---------------------------------------------------------------------------
@@ -477,11 +542,31 @@ export class ObcCompassSector extends LitElement {
             rOff
           )}
         </svg>
+        ${this.hasReadout
+          ? html`<div class="readout" style="top: ${this._readoutTopPercent}%">
+              ${renderCenterReadouts([
+                {
+                  value: this.heading,
+                  label: this.label,
+                  unit: this.unit,
+                  fractionDigits: this.fractionDigits,
+                  size: ReadoutSize.large,
+                  priority: this.priorityFor(CompassSectorPriorityElement.hdg),
+                  centerValue: true,
+                  centerMeta: true,
+                },
+              ])}
+            </div>`
+          : nothing}
       </div>
     `;
   }
 
-  static override styles = unsafeCSS(componentStyle);
+  static override styles = [
+    unsafeCSS(instrumentReadoutStyle),
+    centerReadoutStyles,
+    unsafeCSS(componentStyle),
+  ];
 }
 
 declare global {

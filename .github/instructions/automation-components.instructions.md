@@ -2,6 +2,10 @@
 applyTo: "packages/openbridge-webcomponents/src/automation/**"
 ---
 
+<!-- GENERATED FILE — DO NOT EDIT.
+     Source: docs/agents/automation-components.md
+     Regenerate: npm run agents:sync -w packages/openbridge-webcomponents -->
+
 # Automation Components Instructions
 
 These instructions apply to all automation schematic components: motorized devices (pump, motor, fan), valves, electrical components, line/pipe elements, tanks, readouts, and badges.
@@ -10,14 +14,16 @@ These instructions apply to all automation schematic components: motorized devic
 
 Choose the correct base class when creating a new automation device:
 
-| Use case | Base class | State properties |
-|----------|-----------|------------------|
-| Motorized device (on + speed) | `ObcAbstractAutomationButtonMotorized` | `on`, `speedInPercent` (0–100) |
-| Binary on/off device | `ObcAbstractAutomationButtonSquared` | `on` |
-| Analog device with value | `ObcAbstractAutomationButton` + custom logic | `open`, `value` (0–100) |
-| Pure display (no button) | `LitElement` directly | N/A |
+| Use case                      | Base class                                   | State properties                                                                                         |
+| ----------------------------- | -------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| Motorized device (on + speed) | `ObcAbstractAutomationButtonMotorized`       | `on`, `speed` + `speedUnit` (default `%`) + `speedMaxDigits` (default 3); `speedInPercent` is deprecated |
+| Binary on/off device          | `ObcAbstractAutomationButtonSquared`         | `on`                                                                                                     |
+| Analog device with value      | `ObcAbstractAutomationButton` + custom logic | `open`, `value` (0–100)                                                                                  |
+| Pure display (no button)      | `LitElement` directly                        | N/A                                                                                                      |
 
 All button-based components share `ObcAbstractAutomationButton` as root, which provides: positioning, readout stacks, badges, alert frames, tags, and label direction.
+
+> **Exception:** `obc-automation-tank` extends `LitElement` directly (not the abstract base) because its layout shell is fundamentally different (multi-cell readout/tag/halo grid, optional embedded `obc-gauge-trend`). It re-implements the alert-frame pattern locally — same 6 properties (`alert`, `alertFrameType`, `alertFrameThickness`, `alertFrameStatus`, `showAlertCategoryIcon`, `showAlertIcon`) and same 3 slots (`alert-icon`, `alert-label`, `alert-timer`) — and overlays the `<obc-alert-frame>` inside its `.halo` wrapper so the ring hugs the bordered tank area only. When changing the alert API on the abstract base, keep the tank in sync. The tank also adds `aria-live="polite" aria-atomic="true"` on its `.root` to announce slotted alert labels; the abstract base does not (yet) do this.
 
 ## Icon Rendering Pattern
 
@@ -33,6 +39,7 @@ override get icon() {
 ```
 
 Rules:
+
 - Always include the `usecsscolor` attribute so CSS variable color overrides work
 - Provide both horizontal and vertical icon variants when `this.vertical` is true
 - Apply rotation via a wrapper `div` with `style="transform: rotate(90deg)"`, not on the icon itself
@@ -89,7 +96,20 @@ Analog valves render inline dynamic SVG (not icon swapping):
 
 ## Badge Positioning
 
-Badges (`badgeAuto`, `badgeCommandLocked`, `badgeDuty`, `badgeAlertOff`) render in corner slots. Badge spacer logic is computed based on readout position and which badges are present. Do not hard-code spacer visibility.
+The abstract base exposes four **enum-driven** badge properties (defined in `abstract-automation-button.ts`) that render an `<obc-automation-badge>` in a fixed corner slot. Each defaults to `None` (no badge); a non-`None` value resolves to a specific `ObcAutomationBadgeType`. The legacy `badge-top-*` / `badge-bottom-*` slots still work and override the enum default for backward compatibility.
+
+| Property             | Enum                                 | Values                                                         | Corner       |
+| -------------------- | ------------------------------------ | -------------------------------------------------------------- | ------------ |
+| `badgeControl`       | `AutomationButtonBadgeControl`       | `none`, `local`, `local-only`, `manual`, `manual-only`, `auto` | top-left     |
+| `badgeAlert`         | `AutomationButtonBadgeAlert`         | `none`, `silence`, `caution`, `warning`, `alarm`               | top-right    |
+| `badgeInterlock`     | `AutomationButtonBadgeInterlock`     | `none`, `interlock`, `interlock-inhibit`                       | bottom-left  |
+| `badgeCommandLocked` | `AutomationButtonBadgeCommandLocked` | `none`, `command-locked`                                       | bottom-right |
+
+Badge spacer logic is computed from readout position and which badges are present (enum-resolved or slotted). Do not hard-code spacer visibility.
+
+`obc-automation-tank` mirrors the same four properties and the same enum imports, but rendering happens inside its own `.badges` cell — the corner-slot model does not apply there. When adding a new button-based device, spread `argTypesAbstractAutomationButton` (or one of its variant-specific re-exports) into the story meta so the four select controls are exposed in Storybook (see `analog-valve.stories.ts` for the canonical pattern).
+
+**Exception — the `obc-automation-button` primitive.** The badge enum API lives only on `ObcAbstractAutomationButton`. The underlying `obc-automation-button` element (`class ObcAutomationButton extends LitElement`) exposes only the four named slots (`badge-top-right`, `badge-top-left`, `badge-bottom-left`, `badge-bottom-right`) and has no `badgeControl`/`badgeAlert`/`badgeInterlock`/`badgeCommandLocked` properties. Do **not** spread `argTypesAbstractAutomationButton*` into `automation-button.stories.ts` — the toggles would be inert because the primitive cannot resolve enums to badges. Use the slot API directly there (see `ValveBadges` / `DamperBadges` for the pattern). The wrapper does the enum-to-badge resolution and projects `<obc-automation-badge>` into the primitive's slots.
 
 ## P&ID Anchor Point Model
 
@@ -99,10 +119,10 @@ The Storybook `crossDecorator` simulates this layout: it wraps the component in 
 
 Different components have different anchor points:
 
-| Component type | Anchor point | Internal CSS technique |
-|----------------|-------------|------------------------|
-| Valve / pump / motor | Center of icon | 0×0 `.point-wrapper` at anchor + negative offset by half touch-target size + `translateX(-50%)` for top/bottom positioning or `translateY(-50%)` for left/right positioning |
-| Tank | Top-center of tank body | `translateX(-50%)` on `.outer` + `top: -20px` to skip badge area |
-| Line segments | Left/top edge of line | SVG typically drawn around the 24px grid center (for example x=12 or y=12) + visual offset by about half the grid to align to the host edge, with minor `±0.5px` stroke/viewBox adjustments and direction-specific shifts where needed |
+| Component type       | Anchor point            | Internal CSS technique                                                                                                                                                                                                                 |
+| -------------------- | ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Valve / pump / motor | Center of icon          | 0×0 `.point-wrapper` at anchor + negative offset by half touch-target size + `translateX(-50%)` for top/bottom positioning or `translateY(-50%)` for left/right positioning                                                            |
+| Tank                 | Top-center of tank body | `translateX(-50%)` on `.outer` + `top: -20px` to skip badge area                                                                                                                                                                       |
+| Line segments        | Left/top edge of line   | SVG typically drawn around the 24px grid center (for example x=12 or y=12) + visual offset by about half the grid to align to the host edge, with minor `±0.5px` stroke/viewBox adjustments and direction-specific shifts where needed |
 
 **Do not change the centering transforms** on automation components without understanding the anchor point intent. The browser's element overlay (host box) will often appear offset from the visual content — this is intentional because the host box starts at the placement coordinate while the visual content is shifted to align the anchor.

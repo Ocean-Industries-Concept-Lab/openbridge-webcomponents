@@ -10,7 +10,7 @@ import {WindPropulsionPriorityElement} from './wind-propulsion.js';
 
 const meta: Meta<typeof ObcWindPropulsion> = {
   title: 'Instruments/Wind Propulsion',
-  tags: ['autodocs', '6.0'],
+  tags: ['autodocs', '6.0', 'beta'],
   component: 'obc-wind-propulsion',
   argTypes: {
     forceAngle: {control: {type: 'range', min: -180, max: 180, step: 1}},
@@ -43,8 +43,8 @@ const meta: Meta<typeof ObcWindPropulsion> = {
       options: Object.values(WindPropulsionPriorityElement),
     },
     touching: {control: 'boolean'},
-    currentWindSpeedBeaufort: {
-      control: {type: 'range', min: 0, max: 12, step: 1},
+    currentWindSpeedKnots: {
+      control: {type: 'range', min: 0, max: 100, step: 1},
     },
     currentWindFromDirection: {
       control: {type: 'range', min: 0, max: 360, step: 1},
@@ -138,7 +138,7 @@ export const WithWind: Story = {
     sailAngleSetpoint: 10,
     state: InstrumentState.active,
     priority: Priority.enhanced,
-    currentWindSpeedBeaufort: 5,
+    currentWindSpeedKnots: 25,
     currentWindFromDirection: 270,
     priorityElements: [WindPropulsionPriorityElement.forceBar],
   },

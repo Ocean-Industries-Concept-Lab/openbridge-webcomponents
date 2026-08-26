@@ -18,6 +18,9 @@ export enum CapacitorAlternativeIcon {
   capacitor04 = 'capacitor04',
 }
 
+/**
+ * @stable
+ */
 @customElement('obc-capacitor')
 export class ObcCapacitor extends ObcAbstractAutomationButtonSquared {
   @property({type: String}) alternativeIcon: CapacitorAlternativeIcon =

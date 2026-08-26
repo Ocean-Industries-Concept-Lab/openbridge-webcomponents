@@ -88,11 +88,27 @@ export enum CheckButtonCheckboxAppearance {
  * * `check-button-click` – Fired after user toggles the control.  Detail:
  *   `{ checked: boolean, type: 'regular' | 'checkbox' }`.
  *
+ * @property disabled - Disables the button, preventing user interaction and applying disabled styling.
+ * @property fullWidth - If false, button width adapts to its content (fit-content).
+ *   If true, uses the `width` property (if set) or expands to 100% of parent.
+ * @property width - Specific width for the button (e.g., "200px", "10rem").
+ *   Only applies when `fullWidth` is true.
+ * @availableWhen width fullWidth==true
+ * @property showIcon - Whether to show the icon in regular mode (icon slot).
+ *   Ignored in checkbox mode.
+ * @availableWhen showIcon type==regular
+ * @property hasCheckedIcon - If true, uses the `checked-icon` slot for the checked state in checkbox mode.
+ *   Otherwise, uses the default checked icon.
+ * @availableWhen hasCheckedIcon type==checkbox
+ * @property hasUncheckedIcon - If true, uses the `unchecked-icon` slot for the unchecked state in checkbox mode.
+ *   Otherwise, uses the default unchecked icon.
+ * @availableWhen hasUncheckedIcon type==checkbox
  * @slot - Default slot for button label/content
  * @slot icon - Icon before label (regular mode, if showIcon is true)
  * @slot checked-icon - Custom icon for checked state (checkbox mode)
  * @slot unchecked-icon - Custom icon for unchecked state (checkbox mode)
- * @fires check-button-click {CustomEvent<{checked: boolean, type: string}>}
+ * @fires {CustomEvent<{checked: boolean, type: string}>} check-button-click - Fired after the user toggles the control.
+ * @stable
  */
 @customElement('obc-check-button')
 export class ObcCheckButton extends LitElement {
@@ -114,49 +130,16 @@ export class ObcCheckButton extends LitElement {
    */
   @property({type: Boolean}) checked = false;
 
-  /**
-   * Disables the button, preventing user interaction and applying disabled styling.
-   *
-   * @default false
-   */
   @property({type: Boolean}) disabled = false;
 
-  /**
-   * If false, button width adapts to its content (fit-content).
-   * If true, uses the `width` property (if set) or expands to 100% of parent.
-   *
-   * @default false
-   */
   @property({type: Boolean}) fullWidth = false;
 
-  /**
-   * Specific width for the button (e.g., "200px", "10rem").
-   * Only applies when `fullWidth` is true.
-   *
-   * @default ''
-   */
   @property({type: String}) width = '';
 
-  /**
-   * Whether to show the icon in regular mode (icon slot).
-   * Ignored in checkbox mode.
-   */
   @property({type: Boolean}) showIcon = false;
 
-  /**
-   * If true, uses the `checked-icon` slot for the checked state in checkbox mode.
-   * Otherwise, uses the default checked icon.
-   *
-   * @default false
-   */
   @property({type: Boolean}) hasCheckedIcon = false;
 
-  /**
-   * If true, uses the `unchecked-icon` slot for the unchecked state in checkbox mode.
-   * Otherwise, uses the default unchecked icon.
-   *
-   * @default false
-   */
   @property({type: Boolean}) hasUncheckedIcon = false;
 
   /**
@@ -164,6 +147,7 @@ export class ObcCheckButton extends LitElement {
    * Keep `default` for existing behavior. Use `updated` for the new checkbox visuals.
    *
    * @default 'default'
+   * @availableWhen type==checkbox
    */
   @property({type: String, attribute: 'checkbox-appearance'})
   checkboxAppearance: CheckButtonCheckboxAppearance =
@@ -190,7 +174,7 @@ export class ObcCheckButton extends LitElement {
      * Fired after the user toggles the check button.
      * The event detail includes the new checked state and the type of the button.
      *
-     * @fires check-button-click {CustomEvent<{checked: boolean, type: string}>}
+     * @fires check-button-click
      */
     this.dispatchEvent(
       new CustomEvent('check-button-click', {

@@ -61,7 +61,8 @@ export enum ObcTitleContainerState {
  * @slot title - Title text (overrides `titleValue` fallback).
  * @slot label - Label text (overrides `label` fallback).
  * @slot actions - Action elements rendered in the right section.
- * @fires action-click {CustomEvent<{action: number}>} Fired when a slotted action element is clicked.
+ * @fires {CustomEvent<{action: number}>} action-click - Fired when a slotted action element is clicked.
+ * @beta
  */
 @customElement('obc-title-container')
 export class ObcTitleContainer extends LitElement {

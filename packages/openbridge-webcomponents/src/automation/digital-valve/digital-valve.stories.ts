@@ -15,7 +15,7 @@ const meta: Meta<typeof ObcDigitalValve> = {
   component: 'obc-digital-valve',
   decorators: [crossDecorator],
   args: {
-    tag: '0012',
+    tag: '#0012',
     readoutPosition: AutomationButtonReadoutPosition.bottom,
     positioning: AutomationButtonPositioning.button,
     readoutSize: AutomationButtonReadoutStackSize.regular,
@@ -23,7 +23,6 @@ const meta: Meta<typeof ObcDigitalValve> = {
     progress: false,
     vertical: false,
     showReadoutStack: true,
-    hasIdTag: true,
   },
   argTypes: {
     ...argTypesAbstractAutomationButtonPassiveRound,

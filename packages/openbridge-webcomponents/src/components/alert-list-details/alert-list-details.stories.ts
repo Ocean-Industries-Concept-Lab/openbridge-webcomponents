@@ -187,3 +187,70 @@ export const OneItem: Story = {
     </obc-alert-list-details>`;
   },
 };
+
+export const LevelCategories: Story = {
+  args: {
+    alerts: [
+      {
+        id: 'level-1',
+        tagId: 'CRIT-01',
+        source: 'PCS',
+        text: 'Emergency shutdown condition detected',
+        acknowledged: false,
+        active: true,
+        type: AlertType.LevelCritical,
+        time: new Date('2024-01-15T14:32:15Z'),
+      },
+      {
+        id: 'level-2',
+        tagId: 'HIGH-02',
+        source: 'ME 1',
+        text: 'Main engine overspeed',
+        acknowledged: false,
+        active: true,
+        type: AlertType.LevelHigh,
+        time: new Date('2024-01-15T14:30:00Z'),
+      },
+      {
+        id: 'level-3',
+        tagId: 'MED-03',
+        source: 'Tank 1',
+        text: 'Tank level approaching high limit',
+        acknowledged: false,
+        active: true,
+        type: AlertType.LevelMedium,
+        time: new Date('2024-01-15T14:28:00Z'),
+      },
+      {
+        id: 'level-4',
+        tagId: 'LOW-04',
+        source: 'HVAC',
+        text: 'Filter maintenance due',
+        acknowledged: false,
+        active: true,
+        type: AlertType.LevelLow,
+        time: new Date('2024-01-15T14:25:00Z'),
+      },
+      {
+        id: 'level-5',
+        tagId: 'DIAG-05',
+        source: 'Network',
+        text: 'Redundant link diagnostic message',
+        acknowledged: false,
+        active: true,
+        type: AlertType.LevelDiagnostic,
+        time: new Date('2024-01-15T14:20:00Z'),
+      },
+    ],
+  },
+  render: (args) => {
+    return html` <obc-alert-list-details
+      @ack-click=${handleAck}
+      .selectedMode=${args.selectedMode}
+      .alerts=${args.alerts}
+      .showTime=${args.showTime}
+      style="height: 100vh; display: block;"
+    >
+    </obc-alert-list-details>`;
+  },
+};

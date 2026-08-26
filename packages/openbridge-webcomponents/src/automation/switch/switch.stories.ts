@@ -1,6 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-vite';
 import {ObcSwitch, SwitchAlternativeIcon} from './switch.js';
 import {
+  AutomationButtonOrientation,
   AutomationButtonPositioning,
   AutomationButtonReadoutPosition,
 } from '../automation-button/automation-button.js';
@@ -16,15 +17,14 @@ const meta: Meta<typeof ObcSwitch> = {
   component: 'obc-switch',
   decorators: [crossDecorator],
   args: {
-    tag: '0012',
+    tag: '#0012',
     readoutPosition: AutomationButtonReadoutPosition.bottom,
     positioning: AutomationButtonPositioning.button,
     readoutSize: AutomationButtonReadoutStackSize.regular,
     alert: false,
     progress: false,
-    vertical: false,
+    orientation: AutomationButtonOrientation.horizontal,
     showReadoutStack: true,
-    hasIdTag: true,
   },
   argTypes: {
     alternativeIcon: {
@@ -48,5 +48,19 @@ export const On: Story = {
 export const Off: Story = {
   args: {
     on: false,
+  },
+};
+
+export const OrientationVerticalRight: Story = {
+  args: {
+    on: false,
+    orientation: AutomationButtonOrientation.verticalRight,
+  },
+};
+
+export const OrientationVerticalLeft: Story = {
+  args: {
+    on: false,
+    orientation: AutomationButtonOrientation.verticalLeft,
   },
 };

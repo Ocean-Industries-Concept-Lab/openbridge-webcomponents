@@ -19,12 +19,10 @@ export function makeScreenshot() {
     const slug = storybookMeta.testName
       .replace(/\s+/g, '-')
       .replace(/[/\\?%*:|"<>]/g, '_');
-    await page
-      .elementLocator(wrapper)
-      .screenshot({
-        path: `${storybookMeta.relativePathToSrc}/screenshots/${storybookMeta.name}-${slug}.png`,
-        timeout: 3000,
-      });
+    await page.elementLocator(wrapper).screenshot({
+      path: `${storybookMeta.relativePathToSrc}/screenshots/${storybookMeta.name}-${slug}.png`,
+      timeout: 3000,
+    });
     document.body.removeChild(wrapper);
   });
 }

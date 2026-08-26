@@ -74,6 +74,7 @@ import {ObcChartLineBase} from '../../building-blocks/chart-line/chart-line-base
  * ```html
  * <obc-line-graph lineMode="straight" .showPoints="${true}"></obc-line-graph>
  * ```
+ * @beta
  */
 @customElement('obc-line-graph')
 export class ObcLineGraph extends ObcChartLineBase {

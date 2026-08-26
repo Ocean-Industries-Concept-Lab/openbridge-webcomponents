@@ -38,7 +38,11 @@ import {
   getChartTooltipOptions,
   generateLegendHTML,
   applyAlphaToColor,
+  normalizeXValue,
+  formatXValue,
+  XValueMode,
 } from '../../charthelpers/index.js';
+import type {ChartXValue} from '../../charthelpers/x-value.js';
 import {
   EXTERNAL_SCALE_BORDER_RADIUS_CSS_VAR,
   readExternalScaleBorderRadiusPx,
@@ -94,9 +98,12 @@ interface ExternalScaleElement extends HTMLElement {
   borderRadiusPosition?: BorderRadiusPosition;
 }
 
+export type {ChartXValue, TemporalLike} from '../../charthelpers/x-value.js';
+
 export enum XAxisType {
   category = 'category',
   time = 'time',
+  number = 'number',
 }
 
 export enum YAxisPosition {
@@ -115,8 +122,17 @@ export enum TimeDisplay {
   date = 'date',
 }
 
+export type ChartLinePoint = number | {x: ChartXValue; y: number};
+
 export type ChartLineDataItem = {
-  label: string;
+  /** Category label. Used when `xAxisType='category'` (the default). */
+  label?: string;
+  /**
+   * X-coordinate for `xAxisType='time'` (epoch ms, ISO string, Date, or
+   * Temporal object) or `xAxisType='number'` (plain number). When absent,
+   * `label` is parsed as a fallback.
+   */
+  x?: ChartXValue;
   value: number;
 };
 
@@ -155,6 +171,7 @@ const LINE_GRAPH_WATCHED_PROP_NAMES = [
   'width',
   'height',
   'fixedAspectRatioScaling', // Triggers responsive mode change
+  'hasLabelPadding', // Toggles edge-to-edge rendering and label visibility
 ] as const;
 
 const LINE_GRAPH_RECREATE_PROP_NAMES = [
@@ -165,11 +182,27 @@ const LINE_GRAPH_RECREATE_PROP_NAMES = [
 ] as const;
 
 /**
+ * Properties that define the chart's reference size, and therefore invalidate
+ * the derived `computedWidth` / `computedHeight` pair.
+ */
+const LINE_GRAPH_DIMENSION_PROP_NAMES = [
+  'width',
+  'height',
+  'fixedAspectRatioScaling',
+] as const;
+
+/**
  * Abstract base class for line and area chart components built on Chart.js.
+ *
+ * ## Concrete implementations
+ * - `<obc-line-graph>`: Line chart (non-filled)
+ * - `<obc-area-graph>`: Area chart with fill modes (semitransparent, solid, threshold)
  *
  * ## Features
  * - **Single or multi-series**: Use `data` for simple single-series or `datasets` for multi-series charts
- * - **Time and category axes**: Supports `category` x-axis (labels) and `time` x-axis (ISO dates or timestamps)
+ * - **Category, time and number axes**: `category` (labels, evenly spaced), `time` (epoch ms,
+ *   ISO strings, `Date` or Temporal objects — positioned proportionally, so uneven intervals
+ *   render unevenly) and `number` (plain numeric x-values on a linear scale)
  * - **Line styles**: Choose `smooth` (curved), `straight`, or `stepped` line rendering
  * - **Fill modes**: Area fills with `semitransparent`, `solid`, or `threshold` (red/blue above/below midpoint)
  * - **Stacked charts**: Enable `stacked` for multi-series datasets to stack values on y-axis
@@ -218,6 +251,36 @@ const LINE_GRAPH_RECREATE_PROP_NAMES = [
  * </script>
  * ```
  *
+ * Single-series with time axis (uneven intervals position proportionally;
+ * x accepts epoch ms, ISO strings, Date or Temporal objects):
+ * ```html
+ * <obc-line-graph></obc-line-graph>
+ * <script>
+ *   const chart = document.querySelector('obc-line-graph');
+ *   chart.xAxisType = 'time';
+ *   chart.timeDisplay = 'minutes';
+ *   chart.data = [
+ *     {x: '2026-07-06T10:00:00Z', value: 10},
+ *     {x: new Date('2026-07-06T10:03:00Z'), value: 14},
+ *     {x: Temporal.Instant.from('2026-07-06T10:15:00Z'), value: 12}
+ *   ];
+ * </script>
+ * ```
+ *
+ * Single-series with numeric x-axis:
+ * ```html
+ * <obc-line-graph></obc-line-graph>
+ * <script>
+ *   const chart = document.querySelector('obc-line-graph');
+ *   chart.xAxisType = 'number';
+ *   chart.data = [
+ *     {x: 0, value: 2},
+ *     {x: 2.5, value: 3},
+ *     {x: 10, value: 6}
+ *   ];
+ * </script>
+ * ```
+ *
  * Stacked area chart with solid fill:
  * ```html
  * <obc-line-graph></obc-line-graph>
@@ -228,7 +291,6 @@ const LINE_GRAPH_RECREATE_PROP_NAMES = [
  *     {label: 'Series B', data: [1, 2, 3, 2, 4]},
  *     {label: 'Series C', data: [3, 2, 1, 2, 3]}
  *   ];
- *   chart.fill = true;
  *   chart.fillMode = 'solid';
  *   chart.stacked = true;
  *   chart.legend = true;
@@ -241,7 +303,6 @@ const LINE_GRAPH_RECREATE_PROP_NAMES = [
  * <script>
  *   const chart = document.querySelector('obc-line-graph');
  *   chart.data = [{label: '1', value: 20}, {label: '2', value: 45}, {label: '3', value: 35}];
- *   chart.fill = true;
  *   chart.fillMode = 'threshold';
  * </script>
  * ```
@@ -262,115 +323,157 @@ const LINE_GRAPH_RECREATE_PROP_NAMES = [
  * </script>
  * ```
  *
- * @property {Array<{label: string, value: number}>} data - Single-series data array. Each object must have `label` (string) and `value` (number). Used when `datasets` is not provided.
- * @property {ChartDataset<'line', (number | {x: string|number|Date; y: number})[]>[]} datasets - Multi-series Chart.js datasets. Takes precedence over `data`. Each dataset can have `label`, `data` (numeric array or `{x, y}` points), and visual properties like `borderColor`, `backgroundColor`, `fill`, etc.
- * @property {(string|number)[]} labels - Explicit labels for category x-axis. If omitted, labels are derived from `data` property or dataset x-values.
- * @property {string[]} colors - Custom color palette (CSS variable names or color strings). Falls back to theme default colors if not provided.
- * @property {'category'|'time'} xAxisType - X-axis mode. `'category'` for labeled data points, `'time'` for time-based data (ISO strings or timestamps). Default: `'category'`.
- * @property {'minutes'|'date'} timeDisplay - Time axis label format when `xAxisType='time'`. `'date'` shows full date/time, `'minutes'` shows minutes relative to first data point. Default: `'date'`.
- * @property {'left'|'right'} yAxisPosition - Single y-axis position. Use this for simple charts with one y-axis. For multiple y-axes, use `yAxes` property instead. Default: `'left'`.
- * @property {Array<{id?: string; position?: 'left'|'right'; min?: number; max?: number; grid?: boolean}>} yAxes - Multiple y-axis definitions for complex charts. Each axis can specify `id` (referenced by dataset `yAxisID`), `position`, `min`/`max` range, and `grid` visibility.
- * @property {boolean} showGrid - Show vertical grid lines (x-axis). When combined with `showGridX` and `showGridY`, controls full grid visibility. Default: `false`.
- * @property {boolean} showGridX - Show vertical grid lines (x-axis). Set to `false` to hide only vertical lines while keeping horizontal lines. Default: `false`.
- * @property {boolean} showGridY - Show horizontal grid lines (y-axis). Set to `false` to hide only horizontal lines while keeping vertical lines. Default: `false`.
- * @property {boolean} showTickMarks - Show axis tick marks and labels. Automatically hidden below 192px height threshold. Default: `false`.
- * @property {boolean} showPoints - Show point markers on data points. Default: `false`.
- * @property {boolean} fill - Enable area fill under/between lines. Use with `fillMode` to control fill style. Default: `false`.
- * @property {'semitransparent'|'solid'|'threshold'} fillMode - Fill rendering mode. `'semitransparent'` uses 50% alpha, `'solid'` uses opaque fill, `'threshold'` (single-series only) fills above/below midpoint with red/blue gradient. Default: `'semitransparent'`.
- * @property {'smooth'|'straight'|'stepped'} lineMode - Line drawing style. `'smooth'` applies bezier curve tension, `'straight'` draws straight lines, `'stepped'` creates step-like lines. Default: `'smooth'`.
- * @property {boolean} stacked - Stack multi-series datasets vertically on y-axis. Ignored for single-series and threshold fill mode. Default: `false`.
- * @property {string} unit - Unit label displayed in tooltips (e.g., 'kW', 'kg', '%'). Default: empty string.
- * @property {number} xTicksLimit - Maximum number of x-axis ticks/grid lines. Useful for matching external axes. Optional.
- * @property {number} xStepSize - Force specific interval between x-axis ticks (e.g., 1, 2, 5). Useful for matching external axes. Optional.
- * @property {number} yTicksLimit - Maximum number of y-axis ticks/grid lines. Useful for matching external axes. Optional.
- * @property {number} yStepSize - Force specific interval between y-axis ticks (e.g., 2, 5, 10). Useful for matching external axes. Optional.
- * @property {boolean} legend - Show HTML legend below chart with series labels and colors. Default: `false`.
- * @property {number} height - Chart height in pixels. Determines chart size with 1.5:1 aspect ratio (width = height × 1.5). Default: `320`.
- * @property {boolean} showDebugOverlay - Development mode: show visual debug overlay with dimension guides. Shows blue border around canvas (axis area) and red border around chart grid (data area). Default: `false`.
- *
- * @ignore This is an abstract base class. Use concrete implementations like ObcLineGraph or ObcAreaGraph instead.
+ * @property data - Simple single-series data. `{label, value}` items for the category axis;
+ *   `{x, value}` items for time/number axes (x: epoch ms, ISO string, Date,
+ *   or Temporal object). Points are drawn in array order (no sorting).
+ * @property datasets - Chart.js-style datasets for multi-series use. If provided, takes precedence over `data`.
+ * @property labels - Optional explicit labels for the x-axis (category mode). If omitted labels are derived from `data`
+ * @property colors - Custom color palette (CSS variable names or color strings).
+ * @property legend - Show HTML legend below chart with series labels and colors.
+ * @property showDebugOverlay - Development mode: show visual debug overlay with dimension guides.
+ * @property width - Width of the chart in pixels. Default: 480.
+ * @property height - Height of the chart in pixels. Default: 320.
+ * @property fixedAspectRatioScaling - Enable fixed aspect ratio scaling mode.
+ *   When true, width/height properties define the aspect ratio (not actual pixels).
+ *   The component fills 100% of parent width and calculates height from aspect ratio.
+ *   When false (default), width/height are used as actual pixel dimensions.
+ * @property scaleReferenceSize - Reference size for external scales when using fixedAspectRatioScaling.
+ *   This value is passed down to external scales to determine their 1:1 Figma design size.
+ *   At this reference size, scales render at native size; above/below they scale proportionally.
+ *   Default: 384 (matches Figma design baseline).
+ * @property xAxisType - X-axis mode: 'category' for labeled, evenly spaced data points; 'time'
+ *   for time-based data positioned proportionally; 'number' for plain
+ *   numeric x-values.
+ * @property yAxisPosition - Single y-axis position ('left' or 'right'). For multiple y-axes, use yAxes instead.
+ * @property yAxes - Multiple y-axis definitions for complex multi-axis charts.
+ * @property showGrid - Show grid lines.
+ * @property showGridX - Show vertical grid lines (x-axis). Default: false.
+ * @availableWhen showGridX showGrid==true
+ * @property showGridY - Show horizontal grid lines (y-axis). Default: false.
+ * @availableWhen showGridY showGrid==true
+ * @property showTickMarks - Show axis tick marks and labels.
+ * @property showPoints - Show point markers on data points. Default: false.
+ * @property lineMode - Line drawing style: 'smooth' (curved), 'straight', or 'stepped'.
+ * @property unit - Unit label displayed in tooltips (e.g., 'kW', 'kg', '%').
+ * @property timeDisplay - Time axis label format: 'date' (full date/time) or 'minutes' (relative).
+ * @availableWhen timeDisplay xAxisType==time
+ * @property xTicksLimit - Max number of x-axis ticks/grid lines. Useful for matching external axes.
+ * @property xStepSize - Force x-axis tick interval. Useful for matching external axes.
+ * @property yTicksLimit - Max number of y-axis ticks/grid lines. Useful for matching external axes.
+ * @property yStepSize - Force y-axis tick interval. Useful for matching external axes.
+ * @property state - Instrument state affecting colors of external scales.
+ * @property priority - Color priority: enhanced uses blue palette instead of default gray.
+ * @property frameStyle - Frame style for chart and external scales.
+ * @property borderRadiusPosition - Border radius position for the chart's own border.
+ * @property borderRadiusPositionExternalScales - Border radius position for external scales based on layout.
+ * @property instrumentMode - When true, the chart is used inside an instrument (e.g., gauge-trend).
+ *   In this mode, only label font size responds to .obc-component-size-* CSS classes.
+ *   Border radius uses the explicit `borderRadius` property value (or defaults to 8px),
+ *   rather than reading from CSS variables.
+ * @property borderRadius - Explicit border radius value in pixels.
+ *   When instrumentMode=true, this value is used directly (defaults to 8px).
+ *   When instrumentMode=false, this is ignored and border radius is read from CSS variable.
+ * @availableWhen borderRadius instrumentMode==true
+ * @experimental
  */
 export class ObcChartLineBase extends LitElement {
-  /** Simple single-series data (array of {label, value}). */
   @property({type: Array, attribute: false})
   data: ChartLineDataItem[] = [];
 
-  /** Chart.js-style datasets for multi-series use. If provided, takes precedence over `data`. */
   @property({type: Array, attribute: false})
-  datasets?: ChartDataset<
-    'line',
-    (number | {x: string | number | Date; y: number})[]
-  >[] = undefined;
+  datasets?: ChartDataset<'line', ChartLinePoint[]>[] = undefined;
 
-  /** Optional explicit labels for the x-axis (category mode). If omitted labels are derived from `data` */
   @property({type: Array, attribute: false})
   labels?: (string | number)[] = undefined;
 
-  /** Custom color palette (CSS variable names or color strings). */
   @property({type: Array, attribute: false})
   colors: string[] = [];
 
-  /** Show HTML legend below chart with series labels and colors. */
   @property({type: Boolean, reflect: true})
   legend = false;
 
-  /** Development mode: show visual debug overlay with dimension guides. */
   @property({type: Boolean, reflect: true})
   showDebugOverlay = false;
 
-  /** Width of the chart in pixels. Default: 480. */
   @property({type: Number, reflect: true})
   width = 480;
 
-  /** Height of the chart in pixels. Default: 320. */
   @property({type: Number, reflect: true})
   height = 320;
 
-  /**
-   * Enable fixed aspect ratio scaling mode.
-   * When true, width/height properties define the aspect ratio (not actual pixels).
-   * The component fills 100% of parent width and calculates height from aspect ratio.
-   * When false (default), width/height are used as actual pixel dimensions.
-   */
   @property({type: Boolean, reflect: true})
   fixedAspectRatioScaling = false;
 
-  /**
-   * Reference size for external scales when using fixedAspectRatioScaling.
-   * This value is passed down to external scales to determine their 1:1 Figma design size.
-   * At this reference size, scales render at native size; above/below they scale proportionally.
-   * Default: 384 (matches Figma design baseline).
-   */
   @property({type: Number})
   scaleReferenceSize = 384;
 
-  /** X-axis mode: 'category' for labeled data points, 'time' for time-based data. */
   @property({type: String})
   xAxisType: XAxisType = XAxisType.category;
 
-  /** Single y-axis position ('left' or 'right'). For multiple y-axes, use yAxes instead. */
   @property({type: String})
   yAxisPosition: YAxisPosition = YAxisPosition.left;
 
-  /** Multiple y-axis definitions for complex multi-axis charts. */
   @property({type: Array, attribute: false})
   yAxes?: ChartLineYAxisConfig[] = undefined;
 
-  /** Show grid lines. */
   @property({type: Boolean})
   showGrid = false;
 
-  /** Show vertical grid lines (x-axis). Default: false. */
   @property({type: Boolean})
   showGridX = false;
 
-  /** Show horizontal grid lines (y-axis). Default: false. */
   @property({type: Boolean})
   showGridY = false;
 
-  /** Show axis tick marks and labels. */
   @property({type: Boolean})
   showTickMarks = false;
+
+  /**
+   * Reserve canvas padding for axis tick labels on sides without an external scale.
+   *
+   * When `true` (default), the chart leaves room for tick labels and renders them
+   * (subject to `showTickMarks` and the 192px auto-compact threshold).
+   *
+   * When `false`, the chart renders edge-to-edge on sides without a slotted external
+   * scale AND axis tick labels are force-hidden so they cannot be clipped. This also
+   * suppresses the automatic edge-to-edge switch that normally happens below the
+   * 192px threshold, eliminating the visible padding "jump" when crossing it.
+   *
+   * Useful when embedding the chart inside another component that owns framing
+   * and never wants to show axis labels (e.g. `obc-automation-tank`).
+   *
+   * Defaults to `true` to preserve existing behavior. Declared with `attribute: false`
+   * because a `true`-default boolean cannot work as an HTML boolean attribute.
+   */
+  @property({type: Boolean, attribute: false})
+  hasLabelPadding = true;
+
+  /** @internal - True when the x-axis positions points by numeric value. */
+  protected get isNumericXAxis(): boolean {
+    return (
+      this.xAxisType === XAxisType.time || this.xAxisType === XAxisType.number
+    );
+  }
+
+  /** @internal - Normalization mode for the current x-axis type. */
+  protected get xValueMode(): XValueMode {
+    return this.xAxisType === XAxisType.number
+      ? XValueMode.number
+      : XValueMode.time;
+  }
+
+  /** @internal - Last data/datasets reference already warned about. */
+  private lastWarnedXSource?: unknown;
+
+  /** @internal - Warn once per data assignment about unparseable x-values. */
+  private warnOnInvalidX(xValues: number[], sourceRef: unknown) {
+    const invalid = xValues.filter((x) => !Number.isFinite(x)).length;
+    if (invalid === 0 || this.lastWarnedXSource === sourceRef) return;
+    this.lastWarnedXSource = sourceRef;
+    console.warn(
+      `[obc-chart] ${invalid} x value(s) could not be parsed for xAxisType='${this.xAxisType}'; the points render as gaps.`
+    );
+  }
 
   // Internal default tension used when `lineMode` is 'smooth'. Not exposed as a property.
   private readonly DEFAULT_TENSION = 0.4;
@@ -378,73 +481,48 @@ export class ObcChartLineBase extends LitElement {
   // Internal default point radius when points are shown.
   private readonly POINT_RADIUS = 3;
 
-  /** Show point markers on data points. Default: false. */
   @property({type: Boolean})
   showPoints = false;
 
-  /** Line drawing style: 'smooth' (curved), 'straight', or 'stepped'. */
   @property({type: String})
   lineMode: LineMode = LineMode.smooth;
 
-  /** Unit label displayed in tooltips (e.g., 'kW', 'kg', '%'). */
   @property({type: String})
   unit = '';
 
-  /** Time axis label format: 'date' (full date/time) or 'minutes' (relative). */
   @property({type: String})
   timeDisplay: TimeDisplay = TimeDisplay.date;
 
-  /** Max number of x-axis ticks/grid lines. Useful for matching external axes. */
   @property({type: Number})
   xTicksLimit?: number = undefined;
 
-  /** Force x-axis tick interval. Useful for matching external axes. */
   @property({type: Number})
   xStepSize?: number = undefined;
 
-  /** Max number of y-axis ticks/grid lines. Useful for matching external axes. */
   @property({type: Number})
   yTicksLimit?: number = undefined;
 
-  /** Force y-axis tick interval. Useful for matching external axes. */
   @property({type: Number})
   yStepSize?: number = undefined;
 
-  /** Instrument state affecting colors of external scales. */
   @property({type: String})
   state: InstrumentState = InstrumentState.active;
 
-  /** Color priority: enhanced uses blue palette instead of default gray. */
   @property({type: String})
   priority: Priority = Priority.regular;
 
-  /** Frame style for chart and external scales. */
   @property({type: String})
   frameStyle: FrameStyle = FrameStyle.regular;
 
-  /** Border radius position for the chart's own border. */
   @property({type: String})
   borderRadiusPosition?: BorderRadiusPosition = undefined;
 
-  /** Border radius position for external scales based on layout. */
   @property({type: String})
   borderRadiusPositionExternalScales?: BorderRadiusPosition = undefined;
 
-  /**
-   * When true, the chart is used inside an instrument (e.g., gauge-trend).
-   * In this mode, only label font size responds to .obc-component-size-* CSS classes.
-   * Border radius uses the explicit `borderRadius` property value (or defaults to 8px),
-   * rather than reading from CSS variables.
-   * @default false
-   */
   @property({type: Boolean})
   instrumentMode = false;
 
-  /**
-   * Explicit border radius value in pixels.
-   * When instrumentMode=true, this value is used directly (defaults to 8px).
-   * When instrumentMode=false, this is ignored and border radius is read from CSS variable.
-   */
   @property({type: Number})
   borderRadius?: number = undefined;
 
@@ -770,34 +848,26 @@ export class ObcChartLineBase extends LitElement {
       // Start at top-left corner (accounting for radius)
       ctx.moveTo(x + (corners.topLeft ? r : 0), y);
 
-      // Top edge
       ctx.lineTo(x + width - (corners.topRight ? r : 0), y);
 
-      // Top-right corner
       if (corners.topRight) {
         ctx.arcTo(x + width, y, x + width, y + r, r);
       }
 
-      // Right edge
       ctx.lineTo(x + width, y + height - (corners.bottomRight ? r : 0));
 
-      // Bottom-right corner
       if (corners.bottomRight) {
         ctx.arcTo(x + width, y + height, x + width - r, y + height, r);
       }
 
-      // Bottom edge
       ctx.lineTo(x + (corners.bottomLeft ? r : 0), y + height);
 
-      // Bottom-left corner
       if (corners.bottomLeft) {
         ctx.arcTo(x, y + height, x, y + height - r, r);
       }
 
-      // Left edge
       ctx.lineTo(x, y + (corners.topLeft ? r : 0));
 
-      // Top-left corner
       if (corners.topLeft) {
         ctx.arcTo(x, y, x + r, y, r);
       }
@@ -979,28 +1049,24 @@ export class ObcChartLineBase extends LitElement {
           }
 
           // Draw corners separately (only if adjacent edges are both drawn)
-          // Top-left corner
           if (!skipTop && !skipLeft && corners.topLeft) {
             ctx.beginPath();
             ctx.arc(x + r, y + r, r, Math.PI, Math.PI * 1.5);
             ctx.stroke();
           }
 
-          // Top-right corner
           if (!skipTop && !skipRight && corners.topRight) {
             ctx.beginPath();
             ctx.arc(x + width - r, y + r, r, Math.PI * 1.5, Math.PI * 2);
             ctx.stroke();
           }
 
-          // Bottom-right corner
           if (!skipRight && !skipBottom && corners.bottomRight) {
             ctx.beginPath();
             ctx.arc(x + width - r, y + height - r, r, 0, Math.PI * 0.5);
             ctx.stroke();
           }
 
-          // Bottom-left corner
           if (!skipBottom && !skipLeft && corners.bottomLeft) {
             ctx.beginPath();
             ctx.arc(x + r, y + height - r, r, Math.PI * 0.5, Math.PI);
@@ -1082,13 +1148,6 @@ export class ObcChartLineBase extends LitElement {
     const event = e as CustomEvent<ExternalScaleDimensions>;
     const {side, thickness} = event.detail;
 
-    // console.debug(`[chart-line-base] Scale dimension changed:`, {
-    //   side,
-    //   thickness,
-    //   previousThickness: this.externalScaleDimensions.get(side),
-    //   isUpdatingScales: this.isUpdatingScales,
-    // });
-
     // Update dimension tracking
     const previousThickness = this.externalScaleDimensions.get(side);
     if (previousThickness === thickness) return; // No change
@@ -1169,30 +1228,17 @@ export class ObcChartLineBase extends LitElement {
    * Synchronize scale and chart dimensions/data
    * This is the main coordination function
    */
-  private syncScalesAndChart() {
-    if (this.isUpdatingScales) return;
+  private syncScalesAndChart(): boolean {
+    if (this.isUpdatingScales) return false;
     this.isUpdatingScales = true;
-
-    // console.debug(`[chart-line-base] Syncing scales and chart`, {
-    //   width: this.width,
-    //   height: this.height,
-    //   scaleDimensions: Array.from(this.externalScaleDimensions.entries()),
-    // });
 
     try {
       // Step 1: Calculate padding from scale dimensions
       const padding = this.calculatePaddingFromScales();
 
-      // console.debug(`[chart-line-base] Calculated padding:`, padding);
-
       // Step 2: Calculate effective chart area
       const effectiveWidth = this.width - padding.left - padding.right;
       const effectiveHeight = this.height - padding.top - padding.bottom;
-
-      // console.debug(`[chart-line-base] Effective dimensions:`, {
-      //   effectiveWidth,
-      //   effectiveHeight,
-      // });
 
       // Guard against invalid dimensions
       if (effectiveWidth <= 0 || effectiveHeight <= 0) {
@@ -1203,11 +1249,10 @@ export class ObcChartLineBase extends LitElement {
           effectiveWidth,
           effectiveHeight,
         });
-        return;
+        return false;
       }
 
       // Step 3: Update slotted scales with coordinated properties
-      // this.updateScaleProperties(padding, effectiveWidth, effectiveHeight);
       this.updateScaleProperties(padding);
 
       // Step 4: Force recreation of chart with new padding
@@ -1215,16 +1260,26 @@ export class ObcChartLineBase extends LitElement {
         this.chart.destroy();
       }
       this.createChart();
+      return true;
     } finally {
       this.isUpdatingScales = false;
     }
   }
 
   /**
-   * Calculate chart padding from external scale dimensions
+   * Calculate chart padding from external scale dimensions.
+   *
+   * For sides without an external scale, falls back to `CHART_DIMENSIONS.CANVAS_PADDING`
+   * (the chart's own padding to reserve room for axis tick labels). When
+   * `hasLabelPadding=false` that fallback is 0 so the chart renders edge-to-edge,
+   * and this same value is cascaded to slotted scales via `updateScaleProperties()`
+   * — so the bar's main-axis padding (`paddingTop`/`paddingBottom` for vertical bars)
+   * collapses with the chart's perpendicular padding and they stay visually aligned.
    */
   private calculatePaddingFromScales() {
-    const defaultPadding = CHART_DIMENSIONS.CANVAS_PADDING;
+    const defaultPadding = this.hasLabelPadding
+      ? CHART_DIMENSIONS.CANVAS_PADDING
+      : 0;
 
     const padding = {
       top: this.externalScaleDimensions.get('top') ?? defaultPadding,
@@ -1233,25 +1288,18 @@ export class ObcChartLineBase extends LitElement {
       left: this.externalScaleDimensions.get('left') ?? defaultPadding,
     };
 
-    // console.debug(`[chart-line-base] calculatePaddingFromScales:`, {
-    //   fixedAspectRatioScaling: this.fixedAspectRatioScaling,
-    //   scaleReferenceSize: this.scaleReferenceSize,
-    //   externalScaleDimensions: Object.fromEntries(this.externalScaleDimensions),
-    //   defaultPadding,
-    //   calculatedPadding: padding,
-    // });
-
     return padding;
   }
 
   /**
    * Update properties on slotted scale elements
    */
-  private updateScaleProperties(
-    padding: {top: number; right: number; bottom: number; left: number}
-    // effectiveWidth: number,
-    // effectiveHeight: number
-  ) {
+  private updateScaleProperties(padding: {
+    top: number;
+    right: number;
+    bottom: number;
+    left: number;
+  }) {
     // Get chart scales for min/max values
     const yMin = this.chart?.scales['y']?.min ?? 0;
     const yMax = this.chart?.scales['y']?.max ?? 100;
@@ -1262,8 +1310,14 @@ export class ObcChartLineBase extends LitElement {
     const effectiveWidth = this.getEffectiveWidth();
     const effectiveHeight = this.getEffectiveHeight();
 
-    // Determine if we should show labels (above threshold)
+    // Determine if we should show labels (above threshold).
+    // When `hasLabelPadding=false` the chart reserves no room for axis labels,
+    // so slotted scales must also hide their labels — otherwise their
+    // `labelThickness` band stays in the reported thickness and the chart
+    // gets re-padded inward (leaving whitespace on the scale's side), and any
+    // visible labels would be clipped against the canvas edge.
     const showLabels =
+      this.hasLabelPadding &&
       effectiveWidth >= RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS &&
       effectiveHeight >= RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS;
 
@@ -1293,20 +1347,6 @@ export class ObcChartLineBase extends LitElement {
           ),
         }
       : {left: padding.left, right: padding.right};
-
-    // console.debug(`[chart-line-base] updateScaleProperties:`, {
-    //   fixedAspectRatioScaling: this.fixedAspectRatioScaling,
-    //   referenceWidth: this.width,
-    //   referenceHeight: this.height,
-    //   scaleReferenceSize: this.scaleReferenceSize,
-    //   effectiveWidth,
-    //   effectiveHeight,
-    //   scaleFactor: this.getScaleFactor(),
-    //   basePadding: padding,
-    //   verticalViewBoxPadding,
-    //   horizontalViewBoxPadding,
-    //   showLabels,
-    // });
 
     // Update each slotted scale
     const updates: Array<
@@ -1438,9 +1478,7 @@ export class ObcChartLineBase extends LitElement {
     }
 
     // Apply all updates
-    // console.debug(`[chart-line-base] Applying ${updates.length} scale updates`);
     updates.forEach(([_slot, scale, props]) => {
-      // console.debug(`  - Updating scale:`, props);
       Object.assign(scale, props);
     });
   }
@@ -1557,6 +1595,35 @@ export class ObcChartLineBase extends LitElement {
       return;
     }
 
+    // `computedWidth` / `computedHeight` are the pixel size everything below
+    // derives from (`--chart-height`, the slotted scales' height, the padding
+    // scale factor). They were only ever refreshed from the wrapper's
+    // ResizeObserver, so re-assigning `width` / `height` rebuilt the chart
+    // against the *previous* aspect ratio and the new one only took effect on
+    // the next container resize (issue #1138).
+    //
+    // This runs before the `hasLabelPadding` branch below: the two can change
+    // in the same update (the tank sets both on its embedded gauge-trend), and
+    // taking the label-padding path first would rebuild against a stale
+    // derived size. Nothing is lost by going through here instead — a rebuild
+    // from `updateComputedDimensions()` goes via `syncScalesAndChart()`, which
+    // performs the same `updateScaleProperties()` cascade.
+    if (this.hasAnyChanged(changed, LINE_GRAPH_DIMENSION_PROP_NAMES)) {
+      // Recreates the chart itself when the derived size actually moved.
+      if (this.updateComputedDimensions()) return;
+    }
+
+    // `hasLabelPadding` cascades into slotted scales via `updateScaleProperties()`
+    // (toggles `showLabels`, which collapses/expands the bar's label band and
+    // changes its reported thickness). That path only runs through
+    // `syncScalesAndChart()`, so when only `hasLabelPadding` changes we must
+    // route through there — otherwise slotted scales stay stale until the
+    // next slot/resize event and the chart re-pads on stale thickness.
+    if (changed.has('hasLabelPadding') && this.hasExternalScales()) {
+      this.syncScalesAndChart();
+      return;
+    }
+
     const needsRecreation = this.hasAnyChanged(
       changed,
       LINE_GRAPH_RECREATE_PROP_NAMES
@@ -1668,24 +1735,31 @@ export class ObcChartLineBase extends LitElement {
   }
 
   /**
-   * Calculate actual dimensions based on parent width and aspect ratio.
-   * Only used when fixedAspectRatioScaling is true.
+   * Refresh `computedWidth` / `computedHeight`, the derived pixel size the
+   * chart and its slotted scales are laid out from.
+   *
+   * In pixel mode they simply mirror `width` / `height`. Only in
+   * `fixedAspectRatioScaling` mode are they derived — from the wrapper's
+   * measured width and the aspect ratio the `width` / `height` pair defines —
+   * and only then can this rebuild the chart.
+   *
+   * @returns `true` when the change was significant enough that the chart was
+   * rebuilt here, so the caller must not rebuild it a second time.
    */
-  private updateComputedDimensions() {
+  private updateComputedDimensions(): boolean {
     if (!this.fixedAspectRatioScaling) {
       // In pixel mode, use width/height directly
       this.computedWidth = this.width;
       this.computedHeight = this.height;
-      return;
+      return false;
     }
 
-    // Get the wrapper element
     const wrapper = this.renderRoot.querySelector('.wrapper') as HTMLElement;
-    if (!wrapper) return;
+    if (!wrapper) return false;
 
     // Get parent's available width
     const parentWidth = wrapper.clientWidth;
-    if (parentWidth <= 0) return;
+    if (parentWidth <= 0) return false;
 
     // Calculate aspect ratio from width/height properties
     const aspectRatio = this.width / this.height;
@@ -1693,18 +1767,6 @@ export class ObcChartLineBase extends LitElement {
     // Use parent width as actual width, calculate height from aspect ratio
     const newWidth = parentWidth;
     const newHeight = Math.round(parentWidth / aspectRatio);
-
-    // console.debug(`[chart-line-base] updateComputedDimensions:`, {
-    //   fixedAspectRatioScaling: this.fixedAspectRatioScaling,
-    //   referenceWidth: this.width,
-    //   referenceHeight: this.height,
-    //   scaleReferenceSize: this.scaleReferenceSize,
-    //   parentWidth,
-    //   aspectRatio,
-    //   newWidth,
-    //   newHeight,
-    //   scaleFactor: newWidth / this.width,
-    // });
 
     // Only update if dimensions changed
     if (this.computedWidth !== newWidth || this.computedHeight !== newHeight) {
@@ -1715,13 +1777,18 @@ export class ObcChartLineBase extends LitElement {
       // Note: syncScalesAndChart() handles chart destruction and creation internally,
       // so we only call createChart() directly when there are no external scales.
       if (this.hasExternalScales()) {
-        this.syncScalesAndChart();
+        // syncScalesAndChart() bails without rebuilding when a sync is already
+        // in flight or the effective chart area is degenerate; reporting its
+        // real outcome keeps the caller's own rebuild as the fallback.
+        return this.syncScalesAndChart();
       } else if (this.chart) {
         // No external scales - just recreate chart
         this.chart.destroy();
         this.createChart();
+        return true;
       }
     }
+    return false;
   }
 
   /**
@@ -1767,28 +1834,21 @@ export class ObcChartLineBase extends LitElement {
   protected buildDataset(
     data:
       | number[]
-      | ChartDataset<
-          'line',
-          (number | {x: string | number | Date; y: number})[]
-        >,
+      | {x: number; y: number}[]
+      | ChartDataset<'line', ChartLinePoint[]>,
     index: number,
     chartColors: string[],
     totalCount = 1
-  ): ChartDataset<
-    'line',
-    number[] | (number | {x: string | number | Date; y: number})[]
-  > {
+  ): ChartDataset<'line', ChartLinePoint[]> {
     const currentColor = chartColors[index % chartColors.length];
 
-    // Check if input is existing dataset (has 'data' property) or raw values array
-    const existingDataset =
-      'data' in (data as object)
-        ? (data as ChartDataset<
-            'line',
-            (number | {x: string | number | Date; y: number})[]
-          >)
-        : null;
-    const values = existingDataset ? null : (data as number[]);
+    // Raw input is an array (values or points); anything else is an existing dataset
+    const existingDataset = Array.isArray(data)
+      ? null
+      : (data as ChartDataset<'line', ChartLinePoint[]>);
+    const values = Array.isArray(data)
+      ? (data as number[] | {x: number; y: number}[])
+      : null;
 
     const borderColor = existingDataset?.borderColor ?? currentColor;
     const fillFlag = existingDataset?.fill ?? this.shouldApplyFill();
@@ -1847,33 +1907,34 @@ export class ObcChartLineBase extends LitElement {
       }),
     };
 
-    return result as ChartDataset<
-      'line',
-      number[] | (number | {x: string | number | Date; y: number})[]
-    >;
+    return result as ChartDataset<'line', ChartLinePoint[]>;
   }
 
   /**
-   * Create threshold mode datasets: invisible baseline + main dataset with above/below fills
+   * Create threshold mode datasets: invisible baseline + main dataset with
+   * above/below fills. Accepts plain values (category mode) or {x, y} points
+   * (time/number mode); the baseline mirrors the input x-positions.
    */
   protected createThresholdDatasets(
-    values: number[],
+    values: number[] | {x: number; y: number}[],
     chartColors: string[]
-  ): ChartDataset<'line', number[]>[] {
-    const numericValues = values
-      .map((v) => Number(v))
+  ): ChartDataset<'line', ChartLinePoint[]>[] {
+    const yValues = values
+      .map((v) => (typeof v === 'number' ? v : v.y))
       .filter((n) => Number.isFinite(n));
-    const minV = numericValues.length ? Math.min(...numericValues) : 0;
-    const maxV = numericValues.length ? Math.max(...numericValues) : 100;
+    const minV = yValues.length ? Math.min(...yValues) : 0;
+    const maxV = yValues.length ? Math.max(...yValues) : 100;
     const threshold = (minV + maxV) / 2;
-    const baselineData = numericValues.map(() => threshold);
+    const baselineData: ChartLinePoint[] = values.map((v) =>
+      typeof v === 'number' ? threshold : {x: v.x, y: threshold}
+    );
 
     const lowRaw = LINE_GRAPH_GRID_CONFIG.thresholdLowColorVar;
     const highRaw = LINE_GRAPH_GRID_CONFIG.thresholdHighColorVar;
     const highFill = applyAlphaToColor(this, highRaw, 0.35);
     const lowFill = applyAlphaToColor(this, lowRaw, 0.35);
 
-    const baselineDataset: ChartDataset<'line', number[]> = {
+    const baselineDataset: ChartDataset<'line', ChartLinePoint[]> = {
       label: 'threshold-baseline',
       data: baselineData,
       borderColor: 'transparent',
@@ -1885,10 +1946,7 @@ export class ObcChartLineBase extends LitElement {
       spanGaps: true,
     };
 
-    const main = this.buildDataset(values, 0, chartColors) as ChartDataset<
-      'line',
-      number[]
-    >;
+    const main = this.buildDataset(values, 0, chartColors);
     (main as unknown as Record<string, unknown>).fill = {
       target: 0,
       above: highFill,
@@ -1901,7 +1959,9 @@ export class ObcChartLineBase extends LitElement {
   }
 
   /**
-   * Prepare normalized datasets for multi-series charts
+   * Prepare normalized datasets for multi-series charts.
+   * In time/number mode every point's x is normalized (epoch ms / number)
+   * so strings, Dates and Temporal objects position correctly.
    */
   protected prepareMultiSeriesDatasets() {
     const defaultPalette =
@@ -1914,19 +1974,48 @@ export class ObcChartLineBase extends LitElement {
       defaultPalette
     );
 
+    // Normalize first, then warn once per assignment with the aggregate
+    // count across ALL series — warning inside the per-dataset loop would
+    // either flood the console or (with ref-based dedup) silently swallow
+    // failures in every series after the first.
+    const normalized = this.datasets!.map((ds) => this.normalizeDatasetX(ds));
+    if (this.isNumericXAxis) {
+      this.warnOnInvalidX(
+        normalized.flatMap((ds) =>
+          (ds.data ?? []).map((pt) =>
+            pt && typeof pt === 'object' ? (pt.x as number) : 0
+          )
+        ),
+        this.datasets
+      );
+    }
+
     const totalCount = this.datasets!.length;
-    return this.datasets!.map((ds, i) =>
+    return normalized.map((ds, i) =>
       this.buildDataset(ds, i, chartColors, totalCount)
     );
   }
 
+  /** @internal - Return a copy of the dataset with normalized point x-values. */
+  private normalizeDatasetX(
+    ds: ChartDataset<'line', ChartLinePoint[]>
+  ): ChartDataset<'line', ChartLinePoint[]> {
+    if (!this.isNumericXAxis || !ds.data) return ds;
+    const data = ds.data.map((pt) =>
+      pt && typeof pt === 'object' && 'x' in pt
+        ? {...pt, x: normalizeXValue(pt.x, this.xValueMode)}
+        : pt
+    );
+    return {...ds, data};
+  }
+
   /**
-   * Prepare datasets for single-series charts
-   * Handles both regular and threshold fill modes
+   * Prepare datasets for single-series charts.
+   * Category mode: labels + numeric values (unchanged legacy path).
+   * Time/number mode: normalized {x, y} points on a linear scale.
+   * Handles both regular and threshold fill modes.
    */
   protected prepareSingleSeriesDatasets() {
-    const values = this.data.map((d) => d.value);
-    const labels = this.data.map((d) => d.label);
     const defaultPalette =
       this.priority === Priority.enhanced
         ? CHART_SECTOR_ENHANCED_COLORS
@@ -1938,6 +2027,25 @@ export class ObcChartLineBase extends LitElement {
     );
     const fill = this.shouldApplyFill();
     const fillMode = this.getFillMode();
+
+    if (this.isNumericXAxis) {
+      const points = this.data.map((d) => ({
+        x: normalizeXValue(d.x ?? d.label ?? NaN, this.xValueMode),
+        y: d.value,
+      }));
+      this.warnOnInvalidX(
+        points.map((p) => p.x),
+        this.data
+      );
+      const datasets =
+        fill && fillMode === 'threshold'
+          ? this.createThresholdDatasets(points, chartColors)
+          : [this.buildDataset(points, 0, chartColors)];
+      return {datasets, labels: [] as (string | number)[]};
+    }
+
+    const values = this.data.map((d) => d.value);
+    const labels = this.data.map((d) => d.label ?? String(d.x ?? ''));
 
     const datasets =
       fill && fillMode === 'threshold'
@@ -1969,16 +2077,21 @@ export class ObcChartLineBase extends LitElement {
     // For sides without external scales, we apply the chart's scaleFactor to default padding.
     let padding: {top: number; right: number; bottom: number; left: number};
 
-    if (isTooSmall) {
+    // When hasLabelPadding=false the chart never reserves space for axis tick
+    // labels on sides without an external scale (renders edge-to-edge there).
+    // External-scale sides still receive their reported visual thickness so
+    // slotted scales/bars remain fully visible.
+    const defaultPaddingScaled = !this.hasLabelPadding
+      ? 0
+      : this.fixedAspectRatioScaling
+        ? Math.round(CHART_DIMENSIONS.CANVAS_PADDING * scaleFactor)
+        : CHART_DIMENSIONS.CANVAS_PADDING;
+
+    if (isTooSmall && this.hasLabelPadding) {
       padding = {top: 0, right: 0, bottom: 0, left: 0};
     } else if (this.hasExternalScales()) {
       // External scales report their visual dimensions (already scaled when fixedAspectRatio=true)
       const scalePadding = this.calculatePaddingFromScales();
-      // For sides with external scales, use their reported dimensions directly
-      // For sides without external scales, apply chart's scaleFactor to default padding
-      const defaultPaddingScaled = this.fixedAspectRatioScaling
-        ? Math.round(CHART_DIMENSIONS.CANVAS_PADDING * scaleFactor)
-        : CHART_DIMENSIONS.CANVAS_PADDING;
       padding = {
         top: this.externalScaleDimensions.has('top')
           ? scalePadding.top
@@ -1995,9 +2108,6 @@ export class ObcChartLineBase extends LitElement {
       };
     } else {
       // No external scales - apply scaleFactor to all default padding
-      const defaultPaddingScaled = this.fixedAspectRatioScaling
-        ? Math.round(CHART_DIMENSIONS.CANVAS_PADDING * scaleFactor)
-        : CHART_DIMENSIONS.CANVAS_PADDING;
       padding = {
         top: defaultPaddingScaled,
         right: defaultPaddingScaled,
@@ -2005,19 +2115,6 @@ export class ObcChartLineBase extends LitElement {
         left: defaultPaddingScaled,
       };
     }
-
-    // console.debug(`[chart-line-base] getChartOptions:`, {
-    //   fixedAspectRatioScaling: this.fixedAspectRatioScaling,
-    //   referenceWidth: this.width,
-    //   referenceHeight: this.height,
-    //   effectiveWidth,
-    //   effectiveHeight,
-    //   scaleFactor,
-    //   scaleReferenceSize: this.scaleReferenceSize,
-    //   padding,
-    //   externalScaleDimensions: Object.fromEntries(this.externalScaleDimensions),
-    //   hasExternalScales: this.hasExternalScales(),
-    // });
 
     // Set CSS variables for wrapper and canvas sizing
     if (this.fixedAspectRatioScaling) {
@@ -2058,13 +2155,22 @@ export class ObcChartLineBase extends LitElement {
           callbacks: {
             title: () => '',
             label: (context) => {
-              const label = context.label ?? '';
               const value =
                 typeof context.parsed === 'object' && context.parsed !== null
                   ? (context.parsed as {y: number}).y
                   : (context.parsed as number);
               const numericValue = formatNumericValue(value, 1, false, 0);
               const unit = this.unit ? `${this.unit}` : '';
+              let label = context.label ?? '';
+              if (this.isNumericXAxis) {
+                const x =
+                  typeof context.parsed === 'object' && context.parsed !== null
+                    ? (context.parsed as {x: number}).x
+                    : NaN;
+                const relativeTo =
+                  this.timeDisplay === TimeDisplay.minutes ? refTs : undefined;
+                label = formatXValue(x, this.xValueMode, relativeTo);
+              }
               return `${label} ${numericValue}${unit}`;
             },
           },
@@ -2080,22 +2186,26 @@ export class ObcChartLineBase extends LitElement {
    * Returns earliest timestamp for 'date' mode, latest for 'minutes' mode.
    */
   private computeTimeReference(): number | undefined {
+    if (this.xAxisType !== XAxisType.time) return undefined;
+
     const timestamps: number[] = [];
 
     // Collect timestamps from datasets
     if (this.datasets?.length) {
       this.datasets.forEach((ds) => {
         if (!ds.data) return;
-        (ds.data as (number | {x: unknown; y: number})[]).forEach((pt) => {
+        ds.data.forEach((pt) => {
           if (pt && typeof pt === 'object' && 'x' in pt) {
-            const xVal = (pt as {x: unknown}).x;
-            const ts =
-              typeof xVal === 'string'
-                ? new Date(String(xVal)).getTime()
-                : Number(xVal);
+            const ts = normalizeXValue(pt.x, XValueMode.time);
             if (Number.isFinite(ts)) timestamps.push(ts);
           }
         });
+      });
+    } else if (this.data?.length) {
+      // Collect timestamps from single-series data items
+      this.data.forEach((d) => {
+        const ts = normalizeXValue(d.x ?? d.label ?? NaN, XValueMode.time);
+        if (Number.isFinite(ts)) timestamps.push(ts);
       });
     }
 
@@ -2160,13 +2270,15 @@ export class ObcChartLineBase extends LitElement {
       LINE_GRAPH_LABEL_CONFIG.fontColorVar
     );
 
-    // Extract common values used for both x and y axes
-    const showLabels = showTickMarks && !isTooSmall;
-    const showTicks = showTickMarks && !isTooSmall;
+    // Extract common values used for both x and y axes.
+    // When hasLabelPadding=false the chart renders edge-to-edge, so labels are
+    // force-hidden to prevent clipping.
+    const showLabels = showTickMarks && !isTooSmall && this.hasLabelPadding;
+    const showTicks = showTickMarks && !isTooSmall && this.hasLabelPadding;
     const fontConfig = {family: fontFamily, size: fontSize, weight: fontWeight};
 
     const x = {
-      type: this.xAxisType === 'time' ? 'linear' : 'category',
+      type: this.xAxisType === XAxisType.category ? 'category' : 'linear',
       offset: false, // Always edge-to-edge (no padding on x-axis)
       grace: 0, // No extra margin
       bounds: 'data', // Use data bounds for edge-to-edge rendering
@@ -2185,18 +2297,12 @@ export class ObcChartLineBase extends LitElement {
         maxTicksLimit: this.xTicksLimit,
         stepSize: this.xStepSize,
         callback: (value: unknown) => {
-          if (this.xAxisType !== 'time') return String(value);
+          if (!this.isNumericXAxis) return String(value);
           const n = Number(value);
           if (!Number.isFinite(n)) return String(value);
-          if (
-            this.timeDisplay === 'minutes' &&
-            minX !== undefined &&
-            Number.isFinite(minX)
-          ) {
-            const minutes = Math.round((n - minX) / 60000);
-            return `${minutes}min`;
-          }
-          return new Date(n).toLocaleDateString();
+          const relativeTo =
+            this.timeDisplay === TimeDisplay.minutes ? minX : undefined;
+          return formatXValue(n, this.xValueMode, relativeTo);
         },
       },
       border: {
@@ -2344,7 +2450,6 @@ export class ObcChartLineBase extends LitElement {
 
     // Guard: Check if chart has datasets
     if (!this.chart.data.datasets || this.chart.data.datasets.length === 0) {
-      // console.debug('[chart-line-base] updateLegend: skipped - no datasets available');
       this.legendDiv.innerHTML = '';
       return;
     }
@@ -2356,7 +2461,6 @@ export class ObcChartLineBase extends LitElement {
 
           // Guard: Check if metadata and controller are available
           if (!meta || !meta.controller) {
-            // console.debug(`[chart-line-base] updateLegend: dataset ${i} metadata not yet initialized`);
             return null;
           }
 

@@ -38,19 +38,28 @@ export enum ObcModalWindowSize {
  * | title         | Always                     | Main heading text for the modal                   |
  * | content       | Always                     | Primary content area of the modal                  |
  * | option-label  | `hasOptionalAction` is true | Label for the optional action button               |
- * | cancel-label  | Always                     | Label for the cancel button                        |
+ * | cancel-label  | `hasCancelAction` is true   | Label for the cancel button                        |
  * | done-label    | Always                     | Label for the primary (done) button                |
  *
  * ### Properties
  * - `size` (ObcModalWindowSize): Controls the width and layout of the modal. Default is `large`.
  * - `hasOptionalAction` (boolean): Shows an additional action button when true.
  * - `hasLeadingIcon` (boolean): Shows the leading icon slot when true.
+ * - `hasCancelAction` (boolean): Shows the footer cancel button when true. Default is `true`.
+ * - `hasCloseAction` (boolean): Shows the header close (X) button when true. Default is `true`.
  *
  * ### Events
  * - `close-click`: Fired when the close (X) button in the header is clicked.
  * - `cancel-click`: Fired when the cancel button is clicked.
  * - `done-click`: Fired when the done button is clicked.
  * - `option-click`: Fired when the optional action button is clicked.
+ *
+ * ### Sizing
+ * By default the modal is as tall as its content, capped at `90vh`. To give it
+ * an explicit height, set the `--obc-modal-window-height` custom property on
+ * the element — either a fixed value (`--obc-modal-window-height: 360px`) or
+ * `100%` to fill a host element that is sized by its container. The `90vh` cap
+ * always applies, and the content area scrolls when the content does not fit.
  *
  * ### Example:
  * ```html
@@ -65,34 +74,36 @@ export enum ObcModalWindowSize {
  * </obc-modal-window>
  * ```
  *
- * @fires close-click - {CustomEvent} - Fired when the close button is clicked.
- * @fires cancel-click - {CustomEvent} - Fired when the cancel button is clicked.
- * @fires done-click - {CustomEvent} - Fired when the done button is clicked.
- * @fires option-click - {CustomEvent} - Fired when the optional action button is clicked.
+ * @property size - Controls the modal window size and action button layout.
+ * @property hasOptionalAction - Whether to show an optional third action button.
+ * @property hasLeadingIcon - Whether to show the leading icon slot in the header.
+ * @property hasCancelAction - Whether to show the footer cancel button.
+ * @property hasCloseAction - Whether to show the header close (X) button.
+ * @fires {CustomEvent} close-click - Fired when the close button is clicked.
+ * @fires {CustomEvent} cancel-click - Fired when the cancel button is clicked.
+ * @fires {CustomEvent} done-click - Fired when the done button is clicked.
+ * @fires {CustomEvent} option-click - Fired when the optional action button is clicked.
  *
  * @slot leading-icon - Slot for an icon to appear before the title (shown when `hasLeadingIcon` is true)
  * @slot title - Slot for the modal title text
  * @slot content - Slot for the main content area
  * @slot option-label - Slot for the label of the optional action button (shown when `hasOptionalAction` is true)
- * @slot cancel-label - Slot for the label of the cancel button
+ * @slot cancel-label - Slot for the label of the cancel button (shown when `hasCancelAction` is true)
  * @slot done-label - Slot for the label of the done button
+ * @cssprop [--obc-modal-window-height=auto] - Height of the modal window. Defaults to content height (capped at 90vh); set a fixed value or `100%` to size the modal externally.
+ * @stable
  */
 @customElement('obc-modal-window')
 export class ObcModalWindow extends LitElement {
-  /**
-   * Controls the modal window size and action button layout.
-   */
   @property({type: String}) size = ObcModalWindowSize.Large;
 
-  /**
-   * Whether to show an optional third action button.
-   */
   @property({type: Boolean}) hasOptionalAction = false;
 
-  /**
-   * Whether to show the leading icon slot in the header.
-   */
   @property({type: Boolean}) hasLeadingIcon = false;
+
+  @property({type: Boolean, attribute: false}) hasCancelAction = true;
+
+  @property({type: Boolean, attribute: false}) hasCloseAction = true;
 
   private onCloseClick = () =>
     this.dispatchEvent(new CustomEvent('close-click'));
@@ -109,6 +120,7 @@ export class ObcModalWindow extends LitElement {
     const isLarge = this.size === ObcModalWindowSize.Large;
     const isMedium = this.size === ObcModalWindowSize.Medium;
     const isSmall = this.size === ObcModalWindowSize.Small;
+    const stretchFooterActions = (isSmall || isMedium) && this.hasCancelAction;
 
     return html`
       <div
@@ -117,7 +129,12 @@ export class ObcModalWindow extends LitElement {
           [`size-${this.size}`]: true,
         })}
       >
-        <div class="title-container">
+        <div
+          class=${classMap({
+            'title-container': true,
+            'without-close': !this.hasCloseAction,
+          })}
+        >
           <div class="title-content">
             ${this.hasLeadingIcon
               ? html`<div class="leading-icon">
@@ -128,9 +145,11 @@ export class ObcModalWindow extends LitElement {
               <slot name="title">Title</slot>
             </div>
           </div>
-          <obc-icon-button variant="flat" @click=${this.onCloseClick}>
-            <obi-close-google></obi-close-google>
-          </obc-icon-button>
+          ${this.hasCloseAction
+            ? html`<obc-icon-button variant="flat" @click=${this.onCloseClick}>
+                <obi-close-google></obi-close-google>
+              </obc-icon-button>`
+            : nothing}
           <div class="divider"></div>
         </div>
 
@@ -151,20 +170,24 @@ export class ObcModalWindow extends LitElement {
           <div
             class=${classMap({
               'primary-action-container': true,
-              'primary-action-horizontal': isLarge || isMedium,
-              'primary-action-vertical': isSmall,
+              'primary-action-horizontal':
+                isLarge || isMedium || !this.hasCancelAction,
+              'primary-action-vertical': isSmall && this.hasCancelAction,
+              'without-cancel': !this.hasCancelAction,
             })}
           >
-            <obc-button
-              @click=${this.onCancelClick}
-              .fullWidth=${isSmall || isMedium}
-            >
-              <slot name="cancel-label">Cancel</slot>
-            </obc-button>
+            ${this.hasCancelAction
+              ? html`<obc-button
+                  @click=${this.onCancelClick}
+                  .fullWidth=${stretchFooterActions}
+                >
+                  <slot name="cancel-label">Cancel</slot>
+                </obc-button>`
+              : nothing}
             <obc-button
               variant="raised"
               @click=${this.onDoneClick}
-              .fullWidth=${isSmall || isMedium}
+              .fullWidth=${stretchFooterActions}
             >
               <slot name="done-label">Done</slot>
             </obc-button>

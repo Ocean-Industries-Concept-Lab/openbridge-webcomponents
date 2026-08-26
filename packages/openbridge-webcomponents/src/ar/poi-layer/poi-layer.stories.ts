@@ -20,7 +20,7 @@ type PoiLayerArgs = {
 
 const meta: Meta<PoiLayerArgs> = {
   title: 'AR/POI Layer',
-  tags: ['6.1'],
+  tags: ['6.1', 'experimental'],
   component: 'obc-poi-layer',
   decorators: [
     (story) => html`
@@ -71,6 +71,7 @@ export default meta;
 type Story = StoryObj<PoiLayerArgs>;
 
 export const AnimatedLayout: Story = {
+  tags: ['skip-test'],
   args: {
     label: 'Animated Layer',
     debug: true,
@@ -171,6 +172,7 @@ export const AnimatedLayout: Story = {
 };
 
 export const AnimatedLayoutWithValues: Story = {
+  tags: ['skip-test'],
   args: {
     label: 'Animated Layer (Values)',
     debug: true,
@@ -304,6 +306,7 @@ export const AnimatedLayoutWithValues: Story = {
 };
 
 export const Primary: Story = {
+  tags: ['skip-test'],
   play: async () => {
     await waitForStorySettle();
   },

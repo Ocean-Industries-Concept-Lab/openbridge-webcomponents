@@ -119,6 +119,16 @@ export enum ObcTopbarMessageItemSize {
  * </obc-topbar-message-item>
  * ```
  *
+ * @property showTitle - Whether to show the title slot.
+ * @availableWhen showTitle type!=Inactive
+ * @property showDescription - Whether to show the description slot.
+ * @availableWhen showDescription type!=Inactive
+ * @property showTimestamp - Whether to show the primary timestamp slot.
+ * @availableWhen showTimestamp type!=Inactive
+ * @property hasTimestamp2 - Whether to display the secondary timestamp slot.
+ * @availableWhen hasTimestamp2 type!=Inactive
+ * @property hasSecondaryIcon - Whether to display the secondary icon slot.
+ * @availableWhen hasSecondaryIcon type!=Inactive
  * @slot primary-icon - Main icon representing the message type or status.
  * @slot secondary-icon - Additional icon for context or severity (shown if `hasSecondaryIcon` is true).
  * @slot title - Title or heading of the message (shown if `showTitle` is true).
@@ -128,8 +138,9 @@ export enum ObcTopbarMessageItemSize {
  * @slot action-text - Content for the text action button (shown if type is `with-button`).
  * @slot action-icon - Icon for the icon action button (shown if type is `with-icon-button`).
  * @slot empty - Content for the empty/inactive state (shown if type is `inactive` or `empty` is true).
- * @fires message-click {CustomEvent<void>} Fired when the main message area is clicked.
- * @fires action-click {CustomEvent<void>} Fired when the action button (text or icon) is clicked.
+ * @fires {CustomEvent<void>} message-click - Fired when the main message area is clicked.
+ * @fires {CustomEvent<void>} action-click - Fired when the action button (text or icon) is clicked.
+ * @stable
  */
 @customElement('obc-topbar-message-item')
 export class ObcTopbarMessageItem extends LitElement {
@@ -157,29 +168,14 @@ export class ObcTopbarMessageItem extends LitElement {
   @property({type: String}) size: ObcTopbarMessageItemSize =
     ObcTopbarMessageItemSize.Regular;
 
-  /**
-   * Whether to show the title slot.
-   */
   @property({type: Boolean, attribute: false}) showTitle: boolean = true;
 
-  /**
-   * Whether to show the description slot.
-   */
   @property({type: Boolean, attribute: false}) showDescription: boolean = true;
 
-  /**
-   * Whether to show the primary timestamp slot.
-   */
   @property({type: Boolean, attribute: false}) showTimestamp: boolean = true;
 
-  /**
-   * Whether to display the secondary timestamp slot.
-   */
   @property({type: Boolean}) hasTimestamp2 = false;
 
-  /**
-   * Whether to display the secondary icon slot.
-   */
   @property({type: Boolean}) hasSecondaryIcon = false;
 
   private onMessageClick() {

@@ -6,6 +6,12 @@ import {ifDefined} from 'lit/directives/if-defined.js';
 import '../../icons/icon-arrow-flyout-google.js';
 import {ObcNavigationMenuVariant} from '../navigation-menu/navigation-menu.js';
 import {customElement} from '../../decorator.js';
+import '../tree-navigation-item/tree-navigation-item.js';
+import {
+  TreeBranchType,
+  TreeTerminalType,
+  type TreeNavigationItemAlerts,
+} from '../tree-navigation-item/tree-navigation-item.js';
 
 enum NavigationItemRole {
   Button = 'button',
@@ -90,67 +96,69 @@ enum NavigationItemRole {
  * </obc-navigation-item>
  * ```
  *
+ * @property label - The text label displayed for the navigation item.
+ *   Hidden in icon-only variants.
+ * @availableWhen label variant in [Full, Compact]
+ * @property href - The URL to navigate to when the item is clicked.
+ *   If set, the item is rendered as a link (`<a href="..." />`).
+ *   If undefined, acts as a button.
+ * @property checked - Whether the navigation item is currently selected/active.
+ *   Use to indicate the current location or selection.
+ * @property variant - Visual variant of the navigation item.
+ *   One of `Full` (default), `IconOnly`, `IconOnlyLarge`, or `Compact`.
+ *   Controls layout and visibility of icon/label.
+ * @property group - Enables group mode for the item, displaying a flyout indicator and supporting group selection.
+ *   Use for items that open submenus or represent grouped navigation.
+ * @property groupSelected - Highlights the item as selected within a group.
+ *   Only relevant when `group` is true.
+ * @availableWhen groupSelected group==true
+ * @property hasIcon - Whether the item has a leading icon.
+ * @availableWhen hasTrailingIcon group==false || variant==IconOnly
+ * @property treeMode - Set by `obc-navigation-menu` in its Tree variant — renders the row as a tree item.
+ * @property treeBranches - Indentation columns for tree mode, assigned by `obc-navigation-menu`.
+ * @property terminalType - Terminal type for the row in the Tree variant — one of `regular` (default),
+ *   `aggregated-header`, or `group-header`. Has no effect in the flat variants.
  * @slot icon - Leading icon slot (optional, shown if provided). Set `hasIcon` to `true` to show the icon.
  * @slot trailing-icon - Trailing icon slot (optional, shown if provided). Set `hasTrailingIcon` to `true` to show.
- * @fires click {CustomEvent<void>} Fired when the navigation item is clicked.
+ * @fires click - Fired when the navigation item is clicked, either as a link or as a button.
+ * @stable
  */
 
 @customElement('obc-navigation-item')
 export class ObcNavigationItem extends LitElement {
-  /**
-   * The text label displayed for the navigation item.
-   * Hidden in icon-only variants.
-   */
   @property({type: String}) label = 'Label';
 
-  /**
-   * The URL to navigate to when the item is clicked.
-   * If set, the item is rendered as a link (`<a href="..." />`).
-   * If undefined, acts as a button.
-   */
   @property({type: String}) href: string | undefined;
 
-  /**
-   * Whether the navigation item is currently selected/active.
-   * Use to indicate the current location or selection.
-   */
   @property({type: Boolean}) checked = false;
 
-  /**
-   * Visual variant of the navigation item.
-   * One of `Full` (default), `IconOnly`, `IconOnlyLarge`, or `Compact`.
-   * Controls layout and visibility of icon/label.
-   */
   @property({type: String}) variant = ObcNavigationMenuVariant.Full;
 
-  /**
-   * Enables group mode for the item, displaying a flyout indicator and supporting group selection.
-   * Use for items that open submenus or represent grouped navigation.
-   */
   @property({type: Boolean}) group = false;
 
-  /**
-   * Highlights the item as selected within a group.
-   * Only relevant when `group` is true.
-   */
   @property({type: Boolean}) groupSelected = false;
 
-  /**
-   * Whether the item has a leading icon.
-   */
   @property({type: Boolean, reflect: true}) hasIcon = false;
 
   @property({type: Boolean}) hasTrailingIcon = false;
 
-  @query('a') private anchorElement?: HTMLAnchorElement;
+  @property({type: Boolean}) treeMode = false;
+
+  @property({type: Array}) treeBranches: TreeBranchType[] = [];
+
+  @property({type: String}) terminalType: string = TreeTerminalType.regular;
 
   /**
-   * Fired when the navigation item is clicked (either as a link or button).
-   * @fires click {CustomEvent<void>}
+   * Per-severity alert counts shown as trailing badge(s) (Tree variant only).
+   * Forwarded to the underlying `obc-tree-navigation-item`. See
+   * {@link TreeNavigationItemAlerts}.
    */
-  onClick() {
-    dispatchEvent(new CustomEvent('click'));
-  }
+  @property({type: Object}) alerts?: TreeNavigationItemAlerts;
+
+  @query('a') private anchorElement?: HTMLAnchorElement;
+
+  // In tree mode the row renders an `obc-tree-navigation-item` instead of an `<a>`.
+  @query('obc-tree-navigation-item') private treeItemElement?: HTMLElement;
 
   private handleKeydown(event: KeyboardEvent) {
     const isMenuItem =
@@ -165,7 +173,7 @@ export class ObcNavigationItem extends LitElement {
   }
 
   public override focus(options?: FocusOptions): void {
-    this.anchorElement?.focus(options);
+    (this.treeItemElement ?? this.anchorElement)?.focus(options);
   }
 
   private getItemRole(): NavigationItemRole | undefined {
@@ -188,6 +196,28 @@ export class ObcNavigationItem extends LitElement {
   }
 
   override render() {
+    if (this.treeMode) {
+      // Delegate the whole row to the tree item: it owns focus, keyboard
+      // activation, the checked-inert behavior, and href navigation. Forward its
+      // activation as this item's own `click` so selection wiring is unchanged.
+      return html`
+        <obc-tree-navigation-item
+          class="tree"
+          .label=${this.label}
+          .branches=${this.treeBranches}
+          ?checked=${this.checked}
+          .hasLeadingIcon=${this.hasIcon}
+          .href=${this.href}
+          .terminalType=${this.terminalType}
+          .alerts=${this.alerts}
+        >
+          ${this.hasIcon
+            ? html`<slot name="icon" slot="icon"></slot>`
+            : nothing}
+        </obc-tree-navigation-item>
+      `;
+    }
+
     const showFlyout =
       this.group && this.variant !== ObcNavigationMenuVariant.IconOnly;
     const isCompact = this.variant === ObcNavigationMenuVariant.Compact;
@@ -202,7 +232,6 @@ export class ObcNavigationItem extends LitElement {
           [this.variant]: true,
         })}"
         href=${ifDefined(this.href)}
-        @click=${this.onClick}
         @keydown=${this.handleKeydown}
         tabindex=${ifDefined(this.getItemTabIndex())}
         role=${ifDefined(this.getItemRole())}

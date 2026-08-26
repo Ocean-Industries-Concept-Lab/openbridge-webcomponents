@@ -5,7 +5,7 @@ import './tab-item.js';
 import '../../icons/icon-placeholder.js';
 import {BadgeType, BadgeSize} from '../badge/badge.js';
 
-const meta: Meta<typeof ObcTabItem> = {
+const meta: Meta<ObcTabItem> = {
   title: 'UI Components/Menus and Navigation/Tab Item',
   tags: ['autodocs', '6.0'],
   component: 'obc-tab-item',
@@ -19,6 +19,8 @@ const meta: Meta<typeof ObcTabItem> = {
       ?has-badge=${args.hasBadge}
       .disabled=${args.disabled}
       title=${args.title}
+      .subtitle=${args.subtitle}
+      .showSubtitle=${args.showSubtitle}
       .checked=${args.checked}
       badgeCount=${args.badgeCount}
       badgeType=${args.badgeType}
@@ -26,6 +28,7 @@ const meta: Meta<typeof ObcTabItem> = {
       .badgeShowNumber=${args.badgeShowNumber}
       .showLeadingBadgeIcon=${args.showLeadingBadgeIcon}
       .centerContent=${args.centerContent}
+      .badges=${args.badges ?? []}
     >
       ${args.hasLeadingIcon
         ? html`<obi-placeholder slot="leading-icon"></obi-placeholder>`
@@ -33,6 +36,14 @@ const meta: Meta<typeof ObcTabItem> = {
       ${args.hasBadge
         ? html`<obi-placeholder slot="badge-icon"></obi-placeholder>`
         : null}
+      ${(args.badges ?? [])
+        .filter((badge) => badge.iconSlotName)
+        .map(
+          (badge) =>
+            html`<obi-placeholder
+              slot=${badge.iconSlotName!}
+            ></obi-placeholder>`
+        )}
     </obc-tab-item>
   `,
   args: {
@@ -45,6 +56,8 @@ const meta: Meta<typeof ObcTabItem> = {
     hasBadge: false,
     icon: 'placeholder',
     title: 'Tab',
+    subtitle: '61.482 3.104',
+    showSubtitle: false,
     badgeCount: 0,
     disabled: false,
     badgeType: BadgeType.regular,
@@ -52,8 +65,9 @@ const meta: Meta<typeof ObcTabItem> = {
     badgeShowNumber: true,
     showLeadingBadgeIcon: false,
     centerContent: false,
+    badges: [],
   },
-};
+} satisfies Meta<ObcTabItem>;
 
 export default meta;
 
@@ -75,6 +89,19 @@ export const DefaultHug = {
     hasClose: false,
     centerContent: false,
     title: 'Tab',
+  },
+};
+
+export const Subtitle = {
+  args: {
+    hug: false,
+    hasLeadingIcon: true,
+    hasBadge: false,
+    hasClose: false,
+    centerContent: false,
+    title: 'Coastal Alpha',
+    subtitle: '61.482 3.104',
+    showSubtitle: true,
   },
 };
 
@@ -294,6 +321,26 @@ export const HighBadgeCount = {
     title: 'High Alarm Count',
   },
 };
+export const MultipleBadges = {
+  args: {
+    hug: false,
+    hasLeadingIcon: true,
+    hasClose: false,
+    centerContent: false,
+    title: 'Multiple Badges',
+    badges: [
+      {type: BadgeType.alarm, size: BadgeSize.regular, count: 3},
+      {type: BadgeType.warning, size: BadgeSize.regular, count: 12},
+      {
+        type: BadgeType.notification,
+        size: BadgeSize.regular,
+        showIcon: true,
+        iconSlotName: 'notification-icon',
+      },
+    ],
+  },
+};
+
 export const BadgeHideNumber = {
   args: {
     hug: false,

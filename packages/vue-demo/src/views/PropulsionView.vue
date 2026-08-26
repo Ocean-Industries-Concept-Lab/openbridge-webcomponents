@@ -7,8 +7,6 @@ import {
 import ObcAzimuthThruster from '@oicl/openbridge-webcomponents-vue/navigation-instruments/azimuth-thruster/ObcAzimuthThruster.vue'
 import ObcMainEngine from '@oicl/openbridge-webcomponents-vue/navigation-instruments/main-engine/ObcMainEngine.vue'
 import ObcRudder from '@oicl/openbridge-webcomponents-vue/navigation-instruments/rudder/ObcRudder.vue'
-import ObcInstrumentField from '@oicl/openbridge-webcomponents-vue/navigation-instruments/instrument-field/ObcInstrumentField.vue'
-import { InstrumentFieldSize } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field'
 import ObiLink from '@oicl/openbridge-webcomponents-vue/icons/ObiLink.vue'
 import { useSim } from '../composables/useSim'
 import { computed } from 'vue'
@@ -21,6 +19,10 @@ import { type LinearAdvice } from '@oicl/openbridge-webcomponents/dist/navigatio
 const sim = useSim()
 
 const configStore = useDemoConfigStore()
+
+// Stable reference: obc-readout uses identity-based change detection, so a
+// shared constant avoids re-triggering updates on every render.
+const popUpSetpointOptions = { interaction: 'pop-up' }
 
 const rudderInstrumentAngle = computed(() => sim.propulsion.rudder.value)
 const rudderInstrumentAngleSetpoint = computed(() => sim.propulsion.rudderSet.value)
@@ -144,109 +146,114 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
     />
     <div class="readout-grid">
       <div class="tunnel-index readout-container single">
-        <div class="index off font-ui-label-active">1</div>
-        <div class="title font-ui-label">BT</div>
-        <ObcInstrumentField :size="InstrumentFieldSize.enhanced" neutral-color off />
-        <ObcInstrumentField
-          class="field-unit"
+        <div class="section-header">
+          <div class="index off font-ui-label-active">1</div>
+          <div class="title font-ui-label">BT</div>
+        </div>
+        <obc-readout class="value-readout" :off.prop="true" size="large" direction="horizontal" />
+        <obc-readout
+          class="label-readout"
+          label="Power"
           unit="%"
-          tag="Power"
-          off
-          label-only
-          horizontal
-          :size="InstrumentFieldSize.enhanced"
+          :hasValue.prop="false"
+          stacking="stacked"
         />
       </div>
       <div class="azimuth-index readout-container single">
-        <div class="index off font-ui-label-active">2</div>
-        <div class="title font-ui-label">Azimuth</div>
-        <ObcInstrumentField
+        <div class="section-header">
+          <div class="index off font-ui-label-active">2</div>
+          <div class="title font-ui-label">Azimuth</div>
+        </div>
+        <obc-readout
+          class="value-readout"
           :value="0"
-          :max-digits="3"
-          off
-          :size="InstrumentFieldSize.enhanced"
-          neutral-color
-        >
-          <div slot="off-value">0</div>
-        </ObcInstrumentField>
-        <ObcInstrumentField
-          class="field-unit"
-          unit="DEG"
-          tag="Angle"
-          off
-          label-only
-          horizontal
-          :size="InstrumentFieldSize.enhanced"
+          :maxDigits.prop="3"
+          size="large"
+          direction="horizontal"
         />
-        <ObcInstrumentField off :size="InstrumentFieldSize.enhanced" />
-        <ObcInstrumentField
-          class="field-unit"
+        <obc-readout
+          class="label-readout"
+          label="Angle"
+          unit="DEG"
+          :hasValue.prop="false"
+          stacking="stacked"
+        />
+        <obc-readout class="value-readout" :off.prop="true" size="large" direction="horizontal" />
+        <obc-readout
+          class="label-readout"
+          label="Power"
           unit="%"
-          tag="Power"
-          off
-          label-only
-          horizontal
-          :size="InstrumentFieldSize.enhanced"
+          :hasValue.prop="false"
+          stacking="stacked"
         />
       </div>
       <div class="main-engine-index readout-container single">
-        <div class="index font-ui-label-active">3 <ObiLink class="icon" /> 4</div>
-        <div class="title font-ui-label">ME</div>
-        <ObcInstrumentField
+        <div class="section-header">
+          <div class="index font-ui-label-active">3 <ObiLink class="icon" /> 4</div>
+          <div class="title font-ui-label">ME</div>
+        </div>
+        <obc-readout
+          class="value-readout"
           :value="30"
-          :setpoint="30"
-          :max-digits="3"
-          auto-hide-setpoint
-          :auto-hide-deadband="1"
-          has-setpoint
-          :size="InstrumentFieldSize.enhanced"
+          :priority.prop="'enhanced'"
+          :maxDigits.prop="3"
+          :hasSetpoint.prop="true"
+          :setpoint.prop="30"
+          :setpointOptions.prop="popUpSetpointOptions"
+          size="large"
+          stacking="stacked"
         />
-        <ObcInstrumentField
-          class="field-unit"
+        <obc-readout
+          class="label-readout"
+          label="Pitch"
           unit="%"
-          tag="Pitch"
-          label-only
-          horizontal
-          :size="InstrumentFieldSize.enhanced"
+          :priority.prop="'enhanced'"
+          :hasValue.prop="false"
+          stacking="stacked"
         />
-        <ObcInstrumentField
-          :value="sim.propulsion.propeller.value"
-          :setpoint="sim.propulsion.propellerSet.value"
-          auto-hide-setpoint
-          :auto-hide-deadband="1"
-          has-setpoint
-          :max-digits="3"
-          :size="InstrumentFieldSize.enhanced"
+        <obc-readout
+          class="value-readout"
+          :priority.prop="'enhanced'"
+          :value="Math.round(sim.propulsion.propeller.value)"
+          :maxDigits.prop="3"
+          :hasSetpoint.prop="true"
+          :setpoint.prop="Math.round(sim.propulsion.propellerSet.value)"
+          :setpointOptions.prop="popUpSetpointOptions"
+          size="large"
+          stacking="stacked"
         />
-        <ObcInstrumentField
-          class="field-unit"
+        <obc-readout
+          class="label-readout"
+          label="Speed"
           unit="RPM"
-          tag="Speed"
-          label-only
-          horizontal
-          :size="InstrumentFieldSize.enhanced"
+          :priority.prop="'enhanced'"
+          :hasValue.prop="false"
+          stacking="stacked"
         />
       </div>
       <div class="rudder-index readout-container single">
-        <div class="index font-ui-label-active">5 <ObiLink class="icon" /> 6</div>
-        <div class="title font-ui-label">Rudders</div>
-        <ObcInstrumentField
-          :value="sim.propulsion.rudder.value"
-          :setpoint="sim.propulsion.rudderSet.value"
-          has-setpoint
-          auto-hide-setpoint
-          :auto-hide-deadband="1"
-          :max-digits="0"
-          :size="InstrumentFieldSize.enhanced"
+        <div class="section-header">
+          <div class="index font-ui-label-active">5 <ObiLink class="icon" /> 6</div>
+          <div class="title font-ui-label">Rudders</div>
+        </div>
+        <obc-readout
+          class="value-readout"
+          :priority.prop="'enhanced'"
+          :value="Math.round(sim.propulsion.rudder.value)"
+          :maxDigits.prop="0"
+          :hasSetpoint.prop="true"
+          :setpoint.prop="Math.round(rudderInstrumentAngleSetpoint)"
+          :setpointOptions.prop="popUpSetpointOptions"
+          size="large"
+          stacking="stacked"
         />
-
-        <ObcInstrumentField
-          class="field-unit"
+        <obc-readout
+          class="label-readout"
+          label="Angle"
           unit="DEG"
-          tag="Angle"
-          label-only
-          horizontal
-          :size="InstrumentFieldSize.enhanced"
+          :priority.prop="'enhanced'"
+          :hasValue.prop="false"
+          stacking="stacked"
         />
       </div>
     </div>
@@ -341,18 +348,21 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
 }
 
 .readout-container {
-  justify-self: flex-end;
+  justify-self: end;
   display: grid;
-  grid-column: 1 / -1;
-  grid-template-columns: subgrid;
-  justify-content: space-between;
+  grid-template-columns: auto auto;
   align-items: center;
-  gap: 8px;
+  column-gap: 8px;
+  row-gap: 4px;
   padding-right: 16px;
 }
 
 .readout-container.single {
-  grid-column: 2 / -1;
+  grid-column: 1 / -1;
+}
+
+.section-header {
+  display: contents;
 }
 
 .tunnel-index {
@@ -373,6 +383,7 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
 
 .index {
   justify-self: end;
+  margin-inline-end: 8px;
   box-sizing: border-box;
   height: 18px;
   padding: 0 4px;
@@ -400,7 +411,9 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
 .title {
   color: var(--element-neutral-color);
   justify-self: start;
+  margin-inline-start: 8px;
   white-space: nowrap;
+  padding-block: 4px;
 }
 
 .field-unit {
@@ -409,7 +422,22 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
   justify-self: start;
 }
 
-obc-instrument-field {
+.readout-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.value-readout {
   justify-self: end;
+}
+
+.label-readout {
+  align-self: end;
+  --obc-readout-padding-horizontal-safe: 3px;
+}
+
+obc-readout {
+  flex-shrink: 0;
 }
 </style>

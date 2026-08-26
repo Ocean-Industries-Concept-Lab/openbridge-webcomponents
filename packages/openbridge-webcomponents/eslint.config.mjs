@@ -1,6 +1,7 @@
 import typescriptEslint from '@typescript-eslint/eslint-plugin';
 import globals from 'globals';
 import tsParser from '@typescript-eslint/parser';
+import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import js from '@eslint/js';
@@ -159,8 +160,178 @@ function toTitleCase(segment) {
   });
 }
 
-// Custom plugin for local OpenBridge lint rules
-const openbridgePlugin = {
+// --- Component lifecycle tags (AGENTS.md § 3) -------------------------------
+// The class-level JSDoc tag on an `@customElement` class is the single source
+// of truth for a component's lifecycle state; a story's `meta.tags` mirrors it.
+
+const LIFECYCLE_JSDOC_TAGS = ['stable', 'beta', 'experimental', 'deprecated'];
+
+// `@stable` deliberately maps to no story tag, so a sidebar badge always means
+// "there is a caveat here" rather than decorating every entry.
+const LIFECYCLE_STORY_TAG = {
+  beta: 'beta',
+  experimental: 'experimental',
+  deprecated: 'deprecated',
+};
+
+// Story tags this rule owns and will rewrite. `wip` and `alpha` are the retired
+// names, listed so the autofix removes them.
+const OWNED_STORY_TAGS = new Set([
+  'beta',
+  'experimental',
+  'deprecated',
+  'wip',
+  'alpha',
+]);
+
+const SRC_DIR = path.join(__dirname, 'src');
+
+// A JSDoc block (`/** … */` — never a plain `/* … */`) immediately preceding a
+// `@customElement('…')` decorator. The inner group forbids `*/` so an earlier,
+// unrelated JSDoc block cannot be stretched across intervening code to reach
+// the decorator.
+const CUSTOM_ELEMENT_WITH_DOC =
+  /\/\*\*((?:(?!\*\/)[\s\S])*)\*\/\s*@customElement\(\s*['"]([^'"]+)['"]\s*\)/g;
+// Anchored to the start of a line so a `@customElement(…)` written inside a
+// JSDoc code fence (where the line starts with ` * `) is not mistaken for a
+// real decorator.
+const CUSTOM_ELEMENT_ANY =
+  /(?:^|\r?\n)[ \t]*@customElement\(\s*['"]([^'"]+)['"]\s*\)/g;
+
+const lifecycleTagPatterns = new Map(
+  LIFECYCLE_JSDOC_TAGS.map((tag) => [
+    tag,
+    new RegExp(`^[ \\t]*\\*?[ \\t]*@${tag}\\b`, 'm'),
+  ])
+);
+
+// Every `@customElement` in a source text, with the lifecycle tags declared in
+// its class JSDoc. Shared by both rules so they can never disagree.
+function extractComponents(source) {
+  const components = [];
+  const seen = new Set();
+  let match;
+
+  CUSTOM_ELEMENT_WITH_DOC.lastIndex = 0;
+  while ((match = CUSTOM_ELEMENT_WITH_DOC.exec(source)) !== null) {
+    const doc = match[1];
+    const decoratorOffset = match[0].lastIndexOf('@customElement');
+    components.push({
+      tag: match[2],
+      tags: LIFECYCLE_JSDOC_TAGS.filter((tag) =>
+        lifecycleTagPatterns.get(tag).test(doc)
+      ),
+      index: match.index + decoratorOffset,
+      length: match[0].length - decoratorOffset,
+    });
+    seen.add(match[2]);
+  }
+
+  CUSTOM_ELEMENT_ANY.lastIndex = 0;
+  while ((match = CUSTOM_ELEMENT_ANY.exec(source)) !== null) {
+    if (seen.has(match[1])) continue;
+    seen.add(match[1]);
+    const decoratorOffset = match[0].indexOf('@customElement');
+    components.push({
+      tag: match[1],
+      tags: [],
+      index: match.index + decoratorOffset,
+      length: match[0].length - decoratorOffset,
+    });
+  }
+
+  return components;
+}
+
+function collectComponentSources(dir, out) {
+  for (const entry of fs.readdirSync(dir, {withFileTypes: true})) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      // Icons are generated and carry no lifecycle tags by design.
+      if (entry.name === 'icons' && dir === SRC_DIR) continue;
+      collectComponentSources(full, out);
+    } else if (
+      entry.name.endsWith('.ts') &&
+      !entry.name.endsWith('.stories.ts')
+    ) {
+      out.push(full);
+    }
+  }
+  return out;
+}
+
+// ESLint has no cross-file API, so the tag → lifecycle map is built by reading
+// the sources directly. The result is cached: rebuilt at most once every two
+// seconds so a long-lived editor process still picks up JSDoc edits, while a
+// single CLI run over hundreds of story files pays for it only a few times.
+const COMPONENT_INDEX_TTL_MS = 2000;
+let componentIndex = null;
+let componentIndexBuiltAt = 0;
+let componentIndexPinned = false;
+
+function getComponentIndex() {
+  if (componentIndexPinned) return componentIndex;
+
+  const now = Date.now();
+  if (componentIndex && now - componentIndexBuiltAt < COMPONENT_INDEX_TTL_MS) {
+    return componentIndex;
+  }
+
+  const index = new Map();
+  let files;
+  try {
+    files = collectComponentSources(SRC_DIR, []);
+  } catch {
+    files = [];
+  }
+
+  for (const file of files) {
+    let source;
+    try {
+      source = fs.readFileSync(file, 'utf8');
+    } catch {
+      continue;
+    }
+    if (!source.includes('@customElement')) continue;
+    for (const component of extractComponents(source)) {
+      index.set(component.tag, {file, tags: component.tags});
+    }
+  }
+
+  componentIndex = index;
+  componentIndexBuiltAt = now;
+  return index;
+}
+
+function unwrapTypeExpression(node) {
+  let current = node;
+  while (
+    current &&
+    (current.type === 'TSSatisfiesExpression' ||
+      current.type === 'TSAsExpression')
+  ) {
+    current = current.expression;
+  }
+  return current;
+}
+
+function findObjectProperty(objectExpression, name) {
+  return objectExpression.properties.find(
+    (property) =>
+      property.type === 'Property' &&
+      !property.computed &&
+      property.key.type === 'Identifier' &&
+      property.key.name === name
+  );
+}
+
+function quoteList(names) {
+  return names.map((name) => `'${name}'`).join(', ');
+}
+
+// Custom plugin for local OpenBridge lint rules. Exported so
+// eslint.comments.config.mjs can register the same rule objects.
+export const openbridgePlugin = {
   rules: {
     'storybook-title-case': {
       meta: {
@@ -268,6 +439,170 @@ const openbridgePlugin = {
         };
       },
     },
+    'component-lifecycle-tag': {
+      meta: {
+        type: 'suggestion',
+        docs: {
+          description:
+            'Require exactly one lifecycle tag (@stable, @beta, @experimental, @deprecated) in the class JSDoc of every @customElement',
+        },
+        schema: [],
+      },
+      create(context) {
+        const sourceCode = context.sourceCode ?? context.getSourceCode();
+
+        return {
+          'Program:exit'() {
+            const text = sourceCode.getText();
+            if (!text.includes('@customElement')) return;
+
+            for (const component of extractComponents(text)) {
+              if (component.tags.length === 1) continue;
+
+              context.report({
+                loc: {
+                  start: sourceCode.getLocFromIndex(component.index),
+                  end: sourceCode.getLocFromIndex(
+                    component.index + component.length
+                  ),
+                },
+                message:
+                  component.tags.length === 0
+                    ? `<${component.tag}> has no lifecycle tag in its class JSDoc. Add exactly one of @stable, @beta, @experimental or @deprecated (see AGENTS.md § 3).`
+                    : `<${component.tag}> declares more than one lifecycle tag (${component.tags
+                        .map((tag) => `@${tag}`)
+                        .join(', ')}). Exactly one is allowed.`,
+              });
+            }
+          },
+        };
+      },
+    },
+    'story-lifecycle-tags': {
+      meta: {
+        type: 'problem',
+        docs: {
+          description:
+            "Keep a story's meta.tags lifecycle entry in sync with the class JSDoc lifecycle tag of its meta.component",
+        },
+        fixable: 'code',
+        schema: [],
+      },
+      create(context) {
+        const sourceCode = context.sourceCode ?? context.getSourceCode();
+
+        return {
+          VariableDeclarator(node) {
+            if (node.id.type !== 'Identifier' || node.id.name !== 'meta')
+              return;
+
+            const meta = unwrapTypeExpression(node.init);
+            if (!meta || meta.type !== 'ObjectExpression') return;
+
+            const componentProperty = findObjectProperty(meta, 'component');
+            if (
+              !componentProperty ||
+              componentProperty.value.type !== 'Literal' ||
+              typeof componentProperty.value.value !== 'string'
+            )
+              return;
+
+            const componentTag = componentProperty.value.value;
+            const component = getComponentIndex().get(componentTag);
+
+            // A component with no tag, or more than one, is reported against
+            // its own source file by `component-lifecycle-tag`; there is no
+            // single correct story tag to fix towards here.
+            if (!component || component.tags.length !== 1) return;
+
+            const lifecycle = component.tags[0];
+            const expected = LIFECYCLE_STORY_TAG[lifecycle];
+            const desired = expected ? [expected] : [];
+            const tagsProperty = findObjectProperty(meta, 'tags');
+
+            if (!tagsProperty) {
+              if (!expected) return;
+
+              context.report({
+                node: componentProperty.value,
+                message: `<${componentTag}> is @${lifecycle}, so meta.tags must contain '${expected}', but meta has no tags.`,
+                fix(fixer) {
+                  const titleProperty = findObjectProperty(meta, 'title');
+                  if (titleProperty) {
+                    const next = sourceCode.getTokenAfter(titleProperty);
+                    return next && next.value === ','
+                      ? fixer.insertTextAfter(
+                          next,
+                          `\n  tags: ['${expected}'],`
+                        )
+                      : fixer.insertTextAfter(
+                          titleProperty,
+                          `,\n  tags: ['${expected}']`
+                        );
+                  }
+                  const first = meta.properties[0];
+                  return first
+                    ? fixer.insertTextBefore(
+                        first,
+                        `tags: ['${expected}'],\n  `
+                      )
+                    : null;
+                },
+              });
+              return;
+            }
+
+            if (tagsProperty.value.type !== 'ArrayExpression') return;
+
+            const elements = tagsProperty.value.elements.filter(Boolean);
+            const owned = elements.filter(
+              (element) =>
+                element.type === 'Literal' &&
+                typeof element.value === 'string' &&
+                OWNED_STORY_TAGS.has(element.value)
+            );
+            const found = owned.map((element) => element.value);
+
+            if (
+              found.length === desired.length &&
+              found.every((name, i) => name === desired[i])
+            )
+              return;
+
+            const kept = elements.filter((element) => !owned.includes(element));
+            const nextElements = [
+              ...kept.map((element) => sourceCode.getText(element)),
+              ...desired.map((name) => `'${name}'`),
+            ];
+
+            context.report({
+              node: tagsProperty.value,
+              message: expected
+                ? `<${componentTag}> is @${lifecycle}, so meta.tags must carry ${quoteList(desired)}, but it carries ${found.length ? quoteList(found) : 'no lifecycle tag'}.`
+                : `<${componentTag}> is @${lifecycle}, so meta.tags must carry no lifecycle tag, but it carries ${quoteList(found)}.`,
+              fix(fixer) {
+                if (nextElements.length > 0) {
+                  return fixer.replaceText(
+                    tagsProperty.value,
+                    `[${nextElements.join(', ')}]`
+                  );
+                }
+                const previous = sourceCode.getTokenBefore(tagsProperty);
+                const next = sourceCode.getTokenAfter(tagsProperty);
+                const start = previous
+                  ? previous.range[1]
+                  : tagsProperty.range[0];
+                const end =
+                  next && next.value === ','
+                    ? next.range[1]
+                    : tagsProperty.range[1];
+                return fixer.removeRange([start, end]);
+              },
+            });
+          },
+        };
+      },
+    },
     'prefer-boolean-property-default-false': {
       meta: {
         type: 'problem',
@@ -292,7 +627,7 @@ const openbridgePlugin = {
             );
             if (!propertyDecorator) return;
             // Check if the property decorator has attribute: false — that's the
-            // accepted escape hatch for true-default booleans (see AGENTS.md § 2).
+            // accepted escape hatch for true-default booleans (see docs/agents/coding-standards.md).
             const property =
               propertyDecorator.expression?.arguments[0]?.properties?.find(
                 (p) =>
@@ -301,16 +636,11 @@ const openbridgePlugin = {
                   p.key.type === 'Identifier' &&
                   p.key.name === 'attribute'
               );
-            const isBuildingBlock =
-              typeof context.filename === 'string' &&
-              context.filename.includes('building-blocks');
             if (property?.value?.value === false) {
               return;
             }
-            let message = 'Prefer boolean property default values of false';
-            if (isBuildingBlock) {
-              message += ' or set Attribute: false on the property decorator';
-            }
+            let message =
+              'Prefer boolean property default values of false or set attribute: false on the property decorator';
             context.report({
               node,
               message,
@@ -544,7 +874,9 @@ export default [
       'openbridge/prefer-enum-over-string-literal-union': 'error',
       'openbridge/prefer-boolean-property-default-false': 'error',
       'openbridge/prefer-array-property-type-and-item-interface': 'error',
+      'openbridge/component-lifecycle-tag': 'warn',
       'openbridge/storybook-title-case': 'off',
+      'openbridge/story-lifecycle-tags': 'off',
       // Disabled because eslint-plugin-file-extension-in-import-ts is not yet
       // compatible with ESLint v10 (it still uses deprecated context methods).
       'file-extension-in-import-ts/file-extension-in-import-ts': 'off',
@@ -580,10 +912,33 @@ export default [
     },
   },
   {
+    // Icon components carry no lifecycle tags by design.
+    files: ['src/icons/**/*.ts', 'src/manual-icon/**/*.ts'],
+
+    rules: {
+      'openbridge/component-lifecycle-tag': 'off',
+    },
+  },
+  {
     files: ['**/*.stories.ts'],
 
     rules: {
       'openbridge/storybook-title-case': 'error',
+      'openbridge/story-lifecycle-tags': 'error',
+      'openbridge/component-lifecycle-tag': 'off',
     },
   },
 ];
+
+// ESLint reads only the default export. These named exports exist for
+// script/eslint-rules.test.ts, which unit-tests the lifecycle-tag rules.
+export const __testables = {
+  openbridgePlugin,
+  extractComponents,
+  pinComponentIndex(entries) {
+    componentIndex = new Map(
+      Object.entries(entries).map(([tag, tags]) => [tag, {file: tag, tags}])
+    );
+    componentIndexPinned = true;
+  },
+};

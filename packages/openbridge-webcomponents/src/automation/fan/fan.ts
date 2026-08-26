@@ -4,6 +4,9 @@ import '../../icons/icon-fan-on.js';
 import '../../icons/icon-fan-off.js';
 import {ObcAbstractAutomationButtonMotorized} from '../automation-button/abstract-automation-button-motorized.js';
 
+/**
+ * @stable
+ */
 @customElement('obc-fan')
 export class ObcFan extends ObcAbstractAutomationButtonMotorized {
   override get icon() {

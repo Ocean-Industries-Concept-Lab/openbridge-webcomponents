@@ -1,4 +1,4 @@
-import {LitElement, html, unsafeCSS} from 'lit';
+import {LitElement, html, nothing, unsafeCSS, PropertyValues} from 'lit';
 import {property} from 'lit/decorators.js';
 import compentStyle from './stepper-box.css?inline';
 import '../../icons/icon-down-iec.js';
@@ -9,7 +9,8 @@ import '../../icons/icon-chevron-down-google.js';
 import '../../icons/icon-chevron-right-google.js';
 import '../../icons/icon-chevron-left-google.js';
 import {customElement} from '../../decorator.js';
-import {classMap} from 'lit/directives/class-map.js';
+import '../number-input-field/number-input-field.js';
+import {ObcNumberInputFieldTextAlign} from '../number-input-field/number-input-field.js';
 
 /**
  * The visual and behavioral variant of the stepper box.
@@ -35,24 +36,14 @@ export enum ObcStepperBoxType {
  *   - `up-down`: Uses up and down chevron icons for vertical adjustment.
  *   - `left-right`: Uses left and right chevron icons for horizontal adjustment.
  * - **Value Display:**
- *   - Main value is provided via the default slot.
- *   - Optional unit label via the `unit` slot.
+ *   - Optional unit label via the `unit` property.
  * - **Helper Text:**
- *   - When `hasHelperText` is true, displays additional helper or status text below the control.
+ *   - When `helperText` is set, displays additional helper or status text below the control.
  * - **Icon Buttons:**
  *   - Both increment and decrement actions are triggered by icon buttons, with icons adapting to the selected type.
- * - **Customizable Layout:**
- *   - Supports flexible content via slots for value, unit, and helper text.
  *
  * ### Usage Guidelines
  * Use `obc-stepper-box` for scenarios where users need to adjust a value in discrete steps, such as quantity pickers, setting numeric parameters, or cycling through options. It is ideal when you want to prevent invalid input and provide a clear, touch-friendly interface for value changes.
- *
- * ### Slots
- * | Slot Name      | Renders When...           | Purpose                                 |
- * |--------------- |--------------------------|-----------------------------------------|
- * | (default)      | Always                    | Main value display (e.g., number/text). |
- * | unit           | If provided               | Unit label (e.g., "km", "%").           |
- * | helper-text    | If `hasHelperText` is set | Helper or status text below the control.|
  *
  * ### Events
  * - `down` – Fired when the decrement (left or down) button is clicked.
@@ -65,18 +56,25 @@ export enum ObcStepperBoxType {
  *
  * **Example:**
  * ```
- * <obc-stepper-box type="up-down" hasHelperText>
- *   <div>5</div>
- *   <div slot="unit">kg</div>
- *   <div slot="helper-text">Set weight</div>
- * </obc-stepper-box>
+ * <obc-stepper-box type="up-down" value="5" unit="kg" helperText="Set weight"></obc-stepper-box>
  * ```
  *
- * @slot - Main value display (default slot)
- * @slot unit - Unit label (e.g., "km", "%")
- * @slot helper-text - Helper or status text below the control (shown when `hasHelperText` is true)
- * @fires down {CustomEvent<void>} Fired when the decrement (left or down) button is clicked
- * @fires up {CustomEvent<void>} Fired when the increment (right or up) button is clicked
+ * @property disabled - If true, the stepper box is disabled and the buttons are not clickable.
+ * @property value - The current numeric value displayed in the field.
+ *   Pass `null` to clear the value and show the `placeholder` instead.
+ * @property min - Optional lower bound; decrement button disables at this value.
+ * @property max - Optional upper bound; increment button disables at this value.
+ * @property stepUp - Increment step size (default 1).
+ * @property stepDown - Decrement step size (default 1).
+ * @property unit - Unit text displayed inside the field.
+ * @property helperText - Helper text displayed below the stepper. When set, the helper text is shown.
+ * @property placeholder - Placeholder text shown when the input is empty.
+ * @property readonly - If true, the input is non-editable; programmatic value changes still apply.
+ * @fires {CustomEvent<{value: number}>} down - Fired when the decrement (left or down) button is clicked
+ * @fires {CustomEvent<{value: number}>} up - Fired when the increment (right or up) button is clicked
+ * @fires {CustomEvent<{value: string}>} input - Fired when the user types in the number input field
+ * @fires {CustomEvent<{value: number | null}>} change - Fired when the value changes through the input field or the increment/decrement buttons; programmatic assignment to `value` does not dispatch it
+ * @stable
  */
 @customElement('obc-stepper-box')
 export class ObcStepperBox extends LitElement {
@@ -91,17 +89,78 @@ export class ObcStepperBox extends LitElement {
   @property({type: String}) type: ObcStepperBoxType =
     ObcStepperBoxType.plusMinus;
 
-  /**
-   * If true, displays the `helper-text` slot content below the control for additional guidance or status.
-   */
-  @property({type: Boolean}) hasHelperText = false;
+  @property({type: Boolean, reflect: true}) disabled = false;
 
-  /**
-   * If true, the stepper box is disabled and the buttons are not clickable.
-   */
-  @property({type: Boolean}) disabled = false;
+  @property({type: Number}) value: number | null = 1;
 
-  get leftIcon() {
+  @property({type: Number}) min?: number;
+
+  @property({type: Number}) max?: number;
+
+  @property({type: Number}) stepUp = 1;
+
+  @property({type: Number}) stepDown = 1;
+
+  @property({type: String}) unit = '';
+
+  @property({type: String}) helperText = '';
+
+  @property({type: String}) placeholder = '';
+
+  @property({type: Boolean}) readonly = false;
+
+  private get downDisabled(): boolean {
+    return (
+      this.disabled ||
+      this.readonly ||
+      this.value == null ||
+      this.value <= (this.min ?? -Infinity)
+    );
+  }
+
+  private get upDisabled(): boolean {
+    return (
+      this.disabled ||
+      this.readonly ||
+      this.value == null ||
+      this.value >= (this.max ?? Infinity)
+    );
+  }
+
+  override connectedCallback() {
+    super.connectedCallback();
+    this.syncDisabledAccessibility();
+  }
+
+  override updated(changedProperties: PropertyValues) {
+    if (changedProperties.has('disabled')) {
+      this.syncDisabledAccessibility();
+    }
+  }
+
+  private syncDisabledAccessibility() {
+    if (this.disabled) {
+      this.setAttribute('aria-disabled', 'true');
+    } else {
+      this.removeAttribute('aria-disabled');
+    }
+  }
+
+  private clamp(value: number): number {
+    return Math.min(
+      Math.max(value, this.min ?? -Infinity),
+      this.max ?? Infinity
+    );
+  }
+
+  private normalizedStep(step: number): number {
+    if (!Number.isFinite(step) || step <= 0) {
+      return 1;
+    }
+    return step;
+  }
+
+  private get leftIcon() {
     if (this.type === ObcStepperBoxType.upDown) {
       return html`<obi-chevron-down-google></obi-chevron-down-google>`;
     } else if (this.type === ObcStepperBoxType.leftRight) {
@@ -111,7 +170,7 @@ export class ObcStepperBox extends LitElement {
     }
   }
 
-  get rightIcon() {
+  private get rightIcon() {
     if (this.type === ObcStepperBoxType.upDown) {
       return html`<obi-chevron-up-google></obi-chevron-up-google>`;
     } else if (this.type === ObcStepperBoxType.leftRight) {
@@ -122,44 +181,82 @@ export class ObcStepperBox extends LitElement {
   }
 
   override render() {
-    const wrapperClasses = {
-      wrapper: true,
-      disabled: this.disabled,
-    };
+    const showHelper = Boolean(this.helperText);
 
     return html`
-      <div class=${classMap(wrapperClasses)} aria-disabled=${this.disabled}>
-        <obc-icon-button
-          cornerleft
-          ?disabled=${this.disabled}
-          @click=${() => this.down()}
-        >
-          ${this.leftIcon}
-        </obc-icon-button>
+      <div class="wrapper">
         <div class="display">
-          <div class="value">
-            <slot></slot>
-          </div>
-          <div class="unit">
-            <slot name="unit"></slot>
-          </div>
-        </div>
-        <obc-icon-button
-          cornerright
-          ?disabled=${this.disabled}
-          @click=${() => this.up()}
-        >
-          ${this.rightIcon}
-        </obc-icon-button>
-      </div>
-      ${this.hasHelperText
-        ? html`<div
-            class=${classMap({'helper-text': true, disabled: this.disabled})}
+          <obc-icon-button
+            cornerleft
+            .showDivider=${false}
+            ?disabled=${this.downDisabled}
+            @click=${() => this.down()}
           >
-            <slot name="helper-text"></slot>
-          </div>`
-        : ''}
+            ${this.leftIcon}
+          </obc-icon-button>
+          <div class="field-wrapper">
+            <obc-number-input-field
+              squared
+              .value=${this.value == null ? NaN : Number(this.value)}
+              .unit=${this.unit}
+              .placeholder=${this.placeholder}
+              .textAlign=${ObcNumberInputFieldTextAlign.Center}
+              ?disabled=${this.disabled}
+              ?readonly=${this.readonly}
+              @input=${this.onNumberFieldInput}
+            ></obc-number-input-field>
+          </div>
+          <obc-icon-button
+            cornerright
+            .showDivider=${false}
+            ?disabled=${this.upDisabled}
+            @click=${() => this.up()}
+          >
+            ${this.rightIcon}
+          </obc-icon-button>
+        </div>
+        ${showHelper
+          ? html`<div class="helper-text">${this.helperText}</div>`
+          : nothing}
+      </div>
     `;
+  }
+
+  private onNumberFieldInput(e: Event) {
+    const input = e.target as HTMLInputElement;
+    const raw = input.value;
+    this.dispatchEvent(
+      new CustomEvent('input', {
+        detail: {value: raw},
+        bubbles: true,
+        composed: true,
+      })
+    );
+
+    if (raw.trim() === '') {
+      return;
+    }
+
+    const parsed = Number(raw);
+    if (!Number.isFinite(parsed)) {
+      return;
+    }
+
+    const previous = this.value;
+    this.value = parsed;
+    if (previous !== this.value) {
+      this.dispatchChange(this.value);
+    }
+  }
+
+  private dispatchChange(value: number | null) {
+    this.dispatchEvent(
+      new CustomEvent('change', {
+        detail: {value},
+        bubbles: true,
+        composed: true,
+      })
+    );
   }
 
   /**
@@ -167,10 +264,20 @@ export class ObcStepperBox extends LitElement {
    * @fires down
    */
   down() {
-    if (this.disabled) {
+    if (this.downDisabled) {
       return;
     }
-    this.dispatchEvent(new CustomEvent('down'));
+    const current = this.value as number;
+    const newValue = this.clamp(current - this.normalizedStep(this.stepDown));
+    this.value = newValue;
+    this.dispatchEvent(
+      new CustomEvent('down', {
+        detail: {value: newValue},
+        bubbles: true,
+        composed: true,
+      })
+    );
+    this.dispatchChange(newValue);
   }
 
   /**
@@ -178,10 +285,20 @@ export class ObcStepperBox extends LitElement {
    * @fires up
    */
   up() {
-    if (this.disabled) {
+    if (this.upDisabled) {
       return;
     }
-    this.dispatchEvent(new CustomEvent('up'));
+    const current = this.value as number;
+    const newValue = this.clamp(current + this.normalizedStep(this.stepUp));
+    this.value = newValue;
+    this.dispatchEvent(
+      new CustomEvent('up', {
+        detail: {value: newValue},
+        bubbles: true,
+        composed: true,
+      })
+    );
+    this.dispatchChange(newValue);
   }
 
   static override styles = unsafeCSS(compentStyle);

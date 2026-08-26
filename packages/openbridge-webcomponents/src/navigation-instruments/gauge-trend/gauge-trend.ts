@@ -40,7 +40,9 @@ export {FillMode, ScaleType};
  * ## Locked Configuration (not user-configurable)
  * - Fixed aspect ratio scaling: always enabled
  * - Instrument mode: always enabled (8px border radius)
- * - X-axis type: always 'category'
+ * - X-axis type: auto-detected — 'category' for `{label, value}` data,
+ *   'time' for `{x, value}` data (uneven intervals position proportionally).
+ *   Assigning `xAxisType` explicitly disables auto-detection.
  * - Line mode: always 'smooth'
  * - Grid, tick marks, points, legend: always hidden
  * - Scale advice position: always 'inner'
@@ -102,22 +104,56 @@ export {FillMode, ScaleType};
  * ></obc-gauge-trend>
  * ```
  *
- * @property {number} width - Chart width in pixels (defines aspect ratio)
- * @property {number} height - Chart height in pixels (defines aspect ratio)
- * @property {boolean} enhanced - Use enhanced color palette for chart and scales
- * @property {InstrumentState} state - Instrument state (automatically applied to scale)
- * @property {boolean} chartFill - Enable chart area fill (default: false for line-only)
+ * ### Time-based data with uneven intervals
+ * ```html
+ * <obc-gauge-trend
+ *   .data=${[
+ *     {x: '2026-07-06T10:00:00Z', value: 3.5},
+ *     {x: '2026-07-06T10:03:00Z', value: 4.2},
+ *     {x: '2026-07-06T10:15:00Z', value: 5.0}
+ *   ]}
+ * ></obc-gauge-trend>
+ * ```
+ *
  *
  * Setpoint properties are inherited from {@link SetpointMixin}.
  * These are forwarded to the internal `obc-bar-vertical` scale:
  * `setpoint`, `newSetpoint`, `touching`, `atSetpoint`, `autoAtSetpoint`,
  * `autoAtSetpointDeadband`, `setpointAtZeroDeadband`, `setpointOverride`.
  * See {@link SetpointMixinInterface} for full documentation.
+ *
+ * @property minValue - Minimum value for the scale range.
+ *   Also used as chart y-axis minimum when `chartMinValue` is undefined.
+ * @property maxValue - Maximum value for the scale range.
+ *   Also used as chart y-axis maximum when `chartMaxValue` is undefined.
+ * @property chartMinValue - Minimum value for the chart y-axis.
+ *   When undefined, defaults to `minValue` to keep chart and scale aligned.
+ * @property chartMaxValue - Maximum value for the chart y-axis.
+ *   When undefined, defaults to `maxValue` to keep chart and scale aligned.
+ * @property hasScale - Show scale tick marks and labels.
+ * @property hasAdvice - Show advice overlays on the vertical scale.
+ * @property fillMin - Fill origin value - the starting point for the bar fill.
+ *   In both fill modes, the bar fills from this value toward the current value.
+ *   For scales like -100..100, set this to 0 to have the bar fill up or down from zero.
+ * @availableWhen fillMin hasBar==true && value!=undefined
+ * @property advice - Advice/alert overlays for the vertical scale.
+ * @availableWhen advice hasAdvice==true
+ * @property primaryTickmarkInterval - Primary tick interval for the vertical scale (longest ticks with labels).
+ * @property secondaryTickmarkInterval - Secondary tick interval for the vertical scale (medium ticks).
+ * @availableWhen secondaryTickmarkInterval hasScale==true
+ * @property tertiaryTickmarkInterval - Tertiary tick interval for the vertical scale (shortest ticks).
+ * @availableWhen tertiaryTickmarkInterval hasScale==true
+ * @property chartFill - Enable chart area fill.
+ *   When true, fills the area under the line with semitransparent color.
+ *   When false (default), renders as line-only chart.
+ * @stable
  */
 @customElement('obc-gauge-trend')
 export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
   private _barVerticalElement?: HTMLElement;
   private _isFirstUpdate = false;
+  private _explicitXAxisType = false;
+  private _autoAppliedXAxisType?: XAxisType;
 
   constructor() {
     super();
@@ -290,35 +326,20 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
    * - `'condensed'`: Shorter tick lengths for compact display
    *
    * Hidden from Storybook controls via argTypes configuration.
+   * @availableWhen hasScale==true
    */
   @property({type: String})
   scaleType: ScaleType = ScaleType.regular;
 
-  /**
-   * Minimum value for the scale range.
-   * Also used as chart y-axis minimum when `chartMinValue` is undefined.
-   */
   @property({type: Number})
   minValue = 0;
 
-  /**
-   * Maximum value for the scale range.
-   * Also used as chart y-axis maximum when `chartMaxValue` is undefined.
-   */
   @property({type: Number})
   maxValue = 100;
 
-  /**
-   * Minimum value for the chart y-axis.
-   * When undefined, defaults to `minValue` to keep chart and scale aligned.
-   */
   @property({type: Number})
   chartMinValue?: number = undefined;
 
-  /**
-   * Maximum value for the chart y-axis.
-   * When undefined, defaults to `maxValue` to keep chart and scale aligned.
-   */
   @property({type: Number})
   chartMaxValue?: number = undefined;
 
@@ -331,6 +352,7 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
    * - The `fillMax` value (when `fillMax` is not explicitly set)
    *
    * In typical usage, you only need to set this property to update the gauge.
+   * @availableWhen hasBar==true || hasScale==true
    */
   @property({type: Number})
   value?: number = undefined;
@@ -344,15 +366,9 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
   @property({type: Boolean})
   hasBar = false;
 
-  /**
-   * Show scale tick marks and labels.
-   */
   @property({type: Boolean})
   hasScale = false;
 
-  /**
-   * Show advice overlays on the vertical scale.
-   */
   @property({type: Boolean})
   hasAdvice = false;
 
@@ -364,15 +380,11 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
    *   Use this when you want to show a fixed range independent of the current value.
    *
    * In both modes, `fillMin` is the origin point (e.g., 0 in a -100..100 scale).
+   * @availableWhen hasBar==true && value!=undefined
    */
   @property({type: String})
   fillMode: FillMode = FillMode.fill;
 
-  /**
-   * Fill origin value - the starting point for the bar fill.
-   * In both fill modes, the bar fills from this value toward the current value.
-   * For scales like -100..100, set this to 0 to have the bar fill up or down from zero.
-   */
   @property({type: Number})
   fillMin = 0;
 
@@ -383,19 +395,14 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
    *
    * In `'tint'` mode, this defines the upper bound of the highlighted range.
    * When `undefined`, defaults to `value`.
+   * @availableWhen hasBar==true && value!=undefined && fillMode==tint
    */
   @property({type: Number})
   fillMax?: number = undefined;
 
-  /**
-   * Advice/alert overlays for the vertical scale.
-   */
   @property({type: Array, attribute: false})
   advice: LinearAdvice[] = [];
 
-  /**
-   * Primary tick interval for the vertical scale (longest ticks with labels).
-   */
   @property({type: Number})
   primaryTickmarkInterval?: number = undefined;
 
@@ -404,23 +411,12 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
   // setpointOverride, computeAtSetpoint()) are provided by SetpointMixin.
   // See setpoint-mixin.ts for full docs.
 
-  /**
-   * Secondary tick interval for the vertical scale (medium ticks).
-   */
   @property({type: Number})
   secondaryTickmarkInterval = 0.5;
 
-  /**
-   * Tertiary tick interval for the vertical scale (shortest ticks).
-   */
   @property({type: Number})
   tertiaryTickmarkInterval?: number = undefined;
 
-  /**
-   * Enable chart area fill.
-   * When true, fills the area under the line with semitransparent color.
-   * When false (default), renders as line-only chart.
-   */
   @property({type: Boolean})
   chartFill = false;
 
@@ -447,6 +443,28 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
   }
 
   override willUpdate(changed: Map<PropertyKey, unknown>) {
+    // Auto axis detection: {x, value} data switches to time spacing, {label,
+    // value} stays category. An explicit xAxisType assignment (anything we
+    // did not auto-apply) permanently disables auto-detection. The
+    // constructor's 'category' default lands in the first changed-map but is
+    // not treated as explicit (hasUpdated is false and it equals the default).
+    if (
+      changed.has('xAxisType') &&
+      this.xAxisType !== this._autoAppliedXAxisType &&
+      (this.hasUpdated || this.xAxisType !== XAxisType.category)
+    ) {
+      this._explicitXAxisType = true;
+    }
+    if (!this._explicitXAxisType && changed.has('data')) {
+      const allHaveX =
+        (this.data?.length ?? 0) > 0 && this.data.every((d) => d.x != null);
+      const target = allHaveX ? XAxisType.time : XAxisType.category;
+      if (this.xAxisType !== target) {
+        this._autoAppliedXAxisType = target;
+        this.xAxisType = target;
+      }
+    }
+
     super.willUpdate(changed);
 
     // Update y-axis range when chart or scale min/max changes

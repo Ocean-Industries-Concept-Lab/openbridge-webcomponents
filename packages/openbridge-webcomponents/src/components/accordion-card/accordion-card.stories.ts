@@ -84,34 +84,36 @@ const meta: Meta<ObcAccordionCard> = {
     alertFrameStatus: ObcAlertFrameStatus.Alarm,
   },
   render: (args) => html`
-    <obc-accordion-card
-      .cardTitle="${args.cardTitle}"
-      .description="${args.description}"
-      .statusLabel="${args.statusLabel}"
-      .expanded="${args.expanded}"
-      .disabled="${args.disabled}"
-      .hasAlert="${args.hasAlert}"
-      .hasDescription="${args.hasDescription}"
-      .hasStatusLabel="${args.hasStatusLabel}"
-      .hasLeadingIcon="${args.hasLeadingIcon}"
-      .size="${args.size}"
-      .position="${args.position}"
-      .alertFrameType="${args.alertFrameType}"
-      .alertFrameThickness="${args.alertFrameThickness}"
-      .alertFrameStatus="${args.alertFrameStatus}"
-    >
-      <div slot="expanded-content">
-        Lorem Ipsum is simply dummy text of the printing and typesetting
-        industry. Lorem Ipsum has been the industry's standard dummy text ever
-        since the 1500s, when an unknown printer took a galley of type and
-        scrambled it to make a type specimen book. It has survived not only five
-        centuries, but also the leap into electronic typesetting, remaining
-        essentially unchanged. It was popularised in the 1960s with the release
-        of Letraset sheets containing Lorem Ipsum passages, and more recently
-        with desktop publishing software like Aldus PageMaker including versions
-        of Lorem Ipsum.
-      </div>
-    </obc-accordion-card>
+    <div style="width: 320px;">
+      <obc-accordion-card
+        .cardTitle="${args.cardTitle}"
+        .description="${args.description}"
+        .statusLabel="${args.statusLabel}"
+        .expanded="${args.expanded}"
+        .disabled="${args.disabled}"
+        .hasAlert="${args.hasAlert}"
+        .hasDescription="${args.hasDescription}"
+        .hasStatusLabel="${args.hasStatusLabel}"
+        .hasLeadingIcon="${args.hasLeadingIcon}"
+        .size="${args.size}"
+        .position="${args.position}"
+        .alertFrameType="${args.alertFrameType}"
+        .alertFrameThickness="${args.alertFrameThickness}"
+        .alertFrameStatus="${args.alertFrameStatus}"
+      >
+        <div slot="expanded-content">
+          Lorem Ipsum is simply dummy text of the printing and typesetting
+          industry. Lorem Ipsum has been the industry's standard dummy text ever
+          since the 1500s, when an unknown printer took a galley of type and
+          scrambled it to make a type specimen book. It has survived not only
+          five centuries, but also the leap into electronic typesetting,
+          remaining essentially unchanged. It was popularised in the 1960s with
+          the release of Letraset sheets containing Lorem Ipsum passages, and
+          more recently with desktop publishing software like Aldus PageMaker
+          including versions of Lorem Ipsum.
+        </div>
+      </obc-accordion-card>
+    </div>
   `,
 } satisfies Meta<ObcAccordionCard>;
 
@@ -159,15 +161,17 @@ export const WithIcon: Story = {
     expanded: false,
   },
   render: (args) => html`
-    <obc-accordion-card
-      .cardTitle="${args.cardTitle}"
-      .expanded="${args.expanded}"
-      .hasLeadingIcon="${args.hasLeadingIcon}"
-    >
-      <span slot="leading-icon">
-        <obi-placeholder></obi-placeholder>
-      </span>
-    </obc-accordion-card>
+    <div style="width: 320px;">
+      <obc-accordion-card
+        .cardTitle="${args.cardTitle}"
+        .expanded="${args.expanded}"
+        .hasLeadingIcon="${args.hasLeadingIcon}"
+      >
+        <span slot="leading-icon">
+          <obi-placeholder></obi-placeholder>
+        </span>
+      </obc-accordion-card>
+    </div>
   `,
 };
 
@@ -196,19 +200,21 @@ export const WithAlert: Story = {
     expanded: false,
   },
   render: (args) => html`
-    <obc-accordion-card
-      .cardTitle="${args.cardTitle}"
-      .expanded="${args.expanded}"
-      .hasAlert="${args.hasAlert}"
-      .alertFrameType="${args.alertFrameType}"
-      .alertFrameThickness="${args.alertFrameThickness}"
-      .alertFrameStatus="${args.alertFrameStatus}"
-    >
-      <div slot="expanded-content">Content with alert frame overlay</div>
-      <span slot="alert-icon"><obi-placeholder></obi-placeholder></span>
-      <span slot="alert-label">Alert message</span>
-      <span slot="alert-timer">5m</span>
-    </obc-accordion-card>
+    <div style="width: 320px;">
+      <obc-accordion-card
+        .cardTitle="${args.cardTitle}"
+        .expanded="${args.expanded}"
+        .hasAlert="${args.hasAlert}"
+        .alertFrameType="${args.alertFrameType}"
+        .alertFrameThickness="${args.alertFrameThickness}"
+        .alertFrameStatus="${args.alertFrameStatus}"
+      >
+        <div slot="expanded-content">Content with alert frame overlay</div>
+        <span slot="alert-icon"><obi-placeholder></obi-placeholder></span>
+        <span slot="alert-label">Alert message</span>
+        <span slot="alert-timer">5m</span>
+      </obc-accordion-card>
+    </div>
   `,
 };
 
@@ -217,13 +223,13 @@ export const Multiple: Story = {
     title: 'Multiple Accordions',
   },
   render: () => html`
-    <div>
+    <div style="width: 320px;">
       <obc-accordion-card
         cardTitle="Single Line Accordion"
         .size="${AccordionSize.SingleLine}"
         .position="${Position.top}"
         .hasAlert=${true}
-        .alertFrameStatus="${ObcAlertFrameStatus.Warning}"
+        .alertFrameStatus="${ObcAlertFrameStatus.Alarm}"
       >
         <div slot="expanded-content">Placeholder text</div>
       </obc-accordion-card>
@@ -235,6 +241,7 @@ export const Multiple: Story = {
         .hasDescription=${true}
         .position="${Position.center}"
         .hasAlert=${true}
+        .alertFrameStatus="${ObcAlertFrameStatus.Warning}"
       >
         <div slot="expanded-content">Placeholder text</div>
       </obc-accordion-card>
@@ -265,21 +272,23 @@ export const Disabled: Story = {
     disabled: true,
   },
   render: (args) => html`
-    <obc-accordion-card
-      .cardTitle="${args.cardTitle}"
-      .description="${args.description}"
-      .statusLabel="${args.statusLabel}"
-      .expanded="${args.expanded}"
-      .disabled="${args.disabled}"
-      .hasAlert="${args.hasAlert}"
-      .hasDescription="${args.hasDescription}"
-      .hasStatusLabel="${args.hasStatusLabel}"
-      .hasLeadingIcon="${args.hasLeadingIcon}"
-      .size="${args.size}"
-      .alertFrameType="${args.alertFrameType}"
-      .alertFrameThickness="${args.alertFrameThickness}"
-      .alertFrameStatus="${args.alertFrameStatus}"
-    >
-    </obc-accordion-card>
+    <div style="width: 320px;">
+      <obc-accordion-card
+        .cardTitle="${args.cardTitle}"
+        .description="${args.description}"
+        .statusLabel="${args.statusLabel}"
+        .expanded="${args.expanded}"
+        .disabled="${args.disabled}"
+        .hasAlert="${args.hasAlert}"
+        .hasDescription="${args.hasDescription}"
+        .hasStatusLabel="${args.hasStatusLabel}"
+        .hasLeadingIcon="${args.hasLeadingIcon}"
+        .size="${args.size}"
+        .alertFrameType="${args.alertFrameType}"
+        .alertFrameThickness="${args.alertFrameThickness}"
+        .alertFrameStatus="${args.alertFrameStatus}"
+      >
+      </obc-accordion-card>
+    </div>
   `,
 };

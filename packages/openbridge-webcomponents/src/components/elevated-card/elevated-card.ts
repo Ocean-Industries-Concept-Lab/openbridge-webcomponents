@@ -128,6 +128,32 @@ export enum ObcElevatedCardTag {
  * </obc-elevated-card>
  * ```
  *
+ * @property isClickable - If false, the card is rendered as a static (non-clickable) element
+ *   and uses `<article>` as its tag unless `overrideTag` is set.
+ *   Useful for informational or status cards that should not be interactive.
+ * @property info - Applies an informational style to the card.
+ *   When true, the card uses the "info" visual style.
+ * @property graphicBorder - If true, adds a border below the graphic area (when present).
+ *   Used to visually separate the graphic from the card content.
+ * @availableWhen graphicBorder hasGraphic==true
+ * @property border - If true, adds a border to the card (top or bottom, depending on position).
+ *   Useful for visually separating cards in a stack.
+ * @availableWhen border position!=regular
+ * @property hasAction - If true, displays an action button in the card.
+ *   The button's content is provided via the `action` slot.
+ *   When set, the card is rendered as static (`isClickable` is forced false).
+ * @property hasLeadingIcon - If true, displays a leading icon before the label.
+ *   The icon is provided via the `leading-icon` slot.
+ * @property hasTrailingIcon - If true, displays a trailing icon after the content.
+ *   The icon is provided via the `trailing-icon` slot.
+ * @property hasGraphic - If true, displays a prominent graphic at the top of the card.
+ *   The graphic is provided via the `graphic` slot.
+ * @property hasStatus - If true, displays a status indicator in the card.
+ *   The status content is provided via the `status` slot.
+ * @property href - URL the card links to. It applies whenever the rendered tag is `<a>` — the default
+ *   for a clickable card with an `href`, or `overrideTag="a"`; `isClickable=false`, `hasAction` or another
+ *   `overrideTag` render a tag on which the URL has no effect.
+ * @property target - Specifies the target for the link when `href` is set (e.g., `_blank`).
  * @slot graphic - Prominent graphic or illustration at the top of the card (shown when `hasGraphic` is true)
  * @slot leading-icon - Icon displayed before the label (shown when `hasLeadingIcon` is true)
  * @slot label - Main label or title of the card (always shown)
@@ -136,6 +162,7 @@ export enum ObcElevatedCardTag {
  * @slot action - Content for the action button (shown when `hasAction` is true)
  * @slot trailing-icon - Icon displayed after the content (shown when `hasTrailingIcon` is true)
  * @fires action-click - Fired when the action button is clicked
+ * @stable
  */
 @customElement('obc-elevated-card')
 export class ObcElevatedCard extends LitElement {
@@ -169,75 +196,30 @@ export class ObcElevatedCard extends LitElement {
    */
   @property({type: String}) overrideTag: ObcElevatedCardTag | undefined;
 
-  /**
-   * If true, the card is rendered as a static (non-clickable) element.
-   * When set, the card uses `<article>` as its tag unless overridden.
-   * Useful for informational or status cards that should not be interactive.
-   */
   @property({type: Boolean, attribute: false}) isClickable: boolean = true;
 
-  /**
-   * Applies an informational style to the card.
-   * When true, the card uses the "info" visual style.
-   */
   @property({type: Boolean}) info = false;
 
-  /**
-   * If true, adds a border below the graphic area (when present).
-   * Used to visually separate the graphic from the card content.
-   */
   @property({type: Boolean}) graphicBorder = false;
 
-  /**
-   * If true, adds a border to the card (top or bottom, depending on position).
-   * Useful for visually separating cards in a stack.
-   */
   @property({type: Boolean}) border = false;
 
-  /**
-   * If true, displays an action button in the card.
-   * The button's content is provided via the `action` slot.
-   * When set, the card is rendered as static (`isClickable` is forced false).
-   */
   @property({type: Boolean}) hasAction = false;
 
-  /**
-   * If true, displays a leading icon before the label.
-   * The icon is provided via the `leading-icon` slot.
-   */
   @property({type: Boolean}) hasLeadingIcon: boolean = false;
 
-  /**
-   * If true, displays a trailing icon after the content.
-   * The icon is provided via the `trailing-icon` slot.
-   */
   @property({type: Boolean}) hasTrailingIcon: boolean = false;
 
-  /**
-   * If true, displays a prominent graphic at the top of the card.
-   * The graphic is provided via the `graphic` slot.
-   */
   @property({type: Boolean}) hasGraphic: boolean = false;
 
-  /**
-   * If true, displays a status indicator in the card.
-   * The status content is provided via the `status` slot.
-   */
   @property({type: Boolean}) hasStatus: boolean = false;
 
   @property({type: Boolean}) compact = false;
 
   @property({type: Boolean}) directAction = false;
 
-  /**
-   * If set, the card is rendered as a link (`<a>`) with this URL as the `href`.
-   * When present, the card is clickable and navigates to the specified URL.
-   */
   @property({type: String}) href?: string;
 
-  /**
-   * Specifies the target for the link when `href` is set (e.g., `_blank`).
-   */
   @property({type: String}) target?: string;
 
   override render() {

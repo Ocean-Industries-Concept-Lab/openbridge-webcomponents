@@ -1,6 +1,12 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {ObcWind, WindHistogramData} from './wind.js';
+import {
+  ObcWind,
+  WindHistogramData,
+  WindVariant,
+  WindVisualization,
+} from './wind.js';
 import './wind.js';
+import {Priority} from '../types.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {topVessels} from '../watch/vessels/storybook-helper.js';
 
@@ -76,22 +82,42 @@ const meta: Meta<typeof ObcWind> = {
     width: 400,
     vesselHeadingDeg: 60,
     currentWindFromDirection: 100,
-    currentWindSpeedBeaufort: 5,
+    currentWindSpeedKnots: 25,
     windHistogramData: windHistogramData,
   },
   argTypes: {
-    width: {control: {type: 'range', min: 100, max: 1000, step: 1}},
+    width: {control: {type: 'range', min: 32, max: 1000, step: 1}},
     vesselHeadingDeg: {control: {type: 'range', min: 0, max: 360, step: 1}},
     currentWindFromDirection: {
       control: {type: 'range', min: 0, max: 360, step: 1},
     },
-    currentWindSpeedBeaufort: {
-      control: {type: 'range', min: 0, max: 12, step: 1},
+    currentWindSpeedKnots: {
+      control: {type: 'range', min: 0, max: 100, step: 1},
+      description: 'Wind speed in knots.',
     },
     windHistogramData: {control: 'object'},
     vesselImage: {
       control: 'select',
       options: topVessels,
+    },
+    variant: {
+      control: 'inline-radio',
+      description:
+        'auto uses host min(width, height): < 96px => small, < 200px => medium, otherwise large.',
+      options: [
+        WindVariant.auto,
+        WindVariant.small,
+        WindVariant.medium,
+        WindVariant.large,
+      ],
+    },
+    visualization: {
+      control: 'inline-radio',
+      options: [WindVisualization.histogram, WindVisualization.forceGraphics],
+    },
+    priority: {
+      control: 'inline-radio',
+      options: [Priority.regular, Priority.enhanced],
     },
   },
 } satisfies Meta<ObcWind>;
@@ -101,4 +127,57 @@ type Story = StoryObj<ObcWind>;
 
 export const Primary: Story = {
   args: {},
+};
+
+export const Large: Story = {
+  args: {width: 400, variant: WindVariant.large},
+};
+
+export const Medium: Story = {
+  args: {width: 200, variant: WindVariant.medium},
+};
+
+export const Small: Story = {
+  args: {width: 80, variant: WindVariant.small},
+};
+
+export const Auto: Story = {
+  args: {width: 300, variant: WindVariant.auto},
+};
+
+export const ForceGraphics: Story = {
+  args: {
+    width: 400,
+    variant: WindVariant.large,
+    visualization: WindVisualization.forceGraphics,
+  },
+};
+
+export const ForceGraphicsMedium: Story = {
+  args: {
+    width: 200,
+    variant: WindVariant.medium,
+    visualization: WindVisualization.forceGraphics,
+  },
+};
+
+export const ForceGraphicsSmall: Story = {
+  args: {
+    width: 80,
+    variant: WindVariant.small,
+    visualization: WindVisualization.forceGraphics,
+  },
+};
+
+export const HistogramEnhanced: Story = {
+  args: {width: 400, variant: WindVariant.large, priority: Priority.enhanced},
+};
+
+export const ForceGraphicsEnhanced: Story = {
+  args: {
+    width: 400,
+    variant: WindVariant.large,
+    visualization: WindVisualization.forceGraphics,
+    priority: Priority.enhanced,
+  },
 };

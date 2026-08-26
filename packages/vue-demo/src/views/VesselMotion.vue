@@ -6,9 +6,11 @@ import {
 } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/speed-arrows/speed-arrows'
 import { useSim } from '../composables/useSim'
 import { computed } from 'vue'
-import ObcInstrumentField from '@oicl/openbridge-webcomponents-vue/navigation-instruments/instrument-field/ObcInstrumentField.vue'
-import { InstrumentFieldSize } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field'
 const sim = useSim()
+
+// Stable reference: obc-readout uses identity-based change detection, so a
+// shared constant avoids re-triggering updates on every render.
+const hintedZerosValueOptions = { hintedZeros: true }
 
 defineProps<{
   vessel: 'psv' | 'ferry'
@@ -34,6 +36,10 @@ const speedArrowsSidewaysStern = computed(() =>
 const speedArrowsSidewaysSternDirection = computed(() =>
   sim.vessel.speedSidewaysOverGroundKnotsAtStern.value >= 0 ? Direction.left : Direction.right
 )
+
+function formatSpeedValue(value: number) {
+  return Math.min(Math.max(Math.round(Math.abs(value)), 0), 99)
+}
 </script>
 
 <template>
@@ -126,41 +132,38 @@ const speedArrowsSidewaysSternDirection = computed(() =>
       :active-color="ActiveColor.Regular"
       :tinted-arrows="true"
     />
-    <ObcInstrumentField
+    <obc-readout
       class="speed-readout forward"
-      :value="Math.abs(sim.vessel.speedForwardOverGroundKnots.value)"
-      :max-digits="2"
-      :fraction-digits="0"
-      :size="InstrumentFieldSize.enhanced"
-      tag="Bow"
+      :value.prop="Number(formatSpeedValue(sim.vessel.speedForwardOverGroundKnots.value))"
+      :maxDigits.prop="2"
+      :fractionDigits.prop="0"
+      :valueOptions.prop="hintedZerosValueOptions"
+      size="large"
+      :priority.prop="'regular'"
+      label="Bow"
       unit="kn"
-      neutral-color
-      center
-      show-zero-padding
     />
-    <ObcInstrumentField
+    <obc-readout
       class="speed-readout bow-sideways"
-      :value="Math.abs(sim.vessel.speedSidewaysOverGroundKnotsAtBow.value)"
-      :max-digits="2"
-      :fraction-digits="0"
-      :size="InstrumentFieldSize.enhanced"
-      tag="Bow"
+      size="large"
+      :priority.prop="'regular'"
+      :value.prop="Number(formatSpeedValue(sim.vessel.speedSidewaysOverGroundKnotsAtBow.value))"
+      :maxDigits.prop="2"
+      :fractionDigits.prop="0"
+      :valueOptions.prop="hintedZerosValueOptions"
+      label="Bow"
       unit="kn"
-      neutral-color
-      center
-      show-zero-padding
     />
-    <ObcInstrumentField
+    <obc-readout
       class="speed-readout stern-sideways"
-      :value="Math.abs(sim.vessel.speedSidewaysOverGroundKnotsAtStern.value)"
-      :max-digits="2"
-      :fraction-digits="0"
-      :size="InstrumentFieldSize.enhanced"
-      tag="Aft"
+      size="large"
+      :priority.prop="'regular'"
+      :value.prop="Number(formatSpeedValue(sim.vessel.speedSidewaysOverGroundKnotsAtStern.value))"
+      :maxDigits.prop="2"
+      :fractionDigits.prop="0"
+      :valueOptions.prop="hintedZerosValueOptions"
+      label="Aft"
       unit="kn"
-      neutral-color
-      center
-      show-zero-padding
     />
   </div>
 </template>

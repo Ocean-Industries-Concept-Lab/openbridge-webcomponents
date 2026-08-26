@@ -201,10 +201,13 @@ export enum ContextMenuType {
  *
  * In this example, a flyout menu is shown with a title bar, group icons, and a selected child option.
  *
+ * @property title - Title text displayed in the title bar (if `hasTitleBar` is true).
+ * @availableWhen title hasTitleBar==true
  * @slot - Optionally used for custom icons in options (e.g., `<obi-placeholder slot="icon"></obi-placeholder>`)
- * @fires change {ObcContextMenuInputChangeEvent} Fired when the selection changes.
- * @fires item-click {ObcContextMenuInputItemClickEvent} Fired when a menu item is clicked.
- * @fires close {CustomEvent<void>} Fired when the close button is clicked.
+ * @fires {ObcContextMenuInputChangeEvent} change - Fired when the selection changes.
+ * @fires {ObcContextMenuInputItemClickEvent} item-click - Fired when a menu item is clicked.
+ * @fires {CustomEvent<void>} close - Fired when the close button is clicked.
+ * @beta
  */
 @customElement('obc-context-menu-input')
 export class ObcContextMenuInput extends LitElement {
@@ -247,15 +250,14 @@ export class ObcContextMenuInput extends LitElement {
    */
   @property({type: Boolean}) hasTitleBar = false;
 
-  /**
-   * Title text displayed in the title bar (if `hasTitleBar` is true).
-   */
   @property({type: String}) override title = '';
 
   /**
    * Array of column groups for the `multi-with-subtitles` layout.
    *
    * Each group defines a `title`, `columns` (number of columns in the group), and `options` (array of options for that group).
+   *
+   * @availableWhen type==MultiWithSubtitles
    */
   @property({type: Array}) columnGroups: ColumnGroup[] = [];
 
@@ -263,6 +265,8 @@ export class ObcContextMenuInput extends LitElement {
    * Number of items per column in multi-column layouts.
    *
    * Used in `multi` and `multi-with-subtitles` variants to control column splitting.
+   *
+   * @availableWhen type in [Multi, MultiWithSubtitles]
    */
   @property({type: Number}) itemsPerColumn = 5;
 

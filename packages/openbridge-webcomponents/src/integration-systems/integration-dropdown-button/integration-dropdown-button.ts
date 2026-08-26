@@ -57,8 +57,12 @@ export type IntegrationDropdownOption = {
  * </obc-integration-dropdown-button>
  * ```
  *
+ * @property value - The value of the currently selected option.
+ * @property fullWidth - If true, the select expands to fill the width of its container. Default is false.
+ * @property openTop - If true, the dropdown menu opens above the button.
  * @slot fleet - Fleet button displayed when `hasFleet` is true.
- * @fires change {ObcIntegrationDropdownButtonChangeEvent} - Fires when the value of the select changes
+ * @fires {ObcIntegrationDropdownButtonChangeEvent} change - Fires when the value of the select changes
+ * @experimental
  */
 @customElement('obc-integration-dropdown-button')
 export class ObcIntegrationDropdownButton extends LitElement {
@@ -76,21 +80,12 @@ export class ObcIntegrationDropdownButton extends LitElement {
   @property({type: Boolean}) hasFleet: boolean = false;
   @property({type: String}) fleetLabel: string = '';
 
-  /**
-   * The value of the currently selected option.
-   */
   @property({type: String}) value: string | undefined;
   @property({type: String}) placeholder: string = '';
   @property({type: Boolean}) disabled: boolean = false;
 
-  /**
-   * If true, the select expands to fill the width of its container. Default is false.
-   */
   @property({type: Boolean}) fullWidth = false;
 
-  /**
-   * If true, the dropdown menu opens above the button.
-   */
   @property({type: Boolean}) openTop = false;
 
   private get selectedItem():
@@ -181,10 +176,9 @@ export class ObcIntegrationDropdownButton extends LitElement {
   }
 
   /**
-   * Handles the dropdown-change and change event when a new option is selected. Updates the selected value and label, and dispatches a `dropdown-change` and 'change' event with the new selection.
+   * Handles the change event when a new option is selected. Updates the selected value and label, and dispatches a `change` event with the new selection.
    *
-   * @fires dropdown-change {ObcIntegrationDropdownButtonChangeEvent} - Fired when the user selects a different option.
-   * @fires change {ObcIntegrationDropdownButtonChangeEvent} - Fired when the user selects a different option.
+   * @fires change
    */
   private changeHandler(event: Event) {
     const target = event.target as HTMLSelectElement;

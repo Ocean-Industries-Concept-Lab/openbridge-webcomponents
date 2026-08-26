@@ -34,6 +34,11 @@ export enum ObcPoiButtonState {
   Caution = 'caution',
   Warning = 'warning',
   Alarm = 'alarm',
+  LevelCritical = 'level-critical',
+  LevelHigh = 'level-high',
+  LevelMedium = 'level-medium',
+  LevelLow = 'level-low',
+  LevelDiagnostic = 'level-diagnostic',
 }
 
 export enum PoiButtonVisualState {
@@ -90,7 +95,7 @@ export interface ObcPoiButtonDataItem {
  * - `layout` (default `anchored`): `anchored` or `inline`.
  * - `value` (default `unchecked`): `unchecked`, `checked`, `activated`, `overlapped`.
  * - `overlapOpaque` (default `false`): controls overlapped opacity mode (`false` = translucent, `true` = opaque).
- * - `state` (default `enabled`): `enabled`, `caution`, `warning`, `alarm`.
+ * - `state` (default `enabled`): `enabled`, `caution`, `warning`, `alarm`, `level-critical`, `level-high`, `level-medium`, `level-low`, `level-diagnostic`.
  * - `selected` (default `false`): shows selection frame in anchored layout.
  * - `relativeDirection` (default `0`): rotates default-slot icon content in degrees.
  * - `data` (default `[]`): when non-empty, renders value/label/unit rows.
@@ -111,8 +116,8 @@ export interface ObcPoiButtonDataItem {
  * - `relation`: Optional relation icon/content rendered when `hasRelation` is true in data mode.
  *
  * ## Events
- * This component does not emit custom events.
- * Native `click` is available from the internal `<button>`.
+ * This component emits no custom events. A standard `click` bubbles from the
+ * internal `<button>` (`onClick` in the framework wrappers).
  *
  * ## Best Practices
  * - Keep `value`, `state`, and `selected` synchronized to avoid conflicting visual states.
@@ -129,6 +134,8 @@ export interface ObcPoiButtonDataItem {
  * @slot - Icon/content rendered inside `obc-poi-object`.
  * @slot header - Optional header content rendered above the marker body.
  * @slot relation - Optional relation icon/content in data mode when `hasRelation` is true.
+ * @fires click - Fired when the marker is clicked.
+ * @experimental
  */
 @customElement('obc-poi-button')
 export class ObcPoiButton extends LitElement {
@@ -207,6 +214,16 @@ export class ObcPoiButton extends LitElement {
         return ObcPoiHeaderState.Warning;
       case ObcPoiButtonState.Alarm:
         return ObcPoiHeaderState.Alarm;
+      case ObcPoiButtonState.LevelCritical:
+        return ObcPoiHeaderState.LevelCritical;
+      case ObcPoiButtonState.LevelHigh:
+        return ObcPoiHeaderState.LevelHigh;
+      case ObcPoiButtonState.LevelMedium:
+        return ObcPoiHeaderState.LevelMedium;
+      case ObcPoiButtonState.LevelLow:
+        return ObcPoiHeaderState.LevelLow;
+      case ObcPoiButtonState.LevelDiagnostic:
+        return ObcPoiHeaderState.LevelDiagnostic;
       case ObcPoiButtonState.Enabled:
       default:
         return ObcPoiHeaderState.Selected;

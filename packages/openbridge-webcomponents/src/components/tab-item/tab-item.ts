@@ -9,16 +9,36 @@ import '../badge/badge.js';
 import {BadgeSize, BadgeType} from '../badge/badge.js';
 
 /**
+ * Configuration for a single badge rendered by `<obc-tab-item>` via the `badges` property.
+ */
+export interface TabItemBadge {
+  /** Visual style/type of the badge. See `BadgeType` for available options. */
+  type: BadgeType;
+  /** Size of the badge. See `BadgeSize` for available options. */
+  size: BadgeSize;
+  /** The numeric value to display in the badge. */
+  count?: number;
+  /** Whether to show an icon inside the badge. Default: false. */
+  showIcon?: boolean;
+  /**
+   * When set, a `<slot>` with this name is rendered inside the badge so a custom
+   * icon can be projected (used for badge types without a built-in icon).
+   */
+  iconSlotName?: string;
+}
+
+/**
  * `<obc-tab-item>` – A selectable tab component for navigation menus and tabbed interfaces.
  *
- * Represents a single tab within a tab bar or navigation group, supporting optional icons, badges, close actions, and various layout modes. Designed for use in horizontal or vertical tab sets, allowing users to switch between different views or content panels.
+ * Represents a single tab within a tab bar or navigation group, supporting optional icons, subtitles, badges, close actions, and various layout modes. Designed for use in horizontal or vertical tab sets, allowing users to switch between different views or content panels.
  *
- * Appears as a button-like element that can display a leading icon, a title, a badge (for counts or status), and an optional close button. Supports both fixed-width and "hug" (fit-content) layouts, and can be styled as checked (active/selected) or disabled.
+ * Appears as a button-like element that can display a leading icon, a title, an optional subtitle, a badge (for counts or status), and an optional close button. Supports both fixed-width and "hug" (fit-content) layouts, and can be styled as checked (active/selected) or disabled.
  *
  * ### Features
  * - **Selectable State:** Indicates active/selected tab via the `checked` property.
  * - **Leading Icon:** Optionally displays a leading icon via the `leading-icon` slot.
  * - **Title:** Supports a title label, either via property or slot.
+ * - **Subtitle:** Optionally displays secondary contextual text below the title.
  * - **Badge Support:** Can show a badge (count/status) with configurable type, size, and icon.
  * - **Close Button:** Optional close action via a trailing icon button.
  * - **Layout Modes:**
@@ -33,9 +53,10 @@ import {BadgeSize, BadgeType} from '../badge/badge.js';
  * - **Badge Sizes:** Regular and large badge sizes.
  * - **Badge Number Toggle:** Optionally hide the badge number via `badgeShowNumber` for status-only badges.
  * - **Show Leading Badge Icon:** Optionally display an icon within the badge.
+ * - **Subtitle Toggle:** Optionally display a subtitle line using `showSubtitle`.
  *
  * ### Usage Guidelines
- * Use `obc-tab-item` within a tab bar or navigation group to represent a single selectable view or section. Ideal for switching between content panels, dashboards, or grouped settings. Use the `checked` property to indicate the active tab, and `disabled` to prevent selection. The close button is suitable for user-removable tabs (e.g., in dynamic tab sets).
+ * Use `obc-tab-item` within a tab bar or navigation group to represent a single selectable view or section. Ideal for switching between content panels, dashboards, or grouped settings. Use the `checked` property to indicate the active tab, and `disabled` to prevent selection. Use `subtitle` for short contextual information that helps distinguish similarly named tabs. The close button is suitable for user-removable tabs (e.g., in dynamic tab sets).
  *
  * - Use the badge for counts (e.g., notifications, alarms) or status indicators.
  * - Use the leading icon for visual context or to reinforce the tab's purpose.
@@ -68,6 +89,8 @@ import {BadgeSize, BadgeType} from '../badge/badge.js';
  *   checked
  *   has-leading-icon
  *   has-title
+ *   show-subtitle
+ *   subtitle="Context"
  *   has-badge
  *   badgeCount="3"
  *   badgeType="alarm"
@@ -82,8 +105,9 @@ import {BadgeSize, BadgeType} from '../badge/badge.js';
  * @slot leading-icon - Slot for the leading icon (shown when `hasLeadingIcon` is true)
  * @slot title - Slot for the tab's label/title (shown when `hasTitle` is true)
  * @slot badge-icon - Slot for an icon inside the badge (shown when `hasBadge` and `showLeadingBadgeIcon` are true)
- * @fires tab-click {CustomEvent<{title: string}>} When the tab is clicked or activated via keyboard
- * @fires tab-close {CustomEvent<{title: string}>} When the close button is clicked
+ * @fires {CustomEvent<{title: string}>} tab-click - When the tab is clicked or activated via keyboard
+ * @fires {CustomEvent<{title: string}>} tab-close - When the close button is clicked
+ * @stable
  */
 @customElement('obc-tab-item')
 export class ObcTabItem extends LitElement {
@@ -93,7 +117,7 @@ export class ObcTabItem extends LitElement {
    *
    * Default: false
    */
-  @property({type: Boolean}) hug = false;
+  @property({type: Boolean, reflect: true}) hug = false;
 
   /**
    * Centers the content (icon, title, badge) horizontally within the tab.
@@ -141,10 +165,25 @@ export class ObcTabItem extends LitElement {
    * Useful for visually separating tabs.
    *
    * Default: false
+   * @availableWhen checked==false
    */
   @property({type: Boolean, attribute: 'has-divider'}) hasDivider = false;
 
   /**
+   * One or more badges (count/status) to display on the tab.
+   *
+   * When this array is non-empty it takes precedence over the deprecated
+   * single-badge props (`hasBadge`, `badgeType`, `badgeSize`, `badgeCount`,
+   * `badgeShowNumber`, `showLeadingBadgeIcon`). When empty, the deprecated
+   * props are used instead (gated by `hasBadge`).
+   *
+   * Default: []
+   */
+  @property({type: Array, attribute: false}) badges: TabItemBadge[] = [];
+
+  /**
+   * @deprecated Use the `badges` array instead.
+   *
    * Displays a badge (count/status) on the tab.
    * Configure badge appearance via `badgeCount`, `badgeType`, `badgeSize`, etc.
    *
@@ -169,6 +208,20 @@ export class ObcTabItem extends LitElement {
   @property({type: String}) override title = 'Tab title';
 
   /**
+   * Shows contextual text below the tab title.
+   *
+   * Default: false
+   */
+  @property({type: Boolean, attribute: 'show-subtitle'}) showSubtitle = false;
+
+  /**
+   * Contextual text shown below the tab title when `showSubtitle` is true.
+   *
+   * Default: ''
+   */
+  @property({type: String}) subtitle = '';
+
+  /**
    * Disables the tab, preventing user interaction and applying disabled styles.
    *
    * Default: false
@@ -176,40 +229,55 @@ export class ObcTabItem extends LitElement {
   @property({type: Boolean}) disabled = false;
 
   /**
+   * @deprecated Use the `badges` array instead.
+   *
    * Type of badge to display (e.g., 'regular', 'alarm', 'warning', etc.).
    * See `BadgeType` enum for available options.
    *
    * Default: 'regular'
+   * @availableWhen hasBadge==true
    */
   @property({type: String}) badgeType: string = BadgeType.regular;
 
   /**
+   * @deprecated Use the `badges` array instead.
+   *
    * Size of the badge ('regular' or 'large').
    * See `BadgeSize` enum for available options.
    *
    * Default: 'regular'
+   * @availableWhen hasBadge==true
    */
   @property({type: String}) badgeSize: string = BadgeSize.regular;
 
   /**
+   * @deprecated Use the `badges` array instead.
+   *
    * Shows the badge's numeric value. When false, only the badge background is rendered (for status-only badges).
    *
    * Default: true
+   * @availableWhen hasBadge==true
    */
   @property({type: Boolean, attribute: false}) badgeShowNumber: boolean = true;
 
   /**
+   * @deprecated Use the `badges` array instead.
+   *
    * The numeric value to display in the badge (e.g., count of notifications).
    *
    * Default: 0
+   * @availableWhen hasBadge==true
    */
   @property({type: Number}) badgeCount = 0;
 
   /**
+   * @deprecated Use the `badges` array instead.
+   *
    * Shows an icon inside the badge.
    * Supply icon content via the `badge-icon` slot.
    *
    * Default: false
+   * @availableWhen hasBadge==true
    */
   @property({type: Boolean}) showLeadingBadgeIcon = false;
 
@@ -243,7 +311,44 @@ export class ObcTabItem extends LitElement {
     }
   }
 
+  private get effectiveBadges(): TabItemBadge[] {
+    if (this.badges.length > 0) {
+      return this.badges;
+    }
+    if (!this.hasBadge) {
+      return [];
+    }
+    return [
+      {
+        type: (this.badgeType as BadgeType) || BadgeType.regular,
+        size: (this.badgeSize as BadgeSize) || BadgeSize.regular,
+        count: this.badgeShowNumber ? this.badgeCount : undefined,
+        showIcon: this.showLeadingBadgeIcon,
+        iconSlotName: this.showLeadingBadgeIcon ? 'badge-icon' : undefined,
+      },
+    ];
+  }
+
+  private renderBadge(badge: TabItemBadge) {
+    return html`
+      <obc-badge
+        class="badge"
+        .number=${badge.count ?? 0}
+        .type=${badge.type || BadgeType.regular}
+        .size=${badge.size || BadgeSize.regular}
+        .showNumber=${badge.count !== undefined}
+        .showIcon=${badge.showIcon ?? false}
+      >
+        ${badge.iconSlotName
+          ? html`<slot name=${badge.iconSlotName} slot="badge-icon"></slot>`
+          : nothing}
+      </obc-badge>
+    `;
+  }
+
   override render() {
+    const badges = this.effectiveBadges;
+    const hasBadge = badges.length > 0;
     const wrapperClasses = {
       wrapper: true,
       hug: this.hug,
@@ -251,7 +356,8 @@ export class ObcTabItem extends LitElement {
       'has-leading-icon': this.hasLeadingIcon,
       'has-title': this.hasTitle,
       'has-divider': this.hasDivider && !this.checked,
-      'has-badge': this.hasBadge,
+      'has-badge': hasBadge,
+      'has-subtitle': this.showSubtitle,
       disabled: this.disabled,
       'center-content': this.centerContent,
     };
@@ -274,43 +380,26 @@ export class ObcTabItem extends LitElement {
             : nothing}
           ${this.hasTitle
             ? html`
-                <div class="title">
-                  <slot name="title">${this.title}</slot>
+                <div class="text-content">
+                  <div class="title">
+                    <slot name="title">${this.title}</slot>
+                  </div>
+                  ${this.showSubtitle && this.subtitle
+                    ? html`<div class="subtitle">${this.subtitle}</div>`
+                    : nothing}
                 </div>
               `
             : nothing}
-          ${this.centerContent && this.hasBadge
-            ? html`
-                <obc-badge
-                  class="badge"
-                  .number=${this.badgeCount}
-                  .type=${this.badgeType || BadgeType.regular}
-                  .size=${this.badgeSize || BadgeSize.regular}
-                  .showNumber=${this.badgeShowNumber}
-                  .showIcon=${this.showLeadingBadgeIcon}
-                >
-                  ${this.showLeadingBadgeIcon
-                    ? html`<slot name="badge-icon" slot="badge-icon"></slot>`
-                    : nothing}
-                </obc-badge>
-              `
+          ${this.centerContent && hasBadge
+            ? html`<div class="badges">
+                ${badges.map((badge) => this.renderBadge(badge))}
+              </div>`
             : nothing}
         </div>
-        ${!this.centerContent && this.hasBadge
-          ? html`
-              <obc-badge
-                class="badge"
-                .number=${this.badgeCount}
-                .type=${this.badgeType || BadgeType.regular}
-                .size=${this.badgeSize || BadgeSize.regular}
-                .showNumber=${this.badgeShowNumber}
-                .showIcon=${this.showLeadingBadgeIcon}
-              >
-                ${this.showLeadingBadgeIcon
-                  ? html`<slot name="badge-icon" slot="badge-icon"></slot>`
-                  : nothing}
-              </obc-badge>
-            `
+        ${!this.centerContent && hasBadge
+          ? html`<div class="badges">
+              ${badges.map((badge) => this.renderBadge(badge))}
+            </div>`
           : nothing}
         ${this.hasClose
           ? html`

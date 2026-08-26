@@ -4,16 +4,23 @@ import compentStyle from './alert-button.css?inline';
 import '../../icons/icon-alerts.js';
 import '../../icons/icon-alerts-active.js';
 import '../../icons/icon-notification.js';
-import '../../icons/icon-notification-filled.js';
 import '../../icons/icon-notification-advice.js';
 import '../../icons/icon-notification-advice-active.js';
 import '../../icons/icon-silence-iec.js';
 import '../../icons/icon-alerts-alarm-twotone.js';
 import '../../icons/icon-alerts-warning-twotone.js';
 import '../../icons/icon-alerts-caution-twotone.js';
+import '../../manual-icon/icon-alerts-critical-twotone.js';
+import '../../manual-icon/icon-alerts-diagnostic-twotone.js';
 import {AlertType} from '../../types.js';
+import {
+  getAlertTwotoneComponent,
+  AlertTwotoneComponent,
+  supportsBlinking,
+} from '../../alert-severity.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
+import {blinkingAll} from '../../palettes/blinking.js';
 
 /**
  * `ObcAlertButtonType` – Enum for alert button visual and behavioral variants.
@@ -102,9 +109,12 @@ export enum ObcAlertButtonType {
  *
  * In this example, the button shows an alarm icon, a counter badge with "3", is styled as enhanced, blinks to indicate urgency, and includes a silence button if the width allows.
  *
+ * @property silenceButtonDisabled - Disables the silence button when true.
+ * @availableWhen silenceButtonDisabled showSilenceButton==true
  * @slot - No content slots. All content is provided via properties.
- * @fires click-alert {CustomEvent<void>} Fired when the main alert button is clicked.
- * @fires click-silence {CustomEvent<void>} Fired when the silence button is clicked.
+ * @fires {CustomEvent<void>} click-alert - Fired when the main alert button is clicked.
+ * @fires {CustomEvent<void>} click-silence - Fired when the silence button is clicked.
+ * @stable
  */
 @customElement('obc-alert-button')
 export class ObcAlertButton extends LitElement {
@@ -145,9 +155,6 @@ export class ObcAlertButton extends LitElement {
    */
   @property({type: Boolean}) showSilenceButton = false;
 
-  /**
-   * Disables the silence button when true.
-   */
   @property({type: Boolean}) silenceButtonDisabled = false;
 
   /**
@@ -169,6 +176,8 @@ export class ObcAlertButton extends LitElement {
    *
    * If the available width is less than this value, the button switches to flat mode.
    * Only applies when `type` is set to `normal` or `enhanced`.
+   *
+   * @availableWhen type!=flat
    */
   @property({type: Number}) flatMaxBreakpointPx = 0;
 
@@ -177,6 +186,8 @@ export class ObcAlertButton extends LitElement {
    *
    * If the available width is less than this value, the silence button is hidden.
    * Only applies when `showSilenceButton` is true.
+   *
+   * @availableWhen showSilenceButton==true
    */
   @property({type: Number}) silenceButtonMinBreakpointPx = 0;
 
@@ -189,38 +200,59 @@ export class ObcAlertButton extends LitElement {
   override connectedCallback() {
     super.connectedCallback();
     window.addEventListener('resize', this.resizeListener);
+    if (this.hasUpdated) {
+      this.installBlinking();
+    }
   }
 
   override disconnectedCallback() {
     window.removeEventListener('resize', this.resizeListener);
+    this._blinkAnimationCancel?.();
     super.disconnectedCallback();
+  }
+
+  private renderAlertTwotoneIcon() {
+    const twotone = this.alertType
+      ? getAlertTwotoneComponent(this.alertType)
+      : AlertTwotoneComponent.Caution;
+    switch (twotone) {
+      case AlertTwotoneComponent.Critical:
+        return html`<obi-alerts-critical-twotone
+          useCssColor
+          class="icon"
+        ></obi-alerts-critical-twotone>`;
+      case AlertTwotoneComponent.Diagnostic:
+        return html`<obi-alerts-diagnostic-twotone
+          useCssColor
+          class="icon"
+        ></obi-alerts-diagnostic-twotone>`;
+      case AlertTwotoneComponent.Warning:
+        return html`<obi-alerts-warning-twotone
+          useCssColor
+          class="icon"
+        ></obi-alerts-warning-twotone>`;
+      case AlertTwotoneComponent.Caution:
+        return html`<obi-alerts-caution-twotone
+          useCssColor
+          class="icon"
+        ></obi-alerts-caution-twotone>`;
+      default:
+        return html`<obi-alerts-alarm-twotone
+          useCssColor
+          class="icon"
+        ></obi-alerts-alarm-twotone>`;
+    }
   }
 
   private alertIcon() {
     const isIdle = this.nAlerts === 0;
     if (isIdle) {
       return html`<obi-alerts class="icon"></obi-alerts>`;
-    } else {
-      if (this.type === ObcAlertButtonType.Enhanced) {
-        return html`<obi-alerts-active class="icon"></obi-alerts-active>`;
-      } else if (this.alertType === AlertType.Alarm) {
-        return html`<obi-alerts-alarm-twotone
-          useCssColor
-          class="icon"
-        ></obi-alerts-alarm-twotone>`;
-      } else if (this.alertType === AlertType.Warning) {
-        return html`<obi-alerts-warning-twotone
-          useCssColor
-          class="icon"
-        ></obi-alerts-warning-twotone>`;
-      } else {
-        return html`<obi-alerts-caution-twotone
-          useCssColor
-          class="icon"
-        ></obi-alerts-caution-twotone>`;
-        //     }
-      }
     }
+    if (this.type === ObcAlertButtonType.Enhanced) {
+      return html`<obi-alerts-active class="icon"></obi-alerts-active>`;
+    }
+    return this.renderAlertTwotoneIcon();
   }
 
   private alertIconNegative() {
@@ -228,23 +260,8 @@ export class ObcAlertButton extends LitElement {
       this.nAlerts === 0 || this.type !== ObcAlertButtonType.Enhanced;
     if (useIdle) {
       return html`<obi-alerts class="icon"></obi-alerts>`;
-    } else if (this.alertType === AlertType.Alarm) {
-      return html`<obi-alerts-alarm-twotone
-        useCssColor
-        class="icon"
-      ></obi-alerts-alarm-twotone>`;
-    } else if (this.alertType === AlertType.Warning) {
-      return html`<obi-alerts-warning-twotone
-        useCssColor
-        class="icon"
-      ></obi-alerts-warning-twotone>`;
-    } else {
-      return html`<obi-alerts-caution-twotone
-        useCssColor
-        class="icon"
-      ></obi-alerts-caution-twotone>`;
-      //     }
     }
+    return this.renderAlertTwotoneIcon();
   }
 
   private get activeType(): ObcAlertButtonType {
@@ -265,12 +282,26 @@ export class ObcAlertButton extends LitElement {
     );
   }
 
+  private _blinkAnimationCancel?: () => void;
+
+  private installBlinking() {
+    this._blinkAnimationCancel?.();
+    this._blinkAnimationCancel = blinkingAll(this);
+  }
+
+  override updated() {
+    this.installBlinking();
+  }
+
   override render() {
     const hasAlerts = this.nAlerts > 0;
     const showCounter =
       this.counter && hasAlerts && this.activeType !== ObcAlertButtonType.Flat;
     const showBlinking =
-      this.blinking && hasAlerts && this.alertType !== AlertType.Caution;
+      this.blinking &&
+      hasAlerts &&
+      this.alertType !== undefined &&
+      supportsBlinking(this.alertType, false);
     return html`
       <div
         class=${classMap({

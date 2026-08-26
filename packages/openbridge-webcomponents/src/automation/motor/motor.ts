@@ -9,6 +9,9 @@ import '../../icons/icon-motor-off-horizontal.js';
 import {customElement} from '../../decorator.js';
 import {ObcAbstractAutomationButtonMotorized} from '../automation-button/abstract-automation-button-motorized.js';
 
+/**
+ * @stable
+ */
 @customElement('obc-motor')
 export class ObcMotor extends ObcAbstractAutomationButtonMotorized {
   @property({type: Boolean}) vertical: boolean = false;

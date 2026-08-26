@@ -86,6 +86,10 @@ export enum AreaFillMode {
  *   ];
  * </script>
  * ```
+ *
+ * @property stacked - Stack multi-series datasets vertically on y-axis.
+ *   Ignored for single-series and threshold fill mode.
+ * @beta
  */
 @customElement('obc-area-graph')
 export class ObcAreaGraph extends ObcChartLineBase {
@@ -98,10 +102,6 @@ export class ObcAreaGraph extends ObcChartLineBase {
   @property({type: String})
   fillMode: AreaFillMode = AreaFillMode.semitransparent;
 
-  /**
-   * Stack multi-series datasets vertically on y-axis.
-   * Ignored for single-series and threshold fill mode.
-   */
   @property({type: Boolean})
   stacked = false;
 

@@ -4,8 +4,8 @@
   align-items: center;
   justify-content: center;
   border-style: solid;
-  border-radius: var(--app-components-badge-border-radius);
-  padding: calc(var(--app-components-badge-padding) - 1px);
+  border-radius: var(--ui-components-badge-border-radius);
+  padding: calc(var(--ui-components-badge-padding) - 1px);
   border: 1px solid var(--alert-alarm-outline-color);
   background: var(--alert-alarm-color);
   width: fit-content;
@@ -18,8 +18,8 @@
   }
 
   .icon {
-    width: var(--app-components-badge-icon-size);
-    height: var(--app-components-badge-icon-size);
+    width: var(--ui-components-badge-icon-size);
+    height: var(--ui-components-badge-icon-size);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -33,20 +33,20 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 0 var(--app-components-badge-label-spacing) 1px
-      var(--app-components-badge-label-spacing);
-    height: var(--app-components-badge-icon-size);
-    min-width: var(--app-components-badge-icon-size);
+    padding: 0 var(--ui-components-badge-label-spacing) 1px
+      var(--ui-components-badge-label-spacing);
+    height: var(--ui-components-badge-icon-size);
+    min-width: var(--ui-components-badge-icon-size);
   }
 
   &.size-large {
     display: inline-flex;
     width: fit-content;
     height: 24px;
-    min-width: var(--app-components-badge-min-size-large);
-    min-height: var(--app-components-badge-min-size-large);
+    min-width: var(--ui-components-badge-min-size-large);
+    min-height: var(--ui-components-badge-min-size-large);
 
-    padding: calc(var(--app-components-badge-padding) - 1px);
+    padding: calc(var(--ui-components-badge-padding) - 1px);
     justify-content: center;
     align-items: center;
     background: var(--alert-alarm-color);
@@ -60,8 +60,8 @@
     }
 
     & .icon {
-      width: var(--app-components-badge-icon-size-large);
-      height: var(--app-components-badge-icon-size-large);
+      width: var(--ui-components-badge-icon-size-large);
+      height: var(--ui-components-badge-icon-size-large);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -91,10 +91,35 @@
     color: var(--on-warning-color);
   }
 
-  &.type-caution {
+  &.type-caution,
+  &.type-level-low {
     background-color: var(--alert-caution-color);
     border-color: var(--alert-caution-outline-color);
     color: var(--on-caution-color);
+  }
+
+  &.type-level-critical {
+    background-color: var(--critical-enabled-background-color);
+    border-color: var(--critical-enabled-border-color);
+    color: var(--on-critical-color);
+  }
+
+  &.type-level-high {
+    background-color: var(--alert-alarm-color);
+    border-color: var(--alert-alarm-outline-color);
+    color: var(--on-alarm-color);
+  }
+
+  &.type-level-medium {
+    background-color: var(--alert-warning-color);
+    border-color: var(--alert-warning-outline-color);
+    color: var(--on-warning-color);
+  }
+
+  &.type-level-diagnostic {
+    background-color: var(--notification-enabled-background-color);
+    border-color: var(--notification-enabled-border-color);
+    color: var(--on-notification-active-color);
   }
 
   &.type-running {
@@ -132,8 +157,8 @@
     border-color: var(--flat-enabled-background-color);
 
     .icon {
-      min-width: var(--app-components-badge-icon-size);
-      min-height: var(--app-components-badge-icon-size);
+      min-width: var(--ui-components-badge-icon-size);
+      min-height: var(--ui-components-badge-icon-size);
     }
 
     .icon.type-alarm {
@@ -147,9 +172,34 @@
       border-color: var(--alert-warning-outline-color);
       background: none;
     }
-    .icon.type-caution {
+    .icon.type-caution,
+    .icon.type-level-low {
       color: unset;
       border-color: var(--alert-caution-outline-color);
+      background: none;
+    }
+
+    .icon.type-level-critical {
+      color: unset;
+      border-color: var(--critical-enabled-border-color);
+      background: none;
+    }
+
+    .icon.type-level-high {
+      color: unset;
+      border-color: var(--alert-alarm-outline-color);
+      background: none;
+    }
+
+    .icon.type-level-medium {
+      color: unset;
+      border-color: var(--alert-warning-outline-color);
+      background: none;
+    }
+
+    .icon.type-level-diagnostic {
+      color: unset;
+      border-color: var(--notification-enabled-border-color);
       background: none;
     }
 
@@ -187,8 +237,8 @@
     }
 
     & .icon.type-outline {
-      width: var(--app-components-badge-icon-size-flat);
-      height: var(--app-components-badge-icon-size-flat);
+      width: var(--ui-components-badge-icon-size-flat);
+      height: var(--ui-components-badge-icon-size-flat);
     }
 
     .icon.type-outline + .number {

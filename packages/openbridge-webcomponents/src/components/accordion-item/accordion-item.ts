@@ -51,31 +51,24 @@ import '../../icons/icon-chevron-down-google.js';
  * </obc-accordion-item>
  * ```
  *
+ * @property title - The label displayed in the header of the accordion item.
+ * @property open - Whether the item is expanded (shows the content area).
+ *   Set to `true` to expand, `false` to collapse.
+ * @property disabled - Disables the accordion item, preventing user interaction and dimming the appearance.
+ * @property showDivider - Displays a divider line below the item for visual separation.
+ *   Useful when stacking multiple items in a list.
  * @slot expanded-content - Content displayed when the item is expanded and `showContent` is true.
- * @fires accordion-item-toggle {CustomEvent<{open: boolean, title: string}>} Fired when the item is toggled open or closed.
+ * @fires {CustomEvent<{open: boolean, title: string}>} accordion-item-toggle - Fired when the item is toggled open or closed.
+ * @stable
  */
 @customElement('obc-accordion-item')
 export class ObcAccordionItem extends LitElement {
-  /**
-   * The label displayed in the header of the accordion item.
-   */
   @property({type: String}) override title = '';
 
-  /**
-   * Whether the item is expanded (shows the content area).
-   * Set to `true` to expand, `false` to collapse.
-   */
   @property({type: Boolean}) open = false;
 
-  /**
-   * Disables the accordion item, preventing user interaction and dimming the appearance.
-   */
   @property({type: Boolean}) disabled = false;
 
-  /**
-   * Displays a divider line below the item for visual separation.
-   * Useful when stacking multiple items in a list.
-   */
   @property({type: Boolean}) showDivider = false;
 
   private handleToggle() {

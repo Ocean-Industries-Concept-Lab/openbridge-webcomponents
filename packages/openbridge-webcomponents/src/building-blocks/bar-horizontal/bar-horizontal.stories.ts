@@ -31,7 +31,7 @@ const SAMPLE_DATA = [
 
 const meta: Meta = {
   title: 'Bars and Graphs/Bar Horizontal',
-  tags: ['autodocs', '6.0'],
+  tags: ['autodocs', '6.0', 'beta'],
   component: 'obc-bar-horizontal',
   argTypes: {
     minValue: {control: {type: 'range', min: -100, max: 100}},

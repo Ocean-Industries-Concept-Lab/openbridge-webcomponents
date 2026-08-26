@@ -1,0 +1,594 @@
+* {
+  box-sizing: border-box;
+}
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+/* Bridge the list-item's public colour custom properties onto the block's, so
+   consumers keep theming the value / setpoint / advice / hinted-zero colours via
+   `--obc-readout-list-item-*` even though they now render inside obc-readout-block. */
+obc-readout-block {
+  --obc-readout-block-value-color: var(
+    --obc-readout-list-item-value-color,
+    var(--element-neutral-color)
+  );
+  --obc-readout-block-value-enhanced-color: var(
+    --obc-readout-list-item-value-enhanced-color,
+    var(--element-neutral-enhanced-color)
+  );
+  --obc-readout-block-setpoint-color: var(
+    --obc-readout-list-item-setpoint-color,
+    var(--element-neutral-color)
+  );
+  --obc-readout-block-setpoint-enhanced-color: var(
+    --obc-readout-list-item-setpoint-enhanced-color,
+    var(--instrument-enhanced-secondary-color)
+  );
+  --obc-readout-block-setpoint-touching-outline-color: var(
+    --obc-readout-list-item-setpoint-touching-outline-color,
+    var(--element-neutral-enhanced-color)
+  );
+  --obc-readout-block-setpoint-touching-color: var(
+    --obc-readout-list-item-setpoint-touching-color,
+    var(--base-blue-100)
+  );
+  --obc-readout-block-advice-color: var(
+    --obc-readout-list-item-advice-color,
+    var(--element-neutral-color)
+  );
+  --obc-readout-block-hinted-color: var(
+    --obc-readout-list-item-hinted-color,
+    var(--element-disabled-color)
+  );
+}
+
+/* Size the consumer-provided block icons forwarded into obc-readout-block's
+   `icon` slot (the block sizes the forwarded slot element; this sizes the
+   consumer's icon to fill it). */
+::slotted([slot="value-icon"]),
+::slotted([slot="setpoint-icon"]),
+::slotted([slot="advice-icon"]) {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+/* ---------- Root / surface ----------
+ * `.root` is the touch target (a <button> when clickable, otherwise a <div>).
+ * `.surface` is the visible box that carries padding, corner radius, the
+ * data-quality background/border, and — when clickable — the flat interaction
+ * states. */
+.root {
+  display: block;
+  inline-size: 100%;
+  margin: 0;
+  /* Neutralise the native <button> chrome (default padding + appearance) when
+     `.root` is the clickable touch target, so clickable rows don't inset their
+     `.surface` and misalign with non-clickable `<div>` rows. */
+  padding: 0;
+  border: none;
+  background: none;
+  appearance: none;
+  font: inherit;
+  color: inherit;
+  text-align: inherit;
+}
+
+.root.clickable {
+  cursor: pointer;
+  /* prettier-ignore */
+  @mixin style style=flat visibleWrapperClass=.surface;
+}
+
+.root.clickable:focus {
+  outline: none;
+}
+
+/* Flip-flop: animate the value↔setpoint cap-height swap by forwarding obc-textbox's
+   opt-in size-transition var. 300ms matches the instrument setpoint marker
+   (svghelpers/setpoint.ts). Override via `--obc-readout-list-item-flip-flop-duration`. */
+.root.flip-flop {
+  --obc-textbox-size-transition: var(
+    --obc-readout-list-item-flip-flop-duration,
+    300ms
+  );
+}
+
+.surface {
+  display: block;
+  inline-size: 100%;
+  border-radius: var(--global-border-radius-border-radius-base);
+}
+
+/* Clickable corner variants. The `.clickable` qualifier is redundant for
+   matching (a `border-*` class is only ever set alongside `.clickable`) but
+   raises specificity to (0,4,0) so the interactive corner shape wins over the
+   data-quality rules below — which also target `.surface` at (0,3,0) — when a
+   row is both clickable and low-integrity/invalid. Standalone data-quality rows
+   keep their own radius. */
+.root.clickable.border-squared .surface {
+  border-radius: 0;
+}
+.root.clickable.border-round-corners .surface {
+  border-radius: var(--global-border-radius-border-radius-floating);
+}
+.root.clickable.border-round .surface {
+  border-radius: var(--global-border-radius-border-radius-round);
+}
+
+/* ---------- Content row ----------
+ * Label on the left, value/unit cluster on the right, optional source after a
+ * trailing divider. All segments bottom-align so cap heights sit on a shared
+ * baseline. */
+.content {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  inline-size: 100%;
+  min-inline-size: 0;
+}
+
+/* Reserve the value cap-height per tier so the row height and the bottom
+   baseline stay constant regardless of which parts (label / value / unit / src /
+   setpoint / advice / icons) are present. */
+.size-small .content {
+  min-block-size: var(
+    --global-typography-instrument-value-regular-container-height
+  );
+}
+.size-medium .content {
+  min-block-size: var(
+    --global-typography-instrument-value-medium-container-height
+  );
+}
+.size-large .content {
+  min-block-size: var(
+    --global-typography-instrument-value-large-container-height
+  );
+}
+
+/* The value is the primary data, so under width pressure the label side yields
+   first: the label-container shrinks (and clips a too-long label) while
+   `.value-area` keeps its intrinsic width. */
+.label-container {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: var(--global-size-spacing-target-padding);
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  overflow: hidden;
+}
+
+.label-stack {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-end;
+  min-inline-size: 0;
+}
+
+.value-area {
+  display: inline-flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  flex: 0 0 auto;
+  min-inline-size: 0;
+}
+
+.value-cluster {
+  display: inline-flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+
+.unit-area {
+  display: inline-flex;
+  align-items: flex-end;
+}
+
+/* ---------- Value reading (value + degree + unit) ----------
+ * Groups the value block, its degree column and the trailing unit so the value
+ * alert frame can wrap all three. Layout-neutral: it adds no gap, so the content
+ * sits exactly where it did when these were siblings of `.value-area`. */
+.value-reading {
+  position: relative;
+  display: inline-flex;
+  align-items: flex-end;
+}
+
+/* ---------- Value data quality (low-integrity / invalid) ----------
+ * The value's per-block data-quality chip, applied to the whole reading (value +
+ * degree + unit) rather than hugging the value alone — the same logic as the
+ * value alert frame, minus its custom padding. Same look as the block/source
+ * chip (1px outline, check radius, alert-quality colours). Uses `outline` (not
+ * `border`) so it never shifts the value's width / cross-row column alignment.
+ * Setpoint/advice keep their own in-block chip; the row-level data quality on
+ * `.surface` is unchanged. */
+.value-reading.data-low-integrity,
+.value-reading.data-invalid {
+  outline: 1px solid;
+  border-radius: var(--global-border-radius-border-radius-check);
+}
+.value-reading.data-low-integrity {
+  background: var(--alert-low-integrity-background-color);
+  outline-color: var(--alert-low-integrity-border-color);
+}
+.value-reading.data-invalid {
+  background: var(--alert-invalid-background-color);
+  outline-color: var(--alert-invalid-border-color);
+}
+
+/* ---------- Value alert overlay ----------
+ * A pure overlay around the value reading: it reserves no space, so toggling the
+ * frame never changes the row height or breaks cross-row column alignment. The
+ * box is offset outward by (padding − stroke/2) on each axis so the alert-frame's
+ * outline (drawn outside its box) lands CENTRED on the 4px/2px padding line
+ * (half inside / half outside), matching Figma 58:10120. */
+.value-alert-overlay {
+  --_obc-readout-value-frame-padding-horizontal: 4px;
+  --_obc-readout-value-frame-padding-vertical: 2px;
+  /* Must match obc-alert-frame's ACTUAL outline width so the stroke stays centred
+     on the 4px/2px line. `thickness-small` is hard-coded to 2px in
+     alert-frame.css (it does NOT use the themed stroke-width token), so use a
+     literal 2px here; `thickness-large` is handled below. */
+  --_obc-readout-value-frame-stroke: 2px;
+  position: absolute;
+  inset-inline: calc(
+    -1 *
+      (
+        var(--_obc-readout-value-frame-padding-horizontal) -
+          var(--_obc-readout-value-frame-stroke) / 2
+      )
+  );
+  inset-block: calc(
+    -1 *
+      (
+        var(--_obc-readout-value-frame-padding-vertical) -
+          var(--_obc-readout-value-frame-stroke) / 2
+      )
+  );
+  /* Display-only: never intercept clicks on a clickable row. */
+  pointer-events: none;
+}
+
+/* thickness=large: obc-alert-frame's large outline uses the alert-frame border
+   weight token, so the overlay's outward offset must use the same width to keep
+   the stroke centred on the padding line. */
+.value-alert-overlay.thickness-large {
+  --_obc-readout-value-frame-stroke: var(
+    --global-size-spacing-border-weight-alertframe
+  );
+}
+
+/* The readout building blocks (advice / setpoint / value) now render inside
+   `obc-readout-block`; their layout / colour / hinted-zero / data-quality CSS
+   lives there. The list-item only bridges the public colour vars (see top) and
+   keeps the surrounding row layout below. */
+
+.label {
+  color: var(
+    --obc-readout-list-item-label-color,
+    var(--element-inactive-color)
+  );
+}
+.unit {
+  color: var(--obc-readout-list-item-unit-color, var(--element-inactive-color));
+}
+.source {
+  color: var(
+    --obc-readout-list-item-source-color,
+    var(--element-neutral-color)
+  );
+}
+
+/* ---------- Source data quality ----------
+ * Independent of (and nests inside) the row-level data-quality frame. Uses
+ * `outline` (not `border`) so the chip never shifts the source's width. (The
+ * per-block value/setpoint/advice chips live in `obc-readout-block`.) */
+.source.data-low-integrity,
+.source.data-invalid {
+  outline: 1px solid;
+  border-radius: var(--global-border-radius-border-radius-check);
+}
+.source.data-low-integrity {
+  background: var(--alert-low-integrity-background-color);
+  outline-color: var(--alert-low-integrity-border-color);
+}
+.source.data-invalid {
+  background: var(--alert-invalid-background-color);
+  outline-color: var(--alert-invalid-border-color);
+}
+
+/* ---------- Source state chip & deviation (Figma 6.1 Readout-block-source)
+ * `enhanced` renders the amplified chip, `caution`/`warning` the alert chip.
+ * Like the data-quality chip these use `outline`, so toggling a state never
+ * shifts the row. TODO(designer): Figma pads the chip 4px; a padding here
+ * would shift the row on live state changes, so the chip hugs the text like
+ * the data-quality chip does. */
+.source-block {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.source-block.source-state-enhanced,
+.source-block.source-state-caution,
+.source-block.source-state-warning {
+  outline: 1px solid;
+  border-radius: var(--global-border-radius-border-radius-check);
+}
+.source-block.source-state-enhanced {
+  background: var(--amplified-enabled-background-color);
+  outline-color: var(--amplified-enabled-border-color);
+}
+.source-block.source-state-enhanced .source,
+.source-block.source-state-enhanced .source-deviation {
+  color: var(--on-amplified-active-color);
+}
+.source-block.source-state-caution {
+  background: var(--alert-caution-color);
+  outline-color: var(--alert-caution-outline-color);
+}
+.source-block.source-state-caution .source,
+.source-block.source-state-caution .source-deviation {
+  color: var(--on-caution-active-color);
+}
+.source-block.source-state-warning {
+  background: var(--alert-warning-color);
+  outline-color: var(--alert-warning-outline-color);
+}
+.source-block.source-state-warning .source,
+.source-block.source-state-warning .source-deviation {
+  color: var(--on-warning-active-color);
+}
+
+.source-deviation {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  color: var(--element-inactive-color);
+}
+.source-deviation obi-delta {
+  display: block;
+  inline-size: 12px;
+  block-size: 12px;
+}
+
+.leading-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  color: var(--element-neutral-color);
+}
+.leading-icon ::slotted(*) {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+.divider {
+  flex: none;
+  inline-size: 1px;
+  background-color: var(--border-outline-color);
+  align-self: stretch;
+}
+
+/* ---------- Value↔unit gap & degree column ----------
+ * Default 2px between the value digits and the unit. A degree (or a
+ * hasDegreeSpacer reserve) replaces the 2px with a cap-height degree column
+ * whose width scales with the value size, so value digits + units align across
+ * degree / no-degree rows of the same value size. */
+.value-unit-gap {
+  flex: none;
+  inline-size: var(
+    --instrument-components-readout-new-general-horizontal-trim-padding
+  );
+}
+
+.degree-column {
+  flex: none;
+  display: inline-flex;
+  align-items: flex-end;
+  justify-content: center;
+  inline-size: var(--_obc-readout-list-item-degree-width, 0);
+  overflow: clip;
+  color: var(--obc-readout-list-item-value-color, var(--element-neutral-color));
+}
+.degree-column.tone-enhanced {
+  color: var(
+    --obc-readout-list-item-value-enhanced-color,
+    var(--element-neutral-enhanced-color)
+  );
+}
+/* Setpoint/advice degree glyphs inherit their block's colour. */
+.degree-column.degree-inherit {
+  color: inherit;
+}
+.degree-column.degree-xs {
+  --_obc-readout-list-item-degree-width: var(
+    --global-typography-instrument-value-small-degree-unit-width
+  );
+}
+.degree-column.degree-s {
+  --_obc-readout-list-item-degree-width: var(
+    --global-typography-instrument-value-regular-degree-unit-width
+  );
+}
+.degree-column.degree-m {
+  --_obc-readout-list-item-degree-width: var(
+    --global-typography-instrument-value-medium-degree-unit-width
+  );
+}
+.degree-column.degree-l,
+.degree-column.degree-xl {
+  --_obc-readout-list-item-degree-width: var(
+    --global-typography-instrument-value-large-degree-unit-width
+  );
+}
+
+/* Degree spacer: rendered AFTER the unit on a non-degree row that sets
+   hasDegreeSpacer. Its width (degree-compensation-padding = degree-column width
+   minus the 2px value↔unit gap) shifts the unit left so the row's value digits
+   stay aligned with degree rows in the same column. */
+.degree-spacer {
+  flex: none;
+  align-self: stretch;
+  inline-size: var(--_obc-readout-list-item-degree-spacer-width, 0);
+}
+.size-small .degree-spacer {
+  --_obc-readout-list-item-degree-spacer-width: var(
+    --instrument-components-readout-new-list-item-regular-degree-compensation-padding
+  );
+}
+.size-medium .degree-spacer {
+  --_obc-readout-list-item-degree-spacer-width: var(
+    --instrument-components-readout-new-list-item-medium-degree-compensation-padding
+  );
+}
+.size-large .degree-spacer {
+  --_obc-readout-list-item-degree-spacer-width: var(
+    --instrument-components-readout-new-list-item-large-degree-compensation-padding
+  );
+}
+
+/* ---------- Size tiers ----------
+ * Public small/medium/large map to the design token regular/medium/large
+ * tiers. */
+.size-small .surface {
+  padding-inline: var(
+    --instrument-components-readout-new-list-item-regular-container-padding-horizontal
+  );
+  padding-block: var(
+    --instrument-components-readout-new-list-item-regular-container-padding-vertical
+  );
+}
+.size-small .content {
+  gap: var(
+    --instrument-components-readout-new-list-item-regular-content-container-gap
+  );
+}
+.size-small .value-cluster {
+  gap: var(
+    --instrument-components-readout-new-list-item-regular-value-container-gap
+  );
+}
+.size-small .leading-icon {
+  inline-size: var(
+    --instrument-components-readout-new-general-regular-icon-size
+  );
+  block-size: var(
+    --instrument-components-readout-new-general-regular-icon-size
+  );
+}
+.size-small .divider {
+  block-size: var(
+    --global-typography-instrument-value-regular-container-height
+  );
+}
+
+.size-medium .surface {
+  padding-inline: var(
+    --instrument-components-readout-new-list-item-medium-container-padding-horizontal
+  );
+  padding-block: var(
+    --instrument-components-readout-new-list-item-medium-container-padding-vertical
+  );
+}
+.size-medium .content {
+  gap: var(
+    --instrument-components-readout-new-list-item-medium-content-container-gap
+  );
+}
+.size-medium .value-cluster {
+  gap: var(
+    --instrument-components-readout-new-list-item-medium-value-container-gap
+  );
+}
+.size-medium .leading-icon {
+  inline-size: var(
+    --instrument-components-readout-new-general-medium-icon-size
+  );
+  block-size: var(--instrument-components-readout-new-general-medium-icon-size);
+}
+.size-medium .divider {
+  block-size: var(--global-typography-instrument-value-medium-container-height);
+}
+
+.size-large .surface {
+  padding-inline: var(
+    --instrument-components-readout-new-list-item-large-container-padding-horizontal
+  );
+  padding-block: var(
+    --instrument-components-readout-new-list-item-large-container-padding-vertical
+  );
+  min-block-size: var(
+    --instrument-components-readout-new-list-item-large-min-height
+  );
+}
+.size-large .content {
+  gap: var(--instrument-components-readout-new-list-item-large-content-gap);
+}
+.size-large .value-cluster {
+  gap: var(--instrument-components-readout-new-list-item-large-value-gap);
+}
+.size-large .leading-icon {
+  inline-size: var(--instrument-components-readout-new-general-large-icon-size);
+  block-size: var(--instrument-components-readout-new-general-large-icon-size);
+}
+.size-large .divider {
+  block-size: var(--global-typography-instrument-value-large-container-height);
+}
+
+/* ---------- Stacking ----------
+ * leading-unit / leading-src move the unit / source up beside the label and
+ * suppress the trailing variant. (Handled in markup; these rules tighten the
+ * label-stack gap.) */
+.stacking-leading-src .content {
+  gap: var(--global-size-spacing-target-padding);
+}
+
+/* ---------- Data quality ----------
+ * Orthogonal to the alert frame — both can apply at once. */
+.root.data-low-integrity .surface,
+.root.data-invalid .surface {
+  /* `outline` (not `border`) so the data-quality frame does not inset the
+     content by 1px — keeps the row's value column-aligned with unframed rows.
+     Matches the per-block data-quality rules. */
+  outline: 1px solid var(--_obc-readout-list-item-data-border);
+  background: var(--_obc-readout-list-item-data-background);
+  border-radius: var(--global-border-radius-border-radius-check);
+}
+.root.data-low-integrity {
+  --_obc-readout-list-item-data-background: var(
+    --alert-low-integrity-background-color
+  );
+  --_obc-readout-list-item-data-border: var(--alert-low-integrity-border-color);
+}
+.root.data-invalid {
+  --_obc-readout-list-item-data-background: var(
+    --alert-invalid-background-color
+  );
+  --_obc-readout-list-item-data-border: var(--alert-invalid-border-color);
+}
+
+/* ---------- Debug overlay ----------
+ * `showDebugOverlay` outlines each readout building block (red), the degree
+ * columns (blue) and the degree spacer (green) so reserver widths / alignment
+ * are visible. A development aid (mirrors the donut chart's `showDebugOverlay`);
+ * off by default. */
+:host([showDebugOverlay]) obc-readout-block::part(block) {
+  outline: 1px solid rgba(220, 0, 0, 0.7);
+  outline-offset: -1px;
+}
+:host([showDebugOverlay]) obc-readout-block::part(degree),
+:host([showDebugOverlay]) .degree-column {
+  outline: 1px solid rgba(0, 0, 220, 0.7);
+  outline-offset: -1px;
+}
+:host([showDebugOverlay]) .degree-spacer {
+  outline: 1px solid rgba(0, 160, 0, 0.8);
+  outline-offset: -1px;
+}

@@ -4,8 +4,6 @@ import { useSim } from '../composables/useSim'
 import { useWeather } from '@/business/getWeather'
 import { VesselImage } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/watch/vessel'
 import { computed, ref, onMounted, onUnmounted } from 'vue'
-import ObcInstrumentField from '@oicl/openbridge-webcomponents-vue/navigation-instruments/instrument-field/ObcInstrumentField.vue'
-import { InstrumentFieldSize } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field'
 import {
   type AngleAdvice,
   AdviceType
@@ -57,7 +55,8 @@ const east = computed(() => {
 
 const windSpeedKnots = computed(() => {
   // Convert from m/s to knots
-  return weather.value.windSpeed * 1.94384
+  const knots = weather.value.windSpeed * 1.94384
+  return Math.round(knots * 10) / 10
 })
 
 const headingAdvice = computed((): AngleAdvice[] => {
@@ -113,26 +112,32 @@ onUnmounted(() => {
 <template>
   <div class="container-own-ship">
     <div class="readout left">
-      <ObcInstrumentField
-        :value="mapTo360Degrees(sim.vessel.headingDeg.value)"
-        :size="InstrumentFieldSize.enhanced"
+      <obc-readout
+        :value.prop="mapTo360Degrees(sim.vessel.headingDeg.value)"
+        size="large"
+        :priority.prop="'enhanced'"
+        direction="vertical"
         unit="DEG"
-        tag="HDG"
-        :max-digits="0"
+        label="HDG"
+        :maxDigits.prop="0"
       />
-      <ObcInstrumentField
-        :value="mapTo360Degrees(sim.vessel.courseOverGroundDeg.value)"
-        :size="InstrumentFieldSize.enhanced"
+      <obc-readout
+        :value.prop="mapTo360Degrees(sim.vessel.courseOverGroundDeg.value)"
+        size="large"
+        :priority.prop="'enhanced'"
+        direction="vertical"
         unit="DEG"
-        tag="COG"
-        :max-digits="0"
+        label="COG"
+        :maxDigits.prop="0"
       />
-      <ObcInstrumentField
-        :value="degPerMinute"
-        :size="InstrumentFieldSize.enhanced"
+      <obc-readout
+        :value.prop="degPerMinute"
+        size="large"
+        :priority.prop="'enhanced'"
+        direction="vertical"
         unit="DEG/min"
-        tag="ROT"
-        :max-digits="0"
+        label="ROT"
+        :maxDigits.prop="0"
       />
       <div class="divider"></div>
       <div class="position">
@@ -155,7 +160,7 @@ onUnmounted(() => {
       :vessel-image="vessel === 'psv' ? VesselImage.psvTop : VesselImage.carFerryTop"
       :current-from-direction="sim.currentFromAngleDeg"
       :current-speed="sim.currentSpeedKnots"
-      :wind-speed="weather.windSpeedBeaufort"
+      :current-wind-speed-knots="windSpeedKnots"
       :wind-from-direction="weather.windDirection"
       :heading-advices="headingAdvice"
       :state="InstrumentState.active"
@@ -163,41 +168,47 @@ onUnmounted(() => {
     />
     <div class="readout right">
       <div class="title font-ui-label">Wind</div>
-      <ObcInstrumentField
+      <obc-readout
         :value="windSpeedKnots"
-        :size="InstrumentFieldSize.enhanced"
+        size="large"
+        direction="vertical"
         unit="KN"
-        tag="Speed"
-        neutral-color
-        :fraction-digits="1"
-        :max-digits="0"
+        label="Speed"
+        :fractionDigits.prop="1"
+        :maxDigits.prop="2"
+        :priority.prop="'regular'"
       />
-      <ObcInstrumentField
+      <obc-readout
         :value="weather.windDirection"
-        :size="InstrumentFieldSize.enhanced"
+        :priority.prop="'regular'"
+        size="large"
+        direction="vertical"
         unit="DEG"
-        tag="Direction"
-        neutral-color
-        :max-digits="0"
+        label="Direction"
+        :maxDigits.prop="3"
+        :fractionDigits.prop="0"
       />
       <div class="divider"></div>
       <div class="title font-ui-label">Current</div>
-      <ObcInstrumentField
+      <obc-readout
         :value="sim.currentSpeedKnots"
-        :size="InstrumentFieldSize.enhanced"
+        :priority.prop="'regular'"
+        size="large"
+        direction="vertical"
         unit="KN"
-        tag="Speed"
-        neutral-color
-        :fraction-digits="1"
-        :max-digits="0"
+        label="Speed"
+        :fractionDigits.prop="1"
+        :maxDigits.prop="2"
       />
-      <ObcInstrumentField
+      <obc-readout
         :value="sim.currentFromAngleDeg"
-        :size="InstrumentFieldSize.enhanced"
+        :priority.prop="'regular'"
+        size="large"
+        direction="vertical"
         unit="DEG"
-        tag="Direction"
-        neutral-color
-        :max-digits="0"
+        label="Direction"
+        :maxDigits.prop="3"
+        :fractionDigits.prop="0"
       />
     </div>
   </div>

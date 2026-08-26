@@ -1,4 +1,5 @@
 import path from 'path';
+import postcss from 'postcss';
 import postcssMixins from 'postcss-mixins';
 import postcssNesting from 'postcss-nesting';
 import postcssImport from 'postcss-import';
@@ -50,7 +51,8 @@ function colors({
 }
 
 function parseParams(params) {
-  const paramsArray = params.split(' ');
+  const paramsNoNewLine = params.replaceAll('\n', '');
+  const paramsArray = paramsNoNewLine.split(' ');
   const paramsObject = {};
   paramsArray.forEach((param) => {
     const [key, value] = param.split('=');
@@ -184,11 +186,14 @@ export default (ctx) => ({
     {
       postcssPlugin: 'append-global-styles',
       Once(root) {
-        root.prepend(`
-          * {
-            -webkit-tap-highlight-color: transparent;
-          }
-        `);
+        const source = root.first?.source ?? root.source;
+        const rule = postcss.rule({selector: '*', source});
+        rule.append({
+          prop: '-webkit-tap-highlight-color',
+          value: 'transparent',
+          source,
+        });
+        root.prepend(rule);
       },
     },
   ],

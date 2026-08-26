@@ -17,7 +17,9 @@ import {
   ObcNumberInputField,
   ObcNumberInputFieldTextAlign,
   ObcNumberInputFieldSize,
+  ObcNumberInputFieldInputEvent,
 } from '../number-input-field/number-input-field.js';
+import {parseNumberInput} from '../number-input-field/number-input-format.js';
 
 export enum ObcKeyboardNumericType {
   Floating = 'floating',
@@ -77,44 +79,66 @@ const ALLOWED_CHARS = [
 
 const OPERATORS = ['+', '-', '–', '×', '÷', '*', '/'];
 
+const ALLOWED_CHARS_PATTERN = `^[${ALLOWED_CHARS.map((c) =>
+  c.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&')
+).join('')}]*$`;
+
+/**
+ * `<obc-keyboard-numeric>` – An on-screen numeric keyboard with optional calculation and symbol modes.
+ *
+ * @property hasTitleBar - Shows the top bar with label and close button (only applicable for floating type)
+ * @availableWhen hasTitleBar type==Floating
+ * @property label - Label displayed in the top bar
+ * @availableWhen label hasTitleBar==true && type==Floating
+ * @property value - Current input value
+ * @property hasCalculation - Shows the calculation row with +, -, ×, ÷, = buttons
+ * @property has2Symbols - Shows the #+= / 123 toggle button to switch between numbers and symbols
+ * @property helperText - Helper text content displayed below the input field
+ * @property hasLeadingIcon - Shows a leading icon slot in the input field
+ * @property unit - Unit text (%, kg, °C, etc.)
+ * @property inputFieldTextAlign - Text alignment in input field
+ * @property validationPattern - Optional regex pattern for validation (applies to both keyboard and direct input)
+ * @slot leading-icon - Custom leading icon shown inside the input field (rendered when `hasLeadingIcon` is true).
+ * @fires {CustomEvent<void>} close-click - Fired when the close button (or Escape) dismisses the keyboard.
+ * @fires {CustomEvent<{value: string}>} value-change - Fired whenever the current value changes.
+ * @fires {CustomEvent<{value: string}>} done-click - Fired when the DONE button (or Enter) is pressed.
+ * @beta
+ */
 @customElement('obc-keyboard-numeric')
 export class ObcKeyboardNumeric extends LitElement {
   @property({type: String}) type: ObcKeyboardNumericType =
     ObcKeyboardNumericType.Floating;
 
-  /** Shows the top bar with label and close button (only applicable for floating type) */
   @property({type: Boolean}) hasTitleBar = false;
 
-  /** Label displayed in the top bar */
   @property({type: String}) label = 'Parameter name';
 
-  /** Current input value */
   @property({type: String}) value = '';
 
-  /** Shows the calculation row with +, -, ×, ÷, = buttons */
   @property({type: Boolean}) hasCalculation = false;
 
-  /** Shows the #+= / 123 toggle button to switch between numbers and symbols */
   @property({type: Boolean}) has2Symbols = false;
 
-  /** Helper text content displayed below the input field */
   @property({type: String}) helperText = '';
 
-  /** Shows a leading icon slot in the input field */
   @property({type: Boolean}) hasLeadingIcon = false;
 
-  /** Unit text (%, kg, °C, etc.) */
   @property({type: String}) unit = '';
 
-  /** Text alignment in input field */
   @property({type: String}) inputFieldTextAlign: ObcNumberInputFieldTextAlign =
     ObcNumberInputFieldTextAlign.Right;
 
-  /** Optional regex pattern for validation (applies to both keyboard and direct input) */
   @property({type: String}) validationPattern = '';
 
   @state() private content: ObcKeyboardNumericContent =
     ObcKeyboardNumericContent.Numbers;
+
+  private get effectiveValidationPattern(): string {
+    if (!this.validationPattern) {
+      return ALLOWED_CHARS_PATTERN;
+    }
+    return `^(?=${ALLOWED_CHARS_PATTERN})(?=${this.validationPattern}).*$`;
+  }
 
   /** Validates if a character can be added to the current value */
   private canAddCharacter(char: string): boolean {
@@ -146,11 +170,6 @@ export class ObcKeyboardNumeric extends LitElement {
     }
 
     return true;
-  }
-
-  /** Validates that all characters in a value are allowed */
-  private isValidValue(value: string): boolean {
-    return [...value].every((char) => ALLOWED_CHARS.includes(char));
   }
 
   private handleCloseClick() {
@@ -248,22 +267,9 @@ export class ObcKeyboardNumeric extends LitElement {
     );
   }
 
-  private handleInputChange(e: Event) {
+  private handleInput(e: ObcNumberInputFieldInputEvent) {
     const input = e.target as ObcNumberInputField;
-    const newValue = input.value;
-
-    if (this.validationPattern && newValue) {
-      const regex = new RegExp(this.validationPattern);
-      if (!regex.test(newValue)) {
-        input.value = this.value;
-        return;
-      }
-    }
-
-    if (newValue && !this.isValidValue(newValue)) {
-      input.value = this.value;
-      return;
-    }
+    const newValue = input.displayValue;
 
     this.value = newValue;
     this.dispatchValueChange();
@@ -351,14 +357,16 @@ export class ObcKeyboardNumeric extends LitElement {
     return html`
       <obc-number-input-field
         class="input-field"
-        .value=${this.value}
+        .value=${parseNumberInput(this.value)}
+        .displayOverride=${this.value}
         .unit=${this.unit}
         .textAlign=${this.inputFieldTextAlign}
         .size=${ObcNumberInputFieldSize.Large}
         .helperText=${this.helperText}
+        .validationPattern=${this.effectiveValidationPattern}
         ?hasLeadingIcon=${this.hasLeadingIcon}
         placeholder="00.0"
-        @input=${this.handleInputChange}
+        @input=${this.handleInput}
         @keydown=${this.handleInputKeydown}
       >
         <slot name="leading-icon" slot="leading-icon"></slot>

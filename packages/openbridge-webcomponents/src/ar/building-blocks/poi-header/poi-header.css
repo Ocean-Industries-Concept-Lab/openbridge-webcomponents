@@ -31,26 +31,44 @@
   border: 1px solid var(--overlay-border-outline-color);
 }
 
-.wrapper.type-id.state-caution {
+.wrapper.type-id.state-caution,
+.wrapper.type-id.state-level-low {
   background: var(--alert-caution-color);
   border: 1px solid var(--alert-caution-outline-color);
 }
 
-.wrapper.type-id.state-warning {
+.wrapper.type-id.state-warning,
+.wrapper.type-id.state-level-medium {
   background: var(--alert-warning-color);
   border: 1px solid var(--alert-warning-outline-color);
 }
 
-.wrapper.type-id.state-alarm {
+.wrapper.type-id.state-alarm,
+.wrapper.type-id.state-level-high {
   background: var(--alert-alarm-color);
   border: 1px solid var(--alert-alarm-outline-color);
+}
+
+.wrapper.type-id.state-level-critical {
+  background: var(--critical-enabled-background-color);
+  border: 1px solid var(--critical-enabled-border-color);
+}
+
+.wrapper.type-id.state-level-diagnostic {
+  background: var(--notification-enabled-background-color);
+  border: 1px solid var(--notification-enabled-border-color);
 }
 
 .wrapper.type-data:is(
     .state-selected,
     .state-caution,
     .state-warning,
-    .state-alarm
+    .state-alarm,
+    .state-level-critical,
+    .state-level-high,
+    .state-level-medium,
+    .state-level-low,
+    .state-level-diagnostic
   ) {
   background: var(--overlay-container-background-color);
   border: 1px solid var(--overlay-border-outline-color);
@@ -104,19 +122,32 @@
   border: 1px solid var(--overlay-border-outline-color);
 }
 
-.wrapper.type-data.state-caution .id-pill {
+.wrapper.type-data.state-caution .id-pill,
+.wrapper.type-data.state-level-low .id-pill {
   background: var(--alert-caution-color);
   border: 1px solid var(--alert-caution-outline-color);
 }
 
-.wrapper.type-data.state-warning .id-pill {
+.wrapper.type-data.state-warning .id-pill,
+.wrapper.type-data.state-level-medium .id-pill {
   background: var(--alert-warning-color);
   border: 1px solid var(--alert-warning-outline-color);
 }
 
-.wrapper.type-data.state-alarm .id-pill {
+.wrapper.type-data.state-alarm .id-pill,
+.wrapper.type-data.state-level-high .id-pill {
   background: var(--alert-alarm-color);
   border: 1px solid var(--alert-alarm-outline-color);
+}
+
+.wrapper.type-data.state-level-critical .id-pill {
+  background: var(--critical-enabled-background-color);
+  border: 1px solid var(--critical-enabled-border-color);
+}
+
+.wrapper.type-data.state-level-diagnostic .id-pill {
+  background: var(--notification-enabled-background-color);
+  border: 1px solid var(--notification-enabled-border-color);
 }
 
 .id-text {

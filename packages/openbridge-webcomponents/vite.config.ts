@@ -7,7 +7,16 @@ import postcssConfig from './postcss.config.mjs';
 import fs from 'fs';
 import path from 'path';
 
-const input = globbySync('src/**/*.ts', {ignore: ['src/**/*.stories.ts']});
+const input = globbySync('src/**/*.ts', {
+  ignore: [
+    'src/**/*.stories.ts',
+    'src/**/*.spec.ts',
+    'src/**/*.test.ts',
+    'src/**/*.d.ts',
+    'src/storybook-util.ts',
+    'src/ar/_test-utils.ts',
+  ],
+});
 
 // https://vitejs.dev/config/
 export default defineConfig(({mode}) => {
@@ -16,6 +25,7 @@ export default defineConfig(({mode}) => {
   return {
     build: {
       minify: false,
+      sourcemap: true,
       lib: {
         entry: 'src/index.ts',
         name: 'openbridge-webcomponents',
@@ -41,7 +51,6 @@ export default defineConfig(({mode}) => {
               format: 'es',
               entryFileNames: 'openbridge-webcomponents.bundle.js',
               dir: 'bundle',
-              sourcemap: true,
               preserveModules: false,
               inlineDynamicImports: true,
             }
@@ -51,7 +60,6 @@ export default defineConfig(({mode}) => {
               entryFileNames: (opt) => {
                 return `${opt.name}.js`;
               },
-              sourcemap: true,
               preserveModules: true,
               preserveModulesRoot: 'src',
               inlineDynamicImports: false,
@@ -62,6 +70,13 @@ export default defineConfig(({mode}) => {
       postcssLit(),
       dts({
         clearPureImport: false,
+        exclude: [
+          'src/**/*.stories.ts',
+          'src/**/*.spec.ts',
+          'src/**/*.test.ts',
+          'src/storybook-util.ts',
+          'src/ar/_test-utils.ts',
+        ],
       }),
       {
         name: 'custom-postcss',
