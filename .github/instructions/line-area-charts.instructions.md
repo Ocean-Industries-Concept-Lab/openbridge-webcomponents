@@ -2,9 +2,11 @@
 applyTo: "packages/openbridge-webcomponents/src/building-blocks/chart-line/**,packages/openbridge-webcomponents/src/bars-graphs/line-graph/**,packages/openbridge-webcomponents/src/bars-graphs/area-graph/**,packages/openbridge-webcomponents/src/navigation-instruments/gauge-trend/**"
 ---
 
-# GitHub Copilot Custom Instructions
+<!-- GENERATED FILE — DO NOT EDIT.
+     Source: docs/agents/line-area-charts.md
+     Regenerate: npm run agents:sync -w packages/openbridge-webcomponents -->
 
-## Path-Specific Instructions for Line/Area Charts & Gauge Trend
+# Line/Area Charts & Gauge Trend
 
 These instructions apply to the Chart.js-based line/area chart system and the composite gauge-trend component.
 
@@ -14,7 +16,7 @@ These instructions apply to the Chart.js-based line/area chart system and the co
 >
 > - `chart-line-base.ts` ↔ `line-graph.ts` ↔ `area-graph.ts` ↔ `gauge-trend.ts`
 >
-> Additionally, `gauge-trend.ts` **bridges to the external-scale system** (see `external-scale.instructions.md`):
+> Additionally, `gauge-trend.ts` **bridges to the external-scale system** (see `external-scale.md`):
 >
 > - `gauge-trend.ts` → creates and manages → `bar-vertical.ts` (and possibly `bar-horizontal.ts`) → uses → `external-scale.ts`
 >
@@ -198,7 +200,7 @@ When adding new features or fixing bugs:
 
 ### Feature Goes in External Scale If:
 
-- It's about SVG scale rendering (see external-scale.instructions.md)
+- It's about SVG scale rendering (see external-scale.md)
 
 ### Padding & Label-Visibility Cascade (read before adding chart-level layout flags)
 
@@ -208,13 +210,76 @@ Chart padding has **multiple independent code paths** that must stay in sync. Wh
 2. **`updateScaleProperties(padding)`** — pushes derived state (`showLabels`, padding offsets) down to slotted bar children. Cascade flags here so the bar renders the matching geometry (e.g. `showLabels=false` collapses the bar's `labelThickness` band).
 3. **`getChartOptions()` / `buildScalesConfig()`** — Chart.js axis tick/label visibility and padding. Must honor the flag so Chart.js doesn't draw labels into space the layout doesn't reserve.
 4. **Watched-properties list** (`LINE_GRAPH_WATCHED_PROP_NAMES` / `LINE_GRAPH_RECREATE_PROP_NAMES`) — add the new property so changes trigger re-evaluation.
-5. **Slotted bar `reportDimensions` predicate** — see `external-scale.instructions.md`; if the cascaded property changes the bar's reported thickness, the bar must dispatch a fresh `scale-dimensions-changed` event.
+5. **Slotted bar `reportDimensions` predicate** — see `external-scale.md`; if the cascaded property changes the bar's reported thickness, the bar must dispatch a fresh `scale-dimensions-changed` event.
 
 **Lesson from past bugs:**
 
 - A chart-level `hasLabelPadding=false` flag that only updates `getChartOptions` produces clipped labels (Chart.js still draws them, the scale band is collapsed). It must cascade `showLabels=false` to the slotted bar AND update `calculatePaddingFromScales`'s fallback.
 - Advice/setpoint overlays drawn by slotted bars live **outside** the bar band. If you collapse the scale/label band, the bar must reserve a separate advice/setpoint allowance (see `computeAdviceBandThickness` in `external-scale.ts`) — otherwise overlays clip at the SVG edge AND the chart canvas overlaps them because `reportDimensions` returned a thickness too small.
-- Positive-default boolean properties (e.g. `hasLabelPadding = true`, see AGENTS.md § 2) must be declared with `attribute: false`. Pure JS property; framework wrappers handle it transparently.
+- Positive-default boolean properties (e.g. `hasLabelPadding = true`, see [`coding-standards.md`](../../docs/agents/coding-standards.md#boolean-property-naming)) must be declared with `attribute: false`. Pure JS property; framework wrappers handle it transparently.
+
+### Fixed-Aspect Sizing — Invariants That Look Removable But Are Not
+
+`fixedAspectRatioScaling` mode has a specific contract and three CSS
+declarations that each look like tidy-up candidates. Removing any one of them
+silently reintroduces a shipped bug (issue #1138).
+
+**The contract.** `width` / `height` are a **ratio**, not pixels. The component
+fills its container's width and derives its height as
+`measuredWrapperWidth / (width / height)`. The container's available **height
+is never consulted**. So a consumer that wants the chart to fill a box must
+feed that box's measured size back as `width` / `height` — this is what
+`obc-automation-tank` does with a `ResizeObserver` on its chart cell. Leaving
+the inherited 480×320 default (1.5:1) in a 900×200 box renders a 900×600 chart
+that overflows; that is the contract working, not a bug.
+
+Do not confuse that ratio with `scaleReferenceSize` (default 384). The ratio
+decides the component's own box; `scaleReferenceSize` is the size at which a
+slotted external scale draws 1:1 with the Figma design, and only scales the
+decorations inside it. They are unrelated numbers that both look like sizes.
+
+**The three CSS invariants**, all in `charthelpers/chart-common.css` and all
+scoped to `:host([fixedaspectratioscaling])`:
+
+1. `.canvas-and-slots-container { width: 100% }` — the container must stay a
+   **definite box**. `.wrapper` is a column flex with `align-items: center`, so
+   without this the container is shrink-to-fit; `canvas { width: 100% }` then
+   degrades to `auto`, and a canvas with an auto width and a definite height
+   resolves against its **intrinsic 2:1 ratio** (the 300×150 default). The
+   chart silently caps at `height * 2` and anything wider gets side gutters.
+2. `canvas { margin: 0 }` — Chart.js `getMaximumSize()` **subtracts the
+   canvas' resolved margins** from the container width. `margin: 0 auto`
+   centres the canvas and then donates the leftover space to the margins
+   permanently, so the canvas can never grow into it. Not even an explicit
+   `chart.resize()` recovers.
+3. `canvas { width: 100% !important; height: var(--chart-height) !important }`
+   — the `!important` is load-bearing. Chart.js writes its own measurement back
+   as an inline `style`, and see the measurement rule below for why that number
+   is wrong under `zoom`. Overriding it pins the canvas to the box layout
+   actually gave it; Chart.js keeps its measurement for the drawing buffer,
+   which converges to the same CSS-pixel size (no resolution loss).
+
+**Measurement under CSS `zoom`.** `getBoundingClientRect()` is zoom-scaled;
+`clientWidth` / `clientHeight` and `ResizeObserver` `contentRect` are **not**.
+So never turn a `getBoundingClientRect()` result back into a CSS-pixel style —
+the browser applies the zoom a second time and the element lands at `zoom²` of
+its box. This is not exotic: `vue-demo` exposes a global 100–200 % zoom setting
+and pins one app at `zoom: 1.5`.
+
+**Derived-size bookkeeping.** `computedWidth` / `computedHeight` feed
+`--chart-height`, the slotted scales' height and the padding scale factor. They
+must be refreshed whenever `width` / `height` / `fixedAspectRatioScaling`
+change — a ResizeObserver alone is not enough, because a container that changes
+height only never fires one. In `updated()` that refresh runs **before** the
+`hasLabelPadding` branch, since both can change in the same update. And
+`syncScalesAndChart()` returns whether it actually rebuilt: it bails without
+rebuilding when a sync is in flight or the effective chart area is degenerate,
+and the caller's own rebuild is the fallback for those cases.
+
+**Before changing any of this**, open Storybook →
+**Building Blocks → Chart Sizing Battleground**. It renders every chart subject
+across nine container shapes and six zoom levels and prints a PASS/FAIL per
+cell, so a sizing regression is visible rather than inferred.
 
 ### Checklist for Changes:
 
@@ -225,6 +290,9 @@ Chart padding has **multiple independent code paths** that must stay in sync. Wh
 5. [ ] Test with both `obc-line-graph` and `obc-area-graph`
 6. [ ] Test with external scales in all slot positions
 7. [ ] Test `obc-gauge-trend` if base class change affects it
+8. [ ] If the change touches sizing or `chart-common.css`, check
+       **Building Blocks → Chart Sizing Battleground** — container shapes,
+       zoom levels and the resize sweep should all stay green
 
 ---
 
@@ -332,6 +400,6 @@ private _updateBarVerticalProperties() {
 
 ## Relationship to Other Instructions
 
-- **Building Blocks** (`building-blocks.instructions.md`): General SVG component patterns
-- **External Scale** (`external-scale.instructions.md`): The `bar-vertical` used by gauge-trend
-- **Circular Charts** (`circular-charts.instructions.md`): Similar Chart.js patterns but for donut/pie/polar charts
+- **Building Blocks** (`building-blocks.md`): General SVG component patterns
+- **External Scale** (`external-scale.md`): The `bar-vertical` used by gauge-trend
+- **Circular Charts** (`circular-charts.md`): Similar Chart.js patterns but for donut/pie/polar charts

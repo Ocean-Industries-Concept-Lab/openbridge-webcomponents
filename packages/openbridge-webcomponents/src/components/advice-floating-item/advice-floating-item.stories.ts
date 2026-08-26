@@ -13,7 +13,7 @@ import '../../icons/icon-ship.js';
 const meta: Meta<ObcAdviceFloatingItem> = {
   title: 'Application Components/Notifications/Advice Floating Item',
   component: 'obc-advice-floating-item',
-  tags: ['6.0'],
+  tags: ['6.0', 'beta'],
   argTypes: {
     type: {
       control: 'select',

@@ -50,6 +50,7 @@ const cardStyle = `
 
 const meta: Meta = {
   title: 'Automation/Sequence Step',
+  tags: ['beta'],
   component: 'obc-sequence-step',
   parameters: {layout: 'centered'},
   argTypes: {

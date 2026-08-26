@@ -33,7 +33,12 @@ const filteredModules = data.modules
 
     const filteredDeclarations = module.declarations.filter(
       (declaration: Declaration) => {
-        return declaration.name && declaration.name.startsWith('Obc');
+        return (
+          declaration.name?.startsWith('Obc') ||
+          (module.description &&
+            declaration.kind === 'function' &&
+            declaration.description)
+        );
       }
     );
 

@@ -57,7 +57,9 @@ export enum HydraulicValve43Type {
  * - `position-selected` – Fired when the user requests a position (click or
  *   arrow key). Detail: `{position: number}` (0 = left, 1 = center, 2 = right).
  *
- * @alpha
+ * @experimental
+ *
+ * @property ariaLabel - Accessible name for the control.
  * @fires position-selected {CustomEvent<PositionSelectedDetail>} Position requested by the user.
  */
 @customElement('obc-hydraulic-valve-4-3')
@@ -70,11 +72,6 @@ export class ObcHydraulicValve43 extends ObcShuffleButtonBase {
   @property({type: String}) type: HydraulicValve43Type =
     HydraulicValve43Type.One;
 
-  /**
-   * Accessible name for the control.
-   *
-   * @default 'Hydraulic 4/3 valve'
-   */
   @property({type: String}) override ariaLabel = 'Hydraulic 4/3 valve';
 
   protected override get positionCount(): number {

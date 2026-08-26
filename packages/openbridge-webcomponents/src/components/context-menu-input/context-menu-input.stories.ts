@@ -6,7 +6,7 @@ import '../../icons/icon-placeholder.js';
 
 const meta: Meta<typeof ObcContextMenuInput> = {
   title: 'UI Components/Menus and Navigation/Context Menu Input',
-  tags: ['6.0'],
+  tags: ['6.0', 'beta'],
   component: 'obc-context-menu-input',
   argTypes: {
     type: {

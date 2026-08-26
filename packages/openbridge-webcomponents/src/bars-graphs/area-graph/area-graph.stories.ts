@@ -77,7 +77,7 @@ const SAMPLE_MULTI_DATASETS = [
 const meta: Meta = {
   title: 'Bars and Graphs/Area Graph',
   component: 'obc-area-graph',
-  tags: ['autodocs', '6.0'],
+  tags: ['autodocs', '6.0', 'beta'],
   render: (_args) => html`
     <obc-area-graph
       .data=${_args.data}

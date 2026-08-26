@@ -89,8 +89,17 @@ export type AdviceButtonClickEvent = CustomEvent<{
  * </obc-advice-button>
  * ```
  *
+ * @property count - Number of advice items or notifications to display in the badge.
+ *   Only shown when `showCount` is true and style is `normal` or `enhanced`.
+ * @property showCount - Whether to display the advice count badge.
+ *   If false, the count is hidden even if `count` is set.
+ * @availableWhen showCount isActive==true && buttonStyle in [Normal, Enhanced]
+ * @property isActive - Whether the button is in the active/selected state.
+ *   Changes the icon and style when true.
+ * @property ariaLabel - Accessibility label for the button.
+ *   Used for screen readers via `aria-label`.
  * @slot icon - Custom icon slot (replaces the default advice icon)
- * @fires obc-click {AdviceButtonClickEvent} Fired when the button is clicked.
+ * @fires {AdviceButtonClickEvent} obc-click - Fired when the button is clicked.
  * @stable
  */
 @customElement('obc-advice-button')
@@ -108,37 +117,12 @@ export class ObcAdviceButton extends LitElement {
   @property({type: String}) buttonStyle: AdviceButtonStyle =
     AdviceButtonStyle.Flat;
 
-  /**
-   * Number of advice items or notifications to display in the badge.
-   * Only shown when `showCount` is true and style is `normal` or `enhanced`.
-   *
-   * @default 0
-   */
   @property({type: Number}) count = 0;
 
-  /**
-   * Whether to display the advice count badge.
-   * If false, the count is hidden even if `count` is set.
-   *
-   * @default false
-   * @availableWhen isActive==true && buttonStyle in [Normal, Enhanced]
-   */
   @property({type: Boolean}) showCount = false;
 
-  /**
-   * Whether the button is in the active/selected state.
-   * Changes the icon and style when true.
-   *
-   * @default false
-   */
   @property({type: Boolean}) isActive = false;
 
-  /**
-   * Accessibility label for the button.
-   * Used for screen readers via `aria-label`.
-   *
-   * @default "Advice"
-   */
   @property({type: String}) override ariaLabel = 'Advice';
 
   override render() {

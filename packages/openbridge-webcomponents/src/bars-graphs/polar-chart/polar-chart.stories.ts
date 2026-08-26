@@ -3,6 +3,7 @@ import {html} from 'lit';
 import './polar-chart.js';
 import {ObcPolarChart} from './polar-chart.js';
 import {Priority} from '../../navigation-instruments/types.js';
+import {expectChartCanvasToMatchComputedLayout} from '../../storybook-util.js';
 
 const SAMPLE_DATA = [
   {label: 'Sector A', value: 80},
@@ -22,7 +23,7 @@ const SAMPLE_DATA = [
 const meta: Meta = {
   title: 'Bars and Graphs/Polar Chart',
   component: 'obc-polar-chart',
-  tags: ['autodocs', '6.0'],
+  tags: ['autodocs', '6.0', 'beta'],
   argTypes: {
     fixedHeight: {
       control: {type: 'range', min: 48, max: 512, step: 8},
@@ -31,7 +32,6 @@ const meta: Meta = {
     },
     monochrome: {
       control: 'boolean',
-      if: {arg: 'discreteColorStops', truthy: false},
     },
     discreteColorStops: {control: 'boolean'},
     showSectorLabels: {control: 'boolean'},
@@ -156,6 +156,11 @@ export const WithLegend: Story = {
   name: 'With Legend Polar',
   args: {
     legend: true,
+  },
+  // Regression test for issue #1061: the legend must not inflate the canvas
+  play: async ({canvasElement}) => {
+    await new Promise((resolve) => setTimeout(resolve, 600));
+    expectChartCanvasToMatchComputedLayout(canvasElement, 'obc-polar-chart');
   },
 };
 

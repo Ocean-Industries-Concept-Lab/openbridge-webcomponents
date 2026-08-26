@@ -9,7 +9,7 @@ import '../../icons/icon-placeholder.js';
 
 const meta: Meta<typeof ObcTableHeaderItem> = {
   title: 'UI Components/Tables/Building Blocks/Table Header Item',
-  tags: ['6.0'],
+  tags: ['6.0', 'beta'],
   component: 'obc-table-header-item',
   args: {
     sortable: true,

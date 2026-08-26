@@ -10,7 +10,10 @@ import {
 } from '../../navigation-instruments/watch/watch.js';
 import {renderInstrumentReadout} from '../../navigation-instruments/readout/instrument-readout.js';
 import {Priority} from '../../navigation-instruments/types.js';
-import {TickmarkType} from '../../navigation-instruments/watch/tickmark.js';
+import {
+  arcTickmarks,
+  TickmarkType,
+} from '../../navigation-instruments/watch/tickmark.js';
 import {
   AdviceState,
   AdviceType,
@@ -46,20 +49,16 @@ export const INCLINOMETER_CENTRE_HALF = 200;
  * auto-generated framework wrappers' `createComponent` call type-checks, which
  * rejects abstract constructors. This mirrors `ObcChartLineBase`.
  *
+ * @property hasReadout - When `true`, the centre shows an `<obc-readout>` with the value instead of
+ *   the horizon line, rotating indicator and vessel. Default `false`.
+ * @property priority - Colour palette for the scale fill / indicator and the readout value:
+ *   `regular` (default) or `enhanced`.
  * @ignore This is an abstract base class. Use `obc-pitch` or `obc-roll` instead.
  * @experimental
  */
 export class SingleAxisInclinometer extends LitElement {
   @property({type: Boolean}) zoomToFitArc: boolean = false;
-  /**
-   * When `true`, the centre shows an `<obc-readout>` with the value instead of
-   * the horizon line, rotating indicator and vessel. Default `false`.
-   */
   @property({type: Boolean}) hasReadout: boolean = false;
-  /**
-   * Colour palette for the scale fill / indicator and the readout value:
-   * `regular` (default) or `enhanced`.
-   */
   @property({type: String}) priority: Priority = Priority.regular;
   /**
    * Half-extent of the watch arc in degrees. The arc spans `centre ± arcAngle`
@@ -233,6 +232,7 @@ export class SingleAxisInclinometer extends LitElement {
   // keeps the zoomed `arcFrame` correct.
   protected renderScale(areas: WatchArea[], opposite: boolean) {
     const centerAngle = this.centerAngle;
+    const arcAngle = normalizeArcAngle(this.arcAngle, 45);
     return html`
       <obc-watch
         class=${opposite ? 'scale-opposite' : nothing}
@@ -259,7 +259,10 @@ export class SingleAxisInclinometer extends LitElement {
         .vessels=${opposite || this.zoomToFitArc || this.hasReadout
           ? []
           : this.scaleVessels}
-        .tickmarks=${[{angle: centerAngle, type: TickmarkType.main}]}
+        .tickmarks=${[
+          {angle: centerAngle, type: TickmarkType.main},
+          ...arcTickmarks(centerAngle, arcAngle),
+        ]}
         .advices=${this.advices}
       ></obc-watch>
     `;

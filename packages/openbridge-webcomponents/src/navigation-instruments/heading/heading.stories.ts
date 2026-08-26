@@ -1,10 +1,16 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {
+  CogArrowStyle,
   CompassDirection,
+  CompassReadoutSource,
+  HdgArrowStyle,
   HeadingPriorityElement,
   ObcHeading,
 } from './heading.js';
 import './heading.js';
+import {VesselImage} from '../watch/watch.js';
+import {topVessels} from '../watch/vessels/storybook-helper.js';
+import {ReadoutSize} from '../readout/readout.js';
 import {html} from 'lit';
 import {
   playgroundColumn,
@@ -17,7 +23,7 @@ import {Priority} from '../types.js';
 
 const meta: Meta<typeof ObcHeading> = {
   title: 'Instruments/Heading',
-  tags: ['6.0'],
+  tags: ['autodocs', '6.0'],
   component: 'obc-heading',
   args: {
     width: 512,
@@ -54,6 +60,16 @@ const meta: Meta<typeof ObcHeading> = {
     touching: {control: 'boolean'},
     showLabels: {control: 'boolean'},
     tickmarksInside: {control: 'boolean'},
+    vesselImage: {control: 'select', options: [undefined, ...topVessels]},
+    hdgArrowStyle: {
+      control: 'select',
+      options: Object.values(HdgArrowStyle),
+    },
+    cogArrowStyle: {
+      control: 'select',
+      options: Object.values(CogArrowStyle),
+    },
+    centerReadouts: {control: 'object'},
     priority: {control: 'select', options: Object.values(Priority)},
     priorityElements: {
       control: 'multi-select',
@@ -79,14 +95,47 @@ export const Enhanced: Story = {
   },
 };
 
+export const WithVessel: Story = {
+  tags: ['6.1'],
+  args: {
+    vesselImage: VesselImage.psvTop,
+    hdgArrowStyle: HdgArrowStyle.arrowHead,
+    cogArrowStyle: CogArrowStyle.arrowHead,
+  },
+};
+
+export const WithCenterReadout: Story = {
+  tags: ['6.1'],
+  args: {
+    centerReadouts: [
+      {source: CompassReadoutSource.hdg},
+      {source: CompassReadoutSource.cog, size: ReadoutSize.large},
+    ],
+    hdgArrowStyle: HdgArrowStyle.arrowHead,
+    cogArrowStyle: CogArrowStyle.arrowHead,
+    priority: Priority.enhanced,
+  },
+};
+
+export const WithVectorArrows: Story = {
+  tags: ['6.1'],
+  args: {
+    vesselImage: VesselImage.psvTop,
+    hdgArrowStyle: HdgArrowStyle.vector,
+    cogArrowStyle: CogArrowStyle.vector,
+  },
+};
+
 /**
  * Below the label-reserve cap (~200px for the NSWE + north-arrow decor) the
- * frame reports `labelsHidden` and the instrument drops the labels and the
- * north arrow instead of letting them clip — the same graceful degradation
- * the tick-label instruments use (issue #1021).
+ * frame reports `labelsHidden` and the instrument drops the labels instead
+ * of letting them clip — the same graceful degradation the tick-label
+ * instruments use (issue #1021). The north arrow stays visible on even the
+ * smallest face: below the small-scale threshold it renders as a compact
+ * triangle at the ring that scales with the face, so it never clips.
  */
 export const SmallContainerDegraded: Story = {
-  name: 'Small Container (160px, Labels + Arrow Hidden Past Cap)',
+  name: 'Small Container (160px, Labels Hidden Past Cap)',
   args: {
     width: 160,
   },

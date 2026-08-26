@@ -9,7 +9,7 @@ import '../../icons/icon-placeholder.js';
 
 const meta: Meta<ObcMessageMenuItem> = {
   title: 'UI Components/Message and Alerts/Message Menu Item',
-  tags: ['autodocs', '6.0'],
+  tags: ['autodocs', '6.0', 'beta'],
   component: 'obc-message-menu-item',
   argTypes: {
     // Layout

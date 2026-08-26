@@ -18,22 +18,15 @@ import '../../icons/icon-hydraulic-13.js';
  * Use alongside `<obc-hydraulic-valve-4-3>` and `<obc-hydraulic-valve-x-2>`
  * for consistent styling of valves without switchable positions.
  *
- * @alpha
+ * @experimental
+ *
+ * @property ariaLabel - Accessible name for the symbol.
+ * @property vertical - Rotates the symbol 90° counter-clockwise to match a vertical flow path.
  */
 @customElement('obc-hydraulic-check-valve')
 export class ObcHydraulicCheckValve extends LitElement {
-  /**
-   * Accessible name for the symbol.
-   *
-   * @default 'Check valve'
-   */
   @property({type: String}) override ariaLabel = 'Check valve';
 
-  /**
-   * Rotates the symbol 90° counter-clockwise to match a vertical flow path.
-   *
-   * @default false
-   */
   @property({type: Boolean}) vertical = false;
 
   override render() {

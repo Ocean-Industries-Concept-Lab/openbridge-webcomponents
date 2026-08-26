@@ -46,32 +46,20 @@ export type PositionSelectedEvent = CustomEvent<PositionSelectedDetail>;
  * class breaks the generated React wrapper build (same reason as the
  * specialty-tank base).
  *
+ * @property selectedPosition - Zero-based index of the currently selected position.
+ *   Out-of-range values are clamped.
+ * @property vertical - Lays the control out vertically: positions stack top to bottom and the
+ *   position symbols rotate 90° counter-clockwise to match a vertical flow
+ *   path.
+ * @property ariaLabel - Accessible name for the radio group (the control is icon-only).
+ *   Concrete components override the default with a device-specific name.
  * @ignore
  */
 export class ObcShuffleButtonBase extends LitElement {
-  /**
-   * Zero-based index of the currently selected position.
-   * Out-of-range values are clamped.
-   *
-   * @default 1
-   */
   @property({type: Number}) selectedPosition = 1;
 
-  /**
-   * Lays the control out vertically: positions stack top to bottom and the
-   * position symbols rotate 90° counter-clockwise to match a vertical flow
-   * path.
-   *
-   * @default false
-   */
   @property({type: Boolean}) vertical = false;
 
-  /**
-   * Accessible name for the radio group (the control is icon-only).
-   * Concrete components override the default with a device-specific name.
-   *
-   * @default 'Position selector'
-   */
   @property({type: String}) override ariaLabel = 'Position selector';
 
   @state() private suppressHover = false;

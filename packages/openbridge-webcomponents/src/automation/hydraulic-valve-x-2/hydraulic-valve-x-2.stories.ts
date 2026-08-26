@@ -9,7 +9,7 @@ import type {PositionSelectedEvent} from '../shuffle-button/shuffle-button-base.
 
 const meta: Meta<typeof ObcHydraulicValveX2> = {
   title: 'Automation/Hydraulic Valves/Valve X-2',
-  tags: ['autodocs', 'wip'],
+  tags: ['autodocs', 'experimental'],
   component: 'obc-hydraulic-valve-x-2',
   args: {
     type: HydraulicValveX2Type.TwoTwo,
