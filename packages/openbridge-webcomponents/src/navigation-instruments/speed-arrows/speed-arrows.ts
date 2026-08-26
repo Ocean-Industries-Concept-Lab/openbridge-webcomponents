@@ -21,22 +21,22 @@ export enum ActiveColor {
 }
 
 /**
+ * @availableWhen speedKnots readout==true
+ * @availableWhen maxDigits readout==true
+ * @availableWhen fractionDigits readout==true
  * @beta
  */
 @customElement('obc-speed-arrows')
 export class ObcSpeedArrows extends LitElement {
-  /** @availableWhen readout==true */
   @property({type: Number})
   speedKnots = 0;
 
   @property({type: Boolean})
   readout = false;
 
-  /** @availableWhen readout==true */
   @property({type: Number})
   maxDigits = 2;
 
-  /** @availableWhen readout==true */
   @property({type: Number})
   fractionDigits = 0;
   @property({type: Number})

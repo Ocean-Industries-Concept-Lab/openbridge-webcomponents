@@ -71,6 +71,8 @@ export enum ObcCheckboxItemHoverStyle {
  * ></obc-checkbox-item>
  * ```
  *
+ * @availableWhen isLevel1 isNested==true || hoverStyle==visual-target
+ * @availableWhen isLevel2 isNested==true || hoverStyle==visual-target
  * @slot - No named slots.
  * @fires {ObcCheckboxChangeEvent} change - Emitted when status changes.
  * @stable
@@ -88,10 +90,8 @@ export class ObcCheckboxItem extends LitElement {
 
   @property({type: Boolean, reflect: true}) isNested = false;
 
-  /** @availableWhen isNested==true || hoverStyle==visual-target */
   @property({type: Boolean, reflect: true}) isLevel1 = false;
 
-  /** @availableWhen isNested==true || hoverStyle==visual-target */
   @property({type: Boolean, reflect: true}) isLevel2 = false;
 
   @property({type: String}) hoverStyle: ObcCheckboxItemHoverStyle =

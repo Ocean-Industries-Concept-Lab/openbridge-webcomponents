@@ -54,6 +54,17 @@ export enum ObcTextInputFieldPlacement {
  *
  *
  *
+ * @availableWhen errorText error==true
+ * @property rejectUpdatesOnFocus - If true, the input field will not update its value on focus
+ * @property rejectUpdates - If true, the value will only be initially set, and not updated on change
+ * @property rejectDuplicateUpdates - If true, the input field will not update its value if the value is the same as the previous value
+ *   This is useful to avoid React re-rendering to reset the value.
+ * @property name - Name attribute for form integration
+ * @property maxlength - Maximum number of characters allowed
+ * @property minlength - Minimum number of characters required
+ * @property hasClearButton - Shows a clear button when the input has a value
+ * @availableWhen hasLabelIcon label!=''
+ * @availableWhen labelPlacement label!=''
  * @slot leading-icon - Icon displayed before the input value (when `hasLeadingIcon` is true)
  * @slot label-icon - Icon displayed before the label text (when `hasLabelIcon` is true)
  * @slot helper-icon - Icon displayed before helper or error text (when `hasHelperIcon` is true)
@@ -75,25 +86,16 @@ export class ObcTextInputField extends LitElement {
   @property({type: Boolean, reflect: true}) disabled = false;
   @property({type: Boolean, reflect: true}) readonly = false;
   @property({type: Boolean, reflect: true}) error = false;
-  /** @availableWhen error==true */
   @property({type: String}) errorText = '';
-  /** If true, the input field will not update its value on focus */
   @property({type: Boolean}) rejectUpdatesOnFocus = false;
-  /** If true, the value will only be initially set, and not updated on change */
   @property({type: Boolean}) rejectUpdates = false;
 
-  /** If true, the input field will not update its value if the value is the same as the previous value
-   * This is useful to avoid React re-rendering to reset the value.
-   */
   @property({type: Boolean}) rejectDuplicateUpdates = false;
 
-  /** Name attribute for form integration */
   @property({type: String}) name = '';
 
-  /** Maximum number of characters allowed */
   @property({type: Number}) maxlength?: number;
 
-  /** Minimum number of characters required */
   @property({type: Number}) minlength?: number;
 
   @property({type: String}) size: ObcTextInputFieldSize =
@@ -101,16 +103,13 @@ export class ObcTextInputField extends LitElement {
 
   @property({type: Boolean}) hasLeadingIcon = false;
 
-  /** Shows a clear button when the input has a value */
   @property({type: Boolean}) hasClearButton = false;
 
   @property({type: String}) helperText = '';
 
   @property({type: String}) label = '';
   @property({type: Boolean}) required = false;
-  /** @availableWhen label!='' */
   @property({type: Boolean}) hasLabelIcon = false;
-  /** @availableWhen label!='' */
   @property({type: String}) labelPlacement: ObcTextInputFieldPlacement =
     ObcTextInputFieldPlacement.Left;
 
@@ -246,7 +245,10 @@ export class ObcTextInputField extends LitElement {
     const hasHelperOrError =
       Boolean(this.helperText) || Boolean(this.error && this.errorText);
     const showClearButton =
-      this.hasClearButton && this.value.length > 0 && !this.disabled;
+      this.hasClearButton &&
+      this.value.length > 0 &&
+      !this.disabled &&
+      !this.readonly;
     const isPasswordField = this.type === HTMLInputTypeAttribute.Password;
     const showPasswordToggle = isPasswordField && !this.disabled;
     const isClearButtonVisible = showClearButton && !showPasswordToggle;
@@ -272,6 +274,7 @@ export class ObcTextInputField extends LitElement {
           [`size-${this.size}`]: true,
           error: this.error,
           disabled: this.disabled,
+          readonly: this.readonly,
           empty: this.isEmpty,
           helpertext: hasHelperOrError,
           haslabel: Boolean(this.label),

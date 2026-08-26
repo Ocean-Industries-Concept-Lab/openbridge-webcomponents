@@ -59,6 +59,8 @@ export enum GaugeMotorsAndPumpsType {
  * | `secondary-icon` | Replaces the battery icon on the compact stack's secondary row |
  *
  * @element obc-gauge-motors-and-pumps
+ *
+ * @property type - The design's Type axis; drives the sector and the split frame.
  * @experimental
  *
  * @slot icon - Replaces the default pump symbol (`obi-*` icon)
@@ -66,7 +68,6 @@ export enum GaugeMotorsAndPumpsType {
  */
 @customElement('obc-gauge-motors-and-pumps')
 export class ObcGaugeMotorsAndPumps extends ObcGaugeProportional {
-  /** The design's Type axis; drives the sector and the split frame. */
   @property({type: String}) type: GaugeMotorsAndPumpsType =
     GaugeMotorsAndPumpsType.regular;
 

@@ -15,10 +15,10 @@ export enum ObcIndicatorGraphPriority {
   enhanced = 'enhanced',
 }
 
-// showZeroLine is defaulted to true
 export interface ObcIndicatorGraphLayout {
   size?: ObcIndicatorGraphSize;
   priority?: ObcIndicatorGraphPriority;
+  fill?: boolean;
   y?: {min?: number; max?: number; showZeroLine?: boolean};
 }
 
@@ -26,11 +26,11 @@ export interface ObcIndicatorGraphLayout {
  * @element obc-indicator-graph
  * @description A mini graph component
  *
+ * @property data - The data to display in the graph, first array is the x values, second array is the y values
  * @beta
  */
 @customElement('obc-indicator-graph')
 export class ObcIndicatorGraph extends LitElement {
-  /** The data to display in the graph, first array is the x values, second array is the y values */
   @property({type: Array})
   data: [number[], number[]] = [[], []];
 
@@ -71,6 +71,7 @@ export class ObcIndicatorGraph extends LitElement {
         {
           stroke: this._getStrokeColor(),
           width: this._getStrokeWidth(),
+          fill: this._effectiveFill ? () => this._getFillColor() : undefined,
           points: {show: false},
         },
       ],
@@ -131,6 +132,14 @@ export class ObcIndicatorGraph extends LitElement {
     return this.layout.priority ?? ObcIndicatorGraphPriority.regular;
   }
 
+  private get _effectiveFill() {
+    return this.layout.fill ?? false;
+  }
+
+  private _getFillColor() {
+    return this.getCssColor('--instrument-regular-tertiary-color') || '#bebebe';
+  }
+
   private _getStrokeWidth() {
     switch (this._effectiveSize) {
       case ObcIndicatorGraphSize.small:
@@ -158,6 +167,9 @@ export class ObcIndicatorGraph extends LitElement {
     const series = this.uplot.series[1];
     series.stroke = () => this._getStrokeColor();
     series.width = this._getStrokeWidth();
+    if (this._effectiveFill) {
+      series.fill = () => this._getFillColor();
+    }
     this.uplot.redraw();
   }
 

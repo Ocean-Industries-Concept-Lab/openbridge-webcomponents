@@ -49,6 +49,8 @@ export enum GaugeGeneratorType {
  * | `secondary-icon` | Replaces the battery icon on the compact stack's secondary row     |
  *
  * @element obc-gauge-generator
+ *
+ * @property type - The design's Type axis; `double` renders the primary-secondary frame.
  * @experimental
  *
  * @slot icon - Replaces the default generator symbol (`obi-*` icon)
@@ -56,7 +58,6 @@ export enum GaugeGeneratorType {
  */
 @customElement('obc-gauge-generator')
 export class ObcGaugeGenerator extends ObcGaugeProportional {
-  /** The design's Type axis; `double` renders the primary-secondary frame. */
   @property({type: String}) type: GaugeGeneratorType =
     GaugeGeneratorType.regular;
 

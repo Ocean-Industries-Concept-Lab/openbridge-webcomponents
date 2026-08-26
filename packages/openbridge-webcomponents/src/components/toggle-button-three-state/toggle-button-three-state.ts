@@ -28,20 +28,16 @@ export type ObcToggleButtonThreeStateChangeEvent = CustomEvent<{
  * The component manages its own `state` and emits a `change` event when the
  * selection changes. Use `disabled` to make it non-interactive.
  *
+ * @property state - Current state of the toggle.
+ * @property disabled - Disables interaction when true.
  * @fires {ObcToggleButtonThreeStateChangeEvent} change - Fired when the state changes.
  * @beta
  */
 @customElement('obc-toggle-button-three-state')
 export class ObcToggleButtonThreeState extends LitElement {
-  /**
-   * Current state of the toggle.
-   */
   @property({type: String}) state: ObcToggleButtonThreeStateValue =
     ObcToggleButtonThreeStateValue.noInput;
 
-  /**
-   * Disables interaction when true.
-   */
   @property({type: Boolean, reflect: true}) disabled = false;
 
   private updateState(next: ObcToggleButtonThreeStateValue) {

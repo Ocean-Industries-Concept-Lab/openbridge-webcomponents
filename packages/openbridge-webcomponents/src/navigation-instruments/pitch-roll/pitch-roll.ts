@@ -64,15 +64,30 @@ const CORNER_GAP_PX = 32;
 const MIN_ARC_HALF_DEG = 2;
 
 /**
+ * @property type - `dual-scale` (default) shows pitch and roll arcs on both opposing sides;
+ *   `single-scale` shows one pitch arc on the right and one roll arc at the
+ *   bottom, completed by a thin ring.
+ * @availableWhen triggerPitchAdvice maxPitchAdvice!=undefined
+ * @availableWhen triggerRollAdvice maxRollAdvice!=undefined
+ * @property hasReadout - When `true`, the centre shows two stacked `<obc-readout>`s (pitch above
+ *   roll) instead of the vessel images. Default `false`.
+ * @property pitchLabel - Label for the pitch readout. Default `Pitch`.
+ * @availableWhen pitchLabel hasReadout==true
+ * @property rollLabel - Label for the roll readout. Default `Roll`.
+ * @availableWhen rollLabel hasReadout==true
+ * @property unit - Unit shown in both readouts. Default `DEG`.
+ * @availableWhen unit hasReadout==true
+ * @property fractionDigits - Number of fraction digits shown in both readouts. Default `0`.
+ * @availableWhen fractionDigits hasReadout==true
+ * @property arcAngle - Half-extent of each of the four watch arcs in degrees, measured from the
+ *   arc's natural center (0°/90°/180°/270°). Each arc spans
+ *   `center ± arcAngle`. Default `30` reproduces the historical 60°-wide
+ *   arcs; smaller values produce narrower arcs that, combined with
+ *   `zoomToFitArc`, reveal more detail in the relevant motion range.
  * @stable
  */
 @customElement('obc-pitch-roll')
 export class ObcPitchRoll extends LitElement {
-  /**
-   * `dual-scale` (default) shows pitch and roll arcs on both opposing sides;
-   * `single-scale` shows one pitch arc on the right and one roll arc at the
-   * bottom, completed by a thin ring.
-   */
   @property({type: String}) type: PitchRollType = PitchRollType.dualScale;
   @property({type: Number}) pitch = 0;
   @property({type: Number}) roll = 0;
@@ -85,9 +100,7 @@ export class ObcPitchRoll extends LitElement {
   @property({type: Number}) scaleForeImage = 1;
   @property({type: Number}) maxPitchAdvice: number | undefined = undefined;
   @property({type: Number}) maxRollAdvice: number | undefined = undefined;
-  /** @availableWhen maxPitchAdvice!=undefined */
   @property({type: Boolean}) triggerPitchAdvice = false;
-  /** @availableWhen maxRollAdvice!=undefined */
   @property({type: Boolean}) triggerRollAdvice = false;
   @property({type: String}) priority: Priority = Priority.regular;
   @property({type: Array, attribute: false})
@@ -95,39 +108,12 @@ export class ObcPitchRoll extends LitElement {
     PitchRollPriorityElement.pitch,
     PitchRollPriorityElement.roll,
   ];
-  /**
-   * When `true`, the centre shows two stacked `<obc-readout>`s (pitch above
-   * roll) instead of the vessel images. Default `false`.
-   */
   @property({type: Boolean}) hasReadout: boolean = false;
-  /**
-   * Label for the pitch readout. Default `Pitch`.
-   * @availableWhen hasReadout==true
-   */
   @property({type: String}) pitchLabel = 'Pitch';
-  /**
-   * Label for the roll readout. Default `Roll`.
-   * @availableWhen hasReadout==true
-   */
   @property({type: String}) rollLabel = 'Roll';
-  /**
-   * Unit shown in both readouts. Default `DEG`.
-   * @availableWhen hasReadout==true
-   */
   @property({type: String}) unit = 'DEG';
-  /**
-   * Number of fraction digits shown in both readouts. Default `0`.
-   * @availableWhen hasReadout==true
-   */
   @property({type: Number}) fractionDigits = 0;
   @property({type: Boolean}) zoomToFitArc: boolean = false;
-  /**
-   * Half-extent of each of the four watch arcs in degrees, measured from the
-   * arc's natural center (0°/90°/180°/270°). Each arc spans
-   * `center ± arcAngle`. Default `30` reproduces the historical 60°-wide
-   * arcs; smaller values produce narrower arcs that, combined with
-   * `zoomToFitArc`, reveal more detail in the relevant motion range.
-   */
   @property({type: Number}) arcAngle: number = 30;
   /**
    * Optional per-axis override for the pitch arcs (top + bottom). Falls

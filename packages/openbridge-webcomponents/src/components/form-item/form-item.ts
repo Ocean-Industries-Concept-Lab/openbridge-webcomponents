@@ -89,6 +89,9 @@ export type ObcFormItemActionChangeEvent = CustomEvent<{
  * </obc-form-item>
  * ```
  *
+ * @availableWhen itemId type in [EnabledActionFirst, EnabledActionLast]
+ * @availableWhen errorText type in [EnabledActionFirst, EnabledActionLast] && hasError==true
+ * @availableWhen statusIcon type in [FilledStatusFirst, FilledStatusLast]
  * @slot icon - Optional leading icon content.
  * @slot - Main row text or content.
  * @fires {ObcFormItemActionChangeEvent} action-change - Fired when the internal checkbox state changes.
@@ -98,13 +101,11 @@ export type ObcFormItemActionChangeEvent = CustomEvent<{
 export class ObcFormItem extends LitElement {
   @property({type: String}) type: ObcFormItemType = ObcFormItemType.View;
 
-  /** @availableWhen type in [EnabledActionFirst, EnabledActionLast] */
   @property({type: String, attribute: 'item-id'}) itemId = '';
 
   @property({type: Boolean, reflect: true, attribute: 'has-error'})
   hasError = false;
 
-  /** @availableWhen type in [EnabledActionFirst, EnabledActionLast] && hasError==true */
   @property({type: String, attribute: 'error-text'}) errorText = '';
 
   @property({type: Boolean, attribute: 'has-icon'}) hasIcon = false;
@@ -117,7 +118,6 @@ export class ObcFormItem extends LitElement {
 
   @property({type: Boolean, reflect: true}) disabled = false;
 
-  /** @availableWhen type in [FilledStatusFirst, FilledStatusLast] */
   @property({type: String, attribute: 'status-icon'})
   statusIcon: ObcFormItemStatusIcon = ObcFormItemStatusIcon.Check;
 

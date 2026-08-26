@@ -94,18 +94,88 @@ export function renderCursorRule(
   ].join('\n');
 }
 
-/** Shared routing table (no markers) for AGENTS.md and copilot-instructions.md. */
-export function renderRoutingTable(docs: AgentDoc[]): string {
+/**
+ * Claude Code path-scoped rule: `.claude/rules/<name>.md` (`paths:` = positive globs).
+ *
+ * Negative globs are dropped for the same reason `renderCursorRule` drops
+ * them: Claude Code's `paths:` frontmatter is a plain list of glob patterns
+ * with no documented `!` negation, so the only doc affected (`jsdoc.md`)
+ * loses its generated-directory exclusions here but keeps the rest of its
+ * scope.
+ */
+export function renderClaudeRule(
+  doc: AgentDoc,
+  siblings: ReadonlySet<string> = new Set()
+): string {
+  const globs = doc.globs.filter((g) => !g.startsWith('!'));
+  return [
+    '---',
+    'paths:',
+    ...globs.map((g) => `  - "${g}"`),
+    '---',
+    '',
+    banner(doc.sourcePath),
+    '',
+    rewriteSiblingLinks(doc.body, siblings).replace(/\n*$/, '\n'),
+  ].join('\n');
+}
+
+/**
+ * Groups sibling globs into one brace pattern for display: `a/x/**`, `a/y/**`
+ * → `a/{x,y}/**`. Only the routing tables use this — the adapters keep the raw
+ * list — so a doc with thirty component directories costs one row, not a
+ * kilobyte of repeated prefixes.
+ */
+export function compactGlobs(globs: readonly string[]): string[] {
+  const groups = new Map<
+    string,
+    {neg: string; dir: string; rest: string; names: string[]}
+  >();
+  for (const g of globs) {
+    const neg = g.startsWith('!') ? '!' : '';
+    const segs = (neg ? g.slice(1) : g).split('/');
+    const rest = segs[segs.length - 1] === '**' ? '/**' : '';
+    if (rest) segs.pop();
+    const name = segs.pop() ?? '';
+    const dir = segs.length ? `${segs.join('/')}/` : '';
+    const key = `${neg}${dir}\u0000${rest}`;
+    const group = groups.get(key) ?? {neg, dir, rest, names: []};
+    group.names.push(name);
+    groups.set(key, group);
+  }
+  return [...groups.values()].map(({neg, dir, rest, names}) =>
+    names.length > 1
+      ? `${neg}${dir}{${names.join(',')}}${rest}`
+      : `${neg}${dir}${names[0]}${rest}`
+  );
+}
+
+/**
+ * Shared routing table (no markers) for AGENTS.md and copilot-instructions.md.
+ * `linkPrefix` makes the doc links resolve from a file that is not at the
+ * repository root.
+ *
+ * Wrapped in Prettier's range-ignore comments: the table's glob column packs
+ * every pattern for a doc into one cell, and Prettier's Markdown table
+ * formatter pads every cell in a column to the widest one, which turned a
+ * compact table into tens of kilobytes of alignment spaces. Range-ignoring it
+ * keeps the generator's own compact layout instead.
+ */
+export function renderRoutingTable(docs: AgentDoc[], linkPrefix = ''): string {
   const rows = [...docs]
     .sort((a, b) => a.name.localeCompare(b.name))
     .map((doc) => {
-      const scope = doc.globs.map((g) => `\`${g}\``).join('<br>');
-      return `| [${doc.name}](${doc.sourcePath}) | ${scope} | ${doc.description} |`;
+      const scope = compactGlobs(doc.globs)
+        .map((g) => `\`${g}\``)
+        .join('<br>');
+      return `| [${doc.name}](${linkPrefix}${doc.sourcePath}) | ${scope} | ${doc.description} |`;
     });
   return [
+    '<!-- prettier-ignore-start -->',
     '| Doc | Scope (globs) | Description |',
     '| --- | --- | --- |',
     ...rows,
+    '<!-- prettier-ignore-end -->',
   ].join('\n');
 }
 
@@ -135,7 +205,7 @@ export function renderCopilotInstructions(docs: AgentDoc[]): string {
     '',
     '## Available Instruction Files',
     '',
-    renderRoutingTable(docs),
+    renderRoutingTable(docs, '../'),
     '',
   ].join('\n');
 }
