@@ -135,6 +135,7 @@ export enum ObcTopBarMenuButtonIcon {
  * </obc-top-bar>
  * ```
  *
+ * @availableWhen menuButtonIcon settings==false && inactive==false
  * @slot app-icon - Custom icon representing the application or brand (shown when `showAppIcon` is true)
  * @slot command-button - Primary command/action button for the current context
  * @slot alerts - Area for alert indicators, notification badges, or alert items
@@ -168,7 +169,6 @@ export class ObcTopBar extends LitElement {
    */
   @property({type: String}) pageName = 'Page';
 
-  /** @availableWhen settings==false && inactive==false */
   @property({type: String}) menuButtonIcon = ObcTopBarMenuButtonIcon.Menu;
 
   /**

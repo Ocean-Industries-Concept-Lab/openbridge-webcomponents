@@ -39,9 +39,15 @@ export interface ThrusterPortStarboardConfig {
 /**
  * @element obc-thruster
  *
- * @prop {number} thrust - The thrust of the thruster in percent (-100 - +100)
- * @prop {boolean} touching - Highlight the thruster when the lever is being touched
- * @prop {Priority} priority - Color priority: `Priority.enhanced` uses the blue/enhanced color palette, `Priority.regular` (default) uses the standard palette.
+ * @property thrust - The thrust of the thruster in percent (-100 - +100)
+ * @property touching - Highlight the thruster when the lever is being touched
+ * @property priority - Color priority: `Priority.enhanced` uses the blue/enhanced color palette, `Priority.regular` (default) uses the standard palette.
+ * @property portStarboard - Enables the maritime PORT/STBD (red/green) color mode: forward thrust
+ *   renders green, reverse red. Additional to `priority` — parts not listed in
+ *   `portStarboardElements` keep their regular/enhanced colors.
+ * @property portStarboardElements - Which parts take part while `portStarboard` is on.
+ *   Defaults to everything except the setpoint.
+ * @availableWhen portStarboardElements portStarboard==true
  * @stable
  */
 @customElement('obc-thruster')
@@ -60,17 +66,7 @@ export class ObcThruster extends SetpointMixin(LitElement, {
   @property({type: Array}) advices: LinearAdvice[] = [];
   @property({type: String}) topPropeller: PropellerType = PropellerType.none;
   @property({type: String}) bottomPropeller: PropellerType = PropellerType.none;
-  /**
-   * Enables the maritime PORT/STBD (red/green) color mode: forward thrust
-   * renders green, reverse red. Additional to `priority` — parts not listed in
-   * `portStarboardElements` keep their regular/enhanced colors.
-   */
   @property({type: Boolean}) portStarboard: boolean = false;
-  /**
-   * Which parts take part while `portStarboard` is on.
-   * Defaults to everything except the setpoint.
-   * @availableWhen portStarboard==true
-   */
   @property({type: Array, attribute: false})
   portStarboardElements: PortStarboardElement[] = [
     ...PORT_STARBOARD_DEFAULT_ELEMENTS,

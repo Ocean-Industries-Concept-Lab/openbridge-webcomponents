@@ -97,6 +97,21 @@ export enum AutomationButtonPositioning {
 }
 
 /**
+ * @property activated - Enables the activated background color, used to indicate that the button is activated/selected.
+ * @availableWhen readouts showReadoutStack==true
+ * @availableWhen tag showReadoutStack==true
+ * @availableWhen readoutPosition showReadoutStack==true
+ * @availableWhen readoutSize showReadoutStack==true
+ * @availableWhen alertFrameType alert==true
+ * @availableWhen alertFrameThickness alert==true
+ * @availableWhen alertFrameStatus alert==true
+ * @availableWhen alertFrameMode alert==true
+ * @availableWhen showAlertCategoryIcon alert==true && alertFrameType in [LargeSideFlip, BottomFlip, TopFlip]
+ * @availableWhen showAlertIcon alert==true
+ * @availableWhen progressMode progress==true
+ * @availableWhen progressValue progress==true && progressMode in [determinate, progressive-indeterminate]
+ * @availableWhen direction variant in [double, forward, flatForward]
+ * @property hasBadgeSpacer - Badge spacer should be set to true if there is a badge on the same side as the label
  * @slot badge-top-right - Content projected into the top-right badge position of the button.
  * @slot badge-top-left - Content projected into the top-left badge position of the button.
  * @slot badge-bottom-left - Content projected into the bottom-left badge position of the button.
@@ -116,52 +131,37 @@ export class ObcAutomationButton extends LitElement {
   @property({type: String}) state: AutomationButtonState =
     AutomationButtonState.open;
   @property({type: Boolean}) static: boolean = false;
-  /** Enables the activated background color, used to indicate that the button is activated/selected. */
   @property({type: Boolean}) activated: boolean = false;
   @property({type: Boolean, attribute: false}) showReadoutStack: boolean = true;
-  /** @availableWhen showReadoutStack==true */
   @property({type: Array, attribute: false})
   readouts: AutomationButtonReadoutStack[] = [];
-  /** @availableWhen showReadoutStack==true */
   @property({type: String})
   tag: string | null = null;
-  /** @availableWhen showReadoutStack==true */
   @property({type: String}) readoutPosition: AutomationButtonReadoutPosition =
     AutomationButtonReadoutPosition.bottom;
-  /** @availableWhen showReadoutStack==true */
   @property({type: String}) readoutSize: AutomationButtonReadoutStackSize =
     AutomationButtonReadoutStackSize.regular;
   @property({type: Boolean}) alert: boolean = false;
-  /** @availableWhen alert==true */
   @property({type: String}) alertFrameType: ObcAlertFrameType =
     ObcAlertFrameType.SmallSideFlip;
-  /** @availableWhen alert==true */
   @property({type: String}) alertFrameThickness: ObcAlertFrameThickness =
     ObcAlertFrameThickness.Small;
-  /** @availableWhen alert==true */
   @property({type: String}) alertFrameStatus: AlertType = AlertType.Alarm;
-  /** @availableWhen alert==true */
   @property({type: String}) alertFrameMode: ObcAlertFrameMode =
     ObcAlertFrameMode.ackedActive;
-  /** @availableWhen alert==true && alertFrameType in [LargeSideFlip, BottomFlip, TopFlip] */
   @property({type: Boolean, attribute: false}) showAlertCategoryIcon: boolean =
     true;
-  /** @availableWhen alert==true */
   @property({type: Boolean}) showAlertIcon: boolean = false;
   @property({type: Boolean}) progress: boolean = false;
-  /** @availableWhen progress==true */
   @property({type: String}) progressMode: CircularProgressMode =
     CircularProgressMode.indeterminate;
-  /** @availableWhen progress==true && progressMode in [determinate, progressive-indeterminate] */
   @property({type: Number}) progressValue: number = 0;
-  /** @availableWhen variant in [double, forward, flatForward] */
   @property({type: String}) direction: AutomationButtonDirection =
     AutomationButtonDirection.forward;
   @property({type: String}) positioning: AutomationButtonPositioning =
     AutomationButtonPositioning.point;
   @property({type: String}) orientation: AutomationButtonOrientation =
     AutomationButtonOrientation.horizontal;
-  /** Badge spacer should be set to true if there is a badge on the same side as the label */
   @property({type: Boolean}) hasBadgeSpacer: boolean = false;
 
   override render() {

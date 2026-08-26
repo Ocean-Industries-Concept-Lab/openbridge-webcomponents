@@ -111,6 +111,7 @@ export function canAckFilter(filter: (alert: Alert) => boolean) {
 }
 
 /**
+ * @availableWhen timeFormatter showTime==true
  * @fires {ObcAckClickEvent} ack-click - Fired when the user clicks the "ACK" button.
  * @fires {ObcRowClickEvent} row-click - Fired when the user clicks a row.
  * @stable
@@ -120,7 +121,6 @@ export class ObcAlertListDetails extends LitElement {
   @property({type: String}) selectedMode: AlertListMode = AlertListMode.ALL;
   @property({type: Array}) alerts: Alert[] = [];
   @property({type: Boolean}) showTime: boolean = false;
-  /** @availableWhen showTime==true */
   @property({attribute: false}) timeFormatter: (time: Date) => string = (
     time: Date
   ) => time.toLocaleTimeString(undefined, {hour12: false});

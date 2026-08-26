@@ -63,6 +63,8 @@ const ICON_TILDE_PATH =
  * | ------ | --------- | ------------------------------------------------ |
  * | `icon` | always    | Center icon, defaults to the generator G~ glyph  |
  *
+ * @property level - Outer progress ring sweep, 0-100 (%)
+ * @property secondaryLevel - Inner progress ring sweep, 0-100 (%), double-bar only
  * @slot icon - Center icon, defaults to the generator G~ glyph
  */
 @customElement('obc-indicator-generator')
@@ -71,9 +73,7 @@ export class ObcIndicatorGenerator extends LitElement {
     IndicatorGeneratorVariant.button;
   @property({type: String, reflect: true}) value: IndicatorGeneratorValue =
     IndicatorGeneratorValue.off;
-  /** Outer progress ring sweep, 0-100 (%) */
   @property({type: Number}) level = 0;
-  /** Inner progress ring sweep, 0-100 (%), double-bar only */
   @property({type: Number}) secondaryLevel = 0;
 
   private get center(): number {

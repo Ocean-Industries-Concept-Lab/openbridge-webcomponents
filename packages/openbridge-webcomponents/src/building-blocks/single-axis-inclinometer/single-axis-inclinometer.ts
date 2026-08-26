@@ -49,20 +49,16 @@ export const INCLINOMETER_CENTRE_HALF = 200;
  * auto-generated framework wrappers' `createComponent` call type-checks, which
  * rejects abstract constructors. This mirrors `ObcChartLineBase`.
  *
+ * @property hasReadout - When `true`, the centre shows an `<obc-readout>` with the value instead of
+ *   the horizon line, rotating indicator and vessel. Default `false`.
+ * @property priority - Colour palette for the scale fill / indicator and the readout value:
+ *   `regular` (default) or `enhanced`.
  * @ignore This is an abstract base class. Use `obc-pitch` or `obc-roll` instead.
  * @experimental
  */
 export class SingleAxisInclinometer extends LitElement {
   @property({type: Boolean}) zoomToFitArc: boolean = false;
-  /**
-   * When `true`, the centre shows an `<obc-readout>` with the value instead of
-   * the horizon line, rotating indicator and vessel. Default `false`.
-   */
   @property({type: Boolean}) hasReadout: boolean = false;
-  /**
-   * Colour palette for the scale fill / indicator and the readout value:
-   * `regular` (default) or `enhanced`.
-   */
   @property({type: String}) priority: Priority = Priority.regular;
   /**
    * Half-extent of the watch arc in degrees. The arc spans `centre ± arcAngle`

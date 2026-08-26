@@ -16,6 +16,9 @@ export enum RotIndicatorType {
 }
 
 /**
+ * @property rotDotAnimationFactor - Visual amplification applied to the spinning dot animation. Default `18`
+ *   keeps the legacy visual feel (≈1 rpm at 20°/min). Has no effect when
+ *   the legacy `rotationsPerMinute` API is used.
  * @stable
  */
 @customElement('obc-rot-indicator')
@@ -32,11 +35,6 @@ export class ObcRotIndicator extends LitElement {
    */
   @property({type: Number}) rateOfTurnDegreesPerMinute: number | undefined;
 
-  /**
-   * Visual amplification applied to the spinning dot animation. Default `18`
-   * keeps the legacy visual feel (≈1 rpm at 20°/min). Has no effect when
-   * the legacy `rotationsPerMinute` API is used.
-   */
   @property({type: Number}) rotDotAnimationFactor: number = 18;
 
   /**

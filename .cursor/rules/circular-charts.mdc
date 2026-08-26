@@ -154,7 +154,6 @@ When working with chart helper utilities:
     - JSDoc comments help describe exported functions
     - Document parameters with `@param` and return values with `@returns`
     - Include usage examples where helpful
-    - Explain complex calculations with inline comments
 
 12. **Error Handling**:
     - Validate input parameters where necessary

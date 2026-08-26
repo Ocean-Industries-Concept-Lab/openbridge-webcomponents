@@ -41,6 +41,41 @@ function mapAngle0to360(angle: number): number {
 }
 
 /**
+ * @availableWhen newAngleSetpoint angleSetpoint!=undefined
+ * @availableWhen atAngleSetpoint angleSetpoint!=undefined && autoAtAngleSetpoint==false
+ * @availableWhen angleSetpointAtZeroDeadband angleSetpoint!=undefined
+ * @availableWhen angleSetpointOverride angleSetpoint!=undefined
+ * @availableWhen touching angleSetpoint!=undefined || thrustSetpoint!=undefined
+ * @availableWhen autoAtAngleSetpoint angleSetpoint!=undefined
+ * @availableWhen autoAtAngleSetpointDeadband angleSetpoint!=undefined && autoAtAngleSetpoint==true
+ * @availableWhen animateSetpoint angleSetpoint!=undefined || thrustSetpoint!=undefined
+ * @property primaryTickmarkInterval - Interval (in degrees) for primary tickmarks.
+ *   When undefined or <= 0, no primary tickmarks are shown (only the zero line).
+ *   Default 90 gives ticks at 0°, 90°, 180°, 270°.
+ * @property secondaryTickmarkInterval - Interval (in degrees) for secondary tickmarks.
+ *   When undefined or <= 0, no secondary tickmarks are shown.
+ * @property tertiaryTickmarkInterval - Interval (in degrees) for tertiary tickmarks.
+ *   When undefined or <= 0, no tertiary tickmarks are shown.
+ * @availableWhen newThrustSetpoint thrustSetpoint!=undefined
+ * @availableWhen atThrustSetpoint thrustSetpoint!=undefined && autoAtThrustSetpoint==false
+ * @availableWhen thrustSetpointAtZeroDeadband thrustSetpoint!=undefined
+ * @availableWhen thrustSetpointOverride thrustSetpoint!=undefined
+ * @availableWhen autoAtThrustSetpoint thrustSetpoint!=undefined
+ * @availableWhen autoAtThrustSetpointDeadband thrustSetpoint!=undefined && autoAtThrustSetpoint==true
+ * @property faceDiameter - Outer-ring diameter in CSS pixels. When set, the instrument renders at a
+ *   fixed intrinsic size derived from the ring, arc shape and label reserve —
+ *   so instruments sharing the same value have identical ring circumference
+ *   regardless of label width or arc extent (like obc-donut-chart's
+ *   fixedHeight). When unset (default), the instrument fills its container.
+ * @property portStarboard - Enables the maritime PORT/STBD (red/green) color mode: the face is split
+ *   green (starboard) / red (port), and forward thrust renders green, reverse
+ *   red. Additional to `priority`, and independent of
+ *   `starboardPortIndicator` — both may be enabled together.
+ * @property portStarboardElements - Which parts take part while `portStarboard` is on.
+ *   Defaults to everything except the setpoint.
+ * @availableWhen portStarboardElements portStarboard==true
+ * @property portStarboardSides - Which halves the region tints paint while `portStarboard` is on.
+ * @availableWhen portStarboardSides portStarboard==true
  * @stable
  */
 @customElement('obc-azimuth-thruster')
@@ -49,59 +84,32 @@ export class ObcAzimuthThruster extends LitElement {
 
   @property({type: Number}) angle = 0;
   @property({type: Number}) angleSetpoint: number | undefined;
-  /** @availableWhen angleSetpoint!=undefined */
   @property({type: Number}) newAngleSetpoint: number | undefined;
-  /** @availableWhen angleSetpoint!=undefined && autoAtAngleSetpoint==false */
   @property({type: Boolean})
   atAngleSetpoint: boolean = false;
-  /** @availableWhen angleSetpoint!=undefined */
   @property({type: Number}) angleSetpointAtZeroDeadband: number = 0.5;
-  /** @availableWhen angleSetpoint!=undefined */
   @property({type: Boolean}) angleSetpointOverride: boolean = false;
-  /** @availableWhen angleSetpoint!=undefined || thrustSetpoint!=undefined */
   @property({type: Boolean}) touching: boolean = false;
-  /** @availableWhen angleSetpoint!=undefined */
   @property({type: Boolean, attribute: false}) autoAtAngleSetpoint: boolean =
     true;
-  /** @availableWhen angleSetpoint!=undefined && autoAtAngleSetpoint==true */
   @property({type: Number}) autoAtAngleSetpointDeadband: number = 2;
-  /** @availableWhen angleSetpoint!=undefined || thrustSetpoint!=undefined */
   @property({type: Boolean}) animateSetpoint: boolean = false;
-  /**
-   * Interval (in degrees) for primary tickmarks.
-   * When undefined or <= 0, no primary tickmarks are shown (only the zero line).
-   * Default 90 gives ticks at 0°, 90°, 180°, 270°.
-   */
   @property({type: Number}) primaryTickmarkInterval: number | undefined = 90;
-  /**
-   * Interval (in degrees) for secondary tickmarks.
-   * When undefined or <= 0, no secondary tickmarks are shown.
-   */
   @property({type: Number}) secondaryTickmarkInterval: number | undefined =
     undefined;
-  /**
-   * Interval (in degrees) for tertiary tickmarks.
-   * When undefined or <= 0, no tertiary tickmarks are shown.
-   */
   @property({type: Number}) tertiaryTickmarkInterval: number | undefined =
     undefined;
   @property({type: Boolean}) showLabels: boolean = false;
   @property({type: Boolean}) tickmarksInside: boolean = false;
   @property({type: Number}) thrust = 0;
   @property({type: Number}) thrustSetpoint: number | undefined;
-  /** @availableWhen thrustSetpoint!=undefined */
   @property({type: Number}) newThrustSetpoint: number | undefined;
-  /** @availableWhen thrustSetpoint!=undefined && autoAtThrustSetpoint==false */
   @property({type: Boolean})
   atThrustSetpoint: boolean = false;
-  /** @availableWhen thrustSetpoint!=undefined */
   @property({type: Number}) thrustSetpointAtZeroDeadband: number = 0.1;
-  /** @availableWhen thrustSetpoint!=undefined */
   @property({type: Boolean}) thrustSetpointOverride: boolean = false;
-  /** @availableWhen thrustSetpoint!=undefined */
   @property({type: Boolean, attribute: false}) autoAtThrustSetpoint: boolean =
     true;
-  /** @availableWhen thrustSetpoint!=undefined && autoAtThrustSetpoint==true */
   @property({type: Number}) autoAtThrustSetpointDeadband: number = 1;
   @property({type: String}) state: InstrumentState = InstrumentState.active;
   @property({type: String}) priority: Priority = Priority.regular;
@@ -152,18 +160,7 @@ export class ObcAzimuthThruster extends LitElement {
   @property({type: String}) tickmarkStyle: TickmarkStyle =
     TickmarkStyle.regular;
   @property({type: Boolean}) starboardPortIndicator: boolean = false;
-  /**
-   * Enables the maritime PORT/STBD (red/green) color mode: the face is split
-   * green (starboard) / red (port), and forward thrust renders green, reverse
-   * red. Additional to `priority`, and independent of
-   * `starboardPortIndicator` — both may be enabled together.
-   */
   @property({type: Boolean}) portStarboard: boolean = false;
-  /**
-   * Which parts take part while `portStarboard` is on.
-   * Defaults to everything except the setpoint.
-   * @availableWhen portStarboard==true
-   */
   @property({type: Array, attribute: false})
   portStarboardElements: PortStarboardElement[] = [
     ...PORT_STARBOARD_DEFAULT_ELEMENTS,
@@ -178,19 +175,8 @@ export class ObcAzimuthThruster extends LitElement {
    */
   @property({type: String}) portStarboardSource: PortStarboardSource =
     PortStarboardSource.value;
-  /**
-   * Which halves the region tints paint while `portStarboard` is on.
-   * @availableWhen portStarboard==true
-   */
   @property({type: String}) portStarboardSides: PortStarboardSides =
     PortStarboardSides.both;
-  /**
-   * Outer-ring diameter in CSS pixels. When set, the instrument renders at a
-   * fixed intrinsic size derived from the ring, arc shape and label reserve —
-   * so instruments sharing the same value have identical ring circumference
-   * regardless of label width or arc extent (like obc-donut-chart's
-   * fixedHeight). When unset (default), the instrument fills its container.
-   */
   @property({type: Number, attribute: 'face-diameter'})
   faceDiameter: number | undefined;
 

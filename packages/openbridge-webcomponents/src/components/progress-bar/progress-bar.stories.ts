@@ -48,7 +48,6 @@ const meta: Meta<typeof ObcProgressBar> = {
       table: {
         defaultValue: {summary: ProgressBarMode.determinate},
       },
-      if: {arg: 'type', eq: ProgressBarType.linear},
     },
     priority: {
       control: {type: 'select'},
@@ -58,7 +57,6 @@ const meta: Meta<typeof ObcProgressBar> = {
       table: {
         defaultValue: {summary: Priority.enhanced},
       },
-      if: {arg: 'type', eq: ProgressBarType.linear},
     },
     circularState: {
       control: {type: 'select'},
@@ -68,7 +66,6 @@ const meta: Meta<typeof ObcProgressBar> = {
       table: {
         defaultValue: {summary: CircularProgressState.determinate},
       },
-      if: {arg: 'type', eq: ProgressBarType.circular},
     },
     progressiveIndeterminate: {
       control: {type: 'boolean'},
@@ -77,7 +74,6 @@ const meta: Meta<typeof ObcProgressBar> = {
       table: {
         defaultValue: {summary: 'false'},
       },
-      if: {arg: 'type', eq: ProgressBarType.circular},
     },
     value: {
       control: {type: 'range', min: 0, max: 100, step: 1},
@@ -94,7 +90,6 @@ const meta: Meta<typeof ObcProgressBar> = {
       table: {
         defaultValue: {summary: 'false'},
       },
-      if: {arg: 'type', eq: ProgressBarType.linear},
     },
     showUnit: {
       control: {type: 'boolean'},
@@ -111,7 +106,6 @@ const meta: Meta<typeof ObcProgressBar> = {
       table: {
         defaultValue: {summary: 'false'},
       },
-      if: {arg: 'type', eq: ProgressBarType.linear},
     },
     description: {
       control: {type: 'text'},
