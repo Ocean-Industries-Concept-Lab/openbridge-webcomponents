@@ -3,7 +3,8 @@ import {customElement} from '../../decorator.js';
 import compentStyle from './integration-app-bar.css?inline';
 
 /**
- * @slot apps - Application buttons; slotted elements are normalized to a uniform width
+ * @slot apps - Application buttons; every button is laid out at the width of the widest one
+ * @cssprop [--obc-integration-app-bar-app-width=max-content] - Width of each app button. Defaults to the width of the widest button; set a length to pin them all to that width instead.
  * @experimental
  */
 @customElement('obc-integration-app-bar')
@@ -13,36 +14,11 @@ export class ObcIntegrationAppBar extends LitElement {
       <div class="wrapper">
         <div class="left-side"></div>
         <div class="center">
-          <slot name="apps" @slotchange=${this.handleAppsSlotChange}></slot>
+          <slot name="apps"></slot>
         </div>
         <div class="right-side"></div>
       </div>
     `;
-  }
-
-  private handleAppsSlotChange(event: Event) {
-    const slot = event.target as HTMLSlotElement;
-    const buttons = slot.assignedElements() as HTMLElement[];
-
-    if (buttons.length === 0) {
-      return;
-    }
-
-    for (const btn of buttons) {
-      btn.style.width = '';
-    }
-
-    requestAnimationFrame(() => {
-      const maxWidth = Math.max(
-        ...buttons.map((btn) => btn.getBoundingClientRect().width)
-      );
-
-      if (maxWidth > 0) {
-        for (const btn of buttons) {
-          btn.style.width = `${maxWidth}px`;
-        }
-      }
-    });
   }
 
   static override styles = unsafeCSS(compentStyle);
