@@ -54,23 +54,20 @@ const VESSEL_OFFSET_Y = 4.5;
  *   wanted; this component reuses the same scale for both of its columns.
  *
  * @element obc-draft-trim
+ *
+ * @property draftFore - Draught at the bow, positive below the waterline.
+ * @property draftAft - Draught at the stern, positive below the waterline.
+ * @property instrumentRange - Half-extent of both scales. Each spans `±instrumentRange` around the
+ *   waterline, so the upper half reads as freeboard.
+ * @property advice - Advice zones, in the same positive-below-the-waterline units as the
+ *   draughts. Applied to both scales; each is triggered by its own draught.
  * @experimental
  */
 @customElement('obc-draft-trim')
 export class ObcDraftTrim extends LitElement {
-  /** Draught at the bow, positive below the waterline. */
   @property({type: Number}) draftFore = 0;
-  /** Draught at the stern, positive below the waterline. */
   @property({type: Number}) draftAft = 0;
-  /**
-   * Half-extent of both scales. Each spans `±instrumentRange` around the
-   * waterline, so the upper half reads as freeboard.
-   */
   @property({type: Number}) instrumentRange = 10;
-  /**
-   * Advice zones, in the same positive-below-the-waterline units as the
-   * draughts. Applied to both scales; each is triggered by its own draught.
-   */
   @property({type: Array}) advice: LinearAdvice[] = [];
   @property({type: String}) vesselImage: VesselImage = VesselImage.psvSide;
   @property({type: String}) priority: Priority = Priority.regular;

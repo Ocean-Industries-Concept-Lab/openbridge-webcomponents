@@ -75,6 +75,10 @@ export type ObcSlideButtonSlideEvent = CustomEvent<{completed: boolean}>;
  * ```
  * In this example, the button displays a leading icon and a label. After sliding to the end, it disables itself automatically.
  *
+ * @property disabled - Whether the slide button is disabled. When true, the button cannot be interacted with and appears visually muted.
+ * @property hasLeadingIcon - Whether to show the leading icon slot. Set to true to show the icon area at the start of the button.
+ * @property hugContent - Whether the button should hug its content. When true, the button width shrinks to fit its content instead of stretching to fill the container.
+ * @property autoDisable - Whether to automatically disable the button after a successful slide. When true, the button disables itself after the slide action completes.
  * @slot leading-icon - The icon to display at the start of the button content (shown when `hasLeadingIcon` is true).
  * @slot label - The label text to display in the button.
  * @fires {ObcSlideButtonSlideEvent} slide - Emitted when the slide action is completed.
@@ -82,24 +86,12 @@ export type ObcSlideButtonSlideEvent = CustomEvent<{completed: boolean}>;
  */
 @customElement('obc-slide-button')
 export class ObcSlideButton extends LitElement {
-  /**
-   * Whether the slide button is disabled. When true, the button cannot be interacted with and appears visually muted.
-   */
   @property({type: Boolean}) disabled = false;
 
-  /**
-   * Whether to show the leading icon slot. Set to true to show the icon area at the start of the button.
-   */
   @property({type: Boolean}) hasLeadingIcon = false;
 
-  /**
-   * Whether the button should hug its content. When true, the button width shrinks to fit its content instead of stretching to fill the container.
-   */
   @property({type: Boolean}) hugContent = false;
 
-  /**
-   * Whether to automatically disable the button after a successful slide. When true, the button disables itself after the slide action completes.
-   */
   @property({type: Boolean}) autoDisable = false;
 
   @state() private dragging = false;

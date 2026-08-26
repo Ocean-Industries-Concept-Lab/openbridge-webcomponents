@@ -51,23 +51,24 @@ export enum BusVariant {
  *
  * @ignition-base-width: 200px
  * @ignition-base-height: 16px
+ *
+ * @property label - Centered label text; the bar renders empty when omitted.
+ * @property size - Bar height and typography preset.
+ * @property variant - Color family of the bar.
+ * @property tint - Use the light (tinted) color pairing of the selected variant.
+ * @property vertical - Render the bar vertically with the label rotated 90° clockwise.
  * @beta
  */
 @customElement('obc-bus')
 export class ObcBus extends LitElement {
-  /** Centered label text; the bar renders empty when omitted. */
   @property({type: String}) label = '';
 
-  /** Bar height and typography preset. */
   @property({type: String}) size: BusSize = BusSize.Small;
 
-  /** Color family of the bar. */
   @property({type: String}) variant: BusVariant = BusVariant.Regular;
 
-  /** Use the light (tinted) color pairing of the selected variant. */
   @property({type: Boolean}) tint = false;
 
-  /** Render the bar vertically with the label rotated 90° clockwise. */
   @property({type: Boolean, reflect: true}) vertical = false;
 
   override render() {

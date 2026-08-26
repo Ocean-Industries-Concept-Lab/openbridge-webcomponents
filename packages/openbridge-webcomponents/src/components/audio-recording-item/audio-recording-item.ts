@@ -80,42 +80,30 @@ export enum AudioRecordingStatus {
  *
  * ---
  *
+ * @property audioLevels - Array of audio level values (0-1) for waveform visualization.
+ *   New values should be added to the end (right side) and old values shift left.
+ * @property duration - Current duration in seconds, displayed as MM:SS.
+ * @property status - Recording status - 'recording', 'paused', or 'playback'.
+ * @property playbackPosition - Current playback position (0-1) for playback mode slider.
+ * @property isPlaying - Whether audio is currently playing (only relevant in playback mode).
+ *   When true, shows pause icon; when false, shows play icon.
+ * @property enhanced - Enhanced style that displays waveform bars with neutral enhanced color.
  * @fires {CustomEvent<{isPlaying: boolean}>} status-toggle - Fired when the play/pause button is clicked, containing the desired isPlaying state.
  * @beta
  */
 @customElement('obc-audio-recording-item')
 export class ObcAudioRecordingItem extends LitElement {
-  /**
-   * Array of audio level values (0-1) for waveform visualization.
-   * New values should be added to the end (right side) and old values shift left.
-   */
   @property({type: Array}) audioLevels: number[] = [];
 
-  /**
-   * Current duration in seconds, displayed as MM:SS.
-   */
   @property({type: Number}) duration = 0;
 
-  /**
-   * Recording status - 'recording', 'paused', or 'playback'.
-   */
   @property({type: String}) status: AudioRecordingStatus =
     AudioRecordingStatus.Recording;
 
-  /**
-   * Current playback position (0-1) for playback mode slider.
-   */
   @property({type: Number}) playbackPosition = 0;
 
-  /**
-   * Whether audio is currently playing (only relevant in playback mode).
-   * When true, shows pause icon; when false, shows play icon.
-   */
   @property({type: Boolean}) isPlaying = false;
 
-  /**
-   * Enhanced style that displays waveform bars with neutral enhanced color.
-   */
   @property({type: Boolean}) enhanced = false;
 
   @state() private barCount = 40;

@@ -74,6 +74,11 @@ export enum ObcModalWindowSize {
  * </obc-modal-window>
  * ```
  *
+ * @property size - Controls the modal window size and action button layout.
+ * @property hasOptionalAction - Whether to show an optional third action button.
+ * @property hasLeadingIcon - Whether to show the leading icon slot in the header.
+ * @property hasCancelAction - Whether to show the footer cancel button.
+ * @property hasCloseAction - Whether to show the header close (X) button.
  * @fires {CustomEvent} close-click - Fired when the close button is clicked.
  * @fires {CustomEvent} cancel-click - Fired when the cancel button is clicked.
  * @fires {CustomEvent} done-click - Fired when the done button is clicked.
@@ -90,29 +95,14 @@ export enum ObcModalWindowSize {
  */
 @customElement('obc-modal-window')
 export class ObcModalWindow extends LitElement {
-  /**
-   * Controls the modal window size and action button layout.
-   */
   @property({type: String}) size = ObcModalWindowSize.Large;
 
-  /**
-   * Whether to show an optional third action button.
-   */
   @property({type: Boolean}) hasOptionalAction = false;
 
-  /**
-   * Whether to show the leading icon slot in the header.
-   */
   @property({type: Boolean}) hasLeadingIcon = false;
 
-  /**
-   * Whether to show the footer cancel button.
-   */
   @property({type: Boolean, attribute: false}) hasCancelAction = true;
 
-  /**
-   * Whether to show the header close (X) button.
-   */
   @property({type: Boolean, attribute: false}) hasCloseAction = true;
 
   private onCloseClick = () =>

@@ -157,61 +157,59 @@ export type PieChartDataItem = {
  * </script>
  * ```
  *
+ * @property data - Chart data segments with optional children subsegments for sunburst mode (set via JavaScript).
+ * @property colors - Custom segment colors (set via JavaScript) with fallback to theme palette
+ * @property showOuterLabels - Show outer labels, default: false
+ * @property showUnit - Whether to show unit in labels, default: false
+ * @property sunburst - Enable sunburst mode: clicking a segment expands or collapses its children as an outer ring, default: false
+ * @property outerLabelUnit - Unit string to append to outer labels, default: "%"
+ * @property outerLabelMaxLength - Maximum character length for labels before trim (0 = no limit), default: 0
+ * @availableWhen outerLabelMaxLength showOuterLabels==true
+ * @property outerLabelDecimalPlaces - Number of decimal places in labels, default: 0
+ * @property legend - Whether to display the legend below the chart, default: false
+ * @property showDebugOverlay - Show debug overlay for development, default: false
+ * @property fixedHeight - Fixed height of the chart in pixels (determines chart circumference), default: 320. The chart's circumference is always based on this fixed height to match other radial instruments.
  * @beta
  */
 @customElement('obc-pie-chart')
 export class ObcPieChart extends LitElement {
-  /** Chart data segments with optional children subsegments for sunburst mode (set via JavaScript). */
   @property({type: Array, attribute: false})
   data: PieChartDataItem[] = [];
 
-  /** Custom segment colors (set via JavaScript) with fallback to theme palette */
   @property({type: Array, attribute: false})
   colors: string[] = [];
 
   @property({type: String})
   priority: Priority = Priority.regular;
 
-  /** Show outer labels, default: false */
   @property({type: Boolean})
   showOuterLabels = false;
 
-  /** Whether to show unit in labels, default: false */
   @property({type: Boolean})
   showUnit = false;
 
-  /** Enable sunburst mode with interactive children subsegments, default: false */
   @property({type: Boolean})
   sunburst = false;
 
-  /** Unit string to append to outer labels, default: "%" */
   @property({type: String})
   outerLabelUnit = '%';
 
-  /**
-   * Maximum character length for labels before trim (0 = no limit), default: 0
-   * @availableWhen showOuterLabels==true
-   */
   @property({
     type: Number,
   })
   outerLabelMaxLength = 0;
 
-  /** Number of decimal places in labels, default: 0 */
   @property({
     type: Number,
   })
   outerLabelDecimalPlaces = 0;
 
-  /** Whether to display the legend below the chart, default: false */
   @property({type: Boolean, reflect: true})
   legend = false;
 
-  /** Show debug overlay for development, default: false */
   @property({type: Boolean, reflect: true})
   showDebugOverlay = false;
 
-  /** Fixed height of the chart in pixels (determines chart circumference), default: 320. The chart's circumference is always based on this fixed height to match other radial instruments. */
   @property({type: Number, reflect: true})
   fixedHeight = 320;
 
@@ -486,10 +484,7 @@ export class ObcPieChart extends LitElement {
         };
 
     return {
-      // Fixed, self-computed size: Chart.js responsive mode must stay off,
-      // it measures the wrapper (canvas + optional legend) and inflates the
-      // canvas / re-applies stale deferred resizes on hover (issue #1061).
-      // The canvas render size is set explicitly in createChart/updateChart.
+      // Chart.js responsive mode stays off — see the note in donut-chart.ts (#1061).
       responsive: false,
       maintainAspectRatio: false,
       devicePixelRatio: window.devicePixelRatio,
@@ -804,7 +799,6 @@ export class ObcPieChart extends LitElement {
 
     const {colors, sunburstColors} = this.prepareChartData();
 
-    // Update dataset colors
     if (this.chart.data.datasets[0]) {
       this.chart.data.datasets[0].backgroundColor = colors;
     }
@@ -831,13 +825,11 @@ export class ObcPieChart extends LitElement {
     // Guard: Check if chart metadata is available
     const meta = this.chart.getDatasetMeta(0);
     if (!meta || !meta.controller) {
-      // console.debug('[obc-pie-chart] updateLegend: skipped - chart metadata not yet initialized');
       return;
     }
 
     // Guard: Check if dataset has data
     if (!this.data || this.data.length === 0) {
-      // console.debug('[obc-pie-chart] updateLegend: skipped - no data available');
       this.legendDiv.innerHTML = '';
       return;
     }

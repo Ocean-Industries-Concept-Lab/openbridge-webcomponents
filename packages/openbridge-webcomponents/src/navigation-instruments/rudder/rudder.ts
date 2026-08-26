@@ -80,6 +80,13 @@ export enum ObcRudderVariant {
  * ```
  *
  * @element obc-rudder
+ *
+ * @property tickmarksInside - Whether to render tickmarks inside the ring.
+ * @property faceDiameter - Outer-ring diameter in CSS pixels. When set, the instrument renders at a
+ *   fixed intrinsic size derived from the ring, arc shape and label reserve —
+ *   so instruments sharing the same value have identical ring circumference
+ *   regardless of label width or arc extent (like obc-donut-chart's
+ *   fixedHeight). When unset (default), the instrument fills its container.
  * @stable
  */
 @customElement('obc-rudder')
@@ -88,7 +95,6 @@ export class ObcRudder extends SetpointMixin(LitElement) {
   @property({type: String}) variant: ObcRudderVariant = ObcRudderVariant.Bar;
   @property({type: Number}) maxAngle = 90;
   @property({type: Boolean}) showLabels: boolean = false;
-  /** Whether to render tickmarks inside the ring. */
   @property({type: Boolean}) tickmarksInside: boolean = false;
   @property({type: String}) state: InstrumentState = InstrumentState.active;
   @property({type: String}) priority: Priority = Priority.regular;
@@ -96,13 +102,6 @@ export class ObcRudder extends SetpointMixin(LitElement) {
     TickmarkStyle.regular;
   @property({type: Array, attribute: false}) advices: AngleAdvice[] = [];
   @property({type: Boolean}) zoomToFitArc: boolean = false;
-  /**
-   * Outer-ring diameter in CSS pixels. When set, the instrument renders at a
-   * fixed intrinsic size derived from the ring, arc shape and label reserve —
-   * so instruments sharing the same value have identical ring circumference
-   * regardless of label width or arc extent (like obc-donut-chart's
-   * fixedHeight). When unset (default), the instrument fills its container.
-   */
   @property({type: Number, attribute: 'face-diameter'})
   faceDiameter: number | undefined;
 
