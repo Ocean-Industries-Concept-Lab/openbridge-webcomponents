@@ -237,6 +237,10 @@ function cssPart(value: ObcTableCellData, subpart: string): string | undefined {
  * ></obc-table>`;
  * ```
  *
+ * @availableWhen narrowHeader showHeader==true
+ * @availableWhen selectedRowIds selectable==true
+ * @availableWhen defaultSelectedRowIds selectable==true && selectedRowIds==undefined
+ * @availableWhen selectAllAriaLabel selectable==true && showHeader==true
  * @fires {ObcTableRowClickEvent} row-click - Fired when a row is clicked.
  * @fires {ObcTableCellClickEvent} cell-button-click - Fired when a cell button is clicked.
  * @fires {ObcTableCellCheckboxChangeEvent} cell-checkbox-change - Fired when a cell checkbox is changed.
@@ -249,16 +253,12 @@ export class ObcTable extends LitElement {
   @property({type: Array}) data: ObcTableRow[] = [];
   @property({type: Array}) columns: ObcTableColumn[] = [];
   @property({type: Boolean}) rowDivider = false;
-  /** @availableWhen showHeader==true */
   @property({type: Boolean}) narrowHeader = false;
   @property({type: Boolean, attribute: false}) showHeader = true;
   @property({type: Boolean}) striped = false;
   @property({type: Boolean}) selectable = false;
-  /** @availableWhen selectable==true */
   @property({type: Array}) selectedRowIds?: string[];
-  /** @availableWhen selectable==true && selectedRowIds==undefined */
   @property({type: Array}) defaultSelectedRowIds?: string[];
-  /** @availableWhen selectable==true && showHeader==true */
   @property({type: String}) selectAllAriaLabel = 'Select all rows';
 
   @state()

@@ -307,7 +307,8 @@ function unwrapTypeExpression(node) {
   let current = node;
   while (
     current &&
-    (current.type === 'TSSatisfiesExpression' || current.type === 'TSAsExpression')
+    (current.type === 'TSSatisfiesExpression' ||
+      current.type === 'TSAsExpression')
   ) {
     current = current.expression;
   }
@@ -328,8 +329,9 @@ function quoteList(names) {
   return names.map((name) => `'${name}'`).join(', ');
 }
 
-// Custom plugin for local OpenBridge lint rules
-const openbridgePlugin = {
+// Custom plugin for local OpenBridge lint rules. Exported so
+// eslint.comments.config.mjs can register the same rule objects.
+export const openbridgePlugin = {
   rules: {
     'storybook-title-case': {
       meta: {
@@ -491,7 +493,8 @@ const openbridgePlugin = {
 
         return {
           VariableDeclarator(node) {
-            if (node.id.type !== 'Identifier' || node.id.name !== 'meta') return;
+            if (node.id.type !== 'Identifier' || node.id.name !== 'meta')
+              return;
 
             const meta = unwrapTypeExpression(node.init);
             if (!meta || meta.type !== 'ObjectExpression') return;
@@ -528,7 +531,10 @@ const openbridgePlugin = {
                   if (titleProperty) {
                     const next = sourceCode.getTokenAfter(titleProperty);
                     return next && next.value === ','
-                      ? fixer.insertTextAfter(next, `\n  tags: ['${expected}'],`)
+                      ? fixer.insertTextAfter(
+                          next,
+                          `\n  tags: ['${expected}'],`
+                        )
                       : fixer.insertTextAfter(
                           titleProperty,
                           `,\n  tags: ['${expected}']`
@@ -621,7 +627,7 @@ const openbridgePlugin = {
             );
             if (!propertyDecorator) return;
             // Check if the property decorator has attribute: false — that's the
-            // accepted escape hatch for true-default booleans (see AGENTS.md § 2).
+            // accepted escape hatch for true-default booleans (see docs/agents/coding-standards.md).
             const property =
               propertyDecorator.expression?.arguments[0]?.properties?.find(
                 (p) =>
@@ -924,9 +930,8 @@ export default [
   },
 ];
 
-// ESLint reads only the default export. These named exports exist so the
-// lifecycle-tag rules can be unit-tested (script/eslint-rules.test.ts) without
-// depending on the real state of src/.
+// ESLint reads only the default export. These named exports exist for
+// script/eslint-rules.test.ts, which unit-tests the lifecycle-tag rules.
 export const __testables = {
   openbridgePlugin,
   extractComponents,

@@ -54,6 +54,8 @@ import {customElement} from '../../decorator.js';
  * </obc-advice-menu-item>
  * ```
  *
+ * @property hasIcon - When true, renders the `icon` slot for a secondary icon.
+ * @property size - Layout size: `single-line` (default) or `double-line`.
  * @slot icon - Secondary icon (shown when `hasIcon` is true).
  * @fires {CustomEvent<void>} primary-action-click - Fired when the primary action button is clicked.
  * @fires {CustomEvent<void>} secondary-action-click - Fired when the secondary action button is clicked.
@@ -62,7 +64,6 @@ import {customElement} from '../../decorator.js';
  */
 @customElement('obc-advice-menu-item')
 export class ObcAdviceMenuItem extends LitElement {
-  /** When true, renders the `icon` slot for a secondary icon. */
   @property({type: Boolean}) hasIcon = false;
 
   @property({type: String}) override title = '';
@@ -70,7 +71,6 @@ export class ObcAdviceMenuItem extends LitElement {
   @property({type: String}) day = '';
   @property({type: String}) time = '';
   @property({type: Boolean}) open = false;
-  /** Layout size: `single-line` (default) or `double-line`. */
   @property({type: String}) size: ObcMessageMenuItemSize =
     ObcMessageMenuItemSize.SingleLine;
   @property({type: String}) primaryActionLabel = '';

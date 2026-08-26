@@ -110,6 +110,8 @@ export enum ObcMessageMenuItemSize {
  * </obc-message-menu-item>
  * ```
  *
+ * @availableWhen primaryActionLabel hasActionLabelSlot==false
+ * @availableWhen hasTrailingIcon stackVertical==false
  * @slot title - Message title (shown when `hasTitleSlot` is true).
  * @slot description - Message description (shown when `hasDescriptionSlot` is true).
  * @slot action-label - Primary action button label (shown when `hasActionLabelSlot` is true).
@@ -135,7 +137,6 @@ export class ObcMessageMenuItem extends LitElement {
   @property({type: String}) description = '';
   @property({type: String}) day = '';
   @property({type: String}) time = '';
-  /** @availableWhen hasActionLabelSlot==false */
   @property({type: String}) primaryActionLabel = '';
   @property({type: String}) secondaryActionLabel = '';
   @property({type: Boolean, attribute: false}) enablePrimaryAction = true;
@@ -144,7 +145,6 @@ export class ObcMessageMenuItem extends LitElement {
   // Visibility properties for icons (slots)
   @property({type: Boolean}) hasPrimaryIcon = false;
   @property({type: Boolean}) hasSecondaryIcon = false;
-  /** @availableWhen stackVertical==false */
   @property({type: Boolean}) hasTrailingIcon = false;
   @property({type: Boolean}) isShelved = false;
 

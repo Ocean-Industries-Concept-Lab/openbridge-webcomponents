@@ -27,7 +27,6 @@ The project is divided into three main parts:
 Each component's `*.stories.ts` file should:
 
 - Use `tags: ['autodocs', '6.0']` for documented OpenBridge 6.0 components
-- Use `tags: ['alpha']` for components still in development
 - Use `tags: ['skip-test']` to exclude a story from visual snapshot testing
 - Export a `Default` story and additional stories for key states and variants
 
@@ -475,8 +474,8 @@ The animation itself is driven from TypeScript, **not** from a CSS `@keyframes`.
 Animations API (`el.animate()`) to alternate the `-on` / `-off` pair over a
 per-severity period:
 
-| Severity | Period |
-| -------- | ------ |
+| Severity | Period  |
+| -------- | ------- |
 | Critical | 1000 ms |
 | Alarm    | 2000 ms |
 | Warning  | 4000 ms |
@@ -889,7 +888,7 @@ Booleans that default to `true` must use `attribute: false` to remove the HTML a
 
 Framework wrappers (React, Vue, etc.) always set values via properties, so removing the attribute has no effect on wrapper consumers.
 
-See [AGENTS.md § 2](AGENTS.md#2-coding-standards) for the full rule and examples.
+See [docs/agents/coding-standards.md § Boolean property naming](docs/agents/coding-standards.md#boolean-property-naming) for the full rule and examples.
 
 ## 🧭 SVG based components
 

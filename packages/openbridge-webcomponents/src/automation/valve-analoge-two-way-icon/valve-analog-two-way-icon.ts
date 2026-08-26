@@ -5,11 +5,11 @@ import {customElement} from '../../decorator.js';
 import '../../icons/icon-twoway-analog-closed.js';
 
 /**
+ * @availableWhen value closed==false
  * @stable
  */
 @customElement('obc-valve-analog-two-way-icon')
 export class ObcValveAnalogTwoWayIcon extends LitElement {
-  /** @availableWhen closed==false */
   @property({type: Number}) value: number = 0;
   @property({type: Boolean}) closed: boolean = false;
   @property({type: Boolean}) vertical: boolean = false;

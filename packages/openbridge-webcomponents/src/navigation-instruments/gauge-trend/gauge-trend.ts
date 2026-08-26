@@ -121,6 +121,31 @@ export {FillMode, ScaleType};
  * `setpoint`, `newSetpoint`, `touching`, `atSetpoint`, `autoAtSetpoint`,
  * `autoAtSetpointDeadband`, `setpointAtZeroDeadband`, `setpointOverride`.
  * See {@link SetpointMixinInterface} for full documentation.
+ *
+ * @property minValue - Minimum value for the scale range.
+ *   Also used as chart y-axis minimum when `chartMinValue` is undefined.
+ * @property maxValue - Maximum value for the scale range.
+ *   Also used as chart y-axis maximum when `chartMaxValue` is undefined.
+ * @property chartMinValue - Minimum value for the chart y-axis.
+ *   When undefined, defaults to `minValue` to keep chart and scale aligned.
+ * @property chartMaxValue - Maximum value for the chart y-axis.
+ *   When undefined, defaults to `maxValue` to keep chart and scale aligned.
+ * @property hasScale - Show scale tick marks and labels.
+ * @property hasAdvice - Show advice overlays on the vertical scale.
+ * @property fillMin - Fill origin value - the starting point for the bar fill.
+ *   In both fill modes, the bar fills from this value toward the current value.
+ *   For scales like -100..100, set this to 0 to have the bar fill up or down from zero.
+ * @availableWhen fillMin hasBar==true && value!=undefined
+ * @property advice - Advice/alert overlays for the vertical scale.
+ * @availableWhen advice hasAdvice==true
+ * @property primaryTickmarkInterval - Primary tick interval for the vertical scale (longest ticks with labels).
+ * @property secondaryTickmarkInterval - Secondary tick interval for the vertical scale (medium ticks).
+ * @availableWhen secondaryTickmarkInterval hasScale==true
+ * @property tertiaryTickmarkInterval - Tertiary tick interval for the vertical scale (shortest ticks).
+ * @availableWhen tertiaryTickmarkInterval hasScale==true
+ * @property chartFill - Enable chart area fill.
+ *   When true, fills the area under the line with semitransparent color.
+ *   When false (default), renders as line-only chart.
  * @stable
  */
 @customElement('obc-gauge-trend')
@@ -306,31 +331,15 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
   @property({type: String})
   scaleType: ScaleType = ScaleType.regular;
 
-  /**
-   * Minimum value for the scale range.
-   * Also used as chart y-axis minimum when `chartMinValue` is undefined.
-   */
   @property({type: Number})
   minValue = 0;
 
-  /**
-   * Maximum value for the scale range.
-   * Also used as chart y-axis maximum when `chartMaxValue` is undefined.
-   */
   @property({type: Number})
   maxValue = 100;
 
-  /**
-   * Minimum value for the chart y-axis.
-   * When undefined, defaults to `minValue` to keep chart and scale aligned.
-   */
   @property({type: Number})
   chartMinValue?: number = undefined;
 
-  /**
-   * Maximum value for the chart y-axis.
-   * When undefined, defaults to `maxValue` to keep chart and scale aligned.
-   */
   @property({type: Number})
   chartMaxValue?: number = undefined;
 
@@ -357,15 +366,9 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
   @property({type: Boolean})
   hasBar = false;
 
-  /**
-   * Show scale tick marks and labels.
-   */
   @property({type: Boolean})
   hasScale = false;
 
-  /**
-   * Show advice overlays on the vertical scale.
-   */
   @property({type: Boolean})
   hasAdvice = false;
 
@@ -382,12 +385,6 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
   @property({type: String})
   fillMode: FillMode = FillMode.fill;
 
-  /**
-   * Fill origin value - the starting point for the bar fill.
-   * In both fill modes, the bar fills from this value toward the current value.
-   * For scales like -100..100, set this to 0 to have the bar fill up or down from zero.
-   * @availableWhen hasBar==true && value!=undefined
-   */
   @property({type: Number})
   fillMin = 0;
 
@@ -403,16 +400,9 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
   @property({type: Number})
   fillMax?: number = undefined;
 
-  /**
-   * Advice/alert overlays for the vertical scale.
-   * @availableWhen hasAdvice==true
-   */
   @property({type: Array, attribute: false})
   advice: LinearAdvice[] = [];
 
-  /**
-   * Primary tick interval for the vertical scale (longest ticks with labels).
-   */
   @property({type: Number})
   primaryTickmarkInterval?: number = undefined;
 
@@ -421,25 +411,12 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
   // setpointOverride, computeAtSetpoint()) are provided by SetpointMixin.
   // See setpoint-mixin.ts for full docs.
 
-  /**
-   * Secondary tick interval for the vertical scale (medium ticks).
-   * @availableWhen hasScale==true
-   */
   @property({type: Number})
   secondaryTickmarkInterval = 0.5;
 
-  /**
-   * Tertiary tick interval for the vertical scale (shortest ticks).
-   * @availableWhen hasScale==true
-   */
   @property({type: Number})
   tertiaryTickmarkInterval?: number = undefined;
 
-  /**
-   * Enable chart area fill.
-   * When true, fills the area under the line with semitransparent color.
-   * When false (default), renders as line-only chart.
-   */
   @property({type: Boolean})
   chartFill = false;
 

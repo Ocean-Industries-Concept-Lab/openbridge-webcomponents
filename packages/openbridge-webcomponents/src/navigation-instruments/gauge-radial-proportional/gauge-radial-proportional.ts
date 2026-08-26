@@ -215,6 +215,24 @@ function strongerTickmarkType(
  * | ------ | ------------------------------------------------------------------------------------------------------- |
  * | `icon` | Device symbol shown above the readout, scaled with the face (e.g. `<obi-placeholder-device-on useCssColor>`). |
  *
+ * @property secondaryValue - Secondary value shown as a thin line arc at the band's inner edge with a
+ *   second readout (the "primary-secondary" frame type). When undefined
+ *   (default), the regular single-value frame renders.
+ * @property state - Instrument state (active, loading, off). `priority: off` also renders the off face.
+ * @property primaryTickmarkInterval - Interval for primary tickmarks in value units.
+ *   When undefined or <= 0, no primary tickmarks are shown.
+ * @property secondaryTickmarkInterval - Interval for secondary tickmarks in value units.
+ *   When undefined or <= 0, no secondary tickmarks are shown.
+ * @property advices - Caution/alert arcs in value units.
+ * @property hasReadout - When `true`, shows the center readout (and the secondary readout when
+ *   `secondaryValue` is set). Default `false`.
+ * @availableWhen label hasReadout==true
+ * @availableWhen unit hasReadout==true
+ * @availableWhen secondaryLabel secondaryValue!=undefined
+ * @availableWhen secondaryUnit secondaryValue!=undefined
+ * @property name - Name row shown under the readout (uppercase overline style).
+ * @property faceDiameter - Outer-ring diameter in CSS pixels. When set, the instrument renders at a
+ *   fixed intrinsic size; when unset (default), it fills its container.
  * @slot icon - Device symbol shown above the readout, scaled with the face
  *   (e.g. `<obi-placeholder-device-on useCssColor>` for the device-token
  *   styling).
@@ -227,13 +245,7 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
   @property({type: Number}) value = 0;
   @property({type: Number}) maxValue = 100;
   @property({type: Number}) minValue = 0;
-  /**
-   * Secondary value shown as a thin line arc at the band's inner edge with a
-   * second readout (the "primary-secondary" frame type). When undefined
-   * (default), the regular single-value frame renders.
-   */
   @property({type: Number}) secondaryValue: number | undefined;
-  /** Instrument state (active, loading, off). `priority: off` also renders the off face. */
   @property({type: String}) state: InstrumentState = InstrumentState.active;
   @property({type: String}) sector: GaugeRadialProportionalSector =
     GaugeRadialProportionalSector.deg270;
@@ -242,41 +254,19 @@ export class ObcGaugeRadialProportional extends SetpointMixin(LitElement) {
   @property({type: String}) priority: GaugeRadialProportionalPriority =
     GaugeRadialProportionalPriority.regular;
   @property({type: Boolean}) showLabels: boolean = false;
-  /**
-   * Interval for primary tickmarks in value units.
-   * When undefined or <= 0, no primary tickmarks are shown.
-   */
   @property({type: Number}) primaryTickmarkInterval: number | undefined = 50;
-  /**
-   * Interval for secondary tickmarks in value units.
-   * When undefined or <= 0, no secondary tickmarks are shown.
-   */
   @property({type: Number}) secondaryTickmarkInterval: number | undefined = 10;
   @property({type: String}) tickmarkStyle: TickmarkStyle =
     TickmarkStyle.regular;
-  /** Caution/alert arcs in value units. */
   @property({type: Array, attribute: false})
   advices: GaugeRadialProportionalAdvice[] = [];
-  /**
-   * When `true`, shows the center readout (and the secondary readout when
-   * `secondaryValue` is set). Default `false`.
-   */
   @property({type: Boolean}) hasReadout = false;
-  /** @availableWhen hasReadout==true */
   @property({type: String}) label = '';
-  /** @availableWhen hasReadout==true */
   @property({type: String}) unit = '';
-  /** @availableWhen secondaryValue!=undefined */
   @property({type: String}) secondaryLabel = '';
-  /** @availableWhen secondaryValue!=undefined */
   @property({type: String}) secondaryUnit = '';
   @property({type: Number}) fractionDigits = 0;
-  /** Name row shown under the readout (uppercase overline style). */
   @property({type: String}) name = '';
-  /**
-   * Outer-ring diameter in CSS pixels. When set, the instrument renders at a
-   * fixed intrinsic size; when unset (default), it fills its container.
-   */
   @property({type: Number, attribute: 'face-diameter', reflect: true})
   faceDiameter: number | undefined;
 

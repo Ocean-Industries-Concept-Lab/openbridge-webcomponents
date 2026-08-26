@@ -173,8 +173,8 @@ A confirm is detected when:
 
 ### What Animates
 
-| Element                       | Animation                                           | Duration         |
-| ----------------------------- | --------------------------------------------------- | ---------------- |
+| Element                       | Animation                                           | Duration             |
+| ----------------------------- | --------------------------------------------------- | -------------------- |
 | Original setpoint marker      | Slides from old position to new position            | duration, `ease-out` |
 | Original setpoint marker      | Opacity `0.75 → 1.0` (was dimmed during adjustment) | duration, `ease-out` |
 | Departing new-setpoint marker | Fades out `opacity: 1 → 0`                          | duration, `ease-out` |
@@ -214,14 +214,14 @@ When a confirm occurs, the new-setpoint marker needs to stay in the DOM for the 
 
 > **⚠️ The two paths do not agree on step 3, and the bundle path has a latent bug.**
 >
-> | Path | Timer source | Honours `--setpoint-animation-duration`? |
-> | --- | --- | --- |
-> | `SetpointMixin` (`setpoint-mixin.ts:435`) | `getSetpointAnimationDurationMs(this)` | ✅ yes |
-> | `SetpointBundle` (`setpoint-bundle.ts:235`) | `SETPOINT_ANIMATION_DURATION_MS` (fixed 300 ms) | ❌ no |
+> | Path                                        | Timer source                                    | Honours `--setpoint-animation-duration`? |
+> | ------------------------------------------- | ----------------------------------------------- | ---------------------------------------- |
+> | `SetpointMixin` (`setpoint-mixin.ts:435`)   | `getSetpointAnimationDurationMs(this)`          | ✅ yes                                   |
+> | `SetpointBundle` (`setpoint-bundle.ts:235`) | `SETPOINT_ANIMATION_DURATION_MS` (fixed 300 ms) | ❌ no                                    |
 >
 > With an override of `500ms`, a bundle-based instrument (`compass`, `heading`,
 > `azimuth-thruster`) removes the departing marker 200 ms **before** its CSS
-> transition finishes, cutting the fade short. Treat 300 ms as the *default*,
+> transition finishes, cutting the fade short. Treat 300 ms as the _default_,
 > not the contract.
 >
 > Fixing this means routing the bundle's timer through
