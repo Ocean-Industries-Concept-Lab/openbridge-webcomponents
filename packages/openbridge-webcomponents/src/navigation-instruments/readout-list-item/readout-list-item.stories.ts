@@ -9,14 +9,20 @@ import {
   ReadoutListItemDataQuality,
   ReadoutListItemBorder,
   ReadoutListItemSetpointInteraction,
+  ReadoutAdviceCategory,
+  ReadoutSourceState,
   ObcTextboxFontWeight,
   type ReadoutListItemClickable,
   type ReadoutValueOptions,
   type ReadoutSetpointOptions,
   type ReadoutAdviceOptions,
+  type ReadoutLabelOptions,
   type ReadoutReserverOptions,
   type ReadoutSrcOptions,
+  ReadoutValueType,
 } from './readout-list-item.js';
+import {ObcTextboxSize} from '../../components/textbox/textbox.js';
+import '../../icons/icon-input-right.js';
 import type {AlertFrameConfig} from '../../components/alert-frame/alert-frame.js';
 import {
   ObcAlertFrameMode,
@@ -36,7 +42,8 @@ type ReadoutListItemStoryArgs = {
   unit: string;
   src: string;
   hasValue: boolean;
-  value: number;
+  value: number | string;
+  valueType: ReadoutValueType;
   off: boolean;
   hasSetpoint: boolean;
   setpoint: number;
@@ -59,6 +66,13 @@ type ReadoutListItemStoryArgs = {
   'options.value.hintedZeros': boolean;
   'options.setpoint.interaction': ReadoutListItemSetpointInteraction;
   'options.setpoint.touching': boolean;
+  'options.advice.category': ReadoutAdviceCategory;
+  'options.advice.active': boolean;
+  'options.label.size': ObcTextboxSize | typeof NONE;
+  'options.label.spaceReserver': string;
+  'options.src.state': ReadoutSourceState;
+  'options.src.deviation'?: number;
+  'options.src.spaceReserver': string;
   'options.unit.spaceReserver': string;
 };
 
@@ -81,6 +95,7 @@ type StoryOptions = {
   value?: ReadoutValueOptions;
   setpoint?: ReadoutSetpointOptions;
   advice?: ReadoutAdviceOptions;
+  label?: ReadoutLabelOptions;
   unit?: ReadoutReserverOptions;
   src?: ReadoutSrcOptions;
 };
@@ -90,7 +105,8 @@ type ReadoutItemConfig = {
   unit?: string;
   src?: string;
   hasValue?: boolean;
-  value?: number | null;
+  value?: number | string | null;
+  valueType?: ReadoutValueType;
   off?: boolean;
   hasSetpoint?: boolean;
   setpoint?: number;
@@ -159,6 +175,7 @@ function renderItem(config: ReadoutItemConfig) {
       .src=${config.src}
       .hasValue=${config.hasValue ?? true}
       .value=${config.value ?? null}
+      .valueType=${config.valueType ?? ReadoutValueType.number}
       .off=${config.off ?? false}
       .hasSetpoint=${config.hasSetpoint ?? false}
       .setpoint=${config.setpoint}
@@ -178,6 +195,7 @@ function renderItem(config: ReadoutItemConfig) {
       .valueOptions=${o.value}
       .setpointOptions=${o.setpoint}
       .adviceOptions=${o.advice}
+      .labelOptions=${o.label}
       .unitOptions=${o.unit}
       .srcOptions=${o.src}
       .showDebugOverlay=${config.showDebugOverlay ?? false}
@@ -245,6 +263,7 @@ const defaultArgs: ReadoutListItemStoryArgs = {
   src: 'SRC',
   hasValue: true,
   value: 123,
+  valueType: ReadoutValueType.number,
   off: false,
   hasSetpoint: false,
   setpoint: 120,
@@ -267,6 +286,12 @@ const defaultArgs: ReadoutListItemStoryArgs = {
   'options.setpoint.interaction':
     ReadoutListItemSetpointInteraction.alwaysVisible,
   'options.setpoint.touching': false,
+  'options.advice.category': ReadoutAdviceCategory.regular,
+  'options.advice.active': false,
+  'options.label.size': NONE,
+  'options.label.spaceReserver': '',
+  'options.src.state': ReadoutSourceState.regular,
+  'options.src.spaceReserver': '',
   'options.unit.spaceReserver': '',
 };
 
@@ -296,13 +321,29 @@ function argsToOptions(args: ReadoutListItemStoryArgs): StoryOptions {
       interaction: args['options.setpoint.interaction'],
       touching: args['options.setpoint.touching'],
     },
+    advice: {
+      category: args['options.advice.category'],
+      active: args['options.advice.active'],
+    },
+    label: {
+      size:
+        args['options.label.size'] === NONE
+          ? undefined
+          : args['options.label.size'],
+      spaceReserver: args['options.label.spaceReserver'] || undefined,
+    },
+    src: {
+      state: args['options.src.state'],
+      deviation: args['options.src.deviation'],
+      spaceReserver: args['options.src.spaceReserver'] || undefined,
+    },
     unit: {spaceReserver: args['options.unit.spaceReserver'] || undefined},
   };
 }
 
 const meta = {
   title: 'Instruments/Readout List Item',
-  tags: ['autodocs', '6.0', 'wip'],
+  tags: ['autodocs', '6.0', 'experimental'],
   component: 'obc-readout-list-item',
   decorators: [centeredCanvasDecorator],
   render: (args) =>
@@ -313,6 +354,7 @@ const meta = {
         src: args.src,
         hasValue: args.hasValue,
         value: args.value,
+        valueType: args.valueType,
         off: args.off,
         hasSetpoint: args.hasSetpoint,
         setpoint: args.setpoint,
@@ -331,7 +373,16 @@ const meta = {
     hasValue: {name: 'Has Value', table: {category: 'Data'}},
     value: {
       name: 'Value',
-      control: {type: 'number'},
+      // Text control (not number) so both value types are exercisable. Under
+      // valueType=number a numeric string resolves back to a number; entering
+      // non-numeric text there throws, which is the intended contract.
+      control: {type: 'text'},
+      table: {category: 'Data'},
+    },
+    valueType: {
+      name: 'Value Type',
+      control: {type: 'inline-radio'},
+      options: Object.values(ReadoutValueType),
       table: {category: 'Data'},
     },
     off: {name: 'Off', table: {category: 'Data'}},
@@ -339,14 +390,12 @@ const meta = {
     setpoint: {
       name: 'Setpoint',
       control: {type: 'number'},
-      if: {arg: 'hasSetpoint', truthy: true},
       table: {category: 'Data'},
     },
     hasAdvice: {name: 'Has Advice', table: {category: 'Data'}},
     advice: {
       name: 'Advice',
       control: {type: 'number'},
-      if: {arg: 'hasAdvice', truthy: true},
       table: {category: 'Data'},
     },
     'options.size': {
@@ -427,6 +476,47 @@ const meta = {
       if: {arg: 'hasSetpoint', truthy: true},
       table: {category: 'Setpoint'},
     },
+    'options.advice.category': {
+      name: 'Advice Category',
+      control: {type: 'select'},
+      options: Object.values(ReadoutAdviceCategory),
+      if: {arg: 'hasAdvice', truthy: true},
+      table: {category: 'Advice'},
+    },
+    'options.advice.active': {
+      name: 'Advice Active (triggered)',
+      if: {arg: 'hasAdvice', truthy: true},
+      table: {category: 'Advice'},
+    },
+    'options.label.size': {
+      name: 'Label Size',
+      description:
+        'Dense list rows default to xs; the design defines xs and s.',
+      control: {type: 'select'},
+      options: [NONE, ObcTextboxSize.xs, ObcTextboxSize.s],
+      table: {category: 'Label'},
+    },
+    'options.label.spaceReserver': {
+      name: 'Label Space Reserver',
+      control: {type: 'text'},
+      table: {category: 'Label'},
+    },
+    'options.src.state': {
+      name: 'Source State',
+      control: {type: 'select'},
+      options: Object.values(ReadoutSourceState),
+      table: {category: 'Source'},
+    },
+    'options.src.deviation': {
+      name: 'Source Deviation (Δ)',
+      control: {type: 'number'},
+      table: {category: 'Source'},
+    },
+    'options.src.spaceReserver': {
+      name: 'Source Space Reserver',
+      control: {type: 'text'},
+      table: {category: 'Source'},
+    },
     'options.unit.spaceReserver': {
       name: 'Unit Space Reserver',
       control: {type: 'text'},
@@ -459,6 +549,96 @@ export const Off: Story = {
         ],
       },
     ]),
+};
+
+/**
+ * **Text values** — `valueType="text"` renders `value` verbatim instead of
+ * formatting it as a number, for readings that are states rather than
+ * quantities ("Thermo On", "Auto", "Normal").
+ *
+ * The first section reproduces the reference design: two status rows sharing a
+ * bar, each a label with a bold text value, separated by a vertical divider.
+ *
+ * Under `valueType="text"` the numeric format options (`fractionDigits`,
+ * `maxDigits`, `hintedZeros`) are ignored; an explicit `spaceReserver` still
+ * applies. Passing text while `valueType` is `number` throws a `TypeError`
+ * rather than rendering `NaN`.
+ */
+const STATUS_BAR_ROWS: {label: string; value: string}[] = [
+  {label: 'Operating mode', value: 'Thermo On'},
+  {label: 'Status', value: 'Normal'},
+];
+
+export const TextValue: Story = {
+  render: () => html`
+    <style>
+      .rli-status-bar {
+        display: flex;
+        align-items: stretch;
+        width: 100%;
+        background: var(--container-background-color);
+      }
+      .rli-status-cell {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        padding: 0 16px;
+      }
+      .rli-status-cell + .rli-status-cell {
+        border-left: 1px solid var(--border-divider-color, #ccc);
+      }
+      .rli-status-cell > obc-readout-list-item {
+        width: 100%;
+      }
+      .rli-text-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(240px, max-content));
+        gap: 12px 24px;
+        margin-top: 32px;
+      }
+    </style>
+    <div class="rli-status-bar">
+      ${STATUS_BAR_ROWS.map(
+        (row) => html`
+          <div class="rli-status-cell">
+            ${renderItem({
+              label: row.label,
+              value: row.value,
+              valueType: ReadoutValueType.text,
+              options: {
+                size: ReadoutListItemSize.medium,
+                value: {weight: ObcTextboxFontWeight.bold},
+              },
+            })}
+          </div>
+        `
+      )}
+    </div>
+    <div class="rli-text-grid">
+      ${[
+        {label: 'Mode', value: 'Auto', valueType: ReadoutValueType.text},
+        {
+          label: 'Thruster',
+          value: 'Standby',
+          valueType: ReadoutValueType.text,
+        },
+        // Numeric rows for contrast — the same component, unchanged.
+        {label: 'Speed', value: 12.4, valueType: ReadoutValueType.number},
+        // Verbatim text preserves formatting a number could not round-trip.
+        {label: 'Bearing', value: '1.50', valueType: ReadoutValueType.text},
+      ].map((row) =>
+        renderItem({
+          label: row.label,
+          value: row.value,
+          valueType: row.valueType,
+          options: {
+            size: ReadoutListItemSize.medium,
+            fractionDigits: 1,
+          },
+        })
+      )}
+    </div>
+  `,
 };
 
 const SIZES = [
@@ -839,6 +1019,30 @@ export const SetpointPopUpAnimated: Story = {
     intro:
       'Pop-up: the setpoint shows while the value differs, then fades out (100ms) once the value reaches it. Press Play, or use the buttons.',
     awayLabel: 'Leave setpoint (124)',
+    reachLabel: 'Reach setpoint (120)',
+  }),
+  tags: ['skip-test'],
+};
+
+export const SetpointAlwaysVisibleAnimated: Story = {
+  ...animatedInteractionStory({
+    name: 'Always-Visible (Animated)',
+    interaction: ReadoutListItemSetpointInteraction.alwaysVisible,
+    intro:
+      'Always-visible (the default, Figma "Primary secondary"): the setpoint stays at the secondary size in both states — nothing resizes or hides as the value reaches the setpoint (120); only the touch highlight shows during the sweep. Contrast with flip-flop / pop-up. Press Play, or use the buttons.',
+    awayLabel: 'Away (124)',
+    reachLabel: 'Reach setpoint (120)',
+  }),
+  tags: ['skip-test'],
+};
+
+export const SetpointEqualSizeAnimated: Story = {
+  ...animatedInteractionStory({
+    name: 'Equal-Size (Animated)',
+    interaction: ReadoutListItemSetpointInteraction.equalSize,
+    intro:
+      'Equal-size (Figma 6.1 "Equal size"): value and setpoint share the primary size in both states — like always-visible, nothing resizes or hides as the value reaches the setpoint (120); only the touch highlight shows during the sweep. Press Play, or use the buttons.',
+    awayLabel: 'Away (124)',
     reachLabel: 'Reach setpoint (120)',
   }),
   tags: ['skip-test'],
@@ -1596,7 +1800,8 @@ export const MissingParts: Story = {
  */
 type AlignmentRow = {
   label: string;
-  value: number | null;
+  value: number | string | null;
+  valueType?: ReadoutValueType;
   unit: string;
   size?: ReadoutListItemSize;
   hasDegree?: boolean;
@@ -1722,6 +1927,19 @@ const ALIGNMENT_ROWS: AlignmentRow[] = [
       type: ObcAlertFrameType.Regular,
     },
   },
+  // text value — `valueType="text"` renders verbatim and ignores maxDigits /
+  // fractionDigits, but still honours an explicit `spaceReserver`. So these
+  // rows hug their text in the left column and join the shared value column in
+  // the right one, confirming text does not disturb the numeric alignment.
+  // (Inside `obc-readout-list`, which owns the reservers, text rows are instead
+  // excluded from the computed numeric width — see that component's stories.)
+  {label: 'Mode', value: 'Auto', valueType: ReadoutValueType.text, unit: ''},
+  {
+    label: 'Thruster',
+    value: 'Standby',
+    valueType: ReadoutValueType.text,
+    unit: '',
+  },
   // size variants — value digit edges do NOT fully align cross-size (the degree
   // column scales 6/8/12px with the value size); see the ColumnAlignment doc.
 
@@ -1771,6 +1989,7 @@ function renderAlignmentColumn(aligned: boolean, showDebugOverlay: boolean) {
           unit: row.unit,
           src: '',
           value: row.value,
+          valueType: row.valueType,
           hasSetpoint: row.hasSetpoint,
           setpoint: row.setpoint,
           hasAdvice: row.hasAdvice,
@@ -1852,4 +2071,244 @@ export const ColumnAlignment: StoryObj<
       </section>
     </div>
   `,
+};
+
+/**
+ * Figma 6.1 "Equal size": value and setpoint always share the primary size —
+ * the fourth interaction beside primary-secondary (`always-visible`),
+ * flip-flop and pop-up. Static in both states; only flip-flop / pop-up
+ * resize or hide at runtime — see the `SetpointEqualSizeAnimated` story for
+ * the in-motion contrast. `touching` keeps the setpoint at the primary size
+ * (it only adds the SemiBold focus weight and marker highlight), and the
+ * marker arrow follows the block's rendered size, so an equal-size setpoint
+ * carries the full-size arrow. The sizing rule lives in
+ * `readoutSetpointSize()` (`readout-shared.ts`, unit-tested), shared with
+ * `obc-readout`.
+ */
+export const SetpointEqualSize: Story = {
+  render: () =>
+    renderShowcase([
+      {
+        title: 'Equal Size — Off/At Setpoint × Size',
+        columns: 2,
+        cases: [
+          ReadoutListItemSize.small,
+          ReadoutListItemSize.medium,
+          ReadoutListItemSize.large,
+        ].flatMap((size) =>
+          [123, 120].map((value) => ({
+            label: `${size} / ${value === 120 ? 'at' : 'off'} setpoint`,
+            config: {
+              value,
+              hasSetpoint: true,
+              setpoint: 120,
+              options: {
+                size,
+                priority: ReadoutListItemPriority.enhanced,
+                setpoint: {
+                  interaction: ReadoutListItemSetpointInteraction.equalSize,
+                },
+              },
+            },
+          }))
+        ),
+      },
+    ]),
+};
+
+/**
+ * Advice semantic categories in a row context (Figma 6.1). The full per-block
+ * matrix lives in the Readout Block `AdviceCategories` story.
+ */
+export const AdviceCategories: Story = {
+  render: () =>
+    renderShowcase([
+      {
+        title: 'Advice categories — resting vs active',
+        columns: 2,
+        cases: Object.values(ReadoutAdviceCategory).flatMap((category) =>
+          [false, true].map((active) => ({
+            label: `${category}${active ? ' / active' : ''}`,
+            config: {
+              hasAdvice: true,
+              options: {advice: {category, active}},
+            },
+          }))
+        ),
+      },
+    ]),
+};
+
+/**
+ * Source states + deviation (Figma 6.1 Readout-block-source): `enhanced`
+ * renders the amplified chip, `caution` / `warning` the alert chip;
+ * `deviation` adds the Δ line under the source name. Outline-based, so a live
+ * state change never shifts the row.
+ */
+export const SourceStates: Story = {
+  render: () =>
+    renderShowcase([
+      {
+        title: 'Trailing source — state × deviation',
+        columns: 2,
+        cases: Object.values(ReadoutSourceState).flatMap((state) =>
+          [undefined, 0.5].map((deviation) => ({
+            label: `${state}${deviation !== undefined ? ' / Δ' : ''}`,
+            config: {
+              src: 'GPS 1',
+              options: {src: {state, deviation}},
+            },
+          }))
+        ),
+      },
+      {
+        title: 'Leading source — state chip in the label stack',
+        columns: 1,
+        cases: [
+          {
+            label: 'leading-src / warning / Δ',
+            config: {
+              src: 'GPS 1',
+              options: {
+                stacking: ReadoutListItemStacking.leadingSrc,
+                src: {state: ReadoutSourceState.warning, deviation: 0.5},
+              },
+            },
+          },
+        ],
+      },
+    ]),
+};
+
+/**
+ * `labelOptions`: dense rows default the label to `xs`; `size: 's'` opts a
+ * row into the larger title (Figma 6.1 gives large stand-alone readouts `s`
+ * by default — rows stay dense). The label is SemiBold only on enhanced rows.
+ */
+export const LabelSize: Story = {
+  render: () =>
+    renderShowcase([
+      {
+        title: 'Label size — default (xs) vs s override × priority',
+        columns: 2,
+        cases: [undefined, ObcTextboxSize.s].flatMap((size) =>
+          [
+            ReadoutListItemPriority.regular,
+            ReadoutListItemPriority.enhanced,
+          ].map((priority) => ({
+            label: `${size ?? 'default xs'} / ${priority}`,
+            config: {
+              options: {
+                priority,
+                label: size ? {size} : undefined,
+              },
+            },
+          }))
+        ),
+      },
+    ]),
+};
+
+/**
+ * TODO(designer): open question from the 6.1 review — while a pop-up setpoint
+ * is hidden at-setpoint, should the reading keep a setpoint arrow so it still
+ * reads as "a value you are in control of"? The existing `value-icon` slot
+ * already expresses that today, demonstrated here; no new API until decided.
+ */
+export const SetpointPopUpWithValueArrow: Story = {
+  render: () => html`
+    <style>
+      ${showcaseStyle}
+    </style>
+    <div class="rli-sections">
+      <p
+        style="margin: 0; font: 12px/1.5 var(--global-typography-ui-label-font-family, inherit); color: var(--element-neutral-color, #777);"
+      >
+        Pop-up at setpoint, with an <code>obi-input-right</code> slotted into
+        <code>value-icon</code> so the collapsed reading keeps the in-control
+        marker.
+      </p>
+      <obc-readout-list-item
+        .label=${'HDG'}
+        .unit=${'/min'}
+        .src=${'Source'}
+        .value=${10}
+        .hasSetpoint=${true}
+        .setpoint=${10}
+        .priority=${ReadoutListItemPriority.enhanced}
+        .setpointOptions=${{
+          interaction: ReadoutListItemSetpointInteraction.popUp,
+        }}
+        .valueOptions=${{hasIcon: true}}
+      >
+        <obi-input-right slot="value-icon"></obi-input-right>
+      </obc-readout-list-item>
+    </div>
+  `,
+};
+
+/**
+ * Figma 6.1 bird's-eye matrix — a static expansion of the Readout-list-item
+ * sheet (node 46544-270931): Size (3) × Priority (2) × Reference priority /
+ * interaction (4, one section each) × State (4) = the sheet's 96 variants,
+ * reviewable at a glance without touching controls. Degree is on throughout,
+ * matching the sheet's instances. Note the list item keeps its own per-row
+ * degree convention (setpoint / advice carry the degree too) — the
+ * degree-on-the-actual-value-only rule from the 6.1 review applies to
+ * `obc-readout` only.
+ */
+export const FigmaMatrix: Story = {
+  render: () =>
+    renderShowcase(
+      Object.values(ReadoutListItemSetpointInteraction).map((interaction) => ({
+        title: `${interaction}`,
+        columns: 8,
+        cases: [
+          ReadoutListItemSize.small,
+          ReadoutListItemSize.medium,
+          ReadoutListItemSize.large,
+        ].flatMap((size) =>
+          [
+            ReadoutListItemPriority.regular,
+            ReadoutListItemPriority.enhanced,
+          ].flatMap((priority) =>
+            (
+              [
+                {key: 'off setpoint', value: 123},
+                {key: 'at setpoint', value: 120},
+                {
+                  key: 'low-integrity',
+                  value: 123,
+                  dataQuality: ReadoutListItemDataQuality.lowIntegrity,
+                },
+                {
+                  key: 'invalid',
+                  value: 123,
+                  dataQuality: ReadoutListItemDataQuality.invalid,
+                },
+              ] as {
+                key: string;
+                value: number;
+                dataQuality?: ReadoutListItemDataQuality;
+              }[]
+            ).map((state) => ({
+              label: `${size} / ${priority} / ${state.key}`,
+              config: {
+                value: state.value,
+                hasSetpoint: true,
+                setpoint: 120,
+                hasAdvice: true,
+                options: {
+                  size,
+                  priority,
+                  hasDegree: true,
+                  dataQuality: state.dataQuality,
+                  setpoint: {interaction},
+                },
+              },
+            }))
+          )
+        ),
+      }))
+    ),
 };

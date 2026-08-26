@@ -9,7 +9,7 @@ import '../button/button.js';
 
 const meta = {
   title: 'UI Components/Media/Audio Recording Item',
-  tags: ['autodocs', '6.0'],
+  tags: ['autodocs', '6.0', 'beta'],
   component: 'obc-audio-recording-item',
   args: {},
   argTypes: {

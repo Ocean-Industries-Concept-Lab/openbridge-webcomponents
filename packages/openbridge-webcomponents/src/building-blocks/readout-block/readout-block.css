@@ -42,7 +42,11 @@
 }
 
 .hinted-zero {
-  color: var(--obc-readout-block-hinted-color, var(--element-inactive-color));
+  /* Figma 6.1 review (node 95:24490): hinted zeros are lighter than the old
+     inactive tone and NEVER inherit the value's weight — a bold value must not
+     bold its hints. */
+  color: var(--obc-readout-block-hinted-color, var(--element-disabled-color));
+  font-weight: var(--global-typography-generic-l-font-weight-regular);
 }
 
 /* ---------- Text colours (overridable via custom properties) ----------
@@ -105,6 +109,24 @@
   color: var(--obc-readout-block-advice-color, var(--element-neutral-color));
 }
 
+/* ---------- Advice categories (Figma 6.1 Readout-block-advice) ----------
+ * Resting categories are neutral; `advice-active` (triggered) tints the
+ * regular/optimal/eco diamond via currentColor (the IEC status icons of the
+ * alert categories carry fixed fills and ignore this) and switches the alert
+ * categories' number to the active text colour. */
+.block-advice.advice-active.advice-optimal .block-icon {
+  color: var(--element-neutral-enhanced-color);
+}
+.block-advice.advice-active.advice-eco .block-icon {
+  color: var(--base-mint-400);
+}
+.block-advice.advice-active.advice-caution,
+.block-advice.advice-active.advice-warning,
+.block-advice.advice-active.advice-alarm,
+.block-advice.advice-active.advice-running {
+  color: var(--element-active-color);
+}
+
 /* ---------- Per-block data quality ----------
  * Uses `outline` (not `border`) so the chip never shifts the block's width — the
  * value stays column-aligned across rows. */
@@ -160,33 +182,40 @@
 
 /* ---------- Size tiers ----------
  * Public small/medium/large map to the design token regular/medium/large
- * tiers. */
+ * tiers. The icon↔number gap follows the tier; the marker ICON size follows
+ * the block's rendered number size (`value-size-*`) instead — Figma 6.1
+ * (Readout-block-setpoint, review node 95:26891): a de-emphasised S setpoint
+ * carries the 16px arrow while an emphasised L one carries the 24px arrow,
+ * even though both sit in the same large-tier readout.
+ * `--obc-readout-block-icon-size` is the consumer escape hatch. */
 .block.size-small {
   gap: var(--instrument-components-readout-new-general-regular-icon-gap);
 }
-.size-small .block-icon {
-  inline-size: var(
-    --instrument-components-readout-new-general-regular-icon-size
-  );
-  block-size: var(
-    --instrument-components-readout-new-general-regular-icon-size
-  );
-}
-
 .block.size-medium {
   gap: var(--instrument-components-readout-new-general-medium-icon-gap);
 }
-.size-medium .block-icon {
-  inline-size: var(
-    --instrument-components-readout-new-general-medium-icon-size
-  );
-  block-size: var(--instrument-components-readout-new-general-medium-icon-size);
-}
-
 .block.size-large {
   gap: var(--instrument-components-readout-new-general-large-icon-gap);
 }
-.size-large .block-icon {
-  inline-size: var(--instrument-components-readout-new-general-large-icon-size);
-  block-size: var(--instrument-components-readout-new-general-large-icon-size);
+
+.block.value-size-xs,
+.block.value-size-s {
+  --_block-icon-size: var(
+    --instrument-components-readout-new-general-regular-icon-size
+  );
+}
+.block.value-size-m {
+  --_block-icon-size: var(
+    --instrument-components-readout-new-general-medium-icon-size
+  );
+}
+.block.value-size-l,
+.block.value-size-xl {
+  --_block-icon-size: var(
+    --instrument-components-readout-new-general-large-icon-size
+  );
+}
+.block .block-icon {
+  inline-size: var(--obc-readout-block-icon-size, var(--_block-icon-size));
+  block-size: var(--obc-readout-block-icon-size, var(--_block-icon-size));
 }

@@ -103,9 +103,9 @@ export enum OverlapMode {
  * ```
  *
  * @slot - Default slot for POI targets and optional POI groups.
- * @fires layer-resize {CustomEvent<{height:number,label:string}>} Fired when the layer height changes.
- * @fires grouping-change {CustomEvent<{clusters:Poi[][],front:Poi[],behind:Poi[],pregrouped:Poi[]}>} Fired when grouping membership or overlap state changes. Bubbles, composed.
- * @fires layer-selection-changed {Event} Fired when the layer's `isSelected` state changes. Bubbles.
+ * @fires {CustomEvent<{height:number,label:string}>} layer-resize - Fired when the layer height changes.
+ * @fires {CustomEvent<{clusters:Poi[][],front:Poi[],behind:Poi[],pregrouped:Poi[]}>} grouping-change - Fired when grouping membership or overlap state changes. Bubbles and is composed.
+ * @fires {Event} layer-selection-changed - Fired when the layer's `isSelected` state changes. Bubbles.
  * @experimental
  */
 @customElement('obc-poi-layer')

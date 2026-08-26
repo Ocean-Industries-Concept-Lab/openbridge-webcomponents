@@ -123,6 +123,27 @@ export enum ToggletipVariant {
  * </obc-toggletip>
  * ```
  *
+ * @property title - Title text displayed in the header.
+ * @property description - Description text shown in the content area.
+ * @property hasContent - If true, shows the content slot area.
+ *   Use the `content` slot to provide custom content.
+ * @property hasActions - If true, shows the action buttons container.
+ *   Both primary and secondary buttons are shown if labels are provided.
+ *   TODO(designer): Should both buttons always be shown, or is one preferred as primary?
+ * @property hasLeadingIcon - If true, shows the leading icon in the header.
+ *   The icon adapts to the current `variant` by default, or can be overridden via the `leading-icon` slot.
+ * @availableWhen hasLeadingIcon title!=''
+ * @property hasTrailingIcon - If true, shows the trailing icon in the header.
+ *   Use the `trailing-icon` slot to provide a custom icon.
+ * @availableWhen hasTrailingIcon title!=''
+ * @property customWidth - Sets a custom width for the toggletip in pixels.
+ *   If not set, defaults to 400px.
+ * @property primaryButtonLabel - Label for the primary action button.
+ *   Only shown if `hasActions` is true.
+ * @availableWhen primaryButtonLabel hasActions==true
+ * @property secondaryButtonLabel - Label for the secondary action button.
+ *   Only shown if `hasActions` is true.
+ * @availableWhen secondaryButtonLabel hasActions==true
  * @slot leading-icon - Main icon representing the message type or context (shown when `hasLeadingIcon` is true)
  * @slot trailing-icon - Additional icon for secondary context or actions (shown when `hasTrailingIcon` is true)
  * @slot content - Custom content area for rich or interactive elements (shown when `hasContent` is true)
@@ -146,61 +167,22 @@ export class ObcToggletip extends LitElement {
    */
   @property({type: String}) variant = 'normal' as ToggletipVariant;
 
-  /**
-   * Title text displayed in the header.
-   */
   @property({type: String}) override title: string = '';
 
-  /**
-   * Description text shown in the content area.
-   */
   @property({type: String}) description: string | undefined;
 
-  /**
-   * If true, shows the content slot area.
-   * Use the `content` slot to provide custom content.
-   */
   @property({type: Boolean}) hasContent = false;
 
-  /**
-   * If true, shows the action buttons container.
-   * Both primary and secondary buttons are shown if labels are provided.
-   * TODO(designer): Should both buttons always be shown, or is one preferred as primary?
-   */
   @property({type: Boolean}) hasActions = false;
 
-  /**
-   * If true, shows the leading icon in the header.
-   * The icon adapts to the current `variant` by default, or can be overridden via the `leading-icon` slot.
-   * @availableWhen title!=''
-   */
   @property({type: Boolean}) hasLeadingIcon = false;
 
-  /**
-   * If true, shows the trailing icon in the header.
-   * Use the `trailing-icon` slot to provide a custom icon.
-   * @availableWhen title!=''
-   */
   @property({type: Boolean}) hasTrailingIcon = false;
 
-  /**
-   * Sets a custom width for the toggletip in pixels.
-   * If not set, defaults to 400px.
-   */
   @property({type: Number}) customWidth?: number;
 
-  /**
-   * Label for the primary action button.
-   * Only shown if `hasActions` is true.
-   * @availableWhen hasActions==true
-   */
   @property({type: String}) primaryButtonLabel = 'Label';
 
-  /**
-   * Label for the secondary action button.
-   * Only shown if `hasActions` is true.
-   * @availableWhen hasActions==true
-   */
   @property({type: String}) secondaryButtonLabel = 'Label';
 
   /**

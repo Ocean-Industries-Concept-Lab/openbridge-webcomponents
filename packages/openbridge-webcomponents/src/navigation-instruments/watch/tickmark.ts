@@ -22,6 +22,45 @@ export enum TickmarkStyle {
   enhanced = 'enhanced',
 }
 
+/**
+ * Secondary tickmark ladder spanning a watch arc.
+ *
+ * Emits a `secondary` mark every `interval` degrees strictly inside the arc,
+ * skipping the arc centre — which carries its own `main` mark — and the arc
+ * ends, where the band's rounded end cap already reads as a boundary. Angles
+ * are returned signed relative to `centerAngle`, matching the convention the
+ * inclinometers already use for needles and bar areas.
+ *
+ * @param centerAngle Watch angle the arc is centred on.
+ * @param halfExtent Half-extent of the arc in degrees; the arc spans `centerAngle ± halfExtent`.
+ * @param interval Spacing between ladder marks in degrees.
+ */
+export function arcTickmarks(
+  centerAngle: number,
+  halfExtent: number,
+  interval = 5
+): Tickmark[] {
+  if (
+    !Number.isFinite(centerAngle) ||
+    !Number.isFinite(halfExtent) ||
+    !Number.isFinite(interval) ||
+    interval <= 0
+  ) {
+    return [];
+  }
+  const marks: Tickmark[] = [];
+  const epsilon = 1e-6;
+  for (
+    let offset = interval;
+    offset < halfExtent - epsilon;
+    offset += interval
+  ) {
+    marks.push({angle: centerAngle - offset, type: TickmarkType.secondary});
+    marks.push({angle: centerAngle + offset, type: TickmarkType.secondary});
+  }
+  return marks;
+}
+
 export function tickmarkColor(
   style: TickmarkStyle,
   tickmarkType?: TickmarkType

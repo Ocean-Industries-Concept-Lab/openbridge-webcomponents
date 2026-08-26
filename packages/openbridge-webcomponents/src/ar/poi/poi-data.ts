@@ -23,7 +23,7 @@ export {ObcPoiObjectState as PoiDataObjectState};
  *
  * @slot - Icon content forwarded to the inner POI object. Defaults to a vessel icon.
  * @slot header - Optional custom header content forwarded into `obc-poi`.
- * @fires obc-poi-data-layout-change {CustomEvent<void>} Fired when layout-driving properties change.
+ * @fires {CustomEvent<void>} obc-poi-data-layout-change - Fired when layout-driving properties change.
  * @experimental
  */
 @customElement('obc-poi-data')

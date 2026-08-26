@@ -4,22 +4,43 @@ import componentStyle from './readout-list.css?inline';
 import {customElement} from '../../decorator.js';
 import '../readout-list-item/readout-list-item.js';
 import {ObcReadoutListItem} from '../readout-list-item/readout-list-item.js';
+import {resolveReadoutDigitCount} from '../readout/readout-formatters.js';
+import {
+  resolveReadoutNumericValue,
+  ReadoutValueType,
+} from '../readout/readout-formatters.js';
 
 const ITEM_TAG = 'obc-readout-list-item';
 
+// Lit lowercases a property name to derive its attribute (it does not
+// kebab-case), so multi-word properties are observed as one lowercase word —
+// `valueType` becomes `valuetype`.
+//
+// The kebab-cased entries below are therefore INERT: the real attributes are
+// `maxdigits`, `fractiondigits`, `hasdegree`, `hassetpoint` and `hasadvice`, so
+// changing any of them does not currently re-trigger alignment. They predate
+// this list and are left as-is rather than silently activating five code paths
+// that have never run; see the follow-up issue before adding more entries.
 /** Child attributes whose change should re-trigger alignment (HTML-attribute usage). */
 const OBSERVED_ATTRIBUTES = [
   'unit',
   'src',
   'value',
+  'valuetype',
   'setpoint',
   'advice',
+  // ⚠ inert — see the note above; the real names have no hyphens.
   'max-digits',
   'fraction-digits',
   'has-degree',
   'has-setpoint',
   'has-advice',
 ];
+
+/** Whether a row renders its value as verbatim text rather than a number. */
+function isTextValueRow(item: ObcReadoutListItem): boolean {
+  return item.valueType === ReadoutValueType.text;
+}
 
 /** Integer-digit count of a numeric value (sign and fraction excluded). */
 function integerDigitCount(value: number | null | undefined): number {
@@ -45,7 +66,12 @@ function integerDigitCount(value: number | null | undefined): number {
  * - **Value / setpoint / advice:** the widest numeric width (max integer digits +
  *   max fraction digits across rows, derived from each row's `maxDigits` /
  *   `fractionDigits` / current values) is reserved on every row's numeric blocks.
- *   Reserving off digit counts keeps it stable as live values update.
+ *   Reserving off digit counts keeps it stable as live values update. A row with
+ *   `valueType="text"` is excluded in both directions — it neither contributes
+ *   to the reserve (so a long text value cannot inflate the numeric column) nor
+ *   receives it (so short text is not padded to a digit width); its value block
+ *   sizes to its own content. Its setpoint / advice blocks stay numeric and are
+ *   reserved normally.
  * - **Source:** the longest `src` becomes every row's source space-reserver.
  * - **Degree:** if any row has a degree, non-degree rows reserve the degree column
  *   (`hasDegreeSpacer`) so their digits line up with the degree rows; the spacer is
@@ -61,6 +87,9 @@ function integerDigitCount(value: number | null | undefined): number {
  * HTML-attribute changes). When rows are updated via JS **properties** only (no
  * attribute/DOM mutation), call {@link align} to recompute.
  *
+ * @property showDebugOverlay - Development aid: outline each row's readout building blocks (red), degree
+ *   columns (blue) and degree spacer (green) so the reserved column widths are
+ *   visible. Propagated to every row. Off by default.
  * @experimental Pilot for the new primitives + per-block options Readout API; the
  * API may change in a future release.
  *
@@ -70,11 +99,6 @@ function integerDigitCount(value: number | null | undefined): number {
  */
 @customElement('obc-readout-list')
 export class ObcReadoutList extends LitElement {
-  /**
-   * Development aid: outline each row's readout building blocks (red), degree
-   * columns (blue) and degree spacer (green) so the reserved column widths are
-   * visible. Propagated to every row. Off by default.
-   */
   @property({type: Boolean, reflect: true}) showDebugOverlay = false;
 
   private mutationObserver?: MutationObserver;
@@ -123,11 +147,38 @@ export class ObcReadoutList extends LitElement {
     let anyDegree = false;
 
     for (const item of items) {
-      maxFractionDigits = Math.max(maxFractionDigits, item.fractionDigits ?? 0);
+      // A text value renders verbatim, so it contributes nothing to the numeric
+      // reserve: resolving it yields `undefined` and `integerDigitCount` returns
+      // 0. Its row's `maxDigits` / `fractionDigits` are skipped too — they are
+      // ignored by a text block, so counting them would let a text row inflate
+      // every other row's numeric column. They DO still count when the row also
+      // has a setpoint or advice block, which stay numeric and are formatted by
+      // them. Numeric rows driven by HTML attributes resolve back to numbers
+      // here, so they take part as usual.
+      const hasNumericBlock =
+        !isTextValueRow(item) || item.hasSetpoint || item.hasAdvice;
+      // Bounded per row: the list builds its own reserver string from these
+      // counts, so an `Infinity` or absurdly large value on any single row
+      // would otherwise throw out of `String.prototype.repeat` below — inside a
+      // MutationObserver callback, where the stack says nothing useful.
+      if (hasNumericBlock) {
+        maxFractionDigits = Math.max(
+          maxFractionDigits,
+          resolveReadoutDigitCount(item.fractionDigits)
+        );
+        maxIntegerDigits = Math.max(
+          maxIntegerDigits,
+          resolveReadoutDigitCount(item.maxDigits)
+        );
+      }
       maxIntegerDigits = Math.max(
         maxIntegerDigits,
-        item.maxDigits ?? 0,
-        integerDigitCount(item.value),
+        integerDigitCount(
+          resolveReadoutNumericValue(
+            item.value,
+            item.valueType ?? ReadoutValueType.number
+          )
+        ),
         item.hasSetpoint ? integerDigitCount(item.setpoint) : 0,
         item.hasAdvice ? integerDigitCount(item.advice) : 0
       );
@@ -155,9 +206,13 @@ export class ObcReadoutList extends LitElement {
       // Recompute every reserver / spacer on every pass (do not gate on a value
       // being present), so stale state clears when rows change — e.g. when the
       // last degree row, the last unit, or the last source is removed.
+      // The numeric reserve is a width in DIGITS, so applying it to a text
+      // block would pad short text ("Auto" padded out to "0000.0"'s width).
+      // Text rows hug their own content instead. Setpoint / advice stay
+      // numeric and keep the shared reserve even on a text row.
       item.valueOptions = {
         ...item.valueOptions,
-        spaceReserver: numericReserver,
+        spaceReserver: isTextValueRow(item) ? undefined : numericReserver,
       };
       item.setpointOptions = {
         ...item.setpointOptions,

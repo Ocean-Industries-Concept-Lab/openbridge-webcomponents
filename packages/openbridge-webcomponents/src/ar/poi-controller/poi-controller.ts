@@ -186,6 +186,8 @@ export const POI_CONTROLLER_BACKGROUND_LAYER = 'background';
  * - `--obc-poi-controller-stack-height` (default `50%`) — height of the stack
  * - `--obc-poi-controller-stack-gap` (default `8px`) — gap between layers
  *
+ * @property xFilterCutoffHz - Forwarded to every controller-owned target's `xFilterCutoffHz` when set.
+ * @property yFilterCutoffHz - Forwarded to every controller-owned target's `yFilterCutoffHz` when set.
  * @slot media - Video or image element. Sets the projection source dimensions.
  * @slot stack - `obc-poi-layer-stack` containing the layers for target placement.
  * @experimental
@@ -200,10 +202,8 @@ export class ObcPoiController extends LitElement {
   @property({type: Array}) classFilter: string[] | null = null;
   @property({attribute: false})
   keyFn: PoiKeyFn | null = null;
-  /** Forwarded to every controller-owned target's `xFilterCutoffHz` when set. */
   @property({type: Number, attribute: 'x-filter-cutoff-hz'})
   xFilterCutoffHz: number | null = null;
-  /** Forwarded to every controller-owned target's `yFilterCutoffHz` when set. */
   @property({type: Number, attribute: 'y-filter-cutoff-hz'})
   yFilterCutoffHz: number | null = null;
 

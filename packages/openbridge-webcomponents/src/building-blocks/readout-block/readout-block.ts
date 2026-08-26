@@ -11,9 +11,26 @@ import {
 } from '../../components/textbox/textbox.js';
 import '../../icons/icon-input-right.js';
 import '../../icons/icon-notification-advice.js';
+import '../../icons/icon-notification-advice-active.js';
+import '../../icons/icon-caution-google.js';
+import '../../icons/icon-caution-color-iec.js';
+import '../../icons/icon-warning-unacknowledged-outlined.js';
+import '../../icons/icon-warning-unacknowledged-iec.js';
+import '../../icons/icon-alarm.js';
+import '../../icons/icon-alarm-unacknowledged-iec.js';
+import '../../icons/icon-running.js';
+import '../../icons/icon-running-color-iec.js';
 import {
   formatNumericValue,
   readoutFormattedInteger,
+  assertReadoutValueType,
+  assertReadoutFractionDigits,
+  isReadoutDigitCountMissing,
+  resolveReadoutDigitCount,
+  resolveReadoutNumericValue,
+  resolveReadoutTextValue,
+  READOUT_UNAVAILABLE_DASH,
+  ReadoutValueType,
   type ReadoutNumericFormatOptions,
 } from '../../navigation-instruments/readout/readout-formatters.js';
 import {
@@ -27,6 +44,7 @@ export {
   ObcTextboxFontWeight,
   ObcTextboxAlignment,
 } from '../../components/textbox/textbox.js';
+export {ReadoutValueType} from '../../navigation-instruments/readout/readout-formatters.js';
 
 /**
  * Semantic variant of the block. Drives the default marker icon and the
@@ -64,6 +82,32 @@ export enum ReadoutBlockDataQuality {
 }
 
 /**
+ * Semantic category of an advice block (Figma 6.1 "Readout-block-advice"
+ * Value axis). Drives the default marker icon and — while {@link
+ * ObcReadoutBlock.active} — the triggered styling:
+ * - `regular` / `optimal` / `eco`: the advice diamond; triggered renders the
+ *   filled diamond (tinted enhanced-blue / mint for optimal / eco) and a
+ *   SemiBold number.
+ * - `caution` / `warning` / `alarm` / `running`: the matching neutral outline
+ *   icon; triggered swaps in the filled IEC status icon and the active text
+ *   colour.
+ *
+ * TODO(designer): the optimal / eco triggered tint covers the whole diamond
+ * glyph — the Figma icon tints only the inner plus, which needs a two-tone
+ * icon asset; and the advice "Enhanced" state (indent background chip) is not
+ * implemented yet. Both flagged as "may change" in the 6.1 review.
+ */
+export enum ReadoutAdviceCategory {
+  regular = 'regular',
+  optimal = 'optimal',
+  eco = 'eco',
+  caution = 'caution',
+  warning = 'warning',
+  alarm = 'alarm',
+  running = 'running',
+}
+
+/**
  * Pop-up fade phase for a setpoint block. Driven by the parent's setpoint
  * interaction state machine; only meaningful for `role="setpoint"`.
  */
@@ -83,11 +127,52 @@ export enum ReadoutBlockHidePhase {
  * role default), an optional trailing degree glyph, an `off`/unavailable text
  * state, per-block data-quality and an optional per-block alert frame.
  *
+ * Setting `valueType` to `text` renders `value` verbatim (e.g.
+ * `"Auto"`) instead of a formatted number.
+ *
  * This is a building block used inside `obc-readout-list-item` (and, in a future
  * refactor, inside `obc-readout`); it is not normally used on its own. Colour is
  * inherited from the host context (the parent sets the role colour), so the
  * block stays neutral until placed.
  *
+ * @property variant - Semantic variant (value / setpoint / advice).
+ * @property size - Density tier — icon size, gap, degree tier.
+ * @property valueSize - Resolved number-typography size. When unset it is derived from `size`
+ *   (small→s, medium→m, large→l), so a parent that de-emphasises a block (e.g.
+ *   a secondary setpoint) can pass a smaller size without changing the tier.
+ * @property enhanced - Accent (in-command) colour tone.
+ * @property weight - Number font weight (regular / semibold / bold); colour is independent.
+ * @property hasDegree - Render the trailing cap-height degree glyph (`°`).
+ * @property hasIcon - Show the leading marker-icon container (always on for setpoint/advice).
+ * @property fractionDigits - Number of fraction digits. Must be between 0 and 100 — the range
+ *   `Number.prototype.toFixed` accepts; outside it throws a `RangeError`.
+ *   A fractional count truncates (`2.7` → `2`). A count that never arrived
+ *   (`NaN`, `null` or unset) renders the reading as the unavailable dash —
+ *   formatting with a precision the author never chose would let a critical
+ *   `0.4` pass for a healthy `0`.
+ * @availableWhen fractionDigits valueType==number
+ * @property maxDigits - Integer digits to reserve / hint (independent of `fractionDigits`).
+ *   Bounded before use: a fractional count
+ *   truncates (`2.7` → `2`), anything above 100 — including `Infinity` —
+ *   caps at 100, and a negative count reserves nothing. A count that never
+ *   arrived (`NaN`, `null` or unset) renders the reading as the unavailable
+ *   dash, consistent with `fractionDigits`.
+ * @availableWhen maxDigits valueType==number
+ * @property hintedZeros - Render muted leading zeros filling the integer part to `maxDigits`.
+ * @availableWhen hintedZeros valueType==number
+ * @property spaceReserver - Explicit longest string to reserve width for (e.g. `"0000.0"`).
+ * @property off - Render `offText` instead of a number (e.g. equipment powered down).
+ * @property offText - Text shown when `off` is true.
+ * @property alignment - Text alignment of the number within its reserved width.
+ * @property active - The advice is triggered: the marker swaps to its filled/status icon and
+ *   the number takes the category's triggered styling (SemiBold for
+ *   regular/optimal/eco, active text colour for the alert categories). Only
+ *   meaningful for `variant="advice"`.
+ * @availableWhen active variant==advice
+ * @property dataQuality - Per-block measurement quality (outline chip).
+ * @property alert - Per-block alert frame; nests inside any parent alert frame.
+ * @property touching - Setpoint focus (touch) state — only meaningful for `role="setpoint"`.
+ * @property hidePhase - Setpoint pop-up fade phase — only meaningful for `role="setpoint"`.
  * @experimental Pilot for the new primitives + per-block options Readout API; the
  * API may change in a future release.
  *
@@ -101,71 +186,70 @@ export enum ReadoutBlockHidePhase {
  */
 @customElement('obc-readout-block')
 export class ObcReadoutBlock extends LitElement {
-  /** Semantic variant (value / setpoint / advice). */
   @property({type: String}) variant: ReadoutBlockVariant =
     ReadoutBlockVariant.value;
 
-  /** The numeric value; `null`/`undefined` renders a dash. */
-  @property({type: Number}) value: number | null = null;
-
-  /** Density tier — icon size, gap, degree tier. */
-  @property({type: String}) size: ReadoutBlockSize = ReadoutBlockSize.small;
+  /**
+   * The value; `null`/`undefined` renders a dash. A number by default, or text
+   * when {@link valueType} is `text`.
+   */
+  @property({type: String}) value: number | string | null = null;
 
   /**
-   * Resolved number-typography size. When unset it is derived from `size`
-   * (small→s, medium→m, large→l), so a parent that de-emphasises a block (e.g.
-   * a secondary setpoint) can pass a smaller size without changing the tier.
+   * How {@link value} is interpreted. `number` (default) formats it via
+   * `fractionDigits`; `text` renders it verbatim and ignores the numeric
+   * format options. Passing text while this is `number` throws.
    */
+  @property({type: String}) valueType: ReadoutValueType =
+    ReadoutValueType.number;
+
+  @property({type: String}) size: ReadoutBlockSize = ReadoutBlockSize.small;
+
   @property({type: String}) valueSize?: ObcTextboxSize;
 
-  /** Accent (in-command) colour tone. */
   @property({type: Boolean}) enhanced = false;
 
-  /** Number font weight (regular / semibold / bold); colour is independent. */
   @property({type: String}) weight: ObcTextboxFontWeight =
     ObcTextboxFontWeight.regular;
 
-  /** Render the trailing cap-height degree glyph (`°`). */
   @property({type: Boolean}) hasDegree = false;
 
-  /** Show the leading marker-icon container (always on for setpoint/advice). */
   @property({type: Boolean}) hasIcon = false;
 
-  /** Number of fraction digits. */
   @property({type: Number}) fractionDigits = 0;
 
-  /** Integer digits to reserve / hint (independent of `fractionDigits`). */
   @property({type: Number}) maxDigits = 0;
 
-  /** Render muted leading zeros filling the integer part to `maxDigits`. */
   @property({type: Boolean}) hintedZeros = false;
 
-  /** Explicit longest string to reserve width for (e.g. `"0000.0"`). */
   @property({type: String}) spaceReserver?: string;
 
-  /** Render `offText` instead of a number (e.g. equipment powered down). */
   @property({type: Boolean}) off = false;
 
-  /** Text shown when `off` is true. */
   @property({type: String}) offText = 'OFF';
 
-  /** Text alignment of the number within its reserved width. */
   @property({type: String}) alignment: ObcTextboxAlignment =
     ObcTextboxAlignment.Right;
 
-  /** Per-block measurement quality (outline chip). */
+  /**
+   * Semantic category of an advice block — picks the default marker icon and
+   * the {@link active} styling. Only meaningful for `variant="advice"`.
+   * @availableWhen variant==advice
+   */
+  @property({type: String}) category: ReadoutAdviceCategory =
+    ReadoutAdviceCategory.regular;
+
+  @property({type: Boolean}) active = false;
+
   @property({type: String}) dataQuality?: ReadoutBlockDataQuality;
 
   // `boolean | …` (not `false | …`): the generated Angular wrapper widens a
   // literal-`false` union to `boolean`. `wrapWithAlertFrame` treats any
   // non-object as "no frame", so accepting `boolean` is harmless.
-  /** Per-block alert frame; nests inside any parent alert frame. */
   @property({type: Object}) alert: boolean | AlertFrameConfig = false;
 
-  /** Setpoint focus (touch) state — only meaningful for `role="setpoint"`. */
   @property({type: Boolean}) touching = false;
 
-  /** Setpoint pop-up fade phase — only meaningful for `role="setpoint"`. */
   @property({type: String}) hidePhase: ReadoutBlockHidePhase =
     ReadoutBlockHidePhase.none;
 
@@ -185,21 +269,54 @@ export class ObcReadoutBlock extends LitElement {
     }
   }
 
+  /**
+   * `maxDigits` bounded to a usable count. Every width calculation below goes
+   * through this rather than the raw property, so an `Infinity` (or absurdly
+   * large) value cannot reach `String.prototype.repeat`.
+   */
+  private get resolvedMaxDigits(): number {
+    return resolveReadoutDigitCount(this.maxDigits);
+  }
+
+  /**
+   * Whether a digit knob failed to arrive (`NaN` / `null` / `undefined`).
+   * The reading then renders as the unavailable dash rather than silently
+   * formatting with a default the author never chose — a critical `0.4`
+   * formatted with a failed `fractionDigits` would otherwise print as a
+   * plausible-looking `0`. A missing `maxDigits` dashes too, for consistency:
+   * either knob arriving broken means the row's configuration cannot be
+   * trusted.
+   */
+  private get digitCountsMissing(): boolean {
+    return (
+      isReadoutDigitCountMissing(this.fractionDigits) ||
+      isReadoutDigitCountMissing(this.maxDigits)
+    );
+  }
+
   private get numericFormatOptions(): ReadoutNumericFormatOptions {
     return {
+      // The unavailable placeholder stays short (`\u2012.\u2012\u2012`) rather than
+      // spelling out every reserved digit position — `maxDigits` already
+      // reserves the width, so it simply sits at the right edge of it.
       showZeroPadding: false,
-      minValueLength: this.maxDigits,
-      fractionDigits: this.fractionDigits,
+      minValueLength: this.resolvedMaxDigits,
+      // A missing precision shapes the placeholder as zero fraction digits (a
+      // single dash) — and keeps a runtime `undefined`/`null` out of the
+      // options object, which is typed `number` throughout the formatters.
+      fractionDigits: isReadoutDigitCountMissing(this.fractionDigits)
+        ? 0
+        : this.fractionDigits,
     };
   }
 
   /** Widest possible value string for width reservation (e.g. `"000.0"`). */
   private get reserverText(): string {
-    const maxDigits = this.maxDigits;
+    const maxDigits = this.resolvedMaxDigits;
     if (maxDigits <= 0) {
       return '';
     }
-    const integer = '0'.repeat(Math.max(maxDigits, 1));
+    const integer = '0'.repeat(maxDigits);
     return this.fractionDigits > 0
       ? `${integer}.${'0'.repeat(this.fractionDigits)}`
       : integer;
@@ -251,12 +368,57 @@ export class ObcReadoutBlock extends LitElement {
     if (this.variant === ReadoutBlockVariant.setpoint) {
       fallback = html`<obi-input-right></obi-input-right>`;
     } else if (this.variant === ReadoutBlockVariant.advice) {
-      fallback = html`<obi-notification-advice></obi-notification-advice>`;
+      fallback = this.adviceFallbackIcon();
     }
     return html`<span class="block-icon" part="block-icon" aria-hidden="true">
       <slot name="icon" @slotchange=${this.onIconSlotChange}></slot>
       ${this.hasAssignedIcon ? nothing : fallback}
     </span>`;
+  }
+
+  /**
+   * The advice marker for the current category / triggered state. Resting
+   * categories carry a neutral outline glyph (tinted via `currentColor`);
+   * triggered alert categories swap to the filled IEC status icon rendered
+   * with `useCssColor`, which selects the icon's token-coloured variant
+   * (alert fill + on-alert glyph, e.g. `--alert-caution-color` +
+   * `--on-caution-active-color`) — without it the same icon is a
+   * single-colour `currentColor` silhouette. This mirrors `obc-alert-icon`.
+   * The resting icons and the advice diamond deliberately stay on
+   * `currentColor`: their css-colour variants hard-code
+   * `--element-active-color`, which would defeat the neutral tint and the
+   * optimal / eco triggered tint applied from CSS.
+   */
+  private adviceFallbackIcon(): TemplateResult {
+    const active = this.active;
+    switch (this.category) {
+      case ReadoutAdviceCategory.caution:
+        return active
+          ? html`<obi-caution-color-iec useCssColor></obi-caution-color-iec>`
+          : html`<obi-caution-google></obi-caution-google>`;
+      case ReadoutAdviceCategory.warning:
+        return active
+          ? html`<obi-warning-unacknowledged-iec
+              useCssColor
+            ></obi-warning-unacknowledged-iec>`
+          : html`<obi-warning-unacknowledged-outlined></obi-warning-unacknowledged-outlined>`;
+      case ReadoutAdviceCategory.alarm:
+        return active
+          ? html`<obi-alarm-unacknowledged-iec
+              useCssColor
+            ></obi-alarm-unacknowledged-iec>`
+          : html`<obi-alarm></obi-alarm>`;
+      case ReadoutAdviceCategory.running:
+        return active
+          ? html`<obi-running-color-iec useCssColor></obi-running-color-iec>`
+          : html`<obi-running></obi-running>`;
+      default:
+        // regular / optimal / eco share the advice diamond; the triggered tint
+        // is applied via CSS on `.block-icon` (see `advice-*` classes).
+        return active
+          ? html`<obi-notification-advice-active></obi-notification-advice-active>`
+          : html`<obi-notification-advice></obi-notification-advice>`;
+    }
   }
 
   /**
@@ -280,32 +442,71 @@ export class ObcReadoutBlock extends LitElement {
     `;
   }
 
+  protected override willUpdate(changed: Map<string, unknown>): void {
+    super.willUpdate(changed);
+    // Validated on EVERY update, deliberately NOT gated on `value`/`valueType`
+    // appearing in `changed`. When this assertion throws, Lit's `performUpdate`
+    // catch calls `__markUpdated()`, which clears the changed-properties map. A
+    // later update driven by any OTHER property — inside `obc-readout-list`,
+    // `align()` writing the shared reservers — would then see no `value` in
+    // `changed`, skip the check, and render the invalid value as a plain dash:
+    // exactly the silent failure this assertion exists to prevent.
+    assertReadoutValueType('obc-readout-block', this.value, this.valueType);
+    assertReadoutFractionDigits('obc-readout-block', this.fractionDigits);
+  }
+
   override render() {
     const valueSize = this.resolvedValueSize;
+    const isAdvice = this.variant === ReadoutBlockVariant.advice;
+    // Triggered regular/optimal/eco advice renders SemiBold (Figma 6.1); the
+    // alert categories keep the caller's weight and change colour instead.
+    const adviceSemibold =
+      isAdvice &&
+      this.active &&
+      (this.category === ReadoutAdviceCategory.regular ||
+        this.category === ReadoutAdviceCategory.optimal ||
+        this.category === ReadoutAdviceCategory.eco);
+    const weight = adviceSemibold ? ObcTextboxFontWeight.semibold : this.weight;
     const formatOptions = this.numericFormatOptions;
-    const valueForFormat = this.value ?? undefined;
+    const isTextMode = this.valueType === ReadoutValueType.text;
+    // A missing digit knob makes the reading untrustworthy, so it resolves to
+    // "no reading" and renders the dash (see `digitCountsMissing`). Text mode
+    // is unaffected — it ignores the numeric knobs entirely.
+    const valueForFormat = this.digitCountsMissing
+      ? undefined
+      : resolveReadoutNumericValue(this.value, this.valueType);
+    const textValue = resolveReadoutTextValue(this.value, this.valueType);
+    // Text mode renders verbatim and ignores the numeric format options; a
+    // blank / missing text value still falls back to the unavailable dash.
     const text = this.off
       ? this.offText
-      : formatNumericValue(valueForFormat, formatOptions);
+      : isTextMode
+        ? (textValue ?? READOUT_UNAVAILABLE_DASH)
+        : formatNumericValue(valueForFormat, formatOptions);
     // Hinted zeros pad the INTEGER part up to `maxDigits`, independent of
     // `fractionDigits` (the decimal point and fraction digits never count toward
     // `maxDigits`). Negative / dashed values are not padded. Example: value 1.2,
     // maxDigits 3, fractionDigits 1 → "001.2".
     const hintCount =
       this.off ||
+      isTextMode ||
       !this.hintedZeros ||
       valueForFormat === undefined ||
       valueForFormat < 0
         ? 0
-        : Math.max(this.maxDigits - readoutFormattedInteger(text), 0);
+        : Math.max(this.resolvedMaxDigits - readoutFormattedInteger(text), 0);
     const hinted = hintCount > 0 ? '0'.repeat(hintCount) : '';
     // Hinted zeros own the width — they already fill to `maxDigits` — so when
     // `hintedZeros` is enabled an explicit `spaceReserver` is ignored (it has
     // higher priority). Otherwise the wider of the explicit reserver and the
     // `maxDigits`-derived reserve wins.
-    const reserver = this.hintedZeros
-      ? this.reserverText
-      : this.widerReserver(this.spaceReserver, this.reserverText);
+    // Text mode ignores the `maxDigits`-derived numeric reserve — only an
+    // explicit `spaceReserver` still applies.
+    const reserver = isTextMode
+      ? (this.spaceReserver ?? '')
+      : this.hintedZeros
+        ? this.reserverText
+        : this.widerReserver(this.spaceReserver, this.reserverText);
 
     const block = html`
       <div
@@ -313,6 +514,9 @@ export class ObcReadoutBlock extends LitElement {
           block: true,
           [`block-${this.variant}`]: true,
           [`size-${this.size}`]: true,
+          [`value-size-${valueSize}`]: true,
+          [`advice-${this.category}`]: isAdvice,
+          'advice-active': isAdvice && this.active,
           'tone-enhanced': this.enhanced,
           touching: this.touching,
           'is-hiding': this.hidePhase === ReadoutBlockHidePhase.hiding,
@@ -327,7 +531,7 @@ export class ObcReadoutBlock extends LitElement {
             class="block-text"
             part="block-text"
             .size=${valueSize}
-            .fontWeight=${this.weight}
+            .fontWeight=${weight}
             .alignment=${this.alignment}
             .tabularNums=${true}
           >

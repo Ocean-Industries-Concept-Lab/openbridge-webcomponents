@@ -63,6 +63,21 @@ const VALID_POI_STATES = new Set(Object.values(ObcPoiState));
  *   described in the `obc-poi` documentation.
  * - `x` and `y` updates pass through built-in low-pass filters (see
  *   `xFilterCutoffHz` and `yFilterCutoffHz`).
+ *
+ * The `@fires` tag below documents the dispatch site, which lives here rather
+ * than in the variants. It is deliberately duplicated on each concrete
+ * subclass — that is where `custom-elements.json` and the framework wrappers
+ * pick the event up, since this class is not registered. Do not remove it from
+ * the subclasses. `@ignore` keeps this class out of the generated docs.
+ *
+ * @property xFilterCutoffHz - Cutoff frequency (Hz) of the built-in low-pass filter applied to `x`.
+ *   Lower values smooth noisy input more aggressively; `0` or a negative
+ *   value disables filtering so `x` is applied directly.
+ * @property yFilterCutoffHz - Cutoff frequency (Hz) of the built-in low-pass filter applied to `y`.
+ *   Lower values smooth noisy input more aggressively; `0` or a negative
+ *   value disables filtering so `y` is applied directly.
+ * @fires {CustomEvent<void>} obc-poi-data-layout-change - Fired when layout-driving properties change. Bubbles and is composed.
+ * @ignore
  */
 export class PoiBase extends LitElement implements Poi {
   private headerObserver?: MutationObserver;
@@ -102,18 +117,8 @@ export class PoiBase extends LitElement implements Poi {
   @property({type: Number}) x = 0;
   @property({type: Number}) y = DEFAULT_LINE_LENGTH_PX;
   @property({type: Number, attribute: 'button-y'}) buttonY: number | null = 0;
-  /**
-   * Cutoff frequency (Hz) of the built-in low-pass filter applied to `x`.
-   * Lower values smooth noisy input more aggressively; `0` or a negative
-   * value disables filtering so `x` is applied directly.
-   */
   @property({type: Number, attribute: 'x-filter-cutoff-hz'})
   xFilterCutoffHz = X_FILTER_CUTOFF_HZ;
-  /**
-   * Cutoff frequency (Hz) of the built-in low-pass filter applied to `y`.
-   * Lower values smooth noisy input more aggressively; `0` or a negative
-   * value disables filtering so `y` is applied directly.
-   */
   @property({type: Number, attribute: 'y-filter-cutoff-hz'})
   yFilterCutoffHz = Y_FILTER_CUTOFF_HZ;
   @property({type: Boolean, attribute: 'fixed-target'}) fixedTarget = false;

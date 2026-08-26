@@ -1,6 +1,12 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {ObcWind, WindHistogramData, WindVariant} from './wind.js';
+import {
+  ObcWind,
+  WindHistogramData,
+  WindVariant,
+  WindVisualization,
+} from './wind.js';
 import './wind.js';
+import {Priority} from '../types.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {topVessels} from '../watch/vessels/storybook-helper.js';
 
@@ -105,6 +111,14 @@ const meta: Meta<typeof ObcWind> = {
         WindVariant.large,
       ],
     },
+    visualization: {
+      control: 'inline-radio',
+      options: [WindVisualization.histogram, WindVisualization.forceGraphics],
+    },
+    priority: {
+      control: 'inline-radio',
+      options: [Priority.regular, Priority.enhanced],
+    },
   },
 } satisfies Meta<ObcWind>;
 
@@ -129,4 +143,41 @@ export const Small: Story = {
 
 export const Auto: Story = {
   args: {width: 300, variant: WindVariant.auto},
+};
+
+export const ForceGraphics: Story = {
+  args: {
+    width: 400,
+    variant: WindVariant.large,
+    visualization: WindVisualization.forceGraphics,
+  },
+};
+
+export const ForceGraphicsMedium: Story = {
+  args: {
+    width: 200,
+    variant: WindVariant.medium,
+    visualization: WindVisualization.forceGraphics,
+  },
+};
+
+export const ForceGraphicsSmall: Story = {
+  args: {
+    width: 80,
+    variant: WindVariant.small,
+    visualization: WindVisualization.forceGraphics,
+  },
+};
+
+export const HistogramEnhanced: Story = {
+  args: {width: 400, variant: WindVariant.large, priority: Priority.enhanced},
+};
+
+export const ForceGraphicsEnhanced: Story = {
+  args: {
+    width: 400,
+    variant: WindVariant.large,
+    visualization: WindVisualization.forceGraphics,
+    priority: Priority.enhanced,
+  },
 };

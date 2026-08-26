@@ -61,7 +61,7 @@ function renderFixedPlaceholder(text: string = 'Content') {
 
 const meta: Meta<PoiCardArgs> = {
   title: 'AR/POI Card',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'experimental'],
   component: 'obc-poi-card',
   args: {
     pointerDirection: PointerDirection.None,

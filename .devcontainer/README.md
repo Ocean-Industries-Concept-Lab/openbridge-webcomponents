@@ -33,6 +33,26 @@ once, and the volume keeps it.
 3. Reinstall any apt packages you use (see the example below) — their auth and
    config are already on the volume.
 
+## Feature versions are pinned (lockfile)
+
+[devcontainer-lock.json](devcontainer-lock.json) pins the exact versions of the
+Dev Container Features (`node`, `git`) referenced by
+[devcontainer.json](devcontainer.json), the same way `package-lock.json` pins
+npm dependencies. Without it, `node:1` / `git:1` resolve to the newest upstream
+release on every image build, and any new Feature release invalidates the
+Docker layer that installs them — turning the next container create into a
+multi-minute rebuild (several `apt` rounds plus the node toolchain install).
+With the lockfile committed, image builds keep hitting the cached layer until
+the pins are deliberately updated (run from the repository root, so
+`--workspace-folder .` resolves to the folder containing `.devcontainer/`):
+
+```bash
+npx @devcontainers/cli upgrade --workspace-folder .
+```
+
+Commit the updated lockfile afterwards. (Deleting the lockfile and rebuilding
+has the same effect, minus the reproducibility.)
+
 ## Example: one developer's loadout (Claude Code + GitHub CLI)
 
 An example of setting up personal tooling so that it persists. Substitute your
@@ -96,6 +116,9 @@ committing them to the repo, add them to the **user-level** VS Code setting
   propagate to existing volumes (factory reset if ever needed).
 - Git config and repo-level agent config are unaffected: `.claude/` and
   `CLAUDE.md` stay gitignored, [AGENTS.md](../AGENTS.md) remains the canonical
-  agent instruction file.
+  agent instruction file. `CLAUDE.md` is now **generated** from
+  [`docs/agents/claude.md`](../docs/agents/claude.md) by `npm run agents:sync`,
+  which root `prepare` runs — so it reappears after `npm install` without being
+  committed. Do not hand-edit it; edit the source and re-sync.
 - **GitHub Codespaces:** this mechanism targets local Dev Containers; volume
   persistence semantics on Codespaces differ and are not guaranteed.

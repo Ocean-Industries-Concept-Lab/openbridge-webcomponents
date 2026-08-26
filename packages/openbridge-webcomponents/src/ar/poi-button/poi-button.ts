@@ -115,8 +115,8 @@ export interface ObcPoiButtonDataItem {
  * - `relation`: Optional relation icon/content rendered when `hasRelation` is true in data mode.
  *
  * ## Events
- * This component does not emit custom events.
- * Native `click` is available from the internal `<button>`.
+ * This component emits no custom events. A standard `click` bubbles from the
+ * internal `<button>` (`onClick` in the framework wrappers).
  *
  * ## Best Practices
  * - Keep `value`, `state`, and `selected` synchronized to avoid conflicting visual states.
@@ -130,9 +130,13 @@ export interface ObcPoiButtonDataItem {
  * </obc-poi-button>
  * ```
  *
+ * @property inExpandedGroup - Expanded-group presentation state, applied by the owning group composition
+ *   while the button is shown inside an expanded `obc-poi-group` and during
+ *   its collapse animations. Consumers should not set it directly.
  * @slot - Icon/content rendered inside `obc-poi-object`.
  * @slot header - Optional header content rendered above the marker body.
  * @slot relation - Optional relation icon/content in data mode when `hasRelation` is true.
+ * @fires click - Fired when the marker is clicked.
  * @experimental
  */
 @customElement('obc-poi-button')
@@ -150,11 +154,6 @@ export class ObcPoiButton extends LitElement {
   @property({type: Boolean})
   overlapOpaque = false;
   @property({type: String}) type = ObcPoiButtonType.Button;
-  /**
-   * Expanded-group presentation state, applied by the owning group composition
-   * while the button is shown inside an expanded `obc-poi-group` and during
-   * its collapse animations. Consumers should not set it directly.
-   */
   @property({type: Boolean}) inExpandedGroup = false;
   @property({type: Array, attribute: false}) data: ObcPoiButtonDataItem[] = [];
   @property({type: Boolean}) hasRelation = false;

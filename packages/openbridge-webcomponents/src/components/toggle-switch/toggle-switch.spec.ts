@@ -53,6 +53,20 @@ describe('obc-toggle-switch', () => {
       expect(event.detail).toEqual({checked: true});
     });
 
+    it('dispatches change event with checked detail', async () => {
+      const handler = vi.fn();
+      el.addEventListener('change', handler);
+
+      input.click();
+      await el.updateComplete;
+
+      expect(handler).toHaveBeenCalledTimes(1);
+      const event = handler.mock.calls[0]?.[0] as CustomEvent<{
+        checked: boolean;
+      }>;
+      expect(event.detail).toEqual({checked: true});
+    });
+
     it('combination of click and js control', async () => {
       el.checked = true;
       await el.updateComplete;
@@ -110,6 +124,23 @@ describe('obc-toggle-switch', () => {
       input.click();
       await el.updateComplete;
 
+      expect(handler).toHaveBeenCalledTimes(1);
+      const event = handler.mock.calls[0]?.[0] as CustomEvent<{
+        checked: boolean;
+      }>;
+      expect(event.detail).toEqual({checked: true});
+    });
+
+    it('change event reports the user-selected state even when no input listener responds', async () => {
+      const handler = vi.fn();
+      el.addEventListener('change', handler);
+
+      input.click();
+      await el.updateComplete;
+
+      // The host state stays unchanged (controlled), but the change event
+      // must report the user's selection, consistent with the input event.
+      expect(el.checked).toBe(false);
       expect(handler).toHaveBeenCalledTimes(1);
       const event = handler.mock.calls[0]?.[0] as CustomEvent<{
         checked: boolean;

@@ -22,6 +22,7 @@ import '../../icons/icon-chevron-double-up-google.js';
 import '../../icons/icon-chevron-up-google.js';
 import '../../icons/icon-chevron-double-down-google.js';
 import '../../icons/icon-chevron-down-google.js';
+import '../../icons/icon-arrow-right-google.js';
 import '../../icons/icon-off.js';
 import '../../icons/icon-tank.js';
 import '../../icons/icon-energy-battery.js';
@@ -40,9 +41,11 @@ import {
   AdvicePosition,
   ExternalScaleSide,
   FillMode,
+  computeSetpointBandThickness,
 } from '../../building-blocks/external-scale/external-scale.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
+import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 
 export enum TankTrend {
   fastRising = 'fast-rising',
@@ -79,6 +82,22 @@ export enum TankOrientation {
  *   slot — the parent controls the footprint and the tank renders
  *   responsively inside it, just like a regular button. Compact / static
  *   inner layout still applies; only the host box is changed.
+ *
+ *   If the parent leaves *one* axis indefinite — a flex/grid slot sized with
+ *   `min-height`/`max-height` rather than `height`, or a cross axis freed by
+ *   `align-self: center` — the corresponding `100%` computes to `auto` and the
+ *   tank derives that axis from the other one through the design aspect ratio
+ *   of the matching `point` footprint (256×376 vertical, 420×256 horizontal,
+ *   170×282 compact/static, 244×208 horizontal compact/static). The size then
+ *   does not depend on the chart cell, which takes its own size from the cell
+ *   it was measured in and would otherwise make the constraint circular
+ *   (issue #1121).
+ *
+ *   If *both* axes are indefinite (a shrink-to-fit parent, e.g. an unsized
+ *   `inline-block`) there is no axis left to derive from, so the host falls
+ *   back to its text content. That is stable and non-circular, but much
+ *   smaller than the design footprint — give the parent a definite size on at
+ *   least one axis, and on both whenever the exact footprint matters.
  */
 export enum TankPositioning {
   point = 'point',
@@ -97,6 +116,51 @@ export enum TankChartMode {
 /**
  *
  *
+ * Setpoint properties are inherited from {@link SetpointMixin}
+ * (`setpoint`, `newSetpoint`, `touching`, `atSetpoint`, `autoAtSetpoint`,
+ * `autoAtSetpointDeadband`, `setpointAtZeroDeadband`, `setpointOverride`,
+ * `animateSetpoint`) and are forwarded to the embedded chart: the SVG bar in
+ * `bar` mode, or `obc-gauge-trend` in the graph modes (where the marker
+ * renders on the side bar, i.e. `graph-and-bar`). Values share the tank's
+ * `value` / `max` scale.
+ *
+ * @property positioning - Host positioning model — see `TankPositioning` for details. Defaults to
+ *   `button` (host fills parent container, 100% × 100%, falling back to the
+ *   design aspect ratio on any axis the parent leaves indefinite, no anchor
+ *   offset). Set to `point` for the legacy P&ID canvas mode (fixed default
+ *   dimensions + top-center anchor offset).
+ * @property activated - Enables the activated background color, used to indicate that the tank is
+ *   activated/selected. Requires an interactive tank — the `noClick` mixin
+ *   variant used when `clickable` is `false` only paints the enabled state, so
+ *   a non-clickable tank ignores this (matching `obc-elevated-card`).
+ * @availableWhen activated clickable==true
+ * @property chartData - Time-series data points for the embedded gauge-trend (graph modes only).
+ * @property priority - Priority hint forwarded to child charts (regular | enhanced).
+ * @property advice - Advice overlays. Forwarded to the embedded `obc-gauge-trend` in
+ *   `graph` / `graph-and-bar` modes, or rendered as pills over the static
+ *   bar in `bar` mode.
+ * @property hasAdvice - Show advice overlays (works in all `chartMode` variants).
+ * @property alert - Show an `<obc-alert-frame>` overlay around the bordered tank area (the
+ *   `.halo` wrapper). Mirrors the API of `obc-automation-button`: same six
+ *   properties, same three slots (`alert-icon`, `alert-label`, `alert-timer`).
+ *   The ring overlays `.halo` only, so the tag and readout that sit outside
+ *   the halo in compact / static layouts remain unaffected.
+ * @property showTrendSymbol - Show the trend chevron / off icon next to the percent readout. Default
+ *   `true` preserves existing behavior. Set to `false` to hide the trend
+ *   indicator in both compact and non-compact readouts — useful when the
+ *   trend is not meaningful for a given tank, or when the consumer wants
+ *   to keep the readout compact. Has no effect in `static` mode, which
+ *   renders the tank's capacity (`max` + `unit`) instead of a percent and
+ *   intentionally omits the trend indicator (a static tank represents
+ *   "device present, current state unknown"). `attribute: false` per the
+ *   repo's positive-default-true boolean convention.
+ * @property percentFractionDigits - Number of fraction digits used to format the percent readout in the
+ *   non-compact (regular) layout. Defaults to `0` (integer percent). The
+ *   compact layout always renders integer percent to keep its fixed-width
+ *   footprint stable. The static layout renders capacity (`max` + `unit`)
+ *   rather than percent, so this property has no effect there — pass a
+ *   pre-formatted value through the `max-value` slot if fractional
+ *   precision is needed (see the `WithFractionDigits` story).
  * @slot badges - Custom badges to be displayed in the badge area.
  * @slot tag - Text or element for the tank's tag/label.
  * @slot readout - Replaces the entire readout content block.
@@ -111,10 +175,11 @@ export enum TankChartMode {
  * @slot alert-icon - Custom icon for the alert frame.
  * @slot alert-label - Label for the alert frame.
  * @slot alert-timer - Timer for the alert frame.
+ * @fires click - Fired when the tank is clicked. When `clickable` is `false` the tank renders a plain `<div>`, and in `static` mode a `<div role="img">`, instead of a `<button>` — in both cases it is not focusable or keyboard-activatable; pointer clicks still reach the host.
  * @beta
  */
 @customElement('obc-automation-tank')
-export class ObcAutomationTank extends LitElement {
+export class ObcAutomationTank extends SetpointMixin(LitElement) {
   @property({type: String}) medium: LineMedium = LineMedium.water;
   @property({type: Number}) value: number = 0;
   @property({type: Number}) max: number = 100;
@@ -123,12 +188,6 @@ export class ObcAutomationTank extends LitElement {
   @property({type: String, reflect: true}) orientation: TankOrientation =
     TankOrientation.vertical;
   @property({type: Boolean, reflect: true}) compact: boolean = false;
-  /**
-   * Host positioning model — see `TankPositioning` for details. Defaults to
-   * `button` (host fills parent container, 100% × 100%, no anchor offset).
-   * Set to `point` for the legacy P&ID canvas mode (fixed default dimensions
-   * + top-center anchor offset).
-   */
   @property({type: String, reflect: true}) positioning: TankPositioning =
     TankPositioning.button;
   /**
@@ -144,7 +203,31 @@ export class ObcAutomationTank extends LitElement {
    * activatable controls.
    */
   @property({type: Boolean, reflect: true}) static: boolean = false;
-  /** Enables the activated background color, used to indicate that the tank is activated/selected. */
+  /**
+   * Whether the tank is interactive. `true` (default) renders the root as a
+   * `<button>` with the full flat-mixin interaction surface. `false` renders a
+   * non-interactive `<div>` — the resting appearance is unchanged (same
+   * enabled-state colors and the same 1px border box, via the mixin's
+   * `noClick` variant), but the hover / pressed / focus-visible states are
+   * gone and the tank leaves the tab order.
+   *
+   * Everything else keeps rendering: the chart / bar, badges, readout, tag and
+   * the `alert` frame all behave exactly as they do on a clickable tank. Use
+   * this for a display-only tank that still shows live data — e.g. a row total
+   * aggregating the tanks beside it. For "device present, current state
+   * unknown" use `static` instead, which also hides the chart and shrinks to
+   * the compact footprint.
+   *
+   * `static` is already non-interactive, so this has no effect there.
+   *
+   * Property-only (`attribute: false`, per the repo's positive-default-true
+   * boolean convention — a `true` default cannot round-trip through an HTML
+   * boolean attribute). Set it as a property: `el.clickable = false`,
+   * `.clickable=${false}` in a Lit template, or the equivalent binding in the
+   * React / Vue / Angular / Svelte wrappers. A `clickable="false"` attribute in
+   * plain HTML is **not** observed and leaves the tank interactive.
+   */
+  @property({type: Boolean, attribute: false}) clickable: boolean = true;
   @property({type: Boolean}) activated: boolean = false;
   @property({type: String}) tag: string = '';
 
@@ -157,22 +240,14 @@ export class ObcAutomationTank extends LitElement {
   @property({type: String, reflect: true, attribute: 'chart-mode'})
   chartMode: TankChartMode = TankChartMode.bar;
 
-  /** Time-series data points for the embedded gauge-trend (graph modes only). */
   @property({type: Array, attribute: false})
   chartData: ChartLineDataItem[] = [];
 
-  /** Priority hint forwarded to child charts (regular | enhanced). */
   @property({type: String}) priority: Priority = Priority.regular;
 
-  /**
-   * Advice overlays. Forwarded to the embedded `obc-gauge-trend` in
-   * `graph` / `graph-and-bar` modes, or rendered as pills over the static
-   * bar in `bar` mode.
-   */
   @property({type: Array, attribute: false})
   advice: LinearAdvice[] = [];
 
-  /** Show advice overlays (works in all `chartMode` variants). */
   @property({type: Boolean}) hasAdvice = false;
 
   /**
@@ -193,13 +268,6 @@ export class ObcAutomationTank extends LitElement {
    */
   @property({type: Boolean, attribute: false}) hasGraphIcon = false;
 
-  /**
-   * Show an `<obc-alert-frame>` overlay around the bordered tank area (the
-   * `.halo` wrapper). Mirrors the API of `obc-automation-button`: same six
-   * properties, same three slots (`alert-icon`, `alert-label`, `alert-timer`).
-   * The ring overlays `.halo` only, so the tag and readout that sit outside
-   * the halo in compact / static layouts remain unaffected.
-   */
   @property({type: Boolean}) alert: boolean = false;
   @property({type: String}) alertFrameType: ObcAlertFrameType =
     ObcAlertFrameType.SmallSideFlip;
@@ -210,28 +278,8 @@ export class ObcAutomationTank extends LitElement {
     true;
   @property({type: Boolean}) showAlertIcon: boolean = false;
 
-  /**
-   * Show the trend chevron / off icon next to the percent readout. Default
-   * `true` preserves existing behavior. Set to `false` to hide the trend
-   * indicator in both compact and non-compact readouts — useful when the
-   * trend is not meaningful for a given tank, or when the consumer wants
-   * to keep the readout compact. Has no effect in `static` mode, which
-   * renders the tank's capacity (`max` + `unit`) instead of a percent and
-   * intentionally omits the trend indicator (a static tank represents
-   * "device present, current state unknown"). `attribute: false` per the
-   * repo's positive-default-true boolean convention.
-   */
   @property({type: Boolean, attribute: false}) showTrendSymbol: boolean = true;
 
-  /**
-   * Number of fraction digits used to format the percent readout in the
-   * non-compact (regular) layout. Defaults to `0` (integer percent). The
-   * compact layout always renders integer percent to keep its fixed-width
-   * footprint stable. The static layout renders capacity (`max` + `unit`)
-   * rather than percent, so this property has no effect there — pass a
-   * pre-formatted value through the `max-value` slot if fractional
-   * precision is needed (see the `WithFractionDigits` story).
-   */
   @property({type: Number}) percentFractionDigits: number = 0;
 
   /**
@@ -456,8 +504,9 @@ export class ObcAutomationTank extends LitElement {
     } else if (this.trend === TankTrend.closed) {
       return html`<obi-off class="trend-icon"></obi-off>`;
     } else {
-      // stable: render no icon
-      return nothing;
+      return html`<obi-arrow-right-google
+        class="trend-icon"
+      ></obi-arrow-right-google>`;
     }
   }
 
@@ -824,6 +873,15 @@ export class ObcAutomationTank extends LitElement {
                 .advice=${this.advice}
                 .width=${this._cellWidth}
                 .height=${this._cellHeight}
+                .setpoint=${this.setpoint}
+                .newSetpoint=${this.newSetpoint}
+                .touching=${this.touching}
+                .atSetpoint=${this.atSetpoint}
+                .autoAtSetpoint=${this.autoAtSetpoint}
+                .autoAtSetpointDeadband=${this.autoAtSetpointDeadband}
+                .setpointAtZeroDeadband=${this.setpointAtZeroDeadband}
+                .setpointOverride=${this.setpointOverride}
+                .animateSetpoint=${this.animateSetpoint}
                 style="width: 100%; height: 100%;"
                 .priority=${this.priority}
               ></obc-gauge-trend>`
@@ -864,11 +922,22 @@ export class ObcAutomationTank extends LitElement {
       // cross-axis size so width-fit and height-fit ratios match exactly
       // (no horizontal gutters): viewBoxCross = cellWidth * 384 / cellHeight.
       const SCALE_REFERENCE_SIZE = 384;
-      const adviceReserveVb = this.hasAdvice ? 16 : 0;
+      // The bar's viewBox cross-axis includes an outside-bar band for advice
+      // pills and/or the setpoint marker (see computeExternalScaleLayout).
+      // Subtract the same band the bar will reserve so total viewBox width
+      // still equals viewBoxCross and the meet-scale fills the cell exactly.
+      const hasSetpointMarker =
+        this.setpoint !== undefined ||
+        this.newSetpoint !== undefined ||
+        this.departingNewSetpoint !== undefined;
+      const outsideBarReserveVb = Math.max(
+        this.hasAdvice ? 16 : 0,
+        computeSetpointBandThickness({hasSetpoint: hasSetpointMarker})
+      );
       const safeCellHeight = Math.max(1, this._cellHeight);
       const viewBoxCross =
         (this._cellWidth * SCALE_REFERENCE_SIZE) / safeCellHeight;
-      const barThickness = Math.max(0, viewBoxCross - adviceReserveVb);
+      const barThickness = Math.max(0, viewBoxCross - outsideBarReserveVb);
       // `tint` is locked in for tank bar mode: it draws a fill from 0 to
       // value plus a small marker at the value position, which mirrors the
       // legacy CSS bar's "fill + top border at value" visual idiom.
@@ -891,6 +960,15 @@ export class ObcAutomationTank extends LitElement {
         .borderRadius=${2}
         .advices=${this.hasAdvice ? this.advice : []}
         .advicePosition=${AdvicePosition.inner}
+        .setpoint=${this.setpoint}
+        .newSetpoint=${this.newSetpoint}
+        .touching=${this.touching}
+        .atSetpoint=${this.atSetpoint}
+        .autoAtSetpoint=${this.autoAtSetpoint}
+        .autoAtSetpointDeadband=${this.autoAtSetpointDeadband}
+        .setpointAtZeroDeadband=${this.setpointAtZeroDeadband}
+        .setpointOverride=${this.setpointOverride}
+        .animateSetpoint=${this.animateSetpoint}
         style="width: 100%; height: 100%;"
         .priority=${this.priority}
       ></obc-bar-vertical>`;
@@ -959,7 +1037,18 @@ export class ObcAutomationTank extends LitElement {
     // The `activated` class goes on the interactive `.root` so the shared
     // `flat` style mixin paints the activated background/border on `.halo`
     // (its `visibleWrapperClass`), same as the mixin's hover/pressed states.
-    const rootClasses = classMap({root: true, activated: this.activated});
+    //
+    // `.clickable` selects between the two flat-mixin variants in CSS: the
+    // full six-state one, or the `noClick` one that paints only the resting
+    // enabled state. `static` is already display-only, so it never counts as
+    // clickable. Same shape as `obc-elevated-card`'s `.not-clickable` split
+    // and `obc-readout-list-item`'s `.root.clickable`.
+    const isClickable = this.clickable && !this.static;
+    const rootClasses = classMap({
+      root: true,
+      activated: this.activated,
+      clickable: isClickable,
+    });
 
     // `aria-live="polite"` + `aria-atomic="true"` on the root so the
     // slotted alert label (and any state change of the alert frame) is
@@ -968,27 +1057,47 @@ export class ObcAutomationTank extends LitElement {
     // TODO(a11y): the rest of the automation component family still lacks
     // this live-region announcement; consolidate when alert support is
     // factored into a shared mixin.
-    return html`
-      ${this.static
-        ? html`<div
-            class=${rootClasses}
-            role="img"
-            aria-label=${this.tag || 'Tank'}
-            aria-live="polite"
-            aria-atomic="true"
-          >
-            ${halo}
-          </div>`
-        : html`<button
-            class=${rootClasses}
-            type="button"
-            aria-label=${this.tag || 'Tank'}
-            aria-live="polite"
-            aria-atomic="true"
-          >
-            ${halo}
-          </button>`}
-    `;
+    // Three root shapes:
+    //   - static:            <div role="img"> — an opaque graphic standing in
+    //     for a device whose state is unknown, named by its tag.
+    //   - clickable false:  a plain <div>. Deliberately no `role="img"` and no
+    //     `aria-label` here: unlike a static tank this one still shows live
+    //     data, and both would collapse the readout into a single opaque name
+    //     and hide the percent / value / tag from screen readers. The visible
+    //     content is the accessible content. (Same reasoning as the non-
+    //     clickable branch of `obc-readout-list-item`.)
+    //   - default:           <button>.
+    // The live region stays on all three so an `alert` label is announced
+    // regardless of interactivity.
+    if (this.static) {
+      return html`<div
+        class=${rootClasses}
+        role="img"
+        aria-label=${this.tag || 'Tank'}
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        ${halo}
+      </div>`;
+    }
+    if (!isClickable) {
+      return html`<div
+        class=${rootClasses}
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        ${halo}
+      </div>`;
+    }
+    return html`<button
+      class=${rootClasses}
+      type="button"
+      aria-label=${this.tag || 'Tank'}
+      aria-live="polite"
+      aria-atomic="true"
+    >
+      ${halo}
+    </button>`;
   }
 
   static override styles = unsafeCSS(compentStyle);

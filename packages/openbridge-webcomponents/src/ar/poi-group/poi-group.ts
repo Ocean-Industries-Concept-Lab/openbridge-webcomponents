@@ -70,28 +70,24 @@ export type ExpandEvent = CustomEvent<{expand: boolean}>;
  * </obc-poi-group>
  * ```
  *
+ * @property collapsing - Collapse-animation state. Set by the group itself and by coordinating
+ *   containers such as `obc-poi-layer-stack` during collapse orchestration;
+ *   do not set it directly.
+ * @property internalSwapping - Reorders expanded targets when their horizontal positions cross. Usually
+ *   set via `obc-poi-layer`'s `internal-swapping` attribute, which forwards it
+ *   to auto-created groups; set it directly only on manually managed groups.
  * @slot - Default slot for grouped `obc-poi-data` targets.
- * @fires expand {CustomEvent<{expand:boolean}>} Fired when the group expand state changes.
- * @fires collapse-finished {CustomEvent<void>} Fired after collapse animation completes.
- * @fires obc-poi-group-target-released {CustomEvent<{target:Poi}>} Fired after `releaseTarget()` returns a target to the group's parent context (re-parented for consumer-managed groups, re-assigned for auto groups) — immediately when the group is collapsed, or once the collapse animation completes. Bubbles, composed.
+ * @fires {CustomEvent<{expand:boolean}>} expand - Fired when the group expand state changes.
+ * @fires {CustomEvent<void>} collapse-finished - Fired after collapse animation completes.
+ * @fires {CustomEvent<{target: Poi}>} obc-poi-group-target-released - Fired after `releaseTarget()` returns a target to the group's parent context (re-parented for consumer-managed groups, re-assigned for auto groups) — immediately when the group is collapsed, or once the collapse animation completes. Bubbles and is composed.
  * @experimental
  */
 @customElement('obc-poi-group')
 export class ObcPoiGroup extends LitElement {
   @property({type: Boolean}) expand = false;
-  /**
-   * Collapse-animation state. Set by the group itself and by coordinating
-   * containers such as `obc-poi-layer-stack` during collapse orchestration;
-   * do not set it directly.
-   */
   @property({type: Boolean}) collapsing = false;
   @property({type: String, attribute: 'position-vertical'})
   positionVertical = '0px';
-  /**
-   * Reorders expanded targets when their horizontal positions cross. Usually
-   * set via `obc-poi-layer`'s `internal-swapping` attribute, which forwards it
-   * to auto-created groups; set it directly only on manually managed groups.
-   */
   @property({type: Boolean, attribute: 'internal-swapping'})
   internalSwapping = false;
   @state() private wrapperOffsetX = '0px';
