@@ -1,10 +1,30 @@
-import {LitElement, PropertyValues, css, html} from 'lit';
+import {LitElement, PropertyValues, css, html, nothing} from 'lit';
 import {property} from 'lit/decorators.js';
 import '../watch/watch.js';
 import {Tickmark, TickmarkType} from '../watch/tickmark.js';
-import {arrow, ArrowStyle} from './arrow.js';
+import {
+  CogArrowStyle,
+  HdgArrowStyle,
+  cogArrow,
+  hdgArrow,
+} from '../course-arrows/course-arrows.js';
+import {
+  CompassCenterReadout,
+  CompassReadoutSource,
+  centerReadoutStyles,
+  renderCenterReadouts,
+  resolveCompassCenterReadouts,
+} from '../readout/center-readout.js';
 import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
+import {
+  applyPinnedHostSize,
+  computeRadialFrame,
+  measureContainerPx,
+  NORTH_ARROW_WIDTH_PX,
+  NSWE_LABEL_WIDTH_PX,
+  type RadialFrame,
+} from '../../svghelpers/radial-frame.js';
 import {
   VesselImage,
   VesselImageSize,
@@ -17,6 +37,9 @@ import {ROT_ZERO_DEADBAND_DEG} from '../rate-of-turn/rot-renderer.js';
 import {customElement} from '../../decorator.js';
 import {InstrumentState, Priority} from '../types.js';
 export {RotType};
+export {HdgArrowStyle, CogArrowStyle};
+export {CompassReadoutSource};
+export type {CompassCenterReadout};
 
 export enum CompassDirection {
   NorthUp = 'northUp',
@@ -66,6 +89,13 @@ export enum CompassPriorityElement {
  *   speed/direction indicators on the watch face.
  * - **Vessel image**: Configurable vessel silhouette centered on the
  *   compass, rotating with heading.
+ * - **Arrow styles**: The HDG and COG arrows each select their look via
+ *   `hdgArrowStyle` (`arrowHead` default, `needle`, `vector`, `beamLine`)
+ *   and `cogArrowStyle` (`arrowHead` default, `needle`, `vector`,
+ *   `velocityVector`).
+ * - **Center readouts**: `centerReadouts` replaces the vessel with up to
+ *   three readouts (first on top, the rest below a horizontal divider);
+ *   values bind to the instrument's own inputs per entry `source`.
  * - **Color priority**: Set `priority` to `Priority.enhanced` to use the
  *   blue/enhanced color palette instead of the default gray/regular palette
  *   (default: `Priority.regular`).
@@ -97,83 +127,92 @@ export enum CompassPriorityElement {
  *
  * @ignition-base-height: 512px
  * @ignition-base-width: 512px
+ *
+ * @property heading - The current heading of the vessel in degrees.
+ * @property courseOverGround - The current course over ground in degrees.
+ * @property headingSetpoint - The set point for the heading in degrees.
+ * @availableWhen newHeadingSetpoint headingSetpoint!=null
+ * @property atHeadingSetpoint - Indicates if the vessel is at the heading set point.
+ * @availableWhen atHeadingSetpoint headingSetpoint!=null && autoAtHeadingSetpoint==false
+ * @availableWhen headingSetpointAtZeroDeadband headingSetpoint!=null
+ * @availableWhen headingSetpointOverride headingSetpoint!=null
+ * @property autoAtHeadingSetpoint - Enables automatic at heading set point calculation.
+ * @availableWhen autoAtHeadingSetpoint headingSetpoint!=null
+ * @property autoAtHeadingSetpointDeadband - The deadband for the heading set point in degrees.
+ * @availableWhen autoAtHeadingSetpointDeadband headingSetpoint!=null && autoAtHeadingSetpoint==true
+ * @availableWhen animateSetpoint headingSetpoint!=null
+ * @property touching - Indicates if the compass is being touched.
+ * @availableWhen touching headingSetpoint!=null
+ * @property headingAdvices - An array of angle advices for the compass.
+ * @property currentWindSpeedKnots - The wind speed in knots.
+ * @availableWhen currentWindSpeedKnots windFromDirection!=null
+ * @property windFromDirection - The direction the wind is coming from in degrees.
+ * @availableWhen windFromDirection currentWindSpeedKnots!=null
+ * @property currentSpeed - The current speed, number of arrows.
+ * @availableWhen currentSpeed currentFromDirection!=null
+ * @property currentFromDirection - The direction the current is coming from in degrees.
+ * @availableWhen currentFromDirection currentSpeed!=null
+ * @property vesselImage - The image of the vessel. Hidden while `centerReadouts` is non-empty.
+ * @availableWhen vesselImage centerReadouts==[]
+ * @property centerReadouts - Center readouts replacing the vessel: the first entry renders on top,
+ *   the rest side by side below a horizontal divider. Values bind per entry
+ *   `source` (`hdg` → `heading`, `cog` → `courseOverGround`, `rot` →
+ *   `rateOfTurnDegreesPerMinute`, a dash when unset) and colors follow
+ *   `priorityElements`. While non-empty, the crosshair's center is cut out
+ *   so the readouts sit on a clean face.
+ * @property hdgArrowStyle - HDG arrow style: `arrowHead` (default), `needle`, `vector`, or `beamLine`.
+ * @property cogArrowStyle - COG arrow style: `arrowHead` (default), `needle`, `vector`, or `velocityVector`.
+ * @property rateOfTurnDegreesPerMinute - Measured rate of turn in degrees per minute (positive = starboard).
+ *   Drives both the bar extent and (after multiplication by
+ *   `rotDotAnimationFactor`) the spinning dot animation.
+ *   When `undefined`, falls back to the deprecated `rotationsPerMinute`.
+ * @property rotDotAnimationFactor - Visual amplification applied only to the spinning dot animation
+ *   (not to the bar extent). Default `18` keeps the legacy visual feel
+ *   (≈1 rpm at 20°/min).
+ * @availableWhen rotDotAnimationFactor rotType==dots
+ * @property rotType - ROT display mode: `'dots'` (spinning dots, default) or `'bar'` (a rate-of-turn arc anchored at the current heading, its length proportional to the rate of turn).
+ * @property rotPosition - ROT track position: `'innerCircle'` (default) or `'scale'` (on the outer ring).
+ * @availableWhen rotArcExtent rotType==bar
+ * @availableWhen rotAtZeroDeadband rotType==bar
+ * @property priority - Color priority: `Priority.enhanced` uses the blue/enhanced color palette, `Priority.regular` (default) uses the standard palette.
+ * @availableWhen priorityElements priority==enhanced
+ * @property showLabels - Show compass NSEW labels. The north arrow is always shown, independent of this flag.
+ * @property tickmarksInside - When true, labels and north arrow are placed inside the outer ring.
+ * @property faceDiameter - Outer-ring diameter in CSS pixels. When set, the instrument renders at a
+ *   fixed intrinsic size derived from the ring, arc shape and label reserve —
+ *   so instruments sharing the same value have identical ring circumference
+ *   regardless of label width or arc extent (like obc-donut-chart's
+ *   fixedHeight). When unset (default), the instrument fills its container.
  * @stable
  */
 @customElement('obc-compass')
 export class ObcCompass extends LitElement {
-  /** The current heading of the vessel in degrees. */
   @property({type: Number}) heading = 0;
-  /** The current course over ground in degrees. */
   @property({type: Number}) courseOverGround = 0;
 
-  /** The set point for the heading in degrees. */
   @property({type: Number}) headingSetpoint: number | null = null;
-  /** @availableWhen headingSetpoint!=null */
   @property({type: Number}) newHeadingSetpoint: number | undefined;
-  /**
-   * Indicates if the vessel is at the heading set point.
-   * @availableWhen headingSetpoint!=null && autoAtHeadingSetpoint==false
-   */
   @property({type: Boolean}) atHeadingSetpoint: boolean = false;
-  /** @availableWhen headingSetpoint!=null */
   @property({type: Number}) headingSetpointAtZeroDeadband: number = 0.5;
-  /** @availableWhen headingSetpoint!=null */
   @property({type: Boolean}) headingSetpointOverride: boolean = false;
-  /**
-   * Enables automatic at heading set point calculation.
-   * @availableWhen headingSetpoint!=null
-   */
   @property({type: Boolean, attribute: false}) autoAtHeadingSetpoint: boolean =
     true;
-  /**
-   * The deadband for the heading set point in degrees.
-   * @availableWhen headingSetpoint!=null && autoAtHeadingSetpoint==true
-   */
   @property({type: Number}) autoAtHeadingSetpointDeadband: number = 2;
-  /** @availableWhen headingSetpoint!=null */
   @property({type: Boolean}) animateSetpoint: boolean = false;
-  /**
-   * Indicates if the compass is being touched.
-   * @availableWhen headingSetpoint!=null
-   */
   @property({type: Boolean}) touching: boolean = false;
-  /** An array of angle advices for the compass. */
   @property({type: Array, attribute: false}) headingAdvices: AngleAdvice[] = [];
-  /**
-   * The wind speed in knots.
-   * @availableWhen windFromDirection!=null
-   */
   @property({type: Number}) currentWindSpeedKnots: number | null = null;
-  /**
-   * The direction the wind is coming from in degrees.
-   * @availableWhen currentWindSpeedKnots!=null
-   */
   @property({type: Number}) windFromDirection: number | null = null;
-  /**
-   * The current speed, number of arrows.
-   * @availableWhen currentFromDirection!=null
-   */
   @property({type: Number}) currentSpeed: number | null = null;
-  /**
-   * The direction the current is coming from in degrees.
-   * @availableWhen currentSpeed!=null
-   */
   @property({type: Number}) currentFromDirection: number | null = null;
-  /** The image of the vessel. */
   @property({type: String}) vesselImage: VesselImage = VesselImage.genericTop;
-  /**
-   * Measured rate of turn in degrees per minute (positive = starboard).
-   * Drives both the bar extent and (after multiplication by
-   * `rotDotAnimationFactor`) the spinning dot animation.
-   * When `undefined`, falls back to the deprecated `rotationsPerMinute`.
-   */
+  @property({type: Array, attribute: false})
+  centerReadouts: CompassCenterReadout[] = [];
+  @property({type: String}) hdgArrowStyle: HdgArrowStyle =
+    HdgArrowStyle.arrowHead;
+  @property({type: String}) cogArrowStyle: CogArrowStyle =
+    CogArrowStyle.arrowHead;
   @property({type: Number}) rateOfTurnDegreesPerMinute: number | undefined;
-  /**
-   * Visual amplification applied only to the spinning dot animation
-   * (not to the bar extent). Default `18` keeps the legacy visual feel
-   * (≈1 rpm at 20°/min).
-   * @availableWhen rotType==dots
-   */
   @property({type: Number}) rotDotAnimationFactor: number = 18;
   /**
    * Legacy rate-of-turn input, in rotations per minute. When
@@ -185,9 +224,7 @@ export class ObcCompass extends LitElement {
    * `rateOfTurnDegreesPerMinute` is `undefined`.
    */
   @property({type: Number}) rotationsPerMinute: number = 1;
-  /** ROT display mode: `'dots'` (spinning dots, default) or `'bar'` (a rate-of-turn arc anchored at the current heading, its length proportional to the rate of turn). */
   @property({type: String}) rotType: RotType = RotType.dots;
-  /** ROT track position: `'innerCircle'` (default) or `'scale'` (on the outer ring). */
   @property({type: String}) rotPosition: RotPosition = RotPosition.innerCircle;
   /**
    * Bar-extent reference value in **degrees per minute**. The bar fills the
@@ -200,23 +237,19 @@ export class ObcCompass extends LitElement {
    * @availableWhen rotType==bar
    */
   @property({type: Number}) rotMaxValue: number = 60;
-  /** @availableWhen rotType==bar */
   @property({type: Number}) rotArcExtent: number = 60;
   @property({type: Boolean}) rotPortStarboard: boolean = false;
-  /** @availableWhen rotType==bar */
   @property({type: Number}) rotAtZeroDeadband: number = ROT_ZERO_DEADBAND_DEG;
   @property({type: String}) direction: CompassDirection =
     CompassDirection.NorthUp;
   @property({type: String}) state: InstrumentState = InstrumentState.active;
-  /** Color priority: `Priority.enhanced` uses the blue/enhanced color palette, `Priority.regular` (default) uses the standard palette. */
   @property({type: String}) priority: Priority = Priority.regular;
-  /** @availableWhen priority==enhanced */
   @property({type: Array, attribute: false})
   priorityElements: CompassPriorityElement[] = [CompassPriorityElement.hdg];
-  /** Show compass NSEW labels and north arrow. */
   @property({type: Boolean}) showLabels: boolean = false;
-  /** When true, labels and north arrow are placed inside the outer ring. */
   @property({type: Boolean}) tickmarksInside: boolean = false;
+  @property({type: Number, attribute: 'face-diameter'})
+  faceDiameter: number | undefined;
 
   private _headingSp = new SetpointBundle({
     angularWraparound: true,
@@ -257,18 +290,32 @@ export class ObcCompass extends LitElement {
     return this.rateOfTurnDegreesPerMinute ?? this.rotationsPerMinute;
   }
 
-  private getPadding() {
-    const size = Math.min(this.clientHeight, this.clientWidth);
-    const deltaWidth = 512 - size;
-    const steps = deltaWidth / 128;
-    let deltaPadding;
-    if (deltaWidth > 0) {
-      deltaPadding = steps * 48;
-    } else {
-      deltaPadding = steps * 6;
+  /**
+   * Pixel cost of the outside decor: the always-rendered north-arrow glyph
+   * plus, only while shown, the NSWE labels (both keep a constant on-screen
+   * size via `1/scale` terms). Feeds the frame's width-aware reserve,
+   * replacing the former empirical `72 + delta(clientSize)` padding.
+   * Wind/current symbols at their default radius are covered by the base
+   * padding of 72.
+   */
+  private getOutsideDecorPx(): number {
+    if (this.tickmarksInside) {
+      return 0;
     }
+    return NORTH_ARROW_WIDTH_PX + (this.showLabels ? NSWE_LABEL_WIDTH_PX : 0);
+  }
 
-    return 72 + deltaPadding;
+  /** Whether the host size styles were set by applyPinnedHostSize. */
+  private _hostSizePinned = false;
+  private _frame: RadialFrame | undefined;
+
+  override updated(changed: PropertyValues): void {
+    super.updated(changed);
+    this._hostSizePinned = applyPinnedHostSize(
+      this,
+      this._frame,
+      this._hostSizePinned
+    );
   }
 
   private get angleAdviceRaw(): AngleAdviceRaw[] {
@@ -296,6 +343,21 @@ export class ObcCompass extends LitElement {
       : undefined;
   }
 
+  private readoutPriorityFor(source: CompassReadoutSource): Priority {
+    switch (source) {
+      case CompassReadoutSource.hdg:
+        return this.priorityFor(CompassPriorityElement.hdg);
+      case CompassReadoutSource.cog:
+        return this.priorityFor(CompassPriorityElement.cog);
+      case CompassReadoutSource.rot:
+        return this.priorityFor(CompassPriorityElement.rot);
+    }
+  }
+
+  private get hasCenterReadouts(): boolean {
+    return this.centerReadouts.length > 0;
+  }
+
   private getRotation(): number | undefined {
     if (this.direction === CompassDirection.NorthUp) {
       return undefined;
@@ -315,22 +377,28 @@ export class ObcCompass extends LitElement {
       {angle: 270, type: TickmarkType.main},
     ];
 
-    const padding = this.getPadding();
-    const width = (176 + padding) * 2;
-    const viewBox = `-${width / 2} -${width / 2} ${width} ${width}`;
+    const frame = computeRadialFrame({
+      basePadding: 72,
+      labelWidthPx: this.getOutsideDecorPx(),
+      containerPx: measureContainerPx(this),
+      faceDiameter: this.faceDiameter,
+    });
+    this._frame = frame;
+    const viewBox = frame.viewBox;
 
     return html`
       <div class="container">
         <obc-watch
           .touching=${this.touching}
-          .padding=${padding}
+          .arcFrame=${frame}
           .advices=${this.angleAdviceRaw}
           .tickmarks=${tickmarks}
           .state=${this.state}
           .watchCircleType=${WatchCircleType.triple}
-          .showLabels=${this.showLabels}
+          .showLabels=${this.showLabels && !frame.labelsHidden}
           .tickmarksInside=${this.tickmarksInside}
           .crosshairEnabled=${true}
+          .crosshairCenterCutout=${this.hasCenterReadouts}
           .northArrow=${true}
           .angleSetpoint=${this.headingSetpoint ?? undefined}
           .newAngleSetpoint=${this.newHeadingSetpoint}
@@ -339,13 +407,15 @@ export class ObcCompass extends LitElement {
           .setpointOverride=${this.headingSetpointOverride}
           .priority=${this.priority}
           .animateSetpoint=${this.animateSetpoint}
-          .vessels=${[
-            {
-              size: VesselImageSize.medium,
-              vesselImage: this.vesselImage,
-              transform: `rotate(${this.heading}deg)`,
-            },
-          ]}
+          .vessels=${this.hasCenterReadouts
+            ? []
+            : [
+                {
+                  size: VesselImageSize.medium,
+                  vesselImage: this.vesselImage,
+                  transform: `rotate(${this.heading}deg)`,
+                },
+              ]}
           .windKnots=${this.currentWindSpeedKnots}
           .windFromDirectionDeg=${this.windFromDirection}
           .windColor=${this.colorFor(CompassPriorityElement.wind)}
@@ -369,46 +439,68 @@ export class ObcCompass extends LitElement {
         >
         </obc-watch>
         <svg viewBox="${viewBox}">
-          ${arrow(
-            ArrowStyle.HDG,
+          ${hdgArrow(
+            this.hdgArrowStyle,
             this.heading + (this.getRotation() ?? 0),
             this.priorityFor(CompassPriorityElement.hdg)
           )}
-          ${arrow(
-            ArrowStyle.COG,
+          ${cogArrow(
+            this.cogArrowStyle,
             this.courseOverGround + (this.getRotation() ?? 0),
             this.priorityFor(CompassPriorityElement.cog)
           )}
         </svg>
+        ${this.hasCenterReadouts
+          ? html`<div class="center-readout-overlay">
+              ${renderCenterReadouts(
+                resolveCompassCenterReadouts(this.centerReadouts, {
+                  heading: this.heading,
+                  courseOverGround: this.courseOverGround,
+                  rateOfTurnDegreesPerMinute: this.rateOfTurnDegreesPerMinute,
+                  priorityFor: (source) => this.readoutPriorityFor(source),
+                })
+              )}
+            </div>`
+          : nothing}
       </div>
     `;
   }
 
-  static override styles = css`
-    * {
-      box-sizing: border-box;
-    }
+  static override styles = [
+    centerReadoutStyles,
+    css`
+      * {
+        box-sizing: border-box;
+      }
 
-    .container {
-      position: relative;
-      width: 100%;
-      height: 100%;
-    }
+      .container {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
 
-    .container > * {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
+      .container > * {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
 
-    :host {
-      display: block;
-      width: 100%;
-      height: 100%;
-    }
-  `;
+      .center-readout-overlay {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+      }
+
+      :host {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+    `,
+  ];
 }
 
 declare global {

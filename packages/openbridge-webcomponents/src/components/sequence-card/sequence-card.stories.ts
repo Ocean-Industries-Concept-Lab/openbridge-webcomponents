@@ -184,7 +184,7 @@ const renderSequenceCard = (args: SequenceCardStoryArgs) => html`
 
 const meta: Meta<ObcSequenceCard> = {
   title: 'UI Components/Sections/Sequence Card',
-  tags: ['6.1'],
+  tags: ['6.1', 'experimental'],
   component: 'obc-sequence-card',
   parameters: {
     layout: 'centered',

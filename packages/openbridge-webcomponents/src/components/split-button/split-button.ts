@@ -94,98 +94,70 @@ export type ObcSplitButtonChangeEvent = CustomEvent<{
  * ```
  * In this example, the split button shows a "Save" action with a leading icon, and a dropdown menu with "Save As..." and "Export" options.
  *
+ * @property label - The label displayed on the main (primary) button.
+ * @property hasIcon - Whether the main button should show a leading icon slot.
+ *   When true, content in the `icon` slot is rendered before the label.
+ * @property options - Array of menu options for the dropdown.
+ *   Each option should be a `ContextMenuOption` object.
+ *   For grouped or multi-column menus, use `columnGroups` instead.
+ * @property selectedValues - Array of currently selected option values in the dropdown.
+ *   Used to control the checked/selected state of menu items.
+ * @property menuType - The variant type of context menu to display in the dropdown.
+ *   Accepts values from the `ContextMenuType` enum (e.g., 'regular', 'checkboxes', 'flyout', 'multi', 'multiWithSubtitles').
+ * @property multiSelect - Whether multiple selections are allowed in the dropdown.
+ *   If true, users can select more than one option (e.g., for checkboxes or multi-column).
+ * @property selectPerGroup - Allows single selection per group/column (matches context-menu-input).
+ *   When true, only one option can be selected per group/column.
+ * @property itemsPerColumn - Number of items per column in multi-column layouts.
+ *   Used when `menuType` is 'multi' or 'multiWithSubtitles'.
+ * @availableWhen itemsPerColumn menuType in [Multi, MultiWithSubtitles]
+ * @property hasTitleBar - Whether to show a title bar with close button in the dropdown.
+ *   When true, a title bar appears at the top of the menu.
+ * @property menuTitle - Title text for the dropdown menu.
+ *   Displayed in the title bar when `hasTitleBar` is true.
+ * @availableWhen menuTitle hasTitleBar==true
+ * @property fullWidth - Whether the split button should fill the full width of its container.
+ *   When true, the component stretches horizontally.
+ * @property disabled - Whether both parts of the button are disabled.
+ *   When true, disables both the primary and dropdown buttons.
+ * @property openTop - Open context menu dropdown above (`true`) or below (`false`) the button.
+ *   Useful for placement near the bottom of the viewport.
+ * @property columnGroups - Array of column group definitions for multi-column/grouped menus.
+ *   Use instead of `options` for grouped or subtitle layouts.
+ * @availableWhen columnGroups menuType==MultiWithSubtitles
  * @slot icon - Leading icon for the primary button (shown when `hasIcon` is true)
- * @fires click {ObcSplitButtonClickEvent} Fired when the primary or dropdown button is clicked.
- * @fires change {ObcSplitButtonChangeEvent} Fired when the dropdown menu selection changes.
+ * @fires {ObcSplitButtonClickEvent} click - Fired when the primary or dropdown button is clicked.
+ * @fires {ObcSplitButtonChangeEvent} change - Fired when the dropdown menu selection changes.
  * @beta
  */
 @customElement('obc-split-button')
 export class ObcSplitButton extends LitElement {
-  /**
-   * The label displayed on the main (primary) button.
-   */
   @property({type: String}) label = 'Split Button';
 
-  /**
-   * Whether the main button should show a leading icon slot.
-   * When true, content in the `icon` slot is rendered before the label.
-   */
   @property({type: Boolean}) hasIcon = false;
 
-  /**
-   * Array of menu options for the dropdown.
-   * Each option should be a `ContextMenuOption` object.
-   * For grouped or multi-column menus, use `columnGroups` instead.
-   */
   @property({type: Array}) options: ContextMenuOption[] = [];
 
-  /**
-   * Array of currently selected option values in the dropdown.
-   * Used to control the checked/selected state of menu items.
-   */
   @property({type: Array}) selectedValues: string[] = [];
 
-  /**
-   * The variant type of context menu to display in the dropdown.
-   * Accepts values from the `ContextMenuType` enum (e.g., 'regular', 'checkboxes', 'flyout', 'multi', 'multiWithSubtitles').
-   */
   @property({type: String}) menuType: ContextMenuType = ContextMenuType.Regular;
 
-  /**
-   * Whether multiple selections are allowed in the dropdown.
-   * If true, users can select more than one option (e.g., for checkboxes or multi-column).
-   */
   @property({type: Boolean}) multiSelect?: boolean;
 
-  /**
-   * Allows single selection per group/column (matches context-menu-input).
-   * When true, only one option can be selected per group/column.
-   */
   @property({type: Boolean}) selectPerGroup?: boolean;
 
-  /**
-   * Number of items per column in multi-column layouts.
-   * Used when `menuType` is 'multi' or 'multiWithSubtitles'.
-   * @availableWhen menuType in [Multi, MultiWithSubtitles]
-   */
   @property({type: Number}) itemsPerColumn: number = 5;
 
-  /**
-   * Whether to show a title bar with close button in the dropdown.
-   * When true, a title bar appears at the top of the menu.
-   */
   @property({type: Boolean}) hasTitleBar = false;
 
-  /**
-   * Title text for the dropdown menu.
-   * Displayed in the title bar when `hasTitleBar` is true.
-   * @availableWhen hasTitleBar==true
-   */
   @property({type: String}) menuTitle = '';
 
-  /**
-   * Whether the split button should fill the full width of its container.
-   * When true, the component stretches horizontally.
-   */
   @property({type: Boolean}) fullWidth = false;
 
-  /**
-   * Whether both parts of the button are disabled.
-   * When true, disables both the primary and dropdown buttons.
-   */
   @property({type: Boolean}) disabled = false;
 
-  /**
-   * Open context menu dropdown above (`true`) or below (`false`) the button.
-   * Useful for placement near the bottom of the viewport.
-   */
   @property({type: Boolean}) openTop = false;
 
-  /**
-   * Array of column group definitions for multi-column/grouped menus.
-   * Use instead of `options` for grouped or subtitle layouts.
-   * @availableWhen menuType==MultiWithSubtitles
-   */
   @property({type: Array}) columnGroups: ColumnGroup[] = [];
 
   @state() private isDropdownOpen = false;

@@ -1,12 +1,20 @@
 import {html, LitElement, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import type {PropertyValues} from 'lit';
+import {ResizeController} from '@lit-labs/observers/resize-controller.js';
+import {
+  applyPinnedHostSize,
+  computeRadialFrame,
+  estimateLabelWidthPx,
+  measureContainerPx,
+  observeInnerBox,
+  type RadialFrame,
+} from '../../svghelpers/radial-frame.js';
 import {InstrumentState, Priority} from '../types.js';
 import {SetpointBundle} from '../../svghelpers/setpoint-bundle.js';
 import {thruster} from '../thruster/thruster.js';
 import '../watch/watch.js';
 import componentStyle from './azimuth-thruster.css?inline';
-import {ifDefined} from 'lit/directives/if-defined.js';
 import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
 import {Tickmark, TickmarkStyle, TickmarkType} from '../watch/tickmark.js';
 import {LinearAdvice} from '../thruster/advice.js';
@@ -23,6 +31,32 @@ function mapAngle0to360(angle: number): number {
 }
 
 /**
+ * @availableWhen newAngleSetpoint angleSetpoint!=undefined
+ * @availableWhen atAngleSetpoint angleSetpoint!=undefined && autoAtAngleSetpoint==false
+ * @availableWhen angleSetpointAtZeroDeadband angleSetpoint!=undefined
+ * @availableWhen angleSetpointOverride angleSetpoint!=undefined
+ * @availableWhen touching angleSetpoint!=undefined || thrustSetpoint!=undefined
+ * @availableWhen autoAtAngleSetpoint angleSetpoint!=undefined
+ * @availableWhen autoAtAngleSetpointDeadband angleSetpoint!=undefined && autoAtAngleSetpoint==true
+ * @availableWhen animateSetpoint angleSetpoint!=undefined || thrustSetpoint!=undefined
+ * @property primaryTickmarkInterval - Interval (in degrees) for primary tickmarks.
+ *   When undefined or <= 0, no primary tickmarks are shown (only the zero line).
+ *   Default 90 gives ticks at 0°, 90°, 180°, 270°.
+ * @property secondaryTickmarkInterval - Interval (in degrees) for secondary tickmarks.
+ *   When undefined or <= 0, no secondary tickmarks are shown.
+ * @property tertiaryTickmarkInterval - Interval (in degrees) for tertiary tickmarks.
+ *   When undefined or <= 0, no tertiary tickmarks are shown.
+ * @availableWhen newThrustSetpoint thrustSetpoint!=undefined
+ * @availableWhen atThrustSetpoint thrustSetpoint!=undefined && autoAtThrustSetpoint==false
+ * @availableWhen thrustSetpointAtZeroDeadband thrustSetpoint!=undefined
+ * @availableWhen thrustSetpointOverride thrustSetpoint!=undefined
+ * @availableWhen autoAtThrustSetpoint thrustSetpoint!=undefined
+ * @availableWhen autoAtThrustSetpointDeadband thrustSetpoint!=undefined && autoAtThrustSetpoint==true
+ * @property faceDiameter - Outer-ring diameter in CSS pixels. When set, the instrument renders at a
+ *   fixed intrinsic size derived from the ring, arc shape and label reserve —
+ *   so instruments sharing the same value have identical ring circumference
+ *   regardless of label width or arc extent (like obc-donut-chart's
+ *   fixedHeight). When unset (default), the instrument fills its container.
  * @stable
  */
 @customElement('obc-azimuth-thruster')
@@ -31,59 +65,32 @@ export class ObcAzimuthThruster extends LitElement {
 
   @property({type: Number}) angle = 0;
   @property({type: Number}) angleSetpoint: number | undefined;
-  /** @availableWhen angleSetpoint!=undefined */
   @property({type: Number}) newAngleSetpoint: number | undefined;
-  /** @availableWhen angleSetpoint!=undefined && autoAtAngleSetpoint==false */
   @property({type: Boolean})
   atAngleSetpoint: boolean = false;
-  /** @availableWhen angleSetpoint!=undefined */
   @property({type: Number}) angleSetpointAtZeroDeadband: number = 0.5;
-  /** @availableWhen angleSetpoint!=undefined */
   @property({type: Boolean}) angleSetpointOverride: boolean = false;
-  /** @availableWhen angleSetpoint!=undefined || thrustSetpoint!=undefined */
   @property({type: Boolean}) touching: boolean = false;
-  /** @availableWhen angleSetpoint!=undefined */
   @property({type: Boolean, attribute: false}) autoAtAngleSetpoint: boolean =
     true;
-  /** @availableWhen angleSetpoint!=undefined && autoAtAngleSetpoint==true */
   @property({type: Number}) autoAtAngleSetpointDeadband: number = 2;
-  /** @availableWhen angleSetpoint!=undefined || thrustSetpoint!=undefined */
   @property({type: Boolean}) animateSetpoint: boolean = false;
-  /**
-   * Interval (in degrees) for primary tickmarks.
-   * When undefined or <= 0, no primary tickmarks are shown (only the zero line).
-   * Default 90 gives ticks at 0°, 90°, 180°, 270°.
-   */
   @property({type: Number}) primaryTickmarkInterval: number | undefined = 90;
-  /**
-   * Interval (in degrees) for secondary tickmarks.
-   * When undefined or <= 0, no secondary tickmarks are shown.
-   */
   @property({type: Number}) secondaryTickmarkInterval: number | undefined =
     undefined;
-  /**
-   * Interval (in degrees) for tertiary tickmarks.
-   * When undefined or <= 0, no tertiary tickmarks are shown.
-   */
   @property({type: Number}) tertiaryTickmarkInterval: number | undefined =
     undefined;
   @property({type: Boolean}) showLabels: boolean = false;
   @property({type: Boolean}) tickmarksInside: boolean = false;
   @property({type: Number}) thrust = 0;
   @property({type: Number}) thrustSetpoint: number | undefined;
-  /** @availableWhen thrustSetpoint!=undefined */
   @property({type: Number}) newThrustSetpoint: number | undefined;
-  /** @availableWhen thrustSetpoint!=undefined && autoAtThrustSetpoint==false */
   @property({type: Boolean})
   atThrustSetpoint: boolean = false;
-  /** @availableWhen thrustSetpoint!=undefined */
   @property({type: Number}) thrustSetpointAtZeroDeadband: number = 0.1;
-  /** @availableWhen thrustSetpoint!=undefined */
   @property({type: Boolean}) thrustSetpointOverride: boolean = false;
-  /** @availableWhen thrustSetpoint!=undefined */
   @property({type: Boolean, attribute: false}) autoAtThrustSetpoint: boolean =
     true;
-  /** @availableWhen thrustSetpoint!=undefined && autoAtThrustSetpoint==true */
   @property({type: Number}) autoAtThrustSetpointDeadband: number = 1;
   @property({type: String}) state: InstrumentState = InstrumentState.active;
   @property({type: String}) priority: Priority = Priority.regular;
@@ -134,6 +141,29 @@ export class ObcAzimuthThruster extends LitElement {
   @property({type: String}) tickmarkStyle: TickmarkStyle =
     TickmarkStyle.regular;
   @property({type: Boolean}) starboardPortIndicator: boolean = false;
+  @property({type: Number, attribute: 'face-diameter'})
+  faceDiameter: number | undefined;
+
+  private _frame: RadialFrame | undefined;
+
+  /** Whether the host size styles were set by applyPinnedHostSize. */
+  private _hostSizePinned = false;
+
+  private _resizeController = new ResizeController(this, {});
+
+  override firstUpdated(changed: PropertyValues): void {
+    super.firstUpdated(changed);
+    observeInnerBox(this._resizeController, this.renderRoot);
+  }
+
+  override updated(changed: PropertyValues): void {
+    super.updated(changed);
+    this._hostSizePinned = applyPinnedHostSize(
+      this,
+      this._frame,
+      this._hostSizePinned
+    );
+  }
 
   private get angleAdviceRaw(): AngleAdviceRaw[] {
     return this.angleAdvices.map((advice) => {
@@ -236,20 +266,27 @@ export class ObcAzimuthThruster extends LitElement {
 
     const tickmarks = this.getTickmarks();
 
-    let viewBox: string;
-    if (!this.hasLabelSpacer) {
-      viewBox = '-192 -192 384 384';
-    } else if (this.showLabels && !this.tickmarksInside) {
-      viewBox = '-236 -236 472 472';
-    } else {
-      viewBox = '-200 -200 400 400';
-    }
+    const frame = computeRadialFrame({
+      basePadding: this.hasLabelSpacer ? 24 : 16,
+      labelWidthPx:
+        this.hasLabelSpacer && !this.tickmarksInside
+          ? estimateLabelWidthPx(tickmarks.map((t) => t.text))
+          : 0,
+      containerPx: measureContainerPx(this),
+      faceDiameter: this.faceDiameter,
+    });
+    this._frame = frame;
+    const shownTickmarks = frame.labelsHidden
+      ? tickmarks.map((t) => ({...t, text: undefined}))
+      : tickmarks;
+    const viewBox = frame.viewBox;
 
     return html`
       <div class="container">
         <obc-watch
           .touching=${this.touching}
-          .tickmarks=${tickmarks}
+          .arcFrame=${frame}
+          .tickmarks=${shownTickmarks}
           .state=${this.state}
           .priority=${this.priority}
           .angleSetpoint=${this.angleSetpoint}
@@ -260,7 +297,6 @@ export class ObcAzimuthThruster extends LitElement {
           .animateSetpoint=${this.animateSetpoint}
           .tickmarksInside=${this.tickmarksInside}
           .tickmarkStyle=${this.tickmarkStyle}
-          padding=${ifDefined(!this.hasLabelSpacer ? 16 : undefined)}
           .advices=${this.angleAdviceRaw}
           .starboardPortIndicator=${this.starboardPortIndicator}
         ></obc-watch>

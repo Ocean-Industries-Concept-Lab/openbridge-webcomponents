@@ -173,6 +173,21 @@ describe('obc-text-input-field', () => {
 
       expect(changeHandler).toHaveBeenCalled();
     });
+
+    it('carries the committed value in the change detail', async () => {
+      const changeHandler = vi.fn();
+      el.addEventListener('change', changeHandler);
+
+      input.value = 'new value';
+      input.dispatchEvent(new InputEvent('input', {bubbles: true}));
+      input.dispatchEvent(new Event('change', {bubbles: true}));
+      await el.updateComplete;
+
+      const event = changeHandler.mock.calls[0][0] as CustomEvent<{
+        value: string;
+      }>;
+      expect(event.detail).toEqual({value: 'new value'});
+    });
   });
 
   describe('password visibility', () => {
@@ -247,6 +262,35 @@ describe('obc-text-input-field', () => {
 
       expect(input.value).toBe('');
       expect(el.value).toBe('');
+    });
+
+    it('is hidden when readonly, since clearing is an edit', async () => {
+      el.readonly = true;
+      await el.updateComplete;
+
+      expect(el.shadowRoot!.querySelector('.trailing-icon-button')).toBeNull();
+    });
+  });
+
+  describe('readonly', () => {
+    beforeEach(async () => {
+      el.readonly = true;
+      await el.updateComplete;
+    });
+
+    it('marks the native input readonly', () => {
+      expect(input.readOnly).toBe(true);
+    });
+
+    it('flags the wrapper so the hover and pressed states are suppressed', () => {
+      const wrapper = el.shadowRoot!.querySelector('.wrapper') as HTMLElement;
+      expect(wrapper.classList.contains('readonly')).toBe(true);
+    });
+
+    it('stays focusable so the value can be read and copied', () => {
+      input.focus();
+
+      expect(el.shadowRoot!.activeElement).toBe(input);
     });
   });
 });

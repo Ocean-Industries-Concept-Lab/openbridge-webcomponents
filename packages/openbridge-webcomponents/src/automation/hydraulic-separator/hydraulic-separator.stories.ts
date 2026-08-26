@@ -18,7 +18,7 @@ type StoryArgs = ObcHydraulicSeparator;
 
 const meta: Meta<StoryArgs> = {
   title: 'Automation/Tanks/Hydraulic Separator',
-  tags: ['autodocs', '6.1'],
+  tags: ['autodocs', '6.1', 'beta'],
   component: 'obc-hydraulic-separator',
   args: {
     medium: false,

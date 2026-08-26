@@ -18,7 +18,7 @@ type StoryArgs = ObcHeatExchanger;
 
 const meta: Meta<StoryArgs> = {
   title: 'Automation/Tanks/Heat Exchanger',
-  tags: ['autodocs', '6.1'],
+  tags: ['autodocs', '6.1', 'beta'],
   component: 'obc-heat-exchanger',
   args: {
     medium: false,

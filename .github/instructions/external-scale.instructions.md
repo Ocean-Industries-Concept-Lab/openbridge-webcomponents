@@ -2,9 +2,11 @@
 applyTo: "packages/openbridge-webcomponents/src/building-blocks/external-scale/**,packages/openbridge-webcomponents/src/building-blocks/bar-vertical/**,packages/openbridge-webcomponents/src/building-blocks/bar-horizontal/**,packages/openbridge-webcomponents/src/navigation-instruments/gauge-vertical/**,packages/openbridge-webcomponents/src/navigation-instruments/gauge-horizontal/**,packages/openbridge-webcomponents/src/navigation-instruments/gauge-trend/**"
 ---
 
-# GitHub Copilot Custom Instructions
+<!-- GENERATED FILE — DO NOT EDIT.
+     Source: docs/agents/external-scale.md
+     Regenerate: npm run agents:sync -w packages/openbridge-webcomponents -->
 
-## Path-Specific Instructions for External Scale & Bar/Gauge Components
+# External Scale & Bar/Gauge Components
 
 These instructions apply to the external scale renderer and its thin wrapper components (bar-vertical, bar-horizontal, gauge-vertical, gauge-horizontal, gauge-trend).
 
@@ -227,7 +229,7 @@ When adding new features or fixing bugs:
 
 ### Setpoint Properties
 
-The setpoint marker rendering (including confirm animation) is handled inside `external-scale.ts` via `renderSingleSetpoint()`. For the full setpoint architecture (mixin vs bundle, animation, property cascade), see **`setpoint.instructions.md`**.
+The setpoint marker rendering (including confirm animation) is handled inside `external-scale.ts` via `renderSingleSetpoint()`. For the full setpoint architecture (mixin vs bundle, animation, property cascade), see **`setpoint.md`**.
 
 ### Layout vs Rendering — Multiple Paths to Reason About
 
@@ -245,7 +247,7 @@ The external-scale system has **several independent code paths** that compute "h
 
 - Advice pills don't render inside `barSpace + scaleSpace + labelSpace`; they need a dedicated allowance. `computeAdviceBandThickness()` solves this for the `hasAdvice` case — apply the same pattern for any future overlay that lives outside the bar.
 - Hiding labels via a chart-level flag (`hasLabelPadding=false`) requires **three** coordinated changes: (a) cascade `showLabels=false` to the slotted bar in `updateScaleProperties`, (b) honor the flag in `calculatePaddingFromScales`'s fallback constant, (c) honor it in `getChartOptions`/`buildScalesConfig`. Touching only one produces clipped labels or right-side gutters.
-- Positive-default boolean properties (e.g. `hasLabelPadding = true`) must be declared with `attribute: false` (see AGENTS.md § 2) and added to the watched-property list for change detection.
+- Positive-default boolean properties (e.g. `hasLabelPadding = true`) must be declared with `attribute: false` (see [`coding-standards.md`](../../docs/agents/coding-standards.md#boolean-property-naming)) and added to the watched-property list for change detection.
 
 ### Feature Goes in `external-scale.ts` If:
 

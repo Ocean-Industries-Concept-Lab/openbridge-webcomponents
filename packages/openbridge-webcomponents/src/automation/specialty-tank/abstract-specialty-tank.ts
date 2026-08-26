@@ -62,6 +62,20 @@ export enum SpecialtyTankSplitMode {
  * abstract class breaks the generated React wrapper build (same reason
  * `ObcAbstractAutomationButton` is concrete).
  *
+ * @property medium - Show the hot/cold medium colors instead of the empty grey fill.
+ * @property showMediumIcons - Show the flame (top-left) and snowflake (bottom-right) corner glyphs.
+ * @property showTag - Show the tag readout below the tank frame.
+ * @property tag - Identifier text rendered in the tag readout (e.g. `#0000`). Also used as the accessible name.
+ * @property badgeControl - Mode badge (auto / manual / local variants), leftmost in the badge row.
+ * @property badgeInterlock - Duty badge — reuses the interlock badge enum, whose `interlock` value renders the duty icon.
+ * @property badgeCommandLocked - Command badge, third in the badge row.
+ * @property badgeAlert - Alert badge, rightmost in the badge row.
+ * @property alert - Show an alert-frame overlay around the tile, mirroring `obc-automation-tank`.
+ * @availableWhen alertFrameType alert==true
+ * @availableWhen alertFrameThickness alert==true
+ * @availableWhen alertFrameStatus alert==true
+ * @availableWhen showAlertCategoryIcon alert==true
+ * @availableWhen showAlertIcon alert==true
  * @slot badges - Custom badges rendered in the top-right badge row,
  *   overriding the enum-driven defaults. The row collapses when both the
  *   slot and the badge enums are empty.
@@ -74,43 +88,29 @@ export enum SpecialtyTankSplitMode {
  * @ignore
  */
 export class ObcAbstractSpecialtyTank extends LitElement {
-  /** Show the hot/cold medium colors instead of the empty grey fill. */
   @property({type: Boolean}) medium: boolean = false;
-  /** Show the flame (top-left) and snowflake (bottom-right) corner glyphs. */
   @property({type: Boolean, attribute: false}) showMediumIcons: boolean = true;
-  /** Show the tag readout below the tank frame. */
   @property({type: Boolean, attribute: false}) showTag: boolean = true;
-  /** Identifier text rendered in the tag readout (e.g. `#0000`). Also used as the accessible name. */
   @property({type: String}) tag: string = '';
 
-  /** Mode badge (auto / manual / local variants), leftmost in the badge row. */
   @property({type: String}) badgeControl: AutomationButtonBadgeControl =
     AutomationButtonBadgeControl.None;
-  /** Duty badge — reuses the interlock badge enum, whose `interlock` value renders the duty icon. */
   @property({type: String}) badgeInterlock: AutomationButtonBadgeInterlock =
     AutomationButtonBadgeInterlock.None;
-  /** Command badge, third in the badge row. */
   @property({type: String})
   badgeCommandLocked: AutomationButtonBadgeCommandLocked =
     AutomationButtonBadgeCommandLocked.None;
-  /** Alert badge, rightmost in the badge row. */
   @property({type: String}) badgeAlert: AutomationButtonBadgeAlert =
     AutomationButtonBadgeAlert.None;
 
-  /** Show an alert-frame overlay around the tile, mirroring `obc-automation-tank`. */
   @property({type: Boolean}) alert: boolean = false;
-  /** @availableWhen alert==true */
   @property({type: String}) alertFrameType: ObcAlertFrameType =
     ObcAlertFrameType.SmallSideFlip;
-  /** @availableWhen alert==true */
   @property({type: String}) alertFrameThickness: ObcAlertFrameThickness =
     ObcAlertFrameThickness.Small;
-  /** @availableWhen alert==true */
   @property({type: String}) alertFrameStatus: AlertType = AlertType.Alarm;
-  /** @availableWhen alert==true */
   @property({type: Boolean, attribute: false}) showAlertCategoryIcon: boolean =
     true;
-  /** @availableWhen alert==true */
   @property({type: Boolean}) showAlertIcon: boolean = false;
 
   @state() private _hasBadges = false;

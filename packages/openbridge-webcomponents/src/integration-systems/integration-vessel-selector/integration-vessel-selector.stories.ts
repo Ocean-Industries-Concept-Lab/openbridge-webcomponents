@@ -12,7 +12,7 @@ import {
 
 const meta: Meta<typeof ObcIntegrationVesselSelector> = {
   title: 'Integration Systems/Integration Vessel Selector',
-  tags: ['alpha'],
+  tags: ['experimental'],
   component: 'obc-integration-vessel-selector',
   args: {},
   parameters: {

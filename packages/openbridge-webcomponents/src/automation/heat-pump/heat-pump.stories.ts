@@ -18,7 +18,7 @@ type StoryArgs = ObcHeatPump;
 
 const meta: Meta<StoryArgs> = {
   title: 'Automation/Tanks/Heat Pump',
-  tags: ['autodocs', '6.1'],
+  tags: ['autodocs', '6.1', 'beta'],
   component: 'obc-heat-pump',
   args: {
     medium: false,
