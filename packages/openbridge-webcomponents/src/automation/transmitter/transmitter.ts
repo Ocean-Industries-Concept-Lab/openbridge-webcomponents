@@ -60,6 +60,13 @@ export enum TransmitterType {
  * |-----------|-------------------------|---------------------------------|
  * | icon      | value/graph + `hasIcon` | Leading icon in the value chip. |
  *
+ * @property maxDigits - Integer digits to reserve / hint (independent of `fractionDigits`).
+ * @property hasAlert - Wrap the transmitter in an `<obc-alert-frame>` (alarm) when true.
+ * @property adviceValue - Advisory value shown in the leading advice segment when `hasAdvice`.
+ * @property setpointValue - Target value shown in the setpoint segment when `hasSetPoint`.
+ * @property tag - Tag identifier shown when `type` is `indicator` (e.g. `TT`).
+ * @property idTag - Optional identifier shown below the chip (e.g. `#0000`).
+ * @property data - Trend data for the graph types: `[xValues, yValues]`.
  * @slot icon - Leading icon in the value chip.
  *
  * @experimental
@@ -75,7 +82,6 @@ export class ObcTransmitter extends LitElement {
   @property({type: String}) unit = '';
   @property({type: Number}) fractionDigits = 1;
 
-  /** Integer digits to reserve / hint (independent of `fractionDigits`). */
   @property({type: Number}) maxDigits = 0;
 
   @property({type: Boolean}) hintedZeros = false;
@@ -84,24 +90,18 @@ export class ObcTransmitter extends LitElement {
   @property({type: Boolean}) hasIcon = false;
   @property({type: Boolean}) hasAdvice = false;
 
-  /** Wrap the transmitter in an `<obc-alert-frame>` (alarm) when true. */
   @property({type: Boolean}) hasAlert = false;
 
-  /** Advisory value shown in the leading advice segment when `hasAdvice`. */
   @property({type: Number}) adviceValue?: number | null;
 
   @property({type: Boolean}) hasSetPoint = false;
 
-  /** Target value shown in the setpoint segment when `hasSetPoint`. */
   @property({type: Number}) setpointValue?: number | null;
 
-  /** Tag identifier shown when `type` is `indicator` (e.g. `TT`). */
   @property({type: String}) tag = '';
 
-  /** Optional identifier shown below the chip (e.g. `#0000`). */
   @property({type: String}) idTag = '';
 
-  /** Trend data for the graph types: `[xValues, yValues]`. */
   @property({type: Array}) data: [number[], number[]] = [[], []];
 
   private get hasGraph() {

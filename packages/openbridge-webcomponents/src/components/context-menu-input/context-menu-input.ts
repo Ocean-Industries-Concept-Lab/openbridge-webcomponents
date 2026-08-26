@@ -201,6 +201,8 @@ export enum ContextMenuType {
  *
  * In this example, a flyout menu is shown with a title bar, group icons, and a selected child option.
  *
+ * @property title - Title text displayed in the title bar (if `hasTitleBar` is true).
+ * @availableWhen title hasTitleBar==true
  * @slot - Optionally used for custom icons in options (e.g., `<obi-placeholder slot="icon"></obi-placeholder>`)
  * @fires {ObcContextMenuInputChangeEvent} change - Fired when the selection changes.
  * @fires {ObcContextMenuInputItemClickEvent} item-click - Fired when a menu item is clicked.
@@ -248,11 +250,6 @@ export class ObcContextMenuInput extends LitElement {
    */
   @property({type: Boolean}) hasTitleBar = false;
 
-  /**
-   * Title text displayed in the title bar (if `hasTitleBar` is true).
-   *
-   * @availableWhen hasTitleBar==true
-   */
   @property({type: String}) override title = '';
 
   /**

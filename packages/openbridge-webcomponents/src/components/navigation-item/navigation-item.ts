@@ -96,6 +96,28 @@ enum NavigationItemRole {
  * </obc-navigation-item>
  * ```
  *
+ * @property label - The text label displayed for the navigation item.
+ *   Hidden in icon-only variants.
+ * @availableWhen label variant in [Full, Compact]
+ * @property href - The URL to navigate to when the item is clicked.
+ *   If set, the item is rendered as a link (`<a href="..." />`).
+ *   If undefined, acts as a button.
+ * @property checked - Whether the navigation item is currently selected/active.
+ *   Use to indicate the current location or selection.
+ * @property variant - Visual variant of the navigation item.
+ *   One of `Full` (default), `IconOnly`, `IconOnlyLarge`, or `Compact`.
+ *   Controls layout and visibility of icon/label.
+ * @property group - Enables group mode for the item, displaying a flyout indicator and supporting group selection.
+ *   Use for items that open submenus or represent grouped navigation.
+ * @property groupSelected - Highlights the item as selected within a group.
+ *   Only relevant when `group` is true.
+ * @availableWhen groupSelected group==true
+ * @property hasIcon - Whether the item has a leading icon.
+ * @availableWhen hasTrailingIcon group==false || variant==IconOnly
+ * @property treeMode - Set by `obc-navigation-menu` in its Tree variant — renders the row as a tree item.
+ * @property treeBranches - Indentation columns for tree mode, assigned by `obc-navigation-menu`.
+ * @property terminalType - Terminal type for the row in the Tree variant — one of `regular` (default),
+ *   `aggregated-header`, or `group-header`. Has no effect in the flat variants.
  * @slot icon - Leading icon slot (optional, shown if provided). Set `hasIcon` to `true` to show the icon.
  * @slot trailing-icon - Trailing icon slot (optional, shown if provided). Set `hasTrailingIcon` to `true` to show.
  * @fires click - Fired when the navigation item is clicked, either as a link or as a button.
@@ -104,64 +126,26 @@ enum NavigationItemRole {
 
 @customElement('obc-navigation-item')
 export class ObcNavigationItem extends LitElement {
-  /**
-   * The text label displayed for the navigation item.
-   * Hidden in icon-only variants.
-   * @availableWhen variant in [Full, Compact]
-   */
   @property({type: String}) label = 'Label';
 
-  /**
-   * The URL to navigate to when the item is clicked.
-   * If set, the item is rendered as a link (`<a href="..." />`).
-   * If undefined, acts as a button.
-   */
   @property({type: String}) href: string | undefined;
 
-  /**
-   * Whether the navigation item is currently selected/active.
-   * Use to indicate the current location or selection.
-   */
   @property({type: Boolean}) checked = false;
 
-  /**
-   * Visual variant of the navigation item.
-   * One of `Full` (default), `IconOnly`, `IconOnlyLarge`, or `Compact`.
-   * Controls layout and visibility of icon/label.
-   */
   @property({type: String}) variant = ObcNavigationMenuVariant.Full;
 
-  /**
-   * Enables group mode for the item, displaying a flyout indicator and supporting group selection.
-   * Use for items that open submenus or represent grouped navigation.
-   */
   @property({type: Boolean}) group = false;
 
-  /**
-   * Highlights the item as selected within a group.
-   * Only relevant when `group` is true.
-   * @availableWhen group==true
-   */
   @property({type: Boolean}) groupSelected = false;
 
-  /**
-   * Whether the item has a leading icon.
-   */
   @property({type: Boolean, reflect: true}) hasIcon = false;
 
-  /** @availableWhen group==false || variant==IconOnly */
   @property({type: Boolean}) hasTrailingIcon = false;
 
-  /** Set by `obc-navigation-menu` in its Tree variant — renders the row as a tree item. */
   @property({type: Boolean}) treeMode = false;
 
-  /** Indentation columns for tree mode, assigned by `obc-navigation-menu`. */
   @property({type: Array}) treeBranches: TreeBranchType[] = [];
 
-  /**
-   * Terminal type for the row in the Tree variant — one of `regular` (default),
-   * `aggregated-header`, or `group-header`. Has no effect in the flat variants.
-   */
   @property({type: String}) terminalType: string = TreeTerminalType.regular;
 
   /**

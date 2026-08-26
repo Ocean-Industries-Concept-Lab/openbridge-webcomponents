@@ -82,6 +82,10 @@ export type ObcCommandMenuChangeEvent = CustomEvent<{inCommand: boolean}>;
  * </obc-command-menu>
  * ```
  *
+ * @property inCommand - Whether the menu is in the "in command" state.
+ *   Controls the toggle and visual state.
+ * @property showLocation - Whether to display the location slot.
+ *   If false, the location is omitted from the menu.
  * @slot command-icon - Main icon representing the current command state.
  * @slot command-status - Status label (e.g., "Joystick", "NO CMD").
  * @slot command-description - Description of the command state.
@@ -96,18 +100,8 @@ export type ObcCommandMenuChangeEvent = CustomEvent<{inCommand: boolean}>;
  */
 @customElement('obc-command-menu')
 export class ObcCommandMenu extends LitElement {
-  /**
-   * Whether the menu is in the "in command" state.
-   * Controls the toggle and visual state.
-   *
-   * @default false
-   */
   @property({type: Boolean}) inCommand = false;
 
-  /**
-   * Whether to display the location slot.
-   * If false, the location is omitted from the menu.
-   */
   @property({type: Boolean, attribute: false}) showLocation: boolean = true;
 
   override render() {

@@ -186,6 +186,40 @@ export interface Attachment {
  *
  * ---
  *
+ * @property type - Field type: 'rich' (no send button) or 'message' (with send button).
+ * @property value - The current text value of the input field.
+ * @property rejectUpdatesOnFocus - If true, the textarea will not update its value from external changes while focused.
+ * @property rejectUpdates - If true, the value will only be initially set from the external model and not updated on subsequent changes.
+ * @property rejectDuplicateUpdates - If true, the textarea will not update its value if the value is the same as the previous value.
+ *   Useful to avoid React re-rendering resetting the value.
+ * @property placeholder - Placeholder text shown when the input is empty.
+ * @property label - Label text displayed above the input field.
+ * @property errorText - Error text displayed below the field when `error` is true.
+ * @availableWhen errorText error==true
+ * @property maxlength - Maximum number of characters allowed in the textarea.
+ * @property disabled - Disables the input field and all actions.
+ * @property error - Shows error state with visual highlight.
+ * @property required - Shows a required indicator next to the label.
+ * @property showLabel - Shows the label above the input field.
+ * @property showToolbar - Shows the toolbar with action buttons.
+ * @property showVoiceRecording - Shows the voice recording button.
+ * @property hasLeadingIcon - Shows a leading icon before the input field.
+ * @property recording - Whether voice recording is currently active.
+ *   When true, shows the audio-recording-item instead of textarea.
+ * @property recordingDuration - Current recording duration in seconds.
+ * @availableWhen recordingDuration recording==true
+ * @property audioLevels - Array of audio level values (0-1) for waveform visualization.
+ *   New values should be added to the end (right side) and old values shift left.
+ * @availableWhen audioLevels recording==true
+ * @property recordingStatus - Recording status passed to audio-recording-item.
+ *   Use 'recording' during active recording, and 'playback' when paused
+ *   to allow the user to preview the recorded audio with a slider.
+ *   Automatically reset to 'recording' when `recording` becomes false.
+ * @availableWhen recordingStatus recording==true
+ * @property playbackPosition - Current playback position (0-1) for playback mode.
+ *   Only relevant when recordingStatus is 'playback'.
+ * @availableWhen playbackPosition recording==true
+ * @property attachments - Array of file attachments displayed as removable chips.
  * @slot leading-icon - Displays a contextual icon before the input when `hasLeadingIcon` is true.
  *
  * @fires {CustomEvent<{value: string}>} change - Fired on change when value has changed.
@@ -203,128 +237,50 @@ export interface Attachment {
 @customElement('obc-textarea-field')
 @localized()
 export class ObcTextareaField extends LitElement {
-  /**
-   * Field type: 'rich' (no send button) or 'message' (with send button).
-   */
   @property({type: String}) type: TextareaFieldType = TextareaFieldType.Rich;
 
-  /**
-   * The current text value of the input field.
-   */
   @property({type: String}) value = '';
 
-  /**
-   * If true, the textarea will not update its value from external changes while focused.
-   */
   @property({type: Boolean}) rejectUpdatesOnFocus = false;
 
-  /**
-   * If true, the value will only be initially set from the external model and not updated on subsequent changes.
-   */
   @property({type: Boolean}) rejectUpdates = false;
 
-  /**
-   * If true, the textarea will not update its value if the value is the same as the previous value.
-   * Useful to avoid React re-rendering resetting the value.
-   */
   @property({type: Boolean}) rejectDuplicateUpdates = false;
 
-  /**
-   * Placeholder text shown when the input is empty.
-   */
   @property({type: String}) placeholder = '';
 
-  /**
-   * Label text displayed above the input field.
-   */
   @property({type: String}) label = '';
 
-  /**
-   * Error text displayed below the field when `error` is true.
-   * @availableWhen error==true
-   */
   @property({type: String}) errorText = '';
 
-  /**
-   * Maximum number of characters allowed in the textarea.
-   */
   @property({type: Number}) maxlength?: number;
 
-  /**
-   * Disables the input field and all actions.
-   */
   @property({type: Boolean}) disabled = false;
 
-  /**
-   * Shows error state with visual highlight.
-   */
   @property({type: Boolean}) error = false;
 
-  /**
-   * Shows a required indicator next to the label.
-   */
   @property({type: Boolean}) required = false;
 
-  /**
-   * Shows the label above the input field.
-   */
   @property({type: Boolean, attribute: false}) showLabel: boolean = true;
 
-  /**
-   * Shows the toolbar with action buttons.
-   */
   @property({type: Boolean, attribute: false}) showToolbar: boolean = true;
 
-  /**
-   * Shows the voice recording button.
-   */
   @property({type: Boolean, attribute: false}) showVoiceRecording: boolean =
     true;
 
-  /**
-   * Shows a leading icon before the input field.
-   */
   @property({type: Boolean}) hasLeadingIcon = false;
 
-  /**
-   * Whether voice recording is currently active.
-   * When true, shows the audio-recording-item instead of textarea.
-   */
   @property({type: Boolean}) recording = false;
 
-  /**
-   * Current recording duration in seconds.
-   * @availableWhen recording==true
-   */
   @property({type: Number}) recordingDuration = 0;
 
-  /**
-   * Array of audio level values (0-1) for waveform visualization.
-   * New values should be added to the end (right side) and old values shift left.
-   * @availableWhen recording==true
-   */
   @property({type: Array}) audioLevels: number[] = [];
 
-  /**
-   * Recording status passed to audio-recording-item.
-   * Use 'recording' during active recording, and 'playback' when paused
-   * to allow the user to preview the recorded audio with a slider.
-   * Automatically reset to 'recording' when `recording` becomes false.
-   * @availableWhen recording==true
-   */
   @property({type: String}) recordingStatus: AudioRecordingStatus =
     AudioRecordingStatus.Recording;
 
-  /**
-   * Current playback position (0-1) for playback mode.
-   * Only relevant when recordingStatus is 'playback'.
-   * @availableWhen recording==true
-   */
   @property({type: Number}) playbackPosition = 0;
 
-  /**
-   * Array of file attachments displayed as removable chips.
-   */
   @property({type: Array}) attachments: Attachment[] = [];
 
   @state() private _focused = false;

@@ -62,6 +62,64 @@ export {
  * for bar fill and setpoint instead of the default gray/regular palette
  * (default: `Priority.regular`).
  *
+ * @property minValue - Minimum scale value (manual mode)
+ * @property maxValue - Maximum scale value (manual mode)
+ * @property height - Total height in pixels (including padding bands)
+ * @property paddingTop - Padding above the drawing area
+ * @property paddingBottom - Padding below the drawing area
+ * @property side - Which side this scale lives on
+ * @property fixedAspectRatio - When true, freezes all internal calculations and scales the entire component
+ *   proportionally (like CSS transform:scale), except label font-size remains constant.
+ *   When false (default), dimensions react to component properties.
+ * @property scaleReferenceSize - Reference size for proportional scaling when fixedAspectRatio is true.
+ *   At this height, the scale renders at native 1:1 (matches Figma design).
+ *   Above this height, the scale grows proportionally; below, it shrinks.
+ * @availableWhen scaleReferenceSize fixedAspectRatio==true
+ * @property hasScale - Show scale tickmarks
+ * @property hasBar - Show bar
+ * @property scaleBackground - Show background behind the scale tickmarks.
+ * @property barContainerStyle - Bar container background style.
+ *   When undefined, defaults based on scaleBackground.
+ *   Set explicitly to override: 'primary' (lighter) or 'secondary' (gray).
+ * @availableWhen barContainerStyle hasBar==true
+ * @property barThickness - Bar/fill thickness in pixels
+ * @property tickThickness - Tickmark band thickness in pixels.
+ * @property labelThickness - Label band thickness in pixels.
+ * @property mainTickmarks - Array of values for main tickmarks. When undefined, no main tickmarks shown.
+ *   When empty array [], defaults to [minValue, 0, maxValue].
+ * @property primaryTickmarkInterval - Interval for primary (longest) tickmarks with labels (minimum 1).
+ *   When undefined, no primary tickmarks are shown.
+ * @property secondaryTickmarkInterval - Interval for secondary (medium) tickmarks (minimum 1).
+ *   When undefined, no secondary tickmarks are shown.
+ * @property tertiaryTickmarkInterval - Interval for tertiary (shortest) tickmarks (minimum 1).
+ *   When undefined, no tertiary tickmarks are shown.
+ * @property scaleType - Scale display mode: regular or condensed (shorter ticks)
+ * @property frameStyle - Frame style: regular (4px gap for all), flat (main tickmarks touch edge), framed, or instrument
+ * @property borderRadiusPosition - Border radius position based on component layout
+ * @availableWhen borderRadiusPosition hasBar==true
+ * @property instrumentMode - When true, the component is used inside an instrument (e.g., gauge-trend).
+ *   In this mode, only label font size responds to .obc-component-size-* CSS classes.
+ *   Border radius and bar thickness use explicit values or defaults, not CSS variables.
+ * @property borderRadius - Explicit border radius value in pixels.
+ *   When instrumentMode=true, this value is used directly (defaults to 8px for regular, 4px for condensed).
+ *   When instrumentMode=false, this is ignored and border radius is read from CSS variable.
+ * @availableWhen borderRadius instrumentMode==true
+ * @property priority - Color priority: enhanced uses blue instrument colors for bar fill and setpoint
+ * @property fillMode - Fill visualization mode: fill or tint
+ * @availableWhen fillMode hasBar==true && value!=undefined
+ * @property fillMin - Minimum fill value for tint mode (defaults to 0)
+ * @availableWhen fillMin hasBar==true && value!=undefined
+ * @property fillMax - Maximum fill value for tint mode (defaults to value)
+ * @availableWhen fillMax hasBar==true && value!=undefined
+ * @property value - Current value (bar fill level)
+ * @property state - Instrument state (affects colors and some marker behavior)
+ * @property advicePosition - Advice overlay positioning: center (in bar), inner (covers minor ticks), outer (no overlap)
+ * @availableWhen advicePosition hasBar==true
+ * @property advices - Advice/alert overlays with state and positioning.
+ *   When undefined or empty, no advice shown.
+ * @property highlightCurrentValue - When true, displays a dot indicator at the current value position.
+ *   The dot is rendered in the scale band, touching its inner edge (towards the chart).
+ *   This provides an alternative to bar fill for highlighting the current value.
  * @fires {CustomEvent} scale-dimensions-changed - Fired when the scale's computed layout thickness changes; a parent chart listens for this to reserve space for the scale. Bubbles and is composed.
  * @beta
  */
@@ -69,40 +127,22 @@ export {
 export class ObcBarVertical extends SetpointMixin(LitElement, {
   defaultDeadband: 1,
 }) {
-  /** Minimum scale value (manual mode) */
   @property({type: Number}) minValue = 0;
-  /** Maximum scale value (manual mode) */
   @property({type: Number}) maxValue = 100;
 
-  /** Total height in pixels (including padding bands) */
   @property({type: Number}) height = 320;
 
-  /** Padding above the drawing area */
   @property({type: Number}) paddingTop: number =
     CHART_DIMENSIONS.CANVAS_PADDING;
 
-  /** Padding below the drawing area */
   @property({type: Number}) paddingBottom: number =
     CHART_DIMENSIONS.CANVAS_PADDING;
 
-  /** Which side this scale lives on */
   @property({type: String}) side: ExternalScaleSide = ExternalScaleSide.right;
 
-  /**
-   * When true, freezes all internal calculations and scales the entire component
-   * proportionally (like CSS transform:scale), except label font-size remains constant.
-   * When false (default), dimensions react to component properties.
-   */
   @property({type: Boolean})
   fixedAspectRatio = false;
 
-  /**
-   * Reference size for proportional scaling when fixedAspectRatio is true.
-   * At this height, the scale renders at native 1:1 (matches Figma design).
-   * Above this height, the scale grows proportionally; below, it shrinks.
-   * @default 384
-   * @availableWhen fixedAspectRatio==true
-   */
   @property({type: Number})
   scaleReferenceSize = 384;
 
@@ -128,90 +168,36 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
         scaleReferenceSize: this.scaleReferenceSize,
       });
 
-      // console.debug(`[bar-vertical] ResizeController:`, {
-      //   fixedAspectRatio: this.fixedAspectRatio,
-      //   containerHeight: containerMainAxisSize,
-      //   scaleReferenceSize: this.scaleReferenceSize,
-      //   computedScale: this._scale,
-      //   height: this.height,
-      // });
-
       // Report scaled dimensions to parent chart
       this.reportDimensions();
     },
   });
 
   // Bands (thickness)
-  /** Show scale tickmarks */
   @property({type: Boolean, attribute: false}) hasScale = true;
   @property({type: Boolean, attribute: false}) showLabels = true;
-  /** Show bar */
   @property({type: Boolean}) hasBar = false;
-  /** Show background behind the scale tickmarks. */
   @property({type: Boolean})
   scaleBackground = false;
-  /**
-   * Bar container background style.
-   * When undefined, defaults based on scaleBackground.
-   * Set explicitly to override: 'primary' (lighter) or 'secondary' (gray).
-   * @availableWhen hasBar==true
-   */
   @property({type: String})
   barContainerStyle?: BarContainerStyle = undefined;
-  /** Bar/fill thickness in pixels */
   @property({type: Number}) barThickness = 24;
-  /** Tickmark band thickness in pixels. */
   @property({type: Number}) tickThickness = 24;
-  /** Label band thickness in pixels. */
   @property({type: Number}) labelThickness = 60;
 
   // Tick configuration
-  /**
-   * Array of values for main tickmarks. When undefined, no main tickmarks shown.
-   * When empty array [], defaults to [minValue, 0, maxValue].
-   */
   @property({type: Array, attribute: false}) mainTickmarks?: number[] = [];
-  /**
-   * Interval for primary (longest) tickmarks with labels (minimum 1).
-   * When undefined, no primary tickmarks are shown.
-   */
   @property({type: Number}) primaryTickmarkInterval?: number = undefined;
-  /**
-   * Interval for secondary (medium) tickmarks (minimum 1).
-   * When undefined, no secondary tickmarks are shown.
-   */
   @property({type: Number}) secondaryTickmarkInterval?: number = undefined;
-  /**
-   * Interval for tertiary (shortest) tickmarks (minimum 1).
-   * When undefined, no tertiary tickmarks are shown.
-   */
   @property({type: Number}) tertiaryTickmarkInterval?: number = undefined;
-  /** Scale display mode: regular or condensed (shorter ticks) */
   @property({type: String}) scaleType: ScaleType = ScaleType.regular;
-  /** Frame style: regular (4px gap for all), flat (main tickmarks touch edge), framed, or instrument */
   @property({type: String}) frameStyle: FrameStyle = FrameStyle.regular;
-  /**
-   * Border radius position based on component layout
-   * @availableWhen hasBar==true
-   */
   @property({type: String})
   borderRadiusPosition?: BorderRadiusPosition = undefined;
 
-  /**
-   * When true, the component is used inside an instrument (e.g., gauge-trend).
-   * In this mode, only label font size responds to .obc-component-size-* CSS classes.
-   * Border radius and bar thickness use explicit values or defaults, not CSS variables.
-   * @default false
-   */
   @property({type: Boolean})
   instrumentMode = false;
 
-  /**
-   * Explicit border radius value in pixels.
-   * When instrumentMode=true, this value is used directly (defaults to 8px for regular, 4px for condensed).
-   * When instrumentMode=false, this is ignored and border radius is read from CSS variable.
-   * @availableWhen instrumentMode==true
-   */
   @property({type: Number})
   borderRadius?: number = undefined;
 
@@ -231,48 +217,19 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
   });
 
   // Values
-  /** Color priority: enhanced uses blue instrument colors for bar fill and setpoint */
   @property({type: String}) priority: Priority = Priority.regular;
-  /**
-   * Fill visualization mode: fill or tint
-   * @availableWhen hasBar==true && value!=undefined
-   */
   @property({type: String}) fillMode: FillMode = FillMode.fill;
-  /**
-   * Minimum fill value for tint mode (defaults to 0)
-   * @availableWhen hasBar==true && value!=undefined
-   */
   @property({type: Number}) fillMin?: number = undefined;
-  /**
-   * Maximum fill value for tint mode (defaults to value)
-   * @availableWhen hasBar==true && value!=undefined
-   */
   @property({type: Number}) fillMax?: number = undefined;
-  /** Current value (bar fill level) */
   @property({type: Number}) value?: number = undefined;
 
-  /** Instrument state (affects colors and some marker behavior) */
   @property({type: String}) state: InstrumentState = InstrumentState.active;
 
   // Advice
-  /**
-   * Advice overlay positioning: center (in bar), inner (covers minor ticks), outer (no overlap)
-   * @availableWhen hasBar==true
-   */
   @property({type: String}) advicePosition: AdvicePosition =
     AdvicePosition.inner;
-  /**
-   * Advice/alert overlays with state and positioning.
-   * When undefined or empty, no advice shown.
-   */
   @property({type: Array, attribute: false}) advices?: LinearAdvice[] = [];
 
-  /**
-   * When true, displays a dot indicator at the current value position.
-   * The dot is rendered in the scale band, touching its inner edge (towards the chart).
-   * This provides an alternative to bar fill for highlighting the current value.
-   * @default false
-   */
   @property({type: Boolean}) highlightCurrentValue = false;
 
   override render() {
@@ -288,16 +245,6 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
     // viewBox padding values when fixedAspectRatioScaling is enabled. The padding is
     // pre-scaled to: basePadding * scaleReferenceSize / referenceHeight
     // This ensures the visual padding matches the chart's Canvas padding at any aspect ratio.
-
-    // console.debug(`[bar-vertical] render:`, {
-    //   fixedAspectRatio: this.fixedAspectRatio,
-    //   height: this.height,
-    //   scaleReferenceSize: this.scaleReferenceSize,
-    //   effectiveLength,
-    //   scale: this._scale,
-    //   paddingTop: this.paddingTop,
-    //   paddingBottom: this.paddingBottom,
-    // });
 
     const config: ExternalScaleConfig = {
       orientation: ExternalScaleOrientation.vertical,
@@ -473,22 +420,6 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
           thickness: Math.round(baseDimensions.thickness * this._scale),
         }
       : baseDimensions;
-
-    // console.debug(`[bar-vertical] reportDimensions:`, {
-    //   fixedAspectRatio: this.fixedAspectRatio,
-    //   side: dimensions.side,
-    //   thickness: dimensions.thickness,
-    //   scale: this._scale,
-    //   height: this.height,
-    //   scaleReferenceSize: this.scaleReferenceSize,
-    //   effectiveLength,
-    //   hasBar: this.hasBar,
-    //   hasScale: this.hasScale,
-    //   showLabels: this.showLabels,
-    //   barThickness: this.barThickness,
-    //   tickThickness: this.tickThickness,
-    //   labelThickness: this.labelThickness,
-    // });
 
     this.dispatchEvent(
       new CustomEvent('scale-dimensions-changed', {
