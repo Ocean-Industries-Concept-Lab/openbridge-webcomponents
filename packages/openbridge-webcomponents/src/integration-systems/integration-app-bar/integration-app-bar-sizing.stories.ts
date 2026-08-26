@@ -43,7 +43,7 @@ const meta: Meta<typeof ObcIntegrationAppBar> = {
     docs: {
       description: {
         component:
-          'Stories reproducing the sizing defects of `obc-integration-app-bar` when it is filled with a realistic set of labelled app buttons. The bar equalises its buttons by measuring them once in a `requestAnimationFrame` callback on `slotchange` and writing the largest width back as an inline style, and every story below is a case where that single measurement is wrong.',
+          'Stories documenting how `obc-integration-app-bar` sizes labelled app buttons with the current CSS Grid layout. The app row uses auto-placed columns with `minmax(var(--obc-integration-app-bar-app-width, max-content), 1fr)`, so the cases below show how equal-width tracks respond to realistic labels, narrow containers and wrapper elements.',
       },
     },
   },
@@ -58,7 +58,7 @@ export const EightLabelledApps: Story = {
     docs: {
       description: {
         story:
-          'The measurement runs while the web font is still loading, so all eight buttons are frozen at 76.3px - the widest label in the fallback font. With the real font loaded the widest button needs 87.1px, so "Fleet Analytics", "Weather Data" and "Engine Monitor" wrap onto two lines while "Radar" sits in a box twice as wide as its text. Running the exact same measurement again once `document.fonts.status` is `loaded` returns 87.1px, so nothing recovers it.',
+          'In a wide bar, the grid gives every app the same column width, resolved from the widest label in the set. Short labels keep extra inline space, long labels stay on one line, and the row remains centred because every track uses the same size.',
       },
     },
   },
@@ -74,7 +74,7 @@ export const NarrowBar: Story = {
     docs: {
       description: {
         story:
-          'The same eight buttons in a 560px wide bar. Eight equal buttons plus the gaps need 666px, and nothing shrinks, wraps, truncates or scrolls, so the row is drawn about 110px outside the bar background and past the dashed frame. The centre column also stops being centred, because it is wider than the track it sits in.',
+          'The same eight buttons in a 560px wide bar. The grid keeps equal columns, but their combined minimum width can still exceed the available space, so the centred app row overflows the dashed frame instead of shrinking the buttons.',
       },
     },
   },
@@ -94,7 +94,7 @@ export const LabelsSetAfterFirstRender: Story = {
     docs: {
       description: {
         story:
-          'The bar renders with placeholder labels and the real labels are assigned a second later, which is what happens when the labels come from a data binding or a translation file. `slotchange` does not fire again, so the buttons keep the 48px width measured from the placeholders and every label is now too wide for its button.',
+          'The bar renders with placeholder labels and the real labels are assigned a second later, which matches data-bound or translated labels. CSS Grid recalculates the column sizing from the updated content, so the buttons expand from the placeholder width to the widest final label without a second measurement pass.',
       },
     },
   },
@@ -123,7 +123,7 @@ export const ButtonsWrappedInAnElement: Story = {
     docs: {
       description: {
         story:
-          'Every app button is wrapped in an element - here a plain `div`, in our case a tooltip trigger emitted by a framework wrapper. The bar measures and writes the width onto the slotted `div`, but `obc-app-button` is an `inline-block` sized to its own content, so it never fills the `div` it sits in. The equalisation therefore does nothing at all: the divs are all 76.3px, the buttons keep their own widths between 48px and 76.3px, each sits left aligned in its slot, and the icons end up unevenly spaced across the bar.',
+          'Every app button is wrapped in an element - here a plain `div`, in our case a tooltip trigger emitted by a framework wrapper. The slotted wrapper is flattened with `display: contents`, so the button still becomes the grid item and keeps the same equal-width column sizing as the unwrapped case.',
       },
     },
   },
