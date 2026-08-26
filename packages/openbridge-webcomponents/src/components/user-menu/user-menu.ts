@@ -56,7 +56,7 @@ export type ObcUserMenuSignedInAction = {
  * - **Multiple States:** Supports sign-in, user sign-in, loading, and signed-in layouts.
  * - **Size Options:** Regular and small sizes for compact layouts.
  * - **Recent Users:** Optional "Recently signed in" section for quick access.
- * - **Navigation Actions:** Signed-in state includes navigation items and actions.
+ * - **Navigation Actions:** Signed-in state lists the actions it is given.
  *
  * ### Variants
  * - `type`: `sign-in`, `user-sign-in`, `loading-sign-in`, `signed-in`
@@ -71,7 +71,7 @@ export type ObcUserMenuSignedInAction = {
  * - `type` (`ObcUserMenuType`): Controls the layout state. Defaults to `sign-in`.
  * - `size` (`ObcUserMenuSize`): Controls the overall size. Defaults to `regular`.
  * - `hasRecentlySignedIn` (`boolean`): Toggles the recent users section.
- *   Defaults to `true`.
+ *   Defaults to `false`.
  * - `username` (`string`): Current username value for sign-in layouts.
  * - `password` (`string`): Current password value for sign-in layouts.
  * - `usernameError` (`string`): Error message for the username field.
@@ -79,9 +79,11 @@ export type ObcUserMenuSignedInAction = {
  * - `userInitials` (`string`): Initials for the primary user profile.
  * - `userLabel` (`string`): Label for the primary user profile.
  * - `recentUsers` (`ObcUserMenuUser[]`): List of recent users shown in the
- *   "Recently signed in" section.
+ *   "Recently signed in" section. Empty renders no section.
  * - `signedInActions` (`ObcUserMenuSignedInAction[]`): Actions shown in the
- *   signed-in navigation list.
+ *   signed-in navigation list. Empty renders no actions.
+ * - `primaryActionId` (`string`): Id of the action promoted to a button in the
+ *   small signed-in layout.
  *
  * ### Events
  * - `sign-in-click` – Fired when a sign-in button is clicked.
@@ -123,6 +125,8 @@ export type ObcUserMenuSignedInAction = {
  * @property recentUsers - Recent users for the "Recently signed in" section.
  * @property signedInActions - Actions shown in the signed-in navigation list.
  * @availableWhen signedInActions type==signedIn
+ * @property primaryActionId - Id of the action promoted to a button in the small signed-in layout.
+ * @availableWhen primaryActionId type==signedIn && size==small
  * @slot signed-in-action-icon-<id> - Optional icon for a signed-in action, one per action; `<id>` is the normalized action id (shown in the `signed-in` type).
  * @fires {CustomEvent<{username: string, password: string}>} sign-in-click - Fired when a sign-in button is clicked.
  * @fires {CustomEvent<void>} sign-out-click - Fired when the sign-out button is clicked.
@@ -158,22 +162,10 @@ export class ObcUserMenu extends LitElement {
   @property({type: Array, attribute: false})
   signedInActions: ObcUserMenuSignedInAction[] = [];
 
-  private get defaultSignedInActions() {
-    return [
-      {id: 'calendar', label: msg('Calendar')},
-      {id: 'log', label: msg('Log')},
-      {id: 'preferences', label: msg('Preferences')},
-      {id: 'user-account', label: msg('User account')},
-    ];
-  }
+  @property({type: String}) primaryActionId?: string;
 
-  private get defaultRecentUsers() {
-    const label = msg('Username');
-    return [
-      {initials: 'AB', label},
-      {initials: 'CD', label},
-      {initials: 'EF', label},
-    ];
+  private get showRecentUsers() {
+    return this.hasRecentlySignedIn && this.recentUsers.length > 0;
   }
 
   private renderTextInput(
@@ -202,9 +194,7 @@ export class ObcUserMenu extends LitElement {
 
   private renderUserButtons(count: number, isLarge: boolean) {
     const size = isLarge ? Size.large : Size.regular;
-    const users = (
-      this.recentUsers.length ? this.recentUsers : this.defaultRecentUsers
-    ).slice(0, count);
+    const users = this.recentUsers.slice(0, count);
     return html`
       <div
         class=${classMap({
@@ -231,15 +221,12 @@ export class ObcUserMenu extends LitElement {
 
   private renderUserProfile(
     layout: 'vertical' | 'horizontal',
-    size: 'large' | 'regular',
-    initials?: string,
-    label?: string
+    size: 'large' | 'regular'
   ) {
+    if (!this.userInitials && !this.userLabel) {
+      return nothing;
+    }
     const userButtonSize = size === 'large' ? Size.large : Size.regular;
-    const fallbackUser = this.recentUsers[0] ?? this.defaultRecentUsers[0];
-    const resolvedInitials =
-      initials ?? this.userInitials ?? fallbackUser.initials;
-    const resolvedLabel = label ?? this.userLabel ?? fallbackUser.label;
     return html`
       <div
         class=${classMap({
@@ -255,8 +242,8 @@ export class ObcUserMenu extends LitElement {
           .variant=${Variant.initials}
           .styleType=${StyleType.normal}
           .size=${userButtonSize}
-          .initials=${resolvedInitials}
-          .label=${resolvedLabel}
+          .initials=${this.userInitials ?? ''}
+          .label=${this.userLabel ?? ''}
         ></obc-user-button>
       </div>
     `;
@@ -376,7 +363,7 @@ export class ObcUserMenu extends LitElement {
           ${msg('Sign in')}
         </obc-button>
       </div>
-      ${this.hasRecentlySignedIn
+      ${this.showRecentUsers
         ? html`
             <div class="recent-container">
               <div class="title-container">
@@ -420,7 +407,7 @@ export class ObcUserMenu extends LitElement {
         </obc-button>
       </div>
       <div class="divider" aria-hidden="true"></div>
-      ${this.hasRecentlySignedIn
+      ${this.showRecentUsers
         ? html`
             <div class="recent-container recent">
               <div class="title-container">
@@ -461,7 +448,7 @@ export class ObcUserMenu extends LitElement {
           </obc-button>
         </div>
       </div>
-      ${this.hasRecentlySignedIn
+      ${this.showRecentUsers
         ? html`
             <div class="recent-container">
               <div class="title-container">
@@ -501,7 +488,7 @@ export class ObcUserMenu extends LitElement {
         </obc-button>
       </div>
       <div class="divider" aria-hidden="true"></div>
-      ${this.hasRecentlySignedIn
+      ${this.showRecentUsers
         ? html`
             <div class="recent-container recent">
               <div class="title-container">
@@ -551,9 +538,6 @@ export class ObcUserMenu extends LitElement {
   }
 
   private renderSignedIn() {
-    const actions = this.signedInActions.length
-      ? this.signedInActions
-      : this.defaultSignedInActions;
     return html`
       <div class="title-container">
         <h3 class="title">${msg('User')}</h3>
@@ -562,24 +546,28 @@ export class ObcUserMenu extends LitElement {
         ${this.renderUserProfile('vertical', 'large')}
       </div>
       <div class="divider" aria-hidden="true"></div>
-      <div class="nav-container">
-        ${actions.map((action) => {
-          const normalizedId = this.normalizeActionId(action.id);
-          return html`
-            <obc-navigation-item
-              .label=${action.label}
-              hasIcon
-              @click=${() => this.handleSignedInActionClick(action)}
-            >
-              <span slot="icon">
-                <slot name="signed-in-action-icon-${normalizedId}">
-                  ${this.getSignedInActionIcon(normalizedId)}
-                </slot>
-              </span>
-            </obc-navigation-item>
-          `;
-        })}
-      </div>
+      ${this.signedInActions.length
+        ? html`
+            <div class="nav-container">
+              ${this.signedInActions.map((action) => {
+                const normalizedId = this.normalizeActionId(action.id);
+                return html`
+                  <obc-navigation-item
+                    .label=${action.label}
+                    hasIcon
+                    @click=${() => this.handleSignedInActionClick(action)}
+                  >
+                    <span slot="icon">
+                      <slot name="signed-in-action-icon-${normalizedId}">
+                        ${this.getSignedInActionIcon(normalizedId)}
+                      </slot>
+                    </span>
+                  </obc-navigation-item>
+                `;
+              })}
+            </div>
+          `
+        : nothing}
       <div class="button-container">
         <obc-button
           variant=${ButtonVariant.normal}
@@ -593,10 +581,9 @@ export class ObcUserMenu extends LitElement {
   }
 
   private renderSignedInSmall() {
-    const actions = this.signedInActions.length
-      ? this.signedInActions
-      : this.defaultSignedInActions;
-    const primaryAction = actions[2];
+    const primaryAction = this.signedInActions.find(
+      (action) => action.id === this.primaryActionId
+    );
     return html`
       <div class="title-container">
         <h3 class="title">${msg('User')}</h3>
