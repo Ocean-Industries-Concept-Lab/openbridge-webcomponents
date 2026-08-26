@@ -41,6 +41,8 @@ const WIND_PATTERN_SCALE_DOUBLE = 0.875;
 const WIND_PATTERN_SCALE_SINGLE = 1.28125;
 
 /**
+ * @property visualization - Center visualization: wind histogram (default) or the force-graphics streak field.
+ * @property priority - Color priority: `Priority.enhanced` uses the blue/enhanced palette (default: `Priority.regular`).
  * @stable
  */
 @customElement('obc-wind')
@@ -54,10 +56,8 @@ export class ObcWind extends LitElement {
   @property({type: String}) variant: WindVariant = WindVariant.auto;
   @property({type: Number}) smallVariantMaxPx = WIND_SMALL_MAX_PX_DEFAULT;
   @property({type: Number}) mediumVariantMaxPx = WIND_MEDIUM_MAX_PX_DEFAULT;
-  /** Center visualization: wind histogram (default) or the force-graphics streak field. */
   @property({type: String}) visualization: WindVisualization =
     WindVisualization.histogram;
-  /** Color priority: `Priority.enhanced` uses the blue/enhanced palette (default: `Priority.regular`). */
   @property({type: String}) priority: Priority = Priority.regular;
 
   @state() private _autoVariant: ResolvedWindVariant = WindVariant.medium;

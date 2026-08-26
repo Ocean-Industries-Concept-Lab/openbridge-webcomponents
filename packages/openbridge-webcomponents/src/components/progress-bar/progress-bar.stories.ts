@@ -5,6 +5,7 @@ import {
   ProgressBarMode,
   ProgressBarType,
   CircularProgressState,
+  Priority,
 } from './progress-bar.js';
 import './progress-bar.js';
 
@@ -19,6 +20,7 @@ const meta: Meta<typeof ObcProgressBar> = {
   args: {
     type: ProgressBarType.linear,
     mode: ProgressBarMode.determinate,
+    priority: Priority.enhanced,
     circularState: CircularProgressState.determinate,
     value: 40,
     showValue: false,
@@ -46,7 +48,15 @@ const meta: Meta<typeof ObcProgressBar> = {
       table: {
         defaultValue: {summary: ProgressBarMode.determinate},
       },
-      if: {arg: 'type', eq: ProgressBarType.linear},
+    },
+    priority: {
+      control: {type: 'select'},
+      options: Object.values(Priority),
+      description:
+        'Color emphasis of the bar fill: enhanced (blue) or regular (gray)',
+      table: {
+        defaultValue: {summary: Priority.enhanced},
+      },
     },
     circularState: {
       control: {type: 'select'},
@@ -56,7 +66,6 @@ const meta: Meta<typeof ObcProgressBar> = {
       table: {
         defaultValue: {summary: CircularProgressState.determinate},
       },
-      if: {arg: 'type', eq: ProgressBarType.circular},
     },
     progressiveIndeterminate: {
       control: {type: 'boolean'},
@@ -65,7 +74,6 @@ const meta: Meta<typeof ObcProgressBar> = {
       table: {
         defaultValue: {summary: 'false'},
       },
-      if: {arg: 'type', eq: ProgressBarType.circular},
     },
     value: {
       control: {type: 'range', min: 0, max: 100, step: 1},
@@ -82,7 +90,6 @@ const meta: Meta<typeof ObcProgressBar> = {
       table: {
         defaultValue: {summary: 'false'},
       },
-      if: {arg: 'type', eq: ProgressBarType.linear},
     },
     showUnit: {
       control: {type: 'boolean'},
@@ -99,7 +106,6 @@ const meta: Meta<typeof ObcProgressBar> = {
       table: {
         defaultValue: {summary: 'false'},
       },
-      if: {arg: 'type', eq: ProgressBarType.linear},
     },
     description: {
       control: {type: 'text'},
@@ -169,6 +175,17 @@ export const LinearPrimary: Story = {
   args: {
     type: ProgressBarType.linear,
     value: 40,
+  },
+};
+
+export const LinearRegular: Story = {
+  name: 'Linear - Regular Priority',
+  args: {
+    type: ProgressBarType.linear,
+    mode: ProgressBarMode.determinate,
+    priority: Priority.regular,
+    value: 40,
+    showValue: true,
   },
 };
 

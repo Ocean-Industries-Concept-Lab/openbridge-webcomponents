@@ -47,41 +47,32 @@ const STRIP_WIDTH = 352;
  *
  * @ignition-base-height: 170px
  * @ignition-base-width: 512px
+ *
+ * @property rateOfTurnDegreesPerMinute - Measured rate of turn in degrees per minute (positive = starboard).
+ *   When unset, no bar is shown and the readout shows a dash.
+ * @property rotMaxValue - Scale range in **degrees per minute** per direction. Default `90`.
+ * @property tickInterval - Interval for tickmarks in scale units. Default `5`.
+ * @property rotPortStarboard - Colors the bar and needle by turn direction (starboard/port palette).
+ * @property hasReadout - When `true`, shows a centered `<obc-readout>` below the strip with the
+ *   measured rate of turn.
+ * @property label - Readout label. Default `ROT`.
+ * @availableWhen label hasReadout==true
+ * @property unit - Readout unit. Default `DEG/min`.
+ * @availableWhen unit hasReadout==true
+ * @property fractionDigits - Number of fraction digits shown in the readout. Default `0`.
+ * @availableWhen fractionDigits hasReadout==true
  * @stable
  */
 @customElement('obc-rot-linear')
 export class ObcRotLinear extends LitElement {
-  /**
-   * Measured rate of turn in degrees per minute (positive = starboard).
-   * When unset, no bar is shown and the readout shows a dash.
-   */
   @property({type: Number}) rateOfTurnDegreesPerMinute: number | undefined;
-  /** Scale range in **degrees per minute** per direction. Default `90`. */
   @property({type: Number}) rotMaxValue: number = 90;
-  /** Interval for tickmarks in scale units. Default `5`. */
   @property({type: Number}) tickInterval = 5;
-  /** Colors the bar and needle by turn direction (starboard/port palette). */
   @property({type: Boolean}) rotPortStarboard: boolean = false;
   @property({type: String}) priority: Priority = Priority.regular;
-  /**
-   * When `true`, shows a centered `<obc-readout>` below the strip with the
-   * measured rate of turn.
-   */
   @property({type: Boolean}) hasReadout: boolean = false;
-  /**
-   * Readout label. Default `ROT`.
-   * @availableWhen hasReadout==true
-   */
   @property({type: String}) label = 'ROT';
-  /**
-   * Readout unit. Default `DEG/min`.
-   * @availableWhen hasReadout==true
-   */
   @property({type: String}) unit = 'DEG/min';
-  /**
-   * Number of fraction digits shown in the readout. Default `0`.
-   * @availableWhen hasReadout==true
-   */
   @property({type: Number}) fractionDigits = 0;
 
   /** `rotMaxValue` guarded against non-finite or non-positive values. */

@@ -251,7 +251,7 @@ The external-scale system has **several independent code paths** that compute "h
 
 - Advice pills don't render inside `barSpace + scaleSpace + labelSpace`; they need a dedicated allowance. `computeAdviceBandThickness()` solves this for the `hasAdvice` case — apply the same pattern for any future overlay that lives outside the bar.
 - Hiding labels via a chart-level flag (`hasLabelPadding=false`) requires **three** coordinated changes: (a) cascade `showLabels=false` to the slotted bar in `updateScaleProperties`, (b) honor the flag in `calculatePaddingFromScales`'s fallback constant, (c) honor it in `getChartOptions`/`buildScalesConfig`. Touching only one produces clipped labels or right-side gutters.
-- Positive-default boolean properties (e.g. `hasLabelPadding = true`) must be declared with `attribute: false` (see AGENTS.md § 2) and added to the watched-property list for change detection.
+- Positive-default boolean properties (e.g. `hasLabelPadding = true`) must be declared with `attribute: false` (see [`coding-standards.md`](coding-standards.md#boolean-property-naming)) and added to the watched-property list for change detection.
 
 ### Feature Goes in `external-scale.ts` If:
 

@@ -72,6 +72,8 @@ export type ObcUserMenuSignedInAction = {
  * - `size` (`ObcUserMenuSize`): Controls the overall size. Defaults to `regular`.
  * - `hasRecentlySignedIn` (`boolean`): Toggles the recent users section.
  *   Defaults to `true`.
+ * - `showUsername` (`boolean`): Toggles the username field. Defaults to `true`.
+ * - `showPassword` (`boolean`): Toggles the password field. Defaults to `true`.
  * - `username` (`string`): Current username value for sign-in layouts.
  * - `password` (`string`): Current password value for sign-in layouts.
  * - `usernameError` (`string`): Error message for the username field.
@@ -104,6 +106,29 @@ export type ObcUserMenuSignedInAction = {
  * ></obc-user-menu>
  * ```
  *
+ * @property type - Controls the visual layout of the user menu.
+ * @property size - Controls the overall size of the user menu.
+ * @property hasRecentlySignedIn - Toggles the "Recently signed in" section visibility.
+ * @availableWhen hasRecentlySignedIn type in [signIn, userSignIn]
+ * @property username - Current username value for sign-in layouts.
+ * @availableWhen username showUsername==true && type==signIn
+ * @property password - Current password value for sign-in layouts.
+ * @availableWhen password showPassword==true && type in [signIn, userSignIn]
+ * @property usernameError - Error message for the username field.
+ * @availableWhen usernameError type==signIn
+ * @property passwordError - Error message for the password field.
+ * @availableWhen passwordError type in [signIn, userSignIn]
+ * @property userInitials - Initials for the primary user profile.
+ * @availableWhen userInitials type!=signIn
+ * @property userLabel - Label for the primary user profile.
+ * @availableWhen userLabel type!=signIn
+ * @property recentUsers - Recent users for the "Recently signed in" section.
+ * @property signedInActions - Actions shown in the signed-in navigation list.
+ * @availableWhen signedInActions type==signedIn
+ * @property showUsername - Controls the visibility of the username field.
+ * @availableWhen showUsername type==signIn
+ * @property showPassword - Controls the visibility of the password field.
+ * @availableWhen showPassword type in [signIn, userSignIn]
  * @slot signed-in-action-icon-<id> - Optional icon for a signed-in action, one per action; `<id>` is the normalized action id (shown in the `signed-in` type).
  * @fires {CustomEvent<{username: string, password: string}>} sign-in-click - Fired when a sign-in button is clicked.
  * @fires {CustomEvent<void>} sign-out-click - Fired when the sign-out button is clicked.
@@ -114,83 +139,34 @@ export type ObcUserMenuSignedInAction = {
 @customElement('obc-user-menu')
 @localized()
 export class ObcUserMenu extends LitElement {
-  /**
-   * Controls the visual layout of the user menu.
-   */
   @property({type: String}) type: ObcUserMenuType = ObcUserMenuType.signIn;
 
-  /**
-   * Controls the overall size of the user menu.
-   */
   @property({type: String}) size: ObcUserMenuSize = ObcUserMenuSize.regular;
 
-  /**
-   * Toggles the "Recently signed in" section visibility.
-   * @availableWhen type in [signIn, userSignIn]
-   */
   @property({type: Boolean})
   hasRecentlySignedIn = false;
 
-  /**
-   * Controls the visibility of the username field.
-   * @availableWhen type==signIn
-   */
   @property({type: Boolean, attribute: false})
   showUsername = true;
 
-  /**
-   * Current username value for sign-in layouts.
-   * @availableWhen showUsername == true && type==signIn
-   */
   @property({type: String}) username = '';
 
-  /**
-   * Controls the visibility of the password field.
-   * @availableWhen type in [signIn, userSignIn]
-   */
   @property({type: Boolean, attribute: false})
   showPassword = true;
 
-  /**
-   * Current password value for sign-in layouts.
-   * @availableWhen showPassword == true && type in [signIn, userSignIn]
-   */
   @property({type: String}) password = '';
 
-  /**
-   * Error message for the username field.
-   * @availableWhen type==signIn
-   */
   @property({type: String}) usernameError = '';
 
-  /**
-   * Error message for the password field.
-   * @availableWhen type in [signIn, userSignIn]
-   */
   @property({type: String}) passwordError = '';
 
-  /**
-   * Initials for the primary user profile.
-   * @availableWhen type!=signIn
-   */
   @property({type: String}) userInitials?: string;
 
-  /**
-   * Label for the primary user profile.
-   * @availableWhen type!=signIn
-   */
   @property({type: String}) userLabel?: string;
 
-  /**
-   * Recent users for the "Recently signed in" section.
-   */
   @property({type: Array, attribute: false})
   recentUsers: ObcUserMenuUser[] = [];
 
-  /**
-   * Actions shown in the signed-in navigation list.
-   * @availableWhen type==signedIn
-   */
   @property({type: Array, attribute: false})
   signedInActions: ObcUserMenuSignedInAction[] = [];
 

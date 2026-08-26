@@ -173,6 +173,9 @@ export enum ObcKeyboardFullMode {
  * </obc-keyboard-full>
  * ```
  *
+ * @availableWhen parameterName showTopBar==true
+ * @property inputType - Input type forwarded to the embedded input field. Set to `password` to mask
+ *   the entered value (a show/hide toggle is then shown inside the field).
  * @fires {CustomEvent<{value: string}>} value-change - Dispatched whenever the text value changes
  *   (on key press, backspace, space, or direct input field editing). The `detail.value` contains
  *   the complete current text string.
@@ -188,7 +191,6 @@ export class ObcKeyboardFull extends LitElement {
     ObcKeyboardFullType.Floating;
 
   @property({type: Boolean}) showTopBar = false;
-  /** @availableWhen showTopBar==true */
   @property({type: String}) parameterName = 'Parameter name';
 
   @property({type: String}) value = '';
@@ -197,10 +199,6 @@ export class ObcKeyboardFull extends LitElement {
   @property({type: String}) inputSize: ObcTextInputFieldSize =
     ObcTextInputFieldSize.Large;
 
-  /**
-   * Input type forwarded to the embedded input field. Set to `password` to mask
-   * the entered value (a show/hide toggle is then shown inside the field).
-   */
   @property({type: String}) inputType: HTMLInputTypeAttribute =
     HTMLInputTypeAttribute.Text;
 
