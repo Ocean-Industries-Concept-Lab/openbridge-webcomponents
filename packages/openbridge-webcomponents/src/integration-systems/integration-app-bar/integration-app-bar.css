@@ -35,7 +35,7 @@
   }
 }
 
-/* Handle slotted elements being wrapped in div for svelte framework wrappers */
+/* Svelte wrappers add a slot container that must not become a grid item. */
 slot[name="apps"]::slotted(:not(obc-app-button)) {
   display: contents;
 }
