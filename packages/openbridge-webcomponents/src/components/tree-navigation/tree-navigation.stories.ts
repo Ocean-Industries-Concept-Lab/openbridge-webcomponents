@@ -18,7 +18,7 @@ import {customElement} from '../../decorator.js';
  */
 const meta: Meta<typeof ObcTreeNavigation> = {
   title: 'UI Components/Menus and Navigation/Tree Navigation',
-  tags: ['autodocs', '6.0'],
+  tags: ['autodocs', '6.0', 'beta'],
   component: 'obc-tree-navigation',
   render: () => html`
     <obc-tree-navigation>

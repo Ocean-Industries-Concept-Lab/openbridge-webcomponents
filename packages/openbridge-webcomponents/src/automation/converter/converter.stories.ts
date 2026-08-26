@@ -47,7 +47,7 @@ export const Off: Story = {
 export const MultipleReadouts: Story = {
   args: {
     on: true,
-    showReadoutOnOffState: false,
+    showStatus: false,
     readoutValues: [
       {
         value: 300,

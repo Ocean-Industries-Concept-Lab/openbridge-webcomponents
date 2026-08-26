@@ -23,7 +23,7 @@ const SAMPLE_DATA = [
 const meta: Meta = {
   title: 'Bars and Graphs/Polar Chart',
   component: 'obc-polar-chart',
-  tags: ['autodocs', '6.0'],
+  tags: ['autodocs', '6.0', 'beta'],
   argTypes: {
     fixedHeight: {
       control: {type: 'range', min: 48, max: 512, step: 8},
@@ -32,7 +32,6 @@ const meta: Meta = {
     },
     monochrome: {
       control: 'boolean',
-      if: {arg: 'discreteColorStops', truthy: false},
     },
     discreteColorStops: {control: 'boolean'},
     showSectorLabels: {control: 'boolean'},

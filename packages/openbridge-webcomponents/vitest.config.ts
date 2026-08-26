@@ -52,6 +52,16 @@ export default defineConfig({
           },
         },
       },
+      {
+        // Node-side unit tests for the repo's own tooling (the custom ESLint
+        // rules). Kept out of the `storybook` project so it stays browser-only.
+        extends: true,
+        test: {
+          name: 'rules',
+          environment: 'node',
+          include: ['script/**/*.test.ts'],
+        },
+      },
     ],
   },
 });

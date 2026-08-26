@@ -16,7 +16,7 @@ import {TagColor} from '../tag/tag.js';
 
 const meta: Meta<typeof ObcTable> = {
   title: 'UI Components/Tables/Table',
-  tags: ['6.0'],
+  tags: ['6.0', 'beta'],
   component: 'obc-table',
   decorators: [widthDecorator],
   argTypes: {

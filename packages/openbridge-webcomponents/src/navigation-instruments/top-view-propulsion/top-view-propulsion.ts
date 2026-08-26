@@ -16,10 +16,18 @@ import '../watch/watch.js';
 import {
   OUTER_RING_RADIUS,
   WatchCircleType,
-  innerRingRadiusFor,
   type WatchBarArea,
   type WatchNeedle,
 } from '../watch/watch.js';
+import {
+  BAND_INNER_RADIUS,
+  LANE_DIVIDER_RADIUS,
+  LANE_DIVIDER_WIDTH,
+  PRIMARY_SUBBAND_INNER_RADIUS,
+  PRIMARY_SUBBAND_NEEDLE_LENGTH,
+  arcPath,
+  renderSecondaryLine,
+} from '../watch/secondary-lane.js';
 import {Tickmark, TickmarkStyle, TickmarkType} from '../watch/tickmark.js';
 import {PropellerImage, propellerImages} from '../watch/propeller.js';
 import {customElement} from '../../decorator.js';
@@ -33,36 +41,12 @@ export enum TopViewPropulsionType {
 const FULL_CIRCLE_END_ANGLE = 359.999;
 const LOADING_ARC_RADIUS = (OUTER_RING_RADIUS + 320 / 2) / 2;
 const PROPELLER_SCALE = 224 / 160;
-/* pitch-rpm subdivision of the 112..160 band (Figma: divider outer edge at
-   264 diameter): secondary pitch lane 112..120, white divider 120..128,
-   primary sub-band 128..160. */
-const BAND_INNER_RADIUS = innerRingRadiusFor(WatchCircleType.double);
-const BAND_OUTER_RADIUS = innerRingRadiusFor(WatchCircleType.single);
-const SECONDARY_LINE_WIDTH = 8;
-const DIVIDER_WIDTH = 8;
-const SECONDARY_LANE_RADIUS = BAND_INNER_RADIUS + SECONDARY_LINE_WIDTH / 2;
-const DIVIDER_RADIUS =
-  BAND_INNER_RADIUS + SECONDARY_LINE_WIDTH + DIVIDER_WIDTH / 2;
-const PRIMARY_SUBBAND_INNER_RADIUS =
-  BAND_INNER_RADIUS + SECONDARY_LINE_WIDTH + DIVIDER_WIDTH;
-const RPM_NEEDLE_LENGTH = BAND_OUTER_RADIUS - PRIMARY_SUBBAND_INNER_RADIUS;
 
 function percentToAngle(value: number): number {
   if (!Number.isFinite(value)) {
     return 0;
   }
   return Math.max(-100, Math.min(100, value)) * 1.8;
-}
-
-function arcPath(radius: number, startDeg: number, endDeg: number): string {
-  const toRad = (deg: number) => ((deg - 90) * Math.PI) / 180;
-  const x1 = radius * Math.cos(toRad(startDeg));
-  const y1 = radius * Math.sin(toRad(startDeg));
-  const x2 = radius * Math.cos(toRad(endDeg));
-  const y2 = radius * Math.sin(toRad(endDeg));
-  const largeArc = Math.abs(endDeg - startDeg) > 180 ? 1 : 0;
-  const sweep = endDeg > startDeg ? 1 : 0;
-  return `M ${x1} ${y1} A ${radius} ${radius} 0 ${largeArc} ${sweep} ${x2} ${y2}`;
 }
 
 /**
@@ -84,6 +68,43 @@ function arcPath(radius: number, startDeg: number, endDeg: number): string {
  * Use for a propulsion unit overview. For an azimuthing unit with a
  * direction bar, use `obc-azimuth-thruster` instead.
  *
+ * @property power - Signed power in percent: 0 at the top, positive clockwise, ±100% = ±180°.
+ * @availableWhen power type==power
+ * @availableWhen powerSetpoint type==power
+ * @availableWhen newPowerSetpoint type==power && powerSetpoint!=undefined
+ * @availableWhen atPowerSetpoint type==power && powerSetpoint!=undefined && autoAtPowerSetpoint==false
+ * @availableWhen powerSetpointAtZeroDeadband type==power && powerSetpoint!=undefined
+ * @availableWhen powerSetpointOverride type==power && powerSetpoint!=undefined
+ * @availableWhen autoAtPowerSetpoint type==power && powerSetpoint!=undefined
+ * @availableWhen autoAtPowerSetpointDeadband type==power && powerSetpoint!=undefined && autoAtPowerSetpoint==true
+ * @property rpm - Signed rpm in percent of the maximum: 0 at the top, positive clockwise,
+ *   ±100% = ±180°. Shown on the primary track.
+ * @availableWhen rpm type==pitch-rpm
+ * @availableWhen rpmSetpoint type==pitch-rpm
+ * @availableWhen newRpmSetpoint type==pitch-rpm && rpmSetpoint!=undefined
+ * @availableWhen atRpmSetpoint type==pitch-rpm && rpmSetpoint!=undefined && autoAtRpmSetpoint==false
+ * @availableWhen rpmSetpointAtZeroDeadband type==pitch-rpm && rpmSetpoint!=undefined
+ * @availableWhen rpmSetpointOverride type==pitch-rpm && rpmSetpoint!=undefined
+ * @availableWhen autoAtRpmSetpoint type==pitch-rpm && rpmSetpoint!=undefined
+ * @availableWhen autoAtRpmSetpointDeadband type==pitch-rpm && rpmSetpoint!=undefined && autoAtRpmSetpoint==true
+ * @property pitch - Signed pitch in percent: 0 at the top, positive clockwise, ±100% = ±180°.
+ *   Shown as the thin secondary arc.
+ * @availableWhen pitch type==pitch-rpm
+ * @availableWhen touching powerSetpoint!=undefined || rpmSetpoint!=undefined
+ * @availableWhen animateSetpoint powerSetpoint!=undefined || rpmSetpoint!=undefined
+ * @property loading - Loading progress in percent, shown as an arc on the outer ring.
+ * @availableWhen loading state==loading
+ * @property primaryTickmarkInterval - Interval (in degrees) for primary tickmarks.
+ *   When undefined or <= 0, no primary tickmarks are shown (only the zero line).
+ * @property secondaryTickmarkInterval - Interval (in degrees) for secondary tickmarks.
+ *   When undefined or <= 0, no secondary tickmarks are shown.
+ * @property tertiaryTickmarkInterval - Interval (in degrees) for tertiary tickmarks.
+ *   When undefined or <= 0, no tertiary tickmarks are shown.
+ * @property faceDiameter - Outer-ring diameter in CSS pixels. When set, the instrument renders at a
+ *   fixed intrinsic size derived from the ring, arc shape and label reserve —
+ *   so instruments sharing the same value have identical ring circumference
+ *   regardless of label width or arc extent (like obc-donut-chart's
+ *   fixedHeight). When unset (default), the instrument fills its container.
  * @experimental The API of this component is under design review and may
  * change in a future release.
  */
@@ -92,82 +113,36 @@ export class ObcTopViewPropulsion extends LitElement {
   @property({type: String}) type: TopViewPropulsionType =
     TopViewPropulsionType.power;
 
-  /**
-   * Signed power in percent: 0 at the top, positive clockwise, ±100% = ±180°.
-   * @availableWhen type==power
-   */
   @property({type: Number}) power = 0;
-  /** @availableWhen type==power */
   @property({type: Number}) powerSetpoint: number | undefined;
-  /** @availableWhen type==power && powerSetpoint!=undefined */
   @property({type: Number}) newPowerSetpoint: number | undefined;
-  /** @availableWhen type==power && powerSetpoint!=undefined && autoAtPowerSetpoint==false */
   @property({type: Boolean}) atPowerSetpoint = false;
-  /** @availableWhen type==power && powerSetpoint!=undefined */
   @property({type: Number}) powerSetpointAtZeroDeadband = 0.1;
-  /** @availableWhen type==power && powerSetpoint!=undefined */
   @property({type: Boolean}) powerSetpointOverride = false;
-  /** @availableWhen type==power && powerSetpoint!=undefined */
   @property({type: Boolean, attribute: false}) autoAtPowerSetpoint = true;
-  /** @availableWhen type==power && powerSetpoint!=undefined && autoAtPowerSetpoint==true */
   @property({type: Number}) autoAtPowerSetpointDeadband = 1;
 
-  /**
-   * Signed rpm in percent of the maximum: 0 at the top, positive clockwise,
-   * ±100% = ±180°. Shown on the primary track.
-   * @availableWhen type==pitch-rpm
-   */
   @property({type: Number}) rpm = 0;
-  /** @availableWhen type==pitch-rpm */
   @property({type: Number}) rpmSetpoint: number | undefined;
-  /** @availableWhen type==pitch-rpm && rpmSetpoint!=undefined */
   @property({type: Number}) newRpmSetpoint: number | undefined;
-  /** @availableWhen type==pitch-rpm && rpmSetpoint!=undefined && autoAtRpmSetpoint==false */
   @property({type: Boolean}) atRpmSetpoint = false;
-  /** @availableWhen type==pitch-rpm && rpmSetpoint!=undefined */
   @property({type: Number}) rpmSetpointAtZeroDeadband = 0.1;
-  /** @availableWhen type==pitch-rpm && rpmSetpoint!=undefined */
   @property({type: Boolean}) rpmSetpointOverride = false;
-  /** @availableWhen type==pitch-rpm && rpmSetpoint!=undefined */
   @property({type: Boolean, attribute: false}) autoAtRpmSetpoint = true;
-  /** @availableWhen type==pitch-rpm && rpmSetpoint!=undefined && autoAtRpmSetpoint==true */
   @property({type: Number}) autoAtRpmSetpointDeadband = 1;
 
-  /**
-   * Signed pitch in percent: 0 at the top, positive clockwise, ±100% = ±180°.
-   * Shown as the thin secondary arc.
-   * @availableWhen type==pitch-rpm
-   */
   @property({type: Number}) pitch = 0;
 
-  /** @availableWhen powerSetpoint!=undefined || rpmSetpoint!=undefined */
   @property({type: Boolean}) touching = false;
-  /** @availableWhen powerSetpoint!=undefined || rpmSetpoint!=undefined */
   @property({type: Boolean}) animateSetpoint = false;
 
   @property({type: String}) state: InstrumentState = InstrumentState.active;
   @property({type: String}) priority: Priority = Priority.regular;
-  /**
-   * Loading progress in percent, shown as an arc on the outer ring.
-   * @availableWhen state==loading
-   */
   @property({type: Number}) loading = 0;
 
-  /**
-   * Interval (in degrees) for primary tickmarks.
-   * When undefined or <= 0, no primary tickmarks are shown (only the zero line).
-   */
   @property({type: Number}) primaryTickmarkInterval: number | undefined = 90;
-  /**
-   * Interval (in degrees) for secondary tickmarks.
-   * When undefined or <= 0, no secondary tickmarks are shown.
-   */
   @property({type: Number}) secondaryTickmarkInterval: number | undefined =
     undefined;
-  /**
-   * Interval (in degrees) for tertiary tickmarks.
-   * When undefined or <= 0, no tertiary tickmarks are shown.
-   */
   @property({type: Number}) tertiaryTickmarkInterval: number | undefined =
     undefined;
   @property({type: Boolean}) showLabels = false;
@@ -179,13 +154,6 @@ export class ObcTopViewPropulsion extends LitElement {
   @property({type: String}) propeller: PropellerImage =
     PropellerImage.fourBlade;
 
-  /**
-   * Outer-ring diameter in CSS pixels. When set, the instrument renders at a
-   * fixed intrinsic size derived from the ring, arc shape and label reserve —
-   * so instruments sharing the same value have identical ring circumference
-   * regardless of label width or arc extent (like obc-donut-chart's
-   * fixedHeight). When unset (default), the instrument fills its container.
-   */
   @property({type: Number, attribute: 'face-diameter'})
   faceDiameter: number | undefined;
 
@@ -376,7 +344,7 @@ export class ObcTopViewPropulsion extends LitElement {
         angle: percentToAngle(this.primaryValue),
         fillColor: fill,
         strokeColor: stroke,
-        length: this.isPitchRpm ? RPM_NEEDLE_LENGTH : undefined,
+        length: this.isPitchRpm ? PRIMARY_SUBBAND_NEEDLE_LENGTH : undefined,
       },
     ];
   }
@@ -394,41 +362,20 @@ export class ObcTopViewPropulsion extends LitElement {
     if (!this.isPitchRpm) {
       return nothing;
     }
-    const r = SECONDARY_LANE_RADIUS;
     const divider = svg`<circle
-      r=${DIVIDER_RADIUS}
+      r=${LANE_DIVIDER_RADIUS}
       fill="none"
       stroke="var(--instrument-frame-primary-color)"
-      stroke-width=${DIVIDER_WIDTH}
+      stroke-width=${LANE_DIVIDER_WIDTH}
     ></circle>`;
-    const pitchAngle = percentToAngle(this.pitch);
-    if (!this.isActive || Math.abs(pitchAngle) < 0.5) {
-      return svg`
-        ${divider}
-        <circle
-          cx="0" cy=${-r}
-          r=${SECONDARY_LINE_WIDTH / 2}
-          fill=${this.secondaryColor}
-        ></circle>
-      `;
-    }
-    const toRad = ((pitchAngle - 90) * Math.PI) / 180;
-    const endX = r * Math.cos(toRad);
-    const endY = r * Math.sin(toRad);
+    const pitchAngle = this.isActive ? percentToAngle(this.pitch) : 0;
     return svg`
       ${divider}
-      <path
-        d=${arcPath(r, 0, pitchAngle)}
-        fill="none"
-        stroke=${this.secondaryColor}
-        stroke-width=${SECONDARY_LINE_WIDTH}
-        stroke-linecap="butt"
-      ></path>
-      <circle
-        cx=${endX} cy=${endY}
-        r=${SECONDARY_LINE_WIDTH / 2}
-        fill=${this.secondaryColor}
-      ></circle>
+      ${renderSecondaryLine({
+        originAngle: 0,
+        endAngle: pitchAngle,
+        color: this.secondaryColor,
+      })}
     `;
   }
 
@@ -448,6 +395,21 @@ export class ObcTopViewPropulsion extends LitElement {
       stroke-width="8"
       stroke-linecap="round"
     ></path>`;
+  }
+
+  /**
+   * Thin outline on the track band's inner edge, always shown per the
+   * design's track face. Drawn on the overlay because the watch paints its
+   * band bars over the ring circles, which would swallow a watch-side line.
+   */
+  private renderInnerRingLine() {
+    return svg`<circle
+      r=${BAND_INNER_RADIUS}
+      fill="none"
+      stroke="var(--instrument-frame-tertiary-color)"
+      stroke-width="1"
+      vector-effect="non-scaling-stroke"
+    ></circle>`;
   }
 
   private renderPropeller() {
@@ -487,6 +449,7 @@ export class ObcTopViewPropulsion extends LitElement {
         <obc-watch
           .touching=${this.touching}
           .arcFrame=${frame}
+          .watchCircleType=${WatchCircleType.double}
           .tickmarks=${shownTickmarks}
           .state=${this.state}
           .priority=${this.priority}
@@ -504,8 +467,8 @@ export class ObcTopViewPropulsion extends LitElement {
           .tickmarkStyle=${this.tickmarkStyle}
         ></obc-watch>
         <svg viewBox=${frame.viewBox} xmlns="http://www.w3.org/2000/svg">
-          ${this.renderLoadingArc()} ${this.renderSecondaryArc()}
-          ${this.renderPropeller()}
+          ${this.renderInnerRingLine()} ${this.renderLoadingArc()}
+          ${this.renderSecondaryArc()} ${this.renderPropeller()}
         </svg>
       </div>
     `;

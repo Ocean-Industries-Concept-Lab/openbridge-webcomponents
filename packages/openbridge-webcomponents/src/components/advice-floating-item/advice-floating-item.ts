@@ -74,6 +74,15 @@ import {
  * </obc-advice-floating-item>
  * ```
  *
+ * @property hasTimestamp - If true, displays a timestamp label (e.g., "09:12:46") in the advice message.
+ *   Default: false.
+ * @property hasDay - If true (and `hasTimestamp` is also true), displays a day label (e.g., "Yesterday") in addition to the timestamp.
+ *   Default: false.
+ * @property action - If true, renders a primary action button in the advice message.
+ *   Default: false.
+ * @property action2 - If true, renders a secondary action button in the advice message.
+ *   Note: The secondary action is only shown if the primary action (`action`) is also enabled.
+ *   Default: false.
  * @slot primary-icon - Custom main icon, projected into the child only when `type="application"` (the built-in advice icon is used otherwise).
  * @slot title - Title or heading of the advice message.
  * @slot description - Detailed advice or message text.
@@ -81,9 +90,9 @@ import {
  * @slot day - Day label (e.g., "Yesterday").
  * @slot action - Primary action button label/content.
  * @slot action2 - Secondary action button label/content.
- * @fires action-click {CustomEvent<void>} When the primary action button is clicked.
- * @fires action2-click {CustomEvent<void>} When the secondary action button is clicked.
- * @fires dismiss-click {CustomEvent<void>} When the advice message is dismissed.
+ * @fires {CustomEvent<void>} action-click - When the primary action button is clicked.
+ * @fires {CustomEvent<void>} action2-click - When the secondary action button is clicked.
+ * @fires {CustomEvent<void>} dismiss-click - When the advice message is dismissed.
  * @beta
  */
 @customElement('obc-advice-floating-item')
@@ -104,29 +113,12 @@ export class ObcAdviceFloatingItem extends LitElement {
    */
   @property({type: String}) direction = ObcFloatingItemDirection.horizontal;
 
-  /**
-   * If true, displays a timestamp label (e.g., "09:12:46") in the advice message.
-   * Default: false.
-   */
   @property({type: Boolean}) hasTimestamp = false;
 
-  /**
-   * If true (and `hasTimestamp` is also true), displays a day label (e.g., "Yesterday") in addition to the timestamp.
-   * Default: false.
-   */
   @property({type: Boolean}) hasDay = false;
 
-  /**
-   * If true, renders a primary action button in the advice message.
-   * Default: false.
-   */
   @property({type: Boolean}) action = false;
 
-  /**
-   * If true, renders a secondary action button in the advice message.
-   * Note: The secondary action is only shown if the primary action (`action`) is also enabled.
-   * Default: false.
-   */
   @property({type: Boolean}) action2 = false;
 
   /**

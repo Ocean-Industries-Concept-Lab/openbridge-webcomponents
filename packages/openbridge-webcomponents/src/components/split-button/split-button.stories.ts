@@ -28,7 +28,7 @@ const renderWithIcon = (args: StoryObj<ObcSplitButton>['args']) => html`
 
 const meta: Meta<ObcSplitButton> = {
   title: 'UI Components/Buttons/Split Button',
-  tags: ['autodocs', '6.0'],
+  tags: ['autodocs', '6.0', 'beta'],
   component: 'obc-split-button',
   decorators: [
     (story) => html`

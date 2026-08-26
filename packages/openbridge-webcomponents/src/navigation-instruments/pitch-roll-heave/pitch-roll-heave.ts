@@ -139,6 +139,29 @@ function distanceToRect(
  * available space.
  *
  * @element obc-pitch-roll-heave
+ *
+ * @property heaveRange - Half-extent of the heave scale in metres; the column spans `±heaveRange`.
+ * @property pitchArcAngle - Half-extent of the pitch arc in degrees. Also drives the heave column
+ *   height, which is `2 · outerRadius · sin(pitchArcAngle)` so the column's
+ *   edges stay level with the pitch arc's end caps.
+ * @property rollArcAngle - Half-extent of the roll arc in degrees.
+ * @property hasReadout - Replaces the centre content with stacked pitch, roll and heave readouts.
+ *   Ignored when `type` is `dual-scale`, where the heave column occupies the
+ *   centre.
+ * @availableWhen hasReadout type==singleScale
+ * @availableWhen pitchLabel hasReadout==true
+ * @availableWhen rollLabel hasReadout==true
+ * @availableWhen heaveLabel hasReadout==true
+ * @property unit - Unit shown in the pitch and roll readouts.
+ * @availableWhen unit hasReadout==true
+ * @property heaveUnit - Unit shown in the heave readout.
+ * @availableWhen heaveUnit hasReadout==true
+ * @availableWhen fractionDigits hasReadout==true
+ * @availableWhen vesselImageFore type==singleScale && hasReadout==false
+ * @availableWhen vesselImageSide type==singleScale && hasReadout==false
+ * @availableWhen scaleForeImage type==singleScale && hasReadout==false
+ * @availableWhen triggerPitchAdvice maxPitchAdvice!=undefined
+ * @availableWhen triggerRollAdvice maxRollAdvice!=undefined
  * @experimental
  */
 @customElement('obc-pitch-roll-heave')
@@ -155,57 +178,27 @@ export class ObcPitchRollHeave extends LitElement {
   @property({type: Number}) maxAvgRoll = 0;
   @property({type: Number}) minTrendHeave = 0;
   @property({type: Number}) maxTrendHeave = 0;
-  /** Half-extent of the heave scale in metres; the column spans `±heaveRange`. */
   @property({type: Number}) heaveRange = 10;
 
-  /**
-   * Half-extent of the pitch arc in degrees. Also drives the heave column
-   * height, which is `2 · outerRadius · sin(pitchArcAngle)` so the column's
-   * edges stay level with the pitch arc's end caps.
-   */
   @property({type: Number}) pitchArcAngle = 30;
-  /** Half-extent of the roll arc in degrees. */
   @property({type: Number}) rollArcAngle = 45;
   @property({type: Boolean}) zoomToFitArc = false;
 
-  /**
-   * Replaces the centre content with stacked pitch, roll and heave readouts.
-   * Ignored when `type` is `dual-scale`, where the heave column occupies the
-   * centre.
-   * @availableWhen type==singleScale
-   */
   @property({type: Boolean}) hasReadout = false;
-  /** @availableWhen hasReadout==true */
   @property({type: String}) pitchLabel = 'Pitch';
-  /** @availableWhen hasReadout==true */
   @property({type: String}) rollLabel = 'Roll';
-  /** @availableWhen hasReadout==true */
   @property({type: String}) heaveLabel = 'Heave';
-  /**
-   * Unit shown in the pitch and roll readouts.
-   * @availableWhen hasReadout==true
-   */
   @property({type: String}) unit = 'DEG';
-  /**
-   * Unit shown in the heave readout.
-   * @availableWhen hasReadout==true
-   */
   @property({type: String}) heaveUnit = 'm';
-  /** @availableWhen hasReadout==true */
   @property({type: Number}) fractionDigits = 0;
 
-  /** @availableWhen type==singleScale && hasReadout==false */
   @property({type: String}) vesselImageFore: VesselImage = VesselImage.psvFore;
-  /** @availableWhen type==singleScale && hasReadout==false */
   @property({type: String}) vesselImageSide: VesselImage = VesselImage.psvSide;
-  /** @availableWhen type==singleScale && hasReadout==false */
   @property({type: Number}) scaleForeImage = 1;
 
   @property({type: Number}) maxPitchAdvice: number | undefined = undefined;
   @property({type: Number}) maxRollAdvice: number | undefined = undefined;
-  /** @availableWhen maxPitchAdvice!=undefined */
   @property({type: Boolean}) triggerPitchAdvice = false;
-  /** @availableWhen maxRollAdvice!=undefined */
   @property({type: Boolean}) triggerRollAdvice = false;
   @property({type: Array}) heaveAdvice: LinearAdvice[] = [];
 
@@ -351,9 +344,16 @@ export class ObcPitchRollHeave extends LitElement {
    * `obc-watch` renders its crosshair after the bands, i.e. on top of them.
    * Drawing it here puts it under the watch layer, so the bands and the heave
    * column mask it naturally.
+   *
+   * In `single-scale` nothing frames the segment above the vessel (the other
+   * three arms end under the pitch band, roll band and heave column), so the
+   * vertical arm stops at the centre instead of continuing upward. In
+   * `dual-scale` the top roll band gives it a natural endpoint, so the full
+   * arm is kept.
    */
   private renderCrosshair(): SVGTemplateResult {
     const r = OUTER_RING_RADIUS;
+    const yTop = this.isDualScale ? -r : 0;
     return svg`
       <line
         x1=${-r} y1="0" x2=${r} y2="0"
@@ -361,7 +361,7 @@ export class ObcPitchRollHeave extends LitElement {
         vector-effect="non-scaling-stroke"
       />
       <line
-        x1="0" y1=${-r} x2="0" y2=${r}
+        x1="0" y1=${yTop} x2="0" y2=${r}
         stroke="var(--instrument-frame-tertiary-color)"
         vector-effect="non-scaling-stroke"
       />

@@ -70,11 +70,16 @@ export class ObcAbstractAutomationButton extends LitElement {
   @property({type: String}) readoutPosition: AutomationButtonReadoutPosition =
     AutomationButtonReadoutPosition.bottom;
   /** @availableWhen showReadoutStack==true */
+  @property({type: Boolean, attribute: false}) showStatus: boolean = true;
+  /** @availableWhen showReadoutStack==true */
   @property({type: String}) readoutSize: AutomationButtonReadoutStackSize =
     AutomationButtonReadoutStackSize.regular;
   /** @availableWhen showReadoutStack==true */
+  @property({type: String}) tag: string | null = null;
+  /** @availableWhen showReadoutStack==true */
   @property({type: Array, attribute: false})
   readoutValues?: AutomationButtonReadoutValue[];
+
   @property({type: String}) positioning: AutomationButtonPositioning =
     AutomationButtonPositioning.point;
   /** Enables the activated background color, used to indicate that the button is activated/selected. */
@@ -103,7 +108,7 @@ export class ObcAbstractAutomationButton extends LitElement {
     CircularProgressMode.indeterminate;
   /** @availableWhen progress==true && progressMode in [determinate, progressiveIndeterminate] */
   @property({type: Number}) progressValue: number = 0;
-  @property({type: String}) tag: string | null = null;
+
   @property({type: String}) badgeControl: AutomationButtonBadgeControl =
     AutomationButtonBadgeControl.None;
   @property({type: String})

@@ -24,7 +24,7 @@ import {ObcNumberInputFieldTextAlign} from '../../components/number-input-field/
 
 const meta: Meta<typeof ObcAutomationInputModal> = {
   title: 'Automation/Automation Control',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'experimental'],
   component: 'obc-automation-input-modal',
   args: {},
 } satisfies Meta<ObcAutomationInputModal>;

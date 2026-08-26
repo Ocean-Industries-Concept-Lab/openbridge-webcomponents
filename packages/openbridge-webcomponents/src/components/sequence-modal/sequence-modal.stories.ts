@@ -128,7 +128,7 @@ const renderSequenceModal = (args: SequenceModalStoryArgs) => {
 
 const meta: Meta<SequenceModalStoryArgs> = {
   title: 'UI Components/Sections/Sequence Modal',
-  tags: ['6.1'],
+  tags: ['6.1', 'experimental'],
   component: 'obc-sequence-modal',
   parameters: {
     layout: 'centered',

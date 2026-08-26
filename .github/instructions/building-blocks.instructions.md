@@ -2,9 +2,11 @@
 applyTo: "packages/openbridge-webcomponents/src/building-blocks/**,packages/openbridge-webcomponents/src/svghelpers/**"
 ---
 
-# GitHub Copilot Custom Instructions
+<!-- GENERATED FILE — DO NOT EDIT.
+     Source: docs/agents/building-blocks.md
+     Regenerate: npm run agents:sync -w packages/openbridge-webcomponents -->
 
-## Path-Specific Instructions for Building Blocks & SVG Helpers
+# Building Blocks & SVG Helpers
 
 These instructions apply to SVG-based building block components (instrument-linear, bar-vertical, etc.) and their shared SVG helper utilities.
 
@@ -67,7 +69,7 @@ When working with building block components in this directory:
        value: number,
        minValue: number,
        maxValue: number,
-       height: number
+       height: number,
      ): number {
        const range = maxValue - minValue;
        return ((-value + minValue) * height) / range + height / 2;
@@ -147,7 +149,7 @@ When working with SVG helper utilities:
    - `rectangular.ts`: Helpers for rectangular shapes and layouts
    - `circle.ts`: Helpers for circular/radial shapes
    - `roundedArch.ts`: Helpers for rounded arch paths
-   - `setpoint.ts`, `setpoint-mixin.ts`, `setpoint-bundle.ts`: Setpoint marker design layer, state management, and animation. See `setpoint.instructions.md` for full documentation.
+   - `setpoint.ts`, `setpoint-mixin.ts`, `setpoint-bundle.ts`: Setpoint marker design layer, state management, and animation. See `setpoint.md` for full documentation.
    - `index.ts`: Export all helpers for convenient importing
    - Organize helpers by shape/concept, not by component
 
@@ -156,7 +158,7 @@ When working with SVG helper utilities:
    - Strokes are centered on paths, extending ±strokeWidth/2 from center
    - At viewBox boundaries, half the stroke can be clipped
    - Solution: reduce logical dimensions and shift coordinates inward by half-stroke
-   - Document the problem and solution clearly in comments
+   - Document the contract in the function JSDoc
 
 4. **Coordinate Transformations**:
    - Provide bidirectional mapping: value ↔ coordinate
@@ -182,11 +184,7 @@ When working with SVG helper utilities:
    - Provide clear return types for functions
 
 8. **Documentation**:
-   - Include comprehensive JSDoc comments with problem/solution descriptions
    - Document parameters with `@param` and return values with `@returns`
-   - Provide visual ASCII diagrams where helpful (e.g., stroke clipping illustration)
-   - Include usage examples in function comments
-   - Explain non-obvious calculations inline
 
 9. **Error Handling**:
    - Validate input parameters where necessary

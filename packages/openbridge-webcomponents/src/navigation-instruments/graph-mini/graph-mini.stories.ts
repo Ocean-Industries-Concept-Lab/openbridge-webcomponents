@@ -4,7 +4,7 @@ import './graph-mini.js';
 
 const meta: Meta<typeof ObcGraphMini> = {
   title: 'Bars and Graphs/Graph Mini',
-  tags: ['6.0'],
+  tags: ['6.0', 'beta'],
   component: 'obc-graph-mini',
   args: {
     data: [

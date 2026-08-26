@@ -9,7 +9,7 @@ type RulerPointerArgs = {
 
 const meta: Meta<RulerPointerArgs> = {
   title: 'AR/Building Blocks/Ruler Pointer',
-  tags: ['6.1'],
+  tags: ['6.1', 'experimental'],
   component: 'obc-ruler-pointer',
   decorators: [
     (story) => html`

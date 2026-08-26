@@ -5,7 +5,7 @@ import {crossDecorator} from '../../storybook-util.js';
 
 const meta: Meta<typeof ObcDirectionLine> = {
   title: 'Automation/Line/Direction',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'deprecated'],
   component: 'obc-direction-line',
   decorators: [crossDecorator],
   args: {},

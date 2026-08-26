@@ -21,6 +21,7 @@ export {ObcPoiObjectState as ObcPoiObjectDataState};
  * `dataState`, and `dataInteractive` to control its appearance.
  * Inherits all selection frame, header, and data-row behavior from `obc-poi-button`.
  *
+ * @availableWhen dataInteractive dataState!=overlapped && (dataState!=null || value!=overlapped)
  * @slot - Icon content forwarded to the inner POI object.
  * @slot header - Optional header content.
  * @slot relation - Optional relation icon/content in data mode.
@@ -34,7 +35,6 @@ export class ObcPoiButtonData extends ObcPoiButton {
   @property({type: String, attribute: 'data-state'})
   dataState: ObcPoiObjectState | null = null;
 
-  /** @availableWhen dataState!=overlapped && (dataState!=null || value!=overlapped) */
   @property({type: Boolean, attribute: 'data-interactive'})
   dataInteractive = false;
 

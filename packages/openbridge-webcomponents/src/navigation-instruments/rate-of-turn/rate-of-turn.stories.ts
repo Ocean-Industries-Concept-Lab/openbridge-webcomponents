@@ -131,7 +131,7 @@ export const WithTrackBar: Story = {
     hasReadout: true,
     rateOfTurnDegreesPerMinute: 45,
     rotPosition: RotPosition.innerCircle,
-    watchCircleType: WatchCircleType.double,
+    watchCircleType: WatchCircleType.triple,
   },
 };
 
@@ -142,7 +142,7 @@ export const WithTrackBarEnhanced: Story = {
     hasReadout: true,
     rateOfTurnDegreesPerMinute: 45,
     rotPosition: RotPosition.innerCircle,
-    watchCircleType: WatchCircleType.double,
+    watchCircleType: WatchCircleType.triple,
     priority: Priority.enhanced,
   },
 };
@@ -154,7 +154,7 @@ export const WithTrackBarPortStarboard: Story = {
     hasReadout: true,
     rateOfTurnDegreesPerMinute: 45,
     rotPosition: RotPosition.innerCircle,
-    watchCircleType: WatchCircleType.double,
+    watchCircleType: WatchCircleType.triple,
     rotPortStarboard: true,
   },
 };
