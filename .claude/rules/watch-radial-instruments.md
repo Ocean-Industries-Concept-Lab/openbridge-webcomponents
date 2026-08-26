@@ -168,6 +168,19 @@ When adding new features or fixing bugs:
   bar end) + sector `tickmarks` on the `double` face. `renderBars` applies
   its area cut mask only when `areas` exist, so band bars render reliably on
   full-circle faces.
+- **`watch/secondary-lane.ts`** — the secondary value line helpers
+  (`arcPath()`, `renderSecondaryLine()`) for the split band. The lane
+  geometry constants (`BAND_INNER/OUTER_RADIUS`, `SECONDARY_LINE_WIDTH`,
+  `LANE_DIVIDER_*`, `PRIMARY_SUBBAND_*`) live in `watch.ts` (re-exported
+  here) because the watch's `splitBand` draws the lane chrome itself;
+  consumers (`top-view-propulsion`, `gauge-proportional`) keep only their
+  value graphics.
+- **Interval tick ladder** — `tickmark.ts`'s `buildIntervalTickmarks()` is
+  the one value→tick implementation for interval-configured gauges
+  (`instrument-radial`, `gauge-proportional`): primary/secondary/tertiary
+  ladders deduplicated by value (`strongerTickmarkType`), optional zero
+  tick, min/max end labels, and a `MAX_INTERVAL_TICKMARKS` runaway guard.
+  Do not re-implement the ladder loop in a consumer.
 
 ---
 
@@ -501,37 +514,24 @@ Common instrument CSS variables used in `watch.ts` and helpers:
 
 ## Component Quick Reference
 
-| Component            | Uses                                     | Key Features                                                                                              |
-| -------------------- | ---------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| `obc-watch`          | Helper modules                           | Core renderer - shared circular rendering logic                                                           |
-| `instrument-radial`  | `obc-watch`                              | Generic building block with configurable `getAngle()`                                                     |
-| `compass`            | `obc-watch` + overlay                    | Full compass: HDG/COG arrow styles, ROT, vessel, wind/current, center readouts                            |
-| `heading`            | `obc-watch` + overlay                    | Simplified compass: HDG/COG arrow styles, optional vessel, center readouts                                |
-| `rate-of-turn`       | `obc-watch`                              | ROT dots/bar, track bar (barAreas+needles), center readout                                                |
-| `rudder`             | `obc-watch` + overlay                    | Half-circle: 40% top clipped, needle variant                                                              |
-| `speed-gauge`        | `obc-watch` + overlay                    | Speed arc: custom angle mapping, full needle                                                              |
-| `wind`               | `obc-watch` + overlay                    | Wind rose with histogram                                                                                  |
-| `pitch` / `roll`     | `single-axis-inclinometer` → `obc-watch` | Single-axis inclinometer: side arc scale, single/dual scale, optional center readout                      |
-| `pitch-roll`         | `obc-watch`                              | Pitch + roll on one face; 4 arcs, optional zoomed sub-watches                                             |
-| `pitch-roll-heave`   | `obc-watch` + `watchfaceLinear`          | Pitch arc + roll arc + linear heave column in the band slot; single/dual scale, optional stacked readouts |
-| `gauge-radial`       | `instrument-radial`                      | Thin wrapper adding `enhanced` prop                                                                       |
-| `gauge-proportional` | `obc-watch` + overlay                    | Proportional band gauge: split frame, secondary scale, medium priority, `faceDiameter`                    |
-| `rot-sector`         | `instrument-radial`                      | Rate of turn sector gauge                                                                                 |
-| `azimuth-thruster`   | `obc-watch` + overlay                    | Thruster with angle setpoint and thrust bar                                                               |
-
-### Partial-reuse exception: `automation/gauge-valve`
-
-`obc-gauge-valve` (in `src/automation/`) shares the sizing/coordinate layer of
-this stack — `computeRadialFrame()` (contain-fit, label reserve,
-`faceDiameter`), the watch coordinate space (center-origin, outer ring r 184),
-`roundedArch()`, the setpoint layer and `renderInstrumentReadout` — but draws
-its face bespoke instead of composing `obc-watch`: its three fixed-angle port
-tracks sit at a band radius (112–160) `watch.ts` cannot currently render, and
-its 0–100 scale spans a fixed 60° top arc. **TODO:** fold band-radius
-overrides and fixed-angle sector tracks into `watch.ts` options (cf. the
-rate-of-turn track-bar recipe) and rebuild the gauge-valve face on `obc-watch`;
-until then treat gauge-valve as the documented exception, not a precedent for
-new bespoke renderers.
+| Component                   | Uses                                     | Key Features                                                                                                         |
+| --------------------------- | ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `obc-watch`                 | Helper modules                           | Core renderer - shared circular rendering logic                                                                      |
+| `instrument-radial`         | `obc-watch`                              | Generic building block with configurable `getAngle()`                                                                |
+| `compass`                   | `obc-watch` + overlay                    | Full compass: HDG/COG arrow styles, ROT, vessel, wind/current, center readouts                                       |
+| `heading`                   | `obc-watch` + overlay                    | Simplified compass: HDG/COG arrow styles, optional vessel, center readouts                                           |
+| `rate-of-turn`              | `obc-watch`                              | ROT dots/bar, track bar (barAreas+needles), center readout                                                           |
+| `rudder`                    | `obc-watch` + overlay                    | Half-circle: 40% top clipped, needle variant                                                                         |
+| `speed-gauge`               | `obc-watch` + overlay                    | Speed arc: custom angle mapping, full needle                                                                         |
+| `wind`                      | `obc-watch` + overlay                    | Wind rose with histogram                                                                                             |
+| `pitch` / `roll`            | `single-axis-inclinometer` → `obc-watch` | Single-axis inclinometer: side arc scale, single/dual scale, optional center readout                                 |
+| `pitch-roll`                | `obc-watch`                              | Pitch + roll on one face; 4 arcs, optional zoomed sub-watches                                                        |
+| `pitch-roll-heave`          | `obc-watch` + `watchfaceLinear`          | Pitch arc + roll arc + linear heave column in the band slot; single/dual scale, optional stacked readouts            |
+| `gauge-radial`              | `instrument-radial`                      | Thin wrapper adding `enhanced` prop                                                                                  |
+| `gauge-proportional`        | `obc-watch` (`splitBand`) + overlay      | Proportional band gauge: split lanes, secondary value, medium priority, compact stack, `faceDiameter`                |
+| `rot-sector`                | `instrument-radial`                      | Rate of turn sector gauge                                                                                            |
+| `azimuth-thruster`          | `obc-watch` + overlay                    | Thruster with angle setpoint and thrust bar                                                                          |
+| `gauge-valve` (automation/) | `obc-watch`                              | Per-port track sectors (`areas` + `roundRadius`/`outlined`), cap-pill `needles`, 60° scale, `scalePosition` rotation |
 
 ---
 
@@ -587,16 +587,22 @@ The offset flows through the rendering pipeline:
 quick reference for which knob does what. Combinations not listed under "validated"
 below are undefined — verify them before relying on a specific pairing.
 
-| Property                                            | Affects                                                                                                                                                                                                                                                                |
-| --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `padding`                                           | **Explicit override**: un-zoomed viewBox becomes exactly `(176 + padding) * 2` and the automatic label reserve (see "Shared frame computation") is disabled — the caller owns label room. Unset, `basePadding` is 24 plus the width-aware reserve.                     |
-| `faceDiameter`                                      | Pins the outer-ring diameter in CSS px (`scale = faceDiameter / 368`); the host gets a fixed intrinsic size, so instruments sharing the value have equal circumference (mode b of #1021; the donut-chart `fixedHeight` counterpart).                                   |
-| `clipTop` / `clipBottom` / `clipLeft` / `clipRight` | viewBox window in the **un-zoomed** path. Ignored under zoom (when `zoomToFitArc` is on or an `arcFrame` is supplied).                                                                                                                                                 |
-| `zoomToFitArc`                                      | Swaps to the `computeZoomToFitArcFrame()` path (unless an `arcFrame` is already supplied); every band radius gets the additive `_rOff` (see the `_bandRadius` INVARIANT in `watch.ts`).                                                                                |
-| `arcFrame`                                          | Externally pre-computed zoom frame. Takes precedence when set (the `if (this.arcFrame)` branch runs first) — used directly even when `zoomToFitArc` is false, and `obc-watch` does not recompute it. If you pass it, keep it in sync with `areas` / `watchCircleType`. |
-| `endLabelsMaxMin`                                   | "Max-min" label placement: horizontal end labels (±90°) sit off the dead-center tick instead of beside it.                                                                                                                                                             |
-| `tickmarksInside`                                   | Moves labels inside the ring; their `textRadius` is routed through `_bandRadius`.                                                                                                                                                                                      |
-| `tickFadeAngle`                                     | (pre-existing) Tickmark fade-out near arc edges.                                                                                                                                                                                                                       |
+| Property                                            | Affects                                                                                                                                                                                                                                                                               |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `padding`                                           | **Explicit override**: un-zoomed viewBox becomes exactly `(176 + padding) * 2` and the automatic label reserve (see "Shared frame computation") is disabled — the caller owns label room. Unset, `basePadding` is 24 plus the width-aware reserve.                                    |
+| `faceDiameter`                                      | Pins the outer-ring diameter in CSS px (`scale = faceDiameter / 368`); the host gets a fixed intrinsic size, so instruments sharing the value have equal circumference (mode b of #1021; the donut-chart `fixedHeight` counterpart).                                                  |
+| `clipTop` / `clipBottom` / `clipLeft` / `clipRight` | viewBox window in the **un-zoomed** path. Ignored under zoom (when `zoomToFitArc` is on or an `arcFrame` is supplied).                                                                                                                                                                |
+| `zoomToFitArc`                                      | Swaps to the `computeZoomToFitArcFrame()` path (unless an `arcFrame` is already supplied); every band radius gets the additive `_rOff` (see the `_bandRadius` INVARIANT in `watch.ts`).                                                                                               |
+| `arcFrame`                                          | Externally pre-computed zoom frame. Takes precedence when set (the `if (this.arcFrame)` branch runs first) — used directly even when `zoomToFitArc` is false, and `obc-watch` does not recompute it. If you pass it, keep it in sync with `areas` / `watchCircleType`.                |
+| `endLabelsMaxMin`                                   | "Max-min" label placement: horizontal end labels (±90°) sit off the dead-center tick instead of beside it.                                                                                                                                                                            |
+| `tickmarksInside`                                   | Moves labels inside the ring; their `textRadius` is routed through `_bandRadius`.                                                                                                                                                                                                     |
+| `tickFadeAngle`                                     | (pre-existing) Tickmark fade-out near arc edges.                                                                                                                                                                                                                                      |
+| `splitBand`                                         | With `watchCircleType: double`, the band renders as the secondary-lane lane tracks instead of the joint band; bars clip to the primary lane, and bar ends sitting on a sector cut overshoot 4° so the lane arch trims them flush. Takes precedence over `roundBandCuts` for the band. |
+
+Per-`WatchArea` knobs on the `areas` input: `roundRadius` overrides the
+corner fillet of the `roundBandCuts` arches (default 8), and `outlined`
+strokes the band arch with the tertiary frame color instead of self-colored
+(the gauge-valve track treatment).
 
 ### Shared frame computation (`svghelpers/radial-frame.ts`, issue #1021)
 
