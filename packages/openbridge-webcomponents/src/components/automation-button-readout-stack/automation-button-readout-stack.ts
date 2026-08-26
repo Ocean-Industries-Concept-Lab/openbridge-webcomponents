@@ -14,6 +14,7 @@ import '../../icons/icon-off.js';
 import '../../icons/icon-on.js';
 import '../../icons/icon-temperature-air.js';
 import '../button/button.js';
+import {SETPOINT_PATH_FILLED} from '../../svghelpers/setpoint.js';
 
 export enum AutomationButtonReadoutStackSize {
   small = 'small',
@@ -60,14 +61,26 @@ export interface AutomationButtonReadoutStackButton {
   unit: string;
 }
 
+export interface AutomationButtonReadoutStackSetpoint {
+  type: 'setpoint';
+  value: number;
+  nDigits: number;
+  unit?: string;
+}
+
 export type AutomationButtonReadoutStack =
   | AutomationButtonReadoutStackValue
   | AutomationButtonReadoutStackStateOn
   | AutomationButtonReadoutStackStateOff
-  | AutomationButtonReadoutStackButton;
+  | AutomationButtonReadoutStackButton
+  | AutomationButtonReadoutStackSetpoint;
 
 /**
  * @experimental
+ *
+ * @property readouts - Rows rendered top-to-bottom: `value` (padded digits, unit,
+ *   optional direction icon), `state-on`/`state-off`, `button`, and `setpoint`
+ *   (shared setpoint glyph + padded digits).
  */
 @customElement('obc-automation-button-readout-stack')
 export class ObcAutomationButtonReadoutStack extends LitElement {
@@ -101,15 +114,25 @@ export class ObcAutomationButtonReadoutStack extends LitElement {
     return html`<span class="value-text">${text}</span>`;
   }
 
-  renderValue(readout: AutomationButtonReadoutStackValue): HTMLTemplateResult {
-    const v = readout.value.toFixed(0);
-    // The minus sign occupies a digit slot, so every readout is nDigits wide;
-    // it renders before the dimmed padding ("-05", not "0-5").
+  // The minus sign occupies a digit slot, so every readout is nDigits wide;
+  // it renders before the dimmed padding ("-05", not "0-5").
+  private renderPaddedDigits(
+    value: number,
+    nDigits: number
+  ): HTMLTemplateResult {
+    const v = value.toFixed(0);
     const sign = v.startsWith('-') ? '-' : '';
     const digits = sign ? v.slice(1) : v;
     const zeroPadding =
-      v.length < readout.nDigits ? '0'.repeat(readout.nDigits - v.length) : '';
+      v.length < nDigits ? '0'.repeat(nDigits - v.length) : '';
+    return html`<span class="value-text"
+      >${sign}${zeroPadding
+        ? html`<span class="pad">${zeroPadding}</span>`
+        : nothing}${digits}</span
+    >`;
+  }
 
+  renderValue(readout: AutomationButtonReadoutStackValue): HTMLTemplateResult {
     let directionIcon: HTMLTemplateResult | typeof nothing = nothing;
     if (readout.icon == 'arrow') {
       if (readout.direction == 'up') {
@@ -159,15 +182,30 @@ export class ObcAutomationButtonReadoutStack extends LitElement {
       directionIcon = html`<slot class="icon" name=${readout.slotName}></slot>`;
     }
     const content = html`
-      <span class="value-text"
-        >${sign}${zeroPadding
-          ? html`<span class="pad">${zeroPadding}</span>`
-          : nothing}${digits}</span
-      >
+      ${this.renderPaddedDigits(readout.value, readout.nDigits)}
       <span class="unit">${readout.unit}</span>
     `;
 
     return this.renderValueContainer('value', directionIcon, content);
+  }
+
+  renderSetpoint(
+    readout: AutomationButtonReadoutStackSetpoint
+  ): HTMLTemplateResult {
+    const glyph = html`<svg
+      class="setpoint-glyph"
+      viewBox="2.5 -2.5 21 26"
+      aria-hidden="true"
+    >
+      <path d=${SETPOINT_PATH_FILLED} transform="rotate(-90 13 10.5)" />
+    </svg>`;
+    const content = html`
+      ${this.renderPaddedDigits(readout.value, readout.nDigits)}
+      ${readout.unit
+        ? html`<span class="unit">${readout.unit}</span>`
+        : nothing}
+    `;
+    return this.renderValueContainer('setpoint', glyph, content);
   }
 
   renderStateOff(
@@ -226,6 +264,8 @@ export class ObcAutomationButtonReadoutStack extends LitElement {
       return this.renderStateOff(readout);
     } else if (readout.type === 'button') {
       return this.renderButton(readout);
+    } else if (readout.type === 'setpoint') {
+      return this.renderSetpoint(readout);
     } else {
       throw new Error('Invalid readout type');
     }
@@ -237,7 +277,8 @@ export class ObcAutomationButtonReadoutStack extends LitElement {
         readout.type === 'value' ||
         readout.type === 'state-off' ||
         readout.type === 'state-on' ||
-        readout.type === 'button'
+        readout.type === 'button' ||
+        readout.type === 'setpoint'
     );
 
     const renderedReadouts = displayableReadouts.map((r) =>

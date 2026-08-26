@@ -108,6 +108,18 @@
     /* Styles for state-on type */
   }
 
+  /* The setpoint row is a bare 16px line — the gap to the value rows below is
+     carried by the fonts' own leading, per the design. */
+  .readout-item.setpoint {
+    height: 16px;
+  }
+
+  .setpoint-glyph {
+    width: 4px;
+    height: 5px;
+    fill: var(--element-neutral-color);
+  }
+
   obc-button::part(wrapper) {
     /* line-height: var(--global-typography-ui-button-line-height), 24px; */
     line-height: 20px;
