@@ -15,6 +15,9 @@ export enum GroundAlternativeIcon {
   ground3 = 'ground3',
 }
 
+/**
+ * @stable
+ */
 @customElement('obc-ground')
 export class ObcGround extends ObcAbstractAutomationButtonSquared {
   @property({type: String}) alternativeIcon: GroundAlternativeIcon =

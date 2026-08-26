@@ -121,18 +121,39 @@ export type ObcMenuButtonItemClickEvent = CustomEvent<{
  * ```
  * In this example, the button displays an icon and label, and opens a menu with two options (one with an icon).
  *
+ * @property label - The label displayed on the button.
+ *   If empty, the button can be rendered as icon-only.
+ * @property selectedValues - Array of currently selected option values.
+ *   Used to control which options are checked/selected in the menu.
+ * @property fullWidth - Whether the button should fill the full width of its container.
+ *   If true, the button stretches to 100% width.
+ * @property hasIcon - Whether the button should show an icon slot.
+ *   If true, the `icon` slot is rendered at the start of the button.
+ * @property multiSelect - Whether multiple selections are allowed.
+ *   Overrides the default selection mode for the chosen variant.
+ *   If not explicitly set, defaults based on `menuType`.
+ * @property selectPerGroup - Allows single selection per group (flyout/multi-column only).
+ *   When true, only one item per group/column can be selected.
+ * @property hasTitleBar - Whether to show a title bar with close button at the top of the menu.
+ *   If true, the menu displays a title bar (use `menuTitle` for text).
+ * @property menuTitle - Title text displayed in the title bar (if `hasTitleBar` is true).
+ * @property columnGroups - Array of column groups for the `multi-with-subtitles` layout.
+ *   Used to define grouped columns with subtitles in multi-column menus.
+ * @property itemsPerColumn - Number of items per column in multi-column layouts.
+ *   Used for `Multi` and `MultiWithSubtitles` menu types.
+ * @property openTop - Render the dropdown context menu above or below the button.
+ *   If true, the menu opens above the button; otherwise, it opens below.
+ * @property disabled - Whether both parts of the button are disabled.
+ *   Disables both the button and the menu.
  * @slot icon - Icon displayed at the start of the button when `hasIcon` is true.
- * @fires change {ObcSplitButtonChangeEvent} Fired when the menu selection changes.
- * @fires item-click {ObcMenuButtonItemClickEvent} Fired when a menu item is clicked.
- * @fires open {CustomEvent<void>} Fired when the menu is opened.
- * @fires close {CustomEvent<void>} Fired when the menu is closed.
+ * @fires {ObcSplitButtonChangeEvent} change - Fired when the menu selection changes.
+ * @fires {ObcMenuButtonItemClickEvent} item-click - Fired when a menu item is clicked.
+ * @fires {CustomEvent<void>} open - Fired when the menu is opened.
+ * @fires {CustomEvent<void>} close - Fired when the menu is closed.
+ * @beta
  */
 @customElement('obc-menu-button')
 export class ObcMenuButton extends LitElement {
-  /**
-   * The label displayed on the button.
-   * If empty, the button can be rendered as icon-only.
-   */
   @property({type: String}) label = '';
 
   /**
@@ -146,22 +167,10 @@ export class ObcMenuButton extends LitElement {
    */
   @property({type: Array}) options: ContextMenuOption[] = [];
 
-  /**
-   * Array of currently selected option values.
-   * Used to control which options are checked/selected in the menu.
-   */
   @property({type: Array}) selectedValues: string[] = [];
 
-  /**
-   * Whether the button should fill the full width of its container.
-   * If true, the button stretches to 100% width.
-   */
   @property({type: Boolean}) fullWidth = false;
 
-  /**
-   * Whether the button should show an icon slot.
-   * If true, the `icon` slot is rendered at the start of the button.
-   */
   @property({type: Boolean}) hasIcon = false;
 
   /**
@@ -178,52 +187,20 @@ export class ObcMenuButton extends LitElement {
   @property({type: String})
   menuType: ContextMenuType = ContextMenuType.Regular;
 
-  /**
-   * Whether multiple selections are allowed.
-   * Overrides the default selection mode for the chosen variant.
-   * If not explicitly set, defaults based on `menuType`.
-   */
   @property({type: Boolean}) multiSelect?: boolean;
 
-  /**
-   * Allows single selection per group (flyout/multi-column only).
-   * When true, only one item per group/column can be selected.
-   */
   @property({type: Boolean}) selectPerGroup?: boolean;
 
-  /**
-   * Whether to show a title bar with close button at the top of the menu.
-   * If true, the menu displays a title bar (use `menuTitle` for text).
-   */
   @property({type: Boolean}) hasTitleBar = false;
 
-  /**
-   * Title text displayed in the title bar (if `hasTitleBar` is true).
-   */
   @property({type: String}) menuTitle = '';
 
-  /**
-   * Array of column groups for the `multi-with-subtitles` layout.
-   * Used to define grouped columns with subtitles in multi-column menus.
-   */
   @property({type: Array}) columnGroups: ColumnGroup[] = [];
 
-  /**
-   * Number of items per column in multi-column layouts.
-   * Used for `Multi` and `MultiWithSubtitles` menu types.
-   */
   @property({type: Number}) itemsPerColumn = 5;
 
-  /**
-   * Render the dropdown context menu above or below the button.
-   * If true, the menu opens above the button; otherwise, it opens below.
-   */
   @property({type: Boolean}) openTop = false;
 
-  /**
-   * Whether both parts of the button are disabled.
-   * Disables both the button and the menu.
-   */
   @property({type: Boolean}) disabled = false;
 
   @state() private isOpen = false;

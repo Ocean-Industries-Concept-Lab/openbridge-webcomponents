@@ -32,6 +32,24 @@ export enum SequenceItemState {
  * composing `<obc-sequence-step>` for the visual indicator. Consumers can either
  * configure the built-in step via `step*` props or supply a custom step through
  * the `step` slot.
+ *
+ * @availableWhen subtitle hasSubtitle==true
+ * @availableWhen description hasDescription==true
+ * @property hasStamp - Enables the meta stamp container. Without this, timestamp/distance values are
+ *   ignored even if their booleans are true.
+ * @property hasTimeStamp - Shows a timestamp inside the stamp container when `hasStamp` is true.
+ * @availableWhen hasTimeStamp hasStamp==true
+ * @availableWhen timeStamp hasStamp==true && hasTimeStamp==true
+ * @property hasDistanceStamp - Shows a distance stamp alongside the timestamp. Requires `hasStamp` to be true.
+ * @availableWhen hasDistanceStamp hasStamp==true
+ * @availableWhen distanceStamp hasStamp==true && hasDistanceStamp==true
+ * @property stepLabel - Optional text used inside the auto-generated step. Defaults to `title` when
+ *   not provided.
+ * @slot title - Title/subtitle block (falls back to the built-in `title`/`subtitle`/inline description).
+ * @slot description - Description text (rendered when `hasDescription` is true and not inlined).
+ * @slot meta - Meta row with timestamp/distance stamps (rendered when `hasMeta` is true — i.e. `hasStamp` with a timestamp or distance stamp enabled).
+ * @slot step - Custom step indicator (falls back to the built-in `<obc-sequence-step>`).
+ * @beta
  */
 @customElement('obc-sequence-item')
 export class ObcSequenceItem extends LitElement {
@@ -46,23 +64,11 @@ export class ObcSequenceItem extends LitElement {
   @property({type: String}) subtitle = '';
   @property({type: Boolean}) hasDescription = false;
   @property({type: String}) description = '';
-  /**
-   * Enables the meta stamp container. Without this, timestamp/distance values are
-   * ignored even if their booleans are true.
-   */
   @property({type: Boolean}) hasStamp = false;
-  /** Shows a timestamp inside the stamp container when `hasStamp` is true. */
   @property({type: Boolean}) hasTimeStamp = false;
   @property({type: String}) timeStamp = '';
-  /**
-   * Shows a distance stamp alongside the timestamp. Requires `hasStamp` to be true.
-   */
   @property({type: Boolean}) hasDistanceStamp = false;
   @property({type: String}) distanceStamp = '';
-  /**
-   * Optional text used inside the auto-generated step. Defaults to `title` when
-   * not provided.
-   */
   @property({type: String}) stepLabel = '';
   // Deprecated: keeping the properties for compatibility but they are ignored
   // when rendering the default sequence item visual. Step rendering inside

@@ -4,7 +4,7 @@ import './command-button.js';
 
 const meta: Meta<typeof ObcCommandButton> = {
   title: 'Application Components/Menus/Command Button',
-  tags: ['6.0'],
+  tags: ['6.0', 'beta'],
   component: 'obc-command-button',
   args: {},
 } satisfies Meta<ObcCommandButton>;

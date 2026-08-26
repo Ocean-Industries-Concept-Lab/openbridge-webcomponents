@@ -28,6 +28,7 @@ type FormContainerArgs = {
 
 const meta = {
   title: 'UI Components/Forms/Form Container',
+  tags: ['beta'],
   component: 'obc-form-container',
   decorators: [
     (story) =>

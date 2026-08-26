@@ -111,45 +111,44 @@ export type ObcLinkBrightnessChangeEvent = CustomEvent<{value: boolean}>;
  * ```
  * In this example, both auto toggles are visible, the palette is set to dusk, and brightness is set to 75.
  *
- * @fires palette-changed {ObcPaletteChangeEvent} When the palette is changed
- * @fires brightness-changed {ObcBrightnessChangeEvent} When the brightness is changed
- * @fires link-palette-changed {ObcLinkPaletteChangeEvent} When the link palette toggle is changed
- * @fires link-brightness-changed {ObcLinkBrightnessChangeEvent} When the link brightness toggle is changed
- * @fires screen-control-link-clicked {CustomEvent} When the screen control link is clicked
+ * @property palette - The currently selected palette. Possible values: `'night'`, `'dusk'`, `'day'`, `'bright'`.
+ *   Defaults to `'day'`.
+ * @property brightness - The current brightness value (0–100). Defaults to `50`.
+ * @property showLinkBrightness - If true, displays the link brightness toggle below the brightness slider.
+ * @property showLinkPalette - If true, displays the link palette toggle below the palette selector.
+ * @property showBrightness - If true, shows the brightness slider and auto brightness toggle in the menu.
+ * @property showPalette - If true, shows the palette selector and link palette toggle in the menu.
+ * @property variant - The variant of the menu. Possible values: `'normal'`, `'compact'`, `'tabbed'`.
+ *   Defaults to `'normal'`.
+ * @property brightnessUnit - The unit of the brightness value.
+ * @property brightnessMax - The maximum value of the brightness slider.
+ * @property brightnessMinorStep - The minor step of the brightness slider.
+ * @property brightnessMajorStep - The major step of the brightness slider.
+ * @property brightnessInputVariant - The variant of the brightness input.
+ * @property showScreenControlLink - If true, displays the screen control link.
+ * @fires {ObcPaletteChangeEvent} palette-changed - When the palette is changed
+ * @fires {ObcBrightnessChangeEvent} brightness-changed - When the brightness is changed
+ * @fires {ObcLinkPaletteChangeEvent} link-palette-changed - When the link palette toggle is changed
+ * @fires {ObcLinkBrightnessChangeEvent} link-brightness-changed - When the link brightness toggle is changed
+ * @fires {CustomEvent} screen-control-link-clicked - When the screen control link is clicked
  */
 @localized()
+/**
+ * @stable
+ */
 @customElement('obc-brilliance-menu')
 export class ObcBrillianceMenu extends LitElement {
-  /**
-   * The currently selected palette. Possible values: `'night'`, `'dusk'`, `'day'`, `'bright'`.
-   * Defaults to `'day'`.
-   */
   @property({type: String}) palette: ObcPalette = ObcPalette.day;
 
-  /**
-   * The current brightness value (0–100). Defaults to `50`.
-   */
   @property({type: Number}) brightness = 50;
 
-  /**
-   * If true, displays the link brightness toggle below the brightness slider.
-   */
   @property({type: Boolean})
   showLinkBrightness = false;
 
-  /**
-   * If true, displays the link palette toggle below the palette selector.
-   */
   @property({type: Boolean}) showLinkPalette = false;
 
-  /**
-   * If true, shows the brightness slider and auto brightness toggle in the menu.
-   */
   @property({type: Boolean, attribute: false}) showBrightness = true;
 
-  /**
-   * If true, shows the palette selector and link palette toggle in the menu.
-   */
   @property({type: Boolean, attribute: false}) showPalette = true;
 
   @property({type: Boolean, attribute: false}) showNightPalette = true;
@@ -157,41 +156,19 @@ export class ObcBrillianceMenu extends LitElement {
   @property({type: Boolean, attribute: false}) showDayPalette = true;
   @property({type: Boolean, attribute: false}) showBrightPalette = true;
 
-  /**
-   * The variant of the menu. Possible values: `'normal'`, `'compact'`.
-   * Defaults to `'normal'`.
-   */
   @property({type: String}) variant = ObcBrillianceMenuVariant.normal;
 
-  /**
-   * The unit of the brightness value.
-   */
   @property({type: String}) brightnessUnit = '%';
 
-  /**
-   * The maximum value of the brightness slider.
-   */
   @property({type: Number}) brightnessMax = 100;
 
-  /**
-   * The minor step of the brightness slider.
-   */
   @property({type: Number}) brightnessMinorStep = 5;
 
-  /**
-   * The major step of the brightness slider.
-   */
   @property({type: Number}) brightnessMajorStep = 25;
 
-  /**
-   * The variant of the brightness input.
-   */
   @property({type: String}) brightnessInputVariant =
     ObcBrillianceInputVariant.buttons;
 
-  /**
-   * If true, displays the screen control link.
-   */
   @property({type: Boolean}) showScreenControlLink = false;
 
   override willUpdate(_changed: Map<string, unknown>) {

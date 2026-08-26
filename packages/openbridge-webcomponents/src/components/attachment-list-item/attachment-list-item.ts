@@ -50,47 +50,51 @@ import componentStyle from './attachment-list-item.css?inline';
  * </obc-attachment-list-item>
  * ```
  *
+ * @property label - The file name or label text displayed in the item.
+ * @property index - Optional index text displayed before the icon (e.g., "01").
+ * @availableWhen index hasIndex==true
+ * @property hasIndex - Whether to show the index.
+ * @property hasLeadingIcon - Whether to show the leading icon slot.
+ * @property hasTag - Whether to show the tag slot.
+ * @property hasTimeDate - Whether to show the date and time.
+ * @property date - The date string to display (e.g., "09 May 2025").
+ * @availableWhen date hasTimeDate==true
+ * @property time - The time string to display (e.g., "10:41:32").
+ * @availableWhen time hasTimeDate==true
+ * @property hasTrailingAction - Whether to show the trailing action slot.
+ * @property showDivider - Whether to show the bottom divider.
+ * @property amplified - Whether the item is in amplified (highlighted) state.
+ * @property disabled - Whether the item is disabled.
  * @fires {CustomEvent<{label: string}>} attachment-item-click - Fired when the item is clicked.
  * @slot leading-icon - Icon displayed before the file name.
  * @slot tag - Tag element displayed after the file name.
  * @slot trailing-action - Trailing action button.
+ * @beta
  */
 @customElement('obc-attachment-list-item')
 export class ObcAttachmentListItem extends LitElement {
-  /** The file name or label text displayed in the item. */
   @property({type: String}) label = 'File name';
 
-  /** Optional index text displayed before the icon (e.g., "01"). */
   @property({type: String}) index = '';
 
-  /** Whether to show the index. */
   @property({type: Boolean}) hasIndex = false;
 
-  /** Whether to show the leading icon slot. */
   @property({type: Boolean}) hasLeadingIcon = false;
 
-  /** Whether to show the tag slot. */
   @property({type: Boolean}) hasTag = false;
 
-  /** Whether to show the date and time. */
   @property({type: Boolean}) hasTimeDate = false;
 
-  /** The date string to display (e.g., "09 May 2025"). */
   @property({type: String}) date = '';
 
-  /** The time string to display (e.g., "10:41:32"). */
   @property({type: String}) time = '';
 
-  /** Whether to show the trailing action slot. */
   @property({type: Boolean}) hasTrailingAction = false;
 
-  /** Whether to show the bottom divider. */
   @property({type: Boolean}) showDivider = false;
 
-  /** Whether the item is in amplified (highlighted) state. */
   @property({type: Boolean}) amplified = false;
 
-  /** Whether the item is disabled. */
   @property({type: Boolean}) disabled = false;
 
   override updated(changedProperties: Map<string, unknown>) {

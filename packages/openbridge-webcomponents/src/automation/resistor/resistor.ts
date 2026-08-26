@@ -21,6 +21,9 @@ export enum ResistorAlternativeIcon {
   resistor5 = 'resistor5',
 }
 
+/**
+ * @stable
+ */
 @customElement('obc-resistor')
 export class ObcResistor extends ObcAbstractAutomationButtonSquared {
   @property({type: String}) alternativeIcon: ResistorAlternativeIcon =

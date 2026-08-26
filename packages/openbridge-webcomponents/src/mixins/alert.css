@@ -1,32 +1,3 @@
-@define-mixin alert-alarm $wrapperClass {
-  &:focus {
-    outline: none;
-  }
-
-  & $(wrapperClass) {
-    border: 1px solid var(--alarm-enabled-border-color);
-    background: var(--alarm-enabled-background-color);
-  }
-
-  &:hover $(wrapperClass) {
-    border-color: var(--alarm-hover-border-color);
-    background-color: var(--alarm-hover-background-color);
-  }
-
-  &:active $(wrapperClass) {
-    border-color: var(--alarm-pressed-border-color);
-    background-color: var(--alarm-pressed-background-color);
-  }
-
-  &:focus-visible $(wrapperClass) {
-    background-color: var(--alarm-focused-background-color);
-    border-color: var(--alarm-focused-border-color);
-    outline-color: var(--border-outline-color);
-    outline-width: 4px;
-    outline-style: solid;
-  }
-}
-
 @define-mixin alert-critical $wrapperClass {
   &:focus {
     outline: none;
@@ -50,6 +21,35 @@
   &:focus-visible $(wrapperClass) {
     background-color: var(--critical-focused-background-color);
     border-color: var(--critical-focused-border-color);
+    outline-color: var(--border-outline-color);
+    outline-width: 4px;
+    outline-style: solid;
+  }
+}
+
+@define-mixin alert-alarm $wrapperClass {
+  &:focus {
+    outline: none;
+  }
+
+  & $(wrapperClass) {
+    border: 1px solid var(--alarm-enabled-border-color);
+    background: var(--alarm-enabled-background-color);
+  }
+
+  &:hover $(wrapperClass) {
+    border-color: var(--alarm-hover-border-color);
+    background-color: var(--alarm-hover-background-color);
+  }
+
+  &:active $(wrapperClass) {
+    border-color: var(--alarm-pressed-border-color);
+    background-color: var(--alarm-pressed-background-color);
+  }
+
+  &:focus-visible $(wrapperClass) {
+    background-color: var(--alarm-focused-background-color);
+    border-color: var(--alarm-focused-border-color);
     outline-color: var(--border-outline-color);
     outline-width: 4px;
     outline-style: solid;

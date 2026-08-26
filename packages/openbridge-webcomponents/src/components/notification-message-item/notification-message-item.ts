@@ -89,39 +89,55 @@ export enum ObcNotificationMessageItemSize {
  * </obc-notification-message-item>
  * ```
  *
+ * @property title - Title or heading for the notification.
+ *   Shown in the title slot if `showTitle` is true.
+ * @availableWhen title showTitle==true && type!=Inactive && empty==false
+ * @property description - Detailed message text for the notification.
+ *   Shown in the description slot if `showDescription` is true.
+ * @availableWhen description showDescription==true && type!=Inactive && empty==false
+ * @property time - Primary timestamp to display (e.g., "09:12:46").
+ *   Shown in the time slot if `showTimestamp` is true.
+ * @availableWhen time showTimestamp==true && type!=Inactive && empty==false
+ * @property timeSecondary - Secondary timestamp (e.g., relative time like "2m ago").
+ *   Shown in the time-secondary slot if `hasTimestamp2` is true.
+ * @availableWhen timeSecondary hasTimestamp2==true && type!=Inactive && empty==false
+ * @property actionLabel - Label for the action button (used when `type` is `WithButton`).
+ * @availableWhen actionLabel type==WithButton
+ * @property showTitle - Whether to show the title.
+ * @availableWhen showTitle type!=Inactive && empty==false
+ * @property showDescription - Whether to show the description.
+ *   If false, the description slot is omitted.
+ * @availableWhen showDescription type!=Inactive && empty==false
+ * @property showTimestamp - Whether to show the primary timestamp.
+ * @availableWhen showTimestamp type!=Inactive && empty==false
+ * @property hasTimestamp2 - Whether to show the secondary timestamp.
+ *   If false, the time-secondary slot is omitted.
+ * @availableWhen hasTimestamp2 type!=Inactive && empty==false
+ * @property hasSecondaryIcon - Whether to show the secondary icon overlay.
+ *   If true, renders the `secondary-icon` slot.
+ * @availableWhen hasSecondaryIcon type!=Inactive && empty==false
+ * @property large - **DEPRECATED** – Use `size="tall"` instead.
+ *   If true, uses the tall layout.
+ * @property empty - **DEPRECATED** – Use `type="inactive"` instead.
+ *   If true, shows the empty/inactive state.
+ * @property emptyText - Text to show in the empty/inactive state.
+ *   Used in the `empty` slot when `type="inactive"` or `empty` is true.
+ * @availableWhen emptyText type==Inactive || empty==true
  * @slot secondary-icon - Additional icon for status/priority (shown when `hasSecondaryIcon` is true).
- * @fires message-click {CustomEvent<void>} Fired when the notification item is clicked.
- * @fires action-click {CustomEvent<void>} Fired when the action button or icon is clicked.
+ * @fires {CustomEvent<void>} message-click - Fired when the notification item is clicked.
+ * @fires {CustomEvent<void>} action-click - Fired when the action button or icon is clicked.
+ * @beta
  */
 @customElement('obc-notification-message-item')
 export class ObcNotificationMessageItem extends LitElement {
-  /**
-   * Title or heading for the notification.
-   * Shown in the title slot if `hasTitle` is true.
-   */
   @property({type: String}) override title = '';
 
-  /**
-   * Detailed message text for the notification.
-   * Shown in the description slot if `hasDescription` is true.
-   */
   @property({type: String}) description = '';
 
-  /**
-   * Primary timestamp to display (e.g., "09:12:46").
-   * Shown in the time slot if `hasTimestamp` is true.
-   */
   @property({type: String}) time = '';
 
-  /**
-   * Secondary timestamp (e.g., relative time like "2m ago").
-   * Shown in the time-secondary slot if `hasTimestamp2` is true.
-   */
   @property({type: String}) timeSecondary = '';
 
-  /**
-   * Label for the action button (used when `actionType` is "button").
-   */
   @property({type: String}) actionLabel = 'View';
 
   /**
@@ -142,50 +158,20 @@ export class ObcNotificationMessageItem extends LitElement {
   @property({type: String}) size: ObcNotificationMessageItemSize =
     ObcNotificationMessageItemSize.Regular;
 
-  /**
-   * Whether to show the title.
-   */
   @property({type: Boolean, attribute: false}) showTitle: boolean = true;
 
-  /**
-   * Whether to show the description.
-   * If false, the description slot is omitted.
-   */
   @property({type: Boolean, attribute: false}) showDescription: boolean = true;
 
-  /**
-   * Whether to show the primary timestamp.
-   */
   @property({type: Boolean, attribute: false}) showTimestamp: boolean = true;
 
-  /**
-   * Whether to show the secondary timestamp.
-   * If false, the time-secondary slot is omitted.
-   */
   @property({type: Boolean}) hasTimestamp2 = false;
 
-  /**
-   * Whether to show the secondary icon overlay.
-   * If true, renders the `secondary-icon` slot.
-   */
   @property({type: Boolean}) hasSecondaryIcon = false;
 
-  /**
-   * **DEPRECATED** – Use `size="tall"` instead.
-   * If true, uses the tall layout.
-   */
   @property({type: Boolean}) large = false;
 
-  /**
-   * **DEPRECATED** – Use `type="inactive"` instead.
-   * If true, shows the empty/inactive state.
-   */
   @property({type: Boolean}) empty = false;
 
-  /**
-   * Text to show in the empty/inactive state.
-   * Used in the `empty` slot when `type="inactive"` or `empty` is true.
-   */
   @property({type: String}) emptyText = 'No active notification';
 
   private get mappedType(): ObcTopbarMessageItemType {

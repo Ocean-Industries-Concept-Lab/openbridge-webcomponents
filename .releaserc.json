@@ -31,12 +31,13 @@
     ],
     ["@semantic-release/npm", { "pkgRoot": "./packages/openbridge-webcomponents" }],
     ["@semantic-release/exec", {
-      "prepareCmd": "node scripts/prepare-wrappers.js ${nextRelease.version} && npm install --package-lock-only"
+      "prepareCmd": "node scripts/prepare-wrappers.js ${nextRelease.version} && npx tsx packages/openbridge-webcomponents/script/prepare-full-bundle.ts ${nextRelease.version} && npm install --package-lock-only"
     }],
     ["@semantic-release/npm", { "pkgRoot": "./packages/openbridge-webcomponents-vue" }],
     ["@semantic-release/npm", { "pkgRoot": "./packages/openbridge-webcomponents-svelte" }],
     ["@semantic-release/npm", { "pkgRoot": "./packages/openbridge-webcomponents-react" }],
     ["@semantic-release/npm", { "pkgRoot": "./packages/openbridge-webcomponents-ng/dist" }],
+    ["@semantic-release/npm", { "pkgRoot": "./packages/openbridge-webcomponents/.full-bundle-publish" }],
     ["@semantic-release/github", {
       "successComment": false,
       "failComment": false

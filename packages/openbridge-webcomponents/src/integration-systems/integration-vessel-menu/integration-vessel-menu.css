@@ -1,0 +1,99 @@
+* {
+  box-sizing: border-box;
+}
+
+:host {
+  display: block;
+}
+
+.wrapper {
+  @mixin style style=integration-normal noClick=true;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  background: var(--container-global-color);
+  border-radius: var(
+    --app-components-integration-system-dropdown-menu-border-radius
+  );
+  border: 2px solid var(--integration-border-menu-outline-color);
+  box-shadow: var(--shadow-floating-x) var(--shadow-floating-y)
+    var(--shadow-floating-blur) var(--shadow-raised-spread)
+    var(--shadow-floating-color);
+}
+
+.footer-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  align-self: stretch;
+  height: var(
+    --app-components-integration-system-dropdown-menu-action-container-height
+  );
+  padding: var(--app-components-integration-system-menu-padding-vertical)
+    var(--app-components-integration-system-menu-padding-horizontal);
+  gap: var(--app-components-integration-system-menu-action-spacing);
+  border-top: 1px solid var(--border-divider-color);
+  background: var(--container-global-color);
+  border-radius: 12px;
+  &.hidden {
+    display: none;
+  }
+}
+
+.content-area {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  align-self: stretch;
+  border-radius: 8px;
+  &.hidden {
+    display: none;
+  }
+}
+
+.footer-container slot[name="buttons"]::slotted(*) {
+  display: flex;
+  flex: 1 1 0px;
+  width: 100%;
+  white-space: nowrap;
+}
+
+.footer-container slot[name="buttons"]::slotted(:not(obc-button)) {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(auto, 1fr);
+  gap: var(--app-components-integration-system-menu-action-spacing);
+}
+
+.buttons-slot,
+.content-slot {
+  display: contents;
+}
+
+.content-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  align-self: stretch;
+  min-height: 0;
+  flex: 1;
+  border-radius: 8px;
+  &.hidden {
+    display: none;
+  }
+}
+
+.alertlist {
+  width: 100%;
+  height: 100%;
+}
+
+.leading-icon {
+  color: var(--integration-on-normal-neutral-color);
+}
+
+.container-title {
+  color: var(--integration-on-normal-neutral-color);
+}

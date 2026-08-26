@@ -43,6 +43,7 @@ export enum ObcRulerPointerType {
  * ```html
  * <obc-ruler-pointer type="regular"></obc-ruler-pointer>
  * ```
+ * @experimental
  */
 @customElement('obc-ruler-pointer')
 export class ObcRulerPointer extends LitElement {

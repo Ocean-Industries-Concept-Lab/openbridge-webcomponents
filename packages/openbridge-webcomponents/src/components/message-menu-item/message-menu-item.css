@@ -88,11 +88,8 @@
     gap: var(--app-components-message-menu-item-label-spacing);
 
     color: var(--element-neutral-color);
-
-    .day,
-    .time {
-      @mixin font-label;
-    }
+    white-space: nowrap;
+    text-wrap: nowrap;
   }
 
   .chevron {

@@ -7,7 +7,7 @@ export class ObiConnectorThreeway extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path d="M12 24V12M24 12H12M12 12H0" stroke="#3D3D3D" stroke-dasharray="4 2"/>
+<path d="M12 24V12M24 12H12M12 12H0" stroke="currentColor" stroke-dasharray="4 2"/>
 </svg>
 `;
 

@@ -1,6 +1,9 @@
 import type {Meta, StoryObj} from '@storybook/web-vite';
 import {ObcAnalogValve} from './analog-valve.js';
-import {AutomationButtonReadoutPosition} from '../automation-button/automation-button.js';
+import {
+  AutomationButtonLabelDirection,
+  AutomationButtonReadoutPosition,
+} from '../automation-button/automation-button.js';
 import {AutomationButtonReadoutStackSize} from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 import './analog-valve.js';
 import {crossDecorator} from '../../storybook-util.js';
@@ -22,6 +25,7 @@ const meta: Meta<typeof ObcAnalogValve> = {
     tag: '#0012',
     readoutPosition: AutomationButtonReadoutPosition.bottom,
     readoutSize: AutomationButtonReadoutStackSize.regular,
+    labelDirection: AutomationButtonLabelDirection.right,
     alert: false,
     progress: false,
     vertical: false,
@@ -29,6 +33,10 @@ const meta: Meta<typeof ObcAnalogValve> = {
   },
   argTypes: {
     ...argTypesAbstractAutomationButtonPassiveRound,
+    labelDirection: {
+      options: Object.values(AutomationButtonLabelDirection),
+      control: {type: 'radio'},
+    },
     value: {control: {type: 'range', min: 0, max: 100, step: 1}},
   },
 } as Meta<typeof ObcAnalogValve>;
@@ -47,6 +55,14 @@ export const Closed: Story = {
   args: {
     open: false,
     value: 0,
+  },
+};
+
+export const WithoutLabelDirection: Story = {
+  args: {
+    open: true,
+    value: 20,
+    labelDirection: AutomationButtonLabelDirection.none,
   },
 };
 

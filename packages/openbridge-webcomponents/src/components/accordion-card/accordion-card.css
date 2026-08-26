@@ -158,7 +158,7 @@
 
     .label-description {
       @mixin font-label;
-      flex: 1 0 0;
+      flex: 0 0 auto;
       width: 100%;
       overflow: hidden;
       color: var(--element-neutral-color);
@@ -205,4 +205,37 @@
 
 .alert {
   pointer-events: none;
+
+  /* z-index follows ALERT_SEVERITY_PRIORITY: more severe statuses stack on top. */
+  &.alert-level-critical {
+    z-index: 8;
+  }
+
+  &.alert-alarm {
+    z-index: 7;
+  }
+
+  &.alert-level-high {
+    z-index: 6;
+  }
+
+  &.alert-warning {
+    z-index: 5;
+  }
+
+  &.alert-level-medium {
+    z-index: 4;
+  }
+
+  &.alert-caution {
+    z-index: 3;
+  }
+
+  &.alert-level-low {
+    z-index: 2;
+  }
+
+  &.alert-level-diagnostic {
+    z-index: 1;
+  }
 }

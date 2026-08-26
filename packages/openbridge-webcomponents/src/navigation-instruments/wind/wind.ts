@@ -7,6 +7,9 @@ import {
   WatchCircleType,
   innerRingRadiusFor,
 } from '../watch/watch.js';
+import {WIND_ICON_TIP_TO_BOX_INNER} from '../watch/environment.js';
+import {renderWindForcePattern} from '../watch/force-pattern.js';
+import {Priority} from '../types.js';
 import {customElement} from '../../decorator.js';
 
 export interface WindHistogramData {
@@ -21,6 +24,11 @@ export enum WindVariant {
   large = 'large',
 }
 
+export enum WindVisualization {
+  histogram = 'histogram',
+  forceGraphics = 'forceGraphics',
+}
+
 type ResolvedWindVariant =
   | WindVariant.small
   | WindVariant.medium
@@ -29,11 +37,18 @@ type ResolvedWindVariant =
 const WIND_SMALL_MAX_PX_DEFAULT = 96;
 const WIND_MEDIUM_MAX_PX_DEFAULT = 200;
 const WIND_HISTOGRAM_MIN_RADIUS = 50;
+const WIND_PATTERN_SCALE_DOUBLE = 0.875;
+const WIND_PATTERN_SCALE_SINGLE = 1.28125;
 
+/**
+ * @property visualization - Center visualization: wind histogram (default) or the force-graphics streak field.
+ * @property priority - Color priority: `Priority.enhanced` uses the blue/enhanced palette (default: `Priority.regular`).
+ * @stable
+ */
 @customElement('obc-wind')
 export class ObcWind extends LitElement {
   @property({type: Number}) currentWindFromDirection: number = 0;
-  @property({type: Number}) currentWindSpeedBeaufort: number = 1;
+  @property({type: Number}) currentWindSpeedKnots: number = 25;
   @property({type: Array, attribute: false})
   windHistogramData: WindHistogramData[] = [];
   @property({type: String}) vesselImage: VesselImage = VesselImage.genericTop;
@@ -41,6 +56,9 @@ export class ObcWind extends LitElement {
   @property({type: String}) variant: WindVariant = WindVariant.auto;
   @property({type: Number}) smallVariantMaxPx = WIND_SMALL_MAX_PX_DEFAULT;
   @property({type: Number}) mediumVariantMaxPx = WIND_MEDIUM_MAX_PX_DEFAULT;
+  @property({type: String}) visualization: WindVisualization =
+    WindVisualization.histogram;
+  @property({type: String}) priority: Priority = Priority.regular;
 
   @state() private _autoVariant: ResolvedWindVariant = WindVariant.medium;
 
@@ -134,7 +152,7 @@ export class ObcWind extends LitElement {
         ? []
         : [
             {
-              size: VesselImageSize.small,
+              size: VesselImageSize.medium,
               transform: `rotate(${this.vesselHeadingDeg}deg)`,
               vesselImage: this.vesselImage,
             },
@@ -143,20 +161,51 @@ export class ObcWind extends LitElement {
       resolveWindArrowPlacement(variant);
     return html`
       <div class="wrapper variant-${variant}">
-        ${this.renderWindHistogram(variant)}
+        ${this.renderVisualizationLayer(variant)}
         <obc-watch
           .watchCircleType=${watchCircleType}
-          .wind=${this.currentWindSpeedBeaufort}
+          .priority=${this.priority}
+          .windKnots=${this.currentWindSpeedKnots}
           .windFromDirectionDeg=${this.currentWindFromDirection}
+          .windColor=${this.priority === Priority.enhanced
+            ? 'var(--instrument-enhanced-secondary-color)'
+            : undefined}
           .windSymbolRadius=${windSymbolRadius}
           .scaleWindIcon=${scaleWindIcon}
           crosshairEnabled
           northArrow
           tickmarksInside
+          .showLabels=${true}
+          .insideLabelsFlush=${true}
           .vessels=${vessels}
         ></obc-watch>
       </div>
     `;
+  }
+
+  private get visualizationColor(): string {
+    return this.priority === Priority.enhanced
+      ? 'var(--instrument-enhanced-tertiary-color)'
+      : 'var(--instrument-regular-tertiary-color)';
+  }
+
+  private renderVisualizationLayer(variant: ResolvedWindVariant) {
+    if (this.visualization === WindVisualization.forceGraphics) {
+      return html`
+        <svg width="100%" height="100%" viewBox="-200 -200 400 400">
+          ${renderWindForcePattern({
+            fromDirectionDeg: this.currentWindFromDirection,
+            radius: resolveHistogramMaxRadius(variant),
+            patternScale:
+              variant === WindVariant.large
+                ? WIND_PATTERN_SCALE_DOUBLE
+                : WIND_PATTERN_SCALE_SINGLE,
+            color: this.visualizationColor,
+          })}
+        </svg>
+      `;
+    }
+    return this.renderWindHistogram(variant);
   }
 
   private renderWindHistogram(variant: ResolvedWindVariant) {
@@ -234,9 +283,9 @@ export class ObcWind extends LitElement {
           cy="0"
           r="${maxRadius}"
           vector-effect="non-scaling-stroke"
-          stroke="var(--instrument-regular-tertiary-color)"
+          stroke="${this.visualizationColor}"
           stroke-width="1"
-          fill="var(--instrument-regular-tertiary-color)"
+          fill="${this.visualizationColor}"
           mask="url(#mask)"
         />
       </svg>
@@ -268,25 +317,32 @@ function resolveHistogramMaxRadius(variant: ResolvedWindVariant): number {
  * Per-variant placement of the wind arrow inside `<obc-watch>`.
  *
  * `windSymbolRadius` is the distance from the watch center where the arrow
- * is placed (in watch SVG units, where the outer ring sits at 184).
- * `scaleWindIcon` scales the arrow glyph (and its offset).
+ * tip is anchored (in watch SVG units, where the outer ring sits at 184);
+ * `scaleWindIcon` scales the arrow glyph — and, because the scale group wraps
+ * the translated glyph, the effective tip radius is `radius × scale`.
  *
- * These values are visual-tuning starting points; adjust as needed.
+ * Large places the 48-unit icon box exactly inside the double-face track
+ * band (112–160), per the OpenBridge 6.1 design (the icon box spans the
+ * band, node 19663-140867); the tip anchor is the box inner edge plus the
+ * glyph's inward overhang. Medium ≈93 and small ≈8 (touching center) are
+ * measured from the Figma variants (node 6552-102891).
  */
-function resolveWindArrowPlacement(variant: ResolvedWindVariant): {
+export function resolveWindArrowPlacement(variant: ResolvedWindVariant): {
   windSymbolRadius: number;
   scaleWindIcon: number;
 } {
   switch (variant) {
     case WindVariant.large:
-      // Sits inside the inner ring of the double layout (matches pre-variant behavior).
-      return {windSymbolRadius: 145, scaleWindIcon: 0.8};
+      return {
+        windSymbolRadius:
+          innerRingRadiusFor(WatchCircleType.double) +
+          WIND_ICON_TIP_TO_BOX_INNER,
+        scaleWindIcon: 1.0,
+      };
     case WindVariant.medium:
-      // Sits just inside the single outer ring.
-      return {windSymbolRadius: 60, scaleWindIcon: 1.4};
+      return {windSymbolRadius: 62, scaleWindIcon: 1.5};
     case WindVariant.small:
-      // Compact layout: arrow tip close to centered, enlarged for best legibility.
-      return {windSymbolRadius: 10, scaleWindIcon: 2.3};
+      return {windSymbolRadius: 3, scaleWindIcon: 2.667};
   }
 }
 

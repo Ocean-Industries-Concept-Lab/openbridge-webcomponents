@@ -1,0 +1,38 @@
+:host {
+  display: block;
+  position: relative;
+  width: 48px;
+  height: 48px;
+}
+
+svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.frame {
+  fill: var(--instrument-frame-primary-color);
+  stroke: var(--instrument-frame-tertiary-color);
+}
+
+.icon-wrapper {
+  position: absolute;
+  inset: 12px;
+  color: var(--element-neutral-color);
+}
+
+:host([value="enhanced"]) .icon-wrapper {
+  color: var(--element-neutral-enhanced-color);
+}
+
+:host([value="medium"]) .icon-wrapper {
+  color: var(--base-teal-500);
+}
+
+.icon-wrapper ::slotted(*),
+.icon-wrapper obi-tank {
+  display: block;
+  width: 100%;
+  height: 100%;
+}

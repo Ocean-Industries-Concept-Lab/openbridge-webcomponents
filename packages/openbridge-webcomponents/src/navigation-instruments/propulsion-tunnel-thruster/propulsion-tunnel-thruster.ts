@@ -75,6 +75,7 @@ let nextClipId = 0;
  *
  * Use for a compact tunnel-thruster cue where the full tunnel-thruster watch
  * layout is not required.
+ * @stable
  */
 @customElement('obc-tunnel-thruster')
 export class ObcTunnelThruster extends LitElement {

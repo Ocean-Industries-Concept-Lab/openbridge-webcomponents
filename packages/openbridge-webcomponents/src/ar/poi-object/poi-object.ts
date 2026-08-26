@@ -94,7 +94,9 @@ export enum ObcPoiObjectState {
  * </obc-poi-object>
  * ```
  *
+ * @availableWhen interactive state!=overlapped
  * @slot - Icon/content displayed inside the marker frame.
+ * @experimental
  */
 @customElement('obc-poi-object')
 export class ObcPoiObject extends LitElement {

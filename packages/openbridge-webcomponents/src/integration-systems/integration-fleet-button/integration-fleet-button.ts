@@ -2,6 +2,7 @@ import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement} from '../../decorator.js';
 import compentStyle from './integration-fleet-button.css?inline';
 import {property} from 'lit/decorators.js';
+import {classMap} from 'lit/directives/class-map.js';
 import {msg} from '@lit/localize';
 import '../../components/badge/badge.js';
 
@@ -11,6 +12,11 @@ export interface IntegrationFleetButtonReadout {
   unit: string;
 }
 
+/**
+ * @slot alert-topic-icon - Icon shown alongside the alert topic
+ * @fires click - Fired when the button is clicked.
+ * @experimental
+ */
 @customElement('obc-integration-fleet-button')
 export class ObcIntegrationFleetButton extends LitElement {
   @property({type: Boolean}) selected: boolean = false;
@@ -24,6 +30,7 @@ export class ObcIntegrationFleetButton extends LitElement {
     warning: number;
     caution: number;
   } = {alarm: 0, warning: 0, caution: 0};
+  @property({type: Boolean}) showAlerts: boolean = false;
 
   override render() {
     const hasAlert =
@@ -47,7 +54,14 @@ export class ObcIntegrationFleetButton extends LitElement {
                 </div>`
             )}
           </div>
-          <div class="alerts ${hasAlert ? 'has-alert' : 'no-alert'}">
+          <div
+            class=${classMap({
+              alerts: true,
+              'has-alert': hasAlert,
+              'no-alert': !hasAlert,
+              'show-alerts': this.showAlerts,
+            })}
+          >
             <div class="alert-icon ">
               <slot name="alert-topic-icon"></slot>
             </div>

@@ -7,12 +7,12 @@ export class ObiTransformDiagonal extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path d="M19 11H17V8.41406L8.41406 17H11V19H5V13H7V15.5859L15.5859 7H13V5H19V11Z" fill="currentColor"/>
+<path d="M20 11H18V7.41406L7.41406 18H11V20H4V13H6V16.5859L16.5859 6H13V4H20V11Z" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M19 11H17V8.41406L8.41406 17H11V19H5V13H7V15.5859L15.5859 7H13V5H19V11Z" style="fill: var(--element-active-color)"/>
+<path d="M20 11H18V7.41406L7.41406 18H11V20H4V13H6V16.5859L16.5859 6H13V4H20V11Z" style="fill: var(--element-active-color)"/>
 </svg>
 `;
 

@@ -5,9 +5,7 @@
 .wrapper {
   height: var(--ui-components-button-touch-target-size);
   width: 100%;
-  min-width: var(
-    --ui-components-icon-toggle-button-horizontal-item-touch-target-size
-  );
+  min-width: var(--ui-components-toggle-button-touch-target-size);
   min-height: var(
     --ui-components-toggle-button-toggle-button-item-touch-target-size
   );

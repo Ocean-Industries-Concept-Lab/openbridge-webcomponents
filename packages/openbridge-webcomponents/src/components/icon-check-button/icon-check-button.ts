@@ -52,7 +52,8 @@ import {customElement} from '../../decorator.js';
  * ```
  *
  * @slot icon - Main icon representing the toggle action or state.
- * @fires icon-check-button-click {CustomEvent<{checked: boolean}>} Fired when the button is clicked and the checked state changes.
+ * @fires {CustomEvent<{checked: boolean}>} icon-check-button-click - Fired when the button is clicked and the checked state changes.
+ * @stable
  */
 @customElement('obc-icon-check-button')
 export class ObcIconCheckButton extends LitElement {
@@ -81,6 +82,7 @@ export class ObcIconCheckButton extends LitElement {
    * Text to display below the icon (when `hasLabel` is true).
    *
    * Used to describe the toggle action or state for clarity and accessibility.
+   * @availableWhen hasLabel==true
    */
   @property({type: String}) label = '';
 

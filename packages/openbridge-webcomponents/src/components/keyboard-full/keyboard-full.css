@@ -22,7 +22,7 @@
 .top-bar {
   display: flex;
   height: var(--ui-components-keyboard-top-bar-height);
-  padding-left: var(--ui-components-keyboard-nummeric-section-spacing);
+  padding-left: var(--ui-components-keyboard-numeric-section-spacing);
   justify-content: space-between;
   align-items: center;
   flex-shrink: 0;
@@ -85,7 +85,7 @@ obc-input::part(input) {
 .container-left {
   display: flex;
   flex-direction: column;
-  gap: var(--ui-components-keyboard-nummeric-button-spacing);
+  gap: var(--ui-components-keyboard-numeric-button-spacing);
   flex: 1 0 0;
 }
 
@@ -101,7 +101,7 @@ obc-input::part(input) {
   box-sizing: border-box;
   display: flex;
   align-items: center;
-  gap: var(--ui-components-keyboard-nummeric-button-spacing);
+  gap: var(--ui-components-keyboard-numeric-button-spacing);
   min-height: var(--ui-components-keyboard-button-size-min);
   width: 100%;
 }
@@ -109,8 +109,8 @@ obc-input::part(input) {
 .key-button {
   display: flex;
   flex: 1 0 0;
-  min-width: var(--ui-components-keyboard-nummeric-touch-target-size);
-  min-height: var(--ui-components-keyboard-nummeric-button-size-min);
+  min-width: var(--ui-components-keyboard-numeric-touch-target-size);
+  min-height: var(--ui-components-keyboard-numeric-button-size-min);
 }
 
 obc-button.key-button::part(wrapper) {
@@ -121,8 +121,8 @@ obc-button.key-button::part(visible-wrapper) {
   box-sizing: border-box;
   display: flex;
   width: 100%;
-  min-width: var(--ui-components-keyboard-nummeric-touch-target-size);
-  min-height: var(--ui-components-keyboard-nummeric-button-size-min);
+  min-width: var(--ui-components-keyboard-numeric-touch-target-size);
+  min-height: var(--ui-components-keyboard-numeric-button-size-min);
   align-items: center;
   justify-content: center;
   align-self: stretch;
@@ -137,11 +137,11 @@ obc-button.key-button::part(visible-wrapper) {
 }
 
 .space-button {
-  min-height: var(--ui-components-keyboard-nummeric-button-size-min);
+  min-height: var(--ui-components-keyboard-numeric-button-size-min);
 }
 
 obc-button.space-button::part(visible-wrapper) {
-  min-height: var(--ui-components-keyboard-nummeric-button-size-min);
+  min-height: var(--ui-components-keyboard-numeric-button-size-min);
 }
 
 obc-icon-button::part(visible-wrapper) {
@@ -154,7 +154,7 @@ obc-icon-button::part(visible-wrapper) {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: var(--ui-components-keyboard-nummeric-button-spacing);
+  gap: var(--ui-components-keyboard-numeric-button-spacing);
   align-self: stretch;
 }
 
@@ -168,7 +168,7 @@ obc-icon-button::part(visible-wrapper) {
 .cursor-navigation-number-row {
   display: flex;
   flex-direction: column;
-  gap: var(--ui-components-keyboard-nummeric-button-spacing);
+  gap: var(--ui-components-keyboard-numeric-button-spacing);
 }
 
 .navigation-buttons-container {
@@ -183,16 +183,16 @@ obc-icon-button::part(visible-wrapper) {
 }
 
 .action-button {
-  width: var(--ui-components-keyboard-nummeric-action-button-width);
+  width: var(--ui-components-keyboard-numeric-action-button-width);
   min-width: var(--ui-components-button-touch-target-size);
-  min-height: var(--ui-components-keyboard-nummeric-button-size-min);
+  min-height: var(--ui-components-keyboard-numeric-button-size-min);
 }
 
 obc-button.action-button::part(visible-wrapper) {
   box-sizing: border-box;
-  width: var(--ui-components-keyboard-nummeric-action-button-width);
+  width: var(--ui-components-keyboard-numeric-action-button-width);
   min-width: var(--ui-components-button-touch-target-size);
-  min-height: var(--ui-components-keyboard-nummeric-button-size-min);
+  min-height: var(--ui-components-keyboard-numeric-button-size-min);
 }
 
 obc-check-button.action-button::part(visible-wrapper) {
@@ -200,6 +200,6 @@ obc-check-button.action-button::part(visible-wrapper) {
 }
 
 .row-2 {
-  padding-left: var(--ui-components-keyboard-nummeric-padding-spacer);
-  padding-right: var(--ui-components-keyboard-nummeric-padding-spacer);
+  padding-left: var(--ui-components-keyboard-numeric-padding-spacer);
+  padding-right: var(--ui-components-keyboard-numeric-padding-spacer);
 }

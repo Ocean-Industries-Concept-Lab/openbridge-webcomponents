@@ -11,15 +11,18 @@ type WindIndicatorArgs = {
   type: WindIndicatorType;
   direction: WindIndicatorDirection;
   priority: WindIndicatorPriority;
-  level: number;
+  currentWindSpeedKnots: number;
   rotationAngle: number;
-  windFromAngle: number;
+  currentWindFromDirection: number;
   angle?: number;
   'wind-from-angle'?: number;
+  'current-wind-from-direction'?: number;
   'rotation-angle'?: number;
-  clampedLevel?: number;
+  'current-wind-speed-knots'?: number;
+  iconLevel?: number;
   accentColor?: string;
   windIconCache?: unknown;
+  windFromAngle?: number;
 };
 
 const meta: Meta<WindIndicatorArgs> = {
@@ -37,14 +40,14 @@ const meta: Meta<WindIndicatorArgs> = {
       .type=${args.type}
       .direction=${args.direction}
       .priority=${args.priority}
-      .level=${args.level}
+      .currentWindSpeedKnots=${args.currentWindSpeedKnots}
       .rotationAngle=${args.rotationAngle}
-      .windFromAngle=${args.windFromAngle}
+      .currentWindFromDirection=${args.currentWindFromDirection}
     ></obc-wind-indicator>
   `,
   args: {
-    windFromAngle: 0,
-    level: 7,
+    currentWindFromDirection: 0,
+    currentWindSpeedKnots: 35,
     type: WindIndicatorType.arrow,
     direction: WindIndicatorDirection.true,
     priority: WindIndicatorPriority.regular,
@@ -59,8 +62,8 @@ const meta: Meta<WindIndicatorArgs> = {
       control: {type: 'select'},
       options: Object.values(WindIndicatorDirection),
     },
-    windFromAngle: {
-      name: 'Wind From Angle',
+    currentWindFromDirection: {
+      name: 'Current Wind From Direction',
       description: 'Wind-from angle in degrees. 0/360 = wind from north.',
       control: {type: 'range', min: 0, max: 360, step: 1},
     },
@@ -74,12 +77,19 @@ const meta: Meta<WindIndicatorArgs> = {
       control: {type: 'select'},
       options: Object.values(WindIndicatorPriority),
     },
-    level: {control: {type: 'range', min: 0, max: 12, step: 1}},
+    currentWindSpeedKnots: {
+      description:
+        'Wind speed in knots. Snapped to the nearest icon bucket (0, 1, 5, 10, 15, ..., 95, 100) following the meteorological wind-barb convention.',
+      control: {type: 'range', min: 0, max: 100, step: 1},
+    },
 
     angle: {table: {disable: true}, control: false},
+    windFromAngle: {table: {disable: true}, control: false},
     'wind-from-angle': {table: {disable: true}, control: false},
+    'current-wind-from-direction': {table: {disable: true}, control: false},
     'rotation-angle': {table: {disable: true}, control: false},
-    clampedLevel: {table: {disable: true}, control: false},
+    'current-wind-speed-knots': {table: {disable: true}, control: false},
+    iconLevel: {table: {disable: true}, control: false},
     accentColor: {table: {disable: true}, control: false},
     windIconCache: {table: {disable: true}, control: false},
   },
@@ -121,6 +131,6 @@ export const Labeled: Story = {
     type: WindIndicatorType.labeled,
     direction: WindIndicatorDirection.true,
     priority: WindIndicatorPriority.regular,
-    level: 12,
+    currentWindSpeedKnots: 60,
   },
 };

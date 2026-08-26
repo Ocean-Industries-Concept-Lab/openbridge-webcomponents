@@ -6,7 +6,8 @@ import {classMap} from 'lit/directives/class-map.js';
 import '../badge-command/badge-command.js';
 import '../azimuth-thruster/azimuth-thruster.js';
 import '../readout/readout.js';
-import {ReadoutDirection, ReadoutVariant} from '../readout/readout.js';
+import {ReadoutDirection} from '../readout/readout.js';
+import {ReadoutBlockSize} from '../../building-blocks/readout-block/readout-block.js';
 import {InstrumentState, Priority} from '../types.js';
 import {AngleAdvice} from '../watch/advice.js';
 import {LinearAdvice} from '../thruster/advice.js';
@@ -19,6 +20,21 @@ export enum AzimuthThrusterLabeledSize {
   large = 'large',
 }
 
+/**
+ * @availableWhen newAngleSetpoint angleSetpoint!=undefined
+ * @availableWhen atAngleSetpoint angleSetpoint!=undefined && autoAtAngleSetpoint==false
+ * @availableWhen angleSetpointAtZeroDeadband angleSetpoint!=undefined
+ * @availableWhen angleSetpointOverride angleSetpoint!=undefined
+ * @availableWhen autoAtAngleSetpoint angleSetpoint!=undefined
+ * @availableWhen autoAtAngleSetpointDeadband angleSetpoint!=undefined && autoAtAngleSetpoint==true
+ * @availableWhen touching angleSetpoint!=undefined || thrustSetpoint!=undefined
+ * @availableWhen atThrustSetpoint thrustSetpoint!=undefined && autoAtThrustSetpoint==false
+ * @availableWhen autoAtThrustSetpoint thrustSetpoint!=undefined
+ * @availableWhen autoAtThrustSetpointDeadband thrustSetpoint!=undefined && autoAtThrustSetpoint==true
+ * @availableWhen thrustSetpointAtZeroDeadband thrustSetpoint!=undefined
+ * @availableWhen thrustSetpointOverride thrustSetpoint!=undefined
+ * @deprecated
+ */
 @customElement('obc-azimuth-thruster-labeled')
 export class ObcAzimuthThrusterLabeled extends LitElement {
   @property({type: String}) label = '';
@@ -26,10 +42,10 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
   commandStatus: CommandStatus = CommandStatus.InCommand;
   @property({type: String}) size: AzimuthThrusterLabeledSize =
     AzimuthThrusterLabeledSize.medium;
-  @property({type: String}) readoutVariant: ReadoutVariant =
-    ReadoutVariant.enhanced;
+  @property({type: String}) readoutSize: ReadoutBlockSize =
+    ReadoutBlockSize.large;
   @property({type: Number}) angle = 0;
-  @property({type: Number}) angleSetpoint: number | undefined;
+  @property({type: Number}) angleSetpoint?: number;
   @property({type: Number}) newAngleSetpoint: number | undefined;
   @property({type: Boolean})
   atAngleSetpoint: boolean = false;
@@ -41,7 +57,7 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
   @property({type: Boolean}) touching: boolean = false;
 
   @property({type: Number}) thrust = 0;
-  @property({type: Number}) thrustSetpoint: number | undefined;
+  @property({type: Number}) thrustSetpoint?: number;
   @property({type: Boolean})
   atThrustSetpoint: boolean = false;
   @property({type: Boolean, attribute: false}) autoAtThrustSetpoint: boolean =
@@ -75,9 +91,9 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
       ? Priority.regular
       : Priority.enhanced;
 
-    const effectiveReadoutVariant = isNotInCommand
-      ? ReadoutVariant.regular
-      : this.readoutVariant;
+    const effectiveReadoutSize = isNotInCommand
+      ? ReadoutBlockSize.medium
+      : this.readoutSize;
 
     return html`
       <div class=${classMap({wrapper: true, [this.size]: true})}>
@@ -90,21 +106,18 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
           <div class="label-text">${this.label}</div>
         </div>
         <obc-readout
-          class="instrument-field-angle"
-          .variant=${effectiveReadoutVariant}
+          class="readout-angle"
+          .size=${effectiveReadoutSize}
           .direction=${ReadoutDirection.vertical}
-          .hug=${false}
-          .hasInput=${true}
-          .setpointValue=${this.angleSetpoint === undefined
-            ? '-'
-            : this.angleSetpoint.toFixed(0)}
-          .valuePriority=${readoutPriority}
+          .hasSetpoint=${true}
+          .setpoint=${this.angleSetpoint}
+          .priority=${readoutPriority}
           .value=${this.angle}
           label="Angle"
           unit="DEG"
         >
           <svg
-            slot="input-icon"
+            slot="setpoint-icon"
             width="16"
             height="16"
             viewBox="0 0 16 16"
@@ -118,21 +131,18 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
           </svg>
         </obc-readout>
         <obc-readout
-          class="instrument-field-power"
-          .variant=${effectiveReadoutVariant}
+          class="readout-power"
+          .size=${effectiveReadoutSize}
           .direction=${ReadoutDirection.vertical}
-          .hug=${false}
-          .hasInput=${true}
-          .setpointValue=${this.thrustSetpoint === undefined
-            ? '-'
-            : this.thrustSetpoint.toFixed(0)}
-          .valuePriority=${readoutPriority}
+          .hasSetpoint=${true}
+          .setpoint=${this.thrustSetpoint}
+          .priority=${readoutPriority}
           .value=${this.thrust}
           label="Power"
           unit="%"
         >
           <svg
-            slot="input-icon"
+            slot="setpoint-icon"
             width="16"
             height="16"
             viewBox="0 0 16 16"

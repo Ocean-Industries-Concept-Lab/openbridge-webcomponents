@@ -7,12 +7,12 @@ export class ObiWindShaft5 extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path d="M19 1C19.5523 1 20 1.44772 20 2C20 2.55228 19.5523 3 19 3H13V5H16C16.5523 5 17 5.44772 17 6C17 6.55228 16.5523 7 16 7H13V24H11V2.09961C11.0002 1.4924 11.4924 1.00021 12.0996 1H19Z" fill="currentColor"/>
+<path d="M12 1C12.5523 1 13 1.44772 13 2V5H16C16.5523 5 17 5.44772 17 6C17 6.55228 16.5523 7 16 7H13V24H11V2C11 1.44772 11.4477 1 12 1Z" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M19 1C19.5523 1 20 1.44772 20 2C20 2.55228 19.5523 3 19 3H13V5H16C16.5523 5 17 5.44772 17 6C17 6.55228 16.5523 7 16 7H13V24H11V2.09961C11.0002 1.4924 11.4924 1.00021 12.0996 1H19Z" style="fill: var(--element-active-color)"/>
+<path d="M12 1C12.5523 1 13 1.44772 13 2V5H16C16.5523 5 17 5.44772 17 6C17 6.55228 16.5523 7 16 7H13V24H11V2C11 1.44772 11.4477 1 12 1Z" style="fill: var(--element-active-color)"/>
 </svg>
 `;
 

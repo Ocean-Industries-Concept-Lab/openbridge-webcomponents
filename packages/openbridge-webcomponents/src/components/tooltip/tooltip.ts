@@ -113,6 +113,7 @@ export enum TooltipVariant {
  * In this example, the tooltip displays a warning icon and the label "Low battery" with warning styling.
  *
  * @slot icon - Leading icon slot (shown when `type="icon"` or `type="label"` with `showIcon=true`)
+ * @stable
  */
 @customElement('obc-tooltip')
 export class ObcTooltip extends LitElement {
@@ -145,6 +146,8 @@ export class ObcTooltip extends LitElement {
    * Text content displayed in the tooltip (only used when `type="label"`).
    *
    * Default: `'Label'`
+   *
+   * @availableWhen type==label
    */
   @property({type: String}) label = 'Label';
 
@@ -153,6 +156,8 @@ export class ObcTooltip extends LitElement {
    * Has no effect when `type="icon"`.
    *
    * Default: `false`
+   *
+   * @availableWhen type==label
    */
   @property({type: Boolean}) showIcon = false;
 

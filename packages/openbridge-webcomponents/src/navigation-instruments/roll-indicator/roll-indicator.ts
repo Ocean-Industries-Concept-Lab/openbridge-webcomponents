@@ -61,6 +61,7 @@ let nextTrackClipId = 0;
  * ## Usage Guidelines
  *
  * Use when you need a small roll cue next to other compact indicators.
+ * @stable
  */
 @customElement('obc-roll-indicator')
 export class ObcRollIndicator extends LitElement {

@@ -293,6 +293,11 @@ export interface FixedHeightChartDimensions {
  *
  * Step 4: Check threshold and hide labels if needed
  *   - if (fixedHeight < MIN_HEIGHT_WITH_LABELS) hide labels
+ *   - fixedHeight sets the arc diameter (fixedHeight - 64) in BOTH modes, so
+ *     half and full circle charts show labels from the same arc size upward;
+ *     consumers must gate their draw-time label rendering on the returned
+ *     isTooSmall (not on the rendered canvas height, which is halved in half
+ *     mode)
  *
  * Step 5: Calculate actual rendered height and aspect ratio
  *   - For half circle: actualHeight = (fixedHeight - 64) / 2 + 64
@@ -306,12 +311,23 @@ export interface FixedHeightChartDimensions {
 export function calculateFixedHeightChartLayout(
   config: FixedHeightChartConfig
 ): FixedHeightChartDimensions {
-  // Step 4: Check threshold
+  const topBottomPadding = CHART_DIMENSIONS.CANVAS_PADDING * 2;
+
+  // Step 5 (early): Calculate actual rendered height (different for half mode)
+  // For half mode: show only top half of the circle, so height = diameter/2 + padding
+  // (rounded so the canvas render size stays integral). For full mode: height = fixedHeight
+  const actualHeight = config.isHalfMode
+    ? Math.round((config.fixedHeight - topBottomPadding) / 2 + topBottomPadding)
+    : config.fixedHeight;
+
+  // Step 4: Check threshold against fixedHeight, which sets the arc diameter
+  // (fixedHeight - 64) in both modes: a half donut at the same fixedHeight has
+  // the same arc size as a full donut, so labels appear from the same
+  // fixedHeight upward regardless of mode
   const isTooSmall =
     config.fixedHeight < CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS;
 
   // Step 1: Calculate chart diameter from fixed height
-  const topBottomPadding = CHART_DIMENSIONS.CANVAS_PADDING * 2;
   const chartDiameter = config.isHalfMode
     ? (config.fixedHeight - topBottomPadding) * 2 // Full circle diameter for half mode
     : config.fixedHeight - topBottomPadding; // Full circle diameter for full mode
@@ -354,13 +370,6 @@ export function calculateFixedHeightChartLayout(
       formattedLabels = layout.formattedLabels;
     }
   }
-
-  // Step 5: Calculate actual rendered height (different for half mode)
-  // For half mode: show only top half of the circle, so height = diameter/2 + padding
-  // For full mode: height = diameter + padding
-  const actualHeight = config.isHalfMode
-    ? (config.fixedHeight - topBottomPadding) / 2 + topBottomPadding // (diameter/2) + padding
-    : config.fixedHeight;
 
   // Calculate aspect ratio
   const aspectRatio = calculatedWidth / actualHeight;

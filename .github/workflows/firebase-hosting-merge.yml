@@ -39,6 +39,14 @@ jobs:
       - name: Build vue-demo
         run: cd packages/vue-demo && npm run build
 
+      # Node 24.17.0 has an HTTP keep-alive socket-reuse bug that causes
+      # firebase-tools to hit "premature close" errors against googleapis.com,
+      # leading to false-negative deploy failures. Pin to the patched 24.18.0.
+      - name: Pin Node for Firebase deploy
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24.18.0"
+
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
@@ -71,6 +79,14 @@ jobs:
         run: cd packages/openbridge-webcomponents && npm run build-storybook
         env:
           NODE_OPTIONS: --max-old-space-size=6144
+
+      # Node 24.17.0 has an HTTP keep-alive socket-reuse bug that causes
+      # firebase-tools to hit "premature close" errors against googleapis.com,
+      # leading to false-negative deploy failures. Pin to the patched 24.18.0.
+      - name: Pin Node for Firebase deploy
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24.18.0"
 
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:

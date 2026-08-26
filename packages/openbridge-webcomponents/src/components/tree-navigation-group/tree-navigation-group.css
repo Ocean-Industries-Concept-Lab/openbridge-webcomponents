@@ -1,0 +1,11 @@
+:host {
+  display: block;
+}
+
+[part="children"] {
+  display: block;
+}
+
+[part="children"][hidden] {
+  display: none;
+}

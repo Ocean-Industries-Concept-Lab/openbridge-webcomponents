@@ -7,6 +7,11 @@
   height: 0;
 }
 
+.button-wrapper {
+  width: fit-content;
+  height: fit-content;
+}
+
 .positioning-point {
   &.label-bottom {
     top: calc(var(--automation-components-button-touch-target-size) / -2);
@@ -181,6 +186,20 @@
     height: var(--automation-components-button-icon-size-flat);
     z-index: -1;
   }
+
+  &.orientation-verticalRight {
+    .icon-primary,
+    .icon-silhouette {
+      transform: rotate(90deg);
+    }
+  }
+
+  &.orientation-verticalLeft {
+    .icon-primary,
+    .icon-silhouette {
+      transform: rotate(-90deg);
+    }
+  }
 }
 
 .badge-top-right {
@@ -214,24 +233,24 @@
 }
 
 .state-closed .icon-holder {
-  border-color: var(--automation-pipe-tertiary-inverted-color);
-  background: var(--automation-pipe-primary-inverted-color);
-
-  .static & {
-    border-color: var(--automation-pipe-secondary-color);
-    background: var(--automation-pipe-primary-inverted-color);
-  }
+  border-color: var(--automation-button-off-border-color);
+  background: var(--automation-button-off-background-color);
 }
 
 .state-open .icon-holder {
-  border-color: var(--automation-pipe-tertiary-color);
-  background: var(--automation-pipe-primary-color);
+  border-color: var(--on-border-color);
+  background: var(--on-background-color);
+}
+
+.static .icon-holder {
+  border-color: var(--automation-button-static-broder-color);
+  background: var(--automation-button-static-background-color);
 }
 
 .alert-frame {
   position: absolute;
-  top: -1px;
-  right: -1px;
-  left: -1px;
-  bottom: -1px;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
 }

@@ -57,7 +57,7 @@
       .title-row,
       .meta-row {
         padding: var(
-            --global-size-spacing-list-item-menu-padding-horizonal-list-item
+            --global-size-spacing-nav-item-and-menus-padding-horizontal-list-item
           )
           0;
       }
@@ -137,7 +137,9 @@
 
   .title-row {
     display: flex;
-    gap: var(--global-size-spacing-list-item-menu-padding-horizonal-list-item);
+    gap: var(
+      --global-size-spacing-nav-item-and-menus-padding-horizontal-list-item
+    );
     justify-content: space-between;
     align-items: flex-start;
   }
@@ -186,7 +188,7 @@
     @mixin font-instrument-value-small-neutral;
     display: flex;
     flex-direction: column;
-    gap: var(--alert-components-badge-label-spacing);
+    gap: var(--ui-components-badge-label-spacing);
   }
 
   /* === Label Variants === */

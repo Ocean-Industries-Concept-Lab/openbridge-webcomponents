@@ -138,6 +138,10 @@
       gap: 8px;
       align-self: stretch;
 
+      &:not(.show-alerts) {
+        display: none;
+      }
+
       .alert-icon {
         width: 24px;
         height: 24px;

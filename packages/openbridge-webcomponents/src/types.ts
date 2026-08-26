@@ -9,7 +9,23 @@ export enum AlertType {
   Alarm = 'alarm',
   Warning = 'warning',
   Caution = 'caution',
+  LevelCritical = 'level-critical',
+  LevelHigh = 'level-high',
+  LevelMedium = 'level-medium',
+  LevelLow = 'level-low',
+  LevelDiagnostic = 'level-diagnostic',
 }
+
+export const ALERT_SEVERITY_PRIORITY = [
+  AlertType.LevelCritical,
+  AlertType.Alarm,
+  AlertType.LevelHigh,
+  AlertType.Warning,
+  AlertType.LevelMedium,
+  AlertType.Caution,
+  AlertType.LevelLow,
+  AlertType.LevelDiagnostic,
+];
 
 export enum AlertCategory {
   a = 'a',
@@ -71,11 +87,12 @@ export function isBlocked(alert: Alert) {
   return alert.blocked !== false && alert.blocked !== undefined;
 }
 
-const priorityOrder = [AlertType.Alarm, AlertType.Warning, AlertType.Caution];
-
 export function comparePriorityAlerts(a: Alert, b: Alert) {
   if (a.type !== b.type) {
-    return priorityOrder.indexOf(b.type) - priorityOrder.indexOf(a.type);
+    return (
+      ALERT_SEVERITY_PRIORITY.indexOf(b.type) -
+      ALERT_SEVERITY_PRIORITY.indexOf(a.type)
+    );
   }
 
   if (isActive(a) !== isActive(b)) {

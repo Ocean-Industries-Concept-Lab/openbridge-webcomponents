@@ -89,9 +89,13 @@ export type ObcFormItemActionChangeEvent = CustomEvent<{
  * </obc-form-item>
  * ```
  *
+ * @availableWhen itemId type in [EnabledActionFirst, EnabledActionLast]
+ * @availableWhen errorText type in [EnabledActionFirst, EnabledActionLast] && hasError==true
+ * @availableWhen statusIcon type in [FilledStatusFirst, FilledStatusLast]
  * @slot icon - Optional leading icon content.
  * @slot - Main row text or content.
- * @fires action-change {ObcFormItemActionChangeEvent} Fired when the internal checkbox state changes.
+ * @fires {ObcFormItemActionChangeEvent} action-change - Fired when the internal checkbox state changes.
+ * @beta
  */
 @customElement('obc-form-item')
 export class ObcFormItem extends LitElement {

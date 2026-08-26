@@ -2,9 +2,17 @@
   box-sizing: border-box;
 }
 
+:host {
+  overflow: hidden;
+}
+
+svg {
+  display: block;
+}
+
 .label {
   @mixin font-body;
-  font-size: calc(12px / var(--scale));
+  font-size: calc(12px / var(--scale, 1));
   fill: var(--element-neutral-color);
   dominant-baseline: central;
   text-anchor: middle;
@@ -16,6 +24,10 @@
   &.right {
     text-anchor: start;
   }
+}
+
+.label.north-marker {
+  fill: var(--element-active-inverted-color);
 }
 
 .label.inside {

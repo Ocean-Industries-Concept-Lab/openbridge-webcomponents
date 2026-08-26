@@ -1,49 +1,13 @@
-import {SVGTemplateResult, nothing, svg} from 'lit';
-import {
-  InstrumentState,
-  Priority,
-  FrameStyle,
-  BorderRadiusPosition,
-} from '../../navigation-instruments/types.js';
-import {
-  AdviceState,
-  AdviceType,
-} from '../../navigation-instruments/watch/advice.js';
-import {
-  tickmarkColor,
-  TickmarkStyle,
-} from '../../navigation-instruments/watch/tickmark.js';
-import {
-  adjustRectWidthForStroke,
-  adjustRectHeightForStroke,
-  valueToX,
-  valueToY,
-} from '../../svghelpers/stroke-aware.js';
-import {
-  SetpointVisualState,
-  SetpointColorMode,
-  drawSetpointMarker,
-  generateSetpointId,
-  getSetpointOutwardOffset,
-  computeAtSetpoint,
-  SETPOINT_ANIMATION_CSS_VAR,
-  SETPOINT_ANIMATION_DURATION_DEFAULT,
-} from '../../svghelpers/setpoint.js';
-
 /**
- * External Scale renderer (pure SVG building block).
+ * @module External Scale
  *
- * This module provides a side-aware, orientation-aware SVG “ruler/axis” renderer
- * that can be used standalone, as an overlay axis for charts, or composed inside
- * other components.
+ * # External Scale renderer (pure SVG building block)
  *
- * Unlike Lit components, this file exports **pure functions** that return
- * `SVGTemplateResult` fragments. Consumers are responsible for creating the
- * outer `<svg>` element (including `viewBox`, sizing, and `preserveAspectRatio`).
+ * This module provides a side-aware, orientation-aware SVG “ruler/axis” renderer that can be used standalone, as an overlay axis for charts, or composed inside other components.
  *
- * Note: this module also exports a few small DOM-oriented helpers used by the
- * web-component wrappers to read CSS variables (e.g. border radius) and observe
- * theme/size changes.
+ * Unlike Lit components, this file exports **pure functions** that return `SVGTemplateResult` fragments. Consumers are responsible for creating the outer `<svg>` element (including `viewBox`, sizing, and `preserveAspectRatio`).
+ *
+ * The module also exports a few small DOM helpers the web-component wrappers use to read CSS variables (border radius) and observe theme and size changes.
  *
  * ## What it renders
  * - **Bar container**: a rounded rectangle band (optional)
@@ -51,25 +15,21 @@ import {
  * - **Tickmarks**: main + primary + secondary + tertiary tick lines (optional)
  * - **Labels**: numeric labels at primary tick interval (optional)
  * - **Advice overlays**: alert/advice/caution ranges with canonical dashed bounds
- * - **Setpoint marker**: a triangular marker that flips by side and scales when
- *   “at setpoint”
+ * - **Setpoint marker**: a triangular marker that flips by side and scales when “at setpoint”
  *
  * ## Layout model
  * - `orientation`: `'vertical' | 'horizontal'` controls value→coordinate mapping
  * - `side`: where the scale attaches to the chart edge
  *   - vertical: `'left' | 'right'`
  *   - horizontal: `'top' | 'bottom'`
- * - The **chart edge is always at perpendicular coordinate `0`**.
- *   The scale expands outward into positive or negative perpendicular space
- *   depending on `side`.
+ * - The **chart edge is always at perpendicular coordinate `0`**. The scale expands outward into positive or negative perpendicular space depending on `side`.
  *
- * Use `computeExternalScaleLayout()` to compute the minimal viewBox thickness for
- * the selected bands (bar/ticks/labels).
+ * Use `computeExternalScaleLayout()` to compute the minimal viewBox thickness for the selected bands (bar/ticks/labels).
  *
  * ## Theming & responsive sizing
  * This renderer uses CSS variables directly in SVG attributes.
- * It is designed to inherit theme and sizing variables from parent containers
- * (e.g. `.obc-component-size-*` wrappers) the same way web components do.
+ *
+ * It is designed to inherit theme and sizing variables from parent containers (e.g. `.obc-component-size-*` wrappers) the same way web components do.
  *
  * Common variables involved:
  * - `--global-typography-ui-label-font-size`
@@ -77,26 +37,29 @@ import {
  * - `--instrument-components-watchface-frame-regular-border-radius`
  *
  * **Browser note (SVG geometry + CSS variables):**
- * Some browsers (notably Chrome) do not reliably resolve `var(--...)` inside SVG
- * geometry/path calculations. When you need **selective corner rounding** (which
- * requires numeric path geometry), pass a numeric pixel value via
- * `ExternalScaleConfig.borderRadius`.
- *
- * The web-component wrappers (`obc-bar-vertical` / `obc-bar-horizontal`) compute
- * this numeric value from the CSS variable
- * `--instrument-components-watchface-frame-regular-border-radius` so component-size
- * wrappers (e.g. `.obc-component-size-*`) remain the source of truth.
+ * Some browsers (notably Chrome) do not reliably resolve `var(--...)` inside SVG geometry attributes like `rx`/`ry`. The bar container and fill masks therefore provide numeric fallbacks and also set `rx`/`ry` via CSS geometry properties to allow theme overrides where supported.
  *
  * ## Usage examples
  *
  * ### Standalone usage
  * ```ts
  * import {html} from 'lit';
- * import {computeExternalScaleLayout, renderExternalScale} from './external-scale.js';
+ * import {
+ *   computeExternalScaleLayout,
+ *   renderExternalScale,
+ *   ExternalScaleOrientation,
+ *   ExternalScaleSide,
+ *   ScaleType,
+ *   FillMode,
+ *   AdvicePosition,
+ *   type ExternalScaleConfig,
+ * } from './external-scale.js';
+ * import {FrameStyle, InstrumentState, Priority} from '../../navigation-instruments/types.js';
+ * import {AdviceType} from '../../navigation-instruments/watch/advice.js';
  *
- * const config = {
- *   orientation: 'vertical',
- *   side: 'right',
+ * const config: ExternalScaleConfig = {
+ *   orientation: ExternalScaleOrientation.vertical,
+ *   side: ExternalScaleSide.right,
  *   length: 320,
  *   paddingStart: 32,
  *   paddingEnd: 32,
@@ -154,7 +117,44 @@ import {
  * For common usage, prefer the thin wrappers:
  * - `obc-bar-vertical` (sets up vertical viewBox)
  * - `obc-bar-horizontal` (sets up horizontal viewBox)
+ *
+ * Source of truth: `packages/openbridge-webcomponents/src/building-blocks/external-scale/external-scale.ts`
+ *
+ * @experimental
  */
+import {SVGTemplateResult, nothing, svg} from 'lit';
+import {
+  InstrumentState,
+  Priority,
+  FrameStyle,
+  BorderRadiusPosition,
+} from '../../navigation-instruments/types.js';
+import {
+  AdviceState,
+  AdviceType,
+} from '../../navigation-instruments/watch/advice.js';
+import {
+  tickmarkColor,
+  TickmarkStyle,
+} from '../../navigation-instruments/watch/tickmark.js';
+import {
+  adjustRectWidthForStroke,
+  adjustRectHeightForStroke,
+  valueToX,
+  valueToY,
+} from '../../svghelpers/stroke-aware.js';
+import {
+  SetpointVisualState,
+  SetpointColorMode,
+  drawSetpointMarker,
+  generateSetpointId,
+  getSetpointOutwardOffset,
+  computeAtSetpoint,
+  SETPOINT_ANIMATION_CSS_VAR,
+  SETPOINT_ANIMATION_DURATION_DEFAULT,
+  SETPOINT_HEIGHT,
+  SETPOINT_ZERO_OFFSET,
+} from '../../svghelpers/setpoint.js';
 
 /** Main axis orientation for the external scale renderer. */
 export enum ExternalScaleOrientation {
@@ -657,7 +657,34 @@ export type ExternalScaleLayoutConfig = Pick<
   | 'labelThickness'
   | 'length'
   | 'scaleType'
->;
+> & {
+  /**
+   * Position of advice overlay pills relative to the bar band. Only used when
+   * `hasAdvice` is true; defaults to `AdvicePosition.inner` if omitted.
+   */
+  advicePosition?: AdvicePosition;
+  /**
+   * Whether any advice overlays are present.
+   *
+   * Advice pills render in perpendicular space outside the bar band
+   * (8px wide, plus a 4px offset from the bar edge or tick base). When the
+   * scale/label bands don't already provide enough room, the layout reserves
+   * an extra band so the pill is not clipped by the viewBox. This also makes
+   * the reported scale thickness include the advice band, so parent charts
+   * inset correctly to keep the pill visible inside the cell.
+   */
+  hasAdvice?: boolean;
+  /**
+   * Whether a setpoint marker (original, new, or departing) is present.
+   *
+   * The setpoint marker renders in perpendicular space outside the bar band
+   * (tip at `tickBase + 4` plus a state offset of up to 8, body extending a
+   * further 21 outward). When the scale/label bands don't already provide
+   * enough room — e.g. `hasScale=false` side bars — the layout reserves an
+   * extra band so the marker is not clipped by the viewBox.
+   */
+  hasSetpoint?: boolean;
+};
 
 export interface ExternalScaleViewBox {
   x: number;
@@ -681,6 +708,12 @@ export function toExternalScaleLayoutConfig(
     labelThickness: config.labelThickness,
     length: config.length,
     scaleType: config.scaleType,
+    advicePosition: config.advicePosition,
+    hasAdvice: !!config.advices && config.advices.length > 0,
+    hasSetpoint:
+      config.setpoint !== undefined ||
+      config.newSetpoint !== undefined ||
+      config.departingNewSetpoint !== undefined,
   };
 }
 
@@ -807,7 +840,20 @@ export function computeExternalScaleLayout(
     computeExternalScaleEffectiveTickThickness(config);
   const scaleSpace = config.hasScale ? effectiveTickThickness : 0;
   const labelSpace = config.labels ? config.labelThickness : 0;
-  const thickness = barSpace + scaleSpace + labelSpace;
+
+  // Advice pills render outside the bar band. When the scale/label bands
+  // collapse (e.g. hasLabelPadding=false on the parent chart, or hasScale=false),
+  // reserve a minimum perpendicular band so the pill is not clipped. The pill
+  // is 8px wide with a 4px offset from its anchor edge, plus a small visual
+  // buffer so the pill doesn't touch the viewBox edge.
+  const adviceSpace = computeAdviceBandThickness(config);
+  const setpointSpace = computeSetpointBandThickness(config);
+  const outsideBarSpace = Math.max(
+    scaleSpace + labelSpace,
+    adviceSpace,
+    setpointSpace
+  );
+  const thickness = barSpace + outsideBarSpace;
 
   const isOutwardPositive =
     (config.orientation === 'vertical' && config.side === 'right') ||
@@ -821,6 +867,54 @@ export function computeExternalScaleLayout(
     viewBoxLength: config.length,
     viewBoxThickness: thickness,
   };
+}
+
+/**
+ * Compute the minimum perpendicular band thickness required to render advice
+ * pills without clipping. Returns 0 when no advices are present.
+ *
+ * Pill geometry (see `advicePill` / `renderAdvice`):
+ * - `inner` (default when no bar): pill at `tickBase + 4` to `tickBase + 12`
+ *   from the bar edge → needs 12px + 4px buffer = 16px outside the bar.
+ * - `outer`: pill at `barThickness + 10 + 4` to `barThickness + 10 + 12`
+ *   → needs 22px + 2px buffer = 24px outside the bar.
+ * - `center`: pill straddles the bar band; no extra perpendicular space needed.
+ *
+ * NOTE: `renderAdvice()` coerces `advicePosition` to `inner` when `hasBar=false`
+ * (no bar area to straddle/sit-outside). Mirror that coercion here so the
+ * reserved space matches the rendered geometry — otherwise `hasBar=false +
+ * advicePosition='center'` would reserve 0 while the pill renders at inner
+ * geometry and clips.
+ */
+function computeAdviceBandThickness(
+  config: Pick<
+    ExternalScaleLayoutConfig,
+    'hasAdvice' | 'advicePosition' | 'hasBar'
+  >
+): number {
+  if (!config.hasAdvice) return 0;
+  const position = config.hasBar
+    ? (config.advicePosition ?? AdvicePosition.inner)
+    : AdvicePosition.inner;
+  if (position === AdvicePosition.center) return 0;
+  if (position === AdvicePosition.outer) return 24;
+  return 16;
+}
+
+/**
+ * Perpendicular band needed to keep a setpoint marker inside the viewBox
+ * when no scale/label bands reserve the space.
+ *
+ * Worst case, measured outward from the bar edge (`tickBasePerp`):
+ * `tickGap()` + max state offset (`equalZero`, `SETPOINT_ZERO_OFFSET`) +
+ * marker body (`SETPOINT_HEIGHT`). See `renderSingleSetpoint()` for the
+ * geometry.
+ */
+export function computeSetpointBandThickness(
+  config: Pick<ExternalScaleLayoutConfig, 'hasSetpoint'>
+): number {
+  if (!config.hasSetpoint) return 0;
+  return tickGap() + SETPOINT_ZERO_OFFSET + SETPOINT_HEIGHT;
 }
 
 function isVertical(config: ExternalScaleConfig): boolean {
@@ -877,7 +971,7 @@ function calculateAtSetpoint(config: ExternalScaleConfig): boolean {
  * Note: `focus` visual state is only triggered by the `touching` property
  * (user actively adjusting via touch/drag), not by InstrumentState.
  */
-function deriveSetpointVisualState(
+export function deriveSetpointVisualState(
   config: ExternalScaleConfig
 ): SetpointVisualState {
   // Priority 1: Focus state
@@ -961,6 +1055,15 @@ function colors(config: ExternalScaleConfig): {
   markerStrokeColor: string;
   setpointColor: string;
 } {
+  // TODO(theming): extend the color resolution to support domain-specific
+  // palettes (e.g. automation medium / fuel colors used by `obc-automation-tank`'s
+  // legacy CSS bar — `--automation-medium-fuel`, `--automation-fresh-water`,
+  // etc.). Today the bar fill is locked to the instrument regular/enhanced
+  // palette; tanks rendered through this renderer therefore lose their
+  // per-`medium` coloring. A new optional `colorVariant` (or similar) on
+  // `ExternalScaleConfig`, plumbed through `obc-bar-vertical` /
+  // `obc-bar-horizontal`, would let the tank pass its medium token and
+  // restore the legacy look without forking the renderer.
   const isEnhanced = config.priority === Priority.enhanced;
   // Fill mode uses secondary color, tint mode uses tertiary color
   let barFillColor =
@@ -1404,9 +1507,8 @@ function generateBarContainer(
     let rectWidth = config.barThickness;
     let rectHeight = dLen;
 
-    // When scaleBackground=true, the bar's edge that touches the scale should NOT be
-    // adjusted inward (because it's not a true viewBox boundary - the scale will cover it).
-    // We achieve this by passing adjusted min/max that exclude the touching edge.
+    // The edge touching the scale is not adjusted inward for stroke: it
+    // isn't a true viewBox boundary, since the scale covers it.
     const isRight = config.side === 'right';
     let viewBoxMinX: number;
     let viewBoxMaxX: number;
@@ -1506,27 +1608,19 @@ function generateBarContainer(
     const h = rectHeight;
 
     let path = `M ${x + (shouldRoundTopLeft ? r : 0)} ${y}`;
-    // Top edge
     path += ` L ${x + w - (shouldRoundTopRight ? r : 0)} ${y}`;
-    // Top-right corner
     if (shouldRoundTopRight) {
       path += ` Q ${x + w} ${y} ${x + w} ${y + r}`;
     }
-    // Right edge
     path += ` L ${x + w} ${y + h - (shouldRoundBottomRight ? r : 0)}`;
-    // Bottom-right corner
     if (shouldRoundBottomRight) {
       path += ` Q ${x + w} ${y + h} ${x + w - r} ${y + h}`;
     }
-    // Bottom edge
     path += ` L ${x + (shouldRoundBottomLeft ? r : 0)} ${y + h}`;
-    // Bottom-left corner
     if (shouldRoundBottomLeft) {
       path += ` Q ${x} ${y + h} ${x} ${y + h - r}`;
     }
-    // Left edge
     path += ` L ${x} ${y + (shouldRoundTopLeft ? r : 0)}`;
-    // Top-left corner
     if (shouldRoundTopLeft) {
       path += ` Q ${x} ${y} ${x + r} ${y}`;
     }
@@ -1583,8 +1677,6 @@ function generateBarContainer(
   let rectWidth = dLen;
   let rectHeight = config.barThickness;
 
-  // When scaleBackground=true, the bar's edge that touches the scale should NOT be
-  // adjusted inward (because it's not a true viewBox boundary - the scale will cover it).
   const isBottom = config.side === 'bottom';
   let viewBoxMinY: number;
   let viewBoxMaxY: number;
@@ -1686,27 +1778,19 @@ function generateBarContainer(
   const h = rectHeight;
 
   let path = `M ${x + (shouldRoundTopLeft ? r : 0)} ${y}`;
-  // Top edge
   path += ` L ${x + w - (shouldRoundTopRight ? r : 0)} ${y}`;
-  // Top-right corner
   if (shouldRoundTopRight) {
     path += ` Q ${x + w} ${y} ${x + w} ${y + r}`;
   }
-  // Right edge
   path += ` L ${x + w} ${y + h - (shouldRoundBottomRight ? r : 0)}`;
-  // Bottom-right corner
   if (shouldRoundBottomRight) {
     path += ` Q ${x + w} ${y + h} ${x + w - r} ${y + h}`;
   }
-  // Bottom edge
   path += ` L ${x + (shouldRoundBottomLeft ? r : 0)} ${y + h}`;
-  // Bottom-left corner
   if (shouldRoundBottomLeft) {
     path += ` Q ${x} ${y + h} ${x} ${y + h - r}`;
   }
-  // Left edge
   path += ` L ${x} ${y + (shouldRoundTopLeft ? r : 0)}`;
-  // Top-left corner
   if (shouldRoundTopLeft) {
     path += ` Q ${x} ${y} ${x + r} ${y}`;
   }
@@ -2043,8 +2127,6 @@ function generateScaleBackground(
     let rectWidth = backgroundThickness;
     let rectHeight = dLen;
 
-    // When hasBar=true, the scale's inner edge (touching the bar) should NOT be
-    // adjusted inward (because it's not a true viewBox boundary - the bar covers it).
     const isRight = config.side === 'right';
     let viewBoxMinX: number;
     let viewBoxMaxX: number;
@@ -2094,27 +2176,19 @@ function generateScaleBackground(
 
     // Path construction: start top-left, go clockwise
     let path = `M ${x + (shouldRoundTopLeft ? r : 0)} ${y}`;
-    // Top edge
     path += ` L ${x + w - (shouldRoundTopRight ? r : 0)} ${y}`;
-    // Top-right corner
     if (shouldRoundTopRight) {
       path += ` Q ${x + w} ${y} ${x + w} ${y + r}`;
     }
-    // Right edge
     path += ` L ${x + w} ${y + h - (shouldRoundBottomRight ? r : 0)}`;
-    // Bottom-right corner
     if (shouldRoundBottomRight) {
       path += ` Q ${x + w} ${y + h} ${x + w - r} ${y + h}`;
     }
-    // Bottom edge
     path += ` L ${x + (shouldRoundBottomLeft ? r : 0)} ${y + h}`;
-    // Bottom-left corner
     if (shouldRoundBottomLeft) {
       path += ` Q ${x} ${y + h} ${x} ${y + h - r}`;
     }
-    // Left edge
     path += ` L ${x} ${y + (shouldRoundTopLeft ? r : 0)}`;
-    // Top-left corner
     if (shouldRoundTopLeft) {
       path += ` Q ${x} ${y} ${x + r} ${y}`;
     }
@@ -2143,8 +2217,6 @@ function generateScaleBackground(
   let rectWidth = dLen;
   let rectHeight = backgroundThickness;
 
-  // When hasBar=true, the scale's inner edge (touching the bar) should NOT be
-  // adjusted inward (because it's not a true viewBox boundary - the bar covers it).
   const isBottom = config.side === 'bottom';
   let viewBoxMinY: number;
   let viewBoxMaxY: number;
@@ -2195,27 +2267,19 @@ function generateScaleBackground(
 
   // Path construction: start top-left, go clockwise
   let path = `M ${x + (shouldRoundTopLeft ? r : 0)} ${y}`;
-  // Top edge
   path += ` L ${x + w - (shouldRoundTopRight ? r : 0)} ${y}`;
-  // Top-right corner
   if (shouldRoundTopRight) {
     path += ` Q ${x + w} ${y} ${x + w} ${y + r}`;
   }
-  // Right edge
   path += ` L ${x + w} ${y + h - (shouldRoundBottomRight ? r : 0)}`;
-  // Bottom-right corner
   if (shouldRoundBottomRight) {
     path += ` Q ${x + w} ${y + h} ${x + w - r} ${y + h}`;
   }
-  // Bottom edge
   path += ` L ${x + (shouldRoundBottomLeft ? r : 0)} ${y + h}`;
-  // Bottom-left corner
   if (shouldRoundBottomLeft) {
     path += ` Q ${x} ${y + h} ${x} ${y + h - r}`;
   }
-  // Left edge
   path += ` L ${x} ${y + (shouldRoundTopLeft ? r : 0)}`;
-  // Top-left corner
   if (shouldRoundTopLeft) {
     path += ` Q ${x} ${y} ${x + r} ${y}`;
   }
@@ -2446,7 +2510,6 @@ function generateCurrentValueDot(
     return nothing;
   }
 
-  // Dot dimensions
   const dotDiameter = 12; // Inner fill diameter
   const strokeWidth = 2;
   // Total visual size: stroke is centered on path, so adds strokeWidth/2 to each side
@@ -2474,7 +2537,6 @@ function generateCurrentValueDot(
     ? base + visualRadius
     : base - visualRadius;
 
-  // Colors
   const c = colors(config);
   // Use secondary color for fill (same as markerFillColor from colors function)
   const fillColor = c.markerFillColor;

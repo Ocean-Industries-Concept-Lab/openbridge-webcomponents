@@ -4,6 +4,12 @@ import compentStyle from './navigation-item-group.css?inline';
 import {ObcNavigationMenuVariant} from '../navigation-menu/navigation-menu.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
+import '../tree-navigation-item/tree-navigation-item.js';
+import {
+  TreeBranchType,
+  TreeTerminalType,
+  type TreeNavigationItemAlerts,
+} from '../tree-navigation-item/tree-navigation-item.js';
 
 /**
  * `<obc-navigation-item-group>` – A collapsible navigation group component for organizing related navigation items under a single expandable label.
@@ -52,47 +58,72 @@ import {customElement} from '../../decorator.js';
  * </obc-navigation-item-group>
  * ```
  *
+ * @property label - The label text displayed for the navigation group.
+ * @property href - Optional URL to navigate to when the group label is clicked.
+ *   If set, clicking the group label will navigate to this URL.
+ * @property checked - Whether the group is currently checked/selected.
+ *   Use to highlight the group as active.
+ * @property variant - Visual variant of the navigation group.
+ *   Accepts values from `ObcNavigationMenuVariant` (e.g., 'full', 'compact').
+ *   Controls the styling and layout of the group and its flyout.
+ * @property hug - If true, the flyout panel appears tightly anchored to the group label with compact styling.
+ * @property treeMode - Set by `obc-navigation-menu` in its Tree variant — renders the group as a tree row.
+ * @property treeBranches - Indentation columns for tree mode, assigned by `obc-navigation-menu`.
+ * @property terminalType - Terminal type for the group header in the Tree variant — one of `regular`
+ *   (default), `aggregated-header`, or `group-header`. No effect in flat variants.
+ * @property defaultOpen - Whether the group starts expanded. Useful for trees that open by default.
  * @slot icon - Custom icon displayed next to the group label.
  * @slot - Default slot for flyout content (typically navigation items).
- * @fires open {CustomEvent<void>} When the group is expanded and the flyout is shown.
+ * @fires {CustomEvent<void>} open - When the group is expanded and the flyout is shown.
  */
 @customElement('obc-navigation-item-group')
 export class ObcNavigationItemGroup extends LitElement {
-  /**
-   * The label text displayed for the navigation group.
-   */
   @property({type: String}) label = 'Label';
 
-  /**
-   * Optional URL to navigate to when the group label is clicked.
-   * If set, clicking the group label will navigate to this URL.
-   */
   @property({type: String}) href: string | undefined;
 
-  /**
-   * Whether the group is currently checked/selected.
-   * Use to highlight the group as active.
-   */
   @property({type: Boolean}) checked = false;
 
-  /**
-   * Visual variant of the navigation group.
-   * Accepts values from `ObcNavigationMenuVariant` (e.g., 'full', 'compact').
-   * Controls the styling and layout of the group and its flyout.
-   */
   @property({type: String}) variant: ObcNavigationMenuVariant =
     ObcNavigationMenuVariant.Full;
 
-  /**
-   * If true, the flyout panel appears tightly anchored to the group label with compact styling.
-   */
   @property({type: Boolean}) hug = false;
 
   @property({type: Boolean}) hasIcon = false;
 
+  @property({type: Boolean}) treeMode = false;
+
+  @property({type: Array}) treeBranches: TreeBranchType[] = [];
+
+  @property({type: String}) terminalType: string = TreeTerminalType.regular;
+
+  /**
+   * Per-severity alert counts shown as trailing badge(s) on the group header
+   * (Tree variant only). Forwarded to the underlying `obc-tree-navigation-item`;
+   * typically `{combine: true, ...}` so the header totals the rows beneath it.
+   * See {@link TreeNavigationItemAlerts}.
+   */
+  @property({type: Object}) alerts?: TreeNavigationItemAlerts;
+
+  @property({type: Boolean}) defaultOpen = false;
+
   @state() private openContainer = false;
 
-  @query('obc-navigation-item') private groupItem?: HTMLElement;
+  // Flat mode renders an `obc-navigation-item` header; tree mode renders an
+  // `obc-tree-navigation-item`. Match whichever is present so `focus()` works in both.
+  @query('obc-navigation-item, obc-tree-navigation-item')
+  private groupItem?: HTMLElement;
+
+  override firstUpdated() {
+    if (this.defaultOpen) {
+      this.openContainer = true;
+    }
+  }
+
+  /** Whether the group is currently open (its children are disclosed). */
+  public get expanded(): boolean {
+    return this.openContainer;
+  }
 
   private onClickGroup() {
     if (this.openContainer) {
@@ -123,6 +154,30 @@ export class ObcNavigationItemGroup extends LitElement {
   }
 
   override render() {
+    if (this.treeMode) {
+      return html`
+        <obc-tree-navigation-item
+          part="header"
+          .label=${this.label}
+          .branches=${this.treeBranches}
+          expandable
+          ?expanded=${this.openContainer}
+          ?checked=${this.checked}
+          .hasLeadingIcon=${this.hasIcon}
+          .terminalType=${this.terminalType}
+          .alerts=${this.expanded ? undefined : this.alerts}
+          @expand-toggle=${this.onClickGroup}
+        >
+          ${this.hasIcon
+            ? html`<slot name="icon" slot="icon"></slot>`
+            : nothing}
+        </obc-tree-navigation-item>
+        <div part="children" role="group" ?hidden=${!this.openContainer}>
+          <slot></slot>
+        </div>
+      `;
+    }
+
     return html`
       <obc-navigation-item
         @click=${this.onClickGroup}

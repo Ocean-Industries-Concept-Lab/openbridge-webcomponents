@@ -1,4 +1,5 @@
 @import "palettes/variables.css";
+@import "palettes/manual.css";
 @import "components/radio/radio.css";
 
 html {

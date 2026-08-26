@@ -56,6 +56,10 @@ const meta: Meta<typeof ObcCompassFlat> = {
     },
     rotMaxValue: {control: {type: 'range', min: 1, max: 60, step: 1}},
     rotArcExtent: {control: {type: 'range', min: 10, max: 180, step: 5}},
+    hasReadout: {control: 'boolean'},
+    label: {control: 'text'},
+    unit: {control: 'text'},
+    fractionDigits: {control: 'number'},
   },
   decorators: [widthDecorator],
 } satisfies Meta<ObcCompassFlat>;
@@ -64,6 +68,13 @@ export default meta;
 type Story = StoryObj<ObcCompassFlat>;
 
 export const Primary: Story = {};
+
+export const WithReadout: Story = {
+  tags: ['6.1'],
+  args: {
+    hasReadout: true,
+  },
+};
 
 export const WithFOVIndicator: Story = {
   args: {

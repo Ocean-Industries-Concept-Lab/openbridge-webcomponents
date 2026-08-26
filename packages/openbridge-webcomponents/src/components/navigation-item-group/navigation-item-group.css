@@ -100,3 +100,11 @@
   display: flex;
   flex-direction: column;
 }
+
+[part="children"] {
+  display: block;
+}
+
+[part="children"][hidden] {
+  display: none;
+}

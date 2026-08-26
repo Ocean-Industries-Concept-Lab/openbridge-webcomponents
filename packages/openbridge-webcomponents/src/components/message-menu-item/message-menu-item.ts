@@ -37,6 +37,7 @@ export enum ObcMessageMenuItemSize {
  *
  * - **Actions:**
  *   - Supports up to two action buttons via `primaryActionLabel` and `secondaryActionLabel`.
+ *   - Each action can be independently disabled by setting `enablePrimaryAction` or `enableSecondaryAction` to `false`.
  *   - In vertical layout, action buttons expand to full width.
  *
  * - **Timestamp:**
@@ -52,6 +53,7 @@ export enum ObcMessageMenuItemSize {
  * - Use `stackVertical=true` when actions need more prominence or when space is narrow.
  * - Enable `enhancedIcon` to highlight important or priority messages.
  * - Use `isShelved` to indicate messages that have been temporarily set aside.
+ * - Set `enablePrimaryAction` / `enableSecondaryAction` to `false` when an action is temporarily unavailable (e.g. awaiting a precondition) rather than removing the button.
  *
  * ## Slots
  *
@@ -108,15 +110,18 @@ export enum ObcMessageMenuItemSize {
  * </obc-message-menu-item>
  * ```
  *
+ * @availableWhen primaryActionLabel hasActionLabelSlot==false
+ * @availableWhen hasTrailingIcon stackVertical==false
  * @slot title - Message title (shown when `hasTitleSlot` is true).
  * @slot description - Message description (shown when `hasDescriptionSlot` is true).
  * @slot action-label - Primary action button label (shown when `hasActionLabelSlot` is true).
  * @slot primary-icon - Main icon representing the message type or status (shown when `hasPrimaryIcon` is true).
  * @slot secondary-icon - Additional icon for secondary status/context (shown when `hasSecondaryIcon` is true).
  * @slot trailing-icon - Icon after action buttons, horizontal layout only (shown when `hasTrailingIcon` is true).
- * @fires message-click {CustomEvent<{open: boolean}>} Fired when the message item is clicked.
- * @fires primary-action-click {CustomEvent<void>} Fired when the primary action button is clicked.
- * @fires secondary-action-click {CustomEvent<void>} Fired when the secondary action button is clicked.
+ * @fires {CustomEvent<{open: boolean}>} message-click - Fired when the message item is clicked.
+ * @fires {CustomEvent<void>} primary-action-click - Fired when the primary action button is clicked.
+ * @fires {CustomEvent<void>} secondary-action-click - Fired when the secondary action button is clicked.
+ * @beta
  */
 @customElement('obc-message-menu-item')
 export class ObcMessageMenuItem extends LitElement {
@@ -134,6 +139,8 @@ export class ObcMessageMenuItem extends LitElement {
   @property({type: String}) time = '';
   @property({type: String}) primaryActionLabel = '';
   @property({type: String}) secondaryActionLabel = '';
+  @property({type: Boolean, attribute: false}) enablePrimaryAction = true;
+  @property({type: Boolean, attribute: false}) enableSecondaryAction = true;
 
   // Visibility properties for icons (slots)
   @property({type: Boolean}) hasPrimaryIcon = false;
@@ -281,6 +288,7 @@ export class ObcMessageMenuItem extends LitElement {
                     variant="normal"
                     .fullWidth=${this.isVertical}
                     @click=${this.handleSecondaryActionClick}
+                    ?disabled=${!this.enableSecondaryAction}
                   >
                     ${this.secondaryActionLabel}
                   </obc-button>`
@@ -290,6 +298,7 @@ export class ObcMessageMenuItem extends LitElement {
                     variant="normal"
                     .fullWidth=${this.isVertical}
                     @click=${this.handlePrimaryActionClick}
+                    ?disabled=${!this.enablePrimaryAction}
                   >
                     ${this.hasActionLabelSlot
                       ? html`<slot name="action-label"></slot>`

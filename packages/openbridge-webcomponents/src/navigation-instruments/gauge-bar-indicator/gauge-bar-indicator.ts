@@ -36,6 +36,7 @@ function clamp(value: number, min: number, max: number): number {
  * Use when the UI needs a compact “level/progress” cue next to other indicators without labels,
  * tickmarks, or scale context. Use `obc-gauge-vertical` / `obc-gauge-horizontal` when the full
  * gauge scale and additional overlays are required.
+ * @stable
  */
 @customElement('obc-gauge-bar-indicator')
 export class ObcGaugeBarIndicator extends LitElement {

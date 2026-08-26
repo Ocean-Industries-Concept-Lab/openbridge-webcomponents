@@ -53,8 +53,7 @@ import {
  *
  * | Slot Name       | Renders When...               | Purpose                                                      |
  * |-----------------|------------------------------|--------------------------------------------------------------|
- * | primary-icon    | Always (all types)           | Main icon representing the notification category.            |
- * | secondary-icon  | type="application" only      | Additional icon for application-type notifications.          |
+ * | primary-icon    | type="application" only      | Custom main icon (the built-in notification icon is used otherwise). |
  * | title           | Always                       | Title or heading of the notification.                        |
  * | description     | Always                       | Detailed message text.                                       |
  * | time            | hasTimestamp is true         | Timestamp label (e.g., "09:12:46").                          |
@@ -83,17 +82,26 @@ import {
  * </obc-notification-floating-item>
  * ```
  *
- * @slot primary-icon - Main icon representing the notification category.
- * @slot secondary-icon - Additional icon for application-type notifications.
+ * @property hasTimestamp - If true, displays a timestamp label (e.g., "09:12:46") in the notification.
+ *   Default is false.
+ * @property hasDay - If true (and `hasTimestamp` is also true), displays a day label (e.g., "Yesterday") in the notification.
+ *   Default is false.
+ * @property action - If true, displays a primary action button (e.g., "Close").
+ *   Default is false.
+ * @property action2 - If true, displays a secondary action button (e.g., "Undo").
+ *   Only available if `action` is also true.
+ *   Default is false.
+ * @slot primary-icon - Custom main icon, projected into the child only when `type="application"` (the built-in notification icon is used otherwise).
  * @slot title - Title or heading of the notification.
  * @slot description - Detailed message text.
  * @slot time - Timestamp label (e.g., "09:12:46").
  * @slot day - Day label (e.g., "Yesterday").
  * @slot action - Label/content for the primary action button.
  * @slot action2 - Label/content for the secondary action button.
- * @fires action-click {CustomEvent<void>} When the primary action button is clicked.
- * @fires action2-click {CustomEvent<void>} When the secondary action button is clicked.
- * @fires dismiss-click {CustomEvent<void>} When the notification is dismissed.
+ * @fires {CustomEvent<void>} action-click - When the primary action button is clicked.
+ * @fires {CustomEvent<void>} action2-click - When the secondary action button is clicked.
+ * @fires {CustomEvent<void>} dismiss-click - When the notification is dismissed.
+ * @beta
  */
 @customElement('obc-notification-floating-item')
 export class ObcNotificationFloatingItem extends LitElement {
@@ -113,29 +121,12 @@ export class ObcNotificationFloatingItem extends LitElement {
    */
   @property({type: String}) direction = ObcFloatingItemDirection.horizontal;
 
-  /**
-   * If true, displays a timestamp label (e.g., "09:12:46") in the notification.
-   * Default is false.
-   */
   @property({type: Boolean}) hasTimestamp = false;
 
-  /**
-   * If true (and `hasTimestamp` is also true), displays a day label (e.g., "Yesterday") in the notification.
-   * Default is false.
-   */
   @property({type: Boolean}) hasDay = false;
 
-  /**
-   * If true, displays a primary action button (e.g., "Close").
-   * Default is false.
-   */
   @property({type: Boolean}) action = false;
 
-  /**
-   * If true, displays a secondary action button (e.g., "Undo").
-   * Only available if `action` is also true.
-   * Default is false.
-   */
   @property({type: Boolean}) action2 = false;
 
   /**
