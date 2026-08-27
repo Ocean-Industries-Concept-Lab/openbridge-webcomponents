@@ -18,6 +18,7 @@ Choose the correct base class when creating a new automation device:
 | Motorized device (on + speed) | `ObcAbstractAutomationButtonMotorized`       | `on`, `speed` + `speedUnit` (default `%`) + `speedMaxDigits` (default 3); `speedInPercent` is deprecated |
 | Binary on/off device          | `ObcAbstractAutomationButtonSquared`         | `on`                                                                                                     |
 | Analog device with value      | `ObcAbstractAutomationButton` + custom logic | `open`, `value` (0–100)                                                                                  |
+| HVAC tile (specialty tank)    | `ObcAbstractSpecialtyTank`                   | `medium`, `static`, `showIcon`, `tag`; tank-style `positioning`, `clickable`, `activated`, badges, alert |
 | Pure display (no button)      | `LitElement` directly                        | N/A                                                                                                      |
 
 All button-based components share `ObcAbstractAutomationButton` as root, which provides: positioning, readout stacks, badges, alert frames, tags, and label direction.
@@ -92,6 +93,15 @@ Analog valves render inline dynamic SVG (not icon swapping):
 - Handle rotation: `-(1 - value / 100) * 90` degrees
 - Fill visualization uses clipPath that extends based on value percentage
 - Use CSS variables for stroke/fill colors, not hard-coded values
+
+## Specialty tanks (HVAC tiles)
+
+`obc-heat-pump`, `obc-hydraulic-separator` and `obc-heat-exchanger` extend `ObcAbstractSpecialtyTank` (`src/automation/specialty-tank/`). Each subclass supplies four getters — `equipmentIcon`, `equipmentName`, `frame` (`rounded` box or `pressurized` silhouette with 8px domed caps) and `splitMode` (`vertical`, `horizontal`, `diagonal`) — and its own `:host` footprint CSS (152×96 for the heat pump, 56×142 for the other two).
+
+- **The shell is the compact tank's.** Halo with the state-container padding, badge row, tank frame, tag; empty badge and tag cells collapse via `hidden` so the frame absorbs the space. `positioning` (`TankPositioning`, shared with the tank through `automation-tank/tank-positioning.ts`), `clickable`, `activated`, `static`, the four badge enums and the alert-frame API behave exactly as on `obc-automation-tank`, including the three root shapes (`<button>`, `<div>`, `<div role="img">`).
+- **`medium` mirrors the Figma `has Medium` property** — `regular` is one grey area, `graphic` two grey halves, `medium` hot/cold halves; the fourth value, Static, is the `static` property. The "divider" is a 4px gap between two bordered halves, not a painted bar. Colours: `--instrument-frame-secondary-color` / `--border-outline-color` when grey, `--base-red-200` + `--base-red-300` and `--base-blue-200` + `--base-blue-300` when medium.
+- **The diagonal split is one unit-viewBox SVG** with `preserveAspectRatio="none"` and non-scaling strokes, so borders and the gap keep their pixel widths at every aspect ratio. Keep it that way — a stretched viewBox with scaling strokes distorts them.
+- **Stories share `specialty-tank-story-meta.ts`**; add a story there so all three tiles get it.
 
 ## Storybook Conventions
 
