@@ -76,14 +76,16 @@ export type AutomationButtonReadoutStack =
   | AutomationButtonReadoutStackSetpoint;
 
 /**
+ * A value row with `icon: 'slot'` projects its icon from the host slot named
+ * by its `slotName` — a dynamic slot name, so it carries no `@slot` tag (the
+ * wrapper generator needs literal names).
+ *
  * @property readouts - Rows rendered top-to-bottom: `value` (padded digits, unit,
  *   optional direction icon), `state-on`/`state-off`, `button`, and `setpoint`
  *   (shared setpoint glyph + padded digits).
  * @property tag - Identifier line (e.g. '#0001'); `null` hides it.
  * @property size - Typography tier of the rows (small / regular / enhanced).
  * @property idTagOrientation - Whether the tag renders above or below the rows.
- * @slot <slotName> - A value row with `icon: 'slot'` projects its icon from the
- *   host slot named by its `slotName`.
  * @experimental
  */
 @customElement('obc-automation-button-readout-stack')
