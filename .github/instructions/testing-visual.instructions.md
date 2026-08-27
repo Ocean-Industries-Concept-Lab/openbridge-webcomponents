@@ -173,3 +173,4 @@ re-run scoped to the single component rather than retrying the whole suite.
 ## Open
 
 - `update-snapshots.yml` fails inside its Docker image before writing anything, and triggers on any PR comment containing its command (#1179).
+- Element-cropped story screenshots (`npm run screenshots`, opt-in through `VITE_STORYBOOK_TAKE_SCREENSHOT`, sized from the `@ignition-base-*` tags) are in draft #731; until it lands, crop the 1280×720 baseline by hand as above.
