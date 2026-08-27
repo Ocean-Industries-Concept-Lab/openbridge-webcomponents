@@ -240,3 +240,136 @@ function textSvg(
   const textY = -Math.cos(rad) * (textRadius + yOffset);
   return svg`<text x=${textX} y=${textY} class="label ${positionClass} ${inside ? 'inside' : ''}">${text}</text>`;
 }
+
+export interface IntervalTickmarkOptions {
+  minValue: number;
+  maxValue: number;
+  /** Value→angle mapping (degrees, 0° = 12 o'clock). */
+  mapAngle: (value: number) => number;
+  primaryInterval?: number;
+  secondaryInterval?: number;
+  tertiaryInterval?: number;
+  /** Label the primary-interval ticks and the min/max ends. */
+  showLabels: boolean;
+  /** Keep interval ticks unlabeled even with `showLabels` (end labels still apply). */
+  suppressIntervalLabels?: boolean;
+  /** Mark zero when the range spans it: `main` on a bipolar range, `textOnly` at a range end. */
+  zeroTick?: boolean;
+  /** Skip the max end label (a full circle's max coincides with its min). */
+  suppressMaxEndLabel?: boolean;
+}
+
+/** Intervals that would emit more ticks than this are ignored (runaway guard). */
+export const MAX_INTERVAL_TICKMARKS = 1000;
+
+const TICKMARK_TYPE_RANK: Record<TickmarkType, number> = {
+  [TickmarkType.zeroLineThick]: 6,
+  [TickmarkType.zeroLine]: 5,
+  [TickmarkType.main]: 4,
+  [TickmarkType.primary]: 3,
+  [TickmarkType.secondary]: 2,
+  [TickmarkType.tertiary]: 1,
+  [TickmarkType.textOnly]: 0,
+};
+
+export function strongerTickmarkType(
+  existing: TickmarkType,
+  candidate: TickmarkType
+): TickmarkType {
+  return TICKMARK_TYPE_RANK[candidate] > TICKMARK_TYPE_RANK[existing]
+    ? candidate
+    : existing;
+}
+
+/**
+ * Value-interval tick ladder shared by the interval-configured gauges
+ * (instrument-radial, gauge-proportional, …): primary/secondary/tertiary
+ * ladders deduplicated by value, optional zero tick and min/max end labels,
+ * sorted by angle.
+ */
+export function buildIntervalTickmarks(
+  options: IntervalTickmarkOptions
+): Tickmark[] {
+  const {minValue, maxValue, mapAngle, showLabels} = options;
+  const tickmarksByValue = new Map<number, Tickmark>();
+  const normalizeValue = (value: number) =>
+    Math.abs(value) < 1e-9 ? 0 : Number(value.toFixed(6));
+
+  const upsertTickmark = (value: number, type: TickmarkType, text?: string) => {
+    if (!Number.isFinite(value) || value < minValue || value > maxValue) {
+      return;
+    }
+    const normalizedValue = normalizeValue(value);
+    const existing = tickmarksByValue.get(normalizedValue);
+    if (existing) {
+      existing.type = strongerTickmarkType(existing.type, type);
+      if (text !== undefined) {
+        existing.text = text;
+      }
+      return;
+    }
+    tickmarksByValue.set(normalizedValue, {
+      angle: mapAngle(normalizedValue),
+      type,
+      text,
+    });
+  };
+
+  const addTickmarksAtInterval = (
+    interval: number | undefined,
+    type: TickmarkType,
+    withLabels = false
+  ) => {
+    if (
+      interval === undefined ||
+      interval <= 0 ||
+      !Number.isFinite(interval) ||
+      (maxValue - minValue) / interval > MAX_INTERVAL_TICKMARKS
+    ) {
+      return;
+    }
+    const epsilon = Math.abs(interval) * 1e-6;
+    const startValue = Math.ceil((minValue - epsilon) / interval) * interval;
+    for (
+      let value = startValue;
+      value < maxValue - epsilon;
+      value += interval
+    ) {
+      const normalizedValue = normalizeValue(value);
+      if (
+        normalizedValue <= minValue + epsilon ||
+        normalizedValue >= maxValue - epsilon
+      ) {
+        continue;
+      }
+      upsertTickmark(
+        normalizedValue,
+        type,
+        withLabels && showLabels && !options.suppressIntervalLabels
+          ? normalizedValue.toString()
+          : undefined
+      );
+    }
+  };
+
+  addTickmarksAtInterval(options.primaryInterval, TickmarkType.primary, true);
+  addTickmarksAtInterval(options.secondaryInterval, TickmarkType.secondary);
+  addTickmarksAtInterval(options.tertiaryInterval, TickmarkType.tertiary);
+
+  if (options.zeroTick && minValue <= 0 && maxValue >= 0) {
+    upsertTickmark(
+      0,
+      minValue < 0 ? TickmarkType.main : TickmarkType.textOnly,
+      showLabels ? '0' : undefined
+    );
+  }
+
+  if (showLabels) {
+    upsertTickmark(minValue, TickmarkType.textOnly, minValue.toString());
+    if (!options.suppressMaxEndLabel) {
+      upsertTickmark(maxValue, TickmarkType.textOnly, maxValue.toString());
+    }
+  }
+
+  return [...tickmarksByValue.values()].sort((a, b) => a.angle - b.angle);
+}
