@@ -33,6 +33,8 @@ globs:
   - packages/openbridge-webcomponents/src/navigation-instruments/velocity-projection-plot/**
   - packages/openbridge-webcomponents/src/navigation-instruments/wind-propulsion/**
   - packages/openbridge-webcomponents/src/automation/gauge-valve/**
+  - packages/openbridge-webcomponents/src/automation/gauge-generator/**
+  - packages/openbridge-webcomponents/src/automation/gauge-motors-and-pumps/**
 ---
 
 # Watch & Radial Instruments

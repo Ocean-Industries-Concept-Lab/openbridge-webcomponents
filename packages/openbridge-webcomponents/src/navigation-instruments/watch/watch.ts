@@ -915,8 +915,11 @@ export class ObcWatch extends LitElement {
                         ? PRIMARY_SUBBAND_INNER_RADIUS
                         : (bar.innerRadius ?? RING3_RADIUS)
                     ),
-                    roundOutsideCut: area.roundOutsideCut,
-                    roundInsideCut: area.roundInsideCut,
+                    // splitBandTracks always rounds the lane cuts, so the
+                    // split mask must too — else a bar could paint into the
+                    // arch fillets of an area with square cut flags.
+                    roundOutsideCut: this.splitBand || area.roundOutsideCut,
+                    roundInsideCut: this.splitBand || area.roundInsideCut,
                     roundRadius: this.splitBand ? undefined : area.roundRadius,
                   })} fill="white" stroke="white" stroke-width="1" vector-effect="non-scaling-stroke" />`
               )}

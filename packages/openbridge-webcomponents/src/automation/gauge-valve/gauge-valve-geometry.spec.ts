@@ -17,7 +17,7 @@ describe('clampPercent', () => {
     expect(clampPercent(150)).toBe(100);
     expect(clampPercent(42)).toBe(42);
   });
-  it('treats non-finite as 0', () => {
+  it('treats NaN as 0 and clamps infinite values', () => {
     expect(clampPercent(NaN)).toBe(0);
     expect(clampPercent(Infinity)).toBe(100);
   });
