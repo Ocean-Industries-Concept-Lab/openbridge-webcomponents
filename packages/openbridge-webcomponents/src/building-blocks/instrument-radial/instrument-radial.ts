@@ -9,7 +9,7 @@ import {
 } from '../../navigation-instruments/watch/advice.js';
 import {WatchCircleType} from '../../navigation-instruments/watch/watch.js';
 import {Tickmark} from '../../navigation-instruments/watch/tickmark.js';
-import {TickmarkType} from '../../navigation-instruments/watch/tickmark.js';
+import {buildIntervalTickmarks} from '../../navigation-instruments/watch/tickmark.js';
 import {TickmarkStyle} from '../../navigation-instruments/watch/tickmark.js';
 import {InstrumentState, Priority} from '../../navigation-instruments/types.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
@@ -52,27 +52,6 @@ const NEEDLE_TIP_RADIUS = 160;
 const NEEDLE_TIP_GAP = 5; // tip stops this far short of the scale
 const NEEDLE_WIDTH = 8;
 const NEEDLE_HUB_RADIUS = 16;
-
-function rangeIncludesZero(minValue: number, maxValue: number): boolean {
-  return minValue <= 0 && maxValue >= 0;
-}
-
-function strongerTickmarkType(
-  existing: TickmarkType,
-  candidate: TickmarkType
-): TickmarkType {
-  const priority: Record<TickmarkType, number> = {
-    [TickmarkType.zeroLineThick]: 6,
-    [TickmarkType.zeroLine]: 5,
-    [TickmarkType.main]: 4,
-    [TickmarkType.primary]: 3,
-    [TickmarkType.secondary]: 2,
-    [TickmarkType.tertiary]: 1,
-    [TickmarkType.textOnly]: 0,
-  };
-
-  return priority[candidate] > priority[existing] ? candidate : existing;
-}
 
 interface Clips {
   top: number;
@@ -471,114 +450,16 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
   }
 
   get tickmarks(): Tickmark[] {
-    const tickmarksByValue = new Map<number, Tickmark>();
-    const normalizeValue = (value: number) =>
-      Math.abs(value) < 1e-9 ? 0 : Number(value.toFixed(6));
-
-    const upsertTickmark = (
-      value: number,
-      type: TickmarkType,
-      text?: string
-    ) => {
-      if (
-        !Number.isFinite(value) ||
-        value < this.minValue ||
-        value > this.maxValue
-      ) {
-        return;
-      }
-
-      const normalizedValue = normalizeValue(value);
-      const existing = tickmarksByValue.get(normalizedValue);
-      if (existing) {
-        existing.type = strongerTickmarkType(existing.type, type);
-        if (text !== undefined) {
-          existing.text = text;
-        }
-        return;
-      }
-
-      tickmarksByValue.set(normalizedValue, {
-        angle: this.mapAngle(normalizedValue),
-        type,
-        text,
-      });
-    };
-
-    const addTickmarksAtInterval = (
-      interval: number | undefined,
-      type: TickmarkType,
-      withLabels = false
-    ) => {
-      if (
-        interval === undefined ||
-        interval <= 0 ||
-        !Number.isFinite(interval)
-      ) {
-        return;
-      }
-
-      const epsilon = Math.abs(interval) * 1e-6;
-      const startValue =
-        Math.ceil((this.minValue - epsilon) / interval) * interval;
-
-      for (
-        let value = startValue;
-        value < this.maxValue - epsilon;
-        value += interval
-      ) {
-        const normalizedValue = normalizeValue(value);
-        if (
-          normalizedValue <= this.minValue + epsilon ||
-          normalizedValue >= this.maxValue - epsilon
-        ) {
-          continue;
-        }
-
-        upsertTickmark(
-          normalizedValue,
-          type,
-          withLabels && this.showLabels ? normalizedValue.toString() : undefined
-        );
-      }
-    };
-
-    addTickmarksAtInterval(
-      this.primaryTickmarkInterval,
-      TickmarkType.primary,
-      true
-    );
-    addTickmarksAtInterval(
-      this.secondaryTickmarkInterval,
-      TickmarkType.secondary
-    );
-    addTickmarksAtInterval(
-      this.tertiaryTickmarkInterval,
-      TickmarkType.tertiary
-    );
-
-    if (rangeIncludesZero(this.minValue, this.maxValue)) {
-      upsertTickmark(
-        0,
-        this.minValue < 0 ? TickmarkType.main : TickmarkType.textOnly,
-        this.showLabels ? '0' : undefined
-      );
-    }
-
-    if (this.showLabels) {
-      upsertTickmark(
-        this.minValue,
-        TickmarkType.textOnly,
-        this.minValue.toString()
-      );
-      upsertTickmark(
-        this.maxValue,
-        TickmarkType.textOnly,
-        this.maxValue.toString()
-      );
-    }
-
-    return [...tickmarksByValue.values()].sort((a, b) => a.angle - b.angle);
+    return buildIntervalTickmarks({
+      minValue: this.minValue,
+      maxValue: this.maxValue,
+      mapAngle: (v) => this.mapAngle(v),
+      primaryInterval: this.primaryTickmarkInterval,
+      secondaryInterval: this.secondaryTickmarkInterval,
+      tertiaryInterval: this.tertiaryTickmarkInterval,
+      showLabels: this.showLabels,
+      zeroTick: true,
+    });
   }
 
   private get _advices(): AngleAdviceRaw[] {

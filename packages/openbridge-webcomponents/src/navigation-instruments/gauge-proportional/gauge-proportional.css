@@ -75,7 +75,13 @@
   z-index: 1;
 }
 
-.icon-anchor ::slotted(*) {
+.icon-anchor slot {
+  display: contents;
+}
+
+/* Sizes both slotted icons and the device subclasses' slot-fallback icons. */
+.icon-anchor ::slotted(*),
+.icon-anchor slot > * {
   display: block;
   width: 100%;
   height: 100%;
@@ -115,4 +121,42 @@
   color: var(--element-neutral-color);
   white-space: nowrap;
   z-index: 1;
+}
+
+/* ---------- Compact variant ----------
+ * Width-driven flex column: square face on top, readout stack below (design
+ * gap 8px). The dial is no longer height-fitted, so the square-fit rules of
+ * the large layout are reset. */
+.gauge-root.compact {
+  width: 100%;
+  max-height: none;
+  aspect-ratio: auto;
+  top: 0;
+  transform: none;
+}
+
+.compact-column {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  width: 100%;
+}
+
+/* Secondary-row stack icon: the stack sizes the holder div; the projected
+   icon (host-slotted or subclass fallback) fills that box. */
+.secondary-icon-holder slot {
+  display: contents;
+}
+
+.secondary-icon-holder slot > *,
+.secondary-icon-holder ::slotted(*) {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.compact-column .container {
+  width: 100%;
+  aspect-ratio: 1;
 }

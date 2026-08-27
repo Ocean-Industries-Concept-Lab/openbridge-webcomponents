@@ -95,6 +95,10 @@ export interface WatchArea {
   endAngle: number;
   roundOutsideCut: boolean;
   roundInsideCut: boolean;
+  /** Corner fillet radius of the rounded cuts; `roundedArch`'s default when unset. */
+  roundRadius?: number;
+  /** Outline the roundBandCuts band arch with the tertiary frame color instead of self-colored. */
+  outlined?: boolean;
 }
 
 export interface WatchBarArea {
@@ -127,6 +131,24 @@ const RING3_RADIUS = 224 / 2;
 const RING3B_RADIUS = 272 / 2;
 const RING4_RADIUS = 176 / 2;
 
+/**
+ * Split-band lane geometry (the design's "pitch-rpm" subdivision of the
+ * 112..160 band): thin secondary line, bare-face gap, narrowed primary
+ * lane. Shared with the `secondary-lane.ts` helpers.
+ */
+export const BAND_INNER_RADIUS = RING3_RADIUS;
+export const BAND_OUTER_RADIUS = RING2_RADIUS;
+export const SECONDARY_LINE_WIDTH = 8;
+export const LANE_DIVIDER_WIDTH = 8;
+export const SECONDARY_LANE_RADIUS =
+  BAND_INNER_RADIUS + SECONDARY_LINE_WIDTH / 2;
+export const LANE_DIVIDER_RADIUS =
+  BAND_INNER_RADIUS + SECONDARY_LINE_WIDTH + LANE_DIVIDER_WIDTH / 2;
+export const PRIMARY_SUBBAND_INNER_RADIUS =
+  BAND_INNER_RADIUS + SECONDARY_LINE_WIDTH + LANE_DIVIDER_WIDTH;
+export const PRIMARY_SUBBAND_NEEDLE_LENGTH =
+  BAND_OUTER_RADIUS - PRIMARY_SUBBAND_INNER_RADIUS;
+
 export function innerRingRadiusFor(type: WatchCircleType): number {
   switch (type) {
     case WatchCircleType.single:
@@ -143,6 +165,12 @@ export function innerRingRadiusFor(type: WatchCircleType): number {
 }
 
 const RADIAL_SETPOINT_INWARD_ADJUST = 4;
+
+/**
+ * Split-band bars whose end sits on a sector cut overshoot it by this much;
+ * the lane-arch track mask then trims them flush with the cut's fillet.
+ */
+const SPLIT_BAR_CUT_OVERSHOOT_DEG = 4;
 
 /**
  * Default anchors for the wind/current icons outside the outer ring (the
@@ -232,6 +260,10 @@ const WIND_ICON_OUTSIDE_RADIUS =
  *   bars to that rounded track shape (the design's track-mask model), instead
  *   of the joint silhouette cut shared with the scale ring. No effect without
  *   `areas`.
+ * @property splitBand - With `watchCircleType: double`, render the band as the split
+ *   primary/secondary lane tracks (secondary-lane geometry) instead of the
+ *   joint band; bars clip to the primary lane. Takes precedence over
+ *   `roundBandCuts` for the band.
  * @property crosshairCenterCutout - Cuts the crosshair out inside the inner ring, so center content (e.g.
  *   center readouts) sits on a clean face.
  * @availableWhen crosshairCenterCutout crosshairEnabled==true
@@ -309,6 +341,7 @@ export class ObcWatch extends LitElement {
   @property({type: Array, attribute: false}) areas: WatchArea[] = [];
   @property({type: Array, attribute: false}) barAreas: WatchBarArea[] = [];
   @property({type: Boolean}) roundBandCuts: boolean = false;
+  @property({type: Boolean}) splitBand: boolean = false;
   @property({type: Array, attribute: false}) needles: WatchNeedle[] = [];
   @property({type: Array, attribute: false}) tickmarks: Tickmark[] = [];
   @property({type: Boolean}) tickmarksInside: boolean = false;
@@ -627,7 +660,9 @@ export class ObcWatch extends LitElement {
         );
         const r = (r1 + r2) / 2;
         const strokeWidth = r1 - r2;
-        if (this.roundBandCuts && this.areas.length > 0) {
+        if (this.splitBand && this.watchCircleType === WatchCircleType.double) {
+          rings.push(...this.splitBandTracks());
+        } else if (this.roundBandCuts && this.areas.length > 0) {
           rings.push(
             ...this.areas.map(
               (area) =>
@@ -638,7 +673,12 @@ export class ObcWatch extends LitElement {
                   r: r2,
                   roundOutsideCut: area.roundOutsideCut,
                   roundInsideCut: area.roundInsideCut,
-                })} fill="var(--instrument-frame-secondary-color)" stroke="var(--instrument-frame-secondary-color)" stroke-width="1" vector-effect="non-scaling-stroke" />`
+                  roundRadius: area.roundRadius,
+                })} fill="var(--instrument-frame-secondary-color)" stroke=${
+                  area.outlined
+                    ? 'var(--instrument-frame-tertiary-color)'
+                    : 'var(--instrument-frame-secondary-color)'
+                } stroke-width="1" vector-effect="non-scaling-stroke" />`
             )
           );
           // Same tint as the branch below. It is emitted here too so that
@@ -696,6 +736,7 @@ export class ObcWatch extends LitElement {
           r: this._bandRadius(this.innerRingRadius),
           roundOutsideCut: area.roundOutsideCut,
           roundInsideCut: area.roundInsideCut,
+          roundRadius: area.roundRadius,
         });
         return svgPath;
       });
@@ -916,13 +957,61 @@ export class ObcWatch extends LitElement {
     `;
   }
 
+  /**
+   * The split band: the 112..160 annulus as two lane tracks with a bare-face
+   * gap. Sector cuts collapse to flush fillets — half the line width on the
+   * secondary lane, roundedArch's default on the primary lane.
+   */
+  private splitBandTracks(): SVGTemplateResult[] {
+    const track = 'var(--instrument-frame-secondary-color)';
+    if (this.areas.length === 0) {
+      const priCenter =
+        (this._bandRadius(PRIMARY_SUBBAND_INNER_RADIUS) +
+          this._bandRadius(BAND_OUTER_RADIUS)) /
+        2;
+      return [
+        svg`<circle cx="0" cy="0" r=${this._bandRadius(SECONDARY_LANE_RADIUS)} stroke=${track} stroke-width=${SECONDARY_LINE_WIDTH} fill="none" />`,
+        svg`<circle cx="0" cy="0" r=${priCenter} stroke=${track} stroke-width=${BAND_OUTER_RADIUS - PRIMARY_SUBBAND_INNER_RADIUS} fill="none" />`,
+      ];
+    }
+    return this.areas.flatMap((area) => [
+      svg`<path d=${roundedArch({
+        startAngle: area.startAngle,
+        endAngle: area.endAngle,
+        R: this._bandRadius(BAND_INNER_RADIUS + SECONDARY_LINE_WIDTH),
+        r: this._bandRadius(BAND_INNER_RADIUS),
+        roundOutsideCut: true,
+        roundInsideCut: true,
+        roundRadius: SECONDARY_LINE_WIDTH / 2,
+      })} fill=${track} stroke=${track} stroke-width="1" vector-effect="non-scaling-stroke" />`,
+      svg`<path d=${roundedArch({
+        startAngle: area.startAngle,
+        endAngle: area.endAngle,
+        R: this._bandRadius(BAND_OUTER_RADIUS),
+        r: this._bandRadius(PRIMARY_SUBBAND_INNER_RADIUS),
+        roundOutsideCut: true,
+        roundInsideCut: true,
+      })} fill=${track} stroke=${track} stroke-width="1" vector-effect="non-scaling-stroke" />`,
+    ]);
+  }
+
   private renderBars(): SVGTemplateResult[] | typeof nothing {
     if (this.barAreas.length === 0) {
       return nothing;
     }
     return this.barAreas.map((bar, index) => {
-      const startAngle = Math.min(bar.startAngle, bar.endAngle);
-      const endAngle = Math.max(bar.startAngle, bar.endAngle);
+      let startAngle = Math.min(bar.startAngle, bar.endAngle);
+      let endAngle = Math.max(bar.startAngle, bar.endAngle);
+      if (this.splitBand && this.areas.length > 0) {
+        for (const area of this.areas) {
+          if (Math.abs(startAngle - area.startAngle) <= 0.01) {
+            startAngle -= SPLIT_BAR_CUT_OVERSHOOT_DEG;
+          }
+          if (Math.abs(endAngle - area.endAngle) <= 0.01) {
+            endAngle += SPLIT_BAR_CUT_OVERSHOOT_DEG;
+          }
+        }
+      }
       const arc = roundedArch({
         r: this._bandRadius(bar.innerRadius ?? RING3_RADIUS),
         R: this._bandRadius(bar.outerRadius ?? RING2_RADIUS),
@@ -948,7 +1037,7 @@ export class ObcWatch extends LitElement {
       // track shape, so its ends round off where they reach the sector cuts
       // (the design's track-mask model) while mid-track ends stay square.
       const trackMask =
-        this.roundBandCuts && this.areas.length > 0
+        (this.roundBandCuts || this.splitBand) && this.areas.length > 0
           ? svg`<mask id="barTrackMask-${index}">
               <rect x="${-barMaskR}" y="${-barMaskR}" width="${barMaskR * 2}" height="${barMaskR * 2}" fill="black" />
               ${this.areas.map(
@@ -956,10 +1045,22 @@ export class ObcWatch extends LitElement {
                   svg`<path d=${roundedArch({
                     startAngle: area.startAngle,
                     endAngle: area.endAngle,
-                    R: this._bandRadius(bar.outerRadius ?? RING2_RADIUS),
-                    r: this._bandRadius(bar.innerRadius ?? RING3_RADIUS),
-                    roundOutsideCut: area.roundOutsideCut,
-                    roundInsideCut: area.roundInsideCut,
+                    R: this._bandRadius(
+                      this.splitBand
+                        ? BAND_OUTER_RADIUS
+                        : (bar.outerRadius ?? RING2_RADIUS)
+                    ),
+                    r: this._bandRadius(
+                      this.splitBand
+                        ? PRIMARY_SUBBAND_INNER_RADIUS
+                        : (bar.innerRadius ?? RING3_RADIUS)
+                    ),
+                    // splitBandTracks always rounds the lane cuts, so the
+                    // split mask must too — else a bar could paint into the
+                    // arch fillets of an area with square cut flags.
+                    roundOutsideCut: this.splitBand || area.roundOutsideCut,
+                    roundInsideCut: this.splitBand || area.roundInsideCut,
+                    roundRadius: this.splitBand ? undefined : area.roundRadius,
                   })} fill="white" stroke="white" stroke-width="1" vector-effect="non-scaling-stroke" />`
               )}
             </mask>`
@@ -967,7 +1068,7 @@ export class ObcWatch extends LitElement {
       return svg`
         ${mask}
         ${trackMask}
-        <g mask=${this.areas.length > 0 ? 'url(#cutMask)' : nothing}>
+        <g mask=${this.areas.length > 0 && !this.splitBand ? 'url(#cutMask)' : nothing}>
         <g mask=${trackMask !== nothing ? `url(#barTrackMask-${index})` : nothing}>
         <path
           d=${arc}
