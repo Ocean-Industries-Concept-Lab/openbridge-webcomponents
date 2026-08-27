@@ -302,15 +302,16 @@ automatically when editing a `.css` file.
 8. **Insert `TODO(designer)`** for any documentation detail whose purpose is unclear from code alone.
 9. **Keep stories tagged** with `['autodocs', '6.0']` for documented OB 6.0 components; `['skip-test']` to exclude from visual tests. The lifecycle entry (`beta` / `experimental` / `deprecated`) is **never hand-written** — put `@stable`/`@beta`/`@experimental`/`@deprecated` on the component class and run `npm run lint:fix:stories`. The old `'wip'` and `'alpha'` tags are retired; see [`docs/agents/jsdoc.md` § Component lifecycle tags](docs/agents/jsdoc.md).
 10. **Do not run full builds or start Storybook automatically.** Avoid `npm run build`, `npm run storybook` unless the user explicitly requests it. These are expensive, long-running operations.
-11. **Run visual tests for a single component** instead of the full suite:
+11. **Run visual tests for the components you touched** instead of the full suite. Several names are separate substring filters, not a regex (`'a|b'` matches nothing):
     ```bash
     npx vitest run --project storybook 'component-name'
+    npx vitest run --project storybook heat-pump heat-exchanger hydraulic-separator
     ```
-12. **Update baselines for a single component** — the filter must come **before** `--update`; written after the flag, the name is consumed as the flag's value and the FULL suite runs in update mode, silently rewriting unrelated flaky baselines:
+12. **Update baselines for those components only, locally on Linux** — the devcontainer's render is what CI accepts, so do not rely on the `/update-snapshots` PR comment ([`docs/agents/testing-visual.md`](docs/agents/testing-visual.md)). The filter must come **before** `--update`; written after the flag, the name is consumed as the flag's value and the FULL suite runs in update mode, silently rewriting unrelated flaky baselines. `--update` never prunes — `git rm` the baselines of renamed or removed stories first:
     ```bash
     npx vitest run --project storybook 'component-name' --update
     ```
-13. **Always verify after updating baselines** — re-run the test without `--update` to confirm the new baselines are stable:
+13. **Always verify after updating baselines** — re-run the test without `--update` to confirm the new baselines are stable, then compare the cropped baseline with the Figma variant it implements (every variant value, not only the default):
     ```bash
     npx vitest run --project storybook 'component-name'
     ```
