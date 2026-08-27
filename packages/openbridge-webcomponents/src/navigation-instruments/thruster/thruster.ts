@@ -758,12 +758,17 @@ export function thruster(
     let viewBox = '-80 -160 160 320';
     let y = -160;
     if (options.singleDirection) {
-      viewBox = '-80 -300 160 320';
-      y = -320;
+      if (options.bottomPropeller !== PropellerType.none) {
+        viewBox = '-80 -300 160 356';
+        y = -320;
+      } else {
+        viewBox = '-80 -300 160 320';
+        y = -320;
+      }
     }
     const top = topPropeller(height, tc.arrowColor, options.topPropeller);
     const bottom = bottomPropeller(
-      options.singleDirectionHalfSize ? 0.5 : height,
+      options.singleDirectionHalfSize || options.singleDirection ? 0.5 : height,
       options.bottomPropeller
     );
     return svg`
