@@ -180,7 +180,7 @@ export const SignedInWithoutActions: Story = {
 export const SignInWithoutRecentUsers: Story = {
   args: {
     type: ObcUserMenuType.signIn,
-    size: ObcUserMenuSize.regular,
+    size: ObcUserMenuSize.small,
     hasRecentlySignedIn: true,
     recentUsers: [],
   },

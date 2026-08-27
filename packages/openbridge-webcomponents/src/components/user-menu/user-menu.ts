@@ -406,9 +406,9 @@ export class ObcUserMenu extends LitElement {
           ${msg('Sign in')}
         </obc-button>
       </div>
-      <div class="divider" aria-hidden="true"></div>
       ${this.showRecentUsers
         ? html`
+            <div class="divider" aria-hidden="true"></div>
             <div class="recent-container recent">
               <div class="title-container">
                 <div class="subtitle">${msg('Recent')}</div>
@@ -487,9 +487,9 @@ export class ObcUserMenu extends LitElement {
           ${msg('Sign in')}
         </obc-button>
       </div>
-      <div class="divider" aria-hidden="true"></div>
       ${this.showRecentUsers
         ? html`
+            <div class="divider" aria-hidden="true"></div>
             <div class="recent-container recent">
               <div class="title-container">
                 <div class="subtitle">${msg('Recent')}</div>
