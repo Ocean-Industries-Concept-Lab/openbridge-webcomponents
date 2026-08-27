@@ -55,6 +55,9 @@ const meta: Meta<ObcUserMenu> = {
     signedInActions: {
       control: {type: 'object'},
     },
+    primaryActionId: {
+      control: {type: 'text'},
+    },
   },
   args: {
     type: ObcUserMenuType.signIn,
@@ -77,6 +80,7 @@ const meta: Meta<ObcUserMenu> = {
       {id: 'preferences', label: 'Preferences'},
       {id: 'user-account', label: 'User account'},
     ],
+    primaryActionId: 'preferences',
   },
   render: (args) => {
     return html`
@@ -92,6 +96,7 @@ const meta: Meta<ObcUserMenu> = {
         .userLabel=${args.userLabel}
         .recentUsers=${args.recentUsers}
         .signedInActions=${args.signedInActions}
+        .primaryActionId=${args.primaryActionId}
       ></obc-user-menu>
     `;
   },
@@ -160,5 +165,23 @@ export const UserSignInSmall: Story = {
     type: ObcUserMenuType.userSignIn,
     size: ObcUserMenuSize.small,
     hasRecentlySignedIn: true,
+  },
+};
+
+export const SignedInWithoutActions: Story = {
+  args: {
+    type: ObcUserMenuType.signedIn,
+    size: ObcUserMenuSize.regular,
+    signedInActions: [],
+    primaryActionId: undefined,
+  },
+};
+
+export const SignInWithoutRecentUsers: Story = {
+  args: {
+    type: ObcUserMenuType.signIn,
+    size: ObcUserMenuSize.small,
+    hasRecentlySignedIn: true,
+    recentUsers: [],
   },
 };
