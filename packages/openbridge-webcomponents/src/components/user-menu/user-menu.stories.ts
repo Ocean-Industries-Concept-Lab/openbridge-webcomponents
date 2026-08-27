@@ -42,6 +42,8 @@ const meta: Meta<ObcUserMenu> = {
     type: ObcUserMenuType.signIn,
     size: ObcUserMenuSize.regular,
     hasRecentlySignedIn: false,
+    showUsername: true,
+    showPassword: true,
     username: '',
     password: '',
     usernameError: '',
@@ -67,6 +69,8 @@ const meta: Meta<ObcUserMenu> = {
         type=${args.type}
         size=${args.size}
         ?hasRecentlySignedIn=${args.hasRecentlySignedIn}
+        .showUsername=${args.showUsername}
+        .showPassword=${args.showPassword}
         username=${args.username}
         password=${args.password}
         usernameError=${args.usernameError}

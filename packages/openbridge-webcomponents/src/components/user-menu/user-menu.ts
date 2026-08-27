@@ -319,8 +319,7 @@ export class ObcUserMenu extends LitElement {
     let valid = true;
     const needsUsername =
       this.type === ObcUserMenuType.signIn && this.showUsername;
-    const needsPassword =
-      this.type === ObcUserMenuType.signIn ? this.showPassword : true;
+    const needsPassword = this.showPassword;
 
     if (needsUsername && !this.username) {
       this.usernameError = msg('Username is required');
@@ -358,7 +357,7 @@ export class ObcUserMenu extends LitElement {
       <div
         class=${classMap({
           'login-container': true,
-          'signin-only': !this.hasRecentlySignedIn,
+          'signin-only': !this.showRecentUsers,
         })}
       >
         ${this.showUsername
@@ -410,7 +409,7 @@ export class ObcUserMenu extends LitElement {
       <div
         class=${classMap({
           'login-container': true,
-          'signin-only': !this.hasRecentlySignedIn,
+          'signin-only': !this.showRecentUsers,
         })}
       >
         ${this.showUsername
@@ -463,20 +462,22 @@ export class ObcUserMenu extends LitElement {
       <div
         class=${classMap({
           'login-container': true,
-          'signin-only': !this.hasRecentlySignedIn,
+          'signin-only': !this.showRecentUsers,
         })}
       >
         <div class="user-primary">
           ${this.renderUserProfile('vertical', 'large')}
         </div>
         <div class="fields">
-          ${this.renderTextInput(
-            msg('Password'),
-            HTMLInputTypeAttribute.Password,
-            this.password,
-            this.handlePasswordInput.bind(this),
-            this.passwordError
-          )}
+          ${this.showPassword
+            ? this.renderTextInput(
+                msg('Password'),
+                HTMLInputTypeAttribute.Password,
+                this.password,
+                this.handlePasswordInput.bind(this),
+                this.passwordError
+              )
+            : nothing}
           <obc-button
             variant=${ButtonVariant.raised}
             fullWidth
@@ -512,10 +513,10 @@ export class ObcUserMenu extends LitElement {
       <div
         class=${classMap({
           'login-container': true,
-          'signin-only': !this.hasRecentlySignedIn,
+          'signin-only': !this.showRecentUsers,
         })}
       >
-        ${this.showUsername
+        ${this.showPassword
           ? this.renderTextInput(
               msg('Password'),
               HTMLInputTypeAttribute.Password,
