@@ -25,6 +25,14 @@ All button-based components share `ObcAbstractAutomationButton` as root, which p
 
 > **Exception:** `obc-automation-tank` extends `LitElement` directly (not the abstract base) because its layout shell is fundamentally different (multi-cell readout/tag/halo grid, optional embedded `obc-gauge-trend`). It re-implements the alert-frame pattern locally — same 6 properties (`alert`, `alertFrameType`, `alertFrameThickness`, `alertFrameStatus`, `showAlertCategoryIcon`, `showAlertIcon`) and same 3 slots (`alert-icon`, `alert-label`, `alert-timer`) — and overlays the `<obc-alert-frame>` inside its `.halo` wrapper so the ring hugs the bordered tank area only. When changing the alert API on the abstract base, keep the tank in sync. The tank also adds `aria-live="polite" aria-atomic="true"` on its `.root` to announce slotted alert labels; the abstract base does not (yet) do this.
 
+> **Device-named gauge presets:** `obc-gauge-generator` and
+> `obc-gauge-motors-and-pumps` subclass `obc-gauge-proportional` (a navigation
+> instrument) to bake a device icon and type axis — like the tank exception,
+> they live in `src/automation/` but render on the watch stack;
+> `docs/agents/watch-radial-instruments.md` owns their rendering rules.
+> `obc-gauge-valve` is a direct `obc-watch` consumer in `src/automation/` for
+> the same reason.
+
 ## Icon Rendering Pattern
 
 Automation device icons use a **dual-slot** approach — both `icon` (primary color) and `icon-silhouette` (background shadow) must be rendered:
