@@ -160,6 +160,22 @@ export const SignInWithoutFields: Story = {
   },
 };
 
+export const UserSignInWithoutPasswordRegular: Story = {
+  args: {
+    type: ObcUserMenuType.userSignIn,
+    size: ObcUserMenuSize.regular,
+    showPassword: false,
+  },
+};
+
+export const UserSignInWithoutPasswordSmall: Story = {
+  args: {
+    type: ObcUserMenuType.userSignIn,
+    size: ObcUserMenuSize.small,
+    showPassword: false,
+  },
+};
+
 export const SignedInWithoutActions: Story = {
   args: {
     type: ObcUserMenuType.signedIn,
