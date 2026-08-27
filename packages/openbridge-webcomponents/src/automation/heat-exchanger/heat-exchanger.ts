@@ -1,62 +1,73 @@
-import {TemplateResult, html} from 'lit';
+import {html, unsafeCSS} from 'lit';
+import type {CSSResultGroup, TemplateResult} from 'lit';
 import '../../icons/icon-heatexhanger.js';
 import {
   ObcAbstractSpecialtyTank,
+  SpecialtyTankFrame,
   SpecialtyTankSplitMode,
 } from '../specialty-tank/abstract-specialty-tank.js';
+import hostStyle from './heat-exchanger.css?inline';
 import {customElement} from '../../decorator.js';
 
 /**
- * ## Heat Exchanger
+ * `<obc-heat-exchanger>` – HVAC tile for a heat exchanger.
  *
- * Fixed-footprint instrument tile representing a heat exchanger. Shows a
- * framed hot/cold medium area split diagonally into two corner-to-corner
- * triangles (top-left hot, bottom-right cold, no divider), a centered
- * heat-exchanger icon in a rounded frame, optional flame/snowflake corner
- * glyphs, an optional badge row, and a tag readout below the frame.
+ * A 56×142 pressurized-tank silhouette whose graphic area splits diagonally
+ * into two corner-to-corner triangles — hot top-left, cold bottom-right —
+ * around a centered heat-exchanger icon, with an optional badge row above
+ * the frame and a tag readout below it.
  *
- * ### Features / Variants
- * - `medium` toggles between the empty grey fill and the hot/cold colors.
- * - `showMediumIcons` toggles the flame (top-left) and snowflake
- *   (bottom-right) corner glyphs.
- * - `showTag` / `tag` control the identifier readout below the frame.
- * - Enum-driven badges (`badgeControl`, `badgeInterlock`,
- *   `badgeCommandLocked`, `badgeAlert`) render in the top-right badge row;
- *   the `badges` slot overrides them.
- * - Alert-frame overlay mirroring `obc-automation-tank` (`alert`,
- *   `alertFrameType`, `alertFrameThickness`, `alertFrameStatus`,
- *   `showAlertCategoryIcon`, `showAlertIcon`).
+ * ## Features / Variants
+ * - `medium` selects the graphic area: one grey area (`regular`), two grey
+ *   triangles (`graphic`) or hot/cold triangles (`medium`).
+ * - `static` renders a flat, display-only tile with a bare icon.
+ * - Enum-driven badges (`badgeControl`, `badgeAlert`, `badgeInterlock`,
+ *   `badgeCommandLocked`) or the `badges` slot fill the badge row; it
+ *   collapses when empty, as does the tag cell.
+ * - Alert-frame overlay with the same six properties and three slots as
+ *   `obc-automation-tank`.
+ * - `positioning`, `clickable` and `activated` behave as on
+ *   `obc-automation-tank`.
  *
- * ### Usage Guidelines
+ * ## Usage Guidelines
  * Use for heat exchangers in automation system views. For heat pumps use
- * `obc-heat-pump` (vertical split) and for hydraulic separators use
- * `obc-hydraulic-separator` (horizontal split); the three tiles differ only
- * in center icon and fill geometry.
+ * `obc-heat-pump` and for hydraulic separators `obc-hydraulic-separator`;
+ * the three tiles differ only in footprint, icon and split geometry.
  *
- * @ignition-base-width: 90px
- * @ignition-base-height: 163px
+ * @ignition-base-width: 56px
+ * @ignition-base-height: 142px
  * @ignition-center-horizontal
- * @beta
  *
  * @slot badges - Custom badges, overriding the enum-driven defaults.
  * @slot tag - Text or element replacing the `tag` property readout.
  * @slot alert-icon - Custom icon for the alert frame.
  * @slot alert-label - Label for the alert frame.
  * @slot alert-timer - Timer for the alert frame.
+ * @fires click - Fired when the tile is clicked. When `clickable` is `false` the tile renders a plain `<div>`, and in `static` mode a `<div role="img">`, instead of a `<button>` — in both cases it is not focusable or keyboard-activatable; pointer clicks still reach the host.
+ * @beta
  */
 @customElement('obc-heat-exchanger')
 export class ObcHeatExchanger extends ObcAbstractSpecialtyTank {
-  override get equipmentIcon(): TemplateResult {
+  protected override get equipmentIcon(): TemplateResult {
     return html`<obi-heatexhanger usecsscolor></obi-heatexhanger>`;
-  }
-
-  override get splitMode(): SpecialtyTankSplitMode {
-    return SpecialtyTankSplitMode.diagonal;
   }
 
   protected override get equipmentName(): string {
     return 'Heat exchanger';
   }
+
+  protected override get frame(): SpecialtyTankFrame {
+    return SpecialtyTankFrame.pressurized;
+  }
+
+  protected override get splitMode(): SpecialtyTankSplitMode {
+    return SpecialtyTankSplitMode.diagonal;
+  }
+
+  static override styles: CSSResultGroup = [
+    ObcAbstractSpecialtyTank.styles,
+    unsafeCSS(hostStyle),
+  ];
 }
 
 declare global {

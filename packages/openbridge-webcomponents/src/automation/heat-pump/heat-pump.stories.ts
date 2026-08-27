@@ -1,110 +1,26 @@
-import type {Meta, StoryObj} from '@storybook/web-components-vite';
+import type {Meta} from '@storybook/web-components-vite';
 import {ObcHeatPump} from './heat-pump.js';
 import './heat-pump.js';
-import {html} from 'lit';
 import {
-  ObcAlertFrameStatus,
-  ObcAlertFrameThickness,
-  ObcAlertFrameType,
-} from '../../components/alert-frame/alert-frame.js';
-import {
-  AutomationButtonBadgeAlert,
-  AutomationButtonBadgeCommandLocked,
-  AutomationButtonBadgeControl,
-  AutomationButtonBadgeInterlock,
-} from '../automation-button/abstract-automation-button.js';
+  literal,
+  specialtyTankMeta,
+  specialtyTankStories,
+} from '../specialty-tank/specialty-tank-story-meta.js';
+import type {SpecialtyTankStory} from '../specialty-tank/specialty-tank-story-meta.js';
 
-type StoryArgs = ObcHeatPump;
-
-const meta: Meta<StoryArgs> = {
+const meta: Meta<ObcHeatPump> = {
   title: 'Automation/Tanks/Heat Pump',
   tags: ['autodocs', '6.1', 'beta'],
   component: 'obc-heat-pump',
-  args: {
-    medium: false,
-    showMediumIcons: true,
-    showTag: true,
-    tag: '#0000',
-    badgeControl: AutomationButtonBadgeControl.None,
-    badgeInterlock: AutomationButtonBadgeInterlock.None,
-    badgeCommandLocked: AutomationButtonBadgeCommandLocked.None,
-    badgeAlert: AutomationButtonBadgeAlert.None,
-    alert: false,
-    alertFrameType: ObcAlertFrameType.SmallSideFlip,
-    alertFrameThickness: ObcAlertFrameThickness.Small,
-    alertFrameStatus: ObcAlertFrameStatus.Alarm,
-    showAlertCategoryIcon: true,
-    showAlertIcon: false,
-  },
-  argTypes: {
-    badgeControl: {
-      options: Object.values(AutomationButtonBadgeControl),
-      control: {type: 'select'},
-    },
-    badgeInterlock: {
-      options: Object.values(AutomationButtonBadgeInterlock),
-      control: {type: 'select'},
-    },
-    badgeCommandLocked: {
-      options: Object.values(AutomationButtonBadgeCommandLocked),
-      control: {type: 'select'},
-    },
-    badgeAlert: {
-      options: Object.values(AutomationButtonBadgeAlert),
-      control: {type: 'select'},
-    },
-    alertFrameType: {
-      options: Object.values(ObcAlertFrameType),
-      control: {type: 'select'},
-    },
-    alertFrameThickness: {
-      options: Object.values(ObcAlertFrameThickness),
-      control: {type: 'select'},
-    },
-    alertFrameStatus: {
-      options: Object.values(ObcAlertFrameStatus),
-      control: {type: 'select'},
-    },
-  },
-  render: (args) => html`
-    <obc-heat-pump
-      ?medium=${args.medium}
-      .showMediumIcons=${args.showMediumIcons}
-      .showTag=${args.showTag}
-      .tag=${args.tag}
-      .badgeControl=${args.badgeControl}
-      .badgeInterlock=${args.badgeInterlock}
-      .badgeCommandLocked=${args.badgeCommandLocked}
-      .badgeAlert=${args.badgeAlert}
-      ?alert=${args.alert}
-      .alertFrameType=${args.alertFrameType}
-      .alertFrameThickness=${args.alertFrameThickness}
-      .alertFrameStatus=${args.alertFrameStatus}
-      .showAlertCategoryIcon=${args.showAlertCategoryIcon}
-      .showAlertIcon=${args.showAlertIcon}
-    ></obc-heat-pump>
-  `,
-} satisfies Meta<StoryArgs>;
+  ...specialtyTankMeta(literal`obc-heat-pump`),
+} satisfies Meta<ObcHeatPump>;
 
 export default meta;
-type Story = StoryObj<StoryArgs>;
 
-export const Default: Story = {};
-
-export const WithMedium: Story = {
-  args: {medium: true},
-};
-
-export const WithBadges: Story = {
-  args: {
-    medium: true,
-    badgeControl: AutomationButtonBadgeControl.Auto,
-    badgeInterlock: AutomationButtonBadgeInterlock.Interlock,
-    badgeCommandLocked: AutomationButtonBadgeCommandLocked.CommandLocked,
-    badgeAlert: AutomationButtonBadgeAlert.Silence,
-  },
-};
-
-export const WithAlert: Story = {
-  args: {medium: true, alert: true},
-};
+export const Default: SpecialtyTankStory = specialtyTankStories.Default;
+export const Graphic: SpecialtyTankStory = specialtyTankStories.Graphic;
+export const Medium: SpecialtyTankStory = specialtyTankStories.Medium;
+export const Static: SpecialtyTankStory = specialtyTankStories.Static;
+export const WithoutIcon: SpecialtyTankStory = specialtyTankStories.WithoutIcon;
+export const WithBadges: SpecialtyTankStory = specialtyTankStories.WithBadges;
+export const WithAlert: SpecialtyTankStory = specialtyTankStories.WithAlert;

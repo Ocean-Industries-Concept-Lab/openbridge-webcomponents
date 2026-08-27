@@ -2,22 +2,35 @@
   box-sizing: border-box;
 }
 
-/* Fixed 90×163 tile mirroring the Figma structure: a 4px-padded state
- * container (halo) holding a column of [badge row + tank frame] and the
- * tag readout, separated by a 2px value-padding gap. The badge row
- * collapses via the `hidden` attribute so the tank frame absorbs the
- * freed space, matching the Figma variants where badges are hidden by
- * default. */
+/* ---- Host ----
+ * The concrete tile supplies its design footprint (`:host` width/height and
+ * the `positioning="button"` aspect ratio); the shell below is shared. */
 :host {
   display: inline-block;
-  width: 90px;
-  height: 163px;
+  position: relative; /* P&ID anchor: the root is offset from the host box */
 }
 
-/* The root <button> is the touch target; its visual styling is transparent.
- * The visible interactive surround (border/bg on hover/pressed/focus-visible)
- * is painted on `.halo` via the flat mixin's `visibleWrapperClass`. */
+/* positioning="button": fill the parent, no anchor offset. */
+:host([positioning="button"]) {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+:host([positioning="button"]) .root {
+  position: static;
+  transform: none;
+}
+
+/* ---- Root + halo ----
+ * The root <button> is the touch target and stays transparent; the flat
+ * mixin paints the interactive surround on `.halo` (`visibleWrapperClass`).
+ * `translateX(-50%)` aligns the tile's centerline with the host's left edge,
+ * the P&ID drop coordinate. */
 .root {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translateX(-50%);
   width: 100%;
   height: 100%;
   margin: 0;
@@ -26,12 +39,27 @@
   background: transparent;
   appearance: none;
   display: block;
+}
+
+.root.clickable {
   cursor: pointer;
   /* prettier-ignore */
   @mixin style style=flat visibleWrapperClass=.halo;
 }
+
+/* `noClick` keeps the resting colours and border box, drops the states. */
+.root:not(.clickable) {
+  cursor: default;
+  /* prettier-ignore */
+  @mixin style style=flat noClick visibleWrapperClass=.halo;
+}
+
 .root:focus {
-  outline: none;
+  outline: none; /* the mixin draws the focus-visible ring on .halo */
+}
+
+:host([static]) .root {
+  pointer-events: none;
 }
 
 .halo {
@@ -41,29 +69,20 @@
   border-radius: 6px;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   gap: var(--automation-components-tanks-regular-value-padding);
-  /* Positioned ancestor for the alert-frame overlay. */
-  position: relative;
+  position: relative; /* anchors the alert-frame overlay */
 }
 
-/* Alert-frame overlay mirrors `obc-automation-tank`: -1px inset so the
- * ring sits on the halo's outer edge without clipping. */
+/* -1px inset so the ring sits on the halo's outer edge, as on the tank. */
 .alert-frame {
   position: absolute;
   inset: -1px;
 }
 
-.body {
-  flex: 1 1 auto;
-  min-height: 0;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
+/* ---- Cells ---- */
 .badges {
-  width: 100%;
+  flex: 0 0 auto;
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -71,169 +90,189 @@
   padding: var(--automation-components-tanks-regular-badge-padding-vertical)
     var(--automation-components-tanks-regular-badge-padding-horizontal);
 }
+
+.tag {
+  flex: 0 0 auto;
+  padding: 0 2px;
+  text-align: center;
+  @mixin font-instrument-label;
+  color: var(--element-neutral-color);
+  white-space: nowrap; /* a tag is an identifier; it never wraps */
+}
+
+/* The cells set their own display, which would beat `hidden`; removing them
+ * from the flex column also removes their gap so the frame absorbs the space. */
 .badges[hidden],
 .tag[hidden] {
   display: none !important;
 }
 
-.tank-container {
+/* ---- Tank frame ---- */
+.tank-frame {
   flex: 1 1 auto;
   min-height: 0;
-  width: 100%;
   display: flex;
-  align-items: center;
-  padding: var(--automation-components-tanks-specialty-tanks-content-padding);
-  border: 1px solid var(--instrument-frame-tertiary-color);
-  border-radius: var(--automation-components-tanks-border-radius);
-  background: var(--instrument-frame-primary-color);
-  overflow: hidden;
+  flex-direction: column;
+  width: 100%;
+  --_hot-fill: var(--instrument-frame-secondary-color);
+  --_hot-stroke: var(--border-outline-color);
+  --_cold-fill: var(--instrument-frame-secondary-color);
+  --_cold-stroke: var(--border-outline-color);
+  --_cap-height: 8px;
 }
 
-.content-container {
+.tank-frame.medium-medium {
+  --_hot-fill: var(--base-red-200);
+  --_hot-stroke: var(--base-red-300);
+  --_cold-fill: var(--base-blue-200);
+  --_cold-stroke: var(--base-blue-300);
+}
+
+.middle {
   flex: 1 1 auto;
-  min-width: 0;
-  height: 100%;
-  position: relative;
-  border-radius: 4px;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Hot/cold fills. Both halves and the divider are always rendered; the
- * `has-medium` class only switches the fill colors from the empty grey
- * to the hot/cold pair, matching the Figma variants. */
-.fill {
-  position: absolute;
-  background: var(--instrument-frame-secondary-color);
-}
-.split-vertical .fill-hot {
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: 50%;
-}
-.split-vertical .fill-cold {
-  top: 0;
-  bottom: 0;
-  right: 0;
-  width: 50%;
-}
-.split-horizontal .fill-hot {
-  left: 0;
-  right: 0;
-  top: 0;
-  height: 50%;
-}
-.split-horizontal .fill-cold {
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 50%;
-}
-.has-medium .fill-hot {
-  background: var(--base-red-100);
-}
-.has-medium .fill-cold {
-  background: var(--base-blue-100);
-}
-.fill-diagonal {
-  inset: 0;
-}
-/* Corner-to-corner split: with `to bottom right` the 50% stop line runs
- * exactly through the top-right and bottom-left corners, giving a hot
- * top-left triangle and a cold bottom-right triangle at any aspect ratio. */
-.has-medium .fill-diagonal {
-  background: linear-gradient(
-    to bottom right,
-    var(--base-red-100) 50%,
-    var(--base-blue-100) 50%
-  );
-}
-
-/* Divider bar: total width equals the divider token, with a 1px frame
- * border on each long edge (2px primary core at the default 4px width). */
-.divider {
-  position: absolute;
+  min-height: 0;
   background: var(--instrument-frame-primary-color);
+  border: 1px solid var(--instrument-frame-tertiary-color);
 }
-.split-vertical .divider {
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: var(--automation-components-tanks-specialty-tanks-divider-width);
-  border-left: 1px solid var(--instrument-frame-tertiary-color);
-  border-right: 1px solid var(--instrument-frame-tertiary-color);
+
+.frame-rounded .middle {
+  border-radius: var(--automation-components-tanks-border-radius);
+  padding: 4px;
 }
-.split-horizontal .divider {
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  height: var(--automation-components-tanks-specialty-tanks-divider-width);
-  border-top: 1px solid var(--instrument-frame-tertiary-color);
-  border-bottom: 1px solid var(--instrument-frame-tertiary-color);
+
+.frame-pressurized .middle {
+  border-top: none;
+  border-bottom: none;
+  padding: 2px 4px;
 }
-/* Diagonal divider: the same bordered bar drawn as two overlaid SVG lines
- * from the bottom-left to the top-right corner. `preserveAspectRatio: none`
- * stretches the line corner-to-corner while `non-scaling-stroke` keeps the
- * stroke widths in pixels: the tertiary line is the divider width, the
- * primary line on top is 2px narrower, leaving a 1px border per edge. */
-.divider-diagonal {
-  position: absolute;
-  inset: 0;
+
+.content {
+  position: relative; /* anchors the graphic area and the icon frame */
   width: 100%;
   height: 100%;
 }
-.divider-diagonal-border {
-  stroke: var(--instrument-frame-tertiary-color);
-  stroke-width: var(
-    --automation-components-tanks-specialty-tanks-divider-width
-  );
-}
-.divider-diagonal-fill {
-  stroke: var(--instrument-frame-primary-color);
-  stroke-width: calc(
-    var(--automation-components-tanks-specialty-tanks-divider-width) - 2px
-  );
-}
 
-/* Corner glyphs sit 2px inside the fill area: flame in the hot corner
- * (top-left), snowflake in the cold corner (bottom-right). The obi icons
- * fill with `currentColor`, so `color` drives the state-dependent tint. */
-.corner-icon {
-  position: absolute;
-  width: 16px;
-  height: 16px;
-  color: var(--element-inactive-color);
-}
-.corner-icon-hot {
-  top: 2px;
-  left: 2px;
-}
-.corner-icon-cold {
-  bottom: 2px;
-  right: 2px;
-}
-.has-medium .corner-icon-hot {
-  color: var(--base-red-500);
-}
-.has-medium .corner-icon-cold {
-  color: var(--base-blue-500);
-}
-
-.icon-frame {
+/* ---- Caps (pressurized frame) ----
+ * The Figma silhouette keeps 2.5px of clear space above the dome inside an
+ * 8px cap, so the dome is a bottom-aligned child rather than the cap itself. */
+.cap {
+  flex: 0 0 var(--_cap-height);
+  height: var(--_cap-height);
   position: relative;
-  flex: 0 0 auto;
-  padding: 4px;
+}
+.cap-dome {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 6px;
+  background: var(--instrument-frame-primary-color);
   border: 1px solid var(--instrument-frame-tertiary-color);
+  border-bottom: none;
+  border-radius: 7px 7px 0 0 / 6px 6px 0 0;
+}
+.cap-end {
+  transform: scaleY(-1);
+}
+
+/* ---- Graphic area ---- */
+.area {
+  border: 1px solid var(--_hot-stroke);
+  background: var(--_hot-fill);
+}
+.area-single {
+  position: absolute;
+  inset: 0;
+  border-radius: 2px;
+}
+.area-cold {
+  border-color: var(--_cold-stroke);
+  background: var(--_cold-fill);
+}
+
+/* Two halves with the frame background showing through a 4px gap. */
+.halves {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  gap: 4px;
+}
+.halves > .area {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
+}
+.split-vertical .halves {
+  flex-direction: row;
+}
+.split-vertical .area-hot {
+  border-radius: 2px 0 0 2px;
+}
+.split-vertical .area-cold {
+  border-radius: 0 2px 2px 0;
+}
+.split-horizontal .halves {
+  flex-direction: column;
+}
+.split-horizontal .area-hot {
+  border-radius: 2px 2px 0 0;
+}
+.split-horizontal .area-cold {
+  border-radius: 0 0 2px 2px;
+}
+
+/* Diagonal: stroke widths are pixels (non-scaling), so the outer stroke is
+ * clipped to its half to leave 1px, and the gap edges are 6px lines under
+ * the 4px gap line, leaving 1px of colour on each side of the gap. */
+.diagonal {
+  position: absolute;
+  inset: 0;
+  border-radius: 2px;
+  overflow: hidden; /* rounds the SVG corners */
+}
+.diagonal > svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.area-fill.area-hot {
+  fill: var(--_hot-fill);
+}
+.area-fill.area-cold {
+  fill: var(--_cold-fill);
+}
+.area-stroke {
+  fill: none;
+  stroke-width: 2;
+}
+.area-stroke.area-hot,
+.gap-edge.area-hot {
+  stroke: var(--_hot-stroke);
+}
+.area-stroke.area-cold,
+.gap-edge.area-cold {
+  stroke: var(--_cold-stroke);
+}
+.gap-edge {
+  stroke-width: 6;
+}
+.gap {
+  stroke: var(--instrument-frame-primary-color);
+  stroke-width: 4;
+}
+
+/* ---- Equipment icon ---- */
+.icon-frame {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 4px;
+  border: 1px solid var(--border-outline-color);
   border-radius: 4px;
   background: var(--instrument-frame-primary-color);
+  color: var(--element-active-color);
   display: flex;
-  align-items: center;
-  justify-content: center;
 }
 .icon-frame > * {
   display: block;
@@ -241,11 +280,13 @@
   height: var(--automation-components-tanks-specialty-tanks-icon-size);
 }
 
-.tag {
-  flex: 0 0 auto;
-  padding: 0 2px;
-  @mixin font-instrument-label;
-  color: var(--element-neutral-color);
-  /* Tag text is a fixed identifier (e.g. `#0000`) — never wrap it. */
-  white-space: nowrap;
+/* ---- Static ----
+ * Flat grey tile with a bare icon; the graphic area is not rendered. */
+.tank-frame.static .middle,
+.tank-frame.static .cap-dome {
+  background: var(--instrument-frame-secondary-color);
+}
+.tank-frame.static .icon-frame {
+  border-color: transparent;
+  background: transparent;
 }

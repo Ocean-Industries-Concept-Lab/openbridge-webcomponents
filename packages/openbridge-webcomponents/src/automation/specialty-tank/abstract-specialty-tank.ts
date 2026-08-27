@@ -1,4 +1,5 @@
-import {LitElement, TemplateResult, html, nothing, unsafeCSS} from 'lit';
+import {LitElement, html, nothing, svg, unsafeCSS} from 'lit';
+import type {CSSResultGroup, TemplateResult} from 'lit';
 import {property, state} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import componentStyle from './specialty-tank.css?inline';
@@ -16,92 +17,108 @@ import {
   ObcAlertFrameType,
 } from '../../components/alert-frame/alert-frame.js';
 import {AlertType} from '../../types.js';
-import '../../icons/icon-heat-google.js';
-import '../../icons/icon-cold-google.js';
+import {TankPositioning} from '../automation-tank/tank-positioning.js';
 
 /**
- * Hot/cold fill geometry of a specialty tank. Drives both the medium fill
- * split and the divider through the `split-<mode>` CSS class on the tank
- * container.
+ * What the graphic area of a specialty tank shows. Mirrors the Figma
+ * `has Medium` property; its fourth value, Static, is the `static` property.
+ */
+export enum SpecialtyTankMedium {
+  /** One grey area, no split. */
+  regular = 'regular',
+  /** Two grey halves separated by a gap. */
+  graphic = 'graphic',
+  /** Hot (red) and cold (blue) halves separated by a gap. */
+  medium = 'medium',
+}
+
+/**
+ * Hot/cold split geometry of a specialty tank. Drives the halves and the
+ * gap between them through the `split-<mode>` class on the tank frame.
  */
 export enum SpecialtyTankSplitMode {
-  /** Left half hot, right half cold, vertical divider bar. */
+  /** Left half hot, right half cold. */
   vertical = 'vertical',
-  /** Top half hot, bottom half cold, horizontal divider bar. */
+  /** Top half hot, bottom half cold. */
   horizontal = 'horizontal',
-  /** Two corner-to-corner triangles (top-left hot, bottom-right cold), no divider. */
+  /** Two corner-to-corner triangles, top-left hot and bottom-right cold. */
   diagonal = 'diagonal',
 }
 
 /**
- * ## Abstract Specialty Tank
+ * Frame silhouette of a specialty tank.
+ */
+export enum SpecialtyTankFrame {
+  /** One rounded border box. */
+  rounded = 'rounded',
+  /** Pressurized-tank silhouette: domed caps on a side-bordered body. */
+  pressurized = 'pressurized',
+}
+
+/**
+ * Base class for the specialty-tank tiles `obc-heat-pump`,
+ * `obc-hydraulic-separator` and `obc-heat-exchanger`. Owns the halo, badge
+ * row, tank frame with its hot/cold graphic area and equipment icon, tag
+ * readout and alert-frame overlay. Subclasses supply `equipmentIcon`,
+ * `equipmentName`, `frame` and `splitMode`, plus their own host footprint.
  *
- * Abstract base for the specialty-tank tiles (`obc-heat-pump`,
- * `obc-hydraulic-separator`, `obc-heat-exchanger`). Owns the shared frame,
- * badge row, hot/cold medium fill, corner glyphs, centered equipment-icon
- * frame, tag readout, and alert-frame overlay. Subclasses provide three
- * members: `equipmentIcon` (the centered `obi-*` icon), `splitMode` (the
- * hot/cold fill geometry), and `equipmentName` (the accessible-name
- * fallback used when `tag` is empty).
+ * ## Layout
+ * The same shell as a compact `obc-automation-tank`: a fixed host (or
+ * `positioning="button"` to fill the parent), a 4px-padded halo holding
+ * badges, the tank frame and the tag, the frame absorbing the space of
+ * empty badge and tag cells. Hover, pressed, focus-visible and `activated`
+ * are painted on the halo by the flat style mixin; `clickable` and `static`
+ * switch the root between a `<button>`, a plain `<div>` and a
+ * `<div role="img">` exactly as the tank does.
  *
- * ### Features / Variants
- * - `medium` toggles between the empty grey fill and the hot/cold colors.
- * - `showMediumIcons` toggles the flame (top-left) and snowflake
- *   (bottom-right) corner glyphs.
- * - `showTag` / `tag` control the identifier readout below the frame.
- * - Enum-driven badges (`badgeControl`, `badgeInterlock`,
- *   `badgeCommandLocked`, `badgeAlert`) render in the top-right badge row.
- * - Alert-frame overlay mirroring `obc-automation-tank`.
+ * Not declared `abstract`: the wrapper generators wrap every `LitElement`
+ * subclass and pass its constructor as a concrete `Constructor<T>`, so the
+ * override points throw instead (same as `ObcAbstractAutomationButton`).
  *
- * ### Usage Guidelines
- * Not a custom element — extend it and register the subclass with
- * `@customElement`. The subclass carries the user-facing JSDoc consumed by
- * Storybook autodocs. The override points throw at runtime instead of being
- * declared `abstract` because the framework wrapper generators instantiate
- * every manifest class through a concrete `Constructor<T>` type — an
- * abstract class breaks the generated React wrapper build (same reason
- * `ObcAbstractAutomationButton` is concrete).
- *
- * @property medium - Show the hot/cold medium colors instead of the empty grey fill.
- * @property showMediumIcons - Show the flame (top-left) and snowflake (bottom-right) corner glyphs.
- * @property showTag - Show the tag readout below the tank frame.
- * @property tag - Identifier text rendered in the tag readout (e.g. `#0000`). Also used as the accessible name.
- * @property badgeControl - Mode badge (auto / manual / local variants), leftmost in the badge row.
- * @property badgeInterlock - Duty badge — reuses the interlock badge enum, whose `interlock` value renders the duty icon.
- * @property badgeCommandLocked - Command badge, third in the badge row.
- * @property badgeAlert - Alert badge, rightmost in the badge row.
- * @property alert - Show an alert-frame overlay around the tile, mirroring `obc-automation-tank`.
+ * @property medium - What the graphic area shows: `regular` (one grey area), `graphic` (two grey halves) or `medium` (hot/cold halves).
+ * @property static - Display-only tile with a flat grey frame and a bare icon, rendered as a non-interactive `<div role="img">`. Hides the graphic area.
+ * @property showIcon - Show the equipment icon centered on the graphic area.
+ * @property tag - Identifier rendered in the tag readout below the frame (for example `#0000`); also the accessible name. The cell collapses when empty.
+ * @property positioning - Host positioning model — see `TankPositioning`. `button` (default) fills the parent, `point` uses the fixed design footprint with the P&ID anchor.
+ * @property clickable - Whether the tile is interactive. `false` keeps the resting appearance but drops hover, pressed and focus states and leaves the tab order; property-only because the default is `true`.
+ * @property activated - Paints the activated background on the halo. Needs an interactive tile.
+ * @availableWhen activated clickable==true
+ * @property badgeControl - Mode badge (auto / manual / local variants), first in the badge row.
+ * @property badgeAlert - Alert badge, second in the badge row.
+ * @property badgeInterlock - Interlock badge, third in the badge row.
+ * @property badgeCommandLocked - Command-locked badge, last in the badge row.
+ * @property alert - Show an alert-frame overlay around the halo, mirroring `obc-automation-tank`.
+ * @property alertFrameType - Shape of the alert frame.
  * @availableWhen alertFrameType alert==true
+ * @property alertFrameThickness - Thickness of the alert frame.
  * @availableWhen alertFrameThickness alert==true
+ * @property alertFrameStatus - Alert status the frame is coloured for.
  * @availableWhen alertFrameStatus alert==true
+ * @property showAlertCategoryIcon - Shows the alert category icon inside the frame.
  * @availableWhen showAlertCategoryIcon alert==true
+ * @property showAlertIcon - Shows the slotted alert icon inside the frame.
  * @availableWhen showAlertIcon alert==true
- * @slot badges - Custom badges rendered in the top-right badge row,
- *   overriding the enum-driven defaults. The row collapses when both the
- *   slot and the badge enums are empty.
- * @slot tag - Text or element replacing the `tag` property readout below
- *   the frame. Hidden when `showTag` is `false`.
- * @slot alert-icon - Custom icon for the alert frame (alert only).
- * @slot alert-label - Label for the alert frame (alert only).
- * @slot alert-timer - Timer for the alert frame (alert only).
- *
- * @ignore
  */
 export class ObcAbstractSpecialtyTank extends LitElement {
-  @property({type: Boolean}) medium: boolean = false;
-  @property({type: Boolean, attribute: false}) showMediumIcons: boolean = true;
-  @property({type: Boolean, attribute: false}) showTag: boolean = true;
+  @property({type: String}) medium: SpecialtyTankMedium =
+    SpecialtyTankMedium.regular;
+  @property({type: Boolean, reflect: true}) static: boolean = false;
+  @property({type: Boolean, attribute: false}) showIcon: boolean = true;
   @property({type: String}) tag: string = '';
+  @property({type: String, reflect: true}) positioning: TankPositioning =
+    TankPositioning.button;
+  @property({type: Boolean, attribute: false}) clickable: boolean = true;
+  @property({type: Boolean}) activated: boolean = false;
 
   @property({type: String}) badgeControl: AutomationButtonBadgeControl =
     AutomationButtonBadgeControl.None;
+  @property({type: String}) badgeAlert: AutomationButtonBadgeAlert =
+    AutomationButtonBadgeAlert.None;
   @property({type: String}) badgeInterlock: AutomationButtonBadgeInterlock =
     AutomationButtonBadgeInterlock.None;
   @property({type: String})
   badgeCommandLocked: AutomationButtonBadgeCommandLocked =
     AutomationButtonBadgeCommandLocked.None;
-  @property({type: String}) badgeAlert: AutomationButtonBadgeAlert =
-    AutomationButtonBadgeAlert.None;
 
   @property({type: Boolean}) alert: boolean = false;
   @property({type: String}) alertFrameType: ObcAlertFrameType =
@@ -116,17 +133,21 @@ export class ObcAbstractSpecialtyTank extends LitElement {
   @state() private _hasBadges = false;
   @state() private _hasTagSlot = false;
 
-  get equipmentIcon(): TemplateResult {
-    throw new Error('Method "equipmentIcon" must be implemented in subclass');
-  }
-
-  get splitMode(): SpecialtyTankSplitMode {
-    throw new Error('Method "splitMode" must be implemented in subclass');
+  protected get equipmentIcon(): TemplateResult {
+    throw new Error('"equipmentIcon" must be implemented in the subclass');
   }
 
   /** Accessible-name fallback used when `tag` is empty. */
   protected get equipmentName(): string {
-    throw new Error('Method "equipmentName" must be implemented in subclass');
+    throw new Error('"equipmentName" must be implemented in the subclass');
+  }
+
+  protected get frame(): SpecialtyTankFrame {
+    throw new Error('"frame" must be implemented in the subclass');
+  }
+
+  protected get splitMode(): SpecialtyTankSplitMode {
+    throw new Error('"splitMode" must be implemented in the subclass');
   }
 
   private _badgeControlType(): ObcAutomationBadgeType | null {
@@ -144,27 +165,6 @@ export class ObcAbstractSpecialtyTank extends LitElement {
       default:
         return null;
     }
-  }
-
-  private _badgeInterlockType(): ObcAutomationBadgeType | null {
-    switch (this.badgeInterlock) {
-      case AutomationButtonBadgeInterlock.Interlock:
-        return ObcAutomationBadgeType.Interlock;
-      case AutomationButtonBadgeInterlock.InterlockInhibit:
-        return ObcAutomationBadgeType.InterlockInhibit;
-      default:
-        return null;
-    }
-  }
-
-  private _badgeCommandLockedType(): ObcAutomationBadgeType | null {
-    if (
-      this.badgeCommandLocked ===
-      AutomationButtonBadgeCommandLocked.CommandLocked
-    ) {
-      return ObcAutomationBadgeType.CommandLocked;
-    }
-    return null;
   }
 
   private _badgeAlertType(): ObcAutomationBadgeType | null {
@@ -192,6 +192,27 @@ export class ObcAbstractSpecialtyTank extends LitElement {
     }
   }
 
+  private _badgeInterlockType(): ObcAutomationBadgeType | null {
+    switch (this.badgeInterlock) {
+      case AutomationButtonBadgeInterlock.Interlock:
+        return ObcAutomationBadgeType.Interlock;
+      case AutomationButtonBadgeInterlock.InterlockInhibit:
+        return ObcAutomationBadgeType.InterlockInhibit;
+      default:
+        return null;
+    }
+  }
+
+  private _badgeCommandLockedType(): ObcAutomationBadgeType | null {
+    if (
+      this.badgeCommandLocked ===
+      AutomationButtonBadgeCommandLocked.CommandLocked
+    ) {
+      return ObcAutomationBadgeType.CommandLocked;
+    }
+    return null;
+  }
+
   private _slotHasContent(e: Event): boolean {
     const slot = e.target as HTMLSlotElement;
     return slot
@@ -211,19 +232,65 @@ export class ObcAbstractSpecialtyTank extends LitElement {
     this._hasTagSlot = this._slotHasContent(e);
   }
 
+  private renderGraphic(): TemplateResult {
+    if (this.medium === SpecialtyTankMedium.regular) {
+      return html`<div class="area area-single"></div>`;
+    }
+    if (this.splitMode === SpecialtyTankSplitMode.diagonal) {
+      return this.renderDiagonalSplit();
+    }
+    return html`
+      <div class="halves">
+        <div class="area area-hot"></div>
+        <div class="area area-cold"></div>
+      </div>
+    `;
+  }
+
+  /**
+   * Diagonal split in a unit viewBox stretched over the area
+   * (`preserveAspectRatio="none"`); every stroke is `non-scaling` so the
+   * borders and the gap keep their pixel widths at any aspect ratio. The
+   * gap edges are drawn as one wide line per half, clipped to that half,
+   * under the narrower frame-coloured gap line.
+   */
+  private renderDiagonalSplit(): TemplateResult {
+    const hot = '0,0 1,0 0,1';
+    const cold = '1,0 1,1 0,1';
+    return html`
+      <div class="diagonal">
+        <svg viewBox="0 0 1 1" preserveAspectRatio="none" aria-hidden="true">
+          ${svg`
+            <defs>
+              <clipPath id="clip-hot"><polygon points=${hot} /></clipPath>
+              <clipPath id="clip-cold"><polygon points=${cold} /></clipPath>
+            </defs>
+            <polygon class="area-fill area-hot" points=${hot} />
+            <polygon class="area-fill area-cold" points=${cold} />
+            <polygon class="area-stroke area-hot" points=${hot} clip-path="url(#clip-hot)" vector-effect="non-scaling-stroke" />
+            <polygon class="area-stroke area-cold" points=${cold} clip-path="url(#clip-cold)" vector-effect="non-scaling-stroke" />
+            <line class="gap-edge area-hot" x1="1" y1="0" x2="0" y2="1" clip-path="url(#clip-hot)" vector-effect="non-scaling-stroke" />
+            <line class="gap-edge area-cold" x1="1" y1="0" x2="0" y2="1" clip-path="url(#clip-cold)" vector-effect="non-scaling-stroke" />
+            <line class="gap" x1="1" y1="0" x2="0" y2="1" vector-effect="non-scaling-stroke" />
+          `}
+        </svg>
+      </div>
+    `;
+  }
+
   override render() {
     const controlBadge = this._badgeControlType();
-    const dutyBadge = this._badgeInterlockType();
-    const commandLockedBadge = this._badgeCommandLockedType();
     const alertBadge = this._badgeAlertType();
+    const interlockBadge = this._badgeInterlockType();
+    const commandLockedBadge = this._badgeCommandLockedType();
     const hasEnumBadges =
       controlBadge !== null ||
-      dutyBadge !== null ||
-      commandLockedBadge !== null ||
-      alertBadge !== null;
+      alertBadge !== null ||
+      interlockBadge !== null ||
+      commandLockedBadge !== null;
 
     const badgesHidden = !this._hasBadges && !hasEnumBadges;
-    const tagHidden = !this.showTag || (!this._hasTagSlot && !this.tag);
+    const tagHidden = !this._hasTagSlot && !this.tag;
 
     const badgesCell = html`
       <div class="badges" ?hidden=${badgesHidden}>
@@ -233,9 +300,14 @@ export class ObcAbstractSpecialtyTank extends LitElement {
                 .type=${controlBadge}
               ></obc-automation-badge>`
             : nothing}
-          ${dutyBadge
+          ${alertBadge
             ? html`<obc-automation-badge
-                .type=${dutyBadge}
+                .type=${alertBadge}
+              ></obc-automation-badge>`
+            : nothing}
+          ${interlockBadge
+            ? html`<obc-automation-badge
+                .type=${interlockBadge}
               ></obc-automation-badge>`
             : nothing}
           ${commandLockedBadge
@@ -243,73 +315,40 @@ export class ObcAbstractSpecialtyTank extends LitElement {
                 .type=${commandLockedBadge}
               ></obc-automation-badge>`
             : nothing}
-          ${alertBadge
-            ? html`<obc-automation-badge
-                .type=${alertBadge}
-              ></obc-automation-badge>`
-            : nothing}
         </slot>
-      </div>
-    `;
-
-    const mediumFill =
-      this.splitMode === SpecialtyTankSplitMode.diagonal
-        ? html`<div class="fill fill-diagonal"></div>
-            <svg
-              class="divider-diagonal"
-              viewBox="0 0 100 100"
-              preserveAspectRatio="none"
-              aria-hidden="true"
-            >
-              <line
-                class="divider-diagonal-border"
-                x1="0"
-                y1="100"
-                x2="100"
-                y2="0"
-                vector-effect="non-scaling-stroke"
-              />
-              <line
-                class="divider-diagonal-fill"
-                x1="0"
-                y1="100"
-                x2="100"
-                y2="0"
-                vector-effect="non-scaling-stroke"
-              />
-            </svg>`
-        : html`<div class="fill fill-hot"></div>
-            <div class="fill fill-cold"></div>
-            <div class="divider"></div>`;
-
-    const mediumIcons = this.showMediumIcons
-      ? html`<obi-heat-google
-            class="corner-icon corner-icon-hot"
-            aria-hidden="true"
-          ></obi-heat-google>
-          <obi-cold-google
-            class="corner-icon corner-icon-cold"
-            aria-hidden="true"
-          ></obi-cold-google>`
-      : nothing;
-
-    const tankContainerClasses = classMap({
-      'tank-container': true,
-      [`split-${this.splitMode}`]: true,
-      'has-medium': this.medium,
-    });
-    const tankContainer = html`
-      <div class=${tankContainerClasses}>
-        <div class="content-container">
-          ${mediumFill}${mediumIcons}
-          <div class="icon-frame">${this.equipmentIcon}</div>
-        </div>
       </div>
     `;
 
     const tagCell = html`
       <div class="tag" ?hidden=${tagHidden}>
         <slot name="tag" @slotchange=${this._onTagSlotChange}>${this.tag}</slot>
+      </div>
+    `;
+
+    const pressurized = this.frame === SpecialtyTankFrame.pressurized;
+    const cap = (side: 'start' | 'end') =>
+      pressurized
+        ? html`<div class="cap cap-${side}"><div class="cap-dome"></div></div>`
+        : nothing;
+    const frameClasses = classMap({
+      'tank-frame': true,
+      [`frame-${this.frame}`]: true,
+      [`split-${this.splitMode}`]: true,
+      [`medium-${this.medium}`]: true,
+      static: this.static,
+    });
+    const tankFrame = html`
+      <div class=${frameClasses}>
+        ${cap('start')}
+        <div class="middle">
+          <div class="content">
+            ${this.static ? nothing : this.renderGraphic()}
+            ${this.showIcon
+              ? html`<div class="icon-frame">${this.equipmentIcon}</div>`
+              : nothing}
+          </div>
+        </div>
+        ${cap('end')}
       </div>
     `;
 
@@ -328,21 +367,52 @@ export class ObcAbstractSpecialtyTank extends LitElement {
         </obc-alert-frame>`
       : nothing;
 
-    return html`
-      <button
-        class="root"
-        type="button"
-        aria-label=${this.tag || this.equipmentName}
+    const halo = html`
+      <div class="halo">
+        ${badgesCell}${tankFrame}${tagCell}${alertFrameOverlay}
+      </div>
+    `;
+
+    const isClickable = this.clickable && !this.static;
+    const rootClasses = classMap({
+      root: true,
+      activated: this.activated,
+      clickable: isClickable,
+    });
+    const name = this.tag || this.equipmentName;
+
+    // Same three root shapes as obc-automation-tank; the live region stays on
+    // all of them so a slotted alert label is announced regardless.
+    if (this.static) {
+      return html`<div
+        class=${rootClasses}
+        role="img"
+        aria-label=${name}
         aria-live="polite"
         aria-atomic="true"
       >
-        <div class="halo">
-          <div class="body">${badgesCell}${tankContainer}</div>
-          ${tagCell}${alertFrameOverlay}
-        </div>
-      </button>
-    `;
+        ${halo}
+      </div>`;
+    }
+    if (!isClickable) {
+      return html`<div
+        class=${rootClasses}
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        ${halo}
+      </div>`;
+    }
+    return html`<button
+      class=${rootClasses}
+      type="button"
+      aria-label=${name}
+      aria-live="polite"
+      aria-atomic="true"
+    >
+      ${halo}
+    </button>`;
   }
 
-  static override styles = unsafeCSS(componentStyle);
+  static override styles: CSSResultGroup = unsafeCSS(componentStyle);
 }
