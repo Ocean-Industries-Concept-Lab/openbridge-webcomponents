@@ -14,7 +14,6 @@ const meta: Meta<typeof ObcCompassFlat> = {
   component: 'obc-compass-flat',
   args: {
     width: 512,
-    height: 512,
     heading: 45,
     courseOverGround: 50,
     FOVIndicator: false,

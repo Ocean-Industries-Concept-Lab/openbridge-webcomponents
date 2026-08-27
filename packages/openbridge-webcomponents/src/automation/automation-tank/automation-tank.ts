@@ -116,6 +116,9 @@ export enum TankChartMode {
 /**
  *
  *
+ * @snapshot-base-height 173px
+ * @snapshot-base-width 168px
+ * @ignition-center-horizontal
  * Setpoint properties are inherited from {@link SetpointMixin}
  * (`setpoint`, `newSetpoint`, `touching`, `atSetpoint`, `autoAtSetpoint`,
  * `autoAtSetpointDeadband`, `setpointAtZeroDeadband`, `setpointOverride`,
