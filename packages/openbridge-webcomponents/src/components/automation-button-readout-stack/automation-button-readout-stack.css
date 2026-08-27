@@ -52,7 +52,15 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 10px;
+    gap: 0;
+  }
+
+  .value-text .hinted-zero {
+    color: var(
+      --obc-automation-button-readout-stack-hinted-color,
+      var(--element-disabled-color)
+    );
+    font-weight: var(--global-typography-generic-l-font-weight-regular);
   }
 
   &.small .readout-item {

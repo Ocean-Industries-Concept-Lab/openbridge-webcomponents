@@ -95,11 +95,18 @@ export class ObcAutomationButtonReadoutStack extends LitElement {
     return html`<span class="value-text">${text}</span>`;
   }
 
+  /**
+   * Numeric readout with hinted zeros.
+   *
+   * The minus sign occupies a digit slot, so the readout stays `nDigits` wide
+   * and the sign renders ahead of the hinted padding (`-05`, not `0-5`).
+   */
   renderValue(readout: AutomationButtonReadoutStackValue): HTMLTemplateResult {
     const v = readout.value.toFixed(0);
+    const sign = v.startsWith('-') ? '-' : '';
+    const digits = sign ? v.slice(1) : v;
     const zeroPadding =
       v.length < readout.nDigits ? '0'.repeat(readout.nDigits - v.length) : '';
-    const paddedValue = zeroPadding + v;
 
     let directionIcon: HTMLTemplateResult | typeof nothing = nothing;
     if (readout.icon == 'arrow') {
@@ -148,7 +155,13 @@ export class ObcAutomationButtonReadoutStack extends LitElement {
       }
     }
     const content = html`
-      ${this.renderValueText(paddedValue)}
+      <span class="value-text"
+        >${sign}${zeroPadding
+          ? html`<span class="hinted-zero" aria-hidden="true"
+              >${zeroPadding}</span
+            >`
+          : nothing}${digits}</span
+      >
       <span class="unit">${readout.unit}</span>
     `;
 
