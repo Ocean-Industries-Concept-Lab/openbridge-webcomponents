@@ -22,6 +22,30 @@
     height: 24px;
   }
 
+  /* Slot-projected row icons: the slot hugs its content so an unfilled slot
+     collapses like icon 'none'; the projected element takes the icon size. */
+  slot.icon {
+    display: flex;
+    width: auto;
+    height: auto;
+  }
+
+  slot.icon::slotted(*) {
+    display: block;
+    width: 16px;
+    height: 16px;
+  }
+
+  &.small slot.icon::slotted(*) {
+    width: 12px;
+    height: 12px;
+  }
+
+  &.enhanced slot.icon::slotted(*) {
+    width: 24px;
+    height: 24px;
+  }
+
   .readout-item {
     display: inline-flex;
     padding: 0 4px;
@@ -83,6 +107,18 @@
 
   .readout-item.state-on {
     /* Styles for state-on type */
+  }
+
+  /* The setpoint row is a bare 16px line — the gap to the value rows below is
+     carried by the fonts' own leading, per the design. */
+  .readout-item.setpoint {
+    height: 16px;
+  }
+
+  .setpoint-glyph {
+    width: 4px;
+    height: 5px;
+    fill: var(--element-neutral-color);
   }
 
   obc-button::part(wrapper) {
