@@ -3,14 +3,6 @@ import type {TemplateResult} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import {ObcShuffleButtonBase} from '../shuffle-button/shuffle-button-base.js';
-
-/**
- * Detail payload for the `position-selected` event:
- * the zero-based position the user requested (0 = left, 1 = center, 2 = right).
- */
-export interface PositionSelectedDetail {
-  position: number;
-}
 import '../../icons/icon-hydraulic-01.js';
 import '../../icons/icon-hydraulic-02.js';
 import '../../icons/icon-hydraulic-05.js';
@@ -18,6 +10,17 @@ import '../../icons/icon-hydraulic-06.js';
 import '../../icons/icon-hydraulic-07.js';
 import '../../icons/icon-hydraulic-08.js';
 import '../../icons/icon-hydraulic-16.js';
+
+/**
+ * Detail payload for the `position-selected` event: the zero-based position
+ * the user requested (0 = left, 1 = center, 2 = right).
+ *
+ * Declared here rather than imported from the base: the wrapper generators
+ * resolve event types in the component's own module only.
+ */
+export interface PositionSelectedDetail {
+  position: number;
+}
 
 /**
  * Center-position symbol variant of `<obc-hydraulic-valve-4-3>`.
@@ -45,30 +48,27 @@ export enum HydraulicValve43Type {
  *   match a vertical flow path.
  * - Controlled selection: clicking an option or pressing arrow keys fires
  *   `position-selected` with the requested position; the application updates
- *   `selectedPosition` when the change is confirmed.
+ *   `selectedPosition` once the change is confirmed.
  * - Scales with the component size classes (`obc-component-size-*`).
  *
  * ## Usage Guidelines
  * Use to display and command the position of a 4/3 directional valve. For
  * two-position valves use `<obc-hydraulic-valve-x-2>`; for a static check
- * valve symbol use `<obc-hydraulic-check-valve>`.
+ * valve symbol use `<obc-hydraulic-check-valve>`. Bind `selectedPosition` to
+ * the position the device reports, not to the last request, so the symbol
+ * never shows a position the valve has not reached.
  *
  * ## Events
  * - `position-selected` – Fired when the user requests a position (click or
  *   arrow key). Detail: `{position: number}` (0 = left, 1 = center, 2 = right).
  *
- * @experimental
- *
+ * @property type - Center-position symbol variant.
  * @property ariaLabel - Accessible name for the control.
- * @fires position-selected {CustomEvent<PositionSelectedDetail>} Position requested by the user.
+ * @fires {CustomEvent<PositionSelectedDetail>} position-selected - Fired when the user requests a position (click or arrow key).
+ * @experimental
  */
 @customElement('obc-hydraulic-valve-4-3')
 export class ObcHydraulicValve43 extends ObcShuffleButtonBase {
-  /**
-   * Center-position symbol variant.
-   *
-   * @default HydraulicValve43Type.One
-   */
   @property({type: String}) type: HydraulicValve43Type =
     HydraulicValve43Type.One;
 

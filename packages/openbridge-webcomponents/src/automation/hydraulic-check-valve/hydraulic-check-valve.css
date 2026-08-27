@@ -1,3 +1,3 @@
 .thumb {
-  cursor: default;
+  cursor: default; /* display-only symbol, nothing to select */
 }

@@ -2,11 +2,14 @@
   display: inline-block;
 }
 
+/* ---- Slot grid ----
+ * The box is (2n-1) touch-target slots; the selected thumb always sits in the
+ * center slot, so the box never changes size with the selection. */
 .shuffle {
   --shuffle-slot-size: var(--global-size-spacing-touch-target-min);
   --_shuffle-slot-count: 1;
   --_shuffle-window-offset: 0;
-  position: relative;
+  position: relative; /* containing block for the sliding .window */
   width: calc(var(--_shuffle-slot-count) * var(--shuffle-slot-size));
   height: var(--shuffle-slot-size);
 }
@@ -16,15 +19,17 @@
   height: calc(var(--_shuffle-slot-count) * var(--shuffle-slot-size));
 }
 
+/* The window holds the n thumbs in logical order and slides by whole slots so
+ * the selected one lands in the center; the box above stays put. */
 .window {
-  position: absolute;
+  position: absolute; /* slides inside the fixed-size .shuffle box */
   top: 0;
   left: 0;
   display: flex;
   transform: translateX(
     calc(var(--_shuffle-window-offset) * var(--shuffle-slot-size))
   );
-  transition: transform 100ms ease-out;
+  transition: transform 100ms ease-out; /* TODO(designer): Figma is WIP and specifies no motion */
 }
 
 .shuffle.vertical .window {
@@ -40,6 +45,8 @@
   }
 }
 
+/* The track is inset to the visual target height so it aligns with the thumbs'
+ * visible wrappers, not with the touch slots. */
 .track {
   @mixin style style=indent noClick=true;
   position: absolute;
@@ -52,7 +59,7 @@
     )
     0;
   border-radius: var(--global-border-radius-border-radius-base);
-  box-sizing: border-box;
+  box-sizing: border-box; /* the mixin border must not grow the track past the slots */
 }
 
 .shuffle.vertical .track {
@@ -66,6 +73,9 @@
     );
 }
 
+/* ---- Thumbs ----
+ * Two-layer pattern: the button is the touch target and focus-ring layer, the
+ * .visible-wrapper is the visual target. */
 .thumb {
   position: relative;
   width: var(--shuffle-slot-size);
@@ -73,7 +83,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
+  flex-shrink: 0; /* a slot never shrinks below the touch target */
   padding: 0;
   margin: 0;
   border: none;
@@ -97,7 +107,7 @@ button.thumb {
 }
 
 .thumb.selected {
-  cursor: default;
+  cursor: default; /* clicking the selected position is a no-op */
 }
 
 .thumb.selected .visible-wrapper {
@@ -117,7 +127,7 @@ button.thumb {
 }
 
 .shuffle.vertical .icon-container {
-  transform: rotate(-90deg);
+  transform: rotate(-90deg); /* symbols are drawn for horizontal flow */
 }
 
 .icon-container > * {

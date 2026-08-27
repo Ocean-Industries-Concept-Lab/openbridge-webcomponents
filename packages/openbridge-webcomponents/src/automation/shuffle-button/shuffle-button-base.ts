@@ -24,36 +24,39 @@ export interface PositionSelectedDetail {
 export type PositionSelectedEvent = CustomEvent<PositionSelectedDetail>;
 
 /**
- * Base class for "shuffle button" selectors: a control whose selected thumb
+ * Base class for shuffle-button selectors: a control whose selected thumb
  * always occupies the fixed center slot of a (2·n−1)-slot row (or column when
  * `vertical`). Option thumbs keep their logical order and redistribute to
  * either side of the selected thumb; empty spacer slots absorb the remaining
  * length so the total size never changes.
  *
- * The control is controlled: clicking an option (or using arrow keys) only
- * fires `position-selected` — the host application decides when to update
- * `selectedPosition` (e.g. after the device confirms the change).
+ * ## Controlled selection
+ * Clicking an option or pressing an arrow key only fires `position-selected`.
+ * The host application sets `selectedPosition` once the device confirms the
+ * change, so the control never shows a position the device has not reached.
  *
- * Implements the WAI-ARIA radio-group pattern: one tab stop (the selected
- * thumb), arrow keys request the previous/next position with wrap-around.
+ * ## Keyboard
+ * Follows the WAI-ARIA radio group pattern
+ * (https://www.w3.org/WAI/ARIA/apg/patterns/radio/): `role="radiogroup"` with
+ * one `role="radio"` thumb per position, a single tab stop on the selected
+ * thumb, and Left/Up and Right/Down moving to the previous/next position with
+ * wrap-around. Departures: arrow keys request the position rather than moving
+ * the checked state (controlled selection above), and focus follows the thumb
+ * only once the host confirms it. Space/Enter on a focused thumb request it
+ * through the native button click. Home/End are out of scope.
  *
- * Subclasses define `positionCount` and `renderPositionIcon()`. The
- * `position-selected` event contract is documented (`@fires`) on each concrete
- * component, as required for the custom-elements manifest.
+ * Subclasses define `positionCount` and `renderPositionIcon()` and carry the
+ * `@fires position-selected` tag: the manifest and the framework wrappers read
+ * events from the registered element, not from this base.
  *
- * Not declared `abstract`: the framework wrapper generators instantiate every
- * manifest class through a concrete `Constructor<T>` type, and an abstract
- * class breaks the generated React wrapper build (same reason as the
- * specialty-tank base).
+ * Not declared `abstract`: the wrapper generators wrap every `LitElement`
+ * subclass and pass its constructor as a concrete `Constructor<T>`, so the
+ * default implementations below stand in for abstract members (same as
+ * `ObcAbstractAutomationButton`).
  *
- * @property selectedPosition - Zero-based index of the currently selected position.
- *   Out-of-range values are clamped.
- * @property vertical - Lays the control out vertically: positions stack top to bottom and the
- *   position symbols rotate 90° counter-clockwise to match a vertical flow
- *   path.
- * @property ariaLabel - Accessible name for the radio group (the control is icon-only).
- *   Concrete components override the default with a device-specific name.
- * @ignore
+ * @property selectedPosition - Zero-based index of the currently selected position. Out-of-range values are clamped.
+ * @property vertical - Lays the control out vertically: positions stack top to bottom and the position symbols rotate 90° counter-clockwise to match a vertical flow path.
+ * @property ariaLabel - Accessible name for the radio group (the control is icon-only). Concrete components override the default with a device-specific name.
  */
 export class ObcShuffleButtonBase extends LitElement {
   @property({type: Number}) selectedPosition = 1;

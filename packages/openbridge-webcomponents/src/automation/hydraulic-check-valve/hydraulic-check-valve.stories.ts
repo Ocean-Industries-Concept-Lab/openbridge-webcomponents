@@ -4,7 +4,7 @@ import './hydraulic-check-valve.js';
 
 const meta: Meta<typeof ObcHydraulicCheckValve> = {
   title: 'Automation/Hydraulic Valves/Check Valve',
-  tags: ['autodocs', 'experimental'],
+  tags: ['autodocs', '6.1', 'experimental'],
   component: 'obc-hydraulic-check-valve',
 } satisfies Meta<ObcHydraulicCheckValve>;
 

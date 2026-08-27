@@ -3,19 +3,22 @@ import type {TemplateResult} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import {ObcShuffleButtonBase} from '../shuffle-button/shuffle-button-base.js';
-
-/**
- * Detail payload for the `position-selected` event:
- * the zero-based position the user requested (0 = first, 1 = second).
- */
-export interface PositionSelectedDetail {
-  position: number;
-}
 import '../../icons/icon-hydraulic-01.js';
 import '../../icons/icon-hydraulic-02.js';
 import '../../icons/icon-hydraulic-07.js';
 import '../../icons/icon-hydraulic-10.js';
 import '../../icons/icon-hydraulic-11.js';
+
+/**
+ * Detail payload for the `position-selected` event: the zero-based position
+ * the user requested (0 = first, 1 = second).
+ *
+ * Declared here rather than imported from the base: the wrapper generators
+ * resolve event types in the component's own module only.
+ */
+export interface PositionSelectedDetail {
+  position: number;
+}
 
 /**
  * Port/position configuration of `<obc-hydraulic-valve-x-2>`:
@@ -41,31 +44,28 @@ export enum HydraulicValveX2Type {
  * - `vertical` stacks the positions top to bottom and rotates the symbols to
  *   match a vertical flow path.
  * - Controlled selection: clicking the option or pressing arrow keys fires
- *   `position-selected`; the application updates `selectedPosition` when the
+ *   `position-selected`; the application updates `selectedPosition` once the
  *   change is confirmed.
  * - Scales with the component size classes (`obc-component-size-*`).
  *
  * ## Usage Guidelines
  * Use to display and command the position of a two-position valve. For 4/3
  * directional valves use `<obc-hydraulic-valve-4-3>`; for a static check
- * valve symbol use `<obc-hydraulic-check-valve>`.
+ * valve symbol use `<obc-hydraulic-check-valve>`. Bind `selectedPosition` to
+ * the position the device reports, not to the last request, so the symbol
+ * never shows a position the valve has not reached.
  *
  * ## Events
  * - `position-selected` – Fired when the user requests a position (click or
  *   arrow key). Detail: `{position: number}` (0 = first, 1 = second).
  *
- * @experimental
- *
+ * @property type - Port/position configuration.
  * @property ariaLabel - Accessible name for the control.
- * @fires position-selected {CustomEvent<PositionSelectedDetail>} Position requested by the user.
+ * @fires {CustomEvent<PositionSelectedDetail>} position-selected - Fired when the user requests a position (click or arrow key).
+ * @experimental
  */
 @customElement('obc-hydraulic-valve-x-2')
 export class ObcHydraulicValveX2 extends ObcShuffleButtonBase {
-  /**
-   * Port/position configuration.
-   *
-   * @default HydraulicValveX2Type.TwoTwo
-   */
   @property({type: String}) type: HydraulicValveX2Type =
     HydraulicValveX2Type.TwoTwo;
 

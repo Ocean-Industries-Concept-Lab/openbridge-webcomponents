@@ -18,6 +18,7 @@ Choose the correct base class when creating a new automation device:
 | Motorized device (on + speed) | `ObcAbstractAutomationButtonMotorized`       | `on`, `speed` + `speedUnit` (default `%`) + `speedMaxDigits` (default 3); `speedInPercent` is deprecated |
 | Binary on/off device          | `ObcAbstractAutomationButtonSquared`         | `on`                                                                                                     |
 | Analog device with value      | `ObcAbstractAutomationButton` + custom logic | `open`, `value` (0–100)                                                                                  |
+| Position selector (shuffle)   | `ObcShuffleButtonBase`                       | `selectedPosition`, `vertical`; fires `position-selected` (see § Shuffle selectors)                      |
 | Pure display (no button)      | `LitElement` directly                        | N/A                                                                                                      |
 
 All button-based components share `ObcAbstractAutomationButton` as root, which provides: positioning, readout stacks, badges, alert frames, tags, and label direction.
@@ -93,6 +94,18 @@ Analog valves render inline dynamic SVG (not icon swapping):
 - Fill visualization uses clipPath that extends based on value percentage
 - Use CSS variables for stroke/fill colors, not hard-coded values
 
+## Shuffle selectors (hydraulic valves)
+
+`obc-hydraulic-valve-4-3` and `obc-hydraulic-valve-x-2` extend `ObcShuffleButtonBase` (`src/automation/shuffle-button/`); `obc-hydraulic-check-valve` is display-only and reuses the same CSS for a single static slot. They are not anchored automation buttons: no `crossDecorator`, no badges, no readouts.
+
+- **The box is 2n−1 slots.** The selected thumb always occupies the fixed center slot and the other thumbs keep their logical order on either side, so the host never changes size with the selection. `shuffle-layout.ts` holds the pure math; `shuffle-layout.spec.ts` pins it.
+- **Selection is controlled.** A click or arrow key only fires `position-selected`; `selectedPosition` moves when the application sets it, so the symbol never shows a position the device has not reached. Stories wire the event back to the property so the control feels live.
+- **Keyboard is the APG radio group pattern** — one tab stop on the selected thumb, arrow keys with wrap-around. The departures are listed in the base class JSDoc.
+- **The base is a concrete class, not `abstract`.** The wrapper generators wrap every `LitElement` subclass and need a concrete constructor, like `ObcAbstractAutomationButton`.
+- **`PositionSelectedDetail` is declared in each concrete component.** The wrapper generators resolve event types in the component's own module; importing it from the base leaves the Vue wrapper without an import.
+- **`vertical` rotates the symbols −90°** so they follow a vertical flow path; the track and thumb geometry transpose.
+- **Colors** come from the automation pipe/device tokens; sizes from the global touch/visual target tokens, so the components scale with `obc-component-size-*`.
+
 ## Storybook Conventions
 
 - Use shared argTypes helpers: `argTypesAbstractAutomationButton`, `argTypesAbstractAutomationButtonMotorized`, `argTypesAbstractAutomationButtonPassiveSquare`
@@ -133,3 +146,7 @@ Different components have different anchor points:
 | Line segments        | Left/top edge of line   | SVG typically drawn around the 24px grid center (for example x=12 or y=12) + visual offset by about half the grid to align to the host edge, with minor `±0.5px` stroke/viewBox adjustments and direction-specific shifts where needed |
 
 **Do not change the centering transforms** on automation components without understanding the anchor point intent. The browser's element overlay (host box) will often appear offset from the visual content — this is intentional because the host box starts at the placement coordinate while the visual content is shifted to align the anchor.
+
+## Open
+
+- Shuffle selectors slide 100 ms on selection change; the Figma frames are WIP and specify no motion, so keep or remove is a designer call (#1171).
