@@ -114,8 +114,12 @@ export class ObcAutomationButtonReadoutStack extends LitElement {
     return html`<span class="value-text">${text}</span>`;
   }
 
-  // The minus sign occupies a digit slot, so every readout is nDigits wide;
-  // it renders before the dimmed padding ("-05", not "0-5").
+  /**
+   * Padded digits with hinted zeros.
+   *
+   * The minus sign occupies a digit slot, so the readout stays `nDigits` wide
+   * and the sign renders ahead of the hinted padding (`-05`, not `0-5`).
+   */
   private renderPaddedDigits(
     value: number,
     nDigits: number
@@ -127,7 +131,9 @@ export class ObcAutomationButtonReadoutStack extends LitElement {
       v.length < nDigits ? '0'.repeat(nDigits - v.length) : '';
     return html`<span class="value-text"
       >${sign}${zeroPadding
-        ? html`<span class="pad">${zeroPadding}</span>`
+        ? html`<span class="hinted-zero" aria-hidden="true"
+            >${zeroPadding}</span
+          >`
         : nothing}${digits}</span
     >`;
   }
