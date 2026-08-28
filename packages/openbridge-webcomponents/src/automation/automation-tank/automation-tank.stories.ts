@@ -646,7 +646,6 @@ export const WithAlertBottomFlip: Story = {
       .hasGraphIcon=${args.hasGraphIcon}
       .showTrendSymbol=${args.showTrendSymbol}
       .percentFractionDigits=${args.percentFractionDigits}
-      .readout=${args.readout}
       ?alert=${args.alert}
       .alertFrameType=${args.alertFrameType}
       .alertFrameThickness=${args.alertFrameThickness}
