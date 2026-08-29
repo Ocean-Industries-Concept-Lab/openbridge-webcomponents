@@ -104,7 +104,7 @@ const renderCounter = (
 
 const meta: Meta<typeof ObcAlertSubsystemCounter> = {
   title: 'Application Components/Alerts/Alert Subsystem Counter',
-  tags: ['autodocs', '6.0', 'beta'],
+  tags: ['6.0', 'beta'],
   component: 'obc-alert-subsystem-counter',
   args: {
     label: 'Label',
