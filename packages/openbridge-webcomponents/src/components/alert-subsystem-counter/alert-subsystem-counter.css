@@ -3,7 +3,7 @@
 }
 
 .frame {
-  box-sizing: border-box;
+  box-sizing: border-box; /* the host width is the frame width, border included */
   display: flex;
   align-items: center;
   gap: 8px;
@@ -20,30 +20,29 @@
 
 .leading-container {
   display: flex;
-  flex: 1 0 0;
+  flex: 1 0 0; /* takes the width the badges leave over, so the label can truncate */
   align-items: center;
   gap: 4px;
-  min-width: 0;
+  min-width: 0; /* lets the label shrink below its text width */
 }
 
 .icon {
   flex-shrink: 0;
-  width: 24px;
-  height: 24px;
+  width: var(--global-size-spacing-icon-icon-size-regular);
+  height: var(--global-size-spacing-icon-icon-size-regular);
   color: var(--on-indent-neutral-color);
 }
 
 .icon.no-icon {
-  display: none;
+  display: none; /* collapses the flex gap too, so an iconless counter has no leading hole */
 }
 
 .label {
   @mixin font-body;
   flex: 1 0 0;
-  min-width: 0;
+  min-width: 0; /* required for text-overflow to kick in inside a flex item */
   padding-left: 4px;
   color: var(--element-inactive-color);
-  font-feature-settings: "ss04" 1;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -56,7 +55,7 @@
 
 .trailing-container {
   display: flex;
-  flex-shrink: 0;
+  flex-shrink: 0; /* badges keep their size; the label is what gives way */
   align-items: center;
   gap: 4px;
 }
@@ -65,9 +64,19 @@
   justify-content: flex-end;
 }
 
+.frame.orientation-vertical .trailing-container {
+  align-self: flex-start; /* hugs its content under the label instead of stretching across the frame */
+}
+
+.frame:not(.has-alert) .trailing-container {
+  justify-content: center;
+  /* same row height as the large badges it stands in for */
+  height: var(--ui-components-badge-min-size-large);
+  padding: 0 8px;
+}
+
 .empty {
   @mixin font-label;
   color: var(--element-inactive-color);
   white-space: nowrap;
-  font-feature-settings: "ss04" 1;
 }

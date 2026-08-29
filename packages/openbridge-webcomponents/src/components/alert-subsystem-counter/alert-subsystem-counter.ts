@@ -32,7 +32,7 @@ export enum ObcAlertSubsystemCounterOrientation {
  * - **Alert state:** `hasAlert` toggles between an active (bold label, badges)
  *   and an inactive (muted label, empty text) presentation.
  * - **Freeform label:** Pass a full title or an abbreviation — the label is
- *   plain text decided by the caller.
+ *   plain text decided by the caller and truncates with an ellipsis.
  * - **Configurable empty text:** Customize the message shown when there are no
  *   alerts via `emptyText`.
  * - **Optional leading icon:** Provide an icon through the `icon` slot; omit it
@@ -44,11 +44,18 @@ export enum ObcAlertSubsystemCounterOrientation {
  * - Use this component to give an at-a-glance count of outstanding alerts for a
  *   single subsystem, grouped by severity.
  * - Provide one slotted badge per severity in the `badges` slot, typically
- *   `<obc-badge size="large">` with a severity `type` and a `number`.
+ *   `<obc-badge size="large">` with a severity `type` and a `number`. The
+ *   badge `type` values are the same severity vocabulary as `AlertType`
+ *   (`alarm`, `warning`, `caution` and the `level-*` family); order them
+ *   highest severity first, as `ALERT_SEVERITY_PRIORITY` does.
  * - Set `hasAlert` to `false` to present the resolved/clear state; the badges
- *   are then hidden and `emptyText` is shown.
+ *   are then not rendered and `emptyText` is shown. The component does not
+ *   derive the state from the slotted badges — the consumer owns it.
  * - Choose `vertical` orientation in narrow containers where the badges do not
  *   fit beside the label.
+ * - The counter is display-only: it renders no button and fires no events. For
+ *   a clickable subsystem entry with badges, see `obc-tree-navigation-item`
+ *   (`alertBadges`) or `obc-integration-fleet-button` (`alerts`).
  *
  * ---
  *
@@ -73,32 +80,20 @@ export enum ObcAlertSubsystemCounterOrientation {
  * ```
  *
  * @property label - The subsystem label. Pass a full title or an abbreviation as plain text.
+ * @property orientation - Layout direction: `horizontal` (default) keeps icon, label and badges in one row; `vertical` moves the badges (or empty text) to a line below the label.
+ * @property hasAlert - Whether the subsystem has active alerts. `true` shows the label bold and renders the `badges` slot; `false` mutes the label and shows `emptyText` instead of the badges.
  * @property emptyText - Text shown in the trailing area when `hasAlert` is `false`.
+ * @availableWhen emptyText hasAlert==false
  * @slot icon - Optional leading 24px icon.
  * @slot badges - Count badges shown when `hasAlert` is true.
+ * @beta
  */
 @customElement('obc-alert-subsystem-counter')
 export class ObcAlertSubsystemCounter extends LitElement {
   @property({type: String}) label = '';
-
-  /**
-   * Layout direction.
-   *
-   * - `horizontal` (default): icon, label, and badges in one row.
-   * - `vertical`: badges (or empty text) on a line below the label.
-   */
   @property({type: String}) orientation: ObcAlertSubsystemCounterOrientation =
     ObcAlertSubsystemCounterOrientation.Horizontal;
-
-  /**
-   * Whether the subsystem has active alerts.
-   *
-   * When `true`, the label is shown active (bold) and the `badges` slot is
-   * rendered. When `false`, the label is muted and `emptyText` is shown
-   * instead of the badges.
-   */
   @property({type: Boolean}) hasAlert = false;
-
   @property({type: String}) emptyText = 'No alerts';
 
   @state() private hasIcon = false;
