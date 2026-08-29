@@ -88,7 +88,7 @@ type SelectionRecord = {
  * ```
  *
  * @slot - Layers participating in the stack.
- * @fires selection-change {CustomEvent<{selected: Poi[]; added: Poi | null; removed: Poi | null}>} Fired whenever the selection set changes. Bubbles, composed.
+ * @fires {CustomEvent<{selected: Poi[]; added: Poi | null; removed: Poi | null}>} selection-change - Fired whenever the selection set changes (user click, programmatic call, or bootstrap seeding). Bubbles and is composed.
  * @experimental
  */
 @customElement('obc-poi-layer-stack')
@@ -597,12 +597,10 @@ export class ObcPoiLayerStack extends LitElement {
   }
 
   private applySelectedTargetProjectionState(target: Poi) {
-    // NOTE: do NOT set animatePosition = true here.
-    // That removes the no-motion class, enabling CSS transitions on the
-    // wrapper/button/line. The group's frame-by-frame expand/collapse
-    // animation conflicts with CSS transitions, causing X wiggle.
-    // The FLIP jump animation uses Web Animations API (fill:'forwards')
-    // which overrides CSS anyway — it doesn't need CSS transitions.
+    // Never set `animatePosition` here: it enables CSS transitions on the
+    // wrapper/button/line, which fight the group's frame-by-frame
+    // expand/collapse animation (X wiggle). The FLIP jump runs on the Web
+    // Animations API with fill:'forwards' and needs no CSS transitions.
     target.style.setProperty(
       '--obc-poi-forced-target-transition-duration',
       '0ms'

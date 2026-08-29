@@ -5,6 +5,7 @@ import {
   computeMediaProjection,
   projectPoint,
 } from './poi-projection.js';
+import {moduleDocs} from '../../../.storybook/manifest-docs.js';
 
 type PoiProjectionArgs = {
   mediaWidth: number;
@@ -22,25 +23,7 @@ const meta: Meta<PoiProjectionArgs> = {
   parameters: {
     docs: {
       description: {
-        component: `
-Pure helper functions that map points from media pixel space
-(video/image natural resolution) to rendered screen space, accounting
-for \`cover\`/\`contain\` letterboxing. This is the same math
-\`obc-poi-controller\` applies to its detections-driven targets,
-exported so applications that manage their own POI elements can
-project coordinates without re-implementing the transform.
-
-- \`computeMediaProjection(input)\` — resolve scale and letterbox
-  offsets once per resize/metadata change.
-- \`projectPoint(projection, x, y)\` — media px → rendered px.
-- \`projectPointToLayer(projection, x, y, layerBottom)\` — rendered
-  point → \`obc-poi-data\` layer coordinates (\`x\` center px, \`y\`
-  downward connector length, clamped to 0).
-- \`projectBoxSize(projection, size)\` — scale a box dimension.
-
-The demo below draws the rendered container (outer box), the scaled
-media content region (shaded), and a marker at the projected point.
-        `.trim(),
+        component: moduleDocs('ar/poi-projection/poi-projection.ts'),
       },
     },
   },

@@ -1,4 +1,6 @@
 /**
+ * @module POI Projection
+ *
  * Media-projection helpers for POI overlays.
  *
  * Maps points from media pixel space (video/image natural resolution) to
@@ -23,6 +25,9 @@
  * ### Fit modes
  * - `cover`: media fills the container; overflow is cropped.
  * - `contain`: media letterboxes inside the container.
+ *
+ * The Storybook demo draws the rendered container (outer box), the scaled
+ * media content region (shaded), and a marker at the projected point.
  */
 
 /** Fit behavior matching `obc-poi-controller`'s `PoiFitMode` values. */

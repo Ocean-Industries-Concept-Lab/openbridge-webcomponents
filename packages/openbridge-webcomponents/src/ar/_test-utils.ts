@@ -20,12 +20,10 @@ export const waitForStorySettle = async (
     await new Promise<void>((resolve) => {
       setTimeout(resolve, 220);
     });
-    // POI targets carry `data-x-moving` (a `will-change` compositing hint)
-    // for a short window after position updates. Whether that window is
-    // still open at capture time changes stroke rasterization, so wait for
-    // it to expire — otherwise snapshots flip between two renders depending
-    // on machine load. Stories that animate forever hit the deadline and
-    // capture as before.
+    // `data-x-moving` is a `will-change` hint POI targets carry briefly after
+    // a position update; whether it is still set at capture time changes
+    // stroke rasterization, so snapshots flip under load unless it has
+    // expired. Stories that animate forever hit the deadline instead.
     const deadline = performance.now() + 2000;
     while (
       document.querySelector('[data-x-moving]') &&
