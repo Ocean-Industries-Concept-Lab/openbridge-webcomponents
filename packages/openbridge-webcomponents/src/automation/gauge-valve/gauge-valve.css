@@ -1,0 +1,158 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ---------- Priority / style colour model ----------
+ * Each priority owns a (strong, tint) colour pair; barStyle picks which of
+ * the two paints the bar and whether the cap pills invert to light. The
+ * defaults reproduce the regular/tint variant exactly. The vars inherit into
+ * the obc-watch bars/needles that draw with them. */
+.root {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  --gauge-valve-strong-color: var(--instrument-regular-secondary-color);
+  --gauge-valve-tint-color: var(--instrument-frame-tertiary-color);
+  --gauge-valve-bar-color: var(--gauge-valve-tint-color);
+  --gauge-valve-cap-fill-color: var(--gauge-valve-strong-color);
+  --gauge-valve-cap-border-color: var(--gauge-valve-tint-color);
+}
+
+.root.priority-enhanced {
+  --gauge-valve-strong-color: var(--instrument-enhanced-secondary-color);
+  --gauge-valve-tint-color: var(--instrument-enhanced-tertiary-color);
+}
+
+.root.priority-medium {
+  --gauge-valve-strong-color: var(--base-teal-500);
+  --gauge-valve-tint-color: var(--base-teal-200);
+}
+
+/* Fill style paints the bar in the strong colour; cap pills are not rendered
+ * (matching the fill mode of bar-vertical and gauge-radial). */
+.root.style-fill {
+  --gauge-valve-bar-color: var(--gauge-valve-strong-color);
+}
+
+/* ---------- Contain-fit sizing shell ----------
+ * Same model as gauge-proportional: the face is the largest square that fits
+ * inside both axes of the space left by the (compact) label stack; leftover
+ * space centers it. With `faceDiameter` the face-box gets an exact inline
+ * pixel size instead (`.face-pinned`). */
+.face-area {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  position: relative;
+}
+
+/* With a pinned face the area shrink-wraps the fixed box instead of flexing,
+ * so the compact label stack stays clustered under the face; the root then
+ * centers the face+stack group in the leftover host space. */
+.root.pinned {
+  justify-content: center;
+}
+
+.root.pinned .face-area {
+  flex: 0 0 auto;
+}
+
+.face-box {
+  position: relative;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  aspect-ratio: 1;
+  margin-left: auto;
+  margin-right: auto;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.face-box.face-pinned {
+  max-width: none;
+  max-height: none;
+  aspect-ratio: auto;
+  top: 0;
+  transform: none;
+}
+
+.face-box > .layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* The icon box is a fixed fraction of the frame (96 SVG units), so it scales
+ * with the face like the rest of the watch-face graphics; the host sets
+ * --icon-size per frame. */
+.icon {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: var(--icon-size, 18.75%);
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Off state keeps the actuator icon dark-on-gray (near-black glyph with a
+ * light halo, per the Figma Off master) instead of the default inverted grays
+ * that closed/off `obi-*` icon variants ship with. */
+.root.priority-off .icon {
+  --automation-device-primary-inverted-color: var(--element-active-color);
+  --automation-device-tertiary-inverted-color: var(
+    --instrument-frame-tertiary-color
+  );
+}
+
+.icon ::slotted(*) {
+  width: 100%;
+  height: 100%;
+}
+
+/* ---------- Readout side anchoring ----------
+ * --readout-edge is the near-edge % offset of the readout box from the
+ * scale-side frame edge (set by the host); the frame is symmetric, so the
+ * same offset anchors all four scale positions. */
+.gauge-valve-readout {
+  position: absolute;
+}
+
+.scale-top .gauge-valve-readout {
+  left: 50%;
+  top: var(--readout-edge, 21.88%);
+  transform: translateX(-50%);
+}
+
+.scale-bottom .gauge-valve-readout {
+  left: 50%;
+  bottom: var(--readout-edge, 21.88%);
+  transform: translateX(-50%);
+}
+
+.scale-right .gauge-valve-readout {
+  top: 50%;
+  right: var(--readout-edge, 21.88%);
+  transform: translateY(-50%);
+}
+
+.scale-left .gauge-valve-readout {
+  top: 50%;
+  left: var(--readout-edge, 21.88%);
+  transform: translateY(-50%);
+}
+
+.label-stack {
+  margin-top: 4px;
+}
