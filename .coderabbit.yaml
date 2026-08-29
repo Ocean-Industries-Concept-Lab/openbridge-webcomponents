@@ -10,15 +10,35 @@
 # edit is discarded on the next regeneration and the real fix belongs in the
 # source. See docs/agents/generated-code.md for the full inventory.
 #
-# `path_instructions` is deliberately short. It encodes only failure modes with
-# incident history in this repo, plus one repo-specific fact that reviewers
-# (human and machine) have got wrong. It is NOT a copy of docs/agents/ — that
-# tree is the canonical source and duplicating it here would recreate exactly
-# the drift that PR #1118 removed.
+# The rules themselves are NOT copied here. `knowledge_base.code_guidelines`
+# points CodeRabbit at the canonical `docs/agents/*.md` (the same files
+# `npm run agents:sync` renders for Copilot, Cursor and Claude), so there is one
+# source and `npm run lint:agents` keeps it honest. `path_instructions` carries
+# only what a guideline file cannot: the "do not suggest X" negatives and the
+# repo facts that reviewers — human and machine — have demonstrably inverted.
+
+knowledge_base:
+  code_guidelines:
+    enabled: true
+    # Listed explicitly rather than relying on the defaults: the default set
+    # includes `.cursor/rules/*` and `.github/copilot-instructions.md`, which
+    # `path_filters` below removes from the checkout (path filters also drive
+    # the sparse clone). `docs/agents/` is the source those adapters are
+    # rendered from, so it is what gets ingested.
+    filePatterns:
+      - "AGENTS.md"
+      - "docs/agents/*.md"
 
 reviews:
   # Signal-to-noise at `chill` has been good. Raising it is not the goal.
   profile: chill
+
+  tools:
+    # No Stylelint config in the repo, so the tool runs vendor defaults
+    # (`declaration-empty-line-before` after `@mixin`, …) that contradict the
+    # existing CSS. Off until the repo ships its own config.
+    stylelint:
+      enabled: false
 
   path_filters:
     # ── Generated: agent-instruction adapters ────────────────────────────────
@@ -28,6 +48,7 @@ reviews:
     - "!.github/instructions/**"
     - "!.github/copilot-instructions.md"
     - "!.cursor/rules/**"
+    - "!.claude/rules/**"
 
     # ── Generated: icons and translations ────────────────────────────────────
     # `npm run download:icons` (from Figma) and `npm run build:translations`.
@@ -55,46 +76,48 @@ reviews:
     - "!packages/openbridge-webcomponents/CHANGELOG.md"
 
   path_instructions:
-    # ── The repo's most-repeated real defect ─────────────────────────────────
-    # Four separate incidents: issues #1033 and #1109, PRs #1110 and #1112.
+    # ── Component JSDoc: the repo's most-repeated real defect ─────────────────
+    # Four incidents (issues #1033, #1109; PRs #1110, #1112), plus reviews that
+    # applied the pre-#1166 convention after it was reversed.
     - path: "packages/openbridge-webcomponents/src/**/*.ts"
       instructions: |
-        JSDoc tags on `@customElement` classes are consumer-critical, and getting
-        them wrong fails silently. Two tools read them and they do NOT read the
-        same thing: `cem analyze` produces custom-elements.json, while
-        `lit labs gen` produces the framework wrappers by parsing the source
-        JSDoc, class-level tags only. A correct manifest is not evidence the
-        wrappers work.
+        Component documentation follows docs/agents/jsdoc.md and
+        docs/agents/coding-standards.md; read those before commenting on JSDoc
+        or comments. The points below are the ones reviews keep inverting.
 
-        Flag:
-        - a dispatched event with no class-level `@fires` tag (the wrapper gets
-          no `onX` binding at all);
-        - `@fires name {Type}` written name-first — the type must come FIRST,
-          as `@fires {Type} name - description`;
-        - a `@fires` or `@slot` tag on a method or an unregistered base class
-          rather than on the concrete `@customElement` class;
-        - a bare `dispatchEvent(...)` inside a class method — it must be
-          `this.dispatchEvent(...)`, otherwise it fires on `window`;
-        - a rendered `<slot>` with no matching `@slot` tag, or an `@slot` tag for
-          a `slot="x"` projection (that is a phantom slot, not a real one);
-        - a class-level `@property` tag (properties are documented inline).
+        Property docs live in the class JSDoc as `@property name - description`
+        tags (no type). Inline JSDoc above a `@property()` field is what
+        `npm run lint:comments` warns on — do NOT suggest moving class-level
+        `@property` tags inline. Only the `SetpointMixin` properties and the
+        fields the lint rule classifies as "leave inline" keep inline docs.
+
+        `@fires` is written type-first: `@fires {Type} name - description`.
+        Flag the name-first form; `cem analyze` drops the payload type from it.
+
+        `@fires` and `@slot` tags go on the concrete `@customElement` class, not
+        on a method or an unregistered base class — `lit labs gen` reads only
+        class-level tags, and a correct custom-elements.json is not evidence the
+        framework wrappers have a binding. Flag a dispatched event with no
+        class-level `@fires`, a bare `dispatchEvent(...)` (must be
+        `this.dispatchEvent`), a rendered `<slot>` with no `@slot` tag, and an
+        `@slot` tag for a `slot="x"` projection (a phantom slot).
 
         Every `@customElement` class carries exactly one lifecycle tag
         (`@stable` / `@beta` / `@experimental` / `@deprecated`), last in the
-        block. Never hand-write the lifecycle entry in a story's `meta.tags` —
-        it is derived from the class JSDoc by `npm run lint:fix:stories`.
+        block.
 
-        Boolean properties use positive names (`showLabels`, not `hideLabels`).
-        A boolean defaulting to `true` must declare `attribute: false`, since a
-        present-means-true HTML attribute cannot express it.
+        Implementation comments: why, never what; three lines at most; no
+        history or change narration; a reference is a trailing `(#1234)`.
 
-        Canonical reference: docs/agents/jsdoc.md.
+        Boolean properties use positive names (`showLabels`, not `hideLabels`);
+        a boolean defaulting to `true` declares `attribute: false`.
 
-    # ── A repo-specific fact reviewers get wrong ─────────────────────────────
+    # ── Repo-specific facts reviewers get wrong ───────────────────────────────
     # A prior review flagged a correct coordinate mapping as a bug by assuming
-    # a top-left SVG origin.
-    - path: "packages/openbridge-webcomponents/src/{navigation-instruments,building-blocks}/**"
-      instructions: |
+    # a top-left SVG origin. (Two entries rather than a brace glob, so the rule
+    # does not depend on brace-expansion support.)
+    - path: "packages/openbridge-webcomponents/src/navigation-instruments/**"
+      instructions: &radial |
         SVG instruments use a CENTER-ORIGIN viewBox (e.g. "-200 -200 400 400"),
         so 0 is the centre and negative Y is up. Do not evaluate coordinate
         arithmetic as if the origin were top-left — a mapping that sends the
@@ -111,25 +134,31 @@ reviews:
         deliberately stays local; do not suggest consolidating it.
 
         Canonical reference: docs/agents/watch-radial-instruments.md.
+    - path: "packages/openbridge-webcomponents/src/building-blocks/**"
+      instructions: *radial
 
     # ── Accessibility, required for interactive components ───────────────────
-    - path: "packages/openbridge-webcomponents/src/{components,automation}/**"
-      instructions: |
+    - path: "packages/openbridge-webcomponents/src/components/**"
+      instructions: &a11y |
         Interactive components must be fully keyboard-operable and meet
         WCAG 2.1 AA, following the matching WAI-ARIA APG pattern.
 
-        Flag: a click handler with no keyboard equivalent; a custom control with
-        no `role` and no mirrored state attribute (`aria-pressed`,
-        `aria-expanded`, `aria-selected`, `aria-checked`); an icon-only control
-        with no `aria-label`; `tabindex` greater than 0; `outline: none` with no
-        visible replacement; a modal that does not trap focus, restore focus on
-        close, or close on `Escape`.
+        Flag: a click handler with no keyboard equivalent; a non-native control
+        with no `role`; a control whose APG pattern defines a state that is not
+        mirrored (`aria-pressed` on a toggle button, `aria-expanded` on a
+        disclosure, `aria-selected` on a tab or option, `aria-checked` on a
+        checkbox or radio) — a plain command button needs no state attribute;
+        an icon-only control with no `aria-label`; `tabindex` greater than 0;
+        `outline: none` with no visible replacement; a modal that does not trap
+        focus, restore focus on close, or close on `Escape`.
 
         Do NOT suggest swapping a non-native element for a native one in an
         existing component — that breaks layout, event bubbling and visual
         baselines. It needs a deliberate decision, not a review nit.
 
         Canonical reference: docs/agents/a11y.md.
+    - path: "packages/openbridge-webcomponents/src/automation/**"
+      instructions: *a11y
 
     # ── Story conventions ────────────────────────────────────────────────────
     - path: "packages/openbridge-webcomponents/src/**/*.stories.ts"
@@ -137,10 +166,19 @@ reviews:
         Story `title` and `name` use Title Case (enforced by the ESLint rule
         `openbridge/storybook-title-case`).
 
-        The lifecycle entry in `meta.tags` is derived from the component class
-        JSDoc — flag any hand-written `beta` / `experimental` / `deprecated`.
-        The `wip` and `alpha` tags are retired. Version tags (`6.0`, `6.1`) and
-        tooling tags (`autodocs`, `skip-test`, `!snapshot`) stay hand-written.
+        The lifecycle entry in `meta.tags` (`beta` / `experimental` /
+        `deprecated`) is derived from the component class JSDoc by
+        `npm run lint:fix:stories` — flag a hand-written one that disagrees with
+        the class, but do not ask for it to be removed. `wip` and `alpha` are
+        retired. Version tags (`6.0`, `6.1`) and `skip-test` / `!snapshot` stay
+        hand-written. `autodocs` is applied project-wide by
+        `.storybook/preview.tsx`; flag it as redundant in a story's `meta.tags`.
+
+        A hand-written `render` function must bind every arg it wants applied;
+        an arg gated off by `@availableWhen` (`argTypes[x].if`) is dropped from
+        `render()` entirely, so bind gated string props as attributes with
+        `ifDefined` rather than `.prop=${args.x}` — otherwise `undefined`
+        overwrites the element default.
 
         A new component needs `npm run analyze` before its stories work —
         Storybook resolves story args to element properties through
