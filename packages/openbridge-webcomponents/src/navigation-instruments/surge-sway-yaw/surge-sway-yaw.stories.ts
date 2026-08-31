@@ -1,7 +1,13 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
+import {html} from 'lit';
 import {ObcSurgeSwayYaw, SurgeSwayYawType} from './surge-sway-yaw.js';
 import './surge-sway-yaw.js';
-import {widthDecorator} from '../../storybook-util.js';
+import {
+  playgroundColumn,
+  resizableStoryBox,
+  storyHint,
+  widthDecorator,
+} from '../../storybook-util.js';
 import {InstrumentState, Priority} from '../types.js';
 
 const meta: Meta<typeof ObcSurgeSwayYaw> = {
@@ -151,5 +157,85 @@ export const Off: Story = {
     sway: 60,
     yaw: 35,
     state: InstrumentState.off,
+  },
+};
+
+type SizingPlaygroundArgs = Partial<ObcSurgeSwayYaw> & {
+  lockFaceDiameter?: boolean;
+};
+
+/**
+ * Interactive sizing playground: drag the dashed box's bottom-right corner to
+ * resize it. The first instrument is pinned to a fixed intrinsic size by the
+ * `faceDiameter` control, while the second (labeled, `input-output`) adapts
+ * to the remaining flex space, reserving room for its degree labels
+ * adaptively. Enable `lockFaceDiameter` to pin both to the same
+ * circumference. Related: *Sizing Playground* stories under Building
+ * Blocks/Watch, Building Blocks/Instrument Radial and Instruments/Gauge
+ * Radial.
+ */
+export const SizingPlayground: StoryObj<SizingPlaygroundArgs> = {
+  name: 'Sizing Playground — FaceDiameter + Resizable (Manual)',
+  tags: ['skip-test'],
+  parameters: {widthDecorator: false},
+  args: {
+    faceDiameter: 240,
+    lockFaceDiameter: false,
+  },
+  argTypes: {
+    lockFaceDiameter: {
+      control: 'boolean',
+      description:
+        'Apply faceDiameter to every instance (equal circumference) instead of only the first.',
+    },
+  },
+  render: (args) => {
+    const instances = [
+      {
+        label: 'input',
+        type: SurgeSwayYawType.input,
+        showLabels: false,
+      },
+      {
+        label: 'input-output, labeled',
+        type: SurgeSwayYawType.inputOutput,
+        showLabels: true,
+      },
+    ];
+    const fd = (index: number) =>
+      index === 0 || args.lockFaceDiameter ? args.faceDiameter : undefined;
+    const caption = (index: number, label: string) =>
+      fd(index) !== undefined
+        ? `${label} — pinned ${fd(index)}px`
+        : `${label} — adaptive (flex)`;
+    return html`
+      ${storyHint(
+        'Drag the bottom-right corner of the dashed box to resize it. The first instrument is pinned by the faceDiameter control; the second adapts to the remaining flex space. Enable lockFaceDiameter to pin both to the same circumference.'
+      )}
+      ${resizableStoryBox(
+        html`
+          ${instances.map((g, index) =>
+            playgroundColumn(
+              caption(index, g.label),
+              html`
+                <obc-surge-sway-yaw
+                  .type=${g.type}
+                  .surge=${50}
+                  .sway=${60}
+                  .yaw=${35}
+                  .surgeSetpoint=${60}
+                  .swaySetpoint=${75}
+                  .yawSetpoint=${0}
+                  .showLabels=${g.showLabels}
+                  .faceDiameter=${fd(index)}
+                ></obc-surge-sway-yaw>
+              `,
+              {pinned: fd(index) !== undefined}
+            )
+          )}
+        `,
+        {width: 680, height: 400}
+      )}
+    `;
   },
 };
