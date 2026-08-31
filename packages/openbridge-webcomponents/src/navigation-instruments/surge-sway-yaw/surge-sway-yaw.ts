@@ -44,11 +44,11 @@ export enum SurgeSwayYawType {
 }
 
 /**
- * Cross-column geometry, in watch SVG units (Figma canvas radii sit +4 on
- * the 512 grid relative to these).
+ * Cross-column geometry, in watch SVG units. These lengths are 1:1 with the
+ * Figma 512 canvas — only the ring radii carry the +4 canvas offset.
  */
 /** Half-length of the full-length `input` cross scales. */
-const INPUT_SCALE_HALF = 148;
+const INPUT_SCALE_HALF = 152;
 /** Width of the `input` scale pill (all scale lane, no bar lane). */
 const INPUT_COLUMN_WIDTH = 24;
 /**
@@ -59,8 +59,12 @@ const INPUT_SCALE_WIDTH = 16;
 /** Width of an `input-output` half-column: 24 bar lane + 24 scale lane. */
 const OUTPUT_COLUMN_WIDTH = 48;
 const OUTPUT_SCALE_WIDTH = 24;
-/** Radius where an `input-output` half-column starts (scale value 0). */
-const OUTPUT_COLUMN_INNER = 20;
+/**
+ * Radius where an `input-output` half-column starts (scale value 0). Equals
+ * half the column width, so adjacent pills abut edge-to-edge and their
+ * rounded corners form the design's centre gap.
+ */
+const OUTPUT_COLUMN_INNER = 24;
 /** Length of an `input-output` half-column (scale value 0 to ±100). */
 const OUTPUT_COLUMN_LENGTH = 96;
 /**
@@ -629,6 +633,19 @@ export class ObcSurgeSwayYaw extends LitElement {
           <g transform="scale(1,-1) rotate(90)">
             ${this.axisColumns(this.sway, 'sway')}
           </g>
+          ${this.isInputOutput
+            ? nothing
+            : svg`
+              <!-- Design's empty crossing square: covers both pills' ticks
+                   and outlines where the full-length scales overlap. -->
+              <rect
+                x=${-INPUT_COLUMN_WIDTH / 2}
+                y=${-INPUT_COLUMN_WIDTH / 2}
+                width=${INPUT_COLUMN_WIDTH}
+                height=${INPUT_COLUMN_WIDTH}
+                fill="var(--instrument-frame-primary-color)"
+              ></rect>
+            `}
           ${this.renderLinearSetpoints()}
         </svg>
       </div>
