@@ -34,6 +34,22 @@ is the single most damaging mistake in this area.
 Always re-run without `--update` afterwards to confirm the new baselines are
 stable.
 
+Several components are separate substring filters, not a regex — `'a|b'`
+matches nothing and exits with "No test files found":
+
+```bash
+npx vitest run --project storybook heat-pump heat-exchanger hydraulic-separator --update
+```
+
+`--update` never prunes. A renamed or removed story leaves its
+`<story>-auto.png` behind, and a rewritten story file leaves the whole
+`__baselines__/<family>/<file>.stories.ts/` folder stale — `git rm` those before
+regenerating.
+
+Run `npm run analyze` before the first run of a new component's stories (see
+below); without the manifest the args never reach the element and the
+baselines capture the defaults.
+
 ## Baselines are environment-sensitive
 
 ```text
@@ -45,12 +61,24 @@ __vis__/darwin/__baselines__/   macOS, NOT committed
 Only the Linux baselines ship. Regenerating on macOS produces diffs CI will
 reject.
 
-**Prefer the CI path:** comment `/update-snapshots` on the pull request. The
-`update-snapshots.yml` workflow regenerates inside the same Docker image CI
-uses and pushes the result to the PR branch. Locally, the Docker route is
-`npm run test-storybook:docker` — see
+**Regenerate locally, on Linux.** The devcontainer (Ubuntu 24.04) renders what
+the CI `test` job (`mcr.microsoft.com/playwright:v1.60.0-noble`) accepts, so a
+scoped `--update` followed by a plain re-run is the whole procedure. On macOS
+take the Docker route, `npm run test-storybook:docker` — see
 [IMPLEMENTATION_GUIDELINES.md § Docker Testing](../../IMPLEMENTATION_GUIDELINES.md#docker-testing)
-and [`ci-and-release.md`](../../docs/agents/ci-and-release.md).
+and [`ci-and-release.md`](../../docs/agents/ci-and-release.md). The `/update-snapshots`
+PR-comment workflow is not a fallback (see Open), and it fires on any comment
+that merely contains that string — keep the command out of PR prose.
+
+## Checking a baseline against the design
+
+A baseline is the full 1280×720 story frame. Without a decorator the component
+sits at the top-left; under `crossDecorator` it is centred on the wrapper
+(around `x = 480, y = 360` — the wrapper is 960px wide). Crop and upscale that
+region before comparing it with the Figma export (`pngjs` in `node_modules`
+does it in a few lines), and compare every value of the Figma variant property,
+not only the default story — a component built from a stale copy of the file
+looks right in its default state and wrong in the others.
 
 ## Storybook config
 
@@ -144,3 +172,8 @@ readouts fight each other.
 
 Spawned Chromium processes sometimes hang and stall a run. Kill the strays and
 re-run scoped to the single component rather than retrying the whole suite.
+
+## Open
+
+- `update-snapshots.yml` fails inside its Docker image before writing anything, and triggers on any PR comment containing its command (#1179).
+- Element-cropped story screenshots (`npm run screenshots`, opt-in through `VITE_STORYBOOK_TAKE_SCREENSHOT`, sized from the `@ignition-base-*` tags) are in draft #731; until it lands, crop the 1280×720 baseline by hand as above.
