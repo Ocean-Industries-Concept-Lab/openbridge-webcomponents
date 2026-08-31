@@ -138,15 +138,25 @@ formatter-only fix leaves the last two throwing.
 ```ts
 const reserver = isTextMode
   ? (this.spaceReserver ?? "")
-  : this.hintedZeros
-    ? this.reserverText
-    : this.widerReserver(this.spaceReserver, this.reserverText);
+  : this.widerReserver(this.spaceReserver, this.reserverText);
 ```
 
 `this.reserverText` is an **argument** to `widerReserver`, so the getter runs
-regardless of which branch wins. Priority decides which _result_ is used, never
-which getter _executes_ — setting `spaceReserver` does not route around a bad
-`maxDigits`. Keep input normalisation independent of these priority rules.
+regardless of which result wins. The wider-one-wins rule decides which
+_result_ is used, never which getter _executes_ — setting `spaceReserver`
+does not route around a bad `maxDigits`. Keep input normalisation independent
+of this rule. It applies under `hintedZeros` too (#1097): the hinted zeros
+fill to `maxDigits`, but a negative value at full magnitude has no zero for
+its sign to consume, so a sign column is reserved via `spaceReserver`
+(e.g. `"-0000"`).
+
+### 4b. Hinted zeros keep negative values
+
+`splitHintedValue` hoists the sign ahead of the muted zeros, and the sign
+takes the leading zero's place (`maxDigits` 4: `12` → `0012`, `-12` →
+`-012`), so the rendered width does not change across zero. The sign renders
+in the value colour; only the zeros are muted. A dashed (unavailable) value
+is never padded — the helper guards on the presence of a digit.
 
 ### 5. `obc-readout-list` owns the reservers
 
@@ -230,8 +240,9 @@ Decisions carried into code from the 6.1 review (2026-08):
 
 Do not treat these as settled when editing:
 
-- **Hinted zeros + negative values** and **unavailable-value width** are under
-  design review; the rendered shape of the placeholder may change.
+- **Unavailable-value width** is under design review; the rendered shape of
+  the placeholder may change. (Hinted zeros + negative values are settled by
+  #1097 — see invariant 4b.)
 - `obc-readout` and `obc-readout-list-item` are layout variants of one API and
   **may merge**. Keep shared behaviour in `readout-shared.ts` so the merge stays
   cheap — do not re-inline it per component.

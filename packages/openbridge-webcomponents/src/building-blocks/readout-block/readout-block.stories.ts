@@ -333,8 +333,15 @@ export const TextValue: Story = {
 
 /**
  * Hinted zeros pad the integer part up to `maxDigits` as muted leading zeros.
- * When enabled they take priority over `spaceReserver` (they already fill to
- * `maxDigits`, so an explicit reserver is ignored).
+ *
+ * A **negative** value keeps its zeros, with the minus sign taking the place of
+ * the leading zero (`maxDigits` 4: `12` → `0012`, `-12` → `-012`), so the block's
+ * width does not change as the value crosses zero.
+ *
+ * The one case that still grows is a negative at **full magnitude** — there is
+ * no zero left for the sign to consume, so `-1234` at `maxDigits` 4 needs five
+ * characters. Reserve a sign column with `spaceReserver="-0000"`; the wider of
+ * the explicit reserver and the `maxDigits`-derived one always wins.
  */
 export const HintedZeros: Story = {
   render: () =>
@@ -349,7 +356,39 @@ export const HintedZeros: Story = {
         args: {value: 8, maxDigits: 4, fractionDigits: 1, hintedZeros: true},
       },
       {
-        title: 'hinted wins over reserver',
+        title: 'negative — sign takes the leading zero',
+        args: {value: -8, maxDigits: 4, hintedZeros: true},
+      },
+      {
+        title: 'negative + fraction',
+        args: {value: -1.2, maxDigits: 3, fractionDigits: 1, hintedZeros: true},
+      },
+      {
+        title: 'negative at full magnitude (overflows)',
+        args: {value: -1234, maxDigits: 4, hintedZeros: true},
+      },
+      // The pair below shares one reserver, so both are the same width — the
+      // column does not shift when the value crosses zero at full magnitude.
+      {
+        title: 'sign column · positive',
+        args: {
+          value: 8,
+          maxDigits: 4,
+          hintedZeros: true,
+          spaceReserver: '-0000',
+        },
+      },
+      {
+        title: 'sign column · negative',
+        args: {
+          value: -1234,
+          maxDigits: 4,
+          hintedZeros: true,
+          spaceReserver: '-0000',
+        },
+      },
+      {
+        title: 'wider reserver wins',
         args: {
           value: 8,
           maxDigits: 4,
