@@ -69,6 +69,12 @@ export function watchfaceLinear(
      * shadow root would otherwise both resolve to the first one's mask.
      */
     maskId?: string;
+    /**
+     * Skip the secondary track fill behind the bar lane, for designs whose
+     * pill is a uniform face. Also the only valid mode when `scaleWidth`
+     * fills the whole width, where the track path would degenerate.
+     */
+    hideTrack?: boolean;
   },
   tickmarks: {
     /** Array of values where full-width main tickmarks are drawn. */
@@ -99,7 +105,7 @@ export function watchfaceLinear(
       fill="none" 
       vector-effect="non-scaling-stroke"/>
   `;
-  if (options.off) {
+  if (options.off || options.hideTrack) {
     track = nothing;
   }
 
