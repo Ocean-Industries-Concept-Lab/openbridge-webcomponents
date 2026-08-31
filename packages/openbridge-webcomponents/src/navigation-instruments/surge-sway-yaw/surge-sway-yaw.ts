@@ -74,12 +74,22 @@ const OUTPUT_COLUMN_LENGTH = 96;
 const COLUMN_TICK_MIN_SPACING = 8;
 /** Values smaller than this render no bar / no yaw arc. */
 const VALUE_EPSILON = 0.1;
+/** Ceiling on ticks per ring ladder; a tiny interval must not stall render. */
+const MAX_RING_TICKS = 720;
 
 function clampPercent(value: number): number {
   if (!Number.isFinite(value)) {
     return 0;
   }
   return Math.max(-100, Math.min(100, value));
+}
+
+/** Yaw for rendering and at-setpoint use: non-finite → 0, clamped to ±180. */
+function normalizeYaw(value: number): number {
+  if (!Number.isFinite(value)) {
+    return 0;
+  }
+  return Math.max(-180, Math.min(180, value));
 }
 
 /**
@@ -352,6 +362,7 @@ export class ObcSurgeSwayYaw extends LitElement {
     ) => {
       if (interval === undefined || interval <= 0 || !Number.isFinite(interval))
         return;
+      if (360 / interval > MAX_RING_TICKS) return;
       for (let i = interval; i < 360; i += interval) {
         if (skipAngles.includes(i)) continue;
         tickmarks.push({
@@ -375,7 +386,7 @@ export class ObcSurgeSwayYaw extends LitElement {
     if (!this.isInputOutput || !this.isActive) {
       return [];
     }
-    const yaw = Math.max(-180, Math.min(180, this.yaw));
+    const yaw = normalizeYaw(this.yaw);
     if (Math.abs(yaw) < VALUE_EPSILON) {
       return [];
     }
@@ -579,14 +590,14 @@ export class ObcSurgeSwayYaw extends LitElement {
     const edge = this.laneEdge;
     const surge = this.renderLinearSetpoint(
       this._surgeSp,
-      this.surge,
+      clampPercent(this.surge),
       `${this._idPrefix}-surge-sp`,
       (pos, outward) =>
         `translate(${edge + outward}px, ${-pos}px) rotate(90deg)`
     );
     const sway = this.renderLinearSetpoint(
       this._swaySp,
-      this.sway,
+      clampPercent(this.sway),
       `${this._idPrefix}-sway-sp`,
       (pos, outward) => `translate(${pos}px, ${-(edge + outward)}px)`
     );
@@ -622,7 +633,9 @@ export class ObcSurgeSwayYaw extends LitElement {
           .barAreas=${this.getBarAreas()}
           .angleSetpoint=${this.yawSetpoint}
           .newAngleSetpoint=${this.newYawSetpoint}
-          .atAngleSetpoint=${this._yawSp.computeAtSetpoint(this.yaw)}
+          .atAngleSetpoint=${this._yawSp.computeAtSetpoint(
+            normalizeYaw(this.yaw)
+          )}
           .angleSetpointAtZeroDeadband=${this.yawSetpointAtZeroDeadband}
           .setpointOverride=${this.yawSetpointOverride}
           .touching=${this.touching}
@@ -633,19 +646,6 @@ export class ObcSurgeSwayYaw extends LitElement {
           <g transform="scale(1,-1) rotate(90)">
             ${this.axisColumns(this.sway, 'sway')}
           </g>
-          ${this.isInputOutput
-            ? nothing
-            : svg`
-              <!-- Design's empty crossing square: covers both pills' ticks
-                   and outlines where the full-length scales overlap. -->
-              <rect
-                x=${-INPUT_COLUMN_WIDTH / 2}
-                y=${-INPUT_COLUMN_WIDTH / 2}
-                width=${INPUT_COLUMN_WIDTH}
-                height=${INPUT_COLUMN_WIDTH}
-                fill="var(--instrument-frame-primary-color)"
-              ></rect>
-            `}
           ${this.renderLinearSetpoints()}
         </svg>
       </div>
