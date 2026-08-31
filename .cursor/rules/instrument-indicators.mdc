@@ -39,6 +39,16 @@ When a value-to-angle or value-to-state mapping already exists as a controller
 on the full instrument, **import the controller** rather than reimplementing the
 maths. That is the one thing that should be shared.
 
+The same obligation applies to the PORT/STBD (red/green) color mode. Colors are
+resolved through `svghelpers/port-starboard.ts` — never by writing the
+`--instrument-{port,starboard}-*` tokens inline — and they map by the element's
+**normal-mode shade role**, not by its name: a `*-tertiary-color` fill becomes
+the light `-secondary` token and a `*-secondary-color` one the dark `-primary`
+token. `obc-rudder-indicator` mirrors `obc-rudder` through the opt-in
+`portStarboard` / `portStarboardElements` pair; `obc-rot-indicator` colors by
+turn direction unconditionally, since that is its whole purpose. If you add the
+mode to a full instrument, check whether its indicator twin needs it too.
+
 ## The canvas convention
 
 Most indicators draw on a **48 × 48** canvas via a local `VIEW_SIZE` constant.

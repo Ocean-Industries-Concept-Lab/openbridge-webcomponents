@@ -2,6 +2,13 @@ import {LitElement, html, nothing, svg, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import componentStyle from './rudder-indicator.css?inline';
+import {
+  PORT_STARBOARD_DEFAULT_ELEMENTS,
+  PortStarboardElement,
+  PortStarboardShade,
+  portStarboardSignOf,
+  resolvePortStarboardColor,
+} from '../../svghelpers/port-starboard.js';
 
 export enum RudderIndicatorState {
   InCommand = 'in-command',
@@ -267,7 +274,52 @@ export class ObcRudderIndicator extends LitElement {
 
   @property({type: Boolean}) hasSilhouette = false;
 
+  /**
+   * Recolor the rudder cue with the maritime PORT/STBD (red/green) palette
+   * instead of the state-derived gray/blue one. Parts left out of
+   * `portStarboardElements` keep their state colors.
+   *
+   * @experimental
+   */
+  @property({type: Boolean}) portStarboard: boolean = false;
+
+  /**
+   * Which parts take part while `portStarboard` is on.
+   * Defaults to everything except the setpoint.
+   *
+   * @availableWhen portStarboard==true
+   * @experimental
+   */
+  @property({type: Array, attribute: false})
+  portStarboardElements: PortStarboardElement[] = [
+    ...PORT_STARBOARD_DEFAULT_ELEMENTS,
+  ];
+
   static override styles = unsafeCSS(componentStyle);
+
+  /**
+   * PORT/STBD color for one part, or `undefined` to keep the state color. The
+   * sector and zero line are `*-tertiary-color` elements and the needle and
+   * setpoint marker `*-secondary-color` ones, so the shade rule splits them
+   * into the light and dark sides of the palette. The `off` state never
+   * recolors.
+   */
+  private portStarboardPartColor(
+    element: PortStarboardElement,
+    shade: PortStarboardShade
+  ): string | undefined {
+    if (this.state === RudderIndicatorState.Off) {
+      return undefined;
+    }
+    return resolvePortStarboardColor({
+      enabled: this.portStarboard,
+      elements: this.portStarboardElements,
+      element,
+      sign: portStarboardSignOf(clampAngle(this.angle)),
+      shade,
+      neutralDark: shade === PortStarboardShade.dark,
+    });
+  }
 
   private get isActive(): boolean {
     return this.state !== RudderIndicatorState.Off;
@@ -343,7 +395,12 @@ export class ObcRudderIndicator extends LitElement {
       <path
         d="${ACTIVE_CENTER_LINE_PATH}"
         transform="translate(${ACTIVE_CENTER_LINE_X} ${ACTIVE_CENTER_LINE_Y})"
-        fill="${this.activeTrackColor}"
+        fill="${
+          this.portStarboardPartColor(
+            PortStarboardElement.zeroLine,
+            PortStarboardShade.light
+          ) ?? this.activeTrackColor
+        }"
       />
     `;
   }
@@ -382,7 +439,12 @@ export class ObcRudderIndicator extends LitElement {
       <g clip-path="url(#${this.frameClipId})">
         <path
           d="${sectorPath}"
-          fill="${this.activeTrackColor}"
+          fill="${
+            this.portStarboardPartColor(
+              PortStarboardElement.bar,
+              PortStarboardShade.light
+            ) ?? this.activeTrackColor
+          }"
         />
       </g>
     `;
@@ -398,7 +460,12 @@ export class ObcRudderIndicator extends LitElement {
       >
         <path
           d="${ARROW_PATH}"
-          fill="${this.activeColor}"
+          fill="${
+            this.portStarboardPartColor(
+              PortStarboardElement.needle,
+              PortStarboardShade.dark
+            ) ?? this.activeColor
+          }"
         />
       </g>
     `;
@@ -423,6 +490,17 @@ export class ObcRudderIndicator extends LitElement {
     const markerX = markerBase.x + tangentX * INPUT_LINEAR_TANGENTIAL_OFFSET;
     const markerY = markerBase.y + tangentY * INPUT_LINEAR_TANGENTIAL_OFFSET;
 
+    // The marker follows the commanded angle, so its side comes from the
+    // setpoint rather than from the measured angle.
+    const markerColor =
+      resolvePortStarboardColor({
+        enabled: this.portStarboard,
+        elements: this.portStarboardElements,
+        element: PortStarboardElement.setpoint,
+        sign: portStarboardSignOf(setpoint),
+        shade: PortStarboardShade.dark,
+      }) ?? 'var(--instrument-regular-secondary-color)';
+
     return svg`
       <g transform="translate(${markerX} ${markerY}) rotate(${-setpoint})">
         <g
@@ -430,7 +508,7 @@ export class ObcRudderIndicator extends LitElement {
         >
           <path
             d="${INPUT_LINEAR_PATH}"
-            fill="var(--instrument-regular-secondary-color)"
+            fill="${markerColor}"
             stroke="var(--border-silhouette-color)"
             stroke-width="1"
             stroke-linejoin="round"

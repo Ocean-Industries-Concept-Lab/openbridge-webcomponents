@@ -85,6 +85,30 @@ export const Readout: Story = {
   },
 };
 
+export const PortStarboardAhead: Story = {
+  args: {
+    speed: 12.5,
+    minSpeed: -5,
+    maxSpeed: 25,
+    showLabels: true,
+    hasReadout: true,
+    priority: Priority.enhanced,
+    portStarboard: true,
+  },
+};
+
+export const PortStarboardAstern: Story = {
+  args: {
+    speed: -3,
+    minSpeed: -5,
+    maxSpeed: 25,
+    showLabels: true,
+    hasReadout: true,
+    priority: Priority.enhanced,
+    portStarboard: true,
+  },
+};
+
 export const LabelRoomHighSpeed: Story = {
   name: 'Label Room — 4-Digit Scale in A Short Cell (#1021)',
   args: {

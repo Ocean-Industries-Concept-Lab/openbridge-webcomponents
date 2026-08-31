@@ -1,6 +1,13 @@
 import {LitElement, css, html, svg} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
+import {
+  PortStarboardElement,
+  PortStarboardShade,
+  PortStarboardSource,
+  portStarboardSourceSign,
+  resolvePortStarboardColor,
+} from '../../svghelpers/port-starboard.js';
 import {InstrumentState} from '../types.js';
 
 export enum PropulsionAzimuthIndicatorType {
@@ -100,6 +107,9 @@ function topCircleSideIntersection(
  * ## Usage Guidelines
  *
  * Use for a small combined direction and magnitude cue next to numeric readouts. For a full azimuth instrument with scales and setpoints, use **`obc-azimuth-thruster`** instead.
+ *
+ * @property portStarboard - Enables the maritime PORT/STBD (red/green) color mode: positive thrust
+ *   renders green, negative red.
  * @stable
  */
 @customElement('obc-propulsion-azimuth-indicator')
@@ -114,6 +124,20 @@ export class ObcPropulsionAzimuthIndicator extends LitElement {
   @property({type: Number}) value = 0;
 
   @property({type: String}) state: InstrumentState = InstrumentState.active;
+
+  @property({type: Boolean}) portStarboard = false;
+
+  /**
+   * Which quantity decides the side: the value alone (`value`, the default),
+   * the azimuth orientation alone (`orientation`), or the two combined into the
+   * direction actually being pushed (`resultant`). Mirrors the option on
+   * `obc-azimuth-thruster`.
+   *
+   * @availableWhen portStarboard==true
+   * @experimental
+   */
+  @property({type: String}) portStarboardSource: PortStarboardSource =
+    PortStarboardSource.value;
 
   static override styles = css`
     :host {
@@ -133,6 +157,18 @@ export class ObcPropulsionAzimuthIndicator extends LitElement {
   `;
 
   private get accentColor(): string {
+    const portStarboard = resolvePortStarboardColor({
+      enabled: this.portStarboard,
+      elements: undefined,
+      element: PortStarboardElement.bar,
+      sign: portStarboardSourceSign(
+        this.portStarboardSource,
+        this.azimuth,
+        this.value
+      ),
+      shade: PortStarboardShade.dark,
+    });
+    if (portStarboard) return portStarboard;
     return this.type === PropulsionAzimuthIndicatorType.regular
       ? 'var(--instrument-regular-secondary-color)'
       : 'var(--instrument-enhanced-secondary-color)';

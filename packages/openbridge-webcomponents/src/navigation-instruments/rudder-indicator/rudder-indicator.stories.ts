@@ -2,6 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html, type HTMLTemplateResult} from 'lit';
 import {ObcRudderIndicator, RudderIndicatorState} from './rudder-indicator.js';
 import './rudder-indicator.js';
+import {PortStarboardElement} from '../../svghelpers/port-starboard.js';
 
 const STORY_BOX_PX = 48;
 
@@ -127,5 +128,47 @@ export const OffWithSilhouette = {
     setpoint: 0,
     state: RudderIndicatorState.Off,
     hasSilhouette: true,
+  },
+} satisfies Story;
+
+/**
+ * The PORT/STBD color mode, matching `obc-rudder`: the sector between zero and
+ * the angle takes the light starboard color and the needle the dark one.
+ */
+export const PortStarboardStarboard = {
+  args: {
+    angle: 45,
+    setpoint: 38,
+    state: RudderIndicatorState.InCommand,
+    portStarboard: true,
+  },
+} satisfies Story;
+
+/** The same mode with the rudder to port. */
+export const PortStarboardPort = {
+  args: {
+    angle: -45,
+    setpoint: -38,
+    state: RudderIndicatorState.InCommand,
+    portStarboard: true,
+  },
+} satisfies Story;
+
+/**
+ * Opting the setpoint in as well. The marker only renders while not in command,
+ * and takes its side from the commanded angle rather than the measured one.
+ */
+export const PortStarboardWithSetpoint = {
+  args: {
+    angle: 45,
+    setpoint: 38,
+    state: RudderIndicatorState.NotInCommand,
+    portStarboard: true,
+    portStarboardElements: [
+      PortStarboardElement.bar,
+      PortStarboardElement.needle,
+      PortStarboardElement.zeroLine,
+      PortStarboardElement.setpoint,
+    ],
   },
 } satisfies Story;

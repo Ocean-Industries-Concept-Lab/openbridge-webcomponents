@@ -12,6 +12,13 @@ import {
 import {AdviceType} from '../watch/advice.js';
 import {TickmarkStyle} from '../watch/tickmark.js';
 import {PropellerType} from '../thruster/propeller.js';
+import '../rate-of-turn/rate-of-turn.js';
+import {
+  PORT_STARBOARD_DEFAULT_ELEMENTS,
+  PortStarboardElement,
+  PortStarboardSides,
+  PortStarboardSource,
+} from '../../svghelpers/port-starboard.js';
 
 const meta: Meta<typeof ObcAzimuthThruster> = {
   title: 'Instruments/Azimuth Thruster',
@@ -60,6 +67,29 @@ const meta: Meta<typeof ObcAzimuthThruster> = {
     },
     touching: {control: 'boolean'},
     priority: {control: 'select', options: Object.values(Priority)},
+    portStarboard: {
+      control: 'boolean',
+      description:
+        'Master switch for the maritime PORT/STBD (red/green) color mode.',
+    },
+    portStarboardSource: {
+      control: 'select',
+      options: Object.values(PortStarboardSource),
+      description:
+        'Which quantity decides the side: `value` = thrust alone (green ahead, red astern), `orientation` = pod angle alone, `resultant` = the side actually being pushed. Try it with the pod at 90° and negative thrust — that is where the three differ.',
+    },
+    portStarboardSides: {
+      control: 'select',
+      options: Object.values(PortStarboardSides),
+      description:
+        'Which halves the region tints (face and bands) paint. `active` paints only the half matching the direction.',
+    },
+    portStarboardElements: {
+      control: 'check',
+      options: Object.values(PortStarboardElement),
+      description:
+        'Which parts take part. `face` tints the centre; `outerBand` / `middleBand` / `innerBand` tint the scale bands. Defaults to everything except the setpoint and the bands.',
+    },
   },
   args: {
     width: 512,
@@ -94,6 +124,323 @@ export const InCommand: Story = {
       {min: -100, max: -75, type: AdviceType.caution, hinted: true},
     ],
   },
+};
+
+export const PortStarboardAheadStarboard: Story = {
+  args: {
+    angle: 30,
+    thrust: 60,
+    angleSetpoint: 30,
+    thrustSetpoint: 60,
+    priority: Priority.enhanced,
+    state: InstrumentState.active,
+    portStarboard: true,
+  },
+};
+
+export const PortStarboardAheadPort: Story = {
+  args: {
+    angle: 330,
+    thrust: 60,
+    angleSetpoint: 330,
+    thrustSetpoint: 60,
+    priority: Priority.enhanced,
+    state: InstrumentState.active,
+    portStarboard: true,
+  },
+};
+
+export const PortStarboardAstern: Story = {
+  args: {
+    angle: 200,
+    thrust: -60,
+    angleSetpoint: 200,
+    thrustSetpoint: -60,
+    priority: Priority.enhanced,
+    state: InstrumentState.active,
+    portStarboard: true,
+  },
+};
+
+/**
+ * Centre tint on the active side only — the port half stays untinted while the
+ * unit thrusts to starboard.
+ */
+export const PortStarboardFaceActiveSide: Story = {
+  args: {
+    angle: 30,
+    thrust: 60,
+    angleSetpoint: 45,
+    thrustSetpoint: 80,
+    priority: Priority.enhanced,
+    state: InstrumentState.active,
+    portStarboard: true,
+    portStarboardSides: PortStarboardSides.active,
+  },
+};
+
+/**
+ * Track tint: the outer scale band split red/green, centre left untinted.
+ * The band already exists on the watch face — this colours it for the first
+ * time, inserted under the band's own outline strokes.
+ */
+export const PortStarboardOuterBand: Story = {
+  args: {
+    angle: 30,
+    thrust: 60,
+    angleSetpoint: 45,
+    thrustSetpoint: 80,
+    priority: Priority.enhanced,
+    state: InstrumentState.active,
+    portStarboard: true,
+    portStarboardElements: [
+      PortStarboardElement.outerBand,
+      PortStarboardElement.bar,
+      PortStarboardElement.arrow,
+      PortStarboardElement.zeroLine,
+    ],
+  },
+};
+
+/** Track tint on the active side only. */
+export const PortStarboardOuterBandActiveSide: Story = {
+  args: {
+    angle: 30,
+    thrust: 60,
+    angleSetpoint: 45,
+    thrustSetpoint: 80,
+    priority: Priority.enhanced,
+    state: InstrumentState.active,
+    portStarboard: true,
+    portStarboardSides: PortStarboardSides.active,
+    portStarboardElements: [
+      PortStarboardElement.outerBand,
+      PortStarboardElement.bar,
+      PortStarboardElement.arrow,
+      PortStarboardElement.zeroLine,
+    ],
+  },
+};
+
+/** Track tint at neutral: both halves, regular priority, grey value elements. */
+export const PortStarboardOuterBandNeutral: Story = {
+  args: {
+    angle: 0,
+    thrust: 0,
+    angleSetpoint: 0,
+    priority: Priority.regular,
+    state: InstrumentState.active,
+    portStarboard: true,
+    portStarboardElements: [PortStarboardElement.outerBand],
+  },
+};
+
+/**
+ * `portStarboardSource` picks which quantity decides the side. All three
+ * stories below share the same state — the pod aimed 90° to **starboard** while
+ * running **astern** — because that is the case where the three answers differ.
+ *
+ * `value` (the default) reads the thrust alone, so astern renders red even
+ * though the pod points to starboard.
+ */
+export const PortStarboardSourceValue: Story = {
+  args: {
+    angle: 90,
+    thrust: -60,
+    priority: Priority.enhanced,
+    state: InstrumentState.active,
+    portStarboard: true,
+    portStarboardSource: PortStarboardSource.value,
+  },
+};
+
+/**
+ * `orientation` reads the pod angle alone, ignoring whether the thrust is ahead
+ * or astern: aimed to starboard, so green.
+ */
+export const PortStarboardSourceOrientation: Story = {
+  args: {
+    angle: 90,
+    thrust: -60,
+    priority: Priority.enhanced,
+    state: InstrumentState.active,
+    portStarboard: true,
+    portStarboardSource: PortStarboardSource.orientation,
+  },
+};
+
+/**
+ * `resultant` combines the two into the side actually being pushed. A pod aimed
+ * to starboard running astern pushes to **port**, so it reads red — the same
+ * color as `value` here, but for a different and physically correct reason.
+ * Swing the pod to 270° and it turns green.
+ */
+export const PortStarboardSourceResultant: Story = {
+  args: {
+    angle: 90,
+    thrust: -60,
+    priority: Priority.enhanced,
+    state: InstrumentState.active,
+    portStarboard: true,
+    portStarboardSource: PortStarboardSource.resultant,
+  },
+};
+
+/**
+ * Everything in the PORT/STBD mode, toggleable from the Controls panel — start
+ * here to explore the concept.
+ *
+ * It opens on the case that separates the three `portStarboardSource` answers:
+ * the pod aimed **90° to starboard** while running **astern**.
+ *
+ * - `portStarboardSource` — `value` reads the thrust alone (red, astern),
+ *   `orientation` the pod angle alone (green, aimed starboard), `resultant` the
+ *   side actually being pushed (red — aimed starboard but pushing port). Swing
+ *   `angle` to 270 and `resultant` turns green while `orientation` turns red.
+ * - `portStarboardElements` — tick `face` for the centre tint, or
+ *   `outerBand` / `middleBand` / `innerBand` for the track tints. `setpoint` is
+ *   off by default.
+ * - `portStarboardSides` — `both`, one side only, or `active` for just the half
+ *   matching the direction.
+ */
+export const PortStarboardPlayground: Story = {
+  name: 'PORT/STBD Playground (Manual)',
+  tags: ['skip-test'],
+  args: {
+    angle: 90,
+    thrust: -60,
+    angleSetpoint: 90,
+    thrustSetpoint: -60,
+    priority: Priority.enhanced,
+    state: InstrumentState.active,
+    portStarboard: true,
+    portStarboardSource: PortStarboardSource.value,
+    portStarboardSides: PortStarboardSides.both,
+    portStarboardElements: [...PORT_STARBOARD_DEFAULT_ELEMENTS],
+  },
+};
+
+export const PortStarboardWithSetpoint: Story = {
+  args: {
+    angle: 30,
+    thrust: 60,
+    angleSetpoint: 45,
+    thrustSetpoint: 80,
+    priority: Priority.enhanced,
+    state: InstrumentState.active,
+    portStarboard: true,
+    portStarboardElements: [
+      PortStarboardElement.face,
+      PortStarboardElement.bar,
+      PortStarboardElement.arrow,
+      PortStarboardElement.zeroLine,
+      PortStarboardElement.setpoint,
+    ],
+  },
+};
+
+export const PortStarboardBarsOnly: Story = {
+  args: {
+    angle: 30,
+    thrust: 60,
+    angleSetpoint: 45,
+    thrustSetpoint: 80,
+    priority: Priority.enhanced,
+    state: InstrumentState.active,
+    portStarboard: true,
+    portStarboardElements: [
+      PortStarboardElement.bar,
+      PortStarboardElement.arrow,
+    ],
+  },
+};
+
+/**
+ * A/B grid for the open design question "should the setpoint follow the
+ * PORT/STBD colors?". Columns: default elements (setpoint stays blue), with
+ * the setpoint opted in, and face-only. Rows: regular and enhanced priority.
+ */
+export const PortStarboardComparison: Story = {
+  parameters: {widthDecorator: false},
+  render: () => {
+    const columns: {label: string; elements: PortStarboardElement[]}[] = [
+      {
+        label: 'default (setpoint blue)',
+        elements: PORT_STARBOARD_DEFAULT_ELEMENTS,
+      },
+      {
+        label: '+ setpoint',
+        elements: [
+          ...PORT_STARBOARD_DEFAULT_ELEMENTS,
+          PortStarboardElement.setpoint,
+        ],
+      },
+      {label: 'face only', elements: [PortStarboardElement.face]},
+    ];
+    return html`
+      <div
+        style="display: grid; grid-template-columns: 90px repeat(3, 1fr); gap: 8px; align-items: center; justify-items: center;"
+      >
+        <div></div>
+        ${columns.map(
+          (column) =>
+            html`<div style="font-size: 12px; color: #888;">
+              ${column.label}
+            </div>`
+        )}
+        ${[Priority.regular, Priority.enhanced].map(
+          (priority) => html`
+            <div style="font-size: 12px; color: #888;">${priority}</div>
+            ${columns.map(
+              (column) => html`
+                <div style="width: 180px; height: 180px;">
+                  <obc-azimuth-thruster
+                    .angle=${30}
+                    .thrust=${60}
+                    .angleSetpoint=${45}
+                    .thrustSetpoint=${80}
+                    .priority=${priority}
+                    .state=${InstrumentState.active}
+                    .portStarboard=${true}
+                    .portStarboardElements=${column.elements}
+                  ></obc-azimuth-thruster>
+                </div>
+              `
+            )}
+          `
+        )}
+      </div>
+    `;
+  },
+};
+
+/**
+ * Consistency check: the new mode next to an existing `rotPortStarboard`
+ * instrument. Both resolve to the same two token pairs.
+ */
+export const PortStarboardConsistencyWithRot: Story = {
+  parameters: {widthDecorator: false},
+  render: () => html`
+    <div style="display: flex; gap: 24px; align-items: center;">
+      <div style="width: 200px; height: 200px;">
+        <obc-azimuth-thruster
+          .angle=${30}
+          .thrust=${60}
+          .priority=${Priority.enhanced}
+          .state=${InstrumentState.active}
+          .portStarboard=${true}
+        ></obc-azimuth-thruster>
+      </div>
+      <div style="width: 200px; height: 200px;">
+        <obc-rate-of-turn
+          .rateOfTurnDegreesPerMinute=${40}
+          .rotPortStarboard=${true}
+          .hasTrackBar=${true}
+          .priority=${Priority.enhanced}
+        ></obc-rate-of-turn>
+      </div>
+    </div>
+  `,
 };
 
 export const InCommandDetailedTickmarks: Story = {

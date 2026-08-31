@@ -11,6 +11,7 @@ import {widthDecorator} from '../../storybook-util.js';
 import {PropellerType} from '../thruster/propeller.js';
 import {TickmarkStyle} from '../watch/tickmark.js';
 import {ReadoutSize} from '../readout/readout.js';
+import {PORT_STARBOARD_DEFAULT_ELEMENTS} from '../../svghelpers/port-starboard.js';
 
 function renderAzimuthThrusterLabeled(
   args: Partial<ObcAzimuthThrusterLabeled>
@@ -43,6 +44,9 @@ function renderAzimuthThrusterLabeled(
       .singleDirection=${args.singleDirection ?? false}
       .topPropeller=${args.topPropeller ?? PropellerType.none}
       .bottomPropeller=${args.bottomPropeller ?? PropellerType.none}
+      .portStarboard=${args.portStarboard ?? false}
+      .portStarboardElements=${args.portStarboardElements ??
+      PORT_STARBOARD_DEFAULT_ELEMENTS}
     ></obc-azimuth-thruster-labeled>
   `;
 }
@@ -105,6 +109,17 @@ export const Medium: Story = {
     size: AzimuthThrusterLabeledSize.medium,
     readoutSize: ReadoutSize.medium,
     width: 384,
+  },
+};
+
+export const PortStarboard: Story = {
+  args: {
+    size: AzimuthThrusterLabeledSize.medium,
+    readoutSize: ReadoutSize.medium,
+    width: 384,
+    angle: 30,
+    thrust: 60,
+    portStarboard: true,
   },
 };
 

@@ -78,6 +78,11 @@
  */
 
 import {SVGTemplateResult, svg} from 'lit';
+import {
+  portStarboardColor,
+  PortStarboardShade,
+  type PortStarboardSign,
+} from './port-starboard.js';
 
 // ============================================================================
 // Visual State Enums (Design Layer)
@@ -321,6 +326,13 @@ export interface DrawSetpointMarkerConfig {
   disabled?: boolean;
 
   /**
+   * PORT/STBD direction sign. `0` (default) keeps the priority-derived color.
+   * Ignored for the `focus` visual state and while `disabled`.
+   * @default 0
+   */
+  portStarboardSign?: PortStarboardSign;
+
+  /**
    * Unique ID prefix for SVG defs (mask, etc.)
    * Required for deterministic output and to avoid conflicts when multiple
    * setpoint markers exist in the same SVG.
@@ -351,20 +363,33 @@ export interface DrawSetpointMarkerConfig {
 export function getSetpointFillColor(
   visualState: SetpointVisualState,
   colorMode: SetpointColorMode,
-  disabled: boolean = false
+  disabled: boolean = false,
+  portStarboardSign: PortStarboardSign = 0
 ): string {
   // Disabled state uses tertiary color (overrides everything)
   if (disabled) {
     return 'var(--instrument-frame-tertiary-color)';
   }
 
-  // Focus state has special fill colors
+  // Focus state has special fill colors. The PORT/STBD mode deliberately does
+  // not recolor it: interaction feedback stays one consistent color and the
+  // direction color returns once the setpoint settles.
   if (visualState === SetpointVisualState.focus) {
     if (colorMode === SetpointColorMode.enhanced) {
       return 'var(--base-blue-100)';
     } else {
       return 'var(--instrument-regular-tertiary-color)';
     }
+  }
+
+  // PORT/STBD mode: the marker is a normal-mode `*-primary-color` element, so
+  // the shade rule maps it to the dark port/starboard token.
+  const portStarboard = portStarboardColor(
+    portStarboardSign,
+    PortStarboardShade.dark
+  );
+  if (portStarboard) {
+    return portStarboard;
   }
 
   // All non-disabled states use primary color
@@ -538,9 +563,20 @@ export function generateSetpointId(prefix: string = 'setpoint'): string {
 export function drawSetpointMarker(
   config: DrawSetpointMarkerConfig
 ): SVGTemplateResult {
-  const {visualState, colorMode, disabled = false, id} = config;
+  const {
+    visualState,
+    colorMode,
+    disabled = false,
+    id,
+    portStarboardSign = 0,
+  } = config;
 
-  const fillColor = getSetpointFillColor(visualState, colorMode, disabled);
+  const fillColor = getSetpointFillColor(
+    visualState,
+    colorMode,
+    disabled,
+    portStarboardSign
+  );
   const strokeColor = getSetpointStrokeColor(visualState, colorMode);
   const path = getSetpointPath(visualState);
   const scale = getSetpointScale(visualState);

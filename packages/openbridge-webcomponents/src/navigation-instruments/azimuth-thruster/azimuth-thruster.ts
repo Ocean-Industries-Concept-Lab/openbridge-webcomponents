@@ -20,6 +20,16 @@ import {Tickmark, TickmarkStyle, TickmarkType} from '../watch/tickmark.js';
 import {LinearAdvice} from '../thruster/advice.js';
 import {PropellerType} from '../thruster/propeller.js';
 import {customElement} from '../../decorator.js';
+import {
+  hasPortStarboardElement,
+  PORT_STARBOARD_DEFAULT_ELEMENTS,
+  PortStarboardSides,
+  PortStarboardElement,
+  type PortStarboardSign,
+  portStarboardSignOf,
+  PortStarboardSource,
+  portStarboardSourceSign,
+} from '../../svghelpers/port-starboard.js';
 
 function mapAngle0to360(angle: number): number {
   const a = angle % 360;
@@ -57,6 +67,15 @@ function mapAngle0to360(angle: number): number {
  *   so instruments sharing the same value have identical ring circumference
  *   regardless of label width or arc extent (like obc-donut-chart's
  *   fixedHeight). When unset (default), the instrument fills its container.
+ * @property portStarboard - Enables the maritime PORT/STBD (red/green) color mode: the face is split
+ *   green (starboard) / red (port), and forward thrust renders green, reverse
+ *   red. Additional to `priority`, and independent of
+ *   `starboardPortIndicator` — both may be enabled together.
+ * @property portStarboardElements - Which parts take part while `portStarboard` is on.
+ *   Defaults to everything except the setpoint.
+ * @availableWhen portStarboardElements portStarboard==true
+ * @property portStarboardSides - Which halves the region tints paint while `portStarboard` is on.
+ * @availableWhen portStarboardSides portStarboard==true
  * @stable
  */
 @customElement('obc-azimuth-thruster')
@@ -141,6 +160,23 @@ export class ObcAzimuthThruster extends LitElement {
   @property({type: String}) tickmarkStyle: TickmarkStyle =
     TickmarkStyle.regular;
   @property({type: Boolean}) starboardPortIndicator: boolean = false;
+  @property({type: Boolean}) portStarboard: boolean = false;
+  @property({type: Array, attribute: false})
+  portStarboardElements: PortStarboardElement[] = [
+    ...PORT_STARBOARD_DEFAULT_ELEMENTS,
+  ];
+  /**
+   * Which quantity decides the side: the thrust alone (`value`, the default —
+   * green ahead, red astern), the pod orientation alone (`orientation`), or the
+   * two combined into the direction actually being pushed (`resultant`).
+   *
+   * @availableWhen portStarboard==true
+   * @experimental
+   */
+  @property({type: String}) portStarboardSource: PortStarboardSource =
+    PortStarboardSource.value;
+  @property({type: String}) portStarboardSides: PortStarboardSides =
+    PortStarboardSides.both;
   @property({type: Number, attribute: 'face-diameter'})
   faceDiameter: number | undefined;
 
@@ -186,6 +222,48 @@ export class ObcAzimuthThruster extends LitElement {
         state,
       };
     });
+  }
+
+  /**
+   * Which half of the dial the angle setpoint sits in: starboard for
+   * (0°, 180°), port for (180°, 360°), neutral exactly fore or aft.
+   */
+  private get angleSetpointPortStarboardSign(): PortStarboardSign {
+    if (
+      this.angleSetpoint === undefined ||
+      !Number.isFinite(this.angleSetpoint)
+    ) {
+      return 0;
+    }
+    const angle = mapAngle0to360(this.angleSetpoint);
+    if (angle === 0 || angle === 180) return 0;
+    return angle < 180 ? 1 : -1;
+  }
+
+  /**
+   * The side this instrument reads as, per {@link portStarboardSource}. Drives
+   * the thrust bar and, through `portStarboardSides="active"`, the face and
+   * band tints. The setpoint markers keep deriving from their own quantity —
+   * the angle setpoint from where it sits on the dial, the thrust setpoint from
+   * its own sign.
+   */
+  private get portStarboardValueSign(): PortStarboardSign {
+    return portStarboardSourceSign(
+      this.portStarboardSource,
+      this.angle,
+      this.thrust
+    );
+  }
+
+  /** Thrust-setpoint sign, gated on the `setpoint` element opt-in. */
+  private get thrustSetpointPortStarboardSign(): PortStarboardSign {
+    return hasPortStarboardElement(
+      this.portStarboard,
+      this.portStarboardElements,
+      PortStarboardElement.setpoint
+    )
+      ? portStarboardSignOf(this.thrustSetpoint)
+      : 0;
   }
 
   private getTickmarks(): Tickmark[] {
@@ -299,6 +377,11 @@ export class ObcAzimuthThruster extends LitElement {
           .tickmarkStyle=${this.tickmarkStyle}
           .advices=${this.angleAdviceRaw}
           .starboardPortIndicator=${this.starboardPortIndicator}
+          .portStarboard=${this.portStarboard}
+          .portStarboardElements=${this.portStarboardElements}
+          .portStarboardSides=${this.portStarboardSides}
+          .portStarboardValueSign=${this.portStarboardValueSign}
+          .setpointPortStarboardSign=${this.angleSetpointPortStarboardSign}
         ></obc-watch>
         <svg viewBox=${viewBox} xmlns="http://www.w3.org/2000/svg">
           <g transform="rotate(${rotateAngle})">
@@ -326,6 +409,12 @@ export class ObcAzimuthThruster extends LitElement {
                 animateSetpoint: this.animateSetpoint,
                 departingNewSetpoint: this._thrustSp.departingNewSetpoint,
                 setpointOverride: this.thrustSetpointOverride,
+                portStarboard: {
+                  enabled: this.portStarboard,
+                  elements: this.portStarboardElements,
+                  sign: this.portStarboardValueSign,
+                },
+                portStarboardSetpointSign: this.thrustSetpointPortStarboardSign,
               }
             )}
           </g>
