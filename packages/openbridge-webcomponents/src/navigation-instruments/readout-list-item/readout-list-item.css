@@ -356,6 +356,47 @@ obc-readout-block {
   block-size: 12px;
 }
 
+/* ---------- Free content columns ----------
+ * `leading-content` / `trailing-content` host arbitrary content (an indicator, a
+ * mini chart, …) in a fixed-width column at either end of the row. The width is
+ * a custom property rather than the content's own size, so the column is
+ * predictable across rows and the row never measures its light DOM. An unfilled
+ * slot is `display: contents` and generates no box, so it adds no `.content`
+ * gap — rows that slot nothing lay out exactly as they did before.
+ *
+ * `.content-spacer` reserves the same width on a row that leaves the column
+ * empty while its neighbours fill it (obc-readout-list sets `hasLeadingContentSpacer`
+ * / `hasTrailingContentSpacer` automatically) — the degree-spacer trick, one
+ * column further out. */
+::slotted([slot="leading-content"]),
+::slotted([slot="trailing-content"]),
+.content-spacer {
+  flex: none;
+}
+::slotted([slot="leading-content"]),
+::slotted([slot="trailing-content"]) {
+  align-self: center;
+}
+::slotted([slot="leading-content"]),
+.leading-content-spacer {
+  inline-size: var(
+    --obc-readout-list-item-leading-content-width,
+    var(--global-size-spacing-touch-target-min)
+  );
+}
+::slotted([slot="trailing-content"]),
+.trailing-content-spacer {
+  inline-size: var(
+    --obc-readout-list-item-trailing-content-width,
+    var(--global-size-spacing-touch-target-min)
+  );
+}
+/* Stretched (not centred) so the reserved width is visible under the debug
+   overlay; the box is empty either way, so it never affects the row height. */
+.content-spacer {
+  align-self: stretch;
+}
+
 .leading-icon {
   display: inline-flex;
   align-items: center;
@@ -590,5 +631,16 @@ obc-readout-block {
 }
 :host([showDebugOverlay]) .degree-spacer {
   outline: 1px solid rgba(0, 160, 0, 0.8);
+  outline-offset: -1px;
+}
+/* Free content columns (purple): solid for a filled column, dashed for the
+   reserved-but-empty spacer that keeps the other rows aligned with it. */
+:host([showDebugOverlay]) ::slotted([slot="leading-content"]),
+:host([showDebugOverlay]) ::slotted([slot="trailing-content"]) {
+  outline: 1px solid rgba(150, 0, 190, 0.7);
+  outline-offset: -1px;
+}
+:host([showDebugOverlay]) .content-spacer {
+  outline: 1px dashed rgba(150, 0, 190, 0.7);
   outline-offset: -1px;
 }

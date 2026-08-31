@@ -160,6 +160,34 @@ Text rows (`valueType="text"`) are excluded in **both** directions: they neither
 contribute to the numeric reserve nor receive it, so a long string cannot inflate
 the numeric column and a short one is not padded to a digit width.
 
+### 6. Free content columns reserve by occupancy, never by measurement
+
+`leading-content` / `trailing-content` take arbitrary slotted content. Slotted
+content is light DOM, so no reserver can be derived from it the way the unit /
+value / source reservers are derived from data. Two rules keep alignment
+working:
+
+1. The width is a **shared custom property**
+   (`--obc-readout-list-item-leading-content-width`, default 48px), identical on
+   every row. `align()` reads **occupancy only** — `querySelector(':scope >
+[slot="…-content"]')` — and sets `hasLeadingContentSpacer` /
+   `hasTrailingContentSpacer` on the rows that leave the column empty. Do not
+   replace this with `getBoundingClientRect`: the list writes properties that
+   trigger a re-render, so measuring inside `align()` builds a
+   measure → resize → measure loop.
+2. The `<slot>` renders **unconditionally**, and the spacer `<span>` renders
+   **only** when reserved. An unfilled slot is `display: contents` and generates
+   no box; wrapping it in an always-present element instead would add a
+   `.content` flex gap to every row in the library and move the whole readout +
+   automation-tank snapshot family.
+
+Nothing is forwarded into slotted content — not `value`, not `state`, not
+`dataQuality`. That is deliberate (arbitrary content has no known API), and it
+means a slotted indicator's value is a second binding the consumer must keep in
+step with the row's. Say so in any doc you write for these slots; a reviewer who
+assumes the row drives the indicator will build a display that silently
+disagrees with itself.
+
 ### 6. Lit lowercases attribute names — it does not kebab-case them
 
 `valueType` is the attribute `valuetype`, not `value-type`. `OBSERVED_ATTRIBUTES`

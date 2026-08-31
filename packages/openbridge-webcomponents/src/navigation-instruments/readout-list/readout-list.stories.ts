@@ -1,7 +1,12 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {html} from 'lit';
+import {html, nothing, type TemplateResult} from 'lit';
 import {expect} from 'storybook/test';
 import './readout-list.js';
+import '../pitch-indicator/pitch-indicator.js';
+import '../roll-indicator/roll-indicator.js';
+import '../heave-indicator/heave-indicator.js';
+import '../gauge-trend-indicator/gauge-trend-indicator.js';
+import '../graph-mini/graph-mini.js';
 import {
   ReadoutListItemSize,
   ReadoutListItemPriority,
@@ -26,6 +31,7 @@ type Row = {
   value: number | string | null;
   valueType?: ReadoutValueType;
   unit: string;
+  src?: string;
   size?: ReadoutListItemSize;
   hasDegree?: boolean;
   fractionDigits?: number;
@@ -42,6 +48,11 @@ type Row = {
   valueDataQuality?: ReadoutListItemDataQuality;
   valueAlert?: AlertFrameConfig;
   setpointDataQuality?: ReadoutListItemDataQuality;
+  // Free content columns. These are plain slotted markup: the list reserves the
+  // column, but nothing forwards `value` into them — each story binds the same
+  // number twice, deliberately, because that is what a consumer has to do.
+  leading?: TemplateResult;
+  trailing?: TemplateResult;
 };
 
 function renderRow(row: Row) {
@@ -56,6 +67,7 @@ function renderRow(row: Row) {
     <obc-readout-list-item
       .label=${row.label}
       .unit=${row.unit}
+      .src=${row.src}
       .value=${row.value}
       .valueType=${row.valueType ?? ReadoutValueType.number}
       .size=${row.size ?? ReadoutListItemSize.small}
@@ -71,15 +83,17 @@ function renderRow(row: Row) {
       .alert=${row.alert ?? false}
       .valueOptions=${valueOptions}
       .setpointOptions=${setpointOptions}
-    ></obc-readout-list-item>
+    >
+      ${row.leading ?? nothing} ${row.trailing ?? nothing}
+    </obc-readout-list-item>
   `;
 }
 
-function renderList(rows: Row[], showDebugOverlay: boolean) {
+function renderList(rows: Row[], showDebugOverlay: boolean, width = 360) {
   return html`
     <div
       data-obc-theme="day"
-      style="background: var(--container-background-color); padding: 16px; width: 360px; box-sizing: border-box;"
+      style="background: var(--container-background-color); padding: 16px; width: ${width}px; box-sizing: border-box;"
     >
       <obc-readout-list .showDebugOverlay=${showDebugOverlay}>
         ${rows.map(renderRow)}
@@ -475,5 +489,312 @@ export const Manual: Story = {
       first.unit = first.unit === 'miles' ? 'T' : 'miles';
       list.align();
     };
+  },
+};
+
+/* ---------------------------------------------------------------------------
+ * Free content columns — `leading-content` / `trailing-content`
+ *
+ * The stories below slot whole components into a readout row. Two things are
+ * worth watching, because they are what the slots do NOT give you for free:
+ *
+ * 1. **Alignment.** Slotted content is light DOM the list cannot derive a width
+ *    from, so it reads occupancy only and reserves a shared, custom-property
+ *    width on the rows that slot nothing. Turn the debug overlay on: a filled
+ *    column is a solid purple outline, a reserved-but-empty one is dashed.
+ * 2. **State.** Nothing forwards the row's `value` into the slotted component.
+ *    Every row below binds the same number twice — once on the row, once on the
+ *    indicator — which is exactly the drift risk a consumer takes on.
+ * ------------------------------------------------------------------------- */
+
+// Fixed, seeded-looking series: visual snapshots must be deterministic, so no
+// Math.random anywhere in the demo data.
+const TREND_X = Array.from({length: 40}, (_, i) => i);
+
+function trendValues(phase: number): number[] {
+  return TREND_X.map(
+    (i) =>
+      50 +
+      22 * Math.sin((i + phase) / 5) +
+      9 * Math.sin((i + phase) / 1.7) +
+      5 * Math.sin((i + phase) / 0.9)
+  );
+}
+
+function trendSeries(phase: number): [number[], number[]] {
+  return [TREND_X, trendValues(phase)];
+}
+
+/**
+ * **Leading indicators.** Each row slots a compact instrument indicator into
+ * `leading-content`, so the row reads as glyph → value → unit → source. The
+ * column is a fixed 48px (the minimum touch target) on every row, set by
+ * `--obc-readout-list-item-leading-content-width`, not by the indicator's own
+ * size — so swapping one indicator for a differently-sized element cannot break
+ * the column.
+ *
+ * Values are rendered at both signs on purpose: a compact indicator and its
+ * full-size twin only share a name, so negative deflection is worth eyeballing.
+ *
+ * **TODO(designer):** frame 116428 stacks a small "State" line under the source
+ * and drops the label entirely. `src` is a single line today, so the state line
+ * is not reproduced here — tell us whether the source column should become a
+ * two-line stack (like `label`/`unit` already is under `leading-unit`).
+ */
+export const WithIndicators: Story = {
+  // Designer-facing: the reserve is not the subject here, so show clean rows.
+  args: {showDebugOverlay: false},
+  render: (args) =>
+    renderList(
+      [
+        {
+          label: '',
+          value: 12,
+          unit: 'Pitch',
+          src: 'MRU 1',
+          hasDegree: true,
+          size: ReadoutListItemSize.large,
+          leading: html`<obc-pitch-indicator
+            slot="leading-content"
+            .value=${12}
+          ></obc-pitch-indicator>`,
+        },
+        {
+          label: '',
+          value: -7,
+          unit: 'Roll',
+          src: 'MRU 1',
+          hasDegree: true,
+          size: ReadoutListItemSize.large,
+          leading: html`<obc-roll-indicator
+            slot="leading-content"
+            .value=${-7}
+          ></obc-roll-indicator>`,
+        },
+        {
+          label: '',
+          value: 1.4,
+          unit: 'Heave',
+          src: 'MRU 2',
+          fractionDigits: 1,
+          size: ReadoutListItemSize.large,
+          leading: html`<obc-heave-indicator
+            slot="leading-content"
+            .value=${1.4}
+          ></obc-heave-indicator>`,
+        },
+      ],
+      args.showDebugOverlay,
+      420
+    ),
+};
+
+/**
+ * **Trailing mini charts.** `obc-graph-mini` sits in `trailing-content` as a
+ * sparkline column after the value — the shape of frame 116431. The first row is
+ * `large` and the rest `small`: the chart column keeps its width across the size
+ * change, because it is reserved by custom property rather than by the row's
+ * density tier.
+ *
+ * **TODO(designer):** the frame draws a grey baseline rule under each sparkline.
+ * `obc-graph-mini` has no such rule (it renders the line plus a trailing dot
+ * inside a bordered 32px box), so what you see here is the component as it
+ * stands, not the frame. Confirm whether the rule should be added to
+ * `obc-graph-mini` or whether the framed box replaces it.
+ */
+export const WithTrendCharts: Story = {
+  args: {showDebugOverlay: false},
+  render: (args) =>
+    renderList(
+      [
+        {
+          label: 'Label',
+          value: 123,
+          unit: 'Unit',
+          hasDegree: true,
+          size: ReadoutListItemSize.large,
+          trailing: html`<obc-graph-mini
+            slot="trailing-content"
+            .data=${trendSeries(0)}
+          ></obc-graph-mini>`,
+        },
+        {
+          label: 'Label',
+          value: 123,
+          unit: 'Unit',
+          hasDegree: true,
+          trailing: html`<obc-graph-mini
+            slot="trailing-content"
+            .data=${trendSeries(7)}
+          ></obc-graph-mini>`,
+        },
+        {
+          label: 'Label',
+          value: 123,
+          unit: 'Unit',
+          hasDegree: true,
+          trailing: html`<obc-graph-mini
+            slot="trailing-content"
+            .data=${trendSeries(14)}
+          ></obc-graph-mini>`,
+        },
+        {
+          label: 'Label',
+          value: 123,
+          unit: 'Unit',
+          hasDegree: true,
+          trailing: html`<obc-graph-mini
+            slot="trailing-content"
+            .data=${trendSeries(21)}
+          ></obc-graph-mini>`,
+        },
+      ],
+      args.showDebugOverlay,
+      420
+    ),
+};
+
+/**
+ * **Trailing trend indicators.** The same rows as
+ * [`WithTrendCharts`](?path=/story/instruments-readout-list--with-trend-charts),
+ * with `obc-gauge-trend-indicator` in the column instead of `obc-graph-mini` —
+ * a framed 48×48 glyph with a current-value cue rather than an open sparkline.
+ * Shown side by side so the choice is a design decision, not an implementation
+ * one; the row does not care which is slotted in.
+ *
+ * The full `obc-gauge-trend` is deliberately NOT used here: it sizes itself from
+ * the box it measures, so an in-flow row is exactly the container shape that
+ * goes circular (issue #1138). Fixed-size indicators avoid the question.
+ */
+export const WithTrendIndicators: Story = {
+  args: {showDebugOverlay: false},
+  render: (args) =>
+    renderList(
+      [0, 7, 14, 21].map((phase, index) => {
+        const values = trendValues(phase);
+        const current = values[values.length - 1];
+        return {
+          label: 'Label',
+          value: Math.round(current),
+          unit: 'Unit',
+          hasDegree: true,
+          size: index === 0 ? ReadoutListItemSize.large : undefined,
+          trailing: html`<obc-gauge-trend-indicator
+            slot="trailing-content"
+            .data=${values}
+            .minValue=${0}
+            .maxValue=${100}
+            .value=${current}
+          ></obc-gauge-trend-indicator>`,
+        };
+      }),
+      args.showDebugOverlay,
+      420
+    ),
+};
+
+/**
+ * **Mixed rows — the reserve at work.** Only some rows slot content, in each
+ * column independently. The list reserves the matching column on every row that
+ * does not, so labels and values stay in one line down the list instead of
+ * stepping in and out by 48px per row. With the debug overlay on, a solid purple
+ * outline is a filled column and a dashed one is a reserve.
+ *
+ * Remove the indicator from the one row that has it and the whole leading
+ * reserve disappears on the next alignment pass — the list clears its own
+ * spacers, exactly as it does for the degree column.
+ */
+export const MixedSlots: Story = {
+  render: (args) =>
+    renderList(
+      [
+        {
+          label: 'Pitch',
+          value: 12,
+          unit: '',
+          hasDegree: true,
+          leading: html`<obc-pitch-indicator
+            slot="leading-content"
+            .value=${12}
+          ></obc-pitch-indicator>`,
+          trailing: html`<obc-graph-mini
+            slot="trailing-content"
+            .data=${trendSeries(0)}
+          ></obc-graph-mini>`,
+        },
+        // No leading indicator, but a chart: reserves the leading column only.
+        {
+          label: 'Speed',
+          value: 18.4,
+          unit: 'kn',
+          fractionDigits: 1,
+          trailing: html`<obc-graph-mini
+            slot="trailing-content"
+            .data=${trendSeries(7)}
+          ></obc-graph-mini>`,
+        },
+        // Neither: reserves both columns.
+        {label: 'Depth', value: 124, unit: 'm'},
+        {
+          label: 'Wind',
+          value: null,
+          unit: 'kn',
+          dataQuality: ReadoutListItemDataQuality.invalid,
+        },
+      ],
+      args.showDebugOverlay,
+      420
+    ),
+};
+
+/**
+ * Regression test for the reserve. The list must set a spacer on exactly the
+ * rows that leave a column empty while a sibling fills it — and must not set one
+ * on the row that fills it, which would give that row two columns.
+ */
+export const TestSlotColumnReserve: Story = {
+  render: () => html`
+    <div
+      data-obc-theme="day"
+      style="background: var(--container-background-color); padding: 16px; width: 420px; box-sizing: border-box;"
+    >
+      <obc-readout-list id="reserve-list">
+        <obc-readout-list-item id="with-leading" label="Pitch" value="12">
+          <obc-pitch-indicator slot="leading-content"></obc-pitch-indicator>
+        </obc-readout-list-item>
+        <obc-readout-list-item id="without-leading" label="Depth" value="124">
+        </obc-readout-list-item>
+      </obc-readout-list>
+    </div>
+  `,
+  play: async ({canvasElement}) => {
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+
+    const withLeading = canvasElement.querySelector(
+      '#with-leading'
+    ) as HTMLElement & {
+      hasLeadingContentSpacer: boolean;
+      hasTrailingContentSpacer: boolean;
+    };
+    const withoutLeading = canvasElement.querySelector(
+      '#without-leading'
+    ) as HTMLElement & {
+      hasLeadingContentSpacer: boolean;
+      hasTrailingContentSpacer: boolean;
+    };
+
+    // The row that fills the column must not also reserve one.
+    await expect(withLeading.hasLeadingContentSpacer).toBe(false);
+    await expect(withoutLeading.hasLeadingContentSpacer).toBe(true);
+    // No row slots trailing content, so nothing reserves that column at all.
+    await expect(withLeading.hasTrailingContentSpacer).toBe(false);
+    await expect(withoutLeading.hasTrailingContentSpacer).toBe(false);
+
+    // Removing the only slotted indicator clears the reserve on the next pass.
+    canvasElement.querySelector('obc-pitch-indicator')?.remove();
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    await expect(withoutLeading.hasLeadingContentSpacer).toBe(false);
   },
 };
