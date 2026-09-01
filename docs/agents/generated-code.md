@@ -79,7 +79,7 @@ Keys in `script/figmavariables.json` have the form
 
 Consequences and recovery, in order:
 
-1. A refresh where *every* icon falls back to literal hex (thousands of leak
+1. A refresh where _every_ icon falls back to literal hex (thousands of leak
    files, but only ~60 unresolved ids) is a library re-sync, not a converter
    bug. The unresolved ids are variables, not icons.
 2. An unresolved key whose `<library-key>` already exists in the map under
