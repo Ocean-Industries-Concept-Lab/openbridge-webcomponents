@@ -2,18 +2,18 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcIntegrationAppBar} from './integration-app-bar.js';
 import './integration-app-bar.js';
 import '../../components/app-button/app-button.js';
-import '../../icons/icon-ship.js';
+import '../../icons/icon-placeholder.js';
 import {html} from 'lit';
 
 const appLabels = [
-  'Navigation',
-  'Fleet Analytics',
-  'Maintenance',
-  'Weather Data',
-  'Sea Chart',
-  'Engine Monitor',
-  'Playback',
-  'Radar',
+  'Home',
+  'Diagnostics',
+  'Data Explorer',
+  'Settings',
+  'Alerts',
+  'Reports',
+  'System Overview',
+  'Logs',
 ];
 
 const appBar = (labels: string[]) => html`
@@ -27,7 +27,7 @@ const appBar = (labels: string[]) => html`
           integration
           ?checked=${i === 0}
         >
-          <obi-ship slot="icon"></obi-ship>
+          <obi-placeholder slot="icon"></obi-placeholder>
         </obc-app-button>
       `
     )}
@@ -36,14 +36,14 @@ const appBar = (labels: string[]) => html`
 
 const meta: Meta<typeof ObcIntegrationAppBar> = {
   title: 'Integration Systems/App Bar/Sizing',
-  tags: ['experimental', 'autodocs'],
+  tags: ['experimental'],
   component: 'obc-integration-app-bar',
   parameters: {
     layout: 'fullscreen',
     docs: {
       description: {
         component:
-          'Stories documenting how `obc-integration-app-bar` sizes labelled app buttons with the current CSS Grid layout. The app row uses auto-placed columns with `minmax(var(--obc-integration-app-bar-app-width, max-content), 1fr)`, so the cases below show how equal-width tracks respond to realistic labels, narrow containers and wrapper elements.',
+          'How `obc-integration-app-bar` sizes labelled app buttons. The app row is a grid of auto-placed columns sized `minmax(var(--obc-integration-app-bar-app-width, max-content), 1fr)`; the cases below show how those equal-width tracks respond to mixed label lengths, narrow containers and wrapper elements.',
       },
     },
   },
@@ -112,7 +112,7 @@ export const ButtonsWrappedInAnElement: Story = {
               integration
               ?checked=${i === 0}
             >
-              <obi-ship slot="icon"></obi-ship>
+              <obi-placeholder slot="icon"></obi-placeholder>
             </obc-app-button>
           </div>
         `
@@ -123,7 +123,7 @@ export const ButtonsWrappedInAnElement: Story = {
     docs: {
       description: {
         story:
-          'Every app button is wrapped in an element - here a plain `div`, in our case a tooltip trigger emitted by a framework wrapper. The slotted wrapper is flattened with `display: contents`, so the button still becomes the grid item and keeps the same equal-width column sizing as the unwrapped case.',
+          'Every app button sits inside a wrapper element, here a plain `div` standing in for the tooltip trigger a framework wrapper emits. The slotted wrapper is flattened with `display: contents`, so the button still becomes the grid item and keeps the same equal-width column sizing as the unwrapped case.',
       },
     },
   },
