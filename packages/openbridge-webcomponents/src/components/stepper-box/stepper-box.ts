@@ -75,6 +75,9 @@ export enum ObcStepperBoxType {
  * @property helperText - Helper text displayed below the stepper. When set, the helper text is shown.
  * @property placeholder - Placeholder text shown when the input is empty.
  * @property readonly - If true, the input is non-editable; programmatic value changes still apply.
+ * @property rejectUpdatesOnFocus - If true, the input field will not update its value on focus
+ * @property rejectUpdates - If true, the value will only be initially set, and not updated on change
+ * @property rejectDuplicateUpdates - If true, the input field will not update its value if the value is the same as the previous value
  * @fires {CustomEvent<{value: number}>} down - Fired when the decrement (left or down) button is clicked
  * @fires {CustomEvent<{value: number}>} up - Fired when the increment (right or up) button is clicked
  * @fires {CustomEvent<{value: string}>} input - Fired when the user types in the number input field
@@ -114,15 +117,10 @@ export class ObcStepperBox extends LitElement {
 
   @property({type: Boolean}) readonly = false;
 
-  /** If true, the input field will not update its value on focus */
   @property({type: Boolean}) rejectUpdatesOnFocus = false;
 
-  /** If true, the value will only be initially set, and not updated on change */
   @property({type: Boolean}) rejectUpdates = false;
 
-  /** If true, the input field will not update its value if the value is the same as the previous value
-   * This is useful to avoid React re-rendering to reset the value.
-   */
   @property({type: Boolean}) rejectDuplicateUpdates = false;
 
   private get downDisabled(): boolean {
