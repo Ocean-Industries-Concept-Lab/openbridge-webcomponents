@@ -750,8 +750,13 @@ When `convert-icons.ts` encounters a `VariableID` that is not in
 palette tokens that have not been re-exported yet, but it means the resulting
 icon will not follow theme switches until the token is added.
 
-Two recovery paths, depending on the cause:
+Three recovery paths, depending on the cause:
 
+- **Every icon suddenly leaks hex, with only a few dozen unresolved ids** —
+  the icons file re-synced its palette library and all `VariableID` keys got
+  new import-id suffixes. Most entries can be re-derived mechanically from the
+  existing map; see
+  [docs/agents/generated-code.md § VariableID anatomy](docs/agents/generated-code.md#variableid-anatomy--why-a-refresh-can-lose-every-icon-colour).
 - **Token exists in Figma, just missing from the JSON** — re-run the
   obc-figma-plugin `variables` codegen and overwrite `script/figmavariables.json`,
   then re-run `npm run download:icons`. Hex fallbacks should disappear.
