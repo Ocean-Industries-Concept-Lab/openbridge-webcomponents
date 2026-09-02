@@ -61,6 +61,23 @@ const COMPASS_TICKMARKS: Tickmark[] = [45, 135, 225, 315].map((angle) => ({
  * Use for docking/maneuvering speed overviews. For a single stepped-arrow
  * readout, use `obc-speed-arrows` instead.
  *
+ * @property speedAlongKnots - Signed speed along the vessel axis: positive fore, negative aft.
+ * @property speedAthwartBowKnots - Signed athwart speed at the bow: positive starboard, negative port.
+ * @availableWhen speedAthwartBowKnots type!=longLatArrows
+ * @property speedAthwartSternKnots - Signed athwart speed at the stern: positive starboard, negative port.
+ * @availableWhen speedAthwartSternKnots type!=longLatArrows
+ * @property speedAthwartKnots - Signed athwart speed at midship: positive starboard, negative port.
+ * @availableWhen speedAthwartKnots type==longLatArrows
+ * @property alongSpeedStepKnots - Knots per chevron step on the along axis.
+ * @property athwartSpeedStepKnots - Knots per chevron step on the athwart axes.
+ * @property alongMaxSpeedKnots - Along speed mapped to the full bar length.
+ * @availableWhen alongMaxSpeedKnots type==alongAthwartBars
+ * @property athwartMaxSpeedKnots - Athwart speed mapped to the full bar length.
+ * @availableWhen athwartMaxSpeedKnots type==alongAthwartBars
+ * @property tintedArrows - Render inactive chevron bands as a tinted track.
+ * @availableWhen tintedArrows type!=alongAthwartBars
+ * @property vesselImage - Vessel image drawn at the center of the instrument. The standalone style
+ *   draws it at twice the size for the chevron types, as in the design.
  * @experimental The API of this component is under design review and may
  * change in a future release.
  */
@@ -76,64 +93,33 @@ export class ObcSpeedDirections extends LitElement {
   @property({type: String})
   frameStyle: SpeedDirectionsFrameStyle = SpeedDirectionsFrameStyle.standalone;
 
-  /** Signed speed along the vessel axis: positive fore, negative aft. */
   @property({type: Number})
   speedAlongKnots?: number = undefined;
 
-  /**
-   * Signed athwart speed at the bow: positive starboard, negative port.
-   * @availableWhen type!=longLatArrows
-   */
   @property({type: Number})
   speedAthwartBowKnots?: number = undefined;
 
-  /**
-   * Signed athwart speed at the stern: positive starboard, negative port.
-   * @availableWhen type!=longLatArrows
-   */
   @property({type: Number})
   speedAthwartSternKnots?: number = undefined;
 
-  /**
-   * Signed athwart speed at midship: positive starboard, negative port.
-   * @availableWhen type==longLatArrows
-   */
   @property({type: Number})
   speedAthwartKnots?: number = undefined;
 
-  /** Knots per chevron step on the along axis. */
   @property({type: Number})
   alongSpeedStepKnots = 3;
 
-  /** Knots per chevron step on the athwart axes. */
   @property({type: Number})
   athwartSpeedStepKnots = 1;
 
-  /**
-   * Along speed mapped to the full bar length.
-   * @availableWhen type==alongAthwartBars
-   */
   @property({type: Number})
   alongMaxSpeedKnots = 9;
 
-  /**
-   * Athwart speed mapped to the full bar length.
-   * @availableWhen type==alongAthwartBars
-   */
   @property({type: Number})
   athwartMaxSpeedKnots = 3;
 
-  /**
-   * Render inactive chevron bands as a tinted track.
-   * @availableWhen type!=alongAthwartBars
-   */
   @property({type: Boolean})
   tintedArrows = false;
 
-  /**
-   * Vessel image drawn at the center of the instrument. The standalone style
-   * draws it at twice the size for the chevron types, as in the design.
-   */
   @property({type: String})
   vesselImage: VesselImage = VesselImage.psvTop;
 

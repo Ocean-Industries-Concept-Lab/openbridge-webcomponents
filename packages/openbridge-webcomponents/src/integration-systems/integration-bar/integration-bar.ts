@@ -27,6 +27,26 @@ import {classMap} from 'lit/directives/class-map.js';
  * Provides a configurable integration bar with home/navigation controls, optional fleet and vessel selection,
  * and optional utility actions such as alerts, notifications, screen, system, dimming, user, and clock.
  *
+ * @property hideHomeButton - Hides the home button when true
+ * @property showClock - Toggles rendering of the clock slot
+ * @property showLinkButton - Toggles visibility of link button
+ * @property linkButtonActivated - Activated state of link button
+ * @property showUserButton - Toggles visibility of user button
+ * @property userButtonActivated - Activated state of user button
+ * @property showDimmingButton - Toggles visibility of dimming button
+ * @property dimmingButtonActivated - Activated state of dimming button
+ * @property showSystemButton - Toggles visibility of system button
+ * @property systemButtonActivated - Activated state of system button
+ * @property showScreenButton - Toggles visibility of screen button
+ * @property screenButtonActivated - Activated state of screen button
+ * @property showNotificationButton - Toggles visibility of notification button
+ * @property notificationButtonActivated - Activated state of notification button
+ * @property showAlertButton - Toggles visibility of alert button
+ * @property alertButtonActivated - Activated state of alert button
+ * @property showFleetButton - Toggles visibility of fleet button
+ * @property fleetButtonSelected - Selected state of fleet button
+ * @property fleetButtonActivated - Active state of fleet button while selection is pending
+ * @property fleetButtonLabel - Label for the fleet button
  * @slot clock - Custom clock content, rendered when `showClock` is true
  * @slot integration-buttons - Regular vessel integration buttons
  * @slot hug-buttons - Compact vessel integration buttons; slotted integration buttons are forced to hug type
@@ -42,45 +62,25 @@ import {classMap} from 'lit/directives/class-map.js';
  */
 @customElement('obc-integration-bar')
 export class ObcIntegrationBar extends LitElement {
-  /** Hides the home button when true */
   @property({type: Boolean}) hideHomeButton = false;
-  /** Toggles rendering of the clock slot */
   @property({type: Boolean}) showClock = false;
-  /** Toggles visibility of link button */
   @property({type: Boolean}) showLinkButton = false;
-  /** Activated state of link button */
   @property({type: Boolean}) linkButtonActivated = false;
-  /** Toggles visibility of user button */
   @property({type: Boolean}) showUserButton = false;
-  /** Activated state of user button */
   @property({type: Boolean}) userButtonActivated = false;
-  /** Toggles visibility of dimming button */
   @property({type: Boolean}) showDimmingButton = false;
-  /** Activated state of dimming button */
   @property({type: Boolean}) dimmingButtonActivated = false;
-  /** Toggles visibility of system button */
   @property({type: Boolean}) showSystemButton = false;
-  /** Activated state of system button */
   @property({type: Boolean}) systemButtonActivated = false;
-  /** Toggles visibility of screen button */
   @property({type: Boolean}) showScreenButton = false;
-  /** Activated state of screen button */
   @property({type: Boolean}) screenButtonActivated = false;
-  /** Toggles visibility of notification button */
   @property({type: Boolean}) showNotificationButton = false;
-  /** Activated state of notification button */
   @property({type: Boolean}) notificationButtonActivated = false;
-  /** Toggles visibility of alert button */
   @property({type: Boolean}) showAlertButton = false;
-  /** Activated state of alert button */
   @property({type: Boolean}) alertButtonActivated = false;
-  /** Toggles visibility of fleet button */
   @property({type: Boolean}) showFleetButton = false;
-  /** Selected state of fleet button */
   @property({type: Boolean}) fleetButtonSelected = false;
-  /** Active state of fleet button while selection is pending */
   @property({type: Boolean}) fleetButtonActivated = false;
-  /** Label for the fleet button */
   @property({type: String}) fleetButtonLabel = 'Fleet';
 
   @state() private buttonsOnBar = false;

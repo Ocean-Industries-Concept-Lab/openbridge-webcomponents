@@ -48,12 +48,12 @@ down the stack is the usual cause of bugs here.
 each with its own helper module. They do not share state, and a change to one
 does not affect the other:
 
-| Mode | Helper | Behaviour |
-| --- | --- | --- |
-| `grouping` (default) | `poi-layer/poi-layer-grouping-utils.ts` | Builds overlap clusters and creates/removes **auto-groups**, preserving front / behind / pre-group states across the transition. Threshold set: enter, exit, pre, behind. |
-| `crossing` | `poi-layer/poi-layer-crossing-utils.ts` | Leaves targets independent and continuously nudges their horizontal offsets so they stop crossing. Tracks previous positions, crossing order and last effective X per target. |
+| Mode                 | Helper                                  | Behaviour                                                                                                                                                                     |
+| -------------------- | --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `grouping` (default) | `poi-layer/poi-layer-grouping-utils.ts` | Builds overlap clusters and creates/removes **auto-groups**, preserving front / behind / pre-group states across the transition. Threshold set: enter, exit, pre, behind.     |
+| `crossing`           | `poi-layer/poi-layer-crossing-utils.ts` | Leaves targets independent and continuously nudges their horizontal offsets so they stop crossing. Tracks previous positions, crossing order and last effective X per target. |
 
-Auto-groups are created *by the layer*, not authored. A hand-placed
+Auto-groups are created _by the layer_, not authored. A hand-placed
 `<obc-poi-group>` is respected and left alone; `joinWhileExpanded` is the opt-in
 that lets nearby targets join an already-expanded auto-group.
 
@@ -82,13 +82,13 @@ a fresh LitElement.
 
 ## Shared helper modules
 
-| Module | Role |
-| --- | --- |
-| `poi/poi-css-vars.ts` | Reads touch/visual target sizes from CSS variables at runtime (`getTouchTargetSize`, `getVisualTargetSize`). Layout maths must go through these, never hard-coded px. |
-| `poi/poi-visual-state.ts` | `applyPoiVisualState` / `clearPoiVisualState` — the single place overlap visual state is written to a target. |
-| `poi/poi-position.ts` | `getEffectivePoiX` — a target's true horizontal position including any crossing offset. Both overlap strategies depend on it. |
-| `poi/poi-grouping-attrs.ts` | `clearTargetGroupingAttributes` / `clearTargetGroupingStyles` — teardown when a target leaves a group. Skipping these strands attributes on the element. |
-| `poi-group/animation-utils.ts` | Expand/collapse animation timing. |
+| Module                         | Role                                                                                                                                                                  |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `poi/poi-css-vars.ts`          | Reads touch/visual target sizes from CSS variables at runtime (`getTouchTargetSize`, `getVisualTargetSize`). Layout maths must go through these, never hard-coded px. |
+| `poi/poi-visual-state.ts`      | `applyPoiVisualState` / `clearPoiVisualState` — the single place overlap visual state is written to a target.                                                         |
+| `poi/poi-position.ts`          | `getEffectivePoiX` — a target's true horizontal position including any crossing offset. Both overlap strategies depend on it.                                         |
+| `poi/poi-grouping-attrs.ts`    | `clearTargetGroupingAttributes` / `clearTargetGroupingStyles` — teardown when a target leaves a group. Skipping these strands attributes on the element.              |
+| `poi-group/animation-utils.ts` | Expand/collapse animation timing.                                                                                                                                     |
 
 ## Traps
 

@@ -5,8 +5,10 @@ import {
   ReadoutBlockVariant,
   ReadoutBlockSize,
   ReadoutBlockDataQuality,
+  ReadoutAdviceCategory,
   ObcTextboxFontWeight,
   ObcTextboxAlignment,
+  ObcTextboxSize,
   ReadoutValueType,
 } from './readout-block.js';
 import './readout-block.js';
@@ -25,6 +27,9 @@ type BlockArgs = {
   value: number | string | null;
   valueType: ReadoutValueType;
   size: ReadoutBlockSize;
+  valueSize: ObcTextboxSize;
+  category: ReadoutAdviceCategory;
+  active: boolean;
   enhanced: boolean;
   weight: ObcTextboxFontWeight;
   hasDegree: boolean;
@@ -56,6 +61,9 @@ function renderBlock(args: Partial<BlockArgs>) {
       .value=${args.value as number | string | null}
       .valueType=${args.valueType ?? ReadoutValueType.number}
       .size=${args.size ?? ReadoutBlockSize.small}
+      .valueSize=${args.valueSize}
+      .category=${args.category ?? ReadoutAdviceCategory.regular}
+      .active=${args.active ?? false}
       .enhanced=${args.enhanced ?? false}
       .weight=${args.weight ?? ObcTextboxFontWeight.regular}
       .hasDegree=${args.hasDegree ?? false}
@@ -715,4 +723,50 @@ export const Alert: Story = {
       </div>
     </div>
   `,
+};
+
+/**
+ * Advice semantic categories (Figma 6.1 Readout-block-advice). Resting
+ * categories carry a neutral outline marker; `active` swaps in the filled /
+ * status icon: SemiBold + tinted diamond for regular / optimal / eco, the
+ * coloured IEC status icon + active text colour for the alert categories.
+ */
+export const AdviceCategories: Story = {
+  render: () =>
+    renderShowcase(
+      Object.values(ReadoutAdviceCategory).flatMap((category) =>
+        [false, true].map((active) => ({
+          title: `${category}${active ? ' / active' : ''}`,
+          args: {
+            variant: ReadoutBlockVariant.advice,
+            value: 118,
+            size: ReadoutBlockSize.medium,
+            category,
+            active,
+          },
+        }))
+      )
+    ),
+};
+
+/**
+ * The marker icon follows the block's rendered number size, not the readout
+ * tier (Figma 6.1): a large-tier readout whose setpoint is de-emphasised to
+ * `s` carries the 16px arrow, and the emphasised `l` setpoint the 24px one.
+ */
+export const MarkerIconSizes: Story = {
+  render: () =>
+    renderShowcase(
+      [ObcTextboxSize.s, ObcTextboxSize.m, ObcTextboxSize.l].map(
+        (valueSize) => ({
+          title: `large tier / valueSize ${valueSize}`,
+          args: {
+            variant: ReadoutBlockVariant.setpoint,
+            value: 120,
+            size: ReadoutBlockSize.large,
+            valueSize,
+          },
+        })
+      )
+    ),
 };

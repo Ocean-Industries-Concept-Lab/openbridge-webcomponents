@@ -46,6 +46,7 @@ import {
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
+import {TankPositioning} from './tank-positioning.js';
 
 export enum TankTrend {
   fastRising = 'fast-rising',
@@ -68,41 +69,7 @@ export enum TankOrientation {
   horizontal = 'horizontal',
 }
 
-/**
- * Host positioning model.
- *
- * - `point`: the host has fixed default dimensions (per
- *   orientation and compact / static variant) and a P&ID anchor — the
- *   visual content is shifted with `translateX(-50%)` and (in non-compact)
- *   `top: -20px` so the tank's top-center aligns with the host's top-left
- *   placement coordinate. Use this when dropping the tank onto a P&ID
- *   canvas at a pipe-grid coordinate.
- * - `button` (default): the host fills its parent container (100% × 100%) with no
- *   anchor offset. Use this when embedding the tank inside a sized layout
- *   slot — the parent controls the footprint and the tank renders
- *   responsively inside it, just like a regular button. Compact / static
- *   inner layout still applies; only the host box is changed.
- *
- *   If the parent leaves *one* axis indefinite — a flex/grid slot sized with
- *   `min-height`/`max-height` rather than `height`, or a cross axis freed by
- *   `align-self: center` — the corresponding `100%` computes to `auto` and the
- *   tank derives that axis from the other one through the design aspect ratio
- *   of the matching `point` footprint (256×376 vertical, 420×256 horizontal,
- *   170×282 compact/static, 244×208 horizontal compact/static). The size then
- *   does not depend on the chart cell, which takes its own size from the cell
- *   it was measured in and would otherwise make the constraint circular
- *   (issue #1121).
- *
- *   If *both* axes are indefinite (a shrink-to-fit parent, e.g. an unsized
- *   `inline-block`) there is no axis left to derive from, so the host falls
- *   back to its text content. That is stable and non-circular, but much
- *   smaller than the design footprint — give the parent a definite size on at
- *   least one axis, and on both whenever the exact footprint matters.
- */
-export enum TankPositioning {
-  point = 'point',
-  button = 'button',
-}
+export {TankPositioning};
 
 export enum TankChartMode {
   /** Static fill bar driven by `value` / `max` (default, backward compatible). */
@@ -124,6 +91,43 @@ export enum TankChartMode {
  * renders on the side bar, i.e. `graph-and-bar`). Values share the tank's
  * `value` / `max` scale.
  *
+ * @property positioning - Host positioning model — see `TankPositioning` for details. Defaults to
+ *   `button` (host fills parent container, 100% × 100%, falling back to the
+ *   design aspect ratio on any axis the parent leaves indefinite, no anchor
+ *   offset). Set to `point` for the legacy P&ID canvas mode (fixed default
+ *   dimensions + top-center anchor offset).
+ * @property activated - Enables the activated background color, used to indicate that the tank is
+ *   activated/selected. Requires an interactive tank — the `noClick` mixin
+ *   variant used when `clickable` is `false` only paints the enabled state, so
+ *   a non-clickable tank ignores this (matching `obc-elevated-card`).
+ * @availableWhen activated clickable==true
+ * @property chartData - Time-series data points for the embedded gauge-trend (graph modes only).
+ * @property priority - Priority hint forwarded to child charts (regular | enhanced).
+ * @property advice - Advice overlays. Forwarded to the embedded `obc-gauge-trend` in
+ *   `graph` / `graph-and-bar` modes, or rendered as pills over the static
+ *   bar in `bar` mode.
+ * @property hasAdvice - Show advice overlays (works in all `chartMode` variants).
+ * @property alert - Show an `<obc-alert-frame>` overlay around the bordered tank area (the
+ *   `.halo` wrapper). Mirrors the API of `obc-automation-button`: same six
+ *   properties, same three slots (`alert-icon`, `alert-label`, `alert-timer`).
+ *   The ring overlays `.halo` only, so the tag and readout that sit outside
+ *   the halo in compact / static layouts remain unaffected.
+ * @property showTrendSymbol - Show the trend chevron / off icon next to the percent readout. Default
+ *   `true` preserves existing behavior. Set to `false` to hide the trend
+ *   indicator in both compact and non-compact readouts — useful when the
+ *   trend is not meaningful for a given tank, or when the consumer wants
+ *   to keep the readout compact. Has no effect in `static` mode, which
+ *   renders the tank's capacity (`max` + `unit`) instead of a percent and
+ *   intentionally omits the trend indicator (a static tank represents
+ *   "device present, current state unknown"). `attribute: false` per the
+ *   repo's positive-default-true boolean convention.
+ * @property percentFractionDigits - Number of fraction digits used to format the percent readout in the
+ *   non-compact (regular) layout. Defaults to `0` (integer percent). The
+ *   compact layout always renders integer percent to keep its fixed-width
+ *   footprint stable. The static layout renders capacity (`max` + `unit`)
+ *   rather than percent, so this property has no effect there — pass a
+ *   pre-formatted value through the `max-value` slot if fractional
+ *   precision is needed (see the `WithFractionDigits` story).
  * @slot badges - Custom badges to be displayed in the badge area.
  * @slot tag - Text or element for the tank's tag/label.
  * @slot readout - Replaces the entire readout content block.
@@ -151,13 +155,6 @@ export class ObcAutomationTank extends SetpointMixin(LitElement) {
   @property({type: String, reflect: true}) orientation: TankOrientation =
     TankOrientation.vertical;
   @property({type: Boolean, reflect: true}) compact: boolean = false;
-  /**
-   * Host positioning model — see `TankPositioning` for details. Defaults to
-   * `button` (host fills parent container, 100% × 100%, falling back to the
-   * design aspect ratio on any axis the parent leaves indefinite, no anchor
-   * offset). Set to `point` for the legacy P&ID canvas mode (fixed default
-   * dimensions + top-center anchor offset).
-   */
   @property({type: String, reflect: true}) positioning: TankPositioning =
     TankPositioning.button;
   /**
@@ -198,13 +195,6 @@ export class ObcAutomationTank extends SetpointMixin(LitElement) {
    * plain HTML is **not** observed and leaves the tank interactive.
    */
   @property({type: Boolean, attribute: false}) clickable: boolean = true;
-  /**
-   * Enables the activated background color, used to indicate that the tank is
-   * activated/selected. Requires an interactive tank — the `noClick` mixin
-   * variant used when `clickable` is `false` only paints the enabled state, so
-   * a non-clickable tank ignores this (matching `obc-elevated-card`).
-   * @availableWhen clickable==true
-   */
   @property({type: Boolean}) activated: boolean = false;
   @property({type: String}) tag: string = '';
 
@@ -217,22 +207,14 @@ export class ObcAutomationTank extends SetpointMixin(LitElement) {
   @property({type: String, reflect: true, attribute: 'chart-mode'})
   chartMode: TankChartMode = TankChartMode.bar;
 
-  /** Time-series data points for the embedded gauge-trend (graph modes only). */
   @property({type: Array, attribute: false})
   chartData: ChartLineDataItem[] = [];
 
-  /** Priority hint forwarded to child charts (regular | enhanced). */
   @property({type: String}) priority: Priority = Priority.regular;
 
-  /**
-   * Advice overlays. Forwarded to the embedded `obc-gauge-trend` in
-   * `graph` / `graph-and-bar` modes, or rendered as pills over the static
-   * bar in `bar` mode.
-   */
   @property({type: Array, attribute: false})
   advice: LinearAdvice[] = [];
 
-  /** Show advice overlays (works in all `chartMode` variants). */
   @property({type: Boolean}) hasAdvice = false;
 
   /**
@@ -253,13 +235,6 @@ export class ObcAutomationTank extends SetpointMixin(LitElement) {
    */
   @property({type: Boolean, attribute: false}) hasGraphIcon = false;
 
-  /**
-   * Show an `<obc-alert-frame>` overlay around the bordered tank area (the
-   * `.halo` wrapper). Mirrors the API of `obc-automation-button`: same six
-   * properties, same three slots (`alert-icon`, `alert-label`, `alert-timer`).
-   * The ring overlays `.halo` only, so the tag and readout that sit outside
-   * the halo in compact / static layouts remain unaffected.
-   */
   @property({type: Boolean}) alert: boolean = false;
   @property({type: String}) alertFrameType: ObcAlertFrameType =
     ObcAlertFrameType.SmallSideFlip;
@@ -270,28 +245,8 @@ export class ObcAutomationTank extends SetpointMixin(LitElement) {
     true;
   @property({type: Boolean}) showAlertIcon: boolean = false;
 
-  /**
-   * Show the trend chevron / off icon next to the percent readout. Default
-   * `true` preserves existing behavior. Set to `false` to hide the trend
-   * indicator in both compact and non-compact readouts — useful when the
-   * trend is not meaningful for a given tank, or when the consumer wants
-   * to keep the readout compact. Has no effect in `static` mode, which
-   * renders the tank's capacity (`max` + `unit`) instead of a percent and
-   * intentionally omits the trend indicator (a static tank represents
-   * "device present, current state unknown"). `attribute: false` per the
-   * repo's positive-default-true boolean convention.
-   */
   @property({type: Boolean, attribute: false}) showTrendSymbol: boolean = true;
 
-  /**
-   * Number of fraction digits used to format the percent readout in the
-   * non-compact (regular) layout. Defaults to `0` (integer percent). The
-   * compact layout always renders integer percent to keep its fixed-width
-   * footprint stable. The static layout renders capacity (`max` + `unit`)
-   * rather than percent, so this property has no effect there — pass a
-   * pre-formatted value through the `max-value` slot if fractional
-   * precision is needed (see the `WithFractionDigits` story).
-   */
   @property({type: Number}) percentFractionDigits: number = 0;
 
   /**

@@ -82,6 +82,10 @@ export interface WatchArea {
   endAngle: number;
   roundOutsideCut: boolean;
   roundInsideCut: boolean;
+  /** Corner fillet radius of the rounded cuts; `roundedArch`'s default when unset. */
+  roundRadius?: number;
+  /** Outline the roundBandCuts band arch with the tertiary frame color instead of self-colored. */
+  outlined?: boolean;
 }
 
 export interface WatchBarArea {
@@ -114,6 +118,24 @@ const RING3_RADIUS = 224 / 2;
 const RING3B_RADIUS = 272 / 2;
 const RING4_RADIUS = 176 / 2;
 
+/**
+ * Split-band lane geometry (the design's "pitch-rpm" subdivision of the
+ * 112..160 band): thin secondary line, bare-face gap, narrowed primary
+ * lane. Shared with the `secondary-lane.ts` helpers.
+ */
+export const BAND_INNER_RADIUS = RING3_RADIUS;
+export const BAND_OUTER_RADIUS = RING2_RADIUS;
+export const SECONDARY_LINE_WIDTH = 8;
+export const LANE_DIVIDER_WIDTH = 8;
+export const SECONDARY_LANE_RADIUS =
+  BAND_INNER_RADIUS + SECONDARY_LINE_WIDTH / 2;
+export const LANE_DIVIDER_RADIUS =
+  BAND_INNER_RADIUS + SECONDARY_LINE_WIDTH + LANE_DIVIDER_WIDTH / 2;
+export const PRIMARY_SUBBAND_INNER_RADIUS =
+  BAND_INNER_RADIUS + SECONDARY_LINE_WIDTH + LANE_DIVIDER_WIDTH;
+export const PRIMARY_SUBBAND_NEEDLE_LENGTH =
+  BAND_OUTER_RADIUS - PRIMARY_SUBBAND_INNER_RADIUS;
+
 export function innerRingRadiusFor(type: WatchCircleType): number {
   switch (type) {
     case WatchCircleType.single:
@@ -130,6 +152,12 @@ export function innerRingRadiusFor(type: WatchCircleType): number {
 }
 
 const RADIAL_SETPOINT_INWARD_ADJUST = 4;
+
+/**
+ * Split-band bars whose end sits on a sector cut overshoot it by this much;
+ * the lane-arch track mask then trims them flush with the cut's fillet.
+ */
+const SPLIT_BAR_CUT_OVERSHOOT_DEG = 4;
 
 /**
  * Default anchors for the wind/current icons outside the outer ring (the
@@ -190,6 +218,67 @@ const WIND_ICON_OUTSIDE_RADIUS =
  * `_setpointCssAngle` tracks the accumulated CSS angle to avoid long-way-around
  * transitions across the 0°/360° boundary.
  *
+ * @property state - Instrument state (active, loading, off)
+ * @property priority - Color priority (enhanced = blue palette, regular = gray palette)
+ * @property hasBackgroundCircle - When `true`, the full watch-face circle is drawn behind the dial —
+ *   a frame-primary fill with a tertiary outline — so partial-sector
+ *   instruments still read as a complete circle. In the `off` state the fill
+ *   is omitted (only the outline remains), keeping the off skeleton hollow.
+ *   With sector `areas`, the per-area arch outline is dropped; the face
+ *   outline takes its place.
+ * @property northMarker - Replace the north arrow with the compact heading-up north marker: a small
+ *   triangle on the outer ring with an upright "N" at the outside label
+ *   radius. Rotates with the card via `rotation`.
+ * @availableWhen northMarker northArrow==true
+ * @property angleSetpoint - Setpoint angle in degrees (0° = 12 o'clock)
+ * @property newAngleSetpoint - New setpoint being adjusted (focus mode)
+ * @property atAngleSetpoint - Whether value matches setpoint (within deadband)
+ * @property angleSetpointAtZeroDeadband - Deadband for zero detection (default 0.5°)
+ * @property setpointOverride - Override to derive setpoint color from priority regardless of state
+ * @property padding - Explicit padding override in SVG units: the un-zoomed viewBox becomes
+ *   exactly `(176 + padding) * 2`. Setting it disables the automatic
+ *   width-aware label reserve (issue #1021) — the caller owns label room.
+ * @property faceDiameter - Outer-ring diameter in CSS pixels. When set, the instrument renders at a
+ *   fixed intrinsic size derived from the ring, arc shape and label reserve —
+ *   so instruments sharing the same value have identical ring circumference
+ *   regardless of label width or arc extent (like obc-donut-chart's
+ *   fixedHeight). When unset (default), the instrument fills its container.
+ * @property roundBandCuts - Rounds the band track's sector end cuts at the band's own radii and clips
+ *   bars to that rounded track shape (the design's track-mask model), instead
+ *   of the joint silhouette cut shared with the scale ring. No effect without
+ *   `areas`.
+ * @property splitBand - With `watchCircleType: double`, render the band as the split
+ *   primary/secondary lane tracks (secondary-lane geometry) instead of the
+ *   joint band; bars clip to the primary lane. Takes precedence over
+ *   `roundBandCuts` for the band.
+ * @property crosshairCenterCutout - Cuts the crosshair out inside the inner ring, so center content (e.g.
+ *   center readouts) sits on a clean face.
+ * @availableWhen crosshairCenterCutout crosshairEnabled==true
+ * @property insideLabelsFlush - With `tickmarksInside`, anchor the NSEW label boxes flush against the
+ *   inner ring (px-fixed) instead of the legacy gap that lets them drift
+ *   toward the centre as the instrument shrinks.
+ * @availableWhen insideLabelsFlush tickmarksInside==true
+ * @property currentIconCentered - Render the current icon centered on the face (direction-type layout)
+ *   instead of at `currentSymbolRadius` on the periphery.
+ * @availableWhen currentIconCentered current!=null && currentFromDirectionDeg!=null
+ * @property scaleCurrentIcon - Scale factor for the centered current icon.
+ * @availableWhen scaleCurrentIcon currentIconCentered==true
+ * @property clipTop - Top clip, % of height. Ignored when `zoomToFitArc` is true.
+ * @property clipBottom - Bottom clip, % of height. Ignored when `zoomToFitArc` is true.
+ * @property clipLeft - Left clip, % of width — horizontal counterpart of clipTop/bottom (90° sectors). Ignored when `zoomToFitArc`.
+ * @property clipRight - Right clip, % of width — horizontal counterpart of clipTop/bottom (90° sectors). Ignored when `zoomToFitArc`.
+ * @property endLabelsMaxMin - Place the horizontal end labels (±90°, e.g. min/max) below the tick instead
+ *   of beside it. This is the "Max-min" label placement from the radial label
+ *   model (External / Internal / Max-min) — see PR #903 / design discussion.
+ *   Currently only used by the 180° sector of `obc-gauge-radial`.
+ * @property arcFrame - Pre-computed zoom-to-fit arc frame. When set, the watch skips its own `computeZoomToFitArcFrame()` call and uses these values directly. Consumer instruments (e.g. rudder, instrument-radial) should compute the frame once and pass it here to avoid redundant computation. If you pass `arcFrame`, you own keeping it in sync with `areas` / `watchCircleType` — obc-watch will NOT recompute it, so a stale frame renders stale geometry.
+ * @property rotType - ROT visualization type: `'dots'` (spinning dots) or `'bar'` (arc bar with clipped dots). Undefined hides the ROT layer.
+ * @property rotPosition - Track on which ROT elements are placed: `'scale'` (on the outer ring) or `'innerCircle'` (default, inside the inner ring)
+ * @property rotStartAngle - Start angle of the ROT bar arc in degrees (0° = 12 o'clock, clockwise). Only used when `rotType` is `'bar'`.
+ * @property rotEndAngle - End angle of the ROT bar arc in degrees. The bar is hidden when the difference from `rotStartAngle` is less than 0.1°.
+ * @property rotPriority - Override priority for ROT color derivation. When set, ROT colors use this instead of the main `priority`. Useful when the ROT element has independent priority (e.g. compass per-element priority).
+ * @property rateOfTurnDegreesPerMinute - Measured rate of turn in degrees per minute (the maritime/AIS convention, see ES-TRIN 2025/1 Art. 3.02 and ITU-R M.1371). Sign controls direction (positive = starboard/clockwise). When defined, this drives both the dot animation (multiplied by `rotDotAnimationFactor`) and the port/starboard direction sign.
+ * @property rotDotAnimationFactor - Visual amplification factor applied only to the spinning-dot animation (not to bar extent). Default `18` keeps the legacy visual feel (≈1 rpm at 20°/min).
  * @experimental
  */
 @customElement('obc-watch')
@@ -197,39 +286,18 @@ export class ObcWatch extends LitElement {
   private _setpointId = `watch-setpoint-${Math.random().toString(36).slice(2, 9)}`;
   private _newSetpointId = `watch-new-setpoint-${Math.random().toString(36).slice(2, 9)}`;
 
-  /** Instrument state (active, loading, off) */
   @property({type: String}) state: InstrumentState = InstrumentState.active;
-  /** Color priority (enhanced = blue palette, regular = gray palette) */
   @property({type: String}) priority: Priority = Priority.regular;
   @property({type: String}) watchCircleType: WatchCircleType =
     WatchCircleType.single;
-  /**
-   * When `true`, the full watch-face circle is drawn behind the dial —
-   * a frame-primary fill with a tertiary outline — so partial-sector
-   * instruments still read as a complete circle. In the `off` state the fill
-   * is omitted (only the outline remains), keeping the off skeleton hollow.
-   * With sector `areas`, the per-area arch outline is dropped; the face
-   * outline takes its place.
-   */
   @property({type: Boolean}) hasBackgroundCircle: boolean = false;
   @property({type: Boolean}) northArrow: boolean = false;
   @property({type: Boolean}) northArrowInside: boolean | undefined;
-  /**
-   * Replace the north arrow with the compact heading-up north marker: a small
-   * triangle on the outer ring with an upright "N" at the outside label
-   * radius. Rotates with the card via `rotation`.
-   * @availableWhen northArrow==true
-   */
   @property({type: Boolean}) northMarker: boolean = false;
-  /** Setpoint angle in degrees (0° = 12 o'clock) */
   @property({type: Number}) angleSetpoint: number | undefined;
-  /** New setpoint being adjusted (focus mode) */
   @property({type: Number}) newAngleSetpoint: number | undefined;
-  /** Whether value matches setpoint (within deadband) */
   @property({type: Boolean}) atAngleSetpoint: boolean = false;
-  /** Deadband for zero detection (default 0.5°) */
   @property({type: Number}) angleSetpointAtZeroDeadband: number = 0.5;
-  /** Override to derive setpoint color from priority regardless of state */
   @property({type: Boolean}) setpointOverride: boolean = false;
   @property({type: Boolean}) touching: boolean = false;
 
@@ -247,30 +315,13 @@ export class ObcWatch extends LitElement {
 
   /** Whether the setpoint CSS angle has been initialised (to skip transition on first render). */
   private _setpointCssAngleInit = false;
-  /**
-   * Explicit padding override in SVG units: the un-zoomed viewBox becomes
-   * exactly `(176 + padding) * 2`. Setting it disables the automatic
-   * width-aware label reserve (issue #1021) — the caller owns label room.
-   */
   @property({type: Number}) padding: number | undefined;
-  /**
-   * Outer-ring diameter in CSS pixels. When set, the instrument renders at a
-   * fixed intrinsic size derived from the ring, arc shape and label reserve —
-   * so instruments sharing the same value have identical ring circumference
-   * regardless of label width or arc extent (like obc-donut-chart's
-   * fixedHeight). When unset (default), the instrument fills its container.
-   */
   @property({type: Number, attribute: 'face-diameter'})
   faceDiameter: number | undefined;
   @property({type: Array, attribute: false}) areas: WatchArea[] = [];
   @property({type: Array, attribute: false}) barAreas: WatchBarArea[] = [];
-  /**
-   * Rounds the band track's sector end cuts at the band's own radii and clips
-   * bars to that rounded track shape (the design's track-mask model), instead
-   * of the joint silhouette cut shared with the scale ring. No effect without
-   * `areas`.
-   */
   @property({type: Boolean}) roundBandCuts: boolean = false;
+  @property({type: Boolean}) splitBand: boolean = false;
   @property({type: Array, attribute: false}) needles: WatchNeedle[] = [];
   @property({type: Array, attribute: false}) tickmarks: Tickmark[] = [];
   @property({type: Boolean}) tickmarksInside: boolean = false;
@@ -278,19 +329,8 @@ export class ObcWatch extends LitElement {
     TickmarkStyle.regular;
   @property({type: Array, attribute: false}) advices: AngleAdviceRaw[] = [];
   @property({type: Boolean}) crosshairEnabled: boolean = false;
-  /**
-   * Cuts the crosshair out inside the inner ring, so center content (e.g.
-   * center readouts) sits on a clean face.
-   * @availableWhen crosshairEnabled==true
-   */
   @property({type: Boolean}) crosshairCenterCutout: boolean = false;
   @property({type: Boolean}) showLabels: boolean = false;
-  /**
-   * With `tickmarksInside`, anchor the NSEW label boxes flush against the
-   * inner ring (px-fixed) instead of the legacy gap that lets them drift
-   * toward the centre as the instrument shrinks.
-   * @availableWhen tickmarksInside==true
-   */
   @property({type: Boolean}) insideLabelsFlush: boolean = false;
   @property({type: Array, attribute: false}) vessels: WatchVessel[] = [];
   @property({type: Number}) windKnots: number | null = null;
@@ -301,55 +341,28 @@ export class ObcWatch extends LitElement {
   @property({type: Number}) currentFromDirectionDeg: number | null = null;
   @property({type: Number}) currentSymbolRadius: number | null = null;
   @property({type: String}) currentColor: string | undefined;
-  /**
-   * Render the current icon centered on the face (direction-type layout)
-   * instead of at `currentSymbolRadius` on the periphery.
-   * @availableWhen current!=null && currentFromDirectionDeg!=null
-   */
   @property({type: Boolean}) currentIconCentered: boolean = false;
-  /**
-   * Scale factor for the centered current icon.
-   * @availableWhen currentIconCentered==true
-   */
   @property({type: Number}) scaleCurrentIcon: number = 1;
   @property({type: Boolean}) starboardPortIndicator: boolean = false;
-  /** Top clip, % of height. Ignored when `zoomToFitArc` is true. */
   @property({type: Number}) clipTop: number = 0;
-  /** Bottom clip, % of height. Ignored when `zoomToFitArc` is true. */
   @property({type: Number}) clipBottom: number = 0;
-  /** Left clip, % of width — horizontal counterpart of clipTop/bottom (90° sectors). Ignored when `zoomToFitArc`. */
   @property({type: Number}) clipLeft: number = 0;
-  /** Right clip, % of width — horizontal counterpart of clipTop/bottom (90° sectors). Ignored when `zoomToFitArc`. */
   @property({type: Number}) clipRight: number = 0;
-  /**
-   * Place the horizontal end labels (±90°, e.g. min/max) below the tick instead
-   * of beside it. This is the "Max-min" label placement from the radial label
-   * model (External / Internal / Max-min) — see PR #903 / design discussion.
-   * Currently only used by the 180° sector of `obc-gauge-radial`.
-   */
   @property({type: Boolean}) endLabelsMaxMin: boolean = false;
   @property({type: Number}) scaleWindIcon: number = 1;
   @property({type: Number}) rotation: number | undefined;
   @property({type: Boolean}) zoomToFitArc: boolean = false;
-  /** Pre-computed zoom-to-fit arc frame. When set, the watch skips its own `computeZoomToFitArcFrame()` call and uses these values directly. Consumer instruments (e.g. rudder, instrument-radial) should compute the frame once and pass it here to avoid redundant computation. If you pass `arcFrame`, you own keeping it in sync with `areas` / `watchCircleType` — obc-watch will NOT recompute it, so a stale frame renders stale geometry. */
   @property({attribute: false}) arcFrame: ZoomToFitArcFrame | undefined;
   @property({type: Number}) tickFadeAngle: number = 0;
 
-  /** ROT visualization type: `'dots'` (spinning dots) or `'bar'` (arc bar with clipped dots). Undefined hides the ROT layer. */
   @property({type: String}) rotType: RotType | undefined;
-  /** Track on which ROT elements are placed: `'scale'` (on the outer ring) or `'innerCircle'` (default, inside the inner ring) */
   @property({type: String}) rotPosition: RotPosition = RotPosition.innerCircle;
-  /** Start angle of the ROT bar arc in degrees (0° = 12 o'clock, clockwise). Only used when `rotType` is `'bar'`. */
   @property({type: Number}) rotStartAngle: number = 0;
-  /** End angle of the ROT bar arc in degrees. The bar is hidden when the difference from `rotStartAngle` is less than 0.1°. */
   @property({type: Number}) rotEndAngle: number = 0;
-  /** Override priority for ROT color derivation. When set, ROT colors use this instead of the main `priority`. Useful when the ROT element has independent priority (e.g. compass per-element priority). */
   @property({type: String}) rotPriority: Priority | undefined;
   @property({type: Boolean}) rotPortStarboard: boolean = false;
   @property({type: Number}) rotAtZeroDeadband: number = ROT_ZERO_DEADBAND_DEG;
-  /** Measured rate of turn in degrees per minute (the maritime/AIS convention, see ES-TRIN 2025/1 Art. 3.02 and ITU-R M.1371). Sign controls direction (positive = starboard/clockwise). When defined, this drives both the dot animation (multiplied by `rotDotAnimationFactor`) and the port/starboard direction sign. */
   @property({type: Number}) rateOfTurnDegreesPerMinute: number | undefined;
-  /** Visual amplification factor applied only to the spinning-dot animation (not to bar extent). Default `18` keeps the legacy visual feel (≈1 rpm at 20°/min). */
   @property({type: Number}) rotDotAnimationFactor: number = 18;
   /**
    * @deprecated Use `rateOfTurnDegreesPerMinute` (and optionally `rotDotAnimationFactor`) instead.
@@ -530,7 +543,9 @@ export class ObcWatch extends LitElement {
         );
         const r = (r1 + r2) / 2;
         const strokeWidth = r1 - r2;
-        if (this.roundBandCuts && this.areas.length > 0) {
+        if (this.splitBand && this.watchCircleType === WatchCircleType.double) {
+          rings.push(...this.splitBandTracks());
+        } else if (this.roundBandCuts && this.areas.length > 0) {
           rings.push(
             ...this.areas.map(
               (area) =>
@@ -541,7 +556,12 @@ export class ObcWatch extends LitElement {
                   r: r2,
                   roundOutsideCut: area.roundOutsideCut,
                   roundInsideCut: area.roundInsideCut,
-                })} fill="var(--instrument-frame-secondary-color)" stroke="var(--instrument-frame-secondary-color)" stroke-width="1" vector-effect="non-scaling-stroke" />`
+                  roundRadius: area.roundRadius,
+                })} fill="var(--instrument-frame-secondary-color)" stroke=${
+                  area.outlined
+                    ? 'var(--instrument-frame-tertiary-color)'
+                    : 'var(--instrument-frame-secondary-color)'
+                } stroke-width="1" vector-effect="non-scaling-stroke" />`
             )
           );
         } else {
@@ -576,6 +596,7 @@ export class ObcWatch extends LitElement {
           r: this._bandRadius(this.innerRingRadius),
           roundOutsideCut: area.roundOutsideCut,
           roundInsideCut: area.roundInsideCut,
+          roundRadius: area.roundRadius,
         });
         return svgPath;
       });
@@ -796,13 +817,61 @@ export class ObcWatch extends LitElement {
     `;
   }
 
+  /**
+   * The split band: the 112..160 annulus as two lane tracks with a bare-face
+   * gap. Sector cuts collapse to flush fillets — half the line width on the
+   * secondary lane, roundedArch's default on the primary lane.
+   */
+  private splitBandTracks(): SVGTemplateResult[] {
+    const track = 'var(--instrument-frame-secondary-color)';
+    if (this.areas.length === 0) {
+      const priCenter =
+        (this._bandRadius(PRIMARY_SUBBAND_INNER_RADIUS) +
+          this._bandRadius(BAND_OUTER_RADIUS)) /
+        2;
+      return [
+        svg`<circle cx="0" cy="0" r=${this._bandRadius(SECONDARY_LANE_RADIUS)} stroke=${track} stroke-width=${SECONDARY_LINE_WIDTH} fill="none" />`,
+        svg`<circle cx="0" cy="0" r=${priCenter} stroke=${track} stroke-width=${BAND_OUTER_RADIUS - PRIMARY_SUBBAND_INNER_RADIUS} fill="none" />`,
+      ];
+    }
+    return this.areas.flatMap((area) => [
+      svg`<path d=${roundedArch({
+        startAngle: area.startAngle,
+        endAngle: area.endAngle,
+        R: this._bandRadius(BAND_INNER_RADIUS + SECONDARY_LINE_WIDTH),
+        r: this._bandRadius(BAND_INNER_RADIUS),
+        roundOutsideCut: true,
+        roundInsideCut: true,
+        roundRadius: SECONDARY_LINE_WIDTH / 2,
+      })} fill=${track} stroke=${track} stroke-width="1" vector-effect="non-scaling-stroke" />`,
+      svg`<path d=${roundedArch({
+        startAngle: area.startAngle,
+        endAngle: area.endAngle,
+        R: this._bandRadius(BAND_OUTER_RADIUS),
+        r: this._bandRadius(PRIMARY_SUBBAND_INNER_RADIUS),
+        roundOutsideCut: true,
+        roundInsideCut: true,
+      })} fill=${track} stroke=${track} stroke-width="1" vector-effect="non-scaling-stroke" />`,
+    ]);
+  }
+
   private renderBars(): SVGTemplateResult[] | typeof nothing {
     if (this.barAreas.length === 0) {
       return nothing;
     }
     return this.barAreas.map((bar, index) => {
-      const startAngle = Math.min(bar.startAngle, bar.endAngle);
-      const endAngle = Math.max(bar.startAngle, bar.endAngle);
+      let startAngle = Math.min(bar.startAngle, bar.endAngle);
+      let endAngle = Math.max(bar.startAngle, bar.endAngle);
+      if (this.splitBand && this.areas.length > 0) {
+        for (const area of this.areas) {
+          if (Math.abs(startAngle - area.startAngle) <= 0.01) {
+            startAngle -= SPLIT_BAR_CUT_OVERSHOOT_DEG;
+          }
+          if (Math.abs(endAngle - area.endAngle) <= 0.01) {
+            endAngle += SPLIT_BAR_CUT_OVERSHOOT_DEG;
+          }
+        }
+      }
       const arc = roundedArch({
         r: this._bandRadius(bar.innerRadius ?? RING3_RADIUS),
         R: this._bandRadius(bar.outerRadius ?? RING2_RADIUS),
@@ -828,7 +897,7 @@ export class ObcWatch extends LitElement {
       // track shape, so its ends round off where they reach the sector cuts
       // (the design's track-mask model) while mid-track ends stay square.
       const trackMask =
-        this.roundBandCuts && this.areas.length > 0
+        (this.roundBandCuts || this.splitBand) && this.areas.length > 0
           ? svg`<mask id="barTrackMask-${index}">
               <rect x="${-barMaskR}" y="${-barMaskR}" width="${barMaskR * 2}" height="${barMaskR * 2}" fill="black" />
               ${this.areas.map(
@@ -836,10 +905,22 @@ export class ObcWatch extends LitElement {
                   svg`<path d=${roundedArch({
                     startAngle: area.startAngle,
                     endAngle: area.endAngle,
-                    R: this._bandRadius(bar.outerRadius ?? RING2_RADIUS),
-                    r: this._bandRadius(bar.innerRadius ?? RING3_RADIUS),
-                    roundOutsideCut: area.roundOutsideCut,
-                    roundInsideCut: area.roundInsideCut,
+                    R: this._bandRadius(
+                      this.splitBand
+                        ? BAND_OUTER_RADIUS
+                        : (bar.outerRadius ?? RING2_RADIUS)
+                    ),
+                    r: this._bandRadius(
+                      this.splitBand
+                        ? PRIMARY_SUBBAND_INNER_RADIUS
+                        : (bar.innerRadius ?? RING3_RADIUS)
+                    ),
+                    // splitBandTracks always rounds the lane cuts, so the
+                    // split mask must too — else a bar could paint into the
+                    // arch fillets of an area with square cut flags.
+                    roundOutsideCut: this.splitBand || area.roundOutsideCut,
+                    roundInsideCut: this.splitBand || area.roundInsideCut,
+                    roundRadius: this.splitBand ? undefined : area.roundRadius,
                   })} fill="white" stroke="white" stroke-width="1" vector-effect="non-scaling-stroke" />`
               )}
             </mask>`
@@ -847,7 +928,7 @@ export class ObcWatch extends LitElement {
       return svg`
         ${mask}
         ${trackMask}
-        <g mask=${this.areas.length > 0 ? 'url(#cutMask)' : nothing}>
+        <g mask=${this.areas.length > 0 && !this.splitBand ? 'url(#cutMask)' : nothing}>
         <g mask=${trackMask !== nothing ? `url(#barTrackMask-${index})` : nothing}>
         <path
           d=${arc}

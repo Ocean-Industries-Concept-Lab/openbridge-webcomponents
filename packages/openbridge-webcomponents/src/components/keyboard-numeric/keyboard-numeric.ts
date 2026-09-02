@@ -86,6 +86,18 @@ const ALLOWED_CHARS_PATTERN = `^[${ALLOWED_CHARS.map((c) =>
 /**
  * `<obc-keyboard-numeric>` – An on-screen numeric keyboard with optional calculation and symbol modes.
  *
+ * @property hasTitleBar - Shows the top bar with label and close button (only applicable for floating type)
+ * @availableWhen hasTitleBar type==Floating
+ * @property label - Label displayed in the top bar
+ * @availableWhen label hasTitleBar==true && type==Floating
+ * @property value - Current input value
+ * @property hasCalculation - Shows the calculation row with +, -, ×, ÷, = buttons
+ * @property has2Symbols - Shows the #+= / 123 toggle button to switch between numbers and symbols
+ * @property helperText - Helper text content displayed below the input field
+ * @property hasLeadingIcon - Shows a leading icon slot in the input field
+ * @property unit - Unit text (%, kg, °C, etc.)
+ * @property inputFieldTextAlign - Text alignment in input field
+ * @property validationPattern - Optional regex pattern for validation (applies to both keyboard and direct input)
  * @slot leading-icon - Custom leading icon shown inside the input field (rendered when `hasLeadingIcon` is true).
  * @fires {CustomEvent<void>} close-click - Fired when the close button (or Escape) dismisses the keyboard.
  * @fires {CustomEvent<{value: string}>} value-change - Fired whenever the current value changes.
@@ -97,41 +109,25 @@ export class ObcKeyboardNumeric extends LitElement {
   @property({type: String}) type: ObcKeyboardNumericType =
     ObcKeyboardNumericType.Floating;
 
-  /**
-   * Shows the top bar with label and close button (only applicable for floating type)
-   * @availableWhen type==Floating
-   */
   @property({type: Boolean}) hasTitleBar = false;
 
-  /**
-   * Label displayed in the top bar
-   * @availableWhen hasTitleBar==true && type==Floating
-   */
   @property({type: String}) label = 'Parameter name';
 
-  /** Current input value */
   @property({type: String}) value = '';
 
-  /** Shows the calculation row with +, -, ×, ÷, = buttons */
   @property({type: Boolean}) hasCalculation = false;
 
-  /** Shows the #+= / 123 toggle button to switch between numbers and symbols */
   @property({type: Boolean}) has2Symbols = false;
 
-  /** Helper text content displayed below the input field */
   @property({type: String}) helperText = '';
 
-  /** Shows a leading icon slot in the input field */
   @property({type: Boolean}) hasLeadingIcon = false;
 
-  /** Unit text (%, kg, °C, etc.) */
   @property({type: String}) unit = '';
 
-  /** Text alignment in input field */
   @property({type: String}) inputFieldTextAlign: ObcNumberInputFieldTextAlign =
     ObcNumberInputFieldTextAlign.Right;
 
-  /** Optional regex pattern for validation (applies to both keyboard and direct input) */
   @property({type: String}) validationPattern = '';
 
   @state() private content: ObcKeyboardNumericContent =

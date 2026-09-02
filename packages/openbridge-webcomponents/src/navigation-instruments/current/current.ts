@@ -82,53 +82,39 @@ export function clampCurrentSpeed(value: number | null): number | null {
  * ></obc-current>
  * ```
  *
+ * @property type - Layout type: `vessel` (track face with vessel) or `direction` (large centered icon).
+ * @property currentSpeed - The current strength as a chevron bucket (0–4 = number of chevrons);
+ *   rounded and clamped. `null` hides the icon.
+ * @availableWhen currentSpeed currentFromDirection!=null
+ * @property currentFromDirection - The direction the current is coming from in degrees.
+ * @property priority - Color priority: `Priority.enhanced` uses the blue/enhanced palette (default: `Priority.regular`).
+ * @property hasPattern - Show the force-graphics band pattern behind the watch face.
+ * @availableWhen hasPattern currentFromDirection!=null
+ * @property waveLength - Wavelength of the pattern bands as a multiplier on the design spacing
+ *   (1 = design, 0.5 = twice as dense).
+ * @availableWhen waveLength hasPattern==true && currentFromDirection!=null
+ * @property waveHeight - Wave intensity: the peak opacity the pattern bands fade up to (0–1).
+ * @availableWhen waveHeight hasPattern==true && currentFromDirection!=null
+ * @property waveSpeed - Drift speed of the pattern in wavelengths per second, moving with the
+ *   flow (negative drifts against it); 0 keeps the pattern static.
+ * @availableWhen waveSpeed hasPattern==true && currentFromDirection!=null
+ * @property vesselImage - The image of the vessel.
+ * @availableWhen vesselImage type==vessel
+ * @property vesselHeadingDeg - Vessel heading in degrees.
+ * @availableWhen vesselHeadingDeg type==vessel
  * @experimental
  */
 @customElement('obc-current')
 export class ObcCurrent extends LitElement {
-  /** Layout type: `vessel` (track face with vessel) or `direction` (large centered icon). */
   @property({type: String}) type: CurrentType = CurrentType.vessel;
-  /**
-   * The current strength as a chevron bucket (0–4 = number of chevrons);
-   * rounded and clamped. `null` hides the icon.
-   * @availableWhen currentFromDirection!=null
-   */
   @property({type: Number}) currentSpeed: number | null = null;
-  /** The direction the current is coming from in degrees. */
   @property({type: Number}) currentFromDirection: number | null = null;
-  /** Color priority: `Priority.enhanced` uses the blue/enhanced palette (default: `Priority.regular`). */
   @property({type: String}) priority: Priority = Priority.regular;
-  /**
-   * Show the force-graphics band pattern behind the watch face.
-   * @availableWhen currentFromDirection!=null
-   */
   @property({type: Boolean, attribute: false}) hasPattern = true;
-  /**
-   * Wavelength of the pattern bands as a multiplier on the design spacing
-   * (1 = design, 0.5 = twice as dense).
-   * @availableWhen hasPattern==true && currentFromDirection!=null
-   */
   @property({type: Number}) waveLength = 1;
-  /**
-   * Wave intensity: the peak opacity the pattern bands fade up to (0–1).
-   * @availableWhen hasPattern==true && currentFromDirection!=null
-   */
   @property({type: Number}) waveHeight = 1;
-  /**
-   * Drift speed of the pattern in wavelengths per second, moving with the
-   * flow (negative drifts against it); 0 keeps the pattern static.
-   * @availableWhen hasPattern==true && currentFromDirection!=null
-   */
   @property({type: Number}) waveSpeed = 0;
-  /**
-   * The image of the vessel.
-   * @availableWhen type==vessel
-   */
   @property({type: String}) vesselImage: VesselImage = VesselImage.genericTop;
-  /**
-   * Vessel heading in degrees.
-   * @availableWhen type==vessel
-   */
   @property({type: Number}) vesselHeadingDeg: number = 0;
 
   private get isVesselType(): boolean {

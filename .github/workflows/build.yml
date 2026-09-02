@@ -44,7 +44,7 @@ jobs:
         run: cd packages/openbridge-webcomponents && npm run lint:agents
 
       - name: Lint openbridge-webcomponents
-        run: cd packages/openbridge-webcomponents && npm run lint:lit-analyzer && npm run lint:eslint
+        run: cd packages/openbridge-webcomponents && npm run lint:lit-analyzer && npm run lint:eslint && npm run lint:slots && npm run lint:comments
 
       - name: Check formatting openbridge-webcomponents
         run: cd packages/openbridge-webcomponents && npm run format:check

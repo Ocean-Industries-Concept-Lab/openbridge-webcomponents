@@ -82,6 +82,15 @@ import {
  * </obc-notification-floating-item>
  * ```
  *
+ * @property hasTimestamp - If true, displays a timestamp label (e.g., "09:12:46") in the notification.
+ *   Default is false.
+ * @property hasDay - If true (and `hasTimestamp` is also true), displays a day label (e.g., "Yesterday") in the notification.
+ *   Default is false.
+ * @property action - If true, displays a primary action button (e.g., "Close").
+ *   Default is false.
+ * @property action2 - If true, displays a secondary action button (e.g., "Undo").
+ *   Only available if `action` is also true.
+ *   Default is false.
  * @slot primary-icon - Custom main icon, projected into the child only when `type="application"` (the built-in notification icon is used otherwise).
  * @slot title - Title or heading of the notification.
  * @slot description - Detailed message text.
@@ -112,29 +121,12 @@ export class ObcNotificationFloatingItem extends LitElement {
    */
   @property({type: String}) direction = ObcFloatingItemDirection.horizontal;
 
-  /**
-   * If true, displays a timestamp label (e.g., "09:12:46") in the notification.
-   * Default is false.
-   */
   @property({type: Boolean}) hasTimestamp = false;
 
-  /**
-   * If true (and `hasTimestamp` is also true), displays a day label (e.g., "Yesterday") in the notification.
-   * Default is false.
-   */
   @property({type: Boolean}) hasDay = false;
 
-  /**
-   * If true, displays a primary action button (e.g., "Close").
-   * Default is false.
-   */
   @property({type: Boolean}) action = false;
 
-  /**
-   * If true, displays a secondary action button (e.g., "Undo").
-   * Only available if `action` is also true.
-   * Default is false.
-   */
   @property({type: Boolean}) action2 = false;
 
   /**
