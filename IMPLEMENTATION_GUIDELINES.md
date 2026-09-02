@@ -691,58 +691,56 @@ All icon components live in `packages/openbridge-webcomponents/src/icons` and ar
 
 Run everything from `packages/openbridge-webcomponents/`.
 
-> **Ideal ordering when designers added new palette tokens:** land the token
-> exports before the icon regen —
->
-> 1. `cssvariables` codegen from the main design file →
->    `src/palettes/variables.css` (defines the new tokens),
-> 2. `variables map` codegen from the icons file →
->    `script/figmavariables.json` (maps the new bindings),
-> 3. only then `npm run download:icons`.
->
-> Icons generated against a stale palette reference tokens that do not resolve
-> yet, or fall back to literal hex, and the tripwires in step 6 flag them. The
-> reverse order still works — the icon PR can ship first with the gap
-> documented (see "Unknown variable fallback") — but palette-first avoids the
-> intermediate state entirely. When no new tokens are involved, start at
-> step 1 below. 2. **Token.** Ensure `.env` contains a valid `FIGMA_TOKEN`. 3. **Variable map.** If the design lead has updated the OpenBridge color tokens,
-> regenerate `script/figmavariables.json` first. **This must come from the
-> OpenBridge Icons Figma file (`IkDwOtza6OdjLbIdWA7mI7`), not the main
-> design file** — the map keys include the icon component node IDs the
-> converter matches against (see the [Figma source files matrix](#-postcss)).
-> In Dev Mode → Inspect → Codegen Plugin, switch the language dropdown to
-> `variables map`, select a page-level or multi-frame node (so the codegen
-> emits the full map, not a 5–10-entry slice for one icon), copy, and
-> replace `script/figmavariables.json`. If the plugin chunks the output
-> across multiple runs, paste each block into a scratch file and merge
-> (Object.assign — same key always maps to the same token). 4. **Backup.** `cp -r src/icons /tmp/icons-backup-prev` — gives you a diff target
-> if you need to recover variable mappings that the new run dropped. 5. **Download + generate.**
+**Ideal ordering when designers added new palette tokens:** land the token
+exports before the icon regen — first the `cssvariables` codegen from the main
+design file (`src/palettes/variables.css`, defines the new tokens), then the
+`variables map` codegen from the icons file (`script/figmavariables.json`,
+maps the new bindings), and only then `npm run download:icons`. Icons
+generated against a stale palette reference tokens that do not resolve yet,
+or fall back to literal hex, and the tripwires in step 6 flag them. The
+reverse order still works — the icon PR can ship first with the gap
+documented (see "Unknown variable fallback") — but palette-first avoids the
+intermediate state entirely. When no new tokens are involved, start at
+step 1 below.
 
-```bash
-npm run download:icons
-```
-
-Expect 2000+ icons to be written. Warnings such as
-`Duplicate icon name <name>` indicate Figma-side duplicates that get
-deduplicated by overwrite — flag them with the design lead. A trailing
-`done` line means generation succeeded. 6. **Check for unresolved tokens.**
-
-```bash
-grep -rlE 'var\(--undefined\)' src/icons/ | wc -l   # must be 0
-cat script/.cache/unknown-variables.json            # must be []
-npm run lint:icons                                   # must report 0 hex leaks
-```
-
-If any of these tripwires fires, see "Unknown variable fallback" below. The
-`var(--undefined)` grep alone is **not sufficient** — the converter falls
-back to literal hex rather than emitting `var(--undefined)`, so silent
-regressions only show up via `unknown-variables.json` and `lint:icons`. 7. **Typecheck & lint.**
-
-```bash
-npx tsc --noEmit
-npm run lint
-```
-
+1. **Branch.** `git switch -c chore/refresh-figma-icons` off `develop`.
+2. **Token.** Ensure `.env` contains a valid `FIGMA_TOKEN`.
+3. **Variable map.** If the design lead has updated the OpenBridge color tokens,
+   regenerate `script/figmavariables.json` first. **This must come from the
+   OpenBridge Icons Figma file (`IkDwOtza6OdjLbIdWA7mI7`), not the main
+   design file** — the map keys include the icon component node IDs the
+   converter matches against (see the [Figma source files matrix](#-postcss)).
+   In Dev Mode → Inspect → Codegen Plugin, switch the language dropdown to
+   `variables map`, select a page-level or multi-frame node (so the codegen
+   emits the full map, not a 5–10-entry slice for one icon), copy, and
+   replace `script/figmavariables.json`. If the plugin chunks the output
+   across multiple runs, paste each block into a scratch file and merge
+   (Object.assign — same key always maps to the same token).
+4. **Backup.** `cp -r src/icons /tmp/icons-backup-prev` — gives you a diff target
+   if you need to recover variable mappings that the new run dropped.
+5. **Download + generate.**
+   ```bash
+   npm run download:icons
+   ```
+   Expect 2000+ icons to be written. Warnings such as
+   `Duplicate icon name <name>` indicate Figma-side duplicates that get
+   deduplicated by overwrite — flag them with the design lead. A trailing
+   `done` line means generation succeeded.
+6. **Check for unresolved tokens.**
+   ```bash
+   grep -rlE 'var\(--undefined\)' src/icons/ | wc -l   # must be 0
+   cat script/.cache/unknown-variables.json            # must be []
+   npm run lint:icons                                   # must report 0 hex leaks
+   ```
+   If any of these tripwires fires, see "Unknown variable fallback" below. The
+   `var(--undefined)` grep alone is **not sufficient** — the converter falls
+   back to literal hex rather than emitting `var(--undefined)`, so silent
+   regressions only show up via `unknown-variables.json` and `lint:icons`.
+7. **Typecheck & lint.**
+   ```bash
+   npx tsc --noEmit
+   npm run lint
+   ```
 8. **Refresh visual baselines** (see "Visual snapshots" below).
 9. **Verify bundle stays under the PWA cap.** `vue-demo`'s service worker is
    capped at 7 MB per file (`workbox.maximumFileSizeToCacheInBytes`).
