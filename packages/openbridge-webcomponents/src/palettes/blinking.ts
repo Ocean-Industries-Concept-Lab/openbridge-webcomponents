@@ -24,7 +24,7 @@ function blinkingInstall(
   const anim = el.animate(frames, {duration: period, iterations: Infinity});
   // Common time origin for all animations, so they blink in sync. The offset is
   // negative so the animation starts already that far into its period.
-  anim.startTime = offset;
+  anim.startTime = 0;
   return () => anim.cancel();
 }
 
