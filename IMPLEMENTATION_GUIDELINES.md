@@ -699,9 +699,10 @@ maps the new bindings), and only then `npm run download:icons`. Icons
 generated against a stale palette reference tokens that do not resolve yet,
 or fall back to literal hex, and the tripwires in step 6 flag them. The
 reverse order still works — the icon PR can ship first with the gap
-documented (see "Unknown variable fallback") — but palette-first avoids the
-intermediate state entirely. When no new tokens are involved, start at
-step 1 below.
+documented (see "Unknown variable fallback"), and a run with bindings missing
+from the map completes only with `OBC_ALLOW_UNRESOLVED_VARS=1` — but
+palette-first avoids the intermediate state entirely. When no new tokens are
+involved, start at step 1 below.
 
 1. **Branch.** `git switch -c chore/refresh-figma-icons` off `develop`.
 2. **Token.** Ensure `.env` contains a valid `FIGMA_TOKEN`.
@@ -772,9 +773,11 @@ Three recovery paths, depending on the cause:
 - **Token exists in Figma, just missing from the JSON** — re-run the
   obc-figma-plugin `variables` codegen and overwrite `script/figmavariables.json`,
   then re-run `npm run download:icons`. Hex fallbacks should disappear.
-- **Token does not yet exist in the palette** — accept the hex fallback for
-  this PR, file a follow-up with the design lead to add the missing token, then
-  do a second regen pass once the palette ships.
+- **Token does not yet exist in the palette** — run with
+  `OBC_ALLOW_UNRESOLVED_VARS=1` (the unresolved-ids tripwire otherwise exits
+  with status 1), accept the hex fallback for this PR, file a follow-up with
+  the design lead to add the missing token, then do a second regen pass once
+  the palette ships.
 
 The `script/.cache/unknown-variables.json` diagnostic file (written on every
 `npm run download:icons` run) lists every unresolved `VariableID`. The
