@@ -28,6 +28,7 @@ import { useRoute } from 'vue-router'
 import { NavigationMenuVariant, useDemoConfigStore } from './stores/demoConfig'
 import { useSpeedAlerts } from './composables/useSpeedAlerts'
 import { useComponentSize } from './composables/useComponentSize'
+import { applyPaletteBlend } from './composables/usePaletteBlend'
 import type { App } from './router'
 import ObcIconButton from '@oicl/openbridge-webcomponents-vue/components/icon-button/ObcIconButton.vue'
 import { IconButtonVariant } from '@oicl/openbridge-webcomponents/dist/components/icon-button/icon-button.js'
@@ -134,12 +135,23 @@ onMounted(() => {
 
   useHotkeys()
 
+  applyPaletteBlend(demoConfigStore.brightnessBlend)
+
   import('@oicl/openbridge-webcomponents/dist/icons/index.js')
 })
+
+watch(
+  () => demoConfigStore.brightnessBlend,
+  (blend) => applyPaletteBlend(blend)
+)
 
 const palette = computed(() => bridgeStore.palette)
 
 function onPaletteChange(event: CustomEvent) {
+  // The blend writes inline custom properties on <html>, which outrank every
+  // :root[data-obc-theme=...] rule. Clear it so an explicit palette choice
+  // actually takes effect.
+  demoConfigStore.brightnessBlend = 0
   bridgeStore.setPalette(event.detail.value)
 }
 
