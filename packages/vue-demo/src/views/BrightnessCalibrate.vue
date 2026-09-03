@@ -123,16 +123,19 @@ function onBlendChange(event: CustomEvent<number>) {
 }
 
 .instruments {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
+  /* Grid rather than flex: with flex-wrap, stretch only equalises within a
+     single line, so a card that wraps onto its own row would shrink. */
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 280px);
+  grid-auto-rows: 1fr;
   gap: 24px;
   margin-top: 32px;
 }
 
-.instrument {
-  width: 280px;
-  flex: 0 0 auto;
+/* The card's content area is inside its shadow root, so pad the slotted
+   instrument instead. */
+.instrument > :not([slot='title']) {
+  padding: 16px;
 }
 
 .swatches {
