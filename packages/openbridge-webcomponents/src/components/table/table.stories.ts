@@ -368,7 +368,11 @@ export const TagMultiTagCells: Story = {
             {id: 'nav', label: 'Nav', color: TagColor.teal},
           ],
         },
-        action: {type: ObcTableCellType.Button, text: 'Disabled', disabled: true},
+        action: {
+          type: ObcTableCellType.Button,
+          text: 'Disabled',
+          disabled: true,
+        },
       },
     ],
   },
