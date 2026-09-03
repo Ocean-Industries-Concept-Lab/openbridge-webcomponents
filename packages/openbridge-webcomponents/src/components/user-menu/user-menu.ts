@@ -134,7 +134,7 @@ export type ObcUserMenuSignedInAction = {
  * @property primaryActionId - Id of the action promoted to a button in the small signed-in layout.
  * @availableWhen primaryActionId type==signedIn && size==small
  * @slot signed-in-action-icon-<id> - Optional icon for a signed-in action, one per action; `<id>` is the normalized action id (shown in the `signed-in` type).
- * @fires {CustomEvent<{username: string, password: string}>} sign-in-click - Fired when a sign-in button is clicked.
+ * @fires {CustomEvent<{username?: string, password?: string}>} sign-in-click - Fired when a sign-in button is clicked.
  * @fires {CustomEvent<void>} sign-out-click - Fired when the sign-out button is clicked.
  * @fires {CustomEvent<{id: string, label: string}>} signed-in-action-click - Fired when a signed-in action is clicked.
  * @fires {CustomEvent<{initials: string, label: string}>} recent-user-click - Fired when a recent user button is clicked.
@@ -340,7 +340,10 @@ export class ObcUserMenu extends LitElement {
     }
     this.dispatchEvent(
       new CustomEvent('sign-in-click', {
-        detail: {username: this.username, password: this.password},
+        detail: {
+          username: this.showUsername ? this.username : undefined,
+          password: this.showPassword ? this.password : undefined,
+        },
       })
     );
   }
