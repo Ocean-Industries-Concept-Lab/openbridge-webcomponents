@@ -13,6 +13,7 @@ import '../table-header-item/table-header-item.js';
 import {ObcTableHeaderItemType} from '../table-header-item/table-header-item.js';
 import {classMap} from 'lit/directives/class-map.js';
 import '../button/button.js';
+import '../../icons/icon-chevron-right-google.js';
 import {CheckboxStatus, ObcCheckboxChangeEvent} from '../checkbox/checkbox.js';
 import {TagColor} from '../tag/tag.js';
 import '../../building-blocks/bar-horizontal/bar-horizontal.js';
@@ -129,7 +130,11 @@ export type ObcTableCellData =
 export interface ObcTableRow {
   selected?: boolean;
   id: string;
-  [key: string]: ObcTableCellData | boolean | undefined | string;
+  parentId?: string;
+  level?: number;
+  expandable?: boolean;
+  expanded?: boolean;
+  [key: string]: ObcTableCellData | boolean | undefined | string | number;
 }
 
 export interface ObcTableColumnUnsortable<
@@ -186,6 +191,11 @@ export type ObcTableRowClickEvent = CustomEvent<{
   row: ObcTableRow;
 }>;
 
+export type ObcTableExpandToggleEvent = CustomEvent<{
+  rowId: string;
+  expanded: boolean;
+}>;
+
 function cssPart(value: ObcTableCellData, subpart: string): string | undefined {
   if (value.cssPart) {
     return `${value.cssPart} ${subpart}`;
@@ -205,11 +215,17 @@ function cssPart(value: ObcTableCellData, subpart: string): string | undefined {
  * - Cell rendering variants: `checkbox`, `tag`, `horizontal-bar`, and `button` cell types.
  * - Visual variants: `rowDivider`, `striped`, `narrowHeader`, and `showHeader`.
  * - Sorting support for sortable columns via column definitions.
+ * - Hierarchical rows via `parentId`, `level`, `expandable` and `expanded`.
  *
  * Usage Guidelines
  * - Controlled selection: pass `selectedRowIds` and update it on `selection-change`.
  * - Uncontrolled selection: pass `defaultSelectedRowIds` and listen to `selection-change`.
  * - Use `selectAllAriaLabel` to customize the header checkbox accessibility label.
+ * - Hierarchy is controlled, and flat: pass only the rows that are currently
+ *   visible, each with the `parentId` of its parent row, and drop a collapsed
+ *   group's descendants from `data` on `expand-toggle`. The table draws the
+ *   indent and the chevron, keeps each sibling set sorted within its parent,
+ *   and owns no expansion state of its own.
  *
  * Slots/Content
  * - This component does not expose public slots. Provide content via `data` and `columns`.
@@ -220,6 +236,15 @@ function cssPart(value: ObcTableCellData, subpart: string): string | undefined {
  * - `cell-checkbox-change` fires when a checkbox cell changes.
  * - `cell-tag-click` fires when a tag inside a cell is clicked.
  * - `selection-change` fires when row selection changes (source: `row` or `header`).
+ * - `expand-toggle` fires when a group row's chevron or expand key is used.
+ *
+ * Accessibility
+ * A table with hierarchical rows renders as a
+ * [treegrid](https://www.w3.org/WAI/ARIA/apg/patterns/treegrid/): rows carry
+ * `aria-level`, and group rows `aria-expanded`. Right expands a collapsed
+ * group, Left collapses an expanded one or moves to the parent row. Cell-level
+ * arrow navigation, which the full pattern also specifies, is out of scope —
+ * arrow keys move between rows, matching the flat table.
  *
  * Best Practices
  * - Keep column `key` values stable across renders to avoid selection or sorting resets.
@@ -246,6 +271,7 @@ function cssPart(value: ObcTableCellData, subpart: string): string | undefined {
  * @fires {ObcTableCellCheckboxChangeEvent} cell-checkbox-change - Fired when a cell checkbox is changed.
  * @fires {ObcTableCellTagClickEvent} cell-tag-click - Fired when a tag inside a cell is clicked.
  * @fires {ObcTableSelectionChangeEvent} selection-change - Fired when row selection changes.
+ * @fires {ObcTableExpandToggleEvent} expand-toggle - Fired when a group row is expanded or collapsed.
  * @beta
  */
 @customElement('obc-table')
@@ -272,6 +298,62 @@ export class ObcTable extends LitElement {
 
   private _previousPositions: {top: number; index: string}[] = [];
 
+  /**
+   * Whether the rows form an actual hierarchy. Drives the expander gutter, the
+   * `treegrid` role and the sibling-scoped sort; a table of plain rows renders
+   * and behaves exactly as it did before.
+   *
+   * A caller that fills the fields in unconditionally still counts as flat
+   * while every row sits at level 0 with nothing to expand, so a list that
+   * happens to have no groups keeps its ungrouped layout.
+   */
+  private get hasHierarchy() {
+    return this.data.some(
+      (row) =>
+        row.parentId !== undefined ||
+        (row.level ?? 0) > 0 ||
+        row.expandable === true
+    );
+  }
+
+  /**
+   * Depth-first re-flatten with each sibling set sorted on its own. Sorting the
+   * flat array instead would scatter children away from their parent.
+   */
+  private sortWithinSiblings(
+    rows: ObcTableRow[],
+    compare: (a: ObcTableRow, b: ObcTableRow) => number
+  ) {
+    const ids = new Set(rows.map((row) => row.id));
+    const childrenByParent = new Map<string, ObcTableRow[]>();
+    const roots: ObcTableRow[] = [];
+    for (const row of rows) {
+      const parentId = row.parentId;
+      if (parentId !== undefined && parentId !== row.id && ids.has(parentId)) {
+        const siblings = childrenByParent.get(parentId) ?? [];
+        siblings.push(row);
+        childrenByParent.set(parentId, siblings);
+      } else {
+        roots.push(row);
+      }
+    }
+
+    const sorted: ObcTableRow[] = [];
+    const visited = new Set<string>();
+    const visit = (siblings: ObcTableRow[]) => {
+      for (const row of [...siblings].sort(compare)) {
+        if (visited.has(row.id)) {
+          continue;
+        }
+        visited.add(row.id);
+        sorted.push(row);
+        visit(childrenByParent.get(row.id) ?? []);
+      }
+    };
+    visit(roots);
+    return sorted;
+  }
+
   get sortedData() {
     if (this._sortByColumnIdx === undefined) {
       return this.data;
@@ -284,8 +366,7 @@ export class ObcTable extends LitElement {
       return this.data;
     }
     const sortDirection = this._sortDirection;
-    const sortedData = [...this.data];
-    sortedData.sort((a, b) => {
+    const compare = (a: ObcTableRow, b: ObcTableRow) => {
       const aValue = a[sortByColumn.key];
       const bValue = b[sortByColumn.key];
       if (sortDirection === 'asc') {
@@ -303,7 +384,12 @@ export class ObcTable extends LitElement {
           a
         );
       }
-    });
+    };
+    if (this.hasHierarchy) {
+      return this.sortWithinSiblings(this.data, compare);
+    }
+    const sortedData = [...this.data];
+    sortedData.sort(compare);
     return sortedData;
   }
 
@@ -326,6 +412,47 @@ export class ObcTable extends LitElement {
     this.dispatchEvent(
       new CustomEvent('row-click', {detail: {row}}) as ObcTableRowClickEvent
     );
+  }
+
+  private _handleExpandToggle(row: ObcTableRow, expanded: boolean) {
+    if (!row.expandable) {
+      return;
+    }
+    this.dispatchEvent(
+      new CustomEvent('expand-toggle', {
+        detail: {rowId: row.id, expanded},
+      }) as ObcTableExpandToggleEvent
+    );
+  }
+
+  /**
+   * Indent gutter for a hierarchical row, holding the chevron at its right end.
+   * Every row gets one so a leaf and a group at the same level line up; the
+   * chevron itself is only drawn for `expandable` rows.
+   */
+  private _renderRowExpander(row: ObcTableRow) {
+    if (!this.hasHierarchy) {
+      return nothing;
+    }
+    const level = row.level ?? 0;
+    return html`<span
+      class="row-expander"
+      style="--row-level: ${level}"
+      aria-hidden="true"
+    >
+      ${row.expandable
+        ? html`<span
+            class=${classMap({chevron: true, expanded: row.expanded ?? false})}
+            @click=${(event: MouseEvent) => {
+              event.preventDefault();
+              event.stopPropagation();
+              this._handleExpandToggle(row, !(row.expanded ?? false));
+            }}
+          >
+            <obi-chevron-right-google></obi-chevron-right-google>
+          </span>`
+        : nothing}
+    </span>`;
   }
 
   private _focusFirstRow() {
@@ -393,6 +520,13 @@ export class ObcTable extends LitElement {
   private _handleRowKeyDown(event: KeyboardEvent) {
     const key = event.key;
     if (
+      this.hasHierarchy &&
+      (key === 'ArrowRight' || key === 'ArrowLeft') &&
+      this._handleRowExpandKey(event, key)
+    ) {
+      return;
+    }
+    if (
       key !== 'ArrowDown' &&
       key !== 'ArrowUp' &&
       key !== 'Home' &&
@@ -444,6 +578,41 @@ export class ObcTable extends LitElement {
       event.preventDefault();
       event.stopPropagation();
     }
+  }
+
+  /**
+   * Right expands a collapsed group, Left collapses an expanded one and
+   * otherwise moves focus to the parent row. Returns whether the key was used.
+   */
+  private _handleRowExpandKey(
+    event: KeyboardEvent,
+    key: 'ArrowRight' | 'ArrowLeft'
+  ) {
+    const target = event.currentTarget as HTMLButtonElement | null;
+    const rowId = target?.dataset.rowId;
+    const row = this.sortedData.find((candidate) => candidate.id === rowId);
+    if (!row) return false;
+
+    const expanded = row.expanded ?? false;
+    if (key === 'ArrowRight' && row.expandable && !expanded) {
+      this._handleExpandToggle(row, true);
+    } else if (key === 'ArrowLeft' && row.expandable && expanded) {
+      this._handleExpandToggle(row, false);
+    } else if (key === 'ArrowLeft') {
+      const parent = this.renderRoot.querySelector<HTMLButtonElement>(
+        `button[role="row"].grid-row[data-row-id="${CSS.escape(
+          row.parentId ?? ''
+        )}"]`
+      );
+      if (!parent) return false;
+      parent.focus();
+    } else {
+      return false;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    return true;
   }
 
   private _getAllPositions(): {
@@ -608,7 +777,7 @@ export class ObcTable extends LitElement {
           --grid-columns-rest: ${selectionColumnCount};
           --selection-column-width: var(--menu-navigation-components-table-item-touch-target-size);
         "
-        role="table"
+        role=${this.hasHierarchy ? 'treegrid' : 'table'}
       >
         ${this.showHeader
           ? html`
@@ -740,8 +909,18 @@ export class ObcTable extends LitElement {
                   data-row-id=${row.id}
                   style="grid-row: ${rowIndex + 1}"
                   part="row"
+                  aria-level=${ifDefined(
+                    this.hasHierarchy ? (row.level ?? 0) + 1 : undefined
+                  )}
+                  aria-expanded=${ifDefined(
+                    row.expandable ? (row.expanded ?? false) : undefined
+                  )}
                 >
-                  ${map(effectiveColumns, (col) => {
+                  ${map(effectiveColumns, (col, colIndex) => {
+                    const expander =
+                      colIndex === (this.selectable ? 1 : 0)
+                        ? this._renderRowExpander(row)
+                        : nothing;
                     if (this.selectable && col.key === '__selection__') {
                       const checked = this._selectedRowIds.has(row.id);
                       return html`<div
@@ -764,7 +943,9 @@ export class ObcTable extends LitElement {
                     }
                     const value = row[col.key];
                     if (value === undefined) {
-                      return html`<div class="grid-cell" role="cell"></div>`;
+                      return html`<div class="grid-cell" role="cell">
+                        ${expander}
+                      </div>`;
                     }
                     if (col.renderCell) {
                       return html`<div
@@ -774,7 +955,7 @@ export class ObcTable extends LitElement {
                         role="cell"
                         part=${ifDefined((value as ObcTableCellData).cssPart)}
                       >
-                        ${col.renderCell(
+                        ${expander}${col.renderCell(
                           value as ObcTableCellData,
                           row,
                           row.id
@@ -784,7 +965,8 @@ export class ObcTable extends LitElement {
                       return this._renderCell(
                         value as ObcTableCellData,
                         row,
-                        col
+                        col,
+                        expander
                       );
                     }
                   })}
@@ -950,7 +1132,8 @@ export class ObcTable extends LitElement {
   private _renderCell(
     value: ObcTableCellData,
     row: ObcTableRow,
-    column: ObcTableColumn<ObcTableCellData, ObcTableRow>
+    column: ObcTableColumn<ObcTableCellData, ObcTableRow>,
+    expander: HTMLTemplateResult | typeof nothing = nothing
   ) {
     if (value.type === ObcTableCellType.Regular) {
       return html`<div
@@ -967,7 +1150,7 @@ export class ObcTable extends LitElement {
         role="cell"
         part=${ifDefined(cssPart(value, 'cell'))}
       >
-        ${value.icon3
+        ${expander}${value.icon3
           ? html`<span class="icon" part=${ifDefined(cssPart(value, 'icon3'))}
               >${value.icon3}</span
             >`
@@ -998,6 +1181,7 @@ export class ObcTable extends LitElement {
         class="grid-cell button ${column.dividerRight ? 'divider-right' : ''}"
         role="cell"
       >
+        ${expander}
         <obc-button
           variant="normal"
           fullWidth
@@ -1034,6 +1218,7 @@ export class ObcTable extends LitElement {
         role="cell"
         part=${ifDefined(cssPart(value, 'cell'))}
       >
+        ${expander}
         <obc-checkbox
           .status=${value.status ?? CheckboxStatus.unchecked}
           .disabled=${value.disabled ?? false}
@@ -1081,7 +1266,7 @@ export class ObcTable extends LitElement {
         role="cell"
         part=${ifDefined(cssPart(value, 'cell'))}
       >
-        ${visibleTags.map((tag) => {
+        ${expander}${visibleTags.map((tag) => {
           const hasIcon = tag.hasIcon ?? tag.icon !== undefined;
           return html`<obc-tag
             .label=${tag.label}
@@ -1120,6 +1305,7 @@ export class ObcTable extends LitElement {
         role="cell"
         part=${ifDefined(cssPart(value, 'cell'))}
       >
+        ${expander}
         <obc-bar-horizontal
           .minValue=${value.minValue ?? 0}
           .maxValue=${value.maxValue ?? 100}

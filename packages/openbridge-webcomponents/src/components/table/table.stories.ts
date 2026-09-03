@@ -2,6 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {
   ObcTable,
   ObcTableCellData,
+  ObcTableExpandToggleEvent,
   ObcTableRow,
   ObcTableCellType,
 } from './table.js';
@@ -683,5 +684,148 @@ export const Interactive: Story = {
         ></obc-table>
       </div>
     `;
+  },
+};
+
+interface HierarchyNode {
+  id: string;
+  system: string;
+  location: string;
+  state: string;
+  members?: HierarchyNode[];
+}
+
+const systemTree: HierarchyNode[] = [
+  {
+    id: 'propulsion',
+    system: 'Propulsion',
+    location: 'Engine room',
+    state: 'Running',
+    members: [
+      {
+        id: 'main-engine',
+        system: 'Main engine',
+        location: 'Engine room',
+        state: 'Running',
+        members: [
+          {
+            id: 'lube-oil',
+            system: 'Lube oil',
+            location: 'Engine room',
+            state: 'Nominal',
+          },
+          {
+            id: 'cooling-water',
+            system: 'Cooling water',
+            location: 'Engine room',
+            state: 'Nominal',
+          },
+        ],
+      },
+      {
+        id: 'shaft-generator',
+        system: 'Shaft generator',
+        location: 'Engine room',
+        state: 'Standby',
+      },
+    ],
+  },
+  {
+    id: 'power',
+    system: 'Power',
+    location: 'Switchboard',
+    state: 'Running',
+    members: [
+      {
+        id: 'aux-engine-1',
+        system: 'Aux engine 1',
+        location: 'Switchboard',
+        state: 'Running',
+      },
+      {
+        id: 'aux-engine-2',
+        system: 'Aux engine 2',
+        location: 'Switchboard',
+        state: 'Stopped',
+      },
+    ],
+  },
+  {
+    id: 'ballast',
+    system: 'Ballast',
+    location: 'Pump room',
+    state: 'Idle',
+  },
+];
+
+const collapsedRowIds = new Set<string>(['power']);
+
+const hierarchyRows = (
+  nodes: HierarchyNode[],
+  level = 0,
+  parentId?: string
+): ObcTableRow[] => {
+  const rows: ObcTableRow[] = [];
+  for (const node of nodes) {
+    const expanded = !collapsedRowIds.has(node.id);
+    rows.push({
+      id: node.id,
+      parentId,
+      level,
+      expandable: (node.members?.length ?? 0) > 0,
+      expanded,
+      system: {type: ObcTableCellType.Regular, text: node.system},
+      location: {type: ObcTableCellType.Regular, text: node.location},
+      state: {type: ObcTableCellType.Regular, text: node.state, neutral: true},
+    });
+    if (expanded && node.members) {
+      rows.push(...hierarchyRows(node.members, level + 1, node.id));
+    }
+  }
+  return rows;
+};
+
+const compareCellText = (a: ObcTableCellData, b: ObcTableCellData) => {
+  const text = (value: ObcTableCellData) =>
+    value?.type === ObcTableCellType.Regular ? String(value.text ?? '') : '';
+  return text(a).localeCompare(text(b));
+};
+
+export const Hierarchy: Story = {
+  args: {
+    width: 700,
+    columns: [
+      {
+        label: 'System',
+        key: 'system',
+        sortable: true,
+        compareFunction: compareCellText,
+      },
+      {label: 'Location', key: 'location'},
+      {label: 'State', key: 'state'},
+    ],
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Rows form a tree through `parentId` and `level`. The table draws the indent and the chevron and reports `expand-toggle`; the story owns which rows are collapsed and passes only the visible ones. Sorting the System column reorders each sibling set on its own, so a child never leaves its parent.',
+      },
+    },
+  },
+  render: (args) => {
+    return html`<obc-table
+      .data=${hierarchyRows(systemTree)}
+      .columns=${args.columns}
+      .striped=${true}
+      @expand-toggle=${(e: ObcTableExpandToggleEvent) => {
+        if (e.detail.expanded) {
+          collapsedRowIds.delete(e.detail.rowId);
+        } else {
+          collapsedRowIds.add(e.detail.rowId);
+        }
+        (e.target as ObcTable).data = hierarchyRows(systemTree);
+      }}
+    ></obc-table>`;
   },
 };

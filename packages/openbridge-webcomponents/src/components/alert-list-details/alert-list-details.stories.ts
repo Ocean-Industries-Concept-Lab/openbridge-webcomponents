@@ -254,3 +254,104 @@ export const LevelCategories: Story = {
     </obc-alert-list-details>`;
   },
 };
+
+export const GroupedAlerts: Story = {
+  args: {
+    showTime: true,
+    alerts: [
+      {
+        id: 'gyro',
+        tagId: 'GYRO-01',
+        source: 'Gyroscope',
+        text: 'Gyroscope group',
+        acknowledged: false,
+        active: true,
+        type: AlertType.Alarm,
+        time: new Date('2024-01-15T14:32:15Z'),
+        noAck: true,
+      },
+      {
+        id: 'heading',
+        tagId: 'GYRO-02',
+        source: 'Gyroscope',
+        text: 'Heading deviation',
+        acknowledged: false,
+        active: true,
+        type: AlertType.Alarm,
+        time: new Date('2024-01-15T14:32:15Z'),
+        memberOf: ['gyro'],
+      },
+      {
+        id: 'sensor',
+        tagId: 'SENS-01',
+        source: 'Sensor',
+        text: 'Sensor group, nested under the gyroscope group',
+        acknowledged: false,
+        active: true,
+        type: AlertType.Alarm,
+        time: new Date('2024-01-15T14:33:15Z'),
+        memberOf: ['gyro'],
+      },
+      {
+        id: 'drift',
+        tagId: 'SENS-02',
+        source: 'Sensor',
+        text: 'Sensor drift out of range',
+        acknowledged: false,
+        active: true,
+        type: AlertType.Warning,
+        time: new Date('2024-01-15T14:34:15Z'),
+        memberOf: ['sensor'],
+      },
+      {
+        id: 'radar',
+        tagId: 'RADAR-01',
+        source: 'Radar',
+        text: 'Radar group',
+        acknowledged: false,
+        active: true,
+        type: AlertType.Warning,
+        time: new Date('2024-01-15T14:35:15Z'),
+      },
+      {
+        id: 'power',
+        tagId: 'PWR-01',
+        source: 'Power',
+        text: 'Supply voltage low, a member of both groups',
+        acknowledged: false,
+        active: true,
+        type: AlertType.Caution,
+        time: new Date('2024-01-15T14:36:15Z'),
+        memberOf: ['gyro', 'radar'],
+      },
+      {
+        id: 'ecdis',
+        tagId: 'ECDIS-01',
+        source: 'ECDIS',
+        text: 'Ungrouped alert',
+        acknowledged: false,
+        active: true,
+        type: AlertType.Warning,
+        time: new Date('2024-01-15T14:37:15Z'),
+      },
+    ] as Alert[],
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Alerts are grouped through `memberOf`, which names the alerts a given alert is a member of. Groups nest, and `PWR-01` lists two groups so it appears under both. The group rows here set `noAck`, so they show no ACK button of their own.',
+      },
+    },
+  },
+  render: (args) => {
+    return html` <obc-alert-list-details
+      @ack-click=${handleAck}
+      .selectedMode=${args.selectedMode}
+      .alerts=${args.alerts}
+      .showTime=${args.showTime}
+      style="height: 100vh; display: block;"
+    >
+    </obc-alert-list-details>`;
+  },
+};
