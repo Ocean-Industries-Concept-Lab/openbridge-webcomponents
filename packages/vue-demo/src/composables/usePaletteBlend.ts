@@ -39,6 +39,11 @@ function clearBlend() {
  * the plain `data-obc-theme` palette governs again — inline styles on <html>
  * outrank every `:root[data-obc-theme=...]` rule, so leaving them in place
  * would pin the app to a light palette.
+ *
+ * While a blend is active the theme is pinned to day. Only colours are blended,
+ * so without this the non-colour tokens (shadow geometry, the chevron icons)
+ * would keep coming from whichever palette was selected, and the blend would
+ * not start from the day palette its 0% endpoint claims.
  */
 export function applyPaletteBlend(blend: number) {
   const t = Math.min(100, Math.max(0, blend)) / 100
@@ -47,6 +52,8 @@ export function applyPaletteBlend(blend: number) {
     clearBlend()
     return
   }
+
+  document.documentElement.setAttribute('data-obc-theme', 'day')
 
   const { day, bright } = getPalettes()
   const blended = computeBlend(day, bright, t)
