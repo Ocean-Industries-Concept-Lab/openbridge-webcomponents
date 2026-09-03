@@ -112,6 +112,7 @@ export function canAckFilter(filter: (alert: Alert) => boolean) {
 
 /**
  * @availableWhen timeFormatter showTime==true
+ * @property showTagId - Whether to render the Tag ID column. The small variant never renders it.
  * @fires {ObcAckClickEvent} ack-click - Fired when the user clicks the "ACK" button.
  * @fires {ObcRowClickEvent} row-click - Fired when the user clicks a row.
  * @stable
@@ -121,6 +122,7 @@ export class ObcAlertListDetails extends LitElement {
   @property({type: String}) selectedMode: AlertListMode = AlertListMode.ALL;
   @property({type: Array}) alerts: Alert[] = [];
   @property({type: Boolean}) showTime: boolean = false;
+  @property({type: Boolean, attribute: false}) showTagId: boolean = true;
   @property({attribute: false}) timeFormatter: (time: Date) => string = (
     time: Date
   ) => time.toLocaleTimeString(undefined, {hour12: false});
@@ -226,18 +228,20 @@ export class ObcAlertListDetails extends LitElement {
           },
         });
       }
-      columns.push({
-        label: 'Tag ID',
-        key: 'tagId',
-        sortable: true,
-        compareFunction: (a, b) => {
-          const aText =
-            a?.type === ObcTableCellType.Regular ? String(a.text ?? '') : '';
-          const bText =
-            b?.type === ObcTableCellType.Regular ? String(b.text ?? '') : '';
-          return aText.localeCompare(bText);
-        },
-      });
+      if (this.showTagId) {
+        columns.push({
+          label: 'Tag ID',
+          key: 'tagId',
+          sortable: true,
+          compareFunction: (a, b) => {
+            const aText =
+              a?.type === ObcTableCellType.Regular ? String(a.text ?? '') : '';
+            const bText =
+              b?.type === ObcTableCellType.Regular ? String(b.text ?? '') : '';
+            return aText.localeCompare(bText);
+          },
+        });
+      }
       return columns;
     }
   }
@@ -302,13 +306,14 @@ export class ObcAlertListDetails extends LitElement {
           }
         : undefined;
 
-      const tagId = this.small
-        ? undefined
-        : {
-            type: ObcTableCellType.Regular,
-            text: '#' + alert.id,
-            align: 'right',
-          };
+      const tagId =
+        this.small || !this.showTagId
+          ? undefined
+          : {
+              type: ObcTableCellType.Regular,
+              text: '#' + alert.id,
+              align: 'right',
+            };
       return {
         id: alert.id,
         status,

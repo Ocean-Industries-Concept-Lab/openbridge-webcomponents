@@ -42,6 +42,7 @@ const meta: Meta<typeof ObcAlertListDetails> = {
   args: {
     selectedMode: AlertListMode.ALL,
     showTime: true,
+    showTagId: true,
     alerts: [
       {
         id: '1',
@@ -132,6 +133,7 @@ const meta: Meta<typeof ObcAlertListDetails> = {
       data-testid="alert-menu"
       .selectedMode=${args.selectedMode}
       .showTime=${args.showTime}
+      .showTagId=${args.showTagId}
       .small=${args.small}
       @ack-click=${handleAck}
       .alerts=${args.alerts}
@@ -151,6 +153,12 @@ export const Regular: Story = {
 export const Small: Story = {
   args: {
     small: true,
+  },
+};
+
+export const WithoutTagId: Story = {
+  args: {
+    showTagId: false,
   },
 };
 
