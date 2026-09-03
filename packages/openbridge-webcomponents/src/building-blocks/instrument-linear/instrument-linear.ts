@@ -30,17 +30,19 @@ export function atSetpoint(
 }
 
 /**
- * @param height - The height of the thruster
- * @param value - The value of the thruster
- * @param colors - The colors of the thruster (box and container)
- * @param options - The options of the thruster
- *  - hideTicks - Whether to hide the ticks
- *  - flipAdicePattern - Whether to flip the advice pattern, to be used when the thruster is on the bottom
- *  - hideContainer - Whether to not render the rounded container/wrapper around the thruster,
- *                    used by the main engine
- *  - narrow - Whether to use the narrow version of the thruster
- * @param advice - The advice of the thruster
- * @returns - The thruster top single sided
+ * Linear watch-face gauge: a rounded pill with a bar lane and a tick lane,
+ * filled value boxes, an optional current-value line and advice zones.
+ * Consumed by `obc-heave`, `obc-draft-trim`, `obc-pitch-roll-heave` and
+ * `obc-surge-sway-yaw`.
+ *
+ * @param dims - Pill geometry and value range; `scaleWidth` is the tick lane at the +x edge
+ * @param box - Filled value ranges, drawn across the bar lane
+ * @param bar - Current-value line across the bar lane; `undefined` for none
+ * @param colors - Pill face fill
+ * @param options - Rendering switches; see the member docs
+ * @param tickmarks - Main tick values plus primary/secondary ladder intervals
+ * @param advice - Advice zones rendered along the scale
+ * @returns SVG fragments centred on the pill's origin
  */
 export function watchfaceLinear(
   {
@@ -69,6 +71,12 @@ export function watchfaceLinear(
      * shadow root would otherwise both resolve to the first one's mask.
      */
     maskId?: string;
+    /**
+     * Skip the secondary track fill behind the bar lane, for designs whose
+     * pill is a uniform face. Also the only valid mode when `scaleWidth`
+     * fills the whole width, where the track path would degenerate.
+     */
+    hideTrack?: boolean;
   },
   tickmarks: {
     /** Array of values where full-width main tickmarks are drawn. */
@@ -99,7 +107,7 @@ export function watchfaceLinear(
       fill="none" 
       vector-effect="non-scaling-stroke"/>
   `;
-  if (options.off) {
+  if (options.off || options.hideTrack) {
     track = nothing;
   }
 
