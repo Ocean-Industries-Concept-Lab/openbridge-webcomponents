@@ -137,7 +137,13 @@
   &.active-size-multi-line {
     .text-container {
       grid-template-areas: "title date chevron" "description description description";
-      grid-template-columns: 1fr min-content min-content;
+      grid-template-columns: minmax(0, 1fr) min-content min-content;
+    }
+
+    /* Expanded items show the full title, so it has to wrap rather than widen the grid */
+    .title-container {
+      white-space: normal;
+      overflow-wrap: break-word;
     }
 
     .icon-container {
