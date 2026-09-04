@@ -167,3 +167,28 @@ export const OpenWithLongWord: Story = {
   },
   render: renderInNarrowContainer,
 };
+
+export const OpenShelvedWithLongText: Story = {
+  args: {
+    open: true,
+    shelved: true,
+    title:
+      'A title that is far too long to fit on a single line in a narrow list',
+    description:
+      'A description that is long enough to span several lines once the item is expanded, so the text has to wrap inside the available width instead of making the item wider.',
+  },
+  render: renderInNarrowContainer,
+};
+
+export const OpenShelvedWithSecondaryAction: Story = {
+  args: {
+    open: true,
+    shelved: true,
+    secondaryActionLabel: 'Mute',
+    title:
+      'A title that is far too long to fit on a single line in a narrow list',
+    description:
+      'A description that is long enough to span several lines once the item is expanded, so the text has to wrap inside the available width instead of making the item wider.',
+  },
+  render: renderInNarrowContainer,
+};
