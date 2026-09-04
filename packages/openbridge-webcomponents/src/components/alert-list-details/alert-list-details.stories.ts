@@ -355,3 +355,61 @@ export const GroupedAlerts: Story = {
     </obc-alert-list-details>`;
   },
 };
+
+export const CyclicGrouping: Story = {
+  args: {
+    showTime: true,
+    alerts: [
+      {
+        id: 'standalone',
+        tagId: 'ECDIS-01',
+        source: 'ECDIS',
+        text: 'Ungrouped alert, the only one that survives',
+        acknowledged: false,
+        active: true,
+        type: AlertType.Warning,
+        time: new Date('2024-01-15T14:32:15Z'),
+      },
+      {
+        id: 'pump-a',
+        tagId: 'PUMP-01',
+        source: 'Pump A',
+        text: 'Never rendered: a member of Pump B',
+        acknowledged: false,
+        active: true,
+        type: AlertType.Alarm,
+        time: new Date('2024-01-15T14:33:15Z'),
+        memberOf: ['pump-b'],
+      },
+      {
+        id: 'pump-b',
+        tagId: 'PUMP-02',
+        source: 'Pump B',
+        text: 'Never rendered: a member of Pump A',
+        acknowledged: false,
+        active: true,
+        type: AlertType.Alarm,
+        time: new Date('2024-01-15T14:34:15Z'),
+        memberOf: ['pump-a'],
+      },
+    ] as Alert[],
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Known defect, kept as a regression guard. Three active alerts go in; only the ungrouped one is listed. `buildVisibleRows()` seeds its walk from alerts with no in-set `memberOf`, so a membership cycle produces no root and its members are dropped without warning — two alarms silently missing from an alert list. Remove the standalone alert and the whole list renders the "No active alerts" empty state.',
+      },
+    },
+  },
+  render: (args) => {
+    return html` <obc-alert-list-details
+      @ack-click=${handleAck}
+      .selectedMode=${args.selectedMode}
+      .alerts=${args.alerts}
+      .showTime=${args.showTime}
+      style="height: 100vh; display: block;"
+    >
+    </obc-alert-list-details>`;
+  },
+};

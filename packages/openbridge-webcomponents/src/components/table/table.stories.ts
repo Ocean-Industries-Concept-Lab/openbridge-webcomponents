@@ -829,3 +829,64 @@ export const Hierarchy: Story = {
     ></obc-table>`;
   },
 };
+
+const cyclicRows = (): ObcTableRow[] => [
+  {
+    id: 'standalone',
+    level: 0,
+    system: {type: ObcTableCellType.Regular, text: 'Ballast'},
+    parent: {type: ObcTableCellType.Regular, text: '—', neutral: true},
+  },
+  {
+    id: 'pump-a',
+    parentId: 'pump-b',
+    level: 1,
+    system: {type: ObcTableCellType.Regular, text: 'Pump A'},
+    parent: {type: ObcTableCellType.Regular, text: 'pump-b', neutral: true},
+  },
+  {
+    id: 'pump-b',
+    parentId: 'pump-a',
+    level: 1,
+    system: {type: ObcTableCellType.Regular, text: 'Pump B'},
+    parent: {type: ObcTableCellType.Regular, text: 'pump-a', neutral: true},
+  },
+];
+
+export const CyclicHierarchy: Story = {
+  args: {width: 700},
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Known defect, kept as a regression guard. Both tables get the same three rows, two of which name each other as `parentId`. The unsorted table lists all three; the sorted one lists only the row that has no parent. `sortWithinSiblings()` walks down from rows whose `parentId` is absent from the data, so a cycle yields no root and every row in it is dropped. Make all three rows cyclic and the sorted table renders empty.',
+      },
+    },
+  },
+  render: (args) => {
+    const columns = (sorted: boolean) => [
+      {
+        label: 'System',
+        key: 'system',
+        ...(sorted
+          ? {
+              sortable: true as const,
+              sortDirection: 'asc' as const,
+              compareFunction: compareCellText,
+            }
+          : {}),
+      },
+      {label: 'Declared parentId', key: 'parent'},
+    ];
+    return html`<div style="display: grid; gap: 24px; width: ${args.width}px;">
+      <div>
+        <p>Unsorted — all three rows render</p>
+        <obc-table .data=${cyclicRows()} .columns=${columns(false)}></obc-table>
+      </div>
+      <div>
+        <p>Sorted on System — the two cyclic rows disappear</p>
+        <obc-table .data=${cyclicRows()} .columns=${columns(true)}></obc-table>
+      </div>
+    </div>`;
+  },
+};
