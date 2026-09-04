@@ -118,8 +118,9 @@ export function canAckFilter(filter: (alert: Alert) => boolean) {
  * are members of becomes a group row: it is an ordinary alert row with a
  * chevron, and stays one whether its severity mirrors its members or it exists
  * only to head the group. An alert whose parents are all filtered out of the
- * current mode is promoted to the top level rather than hidden — a filtered
- * view never drops an alert because of where it sits in the hierarchy.
+ * current mode, or whose grouping is cyclic, is promoted to the top level
+ * rather than hidden — the list never drops an alert because of where it sits
+ * in the hierarchy.
  *
  * @availableWhen timeFormatter showTime==true
  * @property defaultExpanded - Whether groups start expanded. Set false to open the list collapsed.
@@ -292,6 +293,13 @@ export class ObcAlertListDetails extends LitElement {
    * The rows to render, depth-first, with a collapsed group's descendants left
    * out. Fills {@link alertByRowId} on the way, so the row a click or a sort
    * lands on can be traced back to its alert.
+   *
+   * Every filtered alert reaches the list. An alert no group walk can descend
+   * to — one whose `memberOf` chain only ever leads back into a cycle, and
+   * anything grouped below it — becomes a root of its own, since an alert list
+   * that quietly omits an active alarm is worse than one grouped oddly.
+   * Reachability is computed before rendering, not after: a collapsed group's
+   * members are unrendered but still reachable, and must not be promoted.
    */
   private buildVisibleRows(): ObcTableRow[] {
     const alerts = this.filteredAlerts;
@@ -310,6 +318,24 @@ export class ObcAlertListDetails extends LitElement {
         const members = membersByGroupId.get(groupId) ?? [];
         members.push(alert);
         membersByGroupId.set(groupId, members);
+      }
+    }
+
+    const reachable = new Set<string>();
+    const markReachable = (alert: Alert) => {
+      if (reachable.has(alert.id)) {
+        return;
+      }
+      reachable.add(alert.id);
+      for (const member of membersByGroupId.get(alert.id) ?? []) {
+        markReachable(member);
+      }
+    };
+    roots.forEach(markReachable);
+    for (const alert of alerts) {
+      if (!reachable.has(alert.id)) {
+        roots.push(alert);
+        markReachable(alert);
       }
     }
 

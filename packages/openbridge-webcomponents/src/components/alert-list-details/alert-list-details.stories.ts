@@ -364,7 +364,7 @@ export const CyclicGrouping: Story = {
         id: 'standalone',
         tagId: 'ECDIS-01',
         source: 'ECDIS',
-        text: 'Ungrouped alert, the only one that survives',
+        text: 'Ungrouped alert, the only natural root',
         acknowledged: false,
         active: true,
         type: AlertType.Warning,
@@ -374,7 +374,7 @@ export const CyclicGrouping: Story = {
         id: 'pump-a',
         tagId: 'PUMP-01',
         source: 'Pump A',
-        text: 'Never rendered: a member of Pump B',
+        text: 'Recovered as a root: a member of Pump B',
         acknowledged: false,
         active: true,
         type: AlertType.Alarm,
@@ -385,7 +385,7 @@ export const CyclicGrouping: Story = {
         id: 'pump-b',
         tagId: 'PUMP-02',
         source: 'Pump B',
-        text: 'Never rendered: a member of Pump A',
+        text: 'Recovered under Pump A, which it also groups',
         acknowledged: false,
         active: true,
         type: AlertType.Alarm,
@@ -398,7 +398,7 @@ export const CyclicGrouping: Story = {
     docs: {
       description: {
         story:
-          'Known defect, kept as a regression guard. Three active alerts go in; only the ungrouped one is listed. `buildVisibleRows()` seeds its walk from alerts with no in-set `memberOf`, so a membership cycle produces no root and its members are dropped without warning — two alarms silently missing from an alert list. Remove the standalone alert and the whole list renders the "No active alerts" empty state.',
+          'Regression guard. Three active alerts go in and three are listed. `buildVisibleRows()` seeds its walk from alerts with no in-set `memberOf`, so this membership cycle produces no root of its own; the alerts it cannot reach become roots instead of being dropped, because an alert list must never quietly omit an active alarm. Remove the standalone alert and both alarms still render.',
       },
     },
   },
@@ -455,7 +455,7 @@ export const CycleWithDescendants: Story = {
         id: 'pump-a',
         tagId: 'PUMP-01',
         source: 'Pump A',
-        text: 'Never rendered: a member of Pump B',
+        text: 'Recovered as a root: a member of Pump B',
         acknowledged: false,
         active: true,
         type: AlertType.Warning,
@@ -466,7 +466,7 @@ export const CycleWithDescendants: Story = {
         id: 'pump-b',
         tagId: 'PUMP-02',
         source: 'Pump B',
-        text: 'Never rendered: a member of Pump A',
+        text: 'Recovered under Pump A, which it also groups',
         acknowledged: false,
         active: true,
         type: AlertType.Warning,
@@ -477,7 +477,7 @@ export const CycleWithDescendants: Story = {
         id: 'pump-sensor',
         tagId: 'PUMP-03',
         source: 'Pump sensor',
-        text: 'Never rendered, and not itself cyclic: a member of Pump A',
+        text: 'Recovered, and not itself cyclic: a member of Pump A',
         acknowledged: false,
         active: true,
         type: AlertType.Caution,
@@ -490,7 +490,7 @@ export const CycleWithDescendants: Story = {
     docs: {
       description: {
         story:
-          'Known defect, kept as a regression guard. Two cycles, only one of them reachable from a root. The Gyroscope cycle sits under a group with no `memberOf`, so the walk reaches it and the `ancestors` guard prunes only the repeat visit — all three render, which a fix must preserve rather than re-listing them at top level. The Pump cycle has no root, so nothing in it is reached: both alarms vanish, and so does Pump sensor, which is not part of any cycle and merely names a member of one. The loss extends to every descendant of an unreachable cycle, not just the cycle itself.',
+          'Regression guard for both halves of the cycle handling. The Gyroscope cycle sits under a group with no `memberOf`, so the walk reaches it and the `ancestors` guard prunes only the repeat visit; those three must render once each, not be re-listed at top level by the recovery. The Pump cycle has no root, so it is recovered: Pump A becomes a root, and Pump B and Pump sensor render beneath it. Pump sensor is in no cycle and merely names a member of one, so recovering only cycle members would still lose it.',
       },
     },
   },

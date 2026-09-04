@@ -319,6 +319,11 @@ export class ObcTable extends LitElement {
   /**
    * Depth-first re-flatten with each sibling set sorted on its own. Sorting the
    * flat array instead would scatter children away from their parent.
+   *
+   * Every row given reaches the output. Rows the walk cannot descend to —
+   * a `parentId` cycle, and anything hanging below one — are re-entered as a
+   * top-level sibling set, because `data` holds only rows meant to be visible
+   * and a malformed hierarchy must not make one disappear.
    */
   private sortWithinSiblings(
     rows: ObcTableRow[],
@@ -351,6 +356,7 @@ export class ObcTable extends LitElement {
       }
     };
     visit(roots);
+    visit(rows.filter((row) => !visited.has(row.id)));
     return sorted;
   }
 

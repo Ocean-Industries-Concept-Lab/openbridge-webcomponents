@@ -859,7 +859,7 @@ export const CyclicHierarchy: Story = {
     docs: {
       description: {
         story:
-          'Known defect, kept as a regression guard. Both tables get the same three rows, two of which name each other as `parentId`. The unsorted table lists all three; the sorted one lists only the row that has no parent. `sortWithinSiblings()` walks down from rows whose `parentId` is absent from the data, so a cycle yields no root and every row in it is dropped. Make all three rows cyclic and the sorted table renders empty.',
+          'Regression guard. Both tables get the same three rows, two of which name each other as `parentId`. `sortWithinSiblings()` walks down from rows whose `parentId` is absent from the data, so the cycle yields no root; the rows it cannot reach are re-entered as a top-level sibling set instead of being dropped. Both tables list all three rows, in the sort order each is given. Make all three rows cyclic and all three still render.',
       },
     },
   },
@@ -880,11 +880,11 @@ export const CyclicHierarchy: Story = {
     ];
     return html`<div style="display: grid; gap: 24px; width: ${args.width}px;">
       <div>
-        <p>Unsorted — all three rows render</p>
+        <p>Unsorted</p>
         <obc-table .data=${cyclicRows()} .columns=${columns(false)}></obc-table>
       </div>
       <div>
-        <p>Sorted on System — the two cyclic rows disappear</p>
+        <p>Sorted on System — the cyclic rows are recovered</p>
         <obc-table .data=${cyclicRows()} .columns=${columns(true)}></obc-table>
       </div>
     </div>`;
@@ -927,7 +927,7 @@ export const CycleWithDescendants: Story = {
     docs: {
       description: {
         story:
-          'Known defect, kept as a regression guard. Pump sensor has one ordinary parent and is in no cycle, but its parent sits in one. Because `sortWithinSiblings()` reaches rows only by walking down from parentless ones, the unreachable cycle takes its descendants with it: the sorted table drops three of four rows, not two.',
+          'Regression guard for the blast radius of a cycle. Pump sensor has one ordinary parent and is in no cycle, but its parent sits in one, so recovering only the cycle members would still lose it. All four rows render in both tables; Pump sensor stays under Pump A, because the recovered rows are walked, not flattened.',
       },
     },
   },
@@ -948,14 +948,14 @@ export const CycleWithDescendants: Story = {
     ];
     return html`<div style="display: grid; gap: 24px; width: ${args.width}px;">
       <div>
-        <p>Unsorted — all four rows render</p>
+        <p>Unsorted</p>
         <obc-table
           .data=${cycleWithDescendantRows()}
           .columns=${columns(false)}
         ></obc-table>
       </div>
       <div>
-        <p>Sorted on System — the cycle and its descendant disappear</p>
+        <p>Sorted on System — the cycle and its descendant are recovered</p>
         <obc-table
           .data=${cycleWithDescendantRows()}
           .columns=${columns(true)}
