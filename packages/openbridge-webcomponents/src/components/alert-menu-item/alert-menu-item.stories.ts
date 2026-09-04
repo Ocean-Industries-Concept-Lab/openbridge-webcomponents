@@ -129,21 +129,28 @@ export const PrimaryActionNone: Story = {
 export const OpenWithLongText: Story = {
   args: {
     open: true,
-    title: 'Port main engine cooling water temperature deviation detected',
+    title:
+      'A title that is far too long to fit on a single line in a narrow list',
     description:
-      'Port main engine jacket cooling water outlet temperature has exceeded the high alarm setpoint of 95 degrees Celsius and remains above the limit; reduce load and check the cooling water system.',
+      'A description that is long enough to span several lines once the item is expanded, so the text has to wrap inside the available width instead of making the item wider.',
   },
-  // Narrow container so the expanded text has to wrap instead of widening the item.
   render: (args) => html`
     <div style="width: 480px">
       <obc-alert-menu-item
         .title=${args.title}
         .description=${args.description}
+        .day=${args.day}
         .time=${args.time}
+        .shelved=${args.shelved}
+        .hasIcon=${args.hasIcon}
         .open=${args.open}
         .status=${args.status}
+        .secondaryActionLabel=${args.secondaryActionLabel}
+        .primaryActionState=${args.primaryActionState}
+        .secondaryActionState=${args.secondaryActionState}
       >
         <obc-alert-icon slot="alert-icon" type="alarm" active></obc-alert-icon>
+        ${args.hasIcon ? html`<obi-engine slot="icon"></obi-engine>` : nothing}
       </obc-alert-menu-item>
     </div>
   `,

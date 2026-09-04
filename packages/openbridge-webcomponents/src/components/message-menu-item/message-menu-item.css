@@ -140,10 +140,18 @@
       grid-template-columns: minmax(0, 1fr) min-content min-content;
     }
 
-    /* Expanded items show the full title, so it has to wrap rather than widen the grid */
     .title-container {
       white-space: normal;
       overflow-wrap: break-word;
+    }
+
+    .description-container {
+      overflow-wrap: break-word;
+    }
+
+    .date-container {
+      align-self: start;
+      height: var(--app-components-message-menu-item-icon-size-regular);
     }
 
     .icon-container {
