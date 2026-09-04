@@ -112,7 +112,8 @@ export function canAckFilter(filter: (alert: Alert) => boolean) {
 
 /**
  * @availableWhen timeFormatter showTime==true
- * @property showTagId - Whether to render the Tag ID column. The small variant never renders it.
+ * @property showTagId - Whether to render the Tag ID column.
+ * @availableWhen showTagId small==false
  * @fires {ObcAckClickEvent} ack-click - Fired when the user clicks the "ACK" button.
  * @fires {ObcRowClickEvent} row-click - Fired when the user clicks a row.
  * @stable
