@@ -340,7 +340,7 @@ export const GroupedAlerts: Story = {
     docs: {
       description: {
         story:
-          'Alerts are grouped through `memberOf`, which names the alerts a given alert is a member of. Groups nest, and `PWR-01` lists two groups so it appears under both. The group rows here set `noAck`, so they show no ACK button of their own.',
+          'Alerts are grouped through `memberOf`, which names the alerts a given alert is a member of. Groups nest, and `PWR-01` lists two groups so it appears under both. The `GYRO-01` group row sets `noAck`, so it shows no ACK button of its own.',
       },
     },
   },
