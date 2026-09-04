@@ -890,3 +890,77 @@ export const CyclicHierarchy: Story = {
     </div>`;
   },
 };
+
+const cycleWithDescendantRows = (): ObcTableRow[] => [
+  {
+    id: 'standalone',
+    level: 0,
+    system: {type: ObcTableCellType.Regular, text: 'Ballast'},
+    parent: {type: ObcTableCellType.Regular, text: '—', neutral: true},
+  },
+  {
+    id: 'pump-a',
+    parentId: 'pump-b',
+    level: 1,
+    system: {type: ObcTableCellType.Regular, text: 'Pump A'},
+    parent: {type: ObcTableCellType.Regular, text: 'pump-b', neutral: true},
+  },
+  {
+    id: 'pump-b',
+    parentId: 'pump-a',
+    level: 1,
+    system: {type: ObcTableCellType.Regular, text: 'Pump B'},
+    parent: {type: ObcTableCellType.Regular, text: 'pump-a', neutral: true},
+  },
+  {
+    id: 'pump-sensor',
+    parentId: 'pump-a',
+    level: 2,
+    system: {type: ObcTableCellType.Regular, text: 'Pump sensor'},
+    parent: {type: ObcTableCellType.Regular, text: 'pump-a', neutral: true},
+  },
+];
+
+export const CycleWithDescendants: Story = {
+  args: {width: 700},
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Known defect, kept as a regression guard. Pump sensor has one ordinary parent and is in no cycle, but its parent sits in one. Because `sortWithinSiblings()` reaches rows only by walking down from parentless ones, the unreachable cycle takes its descendants with it: the sorted table drops three of four rows, not two.',
+      },
+    },
+  },
+  render: (args) => {
+    const columns = (sorted: boolean) => [
+      {
+        label: 'System',
+        key: 'system',
+        ...(sorted
+          ? {
+              sortable: true as const,
+              sortDirection: 'asc' as const,
+              compareFunction: compareCellText,
+            }
+          : {}),
+      },
+      {label: 'Declared parentId', key: 'parent'},
+    ];
+    return html`<div style="display: grid; gap: 24px; width: ${args.width}px;">
+      <div>
+        <p>Unsorted — all four rows render</p>
+        <obc-table
+          .data=${cycleWithDescendantRows()}
+          .columns=${columns(false)}
+        ></obc-table>
+      </div>
+      <div>
+        <p>Sorted on System — the cycle and its descendant disappear</p>
+        <obc-table
+          .data=${cycleWithDescendantRows()}
+          .columns=${columns(true)}
+        ></obc-table>
+      </div>
+    </div>`;
+  },
+};
