@@ -21,6 +21,7 @@ const meta: Meta<ObcAlertMenuItem> = {
     status: ObcAlertMenuItemStatus.Unacknowledged,
     hasIcon: false,
     shelved: false,
+    open: false,
     secondaryActionLabel: '',
     primaryActionState: ObcAlertMenuItemActionState.Enabled,
     secondaryActionState: ObcAlertMenuItemActionState.Enabled,
@@ -33,6 +34,7 @@ const meta: Meta<ObcAlertMenuItem> = {
       .time=${args.time}
       .shelved=${args.shelved}
       .hasIcon=${args.hasIcon}
+      .open=${args.open}
       .status=${args.status}
       .secondaryActionLabel=${args.secondaryActionLabel}
       .primaryActionState=${args.primaryActionState}
@@ -53,6 +55,7 @@ const meta: Meta<ObcAlertMenuItem> = {
     },
     hasIcon: {control: 'boolean'},
     shelved: {control: 'boolean'},
+    open: {control: 'boolean'},
     secondaryActionLabel: {control: 'text'},
     primaryActionState: {
       control: 'select',
@@ -121,4 +124,27 @@ export const PrimaryActionNone: Story = {
     secondaryActionLabel: 'Mute',
     primaryActionState: ObcAlertMenuItemActionState.None,
   },
+};
+
+export const OpenWithLongText: Story = {
+  args: {
+    open: true,
+    title: 'Port main engine cooling water temperature deviation detected',
+    description:
+      'Port main engine jacket cooling water outlet temperature has exceeded the high alarm setpoint of 95 degrees Celsius and remains above the limit; reduce load and check the cooling water system.',
+  },
+  // Narrow container so the expanded text has to wrap instead of widening the item.
+  render: (args) => html`
+    <div style="width: 480px">
+      <obc-alert-menu-item
+        .title=${args.title}
+        .description=${args.description}
+        .time=${args.time}
+        .open=${args.open}
+        .status=${args.status}
+      >
+        <obc-alert-icon slot="alert-icon" type="alarm" active></obc-alert-icon>
+      </obc-alert-menu-item>
+    </div>
+  `,
 };
