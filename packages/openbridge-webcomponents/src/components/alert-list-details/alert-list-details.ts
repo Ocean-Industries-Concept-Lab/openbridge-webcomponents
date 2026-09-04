@@ -123,10 +123,7 @@ export function canAckFilter(filter: (alert: Alert) => boolean) {
  * in the hierarchy.
  *
  * @availableWhen timeFormatter showTime==true
- * @availableWhen timeFormatter showTime==true
-
-  /** Whether groups start expanded. Set false to open the list collapsed. */
-  @property({type: Boolean, attribute: false}) defaultExpanded: boolean = true;
+ * @property defaultExpanded - Whether groups start expanded. Set false to open the list collapsed.
  * @fires {ObcAckClickEvent} ack-click - Fired when the user clicks the "ACK" button.
  * @fires {ObcRowClickEvent} row-click - Fired when the user clicks a row.
  * @stable
