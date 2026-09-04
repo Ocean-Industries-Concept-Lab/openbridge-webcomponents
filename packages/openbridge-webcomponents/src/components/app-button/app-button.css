@@ -39,10 +39,24 @@
     }
   }
 
+  .label-container {
+    display: grid;
+  }
+
+  .label,
+  .label-ghost {
+    grid-area: 1 / 1;
+    text-align: center;
+  }
+
   .label {
     color: var(--element-active-color);
-    text-align: center;
     @mixin font-label;
+  }
+
+  .label-ghost {
+    visibility: hidden;
+    @mixin font-label-active;
   }
 
   &.small {
