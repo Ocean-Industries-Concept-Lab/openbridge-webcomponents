@@ -4,6 +4,8 @@ import './integration-app-bar.js';
 import '../../components/app-button/app-button.js';
 import '../../icons/icon-placeholder.js';
 import {html} from 'lit';
+import {expect} from 'storybook/test';
+import {ObcAppButton} from '../../components/app-button/app-button.js';
 
 const appLabels = [
   'Home',
@@ -59,6 +61,34 @@ export const EightLabelledApps: Story = {
       description: {
         story:
           'In a wide bar, the grid gives every app the same column width, resolved from the widest label in the set. Short labels keep extra inline space, long labels stay on one line, and the row remains centred because every track uses the same size.',
+      },
+    },
+  },
+};
+
+export const SelectingWidestLabelDoesNotShiftTheRow: Story = {
+  render: () => appBar(appLabels),
+  play: async ({canvasElement}) => {
+    const buttons = Array.from(
+      canvasElement.querySelectorAll<ObcAppButton>('obc-app-button')
+    );
+    const widest = buttons.find((b) => b.label === 'System Overview')!;
+    const before = buttons.map((b) => b.getBoundingClientRect());
+
+    widest.checked = true;
+    await widest.updateComplete;
+
+    const after = buttons.map((b) => b.getBoundingClientRect());
+    before.forEach((rect, i) => {
+      expect(after[i].x).toBeCloseTo(rect.x, 0);
+      expect(after[i].width).toBeCloseTo(rect.width, 0);
+    });
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Checking the widest label bolds its text via `font-label-active`. Each column already reserves space for that bold width, so selecting or deselecting any app never resizes or shifts the row.',
       },
     },
   },
