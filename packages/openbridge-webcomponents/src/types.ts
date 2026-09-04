@@ -67,8 +67,10 @@ export interface Alert {
         blockedEndTime?: Date;
         blockedBy?: string;
       };
-  noAck?: boolean; // If true, the alarm has no ack button
+  noAck?: boolean;
+  noSilence?: boolean;
   category?: AlertCategory;
+  memberOf?: string[]; // Ids of the alerts this alert is grouped under
 }
 
 export function isActive(alert: Alert) {

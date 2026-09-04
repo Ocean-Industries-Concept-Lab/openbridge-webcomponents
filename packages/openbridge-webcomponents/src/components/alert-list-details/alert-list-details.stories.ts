@@ -254,3 +254,254 @@ export const LevelCategories: Story = {
     </obc-alert-list-details>`;
   },
 };
+
+export const GroupedAlerts: Story = {
+  args: {
+    showTime: true,
+    alerts: [
+      {
+        id: 'gyro',
+        tagId: 'GYRO-01',
+        source: 'Gyroscope',
+        text: 'Gyroscope group',
+        acknowledged: false,
+        active: true,
+        type: AlertType.Alarm,
+        time: new Date('2024-01-15T14:32:15Z'),
+        noAck: true,
+      },
+      {
+        id: 'heading',
+        tagId: 'GYRO-02',
+        source: 'Gyroscope',
+        text: 'Heading deviation',
+        acknowledged: false,
+        active: true,
+        type: AlertType.Alarm,
+        time: new Date('2024-01-15T14:32:15Z'),
+        memberOf: ['gyro'],
+      },
+      {
+        id: 'sensor',
+        tagId: 'SENS-01',
+        source: 'Sensor',
+        text: 'Sensor group, nested under the gyroscope group',
+        acknowledged: false,
+        active: true,
+        type: AlertType.Alarm,
+        time: new Date('2024-01-15T14:33:15Z'),
+        memberOf: ['gyro'],
+      },
+      {
+        id: 'drift',
+        tagId: 'SENS-02',
+        source: 'Sensor',
+        text: 'Sensor drift out of range',
+        acknowledged: false,
+        active: true,
+        type: AlertType.Warning,
+        time: new Date('2024-01-15T14:34:15Z'),
+        memberOf: ['sensor'],
+      },
+      {
+        id: 'radar',
+        tagId: 'RADAR-01',
+        source: 'Radar',
+        text: 'Radar group',
+        acknowledged: false,
+        active: true,
+        type: AlertType.Warning,
+        time: new Date('2024-01-15T14:35:15Z'),
+      },
+      {
+        id: 'power',
+        tagId: 'PWR-01',
+        source: 'Power',
+        text: 'Supply voltage low, a member of both groups',
+        acknowledged: false,
+        active: true,
+        type: AlertType.Caution,
+        time: new Date('2024-01-15T14:36:15Z'),
+        memberOf: ['gyro', 'radar'],
+      },
+      {
+        id: 'ecdis',
+        tagId: 'ECDIS-01',
+        source: 'ECDIS',
+        text: 'Ungrouped alert',
+        acknowledged: false,
+        active: true,
+        type: AlertType.Warning,
+        time: new Date('2024-01-15T14:37:15Z'),
+      },
+    ] as Alert[],
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Alerts are grouped through `memberOf`, which names the alerts a given alert is a member of. Groups nest, and `PWR-01` lists two groups so it appears under both. The `GYRO-01` group row sets `noAck`, so it shows no ACK button of its own.',
+      },
+    },
+  },
+  render: (args) => {
+    return html` <obc-alert-list-details
+      @ack-click=${handleAck}
+      .selectedMode=${args.selectedMode}
+      .alerts=${args.alerts}
+      .showTime=${args.showTime}
+      style="height: 100vh; display: block;"
+    >
+    </obc-alert-list-details>`;
+  },
+};
+
+export const CyclicGrouping: Story = {
+  args: {
+    showTime: true,
+    alerts: [
+      {
+        id: 'standalone',
+        tagId: 'ECDIS-01',
+        source: 'ECDIS',
+        text: 'Ungrouped alert, the only natural root',
+        acknowledged: false,
+        active: true,
+        type: AlertType.Warning,
+        time: new Date('2024-01-15T14:32:15Z'),
+      },
+      {
+        id: 'pump-a',
+        tagId: 'PUMP-01',
+        source: 'Pump A',
+        text: 'Recovered as a root: a member of Pump B',
+        acknowledged: false,
+        active: true,
+        type: AlertType.Alarm,
+        time: new Date('2024-01-15T14:33:15Z'),
+        memberOf: ['pump-b'],
+      },
+      {
+        id: 'pump-b',
+        tagId: 'PUMP-02',
+        source: 'Pump B',
+        text: 'Recovered under Pump A, which it also groups',
+        acknowledged: false,
+        active: true,
+        type: AlertType.Alarm,
+        time: new Date('2024-01-15T14:34:15Z'),
+        memberOf: ['pump-a'],
+      },
+    ] as Alert[],
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Regression guard. Three active alerts go in and three are listed. `buildVisibleRows()` seeds its walk from alerts with no in-set `memberOf`, so this membership cycle produces no root of its own; the alerts it cannot reach become roots instead of being dropped, because an alert list must never quietly omit an active alarm. Remove the standalone alert and both alarms still render.',
+      },
+    },
+  },
+  render: (args) => {
+    return html` <obc-alert-list-details
+      @ack-click=${handleAck}
+      .selectedMode=${args.selectedMode}
+      .alerts=${args.alerts}
+      .showTime=${args.showTime}
+      style="height: 100vh; display: block;"
+    >
+    </obc-alert-list-details>`;
+  },
+};
+
+export const CycleWithDescendants: Story = {
+  args: {
+    showTime: true,
+    alerts: [
+      {
+        id: 'reachable-group',
+        tagId: 'GYRO-01',
+        source: 'Gyroscope',
+        text: 'Reachable group, renders with its whole cycle below it',
+        acknowledged: false,
+        active: true,
+        type: AlertType.Alarm,
+        time: new Date('2024-01-15T14:30:15Z'),
+        noAck: true,
+      },
+      {
+        id: 'reachable-child',
+        tagId: 'GYRO-02',
+        source: 'Gyroscope',
+        text: 'Member of the group, and of its own child below',
+        acknowledged: false,
+        active: true,
+        type: AlertType.Alarm,
+        time: new Date('2024-01-15T14:31:15Z'),
+        memberOf: ['reachable-group', 'reachable-grandchild'],
+      },
+      {
+        id: 'reachable-grandchild',
+        tagId: 'GYRO-03',
+        source: 'Gyroscope',
+        text: 'Closes the cycle back to its own parent',
+        acknowledged: false,
+        active: true,
+        type: AlertType.Alarm,
+        time: new Date('2024-01-15T14:32:15Z'),
+        memberOf: ['reachable-child'],
+      },
+      {
+        id: 'pump-a',
+        tagId: 'PUMP-01',
+        source: 'Pump A',
+        text: 'Recovered as a root: a member of Pump B',
+        acknowledged: false,
+        active: true,
+        type: AlertType.Warning,
+        time: new Date('2024-01-15T14:33:15Z'),
+        memberOf: ['pump-b'],
+      },
+      {
+        id: 'pump-b',
+        tagId: 'PUMP-02',
+        source: 'Pump B',
+        text: 'Recovered under Pump A, which it also groups',
+        acknowledged: false,
+        active: true,
+        type: AlertType.Warning,
+        time: new Date('2024-01-15T14:34:15Z'),
+        memberOf: ['pump-a'],
+      },
+      {
+        id: 'pump-sensor',
+        tagId: 'PUMP-03',
+        source: 'Pump sensor',
+        text: 'Recovered, and not itself cyclic: a member of Pump A',
+        acknowledged: false,
+        active: true,
+        type: AlertType.Caution,
+        time: new Date('2024-01-15T14:35:15Z'),
+        memberOf: ['pump-a'],
+      },
+    ] as Alert[],
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Regression guard for both halves of the cycle handling. The Gyroscope cycle sits under a group with no `memberOf`, so the walk reaches it and the `ancestors` guard prunes only the repeat visit; those three must render once each, not be re-listed at top level by the recovery. The Pump cycle has no root, so it is recovered: Pump A becomes a root, and Pump B and Pump sensor render beneath it. Pump sensor is in no cycle and merely names a member of one, so recovering only cycle members would still lose it.',
+      },
+    },
+  },
+  render: (args) => {
+    return html` <obc-alert-list-details
+      @ack-click=${handleAck}
+      .selectedMode=${args.selectedMode}
+      .alerts=${args.alerts}
+      .showTime=${args.showTime}
+      style="height: 100vh; display: block;"
+    >
+    </obc-alert-list-details>`;
+  },
+};
