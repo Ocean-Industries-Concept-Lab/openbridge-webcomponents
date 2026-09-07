@@ -160,6 +160,11 @@ Text rows (`valueType="text"`) are excluded in **both** directions: they neither
 contribute to the numeric reserve nor receive it, so a long string cannot inflate
 the numeric column and a short one is not padded to a digit width.
 
+The unit reserver is honoured even by a row **without** a unit: the row renders
+the blank reserved unit column so its value and degree stay on the same grid as
+its neighbours. Guarded by `Readout List Item → ColumnAlignment` (the unit-less
+Heading row) and `Readout List → LeadingSrcInline`.
+
 ### 6. Lit lowercases attribute names — it does not kebab-case them
 
 `valueType` is the attribute `valuetype`, not `value-type`. `OBSERVED_ATTRIBUTES`

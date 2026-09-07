@@ -211,7 +211,11 @@ export interface ReadoutAdviceOptions extends ReadoutBlockState {
 }
 
 export interface ReadoutReserverOptions {
-  /** Longest expected string to reserve width for (aligns multiple rows), e.g. `"miles"`. */
+  /**
+   * Longest expected string to reserve width for (aligns multiple rows), e.g.
+   * `"miles"`. A row without a unit still renders the reserved (blank) column,
+   * so its value and degree stay on the grid of the rows that have one.
+   */
   spaceReserver?: string;
 }
 
@@ -421,6 +425,17 @@ export class ObcReadoutListItem extends LitElement {
 
   private get resolvedPriority(): ReadoutListItemPriority {
     return this.priority ?? ReadoutListItemPriority.regular;
+  }
+
+  /**
+   * Whether a unit box follows the value: a unit, or a reserver alone — the
+   * blank reserved column keeps a unit-less row aligned with its neighbours.
+   */
+  private get hasTrailingUnitBox(): boolean {
+    return (
+      this.resolvedStacking !== ReadoutListItemStacking.leadingUnit &&
+      (Boolean(this.unit) || Boolean(this.unitOptions?.spaceReserver))
+    );
   }
 
   private get resolvedFractionDigits(): number {
@@ -726,16 +741,12 @@ export class ObcReadoutListItem extends LitElement {
     if (!this.hasValue) {
       return nothing;
     }
-    const hasTrailingUnit =
-      Boolean(this.unit) &&
-      this.resolvedStacking !== ReadoutListItemStacking.leadingUnit;
-
     if ((this.hasDegree ?? false) && !this.off) {
       return this.renderDegreeGlyph(this.valueSize, {
         enhanced: this.rowEnhanced,
       });
     }
-    if (hasTrailingUnit) {
+    if (this.hasTrailingUnitBox) {
       return html`<span class="value-unit-gap" aria-hidden="true"></span>`;
     }
     return nothing;
@@ -958,15 +969,12 @@ export class ObcReadoutListItem extends LitElement {
   }
 
   private renderTrailingUnit(): TemplateResult | typeof nothing {
-    if (
-      this.resolvedStacking === ReadoutListItemStacking.leadingUnit ||
-      !this.unit
-    ) {
+    if (!this.hasTrailingUnitBox) {
       return nothing;
     }
     return this.renderTextbox(
       'unit',
-      this.unit,
+      this.unit ?? '',
       this.unitOptions?.spaceReserver
     );
   }

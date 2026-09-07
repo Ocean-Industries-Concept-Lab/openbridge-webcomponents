@@ -1817,8 +1817,11 @@ export const MissingParts: Story = {
  * same width regardless of each row's own value length / `fractionDigits`, and
  * the columns line up.
  *
- * (Source/stacking variations are exercised in the `LeadingSrc` / `LeadingUnit`
- * stories; mixing them here would move the unit out of the rightmost column.)
+ * The Heading row has no unit and carries its source inline
+ * (`leading-src-inline`): in the aligned column it still renders the blank
+ * reserved unit column, so its degree lines up with the rows that have a unit.
+ * (`leading-src` / `leading-unit` are exercised in their own stories; they
+ * would move the unit out of the rightmost column.)
  *
  * The last two rows use `size=medium` / `size=large`. Their value digit edges do
  * NOT fully align with the small rows (~8px stagger): the `°` column scales with
@@ -1836,10 +1839,12 @@ export const MissingParts: Story = {
  */
 type AlignmentRow = {
   label: string;
+  src?: string;
   value: number | string | null;
   valueType?: ReadoutValueType;
   unit: string;
   size?: ReadoutListItemSize;
+  stacking?: ReadoutListItemStacking;
   hasDegree?: boolean;
   fractionDigits?: number;
   priority?: ReadoutListItemPriority;
@@ -1884,6 +1889,16 @@ const ALIGNMENT_ROWS: AlignmentRow[] = [
     advice: 1008,
     // per-block advice low-integrity — the advice chip must not shift the columns
     adviceDataQuality: ReadoutListItemDataQuality.lowIntegrity,
+  },
+  // no unit + degree + inline source — the blank reserved unit column keeps
+  // the degree glyph aligned with the unit rows
+  {
+    label: 'Heading',
+    src: 'GPS1',
+    value: 355,
+    unit: '',
+    hasDegree: true,
+    stacking: ReadoutListItemStacking.leadingSrcInline,
   },
   // negative value + fraction + low-integrity data quality
   {
@@ -2023,7 +2038,7 @@ function renderAlignmentColumn(aligned: boolean, showDebugOverlay: boolean) {
         renderItem({
           label: row.label,
           unit: row.unit,
-          src: '',
+          src: row.src ?? '',
           value: row.value,
           valueType: row.valueType,
           hasSetpoint: row.hasSetpoint,
@@ -2035,6 +2050,7 @@ function renderAlignmentColumn(aligned: boolean, showDebugOverlay: boolean) {
           showDebugOverlay,
           options: {
             size: row.size ?? ReadoutListItemSize.small,
+            stacking: row.stacking,
             hasDegree: row.hasDegree ?? false,
             fractionDigits: row.fractionDigits ?? 0,
             priority: row.priority,
