@@ -12,7 +12,7 @@ import {classMap} from 'lit/directives/class-map.js';
 import '../../icons/icon-alarm-badge.js';
 import '../../icons/icon-warning-badge.js';
 import '../../icons/icon-caution-badge.js';
-import './critical-badge.js';
+import '../../icons/icon-critical-badge.js';
 import './diagnostic-badge.js';
 import {customElement} from '../../decorator.js';
 import {AlertType} from '../../types.js';
