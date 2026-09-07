@@ -9,7 +9,7 @@
 .checkbox-item-container {
   display: flex;
   width: 100%;
-  height: var(--ui-components-checkbox-touch-target-size);
+  min-height: var(--ui-components-checkbox-touch-target-size);
   padding: 0px var(--ui-components-checkbox-margin);
   align-items: center;
   flex-shrink: 0;
@@ -20,32 +20,69 @@
     cursor: not-allowed;
   }
 
-  .chevron-container,
-  .nested-spacer {
+  .chevron-container {
     display: flex;
     width: var(--global-size-spacing-touch-target-min);
-    height: var(--global-size-spacing-touch-target-min);
     min-width: var(--global-size-spacing-touch-target-min);
-    min-height: var(--global-size-spacing-touch-target-min);
-    padding: 0px;
+    height: var(--global-size-spacing-touch-target-min);
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
   }
 
+  .nested-spacer {
+    /* one indent step per level above 1; --checkbox-item-depth is set inline */
+    width: calc(
+      var(--checkbox-item-depth, 0) *
+        var(--ui-components-checkbox-nested-item-padding-left)
+    );
+    flex-shrink: 0;
+    align-self: stretch;
+  }
+
+  .chevron-button {
+    @mixin style style=flat visibleWrapperClass=.chevron-visible;
+    appearance: none;
+    border: none;
+    background: transparent;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--on-flat-neutral-color);
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
+
+  .chevron-visible {
+    /* same visible box as obc-icon-button so the two align in one list */
+    width: var(--ui-components-icon-button-visual-target-size);
+    height: var(--ui-components-icon-button-visual-target-size);
+    border-radius: var(--ui-components-button-border-radius-top-left);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   .chevron-icon {
     width: var(--global-size-spacing-icon-icon-size-regular);
     height: var(--global-size-spacing-icon-icon-size-regular);
-    color: var(--on-flat-neutral-color);
   }
 
   .checkbox-label-container {
     display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0; /* lets the label ellipsis instead of widening the row */
     padding: 0 var(--global-size-spacing-list-item-padding-vertical) 0 0;
     margin-left: calc(
       var(--global-size-spacing-list-item-padding-vertical) / -2
     );
-    align-items: center;
     flex-grow: 1;
   }
 
@@ -65,6 +102,18 @@
       color: var(--element-disabled-color);
     }
   }
+
+  .checkbox-description {
+    color: var(--element-active-color);
+    @mixin font-label;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    .disabled & {
+      color: var(--element-disabled-color);
+    }
+  }
 }
 
 .checkbox-item-container.hover-style-touch-target {
@@ -74,8 +123,7 @@
 .checkbox-item-container.hover-style-visual-target {
   @mixin style style=flat noClick visibleWrapperClass=.content-container;
 
-  .chevron-container,
-  .nested-spacer {
+  .chevron-container {
     width: var(--ui-components-checkbox-nested-item-padding-left);
     min-width: var(--ui-components-checkbox-nested-item-padding-left);
   }
@@ -84,7 +132,7 @@
 .content-container {
   display: flex;
   width: 100%;
-  height: 100%;
+  min-height: 100%;
   margin-left: 0px;
   gap: 0;
   padding: 0;
@@ -92,10 +140,7 @@
   box-shadow: none;
   border-radius: var(--ui-components-checkbox-list-item-border-radius);
 
-  .checkbox-item-container.hover-style-visual-target:not(.is-nested):not(
-      .is-level-1
-    ):not(.is-level-2)
-    & {
+  .checkbox-item-container.hover-style-visual-target:not(.is-nested) & {
     margin-left: calc(var(--ui-components-checkbox-padding-horizontal) * -1);
   }
 
