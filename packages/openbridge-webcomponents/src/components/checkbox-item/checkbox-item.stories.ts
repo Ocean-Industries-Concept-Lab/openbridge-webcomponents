@@ -185,15 +185,7 @@ export const Playground: Story = {
 
 export const Nested: Story = {
   args: {...defaultArgs, level: 1},
-  render: (args) =>
-    renderVariantRows({
-      hoverStyle: args.hoverStyle,
-      label: args.label,
-      description: '',
-      level: 1,
-      expandable: false,
-      expanded: false,
-    }),
+  render: (args) => renderVariantRows(args),
 };
 
 export const Expandable: Story = {
@@ -201,20 +193,14 @@ export const Expandable: Story = {
   render: (args) => html`
     <div style="display:flex; flex-direction:column; gap:20px; width:100%;">
       ${renderStateRow('Collapsed', {
+        ...args,
         state: ObcCheckboxItemState.enabled,
-        hoverStyle: args.hoverStyle,
-        label: args.label,
-        description: '',
-        level: 1,
         expandable: true,
         expanded: false,
       })}
       ${renderStateRow('Expanded', {
+        ...args,
         state: ObcCheckboxItemState.enabled,
-        hoverStyle: args.hoverStyle,
-        label: args.label,
-        description: '',
-        level: 1,
         expandable: true,
         expanded: true,
       })}
@@ -224,26 +210,10 @@ export const Expandable: Story = {
 
 export const Level2: Story = {
   args: {...defaultArgs, level: 2},
-  render: (args) =>
-    renderVariantRows({
-      hoverStyle: args.hoverStyle,
-      label: args.label,
-      description: '',
-      level: 2,
-      expandable: false,
-      expanded: false,
-    }),
+  render: (args) => renderVariantRows(args),
 };
 
 export const WithDescription: Story = {
   args: {...defaultArgs, description: 'Description'},
-  render: (args) =>
-    renderVariantRows({
-      hoverStyle: args.hoverStyle,
-      label: args.label,
-      description: args.description,
-      level: 0,
-      expandable: false,
-      expanded: false,
-    }),
+  render: (args) => renderVariantRows(args),
 };
