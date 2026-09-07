@@ -221,6 +221,7 @@ export class ObcCheckboxItem extends LitElement {
           [`status-${this.status}`]: true,
           [`hover-style-${this.hoverStyle}`]: true,
           'is-nested': hasChevronSlot,
+          'has-description': this.description !== '',
           disabled: isDisabled,
         })}
         @click=${this.handleItemClick}

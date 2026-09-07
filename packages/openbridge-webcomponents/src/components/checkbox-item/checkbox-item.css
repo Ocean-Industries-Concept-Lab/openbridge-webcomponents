@@ -9,12 +9,18 @@
 .checkbox-item-container {
   display: flex;
   width: 100%;
-  min-height: var(--ui-components-checkbox-touch-target-size);
+  height: var(--ui-components-checkbox-touch-target-size);
   padding: 0px var(--ui-components-checkbox-margin);
   align-items: center;
   flex-shrink: 0;
   user-select: none;
   cursor: pointer;
+
+  &.has-description {
+    /* a second text line outgrows the fixed row; the hover surface follows */
+    height: auto;
+    min-height: var(--ui-components-checkbox-touch-target-size);
+  }
 
   &.disabled {
     cursor: not-allowed;
@@ -127,7 +133,7 @@
 .content-container {
   display: flex;
   width: 100%;
-  min-height: 100%;
+  height: 100%;
   margin-left: 0px;
   gap: 0;
   padding: 0;
