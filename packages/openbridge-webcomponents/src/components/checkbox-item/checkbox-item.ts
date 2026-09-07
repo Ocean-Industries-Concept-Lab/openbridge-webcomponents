@@ -226,15 +226,15 @@ export class ObcCheckboxItem extends LitElement {
         })}
         @click=${this.handleItemClick}
       >
-        ${hasChevronSlot
-          ? html`<div class="chevron-container">${this.renderChevron()}</div>`
-          : nothing}
         ${depth > 0
           ? html`<div
               class="nested-spacer"
               aria-hidden="true"
               style=${styleMap({'--checkbox-item-depth': String(depth)})}
             ></div>`
+          : nothing}
+        ${hasChevronSlot
+          ? html`<div class="chevron-container">${this.renderChevron()}</div>`
           : nothing}
         <div class="content-container">
           <obc-checkbox
