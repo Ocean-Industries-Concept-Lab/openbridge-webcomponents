@@ -1820,8 +1820,9 @@ export const MissingParts: Story = {
  * The Heading row has no unit and carries its source inline
  * (`leading-src-inline`): in the aligned column it still renders the blank
  * reserved unit column, so its degree lines up with the rows that have a unit.
- * (`leading-src` / `leading-unit` are exercised in their own stories; they
- * would move the unit out of the rightmost column.)
+ * (`leading-src` and `leading-unit` are exercised in their own stories:
+ * `leading-unit` would move the unit out of the rightmost column, and
+ * `leading-src` would make the row two lines high.)
  *
  * The last two rows use `size=medium` / `size=large`. Their value digit edges do
  * NOT fully align with the small rows (~8px stagger): the `°` column scales with

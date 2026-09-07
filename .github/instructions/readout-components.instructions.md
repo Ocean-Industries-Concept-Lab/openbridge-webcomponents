@@ -156,9 +156,11 @@ contribute to the numeric reserve nor receive it, so a long string cannot inflat
 the numeric column and a short one is not padded to a digit width.
 
 The unit reserver is honoured even by a row **without** a unit: the row renders
-the blank reserved unit column so its value and degree stay on the same grid as
-its neighbours. Guarded by `Readout List Item → ColumnAlignment` (the unit-less
-Heading row) and `Readout List → LeadingSrcInline`.
+the blank reserved trailing unit column so its value and degree stay on the same
+grid as its neighbours. `leading-unit` rows are the exception — they have no
+trailing unit column to reserve. Guarded by `Readout List Item →
+ColumnAlignment` (the unit-less Heading row) and `Readout List →
+LeadingSrcInline`.
 
 ### 6. Lit lowercases attribute names — it does not kebab-case them
 

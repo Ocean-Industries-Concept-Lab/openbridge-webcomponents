@@ -213,8 +213,9 @@ export interface ReadoutAdviceOptions extends ReadoutBlockState {
 export interface ReadoutReserverOptions {
   /**
    * Longest expected string to reserve width for (aligns multiple rows), e.g.
-   * `"miles"`. A row without a unit still renders the reserved (blank) column,
-   * so its value and degree stay on the grid of the rows that have one.
+   * `"miles"`. A row without a unit still renders the reserved (blank)
+   * trailing column, so its value and degree stay on the grid of the rows
+   * that have one. `leading-unit` stacking has no trailing column to reserve.
    */
   spaceReserver?: string;
 }
