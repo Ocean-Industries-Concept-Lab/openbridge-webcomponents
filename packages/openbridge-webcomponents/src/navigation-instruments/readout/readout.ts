@@ -196,6 +196,12 @@ export interface ReadoutSourceOptions extends ReadoutSrcOptions {
 }
 
 /**
+ * Whether the ignored-`size` warning has been logged. Module-wide on purpose:
+ * a screen of horizontal readouts should print one line, not one per element.
+ */
+let hasWarnedHorizontalSize = false;
+
+/**
  * `<obc-readout>` – An instrument readout: a value with optional setpoint,
  * advice, label, unit, and source, arranged vertically or horizontally.
  *
@@ -249,7 +255,8 @@ export interface ReadoutSourceOptions extends ReadoutSrcOptions {
  * @property size - Density tier. Applies to the vertical direction only — the horizontal
  *   arrangement exists in the large tier alone (Figma 6.1: it relies on the
  *   label+unit stack aligning with the L-size value caps), so `size` is
- *   ignored when `direction` is `horizontal`.
+ *   ignored when `direction` is `horizontal`; a horizontal readout given any
+ *   other `size` logs a one-time console warning.
  * @availableWhen size direction==vertical
  * @availableWhen stacking direction==vertical
  * @availableWhen alignment direction==vertical && stacking==stacked
@@ -1310,6 +1317,30 @@ export class ObcReadout extends LitElement {
     // exactly the silent failure this assertion exists to prevent.
     assertReadoutValueType('obc-readout', this.value, this.valueType);
     assertReadoutFractionDigits('obc-readout', this.fractionDigits);
+    this.warnHorizontalSizeIgnored();
+  }
+
+  /**
+   * A horizontal readout discards any `size` but `large` (see `resolvedSize`).
+   * A silent discard is indistinguishable from a bug to a consumer, so the
+   * first offending readout on the page says so (#1182).
+   */
+  private warnHorizontalSizeIgnored(): void {
+    if (
+      hasWarnedHorizontalSize ||
+      !this.isHorizontal ||
+      this.size === undefined ||
+      this.size === ReadoutSize.large
+    ) {
+      return;
+    }
+    hasWarnedHorizontalSize = true;
+    console.warn(
+      `[obc-readout] size="${this.size}" is ignored when direction="horizontal": ` +
+        'the horizontal arrangement exists in the large tier only. Remove the ' +
+        'size, or use direction="vertical" for the small / medium tiers. ' +
+        'Logged once per page.'
+    );
   }
 
   override updated(changed: Map<string, unknown>): void {
