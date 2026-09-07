@@ -44,6 +44,69 @@ normally.
 `custom-elements.json` is also **gitignored** — it is regenerated per checkout
 rather than committed.
 
+## Figma token for `download:icons`
+
+`npm run download:icons` calls the Figma REST API and reads `FIGMA_TOKEN` from
+`packages/openbridge-webcomponents/.env`. The file is gitignored and
+per-machine — a fresh clone or new laptop never has it.
+
+1. Create a personal access token: figma.com → **Settings → Security →
+   Personal access tokens → Generate new token**. Read-only **File content**
+   scope is sufficient.
+2. Put it in `packages/openbridge-webcomponents/.env`:
+   `FIGMA_TOKEN=<token>`
+3. Verify against the icons file, not `/v1/me` — a file-scoped token returns
+   403 on `/v1/me` while working fine for the download:
+   ```bash
+   curl -s -H "X-Figma-Token: $FIGMA_TOKEN" \
+     "https://api.figma.com/v1/files/IkDwOtza6OdjLbIdWA7mI7?depth=1" | head -c 200
+   ```
+
+The full refresh playbook (variable map, tripwires, snapshots, bundle cap)
+lives in
+[IMPLEMENTATION_GUIDELINES.md § Icons](../../IMPLEMENTATION_GUIDELINES.md#-icons).
+
+## VariableID anatomy — why a refresh can "lose" every icon colour
+
+Keys in `script/figmavariables.json` have the form
+`VariableID:<library-key>/<import-id>`:
+
+- `<library-key>` (40-hex) is the **stable** identity of the palette variable
+  in the shared library. The same variable keeps this key forever.
+- `<import-id>` (`45074:1379`-style) is the **per-file import instance**. When
+  the icons file re-syncs its palette library, every binding gets a fresh
+  import-id and none of the existing map keys match any more.
+
+Consequences and recovery, in order:
+
+1. A refresh where _every_ icon falls back to literal hex (thousands of leak
+   files, but only ~60 unresolved ids) is a library re-sync, not a converter
+   bug. The unresolved ids are variables, not icons.
+2. An unresolved key whose `<library-key>` already exists in the map under
+   another import-id is the **same variable** — add the new key with the same
+   token name. The map already contains many such duplicates; same key always
+   maps to the same token.
+3. Only keys with a brand-new `<library-key>` need real name resolution: the
+   plugin `variables map` codegen, or `get_variable_defs` /
+   `figma.variables.getVariableByIdAsync(id)` via the Figma MCP on the icons
+   file. Figma names translate mechanically:
+   `Color/Alert/Critical-color` → `alert-critical-color` (drop `Color/…/`
+   prefix groups, kebab-case). Verify the token exists in
+   `src/palettes/variables.css` or `manual.css` before mapping.
+4. An unresolved id that produces **no** hex leak in `src/icons/` sits on a
+   variant/override (`fillOverrideTable`) the SVG export drops — harmless to
+   output, but map it anyway so the tripwire stays green.
+
+Two more refresh gotchas:
+
+- Raw generator output is not prettier-formatted; committed icons are. Run
+  `npx prettier --write "src/icons/**/*.ts"` after a refresh or the diff
+  balloons to every icon.
+- A new Figma icon can collide with a hand-written stopgap component holding
+  the same `obi-*` tag (duplicate `HTMLElementTagNameMap` entry fails
+  `tsc`). Migrate consumers to the generated `src/icons/…` import and delete
+  the stopgap — `alert-frame`'s badge icons are the precedent.
+
 ## Fix at the source, not in the output
 
 - **A wrong or missing icon colour** → the `VariableID` is missing from
