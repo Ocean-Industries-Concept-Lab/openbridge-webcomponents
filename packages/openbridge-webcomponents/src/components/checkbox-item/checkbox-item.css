@@ -122,11 +122,6 @@
 
 .checkbox-item-container.hover-style-visual-target {
   @mixin style style=flat noClick visibleWrapperClass=.content-container;
-
-  .chevron-container {
-    width: var(--ui-components-checkbox-nested-item-padding-left);
-    min-width: var(--ui-components-checkbox-nested-item-padding-left);
-  }
 }
 
 .content-container {
