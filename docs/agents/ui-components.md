@@ -123,5 +123,7 @@ reserves the chevron slot, each level above adds one
 native button inside the row that fires `expand-toggle` and never flips
 `expanded` itself. `obc-checkbox-list` owns the `hidden` attribute of its rows
 and forwards its `hoverStyle` to them — consumers bind neither. The collapse
-walk is `checkbox-list-visibility.ts`, guarded by its spec. Context menus
-indent nested checkboxes through `level`, not padding.
+walk is `checkbox-list-visibility.ts`, guarded by its spec. Reserve `level`
+for lists with expandable rows: a level above 0 always reserves the 48px
+chevron slot, so flat lists such as the context menu's nested checkboxes keep
+their own compact padding instead.
