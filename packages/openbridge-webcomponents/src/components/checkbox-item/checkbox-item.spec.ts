@@ -58,6 +58,7 @@ describe('obc-checkbox-item expandable', () => {
     const btn = sr(el).querySelector<HTMLButtonElement>('.chevron-button')!;
     expect(btn).not.toBeNull();
     expect(btn.getAttribute('aria-expanded')).toBe('false');
+    expect(btn.getAttribute('aria-label')).toBe('Label');
     expect(sr(el).querySelector('obi-chevron-right-google')).not.toBeNull();
     el.expanded = true;
     await el.updateComplete;

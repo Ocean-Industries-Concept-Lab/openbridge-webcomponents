@@ -3,7 +3,6 @@ import {property, query} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
 import {styleMap} from 'lit/directives/style-map.js';
-import {msg, localized} from '@lit/localize';
 import {customElement} from '../../decorator.js';
 import componentStyle from './checkbox-item.css?inline';
 import '../checkbox/checkbox.js';
@@ -58,8 +57,8 @@ export type ObcCheckboxItemExpandToggleEvent = CustomEvent<boolean>;
  *
  * ### Accessibility
  * The checkbox and the chevron are separate controls in the natural tab
- * order. The chevron is a native button with `aria-expanded` and a name
- * built from the label, following the WAI-ARIA checkbox and disclosure
+ * order. The chevron is a native button named by the row's label, with the
+ * state in `aria-expanded`, following the WAI-ARIA checkbox and disclosure
  * button patterns.
  *
  * ### Example
@@ -95,7 +94,6 @@ export type ObcCheckboxItemExpandToggleEvent = CustomEvent<boolean>;
  * @stable
  */
 @customElement('obc-checkbox-item')
-@localized()
 export class ObcCheckboxItem extends LitElement {
   @property({type: String}) status: CheckboxStatus = CheckboxStatus.unchecked;
 
@@ -183,12 +181,11 @@ export class ObcCheckboxItem extends LitElement {
 
   private renderChevron() {
     if (!this.expandable) return nothing;
-    const action = this.expanded ? msg('Collapse') : msg('Expand');
     return html`<button
       type="button"
       class="chevron-button"
       aria-expanded=${this.expanded ? 'true' : 'false'}
-      aria-label=${`${action} ${this.label}`.trim()}
+      aria-label=${ifDefined(this.label.trim() || undefined)}
       ?disabled=${this.isDisabled}
       @click=${this.handleChevronClick}
     >
