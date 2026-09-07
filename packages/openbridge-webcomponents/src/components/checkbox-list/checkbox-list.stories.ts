@@ -118,3 +118,44 @@ export const WithDescriptions: Story = {
       ></obc-checkbox-item>
     </obc-checkbox-list>`,
 };
+
+/** `level` is not capped at 2: each level above 1 adds one more spacer. */
+export const DeepNesting: Story = {
+  render: (args) =>
+    html`<obc-checkbox-list style="width:320px" .hoverStyle=${args.hoverStyle}>
+      <obc-checkbox-item
+        level="1"
+        expandable
+        expanded
+        label="Documents"
+        status=${CheckboxStatus.mixed}
+      ></obc-checkbox-item>
+      <obc-checkbox-item
+        level="2"
+        expandable
+        expanded
+        label="Reports"
+        status=${CheckboxStatus.mixed}
+      ></obc-checkbox-item>
+      <obc-checkbox-item
+        level="3"
+        label="Monthly"
+        status=${CheckboxStatus.checked}
+      ></obc-checkbox-item>
+      <obc-checkbox-item level="3" label="Quarterly"></obc-checkbox-item>
+      <obc-checkbox-item
+        level="2"
+        expandable
+        label="Presentations"
+      ></obc-checkbox-item>
+      <obc-checkbox-item
+        level="3"
+        label="Hidden until expanded"
+      ></obc-checkbox-item>
+      <obc-checkbox-item
+        level="1"
+        expandable
+        label="Images"
+      ></obc-checkbox-item>
+    </obc-checkbox-list>`,
+};
