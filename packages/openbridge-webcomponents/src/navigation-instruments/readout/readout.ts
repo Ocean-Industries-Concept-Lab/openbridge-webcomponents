@@ -196,12 +196,6 @@ export interface ReadoutSourceOptions extends ReadoutSrcOptions {
 }
 
 /**
- * Whether the ignored-`size` warning has been logged. Module-wide on purpose:
- * a screen of horizontal readouts should print one line, not one per element.
- */
-let hasWarnedHorizontalSize = false;
-
-/**
  * `<obc-readout>` – An instrument readout: a value with optional setpoint,
  * advice, label, unit, and source, arranged vertically or horizontally.
  *
@@ -256,7 +250,7 @@ let hasWarnedHorizontalSize = false;
  *   arrangement exists in the large tier alone (Figma 6.1: it relies on the
  *   label+unit stack aligning with the L-size value caps), so `size` is
  *   ignored when `direction` is `horizontal`; a horizontal readout given any
- *   other `size` logs a one-time console warning.
+ *   other `size` logs a console warning once per element.
  * @availableWhen size direction==vertical
  * @availableWhen stacking direction==vertical
  * @availableWhen alignment direction==vertical && stacking==stacked
@@ -372,6 +366,7 @@ export class ObcReadout extends LitElement {
     ReadoutBlockHidePhase.none;
   private deferredSetpointHideTimer?: number;
   private hasCompletedFirstUpdate = false;
+  private hasWarnedHorizontalSize = false;
 
   @state() private sourcePickerContentVisible = false;
   @state() private sourcePickerOptions: ContextMenuOption[] = [];
@@ -1322,24 +1317,25 @@ export class ObcReadout extends LitElement {
 
   /**
    * A horizontal readout discards any `size` but `large` (see `resolvedSize`).
-   * A silent discard is indistinguishable from a bug to a consumer, so the
-   * first offending readout on the page says so (#1182).
+   * A silent discard is indistinguishable from a bug to a consumer, so each
+   * offending element says so once and logs itself for locating (#1182).
+   * A removed `size` attribute arrives as `null` and counts as unset.
    */
   private warnHorizontalSizeIgnored(): void {
     if (
-      hasWarnedHorizontalSize ||
+      this.hasWarnedHorizontalSize ||
       !this.isHorizontal ||
-      this.size === undefined ||
+      !this.size ||
       this.size === ReadoutSize.large
     ) {
       return;
     }
-    hasWarnedHorizontalSize = true;
+    this.hasWarnedHorizontalSize = true;
     console.warn(
       `[obc-readout] size="${this.size}" is ignored when direction="horizontal": ` +
         'the horizontal arrangement exists in the large tier only. Remove the ' +
-        'size, or use direction="vertical" for the small / medium tiers. ' +
-        'Logged once per page.'
+        'size, or use direction="vertical" for the small / medium tiers.',
+      this
     );
   }
 

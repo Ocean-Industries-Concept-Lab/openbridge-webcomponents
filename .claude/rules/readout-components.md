@@ -224,7 +224,7 @@ Decisions carried into code from the 6.1 review (2026-08):
   deliberately keeps its own per-row convention.
 - The horizontal `obc-readout` exists in the **large tier only** — `size` is
   ignored when `direction="horizontal"`, and a horizontal readout given any
-  other `size` logs a one-time console warning so the discard is never silent
+  other `size` warns once per element so the discard is never silent
   (#1182). Its label+unit stack is pinned to
   the value's container height (`--_readout-primary-height`,
   space-between), so the label cap top and unit cap bottom align with the

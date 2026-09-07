@@ -1608,12 +1608,12 @@ export const TestCases: Story = {
 };
 
 /**
- * A horizontal readout given a `size` other than `large` warns once. The tier
- * is discarded (the arrangement exists in the large tier only), and a silent
- * discard is indistinguishable from a bug to a consumer (#1182). The guard is
- * module-wide so a screen of readouts prints one line, not one per element.
- * Driven through `willUpdate` on detached elements, like
- * `Readout Block → TestValidationSurvivesUnrelatedUpdate`.
+ * A horizontal readout given a `size` other than `large` warns once per
+ * element. The tier is discarded (the arrangement exists in the large tier
+ * only), and a silent discard is indistinguishable from a bug to a consumer
+ * (#1182). A removed `size` attribute arrives as `null` through Lit's String
+ * converter and counts as unset. Driven through `willUpdate` on detached
+ * elements, like `Readout Block → TestValidationSurvivesUnrelatedUpdate`.
  */
 export const TestHorizontalSizeWarning: Story = {
   render: () => html`<span>Regression test — see the play function.</span>`,
@@ -1623,26 +1623,40 @@ export const TestHorizontalSizeWarning: Story = {
       direction?: ReadoutDirection;
       willUpdate: (changed: Map<string, unknown>) => void;
     };
-    const update = (size: ReadoutSize, direction: ReadoutDirection) => {
+    const probe = (
+      size: ReadoutSize | undefined,
+      direction: ReadoutDirection
+    ) => {
       const el = document.createElement('obc-readout') as Probe;
       el.size = size;
       el.direction = direction;
-      el.willUpdate(new Map());
+      return el;
     };
+    const update = (el: Probe) => el.willUpdate(new Map());
     const warn = spyOn(console, 'warn').mockImplementation(() => undefined);
     try {
-      update(ReadoutSize.large, ReadoutDirection.horizontal);
-      update(ReadoutSize.small, ReadoutDirection.vertical);
+      update(probe(ReadoutSize.large, ReadoutDirection.horizontal));
+      update(probe(ReadoutSize.small, ReadoutDirection.vertical));
+      update(probe(undefined, ReadoutDirection.horizontal));
+      const removed = probe(ReadoutSize.small, ReadoutDirection.horizontal);
+      removed.setAttribute('size', ReadoutSize.small);
+      removed.removeAttribute('size');
+      update(removed);
       await expect(warn).not.toHaveBeenCalled();
 
-      update(ReadoutSize.small, ReadoutDirection.horizontal);
+      const small = probe(ReadoutSize.small, ReadoutDirection.horizontal);
+      update(small);
       await expect(warn).toHaveBeenCalledTimes(1);
       await expect(warn.mock.calls[0][0]).toMatch(
         /\[obc-readout\].*size.*horizontal/
       );
+      await expect(warn.mock.calls[0][1]).toBe(small);
 
-      update(ReadoutSize.medium, ReadoutDirection.horizontal);
+      update(small);
       await expect(warn).toHaveBeenCalledTimes(1);
+
+      update(probe(ReadoutSize.medium, ReadoutDirection.horizontal));
+      await expect(warn).toHaveBeenCalledTimes(2);
     } finally {
       warn.mockRestore();
     }
