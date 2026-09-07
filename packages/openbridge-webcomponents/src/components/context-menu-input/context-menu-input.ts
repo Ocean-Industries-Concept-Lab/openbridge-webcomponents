@@ -136,7 +136,7 @@ export enum ContextMenuType {
  * - **Checkboxes:**
  *   - Multi-select list with checkboxes. Each option can be toggled independently.
  * - **NestedCheckboxes:**
- *   - Multi-select with hierarchical/nested options. Indentation reflects nesting level.
+ *   - Multi-select with hierarchical/nested options. Each row's `level` drives the indentation: level 1 reserves the chevron slot, each level above adds a spacer.
  * - **Flyout:**
  *   - Groups of options expand into submenus (flyouts). Supports both single and multi-select. Group and child options can have icons.
  * - **Multi:**
@@ -597,21 +597,15 @@ export class ObcContextMenuInput extends LitElement {
   }
 
   private renderCheckboxItems() {
+    const isNestedMenu = this.type === ContextMenuType.NestedCheckboxes;
     return this.options.map((o) => {
       const isSelected = this.isOptionSelected(o.value);
-      const isNested =
-        this.type === ContextMenuType.NestedCheckboxes &&
-        o.level &&
-        o.level > 1;
-      const indent = isNested ? (o.level! - 1) * 16 : 0;
-      return html`<div
-        class="menu-item checkbox-item-wrapper"
-        style=${indent ? `padding-left:${indent}px` : ''}
-      >
+      return html`<div class="menu-item checkbox-item-wrapper">
         <obc-checkbox-item
           data-menu-item="true"
           data-menu-value=${o.value}
           .label=${o.label}
+          .level=${isNestedMenu ? (o.level ?? 1) : 0}
           .status=${isSelected ? 'checked' : 'unchecked'}
           @change=${(e: Event) => this.handleCheckboxChange(o, e)}
         ></obc-checkbox-item>

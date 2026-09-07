@@ -65,11 +65,6 @@
   padding: 0;
 }
 
-/* Nested Checkbox Styles */
-.checkbox-item-wrapper.nested {
-  padding-left: var(--ui-components-checkbox-nested-item-padding-left);
-}
-
 /* Multi-Column Styles */
 .multi-content {
   width: 100%;
