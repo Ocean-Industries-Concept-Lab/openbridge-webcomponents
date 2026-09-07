@@ -17,15 +17,6 @@ import {property} from 'lit/decorators.js';
 
 /**
  *
- * @fires home-button-clicked - Fired when the home button is clicked
- * @fires link-button-clicked - Fired when the link button is clicked
- * @fires alert-button-clicked - Fired when the alert button is clicked
- * @fires dimming-button-clicked - Fired when the dimming button is clicked
- * @fires notification-button-clicked - Fired when the notification button is clicked
- * @fires screen-button-clicked - Fired when the screen button is clicked
- * @fires user-button-clicked - Fired when the user button is clicked
- * @fires system-button-clicked - Fired when the system button is clicked
- *
  * @slot vessel-selector - Vessel selector content
  * @slot status-label-1 - Label for the first status field
  * @slot status-icon-1 - Icon for the first status field
@@ -34,6 +25,15 @@ import {property} from 'lit/decorators.js';
  * @slot status-label-3 - Label for the third status field
  * @slot status-icon-3 - Icon for the third status field
  * @slot clock - Custom clock content, rendered when `showClock` is true
+ *
+ * @fires {CustomEvent} home-button-clicked - Fired when the home button is clicked
+ * @fires {CustomEvent} link-button-clicked - Fired when the link button is clicked
+ * @fires {CustomEvent} alert-button-clicked - Fired when the alert button is clicked
+ * @fires {CustomEvent} dimming-button-clicked - Fired when the dimming button is clicked
+ * @fires {CustomEvent} notification-button-clicked - Fired when the notification button is clicked
+ * @fires {CustomEvent} screen-button-clicked - Fired when the screen button is clicked
+ * @fires {CustomEvent} user-button-clicked - Fired when the user button is clicked
+ * @fires {CustomEvent} system-button-clicked - Fired when the system button is clicked
  * @experimental
  */
 @customElement('obc-integration-bar-dropdown')
