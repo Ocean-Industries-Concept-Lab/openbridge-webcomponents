@@ -31,10 +31,13 @@ const meta: Meta<typeof ObcIntegrationBarDropdown> = {
   render: (args) =>
     html`<obc-integration-bar-dropdown
       .showHomeButton=${args.showHomeButton}
+      .showLinkButton=${args.showLinkButton}
       .showClock=${args.showClock}
       .showDimmingButton=${args.showDimmingButton}
       .showUserButton=${args.showUserButton}
+      .showAlertButton=${args.showAlertButton}
       .showNotificationButton=${args.showNotificationButton}
+      .showScreenButton=${args.showScreenButton}
       .showSystemButton=${args.showSystemButton}
       .nStatusFields=${args.nStatusFields}
     >
@@ -94,4 +97,17 @@ type Story = StoryObj<ObcIntegrationBarDropdown>;
 
 export const Primary: Story = {
   args: {},
+};
+
+export const AllButtons: Story = {
+  args: {
+    showHomeButton: true,
+    showLinkButton: true,
+    showAlertButton: true,
+    showNotificationButton: true,
+    showScreenButton: true,
+    showSystemButton: true,
+    showDimmingButton: true,
+    showUserButton: true,
+  },
 };

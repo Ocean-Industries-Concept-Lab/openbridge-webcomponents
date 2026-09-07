@@ -9,14 +9,20 @@ import '../../icons/icon-user.js';
 import '../../icons/icon-configure.js';
 import '../../icons/icon-notification.js';
 import '../../icons/icon-home.js';
+import '../../icons/icon-screen-desk.js';
+import '../../icons/icon-alerts.js';
+import '../../icons/icon-link.js';
 import {NotificationButtonStyle} from '../../components/notification-button/notification-button.js';
 import {property} from 'lit/decorators.js';
 
 /**
  *
  * @fires home-button-clicked - Fired when the home button is clicked
+ * @fires link-button-clicked - Fired when the link button is clicked
+ * @fires alert-button-clicked - Fired when the alert button is clicked
  * @fires dimming-button-clicked - Fired when the dimming button is clicked
  * @fires notification-button-clicked - Fired when the notification button is clicked
+ * @fires screen-button-clicked - Fired when the screen button is clicked
  * @fires user-button-clicked - Fired when the user button is clicked
  * @fires system-button-clicked - Fired when the system button is clicked
  *
@@ -34,11 +40,17 @@ import {property} from 'lit/decorators.js';
 export class ObcIntegrationBarDropdown extends LitElement {
   @property({type: Boolean}) showHomeButton = false;
   @property({type: Boolean}) homeButtonActivated = false;
+  @property({type: Boolean}) showLinkButton = false;
+  @property({type: Boolean}) linkButtonActivated = false;
   @property({type: Boolean}) showClock = false;
+  @property({type: Boolean}) showAlertButton = false;
+  @property({type: Boolean}) alertButtonActivated = false;
   @property({type: Boolean}) showNotificationButton = false;
   @property({type: Boolean}) notificationButtonActivated = false;
   @property({type: Number}) notificationCount = 0;
   @property({type: Boolean}) showNotificationCount = false;
+  @property({type: Boolean}) showScreenButton = false;
+  @property({type: Boolean}) screenButtonActivated = false;
   @property({type: Boolean}) showUserButton = false;
   @property({type: Boolean}) userButtonActivated = false;
   @property({type: Boolean}) showDimmingButton = false;
@@ -82,10 +94,34 @@ export class ObcIntegrationBarDropdown extends LitElement {
                 <obi-home></obi-home>
               </obc-icon-button>`
             : null}
+          ${this.showLinkButton
+            ? html`<obc-icon-button
+                class="link-button"
+                part="link-button"
+                variant="integration"
+                @click=${() =>
+                  this.dispatchEvent(new CustomEvent('link-button-clicked'))}
+                ?activated=${this.linkButtonActivated}
+              >
+                <obi-link></obi-link>
+              </obc-icon-button>`
+            : null}
           <slot name="vessel-selector"></slot>
           ${this.renderStatusFields()}
         </div>
         <div class="right-side">
+          ${this.showAlertButton
+            ? html`<obc-icon-button
+                class="alert-button"
+                part="alert-button"
+                variant="integration"
+                @click=${() =>
+                  this.dispatchEvent(new CustomEvent('alert-button-clicked'))}
+                ?activated=${this.alertButtonActivated}
+              >
+                <obi-alerts></obi-alerts>
+              </obc-icon-button>`
+            : null}
           ${this.showNotificationButton
             ? html`<obc-notification-button
                 @click=${() =>
@@ -98,6 +134,18 @@ export class ObcIntegrationBarDropdown extends LitElement {
                 ?isActive=${this.notificationButtonActivated}
               ></obc-notification-button>`
             : nothing}
+          ${this.showScreenButton
+            ? html`<obc-icon-button
+                class="screen-button"
+                part="screen-button"
+                variant="integration"
+                @click=${() =>
+                  this.dispatchEvent(new CustomEvent('screen-button-clicked'))}
+                ?activated=${this.screenButtonActivated}
+              >
+                <obi-screen-desk></obi-screen-desk>
+              </obc-icon-button>`
+            : null}
           ${this.showSystemButton
             ? html`<obc-icon-button
                 class="system-button"
