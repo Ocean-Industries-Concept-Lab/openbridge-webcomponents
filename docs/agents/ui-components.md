@@ -114,3 +114,14 @@ Components that participate in grouped layouts (e.g. form items) use host data a
 ```
 
 These attributes are set by a parent component — do not set them internally.
+
+## Checkbox lists
+
+`obc-checkbox-item` rows are flat; depth is the numeric `level` (0 plain, 1
+reserves the chevron slot, each level above adds one
+`--ui-components-checkbox-nested-item-padding-left` spacer). The chevron is a
+native button inside the row that fires `expand-toggle` and never flips
+`expanded` itself. `obc-checkbox-list` owns the `hidden` attribute of its rows
+and forwards its `hoverStyle` to them — consumers bind neither. The collapse
+walk is `checkbox-list-visibility.ts`, guarded by its spec. Context menus
+indent nested checkboxes through `level`, not padding.
