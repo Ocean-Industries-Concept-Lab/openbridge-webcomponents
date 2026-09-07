@@ -189,8 +189,8 @@ export const Degrees: Story = {
  * an `s` label with the `xs` source). Inside a list the source column is
  * reserved to the longest source, so the readings stay aligned across rows
  * that have no source at all. The unit column is likewise reserved to the
- * longest unit (`/min`); render the rows outside `obc-readout-list` if the
- * units should hug the value instead.
+ * longest unit (`/min`); standalone rows let each unit hug its value instead
+ * (see `Readout List Item → ColumnAlignment`, "without reservers").
  */
 const INLINE_SOURCE_ROWS: Row[] = [
   {
