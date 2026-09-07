@@ -71,8 +71,23 @@ describe('obc-checkbox-list', () => {
     expect(late.hoverStyle).toBe('visual-target');
   });
 
-  it('renders a group role', async () => {
+  it('recomputes when a collapsed row stops being expandable', async () => {
+    const rows = [item(1, true, false), item(2)];
+    await mount(rows);
+    expect(rows[1].hidden).toBe(true);
+    rows[0].expandable = false;
+    await rows[0].updateComplete;
+    await nextTick();
+    expect(rows[1].hidden).toBe(false);
+  });
+
+  it('is the group and keeps a role the consumer set', async () => {
     const list = await mount([]);
-    expect(list.shadowRoot!.querySelector('[role="group"]')).not.toBeNull();
+    expect(list.getAttribute('role')).toBe('group');
+    const custom = document.createElement('obc-checkbox-list');
+    custom.setAttribute('role', 'presentation');
+    document.body.appendChild(custom);
+    await custom.updateComplete;
+    expect(custom.getAttribute('role')).toBe('presentation');
   });
 });

@@ -7,7 +7,6 @@ import {
   ObcCheckboxItemHoverStyle,
   type ObcCheckboxItemExpandToggleEvent,
 } from '../checkbox-item/checkbox-item.js';
-import '../checkbox-item/checkbox-item.js';
 import {computeHiddenRows} from './checkbox-list-visibility.js';
 
 /**
@@ -24,7 +23,7 @@ import {computeHiddenRows} from './checkbox-list-visibility.js';
  * ### Features
  * - Flat markup, level-driven hierarchy — no nesting of elements required.
  * - Handles `expand-toggle`: sets the row's `expanded` and recomputes.
- * - Reacts to `expanded` and `level` attribute changes made from outside.
+ * - Reacts to `expandable`, `expanded` and `level` changes made from outside.
  * - `hoverStyle` forwarded to slotted rows, including rows added later.
  *
  * ### Usage Guidelines
@@ -34,8 +33,8 @@ import {computeHiddenRows} from './checkbox-list-visibility.js';
  * - Selection stays per row: listen to each row's `change`.
  *
  * ### Accessibility
- * Rows are ordinary checkboxes and buttons in the natural tab order inside a
- * `role="group"`; hidden rows leave the tab order. This is a group of
+ * The host is the `role="group"`; rows are ordinary checkboxes and buttons in
+ * the natural tab order and hidden rows leave it. This is a group of
  * checkboxes with disclosure buttons, not a tree widget, so there is no
  * roving tabindex. Name the group with `aria-label` or `aria-labelledby` on
  * the host.
@@ -63,13 +62,16 @@ export class ObcCheckboxList extends LitElement {
 
   override connectedCallback(): void {
     super.connectedCallback();
-    // Rows are light-DOM children owned by the consumer, so `expanded` and
-    // `level` can change without any event reaching the list.
+    // The role sits on the host so a consumer's aria-label / aria-labelledby
+    // names the group.
+    if (!this.hasAttribute('role')) this.setAttribute('role', 'group');
+    // Rows are light-DOM children owned by the consumer, so `expandable`,
+    // `expanded` and `level` can change without any event reaching the list.
     this.mutationObserver = new MutationObserver(() => this.sync());
     this.mutationObserver.observe(this, {
       childList: true,
       attributes: true,
-      attributeFilter: ['expanded', 'level'],
+      attributeFilter: ['expandable', 'expanded', 'level'],
       subtree: true,
     });
     this.addEventListener('expand-toggle', this.onExpandToggle);
@@ -113,7 +115,7 @@ export class ObcCheckboxList extends LitElement {
   }
 
   override render() {
-    return html`<div class="list" role="group">
+    return html`<div class="list">
       <slot @slotchange=${() => this.sync()}></slot>
     </div>`;
   }

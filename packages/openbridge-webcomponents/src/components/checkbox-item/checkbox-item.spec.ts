@@ -37,9 +37,15 @@ describe('obc-checkbox-item level', () => {
     expect(spacer.style.getPropertyValue('--checkbox-item-depth')).toBe('2');
   });
 
-  it('reflects level as an attribute', async () => {
-    const el = await mount((e) => (e.level = 2));
+  it('reflects level, expandable and expanded as attributes', async () => {
+    const el = await mount((e) => {
+      e.level = 2;
+      e.expandable = true;
+      e.expanded = true;
+    });
     expect(el.getAttribute('level')).toBe('2');
+    expect(el.hasAttribute('expandable')).toBe(true);
+    expect(el.hasAttribute('expanded')).toBe(true);
   });
 });
 

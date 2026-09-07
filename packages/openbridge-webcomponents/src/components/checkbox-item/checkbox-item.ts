@@ -110,7 +110,7 @@ export class ObcCheckboxItem extends LitElement {
 
   @property({type: Number, reflect: true}) level = 0;
 
-  @property({type: Boolean}) expandable = false;
+  @property({type: Boolean, reflect: true}) expandable = false;
 
   @property({type: Boolean, reflect: true}) expanded = false;
 
