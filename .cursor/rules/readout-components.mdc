@@ -156,6 +156,13 @@ Text rows (`valueType="text"`) are excluded in **both** directions: they neither
 contribute to the numeric reserve nor receive it, so a long string cannot inflate
 the numeric column and a short one is not padded to a digit width.
 
+The unit reserver is honoured even by a row **without** a unit: the row renders
+the blank reserved trailing unit column so its value and degree stay on the same
+grid as its neighbours. `leading-unit` rows are the exception — they have no
+trailing unit column to reserve. Guarded by `Readout List Item →
+ColumnAlignment` (the unit-less Heading row) and `Readout List →
+LeadingSrcInline`.
+
 ### 6. Lit lowercases attribute names — it does not kebab-case them
 
 `valueType` is the attribute `valuetype`, not `value-type`. `OBSERVED_ATTRIBUTES`
@@ -212,6 +219,15 @@ Decisions carried into code from the 6.1 review (2026-08):
 - Label defaults: `s` on large `obc-readout` (scannability), `xs` in the
   dense list item; SemiBold only when enhanced. Both overridable via
   `labelOptions`.
+- Source placement in the list item is one `stacking` value per arrangement
+  (`leading-src` stacks the source under the label, `leading-src-inline`
+  keeps it on the label's line) rather than a generic primary/secondary
+  label block — the designer chose the per-variant form as easier to
+  maintain and to pick from. The inline reference row is a playground node
+  outside the official 6.1 sheets (Figma 46596:102880: label `s`, source
+  `xs`, 8px apart); the sheets' "Leading label + source" still trails the
+  source. The label default stays `xs` in that mode; pair it with
+  `labelOptions.size: 's'` to match the reference.
 - Degree renders on the **actual value only** in `obc-readout` — setpoint /
   advice blocks never carry one (the unit is written once per readout; the
   degree follows the same rule, 2026-08-18). `obc-readout-list-item`
