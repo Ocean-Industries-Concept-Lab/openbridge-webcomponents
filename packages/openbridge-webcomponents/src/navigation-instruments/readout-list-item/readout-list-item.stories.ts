@@ -726,6 +726,42 @@ export const LeadingSrc: Story = {
     ]),
 };
 
+/**
+ * `leading-src-inline` keeps the source on the label's line, so a row with a
+ * source stays one line high (Figma 46596:102880 pairs an `s` label with the
+ * `xs` source; the dense default label stays `xs` unless `labelOptions.size`
+ * says otherwise).
+ */
+export const LeadingSrcInline: Story = {
+  render: () =>
+    renderShowcase([
+      {
+        title: 'Stacking: leading-src-inline',
+        columns: 3,
+        cases: stackingCases(ReadoutListItemStacking.leadingSrcInline),
+      },
+      {
+        title: 'Label s + source xs (Figma 46596:102880)',
+        columns: 3,
+        cases: SIZES.map((size) => ({
+          label: `${size} / label s`,
+          config: {
+            label: 'HDG',
+            src: 'GPS1',
+            value: 355,
+            unit: '',
+            options: {
+              size,
+              stacking: ReadoutListItemStacking.leadingSrcInline,
+              hasDegree: true,
+              label: {size: ObcTextboxSize.s},
+            },
+          },
+        })),
+      },
+    ]),
+};
+
 export const SetpointFlipFlop: Story = {
   render: () =>
     renderShowcase([

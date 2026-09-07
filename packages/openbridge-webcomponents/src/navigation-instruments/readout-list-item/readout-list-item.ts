@@ -71,12 +71,15 @@ export type ReadoutListItemSize = ReadoutBlockSize;
  * Placement of the unit/source relative to the label and value.
  * - `trailing-unit`: unit after the value, source after a trailing divider.
  * - `leading-unit`: unit beside/under the label.
- * - `leading-src`: source beside/under the label (no trailing source).
+ * - `leading-src`: source under the label (no trailing source).
+ * - `leading-src-inline`: source on the label's line, after it (no trailing
+ *   source); keeps the row one line high.
  */
 export enum ReadoutListItemStacking {
   trailingUnit = 'trailing-unit',
   leadingUnit = 'leading-unit',
   leadingSrc = 'leading-src',
+  leadingSrcInline = 'leading-src-inline',
 }
 
 /**
@@ -273,7 +276,8 @@ export interface ReadoutSrcOptions extends ReadoutBlockState {
  * - **Building blocks:** value, optional setpoint, and optional advice segments,
  *   each cap-height-aligned and able to reserve a stable width.
  * - **Sizes:** `small`, `medium`, `large` density scales.
- * - **Stacking:** `trailing-unit`, `leading-unit`, `leading-src` placement.
+ * - **Stacking:** `trailing-unit`, `leading-unit`, `leading-src`,
+ *   `leading-src-inline` placement.
  * - **Priority:** `regular`/`enhanced` colour emphasis; per-value `weight`
  *   (`regular`/`semibold`/`bold`) is independent of colour.
  * - **Setpoint flip-flop:** swaps emphasis between value and setpoint as the
@@ -404,6 +408,15 @@ export class ObcReadoutListItem extends LitElement {
 
   private get resolvedStacking(): ReadoutListItemStacking {
     return this.stacking ?? ReadoutListItemStacking.trailingUnit;
+  }
+
+  /** Both leading-src stackings move the source into the label stack. */
+  private get hasLeadingSrc(): boolean {
+    const stacking = this.resolvedStacking;
+    return (
+      stacking === ReadoutListItemStacking.leadingSrc ||
+      stacking === ReadoutListItemStacking.leadingSrcInline
+    );
   }
 
   private get resolvedPriority(): ReadoutListItemPriority {
@@ -914,8 +927,7 @@ export class ObcReadoutListItem extends LitElement {
     const stacking = this.resolvedStacking;
     const showLeadingUnit =
       stacking === ReadoutListItemStacking.leadingUnit && Boolean(this.unit);
-    const showLeadingSrc =
-      stacking === ReadoutListItemStacking.leadingSrc && Boolean(this.src);
+    const showLeadingSrc = this.hasLeadingSrc && Boolean(this.src);
 
     return html`
       <div class="label-container" part="label-container">
@@ -1004,10 +1016,7 @@ export class ObcReadoutListItem extends LitElement {
   }
 
   private renderTrailingSource(): TemplateResult | typeof nothing {
-    if (
-      this.resolvedStacking === ReadoutListItemStacking.leadingSrc ||
-      !this.src
-    ) {
+    if (this.hasLeadingSrc || !this.src) {
       return nothing;
     }
     return html`
