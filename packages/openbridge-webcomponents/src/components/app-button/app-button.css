@@ -74,6 +74,8 @@
   }
 
   &.integration {
+    @mixin style style=integration-flat;
+
     .icon-wrapper {
       @mixin style style=integration-normal noClick;
       color: var(--integration-on-normal-neutral-color);
