@@ -112,16 +112,6 @@ export function canAckFilter(filter: (alert: Alert) => boolean) {
 }
 
 /**
- * Grouping
- * An alert listing `memberOf` is rendered as a child of every alert it names,
- * so an alert belonging to two groups appears under both. An alert that others
- * are members of becomes a group row: it is an ordinary alert row with a
- * chevron, and stays one whether its severity mirrors its members or it exists
- * only to head the group. An alert whose parents are all filtered out of the
- * current mode, or whose grouping is cyclic, is promoted to the top level
- * rather than hidden — the list never drops an alert because of where it sits
- * in the hierarchy.
- *
  * @availableWhen timeFormatter showTime==true
  * @property defaultExpanded - Whether groups start expanded. Set false to open the list collapsed.
  * @fires {ObcAckClickEvent} ack-click - Fired when the user clicks the "ACK" button.
@@ -144,13 +134,8 @@ export class ObcAlertListDetails extends LitElement {
 
   @state() private expansionOverrides = new Map<string, boolean>();
 
-  /**
-   * The alert each rendered row stands for. A row id is a path, because one
-   * alert can appear under several groups, so it is not an alert id.
-   */
   private alertByRowId = new Map<string, Alert>();
 
-  /** Deduplicated: an alert visible under two groups is still one alert. */
   public getVisibleAlerts(): Alert[] {
     const seen = new Set<string>();
     return this.alertList
@@ -289,18 +274,6 @@ export class ObcAlertListDetails extends LitElement {
     return this.alerts.filter(this.metadata.filter);
   }
 
-  /**
-   * The rows to render, depth-first, with a collapsed group's descendants left
-   * out. Fills {@link alertByRowId} on the way, so the row a click or a sort
-   * lands on can be traced back to its alert.
-   *
-   * Every filtered alert reaches the list. An alert no group walk can descend
-   * to — one whose `memberOf` chain only ever leads back into a cycle, and
-   * anything grouped below it — becomes a root of its own, since an alert list
-   * that quietly omits an active alarm is worse than one grouped oddly.
-   * Reachability is computed before rendering, not after: a collapsed group's
-   * members are unrendered but still reachable, and must not be promoted.
-   */
   private buildVisibleRows(): ObcTableRow[] {
     const alerts = this.filteredAlerts;
     const alertIds = new Set(alerts.map((alert) => alert.id));

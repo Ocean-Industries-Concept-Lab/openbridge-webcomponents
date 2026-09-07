@@ -298,15 +298,6 @@ export class ObcTable extends LitElement {
 
   private _previousPositions: {top: number; index: string}[] = [];
 
-  /**
-   * Whether the rows form an actual hierarchy. Drives the expander gutter, the
-   * `treegrid` role and the sibling-scoped sort; a table of plain rows renders
-   * and behaves exactly as it did before.
-   *
-   * A caller that fills the fields in unconditionally still counts as flat
-   * while every row sits at level 0 with nothing to expand, so a list that
-   * happens to have no groups keeps its ungrouped layout.
-   */
   private get hasHierarchy() {
     return this.data.some(
       (row) =>
@@ -316,15 +307,6 @@ export class ObcTable extends LitElement {
     );
   }
 
-  /**
-   * Depth-first re-flatten with each sibling set sorted on its own. Sorting the
-   * flat array instead would scatter children away from their parent.
-   *
-   * Every row given reaches the output. Rows the walk cannot descend to —
-   * a `parentId` cycle, and anything hanging below one — are re-entered as a
-   * top-level sibling set, because `data` holds only rows meant to be visible
-   * and a malformed hierarchy must not make one disappear.
-   */
   private sortWithinSiblings(
     rows: ObcTableRow[],
     compare: (a: ObcTableRow, b: ObcTableRow) => number
@@ -431,11 +413,6 @@ export class ObcTable extends LitElement {
     );
   }
 
-  /**
-   * Indent gutter for a hierarchical row, holding the chevron at its right end.
-   * Every row gets one so a leaf and a group at the same level line up; the
-   * chevron itself is only drawn for `expandable` rows.
-   */
   private _renderRowExpander(row: ObcTableRow) {
     if (!this.hasHierarchy) {
       return nothing;
@@ -586,10 +563,6 @@ export class ObcTable extends LitElement {
     }
   }
 
-  /**
-   * Right expands a collapsed group, Left collapses an expanded one and
-   * otherwise moves focus to the parent row. Returns whether the key was used.
-   */
   private _handleRowExpandKey(
     event: KeyboardEvent,
     key: 'ArrowRight' | 'ArrowLeft'
@@ -633,7 +606,6 @@ export class ObcTable extends LitElement {
       )
     );
 
-    // Calculate the zoom factor for the first row
     const firstRow = rows[0];
     if (!firstRow) {
       return [];
