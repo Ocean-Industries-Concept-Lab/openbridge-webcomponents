@@ -14,15 +14,18 @@ const statusVariants = [
   CheckboxStatus.mixed,
 ] as const;
 
-const renderStatusGroup = (opts: {
-  state: ObcCheckboxItemState;
+type RowOptions = {
   hoverStyle: ObcCheckboxItemHoverStyle;
-  disabled: boolean;
   label: string;
-  isNested: boolean;
-  isLevel1: boolean;
-  isLevel2: boolean;
-}) => html`
+  description: string;
+  level: number;
+  expandable: boolean;
+  expanded: boolean;
+};
+
+const renderStatusGroup = (
+  opts: RowOptions & {state: ObcCheckboxItemState; disabled: boolean}
+) => html`
   <div style="display:flex; justify-content:flex-start; width:100%;">
     <div style="display:flex; align-items:center; gap:24px; min-height:96px;">
       ${statusVariants.map(
@@ -33,9 +36,10 @@ const renderStatusGroup = (opts: {
             .hoverStyle=${opts.hoverStyle}
             .disabled=${opts.disabled}
             .label=${opts.label}
-            .isNested=${opts.isNested}
-            .isLevel1=${opts.isLevel1}
-            .isLevel2=${opts.isLevel2}
+            .description=${opts.description}
+            .level=${opts.level}
+            .expandable=${opts.expandable}
+            .expanded=${opts.expanded}
           ></obc-checkbox-item>`
       )}
     </div>
@@ -44,14 +48,7 @@ const renderStatusGroup = (opts: {
 
 const renderStateRow = (
   title: string,
-  opts: {
-    state: ObcCheckboxItemState;
-    hoverStyle: ObcCheckboxItemHoverStyle;
-    label: string;
-    isNested: boolean;
-    isLevel1: boolean;
-    isLevel2: boolean;
-  }
+  opts: RowOptions & {state: ObcCheckboxItemState}
 ) => html`
   <div style="display:flex; flex-direction:column; gap:8px; width:100%;">
     <div style="font-weight:600;">${title}</div>
@@ -62,13 +59,7 @@ const renderStateRow = (
   </div>
 `;
 
-const renderVariantRows = (opts: {
-  hoverStyle: ObcCheckboxItemHoverStyle;
-  label: string;
-  isNested: boolean;
-  isLevel1: boolean;
-  isLevel2: boolean;
-}) => html`
+const renderVariantRows = (opts: RowOptions) => html`
   <div style="display:flex; flex-direction:column; gap:20px; width:100%;">
     ${renderStateRow('Enabled', {
       ...opts,
@@ -88,7 +79,7 @@ const meta = {
   parameters: {
     layout: 'centered',
     actions: {
-      handles: ['change'],
+      handles: ['change', 'expand-toggle'],
     },
   },
   render: (args, context) => {
@@ -98,9 +89,10 @@ const meta = {
       .disabled=${args.disabled}
       .hoverStyle=${args.hoverStyle}
       .label=${args.label}
-      .isNested=${args.isNested}
-      .isLevel1=${args.isLevel1}
-      .isLevel2=${args.isLevel2}
+      .description=${args.description}
+      .level=${args.level}
+      .expandable=${args.expandable}
+      .expanded=${args.expanded}
     ></obc-checkbox-item>`;
 
     if (context.viewMode === 'docs') {
@@ -121,9 +113,10 @@ const meta = {
         .disabled=${args.disabled}
         .hoverStyle=${args.hoverStyle}
         .label=${args.label}
-        .isNested=${args.isNested}
-        .isLevel1=${args.isLevel1}
-        .isLevel2=${args.isLevel2}
+        .description=${args.description}
+        .level=${args.level}
+        .expandable=${args.expandable}
+        .expanded=${args.expanded}
       ></obc-checkbox-item>
     </div>`;
   },
@@ -151,84 +144,106 @@ const meta = {
       name: 'Label',
       control: {type: 'text'},
     },
+    description: {
+      name: 'Description',
+      control: {type: 'text'},
+    },
+    level: {
+      name: 'Level',
+      control: {type: 'number', min: 0, max: 4, step: 1},
+    },
+    expandable: {
+      name: 'Expandable',
+      control: {type: 'boolean'},
+    },
+    expanded: {
+      name: 'Expanded',
+      control: {type: 'boolean'},
+      if: {arg: 'expandable', truthy: true},
+    },
   },
 } satisfies Meta<ObcCheckboxItem>;
 
 export default meta;
 type Story = StoryObj<ObcCheckboxItem>;
 
+const defaultArgs = {
+  status: CheckboxStatus.unchecked,
+  state: ObcCheckboxItemState.enabled,
+  hoverStyle: ObcCheckboxItemHoverStyle.touchTarget,
+  label: 'Label',
+  description: '',
+  disabled: false,
+  level: 0,
+  expandable: false,
+  expanded: false,
+};
+
 export const Playground: Story = {
-  args: {
-    status: CheckboxStatus.unchecked,
-    state: ObcCheckboxItemState.enabled,
-    hoverStyle: ObcCheckboxItemHoverStyle.touchTarget,
-    label: 'Label',
-    disabled: false,
-    isNested: false,
-    isLevel1: false,
-    isLevel2: false,
-  },
+  args: defaultArgs,
 };
 
 export const Nested: Story = {
-  args: {
-    status: CheckboxStatus.unchecked,
-    state: ObcCheckboxItemState.enabled,
-    hoverStyle: ObcCheckboxItemHoverStyle.touchTarget,
-    label: 'Label',
-    disabled: false,
-    isNested: true,
-    isLevel1: false,
-    isLevel2: false,
-  },
+  args: {...defaultArgs, level: 1},
   render: (args) =>
     renderVariantRows({
       hoverStyle: args.hoverStyle,
       label: args.label,
-      isNested: true,
-      isLevel1: false,
-      isLevel2: false,
+      description: '',
+      level: 1,
+      expandable: false,
+      expanded: false,
     }),
 };
 
-export const Level1: Story = {
-  args: {
-    status: CheckboxStatus.unchecked,
-    state: ObcCheckboxItemState.enabled,
-    hoverStyle: ObcCheckboxItemHoverStyle.touchTarget,
-    label: 'Label',
-    disabled: false,
-    isNested: true,
-    isLevel1: true,
-    isLevel2: false,
-  },
-  render: (args) =>
-    renderVariantRows({
-      hoverStyle: args.hoverStyle,
-      label: args.label,
-      isNested: true,
-      isLevel1: true,
-      isLevel2: false,
-    }),
+export const Expandable: Story = {
+  args: {...defaultArgs, level: 1, expandable: true},
+  render: (args) => html`
+    <div style="display:flex; flex-direction:column; gap:20px; width:100%;">
+      ${renderStateRow('Collapsed', {
+        state: ObcCheckboxItemState.enabled,
+        hoverStyle: args.hoverStyle,
+        label: args.label,
+        description: '',
+        level: 1,
+        expandable: true,
+        expanded: false,
+      })}
+      ${renderStateRow('Expanded', {
+        state: ObcCheckboxItemState.enabled,
+        hoverStyle: args.hoverStyle,
+        label: args.label,
+        description: '',
+        level: 1,
+        expandable: true,
+        expanded: true,
+      })}
+    </div>
+  `,
 };
 
 export const Level2: Story = {
-  args: {
-    status: CheckboxStatus.unchecked,
-    state: ObcCheckboxItemState.enabled,
-    hoverStyle: ObcCheckboxItemHoverStyle.touchTarget,
-    label: 'Label',
-    disabled: false,
-    isNested: true,
-    isLevel1: false,
-    isLevel2: true,
-  },
+  args: {...defaultArgs, level: 2},
   render: (args) =>
     renderVariantRows({
       hoverStyle: args.hoverStyle,
       label: args.label,
-      isNested: true,
-      isLevel1: false,
-      isLevel2: true,
+      description: '',
+      level: 2,
+      expandable: false,
+      expanded: false,
+    }),
+};
+
+export const WithDescription: Story = {
+  args: {...defaultArgs, description: 'Description'},
+  render: (args) =>
+    renderVariantRows({
+      hoverStyle: args.hoverStyle,
+      label: args.label,
+      description: args.description,
+      level: 0,
+      expandable: false,
+      expanded: false,
     }),
 };
