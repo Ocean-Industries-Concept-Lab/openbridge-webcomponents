@@ -14,6 +14,7 @@ import '../../icons/icon-alerts.js';
 import '../../icons/icon-link.js';
 import {NotificationButtonStyle} from '../../components/notification-button/notification-button.js';
 import {property} from 'lit/decorators.js';
+import {msg} from '@lit/localize';
 
 /**
  * `<obc-integration-bar-dropdown>` – A compact top-level integration header with a dropdown selector, status fields and system action buttons.
@@ -119,6 +120,7 @@ export class ObcIntegrationBarDropdown extends LitElement {
                 class="home-button"
                 part="home-button"
                 variant="integration"
+                aria-label=${msg('Home')}
                 @click=${() =>
                   this.dispatchEvent(new CustomEvent('home-button-clicked'))}
                 ?activated=${this.homeButtonActivated}
@@ -131,6 +133,7 @@ export class ObcIntegrationBarDropdown extends LitElement {
                 class="link-button"
                 part="link-button"
                 variant="integration"
+                aria-label=${msg('Link')}
                 @click=${() =>
                   this.dispatchEvent(new CustomEvent('link-button-clicked'))}
                 ?activated=${this.linkButtonActivated}
@@ -147,6 +150,7 @@ export class ObcIntegrationBarDropdown extends LitElement {
                 class="alert-button"
                 part="alert-button"
                 variant="integration"
+                aria-label=${msg('Alerts')}
                 @click=${() =>
                   this.dispatchEvent(new CustomEvent('alert-button-clicked'))}
                 ?activated=${this.alertButtonActivated}
@@ -171,6 +175,7 @@ export class ObcIntegrationBarDropdown extends LitElement {
                 class="screen-button"
                 part="screen-button"
                 variant="integration"
+                aria-label=${msg('Screen')}
                 @click=${() =>
                   this.dispatchEvent(new CustomEvent('screen-button-clicked'))}
                 ?activated=${this.screenButtonActivated}
@@ -183,6 +188,7 @@ export class ObcIntegrationBarDropdown extends LitElement {
                 class="system-button"
                 part="system-button"
                 variant="integration"
+                aria-label=${msg('System')}
                 @click=${() =>
                   this.dispatchEvent(new CustomEvent('system-button-clicked'))}
                 ?activated=${this.systemButtonActivated}
@@ -195,6 +201,7 @@ export class ObcIntegrationBarDropdown extends LitElement {
                 class="dimming-button"
                 part="dimming-button"
                 variant="integration"
+                aria-label=${msg('Dimming')}
                 @click=${() =>
                   this.dispatchEvent(new CustomEvent('dimming-button-clicked'))}
                 ?activated=${this.dimmingButtonActivated}
@@ -207,6 +214,7 @@ export class ObcIntegrationBarDropdown extends LitElement {
                 class="user-button"
                 part="user-button"
                 variant="integration"
+                aria-label=${msg('User')}
                 @click=${() =>
                   this.dispatchEvent(new CustomEvent('user-button-clicked'))}
                 ?activated=${this.userButtonActivated}
