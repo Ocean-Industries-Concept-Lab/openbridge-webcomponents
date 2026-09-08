@@ -41,6 +41,7 @@ import {
   normalizeXValue,
   formatXValue,
   XValueMode,
+  observeLabelThreshold,
 } from '../../charthelpers/index.js';
 import type {ChartXValue} from '../../charthelpers/x-value.js';
 import {
@@ -546,9 +547,6 @@ export class ObcChartLineBase extends LitElement {
 
   /** @internal - ResizeObserver for tracking height threshold crossings (e.g. MIN_HEIGHT_WITH_LABELS = 192px) */
   private resizeObserver?: ResizeObserver;
-
-  /** @internal - Track previous state to detect threshold crossing */
-  private wasAboveThreshold = false;
 
   /** @internal - Track external scale dimensions */
   private externalScaleDimensions: Map<string, number> = new Map();
@@ -1681,38 +1679,25 @@ export class ObcChartLineBase extends LitElement {
   }
 
   /**
-   * Setup resize observer to detect height threshold crossings
-   * Recreates chart when crossing MIN_HEIGHT_WITH_LABELS (192px) to show/hide labels
-   * Detect when height property changes programmatically (e.g., via Storybook controls or user code)
+   * Crossing MIN_HEIGHT_WITH_LABELS changes the plugin set, so the chart is
+   * rebuilt rather than updated.
    */
   private setupResizeObserver() {
     if (!this.canvasEl) return;
 
-    this.resizeObserver = new ResizeObserver(() => {
-      // Guard: Check if chart and canvas still exist (component may be disconnecting)
-      if (!this.chart || !this.canvasEl || !this.canvasEl.isConnected) return;
-
-      const height = this.canvasEl.clientHeight;
-      const isAboveThreshold =
-        height >= RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS;
-
-      // Only recreate chart if we crossed the threshold
-      if (isAboveThreshold !== this.wasAboveThreshold) {
-        this.wasAboveThreshold = isAboveThreshold;
-        this.chart.destroy();
-        this.createChart();
-      } else {
-        // Height changed but didn't cross threshold - just update
-        this.updateChart();
+    this.resizeObserver = observeLabelThreshold(
+      this.canvasEl,
+      () =>
+        (this.canvasEl?.clientHeight ?? 0) >=
+        RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS,
+      {
+        rebuild: () => {
+          this.chart?.destroy();
+          this.createChart();
+        },
+        update: () => this.updateChart(),
       }
-    });
-
-    this.resizeObserver.observe(this.canvasEl);
-
-    // Initialize threshold state
-    const height = this.canvasEl.clientHeight;
-    this.wasAboveThreshold =
-      height >= RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS;
+    );
   }
 
   /**
