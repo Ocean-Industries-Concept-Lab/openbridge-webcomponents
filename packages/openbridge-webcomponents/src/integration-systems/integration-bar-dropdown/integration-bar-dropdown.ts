@@ -16,6 +16,38 @@ import {NotificationButtonStyle} from '../../components/notification-button/noti
 import {property} from 'lit/decorators.js';
 
 /**
+ * `<obc-integration-bar-dropdown>` – A compact top-level integration header with a dropdown selector, status fields and system action buttons.
+ *
+ * @property showHomeButton - Home button at the left end of the bar.
+ * @property homeButtonActivated - Pressed styling for the home button.
+ * @availableWhen homeButtonActivated showHomeButton==true
+ * @property showLinkButton - Link button, between home and the selector.
+ * @property linkButtonActivated - Pressed styling for the link button.
+ * @availableWhen linkButtonActivated showLinkButton==true
+ * @property showClock - Renders the `clock` slot at the right end.
+ * @property showAlertButton - Alert button, first in the right-hand group.
+ * @property alertButtonActivated - Pressed styling for the alert button.
+ * @availableWhen alertButtonActivated showAlertButton==true
+ * @property showNotificationButton - Notification button, after the alert button.
+ * @property notificationButtonActivated - Pressed styling; the count badge only appears in this state.
+ * @availableWhen notificationButtonActivated showNotificationButton==true
+ * @property notificationCount - Number drawn in the count badge.
+ * @availableWhen notificationCount showNotificationButton==true && showNotificationCount==true && notificationButtonActivated==true
+ * @property showNotificationCount - Draws the count badge on the notification button.
+ * @availableWhen showNotificationCount showNotificationButton==true && notificationButtonActivated==true
+ * @property showScreenButton - Screen button, after the notification button.
+ * @property screenButtonActivated - Pressed styling for the screen button.
+ * @availableWhen screenButtonActivated showScreenButton==true
+ * @property showUserButton - User button, last before the clock.
+ * @property userButtonActivated - Pressed styling for the user button.
+ * @availableWhen userButtonActivated showUserButton==true
+ * @property showDimmingButton - Dimming button, between system and user.
+ * @property dimmingButtonActivated - Pressed styling for the dimming button.
+ * @availableWhen dimmingButtonActivated showDimmingButton==true
+ * @property showSystemButton - System button, after the screen button.
+ * @property systemButtonActivated - Pressed styling for the system button.
+ * @availableWhen systemButtonActivated showSystemButton==true
+ * @property nStatusFields - How many `status-icon-N`/`status-label-N` slot pairs are rendered.
  *
  * @slot vessel-selector - Vessel selector content
  * @slot status-label-1 - Label for the first status field
