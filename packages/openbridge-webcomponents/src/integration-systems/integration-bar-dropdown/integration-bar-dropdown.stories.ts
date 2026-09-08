@@ -6,6 +6,7 @@ import '../integration-dropdown-button/integration-dropdown-button.js';
 import '../../components/clock/clock.js';
 import '../../icons/icon-placeholder.js';
 import {IntegrationButtonType} from '../integration-button/integration-button.js';
+import {expect} from 'storybook/test';
 
 const meta: Meta<typeof ObcIntegrationBarDropdown> = {
   title: 'Integration Systems/Integration Bar Dropdown',
@@ -18,9 +19,24 @@ const meta: Meta<typeof ObcIntegrationBarDropdown> = {
     showDate: true,
     showTimezone: true,
     timeZoneOffsetHours: 1,
-    showDimmingButton: true,
-    showUserButton: true,
     showHomeButton: true,
+    homeButtonActivated: false,
+    showLinkButton: false,
+    linkButtonActivated: false,
+    showAlertButton: false,
+    alertButtonActivated: false,
+    showNotificationButton: false,
+    notificationButtonActivated: false,
+    showNotificationCount: false,
+    notificationCount: 0,
+    showScreenButton: false,
+    screenButtonActivated: false,
+    showSystemButton: false,
+    systemButtonActivated: false,
+    showDimmingButton: true,
+    dimmingButtonActivated: false,
+    showUserButton: true,
+    userButtonActivated: false,
     nStatusFields: 3,
   },
   argTypes: {
@@ -31,14 +47,24 @@ const meta: Meta<typeof ObcIntegrationBarDropdown> = {
   render: (args) =>
     html`<obc-integration-bar-dropdown
       .showHomeButton=${args.showHomeButton}
+      .homeButtonActivated=${args.homeButtonActivated}
       .showLinkButton=${args.showLinkButton}
+      .linkButtonActivated=${args.linkButtonActivated}
       .showClock=${args.showClock}
-      .showDimmingButton=${args.showDimmingButton}
-      .showUserButton=${args.showUserButton}
       .showAlertButton=${args.showAlertButton}
+      .alertButtonActivated=${args.alertButtonActivated}
       .showNotificationButton=${args.showNotificationButton}
+      .notificationButtonActivated=${args.notificationButtonActivated}
+      .showNotificationCount=${args.showNotificationCount}
+      .notificationCount=${args.notificationCount}
       .showScreenButton=${args.showScreenButton}
+      .screenButtonActivated=${args.screenButtonActivated}
       .showSystemButton=${args.showSystemButton}
+      .systemButtonActivated=${args.systemButtonActivated}
+      .showDimmingButton=${args.showDimmingButton}
+      .dimmingButtonActivated=${args.dimmingButtonActivated}
+      .showUserButton=${args.showUserButton}
+      .userButtonActivated=${args.userButtonActivated}
       .nStatusFields=${args.nStatusFields}
     >
       <obc-integration-dropdown-button
@@ -101,13 +127,38 @@ export const Primary: Story = {
 
 export const AllButtons: Story = {
   args: {
-    showHomeButton: true,
     showLinkButton: true,
     showAlertButton: true,
     showNotificationButton: true,
+    showNotificationCount: true,
+    notificationCount: 3,
     showScreenButton: true,
     showSystemButton: true,
-    showDimmingButton: true,
-    showUserButton: true,
+  },
+  play: async ({canvasElement}) => {
+    const bar = canvasElement.querySelector(
+      'obc-integration-bar-dropdown'
+    ) as ObcIntegrationBarDropdown;
+    const iconButtons = bar.shadowRoot!.querySelectorAll('obc-icon-button');
+
+    expect(iconButtons.length).toBe(7);
+    for (const iconButton of iconButtons) {
+      const control = iconButton.shadowRoot!.querySelector('button')!;
+      expect(control.getAttribute('aria-label')).toBeTruthy();
+    }
+  },
+};
+
+export const AllButtonsActivated: Story = {
+  args: {
+    ...AllButtons.args,
+    homeButtonActivated: true,
+    linkButtonActivated: true,
+    alertButtonActivated: true,
+    notificationButtonActivated: true,
+    screenButtonActivated: true,
+    systemButtonActivated: true,
+    dimmingButtonActivated: true,
+    userButtonActivated: true,
   },
 };
