@@ -1286,7 +1286,7 @@ export const PerBlockAlertFrame: Story = {
 export const DebugOverlay: StoryObj<
   ReadoutStoryArgs & {showDebugOverlay: boolean}
 > = {
-  args: {showDebugOverlay: true},
+  args: {showDebugOverlay: false},
   argTypes: {
     showDebugOverlay: {
       name: 'Show Debug Overlay',
