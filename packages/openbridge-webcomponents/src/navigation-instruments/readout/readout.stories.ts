@@ -75,6 +75,7 @@ type ReadoutStoryArgs = {
   'options.src.deviation'?: number;
   'options.src.spaceReserver': string;
   'options.unit.spaceReserver': string;
+  showDebugOverlay: boolean;
 };
 
 // Authoring convenience for the stories only: the component's API is flat
@@ -312,6 +313,7 @@ const defaultArgs: ReadoutStoryArgs = {
   'options.src.state': ReadoutSourceState.regular,
   'options.src.spaceReserver': '',
   'options.unit.spaceReserver': '',
+  showDebugOverlay: false,
 };
 
 function argsToOptions(args: ReadoutStoryArgs): StoryOptions {
@@ -380,6 +382,7 @@ const meta = {
       advice: args.advice,
       options: argsToOptions(args),
       hasValueIcon: args['options.value.hasIcon'],
+      showDebugOverlay: args.showDebugOverlay,
     }),
   args: defaultArgs,
   argTypes: {
@@ -555,6 +558,13 @@ const meta = {
       name: 'Unit Space Reserver',
       control: {type: 'text'},
       table: {category: 'Format'},
+    },
+    showDebugOverlay: {
+      name: 'Show Debug Overlay',
+      description:
+        'Outlines the building blocks (red), degree columns (blue) and degree spacer (green).',
+      control: {type: 'boolean'},
+      table: {category: 'Debug'},
     },
   },
 } satisfies Meta<ReadoutStoryArgs>;
@@ -1278,75 +1288,6 @@ export const PerBlockAlertFrame: Story = {
         ],
       },
     ]),
-};
-
-// The debug overlay outlines the readout building blocks (red), the degree
-// columns (blue) and the degree spacer (green) so the reserved widths that keep
-// side-by-side readouts aligned are visible.
-export const DebugOverlay: StoryObj<
-  ReadoutStoryArgs & {showDebugOverlay: boolean}
-> = {
-  args: {showDebugOverlay: false},
-  argTypes: {
-    showDebugOverlay: {
-      name: 'Show Debug Overlay',
-      control: {type: 'boolean'},
-      table: {category: 'Debug'},
-    },
-  },
-  render: (args) => html`
-    <style>
-      ${showcaseStyle}
-    </style>
-    <div class="ro-sections">
-      <section class="ro-section">
-        <h3 class="ro-section-title">
-          Reserved Widths Made Visible — Blocks (red), Degree Column (blue),
-          Degree Spacer (green)
-        </h3>
-        <div
-          class="ro-grid"
-          style="grid-template-columns: repeat(3, max-content);"
-        >
-          <div class="ro-card">
-            <div class="ro-card-title">degree</div>
-            ${showcaseReadout({
-              label: 'HDG',
-              unit: 'DEG',
-              value: 92,
-              showDebugOverlay: args.showDebugOverlay,
-              options: {hasDegree: true, maxDigits: 3},
-            })}
-          </div>
-          <div class="ro-card">
-            <div class="ro-card-title">degree spacer</div>
-            ${showcaseReadout({
-              label: 'COG',
-              unit: 'DEG',
-              value: 8,
-              showDebugOverlay: args.showDebugOverlay,
-              options: {hasDegreeSpacer: true, maxDigits: 3},
-            })}
-          </div>
-          <div class="ro-card">
-            <div class="ro-card-title">setpoint + advice reservers</div>
-            ${showcaseReadout({
-              hasSetpoint: true,
-              hasAdvice: true,
-              showDebugOverlay: args.showDebugOverlay,
-              options: {
-                size: ReadoutSize.medium,
-                maxDigits: 4,
-                value: {spaceReserver: '0000'},
-                setpoint: {spaceReserver: '0000'},
-                advice: {spaceReserver: '0000'},
-              },
-            })}
-          </div>
-        </div>
-      </section>
-    </div>
-  `,
 };
 
 /**
