@@ -11,6 +11,7 @@ export {
   PRIMARY_SUBBAND_INNER_RADIUS,
   PRIMARY_SUBBAND_NEEDLE_LENGTH,
 } from './watch.js';
+import {degToRad} from '../../svghelpers/math.js';
 
 /** A circular arc path (center origin, 0° = 12 o'clock, clockwise positive). */
 export function arcPath(
@@ -18,7 +19,7 @@ export function arcPath(
   startDeg: number,
   endDeg: number
 ): string {
-  const toRad = (deg: number) => ((deg - 90) * Math.PI) / 180;
+  const toRad = (deg: number) => degToRad(deg - 90);
   const x1 = radius * Math.cos(toRad(startDeg));
   const y1 = radius * Math.sin(toRad(startDeg));
   const x2 = radius * Math.cos(toRad(endDeg));

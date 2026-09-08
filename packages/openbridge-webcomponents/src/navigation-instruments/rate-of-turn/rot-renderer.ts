@@ -33,7 +33,7 @@
  * horizontal bar.
  */
 import {svg, SVGTemplateResult} from 'lit';
-import {normalizeAngle} from '../../svghelpers/math.js';
+import {degToRad, normalizeAngle, radToDeg} from '../../svghelpers/math.js';
 
 export enum RotType {
   dots = 'dots',
@@ -74,7 +74,7 @@ function getTrackRadius(position: RotPosition, radiusOffset = 0): number {
 }
 
 function dotOnTrack(angle: number, radius: number): {cx: number; cy: number} {
-  const rad = (angle * Math.PI) / 180;
+  const rad = degToRad(angle);
   return {
     cx: Math.sin(rad) * radius,
     cy: -Math.cos(rad) * radius,
@@ -101,8 +101,8 @@ function rotBarPath(
   const R = trackRadius + BAR_HALF_THICKNESS;
   const r = trackRadius - BAR_HALF_THICKNESS;
 
-  const a1 = (startAngle * Math.PI) / 180;
-  const a2 = (endAngle * Math.PI) / 180;
+  const a1 = degToRad(startAngle);
+  const a2 = degToRad(endAngle);
 
   const outerStartX = Math.sin(a1) * R;
   const outerStartY = -Math.cos(a1) * R;
@@ -150,7 +150,7 @@ export function rotBarThresholdAngle(
   radiusOffset = 0
 ): number {
   const trackRadius = getTrackRadius(position, radiusOffset);
-  return (BAR_HALF_THICKNESS / trackRadius) * (180 / Math.PI);
+  return radToDeg(BAR_HALF_THICKNESS / trackRadius);
 }
 
 export function renderRotZeroPill(

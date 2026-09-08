@@ -1,7 +1,7 @@
 import {LitElement, css, html, svg} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
-import {normalizeAngle} from '../../svghelpers/math.js';
+import {degToRad, normalizeAngle, radToDeg} from '../../svghelpers/math.js';
 import {InstrumentState} from '../types.js';
 
 export enum PropulsionAzimuthIndicatorType {
@@ -12,7 +12,6 @@ export enum PropulsionAzimuthIndicatorType {
 const VIEW_SIZE = 48;
 const CX = VIEW_SIZE / 2;
 const CY = VIEW_SIZE / 2;
-const DEG_TO_RAD = Math.PI / 180;
 
 const LUBBER_PATH =
   'M4.12242 0.209381L0.0940147 5.84915C-0.142367 6.18008 0.0941955 6.63977 0.500882 6.63977H8.55769C8.96438 6.63977 9.20094 6.18008 8.96456 5.84915L4.93615 0.209381C4.73674 -0.0697936 4.32183 -0.0697937 4.12242 0.209381Z';
@@ -43,7 +42,7 @@ const BAR_CENTER_NEUTRAL = (BAR_MIN_CY + BAR_MAX_CY) / 2;
 const BAR_HALF_SPAN = (BAR_MAX_CY - BAR_MIN_CY) / 2;
 
 function circlePoint(radius: number, angle: number): {x: number; y: number} {
-  const radians = (angle - 90) * DEG_TO_RAD;
+  const radians = degToRad(angle - 90);
   return {
     x: CX + radius * Math.cos(radians),
     y: CY + radius * Math.sin(radians),
@@ -79,7 +78,7 @@ function topCircleSideIntersection(
   return {
     deltaX,
     y,
-    angle: Math.asin(deltaX / radius) / DEG_TO_RAD,
+    angle: radToDeg(Math.asin(deltaX / radius)),
   };
 }
 

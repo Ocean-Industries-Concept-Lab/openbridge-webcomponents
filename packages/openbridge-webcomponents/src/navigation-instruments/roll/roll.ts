@@ -11,6 +11,7 @@ import {
   SingleAxisInclinometer,
   INCLINOMETER_WATCH_RADIUS,
 } from '../../building-blocks/single-axis-inclinometer/single-axis-inclinometer.js';
+import {degToRad} from '../../svghelpers/math.js';
 
 const watchRadius = INCLINOMETER_WATCH_RADIUS;
 
@@ -124,8 +125,8 @@ export class ObcRoll extends SingleAxisInclinometer {
     // Outer thin-ring complement endpoints. The arc band is centred at watch
     // angle 180° (bottom) and spans 180° ± arcAngle, so its edges sit at SVG
     // coords (±R·sin(arcAngle), R·cos(arcAngle)).
-    const x = watchRadius * Math.sin((arcAngle * Math.PI) / 180);
-    const y = watchRadius * Math.cos((arcAngle * Math.PI) / 180);
+    const x = watchRadius * Math.sin(degToRad(arcAngle));
+    const y = watchRadius * Math.cos(degToRad(arcAngle));
     return svg`
       <path
         d="M ${-x} ${y} A ${watchRadius} ${watchRadius} 0 1 1 ${x} ${y}"

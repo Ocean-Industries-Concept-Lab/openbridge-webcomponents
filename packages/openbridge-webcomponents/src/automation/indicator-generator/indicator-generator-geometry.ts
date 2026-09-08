@@ -1,4 +1,4 @@
-import {clampPercent} from '../../svghelpers/math.js';
+import {clampPercent, degToRad} from '../../svghelpers/math.js';
 
 export const BUTTON_SILHOUETTE_RADIUS = 18.5;
 export const DISC_RADIUS = 17.5;
@@ -27,7 +27,7 @@ export function polarPoint(
   radius: number,
   angleDeg: number
 ): {x: number; y: number} {
-  const rad = (angleDeg * Math.PI) / 180;
+  const rad = degToRad(angleDeg);
   return {
     x: Math.round((cx + radius * Math.sin(rad)) * 1000) / 1000,
     y: Math.round((cy - radius * Math.cos(rad)) * 1000) / 1000,
