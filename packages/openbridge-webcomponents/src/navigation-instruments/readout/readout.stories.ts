@@ -1,6 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html, nothing} from 'lit';
-import {expect, spyOn, userEvent} from 'storybook/test';
+import {userEvent} from 'storybook/test';
 import {gsap} from 'gsap';
 import './readout.js';
 import '../../components/navigation-item/navigation-item.js';
@@ -117,6 +117,8 @@ type ReadoutConfig = {
   options?: StoryOptions;
   hasValueIcon?: boolean;
   showDebugOverlay?: boolean;
+  /** Source names slotted into `src-picker-content` for a picker source. */
+  srcPickerSources?: string[];
 };
 
 type ShowcaseCase = {label: string; config: ReadoutConfig};
@@ -208,6 +210,21 @@ function renderReadout(config: ReadoutConfig) {
         : nothing}
       ${o.hasLeadingIcon
         ? html`<obi-placeholder slot="leading-icon"></obi-placeholder>`
+        : nothing}
+      ${config.srcPickerSources
+        ? html`<div slot="src-picker-content">
+            ${config.srcPickerSources.map(
+              (name) => html`
+                <obc-navigation-item
+                  label=${name}
+                  data-value=${name}
+                  ?checked=${name === config.src}
+                >
+                  <obi-placeholder slot="icon"></obi-placeholder>
+                </obc-navigation-item>
+              `
+            )}
+          </div>`
         : nothing}
     </obc-readout>
   `;
@@ -716,6 +733,12 @@ export const Off: Story = {
     ]),
 };
 
+/**
+ * The picker button opens a context menu built from the `src-picker-content`
+ * slot, so the picker case slots two sources (see `SourcePicker` for the
+ * standalone form). The flyout button only fires `source-flyout-click` — the
+ * consumer opens its own panel, so nothing happens in a story.
+ */
 export const Source: Story = {
   render: () =>
     renderShowcase([
@@ -738,7 +761,13 @@ export const Source: Story = {
         columns: 3,
         cases: Object.values(ReadoutSourceInteraction).map((interaction) => ({
           label: interaction,
-          config: {src: 'GPS 1', options: {src: {interaction}}},
+          config: {
+            src: 'GPS 1',
+            options: {src: {interaction}},
+            ...(interaction === ReadoutSourceInteraction.picker
+              ? {srcPickerSources: ['GPS 1', 'GPS 2']}
+              : {}),
+          },
         })),
       },
     ]),
@@ -820,10 +849,8 @@ export const DataQuality: Story = {
     ]),
 };
 
-// Mirrors the old readout alert stories: an RPM readout with a setpoint and
-// degree glyphs inside an alert frame that carries the alert-category badge
-// (no explicit frame `type`, so the wrapWithAlertFrame default — the small
-// side flip with the category icon — applies, as it did before the rework).
+// No explicit frame `type`, so the wrapWithAlertFrame default applies — the
+// small side flip carrying the alert-category badge.
 const ALERT_FRAME: AlertFrameConfig = {
   mode: ObcAlertFrameMode.ackedActive,
 };
@@ -1112,12 +1139,8 @@ export const Degree: Story = {
 };
 
 // Each card drops a different part; renderReadout passes nils through, so the
-// missing part renders its true nil state (dash for a null value, omitted
-// label/unit/src) rather than a demo default. Note the two distinct "no value"
-// states: `hasValue=false` is a deliberate label-only LAYOUT (the old
-// `labelOnly`, e.g. instrument centre labels) and hugs its remaining parts;
-// a temporarily missing value is `value=null` — the dash keeps the value
-// block at full size so nothing shifts when data arrives.
+// missing part renders its true nil state rather than a demo default. The
+// story note explains the two distinct "no value" states.
 const MISSING_PARTS_CASES: {title: string; config: ReadoutConfig}[] = [
   {
     title: 'all parts',
@@ -1608,62 +1631,6 @@ export const TestCases: Story = {
 };
 
 /**
- * A horizontal readout given a `size` other than `large` warns once per
- * element. The tier is discarded (the arrangement exists in the large tier
- * only), and a silent discard is indistinguishable from a bug to a consumer
- * (#1182). A removed `size` attribute arrives as `null` through Lit's String
- * converter and counts as unset. Driven through `willUpdate` on detached
- * elements, like `Readout Block → TestValidationSurvivesUnrelatedUpdate`.
- */
-export const TestHorizontalSizeWarning: Story = {
-  render: () => html`<span>Regression test — see the play function.</span>`,
-  play: async () => {
-    type Probe = HTMLElement & {
-      size?: ReadoutSize;
-      direction?: ReadoutDirection;
-      willUpdate: (changed: Map<string, unknown>) => void;
-    };
-    const probe = (
-      size: ReadoutSize | undefined,
-      direction: ReadoutDirection
-    ) => {
-      const el = document.createElement('obc-readout') as Probe;
-      el.size = size;
-      el.direction = direction;
-      return el;
-    };
-    const update = (el: Probe) => el.willUpdate(new Map());
-    const warn = spyOn(console, 'warn').mockImplementation(() => undefined);
-    try {
-      update(probe(ReadoutSize.large, ReadoutDirection.horizontal));
-      update(probe(ReadoutSize.small, ReadoutDirection.vertical));
-      update(probe(undefined, ReadoutDirection.horizontal));
-      const removed = probe(ReadoutSize.small, ReadoutDirection.horizontal);
-      removed.setAttribute('size', ReadoutSize.small);
-      removed.removeAttribute('size');
-      update(removed);
-      await expect(warn).not.toHaveBeenCalled();
-
-      const small = probe(ReadoutSize.small, ReadoutDirection.horizontal);
-      update(small);
-      await expect(warn).toHaveBeenCalledTimes(1);
-      await expect(warn.mock.calls[0][0]).toMatch(
-        /\[obc-readout\].*size.*horizontal/
-      );
-      await expect(warn.mock.calls[0][1]).toBe(small);
-
-      update(small);
-      await expect(warn).toHaveBeenCalledTimes(1);
-
-      update(probe(ReadoutSize.medium, ReadoutDirection.horizontal));
-      await expect(warn).toHaveBeenCalledTimes(2);
-    } finally {
-      warn.mockRestore();
-    }
-  },
-};
-
-/**
  * Figma 6.1 "Equal size": value and setpoint always share the primary size —
  * the missing fourth mode beside primary-secondary (`always-visible`),
  * flip-flop and pop-up. Static in both states; only flip-flop / pop-up
@@ -1708,9 +1675,8 @@ export const SetpointEqualSize: Story = {
  * Label ("readout-block-title") options — Figma 6.1. Large readouts default
  * the label to textbox `s` (a scannable label should not sit at the smallest
  * size); `labelOptions.size` opts a tight layout back down to `xs`, and
- * `labelOptions.spaceReserver` aligns ragged labels across stacked readouts
- * (the legacy `AlignMultiple` gap). The label is SemiBold only on enhanced
- * readouts.
+ * `labelOptions.spaceReserver` aligns ragged labels across stacked readouts.
+ * The label is SemiBold only on enhanced readouts.
  */
 export const LabelOptions: Story = {
   render: () =>
@@ -1904,21 +1870,9 @@ export const SetpointPopUpWithValueArrow: Story = {
   `,
 };
 
-// ---------------------------------------------------------------------------
-// Figma 6.1 bird's-eye matrices — static expansions of the design file's
-// component sheets (parent node 46596-102878), so every combination can be
-// reviewed at a glance without touching controls:
-// - Readout-vertical-trailing-title (46390-197995): Size × Priority ×
-//   Value priority × State × has Degree — split into one story per
-//   interaction below so each snapshot stays a reviewable size. The
-//   `has Leading icon` axis is covered by the LeadingIcon story, and the
-//   Readout-vertical-block sheet (46551-303919) differs only in title sizing
-//   (tracked by the medium-tier label TODO); the leading-title sheet
-//   (46551-341292) is marked WIP in Figma and deliberately not expanded.
-// - Readout-horizontal (46471-75814): large-only, one story. Its
-//   leading-label stacking column is obc-readout-list-item's job (see the
-//   Readout List Item FigmaMatrix story).
-// ---------------------------------------------------------------------------
+// Figma 6.1 bird's-eye matrices: static expansions of the design file's
+// component sheets (parent node 46596-102878). The story descriptions name
+// the sheet each one expands.
 
 const MATRIX_PRIORITIES = [
   ReadoutPriority.regular,
@@ -1973,6 +1927,15 @@ function verticalMatrixStory(
     );
 }
 
+/**
+ * Readout-vertical-trailing-title (Figma 46390-197995): Size × Priority ×
+ * State × has Degree, one story per setpoint interaction so each snapshot
+ * stays a reviewable size. The `has Leading icon` axis lives in the
+ * `LeadingIcon` story. The Readout-vertical-block sheet (46551-303919)
+ * differs only in title sizing (the medium-tier label default is an open
+ * designer question); the leading-title sheet (46551-341292) is marked WIP in
+ * Figma and deliberately not expanded.
+ */
 export const FigmaMatrixVerticalAlwaysVisible: Story = {
   render: verticalMatrixStory(ReadoutSetpointInteraction.alwaysVisible),
 };
@@ -1989,6 +1952,11 @@ export const FigmaMatrixVerticalPopUp: Story = {
   render: verticalMatrixStory(ReadoutSetpointInteraction.popUp),
 };
 
+/**
+ * Readout-horizontal (Figma 46471-75814): large-only. Its leading-label
+ * stacking column is `obc-readout-list-item`'s job — see the Readout List Item
+ * `FigmaMatrix` story.
+ */
 export const FigmaMatrixHorizontal: Story = {
   render: () =>
     renderShowcase(

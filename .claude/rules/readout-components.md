@@ -88,8 +88,7 @@ Lit's `performUpdate` catch calls `__markUpdated()`, which clears the
 changed-properties map — so the next update, driven by any other property (inside
 `obc-readout-list` that is `align()` writing the reservers), would see an empty
 map, skip the check, and render the invalid value as a plain dash. Loud once,
-then silent forever. Covered by
-`Building Blocks/Readout Block → TestValidationSurvivesUnrelatedUpdate`.
+then silent forever. Covered by `readout-block.spec.ts`.
 
 ### 2. Throw for configuration mistakes, render for data conditions
 
@@ -181,14 +180,17 @@ what activating five dormant code paths does to alignment.
 ## Testing
 
 - Pure helpers in `readout-formatters.ts` / `readout-shared.ts` are unit-tested
-  (`*.spec.ts`) and run in Node. Prefer testing an invariant over an example —
-  e.g. "the assertion accepts exactly the values `toFixed` accepts" rather than a
-  list of inputs.
-- Component behaviour is tested through Storybook play functions. A test that
-  needs a real throw must avoid it escaping Lit's scheduler as an unhandled
-  rejection (which fails the run even when assertions pass) — drive `willUpdate`
-  directly on a **detached** element instead, as
-  `TestValidationSurvivesUnrelatedUpdate` does.
+  (`*.spec.ts`). Prefer testing an invariant over an example — e.g. "the
+  assertion accepts exactly the values `toFixed` accepts" rather than a list
+  of inputs.
+- Behaviour with nothing to look at (a throw, a `console.warn`) is a
+  `*.spec.ts` beside the component, run by `npm run test:browser` in CI — not
+  a story whose canvas is empty. A test that needs a real throw must keep it
+  out of Lit's scheduler (an unhandled rejection fails the run even when the
+  assertions pass): drive `willUpdate` directly on a **detached** element, as
+  `readout-block.spec.ts` and `readout.spec.ts` do.
+- Visual behaviour is a story; the snapshot is the doc. Play functions are for
+  DOM assertions on a rendered story (`Readout List → TestTextRowAttributes`).
 - Run one component at a time; the filter must precede `--update`:
   ```bash
   npx vitest run --project storybook 'readout-block'
@@ -245,13 +247,32 @@ Decisions carried into code from the 6.1 review (2026-08):
   the value's container height (`--_readout-primary-height`,
   space-between), so the label cap top and unit cap bottom align with the
   value's cap edges.
+- Unavailable placeholder: short (`-.--` for `000.00`), right-aligned in the
+  reserved width, drawn with U+2012 FIGURE DASH because it is digit-width
+  (`readout-formatters.ts` carries the measurements). Settled — do not
+  re-open the dash alternatives.
+- Two icon systems, on purpose. An **alert frame** flap carries the
+  `obi-*-badge` glyphs — single-colour silhouettes on the flap's status
+  colour (triangle alarm, circle warning, square caution, hexagon critical),
+  exactly as the alert-frame sheet (Figma 2370:6884) draws them. The
+  token-coloured IEC icons belong to **advice categories** and the source
+  chips. A monochrome flap badge is not a missing `useCssColor`.
+- Source chips use `outline`, drawn outside the box, so any ancestor that
+  clips must leave 1px of clip margin — `.label-container` in the list item
+  does (`overflow: clip; overflow-clip-margin: 1px`) because a `leading-src`
+  chip sits on its left and bottom edges. The 1× snapshot does not catch a
+  regression here (the lost fringe is under the pixel threshold); check the
+  leading-src row of `Readout List Item → SourceStates` at 2×.
+- Picker sources render an **empty** context menu without slotted
+  `src-picker-content`; flyout sources only fire `source-flyout-click`. The
+  showcases slot demo items for the picker and expect nothing from the
+  flyout.
 
 ## Open / in flux
 
 Do not treat these as settled when editing:
 
-- **Hinted zeros + negative values** and **unavailable-value width** are under
-  design review; the rendered shape of the placeholder may change.
+- **Hinted zeros + negative values** are under design review.
 - `obc-readout` and `obc-readout-list-item` are layout variants of one API and
   **may merge**. Keep shared behaviour in `readout-shared.ts` so the merge stays
   cheap — do not re-inline it per component.

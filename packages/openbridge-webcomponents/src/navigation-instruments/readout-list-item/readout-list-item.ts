@@ -300,10 +300,23 @@ export interface ReadoutSrcOptions extends ReadoutBlockState {
  * Use for dense readout rows in lists/tables. Prefer `<obc-readout>` for rich
  * multi-segment instrument layouts, source pickers, or flyout behaviour.
  *
+ * ### Slots
+ * | Slot Name     | Renders When                  | Purpose                                  |
+ * |---------------|-------------------------------|------------------------------------------|
+ * | leading-icon  | `hasLeadingIcon`              | Icon before the label.                   |
+ * | value-icon    | `valueOptions.hasIcon`        | Icon before the value.                   |
+ * | setpoint-icon | `hasSetpoint`                 | Overrides the default setpoint icon.     |
+ * | advice-icon   | `hasAdvice`                   | Overrides the default advice icon.       |
+ *
  * @property hasValue - Layout switch: `false` renders a deliberately value-less (label-only)
  *   row that hugs its remaining parts. For a temporarily missing value keep
  *   `hasValue` and set `value` to `null` instead — the dash keeps the value
  *   block at full size, so the row does not shift when data arrives.
+ * @property value - The value; `null` renders a dash. A number by default, or text when
+ *   `valueType` is `text`.
+ * @property valueType - How `value` is interpreted. `number` (default) formats it via
+ *   `fractionDigits`; `text` renders it verbatim and ignores the numeric
+ *   format options. Passing text while this is `number` throws.
  * @property off - Render the value as `offText` (e.g. equipment powered down). Affects the value only.
  * @property offText - Text shown in place of the value when `off` is true.
  * @availableWhen offText off==true
@@ -327,22 +340,12 @@ export interface ReadoutSrcOptions extends ReadoutBlockState {
  * @property showDebugOverlay - Development aid: outline the readout building blocks (red), the degree
  *   columns (blue) and the degree spacer (green) so reserver widths / alignment
  *   are visible. Off by default.
- * @experimental This component is the pilot for the new primitives + per-block
- * options Readout API; its API may change in a future release.
- *
- * ### Slots
- * | Slot Name     | Renders When                  | Purpose                                  |
- * |---------------|-------------------------------|------------------------------------------|
- * | leading-icon  | `hasLeadingIcon`              | Icon before the label.                   |
- * | value-icon    | `valueOptions.hasIcon`        | Icon before the value.                   |
- * | setpoint-icon | `hasSetpoint`                 | Overrides the default setpoint icon.     |
- * | advice-icon   | `hasAdvice`                   | Overrides the default advice icon.       |
- *
  * @slot leading-icon - Icon before the label.
  * @slot value-icon - Icon before the value.
  * @slot setpoint-icon - Overrides the default setpoint icon.
  * @slot advice-icon - Overrides the default advice icon.
  * @fires click - Fired when the item is activated. Only fired when `clickable` is set; otherwise the item renders as a non-interactive `<div>`.
+ * @experimental
  */
 @customElement('obc-readout-list-item')
 export class ObcReadoutListItem extends LitElement {
@@ -352,16 +355,7 @@ export class ObcReadoutListItem extends LitElement {
   @property({type: String}) src?: string;
 
   @property({type: Boolean, attribute: false}) hasValue = true;
-  /**
-   * The value; `null` renders a dash. A number by default, or text when
-   * {@link valueType} is `text`.
-   */
   @property({type: String}) value: number | string | null = null;
-  /**
-   * How {@link value} is interpreted. `number` (default) formats it via
-   * `fractionDigits`; `text` renders it verbatim and ignores the numeric
-   * format options. Passing text while this is `number` throws.
-   */
   @property({type: String}) valueType: ReadoutValueType =
     ReadoutValueType.number;
   @property({type: Boolean}) off = false;
@@ -560,12 +554,9 @@ export class ObcReadoutListItem extends LitElement {
   }
 
   private get valueSize(): ObcTextboxSize {
-    // The value de-emphasises (secondary size) whenever the setpoint is the
-    // focus — while actively adjusting (`touching`) or while a flip-flop holds
-    // the value away from the setpoint. So "grab the setpoint" shrinks the value for
-    // the whole adjustment (initiate + move read the same: setpoint big, value
-    // small), mirroring the flip-flop convention. `equal-size` opts out: both
-    // blocks always hold the primary size, even while touching.
+    // The value takes the secondary size whenever the setpoint has the focus
+    // (`touching`, or a flip-flop holding the value away from it); `equal-size`
+    // opts out and keeps both blocks at the primary size.
     return readoutValueSize({
       primary: this.primarySize,
       secondary: this.secondarySize,
@@ -982,9 +973,8 @@ export class ObcReadoutListItem extends LitElement {
 
   /**
    * The source text plus its optional state chip and deviation line. The
-   * plain (regular, no-deviation) case renders the bare textbox — byte-for-
-   * byte the pre-6.1 output; a state or a deviation wraps it in the
-   * `.source-block` stack.
+   * plain (regular, no-deviation) case renders the bare textbox; a state or a
+   * deviation wraps it in the `.source-block` stack.
    */
   private renderSourceBlock(): TemplateResult {
     const state = this.srcOptions?.state ?? ReadoutSourceState.regular;
@@ -1048,13 +1038,9 @@ export class ObcReadoutListItem extends LitElement {
 
   protected override willUpdate(changed: Map<string, unknown>): void {
     super.willUpdate(changed);
-    // Validated on EVERY update, deliberately NOT gated on `value`/`valueType`
-    // appearing in `changed`. When this assertion throws, Lit's `performUpdate`
-    // catch calls `__markUpdated()`, which clears the changed-properties map. A
-    // later update driven by any OTHER property — inside `obc-readout-list`,
-    // `align()` writing the shared reservers — would then see no `value` in
-    // `changed`, skip the check, and render the invalid value as a plain dash:
-    // exactly the silent failure this assertion exists to prevent.
+    // Never gate this on `changed`: a throw clears Lit's changed map, so the
+    // next update would skip the check and render the invalid value as a dash
+    // (readout-components.md § 1, pinned by readout-block.spec.ts).
     assertReadoutValueType('obc-readout-list-item', this.value, this.valueType);
     assertReadoutFractionDigits('obc-readout-list-item', this.fractionDigits);
   }
@@ -1150,13 +1136,9 @@ export class ObcReadoutListItem extends LitElement {
         </button>`
       : html`<div class=${classes} part="root">${surface}</div>`;
 
-    // `alert` accepts `boolean` (so the generated Angular wrapper's widened
-    // `boolean` type assigns cleanly), but `wrapWithAlertFrame` ignores non-object
-    // truthy values. Normalise `true` → a default frame `{}` (like `clickable:
-    // true`) so it isn't a silent no-op; `false`/object pass through.
-    // fullWidth=true: the row-level alert frame stretches to the readout's full
-    // width (PR #1001) rather than hugging it. Per-block / src alert frames keep
-    // the default (hug) so they stay inline.
+    // `alert: true` (the Angular wrapper's widened `boolean`) becomes a default
+    // frame `{}`, as `wrapWithAlertFrame` ignores non-object truthy values. The
+    // row frame stretches full width; per-block frames hug (#1001).
     const alert = this.alert === true ? {} : this.alert;
     return wrapWithAlertFrame(alert, root, true);
   }
