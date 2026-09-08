@@ -1,6 +1,7 @@
 import {LitElement, html, nothing, svg, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
+import {clamp} from '../../svghelpers/math.js';
 import componentStyle from './gauge-radial-indicator.css?inline';
 import '../../icons/icon.js';
 import '../../icons/icon-placeholder.js';
@@ -35,10 +36,6 @@ export type GaugeRadialIndicatorSector =
 export enum GaugeRadialIndicatorStyle {
   Regular = 'regular',
   Flat = 'flat',
-}
-
-function clamp(value: number, min: number, max: number): number {
-  return Math.min(Math.max(value, min), max);
 }
 
 function pointOnCircle(
