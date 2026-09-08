@@ -26,7 +26,7 @@ import {
   createArcOuterLabelPlugin,
   calculateFixedHeightChartLayout,
   formatSingleLabel,
-  formatNumericValue,
+  formatChartNumber,
   getChartTooltipOptions,
   generateLegendHTML,
   observeLabelThreshold,
@@ -506,7 +506,7 @@ export class ObcPieChart extends LitElement {
               const value = context.parsed;
               const denominator = this.total > 0 ? this.total : 1;
               const isPercentage = this.outerLabelUnit === '%';
-              const numericValue = formatNumericValue(
+              const numericValue = formatChartNumber(
                 value,
                 denominator,
                 isPercentage,
@@ -829,7 +829,7 @@ export class ObcPieChart extends LitElement {
     try {
       const legendItems = this.data.map((item, i) => {
         const style = meta.controller.getStyle(i, false);
-        const numericValue = formatNumericValue(
+        const numericValue = formatChartNumber(
           item.value,
           denominator,
           isPercentage,

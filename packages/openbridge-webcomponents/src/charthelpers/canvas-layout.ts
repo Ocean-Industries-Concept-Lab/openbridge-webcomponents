@@ -97,7 +97,7 @@ function generateLabels(
  * @param decimalPlaces - Number of decimal places to show (default: 0)
  * @returns Formatted numeric string (e.g., "45.0" or "30.5")
  */
-export function formatNumericValue(
+export function formatChartNumber(
   value: number,
   denominator: number,
   asPercentage: boolean,
@@ -129,7 +129,7 @@ export function formatSingleLabel(
   }
 ): string {
   const isPercentage = config.unit === '%';
-  const numericValue = formatNumericValue(
+  const numericValue = formatChartNumber(
     value,
     denominator,
     isPercentage,

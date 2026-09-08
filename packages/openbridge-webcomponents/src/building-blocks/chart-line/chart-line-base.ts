@@ -34,7 +34,7 @@ import {
   getCssVariableValue,
   getChartColorsOrDefault,
   observeThemeChanges,
-  formatNumericValue,
+  formatChartNumber,
   getChartTooltipOptions,
   generateLegendHTML,
   applyAlphaToColor,
@@ -2144,7 +2144,7 @@ export class ObcChartLineBase extends LitElement {
                 typeof context.parsed === 'object' && context.parsed !== null
                   ? (context.parsed as {y: number}).y
                   : (context.parsed as number);
-              const numericValue = formatNumericValue(value, 1, false, 0);
+              const numericValue = formatChartNumber(value, 1, false, 0);
               const unit = this.unit ? `${this.unit}` : '';
               let label = context.label ?? '';
               if (this.isNumericXAxis) {

@@ -25,7 +25,7 @@ import {
   createArcOuterLabelPlugin,
   calculateFixedHeightChartLayout,
   getChartTooltipOptions,
-  formatNumericValue,
+  formatChartNumber,
   generateLegendHTML,
   observeLabelThreshold,
 } from '../../charthelpers/index.js';
@@ -714,7 +714,7 @@ export class ObcPolarChart extends LitElement {
           valueToFormat = item.value;
         }
 
-        const numericValue = formatNumericValue(
+        const numericValue = formatChartNumber(
           valueToFormat,
           denominator,
           isPercentage,

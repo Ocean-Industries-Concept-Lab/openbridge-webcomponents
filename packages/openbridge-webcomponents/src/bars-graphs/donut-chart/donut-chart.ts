@@ -18,7 +18,7 @@ import {
   getChartColorsOrDefault,
   observeThemeChanges,
   calculateSumTotal,
-  formatNumericValue,
+  formatChartNumber,
   createArcOuterLabelPlugin,
   calculateFixedHeightChartLayout,
   getChartTooltipOptions,
@@ -440,7 +440,7 @@ export class ObcDonutChart extends LitElement {
                 this.max > 0 ? this.max : this.total > 0 ? this.total : 1;
               // Calculate percentage if unit is "%", otherwise use raw value
               const isPercentage = this.outerLabelUnit === '%';
-              const numericValue = formatNumericValue(
+              const numericValue = formatChartNumber(
                 value,
                 denominator,
                 isPercentage,
@@ -814,7 +814,7 @@ export class ObcDonutChart extends LitElement {
     try {
       const legendItems = this.data.map((item, i) => {
         const style = meta.controller.getStyle(i, false);
-        const numericValue = formatNumericValue(
+        const numericValue = formatChartNumber(
           item.value,
           denominator,
           isPercentage,
