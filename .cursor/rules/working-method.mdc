@@ -111,7 +111,17 @@ tell you something.
 
 ## Figma is the target, the code is the precedent
 
-Aim for 1:1 with the OB 6.1 file and verify it the way
+The design lives in the main OpenBridge 6.1 file, `kQMFf24Y1ry43HJWOStqd8`
+(`https://www.figma.com/design/kQMFf24Y1ry43HJWOStqd8/OpenBridge-6.1?node-id=<id>`);
+icons live in `IkDwOtza6OdjLbIdWA7mI7`
+([IMPLEMENTATION_GUIDELINES.md § PostCSS](../../IMPLEMENTATION_GUIDELINES.md#-postcss)).
+The Figma MCP and the plugin need Dev Mode, which some seats only get on a
+personal copy of the file — so links from a copy circulate. Node ids are the
+same in every copy: in a PR or issue, cite the node id on the main file (the
+URL above) or the bare id, never a copy's link, and take only the id from a
+link you receive.
+
+Aim for 1:1 with that file and verify it the way
 [`testing-visual.md`](../../docs/agents/testing-visual.md) describes: the cropped baseline
 against every variant value. When the file and the code disagree, the order
 of authority is:
