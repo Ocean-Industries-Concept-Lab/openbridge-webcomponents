@@ -13,7 +13,7 @@ import {buildIntervalTickmarks} from '../../navigation-instruments/watch/tickmar
 import {TickmarkStyle} from '../../navigation-instruments/watch/tickmark.js';
 import {InstrumentState, Priority} from '../../navigation-instruments/types.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
-import {clamp} from '../../svghelpers/math.js';
+import {clamp, normalizeAngle} from '../../svghelpers/math.js';
 import {innerRingRadiusFor} from '../../navigation-instruments/watch/watch.js';
 import {
   applyPinnedHostSize,
@@ -305,7 +305,7 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
       if (t.text === undefined) {
         return false;
       }
-      const angle = ((t.angle % 360) + 360) % 360;
+      const angle = normalizeAngle(t.angle);
       return Math.abs(angle - 90) < 1 || Math.abs(angle - 270) < 1;
     });
     const frame = computeRadialFrame({

@@ -1,4 +1,5 @@
 import type {WatchArea} from '../navigation-instruments/watch/watch.js';
+import {normalizeAngle} from './math.js';
 
 export interface ArcViewBox {
   x: number;
@@ -196,8 +197,8 @@ function computeAnnularArcBBox(
       expand(R * Math.sin(endRad), -R * Math.cos(endRad));
     }
 
-    const startNorm = ((area.startAngle % 360) + 360) % 360;
-    const endNorm = ((area.endAngle % 360) + 360) % 360;
+    const startNorm = normalizeAngle(area.startAngle);
+    const endNorm = normalizeAngle(area.endAngle);
     const axes = [0, 90, 180, 270];
     for (const axis of axes) {
       if (arcContainsAngle(startNorm, endNorm, axis)) {
@@ -285,9 +286,9 @@ function arcContainsAngle(
   endDeg: number,
   testDeg: number
 ): boolean {
-  const s = ((startDeg % 360) + 360) % 360;
-  const e = ((endDeg % 360) + 360) % 360;
-  const t = ((testDeg % 360) + 360) % 360;
+  const s = normalizeAngle(startDeg);
+  const e = normalizeAngle(endDeg);
+  const t = normalizeAngle(testDeg);
   if (s <= e) {
     return t >= s && t <= e;
   }

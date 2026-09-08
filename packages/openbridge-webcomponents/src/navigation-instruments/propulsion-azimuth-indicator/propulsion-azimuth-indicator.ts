@@ -1,6 +1,7 @@
 import {LitElement, css, html, svg} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
+import {normalizeAngle} from '../../svghelpers/math.js';
 import {InstrumentState} from '../types.js';
 
 export enum PropulsionAzimuthIndicatorType {
@@ -40,10 +41,6 @@ const BAR_MIN_CY = BAR_END_INSET + BAR_HALF;
 const BAR_MAX_CY = TRACK_H - BAR_END_INSET - BAR_HALF;
 const BAR_CENTER_NEUTRAL = (BAR_MIN_CY + BAR_MAX_CY) / 2;
 const BAR_HALF_SPAN = (BAR_MAX_CY - BAR_MIN_CY) / 2;
-
-function normalizeAngle360(angle: number): number {
-  return ((angle % 360) + 360) % 360;
-}
 
 function circlePoint(radius: number, angle: number): {x: number; y: number} {
   const radians = (angle - 90) * DEG_TO_RAD;
@@ -278,7 +275,7 @@ export class ObcPropulsionAzimuthIndicator extends LitElement {
 
   override render() {
     const azimuth = Number.isFinite(this.azimuth) ? this.azimuth : 0;
-    const rotation = normalizeAngle360(azimuth);
+    const rotation = normalizeAngle(azimuth);
     return html`
       <svg
         viewBox="0 0 ${VIEW_SIZE} ${VIEW_SIZE}"

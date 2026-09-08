@@ -1,5 +1,6 @@
 import {SVGTemplateResult, nothing, svg} from 'lit';
 import {TickmarkStyle, TickmarkType, tickmark} from './tickmark.js';
+import {normalizeAngle} from '../../svghelpers/math.js';
 
 export enum AdviceType {
   advice = 'advice',
@@ -38,7 +39,7 @@ export function adviceMask(
   stroke: string,
   radiusOffset = 0
 ): SVGTemplateResult | typeof nothing {
-  const spanDeg = (((maxAngle - minAngle) % 360) + 360) % 360;
+  const spanDeg = normalizeAngle(maxAngle - minAngle);
   const spanRad = (spanDeg * Math.PI) / 180;
   if (spanRad <= deltaAngle * 2) return nothing;
   const trimmedSpanRad = spanRad - deltaAngle * 2;

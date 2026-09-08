@@ -33,6 +33,7 @@
  * horizontal bar.
  */
 import {svg, SVGTemplateResult} from 'lit';
+import {normalizeAngle} from '../../svghelpers/math.js';
 
 export enum RotType {
   dots = 'dots',
@@ -140,7 +141,7 @@ export function shortestAngularDeltaDeg(
   startAngle: number,
   endAngle: number
 ): number {
-  const cw = (((endAngle - startAngle) % 360) + 360) % 360;
+  const cw = normalizeAngle(endAngle - startAngle);
   return cw <= 180 ? cw : 360 - cw;
 }
 

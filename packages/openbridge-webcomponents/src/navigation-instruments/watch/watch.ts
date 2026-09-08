@@ -59,6 +59,7 @@ import {
 } from './environment.js';
 import {customElement} from '../../decorator.js';
 import {type ZoomToFitArcFrame} from '../../svghelpers/arc-frame.js';
+import {normalizeAngle} from '../../svghelpers/math.js';
 import {
   applyPinnedHostSize,
   computeRadialFrame,
@@ -1176,8 +1177,7 @@ export class ObcWatch extends LitElement {
       // for dots, use spinner RPM.
       let direction: number;
       if (this.rotType === RotType.bar) {
-        const cwSpan =
-          (((this.rotEndAngle - this.rotStartAngle) % 360) + 360) % 360;
+        const cwSpan = normalizeAngle(this.rotEndAngle - this.rotStartAngle);
         direction = cwSpan <= 180 ? cwSpan : cwSpan - 360;
       } else {
         direction = this._effectiveRpm;
