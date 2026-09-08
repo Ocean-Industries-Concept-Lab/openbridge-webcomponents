@@ -178,6 +178,38 @@ Where the code wins, the disagreement is written at the site as
 family doc carries the settled rule. Where nothing in the code decides it,
 the design decides; a missing design is a `TODO(designer)` too, not a guess.
 
+## Stop when something is missing
+
+Brute force starts the moment a step cannot be done as intended. When that
+happens, stop: say what is missing, what you would do with it, and wait for
+input. Do not route around it, guess, or continue on a lesser path and
+mention it at the end. Finish everything that does not depend on the answer
+first, then ask once, with the options and a recommendation
+(`AGENTS.md` § 2).
+
+Tools and access:
+
+- The Figma MCP or plugin is not authenticated, or the node needs Dev Mode
+  the seat does not have — no design reading from screenshots or memory;
+  ask for access or for the node's export.
+- `FIGMA_TOKEN` is unset — `npm run download:icons` cannot run; an icon is
+  never hand-drawn or copied from a screenshot.
+- `OPENAI_API_KEY` is unset — `script/docgen` cannot run; do not draft the
+  JSDoc "by hand instead" without saying so.
+- `gh` is missing or unauthenticated — the tracker check (§ History) and the
+  PR cannot be done; do not skip the check.
+- No browser, Docker or devcontainer — no baselines to commit.
+
+Decisions:
+
+- The Figma file does not define the state, size or variant — `TODO(designer)`
+  at the site, and ask; nothing is invented.
+- The issue does not settle the API shape, the breaking change, or which
+  family members to touch — ask with a short list of options.
+- A review comment contradicts a verified finding — say so with the evidence
+  (§ History); neither flip-flop nor silently ignore it.
+- Two docs disagree — ask which is current instead of picking one.
+
 ## Accessibility, forwards and backwards
 
 [`a11y.md`](../../docs/agents/a11y.md) is the bar for new interactive components and for any

@@ -297,18 +297,17 @@ automatically when editing a `.css` file.
 3. **Respect glob-scoped instructions** (§ 4) — read the matching `docs/agents/*.md` file when touching files in its scope.
 4. **Accessibility is required for interactive components, old and new.** Every new or modified component in `src/components/**` or `src/automation/**` must support full keyboard navigation and meet WCAG 2.1 AA; touching an existing one brings it through the checklist. Keyboard behaviour follows the [WAI-ARIA APG patterns](https://www.w3.org/WAI/ARIA/apg/patterns/) — start from the matching pattern, or the closest one, and design your own only when nothing applies. Read [`docs/agents/a11y.md`](docs/agents/a11y.md) for that ladder, the activation-key table, ARIA rules, focus handling, the testing checklist and the automated checks (§ 9) before writing or changing an interactive component.
 5. **Do not edit auto-generated packages** (`-react`, `-vue`, `-ng`, `-svelte`). Run `npm run wrappers` instead.
-6. **Run `npm run analyze`** after adding or renaming a `@customElement` to keep `custom-elements.json` in sync. Storybook resolves story args to element properties through the manifest, so run it **before** testing the stories of a newly created component — without it the args silently never reach the element.
-   Never hand-edit `custom-elements.json` — it is auto-generated and git-ignored. Fix manifest inaccuracies at the source (`@slot`/`@fires`/property JSDoc); see § 3 "Slots and events are manifest-critical" and run `npm run lint:slots`.
+6. **Run `npm run analyze`** after adding or renaming a `@customElement`, and **before** testing a new component's stories — story args reach the element only through the manifest. Never hand-edit `custom-elements.json` (generated, git-ignored); fix inaccuracies in the `@slot`/`@fires`/property JSDoc (§ 3) and run `npm run lint:slots`.
 7. **Run `npm run lint`** after code changes to catch issues early.
 8. **Insert `TODO(designer)`** for any documentation detail whose purpose is unclear from code alone.
 9. **Keep stories tagged** with `['autodocs', '6.0']` for documented OB 6.0 components; `['skip-test']` to exclude from visual tests. The lifecycle entry (`beta` / `experimental` / `deprecated`) is **never hand-written** — put `@stable`/`@beta`/`@experimental`/`@deprecated` on the component class and run `npm run lint:fix:stories`. The old `'wip'` and `'alpha'` tags are retired; see [`docs/agents/jsdoc.md` § Component lifecycle tags](docs/agents/jsdoc.md).
-10. **Do not run full builds or start Storybook automatically.** Avoid `npm run build`, `npm run storybook` unless the user explicitly requests it. These are expensive, long-running operations.
+10. **Do not run full builds or start Storybook unasked** (`npm run build`, `npm run storybook`) — expensive and long-running.
 11. **Run visual tests for the components you touched** instead of the full suite. Several names are separate substring filters, not a regex (`'a|b'` matches nothing):
     ```bash
     npx vitest run --project storybook 'component-name'
     npx vitest run --project storybook heat-pump heat-exchanger hydraulic-separator
     ```
-12. **Update baselines for those components only, locally on Linux** — the devcontainer's render is what CI accepts, so do not rely on the `/update-snapshots` PR comment ([`docs/agents/testing-visual.md`](docs/agents/testing-visual.md)). The filter must come **before** `--update`; written after the flag, the name is consumed as the flag's value and the FULL suite runs in update mode, silently rewriting unrelated flaky baselines. `--update` never prunes — `git rm` the baselines of renamed or removed stories first:
+12. **Update baselines for those components only, locally on Linux** — the devcontainer's render is what CI accepts, so do not rely on the `/update-snapshots` PR comment ([`docs/agents/testing-visual.md`](docs/agents/testing-visual.md)). The filter must come **before** `--update` — after it, the FULL suite runs in update mode and rewrites unrelated flaky baselines. `--update` never prunes — `git rm` the baselines of renamed or removed stories first:
     ```bash
     npx vitest run --project storybook 'component-name' --update
     ```
@@ -316,7 +315,7 @@ automatically when editing a `.css` file.
     ```bash
     npx vitest run --project storybook 'component-name'
     ```
-14. **Keep the main context clean.** Delegate broad codebase exploration to subagents; only read files directly in the main thread when you are about to edit them or need a few specific lines.
+14. **Keep the main context clean.** Delegate broad exploration to subagents; read a file in the main thread only to edit it or for a few lines.
 15. **Radial instrument geometry goes through `svghelpers/radial-frame.ts`.** Never hand-mirror viewBox constants or paddings between `obc-watch` and an overlay SVG — one `computeRadialFrame()` result per render feeds both `<obc-watch .arcFrame=...>` and the overlay `viewBox`. The helper reproduces legacy geometry byte-identically when no outside labels exist; breaking that regenerates the whole radial snapshot family. Read [`docs/agents/watch-radial-instruments.md` § Shared frame computation](docs/agents/watch-radial-instruments.md) first.
 16. **The readout family is four nested layers, not one component.** `obc-textbox` → `obc-readout-block` → `obc-readout-list-item` → `obc-readout-list`, plus `obc-readout` over the same block inside radial instruments. A change to a lower layer reaches every layer above it — re-run the instrument snapshots too. Value/format helpers belong in `readout-formatters.ts` (imports nothing); the validation and bounding invariants are in [`docs/agents/readout-components.md`](docs/agents/readout-components.md) — read it before editing any of them.
 17. **Never hand-edit `src/palettes/variables.css`, `src/mixins/fonts.css` or `script/figmavariables.json`.** All three are regenerated wholesale from the [obc-figma-plugin](https://github.com/Ocean-Industries-Concept-Lab/obc-figma-plugin), so token additions and renames go through Figma (or the plugin's `rename()`) first. Hand-curated font mixins live in `src/mixins/font-extras.css`; run `npm run lint:mixins` after regenerating `fonts.css` ([`docs/agents/generated-code.md`](docs/agents/generated-code.md)).
@@ -332,6 +331,7 @@ automatically when editing a `.css` file.
 23. **Figma is the target, the code is the precedent.** Aim for 1:1; where deliberate code geometry or a property name disagrees with the file, keep the code and leave a `TODO(designer)`. Generated tokens and icons flow from Figma (rule 17).
 24. **No names.** Cite roles, issues and Figma nodes, never people or handles — in comments, docs, commits, PR and issue text ([`docs/agents/coding-standards.md`](docs/agents/coding-standards.md) § Writing style).
 25. **Use the most capable current model** your tool offers; a smaller tier is for mechanical steps only.
+26. **Stop and ask when something is missing.** An unauthenticated Figma MCP or plugin, no `FIGMA_TOKEN` for icons, no `gh`, a state the design file does not define, a decision the issue does not settle: say what is missing and wait — never brute-force around it, guess, or continue on a lesser path silently ([`docs/agents/working-method.md` § Missing](docs/agents/working-method.md)).
 
 ---
 
