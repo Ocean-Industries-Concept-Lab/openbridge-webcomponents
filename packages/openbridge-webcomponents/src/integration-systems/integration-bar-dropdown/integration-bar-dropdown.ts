@@ -1,4 +1,4 @@
-import {LitElement, html, nothing, unsafeCSS} from 'lit';
+import {LitElement, html, nothing, unsafeCSS, type TemplateResult} from 'lit';
 import {customElement} from '../../decorator.js';
 import compentStyle from './integration-bar-dropdown.css?inline';
 import '../integration-tabs/integration-tabs.js';
@@ -111,53 +111,62 @@ export class ObcIntegrationBarDropdown extends LitElement {
     return html`<div class="status">${result}</div>`;
   }
 
+  // The event name stays a literal at each call site so `cem analyze` can read it.
+  private renderIconButton(
+    name: string,
+    activated: boolean,
+    label: string,
+    icon: TemplateResult,
+    onClick: () => void
+  ) {
+    return html`<obc-icon-button
+      class="${name}-button"
+      part="${name}-button"
+      variant="integration"
+      aria-label=${label}
+      @click=${onClick}
+      ?activated=${activated}
+    >
+      ${icon}
+    </obc-icon-button>`;
+  }
+
   override render() {
     return html`
       <div class="wrapper">
         <div class="left-side">
           ${this.showHomeButton
-            ? html`<obc-icon-button
-                class="home-button"
-                part="home-button"
-                variant="integration"
-                aria-label=${msg('Home')}
-                @click=${() =>
-                  this.dispatchEvent(new CustomEvent('home-button-clicked'))}
-                ?activated=${this.homeButtonActivated}
-              >
-                <obi-home></obi-home>
-              </obc-icon-button>`
-            : null}
+            ? this.renderIconButton(
+                'home',
+                this.homeButtonActivated,
+                msg('Home'),
+                html`<obi-home></obi-home>`,
+                () => this.dispatchEvent(new CustomEvent('home-button-clicked'))
+              )
+            : nothing}
           ${this.showLinkButton
-            ? html`<obc-icon-button
-                class="link-button"
-                part="link-button"
-                variant="integration"
-                aria-label=${msg('Link')}
-                @click=${() =>
-                  this.dispatchEvent(new CustomEvent('link-button-clicked'))}
-                ?activated=${this.linkButtonActivated}
-              >
-                <obi-link></obi-link>
-              </obc-icon-button>`
-            : null}
+            ? this.renderIconButton(
+                'link',
+                this.linkButtonActivated,
+                msg('Link'),
+                html`<obi-link></obi-link>`,
+                () => this.dispatchEvent(new CustomEvent('link-button-clicked'))
+              )
+            : nothing}
           <slot name="vessel-selector"></slot>
           ${this.renderStatusFields()}
         </div>
         <div class="right-side">
           ${this.showAlertButton
-            ? html`<obc-icon-button
-                class="alert-button"
-                part="alert-button"
-                variant="integration"
-                aria-label=${msg('Alerts')}
-                @click=${() =>
-                  this.dispatchEvent(new CustomEvent('alert-button-clicked'))}
-                ?activated=${this.alertButtonActivated}
-              >
-                <obi-alerts></obi-alerts>
-              </obc-icon-button>`
-            : null}
+            ? this.renderIconButton(
+                'alert',
+                this.alertButtonActivated,
+                msg('Alerts'),
+                html`<obi-alerts></obi-alerts>`,
+                () =>
+                  this.dispatchEvent(new CustomEvent('alert-button-clicked'))
+              )
+            : nothing}
           ${this.showNotificationButton
             ? html`<obc-notification-button
                 @click=${() =>
@@ -171,58 +180,45 @@ export class ObcIntegrationBarDropdown extends LitElement {
               ></obc-notification-button>`
             : nothing}
           ${this.showScreenButton
-            ? html`<obc-icon-button
-                class="screen-button"
-                part="screen-button"
-                variant="integration"
-                aria-label=${msg('Screen')}
-                @click=${() =>
-                  this.dispatchEvent(new CustomEvent('screen-button-clicked'))}
-                ?activated=${this.screenButtonActivated}
-              >
-                <obi-screen-desk></obi-screen-desk>
-              </obc-icon-button>`
-            : null}
+            ? this.renderIconButton(
+                'screen',
+                this.screenButtonActivated,
+                msg('Screen'),
+                html`<obi-screen-desk></obi-screen-desk>`,
+                () =>
+                  this.dispatchEvent(new CustomEvent('screen-button-clicked'))
+              )
+            : nothing}
           ${this.showSystemButton
-            ? html`<obc-icon-button
-                class="system-button"
-                part="system-button"
-                variant="integration"
-                aria-label=${msg('System')}
-                @click=${() =>
-                  this.dispatchEvent(new CustomEvent('system-button-clicked'))}
-                ?activated=${this.systemButtonActivated}
-              >
-                <obi-configure></obi-configure>
-              </obc-icon-button>`
-            : null}
+            ? this.renderIconButton(
+                'system',
+                this.systemButtonActivated,
+                msg('System'),
+                html`<obi-configure></obi-configure>`,
+                () =>
+                  this.dispatchEvent(new CustomEvent('system-button-clicked'))
+              )
+            : nothing}
           ${this.showDimmingButton
-            ? html`<obc-icon-button
-                class="dimming-button"
-                part="dimming-button"
-                variant="integration"
-                aria-label=${msg('Dimming')}
-                @click=${() =>
-                  this.dispatchEvent(new CustomEvent('dimming-button-clicked'))}
-                ?activated=${this.dimmingButtonActivated}
-              >
-                <obi-palette-day-night-iec></obi-palette-day-night-iec>
-              </obc-icon-button>`
-            : null}
+            ? this.renderIconButton(
+                'dimming',
+                this.dimmingButtonActivated,
+                msg('Dimming'),
+                html`<obi-palette-day-night-iec></obi-palette-day-night-iec>`,
+                () =>
+                  this.dispatchEvent(new CustomEvent('dimming-button-clicked'))
+              )
+            : nothing}
           ${this.showUserButton
-            ? html`<obc-icon-button
-                class="user-button"
-                part="user-button"
-                variant="integration"
-                aria-label=${msg('User')}
-                @click=${() =>
-                  this.dispatchEvent(new CustomEvent('user-button-clicked'))}
-                ?activated=${this.userButtonActivated}
-              >
-                <obi-user></obi-user>
-              </obc-icon-button>`
-            : null}
-          ${this.showClock ? html`<slot name="clock"></slot>` : null}
+            ? this.renderIconButton(
+                'user',
+                this.userButtonActivated,
+                msg('User'),
+                html`<obi-user></obi-user>`,
+                () => this.dispatchEvent(new CustomEvent('user-button-clicked'))
+              )
+            : nothing}
+          ${this.showClock ? html`<slot name="clock"></slot>` : nothing}
         </div>
       </div>
     `;
