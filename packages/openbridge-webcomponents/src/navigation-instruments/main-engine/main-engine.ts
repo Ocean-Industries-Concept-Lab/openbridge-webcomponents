@@ -11,8 +11,22 @@ import {
 } from '../thruster/thruster.js';
 import {LinearAdvice} from '../thruster/advice.js';
 import {customElement} from '../../decorator.js';
+import {
+  hasPortStarboardElement,
+  PORT_STARBOARD_DEFAULT_ELEMENTS,
+  PortStarboardElement,
+  PortStarboardShade,
+  type PortStarboardSign,
+  portStarboardSignOf,
+  resolvePortStarboardColor,
+} from '../../svghelpers/port-starboard.js';
 
 /**
+ * @property portStarboard - Enables the maritime PORT/STBD (red/green) color mode: ahead thrust and
+ *   speed render green, astern red.
+ * @property portStarboardElements - Which parts take part while `portStarboard` is on.
+ *   Defaults to everything except the setpoint.
+ * @availableWhen portStarboardElements portStarboard==true
  * @stable
  */
 @customElement('obc-main-engine')
@@ -39,6 +53,25 @@ export class ObcMainEngine extends LitElement {
   @property({type: String}) state: InstrumentState = InstrumentState.active;
   @property({type: String}) priority: Priority = Priority.regular;
   @property({type: Array}) thrustAdvices: LinearAdvice[] = [];
+  @property({type: Boolean}) portStarboard: boolean = false;
+  @property({type: Array, attribute: false})
+  portStarboardElements: PortStarboardElement[] = [
+    ...PORT_STARBOARD_DEFAULT_ELEMENTS,
+  ];
+
+  /**
+   * Setpoint-marker sign for one axis, gated on the `setpoint` element opt-in.
+   * Each column signs from its own value, matching its bar.
+   */
+  private setpointPortStarboardSign(value: number): PortStarboardSign {
+    return hasPortStarboardElement(
+      this.portStarboard,
+      this.portStarboardElements,
+      PortStarboardElement.setpoint
+    )
+      ? portStarboardSignOf(value)
+      : 0;
+  }
 
   override render() {
     const thrustAtSetpoint = atSetpoint(this.thrust, this.thrustSetpoint, {
@@ -53,7 +86,12 @@ export class ObcMainEngine extends LitElement {
         touching: this.thrustTouching,
       },
       this.state,
-      this.priority
+      this.priority,
+      {
+        enabled: this.portStarboard,
+        elements: this.portStarboardElements,
+        sign: portStarboardSignOf(this.thrust),
+      }
     );
     const speedAtSetpoint = atSetpoint(this.speed, this.speedSetpoint, {
       atSetpoint: this.atSpeedSetpoint,
@@ -67,7 +105,12 @@ export class ObcMainEngine extends LitElement {
         touching: this.speedTouching,
       },
       this.state,
-      this.priority
+      this.priority,
+      {
+        enabled: this.portStarboard,
+        elements: this.portStarboardElements,
+        sign: portStarboardSignOf(this.speed),
+      }
     );
     const container = svg`<rect x="-80" y="-176" width="160" height="352" fill="var(--instrument-frame-primary-color)" stroke="var(--instrument-frame-tertiary-color)" rx="8"/>`;
     const border = svg`<rect x="-80" y="-176" width="160" height="352" fill="none" stroke="var(--instrument-frame-tertiary-color)" rx="8" vector-effect="non-scaling-stroke"/>`;
@@ -118,6 +161,7 @@ export class ObcMainEngine extends LitElement {
               singleSided: true,
               narrow: false,
               id: this._thrustSetpointId,
+              portStarboardSign: this.setpointPortStarboardSign(this.thrust),
             }
           )}</g>`
         : nothing;
@@ -125,9 +169,16 @@ export class ObcMainEngine extends LitElement {
     const speedHeight = 352 * (this.speed / 100) + 2;
     const speedY = 176 - speedHeight;
     const speedBoxColor =
-      this.priority === Priority.enhanced
+      resolvePortStarboardColor({
+        enabled: this.portStarboard,
+        elements: this.portStarboardElements,
+        element: PortStarboardElement.bar,
+        sign: portStarboardSignOf(this.speed),
+        shade: PortStarboardShade.light,
+      }) ??
+      (this.priority === Priority.enhanced
         ? 'var(--instrument-enhanced-tertiary-color)'
-        : 'var(--instrument-regular-tertiary-color)';
+        : 'var(--instrument-regular-tertiary-color)');
     const speedBox = svg`<rect x="-56" y=${speedY} width="48" height=${speedHeight} fill=${speedBoxColor} stroke=${speedBoxColor} vector-effect="non-scaling-stroke">`;
     const speedLine = svg`<rect x="-56" y=${speedY - 2} width="48" height="4" rx="2" fill=${cSpeed.boxColor} stroke=${cSpeed.boxColor}/>
 `;
@@ -145,6 +196,7 @@ export class ObcMainEngine extends LitElement {
               singleSided: true,
               narrow: false,
               id: this._speedSetpointId,
+              portStarboardSign: this.setpointPortStarboardSign(this.speed),
             }
           )}</g>`
         : nothing;

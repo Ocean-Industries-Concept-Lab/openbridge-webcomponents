@@ -13,6 +13,16 @@ import {buildIntervalTickmarks} from '../../navigation-instruments/watch/tickmar
 import {TickmarkStyle} from '../../navigation-instruments/watch/tickmark.js';
 import {InstrumentState, Priority} from '../../navigation-instruments/types.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
+import {
+  hasPortStarboardElement,
+  PORT_STARBOARD_DEFAULT_ELEMENTS,
+  PortStarboardSides,
+  PortStarboardElement,
+  PortStarboardShade,
+  type PortStarboardSign,
+  portStarboardSignOf,
+  resolvePortStarboardColor,
+} from '../../svghelpers/port-starboard.js';
 import {innerRingRadiusFor} from '../../navigation-instruments/watch/watch.js';
 import {
   applyPinnedHostSize,
@@ -114,6 +124,14 @@ function defaultGaugeAngle(
  *   so instruments sharing the same value have identical ring circumference
  *   regardless of label width or arc extent (like obc-donut-chart's
  *   fixedHeight). When unset (default), the instrument fills its container.
+ * @property portStarboard - Enables the maritime PORT/STBD (red/green) color mode: positive values
+ *   render green, negative red. Ignored for any part whose color the consumer
+ *   supplies explicitly via `barColor` / `needleColor`.
+ * @property portStarboardElements - Which parts take part while `portStarboard` is on.
+ *   Defaults to everything except the setpoint.
+ * @availableWhen portStarboardElements portStarboard==true
+ * @property portStarboardSides - Which halves the region tints paint while `portStarboard` is on.
+ * @availableWhen portStarboardSides portStarboard==true
  * @fires {CustomEvent<RadialFrame>} frame-changed - Fired after render when the
  *   computed radial frame changed (viewBox, label visibility, or pinned host
  *   size). Wrappers use it to align sibling overlays/readouts with the dial.
@@ -155,6 +173,13 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
   @property({type: Boolean}) zoomToFitArc: boolean = false;
   @property({type: Number, attribute: 'face-diameter'})
   faceDiameter: number | undefined;
+  @property({type: Boolean}) portStarboard: boolean = false;
+  @property({type: Array, attribute: false})
+  portStarboardElements: PortStarboardElement[] = [
+    ...PORT_STARBOARD_DEFAULT_ELEMENTS,
+  ];
+  @property({type: String}) portStarboardSides: PortStarboardSides =
+    PortStarboardSides.both;
 
   private _radiusOffset = 0;
   private _frame: RadialFrame | undefined;
@@ -231,6 +256,22 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
     });
   }
 
+  /** Direction of this instrument's own value, for `portStarboardSides="active"`. */
+  private get portStarboardValueSign(): PortStarboardSign {
+    return portStarboardSignOf(this.clampedValue);
+  }
+
+  /** Setpoint-marker sign, gated on the `setpoint` element opt-in. */
+  private get setpointPortStarboardSign(): PortStarboardSign {
+    return hasPortStarboardElement(
+      this.portStarboard,
+      this.portStarboardElements,
+      PortStarboardElement.setpoint
+    )
+      ? portStarboardSignOf(this.setpoint)
+      : 0;
+  }
+
   private get _derivedNeedleColor(): string {
     if (
       this.state === InstrumentState.loading ||
@@ -238,6 +279,15 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
     ) {
       return 'transparent';
     }
+    const portStarboard = resolvePortStarboardColor({
+      enabled: this.portStarboard,
+      elements: this.portStarboardElements,
+      element: PortStarboardElement.needle,
+      sign: portStarboardSignOf(this.clampedValue),
+      shade: PortStarboardShade.dark,
+      neutralDark: true,
+    });
+    if (portStarboard) return portStarboard;
     return this.priority === Priority.enhanced
       ? 'var(--instrument-enhanced-secondary-color)'
       : 'var(--instrument-regular-secondary-color)';
@@ -250,6 +300,19 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
     ) {
       return 'transparent';
     }
+    const portStarboard = resolvePortStarboardColor({
+      enabled: this.portStarboard,
+      elements: this.portStarboardElements,
+      element: PortStarboardElement.bar,
+      sign: portStarboardSignOf(this.clampedValue),
+      // The filled type paints a dark value fill; the bar type paints a light
+      // track, so the shade role differs (see the shade rule).
+      shade:
+        this.type === ObcGaugeRadialType.filled
+          ? PortStarboardShade.dark
+          : PortStarboardShade.light,
+    });
+    if (portStarboard) return portStarboard;
     if (this.type === ObcGaugeRadialType.filled) {
       return this.priority === Priority.enhanced
         ? 'var(--instrument-enhanced-secondary-color)'
@@ -351,6 +414,11 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
           .barAreas=${barAreas}
           .endLabelsMaxMin=${this.endLabelsMaxMin}
           .arcFrame=${frame}
+          .portStarboard=${this.portStarboard}
+          .portStarboardElements=${this.portStarboardElements}
+          .portStarboardSides=${this.portStarboardSides}
+          .portStarboardValueSign=${this.portStarboardValueSign}
+          .setpointPortStarboardSign=${this.setpointPortStarboardSign}
         ></obc-watch>
         <svg class="gauge-radial" viewBox=${frame.viewBox}>${this._needle}</svg>
       </div>

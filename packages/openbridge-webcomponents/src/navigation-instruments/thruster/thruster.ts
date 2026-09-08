@@ -16,6 +16,25 @@ import {
   SETPOINT_ANIMATION_DURATION_DEFAULT,
 } from '../../svghelpers/setpoint.js';
 import {customElement} from '../../decorator.js';
+import {
+  hasPortStarboardElement,
+  PORT_STARBOARD_DEFAULT_ELEMENTS,
+  PortStarboardElement,
+  PortStarboardShade,
+  type PortStarboardSign,
+  portStarboardSignOf,
+  resolvePortStarboardColor,
+} from '../../svghelpers/port-starboard.js';
+
+/** PORT/STBD inputs shared by `thrusterColors()` and `thruster()`. */
+export interface ThrusterPortStarboardConfig {
+  /** The instrument's `portStarboard` master switch. */
+  enabled: boolean;
+  /** The instrument's `portStarboardElements` list. */
+  elements: PortStarboardElement[];
+  /** Direction sign derived from the thrust value. */
+  sign: PortStarboardSign;
+}
 
 /**
  * @element obc-thruster
@@ -23,6 +42,12 @@ import {customElement} from '../../decorator.js';
  * @property thrust - The thrust of the thruster in percent (-100 - +100)
  * @property touching - Highlight the thruster when the lever is being touched
  * @property priority - Color priority: `Priority.enhanced` uses the blue/enhanced color palette, `Priority.regular` (default) uses the standard palette.
+ * @property portStarboard - Enables the maritime PORT/STBD (red/green) color mode: forward thrust
+ *   renders green, reverse red. Additional to `priority` — parts not listed in
+ *   `portStarboardElements` keep their regular/enhanced colors.
+ * @property portStarboardElements - Which parts take part while `portStarboard` is on.
+ *   Defaults to everything except the setpoint.
+ * @availableWhen portStarboardElements portStarboard==true
  * @stable
  */
 @customElement('obc-thruster')
@@ -41,6 +66,11 @@ export class ObcThruster extends SetpointMixin(LitElement, {
   @property({type: Array}) advices: LinearAdvice[] = [];
   @property({type: String}) topPropeller: PropellerType = PropellerType.none;
   @property({type: String}) bottomPropeller: PropellerType = PropellerType.none;
+  @property({type: Boolean}) portStarboard: boolean = false;
+  @property({type: Array, attribute: false})
+  portStarboardElements: PortStarboardElement[] = [
+    ...PORT_STARBOARD_DEFAULT_ELEMENTS,
+  ];
 
   override render() {
     return html`<div class="container">
@@ -60,6 +90,18 @@ export class ObcThruster extends SetpointMixin(LitElement, {
         narrow: !this.tunnel,
         newSetpoint: this.newSetpoint,
         setpointId: this._setpointId,
+        portStarboard: {
+          enabled: this.portStarboard,
+          elements: this.portStarboardElements,
+          sign: portStarboardSignOf(this.thrust),
+        },
+        portStarboardSetpointSign: hasPortStarboardElement(
+          this.portStarboard,
+          this.portStarboardElements,
+          PortStarboardElement.setpoint
+        )
+          ? portStarboardSignOf(this.setpoint)
+          : 0,
       })}
     </div>`;
   }
@@ -275,6 +317,8 @@ export interface ThrusterSetpointConfig {
   departingNewSetpoint?: number;
   /** Override to derive color from priority regardless of instrument state. */
   setpointOverride?: boolean;
+  /** PORT/STBD sign for the setpoint marker. `0` keeps the priority color. */
+  portStarboardSign?: PortStarboardSign;
 }
 
 /**
@@ -409,6 +453,7 @@ export function renderThrusterSetpoint(
     colorMode,
     disabled,
     id: `${config.id}-r`,
+    portStarboardSign: config.portStarboardSign ?? 0,
   });
 
   const result: SVGTemplateResult[] = [];
@@ -424,6 +469,7 @@ export function renderThrusterSetpoint(
         colorMode,
         disabled,
         id: `${config.id}-l`,
+        portStarboardSign: config.portStarboardSign ?? 0,
       });
       result.push(
         svg`<g style="transform: translate(${-tipX}px, ${y}px) rotate(-90deg); opacity: ${opacity}; transition: transform ${duration} ease-out, opacity ${duration} ease-out;">${leftMarker}</g>`
@@ -439,6 +485,7 @@ export function renderThrusterSetpoint(
         colorMode,
         disabled,
         id: `${config.id}-l`,
+        portStarboardSign: config.portStarboardSign ?? 0,
       });
       result.push(
         svg`<g transform="translate(${-tipX}, ${y}) rotate(-90)" opacity="${opacity}">${leftMarker}</g>`
@@ -608,6 +655,13 @@ export function thruster(
     departingNewSetpoint?: number;
     /** Override to derive color from priority regardless of instrument state. */
     setpointOverride?: boolean;
+    /** PORT/STBD color mode inputs for the bar, zero line and arrow. */
+    portStarboard?: ThrusterPortStarboardConfig;
+    /**
+     * Pre-gated PORT/STBD sign for the setpoint marker. The caller applies the
+     * `setpoint` element opt-in, so `0` here means "keep the priority color".
+     */
+    portStarboardSetpointSign?: PortStarboardSign;
   }
 ) {
   if (options.tunnel) {
@@ -621,7 +675,7 @@ export function thruster(
 
   options.atSetpoint = atSetpoint(thrust, setpoint, options);
 
-  const tc = thrusterColors(options, state, priority);
+  const tc = thrusterColors(options, state, priority, options.portStarboard);
 
   let centerLine = svg`
     <rect x="-44" y="-2" width="88" height="4" stroke-width="1" fill=${tc.zeroLineColor} stroke=${tc.zeroLineColor} vector-effect="non-scaling-stroke"/>
@@ -723,6 +777,7 @@ export function thruster(
           animateSetpoint: options.animateSetpoint,
           departingNewSetpoint: options.departingNewSetpoint,
           setpointOverride: options.setpointOverride,
+          portStarboardSign: options.portStarboardSetpointSign ?? 0,
         })
       );
     } else {
@@ -818,7 +873,8 @@ export function convertThrustAdvices(
 export function thrusterColors(
   options: {atSetpoint: boolean; touching: boolean},
   state: InstrumentState,
-  priority: Priority
+  priority: Priority,
+  portStarboard?: ThrusterPortStarboardConfig
 ) {
   const isEnhanced = priority === Priority.enhanced;
   let boxColor = isEnhanced
@@ -833,6 +889,29 @@ export function thrusterColors(
     ? 'var(--instrument-enhanced-secondary-color)'
     : 'var(--instrument-regular-secondary-color)';
   let hideTicks = false;
+  if (portStarboard?.enabled) {
+    const shared = {
+      enabled: true,
+      elements: portStarboard.elements,
+      sign: portStarboard.sign,
+      shade: PortStarboardShade.dark,
+    };
+    const bar = resolvePortStarboardColor({
+      ...shared,
+      element: PortStarboardElement.bar,
+    });
+    if (bar) boxColor = bar;
+    const zeroLine = resolvePortStarboardColor({
+      ...shared,
+      element: PortStarboardElement.zeroLine,
+    });
+    if (zeroLine) zeroLineColor = zeroLine;
+    const arrow = resolvePortStarboardColor({
+      ...shared,
+      element: PortStarboardElement.arrow,
+    });
+    if (arrow) arrowColor = arrow;
+  }
   if (options.atSetpoint) {
     setPointColor = boxColor;
   }

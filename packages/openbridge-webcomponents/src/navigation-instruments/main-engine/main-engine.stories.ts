@@ -3,6 +3,7 @@ import {ObcMainEngine} from './main-engine.js';
 import './main-engine.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {InstrumentState, Priority} from '../types.js';
+import {PortStarboardElement} from '../../svghelpers/port-starboard.js';
 
 const meta: Meta<typeof ObcMainEngine> = {
   title: 'Instruments/Main Engine',
@@ -38,6 +39,55 @@ export const InCommand: Story = {
   args: {
     state: InstrumentState.active,
     priority: Priority.enhanced,
+  },
+};
+
+export const PortStarboardAhead: Story = {
+  args: {
+    thrust: 70,
+    speed: 70,
+    priority: Priority.enhanced,
+    state: InstrumentState.active,
+    portStarboard: true,
+  },
+};
+
+/**
+ * Engine astern while the vessel is still making way ahead: the thrust column
+ * reads red, the speed column green. `speed` is a unipolar 0–100 scale (only
+ * `thrust` is bipolar), so it never renders red.
+ */
+export const PortStarboardAstern: Story = {
+  args: {
+    thrust: -70,
+    thrustSetpoint: -70,
+    speed: 20,
+    speedSetpoint: 20,
+    priority: Priority.enhanced,
+    state: InstrumentState.active,
+    portStarboard: true,
+  },
+};
+
+/**
+ * `setpoint` opted in: both setpoint markers follow their own column's
+ * direction instead of staying priority-coloured.
+ */
+export const PortStarboardWithSetpoint: Story = {
+  args: {
+    thrust: -70,
+    thrustSetpoint: -85,
+    speed: 20,
+    speedSetpoint: 30,
+    priority: Priority.enhanced,
+    state: InstrumentState.active,
+    portStarboard: true,
+    portStarboardElements: [
+      PortStarboardElement.bar,
+      PortStarboardElement.zeroLine,
+      PortStarboardElement.arrow,
+      PortStarboardElement.setpoint,
+    ],
   },
 };
 

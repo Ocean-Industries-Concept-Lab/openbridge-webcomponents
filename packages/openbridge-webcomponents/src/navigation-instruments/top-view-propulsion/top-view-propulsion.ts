@@ -31,6 +31,16 @@ import {
 import {Tickmark, TickmarkStyle, TickmarkType} from '../watch/tickmark.js';
 import {PropellerImage, propellerImages} from '../watch/propeller.js';
 import {customElement} from '../../decorator.js';
+import {
+  hasPortStarboardElement,
+  PORT_STARBOARD_DEFAULT_ELEMENTS,
+  PortStarboardSides,
+  PortStarboardElement,
+  PortStarboardShade,
+  type PortStarboardSign,
+  portStarboardSignOf,
+  resolvePortStarboardColor,
+} from '../../svghelpers/port-starboard.js';
 import componentStyle from './top-view-propulsion.css?inline';
 
 export enum TopViewPropulsionType {
@@ -105,6 +115,13 @@ function percentToAngle(value: number): number {
  *   so instruments sharing the same value have identical ring circumference
  *   regardless of label width or arc extent (like obc-donut-chart's
  *   fixedHeight). When unset (default), the instrument fills its container.
+ * @property portStarboard - Enables the maritime PORT/STBD (red/green) color mode: positive values
+ *   render green, negative red. The face is not tinted.
+ * @property portStarboardElements - Which parts take part while `portStarboard` is on.
+ *   Defaults to everything except the setpoint. `face` has no effect here.
+ * @availableWhen portStarboardElements portStarboard==true
+ * @property portStarboardSides - Which halves the region tints paint while `portStarboard` is on.
+ * @availableWhen portStarboardSides portStarboard==true
  * @experimental The API of this component is under design review and may
  * change in a future release.
  */
@@ -112,6 +129,14 @@ function percentToAngle(value: number): number {
 export class ObcTopViewPropulsion extends LitElement {
   @property({type: String}) type: TopViewPropulsionType =
     TopViewPropulsionType.power;
+
+  @property({type: Boolean}) portStarboard = false;
+  @property({type: Array, attribute: false})
+  portStarboardElements: PortStarboardElement[] = [
+    ...PORT_STARBOARD_DEFAULT_ELEMENTS,
+  ];
+  @property({type: String}) portStarboardSides: PortStarboardSides =
+    PortStarboardSides.both;
 
   @property({type: Number}) power = 0;
   @property({type: Number}) powerSetpoint: number | undefined;
@@ -205,6 +230,50 @@ export class ObcTopViewPropulsion extends LitElement {
 
   private get isPitchRpm(): boolean {
     return this.type === TopViewPropulsionType.pitchRpm;
+  }
+
+  /**
+   * The centre carries the propeller art, so the face is never tinted.
+   */
+  private get watchPortStarboardElements(): PortStarboardElement[] {
+    return this.portStarboardElements.filter(
+      (element) => element !== PortStarboardElement.face
+    );
+  }
+
+  /** Direction of this instrument's own value, for `portStarboardSides="active"`. */
+  private get portStarboardValueSign(): PortStarboardSign {
+    return portStarboardSignOf(this.primaryValue);
+  }
+
+  /** Setpoint-marker sign, gated on the `setpoint` element opt-in. */
+  private get setpointPortStarboardSign(): PortStarboardSign {
+    return hasPortStarboardElement(
+      this.portStarboard,
+      this.portStarboardElements,
+      PortStarboardElement.setpoint
+    )
+      ? portStarboardSignOf(this.primaryValue)
+      : 0;
+  }
+
+  /**
+   * Resolve one element's PORT/STBD color, or `undefined` to keep the
+   * priority-derived color. `neutralDark` is off: this instrument keeps its
+   * priority color at zero rather than dropping to gray.
+   */
+  private portStarboardColorFor(
+    element: PortStarboardElement,
+    shade: PortStarboardShade,
+    value: number
+  ): string | undefined {
+    return resolvePortStarboardColor({
+      enabled: this.portStarboard,
+      elements: this.portStarboardElements,
+      element,
+      shade,
+      sign: portStarboardSignOf(value),
+    });
   }
 
   private get primaryValue(): number {
@@ -319,9 +388,15 @@ export class ObcTopViewPropulsion extends LitElement {
       areas.push({
         startAngle: Math.min(0, valueAngle),
         endAngle: Math.max(0, valueAngle),
-        fillColor: this.isEnhanced
-          ? 'var(--instrument-enhanced-tertiary-color)'
-          : 'var(--instrument-regular-tertiary-color)',
+        fillColor:
+          this.portStarboardColorFor(
+            PortStarboardElement.bar,
+            PortStarboardShade.light,
+            this.primaryValue
+          ) ??
+          (this.isEnhanced
+            ? 'var(--instrument-enhanced-tertiary-color)'
+            : 'var(--instrument-regular-tertiary-color)'),
         innerRadius: this.isPitchRpm ? PRIMARY_SUBBAND_INNER_RADIUS : undefined,
       });
     }
@@ -331,14 +406,24 @@ export class ObcTopViewPropulsion extends LitElement {
   private getNeedles(): WatchNeedle[] {
     const fill = !this.isActive
       ? 'var(--instrument-frame-tertiary-color)'
-      : this.isEnhanced
-        ? 'var(--instrument-enhanced-secondary-color)'
-        : 'var(--instrument-regular-secondary-color)';
+      : (this.portStarboardColorFor(
+          PortStarboardElement.needle,
+          PortStarboardShade.dark,
+          this.primaryValue
+        ) ??
+        (this.isEnhanced
+          ? 'var(--instrument-enhanced-secondary-color)'
+          : 'var(--instrument-regular-secondary-color)'));
     const stroke = !this.isActive
       ? 'var(--border-silhouette-color)'
-      : this.isEnhanced
-        ? 'var(--instrument-enhanced-tertiary-color)'
-        : 'var(--instrument-regular-tertiary-color)';
+      : (this.portStarboardColorFor(
+          PortStarboardElement.needle,
+          PortStarboardShade.light,
+          this.primaryValue
+        ) ??
+        (this.isEnhanced
+          ? 'var(--instrument-enhanced-tertiary-color)'
+          : 'var(--instrument-regular-tertiary-color)'));
     return [
       {
         angle: percentToAngle(this.primaryValue),
@@ -353,6 +438,12 @@ export class ObcTopViewPropulsion extends LitElement {
     if (!this.isActive) {
       return 'var(--instrument-frame-tertiary-color)';
     }
+    const portStarboard = this.portStarboardColorFor(
+      PortStarboardElement.bar,
+      PortStarboardShade.dark,
+      this.pitch
+    );
+    if (portStarboard) return portStarboard;
     return this.isEnhanced
       ? 'var(--instrument-enhanced-secondary-color)'
       : 'var(--instrument-regular-secondary-color)';
@@ -465,6 +556,11 @@ export class ObcTopViewPropulsion extends LitElement {
           .animateSetpoint=${this.animateSetpoint}
           .tickmarksInside=${this.tickmarksInside}
           .tickmarkStyle=${this.tickmarkStyle}
+          .portStarboard=${this.portStarboard}
+          .portStarboardElements=${this.watchPortStarboardElements}
+          .portStarboardSides=${this.portStarboardSides}
+          .portStarboardValueSign=${this.portStarboardValueSign}
+          .setpointPortStarboardSign=${this.setpointPortStarboardSign}
         ></obc-watch>
         <svg viewBox=${frame.viewBox} xmlns="http://www.w3.org/2000/svg">
           ${this.renderInnerRingLine()} ${this.renderLoadingArc()}

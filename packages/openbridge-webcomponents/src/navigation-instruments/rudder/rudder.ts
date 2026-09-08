@@ -9,6 +9,16 @@ import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
 import {customElement} from '../../decorator.js';
 import {
+  hasPortStarboardElement,
+  PORT_STARBOARD_DEFAULT_ELEMENTS,
+  PortStarboardSides,
+  PortStarboardElement,
+  PortStarboardShade,
+  type PortStarboardSign,
+  portStarboardSignOf,
+  resolvePortStarboardColor,
+} from '../../svghelpers/port-starboard.js';
+import {
   applyPinnedHostSize,
   computeRadialFrame,
   estimateLabelWidthPx,
@@ -87,6 +97,13 @@ export enum ObcRudderVariant {
  *   so instruments sharing the same value have identical ring circumference
  *   regardless of label width or arc extent (like obc-donut-chart's
  *   fixedHeight). When unset (default), the instrument fills its container.
+ * @property portStarboard - Enables the maritime PORT/STBD (red/green) color mode: starboard rudder
+ *   renders green, port red, and the face is split behind the arc.
+ * @property portStarboardElements - Which parts take part while `portStarboard` is on.
+ *   Defaults to everything except the setpoint.
+ * @availableWhen portStarboardElements portStarboard==true
+ * @property portStarboardSides - Which halves the region tints paint while `portStarboard` is on.
+ * @availableWhen portStarboardSides portStarboard==true
  * @stable
  */
 @customElement('obc-rudder')
@@ -101,6 +118,13 @@ export class ObcRudder extends SetpointMixin(LitElement) {
   @property({type: String}) tickmarkStyle: TickmarkStyle =
     TickmarkStyle.regular;
   @property({type: Array, attribute: false}) advices: AngleAdvice[] = [];
+  @property({type: Boolean}) portStarboard: boolean = false;
+  @property({type: Array, attribute: false})
+  portStarboardElements: PortStarboardElement[] = [
+    ...PORT_STARBOARD_DEFAULT_ELEMENTS,
+  ];
+  @property({type: String}) portStarboardSides: PortStarboardSides =
+    PortStarboardSides.both;
   @property({type: Boolean}) zoomToFitArc: boolean = false;
   @property({type: Number, attribute: 'face-diameter'})
   faceDiameter: number | undefined;
@@ -139,7 +163,71 @@ export class ObcRudder extends SetpointMixin(LitElement) {
     return 180 - value;
   }
 
+  /** Direction of this instrument's own value, for `portStarboardSides="active"`. */
+  private get portStarboardValueSign(): PortStarboardSign {
+    return portStarboardSignOf(this.angle);
+  }
+
+  /** Setpoint-marker sign, gated on the `setpoint` element opt-in. */
+  private get setpointPortStarboardSign(): PortStarboardSign {
+    return hasPortStarboardElement(
+      this.portStarboard,
+      this.portStarboardElements,
+      PortStarboardElement.setpoint
+    )
+      ? portStarboardSignOf(this.setpoint)
+      : 0;
+  }
+
+  /**
+   * PORT/STBD color for a band-family element, or `undefined` to fall back to
+   * {@link baseBandColor}. The band is a light track in the needle variant and
+   * the dark value fill in the bar variant, so the shade role differs by
+   * variant while the element stays the caller's. Loading/off never recolor.
+   */
+  private portStarboardBandColor(
+    element: PortStarboardElement
+  ): string | undefined {
+    if (
+      this.state === InstrumentState.loading ||
+      this.state === InstrumentState.off
+    ) {
+      return undefined;
+    }
+    return resolvePortStarboardColor({
+      enabled: this.portStarboard,
+      elements: this.portStarboardElements,
+      element,
+      sign: portStarboardSignOf(this.angle),
+      shade:
+        this.variant === ObcRudderVariant.Needle
+          ? PortStarboardShade.light
+          : PortStarboardShade.dark,
+      neutralDark: true,
+    });
+  }
+
+  /**
+   * Color of the thick zero-line tickmark. Shares the bar's fallback but
+   * resolves PORT/STBD through the `zeroLine` element, so the two can be
+   * selected independently.
+   */
+  private get zeroLineColor(): string {
+    return (
+      this.portStarboardBandColor(PortStarboardElement.zeroLine) ??
+      this.baseBandColor
+    );
+  }
+
   get barColor() {
+    return (
+      this.portStarboardBandColor(PortStarboardElement.bar) ??
+      this.baseBandColor
+    );
+  }
+
+  /** Priority/state-derived band color, shared by the bar and the zero line. */
+  private get baseBandColor(): string {
     if (this.variant === ObcRudderVariant.Needle) {
       if (
         this.state === InstrumentState.loading ||
@@ -168,11 +256,21 @@ export class ObcRudder extends SetpointMixin(LitElement) {
       return nothing;
     }
     let color: string;
+    const portStarboardNeedle = resolvePortStarboardColor({
+      enabled: this.portStarboard,
+      elements: this.portStarboardElements,
+      element: PortStarboardElement.needle,
+      sign: portStarboardSignOf(this.angle),
+      shade: PortStarboardShade.dark,
+      neutralDark: true,
+    });
     if (
       this.state === InstrumentState.loading ||
       this.state === InstrumentState.off
     ) {
       color = 'var(--instrument-frame-tertiary-color)';
+    } else if (portStarboardNeedle) {
+      color = portStarboardNeedle;
     } else {
       color =
         this.priority === Priority.enhanced
@@ -220,7 +318,7 @@ export class ObcRudder extends SetpointMixin(LitElement) {
       {
         angle: 180,
         type: TickmarkType.zeroLineThick,
-        color: this.barColor,
+        color: this.zeroLineColor,
       },
       {
         angle: 180 - maxAngle,
@@ -314,6 +412,11 @@ export class ObcRudder extends SetpointMixin(LitElement) {
           .state=${this.state}
           .priority=${this.priority}
           .advices=${advices}
+          .portStarboard=${this.portStarboard}
+          .portStarboardElements=${this.portStarboardElements}
+          .portStarboardSides=${this.portStarboardSides}
+          .portStarboardValueSign=${this.portStarboardValueSign}
+          .setpointPortStarboardSign=${this.setpointPortStarboardSign}
         ></obc-watch>
         <svg viewBox="${overlayViewBox}">${this.renderNeedle()}</svg>
       </div>

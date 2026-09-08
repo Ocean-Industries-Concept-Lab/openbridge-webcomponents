@@ -22,6 +22,19 @@ import {
   SETPOINT_ANIMATION_DURATION_DEFAULT,
 } from '../../svghelpers/setpoint.js';
 import {InstrumentState, Priority} from '../types.js';
+import {
+  hasPortStarboardElement,
+  PORT_STARBOARD_DEFAULT_ELEMENTS,
+  portStarboardColor,
+  PortStarboardElement,
+  PortStarboardShade,
+  type PortStarboardSign,
+  portStarboardSignOf,
+  PortStarboardSides,
+  portStarboardTintedSides,
+} from '../../svghelpers/port-starboard.js';
+export {PortStarboardElement, PortStarboardSides};
+export type {PortStarboardSign};
 import compentStyle from './watch.css?inline';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import {adviceMask, AngleAdviceRaw, renderAdvice} from './advice.js';
@@ -279,12 +292,19 @@ const WIND_ICON_OUTSIDE_RADIUS =
  * @property rotPriority - Override priority for ROT color derivation. When set, ROT colors use this instead of the main `priority`. Useful when the ROT element has independent priority (e.g. compass per-element priority).
  * @property rateOfTurnDegreesPerMinute - Measured rate of turn in degrees per minute (the maritime/AIS convention, see ES-TRIN 2025/1 Art. 3.02 and ITU-R M.1371). Sign controls direction (positive = starboard/clockwise). When defined, this drives both the dot animation (multiplied by `rotDotAnimationFactor`) and the port/starboard direction sign.
  * @property rotDotAnimationFactor - Visual amplification factor applied only to the spinning-dot animation (not to bar extent). Default `18` keeps the legacy visual feel (≈1 rpm at 20°/min).
+ * @property portStarboardElements - Which parts take part while `portStarboard` is on.
+ *   Defaults to everything except the setpoint.
+ * @availableWhen portStarboardElements portStarboard==true
+ * @property portStarboardSides - Which halves the region tints (`face` and the three bands) paint. Defaults
+ *   to both, i.e. a green starboard half and a red port half.
+ * @availableWhen portStarboardSides portStarboard==true
  * @experimental
  */
 @customElement('obc-watch')
 export class ObcWatch extends LitElement {
   private _setpointId = `watch-setpoint-${Math.random().toString(36).slice(2, 9)}`;
   private _newSetpointId = `watch-new-setpoint-${Math.random().toString(36).slice(2, 9)}`;
+  private _faceClipId = `watch-ps-face-${Math.random().toString(36).slice(2, 9)}`;
 
   @property({type: String}) state: InstrumentState = InstrumentState.active;
   @property({type: String}) priority: Priority = Priority.regular;
@@ -344,6 +364,49 @@ export class ObcWatch extends LitElement {
   @property({type: Boolean}) currentIconCentered: boolean = false;
   @property({type: Number}) scaleCurrentIcon: number = 1;
   @property({type: Boolean}) starboardPortIndicator: boolean = false;
+  /**
+   * Enables the maritime PORT/STBD (red/green) color mode. Additional to
+   * `priority`: parts not listed in `portStarboardElements` keep their
+   * regular/enhanced colors, and the setpoint focus state never recolors.
+   *
+   * Independent of `starboardPortIndicator`, which draws thin arcs on the
+   * scale ring; this mode's `face` element tints the open face inside the
+   * rings. Both may be enabled together.
+   *
+   * Do not enable the `face` element on an instrument that renders a center
+   * readout — the tint would sit behind the text. It is likewise not
+   * combinable with `hasBackgroundCircle`, whose opaque face fill is painted
+   * over it.
+   */
+  @property({type: Boolean}) portStarboard: boolean = false;
+  @property({type: Array, attribute: false})
+  portStarboardElements: PortStarboardElement[] = [
+    ...PORT_STARBOARD_DEFAULT_ELEMENTS,
+  ];
+  /**
+   * Direction for the setpoint marker while the `setpoint` element is enabled.
+   * Only the sign is read, so a raw setpoint value works as well as `-1`/`1`;
+   * `0` (and any non-finite value) keeps the priority-derived color.
+   *
+   * Declared as `number` rather than the narrower `PortStarboardSign` because
+   * the framework wrapper generators type `@property({type: Number})` setters
+   * as `number` — a union type alias here breaks the Angular package build.
+   * @availableWhen portStarboard==true
+   */
+  @property({type: Number}) setpointPortStarboardSign: number = 0;
+  @property({type: String}) portStarboardSides: PortStarboardSides =
+    PortStarboardSides.both;
+  /**
+   * Direction of the instrument's own value, used only by
+   * `portStarboardSides="active"` to pick the half to paint. Only the sign is
+   * read, so a raw value works; `0` (or non-finite) paints both halves.
+   *
+   * Declared as `number` rather than `PortStarboardSign` for the same reason as
+   * `setpointPortStarboardSign` — the wrapper generators type `type: Number`
+   * setters as `number`.
+   * @availableWhen portStarboard==true && portStarboardSides==active
+   */
+  @property({type: Number}) portStarboardValueSign: number = 0;
   @property({type: Number}) clipTop: number = 0;
   @property({type: Number}) clipBottom: number = 0;
   @property({type: Number}) clipLeft: number = 0;
@@ -491,6 +554,53 @@ export class ObcWatch extends LitElement {
     return base + this._rOff;
   }
 
+  /**
+   * Half-annulus tint for one of the watch face's existing bands. Returns an
+   * empty array when the element is not selected, the band does not exist for
+   * the current `watchCircleType`, or the instrument is not active.
+   *
+   * Callers insert the result into the ring list immediately after that band's
+   * own fill and before its outline strokes, so the frame lines stay crisp and
+   * the sector `areas` cut mask applies to the tint for free.
+   */
+  private portStarboardBandTint(
+    element: PortStarboardElement,
+    innerRadius: number,
+    outerRadius: number
+  ): SVGTemplateResult[] {
+    if (
+      !hasPortStarboardElement(
+        this.portStarboard,
+        this.portStarboardElements,
+        element
+      ) ||
+      this.state !== InstrumentState.active
+    ) {
+      return [];
+    }
+    const sides = portStarboardTintedSides(
+      this.portStarboardSides,
+      portStarboardSignOf(this.portStarboardValueSign)
+    );
+    const half = (startAngle: number, endAngle: number, sign: 1 | -1) =>
+      svg`<path
+        d=${roundedArch({
+          startAngle,
+          endAngle,
+          R: outerRadius,
+          r: innerRadius,
+          roundOutsideCut: false,
+          roundInsideCut: false,
+        })}
+        fill=${portStarboardColor(sign, PortStarboardShade.light)}
+        stroke="none"
+      />`;
+    const halves: SVGTemplateResult[] = [];
+    if (sides.starboard) halves.push(half(0, 180, 1));
+    if (sides.port) halves.push(half(180, 360, -1));
+    return halves;
+  }
+
   private watchCircle(): SVGTemplateResult | SVGTemplateResult[] {
     const rings = [];
     // Full-face circle behind everything, split in two: the fill goes under
@@ -533,6 +643,13 @@ export class ObcWatch extends LitElement {
           fill="none"
           stroke-width="24"
         />`);
+      rings.push(
+        ...this.portStarboardBandTint(
+          PortStarboardElement.outerBand,
+          this._bandRadius(RING2_RADIUS),
+          this._bandRadius(OUTER_RING_RADIUS)
+        )
+      );
 
       if (this.watchCircleType !== WatchCircleType.single) {
         const r1 = this._bandRadius(RING2_RADIUS);
@@ -564,10 +681,30 @@ export class ObcWatch extends LitElement {
                 } stroke-width="1" vector-effect="non-scaling-stroke" />`
             )
           );
+          // Same tint as the branch below. It is emitted here too so that
+          // `middleBand` still works when the band is drawn as rounded sector
+          // arches; the `cutMask` built from `areas` trims it to the sectors.
+          rings.push(
+            ...this.portStarboardBandTint(
+              PortStarboardElement.middleBand,
+              r2,
+              r1
+            )
+          );
         } else {
           rings.push(
             svg`
-            <circle cx="0" cy="0" r=${r} stroke="var(--instrument-frame-secondary-color)" stroke-width=${strokeWidth} fill="none" />
+            <circle cx="0" cy="0" r=${r} stroke="var(--instrument-frame-secondary-color)" stroke-width=${strokeWidth} fill="none" />`
+          );
+          rings.push(
+            ...this.portStarboardBandTint(
+              PortStarboardElement.middleBand,
+              r2,
+              r1
+            )
+          );
+          rings.push(
+            svg`
             <circle cx="0" cy="0" r=${r1} stroke="var(--instrument-frame-secondary-color)" stroke-width="1" fill="none" vector-effect="non-scaling-stroke" />
             <circle cx="0" cy="0" r=${r2} stroke="var(--instrument-frame-secondary-color)" stroke-width="1" fill="none" vector-effect="non-scaling-stroke" />
         `
@@ -581,6 +718,9 @@ export class ObcWatch extends LitElement {
         const strokeWidth = r1 - r2;
         rings.push(
           svg`<circle cx="0" cy="0" r=${r} stroke="var(--instrument-frame-primary-color)" stroke-width=${strokeWidth} fill="none" />`
+        );
+        rings.push(
+          ...this.portStarboardBandTint(PortStarboardElement.innerBand, r2, r1)
         );
       }
     }
@@ -1130,7 +1270,8 @@ export class ObcWatch extends LitElement {
         style="--scale: ${scale}"
         transform="rotate(${this.rotation ?? 0})"
       >
-        ${this.watchCircle()} ${this.renderBars()}
+        ${this.renderPortStarboardFace()} ${this.watchCircle()}
+        ${this.renderBars()}
         ${this.crosshairEnabled
           ? this.renderCrosshair(
               OUTER_RING_RADIUS + rOff,
@@ -1286,6 +1427,14 @@ export class ObcWatch extends LitElement {
 
     const {visualState, colorMode, disabled, hasNewSetpoint} = derived;
 
+    const portStarboardSign = hasPortStarboardElement(
+      this.portStarboard,
+      this.portStarboardElements,
+      PortStarboardElement.setpoint
+    )
+      ? portStarboardSignOf(this.setpointPortStarboardSign)
+      : 0;
+
     const outwardOffset = getSetpointOutwardOffset(visualState);
     const radius =
       RADIAL_SETPOINT_RADIUS +
@@ -1300,6 +1449,7 @@ export class ObcWatch extends LitElement {
       colorMode,
       disabled,
       id: this._setpointId,
+      portStarboardSign,
     });
 
     const animate = this.animateSetpoint;
@@ -1415,6 +1565,72 @@ export class ObcWatch extends LitElement {
         'var(--instrument-port-secondary-color)'
       ),
     ] as SVGTemplateResult[];
+  }
+
+  /**
+   * Half-area tints on the open face inside the rings: starboard (green)
+   * spans 0–180°, port (red) 180–360°. Anchored to `innerRingRadius` so it
+   * never covers a frame band for any `watchCircleType`, and rendered before
+   * the rings so the ring outlines — whose 1px strokes straddle that exact
+   * radius — stay crisp even with a saturated tint (the night theme's
+   * port/starboard colors are dark). With sector `areas` it is clipped to the
+   * wedge — center included — matching the design's tinted rudder face.
+   */
+  private renderPortStarboardFace(): SVGTemplateResult | typeof nothing {
+    if (
+      !hasPortStarboardElement(
+        this.portStarboard,
+        this.portStarboardElements,
+        PortStarboardElement.face
+      ) ||
+      this.state !== InstrumentState.active
+    ) {
+      return nothing;
+    }
+    const r = this._bandRadius(this.innerRingRadius);
+    const sides = portStarboardTintedSides(
+      this.portStarboardSides,
+      portStarboardSignOf(this.portStarboardValueSign)
+    );
+    const halves = svg`
+      ${
+        sides.starboard
+          ? svg`<path
+        d="M 0 ${-r} A ${r} ${r} 0 0 1 0 ${r} Z"
+        fill=${portStarboardColor(1, PortStarboardShade.light)}
+        stroke="none"
+      />`
+          : nothing
+      }
+      ${
+        sides.port
+          ? svg`<path
+        d="M 0 ${r} A ${r} ${r} 0 0 1 0 ${-r} Z"
+        fill=${portStarboardColor(-1, PortStarboardShade.light)}
+        stroke="none"
+      />`
+          : nothing
+      }
+    `;
+    if (this.areas.length === 0) {
+      return halves;
+    }
+    return svg`
+      <clipPath id=${this._faceClipId}>
+        ${this.areas.map(
+          (area) =>
+            svg`<path d=${roundedArch({
+              startAngle: area.startAngle,
+              endAngle: area.endAngle,
+              R: r,
+              r: 0,
+              roundOutsideCut: area.roundOutsideCut,
+              roundInsideCut: area.roundInsideCut,
+            })} />`
+        )}
+      </clipPath>
+      <g clip-path="url(#${this._faceClipId})">${halves}</g>
+    `;
   }
 
   static override styles = unsafeCSS(compentStyle);

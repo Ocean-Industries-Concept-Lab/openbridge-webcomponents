@@ -1,6 +1,13 @@
 import {LitElement, html, nothing, svg, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
+import {
+  PortStarboardElement,
+  PortStarboardShade,
+  type PortStarboardSign,
+  portStarboardSignOf,
+  resolvePortStarboardColor,
+} from '../../svghelpers/port-starboard.js';
 import {InstrumentState, Priority} from '../types.js';
 
 const componentStyle = `:host {
@@ -85,6 +92,10 @@ let nextFrameClipId = 0;
  * ## Usage Guidelines
  *
  * Use when the larger `obc-main-engine` is too dense and only a compact visual summary of speed and thrust is needed. Use `obc-main-engine` when setpoints or the larger scale treatment are required.
+ *
+ * @property portStarboard - Enables the maritime PORT/STBD (red/green) color mode: ahead renders
+ *   green, astern red. The indicator shows one propulsion unit, so the whole
+ *   visual follows its thrust (pitch) direction.
  * @stable
  */
 @customElement('obc-main-engine-indicator')
@@ -140,6 +151,8 @@ export class ObcMainEngineIndicator extends LitElement {
   @property({type: String}) priority: Priority = Priority.regular;
 
   @property({type: Boolean}) hasSilhouette = false;
+
+  @property({type: Boolean}) portStarboard = false;
 
   static override styles = unsafeCSS(componentStyle);
 
@@ -239,16 +252,43 @@ export class ObcMainEngineIndicator extends LitElement {
     return this.hasSilhouette && this.state !== InstrumentState.off;
   }
 
+  /**
+   * Direction sign for the PORT/STBD mode. The compact indicator shows one
+   * propulsion unit, so its single direction is the thrust (pitch) sign; the
+   * speed fill and cap follow it rather than the unipolar rpm.
+   */
+  private get portStarboardSign(): PortStarboardSign {
+    return portStarboardSignOf(this.thrust);
+  }
+
   private get speedFillColor(): string {
-    return this.priority === Priority.enhanced
-      ? 'var(--instrument-enhanced-tertiary-color)'
-      : 'var(--instrument-regular-tertiary-color)';
+    return (
+      resolvePortStarboardColor({
+        enabled: this.portStarboard,
+        elements: undefined,
+        element: PortStarboardElement.bar,
+        sign: this.portStarboardSign,
+        shade: PortStarboardShade.light,
+      }) ??
+      (this.priority === Priority.enhanced
+        ? 'var(--instrument-enhanced-tertiary-color)'
+        : 'var(--instrument-regular-tertiary-color)')
+    );
   }
 
   private get accentColor(): string {
-    return this.priority === Priority.enhanced
-      ? 'var(--instrument-enhanced-secondary-color)'
-      : 'var(--instrument-regular-secondary-color)';
+    return (
+      resolvePortStarboardColor({
+        enabled: this.portStarboard,
+        elements: undefined,
+        element: PortStarboardElement.bar,
+        sign: this.portStarboardSign,
+        shade: PortStarboardShade.dark,
+      }) ??
+      (this.priority === Priority.enhanced
+        ? 'var(--instrument-enhanced-secondary-color)'
+        : 'var(--instrument-regular-secondary-color)')
+    );
   }
 
   private renderSilhouette() {
