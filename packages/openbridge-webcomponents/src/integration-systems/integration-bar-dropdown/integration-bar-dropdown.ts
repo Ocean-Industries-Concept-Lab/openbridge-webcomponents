@@ -168,7 +168,9 @@ export class ObcIntegrationBarDropdown extends LitElement {
               )
             : nothing}
           ${this.showNotificationButton
-            ? html`<obc-notification-button
+            ? // TODO(designer): keep the Enhanced badge button here, or match the
+              // sibling bar's plain notification icon button? (#624)
+              html`<obc-notification-button
                 @click=${() =>
                   this.dispatchEvent(
                     new CustomEvent('notification-button-clicked')
