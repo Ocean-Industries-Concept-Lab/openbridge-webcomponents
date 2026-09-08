@@ -2,6 +2,7 @@
 paths:
   - "packages/openbridge-webcomponents/.storybook/**"
   - "packages/openbridge-webcomponents/__vis__/**"
+  - "packages/openbridge-webcomponents/vitest*.config.ts"
   - "packages/vue-demo/e2e/**"
 ---
 
@@ -64,8 +65,16 @@ reject.
 **Regenerate locally, on Linux.** The devcontainer (Ubuntu 24.04) renders what
 the CI `test` job (`mcr.microsoft.com/playwright:v1.60.0-noble`) accepts, so a
 scoped `--update` followed by a plain re-run is the whole procedure. On macOS
-take the Docker route, `npm run test-storybook:docker` — see
-[IMPLEMENTATION_GUIDELINES.md § Docker Testing](../../IMPLEMENTATION_GUIDELINES.md#docker-testing)
+take the Docker route from the package directory (the scripts mount `$(pwd)`),
+keeping the filter in front of the flag — `update-snapshots:docker` has no
+filter and rewrites the whole suite:
+
+```bash
+npm run test-storybook:docker -- -- component-name --update
+npm run test-storybook:docker -- -- component-name
+```
+
+See [IMPLEMENTATION_GUIDELINES.md § Docker Testing](../../IMPLEMENTATION_GUIDELINES.md#docker-testing)
 and [`ci-and-release.md`](../../docs/agents/ci-and-release.md). The `/update-snapshots`
 PR-comment workflow is not a fallback (see Open), and it fires on any comment
 that merely contains that string — keep the command out of PR prose.
@@ -73,12 +82,14 @@ that merely contains that string — keep the command out of PR prose.
 ## Checking a baseline against the design
 
 A baseline is the full 1280×720 story frame. Without a decorator the component
-sits at the top-left; under `crossDecorator` it is centred on the wrapper
-(around `x = 480, y = 360` — the wrapper is 960px wide). Crop and upscale that
-region before comparing it with the Figma export (`pngjs` in `node_modules`
-does it in a few lines), and compare every value of the Figma variant property,
-not only the default story — a component built from a stale copy of the file
-looks right in its default state and wrong in the others.
+sits at the top-left; under `crossDecorator` it is centred at `x = 480, y = 360`
+— the story renders in a 960 px-wide area of that frame, whatever the
+decorator's `width: 100%` suggests (measure a `cross` baseline: the guide lines
+sit in column 480 and row 360). Crop and upscale that region before comparing
+it with the Figma export (`pngjs` in `node_modules` does it in a few lines),
+and compare every value of the Figma variant property, not only the default
+story — a component built from a stale copy of the file looks right in its
+default state and wrong in the others.
 
 ## Storybook config
 
@@ -168,6 +179,15 @@ When adding one, keep the interval probes per-story and clear them before
 starting new ones — a rerender otherwise leaves two probe loops running and the
 readouts fight each other.
 
+## The spec project is not the snapshot project
+
+`npm run test:browser` runs `src/**/*.spec.ts` in Chromium through
+`vitest.browser.config.ts`; `npm run test-storybook` runs the stories through
+`vitest.config.ts`. Both set `headless: true` explicitly — Vitest only defaults
+to headless under `CI`, so without the line a local run opens no window and
+waits for a display forever. Node-only tests for the repo's tooling
+(`script/**/*.test.ts`) are the `rules` project, `npm run test:rules`.
+
 ## Stuck browsers
 
 Spawned Chromium processes sometimes hang and stall a run. Kill the strays and
@@ -176,4 +196,4 @@ re-run scoped to the single component rather than retrying the whole suite.
 ## Open
 
 - `update-snapshots.yml` fails inside its Docker image before writing anything, and triggers on any PR comment containing its command (#1179).
-- Element-cropped story screenshots (`npm run screenshots`, opt-in through `VITE_STORYBOOK_TAKE_SCREENSHOT`, sized from the `@ignition-base-*` tags) are in draft #731; until it lands, crop the 1280×720 baseline by hand as above.
+- Element-cropped story screenshots (`npm run screenshots`, opt-in through `VITE_STORYBOOK_TAKE_SCREENSHOT`, sized from the `@snapshot-base-width` / `@snapshot-base-height` JSDoc tags) are in draft #731; until it lands, crop the 1280×720 baseline by hand as above.

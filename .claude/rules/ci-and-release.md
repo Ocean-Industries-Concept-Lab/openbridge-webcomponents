@@ -70,9 +70,11 @@ wrapper versions are synced first by `scripts/prepare-wrappers.js` (see below).
 **Regenerate baselines locally, on Linux.** The devcontainer's render is what
 the `test` job accepts; scope the run to the component and re-run without
 `--update` afterwards ([`testing-visual.md`](../../docs/agents/testing-visual.md)). Baselines from
-a non-Linux machine produce diffs CI rejects — use `npm run test-storybook:docker`
-there. The `/update-snapshots` comment workflow currently fails inside its
-Docker image, and fires on any comment containing that string (#1179).
+a non-Linux machine produce diffs CI rejects — there, run
+`npm run test-storybook:docker -- -- component-name --update` from the package
+directory, then the same command without `--update`. The `/update-snapshots`
+comment workflow currently fails inside its Docker image, and fires on any
+comment containing that string (#1179).
 
 ## Two script directories, and they are not interchangeable
 
