@@ -1,3 +1,5 @@
+import {clampPercent} from '../../svghelpers/math.js';
+
 export const BUTTON_SILHOUETTE_RADIUS = 18.5;
 export const DISC_RADIUS = 17.5;
 export const FILLED_DISC_RADIUS = 18.5;
@@ -12,11 +14,6 @@ export const DOUBLE_BAR_OUTER_RADIUS = 22;
 export const DOUBLE_BAR_OUTER_STROKE_WIDTH = 4;
 export const DOUBLE_BAR_INNER_RADIUS = 18;
 export const DOUBLE_BAR_INNER_STROKE_WIDTH = 2;
-
-export function clampPercent(value: number): number {
-  if (Number.isNaN(value)) return 0;
-  return Math.min(100, Math.max(0, value));
-}
 
 /** Sweep (deg) of the progress arc, clockwise from 12 o'clock. */
 export function progressSweep(level: number): number {

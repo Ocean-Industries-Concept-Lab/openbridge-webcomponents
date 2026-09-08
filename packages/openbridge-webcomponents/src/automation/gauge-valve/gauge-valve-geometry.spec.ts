@@ -4,24 +4,11 @@ import {
   SCALE_ROTATION_DEG,
   TRACK_CORNER_RADIUS,
   TRACK_HALF_SPANS,
-  clampPercent,
   inletPercent,
   scaleAngle,
   valveAreas,
   valvePorts,
 } from './gauge-valve-geometry.js';
-
-describe('clampPercent', () => {
-  it('clamps below 0 and above 100', () => {
-    expect(clampPercent(-5)).toBe(0);
-    expect(clampPercent(150)).toBe(100);
-    expect(clampPercent(42)).toBe(42);
-  });
-  it('treats NaN as 0 and clamps infinite values', () => {
-    expect(clampPercent(NaN)).toBe(0);
-    expect(clampPercent(Infinity)).toBe(100);
-  });
-});
 
 describe('inletPercent', () => {
   it('sums outlet flows, capped at 100', () => {
