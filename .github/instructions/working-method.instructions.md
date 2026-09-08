@@ -60,14 +60,39 @@ judgement call.
 
 3. **The pattern exists elsewhere.** Search `src/` for the Figma property
    name, the CSS token, the event name and the JSDoc phrase; search
-   `docs/agents/` for the family; run `gh pr list --search "<component>"` and
-   `git log -S'<symbol>'` for the last change to the same thing (`AGENTS.md`
-   § 8 rule 19).
+   `docs/agents/` for the family; run `git log -S'<symbol>'` for the last
+   change to the same thing, and read the tracker (next section).
 
 4. **Nothing exists.** Write it in the shared home — `svghelpers/`,
    `charthelpers/`, `src/mixins/`, or the family's `*-shared.ts` — with a
    spec, and import it. A local copy "for now" is how the table below was
    born.
+
+## The history is part of the codebase
+
+Decisions are DRY too. Rule 18 in `AGENTS.md` puts every design record in
+the PR body and every open question in an issue, so the reasons behind the
+code live in the tracker, not in comments — and a task that skips them
+re-litigates a settled choice or rebuilds a parked PR. Before starting, and
+before proposing anything, read the tracker for the component and the
+family, months back, open and closed. Titles first — a listing costs a few
+hundred tokens:
+
+```bash
+gh issue list --state all --search "<component>" --limit 40
+gh pr list --state all --search "<component>" --limit 40
+gh pr list --state merged --limit 60            # the last few months by eye
+git log --oneline --since='3 months ago' -- src/<family>/
+```
+
+Then dig only where a title or description touches the task: `gh pr view N`
+for the design record and its Alternatives section, `gh issue view N
+--comments` for the decision and the cross-links, `gh pr diff N` when the
+change itself matters. A closed issue is a decision; a closed unmerged PR is
+a parked design with a tracking issue in its last comment; a merged PR's
+"Follow-ups" is the list of what was deliberately not done. Cite what you
+found as a trailing `(#1234)` and build on it — or say in the PR body why
+this task departs from it.
 
 ## Known duplication — do not add to it
 

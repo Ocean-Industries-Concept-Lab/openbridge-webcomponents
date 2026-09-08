@@ -321,16 +321,17 @@ automatically when editing a `.css` file.
 16. **The readout family is four nested layers, not one component.** `obc-textbox` → `obc-readout-block` → `obc-readout-list-item` → `obc-readout-list`, plus `obc-readout` over the same block inside radial instruments. A change to a lower layer reaches every layer above it — re-run the instrument snapshots too. Value/format helpers belong in `readout-formatters.ts` (imports nothing); the validation and bounding invariants are in [`docs/agents/readout-components.md`](docs/agents/readout-components.md) — read it before editing any of them.
 17. **Never hand-edit `src/palettes/variables.css`, `src/mixins/fonts.css` or `script/figmavariables.json`.** All three are regenerated wholesale from the [obc-figma-plugin](https://github.com/Ocean-Industries-Concept-Lab/obc-figma-plugin), so token additions and renames go through Figma (or the plugin's `rename()`) first. Hand-curated font mixins live in `src/mixins/font-extras.css`; run `npm run lint:mixins` after regenerating `fonts.css` ([`docs/agents/generated-code.md`](docs/agents/generated-code.md)).
 18. **Do not commit planning documents or specs.** Design notes, plans and scratch specs stay out of the repository, whatever directory an agent writes them to — the design record belongs in the pull request body, where reviewers read it and where it stays attached to the change.
-19. **Check for parallel work before you start.** Read the issue
-    (`gh issue view N`); look for open PRs or branches touching the same
-    component (`gh pr list --search "<component>"`). Auto-memory and local plan
-    files are private to one developer — never a coordination surface.
+19. **Read the tracker before you start.** The issue, then open and closed
+    issues and PRs for the component months back — titles first, bodies of
+    the relevant ones ([`docs/agents/working-method.md` § History](docs/agents/working-method.md)).
+    Auto-memory and local plan files are private to one developer — never a
+    coordination surface.
 20. **Open a draft PR early** with the design record in the template's sections, a Conventional Commits title, and up to three screenshots for anything visual ([`docs/agents/coding-standards.md` § Writing style](docs/agents/coding-standards.md)).
 21. **Comment pass is part of done** (§ 2; [`docs/agents/coding-standards.md`](docs/agents/coding-standards.md)).
 22. **Search before you write.** 283 elements share a few helper hubs and come in twin families: find the helper, sibling or pattern first, and fix the family, not the member ([`docs/agents/working-method.md`](docs/agents/working-method.md)).
 23. **Figma is the target, the code is the precedent.** Aim for 1:1; where deliberate code geometry or a property name disagrees with the file, keep the code and leave a `TODO(designer)`. Generated tokens and icons flow from Figma (rule 17).
 24. **No names.** Cite roles, issues and Figma nodes, never people or handles — in comments, docs, commits, PR and issue text ([`docs/agents/coding-standards.md`](docs/agents/coding-standards.md) § Writing style).
-25. **Use the most capable current model** your tool offers; a smaller tier is for mechanical steps only. `script/docgen` pins an OpenAI default — pass `OPENAI_MODEL`.
+25. **Use the most capable current model** your tool offers; a smaller tier is for mechanical steps only.
 
 ---
 
