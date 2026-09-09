@@ -516,3 +516,48 @@ describe('range labels follow the data (#1191)', () => {
     expect(drawnRangeLabels(chart).map((l) => l.text)).toEqual(['90', '10']);
   });
 });
+
+describe('scale stays level with the chart area at any container width (#1191)', () => {
+  /** The bar's drawing area on screen: its box minus its padding, scaled from viewBox units. */
+  const barDrawingArea = (bar: ObcBarVertical) => {
+    const rect = bar.getBoundingClientRect();
+    const unit = rect.height / bar.scaleReferenceSize;
+    return {
+      top: rect.top + bar.paddingTop * unit,
+      bottom: rect.bottom - bar.paddingBottom * unit,
+    };
+  };
+
+  for (const containerWidth of [160, 236, 300]) {
+    it(`gauge-trend at ${containerWidth}px wide, 160×128 ratio, range labels`, async () => {
+      const host = document.createElement('div');
+      host.style.cssText = `width: ${containerWidth}px`;
+      document.body.appendChild(host);
+      mounted.push(host);
+      const gauge = document.createElement('obc-gauge-trend') as ObcGaugeTrend;
+      gauge.width = 160;
+      gauge.height = 128;
+      gauge.rangeLabels = RangeLabels.xy;
+      gauge.hasBar = true;
+      gauge.hasScale = true;
+      gauge.data = [45, 52, 48, 55].map((value, i) => ({
+        label: String(i),
+        value,
+      }));
+      host.appendChild(gauge);
+      await gauge.updateComplete;
+      await frames(30);
+
+      const bar = gauge.querySelector('obc-bar-vertical') as ObcBarVertical;
+      const canvas = canvasRect(gauge as unknown as ObcAreaGraph);
+      const area = chartAreaOf(gauge as unknown as ObcAreaGraph);
+      const drawing = barDrawingArea(bar);
+      expect(
+        Math.abs(drawing.top - (canvas.top + area.top))
+      ).toBeLessThanOrEqual(1);
+      expect(
+        Math.abs(drawing.bottom - (canvas.top + area.bottom))
+      ).toBeLessThanOrEqual(1);
+    });
+  }
+});
