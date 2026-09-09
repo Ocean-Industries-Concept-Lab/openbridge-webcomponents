@@ -50,14 +50,14 @@ import {classMap} from 'lit/directives/class-map.js';
  * @slot clock - Custom clock content, rendered when `showClock` is true
  * @slot integration-buttons - Regular vessel integration buttons
  * @slot hug-buttons - Compact vessel integration buttons; slotted integration buttons are forced to hug type
- * @fires fleet-button-click - Fired when the fleet button is clicked
- * @fires link-button-clicked - Fired when the link button is clicked
- * @fires alert-button-clicked - Fired when the alert button is clicked
- * @fires notification-button-clicked - Fired when the notification button is clicked
- * @fires screen-button-clicked - Fired when the screen button is clicked
- * @fires system-button-clicked - Fired when the system button is clicked
- * @fires dimming-button-clicked - Fired when the dimming button is clicked
- * @fires user-button-clicked - Fired when the user button is clicked
+ * @fires {CustomEvent} fleet-button-click - Fired when the fleet button is clicked
+ * @fires {CustomEvent} link-button-clicked - Fired when the link button is clicked
+ * @fires {CustomEvent} alert-button-clicked - Fired when the alert button is clicked
+ * @fires {CustomEvent} notification-button-clicked - Fired when the notification button is clicked
+ * @fires {CustomEvent} screen-button-clicked - Fired when the screen button is clicked
+ * @fires {CustomEvent} system-button-clicked - Fired when the system button is clicked
+ * @fires {CustomEvent} dimming-button-clicked - Fired when the dimming button is clicked
+ * @fires {CustomEvent} user-button-clicked - Fired when the user button is clicked
  * @experimental
  */
 @customElement('obc-integration-bar')
