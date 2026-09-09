@@ -46,7 +46,6 @@
   }
 
   &.left .menu-button {
-    flex-shrink: 0; /* the menu button outranks every text in a squeeze */
     margin-right: 0;
     margin-left: 0;
 
@@ -65,6 +64,18 @@
   }
 }
 
+/* Controls never shrink: a squeeze reaches the texts, then overflows the end */
+.menu-button,
+.app-icon,
+.left-more-button,
+.dimming-button,
+.user-button,
+.apps-button,
+::slotted([slot="command-button"]),
+::slotted([slot="clock"]) {
+  flex-shrink: 0;
+}
+
 .alert-container {
   display: flex;
   flex: 1 1 0; /* zero basis: fills what the texts leave, holds its min-content in a squeeze */
@@ -77,21 +88,20 @@
 
 .title,
 .page-name {
+  min-width: 1.75em; /* room for "W…": narrower boxes paint a clipped glyph instead */
   overflow: hidden;
+  text-overflow: ellipsis; /* per line, so a lone wide word ellipsizes too */
   color: var(--element-active-color, #1a1a1a);
 }
 
 .title {
-  flex-shrink: 3; /* the app title gives way before the page name */
-  min-width: 2em; /* room for "A…": narrower boxes paint a clipped glyph instead */
+  flex-shrink: 100; /* the app title reaches its floor before the page name loses a pixel */
   white-space: nowrap;
-  text-overflow: ellipsis;
   @mixin font-body;
 }
 
 .page-name {
-  min-width: 0; /* shrink below the longest word instead of pushing buttons out */
-  display: -webkit-box; /* two lines, then an ellipsis */
+  display: -webkit-box; /* two lines, then dropped */
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   line-clamp: 2;
@@ -100,7 +110,6 @@
 
 .left-more-button {
   display: none;
-  flex-shrink: 0; /* the more button outranks every text in a squeeze */
 }
 
 .divider {
