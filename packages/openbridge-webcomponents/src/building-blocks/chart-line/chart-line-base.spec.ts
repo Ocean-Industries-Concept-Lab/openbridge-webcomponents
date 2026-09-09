@@ -7,7 +7,7 @@ import type {ObcAreaGraph} from '../../bars-graphs/area-graph/area-graph.js';
 import type {ObcBarVertical} from '../bar-vertical/bar-vertical.js';
 import type {ObcBarHorizontal} from '../bar-horizontal/bar-horizontal.js';
 import {ExternalScaleSide} from '../external-scale/external-scale.js';
-import {XAxisType, TimeDisplay} from './chart-line-base.js';
+import {XAxisType, TimeDisplay, RangeLabels} from './chart-line-base.js';
 
 type ChartScales = {
   scales: Record<string, {min: number; max: number}>;
@@ -69,6 +69,56 @@ async function mount(
   await chart.updateComplete;
   await frames();
   return {chart, left, right, bottom};
+}
+
+type ChartGeometry = {
+  chartArea: {left: number; right: number; top: number; bottom: number};
+  options: {
+    layout: {
+      padding: {top: number; right: number; bottom: number; left: number};
+    };
+  };
+};
+
+const chartPadding = (chart: ObcAreaGraph) =>
+  (chart as unknown as {chart: ChartGeometry}).chart.options.layout.padding;
+
+const chartAreaOf = (chart: ObcAreaGraph) => {
+  const a = (chart as unknown as {chart: ChartGeometry}).chart.chartArea;
+  return {
+    left: Math.round(a.left),
+    right: Math.round(a.right),
+    top: Math.round(a.top),
+    bottom: Math.round(a.bottom),
+  };
+};
+
+const canvasRect = (chart: ObcAreaGraph) =>
+  chart.shadowRoot!.querySelector('canvas')!.getBoundingClientRect();
+
+type DrawnRangeLabel = {axis: 'x' | 'y'; text: string; x: number; y: number};
+const drawnRangeLabels = (chart: ObcAreaGraph) =>
+  (chart as unknown as {lastRangeLabels: DrawnRangeLabel[]}).lastRangeLabels;
+
+/** Mounts an area graph with no slotted scales at the given size. */
+async function mountPlain(
+  configure: (chart: ObcAreaGraph) => void,
+  size: {width: number; height: number}
+) {
+  document.documentElement.classList.add('obc-component-size-regular');
+  const host = document.createElement('div');
+  document.body.appendChild(host);
+  mounted.push(host);
+
+  const chart = document.createElement('obc-area-graph');
+  chart.width = size.width;
+  chart.height = size.height;
+  chart.showTickMarks = true;
+  configure(chart);
+  host.appendChild(chart);
+  await chart.updateComplete;
+  await frames();
+  return chart;
 }
 
 const datasetAxisId = (chart: ObcAreaGraph, index = 0) =>
@@ -248,5 +298,72 @@ describe('slotted scales on a time axis (#1219)', () => {
     });
     expect(range(bottom)).toEqual({min: 0, max: 100});
     expect(warn).toHaveBeenCalledWith(expect.stringContaining('date'));
+  });
+});
+
+describe('range labels below the threshold (#1191)', () => {
+  const small = {width: 120, height: 72};
+
+  it('reserves a measured side gutter and a one-line bottom gutter', async () => {
+    const chart = await mountPlain((c) => {
+      c.rangeLabels = RangeLabels.xy;
+      c.data = [3.5, 7, 4].map((value, i) => ({label: `L${i}`, value}));
+    }, small);
+    const padding = chartPadding(chart);
+    expect(padding.left).toBeGreaterThan(8);
+    expect(padding.right).toBe(0);
+    expect(padding.bottom).toBeGreaterThan(4);
+    expect(padding.top).toBe(0);
+    expect(
+      drawnRangeLabels(chart)
+        .map((l) => l.text)
+        .sort()
+    ).toEqual(['3.5', '7.0', 'L0', 'L2'].sort());
+  });
+
+  it('clamps min and max to the plot edges and adds 0 inside a bipolar range', async () => {
+    const chart = await mountPlain((c) => {
+      c.rangeLabels = RangeLabels.y;
+      c.yAxes = [{id: 'y', position: 'left', min: -100, max: 100}];
+      c.data = [-50, 50].map((value, i) => ({label: String(i), value}));
+    }, small);
+    const labels = drawnRangeLabels(chart);
+    const area = chartAreaOf(chart);
+    expect(labels.map((l) => l.text)).toEqual(['100', '0', '-100']);
+    expect(Math.round(labels[0].y)).toBe(area.top);
+    expect(Math.round(labels[2].y)).toBe(area.bottom);
+  });
+
+  it('does nothing above the threshold or when hasLabelPadding is false', async () => {
+    const big = await mountPlain(
+      (c) => {
+        c.rangeLabels = RangeLabels.xy;
+        c.data = numberData([1, 2]);
+      },
+      {width: 300, height: 200}
+    );
+    expect(drawnRangeLabels(big)).toEqual([]);
+    const edge = await mountPlain((c) => {
+      c.rangeLabels = RangeLabels.xy;
+      c.hasLabelPadding = false;
+      c.data = numberData([1, 2]);
+    }, small);
+    expect(chartPadding(edge)).toEqual({top: 0, right: 0, bottom: 0, left: 0});
+  });
+
+  it('pads a slotted side by its reported thickness below the threshold', async () => {
+    const {chart, left} = await mount((c) => {
+      c.width = 160;
+      c.height = 120;
+      c.data = numberData([1, 2, 3]);
+    });
+    const reported = (
+      chart as unknown as {externalScaleDimensions: Map<string, number>}
+    ).externalScaleDimensions.get('left');
+    expect(reported).toBeGreaterThan(0);
+    expect(chartAreaOf(chart).left).toBeGreaterThanOrEqual(reported!);
+    expect(left.getBoundingClientRect().right).toBeLessThanOrEqual(
+      canvasRect(chart).left + chartAreaOf(chart).left + 1
+    );
   });
 });
