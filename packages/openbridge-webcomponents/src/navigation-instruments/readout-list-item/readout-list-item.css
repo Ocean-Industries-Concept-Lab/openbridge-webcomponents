@@ -116,7 +116,9 @@ obc-readout-block {
   gap: var(--global-size-spacing-target-padding);
   flex: 1 1 auto;
   min-inline-size: 0;
-  overflow: hidden;
+  overflow: clip;
+  /* a leading-src chip's 1px outline is drawn outside its box at the container edge */
+  overflow-clip-margin: 1px;
 }
 
 .label-stack {
