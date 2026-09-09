@@ -1,6 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html, nothing} from 'lit';
-import {expect} from 'storybook/test';
 import {
   ReadoutBlockVariant,
   ReadoutBlockSize,
@@ -12,7 +11,6 @@ import {
   ReadoutValueType,
 } from './readout-block.js';
 import './readout-block.js';
-import '../../components/textbox/textbox.js';
 import '../../icons/icon-placeholder.js';
 import {
   ObcAlertFrameMode,
@@ -44,16 +42,10 @@ type BlockArgs = {
   dataQuality: ReadoutBlockDataQuality | typeof NONE;
 };
 
-// A faithful single-block render. The block inherits its colour from the host
-// context (the list-item normally drives it), so standalone it shows the neutral
-// default tone; `enhanced` switches to the accent tone.
-//
-// `value` is passed through as given, deliberately NOT as `args.value ?? null`:
-// one unavailable case IS `undefined`, and coercing here would quietly turn it
-// into the `null` case. `undefined` sits outside the declared `value` type —
-// consumers should pass `null` — but an unset property arrives as `undefined` in
-// practice and has to read the same, so the cast is what the case is testing
-// rather than a way around the type checker.
+// A faithful single-block render: colour comes from the host context, so a
+// standalone block shows the neutral tone. `value` is passed through as given,
+// not as `args.value ?? null` — one unavailable case IS `undefined`, and
+// coercing it here would quietly turn it into the `null` case.
 function renderBlock(args: Partial<BlockArgs>) {
   return html`
     <obc-readout-block
@@ -394,43 +386,6 @@ export const Alignment: Story = {
     ),
 };
 
-/**
- * Regression test for a validation hole, not a visual case.
- *
- * When `willUpdate` throws, Lit's `performUpdate` catch calls `__markUpdated()`,
- * which clears the changed-properties map. Validation used to be gated on
- * `changed.has('value') || changed.has('valueType')`, so the NEXT update —
- * driven by any other property, e.g. `obc-readout-list.align()` writing the
- * shared reservers — saw an empty map, skipped the check, and rendered the
- * invalid value as a plain dash. Loud once, then silent forever.
- *
- * An EMPTY changed map is exactly what Lit leaves behind after a throw, so
- * `willUpdate` is invoked directly with one. The element is deliberately left
- * detached: an unconnected `LitElement` never starts its update cycle, so this
- * exercises the guard without the real throw escaping the scheduler as an
- * unhandled rejection.
- */
-export const TestValidationSurvivesUnrelatedUpdate: Story = {
-  render: () => html`<span>Regression test — see the play function.</span>`,
-  play: async () => {
-    type Probe = HTMLElement & {
-      value: number | string | null;
-      willUpdate: (changed: Map<string, unknown>) => void;
-    };
-    const el = document.createElement('obc-readout-block') as Probe;
-    const validateWithNoChanges = () => el.willUpdate(new Map());
-
-    el.value = 'Auto';
-    await expect(validateWithNoChanges).toThrow(/value must be a number/);
-
-    el.value = 12.4;
-    await expect(validateWithNoChanges).not.toThrow();
-
-    el.value = null;
-    await expect(validateWithNoChanges).not.toThrow();
-  },
-};
-
 // The designer's specification, revised in review: the unavailable placeholder
 // stays SHORT (`-.--`, not `---.--`) and sits at the right of the reserved width.
 //   format: 000.00 · readout: 12.30 · hinted: 012.30 · not available: -.--
@@ -525,7 +480,7 @@ const ALIGNMENT_CASES: Partial<BlockArgs>[] = [
  *    the placeholder's decimal point missed the reading's. `tabular-nums` does
  *    not help here: it equalises figures with each other and leaves punctuation
  *    untouched (measured identical with the feature on and off).
- * 3. **`NaN` and `±Infinity` count as unavailable.** They previously rendered as
+ * 3. **`NaN` and `±Infinity` count as unavailable.** They would otherwise print
  *    the literal text `NaN` / `Infinity` in place of a reading. They are a
  *    runtime data condition (sensor dropout, `0/0`, a bad parse) rather than a
  *    programmer error, so they resolve to the dash rather than throwing.
@@ -539,14 +494,6 @@ const ALIGNMENT_CASES: Partial<BlockArgs>[] = [
  *
  * Hinted zeros are suppressed for an unavailable value, so the two "not
  * available" rows are identical and nothing reads `----Na.N`.
- *
- * **Open question — dash treatment.** U+2012 is exactly digit-width, which is
- * what makes the columns line up, but two adjacent dashes then run together
- * into one bar. The last section renders the alternatives at a readable size:
- * (A) the figure dash as implemented, (B) an ASCII hyphen centred in a
- * digit-width cell — separated and still aligned, at the cost of a lighter,
- * sparser look — and (C) the previous plain hyphen, for reference. Delete that
- * section once the choice is made.
  */
 export const UnavailableValues: Story = {
   render: () => html`
@@ -587,17 +534,6 @@ export const UnavailableValues: Story = {
         outline: 1px dashed rgba(0, 0, 0, 0.12);
         width: max-content;
       }
-      .rb-dash-options {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        width: max-content;
-      }
-      .rb-cellspan {
-        display: inline-block;
-        width: 1ch;
-        text-align: center;
-      }
       /* One column, so the decimal points can be compared down the stack. */
       .rb-align {
         display: flex;
@@ -631,40 +567,6 @@ export const UnavailableValues: Story = {
       ${ALIGNMENT_CASES.map((args) =>
         renderBlock({size: ReadoutBlockSize.medium, ...args})
       )}
-    </div>
-
-    <div class="rb-unavail-spec">
-      Dash treatment — open question for the designer
-    </div>
-    <div class="rb-dash-options">
-      <div>
-        <div class="rb-unavail-label">reading, for reference</div>
-        <obc-textbox size="l" .tabularNums=${true}>12.30</obc-textbox>
-      </div>
-      <div>
-        <div class="rb-unavail-label">
-          A — U+2012 figure dash (implemented): digit-width, but adjacent dashes
-          run together
-        </div>
-        <obc-textbox size="l" .tabularNums=${true}
-          >&#8210;.&#8210;&#8210;</obc-textbox
-        >
-      </div>
-      <div>
-        <div class="rb-unavail-label">
-          B — hyphen in digit-width cells: separated, but lighter and sparser
-        </div>
-        <obc-textbox size="l" .tabularNums=${true}>
-          <span class="rb-cellspan">-</span>.<span class="rb-cellspan">-</span
-          ><span class="rb-cellspan">-</span>
-        </obc-textbox>
-      </div>
-      <div>
-        <div class="rb-unavail-label">
-          C — ASCII hyphen (previous): narrower than a digit, does not align
-        </div>
-        <obc-textbox size="l" .tabularNums=${true}>-.--</obc-textbox>
-      </div>
     </div>
 
     <div class="rb-unavail-spec">

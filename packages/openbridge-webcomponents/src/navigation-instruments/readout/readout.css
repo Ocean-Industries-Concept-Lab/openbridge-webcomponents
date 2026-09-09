@@ -258,8 +258,7 @@ obc-readout-block {
 .meta-inline .meta-labels {
   flex-direction: row;
   /* Bottom-align so an `s` label and its `xs` unit share a baseline (the
-     Figma title block is items-end); identical to the old flex-start while
-     both were `xs`. */
+     Figma title block is items-end). */
   align-items: flex-end;
   gap: var(--global-size-spacing-target-padding);
 }
@@ -683,7 +682,7 @@ obc-readout-block {
   --_readout-trim: var(
     --instrument-components-readout-new-group-horizontal-regular-horizontal-trim-padding
   );
-  /* TODO: verify this with designers */
+  /* TODO(designer): verify this gap */
   --_readout-value-gap: 0;
   --_readout-value-pad-v: var(
     --instrument-components-readout-new-group-horizontal-regular-value-container-padding-vertical
@@ -691,7 +690,7 @@ obc-readout-block {
   --_readout-divider-pad: var(
     --instrument-components-readout-new-group-horizontal-regular-divider-padding
   );
-  /* TODO: verify this with designers, this needs to work also when only a unit is present*/
+  /* TODO(designer): verify; must also hold when only a unit is present */
   --_readout-min-height: auto;
 }
 
@@ -705,7 +704,7 @@ obc-readout-block {
   --_readout-trim: var(
     --instrument-components-readout-new-group-horizontal-medium-horizontal-trim-padding
   );
-  /* TODO: verify this with designers */
+  /* TODO(designer): verify this gap */
   --_readout-value-gap: 0;
   --_readout-value-pad-v: var(
     --instrument-components-readout-new-group-horizontal-medium-value-container-padding-vertical
@@ -725,7 +724,7 @@ obc-readout-block {
   --_readout-trim: var(
     --instrument-components-readout-new-group-horizontal-enhanced-horizontal-trim-padding
   );
-  /* TODO: verify this with designers */
+  /* TODO(designer): verify this gap */
   --_readout-value-gap: 4px;
   --_readout-value-pad-v: var(
     --instrument-components-readout-new-group-horizontal-enhanced-value-container-padding
