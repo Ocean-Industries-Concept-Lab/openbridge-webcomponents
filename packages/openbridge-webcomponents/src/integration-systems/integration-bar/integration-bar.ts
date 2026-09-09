@@ -20,6 +20,7 @@ import '../../icons/icon-alerts.js';
 import '../../icons/icon-link.js';
 import {property, state} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
+import {msg} from '@lit/localize';
 
 /**
  * `<obc-integration-bar>` – A compact top-level integration header for vessel and system navigation controls.
@@ -114,7 +115,11 @@ export class ObcIntegrationBar extends LitElement {
       <nav class="wrapper">
         <div class="content-container">
           ${!this.hideHomeButton
-            ? html`<obc-icon-button class="home-button" variant="integration">
+            ? html`<obc-icon-button
+                class="home-button"
+                variant="integration"
+                aria-label=${msg('Home')}
+              >
                 <obi-home></obi-home>
               </obc-icon-button>`
             : null}
@@ -126,6 +131,7 @@ export class ObcIntegrationBar extends LitElement {
                 })}
                 part="link-button"
                 variant="integration"
+                aria-label=${msg('Link')}
                 @click=${() =>
                   this.dispatchEvent(new CustomEvent('link-button-clicked'))}
                 ?activated=${this.linkButtonActivated}
@@ -179,6 +185,7 @@ export class ObcIntegrationBar extends LitElement {
                 })}
                 part="alert-button"
                 variant="integration"
+                aria-label=${msg('Alerts')}
                 style=${this.alertButtonActivated
                   ? 'anchor-name: --settings-menu-anchor;'
                   : ''}
@@ -197,6 +204,7 @@ export class ObcIntegrationBar extends LitElement {
                 })}
                 part="notification-button"
                 variant="integration"
+                aria-label=${msg('Notifications')}
                 style=${this.notificationButtonActivated
                   ? 'anchor-name: --settings-menu-anchor;'
                   : ''}
@@ -217,6 +225,7 @@ export class ObcIntegrationBar extends LitElement {
                 })}
                 part="screen-button"
                 variant="integration"
+                aria-label=${msg('Screen')}
                 style=${this.screenButtonActivated
                   ? 'anchor-name: --settings-menu-anchor;'
                   : ''}
@@ -235,6 +244,7 @@ export class ObcIntegrationBar extends LitElement {
                 })}
                 part="system-button"
                 variant="integration"
+                aria-label=${msg('System')}
                 style=${this.systemButtonActivated
                   ? 'anchor-name: --settings-menu-anchor;'
                   : ''}
@@ -253,6 +263,7 @@ export class ObcIntegrationBar extends LitElement {
                 })}
                 part="dimming-button"
                 variant="integration"
+                aria-label=${msg('Dimming')}
                 style=${this.dimmingButtonActivated
                   ? 'anchor-name: --settings-menu-anchor;'
                   : ''}
@@ -271,6 +282,7 @@ export class ObcIntegrationBar extends LitElement {
                 })}
                 part="user-button"
                 variant="integration"
+                aria-label=${msg('User')}
                 style=${this.userButtonActivated
                   ? 'anchor-name: --settings-menu-anchor;'
                   : ''}
