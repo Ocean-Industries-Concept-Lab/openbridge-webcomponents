@@ -145,6 +145,11 @@ export type ChartLineYAxisConfig = {
   grid?: boolean;
 };
 
+export type ChartLineXAxisConfig = {
+  min?: number;
+  max?: number;
+};
+
 const LINE_GRAPH_WATCHED_PROP_NAMES = [
   'data',
   'datasets',
@@ -153,6 +158,7 @@ const LINE_GRAPH_WATCHED_PROP_NAMES = [
   'xAxisType',
   'yAxisPosition',
   'yAxes',
+  'xAxis',
   'showGrid',
   'showGridX',
   'showGridY',
@@ -347,6 +353,10 @@ const LINE_GRAPH_DIMENSION_PROP_NAMES = [
  *   numeric x-values.
  * @property yAxisPosition - Single y-axis position ('left' or 'right'). For multiple y-axes, use yAxes instead.
  * @property yAxes - Multiple y-axis definitions for complex multi-axis charts.
+ * @property xAxis - Pinned x range (`min`/`max`) for time and number axes. Without it the
+ *   axis spans exactly the data, so a window that is still filling stretches across the
+ *   full width. In `minutes` display `max` is the `0min` reference.
+ * @availableWhen xAxis xAxisType!=category
  * @property showGrid - Show grid lines.
  * @property showGridX - Show vertical grid lines (x-axis). Default: false.
  * @availableWhen showGridX showGrid==true
@@ -416,6 +426,9 @@ export class ObcChartLineBase extends LitElement {
 
   @property({type: Array, attribute: false})
   yAxes?: ChartLineYAxisConfig[] = undefined;
+
+  @property({type: Object, attribute: false})
+  xAxis?: ChartLineXAxisConfig = undefined;
 
   @property({type: Boolean})
   showGrid = false;
@@ -1312,7 +1325,9 @@ export class ObcChartLineBase extends LitElement {
     let id = side === 'x' ? 'x' : 'y';
     let configured: {min?: number; max?: number} | undefined;
 
-    if (side !== 'x' && this.yAxes?.length) {
+    if (side === 'x') {
+      configured = this.isNumericXAxis ? this.xAxis : undefined;
+    } else if (this.yAxes?.length) {
       const match = this.yAxes.findIndex(
         (axis) => (axis.position ?? 'left') === side
       );
@@ -2236,9 +2251,17 @@ export class ObcChartLineBase extends LitElement {
   /**
    * Compute reference timestamp for time axis formatting.
    * Returns earliest timestamp for 'date' mode, latest for 'minutes' mode.
+   * A pinned x range supplies the reference instead, so the axis edge stays
+   * the reference while the data has not reached it yet.
    */
   private computeTimeReference(): number | undefined {
     if (this.xAxisType !== XAxisType.time) return undefined;
+
+    const pinned =
+      this.timeDisplay === TimeDisplay.minutes
+        ? this.xAxis?.max
+        : this.xAxis?.min;
+    if (pinned !== undefined && Number.isFinite(pinned)) return pinned;
 
     const timestamps: number[] = [];
 
@@ -2334,6 +2357,9 @@ export class ObcChartLineBase extends LitElement {
       offset: false, // Always edge-to-edge (no padding on x-axis)
       grace: 0, // No extra margin
       bounds: 'data', // Use data bounds for edge-to-edge rendering
+      // A category axis has no numeric range to pin.
+      min: this.isNumericXAxis ? this.xAxis?.min : undefined,
+      max: this.isNumericXAxis ? this.xAxis?.max : undefined,
       grid: {
         display: this.showGrid && this.showGridX,
         color: gridColor,

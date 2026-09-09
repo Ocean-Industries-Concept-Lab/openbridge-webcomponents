@@ -150,3 +150,53 @@ describe('slotted scale range resolution (#1217)', () => {
     expect(range(left)).toEqual(chartRange(chart, 'y'));
   });
 });
+
+type ChartTickCallback = {
+  options: {scales: {x: {ticks: {callback(value: number): string}}}};
+};
+
+const xTickLabel = (chart: ObcAreaGraph, value: number) =>
+  (
+    chart as unknown as {chart: ChartTickCallback}
+  ).chart.options.scales.x.ticks.callback(value);
+
+describe('pinned x range (#1218)', () => {
+  it('pins the x scale and the bottom scale beyond the data extent', async () => {
+    const {chart, bottom} = await mount((c) => {
+      c.xAxisType = XAxisType.number;
+      c.xAxis = {min: -12, max: 0};
+      c.data = [-5, -4, -3, -2, -1, 0].map((x) => ({x, value: 1}));
+    });
+    expect(chartRange(chart, 'x')).toEqual({min: -12, max: 0});
+    expect(range(bottom)).toEqual({min: -12, max: 0});
+  });
+
+  it('is ignored on a category axis', async () => {
+    const {chart} = await mount((c) => {
+      c.xAxis = {min: -12, max: 0};
+      c.data = [
+        {label: 'a', value: 1},
+        {label: 'b', value: 2},
+        {label: 'c', value: 3},
+      ];
+    });
+    expect(chartRange(chart, 'x')).toEqual({min: 0, max: 2});
+  });
+
+  it('makes xAxis.max the 0min reference for relative time labels', async () => {
+    const minute = 60_000;
+    const now = 1_757_430_000_000;
+    const {chart} = await mount((c) => {
+      c.xAxisType = XAxisType.time;
+      c.timeDisplay = 'minutes' as never;
+      c.xAxis = {min: now - 10 * minute, max: now};
+      // Buffer still filling: newest sample is three minutes short of `max`.
+      c.data = [7, 6, 5, 4, 3].map((ago) => ({
+        x: now - ago * minute,
+        value: 1,
+      }));
+    });
+    expect(xTickLabel(chart, now)).toBe('0min');
+    expect(xTickLabel(chart, now - 10 * minute)).toBe('-10min');
+  });
+});
