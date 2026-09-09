@@ -251,6 +251,7 @@ The external-scale system has **several independent code paths** that compute "h
 
 **Lesson from past bugs:**
 
+- A tick ladder is capped at `EXTERNAL_SCALE_MAX_TICKS` (1000) per level: `generateTickmarksAtInterval()` and `generateLabels()` skip a denser ladder and warn once per range/interval pair. The case that produced it was a chart cascading an epoch-millisecond range to a slotted scale whose interval was meant for minutes — 330 000 ticks, and the spread that collected them overflowed the call stack. The cap is the renderer's own guard; the chart side of the fix is in `line-area-charts.md`.
 - Advice pills don't render inside `barSpace + scaleSpace + labelSpace`; they need a dedicated allowance. `computeAdviceBandThickness()` solves this for the `hasAdvice` case — apply the same pattern for any future overlay that lives outside the bar.
 - Hiding labels via a chart-level flag (`hasLabelPadding=false`) requires **three** coordinated changes: (a) cascade `showLabels=false` to the slotted bar in `updateScaleProperties`, (b) honor the flag in `calculatePaddingFromScales`'s fallback constant, (c) honor it in `getChartOptions`/`buildScalesConfig`. Touching only one produces clipped labels or right-side gutters.
 - Positive-default boolean properties (e.g. `hasLabelPadding = true`) must be declared with `attribute: false` (see [`coding-standards.md`](../../docs/agents/coding-standards.md#boolean-property-naming)) and added to the watched-property list for change detection.

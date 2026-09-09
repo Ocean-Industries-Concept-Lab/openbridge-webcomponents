@@ -115,6 +115,26 @@ When adding new features or fixing bugs:
    - Listens for `scale-dimensions-changed` events from slotted elements
    - Adjusts chart padding to accommodate external scale thickness
    - Syncs scale properties (min/max, padding, enhanced, state, etc.)
+   - **Ranges come from `resolveAxisRange()`**: a range pinned in `yAxes` / `xAxis`
+     wins; otherwise the live Chart.js scale is read under the id
+     `buildScalesConfig()` assigns (`y0`, `y1`… when an entry has no id, `y` only
+     when `yAxes` is unset). The left slot takes the first left-positioned axis, the
+     right slot the first right-positioned one; a side without an axis of its own
+     follows the first entry. Datasets that name no `yAxisID` land on
+     `primaryYAxisId` — without that Chart.js adds a default `y` scale beside the
+     configured ones and draws it.
+   - `updateScaleProperties()` runs **before** the chart is rebuilt and so reads the
+     previous chart; `syncSlottedScaleRanges()` pushes ranges again after every
+     `createChart()` / `updateChart()`, which is also what keeps an auto-ranged
+     scale following the data.
+   - **Never push epoch milliseconds to a slotted scale.** A scale labels values
+     verbatim and a plausible tick interval over an epoch-ms range overflows the
+     stack. `resolveSlottedXRange()` converts a `time` axis to minutes relative to
+     the reference in `minutes` display; in `date` display it leaves the top/bottom
+     scales alone and warns once.
+   - `xAxis: {min, max}` pins the x range (time and number axes only; a category
+     axis is ignored). In `minutes` display `xAxis.max` is the `0min` reference, so
+     the right edge reads as now while a buffer is still filling.
 
 5. **Property Change Tracking**:
    - `LINE_GRAPH_WATCHED_PROP_NAMES`: Properties that trigger chart data/options update
