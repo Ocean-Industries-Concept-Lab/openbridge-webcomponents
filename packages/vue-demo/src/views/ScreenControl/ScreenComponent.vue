@@ -125,6 +125,14 @@ const onContextMenuChange = (event: ObcContextMenuInputChangeEvent) => {
   height: 288px;
 }
 
+/* Mobile: no screen tile wider than the viewport. 768px is
+   MOBILE_BREAKPOINT_PX in composables/useMobileLayout.ts. */
+@media screen and (max-width: 768px) {
+  .screen {
+    max-width: calc(100vw - 32px);
+  }
+}
+
 .screen-icon {
   width: 64px;
   height: 64px;
