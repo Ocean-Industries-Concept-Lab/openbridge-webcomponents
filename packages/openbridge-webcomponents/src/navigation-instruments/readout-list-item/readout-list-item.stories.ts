@@ -1979,12 +1979,9 @@ const ALIGNMENT_ROWS: AlignmentRow[] = [
       type: ObcAlertFrameType.Regular,
     },
   },
-  // text value — `valueType="text"` renders verbatim and ignores maxDigits /
-  // fractionDigits, but still honours an explicit `spaceReserver`. So these
-  // rows hug their text in the left column and join the shared value column in
-  // the right one, confirming text does not disturb the numeric alignment.
-  // (Inside `obc-readout-list`, which owns the reservers, text rows are instead
-  // excluded from the computed numeric width — see that component's stories.)
+  // text value — ignores maxDigits / fractionDigits but honours an explicit
+  // `spaceReserver`, so these rows hug their text on the left and join the
+  // shared value column on the right (a list excludes them instead).
   {label: 'Mode', value: 'Auto', valueType: ReadoutValueType.text, unit: ''},
   {
     label: 'Thruster',

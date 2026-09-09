@@ -11,6 +11,7 @@ import {WIND_ICON_TIP_TO_BOX_INNER} from '../watch/environment.js';
 import {renderWindForcePattern} from '../watch/force-pattern.js';
 import {Priority} from '../types.js';
 import {customElement} from '../../decorator.js';
+import {degToRad} from '../../svghelpers/math.js';
 
 export interface WindHistogramData {
   direction: number;
@@ -247,7 +248,7 @@ export class ObcWind extends LitElement {
     // Create SVG path for each degree
     let outerPathPoints = '';
     for (let deg = 0; deg < 360; deg++) {
-      const angle = ((deg - 90) * Math.PI) / 180;
+      const angle = degToRad(deg - 90);
       const occ = interpolated[deg];
       const radius = hasValidScale
         ? maxRadius - (occ / maxOccurrences) * (maxRadius - minRadius)

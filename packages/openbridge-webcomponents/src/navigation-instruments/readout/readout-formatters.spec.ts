@@ -334,12 +334,8 @@ describe('formatNumericValue — unavailable value', () => {
   });
 });
 
-// The designer's specification, verbatim:
-//   format: 000.00
-//   readout: 12.30
-//   readout with hinted: 012.30  (hinted colour on the first zero)
-//   Not available: -.--   (revised in review from ---.--)
-// `format: 000.00` is maxDigits 3 + fractionDigits 2.
+// The designer's specification (`format: 000.00` = maxDigits 3 + fractionDigits
+// 2): readout 12.30 · hinted 012.30 · not available -.--
 describe("designer's format specification (000.00)", () => {
   const MAX_DIGITS = 3;
   const FRACTION_DIGITS = 2;

@@ -96,17 +96,7 @@
   background-color: var(--instrument-regular-secondary-color);
 }
 
-@keyframes indeterminate-slide {
-  0% {
-    transform: translateX(-100%);
-  }
-  60% {
-    transform: translateX(100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
-}
+@mixin indeterminate-slide-keyframes;
 
 .description-container {
   display: flex;

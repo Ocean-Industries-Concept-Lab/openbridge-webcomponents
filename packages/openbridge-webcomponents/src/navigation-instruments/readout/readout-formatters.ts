@@ -282,15 +282,9 @@ export function formatNumericValue(
   value: number | undefined,
   options: ReadoutNumericFormatOptions
 ): string {
-  // Non-finite counts as unavailable here too, not only in
-  // `resolveReadoutNumericValue`. Every caller normalises today, but this
-  // function is exported, and `NaN.toFixed()` would put the literal text
-  // "NaN" where a reading belongs — the exact failure this change removes.
-  //
-  // A missing precision (`NaN` fractionDigits) is the same class of failure
-  // from the other operand: `value.toFixed(NaN)` silently formats with zero
-  // decimals, printing a critical `0.4` as a plausible-looking `0`. The
-  // reading is untrustworthy without its precision, so it dashes too.
+  // Exported, so guard here too: `NaN.toFixed()` prints the literal "NaN", and
+  // `value.toFixed(NaN)` formats with zero decimals, printing a critical 0.4 as
+  // a healthy-looking 0. Both dash instead (readout-components.md § 2).
   if (
     value === undefined ||
     !Number.isFinite(value) ||
