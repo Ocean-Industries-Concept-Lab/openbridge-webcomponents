@@ -53,6 +53,10 @@ When a value-to-angle or value-to-state mapping already exists as a controller
 on the full instrument, **import the controller** rather than reimplementing the
 maths. That is the one thing that should be shared.
 
+The arithmetic under the drawing is shared too: `clamp`, `clampPercent`,
+`normalizeAngle`, `degToRad` and `radToDeg` come from `svghelpers/math.ts`. An
+indicator declares none of them locally.
+
 ## The canvas convention
 
 Most indicators draw on a **48 × 48** canvas via a local `VIEW_SIZE` constant.

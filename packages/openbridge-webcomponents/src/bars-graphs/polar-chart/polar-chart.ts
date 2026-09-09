@@ -25,8 +25,9 @@ import {
   createArcOuterLabelPlugin,
   calculateFixedHeightChartLayout,
   getChartTooltipOptions,
-  formatNumericValue,
+  formatChartNumber,
   generateLegendHTML,
+  observeLabelThreshold,
 } from '../../charthelpers/index.js';
 import type {FixedHeightChartDimensions} from '../../charthelpers/canvas-layout.js';
 
@@ -239,9 +240,6 @@ export class ObcPolarChart extends LitElement {
   /** @internal - ResizeObserver for tracking height threshold crossings */
   private resizeObserver?: ResizeObserver;
 
-  /** @internal - Track previous state to detect threshold crossing */
-  private wasAboveThreshold = false;
-
   private hasAnyChanged(
     changed: PropertyValues,
     props: readonly (keyof ObcPolarChart)[]
@@ -284,33 +282,25 @@ export class ObcPolarChart extends LitElement {
   }
 
   /**
-   * Setup resize observer to detect height threshold crossings
-   * Recreates chart when crossing MIN_HEIGHT_WITH_LABELS (192px) to show/hide labels
+   * Crossing MIN_HEIGHT_WITH_LABELS changes the plugin set, so the chart is
+   * rebuilt rather than updated.
    */
   private setupResizeObserver() {
     if (!this.canvasEl) return;
 
-    this.resizeObserver = new ResizeObserver(() => {
-      const height = this.canvasEl?.clientHeight ?? 0;
-      const isAboveThreshold =
-        height >= CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS;
-
-      // Only recreate chart if we crossed the threshold (need to add/remove plugins)
-      if (isAboveThreshold !== this.wasAboveThreshold) {
-        this.wasAboveThreshold = isAboveThreshold;
-        this.chart?.destroy();
-        this.createChart();
-      } else {
-        // Height changed but didn't cross threshold - just update
-        this.updateChart();
+    this.resizeObserver = observeLabelThreshold(
+      this.canvasEl,
+      () =>
+        (this.canvasEl?.clientHeight ?? 0) >=
+        CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS,
+      {
+        rebuild: () => {
+          this.chart?.destroy();
+          this.createChart();
+        },
+        update: () => this.updateChart(),
       }
-    });
-
-    this.resizeObserver.observe(this.canvasEl);
-
-    // Initialize threshold state
-    const height = this.canvasEl.clientHeight;
-    this.wasAboveThreshold = height >= CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS;
+    );
   }
 
   private prepareChartData() {
@@ -724,7 +714,7 @@ export class ObcPolarChart extends LitElement {
           valueToFormat = item.value;
         }
 
-        const numericValue = formatNumericValue(
+        const numericValue = formatChartNumber(
           valueToFormat,
           denominator,
           isPercentage,

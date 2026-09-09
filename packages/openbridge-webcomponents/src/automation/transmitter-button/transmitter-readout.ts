@@ -16,6 +16,7 @@ import {html, nothing, type TemplateResult} from 'lit';
 import {
   formatNumericValue,
   readoutFormattedInteger,
+  READOUT_UNAVAILABLE_DASH,
 } from '../../navigation-instruments/readout/readout-formatters.js';
 import '../../components/textbox/textbox.js';
 import {
@@ -78,9 +79,9 @@ type HintedValueParts = {
 };
 
 function dashedValue(maxDigits: number, fractionDigits: number): string {
-  const integer = '-'.repeat(Math.max(maxDigits, 1));
+  const integer = READOUT_UNAVAILABLE_DASH.repeat(Math.max(maxDigits, 1));
   return fractionDigits > 0
-    ? `${integer}.${'-'.repeat(fractionDigits)}`
+    ? `${integer}.${READOUT_UNAVAILABLE_DASH.repeat(fractionDigits)}`
     : integer;
 }
 

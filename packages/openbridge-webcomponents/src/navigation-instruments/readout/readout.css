@@ -7,54 +7,11 @@
   position: relative;
 }
 
-/* Bridge the readout's public colour custom properties onto the block's, so
-   consumers theme the value / setpoint / advice / hinted-zero colours via
-   `--obc-readout-*` even though they render inside obc-readout-block. */
 obc-readout-block {
-  --obc-readout-block-value-color: var(
-    --obc-readout-value-color,
-    var(--element-neutral-color)
-  );
-  --obc-readout-block-value-enhanced-color: var(
-    --obc-readout-value-enhanced-color,
-    var(--element-neutral-enhanced-color)
-  );
-  --obc-readout-block-setpoint-color: var(
-    --obc-readout-setpoint-color,
-    var(--element-neutral-color)
-  );
-  --obc-readout-block-setpoint-enhanced-color: var(
-    --obc-readout-setpoint-enhanced-color,
-    var(--instrument-enhanced-secondary-color)
-  );
-  --obc-readout-block-setpoint-touching-outline-color: var(
-    --obc-readout-setpoint-touching-outline-color,
-    var(--element-neutral-enhanced-color)
-  );
-  --obc-readout-block-setpoint-touching-color: var(
-    --obc-readout-setpoint-touching-color,
-    var(--base-blue-100)
-  );
-  --obc-readout-block-advice-color: var(
-    --obc-readout-advice-color,
-    var(--element-neutral-color)
-  );
-  --obc-readout-block-hinted-color: var(
-    --obc-readout-hinted-color,
-    var(--element-disabled-color)
-  );
+  @mixin readout-block-color-bridge --obc-readout;
 }
 
-/* Size the consumer-provided block icons forwarded into obc-readout-block's
-   `icon` slot (the block sizes the forwarded slot element; this sizes the
-   consumer's icon to fill it). */
-::slotted([slot="value-icon"]),
-::slotted([slot="setpoint-icon"]),
-::slotted([slot="advice-icon"]) {
-  display: block;
-  inline-size: 100%;
-  block-size: 100%;
-}
+@mixin readout-block-slot-icons;
 
 /* ---------- Root ----------
  * The root is an inline flex column (vertical) or row (horizontal). Private

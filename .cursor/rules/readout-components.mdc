@@ -48,13 +48,14 @@ render a value, and the two layout components built on them.
 
 ## Where logic lives
 
-| Concern                                                   | Home                    | Notes                                                |
-| --------------------------------------------------------- | ----------------------- | ---------------------------------------------------- |
-| Cap-height box, `length`-slot width reserve, tabular nums | `obc-textbox`           | Display primitive; no readout knowledge              |
-| Number formatting, hinted zeros, degree, reserver, `off`  | `obc-readout-block`     | The only place a value becomes text                  |
-| Value/format contracts, pure helpers                      | `readout-formatters.ts` | No imports — safe for every layer                    |
-| Behaviour shared by the two layouts                       | `readout-shared.ts`     | Setpoint compare, size mapping, data-quality classes |
-| Cross-row column alignment                                | `obc-readout-list`      | Owns and overwrites the rows' reservers              |
+| Concern                                                   | Home                     | Notes                                                                                                       |
+| --------------------------------------------------------- | ------------------------ | ----------------------------------------------------------------------------------------------------------- |
+| Cap-height box, `length`-slot width reserve, tabular nums | `obc-textbox`            | Display primitive; no readout knowledge                                                                     |
+| Number formatting, hinted zeros, degree, reserver, `off`  | `obc-readout-block`      | The only place a value becomes text                                                                         |
+| Value/format contracts, pure helpers                      | `readout-formatters.ts`  | No imports — safe for every layer                                                                           |
+| Behaviour shared by the two layouts                       | `readout-shared.ts`      | Setpoint compare, size mapping, data-quality classes                                                        |
+| CSS the two layouts share about the block                 | `src/mixins/readout.css` | `readout-block-color-bridge <prefix>` (the public colour vars onto the block's), `readout-block-slot-icons` |
+| Cross-row column alignment                                | `obc-readout-list`       | Owns and overwrites the rows' reservers                                                                     |
 
 `readout-formatters.ts` deliberately imports **nothing**. `readout-shared.ts`
 imports from `readout-block.ts`, so putting a shared helper there and importing

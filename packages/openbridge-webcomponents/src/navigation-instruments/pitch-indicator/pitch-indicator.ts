@@ -1,6 +1,7 @@
 import {LitElement, css, html, svg} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
+import {degToRad} from '../../svghelpers/math.js';
 
 export enum PitchIndicatorType {
   enhanced = 'enhanced',
@@ -118,7 +119,7 @@ export class ObcPitchIndicator extends LitElement {
   }
 
   private get sectorPathD(): string {
-    const radians = (this.mappedTrackAngle * Math.PI) / 180;
+    const radians = degToRad(this.mappedTrackAngle);
     const edgeX = CX + Math.cos(radians) * SECTOR_RAY;
     const edgeY = CY + Math.sin(radians) * SECTOR_RAY;
 

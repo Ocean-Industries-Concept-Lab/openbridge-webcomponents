@@ -1,4 +1,5 @@
 import {SVGTemplateResult, svg} from 'lit';
+import {degToRad} from '../../svghelpers/math.js';
 
 export interface Tickmark {
   angle: number;
@@ -112,7 +113,7 @@ export function tickmark(
   let innerRadius: number;
   let outerRadius: number;
   textRadius = textRadius + (3 / safeScale + 3) * (inside ? -1 : 1);
-  const rad = (angle * Math.PI) / 180;
+  const rad = degToRad(angle);
   if (size === TickmarkType.primary) {
     innerRadius = 328 / 2 + rOff;
     outerRadius = 368 / 2 + rOff;
@@ -205,7 +206,7 @@ function textSvg(
     endLabelsMaxMin?: boolean;
   }
 ) {
-  const radHoriz = (angle * Math.PI) / 180;
+  const radHoriz = degToRad(angle);
   // "Max-min" placement: horizontal end labels (±90°) sit off the dead-center
   // tick (below outside / lifted inside), inset inward by label width.
   if (endLabelsMaxMin && Math.abs(Math.cos(radHoriz)) < 1e-6) {
@@ -226,7 +227,7 @@ function textSvg(
   } else {
     positionClass = 'left';
   }
-  const rad = (angle * Math.PI) / 180;
+  const rad = degToRad(angle);
   const insideGain = inside ? -1 : 1;
   const yOffset = (7 / scale) * insideGain;
   const xOffset = (6 / scale) * insideGain;
