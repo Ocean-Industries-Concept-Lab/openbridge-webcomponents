@@ -20,6 +20,7 @@ import {
   ObcPoiPointerType,
 } from '../building-blocks/poi-pointer/poi-pointer.js';
 import {customElement} from '../../decorator.js';
+import {degToRad} from '../../svghelpers/math.js';
 
 /* ---------- Poi interface & helpers ---------- */
 
@@ -524,7 +525,7 @@ export class ObcPoi extends LitElement {
     const touchTarget = this.buttonType === ObcPoiButtonType.Enhanced ? 64 : 48;
     const radius = touchTarget / Math.SQRT2;
     const baseCenterYOffset = -touchTarget / 2;
-    const angle = (this.outsideAngle * Math.PI) / 180;
+    const angle = degToRad(this.outsideAngle);
     const xOffset = Math.cos(angle) * radius;
     const yOffset = baseCenterYOffset + Math.sin(angle) * radius;
     const value = this.pointerSelected ? 'checked' : 'unchecked';

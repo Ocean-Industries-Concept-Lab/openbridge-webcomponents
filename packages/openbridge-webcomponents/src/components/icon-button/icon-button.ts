@@ -3,6 +3,7 @@ import {property} from 'lit/decorators.js';
 import iconStyle from './icon-button.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
+import {degToRad} from '../../svghelpers/math.js';
 
 /**
  * The available visual variants for `<obc-icon-button>`.
@@ -153,7 +154,7 @@ export class ObcIconButton extends LitElement {
         </svg>
       </div>`;
     }
-    const angleRad = (this.progress * 0.95 * 3.6 * Math.PI) / 180;
+    const angleRad = degToRad(this.progress * 0.95 * 3.6);
     const x = 20 + 18 * Math.sin(angleRad);
     const y = 20 - 18 * Math.cos(angleRad);
     const largeArcFlag = angleRad > Math.PI ? 1 : 0;

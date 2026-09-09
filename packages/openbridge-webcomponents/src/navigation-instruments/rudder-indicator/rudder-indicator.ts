@@ -2,6 +2,7 @@ import {LitElement, html, nothing, svg, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import componentStyle from './rudder-indicator.css?inline';
+import {degToRad} from '../../svghelpers/math.js';
 
 export enum RudderIndicatorState {
   InCommand = 'in-command',
@@ -223,7 +224,7 @@ function pointOnArc(
 ): {x: number; y: number} {
   // Keep the same angular convention as `obc-rudder`:
   // 0° = bottom, +90° = right, -90° = left.
-  const radians = (angleDeg * Math.PI) / 180;
+  const radians = degToRad(angleDeg);
   return {
     x: centerX + Math.sin(radians) * radius,
     y: centerY + Math.cos(radians) * radius,
@@ -417,7 +418,7 @@ export class ObcRudderIndicator extends LitElement {
       INPUT_LINEAR_ARC_CENTER_X,
       INPUT_LINEAR_ARC_CENTER_Y
     );
-    const tangentRadians = (positionAngle * Math.PI) / 180;
+    const tangentRadians = degToRad(positionAngle);
     const tangentX = Math.cos(tangentRadians);
     const tangentY = -Math.sin(tangentRadians);
     const markerX = markerBase.x + tangentX * INPUT_LINEAR_TANGENTIAL_OFFSET;

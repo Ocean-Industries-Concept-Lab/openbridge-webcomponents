@@ -2,6 +2,7 @@ import {LitElement, html, nothing, svg, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import componentStyle from './gauge-trend-indicator.css?inline';
 import {customElement} from '../../decorator.js';
+import {clamp} from '../../svghelpers/math.js';
 
 export enum ObcGaugeTrendIndicatorType {
   Fill = 'Fill',
@@ -22,10 +23,6 @@ const GRAPH_WIDTH = 28;
 const DIVIDER_X = FRAME_X + GRAPH_WIDTH;
 const POINTER_RADIUS = 2;
 const FRAME_PATH = createFramePath();
-
-function clamp(value: number, min: number, max: number): number {
-  return Math.min(Math.max(value, min), max);
-}
 
 function createFramePath() {
   const left = FRAME_X;
