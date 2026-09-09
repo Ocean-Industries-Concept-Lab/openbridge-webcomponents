@@ -133,6 +133,16 @@ When adding new features or fixing bugs:
    - `xAxis: {min, max}` pins the x range (time and number axes only; a category
      axis is ignored). In `minutes` display `xAxis.max` is the `0min` reference, so
      the right edge reads as now while a buffer is still filling.
+   - **Below the threshold** (`RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS`,
+     tested on both dimensions) every axis label is hidden unless `rangeLabels`
+     opts in. Then a free side gets a _measured_ gutter (`charthelpers/range-labels.ts`:
+     widest label + 8, or one line + 4 at the bottom) and the `rangeLabels` plugin
+     paints min / 0 / max flush with the plot's top and bottom and first / last x in
+     the bottom gutter — no vertical space is taken for y. A slotted side is switched to
+     `showMainTickmarkLabels` with a compact `labelThickness` measured the same way,
+     and the scale's own thickness is restored when the chart leaves compact mode.
+     Padding is decided **per side**: a slotted scale always gets its reported
+     thickness, at any size — "too small ⇒ 0 everywhere" painted the canvas over it.
 
 5. **Property Change Tracking**:
    - `LINE_GRAPH_WATCHED_PROP_NAMES`: Properties that trigger chart data/options update

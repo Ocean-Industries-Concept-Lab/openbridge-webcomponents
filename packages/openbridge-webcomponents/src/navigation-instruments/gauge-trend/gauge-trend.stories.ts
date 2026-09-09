@@ -170,6 +170,10 @@ const meta: Meta = {
     chartFill: {
       control: 'boolean',
     },
+    rangeLabels: {
+      control: {type: 'radio'},
+      options: ['none', 'y', 'x', 'xy'],
+    },
     touching: {
       control: 'boolean',
     },
@@ -190,6 +194,7 @@ const meta: Meta = {
     fillMin: 0,
     // Note: fillMax intentionally omitted - in 'fill' mode it auto-derives from value
     chartFill: true,
+    rangeLabels: 'none',
     touching: false,
   },
   render: (args) => html`
@@ -199,6 +204,7 @@ const meta: Meta = {
       .height=${args.height}
       .priority=${args.priority}
       .chartFill=${args.chartFill}
+      .rangeLabels=${args.rangeLabels}
       .minValue=${args.minValue}
       .maxValue=${args.maxValue}
       .value=${args.value}
@@ -264,6 +270,21 @@ export const GaugeTrend: Story = {
     >
     </obc-gauge-trend>
   `,
+};
+
+export const CompactRangeLabels: Story = {
+  name: 'Compact With Range Labels (160px)',
+  play: async () => {
+    await new Promise((resolve) => setTimeout(resolve, 300));
+  },
+  args: {
+    browserContainerWidth: 160,
+    width: 160,
+    height: 160,
+    rangeLabels: 'xy',
+    hasBar: true,
+    hasScale: true,
+  },
 };
 
 export const UnevenTimeIntervals: Story = {

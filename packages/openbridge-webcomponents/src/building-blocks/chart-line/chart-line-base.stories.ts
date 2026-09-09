@@ -940,6 +940,60 @@ export const ExternalScalesMinimal: Story = {
   `,
 };
 
+export const ExternalScalesRangeLabels: Story = {
+  name: 'External Scales With Range Labels (160×160, Bottom + Right)',
+  play: async () => {
+    await new Promise((resolve) => setTimeout(resolve, 300));
+  },
+  argTypes: {
+    priority: {
+      control: 'select',
+      options: Object.values(Priority),
+    },
+  },
+  args: {
+    width: 160,
+    height: 160,
+    rangeLabels: 'xy',
+    priority: Priority.enhanced,
+  },
+  render: (_args) => html`
+    <obc-area-graph
+      .data=${SAMPLE_DATA}
+      .showGrid=${true}
+      .showGridX=${true}
+      .showGridY=${true}
+      .width=${_args.width}
+      .height=${_args.height}
+      .rangeLabels=${_args.rangeLabels}
+      .priority=${_args.priority}
+    >
+      <obc-bar-vertical
+        slot="right-scale"
+        .minValue=${0}
+        .maxValue=${10}
+        .height=${_args.height}
+        .side=${'right'}
+        .hasBar=${false}
+        .primaryTickmarkInterval=${2}
+        .secondaryTickmarkInterval=${1}
+        .priority=${_args.priority}
+      ></obc-bar-vertical>
+      <obc-bar-horizontal
+        slot="bottom-scale"
+        .minValue=${0}
+        .maxValue=${12}
+        .width=${_args.width}
+        .side=${'bottom'}
+        .hasBar=${false}
+        .primaryTickmarkInterval=${2}
+        .secondaryTickmarkInterval=${1}
+        .priority=${_args.priority}
+      ></obc-bar-horizontal>
+    </obc-area-graph>
+  `,
+};
+
 export const FixedAspectRatioScaling: StoryObj = {
   name: 'Fixed Aspect Ratio Scaling (responsive)',
   tags: ['skip-test'],
