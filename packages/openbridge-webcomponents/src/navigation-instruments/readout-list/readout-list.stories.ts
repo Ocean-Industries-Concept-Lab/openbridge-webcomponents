@@ -107,7 +107,7 @@ const meta = {
   tags: ['autodocs', '6.0', 'experimental'],
   component: 'obc-readout-list',
   args: {
-    showDebugOverlay: true,
+    showDebugOverlay: false,
   },
   argTypes: {
     showDebugOverlay: {control: {type: 'boolean'}},
@@ -225,7 +225,6 @@ const INLINE_SOURCE_ROWS: Row[] = [
 }));
 
 export const LeadingSrcInline: Story = {
-  args: {showDebugOverlay: false},
   render: (args) => renderList(INLINE_SOURCE_ROWS, args.showDebugOverlay),
 };
 
