@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/web-components-vite';
+import type {Args, Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
 import type {ObcAreaGraph} from './area-graph.js';
 import './area-graph.js';
@@ -452,6 +452,78 @@ export const SemitransparentExternalScales: Story = {
   `,
 };
 
+/**
+ * Two identical configurations fed data an order of magnitude apart. Their
+ * frames must line up exactly — a drift between them means the plot rectangle
+ * has started following the data again (#1214).
+ */
+const FIXED_FRAME_SHALLOW = SAMPLE_DATA.map((p, i) => ({x: i, value: p.value}));
+const FIXED_FRAME_DEEP = SAMPLE_DATA.map((p, i) => ({
+  x: i,
+  value: p.value * 40,
+}));
+
+const renderFixedFrameChart = (
+  _args: Args,
+  data: {x: number; value: number}[]
+) => html`
+  <obc-area-graph
+    .data=${data}
+    .xAxisType=${'number'}
+    .yAxes=${[{id: 'y', position: 'left' as const, min: 0, max: 300}]}
+    .fillMode=${_args.fillMode}
+    .lineMode=${_args.lineMode}
+    .showGrid=${_args.showGrid}
+    .showGridX=${_args.showGridX}
+    .showGridY=${_args.showGridY}
+    .priority=${_args.priority}
+    .showDebugOverlay=${_args.showDebugOverlay}
+    .width=${_args.width}
+    .height=${_args.height}
+  >
+    <obc-bar-vertical
+      slot="left-scale"
+      side="left"
+      .height=${_args.height}
+      .primaryTickmarkInterval=${100}
+      .secondaryTickmarkInterval=${50}
+      .hasBar=${false}
+      .priority=${_args.priority}
+    ></obc-bar-vertical>
+    <obc-bar-horizontal
+      slot="bottom-scale"
+      side="bottom"
+      .width=${_args.width}
+      .primaryTickmarkInterval=${2}
+      .secondaryTickmarkInterval=${1}
+      .hasBar=${false}
+      .priority=${_args.priority}
+    ></obc-bar-horizontal>
+  </obc-area-graph>
+`;
+
+export const FixedFrame: Story = {
+  name: 'Fixed Frame (Pinned Range With External Scales)',
+  args: {
+    width: 480,
+    height: 220,
+  },
+  play: async ({canvasElement}) => {
+    await document.fonts.ready;
+    canvasElement
+      .querySelectorAll('obc-area-graph')
+      .forEach((chart) =>
+        (chart as HTMLElement & {chart?: {update(): void}}).chart?.update()
+      );
+  },
+  render: (_args) => html`
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+      ${renderFixedFrameChart(_args, FIXED_FRAME_SHALLOW)}
+      ${renderFixedFrameChart(_args, FIXED_FRAME_DEEP)}
+    </div>
+  `,
+};
+
 export const WithPoints: Story = {
   name: 'With Points Area Graph',
   args: {
@@ -691,6 +763,78 @@ export const RealtimeShifting: Story = {
     }, 2000);
 
     // Clean up interval when element is removed
+    const mo = new MutationObserver(() => {
+      if (!document.body.contains(chart)) {
+        clearInterval(interval);
+        mo.disconnect();
+      }
+    });
+    mo.observe(document.body, {childList: true, subtree: true});
+
+    return chart;
+  },
+};
+
+export const RealtimeFixedFrame: Story = {
+  name: 'Realtime (Fixed Frame)',
+  tags: ['skip-test'],
+  render: (_args) => {
+    const chart = document.createElement('obc-area-graph');
+    chart.showDebugOverlay = _args.showDebugOverlay;
+    chart.width = _args.width;
+    chart.height = _args.height;
+    chart.priority = _args.priority;
+
+    // A slotted horizontal scale labels raw axis values, so the x axis carries
+    // minutes-ago rather than epoch milliseconds (#1219).
+    chart.xAxisType = 'number';
+
+    // The pinned range is what holds the frame still: fixed labels give the
+    // scale a fixed thickness, so the plot rectangle stops following the data.
+    chart.yAxes = [{id: 'y', position: 'left', min: 0, max: 10}];
+
+    const verticalScale = document.createElement('obc-bar-vertical');
+    verticalScale.slot = 'left-scale';
+    verticalScale.side = 'left';
+    verticalScale.height = _args.height;
+    verticalScale.primaryTickmarkInterval = 2;
+    verticalScale.secondaryTickmarkInterval = 1;
+    verticalScale.hasBar = false;
+    verticalScale.priority = _args.priority;
+    chart.appendChild(verticalScale);
+
+    const horizontalScale = document.createElement('obc-bar-horizontal');
+    horizontalScale.slot = 'bottom-scale';
+    horizontalScale.side = 'bottom';
+    horizontalScale.width = _args.width;
+    horizontalScale.primaryTickmarkInterval = 2;
+    horizontalScale.secondaryTickmarkInterval = 1;
+    horizontalScale.hasBar = false;
+    horizontalScale.priority = _args.priority;
+    chart.appendChild(horizontalScale);
+
+    const windowMinutes = 12;
+
+    // Values roam the whole range, unlike Realtime (Shifting) which repeats a
+    // fixed set: here the frame holds because the range is pinned.
+    const nextValue = () => Math.random() * 10;
+
+    // Re-basing x to minutes-ago on every tick keeps both the data extent and
+    // the tick labels constant, which the x axis cannot yet do on its own.
+    let values = Array.from({length: windowMinutes}, nextValue);
+    const publish = () => {
+      chart.data = values.map((value, i) => ({
+        x: i - (windowMinutes - 1),
+        value,
+      }));
+    };
+    publish();
+
+    const interval = setInterval(() => {
+      values = [...values.slice(1), nextValue()];
+      publish();
+    }, 2000);
+
     const mo = new MutationObserver(() => {
       if (!document.body.contains(chart)) {
         clearInterval(interval);
