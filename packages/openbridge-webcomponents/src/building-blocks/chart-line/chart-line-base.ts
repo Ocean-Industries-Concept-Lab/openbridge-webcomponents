@@ -123,6 +123,14 @@ export enum TimeDisplay {
   date = 'date',
 }
 
+/** Which axes keep min / max labels below the label threshold. */
+export enum RangeLabels {
+  none = 'none',
+  y = 'y',
+  x = 'x',
+  xy = 'xy',
+}
+
 export type ChartLinePoint = number | {x: ChartXValue; y: number};
 
 export type ChartLineDataItem = {
@@ -179,6 +187,7 @@ const LINE_GRAPH_WATCHED_PROP_NAMES = [
   'height',
   'fixedAspectRatioScaling', // Triggers responsive mode change
   'hasLabelPadding', // Toggles edge-to-edge rendering and label visibility
+  'rangeLabels',
 ] as const;
 
 const LINE_GRAPH_RECREATE_PROP_NAMES = [
@@ -186,6 +195,7 @@ const LINE_GRAPH_RECREATE_PROP_NAMES = [
   'width',
   'height',
   'fixedAspectRatioScaling',
+  'rangeLabels', // Adds or removes the range-labels plugin
 ] as const;
 
 /**
@@ -363,6 +373,11 @@ const LINE_GRAPH_DIMENSION_PROP_NAMES = [
  * @property showGridY - Show horizontal grid lines (y-axis). Default: false.
  * @availableWhen showGridY showGrid==true
  * @property showTickMarks - Show axis tick marks and labels.
+ * @property rangeLabels - Labels kept below the 192px threshold, where the axis labels are
+ *   otherwise hidden: 'y' draws min, max and (inside the range) 0 in a gutter on the
+ *   y-axis side; 'x' draws the first and last x value in a bottom gutter; 'xy' both.
+ *   Ignored when `hasLabelPadding` is false.
+ * @availableWhen rangeLabels hasLabelPadding==true
  * @property showPoints - Show point markers on data points. Default: false.
  * @property lineMode - Line drawing style: 'smooth' (curved), 'straight', or 'stepped'.
  * @property unit - Unit label displayed in tooltips (e.g., 'kW', 'kg', '%').
@@ -461,6 +476,27 @@ export class ObcChartLineBase extends LitElement {
    */
   @property({type: Boolean, attribute: false})
   hasLabelPadding = true;
+
+  @property({type: String})
+  rangeLabels: RangeLabels = RangeLabels.none;
+
+  /** @internal - The y side wants range labels; an edge-to-edge chart never does. */
+  protected get rangeLabelsY(): boolean {
+    return (
+      this.hasLabelPadding &&
+      (this.rangeLabels === RangeLabels.y ||
+        this.rangeLabels === RangeLabels.xy)
+    );
+  }
+
+  /** @internal - The x side wants range labels; an edge-to-edge chart never does. */
+  protected get rangeLabelsX(): boolean {
+    return (
+      this.hasLabelPadding &&
+      (this.rangeLabels === RangeLabels.x ||
+        this.rangeLabels === RangeLabels.xy)
+    );
+  }
 
   /** @internal - True when the x-axis positions points by numeric value. */
   protected get isNumericXAxis(): boolean {
@@ -1802,7 +1838,9 @@ export class ObcChartLineBase extends LitElement {
       this.canvasEl,
       () =>
         (this.canvasEl?.clientHeight ?? 0) >=
-        RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS,
+          RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS &&
+        (this.canvasEl?.clientWidth ?? 0) >=
+          RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS,
       {
         rebuild: () => {
           this.chart?.destroy();
