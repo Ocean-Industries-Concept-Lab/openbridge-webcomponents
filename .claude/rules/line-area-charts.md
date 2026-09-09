@@ -143,8 +143,11 @@ When adding new features or fixing bugs:
      the bottom gutter — no vertical space is taken for y. A slotted side is switched to
      `showMainTickmarkLabels` with a compact `labelThickness` measured the same way,
      and the scale's own thickness is restored when the chart leaves compact mode.
-     Padding is decided **per side**: a slotted scale always gets its reported
-     thickness, at any size — "too small ⇒ 0 everywhere" painted the canvas over it.
+     Padding is decided **per side** in `computeChartPadding()`, which feeds both the
+     Chart.js layout and the padding cascaded to slotted scales — the two used to be
+     separate paths, so below the threshold a scale sat 32 px inset inside a chart
+     that had no padding. A slotted scale always gets its reported thickness, at any
+     size — "too small ⇒ 0 everywhere" painted the canvas over it.
 
 5. **Property Change Tracking**:
    - `LINE_GRAPH_WATCHED_PROP_NAMES`: Properties that trigger chart data/options update

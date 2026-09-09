@@ -1533,8 +1533,9 @@ export class ObcChartLineBase extends LitElement {
     this.isUpdatingScales = true;
 
     try {
-      // Step 1: Calculate padding from scale dimensions
-      const padding = this.calculatePaddingFromScales();
+      // Step 1: The padding the chart itself will lay out with, so a slotted
+      // scale's drawing area lines up with the chart area on every side.
+      const padding = this.computeChartPadding();
 
       // Step 2: Calculate effective chart area
       const effectiveWidth = this.width - padding.left - padding.right;
@@ -2479,25 +2480,24 @@ export class ObcChartLineBase extends LitElement {
   }
 
   /**
-   * Get Chart.js options with dynamic sizing and padding
+   * Padding the chart lays out with, per side. A slotted scale gets the room
+   * it reported at any size; a free side gets the range-label gutter below the
+   * threshold, nothing else there, and the label padding above it. Both the
+   * Chart.js layout and the slotted scales are fed from here, so their
+   * drawing areas stay level — "too small ⇒ 0 everywhere" painted the canvas
+   * over slotted scales, and a scale padded for labels sat inside a chart
+   * that had none.
    */
-  protected getChartOptions(): ChartOptions<'line'> {
-    // Use effective dimensions (computed when fixedAspectRatioScaling=true)
-    const effectiveWidth = this.getEffectiveWidth();
-    const effectiveHeight = this.getEffectiveHeight();
-
-    // Determine if chart is too small for labels
-    const isTooSmall =
-      effectiveWidth < RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS ||
-      effectiveHeight < RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS;
-
+  private computeChartPadding(): {
+    top: number;
+    right: number;
+    bottom: number;
+    left: number;
+  } {
+    const isTooSmall = this.isBelowThreshold();
     // Get scale factor for proportional scaling in fixed aspect ratio mode
     const scaleFactor = this.getScaleFactor();
 
-    // Per side: a slotted scale always gets the room it reported; a free side
-    // gets the range-label gutter below the threshold and the label padding
-    // above it. "Too small ⇒ 0 everywhere" painted the canvas over slotted
-    // scales, since a scale's bands never collapse to nothing.
     const defaultPaddingScaled = !this.hasLabelPadding
       ? 0
       : this.fixedAspectRatioScaling
@@ -2536,6 +2536,24 @@ export class ObcChartLineBase extends LitElement {
         ? scalePadding.left
         : freeSide('left'),
     };
+
+    return padding;
+  }
+
+  /**
+   * Get Chart.js options with dynamic sizing and padding
+   */
+  protected getChartOptions(): ChartOptions<'line'> {
+    // Use effective dimensions (computed when fixedAspectRatioScaling=true)
+    const effectiveWidth = this.getEffectiveWidth();
+    const effectiveHeight = this.getEffectiveHeight();
+
+    // Determine if chart is too small for labels
+    const isTooSmall =
+      effectiveWidth < RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS ||
+      effectiveHeight < RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS;
+
+    const padding = this.computeChartPadding();
 
     // Set CSS variables for wrapper and canvas sizing
     if (this.fixedAspectRatioScaling) {

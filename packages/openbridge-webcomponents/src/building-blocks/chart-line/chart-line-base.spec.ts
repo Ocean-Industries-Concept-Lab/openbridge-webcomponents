@@ -3,6 +3,8 @@ import '../../main.css';
 import '../../bars-graphs/area-graph/area-graph.js';
 import '../bar-vertical/bar-vertical.js';
 import '../bar-horizontal/bar-horizontal.js';
+import '../../navigation-instruments/gauge-trend/gauge-trend.js';
+import type {ObcGaugeTrend} from '../../navigation-instruments/gauge-trend/gauge-trend.js';
 import type {ObcAreaGraph} from '../../bars-graphs/area-graph/area-graph.js';
 import type {ObcBarVertical} from '../bar-vertical/bar-vertical.js';
 import type {ObcBarHorizontal} from '../bar-horizontal/bar-horizontal.js';
@@ -453,5 +455,46 @@ describe('compact label band on slotted scales (#1191)', () => {
       c.data = numberData([1, 2, 3]);
     });
     expect(left.labelThickness).toBe(60);
+  });
+});
+
+describe('slotted scale padding matches the chart padding (#1191)', () => {
+  it('gives a slotted scale the padding the chart lays out with, below the threshold', async () => {
+    const {chart, left} = await mount((c) => {
+      c.rangeLabels = RangeLabels.xy;
+      c.width = 160;
+      c.height = 120;
+      c.data = numberData([1, 2, 3]);
+    });
+    const padding = chartPadding(chart);
+    expect(left.paddingTop).toBe(padding.top);
+    expect(left.paddingBottom).toBe(padding.bottom);
+  });
+
+  it('keeps a gauge-trend scale level with its chart area in a compact container', async () => {
+    const host = document.createElement('div');
+    host.style.cssText = 'width: 160px';
+    document.body.appendChild(host);
+    mounted.push(host);
+    const gauge = document.createElement('obc-gauge-trend') as ObcGaugeTrend;
+    gauge.width = 160;
+    gauge.height = 160;
+    gauge.rangeLabels = RangeLabels.xy;
+    gauge.hasBar = true;
+    gauge.hasScale = true;
+    gauge.data = [45, 52, 48, 55].map((value, i) => ({
+      label: String(i),
+      value,
+    }));
+    host.appendChild(gauge);
+    await gauge.updateComplete;
+    await frames(30);
+
+    const bar = gauge.querySelector('obc-bar-vertical') as ObcBarVertical;
+    const padding = chartPadding(gauge as unknown as ObcAreaGraph);
+    const toViewBox = (px: number) =>
+      Math.round((px * gauge.scaleReferenceSize) / gauge.height);
+    expect(bar.paddingTop).toBe(toViewBox(padding.top));
+    expect(bar.paddingBottom).toBe(toViewBox(padding.bottom));
   });
 });
