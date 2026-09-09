@@ -487,6 +487,9 @@ export class ObcChartLineBase extends LitElement {
   /** @internal - Last data/datasets reference already warned about. */
   private lastWarnedXSource?: unknown;
 
+  /** @internal - Whether the `date`-display scale warning has been issued. */
+  private warnedDateDisplayScale = false;
+
   /** @internal - Warn once per data assignment about unparseable x-values. */
   private warnOnInvalidX(xValues: number[], sourceRef: unknown) {
     const invalid = xValues.filter((x) => !Number.isFinite(x)).length;
@@ -1348,6 +1351,38 @@ export class ObcChartLineBase extends LitElement {
   }
 
   /**
+   * Range pushed to the top and bottom scales, or `undefined` to leave them
+   * alone. A scale prints its values verbatim, and on a `time` axis the raw
+   * range is epoch milliseconds. In `minutes` display the range is converted
+   * to the minutes the chart's own labels show; `date` display has no numeric
+   * equivalent, so the scale keeps its own range.
+   */
+  private resolveSlottedXRange(): {min: number; max: number} | undefined {
+    const range = this.resolveAxisRange('x');
+    if (this.xAxisType !== XAxisType.time) return range;
+
+    if (this.timeDisplay !== TimeDisplay.minutes) {
+      if (!this.warnedDateDisplayScale) {
+        this.warnedDateDisplayScale = true;
+        console.warn(
+          "[obc-chart] a slotted horizontal scale cannot label a time axis in 'date' display and keeps its own range; use timeDisplay='minutes' or a number axis."
+        );
+      }
+      return undefined;
+    }
+
+    const pinned =
+      this.xAxis?.min !== undefined && this.xAxis?.max !== undefined;
+    const reference = this.computeTimeReference();
+    if (reference === undefined || (!this.chart && !pinned)) return undefined;
+    const minute = 60_000;
+    return {
+      min: (range.min - reference) / minute,
+      max: (range.max - reference) / minute,
+    };
+  }
+
+  /**
    * Update properties on slotted scale elements
    */
   private updateScaleProperties(padding: {
@@ -1358,7 +1393,7 @@ export class ObcChartLineBase extends LitElement {
   }) {
     const leftRange = this.resolveAxisRange('left');
     const rightRange = this.resolveAxisRange('right');
-    const {min: xMin, max: xMax} = this.resolveAxisRange('x');
+    const xRange = this.resolveSlottedXRange();
 
     // Use effective dimensions for threshold checks
     const effectiveWidth = this.getEffectiveWidth();
@@ -1477,8 +1512,7 @@ export class ObcChartLineBase extends LitElement {
         this.topScaleSlot.assignedElements() as ExternalScaleElement[];
       scales.forEach((scale) => {
         const props: Partial<ExternalScaleElement> = {
-          minValue: xMin,
-          maxValue: xMax,
+          ...xRange,
           width: effectiveWidth, // Use effective width for proper sizing
           paddingLeft: horizontalViewBoxPadding.left,
           paddingRight: horizontalViewBoxPadding.right,
@@ -1507,8 +1541,7 @@ export class ObcChartLineBase extends LitElement {
         this.bottomScaleSlot.assignedElements() as ExternalScaleElement[];
       scales.forEach((scale) => {
         const props: Partial<ExternalScaleElement> = {
-          minValue: xMin,
-          maxValue: xMax,
+          ...xRange,
           width: effectiveWidth, // Use effective width for proper sizing
           paddingLeft: horizontalViewBoxPadding.left,
           paddingRight: horizontalViewBoxPadding.right,
@@ -1546,19 +1579,19 @@ export class ObcChartLineBase extends LitElement {
   private syncSlottedScaleRanges() {
     const apply = (
       slot: HTMLSlotElement | undefined,
-      side: 'left' | 'right' | 'x'
+      range: {min: number; max: number} | undefined
     ) => {
-      if (!slot) return;
-      const {min, max} = this.resolveAxisRange(side);
+      if (!slot || !range) return;
       (slot.assignedElements() as ExternalScaleElement[]).forEach((scale) => {
-        scale.minValue = min;
-        scale.maxValue = max;
+        scale.minValue = range.min;
+        scale.maxValue = range.max;
       });
     };
-    apply(this.leftScaleSlot, 'left');
-    apply(this.rightScaleSlot, 'right');
-    apply(this.topScaleSlot, 'x');
-    apply(this.bottomScaleSlot, 'x');
+    apply(this.leftScaleSlot, this.resolveAxisRange('left'));
+    apply(this.rightScaleSlot, this.resolveAxisRange('right'));
+    const xRange = this.resolveSlottedXRange();
+    apply(this.topScaleSlot, xRange);
+    apply(this.bottomScaleSlot, xRange);
   }
 
   private hasAnyChanged(

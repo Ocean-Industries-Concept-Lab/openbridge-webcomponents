@@ -1,4 +1,4 @@
-import {describe, it, expect, afterEach} from 'vitest';
+import {describe, it, expect, afterEach, vi} from 'vitest';
 import '../../main.css';
 import '../../bars-graphs/area-graph/area-graph.js';
 import '../bar-vertical/bar-vertical.js';
@@ -198,5 +198,51 @@ describe('pinned x range (#1218)', () => {
     });
     expect(xTickLabel(chart, now)).toBe('0min');
     expect(xTickLabel(chart, now - 10 * minute)).toBe('-10min');
+  });
+});
+
+describe('slotted scales on a time axis (#1219)', () => {
+  const minute = 60_000;
+  const now = 1_757_430_000_000;
+  const twelveMinutes = Array.from({length: 12}, (_, i) => ({
+    x: now - (11 - i) * minute,
+    value: i,
+  }));
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('cascades minutes relative to the reference, not epoch milliseconds', async () => {
+    const {bottom} = await mount((c) => {
+      c.xAxisType = XAxisType.time;
+      c.timeDisplay = 'minutes' as never;
+      c.data = twelveMinutes;
+    });
+    // A plausible interval for the plotted axis must stay plausible here.
+    bottom.primaryTickmarkInterval = 2;
+    await bottom.updateComplete;
+    expect(range(bottom)).toEqual({min: -11, max: 0});
+  });
+
+  it('converts a pinned x range to minutes as well', async () => {
+    const {bottom} = await mount((c) => {
+      c.xAxisType = XAxisType.time;
+      c.timeDisplay = 'minutes' as never;
+      c.xAxis = {min: now - 10 * minute, max: now};
+      c.data = twelveMinutes.slice(7);
+    });
+    expect(range(bottom)).toEqual({min: -10, max: 0});
+  });
+
+  it("leaves the scale alone in 'date' display and says why", async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const {bottom} = await mount((c) => {
+      c.xAxisType = XAxisType.time;
+      c.timeDisplay = 'date' as never;
+      c.data = twelveMinutes;
+    });
+    expect(range(bottom)).toEqual({min: 0, max: 100});
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining('date'));
   });
 });

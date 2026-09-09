@@ -932,6 +932,36 @@ function rangeIncludesZero(minValue: number, maxValue: number): boolean {
   return minValue <= 0 && maxValue >= 0;
 }
 
+/**
+ * Upper bound on the tickmarks one ladder (primary, secondary, tertiary or
+ * labels) may produce. A denser ladder is not drawn at all: it cannot be read
+ * on any scale length, and building it would exhaust the call stack.
+ */
+export const EXTERNAL_SCALE_MAX_TICKS = 1000;
+
+const warnedDenseLadders = new Set<string>();
+
+/**
+ * True when `interval` would put more than `EXTERNAL_SCALE_MAX_TICKS` ticks
+ * on the range. Warns once per range/interval pair, since a scale re-renders
+ * on every property change.
+ */
+function isLadderTooDense(
+  config: Pick<ExternalScaleConfig, 'minValue' | 'maxValue'>,
+  interval: number
+): boolean {
+  const count = (config.maxValue - config.minValue) / interval;
+  if (!(count > EXTERNAL_SCALE_MAX_TICKS)) return false;
+  const key = `${config.minValue}/${config.maxValue}/${interval}`;
+  if (!warnedDenseLadders.has(key)) {
+    warnedDenseLadders.add(key);
+    console.warn(
+      `[external-scale] tick interval ${interval} over the range ${config.minValue}…${config.maxValue} is ${Math.round(count)} ticks; the ladder is not drawn (limit ${EXTERNAL_SCALE_MAX_TICKS}). On a time axis the range is epoch milliseconds.`
+    );
+  }
+  return true;
+}
+
 function calculateAtSetpoint(config: ExternalScaleConfig): boolean {
   const isTouching = config.touching ?? false;
   return computeAtSetpoint({
@@ -1207,6 +1237,7 @@ function generateTickmarksAtInterval(
   const values: number[] = [];
 
   if (interval <= 0 || !Number.isFinite(interval)) return {svgs, values};
+  if (isLadderTooDense(config, interval)) return {svgs, values};
 
   const includesZero = rangeIncludesZero(config.minValue, config.maxValue);
 
@@ -1351,6 +1382,7 @@ function generateLabels(config: ExternalScaleConfig): SVGTemplateResult[] {
 
   const interval = config.primaryTickmarkInterval;
   if (interval <= 0 || !Number.isFinite(interval)) return [];
+  if (isLadderTooDense(config, interval)) return [];
 
   const fontFamily = 'var(--font-family-main)';
   const fontColor = 'var(--instrument-tick-mark-label-secondary-color)';
