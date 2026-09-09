@@ -1,4 +1,4 @@
-import {describe, it, expect, afterEach, vi} from 'vitest';
+import {describe, it, expect, afterEach, afterAll, vi} from 'vitest';
 import '../../main.css';
 import '../../bars-graphs/area-graph/area-graph.js';
 import '../bar-vertical/bar-vertical.js';
@@ -7,7 +7,7 @@ import type {ObcAreaGraph} from '../../bars-graphs/area-graph/area-graph.js';
 import type {ObcBarVertical} from '../bar-vertical/bar-vertical.js';
 import type {ObcBarHorizontal} from '../bar-horizontal/bar-horizontal.js';
 import {ExternalScaleSide} from '../external-scale/external-scale.js';
-import {XAxisType} from './chart-line-base.js';
+import {XAxisType, TimeDisplay} from './chart-line-base.js';
 
 type ChartScales = {
   scales: Record<string, {min: number; max: number}>;
@@ -23,6 +23,10 @@ const mounted: HTMLElement[] = [];
 
 afterEach(() => {
   mounted.splice(0).forEach((el) => el.remove());
+});
+
+afterAll(() => {
+  document.documentElement.classList.remove('obc-component-size-regular');
 });
 
 /**
@@ -188,7 +192,7 @@ describe('pinned x range (#1218)', () => {
     const now = 1_757_430_000_000;
     const {chart} = await mount((c) => {
       c.xAxisType = XAxisType.time;
-      c.timeDisplay = 'minutes' as never;
+      c.timeDisplay = TimeDisplay.minutes;
       c.xAxis = {min: now - 10 * minute, max: now};
       // Buffer still filling: newest sample is three minutes short of `max`.
       c.data = [7, 6, 5, 4, 3].map((ago) => ({
@@ -216,7 +220,7 @@ describe('slotted scales on a time axis (#1219)', () => {
   it('cascades minutes relative to the reference, not epoch milliseconds', async () => {
     const {bottom} = await mount((c) => {
       c.xAxisType = XAxisType.time;
-      c.timeDisplay = 'minutes' as never;
+      c.timeDisplay = TimeDisplay.minutes;
       c.data = twelveMinutes;
     });
     // A plausible interval for the plotted axis must stay plausible here.
@@ -228,7 +232,7 @@ describe('slotted scales on a time axis (#1219)', () => {
   it('converts a pinned x range to minutes as well', async () => {
     const {bottom} = await mount((c) => {
       c.xAxisType = XAxisType.time;
-      c.timeDisplay = 'minutes' as never;
+      c.timeDisplay = TimeDisplay.minutes;
       c.xAxis = {min: now - 10 * minute, max: now};
       c.data = twelveMinutes.slice(7);
     });
@@ -239,7 +243,7 @@ describe('slotted scales on a time axis (#1219)', () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
     const {bottom} = await mount((c) => {
       c.xAxisType = XAxisType.time;
-      c.timeDisplay = 'date' as never;
+      c.timeDisplay = TimeDisplay.date;
       c.data = twelveMinutes;
     });
     expect(range(bottom)).toEqual({min: 0, max: 100});

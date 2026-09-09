@@ -70,6 +70,19 @@ describe('tick ladder density guard (#1219)', () => {
     expect(warn).toHaveBeenCalled();
   });
 
+  it('counts both endpoints: a range of exactly the cap in steps is one over', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const parts = renderExternalScale(
+      bottomScale({
+        minValue: 0,
+        maxValue: EXTERNAL_SCALE_MAX_TICKS,
+        primaryTickmarkInterval: 1,
+      })
+    );
+    expect(parts.labels).toEqual([]);
+    expect(warn).toHaveBeenCalledTimes(1);
+  });
+
   it('keeps a ladder whose count is under the cap', () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
     const parts = renderExternalScale(
