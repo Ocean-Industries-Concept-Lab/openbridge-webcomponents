@@ -28,27 +28,6 @@ const meta: Meta<ObcUserMenu> = {
       control: {type: 'select'},
       options: Object.values(ObcUserMenuSize),
     },
-    hasRecentlySignedIn: {
-      control: {type: 'boolean'},
-    },
-    username: {
-      control: {type: 'text'},
-    },
-    password: {
-      control: {type: 'text'},
-    },
-    usernameError: {
-      control: {type: 'text'},
-    },
-    passwordError: {
-      control: {type: 'text'},
-    },
-    userInitials: {
-      control: {type: 'text'},
-    },
-    userLabel: {
-      control: {type: 'text'},
-    },
     recentUsers: {
       control: {type: 'object'},
     },
@@ -63,6 +42,8 @@ const meta: Meta<ObcUserMenu> = {
     type: ObcUserMenuType.signIn,
     size: ObcUserMenuSize.regular,
     hasRecentlySignedIn: false,
+    showUsername: true,
+    showPassword: true,
     username: '',
     password: '',
     usernameError: '',
@@ -88,6 +69,8 @@ const meta: Meta<ObcUserMenu> = {
         type=${args.type}
         size=${args.size}
         ?hasRecentlySignedIn=${args.hasRecentlySignedIn}
+        .showUsername=${args.showUsername}
+        .showPassword=${args.showPassword}
         username=${args.username}
         password=${args.password}
         usernameError=${args.usernameError}
@@ -165,6 +148,31 @@ export const UserSignInSmall: Story = {
     type: ObcUserMenuType.userSignIn,
     size: ObcUserMenuSize.small,
     hasRecentlySignedIn: true,
+  },
+};
+
+export const SignInWithoutFields: Story = {
+  args: {
+    type: ObcUserMenuType.signIn,
+    size: ObcUserMenuSize.small,
+    showUsername: false,
+    showPassword: false,
+  },
+};
+
+export const UserSignInWithoutPasswordRegular: Story = {
+  args: {
+    type: ObcUserMenuType.userSignIn,
+    size: ObcUserMenuSize.regular,
+    showPassword: false,
+  },
+};
+
+export const UserSignInWithoutPasswordSmall: Story = {
+  args: {
+    type: ObcUserMenuType.userSignIn,
+    size: ObcUserMenuSize.small,
+    showPassword: false,
   },
 };
 

@@ -1,4 +1,5 @@
 import type {WatchArea} from '../navigation-instruments/watch/watch.js';
+import {degToRad, normalizeAngle} from './math.js';
 
 export interface ArcViewBox {
   x: number;
@@ -188,20 +189,20 @@ function computeAnnularArcBBox(
   };
 
   for (const area of areas) {
-    const startRad = (area.startAngle * Math.PI) / 180;
-    const endRad = (area.endAngle * Math.PI) / 180;
+    const startRad = degToRad(area.startAngle);
+    const endRad = degToRad(area.endAngle);
 
     for (const R of [R_vis, R_in]) {
       expand(R * Math.sin(startRad), -R * Math.cos(startRad));
       expand(R * Math.sin(endRad), -R * Math.cos(endRad));
     }
 
-    const startNorm = ((area.startAngle % 360) + 360) % 360;
-    const endNorm = ((area.endAngle % 360) + 360) % 360;
+    const startNorm = normalizeAngle(area.startAngle);
+    const endNorm = normalizeAngle(area.endAngle);
     const axes = [0, 90, 180, 270];
     for (const axis of axes) {
       if (arcContainsAngle(startNorm, endNorm, axis)) {
-        const axisRad = (axis * Math.PI) / 180;
+        const axisRad = degToRad(axis);
         for (const R of [R_vis, R_in]) {
           expand(R * Math.sin(axisRad), -R * Math.cos(axisRad));
         }
@@ -285,9 +286,9 @@ function arcContainsAngle(
   endDeg: number,
   testDeg: number
 ): boolean {
-  const s = ((startDeg % 360) + 360) % 360;
-  const e = ((endDeg % 360) + 360) % 360;
-  const t = ((testDeg % 360) + 360) % 360;
+  const s = normalizeAngle(startDeg);
+  const e = normalizeAngle(endDeg);
+  const t = normalizeAngle(testDeg);
   if (s <= e) {
     return t >= s && t <= e;
   }

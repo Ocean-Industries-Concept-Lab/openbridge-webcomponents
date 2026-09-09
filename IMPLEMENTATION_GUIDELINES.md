@@ -500,12 +500,14 @@ Components apply the animation by binding opacity to these properties:
 
 ### Other CSS Mixins
 
-| File                              | Mixin                                                                | Purpose                                                                                                               |
-| --------------------------------- | -------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `src/mixins/card.css`             | `@mixin card`                                                        | Card surface: `border-radius: 8px`, `background: var(--container-global-color)`, `box-shadow: var(--shadow-floating)` |
-| `src/mixins/outline-inward.css`   | `@mixin outline-inward $wrapperClass`                                | Focus outline with `outline-offset: -2px` applied on `:focus-visible`                                                 |
-| `src/mixins/base-input-field.css` | Several (`base-input-field-wrapper`, `base-input-field-label`, etc.) | Shared input field chrome: labels, helper text, error borders, disabled states                                        |
-| `src/mixins/scrollbar.css`        | `@mixin scrollbar`                                                   | Custom scrollbar styling via `::-webkit-scrollbar-*` pseudo-elements. Uses `--obc-scrollbar-*` variables              |
+| File                                 | Mixin                                                                          | Purpose                                                                                                                                                                                                                                                |
+| ------------------------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `src/mixins/card.css`                | `@mixin card`                                                                  | Card surface: `border-radius: 8px`, `background: var(--container-global-color)`, `box-shadow: var(--shadow-floating)`                                                                                                                                  |
+| `src/mixins/outline-inward.css`      | `@mixin outline-inward $wrapperClass`                                          | Focus outline with `outline-offset: -2px` applied on `:focus-visible`                                                                                                                                                                                  |
+| `src/mixins/base-input-field.css`    | Several (`base-input-field-wrapper`, `base-input-field-label`, etc.)           | Shared input field chrome: labels, helper text, error borders, disabled states                                                                                                                                                                         |
+| `src/mixins/scrollbar.css`           | `@mixin scrollbar`                                                             | Custom scrollbar styling via `::-webkit-scrollbar-*` pseudo-elements. Uses `--obc-scrollbar-*` variables. Apply on an ancestor of the scrolling element (`:host` in `obc-scrollbar`, the grid container in `obc-table`): the rules nest as descendants |
+| `src/mixins/indeterminate-slide.css` | `@mixin indeterminate-slide-keyframes`                                         | The `indeterminate-slide` keyframes the progress bar and the progress button share; use at the top level of the stylesheet                                                                                                                             |
+| `src/mixins/readout.css`             | `@mixin readout-block-color-bridge $prefix`, `@mixin readout-block-slot-icons` | What `obc-readout` and `obc-readout-list-item` share about `obc-readout-block`: the colour-variable bridge and the forwarded icon sizing                                                                                                               |
 
 ---
 
@@ -691,6 +693,19 @@ All icon components live in `packages/openbridge-webcomponents/src/icons` and ar
 
 Run everything from `packages/openbridge-webcomponents/`.
 
+**Ideal ordering when designers added new palette tokens:** land the token
+exports before the icon regen — first the `cssvariables` codegen from the main
+design file (`src/palettes/variables.css`, defines the new tokens), then the
+`variables map` codegen from the icons file (`script/figmavariables.json`,
+maps the new bindings), and only then `npm run download:icons`. Icons
+generated against a stale palette reference tokens that do not resolve yet,
+or fall back to literal hex, and the tripwires in step 6 flag them. The
+reverse order still works — the icon PR can ship first with the gap
+documented (see "Unknown variable fallback"), and a run with bindings missing
+from the map completes only with `OBC_ALLOW_UNRESOLVED_VARS=1` — but
+palette-first avoids the intermediate state entirely. When no new tokens are
+involved, start at step 1 below.
+
 1. **Branch.** `git switch -c chore/refresh-figma-icons` off `develop`.
 2. **Token.** Ensure `.env` contains a valid `FIGMA_TOKEN`.
 3. **Variable map.** If the design lead has updated the OpenBridge color tokens,
@@ -750,14 +765,21 @@ When `convert-icons.ts` encounters a `VariableID` that is not in
 palette tokens that have not been re-exported yet, but it means the resulting
 icon will not follow theme switches until the token is added.
 
-Two recovery paths, depending on the cause:
+Three recovery paths, depending on the cause:
 
+- **Every icon suddenly leaks hex, with only a few dozen unresolved ids** —
+  the icons file re-synced its palette library and all `VariableID` keys got
+  new import-id suffixes. Most entries can be re-derived mechanically from the
+  existing map; see
+  [docs/agents/generated-code.md § VariableID anatomy](docs/agents/generated-code.md#variableid-anatomy--why-a-refresh-can-lose-every-icon-colour).
 - **Token exists in Figma, just missing from the JSON** — re-run the
   obc-figma-plugin `variables` codegen and overwrite `script/figmavariables.json`,
   then re-run `npm run download:icons`. Hex fallbacks should disappear.
-- **Token does not yet exist in the palette** — accept the hex fallback for
-  this PR, file a follow-up with the design lead to add the missing token, then
-  do a second regen pass once the palette ships.
+- **Token does not yet exist in the palette** — run with
+  `OBC_ALLOW_UNRESOLVED_VARS=1` (the unresolved-ids tripwire otherwise exits
+  with status 1), accept the hex fallback for this PR, file a follow-up with
+  the design lead to add the missing token, then do a second regen pass once
+  the palette ships.
 
 The `script/.cache/unknown-variables.json` diagnostic file (written on every
 `npm run download:icons` run) lists every unresolved `VariableID`. The

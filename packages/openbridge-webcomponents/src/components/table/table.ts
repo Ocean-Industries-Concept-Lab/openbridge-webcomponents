@@ -53,6 +53,7 @@ export interface ObcTableCellDataRegular {
 
 export interface ObcTableCellDataButton {
   type: ObcTableCellType.Button;
+  disabled?: boolean;
   cssPart?: string;
   text?: string;
   icon?: HTMLTemplateResult;
@@ -1001,6 +1002,7 @@ export class ObcTable extends LitElement {
         <obc-button
           variant="normal"
           fullWidth
+          .disabled=${value.disabled ?? false}
           ?showLeadingIcon=${value.icon !== undefined}
           part=${ifDefined(cssPart(value, 'button'))}
           @click=${(event: MouseEvent) =>
