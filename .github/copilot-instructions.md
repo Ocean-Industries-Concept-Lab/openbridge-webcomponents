@@ -13,8 +13,9 @@ of maritime navigation and automation UI components built with Lit and
 TypeScript.
 
 - **Start here →** [`AGENTS.md`](../AGENTS.md).
-- Path-scoped rules are auto-attached from `.github/instructions/`, which is
-  generated from `docs/agents/`. Read the canonical file, not the copy.
+- Path-scoped rules are listed from `.github/instructions/`, which is
+  generated from `docs/agents/`. A listing is not the content: open the
+  canonical file for every doc whose glob matches a file you will change.
 - Ask for clarification (e.g. a list of questions) before implementing
   significant changes.
 

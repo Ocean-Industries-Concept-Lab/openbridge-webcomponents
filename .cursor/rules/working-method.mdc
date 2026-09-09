@@ -35,6 +35,13 @@ paste.
 Work down the list and stop at the first hit. Each step is a search, not a
 judgement call.
 
+0. **The doc is open.** The adapters name the `docs/agents/*.md` that match a
+   path; they do not deliver the text, and one attached doc is not proof the
+   rest arrived. Before the first edit, open every doc whose glob matches a
+   file in the diff — `coding-standards.md`, `jsdoc.md` and this one match all
+   of `src/**/*.ts` — and again before writing the PR body or an issue
+   comment, which the writing-style list also covers.
+
 1. **The helper exists.** The hubs, by number of importing files:
 
    | Helper                                                                               | For                                                                   | Importers                                                               |
