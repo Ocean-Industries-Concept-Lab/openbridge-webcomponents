@@ -91,6 +91,7 @@ interface ExternalScaleElement extends HTMLElement {
   paddingEnd?: number;
   primaryTickmarkInterval?: number;
   showLabels?: boolean;
+  reverse?: boolean;
   fixedAspectRatio?: boolean;
   scaleReferenceSize?: number;
   state?: InstrumentState;
@@ -143,6 +144,11 @@ export type ChartLineYAxisConfig = {
   min?: number;
   max?: number;
   grid?: boolean;
+  /**
+   * Plot `min` at the top and grow downward. Area fills still reach the
+   * visual bottom, so a depth profile fills the seabed side.
+   */
+  reverse?: boolean;
 };
 
 const LINE_GRAPH_WATCHED_PROP_NAMES = [
@@ -151,6 +157,7 @@ const LINE_GRAPH_WATCHED_PROP_NAMES = [
   'labels',
   'colors',
   'xAxisType',
+  'xAxisReverse',
   'yAxisPosition',
   'yAxes',
   'showGrid',
@@ -345,8 +352,13 @@ const LINE_GRAPH_DIMENSION_PROP_NAMES = [
  * @property xAxisType - X-axis mode: 'category' for labeled, evenly spaced data points; 'time'
  *   for time-based data positioned proportionally; 'number' for plain
  *   numeric x-values.
+ * @property xAxisReverse - Reverse the x-axis so the smallest x sits at the right edge.
+ *   Lets "minutes ago" style data be plotted with positive numbers and 0 on the right.
+ *   Cascades to slotted top/bottom scales.
  * @property yAxisPosition - Single y-axis position ('left' or 'right'). For multiple y-axes, use yAxes instead.
  * @property yAxes - Multiple y-axis definitions for complex multi-axis charts.
+ *   Each entry accepts `min`/`max` to pin the range and `reverse` to plot `min` at the
+ *   top (depth profiles). The primary axis' `reverse` cascades to slotted left/right scales.
  * @property showGrid - Show grid lines.
  * @property showGridX - Show vertical grid lines (x-axis). Default: false.
  * @availableWhen showGridX showGrid==true
@@ -411,6 +423,9 @@ export class ObcChartLineBase extends LitElement {
   @property({type: String})
   xAxisType: XAxisType = XAxisType.category;
 
+  @property({type: Boolean})
+  xAxisReverse = false;
+
   @property({type: String})
   yAxisPosition: YAxisPosition = YAxisPosition.left;
 
@@ -461,6 +476,16 @@ export class ObcChartLineBase extends LitElement {
     return this.xAxisType === XAxisType.number
       ? XValueMode.number
       : XValueMode.time;
+  }
+
+  /**
+   * Whether the primary y-axis is reversed: the `yAxes` entry with id `'y'`,
+   * else the first entry (the axis `updateScaleProperties()` mirrors).
+   */
+  protected isYAxisReversed(): boolean {
+    if (!this.yAxes?.length) return false;
+    const axis = this.yAxes.find((a) => a.id === 'y') ?? this.yAxes[0];
+    return axis?.reverse ?? false;
   }
 
   /** @internal - Last data/datasets reference already warned about. */
@@ -1303,6 +1328,8 @@ export class ObcChartLineBase extends LitElement {
     const yMax = this.chart?.scales['y']?.max ?? 100;
     const xMin = this.chart?.scales['x']?.min ?? 0;
     const xMax = this.chart?.scales['x']?.max ?? 100;
+    const yReverse = this.isYAxisReversed();
+    const xReverse = this.xAxisReverse;
 
     // Use effective dimensions for threshold checks
     const effectiveWidth = this.getEffectiveWidth();
@@ -1363,6 +1390,7 @@ export class ObcChartLineBase extends LitElement {
         const props: Partial<ExternalScaleElement> = {
           minValue: yMin,
           maxValue: yMax,
+          reverse: yReverse,
           height: effectiveHeight, // Use effective height for proper sizing
           paddingTop: verticalViewBoxPadding.top,
           paddingBottom: verticalViewBoxPadding.bottom,
@@ -1393,6 +1421,7 @@ export class ObcChartLineBase extends LitElement {
         const props: Partial<ExternalScaleElement> = {
           minValue: yMin,
           maxValue: yMax,
+          reverse: yReverse,
           height: effectiveHeight, // Use effective height for proper sizing
           paddingTop: verticalViewBoxPadding.top,
           paddingBottom: verticalViewBoxPadding.bottom,
@@ -1423,6 +1452,7 @@ export class ObcChartLineBase extends LitElement {
         const props: Partial<ExternalScaleElement> = {
           minValue: xMin,
           maxValue: xMax,
+          reverse: xReverse,
           width: effectiveWidth, // Use effective width for proper sizing
           paddingLeft: horizontalViewBoxPadding.left,
           paddingRight: horizontalViewBoxPadding.right,
@@ -1453,6 +1483,7 @@ export class ObcChartLineBase extends LitElement {
         const props: Partial<ExternalScaleElement> = {
           minValue: xMin,
           maxValue: xMax,
+          reverse: xReverse,
           width: effectiveWidth, // Use effective width for proper sizing
           paddingLeft: horizontalViewBoxPadding.left,
           paddingRight: horizontalViewBoxPadding.right,
@@ -1877,7 +1908,8 @@ export class ObcChartLineBase extends LitElement {
       pointBorderColor: existingDataset?.pointBorderColor ?? borderColor,
       pointBorderWidth: existingDataset?.pointBorderWidth ?? 2,
       stepped: existingDataset?.stepped ?? this.lineMode === 'stepped',
-      // Use 'start' to fill from chart bottom, not 'origin' (y=0)
+      // 'start' is the pixel bottom of the scale (not value min), so it stays
+      // the visual bottom under a reversed axis too — no flip needed.
       fill: fillFlag ? 'start' : false,
       spanGaps: existingDataset?.spanGaps ?? true,
       // Add segment styling for stacked divider lines
@@ -2264,6 +2296,7 @@ export class ObcChartLineBase extends LitElement {
 
     const x = {
       type: this.xAxisType === XAxisType.category ? 'category' : 'linear',
+      reverse: this.xAxisReverse,
       offset: false, // Always edge-to-edge (no padding on x-axis)
       grace: 0, // No extra margin
       bounds: 'data', // Use data bounds for edge-to-edge rendering
@@ -2303,6 +2336,7 @@ export class ObcChartLineBase extends LitElement {
           position: axis.position ?? ('left' as 'left' | 'right'),
           min: axis.min,
           max: axis.max,
+          reverse: axis.reverse ?? false,
           gridDisplay: axis.grid ?? (this.showGrid && this.showGridY),
         }))
       : [
@@ -2311,17 +2345,19 @@ export class ObcChartLineBase extends LitElement {
             position: this.yAxisPosition,
             min: undefined,
             max: undefined,
+            reverse: false,
             gridDisplay: this.showGrid && this.showGridY,
           },
         ];
 
     const scalesRecord: Record<string, unknown> = {x};
 
-    yAxesConfig.forEach(({id, position, min, max, gridDisplay}) => {
+    yAxesConfig.forEach(({id, position, min, max, reverse, gridDisplay}) => {
       scalesRecord[id] = {
         type: 'linear',
         display: true,
         position,
+        reverse,
         stacked: this.shouldStack() && this.getFillMode() !== 'threshold',
         grace: isTooSmall ? 0 : undefined,
         bounds: isTooSmall ? 'data' : 'ticks',

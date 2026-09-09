@@ -36,6 +36,7 @@ const meta: Meta = {
   argTypes: {
     minValue: {control: {type: 'range', min: -100, max: 100}},
     maxValue: {control: {type: 'range', min: 0, max: 1000}},
+    reverse: {control: {type: 'boolean'}},
     width: {control: {type: 'range', min: 0, max: 768}},
     barThickness: {control: {type: 'range', min: 8, max: 48}},
     hasScale: {control: {type: 'boolean'}},
@@ -94,6 +95,7 @@ const meta: Meta = {
   args: {
     minValue: 0,
     maxValue: 100,
+    reverse: false,
     width: 480,
     barThickness: 24,
     hasScale: true,
@@ -128,6 +130,7 @@ const meta: Meta = {
     <obc-bar-horizontal
       .minValue=${args.minValue}
       .maxValue=${args.maxValue}
+      .reverse=${args.reverse}
       .width=${args.width}
       .barThickness=${args.barThickness}
       .hasScale=${args.hasScale}
@@ -328,6 +331,26 @@ export const SmallRange: Story = {
   args: {
     minValue: 0,
     maxValue: 10,
+    width: 480,
+    primaryTickmarkInterval: 2,
+    secondaryTickmarkInterval: 1,
+  },
+};
+
+export const Reversed: Story = {
+  name: 'Reversed (0 at right, minutes ago)',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`reverse` puts `minValue` at the right edge so a "minutes ago" axis reads with positive numbers and 0 (now) on the right.',
+      },
+    },
+  },
+  args: {
+    minValue: 0,
+    maxValue: 10,
+    reverse: true,
     width: 480,
     primaryTickmarkInterval: 2,
     secondaryTickmarkInterval: 1,

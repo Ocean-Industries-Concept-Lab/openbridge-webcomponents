@@ -138,6 +138,9 @@ const meta: Meta = {
     maxValue: {
       control: {type: 'number'},
     },
+    reverse: {
+      control: 'boolean',
+    },
     value: {
       control: {type: 'range', min: 0, max: 100, step: 1},
     },
@@ -181,6 +184,7 @@ const meta: Meta = {
     priority: Priority.regular,
     minValue: 0,
     maxValue: 100,
+    reverse: false,
     value: 50,
     setpoint: 50,
     hasBar: true,
@@ -201,6 +205,7 @@ const meta: Meta = {
       .chartFill=${args.chartFill}
       .minValue=${args.minValue}
       .maxValue=${args.maxValue}
+      .reverse=${args.reverse}
       .value=${args.value}
       .setpoint=${args.setpoint}
       .newSetpoint=${args.newSetpoint}
@@ -728,6 +733,81 @@ export const GaugeTrendCustomScaleRange: Story = {
       .secondaryTickmarkInterval=${5}
       .tertiaryTickmarkInterval=${1}
       .scaleReferenceSize=${_args.scaleReferenceSize}
+    >
+    </obc-gauge-trend>
+  `,
+};
+
+/** Depth below transducer over the last ten minutes, one sample per 20 s. */
+const DEPTH_TREND_DATA = Array.from({length: 31}, (_, i) => {
+  const trend = 70 - i * 0.16;
+  const ripple = Math.sin(i * 1.7) * 1.2 + Math.cos(i * 0.6) * 0.8;
+  return {
+    label: `${String(Math.floor((i * 20) / 60)).padStart(2, '0')}:${String((i * 20) % 60).padStart(2, '0')}`,
+    value: Math.round((trend + ripple) * 10) / 10,
+  };
+});
+
+export const DepthProfile: Story = {
+  name: 'Depth Profile (Reversed Scale, 0 at Top)',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`reverse` plots `minValue` at the top on both the chart and the vertical scale, so depth is fed as positive numbers. The chart fill reaches the seabed side; the bar fills from the surface (`fillMin: 0`) down to the current depth.',
+      },
+    },
+  },
+  play: async () => {
+    // Wait for rendering to complete before snapshot
+    await new Promise((resolve) => setTimeout(resolve, 300));
+  },
+  argTypes: {
+    value: {control: {type: 'range', min: 0, max: 75, step: 0.1}},
+    setpoint: {control: {type: 'range', min: 0, max: 75, step: 0.1}},
+    fillMin: {control: {type: 'range', min: 0, max: 75, step: 1}},
+    fillMax: {control: {type: 'range', min: 0, max: 75, step: 1}},
+  },
+  args: {
+    width: 384,
+    height: 384,
+    priority: Priority.regular,
+    minValue: 0,
+    maxValue: 75,
+    reverse: true,
+    value: 65.3,
+    setpoint: undefined,
+    hasBar: true,
+    hasScale: true,
+    hasAdvice: true,
+    fillMode: 'fill',
+    fillMin: 0,
+    chartFill: true,
+  },
+  render: (_args) => html`
+    <obc-gauge-trend
+      .data=${DEPTH_TREND_DATA}
+      .width=${_args.width}
+      .height=${_args.height}
+      .priority=${_args.priority}
+      .chartFill=${_args.chartFill}
+      .minValue=${_args.minValue}
+      .maxValue=${_args.maxValue}
+      .reverse=${_args.reverse}
+      .value=${_args.value}
+      .setpoint=${_args.setpoint}
+      .newSetpoint=${_args.newSetpoint}
+      .touching=${_args.touching}
+      .hasBar=${_args.hasBar}
+      .hasScale=${_args.hasScale}
+      .hasAdvice=${_args.hasAdvice}
+      .fillMode=${_args.fillMode}
+      .fillMin=${_args.fillMin}
+      .fillMax=${_args.fillMax}
+      .advice=${[{min: 70, max: 75, type: AdviceType.caution, hinted: false}]}
+      .primaryTickmarkInterval=${25}
+      .secondaryTickmarkInterval=${5}
+      .tertiaryTickmarkInterval=${1}
     >
     </obc-gauge-trend>
   `,

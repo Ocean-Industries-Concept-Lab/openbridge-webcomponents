@@ -418,6 +418,13 @@ export interface ExternalScaleConfig {
   minValue: number;
   /** Maximum scale value. */
   maxValue: number;
+  /**
+   * Reverse the main axis so `minValue` sits at the top (vertical) or right
+   * (horizontal) and values grow downward / leftward. Lets a quantity measured
+   * downward (a depth) be plotted with positive numbers.
+   * @default false
+   */
+  reverse?: boolean;
 
   // Layout bands (thickness, in px)
   /** Show scale tickmarks. */
@@ -1134,15 +1141,17 @@ function drawingLength(config: ExternalScaleConfig): number {
 
 function valueToMainAxis(config: ExternalScaleConfig, value: number): number {
   const dLen = drawingLength(config);
+  // Every consumer takes min/max of two mapped coordinates, so mirroring the
+  // value inside the range is enough to reverse fill, ticks, labels and advice.
+  const v = config.reverse ? config.minValue + config.maxValue - value : value;
   if (isVertical(config)) {
     return (
-      valueToY(value, config.minValue, config.maxValue, dLen) +
+      valueToY(v, config.minValue, config.maxValue, dLen) +
       mainAxisOffset(config)
     );
   }
   return (
-    valueToX(value, config.minValue, config.maxValue, dLen) +
-    mainAxisOffset(config)
+    valueToX(v, config.minValue, config.maxValue, dLen) + mainAxisOffset(config)
   );
 }
 

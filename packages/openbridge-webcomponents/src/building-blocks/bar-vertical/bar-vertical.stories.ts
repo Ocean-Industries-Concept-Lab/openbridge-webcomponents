@@ -37,6 +37,7 @@ const meta: Meta = {
   argTypes: {
     minValue: {control: {type: 'range', min: -100, max: 100}},
     maxValue: {control: {type: 'range', min: 0, max: 1000}},
+    reverse: {control: {type: 'boolean'}},
     height: {control: {type: 'range', min: 0, max: 512}},
     barThickness: {control: {type: 'range', min: 8, max: 48}},
     hasScale: {control: {type: 'boolean'}},
@@ -95,6 +96,7 @@ const meta: Meta = {
   args: {
     minValue: 0,
     maxValue: 100,
+    reverse: false,
     height: 320,
     barThickness: 24,
     hasScale: true,
@@ -129,6 +131,7 @@ const meta: Meta = {
     <obc-bar-vertical
       .minValue=${args.minValue}
       .maxValue=${args.maxValue}
+      .reverse=${args.reverse}
       .height=${args.height}
       .barThickness=${args.barThickness}
       .hasScale=${args.hasScale}
@@ -330,6 +333,31 @@ export const SmallRange: Story = {
     height: 320,
     primaryTickmarkInterval: 2,
     secondaryTickmarkInterval: 1,
+  },
+};
+
+export const Reversed: Story = {
+  name: 'Reversed (0 at top, depth 0 to 75 m)',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`reverse` puts `minValue` at the top so a quantity measured downward (depth) is plotted with positive numbers. The bar fills from `fillMin` (0, the surface) down to `value`.',
+      },
+    },
+  },
+  args: {
+    minValue: 0,
+    maxValue: 75,
+    reverse: true,
+    height: 320,
+    hasBar: true,
+    value: 65.3,
+    fillMax: undefined,
+    setpoint: 70,
+    primaryTickmarkInterval: 25,
+    secondaryTickmarkInterval: 5,
+    advices: [{min: 65, max: 75, type: AdviceType.caution, hinted: false}],
   },
 };
 

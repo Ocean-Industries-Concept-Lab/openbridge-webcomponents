@@ -66,6 +66,8 @@ export {
  *
  * @property minValue - Minimum scale value (manual mode)
  * @property maxValue - Maximum scale value (manual mode)
+ * @property reverse - Reverse the scale so `minValue` is at the right and values grow leftward.
+ *   Use for quantities such as "minutes ago" so 0 sits at the right edge with positive numbers.
  * @property width - Total width in pixels (including padding bands)
  * @availableWhen width fixedAspectRatio==false
  * @property paddingLeft - Padding left of the drawing area
@@ -140,6 +142,7 @@ export class ObcBarHorizontal extends SetpointMixin(LitElement, {
 }) {
   @property({type: Number}) minValue = 0;
   @property({type: Number}) maxValue = 100;
+  @property({type: Boolean}) reverse = false;
 
   @property({type: Number}) width = 320;
 
@@ -265,6 +268,7 @@ export class ObcBarHorizontal extends SetpointMixin(LitElement, {
       paddingEnd: this.paddingRight,
       minValue: this.minValue,
       maxValue: this.maxValue,
+      reverse: this.reverse,
       hasScale: this.hasScale,
       labels: this.showLabels,
       hasBar: this.hasBar,

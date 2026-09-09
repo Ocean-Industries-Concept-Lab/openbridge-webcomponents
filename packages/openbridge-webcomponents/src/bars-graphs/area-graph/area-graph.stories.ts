@@ -86,7 +86,9 @@ const meta: Meta = {
       .lineMode=${_args.lineMode}
       .colors=${_args.colors}
       .xAxisType=${_args.xAxisType}
+      .xAxisReverse=${_args.xAxisReverse}
       .yAxisPosition=${_args.yAxisPosition}
+      .yAxes=${_args.yAxes}
       .showGrid=${_args.showGrid}
       .showGridX=${_args.showGridX}
       .showGridY=${_args.showGridY}
@@ -116,7 +118,9 @@ const meta: Meta = {
       control: {type: 'radio'},
       options: ['category', 'time', 'number'],
     },
+    xAxisReverse: {control: 'boolean'},
     yAxisPosition: {control: {type: 'radio'}, options: ['left', 'right']},
+    yAxes: {control: 'object'},
     showGrid: {control: 'boolean'},
     showGridX: {control: 'boolean'},
     showGridY: {control: 'boolean'},
@@ -149,7 +153,9 @@ const meta: Meta = {
     datasets: undefined,
     labels: undefined,
     xAxisType: 'category',
+    xAxisReverse: false,
     yAxisPosition: 'left',
+    yAxes: undefined,
     showGrid: true, // Component defaults to false, but stories show grid by default
     showGridX: true, // Component defaults to false, but stories show grid by default
     showGridY: true, // Component defaults to false, but stories show grid by default
@@ -256,6 +262,77 @@ export const NumberAxis: Story = {
       .width=${_args.width}
       .height=${_args.height}
     ></obc-area-graph>
+  `,
+};
+
+/** Depth below transducer sampled every 30 s over the last 10 minutes; x is "minutes ago". */
+const DEPTH_PROFILE_DATA = Array.from({length: 21}, (_, i) => {
+  const minutesAgo = 10 - i * 0.5;
+  const trend = 70 - i * 0.25;
+  const ripple = Math.sin(i * 1.7) * 1.2 + Math.cos(i * 0.6) * 0.8;
+  return {x: minutesAgo, value: Math.round((trend + ripple) * 10) / 10};
+});
+
+export const DepthProfile: Story = {
+  name: 'Depth Profile (Fixed Range, Reversed Axes, External Scales)',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Depth plotted with positive numbers: `yAxes` pins the range to 0–75 and `reverse: true` puts 0 at the top, so the area fill lands on the seabed side. `xAxisReverse` puts 0 ("now") at the right edge of a number axis. Both flags cascade to the slotted OpenBridge scales.',
+      },
+    },
+  },
+  play: async ({canvasElement}) => {
+    await document.fonts.ready;
+    const chart = canvasElement.querySelector('obc-area-graph') as
+      | (HTMLElement & {chart?: {update(): void}})
+      | null;
+    chart?.chart?.update();
+  },
+  args: {
+    xAxisType: 'number',
+    xAxisReverse: true,
+    yAxes: [{id: 'y', position: 'left', min: 0, max: 75, reverse: true}],
+    showTickMarks: false,
+    priority: Priority.regular,
+  },
+  render: (_args) => html`
+    <obc-area-graph
+      .data=${DEPTH_PROFILE_DATA}
+      .xAxisType=${_args.xAxisType}
+      .xAxisReverse=${_args.xAxisReverse}
+      .yAxes=${_args.yAxes}
+      .lineMode=${_args.lineMode}
+      .showGrid=${_args.showGrid}
+      .showGridX=${_args.showGridX}
+      .showGridY=${_args.showGridY}
+      .showTickMarks=${_args.showTickMarks}
+      .showPoints=${_args.showPoints}
+      .fillMode=${_args.fillMode}
+      .priority=${_args.priority}
+      .unit=${'m'}
+      .width=${_args.width}
+      .height=${_args.height}
+      .borderRadiusPositionExternalScales=${BorderRadiusPosition.outerLastChild}
+    >
+      <obc-bar-vertical
+        slot="left-scale"
+        .side=${'left'}
+        .hasScale=${true}
+        .primaryTickmarkInterval=${25}
+        .secondaryTickmarkInterval=${5}
+        .priority=${_args.priority}
+      ></obc-bar-vertical>
+      <obc-bar-horizontal
+        slot="bottom-scale"
+        .side=${'bottom'}
+        .hasScale=${true}
+        .primaryTickmarkInterval=${5}
+        .secondaryTickmarkInterval=${1}
+        .priority=${_args.priority}
+      ></obc-bar-horizontal>
+    </obc-area-graph>
   `,
 };
 
