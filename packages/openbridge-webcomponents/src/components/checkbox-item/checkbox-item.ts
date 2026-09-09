@@ -81,7 +81,7 @@ export type ObcCheckboxItemExpandToggleEvent = CustomEvent<boolean>;
  * @property status - Checkbox status: `unchecked`, `checked` or `mixed`.
  * @property state - Item state: `enabled` or `disabled`.
  * @property disabled - Disables the row and the inner checkbox.
- * @property label - Text label; also the checkbox's accessible name.
+ * @property label - Text label; also the accessible name of the checkbox and the chevron button, so it must not be empty.
  * @property description - Secondary line under the label; hidden when empty.
  * @property level - Depth in a nested list. 0 is a plain row; 1 reserves the chevron slot; each level above 1 adds a spacer.
  * @property expandable - Shows the chevron button that fires `expand-toggle`.
