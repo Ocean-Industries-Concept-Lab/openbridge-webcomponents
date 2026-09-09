@@ -88,7 +88,7 @@ hundred tokens:
 gh issue list --state all --search "<component>" --limit 40
 gh pr list --state all --search "<component>" --limit 40
 gh pr list --state merged --limit 60            # the last few months by eye
-git log --oneline --since='3 months ago' -- src/<family>/
+git log --oneline --since='3 months ago' -- packages/openbridge-webcomponents/src/<family>/
 ```
 
 Then dig only where a title or description touches the task: `gh pr view N`
