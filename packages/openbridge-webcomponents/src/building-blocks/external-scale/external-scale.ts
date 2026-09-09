@@ -933,30 +933,32 @@ function rangeIncludesZero(minValue: number, maxValue: number): boolean {
 }
 
 /**
- * Upper bound on the tickmarks one ladder (primary, secondary, tertiary or
- * labels) may produce. A denser ladder is not drawn at all: it cannot be read
- * on any scale length, and building it would exhaust the call stack.
+ * Ticks one ladder (primary, secondary, tertiary or labels) may hold. A
+ * denser ladder cannot be read on any scale length, and building it would
+ * exhaust the call stack.
  */
 export const EXTERNAL_SCALE_MAX_TICKS = 1000;
 
+// Bounded: a scale re-renders on every property change, and a live range
+// that stays dense would otherwise grow this without limit.
+const DENSE_LADDER_WARNINGS_KEPT = 64;
 const warnedDenseLadders = new Set<string>();
 
-/**
- * True when `interval` would put more than `EXTERNAL_SCALE_MAX_TICKS` ticks
- * on the range. Warns once per range/interval pair, since a scale re-renders
- * on every property change.
- */
+/** True when `interval` would put more than the cap on the range; warns once per pair. */
 function isLadderTooDense(
   config: Pick<ExternalScaleConfig, 'minValue' | 'maxValue'>,
   interval: number
 ): boolean {
-  const count = (config.maxValue - config.minValue) / interval;
+  const count = Math.floor((config.maxValue - config.minValue) / interval) + 1;
   if (!(count > EXTERNAL_SCALE_MAX_TICKS)) return false;
   const key = `${config.minValue}/${config.maxValue}/${interval}`;
   if (!warnedDenseLadders.has(key)) {
+    if (warnedDenseLadders.size >= DENSE_LADDER_WARNINGS_KEPT) {
+      warnedDenseLadders.clear();
+    }
     warnedDenseLadders.add(key);
     console.warn(
-      `[external-scale] tick interval ${interval} over the range ${config.minValue}…${config.maxValue} is ${Math.round(count)} ticks; the ladder is not drawn (limit ${EXTERNAL_SCALE_MAX_TICKS}). On a time axis the range is epoch milliseconds.`
+      `[external-scale] tick interval ${interval} over the range ${config.minValue}…${config.maxValue} is ${count} ticks; the ladder is not drawn (limit ${EXTERNAL_SCALE_MAX_TICKS}). A range in epoch milliseconds needs an interval in milliseconds.`
     );
   }
   return true;
