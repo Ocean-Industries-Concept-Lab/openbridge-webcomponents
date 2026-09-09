@@ -42,7 +42,13 @@ import {
   formatXValue,
   XValueMode,
   observeLabelThreshold,
+  measureRangeLabelGutters,
+  rangeLabelFontString,
+  rangeLabelLineHeight,
+  formatRangeValue,
+  yRangeLabelValues,
 } from '../../charthelpers/index.js';
+import type {RangeLabelFont} from '../../charthelpers/index.js';
 import type {ChartXValue} from '../../charthelpers/x-value.js';
 import {
   EXTERNAL_SCALE_BORDER_RADIUS_CSS_VAR,
@@ -680,19 +686,224 @@ export class ObcChartLineBase extends LitElement {
    * - middleChild → no rounding
    */
 
+  /** @internal - Labels the range-labels plugin drew last, for tests. */
+  lastRangeLabels: {axis: 'x' | 'y'; text: string; x: number; y: number}[] = [];
+
+  private slotFor(
+    side: 'left' | 'right' | 'top' | 'bottom'
+  ): HTMLSlotElement | undefined {
+    return {
+      left: this.leftScaleSlot,
+      right: this.rightScaleSlot,
+      top: this.topScaleSlot,
+      bottom: this.bottomScaleSlot,
+    }[side];
+  }
+
+  private hasSlottedScale(side: 'left' | 'right' | 'top' | 'bottom'): boolean {
+    return (this.slotFor(side)?.assignedElements().length ?? 0) > 0;
+  }
+
+  /** @internal - Below the label threshold on either dimension. */
+  private isBelowThreshold(): boolean {
+    return (
+      this.getEffectiveWidth() <
+        RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS ||
+      this.getEffectiveHeight() <
+        RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS
+    );
+  }
+
+  private get ySide(): 'left' | 'right' {
+    const first = this.yAxes?.[0]?.position;
+    return (first ?? this.yAxisPosition) === 'right' ? 'right' : 'left';
+  }
+
+  private rangeLabelFont(): RangeLabelFont {
+    const sizePx = Number.parseFloat(
+      getCssVariableValue(this, LINE_GRAPH_LABEL_CONFIG.fontSizeVar)
+    );
+    return {
+      family: getCssVariableValue(this, LINE_GRAPH_LABEL_CONFIG.fontFamily),
+      sizePx: Number.isFinite(sizePx) ? sizePx : 12,
+      weight: getCssVariableValue(this, LINE_GRAPH_LABEL_CONFIG.fontWeightVar),
+    };
+  }
+
+  /** Extent of the prepared data on one axis; `undefined` without points. */
+  private dataExtent(axis: 'x' | 'y'): {min: number; max: number} | undefined {
+    let min = Infinity;
+    let max = -Infinity;
+    this.prepareChartDataAndLabels().datasets.forEach((dataset) => {
+      (dataset.data as ChartLinePoint[]).forEach((point) => {
+        const v =
+          typeof point === 'number'
+            ? axis === 'y'
+              ? point
+              : NaN
+            : ((point as {x: number; y: number})[axis] ?? NaN);
+        if (Number.isFinite(v)) {
+          min = Math.min(min, v);
+          max = Math.max(max, v);
+        }
+      });
+    });
+    return min <= max ? {min, max} : undefined;
+  }
+
+  /**
+   * Range the y labels describe. Below the threshold the axis runs on data
+   * bounds, so the data extent is exact and needs no chart to read from.
+   */
+  private yRangeBounds(): {min: number; max: number} | undefined {
+    const axis =
+      this.yAxes?.find((a) => (a.position ?? 'left') === this.ySide) ??
+      this.yAxes?.[0];
+    const extent = this.dataExtent('y');
+    const min = axis?.min ?? extent?.min;
+    const max = axis?.max ?? extent?.max;
+    return min !== undefined && max !== undefined ? {min, max} : undefined;
+  }
+
+  /** First and last x label, or nothing when there is no span to label. */
+  private xEdgeLabelTexts(): string[] {
+    if (!this.isNumericXAxis) {
+      const labels = this.prepareChartDataAndLabels().labels.map(String);
+      const first = labels[0];
+      const last = labels[labels.length - 1];
+      return labels.length > 1 && first !== last ? [first, last] : [];
+    }
+    const extent = this.dataExtent('x');
+    const min = this.xAxis?.min ?? extent?.min;
+    const max = this.xAxis?.max ?? extent?.max;
+    if (min === undefined || max === undefined || min === max) return [];
+    const reference =
+      this.timeDisplay === TimeDisplay.minutes
+        ? this.computeTimeReference()
+        : undefined;
+    return [
+      formatXValue(min, this.xValueMode, reference),
+      formatXValue(max, this.xValueMode, reference),
+    ];
+  }
+
+  /**
+   * Range label text for the sides the built-in axis owns. A side with a
+   * slotted scale is labelled by the scale; above the threshold there are
+   * regular labels instead.
+   */
+  private computeRangeLabelTexts(): {y: string[]; x: string[]} {
+    const y: string[] = [];
+    const x: string[] = [];
+    if (!this.isBelowThreshold()) return {y, x};
+    if (
+      this.rangeLabelsY &&
+      !this.hasSlottedScale('left') &&
+      !this.hasSlottedScale('right')
+    ) {
+      const bounds = this.yRangeBounds();
+      if (bounds) {
+        y.push(
+          ...yRangeLabelValues(bounds.min, bounds.max).map((v) =>
+            formatRangeValue(v, bounds.min, bounds.max)
+          )
+        );
+      }
+    }
+    if (
+      this.rangeLabelsX &&
+      !this.hasSlottedScale('top') &&
+      !this.hasSlottedScale('bottom')
+    ) {
+      x.push(...this.xEdgeLabelTexts());
+    }
+    return {y, x};
+  }
+
+  /**
+   * Paints min / 0 / max and first / last once Chart.js has drawn, inside the
+   * gutters `getChartOptions()` reserved. The end labels sit flush with the
+   * plot edges so no vertical padding is needed for them.
+   */
+  private createRangeLabelsPlugin() {
+    return {
+      id: 'rangeLabels',
+      afterDraw: (chart: Chart) => {
+        this.lastRangeLabels = [];
+        const {y: yTexts, x: xTexts} = this.computeRangeLabelTexts();
+        if (!yTexts.length && !xTexts.length) return;
+        const area = chart.chartArea;
+        const ctx = chart.ctx;
+        const font = this.rangeLabelFont();
+        const lineHeight = rangeLabelLineHeight(font);
+        ctx.save();
+        ctx.font = rangeLabelFontString(font);
+        ctx.fillStyle = getCssVariableValue(
+          this,
+          LINE_GRAPH_LABEL_CONFIG.fontColorVar
+        );
+
+        const bounds = this.yRangeBounds();
+        const scale = chart.scales[this.primaryYAxisId];
+        if (yTexts.length && bounds && scale) {
+          const onRight = this.ySide === 'right';
+          const x = onRight ? area.right + 8 : area.left - 8;
+          ctx.textAlign = onRight ? 'left' : 'right';
+          const values = yRangeLabelValues(bounds.min, bounds.max);
+          // Top-down, so the recorded order reads max, 0, min.
+          for (let i = values.length - 1; i >= 0; i--) {
+            const isMax = i === values.length - 1;
+            const isMin = i === 0;
+            const y = isMax
+              ? area.top
+              : isMin
+                ? area.bottom
+                : scale.getPixelForValue(values[i]);
+            // A 0 within a line of either end would collide with it.
+            if (
+              !isMax &&
+              !isMin &&
+              (y - area.top < lineHeight || area.bottom - y < lineHeight)
+            ) {
+              continue;
+            }
+            ctx.textBaseline = isMax ? 'top' : isMin ? 'bottom' : 'middle';
+            ctx.fillText(yTexts[i], x, y);
+            this.lastRangeLabels.push({axis: 'y', text: yTexts[i], x, y});
+          }
+        }
+
+        if (xTexts.length === 2) {
+          const y = area.bottom + 4;
+          ctx.textBaseline = 'top';
+          ctx.textAlign = 'left';
+          ctx.fillText(xTexts[0], area.left, y);
+          this.lastRangeLabels.push({
+            axis: 'x',
+            text: xTexts[0],
+            x: area.left,
+            y,
+          });
+          ctx.textAlign = 'right';
+          ctx.fillText(xTexts[1], area.right, y);
+          this.lastRangeLabels.push({
+            axis: 'x',
+            text: xTexts[1],
+            x: area.right,
+            y,
+          });
+        }
+        ctx.restore();
+      },
+    };
+  }
+
   /**
    * Check if a slotted scale element is actually visible (renders content).
    * For bar-vertical/bar-horizontal elements, checks hasBar and hasScale properties.
    */
   private hasVisibleScale(side: 'left' | 'right' | 'top' | 'bottom'): boolean {
-    const slotMap = {
-      left: this.leftScaleSlot,
-      right: this.rightScaleSlot,
-      top: this.topScaleSlot,
-      bottom: this.bottomScaleSlot,
-    };
-
-    const slot = slotMap[side];
+    const slot = this.slotFor(side);
     const elements = slot?.assignedElements() ?? [];
 
     return elements.some((el: Element) => {
@@ -2209,50 +2420,48 @@ export class ObcChartLineBase extends LitElement {
     // Get scale factor for proportional scaling in fixed aspect ratio mode
     const scaleFactor = this.getScaleFactor();
 
-    // Calculate padding for the chart.
-    // External scales report their actual visual (scaled) thickness when in fixedAspectRatio mode,
-    // so we use those values directly without additional scaling.
-    // For sides without external scales, we apply the chart's scaleFactor to default padding.
-    let padding: {top: number; right: number; bottom: number; left: number};
-
-    // When hasLabelPadding=false the chart never reserves space for axis tick
-    // labels on sides without an external scale (renders edge-to-edge there).
-    // External-scale sides still receive their reported visual thickness so
-    // slotted scales/bars remain fully visible.
+    // Per side: a slotted scale always gets the room it reported; a free side
+    // gets the range-label gutter below the threshold and the label padding
+    // above it. "Too small ⇒ 0 everywhere" painted the canvas over slotted
+    // scales, since a scale's bands never collapse to nothing.
     const defaultPaddingScaled = !this.hasLabelPadding
       ? 0
       : this.fixedAspectRatioScaling
         ? Math.round(CHART_DIMENSIONS.CANVAS_PADDING * scaleFactor)
         : CHART_DIMENSIONS.CANVAS_PADDING;
 
-    if (isTooSmall && this.hasLabelPadding) {
-      padding = {top: 0, right: 0, bottom: 0, left: 0};
-    } else if (this.hasExternalScales()) {
-      // External scales report their visual dimensions (already scaled when fixedAspectRatio=true)
-      const scalePadding = this.calculatePaddingFromScales();
-      padding = {
-        top: this.externalScaleDimensions.has('top')
-          ? scalePadding.top
-          : defaultPaddingScaled,
-        right: this.externalScaleDimensions.has('right')
-          ? scalePadding.right
-          : defaultPaddingScaled,
-        bottom: this.externalScaleDimensions.has('bottom')
-          ? scalePadding.bottom
-          : defaultPaddingScaled,
-        left: this.externalScaleDimensions.has('left')
-          ? scalePadding.left
-          : defaultPaddingScaled,
-      };
-    } else {
-      // No external scales - apply scaleFactor to all default padding
-      padding = {
-        top: defaultPaddingScaled,
-        right: defaultPaddingScaled,
-        bottom: defaultPaddingScaled,
-        left: defaultPaddingScaled,
-      };
-    }
+    const {y: yTexts, x: xTexts} = this.computeRangeLabelTexts();
+    const context = this.canvasEl?.getContext('2d');
+    const gutters =
+      (yTexts.length || xTexts.length) && context
+        ? measureRangeLabelGutters(
+            context,
+            this.rangeLabelFont(),
+            yTexts,
+            xTexts
+          )
+        : {side: 0, bottom: 0};
+
+    const scalePadding = this.calculatePaddingFromScales();
+    const freeSide = (side: 'top' | 'right' | 'bottom' | 'left'): number => {
+      if (!isTooSmall) return defaultPaddingScaled;
+      if (side === 'bottom') return gutters.bottom;
+      return side === this.ySide ? gutters.side : 0;
+    };
+    const padding = {
+      top: this.externalScaleDimensions.has('top')
+        ? scalePadding.top
+        : freeSide('top'),
+      right: this.externalScaleDimensions.has('right')
+        ? scalePadding.right
+        : freeSide('right'),
+      bottom: this.externalScaleDimensions.has('bottom')
+        ? scalePadding.bottom
+        : freeSide('bottom'),
+      left: this.externalScaleDimensions.has('left')
+        ? scalePadding.left
+        : freeSide('left'),
+    };
 
     // Set CSS variables for wrapper and canvas sizing
     if (this.fixedAspectRatioScaling) {
@@ -2545,7 +2754,12 @@ export class ObcChartLineBase extends LitElement {
       type: 'line',
       data: {labels, datasets},
       options: this.getChartOptions(),
-      plugins: this.borderRadiusPosition ? [this.createBorderPlugin()] : [],
+      plugins: [
+        ...(this.borderRadiusPosition ? [this.createBorderPlugin()] : []),
+        ...(this.rangeLabels !== RangeLabels.none
+          ? [this.createRangeLabelsPlugin()]
+          : []),
+      ],
     } as ChartConfiguration<'line'>);
 
     // Defer legend update to next tick to ensure Chart.js metadata is initialized
