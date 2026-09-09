@@ -30,8 +30,8 @@
 }
 
 /* ---- One flex line ----
-   The groups are markup only: every button, text and slot is a flex item of
-   the bar, so a squeeze reaches the texts first and never covers the menu button. */
+   Flattened because a squeeze must reach the texts, not a group: a shrinkable
+   left group collapses under an unshrinkable alert and covers the menu button. */
 
 .group {
   display: contents;

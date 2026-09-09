@@ -129,6 +129,7 @@ const onContextMenuChange = (event: ObcContextMenuInputChangeEvent) => {
    MOBILE_BREAKPOINT_PX in composables/useMobileLayout.ts. */
 @media screen and (max-width: 768px) {
   .screen {
+    box-sizing: border-box; /* the cap must include the 1px borders */
     max-width: calc(100vw - 32px);
   }
 }
