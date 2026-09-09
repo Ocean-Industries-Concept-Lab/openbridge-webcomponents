@@ -713,8 +713,9 @@ export class ObcChartLineBase extends LitElement {
       visual = measureRangeLabelGutters(context, font, [], ['x']).bottom + 8;
     }
     if (!this.fixedAspectRatioScaling) return Math.ceil(visual);
-    const referenceLength = axis === 'y' ? this.height : this.width;
-    return Math.ceil((visual * this.scaleReferenceSize) / referenceLength);
+    const effectiveLength =
+      axis === 'y' ? this.getEffectiveHeight() : this.getEffectiveWidth();
+    return Math.ceil((visual * this.scaleReferenceSize) / effectiveLength);
   }
 
   /** @internal - Labels the range-labels plugin drew last, for tests. */
@@ -1556,15 +1557,19 @@ export class ObcChartLineBase extends LitElement {
       // scale's drawing area lines up with the chart area on every side.
       const padding = this.computeChartPadding();
 
-      // Step 2: Calculate effective chart area
-      const effectiveWidth = this.width - padding.left - padding.right;
-      const effectiveHeight = this.height - padding.top - padding.bottom;
+      // Step 2: The chart area left once the (visual) padding is taken from
+      // the visual size — the reference `width` / `height` would go negative
+      // in a container larger than the reference.
+      const effectiveWidth =
+        this.getEffectiveWidth() - padding.left - padding.right;
+      const effectiveHeight =
+        this.getEffectiveHeight() - padding.top - padding.bottom;
 
       // Guard against invalid dimensions
       if (effectiveWidth <= 0 || effectiveHeight <= 0) {
         console.warn('[chart-line-base] Invalid effective dimensions', {
-          width: this.width,
-          height: this.height,
+          width: this.getEffectiveWidth(),
+          height: this.getEffectiveHeight(),
           padding,
           effectiveWidth,
           effectiveHeight,
@@ -1741,18 +1746,18 @@ export class ObcChartLineBase extends LitElement {
       return saved;
     };
 
-    // Calculate viewBox padding for external scales.
-    // When fixedAspectRatioScaling is true, the chart's Canvas padding is scaled by
-    // scaleFactor = computedWidth / this.width. For external scales to match, their
-    // viewBox padding needs to be: basePadding * scaleReferenceSize / referenceSize
-    // This ensures the visual padding matches when the SVG scales to fill the container.
+    // The padding is in visual pixels. In fixed-aspect mode a scale's viewBox
+    // is `scaleReferenceSize` long and stretched to the effective length, so
+    // the same distance in viewBox units is the visual one scaled by that
+    // ratio — the *effective* length, not the reference `width` / `height`,
+    // or every container that is not the reference size drifts.
     const verticalViewBoxPadding = this.fixedAspectRatioScaling
       ? {
           top: Math.round(
-            (padding.top * this.scaleReferenceSize) / this.height
+            (padding.top * this.scaleReferenceSize) / effectiveHeight
           ),
           bottom: Math.round(
-            (padding.bottom * this.scaleReferenceSize) / this.height
+            (padding.bottom * this.scaleReferenceSize) / effectiveHeight
           ),
         }
       : {top: padding.top, bottom: padding.bottom};
@@ -1760,10 +1765,10 @@ export class ObcChartLineBase extends LitElement {
     const horizontalViewBoxPadding = this.fixedAspectRatioScaling
       ? {
           left: Math.round(
-            (padding.left * this.scaleReferenceSize) / this.width
+            (padding.left * this.scaleReferenceSize) / effectiveWidth
           ),
           right: Math.round(
-            (padding.right * this.scaleReferenceSize) / this.width
+            (padding.right * this.scaleReferenceSize) / effectiveWidth
           ),
         }
       : {left: padding.left, right: padding.right};
