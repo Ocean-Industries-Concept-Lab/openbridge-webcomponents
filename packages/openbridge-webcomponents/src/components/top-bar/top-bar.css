@@ -77,21 +77,24 @@
 
 .title,
 .page-name {
-  min-width: 0; /* shrink below the longest word instead of pushing buttons out */
   overflow: hidden;
-  display: -webkit-box; /* two lines, then clipped */
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
   color: var(--element-active-color, #1a1a1a);
 }
 
 .title {
-  flex-shrink: 3; /* the app title disappears before the page name */
+  flex-shrink: 3; /* the app title gives way before the page name */
+  min-width: 2em; /* room for "A…": narrower boxes paint a clipped glyph instead */
+  white-space: nowrap;
+  text-overflow: ellipsis;
   @mixin font-body;
 }
 
 .page-name {
+  min-width: 0; /* shrink below the longest word instead of pushing buttons out */
+  display: -webkit-box; /* two lines, then an ellipsis */
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   @mixin font-body-active;
 }
 
