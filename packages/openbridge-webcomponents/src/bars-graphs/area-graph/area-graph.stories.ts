@@ -259,6 +259,67 @@ export const NumberAxis: Story = {
   `,
 };
 
+/**
+ * Five of the twelve minutes have arrived. Without `xAxis` the trace would
+ * stretch across the full width; pinned, it occupies the right-hand slice
+ * and grows leftwards as the buffer fills (#1218).
+ */
+const PINNED_X_RANGE_DATA = [-4, -3, -2, -1, 0].map((x, i) => ({
+  x,
+  value: SAMPLE_DATA[i].value,
+}));
+
+export const PinnedXRange: Story = {
+  name: 'Pinned X Range (Filling Buffer)',
+  args: {
+    xAxisType: 'number',
+    height: 220,
+  },
+  play: async ({canvasElement}) => {
+    await document.fonts.ready;
+    const chart = canvasElement.querySelector('obc-area-graph') as
+      | (HTMLElement & {chart?: {update(): void}})
+      | null;
+    chart?.chart?.update();
+  },
+  render: (_args) => html`
+    <obc-area-graph
+      .data=${PINNED_X_RANGE_DATA}
+      .xAxisType=${_args.xAxisType}
+      .xAxis=${{min: -12, max: 0}}
+      .yAxes=${[{id: 'y', position: 'left' as const, min: 0, max: 8}]}
+      .fillMode=${_args.fillMode}
+      .lineMode=${_args.lineMode}
+      .showGrid=${_args.showGrid}
+      .showGridX=${_args.showGridX}
+      .showGridY=${_args.showGridY}
+      .priority=${_args.priority}
+      .showDebugOverlay=${_args.showDebugOverlay}
+      .width=${_args.width}
+      .height=${_args.height}
+    >
+      <obc-bar-vertical
+        slot="left-scale"
+        side="left"
+        .height=${_args.height}
+        .primaryTickmarkInterval=${2}
+        .secondaryTickmarkInterval=${1}
+        .hasBar=${false}
+        .priority=${_args.priority}
+      ></obc-bar-vertical>
+      <obc-bar-horizontal
+        slot="bottom-scale"
+        side="bottom"
+        .width=${_args.width}
+        .primaryTickmarkInterval=${2}
+        .secondaryTickmarkInterval=${1}
+        .hasBar=${false}
+        .priority=${_args.priority}
+      ></obc-bar-horizontal>
+    </obc-area-graph>
+  `,
+};
+
 export const SemitransparentExternalScales: Story = {
   name: 'Semitransparent Area Graph (with external scales)',
   tags: ['skip-test'],
