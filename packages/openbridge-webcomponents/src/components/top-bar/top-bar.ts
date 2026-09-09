@@ -1,6 +1,7 @@
 import {LitElement, html, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
+import {msg} from '@lit/localize';
 import compentStyle from './top-bar.css?inline';
 import '../icon-button/icon-button.js';
 import '../clock/clock.js';
@@ -429,6 +430,7 @@ export class ObcTopBar extends LitElement {
         html`<div class="menu-button">
           <obc-icon-button
             variant="flat"
+            aria-label=${msg('Close')}
             @pointerdown=${() => this.leftButtonDown(new CustomEvent('close'))}
             @pointerup=${() => this.leftButtonUp()}
             @pointerleave=${() => this.leftButtonLeave()}
@@ -440,6 +442,7 @@ export class ObcTopBar extends LitElement {
       leftGroup.push(
         html`<obc-icon-button
           variant="flat"
+          aria-label=${msg('Back')}
           @click=${() => this.dispatchEvent(new CustomEvent('back'))}
         >
           <obi-arrow-left-google></obi-arrow-left-google>
@@ -463,6 +466,9 @@ export class ObcTopBar extends LitElement {
           html`<div class="menu-button ${this.wideMenuButton ? 'wide' : null}">
             <obc-icon-button
               variant="flat"
+              aria-label=${this.menuButtonIcon === ObcTopBarMenuButtonIcon.Menu
+                ? msg('Menu')
+                : msg('Home')}
               @pointerdown=${() =>
                 this.leftButtonDown(new CustomEvent('menu-button-clicked'))}
               @pointerup=${() => this.leftButtonUp()}
@@ -553,6 +559,7 @@ export class ObcTopBar extends LitElement {
                 class="dimming-button"
                 part="dimming-button"
                 variant="flat"
+                aria-label=${msg('Dimming')}
                 @click=${this.dimmingButtonClicked}
                 ?activated=${this.dimmingButtonActivated}
               >
@@ -564,6 +571,7 @@ export class ObcTopBar extends LitElement {
                 class="user-button"
                 variant="flat"
                 part="user-button"
+                aria-label=${msg('User')}
                 @click=${this.userButtonClicked}
                 ?activated=${this.userButtonActivated}
                 ?disabled=${this.userButtonDisabled}
@@ -576,6 +584,7 @@ export class ObcTopBar extends LitElement {
                 class="apps-button"
                 variant="flat"
                 part="apps-button"
+                aria-label=${msg('Apps')}
                 @click=${this.appsButtonClicked}
                 ?activated=${this.appsButtonActivated}
               >
@@ -588,6 +597,7 @@ export class ObcTopBar extends LitElement {
                 class="left-more-button"
                 part="left-more-button"
                 variant="flat"
+                aria-label=${msg('More')}
                 @click=${this.leftMoreButtonClicked}
                 ?activated=${this.leftMoreButtonActivated}
               >
