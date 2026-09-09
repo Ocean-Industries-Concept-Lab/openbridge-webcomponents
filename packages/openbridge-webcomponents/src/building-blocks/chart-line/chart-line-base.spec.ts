@@ -561,3 +561,24 @@ describe('scale stays level with the chart area at any container width (#1191)',
     });
   }
 });
+
+describe('range labels on a multi-axis chart (#1191)', () => {
+  it('labels the y side from its own datasets, not the other axis', async () => {
+    const chart = await mountPlain(
+      (c) => {
+        c.rangeLabels = RangeLabels.y;
+        c.yAxes = [
+          {id: 'y-temp', position: 'left'},
+          {id: 'y-pressure', position: 'right', min: 0, max: 10},
+        ];
+        c.datasets = [
+          {label: 'T', data: [20, 30], yAxisID: 'y-temp'},
+          {label: 'P', data: [2, 3], yAxisID: 'y-pressure'},
+        ];
+      },
+      {width: 120, height: 72}
+    );
+    expect(drawnRangeLabels(chart).map((l) => l.text)).toEqual(['30', '20']);
+    expect(chartRange(chart, 'y-temp')).toEqual({min: 20, max: 30});
+  });
+});
