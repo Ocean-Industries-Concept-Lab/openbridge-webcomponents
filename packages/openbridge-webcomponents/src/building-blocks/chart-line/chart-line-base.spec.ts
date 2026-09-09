@@ -425,3 +425,33 @@ describe('compact labels cascade to slotted scales (#1191)', () => {
     expect(left.showMainTickmarkLabels).toBe(true);
   });
 });
+
+describe('compact label band on slotted scales (#1191)', () => {
+  it('narrows the label band to the labels while compact, and restores it after', async () => {
+    const {chart, left, bottom} = await mount((c) => {
+      c.rangeLabels = RangeLabels.xy;
+      c.width = 160;
+      c.height = 120;
+      c.data = numberData([1, 2, 3]);
+    });
+    expect(left.labelThickness).toBeGreaterThan(8);
+    expect(left.labelThickness).toBeLessThan(60);
+    expect(bottom.labelThickness).toBeGreaterThan(8);
+    expect(bottom.labelThickness).toBeLessThan(60);
+
+    chart.rangeLabels = RangeLabels.none;
+    await chart.updateComplete;
+    await frames();
+    expect(left.labelThickness).toBe(60);
+    expect(bottom.labelThickness).toBe(60);
+  });
+
+  it('keeps a consumer band untouched when nothing is compact', async () => {
+    const {left} = await mount((c) => {
+      c.width = 160;
+      c.height = 120;
+      c.data = numberData([1, 2, 3]);
+    });
+    expect(left.labelThickness).toBe(60);
+  });
+});
