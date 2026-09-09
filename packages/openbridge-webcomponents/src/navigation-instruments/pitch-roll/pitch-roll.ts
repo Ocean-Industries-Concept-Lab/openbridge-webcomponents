@@ -24,6 +24,7 @@ import {
   normalizeArcAngle,
   shiftArcFrameToOuterEdge,
 } from '../../svghelpers/arc-frame.js';
+import {degToRad, radToDeg} from '../../svghelpers/math.js';
 
 export enum PitchRollPriorityElement {
   pitch = 'pitch',
@@ -304,7 +305,7 @@ export class ObcPitchRoll extends LitElement {
   private renderRingComplement(pitchArc: number, rollArc: number) {
     const r = OUTER_RING_RADIUS;
     const pt = (deg: number): [number, number] => {
-      const rad = ((deg - 90) * Math.PI) / 180;
+      const rad = degToRad(deg - 90);
       return [r * Math.cos(rad), r * Math.sin(rad)];
     };
     const segment = (from: number, to: number) => {
@@ -432,8 +433,8 @@ export class ObcPitchRoll extends LitElement {
     // requested pitch:roll RATIO is preserved, until the MIN of the
     // inner and outer signed gaps equals CORNER_GAP_PX.
     const OR = OUTER_RING_RADIUS;
-    const aPreqRad = (pitchReq * Math.PI) / 180;
-    const aRreqRad = (rollReq * Math.PI) / 180;
+    const aPreqRad = degToRad(pitchReq);
+    const aRreqRad = degToRad(rollReq);
     const signedDist = (
       px: number,
       py: number,
@@ -492,8 +493,8 @@ export class ObcPitchRoll extends LitElement {
       aP = aPreqRad * lo;
       aR = aRreqRad * lo;
     }
-    const pitchClampedDeg = Math.max(MIN_ARC_HALF_DEG, (aP * 180) / Math.PI);
-    const rollClampedDeg = Math.max(MIN_ARC_HALF_DEG, (aR * 180) / Math.PI);
+    const pitchClampedDeg = Math.max(MIN_ARC_HALF_DEG, radToDeg(aP));
+    const rollClampedDeg = Math.max(MIN_ARC_HALF_DEG, radToDeg(aR));
 
     const subAreas = (halfDeg: number): WatchArea[] => [
       {
@@ -542,7 +543,7 @@ export class ObcPitchRoll extends LitElement {
       const oyPct = (-frame.y / frame.height) * 100;
       // Sector half-angle, expressed as the horizontal offset (in pct)
       // a ray reaches when traveling from the origin up to the top edge.
-      const dxPct = oyPct * Math.tan((halfDeg * Math.PI) / 180);
+      const dxPct = oyPct * Math.tan(degToRad(halfDeg));
       // Clamp to box bounds so half-angles ≥ 45° still produce a polygon
       // that reaches the corners instead of going off-canvas.
       const lx = Math.max(0, oxPct - dxPct);

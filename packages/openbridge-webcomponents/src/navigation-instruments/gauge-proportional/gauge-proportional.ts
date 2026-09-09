@@ -39,6 +39,7 @@ import {
   SIDE_LABEL_DROP_PX,
   type RadialFrame,
 } from '../../svghelpers/radial-frame.js';
+import {normalizeAngle} from '../../svghelpers/math.js';
 import {
   CenterReadoutArrangement,
   centerReadoutStyles,
@@ -804,7 +805,7 @@ export class ObcGaugeProportional extends SetpointMixin(LitElement) {
       if (t.text === undefined) {
         return false;
       }
-      const angle = ((t.angle % 360) + 360) % 360;
+      const angle = normalizeAngle(t.angle);
       return Math.abs(angle - 90) < 1 || Math.abs(angle - 270) < 1;
     });
     const frame = computeRadialFrame({

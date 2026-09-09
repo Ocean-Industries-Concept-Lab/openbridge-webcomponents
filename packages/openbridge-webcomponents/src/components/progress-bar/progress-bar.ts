@@ -7,6 +7,7 @@ import {customElement} from '../../decorator.js';
 import '../../icons/icon-placeholder.js';
 import {CircularProgressMode} from '../../building-blocks/circular-progress/circular-progress.js';
 import {Priority} from '../../navigation-instruments/types.js';
+import {clamp} from '../../svghelpers/math.js';
 
 export {Priority};
 
@@ -215,7 +216,7 @@ export class ObcProgressBar extends LitElement {
   }
 
   private renderLinearProgress() {
-    const clampedValue = Math.max(0, Math.min(100, this.value));
+    const clampedValue = clamp(this.value, 0, 100);
     const progressWidth = `${clampedValue}%`;
     const barClasses = {
       bar: true,

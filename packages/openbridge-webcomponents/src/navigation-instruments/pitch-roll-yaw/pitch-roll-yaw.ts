@@ -17,6 +17,7 @@ import {
   measureContainerPx,
   observeInnerBox,
 } from '../../svghelpers/radial-frame.js';
+import {degToRad} from '../../svghelpers/math.js';
 
 export enum PitchRollYawType {
   /** Combined attitude dot only — no vessel image. */
@@ -157,7 +158,7 @@ export class ObcPitchRollYaw extends LitElement {
   }
 
   private scalePoint(angle: number): {x: number; y: number} {
-    const rad = (angle * Math.PI) / 180;
+    const rad = degToRad(angle);
     return {
       x: SCALE_TRACK_RADIUS * Math.sin(rad),
       y: -SCALE_TRACK_RADIUS * Math.cos(rad),
