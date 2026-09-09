@@ -456,6 +456,14 @@ export class ObcChartLineBase extends LitElement {
     );
   }
 
+  /**
+   * Id of the y scale a dataset lands on when it names none. Chart.js would
+   * otherwise add a default `y` scale next to the configured ones and draw it.
+   */
+  private get primaryYAxisId(): string {
+    return this.yAxes?.length ? (this.yAxes[0].id ?? 'y0') : 'y';
+  }
+
   /** @internal - Normalization mode for the current x-axis type. */
   protected get xValueMode(): XValueMode {
     return this.xAxisType === XAxisType.number
@@ -1290,6 +1298,41 @@ export class ObcChartLineBase extends LitElement {
   }
 
   /**
+   * Range a slotted scale on the given side has to cover.
+   *
+   * A range pinned in the axis configuration is used as is: it is the source
+   * of truth, and on the first sync there is no chart to read yet. Otherwise
+   * the live Chart.js scale is read under the id `buildScalesConfig()` gives
+   * it. A side with no axis of its own follows the first configured one.
+   */
+  private resolveAxisRange(side: 'left' | 'right' | 'x'): {
+    min: number;
+    max: number;
+  } {
+    let id = side === 'x' ? 'x' : 'y';
+    let configured: {min?: number; max?: number} | undefined;
+
+    if (side !== 'x' && this.yAxes?.length) {
+      const match = this.yAxes.findIndex(
+        (axis) => (axis.position ?? 'left') === side
+      );
+      const index = match === -1 ? 0 : match;
+      const axis = this.yAxes[index];
+      id = axis.id ?? `y${index}`;
+      configured = axis;
+    }
+
+    if (configured?.min !== undefined && configured.max !== undefined) {
+      return {min: configured.min, max: configured.max};
+    }
+    const scale = this.chart?.scales[id];
+    return {
+      min: scale?.min ?? configured?.min ?? 0,
+      max: scale?.max ?? configured?.max ?? 100,
+    };
+  }
+
+  /**
    * Update properties on slotted scale elements
    */
   private updateScaleProperties(padding: {
@@ -1298,11 +1341,9 @@ export class ObcChartLineBase extends LitElement {
     bottom: number;
     left: number;
   }) {
-    // Get chart scales for min/max values
-    const yMin = this.chart?.scales['y']?.min ?? 0;
-    const yMax = this.chart?.scales['y']?.max ?? 100;
-    const xMin = this.chart?.scales['x']?.min ?? 0;
-    const xMax = this.chart?.scales['x']?.max ?? 100;
+    const leftRange = this.resolveAxisRange('left');
+    const rightRange = this.resolveAxisRange('right');
+    const {min: xMin, max: xMax} = this.resolveAxisRange('x');
 
     // Use effective dimensions for threshold checks
     const effectiveWidth = this.getEffectiveWidth();
@@ -1361,8 +1402,8 @@ export class ObcChartLineBase extends LitElement {
         this.leftScaleSlot.assignedElements() as ExternalScaleElement[];
       scales.forEach((scale) => {
         const props: Partial<ExternalScaleElement> = {
-          minValue: yMin,
-          maxValue: yMax,
+          minValue: leftRange.min,
+          maxValue: leftRange.max,
           height: effectiveHeight, // Use effective height for proper sizing
           paddingTop: verticalViewBoxPadding.top,
           paddingBottom: verticalViewBoxPadding.bottom,
@@ -1391,8 +1432,8 @@ export class ObcChartLineBase extends LitElement {
         this.rightScaleSlot.assignedElements() as ExternalScaleElement[];
       scales.forEach((scale) => {
         const props: Partial<ExternalScaleElement> = {
-          minValue: yMin,
-          maxValue: yMax,
+          minValue: rightRange.min,
+          maxValue: rightRange.max,
           height: effectiveHeight, // Use effective height for proper sizing
           paddingTop: verticalViewBoxPadding.top,
           paddingBottom: verticalViewBoxPadding.bottom,
@@ -1479,6 +1520,30 @@ export class ObcChartLineBase extends LitElement {
     updates.forEach(([_slot, scale, props]) => {
       Object.assign(scale, props);
     });
+  }
+
+  /**
+   * Push the current axis ranges to the slotted scales. The full
+   * `updateScaleProperties()` cascade runs before the chart is (re)built and
+   * so reads the previous chart's ranges; this closes that gap once the new
+   * chart exists, and keeps auto-ranged scales in step with the data.
+   */
+  private syncSlottedScaleRanges() {
+    const apply = (
+      slot: HTMLSlotElement | undefined,
+      side: 'left' | 'right' | 'x'
+    ) => {
+      if (!slot) return;
+      const {min, max} = this.resolveAxisRange(side);
+      (slot.assignedElements() as ExternalScaleElement[]).forEach((scale) => {
+        scale.minValue = min;
+        scale.maxValue = max;
+      });
+    };
+    apply(this.leftScaleSlot, 'left');
+    apply(this.rightScaleSlot, 'right');
+    apply(this.topScaleSlot, 'x');
+    apply(this.bottomScaleSlot, 'x');
   }
 
   private hasAnyChanged(
@@ -1865,6 +1930,7 @@ export class ObcChartLineBase extends LitElement {
     const result = {
       ...(existingDataset || {}),
       data: existingDataset?.data ?? values!,
+      yAxisID: existingDataset?.yAxisID ?? this.primaryYAxisId,
       borderColor,
       backgroundColor,
       borderWidth: existingDataset?.borderWidth ?? 2,
@@ -1922,6 +1988,7 @@ export class ObcChartLineBase extends LitElement {
     const baselineDataset: ChartDataset<'line', ChartLinePoint[]> = {
       label: 'threshold-baseline',
       data: baselineData,
+      yAxisID: this.primaryYAxisId,
       borderColor: 'transparent',
       backgroundColor: 'transparent',
       borderWidth: 0,
@@ -2387,6 +2454,7 @@ export class ObcChartLineBase extends LitElement {
     // Defer legend update to next tick to ensure Chart.js metadata is initialized
     requestAnimationFrame(() => this.updateLegend());
     this.applyFillModes();
+    this.syncSlottedScaleRanges();
   }
 
   private updateChart() {
@@ -2403,6 +2471,7 @@ export class ObcChartLineBase extends LitElement {
 
     this.applyFillModes();
     this.chart.update();
+    this.syncSlottedScaleRanges();
 
     // Update legend after chart update completes to ensure metadata is ready
     requestAnimationFrame(() => this.updateLegend());
