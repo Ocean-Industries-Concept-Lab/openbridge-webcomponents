@@ -37,20 +37,24 @@ judgement call.
 
 1. **The helper exists.** The hubs, by number of importing files:
 
-   | Helper                                                                               | For                                                                   | Importers                                 |
-   | ------------------------------------------------------------------------------------ | --------------------------------------------------------------------- | ----------------------------------------- |
-   | `svghelpers/setpoint-mixin.ts`, `setpoint-bundle.ts`, `setpoint.ts`                  | setpoint properties, marker drawing, angular distance                 | 15 / 7 / 5                                |
-   | `svghelpers/radial-frame.ts`                                                         | radial viewBox, container measurement, `observeInnerBox()`            | 15                                        |
-   | `svghelpers/arc-frame.ts`, `stroke-aware.ts`                                         | arc normalisation and zoom-to-fit; half-pixel non-scaling strokes     | 5 / 2                                     |
-   | `charthelpers/` (`constants.ts`, `canvas-layout.ts`, `chart-common.css`)             | Chart.js layout, labels, the shared chart CSS                         | 5                                         |
-   | `navigation-instruments/readout/readout-formatters.ts`                               | value formatting and the figure-dash placeholder (imports nothing)    | the readout stack                         |
-   | `building-blocks/{instrument-linear,external-scale,circular-progress,readout-block}` | the pieces instruments compose                                        | 9 / 9 / 6 / 5                             |
-   | `navigation-instruments/watch/watch.ts`                                              | everything more than one radial instrument draws                      | 6                                         |
-   | `internal/tree-roving-navigator.ts`                                                  | roving tabindex for tree hosts                                        | 2                                         |
-   | `src/mixins/*.css`                                                                   | PostCSS mixins — global, no import (`postcss.config.mjs` `mixinsDir`) | `font-body` 52, `font-label` 36, `card` 5 |
+   | Helper                                                                               | For                                                                   | Importers                                                               |
+   | ------------------------------------------------------------------------------------ | --------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+   | `svghelpers/setpoint-mixin.ts`, `setpoint-bundle.ts`, `setpoint.ts`                  | setpoint properties, marker drawing, angular distance                 | 15 / 7 / 5                                                              |
+   | `svghelpers/radial-frame.ts`                                                         | radial viewBox, container measurement, `observeInnerBox()`            | 15                                                                      |
+   | `svghelpers/math.ts`                                                                 | `clamp`, `clampPercent`, `normalizeAngle`, `degToRad`, `radToDeg`     | 39                                                                      |
+   | `svghelpers/arc-frame.ts`, `stroke-aware.ts`                                         | arc normalisation and zoom-to-fit; half-pixel non-scaling strokes     | 5 / 2                                                                   |
+   | `charthelpers/` (`constants.ts`, `canvas-layout.ts`, `chart-common.css`)             | Chart.js layout, labels, the shared chart CSS                         | 5                                                                       |
+   | `charthelpers/label-threshold.ts`                                                    | the chart resize observer: rebuild on a label-threshold crossing      | 5                                                                       |
+   | `navigation-instruments/readout/readout-formatters.ts`                               | value formatting and the figure-dash placeholder (imports nothing)    | the readout stack                                                       |
+   | `building-blocks/{instrument-linear,external-scale,circular-progress,readout-block}` | the pieces instruments compose                                        | 9 / 9 / 6 / 5                                                           |
+   | `navigation-instruments/watch/watch.ts`                                              | everything more than one radial instrument draws                      | 6                                                                       |
+   | `internal/tree-roving-navigator.ts`                                                  | roving tabindex for tree hosts                                        | 2                                                                       |
+   | `src/mixins/*.css`                                                                   | PostCSS mixins — global, no import (`postcss.config.mjs` `mixinsDir`) | `font-body` 52, `font-label` 36, `card` 5, `scrollbar` 2, `readout-*` 2 |
 
    A `Math.min(Math.max(…))`, a `((a % 360) + 360) % 360`, a `* Math.PI / 180`
-   or a hand-rolled `ResizeObserver` in a new file means this step was skipped.
+   or a hand-rolled `ResizeObserver` in a new file means this step was skipped:
+   the first three are `svghelpers/math.ts`, the chart observer is
+   `charthelpers/label-threshold.ts`.
 
 2. **The sibling exists.** `npm run new:component` writes a blank element, an
    empty CSS file and a one-story file; it copies nothing. The next step is
@@ -97,24 +101,18 @@ this task departs from it.
 
 ## Known duplication — do not add to it
 
-Verified copies a search would have prevented (#1209). Fold them into a
-helper when touching either side; never make a fourth.
+The copies a search would have prevented were folded into their homes
+(#1210): `svghelpers/math.ts`, `charthelpers/label-threshold.ts`,
+`src/mixins/readout.css`, `src/mixins/indeterminate-slide.css`, and the
+`scrollbar` mixin applied where its body had been re-typed. One copy
+remains, on purpose; never make a second:
 
-| Copied                                     | Where                                                                                                                                                                 |
-| ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `clampPercent()`                           | `automation/gauge-valve/gauge-valve-geometry.ts`, `automation/indicator-shared/linear-indicator.ts`, `automation/indicator-generator/indicator-generator-geometry.ts` |
-| `clamp()`                                  | `gauge-radial-indicator`, `gauge-trend-indicator`, `gauge-bar-indicator`                                                                                              |
-| `normalizeAngle()`                         | `compass-indicator`, `heading-indicator`, `compass-sector`, `propulsion-azimuth-indicator`, inlined in five more; `arc-frame.ts` and `setpoint.ts` export nothing     |
-| degree → radian                            | inlined in 30 files; the one `DEG_TO_RAD` (`propulsion-azimuth-indicator.ts`) has no importer                                                                         |
-| `setupResizeObserver()`, comments included | the four circular charts (`pie`, `donut`, `polar`, `radial-bar`), while 14 instruments use `observeInnerBox()`                                                        |
-| the `scrollbar` mixin body                 | re-typed in `components/scrollbar/scrollbar.css`; `table.css` writes `@mixin scrollbar`                                                                               |
-| indeterminate keyframes                    | `progress-bar.css` and `progress-button.css`, under two names                                                                                                         |
-| 50 lines of slot-icon CSS                  | `readout/readout.css` and `readout-list-item/readout-list-item.css`                                                                                                   |
-| a trimmed readout block                    | `automation/transmitter-button/transmitter-readout.ts` — already drifted: ASCII `-` where the formatter uses the figure dash                                          |
+| Copied                  | Where                                                                                                                                               | Until                                                                      |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| a trimmed readout block | `automation/transmitter-button/transmitter-readout.ts`, with its own sign-aware hinted zeros (#1097 brings them to the block); the dash matches now | `obc-readout-block` leaves `@experimental`; then delete the module (#1209) |
 
-Two exported `formatNumericValue` exist with incompatible signatures
-(`readout-formatters.ts`, `charthelpers/canvas-layout.ts`); check the module
-before importing the symbol.
+`formatNumericValue` is the readout formatter (`readout-formatters.ts`); the
+chart-side one is `formatChartNumber` (`charthelpers/canvas-layout.ts`).
 
 ## Fix the family, not the member
 
@@ -125,7 +123,7 @@ before importing the symbol.
 | Round / flat        | `watch` / `watch-flat`, `compass` / `compass-flat`                                    | structurally different; reason twice, copy nothing                                                                                                                                                 |
 | Coupled axes        | `pitch`, `roll`, `pitch-roll`, `pitch-roll-heave`, `pitch-roll-yaw`, `surge-sway-yaw` | each owns its `buildFrame` contract ([`watch-radial-instruments.md`](../../docs/agents/watch-radial-instruments.md))                                                                               |
 | Rate of turn        | `rate-of-turn`, `rot-linear`, `rot-sector`, `rot-indicator`                           | one controller, four renderings                                                                                                                                                                    |
-| Circular charts     | `pie`, `donut`, `polar`, `radial-bar`                                                 | one resize story, four copies today                                                                                                                                                                |
+| Circular charts     | `pie`, `donut`, `polar`, `radial-bar`                                                 | one resize story, `observeLabelThreshold()` in `charthelpers/label-threshold.ts`                                                                                                                   |
 | Readout stack       | `textbox` → `readout-block` → `readout-list-item` → `readout-list`, and `readout`     | a lower layer reaches every layer above it ([`readout-components.md`](../../docs/agents/readout-components.md))                                                                                    |
 | Wrappers            | `-react`, `-vue`, `-ng`, `-svelte`                                                    | generated; `npm run wrappers`                                                                                                                                                                      |
 
@@ -238,5 +236,5 @@ current one ([`docgen.md`](../../docs/agents/docgen.md)).
 
 ## Open
 
-- Fold the duplicated helpers into their shared homes (#1209).
+- Retire `transmitter-readout.ts` onto `obc-readout-block` once its API settles (#1209, #1097).
 - Automated accessibility checks (#1208).
