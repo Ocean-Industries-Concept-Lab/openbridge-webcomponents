@@ -97,6 +97,7 @@ interface ExternalScaleElement extends HTMLElement {
   paddingEnd?: number;
   primaryTickmarkInterval?: number;
   showLabels?: boolean;
+  showMainTickmarkLabels?: boolean;
   fixedAspectRatio?: boolean;
   scaleReferenceSize?: number;
   state?: InstrumentState;
