@@ -773,7 +773,9 @@ export class ObcChartLineBase extends LitElement {
   }
 
   /** Extent of the prepared data per axis; an axis without points is absent. */
-  private dataExtents(): {
+  private dataExtents(
+    prepared: ReturnType<ObcChartLineBase['prepareChartDataAndLabels']>
+  ): {
     x?: {min: number; max: number};
     y?: {min: number; max: number};
   } {
@@ -784,7 +786,7 @@ export class ObcChartLineBase extends LitElement {
       extent.min = Math.min(extent.min, v);
       extent.max = Math.max(extent.max, v);
     };
-    this.prepareChartDataAndLabels().datasets.forEach((dataset) => {
+    prepared.datasets.forEach((dataset) => {
       (dataset.data as ChartLinePoint[]).forEach((point) => {
         if (typeof point === 'number') {
           take(y, point);
@@ -817,10 +819,11 @@ export class ObcChartLineBase extends LitElement {
 
   /** First and last x label, or nothing when there is no span to label. */
   private xEdgeLabelTexts(
+    prepared: ReturnType<ObcChartLineBase['prepareChartDataAndLabels']>,
     extent: {min: number; max: number} | undefined
   ): string[] {
     if (!this.isNumericXAxis) {
-      const labels = this.prepareChartDataAndLabels().labels.map(String);
+      const labels = prepared.labels.map(String);
       const first = labels[0];
       const last = labels[labels.length - 1];
       return labels.length > 1 && first !== last ? [first, last] : [];
@@ -846,7 +849,9 @@ export class ObcChartLineBase extends LitElement {
   private refreshRangeLabels(): typeof this.rangeLabelCache {
     const cache: typeof this.rangeLabelCache = {y: [], x: []};
     if (this.isBelowThreshold()) {
-      const extents = this.dataExtents();
+      // Prepared once: it restyles every dataset and reads CSS variables.
+      const prepared = this.prepareChartDataAndLabels();
+      const extents = this.dataExtents(prepared);
       if (this.rangeLabelsY) {
         cache.bounds = this.yRangeBounds(extents.y);
         if (
@@ -865,7 +870,7 @@ export class ObcChartLineBase extends LitElement {
         !this.hasSlottedScale('top') &&
         !this.hasSlottedScale('bottom')
       ) {
-        cache.x = this.xEdgeLabelTexts(extents.x);
+        cache.x = this.xEdgeLabelTexts(prepared, extents.x);
       }
     }
     this.rangeLabelCache = cache;
@@ -1746,11 +1751,9 @@ export class ObcChartLineBase extends LitElement {
       return saved;
     };
 
-    // The padding is in visual pixels. In fixed-aspect mode a scale's viewBox
-    // is `scaleReferenceSize` long and stretched to the effective length, so
-    // the same distance in viewBox units is the visual one scaled by that
-    // ratio — the *effective* length, not the reference `width` / `height`,
-    // or every container that is not the reference size drifts.
+    // Visual pixels into a viewBox stretched to the *effective* length; the
+    // reference `width` / `height` only matches in a reference-sized
+    // container, and every other one drifts.
     const verticalViewBoxPadding = this.fixedAspectRatioScaling
       ? {
           top: Math.round(
