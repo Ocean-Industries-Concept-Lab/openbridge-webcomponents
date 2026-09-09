@@ -59,6 +59,7 @@ import {
 } from './environment.js';
 import {customElement} from '../../decorator.js';
 import {type ZoomToFitArcFrame} from '../../svghelpers/arc-frame.js';
+import {degToRad, normalizeAngle} from '../../svghelpers/math.js';
 import {
   applyPinnedHostSize,
   computeRadialFrame,
@@ -678,9 +679,8 @@ export class ObcWatch extends LitElement {
 
     const {startAngle, endAngle} = area;
     const R = OUTER_RING_RADIUS + this._rOff + 200;
-    const toRad = (deg: number) => (deg * Math.PI) / 180;
-    const px = (deg: number) => R * Math.sin(toRad(deg));
-    const py = (deg: number) => -R * Math.cos(toRad(deg));
+    const px = (deg: number) => R * Math.sin(degToRad(deg));
+    const py = (deg: number) => -R * Math.cos(degToRad(deg));
 
     const pieSlice = (a: number, b: number): string => {
       const x1 = px(a),
@@ -695,8 +695,8 @@ export class ObcWatch extends LitElement {
       (this._bandRadius(OUTER_RING_RADIUS) +
         this._bandRadius(this.innerRingRadius)) /
       2;
-    const gx = (deg: number) => Rm * Math.sin(toRad(deg));
-    const gy = (deg: number) => -Rm * Math.cos(toRad(deg));
+    const gx = (deg: number) => Rm * Math.sin(degToRad(deg));
+    const gy = (deg: number) => -Rm * Math.cos(degToRad(deg));
 
     return svg`
       <defs>
@@ -1176,8 +1176,7 @@ export class ObcWatch extends LitElement {
       // for dots, use spinner RPM.
       let direction: number;
       if (this.rotType === RotType.bar) {
-        const cwSpan =
-          (((this.rotEndAngle - this.rotStartAngle) % 360) + 360) % 360;
+        const cwSpan = normalizeAngle(this.rotEndAngle - this.rotStartAngle);
         direction = cwSpan <= 180 ? cwSpan : cwSpan - 360;
       } else {
         direction = this._effectiveRpm;
