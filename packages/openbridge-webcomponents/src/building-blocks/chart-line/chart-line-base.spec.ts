@@ -498,3 +498,21 @@ describe('slotted scale padding matches the chart padding (#1191)', () => {
     expect(bar.paddingBottom).toBe(toViewBox(padding.bottom));
   });
 });
+
+describe('range labels follow the data (#1191)', () => {
+  it('redraws the labels from the new extent after a data change', async () => {
+    const chart = await mountPlain(
+      (c) => {
+        c.rangeLabels = RangeLabels.y;
+        c.data = numberData([3, 7]);
+      },
+      {width: 120, height: 72}
+    );
+    expect(drawnRangeLabels(chart).map((l) => l.text)).toEqual(['7', '3']);
+
+    chart.data = numberData([10, 90]);
+    await chart.updateComplete;
+    await frames();
+    expect(drawnRangeLabels(chart).map((l) => l.text)).toEqual(['90', '10']);
+  });
+});

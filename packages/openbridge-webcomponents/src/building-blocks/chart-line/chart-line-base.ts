@@ -705,7 +705,7 @@ export class ObcChartLineBase extends LitElement {
     const font = this.rangeLabelFont();
     let visual: number;
     if (axis === 'y') {
-      const bounds = this.yRangeBounds();
+      const bounds = this.rangeLabelCache.bounds;
       if (!bounds) return undefined;
       const texts = yRangeLabelValues(bounds.min, bounds.max).map(String);
       visual = measureRangeLabelGutters(context, font, texts, []).side + 4;
@@ -719,6 +719,16 @@ export class ObcChartLineBase extends LitElement {
 
   /** @internal - Labels the range-labels plugin drew last, for tests. */
   lastRangeLabels: {axis: 'x' | 'y'; text: string; x: number; y: number}[] = [];
+
+  /**
+   * Range labels for the current data and size, refreshed with every
+   * `getChartOptions()` so the plugin never rebuilds the datasets on a draw.
+   */
+  private rangeLabelCache: {
+    y: string[];
+    x: string[];
+    bounds?: {min: number; max: number};
+  } = {y: [], x: []};
 
   private slotFor(
     side: 'left' | 'right' | 'top' | 'bottom'
@@ -761,50 +771,59 @@ export class ObcChartLineBase extends LitElement {
     };
   }
 
-  /** Extent of the prepared data on one axis; `undefined` without points. */
-  private dataExtent(axis: 'x' | 'y'): {min: number; max: number} | undefined {
-    let min = Infinity;
-    let max = -Infinity;
+  /** Extent of the prepared data per axis; an axis without points is absent. */
+  private dataExtents(): {
+    x?: {min: number; max: number};
+    y?: {min: number; max: number};
+  } {
+    const x = {min: Infinity, max: -Infinity};
+    const y = {min: Infinity, max: -Infinity};
+    const take = (extent: {min: number; max: number}, v: number) => {
+      if (!Number.isFinite(v)) return;
+      extent.min = Math.min(extent.min, v);
+      extent.max = Math.max(extent.max, v);
+    };
     this.prepareChartDataAndLabels().datasets.forEach((dataset) => {
       (dataset.data as ChartLinePoint[]).forEach((point) => {
-        const v =
-          typeof point === 'number'
-            ? axis === 'y'
-              ? point
-              : NaN
-            : ((point as {x: number; y: number})[axis] ?? NaN);
-        if (Number.isFinite(v)) {
-          min = Math.min(min, v);
-          max = Math.max(max, v);
+        if (typeof point === 'number') {
+          take(y, point);
+        } else if (point) {
+          take(x, point.x as number);
+          take(y, point.y);
         }
       });
     });
-    return min <= max ? {min, max} : undefined;
+    return {
+      x: x.min <= x.max ? x : undefined,
+      y: y.min <= y.max ? y : undefined,
+    };
   }
 
   /**
    * Range the y labels describe. Below the threshold the axis runs on data
    * bounds, so the data extent is exact and needs no chart to read from.
    */
-  private yRangeBounds(): {min: number; max: number} | undefined {
+  private yRangeBounds(
+    extent: {min: number; max: number} | undefined
+  ): {min: number; max: number} | undefined {
     const axis =
       this.yAxes?.find((a) => (a.position ?? 'left') === this.ySide) ??
       this.yAxes?.[0];
-    const extent = this.dataExtent('y');
     const min = axis?.min ?? extent?.min;
     const max = axis?.max ?? extent?.max;
     return min !== undefined && max !== undefined ? {min, max} : undefined;
   }
 
   /** First and last x label, or nothing when there is no span to label. */
-  private xEdgeLabelTexts(): string[] {
+  private xEdgeLabelTexts(
+    extent: {min: number; max: number} | undefined
+  ): string[] {
     if (!this.isNumericXAxis) {
       const labels = this.prepareChartDataAndLabels().labels.map(String);
       const first = labels[0];
       const last = labels[labels.length - 1];
       return labels.length > 1 && first !== last ? [first, last] : [];
     }
-    const extent = this.dataExtent('x');
     const min = this.xAxis?.min ?? extent?.min;
     const max = this.xAxis?.max ?? extent?.max;
     if (min === undefined || max === undefined || min === max) return [];
@@ -819,36 +838,37 @@ export class ObcChartLineBase extends LitElement {
   }
 
   /**
-   * Range label text for the sides the built-in axis owns. A side with a
-   * slotted scale is labelled by the scale; above the threshold there are
-   * regular labels instead.
+   * Recompute the range labels. A side with a slotted scale is labelled by
+   * the scale, so it gets no text here; the y bounds are kept regardless,
+   * since the scale's compact band is measured from them.
    */
-  private computeRangeLabelTexts(): {y: string[]; x: string[]} {
-    const y: string[] = [];
-    const x: string[] = [];
-    if (!this.isBelowThreshold()) return {y, x};
-    if (
-      this.rangeLabelsY &&
-      !this.hasSlottedScale('left') &&
-      !this.hasSlottedScale('right')
-    ) {
-      const bounds = this.yRangeBounds();
-      if (bounds) {
-        y.push(
-          ...yRangeLabelValues(bounds.min, bounds.max).map((v) =>
-            formatRangeValue(v, bounds.min, bounds.max)
-          )
-        );
+  private refreshRangeLabels(): typeof this.rangeLabelCache {
+    const cache: typeof this.rangeLabelCache = {y: [], x: []};
+    if (this.isBelowThreshold()) {
+      const extents = this.dataExtents();
+      if (this.rangeLabelsY) {
+        cache.bounds = this.yRangeBounds(extents.y);
+        if (
+          cache.bounds &&
+          !this.hasSlottedScale('left') &&
+          !this.hasSlottedScale('right')
+        ) {
+          const {min, max} = cache.bounds;
+          cache.y = yRangeLabelValues(min, max).map((v) =>
+            formatRangeValue(v, min, max)
+          );
+        }
+      }
+      if (
+        this.rangeLabelsX &&
+        !this.hasSlottedScale('top') &&
+        !this.hasSlottedScale('bottom')
+      ) {
+        cache.x = this.xEdgeLabelTexts(extents.x);
       }
     }
-    if (
-      this.rangeLabelsX &&
-      !this.hasSlottedScale('top') &&
-      !this.hasSlottedScale('bottom')
-    ) {
-      x.push(...this.xEdgeLabelTexts());
-    }
-    return {y, x};
+    this.rangeLabelCache = cache;
+    return cache;
   }
 
   /**
@@ -861,7 +881,7 @@ export class ObcChartLineBase extends LitElement {
       id: 'rangeLabels',
       afterDraw: (chart: Chart) => {
         this.lastRangeLabels = [];
-        const {y: yTexts, x: xTexts} = this.computeRangeLabelTexts();
+        const {y: yTexts, x: xTexts, bounds} = this.rangeLabelCache;
         if (!yTexts.length && !xTexts.length) return;
         const area = chart.chartArea;
         const ctx = chart.ctx;
@@ -874,7 +894,6 @@ export class ObcChartLineBase extends LitElement {
           LINE_GRAPH_LABEL_CONFIG.fontColorVar
         );
 
-        const bounds = this.yRangeBounds();
         const scale = chart.scales[this.primaryYAxisId];
         if (yTexts.length && bounds && scale) {
           const onRight = this.ySide === 'right';
@@ -1706,9 +1725,14 @@ export class ObcChartLineBase extends LitElement {
       thickness: number | undefined
     ): number | undefined => {
       if (compact) {
-        if (thickness === undefined) return undefined;
+        if (
+          thickness === undefined ||
+          typeof scale.labelThickness !== 'number'
+        ) {
+          return undefined;
+        }
         if (!this.savedLabelThickness.has(scale)) {
-          this.savedLabelThickness.set(scale, scale.labelThickness ?? 60);
+          this.savedLabelThickness.set(scale, scale.labelThickness);
         }
         return thickness;
       }
@@ -2480,13 +2504,8 @@ export class ObcChartLineBase extends LitElement {
   }
 
   /**
-   * Padding the chart lays out with, per side. A slotted scale gets the room
-   * it reported at any size; a free side gets the range-label gutter below the
-   * threshold, nothing else there, and the label padding above it. Both the
-   * Chart.js layout and the slotted scales are fed from here, so their
-   * drawing areas stay level — "too small ⇒ 0 everywhere" painted the canvas
-   * over slotted scales, and a scale padded for labels sat inside a chart
-   * that had none.
+   * One padding source for the Chart.js layout and the slotted scales: two
+   * sources painted the canvas over a scale and inset a scale inside a chart.
    */
   private computeChartPadding(): {
     top: number;
@@ -2504,7 +2523,7 @@ export class ObcChartLineBase extends LitElement {
         ? Math.round(CHART_DIMENSIONS.CANVAS_PADDING * scaleFactor)
         : CHART_DIMENSIONS.CANVAS_PADDING;
 
-    const {y: yTexts, x: xTexts} = this.computeRangeLabelTexts();
+    const {y: yTexts, x: xTexts} = this.refreshRangeLabels();
     const context = this.canvasEl?.getContext('2d');
     const gutters =
       (yTexts.length || xTexts.length) && context
