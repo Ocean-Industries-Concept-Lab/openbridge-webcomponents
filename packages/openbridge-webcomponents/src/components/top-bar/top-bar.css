@@ -20,33 +20,33 @@
   &.tall {
     height: var(--app-components-topbar-touch-target-tall);
   }
+
+  &.inactive {
+    padding-left: calc(
+      var(--app-components-topbar-margin-global) +
+        var(--app-components-topbar-padding-left-small)
+    ); /* no menu button: inset the title instead */
+  }
 }
 
-.group {
-  display: flex;
-  align-items: center;
+/* ---- One flex line ----
+   The groups are markup only: every button, text and slot is a flex item of
+   the bar, so a squeeze reaches the texts first and never covers the menu button. */
 
-  &.right {
-    justify-content: flex-end;
-    flex-grow: 1;
-  }
+.group {
+  display: contents;
 
   .settings &.left > * {
     margin-right: 0;
     margin-left: 0;
   }
 
-  &.left {
-    & .title {
-      padding-right: var(--app-components-topbar-label-spacing);
-    }
-  }
-
-  .inactive &.left {
-    padding-left: var(--app-components-topbar-padding-left-small);
+  &.left .title {
+    padding-right: var(--app-components-topbar-label-spacing);
   }
 
   &.left .menu-button {
+    flex-shrink: 0; /* the menu button outranks every text in a squeeze */
     margin-right: 0;
     margin-left: 0;
 
@@ -67,24 +67,37 @@
 
 .alert-container {
   display: flex;
-  flex-grow: 1;
+  flex: 1 1 0; /* zero basis: fills what the texts leave, holds its min-content in a squeeze */
   gap: var(--app-components-topbar-label-spacing);
   align-items: center;
   justify-content: right;
 }
 
-.title {
+/* ---- Text gives way first ---- */
+
+.title,
+.page-name {
+  min-width: 0; /* shrink below the longest word instead of pushing buttons out */
+  overflow: hidden;
+  display: -webkit-box; /* two lines, then clipped */
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   color: var(--element-active-color, #1a1a1a);
+}
+
+.title {
+  flex-shrink: 3; /* the app title disappears before the page name */
   @mixin font-body;
 }
 
 .page-name {
-  color: var(--element-active-color, #1a1a1a);
   @mixin font-body-active;
 }
 
 .left-more-button {
   display: none;
+  flex-shrink: 0; /* the more button outranks every text in a squeeze */
 }
 
 .divider {

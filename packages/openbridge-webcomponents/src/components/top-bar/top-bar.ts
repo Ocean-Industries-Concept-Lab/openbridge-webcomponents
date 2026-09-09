@@ -518,7 +518,7 @@ export class ObcTopBar extends LitElement {
 
         @media (max-width: ${this.appTitleBreakpointPx}px) {
           .title {
-            display: none;
+            display: none !important; /* the stylesheet's display wins over this inline rule otherwise */
           }
         }
 

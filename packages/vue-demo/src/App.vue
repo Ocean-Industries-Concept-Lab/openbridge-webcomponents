@@ -213,7 +213,7 @@ function onMoreMenuChange(event: ObcContextMenuInputChangeEvent) {
       :inactive="inactive"
       :app-button-breakpoint-px="MOBILE_BREAKPOINT_PX"
       :dimming-button-breakpoint-px="MOBILE_BREAKPOINT_PX"
-      :app-title-breakpoint-px="smallScreen ? 100000 : 400"
+      :app-title-breakpoint-px="smallScreen ? 100000 : MOBILE_BREAKPOINT_PX"
       :menu-button-activated="showNavigation"
       :dimming-button-activated="showBrilliance"
       :apps-button-activated="showAppMenu"
