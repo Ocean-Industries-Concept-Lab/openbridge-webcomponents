@@ -88,20 +88,21 @@
 
 .title,
 .page-name {
-  min-width: 1.75em; /* room for "W…": narrower boxes paint a clipped glyph instead */
   overflow: hidden;
-  text-overflow: ellipsis; /* per line, so a lone wide word ellipsizes too */
   color: var(--element-active-color, #1a1a1a);
 }
 
 .title {
-  flex-shrink: 100; /* the app title reaches its floor before the page name loses a pixel */
+  flex-shrink: 3; /* the app title gives way before the page name */
+  min-width: 2em; /* room for "A…": narrower boxes paint a clipped glyph instead */
   white-space: nowrap;
+  text-overflow: ellipsis;
   @mixin font-body;
 }
 
 .page-name {
-  display: -webkit-box; /* two lines, then dropped */
+  min-width: 0; /* shrink below the longest word instead of pushing buttons out */
+  display: -webkit-box; /* two lines, then an ellipsis */
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   line-clamp: 2;
