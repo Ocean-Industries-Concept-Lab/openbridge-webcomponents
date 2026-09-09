@@ -1,4 +1,5 @@
 import {describe, it, expect, vi, afterEach} from 'vitest';
+import {render, svg, type SVGTemplateResult} from 'lit';
 import {
   renderExternalScale,
   ExternalScaleOrientation,
@@ -96,5 +97,58 @@ describe('tick ladder density guard (#1219)', () => {
     expect(parts.labels).toHaveLength(7);
     expect(parts.tickmarks.length).toBeGreaterThan(0);
     expect(warn).not.toHaveBeenCalled();
+  });
+});
+
+/** Renders one label fragment into a detached <svg> and returns its <text>. */
+function labelElement(label: SVGTemplateResult): SVGTextElement {
+  const host = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  render(svg`${label}`, host);
+  return host.querySelector('text')!;
+}
+
+const labelText = (label: SVGTemplateResult) =>
+  labelElement(label).textContent?.trim();
+const labelAttr = (label: SVGTemplateResult, name: string) =>
+  labelElement(label).getAttribute(name);
+
+describe('main tickmark labels (#1191)', () => {
+  it('labels [min, 0, max] instead of the interval ladder', () => {
+    const parts = renderExternalScale(
+      bottomScale({
+        minValue: -50,
+        maxValue: 100,
+        primaryTickmarkInterval: 10,
+        mainTickmarkLabels: true,
+      })
+    );
+    expect(parts.labels.map(labelText)).toEqual(['-50', '0', '100']);
+  });
+
+  it('clamps the end labels inward on a horizontal scale', () => {
+    const parts = renderExternalScale(
+      bottomScale({minValue: 0, maxValue: 100, mainTickmarkLabels: true})
+    );
+    expect(parts.labels.map((l) => labelAttr(l, 'text-anchor'))).toEqual([
+      'start',
+      'end',
+    ]);
+  });
+
+  it('clamps the end labels inward on a vertical scale', () => {
+    const parts = renderExternalScale(
+      bottomScale({
+        orientation: ExternalScaleOrientation.vertical,
+        side: ExternalScaleSide.left,
+        minValue: 0,
+        maxValue: 100,
+        mainTickmarkLabels: true,
+      })
+    );
+    // min sits at the bottom and hangs upward, max at the top hangs downward.
+    expect(parts.labels.map((l) => labelAttr(l, 'dominant-baseline'))).toEqual([
+      'auto',
+      'hanging',
+    ]);
   });
 });

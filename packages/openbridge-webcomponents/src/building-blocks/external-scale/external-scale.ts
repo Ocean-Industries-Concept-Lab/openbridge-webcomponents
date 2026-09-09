@@ -424,6 +424,11 @@ export interface ExternalScaleConfig {
   hasScale: boolean;
   /** Show labels at primary tickmark intervals. */
   labels?: boolean;
+  /**
+   * Label the main tickmarks (`mainTickmarks`, or min / 0 / max) instead of
+   * the primary interval ladder. For scales too short for a ladder.
+   */
+  mainTickmarkLabels?: boolean;
   /** Show bar. */
   hasBar: boolean;
   /** Show background behind the scale tickmarks. */
@@ -932,6 +937,18 @@ function rangeIncludesZero(minValue: number, maxValue: number): boolean {
   return minValue <= 0 && maxValue >= 0;
 }
 
+/** The main tickmark values inside the range, ascending, without repeats. */
+function resolveMainTickmarkValues(
+  config: Pick<ExternalScaleConfig, 'mainTickmarks' | 'minValue' | 'maxValue'>
+): number[] {
+  const source = config.mainTickmarks?.length
+    ? config.mainTickmarks
+    : [config.minValue, 0, config.maxValue];
+  return [...new Set(source)]
+    .filter((v) => v >= config.minValue && v <= config.maxValue)
+    .sort((a, b) => a - b);
+}
+
 /**
  * Ticks one ladder (primary, secondary, tertiary or labels) may hold. A
  * denser ladder cannot be read on any scale length, and building it would
@@ -1304,16 +1321,7 @@ function generateTickmarks(config: ExternalScaleConfig): SVGTemplateResult[] {
     const mainLen = config.frameStyle === 'flat' ? main + 4 : main;
     const dirLen = isOutwardPositive(config) ? mainLen : -mainLen;
 
-    // Use provided array or default to [minValue, 0, maxValue]
-    const mainTickValues =
-      config.mainTickmarks.length > 0
-        ? config.mainTickmarks
-        : [config.minValue, 0, config.maxValue];
-
-    for (const value of mainTickValues) {
-      // Skip if outside range
-      if (value < config.minValue || value > config.maxValue) continue;
-
+    for (const value of resolveMainTickmarkValues(config)) {
       // Skip min/max tickmarks when scaleBackground is enabled (they align with the background edges)
       if (
         config.scaleBackground &&
@@ -1380,11 +1388,7 @@ function generateTickmarks(config: ExternalScaleConfig): SVGTemplateResult[] {
 }
 
 function generateLabels(config: ExternalScaleConfig): SVGTemplateResult[] {
-  if (!config.labels || config.primaryTickmarkInterval === undefined) return [];
-
-  const interval = config.primaryTickmarkInterval;
-  if (interval <= 0 || !Number.isFinite(interval)) return [];
-  if (isLadderTooDense(config, interval)) return [];
+  if (!config.labels) return [];
 
   const fontFamily = 'var(--font-family-main)';
   const fontColor = 'var(--instrument-tick-mark-label-secondary-color)';
@@ -1399,18 +1403,17 @@ function generateLabels(config: ExternalScaleConfig): SVGTemplateResult[] {
     ? base + (config.hasScale ? effectiveTickThickness : 0) + labelGap()
     : base - (config.hasScale ? effectiveTickThickness : 0) - labelGap();
 
-  const includesZero = rangeIncludesZero(config.minValue, config.maxValue);
-
   const labels: SVGTemplateResult[] = [];
 
-  const push = (v: number) => {
+  const push = (v: number, edge?: {anchor: string; baseline: string}) => {
     const main = valueToMainAxis(config, v);
     if (isVertical(config)) {
       const x = labelPos;
       const y = main;
       const anchor = isOutwardPositive(config) ? 'start' : 'end';
+      const baseline = edge?.baseline ?? 'middle';
       labels.push(
-        svg`<text x=${x} y=${y} text-anchor=${anchor} dominant-baseline="middle" font-family=${fontFamily} style="font-size: ${fontSize}" fill=${fontColor}>${v}</text>`
+        svg`<text x=${x} y=${y} text-anchor=${anchor} dominant-baseline=${baseline} font-family=${fontFamily} style="font-size: ${fontSize}" fill=${fontColor}>${v}</text>`
       );
       return;
     }
@@ -1418,12 +1421,33 @@ function generateLabels(config: ExternalScaleConfig): SVGTemplateResult[] {
     const y = labelPos;
     const x = main;
     const baseline = isOutwardPositive(config) ? 'hanging' : 'auto';
+    const anchor = edge?.anchor ?? 'middle';
     labels.push(
-      svg`<text x=${x} y=${y} text-anchor="middle" dominant-baseline=${baseline} font-family=${fontFamily} style="font-size: ${fontSize}" fill=${fontColor}>${v}</text>`
+      svg`<text x=${x} y=${y} text-anchor=${anchor} dominant-baseline=${baseline} font-family=${fontFamily} style="font-size: ${fontSize}" fill=${fontColor}>${v}</text>`
     );
   };
 
-  if (includesZero) {
+  if (config.mainTickmarkLabels) {
+    // The end labels turn inward so they stay inside the drawing length.
+    for (const v of resolveMainTickmarkValues(config)) {
+      const edge =
+        v === config.minValue
+          ? {anchor: 'start', baseline: 'auto'}
+          : v === config.maxValue
+            ? {anchor: 'end', baseline: 'hanging'}
+            : undefined;
+      push(v, edge);
+    }
+    return labels;
+  }
+
+  const interval = config.primaryTickmarkInterval;
+  if (interval === undefined || interval <= 0 || !Number.isFinite(interval)) {
+    return [];
+  }
+  if (isLadderTooDense(config, interval)) return [];
+
+  if (rangeIncludesZero(config.minValue, config.maxValue)) {
     for (let v = 0; v <= config.maxValue; v += interval) push(v);
     for (let v = -interval; v >= config.minValue; v -= interval) push(v);
   } else {
