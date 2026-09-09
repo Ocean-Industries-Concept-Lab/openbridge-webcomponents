@@ -264,6 +264,7 @@ onMounted(() => {
 <style scoped>
 .scroll-box {
   width: 100%;
+  height: 100%; /* keeps the horizontal scrollbar at the page bottom */
   overflow: auto; /* the fixed 1000px diagram pans here instead of widening the page */
 }
 

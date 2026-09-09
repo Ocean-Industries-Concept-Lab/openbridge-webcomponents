@@ -651,6 +651,11 @@ const aisSource = computed((): GeoJSON.FeatureCollection => {
     overflow-y: auto; /* own-ship card and target list scroll inside the capped row */
   }
 
+  .targets-card {
+    flex: none; /* flex: 1 collapses it to 0px under the taller own-ship card */
+    height: 320px;
+  }
+
   .toolbar {
     height: auto;
     flex-wrap: wrap;
