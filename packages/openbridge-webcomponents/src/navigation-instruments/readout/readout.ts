@@ -304,7 +304,7 @@ export interface ReadoutSourceOptions extends ReadoutSrcOptions {
  * @slot src-picker-content - Provides the source picker context menu content.
  * @fires {CustomEvent<{value: string, label?: string}>} source-change - Fired when a source picker option is selected.
  * @fires {CustomEvent<{src: string}>} source-flyout-click - Fired when the source row is clicked while `srcOptions.interaction == 'flyout'`.
- * @experimental
+ * @beta
  */
 @customElement('obc-readout')
 export class ObcReadout extends LitElement {

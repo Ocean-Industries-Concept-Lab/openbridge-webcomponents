@@ -270,7 +270,9 @@ Do not treat these as settled when editing:
 - `obc-readout` and `obc-readout-list-item` are layout variants of one API and
   **may merge**. Keep shared behaviour in `readout-shared.ts` so the merge stays
   cheap — do not re-inline it per component.
-- The whole family is `@experimental`.
+- Lifecycle: `obc-textbox`, `obc-readout-block`, `obc-readout` and
+  `obc-readout-list-item` are `@beta`; `obc-readout-list` stays
+  `@experimental` because the API for grouping rows may still change.
 - The large-tier label-`s` default and the regular-weight label are
   **confirmed** by the design team (2026-08-17); only the medium-tier label
   default remains unverified (`labelSize` carries the TODO).
