@@ -772,46 +772,61 @@ export class ObcChartLineBase extends LitElement {
     };
   }
 
-  /** Extent of the prepared data per axis; an axis without points is absent. */
+  /**
+   * Extent of the prepared data: one for x, one per y scale id. Each y axis
+   * ranges from its own datasets, so a merged extent would label one axis
+   * with another's values.
+   */
   private dataExtents(
     prepared: ReturnType<ObcChartLineBase['prepareChartDataAndLabels']>
   ): {
     x?: {min: number; max: number};
-    y?: {min: number; max: number};
+    y: Map<string, {min: number; max: number}>;
   } {
     const x = {min: Infinity, max: -Infinity};
-    const y = {min: Infinity, max: -Infinity};
+    const y = new Map<string, {min: number; max: number}>();
     const take = (extent: {min: number; max: number}, v: number) => {
       if (!Number.isFinite(v)) return;
       extent.min = Math.min(extent.min, v);
       extent.max = Math.max(extent.max, v);
     };
     prepared.datasets.forEach((dataset) => {
+      const id = dataset.yAxisID ?? this.primaryYAxisId;
+      const extent = y.get(id) ?? {min: Infinity, max: -Infinity};
+      y.set(id, extent);
       (dataset.data as ChartLinePoint[]).forEach((point) => {
         if (typeof point === 'number') {
-          take(y, point);
+          take(extent, point);
         } else if (point) {
           take(x, point.x as number);
-          take(y, point.y);
+          take(extent, point.y);
         }
       });
     });
-    return {
-      x: x.min <= x.max ? x : undefined,
-      y: y.min <= y.max ? y : undefined,
-    };
+    y.forEach((extent, id) => {
+      if (!(extent.min <= extent.max)) y.delete(id);
+    });
+    return {x: x.min <= x.max ? x : undefined, y};
   }
 
   /**
    * Range the y labels describe. Below the threshold the axis runs on data
-   * bounds, so the data extent is exact and needs no chart to read from.
+   * bounds, so its datasets' extent is exact and needs no chart to read from.
    */
   private yRangeBounds(
-    extent: {min: number; max: number} | undefined
+    extents: Map<string, {min: number; max: number}>
   ): {min: number; max: number} | undefined {
-    const axis =
-      this.yAxes?.find((a) => (a.position ?? 'left') === this.ySide) ??
-      this.yAxes?.[0];
+    let axis: ChartLineYAxisConfig | undefined;
+    let id = 'y';
+    if (this.yAxes?.length) {
+      const match = this.yAxes.findIndex(
+        (a) => (a.position ?? 'left') === this.ySide
+      );
+      const index = match === -1 ? 0 : match;
+      axis = this.yAxes[index];
+      id = axis.id ?? `y${index}`;
+    }
+    const extent = extents.get(id);
     const min = axis?.min ?? extent?.min;
     const max = axis?.max ?? extent?.max;
     return min !== undefined && max !== undefined ? {min, max} : undefined;
