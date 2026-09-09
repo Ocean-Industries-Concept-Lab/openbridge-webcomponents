@@ -98,6 +98,7 @@ interface ExternalScaleElement extends HTMLElement {
   primaryTickmarkInterval?: number;
   showLabels?: boolean;
   showMainTickmarkLabels?: boolean;
+  labelThickness?: number;
   fixedAspectRatio?: boolean;
   scaleReferenceSize?: number;
   state?: InstrumentState;
@@ -686,6 +687,35 @@ export class ObcChartLineBase extends LitElement {
    *   - When external scale is on BOTTOM, chart is on TOP (opposite)
    * - middleChild → no rounding
    */
+
+  /**
+   * @internal - Label band each slotted scale had before the chart narrowed
+   * it for compact labels, so it can be given back on the way out.
+   */
+  private savedLabelThickness = new WeakMap<ExternalScaleElement, number>();
+
+  /**
+   * Label band a slotted scale needs for its compact labels, in the scale's
+   * own viewBox units. The scale prints the raw values, so those are what is
+   * measured; the x band is one text line.
+   */
+  private compactLabelThickness(axis: 'x' | 'y'): number | undefined {
+    const context = this.canvasEl?.getContext('2d');
+    if (!context) return undefined;
+    const font = this.rangeLabelFont();
+    let visual: number;
+    if (axis === 'y') {
+      const bounds = this.yRangeBounds();
+      if (!bounds) return undefined;
+      const texts = yRangeLabelValues(bounds.min, bounds.max).map(String);
+      visual = measureRangeLabelGutters(context, font, texts, []).side + 4;
+    } else {
+      visual = measureRangeLabelGutters(context, font, [], ['x']).bottom + 8;
+    }
+    if (!this.fixedAspectRatioScaling) return Math.ceil(visual);
+    const referenceLength = axis === 'y' ? this.height : this.width;
+    return Math.ceil((visual * this.scaleReferenceSize) / referenceLength);
+  }
 
   /** @internal - Labels the range-labels plugin drew last, for tests. */
   lastRangeLabels: {axis: 'x' | 'y'; text: string; x: number; y: number}[] = [];
@@ -1660,6 +1690,31 @@ export class ObcChartLineBase extends LitElement {
     // Below the threshold a ladder has no room, but min / 0 / max still has.
     const compactY = !aboveThreshold && this.rangeLabelsY;
     const compactX = !aboveThreshold && this.rangeLabelsX;
+    const compactYThickness = compactY
+      ? this.compactLabelThickness('y')
+      : undefined;
+    const compactXThickness = compactX
+      ? this.compactLabelThickness('x')
+      : undefined;
+
+    // Narrow a scale's label band to its compact labels, and give the scale
+    // its own band back once the chart leaves compact mode.
+    const bandFor = (
+      scale: ExternalScaleElement,
+      compact: boolean,
+      thickness: number | undefined
+    ): number | undefined => {
+      if (compact) {
+        if (thickness === undefined) return undefined;
+        if (!this.savedLabelThickness.has(scale)) {
+          this.savedLabelThickness.set(scale, scale.labelThickness ?? 60);
+        }
+        return thickness;
+      }
+      const saved = this.savedLabelThickness.get(scale);
+      this.savedLabelThickness.delete(scale);
+      return saved;
+    };
 
     // Calculate viewBox padding for external scales.
     // When fixedAspectRatioScaling is true, the chart's Canvas padding is scaled by
@@ -1724,6 +1779,8 @@ export class ObcChartLineBase extends LitElement {
         if (this.yStepSize !== undefined) {
           props.primaryTickmarkInterval = this.yStepSize;
         }
+        const band = bandFor(scale, compactY, compactYThickness);
+        if (band !== undefined) props.labelThickness = band;
         updates.push([this.leftScaleSlot, scale, props]);
       });
     }
@@ -1755,6 +1812,8 @@ export class ObcChartLineBase extends LitElement {
         if (this.yStepSize !== undefined) {
           props.primaryTickmarkInterval = this.yStepSize;
         }
+        const band = bandFor(scale, compactY, compactYThickness);
+        if (band !== undefined) props.labelThickness = band;
         updates.push([this.rightScaleSlot, scale, props]);
       });
     }
@@ -1785,6 +1844,8 @@ export class ObcChartLineBase extends LitElement {
         if (this.xStepSize !== undefined) {
           props.primaryTickmarkInterval = this.xStepSize;
         }
+        const band = bandFor(scale, compactX, compactXThickness);
+        if (band !== undefined) props.labelThickness = band;
         updates.push([this.topScaleSlot, scale, props]);
       });
     }
@@ -1815,6 +1876,8 @@ export class ObcChartLineBase extends LitElement {
         if (this.xStepSize !== undefined) {
           props.primaryTickmarkInterval = this.xStepSize;
         }
+        const band = bandFor(scale, compactX, compactXThickness);
+        if (band !== undefined) props.labelThickness = band;
         updates.push([this.bottomScaleSlot, scale, props]);
       });
     }
