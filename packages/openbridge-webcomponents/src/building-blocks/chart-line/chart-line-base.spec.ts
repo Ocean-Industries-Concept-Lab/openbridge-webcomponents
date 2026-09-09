@@ -367,3 +367,61 @@ describe('range labels below the threshold (#1191)', () => {
     );
   });
 });
+
+describe('compact labels cascade to slotted scales (#1191)', () => {
+  it('switches slotted scales to main-tickmark labels below the threshold', async () => {
+    const {left, bottom} = await mount((c) => {
+      c.rangeLabels = RangeLabels.xy;
+      c.width = 160;
+      c.height = 120;
+      c.data = numberData([1, 2, 3]);
+    });
+    expect(left.showLabels).toBe(true);
+    expect(left.showMainTickmarkLabels).toBe(true);
+    expect(bottom.showLabels).toBe(true);
+    expect(bottom.showMainTickmarkLabels).toBe(true);
+  });
+
+  it('covers only the requested axis', async () => {
+    const {left, bottom} = await mount((c) => {
+      c.rangeLabels = RangeLabels.y;
+      c.width = 160;
+      c.height = 120;
+      c.data = numberData([1, 2, 3]);
+    });
+    expect(left.showMainTickmarkLabels).toBe(true);
+    expect(bottom.showLabels).toBe(false);
+    expect(bottom.showMainTickmarkLabels).toBe(false);
+  });
+
+  it('leaves slotted scale labels off below the threshold without rangeLabels', async () => {
+    const {left} = await mount((c) => {
+      c.width = 160;
+      c.height = 120;
+      c.data = numberData([1, 2, 3]);
+    });
+    expect(left.showLabels).toBe(false);
+    expect(left.showMainTickmarkLabels).toBe(false);
+  });
+
+  it('never sets main-tickmark labels above the threshold', async () => {
+    const {left} = await mount((c) => {
+      c.rangeLabels = RangeLabels.xy;
+      c.data = numberData([1, 2, 3]);
+    });
+    expect(left.showLabels).toBe(true);
+    expect(left.showMainTickmarkLabels).toBe(false);
+  });
+
+  it('follows a rangeLabels change on a mounted chart', async () => {
+    const {chart, left} = await mount((c) => {
+      c.width = 160;
+      c.height = 120;
+      c.data = numberData([1, 2, 3]);
+    });
+    chart.rangeLabels = RangeLabels.y;
+    await chart.updateComplete;
+    await frames();
+    expect(left.showMainTickmarkLabels).toBe(true);
+  });
+});

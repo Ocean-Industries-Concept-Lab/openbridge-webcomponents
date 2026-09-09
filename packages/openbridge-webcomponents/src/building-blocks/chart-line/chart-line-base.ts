@@ -1653,10 +1653,13 @@ export class ObcChartLineBase extends LitElement {
     // `labelThickness` band stays in the reported thickness and the chart
     // gets re-padded inward (leaving whitespace on the scale's side), and any
     // visible labels would be clipped against the canvas edge.
-    const showLabels =
-      this.hasLabelPadding &&
+    const aboveThreshold =
       effectiveWidth >= RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS &&
       effectiveHeight >= RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS;
+    const showLabels = this.hasLabelPadding && aboveThreshold;
+    // Below the threshold a ladder has no room, but min / 0 / max still has.
+    const compactY = !aboveThreshold && this.rangeLabelsY;
+    const compactX = !aboveThreshold && this.rangeLabelsX;
 
     // Calculate viewBox padding for external scales.
     // When fixedAspectRatioScaling is true, the chart's Canvas padding is scaled by
@@ -1707,7 +1710,8 @@ export class ObcChartLineBase extends LitElement {
           paddingBottom: verticalViewBoxPadding.bottom,
           paddingStart: verticalViewBoxPadding.top,
           paddingEnd: verticalViewBoxPadding.bottom,
-          showLabels,
+          showLabels: showLabels || compactY,
+          showMainTickmarkLabels: compactY,
           fixedAspectRatio: this.fixedAspectRatioScaling,
           // Use chart's scaleReferenceSize property for proportional scaling
           scaleReferenceSize: this.scaleReferenceSize,
@@ -1737,7 +1741,8 @@ export class ObcChartLineBase extends LitElement {
           paddingBottom: verticalViewBoxPadding.bottom,
           paddingStart: verticalViewBoxPadding.top,
           paddingEnd: verticalViewBoxPadding.bottom,
-          showLabels,
+          showLabels: showLabels || compactY,
+          showMainTickmarkLabels: compactY,
           fixedAspectRatio: this.fixedAspectRatioScaling,
           // Use chart's scaleReferenceSize property for proportional scaling
           scaleReferenceSize: this.scaleReferenceSize,
@@ -1766,7 +1771,8 @@ export class ObcChartLineBase extends LitElement {
           paddingRight: horizontalViewBoxPadding.right,
           paddingStart: horizontalViewBoxPadding.left,
           paddingEnd: horizontalViewBoxPadding.right,
-          showLabels,
+          showLabels: showLabels || compactX,
+          showMainTickmarkLabels: compactX,
           fixedAspectRatio: this.fixedAspectRatioScaling,
           // Use chart's scaleReferenceSize property for proportional scaling
           scaleReferenceSize: this.scaleReferenceSize,
@@ -1795,7 +1801,8 @@ export class ObcChartLineBase extends LitElement {
           paddingRight: horizontalViewBoxPadding.right,
           paddingStart: horizontalViewBoxPadding.left,
           paddingEnd: horizontalViewBoxPadding.right,
-          showLabels,
+          showLabels: showLabels || compactX,
+          showMainTickmarkLabels: compactX,
           fixedAspectRatio: this.fixedAspectRatioScaling,
           // Use chart's scaleReferenceSize property for proportional scaling
           scaleReferenceSize: this.scaleReferenceSize,
@@ -1978,7 +1985,10 @@ export class ObcChartLineBase extends LitElement {
     // `syncScalesAndChart()`, so when only `hasLabelPadding` changes we must
     // route through there — otherwise slotted scales stay stale until the
     // next slot/resize event and the chart re-pads on stale thickness.
-    if (changed.has('hasLabelPadding') && this.hasExternalScales()) {
+    if (
+      (changed.has('hasLabelPadding') || changed.has('rangeLabels')) &&
+      this.hasExternalScales()
+    ) {
       this.syncScalesAndChart();
       return;
     }
