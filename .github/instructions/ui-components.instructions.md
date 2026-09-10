@@ -38,6 +38,27 @@ Most interactive components support elevation variants (`flat`, `normal`, `raise
 - Interactive state colors follow `--{variant}-{state}-background-color` / `--{variant}-{state}-border-color` (see full convention in IMPLEMENTATION_GUIDELINES.md)
 - Use `noClick` for display-only sub-parts that need colors but no interactivity
 
+## Alert flashing
+
+Alert frame, alert icon and alert button flash on one tempo table (#1224):
+fast 400/400, slow 1200/400, very-slow 2800/400 ms on/off. The table lives in
+`src/palettes/blinking.ts` and nowhere else.
+
+- `resolveFlashingSpeed(speed, type, phase)` in `src/alert-severity.ts` is the
+  only place that maps an alert type to a tempo. Components map acknowledged
+  to `fixed` before calling it.
+- Components never call `el.animate` themselves: `FlashingController(host,
+() => host.resolvedFlashingSpeed)` (`src/palettes/flashing-controller.ts`)
+  installs one animation per host and owns connect/disconnect. CSS reads
+  `--flash-<tempo>-on/off` through a `flash-<tempo>` class.
+- Every animation starts at document time 0, so all elements dip together;
+  do not add per-element delays.
+- The rectified frame is an SVG overlay (`svg.dash`, two `roundedRectPath`
+  strokes, `stroke-dasharray: 12 6`) because CSS outlines have no dash array.
+  Its geometry is measured from the wrapper, never derived from props.
+- Visual tests park all Web Animations at 100 ms (see `testing-visual.md`),
+  so flashing stories snapshot the on state.
+
 ## Slot Conventions
 
 | Pattern                                      | Usage                                  |
