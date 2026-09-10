@@ -1,55 +1,58 @@
-const CRITICAL_PERIOD = 1000; // ms
-const ALARM_PERIOD = 2000; // ms
-const WARNING_PERIOD = 4000; // ms
-const LOW_PERIOD = 8000; // ms
-const BLINK_OFF_DURATION = 250; // ms
+import {FlashingSpeed, type FlashTempo} from '../types.js';
 
-function blinkingInstall(
+/** Shared off phase: nested cycles (800/1600/3200 ms) then dip together (#1224). */
+export const FLASH_OFF_MS = 400;
+
+export const FLASH_ON_MS: Record<FlashTempo, number> = {
+  [FlashingSpeed.Fast]: 400,
+  [FlashingSpeed.Slow]: 1200,
+  [FlashingSpeed.VerySlow]: 2800,
+};
+
+export const FLASH_TEMPOS: readonly FlashTempo[] = [
+  FlashingSpeed.Fast,
+  FlashingSpeed.Slow,
+  FlashingSpeed.VerySlow,
+];
+
+export function flashPeriodMs(tempo: FlashTempo): number {
+  return FLASH_ON_MS[tempo] + FLASH_OFF_MS;
+}
+
+/** Animated custom property name; `on` reads 1 during the on phase, `off` 1 during the off phase. */
+export function flashVariable(tempo: FlashTempo, phase: 'on' | 'off'): string {
+  return `--flash-${tempo}-${phase}`;
+}
+
+/**
+ * Animates `--flash-<tempo>-on` / `-off` on `el` for one tempo. Returns the
+ * cancel function.
+ */
+export function installFlashing(
   el: HTMLElement,
-  period: number,
-  offset: number,
-  label: string
+  tempo: FlashTempo
 ): () => void {
-  const blinkOffDuration = BLINK_OFF_DURATION / period;
+  const on = flashVariable(tempo, 'on');
+  const off = flashVariable(tempo, 'off');
+  const period = flashPeriodMs(tempo);
   const frames: Keyframe[] = [
-    {[label + '-on']: 0, [label + '-off']: 1, easing: 'step-end'},
+    {[on]: 1, [off]: 0, easing: 'step-end'},
     {
-      [label + '-on']: 1,
-      [label + '-off']: 0,
-      offset: blinkOffDuration,
+      [on]: 0,
+      [off]: 1,
+      offset: FLASH_ON_MS[tempo] / period,
       easing: 'step-end',
     },
-    {[label + '-on']: 1, [label + '-off']: 0},
+    {[on]: 0, [off]: 1},
   ];
   const anim = el.animate(frames, {duration: period, iterations: Infinity});
-  // Common time origin for all animations, so they blink in sync. The offset is
-  // negative so the animation starts already that far into its period.
+  // Document-timeline origin, so every flashing element is in the same phase.
   anim.startTime = 0;
   return () => anim.cancel();
 }
 
-export function blinkingCritical(el: HTMLElement): () => void {
-  return blinkingInstall(el, CRITICAL_PERIOD, 0, '--critical-blink');
-}
-
-export function blinkingAlarm(el: HTMLElement): () => void {
-  return blinkingInstall(el, ALARM_PERIOD, 250, '--alarm-blink');
-}
-
-export function blinkingWarning(el: HTMLElement): () => void {
-  return blinkingInstall(el, WARNING_PERIOD, 500, '--warning-blink');
-}
-
-export function blinkingLow(el: HTMLElement): () => void {
-  return blinkingInstall(el, LOW_PERIOD, 750, '--low-blink');
-}
-
+/** Installs every tempo on `el`, for CSS that reads the variables directly. */
 export function blinkingAll(el: HTMLElement): () => void {
-  const animes = [
-    blinkingCritical(el),
-    blinkingAlarm(el),
-    blinkingWarning(el),
-    blinkingLow(el),
-  ];
-  return () => animes.forEach((anim) => anim());
+  const cancels = FLASH_TEMPOS.map((tempo) => installFlashing(el, tempo));
+  return () => cancels.forEach((cancel) => cancel());
 }
