@@ -37,7 +37,7 @@ describe('obc-icon-button accessible name', () => {
     expect(shadowButton(el).getAttribute('aria-label')).toBe('Pause');
   });
 
-  it('prefers aria-labelledby over aria-label', async () => {
+  it('does not forward aria-labelledby, which cannot resolve across the shadow boundary', async () => {
     const el = await setup(
       html`<obc-icon-button
         aria-label="Play"
@@ -46,7 +46,7 @@ describe('obc-icon-button accessible name', () => {
     );
 
     const button = shadowButton(el);
-    expect(button.getAttribute('aria-labelledby')).toBe('external-label');
-    expect(button.hasAttribute('aria-label')).toBe(false);
+    expect(button.hasAttribute('aria-labelledby')).toBe(false);
+    expect(button.getAttribute('aria-label')).toBe('Play');
   });
 });
