@@ -1,6 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcAlertButton, ObcAlertButtonType} from './alert-button.js';
-import {AlertType} from '../../types.js';
+import {AlertType, FlashingSpeed} from '../../types.js';
 import './alert-button.js';
 import {widthDecorator} from '../../storybook-util.js';
 
@@ -25,6 +25,10 @@ const meta: Meta<typeof ObcAlertButton> = {
     },
     type: {
       options: Object.values(ObcAlertButtonType),
+      control: {type: 'select'},
+    },
+    flashingSpeed: {
+      options: Object.values(FlashingSpeed),
       control: {type: 'select'},
     },
     width: {control: {type: 'range', min: 64, max: 1028, step: 1}},
