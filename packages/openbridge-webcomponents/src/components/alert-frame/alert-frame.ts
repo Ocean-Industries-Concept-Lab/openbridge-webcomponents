@@ -6,7 +6,7 @@ import {
   TemplateResult,
   HTMLTemplateResult,
 } from 'lit';
-import {property} from 'lit/decorators.js';
+import {property, query, state} from 'lit/decorators.js';
 import compentStyle from './alert-frame.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import '../../icons/icon-alarm-badge.js';
@@ -25,6 +25,10 @@ import {
   AlertBadgeComponent,
 } from '../../alert-severity.js';
 import {FlashingController} from '../../palettes/flashing-controller.js';
+import {
+  roundedRectPath,
+  type RoundedRect,
+} from '../../svghelpers/rounded-rect.js';
 import {AlertFlashPhase, resolveFlashingSpeed} from '../../alert-severity.js';
 
 export {AlertType as ObcAlertFrameStatus} from '../../types.js';
@@ -70,6 +74,16 @@ export enum AlertFrameTextSize {
   Regular = 'regular',
   Large = 'large',
 }
+
+/** Wrapper geometry the dashed overlay is drawn from; measured, never derived from props. */
+interface DashBox {
+  width: number;
+  height: number;
+  thickness: number;
+  radii: RoundedRect['radii'];
+}
+
+const DASH_FLASH_GROWTH_PX = 2;
 
 export interface AlertFrameConfig {
   type?: ObcAlertFrameType;
@@ -220,6 +234,101 @@ export class ObcAlertFrame extends LitElement {
     () => this.resolvedFlashingSpeed
   );
 
+  @state() private dashBox?: DashBox;
+
+  @query('.wrapper') private wrapper?: HTMLElement;
+
+  private dashObserver?: ResizeObserver;
+
+  private measureDash = (): void => {
+    const wrapper = this.wrapper;
+    if (!wrapper) {
+      return;
+    }
+    const style = getComputedStyle(wrapper);
+    const px = (value: string) => parseFloat(value) || 0;
+    const box: DashBox = {
+      width: wrapper.offsetWidth,
+      height: wrapper.offsetHeight,
+      thickness: px(style.getPropertyValue('--thickness')),
+      radii: [
+        px(style.borderTopLeftRadius),
+        px(style.borderTopRightRadius),
+        px(style.borderBottomRightRadius),
+        px(style.borderBottomLeftRadius),
+      ],
+    };
+    // Setting state from updated() re-renders; only do it for a real change.
+    if (JSON.stringify(box) !== JSON.stringify(this.dashBox)) {
+      this.dashBox = box;
+    }
+  };
+
+  override connectedCallback() {
+    super.connectedCallback();
+    if (this.hasUpdated) {
+      this.requestUpdate();
+    }
+  }
+
+  override updated() {
+    const wantsDash =
+      this.mode === ObcAlertFrameMode.unackedRectified && this.isConnected;
+    if (wantsDash && !this.dashObserver && this.wrapper) {
+      this.dashObserver = new ResizeObserver(this.measureDash);
+      this.dashObserver.observe(this.wrapper);
+      this.measureDash();
+    }
+    if (!wantsDash && this.dashObserver) {
+      this.dashObserver.disconnect();
+      this.dashObserver = undefined;
+      this.dashBox = undefined;
+    }
+  }
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    this.dashObserver?.disconnect();
+    this.dashObserver = undefined;
+  }
+
+  private renderDash(): TemplateResult | typeof nothing {
+    const box = this.dashBox;
+    if (this.mode !== ObcAlertFrameMode.unackedRectified || !box) {
+      return nothing;
+    }
+    const pad = box.thickness + DASH_FLASH_GROWTH_PX;
+    const stroked = (strokeWidth: number): RoundedRect => ({
+      x: pad - strokeWidth / 2,
+      y: pad - strokeWidth / 2,
+      width: box.width + strokeWidth,
+      height: box.height + strokeWidth,
+      // A radius of 0 is a sharp edge and must stay square.
+      radii: box.radii.map((r) =>
+        r > 0 ? r + strokeWidth / 2 : 0
+      ) as RoundedRect['radii'],
+    });
+    const width = box.width + 2 * pad;
+    const height = box.height + 2 * pad;
+    return html`<svg
+      class="dash"
+      aria-hidden="true"
+      width=${width}
+      height=${height}
+      viewBox="0 0 ${width} ${height}"
+      style="--dash-pad: ${pad}px"
+    >
+      <path
+        class="dash-steady"
+        d=${roundedRectPath(stroked(box.thickness))}
+      ></path>
+      <path
+        class="dash-flash"
+        d=${roundedRectPath(stroked(box.thickness + DASH_FLASH_GROWTH_PX))}
+      ></path>
+    </svg>`;
+  }
+
   get resolvedFlashingSpeed(): ResolvedFlashingSpeed {
     switch (this.mode) {
       case ObcAlertFrameMode.unackedActive:
@@ -278,7 +387,7 @@ export class ObcAlertFrame extends LitElement {
         })}
       >
         <slot></slot>
-        ${this.flap()}
+        ${this.renderDash()} ${this.flap()}
       </div>
     `;
   }

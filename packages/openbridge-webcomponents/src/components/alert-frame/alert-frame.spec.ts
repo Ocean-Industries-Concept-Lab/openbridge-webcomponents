@@ -184,4 +184,36 @@ describe('obc-alert-frame flashing lifecycle', () => {
       expect(el.getAnimations().length).toBeGreaterThan(0);
     });
   });
+
+  describe('rectified dash', () => {
+    it('draws the 12/6 dash as two svg paths in place of the outline', async () => {
+      const el = await setup(ObcAlertFrameMode.unackedRectified);
+      await new Promise((r) => requestAnimationFrame(r));
+      await el.updateComplete;
+
+      const root = el.shadowRoot!;
+      const wrapper = root.querySelector('.wrapper') as HTMLElement;
+      expect(getComputedStyle(wrapper).outlineStyle).toBe('none');
+      const paths = root.querySelectorAll('svg.dash path');
+      expect(paths).toHaveLength(2);
+      for (const path of paths) {
+        expect(getComputedStyle(path).strokeDasharray).toBe('12px, 6px');
+        expect(path.getAttribute('d')).toMatch(/^M[\d.-]+ [\d.-]+ H/);
+      }
+      expect(getComputedStyle(paths[0]).strokeWidth).toBe('2px');
+      expect(getComputedStyle(paths[1]).strokeWidth).toBe('4px');
+    });
+
+    it('removes the svg when the mode leaves unacked-rectified', async () => {
+      const el = await setup(ObcAlertFrameMode.unackedRectified);
+      await new Promise((r) => requestAnimationFrame(r));
+      await el.updateComplete;
+      expect(el.shadowRoot!.querySelector('svg.dash')).not.toBeNull();
+
+      el.mode = ObcAlertFrameMode.ackedActive;
+      await el.updateComplete;
+
+      expect(el.shadowRoot!.querySelector('svg.dash')).toBeNull();
+    });
+  });
 });
