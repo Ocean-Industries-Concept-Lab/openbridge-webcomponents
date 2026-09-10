@@ -84,7 +84,7 @@
   }
 
   --blink-width-dynamic: calc(var(--blink-width) * var(--blink-on));
-  /* How far the flap and its masks follow the outline outward while on. */
+  /* One knob for flap and masks, so they cannot drift apart from the outline. */
   --flap-grow: 0px;
 
   &.unacked-active,
@@ -403,6 +403,6 @@
 }
 
 .dash path {
-  /* Same growth as the solid outline, centred on the steady stroke. */
+  /* Animated on the one path: a wider second path would drift its dashes. */
   stroke-width: calc(var(--thickness) + var(--blink-width-dynamic));
 }

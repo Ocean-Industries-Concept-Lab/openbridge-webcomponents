@@ -328,8 +328,8 @@ export class ObcAlertFrame extends LitElement {
       return nothing;
     }
     const pad = box.thickness + DASH_FLASH_GROWTH_PX;
-    // One path whose stroke width animates: a second, wider path would have
-    // longer corner arcs and its dashes would drift around the frame.
+    // A second, wider path for the on phase would have longer corner arcs
+    // and its dashes would drift around the frame.
     const centreline: RoundedRect = {
       x: pad - box.thickness / 2,
       y: pad - box.thickness / 2,
