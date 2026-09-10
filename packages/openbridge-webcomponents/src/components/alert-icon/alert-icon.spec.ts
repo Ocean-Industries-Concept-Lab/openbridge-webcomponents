@@ -3,74 +3,118 @@ import './alert-icon.js';
 import {ObcAlertIcon} from './alert-icon.js';
 import {render} from 'vitest-browser-lit';
 import {html} from 'lit';
-import {AlertType} from '../../types.js';
+import {AlertType, FlashingSpeed} from '../../types.js';
 
-describe('obc-alert-icon blinking lifecycle', () => {
-  async function setup(acknowledged = false) {
+function durations(el: HTMLElement): number[] {
+  return el
+    .getAnimations()
+    .map((a) => (a.effect as KeyframeEffect).getTiming().duration as number);
+}
+
+describe('obc-alert-icon flashing lifecycle', () => {
+  async function setup(
+    props: Partial<
+      Pick<
+        ObcAlertIcon,
+        'alertType' | 'acknowledged' | 'active' | 'flashingSpeed'
+      >
+    > = {}
+  ) {
     const screen = render(
       html`<obc-alert-icon
-        .alertType=${AlertType.Alarm}
-        .acknowledged=${acknowledged}
+        .alertType=${props.alertType ?? AlertType.Alarm}
+        .acknowledged=${props.acknowledged ?? false}
+        .active=${props.active}
+        .flashingSpeed=${props.flashingSpeed ?? FlashingSpeed.Default}
       ></obc-alert-icon>`
     );
-    const el = screen.baseElement.querySelector(
-      'obc-alert-icon'
-    ) as ObcAlertIcon;
+    const el = screen.container.querySelector('obc-alert-icon') as ObcAlertIcon;
     await el.updateComplete;
     return el;
   }
 
-  function wrapperAnimations(el: ObcAlertIcon) {
-    return el.getAnimations();
-  }
-
-  it('blinks for an unacknowledged blinking alert type', async () => {
+  it('flashes fast for an unacknowledged alarm', async () => {
     const el = await setup();
 
-    expect(wrapperAnimations(el).length).toBeGreaterThan(0);
+    expect(durations(el)).toEqual([800]);
+    expect(el.shadowRoot!.querySelector('.wrapper.flash-fast')).not.toBeNull();
   });
 
-  it('does not blink once acknowledged', async () => {
-    const el = await setup(true);
-
-    expect(wrapperAnimations(el)).toHaveLength(0);
+  it('flashes slow for a warning and very slow for level-low', async () => {
+    expect(durations(await setup({alertType: AlertType.Warning}))).toEqual([
+      1600,
+    ]);
+    expect(durations(await setup({alertType: AlertType.LevelLow}))).toEqual([
+      3200,
+    ]);
   });
 
-  it('stops blinking when the alert is acknowledged', async () => {
+  it('flashes very slow while rectified and unacknowledged', async () => {
+    expect(durations(await setup({active: false}))).toEqual([3200]);
+  });
+
+  it('never flashes caution or diagnostic', async () => {
+    expect(durations(await setup({alertType: AlertType.Caution}))).toEqual([]);
+    expect(
+      durations(await setup({alertType: AlertType.LevelDiagnostic}))
+    ).toEqual([]);
+  });
+
+  it('honours an explicit flashingSpeed unless acknowledged', async () => {
+    expect(durations(await setup({flashingSpeed: FlashingSpeed.Slow}))).toEqual(
+      [1600]
+    );
+    expect(
+      durations(await setup({flashingSpeed: FlashingSpeed.Fixed}))
+    ).toEqual([]);
+    expect(
+      durations(
+        await setup({flashingSpeed: FlashingSpeed.Fast, acknowledged: true})
+      )
+    ).toEqual([]);
+  });
+
+  it('does not flash once acknowledged', async () => {
+    const el = await setup({acknowledged: true});
+
+    expect(el.getAnimations()).toHaveLength(0);
+  });
+
+  it('stops flashing when the alert is acknowledged', async () => {
     const el = await setup();
-    expect(wrapperAnimations(el).length).toBeGreaterThan(0);
+    expect(el.getAnimations().length).toBeGreaterThan(0);
 
     el.acknowledged = true;
     await el.updateComplete;
 
-    expect(wrapperAnimations(el)).toHaveLength(0);
+    expect(el.getAnimations()).toHaveLength(0);
   });
 
-  it('resumes blinking after disconnect and reconnect', async () => {
+  it('resumes flashing after disconnect and reconnect', async () => {
     const el = await setup();
     const parent = el.parentElement!;
-    const initial = wrapperAnimations(el).length;
+    const initial = el.getAnimations().length;
     expect(initial).toBeGreaterThan(0);
 
     parent.removeChild(el);
-    expect(wrapperAnimations(el)).toHaveLength(0);
+    expect(el.getAnimations()).toHaveLength(0);
 
     // Reconnect without touching any property, so no Lit update is scheduled.
     parent.appendChild(el);
     await el.updateComplete;
 
-    expect(wrapperAnimations(el)).toHaveLength(initial);
+    expect(el.getAnimations()).toHaveLength(initial);
   });
 
   it('does not accumulate animations across repeated updates', async () => {
     const el = await setup();
-    const initial = wrapperAnimations(el).length;
+    const initial = el.getAnimations().length;
 
     el.active = true;
     await el.updateComplete;
     el.silenced = true;
     await el.updateComplete;
 
-    expect(wrapperAnimations(el)).toHaveLength(initial);
+    expect(el.getAnimations()).toHaveLength(initial);
   });
 });

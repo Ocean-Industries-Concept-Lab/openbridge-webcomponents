@@ -3,11 +3,15 @@ import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import '../../icons/icon-caution-color-iec.js';
 import {customElement} from '../../decorator.js';
-import {AlertType} from '../../types.js';
 import {
-  getAlertBlinkMode,
+  AlertType,
+  FlashingSpeed,
+  type ResolvedFlashingSpeed,
+} from '../../types.js';
+import {
+  AlertFlashPhase,
   getBamAlertTypeForBlinking,
-  supportsBlinking,
+  resolveFlashingSpeed,
 } from '../../alert-severity.js';
 import '../../icons/icon-alarm-badge-outline.js';
 import '../../icons/icon-warning-badge-outline.js';
@@ -50,7 +54,7 @@ import {
 import {lowSilencedA, lowSilencedB} from './icons/icon-low-silenced.js';
 import {lowRectifiedA, lowRectifiedB} from './icons/icon-low-rectified.js';
 import {lowAcknowledged} from './icons/icon-low-acknowledged.js';
-import {blinkingAll} from '../../palettes/blinking.js';
+import {FlashingController} from '../../palettes/flashing-controller.js';
 
 enum AlertIconState {
   Silenced = 'silenced',
@@ -156,7 +160,7 @@ const mapping = {
  *
  * ## Features
  * - **Multiple Icon Types:** Supports all alarm and warning types.
- * - **Blinking Animation:** Uses two SVG layers with alternating opacity to create a blinking effect, visually emphasizing the alert or warning state.
+ * - **Flashing:** Two SVG layers alternate at the design tempo (fast for critical/alarm/high, slow for warning/medium, very slow for low and for every rectified alert); acknowledged icons are steady.
  * - **Adaptive Styling:** Applies different CSS variables for alarm and warning types to allow for distinct visual cues (e.g., color, blink timing).
  * - **Scalable:** Designed to fit any container size; scales with its parent element.
  *
@@ -179,6 +183,9 @@ const mapping = {
  * <obc-alert-icon .alarmType=${alarm.type} .alarmStatus=${alarm.status}></obc-alert-icon>
  * ```
  *
+ * @property flashingSpeed - Flash tempo: `default` resolves from the alert type and state,
+ *   `fast`, `slow`, `very-slow` force a tempo, `fixed` never flashes. Acknowledged icons are
+ *   always steady.
  * @availableWhen acknowledged type in [Alarm, Warning, LevelCritical, LevelHigh, LevelMedium, LevelLow]
  * @availableWhen active type in [Alarm, Warning, LevelCritical, LevelHigh, LevelMedium, LevelLow]
  * @stable
@@ -191,6 +198,25 @@ export class ObcAlertIcon extends LitElement {
   @property({type: Boolean}) acknowledged?: boolean;
   @property({type: Boolean}) active?: boolean;
   @property({type: Boolean}) silenced?: boolean;
+
+  @property({type: String}) flashingSpeed: FlashingSpeed =
+    FlashingSpeed.Default;
+
+  protected readonly flashing = new FlashingController(
+    this,
+    () => this.resolvedFlashingSpeed
+  );
+
+  get resolvedFlashingSpeed(): ResolvedFlashingSpeed {
+    if (this.acknowledged) {
+      return FlashingSpeed.Fixed;
+    }
+    return resolveFlashingSpeed(
+      this.flashingSpeed,
+      this._effectiveType,
+      this.active === false ? AlertFlashPhase.Rectified : AlertFlashPhase.Active
+    );
+  }
 
   private get _effectiveType(): AlertType {
     if (this.type) {
@@ -319,62 +345,20 @@ export class ObcAlertIcon extends LitElement {
     if (!this._effectiveType) {
       return html`<div>No alarm</div>`;
     }
-    if (supportsBlinking(this._effectiveType, this.acknowledged ?? false)) {
+    const tempo = this.resolvedFlashingSpeed;
+    if (tempo !== FlashingSpeed.Fixed) {
       const icons = this.icon;
       if (!icons) {
         throw new Error('No icon found');
       }
-      const blinkMode = getAlertBlinkMode(this._effectiveType);
       return html`
-        <div
-          class=${classMap({
-            wrapper: true,
-            [`blink-${blinkMode}`]: true,
-          })}
-        >
+        <div class=${classMap({wrapper: true, [`flash-${tempo}`]: true})}>
           <span class="a">${icons.a}</span>
           <span class="b">${icons.b}</span>
         </div>
       `;
     }
     return html`<div class="wrapper">${this.renderStaticIcon()}</div>`;
-  }
-
-  private _blinkAnimationCancel?: () => void;
-
-  private syncBlinking(): void {
-    if (
-      this._blinkAnimationCancel &&
-      !supportsBlinking(this._effectiveType, this.acknowledged ?? false)
-    ) {
-      this._blinkAnimationCancel();
-      this._blinkAnimationCancel = undefined;
-    }
-    if (
-      !this._blinkAnimationCancel &&
-      supportsBlinking(this._effectiveType, this.acknowledged ?? false)
-    ) {
-      this._blinkAnimationCancel = blinkingAll(this);
-    }
-  }
-
-  override connectedCallback(): void {
-    super.connectedCallback();
-    if (this.hasUpdated) {
-      this.syncBlinking();
-    }
-  }
-
-  override updated(): void {
-    this.syncBlinking();
-  }
-
-  override disconnectedCallback(): void {
-    super.disconnectedCallback();
-    if (this._blinkAnimationCancel) {
-      this._blinkAnimationCancel();
-      this._blinkAnimationCancel = undefined;
-    }
   }
 
   static override styles = css`
@@ -402,36 +386,28 @@ export class ObcAlertIcon extends LitElement {
         top: 0;
         left: 0;
       }
-      &.blink-alarm .a {
-        opacity: var(--alarm-blink-on);
+      &.flash-fast .a {
+        opacity: var(--flash-fast-on);
       }
 
-      &.blink-alarm .b {
-        opacity: var(--alarm-blink-off);
+      &.flash-fast .b {
+        opacity: var(--flash-fast-off);
       }
 
-      &.blink-critical .a {
-        opacity: var(--critical-blink-on);
+      &.flash-slow .a {
+        opacity: var(--flash-slow-on);
       }
 
-      &.blink-critical .b {
-        opacity: var(--critical-blink-off);
+      &.flash-slow .b {
+        opacity: var(--flash-slow-off);
       }
 
-      &.blink-warning .a {
-        opacity: var(--warning-blink-on);
+      &.flash-very-slow .a {
+        opacity: var(--flash-very-slow-on);
       }
 
-      &.blink-warning .b {
-        opacity: var(--warning-blink-off);
-      }
-
-      &.blink-low .a {
-        opacity: var(--low-blink-on);
-      }
-
-      &.blink-low .b {
-        opacity: var(--low-blink-off);
+      &.flash-very-slow .b {
+        opacity: var(--flash-very-slow-off);
       }
     }
   `;
