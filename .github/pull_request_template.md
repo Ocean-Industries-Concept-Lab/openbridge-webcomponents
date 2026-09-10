@@ -1,6 +1,6 @@
 ## Summary
 
-<!-- two or three sentences; screenshot or story link for anything visual -->
+<!-- two or three sentences; up to three screenshots (before / after, the variant sweep, the story) or a story link for anything visual; no names or handles anywhere in the body -->
 
 ## Why
 

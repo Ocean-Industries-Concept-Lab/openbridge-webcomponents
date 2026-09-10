@@ -103,7 +103,8 @@ Please ensure your title is clear and follows the syntax.
 
 ## Pull Request Guidelines
 
-- Include screenshots and animated GIFs in your pull request whenever possible.
+- Give the pull request a Conventional Commits title and, for anything visual, up to three screenshots or GIFs (before / after, the variant sweep, the story) — a bird's-eye view, not a gallery.
+- Cite roles, issues or Figma nodes, never a person or a handle — in the PR body, the commits and the code ([`docs/agents/coding-standards.md` § Writing style](docs/agents/coding-standards.md)).
 - Follow the coding conventions of the project.
 - Document new code following [`docs/agents/coding-standards.md`](docs/agents/coding-standards.md) (comments) and [`docs/agents/jsdoc.md`](docs/agents/jsdoc.md) (JSDoc). Before committing, `npm run lint:comments` reports comment-style warnings; `npm run comments:rewrite -- <folder>` (Claude Code, uses your own tokens) rewrites them. Claude Code users may prefer the `Concise` output style (`/config` → Output style).
 - End all files with a newline.
