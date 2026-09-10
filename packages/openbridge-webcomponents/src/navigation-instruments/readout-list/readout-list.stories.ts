@@ -6,9 +6,12 @@ import {
   ReadoutListItemSize,
   ReadoutListItemPriority,
   ReadoutListItemDataQuality,
+  ReadoutListItemStacking,
+  ObcTextboxFontWeight,
   type ReadoutValueOptions,
   ReadoutValueType,
 } from '../readout-list-item/readout-list-item.js';
+import {ObcTextboxSize} from '../../components/textbox/textbox.js';
 import '../readout-list-item/readout-list-item.js';
 import type {AlertFrameConfig} from '../../components/alert-frame/alert-frame.js';
 import {
@@ -23,13 +26,17 @@ type ListArgs = {
 
 type Row = {
   label: string;
+  src?: string;
   value: number | string | null;
   valueType?: ReadoutValueType;
   unit: string;
   size?: ReadoutListItemSize;
+  stacking?: ReadoutListItemStacking;
+  labelSize?: ObcTextboxSize;
   hasDegree?: boolean;
   fractionDigits?: number;
   priority?: ReadoutListItemPriority;
+  weight?: ObcTextboxFontWeight;
   hasSetpoint?: boolean;
   setpoint?: number;
   hasAdvice?: boolean;
@@ -46,8 +53,12 @@ type Row = {
 
 function renderRow(row: Row) {
   const valueOptions =
-    row.valueDataQuality || row.valueAlert
-      ? {dataQuality: row.valueDataQuality, alert: row.valueAlert}
+    row.valueDataQuality || row.valueAlert || row.weight
+      ? {
+          dataQuality: row.valueDataQuality,
+          alert: row.valueAlert,
+          weight: row.weight,
+        }
       : undefined;
   const setpointOptions = row.setpointDataQuality
     ? {dataQuality: row.setpointDataQuality}
@@ -55,10 +66,13 @@ function renderRow(row: Row) {
   return html`
     <obc-readout-list-item
       .label=${row.label}
+      .src=${row.src}
       .unit=${row.unit}
       .value=${row.value}
       .valueType=${row.valueType ?? ReadoutValueType.number}
       .size=${row.size ?? ReadoutListItemSize.small}
+      .stacking=${row.stacking}
+      .labelOptions=${row.labelSize ? {size: row.labelSize} : undefined}
       .hasDegree=${row.hasDegree ?? false}
       .fractionDigits=${row.fractionDigits ?? 0}
       .priority=${row.priority}
@@ -93,7 +107,7 @@ const meta = {
   tags: ['autodocs', '6.0', 'experimental'],
   component: 'obc-readout-list',
   args: {
-    showDebugOverlay: true,
+    showDebugOverlay: false,
   },
   argTypes: {
     showDebugOverlay: {control: {type: 'boolean'}},
@@ -167,6 +181,51 @@ const DEGREE_ROWS: Row[] = [
 
 export const Degrees: Story = {
   render: (args) => renderList(DEGREE_ROWS, args.showDebugOverlay),
+};
+
+/**
+ * **Source on the label's line.** `stacking="leading-src-inline"` keeps each
+ * row one line high with the source after the label (Figma 46596:102880 pairs
+ * an `s` label with the `xs` source). Inside a list the source column is
+ * reserved to the longest source, so the readings stay aligned across rows
+ * that have no source at all. The unit column is likewise reserved to the
+ * longest unit (`/min`); standalone rows let each unit hug its value instead
+ * (see `Readout List Item → ColumnAlignment`, "without reservers").
+ */
+const INLINE_SOURCE_ROWS: Row[] = [
+  {
+    label: 'HDG',
+    src: 'GPS1',
+    value: 355,
+    unit: '',
+    hasDegree: true,
+    priority: ReadoutListItemPriority.enhanced,
+    weight: ObcTextboxFontWeight.semibold,
+  },
+  {label: 'COG', src: 'POS1', value: 5, unit: '', hasDegree: true},
+  {label: 'ROT', src: 'GYRO2', value: 10, unit: '/min', hasDegree: true},
+  {
+    label: 'SOG',
+    src: 'LOG1',
+    value: 9.8,
+    unit: 'kn',
+    fractionDigits: 1,
+    priority: ReadoutListItemPriority.enhanced,
+    weight: ObcTextboxFontWeight.semibold,
+  },
+  {label: 'STW', src: 'GPS1', value: 10.2, unit: 'kn', fractionDigits: 1},
+  {label: 'DPTH', src: 'ECHO1', value: 534, unit: 'm'},
+  {label: 'Pitch', value: 5.3, unit: '', hasDegree: true, fractionDigits: 1},
+  {label: 'Draft fore', value: 3.78, unit: 'm', fractionDigits: 2},
+].map((row) => ({
+  ...row,
+  size: ReadoutListItemSize.medium,
+  stacking: ReadoutListItemStacking.leadingSrcInline,
+  labelSize: ObcTextboxSize.s,
+}));
+
+export const LeadingSrcInline: Story = {
+  render: (args) => renderList(INLINE_SOURCE_ROWS, args.showDebugOverlay),
 };
 
 const WARNING_FRAME: AlertFrameConfig = {

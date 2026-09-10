@@ -7,54 +7,11 @@
   width: 100%;
 }
 
-/* Bridge the list-item's public colour custom properties onto the block's, so
-   consumers keep theming the value / setpoint / advice / hinted-zero colours via
-   `--obc-readout-list-item-*` even though they now render inside obc-readout-block. */
 obc-readout-block {
-  --obc-readout-block-value-color: var(
-    --obc-readout-list-item-value-color,
-    var(--element-neutral-color)
-  );
-  --obc-readout-block-value-enhanced-color: var(
-    --obc-readout-list-item-value-enhanced-color,
-    var(--element-neutral-enhanced-color)
-  );
-  --obc-readout-block-setpoint-color: var(
-    --obc-readout-list-item-setpoint-color,
-    var(--element-neutral-color)
-  );
-  --obc-readout-block-setpoint-enhanced-color: var(
-    --obc-readout-list-item-setpoint-enhanced-color,
-    var(--instrument-enhanced-secondary-color)
-  );
-  --obc-readout-block-setpoint-touching-outline-color: var(
-    --obc-readout-list-item-setpoint-touching-outline-color,
-    var(--element-neutral-enhanced-color)
-  );
-  --obc-readout-block-setpoint-touching-color: var(
-    --obc-readout-list-item-setpoint-touching-color,
-    var(--base-blue-100)
-  );
-  --obc-readout-block-advice-color: var(
-    --obc-readout-list-item-advice-color,
-    var(--element-neutral-color)
-  );
-  --obc-readout-block-hinted-color: var(
-    --obc-readout-list-item-hinted-color,
-    var(--element-disabled-color)
-  );
+  @mixin readout-block-color-bridge --obc-readout-list-item;
 }
 
-/* Size the consumer-provided block icons forwarded into obc-readout-block's
-   `icon` slot (the block sizes the forwarded slot element; this sizes the
-   consumer's icon to fill it). */
-::slotted([slot="value-icon"]),
-::slotted([slot="setpoint-icon"]),
-::slotted([slot="advice-icon"]) {
-  display: block;
-  inline-size: 100%;
-  block-size: 100%;
-}
+@mixin readout-block-slot-icons;
 
 /* ---------- Root / surface ----------
  * `.root` is the touch target (a <button> when clickable, otherwise a <div>).
@@ -159,7 +116,9 @@ obc-readout-block {
   gap: var(--global-size-spacing-target-padding);
   flex: 1 1 auto;
   min-inline-size: 0;
-  overflow: hidden;
+  overflow: clip;
+  /* a leading-src chip's 1px outline is drawn outside its box at the container edge */
+  overflow-clip-margin: 1px;
 }
 
 .label-stack {
@@ -548,6 +507,27 @@ obc-readout-block {
  * label-stack gap.) */
 .stacking-leading-src .content {
   gap: var(--global-size-spacing-target-padding);
+}
+
+/* leading-src-inline: the source follows the label on one line, bottom-aligned
+   so the `xs` source and the label share a cap baseline. The label↔source gap
+   reuses the tier's content gap (8px, matching Figma 46596:102880). */
+.stacking-leading-src-inline .label-stack {
+  flex-direction: row;
+  align-items: flex-end;
+}
+.size-small.stacking-leading-src-inline .label-stack {
+  gap: var(
+    --instrument-components-readout-new-list-item-regular-content-container-gap
+  );
+}
+.size-medium.stacking-leading-src-inline .label-stack {
+  gap: var(
+    --instrument-components-readout-new-list-item-medium-content-container-gap
+  );
+}
+.size-large.stacking-leading-src-inline .label-stack {
+  gap: var(--instrument-components-readout-new-list-item-large-content-gap);
 }
 
 /* ---------- Data quality ----------

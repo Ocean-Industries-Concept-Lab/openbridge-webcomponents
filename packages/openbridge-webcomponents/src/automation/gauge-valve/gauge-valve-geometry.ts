@@ -5,6 +5,7 @@
  * these angles.
  */
 import type {WatchArea} from '../../navigation-instruments/watch/watch.js';
+import {clampPercent} from '../../svghelpers/math.js';
 
 export enum GaugeValveScalePosition {
   top = 'top',
@@ -30,11 +31,6 @@ export interface ValvePort {
   centerAngle: number;
   /** Which flow value fills this port's track. */
   role: 'through' | 'inlet' | 'bottom';
-}
-
-export function clampPercent(value: number): number {
-  if (Number.isNaN(value)) return 0;
-  return Math.min(100, Math.max(0, value));
 }
 
 export function inletPercent(value: number, bottomValue: number): number {

@@ -2,10 +2,12 @@ import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property, query} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
+import {styleMap} from 'lit/directives/style-map.js';
 import {customElement} from '../../decorator.js';
 import componentStyle from './checkbox-item.css?inline';
 import '../checkbox/checkbox.js';
 import '../../icons/icon-chevron-right-google.js';
+import '../../icons/icon-chevron-down-google.js';
 import {
   CheckboxState,
   CheckboxStatus,
@@ -22,59 +24,73 @@ export enum ObcCheckboxItemHoverStyle {
   visualTarget = 'visual-target',
 }
 
+export type ObcCheckboxItemExpandToggleEvent = CustomEvent<boolean>;
+
 /**
- * `<obc-checkbox-item>` – A list-item wrapper for `<obc-checkbox>` with label
- * and optional nested indentation affordances.
+ * `<obc-checkbox-item>` – A list row that pairs `<obc-checkbox>` with a label,
+ * an optional description, and hierarchy affordances for nested lists.
  *
  * ### Overview
- * Combines checkbox interaction with a row-like container used in menus and
- * hierarchical selection lists. The component proxies checkbox state changes,
- * supports touch-target or visual-target interaction behavior, and can render
- * nested structure indicators.
+ * The row is the touch target: clicking anywhere on it toggles the checkbox,
+ * except on the chevron button, which only asks to expand or collapse. Depth
+ * is a number (`level`); the row indents itself so a flat sequence of rows
+ * reads as a tree. `<obc-checkbox-list>` builds on this to hide the rows
+ * under a collapsed parent.
  *
  * ### Features
- * - Three checkbox statuses: `unchecked`, `checked`, `mixed`.
- * - Item state control: `enabled` or `disabled`.
- * - Two hover/focus interaction modes: `touch-target` and `visual-target`.
- * - Optional nested layout controls via `isNested`, `isLevel1`, `isLevel2`.
- * - Forwards `aria-describedby` to the inner checkbox for assistive context.
- *
- * ### Variants
- * - **Nested level 1:** Chevron icon is shown.
- * - **Nested level 2:** Chevron slot is reserved and nested spacer is shown.
+ * - Three statuses: `unchecked`, `checked`, `mixed`.
+ * - `touch-target` or `visual-target` hover treatment.
+ * - `level` indentation: level 1 reserves the chevron slot, each further
+ *   level adds a spacer.
+ * - `expandable` rows show a chevron button that fires `expand-toggle`; the
+ *   host owns `expanded`.
+ * - Optional `description` line under the label.
+ * - Forwards `aria-describedby` to the inner checkbox.
  *
  * ### Usage Guidelines
- * - Use for checkbox rows that require text labels and optional hierarchy.
- * - Keep `status` as the source of truth for checked/mixed/unchecked value.
- * - Use `state="disabled"` or `disabled` to lock interaction.
- * - Prefer `hoverStyle="touch-target"` for standard list behavior.
+ * - Keep `status` as the source of truth; update it from the `change` event.
+ * - Set `expanded` in response to `expand-toggle` — the row never flips it
+ *   itself, so a parent (or `<obc-checkbox-list>`) can veto or persist it.
+ * - Use `level` 0 for a plain list; start at 1 when any row in the list is
+ *   expandable so chevrons and checkboxes line up.
+ * - Prefer `hoverStyle="touch-target"` for standard list behaviour.
  *
- * ### Slots / Content
- * - No named slots. Label content is provided through the `label` property.
- *
- * ### Events
- * - `change` – Fired when status changes (from row click or inner checkbox).
- *   **detail:** `{ status, disabled }`
- *
- * ### Best Practices
- * - Provide non-empty `label` for accessible naming.
- * - Use `aria-describedby` when additional contextual text exists outside.
- * - For deep hierarchies, use `isNested` with `isLevel1` / `isLevel2`
- *   consistently to preserve spacing and alignment.
+ * ### Accessibility
+ * The checkbox and the chevron are separate controls in the natural tab
+ * order. The chevron is a native button named by the row's label, with the
+ * state in `aria-expanded`, following the WAI-ARIA checkbox and disclosure
+ * button patterns.
  *
  * ### Example
  * ```html
  * <obc-checkbox-item
+ *   level="1"
+ *   expandable
+ *   expanded
  *   status="mixed"
- *   label="Include archived items"
- *   hoverStyle="touch-target"
+ *   label="Reports"
+ * ></obc-checkbox-item>
+ * <obc-checkbox-item
+ *   level="2"
+ *   status="checked"
+ *   label="Monthly"
+ *   description="Sent on the 1st"
  * ></obc-checkbox-item>
  * ```
  *
- * @availableWhen isLevel1 isNested==true || hoverStyle==visual-target
- * @availableWhen isLevel2 isNested==true || hoverStyle==visual-target
- * @slot - No named slots.
+ * @property status - Checkbox status: `unchecked`, `checked` or `mixed`.
+ * @property state - Item state: `enabled` or `disabled`.
+ * @property disabled - Disables the row and the inner checkbox.
+ * @property label - Text label; also the accessible name of the checkbox and the chevron button, so it must not be empty.
+ * @property description - Secondary line under the label; hidden when empty.
+ * @property level - Depth in a nested list. 0 is a plain row; 1 reserves the chevron slot; each level above 1 adds a spacer.
+ * @property expandable - Shows the chevron button that fires `expand-toggle`.
+ * @property expanded - Whether the row's children are shown; drives the chevron direction and `aria-expanded`.
+ * @availableWhen expanded expandable==true
+ * @property hoverStyle - Which box shows hover and focus: the whole row (`touch-target`) or the checkbox (`visual-target`).
+ * @property ariaDescribedBy - Forwarded to the inner checkbox as `aria-describedby`.
  * @fires {ObcCheckboxChangeEvent} change - Emitted when status changes.
+ * @fires {ObcCheckboxItemExpandToggleEvent} expand-toggle - Emitted when the chevron is activated; detail is the next `expanded` value. Bubbles and is composed.
  * @stable
  */
 @customElement('obc-checkbox-item')
@@ -88,11 +104,13 @@ export class ObcCheckboxItem extends LitElement {
 
   @property({type: String}) label = '';
 
-  @property({type: Boolean, reflect: true}) isNested = false;
+  @property({type: String}) description = '';
 
-  @property({type: Boolean, reflect: true}) isLevel1 = false;
+  @property({type: Number, reflect: true}) level = 0;
 
-  @property({type: Boolean, reflect: true}) isLevel2 = false;
+  @property({type: Boolean, reflect: true}) expandable = false;
+
+  @property({type: Boolean, reflect: true}) expanded = false;
 
   @property({type: String}) hoverStyle: ObcCheckboxItemHoverStyle =
     ObcCheckboxItemHoverStyle.touchTarget;
@@ -102,10 +120,13 @@ export class ObcCheckboxItem extends LitElement {
 
   @query('obc-checkbox') private checkboxElement?: HTMLElement;
 
-  private toggleStatusFromItem() {
-    const isDisabled =
-      this.disabled || this.state === ObcCheckboxItemState.disabled;
+  @query('.chevron-button') private chevronButton?: HTMLElement;
 
+  private get isDisabled(): boolean {
+    return this.disabled || this.state === ObcCheckboxItemState.disabled;
+  }
+
+  private toggleStatusFromItem() {
     if (this.status === CheckboxStatus.checked) {
       this.status = CheckboxStatus.unchecked;
     } else {
@@ -116,20 +137,31 @@ export class ObcCheckboxItem extends LitElement {
       new CustomEvent('change', {
         detail: {
           status: this.status,
-          disabled: isDisabled,
+          disabled: this.isDisabled,
         },
       })
     );
   }
 
   private handleItemClick(event: MouseEvent) {
-    if (this.disabled || this.state === ObcCheckboxItemState.disabled) return;
+    if (this.isDisabled) return;
 
     const path = event.composedPath();
-    const checkboxElement = this.checkboxElement;
-    if (checkboxElement && path.includes(checkboxElement)) return;
+    if (this.checkboxElement && path.includes(this.checkboxElement)) return;
+    if (this.chevronButton && path.includes(this.chevronButton)) return;
 
     this.toggleStatusFromItem();
+  }
+
+  private handleChevronClick(event: MouseEvent) {
+    event.stopPropagation();
+    this.dispatchEvent(
+      new CustomEvent<boolean>('expand-toggle', {
+        detail: !this.expanded,
+        bubbles: true,
+        composed: true,
+      })
+    );
   }
 
   private handleCheckboxChange(event: Event) {
@@ -147,15 +179,35 @@ export class ObcCheckboxItem extends LitElement {
     this.checkboxElement?.focus(options);
   }
 
+  private renderChevron() {
+    if (!this.expandable) return nothing;
+    return html`<button
+      type="button"
+      class="chevron-button"
+      aria-expanded=${this.expanded ? 'true' : 'false'}
+      aria-label=${ifDefined(this.label.trim() || undefined)}
+      ?disabled=${this.isDisabled}
+      @click=${this.handleChevronClick}
+    >
+      <span class="chevron-visible">
+        ${this.expanded
+          ? html`<obi-chevron-down-google
+              class="chevron-icon"
+            ></obi-chevron-down-google>`
+          : html`<obi-chevron-right-google
+              class="chevron-icon"
+            ></obi-chevron-right-google>`}
+      </span>
+    </button>`;
+  }
+
   override render() {
-    const isDisabled =
-      this.disabled || this.state === ObcCheckboxItemState.disabled;
+    const isDisabled = this.isDisabled;
     const hasCheckboxHoverEffects = !(
       this.hoverStyle === ObcCheckboxItemHoverStyle.touchTarget && !isDisabled
     );
-    const shouldRenderNestedSpacer = this.isNested && this.isLevel2;
-    const shouldRenderChevronContainer = this.isNested;
-    const shouldRenderChevronIcon = this.isNested && this.isLevel1;
+    const depth = Math.max(0, Math.floor(this.level) - 1);
+    const hasChevronSlot = this.level >= 1 || this.expandable;
     const checkboxAriaLabel =
       this.label.trim().length > 0 ? this.label : undefined;
 
@@ -165,24 +217,21 @@ export class ObcCheckboxItem extends LitElement {
           'checkbox-item-container': true,
           [`status-${this.status}`]: true,
           [`hover-style-${this.hoverStyle}`]: true,
-          'is-nested': this.isNested,
-          'is-level-1': this.isLevel1,
-          'is-level-2': this.isLevel2,
+          'is-nested': hasChevronSlot,
+          'has-description': this.description !== '',
           disabled: isDisabled,
         })}
         @click=${this.handleItemClick}
       >
-        ${shouldRenderChevronContainer
-          ? html`<div class="chevron-container" aria-hidden="true">
-              ${shouldRenderChevronIcon
-                ? html`<obi-chevron-right-google
-                    class="chevron-icon"
-                  ></obi-chevron-right-google>`
-                : nothing}
-            </div>`
+        ${depth > 0
+          ? html`<div
+              class="nested-spacer"
+              aria-hidden="true"
+              style=${styleMap({'--checkbox-item-depth': String(depth)})}
+            ></div>`
           : nothing}
-        ${shouldRenderNestedSpacer
-          ? html`<div class="nested-spacer" aria-hidden="true"></div>`
+        ${hasChevronSlot
+          ? html`<div class="chevron-container">${this.renderChevron()}</div>`
           : nothing}
         <div class="content-container">
           <obc-checkbox
@@ -196,6 +245,11 @@ export class ObcCheckboxItem extends LitElement {
           ></obc-checkbox>
           <div class="checkbox-label-container">
             <span class="checkbox-label">${this.label}</span>
+            ${this.description
+              ? html`<span class="checkbox-description"
+                  >${this.description}</span
+                >`
+              : nothing}
           </div>
         </div>
       </div>

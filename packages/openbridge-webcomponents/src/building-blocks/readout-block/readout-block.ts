@@ -136,6 +136,11 @@ export enum ReadoutBlockHidePhase {
  * block stays neutral until placed.
  *
  * @property variant - Semantic variant (value / setpoint / advice).
+ * @property value - The value; `null`/`undefined` renders a dash. A number by default, or text when
+ *   `valueType` is `text`.
+ * @property valueType - How `value` is interpreted. `number` (default) formats it via
+ *   `fractionDigits`; `text` renders it verbatim and ignores the numeric
+ *   format options. Passing text while this is `number` throws.
  * @property size - Density tier — icon size, gap, degree tier.
  * @property valueSize - Resolved number-typography size. When unset it is derived from `size`
  *   (small→s, medium→m, large→l), so a parent that de-emphasises a block (e.g.
@@ -173,33 +178,24 @@ export enum ReadoutBlockHidePhase {
  * @property alert - Per-block alert frame; nests inside any parent alert frame.
  * @property touching - Setpoint focus (touch) state — only meaningful for `role="setpoint"`.
  * @property hidePhase - Setpoint pop-up fade phase — only meaningful for `role="setpoint"`.
- * @experimental Pilot for the new primitives + per-block options Readout API; the
- * API may change in a future release.
- *
+ * @property category - Semantic category of an advice block — picks the default marker icon
+ *   and the `active` styling. Only meaningful for `variant="advice"`.
+ * @availableWhen category variant==advice
  * @slot icon - Replaces the role's default marker icon.
- *
  * @csspart block - The block container (carries role / tone / data-quality).
  * @csspart block-content - The number + degree group.
  * @csspart block-text - The `obc-textbox` rendering the number.
  * @csspart block-icon - The leading marker-icon container.
  * @csspart degree - The trailing degree-glyph column.
+ * @experimental
  */
 @customElement('obc-readout-block')
 export class ObcReadoutBlock extends LitElement {
   @property({type: String}) variant: ReadoutBlockVariant =
     ReadoutBlockVariant.value;
 
-  /**
-   * The value; `null`/`undefined` renders a dash. A number by default, or text
-   * when {@link valueType} is `text`.
-   */
   @property({type: String}) value: number | string | null = null;
 
-  /**
-   * How {@link value} is interpreted. `number` (default) formats it via
-   * `fractionDigits`; `text` renders it verbatim and ignores the numeric
-   * format options. Passing text while this is `number` throws.
-   */
   @property({type: String}) valueType: ReadoutValueType =
     ReadoutValueType.number;
 
@@ -231,11 +227,6 @@ export class ObcReadoutBlock extends LitElement {
   @property({type: String}) alignment: ObcTextboxAlignment =
     ObcTextboxAlignment.Right;
 
-  /**
-   * Semantic category of an advice block — picks the default marker icon and
-   * the {@link active} styling. Only meaningful for `variant="advice"`.
-   * @availableWhen variant==advice
-   */
   @property({type: String}) category: ReadoutAdviceCategory =
     ReadoutAdviceCategory.regular;
 
@@ -296,9 +287,8 @@ export class ObcReadoutBlock extends LitElement {
 
   private get numericFormatOptions(): ReadoutNumericFormatOptions {
     return {
-      // The unavailable placeholder stays short (`\u2012.\u2012\u2012`) rather than
-      // spelling out every reserved digit position — `maxDigits` already
-      // reserves the width, so it simply sits at the right edge of it.
+      // The unavailable placeholder stays short (`\u2012.\u2012\u2012`): `maxDigits`
+      // already reserves the width, so it sits at the right edge of it.
       showZeroPadding: false,
       minValueLength: this.resolvedMaxDigits,
       // A missing precision shapes the placeholder as zero fraction digits (a
@@ -444,13 +434,9 @@ export class ObcReadoutBlock extends LitElement {
 
   protected override willUpdate(changed: Map<string, unknown>): void {
     super.willUpdate(changed);
-    // Validated on EVERY update, deliberately NOT gated on `value`/`valueType`
-    // appearing in `changed`. When this assertion throws, Lit's `performUpdate`
-    // catch calls `__markUpdated()`, which clears the changed-properties map. A
-    // later update driven by any OTHER property — inside `obc-readout-list`,
-    // `align()` writing the shared reservers — would then see no `value` in
-    // `changed`, skip the check, and render the invalid value as a plain dash:
-    // exactly the silent failure this assertion exists to prevent.
+    // Never gate this on `changed`: a throw clears Lit's changed map, so the
+    // next update would skip the check and render the invalid value as a dash
+    // (readout-components.md § 1, pinned by readout-block.spec.ts).
     assertReadoutValueType('obc-readout-block', this.value, this.valueType);
     assertReadoutFractionDigits('obc-readout-block', this.fractionDigits);
   }
@@ -496,12 +482,9 @@ export class ObcReadoutBlock extends LitElement {
         ? 0
         : Math.max(this.resolvedMaxDigits - readoutFormattedInteger(text), 0);
     const hinted = hintCount > 0 ? '0'.repeat(hintCount) : '';
-    // Hinted zeros own the width — they already fill to `maxDigits` — so when
-    // `hintedZeros` is enabled an explicit `spaceReserver` is ignored (it has
-    // higher priority). Otherwise the wider of the explicit reserver and the
-    // `maxDigits`-derived reserve wins.
-    // Text mode ignores the `maxDigits`-derived numeric reserve — only an
-    // explicit `spaceReserver` still applies.
+    // Hinted zeros already fill to `maxDigits`, so they win over an explicit
+    // `spaceReserver`; otherwise the wider of the two reserves wins. Text mode
+    // honours only an explicit `spaceReserver` (readout-components.md § 4).
     const reserver = isTextMode
       ? (this.spaceReserver ?? '')
       : this.hintedZeros

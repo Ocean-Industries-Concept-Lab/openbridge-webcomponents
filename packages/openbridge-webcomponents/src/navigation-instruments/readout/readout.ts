@@ -237,10 +237,24 @@ export interface ReadoutSourceOptions extends ReadoutSrcOptions {
  * lists/tables (label left, value right) and `<obc-readout-list>` for
  * auto-aligned groups of rows.
  *
+ * ### Slots
+ * | Slot Name          | Renders When                          | Purpose                              |
+ * |--------------------|---------------------------------------|--------------------------------------|
+ * | leading-icon       | `hasLeadingIcon`                      | Icon before the label/unit meta zone.|
+ * | value-icon         | `valueOptions.hasIcon`                | Icon before the value.               |
+ * | setpoint-icon      | `hasSetpoint`                         | Overrides the default setpoint icon. |
+ * | advice-icon        | `hasAdvice`                           | Overrides the default advice icon.   |
+ * | src-picker-content | `srcOptions.interaction == 'picker'`  | Source picker context-menu content.  |
+ *
  * @property hasValue - Layout switch: `false` renders a deliberately value-less (label-only)
  *   readout that hugs its remaining parts. For a temporarily missing value
  *   keep `hasValue` and set `value` to `null` instead — the dash keeps the
  *   value block at full size, so the layout does not shift when data arrives.
+ * @property value - The value; `null` renders a dash. A number by default, or text when
+ *   `valueType` is `text`.
+ * @property valueType - How `value` is interpreted. `number` (default) formats it via
+ *   `fractionDigits`; `text` renders it verbatim and ignores the numeric
+ *   format options. Passing text while this is `number` throws.
  * @property off - Render the value as `offText` (e.g. equipment powered down). Affects the value only.
  * @property offText - Text shown in place of the value when `off` is true.
  * @availableWhen offText off==true
@@ -249,7 +263,8 @@ export interface ReadoutSourceOptions extends ReadoutSrcOptions {
  * @property size - Density tier. Applies to the vertical direction only — the horizontal
  *   arrangement exists in the large tier alone (Figma 6.1: it relies on the
  *   label+unit stack aligning with the L-size value caps), so `size` is
- *   ignored when `direction` is `horizontal`.
+ *   ignored when `direction` is `horizontal`; a horizontal readout given any
+ *   other `size` logs a console warning once per element.
  * @availableWhen size direction==vertical
  * @availableWhen stacking direction==vertical
  * @availableWhen alignment direction==vertical && stacking==stacked
@@ -282,26 +297,14 @@ export interface ReadoutSourceOptions extends ReadoutSrcOptions {
  * @property showDebugOverlay - Development aid: outline the readout building blocks (red), the degree
  *   columns (blue) and the degree spacer (green) so reserved widths / alignment
  *   are visible. Off by default.
- * @experimental Part of the primitives + per-block options Readout API pilot;
- * the API may change in a future release.
- *
- * ### Slots
- * | Slot Name          | Renders When                          | Purpose                              |
- * |--------------------|---------------------------------------|--------------------------------------|
- * | leading-icon       | `hasLeadingIcon`                      | Icon before the label/unit meta zone.|
- * | value-icon         | `valueOptions.hasIcon`                | Icon before the value.               |
- * | setpoint-icon      | `hasSetpoint`                         | Overrides the default setpoint icon. |
- * | advice-icon        | `hasAdvice`                           | Overrides the default advice icon.   |
- * | src-picker-content | `srcOptions.interaction == 'picker'`  | Source picker context-menu content.  |
- *
- * @fires {CustomEvent<{value: string, label?: string}>} source-change - Fired when a source picker option is selected.
- * @fires {CustomEvent<{src: string}>} source-flyout-click - Fired when the source row is clicked while `srcOptions.interaction == 'flyout'`.
- *
  * @slot leading-icon - Icon before the label/unit meta zone.
  * @slot value-icon - Icon before the value.
  * @slot setpoint-icon - Overrides the default setpoint icon.
  * @slot advice-icon - Overrides the default advice icon.
  * @slot src-picker-content - Provides the source picker context menu content.
+ * @fires {CustomEvent<{value: string, label?: string}>} source-change - Fired when a source picker option is selected.
+ * @fires {CustomEvent<{src: string}>} source-flyout-click - Fired when the source row is clicked while `srcOptions.interaction == 'flyout'`.
+ * @experimental
  */
 @customElement('obc-readout')
 export class ObcReadout extends LitElement {
@@ -311,16 +314,7 @@ export class ObcReadout extends LitElement {
   @property({type: String}) src?: string;
 
   @property({type: Boolean, attribute: false}) hasValue = true;
-  /**
-   * The value; `null` renders a dash. A number by default, or text when
-   * {@link valueType} is `text`.
-   */
   @property({type: String}) value: number | string | null = null;
-  /**
-   * How {@link value} is interpreted. `number` (default) formats it via
-   * `fractionDigits`; `text` renders it verbatim and ignores the numeric
-   * format options. Passing text while this is `number` throws.
-   */
   @property({type: String}) valueType: ReadoutValueType =
     ReadoutValueType.number;
   @property({type: Boolean}) off = false;
@@ -365,6 +359,7 @@ export class ObcReadout extends LitElement {
     ReadoutBlockHidePhase.none;
   private deferredSetpointHideTimer?: number;
   private hasCompletedFirstUpdate = false;
+  private hasWarnedHorizontalSize = false;
 
   @state() private sourcePickerContentVisible = false;
   @state() private sourcePickerOptions: ContextMenuOption[] = [];
@@ -383,9 +378,8 @@ export class ObcReadout extends LitElement {
   };
 
   private get resolvedSize(): ReadoutSize {
-    // The horizontal arrangement exists only in the large tier (Figma 6.1 /
-    // design review 2026-08-18): it relies on the label+unit stack aligning
-    // with the L-size value caps, so `size` is ignored when horizontal.
+    // The horizontal arrangement exists only in the large tier (Figma 6.1): it
+    // relies on the label+unit stack aligning with the L-size value caps.
     if (this.isHorizontal) {
       return ReadoutSize.large;
     }
@@ -568,7 +562,6 @@ export class ObcReadout extends LitElement {
    * scannable label should not sit at the smallest permitted size — while
    * small/medium tiers stay `xs`; `labelOptions.size` overrides either way
    * (per the design team, for context / density / secondary instruments).
-   * The `s` default was confirmed by the design team (2026-08-17).
    * TODO(designer): the medium-tier default is unverified in the new sheets
    * (only XS and S exist on the title's size axis).
    */
@@ -769,10 +762,8 @@ export class ObcReadout extends LitElement {
   }
 
   // `hasDegree` is deliberately NOT forwarded to the advice / setpoint blocks:
-  // the degree glyph renders on the actual value only (Figma 6.1 review,
-  // 2026-08-18) — the unit is written once for the whole readout, and the
-  // degree follows the same rule; the setpoint / advice implicitly share it.
-  // `obc-readout-list-item` keeps its own per-row convention.
+  // the unit is written once per readout and the degree follows the same rule
+  // (Figma 6.1). `obc-readout-list-item` keeps its own per-row convention.
   private renderAdviceBlock(): TemplateResult {
     return this.renderBlock({
       variant: ReadoutBlockVariant.advice,
@@ -985,9 +976,9 @@ export class ObcReadout extends LitElement {
   /**
    * The plain (non-interactive) source: the textbox plus its optional state
    * chip and deviation line. The regular no-deviation case renders the bare
-   * textbox — the pre-6.1 output; a state or deviation wraps it in the
-   * `.source-block` stack. The picker / flyout button variants do not carry
-   * state / deviation yet — TODO(designer): undefined in the 6.1 sheets.
+   * textbox; a state or deviation wraps it in the `.source-block` stack. The
+   * picker / flyout button variants do not carry state / deviation yet —
+   * TODO(designer): undefined in the 6.1 sheets.
    */
   private renderSourceBlock(src: string): TemplateResult {
     const state = this.srcOptions?.state ?? ReadoutSourceState.regular;
@@ -1301,15 +1292,36 @@ export class ObcReadout extends LitElement {
 
   protected override willUpdate(changed: Map<string, unknown>): void {
     super.willUpdate(changed);
-    // Validated on EVERY update, deliberately NOT gated on `value`/`valueType`
-    // appearing in `changed`. When this assertion throws, Lit's `performUpdate`
-    // catch calls `__markUpdated()`, which clears the changed-properties map. A
-    // later update driven by any OTHER property — inside `obc-readout-list`,
-    // `align()` writing the shared reservers — would then see no `value` in
-    // `changed`, skip the check, and render the invalid value as a plain dash:
-    // exactly the silent failure this assertion exists to prevent.
+    // Never gate this on `changed`: a throw clears Lit's changed map, so the
+    // next update would skip the check and render the invalid value as a dash
+    // (readout-components.md § 1, pinned by readout-block.spec.ts).
     assertReadoutValueType('obc-readout', this.value, this.valueType);
     assertReadoutFractionDigits('obc-readout', this.fractionDigits);
+    this.warnHorizontalSizeIgnored();
+  }
+
+  /**
+   * A horizontal readout discards any `size` but `large` (see `resolvedSize`).
+   * A silent discard is indistinguishable from a bug to a consumer, so each
+   * offending element says so once and logs itself for locating (#1182).
+   * A removed `size` attribute arrives as `null` and counts as unset.
+   */
+  private warnHorizontalSizeIgnored(): void {
+    if (
+      this.hasWarnedHorizontalSize ||
+      !this.isHorizontal ||
+      !this.size ||
+      this.size === ReadoutSize.large
+    ) {
+      return;
+    }
+    this.hasWarnedHorizontalSize = true;
+    console.warn(
+      `[obc-readout] size="${this.size}" is ignored when direction="horizontal": ` +
+        'the horizontal arrangement exists in the large tier only. Remove the ' +
+        'size, or use direction="vertical" for the small / medium tiers.',
+      this
+    );
   }
 
   override updated(changed: Map<string, unknown>): void {

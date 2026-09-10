@@ -5,6 +5,7 @@ import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import compentStyle from './gauge-valve.css?inline';
 import {customElement} from '../../decorator.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
+import {clampPercent} from '../../svghelpers/math.js';
 import {
   computeRadialFrame,
   estimateLabelWidthPx,
@@ -37,7 +38,6 @@ import {
   SCALE_ROTATION_DEG,
   TRACK_HALF_SPANS,
   type ValvePort,
-  clampPercent,
   inletPercent,
   scaleAngle,
   valveAreas,

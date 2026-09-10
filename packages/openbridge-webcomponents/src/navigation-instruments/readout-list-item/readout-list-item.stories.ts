@@ -726,6 +726,42 @@ export const LeadingSrc: Story = {
     ]),
 };
 
+/**
+ * `leading-src-inline` keeps the source on the label's line, so a row with a
+ * source stays one line high (Figma 46596:102880 pairs an `s` label with the
+ * `xs` source; the dense default label stays `xs` unless `labelOptions.size`
+ * says otherwise).
+ */
+export const LeadingSrcInline: Story = {
+  render: () =>
+    renderShowcase([
+      {
+        title: 'Stacking: leading-src-inline',
+        columns: 3,
+        cases: stackingCases(ReadoutListItemStacking.leadingSrcInline),
+      },
+      {
+        title: 'Label s + source xs (Figma 46596:102880)',
+        columns: 3,
+        cases: SIZES.map((size) => ({
+          label: `${size} / label s`,
+          config: {
+            label: 'HDG',
+            src: 'GPS1',
+            value: 355,
+            unit: '',
+            options: {
+              size,
+              stacking: ReadoutListItemStacking.leadingSrcInline,
+              hasDegree: true,
+              label: {size: ObcTextboxSize.s},
+            },
+          },
+        })),
+      },
+    ]),
+};
+
 export const SetpointFlipFlop: Story = {
   render: () =>
     renderShowcase([
@@ -1781,8 +1817,12 @@ export const MissingParts: Story = {
  * same width regardless of each row's own value length / `fractionDigits`, and
  * the columns line up.
  *
- * (Source/stacking variations are exercised in the `LeadingSrc` / `LeadingUnit`
- * stories; mixing them here would move the unit out of the rightmost column.)
+ * The Heading row has no unit and carries its source inline
+ * (`leading-src-inline`): in the aligned column it still renders the blank
+ * reserved unit column, so its degree lines up with the rows that have a unit.
+ * (`leading-src` and `leading-unit` are exercised in their own stories:
+ * `leading-unit` would move the unit out of the rightmost column, and
+ * `leading-src` would make the row two lines high.)
  *
  * The last two rows use `size=medium` / `size=large`. Their value digit edges do
  * NOT fully align with the small rows (~8px stagger): the `°` column scales with
@@ -1800,10 +1840,12 @@ export const MissingParts: Story = {
  */
 type AlignmentRow = {
   label: string;
+  src?: string;
   value: number | string | null;
   valueType?: ReadoutValueType;
   unit: string;
   size?: ReadoutListItemSize;
+  stacking?: ReadoutListItemStacking;
   hasDegree?: boolean;
   fractionDigits?: number;
   priority?: ReadoutListItemPriority;
@@ -1848,6 +1890,16 @@ const ALIGNMENT_ROWS: AlignmentRow[] = [
     advice: 1008,
     // per-block advice low-integrity — the advice chip must not shift the columns
     adviceDataQuality: ReadoutListItemDataQuality.lowIntegrity,
+  },
+  // no unit + degree + inline source — the blank reserved unit column keeps
+  // the degree glyph aligned with the unit rows
+  {
+    label: 'Heading',
+    src: 'GPS1',
+    value: 355,
+    unit: '',
+    hasDegree: true,
+    stacking: ReadoutListItemStacking.leadingSrcInline,
   },
   // negative value + fraction + low-integrity data quality
   {
@@ -1927,12 +1979,9 @@ const ALIGNMENT_ROWS: AlignmentRow[] = [
       type: ObcAlertFrameType.Regular,
     },
   },
-  // text value — `valueType="text"` renders verbatim and ignores maxDigits /
-  // fractionDigits, but still honours an explicit `spaceReserver`. So these
-  // rows hug their text in the left column and join the shared value column in
-  // the right one, confirming text does not disturb the numeric alignment.
-  // (Inside `obc-readout-list`, which owns the reservers, text rows are instead
-  // excluded from the computed numeric width — see that component's stories.)
+  // text value — ignores maxDigits / fractionDigits but honours an explicit
+  // `spaceReserver`, so these rows hug their text on the left and join the
+  // shared value column on the right (a list excludes them instead).
   {label: 'Mode', value: 'Auto', valueType: ReadoutValueType.text, unit: ''},
   {
     label: 'Thruster',
@@ -1987,7 +2036,7 @@ function renderAlignmentColumn(aligned: boolean, showDebugOverlay: boolean) {
         renderItem({
           label: row.label,
           unit: row.unit,
-          src: '',
+          src: row.src ?? '',
           value: row.value,
           valueType: row.valueType,
           hasSetpoint: row.hasSetpoint,
@@ -1999,6 +2048,7 @@ function renderAlignmentColumn(aligned: boolean, showDebugOverlay: boolean) {
           showDebugOverlay,
           options: {
             size: row.size ?? ReadoutListItemSize.small,
+            stacking: row.stacking,
             hasDegree: row.hasDegree ?? false,
             fractionDigits: row.fractionDigits ?? 0,
             priority: row.priority,

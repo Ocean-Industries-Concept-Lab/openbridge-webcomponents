@@ -186,7 +186,7 @@ export class ObcAlertListDetails extends LitElement {
     if (this.small) {
       const columns: ObcTableColumn<ObcTableCellData, ObcTableRow>[] = [
         {
-          label: 'status',
+          label: 'Status',
           key: 'status',
           sortDirection: 'desc',
           sortable: true,
@@ -214,7 +214,7 @@ export class ObcAlertListDetails extends LitElement {
     } else {
       const columns: ObcTableColumn<ObcTableCellData, ObcTableRow>[] = [
         {
-          label: 'status',
+          label: 'Status',
           key: 'status',
           sortDirection: 'desc',
           sortable: true,
