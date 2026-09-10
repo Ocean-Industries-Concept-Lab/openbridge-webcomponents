@@ -59,6 +59,29 @@
     --blink-off: var(--flash-very-slow-off);
   }
 
+  &.flash-effect-opacity {
+    /* No size change: the flap masks and the dash keep their steady geometry. */
+    --blink-width: 0px;
+
+    &.unacked-active {
+      outline-color: color-mix(
+        in srgb,
+        var(--bg-color) calc(35% + 65% * var(--blink-on)),
+        transparent
+      );
+      transition: outline-color 150ms linear;
+    }
+
+    .dash-flash {
+      display: none;
+    }
+
+    .dash-steady {
+      opacity: calc(0.35 + 0.65 * var(--blink-on));
+      transition: opacity 150ms linear;
+    }
+  }
+
   --blink-width-dynamic: calc(var(--blink-width) * var(--blink-on));
 
   &.unacked-active,
