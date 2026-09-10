@@ -118,24 +118,6 @@ export function resolveFlashingSpeed(
   }
 }
 
-export function supportsBlinking(
-  type: AlertType,
-  acknowledged: boolean
-): boolean {
-  if (acknowledged) {
-    return false;
-  }
-
-  return [
-    AlertType.Alarm,
-    AlertType.Warning,
-    AlertType.LevelCritical,
-    AlertType.LevelHigh,
-    AlertType.LevelMedium,
-    AlertType.LevelLow,
-  ].includes(type);
-}
-
 export function getAlertSeverityCssClass(type: AlertType): string {
   return type;
 }
@@ -224,30 +206,6 @@ export function getAlertTwotoneComponent(
     case AlertType.LevelHigh:
     default:
       return AlertTwotoneComponent.Alarm;
-  }
-}
-
-export enum AlertBlinkMode {
-  Critical = 'critical',
-  Alarm = 'alarm',
-  Warning = 'warning',
-  Low = 'low',
-}
-
-export function getAlertBlinkMode(type: AlertType): AlertBlinkMode {
-  switch (type) {
-    case AlertType.LevelCritical:
-      return AlertBlinkMode.Critical;
-    case AlertType.Warning:
-    case AlertType.LevelMedium:
-      return AlertBlinkMode.Warning;
-    case AlertType.Caution:
-    case AlertType.LevelLow:
-      return AlertBlinkMode.Low;
-    case AlertType.Alarm:
-    case AlertType.LevelHigh:
-    default:
-      return AlertBlinkMode.Alarm;
   }
 }
 

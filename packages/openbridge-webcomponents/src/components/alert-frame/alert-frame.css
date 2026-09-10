@@ -373,6 +373,8 @@
 }
 
 .dash {
+  /* Overridden inline per render from the measured thickness. */
+  --dash-pad: 0px;
   position: absolute;
   top: calc(-1 * var(--dash-pad));
   left: calc(-1 * var(--dash-pad));
