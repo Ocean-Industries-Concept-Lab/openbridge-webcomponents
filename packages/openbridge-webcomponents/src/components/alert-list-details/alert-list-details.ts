@@ -2,7 +2,7 @@ import {LitElement, html, unsafeCSS} from 'lit';
 import {customElement} from '../../decorator.js';
 import compentStyle from './alert-list-details.css?inline';
 import {msg} from '@lit/localize';
-import {property, query, state} from 'lit/decorators.js';
+import {property, query} from 'lit/decorators.js';
 import '../icon-button/icon-button.js';
 import '../button/button.js';
 import '../../icons/icon-silence-iec.js';
@@ -32,7 +32,6 @@ import {
   ObcTableCellClickEvent,
   ObcTableCellData,
   ObcTableCellType,
-  ObcTableExpandToggleEvent,
   ObcTableRowClickEvent,
   ObcTableRow,
   ObcTableColumn,
@@ -113,7 +112,6 @@ export function canAckFilter(filter: (alert: Alert) => boolean) {
 
 /**
  * @availableWhen timeFormatter showTime==true
- * @property defaultExpanded - Whether groups start expanded. Set false to open the list collapsed.
  * @fires {ObcAckClickEvent} ack-click - Fired when the user clicks the "ACK" button.
  * @fires {ObcRowClickEvent} row-click - Fired when the user clicks a row.
  * @stable
@@ -127,32 +125,20 @@ export class ObcAlertListDetails extends LitElement {
     time: Date
   ) => time.toLocaleTimeString(undefined, {hour12: false});
   @property({type: Boolean}) small: boolean = false;
-  @property({type: Boolean, attribute: false}) defaultExpanded: boolean = true;
 
   @query('obc-table')
   private alertList!: ObcTable;
 
-  @state() private expansionOverrides = new Map<string, boolean>();
-
-  private alertByRowId = new Map<string, Alert>();
-
   public getVisibleAlerts(): Alert[] {
-    const seen = new Set<string>();
-    return this.alertList
+    const visibleElements = this.alertList
       .getAllVisibleRows()
-      .map((rowId) => this.alertByRowId.get(rowId))
-      .filter((alert): alert is Alert => alert !== undefined)
-      .filter((alert) => {
-        if (seen.has(alert.id)) {
-          return false;
-        }
-        seen.add(alert.id);
-        return true;
-      });
+      .map((id) => this.alerts.find((alert) => alert.id === id))
+      .filter((alert): alert is Alert => alert !== undefined);
+    return visibleElements;
   }
 
   private onRowClick(e: ObcTableRowClickEvent) {
-    const row = this.alertByRowId.get(e.detail.row.id);
+    const row = this.alerts.find((alert) => alert.id === e.detail.row.id);
     if (row) {
       this.dispatchEvent(
         new CustomEvent('row-click', {detail: {alert: row}}) as ObcRowClickEvent
@@ -161,7 +147,7 @@ export class ObcAlertListDetails extends LitElement {
   }
 
   private onCellButtonClick(e: ObcTableCellClickEvent) {
-    const row = this.alertByRowId.get(e.detail.rowId);
+    const row = this.alerts.find((alert) => alert.id === e.detail.rowId);
     if (row) {
       this.dispatchEvent(
         new CustomEvent('ack-click', {
@@ -170,16 +156,6 @@ export class ObcAlertListDetails extends LitElement {
         }) as ObcAckClickEvent
       );
     }
-  }
-
-  private onExpandToggle(e: ObcTableExpandToggleEvent) {
-    const overrides = new Map(this.expansionOverrides);
-    overrides.set(e.detail.rowId, e.detail.expanded);
-    this.expansionOverrides = overrides;
-  }
-
-  private isExpanded(rowId: string) {
-    return this.expansionOverrides.get(rowId) ?? this.defaultExpanded;
   }
 
   private get columns() {
@@ -191,8 +167,8 @@ export class ObcAlertListDetails extends LitElement {
           sortDirection: 'desc',
           sortable: true,
           compareFunction: (_a, _b, aRow, bRow) => {
-            const aAlert = this.alertByRowId.get(aRow.id);
-            const bAlert = this.alertByRowId.get(bRow.id);
+            const aAlert = this.alerts.find((alert) => alert.id === aRow.id);
+            const bAlert = this.alerts.find((alert) => alert.id === bRow.id);
             if (aAlert && bAlert) {
               return comparePriorityAlerts(aAlert, bAlert);
             }
@@ -219,8 +195,8 @@ export class ObcAlertListDetails extends LitElement {
           sortDirection: 'desc',
           sortable: true,
           compareFunction: (_a, _b, aRow, bRow) => {
-            const aAlert = this.alertByRowId.get(aRow.id);
-            const bAlert = this.alertByRowId.get(bRow.id);
+            const aAlert = this.alerts.find((alert) => alert.id === aRow.id);
+            const bAlert = this.alerts.find((alert) => alert.id === bRow.id);
             if (aAlert && bAlert) {
               return comparePriorityAlerts(aAlert, bAlert);
             }
@@ -239,8 +215,8 @@ export class ObcAlertListDetails extends LitElement {
           key: 'time',
           sortable: true,
           compareFunction: (_a, _b, aRow, bRow) => {
-            const aAlert = this.alertByRowId.get(aRow.id);
-            const bAlert = this.alertByRowId.get(bRow.id);
+            const aAlert = this.alerts.find((alert) => alert.id === aRow.id);
+            const bAlert = this.alerts.find((alert) => alert.id === bRow.id);
             if (aAlert && bAlert) {
               const aTime = new Date(aAlert.time);
               const bTime = new Date(bAlert.time);
@@ -274,156 +250,73 @@ export class ObcAlertListDetails extends LitElement {
     return this.alerts.filter(this.metadata.filter);
   }
 
-  private buildVisibleRows(): ObcTableRow[] {
-    const alerts = this.filteredAlerts;
-    const alertIds = new Set(alerts.map((alert) => alert.id));
-    const membersByGroupId = new Map<string, Alert[]>();
-    const roots: Alert[] = [];
-    for (const alert of alerts) {
-      const groupIds = (alert.memberOf ?? []).filter(
-        (groupId) => groupId !== alert.id && alertIds.has(groupId)
-      );
-      if (groupIds.length === 0) {
-        roots.push(alert);
-        continue;
-      }
-      for (const groupId of groupIds) {
-        const members = membersByGroupId.get(groupId) ?? [];
-        members.push(alert);
-        membersByGroupId.set(groupId, members);
-      }
-    }
-
-    const reachable = new Set<string>();
-    const markReachable = (alert: Alert) => {
-      if (reachable.has(alert.id)) {
-        return;
-      }
-      reachable.add(alert.id);
-      for (const member of membersByGroupId.get(alert.id) ?? []) {
-        markReachable(member);
-      }
-    };
-    roots.forEach(markReachable);
-    for (const alert of alerts) {
-      if (!reachable.has(alert.id)) {
-        roots.push(alert);
-        markReachable(alert);
-      }
-    }
-
-    const rows: ObcTableRow[] = [];
-    this.alertByRowId = new Map();
-    const visit = (
-      alert: Alert,
-      level: number,
-      parentRowId: string | undefined,
-      ancestors: Set<string>
-    ) => {
-      const segment = encodeURIComponent(alert.id);
-      const rowId =
-        parentRowId === undefined ? segment : `${parentRowId}/${segment}`;
-      const members = membersByGroupId.get(alert.id) ?? [];
-      // A member can name a group that is also its own descendant.
-      const expandableMembers = members.filter(
-        (member) => !ancestors.has(member.id)
-      );
-      const expanded = this.isExpanded(rowId);
-
-      this.alertByRowId.set(rowId, alert);
-      rows.push({
-        ...this.buildRowCells(alert),
-        id: rowId,
-        parentId: parentRowId,
-        level,
-        expandable: expandableMembers.length > 0,
-        expanded,
-      });
-
-      if (!expanded) {
-        return;
-      }
-      const nextAncestors = new Set(ancestors).add(alert.id);
-      for (const member of expandableMembers) {
-        visit(member, level + 1, rowId, nextAncestors);
-      }
-    };
-
-    for (const alert of roots) {
-      visit(alert, 0, undefined, new Set());
-    }
-    return rows;
-  }
-
-  private buildRowCells(
-    alert: Alert
-  ): Record<string, ObcTableCellData | undefined> {
-    let action: ObcTableCellData = {
-      type: ObcTableCellType.Regular,
-    };
-    if (
-      !isAcknowledged(alert) &&
-      isActive(alert) &&
-      requiresAcknowledgement(alert.type)
-    ) {
-      if (alert.noAck) {
-        const icon = usesAlarmNoAckIcon(alert.type)
-          ? html`<obi-alarm-noack-iec usecsscolor></obi-alarm-noack-iec>`
-          : html`<obi-warning-noack-iec usecsscolor></obi-warning-noack-iec>`;
-        action = {
-          type: ObcTableCellType.Regular,
-          largeIcon: true,
-          icon,
-          align: 'center',
-        };
-      } else {
-        action = {
-          type: ObcTableCellType.Button,
-          text: msg('ACK'),
-        };
-      }
-    }
-
-    const status: ObcTableCellData = {
-      type: ObcTableCellType.Regular,
-      largeIcon: true,
-      text: alert.text,
-      title: alert.source,
-      noWrap: true,
-      icon: html`<obc-alert-icon
-        .type=${alert.type}
-        .acknowledged=${isAcknowledged(alert)}
-        .active=${isActive(alert)}
-      ></obc-alert-icon>`,
-    };
-
-    const time: ObcTableCellData | undefined = this.showTime
-      ? {
-          type: ObcTableCellType.Regular,
-          text: this.timeFormatter(alert.time),
-          align: 'center',
-          neutral: true,
-        }
-      : undefined;
-
-    const tagId: ObcTableCellData | undefined = this.small
-      ? undefined
-      : {
-          type: ObcTableCellType.Regular,
-          text: '#' + alert.id,
-          align: 'right',
-        };
-    return {
-      status,
-      time,
-      action,
-      tagId,
-    };
-  }
-
   override render() {
     const selectedList = this.metadata;
-    const data = this.buildVisibleRows();
+
+    const data = this.filteredAlerts.map((alert) => {
+      let action: ObcTableCellData = {
+        type: ObcTableCellType.Regular,
+      };
+      if (
+        !isAcknowledged(alert) &&
+        isActive(alert) &&
+        requiresAcknowledgement(alert.type)
+      ) {
+        if (alert.noAck) {
+          const icon = usesAlarmNoAckIcon(alert.type)
+            ? html`<obi-alarm-noack-iec usecsscolor></obi-alarm-noack-iec>`
+            : html`<obi-warning-noack-iec usecsscolor></obi-warning-noack-iec>`;
+          action = {
+            type: ObcTableCellType.Regular,
+            largeIcon: true,
+            icon,
+            align: 'center',
+          };
+        } else {
+          action = {
+            type: ObcTableCellType.Button,
+            text: msg('ACK'),
+          };
+        }
+      }
+
+      const status = {
+        type: ObcTableCellType.Regular,
+        largeIcon: true,
+        text: alert.text,
+        title: alert.source,
+        noWrap: true,
+        icon: html`<obc-alert-icon
+          .type=${alert.type}
+          .acknowledged=${isAcknowledged(alert)}
+          .active=${isActive(alert)}
+        ></obc-alert-icon>`,
+      };
+
+      const time = this.showTime
+        ? {
+            type: ObcTableCellType.Regular,
+            text: this.timeFormatter(alert.time),
+            align: 'center',
+            neutral: true,
+          }
+        : undefined;
+
+      const tagId = this.small
+        ? undefined
+        : {
+            type: ObcTableCellType.Regular,
+            text: '#' + alert.id,
+            align: 'right',
+          };
+      return {
+        id: alert.id,
+        status,
+        time,
+        action,
+        tagId,
+      };
+    });
 
     return html`
       <div class="wrapper ${this.small ? 'small' : ''}">
@@ -436,7 +329,6 @@ export class ObcAlertListDetails extends LitElement {
                 .showHeader=${!this.small}
                 @row-click=${this.onRowClick}
                 @cell-button-click=${this.onCellButtonClick}
-                @expand-toggle=${this.onExpandToggle}
               ></obc-table>
               <div class="spacer"></div>`
           : html` <div class="empty-list">
