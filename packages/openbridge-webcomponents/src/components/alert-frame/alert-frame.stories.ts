@@ -44,10 +44,12 @@ const meta: Meta<typeof ObcAlertFrame> = {
     flashingSpeed: {
       options: Object.values(FlashingSpeed),
       control: {type: 'select'},
+      if: {arg: 'mode', neq: ObcAlertFrameMode.ackedActive},
     },
     flashEffect: {
       options: Object.values(ObcAlertFrameFlashEffect),
       control: {type: 'select'},
+      if: {arg: 'mode', neq: ObcAlertFrameMode.ackedActive},
     },
     thickness: {
       options: Object.values(ObcAlertFrameThickness),
