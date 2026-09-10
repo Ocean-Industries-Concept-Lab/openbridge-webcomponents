@@ -94,6 +94,7 @@ interface DashBox {
   radii: RoundedRect['radii'];
 }
 
+/** Room the svg leaves around the box for the stroke's on-phase growth. */
 const DASH_FLASH_GROWTH_PX = 2;
 
 export interface AlertFrameConfig {
@@ -314,16 +315,18 @@ export class ObcAlertFrame extends LitElement {
       return nothing;
     }
     const pad = box.thickness + DASH_FLASH_GROWTH_PX;
-    const stroked = (strokeWidth: number): RoundedRect => ({
-      x: pad - strokeWidth / 2,
-      y: pad - strokeWidth / 2,
-      width: box.width + strokeWidth,
-      height: box.height + strokeWidth,
+    // One path whose stroke width animates: a second, wider path would have
+    // longer corner arcs and its dashes would drift around the frame.
+    const centreline: RoundedRect = {
+      x: pad - box.thickness / 2,
+      y: pad - box.thickness / 2,
+      width: box.width + box.thickness,
+      height: box.height + box.thickness,
       // A radius of 0 is a sharp edge and must stay square.
       radii: box.radii.map((r) =>
-        r > 0 ? r + strokeWidth / 2 : 0
+        r > 0 ? r + box.thickness / 2 : 0
       ) as RoundedRect['radii'],
-    });
+    };
     const width = box.width + 2 * pad;
     const height = box.height + 2 * pad;
     return html`<svg
@@ -334,14 +337,7 @@ export class ObcAlertFrame extends LitElement {
       viewBox="0 0 ${width} ${height}"
       style="--dash-pad: ${pad}px"
     >
-      <path
-        class="dash-steady"
-        d=${roundedRectPath(stroked(box.thickness))}
-      ></path>
-      <path
-        class="dash-flash"
-        d=${roundedRectPath(stroked(box.thickness + DASH_FLASH_GROWTH_PX))}
-      ></path>
+      <path d=${roundedRectPath(centreline)}></path>
     </svg>`;
   }
 
