@@ -343,7 +343,7 @@ function argsToOptions(args: ReadoutListItemStoryArgs): StoryOptions {
 
 const meta = {
   title: 'Instruments/Readout List Item',
-  tags: ['autodocs', '6.0', 'experimental'],
+  tags: ['autodocs', '6.0', 'beta'],
   component: 'obc-readout-list-item',
   decorators: [centeredCanvasDecorator],
   render: (args) =>
