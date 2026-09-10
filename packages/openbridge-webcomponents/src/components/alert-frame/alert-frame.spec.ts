@@ -1,6 +1,10 @@
 import {describe, expect, it} from 'vitest';
 import './alert-frame.js';
-import {ObcAlertFrame, ObcAlertFrameMode} from './alert-frame.js';
+import {
+  ObcAlertFrame,
+  ObcAlertFrameFlashEffect,
+  ObcAlertFrameMode,
+} from './alert-frame.js';
 import {render} from 'vitest-browser-lit';
 import {html} from 'lit';
 import {AlertType, FlashingSpeed} from '../../types.js';
@@ -185,6 +189,22 @@ describe('obc-alert-frame flashing lifecycle', () => {
     });
   });
 
+  it('keeps a fixed frame fully visible in the opacity effect', async () => {
+    const el = await setup(
+      ObcAlertFrameMode.unackedActive,
+      AlertType.Caution,
+      FlashingSpeed.Default
+    );
+    el.flashEffect = ObcAlertFrameFlashEffect.Opacity;
+    await el.updateComplete;
+
+    const wrapper = el.shadowRoot!.querySelector('.wrapper') as HTMLElement;
+    expect(wrapper.classList.contains('flash-fixed')).toBe(true);
+    expect(
+      getComputedStyle(wrapper).getPropertyValue('--blink-on').trim()
+    ).toBe('1');
+  });
+
   describe('rectified dash', () => {
     it('draws the 12/6 dash as one svg path whose stroke width flashes', async () => {
       const el = await setup(ObcAlertFrameMode.unackedRectified);
@@ -209,6 +229,25 @@ describe('obc-alert-frame flashing lifecycle', () => {
       anim.currentTime = 3000;
       expect(getComputedStyle(path).strokeWidth).toBe('2px');
       expect(path.getAttribute('d')).toBe(d);
+    });
+
+    it('re-measures when a sharp edge or the thickness changes', async () => {
+      const el = await setup(ObcAlertFrameMode.unackedRectified);
+      // The palette is not loaded here; give the corners a radius to lose.
+      el.style.setProperty('--ui-components-button-border-radius', '6px');
+      await new Promise((r) => requestAnimationFrame(r));
+      await el.updateComplete;
+      const path = () => el.shadowRoot!.querySelector('svg.dash path')!;
+      const rounded = path().getAttribute('d')!;
+      expect(rounded).toContain('A');
+
+      el.sharpEdgeTopLeft = true;
+      await el.updateComplete;
+      await el.updateComplete;
+
+      const sharp = path().getAttribute('d')!;
+      expect(sharp).not.toBe(rounded);
+      expect(sharp.startsWith('M3 3 H')).toBe(true);
     });
 
     it('removes the svg when the mode leaves unacked-rectified', async () => {

@@ -63,6 +63,11 @@
     /* No size change: the flap masks and the dash keep their steady geometry. */
     --blink-width: 0px;
 
+    &.flash-fixed {
+      /* Steady means fully visible here; 0 is only right for the width effect. */
+      --blink-on: 1;
+    }
+
     &.unacked-active {
       outline-color: color-mix(
         in srgb,
