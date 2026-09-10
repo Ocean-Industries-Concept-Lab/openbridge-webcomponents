@@ -44,7 +44,7 @@ import {
   ObcAlertFrameThickness,
   ObcAlertFrameMode,
 } from '../../components/alert-frame/alert-frame.js';
-import {AlertType} from '../../types.js';
+import {AlertType, FlashingSpeed} from '../../types.js';
 
 // The value weight maps straight to obc-textbox's font weights (regular /
 // semibold / bold). Re-exported so consumers can set `valueOptions.weight`
@@ -941,6 +941,7 @@ export class ObcReadoutListItem extends LitElement {
           .thickness=${thickness}
           .status=${alert.status ?? AlertType.Alarm}
           .mode=${alert.mode ?? ObcAlertFrameMode.ackedActive}
+          .flashingSpeed=${alert.flashingSpeed ?? FlashingSpeed.Default}
           .showIcon=${alert.showIcon ?? false}
           .showAlertCategoryIcon=${alert.showAlertCategoryIcon ?? true}
           .wrapContent=${false}
