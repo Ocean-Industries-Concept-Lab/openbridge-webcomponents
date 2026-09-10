@@ -60,6 +60,17 @@ describe('obc-alert-icon flashing lifecycle', () => {
     ).toEqual([]);
   });
 
+  it('stays static for caution and diagnostic even with an explicit speed', async () => {
+    for (const alertType of [AlertType.Caution, AlertType.LevelDiagnostic]) {
+      const el = await setup({alertType, flashingSpeed: FlashingSpeed.Fast});
+      expect(el.getAnimations()).toHaveLength(0);
+      expect(el.shadowRoot!.querySelector('.wrapper .a')).toBeNull();
+      expect(el.shadowRoot!.querySelector('.wrapper')!.children).toHaveLength(
+        1
+      );
+    }
+  });
+
   it('honours an explicit flashingSpeed unless acknowledged', async () => {
     expect(durations(await setup({flashingSpeed: FlashingSpeed.Slow}))).toEqual(
       [1600]

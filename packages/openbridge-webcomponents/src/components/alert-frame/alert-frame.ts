@@ -97,6 +97,16 @@ interface DashBox {
 /** Room the svg leaves around the box for the stroke's on-phase growth. */
 const DASH_FLASH_GROWTH_PX = 2;
 
+function sameDashBox(a: DashBox, b: DashBox | undefined): boolean {
+  return (
+    b !== undefined &&
+    a.width === b.width &&
+    a.height === b.height &&
+    a.thickness === b.thickness &&
+    a.radii.every((r, i) => r === b.radii[i])
+  );
+}
+
 export interface AlertFrameConfig {
   type?: ObcAlertFrameType;
   thickness?: ObcAlertFrameThickness;
@@ -276,7 +286,7 @@ export class ObcAlertFrame extends LitElement {
       ],
     };
     // Setting state from updated() re-renders; only do it for a real change.
-    if (JSON.stringify(box) !== JSON.stringify(this.dashBox)) {
+    if (!sameDashBox(box, this.dashBox)) {
       this.dashBox = box;
     }
   };
@@ -294,6 +304,9 @@ export class ObcAlertFrame extends LitElement {
     if (wantsDash && !this.dashObserver && this.wrapper) {
       this.dashObserver = new ResizeObserver(this.measureDash);
       this.dashObserver.observe(this.wrapper);
+    }
+    if (wantsDash) {
+      // thickness and sharpEdge* change the radii without a resize.
       this.measureDash();
     }
     if (!wantsDash && this.dashObserver) {

@@ -208,7 +208,8 @@ export class ObcAlertIcon extends LitElement {
   );
 
   get resolvedFlashingSpeed(): ResolvedFlashingSpeed {
-    if (this.acknowledged) {
+    // Caution and diagnostic have no flashing glyph pair, whatever the speed.
+    if (this.acknowledged || !this.icon) {
       return FlashingSpeed.Fixed;
     }
     return resolveFlashingSpeed(
@@ -346,11 +347,8 @@ export class ObcAlertIcon extends LitElement {
       return html`<div>No alarm</div>`;
     }
     const tempo = this.resolvedFlashingSpeed;
-    if (tempo !== FlashingSpeed.Fixed) {
-      const icons = this.icon;
-      if (!icons) {
-        throw new Error('No icon found');
-      }
+    const icons = this.icon;
+    if (tempo !== FlashingSpeed.Fixed && icons) {
       return html`
         <div class=${classMap({wrapper: true, [`flash-${tempo}`]: true})}>
           <span class="a">${icons.a}</span>
