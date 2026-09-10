@@ -6,6 +6,8 @@
 
 **Quick nav:** [Overview](#1-repository-overview) · [Coding Standards](#2-coding-standards) · [JSDoc](#3-documentation-rules-jsdoc) · [Instructions](#4-path-scoped-instruction-files) · [Build & Test](#5-build-test--run) · [SVG](#6-svg-component-guidelines) · [CSS](#7-css--postcss-reference) · [Behavioral Rules](#8-behavioral-rules-for-ai-agents) · [Related Docs](#9-related-documentation)
 
+**Before the first edit:** the path-scoped docs in `docs/agents/` are listed to you, not inlined. Open every one whose glob matches a file you will change (§ 4 table) before writing code, PR text or an issue comment. `coding-standards.md`, `jsdoc.md` and `working-method.md` match every `src/**/*.ts` file, so they are always in scope.
+
 ---
 
 ## 1. Repository Overview
@@ -115,8 +117,9 @@ Key points:
 ## 4. Path-Scoped Instruction Files
 
 Detailed component-family rules live in [`docs/agents/`](docs/agents/) — the
-canonical, tool-neutral source, readable by any agent. Agents that support
-glob-scoped instructions pick them up automatically from generated adapters:
+canonical, tool-neutral source, readable by any agent. Generated adapters tell
+glob-aware agents which doc applies to a path; most list the doc without
+inlining it, so a listed doc is unread until opened:
 
 | Adapter                                              | Consumer       |
 | ---------------------------------------------------- | -------------- |
@@ -166,9 +169,10 @@ The table below is generated too. Edit `docs/agents/*.md`, never this block.
 | [pages](docs/agents/pages.md) | `packages/openbridge-webcomponents/src/pages/**` | Full-page composite examples that assemble many components into one screen |
 | [readout-components](docs/agents/readout-components.md) | `packages/openbridge-webcomponents/src/components/textbox/**`<br>`packages/openbridge-webcomponents/src/building-blocks/readout-block/**`<br>`packages/openbridge-webcomponents/src/navigation-instruments/{readout-list-item,readout-list}/**`<br>`packages/openbridge-webcomponents/src/navigation-instruments/readout/{readout.ts,readout-formatters.ts,readout-shared.ts}` | Readout composition stack (textbox → block → list-item → list) and its value/format contracts |
 | [setpoint](docs/agents/setpoint.md) | `packages/openbridge-webcomponents/src/svghelpers/{setpoint.ts,setpoint-mixin.ts,setpoint-bundle.ts}`<br>`packages/openbridge-webcomponents/src/building-blocks/setpoint/**` | Setpoint design layer, mixin/bundle, confirm animation |
-| [testing-visual](docs/agents/testing-visual.md) | `packages/openbridge-webcomponents/{.storybook,__vis__}/**`<br>`packages/vue-demo/e2e/**` | Storybook config, visual snapshot baselines, and the vue-demo Playwright suite |
+| [testing-visual](docs/agents/testing-visual.md) | `packages/openbridge-webcomponents/{.storybook,__vis__}/**`<br>`packages/openbridge-webcomponents/vitest*.config.ts`<br>`packages/vue-demo/e2e/**` | Storybook config, visual snapshot baselines, and the vue-demo Playwright suite |
 | [ui-components](docs/agents/ui-components.md) | `packages/openbridge-webcomponents/src/components/**` | General UI components (buttons, cards, inputs, feedback) |
 | [watch-radial-instruments](docs/agents/watch-radial-instruments.md) | `packages/openbridge-webcomponents/src/navigation-instruments/{watch,compass,compass-sector,heading,rudder,wind,pitch,roll,pitch-roll,pitch-roll-heave,speed-gauge,gauge-radial,rot-sector,rate-of-turn,course-arrows,readout,watch-flat,compass-flat,rot-linear,azimuth-thruster,current,gauge-proportional,pitch-roll-yaw,position-deviation,speed-directions,top-view-propulsion,velocity-projection-plot,wind-propulsion}/**`<br>`packages/openbridge-webcomponents/src/building-blocks/{single-axis-inclinometer,instrument-radial}/**`<br>`packages/openbridge-webcomponents/src/automation/{gauge-valve,gauge-generator,gauge-motors-and-pumps}/**` | Watch-based instruments (radial core + linear strip counterparts), radial gauges, shared arrow/readout modules |
+| [working-method](docs/agents/working-method.md) | `packages/openbridge-webcomponents/src/**`<br>`!packages/openbridge-webcomponents/src/{icons,generated,manual-icon}/**` | How to enter the codebase before editing — search for prior art, fix the family not the member, Figma as target and code as precedent, PR shape, model choice |
 <!-- prettier-ignore-end -->
 <!-- agents:routing:end -->
 
@@ -291,40 +295,46 @@ automatically when editing a `.css` file.
 
 ## 8. Behavioral Rules for AI Agents
 
-1. **Read before writing.** Always read the relevant source, story, and instruction file before modifying a component.
+1. **Read before writing.** The source, its story, and every `docs/agents/*.md` whose glob matches a file in your diff (§ 4) — the adapters list them, they do not inline them.
 2. **Follow the three-pattern strategy** (§ 3) when writing or updating JSDoc.
-3. **Respect glob-scoped instructions** (§ 4) — read the matching `docs/agents/*.md` file when touching files in its scope.
-4. **Accessibility is required for interactive components.** Every new or modified component in `src/components/**` or `src/automation/**` must support full keyboard navigation and meet WCAG 2.1 AA. Keyboard behaviour should follow the [WAI-ARIA APG patterns](https://www.w3.org/WAI/ARIA/apg/patterns/) — start from the matching pattern, or the closest one, and design your own only when nothing applies. Read [`docs/agents/a11y.md`](docs/agents/a11y.md) for that ladder, the activation-key table, ARIA rules, focus handling, and testing checklist before writing or changing an interactive component.
+3. **Two docs disagree?** Ask which is current instead of picking one ([`docs/agents/working-method.md` § Missing](docs/agents/working-method.md)).
+4. **Accessibility is required for interactive components, old and new.** Every new or modified component in `src/components/**` or `src/automation/**` supports full keyboard navigation and meets WCAG 2.1 AA; touching an existing one brings it through the checklist. Keyboard behaviour follows the [WAI-ARIA APG patterns](https://www.w3.org/WAI/ARIA/apg/patterns/) — the matching pattern, or the closest one. The ladder, the activation-key table, ARIA rules, focus handling, the checklist and the automated checks (§ 9) are in [`docs/agents/a11y.md`](docs/agents/a11y.md).
 5. **Do not edit auto-generated packages** (`-react`, `-vue`, `-ng`, `-svelte`). Run `npm run wrappers` instead.
-6. **Run `npm run analyze`** after adding or renaming a `@customElement` to keep `custom-elements.json` in sync. Storybook resolves story args to element properties through the manifest, so run it **before** testing the stories of a newly created component — without it the args silently never reach the element.
-   Never hand-edit `custom-elements.json` — it is auto-generated and git-ignored. Fix manifest inaccuracies at the source (`@slot`/`@fires`/property JSDoc); see § 3 "Slots and events are manifest-critical" and run `npm run lint:slots`.
+6. **Run `npm run analyze`** after adding or renaming a `@customElement`, and **before** testing a new component's stories — story args reach the element only through the manifest. Never hand-edit `custom-elements.json`; fix the `@slot`/`@fires`/property JSDoc (§ 3) and run `npm run lint:slots`.
 7. **Run `npm run lint`** after code changes to catch issues early.
 8. **Insert `TODO(designer)`** for any documentation detail whose purpose is unclear from code alone.
 9. **Keep stories tagged** with `['autodocs', '6.0']` for documented OB 6.0 components; `['skip-test']` to exclude from visual tests. The lifecycle entry (`beta` / `experimental` / `deprecated`) is **never hand-written** — put `@stable`/`@beta`/`@experimental`/`@deprecated` on the component class and run `npm run lint:fix:stories`. The old `'wip'` and `'alpha'` tags are retired; see [`docs/agents/jsdoc.md` § Component lifecycle tags](docs/agents/jsdoc.md).
-10. **Do not run full builds or start Storybook automatically.** Avoid `npm run build`, `npm run storybook` unless the user explicitly requests it. These are expensive, long-running operations.
-11. **Run visual tests for a single component** instead of the full suite:
+10. **Do not run full builds or start Storybook unasked** (`npm run build`, `npm run storybook`) — expensive and long-running.
+11. **Run visual tests for the components you touched** instead of the full suite. Several names are separate substring filters, not a regex (`'a|b'` matches nothing):
     ```bash
     npx vitest run --project storybook 'component-name'
+    npx vitest run --project storybook heat-pump heat-exchanger hydraulic-separator
     ```
-12. **Update baselines for a single component** — the filter must come **before** `--update`; written after the flag, the name is consumed as the flag's value and the FULL suite runs in update mode, silently rewriting unrelated flaky baselines:
+12. **Update baselines for those components only, locally on Linux** — the devcontainer's render is what CI accepts, so do not rely on the `/update-snapshots` PR comment ([`docs/agents/testing-visual.md`](docs/agents/testing-visual.md)). The filter must come **before** `--update` — after it, the FULL suite runs in update mode and rewrites unrelated flaky baselines. `--update` never prunes — `git rm` the baselines of renamed or removed stories first:
     ```bash
     npx vitest run --project storybook 'component-name' --update
     ```
-13. **Always verify after updating baselines** — re-run the test without `--update` to confirm the new baselines are stable:
+13. **Always verify after updating baselines** — re-run the test without `--update` to confirm the new baselines are stable, then compare the cropped baseline with the Figma variant it implements (every variant value, not only the default):
     ```bash
     npx vitest run --project storybook 'component-name'
     ```
-14. **Keep the main context clean.** Delegate broad codebase exploration to subagents; only read files directly in the main thread when you are about to edit them or need a few specific lines.
-15. **Radial instrument geometry goes through `svghelpers/radial-frame.ts`.** Never hand-mirror viewBox constants or paddings between `obc-watch` and an overlay SVG — compute one `computeRadialFrame()` result per render and pass it to both `<obc-watch .arcFrame=...>` and the overlay `viewBox` (this also provides the width-aware label reserve and `faceDiameter` from issue #1021). Before any refactoring of a radial instrument, read [`docs/agents/watch-radial-instruments.md` § Shared frame computation](docs/agents/watch-radial-instruments.md) — the helper reproduces legacy geometry byte-identically when no outside labels exist, and breaking that contract regenerates the entire radial snapshot family.
-16. **The readout family is four nested layers, not one component.** `obc-textbox` → `obc-readout-block` → `obc-readout-list-item` → `obc-readout-list`, with `obc-readout` as a second layout over the same block (used mostly inside radial instruments). A change to a lower layer reaches every layer above it, so touching `obc-textbox` or `obc-readout-block` means re-running the instrument snapshots too, not just the readout ones. Value/format helpers belong in `readout-formatters.ts` (which imports nothing) — putting them in `readout-shared.ts` and importing back into the block creates a circular import. Read [`docs/agents/readout-components.md`](docs/agents/readout-components.md) before editing any of them: it documents the validation invariants (validate on every update, never gated on `changed`), the throw-vs-clamp rule for bad configuration, and the four `String.prototype.repeat` sites that must be bounded at the property boundary.
-17. **Never hand-edit `src/palettes/variables.css` or `src/mixins/fonts.css`.** Both are regenerated wholesale from the [obc-figma-plugin](https://github.com/Ocean-Industries-Concept-Lab/obc-figma-plugin) (`cssvariables` and `font-exports` codegens respectively); any local edit will be overwritten the next time someone pastes new plugin output. Token additions/renames must go through Figma (or the plugin's `rename()` function) first. The same caution applies to `script/figmavariables.json` (the plugin's `variables` codegen output). Hand-curated font mixins that the plugin does not produce live in `src/mixins/font-extras.css` — edit them there. Run `npm run lint:mixins` after regenerating `fonts.css`. See [IMPLEMENTATION_GUIDELINES.md § PostCSS](IMPLEMENTATION_GUIDELINES.md#-postcss).
-18. **Do not commit planning documents or specs.** Design notes, implementation plans and scratch specs stay out of the repository — the design record belongs in the pull request body, where reviewers actually read it and where it stays attached to the change. This applies to any agent's planning output, whatever directory it lands in.
-19. **Check for parallel work before you start.** Read the issue
-    (`gh issue view N`); look for open PRs or branches touching the same
-    component (`gh pr list --search "<component>"`). Auto-memory and local plan
-    files are private to one developer — never a coordination surface.
-20. **Open a draft PR early** with the design record in the body.
-21. **Comment pass is part of done** (§ 2; [`docs/agents/coding-standards.md`](docs/agents/coding-standards.md)).
+14. **Keep the main context clean.** Delegate broad exploration to subagents; read a file in the main thread only to edit it or for a few lines.
+15. **Radial instrument geometry goes through `svghelpers/radial-frame.ts`.** One `computeRadialFrame()` result per render feeds both `<obc-watch .arcFrame=...>` and the overlay `viewBox`; never hand-mirror viewBox constants or paddings ([`docs/agents/watch-radial-instruments.md` § Shared frame computation](docs/agents/watch-radial-instruments.md)).
+16. **The readout family is four nested layers, not one component.** `obc-textbox` → `obc-readout-block` → `obc-readout-list-item` → `obc-readout-list`, plus `obc-readout` inside radial instruments; a lower-layer change reaches every layer above it, so re-run the instrument snapshots too ([`docs/agents/readout-components.md`](docs/agents/readout-components.md)).
+17. **Never hand-edit `src/palettes/variables.css`, `src/mixins/fonts.css` or `script/figmavariables.json`.** All three are regenerated wholesale from the [obc-figma-plugin](https://github.com/Ocean-Industries-Concept-Lab/obc-figma-plugin), so token additions and renames go through Figma (or the plugin's `rename()`) first. Hand-curated font mixins live in `src/mixins/font-extras.css`; run `npm run lint:mixins` after regenerating `fonts.css` ([`docs/agents/generated-code.md`](docs/agents/generated-code.md)).
+18. **Do not commit planning documents or specs.** Design notes, plans and scratch specs stay out of the repository, whatever directory an agent writes them to — the design record belongs in the pull request body, where reviewers read it and where it stays attached to the change.
+19. **Read the tracker before you start.** The issue, then open and closed
+    issues and PRs for the component months back — titles first, bodies of
+    the relevant ones ([`docs/agents/working-method.md` § History](docs/agents/working-method.md)).
+    Auto-memory and local plan files are private to one developer — never a
+    coordination surface.
+20. **Open a draft PR early** with the design record in the template's sections, a Conventional Commits title, and up to three screenshots for anything visual ([`docs/agents/coding-standards.md` § Writing style](docs/agents/coding-standards.md)).
+21. **Comment pass is part of done** — the comments in the diff, and the PR body and issue comments you post, re-read against the writing-style list (§ 2; [`docs/agents/coding-standards.md`](docs/agents/coding-standards.md)).
+22. **Search before you write.** 283 elements share a few helper hubs and come in twin families: find the helper, sibling or pattern first, and fix the family, not the member ([`docs/agents/working-method.md`](docs/agents/working-method.md)).
+23. **Figma is the target, the code is the precedent.** Aim for 1:1; where deliberate code geometry or a property name disagrees with the file, keep the code and leave a `TODO(designer)`. Generated tokens and icons flow from Figma (rule 17).
+24. **No names.** Cite roles, issues and Figma nodes, never people or handles — in comments, docs, commits, PR and issue text ([`docs/agents/coding-standards.md`](docs/agents/coding-standards.md) § Writing style).
+25. **Use the most capable current model** your tool offers; a smaller tier is for mechanical steps only.
+26. **Stop and ask when something is missing.** An unauthenticated Figma MCP, no `FIGMA_TOKEN`, no `gh`, an undefined design state, an unsettled decision: say what is missing and wait — never brute-force around it or continue on a lesser path silently ([`docs/agents/working-method.md` § Missing](docs/agents/working-method.md)).
 
 ---
 
