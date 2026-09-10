@@ -345,7 +345,7 @@ export interface ReadoutSrcOptions extends ReadoutBlockState {
  * @slot setpoint-icon - Overrides the default setpoint icon.
  * @slot advice-icon - Overrides the default advice icon.
  * @fires click - Fired when the item is activated. Only fired when `clickable` is set; otherwise the item renders as a non-interactive `<div>`.
- * @experimental
+ * @beta
  */
 @customElement('obc-readout-list-item')
 export class ObcReadoutListItem extends LitElement {
