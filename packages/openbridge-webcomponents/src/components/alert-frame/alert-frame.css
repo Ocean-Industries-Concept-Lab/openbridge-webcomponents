@@ -67,7 +67,8 @@
   }
 
   &.unacked-rectified {
-    outline-style: dashed;
+    /* The dash pattern (12/6) needs an SVG stroke; outlines have no dash array. */
+    outline-style: none;
   }
 
   &.alarm,
@@ -346,4 +347,25 @@
   height: var(--app-components-alert-frame-icon-size);
   display: block;
   flex-shrink: 0;
+}
+
+.dash {
+  position: absolute;
+  top: calc(-1 * var(--dash-pad));
+  left: calc(-1 * var(--dash-pad));
+  overflow: visible;
+  pointer-events: none;
+  fill: none;
+  stroke: var(--bg-color);
+  stroke-dasharray: 12 6;
+}
+
+.dash-steady {
+  stroke-width: var(--thickness);
+  opacity: var(--blink-off);
+}
+
+.dash-flash {
+  stroke-width: calc(var(--thickness) + var(--blink-width));
+  opacity: var(--blink-on);
 }
