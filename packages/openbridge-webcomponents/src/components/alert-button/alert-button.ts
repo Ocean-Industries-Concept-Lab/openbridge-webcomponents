@@ -12,15 +12,20 @@ import '../../icons/icon-alerts-warning-twotone.js';
 import '../../icons/icon-alerts-caution-twotone.js';
 import '../../manual-icon/icon-alerts-critical-twotone.js';
 import '../../manual-icon/icon-alerts-diagnostic-twotone.js';
-import {AlertType} from '../../types.js';
 import {
+  AlertType,
+  FlashingSpeed,
+  type ResolvedFlashingSpeed,
+} from '../../types.js';
+import {
+  AlertFlashPhase,
   getAlertTwotoneComponent,
   AlertTwotoneComponent,
-  supportsBlinking,
+  resolveFlashingSpeed,
 } from '../../alert-severity.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
-import {blinkingAll} from '../../palettes/blinking.js';
+import {FlashingController} from '../../palettes/flashing-controller.js';
 
 /**
  * `ObcAlertButtonType` – Enum for alert button visual and behavioral variants.
@@ -77,6 +82,7 @@ export enum ObcAlertButtonType {
  * - `flatMaxBreakpointPx` (number): Maximum width (in px) for normal/enhanced mode; below this, switches to flat mode.
  * - `silenceButtonMinBreakpointPx` (number): Minimum width (in px) to show the silence button; below this, it is hidden.
  * - `blinking` (boolean): Enables blinking animation for active alerts (not for caution type).
+ * - `flashingSpeed`: tempo of the blink (`default` follows the alert type: critical/alarm/high fast, warning/medium slow, low very slow; `fixed` never flashes).
  * - `large` (boolean): Increases button size for prominent or touch-friendly use.
  *
  * ## Events
@@ -109,6 +115,8 @@ export enum ObcAlertButtonType {
  *
  * In this example, the button shows an alarm icon, a counter badge with "3", is styled as enhanced, blinks to indicate urgency, and includes a silence button if the width allows.
  *
+ * @property flashingSpeed - Flash tempo while `blinking` is on: `default` resolves from
+ *   `alertType`, `fast`, `slow`, `very-slow` force a tempo, `fixed` never flashes.
  * @property silenceButtonDisabled - Disables the silence button when true.
  * @availableWhen silenceButtonDisabled showSilenceButton==true
  * @slot - No content slots. All content is provided via properties.
@@ -171,6 +179,25 @@ export class ObcAlertButton extends LitElement {
    */
   @property({type: Boolean}) blinking = false;
 
+  @property({type: String}) flashingSpeed: FlashingSpeed =
+    FlashingSpeed.Default;
+
+  protected readonly flashing = new FlashingController(
+    this,
+    () => this.resolvedFlashingSpeed
+  );
+
+  get resolvedFlashingSpeed(): ResolvedFlashingSpeed {
+    if (!this.blinking || this.nAlerts <= 0 || this.alertType === undefined) {
+      return FlashingSpeed.Fixed;
+    }
+    return resolveFlashingSpeed(
+      this.flashingSpeed,
+      this.alertType,
+      AlertFlashPhase.Active
+    );
+  }
+
   /**
    * Maximum width (in px) for normal/enhanced mode.
    *
@@ -200,14 +227,10 @@ export class ObcAlertButton extends LitElement {
   override connectedCallback() {
     super.connectedCallback();
     window.addEventListener('resize', this.resizeListener);
-    if (this.hasUpdated) {
-      this.installBlinking();
-    }
   }
 
   override disconnectedCallback() {
     window.removeEventListener('resize', this.resizeListener);
-    this._blinkAnimationCancel?.();
     super.disconnectedCallback();
   }
 
@@ -282,26 +305,12 @@ export class ObcAlertButton extends LitElement {
     );
   }
 
-  private _blinkAnimationCancel?: () => void;
-
-  private installBlinking() {
-    this._blinkAnimationCancel?.();
-    this._blinkAnimationCancel = blinkingAll(this);
-  }
-
-  override updated() {
-    this.installBlinking();
-  }
-
   override render() {
     const hasAlerts = this.nAlerts > 0;
     const showCounter =
       this.counter && hasAlerts && this.activeType !== ObcAlertButtonType.Flat;
-    const showBlinking =
-      this.blinking &&
-      hasAlerts &&
-      this.alertType !== undefined &&
-      supportsBlinking(this.alertType, false);
+    const tempo = this.resolvedFlashingSpeed;
+    const showBlinking = tempo !== FlashingSpeed.Fixed;
     return html`
       <div
         class=${classMap({
@@ -310,7 +319,7 @@ export class ObcAlertButton extends LitElement {
           counter: showCounter,
           'has-silence': this.showSilenceButtonDynamic,
           [`type-${this.activeType}`]: true,
-          blinking: showBlinking,
+          [`flash-${tempo}`]: true,
           large: this.large,
         })}
       >
