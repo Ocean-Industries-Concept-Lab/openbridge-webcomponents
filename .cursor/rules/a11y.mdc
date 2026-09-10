@@ -11,6 +11,8 @@ alwaysApply: false
 
 These instructions apply to all interactive UI components and automation components. Target: **WCAG 2.1 AA**, plus WCAG 2.2 § 2.5.8 for pointer target size (§ 7) — 2.1 has no target-size criterion at AA level. The primary focus is **keyboard navigation** — every new interactive component must be fully operable without a mouse.
 
+The bar applies backwards as well as forwards: touching an existing component means bringing it through § 8, and a gap left in place is written down (a `TODO(#issue)` at the site, or the issue itself), never silently inherited.
+
 Display-only SVG instruments (navigation-instruments, building-blocks, bars-graphs) are out of scope unless they expose interactive affordances (e.g. draggable setpoints).
 
 ## 1. Follow the WAI-ARIA Authoring Practices
@@ -144,3 +146,45 @@ Before marking an interactive component as done:
 6. **Disabled state** is skipped by `Tab` (unless deliberately using `aria-disabled`).
 7. **Modal focus trap** (if applicable) — `Tab` cycles within the modal; `Escape` closes and returns focus to the invoker.
 8. **Target size** — every pointer target is ≥ 24 × 24 CSS px (§ 7); the standard tokens deliver 48 px+. Check the `regular` size class, every variant, and — for anything SVG-interactive — the smallest story size.
+
+## 9. Automated checks
+
+Nothing runs axe today: no `@storybook/addon-a11y`, no `axe-core`, no
+`eslint-plugin-lit-a11y`, and `lit-analyzer` has no accessibility rules. § 8 is
+manual, and three stories exercise keyboard activation in a `play` function
+(`start-stop-switch`, `slide-button`, `command-menu`); none tabs through a
+component. The pieces that make automation cheap are in place — every story
+already renders in Chromium through the `storybook` Vitest project, and
+`.storybook/vitest.setup.ts` is the global hook — so the path is settled
+(#1208), in this order:
+
+1. `@storybook/addon-a11y`, matched to the Storybook line, in
+   `.storybook/main.ts` for the panel, and its `preview` annotations added to
+   the `setProjectAnnotations([...])` call in `.storybook/vitest.setup.ts`
+   next to `visAnnotations` — without that entry the addon is a panel only
+   and no story is checked. Report first (`parameters.a11y.test: 'todo'`),
+   triage, then `'error'`; a story with a deliberate violation pins both
+   modes.
+2. `eslint-plugin-lit-a11y` in `eslint.config.mjs`: static template checks
+   (`click-events-have-key-events`, `role-has-required-aria-attrs`) for states
+   no story reaches. `lint:eslint` and the pre-commit hook pick it up.
+3. Keyboard `play` functions for the composite widgets — tab order, arrow
+   keys, `Escape`. axe does not test interaction.
+
+Until that lands, the manual checklist is the gate, and a PR that touches an
+interactive component says in its Verification section which § 8 items were
+run. Three constraints for whoever wires it up: axe reads open shadow roots, so
+assert on the host element; `skip-test` also drops a story from the axe run,
+and a snapshot-flaky story is not an accessibility-exempt one — give the axe
+exclusion its own tag; the project's `retry: 3` exists for pixel flake, and
+deterministic axe results belong in a run without it.
+
+Where to look first: seven components handle `@click` on a non-native element
+with no `role`, `tabindex`, `aria-*` or `@keydown` — `alert-menu`,
+`brilliance-menu`, `elevated-card-radio`, `floating-item`, `keyboard-full`,
+`modal-window`, `toggletip`. As with undersized targets (§ 7): defects to bring
+into line when touched, not precedent.
+
+## Open
+
+- Automated axe run on every story and the lit-a11y ESLint rules (#1208).

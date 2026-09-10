@@ -13,8 +13,9 @@ of maritime navigation and automation UI components built with Lit and
 TypeScript.
 
 - **Start here →** [`AGENTS.md`](../AGENTS.md).
-- Path-scoped rules are auto-attached from `.github/instructions/`, which is
-  generated from `docs/agents/`. Read the canonical file, not the copy.
+- Path-scoped rules are listed from `.github/instructions/`, which is
+  generated from `docs/agents/`. A listing is not the content: open the
+  canonical file for every doc whose glob matches a file you will change.
 - Ask for clarification (e.g. a list of questions) before implementing
   significant changes.
 
@@ -42,7 +43,8 @@ TypeScript.
 | [pages](../docs/agents/pages.md) | `packages/openbridge-webcomponents/src/pages/**` | Full-page composite examples that assemble many components into one screen |
 | [readout-components](../docs/agents/readout-components.md) | `packages/openbridge-webcomponents/src/components/textbox/**`<br>`packages/openbridge-webcomponents/src/building-blocks/readout-block/**`<br>`packages/openbridge-webcomponents/src/navigation-instruments/{readout-list-item,readout-list}/**`<br>`packages/openbridge-webcomponents/src/navigation-instruments/readout/{readout.ts,readout-formatters.ts,readout-shared.ts}` | Readout composition stack (textbox → block → list-item → list) and its value/format contracts |
 | [setpoint](../docs/agents/setpoint.md) | `packages/openbridge-webcomponents/src/svghelpers/{setpoint.ts,setpoint-mixin.ts,setpoint-bundle.ts}`<br>`packages/openbridge-webcomponents/src/building-blocks/setpoint/**` | Setpoint design layer, mixin/bundle, confirm animation |
-| [testing-visual](../docs/agents/testing-visual.md) | `packages/openbridge-webcomponents/{.storybook,__vis__}/**`<br>`packages/vue-demo/e2e/**` | Storybook config, visual snapshot baselines, and the vue-demo Playwright suite |
+| [testing-visual](../docs/agents/testing-visual.md) | `packages/openbridge-webcomponents/{.storybook,__vis__}/**`<br>`packages/openbridge-webcomponents/vitest*.config.ts`<br>`packages/vue-demo/e2e/**` | Storybook config, visual snapshot baselines, and the vue-demo Playwright suite |
 | [ui-components](../docs/agents/ui-components.md) | `packages/openbridge-webcomponents/src/components/**` | General UI components (buttons, cards, inputs, feedback) |
 | [watch-radial-instruments](../docs/agents/watch-radial-instruments.md) | `packages/openbridge-webcomponents/src/navigation-instruments/{watch,compass,compass-sector,heading,rudder,wind,pitch,roll,pitch-roll,pitch-roll-heave,speed-gauge,gauge-radial,rot-sector,rate-of-turn,course-arrows,readout,watch-flat,compass-flat,rot-linear,azimuth-thruster,current,gauge-proportional,pitch-roll-yaw,position-deviation,speed-directions,top-view-propulsion,velocity-projection-plot,wind-propulsion}/**`<br>`packages/openbridge-webcomponents/src/building-blocks/{single-axis-inclinometer,instrument-radial}/**`<br>`packages/openbridge-webcomponents/src/automation/{gauge-valve,gauge-generator,gauge-motors-and-pumps}/**` | Watch-based instruments (radial core + linear strip counterparts), radial gauges, shared arrow/readout modules |
+| [working-method](../docs/agents/working-method.md) | `packages/openbridge-webcomponents/src/**`<br>`!packages/openbridge-webcomponents/src/{icons,generated,manual-icon}/**` | How to enter the codebase before editing — search for prior art, fix the family not the member, Figma as target and code as precedent, PR shape, model choice |
 <!-- prettier-ignore-end -->
