@@ -17,7 +17,9 @@
 .wrapper {
   --bg-color: var(--alert-alarm-color);
   --thickness: var(--global-size-spacing-border-weight-alertframe);
-  --blink-on: var(--alarm-blink-on);
+  /* 0/1 from the flash-<tempo> classes below; steady when no class applies. */
+  --blink-on: 0;
+  --blink-off: 1;
   color: var(--on-alarm-active-color);
   position: relative;
   width: 100%;
@@ -27,10 +29,10 @@
   );
   outline: var(--thickness) solid var(--bg-color);
   outline-offset: 0;
+  /* +2 px outward while on, both thicknesses (Figma Flash=yes: 2 → 4 px). */
   --blink-width: 2px;
   &.thickness-small {
     --thickness: 2px;
-    --blink-width: 1px;
   }
 
   &.wrap-content {
@@ -42,9 +44,25 @@
     width: 100%;
   }
 
+  &.flash-fast {
+    --blink-on: var(--flash-fast-on);
+    --blink-off: var(--flash-fast-off);
+  }
+
+  &.flash-slow {
+    --blink-on: var(--flash-slow-on);
+    --blink-off: var(--flash-slow-off);
+  }
+
+  &.flash-very-slow {
+    --blink-on: var(--flash-very-slow-on);
+    --blink-off: var(--flash-very-slow-off);
+  }
+
   --blink-width-dynamic: calc(var(--blink-width) * var(--blink-on));
 
-  &.unacked-active {
+  &.unacked-active,
+  &.unacked-rectified {
     outline-width: calc(var(--thickness) + var(--blink-width-dynamic));
   }
 
@@ -61,24 +79,17 @@
   &.warning,
   &.level-medium {
     --bg-color: var(--alert-warning-color);
-    --blink-on: var(--warning-blink-on);
     color: var(--on-warning-active-color);
   }
 
   &.caution,
   &.level-low {
     --bg-color: var(--alert-caution-color);
-    --blink-on: 1;
     color: var(--on-caution-active-color);
-  }
-
-  &.level-low {
-    --blink-on: var(--low-blink-on);
   }
 
   &.level-critical {
     --bg-color: var(--critical-enabled-background-color);
-    --blink-on: var(--critical-blink-on);
     color: var(--on-critical-active-color);
   }
 
@@ -144,7 +155,8 @@
         50% var(--thickness)
       );
 
-      .unacked-active & {
+      .unacked-active &,
+      .unacked-rectified & {
         top: calc(-1 * var(--blink-width-dynamic));
       }
     }
@@ -165,7 +177,8 @@
         calc(100% - var(--thickness)) 50%
       );
 
-      .unacked-active & {
+      .unacked-active &,
+      .unacked-rectified & {
         bottom: calc(-1 * var(--blink-width-dynamic));
       }
     }
@@ -186,7 +199,8 @@
         var(--thickness) 50%
       );
 
-      .unacked-active & {
+      .unacked-active &,
+      .unacked-rectified & {
         left: calc(-1 * var(--blink-width-dynamic));
       }
 
@@ -235,7 +249,8 @@
         );
       }
 
-      .unacked-active & {
+      .unacked-active &,
+      .unacked-rectified & {
         right: calc(-1 * var(--blink-width-dynamic));
       }
     }
@@ -315,7 +330,8 @@
   }
 }
 
-.unacked-active .flap {
+.unacked-active .flap,
+.unacked-rectified .flap {
   outline: var(--bg-color) solid var(--blink-width-dynamic);
 }
 

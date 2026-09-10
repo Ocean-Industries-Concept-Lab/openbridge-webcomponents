@@ -3,43 +3,108 @@ import './alert-frame.js';
 import {ObcAlertFrame, ObcAlertFrameMode} from './alert-frame.js';
 import {render} from 'vitest-browser-lit';
 import {html} from 'lit';
+import {AlertType, FlashingSpeed} from '../../types.js';
 
-describe('obc-alert-frame blinking lifecycle', () => {
-  async function setup(mode: ObcAlertFrameMode) {
+function durations(el: HTMLElement): number[] {
+  return el
+    .getAnimations()
+    .map((a) => (a.effect as KeyframeEffect).getTiming().duration as number);
+}
+
+describe('obc-alert-frame flashing lifecycle', () => {
+  async function setup(
+    mode: ObcAlertFrameMode,
+    status: AlertType = AlertType.Alarm,
+    flashingSpeed: FlashingSpeed = FlashingSpeed.Default
+  ) {
     const screen = render(
-      html`<obc-alert-frame .mode=${mode}></obc-alert-frame>`
+      html`<obc-alert-frame
+        .mode=${mode}
+        .status=${status}
+        .flashingSpeed=${flashingSpeed}
+      ></obc-alert-frame>`
     );
-    const el = screen.baseElement.querySelector(
+    const el = screen.container.querySelector(
       'obc-alert-frame'
     ) as ObcAlertFrame;
     await el.updateComplete;
     return el;
   }
 
-  it('blinks while mode is unacked-active', async () => {
+  it('flashes fast while an alarm is unacked-active', async () => {
     const el = await setup(ObcAlertFrameMode.unackedActive);
 
-    expect(el.getAnimations().length).toBeGreaterThan(0);
+    expect(durations(el)).toEqual([800]);
+    expect(el.resolvedFlashingSpeed).toBe(FlashingSpeed.Fast);
   });
 
-  it('does not blink in other modes', async () => {
+  it('flashes slow for a warning and very slow for level-low', async () => {
+    expect(
+      durations(await setup(ObcAlertFrameMode.unackedActive, AlertType.Warning))
+    ).toEqual([1600]);
+    expect(
+      durations(
+        await setup(ObcAlertFrameMode.unackedActive, AlertType.LevelLow)
+      )
+    ).toEqual([3200]);
+  });
+
+  it('never flashes a caution', async () => {
+    expect(
+      durations(await setup(ObcAlertFrameMode.unackedActive, AlertType.Caution))
+    ).toEqual([]);
+    expect(
+      durations(
+        await setup(ObcAlertFrameMode.unackedRectified, AlertType.Caution)
+      )
+    ).toEqual([]);
+  });
+
+  it('flashes very slow while rectified', async () => {
+    const el = await setup(ObcAlertFrameMode.unackedRectified);
+
+    expect(durations(el)).toEqual([3200]);
+  });
+
+  it('honours an explicit flashingSpeed', async () => {
+    expect(
+      durations(
+        await setup(
+          ObcAlertFrameMode.unackedActive,
+          AlertType.Alarm,
+          FlashingSpeed.Slow
+        )
+      )
+    ).toEqual([1600]);
+    expect(
+      durations(
+        await setup(
+          ObcAlertFrameMode.unackedActive,
+          AlertType.Alarm,
+          FlashingSpeed.Fixed
+        )
+      )
+    ).toEqual([]);
+  });
+
+  it('does not flash in acked-active', async () => {
     const el = await setup(ObcAlertFrameMode.ackedActive);
 
     expect(el.getAnimations()).toHaveLength(0);
   });
 
   describe('mode transitions', () => {
-    it('starts blinking when mode becomes unacked-active', async () => {
+    it('starts flashing when mode becomes unacked-active', async () => {
       const el = await setup(ObcAlertFrameMode.ackedActive);
       expect(el.getAnimations()).toHaveLength(0);
 
       el.mode = ObcAlertFrameMode.unackedActive;
       await el.updateComplete;
 
-      expect(el.getAnimations().length).toBeGreaterThan(0);
+      expect(durations(el)).toEqual([800]);
     });
 
-    it('stops blinking when mode leaves unacked-active', async () => {
+    it('stops flashing when mode leaves unacked-active', async () => {
       const el = await setup(ObcAlertFrameMode.unackedActive);
       expect(el.getAnimations().length).toBeGreaterThan(0);
 
@@ -49,13 +114,13 @@ describe('obc-alert-frame blinking lifecycle', () => {
       expect(el.getAnimations()).toHaveLength(0);
     });
 
-    it('stops blinking when mode becomes unacked-rectified', async () => {
+    it('switches to the very-slow tempo when mode becomes unacked-rectified', async () => {
       const el = await setup(ObcAlertFrameMode.unackedActive);
 
       el.mode = ObcAlertFrameMode.unackedRectified;
       await el.updateComplete;
 
-      expect(el.getAnimations()).toHaveLength(0);
+      expect(durations(el)).toEqual([3200]);
     });
 
     it('does not accumulate animations across repeated updates', async () => {
@@ -72,7 +137,7 @@ describe('obc-alert-frame blinking lifecycle', () => {
   });
 
   describe('reconnection', () => {
-    it('resumes blinking after disconnect and reconnect', async () => {
+    it('resumes flashing after disconnect and reconnect', async () => {
       const el = await setup(ObcAlertFrameMode.unackedActive);
       const parent = el.parentElement!;
       expect(el.getAnimations().length).toBeGreaterThan(0);
@@ -81,14 +146,14 @@ describe('obc-alert-frame blinking lifecycle', () => {
       expect(el.getAnimations()).toHaveLength(0);
 
       // Reconnect without touching any property. firstUpdated() will not run
-      // again, so this only passes if blinking is reinstalled on update.
+      // again, so this only passes if the controller re-syncs on connect.
       parent.appendChild(el);
       await el.updateComplete;
 
       expect(el.getAnimations().length).toBeGreaterThan(0);
     });
 
-    it('does not resume blinking on reconnect when mode is not unacked-active', async () => {
+    it('does not resume flashing on reconnect when mode is not unacked-active', async () => {
       const el = await setup(ObcAlertFrameMode.ackedActive);
       const parent = el.parentElement!;
 
@@ -99,7 +164,7 @@ describe('obc-alert-frame blinking lifecycle', () => {
       expect(el.getAnimations()).toHaveLength(0);
     });
 
-    it('does not blink after disconnection when mode became unacked-active while detached', async () => {
+    it('does not flash after disconnection when mode became unacked-active while detached', async () => {
       const el = await setup(ObcAlertFrameMode.ackedActive);
       const parent = el.parentElement!;
 

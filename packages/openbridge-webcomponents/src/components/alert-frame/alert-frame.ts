@@ -15,12 +15,17 @@ import '../../icons/icon-caution-badge.js';
 import '../../icons/icon-critical-badge.js';
 import './diagnostic-badge.js';
 import {customElement} from '../../decorator.js';
-import {AlertType} from '../../types.js';
+import {
+  AlertType,
+  FlashingSpeed,
+  type ResolvedFlashingSpeed,
+} from '../../types.js';
 import {
   getAlertBadgeComponent,
   AlertBadgeComponent,
 } from '../../alert-severity.js';
-import {blinkingAll} from '../../palettes/blinking.js';
+import {FlashingController} from '../../palettes/flashing-controller.js';
+import {AlertFlashPhase, resolveFlashingSpeed} from '../../alert-severity.js';
 
 export {AlertType as ObcAlertFrameStatus} from '../../types.js';
 
@@ -71,6 +76,7 @@ export interface AlertFrameConfig {
   thickness?: ObcAlertFrameThickness;
   status?: AlertType;
   mode?: ObcAlertFrameMode;
+  flashingSpeed?: FlashingSpeed;
   textSize?: AlertFrameTextSize;
   showIcon?: boolean;
   showAlertCategoryIcon?: boolean;
@@ -89,7 +95,7 @@ export interface AlertFrameConfig {
  *   - `bottom-flip`: Adds a bottom flap with a status icon, label, and timer slots.
  * - **Thickness options:** Choose between `small` (thin border) and `large` (thick border) for visual emphasis.
  * - **Status indication:** Displays different color schemes and icons for the legacy statuses (`alarm`, `warning`, `caution`) and the level statuses (`level-critical`, `level-high`, `level-medium`, `level-low`, `level-diagnostic`).
- * - **Acknowledgement mode:** The `mode` property reflects the alert lifecycle state — `acked-active` (default), `unacked-active`, and `unacked-rectified` — driving the blinking/animation treatment of the frame.
+ * - **Acknowledgement mode:** The `mode` property reflects the alert lifecycle state — `acked-active` (default, steady), `unacked-active` (flashes) and `unacked-rectified` (dashed, flashes) — and `flashingSpeed` picks the tempo.
  * - **Content wrapping:** When `wrapContent` is true, the frame wraps and sizes itself to its slotted content rather than overlaying a fixed region.
  * - **Customizable corners:** Each corner can be set to a sharp (non-rounded) edge for integration with other UI elements.
  * - **Slot-based content:** Supports custom icons, labels, and timers in flap variants via named slots.
@@ -156,6 +162,10 @@ export interface AlertFrameConfig {
  * @property sharpEdgeTopRight - If true, the top-right corner will be sharp (not rounded).
  * @property sharpEdgeBottomLeft - If true, the bottom-left corner will be sharp (not rounded).
  * @property sharpEdgeBottomRight - If true, the bottom-right corner will be sharp (not rounded).
+ * @property flashingSpeed - Flash tempo: `default` resolves from the alert type and mode
+ *   (critical/alarm/high fast, warning/medium slow, low very slow, every rectified alert very
+ *   slow, caution and diagnostic fixed), `fast`, `slow`, `very-slow` force a tempo, `fixed`
+ *   never flashes. Acknowledged frames are always steady.
  * @slot - Default slot for main alert content.
  * @slot icon - Custom icon for the flap (large-side-flip, bottom-flip).
  * @slot label - Label text for the bottom flap (bottom-flip only).
@@ -202,6 +212,33 @@ export class ObcAlertFrame extends LitElement {
   @property({type: String}) mode: ObcAlertFrameMode =
     ObcAlertFrameMode.ackedActive;
 
+  @property({type: String}) flashingSpeed: FlashingSpeed =
+    FlashingSpeed.Default;
+
+  protected readonly flashing = new FlashingController(
+    this,
+    () => this.resolvedFlashingSpeed
+  );
+
+  get resolvedFlashingSpeed(): ResolvedFlashingSpeed {
+    switch (this.mode) {
+      case ObcAlertFrameMode.unackedActive:
+        return resolveFlashingSpeed(
+          this.flashingSpeed,
+          this.status,
+          AlertFlashPhase.Active
+        );
+      case ObcAlertFrameMode.unackedRectified:
+        return resolveFlashingSpeed(
+          this.flashingSpeed,
+          this.status,
+          AlertFlashPhase.Rectified
+        );
+      default:
+        return FlashingSpeed.Fixed;
+    }
+  }
+
   @property({type: Boolean, reflect: true}) wrapContent: boolean = false;
 
   @property({type: Boolean, reflect: true}) fullWidth: boolean = false;
@@ -237,48 +274,13 @@ export class ObcAlertFrame extends LitElement {
           'sharp-edge-bottom-left': this.sharpEdgeBottomLeft,
           'sharp-edge-bottom-right': this.sharpEdgeBottomRight,
           [this.mode]: true,
+          ['flash-' + this.resolvedFlashingSpeed]: true,
         })}
       >
         <slot></slot>
         ${this.flap()}
       </div>
     `;
-  }
-
-  private _blinkAnimationCancel?: () => void;
-
-  private syncBlinking() {
-    if (
-      this.mode !== ObcAlertFrameMode.unackedActive &&
-      this._blinkAnimationCancel
-    ) {
-      this._blinkAnimationCancel();
-      this._blinkAnimationCancel = undefined;
-    }
-
-    if (
-      this.mode === ObcAlertFrameMode.unackedActive &&
-      !this._blinkAnimationCancel
-    ) {
-      this._blinkAnimationCancel = blinkingAll(this);
-    }
-  }
-
-  override connectedCallback() {
-    super.connectedCallback();
-    if (this.hasUpdated) {
-      this.syncBlinking();
-    }
-  }
-
-  override updated() {
-    this.syncBlinking();
-  }
-
-  override disconnectedCallback() {
-    super.disconnectedCallback();
-    this._blinkAnimationCancel?.();
-    this._blinkAnimationCancel = undefined;
   }
 
   private flap() {
@@ -383,6 +385,7 @@ export function wrapWithAlertFrame(
     .thickness=${options.thickness ?? ObcAlertFrameThickness.Small}
     .status=${options.status ?? AlertType.Alarm}
     .mode=${options.mode ?? ObcAlertFrameMode.ackedActive}
+    .flashingSpeed=${options.flashingSpeed ?? FlashingSpeed.Default}
     .showIcon=${options.showIcon ?? false}
     .showAlertCategoryIcon=${options.showAlertCategoryIcon ?? true}
     .wrapContent=${true}
