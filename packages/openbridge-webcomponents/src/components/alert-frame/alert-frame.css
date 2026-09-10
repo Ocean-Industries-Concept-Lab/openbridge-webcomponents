@@ -79,10 +79,21 @@
   }
 
   --blink-width-dynamic: calc(var(--blink-width) * var(--blink-on));
+  /* How far the flap and its masks follow the outline outward while on. */
+  --flap-grow: 0px;
 
   &.unacked-active,
   &.unacked-rectified {
     outline-width: calc(var(--thickness) + var(--blink-width-dynamic));
+  }
+
+  &.unacked-active {
+    --flap-grow: var(--blink-width-dynamic);
+  }
+
+  &.unacked-rectified {
+    /* The dashed stroke is centred, so it moves out by half its growth. */
+    --flap-grow: calc(var(--blink-width-dynamic) / 2);
   }
 
   &.unacked-rectified {
@@ -163,7 +174,7 @@
       width: calc(
         var(--ui-components-button-border-radius) + var(--thickness) + 0.5px
       );
-      top: 0;
+      top: calc(-1 * var(--flap-grow));
       left: calc(
         -1 * var(--ui-components-button-border-radius) - var(--thickness)
       );
@@ -174,18 +185,13 @@
         calc(100% - var(--thickness)) 50%,
         50% var(--thickness)
       );
-
-      .unacked-active &,
-      .unacked-rectified & {
-        top: calc(-1 * var(--blink-width-dynamic));
-      }
     }
 
     &.down {
       width: calc(
         var(--ui-components-button-border-radius) + var(--thickness) + 0.5px
       );
-      bottom: 0;
+      bottom: calc(-1 * var(--flap-grow));
       left: calc(
         -1 * var(--ui-components-button-border-radius) - var(--thickness)
       );
@@ -196,11 +202,6 @@
         50% calc(100% - var(--thickness)),
         calc(100% - var(--thickness)) 50%
       );
-
-      .unacked-active &,
-      .unacked-rectified & {
-        bottom: calc(-1 * var(--blink-width-dynamic));
-      }
     }
 
     &.left {
@@ -210,7 +211,7 @@
       top: calc(
         -1 * var(--ui-components-button-border-radius) - var(--thickness)
       );
-      left: 0;
+      left: calc(-1 * var(--flap-grow));
       clip-path: polygon(
         0 0,
         0 100%,
@@ -218,11 +219,6 @@
         50% calc(100% - var(--thickness)),
         var(--thickness) 50%
       );
-
-      .unacked-active &,
-      .unacked-rectified & {
-        left: calc(-1 * var(--blink-width-dynamic));
-      }
 
       .top & {
         top: unset;
@@ -246,7 +242,7 @@
       top: calc(
         -1 * var(--ui-components-button-border-radius) - var(--thickness)
       );
-      right: 0;
+      right: calc(-1 * var(--flap-grow));
       clip-path: polygon(
         100% 0,
         100% 100%,
@@ -267,11 +263,6 @@
           50% var(--thickness),
           calc(100% - var(--thickness)) 50%
         );
-      }
-
-      .unacked-active &,
-      .unacked-rectified & {
-        right: calc(-1 * var(--blink-width-dynamic));
       }
     }
   }
@@ -350,9 +341,34 @@
   }
 }
 
-.unacked-active .flap,
-.unacked-rectified .flap {
-  outline: var(--bg-color) solid var(--blink-width-dynamic);
+/* Grows the flap outward with the outline, never toward the content: shifted
+   copies leave the inner edge where it is (an outline would cross it). */
+.flap.small,
+.flap.large {
+  box-shadow:
+    var(--flap-grow) 0 0 0 var(--bg-color),
+    0 calc(-1 * var(--flap-grow)) 0 0 var(--bg-color),
+    0 var(--flap-grow) 0 0 var(--bg-color),
+    var(--flap-grow) calc(-1 * var(--flap-grow)) 0 0 var(--bg-color),
+    var(--flap-grow) var(--flap-grow) 0 0 var(--bg-color);
+}
+
+.flap.bottom {
+  box-shadow:
+    0 var(--flap-grow) 0 0 var(--bg-color),
+    calc(-1 * var(--flap-grow)) 0 0 0 var(--bg-color),
+    var(--flap-grow) 0 0 0 var(--bg-color),
+    calc(-1 * var(--flap-grow)) var(--flap-grow) 0 0 var(--bg-color),
+    var(--flap-grow) var(--flap-grow) 0 0 var(--bg-color);
+}
+
+.flap.top {
+  box-shadow:
+    0 calc(-1 * var(--flap-grow)) 0 0 var(--bg-color),
+    calc(-1 * var(--flap-grow)) 0 0 0 var(--bg-color),
+    var(--flap-grow) 0 0 0 var(--bg-color),
+    calc(-1 * var(--flap-grow)) calc(-1 * var(--flap-grow)) 0 0 var(--bg-color),
+    var(--flap-grow) calc(-1 * var(--flap-grow)) 0 0 var(--bg-color);
 }
 
 ::slotted([slot="label"]) {
