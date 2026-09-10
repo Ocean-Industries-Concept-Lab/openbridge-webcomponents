@@ -186,7 +186,7 @@ describe('obc-alert-frame flashing lifecycle', () => {
   });
 
   describe('rectified dash', () => {
-    it('draws the 12/6 dash as two svg paths in place of the outline', async () => {
+    it('draws the 12/6 dash as one svg path whose stroke width flashes', async () => {
       const el = await setup(ObcAlertFrameMode.unackedRectified);
       await new Promise((r) => requestAnimationFrame(r));
       await el.updateComplete;
@@ -195,13 +195,20 @@ describe('obc-alert-frame flashing lifecycle', () => {
       const wrapper = root.querySelector('.wrapper') as HTMLElement;
       expect(getComputedStyle(wrapper).outlineStyle).toBe('none');
       const paths = root.querySelectorAll('svg.dash path');
-      expect(paths).toHaveLength(2);
-      for (const path of paths) {
-        expect(getComputedStyle(path).strokeDasharray).toBe('12px, 6px');
-        expect(path.getAttribute('d')).toMatch(/^M[\d.-]+ [\d.-]+ H/);
-      }
-      expect(getComputedStyle(paths[0]).strokeWidth).toBe('2px');
-      expect(getComputedStyle(paths[1]).strokeWidth).toBe('4px');
+      expect(paths).toHaveLength(1);
+      const path = paths[0];
+      expect(getComputedStyle(path).strokeDasharray).toBe('12px, 6px');
+      const d = path.getAttribute('d');
+      expect(d).toMatch(/^M[\d.-]+ [\d.-]+ H/);
+
+      // The geometry must not change between phases, or the dashes drift.
+      const [anim] = el.getAnimations();
+      anim.pause();
+      anim.currentTime = 100;
+      expect(getComputedStyle(path).strokeWidth).toBe('4px');
+      anim.currentTime = 3000;
+      expect(getComputedStyle(path).strokeWidth).toBe('2px');
+      expect(path.getAttribute('d')).toBe(d);
     });
 
     it('removes the svg when the mode leaves unacked-rectified', async () => {

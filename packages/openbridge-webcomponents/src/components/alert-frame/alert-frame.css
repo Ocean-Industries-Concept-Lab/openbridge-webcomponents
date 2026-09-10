@@ -72,11 +72,7 @@
       transition: outline-color 150ms linear;
     }
 
-    .dash-flash {
-      display: none;
-    }
-
-    .dash-steady {
+    .dash path {
       opacity: calc(0.35 + 0.65 * var(--blink-on));
       transition: opacity 150ms linear;
     }
@@ -385,12 +381,7 @@
   stroke-dasharray: 12 6;
 }
 
-.dash-steady {
-  stroke-width: var(--thickness);
-  opacity: var(--blink-off);
-}
-
-.dash-flash {
-  stroke-width: calc(var(--thickness) + var(--blink-width));
-  opacity: var(--blink-on);
+.dash path {
+  /* Same growth as the solid outline, centred on the steady stroke. */
+  stroke-width: calc(var(--thickness) + var(--blink-width-dynamic));
 }

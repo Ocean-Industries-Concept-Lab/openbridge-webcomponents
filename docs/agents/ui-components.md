@@ -52,9 +52,11 @@ fast 400/400, slow 1200/400, very-slow 2800/400 ms on/off. The table lives in
   `--flash-<tempo>-on/off` through a `flash-<tempo>` class.
 - Every animation starts at document time 0, so all elements dip together;
   do not add per-element delays.
-- The rectified frame is an SVG overlay (`svg.dash`, two `roundedRectPath`
-  strokes, `stroke-dasharray: 12 6`) because CSS outlines have no dash array.
-  Its geometry is measured from the wrapper, never derived from props.
+- The rectified frame is an SVG overlay (`svg.dash`, one `roundedRectPath`
+  stroke, `stroke-dasharray: 12 6`) because CSS outlines have no dash array.
+  The flash animates `stroke-width` on that one path; a second, wider path has
+  longer corner arcs and its dashes drift around the frame. Geometry is
+  measured from the wrapper, never derived from props.
 - Visual tests park all Web Animations at 100 ms (see `testing-visual.md`),
   so flashing stories snapshot the on state.
 
