@@ -66,6 +66,17 @@ export enum ObcAlertFrameMode {
 }
 
 /**
+ * How the frame renders the on phase of a flash: `outline` grows the outline
+ * outward by 2 px (the design); `opacity` keeps the width and fades the
+ * outline colour instead. `opacity` exists for design evaluation and may be
+ * removed (#1224).
+ */
+export enum ObcAlertFrameFlashEffect {
+  Outline = 'outline',
+  Opacity = 'opacity',
+}
+
+/**
  * Text size options for flip-flap typography.
  * - `regular`: Standard text size (default).
  * - `large`: Larger text for increased visibility.
@@ -180,6 +191,8 @@ export interface AlertFrameConfig {
  *   (critical/alarm/high fast, warning/medium slow, low very slow, every rectified alert very
  *   slow, caution and diagnostic fixed), `fast`, `slow`, `very-slow` force a tempo, `fixed`
  *   never flashes. Acknowledged frames are always steady.
+ * @property flashEffect - `outline` (default) grows the outline by 2 px while on; `opacity`
+ *   keeps the width and fades the outline colour. `opacity` is a design-evaluation option.
  * @slot - Default slot for main alert content.
  * @slot icon - Custom icon for the flap (large-side-flip, bottom-flip).
  * @slot label - Label text for the bottom flap (bottom-flip only).
@@ -228,6 +241,9 @@ export class ObcAlertFrame extends LitElement {
 
   @property({type: String}) flashingSpeed: FlashingSpeed =
     FlashingSpeed.Default;
+
+  @property({type: String}) flashEffect: ObcAlertFrameFlashEffect =
+    ObcAlertFrameFlashEffect.Outline;
 
   protected readonly flashing = new FlashingController(
     this,
@@ -384,6 +400,7 @@ export class ObcAlertFrame extends LitElement {
           'sharp-edge-bottom-right': this.sharpEdgeBottomRight,
           [this.mode]: true,
           ['flash-' + this.resolvedFlashingSpeed]: true,
+          ['flash-effect-' + this.flashEffect]: true,
         })}
       >
         <slot></slot>
