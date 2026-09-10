@@ -116,7 +116,7 @@ export function canAckFilter(filter: (alert: Alert) => boolean) {
  * @property defaultExpanded - Whether groups start expanded. Set false to open the list collapsed.
  * @fires {ObcAckClickEvent} ack-click - Fired when the user clicks the "ACK" button.
  * @fires {ObcRowClickEvent} row-click - Fired when the user clicks a row.
- * @stable
+ * @experimental
  */
 @customElement('obc-alert-list-details-experimental')
 export class ObcAlertListDetailsExperimental extends LitElement {
