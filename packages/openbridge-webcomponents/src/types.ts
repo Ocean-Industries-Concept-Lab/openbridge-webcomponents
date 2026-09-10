@@ -34,11 +34,11 @@ export enum AlertCategory {
 }
 
 export interface Alert {
-  id: string; // The id of the alert
-  tagId: string; // The tag ID visible to the user
+  id: string;
+  tagId: string;
   source: string;
   text: string;
-  note?: string; // The note of the alert, typically by the operator
+  note?: string;
   acknowledged:
     | false
     | {
@@ -70,7 +70,7 @@ export interface Alert {
   noAck?: boolean;
   noSilence?: boolean;
   category?: AlertCategory;
-  memberOf?: string[]; // Ids of the alerts this alert is grouped under
+  memberOf?: string[];
 }
 
 export function isActive(alert: Alert) {
