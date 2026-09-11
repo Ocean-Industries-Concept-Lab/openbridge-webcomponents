@@ -205,6 +205,36 @@ describe('obc-alert-frame flashing lifecycle', () => {
     ).toBe('1');
   });
 
+  it('eases the outline width between phases in the outline-eased effect', async () => {
+    const el = await setup(ObcAlertFrameMode.unackedActive);
+    el.flashEffect = ObcAlertFrameFlashEffect.OutlineEased;
+    await el.updateComplete;
+    const wrapper = el.shadowRoot!.querySelector('.wrapper') as HTMLElement;
+    const [flash] = el.getAnimations();
+    flash.pause();
+    flash.currentTime = 100;
+    await new Promise((r) => requestAnimationFrame(r));
+    await Promise.all(wrapper.getAnimations().map((a) => a.finished));
+    expect(getComputedStyle(wrapper).outlineWidth).toBe('4px');
+
+    flash.currentTime = 500;
+    await new Promise((r) => requestAnimationFrame(r));
+    const transition = wrapper
+      .getAnimations()
+      .find(
+        (a) => (a as CSSTransition).transitionProperty === 'outline-width'
+      ) as CSSTransition | undefined;
+    expect(transition).toBeDefined();
+    expect((transition!.effect as KeyframeEffect).getTiming().duration).toBe(
+      150
+    );
+    transition!.pause();
+    transition!.currentTime = 75;
+    const midway = parseFloat(getComputedStyle(wrapper).outlineWidth);
+    expect(midway).toBeGreaterThan(2);
+    expect(midway).toBeLessThan(4);
+  });
+
   describe('rectified dash', () => {
     it('draws the 12/6 dash as one svg path whose stroke width flashes', async () => {
       const el = await setup(ObcAlertFrameMode.unackedRectified);
