@@ -195,30 +195,30 @@
  * even though both sit in the same large-tier readout.
  * `--obc-readout-block-icon-size` is the consumer escape hatch. */
 .block.size-small {
-  gap: var(--instrument-components-readout-new-general-regular-icon-gap);
+  gap: var(--instrument-components-readout-general-regular-icon-gap);
 }
 .block.size-medium {
-  gap: var(--instrument-components-readout-new-general-medium-icon-gap);
+  gap: var(--instrument-components-readout-general-medium-icon-gap);
 }
 .block.size-large {
-  gap: var(--instrument-components-readout-new-general-large-icon-gap);
+  gap: var(--instrument-components-readout-general-large-icon-gap);
 }
 
 .block.value-size-xs,
 .block.value-size-s {
   --_block-icon-size: var(
-    --instrument-components-readout-new-general-regular-icon-size
+    --instrument-components-readout-general-regular-icon-size
   );
 }
 .block.value-size-m {
   --_block-icon-size: var(
-    --instrument-components-readout-new-general-medium-icon-size
+    --instrument-components-readout-general-medium-icon-size
   );
 }
 .block.value-size-l,
 .block.value-size-xl {
   --_block-icon-size: var(
-    --instrument-components-readout-new-general-large-icon-size
+    --instrument-components-readout-general-large-icon-size
   );
 }
 .block .block-icon {
