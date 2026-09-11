@@ -138,6 +138,19 @@ All other CSS code should be kept in the `*.css` files in the component folders.
 > 2. Re-run the plugin (Figma → Dev Mode → Inspect → "css variables export").
 > 3. Replace `variables.css` wholesale with the plugin output and commit.
 >
+> The current plugin output carries three things the repo does not ship;
+> strip them after pasting and diff the semantic content, not the text:
+>
+> - the `@keyframes warning-blink` block and the trailing
+>   `:root { animation: … }` rule — the root animation recalculates every
+>   node's style each second and was removed in #1116 (#1134); keep the four
+>   `@property` registrations
+> - the `Component-size` modes whose names carry spaces (`40px visual
+target beta`, `48px visual target beta`, `glove beta`) — they export as
+>   descendant selectors no element can match
+> - the `desktop` mode — a 40 px touch target, below the floor the size
+>   classes guarantee, and not yet a documented size class
+>
 > The same plugin also produces:
 >
 > - **`script/figmavariables.json`** (via its `variables` codegen) — a
@@ -481,9 +494,9 @@ per-severity period:
 | Warning  | 4000 ms |
 | Low      | 8000 ms |
 
-Call sites: `alert-frame`, `alert-icon` and `alert-button`. (Before PR #1116
-this was a shared `@keyframes warning-blink` in `variables.css`; that keyframes
-no longer exists.)
+Call sites: `alert-frame`, `alert-icon` and `alert-button`. The plugin still
+emits the old `@keyframes warning-blink` and a `:root { animation: … }` rule;
+strip both when regenerating `variables.css` (#1116, #1134).
 
 Components apply the animation by binding opacity to these properties:
 
