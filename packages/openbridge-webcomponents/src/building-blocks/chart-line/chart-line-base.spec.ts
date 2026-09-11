@@ -743,3 +743,25 @@ describe('slotted scale keeps its own main-tickmark labels (#1191)', () => {
     expect(left.labelThickness).toBe(60);
   });
 });
+
+describe('range labels on a stacked chart (#1191)', () => {
+  it('labels the accumulated range, not the widest series', async () => {
+    const chart = await mountPlain(
+      (c) => {
+        c.rangeLabels = RangeLabels.y;
+        (c as ObcAreaGraph & {stacked: boolean}).stacked = true;
+        c.datasets = [
+          {label: 'A', data: [10, 20, 15]},
+          {label: 'B', data: [30, 40, 35]},
+        ];
+      },
+      {width: 120, height: 72}
+    );
+
+    const {min, max} = chartRange(chart, 'y');
+    expect(drawnRangeLabels(chart).map((l) => l.text)).toEqual([
+      String(max),
+      String(min),
+    ]);
+  });
+});
