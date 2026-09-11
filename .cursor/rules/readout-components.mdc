@@ -132,17 +132,32 @@ formatter-only fix leaves the last two throwing.
 ### 4. The reserver getter is evaluated eagerly
 
 ```ts
-const reserver = isTextMode
+const baseReserver = isTextMode
   ? (this.spaceReserver ?? "")
-  : this.hintedZeros
-    ? this.reserverText
-    : this.widerReserver(this.spaceReserver, this.reserverText);
+  : this.widerReserver(this.spaceReserver, this.reserverText);
 ```
 
 `this.reserverText` is an **argument** to `widerReserver`, so the getter runs
-regardless of which branch wins. Priority decides which _result_ is used, never
-which getter _executes_ — setting `spaceReserver` does not route around a bad
-`maxDigits`. Keep input normalisation independent of these priority rules.
+regardless of which result wins. The wider-one-wins rule decides which
+_result_ is used, never which getter _executes_ — setting `spaceReserver`
+does not route around a bad `maxDigits`. Keep input normalisation independent
+of this rule. It applies under `hintedZeros` too, so a sign-column reserver
+(`"-000.0"`, from `obc-readout-list` or a consumer) is honoured on hinted
+blocks; `hasSignSpacer` prefixes the sign column itself unless the explicit
+reserver already leads with one.
+
+### 4b. Hinted zeros and the sign never mix
+
+The sign never consumes a hinted zero: the integer part always fills to
+`maxDigits` and a negative value prepends its sign (`maxDigits` 3: `12.3` →
+`012.3`, `-12.3` → `-012.3`), so a negative reading is one character wider.
+Where the width must not change across zero, `hasSignSpacer` reserves a
+minus-sign column — an invisible ASCII `-` holds it open while the value is
+non-negative (`splitHintedValue` hoists a real sign ahead of the muted
+zeros). Inside `obc-readout-list` the shared column opens automatically once
+any row shows or declares a sign, and closes when none remains. An
+unavailable value is never padded with zeros; under `hintedZeros` its dashes
+fill the whole reserved width instead (see the decisions below).
 
 ### 5. `obc-readout-list` owns the reservers
 
@@ -242,10 +257,16 @@ Decisions carried into code from the 6.1 review (2026-08):
   the value's container height (`--_readout-primary-height`,
   space-between), so the label cap top and unit cap bottom align with the
   value's cap edges.
-- Unavailable placeholder: short (`-.--` for `000.00`), right-aligned in the
-  reserved width, drawn with U+2012 FIGURE DASH because it is digit-width
+- Unavailable placeholder: short (`-.--` for `000.00`) without hinted zeros,
+  right-aligned in the reserved width; **with `hintedZeros` the dashes fill
+  the whole reserve** (`---.--`), taking the positions the zeros would. Both
+  drawn with U+2012 FIGURE DASH because it is digit-width
   (`readout-formatters.ts` carries the measurements). Settled — do not
   re-open the dash alternatives.
+- Hinted zeros + negatives (settled 2026-09): the sign is prepended and never
+  consumes a zero (`012.3` / `-012.3`); the opt-in sign column
+  (`hasSignSpacer`, mirrored by the list's automatic shared reserver) is what
+  keeps widths stable across zero — see invariant 4b.
 - Two icon systems, on purpose. An **alert frame** flap carries the
   `obi-*-badge` glyphs — single-colour silhouettes on the flap's status
   colour (triangle alarm, circle warning, square caution, hexagon critical),
@@ -267,7 +288,6 @@ Decisions carried into code from the 6.1 review (2026-08):
 
 Do not treat these as settled when editing:
 
-- **Hinted zeros + negative values** are under design review.
 - `obc-readout` and `obc-readout-list-item` are layout variants of one API and
   **may merge**. Keep shared behaviour in `readout-shared.ts` so the merge stays
   cheap — do not re-inline it per component.

@@ -64,6 +64,7 @@ type ReadoutStoryArgs = {
   'options.value.weight': ObcTextboxFontWeight;
   'options.value.hasIcon': boolean;
   'options.value.hintedZeros': boolean;
+  'options.value.hasSignSpacer': boolean;
   'options.setpoint.interaction': ReadoutSetpointInteraction;
   'options.setpoint.touching': boolean;
   'options.advice.category': ReadoutAdviceCategory;
@@ -303,6 +304,7 @@ const defaultArgs: ReadoutStoryArgs = {
   'options.value.weight': ObcTextboxFontWeight.regular,
   'options.value.hasIcon': false,
   'options.value.hintedZeros': false,
+  'options.value.hasSignSpacer': false,
   'options.setpoint.interaction': ReadoutSetpointInteraction.alwaysVisible,
   'options.setpoint.touching': false,
   'options.advice.category': ReadoutAdviceCategory.regular,
@@ -336,6 +338,7 @@ function argsToOptions(args: ReadoutStoryArgs): StoryOptions {
       weight: args['options.value.weight'],
       hasIcon: args['options.value.hasIcon'],
       hintedZeros: args['options.value.hintedZeros'],
+      hasSignSpacer: args['options.value.hasSignSpacer'],
     },
     setpoint: {
       interaction: args['options.setpoint.interaction'],
@@ -487,6 +490,12 @@ const meta = {
     'options.value.hintedZeros': {
       name: 'Value Hinted Zeros',
       if: {arg: 'options.maxDigits', truthy: true},
+      table: {category: 'Value'},
+    },
+    'options.value.hasSignSpacer': {
+      name: 'Value Sign Spacer',
+      description:
+        'Reserve a minus-sign column so the width does not change across zero.',
       table: {category: 'Value'},
     },
     'options.setpoint.interaction': {

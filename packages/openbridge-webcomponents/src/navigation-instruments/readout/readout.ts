@@ -625,6 +625,7 @@ export class ObcReadout extends LitElement {
     enhanced: boolean;
     weight: ObcTextboxFontWeight;
     hintedZeros: boolean;
+    hasSignSpacer?: boolean;
     spaceReserver?: string;
     off?: boolean;
     hasDegree?: boolean;
@@ -662,6 +663,7 @@ export class ObcReadout extends LitElement {
         .fractionDigits=${this.fractionDigits}
         .maxDigits=${this.maxDigits}
         .hintedZeros=${config.hintedZeros}
+        .hasSignSpacer=${config.hasSignSpacer ?? false}
         .spaceReserver=${config.spaceReserver}
         .off=${config.off ?? false}
         .offText=${this.offText}
@@ -772,6 +774,7 @@ export class ObcReadout extends LitElement {
       enhanced: false,
       weight: ObcTextboxFontWeight.regular,
       hintedZeros: this.adviceOptions?.hintedZeros ?? false,
+      hasSignSpacer: this.adviceOptions?.hasSignSpacer ?? false,
       spaceReserver: this.adviceOptions?.spaceReserver,
       dataQuality: this.adviceOptions?.dataQuality,
       alert: this.adviceOptions?.alert,
@@ -790,6 +793,7 @@ export class ObcReadout extends LitElement {
       enhanced: this.rowEnhanced,
       weight: this.setpointWeight,
       hintedZeros: this.setpointOptions?.hintedZeros ?? false,
+      hasSignSpacer: this.setpointOptions?.hasSignSpacer ?? false,
       spaceReserver: this.setpointOptions?.spaceReserver,
       touching: this.setpointTouching,
       hidePhase: this.setpointHidePhase,
@@ -822,6 +826,7 @@ export class ObcReadout extends LitElement {
           enhanced: this.rowEnhanced,
           weight: this.valueWeight,
           hintedZeros: this.valueOptions?.hintedZeros ?? false,
+          hasSignSpacer: this.valueOptions?.hasSignSpacer ?? false,
           spaceReserver: this.valueOptions?.spaceReserver,
           off: this.off,
           hasIcon: this.valueOptions?.hasIcon ?? false,
@@ -1210,6 +1215,7 @@ export class ObcReadout extends LitElement {
             // renders on the actual value only), so the ghost mirrors it.
             weight: ObcTextboxFontWeight.semibold,
             hintedZeros: this.setpointOptions?.hintedZeros ?? false,
+            hasSignSpacer: this.setpointOptions?.hasSignSpacer ?? false,
             spaceReserver: this.setpointOptions?.spaceReserver,
             alert: this.setpointOptions?.alert,
             ghost: true,
@@ -1222,6 +1228,7 @@ export class ObcReadout extends LitElement {
             enhanced: false,
             weight: this.valueWeight,
             hintedZeros: this.valueOptions?.hintedZeros ?? false,
+            hasSignSpacer: this.valueOptions?.hasSignSpacer ?? false,
             spaceReserver: this.valueOptions?.spaceReserver,
             off: this.off,
             hasIcon: this.valueOptions?.hasIcon ?? false,
