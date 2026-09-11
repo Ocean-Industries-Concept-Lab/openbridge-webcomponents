@@ -644,3 +644,102 @@ describe('gauge-trend keeps its own scale range (#1214)', () => {
     });
   });
 });
+
+describe('slotted scale keeps its own main-tickmark labels (#1191)', () => {
+  /**
+   * Compact mode borrows the flag to label a short scale; a scale the chart
+   * never compacted must keep the value its consumer set.
+   */
+  const mountWithLeft = async (
+    size: {width: number; height: number},
+    configureBar: (bar: ObcBarVertical) => void
+  ) => {
+    document.documentElement.classList.add('obc-component-size-regular');
+    const host = document.createElement('div');
+    host.style.cssText = `width: ${size.width}px`;
+    document.body.appendChild(host);
+    mounted.push(host);
+
+    const chart = document.createElement('obc-area-graph');
+    chart.width = size.width;
+    chart.height = size.height;
+    chart.data = numberData([3, 7]);
+
+    const left = document.createElement('obc-bar-vertical') as ObcBarVertical;
+    left.slot = 'left-scale';
+    left.side = ExternalScaleSide.left;
+    configureBar(left);
+    chart.appendChild(left);
+
+    host.appendChild(chart);
+    await chart.updateComplete;
+    await frames(20);
+    return {chart, left};
+  };
+
+  it('leaves an opted-in scale alone above the threshold', async () => {
+    const {left} = await mountWithLeft({width: 600, height: 300}, (bar) => {
+      bar.showMainTickmarkLabels = true;
+    });
+    expect(left.showMainTickmarkLabels).toBe(true);
+  });
+
+  it('restores the consumer value after a compact spell', async () => {
+    const {chart, left} = await mountWithLeft(
+      {width: 600, height: 300},
+      (bar) => {
+        bar.showMainTickmarkLabels = true;
+      }
+    );
+
+    chart.rangeLabels = RangeLabels.y;
+    chart.height = 120;
+    await chart.updateComplete;
+    await frames(20);
+    expect(left.showMainTickmarkLabels).toBe(true);
+
+    chart.height = 300;
+    await chart.updateComplete;
+    await frames(20);
+    expect(left.showMainTickmarkLabels).toBe(true);
+  });
+
+  it('returns a scale that never opted in to false after compacting', async () => {
+    const {chart, left} = await mountWithLeft(
+      {width: 600, height: 300},
+      () => {}
+    );
+
+    chart.rangeLabels = RangeLabels.y;
+    chart.height = 120;
+    await chart.updateComplete;
+    await frames(20);
+    expect(left.showMainTickmarkLabels).toBe(true);
+
+    chart.height = 300;
+    await chart.updateComplete;
+    await frames(20);
+    expect(left.showMainTickmarkLabels).toBe(false);
+  });
+
+  /**
+   * In pixel mode a size change does not go through `updateComputedDimensions()`,
+   * so before the threshold-crossing branch the cascade never re-ran and the
+   * scale kept its compact band after the chart grew back.
+   */
+  it('gives the band back when the chart grows past the threshold', async () => {
+    const {chart, left} = await mountWithLeft(
+      {width: 600, height: 120},
+      () => {}
+    );
+    chart.rangeLabels = RangeLabels.y;
+    await chart.updateComplete;
+    await frames(20);
+    expect(left.labelThickness).toBeLessThan(60);
+
+    chart.height = 300;
+    await chart.updateComplete;
+    await frames(30);
+    expect(left.labelThickness).toBe(60);
+  });
+});
