@@ -520,7 +520,7 @@ export const SemitransparentExternalScales: Story = {
 };
 
 /**
- * Two identical configurations fed data an order of magnitude apart. Their
+ * Two identical configurations fed data forty times apart. Their
  * frames must line up exactly — a drift between them means the plot rectangle
  * has started following the data again (#1214).
  */
@@ -544,6 +544,7 @@ const renderFixedFrameChart = (
     .showGridX=${_args.showGridX}
     .showGridY=${_args.showGridY}
     .priority=${_args.priority}
+    .rangeLabels=${_args.rangeLabels}
     .showDebugOverlay=${_args.showDebugOverlay}
     .width=${_args.width}
     .height=${_args.height}
@@ -869,6 +870,7 @@ export const RealtimeFixedFrame: Story = {
     chart.width = _args.width;
     chart.height = _args.height;
     chart.priority = _args.priority;
+    chart.rangeLabels = _args.rangeLabels;
 
     // A slotted horizontal scale labels raw axis values, so the x axis carries
     // minutes-ago rather than epoch milliseconds (#1219).
@@ -900,23 +902,26 @@ export const RealtimeFixedFrame: Story = {
 
     const windowMinutes = 12;
 
+    // The window is declared rather than inferred from the data, so the buffer
+    // starts empty and fills into the right-hand slice instead of stretching
+    // across the full width (#1218).
+    chart.xAxis = {min: -(windowMinutes - 1), max: 0};
+
     // Values roam the whole range, unlike Realtime (Shifting) which repeats a
-    // fixed set: here the frame holds because the range is pinned.
+    // fixed set: here the frame holds because both ranges are pinned.
     const nextValue = () => Math.random() * 10;
 
-    // Re-basing x to minutes-ago on every tick keeps both the data extent and
-    // the tick labels constant, which the x axis cannot yet do on its own.
-    let values = Array.from({length: windowMinutes}, nextValue);
+    let values: number[] = [];
     const publish = () => {
       chart.data = values.map((value, i) => ({
-        x: i - (windowMinutes - 1),
+        x: i - (values.length - 1),
         value,
       }));
     };
     publish();
 
     const interval = setInterval(() => {
-      values = [...values.slice(1), nextValue()];
+      values = [...values, nextValue()].slice(-windowMinutes);
       publish();
     }, 2000);
 
