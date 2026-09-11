@@ -2,6 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {
   ObcTable,
   ObcTableCellData,
+  ObcTableExpandToggleEvent,
   ObcTableRow,
   ObcTableCellType,
 } from './table.js';
@@ -687,5 +688,283 @@ export const Interactive: Story = {
         ></obc-table>
       </div>
     `;
+  },
+};
+
+interface HierarchyNode {
+  id: string;
+  system: string;
+  location: string;
+  state: string;
+  members?: HierarchyNode[];
+}
+
+const systemTree: HierarchyNode[] = [
+  {
+    id: 'propulsion',
+    system: 'Propulsion',
+    location: 'Engine room',
+    state: 'Running',
+    members: [
+      {
+        id: 'main-engine',
+        system: 'Main engine',
+        location: 'Engine room',
+        state: 'Running',
+        members: [
+          {
+            id: 'lube-oil',
+            system: 'Lube oil',
+            location: 'Engine room',
+            state: 'Nominal',
+          },
+          {
+            id: 'cooling-water',
+            system: 'Cooling water',
+            location: 'Engine room',
+            state: 'Nominal',
+          },
+        ],
+      },
+      {
+        id: 'shaft-generator',
+        system: 'Shaft generator',
+        location: 'Engine room',
+        state: 'Standby',
+      },
+    ],
+  },
+  {
+    id: 'power',
+    system: 'Power',
+    location: 'Switchboard',
+    state: 'Running',
+    members: [
+      {
+        id: 'aux-engine-1',
+        system: 'Aux engine 1',
+        location: 'Switchboard',
+        state: 'Running',
+      },
+      {
+        id: 'aux-engine-2',
+        system: 'Aux engine 2',
+        location: 'Switchboard',
+        state: 'Stopped',
+      },
+    ],
+  },
+  {
+    id: 'ballast',
+    system: 'Ballast',
+    location: 'Pump room',
+    state: 'Idle',
+  },
+];
+
+const collapsedRowIds = new Set<string>(['power']);
+
+const hierarchyRows = (
+  nodes: HierarchyNode[],
+  level = 0,
+  parentId?: string
+): ObcTableRow[] => {
+  const rows: ObcTableRow[] = [];
+  for (const node of nodes) {
+    const expanded = !collapsedRowIds.has(node.id);
+    rows.push({
+      id: node.id,
+      parentId,
+      level,
+      expandable: (node.members?.length ?? 0) > 0,
+      expanded,
+      system: {type: ObcTableCellType.Regular, text: node.system},
+      location: {type: ObcTableCellType.Regular, text: node.location},
+      state: {type: ObcTableCellType.Regular, text: node.state, neutral: true},
+    });
+    if (expanded && node.members) {
+      rows.push(...hierarchyRows(node.members, level + 1, node.id));
+    }
+  }
+  return rows;
+};
+
+const compareCellText = (a: ObcTableCellData, b: ObcTableCellData) => {
+  const text = (value: ObcTableCellData) =>
+    value?.type === ObcTableCellType.Regular ? String(value.text ?? '') : '';
+  return text(a).localeCompare(text(b));
+};
+
+export const Hierarchy: Story = {
+  args: {
+    width: 700,
+    columns: [
+      {
+        label: 'System',
+        key: 'system',
+        sortable: true,
+        compareFunction: compareCellText,
+      },
+      {label: 'Location', key: 'location'},
+      {label: 'State', key: 'state'},
+    ],
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Rows form a tree through `parentId` and `level`. The table draws the indent and the chevron and reports `expand-toggle`; the story owns which rows are collapsed and passes only the visible ones. Sorting the System column reorders each sibling set on its own, so a child never leaves its parent.',
+      },
+    },
+  },
+  render: (args) => {
+    return html`<obc-table
+      .data=${hierarchyRows(systemTree)}
+      .columns=${args.columns}
+      .striped=${true}
+      @expand-toggle=${(e: ObcTableExpandToggleEvent) => {
+        if (e.detail.expanded) {
+          collapsedRowIds.delete(e.detail.rowId);
+        } else {
+          collapsedRowIds.add(e.detail.rowId);
+        }
+        (e.target as ObcTable).data = hierarchyRows(systemTree);
+      }}
+    ></obc-table>`;
+  },
+};
+
+const cyclicRows = (): ObcTableRow[] => [
+  {
+    id: 'standalone',
+    level: 0,
+    system: {type: ObcTableCellType.Regular, text: 'Ballast'},
+    parent: {type: ObcTableCellType.Regular, text: '—', neutral: true},
+  },
+  {
+    id: 'pump-a',
+    parentId: 'pump-b',
+    level: 1,
+    system: {type: ObcTableCellType.Regular, text: 'Pump A'},
+    parent: {type: ObcTableCellType.Regular, text: 'pump-b', neutral: true},
+  },
+  {
+    id: 'pump-b',
+    parentId: 'pump-a',
+    level: 1,
+    system: {type: ObcTableCellType.Regular, text: 'Pump B'},
+    parent: {type: ObcTableCellType.Regular, text: 'pump-a', neutral: true},
+  },
+];
+
+export const CyclicHierarchy: Story = {
+  args: {width: 700},
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Regression guard. Both tables get the same three rows, two of which name each other as `parentId`. `sortWithinSiblings()` walks down from rows whose `parentId` is absent from the data, so the cycle yields no root; the rows it cannot reach are re-entered as a top-level sibling set instead of being dropped. Both tables list all three rows, in the sort order each is given. Make all three rows cyclic and all three still render.',
+      },
+    },
+  },
+  render: (args) => {
+    const columns = (sorted: boolean) => [
+      {
+        label: 'System',
+        key: 'system',
+        ...(sorted
+          ? {
+              sortable: true as const,
+              sortDirection: 'asc' as const,
+              compareFunction: compareCellText,
+            }
+          : {}),
+      },
+      {label: 'Declared parentId', key: 'parent'},
+    ];
+    return html`<div style="display: grid; gap: 24px; width: ${args.width}px;">
+      <div>
+        <p>Unsorted</p>
+        <obc-table .data=${cyclicRows()} .columns=${columns(false)}></obc-table>
+      </div>
+      <div>
+        <p>Sorted on System — the cyclic rows are recovered</p>
+        <obc-table .data=${cyclicRows()} .columns=${columns(true)}></obc-table>
+      </div>
+    </div>`;
+  },
+};
+
+const cycleWithDescendantRows = (): ObcTableRow[] => [
+  {
+    id: 'standalone',
+    level: 0,
+    system: {type: ObcTableCellType.Regular, text: 'Ballast'},
+    parent: {type: ObcTableCellType.Regular, text: '—', neutral: true},
+  },
+  {
+    id: 'pump-a',
+    parentId: 'pump-b',
+    level: 1,
+    system: {type: ObcTableCellType.Regular, text: 'Pump A'},
+    parent: {type: ObcTableCellType.Regular, text: 'pump-b', neutral: true},
+  },
+  {
+    id: 'pump-b',
+    parentId: 'pump-a',
+    level: 1,
+    system: {type: ObcTableCellType.Regular, text: 'Pump B'},
+    parent: {type: ObcTableCellType.Regular, text: 'pump-a', neutral: true},
+  },
+  {
+    id: 'pump-sensor',
+    parentId: 'pump-a',
+    level: 2,
+    system: {type: ObcTableCellType.Regular, text: 'Pump sensor'},
+    parent: {type: ObcTableCellType.Regular, text: 'pump-a', neutral: true},
+  },
+];
+
+export const CycleWithDescendants: Story = {
+  args: {width: 700},
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Regression guard for the blast radius of a cycle. Pump sensor has one ordinary parent and is in no cycle, but its parent sits in one, so recovering only the cycle members would still lose it. All four rows render in both tables; Pump sensor stays under Pump A, because the recovered rows are walked, not flattened.',
+      },
+    },
+  },
+  render: (args) => {
+    const columns = (sorted: boolean) => [
+      {
+        label: 'System',
+        key: 'system',
+        ...(sorted
+          ? {
+              sortable: true as const,
+              sortDirection: 'asc' as const,
+              compareFunction: compareCellText,
+            }
+          : {}),
+      },
+      {label: 'Declared parentId', key: 'parent'},
+    ];
+    return html`<div style="display: grid; gap: 24px; width: ${args.width}px;">
+      <div>
+        <p>Unsorted</p>
+        <obc-table
+          .data=${cycleWithDescendantRows()}
+          .columns=${columns(false)}
+        ></obc-table>
+      </div>
+      <div>
+        <p>Sorted on System — the cycle and its descendant are recovered</p>
+        <obc-table
+          .data=${cycleWithDescendantRows()}
+          .columns=${columns(true)}
+        ></obc-table>
+      </div>
+    </div>`;
   },
 };

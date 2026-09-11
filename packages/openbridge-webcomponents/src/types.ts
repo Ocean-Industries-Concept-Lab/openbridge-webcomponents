@@ -34,11 +34,11 @@ export enum AlertCategory {
 }
 
 export interface Alert {
-  id: string; // The id of the alert
-  tagId: string; // The tag ID visible to the user
+  id: string;
+  tagId: string;
   source: string;
   text: string;
-  note?: string; // The note of the alert, typically by the operator
+  note?: string;
   acknowledged:
     | false
     | {
@@ -67,8 +67,10 @@ export interface Alert {
         blockedEndTime?: Date;
         blockedBy?: string;
       };
-  noAck?: boolean; // If true, the alarm has no ack button
+  noAck?: boolean;
+  noSilence?: boolean;
   category?: AlertCategory;
+  memberOf?: string[];
 }
 
 export function isActive(alert: Alert) {
