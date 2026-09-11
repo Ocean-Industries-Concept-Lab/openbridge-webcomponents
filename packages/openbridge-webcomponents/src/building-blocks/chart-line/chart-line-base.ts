@@ -833,8 +833,13 @@ export class ObcChartLineBase extends LitElement {
       id = axis.id ?? `y${index}`;
     }
     const extent = extents.get(id);
-    const min = axis?.min ?? extent?.min;
-    const max = axis?.max ?? extent?.max;
+    // Stacking makes the axis span the accumulated series, which a per-dataset
+    // extent cannot describe, so the laid-out scale is the only source for it.
+    const stackedScale = this.shouldStack()
+      ? this.chart?.scales[id]
+      : undefined;
+    const min = axis?.min ?? stackedScale?.min ?? extent?.min;
+    const max = axis?.max ?? stackedScale?.max ?? extent?.max;
     return min !== undefined && max !== undefined ? {min, max} : undefined;
   }
 
