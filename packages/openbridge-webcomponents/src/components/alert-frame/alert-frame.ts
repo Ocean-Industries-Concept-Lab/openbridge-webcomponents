@@ -6,7 +6,7 @@ import {
   TemplateResult,
   HTMLTemplateResult,
 } from 'lit';
-import {property} from 'lit/decorators.js';
+import {property, query, state} from 'lit/decorators.js';
 import compentStyle from './alert-frame.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import '../../icons/icon-alarm-badge.js';
@@ -15,12 +15,21 @@ import '../../icons/icon-caution-badge.js';
 import '../../icons/icon-critical-badge.js';
 import './diagnostic-badge.js';
 import {customElement} from '../../decorator.js';
-import {AlertType} from '../../types.js';
+import {
+  AlertType,
+  FlashingSpeed,
+  type ResolvedFlashingSpeed,
+} from '../../types.js';
 import {
   getAlertBadgeComponent,
   AlertBadgeComponent,
 } from '../../alert-severity.js';
-import {blinkingAll} from '../../palettes/blinking.js';
+import {FlashingController} from '../../palettes/flashing-controller.js';
+import {
+  roundedRectPath,
+  type RoundedRect,
+} from '../../svghelpers/rounded-rect.js';
+import {AlertFlashPhase, resolveFlashingSpeed} from '../../alert-severity.js';
 
 export {AlertType as ObcAlertFrameStatus} from '../../types.js';
 
@@ -57,6 +66,17 @@ export enum ObcAlertFrameMode {
 }
 
 /**
+ * How the frame renders the on phase of a flash: `outline` grows the outline
+ * outward by 2 px in one step (the design); `outline-eased` grows it the same
+ * way over a 50 ms transition. The eased variant exists for design evaluation
+ * and may be removed (#1224).
+ */
+export enum ObcAlertFrameFlashEffect {
+  Outline = 'outline',
+  OutlineEased = 'outline-eased',
+}
+
+/**
  * Text size options for flip-flap typography.
  * - `regular`: Standard text size (default).
  * - `large`: Larger text for increased visibility.
@@ -66,11 +86,33 @@ export enum AlertFrameTextSize {
   Large = 'large',
 }
 
+/** Wrapper geometry the dashed overlay is drawn from; measured, never derived from props. */
+interface DashBox {
+  width: number;
+  height: number;
+  thickness: number;
+  radii: RoundedRect['radii'];
+}
+
+/** Room the svg leaves around the box for the stroke's on-phase growth. */
+const DASH_FLASH_GROWTH_PX = 2;
+
+function sameDashBox(a: DashBox, b: DashBox | undefined): boolean {
+  return (
+    b !== undefined &&
+    a.width === b.width &&
+    a.height === b.height &&
+    a.thickness === b.thickness &&
+    a.radii.every((r, i) => r === b.radii[i])
+  );
+}
+
 export interface AlertFrameConfig {
   type?: ObcAlertFrameType;
   thickness?: ObcAlertFrameThickness;
   status?: AlertType;
   mode?: ObcAlertFrameMode;
+  flashingSpeed?: FlashingSpeed;
   textSize?: AlertFrameTextSize;
   showIcon?: boolean;
   showAlertCategoryIcon?: boolean;
@@ -89,7 +131,7 @@ export interface AlertFrameConfig {
  *   - `bottom-flip`: Adds a bottom flap with a status icon, label, and timer slots.
  * - **Thickness options:** Choose between `small` (thin border) and `large` (thick border) for visual emphasis.
  * - **Status indication:** Displays different color schemes and icons for the legacy statuses (`alarm`, `warning`, `caution`) and the level statuses (`level-critical`, `level-high`, `level-medium`, `level-low`, `level-diagnostic`).
- * - **Acknowledgement mode:** The `mode` property reflects the alert lifecycle state — `acked-active` (default), `unacked-active`, and `unacked-rectified` — driving the blinking/animation treatment of the frame.
+ * - **Acknowledgement mode:** The `mode` property reflects the alert lifecycle state — `acked-active` (default, steady), `unacked-active` (flashes) and `unacked-rectified` (dashed, flashes) — and `flashingSpeed` picks the tempo.
  * - **Content wrapping:** When `wrapContent` is true, the frame wraps and sizes itself to its slotted content rather than overlaying a fixed region.
  * - **Customizable corners:** Each corner can be set to a sharp (non-rounded) edge for integration with other UI elements.
  * - **Slot-based content:** Supports custom icons, labels, and timers in flap variants via named slots.
@@ -156,6 +198,12 @@ export interface AlertFrameConfig {
  * @property sharpEdgeTopRight - If true, the top-right corner will be sharp (not rounded).
  * @property sharpEdgeBottomLeft - If true, the bottom-left corner will be sharp (not rounded).
  * @property sharpEdgeBottomRight - If true, the bottom-right corner will be sharp (not rounded).
+ * @property flashingSpeed - Flash tempo: `default` resolves from the alert type and mode
+ *   (critical/alarm/high fast, warning/medium slow, low very slow, every rectified alert very
+ *   slow, caution and diagnostic fixed), `fast`, `slow`, `very-slow` force a tempo, `fixed`
+ *   never flashes. Acknowledged frames are always steady.
+ * @property flashEffect - `outline` (default) grows the outline by 2 px while on in one step;
+ *   `outline-eased` grows it over a 50 ms transition, a design-evaluation option.
  * @slot - Default slot for main alert content.
  * @slot icon - Custom icon for the flap (large-side-flip, bottom-flip).
  * @slot label - Label text for the bottom flap (bottom-flip only).
@@ -202,6 +250,129 @@ export class ObcAlertFrame extends LitElement {
   @property({type: String}) mode: ObcAlertFrameMode =
     ObcAlertFrameMode.ackedActive;
 
+  @property({type: String}) flashingSpeed: FlashingSpeed =
+    FlashingSpeed.Default;
+
+  @property({type: String}) flashEffect: ObcAlertFrameFlashEffect =
+    ObcAlertFrameFlashEffect.Outline;
+
+  protected readonly flashing = new FlashingController(
+    this,
+    () => this.resolvedFlashingSpeed
+  );
+
+  @state() private dashBox?: DashBox;
+
+  @query('.wrapper') private wrapper?: HTMLElement;
+
+  private dashObserver?: ResizeObserver;
+
+  private measureDash = (): void => {
+    const wrapper = this.wrapper;
+    if (!wrapper) {
+      return;
+    }
+    const style = getComputedStyle(wrapper);
+    const px = (value: string) => parseFloat(value) || 0;
+    const box: DashBox = {
+      width: wrapper.offsetWidth,
+      height: wrapper.offsetHeight,
+      thickness: px(style.getPropertyValue('--thickness')),
+      radii: [
+        px(style.borderTopLeftRadius),
+        px(style.borderTopRightRadius),
+        px(style.borderBottomRightRadius),
+        px(style.borderBottomLeftRadius),
+      ],
+    };
+    // Setting state from updated() re-renders; only do it for a real change.
+    if (!sameDashBox(box, this.dashBox)) {
+      this.dashBox = box;
+    }
+  };
+
+  override connectedCallback() {
+    super.connectedCallback();
+    if (this.hasUpdated) {
+      this.requestUpdate();
+    }
+  }
+
+  override updated() {
+    const wantsDash =
+      this.mode === ObcAlertFrameMode.unackedRectified && this.isConnected;
+    if (wantsDash && !this.dashObserver && this.wrapper) {
+      this.dashObserver = new ResizeObserver(this.measureDash);
+      this.dashObserver.observe(this.wrapper);
+    }
+    if (wantsDash) {
+      // thickness and sharpEdge* change the radii without a resize.
+      this.measureDash();
+    }
+    if (!wantsDash && this.dashObserver) {
+      this.dashObserver.disconnect();
+      this.dashObserver = undefined;
+      this.dashBox = undefined;
+    }
+  }
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    this.dashObserver?.disconnect();
+    this.dashObserver = undefined;
+  }
+
+  private renderDash(): TemplateResult | typeof nothing {
+    const box = this.dashBox;
+    if (this.mode !== ObcAlertFrameMode.unackedRectified || !box) {
+      return nothing;
+    }
+    const pad = box.thickness + DASH_FLASH_GROWTH_PX;
+    // A second, wider path for the on phase would have longer corner arcs
+    // and its dashes would drift around the frame.
+    const centreline: RoundedRect = {
+      x: pad - box.thickness / 2,
+      y: pad - box.thickness / 2,
+      width: box.width + box.thickness,
+      height: box.height + box.thickness,
+      // A radius of 0 is a sharp edge and must stay square.
+      radii: box.radii.map((r) =>
+        r > 0 ? r + box.thickness / 2 : 0
+      ) as RoundedRect['radii'],
+    };
+    const width = box.width + 2 * pad;
+    const height = box.height + 2 * pad;
+    return html`<svg
+      class="dash"
+      aria-hidden="true"
+      width=${width}
+      height=${height}
+      viewBox="0 0 ${width} ${height}"
+      style="--dash-pad: ${pad}px"
+    >
+      <path d=${roundedRectPath(centreline)}></path>
+    </svg>`;
+  }
+
+  get resolvedFlashingSpeed(): ResolvedFlashingSpeed {
+    switch (this.mode) {
+      case ObcAlertFrameMode.unackedActive:
+        return resolveFlashingSpeed(
+          this.flashingSpeed,
+          this.status,
+          AlertFlashPhase.Active
+        );
+      case ObcAlertFrameMode.unackedRectified:
+        return resolveFlashingSpeed(
+          this.flashingSpeed,
+          this.status,
+          AlertFlashPhase.Rectified
+        );
+      default:
+        return FlashingSpeed.Fixed;
+    }
+  }
+
   @property({type: Boolean, reflect: true}) wrapContent: boolean = false;
 
   @property({type: Boolean, reflect: true}) fullWidth: boolean = false;
@@ -237,48 +408,14 @@ export class ObcAlertFrame extends LitElement {
           'sharp-edge-bottom-left': this.sharpEdgeBottomLeft,
           'sharp-edge-bottom-right': this.sharpEdgeBottomRight,
           [this.mode]: true,
+          ['flash-' + this.resolvedFlashingSpeed]: true,
+          ['flash-effect-' + this.flashEffect]: true,
         })}
       >
         <slot></slot>
-        ${this.flap()}
+        ${this.renderDash()} ${this.flap()}
       </div>
     `;
-  }
-
-  private _blinkAnimationCancel?: () => void;
-
-  private syncBlinking() {
-    if (
-      this.mode !== ObcAlertFrameMode.unackedActive &&
-      this._blinkAnimationCancel
-    ) {
-      this._blinkAnimationCancel();
-      this._blinkAnimationCancel = undefined;
-    }
-
-    if (
-      this.mode === ObcAlertFrameMode.unackedActive &&
-      !this._blinkAnimationCancel
-    ) {
-      this._blinkAnimationCancel = blinkingAll(this);
-    }
-  }
-
-  override connectedCallback() {
-    super.connectedCallback();
-    if (this.hasUpdated) {
-      this.syncBlinking();
-    }
-  }
-
-  override updated() {
-    this.syncBlinking();
-  }
-
-  override disconnectedCallback() {
-    super.disconnectedCallback();
-    this._blinkAnimationCancel?.();
-    this._blinkAnimationCancel = undefined;
   }
 
   private flap() {
@@ -383,6 +520,7 @@ export function wrapWithAlertFrame(
     .thickness=${options.thickness ?? ObcAlertFrameThickness.Small}
     .status=${options.status ?? AlertType.Alarm}
     .mode=${options.mode ?? ObcAlertFrameMode.ackedActive}
+    .flashingSpeed=${options.flashingSpeed ?? FlashingSpeed.Default}
     .showIcon=${options.showIcon ?? false}
     .showAlertCategoryIcon=${options.showAlertCategoryIcon ?? true}
     .wrapContent=${true}

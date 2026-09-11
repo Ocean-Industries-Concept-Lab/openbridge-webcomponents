@@ -17,7 +17,9 @@
 .wrapper {
   --bg-color: var(--alert-alarm-color);
   --thickness: var(--global-size-spacing-border-weight-alertframe);
-  --blink-on: var(--alarm-blink-on);
+  /* 0/1 from the flash-<tempo> classes below; steady when no class applies. */
+  --blink-on: 0;
+  --blink-off: 1;
   color: var(--on-alarm-active-color);
   position: relative;
   width: 100%;
@@ -27,10 +29,10 @@
   );
   outline: var(--thickness) solid var(--bg-color);
   outline-offset: 0;
+  /* +2 px outward while on, both thicknesses (Figma Flash=yes: 2 → 4 px). */
   --blink-width: 2px;
   &.thickness-small {
     --thickness: 2px;
-    --blink-width: 1px;
   }
 
   &.wrap-content {
@@ -42,14 +44,64 @@
     width: 100%;
   }
 
-  --blink-width-dynamic: calc(var(--blink-width) * var(--blink-on));
+  &.flash-fast {
+    --blink-on: var(--flash-fast-on);
+    --blink-off: var(--flash-fast-off);
+  }
 
-  &.unacked-active {
+  &.flash-slow {
+    --blink-on: var(--flash-slow-on);
+    --blink-off: var(--flash-slow-off);
+  }
+
+  &.flash-very-slow {
+    --blink-on: var(--flash-very-slow-on);
+    --blink-off: var(--flash-very-slow-off);
+  }
+
+  --flash-transition: 50ms linear;
+
+  &.flash-effect-outline-eased {
+    transition: outline-width var(--flash-transition);
+
+    .flap {
+      transition: box-shadow var(--flash-transition);
+    }
+
+    .mask {
+      transition:
+        top var(--flash-transition),
+        bottom var(--flash-transition),
+        left var(--flash-transition),
+        right var(--flash-transition);
+    }
+
+    .dash path {
+      transition: stroke-width var(--flash-transition);
+    }
+  }
+
+  --blink-width-dynamic: calc(var(--blink-width) * var(--blink-on));
+  /* One knob for flap and masks, so they cannot drift apart from the outline. */
+  --flap-grow: 0px;
+
+  &.unacked-active,
+  &.unacked-rectified {
     outline-width: calc(var(--thickness) + var(--blink-width-dynamic));
   }
 
+  &.unacked-active {
+    --flap-grow: var(--blink-width-dynamic);
+  }
+
   &.unacked-rectified {
-    outline-style: dashed;
+    /* The dashed stroke is centred, so it moves out by half its growth. */
+    --flap-grow: calc(var(--blink-width-dynamic) / 2);
+  }
+
+  &.unacked-rectified {
+    /* The dash pattern (12/6) needs an SVG stroke; outlines have no dash array. */
+    outline-style: none;
   }
 
   &.alarm,
@@ -61,24 +113,17 @@
   &.warning,
   &.level-medium {
     --bg-color: var(--alert-warning-color);
-    --blink-on: var(--warning-blink-on);
     color: var(--on-warning-active-color);
   }
 
   &.caution,
   &.level-low {
     --bg-color: var(--alert-caution-color);
-    --blink-on: 1;
     color: var(--on-caution-active-color);
-  }
-
-  &.level-low {
-    --blink-on: var(--low-blink-on);
   }
 
   &.level-critical {
     --bg-color: var(--critical-enabled-background-color);
-    --blink-on: var(--critical-blink-on);
     color: var(--on-critical-active-color);
   }
 
@@ -132,7 +177,7 @@
       width: calc(
         var(--ui-components-button-border-radius) + var(--thickness) + 0.5px
       );
-      top: 0;
+      top: calc(-1 * var(--flap-grow));
       left: calc(
         -1 * var(--ui-components-button-border-radius) - var(--thickness)
       );
@@ -143,17 +188,13 @@
         calc(100% - var(--thickness)) 50%,
         50% var(--thickness)
       );
-
-      .unacked-active & {
-        top: calc(-1 * var(--blink-width-dynamic));
-      }
     }
 
     &.down {
       width: calc(
         var(--ui-components-button-border-radius) + var(--thickness) + 0.5px
       );
-      bottom: 0;
+      bottom: calc(-1 * var(--flap-grow));
       left: calc(
         -1 * var(--ui-components-button-border-radius) - var(--thickness)
       );
@@ -164,10 +205,6 @@
         50% calc(100% - var(--thickness)),
         calc(100% - var(--thickness)) 50%
       );
-
-      .unacked-active & {
-        bottom: calc(-1 * var(--blink-width-dynamic));
-      }
     }
 
     &.left {
@@ -177,7 +214,7 @@
       top: calc(
         -1 * var(--ui-components-button-border-radius) - var(--thickness)
       );
-      left: 0;
+      left: calc(-1 * var(--flap-grow));
       clip-path: polygon(
         0 0,
         0 100%,
@@ -185,10 +222,6 @@
         50% calc(100% - var(--thickness)),
         var(--thickness) 50%
       );
-
-      .unacked-active & {
-        left: calc(-1 * var(--blink-width-dynamic));
-      }
 
       .top & {
         top: unset;
@@ -212,7 +245,7 @@
       top: calc(
         -1 * var(--ui-components-button-border-radius) - var(--thickness)
       );
-      right: 0;
+      right: calc(-1 * var(--flap-grow));
       clip-path: polygon(
         100% 0,
         100% 100%,
@@ -233,10 +266,6 @@
           50% var(--thickness),
           calc(100% - var(--thickness)) 50%
         );
-      }
-
-      .unacked-active & {
-        right: calc(-1 * var(--blink-width-dynamic));
       }
     }
   }
@@ -315,8 +344,34 @@
   }
 }
 
-.unacked-active .flap {
-  outline: var(--bg-color) solid var(--blink-width-dynamic);
+/* Grows the flap outward with the outline, never toward the content: shifted
+   copies leave the inner edge where it is (an outline would cross it). */
+.flap.small,
+.flap.large {
+  box-shadow:
+    var(--flap-grow) 0 0 0 var(--bg-color),
+    0 calc(-1 * var(--flap-grow)) 0 0 var(--bg-color),
+    0 var(--flap-grow) 0 0 var(--bg-color),
+    var(--flap-grow) calc(-1 * var(--flap-grow)) 0 0 var(--bg-color),
+    var(--flap-grow) var(--flap-grow) 0 0 var(--bg-color);
+}
+
+.flap.bottom {
+  box-shadow:
+    0 var(--flap-grow) 0 0 var(--bg-color),
+    calc(-1 * var(--flap-grow)) 0 0 0 var(--bg-color),
+    var(--flap-grow) 0 0 0 var(--bg-color),
+    calc(-1 * var(--flap-grow)) var(--flap-grow) 0 0 var(--bg-color),
+    var(--flap-grow) var(--flap-grow) 0 0 var(--bg-color);
+}
+
+.flap.top {
+  box-shadow:
+    0 calc(-1 * var(--flap-grow)) 0 0 var(--bg-color),
+    calc(-1 * var(--flap-grow)) 0 0 0 var(--bg-color),
+    var(--flap-grow) 0 0 0 var(--bg-color),
+    calc(-1 * var(--flap-grow)) calc(-1 * var(--flap-grow)) 0 0 var(--bg-color),
+    var(--flap-grow) calc(-1 * var(--flap-grow)) 0 0 var(--bg-color);
 }
 
 ::slotted([slot="label"]) {
@@ -330,4 +385,22 @@
   height: var(--app-components-alert-frame-icon-size);
   display: block;
   flex-shrink: 0;
+}
+
+.dash {
+  /* Overridden inline per render from the measured thickness. */
+  --dash-pad: 0px;
+  position: absolute;
+  top: calc(-1 * var(--dash-pad));
+  left: calc(-1 * var(--dash-pad));
+  overflow: visible;
+  pointer-events: none;
+  fill: none;
+  stroke: var(--bg-color);
+  stroke-dasharray: 12 6;
+}
+
+.dash path {
+  /* Animated on the one path: a wider second path would drift its dashes. */
+  stroke-width: calc(var(--thickness) + var(--blink-width-dynamic));
 }

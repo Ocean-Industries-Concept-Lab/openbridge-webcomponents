@@ -105,6 +105,11 @@ Two facts that bite:
 Use `skip-test` to exclude a story from snapshot testing — appropriate for
 anything genuinely non-deterministic rather than papering over a flake.
 
+Web Animations (alert flashing) ignore the zeroed CSS durations, so an
+`afterEach` in `vitest.setup.ts` parks every animation at 100 ms, inside the
+on phase of every flash tempo; snapshots of flashing elements always show the
+on state.
+
 ## Manifest-driven docs and controls
 
 `.storybook/manifest-docs-core.ts` holds the helpers; `manifest-docs.ts` binds

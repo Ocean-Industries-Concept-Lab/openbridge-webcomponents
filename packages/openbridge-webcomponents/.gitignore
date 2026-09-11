@@ -20,6 +20,9 @@ dist-ssr
 **/__vis__/**/__diffs__
 **/__vis__/**/__results__
 **/__vis__/local
+# Vitest browser mode writes these on every failing assertion
+src/**/__screenshots__/
+.vitest-attachments/
 
 # Editor directories and files
 !.vscode/extensions.json

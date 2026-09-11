@@ -55,7 +55,7 @@ import {
   ObcAlertFrameThickness,
   ObcAlertFrameMode,
 } from '../../components/alert-frame/alert-frame.js';
-import {AlertType} from '../../types.js';
+import {AlertType, FlashingSpeed} from '../../types.js';
 import '../../components/button/button.js';
 import '../../components/context-menu-input/context-menu-input.js';
 import {
@@ -866,6 +866,7 @@ export class ObcReadout extends LitElement {
           .thickness=${thickness}
           .status=${alert.status ?? AlertType.Alarm}
           .mode=${alert.mode ?? ObcAlertFrameMode.ackedActive}
+          .flashingSpeed=${alert.flashingSpeed ?? FlashingSpeed.Default}
           .showIcon=${alert.showIcon ?? false}
           .showAlertCategoryIcon=${alert.showAlertCategoryIcon ?? true}
           .wrapContent=${false}

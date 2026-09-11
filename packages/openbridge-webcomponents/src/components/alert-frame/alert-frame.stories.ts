@@ -6,7 +6,9 @@ import {
   ObcAlertFrameStatus,
   AlertFrameTextSize,
   ObcAlertFrameMode,
+  ObcAlertFrameFlashEffect,
 } from './alert-frame.js';
+import {AlertType, FlashingSpeed} from '../../types.js';
 import './alert-frame.js';
 import '../../icons/icon-placeholder.js';
 import {html} from 'lit';
@@ -20,6 +22,8 @@ const meta: Meta<typeof ObcAlertFrame> = {
     thickness: ObcAlertFrameThickness.Small,
     status: ObcAlertFrameStatus.Alarm,
     mode: ObcAlertFrameMode.ackedActive,
+    flashingSpeed: FlashingSpeed.Default,
+    flashEffect: ObcAlertFrameFlashEffect.Outline,
     demoWidth: 200,
     showIcon: true,
     showAlertCategoryIcon: true,
@@ -36,6 +40,16 @@ const meta: Meta<typeof ObcAlertFrame> = {
       control: {
         type: 'select',
       },
+    },
+    flashingSpeed: {
+      options: Object.values(FlashingSpeed),
+      control: {type: 'select'},
+      if: {arg: 'mode', neq: ObcAlertFrameMode.ackedActive},
+    },
+    flashEffect: {
+      options: Object.values(ObcAlertFrameFlashEffect),
+      control: {type: 'select'},
+      if: {arg: 'mode', neq: ObcAlertFrameMode.ackedActive},
     },
     thickness: {
       options: Object.values(ObcAlertFrameThickness),
@@ -64,6 +78,8 @@ const meta: Meta<typeof ObcAlertFrame> = {
         .type=${args.type}
         .thickness=${args.thickness}
         .mode=${args.mode}
+        .flashingSpeed=${args.flashingSpeed}
+        .flashEffect=${args.flashEffect}
         .status=${args.status}
         .textSize=${args.textSize}
         .showIcon=${args.showIcon}
@@ -271,5 +287,50 @@ export const CriticalUnacked: Story = {
     demoWidth: 200,
     showIcon: true,
     showAlertCategoryIcon: true,
+  },
+};
+
+export const FlashComparison: Story = {
+  tags: ['skip-test'],
+  render: () => {
+    const statuses = [
+      AlertType.LevelCritical,
+      AlertType.Alarm,
+      AlertType.Warning,
+      AlertType.Caution,
+      AlertType.LevelLow,
+    ];
+    const modes = [
+      ObcAlertFrameMode.unackedActive,
+      ObcAlertFrameMode.unackedRectified,
+    ];
+    return html`<style>
+        .flash-grid {
+          display: grid;
+          grid-template-columns: repeat(2, 200px);
+          gap: 24px;
+          padding: 16px;
+        }
+      </style>
+      ${Object.values(ObcAlertFrameFlashEffect).map(
+        (effect) =>
+          html`<h4>${effect}</h4>
+            <div class="flash-grid">
+              ${statuses.flatMap((status) =>
+                modes.map(
+                  (mode) =>
+                    html`<obc-alert-frame
+                      .type=${ObcAlertFrameType.Regular}
+                      .status=${status}
+                      .mode=${mode}
+                      .flashEffect=${effect}
+                      wrapContent
+                    >
+                      <div style="width: 200px; height: 48px"></div>
+                    </obc-alert-frame>`
+                )
+              )}
+            </div>`
+      )}`;
   },
 };
