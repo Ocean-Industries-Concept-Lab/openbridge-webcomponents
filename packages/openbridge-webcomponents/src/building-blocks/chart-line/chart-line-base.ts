@@ -1800,14 +1800,22 @@ export class ObcChartLineBase extends LitElement {
       ]
     > = [];
 
+    /** Empty on a side whose slotted scale carries a range of its own. */
+    const rangeProps = (
+      side: 'left' | 'right' | 'top' | 'bottom',
+      range: {min: number; max: number}
+    ): Partial<ExternalScaleElement> =>
+      this.ownsSlottedScaleRange(side)
+        ? {minValue: range.min, maxValue: range.max}
+        : {};
+
     // Left scale
     if (this.leftScaleSlot) {
       const scales =
         this.leftScaleSlot.assignedElements() as ExternalScaleElement[];
       scales.forEach((scale) => {
         const props: Partial<ExternalScaleElement> = {
-          minValue: leftRange.min,
-          maxValue: leftRange.max,
+          ...rangeProps('left', leftRange),
           height: effectiveHeight, // Use effective height for proper sizing
           paddingTop: verticalViewBoxPadding.top,
           paddingBottom: verticalViewBoxPadding.bottom,
@@ -1839,8 +1847,7 @@ export class ObcChartLineBase extends LitElement {
         this.rightScaleSlot.assignedElements() as ExternalScaleElement[];
       scales.forEach((scale) => {
         const props: Partial<ExternalScaleElement> = {
-          minValue: rightRange.min,
-          maxValue: rightRange.max,
+          ...rangeProps('right', rightRange),
           height: effectiveHeight, // Use effective height for proper sizing
           paddingTop: verticalViewBoxPadding.top,
           paddingBottom: verticalViewBoxPadding.bottom,
@@ -1937,6 +1944,17 @@ export class ObcChartLineBase extends LitElement {
   }
 
   /**
+   * Whether the chart's axis range is what a slotted scale on this side should
+   * describe. A subclass that slots a scale of its own and gives it a separate
+   * range returns false for that side, otherwise the sync below overwrites it.
+   */
+  protected ownsSlottedScaleRange(
+    _side: 'left' | 'right' | 'top' | 'bottom'
+  ): boolean {
+    return true;
+  }
+
+  /**
    * Push the current axis ranges to the slotted scales. The full
    * `updateScaleProperties()` cascade runs before the chart is (re)built and
    * so reads the previous chart's ranges; this closes that gap once the new
@@ -1944,20 +1962,21 @@ export class ObcChartLineBase extends LitElement {
    */
   private syncSlottedScaleRanges() {
     const apply = (
+      side: 'left' | 'right' | 'top' | 'bottom',
       slot: HTMLSlotElement | undefined,
       range: {min: number; max: number} | undefined
     ) => {
-      if (!slot || !range) return;
+      if (!slot || !range || !this.ownsSlottedScaleRange(side)) return;
       (slot.assignedElements() as ExternalScaleElement[]).forEach((scale) => {
         scale.minValue = range.min;
         scale.maxValue = range.max;
       });
     };
-    apply(this.leftScaleSlot, this.resolveAxisRange('left'));
-    apply(this.rightScaleSlot, this.resolveAxisRange('right'));
+    apply('left', this.leftScaleSlot, this.resolveAxisRange('left'));
+    apply('right', this.rightScaleSlot, this.resolveAxisRange('right'));
     const xRange = this.resolveSlottedXRange();
-    apply(this.topScaleSlot, xRange);
-    apply(this.bottomScaleSlot, xRange);
+    apply('top', this.topScaleSlot, xRange);
+    apply('bottom', this.bottomScaleSlot, xRange);
   }
 
   private hasAnyChanged(
