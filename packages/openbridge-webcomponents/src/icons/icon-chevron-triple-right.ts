@@ -2,8 +2,8 @@ import {LitElement, html, css, svg} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../decorator.js';
 
-@customElement('obi-chevron-tripple-right')
-export class ObiChevronTrippleRight extends LitElement {
+@customElement('obi-chevron-triple-right')
+export class ObiChevronTripleRight extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -41,6 +41,6 @@ export class ObiChevronTrippleRight extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obi-chevron-tripple-right': ObiChevronTrippleRight;
+    'obi-chevron-triple-right': ObiChevronTripleRight;
   }
 }

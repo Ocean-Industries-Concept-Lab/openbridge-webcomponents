@@ -143,7 +143,7 @@ tell you something.
 The design lives in the main OpenBridge 6.1 file, `kQMFf24Y1ry43HJWOStqd8`
 (`https://www.figma.com/design/kQMFf24Y1ry43HJWOStqd8/OpenBridge-6.1?node-id=<id>`);
 icons live in `IkDwOtza6OdjLbIdWA7mI7`
-([IMPLEMENTATION_GUIDELINES.md § PostCSS](../../IMPLEMENTATION_GUIDELINES.md#-postcss)).
+([`figma-refresh.md`](../../docs/agents/figma-refresh.md)).
 The Figma MCP and the plugin need Dev Mode, which some seats only get on a
 personal copy of the file — so links from a copy circulate. Node ids are the
 same in every copy: in a PR or issue, cite the node id on the main file (the
@@ -157,7 +157,7 @@ of authority is:
 
 1. **Generated artefacts follow Figma.** Icons, `variables.css`, `fonts.css`,
    `figmavariables.json`, `course-arrows-art.ts` — regenerate, never hand-edit
-   ([`generated-code.md`](../../docs/agents/generated-code.md)).
+   ([`generated-code.md`](../../docs/agents/generated-code.md), [`figma-refresh.md`](../../docs/agents/figma-refresh.md)).
 2. **Deliberate code geometry and behaviour stay.** The ring radii in
    `watch.ts` sit 4 units inside the 6.1 canvas radii and icons anchor to the
    code band edges; the legacy `(176 + basePadding) * 2` viewBox is
@@ -188,9 +188,14 @@ the design decides; a missing design is a `TODO(designer)` too, not a guess.
 Brute force starts the moment a step cannot be done as intended. When that
 happens, stop: say what is missing, what you would do with it, and wait for
 input. Do not route around it, guess, or continue on a lesser path and
-mention it at the end. Finish everything that does not depend on the answer
-first, then ask once, with the options and a recommendation
-(`AGENTS.md` § 2).
+mention it at the end.
+
+Ask in the message that finds the gap, not at the end of the task. Local,
+reversible work that does not depend on the answer may continue while
+waiting; a push, a pull request, an issue comment or a baseline commit may
+not — the deliverable is the whole task, and a PR without the blocked part
+is a partial result presented as done. Ask once, with the options and a
+recommendation (`AGENTS.md` § 2).
 
 Tools and access:
 

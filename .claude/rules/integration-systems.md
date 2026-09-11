@@ -48,6 +48,5 @@ expect to refresh these baselines:
 npx vitest run --project storybook 'integration'
 ```
 
-[IMPLEMENTATION_GUIDELINES.md § Icons](../../IMPLEMENTATION_GUIDELINES.md#-icons)
-names `integration-bar` explicitly as a path needing a baseline update after a
-family rename.
+[`figma-refresh.md` § Icons](../../docs/agents/figma-refresh.md#icons) names `integration-bar`
+explicitly as a path needing a baseline update after a family rename.

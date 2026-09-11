@@ -11,7 +11,7 @@
   align-items: center;
   color: var(--element-active-color);
   text-align: center;
-  gap: var(--app-components-clock-digit-spacing);
+  gap: var(--app-components-clock-digit-spacing-regular);
   @mixin font-button;
 }
 
@@ -38,7 +38,7 @@
 }
 
 .ticks {
-  width: var(--app-components-clock-colon-size);
+  width: var(--app-components-clock-colon-size-regular);
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -58,8 +58,8 @@
   .tick {
     width: 100%;
     height: 100%;
-    width: calc(var(--app-components-clock-colon-size) + 1px);
-    height: calc(var(--app-components-clock-colon-size) + 1px);
+    width: calc(var(--app-components-clock-colon-size-regular) + 1px);
+    height: calc(var(--app-components-clock-colon-size-regular) + 1px);
     border-radius: 100%;
     background-color: var(--element-active-color);
   }

@@ -117,114 +117,25 @@ The CSS files are post-processed by [PostCSS](https://postcss.org/).
 There is one global CSS file for the palettes, `variables.css`, which contains the color palettes for the components.
 All other CSS code should be kept in the `*.css` files in the component folders.
 
-> **⚠️ `src/palettes/variables.css` is generated, not authored.**
-> The file is produced by the [OpenBridge devtools Figma plugin](https://github.com/Ocean-Industries-Concept-Lab/obc-figma-plugin)
-> (published as [Figma community plugin `1448419213272098259`](https://www.figma.com/community/plugin/1448419213272098259)).
-> The plugin's `cssvariables` codegen emits the entire file in one go: the
-> four `.obc-component-size-*` blocks (from the `Component-size` collection),
-> the `* { … }` block (`typography-primitives` + `Set-component-corners` +
-> `component-primitives` + shadow composites), the four
-> `:root[data-obc-theme="…"]` blocks (from the `Palette` collection, with
-> variable alias chains flattened to literal `rgb(…)` values per theme), and
-> the `@property` blink registrations at the bottom (the animation itself is
-> driven from `src/palettes/blinking.ts`, not from CSS keyframes).
+> **⚠️ `src/palettes/variables.css` is generated, not authored.** The
+> [obc-figma-plugin](https://github.com/Ocean-Industries-Concept-Lab/obc-figma-plugin)
+> `cssvariables` codegen emits the whole file from the OpenBridge 6.1 Figma
+> file: the four `.obc-component-size-*` blocks, the `* { … }` primitives, the
+> four `:root[data-obc-theme="…"]` blocks with alias chains flattened to
+> literal `rgb(…)`, and the `@property` blink registrations. The same plugin
+> produces `src/mixins/fonts.css` (`font-exports`) and
+> `script/figmavariables.json` (`variables map`, from the icons file).
 >
-> **Do not hand-edit `variables.css`.** Any local change will be silently
-> overwritten the next time someone pastes new plugin output. To add,
-> rename, or change a token, the workflow is:
->
-> 1. Change the variable in Figma (or, for name normalisation only, in the
->    plugin's `rename()` function in `code.ts`).
-> 2. Re-run the plugin (Figma → Dev Mode → Inspect → "css variables export").
-> 3. Replace `variables.css` wholesale with the plugin output and commit.
->
-> The same plugin also produces:
->
-> - **`script/figmavariables.json`** (via its `variables` codegen) — a
->   `VariableID → token-name` lookup consumed by `script/convert-icons.ts`
->   to rewrite hex colors back into `var(--…)` references in downloaded icons.
-> - **`src/mixins/fonts.css`** is regenerated wholesale by the plugin's
->   `font-exports` codegen — replace the entire file on each regeneration.
->   Hand-curated font mixins that the plugin does **not** produce live in a
->   sibling file, **`src/mixins/font-extras.css`** (currently
->   `font-overlay-outline-shadow` and the `font-instrument-*-box` family
->   used by `readout`, `readout-list-item`, `readout-setpoint`, and
->   `ar/poi-header`). PostCSS auto-loads every file in `src/mixins/`
->   (see `postcss.config.mjs` → `mixinsDir`), so adding new mixins to
->   `font-extras.css` requires no other wiring. Always run
->   `npm run lint:mixins` after regenerating `fonts.css` — a dropped
->   definition produces an undefined-mixin error rather than silent
->   breakage (`@mixin missing;` expands to nothing).
->
-> The audit at `script/check-css-variables.ts` will catch consumer CSS that
-> references tokens missing from `variables.css`, but it cannot catch tokens
-> that are missing from Figma itself — those need a designer round-trip.
->
-> **How to run the plugin (browser Figma):**
->
-> The plugin is a **codegen plugin** (`"capabilities": ["codegen"]`,
-> `"editorType": ["dev"]` in its manifest), so it does **not** open as a
-> regular plugin window from the Plugins tab. Its output appears inside
-> Dev Mode's Inspect panel.
->
-> **Which Figma file do I open?** There are two canonical files, and each
-> codegen reads from a specific one. Running the wrong codegen against the
-> wrong file produces output that looks plausible but is silently broken
-> (e.g. `figmavariables.json` keys that no icon will ever match).
->
-> | Repo target file             | Codegen language       | Source Figma file                                               | Why this file                                                                                                                                                                                                             |
-> | ---------------------------- | ---------------------- | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-> | `src/palettes/variables.css` | `css variables export` | **OpenBridge 6.1** (main design file, `kQMFf24Y1ry43HJWOStqd8`) | Variable **definitions** live here — `valuesByMode` per theme, the per-size-class numbers, etc.                                                                                                                           |
-> | `src/mixins/fonts.css`       | `Font exports`         | **OpenBridge 6.1** (main design file)                           | Text-style definitions live here.                                                                                                                                                                                         |
-> | `script/figmavariables.json` | `variables map`        | **OpenBridge Icons** (`IkDwOtza6OdjLbIdWA7mI7`)                 | The map keys are `VariableID/<nodeId>` where `<nodeId>` is the icon component node that consumes the variable. `convert-icons.ts` matches by that exact key, so the map must be exported from the file the icons live in. |
->
-> The icons file only **references** palette variables (it does not define
-> them), and the main design file does not contain icon component node IDs —
-> so the two files are not interchangeable for either codegen.
->
-> **Dev Mode access caveats.** Dev Mode requires a Professional / Organization
-> / Enterprise seat — a free seat will not show the codegen UI. If you only
-> have view access on the canonical file, the workflow is:
->
-> - **Best:** ask the design lead for editor / Dev Mode access on the
->   canonical file. Variables in a duplicate drift the moment the original is
->   edited.
-> - **Workaround (drafts duplicate):** **File → Duplicate to your drafts** on
->   the canonical file. Open the draft in Dev Mode and run the codegen there.
->   The duplicate inherits the source file's variables at the moment of the
->   copy. Always re-duplicate before each export run; never let a stale
->   drafts copy linger — you will silently miss any token the design lead
->   added since you last duplicated.
-> - The icons file (`IkDwOtza6OdjLbIdWA7mI7`) is usually shared more openly
->   than the main design file, so you may have Dev Mode on the icons file
->   directly and need the drafts trick only for the main file.
->
-> **Steps once you have the file open in Dev Mode:**
->
-> 1. From the [community plugin page](https://www.figma.com/community/plugin/1448419213272098259)
->    click **Open in…** and pick the file (only needed the first time).
-> 2. Select **any node** in the canvas — the codegen panel only renders when
->    something is selected, but for `cssvariables` / `font-exports` /
->    `variables` the output comes from the file's local variables and text
->    styles, not from the selected node.
->    - **Exception:** the `variables map` codegen emits one JSON block per
->      selected node's bindings. To get the full map in one go, select a
->      page-level or large multi-frame node; selecting a single icon yields
->      only the 5–10 bindings on that one icon. If the plugin still chunks
->      the output across multiple codegen runs, paste each block into a
->      scratch file and merge them (Object.assign — same key always maps to
->      the same token, so order does not matter).
-> 3. In the right sidebar's **Inspect** tab, scroll to the bottom. The
->    **"Codegen Plugin"** section is the plugin's output area.
-> 4. In that section's header there is a small language dropdown (defaults to
->    `css`). Switch it to the codegen you need (see the table above):
->    - `css variables export` → replaces `src/palettes/variables.css`
->    - `Font exports` → replaces `src/mixins/fonts.css` wholesale
->      (hand-curated companion mixins live in `src/mixins/font-extras.css`)
->    - `variables map` → replaces `script/figmavariables.json`
->    - `css` → per-node CSS, not used for repo regeneration
-> 5. Click the copy icon at the top-right of the Codegen Plugin section and
->    paste into the corresponding repo file. Diff carefully before committing.
+> Do not hand-edit any of the three: change the token in Figma (or the
+> plugin's `rename()`), re-run the codegen, replace the file wholesale and
+> run `npm run palette:strip` (`npm run lint:palette` fails CI otherwise).
+> Which file feeds which codegen, how to run the plugin and how to diff the
+> result (`npm run palette:diff`) are in
+> [docs/agents/figma-refresh.md](docs/agents/figma-refresh.md). Hand-curated
+> font mixins the plugin does not emit live in `src/mixins/font-extras.css`;
+> `npm run lint:mixins` fails on a dropped definition, and
+> `npm run lint:variables` on a consumer of a token the export no longer
+> defines.
 
 Most mixins are defined in `src/mixins/` and auto-loaded via `postcss-mixins` (configured in `postcss.config.mjs`); the `style` mixin used for elevation variants is defined inline in `postcss.config.mjs`. All mixins are available globally in component CSS — no `@import` is needed.
 
@@ -481,9 +392,10 @@ per-severity period:
 | Warning  | 4000 ms |
 | Low      | 8000 ms |
 
-Call sites: `alert-frame`, `alert-icon` and `alert-button`. (Before PR #1116
-this was a shared `@keyframes warning-blink` in `variables.css`; that keyframes
-no longer exists.)
+Call sites: `alert-frame`, `alert-icon` and `alert-button`. The plugin still
+emits the old `@keyframes warning-blink` and a `:root { animation: … }` rule;
+`npm run palette:strip` removes both when regenerating `variables.css`
+(#1116, #1134).
 
 Components apply the animation by binding opacity to these properties:
 
@@ -678,207 +590,9 @@ All icon components live in `packages/openbridge-webcomponents/src/icons` and ar
    `var(--<token>)` so themed icons follow the active palette. Unknown IDs fall
    back to the literal hex color (see "Unknown variable fallback" below).
 
-### Inputs
-
-| File / env                               | Tracked? | Notes                                                                                                                                                                                                                                           |
-| ---------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/openbridge-webcomponents/.env` | No       | Must set `FIGMA_TOKEN=<personal access token>` (read-only scope is sufficient).                                                                                                                                                                 |
-| `script/figmavariables.json`             | Yes      | `VariableID → token-name` map emitted by the [obc-figma-plugin](#-postcss) `variables` codegen. Must be exported from the **icons file** (not the main design file), because the converter matches the binding's per-node-id key.               |
-| `script/.cache/icons/*.svg`              | No       | Per-icon SVG payloads. Cleared on each run.                                                                                                                                                                                                     |
-| `script/.cache-figma.json`               | No       | ~30 MB raw Figma API response cache, reused across runs to avoid re-downloading.                                                                                                                                                                |
-| `script/.cache/unknown-variables.json`   | No       | Written after every `npm run download:icons` run. Lists `VariableID`s referenced by icons but missing from `script/figmavariables.json` (empty array when fully resolved).                                                                      |
-| `OBC_USE_CACHE=1`                        | n/a      | Env var. When set, `download-icons` reuses the on-disk `cache-figma.json` and `.cache/icons/*.svg` instead of calling the Figma API. Useful when iterating on `convert-icons.ts` or refreshing `figmavariables.json` without burning API quota. |
-
-### Step-by-step refresh
-
-Run everything from `packages/openbridge-webcomponents/`.
-
-**Ideal ordering when designers added new palette tokens:** land the token
-exports before the icon regen — first the `cssvariables` codegen from the main
-design file (`src/palettes/variables.css`, defines the new tokens), then the
-`variables map` codegen from the icons file (`script/figmavariables.json`,
-maps the new bindings), and only then `npm run download:icons`. Icons
-generated against a stale palette reference tokens that do not resolve yet,
-or fall back to literal hex, and the tripwires in step 6 flag them. The
-reverse order still works — the icon PR can ship first with the gap
-documented (see "Unknown variable fallback"), and a run with bindings missing
-from the map completes only with `OBC_ALLOW_UNRESOLVED_VARS=1` — but
-palette-first avoids the intermediate state entirely. When no new tokens are
-involved, start at step 1 below.
-
-1. **Branch.** `git switch -c chore/refresh-figma-icons` off `develop`.
-2. **Token.** Ensure `.env` contains a valid `FIGMA_TOKEN`.
-3. **Variable map.** If the design lead has updated the OpenBridge color tokens,
-   regenerate `script/figmavariables.json` first. **This must come from the
-   OpenBridge Icons Figma file (`IkDwOtza6OdjLbIdWA7mI7`), not the main
-   design file** — the map keys include the icon component node IDs the
-   converter matches against (see the [Figma source files matrix](#-postcss)).
-   In Dev Mode → Inspect → Codegen Plugin, switch the language dropdown to
-   `variables map`, select a page-level or multi-frame node (so the codegen
-   emits the full map, not a 5–10-entry slice for one icon), copy, and
-   replace `script/figmavariables.json`. If the plugin chunks the output
-   across multiple runs, paste each block into a scratch file and merge
-   (Object.assign — same key always maps to the same token).
-4. **Backup.** `cp -r src/icons /tmp/icons-backup-prev` — gives you a diff target
-   if you need to recover variable mappings that the new run dropped.
-5. **Download + generate.**
-   ```bash
-   npm run download:icons
-   ```
-   Expect 2000+ icons to be written. Warnings such as
-   `Duplicate icon name <name>` indicate Figma-side duplicates that get
-   deduplicated by overwrite — flag them with the design lead. A trailing
-   `done` line means generation succeeded.
-6. **Check for unresolved tokens.**
-   ```bash
-   grep -rlE 'var\(--undefined\)' src/icons/ | wc -l   # must be 0
-   cat script/.cache/unknown-variables.json            # must be []
-   npm run lint:icons                                   # must report 0 hex leaks
-   ```
-   If any of these tripwires fires, see "Unknown variable fallback" below. The
-   `var(--undefined)` grep alone is **not sufficient** — the converter falls
-   back to literal hex rather than emitting `var(--undefined)`, so silent
-   regressions only show up via `unknown-variables.json` and `lint:icons`.
-7. **Typecheck & lint.**
-   ```bash
-   npx tsc --noEmit
-   npm run lint
-   ```
-8. **Refresh visual baselines** (see "Visual snapshots" below).
-9. **Verify bundle stays under the PWA cap.** `vue-demo`'s service worker is
-   capped at 7 MB per file (`workbox.maximumFileSizeToCacheInBytes`).
-   ```bash
-   npm run build --workspace=vue-demo
-   ```
-   Inspect the largest emitted chunk.
-10. **Commit.** Squash all the regenerated noise into a single
-    `chore: refresh icons from Figma` (or `feat:` if you also changed the
-    consuming components). Keep `script/figmavariables.json` and any
-    `script/convert-icons.ts` changes in the same commit.
-
-### Unknown variable fallback
-
-When `convert-icons.ts` encounters a `VariableID` that is not in
-`figmavariables.json`, it falls back to the literal hex color
-(`fill="#XXXXXX"` / `stroke="#XXXXXX"`) rather than emitting
-`var(--undefined)`. This keeps the regen unblocked when designers add brand-new
-palette tokens that have not been re-exported yet, but it means the resulting
-icon will not follow theme switches until the token is added.
-
-Three recovery paths, depending on the cause:
-
-- **Every icon suddenly leaks hex, with only a few dozen unresolved ids** —
-  the icons file re-synced its palette library and all `VariableID` keys got
-  new import-id suffixes. Most entries can be re-derived mechanically from the
-  existing map; see
-  [docs/agents/generated-code.md § VariableID anatomy](docs/agents/generated-code.md#variableid-anatomy--why-a-refresh-can-lose-every-icon-colour).
-- **Token exists in Figma, just missing from the JSON** — re-run the
-  obc-figma-plugin `variables` codegen and overwrite `script/figmavariables.json`,
-  then re-run `npm run download:icons`. Hex fallbacks should disappear.
-- **Token does not yet exist in the palette** — run with
-  `OBC_ALLOW_UNRESOLVED_VARS=1` (the unresolved-ids tripwire otherwise exits
-  with status 1), accept the hex fallback for this PR, file a follow-up with
-  the design lead to add the missing token, then do a second regen pass once
-  the palette ships.
-
-The `script/.cache/unknown-variables.json` diagnostic file (written on every
-`npm run download:icons` run) lists every unresolved `VariableID`. The
-parallel `npm run lint:icons` check (`script/check-icon-hex-leaks.ts`)
-zero-tolerance-fails on any remaining literal hex `fill`/`stroke` attribute
-in `src/icons/*.ts`, printing the offending `file → attr` pairs. Together
-the two tripwires force every unbound or fallback color to be acknowledged
-in a PR instead of silently producing a non-themed icon. If a future
-legitimate exception arises (e.g. a regulatory color that must not follow
-the theme), prefer adding an explicit allowlist to
-`script/check-icon-hex-leaks.ts` over reintroducing a sliding budget.
-
-### Touching the consuming components (worked example: wind)
-
-Icon family renames or bucket changes (e.g. the wind family migrating from
-`wind-true-1` through `wind-true-14` to bucket-named
-`wind-true-{0,1,5,10,15,…,100}` and `wind-shaft-{0,1,5,…,100}`) require code
-changes in any component that imports specific icons. The wind indicator is the
-canonical worked example because it is the only component that snaps a numeric
-sensor value to a discrete icon glyph.
-
-Files to update when an icon family changes:
-
-1. **The wind icon mapper** —
-   `src/navigation-instruments/watch/environment.ts`.
-   - Re-import every bucket from the new family with an **explicit per-icon
-     import** (not via `icons/index.js`) so the PWA can tree-shake — the wind
-     consumers must stay under the 7 MB Workbox cap.
-   - Export the bucket list as a `readonly` array (e.g. `WIND_TRUE_BUCKETS`,
-     `WIND_SHAFT_BUCKETS`).
-   - Provide a snap helper such as
-     `windKnotsToBucket(knots, buckets)` that returns the nearest bucket by
-     absolute distance (ties resolve to the lower bucket). Wrap it in
-     family-specific helpers (`windKnotsToWindTrueBucket`,
-     `windKnotsToWindShaftBucket`) so consumers do not import the bucket arrays
-     themselves.
-   - Keep any legacy index-based helper that downstream code still needs (the
-     wind indicator's inline barb glyphs are indexed 1..14, fed by a renamed
-     `windKnotsToShaftTrueLevel`).
-2. **The wind indicator** —
-   `src/navigation-instruments/wind-indicator/wind-indicator.ts`.
-   - Import the explicit `obi-wind-true-*` / `obi-wind-shaft-*` set.
-   - Use the bucket helpers from `environment.ts` to build the tag name
-     (`obi-wind-true-${windKnotsToWindTrueBucket(...)}`).
-   - Prefer the CSS-color variant of each icon (`instance.iconCss ?? instance.icon`)
-     so theme tokens drive the color; the `var(--currentColor)` path is the
-     fallback.
-   - Rename any public/private surface (`iconIndex` → `iconLevel`, etc.) and
-     update the matching `*.stories.ts` `argTypes` so Storybook controls match.
-3. **Wrappers around the indicator** (`wind/wind.ts`,
-   `wind-propulsion/wind-propulsion.ts`) usually need no changes — they re-export
-   the indicator's API.
-
-A handful of other components reference specific icons directly
-(`automation/**`, `building-blocks/**`, etc.). Run a workspace grep for the old
-icon names before assuming the wind change is isolated:
-
-```bash
-grep -rE "obi-<old-family>-|icon-<old-family>-" src/
-```
-
-### Visual snapshots
-
-A broad icon refresh almost always disturbs snapshot baselines because dozens
-of components render icons inside their stories. The strategy:
-
-1. **First pass — find the drift.** Run the full suite without `--update`:
-   ```bash
-   npx vitest run --project storybook
-   ```
-   Expect failures concentrated in components that render icons. Each failure
-   reports the pixel-distance from the baseline.
-2. **Inspect a representative diff** under
-   `__vis__/linux/__diffs__/<path>/<story>.png` and confirm the change is
-   "just" an icon-color or icon-shape update (not a layout regression).
-3. **Update scoped first** — for the targeted family (e.g. wind), refresh only
-   the affected stories so the diff stays reviewable:
-   ```bash
-   npx vitest run --project storybook --update src/navigation-instruments/wind-indicator
-   ```
-4. **Update everything else** that drifted from the icon library churn:
-   ```bash
-   npx vitest run --project storybook --update src/integration-systems/integration-bar
-   ```
-   (Repeat per failing path.)
-5. **Verify stable.** Re-run the full suite once more without `--update` and
-   confirm zero icon-related failures. Pre-existing chart flakes (e.g.
-   `polar-chart` Chart.js layout timing) are unrelated to icon work and should
-   be triaged separately, not papered over by a baseline refresh.
-6. **Linux-only baselines.** The repo only ships `__vis__/linux/__baselines__/`.
-   On macOS, the `darwin` directory is populated locally but **not committed**;
-   regenerate Linux baselines inside the Docker container described in
-   [§ Testing](#docker-testing) if you cannot rely on a Linux dev box.
-
-> **PR size warning:** A full icon refresh routinely touches 1500–2000 files in
-> `src/icons/` plus 100–500 baseline PNGs. Reviewers should focus on
-> `script/convert-icons.ts`, `script/figmavariables.json`, the consuming
-> component(s) (e.g. wind), and a sampling of diff images — not the per-icon
-> noise.
+Inputs, the step-by-step refresh, the unresolved-variable fallback, the
+consuming-component checklist (wind is the worked example) and the snapshot
+strategy are in [docs/agents/figma-refresh.md](docs/agents/figma-refresh.md).
 
 ## 📄 Create a new component
 

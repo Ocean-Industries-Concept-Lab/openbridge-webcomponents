@@ -343,7 +343,7 @@ obc-readout-block {
 .value-unit-gap {
   flex: none;
   inline-size: var(
-    --instrument-components-readout-new-general-horizontal-trim-padding
+    --instrument-components-readout-general-horizontal-trim-padding
   );
 }
 
@@ -399,17 +399,17 @@ obc-readout-block {
 }
 .size-small .degree-spacer {
   --_obc-readout-list-item-degree-spacer-width: var(
-    --instrument-components-readout-new-list-item-regular-degree-compensation-padding
+    --instrument-components-readout-list-item-regular-degree-compensation-padding
   );
 }
 .size-medium .degree-spacer {
   --_obc-readout-list-item-degree-spacer-width: var(
-    --instrument-components-readout-new-list-item-medium-degree-compensation-padding
+    --instrument-components-readout-list-item-medium-degree-compensation-padding
   );
 }
 .size-large .degree-spacer {
   --_obc-readout-list-item-degree-spacer-width: var(
-    --instrument-components-readout-new-list-item-large-degree-compensation-padding
+    --instrument-components-readout-list-item-large-degree-compensation-padding
   );
 }
 
@@ -418,29 +418,25 @@ obc-readout-block {
  * tiers. */
 .size-small .surface {
   padding-inline: var(
-    --instrument-components-readout-new-list-item-regular-container-padding-horizontal
+    --instrument-components-readout-list-item-regular-container-padding-horizontal
   );
   padding-block: var(
-    --instrument-components-readout-new-list-item-regular-container-padding-vertical
+    --instrument-components-readout-list-item-regular-container-padding-vertical
   );
 }
 .size-small .content {
   gap: var(
-    --instrument-components-readout-new-list-item-regular-content-container-gap
+    --instrument-components-readout-list-item-regular-content-container-gap
   );
 }
 .size-small .value-cluster {
   gap: var(
-    --instrument-components-readout-new-list-item-regular-value-container-gap
+    --instrument-components-readout-list-item-regular-value-container-gap
   );
 }
 .size-small .leading-icon {
-  inline-size: var(
-    --instrument-components-readout-new-general-regular-icon-size
-  );
-  block-size: var(
-    --instrument-components-readout-new-general-regular-icon-size
-  );
+  inline-size: var(--instrument-components-readout-general-regular-icon-size);
+  block-size: var(--instrument-components-readout-general-regular-icon-size);
 }
 .size-small .divider {
   block-size: var(
@@ -450,27 +446,25 @@ obc-readout-block {
 
 .size-medium .surface {
   padding-inline: var(
-    --instrument-components-readout-new-list-item-medium-container-padding-horizontal
+    --instrument-components-readout-list-item-medium-container-padding-horizontal
   );
   padding-block: var(
-    --instrument-components-readout-new-list-item-medium-container-padding-vertical
+    --instrument-components-readout-list-item-medium-container-padding-vertical
   );
 }
 .size-medium .content {
   gap: var(
-    --instrument-components-readout-new-list-item-medium-content-container-gap
+    --instrument-components-readout-list-item-medium-content-container-gap
   );
 }
 .size-medium .value-cluster {
   gap: var(
-    --instrument-components-readout-new-list-item-medium-value-container-gap
+    --instrument-components-readout-list-item-medium-value-container-gap
   );
 }
 .size-medium .leading-icon {
-  inline-size: var(
-    --instrument-components-readout-new-general-medium-icon-size
-  );
-  block-size: var(--instrument-components-readout-new-general-medium-icon-size);
+  inline-size: var(--instrument-components-readout-general-medium-icon-size);
+  block-size: var(--instrument-components-readout-general-medium-icon-size);
 }
 .size-medium .divider {
   block-size: var(--global-typography-instrument-value-medium-container-height);
@@ -478,24 +472,24 @@ obc-readout-block {
 
 .size-large .surface {
   padding-inline: var(
-    --instrument-components-readout-new-list-item-large-container-padding-horizontal
+    --instrument-components-readout-list-item-large-container-padding-horizontal
   );
   padding-block: var(
-    --instrument-components-readout-new-list-item-large-container-padding-vertical
+    --instrument-components-readout-list-item-large-container-padding-vertical
   );
   min-block-size: var(
-    --instrument-components-readout-new-list-item-large-min-height
+    --instrument-components-readout-list-item-large-min-height
   );
 }
 .size-large .content {
-  gap: var(--instrument-components-readout-new-list-item-large-content-gap);
+  gap: var(--instrument-components-readout-list-item-large-content-gap);
 }
 .size-large .value-cluster {
-  gap: var(--instrument-components-readout-new-list-item-large-value-gap);
+  gap: var(--instrument-components-readout-list-item-large-value-gap);
 }
 .size-large .leading-icon {
-  inline-size: var(--instrument-components-readout-new-general-large-icon-size);
-  block-size: var(--instrument-components-readout-new-general-large-icon-size);
+  inline-size: var(--instrument-components-readout-general-large-icon-size);
+  block-size: var(--instrument-components-readout-general-large-icon-size);
 }
 .size-large .divider {
   block-size: var(--global-typography-instrument-value-large-container-height);
@@ -518,16 +512,16 @@ obc-readout-block {
 }
 .size-small.stacking-leading-src-inline .label-stack {
   gap: var(
-    --instrument-components-readout-new-list-item-regular-content-container-gap
+    --instrument-components-readout-list-item-regular-content-container-gap
   );
 }
 .size-medium.stacking-leading-src-inline .label-stack {
   gap: var(
-    --instrument-components-readout-new-list-item-medium-content-container-gap
+    --instrument-components-readout-list-item-medium-content-container-gap
   );
 }
 .size-large.stacking-leading-src-inline .label-stack {
-  gap: var(--instrument-components-readout-new-list-item-large-content-gap);
+  gap: var(--instrument-components-readout-list-item-large-content-gap);
 }
 
 /* ---------- Data quality ----------
