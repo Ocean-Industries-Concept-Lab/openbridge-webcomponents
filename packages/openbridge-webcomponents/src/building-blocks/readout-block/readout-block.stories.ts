@@ -35,6 +35,7 @@ type BlockArgs = {
   fractionDigits: number;
   maxDigits: number;
   hintedZeros: boolean;
+  hasSignSpacer: boolean;
   spaceReserver: string;
   off: boolean;
   offText: string;
@@ -63,6 +64,7 @@ function renderBlock(args: Partial<BlockArgs>) {
       .fractionDigits=${args.fractionDigits ?? 0}
       .maxDigits=${args.maxDigits ?? 0}
       .hintedZeros=${args.hintedZeros ?? false}
+      .hasSignSpacer=${args.hasSignSpacer ?? false}
       .spaceReserver=${args.spaceReserver || undefined}
       .off=${args.off ?? false}
       .offText=${args.offText ?? 'OFF'}
@@ -149,6 +151,7 @@ const meta = {
     fractionDigits: 0,
     maxDigits: 0,
     hintedZeros: false,
+    hasSignSpacer: false,
     spaceReserver: '',
     off: false,
     offText: 'OFF',
@@ -325,8 +328,15 @@ export const TextValue: Story = {
 
 /**
  * Hinted zeros pad the integer part up to `maxDigits` as muted leading zeros.
- * When enabled they take priority over `spaceReserver` (they already fill to
- * `maxDigits`, so an explicit reserver is ignored).
+ *
+ * A **negative** value keeps them all: the sign is prepended and never
+ * consumes a zero (`maxDigits` 4: `12` → `0012`, `-12` → `-0012`), so a
+ * negative reading is one character wider than a positive one. Where the
+ * width must not change across zero, `hasSignSpacer` reserves a minus-sign
+ * column: an invisible sign placeholder holds it open while the value is
+ * non-negative and the real sign fills it when negative — the pair below
+ * shares one width. The wider of an explicit `spaceReserver` and the
+ * `maxDigits`-derived reserve always wins.
  */
 export const HintedZeros: Story = {
   render: () =>
@@ -341,12 +351,71 @@ export const HintedZeros: Story = {
         args: {value: 8, maxDigits: 4, fractionDigits: 1, hintedZeros: true},
       },
       {
-        title: 'hinted wins over reserver',
+        title: 'negative — sign prepended, zeros kept',
+        args: {value: -8, maxDigits: 4, hintedZeros: true},
+      },
+      {
+        title: 'negative + fraction',
+        args: {value: -1.2, maxDigits: 3, fractionDigits: 1, hintedZeros: true},
+      },
+      {
+        title: 'sign column · positive',
+        args: {value: 8, maxDigits: 4, hintedZeros: true, hasSignSpacer: true},
+      },
+      {
+        title: 'sign column · negative',
+        args: {value: -8, maxDigits: 4, hintedZeros: true, hasSignSpacer: true},
+      },
+      {
+        title: 'wider reserver wins',
         args: {
           value: 8,
           maxDigits: 4,
           hintedZeros: true,
           spaceReserver: '00000000',
+        },
+      },
+    ]),
+};
+
+/**
+ * The sign column without hinted zeros: `hasSignSpacer` reserves minus-sign
+ * width on any numeric block, so a value that crosses zero keeps its digits
+ * (and everything after them) in place. Works in every alignment — the
+ * placeholder is an invisible sign in the text flow, not only a wider
+ * reserve.
+ */
+export const SignSpacer: Story = {
+  render: () =>
+    renderShowcase([
+      {
+        title: 'positive · spacer holds the column',
+        args: {value: 12.3, fractionDigits: 1, hasSignSpacer: true},
+      },
+      {
+        title: 'negative · sign fills it',
+        args: {value: -12.3, fractionDigits: 1, hasSignSpacer: true},
+      },
+      {
+        title: 'unavailable · column kept',
+        args: {value: null, fractionDigits: 1, hasSignSpacer: true},
+      },
+      {
+        title: 'left-aligned pair',
+        args: {
+          value: 12.3,
+          fractionDigits: 1,
+          hasSignSpacer: true,
+          alignment: ObcTextboxAlignment.Left,
+        },
+      },
+      {
+        title: '(left-aligned, negative)',
+        args: {
+          value: -12.3,
+          fractionDigits: 1,
+          hasSignSpacer: true,
+          alignment: ObcTextboxAlignment.Left,
         },
       },
     ]),
@@ -386,10 +455,10 @@ export const Alignment: Story = {
     ),
 };
 
-// The designer's specification, revised in review: the unavailable placeholder
-// stays SHORT (`-.--`, not `---.--`) and sits at the right of the reserved width.
-//   format: 000.00 · readout: 12.30 · hinted: 012.30 · not available: -.--
-// `format: 000.00` maps to maxDigits 3 + fractionDigits 2.
+// The designer's specification: the plain unavailable placeholder stays SHORT
+// (`-.--`) at the right of the reserved width; with hinted zeros the dashes
+// fill every reserved position instead (`---.--`), matching the space the
+// zeros occupy. `format: 000.00` maps to maxDigits 3 + fractionDigits 2.
 const DESIGNER_SPEC_CASES: {
   label: string;
   expected: string;
@@ -412,7 +481,7 @@ const DESIGNER_SPEC_CASES: {
   },
   {
     label: 'not available, hinted enabled',
-    expected: '-.--',
+    expected: '---.--',
     args: {value: null, maxDigits: 3, fractionDigits: 2, hintedZeros: true},
   },
 ];
@@ -471,9 +540,12 @@ const ALIGNMENT_CASES: Partial<BlockArgs>[] = [
 /**
  * **Unavailable values — for design review.**
  *
- * 1. **The placeholder is short.** `-.--` for `format: 000.00`, not `---.--`:
+ * 1. **The plain placeholder is short.** `-.--` for `format: 000.00`:
  *    `maxDigits` already reserves the width, so the dash sits at the right edge
  *    of the reserve rather than spelling out every reserved digit position.
+ *    With **hinted zeros** the dashes fill the whole reserve instead
+ *    (`---.--`) — they stand in for the zeros that would otherwise mark those
+ *    positions.
  * 2. **The dash is digit-width.** It is U+2012 FIGURE DASH, not the ASCII
  *    hyphen-minus. Measured in Noto Sans with tabular figures, a digit is
  *    13.02px and U+2012 is 13.02px, while U+002D is 7.02px — so with a hyphen
@@ -492,8 +564,8 @@ const ALIGNMENT_CASES: Partial<BlockArgs>[] = [
  *    out-of-range values are different: `fractionDigits` throws (programmer
  *    error), `maxDigits` clamps (width-only).
  *
- * Hinted zeros are suppressed for an unavailable value, so the two "not
- * available" rows are identical and nothing reads `----Na.N`.
+ * An unavailable value is never zero-padded — the hinted rendering swaps to
+ * the full-width dashes above, so nothing ever reads `000-.-` or `----Na.N`.
  */
 export const UnavailableValues: Story = {
   render: () => html`
