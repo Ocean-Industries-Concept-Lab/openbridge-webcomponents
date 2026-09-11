@@ -64,9 +64,8 @@ per-machine — a fresh clone or new laptop never has it.
      "https://api.figma.com/v1/files/IkDwOtza6OdjLbIdWA7mI7?depth=1" | head -c 200
    ```
 
-The full refresh playbook (variable map, tripwires, snapshots, bundle cap)
-lives in
-[IMPLEMENTATION_GUIDELINES.md § Icons](../../IMPLEMENTATION_GUIDELINES.md#-icons).
+The full refresh procedure (palette export, variable map, tripwires,
+snapshots, bundle cap) is [`figma-refresh.md`](../../docs/agents/figma-refresh.md).
 
 ## VariableID anatomy — why a refresh can "lose" every icon colour
 
@@ -115,8 +114,7 @@ Two more refresh gotchas:
   `script/figmavariables.json`. Re-run the plugin's `variables map` codegen
   against the **icons** Figma file (the map keys embed icon component node IDs,
   so the main design file produces a map that silently matches nothing), then
-  re-run `npm run download:icons`. See
-  [IMPLEMENTATION_GUIDELINES.md § Icons](../../IMPLEMENTATION_GUIDELINES.md#-icons).
+  re-run `npm run download:icons`. See [`figma-refresh.md`](../../docs/agents/figma-refresh.md).
 - **A missing colour token** → add it in Figma, re-run the `cssvariables`
   codegen, and replace `variables.css` wholesale. `npm run lint:variables`
   catches consumer CSS referencing tokens that do not exist, but cannot catch a

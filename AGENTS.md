@@ -160,6 +160,7 @@ The table below is generated too. Edit `docs/agents/*.md`, never this block.
 | [css-postcss](docs/agents/css-postcss.md) | `packages/openbridge-webcomponents/src/**/*.css` | PostCSS mixins, the two-layer colour model, size variants and font mixins |
 | [docgen](docs/agents/docgen.md) | `packages/openbridge-webcomponents/script/docgen/**` | The OpenAI-backed JSDoc generation CLI and its review-copy workflow |
 | [external-scale](docs/agents/external-scale.md) | `packages/openbridge-webcomponents/src/building-blocks/{external-scale,bar-vertical,bar-horizontal}/**`<br>`packages/openbridge-webcomponents/src/navigation-instruments/{gauge-vertical,gauge-horizontal,gauge-trend}/**` | External scale renderer and bar/gauge wrappers |
+| [figma-refresh](docs/agents/figma-refresh.md) | `packages/openbridge-webcomponents/src/palettes/variables.css`<br>`packages/openbridge-webcomponents/src/mixins/fonts.css`<br>`packages/openbridge-webcomponents/script/{figmavariables.json,download-icons.ts,convert-icons.ts,check-icon-hex-leaks.ts}`<br>`packages/openbridge-webcomponents/src/icons/**` | Regenerating variables.css, fonts.css, figmavariables.json and the icons from Figma, with the tripwires and the commit shape |
 | [generated-code](docs/agents/generated-code.md) | `packages/openbridge-webcomponents/src/{icons,manual-icon}/**`<br>`packages/openbridge-webcomponents/src/palettes/variables.css`<br>`packages/openbridge-webcomponents/src/mixins/fonts.css`<br>`packages/openbridge-webcomponents/script/figmavariables.json`<br>`packages/{openbridge-webcomponents-react,openbridge-webcomponents-vue,openbridge-webcomponents-ng,openbridge-webcomponents-svelte}/**` | Generated files that must never be hand-edited, and the command that regenerates each |
 | [instrument-indicators](docs/agents/instrument-indicators.md) | `packages/openbridge-webcomponents/src/navigation-instruments/{bearing-indicator,compass-indicator,depth-indicator,gauge-bar-indicator,gauge-radial-indicator,gauge-trend-indicator,heading-indicator,heave-indicator,main-engine-indicator,pitch-indicator,propulsion-azimuth-indicator,propulsion-tunnel-thruster,roll-indicator,rot-indicator,rudder-indicator,speed-indicator,wind-indicator}/**` | Compact indicator glyphs — miniature instrument renderings for strips, lists and tiles |
 | [instruments-misc](docs/agents/instruments-misc.md) | `packages/openbridge-webcomponents/src/navigation-instruments/{azimuth-thruster-labeled,badge-command,depth-actual,draft-trim,heave,instrument-field,main-engine,readout-list,readout-list-item,speed-arrows,thruster}/**` | Instruments outside the obc-watch core — readout rows, propulsion glyphs, and helper-borrowing SVG instruments |
@@ -225,12 +226,8 @@ npm run new:component
 npm run download:icons
 ```
 
-> **Refreshing icons from Figma is a multi-step pipeline** (Figma token,
-> `figmavariables.json` map, hex-fallback handling, dependent component
-> updates, snapshot refresh, PWA bundle-size check). Follow the step-by-step
-> playbook in [IMPLEMENTATION_GUIDELINES.md § Icons](IMPLEMENTATION_GUIDELINES.md#-icons)
-> — it walks through the wind component as the worked example for a
-> family-rename change.
+> **Refreshing icons from Figma is a multi-step pipeline.** Follow
+> [`docs/agents/figma-refresh.md`](docs/agents/figma-refresh.md).
 
 Snapshot baselines: `__vis__/linux/__baselines__/` (CI) and `__vis__/darwin/__baselines__/` (macOS).
 
@@ -321,7 +318,7 @@ automatically when editing a `.css` file.
 14. **Keep the main context clean.** Delegate broad exploration to subagents; read a file in the main thread only to edit it or for a few lines.
 15. **Radial instrument geometry goes through `svghelpers/radial-frame.ts`.** One `computeRadialFrame()` result per render feeds both `<obc-watch .arcFrame=...>` and the overlay `viewBox`; never hand-mirror viewBox constants or paddings ([`docs/agents/watch-radial-instruments.md` § Shared frame computation](docs/agents/watch-radial-instruments.md)).
 16. **The readout family is four nested layers, not one component.** `obc-textbox` → `obc-readout-block` → `obc-readout-list-item` → `obc-readout-list`, plus `obc-readout` inside radial instruments; a lower-layer change reaches every layer above it, so re-run the instrument snapshots too ([`docs/agents/readout-components.md`](docs/agents/readout-components.md)).
-17. **Never hand-edit `src/palettes/variables.css`, `src/mixins/fonts.css` or `script/figmavariables.json`.** All three are regenerated wholesale from the [obc-figma-plugin](https://github.com/Ocean-Industries-Concept-Lab/obc-figma-plugin), so token additions and renames go through Figma (or the plugin's `rename()`) first. Hand-curated font mixins live in `src/mixins/font-extras.css`; run `npm run lint:mixins` after regenerating `fonts.css` ([`docs/agents/generated-code.md`](docs/agents/generated-code.md)).
+17. **Never hand-edit `src/palettes/variables.css`, `src/mixins/fonts.css`, `script/figmavariables.json` or `src/icons/**`.** Regenerate them from Figma the way [`docs/agents/figma-refresh.md`](docs/agents/figma-refresh.md) describes.
 18. **Do not commit planning documents or specs.** Design notes, plans and scratch specs stay out of the repository, whatever directory an agent writes them to — the design record belongs in the pull request body, where reviewers read it and where it stays attached to the change.
 19. **Read the tracker before you start.** The issue, then open and closed
     issues and PRs for the component months back — titles first, bodies of
