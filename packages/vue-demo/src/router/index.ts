@@ -22,6 +22,7 @@ import AzimuthView from '@/views/small-screen/AzimuthView.vue'
 import ScreenControl from '@/views/ScreenControl/ScreenControl.vue'
 import type { ScreenPage } from '@/stores/bridge'
 import ZoomCalibrate from '@/views/ZoomCalibrate.vue'
+import BrightnessCalibrate from '@/views/BrightnessCalibrate.vue'
 import QrView from '@/views/QrView.vue'
 
 export interface App {
@@ -253,6 +254,23 @@ export const apps: App[] = [
         title: 'Zoom Calibrate',
         background: '--container-background-color',
         icon: 'palette-color-calibrated-iec'
+      }
+    ]
+  },
+  {
+    name: 'Brightness Calibrate',
+    appIcon: 'palette-day-bright',
+    showTopBar: true,
+    showInCommandMenu: false,
+    path: '/brightness-calibrate',
+    pages: [
+      {
+        path: '',
+        name: 'brightness-calibrate',
+        component: BrightnessCalibrate,
+        title: 'Brightness Calibrate',
+        background: '--container-background-color',
+        icon: 'palette-day-bright'
       }
     ]
   },

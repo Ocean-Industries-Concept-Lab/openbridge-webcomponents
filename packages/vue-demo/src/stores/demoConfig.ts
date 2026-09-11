@@ -25,6 +25,7 @@ export const useDemoConfigStore = defineStore('demoConfig', {
       NavigationMenuVariant.Normal
     ),
     hasCommand: useStorage<boolean>('hasCommand', true),
-    zoomLevel: useStorage<number>('zoomLevel', 1)
+    zoomLevel: useStorage<number>('zoomLevel', 1),
+    brightnessBlend: useStorage<number>('brightnessBlend', 0)
   })
 })
