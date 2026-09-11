@@ -133,18 +133,46 @@ function recursiveFindIcons(
   return icons;
 }
 
-export async function main() {
-  // delete all icons; icon.ts and the do-not-edit marker are hand-written
-  const iconDir = './src/icons';
+/** Empties `src/icons` except the hand-written `icon.ts` and the do-not-edit marker. */
+function clearGeneratedIcons(iconDir: string) {
   const keep = new Set(['icon.ts', 'AGENTS.md']);
-  if (fs.existsSync(iconDir)) {
-    const files = fs.readdirSync(iconDir);
-    for (const file of files.filter((file) => !keep.has(file))) {
-      fs.unlinkSync(`${iconDir}/${file}`);
-    }
-  } else {
+  if (!fs.existsSync(iconDir)) {
     fs.mkdirSync(iconDir);
+    return;
   }
+  for (const file of fs.readdirSync(iconDir)) {
+    if (!keep.has(file)) fs.unlinkSync(`${iconDir}/${file}`);
+  }
+}
+
+/** The image endpoint throttles a full run after ~1000 exports; wait out a 429 (Retry-After when sent) instead of failing. */
+async function withRateLimitRetry<T>(
+  call: () => Promise<T>,
+  attempts = 6
+): Promise<T> {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      return await call();
+    } catch (e) {
+      const response =
+        (e as {error?: {response?: unknown}; response?: unknown}).error
+          ?.response ?? (e as {response?: unknown}).response;
+      const {status, headers} = (response ?? {}) as {
+        status?: number;
+        headers?: Record<string, string>;
+      };
+      if (status !== 429 || attempt >= attempts) throw e;
+      const seconds = Number(headers?.['retry-after']) || 30 * attempt;
+      console.log(
+        `[download-icons] 429 from Figma, waiting ${seconds}s (attempt ${attempt}/${attempts})`
+      );
+      await new Promise((resolve) => setTimeout(resolve, seconds * 1000));
+    }
+  }
+}
+
+export async function main() {
+  const iconDir = './src/icons';
 
   // ensure SVG cache dir exists (download step writes here)
   fs.mkdirSync('./script/.cache/icons', {recursive: true});
@@ -228,13 +256,15 @@ export async function main() {
   for (let i = 0; i < iconsToDownload.length; i += split) {
     console.log('Got images', i);
     const iconChunks = iconsToDownload.slice(i, i + split);
-    const images = await getApi().getImages(
-      {file_key: documentId},
-      {
-        ids: iconChunks.map((icon) => icon.id).join(','),
-        scale: 1,
-        format: 'svg',
-      }
+    const images = await withRateLimitRetry(() =>
+      getApi().getImages(
+        {file_key: documentId},
+        {
+          ids: iconChunks.map((icon) => icon.id).join(','),
+          scale: 1,
+          format: 'svg',
+        }
+      )
     );
 
     // write icons to disk
@@ -251,6 +281,9 @@ export async function main() {
       })
     );
   }
+
+  // only now: a failed download above must leave the committed icons in place
+  clearGeneratedIcons(iconDir);
 
   const scriptMapping: string[] = [];
   const fileImport: string[] = [];
