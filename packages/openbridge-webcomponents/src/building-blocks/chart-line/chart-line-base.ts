@@ -693,6 +693,12 @@ export class ObcChartLineBase extends LitElement {
    * it for compact labels, so it can be given back on the way out.
    */
   private savedLabelThickness = new WeakMap<ExternalScaleElement, number>();
+  private savedMainTickmarkLabels = new WeakMap<
+    ExternalScaleElement,
+    boolean
+  >();
+  /** Last known threshold side, to notice a crossing in `updated()`. */
+  private wasBelowThreshold?: boolean;
 
   /**
    * Label band a slotted scale needs for its compact labels, in the scale's
@@ -863,7 +869,7 @@ export class ObcChartLineBase extends LitElement {
    */
   private refreshRangeLabels(): typeof this.rangeLabelCache {
     const cache: typeof this.rangeLabelCache = {y: [], x: []};
-    if (this.isBelowThreshold()) {
+    if (this.isBelowThreshold() && (this.rangeLabelsY || this.rangeLabelsX)) {
       // Prepared once: it restyles every dataset and reads CSS variables.
       const prepared = this.prepareChartDataAndLabels();
       const extents = this.dataExtents(prepared);
@@ -1742,6 +1748,27 @@ export class ObcChartLineBase extends LitElement {
       ? this.compactLabelThickness('x')
       : undefined;
 
+    // Compact mode labels a slotted scale's main tickmarks; a scale the chart
+    // never compacted keeps whatever the consumer set.
+    const mainLabelsFor = (
+      scale: ExternalScaleElement,
+      compact: boolean
+    ): boolean | undefined => {
+      if (compact) {
+        if (!this.savedMainTickmarkLabels.has(scale)) {
+          this.savedMainTickmarkLabels.set(
+            scale,
+            scale.showMainTickmarkLabels ?? false
+          );
+        }
+        return true;
+      }
+      if (!this.savedMainTickmarkLabels.has(scale)) return undefined;
+      const saved = this.savedMainTickmarkLabels.get(scale);
+      this.savedMainTickmarkLabels.delete(scale);
+      return saved;
+    };
+
     // Narrow a scale's label band to its compact labels, and give the scale
     // its own band back once the chart leaves compact mode.
     const bandFor = (
@@ -1822,7 +1849,6 @@ export class ObcChartLineBase extends LitElement {
           paddingStart: verticalViewBoxPadding.top,
           paddingEnd: verticalViewBoxPadding.bottom,
           showLabels: showLabels || compactY,
-          showMainTickmarkLabels: compactY,
           fixedAspectRatio: this.fixedAspectRatioScaling,
           // Use chart's scaleReferenceSize property for proportional scaling
           scaleReferenceSize: this.scaleReferenceSize,
@@ -1836,6 +1862,8 @@ export class ObcChartLineBase extends LitElement {
           props.primaryTickmarkInterval = this.yStepSize;
         }
         const band = bandFor(scale, compactY, compactYThickness);
+        const mainLabels = mainLabelsFor(scale, compactY);
+        if (mainLabels !== undefined) props.showMainTickmarkLabels = mainLabels;
         if (band !== undefined) props.labelThickness = band;
         updates.push([this.leftScaleSlot, scale, props]);
       });
@@ -1854,7 +1882,6 @@ export class ObcChartLineBase extends LitElement {
           paddingStart: verticalViewBoxPadding.top,
           paddingEnd: verticalViewBoxPadding.bottom,
           showLabels: showLabels || compactY,
-          showMainTickmarkLabels: compactY,
           fixedAspectRatio: this.fixedAspectRatioScaling,
           // Use chart's scaleReferenceSize property for proportional scaling
           scaleReferenceSize: this.scaleReferenceSize,
@@ -1868,6 +1895,8 @@ export class ObcChartLineBase extends LitElement {
           props.primaryTickmarkInterval = this.yStepSize;
         }
         const band = bandFor(scale, compactY, compactYThickness);
+        const mainLabels = mainLabelsFor(scale, compactY);
+        if (mainLabels !== undefined) props.showMainTickmarkLabels = mainLabels;
         if (band !== undefined) props.labelThickness = band;
         updates.push([this.rightScaleSlot, scale, props]);
       });
@@ -1886,7 +1915,6 @@ export class ObcChartLineBase extends LitElement {
           paddingStart: horizontalViewBoxPadding.left,
           paddingEnd: horizontalViewBoxPadding.right,
           showLabels: showLabels || compactX,
-          showMainTickmarkLabels: compactX,
           fixedAspectRatio: this.fixedAspectRatioScaling,
           // Use chart's scaleReferenceSize property for proportional scaling
           scaleReferenceSize: this.scaleReferenceSize,
@@ -1900,6 +1928,8 @@ export class ObcChartLineBase extends LitElement {
           props.primaryTickmarkInterval = this.xStepSize;
         }
         const band = bandFor(scale, compactX, compactXThickness);
+        const mainLabels = mainLabelsFor(scale, compactX);
+        if (mainLabels !== undefined) props.showMainTickmarkLabels = mainLabels;
         if (band !== undefined) props.labelThickness = band;
         updates.push([this.topScaleSlot, scale, props]);
       });
@@ -1918,7 +1948,6 @@ export class ObcChartLineBase extends LitElement {
           paddingStart: horizontalViewBoxPadding.left,
           paddingEnd: horizontalViewBoxPadding.right,
           showLabels: showLabels || compactX,
-          showMainTickmarkLabels: compactX,
           fixedAspectRatio: this.fixedAspectRatioScaling,
           // Use chart's scaleReferenceSize property for proportional scaling
           scaleReferenceSize: this.scaleReferenceSize,
@@ -1932,6 +1961,8 @@ export class ObcChartLineBase extends LitElement {
           props.primaryTickmarkInterval = this.xStepSize;
         }
         const band = bandFor(scale, compactX, compactXThickness);
+        const mainLabels = mainLabelsFor(scale, compactX);
+        if (mainLabels !== undefined) props.showMainTickmarkLabels = mainLabels;
         if (band !== undefined) props.labelThickness = band;
         updates.push([this.bottomScaleSlot, scale, props]);
       });
@@ -2115,8 +2146,20 @@ export class ObcChartLineBase extends LitElement {
     // `syncScalesAndChart()`, so when only `hasLabelPadding` changes we must
     // route through there — otherwise slotted scales stay stale until the
     // next slot/resize event and the chart re-pads on stale thickness.
+    // Crossing the threshold is the other way the cascade's compact state goes
+    // stale: in pixel mode `updateComputedDimensions()` returns false, so a
+    // `width` / `height` change falls through to a plain rebuild and the
+    // slotted scales keep their compact band and labels at full size.
+    const belowThreshold = this.isBelowThreshold();
+    const crossedThreshold =
+      this.wasBelowThreshold !== undefined &&
+      this.wasBelowThreshold !== belowThreshold;
+    this.wasBelowThreshold = belowThreshold;
+
     if (
-      (changed.has('hasLabelPadding') || changed.has('rangeLabels')) &&
+      (changed.has('hasLabelPadding') ||
+        changed.has('rangeLabels') ||
+        crossedThreshold) &&
       this.hasExternalScales()
     ) {
       this.syncScalesAndChart();
