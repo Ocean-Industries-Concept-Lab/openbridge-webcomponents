@@ -67,12 +67,14 @@ export enum ObcAlertFrameMode {
 
 /**
  * How the frame renders the on phase of a flash: `outline` grows the outline
- * outward by 2 px (the design); `opacity` keeps the width and fades the
- * outline colour instead. `opacity` exists for design evaluation and may be
- * removed (#1224).
+ * outward by 2 px in one step (the design); `outline-eased` grows it the same
+ * way over a 150 ms transition; `opacity` keeps the width and fades the
+ * outline colour instead. The last two exist for design evaluation and may
+ * be removed (#1224).
  */
 export enum ObcAlertFrameFlashEffect {
   Outline = 'outline',
+  OutlineEased = 'outline-eased',
   Opacity = 'opacity',
 }
 
@@ -202,8 +204,9 @@ export interface AlertFrameConfig {
  *   (critical/alarm/high fast, warning/medium slow, low very slow, every rectified alert very
  *   slow, caution and diagnostic fixed), `fast`, `slow`, `very-slow` force a tempo, `fixed`
  *   never flashes. Acknowledged frames are always steady.
- * @property flashEffect - `outline` (default) grows the outline by 2 px while on; `opacity`
- *   keeps the width and fades the outline colour. `opacity` is a design-evaluation option.
+ * @property flashEffect - `outline` (default) grows the outline by 2 px while on in one step;
+ *   `outline-eased` grows it over a 150 ms transition; `opacity` keeps the width and fades the
+ *   outline colour. The last two are design-evaluation options.
  * @slot - Default slot for main alert content.
  * @slot icon - Custom icon for the flap (large-side-flip, bottom-flip).
  * @slot label - Label text for the bottom flap (bottom-flip only).

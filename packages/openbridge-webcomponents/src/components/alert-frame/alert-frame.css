@@ -59,6 +59,29 @@
     --blink-off: var(--flash-very-slow-off);
   }
 
+  /* Shared by the eased and opacity effects, so the two fade alike. */
+  --flash-transition: 150ms linear;
+
+  &.flash-effect-outline-eased {
+    transition: outline-width var(--flash-transition);
+
+    .flap {
+      transition: box-shadow var(--flash-transition);
+    }
+
+    .mask {
+      transition:
+        top var(--flash-transition),
+        bottom var(--flash-transition),
+        left var(--flash-transition),
+        right var(--flash-transition);
+    }
+
+    .dash path {
+      transition: stroke-width var(--flash-transition);
+    }
+  }
+
   &.flash-effect-opacity {
     /* No size change: the flap masks and the dash keep their steady geometry. */
     --blink-width: 0px;
@@ -74,12 +97,12 @@
         var(--bg-color) calc(35% + 65% * var(--blink-on)),
         transparent
       );
-      transition: outline-color 150ms linear;
+      transition: outline-color var(--flash-transition);
     }
 
     .dash path {
       opacity: calc(0.35 + 0.65 * var(--blink-on));
-      transition: opacity 150ms linear;
+      transition: opacity var(--flash-transition);
     }
   }
 
