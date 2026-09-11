@@ -134,11 +134,12 @@ function recursiveFindIcons(
 }
 
 export async function main() {
-  // delete all icons
+  // delete all icons; icon.ts and the do-not-edit marker are hand-written
   const iconDir = './src/icons';
+  const keep = new Set(['icon.ts', 'AGENTS.md']);
   if (fs.existsSync(iconDir)) {
     const files = fs.readdirSync(iconDir);
-    for (const file of files.filter((file) => file !== 'icon.ts')) {
+    for (const file of files.filter((file) => !keep.has(file))) {
       fs.unlinkSync(`${iconDir}/${file}`);
     }
   } else {
