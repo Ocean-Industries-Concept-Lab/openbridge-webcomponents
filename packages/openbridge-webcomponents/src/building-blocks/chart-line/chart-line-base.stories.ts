@@ -994,6 +994,55 @@ export const ExternalScalesRangeLabels: Story = {
   `,
 };
 
+/**
+ * A chart below the label threshold with scales slotted on two sides, and no
+ * range labels. The canvas used to be drawn edge to edge here and painted over
+ * both scales; it is now inset by the thickness each scale reports, so the
+ * ladders stay visible at any size.
+ */
+export const ExternalScalesBelowThreshold: Story = {
+  name: 'External Scales Below The Threshold (160×160, No Range Labels)',
+  play: async () => {
+    await new Promise((resolve) => setTimeout(resolve, 300));
+  },
+  args: {
+    width: 160,
+    height: 160,
+    priority: Priority.enhanced,
+  },
+  render: (_args) => html`
+    <obc-area-graph
+      .data=${SAMPLE_DATA}
+      .width=${_args.width}
+      .height=${_args.height}
+      .priority=${_args.priority}
+    >
+      <obc-bar-vertical
+        slot="right-scale"
+        .minValue=${0}
+        .maxValue=${10}
+        .height=${_args.height}
+        .side=${'right'}
+        .hasBar=${false}
+        .primaryTickmarkInterval=${2}
+        .secondaryTickmarkInterval=${1}
+        .priority=${_args.priority}
+      ></obc-bar-vertical>
+      <obc-bar-horizontal
+        slot="bottom-scale"
+        .minValue=${0}
+        .maxValue=${12}
+        .width=${_args.width}
+        .side=${'bottom'}
+        .hasBar=${false}
+        .primaryTickmarkInterval=${2}
+        .secondaryTickmarkInterval=${1}
+        .priority=${_args.priority}
+      ></obc-bar-horizontal>
+    </obc-area-graph>
+  `,
+};
+
 export const FixedAspectRatioScaling: StoryObj = {
   name: 'Fixed Aspect Ratio Scaling (responsive)',
   tags: ['skip-test'],
