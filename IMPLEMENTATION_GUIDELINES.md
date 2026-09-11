@@ -145,9 +145,9 @@ All other CSS code should be kept in the `*.css` files in the component folders.
 >   `:root { animation: … }` rule — the root animation recalculates every
 >   node's style each second and was removed in #1116 (#1134); keep the four
 >   `@property` registrations
-> - the `Component-size` modes whose names carry spaces (`40px visual
-target beta`, `48px visual target beta`, `glove beta`) — they export as
->   descendant selectors no element can match
+> - the `Component-size` modes whose names carry spaces
+>   (`40px visual target beta`, `48px visual target beta`, `glove beta`) —
+>   they export as descendant selectors no element can match
 > - the `desktop` mode — a 40 px touch target, below the floor the size
 >   classes guarantee, and not yet a documented size class
 >
