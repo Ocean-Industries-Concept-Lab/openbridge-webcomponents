@@ -107,6 +107,7 @@ const meta: Meta = {
       .showGridX=${_args.showGridX}
       .showGridY=${_args.showGridY}
       .showTickMarks=${_args.showTickMarks}
+      .rangeLabels=${_args.rangeLabels}
       .xTicksLimit=${_args.xTicksLimit}
       .xStepSize=${_args.xStepSize}
       .yTicksLimit=${_args.yTicksLimit}
@@ -155,6 +156,10 @@ const meta: Meta = {
       description: 'Show horizontal grid lines (y-axis). Default: true',
     },
     showTickMarks: {control: 'boolean'},
+    rangeLabels: {
+      control: {type: 'radio'},
+      options: ['none', 'y', 'x', 'xy'],
+    },
     xTicksLimit: {
       control: {type: 'number'},
       description: 'Max number of x-axis ticks/grid lines (optional)',
@@ -231,6 +236,7 @@ const meta: Meta = {
     showGridX: true, // Component defaults to false, but stories show grid by default
     showGridY: true, // Component defaults to false, but stories show grid by default
     showTickMarks: true, // Component defaults to false, but stories show tick marks by default
+    rangeLabels: 'none',
     xTicksLimit: undefined,
     xStepSize: undefined,
     yTicksLimit: undefined,
@@ -335,6 +341,24 @@ export const MinHeight: Story = {
   args: {
     width: 72,
     height: 48,
+  },
+};
+
+export const MinHeightRangeLabels: Story = {
+  name: 'Minimal Height With Range Labels (48px)',
+  args: {
+    width: 120,
+    height: 48,
+    rangeLabels: 'xy',
+  },
+};
+
+export const BelowThresholdRangeLabels: Story = {
+  name: 'Below Threshold With Range Labels (191px, Y Only)',
+  args: {
+    width: 288,
+    height: 191,
+    rangeLabels: 'y',
   },
 };
 
@@ -907,6 +931,115 @@ export const ExternalScalesMinimal: Story = {
         .side=${'bottom'}
         .hasScale=${true}
         .showLabels=${_args.showLabels}
+        .hasBar=${false}
+        .primaryTickmarkInterval=${2}
+        .secondaryTickmarkInterval=${1}
+        .priority=${_args.priority}
+      ></obc-bar-horizontal>
+    </obc-area-graph>
+  `,
+};
+
+export const ExternalScalesRangeLabels: Story = {
+  name: 'External Scales With Range Labels (160×160, Bottom + Right)',
+  play: async () => {
+    await new Promise((resolve) => setTimeout(resolve, 300));
+  },
+  argTypes: {
+    priority: {
+      control: 'select',
+      options: Object.values(Priority),
+    },
+  },
+  args: {
+    width: 160,
+    height: 160,
+    rangeLabels: 'xy',
+    priority: Priority.enhanced,
+  },
+  render: (_args) => html`
+    <obc-area-graph
+      .data=${SAMPLE_DATA}
+      .showGrid=${true}
+      .showGridX=${true}
+      .showGridY=${true}
+      .width=${_args.width}
+      .height=${_args.height}
+      .rangeLabels=${_args.rangeLabels}
+      .priority=${_args.priority}
+    >
+      <obc-bar-vertical
+        slot="right-scale"
+        .minValue=${0}
+        .maxValue=${10}
+        .height=${_args.height}
+        .side=${'right'}
+        .hasBar=${false}
+        .primaryTickmarkInterval=${2}
+        .secondaryTickmarkInterval=${1}
+        .priority=${_args.priority}
+      ></obc-bar-vertical>
+      <obc-bar-horizontal
+        slot="bottom-scale"
+        .minValue=${0}
+        .maxValue=${12}
+        .width=${_args.width}
+        .side=${'bottom'}
+        .hasBar=${false}
+        .primaryTickmarkInterval=${2}
+        .secondaryTickmarkInterval=${1}
+        .priority=${_args.priority}
+      ></obc-bar-horizontal>
+    </obc-area-graph>
+  `,
+};
+
+/**
+ * A chart below the label threshold with scales slotted on two sides, and no
+ * range labels. The canvas used to be drawn edge to edge here and painted over
+ * both scales; it is now inset by the thickness each scale reports, so the
+ * ladders stay visible at any size.
+ *
+ * The trace is stepped on purpose. What this baseline asserts is the inset, and
+ * a smooth curve puts the whole stroke on sub-pixel boundaries whose
+ * anti-aliasing differs between render environments — axis-aligned segments
+ * rasterize the same everywhere.
+ */
+export const ExternalScalesBelowThreshold: Story = {
+  name: 'External Scales Below The Threshold (160×160, No Range Labels)',
+  play: async () => {
+    await new Promise((resolve) => setTimeout(resolve, 300));
+  },
+  args: {
+    width: 160,
+    height: 160,
+    priority: Priority.enhanced,
+  },
+  render: (_args) => html`
+    <obc-area-graph
+      .data=${SAMPLE_DATA}
+      .lineMode=${'stepped'}
+      .width=${_args.width}
+      .height=${_args.height}
+      .priority=${_args.priority}
+    >
+      <obc-bar-vertical
+        slot="right-scale"
+        .minValue=${0}
+        .maxValue=${10}
+        .height=${_args.height}
+        .side=${'right'}
+        .hasBar=${false}
+        .primaryTickmarkInterval=${2}
+        .secondaryTickmarkInterval=${1}
+        .priority=${_args.priority}
+      ></obc-bar-vertical>
+      <obc-bar-horizontal
+        slot="bottom-scale"
+        .minValue=${0}
+        .maxValue=${12}
+        .width=${_args.width}
+        .side=${'bottom'}
         .hasBar=${false}
         .primaryTickmarkInterval=${2}
         .secondaryTickmarkInterval=${1}

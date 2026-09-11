@@ -442,6 +442,17 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
     return false;
   }
 
+  /**
+   * The right scale is this component's own bar, ranged by `minValue` /
+   * `maxValue`. `chartMinValue` / `chartMaxValue` exist so the plotted range
+   * can differ from it, so the chart's axis range must not overwrite it.
+   */
+  protected override ownsSlottedScaleRange(
+    side: 'left' | 'right' | 'top' | 'bottom'
+  ): boolean {
+    return side !== 'right';
+  }
+
   override willUpdate(changed: Map<PropertyKey, unknown>) {
     // Auto axis detection: {x, value} data switches to time spacing, {label,
     // value} stays category. An explicit xAxisType assignment (anything we
