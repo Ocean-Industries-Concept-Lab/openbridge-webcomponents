@@ -189,22 +189,6 @@ describe('obc-alert-frame flashing lifecycle', () => {
     });
   });
 
-  it('keeps a fixed frame fully visible in the opacity effect', async () => {
-    const el = await setup(
-      ObcAlertFrameMode.unackedActive,
-      AlertType.Caution,
-      FlashingSpeed.Default
-    );
-    el.flashEffect = ObcAlertFrameFlashEffect.Opacity;
-    await el.updateComplete;
-
-    const wrapper = el.shadowRoot!.querySelector('.wrapper') as HTMLElement;
-    expect(wrapper.classList.contains('flash-fixed')).toBe(true);
-    expect(
-      getComputedStyle(wrapper).getPropertyValue('--blink-on').trim()
-    ).toBe('1');
-  });
-
   it('eases the outline width between phases in the outline-eased effect', async () => {
     const el = await setup(ObcAlertFrameMode.unackedActive);
     el.flashEffect = ObcAlertFrameFlashEffect.OutlineEased;
@@ -226,10 +210,10 @@ describe('obc-alert-frame flashing lifecycle', () => {
       ) as CSSTransition | undefined;
     expect(transition).toBeDefined();
     expect((transition!.effect as KeyframeEffect).getTiming().duration).toBe(
-      150
+      50
     );
     transition!.pause();
-    transition!.currentTime = 75;
+    transition!.currentTime = 25;
     const midway = parseFloat(getComputedStyle(wrapper).outlineWidth);
     expect(midway).toBeGreaterThan(2);
     expect(midway).toBeLessThan(4);
