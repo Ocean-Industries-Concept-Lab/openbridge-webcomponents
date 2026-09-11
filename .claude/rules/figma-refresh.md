@@ -62,26 +62,30 @@ tokens that do not resolve or fall back to hex, and the tripwires fire.
 2. Paste the `css variables export` output over `variables.css`, run
    `npx prettier --write` on it, and commit that as the first commit so the
    raw export is reviewable on its own.
-3. Strip what the plugin emits and the repo does not ship, as a second
-   commit:
+3. `npm run palette:strip`, prettier again, and commit that second. The
+   script (`script/palette/export.ts`) removes what the plugin emits and the
+   package does not ship, and `npm run lint:palette` fails CI while any of
+   it is still in the file:
    - the `@keyframes warning-blink` block and the trailing
      `:root { animation: … }` rule. Animating inherited custom properties on
      the root recalculates every node's style each second; the blink is
-     driven from `src/palettes/blinking.ts` (#1116, #1134). Keep the four
-     `@property` registrations.
-   - `Component-size` modes with spaces in their names, such as
-     `40px visual target beta`: they export as descendant selectors no
-     element can match.
-   - any size mode that is not one of the four documented classes
-     (`regular`, `medium`, `large`, `xl`) until it is a decision; `desktop`
-     is a 40 px touch target, below the floor
-     [`a11y.md`](../../docs/agents/a11y.md) § 7 guarantees.
-4. Diff the content, not the text. Prettier wraps long `var(…)` values and
-   a new mode block adds thousands of lines, so `git diff` is unreadable.
-   Parse both versions into block → property → value with whitespace
-   collapsed (a twenty-line script) and read the three lists: added,
-   removed, changed. Every removed name is either a rename (same value
-   under a new name in the added list) or a token consumers must lose.
+     driven from `src/palettes/blinking.ts` (#1116, #1134). The four
+     `@property` registrations stay.
+   - every `Component-size` mode outside the four documented classes
+     (`regular`, `medium`, `large`, `xl`). Modes with spaces in their names
+     export as descendant selectors no element can match; `desktop` is a
+     40 px touch target, below the floor [`a11y.md`](../../docs/agents/a11y.md) § 7
+     guarantees. A new class is a decision, then an entry in the script's
+     allow-list and a row in the size-class table.
+4. Diff the content, not the text — prettier wraps long `var(…)` values
+   and a mode block adds thousands of lines, so `git diff` is unreadable:
+   ```bash
+   git show develop:packages/openbridge-webcomponents/src/palettes/variables.css > /tmp/variables.old.css
+   npm run palette:diff -- /tmp/variables.old.css src/palettes/variables.css
+   ```
+   It prints renames (a removed name whose value reappears under one new
+   name in the same block), removals, additions and value changes per
+   block. A removal that is not a rename is a token consumers must lose.
 5. `npm run lint:variables` names every consumer of a removed token. Follow
    renames in the consuming CSS as a third commit; a rename with an
    identical value changes no rendering, so say so in the commit.
@@ -197,7 +201,8 @@ the semantic diff (renamed, removed, changed per block) belong there too.
 ## Open
 
 - The plugin still emits the blink keyframes and root animation, and modes
-  with spaces in their names; both should be fixed at the source.
+  with spaces in their names; `palette:strip` covers for it until both are
+  fixed at the source.
 - `--base-categorical-*` is referenced by generated icons and absent from
   the palette export (#1187).
 - Token typos in Figma (#985).

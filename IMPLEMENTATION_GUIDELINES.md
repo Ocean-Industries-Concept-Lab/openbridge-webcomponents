@@ -127,9 +127,10 @@ All other CSS code should be kept in the `*.css` files in the component folders.
 > `script/figmavariables.json` (`variables map`, from the icons file).
 >
 > Do not hand-edit any of the three: change the token in Figma (or the
-> plugin's `rename()`), re-run the codegen and replace the file wholesale.
-> Which file feeds which codegen, how to run the plugin, what to strip from
-> its output and how to diff the result are in
+> plugin's `rename()`), re-run the codegen, replace the file wholesale and
+> run `npm run palette:strip` (`npm run lint:palette` fails CI otherwise).
+> Which file feeds which codegen, how to run the plugin and how to diff the
+> result (`npm run palette:diff`) are in
 > [docs/agents/figma-refresh.md](docs/agents/figma-refresh.md). Hand-curated
 > font mixins the plugin does not emit live in `src/mixins/font-extras.css`;
 > `npm run lint:mixins` fails on a dropped definition, and
@@ -393,7 +394,8 @@ per-severity period:
 
 Call sites: `alert-frame`, `alert-icon` and `alert-button`. The plugin still
 emits the old `@keyframes warning-blink` and a `:root { animation: … }` rule;
-strip both when regenerating `variables.css` (#1116, #1134).
+`npm run palette:strip` removes both when regenerating `variables.css`
+(#1116, #1134).
 
 Components apply the animation by binding opacity to these properties:
 
