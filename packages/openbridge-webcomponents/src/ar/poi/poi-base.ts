@@ -7,7 +7,12 @@ import {
   ObcPoiButtonDataItem,
 } from '../poi-button/poi-button.js';
 import {ObcPoiHeaderState} from '../building-blocks/poi-header/poi-header.js';
-import {ObcPoiState, ObcPoiType, ObcPoiValue} from './poi.js';
+import {
+  DEFAULT_LINE_LENGTH_PX,
+  ObcPoiState,
+  ObcPoiType,
+  ObcPoiValue,
+} from './poi.js';
 import {
   ObcPoiPointerState,
   ObcPoiPointerType,
@@ -34,6 +39,7 @@ function stripWhitespaceTextNodes(el: Element): void {
 }
 
 const X_FILTER_CUTOFF_HZ = 16;
+const Y_FILTER_CUTOFF_HZ = 16;
 const X_FILTER_DEADBAND_PX = 0.1;
 const X_MOVING_HINT_MS = 120;
 const VALID_POI_TYPES = new Set(Object.values(ObcPoiType));
@@ -47,12 +53,29 @@ const VALID_POI_STATES = new Set(Object.values(ObcPoiState));
  * layout-change dispatch, and visual-query logic so that each variant
  * only needs to override `renderContent()` and `getVisualNodes()`.
  *
+ * ### Coordinate Model
+ * - `x` is the horizontal center position in px within the layer.
+ * - Targets are anchored at the layer's bottom edge; `y` is the connector
+ *   line length in px extending downward from that anchor to the target
+ *   point (default `192`, the shared `DEFAULT_LINE_LENGTH_PX`). The button
+ *   renders at the top of the connector, inside the layer.
+ * - `buttonY` positions the button; its interaction with `fixedTarget` is
+ *   described in the `obc-poi` documentation.
+ * - `x` and `y` updates pass through built-in low-pass filters (see
+ *   `xFilterCutoffHz` and `yFilterCutoffHz`).
+ *
  * The `@fires` tag below documents the dispatch site, which lives here rather
  * than in the variants. It is deliberately duplicated on each concrete
  * subclass — that is where `custom-elements.json` and the framework wrappers
  * pick the event up, since this class is not registered. Do not remove it from
  * the subclasses. `@ignore` keeps this class out of the generated docs.
  *
+ * @property xFilterCutoffHz - Cutoff frequency (Hz) of the built-in low-pass filter applied to `x`.
+ *   Lower values smooth noisy input more aggressively; `0` or a negative
+ *   value disables filtering so `x` is applied directly.
+ * @property yFilterCutoffHz - Cutoff frequency (Hz) of the built-in low-pass filter applied to `y`.
+ *   Lower values smooth noisy input more aggressively; `0` or a negative
+ *   value disables filtering so `y` is applied directly.
  * @fires {CustomEvent<void>} obc-poi-data-layout-change - Fired when layout-driving properties change. Bubbles and is composed.
  * @ignore
  */
@@ -92,8 +115,12 @@ export class PoiBase extends LitElement implements Poi {
   /* ---------- Poi — position ---------- */
 
   @property({type: Number}) x = 0;
-  @property({type: Number}) y = 192;
+  @property({type: Number}) y = DEFAULT_LINE_LENGTH_PX;
   @property({type: Number, attribute: 'button-y'}) buttonY: number | null = 0;
+  @property({type: Number, attribute: 'x-filter-cutoff-hz'})
+  xFilterCutoffHz = X_FILTER_CUTOFF_HZ;
+  @property({type: Number, attribute: 'y-filter-cutoff-hz'})
+  yFilterCutoffHz = Y_FILTER_CUTOFF_HZ;
   @property({type: Boolean, attribute: 'fixed-target'}) fixedTarget = false;
   @property({type: Number, attribute: 'box-width'}) boxWidth: number | null =
     null;
@@ -144,6 +171,26 @@ export class PoiBase extends LitElement implements Poi {
   private xFilterRaf = 0;
   private xMovingHintTimeout: number | null = null;
 
+  private get resolvedXFilterCutoffHz(): number {
+    return Number.isFinite(this.xFilterCutoffHz)
+      ? this.xFilterCutoffHz
+      : X_FILTER_CUTOFF_HZ;
+  }
+
+  /* ---------- Y-filter state ---------- */
+
+  private filteredY = 0;
+  private yFilterTarget = 0;
+  private yFilterInitialized = false;
+  private lastYFilterTimestampMs = 0;
+  private yFilterRaf = 0;
+
+  private get resolvedYFilterCutoffHz(): number {
+    return Number.isFinite(this.yFilterCutoffHz)
+      ? this.yFilterCutoffHz
+      : Y_FILTER_CUTOFF_HZ;
+  }
+
   /* ---------- Layout change ---------- */
 
   private dispatchLayoutChange() {
@@ -172,7 +219,9 @@ export class PoiBase extends LitElement implements Poi {
         : 1 / 60;
     this.lastXFilterTimestampMs = nowMs;
 
-    const alpha = 1 - Math.exp(-2 * Math.PI * X_FILTER_CUTOFF_HZ * dtSeconds);
+    const cutoffHz = this.resolvedXFilterCutoffHz;
+    const alpha =
+      cutoffHz <= 0 ? 1 : 1 - Math.exp(-2 * Math.PI * cutoffHz * dtSeconds);
     const delta = this.xFilterTarget - this.filteredX;
     const nextX =
       Math.abs(delta) <= X_FILTER_DEADBAND_PX
@@ -211,7 +260,10 @@ export class PoiBase extends LitElement implements Poi {
       return;
     }
 
-    if (Math.abs(nextX - this.filteredX) <= X_FILTER_DEADBAND_PX) {
+    if (
+      this.resolvedXFilterCutoffHz <= 0 ||
+      Math.abs(nextX - this.filteredX) <= X_FILTER_DEADBAND_PX
+    ) {
       this.filteredX = this.xFilterTarget;
       this.style.setProperty('--obc-poi-data-x', `${this.filteredX}px`);
       if (this.xFilterRaf) {
@@ -227,6 +279,85 @@ export class PoiBase extends LitElement implements Poi {
       this.lastXFilterTimestampMs = 0;
       this.markXMoving();
       this.xFilterRaf = requestAnimationFrame(this.stepXFilter);
+    }
+  }
+
+  /* ---------- Y filter (low-pass) ---------- */
+
+  private stepYFilter = (nowMs: number) => {
+    this.yFilterRaf = 0;
+    if (!this.isConnected || !this.yFilterInitialized) {
+      return;
+    }
+
+    const dtSeconds =
+      this.lastYFilterTimestampMs > 0
+        ? Math.min(
+            0.25,
+            Math.max(1 / 120, (nowMs - this.lastYFilterTimestampMs) / 1000)
+          )
+        : 1 / 60;
+    this.lastYFilterTimestampMs = nowMs;
+
+    const cutoffHz = this.resolvedYFilterCutoffHz;
+    const alpha =
+      cutoffHz <= 0 ? 1 : 1 - Math.exp(-2 * Math.PI * cutoffHz * dtSeconds);
+    const delta = this.yFilterTarget - this.filteredY;
+    const nextY =
+      Math.abs(delta) <= X_FILTER_DEADBAND_PX
+        ? this.yFilterTarget
+        : this.filteredY + delta * alpha;
+    const changed = Math.abs(nextY - this.filteredY) > 1e-6;
+    this.filteredY = nextY;
+    if (changed) {
+      this.applyFilteredY();
+    }
+
+    const settled =
+      Math.abs(this.yFilterTarget - this.filteredY) <= X_FILTER_DEADBAND_PX;
+
+    if (settled) {
+      this.filteredY = this.yFilterTarget;
+      this.applyFilteredY();
+      this.lastYFilterTimestampMs = 0;
+      return;
+    }
+
+    this.yFilterRaf = requestAnimationFrame(this.stepYFilter);
+  };
+
+  private applyFilteredY() {
+    this.requestUpdate();
+    this.updatePosition();
+    this.dispatchLayoutChange();
+  }
+
+  private syncYFilterTarget(nextY: number) {
+    this.yFilterTarget = nextY;
+
+    if (!this.yFilterInitialized) {
+      this.yFilterInitialized = true;
+      this.filteredY = nextY;
+      return;
+    }
+
+    if (
+      this.resolvedYFilterCutoffHz <= 0 ||
+      Math.abs(nextY - this.filteredY) <= X_FILTER_DEADBAND_PX
+    ) {
+      this.filteredY = this.yFilterTarget;
+      this.applyFilteredY();
+      if (this.yFilterRaf) {
+        cancelAnimationFrame(this.yFilterRaf);
+        this.yFilterRaf = 0;
+      }
+      this.lastYFilterTimestampMs = 0;
+      return;
+    }
+
+    if (!this.yFilterRaf) {
+      this.lastYFilterTimestampMs = 0;
+      this.yFilterRaf = requestAnimationFrame(this.stepYFilter);
     }
   }
 
@@ -252,6 +383,11 @@ export class PoiBase extends LitElement implements Poi {
       this.xFilterRaf = 0;
     }
     this.lastXFilterTimestampMs = 0;
+    if (this.yFilterRaf) {
+      cancelAnimationFrame(this.yFilterRaf);
+      this.yFilterRaf = 0;
+    }
+    this.lastYFilterTimestampMs = 0;
     if (this.xMovingHintTimeout !== null) {
       window.clearTimeout(this.xMovingHintTimeout);
       this.xMovingHintTimeout = null;
@@ -264,7 +400,6 @@ export class PoiBase extends LitElement implements Poi {
       for (const mutation of mutations) {
         if (mutation.type === 'childList') {
           this.syncHeaderContent();
-          this.syncHeaderState();
           return;
         }
         if (
@@ -273,7 +408,6 @@ export class PoiBase extends LitElement implements Poi {
           mutation.target.getAttribute('slot') === 'header'
         ) {
           this.syncHeaderContent();
-          this.syncHeaderState();
           return;
         }
       }
@@ -288,6 +422,9 @@ export class PoiBase extends LitElement implements Poi {
   override updated(changedProperties: Map<string, unknown>) {
     if (changedProperties.has('x')) {
       this.syncXFilterTarget(Number.isFinite(this.x) ? this.x : 0);
+    }
+    if (changedProperties.has('y')) {
+      this.syncYFilterTarget(Number.isFinite(this.y) ? this.y : 0);
     }
     if (
       changedProperties.has('buttonY') ||
@@ -312,12 +449,10 @@ export class PoiBase extends LitElement implements Poi {
       this.dispatchLayoutChange();
     }
     this.syncHeaderContent();
-    this.syncHeaderState();
   }
 
   protected override firstUpdated(_changedProperties: Map<string, unknown>) {
     this.syncHeaderContent();
-    this.syncHeaderState();
   }
 
   /* ---------- Vertical positioning ---------- */
@@ -543,8 +678,11 @@ export class PoiBase extends LitElement implements Poi {
 
   /* ---------- Render helpers ---------- */
 
-  /** Public `y` normalized as the target Y input. */
+  /** Public `y` normalized as the target Y input, after the y filter. */
   protected get resolvedTargetY(): number {
+    if (this.yFilterInitialized) {
+      return this.filteredY;
+    }
     return Number.isFinite(this.y) ? this.y : 0;
   }
 
@@ -581,6 +719,7 @@ export class PoiBase extends LitElement implements Poi {
         .data=${this.data}
       >
         <slot></slot>
+        <slot name="header" slot="header"></slot>
       </obc-poi-button>
     `;
   }
@@ -601,54 +740,24 @@ export class PoiBase extends LitElement implements Poi {
     }
   }
 
+  /**
+   * Auto-enable `hasHeader` when the consumer slots header content directly
+   * (outside a stack, which manages `hasHeader` itself). Header elements stay
+   * in the consumer's light DOM and reach the inner button through the
+   * `<slot name="header">` forwarding chain; their `state` is synced by
+   * `obc-poi-button`.
+   */
   private syncHeaderContent() {
-    const headerChildren = Array.from(this.children).filter(
-      (child): child is HTMLElement =>
+    if (this.hasHeader) {
+      return;
+    }
+    const hasHeaderChildren = Array.from(this.children).some(
+      (child) =>
         child instanceof HTMLElement && child.getAttribute('slot') === 'header'
     );
-
-    if (headerChildren.length === 0 && !this.hasHeader) {
-      return;
-    }
-
-    if (
-      headerChildren.length > 0 &&
-      !this.hasHeader &&
-      this.closest('obc-poi-layer-stack') === null
-    ) {
+    if (hasHeaderChildren && this.closest('obc-poi-layer-stack') === null) {
       this.hasHeader = true;
     }
-
-    const target = (this.shadowRoot?.querySelector('[slot="button"]') ??
-      this.shadowRoot?.querySelector('obc-poi')) as HTMLElement | null;
-    if (!target) {
-      return;
-    }
-
-    for (const child of headerChildren) {
-      if (child.parentElement !== target) {
-        target.appendChild(child);
-      }
-      this.applyHeaderState(child);
-    }
-  }
-
-  private applyHeaderState(root: ParentNode) {
-    const headers = [
-      ...(root instanceof Element && root.matches('obc-poi-header')
-        ? [root]
-        : []),
-      ...root.querySelectorAll('obc-poi-header'),
-    ] as HTMLElement[];
-
-    for (const header of headers) {
-      (header as {state?: ObcPoiHeaderState}).state = this.resolvedHeaderState;
-      header.setAttribute('state', this.resolvedHeaderState);
-    }
-  }
-
-  private syncHeaderState() {
-    this.applyHeaderState(this.renderRoot);
   }
 
   override render() {

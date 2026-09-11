@@ -18,6 +18,7 @@ export {ObcPoiObjectState as ObcPoiObjectAtonState};
  *
  * Extends `PoiBase` to provide the "aton" variant of the POI system.
  * Renders `<obc-poi>` with a slotted `<obc-poi-button-aton>`.
+ * See the "Coordinate Model" section in `PoiBase` (poi-base.ts) for how `x`, `y`, and `buttonY` position the marker.
  *
  * @slot - Icon content forwarded to the inner aton diamond.
  * @slot header - Optional header content forwarded to the poi button.
@@ -61,6 +62,7 @@ export class ObcPoiAton extends PoiBase {
         .atonInteractive=${this.atonInteractive}
       >
         <slot><obi-beacon-general-east></obi-beacon-general-east></slot>
+        <slot name="header" slot="header"></slot>
       </obc-poi-button-aton>
     `;
   }
