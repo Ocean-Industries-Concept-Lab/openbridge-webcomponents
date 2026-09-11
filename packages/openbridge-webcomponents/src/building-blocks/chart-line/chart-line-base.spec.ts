@@ -582,3 +582,65 @@ describe('range labels on a multi-axis chart (#1191)', () => {
     expect(chartRange(chart, 'y-temp')).toEqual({min: 20, max: 30});
   });
 });
+
+describe('gauge-trend keeps its own scale range (#1214)', () => {
+  /**
+   * `chartMinValue` / `chartMaxValue` exist so the plotted range can differ from
+   * the range the bar and its ladder describe. The base pushes the chart's axis
+   * range to every slotted scale after each build, and the gauge's bar sits in
+   * `right-scale` while its only axis is left-positioned — so without an opt-out
+   * the bar is handed the chart range on the next data tick.
+   */
+  const mountGauge = async () => {
+    const host = document.createElement('div');
+    host.style.cssText = 'width: 384px';
+    document.body.appendChild(host);
+    mounted.push(host);
+    const gauge = document.createElement('obc-gauge-trend') as ObcGaugeTrend;
+    gauge.width = 384;
+    gauge.height = 384;
+    gauge.hasBar = true;
+    gauge.hasScale = true;
+    gauge.minValue = 0;
+    gauge.maxValue = 100;
+    gauge.chartMinValue = 20;
+    gauge.chartMaxValue = 80;
+    gauge.value = 50;
+    gauge.data = [45, 52, 48, 55].map((value, i) => ({
+      label: String(i),
+      value,
+    }));
+    host.appendChild(gauge);
+    await gauge.updateComplete;
+    await frames(30);
+    return gauge;
+  };
+
+  it('holds minValue/maxValue on the bar when the chart range differs', async () => {
+    const gauge = await mountGauge();
+    const bar = gauge.querySelector('obc-bar-vertical') as ObcBarVertical;
+    expect([bar.minValue, bar.maxValue]).toEqual([0, 100]);
+  });
+
+  it('holds them through a data change', async () => {
+    const gauge = await mountGauge();
+    const bar = gauge.querySelector('obc-bar-vertical') as ObcBarVertical;
+
+    gauge.data = [10, 70, 30, 65].map((value, i) => ({
+      label: String(i),
+      value,
+    }));
+    await gauge.updateComplete;
+    await frames(30);
+
+    expect([bar.minValue, bar.maxValue]).toEqual([0, 100]);
+  });
+
+  it('still plots on the chart range', async () => {
+    const gauge = await mountGauge();
+    expect(chartRange(gauge as unknown as ObcAreaGraph, 'y')).toEqual({
+      min: 20,
+      max: 80,
+    });
+  });
+});
