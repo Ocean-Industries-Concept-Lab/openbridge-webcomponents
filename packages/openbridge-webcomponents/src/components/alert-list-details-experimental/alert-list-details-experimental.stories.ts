@@ -40,7 +40,7 @@ const ack = (item: Alert) => {
 
 const meta: Meta<typeof ObcAlertListDetailsExperimental> = {
   title: 'Application Components/Alerts/Alert List Details Experimental',
-  tags: ['6.0'],
+  tags: ['6.0', 'experimental'],
   component: 'obc-alert-list-details-experimental',
   args: {
     selectedMode: AlertListMode.ALL,
