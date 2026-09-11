@@ -107,7 +107,13 @@ export class ObcAppButton extends LitElement {
           <slot name="icon"></slot>
         </span>
       </div>
-      ${this.showLabel ? html`<div class="label">${this.label}</div>` : nothing}
+      ${this.showLabel
+        ? html`<div class="label">
+            ${this.label}<span class="label-width-reserve" aria-hidden="true"
+              >${this.label}</span
+            >
+          </div>`
+        : nothing}
     </button>`;
   }
 
