@@ -2145,16 +2145,9 @@ export class ObcChartLineBase extends LitElement {
       if (this.updateComputedDimensions()) return;
     }
 
-    // `hasLabelPadding` cascades into slotted scales via `updateScaleProperties()`
-    // (toggles `showLabels`, which collapses/expands the bar's label band and
-    // changes its reported thickness). That path only runs through
-    // `syncScalesAndChart()`, so when only `hasLabelPadding` changes we must
-    // route through there — otherwise slotted scales stay stale until the
-    // next slot/resize event and the chart re-pads on stale thickness.
-    // Crossing the threshold is the other way the cascade's compact state goes
-    // stale: in pixel mode `updateComputedDimensions()` returns false, so a
-    // `width` / `height` change falls through to a plain rebuild and the
-    // slotted scales keep their compact band and labels at full size.
+    // Only `syncScalesAndChart()` re-cascades to slotted scales, and these are
+    // the changes that need it: the two flags decide what a scale renders, and
+    // a threshold crossing reaches a plain rebuild in pixel mode.
     const belowThreshold = this.isBelowThreshold();
     const crossedThreshold =
       this.wasBelowThreshold !== undefined &&

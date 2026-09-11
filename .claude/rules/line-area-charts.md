@@ -127,6 +127,15 @@ When adding new features or fixing bugs:
      previous chart; `syncSlottedScaleRanges()` pushes ranges again after every
      `createChart()` / `updateChart()`, which is also what keeps an auto-ranged
      scale following the data.
+   - **A subclass that ranges its own slotted scale overrides
+     `ownsSlottedScaleRange(side)`.** Both range writers go through it. `obc-gauge-trend`
+     returns false for `right`: its bar is ranged by `minValue` / `maxValue`, which
+     `chartMinValue` / `chartMaxValue` exist to differ from, and the chart's axis is
+     left-positioned so the right slot would otherwise fall back to it (#1214).
+   - **Crossing the threshold re-runs the cascade.** In pixel mode
+     `updateComputedDimensions()` returns false, so a `width` / `height` change reaches
+     a plain rebuild and never re-cascades; `updated()` compares against the remembered
+     side so a chart that shrank and grew back gets its scales' bands and labels back.
    - **Never push epoch milliseconds to a slotted scale.** A scale labels values
      verbatim and a plausible tick interval over an epoch-ms range overflows the
      stack. `resolveSlottedXRange()` converts a `time` axis to minutes relative to
@@ -141,8 +150,12 @@ When adding new features or fixing bugs:
      widest label + 8, or one line + 4 at the bottom) and the `rangeLabels` plugin
      paints min / 0 / max flush with the plot's top and bottom and first / last x in
      the bottom gutter — no vertical space is taken for y. A slotted side is switched to
-     `showMainTickmarkLabels` with a compact `labelThickness` measured the same way,
-     and the scale's own thickness is restored when the chart leaves compact mode.
+     `showMainTickmarkLabels` with a compact `labelThickness` measured the same way.
+     Both are **borrowed, not owned**: each is saved per scale on the way into compact
+     mode and handed back on the way out, so a scale that asked for main-tickmark
+     labels itself keeps them and one that never did returns to false.
+     The y bounds come from the datasets' own extent, except under `stacked`, where the
+     axis spans the accumulated series and only the laid-out scale knows the range.
      Padding is decided **per side** in `computeChartPadding()`, which feeds both the
      Chart.js layout and the padding cascaded to slotted scales — the two used to be
      separate paths, so below the threshold a scale sat 32 px inset inside a chart
