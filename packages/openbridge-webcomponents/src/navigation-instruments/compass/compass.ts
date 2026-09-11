@@ -125,8 +125,8 @@ export enum CompassPriorityElement {
  * ```
  *
  *
- * @ignition-base-height: 512px
- * @ignition-base-width: 512px
+ * @snapshot-base-height 512px
+ * @snapshot-base-width 512px
  *
  * @property heading - The current heading of the vessel in degrees.
  * @property courseOverGround - The current course over ground in degrees.

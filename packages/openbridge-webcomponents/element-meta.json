@@ -1,0 +1,1577 @@
+[
+  {
+    "tagname": "obc-accordion-card",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-accordion-card-Primary.png",
+    "widthPx": 318,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-accordion-item",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-accordion-item-Primary.png",
+    "widthPx": 193,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-advice-button",
+    "primaryStorybook": "Advice Flat Inactive",
+    "screenshotPath": "screenshots/obc-advice-button-Advice-Flat-Inactive.png",
+    "widthPx": 48,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-advice-floating-item",
+    "primaryStorybook": "Advice Vertical Single Regular",
+    "screenshotPath": "screenshots/obc-advice-floating-item-Advice-Vertical-Single-Regular.png",
+    "widthPx": 636,
+    "heightPx": 73
+  },
+  {
+    "tagname": "obc-advice-menu-item",
+    "primaryStorybook": "Single Line",
+    "screenshotPath": "screenshots/obc-advice-menu-item-Single-Line.png",
+    "widthPx": 32,
+    "heightPx": 57
+  },
+  {
+    "tagname": "obc-advice-message-item",
+    "primaryStorybook": "Default",
+    "screenshotPath": "screenshots/obc-advice-message-item-Default.png",
+    "widthPx": 636,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-alert-button",
+    "primaryStorybook": "Dynamic Sizing To Flat",
+    "screenshotPath": null,
+    "widthPx": null,
+    "heightPx": null
+  },
+  {
+    "tagname": "obc-alert-detail-page",
+    "primaryStorybook": "Page",
+    "screenshotPath": "screenshots/obc-alert-detail-page-Page.png",
+    "widthPx": 602,
+    "heightPx": 863
+  },
+  {
+    "tagname": "obc-alert-floating-item",
+    "primaryStorybook": "Alert Vertical Single Regular",
+    "screenshotPath": "screenshots/obc-alert-floating-item-Alert-Vertical-Single-Regular.png",
+    "widthPx": 636,
+    "heightPx": 73
+  },
+  {
+    "tagname": "obc-alert-frame",
+    "primaryStorybook": "Alarm Thick",
+    "screenshotPath": null,
+    "widthPx": null,
+    "heightPx": null
+  },
+  {
+    "tagname": "obc-alert-icon",
+    "primaryStorybook": "Alarm Unacknowledged",
+    "screenshotPath": null,
+    "widthPx": null,
+    "heightPx": null
+  },
+  {
+    "tagname": "obc-alert-list",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-alert-list-Primary.png",
+    "widthPx": 32,
+    "heightPx": 298
+  },
+  {
+    "tagname": "obc-alert-list-details",
+    "primaryStorybook": "Regular",
+    "screenshotPath": "screenshots/obc-alert-list-details-Regular.png",
+    "widthPx": 913,
+    "heightPx": 894
+  },
+  {
+    "tagname": "obc-alert-list-page-small",
+    "primaryStorybook": "Regular",
+    "screenshotPath": "screenshots/obc-alert-list-page-small-Regular.png",
+    "widthPx": 684,
+    "heightPx": 894
+  },
+  {
+    "tagname": "obc-alert-menu",
+    "primaryStorybook": "Regular",
+    "screenshotPath": "screenshots/obc-alert-menu-Regular.png",
+    "widthPx": 636,
+    "heightPx": 557
+  },
+  {
+    "tagname": "obc-alert-menu-item",
+    "primaryStorybook": "Default",
+    "screenshotPath": "screenshots/obc-alert-menu-item-Default.png",
+    "widthPx": 32,
+    "heightPx": 65
+  },
+  {
+    "tagname": "obc-analog-valve",
+    "primaryStorybook": "Open",
+    "screenshotPath": "screenshots/obc-analog-valve-Open.png",
+    "widthPx": 80,
+    "heightPx": 84
+  },
+  {
+    "tagname": "obc-app-button",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-app-button-Primary.png",
+    "widthPx": 72,
+    "heightPx": 96
+  },
+  {
+    "tagname": "obc-app-menu",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-app-menu-Primary.png",
+    "widthPx": 358,
+    "heightPx": 366
+  },
+  {
+    "tagname": "obc-area-graph",
+    "primaryStorybook": "Semitransparent Area Graph (default)",
+    "screenshotPath": "screenshots/obc-area-graph-Semitransparent-Area-Graph-(default).png",
+    "widthPx": 477,
+    "heightPx": 323
+  },
+  {
+    "tagname": "obc-attachment-list-item",
+    "primaryStorybook": "Default",
+    "screenshotPath": "screenshots/obc-attachment-list-item-Default.png",
+    "widthPx": 302,
+    "heightPx": 50
+  },
+  {
+    "tagname": "obc-audio-output",
+    "primaryStorybook": "Full Volume",
+    "screenshotPath": "screenshots/obc-audio-output-Full-Volume.png",
+    "widthPx": 168,
+    "heightPx": 25
+  },
+  {
+    "tagname": "obc-audio-recording-item",
+    "primaryStorybook": "Recording",
+    "screenshotPath": "screenshots/obc-audio-recording-item-Recording.png",
+    "widthPx": 398,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-automation-badge",
+    "primaryStorybook": "Flat",
+    "screenshotPath": "screenshots/obc-automation-badge-Flat.png",
+    "widthPx": 16,
+    "heightPx": 16
+  },
+  {
+    "tagname": "obc-automation-button",
+    "primaryStorybook": "Valve Open",
+    "screenshotPath": "screenshots/obc-automation-button-Valve-Open.png",
+    "widthPx": 48,
+    "heightPx": 65
+  },
+  {
+    "tagname": "obc-automation-button-readout-stack",
+    "primaryStorybook": "Default",
+    "screenshotPath": "screenshots/obc-automation-button-readout-stack-Default.png",
+    "widthPx": 80,
+    "heightPx": 61
+  },
+  {
+    "tagname": "obc-automation-input-modal",
+    "primaryStorybook": "Compact",
+    "screenshotPath": "screenshots/obc-automation-input-modal-Compact.png",
+    "widthPx": 451,
+    "heightPx": 159
+  },
+  {
+    "tagname": "obc-automation-readout",
+    "primaryStorybook": "Usage With Pipe Bottom",
+    "screenshotPath": "screenshots/obc-automation-readout-Usage-With-Pipe-Bottom.png",
+    "widthPx": 70,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-automation-tank",
+    "primaryStorybook": "Vertical",
+    "screenshotPath": "screenshots/obc-automation-tank-Vertical.png",
+    "widthPx": 168,
+    "heightPx": 173
+  },
+  {
+    "tagname": "obc-azimuth-thruster",
+    "primaryStorybook": "In Command",
+    "screenshotPath": "screenshots/obc-azimuth-thruster-In-Command.png",
+    "widthPx": 509,
+    "heightPx": 509
+  },
+  {
+    "tagname": "obc-azimuth-thruster-labeled",
+    "primaryStorybook": "Medium",
+    "screenshotPath": "screenshots/obc-azimuth-thruster-labeled-Medium.png",
+    "widthPx": 509,
+    "heightPx": 509
+  },
+  {
+    "tagname": "obc-badge",
+    "primaryStorybook": "Regular",
+    "screenshotPath": "screenshots/obc-badge-Regular.png",
+    "widthPx": 29,
+    "heightPx": 16
+  },
+  {
+    "tagname": "obc-badge-command",
+    "primaryStorybook": "In Command Large",
+    "screenshotPath": "screenshots/obc-badge-command-In-Command-Large.png",
+    "widthPx": 509,
+    "heightPx": 509
+  },
+  {
+    "tagname": "obc-bar-horizontal",
+    "primaryStorybook": "Default (bottom side, bar, labels, advice)",
+    "screenshotPath": "screenshots/obc-bar-horizontal-Default-(bottom-side,-bar,-labels,-advice).png",
+    "widthPx": 477,
+    "heightPx": 113
+  },
+  {
+    "tagname": "obc-bar-vertical",
+    "primaryStorybook": "Default (right side, bar, labels, advice)",
+    "screenshotPath": "screenshots/obc-bar-vertical-Default-(right-side,-bar,-labels,-advice).png",
+    "widthPx": 108,
+    "heightPx": 323
+  },
+  {
+    "tagname": "obc-battery-icon",
+    "primaryStorybook": "Full",
+    "screenshotPath": "screenshots/obc-battery-icon-Full.png",
+    "widthPx": 298,
+    "heightPx": 298
+  },
+  {
+    "tagname": "obc-bearing-indicator",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-bearing-indicator-Primary.png",
+    "widthPx": 48,
+    "heightPx": 53
+  },
+  {
+    "tagname": "obc-bipolar-transistor",
+    "primaryStorybook": "On",
+    "screenshotPath": "screenshots/obc-bipolar-transistor-On.png",
+    "widthPx": 55,
+    "heightPx": 84
+  },
+  {
+    "tagname": "obc-breadcrumb",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-breadcrumb-Primary.png",
+    "widthPx": 338,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-brilliance-menu",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-brilliance-menu-Primary.png",
+    "widthPx": 318,
+    "heightPx": 621
+  },
+  {
+    "tagname": "obc-button",
+    "primaryStorybook": "Normal",
+    "screenshotPath": "screenshots/obc-button-Normal.png",
+    "widthPx": 112,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-calendar",
+    "primaryStorybook": "Regular",
+    "screenshotPath": "screenshots/obc-calendar-Regular.png",
+    "widthPx": 339,
+    "heightPx": 114
+  },
+  {
+    "tagname": "obc-capacitor",
+    "primaryStorybook": "On",
+    "screenshotPath": "screenshots/obc-capacitor-On.png",
+    "widthPx": 55,
+    "heightPx": 84
+  },
+  {
+    "tagname": "obc-card",
+    "primaryStorybook": "Regular",
+    "screenshotPath": "screenshots/obc-card-Regular.png",
+    "widthPx": 62,
+    "heightPx": 134
+  },
+  {
+    "tagname": "obc-chart-object-vessel-button",
+    "primaryStorybook": "TS Sola",
+    "screenshotPath": null,
+    "widthPx": null,
+    "heightPx": null
+  },
+  {
+    "tagname": "obc-chat-message",
+    "primaryStorybook": "Self",
+    "screenshotPath": "screenshots/obc-chat-message-Self.png",
+    "widthPx": 852,
+    "heightPx": 104
+  },
+  {
+    "tagname": "obc-check-button",
+    "primaryStorybook": "Checkbox",
+    "screenshotPath": "screenshots/obc-check-button-Checkbox.png",
+    "widthPx": 113,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-checkbox",
+    "primaryStorybook": "Playground",
+    "screenshotPath": "screenshots/obc-checkbox-Playground.png",
+    "widthPx": 48,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-checkbox-item",
+    "primaryStorybook": "Playground",
+    "screenshotPath": "screenshots/obc-checkbox-item-Playground.png",
+    "widthPx": 94,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-clock",
+    "primaryStorybook": "Normal",
+    "screenshotPath": "screenshots/obc-clock-Normal.png",
+    "widthPx": 68,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-command-button",
+    "primaryStorybook": "In Command",
+    "screenshotPath": "screenshots/obc-command-button-In-Command.png",
+    "widthPx": 48,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-command-menu",
+    "primaryStorybook": "In Command",
+    "screenshotPath": "screenshots/obc-command-menu-In-Command.png",
+    "widthPx": 358,
+    "heightPx": 255
+  },
+  {
+    "tagname": "obc-communication-table",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-communication-table-Primary.png",
+    "widthPx": 301,
+    "heightPx": 255
+  },
+  {
+    "tagname": "obc-compass",
+    "primaryStorybook": "North Up In Command",
+    "screenshotPath": "screenshots/obc-compass-North-Up-In-Command.png",
+    "widthPx": 509,
+    "heightPx": 509
+  },
+  {
+    "tagname": "obc-compass-flat",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-compass-flat-Primary.png",
+    "widthPx": 509,
+    "heightPx": 170
+  },
+  {
+    "tagname": "obc-compass-indicator",
+    "primaryStorybook": "Heading",
+    "screenshotPath": "screenshots/obc-compass-indicator-Heading.png",
+    "widthPx": 48,
+    "heightPx": 53
+  },
+  {
+    "tagname": "obc-compass-sector",
+    "primaryStorybook": "Default",
+    "screenshotPath": "screenshots/obc-compass-sector-Default.png",
+    "widthPx": 509,
+    "heightPx": 509
+  },
+  {
+    "tagname": "obc-context-menu-input",
+    "primaryStorybook": "Regular",
+    "screenshotPath": "screenshots/obc-context-menu-input-Regular.png",
+    "widthPx": 160,
+    "heightPx": 247
+  },
+  {
+    "tagname": "obc-converter",
+    "primaryStorybook": "On",
+    "screenshotPath": "screenshots/obc-converter-On.png",
+    "widthPx": 55,
+    "heightPx": 84
+  },
+  {
+    "tagname": "obc-corner-line",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-corner-line-Primary.png",
+    "widthPx": 25,
+    "heightPx": 25
+  },
+  {
+    "tagname": "obc-damper",
+    "primaryStorybook": "On",
+    "screenshotPath": "screenshots/obc-damper-On.png",
+    "widthPx": 55,
+    "heightPx": 84
+  },
+  {
+    "tagname": "obc-date-item",
+    "primaryStorybook": "Large",
+    "screenshotPath": "screenshots/obc-date-item-Large.png",
+    "widthPx": 125,
+    "heightPx": 145
+  },
+  {
+    "tagname": "obc-depth-actual",
+    "primaryStorybook": "Regular",
+    "screenshotPath": "screenshots/obc-depth-actual-Regular.png",
+    "widthPx": 509,
+    "heightPx": 509
+  },
+  {
+    "tagname": "obc-diagram-playground",
+    "primaryStorybook": "Sequence Items",
+    "screenshotPath": null,
+    "widthPx": null,
+    "heightPx": null
+  },
+  {
+    "tagname": "obc-digital-valve",
+    "primaryStorybook": "Open",
+    "screenshotPath": "screenshots/obc-digital-valve-Open.png",
+    "widthPx": 66,
+    "heightPx": 83
+  },
+  {
+    "tagname": "obc-diodes",
+    "primaryStorybook": "On",
+    "screenshotPath": "screenshots/obc-diodes-On.png",
+    "widthPx": 55,
+    "heightPx": 84
+  },
+  {
+    "tagname": "obc-direction-line",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-direction-line-Primary.png",
+    "widthPx": 25,
+    "heightPx": 25
+  },
+  {
+    "tagname": "obc-donut-chart",
+    "primaryStorybook": "Full Donut",
+    "screenshotPath": "screenshots/obc-donut-chart-Full-Donut.png",
+    "widthPx": 327,
+    "heightPx": 323
+  },
+  {
+    "tagname": "obc-dropdown-button",
+    "primaryStorybook": "Label",
+    "screenshotPath": "screenshots/obc-dropdown-button-Label.png",
+    "widthPx": 97,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-elevated-card",
+    "primaryStorybook": "Regular",
+    "screenshotPath": "screenshots/obc-elevated-card-Regular.png",
+    "widthPx": 527,
+    "heightPx": 65
+  },
+  {
+    "tagname": "obc-elevated-card-radio",
+    "primaryStorybook": "Unchecked",
+    "screenshotPath": "screenshots/obc-elevated-card-radio-Unchecked.png",
+    "widthPx": 127,
+    "heightPx": 65
+  },
+  {
+    "tagname": "obc-elevated-card-radio-group",
+    "primaryStorybook": "None Selected",
+    "screenshotPath": "screenshots/obc-elevated-card-radio-group-None-Selected.png",
+    "widthPx": 127,
+    "heightPx": 191
+  },
+  {
+    "tagname": "obc-end-point-line",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-end-point-line-Primary.png",
+    "widthPx": 25,
+    "heightPx": 25
+  },
+  {
+    "tagname": "obc-event-item",
+    "primaryStorybook": "Single Line",
+    "screenshotPath": "screenshots/obc-event-item-Single-Line.png",
+    "widthPx": 82,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-event-list",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-event-list-Primary.png",
+    "widthPx": 169,
+    "heightPx": 134
+  },
+  {
+    "tagname": "obc-external-scale",
+    "primaryStorybook": "Vertical (right side, hasBar, advices, setpoint)",
+    "screenshotPath": null,
+    "widthPx": null,
+    "heightPx": null
+  },
+  {
+    "tagname": "obc-fan",
+    "primaryStorybook": "Fan On",
+    "screenshotPath": "screenshots/obc-fan-Fan-On.png",
+    "widthPx": 80,
+    "heightPx": 84
+  },
+  {
+    "tagname": "obc-filter",
+    "primaryStorybook": "On",
+    "screenshotPath": "screenshots/obc-filter-On.png",
+    "widthPx": 55,
+    "heightPx": 84
+  },
+  {
+    "tagname": "obc-filter-chip",
+    "primaryStorybook": "Checked – Icon On",
+    "screenshotPath": "screenshots/obc-filter-chip-Checked-–-Icon-On.png",
+    "widthPx": 160,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-floating-item",
+    "primaryStorybook": "Vertical Single Regular",
+    "screenshotPath": "screenshots/obc-floating-item-Vertical-Single-Regular.png",
+    "widthPx": 636,
+    "heightPx": 73
+  },
+  {
+    "tagname": "obc-form-container",
+    "primaryStorybook": "📌 Playground",
+    "screenshotPath": "screenshots/obc-form-container-📌-Playground.png",
+    "widthPx": 636,
+    "heightPx": 636
+  },
+  {
+    "tagname": "obc-form-footer-container",
+    "primaryStorybook": "📌 Playground",
+    "screenshotPath": "screenshots/obc-form-footer-container-📌-Playground.png",
+    "widthPx": 207,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-form-group",
+    "primaryStorybook": "📌 Playground",
+    "screenshotPath": "screenshots/obc-form-group-📌-Playground.png",
+    "widthPx": 670,
+    "heightPx": 143
+  },
+  {
+    "tagname": "obc-form-item",
+    "primaryStorybook": "📌 Playground",
+    "screenshotPath": "screenshots/obc-form-item-📌-Playground.png",
+    "widthPx": 666,
+    "heightPx": 50
+  },
+  {
+    "tagname": "obc-gauge-horizontal",
+    "primaryStorybook": "Default (bottom side, labels, advice)",
+    "screenshotPath": "screenshots/obc-gauge-horizontal-Default-(bottom-side,-labels,-advice).png",
+    "widthPx": 509,
+    "heightPx": 509
+  },
+  {
+    "tagname": "obc-gauge-radial",
+    "primaryStorybook": "Positive",
+    "screenshotPath": "screenshots/obc-gauge-radial-Positive.png",
+    "widthPx": 509,
+    "heightPx": 509
+  },
+  {
+    "tagname": "obc-gauge-trend",
+    "primaryStorybook": "Gauge Trend (default, scaleReferenceSize=384)",
+    "screenshotPath": "screenshots/obc-gauge-trend-Gauge-Trend-(default,-scaleReferenceSize=384).png",
+    "widthPx": 509,
+    "heightPx": 509
+  },
+  {
+    "tagname": "obc-gauge-vertical",
+    "primaryStorybook": "Default (right side, labels, advice)",
+    "screenshotPath": "screenshots/obc-gauge-vertical-Default-(right-side,-labels,-advice).png",
+    "widthPx": 509,
+    "heightPx": 509
+  },
+  {
+    "tagname": "obc-graph-mini",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-graph-mini-Primary.png",
+    "widthPx": 48,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-ground",
+    "primaryStorybook": "On",
+    "screenshotPath": "screenshots/obc-ground-On.png",
+    "widthPx": 55,
+    "heightPx": 84
+  },
+  {
+    "tagname": "obc-heading",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-heading-Primary.png",
+    "widthPx": 509,
+    "heightPx": 509
+  },
+  {
+    "tagname": "obc-heave",
+    "primaryStorybook": "Regular",
+    "screenshotPath": "screenshots/obc-heave-Regular.png",
+    "widthPx": 509,
+    "heightPx": 509
+  },
+  {
+    "tagname": "obc-horizontal-line",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-horizontal-line-Primary.png",
+    "widthPx": 72,
+    "heightPx": 25
+  },
+  {
+    "tagname": "obc-icon-button",
+    "primaryStorybook": "Normal",
+    "screenshotPath": "screenshots/obc-icon-button-Normal.png",
+    "widthPx": 48,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-icon-check-button",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-icon-check-button-Primary.png",
+    "widthPx": 48,
+    "heightPx": 56
+  },
+  {
+    "tagname": "obc-icons",
+    "primaryStorybook": "List",
+    "screenshotPath": null,
+    "widthPx": null,
+    "heightPx": null
+  },
+  {
+    "tagname": "obc-input-chip",
+    "primaryStorybook": "Input Chip With Icon",
+    "screenshotPath": "screenshots/obc-input-chip-Input-Chip-With-Icon.png",
+    "widthPx": 116,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-instrument-field",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-instrument-field-Primary.png",
+    "widthPx": 68,
+    "heightPx": 60
+  },
+  {
+    "tagname": "obc-instrument-linear",
+    "primaryStorybook": "Both Sides",
+    "screenshotPath": null,
+    "widthPx": null,
+    "heightPx": null
+  },
+  {
+    "tagname": "obc-instrument-radial",
+    "primaryStorybook": "Positive",
+    "screenshotPath": null,
+    "widthPx": null,
+    "heightPx": null
+  },
+  {
+    "tagname": "obc-integration-app-bar",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-integration-app-bar-Primary.png",
+    "widthPx": 168,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-integration-bar",
+    "primaryStorybook": "Primary",
+    "screenshotPath": null,
+    "widthPx": null,
+    "heightPx": null
+  },
+  {
+    "tagname": "obc-integration-button",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-integration-button-Primary.png",
+    "widthPx": 318,
+    "heightPx": 98
+  },
+  {
+    "tagname": "obc-integration-dropdown-button",
+    "primaryStorybook": "With Fleet",
+    "screenshotPath": "screenshots/obc-integration-dropdown-button-With-Fleet.png",
+    "widthPx": 91,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-integration-fleet-button",
+    "primaryStorybook": "Unselected",
+    "screenshotPath": "screenshots/obc-integration-fleet-button-Unselected.png",
+    "widthPx": 318,
+    "heightPx": 166
+  },
+  {
+    "tagname": "obc-integration-tabs",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-integration-tabs-Primary.png",
+    "widthPx": 130,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-integration-vessel-selector",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-integration-vessel-selector-Primary.png",
+    "widthPx": 318,
+    "heightPx": 894
+  },
+  {
+    "tagname": "obc-keyboard-full",
+    "primaryStorybook": "Default",
+    "screenshotPath": "screenshots/obc-keyboard-full-Default.png",
+    "widthPx": 701,
+    "heightPx": 366
+  },
+  {
+    "tagname": "obc-keyboard-numeric",
+    "primaryStorybook": "Default",
+    "screenshotPath": "screenshots/obc-keyboard-numeric-Default.png",
+    "widthPx": 303,
+    "heightPx": 422
+  },
+  {
+    "tagname": "obc-line",
+    "primaryStorybook": "Fluid",
+    "screenshotPath": null,
+    "widthPx": null,
+    "heightPx": null
+  },
+  {
+    "tagname": "obc-line-cross",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-line-cross-Primary.png",
+    "widthPx": 25,
+    "heightPx": 25
+  },
+  {
+    "tagname": "obc-line-graph",
+    "primaryStorybook": "Single-Series Line Graph (category)",
+    "screenshotPath": "screenshots/obc-line-graph-Single-Series-Line-Graph-(category).png",
+    "widthPx": 477,
+    "heightPx": 323
+  },
+  {
+    "tagname": "obc-line-overlap",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-line-overlap-Primary.png",
+    "widthPx": 25,
+    "heightPx": 25
+  },
+  {
+    "tagname": "obc-logic",
+    "primaryStorybook": "On",
+    "screenshotPath": "screenshots/obc-logic-On.png",
+    "widthPx": 55,
+    "heightPx": 84
+  },
+  {
+    "tagname": "obc-main-engine",
+    "primaryStorybook": "In Command",
+    "screenshotPath": "screenshots/obc-main-engine-In-Command.png",
+    "widthPx": 509,
+    "heightPx": 511
+  },
+  {
+    "tagname": "obc-menu-button",
+    "primaryStorybook": "Regular",
+    "screenshotPath": "screenshots/obc-menu-button-Regular.png",
+    "widthPx": 183,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-message-menu-item",
+    "primaryStorybook": "Horizontal Single Line",
+    "screenshotPath": "screenshots/obc-message-menu-item-Horizontal-Single-Line.png",
+    "widthPx": 557,
+    "heightPx": 57
+  },
+  {
+    "tagname": "obc-modal-window",
+    "primaryStorybook": "Large",
+    "screenshotPath": "screenshots/obc-modal-window-Large.png",
+    "widthPx": 537,
+    "heightPx": 405
+  },
+  {
+    "tagname": "obc-mosfet",
+    "primaryStorybook": "On",
+    "screenshotPath": "screenshots/obc-mosfet-On.png",
+    "widthPx": 55,
+    "heightPx": 84
+  },
+  {
+    "tagname": "obc-motor",
+    "primaryStorybook": "On Vertical",
+    "screenshotPath": "screenshots/obc-motor-On-Vertical.png",
+    "widthPx": 80,
+    "heightPx": 84
+  },
+  {
+    "tagname": "obc-navigation-item",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-navigation-item-Primary.png",
+    "widthPx": 98,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-navigation-menu",
+    "primaryStorybook": "Full",
+    "screenshotPath": null,
+    "widthPx": null,
+    "heightPx": null
+  },
+  {
+    "tagname": "obc-notification-badge-button",
+    "primaryStorybook": "Ack",
+    "screenshotPath": "screenshots/obc-notification-badge-button-Ack.png",
+    "widthPx": 65,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-notification-button",
+    "primaryStorybook": "Flat (Inactive)",
+    "screenshotPath": "screenshots/obc-notification-button-Flat-(Inactive).png",
+    "widthPx": 48,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-notification-floating-item",
+    "primaryStorybook": "Notification Vertical Single Regular",
+    "screenshotPath": "screenshots/obc-notification-floating-item-Notification-Vertical-Single-Regular.png",
+    "widthPx": 636,
+    "heightPx": 73
+  },
+  {
+    "tagname": "obc-notification-menu-item",
+    "primaryStorybook": "Single Line",
+    "screenshotPath": "screenshots/obc-notification-menu-item-Single-Line.png",
+    "widthPx": 32,
+    "heightPx": 57
+  },
+  {
+    "tagname": "obc-notification-message-item",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-notification-message-item-Primary.png",
+    "widthPx": 636,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-number-input-field",
+    "primaryStorybook": "Default",
+    "screenshotPath": "screenshots/obc-number-input-field-Default.png",
+    "widthPx": 234,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-pagination",
+    "primaryStorybook": "Playground",
+    "screenshotPath": "screenshots/obc-pagination-Playground.png",
+    "widthPx": 430,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-pie-chart",
+    "primaryStorybook": "Default Pie",
+    "screenshotPath": "screenshots/obc-pie-chart-Default-Pie.png",
+    "widthPx": 327,
+    "heightPx": 323
+  },
+  {
+    "tagname": "obc-pitch",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-pitch-Primary.png",
+    "widthPx": 509,
+    "heightPx": 509
+  },
+  {
+    "tagname": "obc-pitch-roll",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-pitch-roll-Primary.png",
+    "widthPx": 509,
+    "heightPx": 509
+  },
+  {
+    "tagname": "obc-pivot-item-group",
+    "primaryStorybook": "Horizontal",
+    "screenshotPath": null,
+    "widthPx": null,
+    "heightPx": null
+  },
+  {
+    "tagname": "obc-poi",
+    "primaryStorybook": "Line",
+    "screenshotPath": null,
+    "widthPx": null,
+    "heightPx": null
+  },
+  {
+    "tagname": "obc-poi-aton",
+    "primaryStorybook": "Preview",
+    "screenshotPath": null,
+    "widthPx": null,
+    "heightPx": null
+  },
+  {
+    "tagname": "obc-poi-button",
+    "primaryStorybook": "Default",
+    "screenshotPath": "screenshots/obc-poi-button-Default.png",
+    "widthPx": 48,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-poi-button-aton",
+    "primaryStorybook": "Default",
+    "screenshotPath": "screenshots/obc-poi-button-aton-Default.png",
+    "widthPx": 48,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-poi-button-data",
+    "primaryStorybook": "Button",
+    "screenshotPath": "screenshots/obc-poi-button-data-Button.png",
+    "widthPx": 48,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-poi-button-vessel",
+    "primaryStorybook": "Default",
+    "screenshotPath": "screenshots/obc-poi-button-vessel-Default.png",
+    "widthPx": 48,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-poi-card",
+    "primaryStorybook": "Default",
+    "screenshotPath": "screenshots/obc-poi-card-Default.png",
+    "widthPx": 307,
+    "heightPx": 272
+  },
+  {
+    "tagname": "obc-poi-card-header",
+    "primaryStorybook": "Tag",
+    "screenshotPath": "screenshots/obc-poi-card-header-Tag.png",
+    "widthPx": 16,
+    "heightPx": 17
+  },
+  {
+    "tagname": "obc-poi-controller",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-poi-controller-Primary.png",
+    "widthPx": 1193,
+    "heightPx": 671
+  },
+  {
+    "tagname": "obc-poi-data",
+    "primaryStorybook": "Preview",
+    "screenshotPath": null,
+    "widthPx": null,
+    "heightPx": null
+  },
+  {
+    "tagname": "obc-poi-graphic-line",
+    "primaryStorybook": "Normal",
+    "screenshotPath": "screenshots/obc-poi-graphic-line-Normal.png",
+    "widthPx": 6,
+    "heightPx": 102
+  },
+  {
+    "tagname": "obc-poi-group",
+    "primaryStorybook": "Grouped",
+    "screenshotPath": null,
+    "widthPx": null,
+    "heightPx": null
+  },
+  {
+    "tagname": "obc-poi-header",
+    "primaryStorybook": "Interactive",
+    "screenshotPath": "screenshots/obc-poi-header-Interactive.png",
+    "widthPx": 75,
+    "heightPx": 22
+  },
+  {
+    "tagname": "obc-poi-layer",
+    "primaryStorybook": "Animated Layout",
+    "screenshotPath": null,
+    "widthPx": null,
+    "heightPx": null
+  },
+  {
+    "tagname": "obc-poi-layer-stack",
+    "primaryStorybook": "Selection Single",
+    "screenshotPath": "screenshots/obc-poi-layer-stack-Selection-Single.png",
+    "widthPx": 636,
+    "heightPx": 104
+  },
+  {
+    "tagname": "obc-poi-line",
+    "primaryStorybook": "Normal",
+    "screenshotPath": null,
+    "widthPx": null,
+    "heightPx": null
+  },
+  {
+    "tagname": "obc-poi-object",
+    "primaryStorybook": "Default",
+    "screenshotPath": "screenshots/obc-poi-object-Default.png",
+    "widthPx": 48,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-poi-object-aton",
+    "primaryStorybook": "Default",
+    "screenshotPath": "screenshots/obc-poi-object-aton-Default.png",
+    "widthPx": 48,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-poi-object-data",
+    "primaryStorybook": "Default",
+    "screenshotPath": "screenshots/obc-poi-object-data-Default.png",
+    "widthPx": 48,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-poi-object-vessel",
+    "primaryStorybook": "Default",
+    "screenshotPath": "screenshots/obc-poi-object-vessel-Default.png",
+    "widthPx": 48,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-poi-pointer",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-poi-pointer-Primary.png",
+    "widthPx": 32,
+    "heightPx": 32
+  },
+  {
+    "tagname": "obc-poi-selection-frame",
+    "primaryStorybook": "Interactive",
+    "screenshotPath": "screenshots/obc-poi-selection-frame-Interactive.png",
+    "widthPx": 31,
+    "heightPx": 37
+  },
+  {
+    "tagname": "obc-poi-vessel",
+    "primaryStorybook": "Preview",
+    "screenshotPath": null,
+    "widthPx": null,
+    "heightPx": null
+  },
+  {
+    "tagname": "obc-polar-chart",
+    "primaryStorybook": "Default Polar",
+    "screenshotPath": "screenshots/obc-polar-chart-Default-Polar.png",
+    "widthPx": 318,
+    "heightPx": 323
+  },
+  {
+    "tagname": "obc-progress-bar",
+    "primaryStorybook": "Linear - Determinate With Description and State",
+    "screenshotPath": "screenshots/obc-progress-bar-Linear---Determinate-With-Description-and-State.png",
+    "widthPx": 111,
+    "heightPx": 52
+  },
+  {
+    "tagname": "obc-progress-button",
+    "primaryStorybook": "Linear - Regular",
+    "screenshotPath": "screenshots/obc-progress-button-Linear---Regular.png",
+    "widthPx": 144,
+    "heightPx": 55
+  },
+  {
+    "tagname": "obc-pump",
+    "primaryStorybook": "On Verical",
+    "screenshotPath": "screenshots/obc-pump-On-Verical.png",
+    "widthPx": 80,
+    "heightPx": 84
+  },
+  {
+    "tagname": "obc-radial-bar-chart",
+    "primaryStorybook": "Default Radial Bar",
+    "screenshotPath": "screenshots/obc-radial-bar-chart-Default-Radial-Bar.png",
+    "widthPx": 318,
+    "heightPx": 323
+  },
+  {
+    "tagname": "obc-radio",
+    "primaryStorybook": "With Label",
+    "screenshotPath": "screenshots/obc-radio-With-Label.png",
+    "widthPx": 122,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-rate-of-turn",
+    "primaryStorybook": "Dots",
+    "screenshotPath": "screenshots/obc-rate-of-turn-Dots.png",
+    "widthPx": 509,
+    "heightPx": 509
+  },
+  {
+    "tagname": "obc-resistor",
+    "primaryStorybook": "On",
+    "screenshotPath": "screenshots/obc-resistor-On.png",
+    "widthPx": 55,
+    "heightPx": 84
+  },
+  {
+    "tagname": "obc-rich-button",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-rich-button-Primary.png",
+    "widthPx": 128,
+    "heightPx": 158
+  },
+  {
+    "tagname": "obc-roll",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-roll-Primary.png",
+    "widthPx": 509,
+    "heightPx": 509
+  },
+  {
+    "tagname": "obc-rot-indicator",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-rot-indicator-Primary.png",
+    "widthPx": 48,
+    "heightPx": 53
+  },
+  {
+    "tagname": "obc-rot-sector",
+    "primaryStorybook": "Regular",
+    "screenshotPath": "screenshots/obc-rot-sector-Regular.png",
+    "widthPx": 509,
+    "heightPx": 509
+  },
+  {
+    "tagname": "obc-router",
+    "primaryStorybook": "On",
+    "screenshotPath": "screenshots/obc-router-On.png",
+    "widthPx": 55,
+    "heightPx": 84
+  },
+  {
+    "tagname": "obc-rudder",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-rudder-Primary.png",
+    "widthPx": 509,
+    "heightPx": 509
+  },
+  {
+    "tagname": "obc-ruler-pointer",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-ruler-pointer-Primary.png",
+    "widthPx": 5,
+    "heightPx": 22
+  },
+  {
+    "tagname": "obc-scrollbar",
+    "primaryStorybook": "Wide",
+    "screenshotPath": null,
+    "widthPx": null,
+    "heightPx": null
+  },
+  {
+    "tagname": "obc-sequence-card",
+    "primaryStorybook": "Playground",
+    "screenshotPath": "screenshots/obc-sequence-card-Playground.png",
+    "widthPx": 318,
+    "heightPx": 248
+  },
+  {
+    "tagname": "obc-sequence-connector",
+    "primaryStorybook": "Playground",
+    "screenshotPath": "screenshots/obc-sequence-connector-Playground.png",
+    "widthPx": 25,
+    "heightPx": 2
+  },
+  {
+    "tagname": "obc-sequence-item",
+    "primaryStorybook": "📌 Playground",
+    "screenshotPath": "screenshots/obc-sequence-item-📌-Playground.png",
+    "widthPx": 188,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-sequence-loading-spinner",
+    "primaryStorybook": "Playground",
+    "screenshotPath": "screenshots/obc-sequence-loading-spinner-Playground.png",
+    "widthPx": 16,
+    "heightPx": 22
+  },
+  {
+    "tagname": "obc-sequence-modal",
+    "primaryStorybook": "Playground",
+    "screenshotPath": "screenshots/obc-sequence-modal-Playground.png",
+    "widthPx": 554,
+    "heightPx": 503
+  },
+  {
+    "tagname": "obc-sequence-step",
+    "primaryStorybook": "Playground",
+    "screenshotPath": "screenshots/obc-sequence-step-Playground.png",
+    "widthPx": 73,
+    "heightPx": 25
+  },
+  {
+    "tagname": "obc-sequence-toolbar",
+    "primaryStorybook": "📌 Playground",
+    "screenshotPath": "screenshots/obc-sequence-toolbar-📌-Playground.png",
+    "widthPx": 605,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-setpoint",
+    "primaryStorybook": "NotEqual (Input ≠ Output)",
+    "screenshotPath": null,
+    "widthPx": null,
+    "heightPx": null
+  },
+  {
+    "tagname": "obc-slide-button",
+    "primaryStorybook": "Default",
+    "screenshotPath": "screenshots/obc-slide-button-Default.png",
+    "widthPx": 2,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-slider",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-slider-Primary.png",
+    "widthPx": 298,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-slider-double",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-slider-double-Primary.png",
+    "widthPx": 298,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-source",
+    "primaryStorybook": "On",
+    "screenshotPath": "screenshots/obc-source-On.png",
+    "widthPx": 55,
+    "heightPx": 84
+  },
+  {
+    "tagname": "obc-speed-arrows",
+    "primaryStorybook": "Forward",
+    "screenshotPath": "screenshots/obc-speed-arrows-Forward.png",
+    "widthPx": 509,
+    "heightPx": 509
+  },
+  {
+    "tagname": "obc-speed-gauge",
+    "primaryStorybook": "Enhanced",
+    "screenshotPath": "screenshots/obc-speed-gauge-Enhanced.png",
+    "widthPx": 509,
+    "heightPx": 509
+  },
+  {
+    "tagname": "obc-speed-indicator",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-speed-indicator-Primary.png",
+    "widthPx": 48,
+    "heightPx": 53
+  },
+  {
+    "tagname": "obc-split-button",
+    "primaryStorybook": "Basic",
+    "screenshotPath": "screenshots/obc-split-button-Basic.png",
+    "widthPx": 179,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-start-stop-switch",
+    "primaryStorybook": "Unchecked",
+    "screenshotPath": "screenshots/obc-start-stop-switch-Unchecked.png",
+    "widthPx": 2,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-status-indicator",
+    "primaryStorybook": "Active",
+    "screenshotPath": "screenshots/obc-status-indicator-Active.png",
+    "widthPx": 86,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-stepper-box",
+    "primaryStorybook": "Plus Minus",
+    "screenshotPath": "screenshots/obc-stepper-box-Plus-Minus.png",
+    "widthPx": 174,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-switch",
+    "primaryStorybook": "On",
+    "screenshotPath": "screenshots/obc-switch-On.png",
+    "widthPx": 55,
+    "heightPx": 84
+  },
+  {
+    "tagname": "obc-system-button",
+    "primaryStorybook": "Actions",
+    "screenshotPath": "screenshots/obc-system-button-Actions.png",
+    "widthPx": 257,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-system-menu",
+    "primaryStorybook": "Full",
+    "screenshotPath": "screenshots/obc-system-menu-Full.png",
+    "widthPx": 318,
+    "heightPx": 473
+  },
+  {
+    "tagname": "obc-tab-row",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-tab-row-Primary.png",
+    "widthPx": 1241,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-tabbed-card",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-tabbed-card-Primary.png",
+    "widthPx": 497,
+    "heightPx": 497
+  },
+  {
+    "tagname": "obc-table",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-table-Primary.png",
+    "widthPx": 524,
+    "heightPx": 288
+  },
+  {
+    "tagname": "obc-table-header-item",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-table-header-item-Primary.png",
+    "widthPx": 148,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-tag",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-tag-Primary.png",
+    "widthPx": 68,
+    "heightPx": 29
+  },
+  {
+    "tagname": "obc-text-input-field",
+    "primaryStorybook": "Default",
+    "screenshotPath": "screenshots/obc-text-input-field-Default.png",
+    "widthPx": 211,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-textarea-field",
+    "primaryStorybook": "Default",
+    "screenshotPath": "screenshots/obc-textarea-field-Default.png",
+    "widthPx": 417,
+    "heightPx": 134
+  },
+  {
+    "tagname": "obc-three-way-line",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-three-way-line-Primary.png",
+    "widthPx": 25,
+    "heightPx": 25
+  },
+  {
+    "tagname": "obc-thruster",
+    "primaryStorybook": "In Command",
+    "screenshotPath": "screenshots/obc-thruster-In-Command.png",
+    "widthPx": 509,
+    "heightPx": 509
+  },
+  {
+    "tagname": "obc-title-container",
+    "primaryStorybook": "📌 Playground",
+    "screenshotPath": "screenshots/obc-title-container-📌-Playground.png",
+    "widthPx": 283,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-toggle-button-group",
+    "primaryStorybook": "Icon Text",
+    "screenshotPath": null,
+    "widthPx": null,
+    "heightPx": null
+  },
+  {
+    "tagname": "obc-toggle-button-three-state",
+    "primaryStorybook": "No Input",
+    "screenshotPath": "screenshots/obc-toggle-button-three-state-No-Input.png",
+    "widthPx": 144,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-toggle-button-vertical-group",
+    "primaryStorybook": "Regular",
+    "screenshotPath": "screenshots/obc-toggle-button-vertical-group-Regular.png",
+    "widthPx": 128,
+    "heightPx": 144
+  },
+  {
+    "tagname": "obc-toggle-switch",
+    "primaryStorybook": "Default",
+    "screenshotPath": "screenshots/obc-toggle-switch-Default.png",
+    "widthPx": 173,
+    "heightPx": 56
+  },
+  {
+    "tagname": "obc-toggletip",
+    "primaryStorybook": "Normal",
+    "screenshotPath": "screenshots/obc-toggletip-Normal.png",
+    "widthPx": 398,
+    "heightPx": 348
+  },
+  {
+    "tagname": "obc-tooltip",
+    "primaryStorybook": "Normal With Label And Icon",
+    "screenshotPath": "screenshots/obc-tooltip-Normal-With-Label-And-Icon.png",
+    "widthPx": 98,
+    "heightPx": 34
+  },
+  {
+    "tagname": "obc-top-bar",
+    "primaryStorybook": "Regular",
+    "screenshotPath": "screenshots/obc-top-bar-Regular.png",
+    "widthPx": 1179,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-topbar-message-item",
+    "primaryStorybook": "Text Action",
+    "screenshotPath": "screenshots/obc-topbar-message-item-Text-Action.png",
+    "widthPx": 636,
+    "heightPx": 48
+  },
+  {
+    "tagname": "obc-transformer",
+    "primaryStorybook": "On",
+    "screenshotPath": "screenshots/obc-transformer-On.png",
+    "widthPx": 55,
+    "heightPx": 84
+  },
+  {
+    "tagname": "obc-user-button",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-user-button-Primary.png",
+    "widthPx": 48,
+    "heightPx": 60
+  },
+  {
+    "tagname": "obc-user-menu",
+    "primaryStorybook": "Sign In Regular",
+    "screenshotPath": "screenshots/obc-user-menu-Sign-In-Regular.png",
+    "widthPx": 318,
+    "heightPx": 353
+  },
+  {
+    "tagname": "obc-valve-analog-three-way-icon",
+    "primaryStorybook": "Open",
+    "screenshotPath": "screenshots/obc-valve-analog-three-way-icon-Open.png",
+    "widthPx": 25,
+    "heightPx": 25
+  },
+  {
+    "tagname": "obc-valve-analog-two-way-icon",
+    "primaryStorybook": "Open",
+    "screenshotPath": "screenshots/obc-valve-analog-two-way-icon-Open.png",
+    "widthPx": 25,
+    "heightPx": 25
+  },
+  {
+    "tagname": "obc-velocity-projection-plot",
+    "primaryStorybook": "Average",
+    "screenshotPath": "screenshots/obc-velocity-projection-plot-Average.png",
+    "widthPx": 509,
+    "heightPx": 511
+  },
+  {
+    "tagname": "obc-vendor-button",
+    "primaryStorybook": "Primary",
+    "screenshotPath": null,
+    "widthPx": null,
+    "heightPx": null
+  },
+  {
+    "tagname": "obc-vertical-line",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-vertical-line-Primary.png",
+    "widthPx": 25,
+    "heightPx": 73
+  },
+  {
+    "tagname": "obc-watch",
+    "primaryStorybook": "In Command",
+    "screenshotPath": "screenshots/obc-watch-In-Command.png",
+    "widthPx": 509,
+    "heightPx": 509
+  },
+  {
+    "tagname": "obc-watch-flat",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-watch-flat-Primary.png",
+    "widthPx": 509,
+    "heightPx": 509
+  },
+  {
+    "tagname": "obc-wind",
+    "primaryStorybook": "Primary",
+    "screenshotPath": "screenshots/obc-wind-Primary.png",
+    "widthPx": 509,
+    "heightPx": 509
+  },
+  {
+    "tagname": "obc-wind-indicator",
+    "primaryStorybook": "Default",
+    "screenshotPath": "screenshots/obc-wind-indicator-Default.png",
+    "widthPx": 48,
+    "heightPx": 53
+  },
+  {
+    "tagname": "obc-wind-propulsion",
+    "primaryStorybook": "Default",
+    "screenshotPath": "screenshots/obc-wind-propulsion-Default.png",
+    "widthPx": 509,
+    "heightPx": 509
+  }
+]

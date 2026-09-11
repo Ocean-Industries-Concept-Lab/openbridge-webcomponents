@@ -3,7 +3,10 @@ import {
   ObcBipolarTransistor,
   BipolarTransistorAlternativeIcon,
 } from './bipolar-transistor.js';
-import {AutomationButtonReadoutPosition} from '../automation-button/automation-button.js';
+import {
+  AutomationButtonPositioning,
+  AutomationButtonReadoutPosition,
+} from '../automation-button/automation-button.js';
 import {AutomationButtonReadoutStackSize} from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 import './bipolar-transistor.js';
 import {crossDecorator} from '../../storybook-util.js';
@@ -18,6 +21,7 @@ const meta: Meta<typeof ObcBipolarTransistor> = {
   args: {
     tag: '#0012',
     readoutPosition: AutomationButtonReadoutPosition.bottom,
+    positioning: AutomationButtonPositioning.button,
     readoutSize: AutomationButtonReadoutStackSize.regular,
     alert: false,
     progress: false,

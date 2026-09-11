@@ -43,6 +43,8 @@ CLAUDE.md
 # specific document is genuinely meant to be committed.
 docs/superpowers/
 
+**/screenshots/
+packages/openbridge-webcomponents/default-sizes.json
 /.env
 packages/openbridge-webcomponents/screenshots/
 .playwright-mcp

@@ -148,6 +148,8 @@ export type ObcSliderDoubleChangeEvent = CustomEvent<{
  *   layout integration. Reflected to the `hugcontainer` HTML attribute.
  * @slot left-readout - Custom content for the left (low) readout label (rendered when `showLeftReadout` is true)
  * @slot right-readout - Custom content for the right (high) readout label (rendered when `showRightReadout` is true)
+ * @fires value {ObcSliderDoubleValueEvent} - Fires when the value is changed
+ * @snapshot-base-width 300px
  * @fires {ObcSliderDoubleValueEvent} value - Fires when the value is changed
  * @fires {ObcSliderDoubleChangeEvent} change - Fires when user interaction completes
  * @stable

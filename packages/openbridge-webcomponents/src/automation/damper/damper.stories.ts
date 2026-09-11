@@ -2,6 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-vite';
 import {ObcDamper} from './damper.js';
 import {
   AutomationButtonOrientation,
+  AutomationButtonPositioning,
   AutomationButtonReadoutPosition,
 } from '../automation-button/automation-button.js';
 import {AutomationButtonReadoutStackSize} from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
@@ -18,6 +19,7 @@ const meta: Meta<typeof ObcDamper> = {
   args: {
     tag: '#0012',
     readoutPosition: AutomationButtonReadoutPosition.bottom,
+    positioning: AutomationButtonPositioning.button,
     readoutSize: AutomationButtonReadoutStackSize.regular,
     alert: false,
     progress: false,
