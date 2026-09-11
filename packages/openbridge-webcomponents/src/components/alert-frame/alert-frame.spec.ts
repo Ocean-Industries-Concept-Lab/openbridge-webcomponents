@@ -202,7 +202,9 @@ describe('obc-alert-frame flashing lifecycle', () => {
     expect(getComputedStyle(wrapper).outlineWidth).toBe('4px');
 
     flash.currentTime = 500;
-    await new Promise((r) => requestAnimationFrame(r));
+    // A style read starts the transition synchronously; waiting a frame lets
+    // a slow runner finish the 50 ms and drop it from getAnimations().
+    void getComputedStyle(wrapper).outlineWidth;
     const transition = wrapper
       .getAnimations()
       .find(
