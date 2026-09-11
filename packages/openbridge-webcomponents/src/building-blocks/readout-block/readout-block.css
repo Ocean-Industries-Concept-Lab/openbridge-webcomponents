@@ -49,6 +49,12 @@
   font-weight: var(--global-typography-generic-l-font-weight-regular);
 }
 
+.sign-spacer {
+  /* visibility, not display: the hidden `-` must keep its box so the sign
+     column stays open while the value is non-negative (`hasSignSpacer`). */
+  visibility: hidden;
+}
+
 /* ---------- Text colours (overridable via custom properties) ----------
  * obc-textbox does not set its own colour, so it inherits these. */
 .block-value {

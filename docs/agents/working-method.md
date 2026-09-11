@@ -244,5 +244,4 @@ current one ([`docgen.md`](docgen.md)).
 
 ## Open
 
-- Retire `transmitter-readout.ts` onto `obc-readout-block` once its API settles (#1209, #1097).
 - Automated accessibility checks (#1208).

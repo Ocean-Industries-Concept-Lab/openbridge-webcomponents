@@ -29,6 +29,7 @@ const meta: Meta<typeof ObcTransmitter> = {
     fractionDigits: 1,
     maxDigits: 0,
     hintedZeros: false,
+    hasSignSpacer: false,
     hasIcon: true,
     hasAdvice: false,
     adviceValue: 123,
@@ -94,6 +95,7 @@ function renderComponent(args: ObcTransmitter) {
       .fractionDigits=${args.fractionDigits}
       .maxDigits=${args.maxDigits}
       .hintedZeros=${args.hintedZeros}
+      .hasSignSpacer=${args.hasSignSpacer}
       .hasIcon=${args.hasIcon}
       .hasAdvice=${args.hasAdvice}
       .adviceValue=${args.adviceValue}

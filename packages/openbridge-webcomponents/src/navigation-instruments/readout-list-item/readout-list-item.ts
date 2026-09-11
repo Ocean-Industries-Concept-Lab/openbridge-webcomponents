@@ -137,8 +137,23 @@ export interface ReadoutBlockState {
  * content or changes the row height / column alignment (Figma 58:10120).
  */
 export interface ReadoutValueOptions extends ReadoutBlockState {
-  /** Render the unfilled leading positions as muted zeroes (requires `maxDigits`). */
+  /**
+   * Render the unfilled leading positions as muted zeroes (requires
+   * `maxDigits`). The sign never consumes a zero (`12.3` → `012.3`, `-12.3` →
+   * `-012.3` at `maxDigits` 3), so a negative reading is one character wider
+   * unless `hasSignSpacer` reserves the sign column; an unavailable value
+   * renders dashes across the whole reserved width.
+   */
   hintedZeros?: boolean;
+  /**
+   * Reserve a minus-sign column ahead of the digits, filled by the real sign
+   * only while the value is negative — the width does not change across zero.
+   * Enable it on rows whose value can go negative; inside `obc-readout-list`
+   * the shared column widens automatically once any row shows a sign, but a
+   * live value crossing zero still shifts the columns unless the rows that
+   * can go negative opt in up front.
+   */
+  hasSignSpacer?: boolean;
   /**
    * Value font weight — `regular` (default), `semibold`, or `bold` (the
    * obc-textbox weights). Affects weight only; it does NOT change the colour
@@ -184,6 +199,8 @@ export enum ReadoutListItemSetpointInteraction {
 
 export interface ReadoutSetpointOptions extends ReadoutBlockState {
   hintedZeros?: boolean;
+  /** Reserve a minus-sign column; see {@link ReadoutValueOptions.hasSignSpacer}. */
+  hasSignSpacer?: boolean;
   /** How the setpoint behaves relative to the value (default `always-visible`). */
   interaction?: ReadoutListItemSetpointInteraction;
   /**
@@ -199,6 +216,8 @@ export interface ReadoutSetpointOptions extends ReadoutBlockState {
 
 export interface ReadoutAdviceOptions extends ReadoutBlockState {
   hintedZeros?: boolean;
+  /** Reserve a minus-sign column; see {@link ReadoutValueOptions.hasSignSpacer}. */
+  hasSignSpacer?: boolean;
   /**
    * Semantic category (Figma 6.1) — picks the default marker icon and the
    * `active` styling; `regular` when unset.
@@ -635,6 +654,7 @@ export class ObcReadoutListItem extends LitElement {
     enhanced: boolean;
     weight: ObcTextboxFontWeight;
     hintedZeros: boolean;
+    hasSignSpacer?: boolean;
     spaceReserver?: string;
     off?: boolean;
     hasDegree?: boolean;
@@ -665,6 +685,7 @@ export class ObcReadoutListItem extends LitElement {
         .fractionDigits=${this.fractionDigits}
         .maxDigits=${this.maxDigits}
         .hintedZeros=${config.hintedZeros}
+        .hasSignSpacer=${config.hasSignSpacer ?? false}
         .spaceReserver=${config.spaceReserver}
         .off=${config.off ?? false}
         .offText=${this.offText}
@@ -810,6 +831,7 @@ export class ObcReadoutListItem extends LitElement {
               enhanced: false,
               weight: ObcTextboxFontWeight.regular,
               hintedZeros: this.adviceOptions?.hintedZeros ?? false,
+              hasSignSpacer: this.adviceOptions?.hasSignSpacer ?? false,
               spaceReserver: this.adviceOptions?.spaceReserver,
               hasDegree: this.hasDegree ?? false,
               dataQuality: this.adviceOptions?.dataQuality,
@@ -828,6 +850,7 @@ export class ObcReadoutListItem extends LitElement {
               enhanced: this.rowEnhanced,
               weight: this.setpointWeight,
               hintedZeros: this.setpointOptions?.hintedZeros ?? false,
+              hasSignSpacer: this.setpointOptions?.hasSignSpacer ?? false,
               spaceReserver: this.setpointOptions?.spaceReserver,
               hasDegree: this.hasDegree ?? false,
               touching: this.setpointTouching,
@@ -873,6 +896,7 @@ export class ObcReadoutListItem extends LitElement {
               enhanced: this.rowEnhanced,
               weight: this.valueWeight,
               hintedZeros: this.valueOptions?.hintedZeros ?? false,
+              hasSignSpacer: this.valueOptions?.hasSignSpacer ?? false,
               spaceReserver: this.valueOptions?.spaceReserver,
               off: this.off,
               hasIcon: this.valueOptions?.hasIcon ?? false,

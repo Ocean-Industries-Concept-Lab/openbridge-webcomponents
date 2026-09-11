@@ -14,6 +14,9 @@ import '../../icons/icon-off.js';
 import '../../icons/icon-on.js';
 import '../../icons/icon-temperature-air.js';
 import '../button/button.js';
+import '../../building-blocks/readout-block/readout-block.js';
+import {ReadoutBlockSize} from '../../building-blocks/readout-block/readout-block.js';
+import {ObcTextboxSize} from '../../components/textbox/textbox.js';
 import {SETPOINT_PATH_FILLED} from '../../svghelpers/setpoint.js';
 
 export enum AutomationButtonReadoutStackSize {
@@ -26,6 +29,28 @@ export enum IdTagOrientation {
   top = 'top',
   bottom = 'bottom',
 }
+
+// The stack's three tiers map onto the readout block's: `small` is the block's
+// small tier at xs number typography, `regular` the small tier at its default
+// s, `enhanced` the large tier. The block's cap-height boxes (16 / 20 / 32)
+// match the tiers' former line-heights.
+const blockSizeBySize: Record<
+  AutomationButtonReadoutStackSize,
+  ReadoutBlockSize
+> = {
+  [AutomationButtonReadoutStackSize.small]: ReadoutBlockSize.small,
+  [AutomationButtonReadoutStackSize.regular]: ReadoutBlockSize.small,
+  [AutomationButtonReadoutStackSize.enhanced]: ReadoutBlockSize.large,
+};
+
+const valueSizeBySize: Record<
+  AutomationButtonReadoutStackSize,
+  ObcTextboxSize
+> = {
+  [AutomationButtonReadoutStackSize.small]: ObcTextboxSize.xs,
+  [AutomationButtonReadoutStackSize.regular]: ObcTextboxSize.s,
+  [AutomationButtonReadoutStackSize.enhanced]: ObcTextboxSize.l,
+};
 
 export interface AutomationButtonReadoutStackValue {
   type: 'value';
@@ -121,27 +146,24 @@ export class ObcAutomationButtonReadoutStack extends LitElement {
   }
 
   /**
-   * Padded digits with hinted zeros.
-   *
-   * The minus sign occupies a digit slot, so the readout stays `nDigits` wide
-   * and the sign renders ahead of the hinted padding (`-05`, not `0-5`).
+   * A numeric segment on `obc-readout-block` — the block owns the formatting:
+   * hinted zeros fill the integer part to `maxDigits`, the sign is prepended
+   * without consuming a zero (`-005`), and an unavailable value renders the
+   * family's dash placeholder.
    */
-  private renderPaddedDigits(
+  private renderNumber(
     value: number,
-    nDigits: number
+    format: {maxDigits?: number; fractionDigits?: number; hintedZeros?: boolean}
   ): HTMLTemplateResult {
-    const v = value.toFixed(0);
-    const sign = v.startsWith('-') ? '-' : '';
-    const digits = sign ? v.slice(1) : v;
-    const zeroPadding =
-      v.length < nDigits ? '0'.repeat(nDigits - v.length) : '';
-    return html`<span class="value-text"
-      >${sign}${zeroPadding
-        ? html`<span class="hinted-zero" aria-hidden="true"
-            >${zeroPadding}</span
-          >`
-        : nothing}${digits}</span
-    >`;
+    return html`<obc-readout-block
+      class="number"
+      .value=${value}
+      .size=${blockSizeBySize[this.size]}
+      .valueSize=${valueSizeBySize[this.size]}
+      .maxDigits=${format.maxDigits ?? 0}
+      .fractionDigits=${format.fractionDigits ?? 0}
+      .hintedZeros=${format.hintedZeros ?? false}
+    ></obc-readout-block>`;
   }
 
   renderValue(readout: AutomationButtonReadoutStackValue): HTMLTemplateResult {
@@ -194,7 +216,10 @@ export class ObcAutomationButtonReadoutStack extends LitElement {
       directionIcon = html`<slot class="icon" name=${readout.slotName}></slot>`;
     }
     const content = html`
-      ${this.renderPaddedDigits(readout.value, readout.nDigits)}
+      ${this.renderNumber(readout.value, {
+        maxDigits: readout.nDigits,
+        hintedZeros: true,
+      })}
       <span class="unit">${readout.unit}</span>
     `;
 
@@ -212,7 +237,10 @@ export class ObcAutomationButtonReadoutStack extends LitElement {
       <path d=${SETPOINT_PATH_FILLED} transform="rotate(-90 13 10.5)" />
     </svg>`;
     const content = html`
-      ${this.renderPaddedDigits(readout.value, readout.nDigits)}
+      ${this.renderNumber(readout.value, {
+        maxDigits: readout.nDigits,
+        hintedZeros: true,
+      })}
       ${readout.unit
         ? html`<span class="unit">${readout.unit}</span>`
         : nothing}
@@ -247,8 +275,6 @@ export class ObcAutomationButtonReadoutStack extends LitElement {
   renderButton(
     readout: AutomationButtonReadoutStackButton
   ): HTMLTemplateResult {
-    const v = readout.value.toFixed(1); // Format as 000.0
-
     let temperatureIcon: HTMLTemplateResult = html``;
     if (readout.hasIcon) {
       temperatureIcon = html`<obi-temperature-air
@@ -258,7 +284,7 @@ export class ObcAutomationButtonReadoutStack extends LitElement {
     }
 
     const content = html`
-      ${this.renderValueText(v)}
+      ${this.renderNumber(readout.value, {fractionDigits: 1})}
       <span class="unit">${readout.unit}</span>
     `;
 

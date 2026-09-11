@@ -9,6 +9,7 @@ import {
   resolveReadoutTextValue,
   formatNumericValue,
   isReadoutValueType,
+  splitHintedValue,
   ReadoutValueType,
   READOUT_UNAVAILABLE_DASH,
 } from './readout-formatters.js';
@@ -566,5 +567,112 @@ describe('formatNumericValue — missing precision', () => {
   it('still formats normally with a precision that arrived', () => {
     expect(formatNumericValue(0.4, opts(1))).toBe('0.4');
     expect(formatNumericValue(12.3, opts(2))).toBe('12.30');
+  });
+});
+
+describe('splitHintedValue', () => {
+  it('pads a positive value to maxDigits', () => {
+    expect(splitHintedValue('12', 4)).toEqual({
+      sign: '',
+      hinted: '00',
+      magnitude: '12',
+    });
+  });
+
+  // The sign comes out separately so the caller can render it BEFORE the
+  // muted zeros ("-012", never "00-12").
+  it('hoists the sign of a negative value out of the magnitude', () => {
+    expect(splitHintedValue('-12', 4)).toEqual({
+      sign: '-',
+      hinted: '00',
+      magnitude: '12',
+    });
+  });
+
+  // The settled rule: the integer part always fills to maxDigits and the
+  // sign is prepended, so a negative is exactly one character wider than the
+  // same magnitude positive ("012.3" / "-012.3"). A sign column
+  // (hasSignSpacer / a signed spaceReserver) absorbs the difference.
+  it('never lets the sign consume a hinted zero', () => {
+    const width = (v: string, maxDigits: number) => {
+      const {sign, hinted, magnitude} = splitHintedValue(v, maxDigits);
+      return (sign + hinted + magnitude).length;
+    };
+    expect(width('-12', 4)).toBe(width('12', 4) + 1);
+    expect(width('-8', 4)).toBe(width('8', 4) + 1);
+    expect(width('-1.2', 3)).toBe(width('1.2', 3) + 1);
+  });
+
+  it('counts only integer digits, ignoring the fraction', () => {
+    expect(splitHintedValue('1.2', 3)).toEqual({
+      sign: '',
+      hinted: '00',
+      magnitude: '1.2',
+    });
+    expect(splitHintedValue('-1.2', 3)).toEqual({
+      sign: '-',
+      hinted: '00',
+      magnitude: '1.2',
+    });
+  });
+
+  it('emits no zeros when the magnitude already fills maxDigits', () => {
+    expect(splitHintedValue('1234', 4).hinted).toBe('');
+    expect(splitHintedValue('-1234', 4).hinted).toBe('');
+  });
+
+  // The guard is "has no digits", not "does not start with a hyphen", so it
+  // holds for whichever character the unavailable placeholder uses. The real
+  // placeholder is U+2012 FIGURE DASH, which `startsWith('-')` would miss
+  // entirely; the ASCII forms are kept because the helper is exported and
+  // must not be able to produce "-000" from a dashed value on its own.
+  it('passes a dashed (unavailable) value through unpadded', () => {
+    const D = READOUT_UNAVAILABLE_DASH;
+    for (const dashed of [D, `${D}.${D}${D}`, '-', '--.-']) {
+      expect(splitHintedValue(dashed, 4)).toEqual({
+        sign: '',
+        hinted: '',
+        magnitude: dashed,
+      });
+    }
+  });
+
+  it('handles maxDigits of 0', () => {
+    expect(splitHintedValue('12', 0).hinted).toBe('');
+    expect(splitHintedValue('-12', 0).hinted).toBe('');
+  });
+});
+
+// The hinted-zeros placeholder: dashes take the full reserved width
+// ("000.0" -> full dashes), where the plain placeholder stays short — see
+// "formatNumericValue — unavailable value" above for the short form.
+describe('formatNumericValue — full-width placeholder (showZeroPadding)', () => {
+  const D = READOUT_UNAVAILABLE_DASH;
+  const opts = (minValueLength: number, fractionDigits: number) => ({
+    showZeroPadding: true,
+    minValueLength,
+    fractionDigits,
+  });
+
+  it('fills the integer part to minValueLength', () => {
+    expect(formatNumericValue(undefined, opts(3, 1))).toBe(`${D}${D}${D}.${D}`);
+    expect(formatNumericValue(undefined, opts(4, 0))).toBe(`${D}${D}${D}${D}`);
+  });
+
+  it('still renders at least one integer dash without a reserve', () => {
+    expect(formatNumericValue(undefined, opts(0, 0))).toBe(D);
+    expect(formatNumericValue(undefined, opts(0, 2))).toBe(`${D}.${D}${D}`);
+  });
+
+  it('does not zero-pad an available value', () => {
+    expect(formatNumericValue(12.3, opts(4, 1))).toBe('12.3');
+  });
+
+  // A missing precision shapes the placeholder as zero fraction digits; the
+  // integer reserve still fills out.
+  it('keeps the integer fill with a missing precision', () => {
+    expect(formatNumericValue(undefined, opts(3, Number.NaN))).toBe(
+      `${D}${D}${D}`
+    );
   });
 });

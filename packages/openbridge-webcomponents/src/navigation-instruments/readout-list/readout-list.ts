@@ -70,6 +70,13 @@ function integerDigitCount(value: number | null | undefined): number {
  * - **Degree:** if any row has a degree, non-degree rows reserve the degree column
  *   (`hasDegreeSpacer`) so their digits line up with the degree rows; the spacer is
  *   cleared once no degree rows remain.
+ * - **Sign:** if any row shows a minus sign (a negative value / setpoint /
+ *   advice) or declares it can (`hasSignSpacer` on a numeric block's options),
+ *   the shared numeric reserve gains a sign column so every row's digits stay
+ *   aligned; the column closes once no such row remains. A live value crossing
+ *   zero re-aligns automatically only when it changes via attribute — rows
+ *   whose values can go negative should set `hasSignSpacer` up front so the
+ *   columns never shift.
  *
  * The list **owns** these reservers: it recomputes them from the rows' data on
  * every pass (and clears stale reservers / spacers when rows change), so a
@@ -136,6 +143,7 @@ export class ObcReadoutList extends LitElement {
     let longestUnit = '';
     let longestSrc = '';
     let anyDegree = false;
+    let anySign = false;
 
     for (const item of items) {
       // A text row's value and digit knobs stay out of the numeric reserve,
@@ -157,17 +165,34 @@ export class ObcReadoutList extends LitElement {
           resolveReadoutDigitCount(item.maxDigits)
         );
       }
+      const numericValue = resolveReadoutNumericValue(
+        item.value,
+        item.valueType ?? ReadoutValueType.number
+      );
       maxIntegerDigits = Math.max(
         maxIntegerDigits,
-        integerDigitCount(
-          resolveReadoutNumericValue(
-            item.value,
-            item.valueType ?? ReadoutValueType.number
-          )
-        ),
+        integerDigitCount(numericValue),
         item.hasSetpoint ? integerDigitCount(item.setpoint) : 0,
         item.hasAdvice ? integerDigitCount(item.advice) : 0
       );
+      // The sign column opens once any row shows a sign (a currently-negative
+      // value / setpoint / advice) or declares it can (`hasSignSpacer` on a
+      // numeric block) — and closes again when no such row remains. Rows that
+      // can go negative should opt in, so a live value crossing zero widens
+      // nothing.
+      const showsSign =
+        (numericValue ?? 0) < 0 ||
+        (item.hasSetpoint && (item.setpoint ?? 0) < 0) ||
+        (item.hasAdvice && (item.advice ?? 0) < 0);
+      const reservesSign =
+        (hasNumericBlock &&
+          (item.valueOptions?.hasSignSpacer ||
+            item.setpointOptions?.hasSignSpacer ||
+            item.adviceOptions?.hasSignSpacer)) ??
+        false;
+      if (showsSign || reservesSign) {
+        anySign = true;
+      }
       if (item.unit && item.unit.length > longestUnit.length) {
         longestUnit = item.unit;
       }
@@ -179,9 +204,15 @@ export class ObcReadoutList extends LitElement {
       }
     }
 
+    // The sign prefix widens every numeric block's reserve by one sign column;
+    // the blocks right-align inside it, so positive rows leave the column
+    // blank and a negative row's sign fills it — digits stay aligned either
+    // way, and `obc-readout-block` skips its own prefix for a reserver that
+    // already leads with one.
     const numericReserver =
       maxIntegerDigits > 0
-        ? '0'.repeat(maxIntegerDigits) +
+        ? (anySign ? '-' : '') +
+          '0'.repeat(maxIntegerDigits) +
           (maxFractionDigits > 0 ? `.${'0'.repeat(maxFractionDigits)}` : '')
         : undefined;
 

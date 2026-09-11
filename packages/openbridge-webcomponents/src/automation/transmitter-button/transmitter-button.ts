@@ -3,11 +3,11 @@ import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import componentStyle from './transmitter-button.css?inline';
 import {customElement} from '../../decorator.js';
+import '../../building-blocks/readout-block/readout-block.js';
 import {
-  TransmitterReadoutSize,
-  TransmitterReadoutVariant,
-  renderTransmitterReadout,
-} from './transmitter-readout.js';
+  ReadoutBlockSize,
+  ReadoutBlockVariant,
+} from '../../building-blocks/readout-block/readout-block.js';
 
 export enum TransmitterButtonVariant {
   value = 'value',
@@ -20,12 +20,11 @@ export enum TransmitterButtonSize {
   large = 'large',
 }
 
-const readoutSizeBySize: Record<TransmitterButtonSize, TransmitterReadoutSize> =
-  {
-    [TransmitterButtonSize.regular]: TransmitterReadoutSize.regular,
-    [TransmitterButtonSize.medium]: TransmitterReadoutSize.medium,
-    [TransmitterButtonSize.large]: TransmitterReadoutSize.large,
-  };
+const readoutSizeBySize: Record<TransmitterButtonSize, ReadoutBlockSize> = {
+  [TransmitterButtonSize.regular]: ReadoutBlockSize.small,
+  [TransmitterButtonSize.medium]: ReadoutBlockSize.medium,
+  [TransmitterButtonSize.large]: ReadoutBlockSize.large,
+};
 
 /**
  * `<obc-transmitter-button>` – The pressable readout chip used as the core of a
@@ -48,9 +47,11 @@ const readoutSizeBySize: Record<TransmitterButtonSize, TransmitterReadoutSize> =
  *   all sizes.
  * - **Formatting** – `fractionDigits` sets the decimal precision, `maxDigits`
  *   reserves a number of integer digits, and `hintedZeros` renders the reserved
- *   leading positions as muted zeros (e.g. `0012.3`). A negative value's minus
- *   sign takes one of the reserved positions, so it stays the same width as a
- *   positive one (`-012.3`). All three segments share this formatting.
+ *   leading positions as muted zeros (e.g. `0012.3`). The sign never consumes
+ *   a reserved position (`-0012.3`), so a negative value is one character
+ *   wider than a positive one; `hasSignSpacer` reserves the sign column so
+ *   the width does not change across zero. All three segments share this
+ *   formatting — it is `obc-readout-block`'s.
  * - **Missing values** – `value`, `adviceValue` and `setpointValue` each render
  *   dashes when they are `NaN`, `null` or `undefined`; with `hintedZeros` the
  *   dashes fill the whole reserved width (e.g. `---.-`).
@@ -66,6 +67,8 @@ const readoutSizeBySize: Record<TransmitterButtonSize, TransmitterReadoutSize> =
  * | icon      | `value` variant and `hasIcon` | Leading icon beside the value. |
  *
  * @property maxDigits - Integer digits to reserve / hint (independent of `fractionDigits`).
+ * @property hasSignSpacer - Reserve a minus-sign column on every segment, filled by the real sign
+ *   only while a value is negative, so the width does not change across zero.
  * @property adviceValue - Advisory value shown in the leading advice segment when `hasAdvice`.
  * @property setpointValue - Target value shown in the setpoint segment when `hasSetPoint`.
  * @property label - Short tag identifier shown in the `tag` variant (e.g. `TT`).
@@ -86,6 +89,7 @@ export class ObcTransmitterButton extends LitElement {
   @property({type: Number}) maxDigits = 0;
 
   @property({type: Boolean}) hintedZeros = false;
+  @property({type: Boolean}) hasSignSpacer = false;
   @property({type: Boolean}) hasIcon = false;
   @property({type: Boolean}) hasAdvice = false;
 
@@ -102,34 +106,32 @@ export class ObcTransmitterButton extends LitElement {
   }
 
   private renderBlock(
-    variant: TransmitterReadoutVariant,
+    variant: ReadoutBlockVariant,
     value: number | null | undefined
   ) {
-    return renderTransmitterReadout({
-      variant,
-      size: readoutSizeBySize[this.size],
-      value,
-      fractionDigits: this.fractionDigits,
-      maxDigits: this.maxDigits,
-      hintedZeros: this.hintedZeros,
-    });
+    return html`<obc-readout-block
+      .variant=${variant}
+      .value=${value ?? null}
+      .size=${readoutSizeBySize[this.size]}
+      .fractionDigits=${this.fractionDigits}
+      .maxDigits=${this.maxDigits}
+      .hintedZeros=${this.hintedZeros}
+      .hasSignSpacer=${this.hasSignSpacer}
+    ></obc-readout-block>`;
   }
 
   private renderAdvice() {
     if (!this.hasAdvice) {
       return nothing;
     }
-    return this.renderBlock(TransmitterReadoutVariant.advice, this.adviceValue);
+    return this.renderBlock(ReadoutBlockVariant.advice, this.adviceValue);
   }
 
   private renderSetpoint() {
     if (!this.hasSetPoint) {
       return nothing;
     }
-    return this.renderBlock(
-      TransmitterReadoutVariant.setpoint,
-      this.setpointValue
-    );
+    return this.renderBlock(ReadoutBlockVariant.setpoint, this.setpointValue);
   }
 
   private renderContent() {
@@ -143,7 +145,7 @@ export class ObcTransmitterButton extends LitElement {
         ${this.hasIcon
           ? html`<div class="icon"><slot name="icon"></slot></div>`
           : nothing}
-        ${this.renderBlock(TransmitterReadoutVariant.value, this.value)}
+        ${this.renderBlock(ReadoutBlockVariant.value, this.value)}
         ${this.unit ? html`<span class="unit">${this.unit}</span>` : nothing}
       </div>
     `;
