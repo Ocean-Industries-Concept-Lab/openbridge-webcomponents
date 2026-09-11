@@ -21,12 +21,14 @@
  * ============================================================================ */
 
 /* Holds a label at its selected (bold) width in every state, so a layout sized
- * from label content cannot reflow as the selection moves. Apply to a `::after`
- * whose `content` repeats the label text (#1212). */
+ * from label content cannot reflow as the selection moves. Apply to an
+ * `aria-hidden` element repeating the label text — a `::after` cannot carry
+ * `aria-hidden`, and accessible-name implementations disagree on whether
+ * generated content is hidden by `visibility` alone (#1212). */
 @define-mixin font-label-active-reserve {
   @mixin font-label-active;
   display: block;
-  /* Contributes width without taking part in the visible or accessible box. */
+  /* Contributes width to the parent without occupying a visible box. */
   height: 0;
   overflow: hidden;
   visibility: hidden;

@@ -1,4 +1,5 @@
 import {describe, expect, it} from 'vitest';
+import {page} from '@vitest/browser/context';
 import {render} from 'vitest-browser-lit';
 import {html} from 'lit';
 import './app-button.js';
@@ -40,14 +41,21 @@ describe('obc-app-button intrinsic width', () => {
     expect(width(checked)).toBeCloseTo(width(plain), 1);
   });
 
-  it('keeps the reserved copy of the label out of the accessible box', async () => {
-    const [button] = await buttons(
+  it('names the button from the label once, not twice', async () => {
+    const screen = render(
       html`<obc-app-button label="System Overview"></obc-app-button>`
     );
-    const label = button.shadowRoot!.querySelector('.label')!;
+    const button = screen.container.querySelector(
+      'obc-app-button'
+    ) as ObcAppButton;
+    await button.updateComplete;
+    await document.fonts.ready;
 
-    expect(getComputedStyle(label, '::after').visibility).toBe('hidden');
-    expect(label.textContent).toBe('System Overview');
+    expect(
+      page
+        .getByRole('button', {name: 'System Overview', exact: true})
+        .elements()
+    ).toHaveLength(1);
   });
 
   it('does not change when a button is checked after first render', async () => {

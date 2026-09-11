@@ -47,8 +47,7 @@
     /* Checking a button switches this label to bold, which is wider. Reserving
      * that width in every state keeps a row of app buttons sized from its
      * labels from resizing as the selection moves (#1212). */
-    &::after {
-      content: attr(data-label);
+    .label-width-reserve {
       @mixin font-label-active-reserve;
     }
   }
