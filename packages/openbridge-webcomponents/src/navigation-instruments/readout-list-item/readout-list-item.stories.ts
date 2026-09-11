@@ -64,6 +64,7 @@ type ReadoutListItemStoryArgs = {
   'options.value.weight': ObcTextboxFontWeight;
   'options.value.hasIcon': boolean;
   'options.value.hintedZeros': boolean;
+  'options.value.hasSignSpacer': boolean;
   'options.setpoint.interaction': ReadoutListItemSetpointInteraction;
   'options.setpoint.touching': boolean;
   'options.advice.category': ReadoutAdviceCategory;
@@ -283,6 +284,7 @@ const defaultArgs: ReadoutListItemStoryArgs = {
   'options.value.weight': ObcTextboxFontWeight.regular,
   'options.value.hasIcon': false,
   'options.value.hintedZeros': false,
+  'options.value.hasSignSpacer': false,
   'options.setpoint.interaction':
     ReadoutListItemSetpointInteraction.alwaysVisible,
   'options.setpoint.touching': false,
@@ -316,6 +318,7 @@ function argsToOptions(args: ReadoutListItemStoryArgs): StoryOptions {
       weight: args['options.value.weight'],
       hasIcon: args['options.value.hasIcon'],
       hintedZeros: args['options.value.hintedZeros'],
+      hasSignSpacer: args['options.value.hasSignSpacer'],
     },
     setpoint: {
       interaction: args['options.setpoint.interaction'],
@@ -462,6 +465,12 @@ const meta = {
     'options.value.hintedZeros': {
       name: 'Value Hinted Zeros',
       if: {arg: 'options.maxDigits', truthy: true},
+      table: {category: 'Value'},
+    },
+    'options.value.hasSignSpacer': {
+      name: 'Value Sign Spacer',
+      description:
+        'Reserve a minus-sign column so the width does not change across zero.',
       table: {category: 'Value'},
     },
     'options.setpoint.interaction': {
@@ -2010,11 +2019,11 @@ const ALIGNMENT_ROWS: AlignmentRow[] = [
 
 const LONGEST_UNIT = 'miles';
 const MAX_INTEGER_DIGITS = 4;
-// Longest value string in the column (4 integer digits + 1 fraction). Passed to
-// every row's value/setpoint/advice spaceReserver so they all reserve the same
-// width regardless of each row's own fractionDigits — like LONGEST_UNIT does for
-// the unit column.
-const VALUE_RESERVER = `${'0'.repeat(MAX_INTEGER_DIGITS)}.0`;
+// The shared value/setpoint/advice reserver, like LONGEST_UNIT for the unit
+// column. The leading `-` opens the sign column for the negative row ("Flow
+// speed"); positive rows leave it blank, so every row's digits stay aligned —
+// the same reserver `obc-readout-list` derives once any row shows a sign.
+const VALUE_RESERVER = `-${'0'.repeat(MAX_INTEGER_DIGITS)}.0`;
 
 const alignmentStyle = `
   .rli-align-wrap { display: flex; flex-direction: column; gap: 24px; width: 100%; }

@@ -242,20 +242,24 @@ export function resolveReadoutTextValue(
 export const READOUT_UNAVAILABLE_DASH = '\u2012';
 
 /**
- * The unavailable ("no reading") text: a single integer dash plus one dash per
- * fraction digit — `\u2012` at `fractionDigits` 0, `\u2012.\u2012\u2012` at 2.
+ * The unavailable ("no reading") text.
  *
- * Deliberately NOT filled out to `maxDigits`: the placeholder stays short and
- * sits at the right edge of the reserved width, rather than spelling out every
- * reserved digit position. `maxDigits` still reserves the width, so nothing
- * shifts when a reading arrives.
+ * Short by default: a single integer dash plus one dash per
+ * fraction digit — `\u2012` at `fractionDigits` 0, `\u2012.\u2012\u2012` at 2.
+ * It sits at the right edge of the reserved width rather than spelling out
+ * every reserved digit position (`maxDigits` still reserves the width, so
+ * nothing shifts when a reading arrives).
+ *
+ * With `showZeroPadding` (a hinted-zeros readout) the integer part fills out
+ * to `minValueLength` instead, so the placeholder occupies the positions the
+ * hinted zeros would.
  */
 function dashedGenerator({
   showZeroPadding,
   minValueLength,
   fractionDigits: rawFractionDigits,
 }: ReadoutNumericFormatOptions): string {
-  const visibleDigits = showZeroPadding ? Math.max(minValueLength, 1) : 1;
+  const integerDigits = showZeroPadding ? Math.max(minValueLength, 1) : 1;
 
   // A missing precision shapes the placeholder as zero fraction digits — a
   // single dash. Without this, `NaN < 1` is false, both `repeat(NaN)` calls
@@ -266,13 +270,11 @@ function dashedGenerator({
     : rawFractionDigits;
 
   if (fractionDigits < 1) {
-    return READOUT_UNAVAILABLE_DASH.repeat(visibleDigits);
+    return READOUT_UNAVAILABLE_DASH.repeat(integerDigits);
   }
 
-  const integerDigits = visibleDigits - fractionDigits;
-
   return (
-    READOUT_UNAVAILABLE_DASH.repeat(Math.max(integerDigits, 1)) +
+    READOUT_UNAVAILABLE_DASH.repeat(integerDigits) +
     '.' +
     READOUT_UNAVAILABLE_DASH.repeat(fractionDigits)
   );
@@ -307,22 +309,49 @@ export function readoutFormattedInteger(valueText: string): number {
   return dot === -1 ? rest.length : dot;
 }
 
-export function getHintZeros(
-  value: number | undefined,
-  {showZeroPadding, minValueLength, fractionDigits}: ReadoutNumericFormatOptions
-): string {
-  const formattedValue = formatNumericValue(value, {
-    showZeroPadding,
-    minValueLength,
-    fractionDigits,
-  });
-  const dotLength = fractionDigits > 0 ? 1 : 0;
-  const integerLength = formattedValue.length - dotLength;
-  const hintedDigits = Math.max(minValueLength - integerLength, 0);
+/** A formatted value split into the parts a hinted-zero readout renders. */
+export interface ReadoutHintedValue {
+  /** A leading `-`, hoisted ahead of the muted zeros, or `''`. */
+  sign: string;
+  /** The muted leading zeros that pad the integer part to `maxDigits`. */
+  hinted: string;
+  /** The value text with its sign removed. */
+  magnitude: string;
+}
 
-  if (hintedDigits > 0) {
-    return '0'.repeat(hintedDigits);
+/**
+ * Splits a formatted value for hinted-zero rendering.
+ *
+ * The sign is returned separately so the caller can render it BEFORE the
+ * muted zeros — emitting the raw text after them would read `00-12` instead
+ * of `-012`.
+ *
+ * The sign never consumes a hinted zero: the integer part always fills to
+ * `maxDigits` and a negative value prepends its sign to that — at `maxDigits`
+ * 3, `12.3` → `012.3` and `-12.3` → `-012.3` — so a negative value is one
+ * character wider than a positive one. Reserve a sign column (the block's
+ * `hasSignSpacer`, or a `spaceReserver` such as `"-000.0"`) where the width
+ * must not change across zero. Only the INTEGER part fills; the decimal point
+ * and fraction digits never count toward `maxDigits`.
+ *
+ * @example
+ * splitHintedValue('-1.2', 3); // {sign: '-', hinted: '00', magnitude: '1.2'}
+ */
+export function splitHintedValue(
+  valueText: string,
+  maxDigits: number
+): ReadoutHintedValue {
+  // Only pad something that actually has digits. A dashed (unavailable) value
+  // would otherwise read its leading `-` as a sign and pad it to `-000`.
+  if (!/\d/.test(valueText)) {
+    return {sign: '', hinted: '', magnitude: valueText};
   }
-
-  return '';
+  const negative = valueText.startsWith('-');
+  const magnitude = negative ? valueText.slice(1) : valueText;
+  const hintCount = Math.max(maxDigits - readoutFormattedInteger(magnitude), 0);
+  return {
+    sign: negative ? '-' : '',
+    hinted: hintCount > 0 ? '0'.repeat(hintCount) : '',
+    magnitude,
+  };
 }

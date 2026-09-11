@@ -2,6 +2,7 @@ import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import iconStyle from './icon-button.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
+import {ifDefined} from 'lit/directives/if-defined.js';
 import {customElement} from '../../decorator.js';
 import {degToRad} from '../../svghelpers/math.js';
 
@@ -96,6 +97,7 @@ export enum IconButtonVariant {
  *   If undefined, no progress indicator is shown.
  * @property hasLabel - If true, displays a label below the icon using the `label` slot.
  * @property showDivider - If false, and cornerLeft or cornerRight is true, the divider is not shown.
+ * @property ariaLabel - Accessible name forwarded to the inner `<button>`, mapped to the `aria-label` attribute. `aria-labelledby` is not supported: ID references cannot cross the shadow boundary.
  * @slot - Icon slot (default): Place an icon such as <obi-search> here.
  * @slot label - Optional label shown below the icon when `hasLabel` is true.
  * @fires click - Fired when the button is clicked (if not disabled).
@@ -129,6 +131,10 @@ export class ObcIconButton extends LitElement {
   @property({type: Boolean}) hasLabel: boolean = false;
 
   @property({type: Boolean, attribute: false}) showDivider = true;
+
+  // Reactive so a consumer swapping the name (Play → Pause) re-renders the shadow button.
+  @property({type: String, attribute: 'aria-label'})
+  override ariaLabel: string | null = null;
 
   get progressSpinner() {
     if (this.progress === undefined) {
@@ -200,6 +206,7 @@ export class ObcIconButton extends LitElement {
           'hide-divider': !this.showDivider,
         })}
         ?disabled=${this.disabled}
+        aria-label=${ifDefined(this.ariaLabel ?? undefined)}
         part="wrapper"
       >
         ${this.progress !== undefined ? this.progressSpinner : nothing}

@@ -22,7 +22,7 @@ import '../../icons/icon-running.js';
 import '../../icons/icon-running-color-iec.js';
 import {
   formatNumericValue,
-  readoutFormattedInteger,
+  splitHintedValue,
   assertReadoutValueType,
   assertReadoutFractionDigits,
   isReadoutDigitCountMissing,
@@ -164,8 +164,22 @@ export enum ReadoutBlockHidePhase {
  *   dash, consistent with `fractionDigits`.
  * @availableWhen maxDigits valueType==number
  * @property hintedZeros - Render muted leading zeros filling the integer part to `maxDigits`.
+ *   A negative value keeps them all — the sign is prepended and never consumes
+ *   a zero (`maxDigits` 3: `12.3` → `012.3`, `-12.3` → `-012.3`) — so a
+ *   negative reading is one character wider than a positive one unless
+ *   `hasSignSpacer` reserves the sign column. An unavailable value renders
+ *   dashes across the whole reserved width (`‒‒‒.‒`) instead of the short
+ *   placeholder.
  * @availableWhen hintedZeros valueType==number
+ * @property hasSignSpacer - Reserve a minus-sign column ahead of the digits: an invisible sign
+ *   placeholder holds the column open while the value is non-negative and the
+ *   real sign fills it when negative, so the width does not change across
+ *   zero. Enable it on readouts whose value can go negative; all-positive
+ *   readouts reserve nothing.
+ * @availableWhen hasSignSpacer valueType==number
  * @property spaceReserver - Explicit longest string to reserve width for (e.g. `"0000.0"`).
+ *   Combined with the `maxDigits`-derived reserve by taking whichever is
+ *   wider, so it can never reserve less than the formatted value needs.
  * @property off - Render `offText` instead of a number (e.g. equipment powered down).
  * @property offText - Text shown when `off` is true.
  * @property alignment - Text alignment of the number within its reserved width.
@@ -217,6 +231,8 @@ export class ObcReadoutBlock extends LitElement {
   @property({type: Number}) maxDigits = 0;
 
   @property({type: Boolean}) hintedZeros = false;
+
+  @property({type: Boolean}) hasSignSpacer = false;
 
   @property({type: String}) spaceReserver?: string;
 
@@ -287,9 +303,10 @@ export class ObcReadoutBlock extends LitElement {
 
   private get numericFormatOptions(): ReadoutNumericFormatOptions {
     return {
-      // The unavailable placeholder stays short (`\u2012.\u2012\u2012`): `maxDigits`
-      // already reserves the width, so it sits at the right edge of it.
-      showZeroPadding: false,
+      // The unavailable placeholder stays short (`maxDigits` already reserves
+      // the width, so it sits at the right edge of it) \u2014 except under hinted
+      // zeros, where dashes fill every position the zeros would occupy.
+      showZeroPadding: this.hintedZeros,
       minValueLength: this.resolvedMaxDigits,
       // A missing precision shapes the placeholder as zero fraction digits (a
       // single dash) — and keeps a runtime `undefined`/`null` out of the
@@ -469,27 +486,41 @@ export class ObcReadoutBlock extends LitElement {
       : isTextMode
         ? (textValue ?? READOUT_UNAVAILABLE_DASH)
         : formatNumericValue(valueForFormat, formatOptions);
-    // Hinted zeros pad the INTEGER part up to `maxDigits`, independent of
-    // `fractionDigits` (the decimal point and fraction digits never count toward
-    // `maxDigits`). Negative / dashed values are not padded. Example: value 1.2,
-    // maxDigits 3, fractionDigits 1 → "001.2".
-    const hintCount =
-      this.off ||
-      isTextMode ||
-      !this.hintedZeros ||
-      valueForFormat === undefined ||
-      valueForFormat < 0
-        ? 0
-        : Math.max(this.resolvedMaxDigits - readoutFormattedInteger(text), 0);
-    const hinted = hintCount > 0 ? '0'.repeat(hintCount) : '';
-    // Hinted zeros already fill to `maxDigits`, so they win over an explicit
-    // `spaceReserver`; otherwise the wider of the two reserves wins. Text mode
-    // honours only an explicit `spaceReserver` (readout-components.md § 4).
-    const reserver = isTextMode
+    // Hinted zeros fill the INTEGER part to `maxDigits` (the fraction never
+    // counts); `splitHintedValue` hoists a negative value's sign ahead of the
+    // muted zeros ("-012.3"). A dashed (unavailable) value is not padded —
+    // its dashes already fill the reserved positions (`showZeroPadding`).
+    const isHinting =
+      !this.off &&
+      !isTextMode &&
+      this.hintedZeros &&
+      valueForFormat !== undefined;
+    // `resolvedMaxDigits`, not the raw property: `splitHintedValue` hands the
+    // count to `String.prototype.repeat`, so an `Infinity` here would throw.
+    const {sign, hinted, magnitude} = isHinting
+      ? splitHintedValue(text, this.resolvedMaxDigits)
+      : {sign: '', hinted: '', magnitude: text};
+    // A plain ASCII `-`, exactly as wide as a rendered sign, so the digits do
+    // not move when the sign appears. A non-hinted negative keeps its sign
+    // inside `magnitude`, hence the startsWith check.
+    const showSignSpacer =
+      this.hasSignSpacer &&
+      !isTextMode &&
+      sign === '' &&
+      !magnitude.startsWith('-');
+    // The wider of the explicit `spaceReserver` and the `maxDigits`-derived
+    // reserve wins — also under `hintedZeros`, so a sign-column reserver from
+    // a list is honoured. Text mode honours only an explicit `spaceReserver`
+    // (readout-components.md § 4).
+    const baseReserver = isTextMode
       ? (this.spaceReserver ?? '')
-      : this.hintedZeros
-        ? this.reserverText
-        : this.widerReserver(this.spaceReserver, this.reserverText);
+      : this.widerReserver(this.spaceReserver, this.reserverText);
+    // No double prefix: an explicit reserver that already leads with a sign
+    // (e.g. `obc-readout-list`'s shared "-000.0") has the column reserved.
+    const reserver =
+      !isTextMode && this.hasSignSpacer && !baseReserver.startsWith('-')
+        ? `-${baseReserver}`
+        : baseReserver;
 
     const block = html`
       <div
@@ -518,11 +549,13 @@ export class ObcReadoutBlock extends LitElement {
             .alignment=${this.alignment}
             .tabularNums=${true}
           >
-            ${hinted
+            ${sign}${showSignSpacer
+              ? html`<span class="sign-spacer" aria-hidden="true">-</span>`
+              : nothing}${hinted
               ? html`<span class="hinted-zero" aria-hidden="true"
                   >${hinted}</span
                 >`
-              : nothing}${text}
+              : nothing}${magnitude}
             ${reserver ? html`<span slot="length">${reserver}</span>` : nothing}
           </obc-textbox>
           ${this.hasDegree ? this.renderDegreeGlyph(valueSize) : nothing}

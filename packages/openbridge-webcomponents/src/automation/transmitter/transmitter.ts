@@ -49,11 +49,12 @@ export enum TransmitterType {
  *   `adviceValue` and a setpoint segment with `hasSetPoint`/`setpointValue`;
  *   both are read-only and shown in the value chip for non-`indicator` types.
  * - **`hasAlert`** – wraps the whole transmitter in an alarm `<obc-alert-frame>`.
- * - **Formatting** – `fractionDigits`, `maxDigits` and `hintedZeros` are
- *   forwarded to the value chip to control decimal precision and muted
- *   leading-zero padding (e.g. `0012.3`). The advice and setpoint segments reuse
- *   the same formatting. `value`, `adviceValue` and `setpointValue` render
- *   dashes when they are `NaN`, `null` or `undefined`.
+ * - **Formatting** – `fractionDigits`, `maxDigits`, `hintedZeros` and
+ *   `hasSignSpacer` are forwarded to the value chip to control decimal
+ *   precision, muted leading-zero padding (e.g. `0012.3`) and the sign
+ *   column. The advice and setpoint segments reuse the same formatting.
+ *   `value`, `adviceValue` and `setpointValue` render dashes when they are
+ *   `NaN`, `null` or `undefined`.
  *
  * ### Slots
  * | Slot Name | Conditions              | Purpose                         |
@@ -61,6 +62,9 @@ export enum TransmitterType {
  * | icon      | value/graph + `hasIcon` | Leading icon in the value chip. |
  *
  * @property maxDigits - Integer digits to reserve / hint (independent of `fractionDigits`).
+ * @property hasSignSpacer - Reserve a minus-sign column on every segment, filled by the real sign
+ *   only while a value is negative, so the chip's width does not change
+ *   across zero.
  * @property hasAlert - Wrap the transmitter in an `<obc-alert-frame>` (alarm) when true.
  * @property adviceValue - Advisory value shown in the leading advice segment when `hasAdvice`.
  * @property setpointValue - Target value shown in the setpoint segment when `hasSetPoint`.
@@ -85,6 +89,7 @@ export class ObcTransmitter extends LitElement {
   @property({type: Number}) maxDigits = 0;
 
   @property({type: Boolean}) hintedZeros = false;
+  @property({type: Boolean}) hasSignSpacer = false;
   @property({type: String}) size: TransmitterButtonSize =
     TransmitterButtonSize.regular;
   @property({type: Boolean}) hasIcon = false;
@@ -129,6 +134,7 @@ export class ObcTransmitter extends LitElement {
         .fractionDigits=${this.fractionDigits}
         .maxDigits=${this.maxDigits}
         .hintedZeros=${this.hintedZeros}
+        .hasSignSpacer=${this.hasSignSpacer}
         .hasIcon=${this.hasIcon}
         .hasAdvice=${this.hasAdvice}
         .adviceValue=${this.adviceValue}
