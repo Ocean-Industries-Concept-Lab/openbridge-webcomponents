@@ -108,4 +108,14 @@ describe('diffPaletteExports', () => {
       diffPaletteExports(':root { --a: 1px; }', ':root { --a: 2px; }').changed
     ).toEqual([{block: ':root', name: '--a', before: '1px', after: '2px'}]);
   });
+
+  it('reports no rename when two removed names share a value', () => {
+    const diff = diffPaletteExports(
+      ':root { --a: 4px; --b: 4px; }',
+      ':root { --c: 4px; }'
+    );
+    expect(diff.renamed).toEqual([]);
+    expect(diff.removed.map((c) => c.name)).toEqual(['--a', '--b']);
+    expect(diff.added.map((c) => c.name)).toEqual(['--c']);
+  });
 });

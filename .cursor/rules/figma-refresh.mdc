@@ -36,10 +36,12 @@ Two prerequisites, and a missing one is a question, not a detour
 
 - `FIGMA_TOKEN` in `packages/openbridge-webcomponents/.env` (gitignored,
   per machine). A read-only File content token is enough. Verify against
-  the icons file, not `/v1/me`, which returns 403 for a file-scoped token:
+  the icons file, not `/v1/me`, which returns 403 for a file-scoped token;
+  the scripts load `.env` themselves, a shell does not:
   ```bash
-  curl -s -H "X-Figma-Token: $FIGMA_TOKEN" \
-    "https://api.figma.com/v1/files/IkDwOtza6OdjLbIdWA7mI7?depth=1" | head -c 200
+  set -a; source .env; set +a
+  curl -s -o /dev/null -w '%{http_code}\n' -H "X-Figma-Token: $FIGMA_TOKEN" \
+    "https://api.figma.com/v1/files/IkDwOtza6OdjLbIdWA7mI7?depth=1"   # 200
   ```
 - A Dev Mode seat on the file the codegen reads. A view-only seat can
   **File → Duplicate to your drafts** and run the codegen on the copy; the
@@ -54,12 +56,12 @@ tokens that do not resolve or fall back to hex, and the tripwires fire.
 
 1. Branch off `develop`, `chore/refresh-figma-…`.
 2. Paste the `css variables export` output over `variables.css`, run
-   `npx prettier --write` on it, and commit that as the first commit so the
-   raw export is reviewable on its own.
-3. `npm run palette:strip`, prettier again, and commit that second. The
-   script (`script/palette/export.ts`) removes what the plugin emits and the
-   package does not ship, and `npm run lint:palette` fails CI while any of
-   it is still in the file:
+   `npx prettier --write src/palettes/variables.css`, and commit that as the
+   first commit so the raw export is reviewable on its own.
+3. `npm run palette:strip`, the same prettier command, and commit that
+   second. The script (`script/palette/export.ts`) removes what the plugin
+   emits and the package does not ship, and `npm run lint:palette` fails CI
+   while any of it is still in the file:
    - the `@keyframes warning-blink` block and the trailing
      `:root { animation: … }` rule. Animating inherited custom properties on
      the root recalculates every node's style each second; the blink is
@@ -108,15 +110,15 @@ re-sync changes every key are in
 
 Inputs:
 
-| File / env                             | Tracked | Notes                                                                                                                 |
-| -------------------------------------- | ------- | --------------------------------------------------------------------------------------------------------------------- |
-| `.env` → `FIGMA_TOKEN`                 | no      | required for any run that calls the API                                                                               |
-| `script/figmavariables.json`           | yes     | `VariableID → token` map; the converter falls back to literal hex for an unknown id                                   |
-| `script/.cache-figma.json`             | no      | ~30 MB raw API response, reused across runs                                                                           |
-| `script/.cache/icons/*.svg`            | no      | per-icon payloads, cleared each run                                                                                   |
-| `script/.cache/unknown-variables.json` | no      | written every run: the ids the map did not resolve, `[]` when clean                                                   |
-| `OBC_USE_CACHE=1`                      | —       | reuse the on-disk cache instead of calling the API; for iterating on `convert-icons.ts` or a refreshed map            |
-| `OBC_ALLOW_UNRESOLVED_VARS=1`          | —       | let a run with unresolved ids exit 0; only for a token that does not exist in the palette yet, with a follow-up filed |
+| File / env                             | Tracked | Notes                                                                                                      |
+| -------------------------------------- | ------- | ---------------------------------------------------------------------------------------------------------- |
+| `.env` → `FIGMA_TOKEN`                 | no      | required for any run that calls the API                                                                    |
+| `script/figmavariables.json`           | yes     | `VariableID → token` map; the converter falls back to literal hex for an unknown id                        |
+| `script/.cache-figma.json`             | no      | ~30 MB raw API response, reused across runs                                                                |
+| `script/.cache/icons/*.svg`            | no      | per-icon payloads, cleared each run                                                                        |
+| `script/.cache/unknown-variables.json` | no      | written every run: the ids the map did not resolve, `[]` when clean                                        |
+| `OBC_USE_CACHE=1`                      | —       | reuse the on-disk cache instead of calling the API; for iterating on `convert-icons.ts` or a refreshed map |
+| `OBC_ALLOW_UNRESOLVED_VARS=1`          | —       | let a run with unresolved ids finish writing; `lint:icons` still fails on the hex it leaves behind         |
 
 Steps:
 
@@ -156,14 +158,17 @@ Unresolved ids, by cause:
   ([`generated-code.md`](../../docs/agents/generated-code.md#variableid-anatomy--why-a-refresh-can-lose-every-icon-colour)).
 - **The token exists, the map lacks it** — re-run `variables map` on the
   icons file, replace the JSON, re-run the download.
-- **The token is not in the palette yet** — `OBC_ALLOW_UNRESOLVED_VARS=1`,
-  accept the hex fallback, file the token with the design team, regenerate
-  when the palette ships (#1187 is one).
+- **The token is not in the palette yet** — file it with the design team
+  and wait; the palette export comes first (#1187 is one). Shipping the
+  icon anyway means `OBC_ALLOW_UNRESOLVED_VARS=1` to let the run finish and
+  an explicit allowlist entry for that icon and attribute in
+  `script/check-icon-hex-leaks.ts`, since the hex it leaves behind fails
+  `lint:icons` otherwise; the entry goes when the palette ships.
 
 `npm run lint:icons` (`script/check-icon-hex-leaks.ts`) fails on any literal
-hex `fill`/`stroke` in `src/icons/*.ts`. A legitimate exception, such as a
-regulatory colour that must not follow the theme, goes on an explicit
-allowlist there, never on a sliding budget.
+hex `fill`/`stroke` in `src/icons/*.ts`. It has no allowlist today; a
+legitimate exception, such as a regulatory colour that must not follow the
+theme, gets an explicit one there, never a sliding budget.
 
 ## Consuming components
 

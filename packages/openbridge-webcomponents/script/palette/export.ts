@@ -122,8 +122,17 @@ export interface PaletteDiff {
   added: DeclarationChange[];
   removed: DeclarationChange[];
   changed: DeclarationChange[];
-  /** A removed name whose value reappears under exactly one new name in the same block. */
+  /** A removed name whose value reappears under one new name in the same block, and under no other removed name. */
   renamed: Array<{block: string; from: string; to: string}>;
+}
+
+function groupByValue(changes: DeclarationChange[], key: 'before' | 'after') {
+  const groups = new Map<string, DeclarationChange[]>();
+  for (const change of changes) {
+    const id = `${change.block}|${change[key]}`;
+    groups.set(id, [...(groups.get(id) ?? []), change]);
+  }
+  return groups;
 }
 
 export function diffPaletteExports(before: string, after: string): PaletteDiff {
@@ -141,12 +150,15 @@ export function diffPaletteExports(before: string, after: string): PaletteDiff {
       else if (x !== y) diff.changed.push({block, name, before: x, after: y});
     }
   }
-  for (const {block, name, before: value} of diff.removed) {
-    const candidates = diff.added.filter(
-      (c) => c.block === block && c.after === value
-    );
-    if (candidates.length === 1) {
-      diff.renamed.push({block, from: name, to: candidates[0].name});
+  const addedByValue = groupByValue(diff.added, 'after');
+  for (const [id, removed] of groupByValue(diff.removed, 'before')) {
+    const added = addedByValue.get(id) ?? [];
+    if (removed.length === 1 && added.length === 1) {
+      diff.renamed.push({
+        block: removed[0].block,
+        from: removed[0].name,
+        to: added[0].name,
+      });
     }
   }
   return diff;

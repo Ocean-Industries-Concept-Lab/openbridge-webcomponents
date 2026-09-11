@@ -267,18 +267,32 @@ export async function main() {
       )
     );
 
-    // write icons to disk
+    // write icons to disk; a null url means Figma could not render that node
     await Promise.all(
       Object.keys(images.images).map(async (nodeId) => {
         const icon = icons.find((icon) => icon.id === nodeId);
         const imageUrl = images.images[nodeId];
-        if (icon && imageUrl) {
-          // download icons
-          const request = await fetch(imageUrl);
-          const imageData = await request.text();
-          fs.writeFileSync(`./script/.cache/icons/${icon.name}.svg`, imageData);
+        if (!icon || !imageUrl) return;
+        const request = await fetch(imageUrl);
+        if (!request.ok) {
+          throw new Error(
+            `[download-icons] ${icon.name}: image download failed with status ${request.status}`
+          );
         }
+        fs.writeFileSync(
+          `./script/.cache/icons/${icon.name}.svg`,
+          await request.text()
+        );
       })
+    );
+  }
+
+  const missing = icons
+    .filter((icon) => !fs.existsSync(`./script/.cache/icons/${icon.name}.svg`))
+    .map((icon) => icon.name);
+  if (missing.length > 0) {
+    throw new Error(
+      `[download-icons] ${missing.length} icon(s) have no SVG after the download, nothing was replaced: ${missing.join(', ')}`
     );
   }
 

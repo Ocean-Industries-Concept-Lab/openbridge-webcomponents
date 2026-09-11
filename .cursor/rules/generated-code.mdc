@@ -50,10 +50,12 @@ per-machine — a fresh clone or new laptop never has it.
 2. Put it in `packages/openbridge-webcomponents/.env`:
    `FIGMA_TOKEN=<token>`
 3. Verify against the icons file, not `/v1/me` — a file-scoped token returns
-   403 on `/v1/me` while working fine for the download:
+   403 on `/v1/me` while working fine for the download. The scripts load
+   `.env` themselves; a shell does not:
    ```bash
-   curl -s -H "X-Figma-Token: $FIGMA_TOKEN" \
-     "https://api.figma.com/v1/files/IkDwOtza6OdjLbIdWA7mI7?depth=1" | head -c 200
+   set -a; source .env; set +a
+   curl -s -o /dev/null -w '%{http_code}\n' -H "X-Figma-Token: $FIGMA_TOKEN" \
+     "https://api.figma.com/v1/files/IkDwOtza6OdjLbIdWA7mI7?depth=1"   # 200
    ```
 
 The full refresh procedure (palette export, variable map, tripwires,
