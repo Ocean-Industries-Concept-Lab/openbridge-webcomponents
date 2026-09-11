@@ -999,6 +999,11 @@ export const ExternalScalesRangeLabels: Story = {
  * range labels. The canvas used to be drawn edge to edge here and painted over
  * both scales; it is now inset by the thickness each scale reports, so the
  * ladders stay visible at any size.
+ *
+ * The trace is stepped on purpose. What this baseline asserts is the inset, and
+ * a smooth curve puts the whole stroke on sub-pixel boundaries whose
+ * anti-aliasing differs between render environments — axis-aligned segments
+ * rasterize the same everywhere.
  */
 export const ExternalScalesBelowThreshold: Story = {
   name: 'External Scales Below The Threshold (160×160, No Range Labels)',
@@ -1013,6 +1018,7 @@ export const ExternalScalesBelowThreshold: Story = {
   render: (_args) => html`
     <obc-area-graph
       .data=${SAMPLE_DATA}
+      .lineMode=${'stepped'}
       .width=${_args.width}
       .height=${_args.height}
       .priority=${_args.priority}
