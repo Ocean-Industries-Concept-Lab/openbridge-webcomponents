@@ -425,7 +425,7 @@ export class ObcNumberInputField extends LitElement {
     });
   }
 
-  /** Whether a click outside the input landed to the left of the value. */
+  /** Whether a click outside the input was aimed at the start of the value. */
   private clickedBeforeValue(e: MouseEvent, input: HTMLInputElement): boolean {
     const inputBox = input.getBoundingClientRect();
 
@@ -447,7 +447,10 @@ export class ObcNumberInputField extends LitElement {
       ? inputBox.width / input.offsetWidth
       : 1;
     const rectToClient = rectScale ? cssZoomOf(input) / rectScale : 1;
-    return e.clientX < inputBox.left * rectToClient;
+    // A wrapper reaches above and below the value as well as beside it, so compare
+    // against the middle of the value: the nearer end is the one that was aimed at.
+    const middle = inputBox.left + inputBox.width / 2;
+    return e.clientX < middle * rectToClient;
   }
 
   override render() {
