@@ -24,6 +24,11 @@ dist-ssr
 src/**/__screenshots__/
 .vitest-attachments/
 
+# Vitest browser-mode failure artefacts: screenshots attached to a failing
+# spec report, written next to the spec and into the package root.
+src/**/__screenshots__/
+.vitest-attachments/
+
 # Editor directories and files
 !.vscode/extensions.json
 .idea

@@ -103,6 +103,10 @@ const meta: Meta = {
     showGridX: {control: 'boolean'},
     showGridY: {control: 'boolean'},
     showTickMarks: {control: 'boolean'},
+    rangeLabels: {
+      control: {type: 'radio'},
+      options: ['none', 'y', 'x', 'xy'],
+    },
     xTicksLimit: {control: {type: 'number'}},
     xStepSize: {control: {type: 'number'}},
     yTicksLimit: {control: {type: 'number'}},
@@ -134,6 +138,7 @@ const meta: Meta = {
     showGridX: true, // Component defaults to false, but stories show grid by default
     showGridY: true, // Component defaults to false, but stories show grid by default
     showTickMarks: true, // Component defaults to false, but stories show tick marks by default
+    rangeLabels: 'none',
     xTicksLimit: undefined,
     xStepSize: undefined,
     yTicksLimit: undefined,
@@ -174,6 +179,7 @@ export const SingleSeries: Story = {
       .showGridX=${_args.showGridX}
       .showGridY=${_args.showGridY}
       .showTickMarks=${_args.showTickMarks}
+      .rangeLabels=${_args.rangeLabels}
       .xTicksLimit=${_args.xTicksLimit}
       .xStepSize=${_args.xStepSize}
       .yTicksLimit=${_args.yTicksLimit}
@@ -563,6 +569,24 @@ export const MinHeight: Story = {
   args: {
     width: 72,
     height: 48,
+  },
+};
+
+export const MinHeightRangeLabels: Story = {
+  name: 'Minimal Height With Range Labels (48px)',
+  args: {
+    width: 120,
+    height: 48,
+    rangeLabels: 'xy',
+  },
+};
+
+export const BelowThresholdRangeLabels: Story = {
+  name: 'Below Threshold With Range Labels (191px, Y Only)',
+  args: {
+    width: 288,
+    height: 191,
+    rangeLabels: 'y',
   },
 };
 
