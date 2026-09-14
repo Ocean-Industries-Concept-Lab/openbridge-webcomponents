@@ -60,6 +60,24 @@ fast 400/400, slow 1200/400, very-slow 2800/400 ms on/off. The table lives in
 - Visual tests park all Web Animations at 100 ms (see `testing-visual.md`),
   so flashing stories snapshot the on state.
 
+## Alert button layers
+
+`obc-badge` → `obc-alert-counter-item` → `obc-alert-button-item` →
+`obc-alert-button`, the nesting of the Figma Alert counter item, Alert
+button item and Alert button (#1236).
+
+- `obc-alert-button-item` draws the bell, the counter and the global
+  counter, and holds the alert button's `FlashingController`.
+  `obc-alert-button` forwards its properties to the item and adds the
+  silence button and the breakpoints; it never draws a bell of its own.
+- `rankAlertCounts(counts, combine)` in `src/alert-severity.ts` is the only
+  per-severity count ranking, over the shared `AlertCounts` shape
+  (`src/types.ts`); the tree navigation badges and the counter item call it.
+- A parent squares the item's end with `data-group-item-not-last` (see Data
+  Attributes for Group Styling).
+- Guarded by `alert-button-item.spec.ts`, `alert-counter-item.spec.ts`,
+  `alert-button.spec.ts` and `alert-severity.spec.ts`.
+
 ## Slot Conventions
 
 | Pattern                                      | Usage                                  |
