@@ -123,6 +123,11 @@ every devcontainer run is identical (#1222). Pin the layout fact in a
 `.spec.ts` instead, and `git rm` the orphaned baseline — `--update` never
 prunes.
 
+Web Animations (alert flashing) ignore the zeroed CSS durations, so an
+`afterEach` in `vitest.setup.ts` parks every animation at 100 ms, inside the
+on phase of every flash tempo; snapshots of flashing elements always show the
+on state.
+
 ## Manifest-driven docs and controls
 
 `.storybook/manifest-docs-core.ts` holds the helpers; `manifest-docs.ts` binds
