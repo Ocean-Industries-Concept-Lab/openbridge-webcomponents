@@ -26,6 +26,7 @@ import {
   PortStarboardSides,
   PortStarboardElement,
   type PortStarboardSign,
+  portStarboardOrientationSign,
   portStarboardSignOf,
   PortStarboardSource,
   portStarboardSourceSign,
@@ -224,20 +225,9 @@ export class ObcAzimuthThruster extends LitElement {
     });
   }
 
-  /**
-   * Which half of the dial the angle setpoint sits in: starboard for
-   * (0°, 180°), port for (180°, 360°), neutral exactly fore or aft.
-   */
+  /** Side of the dial the angle setpoint sits in; neutral dead fore or aft. */
   private get angleSetpointPortStarboardSign(): PortStarboardSign {
-    if (
-      this.angleSetpoint === undefined ||
-      !Number.isFinite(this.angleSetpoint)
-    ) {
-      return 0;
-    }
-    const angle = mapAngle0to360(this.angleSetpoint);
-    if (angle === 0 || angle === 180) return 0;
-    return angle < 180 ? 1 : -1;
+    return portStarboardOrientationSign(this.angleSetpoint);
   }
 
   /**
