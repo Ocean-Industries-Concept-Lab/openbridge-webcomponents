@@ -197,6 +197,9 @@ export type ObcTableExpandToggleEvent = CustomEvent<{
   expanded: boolean;
 }>;
 
+const INTERACTIVE_SELECTOR =
+  'button, a[href], input, select, textarea, [role="button"], [role="link"], [role="checkbox"]';
+
 function cssPart(value: ObcTableCellData, subpart: string): string | undefined {
   if (value.cssPart) {
     return `${value.cssPart} ${subpart}`;
@@ -397,7 +400,16 @@ export class ObcTable extends LitElement {
     }
   }
 
-  private _handleRowClick(row: ObcTableRow) {
+  private _handleRowClick(event: MouseEvent, row: ObcTableRow) {
+    const rowElement = event.currentTarget;
+    for (const node of event.composedPath()) {
+      if (node === rowElement) break;
+      // Stopping propagation in the cell instead would break listeners
+      // delegated to the document, such as Svelte's.
+      if (node instanceof Element && node.matches(INTERACTIVE_SELECTOR)) {
+        return;
+      }
+    }
     this.dispatchEvent(
       new CustomEvent('row-click', {detail: {row}}) as ObcTableRowClickEvent
     );
@@ -883,7 +895,8 @@ export class ObcTable extends LitElement {
                     'selected-with-next': isRowSelected && hasSelectedNextRow,
                     striped: isStriped,
                   })}
-                  @click=${() => this._handleRowClick(row)}
+                  @click=${(event: MouseEvent) =>
+                    this._handleRowClick(event, row)}
                   @keydown=${this._handleRowKeyDown}
                   data-row-id=${row.id}
                   style="grid-row: ${rowIndex + 1}"

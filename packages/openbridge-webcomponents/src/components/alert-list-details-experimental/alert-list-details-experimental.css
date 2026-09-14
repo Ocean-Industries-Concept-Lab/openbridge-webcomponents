@@ -33,13 +33,8 @@
 }
 
 obc-table::part(grid) {
-  grid-template-columns: 1fr repeat(4, min-content);
-}
-
-.wrapper.small obc-table::part(grid) {
-  grid-template-columns: 1fr min-content var(
-      --app-components-alert-table-row-ack-container-width-small
-    );
+  /* set from columns[].width */
+  grid-template-columns: var(--alert-list-grid-columns);
 }
 
 .empty-list {

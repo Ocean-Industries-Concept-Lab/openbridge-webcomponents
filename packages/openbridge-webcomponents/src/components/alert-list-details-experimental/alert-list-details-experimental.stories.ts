@@ -1,9 +1,16 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {
   AlertListMode,
-  ObcAckClickEvent,
+  ObcAlertListCellClickEvent,
   ObcAlertListDetailsExperimental,
+  ackColumn,
+  alertListCellSlotName,
+  getAlertRows,
+  statusColumn,
+  tagIdColumn,
+  timeColumn,
 } from './alert-list-details-experimental.js';
+import type {ObcButton} from '../button/button.js';
 import '../alert-icon/alert-icon.js';
 import '../../icons/icon-alarm-unacknowledged-iec.js';
 import '../../icons/icon-warning-unacknowledged-iec.js';
@@ -11,13 +18,14 @@ import '../../icons/icon-caution-color-iec.js';
 import '../../icons/icon-alarm-acknowledged-iec.js';
 
 import {html} from 'lit';
-import {Alert, AlertType} from '../../types.js';
+import {Alert, AlertType, isAcknowledged} from '../../types.js';
 
-// Handler for ack-click events, this is a demo solution for the storybook
-// Normally the ack-click is handled by the backend and the component is updated
-const handleAck = (e: ObcAckClickEvent) => {
-  const item = e.detail.alert;
-  ack(item);
+// Handler for ACK clicks, this is a demo solution for the storybook
+// Normally the click is handled by the backend and the component is updated
+const handleAck = (e: ObcAlertListCellClickEvent) => {
+  if (e.detail.columnKey === 'ack') {
+    ack(e.detail.alert);
+  }
 };
 
 const ack = (item: Alert) => {
@@ -44,7 +52,13 @@ const meta: Meta<typeof ObcAlertListDetailsExperimental> = {
   component: 'obc-alert-list-details-experimental',
   args: {
     selectedMode: AlertListMode.ALL,
-    showTime: true,
+    showHeader: true,
+    columns: [
+      statusColumn(),
+      ackColumn({dividerRight: true}),
+      timeColumn(),
+      tagIdColumn(),
+    ],
     alerts: [
       {
         id: '1',
@@ -129,14 +143,16 @@ const meta: Meta<typeof ObcAlertListDetailsExperimental> = {
   parameters: {
     layout: 'fullscreen',
   },
-  argTypes: {},
+  argTypes: {
+    columns: {control: false},
+  },
   render: (args) => {
     return html` <obc-alert-list-details-experimental
       data-testid="alert-menu"
       .selectedMode=${args.selectedMode}
-      .showTime=${args.showTime}
-      .small=${args.small}
-      @ack-click=${handleAck}
+      .columns=${args.columns}
+      .showHeader=${args.showHeader}
+      @cell-click=${handleAck}
       .alerts=${args.alerts}
       style="height: 100vh; display: block; max-height: 100%;"
     >
@@ -153,7 +169,15 @@ export const Regular: Story = {
 
 export const Small: Story = {
   args: {
-    small: true,
+    showHeader: false,
+    columns: [
+      statusColumn(),
+      timeColumn(),
+      ackColumn({
+        width:
+          'var(--app-components-alert-table-row-ack-container-width-small)',
+      }),
+    ],
   },
 };
 
@@ -182,7 +206,7 @@ export const OneItem: Story = {
   },
   render: (args) => {
     return html` <obc-alert-list-details-experimental
-      @ack-click=${handleAck}
+      @cell-click=${handleAck}
       .selectedMode=${args.selectedMode}
       .alerts=${args.alerts}
       style="height: 100vh; display: block;"
@@ -248,10 +272,10 @@ export const LevelCategories: Story = {
   },
   render: (args) => {
     return html` <obc-alert-list-details-experimental
-      @ack-click=${handleAck}
+      @cell-click=${handleAck}
       .selectedMode=${args.selectedMode}
       .alerts=${args.alerts}
-      .showTime=${args.showTime}
+      .columns=${args.columns}
       style="height: 100vh; display: block;"
     >
     </obc-alert-list-details-experimental>`;
@@ -260,7 +284,6 @@ export const LevelCategories: Story = {
 
 export const GroupedAlerts: Story = {
   args: {
-    showTime: true,
     alerts: [
       {
         id: 'gyro',
@@ -349,10 +372,10 @@ export const GroupedAlerts: Story = {
   },
   render: (args) => {
     return html` <obc-alert-list-details-experimental
-      @ack-click=${handleAck}
+      @cell-click=${handleAck}
       .selectedMode=${args.selectedMode}
       .alerts=${args.alerts}
-      .showTime=${args.showTime}
+      .columns=${args.columns}
       style="height: 100vh; display: block;"
     >
     </obc-alert-list-details-experimental>`;
@@ -361,7 +384,6 @@ export const GroupedAlerts: Story = {
 
 export const CyclicGrouping: Story = {
   args: {
-    showTime: true,
     alerts: [
       {
         id: 'standalone',
@@ -407,10 +429,10 @@ export const CyclicGrouping: Story = {
   },
   render: (args) => {
     return html` <obc-alert-list-details-experimental
-      @ack-click=${handleAck}
+      @cell-click=${handleAck}
       .selectedMode=${args.selectedMode}
       .alerts=${args.alerts}
-      .showTime=${args.showTime}
+      .columns=${args.columns}
       style="height: 100vh; display: block;"
     >
     </obc-alert-list-details-experimental>`;
@@ -419,7 +441,6 @@ export const CyclicGrouping: Story = {
 
 export const CycleWithDescendants: Story = {
   args: {
-    showTime: true,
     alerts: [
       {
         id: 'reachable-group',
@@ -499,12 +520,61 @@ export const CycleWithDescendants: Story = {
   },
   render: (args) => {
     return html` <obc-alert-list-details-experimental
-      @ack-click=${handleAck}
+      @cell-click=${handleAck}
       .selectedMode=${args.selectedMode}
       .alerts=${args.alerts}
-      .showTime=${args.showTime}
+      .columns=${args.columns}
       style="height: 100vh; display: block;"
     >
+    </obc-alert-list-details-experimental>`;
+  },
+};
+
+export const SlottedAckButtons: Story = {
+  args: {
+    alerts: GroupedAlerts.args?.alerts as Alert[],
+    columns: [
+      statusColumn(),
+      {key: 'ack', label: 'ACK-status', slot: true, dividerRight: true},
+      timeColumn(),
+      tagIdColumn(),
+    ],
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'The ACK column is a slot column. The consumer creates each button, gives it its own `id`, and places it in slot `cell-ack-<rowId>`, with the row ids from `getAlertRows()`. `PWR-01` is a member of two groups, so it has two rows and two buttons. Clicking ACK looks up every button for that alert in the DOM and disables it.',
+      },
+    },
+  },
+  render: (args) => {
+    const disableAckButtons = (alert: Alert) => {
+      document
+        .querySelectorAll<ObcButton>(
+          `obc-button[data-alert-id="${CSS.escape(alert.id)}"]`
+        )
+        .forEach((button) => (button.disabled = true));
+    };
+    return html` <obc-alert-list-details-experimental
+      .selectedMode=${args.selectedMode}
+      .alerts=${args.alerts}
+      .columns=${args.columns}
+      style="height: 100vh; display: block;"
+    >
+      ${getAlertRows(args.alerts, args.selectedMode)
+        .filter(({alert}) => !isAcknowledged(alert) && !alert.noAck)
+        .map(
+          (row) =>
+            html`<obc-button
+              slot=${alertListCellSlotName('ack', row.rowId)}
+              id=${`ack-${row.rowId}`}
+              data-alert-id=${row.alert.id}
+              fullWidth
+              @click=${() => disableAckButtons(row.alert)}
+              >ACK</obc-button
+            >`
+        )}
     </obc-alert-list-details-experimental>`;
   },
 };
