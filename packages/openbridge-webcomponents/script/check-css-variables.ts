@@ -44,14 +44,9 @@ import fs from 'fs';
 import path from 'path';
 import {globby} from 'globby';
 
-// Bucket B from issue #916 — undefined CSS variables that still need a design
-// decision (token value, rename target, or removal). Tracked for follow-up.
-// See https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/916
+// Undefined CSS variables that only a fix in Figma can resolve (#929).
 const allowedUndefinedVariables = new Set([
-  // B-5/B-6: instrument-field internal widths — unusual --obc- prefix
-  '--obc-instrument-field-source-width',
-  '--obc-instrument-field-tag-width',
-  // B-7: keyboard "numeric" tokens missing from the (misspelled) family
+  // B-7: Figma binds both to variables missing from Component-size
   '--ui-components-keyboard-numeric-component-height-min',
   '--ui-components-keyboard-numeric-touch-target-size',
 ]);
