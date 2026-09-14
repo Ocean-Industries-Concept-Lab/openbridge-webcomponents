@@ -62,10 +62,11 @@ reject.
 
 **Regenerate locally, on Linux.** The devcontainer (Ubuntu 24.04) renders what
 the CI `test` job (`mcr.microsoft.com/playwright:v1.60.0-noble`) accepts, so a
-scoped `--update` followed by a plain re-run is the whole procedure. On macOS
-take the Docker route from the package directory (the scripts mount `$(pwd)`),
-keeping the filter in front of the flag — `update-snapshots:docker` has no
-filter and rewrites the whole suite:
+scoped `--update` followed by a plain re-run is the whole procedure, except for
+small `<canvas>` charts ([`skip-test` or `!snapshot`](#skip-test-or-snapshot)).
+On macOS take the Docker route from the package directory (the scripts mount
+`$(pwd)`), keeping the filter in front of the flag — `update-snapshots:docker`
+has no filter and rewrites the whole suite:
 
 ```bash
 npm run test-storybook:docker -- -- component-name --update
@@ -104,8 +105,25 @@ Two facts that bite:
   class JSDoc — see [`jsdoc.md`](jsdoc.md). Tooling tags (`autodocs`,
   `skip-test`, `!snapshot`) and version tags (`6.0`, `6.1`) stay hand-written.
 
-Use `skip-test` to exclude a story from snapshot testing — appropriate for
-anything genuinely non-deterministic rather than papering over a flake.
+### `skip-test` or `!snapshot`
+
+Both keep a story out of the baselines, and both are for output that is
+genuinely non-deterministic, never for papering over a regression.
+
+- **`skip-test`** — the snapshot project does not collect the story at all
+  (`tags.exclude` in `vitest.config.ts`): no render, no `play`, no baseline.
+  For a story with nothing to assert as a test, like the live harness stories
+  below.
+- **`!snapshot`** — the story still renders and runs `play` as a test, so a
+  thrown error fails CI; only the screenshot is skipped and no baseline is
+  written. For a story whose render is deterministic but whose pixels are not.
+
+Small `<canvas>` charts are the known case for `!snapshot`. The harness
+captures a story at about 0.8 of its CSS size, so their edges land on
+fractional pixels, and that anti-aliasing differs between CI runners even when
+every devcontainer run is identical (#1222). Pin the layout fact in a
+`.spec.ts` instead, and `git rm` the orphaned baseline — `--update` never
+prunes.
 
 ## Manifest-driven docs and controls
 
