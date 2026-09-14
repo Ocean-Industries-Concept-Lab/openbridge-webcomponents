@@ -50,8 +50,6 @@ import {globby} from 'globby';
 const allowedUndefinedVariables = new Set([
   // B-1: notification icon size (alert-menu-item.css, message-menu-item.css)
   '--app-components-alert-components-general-notification-item-icon-size-large',
-  // B-2: alert counter spacing (alert-button.css)
-  '--app-components-global-alert-item-counter-spacing',
   // B-3: likely typo for --normal-enabled-background-color (sequence-toolbar.css)
   '--enabled-background-color',
   // B-4: date-item vertical padding (date-item.css) — sibling tokens exist
