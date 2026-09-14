@@ -16,10 +16,9 @@
  * - Component selectors: `getAlertBadgeComponent` and
  *   `getAlertTwotoneComponent` resolve the badge/icon element tag for a
  *   severity.
- * - Blinking: `supportsBlinking` reports whether a severity blinks,
- *   `getAlertBlinkMode` resolves its blink mode, and
- *   `getBamAlertTypeForBlinking` maps level severities onto the legacy type used
- *   by the bridge alert management (BAM) blink machinery.
+ * - Flashing: `resolveFlashingSpeed` maps a severity and phase onto the
+ *   design tempo table, and `getBamAlertTypeForBlinking` maps level
+ *   severities onto the legacy type that selects the icon glyphs.
  * - Acknowledgement & filtering: `requiresAcknowledgement` reports whether a
  *   severity needs an ACK action, `excludedFromUnackedFilter` reports whether
  *   it is hidden from the "unacked" view, and `usesAlarmNoAckIcon` selects the
@@ -45,7 +44,12 @@
  * );
  * ```
  */
-import {AlertType, ALERT_SEVERITY_PRIORITY} from './types.js';
+import {
+  AlertType,
+  ALERT_SEVERITY_PRIORITY,
+  FlashingSpeed,
+  type ResolvedFlashingSpeed,
+} from './types.js';
 
 export {ALERT_SEVERITY_PRIORITY};
 
@@ -74,22 +78,44 @@ export function requiresAcknowledgement(type: AlertType): boolean {
   ].includes(type);
 }
 
-export function supportsBlinking(
-  type: AlertType,
-  acknowledged: boolean
-): boolean {
-  if (acknowledged) {
-    return false;
-  }
+export enum AlertFlashPhase {
+  Active = 'active',
+  Rectified = 'rectified',
+}
 
-  return [
-    AlertType.Alarm,
-    AlertType.Warning,
-    AlertType.LevelCritical,
-    AlertType.LevelHigh,
-    AlertType.LevelMedium,
-    AlertType.LevelLow,
-  ].includes(type);
+/**
+ * Resolves the `default` flashing speed from the design tempo table (#1224):
+ * active critical/alarm/high flash fast, warning/medium slow, low very slow;
+ * every rectified alert flashes very slow; caution and diagnostic never
+ * flash. Callers map acknowledged alerts to `fixed` before asking.
+ */
+export function resolveFlashingSpeed(
+  speed: FlashingSpeed,
+  type: AlertType,
+  phase: AlertFlashPhase = AlertFlashPhase.Active
+): ResolvedFlashingSpeed {
+  if (speed !== FlashingSpeed.Default) {
+    return speed;
+  }
+  if (type === AlertType.Caution || type === AlertType.LevelDiagnostic) {
+    return FlashingSpeed.Fixed;
+  }
+  if (phase === AlertFlashPhase.Rectified) {
+    return FlashingSpeed.VerySlow;
+  }
+  switch (type) {
+    case AlertType.LevelCritical:
+    case AlertType.Alarm:
+    case AlertType.LevelHigh:
+      return FlashingSpeed.Fast;
+    case AlertType.Warning:
+    case AlertType.LevelMedium:
+      return FlashingSpeed.Slow;
+    case AlertType.LevelLow:
+      return FlashingSpeed.VerySlow;
+    default:
+      return FlashingSpeed.Fixed;
+  }
 }
 
 export function getAlertSeverityCssClass(type: AlertType): string {
@@ -180,30 +206,6 @@ export function getAlertTwotoneComponent(
     case AlertType.LevelHigh:
     default:
       return AlertTwotoneComponent.Alarm;
-  }
-}
-
-export enum AlertBlinkMode {
-  Critical = 'critical',
-  Alarm = 'alarm',
-  Warning = 'warning',
-  Low = 'low',
-}
-
-export function getAlertBlinkMode(type: AlertType): AlertBlinkMode {
-  switch (type) {
-    case AlertType.LevelCritical:
-      return AlertBlinkMode.Critical;
-    case AlertType.Warning:
-    case AlertType.LevelMedium:
-      return AlertBlinkMode.Warning;
-    case AlertType.Caution:
-    case AlertType.LevelLow:
-      return AlertBlinkMode.Low;
-    case AlertType.Alarm:
-    case AlertType.LevelHigh:
-    default:
-      return AlertBlinkMode.Alarm;
   }
 }
 
