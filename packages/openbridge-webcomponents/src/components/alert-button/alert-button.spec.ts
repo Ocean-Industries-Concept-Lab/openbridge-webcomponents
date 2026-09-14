@@ -106,4 +106,19 @@ describe('obc-alert-button', () => {
 
     expect(fired).toBe(1);
   });
+
+  it('names the silence button', async () => {
+    const {el} = await setup(
+      html`<obc-alert-button
+        .nAlerts=${3}
+        showSilenceButton
+      ></obc-alert-button>`
+    );
+
+    expect(
+      el
+        .shadowRoot!.querySelector('.silence-button')!
+        .getAttribute('aria-label')
+    ).toBe('Silence');
+  });
 });

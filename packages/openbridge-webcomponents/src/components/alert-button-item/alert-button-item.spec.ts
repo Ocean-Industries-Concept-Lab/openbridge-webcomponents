@@ -227,6 +227,49 @@ describe('obc-alert-button-item accessibility', () => {
     );
   });
 
+  it('names the badges the global counter shows without a total', async () => {
+    const el = await setup({
+      globalCounter: true,
+      nAlerts: 0,
+      counts: SEVERITY_COUNTS,
+    });
+
+    expect(button(el).getAttribute('aria-label')).toBe(
+      'Alerts, 2 Alarm, 4 Warning, 6 Caution'
+    );
+  });
+
+  it('follows a host aria-label set after the first render', async () => {
+    const el = await setup();
+
+    el.setAttribute('aria-label', 'Engine alerts');
+    await el.updateComplete;
+
+    expect(button(el).getAttribute('aria-label')).toBe('Engine alerts');
+  });
+
+  it('does not submit an enclosing form', async () => {
+    let submitted = 0;
+    const screen = render(
+      html`<form
+        @submit=${(event: Event) => {
+          event.preventDefault();
+          submitted++;
+        }}
+      >
+        <obc-alert-button-item .nAlerts=${3}></obc-alert-button-item>
+      </form>`
+    );
+    const el = screen.container.querySelector(
+      'obc-alert-button-item'
+    ) as ObcAlertButtonItem;
+    await el.updateComplete;
+
+    button(el).click();
+
+    expect(submitted).toBe(0);
+  });
+
   it('forwards an aria-label set on the host', async () => {
     const screen = render(
       html`<obc-alert-button-item

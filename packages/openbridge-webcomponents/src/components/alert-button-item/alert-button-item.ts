@@ -96,6 +96,7 @@ export enum ObcAlertButtonType {
  * @property type - Visual variant: `flat` (icon only), `normal` (default, bordered with the counter) or `enhanced` (filled in the severity colour).
  * @availableWhen type globalCounter==false
  * @property alertType - Alert type that selects the icon and colours: `alarm`, `warning`, `caution` or a `level-*` severity.
+ * @availableWhen alertType globalCounter==false
  * @property nAlerts - Number of active alerts; 0 shows the idle bell and hides the counter.
  * @property counter - Shows `nAlerts` next to the bell (not in `flat`).
  * @availableWhen counter globalCounter==false
@@ -105,9 +106,11 @@ export enum ObcAlertButtonType {
  * @property shelvedCount - Number of shelved alerts, shown after the global counter badges.
  * @availableWhen shelvedCount globalCounter==true
  * @property blinking - Flashes the bell while there are active alerts of a flashing alert type.
+ * @availableWhen blinking globalCounter==false
  * @property flashingSpeed - Flash tempo while `blinking` is on: `default` resolves from `alertType`, `fast`, `slow`, `very-slow` force a tempo, `fixed` never flashes.
  * @availableWhen flashingSpeed blinking==true
  * @property fillHeight - Stretches the visible button to the host height instead of the 32 px visual target.
+ * @property ariaLabel - Accessible name forwarded to the inner `<button>`, mapped to the `aria-label` attribute; replaces the generated label. `aria-labelledby` is not supported: ID references cannot cross the shadow boundary.
  * @fires click - Fired when the button is clicked.
  * @experimental
  */
@@ -126,6 +129,10 @@ export class ObcAlertButtonItem extends LitElement {
   @property({type: String}) flashingSpeed: FlashingSpeed =
     FlashingSpeed.Default;
   @property({type: Boolean}) fillHeight = false;
+
+  // Reactive so a consumer changing the name re-renders the shadow button.
+  @property({type: String, attribute: 'aria-label'})
+  override ariaLabel: string | null = null;
 
   protected readonly flashing = new FlashingController(
     this,
@@ -149,21 +156,20 @@ export class ObcAlertButtonItem extends LitElement {
   }
 
   private get accessibleName(): string {
-    const forwarded = this.getAttribute('aria-label');
-    if (forwarded) {
-      return forwarded;
+    if (this.ariaLabel) {
+      return this.ariaLabel;
     }
     const parts = [msg('Alerts')];
     if (this.nAlerts > 0) {
       parts.push(String(this.nAlerts));
-      if (this.globalCounter) {
-        const breakdown = alertCountsLabel(this.counts, this.shelvedCount);
-        if (breakdown) {
-          parts.push(breakdown);
-        }
-      } else if (this.alertType) {
-        parts.push(alertTypeLabel(this.alertType));
+    }
+    if (this.globalCounter) {
+      const breakdown = alertCountsLabel(this.counts, this.shelvedCount);
+      if (breakdown) {
+        parts.push(breakdown);
       }
+    } else if (this.nAlerts > 0 && this.alertType) {
+      parts.push(alertTypeLabel(this.alertType));
     }
     return parts.join(', ');
   }

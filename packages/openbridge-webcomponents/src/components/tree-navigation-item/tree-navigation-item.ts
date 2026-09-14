@@ -158,8 +158,8 @@ export class ObcTreeNavigationItem extends LitElement {
    * every count at 0) for a row with no alerts. See {@link TreeNavigationItemAlerts}.
    *
    * - When `combine` is true, a single badge is shown: its number is the sum
-   *   of all counts and its severity is the highest category present
-   *   (critical → alarm → warning → caution).
+   *   of all counts and its severity is the highest category present, ranked
+   *   by `ALERT_SEVERITY_PRIORITY`.
    * - Otherwise one badge is shown per count greater than 0, ordered most to
    *   least severe and spaced by the alert-counter spacing token.
    */

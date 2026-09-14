@@ -1,6 +1,7 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property, state} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
+import {localized, msg} from '@lit/localize';
 import compentStyle from './alert-button.css?inline';
 import '../../icons/icon-notification.js';
 import '../../icons/icon-notification-advice.js';
@@ -94,6 +95,7 @@ export {ObcAlertButtonType};
  * @stable
  */
 @customElement('obc-alert-button')
+@localized()
 export class ObcAlertButton extends LitElement {
   @property({type: Number}) nAlerts = 0;
   @property({type: String}) alertType?: AlertType;
@@ -167,6 +169,7 @@ export class ObcAlertButton extends LitElement {
           ? html`
               <button
                 class="silence-button"
+                aria-label=${msg('Silence')}
                 @click=${() =>
                   this.dispatchEvent(new CustomEvent('click-silence'))}
                 ?disabled=${this.silenceButtonDisabled}
