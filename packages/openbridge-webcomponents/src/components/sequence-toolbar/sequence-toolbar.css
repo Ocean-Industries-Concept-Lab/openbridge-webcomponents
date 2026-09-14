@@ -28,7 +28,6 @@
 
   &.type-condensed {
     border-radius: 100px;
-    background-color: var(--normal-enabled-background-color);
 
     .condensed-label__current {
       font-weight: var(--font-weight-Bold, 670);
