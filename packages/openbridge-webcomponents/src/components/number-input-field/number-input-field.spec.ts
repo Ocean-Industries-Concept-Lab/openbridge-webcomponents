@@ -1,4 +1,5 @@
 import {describe, it, expect, beforeEach, afterEach, vi} from 'vitest';
+import {userEvent} from '@vitest/browser/context';
 import './number-input-field.js';
 import {
   ObcNumberInputField,
@@ -397,6 +398,18 @@ describe('obc-number-input-field', () => {
     const query = <T extends Element>(selector: string): T =>
       el.shadowRoot!.querySelector(selector) as T;
 
+    /** The caret is applied after the render that focusing schedules. */
+    const settle = async () => {
+      await el.updateComplete;
+      await el.updateComplete;
+    };
+
+    /**
+     * A synthetic click, for the cases the component resolves itself: a click on
+     * the chrome is answered from rects and `clientX` alone, so a dispatched event
+     * exercises the real code path. Native caret placement is not reproducible this
+     * way — `clickReally` covers that.
+     */
     const clickOn = (target: Element, clientX = 0): MouseEvent => {
       const event = new MouseEvent('click', {
         bubbles: true,
@@ -408,19 +421,43 @@ describe('obc-number-input-field', () => {
       return event;
     };
 
-    /** The caret is applied after the render that focusing schedules. */
-    const settle = async () => {
-      await el.updateComplete;
-      await el.updateComplete;
+    /**
+     * A real pointer click through the browser driver, so hit testing, focus and the
+     * browser's own caret placement all run. `position` is an offset into the
+     * target's rect, which CSS zoom scales along with the glyphs.
+     */
+    const clickReally = async (
+      target: Element,
+      position?: {x: number; y: number}
+    ) => {
+      await userEvent.click(target, position ? {position} : {});
+      await settle();
+    };
+
+    /** Back to an unfocused field showing the formatted value. */
+    const reset = async () => {
+      input.blur();
+      el.value = 1234567.89;
+      await settle();
+    };
+
+    const setZoom = async (zoom: number) => {
+      document.documentElement.style.zoom = String(zoom);
+      await settle();
     };
 
     beforeEach(async () => {
-      // A fixed width keeps the label above the value rather than beside it, so the
-      // geometry these tests assert on is deterministic.
-      el.style.width = '260px';
+      // An inline-block host of a fixed width keeps the label above the value rather
+      // than beside it, so the geometry these tests assert on is deterministic.
+      el.style.cssText = 'display:inline-block;width:320px;';
       el.label = 'SV';
       el.unit = 'm/s';
       el.hasLeadingIcon = true;
+      // The slot drives the icon's size, so a real click needs something in it.
+      const icon = document.createElement('div');
+      icon.slot = 'leading-icon';
+      icon.style.cssText = 'width:24px;height:24px;';
+      el.appendChild(icon);
       el.groupSeparator = ',';
       el.decimalSeparator = '.';
       el.maxFractionDigits = 6;
@@ -435,29 +472,54 @@ describe('obc-number-input-field', () => {
     });
 
     describe('clicks on the value', () => {
-      it('leaves placement to the browser instead of computing an offset', async () => {
-        input.focus();
-        await el.updateComplete;
-        input.setSelectionRange(3, 3);
+      // Distances from the right edge of the input, in unzoomed CSS pixels. CSS zoom
+      // scales the rect and the glyphs together, so the same distance scaled by the
+      // zoom must land on the same character at every scale.
+      const offsets = [10, 30, 50, 70];
 
-        const event = clickOn(input, 100);
-        await settle();
+      /** Where the caret lands for each offset, clicked at the given zoom. */
+      const sweep = async (zoom: number): Promise<number[]> => {
+        await setZoom(zoom);
+        const carets: number[] = [];
+        for (const offset of offsets) {
+          const box = input.getBoundingClientRect();
+          await clickReally(input, {
+            x: box.width - offset * zoom,
+            y: box.height / 2,
+          });
+          carets.push(input.selectionStart ?? -1);
+        }
+        return carets;
+      };
 
-        expect(event.defaultPrevented).toBe(false);
-        expect(input.selectionStart).toBe(3);
+      it('places the caret at the pointer rather than at an end of the value', async () => {
+        const carets = await sweep(1);
+
+        expect(Math.min(...carets)).toBeGreaterThan(0);
+        expect(Math.max(...carets)).toBeLessThan(input.value.length);
+        // Stepping left through the value steps the caret back through it.
+        expect(carets).toEqual([...carets].sort((a, b) => b - a));
+        expect(new Set(carets).size).toBe(carets.length);
       });
 
-      it('leaves placement to the browser under CSS zoom', async () => {
-        document.documentElement.style.zoom = '0.75';
-        input.focus();
-        await el.updateComplete;
-        input.setSelectionRange(4, 4);
+      for (const zoom of [0.5, 0.75, 1.25]) {
+        it(`places the caret on the same character at zoom ${zoom}`, async () => {
+          const atOne = await sweep(1);
+          const zoomed = await sweep(zoom);
 
-        const event = clickOn(input, 100);
-        await settle();
+          expect(zoomed).toEqual(atOne);
+        });
+      }
 
-        expect(event.defaultPrevented).toBe(false);
-        expect(input.selectionStart).toBe(4);
+      it('leaves the placement to the browser instead of computing an offset', async () => {
+        const clicks: MouseEvent[] = [];
+        el.addEventListener('click', (e) => clicks.push(e as MouseEvent));
+        const box = input.getBoundingClientRect();
+
+        await clickReally(input, {x: box.width / 2, y: box.height / 2});
+
+        expect(clicks).toHaveLength(1);
+        expect(clicks[0].defaultPrevented).toBe(false);
       });
     });
 
@@ -553,35 +615,31 @@ describe('obc-number-input-field', () => {
     });
 
     describe('under CSS zoom', () => {
+      // Real clicks, because the whole hazard is that pointer coordinates and rects
+      // may be measured in different spaces once the page is zoomed.
       beforeEach(async () => {
-        document.documentElement.style.zoom = '0.75';
-        await el.updateComplete;
+        await setZoom(0.75);
       });
 
       it('still puts the caret before the value for the leading icon', async () => {
-        clickOn(query('.leading-icon'));
-        await settle();
+        await clickReally(query('.leading-icon'));
 
         expect(input.selectionStart).toBe(0);
       });
 
       it('still puts the caret after the value for the unit', async () => {
-        clickOn(query('.unit-text'));
-        await settle();
+        await clickReally(query('.unit-text'));
 
         expect(input.selectionStart).toBe(input.value.length);
       });
 
       it('resolves the same side as at zoom 1', async () => {
-        clickOn(query('.leading-icon'));
-        await settle();
+        await clickReally(query('.leading-icon'));
         const zoomed = input.selectionStart;
 
-        document.documentElement.style.removeProperty('zoom');
-        input.blur();
-        await el.updateComplete;
-        clickOn(query('.leading-icon'));
-        await settle();
+        await reset();
+        await setZoom(1);
+        await clickReally(query('.leading-icon'));
 
         expect(zoomed).toBe(input.selectionStart);
       });

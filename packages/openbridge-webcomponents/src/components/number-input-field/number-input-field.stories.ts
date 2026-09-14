@@ -321,7 +321,12 @@ export const CaretPlacementUnderZoom: Story = {
   `,
 };
 
-/** Disabled and readonly fields must not move the caret or take focus. */
+/**
+ * Disabled fields must not move the caret or take focus. Readonly fields stay
+ * focusable so the value can be selected and copied, but the field never moves the
+ * caret for them either — the browser's own placement inside the value is all they
+ * get.
+ */
 export const CaretPlacementInert: Story = {
   render: () => html`
     <div style="padding:8px;">
