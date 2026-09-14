@@ -44,6 +44,20 @@ export enum ObcNumberInputFieldPlacement {
 const characterWidth = 9.15199279785156;
 const symbolWidth = 4.287994384765653;
 const baseFontSize = 16;
+
+/** Product of the CSS `zoom` of the element and every ancestor, across shadow roots. */
+function cssZoomOf(element: Element): number {
+  let zoom = 1;
+  let node: Element | null = element;
+  while (node) {
+    const value = Number.parseFloat(getComputedStyle(node).zoom);
+    if (Number.isFinite(value) && value > 0) zoom *= value;
+    const root = node.getRootNode();
+    node =
+      node.parentElement ?? (root instanceof ShadowRoot ? root.host : null);
+  }
+  return zoom;
+}
 /**
  * `<obc-number-input-field>` – A specialized input field for numerical values with optional unit display.
  *
@@ -384,42 +398,56 @@ export class ObcNumberInputField extends LitElement {
   private onPointerDown(e: PointerEvent) {
     if (this.disabled) return;
     if (this.readonly) return;
-    if (this.inputElement) {
-      e.stopPropagation();
-      e.preventDefault();
-      this.inputElement.focus();
-      const inputBox = this.inputElement.getBoundingClientRect();
-      let selectionStart: number | undefined;
-      if (e.clientX < inputBox.left) {
-        // set marker at the left edge of the input
-        selectionStart = 0;
-      } else if (e.clientX > inputBox.right) {
-        // set marker at the right edge of the input
-        selectionStart = this.inputElement.value.length;
-      } else {
-        // set marker at the mouse position
-        // Start from the right side of the input and move left until the mouse position is found
-        // This is done to set the marker also at label touch.
-        // Starts from the right since the label is right aligned.
-        const mouseX = e.clientX;
-        let inputX = inputBox.right;
-        const text = this.inputElement.value;
-        for (let i = text.length - 1; i >= 0; i--) {
-          const char = text[i];
-          const isSymbol = char.match(/[.,]/);
-          const width = isSymbol ? symbolWidth : characterWidth;
-          if (mouseX > inputX - width / 2) {
-            selectionStart = i + 1;
-            break;
-          }
-          inputX -= width;
-        }
-        if (selectionStart === undefined) {
-          selectionStart = 0;
-        }
-      }
-      this.inputElement.setSelectionRange(selectionStart, selectionStart);
+    if (!this.inputElement) return;
+    e.stopPropagation();
+  }
+
+  private onClick(e: MouseEvent) {
+    if (this.disabled) return;
+    if (this.readonly) return;
+    const input = this.inputElement;
+    if (!input) return;
+    // A click on the input is left to the browser: it derives the caret from the
+    // real glyph metrics and stays correct under CSS zoom.
+    if (e.composedPath().includes(input)) return;
+
+    // Everywhere else in the field (label, unit, icon, padding) holds no text, so
+    // anchor the caret to whichever end of the value was clicked towards. Decide
+    // before focusing, which reformats the value and reflows the field.
+    e.preventDefault();
+    const toStart = this.clickedBeforeValue(e, input);
+    input.focus();
+    // Focusing swaps in the editing representation; setting `value` resets the
+    // selection, so place the caret only once that render has landed.
+    void this.updateComplete.then(() => {
+      const caret = toStart ? 0 : input.value.length;
+      input.setSelectionRange(caret, caret);
+    });
+  }
+
+  /** Whether a click outside the input landed to the left of the value. */
+  private clickedBeforeValue(e: MouseEvent, input: HTMLInputElement): boolean {
+    const inputBox = input.getBoundingClientRect();
+
+    // An element that sits beside the input answers this without pointer maths,
+    // because both rects come from the same coordinate space.
+    for (const node of e.composedPath()) {
+      if (node === this) break;
+      if (!(node instanceof Element)) continue;
+      const box = node.getBoundingClientRect();
+      if (box.width === 0) continue;
+      if (box.right <= inputBox.left) return true;
+      if (box.left >= inputBox.right) return false;
     }
+
+    // Padding of an element that wraps the input, so only the pointer can say which
+    // side it was. getBoundingClientRect() is zoom-adjusted on newer engines and
+    // unzoomed on older ones, so calibrate the two spaces instead of assuming.
+    const rectScale = input.offsetWidth
+      ? inputBox.width / input.offsetWidth
+      : 1;
+    const rectToClient = rectScale ? cssZoomOf(input) / rectScale : 1;
+    return e.clientX < inputBox.left * rectToClient;
   }
 
   override render() {
@@ -449,6 +477,7 @@ export class ObcNumberInputField extends LitElement {
           squared: this.squared,
         })}
         @pointerdown=${this.onPointerDown}
+        @click=${this.onClick}
       >
         ${this.label
           ? html`<div

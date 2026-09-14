@@ -1,6 +1,9 @@
-import {describe, it, expect, beforeEach, vi} from 'vitest';
+import {describe, it, expect, beforeEach, afterEach, vi} from 'vitest';
 import './number-input-field.js';
-import {ObcNumberInputField} from './number-input-field.js';
+import {
+  ObcNumberInputField,
+  ObcNumberInputFieldTextAlign,
+} from './number-input-field.js';
 import {render} from 'vitest-browser-lit';
 import {html} from 'lit';
 
@@ -387,6 +390,243 @@ describe('obc-number-input-field', () => {
       await el.updateComplete;
 
       expect(el.value).toBe(1234.5);
+    });
+  });
+
+  describe('caret placement', () => {
+    const query = <T extends Element>(selector: string): T =>
+      el.shadowRoot!.querySelector(selector) as T;
+
+    const clickOn = (target: Element, clientX = 0): MouseEvent => {
+      const event = new MouseEvent('click', {
+        bubbles: true,
+        composed: true,
+        cancelable: true,
+        clientX,
+      });
+      target.dispatchEvent(event);
+      return event;
+    };
+
+    /** The caret is applied after the render that focusing schedules. */
+    const settle = async () => {
+      await el.updateComplete;
+      await el.updateComplete;
+    };
+
+    beforeEach(async () => {
+      // A fixed width keeps the label above the value rather than beside it, so the
+      // geometry these tests assert on is deterministic.
+      el.style.width = '260px';
+      el.label = 'SV';
+      el.unit = 'm/s';
+      el.hasLeadingIcon = true;
+      el.groupSeparator = ',';
+      el.decimalSeparator = '.';
+      el.maxFractionDigits = 6;
+      el.value = 1234567.89;
+      await el.updateComplete;
+      input.blur();
+      await el.updateComplete;
+    });
+
+    afterEach(() => {
+      document.documentElement.style.removeProperty('zoom');
+    });
+
+    describe('clicks on the value', () => {
+      it('leaves placement to the browser instead of computing an offset', async () => {
+        input.focus();
+        await el.updateComplete;
+        input.setSelectionRange(3, 3);
+
+        const event = clickOn(input, 100);
+        await settle();
+
+        expect(event.defaultPrevented).toBe(false);
+        expect(input.selectionStart).toBe(3);
+      });
+
+      it('leaves placement to the browser under CSS zoom', async () => {
+        document.documentElement.style.zoom = '0.75';
+        input.focus();
+        await el.updateComplete;
+        input.setSelectionRange(4, 4);
+
+        const event = clickOn(input, 100);
+        await settle();
+
+        expect(event.defaultPrevented).toBe(false);
+        expect(input.selectionStart).toBe(4);
+      });
+    });
+
+    describe('clicks on the surrounding chrome', () => {
+      it('puts the caret after the value when the unit is clicked', async () => {
+        clickOn(query('.unit-text'));
+        await settle();
+
+        expect(input.selectionStart).toBe(input.value.length);
+      });
+
+      it('puts the caret before the value when the leading icon is clicked', async () => {
+        clickOn(query('.leading-icon'));
+        await settle();
+
+        expect(input.selectionStart).toBe(0);
+      });
+
+      it('puts the caret before the value when the label is clicked left of it', async () => {
+        const box = input.getBoundingClientRect();
+        clickOn(query('.label-text-container'), box.left - 20);
+        await settle();
+
+        expect(input.selectionStart).toBe(0);
+      });
+
+      it('puts the caret after the value when the label is clicked right of it', async () => {
+        const box = input.getBoundingClientRect();
+        clickOn(query('.label-text-container'), box.right + 20);
+        await settle();
+
+        expect(input.selectionStart).toBe(input.value.length);
+      });
+
+      it('focuses the input', async () => {
+        clickOn(query('.unit-text'));
+        await settle();
+
+        expect(el.shadowRoot!.activeElement).toBe(input);
+      });
+
+      it('suppresses the default label activation', () => {
+        const event = clickOn(query('.unit-text'));
+
+        expect(event.defaultPrevented).toBe(true);
+      });
+
+      it('anchors to the end of the reformatted value, not the formatted one', async () => {
+        const formattedLength = input.value.length;
+        clickOn(query('.unit-text'));
+        await settle();
+
+        // Focusing drops the grouping, so the value is shorter than it was.
+        expect(input.value.length).toBeLessThan(formattedLength);
+        expect(input.selectionStart).toBe(input.value.length);
+      });
+    });
+
+    describe('clicks on padding that wraps the value', () => {
+      it('puts the caret before the value when clicked to its left', async () => {
+        const box = input.getBoundingClientRect();
+        clickOn(query('.label-container'), box.left - 20);
+        await settle();
+
+        expect(input.selectionStart).toBe(0);
+      });
+
+      it('puts the caret after the value when clicked to its right', async () => {
+        const box = input.getBoundingClientRect();
+        clickOn(query('.label-container'), box.right + 20);
+        await settle();
+
+        expect(input.selectionStart).toBe(input.value.length);
+      });
+    });
+
+    describe('under CSS zoom', () => {
+      beforeEach(async () => {
+        document.documentElement.style.zoom = '0.75';
+        await el.updateComplete;
+      });
+
+      it('still puts the caret before the value for the leading icon', async () => {
+        clickOn(query('.leading-icon'));
+        await settle();
+
+        expect(input.selectionStart).toBe(0);
+      });
+
+      it('still puts the caret after the value for the unit', async () => {
+        clickOn(query('.unit-text'));
+        await settle();
+
+        expect(input.selectionStart).toBe(input.value.length);
+      });
+
+      it('resolves the same side as at zoom 1', async () => {
+        clickOn(query('.leading-icon'));
+        await settle();
+        const zoomed = input.selectionStart;
+
+        document.documentElement.style.removeProperty('zoom');
+        input.blur();
+        await el.updateComplete;
+        clickOn(query('.leading-icon'));
+        await settle();
+
+        expect(zoomed).toBe(input.selectionStart);
+      });
+    });
+
+    describe('inert states', () => {
+      it('ignores clicks when disabled', async () => {
+        el.disabled = true;
+        await el.updateComplete;
+
+        const event = clickOn(query('.unit-text'));
+
+        expect(event.defaultPrevented).toBe(false);
+      });
+
+      it('ignores clicks when readonly', async () => {
+        el.readonly = true;
+        await el.updateComplete;
+
+        const event = clickOn(query('.unit-text'));
+
+        expect(event.defaultPrevented).toBe(false);
+      });
+    });
+
+    describe('alignment variants', () => {
+      const alignments = [
+        ObcNumberInputFieldTextAlign.Right,
+        ObcNumberInputFieldTextAlign.Center,
+        ObcNumberInputFieldTextAlign.RightUnitOutside,
+      ];
+
+      for (const textAlign of alignments) {
+        it(`anchors to the end from the unit when aligned ${textAlign}`, async () => {
+          el.textAlign = textAlign;
+          await el.updateComplete;
+
+          clickOn(query('.unit-text'));
+          await settle();
+
+          expect(input.selectionStart).toBe(input.value.length);
+        });
+
+        it(`anchors to the start from the leading icon when aligned ${textAlign}`, async () => {
+          el.textAlign = textAlign;
+          await el.updateComplete;
+
+          clickOn(query('.leading-icon'));
+          await settle();
+
+          expect(input.selectionStart).toBe(0);
+        });
+      }
+    });
+
+    it('does not throw when the field is empty', async () => {
+      el.value = NaN;
+      await el.updateComplete;
+
+      clickOn(query('.unit-text'));
+      await settle();
+
+      expect(input.selectionStart).toBe(0);
     });
   });
 });
