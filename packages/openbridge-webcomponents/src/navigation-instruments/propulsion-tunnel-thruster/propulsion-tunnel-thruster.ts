@@ -1,6 +1,12 @@
 import {LitElement, html, nothing, svg, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
+import {
+  PortStarboardElement,
+  PortStarboardShade,
+  portStarboardSignOf,
+  resolvePortStarboardColor,
+} from '../../svghelpers/port-starboard.js';
 
 const componentStyle = `:host {
   display: inline-block;
@@ -75,6 +81,9 @@ let nextClipId = 0;
  *
  * Use for a compact tunnel-thruster cue where the full tunnel-thruster watch
  * layout is not required.
+ *
+ * @property portStarboard - Enables the maritime PORT/STBD (red/green) color mode: positive thrust
+ *   renders green, negative red.
  * @stable
  */
 @customElement('obc-tunnel-thruster')
@@ -113,6 +122,8 @@ export class ObcTunnelThruster extends LitElement {
   @property({type: Boolean})
   hasSilhouette = false;
 
+  @property({type: Boolean}) portStarboard = false;
+
   static override styles = unsafeCSS(componentStyle);
 
   private get normalizedValue(): number {
@@ -136,6 +147,15 @@ export class ObcTunnelThruster extends LitElement {
     if (!this.isActive) {
       return 'var(--instrument-frame-tertiary-color)';
     }
+
+    const portStarboard = resolvePortStarboardColor({
+      enabled: this.portStarboard,
+      elements: undefined,
+      element: PortStarboardElement.bar,
+      sign: portStarboardSignOf(this.value),
+      shade: PortStarboardShade.dark,
+    });
+    if (portStarboard) return portStarboard;
 
     return this.isInCommand
       ? 'var(--instrument-enhanced-secondary-color)'

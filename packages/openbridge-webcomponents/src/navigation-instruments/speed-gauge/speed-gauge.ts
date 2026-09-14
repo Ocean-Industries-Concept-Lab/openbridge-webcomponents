@@ -17,6 +17,16 @@ import {Priority} from '../types.js';
 import {renderInstrumentReadout} from '../readout/instrument-readout.js';
 import {ReadoutDirection} from '../readout/readout.js';
 import {customElement} from '../../decorator.js';
+import {
+  hasPortStarboardElement,
+  PORT_STARBOARD_DEFAULT_ELEMENTS,
+  PortStarboardSides,
+  PortStarboardElement,
+  PortStarboardShade,
+  type PortStarboardSign,
+  portStarboardSignOf,
+  resolvePortStarboardColor,
+} from '../../svghelpers/port-starboard.js';
 
 export enum ObcSpeedGaugeNeedleType {
   full = 'full',
@@ -131,8 +141,66 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
    */
   @property({type: Number, attribute: 'face-diameter'})
   faceDiameter: number | undefined;
+  /**
+   * Enables the maritime PORT/STBD (red/green) color mode: positive speed
+   * renders green, astern red. The face is not tinted — the gauge shows a
+   * centred readout.
+   */
+  @property({type: Boolean}) portStarboard: boolean = false;
+  /**
+   * Which parts take part while `portStarboard` is on.
+   * Defaults to everything except the setpoint. `face` has no effect here.
+   * @availableWhen portStarboard==true
+   */
+  @property({type: Array, attribute: false})
+  portStarboardElements: PortStarboardElement[] = [
+    ...PORT_STARBOARD_DEFAULT_ELEMENTS,
+  ];
+  /**
+   * Which halves the region tints paint while `portStarboard` is on.
+   * @availableWhen portStarboard==true
+   */
+  @property({type: String}) portStarboardSides: PortStarboardSides =
+    PortStarboardSides.both;
 
   private _frame: RadialFrame | undefined;
+
+  /** The gauge shows a centred readout, so the face is never tinted. */
+  private get watchPortStarboardElements(): PortStarboardElement[] {
+    return this.portStarboardElements.filter(
+      (element) => element !== PortStarboardElement.face
+    );
+  }
+
+  /** Direction of this instrument's own value, for `portStarboardSides="active"`. */
+  private get portStarboardValueSign(): PortStarboardSign {
+    return portStarboardSignOf(this.speed);
+  }
+
+  /** Setpoint-marker sign, gated on the `setpoint` element opt-in. */
+  private get setpointPortStarboardSign(): PortStarboardSign {
+    return hasPortStarboardElement(
+      this.portStarboard,
+      this.portStarboardElements,
+      PortStarboardElement.setpoint
+    )
+      ? portStarboardSignOf(this.setpoint)
+      : 0;
+  }
+
+  /** Modifier class recoloring the centred readout value by speed direction. */
+  private get readoutPortStarboardClass(): string {
+    const sign = hasPortStarboardElement(
+      this.portStarboard,
+      this.portStarboardElements,
+      PortStarboardElement.bar
+    )
+      ? portStarboardSignOf(this.speed)
+      : 0;
+    if (sign > 0) return 'speed-gauge-value speed-gauge-value-starboard';
+    if (sign < 0) return 'speed-gauge-value speed-gauge-value-port';
+    return 'speed-gauge-value';
+  }
 
   /** Whether the host size styles were set by applyPinnedHostSize. */
   private _hostSizePinned = false;
@@ -165,9 +233,16 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
 
   override render() {
     const barColor =
-      this.priority === Priority.enhanced
+      resolvePortStarboardColor({
+        enabled: this.portStarboard,
+        elements: this.portStarboardElements,
+        element: PortStarboardElement.bar,
+        sign: portStarboardSignOf(this.speed),
+        shade: PortStarboardShade.light,
+      }) ??
+      (this.priority === Priority.enhanced
         ? 'var(--instrument-enhanced-tertiary-color)'
-        : 'var(--instrument-regular-tertiary-color)';
+        : 'var(--instrument-regular-tertiary-color)');
     const setpointAngle =
       this.setpoint !== undefined ? this.getAngle(this.setpoint) : undefined;
 
@@ -213,6 +288,11 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
             },
           ]}
           .watchCircleType=${WatchCircleType.double}
+          .portStarboard=${this.portStarboard}
+          .portStarboardElements=${this.watchPortStarboardElements}
+          .portStarboardSides=${this.portStarboardSides}
+          .portStarboardValueSign=${this.portStarboardValueSign}
+          .setpointPortStarboardSign=${this.setpointPortStarboardSign}
           .barAreas=${[
             {
               startAngle: this.getAngle(0),
@@ -225,7 +305,7 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
         ${this.hasReadout
           ? html`
               ${renderInstrumentReadout({
-                className: 'speed-gauge-value',
+                className: this.readoutPortStarboardClass,
                 direction: ReadoutDirection.horizontal,
                 value: this.speed,
                 label: this.label,
@@ -242,9 +322,17 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
 
   get needle() {
     const needleColor =
-      this.priority === Priority.enhanced
+      resolvePortStarboardColor({
+        enabled: this.portStarboard,
+        elements: this.portStarboardElements,
+        element: PortStarboardElement.needle,
+        sign: portStarboardSignOf(this.speed),
+        shade: PortStarboardShade.dark,
+        neutralDark: true,
+      }) ??
+      (this.priority === Priority.enhanced
         ? 'var(--instrument-enhanced-secondary-color)'
-        : 'var(--instrument-regular-secondary-color)';
+        : 'var(--instrument-regular-secondary-color)');
     if (this.needleType === ObcSpeedGaugeNeedleType.full) {
       return svg`<g transform="rotate(${this.getAngle(this.speed)}) translate(-256, -256)">
       <circle cx="256" cy="256" r="14" fill=${needleColor}/>
@@ -353,6 +441,20 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
 
     obc-watch {
       anchor-name: --watch;
+    }
+
+    /* PORT/STBD mode: recolor the centred value through the readout's public
+       theming hooks, so it follows the needle rather than the priority. */
+    .speed-gauge-value-starboard {
+      --obc-readout-value-color: var(--instrument-starboard-primary-color);
+      --obc-readout-value-enhanced-color: var(
+        --instrument-starboard-primary-color
+      );
+    }
+
+    .speed-gauge-value-port {
+      --obc-readout-value-color: var(--instrument-port-primary-color);
+      --obc-readout-value-enhanced-color: var(--instrument-port-primary-color);
     }
 
     .speed-gauge-value {

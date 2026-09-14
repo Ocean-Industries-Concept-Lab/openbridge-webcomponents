@@ -14,6 +14,11 @@ import {LinearAdvice} from '../thruster/advice.js';
 import {PropellerType} from '../thruster/propeller.js';
 import {TickmarkStyle} from '../watch/tickmark.js';
 import {customElement} from '../../decorator.js';
+import {
+  PORT_STARBOARD_DEFAULT_ELEMENTS,
+  PortStarboardSource,
+  PortStarboardElement,
+} from '../../svghelpers/port-starboard.js';
 
 export enum AzimuthThrusterLabeledSize {
   medium = 'medium',
@@ -33,6 +38,11 @@ export enum AzimuthThrusterLabeledSize {
  * @availableWhen autoAtThrustSetpointDeadband thrustSetpoint!=undefined && autoAtThrustSetpoint==true
  * @availableWhen thrustSetpointAtZeroDeadband thrustSetpoint!=undefined
  * @availableWhen thrustSetpointOverride thrustSetpoint!=undefined
+ * @property portStarboard - Enables the maritime PORT/STBD (red/green) color mode on the embedded
+ *   azimuth thruster.
+ * @property portStarboardElements - Which parts take part while `portStarboard` is on.
+ *   Defaults to everything except the setpoint.
+ * @availableWhen portStarboardElements portStarboard==true
  * @deprecated
  */
 @customElement('obc-azimuth-thruster-labeled')
@@ -72,6 +82,21 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
   @property({type: Boolean}) singleDirection: boolean = false;
   @property({type: String}) topPropeller: PropellerType = PropellerType.none;
   @property({type: String}) bottomPropeller: PropellerType = PropellerType.none;
+  @property({type: Boolean}) portStarboard: boolean = false;
+  @property({type: Array, attribute: false})
+  portStarboardElements: PortStarboardElement[] = [
+    ...PORT_STARBOARD_DEFAULT_ELEMENTS,
+  ];
+  /**
+   * Which quantity decides the side on the embedded azimuth thruster: the
+   * thrust alone (`value`, the default), the pod orientation alone
+   * (`orientation`), or the two combined (`resultant`).
+   *
+   * @availableWhen portStarboard==true
+   * @experimental
+   */
+  @property({type: String}) portStarboardSource: PortStarboardSource =
+    PortStarboardSource.value;
 
   override render() {
     let state: InstrumentState = InstrumentState.active;
@@ -182,6 +207,9 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
           .tickmarkStyle=${this.tickmarkStyle}
           .topPropeller=${this.topPropeller}
           .bottomPropeller=${this.bottomPropeller}
+          .portStarboard=${this.portStarboard}
+          .portStarboardElements=${this.portStarboardElements}
+          .portStarboardSource=${this.portStarboardSource}
         ></obc-azimuth-thruster>
       </div>
     `;
