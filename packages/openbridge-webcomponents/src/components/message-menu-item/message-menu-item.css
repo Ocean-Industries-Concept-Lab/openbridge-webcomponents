@@ -167,12 +167,8 @@
 }
 
 .trailing-icon {
-  width: var(
-    --app-components-alert-components-general-notification-item-icon-size-large
-  );
-  height: var(
-    --app-components-alert-components-general-notification-item-icon-size-large
-  );
+  width: var(--app-components-message-menu-item-icon-size-large);
+  height: var(--app-components-message-menu-item-icon-size-large);
   display: flex;
   align-items: center;
   justify-content: center;
