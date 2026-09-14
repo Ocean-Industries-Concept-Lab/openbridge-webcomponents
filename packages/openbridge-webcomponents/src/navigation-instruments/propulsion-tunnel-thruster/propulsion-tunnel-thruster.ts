@@ -82,6 +82,9 @@ let nextClipId = 0;
  *
  * Use for a compact tunnel-thruster cue where the full tunnel-thruster watch
  * layout is not required.
+ *
+ * @property portStarboard - Enables the maritime PORT/STBD (red/green) color mode: positive thrust
+ *   renders green, negative red.
  * @stable
  */
 @customElement('obc-tunnel-thruster')
@@ -120,10 +123,6 @@ export class ObcTunnelThruster extends LitElement {
   @property({type: Boolean})
   hasSilhouette = false;
 
-  /**
-   * Enables the maritime PORT/STBD (red/green) color mode: positive thrust
-   * renders green, negative red.
-   */
   @property({type: Boolean}) portStarboard = false;
 
   static override styles = unsafeCSS(componentStyle);

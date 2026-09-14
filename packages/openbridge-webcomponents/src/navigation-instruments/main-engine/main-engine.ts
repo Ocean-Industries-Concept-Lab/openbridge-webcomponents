@@ -22,6 +22,11 @@ import {
 } from '../../svghelpers/port-starboard.js';
 
 /**
+ * @property portStarboard - Enables the maritime PORT/STBD (red/green) color mode: ahead thrust and
+ *   speed render green, astern red.
+ * @property portStarboardElements - Which parts take part while `portStarboard` is on.
+ *   Defaults to everything except the setpoint.
+ * @availableWhen portStarboardElements portStarboard==true
  * @stable
  */
 @customElement('obc-main-engine')
@@ -48,16 +53,7 @@ export class ObcMainEngine extends LitElement {
   @property({type: String}) state: InstrumentState = InstrumentState.active;
   @property({type: String}) priority: Priority = Priority.regular;
   @property({type: Array}) thrustAdvices: LinearAdvice[] = [];
-  /**
-   * Enables the maritime PORT/STBD (red/green) color mode: ahead thrust and
-   * speed render green, astern red.
-   */
   @property({type: Boolean}) portStarboard: boolean = false;
-  /**
-   * Which parts take part while `portStarboard` is on.
-   * Defaults to everything except the setpoint.
-   * @availableWhen portStarboard==true
-   */
   @property({type: Array, attribute: false})
   portStarboardElements: PortStarboardElement[] = [
     ...PORT_STARBOARD_DEFAULT_ELEMENTS,

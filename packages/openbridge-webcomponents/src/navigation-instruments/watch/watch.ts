@@ -293,6 +293,12 @@ const WIND_ICON_OUTSIDE_RADIUS =
  * @property rotPriority - Override priority for ROT color derivation. When set, ROT colors use this instead of the main `priority`. Useful when the ROT element has independent priority (e.g. compass per-element priority).
  * @property rateOfTurnDegreesPerMinute - Measured rate of turn in degrees per minute (the maritime/AIS convention, see ES-TRIN 2025/1 Art. 3.02 and ITU-R M.1371). Sign controls direction (positive = starboard/clockwise). When defined, this drives both the dot animation (multiplied by `rotDotAnimationFactor`) and the port/starboard direction sign.
  * @property rotDotAnimationFactor - Visual amplification factor applied only to the spinning-dot animation (not to bar extent). Default `18` keeps the legacy visual feel (≈1 rpm at 20°/min).
+ * @property portStarboardElements - Which parts take part while `portStarboard` is on.
+ *   Defaults to everything except the setpoint.
+ * @availableWhen portStarboardElements portStarboard==true
+ * @property portStarboardSides - Which halves the region tints (`face` and the three bands) paint. Defaults
+ *   to both, i.e. a green starboard half and a red port half.
+ * @availableWhen portStarboardSides portStarboard==true
  * @experimental
  */
 @customElement('obc-watch')
@@ -374,11 +380,6 @@ export class ObcWatch extends LitElement {
    * over it.
    */
   @property({type: Boolean}) portStarboard: boolean = false;
-  /**
-   * Which parts take part while `portStarboard` is on.
-   * Defaults to everything except the setpoint.
-   * @availableWhen portStarboard==true
-   */
   @property({type: Array, attribute: false})
   portStarboardElements: PortStarboardElement[] = [
     ...PORT_STARBOARD_DEFAULT_ELEMENTS,
@@ -394,11 +395,6 @@ export class ObcWatch extends LitElement {
    * @availableWhen portStarboard==true
    */
   @property({type: Number}) setpointPortStarboardSign: number = 0;
-  /**
-   * Which halves the region tints (`face` and the three bands) paint. Defaults
-   * to both, i.e. a green starboard half and a red port half.
-   * @availableWhen portStarboard==true
-   */
   @property({type: String}) portStarboardSides: PortStarboardSides =
     PortStarboardSides.both;
   /**
