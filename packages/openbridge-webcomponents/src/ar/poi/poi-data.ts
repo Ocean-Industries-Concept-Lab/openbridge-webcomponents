@@ -19,6 +19,7 @@ export {ObcPoiObjectState as PoiDataObjectState};
  *
  * Extends `PoiBase` to provide the "data" variant of the POI system.
  * Renders `<obc-poi>` with a slotted `<obc-poi-button-data>`.
+ * See the "Coordinate Model" section in `PoiBase` (poi-base.ts) for how `x`, `y`, and `buttonY` position the marker.
  *
  * @slot - Icon content forwarded to the inner POI object. Defaults to a vessel icon.
  * @slot header - Optional custom header content forwarded into `obc-poi`.
@@ -60,6 +61,7 @@ export class ObcPoiData extends PoiBase {
         <slot
           ><obi-vessel-generic-default-filled></obi-vessel-generic-default-filled
         ></slot>
+        <slot name="header" slot="header"></slot>
       </obc-poi-button-data>
     `;
   }

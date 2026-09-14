@@ -37,14 +37,14 @@ export type ExpandEvent = CustomEvent<{expand: boolean}>;
  * - Front-target handling: Keeps one front target visually prioritized while collapsing other targets into overlap state.
  * - Backdrop interaction: Shows a backdrop while expanded and collapses on backdrop click.
  * - Dynamic ordering: `internalSwapping` enables reordering while expanded based on current horizontal positions.
- * - Vertical placement: `positionVertical` sets the wrapper/group top offset used for collapsed positioning.
+ * - Vertical placement: `positionVertical` (attribute `position-vertical`) sets the wrapper/group top offset used for collapsed positioning.
  *
  * ### Usage Guidelines
  * - Slot only `obc-poi-data` items that should behave as one grouped target set.
  * - Control expand/collapse via the `expand` property, or let the built-in wrapper button toggle expansion.
  * - Use the `expand` event detail to synchronize nearby standalone targets (for example, set outside targets to overlapped while this group is open).
- * - Treat `collapsing` as component-managed runtime state unless you have a specific orchestration need.
- * - **TODO(designer):** Confirm whether external consumers should set `collapsing` directly, or if it should remain fully internal.
+ * - Treat `collapsing` as orchestration state: it is set by the group itself and by coordinating containers such as `obc-poi-layer-stack` during collapse animations. Do not set it directly.
+ * - `internalSwapping` is usually set via `obc-poi-layer`'s `internal-swapping` attribute, which forwards it to auto-created groups; set it directly only on manually managed groups.
  *
  * ### Slots
  * | Slot | Renders When... | Purpose |
@@ -54,6 +54,7 @@ export type ExpandEvent = CustomEvent<{expand: boolean}>;
  * ### Events
  * - `expand` - Fired when expand state changes. Detail: `{ expand: boolean }`.
  * - `collapse-finished` - Fired when the collapse animation has fully completed.
+ * - `obc-poi-group-target-released` - Fired after `releaseTarget()` returns a target to the group's parent context: re-parented for consumer-managed groups, re-assigned to the layer's main slot for layer-created auto groups. Detail: `{ target: Poi }`.
  *
  * ### Best Practices
  * - Keep grouped targets positioned consistently so wrapper bounds and front-target selection remain stable.
@@ -62,24 +63,31 @@ export type ExpandEvent = CustomEvent<{expand: boolean}>;
  *
  * ### Example
  * ```html
- * <obc-poi-group positionVertical="240px">
+ * <obc-poi-group position-vertical="240px">
  *   <obc-poi-data x="300" button-y="240" y="240"></obc-poi-data>
  *   <obc-poi-data x="320" button-y="240" y="240"></obc-poi-data>
  *   <obc-poi-data x="340" button-y="240" y="240"></obc-poi-data>
  * </obc-poi-group>
  * ```
  *
+ * @property collapsing - Collapse-animation state. Set by the group itself and by coordinating
+ *   containers such as `obc-poi-layer-stack` during collapse orchestration;
+ *   do not set it directly.
+ * @property internalSwapping - Reorders expanded targets when their horizontal positions cross. Usually
+ *   set via `obc-poi-layer`'s `internal-swapping` attribute, which forwards it
+ *   to auto-created groups; set it directly only on manually managed groups.
  * @slot - Default slot for grouped `obc-poi-data` targets.
  * @fires {CustomEvent<{expand:boolean}>} expand - Fired when the group expand state changes.
  * @fires {CustomEvent<void>} collapse-finished - Fired after collapse animation completes.
- * @fires {CustomEvent<{target: Poi}>} obc-poi-group-target-released - Fired after a target leaves the group and has been re-inserted before it in the parent. Bubbles and is composed.
+ * @fires {CustomEvent<{target: Poi}>} obc-poi-group-target-released - Fired after `releaseTarget()` returns a target to the group's parent context (re-parented for consumer-managed groups, re-assigned for auto groups) — immediately when the group is collapsed, or once the collapse animation completes. Bubbles and is composed.
  * @experimental
  */
 @customElement('obc-poi-group')
 export class ObcPoiGroup extends LitElement {
   @property({type: Boolean}) expand = false;
   @property({type: Boolean}) collapsing = false;
-  @property({type: String}) positionVertical = '0px';
+  @property({type: String, attribute: 'position-vertical'})
+  positionVertical = '0px';
   @property({type: Boolean, attribute: 'internal-swapping'})
   internalSwapping = false;
   @state() private wrapperOffsetX = '0px';
@@ -273,10 +281,49 @@ export class ObcPoiGroup extends LitElement {
     });
   };
 
+  /**
+   * Membership check that works for both light-DOM children (manual groups)
+   * and slot-assigned members (layer-created auto groups, where the member
+   * stays in the consumer's light DOM and is assigned into this group's
+   * member slot).
+   */
+  private isMember(child: HTMLElement): boolean {
+    return (
+      child.parentElement === this || child.assignedSlot?.parentElement === this
+    );
+  }
+
+  private getMemberSlot(): HTMLSlotElement | null {
+    return this.querySelector(
+      ':scope > slot.auto-group-members'
+    ) as HTMLSlotElement | null;
+  }
+
+  /**
+   * Paint the front child on top. For light-DOM members this reorders the
+   * children; for slot-assigned members it re-assigns the member slot, which
+   * changes flattened-tree order without touching the consumer's DOM.
+   */
+  private bringChildToFront(frontChild: Poi) {
+    const memberSlot = this.getMemberSlot();
+    if (memberSlot && frontChild.assignedSlot === memberSlot) {
+      const members = memberSlot.assignedElements();
+      if (members[members.length - 1] === frontChild) return;
+      memberSlot.assign(
+        ...members.filter((el) => el !== frontChild),
+        frontChild
+      );
+      return;
+    }
+    if (frontChild.parentElement === this) {
+      this.appendChild(frontChild);
+    }
+  }
+
   private ensureFrontChildOnTop() {
     const frontChild = this.getFrontChild();
     if (frontChild && this.lastElementChild !== frontChild) {
-      this.appendChild(frontChild);
+      this.bringChildToFront(frontChild);
     }
   }
 
@@ -289,7 +336,7 @@ export class ObcPoiGroup extends LitElement {
   }
 
   public releaseTarget(target: Poi): Promise<boolean> {
-    if (target.parentElement !== this) {
+    if (!this.isMember(target)) {
       return Promise.resolve(false);
     }
 
@@ -341,7 +388,7 @@ export class ObcPoiGroup extends LitElement {
     }
 
     if (!expand && frontChild) {
-      this.appendChild(frontChild);
+      this.bringChildToFront(frontChild);
     }
 
     this.animateTopOffset(expand ? 1 : 0);
@@ -528,7 +575,7 @@ export class ObcPoiGroup extends LitElement {
     const touchAreaExpanded = progress > 0.5;
 
     this.topOffsetTargets.forEach((config, child) => {
-      if (child.parentElement !== this) {
+      if (!this.isMember(child)) {
         this.topOffsetTargets.delete(child);
         this.collapseDeltas.delete(child);
         this.lastAppliedOffsets.delete(child);
@@ -763,7 +810,7 @@ export class ObcPoiGroup extends LitElement {
     this.lastTargetOrder = orderedTargets;
 
     targets.forEach((child) => {
-      if (child.parentElement !== this) {
+      if (!this.isMember(child)) {
         this.topOffsetTargets.delete(child);
         this.lastAppliedOffsets.delete(child);
         return;
@@ -878,7 +925,7 @@ export class ObcPoiGroup extends LitElement {
   }
 
   private releaseTargetToParent(target: Poi): boolean {
-    if (target.parentElement !== this) {
+    if (!this.isMember(target)) {
       return false;
     }
 
@@ -903,6 +950,34 @@ export class ObcPoiGroup extends LitElement {
     target.style.removeProperty('--obc-poi-group-overlap-height');
     target.style.removeProperty('--obc-poi-group-overlap-shift');
     clearPoiVisualState(target);
+
+    const memberSlot = this.getMemberSlot();
+    if (memberSlot && target.assignedSlot === memberSlot) {
+      // Slot-assigned member (layer-created auto group): the target already
+      // lives in the consumer's light DOM — only the assignment changes. The
+      // host layer immediately re-assigns it to its main slot.
+      memberSlot.assign(
+        ...memberSlot.assignedElements().filter((el) => el !== target)
+      );
+      const root = this.getRootNode();
+      const host =
+        root instanceof ShadowRoot
+          ? (root.host as HTMLElement & {
+              releaseAssignedTarget?: (target: Poi) => void;
+            })
+          : null;
+      host?.releaseAssignedTarget?.(target);
+      this.updatePosition();
+
+      this.dispatchEvent(
+        new CustomEvent<{target: Poi}>('obc-poi-group-target-released', {
+          detail: {target},
+          bubbles: true,
+          composed: true,
+        })
+      );
+      return true;
+    }
 
     const parent = this.parentElement;
     if (!parent) {

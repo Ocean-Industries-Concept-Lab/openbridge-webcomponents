@@ -50,7 +50,7 @@ export enum OverlapMode {
  *
  * ### Features
  * - Overlap strategies: `overlapMode="grouping"` builds overlap clusters; `overlapMode="crossing"` continuously adjusts horizontal offsets to reduce crossings.
- * - Auto-group lifecycle: Creates/removes auto groups and preserves front/behind/pre-group states during transitions.
+ * - Auto-group lifecycle: Creates/removes auto groups as shadow-internal chrome — the consumer's light DOM is never modified; members are placed via manual slot assignment. Reach the group elements through the `autoGroups` accessor.
  * - Manual group support: Respects existing `obc-poi-group` elements and can optionally join nearby targets while a group is expanded (`joinWhileExpanded`).
  * - Dynamic observation: Reacts to slot changes, target style/position mutations, and target size changes to recompute grouping and layer height.
  * - Layer diagnostics: `debug` shows a label overlay using `label`.
@@ -62,9 +62,11 @@ export enum OverlapMode {
  * - Choose `overlapMode` based on behavior:
  *   - `grouping`: best when overlaps should collapse into expandable clusters.
  *   - `crossing`: best when targets stay independent but should separate horizontally.
- * - Listen for `layer-resize` to keep parent containers in sync with computed layer height.
+ * - Handle `layer-resize` only when using the layer standalone; inside `obc-poi-layer-stack` / `obc-poi-controller` the container handles height syncing. Example: `layer.addEventListener('layer-resize', (e) => { host.style.height = e.detail.height + 'px'; })`.
+ * - After imperatively adding, removing, or moving POI children outside the layer's own observers, call the public `requestGroupingUpdate()` method to force a recompute; it is the supported hook for imperative DOM mutations.
+ * - Set `--obc-poi-layer-min-height` when the layer starts empty, otherwise the layer collapses to 0px height until targets exist.
  * - Enable `joinWhileExpanded` only when targets should be able to join an already expanded auto-group.
- * - **TODO(designer):** Confirm intended user-visible behavior for `isSelected`, since it currently reflects an attribute but is not consumed by the layer logic here.
+ * - **TODO(designer):** Confirm intended user-visible behavior for `isSelected`, since it has no runtime layout logic in this class — it only reflects the attribute and notifies containers via `layer-selection-changed` (consumed by `obc-poi-layer-stack` to pick the selected layer).
  *
  * ### Slots
  * | Slot | Renders When... | Purpose |
@@ -73,10 +75,22 @@ export enum OverlapMode {
  *
  * ### Events
  * - `layer-resize` - Fired when computed layer height changes. Detail: `{ height: number, label: string }`.
+ * - `grouping-change` - Fired when grouping membership or front/behind/pre-group state changes. Detail: `{ clusters: Poi[][], front: Poi[], behind: Poi[], pregrouped: Poi[] }`. Subscribe to this instead of observing the layer's internal `data-*` attributes.
+ *
+ * ### CSS Custom Properties
+ * | Property | Default | Purpose |
+ * | --- | --- | --- |
+ * | `--obc-poi-layer-overlap-enter` | `10px` | Max horizontal gap at which ungrouped targets start grouping. |
+ * | `--obc-poi-layer-overlap-exit` | `18px` | Gap at which grouped targets leave their group. Clamped to at least the enter threshold; keep it larger than enter so jittery positions do not oscillate in and out of groups. |
+ * | `--obc-poi-layer-overlap-pre` | `16px` | Gap at which targets get the pre-grouped visual state. |
+ * | `--obc-poi-layer-overlap-behind` | `10px` | Gap at which the shortest target gets the behind visual state. |
+ * | `--obc-poi-layer-exit-delay-ms` | `140` | Delay before exiting targets lose their exit visual state. |
+ * | `--obc-poi-layer-group-removal-delay-ms` | `250` | Delay before a dissolved auto-group element is removed. |
+ * | `--obc-poi-layer-exit-lock-duration-ms` | `500` | Duration a target is locked out of pre-group/behind states after leaving a group. |
  *
  * ### Best Practices
  * - Keep POI targets as direct descendants when possible to reduce grouping ambiguity.
- * - Use stable `x`/`y` updates for animated scenarios so grouping and crossing calculations remain predictable.
+ * - Targets may update `x`/`y` every animation frame; grouping stays stable as long as the horizontal gap between targets does not oscillate across the enter/exit band faster than the group lifecycle delays (~0.5s). Smooth noisy input coordinates or widen the enter/exit band to compensate.
  * - Avoid adding non-POI interactive wrappers inside the layer unless needed, as layer observers track POI-related descendants.
  *
  * ### Example
@@ -90,11 +104,22 @@ export enum OverlapMode {
  *
  * @slot - Default slot for POI targets and optional POI groups.
  * @fires {CustomEvent<{height:number,label:string}>} layer-resize - Fired when the layer height changes.
+ * @fires {CustomEvent<{clusters:Poi[][],front:Poi[],behind:Poi[],pregrouped:Poi[]}>} grouping-change - Fired when grouping membership or overlap state changes. Bubbles and is composed.
  * @fires {Event} layer-selection-changed - Fired when the layer's `isSelected` state changes. Bubbles.
  * @experimental
  */
 @customElement('obc-poi-layer')
 export class ObcPoiLayer extends LitElement {
+  /**
+   * Manual slot assignment lets the layer place consumer-owned targets into
+   * shadow-internal auto-group chrome (and back) without ever re-parenting
+   * them: grouping only changes which internal slot a target is assigned to.
+   */
+  static override shadowRootOptions: ShadowRootInit = {
+    ...LitElement.shadowRootOptions,
+    slotAssignment: 'manual',
+  };
+
   @property({type: String}) label = '';
   @property({type: Boolean}) debug = false;
   @property({type: String}) overlapMode: OverlapMode = OverlapMode.Grouping;
@@ -111,6 +136,9 @@ export class ObcPoiLayer extends LitElement {
   private targetResizeObserver?: ResizeObserver;
   private lastHeight = 0;
   private isGrouping = false;
+  private lastGroupingSignature = '';
+  private groupingIds = new WeakMap<Poi, number>();
+  private nextGroupingId = 1;
   private targetObservers = new Map<Poi, MutationObserver>();
   private targetSizeElements = new Map<Poi, HTMLElement>();
   private groupingRaf = 0;
@@ -406,19 +434,31 @@ export class ObcPoiLayer extends LitElement {
   private setupLayerMutationObserver() {
     this.layerMutationObserver?.disconnect();
     this.layerMutationObserver = new MutationObserver((mutations) => {
+      let childListChanged = false;
+      let relevant = false;
       for (const mutation of mutations) {
         if (mutation.type !== 'childList') continue;
+        childListChanged = true;
         const nodes = [...mutation.addedNodes, ...mutation.removedNodes];
         for (const node of nodes) {
-          if (!(node instanceof HTMLElement)) continue;
-          if (this.isPoiLayerRelevantNode(node)) {
-            this.updateTargetObservers();
-            this.scheduleGrouping();
-            this.scheduleLayerHeightUpdate();
-            this.crossingTargetsDirty = true;
-            return;
+          if (
+            node instanceof HTMLElement &&
+            this.isPoiLayerRelevantNode(node)
+          ) {
+            relevant = true;
+            break;
           }
         }
+        if (relevant) break;
+      }
+      if (childListChanged) {
+        this.syncSlotAssignments();
+      }
+      if (relevant) {
+        this.updateTargetObservers();
+        this.scheduleGrouping();
+        this.scheduleLayerHeightUpdate();
+        this.crossingTargetsDirty = true;
       }
     });
     this.layerMutationObserver.observe(this, {childList: true, subtree: true});
@@ -427,6 +467,96 @@ export class ObcPoiLayer extends LitElement {
   public requestGroupingUpdate() {
     this.scheduleGrouping();
     this.scheduleLayerHeightUpdate();
+  }
+
+  /* ---------- Manual slot assignment ---------- */
+
+  private getMainSlot(): HTMLSlotElement | null {
+    return (
+      (this.shadowRoot?.querySelector('slot.main') as HTMLSlotElement | null) ??
+      null
+    );
+  }
+
+  /**
+   * Assign every light-DOM child that is not currently placed in an
+   * auto-group member slot to the main slot. With `slotAssignment: 'manual'`
+   * nothing renders unless explicitly assigned, so this runs after render,
+   * on child-list mutations, and after every grouping change.
+   */
+  private syncSlotAssignments() {
+    const mainSlot = this.getMainSlot();
+    if (!mainSlot) return;
+    const groupAssigned = new Set<Node>();
+    this.getAutoGroups().forEach((group) => {
+      const slot = this.getAutoGroupMemberSlot(group);
+      slot?.assignedNodes().forEach((node) => groupAssigned.add(node));
+    });
+    const mainNodes = Array.from(this.childNodes).filter(
+      (node): node is Element | Text =>
+        !groupAssigned.has(node) &&
+        (node instanceof Element || node instanceof Text)
+    );
+    mainSlot.assign(...mainNodes);
+  }
+
+  /**
+   * Called by an auto-created `obc-poi-group` after it removed a target from
+   * its member slot, so the target immediately re-renders through the main
+   * slot instead of disappearing until the next grouping pass.
+   * @internal
+   */
+  public releaseAssignedTarget(_target: Poi) {
+    this.syncSlotAssignments();
+    this.requestGroupingUpdate();
+  }
+
+  /**
+   * The auto-created `obc-poi-group` elements currently managed by this
+   * layer. Auto groups are shadow-internal chrome (they never appear in the
+   * consumer's light DOM); use this accessor — typically after a
+   * `grouping-change` event — to reach them, e.g. to expand a group
+   * programmatically.
+   */
+  public get autoGroups(): HTMLElement[] {
+    return this.getAutoGroups();
+  }
+
+  private getAutoGroups(): PoiButtonGroupElement[] {
+    return Array.from(
+      this.shadowRoot?.querySelectorAll('obc-poi-group[data-auto-group]') ?? []
+    ) as PoiButtonGroupElement[];
+  }
+
+  private getAutoGroupMemberSlot(group: HTMLElement): HTMLSlotElement | null {
+    return group.querySelector(
+      ':scope > slot.auto-group-members'
+    ) as HTMLSlotElement | null;
+  }
+
+  /** The auto group a target is currently assigned into, if any. */
+  private getAutoGroupOf(target: Poi): HTMLElement | null {
+    const slot = target.assignedSlot;
+    if (slot?.classList.contains('auto-group-members')) {
+      return slot.parentElement;
+    }
+    return null;
+  }
+
+  /**
+   * Members of a group in either mode: slot-assigned (shadow auto groups) or
+   * light-DOM children (consumer-managed manual groups).
+   */
+  private getGroupMembers(group: ParentNode): Poi[] {
+    if (group instanceof HTMLElement) {
+      const slot = this.getAutoGroupMemberSlot(group);
+      if (slot) {
+        return slot.assignedElements().filter((el): el is Poi => isPoi(el));
+      }
+    }
+    return Array.from(group.querySelectorAll(`[${POI_ATTR}]`)).filter(
+      (node): node is Poi => isPoi(node)
+    );
   }
 
   private scheduleGrouping() {
@@ -487,6 +617,47 @@ export class ObcPoiLayer extends LitElement {
     return next.shouldContinue;
   }
 
+  private getGroupingId(target: Poi): number {
+    let id = this.groupingIds.get(target);
+    if (id === undefined) {
+      id = this.nextGroupingId++;
+      this.groupingIds.set(target, id);
+    }
+    return id;
+  }
+
+  private notifyGroupingChange(
+    clusters: Poi[][],
+    frontTargets: Set<Poi>,
+    behindTargets: Set<Poi>,
+    preGrouped: Set<Poi>
+  ) {
+    const idsOf = (targets: Iterable<Poi>) =>
+      Array.from(targets, (target) => this.getGroupingId(target)).sort(
+        (a, b) => a - b
+      );
+    const signature = JSON.stringify({
+      clusters: clusters.map((cluster) => idsOf(cluster)).sort(),
+      front: idsOf(frontTargets),
+      behind: idsOf(behindTargets),
+      pre: idsOf(preGrouped),
+    });
+    if (signature === this.lastGroupingSignature) return;
+    this.lastGroupingSignature = signature;
+    this.dispatchEvent(
+      new CustomEvent('grouping-change', {
+        detail: {
+          clusters: clusters.map((cluster) => [...cluster]),
+          front: [...frontTargets],
+          behind: [...behindTargets],
+          pregrouped: [...preGrouped],
+        },
+        bubbles: true,
+        composed: true,
+      })
+    );
+  }
+
   private toggleGroupLayerHook(group: HTMLElement, hasTargets: boolean) {
     if (hasTargets) {
       group.setAttribute(ObcPoiLayer.GROUP_LAYER_HOOK_ATTR, '');
@@ -538,17 +709,23 @@ export class ObcPoiLayer extends LitElement {
       const behindRaw = getComputedStyle(this).getPropertyValue(
         '--obc-poi-layer-overlap-behind'
       );
-      const enterThreshold = Number.parseFloat(enterRaw) || 0;
-      const exitThreshold =
-        Number.parseFloat(exitRaw) || Math.max(enterThreshold + 8, 8);
-      const preThreshold = Number.parseFloat(preRaw) || enterThreshold;
-      const behindThreshold = Number.parseFloat(behindRaw) || enterThreshold;
+      const parseThreshold = (raw: string, fallback: number): number => {
+        const value = Number.parseFloat(raw);
+        return Number.isFinite(value) ? value : fallback;
+      };
+      const enterThreshold = parseThreshold(enterRaw, 10);
+      const exitThreshold = Math.max(
+        parseThreshold(exitRaw, enterThreshold + 8),
+        enterThreshold
+      );
+      const preThreshold = parseThreshold(preRaw, Math.max(enterThreshold, 16));
+      const behindThreshold = parseThreshold(behindRaw, enterThreshold);
 
       const currentGroupByTarget = new Map<Poi, HTMLElement>();
       targets.forEach((target) => {
-        const parent = target.parentElement;
-        if (parent?.tagName.toLowerCase() === 'obc-poi-group') {
-          currentGroupByTarget.set(target, parent as HTMLElement);
+        const group = this.getAutoGroupOf(target);
+        if (group) {
+          currentGroupByTarget.set(target, group);
         }
       });
 
@@ -574,9 +751,13 @@ export class ObcPoiLayer extends LitElement {
       const clusters = buildClusters(targets, adjacency);
       const behindClusters = buildClusters(targets, behindAdjacency);
 
-      const existingGroups = Array.from(
-        this.querySelectorAll('obc-poi-group[data-auto-group]')
-      ) as PoiButtonGroupElement[];
+      // Exiting groups are condemned: their members are already released and
+      // a removal timer is running. Excluding them here keeps a new grouping
+      // pass from re-disbanding them, which would reset the removal timer on
+      // every pass and leak group chrome forever under continuous churn.
+      const existingGroups = this.getAutoGroups().filter(
+        (group) => !group.hasAttribute('data-exiting')
+      );
 
       const frontTargets = new Set<Poi>();
       clusters.forEach((cluster) => {
@@ -609,9 +790,7 @@ export class ObcPoiLayer extends LitElement {
       const keptGroups: HTMLElement[] = [];
 
       existingGroups.forEach((group) => {
-        const children = Array.from(group.children).filter(
-          (child): child is Poi => isPoi(child)
-        );
+        const children = this.getGroupMembers(group);
         const matchIndex = remainingClusters.findIndex(
           (cluster) =>
             cluster.length === children.length &&
@@ -645,7 +824,10 @@ export class ObcPoiLayer extends LitElement {
           });
           group.removeAttribute('data-visible');
           group.setAttribute('data-exiting', 'true');
-          children.forEach((child) => this.appendChild(child));
+          // Release members back to the main slot — their DOM position never
+          // changed, only the slot assignment does.
+          this.getAutoGroupMemberSlot(group)?.assign();
+          this.syncSlotAssignments();
           children.forEach((child) => {
             if (!front || child !== front) {
               child.getBoundingClientRect();
@@ -673,14 +855,20 @@ export class ObcPoiLayer extends LitElement {
         (group as PoiButtonGroupElement).internalSwapping =
           !!this.internalSwapping;
         group.setAttribute(
-          'positionVertical',
+          'position-vertical',
           `${this.getGroupPositionVertical(cluster, rects, layerRect, group)}px`
         );
+        const memberSlot = document.createElement('slot');
+        memberSlot.className = 'auto-group-members';
+        group.appendChild(memberSlot);
         cluster.forEach((target) => {
           target.removeAttribute('data-grouped');
-          group.appendChild(target);
         });
-        this.appendChild(group);
+        // The group lives in the layer's shadow root; members stay in the
+        // consumer's light DOM and are slot-assigned into the group.
+        this.wrapper?.appendChild(group);
+        memberSlot.assign(...cluster);
+        this.syncSlotAssignments();
         requestAnimationFrame(() => {
           cluster.forEach((target) =>
             target.setAttribute('data-grouped', 'true')
@@ -691,8 +879,8 @@ export class ObcPoiLayer extends LitElement {
 
       const groupedTargets = new Set<Poi>();
       keptGroups.forEach((group) => {
-        Array.from(group.children).forEach((child) => {
-          if (isPoi(child)) groupedTargets.add(child);
+        this.getGroupMembers(group).forEach((child) => {
+          groupedTargets.add(child);
         });
       });
 
@@ -743,6 +931,12 @@ export class ObcPoiLayer extends LitElement {
       });
 
       this.refreshGroupPositions(layerRect, rects);
+      this.notifyGroupingChange(
+        clusters,
+        frontTargets,
+        behindTargets,
+        preGrouped
+      );
 
       requestAnimationFrame(() => {
         targets.forEach((target) => target.removeAttribute('data-front-exit'));
@@ -767,7 +961,8 @@ export class ObcPoiLayer extends LitElement {
     const candidates = targets.filter(
       (target) =>
         !groupTargetSet.has(target) &&
-        target.parentElement?.tagName.toLowerCase() !== 'obc-poi-group'
+        target.parentElement?.tagName.toLowerCase() !== 'obc-poi-group' &&
+        this.getAutoGroupOf(target) === null
     );
     if (candidates.length === 0) return;
 
@@ -824,7 +1019,19 @@ export class ObcPoiLayer extends LitElement {
         : 0;
     const insertBefore = candidateCenter < groupCenter;
 
-    if (insertBefore) {
+    const memberSlot =
+      group instanceof HTMLElement ? this.getAutoGroupMemberSlot(group) : null;
+    if (memberSlot) {
+      const members = memberSlot
+        .assignedElements()
+        .filter((el) => el !== bestCandidate);
+      memberSlot.assign(
+        ...(insertBefore
+          ? [bestCandidate, ...members]
+          : [...members, bestCandidate])
+      );
+      this.syncSlotAssignments();
+    } else if (insertBefore) {
       group.insertBefore(bestCandidate, groupTargets[0] ?? null);
     } else {
       group.appendChild(bestCandidate);
@@ -875,17 +1082,16 @@ export class ObcPoiLayer extends LitElement {
     layerRect?: DOMRect,
     rects?: Map<Poi, DOMRect>
   ) {
-    const groups = Array.from(
-      this.querySelectorAll('obc-poi-group')
-    ) as PoiButtonGroupElement[];
+    const groups = [
+      ...(Array.from(
+        this.querySelectorAll('obc-poi-group')
+      ) as PoiButtonGroupElement[]),
+      ...this.getAutoGroups(),
+    ];
     groups.forEach((group) => {
-      const children = Array.from(group.children).filter(
-        (child): child is Poi => isPoi(child)
-      );
+      const children = this.getGroupMembers(group);
       this.toggleGroupLayerHook(group, children.length > 0);
-      const hasPositionAttr =
-        group.hasAttribute('positionvertical') ||
-        group.hasAttribute('positionVertical');
+      const hasPositionAttr = group.hasAttribute('position-vertical');
       if (
         !group.hasAttribute('data-auto-group') &&
         !group.hasAttribute('data-position-mode')
@@ -909,7 +1115,7 @@ export class ObcPoiLayer extends LitElement {
             ])
           );
         group.setAttribute(
-          'positionVertical',
+          'position-vertical',
           `${this.getGroupPositionVertical(children, rectMap, layerBounds, group)}px`
         );
       }
@@ -1123,15 +1329,7 @@ export class ObcPoiLayer extends LitElement {
   }
 
   private getGroupTargets(group: ParentNode): Poi[] {
-    return Array.from(group.querySelectorAll(`[${POI_ATTR}]`)).filter(
-      (node): node is Poi => isPoi(node)
-    );
-  }
-
-  protected override updated(changedProperties: PropertyValues): void {
-    if (changedProperties.has('isSelected')) {
-      this.dispatchEvent(new Event('layer-selection-changed', {bubbles: true}));
-    }
+    return this.getGroupMembers(group);
   }
 
   override render() {
@@ -1140,9 +1338,16 @@ export class ObcPoiLayer extends LitElement {
         ${this.debug
           ? html`<span class="debug-label">${this.label || 'Layer'}</span>`
           : nothing}
-        <slot></slot>
+        <slot class="main"></slot>
       </div>
     `;
+  }
+
+  protected override updated(changedProperties: PropertyValues): void {
+    if (changedProperties.has('isSelected')) {
+      this.dispatchEvent(new Event('layer-selection-changed', {bubbles: true}));
+    }
+    this.syncSlotAssignments();
   }
 
   static override styles = unsafeCSS(componentStyle);
