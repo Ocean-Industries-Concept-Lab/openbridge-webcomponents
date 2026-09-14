@@ -28,6 +28,8 @@
  * @experimental
  */
 
+import {normalizeAngle} from './math.js';
+
 /** Parts of an instrument that can take part in the PORT/STBD color mode. */
 export enum PortStarboardElement {
   /** Half-area tints: the radial face inside the rings, or a linear track's halves. */
@@ -132,12 +134,6 @@ export enum PortStarboardSource {
    * port, so it reads red. Neutral at zero magnitude, since nothing is pushed.
    */
   resultant = 'resultant',
-}
-
-/** Normalize any angle into `[0, 360)`. */
-function normalizeAngle(angle: number): number {
-  const a = angle % 360;
-  return a < 0 ? a + 360 : a;
 }
 
 /**
