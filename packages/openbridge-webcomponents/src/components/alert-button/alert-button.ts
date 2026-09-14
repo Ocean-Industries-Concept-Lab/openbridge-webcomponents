@@ -1,51 +1,24 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property, state} from 'lit/decorators.js';
+import {classMap} from 'lit/directives/class-map.js';
 import compentStyle from './alert-button.css?inline';
-import '../../icons/icon-alerts.js';
-import '../../icons/icon-alerts-active.js';
 import '../../icons/icon-notification.js';
 import '../../icons/icon-notification-advice.js';
 import '../../icons/icon-notification-advice-active.js';
 import '../../icons/icon-silence-iec.js';
-import '../../icons/icon-alerts-alarm-twotone.js';
-import '../../icons/icon-alerts-warning-twotone.js';
-import '../../icons/icon-alerts-caution-twotone.js';
-import '../../manual-icon/icon-alerts-critical-twotone.js';
-import '../../manual-icon/icon-alerts-diagnostic-twotone.js';
-import {
-  AlertType,
-  FlashingSpeed,
-  type ResolvedFlashingSpeed,
-} from '../../types.js';
-import {
-  AlertFlashPhase,
-  getAlertTwotoneComponent,
-  AlertTwotoneComponent,
-  resolveFlashingSpeed,
-} from '../../alert-severity.js';
-import {classMap} from 'lit/directives/class-map.js';
+import '../alert-button-item/alert-button-item.js';
+import {ObcAlertButtonType} from '../alert-button-item/alert-button-item.js';
+import {AlertType, FlashingSpeed} from '../../types.js';
 import {customElement} from '../../decorator.js';
-import {FlashingController} from '../../palettes/flashing-controller.js';
 
-/**
- * `ObcAlertButtonType` – Enum for alert button visual and behavioral variants.
- *
- * - `flat`: Minimal, icon-only button for compact spaces.
- * - `normal`: Standard button with icon and optional counter.
- * - `enhanced`: Emphasized button with additional styling for high-priority alerts.
- */
-export enum ObcAlertButtonType {
-  Flat = 'flat',
-  Normal = 'normal',
-  Enhanced = 'enhanced',
-}
+export {ObcAlertButtonType};
 
 /**
  * `<obc-alert-button>` – A compact, icon-based button for displaying alert or notification status and count.
  *
  * This component provides a visual indicator for active alerts or notifications, supporting different alert types (such as alarm, warning, or caution) and an optional counter badge. It can also include a secondary "silence" action button for muting alerts, adapting its layout responsively for different screen widths.
  *
- * Appears in toolbars or notification areas to give users a quick overview of alert status and provide direct access to alert-related actions.
+ * Appears in toolbars or notification areas to give users a quick overview of alert status and provide direct access to alert-related actions. The bell itself is an `obc-alert-button-item`; use the item directly where no silence button or breakpoints are needed, or for its global counter.
  *
  * ## Features
  *
@@ -70,20 +43,6 @@ export enum ObcAlertButtonType {
  * - The blinking feature should be reserved for urgent or high-priority alerts to avoid unnecessary distraction.
  *
  * **TODO(designer):** Confirm if there are recommended default behaviors for auto-blinking, and if there are any design constraints for when to use each variant.
- *
- * ## Properties
- *
- * - `nAlerts` (number): Number of active alerts to display in the counter badge.
- * - `alertType` (`AlertType`): Type of alert (`alarm`, `warning`, `caution`, or undefined for idle).
- * - `type` (`ObcAlertButtonType`): Visual variant of the button (`flat`, `normal`, `enhanced`). Default is `normal`.
- * - `counter` (boolean): Whether to show the alert counter badge (not available in flat mode).
- * - `showSilenceButton` (boolean): Whether to display the silence button (hidden in flat mode or below min breakpoint).
- * - `silenceButtonDisabled` (boolean): Disables the silence button when true.
- * - `flatMaxBreakpointPx` (number): Maximum width (in px) for normal/enhanced mode; below this, switches to flat mode.
- * - `silenceButtonMinBreakpointPx` (number): Minimum width (in px) to show the silence button; below this, it is hidden.
- * - `blinking` (boolean): Enables blinking animation for active alerts (not for caution type).
- * - `flashingSpeed`: tempo of the blink (`default` follows the alert type: critical/alarm/high fast, warning/medium slow, low very slow; `fixed` never flashes).
- * - `large` (boolean): Increases button size for prominent or touch-friendly use.
  *
  * ## Events
  *
@@ -115,107 +74,38 @@ export enum ObcAlertButtonType {
  *
  * In this example, the button shows an alarm icon, a counter badge with "3", is styled as enhanced, blinks to indicate urgency, and includes a silence button if the width allows.
  *
- * @property flashingSpeed - Flash tempo while `blinking` is on: `default` resolves from
- *   `alertType`, `fast`, `slow`, `very-slow` force a tempo, `fixed` never flashes.
+ * @property nAlerts - Number of active alerts shown in the counter; 0 shows the idle state.
+ * @property alertType - Alert type that selects the icon and colours: `alarm`, `warning`, `caution`, a `level-*` severity, or unset for the idle state.
+ * @property type - Visual variant: `flat` (icon only), `normal` (default, icon and optional counter) or `enhanced` (emphasized for high-priority alerts).
+ * @property large - Increases the button height and padding for touch-friendly or prominent use.
+ * @property showSilenceButton - Shows the silence button when the width is at least `silenceButtonMinBreakpointPx` and the button is not flat.
  * @property silenceButtonDisabled - Disables the silence button when true.
  * @availableWhen silenceButtonDisabled showSilenceButton==true
- * @slot - No content slots. All content is provided via properties.
+ * @property counter - Shows the alert counter when there are active alerts and the button is not flat.
+ * @property blinking - Flashes the bell for active alerts of a flashing alert type (never for caution).
+ * @property flashingSpeed - Flash tempo while `blinking` is on: `default` resolves from `alertType`, `fast`, `slow`, `very-slow` force a tempo, `fixed` never flashes.
+ * @availableWhen flashingSpeed blinking==true
+ * @property flatMaxBreakpointPx - Window width in px below which a `normal` or `enhanced` button switches to flat mode.
+ * @availableWhen flatMaxBreakpointPx type!=flat
+ * @property silenceButtonMinBreakpointPx - Minimum window width in px for showing the silence button.
+ * @availableWhen silenceButtonMinBreakpointPx showSilenceButton==true
  * @fires {CustomEvent<void>} click-alert - Fired when the main alert button is clicked.
  * @fires {CustomEvent<void>} click-silence - Fired when the silence button is clicked.
  * @stable
  */
 @customElement('obc-alert-button')
 export class ObcAlertButton extends LitElement {
-  /**
-   * Number of active alerts to display in the counter badge.
-   *
-   * If set to 0, the button appears in the idle state.
-   */
   @property({type: Number}) nAlerts = 0;
-
-  /**
-   * Type of alert to display.
-   *
-   * Determines the icon and color scheme. Can be `alarm`, `warning`, `caution`, or undefined for idle state.
-   */
   @property({type: String}) alertType?: AlertType;
-
-  /**
-   * Visual variant of the button.
-   *
-   * - `flat`: Minimal, icon-only button for compact layouts.
-   * - `normal`: Standard button with icon and optional counter (default).
-   * - `enhanced`: Emphasized button for high-priority alerts.
-   */
   @property({type: String}) type = ObcAlertButtonType.Normal;
-
-  /**
-   * Increases button size for touch-friendly or prominent use.
-   *
-   * Adds extra height and padding.
-   */
   @property({type: Boolean}) large = false;
-
-  /**
-   * Whether to display the silence button.
-   *
-   * The silence button is only shown if this is true, the width is above `silenceButtonMinBreakpointPx`, and the button is not in flat mode.
-   */
   @property({type: Boolean}) showSilenceButton = false;
-
   @property({type: Boolean}) silenceButtonDisabled = false;
-
-  /**
-   * Whether to show the alert counter badge.
-   *
-   * Only shown when there are active alerts and the button is not in flat mode.
-   */
   @property({type: Boolean}) counter = false;
-
-  /**
-   * Enables blinking animation for active alerts.
-   *
-   * Blinking is only shown for alarm and warning types, not for caution.
-   */
   @property({type: Boolean}) blinking = false;
-
   @property({type: String}) flashingSpeed: FlashingSpeed =
     FlashingSpeed.Default;
-
-  protected readonly flashing = new FlashingController(
-    this,
-    () => this.resolvedFlashingSpeed
-  );
-
-  get resolvedFlashingSpeed(): ResolvedFlashingSpeed {
-    if (!this.blinking || this.nAlerts <= 0 || this.alertType === undefined) {
-      return FlashingSpeed.Fixed;
-    }
-    return resolveFlashingSpeed(
-      this.flashingSpeed,
-      this.alertType,
-      AlertFlashPhase.Active
-    );
-  }
-
-  /**
-   * Maximum width (in px) for normal/enhanced mode.
-   *
-   * If the available width is less than this value, the button switches to flat mode.
-   * Only applies when `type` is set to `normal` or `enhanced`.
-   *
-   * @availableWhen type!=flat
-   */
   @property({type: Number}) flatMaxBreakpointPx = 0;
-
-  /**
-   * Minimum width (in px) to show the silence button.
-   *
-   * If the available width is less than this value, the silence button is hidden.
-   * Only applies when `showSilenceButton` is true.
-   *
-   * @availableWhen showSilenceButton==true
-   */
   @property({type: Number}) silenceButtonMinBreakpointPx = 0;
 
   @state() private width = window.innerWidth;
@@ -232,59 +122,6 @@ export class ObcAlertButton extends LitElement {
   override disconnectedCallback() {
     window.removeEventListener('resize', this.resizeListener);
     super.disconnectedCallback();
-  }
-
-  private renderAlertTwotoneIcon() {
-    const twotone = this.alertType
-      ? getAlertTwotoneComponent(this.alertType)
-      : AlertTwotoneComponent.Caution;
-    switch (twotone) {
-      case AlertTwotoneComponent.Critical:
-        return html`<obi-alerts-critical-twotone
-          useCssColor
-          class="icon"
-        ></obi-alerts-critical-twotone>`;
-      case AlertTwotoneComponent.Diagnostic:
-        return html`<obi-alerts-diagnostic-twotone
-          useCssColor
-          class="icon"
-        ></obi-alerts-diagnostic-twotone>`;
-      case AlertTwotoneComponent.Warning:
-        return html`<obi-alerts-warning-twotone
-          useCssColor
-          class="icon"
-        ></obi-alerts-warning-twotone>`;
-      case AlertTwotoneComponent.Caution:
-        return html`<obi-alerts-caution-twotone
-          useCssColor
-          class="icon"
-        ></obi-alerts-caution-twotone>`;
-      default:
-        return html`<obi-alerts-alarm-twotone
-          useCssColor
-          class="icon"
-        ></obi-alerts-alarm-twotone>`;
-    }
-  }
-
-  private alertIcon() {
-    const isIdle = this.nAlerts === 0;
-    if (isIdle) {
-      return html`<obi-alerts class="icon"></obi-alerts>`;
-    }
-    if (this.type === ObcAlertButtonType.Enhanced) {
-      return html`<obi-alerts-active class="icon"></obi-alerts-active>`;
-    }
-    return this.renderAlertTwotoneIcon();
-  }
-
-  private alertIconNegative() {
-    const useIdle =
-      this.nAlerts === 0 || this.type !== ObcAlertButtonType.Enhanced;
-    if (useIdle) {
-      return html`<obi-alerts class="icon"></obi-alerts>`;
-    }
-    return this.renderAlertTwotoneIcon();
   }
 
   private get activeType(): ObcAlertButtonType {
@@ -306,44 +143,27 @@ export class ObcAlertButton extends LitElement {
   }
 
   override render() {
-    const hasAlerts = this.nAlerts > 0;
-    const showCounter =
-      this.counter && hasAlerts && this.activeType !== ObcAlertButtonType.Flat;
-    const tempo = this.resolvedFlashingSpeed;
-    const showBlinking = tempo !== FlashingSpeed.Fixed;
+    const showSilence = this.showSilenceButtonDynamic;
     return html`
       <div
         class=${classMap({
           wrapper: true,
-          [`alert-type-${this.alertType ?? 'none'}`]: true,
-          counter: showCounter,
-          'has-silence': this.showSilenceButtonDynamic,
           [`type-${this.activeType}`]: true,
-          [`flash-${tempo}`]: true,
           large: this.large,
         })}
       >
-        <button
-          class="alert-button"
+        <obc-alert-button-item
+          .type=${this.activeType}
+          .alertType=${this.alertType}
+          .nAlerts=${this.nAlerts}
+          .counter=${this.counter}
+          .blinking=${this.blinking}
+          .flashingSpeed=${this.flashingSpeed}
+          .fillHeight=${this.large}
+          ?data-group-item-not-last=${showSilence}
           @click=${() => this.dispatchEvent(new CustomEvent('click-alert'))}
-        >
-          ${showBlinking
-            ? html` <div class="blink">
-                ${this.alertIconNegative()}
-                ${showCounter
-                  ? html`<div class="badge">${this.nAlerts}</div>`
-                  : null}
-              </div>`
-            : nothing}
-          <div class="visible-wrapper">
-            ${this.alertIcon()}
-            ${showCounter
-              ? html`<div class="badge">${this.nAlerts}</div>`
-              : nothing}
-          </div>
-        </button>
-
-        ${this.showSilenceButtonDynamic
+        ></obc-alert-button-item>
+        ${showSilence
           ? html`
               <button
                 class="silence-button"
@@ -356,7 +176,7 @@ export class ObcAlertButton extends LitElement {
                 </div>
               </button>
             `
-          : null}
+          : nothing}
       </div>
     `;
   }
