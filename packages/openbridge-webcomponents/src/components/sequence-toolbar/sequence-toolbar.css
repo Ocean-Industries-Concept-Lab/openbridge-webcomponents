@@ -12,7 +12,7 @@
   align-items: center;
   padding: 5px;
   border: 1px solid var(--border-outline-color);
-  background-color: var(--enabled-background-color);
+  background-color: var(--container-global-color);
 
   &.type-sequential,
   &.type-unordered {

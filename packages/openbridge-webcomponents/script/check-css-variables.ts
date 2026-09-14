@@ -50,8 +50,6 @@ import {globby} from 'globby';
 const allowedUndefinedVariables = new Set([
   // B-1: notification icon size (alert-menu-item.css, message-menu-item.css)
   '--app-components-alert-components-general-notification-item-icon-size-large',
-  // B-3: likely typo for --normal-enabled-background-color (sequence-toolbar.css)
-  '--enabled-background-color',
   // B-4: date-item vertical padding (date-item.css) — sibling tokens exist
   '--menu-navigation-components-date-item-padding-vertical',
   // B-5/B-6: instrument-field internal widths — unusual --obc- prefix
