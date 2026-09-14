@@ -167,46 +167,33 @@ button {
   }
 }
 
-.blinking.alert-type-warning .alert-button,
-.blinking.alert-type-level-medium .alert-button {
+.flash-fast .alert-button {
   .visible-wrapper {
-    opacity: var(--warning-blink-on);
+    opacity: var(--flash-fast-on);
   }
 
   .blink {
-    opacity: var(--warning-blink-off);
+    opacity: var(--flash-fast-off);
   }
 }
 
-.blinking.alert-type-level-critical .alert-button {
+.flash-slow .alert-button {
   .visible-wrapper {
-    opacity: var(--critical-blink-on);
+    opacity: var(--flash-slow-on);
   }
 
   .blink {
-    opacity: var(--critical-blink-off);
+    opacity: var(--flash-slow-off);
   }
 }
 
-.blinking.alert-type-alarm .alert-button,
-.blinking.alert-type-level-high .alert-button {
+.flash-very-slow .alert-button {
   .visible-wrapper {
-    opacity: var(--alarm-blink-on);
+    opacity: var(--flash-very-slow-on);
   }
 
   .blink {
-    opacity: var(--alarm-blink-off);
-  }
-}
-
-.blinking.alert-type-caution .alert-button,
-.blinking.alert-type-level-low .alert-button {
-  .visible-wrapper {
-    opacity: var(--low-blink-on);
-  }
-
-  .blink {
-    opacity: var(--low-blink-off);
+    opacity: var(--flash-very-slow-off);
   }
 }
 
