@@ -67,8 +67,8 @@ export interface Label {
  *   `priorityElements`.
  *
  *
- * @ignition-base-height: 170px
- * @ignition-base-width: 512px
+ * @snapshot-base-height 170px
+ * @snapshot-base-width 512px
  *
  * @property heading - Current heading in degrees.
  * @property courseOverGround - Current COG in degrees.

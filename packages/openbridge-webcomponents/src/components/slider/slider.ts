@@ -127,6 +127,8 @@ export type ObcSliderChangeEvent = CustomEvent<number>;
  * @slot icon-left - Slot for the left icon button (shown when `hasLeftIcon` is true)
  * @slot icon-right - Slot for the right icon button (shown when `hasRightIcon` is true)
  * @attr hugcontainer - If set, the slider will not have any spacing between the slider icons and the container
+ * @fires value {ObcSliderValueEvent} - Fired when the value is changed
+ * @snapshot-base-width 300px
  * @fires {ObcSliderValueEvent} value - Fired when the value is changed
  * @fires {ObcSliderChangeEvent} change - Fired when user interaction completes; dispatched on release even if the value did not change
  * @stable
