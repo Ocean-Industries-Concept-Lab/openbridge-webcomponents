@@ -2,8 +2,8 @@ import {LitElement, html, css, svg} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../decorator.js';
 
-@customElement('obi-bipolar_transistor-04-off')
-export class ObiBipolar_transistor04Off extends LitElement {
+@customElement('obi-bipolar-transistor-04-off')
+export class ObiBipolarTransistor04Off extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -43,6 +43,6 @@ export class ObiBipolar_transistor04Off extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obi-bipolar_transistor-04-off': ObiBipolar_transistor04Off;
+    'obi-bipolar-transistor-04-off': ObiBipolarTransistor04Off;
   }
 }
