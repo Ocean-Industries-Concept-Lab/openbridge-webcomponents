@@ -532,6 +532,24 @@ describe('obc-number-input-field', () => {
 
         expect(input.selectionStart).toBe(input.value.length);
       });
+
+      // A wrapper also reaches above and below the value, so a click can share the
+      // value's horizontal range without being a click on it.
+      it('puts the caret before the value when clicked over its left half', async () => {
+        const box = input.getBoundingClientRect();
+        clickOn(query('.label-container'), box.left + box.width * 0.25);
+        await settle();
+
+        expect(input.selectionStart).toBe(0);
+      });
+
+      it('puts the caret after the value when clicked over its right half', async () => {
+        const box = input.getBoundingClientRect();
+        clickOn(query('.label-container'), box.left + box.width * 0.75);
+        await settle();
+
+        expect(input.selectionStart).toBe(input.value.length);
+      });
     });
 
     describe('under CSS zoom', () => {
