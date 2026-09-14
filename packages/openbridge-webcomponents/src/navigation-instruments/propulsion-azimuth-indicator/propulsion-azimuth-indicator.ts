@@ -103,6 +103,9 @@ function topCircleSideIntersection(
  * ## Usage Guidelines
  *
  * Use for a small combined direction and magnitude cue next to numeric readouts. For a full azimuth instrument with scales and setpoints, use **`obc-azimuth-thruster`** instead.
+ *
+ * @property portStarboard - Enables the maritime PORT/STBD (red/green) color mode: positive thrust
+ *   renders green, negative red.
  * @stable
  */
 @customElement('obc-propulsion-azimuth-indicator')
@@ -118,10 +121,6 @@ export class ObcPropulsionAzimuthIndicator extends LitElement {
 
   @property({type: String}) state: InstrumentState = InstrumentState.active;
 
-  /**
-   * Enables the maritime PORT/STBD (red/green) color mode: positive thrust
-   * renders green, negative red.
-   */
   @property({type: Boolean}) portStarboard = false;
 
   /**
