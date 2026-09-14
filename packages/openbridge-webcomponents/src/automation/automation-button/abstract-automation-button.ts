@@ -56,46 +56,78 @@ export enum AutomationButtonBadgeCommandLocked {
   CommandLocked = 'command-locked',
 }
 
+/**
+ * Abstract base class for automation device buttons (e.g. valves, pumps,
+ * tanks). Subclasses provide the device symbol through the `icon` getter and
+ * its on/off state through `_on`, while this class renders the underlying
+ * `<obc-automation-button>` and forwards the shared slots and properties.
+ *
+ * ### Alert frame slots
+ *
+ * When `alert` is enabled the button is wrapped in an `<obc-alert-frame>`. The
+ * alert frame can show a custom icon, label and timer, depending on the
+ * selected `alertFrameType`. These are exposed using the same slot names as
+ * `<obc-automation-button>` and are forwarded all the way down to the alert
+ * frame, for every `positioning` value:
+ *
+ * | Slot Name    | Renders When...                                              | Purpose                                                                 |
+ * |--------------|--------------------------------------------------------------|-------------------------------------------------------------------------|
+ * | alert-icon   | `alert` and `showAlertIcon` and `alertFrameType` in [`large-side-flip`, `bottom-flip`, `top-flip`] | Custom icon shown in the alert frame flap, in addition to the alert category icon. |
+ * | alert-label  | `alert` and `alertFrameType` in [`bottom-flip`, `top-flip`]  | Label text shown in the alert frame flap.                               |
+ * | alert-timer  | `alert` and `alertFrameType` in [`bottom-flip`, `top-flip`]  | Timer / clock shown in the alert frame flap.                            |
+ *
+ * The slot content is remapped on its way down: `alert-icon`
+ * (`obc-automation-button`) -> `icon` (`obc-alert-frame`), and likewise for
+ * the label and timer slots.
+ *
+ * @availableWhen readoutPosition showReadoutStack==true
+ * @availableWhen showStatus showReadoutStack==true
+ * @availableWhen readoutSize showReadoutStack==true
+ * @availableWhen tag showReadoutStack==true
+ * @property activated - Enables the activated background color, used to indicate that the button is activated/selected.
+ * @availableWhen alertFrameType alert==true
+ * @availableWhen alertFrameThickness alert==true
+ * @availableWhen alertFrameStatus alert==true
+ * @availableWhen alertFrameMode alert==true
+ * @availableWhen showAlertCategoryIcon alert==true
+ * @availableWhen showAlertIcon alert==true
+ * @property progress - Shows a progress indicator, used to indicate that an user action is in progress
+ * @availableWhen progressMode progress==true
+ * @availableWhen progressValue progress==true && progressMode in [determinate, progressiveIndeterminate]
+ * @slot alert-icon - Custom icon shown in the alert frame flap (requires `showAlertIcon` and a flap variant that supports an icon).
+ * @slot alert-label - Label text shown in the alert frame flap (`bottom-flip`/`top-flip`).
+ * @slot alert-timer - Timer / clock shown in the alert frame flap (`bottom-flip`/`top-flip`).
+ * @slot badge-top-right - Custom badge in the top-right corner (overrides `badgeAlert`).
+ * @slot badge-top-left - Custom badge in the top-left corner (overrides `badgeControl`).
+ * @slot badge-bottom-left - Custom badge in the bottom-left corner (overrides `badgeInterlock`).
+ * @slot badge-bottom-right - Custom badge in the bottom-right corner (overrides `badgeCommandLocked`).
+ */
 export class ObcAbstractAutomationButton extends LitElement {
   @property({type: Boolean, attribute: false}) showReadoutStack: boolean = true;
-  /** @availableWhen showReadoutStack==true */
   @property({type: String}) readoutPosition: AutomationButtonReadoutPosition =
     AutomationButtonReadoutPosition.bottom;
-  /** @availableWhen showReadoutStack==true */
   @property({type: Boolean, attribute: false}) showStatus: boolean = true;
-  /** @availableWhen showReadoutStack==true */
   @property({type: String}) readoutSize: AutomationButtonReadoutStackSize =
     AutomationButtonReadoutStackSize.regular;
-  /** @availableWhen showReadoutStack==true */
   @property({type: String}) tag: string | null = null;
 
   @property({type: String}) positioning: AutomationButtonPositioning =
     AutomationButtonPositioning.point;
-  /** Enables the activated background color, used to indicate that the button is activated/selected. */
   @property({type: Boolean}) activated: boolean = false;
   @property({type: Boolean}) alert: boolean = false;
-  /** @availableWhen alert==true */
   @property({type: String}) alertFrameType: ObcAlertFrameType =
     ObcAlertFrameType.SmallSideFlip;
-  /** @availableWhen alert==true */
   @property({type: String}) alertFrameThickness: ObcAlertFrameThickness =
     ObcAlertFrameThickness.Small;
-  /** @availableWhen alert==true */
   @property({type: String}) alertFrameStatus: AlertType = AlertType.Alarm;
-  /** @availableWhen alert==true */
   @property({type: String}) alertFrameMode: ObcAlertFrameMode =
     ObcAlertFrameMode.ackedActive;
-  /** @availableWhen alert==true */
   @property({type: Boolean, attribute: false}) showAlertCategoryIcon: boolean =
     true;
-  /** @availableWhen alert==true */
   @property({type: Boolean}) showAlertIcon: boolean = false;
-  /** Shows a progress indicator, used to indicate that an user action is in progress */
   @property({type: Boolean}) progress: boolean = false;
-  /** @availableWhen progress==true */
   @property({type: String}) progressMode: CircularProgressMode =
     CircularProgressMode.indeterminate;
-  /** @availableWhen progress==true && progressMode in [determinate, progressiveIndeterminate] */
   @property({type: Number}) progressValue: number = 0;
 
   @property({type: String}) badgeControl: AutomationButtonBadgeControl =
@@ -270,6 +302,9 @@ export class ObcAbstractAutomationButton extends LitElement {
       ?activated=${this.activated}
     >
       ${this.icon}
+      <slot name="alert-icon" slot="alert-icon"></slot>
+      <slot name="alert-label" slot="alert-label"></slot>
+      <slot name="alert-timer" slot="alert-timer"></slot>
       <slot
         name="badge-top-right"
         slot="badge-top-right"
