@@ -48,8 +48,6 @@ import {globby} from 'globby';
 // decision (token value, rename target, or removal). Tracked for follow-up.
 // See https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/916
 const allowedUndefinedVariables = new Set([
-  // B-4: date-item vertical padding (date-item.css) — sibling tokens exist
-  '--menu-navigation-components-date-item-padding-vertical',
   // B-5/B-6: instrument-field internal widths — unusual --obc- prefix
   '--obc-instrument-field-source-width',
   '--obc-instrument-field-tag-width',

@@ -27,8 +27,6 @@
     width: 100%;
     max-width: var(--menu-navigation-components-date-item-touch-target);
     height: var(--menu-navigation-components-date-item-touch-target);
-    padding: var(--menu-navigation-components-date-item-padding-vertical)
-      var(--menu-navigation-components-date-item-padding-horizontal);
 
     /* Keyboard press visual feedback */
     &.pressing .date-container {
@@ -175,7 +173,7 @@
   display: flex;
   width: var(--menu-navigation-components-date-item-touch-target, 48px);
   height: var(--menu-navigation-components-date-item-touch-target, 48px);
-  padding: var(--menu-navigation-components-date-item-padding-vertical, 8px)
+  padding: var(--menu-navigation-components-date-item-padding-bottom, 8px)
     var(--menu-navigation-components-date-item-padding-horizontal, 8px);
   flex-direction: column;
   justify-content: center;
