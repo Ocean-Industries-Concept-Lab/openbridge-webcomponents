@@ -25,6 +25,8 @@
  *   alarm-style no-ack icon.
  * - Priority: re-exports `ALERT_SEVERITY_PRIORITY`, the ordered severity list
  *   (most → least severe) used to sort alerts.
+ * - Counts: `rankAlertCounts` orders per-severity counts and can combine
+ *   them; `alertTypeLabel` and `alertCountsLabel` build accessible names.
  *
  * Usage:
  * ```ts
@@ -44,10 +46,12 @@
  * );
  * ```
  */
+import {msg} from '@lit/localize';
 import {
   AlertType,
   ALERT_SEVERITY_PRIORITY,
   FlashingSpeed,
+  type AlertCounts,
   type ResolvedFlashingSpeed,
 } from './types.js';
 
@@ -233,4 +237,74 @@ export function usesAlarmNoAckIcon(type: AlertType): boolean {
     AlertType.LevelCritical,
     AlertType.LevelHigh,
   ].includes(type);
+}
+
+/** One severity and its alert count, as `rankAlertCounts` returns them. */
+export interface RankedAlertCount {
+  type: AlertType;
+  count: number;
+}
+
+const ALERT_COUNT_FIELD: Record<AlertType, keyof AlertCounts> = {
+  [AlertType.Alarm]: 'countAlarm',
+  [AlertType.Warning]: 'countWarning',
+  [AlertType.Caution]: 'countCaution',
+  [AlertType.LevelCritical]: 'countLevelCritical',
+  [AlertType.LevelHigh]: 'countLevelHigh',
+  [AlertType.LevelMedium]: 'countLevelMedium',
+  [AlertType.LevelLow]: 'countLevelLow',
+  [AlertType.LevelDiagnostic]: 'countLevelDiagnostic',
+};
+
+/**
+ * The positive counts, most severe first by `ALERT_SEVERITY_PRIORITY`.
+ * `combine` folds them into one entry: the total, typed as the most severe
+ * category present.
+ */
+export function rankAlertCounts(
+  counts: AlertCounts,
+  combine = false
+): RankedAlertCount[] {
+  const ranked = ALERT_SEVERITY_PRIORITY.map((type) => ({
+    type,
+    count: counts[ALERT_COUNT_FIELD[type]] ?? 0,
+  })).filter((entry) => entry.count > 0);
+  if (!combine || ranked.length === 0) {
+    return ranked;
+  }
+  const total = ranked.reduce((sum, entry) => sum + entry.count, 0);
+  return [{type: ranked[0].type, count: total}];
+}
+
+const ALERT_TYPE_LABEL: Record<AlertType, () => string> = {
+  [AlertType.Alarm]: () => msg('Alarm'),
+  [AlertType.Warning]: () => msg('Warning'),
+  [AlertType.Caution]: () => msg('Caution'),
+  [AlertType.LevelCritical]: () => msg('Critical'),
+  [AlertType.LevelHigh]: () => msg('High'),
+  [AlertType.LevelMedium]: () => msg('Medium'),
+  [AlertType.LevelLow]: () => msg('Low'),
+  [AlertType.LevelDiagnostic]: () => msg('Diagnostic'),
+};
+
+/** Localized severity name, read at render time so a locale switch applies. */
+export function alertTypeLabel(type: AlertType): string {
+  return ALERT_TYPE_LABEL[type]();
+}
+
+/**
+ * Accessible summary of the counts, e.g. "2 Alarm, 4 Warning, 9 Shelved";
+ * empty when nothing is counted.
+ */
+export function alertCountsLabel(
+  counts: AlertCounts,
+  shelvedCount = 0
+): string {
+  const parts = rankAlertCounts(counts).map(
+    ({type, count}) => `${count} ${alertTypeLabel(type)}`
+  );
+  if (shelvedCount > 0) {
+    parts.push(`${shelvedCount} ${msg('Shelved')}`);
+  }
+  return parts.join(', ');
 }
