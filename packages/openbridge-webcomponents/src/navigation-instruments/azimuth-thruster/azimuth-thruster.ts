@@ -67,6 +67,15 @@ function mapAngle0to360(angle: number): number {
  *   so instruments sharing the same value have identical ring circumference
  *   regardless of label width or arc extent (like obc-donut-chart's
  *   fixedHeight). When unset (default), the instrument fills its container.
+ * @property portStarboard - Enables the maritime PORT/STBD (red/green) color mode: the face is split
+ *   green (starboard) / red (port), and forward thrust renders green, reverse
+ *   red. Additional to `priority`, and independent of
+ *   `starboardPortIndicator` — both may be enabled together.
+ * @property portStarboardElements - Which parts take part while `portStarboard` is on.
+ *   Defaults to everything except the setpoint.
+ * @availableWhen portStarboardElements portStarboard==true
+ * @property portStarboardSides - Which halves the region tints paint while `portStarboard` is on.
+ * @availableWhen portStarboardSides portStarboard==true
  * @stable
  */
 @customElement('obc-azimuth-thruster')
@@ -151,18 +160,7 @@ export class ObcAzimuthThruster extends LitElement {
   @property({type: String}) tickmarkStyle: TickmarkStyle =
     TickmarkStyle.regular;
   @property({type: Boolean}) starboardPortIndicator: boolean = false;
-  /**
-   * Enables the maritime PORT/STBD (red/green) color mode: the face is split
-   * green (starboard) / red (port), and forward thrust renders green, reverse
-   * red. Additional to `priority`, and independent of
-   * `starboardPortIndicator` — both may be enabled together.
-   */
   @property({type: Boolean}) portStarboard: boolean = false;
-  /**
-   * Which parts take part while `portStarboard` is on.
-   * Defaults to everything except the setpoint.
-   * @availableWhen portStarboard==true
-   */
   @property({type: Array, attribute: false})
   portStarboardElements: PortStarboardElement[] = [
     ...PORT_STARBOARD_DEFAULT_ELEMENTS,
@@ -177,10 +175,6 @@ export class ObcAzimuthThruster extends LitElement {
    */
   @property({type: String}) portStarboardSource: PortStarboardSource =
     PortStarboardSource.value;
-  /**
-   * Which halves the region tints paint while `portStarboard` is on.
-   * @availableWhen portStarboard==true
-   */
   @property({type: String}) portStarboardSides: PortStarboardSides =
     PortStarboardSides.both;
   @property({type: Number, attribute: 'face-diameter'})

@@ -38,6 +38,11 @@ export enum AzimuthThrusterLabeledSize {
  * @availableWhen autoAtThrustSetpointDeadband thrustSetpoint!=undefined && autoAtThrustSetpoint==true
  * @availableWhen thrustSetpointAtZeroDeadband thrustSetpoint!=undefined
  * @availableWhen thrustSetpointOverride thrustSetpoint!=undefined
+ * @property portStarboard - Enables the maritime PORT/STBD (red/green) color mode on the embedded
+ *   azimuth thruster.
+ * @property portStarboardElements - Which parts take part while `portStarboard` is on.
+ *   Defaults to everything except the setpoint.
+ * @availableWhen portStarboardElements portStarboard==true
  * @deprecated The azimuth-thruster-labeled component is deprecated and will be removed in future releases.
  * Please make a combined component by using <obc-azimuth-thruster> in combination with <obc-readout> instead.
  */
@@ -78,16 +83,7 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
   @property({type: Boolean}) singleDirection: boolean = false;
   @property({type: String}) topPropeller: PropellerType = PropellerType.none;
   @property({type: String}) bottomPropeller: PropellerType = PropellerType.none;
-  /**
-   * Enables the maritime PORT/STBD (red/green) color mode on the embedded
-   * azimuth thruster.
-   */
   @property({type: Boolean}) portStarboard: boolean = false;
-  /**
-   * Which parts take part while `portStarboard` is on.
-   * Defaults to everything except the setpoint.
-   * @availableWhen portStarboard==true
-   */
   @property({type: Array, attribute: false})
   portStarboardElements: PortStarboardElement[] = [
     ...PORT_STARBOARD_DEFAULT_ELEMENTS,

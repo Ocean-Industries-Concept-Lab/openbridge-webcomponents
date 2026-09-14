@@ -92,6 +92,10 @@ let nextFrameClipId = 0;
  * ## Usage Guidelines
  *
  * Use when the larger `obc-main-engine` is too dense and only a compact visual summary of speed and thrust is needed. Use `obc-main-engine` when setpoints or the larger scale treatment are required.
+ *
+ * @property portStarboard - Enables the maritime PORT/STBD (red/green) color mode: ahead renders
+ *   green, astern red. The indicator shows one propulsion unit, so the whole
+ *   visual follows its thrust (pitch) direction.
  * @stable
  */
 @customElement('obc-main-engine-indicator')
@@ -148,11 +152,6 @@ export class ObcMainEngineIndicator extends LitElement {
 
   @property({type: Boolean}) hasSilhouette = false;
 
-  /**
-   * Enables the maritime PORT/STBD (red/green) color mode: ahead renders
-   * green, astern red. The indicator shows one propulsion unit, so the whole
-   * visual follows its thrust (pitch) direction.
-   */
   @property({type: Boolean}) portStarboard = false;
 
   static override styles = unsafeCSS(componentStyle);

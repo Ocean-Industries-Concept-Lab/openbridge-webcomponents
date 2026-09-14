@@ -115,6 +115,13 @@ function percentToAngle(value: number): number {
  *   so instruments sharing the same value have identical ring circumference
  *   regardless of label width or arc extent (like obc-donut-chart's
  *   fixedHeight). When unset (default), the instrument fills its container.
+ * @property portStarboard - Enables the maritime PORT/STBD (red/green) color mode: positive values
+ *   render green, negative red. The face is not tinted.
+ * @property portStarboardElements - Which parts take part while `portStarboard` is on.
+ *   Defaults to everything except the setpoint. `face` has no effect here.
+ * @availableWhen portStarboardElements portStarboard==true
+ * @property portStarboardSides - Which halves the region tints paint while `portStarboard` is on.
+ * @availableWhen portStarboardSides portStarboard==true
  * @experimental The API of this component is under design review and may
  * change in a future release.
  */
@@ -123,24 +130,11 @@ export class ObcTopViewPropulsion extends LitElement {
   @property({type: String}) type: TopViewPropulsionType =
     TopViewPropulsionType.power;
 
-  /**
-   * Enables the maritime PORT/STBD (red/green) color mode: positive values
-   * render green, negative red. The face is not tinted.
-   */
   @property({type: Boolean}) portStarboard = false;
-  /**
-   * Which parts take part while `portStarboard` is on.
-   * Defaults to everything except the setpoint. `face` has no effect here.
-   * @availableWhen portStarboard==true
-   */
   @property({type: Array, attribute: false})
   portStarboardElements: PortStarboardElement[] = [
     ...PORT_STARBOARD_DEFAULT_ELEMENTS,
   ];
-  /**
-   * Which halves the region tints paint while `portStarboard` is on.
-   * @availableWhen portStarboard==true
-   */
   @property({type: String}) portStarboardSides: PortStarboardSides =
     PortStarboardSides.both;
 

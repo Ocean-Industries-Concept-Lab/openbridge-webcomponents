@@ -125,6 +125,14 @@ function defaultGaugeAngle(
  *   so instruments sharing the same value have identical ring circumference
  *   regardless of label width or arc extent (like obc-donut-chart's
  *   fixedHeight). When unset (default), the instrument fills its container.
+ * @property portStarboard - Enables the maritime PORT/STBD (red/green) color mode: positive values
+ *   render green, negative red. Ignored for any part whose color the consumer
+ *   supplies explicitly via `barColor` / `needleColor`.
+ * @property portStarboardElements - Which parts take part while `portStarboard` is on.
+ *   Defaults to everything except the setpoint.
+ * @availableWhen portStarboardElements portStarboard==true
+ * @property portStarboardSides - Which halves the region tints paint while `portStarboard` is on.
+ * @availableWhen portStarboardSides portStarboard==true
  * @fires {CustomEvent<RadialFrame>} frame-changed - Fired after render when the
  *   computed radial frame changed (viewBox, label visibility, or pinned host
  *   size). Wrappers use it to align sibling overlays/readouts with the dial.
@@ -166,25 +174,11 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
   @property({type: Boolean}) zoomToFitArc: boolean = false;
   @property({type: Number, attribute: 'face-diameter'})
   faceDiameter: number | undefined;
-  /**
-   * Enables the maritime PORT/STBD (red/green) color mode: positive values
-   * render green, negative red. Ignored for any part whose color the consumer
-   * supplies explicitly via `barColor` / `needleColor`.
-   */
   @property({type: Boolean}) portStarboard: boolean = false;
-  /**
-   * Which parts take part while `portStarboard` is on.
-   * Defaults to everything except the setpoint.
-   * @availableWhen portStarboard==true
-   */
   @property({type: Array, attribute: false})
   portStarboardElements: PortStarboardElement[] = [
     ...PORT_STARBOARD_DEFAULT_ELEMENTS,
   ];
-  /**
-   * Which halves the region tints paint while `portStarboard` is on.
-   * @availableWhen portStarboard==true
-   */
   @property({type: String}) portStarboardSides: PortStarboardSides =
     PortStarboardSides.both;
 
