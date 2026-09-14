@@ -1,6 +1,6 @@
 import {describe, expect, it} from 'vitest';
 import {render} from 'vitest-browser-lit';
-import {userEvent} from 'vitest/browser';
+import {userEvent} from '@vitest/browser/context';
 import {html} from 'lit';
 import './alert-button-item.js';
 import {ObcAlertButtonItem, ObcAlertButtonType} from './alert-button-item.js';
