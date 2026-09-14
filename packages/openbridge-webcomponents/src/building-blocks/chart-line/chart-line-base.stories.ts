@@ -995,21 +995,13 @@ export const ExternalScalesRangeLabels: Story = {
 };
 
 /**
- * A chart below the label threshold with scales slotted on two sides, and no
- * range labels. The canvas used to be drawn edge to edge here and painted over
- * both scales; it is now inset by the thickness each scale reports, so the
- * ladders stay visible at any size.
- *
- * The trace is stepped on purpose. What this baseline asserts is the inset, and
- * a smooth curve puts the whole stroke on sub-pixel boundaries whose
- * anti-aliasing differs between render environments — axis-aligned segments
- * rasterize the same everywhere.
+ * Below the label threshold the canvas is inset by each slotted scale's
+ * reported thickness; `chart-line-base.spec.ts` pins that. No snapshot: canvas
+ * anti-aliasing at the capture scale differs between CI runners.
  */
 export const ExternalScalesBelowThreshold: Story = {
   name: 'External Scales Below The Threshold (160×160, No Range Labels)',
-  play: async () => {
-    await new Promise((resolve) => setTimeout(resolve, 300));
-  },
+  tags: ['!snapshot'],
   args: {
     width: 160,
     height: 160,
@@ -1018,7 +1010,6 @@ export const ExternalScalesBelowThreshold: Story = {
   render: (_args) => html`
     <obc-area-graph
       .data=${SAMPLE_DATA}
-      .lineMode=${'stepped'}
       .width=${_args.width}
       .height=${_args.height}
       .priority=${_args.priority}
