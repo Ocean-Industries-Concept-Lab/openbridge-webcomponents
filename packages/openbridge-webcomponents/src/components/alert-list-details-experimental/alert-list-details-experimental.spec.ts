@@ -103,10 +103,10 @@ describe('cellSlots', () => {
     await el.updateComplete;
 
     expect(el.cellSlots.map((slot) => slot.name)).toEqual([
-      'cell-ack-gyro',
-      'cell-ack-gyro/power',
-      'cell-ack-radar',
-      'cell-ack-radar/power',
+      'cell-ack:gyro',
+      'cell-ack:gyro/power',
+      'cell-ack:radar',
+      'cell-ack:radar/power',
     ]);
     expect(details).toEqual([el.cellSlots]);
 
@@ -125,7 +125,17 @@ describe('cellSlots', () => {
 describe('alertListCellSlotName', () => {
   it('namespaces the column key and row id', () => {
     expect(alertListCellSlotName('ack', 'gyro/power')).toBe(
-      'cell-ack-gyro/power'
+      'cell-ack:gyro/power'
+    );
+  });
+
+  it('keeps names apart when a key or row id contains a dash or colon', () => {
+    const [ackRowId, ackARowId] = rowIds([alert('a-b'), alert('b')]);
+    expect(alertListCellSlotName('ack', ackRowId)).not.toBe(
+      alertListCellSlotName('ack-a', ackARowId)
+    );
+    expect(alertListCellSlotName('ack:a', 'b')).not.toBe(
+      alertListCellSlotName('ack', rowIds([alert('a:b')])[0])
     );
   });
 });

@@ -76,7 +76,7 @@ export interface AlertListDataColumn extends AlertListColumnBase {
   sortDirection?: 'asc' | 'desc';
 }
 
-/** A column whose cells the consumer supplies through `cell-<key>-<rowId>` slots. */
+/** A column whose cells the consumer supplies through `cell-<key>:<rowId>` slots. */
 export interface AlertListSlotColumn extends AlertListColumnBase {
   slot: true;
 }
@@ -161,7 +161,8 @@ export function canAckFilter(filter: (alert: Alert) => boolean) {
 
 /** Name of the slot that fills the cell of a slot column in one row. */
 export function alertListCellSlotName(columnKey: string, rowId: string) {
-  return `cell-${columnKey}-${rowId}`;
+  // Row ids are URI-encoded too, so neither part can contain the `:` separator.
+  return `cell-${encodeURIComponent(columnKey)}:${rowId}`;
 }
 
 /** Alert icon, text and source; sorted by priority. */
@@ -243,17 +244,17 @@ export function timeColumn({
   };
 }
 
-/** Alert id prefixed with `#`; sorted alphabetically. */
+/** Tag ID prefixed with `#`; sorted alphabetically. */
 export function tagIdColumn(
   options: AlertListColumnOptions = {}
 ): AlertListDataColumn {
   return {
     key: 'tagId',
     label: 'Tag ID',
-    compare: (a, b) => a.id.localeCompare(b.id),
+    compare: (a, b) => a.tagId.localeCompare(b.tagId),
     cell: (alert) => ({
       type: ObcTableCellType.Regular,
-      text: '#' + alert.id,
+      text: '#' + alert.tagId,
       align: 'right',
     }),
     ...options,
@@ -379,7 +380,7 @@ export function getAlertRows(
  * - Use a slot column when the cell content must be owned by the consumer,
  *   for example a button the application disables or removes later. Slotted
  *   content stays in the light DOM, so it can be looked up by id.
- * - Slot names are `cell-<key>-<rowId>`. `cellSlots` lists every one, with its
+ * - Slot names are `cell-<key>:<rowId>`. `cellSlots` lists every one, with its
  *   alert, row id and column key, and `cell-slots-change` fires when the list
  *   changes. The Svelte wrapper renders its `cell` snippet once per entry. An
  *   alert in two groups has two rows, so it gets two entries.
@@ -390,7 +391,7 @@ export function getAlertRows(
  * ## Example
  * ```html
  * <obc-alert-list-details-experimental>
- *   <obc-button slot="cell-ack-radar" id="ack-radar">ACK</obc-button>
+ *   <obc-button slot="cell-ack:radar" id="ack-radar">ACK</obc-button>
  * </obc-alert-list-details-experimental>
  * ```
  * with `columns` set to `[statusColumn(), {key: 'ack', label: 'ACK-status', slot: true}]`.
@@ -400,7 +401,7 @@ export function getAlertRows(
  * @property columns - Columns in display order.
  * @property showHeader - Whether to show the column header row.
  * @property defaultExpanded - Whether groups start expanded. Set false to open the list collapsed.
- * @slot cell-<key>-<rowId> - Content of the cell in slot column `<key>` for row `<rowId>`.
+ * @slot cell-<key>:<rowId> - Content of the cell in slot column `<key>` for row `<rowId>`.
  * @fires {ObcAlertListCellClickEvent} cell-click - Fired when the user clicks a button rendered by a data column, such as the one from `ackColumn()`.
  * @fires {ObcRowClickEvent} row-click - Fired when the user clicks a row.
  * @fires {ObcAlertListCellSlotsChangeEvent} cell-slots-change - Fired when `cellSlots` changes; the detail is the new list.

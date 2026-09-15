@@ -544,7 +544,7 @@ export const SlottedAckButtons: Story = {
     docs: {
       description: {
         story:
-          'The ACK column is a slot column. The consumer creates each button, gives it its own `id`, and places it in slot `cell-ack-<rowId>`, with the row ids from `getAlertRows()`. `PWR-01` is a member of two groups, so it has two rows and two buttons. Clicking ACK looks up every button for that alert in the DOM and disables it.',
+          'The ACK column is a slot column. The consumer creates each button, gives it its own `id`, and places it in slot `cell-ack:<rowId>`, with the row ids from `getAlertRows()`. `PWR-01` is a member of two groups, so it has two rows and two buttons. Clicking ACK looks up every button for that alert in the DOM and disables it.',
       },
     },
   },
