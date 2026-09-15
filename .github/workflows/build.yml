@@ -55,6 +55,12 @@ jobs:
       - name: Check formatting vue-demo
         run: cd packages/vue-demo && npm run format:check
 
+      - name: Typecheck connector-diagram
+        run: cd packages/connector-diagram && npm run typecheck
+
+      - name: Unit tests connector-diagram
+        run: cd packages/connector-diagram && npm run test
+
   test-browser:
     container:
       image: mcr.microsoft.com/playwright:v1.60.0-noble

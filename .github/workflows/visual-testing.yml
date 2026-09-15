@@ -42,3 +42,37 @@ jobs:
           name: playwright-report
           path: packages/openbridge-webcomponents/__vis__/linux/__diffs__
           retention-days: 30
+
+  connector-diagram:
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.60.0-noble
+    env:
+      LANG: en_US.UTF-8
+      LC_ALL: en_US.UTF-8
+      LC_NUMERIC: en_US.UTF-8
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+        working-directory: packages/connector-diagram
+
+      - name: Serve Storybook and run tests
+        run: npm run test-storybook
+        working-directory: packages/connector-diagram
+
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: playwright-report-connector-diagram
+          path: packages/connector-diagram/__vis__/linux/__diffs__
+          retention-days: 30
