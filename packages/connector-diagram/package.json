@@ -1,0 +1,48 @@
+{
+  "name": "@oicl/connector-diagram",
+  "version": "0.1.0",
+  "description": "Canvas-based pipe/connector diagram renderer for OpenBridge",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "example": "vite serve example --open",
+    "test": "vitest run --project=unit",
+    "storybook": "storybook dev -p 6007 --no-open",
+    "build-storybook": "storybook build",
+    "test:unit": "vitest --project=unit",
+    "test-storybook": "vitest --project=storybook",
+    "test-storybook:watch": "vitest --project=storybook --watch",
+    "update-snapshots": "rm -rf __vis__/linux/__baselines__ && mv __vis__/linux/__results__/ __vis__/linux/__baselines__/"
+  },
+  "devDependencies": {
+    "@oicl/openbridge-webcomponents": "^2.0.0-next.56",
+    "@playwright/test": "1.60.0",
+    "@storybook/addon-vitest": "^10.2.17",
+    "@storybook/html": "^10.2.17",
+    "@storybook/html-vite": "^10.2.17",
+    "@types/node": "^20.0.0",
+    "@vitest/browser-playwright": "^4.0.18",
+    "playwright": "^1.60.0",
+    "storybook": "^10.2.17",
+    "storybook-addon-vis": "3.0.1",
+    "typescript": "^5.5.0",
+    "vite": "^7.3.1",
+    "vitest": "^4.0.18"
+  },
+  "overrides": {
+    "storybook": "$storybook"
+  }
+}
