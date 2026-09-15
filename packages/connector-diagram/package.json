@@ -26,7 +26,7 @@
     "test:unit": "vitest --project=unit",
     "test-storybook": "vitest --project=storybook",
     "test-storybook:watch": "vitest --project=storybook --watch",
-    "update-snapshots": "rm -rf __vis__/linux/__baselines__ && mv __vis__/linux/__results__/ __vis__/linux/__baselines__/",
+    "update-snapshots": "vitest run --project=storybook --update",
     "clean": "rm -rf node_modules dist storybook-static"
   },
   "devDependencies": {
