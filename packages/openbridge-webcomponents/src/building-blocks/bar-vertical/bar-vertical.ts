@@ -76,6 +76,10 @@ export {
  *   Above this height, the scale grows proportionally; below, it shrinks.
  * @availableWhen scaleReferenceSize fixedAspectRatio==true
  * @property hasScale - Show scale tickmarks
+ * @property showMainTickmarkLabels - Label the main tickmarks (min / 0 / max) instead of the
+ *   primary interval ladder, for a scale too short for a ladder. A chart sets it on its
+ *   slotted scales below its label threshold.
+ * @availableWhen showMainTickmarkLabels showLabels==true
  * @property hasBar - Show bar
  * @property scaleBackground - Show background behind the scale tickmarks.
  * @property barContainerStyle - Bar container background style.
@@ -176,6 +180,7 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
   // Bands (thickness)
   @property({type: Boolean, attribute: false}) hasScale = true;
   @property({type: Boolean, attribute: false}) showLabels = true;
+  @property({type: Boolean}) showMainTickmarkLabels = false;
   @property({type: Boolean}) hasBar = false;
   @property({type: Boolean})
   scaleBackground = false;
@@ -256,6 +261,7 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
       maxValue: this.maxValue,
       hasScale: this.hasScale,
       labels: this.showLabels,
+      mainTickmarkLabels: this.showMainTickmarkLabels,
       hasBar: this.hasBar,
       scaleBackground: this.scaleBackground,
       barContainerStyle: this.barContainerStyle,
@@ -355,6 +361,7 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
     const layoutChanged =
       changed.has('side') ||
       changed.has('showLabels') ||
+      changed.has('showMainTickmarkLabels') ||
       changed.has('hasScale') ||
       changed.has('hasBar') ||
       changed.has('barThickness') ||

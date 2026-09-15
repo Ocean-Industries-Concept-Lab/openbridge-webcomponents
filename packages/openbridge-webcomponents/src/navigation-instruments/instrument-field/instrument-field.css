@@ -76,7 +76,7 @@
 
     .tag {
       @mixin font-instrument-label;
-      width: var(--obc-instrument-field-tag-width);
+      width: var(--obc-instrument-field-tag-width, auto);
     }
 
     .unit {
@@ -109,7 +109,7 @@
     @mixin font-instrument-unit;
     color: var(--element-neutral-color);
     justify-content: end;
-    width: var(--obc-instrument-field-source-width);
+    width: var(--obc-instrument-field-source-width, auto);
     box-sizing: content-box;
   }
 

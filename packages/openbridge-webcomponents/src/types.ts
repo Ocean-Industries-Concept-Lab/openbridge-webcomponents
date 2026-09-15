@@ -16,6 +16,26 @@ export enum AlertType {
   LevelDiagnostic = 'level-diagnostic',
 }
 
+/**
+ * Flash tempo of an alert element. `default` resolves per alert type and
+ * phase (see `resolveFlashingSpeed` in `alert-severity.ts`); `fixed` never
+ * flashes.
+ */
+export enum FlashingSpeed {
+  Default = 'default',
+  Fast = 'fast',
+  Slow = 'slow',
+  VerySlow = 'very-slow',
+  Fixed = 'fixed',
+}
+
+export type ResolvedFlashingSpeed = Exclude<
+  FlashingSpeed,
+  FlashingSpeed.Default
+>;
+
+export type FlashTempo = Exclude<ResolvedFlashingSpeed, FlashingSpeed.Fixed>;
+
 export const ALERT_SEVERITY_PRIORITY = [
   AlertType.LevelCritical,
   AlertType.Alarm,
@@ -26,6 +46,22 @@ export const ALERT_SEVERITY_PRIORITY = [
   AlertType.LevelLow,
   AlertType.LevelDiagnostic,
 ];
+
+/**
+ * Number of active alerts per severity: the level severities and the IEC
+ * severities `alarm`, `warning` and `caution`. `rankAlertCounts` in
+ * `alert-severity.ts` orders them and leaves out counts of zero or less.
+ */
+export interface AlertCounts {
+  countLevelCritical?: number;
+  countAlarm?: number;
+  countLevelHigh?: number;
+  countWarning?: number;
+  countLevelMedium?: number;
+  countCaution?: number;
+  countLevelLow?: number;
+  countLevelDiagnostic?: number;
+}
 
 export enum AlertCategory {
   a = 'a',

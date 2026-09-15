@@ -38,6 +38,52 @@ Most interactive components support elevation variants (`flat`, `normal`, `raise
 - Interactive state colors follow `--{variant}-{state}-background-color` / `--{variant}-{state}-border-color` (see full convention in IMPLEMENTATION_GUIDELINES.md)
 - Use `noClick` for display-only sub-parts that need colors but no interactivity
 
+## Alert flashing
+
+Alert frame, alert icon and alert button flash on one tempo table (#1224):
+fast 400/400, slow 400/1200, very-slow 400/2800 ms on/off. The table lives in
+`src/palettes/blinking.ts` and nowhere else.
+
+- `resolveFlashingSpeed(speed, type, phase)` in `src/alert-severity.ts` is the
+  only place that maps an alert type to a tempo. Components map acknowledged
+  to `fixed` before calling it.
+- Components never call `el.animate` themselves: `FlashingController(host,
+() => host.resolvedFlashingSpeed)` (`src/palettes/flashing-controller.ts`)
+  installs one animation per host and owns connect/disconnect. CSS reads
+  `--flash-<tempo>-on/off` through a `flash-<tempo>` class.
+- Every animation starts at document time 0, so all elements light up
+  together; do not add per-element delays.
+- The frame's stroke is centred on the frame edge (`outline-offset` of minus
+  half the width), so frames on touching components share one edge, and the
+  flash grows it 1 px on each side. Place the frame box on the edge to frame;
+  never offset it by half a stroke.
+- The rectified frame is an SVG overlay (`svg.dash`, one `roundedRectPath`
+  stroke on the wrapper edge, `stroke-dasharray: 12 6`) because CSS outlines
+  have no dash array. The flash animates `stroke-width` on that one path; a
+  second, wider path has longer corner arcs and its dashes drift around the
+  frame. Geometry is measured from the wrapper, never derived from props.
+- Visual tests park all Web Animations at 100 ms (see `testing-visual.md`),
+  so flashing stories snapshot the on state.
+
+## Alert button layers
+
+`obc-badge` → `obc-alert-counter-item` → `obc-alert-button-item` →
+`obc-alert-button`, the nesting of the Figma Alert counter item, Alert
+button item and Alert button (#1236).
+
+- `obc-alert-button-item` draws the bell, the counter and the global
+  counter, and holds the alert button's `FlashingController`.
+  `obc-alert-button` forwards its properties to the item, the global counter
+  included (a flat button drops it), and adds the silence button and the
+  breakpoints; it never draws a bell of its own.
+- `rankAlertCounts(counts, combine)` in `src/alert-severity.ts` is the only
+  per-severity count ranking, over the shared `AlertCounts` shape
+  (`src/types.ts`); the tree navigation badges and the counter item call it.
+- A parent squares the item's end with `data-group-item-not-last` (see Data
+  Attributes for Group Styling).
+- Guarded by `alert-button-item.spec.ts`, `alert-counter-item.spec.ts`,
+  `alert-button.spec.ts` and `alert-severity.spec.ts`.
+
 ## Slot Conventions
 
 | Pattern                                      | Usage                                  |

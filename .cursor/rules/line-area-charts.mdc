@@ -112,6 +112,52 @@ When adding new features or fixing bugs:
    - Listens for `scale-dimensions-changed` events from slotted elements
    - Adjusts chart padding to accommodate external scale thickness
    - Syncs scale properties (min/max, padding, enhanced, state, etc.)
+   - **Ranges come from `resolveAxisRange()`**: a range pinned in `yAxes` / `xAxis`
+     wins; otherwise the live Chart.js scale is read under the id
+     `buildScalesConfig()` assigns (`y0`, `y1`… when an entry has no id, `y` only
+     when `yAxes` is unset). The left slot takes the first left-positioned axis, the
+     right slot the first right-positioned one; a side without an axis of its own
+     follows the first entry. Datasets that name no `yAxisID` land on
+     `primaryYAxisId` — without that Chart.js adds a default `y` scale beside the
+     configured ones and draws it.
+   - `updateScaleProperties()` runs **before** the chart is rebuilt and so reads the
+     previous chart; `syncSlottedScaleRanges()` pushes ranges again after every
+     `createChart()` / `updateChart()`, which is also what keeps an auto-ranged
+     scale following the data.
+   - **A subclass that ranges its own slotted scale overrides
+     `ownsSlottedScaleRange(side)`.** Both range writers go through it. `obc-gauge-trend`
+     returns false for `right`: its bar is ranged by `minValue` / `maxValue`, which
+     `chartMinValue` / `chartMaxValue` exist to differ from, and the chart's axis is
+     left-positioned so the right slot would otherwise fall back to it (#1214).
+   - **Crossing the threshold re-runs the cascade.** In pixel mode
+     `updateComputedDimensions()` returns false, so a `width` / `height` change reaches
+     a plain rebuild and never re-cascades; `updated()` compares against the remembered
+     side so a chart that shrank and grew back gets its scales' bands and labels back.
+   - **Never push epoch milliseconds to a slotted scale.** A scale labels values
+     verbatim and a plausible tick interval over an epoch-ms range overflows the
+     stack. `resolveSlottedXRange()` converts a `time` axis to minutes relative to
+     the reference in `minutes` display; in `date` display it leaves the top/bottom
+     scales alone and warns once.
+   - `xAxis: {min, max}` pins the x range (time and number axes only; a category
+     axis is ignored). In `minutes` display `xAxis.max` is the `0min` reference, so
+     the right edge reads as now while a buffer is still filling.
+   - **Below the threshold** (`RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS`,
+     tested on both dimensions) every axis label is hidden unless `rangeLabels`
+     opts in. Then a free side gets a _measured_ gutter (`charthelpers/range-labels.ts`:
+     widest label + 8, or one line + 4 at the bottom) and the `rangeLabels` plugin
+     paints min / 0 / max flush with the plot's top and bottom and first / last x in
+     the bottom gutter — no vertical space is taken for y. A slotted side is switched to
+     `showMainTickmarkLabels` with a compact `labelThickness` measured the same way.
+     Both are **borrowed, not owned**: each is saved per scale on the way into compact
+     mode and handed back on the way out, so a scale that asked for main-tickmark
+     labels itself keeps them and one that never did returns to false.
+     The y bounds come from the datasets' own extent, except under `stacked`, where the
+     axis spans the accumulated series and only the laid-out scale knows the range.
+     Padding is decided **per side** in `computeChartPadding()`, which feeds both the
+     Chart.js layout and the padding cascaded to slotted scales — the two used to be
+     separate paths, so below the threshold a scale sat 32 px inset inside a chart
+     that had no padding. A slotted scale always gets its reported thickness, at any
+     size — "too small ⇒ 0 everywhere" painted the canvas over it.
 
 5. **Property Change Tracking**:
    - `LINE_GRAPH_WATCHED_PROP_NAMES`: Properties that trigger chart data/options update
