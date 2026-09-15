@@ -7,68 +7,7 @@
 }
 
 .transmitter {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: fit-content;
-
-  &.orientation-bottom {
-    padding-top: 8px;
-    top: calc(1px + var(--offset));
-    transform: translateX(-50%);
-  }
-
-  &.orientation-top {
-    padding-bottom: 8px;
-    transform: translate(-50%, calc(-100% - 1px - var(--offset)));
-  }
-
-  &.orientation-left {
-    padding-right: 8px;
-    transform: translate(calc(-100% - 4px - var(--offset)), -50%);
-  }
-
-  &.orientation-right {
-    padding-left: 8px;
-    transform: translateY(-50%);
-    right: calc(-4px - var(--offset));
-  }
-
-  &::before {
-    content: "";
-    display: block;
-    position: absolute;
-    border: var(--normal-enabled-border-color) solid 1px;
-  }
-
-  &.orientation-bottom::before,
-  &.orientation-top::before {
-    width: 0;
-    height: 8px;
-  }
-
-  &.orientation-bottom::before {
-    top: -1px;
-  }
-
-  &.orientation-top::before {
-    bottom: -1px;
-  }
-
-  &.orientation-left::before,
-  &.orientation-right::before {
-    height: 0;
-    width: 8px;
-  }
-
-  &.orientation-left::before {
-    right: -4px;
-  }
-
-  &.orientation-right::before {
-    left: -4px;
-  }
+  @mixin transmitter-leader;
 }
 
 .content {
@@ -136,13 +75,5 @@
 }
 
 .id-tag {
-  color: var(--element-neutral-color);
-  color: var(--element-neutral-color);
-  font-variant-numeric: lining-nums tabular-nums;
-  font-feature-settings: "ss04" on;
-  font-family: var(--global-typography-font-family);
-  font-size: var(--global-typography-instrument-label-font-size);
-  font-style: normal;
-  font-weight: 570;
-  line-height: var(--global-typography-instrument-label-line-height);
+  @mixin transmitter-id-tag;
 }

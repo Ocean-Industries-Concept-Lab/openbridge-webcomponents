@@ -31,6 +31,13 @@ export enum TransmitterType {
   verticalGraph = 'vertical-graph',
 }
 
+/** Half the line's stroke width, so the leader line starts on the line's edge. */
+export function transmitterLeaderOffset(
+  lineType: LineType | undefined
+): number {
+  return lineType === undefined ? 0 : lineWidth(lineType) / 2;
+}
+
 /**
  * `<obc-transmitter>` – A readout label that attaches to a line on a process
  * diagram via a leader line, showing a measured value, a tag identifier, or a
@@ -116,10 +123,6 @@ export class ObcTransmitter extends LitElement {
     );
   }
 
-  private get lineOffset() {
-    return this.lineType === undefined ? 0 : lineWidth(this.lineType) / 2;
-  }
-
   private renderButton() {
     const isIndicator = this.type === TransmitterType.indicator;
     return html`
@@ -200,7 +203,7 @@ export class ObcTransmitter extends LitElement {
           [`orientation-${this.orientation}`]: true,
           [`type-${this.type}`]: true,
         })}
-        style="--offset: ${this.lineOffset}px;"
+        style="--offset: ${transmitterLeaderOffset(this.lineType)}px;"
       >
         ${content}
       </div>
