@@ -2,6 +2,7 @@ import {describe, it, expect} from 'vitest';
 import {
   FilterModes,
   ObcAlertListCellSlotsChangeEvent,
+  ObcAlertListDetailsExperimental,
   alertListCellSlotName,
   getAlertRows,
   statusColumn,
@@ -119,6 +120,52 @@ describe('cellSlots', () => {
     await el.updateComplete;
     expect(details[details.length - 1]).toEqual([]);
     el.remove();
+  });
+});
+
+describe('selectedRowId', () => {
+  const groupedAlerts = () => [
+    alert('gyro'),
+    alert('sensor', {memberOf: ['gyro']}),
+    alert('radar'),
+    alert('power', {memberOf: ['gyro', 'radar']}),
+  ];
+
+  async function selectedTableRowIds(
+    configure: (el: ObcAlertListDetailsExperimental) => void
+  ) {
+    const el = document.createElement('obc-alert-list-details-experimental');
+    el.alerts = groupedAlerts();
+    configure(el);
+    document.body.append(el);
+    await el.updateComplete;
+    const table = el.shadowRoot!.querySelector('obc-table')!;
+    const selected = table.data
+      .filter((row) => row.selected)
+      .map((row) => row.id);
+    el.remove();
+    return selected;
+  }
+
+  it('highlights only the selected row of an alert listed under two groups', async () => {
+    expect(
+      await selectedTableRowIds((el) => (el.selectedRowId = 'radar/power'))
+    ).toEqual(['radar/power']);
+  });
+
+  it('highlights the group row when a collapsed group hides the selected row', async () => {
+    expect(
+      await selectedTableRowIds((el) => {
+        el.defaultExpanded = false;
+        el.selectedRowId = 'gyro/sensor';
+      })
+    ).toEqual(['gyro']);
+  });
+
+  it('highlights nothing when no row has the selected id', async () => {
+    expect(
+      await selectedTableRowIds((el) => (el.selectedRowId = 'gyro/missing'))
+    ).toEqual([]);
   });
 });
 

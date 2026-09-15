@@ -3,6 +3,7 @@ import {
   FilterModes,
   ObcAlertListCellClickEvent,
   ObcAlertListDetailsExperimental,
+  ObcRowClickEvent,
   ackColumn,
   alertListCellSlotName,
   getAlertRows,
@@ -380,6 +381,40 @@ export const GroupedAlerts: Story = {
       .filterMode=${args.filterMode}
       .alerts=${args.alerts}
       .columns=${args.columns}
+      style="height: 100vh; display: block;"
+    >
+    </obc-alert-list-details-experimental>`;
+  },
+};
+
+export const SelectedRow: Story = {
+  args: {
+    alerts: GroupedAlerts.args?.alerts as Alert[],
+    selectedRowId: 'gyro/sensor',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'The consumer owns the selection. Clicking a row sets `selectedRowId` to its row id, and clicking it again sets it back to `undefined`. Collapse the gyroscope group and the group row is highlighted instead of the hidden sensor row. `PWR-01` has a row under each group, and only the clicked one is highlighted.',
+      },
+    },
+  },
+  render: (args) => {
+    const toggleSelection = (event: ObcRowClickEvent) => {
+      const list = event.currentTarget as ObcAlertListDetailsExperimental;
+      list.selectedRowId =
+        list.selectedRowId === event.detail.rowId
+          ? undefined
+          : event.detail.rowId;
+    };
+    return html` <obc-alert-list-details-experimental
+      @cell-click=${handleAck}
+      @row-click=${toggleSelection}
+      .selectedMode=${args.selectedMode}
+      .alerts=${args.alerts}
+      .columns=${args.columns}
+      .selectedRowId=${args.selectedRowId}
       style="height: 100vh; display: block;"
     >
     </obc-alert-list-details-experimental>`;

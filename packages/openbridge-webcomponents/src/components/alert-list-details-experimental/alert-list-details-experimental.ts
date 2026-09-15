@@ -265,6 +265,12 @@ function isSlotColumn(column: AlertListColumn): column is AlertListSlotColumn {
   return 'slot' in column && column.slot === true;
 }
 
+/** Row ids join URI-encoded alert ids with `/`, so the last `/` separates the parent. */
+function parentRowIdOf(rowId: string): string | undefined {
+  const separatorIndex = rowId.lastIndexOf('/');
+  return separatorIndex === -1 ? undefined : rowId.slice(0, separatorIndex);
+}
+
 /** Keeps column keys clear of the row fields `obc-table` reserves (`id`, `level`, …). */
 const TABLE_KEY_PREFIX = 'column-';
 
@@ -375,6 +381,8 @@ export function getAlertRows(
  *   blocked or rectified alerts, with an empty state per filter mode.
  * - **Grouping:** an alert listing group ids in `memberOf` renders under each
  *   of those groups; groups nest and can be collapsed.
+ * - **Selection:** `selectedRowId` highlights one row. When a collapsed group
+ *   hides it, the nearest visible group row is highlighted instead.
  *
  * ## Usage Guidelines
  * - Use a slot column when the cell content must be owned by the consumer,
@@ -387,6 +395,9 @@ export function getAlertRows(
  * - Without a wrapper, build the names from `getAlertRows(alerts, filterMode)`
  *   and `alertListCellSlotName(key, rowId)`, or read `cellSlots`.
  * - Clicks on buttons, links and inputs in a cell do not fire `row-click`.
+ * - The consumer owns the selection: set `selectedRowId` from `row-click`, and
+ *   set it to `undefined` on a second click to unselect. The list never changes
+ *   it; clear it when the row is no longer in `getAlertRows(alerts, selectedMode)`.
  *
  * ## Example
  * ```html
@@ -401,6 +412,7 @@ export function getAlertRows(
  * @property columns - Columns in display order.
  * @property showHeader - Whether to show the column header row.
  * @property defaultExpanded - Whether groups start expanded. Set false to open the list collapsed.
+ * @property selectedRowId - Row id to highlight, as given by `row-click` or `getAlertRows()`. Nothing is highlighted when no row has this id.
  * @slot cell-<key>:<rowId> - Content of the cell in slot column `<key>` for row `<rowId>`.
  * @fires {ObcAlertListCellClickEvent} cell-click - Fired when the user clicks a button rendered by a data column, such as the one from `ackColumn()`.
  * @fires {ObcRowClickEvent} row-click - Fired when the user clicks a row.
@@ -418,6 +430,7 @@ export class ObcAlertListDetailsExperimental extends LitElement {
   ];
   @property({type: Boolean, attribute: false}) showHeader: boolean = true;
   @property({type: Boolean, attribute: false}) defaultExpanded: boolean = true;
+  @property({type: String}) selectedRowId?: string;
 
   @query('obc-table')
   private alertList!: ObcTable;
@@ -425,6 +438,7 @@ export class ObcAlertListDetailsExperimental extends LitElement {
   @state() private expansionOverrides = new Map<string, boolean>();
 
   private alertByRowId = new Map<string, Alert>();
+  private allRowIds = new Set<string>();
 
   private _cellSlots: AlertListCellSlot[] = [];
   private cellSlotsChanged = false;
@@ -442,6 +456,8 @@ export class ObcAlertListDetailsExperimental extends LitElement {
     ) {
       return;
     }
+    const rows = getAlertRows(this.alerts, this.filterMode);
+    this.allRowIds = new Set(rows.map((row) => row.rowId));
     const slotColumns = this.columns.filter(isSlotColumn);
     const next = getAlertRows(this.alerts, this.filterMode).flatMap((row) =>
       slotColumns.map((column) => ({
@@ -588,6 +604,7 @@ export class ObcAlertListDetailsExperimental extends LitElement {
       (rowId) => this.isExpanded(rowId)
     );
     this.alertByRowId = new Map(rows.map((row) => [row.rowId, row.alert]));
+    const highlightedRowId = this.highlightedRowId();
     return rows.map((row) => ({
       ...this.buildRowCells(row.alert),
       id: row.rowId,
@@ -595,7 +612,23 @@ export class ObcAlertListDetailsExperimental extends LitElement {
       level: row.level,
       expandable: row.expandable,
       expanded: this.isExpanded(row.rowId),
+      selected: row.rowId === highlightedRowId,
     }));
+  }
+
+  /** The selected row, or the nearest visible group row when a collapsed group hides it. */
+  private highlightedRowId(): string | undefined {
+    if (
+      this.selectedRowId === undefined ||
+      !this.allRowIds.has(this.selectedRowId)
+    ) {
+      return undefined;
+    }
+    let rowId: string | undefined = this.selectedRowId;
+    while (rowId !== undefined && !this.alertByRowId.has(rowId)) {
+      rowId = parentRowIdOf(rowId);
+    }
+    return rowId;
   }
 
   private buildRowCells(
