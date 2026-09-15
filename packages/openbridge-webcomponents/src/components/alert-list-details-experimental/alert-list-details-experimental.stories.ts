@@ -411,7 +411,7 @@ export const SelectedRow: Story = {
     return html` <obc-alert-list-details-experimental
       @cell-click=${handleAck}
       @row-click=${toggleSelection}
-      .selectedMode=${args.selectedMode}
+      .filterMode=${args.filterMode}
       .alerts=${args.alerts}
       .columns=${args.columns}
       .selectedRowId=${args.selectedRowId}

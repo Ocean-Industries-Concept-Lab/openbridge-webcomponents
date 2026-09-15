@@ -397,7 +397,7 @@ export function getAlertRows(
  * - Clicks on buttons, links and inputs in a cell do not fire `row-click`.
  * - The consumer owns the selection: set `selectedRowId` from `row-click`, and
  *   set it to `undefined` on a second click to unselect. The list never changes
- *   it; clear it when the row is no longer in `getAlertRows(alerts, selectedMode)`.
+ *   it; clear it when the row is no longer in `getAlertRows(alerts, filterMode)`.
  *
  * ## Example
  * ```html
