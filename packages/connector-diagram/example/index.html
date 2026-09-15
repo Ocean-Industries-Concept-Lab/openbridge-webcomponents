@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en" data-obc-theme="day">
+  <head>
+    <meta charset="utf-8" />
+    <title>Connector diagram — minimal example</title>
+    <!-- The OpenBridge palette is imported from main.ts (Vite resolves it out
+         of node_modules). `data-obc-theme="dusk"` on <html> selects the dusk
+         variable set; the colours in style.css — and the pipe theme, resolved
+         via themeFromCss — read from it. -->
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <h1>Connector diagram — motor, pump and valve</h1>
+    <p>Dusk palette. Open pipes draw filled, closed pipes draw as a single thin stroke.</p>
+    <obc-button id="toggle-medium-color">Toggle Medium Color</obc-button>
+    <div id="stage">
+      <canvas id="pipes"></canvas>
+
+      <!-- `tag` is the component's own label, so it sits correctly inside the
+           readout stack instead of colliding with it. Motor and pump run (`on`,
+           driving the two open pipes); the valve is shut, so its pipes read
+           closed. -->
+      <obc-motor id="motor" on tag="Motor" readoutposition="top"></obc-motor>
+      <obc-pump id="pump" on tag="Pump" readoutposition="top"></obc-pump>
+      <obc-digital-valve id="valve" tag="Valve" readoutposition="bottom"></obc-digital-valve>
+    </div>
+
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>
