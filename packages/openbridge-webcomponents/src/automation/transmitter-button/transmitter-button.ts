@@ -3,11 +3,8 @@ import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import componentStyle from './transmitter-button.css?inline';
 import {customElement} from '../../decorator.js';
-import '../../building-blocks/readout-block/readout-block.js';
-import {
-  ReadoutBlockSize,
-  ReadoutBlockVariant,
-} from '../../building-blocks/readout-block/readout-block.js';
+import '../../navigation-instruments/readout-list-item/readout-list-item.js';
+import {ReadoutListItemSize} from '../../navigation-instruments/readout-list-item/readout-list-item.js';
 
 export enum TransmitterButtonVariant {
   value = 'value',
@@ -20,31 +17,31 @@ export enum TransmitterButtonSize {
   large = 'large',
 }
 
-const readoutSizeBySize: Record<TransmitterButtonSize, ReadoutBlockSize> = {
-  [TransmitterButtonSize.regular]: ReadoutBlockSize.small,
-  [TransmitterButtonSize.medium]: ReadoutBlockSize.medium,
-  [TransmitterButtonSize.large]: ReadoutBlockSize.large,
+const readoutSizeBySize: Record<TransmitterButtonSize, ReadoutListItemSize> = {
+  [TransmitterButtonSize.regular]: ReadoutListItemSize.small,
+  [TransmitterButtonSize.medium]: ReadoutListItemSize.medium,
+  [TransmitterButtonSize.large]: ReadoutListItemSize.large,
 };
 
 /**
- * `<obc-transmitter-button>` – The pressable readout chip used as the core of a
- * transmitter on a process diagram.
+ * `<obc-transmitter-button>` – The pressable readout chip at the core of a
+ * transmitter: a bordered button around one reading.
  *
- * The value content (leading icon, optional advice and setpoint segments,
- * value, unit) is laid out inline. The value, advice and setpoint segments all
- * share one numeric format, so they support fixed-width values and muted
- * leading zeros identically. The leading icon is slotted so the consumer
- * provides the type-specific content.
+ * The reading is a label-less `<obc-readout-list-item>` (the Figma "automation
+ * value"): leading icon, optional advice and setpoint, value, optional degree
+ * and unit, all rendered by the readout family. The leading icon is slotted so
+ * the consumer provides the type-specific content.
  *
  * ### Features / Variants
- * - **`value`** – white, bordered box showing an icon, value and unit. Opt into a
- *   leading advice segment with `hasAdvice`/`adviceValue` and a setpoint segment
- *   with `hasSetPoint`/`setpointValue`.
+ * - **`value`** – bordered chip showing an icon, value and unit. Opt into a
+ *   leading advice segment with `hasAdvice`/`adviceValue`, a setpoint segment
+ *   with `hasSetPoint`/`setpointValue`, and a degree column before the unit
+ *   with `hasDegree`.
  * - **`tag`** – a static rounded pill showing a short identifier (e.g. `TT`)
  *   from the `label` property, with no live value.
- * - **`size`** – `regular`, `medium` or `large`, scaling the value text, the icon
- *   glyph and the advice/setpoint segments. The unit stays at a fixed size across
- *   all sizes.
+ * - **`size`** – `regular`, `medium` or `large`, the list item's `small`,
+ *   `medium` and `large` tiers: the value text, the icon and the advice/setpoint
+ *   segments scale, the unit stays extra small.
  * - **Formatting** – `fractionDigits` sets the decimal precision, `maxDigits`
  *   reserves a number of integer digits, and `hintedZeros` renders the reserved
  *   leading positions as muted zeros (e.g. `0012.3`). The sign never consumes
@@ -57,9 +54,15 @@ const readoutSizeBySize: Record<TransmitterButtonSize, ReadoutBlockSize> = {
  *   dashes fill the whole reserved width (e.g. `---.-`).
  *
  * ### Usage Guidelines
- * Use as a building block for `<obc-transmitter>`; it is the part that carries
- * the measured value or the tag identifier. Slot in the type-specific icon; the
- * advice and setpoint segments are value-driven and read-only.
+ * Use as a building block for `<obc-transmitter>` and `<obc-transmitter-stack>`;
+ * it is the part that carries the measured value or the tag identifier. Slot in
+ * the type-specific icon; the advice and setpoint segments are value-driven and
+ * read-only.
+ *
+ * **TODO(designer):** the hit area is the visible chip, 24 px high at `regular`:
+ * at the WCAG 2.5.8 floor of 24 px, below the 48 px touch-target token. A
+ * 48 px target would overlap the id tag, the leader line and neighbouring
+ * `<obc-transmitter-stack>` segments, so the size needs a design decision.
  *
  * ### Slots
  * | Slot Name | Conditions                    | Purpose                        |
@@ -69,9 +72,12 @@ const readoutSizeBySize: Record<TransmitterButtonSize, ReadoutBlockSize> = {
  * @property maxDigits - Integer digits to reserve / hint (independent of `fractionDigits`).
  * @property hasSignSpacer - Reserve a minus-sign column on every segment, filled by the real sign
  *   only while a value is negative, so the width does not change across zero.
+ * @property hasDegree - Show a degree column between the value and the unit (e.g. `12.3°` then `C`).
  * @property adviceValue - Advisory value shown in the leading advice segment when `hasAdvice`.
  * @property setpointValue - Target value shown in the setpoint segment when `hasSetPoint`.
  * @property label - Short tag identifier shown in the `tag` variant (e.g. `TT`).
+ * @property idTag - Identifier appended to the button's accessible name only (e.g. `#0001`); the
+ *   parent transmitter draws the visible tag outside the button, where it cannot join the name.
  * @slot icon - Leading icon beside the value.
  *
  * @experimental
@@ -90,6 +96,7 @@ export class ObcTransmitterButton extends LitElement {
 
   @property({type: Boolean}) hintedZeros = false;
   @property({type: Boolean}) hasSignSpacer = false;
+  @property({type: Boolean}) hasDegree = false;
   @property({type: Boolean}) hasIcon = false;
   @property({type: Boolean}) hasAdvice = false;
 
@@ -101,53 +108,37 @@ export class ObcTransmitterButton extends LitElement {
 
   @property({type: String}) label = '';
 
+  @property({type: String}) idTag = '';
+
   private get isTag() {
     return this.variant === TransmitterButtonVariant.tag;
   }
 
-  private renderBlock(
-    variant: ReadoutBlockVariant,
-    value: number | null | undefined
-  ) {
-    return html`<obc-readout-block
-      .variant=${variant}
-      .value=${value ?? null}
-      .size=${readoutSizeBySize[this.size]}
-      .fractionDigits=${this.fractionDigits}
-      .maxDigits=${this.maxDigits}
-      .hintedZeros=${this.hintedZeros}
-      .hasSignSpacer=${this.hasSignSpacer}
-    ></obc-readout-block>`;
-  }
-
-  private renderAdvice() {
-    if (!this.hasAdvice) {
-      return nothing;
-    }
-    return this.renderBlock(ReadoutBlockVariant.advice, this.adviceValue);
-  }
-
-  private renderSetpoint() {
-    if (!this.hasSetPoint) {
-      return nothing;
-    }
-    return this.renderBlock(ReadoutBlockVariant.setpoint, this.setpointValue);
-  }
-
-  private renderContent() {
-    if (this.isTag) {
-      return html`<span class="label">${this.label}</span>`;
-    }
-
+  private renderReading() {
+    const format = {
+      hintedZeros: this.hintedZeros,
+      hasSignSpacer: this.hasSignSpacer,
+    };
     return html`
-      ${this.renderAdvice()} ${this.renderSetpoint()}
-      <div class="value-container">
+      <obc-readout-list-item
+        .size=${readoutSizeBySize[this.size]}
+        .value=${this.value ?? null}
+        .unit=${this.unit}
+        .hasDegree=${this.hasDegree}
+        .fractionDigits=${this.fractionDigits}
+        .maxDigits=${this.maxDigits}
+        .valueOptions=${{...format, hasIcon: this.hasIcon}}
+        .hasSetpoint=${this.hasSetPoint}
+        .setpoint=${this.setpointValue ?? undefined}
+        .setpointOptions=${format}
+        .hasAdvice=${this.hasAdvice}
+        .advice=${this.adviceValue ?? undefined}
+        .adviceOptions=${format}
+      >
         ${this.hasIcon
-          ? html`<div class="icon"><slot name="icon"></slot></div>`
+          ? html`<slot name="icon" slot="value-icon"></slot>`
           : nothing}
-        ${this.renderBlock(ReadoutBlockVariant.value, this.value)}
-        ${this.unit ? html`<span class="unit">${this.unit}</span>` : nothing}
-      </div>
+      </obc-readout-list-item>
     `;
   }
 
@@ -161,8 +152,13 @@ export class ObcTransmitterButton extends LitElement {
             tag: this.isTag,
           })}
         >
-          ${this.renderContent()}
+          ${this.isTag
+            ? html`<span class="label">${this.label}</span>`
+            : this.renderReading()}
         </div>
+        ${this.idTag
+          ? html`<span class="visually-hidden">${this.idTag}</span>`
+          : nothing}
       </button>
     `;
   }
