@@ -9,7 +9,7 @@ import '../../icons/icon-notification-advice-active.js';
 import '../../icons/icon-silence-iec.js';
 import '../alert-button-item/alert-button-item.js';
 import {ObcAlertButtonType} from '../alert-button-item/alert-button-item.js';
-import {AlertType, FlashingSpeed} from '../../types.js';
+import {AlertType, FlashingSpeed, type AlertCounts} from '../../types.js';
 import {customElement} from '../../decorator.js';
 
 export {ObcAlertButtonType};
@@ -29,6 +29,7 @@ export {ObcAlertButtonType};
  *   - **Enhanced:** Visually prominent button for high-priority alerts, with accent styling.
  * - **Alert Types:** Supports `alarm`, `warning`, `caution`, or no alert (idle). Icon and color adapt to the alert type.
  * - **Alert Counter:** Optional badge displays the number of active alerts (except in flat mode).
+ * - **Global Counter:** `globalCounter` shows the per-severity `counts` and an optional `shelvedCount` before the bell and the total, as `obc-alert-button-item` draws them.
  * - **Silence Button:** Optional secondary button to mute or silence alerts, shown when enabled and at sufficient width.
  * - **Blinking Animation:** Can animate (blink) to draw attention to active alerts (except for caution type).
  * - **Responsive Layout:** Automatically switches to flat mode below a configurable width, and hides the silence button below another configurable width.
@@ -44,6 +45,8 @@ export {ObcAlertButtonType};
  * - The blinking feature should be reserved for urgent or high-priority alerts to avoid unnecessary distraction.
  *
  * **TODO(designer):** Confirm if there are recommended default behaviors for auto-blinking, and if there are any design constraints for when to use each variant.
+ *
+ * **TODO(designer):** The Figma Alert button has no flat Global counter, so below `flatMaxBreakpointPx` the button shows the flat bell without the counts.
  *
  * ## Events
  *
@@ -83,6 +86,11 @@ export {ObcAlertButtonType};
  * @property silenceButtonDisabled - Disables the silence button when true.
  * @availableWhen silenceButtonDisabled showSilenceButton==true
  * @property counter - Shows the alert counter when there are active alerts and the button is not flat.
+ * @property globalCounter - Shows the per-severity counts and the shelved count before the bell and the total (the item's global counter); a flat button shows the plain bell.
+ * @property counts - Alert count per severity for the global counter badges (`countAlarm`, `countWarning`, `countCaution` and the `level-*` counts).
+ * @availableWhen counts globalCounter==true
+ * @property shelvedCount - Number of shelved alerts, shown after the global counter badges; hidden at zero.
+ * @availableWhen shelvedCount globalCounter==true
  * @property blinking - Flashes the bell for active alerts of a flashing alert type (never for caution).
  * @property flashingSpeed - Flash tempo while `blinking` is on: `default` resolves from `alertType`, `fast`, `slow`, `very-slow` force a tempo, `fixed` never flashes.
  * @availableWhen flashingSpeed blinking==true
@@ -104,6 +112,9 @@ export class ObcAlertButton extends LitElement {
   @property({type: Boolean}) showSilenceButton = false;
   @property({type: Boolean}) silenceButtonDisabled = false;
   @property({type: Boolean}) counter = false;
+  @property({type: Boolean}) globalCounter = false;
+  @property({type: Object, attribute: false}) counts: AlertCounts = {};
+  @property({type: Number}) shelvedCount = 0;
   @property({type: Boolean}) blinking = false;
   @property({type: String}) flashingSpeed: FlashingSpeed =
     FlashingSpeed.Default;
@@ -159,6 +170,10 @@ export class ObcAlertButton extends LitElement {
           .alertType=${this.alertType}
           .nAlerts=${this.nAlerts}
           .counter=${this.counter}
+          .globalCounter=${this.globalCounter &&
+          this.activeType !== ObcAlertButtonType.Flat}
+          .counts=${this.counts}
+          .shelvedCount=${this.shelvedCount}
           .blinking=${this.blinking}
           .flashingSpeed=${this.flashingSpeed}
           .fillHeight=${this.large}

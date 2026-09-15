@@ -59,6 +59,32 @@ describe('obc-alert-button', () => {
     ]);
   });
 
+  it('forwards the global counter and drops it in flat mode', async () => {
+    const counts = {countAlarm: 1, countWarning: 10, countCaution: 15};
+    const {el, item} = await setup(
+      html`<obc-alert-button
+        globalCounter
+        .nAlerts=${26}
+        .counts=${counts}
+        .shelvedCount=${9}
+      ></obc-alert-button>`
+    );
+    expect([item.globalCounter, item.counts, item.shelvedCount]).toEqual([
+      true,
+      counts,
+      9,
+    ]);
+
+    el.flatMaxBreakpointPx = window.innerWidth + 1;
+    await el.updateComplete;
+    await item.updateComplete;
+
+    expect([item.type, item.globalCounter]).toEqual([
+      ObcAlertButtonType.Flat,
+      false,
+    ]);
+  });
+
   it('passes the flat breakpoint on as the item type', async () => {
     const {item} = await setup(
       html`<obc-alert-button

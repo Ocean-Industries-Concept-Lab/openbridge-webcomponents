@@ -31,6 +31,8 @@ const meta: Meta<typeof ObcAlertButton> = {
       options: Object.values(FlashingSpeed),
       control: {type: 'select'},
     },
+    counts: {control: {type: 'object'}},
+    shelvedCount: {control: {type: 'number', min: 0}},
     width: {control: {type: 'range', min: 64, max: 1028, step: 1}},
   },
   decorators: [widthDecorator],
@@ -252,5 +254,27 @@ export const NormalLevelDiagnostic: Story = {
     alertType: AlertType.LevelDiagnostic,
     type: ObcAlertButtonType.Normal,
     nAlerts: 1,
+  },
+};
+
+const GLOBAL_COUNTS = {countAlarm: 1, countWarning: 10, countCaution: 15};
+
+export const GlobalCounter: Story = {
+  args: {
+    globalCounter: true,
+    nAlerts: 26,
+    counts: GLOBAL_COUNTS,
+    width: 168,
+  },
+};
+
+export const GlobalCounterShelvedSilence: Story = {
+  args: {
+    globalCounter: true,
+    nAlerts: 26,
+    counts: GLOBAL_COUNTS,
+    shelvedCount: 9,
+    showSilenceButton: true,
+    width: 244,
   },
 };

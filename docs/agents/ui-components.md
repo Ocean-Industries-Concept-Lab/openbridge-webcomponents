@@ -72,8 +72,9 @@ button item and Alert button (#1236).
 
 - `obc-alert-button-item` draws the bell, the counter and the global
   counter, and holds the alert button's `FlashingController`.
-  `obc-alert-button` forwards its properties to the item and adds the
-  silence button and the breakpoints; it never draws a bell of its own.
+  `obc-alert-button` forwards its properties to the item, the global counter
+  included (a flat button drops it), and adds the silence button and the
+  breakpoints; it never draws a bell of its own.
 - `rankAlertCounts(counts, combine)` in `src/alert-severity.ts` is the only
   per-severity count ranking, over the shared `AlertCounts` shape
   (`src/types.ts`); the tree navigation badges and the counter item call it.
