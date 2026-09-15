@@ -78,6 +78,7 @@ This repository uses npm workspaces and is organized as follows:
 | [`packages/openbridge-webcomponents-svelte`](packages/openbridge-webcomponents-svelte) | Auto-generated Svelte wrappers.                  |
 | `packages/vue-demo`                                                                    | Demo application using Vue.js.                   |
 | `packages/react-demo`                                                                  | Demo application using React.                    |
+| [`packages/connector-diagram`](packages/connector-diagram)                             | Canvas renderer for pipe and connector diagrams. |
 
 ## 📚 Storybook & Demo
 
