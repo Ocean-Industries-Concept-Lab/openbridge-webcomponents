@@ -52,7 +52,8 @@ export interface TransmitterStackValueClickDetail {
  *   `<obc-transmitter-button>`. An omitted key takes its default; a key set to
  *   `null`, `undefined` or `NaN` renders the reading as the unavailable dash.
  * - **Icons** – `iconSlotName` projects the light-DOM element with that slot
- *   name as the segment's icon.
+ *   name as the segment's icon. The name is chosen per value, so it carries no
+ *   `@slot` tag (the wrapper generator needs literal names).
  *
  * ### Usage Guidelines
  * Use when one measuring point reports several quantities that belong to one
@@ -67,7 +68,6 @@ export interface TransmitterStackValueClickDetail {
  * @property orientation - Edge of the chip the leader line attaches to.
  * @property lineType - Line the transmitter sits on; offsets the leader line by half its stroke.
  * @property values - One segment per entry, in order.
- * @slot <iconSlotName> - Icon for the value whose `iconSlotName` matches, one per value.
  * @fires {CustomEvent<TransmitterStackValueClickDetail>} value-click - Fired when a segment is activated, with its value and index.
  * @fires click - Fired when any segment is clicked; `value-click` tells which.
  * @experimental
@@ -94,8 +94,9 @@ export class ObcTransmitterStack extends LitElement {
     index: number,
     hasIdTags: boolean
   ) {
-    // `in`, not `??`: a key that is present but empty is a failed runtime
-    // write and must reach the block as missing (readout-components.md § 2).
+    // `in`, not `??` alone: a key that is present but empty is a failed
+    // runtime write and must reach the block as missing (NaN renders the dash,
+    // readout-components.md § 2).
     return html`
       <div class="cell" part="cell">
         <obc-transmitter-button
@@ -104,9 +105,9 @@ export class ObcTransmitterStack extends LitElement {
           .value=${entry.value}
           .unit=${entry.unit ?? ''}
           .fractionDigits=${'fractionDigits' in entry
-            ? entry.fractionDigits
+            ? (entry.fractionDigits ?? NaN)
             : 1}
-          .maxDigits=${'maxDigits' in entry ? entry.maxDigits : 0}
+          .maxDigits=${'maxDigits' in entry ? (entry.maxDigits ?? NaN) : 0}
           .hintedZeros=${entry.hintedZeros ?? false}
           .hasSignSpacer=${entry.hasSignSpacer ?? false}
           .hasIcon=${Boolean(entry.iconSlotName)}

@@ -1,5 +1,6 @@
 import {describe, expect, it} from 'vitest';
 import {render} from 'vitest-browser-lit';
+import {userEvent} from '@vitest/browser/context';
 import {html} from 'lit';
 import './transmitter-stack.js';
 import type {
@@ -55,7 +56,7 @@ describe('obc-transmitter-stack', () => {
     const [omitted, missing] = segments(el);
 
     expect([omitted.fractionDigits, omitted.maxDigits]).toEqual([1, 0]);
-    expect(missing.fractionDigits).toBeUndefined();
+    expect(missing.fractionDigits).toBeNaN();
     expect(missing.maxDigits).toBeNaN();
   });
 
@@ -89,6 +90,24 @@ describe('obc-transmitter-stack', () => {
     second.shadowRoot!.querySelector('button')!.click();
 
     expect(details).toEqual([{index: 1, value: values[1]}]);
+  });
+
+  it('reaches each segment with Tab and activates it with Enter and Space', async () => {
+    const el = await setup([{value: 1}, {value: 2}]);
+    const indexes: number[] = [];
+    el.addEventListener('value-click', (event) =>
+      indexes.push(
+        (event as CustomEvent<TransmitterStackValueClickDetail>).detail.index
+      )
+    );
+    await Promise.all(segments(el).map((segment) => segment.updateComplete));
+
+    await userEvent.tab();
+    await userEvent.keyboard('{Enter}');
+    await userEvent.tab();
+    await userEvent.keyboard(' ');
+
+    expect(indexes).toEqual([0, 1]);
   });
 
   it('renders an id-tag row in every cell once any value has one', async () => {
