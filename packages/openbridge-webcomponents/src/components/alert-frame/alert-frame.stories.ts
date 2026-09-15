@@ -290,6 +290,53 @@ export const CriticalUnacked: Story = {
   },
 };
 
+const ADJACENT_FRAMES: {
+  status: AlertType;
+  mode: ObcAlertFrameMode;
+  thickness: ObcAlertFrameThickness;
+}[] = [
+  {
+    status: AlertType.Warning,
+    mode: ObcAlertFrameMode.unackedActive,
+    thickness: ObcAlertFrameThickness.Small,
+  },
+  {
+    status: AlertType.Alarm,
+    mode: ObcAlertFrameMode.ackedActive,
+    thickness: ObcAlertFrameThickness.Small,
+  },
+  {
+    status: AlertType.Caution,
+    mode: ObcAlertFrameMode.ackedActive,
+    thickness: ObcAlertFrameThickness.Large,
+  },
+];
+
+export const AdjacentFrames: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Frames on touching components share one edge: every stroke is centred on the edge of its component. The top frame is in its on phase, so its wider stroke shows on both sides of the thinner one below it.',
+      },
+    },
+  },
+  render: () =>
+    html`<div style="display: grid; width: 240px; padding: 16px">
+      ${ADJACENT_FRAMES.map(
+        (frame) =>
+          html`<div style="position: relative; height: 56px">
+            <obc-alert-frame
+              .type=${ObcAlertFrameType.Regular}
+              .status=${frame.status}
+              .mode=${frame.mode}
+              .thickness=${frame.thickness}
+            ></obc-alert-frame>
+          </div>`
+      )}
+    </div>`,
+};
+
 export const FlashComparison: Story = {
   tags: ['skip-test'],
   render: () => {
