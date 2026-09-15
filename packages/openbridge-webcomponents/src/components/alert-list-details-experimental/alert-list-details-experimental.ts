@@ -569,11 +569,12 @@ export class ObcAlertListDetailsExperimental extends LitElement {
   }
 
   private get gridColumns() {
-    return this.columns
-      .map(
-        (column, index) => column.width ?? (index === 0 ? '1fr' : 'min-content')
-      )
-      .join(' ');
+    const columnTracks = this.columns.map(
+      (column, index) => column.width ?? (index === 0 ? '1fr' : 'min-content')
+    );
+    // The empty trailing track takes the table body's end padding and
+    // scrollbar gutter, which obc-table's subgrids add to the last track.
+    return [...columnTracks, 'min-content'].join(' ');
   }
 
   private get metadata() {
