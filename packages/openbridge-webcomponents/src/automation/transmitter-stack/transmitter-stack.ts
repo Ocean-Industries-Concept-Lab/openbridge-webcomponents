@@ -79,10 +79,10 @@ export class ObcTransmitterStack extends LitElement {
   @property({type: String}) lineType: LineType | undefined = undefined;
   @property({type: Array}) values: TransmitterStackValue[] = [];
 
-  private handleValueClick(index: number): void {
+  private handleValueClick(index: number, value: TransmitterStackValue): void {
     this.dispatchEvent(
       new CustomEvent<TransmitterStackValueClickDetail>('value-click', {
-        detail: {index, value: this.values[index]},
+        detail: {index, value},
         bubbles: true,
         composed: true,
       })
@@ -111,7 +111,7 @@ export class ObcTransmitterStack extends LitElement {
           .hintedZeros=${entry.hintedZeros ?? false}
           .hasSignSpacer=${entry.hasSignSpacer ?? false}
           .hasIcon=${Boolean(entry.iconSlotName)}
-          @click=${() => this.handleValueClick(index)}
+          @click=${() => this.handleValueClick(index, entry)}
         >
           ${entry.iconSlotName
             ? html`<slot name=${entry.iconSlotName} slot="icon"></slot>`

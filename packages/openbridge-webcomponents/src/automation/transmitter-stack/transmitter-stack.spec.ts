@@ -92,6 +92,24 @@ describe('obc-transmitter-stack', () => {
     expect(details).toEqual([{index: 1, value: values[1]}]);
   });
 
+  it('reports the rendered value when values change before the next render', async () => {
+    const rendered = [{value: 1}, {value: 2}];
+    const el = await setup(rendered);
+    const details: TransmitterStackValueClickDetail[] = [];
+    el.addEventListener('value-click', (event) =>
+      details.push(
+        (event as CustomEvent<TransmitterStackValueClickDetail>).detail
+      )
+    );
+    const second = segments(el)[1];
+    await second.updateComplete;
+
+    el.values = [{value: 3}, {value: 4}];
+    second.shadowRoot!.querySelector('button')!.click();
+
+    expect(details).toEqual([{index: 1, value: rendered[1]}]);
+  });
+
   it('reaches each segment with Tab and activates it with Enter and Space', async () => {
     const el = await setup([{value: 1}, {value: 2}]);
     const indexes: number[] = [];
