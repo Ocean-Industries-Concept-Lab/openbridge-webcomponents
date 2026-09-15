@@ -1,6 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {
-  AlertListMode,
+  FilterModes,
   ObcAlertListCellClickEvent,
   ObcAlertListDetailsExperimental,
   ackColumn,
@@ -51,7 +51,7 @@ const meta: Meta<typeof ObcAlertListDetailsExperimental> = {
   tags: ['6.0', 'experimental'],
   component: 'obc-alert-list-details-experimental',
   args: {
-    selectedMode: AlertListMode.ALL,
+    filterMode: FilterModes.ALL,
     showHeader: true,
     columns: [
       statusColumn(),
@@ -145,11 +145,15 @@ const meta: Meta<typeof ObcAlertListDetailsExperimental> = {
   },
   argTypes: {
     columns: {control: false},
+    filterMode: {
+      control: {type: 'select'},
+      options: Object.values(FilterModes),
+    },
   },
   render: (args) => {
     return html` <obc-alert-list-details-experimental
       data-testid="alert-menu"
-      .selectedMode=${args.selectedMode}
+      .filterMode=${args.filterMode}
       .columns=${args.columns}
       .showHeader=${args.showHeader}
       @cell-click=${handleAck}
@@ -207,7 +211,7 @@ export const OneItem: Story = {
   render: (args) => {
     return html` <obc-alert-list-details-experimental
       @cell-click=${handleAck}
-      .selectedMode=${args.selectedMode}
+      .filterMode=${args.filterMode}
       .alerts=${args.alerts}
       style="height: 100vh; display: block;"
     >
@@ -273,7 +277,7 @@ export const LevelCategories: Story = {
   render: (args) => {
     return html` <obc-alert-list-details-experimental
       @cell-click=${handleAck}
-      .selectedMode=${args.selectedMode}
+      .filterMode=${args.filterMode}
       .alerts=${args.alerts}
       .columns=${args.columns}
       style="height: 100vh; display: block;"
@@ -373,7 +377,7 @@ export const GroupedAlerts: Story = {
   render: (args) => {
     return html` <obc-alert-list-details-experimental
       @cell-click=${handleAck}
-      .selectedMode=${args.selectedMode}
+      .filterMode=${args.filterMode}
       .alerts=${args.alerts}
       .columns=${args.columns}
       style="height: 100vh; display: block;"
@@ -430,7 +434,7 @@ export const CyclicGrouping: Story = {
   render: (args) => {
     return html` <obc-alert-list-details-experimental
       @cell-click=${handleAck}
-      .selectedMode=${args.selectedMode}
+      .filterMode=${args.filterMode}
       .alerts=${args.alerts}
       .columns=${args.columns}
       style="height: 100vh; display: block;"
@@ -521,7 +525,7 @@ export const CycleWithDescendants: Story = {
   render: (args) => {
     return html` <obc-alert-list-details-experimental
       @cell-click=${handleAck}
-      .selectedMode=${args.selectedMode}
+      .filterMode=${args.filterMode}
       .alerts=${args.alerts}
       .columns=${args.columns}
       style="height: 100vh; display: block;"
@@ -557,12 +561,12 @@ export const SlottedAckButtons: Story = {
         .forEach((button) => (button.disabled = true));
     };
     return html` <obc-alert-list-details-experimental
-      .selectedMode=${args.selectedMode}
+      .filterMode=${args.filterMode}
       .alerts=${args.alerts}
       .columns=${args.columns}
       style="height: 100vh; display: block;"
     >
-      ${getAlertRows(args.alerts, args.selectedMode)
+      ${getAlertRows(args.alerts, args.filterMode)
         .filter(({alert}) => !isAcknowledged(alert) && !alert.noAck)
         .map(
           (row) =>

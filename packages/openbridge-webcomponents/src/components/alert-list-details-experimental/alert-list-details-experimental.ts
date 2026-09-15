@@ -40,7 +40,7 @@ import {
 } from '../table/table.js';
 import '../scrollbar/scrollbar.js';
 
-export enum AlertListMode {
+export enum FilterModes {
   UNACKED = 'unacked',
   ALL = 'all',
   SHELVED = 'shelved',
@@ -103,18 +103,18 @@ export interface AlertListRow {
   expandable: boolean;
 }
 
-export function getAlertListModeData(selectedMode: AlertListMode) {
-  if (selectedMode === AlertListMode.ALL)
+export function getFilterModeData(filterMode: FilterModes) {
+  if (filterMode === FilterModes.ALL)
     return {
-      name: AlertListMode.ALL,
+      name: FilterModes.ALL,
       title: msg('All'),
       emptyTitle: msg('No active alerts'),
       emptyIcon: html`<obi-alerts></obi-alerts>`,
       filter: (alert: Alert) => !isShelved(alert) && isActive(alert),
     };
-  else if (selectedMode === AlertListMode.UNACKED)
+  else if (filterMode === FilterModes.UNACKED)
     return {
-      name: AlertListMode.UNACKED,
+      name: FilterModes.UNACKED,
       title: msg('Unacked'),
       emptyTitle: msg('No unacknowledged alerts'),
       emptyIcon: html`<obi-unacknowledged></obi-unacknowledged>`,
@@ -124,31 +124,31 @@ export function getAlertListModeData(selectedMode: AlertListMode) {
         !excludedFromUnackedFilter(alert.type) &&
         !isShelved(alert),
     };
-  else if (selectedMode === AlertListMode.SHELVED)
+  else if (filterMode === FilterModes.SHELVED)
     return {
-      name: AlertListMode.SHELVED,
+      name: FilterModes.SHELVED,
       title: msg('Shelved'),
       emptyTitle: msg('No shelved alerts'),
       emptyIcon: html`<obi-alerts-shelf></obi-alerts-shelf>`,
       filter: (alert: Alert) => isShelved(alert),
     };
-  else if (selectedMode === AlertListMode.BLOCKED)
+  else if (filterMode === FilterModes.BLOCKED)
     return {
-      name: AlertListMode.BLOCKED,
+      name: FilterModes.BLOCKED,
       title: msg('Blocked'),
       emptyTitle: msg('No blocked alerts'),
       emptyIcon: html`<obi-alerts-active></obi-alerts-active>`,
       filter: (alert: Alert) => isBlocked(alert),
     };
-  else if (selectedMode === AlertListMode.RECTIFIED)
+  else if (filterMode === FilterModes.RECTIFIED)
     return {
-      name: AlertListMode.RECTIFIED,
+      name: FilterModes.RECTIFIED,
       title: msg('Rectified'),
       emptyTitle: msg('No rectified alerts'),
       emptyIcon: html`<obi-alarm-rectified-iec></obi-alarm-rectified-iec>`,
       filter: (alert: Alert) => !isActive(alert),
     };
-  else throw new Error('Invalid selected mode');
+  else throw new Error('Invalid filter mode');
 }
 
 export function canAckFilter(filter: (alert: Alert) => boolean) {
@@ -349,14 +349,14 @@ function walkAlertRows(
 
 /**
  * Every row `obc-alert-list-details-experimental` can show for these alerts
- * and mode, rows inside collapsed groups included. An alert that is a member
+ * and filter mode, rows inside collapsed groups included. An alert that is a member
  * of several groups gets one row, and one `rowId`, under each.
  */
 export function getAlertRows(
   alerts: Alert[],
-  selectedMode: AlertListMode
+  filterMode: FilterModes
 ): AlertListRow[] {
-  const {filter} = getAlertListModeData(selectedMode);
+  const {filter} = getFilterModeData(filterMode);
   return walkAlertRows(alerts.filter(filter), () => true);
 }
 
@@ -371,8 +371,8 @@ export function getAlertRows(
  * - **Column factories:** `statusColumn()`, `ackColumn()`, `timeColumn()` and
  *   `tagIdColumn()` build the standard data columns; each takes overrides
  *   such as `label`, `width` or `dividerRight`.
- * - **Modes:** `selectedMode` filters to unacknowledged, all, shelved,
- *   blocked or rectified alerts, with an empty state per mode.
+ * - **Filter modes:** `filterMode` lists unacknowledged, all, shelved,
+ *   blocked or rectified alerts, with an empty state per filter mode.
  * - **Grouping:** an alert listing group ids in `memberOf` renders under each
  *   of those groups; groups nest and can be collapsed.
  *
@@ -384,7 +384,7 @@ export function getAlertRows(
  *   alert, row id and column key, and `cell-slots-change` fires when the list
  *   changes. The Svelte wrapper renders its `cell` snippet once per entry. An
  *   alert in two groups has two rows, so it gets two entries.
- * - Without a wrapper, build the names from `getAlertRows(alerts, selectedMode)`
+ * - Without a wrapper, build the names from `getAlertRows(alerts, filterMode)`
  *   and `alertListCellSlotName(key, rowId)`, or read `cellSlots`.
  * - Clicks on buttons, links and inputs in a cell do not fire `row-click`.
  *
@@ -396,7 +396,7 @@ export function getAlertRows(
  * ```
  * with `columns` set to `[statusColumn(), {key: 'ack', label: 'ACK-status', slot: true}]`.
  *
- * @property selectedMode - Which alerts to list.
+ * @property filterMode - Which alerts to list.
  * @property alerts - Alerts to list.
  * @property columns - Columns in display order.
  * @property showHeader - Whether to show the column header row.
@@ -409,7 +409,7 @@ export function getAlertRows(
  */
 @customElement('obc-alert-list-details-experimental')
 export class ObcAlertListDetailsExperimental extends LitElement {
-  @property({type: String}) selectedMode: AlertListMode = AlertListMode.ALL;
+  @property({type: String}) filterMode: FilterModes = FilterModes.ALL;
   @property({type: Array}) alerts: Alert[] = [];
   @property({type: Array, attribute: false}) columns: AlertListColumn[] = [
     statusColumn(),
@@ -438,12 +438,12 @@ export class ObcAlertListDetailsExperimental extends LitElement {
     if (
       !changed.has('alerts') &&
       !changed.has('columns') &&
-      !changed.has('selectedMode')
+      !changed.has('filterMode')
     ) {
       return;
     }
     const slotColumns = this.columns.filter(isSlotColumn);
-    const next = getAlertRows(this.alerts, this.selectedMode).flatMap((row) =>
+    const next = getAlertRows(this.alerts, this.filterMode).flatMap((row) =>
       slotColumns.map((column) => ({
         name: alertListCellSlotName(column.key, row.rowId),
         alert: row.alert,
@@ -579,7 +579,7 @@ export class ObcAlertListDetailsExperimental extends LitElement {
   }
 
   private get metadata() {
-    return getAlertListModeData(this.selectedMode);
+    return getFilterModeData(this.filterMode);
   }
 
   private buildVisibleRows(): ObcTableRow[] {

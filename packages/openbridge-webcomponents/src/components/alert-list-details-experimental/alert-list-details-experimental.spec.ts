@@ -1,6 +1,6 @@
 import {describe, it, expect} from 'vitest';
 import {
-  AlertListMode,
+  FilterModes,
   ObcAlertListCellSlotsChangeEvent,
   alertListCellSlotName,
   getAlertRows,
@@ -22,12 +22,12 @@ function alert(id: string, overrides: Partial<Alert> = {}): Alert {
   } as Alert;
 }
 
-const rowIds = (alerts: Alert[], mode = AlertListMode.ALL) =>
-  getAlertRows(alerts, mode).map((row) => row.rowId);
+const rowIds = (alerts: Alert[], filterMode = FilterModes.ALL) =>
+  getAlertRows(alerts, filterMode).map((row) => row.rowId);
 
 describe('getAlertRows', () => {
   it('gives an ungrouped alert its encoded id as row id', () => {
-    const rows = getAlertRows([alert('a/b')], AlertListMode.ALL);
+    const rows = getAlertRows([alert('a/b')], FilterModes.ALL);
     expect(rows).toEqual([
       {
         rowId: 'a%2Fb',
@@ -46,7 +46,7 @@ describe('getAlertRows', () => {
         alert('sensor', {memberOf: ['gyro']}),
         alert('drift', {memberOf: ['sensor']}),
       ],
-      AlertListMode.ALL
+      FilterModes.ALL
     );
     expect(
       rows.map(({rowId, level, expandable}) => [rowId, level, expandable])
@@ -67,13 +67,13 @@ describe('getAlertRows', () => {
     ).toEqual(['gyro', 'gyro/power', 'radar', 'radar/power']);
   });
 
-  it('makes a member a root when the mode filters its group out', () => {
+  it('makes a member a root when the filter mode hides its group', () => {
     const alerts = [
       alert('group', {active: {rectifiedTime: new Date()}}),
       alert('member', {memberOf: ['group']}),
     ];
-    expect(rowIds(alerts, AlertListMode.ALL)).toEqual(['member']);
-    expect(rowIds(alerts, AlertListMode.RECTIFIED)).toEqual(['group']);
+    expect(rowIds(alerts, FilterModes.ALL)).toEqual(['member']);
+    expect(rowIds(alerts, FilterModes.RECTIFIED)).toEqual(['group']);
   });
 
   it('recovers a membership cycle with no root', () => {
