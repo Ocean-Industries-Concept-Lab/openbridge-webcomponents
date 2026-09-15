@@ -9,6 +9,8 @@
 .alert-list {
   min-height: 0;
   flex-grow: 0;
+  /* default; the inline style built from columns[].width overrides it */
+  --alert-list-grid-columns: 1fr;
 }
 
 .spacer {
