@@ -130,6 +130,7 @@ obc-readout-block {
 }
 
 .value-area {
+  margin-inline-start: auto; /* right-aligns a label-less row's value, which has no label container to push it */
   display: inline-flex;
   align-items: flex-end;
   justify-content: flex-end;
