@@ -1,8 +1,10 @@
 import {describe, it, expect} from 'vitest';
 import {
   AlertListMode,
+  ObcAlertListCellSlotsChangeEvent,
   alertListCellSlotName,
   getAlertRows,
+  statusColumn,
 } from './alert-list-details-experimental.js';
 import {Alert, AlertType} from '../../types.js';
 
@@ -81,6 +83,42 @@ describe('getAlertRows', () => {
         alert('pump-b', {memberOf: ['pump-a']}),
       ])
     ).toEqual(['pump-a', 'pump-a/pump-b']);
+  });
+});
+
+describe('cellSlots', () => {
+  it('lists every row of each slot column and fires only when it changes', async () => {
+    const el = document.createElement('obc-alert-list-details-experimental');
+    const details: ObcAlertListCellSlotsChangeEvent['detail'][] = [];
+    el.addEventListener('cell-slots-change', (event) =>
+      details.push((event as ObcAlertListCellSlotsChangeEvent).detail)
+    );
+    el.columns = [statusColumn(), {key: 'ack', label: 'ACK', slot: true}];
+    el.alerts = [
+      alert('gyro'),
+      alert('radar'),
+      alert('power', {memberOf: ['gyro', 'radar']}),
+    ];
+    document.body.append(el);
+    await el.updateComplete;
+
+    expect(el.cellSlots.map((slot) => slot.name)).toEqual([
+      'cell-ack-gyro',
+      'cell-ack-gyro/power',
+      'cell-ack-radar',
+      'cell-ack-radar/power',
+    ]);
+    expect(details).toEqual([el.cellSlots]);
+
+    el.defaultExpanded = false;
+    el.alerts = [...el.alerts];
+    await el.updateComplete;
+    expect(details).toHaveLength(1);
+
+    el.columns = [statusColumn()];
+    await el.updateComplete;
+    expect(details[details.length - 1]).toEqual([]);
+    el.remove();
   });
 });
 

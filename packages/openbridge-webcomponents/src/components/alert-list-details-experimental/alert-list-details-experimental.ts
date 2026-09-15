@@ -1,4 +1,4 @@
-import {LitElement, html, unsafeCSS} from 'lit';
+import {LitElement, PropertyValues, html, unsafeCSS} from 'lit';
 import {customElement} from '../../decorator.js';
 import compentStyle from './alert-list-details-experimental.css?inline';
 import {msg} from '@lit/localize';
@@ -84,6 +84,16 @@ export interface AlertListSlotColumn extends AlertListColumnBase {
 export type AlertListColumn = AlertListDataColumn | AlertListSlotColumn;
 
 export type AlertListColumnOptions = Partial<AlertListColumnBase>;
+
+/** One cell of a slot column, for every row including rows in collapsed groups. */
+export interface AlertListCellSlot {
+  name: string;
+  alert: Alert;
+  rowId: string;
+  columnKey: string;
+}
+
+export type ObcAlertListCellSlotsChangeEvent = CustomEvent<AlertListCellSlot[]>;
 
 export interface AlertListRow {
   rowId: string;
@@ -369,10 +379,12 @@ export function getAlertRows(
  * - Use a slot column when the cell content must be owned by the consumer,
  *   for example a button the application disables or removes later. Slotted
  *   content stays in the light DOM, so it can be looked up by id.
- * - Slot names are `cell-<key>-<rowId>`. Get the row ids from
- *   `getAlertRows(alerts, selectedMode)` and the names from
- *   `alertListCellSlotName(key, rowId)`. An alert in two groups has two rows,
- *   so it needs content in two slots.
+ * - Slot names are `cell-<key>-<rowId>`. `cellSlots` lists every one, with its
+ *   alert, row id and column key, and `cell-slots-change` fires when the list
+ *   changes. The Svelte wrapper renders its `cell` snippet once per entry. An
+ *   alert in two groups has two rows, so it gets two entries.
+ * - Without a wrapper, build the names from `getAlertRows(alerts, selectedMode)`
+ *   and `alertListCellSlotName(key, rowId)`, or read `cellSlots`.
  * - Clicks on buttons, links and inputs in a cell do not fire `row-click`.
  *
  * ## Example
@@ -391,6 +403,7 @@ export function getAlertRows(
  * @slot cell-<key>-<rowId> - Content of the cell in slot column `<key>` for row `<rowId>`.
  * @fires {ObcAlertListCellClickEvent} cell-click - Fired when the user clicks a button rendered by a data column, such as the one from `ackColumn()`.
  * @fires {ObcRowClickEvent} row-click - Fired when the user clicks a row.
+ * @fires {ObcAlertListCellSlotsChangeEvent} cell-slots-change - Fired when `cellSlots` changes; the detail is the new list.
  * @experimental
  */
 @customElement('obc-alert-list-details-experimental')
@@ -411,6 +424,55 @@ export class ObcAlertListDetailsExperimental extends LitElement {
   @state() private expansionOverrides = new Map<string, boolean>();
 
   private alertByRowId = new Map<string, Alert>();
+
+  private _cellSlots: AlertListCellSlot[] = [];
+  private cellSlotsChanged = false;
+
+  /** Slot of every cell in a slot column, rows in collapsed groups included. */
+  get cellSlots(): AlertListCellSlot[] {
+    return this._cellSlots;
+  }
+
+  override willUpdate(changed: PropertyValues<this>) {
+    if (
+      !changed.has('alerts') &&
+      !changed.has('columns') &&
+      !changed.has('selectedMode')
+    ) {
+      return;
+    }
+    const slotColumns = this.columns.filter(isSlotColumn);
+    const next = getAlertRows(this.alerts, this.selectedMode).flatMap((row) =>
+      slotColumns.map((column) => ({
+        name: alertListCellSlotName(column.key, row.rowId),
+        alert: row.alert,
+        rowId: row.rowId,
+        columnKey: column.key,
+      }))
+    );
+    const unchanged =
+      next.length === this._cellSlots.length &&
+      next.every(
+        (slot, index) =>
+          slot.name === this._cellSlots[index].name &&
+          slot.alert === this._cellSlots[index].alert
+      );
+    if (!unchanged) {
+      this._cellSlots = next;
+      this.cellSlotsChanged = true;
+    }
+  }
+
+  override updated() {
+    if (this.cellSlotsChanged) {
+      this.cellSlotsChanged = false;
+      this.dispatchEvent(
+        new CustomEvent('cell-slots-change', {
+          detail: this._cellSlots,
+        }) as ObcAlertListCellSlotsChangeEvent
+      );
+    }
+  }
 
   public getVisibleAlerts(): Alert[] {
     const seen = new Set<string>();
