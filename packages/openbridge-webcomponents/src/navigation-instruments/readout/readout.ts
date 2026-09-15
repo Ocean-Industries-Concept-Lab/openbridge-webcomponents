@@ -851,15 +851,7 @@ export class ObcReadout extends LitElement {
     }
     const thickness = alert.thickness ?? ObcAlertFrameThickness.Small;
     return html`
-      <div
-        class=${classMap({
-          'value-alert-overlay': true,
-          // The outward offset is thickness-dependent (see the CSS): large frames
-          // draw a wider outline, so the box must sit further out to stay centred.
-          'thickness-large': thickness === ObcAlertFrameThickness.Large,
-        })}
-        aria-hidden="true"
-      >
+      <div class="value-alert-overlay" aria-hidden="true">
         <obc-alert-frame
           part="value-alert-frame"
           .type=${alert.type ?? ObcAlertFrameType.Regular}

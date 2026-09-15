@@ -1,99 +1,150 @@
 import {describe, expect, it} from 'vitest';
-import './alert-button.js';
-import {ObcAlertButton} from './alert-button.js';
 import {render} from 'vitest-browser-lit';
-import {html} from 'lit';
+import {html, type TemplateResult} from 'lit';
+import './alert-button.js';
+import {ObcAlertButton, ObcAlertButtonType} from './alert-button.js';
+import type {ObcAlertButtonItem} from '../alert-button-item/alert-button-item.js';
 import {AlertType, FlashingSpeed} from '../../types.js';
 
-function durations(el: HTMLElement): number[] {
-  return el
-    .getAnimations()
-    .map((a) => (a.effect as KeyframeEffect).getTiming().duration as number);
+async function setup(
+  template: TemplateResult = html`<obc-alert-button
+    .nAlerts=${3}
+    .alertType=${AlertType.Alarm}
+    counter
+    blinking
+  ></obc-alert-button>`
+) {
+  const screen = render(template);
+  const el = screen.container.querySelector(
+    'obc-alert-button'
+  ) as ObcAlertButton;
+  await el.updateComplete;
+  const item = el.shadowRoot!.querySelector(
+    'obc-alert-button-item'
+  ) as ObcAlertButtonItem;
+  await item.updateComplete;
+  return {el, item};
 }
 
-describe('obc-alert-button flashing lifecycle', () => {
-  async function setup(
-    props: Partial<
-      Pick<
-        ObcAlertButton,
-        'nAlerts' | 'alertType' | 'blinking' | 'flashingSpeed'
-      >
-    > = {}
-  ) {
-    const screen = render(
+describe('obc-alert-button', () => {
+  it('forwards the alert state to its item', async () => {
+    const {item} = await setup(
       html`<obc-alert-button
-        .nAlerts=${props.nAlerts ?? 1}
-        .alertType=${props.alertType ?? AlertType.Alarm}
-        .blinking=${props.blinking ?? true}
-        .flashingSpeed=${props.flashingSpeed ?? FlashingSpeed.Default}
+        .nAlerts=${3}
+        .alertType=${AlertType.Warning}
+        .type=${ObcAlertButtonType.Enhanced}
+        .flashingSpeed=${FlashingSpeed.Slow}
+        counter
+        blinking
+        large
       ></obc-alert-button>`
     );
-    const el = screen.container.querySelector(
-      'obc-alert-button'
-    ) as ObcAlertButton;
-    await el.updateComplete;
-    return el;
-  }
 
-  it('flashes fast for a blinking alarm button with alerts', async () => {
-    const el = await setup();
-
-    expect(durations(el)).toEqual([800]);
-    expect(el.shadowRoot!.querySelector('.wrapper.flash-fast')).not.toBeNull();
-  });
-
-  it('flashes slow for a warning and never for caution', async () => {
-    expect(durations(await setup({alertType: AlertType.Warning}))).toEqual([
-      1600,
+    expect([
+      item.type,
+      item.alertType,
+      item.nAlerts,
+      item.counter,
+      item.blinking,
+      item.flashingSpeed,
+      item.fillHeight,
+    ]).toEqual([
+      ObcAlertButtonType.Enhanced,
+      AlertType.Warning,
+      3,
+      true,
+      true,
+      FlashingSpeed.Slow,
+      true,
     ]);
-    expect(durations(await setup({alertType: AlertType.Caution}))).toEqual([]);
   });
 
-  it('keeps blinking as the gate', async () => {
-    expect(durations(await setup({blinking: false}))).toEqual([]);
-    expect(durations(await setup({nAlerts: 0}))).toEqual([]);
+  it('forwards the global counter and drops it in flat mode', async () => {
+    const counts = {countAlarm: 1, countWarning: 10, countCaution: 15};
+    const {el, item} = await setup(
+      html`<obc-alert-button
+        globalCounter
+        .nAlerts=${26}
+        .counts=${counts}
+        .shelvedCount=${9}
+      ></obc-alert-button>`
+    );
+    expect([item.globalCounter, item.counts, item.shelvedCount]).toEqual([
+      true,
+      counts,
+      9,
+    ]);
+
+    el.flatMaxBreakpointPx = window.innerWidth + 1;
+    await el.updateComplete;
+    await item.updateComplete;
+
+    expect([item.type, item.globalCounter]).toEqual([
+      ObcAlertButtonType.Flat,
+      false,
+    ]);
   });
 
-  it('honours an explicit flashingSpeed', async () => {
-    expect(
-      durations(await setup({flashingSpeed: FlashingSpeed.VerySlow}))
-    ).toEqual([3200]);
-    expect(
-      durations(await setup({flashingSpeed: FlashingSpeed.Fixed}))
-    ).toEqual([]);
+  it('passes the flat breakpoint on as the item type', async () => {
+    const {item} = await setup(
+      html`<obc-alert-button
+        .nAlerts=${3}
+        .flatMaxBreakpointPx=${window.innerWidth + 1}
+      ></obc-alert-button>`
+    );
+
+    expect(item.type).toBe(ObcAlertButtonType.Flat);
   });
 
-  it('cancels the animation on disconnect', async () => {
-    const el = await setup();
-
-    el.parentElement!.removeChild(el);
-
+  it('flashes through its item', async () => {
+    const {el, item} = await setup();
+    expect(item.getAnimations()).toHaveLength(1);
     expect(el.getAnimations()).toHaveLength(0);
+
+    el.blinking = false;
+    await el.updateComplete;
+    await item.updateComplete;
+
+    expect(item.getAnimations()).toHaveLength(0);
   });
 
-  it('resumes flashing after disconnect and reconnect', async () => {
-    const el = await setup();
-    const parent = el.parentElement!;
+  it('joins the item to the silence button', async () => {
+    const {el, item} = await setup(
+      html`<obc-alert-button
+        .nAlerts=${3}
+        showSilenceButton
+      ></obc-alert-button>`
+    );
+    expect(item.hasAttribute('data-group-item-not-last')).toBe(true);
 
-    parent.removeChild(el);
-    expect(el.getAnimations()).toHaveLength(0);
-
-    // Reconnect without touching any property. firstUpdated() will not run
-    // again, so this only passes if the controller re-syncs on connect.
-    parent.appendChild(el);
+    el.showSilenceButton = false;
     await el.updateComplete;
 
-    expect(durations(el)).toEqual([800]);
+    expect(item.hasAttribute('data-group-item-not-last')).toBe(false);
   });
 
-  it('does not accumulate animations across repeated updates', async () => {
-    const el = await setup();
+  it('fires click-alert when the item is clicked', async () => {
+    const {el, item} = await setup();
+    let fired = 0;
+    el.addEventListener('click-alert', () => fired++);
 
-    el.large = true;
-    await el.updateComplete;
-    el.counter = true;
-    await el.updateComplete;
+    item.shadowRoot!.querySelector('button')!.click();
 
-    expect(el.getAnimations()).toHaveLength(1);
+    expect(fired).toBe(1);
+  });
+
+  it('names the silence button', async () => {
+    const {el} = await setup(
+      html`<obc-alert-button
+        .nAlerts=${3}
+        showSilenceButton
+      ></obc-alert-button>`
+    );
+
+    expect(
+      el
+        .shadowRoot!.querySelector('.silence-button')!
+        .getAttribute('aria-label')
+    ).toBe('Silence');
   });
 });

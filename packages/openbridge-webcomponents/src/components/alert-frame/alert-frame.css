@@ -24,12 +24,12 @@
   position: relative;
   width: 100%;
   height: 100%;
-  border-radius: calc(
-    var(--ui-components-button-border-radius) + var(--thickness) / 2
-  );
+  /* The stroke's centreline follows this radius, like a Figma centre stroke. */
+  border-radius: var(--ui-components-button-border-radius);
   outline: var(--thickness) solid var(--bg-color);
-  outline-offset: 0;
-  /* +2 px outward while on, both thicknesses (Figma Flash=yes: 2 → 4 px). */
+  /* Centre stroke: frames on touching components share one edge. */
+  outline-offset: calc(-1 * var(--thickness) / 2);
+  /* +2 px while on, 1 px each side, both thicknesses (Figma Flash=yes: 2 → 4 px). */
   --blink-width: 2px;
   &.thickness-small {
     --thickness: 2px;
@@ -62,7 +62,9 @@
   --flash-transition: 50ms linear;
 
   &.flash-effect-outline-eased {
-    transition: outline-width var(--flash-transition);
+    transition:
+      outline-width var(--flash-transition),
+      outline-offset var(--flash-transition);
 
     .flap {
       transition: box-shadow var(--flash-transition);
@@ -88,14 +90,10 @@
   &.unacked-active,
   &.unacked-rectified {
     outline-width: calc(var(--thickness) + var(--blink-width-dynamic));
-  }
-
-  &.unacked-active {
-    --flap-grow: var(--blink-width-dynamic);
-  }
-
-  &.unacked-rectified {
-    /* The dashed stroke is centred, so it moves out by half its growth. */
+    outline-offset: calc(
+      -1 * (var(--thickness) + var(--blink-width-dynamic)) / 2
+    );
+    /* The stroke grows on both sides, so its outer edge moves by half. */
     --flap-grow: calc(var(--blink-width-dynamic) / 2);
   }
 
@@ -160,9 +158,9 @@
   gap: 2px;
 
   &.small {
-    top: calc(-1 * var(--thickness));
+    top: calc(-1 * var(--thickness) / 2);
     right: calc(
-      -1 * var(--app-components-alert-frame-icon-size) - var(--thickness) / 2 -
+      -1 * var(--app-components-alert-frame-icon-size) -
         var(--ui-components-badge-padding) * 2
     );
   }
@@ -272,10 +270,10 @@
 
   &.large {
     flex-direction: column;
-    top: calc(-1 * var(--thickness));
-    bottom: calc(-1 * var(--thickness));
+    top: calc(-1 * var(--thickness) / 2);
+    bottom: calc(-1 * var(--thickness) / 2);
     right: calc(
-      -1 * var(--app-components-alert-frame-icon-size) + var(--thickness) / 2 -
+      -1 * var(--app-components-alert-frame-icon-size) + var(--thickness) -
         var(--ui-components-badge-padding) * 2
     );
     border-radius: 0px
@@ -285,13 +283,12 @@
 
   &.bottom,
   &.top {
-    left: calc(-1 * var(--thickness));
-    right: calc(-1 * var(--thickness));
+    left: calc(-1 * var(--thickness) / 2);
+    right: calc(-1 * var(--thickness) / 2);
     padding: var(--app-components-alert-frame-large-flip-padding-vertical)
       var(--app-components-alert-frame-large-flip-4px-padding-horizontal);
     bottom: calc(
-      -1 * var(--thickness) / 2 -
-        var(--global-typography-ui-label-line-height) -
+      -1 * var(--global-typography-ui-label-line-height) -
         var(--app-components-alert-frame-large-flip-padding-vertical) * 2
     );
     border-radius: 0px 0px var(--button-border-radius-bottom-right)
@@ -308,7 +305,7 @@
     .text-size-large & {
       @mixin font-body;
       bottom: calc(
-        var(--thickness) / 2 - var(--global-typography-ui-body-line-height) -
+        var(--thickness) - var(--global-typography-ui-body-line-height) -
           var(--app-components-alert-frame-large-flip-padding-vertical) * 2
       );
 
@@ -321,8 +318,7 @@
   &.top {
     bottom: unset !important;
     top: calc(
-      -1 * var(--thickness) / 2 -
-        var(--global-typography-ui-label-line-height) -
+      -1 * var(--global-typography-ui-label-line-height) -
         var(--app-components-alert-frame-large-flip-padding-vertical) * 2
     );
     border-radius: var(--button-border-radius-bottom-right)
@@ -330,7 +326,7 @@
 
     .text-size-large & {
       top: calc(
-        var(--thickness) / 2 - var(--global-typography-ui-body-line-height) -
+        var(--thickness) - var(--global-typography-ui-body-line-height) -
           var(--app-components-alert-frame-large-flip-padding-vertical) * 2
       );
     }

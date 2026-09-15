@@ -47,6 +47,22 @@ export const ALERT_SEVERITY_PRIORITY = [
   AlertType.LevelDiagnostic,
 ];
 
+/**
+ * Number of active alerts per severity: the level severities and the IEC
+ * severities `alarm`, `warning` and `caution`. `rankAlertCounts` in
+ * `alert-severity.ts` orders them and leaves out counts of zero or less.
+ */
+export interface AlertCounts {
+  countLevelCritical?: number;
+  countAlarm?: number;
+  countLevelHigh?: number;
+  countWarning?: number;
+  countLevelMedium?: number;
+  countCaution?: number;
+  countLevelLow?: number;
+  countLevelDiagnostic?: number;
+}
+
 export enum AlertCategory {
   a = 'a',
   b = 'b',

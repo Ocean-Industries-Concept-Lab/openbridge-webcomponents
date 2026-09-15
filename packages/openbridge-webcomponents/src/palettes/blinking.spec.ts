@@ -24,14 +24,14 @@ describe('installFlashing', () => {
   });
 
   it.each(FLASH_TEMPOS)(
-    '%s runs on for its on-time, off for 400 ms, from the document origin',
+    '%s runs on for its on-time, then off for its off-time, from the document origin',
     (tempo) => {
       const el = host();
       const cancel = installFlashing(el, tempo);
       const [anim] = el.getAnimations();
       const effect = anim.effect as KeyframeEffect;
       const timing = effect.getTiming();
-      expect(timing.duration).toBe(FLASH_ON_MS[tempo] + FLASH_OFF_MS);
+      expect(timing.duration).toBe(FLASH_ON_MS[tempo] + FLASH_OFF_MS[tempo]);
       expect(timing.iterations).toBe(Infinity);
       const frames = effect.getKeyframes();
       expect(frames).toHaveLength(3);
@@ -46,32 +46,47 @@ describe('installFlashing', () => {
     }
   );
 
-  it('nests the cycles so every tempo dips together', () => {
+  it('follows the tempo table: on for 400 ms, off for 400, 1200 or 2800 ms', () => {
+    expect(
+      FLASH_TEMPOS.map((tempo) => [FLASH_ON_MS[tempo], FLASH_OFF_MS[tempo]])
+    ).toEqual([
+      [400, 400],
+      [400, 1200],
+      [400, 2800],
+    ]);
+  });
+
+  it('nests the cycles so every tempo lights up together', () => {
     expect(flashPeriodMs(FlashingSpeed.Fast)).toBe(800);
     expect(flashPeriodMs(FlashingSpeed.Slow)).toBe(1600);
     expect(flashPeriodMs(FlashingSpeed.VerySlow)).toBe(3200);
   });
 
-  it('drives the on/off variables in step', () => {
-    const el = host();
-    installFlashing(el, FlashingSpeed.Fast);
-    const [anim] = el.getAnimations();
-    const on = () =>
-      getComputedStyle(el).getPropertyValue(
-        flashVariable(FlashingSpeed.Fast, 'on')
-      );
-    const off = () =>
-      getComputedStyle(el).getPropertyValue(
-        flashVariable(FlashingSpeed.Fast, 'off')
-      );
-    anim.pause();
-    anim.currentTime = 100;
-    expect(on().trim()).toBe('1');
-    expect(off().trim()).toBe('0');
-    anim.currentTime = 500;
-    expect(on().trim()).toBe('0');
-    expect(off().trim()).toBe('1');
-  });
+  it.each(FLASH_TEMPOS)(
+    '%s drives the on/off variables in step, on phase first',
+    (tempo) => {
+      const el = host();
+      installFlashing(el, tempo);
+      const [anim] = el.getAnimations();
+      const read = (phase: 'on' | 'off') =>
+        getComputedStyle(el)
+          .getPropertyValue(flashVariable(tempo, phase))
+          .trim();
+      const period = flashPeriodMs(tempo);
+      anim.pause();
+      for (const [time, lit] of [
+        [100, true],
+        [500, false],
+        [period - 100, false],
+        [period + 100, true],
+      ] as const) {
+        anim.currentTime = time;
+        expect([time, read('on'), read('off')]).toEqual(
+          lit ? [time, '1', '0'] : [time, '0', '1']
+        );
+      }
+    }
+  );
 
   it('blinkingAll installs one animation per tempo and cancels them together', () => {
     const el = host();

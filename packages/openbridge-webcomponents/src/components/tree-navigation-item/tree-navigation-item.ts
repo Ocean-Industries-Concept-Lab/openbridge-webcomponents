@@ -8,7 +8,8 @@ import '../../icons/icon-chevron-right-google.js';
 import '../../icons/icon-alert-header-aggregated-iec.js';
 import '../../icons/icon-alert-header-group-iec.js';
 import '../badge/badge.js';
-import {AlertType, ALERT_SEVERITY_PRIORITY} from '../../types.js';
+import type {AlertCounts} from '../../types.js';
+import {rankAlertCounts, type RankedAlertCount} from '../../alert-severity.js';
 
 /**
  * Guide line drawn for one indentation column. Normally computed by
@@ -43,36 +44,16 @@ export enum TreeTerminalType {
 }
 
 /**
- * Per-severity alert counts for a tree row's trailing badge(s). Each `count*`
- * is the number of active alerts of that severity at or beneath the row — the
- * level severities `level-critical`, `level-high`, `level-medium`, `level-low`,
- * and `level-diagnostic`, plus the IEC severities `alarm`, `warning`, and
- * `caution`. Badges are ordered and aggregated by the shared
- * `ALERT_SEVERITY_PRIORITY` ranking, most to least severe.
+ * Per-severity alert counts for a tree row's trailing badge(s): the active
+ * alerts at or beneath the row, ordered by `rankAlertCounts`.
  *
  * Set `combine` to collapse the counts into a single badge showing the total,
  * styled as the highest category present; otherwise one badge is rendered per
  * non-zero count.
  */
-export interface TreeNavigationItemAlerts {
+export interface TreeNavigationItemAlerts extends AlertCounts {
   /** Collapse all counts into one badge: total count, highest-severity style. */
   combine?: boolean;
-  /** Number of level-critical alerts. */
-  countLevelCritical?: number;
-  /** Number of alarm alerts. */
-  countAlarm?: number;
-  /** Number of level-high alerts. */
-  countLevelHigh?: number;
-  /** Number of warning alerts. */
-  countWarning?: number;
-  /** Number of level-medium alerts. */
-  countLevelMedium?: number;
-  /** Number of caution alerts. */
-  countCaution?: number;
-  /** Number of level-low alerts. */
-  countLevelLow?: number;
-  /** Number of level-diagnostic alerts. */
-  countLevelDiagnostic?: number;
 }
 
 /**
@@ -177,8 +158,8 @@ export class ObcTreeNavigationItem extends LitElement {
    * every count at 0) for a row with no alerts. See {@link TreeNavigationItemAlerts}.
    *
    * - When `combine` is true, a single badge is shown: its number is the sum
-   *   of all counts and its severity is the highest category present
-   *   (critical → alarm → warning → caution).
+   *   of all counts and its severity is the highest category present, ranked
+   *   by `ALERT_SEVERITY_PRIORITY`.
    * - Otherwise one badge is shown per count greater than 0, ordered most to
    *   least severe and spaced by the alert-counter spacing token.
    */
@@ -193,40 +174,9 @@ export class ObcTreeNavigationItem extends LitElement {
     this.wrapperElement?.focus(options);
   }
 
-  /**
-   * The badge(s) to render from `alerts`, as `{type, count}` pairs already in
-   * severity order, ranked by `ALERT_SEVERITY_PRIORITY`.
-   *
-   * - No `alerts`, or every count 0 → no badges.
-   * - `combine` → a single pair: the summed count typed as the highest
-   *   category that has any alerts.
-   * - Otherwise → one pair per count greater than 0.
-   */
-  private get alertBadges(): {type: AlertType; count: number}[] {
-    const alerts = this.alerts;
-    if (!alerts) return [];
-    const countByType: Partial<Record<AlertType, number>> = {
-      [AlertType.LevelCritical]: alerts.countLevelCritical ?? 0,
-      [AlertType.Alarm]: alerts.countAlarm ?? 0,
-      [AlertType.LevelHigh]: alerts.countLevelHigh ?? 0,
-      [AlertType.Warning]: alerts.countWarning ?? 0,
-      [AlertType.LevelMedium]: alerts.countLevelMedium ?? 0,
-      [AlertType.Caution]: alerts.countCaution ?? 0,
-      [AlertType.LevelLow]: alerts.countLevelLow ?? 0,
-      [AlertType.LevelDiagnostic]: alerts.countLevelDiagnostic ?? 0,
-    };
-    // Order (and, when combining, rank) by the shared severity priority,
-    // keeping only the severities this component exposes.
-    const ranked = ALERT_SEVERITY_PRIORITY.filter(
-      (type) => type in countByType
-    ).map((type) => ({type, count: countByType[type] ?? 0}));
-    if (alerts.combine) {
-      const total = ranked.reduce((sum, b) => sum + b.count, 0);
-      const highest = ranked.find((b) => b.count > 0);
-      if (!highest) return [];
-      return [{type: highest.type, count: total}];
-    }
-    return ranked.filter((b) => b.count > 0);
+  /** The badge(s) to render from `alerts`, ranked by `rankAlertCounts`. */
+  private get alertBadges(): RankedAlertCount[] {
+    return this.alerts ? rankAlertCounts(this.alerts, this.alerts.combine) : [];
   }
 
   /** A root-level row has no ancestor columns, so it draws no connector lines. */
