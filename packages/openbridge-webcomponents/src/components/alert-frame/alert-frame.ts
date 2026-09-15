@@ -66,10 +66,10 @@ export enum ObcAlertFrameMode {
 }
 
 /**
- * How the frame renders the on phase of a flash: `outline` grows the outline
- * outward by 2 px in one step (the design); `outline-eased` grows it the same
- * way over a 50 ms transition. The eased variant exists for design evaluation
- * and may be removed (#1224).
+ * How the frame renders the on phase of a flash: `outline` grows the centred
+ * stroke by 2 px, 1 px on each side, in one step (the design); `outline-eased`
+ * grows it the same way over a 50 ms transition. The eased variant exists for
+ * design evaluation and may be removed (#1224).
  */
 export enum ObcAlertFrameFlashEffect {
   Outline = 'outline',
@@ -94,7 +94,7 @@ interface DashBox {
   radii: RoundedRect['radii'];
 }
 
-/** Room the svg leaves around the box for the stroke's on-phase growth. */
+/** On-phase stroke growth; the svg leaves half of stroke plus growth around the box. */
 const DASH_FLASH_GROWTH_PX = 2;
 
 function sameDashBox(a: DashBox, b: DashBox | undefined): boolean {
@@ -130,6 +130,7 @@ export interface AlertFrameConfig {
  *   - `large-side-flip`: Adds a larger, vertical side flap with a status icon and optional custom icon.
  *   - `bottom-flip`: Adds a bottom flap with a status icon, label, and timer slots.
  * - **Thickness options:** Choose between `small` (thin border) and `large` (thick border) for visual emphasis.
+ * - **Centred stroke:** The stroke straddles the frame edge, half over the content and half outside, so frames on touching components share one edge. While flashing it grows by 1 px on each side.
  * - **Status indication:** Displays different color schemes and icons for the legacy statuses (`alarm`, `warning`, `caution`) and the level statuses (`level-critical`, `level-high`, `level-medium`, `level-low`, `level-diagnostic`).
  * - **Acknowledgement mode:** The `mode` property reflects the alert lifecycle state — `acked-active` (default, steady), `unacked-active` (flashes) and `unacked-rectified` (dashed, flashes) — and `flashingSpeed` picks the tempo.
  * - **Content wrapping:** When `wrapContent` is true, the frame wraps and sizes itself to its slotted content rather than overlaying a fixed region.
@@ -202,7 +203,7 @@ export interface AlertFrameConfig {
  *   (critical/alarm/high fast, warning/medium slow, low very slow, every rectified alert very
  *   slow, caution and diagnostic fixed), `fast`, `slow`, `very-slow` force a tempo, `fixed`
  *   never flashes. Acknowledged frames are always steady.
- * @property flashEffect - `outline` (default) grows the outline by 2 px while on in one step;
+ * @property flashEffect - `outline` (default) grows the outline by 2 px, 1 px each side, while on in one step;
  *   `outline-eased` grows it over a 50 ms transition, a design-evaluation option.
  * @slot - Default slot for main alert content.
  * @slot icon - Custom icon for the flap (large-side-flip, bottom-flip).
@@ -327,18 +328,16 @@ export class ObcAlertFrame extends LitElement {
     if (this.mode !== ObcAlertFrameMode.unackedRectified || !box) {
       return nothing;
     }
-    const pad = box.thickness + DASH_FLASH_GROWTH_PX;
-    // A second, wider path for the on phase would have longer corner arcs
-    // and its dashes would drift around the frame.
+    const pad = (box.thickness + DASH_FLASH_GROWTH_PX) / 2;
+    // The centreline is the wrapper edge, as for the solid outline. A second,
+    // wider path for the on phase would have longer corner arcs and its
+    // dashes would drift around the frame.
     const centreline: RoundedRect = {
-      x: pad - box.thickness / 2,
-      y: pad - box.thickness / 2,
-      width: box.width + box.thickness,
-      height: box.height + box.thickness,
-      // A radius of 0 is a sharp edge and must stay square.
-      radii: box.radii.map((r) =>
-        r > 0 ? r + box.thickness / 2 : 0
-      ) as RoundedRect['radii'],
+      x: pad,
+      y: pad,
+      width: box.width,
+      height: box.height,
+      radii: box.radii,
     };
     const width = box.width + 2 * pad;
     const height = box.height + 2 * pad;

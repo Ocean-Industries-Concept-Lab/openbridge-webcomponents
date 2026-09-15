@@ -221,6 +221,21 @@ describe('obc-alert-frame flashing lifecycle', () => {
     expect(midway).toBeLessThan(4);
   });
 
+  it('centres the stroke on the frame edge and grows it 1 px each side while on', async () => {
+    const el = await setup(ObcAlertFrameMode.unackedActive);
+    const wrapper = el.shadowRoot!.querySelector('.wrapper') as HTMLElement;
+    const outline = () => {
+      const style = getComputedStyle(wrapper);
+      return [style.outlineWidth, style.outlineOffset];
+    };
+    const [flash] = el.getAnimations();
+    flash.pause();
+    flash.currentTime = 100;
+    expect(outline()).toEqual(['4px', '-2px']);
+    flash.currentTime = 500;
+    expect(outline()).toEqual(['2px', '-1px']);
+  });
+
   describe('rectified dash', () => {
     it('draws the 12/6 dash as one svg path whose stroke width flashes', async () => {
       const el = await setup(ObcAlertFrameMode.unackedRectified);
@@ -263,7 +278,10 @@ describe('obc-alert-frame flashing lifecycle', () => {
 
       const sharp = path().getAttribute('d')!;
       expect(sharp).not.toBe(rounded);
-      expect(sharp.startsWith('M3 3 H')).toBe(true);
+      // The sharp corner sits on the wrapper corner: the svg is shifted by -pad.
+      expect(sharp.startsWith('M2 2 H')).toBe(true);
+      const svg = el.shadowRoot!.querySelector('svg.dash') as SVGSVGElement;
+      expect(svg.style.getPropertyValue('--dash-pad')).toBe('2px');
     });
 
     it('removes the svg when the mode leaves unacked-rectified', async () => {

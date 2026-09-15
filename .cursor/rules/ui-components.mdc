@@ -52,13 +52,17 @@ fast 400/400, slow 400/1200, very-slow 400/2800 ms on/off. The table lives in
 () => host.resolvedFlashingSpeed)` (`src/palettes/flashing-controller.ts`)
   installs one animation per host and owns connect/disconnect. CSS reads
   `--flash-<tempo>-on/off` through a `flash-<tempo>` class.
-- Every animation starts at document time 0, so all elements dip together;
-  do not add per-element delays.
+- Every animation starts at document time 0, so all elements light up
+  together; do not add per-element delays.
+- The frame's stroke is centred on the frame edge (`outline-offset` of minus
+  half the width), so frames on touching components share one edge, and the
+  flash grows it 1 px on each side. Place the frame box on the edge to frame;
+  never offset it by half a stroke.
 - The rectified frame is an SVG overlay (`svg.dash`, one `roundedRectPath`
-  stroke, `stroke-dasharray: 12 6`) because CSS outlines have no dash array.
-  The flash animates `stroke-width` on that one path; a second, wider path has
-  longer corner arcs and its dashes drift around the frame. Geometry is
-  measured from the wrapper, never derived from props.
+  stroke on the wrapper edge, `stroke-dasharray: 12 6`) because CSS outlines
+  have no dash array. The flash animates `stroke-width` on that one path; a
+  second, wider path has longer corner arcs and its dashes drift around the
+  frame. Geometry is measured from the wrapper, never derived from props.
 - Visual tests park all Web Animations at 100 ms (see `testing-visual.md`),
   so flashing stories snapshot the on state.
 

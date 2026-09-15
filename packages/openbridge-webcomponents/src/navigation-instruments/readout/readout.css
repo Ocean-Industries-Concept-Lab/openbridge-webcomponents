@@ -173,40 +173,15 @@ obc-readout-block {
 }
 
 /* ---------- Value alert overlay ----------
- * A pure overlay around the value reading: it reserves no space, so toggling
- * the frame never shifts content. The box is offset outward by
- * (padding − stroke/2) on each axis so the alert-frame's outline (drawn
- * outside its box) lands CENTRED on the 4px/2px padding line. */
+ * Reserves no space, so toggling the frame never shifts content. The box sits
+ * on the 4px/2px padding line, where obc-alert-frame centres its stroke. */
 .value-alert-overlay {
   --_readout-value-frame-padding-horizontal: 4px;
   --_readout-value-frame-padding-vertical: 2px;
-  /* Must match obc-alert-frame's ACTUAL outline width so the stroke stays
-     centred on the 4px/2px line. `thickness-small` is hard-coded to 2px in
-     alert-frame.css, so use a literal 2px here; `thickness-large` is handled
-     below. */
-  --_readout-value-frame-stroke: 2px;
   position: absolute;
-  inset-inline: calc(
-    -1 *
-      (
-        var(--_readout-value-frame-padding-horizontal) -
-          var(--_readout-value-frame-stroke) / 2
-      )
-  );
-  inset-block: calc(
-    -1 *
-      (
-        var(--_readout-value-frame-padding-vertical) -
-          var(--_readout-value-frame-stroke) / 2
-      )
-  );
+  inset-inline: calc(-1 * var(--_readout-value-frame-padding-horizontal));
+  inset-block: calc(-1 * var(--_readout-value-frame-padding-vertical));
   pointer-events: none;
-}
-
-.value-alert-overlay.thickness-large {
-  --_readout-value-frame-stroke: var(
-    --global-size-spacing-border-weight-alertframe
-  );
 }
 
 /* ---------- Meta zone (label + unit) ----------
