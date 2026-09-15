@@ -24,6 +24,8 @@ export interface TransmitterStackValue {
   maxDigits?: number;
   hintedZeros?: boolean;
   hasSignSpacer?: boolean;
+  /** Show a degree column between the value and the unit (e.g. `12.3°` then `C`). */
+  hasDegree?: boolean;
   /**
    * Name of the light-DOM slot projected as this segment's icon. Unique within
    * the stack: an element is projected once, so a repeated name leaves later
@@ -39,7 +41,7 @@ export interface TransmitterStackValueClickDetail {
 
 /**
  * `<obc-transmitter-stack>` – Several transmitter readings side by side in one
- * joined chip, attached to a line on a process diagram by a single leader line.
+ * joined chip, attached to a line by a single leader line.
  *
  * Each entry of `values` renders an `<obc-transmitter-button>` segment with its
  * own icon, value, unit and id tag. The segments take equal widths, set by the
@@ -52,7 +54,7 @@ export interface TransmitterStackValueClickDetail {
  * - **Values** – `value` and `unit` per segment. `idTag` adds a label row under
  *   every segment once any value has one, so the chip stays aligned.
  * - **Formatting** – per value `fractionDigits` (default `1`), `maxDigits`
- *   (default `0`), `hintedZeros` and `hasSignSpacer`, formatted like
+ *   (default `0`), `hintedZeros`, `hasSignSpacer` and `hasDegree`, formatted like
  *   `<obc-transmitter-button>`. An omitted key takes its default; a key set to
  *   `null`, `undefined` or `NaN` renders the reading as the unavailable dash.
  * - **Icons** – `iconSlotName` projects the light-DOM element with that slot
@@ -65,10 +67,10 @@ export interface TransmitterStackValueClickDetail {
  * - **Empty** – with no `values` nothing renders, leader line included.
  *
  * ### Usage Guidelines
- * Use when one measuring point reports several quantities that belong to one
- * tag on the diagram. For a single reading, a tag pill or a trend graph, use
- * `<obc-transmitter>`. Each segment's hit area is `<obc-transmitter-button>`'s
- * chip (26 px high), below the 48 px touch-target token; see its design note.
+ * Use when one source reports several readings that share one leader line. For
+ * a single reading, a tag pill or a trend graph, use `<obc-transmitter>`. Each
+ * segment's hit area is `<obc-transmitter-button>`'s chip (24 px high), below
+ * the 48 px touch-target token; see its design note.
  *
  * ### Slots
  * | Slot Name        | Conditions                      | Purpose                       |
@@ -120,6 +122,7 @@ export class ObcTransmitterStack extends LitElement {
           .maxDigits=${'maxDigits' in entry ? (entry.maxDigits ?? NaN) : 0}
           .hintedZeros=${entry.hintedZeros ?? false}
           .hasSignSpacer=${entry.hasSignSpacer ?? false}
+          .hasDegree=${entry.hasDegree ?? false}
           .hasIcon=${Boolean(entry.iconSlotName)}
           .idTag=${entry.idTag ?? ''}
           @click=${() => this.handleValueClick(index, entry)}

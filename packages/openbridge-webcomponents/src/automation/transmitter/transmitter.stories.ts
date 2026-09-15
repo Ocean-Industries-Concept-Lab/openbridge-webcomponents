@@ -25,11 +25,12 @@ const meta: Meta<typeof ObcTransmitter> = {
     size: TransmitterButtonSize.regular,
     lineType: LineType.fluid,
     value: 12.3,
-    unit: '°C',
+    unit: 'C',
     fractionDigits: 1,
     maxDigits: 0,
     hintedZeros: false,
     hasSignSpacer: false,
+    hasDegree: true,
     hasIcon: true,
     hasAdvice: false,
     adviceValue: 123,
@@ -96,6 +97,7 @@ function renderComponent(args: ObcTransmitter) {
       .maxDigits=${args.maxDigits}
       .hintedZeros=${args.hintedZeros}
       .hasSignSpacer=${args.hasSignSpacer}
+      .hasDegree=${args.hasDegree}
       .hasIcon=${args.hasIcon}
       .hasAdvice=${args.hasAdvice}
       .adviceValue=${args.adviceValue}

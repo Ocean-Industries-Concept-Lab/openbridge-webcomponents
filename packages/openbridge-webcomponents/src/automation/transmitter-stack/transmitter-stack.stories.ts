@@ -8,20 +8,21 @@ import './transmitter-stack.js';
 import {TransmitterOrientation} from '../transmitter/transmitter.js';
 import {crossDecorator} from '../../storybook-util.js';
 import '../../icons/icon-temperature-air.js';
+import '../../icons/icon-pressure.js';
 import '../../icons/icon-placeholder.js';
 import '../horizontal-line/horizontal-line.js';
 import {LineMedium, LineType} from '../index.js';
 
 const designValues: TransmitterStackValue[] = [
-  {value: 12.3, unit: '°C', idTag: '#0000', iconSlotName: 'temperature'},
-  {value: 12.3, unit: 'mVs', idTag: '#0000', iconSlotName: 'flow'},
   {
-    value: 1.23,
-    unit: 'm',
+    value: 12.3,
+    unit: 'C',
+    hasDegree: true,
     idTag: '#0000',
-    fractionDigits: 2,
-    iconSlotName: 'level',
+    iconSlotName: 'temperature',
   },
+  {value: 12.3, unit: 'mVs', idTag: '#0000', iconSlotName: 'pressure'},
+  {value: 12.3, unit: 'm', idTag: '#0000', iconSlotName: 'level'},
 ];
 
 const meta: Meta<typeof ObcTransmitterStack> = {
@@ -67,7 +68,7 @@ function renderComponent(args: ObcTransmitterStack) {
       .values=${args.values}
     >
       <obi-temperature-air slot="temperature"></obi-temperature-air>
-      <obi-placeholder slot="flow"></obi-placeholder>
+      <obi-pressure slot="pressure"></obi-pressure>
       <obi-placeholder slot="level"></obi-placeholder>
     </obc-transmitter-stack>
   `;

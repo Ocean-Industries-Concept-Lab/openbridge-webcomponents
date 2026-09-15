@@ -34,9 +34,9 @@ export enum TransmitterType {
 }
 
 /**
- * `<obc-transmitter>` – A readout label that attaches to a line on a process
- * diagram via a leader line, showing a measured value, a tag identifier, or a
- * value paired with a trend graph.
+ * `<obc-transmitter>` – A readout label that attaches to a line via a leader
+ * line, showing a measured value, a tag identifier, or a value paired with a
+ * trend graph.
  *
  * Positioning (orientation + leader line) follows `<obc-automation-readout>`.
  * The value chip is an `<obc-transmitter-button>` and the trend is an
@@ -55,6 +55,7 @@ export enum TransmitterType {
  *   `hasSignSpacer` are forwarded to the value chip to control decimal
  *   precision, muted leading-zero padding (e.g. `0012.3`) and the sign
  *   column. The advice and setpoint segments reuse the same formatting.
+ *   `hasDegree` adds a degree column between the value and the unit.
  *   `value`, `adviceValue` and `setpointValue` render dashes when they are
  *   `NaN`, `null` or `undefined`.
  *
@@ -67,6 +68,7 @@ export enum TransmitterType {
  * @property hasSignSpacer - Reserve a minus-sign column on every segment, filled by the real sign
  *   only while a value is negative, so the chip's width does not change
  *   across zero.
+ * @property hasDegree - Show a degree column between the value and the unit (e.g. `12.3°` then `C`).
  * @property hasAlert - Wrap the transmitter in an `<obc-alert-frame>` (alarm) when true.
  * @property adviceValue - Advisory value shown in the leading advice segment when `hasAdvice`.
  * @property setpointValue - Target value shown in the setpoint segment when `hasSetPoint`.
@@ -92,6 +94,7 @@ export class ObcTransmitter extends LitElement {
 
   @property({type: Boolean}) hintedZeros = false;
   @property({type: Boolean}) hasSignSpacer = false;
+  @property({type: Boolean}) hasDegree = false;
   @property({type: String}) size: TransmitterButtonSize =
     TransmitterButtonSize.regular;
   @property({type: Boolean}) hasIcon = false;
@@ -133,6 +136,7 @@ export class ObcTransmitter extends LitElement {
         .maxDigits=${this.maxDigits}
         .hintedZeros=${this.hintedZeros}
         .hasSignSpacer=${this.hasSignSpacer}
+        .hasDegree=${this.hasDegree}
         .hasIcon=${this.hasIcon}
         .hasAdvice=${this.hasAdvice}
         .adviceValue=${this.adviceValue}

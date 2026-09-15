@@ -10,6 +10,7 @@ import type {
   TransmitterStackValueClickDetail,
 } from './transmitter-stack.js';
 import type {ObcTransmitterButton} from '../transmitter-button/transmitter-button.js';
+import type {ObcReadoutListItem} from '../../navigation-instruments/readout-list-item/readout-list-item.js';
 
 async function setup(values: TransmitterStackValue[]) {
   const screen = render(
@@ -46,6 +47,28 @@ describe('obc-transmitter-stack', () => {
     ).toEqual([
       [12.3, '°C', 1],
       [1.23, 'm', 2],
+    ]);
+  });
+
+  it('renders each reading through a label-less readout list item', async () => {
+    const el = await setup([
+      {value: 12.3, unit: 'C', hasDegree: true},
+      {value: 1, unit: 'm'},
+    ]);
+    const items = await Promise.all(
+      segments(el).map(async (segment) => {
+        await segment.updateComplete;
+        return segment.shadowRoot!.querySelector(
+          'obc-readout-list-item'
+        ) as ObcReadoutListItem;
+      })
+    );
+
+    expect(
+      items.map((item) => [item.value, item.unit, item.hasDegree, item.label])
+    ).toEqual([
+      [12.3, 'C', true, undefined],
+      [1, 'm', false, undefined],
     ]);
   });
 
