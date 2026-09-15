@@ -1,0 +1,56 @@
+* {
+  box-sizing: border-box;
+}
+
+:host {
+  display: block;
+}
+
+.transmitter {
+  @mixin transmitter-leader;
+}
+
+.values {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr; /* equal segments, sized by the widest reading (Figma 25656:45218) */
+}
+
+.cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.orientation-top .cell {
+  flex-direction: column-reverse;
+}
+
+.segment {
+  width: 100%;
+}
+
+.segment::part(button) {
+  flex: 1;
+  justify-content: center;
+}
+
+/* Neighbours share one border line; only the chip's outer corners round. */
+.cell:not(:last-child) .segment::part(button) {
+  border-right: none;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.cell:not(:first-child) .segment::part(button) {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.id-tag {
+  @mixin transmitter-id-tag;
+  min-height: var(
+    --global-typography-instrument-label-line-height
+  ); /* an empty tag keeps the chip row aligned */
+}
