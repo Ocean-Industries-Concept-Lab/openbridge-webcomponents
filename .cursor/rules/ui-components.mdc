@@ -42,7 +42,7 @@ Most interactive components support elevation variants (`flat`, `normal`, `raise
 ## Alert flashing
 
 Alert frame, alert icon and alert button flash on one tempo table (#1224):
-fast 400/400, slow 1200/400, very-slow 2800/400 ms on/off. The table lives in
+fast 400/400, slow 400/1200, very-slow 400/2800 ms on/off. The table lives in
 `src/palettes/blinking.ts` and nowhere else.
 
 - `resolveFlashingSpeed(speed, type, phase)` in `src/alert-severity.ts` is the

@@ -1,9 +1,17 @@
 import {FlashingSpeed, type FlashTempo} from '../types.js';
 
-/** Shared off phase: nested cycles (800/1600/3200 ms) then dip together (#1224). */
-export const FLASH_OFF_MS = 400;
-
+/** Shared on phase: every tempo lights up for the first 400 ms of its cycle. */
 export const FLASH_ON_MS: Record<FlashTempo, number> = {
+  [FlashingSpeed.Fast]: 400,
+  [FlashingSpeed.Slow]: 400,
+  [FlashingSpeed.VerySlow]: 400,
+};
+
+/**
+ * The off phase carries the tempo. The cycles (800/1600/3200 ms) nest, so
+ * every tempo lights up together at the start of the longest one (#1224).
+ */
+export const FLASH_OFF_MS: Record<FlashTempo, number> = {
   [FlashingSpeed.Fast]: 400,
   [FlashingSpeed.Slow]: 1200,
   [FlashingSpeed.VerySlow]: 2800,
@@ -16,7 +24,7 @@ export const FLASH_TEMPOS: readonly FlashTempo[] = [
 ];
 
 export function flashPeriodMs(tempo: FlashTempo): number {
-  return FLASH_ON_MS[tempo] + FLASH_OFF_MS;
+  return FLASH_ON_MS[tempo] + FLASH_OFF_MS[tempo];
 }
 
 /** Animated custom property name; `on` reads 1 during the on phase, `off` 1 during the off phase. */

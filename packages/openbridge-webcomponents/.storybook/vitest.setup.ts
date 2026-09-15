@@ -26,7 +26,7 @@ vis.setup();
 
 // Web Animations ignore the zeroed CSS durations above. Park every animation
 // 100 ms into its cycle, inside the on phase of all alert flash tempos, so a
-// snapshot never lands in a 400 ms dip. Registered after vis.setup(): Vitest
+// snapshot never lands in an off phase. Registered after vis.setup(): Vitest
 // runs afterEach hooks last-registered first, so this precedes the capture.
 afterEach(() => {
   for (const animation of document.getAnimations()) {
