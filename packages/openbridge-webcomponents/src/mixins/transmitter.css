@@ -66,6 +66,16 @@
   &.orientation-right::before {
     left: -4px;
   }
+
+  /* Left/right anchor on the chip row's middle (Figma 25656:45233), so the id
+     tag hangs below out of flow; its parent must be the containing block. */
+  &:is(.orientation-left, .orientation-right):not(.has-alert) .id-tag {
+    position: absolute;
+    top: calc(100% + 2px);
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+  }
 }
 
 @define-mixin transmitter-id-tag {

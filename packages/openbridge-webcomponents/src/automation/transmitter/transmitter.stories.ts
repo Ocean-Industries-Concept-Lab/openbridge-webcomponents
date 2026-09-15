@@ -117,6 +117,16 @@ export const Value: Story = {
   render: (args) => renderComponent(args as ObcTransmitter),
 };
 
+export const Left: Story = {
+  args: {orientation: TransmitterOrientation.left},
+  render: (args) => renderComponent(args as ObcTransmitter),
+};
+
+export const Right: Story = {
+  args: {orientation: TransmitterOrientation.right},
+  render: (args) => renderComponent(args as ObcTransmitter),
+};
+
 export const Indicator: Story = {
   args: {type: TransmitterType.indicator},
   render: (args) => renderComponent(args as ObcTransmitter),

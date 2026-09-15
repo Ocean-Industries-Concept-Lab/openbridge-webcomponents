@@ -11,6 +11,7 @@
 }
 
 .content {
+  position: relative; /* containing block for the left/right id tag (transmitter-leader) */
   display: flex;
   flex-direction: column;
   align-items: center;
