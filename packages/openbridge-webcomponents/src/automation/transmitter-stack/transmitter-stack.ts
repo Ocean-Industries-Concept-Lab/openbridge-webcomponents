@@ -7,7 +7,7 @@ import {LineType} from '../index.js';
 import {
   TransmitterOrientation,
   transmitterLeaderOffset,
-} from '../transmitter/transmitter.js';
+} from '../transmitter/transmitter-shared.js';
 import {TransmitterButtonVariant} from '../transmitter-button/transmitter-button.js';
 import '../transmitter-button/transmitter-button.js';
 
@@ -16,7 +16,7 @@ export interface TransmitterStackValue {
   /** The reading; `null` or `NaN` renders the unavailable dash. */
   value: number | null;
   unit?: string;
-  /** Identifier shown under the segment (above it for `top`). */
+  /** Identifier shown under the segment (above it for `top`) and read as part of its name. */
   idTag?: string;
   /** Decimal precision; `1` when the key is omitted. */
   fractionDigits?: number;
@@ -24,7 +24,11 @@ export interface TransmitterStackValue {
   maxDigits?: number;
   hintedZeros?: boolean;
   hasSignSpacer?: boolean;
-  /** Name of the light-DOM slot projected as this segment's icon. */
+  /**
+   * Name of the light-DOM slot projected as this segment's icon. Unique within
+   * the stack: an element is projected once, so a repeated name leaves later
+   * segments with an empty icon.
+   */
   iconSlotName?: string;
 }
 
@@ -52,13 +56,19 @@ export interface TransmitterStackValueClickDetail {
  *   `<obc-transmitter-button>`. An omitted key takes its default; a key set to
  *   `null`, `undefined` or `NaN` renders the reading as the unavailable dash.
  * - **Icons** – `iconSlotName` projects the light-DOM element with that slot
- *   name as the segment's icon. The name is chosen per value, so it carries no
- *   `@slot` tag (the wrapper generator needs literal names).
+ *   name as the segment's icon; names must be unique within the stack. The
+ *   name is chosen per value, so it carries no `@slot` tag (the wrapper
+ *   generator needs literal names).
+ * - **Accessible name** – each segment is a native button named by its
+ *   reading, unit and `idTag`; the visible tag is hidden from assistive
+ *   technology so it is not read twice.
+ * - **Empty** – with no `values` nothing renders, leader line included.
  *
  * ### Usage Guidelines
  * Use when one measuring point reports several quantities that belong to one
  * tag on the diagram. For a single reading, a tag pill or a trend graph, use
- * `<obc-transmitter>`.
+ * `<obc-transmitter>`. Each segment's hit area is `<obc-transmitter-button>`'s
+ * chip (26 px high), below the 48 px touch-target token; see its design note.
  *
  * ### Slots
  * | Slot Name        | Conditions                      | Purpose                       |
@@ -111,6 +121,7 @@ export class ObcTransmitterStack extends LitElement {
           .hintedZeros=${entry.hintedZeros ?? false}
           .hasSignSpacer=${entry.hasSignSpacer ?? false}
           .hasIcon=${Boolean(entry.iconSlotName)}
+          .idTag=${entry.idTag ?? ''}
           @click=${() => this.handleValueClick(index, entry)}
         >
           ${entry.iconSlotName
@@ -118,13 +129,18 @@ export class ObcTransmitterStack extends LitElement {
             : nothing}
         </obc-transmitter-button>
         ${hasIdTags
-          ? html`<div class="id-tag">${entry.idTag ?? ''}</div>`
+          ? html`<div class="id-tag" aria-hidden="true">
+              ${entry.idTag ?? ''}
+            </div>`
           : nothing}
       </div>
     `;
   }
 
   override render() {
+    if (this.values.length === 0) {
+      return nothing;
+    }
     const hasIdTags = this.values.some((entry) => Boolean(entry.idTag));
     return html`
       <div

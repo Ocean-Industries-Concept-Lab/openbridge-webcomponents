@@ -3,7 +3,11 @@ import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import componentStyle from './transmitter.css?inline';
 import {customElement} from '../../decorator.js';
-import {LineType, lineWidth} from '../index.js';
+import {LineType} from '../index.js';
+import {
+  TransmitterOrientation,
+  transmitterLeaderOffset,
+} from './transmitter-shared.js';
 import {
   TransmitterButtonSize,
   TransmitterButtonVariant,
@@ -17,25 +21,16 @@ import '../../navigation-instruments/indicator-graph/indicator-graph.js';
 import {ObcAlertFrameType} from '../../components/alert-frame/alert-frame.js';
 import '../../components/alert-frame/alert-frame.js';
 
-export enum TransmitterOrientation {
-  top = 'top',
-  right = 'right',
-  bottom = 'bottom',
-  left = 'left',
-}
+export {
+  TransmitterOrientation,
+  transmitterLeaderOffset,
+} from './transmitter-shared.js';
 
 export enum TransmitterType {
   indicator = 'indicator',
   value = 'value',
   horizontalGraph = 'horizontal-graph',
   verticalGraph = 'vertical-graph',
-}
-
-/** Half the line's stroke width, so the leader line starts on the line's edge. */
-export function transmitterLeaderOffset(
-  lineType: LineType | undefined
-): number {
-  return lineType === undefined ? 0 : lineWidth(lineType) / 2;
 }
 
 /**
@@ -144,6 +139,7 @@ export class ObcTransmitter extends LitElement {
         .hasSetPoint=${this.hasSetPoint}
         .setpointValue=${this.setpointValue}
         .label=${this.tag}
+        .idTag=${this.idTag}
       >
         <slot name="icon" slot="icon"></slot>
       </obc-transmitter-button>
@@ -170,7 +166,7 @@ export class ObcTransmitter extends LitElement {
     if (!this.idTag) {
       return nothing;
     }
-    return html`<div class="id-tag">${this.idTag}</div>`;
+    return html`<div class="id-tag" aria-hidden="true">${this.idTag}</div>`;
   }
 
   private renderContent() {

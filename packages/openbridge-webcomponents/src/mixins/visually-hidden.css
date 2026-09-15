@@ -1,0 +1,10 @@
+/* Removes content from view while keeping it in the accessibility tree. */
+@define-mixin visually-hidden {
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}

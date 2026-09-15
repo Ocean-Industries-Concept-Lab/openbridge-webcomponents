@@ -81,3 +81,7 @@
   @mixin font-instrument-value-regular-neutral;
   color: var(--element-neutral-color);
 }
+
+.visually-hidden {
+  @mixin visually-hidden;
+}

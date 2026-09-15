@@ -61,6 +61,11 @@ const readoutSizeBySize: Record<TransmitterButtonSize, ReadoutBlockSize> = {
  * the measured value or the tag identifier. Slot in the type-specific icon; the
  * advice and setpoint segments are value-driven and read-only.
  *
+ * **TODO(designer):** the hit area is the visible chip, 26 px high at `regular`:
+ * above the WCAG 2.5.8 floor of 24 px, below the 48 px touch-target token. A
+ * 48 px target would overlap the id tag, the leader line and neighbouring
+ * `<obc-transmitter-stack>` segments, so the size needs a design decision.
+ *
  * ### Slots
  * | Slot Name | Conditions                    | Purpose                        |
  * |-----------|-------------------------------|--------------------------------|
@@ -72,6 +77,8 @@ const readoutSizeBySize: Record<TransmitterButtonSize, ReadoutBlockSize> = {
  * @property adviceValue - Advisory value shown in the leading advice segment when `hasAdvice`.
  * @property setpointValue - Target value shown in the setpoint segment when `hasSetPoint`.
  * @property label - Short tag identifier shown in the `tag` variant (e.g. `TT`).
+ * @property idTag - Identifier appended to the button's accessible name only (e.g. `#0001`); the
+ *   parent transmitter draws the visible tag outside the button, where it cannot join the name.
  * @slot icon - Leading icon beside the value.
  *
  * @experimental
@@ -100,6 +107,8 @@ export class ObcTransmitterButton extends LitElement {
   @property({type: Number}) setpointValue?: number | null;
 
   @property({type: String}) label = '';
+
+  @property({type: String}) idTag = '';
 
   private get isTag() {
     return this.variant === TransmitterButtonVariant.tag;
@@ -163,6 +172,9 @@ export class ObcTransmitterButton extends LitElement {
         >
           ${this.renderContent()}
         </div>
+        ${this.idTag
+          ? html`<span class="visually-hidden">${this.idTag}</span>`
+          : nothing}
       </button>
     `;
   }

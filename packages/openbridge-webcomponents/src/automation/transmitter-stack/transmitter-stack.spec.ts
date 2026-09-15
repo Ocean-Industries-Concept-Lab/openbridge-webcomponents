@@ -1,7 +1,8 @@
 import {describe, expect, it} from 'vitest';
 import {render} from 'vitest-browser-lit';
-import {userEvent} from '@vitest/browser/context';
+import {page, userEvent} from '@vitest/browser/context';
 import {html} from 'lit';
+import '../../main.css';
 import './transmitter-stack.js';
 import type {
   ObcTransmitterStack,
@@ -126,6 +127,54 @@ describe('obc-transmitter-stack', () => {
     await userEvent.keyboard(' ');
 
     expect(indexes).toEqual([0, 1]);
+  });
+
+  it('names each segment by its reading and id tag, and hides the visible tag', async () => {
+    const el = await setup([
+      {value: 1, unit: 'm', idTag: '#0001'},
+      {value: 1, unit: 'm', idTag: '#0002'},
+    ]);
+    await Promise.all(segments(el).map((segment) => segment.updateComplete));
+
+    await expect
+      .element(page.getByRole('button', {name: /#0002/}))
+      .toBeInTheDocument();
+    expect(
+      Array.from(el.shadowRoot!.querySelectorAll('.id-tag')).map((tag) =>
+        tag.getAttribute('aria-hidden')
+      )
+    ).toEqual(['true', 'true']);
+  });
+
+  it('renders nothing, leader line included, without values', async () => {
+    const el = await setup([]);
+
+    expect(el.shadowRoot!.querySelector('.transmitter')).toBeNull();
+  });
+
+  it('gives every segment the width of the widest reading', async () => {
+    const el = await setup([
+      {value: 1, unit: 'm'},
+      {value: 12345.6, unit: 'mVs', maxDigits: 5},
+    ]);
+    await Promise.all(segments(el).map((segment) => segment.updateComplete));
+    const [narrow, wide] = segments(el).map(
+      (segment) => segment.getBoundingClientRect().width
+    );
+
+    expect(narrow).toBeCloseTo(wide, 0);
+  });
+
+  it('keeps each segment at or above the 24 px pointer-target floor', async () => {
+    const el = await setup([{value: 1, unit: 'm'}]);
+    const [segment] = segments(el);
+    await segment.updateComplete;
+    const target = segment
+      .shadowRoot!.querySelector('button')!
+      .getBoundingClientRect();
+
+    expect(target.height).toBeGreaterThanOrEqual(24);
+    expect(target.width).toBeGreaterThanOrEqual(24);
   });
 
   it('renders an id-tag row in every cell once any value has one', async () => {
