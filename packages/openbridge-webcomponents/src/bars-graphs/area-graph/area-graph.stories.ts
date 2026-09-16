@@ -936,3 +936,72 @@ export const RealtimeFixedFrame: Story = {
     return chart;
   },
 };
+
+/** Depth below the transducer, sampled every 30 s; x is minutes relative to now. */
+const DEPTH_PROFILE_DATA = Array.from({length: 21}, (_, i) => {
+  const trend = 70 - i * 0.25;
+  const ripple = Math.sin(i * 1.7) * 1.2 + Math.cos(i * 0.6) * 0.8;
+  return {x: -(10 - i * 0.5), value: Math.round((trend + ripple) * 10) / 10};
+});
+
+export const DepthProfile: Story = {
+  name: 'Depth Profile (Fixed Range, Reversed Y, External Scales)',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Depth plotted with positive numbers: `yAxes` pins the range to 0–75 and `reverse: true` puts 0 at the top, so the area fill lands on the seabed side. The flag cascades to the slotted left scale. A number x axis running −10…0 keeps "now" at the right edge.',
+      },
+    },
+  },
+  play: async ({canvasElement}) => {
+    await document.fonts.ready;
+    const chart = canvasElement.querySelector('obc-area-graph') as
+      | (HTMLElement & {chart?: {update(): void}})
+      | null;
+    chart?.chart?.update();
+  },
+  args: {
+    xAxisType: 'number',
+    showTickMarks: false,
+    priority: Priority.regular,
+  },
+  render: (_args) => html`
+    <obc-area-graph
+      .data=${DEPTH_PROFILE_DATA}
+      .xAxisType=${_args.xAxisType}
+      .yAxes=${[
+        {id: 'y', position: 'left' as const, min: 0, max: 75, reverse: true},
+      ]}
+      .lineMode=${_args.lineMode}
+      .showGrid=${_args.showGrid}
+      .showGridX=${_args.showGridX}
+      .showGridY=${_args.showGridY}
+      .showTickMarks=${_args.showTickMarks}
+      .showPoints=${_args.showPoints}
+      .fillMode=${_args.fillMode}
+      .priority=${_args.priority}
+      .unit=${'m'}
+      .width=${_args.width}
+      .height=${_args.height}
+      .borderRadiusPositionExternalScales=${BorderRadiusPosition.outerLastChild}
+    >
+      <obc-bar-vertical
+        slot="left-scale"
+        .side=${'left'}
+        .hasScale=${true}
+        .primaryTickmarkInterval=${25}
+        .secondaryTickmarkInterval=${5}
+        .priority=${_args.priority}
+      ></obc-bar-vertical>
+      <obc-bar-horizontal
+        slot="bottom-scale"
+        .side=${'bottom'}
+        .hasScale=${true}
+        .primaryTickmarkInterval=${5}
+        .secondaryTickmarkInterval=${1}
+        .priority=${_args.priority}
+      ></obc-bar-horizontal>
+    </obc-area-graph>
+  `,
+};

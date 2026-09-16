@@ -64,6 +64,7 @@ export {
  *
  * @property minValue - Minimum scale value (manual mode)
  * @property maxValue - Maximum scale value (manual mode)
+ * @property reverse - Plot `minValue` at the top so values grow downward (a depth).
  * @property height - Total height in pixels (including padding bands)
  * @property paddingTop - Padding above the drawing area
  * @property paddingBottom - Padding below the drawing area
@@ -133,6 +134,7 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
 }) {
   @property({type: Number}) minValue = 0;
   @property({type: Number}) maxValue = 100;
+  @property({type: Boolean}) reverse = false;
 
   @property({type: Number}) height = 320;
 
@@ -259,6 +261,7 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
       paddingEnd: this.paddingBottom,
       minValue: this.minValue,
       maxValue: this.maxValue,
+      reverse: this.reverse,
       hasScale: this.hasScale,
       labels: this.showLabels,
       mainTickmarkLabels: this.showMainTickmarkLabels,

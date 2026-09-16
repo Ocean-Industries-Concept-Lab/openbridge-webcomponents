@@ -765,3 +765,34 @@ describe('range labels on a stacked chart (#1191)', () => {
     ]);
   });
 });
+
+describe('reversed y axis (#1211)', () => {
+  const yReverse = (chart: ObcAreaGraph) =>
+    (
+      chartScales(chart) as unknown as Record<
+        string,
+        {options: {reverse?: boolean}}
+      >
+    )['y'].options.reverse;
+
+  it('passes reverse to the Chart.js scale and cascades it to the slotted scales', async () => {
+    const {chart, left, bottom} = await mount((c) => {
+      c.xAxisType = XAxisType.number;
+      c.yAxes = [{id: 'y', position: 'left', min: 0, max: 75, reverse: true}];
+      c.data = numberData([10, 70, 40]);
+    });
+    expect(yReverse(chart)).toBe(true);
+    expect(left.reverse).toBe(true);
+    expect(bottom.reverse).toBe(false);
+  });
+
+  it('keeps the slotted scales upright when reverse is unset', async () => {
+    const {chart, left} = await mount((c) => {
+      c.xAxisType = XAxisType.number;
+      c.yAxes = [{id: 'y', position: 'left', min: 0, max: 75}];
+      c.data = numberData([10, 70, 40]);
+    });
+    expect(yReverse(chart)).toBe(false);
+    expect(left.reverse).toBe(false);
+  });
+});

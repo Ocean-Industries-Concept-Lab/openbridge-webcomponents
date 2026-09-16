@@ -87,6 +87,7 @@ export interface ExternalScaleDimensions {
 interface ExternalScaleElement extends HTMLElement {
   minValue?: number;
   maxValue?: number;
+  reverse?: boolean;
   height?: number;
   width?: number;
   paddingTop?: number;
@@ -158,6 +159,8 @@ export type ChartLineYAxisConfig = {
   position?: 'left' | 'right';
   min?: number;
   max?: number;
+  /** Plot `min` at the top. Area fills still reach the visual bottom. */
+  reverse?: boolean;
   grid?: boolean;
 };
 
@@ -371,6 +374,8 @@ const LINE_GRAPH_DIMENSION_PROP_NAMES = [
  *   numeric x-values.
  * @property yAxisPosition - Single y-axis position ('left' or 'right'). For multiple y-axes, use yAxes instead.
  * @property yAxes - Multiple y-axis definitions for complex multi-axis charts.
+ *   Each entry accepts `min`/`max` to pin the range and `reverse` to plot `min` at the
+ *   top; the primary axis' `reverse` cascades to slotted left/right scales.
  * @property xAxis - Pinned x range (`min`/`max`) for time and number axes. Without it the
  *   axis spans exactly the data, so a window that is still filling stretches across the
  *   full width. In `minutes` display `max` is the `0min` reference.
@@ -526,6 +531,13 @@ export class ObcChartLineBase extends LitElement {
     return this.xAxisType === XAxisType.number
       ? XValueMode.number
       : XValueMode.time;
+  }
+
+  /** The primary y axis' `reverse`: the entry with id `'y'`, else the first. */
+  protected isYAxisReversed(): boolean {
+    if (!this.yAxes?.length) return false;
+    const axis = this.yAxes.find((a) => a.id === 'y') ?? this.yAxes[0];
+    return axis.reverse ?? false;
   }
 
   /** @internal - Last data/datasets reference already warned about. */
@@ -932,15 +944,19 @@ export class ObcChartLineBase extends LitElement {
           const x = onRight ? area.right + 8 : area.left - 8;
           ctx.textAlign = onRight ? 'left' : 'right';
           const values = yRangeLabelValues(bounds.min, bounds.max);
+          const reversed = this.isYAxisReversed();
           // Top-down, so the recorded order reads max, 0, min.
           for (let i = values.length - 1; i >= 0; i--) {
             const isMax = i === values.length - 1;
             const isMin = i === 0;
-            const y = isMax
-              ? area.top
-              : isMin
-                ? area.bottom
-                : scale.getPixelForValue(values[i]);
+            const isEnd = isMax || isMin;
+            // Under a reversed axis the max end sits at the plot bottom.
+            const atTop = isMax !== reversed;
+            const y = isEnd
+              ? atTop
+                ? area.top
+                : area.bottom
+              : scale.getPixelForValue(values[i]);
             // A 0 within a line of either end would collide with it.
             if (
               !isMax &&
@@ -949,7 +965,7 @@ export class ObcChartLineBase extends LitElement {
             ) {
               continue;
             }
-            ctx.textBaseline = isMax ? 'top' : isMin ? 'bottom' : 'middle';
+            ctx.textBaseline = isEnd ? (atTop ? 'top' : 'bottom') : 'middle';
             ctx.fillText(yTexts[i], x, y);
             this.lastRangeLabels.push({axis: 'y', text: yTexts[i], x, y});
           }
@@ -1838,7 +1854,13 @@ export class ObcChartLineBase extends LitElement {
       range: {min: number; max: number}
     ): Partial<ExternalScaleElement> =>
       this.ownsSlottedScaleRange(side)
-        ? {minValue: range.min, maxValue: range.max}
+        ? {
+            minValue: range.min,
+            maxValue: range.max,
+            ...(side === 'left' || side === 'right'
+              ? {reverse: this.isYAxisReversed()}
+              : {}),
+          }
         : {};
 
     // Left scale
@@ -2006,6 +2028,9 @@ export class ObcChartLineBase extends LitElement {
       (slot.assignedElements() as ExternalScaleElement[]).forEach((scale) => {
         scale.minValue = range.min;
         scale.maxValue = range.max;
+        if (side === 'left' || side === 'right') {
+          scale.reverse = this.isYAxisReversed();
+        }
       });
     };
     apply('left', this.leftScaleSlot, this.resolveAxisRange('left'));
@@ -2870,6 +2895,7 @@ export class ObcChartLineBase extends LitElement {
           position: axis.position ?? ('left' as 'left' | 'right'),
           min: axis.min,
           max: axis.max,
+          reverse: axis.reverse ?? false,
           gridDisplay: axis.grid ?? (this.showGrid && this.showGridY),
         }))
       : [
@@ -2878,17 +2904,19 @@ export class ObcChartLineBase extends LitElement {
             position: this.yAxisPosition,
             min: undefined,
             max: undefined,
+            reverse: false,
             gridDisplay: this.showGrid && this.showGridY,
           },
         ];
 
     const scalesRecord: Record<string, unknown> = {x};
 
-    yAxesConfig.forEach(({id, position, min, max, gridDisplay}) => {
+    yAxesConfig.forEach(({id, position, min, max, reverse, gridDisplay}) => {
       scalesRecord[id] = {
         type: 'linear',
         display: true,
         position,
+        reverse,
         stacked: this.shouldStack() && this.getFillMode() !== 'threshold',
         grace: isTooSmall ? 0 : undefined,
         bounds: isTooSmall ? 'data' : 'ticks',

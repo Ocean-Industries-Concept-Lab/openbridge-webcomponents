@@ -104,6 +104,19 @@ export {FillMode, ScaleType};
  * ></obc-gauge-trend>
  * ```
  *
+ * ### Depth profile (0 at the top, positive depths grow downward)
+ * ```html
+ * <obc-gauge-trend
+ *   .reverse=${true}
+ *   .minValue=${0}
+ *   .maxValue=${75}
+ *   .value=${65.3}
+ *   .chartFill=${true}
+ *   .hasScale=${true}
+ *   .data=${depthSamples}
+ * ></obc-gauge-trend>
+ * ```
+ *
  * ### Time-based data with uneven intervals
  * ```html
  * <obc-gauge-trend
@@ -130,6 +143,8 @@ export {FillMode, ScaleType};
  *   When undefined, defaults to `minValue` to keep chart and scale aligned.
  * @property chartMaxValue - Maximum value for the chart y-axis.
  *   When undefined, defaults to `maxValue` to keep chart and scale aligned.
+ * @property reverse - Plot `minValue` at the top and grow downward, on both the chart
+ *   y axis and the vertical scale. The chart fill still reaches the visual bottom.
  * @property hasScale - Show scale tick marks and labels.
  * @property hasAdvice - Show advice overlays on the vertical scale.
  * @property fillMin - Fill origin value - the starting point for the bar fill.
@@ -194,6 +209,7 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
         position: 'left',
         min: this.chartMinValue ?? this.minValue,
         max: this.chartMaxValue ?? this.maxValue,
+        reverse: this.reverse,
       },
     ];
   }
@@ -252,6 +268,7 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
 
     barVertical.minValue = this.minValue;
     barVertical.maxValue = this.maxValue;
+    barVertical.reverse = this.reverse;
     barVertical.height = effectiveHeight;
     barVertical.side = 'right';
     barVertical.hasScale = this.hasScale;
@@ -342,6 +359,9 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
 
   @property({type: Number})
   chartMaxValue?: number = undefined;
+
+  @property({type: Boolean})
+  reverse = false;
 
   /**
    * Current value displayed on the vertical scale.
@@ -485,7 +505,8 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
       changed.has('chartMinValue') ||
       changed.has('chartMaxValue') ||
       changed.has('minValue') ||
-      changed.has('maxValue')
+      changed.has('maxValue') ||
+      changed.has('reverse')
     ) {
       const chartMin = this.chartMinValue ?? this.minValue;
       const chartMax = this.chartMaxValue ?? this.maxValue;
@@ -495,6 +516,7 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
           position: 'left',
           min: chartMin,
           max: chartMax,
+          reverse: this.reverse,
         },
       ];
     }
@@ -528,6 +550,7 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
     const shouldUpdateScale =
       changed.has('minValue') ||
       changed.has('maxValue') ||
+      changed.has('reverse') ||
       changed.has('value') ||
       changed.has('setpoint') ||
       changed.has('newSetpoint') ||
