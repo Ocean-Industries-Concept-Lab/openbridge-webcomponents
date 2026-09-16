@@ -122,11 +122,15 @@ const meta: Meta = {
 export default meta;
 type Story = StoryObj;
 
+// Sub-pixel anti-aliasing of the history line differs between runners
+// (#1222); depth.spec.ts pins what these two stories show.
 export const Default: Story = {
   name: 'Regular (History, Dot in the Band)',
+  tags: ['!snapshot'],
 };
 
 export const RegularCondensed: Story = {
+  tags: ['!snapshot'],
   args: {hasScale: true},
 };
 
