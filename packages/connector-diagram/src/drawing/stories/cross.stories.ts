@@ -39,7 +39,7 @@ export const Interactive: Story = {
 
 export const AllValues: Story = {
   render: ({size}) => {
-    const values: PipeValue[] = ['open-flow', 'empty', 'medium-flow', 'enhanced', 'running', 'closed', 'closed-dash']
+    const values: PipeValue[] = ['open-flow', 'open-generic', 'empty', 'medium-flow', 'enhanced', 'running', 'closed', 'closed-dash']
     const container = document.createElement('div')
     container.style.cssText = 'display:flex;gap:8px;padding:8px;flex-wrap:wrap'
     for (const value of values) {
