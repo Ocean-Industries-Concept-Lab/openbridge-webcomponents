@@ -66,7 +66,6 @@ Chart.register(
   CategoryScale,
   LinearScale,
   TimeScale,
-  Filler,
   Tooltip
 );
 
@@ -169,12 +168,15 @@ export type ChartLineXAxisConfig = {
   max?: number;
 };
 
-/** Ellipse in data units that clips one dataset's drawing (a sonar range). */
+/**
+ * Ellipse that clips one dataset's drawing (a sonar range). Centre and `rx`
+ * are in data units; `ry` too when given, else the clip is a circle in pixels.
+ */
 export type ChartLineEllipseClip = {
   x: number;
   y: number;
   rx: number;
-  ry: number;
+  ry?: number;
 };
 
 /** Fields the chart reads on a `datasets` entry beyond Chart.js' own. */
@@ -210,6 +212,52 @@ const MARKER = {
   valueLineWidth: 2,
   ringColorVar: '--border-silhouette-color',
 } as const;
+
+/** Ellipse clips applied on the last draw, in pixels by dataset index. */
+const datasetClipRecords = new WeakMap<
+  Chart,
+  Record<number, ChartLineEllipseClip>
+>();
+
+/**
+ * Clips a dataset's drawing to its `ellipseClip`, mapped through the x scale
+ * and the dataset's y scale so the radii stay true to the data units.
+ * Registered globally ahead of `Filler`, whose `beforeDatasetDraw` paints the
+ * area fill: a chart-level plugin would clip only the line.
+ */
+const datasetClipPlugin = {
+  id: 'datasetClip',
+  beforeDraw: (chart: Chart) => {
+    datasetClipRecords.set(chart, {});
+  },
+  beforeDatasetDraw: (chart: Chart, args: {index: number}) => {
+    const ds = chart.data.datasets[args.index] as ChartLineDataset | undefined;
+    const clip = ds?.ellipseClip;
+    const xScale = chart.scales['x'];
+    const yScale = ds?.yAxisID ? chart.scales[ds.yAxisID] : undefined;
+    if (!clip || !xScale || !yScale) return;
+    const x = xScale.getPixelForValue(clip.x);
+    const y = yScale.getPixelForValue(clip.y);
+    const rx = Math.abs(xScale.getPixelForValue(clip.x + clip.rx) - x);
+    const ry =
+      clip.ry === undefined
+        ? rx
+        : Math.abs(yScale.getPixelForValue(clip.y + clip.ry) - y);
+    const ctx = chart.ctx;
+    ctx.save();
+    ctx.beginPath();
+    ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2);
+    ctx.clip();
+    const records = datasetClipRecords.get(chart) ?? {};
+    records[args.index] = {x, y, rx, ry};
+    datasetClipRecords.set(chart, records);
+  },
+  afterDatasetDraw: (chart: Chart, args: {index: number}) => {
+    if (datasetClipRecords.get(chart)?.[args.index]) chart.ctx.restore();
+  },
+};
+// Global plugins run in registration order: the clip must precede Filler.
+Chart.register(datasetClipPlugin, Filler);
 
 /**
  * Linear interpolation of a dataset's y at `x`; `undefined` outside its data.
@@ -428,7 +476,8 @@ const LINE_GRAPH_DIMENSION_PROP_NAMES = [
  * @property datasets - Chart.js-style datasets for multi-series use. If provided, takes precedence over `data`.
  *   Explicit Chart.js styling on an entry (`borderColor`, `backgroundColor`, `borderDash`,
  *   `borderCapStyle`, `fill`, `order`, `pointRadius`) wins over the derived defaults;
- *   `ellipseClip` clips the entry's drawing to an ellipse given in data units.
+ *   `ellipseClip` clips the entry's drawing to an ellipse: centre and `rx` in data
+ *   units, `ry` in data units when given, else round in pixels.
  * @property labels - Optional explicit labels for the x-axis (category mode). If omitted labels are derived from `data`
  * @property colors - Custom color palette (CSS variable names or color strings).
  * @property legend - Show HTML legend below chart with series labels and colors.
@@ -828,7 +877,9 @@ export class ObcChartLineBase extends LitElement {
   lastMarkers: {x?: {x: number; y?: number}; y?: {y: number}} = {};
 
   /** @internal - Ellipse clips applied last, in pixels by dataset index, for tests. */
-  lastClips: Record<number, ChartLineEllipseClip> = {};
+  get lastClips(): Record<number, ChartLineEllipseClip> {
+    return (this.chart && datasetClipRecords.get(this.chart)) ?? {};
+  }
 
   /**
    * Range labels for the current data and size, refreshed with every
@@ -1089,42 +1140,6 @@ export class ObcChartLineBase extends LitElement {
           }
         }
         ctx.restore();
-      },
-    };
-  }
-
-  /**
-   * Clips a dataset's drawing to its `ellipseClip`, mapped through the x scale
-   * and the dataset's y scale so the radii stay true to the data units.
-   */
-  private createDatasetClipPlugin() {
-    const clipOf = (chart: Chart, index: number) => {
-      const ds = chart.data.datasets[index] as ChartLineDataset | undefined;
-      return {ds, clip: ds?.ellipseClip};
-    };
-    return {
-      id: 'datasetClip',
-      beforeDraw: () => {
-        this.lastClips = {};
-      },
-      beforeDatasetDraw: (chart: Chart, args: {index: number}) => {
-        const {ds, clip} = clipOf(chart, args.index);
-        const xScale = chart.scales['x'];
-        const yScale = chart.scales[ds?.yAxisID ?? this.primaryYAxisId];
-        if (!clip || !xScale || !yScale) return;
-        const x = xScale.getPixelForValue(clip.x);
-        const y = yScale.getPixelForValue(clip.y);
-        const rx = Math.abs(xScale.getPixelForValue(clip.x + clip.rx) - x);
-        const ry = Math.abs(yScale.getPixelForValue(clip.y + clip.ry) - y);
-        const ctx = chart.ctx;
-        ctx.save();
-        ctx.beginPath();
-        ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2);
-        ctx.clip();
-        this.lastClips[args.index] = {x, y, rx, ry};
-      },
-      afterDatasetDraw: (chart: Chart, args: {index: number}) => {
-        if (this.lastClips[args.index]) chart.ctx.restore();
       },
     };
   }
@@ -3206,7 +3221,6 @@ export class ObcChartLineBase extends LitElement {
         ...(this.rangeLabels !== RangeLabels.none
           ? [this.createRangeLabelsPlugin()]
           : []),
-        this.createDatasetClipPlugin(),
         this.createMarkersPlugin(),
       ],
     } as ChartConfiguration<'line'>);

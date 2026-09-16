@@ -1,0 +1,22 @@
+:host {
+  display: block; /* the chart's top slot is an absolute strip; a block host fills its width */
+  position: relative;
+  z-index: 2; /* above the chart canvas (z-index 1) so the hull may overlap the frame's top edge */
+  pointer-events: none;
+  width: 100%;
+}
+
+svg {
+  display: block; /* no inline line-box gap below the graphic */
+  width: 100%;
+  height: auto;
+  overflow: visible; /* the hull sits a few px below the waterline, over the chart */
+}
+
+.label {
+  font-family: var(--font-family-main);
+  font-size: calc(
+    var(--global-typography-ui-label-font-size) / var(--scale, 1)
+  );
+  fill: var(--instrument-tick-mark-label-secondary-color);
+}

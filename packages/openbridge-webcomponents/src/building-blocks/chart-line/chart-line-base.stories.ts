@@ -1282,7 +1282,7 @@ const CLIP_DATASETS: ChartLineDataset[] = [
     label: 'Scan',
     data: along(0, 250, 5, seabed),
     fill: {value: 0},
-    ellipseClip: {x: 0, y: 0, rx: 150, ry: 150},
+    ellipseClip: {x: 0, y: 0, rx: 150},
   },
   {
     label: 'History',
@@ -1299,7 +1299,7 @@ export const EllipseClip: Story = {
     docs: {
       description: {
         story:
-          'A dataset with `ellipseClip` is drawn only inside an ellipse given in data units, here a 150 m range around the vessel at (0, 0); the water column fill (`fill: {value: 0}`) is cut by the arc. The y axis is reversed so 0 sits at the top.',
+          'A dataset with `ellipseClip` is drawn only inside the ellipse: centre and `rx` in data units (a 150 m range around the vessel at (0, 0)), round in pixels because `ry` is omitted. The water column fill (`fill: {value: 0}`) is cut by the arc; the y axis is reversed so 0 sits at the top.',
       },
     },
   },

@@ -954,6 +954,27 @@ describe('markers', () => {
 });
 
 describe('ellipseClip', () => {
+  it('is round in pixels when ry is omitted', async () => {
+    const chart = await mountPlain(
+      (c) => {
+        c.xAxisType = XAxisType.number;
+        c.datasets = [
+          {
+            label: 'scan',
+            data: [
+              {x: 0, y: 10},
+              {x: 100, y: 20},
+            ],
+            ellipseClip: {x: 0, y: 0, rx: 50},
+          },
+        ];
+      },
+      {width: 480, height: 320}
+    );
+    const clip = chart.lastClips[0];
+    expect(clip.ry).toBeCloseTo(clip.rx, 5);
+  });
+
   it('maps the ellipse through the scales in data units', async () => {
     const chart = await mountPlain(
       (c) => {
