@@ -42,7 +42,13 @@ stroke weights.
 - `npm run storybook` — visual sandbox for every connector shape (all pipe
   values and sizes).
 - `npm run test-storybook` — pixel-snapshot regression tests via Playwright;
-  `npm run update-snapshots` promotes the current results to baselines.
+  `npm run update-snapshots` re-runs them in update mode and rewrites the
+  baselines. CI compares against the Linux baselines in
+  `__vis__/linux/__baselines__/`, so regenerate them in the devcontainer; on
+  another platform use the Docker route in
+  [IMPLEMENTATION_GUIDELINES.md](../../IMPLEMENTATION_GUIDELINES.md#docker-testing).
+  For a single story run `npx vitest run --project storybook <name> --update`,
+  keeping the filter before the flag.
 
 ## Design source
 
