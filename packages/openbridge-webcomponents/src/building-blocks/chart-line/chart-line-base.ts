@@ -1094,40 +1094,43 @@ export class ObcChartLineBase extends LitElement {
             : typeof this.xMarker.x === 'number'
               ? this.xMarker.x
               : (chart.data.labels ?? []).indexOf(this.xMarker.x as string);
-          if (!Number.isFinite(xValue) || xValue < 0) {
-            ctx.restore();
-            return;
-          }
-          // Half-pixel alignment keeps the 1px line crisp.
-          const x = Math.round(xScale.getPixelForValue(xValue)) + 0.5;
-          const yValue =
-            ds && yScale ? interpolateDatasetY(ds.data, xValue) : undefined;
-          const y =
-            yValue === undefined ? undefined : yScale!.getPixelForValue(yValue);
-          const color = colorOf(ds);
-          ctx.strokeStyle = color;
-          ctx.lineWidth = MARKER.lineWidth;
-          ctx.setLineDash([]);
-          ctx.beginPath();
-          ctx.moveTo(x, area.top);
-          ctx.lineTo(x, y ?? area.top);
-          ctx.stroke();
-          ctx.setLineDash([...MARKER.dash]);
-          ctx.beginPath();
-          ctx.moveTo(x, y ?? area.top);
-          ctx.lineTo(x, area.bottom);
-          ctx.stroke();
-          ctx.setLineDash([]);
-          if (y !== undefined && (this.xMarker.showDot ?? true)) {
+          // A numeric axis may run negative; only a category index cannot.
+          const xValid =
+            Number.isFinite(xValue) && (this.isNumericXAxis || xValue >= 0);
+          if (xValid) {
+            // Half-pixel alignment keeps the 1px line crisp.
+            const x = Math.round(xScale.getPixelForValue(xValue)) + 0.5;
+            const yValue =
+              ds && yScale ? interpolateDatasetY(ds.data, xValue) : undefined;
+            const y =
+              yValue === undefined
+                ? undefined
+                : yScale!.getPixelForValue(yValue);
+            const color = colorOf(ds);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = MARKER.lineWidth;
+            ctx.setLineDash([]);
             ctx.beginPath();
-            ctx.arc(x, y, MARKER.dotRadius, 0, Math.PI * 2);
-            ctx.fillStyle = color;
-            ctx.fill();
-            ctx.lineWidth = MARKER.dotRingWidth;
-            ctx.strokeStyle = getCssVariableValue(this, MARKER.ringColorVar);
+            ctx.moveTo(x, area.top);
+            ctx.lineTo(x, y ?? area.top);
             ctx.stroke();
+            ctx.setLineDash([...MARKER.dash]);
+            ctx.beginPath();
+            ctx.moveTo(x, y ?? area.top);
+            ctx.lineTo(x, area.bottom);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            if (y !== undefined && (this.xMarker.showDot ?? true)) {
+              ctx.beginPath();
+              ctx.arc(x, y, MARKER.dotRadius, 0, Math.PI * 2);
+              ctx.fillStyle = color;
+              ctx.fill();
+              ctx.lineWidth = MARKER.dotRingWidth;
+              ctx.strokeStyle = getCssVariableValue(this, MARKER.ringColorVar);
+              ctx.stroke();
+            }
+            this.lastMarkers.x = {x, y};
           }
-          this.lastMarkers.x = {x, y};
         }
 
         if (this.yMarker) {

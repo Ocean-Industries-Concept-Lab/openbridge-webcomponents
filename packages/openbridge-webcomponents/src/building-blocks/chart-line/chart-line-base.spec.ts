@@ -987,6 +987,40 @@ describe('markers', () => {
     expect(chart.lastMarkers.x).toBeUndefined();
   });
 
+  it('accepts a negative x on a number axis and keeps the y marker when x is unknown', async () => {
+    const chart = await mountPlain(
+      (c) => {
+        c.xAxisType = XAxisType.number;
+        c.xAxis = {min: -200, max: 200};
+        c.data = [
+          {x: -100, value: 10},
+          {x: 100, value: 30},
+        ];
+        c.xMarker = {x: -50};
+        c.yMarker = {y: 20};
+      },
+      {width: 480, height: 320}
+    );
+    const scales = pixelScales(chart);
+    expect(chart.lastMarkers.x?.x).toBeCloseTo(
+      Math.round(scales['x'].getPixelForValue(-50)) + 0.5,
+      5
+    );
+    chart.xAxisType = XAxisType.category;
+    chart.data = [
+      {label: 'a', value: 10},
+      {label: 'b', value: 30},
+    ];
+    chart.xMarker = {x: 'zzz'};
+    await chart.updateComplete;
+    await frames();
+    expect(chart.lastMarkers.x).toBeUndefined();
+    expect(chart.lastMarkers.y?.y).toBeCloseTo(
+      pixelScales(chart)['y'].getPixelForValue(20),
+      5
+    );
+  });
+
   it('draws the x marker without a value outside the data', async () => {
     const chart = await mountPlain(
       (c) => {

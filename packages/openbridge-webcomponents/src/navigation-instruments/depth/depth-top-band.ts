@@ -23,7 +23,7 @@ const BAND_HEIGHT: Record<DepthTopBandType, number> = {
   [DepthTopBandType.vessel]: 48,
 };
 const FRAME_RADIUS = 8;
-/** The 160-unit side art at this factor puts its waterline on the band's bottom edge. */
+/** The 160-unit side art at this factor puts its baseline on the band's bottom edge. */
 const VESSEL_ART_SCALE = 0.6;
 const VESSEL_ART_SIZE = 160;
 /**
@@ -31,7 +31,7 @@ const VESSEL_ART_SIZE = 160;
  * TODO(designer): the design places the silhouette by eye (#1248).
  */
 const VESSEL_CENTRE_OFFSET = 24;
-/** Bow and stern reach past the art's centre, and the margin kept to the frame edges. */
+/** Reach of the art past its centre to either end, and the margin kept to the frame edges. */
 const VESSEL_BOW_REACH = 67 * VESSEL_ART_SCALE;
 const VESSEL_STERN_REACH = 68 * VESSEL_ART_SCALE;
 const VESSEL_EDGE_MARGIN = 2;
