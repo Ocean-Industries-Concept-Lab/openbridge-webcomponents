@@ -1,6 +1,7 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property, state} from 'lit/decorators.js';
 import type {PropertyValues} from 'lit';
+import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import {customElement} from '../../decorator.js';
 import componentStyle from './depth.css?inline';
 import '../gauge-trend/gauge-trend.js';
@@ -21,6 +22,7 @@ import {
   getCssVariableValue,
   observeThemeChanges,
 } from '../../charthelpers/index.js';
+import {normalizeXValue, XValueMode} from '../../charthelpers/x-value.js';
 import type {LinearAdvice} from '../../building-blocks/instrument-linear/advice.js';
 import {InstrumentState, Priority} from '../types.js';
 import {VesselImage} from '../watch/watch.js';
@@ -106,7 +108,8 @@ function deepest(...series: (number | undefined)[][]): number {
  * @property hasValueLine - Draws the current depth as a line across the chart.
  * @property now - x of the now-line; 0 for `prediction` and `scanned`.
  * @availableWhen now type!=regular
- * @property xAxis - Pinned x range; defaults to ±200 for `prediction` and −100…250 for `scanned`.
+ * @property xAxis - Pinned x range; defaults to the history's extent for `regular` (so now is
+ *   the right edge), ±200 for `prediction` and −100…250 for `scanned`.
  * @property ranges - Range ladder.
  * @property maxDepth - Explicit scale maximum; wins over `autoRange`.
  * @property autoRange - Steps the ladder with the data.
@@ -157,8 +160,21 @@ export class ObcDepth extends LitElement {
   @state() private _cellWidth = 0;
   @state() private _cellHeight = 0;
 
-  private _cellObserver?: ResizeObserver;
   private _themeObserver?: MutationObserver;
+
+  // The host is a block with an aspect ratio, so its content box is the cell
+  // the chart is pinned to; contentRect is not zoom-scaled, unlike getBoundingClientRect.
+  // @ts-expect-error - Controller is used for side effects, not accessed directly
+  private _cellResizeController = new ResizeController(this, {
+    callback: (entries) => {
+      const rect = entries[0]?.contentRect;
+      if (!rect) return;
+      const width = Math.round(rect.width);
+      const height = Math.round(rect.height);
+      if (width !== this._cellWidth) this._cellWidth = width;
+      if (height !== this._cellHeight) this._cellHeight = height;
+    },
+  });
 
   override connectedCallback() {
     super.connectedCallback();
@@ -170,27 +186,11 @@ export class ObcDepth extends LitElement {
     super.disconnectedCallback();
     this._themeObserver?.disconnect();
     this._themeObserver = undefined;
-    this._cellObserver?.disconnect();
-    this._cellObserver = undefined;
-  }
-
-  override firstUpdated() {
-    const cell = this.renderRoot.querySelector('.container');
-    if (!cell) return;
-    // contentRect, not getBoundingClientRect: the latter is zoom-scaled.
-    this._cellObserver = new ResizeObserver((entries) => {
-      const rect = entries[0]?.contentRect;
-      if (!rect) return;
-      const width = Math.round(rect.width);
-      const height = Math.round(rect.height);
-      if (width !== this._cellWidth) this._cellWidth = width;
-      if (height !== this._cellHeight) this._cellHeight = height;
-    });
-    this._cellObserver.observe(cell);
   }
 
   override willUpdate(changed: PropertyValues) {
     if (
+      changed.has('type') ||
       changed.has('data') ||
       changed.has('prediction') ||
       changed.has('scan') ||
@@ -248,8 +248,19 @@ export class ObcDepth extends LitElement {
     return this.historyHasX ? XAxisType.time : XAxisType.category;
   }
 
+  /**
+   * The x window. A regular history spans exactly its samples, so now sits on
+   * the right edge and the range does not snap to tick bounds.
+   */
   private get effectiveXAxis(): ChartLineXAxisConfig | undefined {
-    return this.xAxis ?? DEFAULT_X_AXIS[this.type];
+    if (this.xAxis) return this.xAxis;
+    if (this.type !== DepthType.regular) return DEFAULT_X_AXIS[this.type];
+    if (!this.historyHasX) return undefined;
+    const xs = this.data
+      .map((d) => normalizeXValue(d.x!, XValueMode.time))
+      .filter((x) => Number.isFinite(x));
+    if (xs.length < 2) return undefined;
+    return {min: Math.min(...xs), max: Math.max(...xs)};
   }
 
   private get effectiveScanRange(): number | undefined {
@@ -343,6 +354,8 @@ export class ObcDepth extends LitElement {
           borderWidth: LINE_WIDTH,
           backgroundColor: c.band,
           fill: {value: 0},
+          // TODO(designer): the physical slant range; the design's cut-off is a
+          // pixel circle centred below the surface (#1248).
           ...(range !== undefined
             ? {ellipseClip: {x: this.now, y: 0, rx: range, ry: range}}
             : {}),
@@ -359,6 +372,10 @@ export class ObcDepth extends LitElement {
     return [historySet(c.line), echoSet(0, c.band)];
   }
 
+  /**
+   * TODO(designer): the now-line sits at the plot centre; the design's sits at
+   * the frame centre, its plot running under the band (#1248).
+   */
   private get xMarker(): ChartLineXMarker | undefined {
     return this.type === DepthType.regular
       ? undefined
@@ -385,6 +402,11 @@ export class ObcDepth extends LitElement {
     ></obc-depth-top-band>`;
   }
 
+  /**
+   * TODO(designer): edge-to-edge plotting turns the cascaded labels off, so the
+   * "None" style has no min/max labels; and the condensed band is 14 px where
+   * the design draws 24 (#1248).
+   */
   override render() {
     const hasSize = this._cellWidth > 0 && this._cellHeight > 0;
     const range = this._range;

@@ -792,6 +792,39 @@ describe('reversed y axis (#1211)', () => {
     expect(bottom.reverse).toBe(false);
   });
 
+  it('gives each side the reversal of the axis it follows', async () => {
+    const {chart, left, right} = await mount(
+      (c) => {
+        c.xAxisType = XAxisType.number;
+        c.yAxes = [
+          {id: 'y', position: 'left', min: 0, max: 75, reverse: true},
+          {id: 'y-right', position: 'right', min: 0, max: 10},
+        ];
+        c.datasets = [
+          {
+            label: 'a',
+            data: [
+              {x: 0, y: 10},
+              {x: 1, y: 70},
+            ],
+          },
+          {
+            label: 'b',
+            data: [
+              {x: 0, y: 1},
+              {x: 1, y: 7},
+            ],
+            yAxisID: 'y-right',
+          },
+        ];
+      },
+      {withRight: true}
+    );
+    expect(yReverse(chart)).toBe(true);
+    expect(left.reverse).toBe(true);
+    expect(right.reverse).toBe(false);
+  });
+
   it('keeps the slotted scales upright when reverse is unset', async () => {
     const {chart, left} = await mount((c) => {
       c.xAxisType = XAxisType.number;
@@ -925,6 +958,33 @@ describe('markers', () => {
       scales['y'].getPixelForValue(25),
       5
     );
+  });
+
+  it('resolves a category marker from its label and skips an unknown one', async () => {
+    const chart = await mountPlain(
+      (c) => {
+        c.data = [
+          {label: 'a', value: 10},
+          {label: 'b', value: 30},
+          {label: 'c', value: 20},
+        ];
+        c.xMarker = {x: 'b'};
+      },
+      {width: 480, height: 320}
+    );
+    const scales = pixelScales(chart);
+    expect(chart.lastMarkers.x?.x).toBeCloseTo(
+      Math.round(scales['x'].getPixelForValue(1)) + 0.5,
+      5
+    );
+    expect(chart.lastMarkers.x?.y).toBeCloseTo(
+      scales['y'].getPixelForValue(30),
+      5
+    );
+    chart.xMarker = {x: 'zzz'};
+    await chart.updateComplete;
+    await frames();
+    expect(chart.lastMarkers.x).toBeUndefined();
   });
 
   it('draws the x marker without a value outside the data', async () => {

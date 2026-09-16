@@ -45,7 +45,7 @@ const meta: Meta<typeof ObcDepthActual> = {
 export default meta;
 type Story = StoryObj<ObcDepthActual>;
 
-export const Regular: Story = {
+export const Default: Story = {
   name: 'Regular (0 to 100)',
   args: {},
 };
@@ -118,9 +118,13 @@ export const AutoRangeLive: Story = {
     };
     tick();
     const timer = setInterval(tick, 500);
-    new MutationObserver(() => {
-      if (!el.isConnected) clearInterval(timer);
-    }).observe(document.body, {childList: true, subtree: true});
+    const observer = new MutationObserver(() => {
+      if (!el.isConnected) {
+        clearInterval(timer);
+        observer.disconnect();
+      }
+    });
+    observer.observe(document.body, {childList: true, subtree: true});
     return el;
   },
 };

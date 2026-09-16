@@ -153,6 +153,7 @@ export class ObcDepthActual extends LitElement {
     const depthY = toY(Math.min(this.depth, maxDepth));
 
     // The air band is labelled on the same scale, at the primary interval.
+    // TODO(designer): the design's Regular exports a "25" over a 20 m air band (#1248).
     const airDepth = airHeight / unitsPerDepth;
     const airLabels = [];
     for (let v = primary; primary > 0 && v <= airDepth + 1e-9; v += primary) {
@@ -307,6 +308,8 @@ export class ObcDepthActual extends LitElement {
                 },
               ],
               // A depth at or past the range end has no place to mark.
+              // TODO(designer): the design's Deep example hides it; primary
+              // ticks stay 20 units against the design's 24 (#1248).
               this.depth < maxDepth
                 ? {value: this._toValue(this.depth)}
                 : undefined,

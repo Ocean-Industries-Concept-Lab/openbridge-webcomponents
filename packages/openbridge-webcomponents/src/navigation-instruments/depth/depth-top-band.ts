@@ -26,10 +26,14 @@ const FRAME_RADIUS = 8;
 /** The 160-unit side art at this factor puts its waterline on the band's bottom edge. */
 const VESSEL_ART_SCALE = 0.6;
 const VESSEL_ART_SIZE = 160;
-/** Horizontal distance from the silhouette's centre back to the now-line. */
+/**
+ * Horizontal distance from the silhouette's centre back to the now-line.
+ * TODO(designer): the design places the silhouette by eye (#1248).
+ */
 const VESSEL_CENTRE_OFFSET = 24;
-/** Bow overhang past the art's centre, and the margin kept to the frame edge. */
+/** Bow and stern reach past the art's centre, and the margin kept to the frame edges. */
 const VESSEL_BOW_REACH = 67 * VESSEL_ART_SCALE;
+const VESSEL_STERN_REACH = 68 * VESSEL_ART_SCALE;
 const VESSEL_EDGE_MARGIN = 2;
 
 /**
@@ -154,10 +158,13 @@ export class ObcDepthTopBand extends LitElement {
     const {now} = this.geometry();
     const r = FRAME_RADIUS;
     const artHalf = (VESSEL_ART_SIZE * VESSEL_ART_SCALE) / 2;
-    // A now-line at the plot's right edge would push the bow past the frame.
-    const centre = Math.min(
-      now - VESSEL_CENTRE_OFFSET,
-      FRAME_WIDTH - VESSEL_EDGE_MARGIN - VESSEL_BOW_REACH
+    // A now-line at either plot edge would push the hull past the frame.
+    const centre = Math.max(
+      VESSEL_EDGE_MARGIN + VESSEL_STERN_REACH,
+      Math.min(
+        now - VESSEL_CENTRE_OFFSET,
+        FRAME_WIDTH - VESSEL_EDGE_MARGIN - VESSEL_BOW_REACH
+      )
     );
     const outline = `M0.5 ${height} V${r + 0.5} A${r} ${r} 0 0 1 ${r + 0.5} 0.5 H${FRAME_WIDTH - r - 0.5} A${r} ${r} 0 0 1 ${FRAME_WIDTH - 0.5} ${r + 0.5} V${height}`;
     return svg`

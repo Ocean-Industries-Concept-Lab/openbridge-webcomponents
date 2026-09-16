@@ -127,7 +127,7 @@ export {
  *
  * @property minValue - Minimum scale value
  * @property maxValue - Maximum scale value
- * @property reverse - Plot `minValue` at the top so values grow downward (a depth).
+ * @property reverse - Plot `minValue` at the top so values grow downward.
  * @property side - Which side of the chart area this scale lives on (left or right)
  * @property showLabels - Show numerical value labels at primary tickmarks
  * @property mainTickmarks - Array of values for main tickmarks. When undefined, no main tickmarks shown. When empty array [], defaults to [minValue, 0, maxValue].

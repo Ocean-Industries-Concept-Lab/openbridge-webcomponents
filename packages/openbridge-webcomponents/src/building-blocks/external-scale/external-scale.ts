@@ -19,7 +19,7 @@
  *
  * ## Layout model
  * - `orientation`: `'vertical' | 'horizontal'` controls value→coordinate mapping
- * - `reverse`: plots `minValue` at the top / right, for quantities measured downward (a depth)
+ * - `reverse`: plots `minValue` at the top / right, for quantities measured downward
  * - `side`: where the scale attaches to the chart edge
  *   - vertical: `'left' | 'right'`
  *   - horizontal: `'top' | 'bottom'`
@@ -421,7 +421,7 @@ export interface ExternalScaleConfig {
   maxValue: number;
   /**
    * Plot `minValue` at the top (vertical) or right (horizontal) so a quantity
-   * measured downward, a depth, is fed as positive numbers.
+   * measured downward is fed as positive numbers.
    * @default false
    */
   reverse?: boolean;

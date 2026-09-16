@@ -169,7 +169,7 @@ export type ChartLineXAxisConfig = {
 };
 
 /**
- * Ellipse that clips one dataset's drawing (a sonar range). Centre and `rx`
+ * Ellipse that clips one dataset's drawing (a radial range). Centre and `rx`
  * are in data units; `ry` too when given, else the clip is a circle in pixels.
  */
 export type ChartLineEllipseClip = {
@@ -203,7 +203,7 @@ export type ChartLineYMarker = {
   datasetIndex?: number;
 };
 
-/** Marker geometry, in CSS pixels, shared by the depth designs. */
+/** Marker geometry, in CSS pixels. */
 const MARKER = {
   lineWidth: 1,
   dash: [1, 2],
@@ -475,7 +475,8 @@ const LINE_GRAPH_DIMENSION_PROP_NAMES = [
  *   or Temporal object). Points are drawn in array order (no sorting).
  * @property datasets - Chart.js-style datasets for multi-series use. If provided, takes precedence over `data`.
  *   Explicit Chart.js styling on an entry (`borderColor`, `backgroundColor`, `borderDash`,
- *   `borderCapStyle`, `fill`, `order`, `pointRadius`) wins over the derived defaults;
+ *   `borderCapStyle`, `fill`, `order`, `pointRadius`) wins over the derived defaults
+ *   (`fill: true` selects the chart's own `'start'`);
  *   `ellipseClip` clips the entry's drawing to an ellipse: centre and `rx` in data
  *   units, `ry` in data units when given, else round in pixels.
  * @property labels - Optional explicit labels for the x-axis (category mode). If omitted labels are derived from `data`
@@ -667,10 +668,14 @@ export class ObcChartLineBase extends LitElement {
       : XValueMode.time;
   }
 
-  /** The primary y axis' `reverse`: the entry with id `'y'`, else the first. */
-  protected isYAxisReversed(): boolean {
+  /**
+   * `reverse` of the axis a side follows: the first axis positioned on that
+   * side, else the first entry — the selection `resolveAxisRange()` makes.
+   */
+  protected isYAxisReversed(side: 'left' | 'right' = 'left'): boolean {
     if (!this.yAxes?.length) return false;
-    const axis = this.yAxes.find((a) => a.id === 'y') ?? this.yAxes[0];
+    const axis =
+      this.yAxes.find((a) => (a.position ?? 'left') === side) ?? this.yAxes[0];
     return axis.reverse ?? false;
   }
 
@@ -1083,9 +1088,16 @@ export class ObcChartLineBase extends LitElement {
         if (this.xMarker && xScale) {
           const ds = datasetOf(this.xMarker.datasetIndex);
           const yScale = yScaleOf(ds);
+          // On a category axis a string marker names a label; a number is an index.
           const xValue = this.isNumericXAxis
             ? normalizeXValue(this.xMarker.x, this.xValueMode)
-            : Number(this.xMarker.x);
+            : typeof this.xMarker.x === 'number'
+              ? this.xMarker.x
+              : (chart.data.labels ?? []).indexOf(this.xMarker.x as string);
+          if (!Number.isFinite(xValue) || xValue < 0) {
+            ctx.restore();
+            return;
+          }
           // Half-pixel alignment keeps the 1px line crisp.
           const x = Math.round(xScale.getPixelForValue(xValue)) + 0.5;
           const yValue =
@@ -1173,7 +1185,7 @@ export class ObcChartLineBase extends LitElement {
           const x = onRight ? area.right + 8 : area.left - 8;
           ctx.textAlign = onRight ? 'left' : 'right';
           const values = yRangeLabelValues(bounds.min, bounds.max);
-          const reversed = this.isYAxisReversed();
+          const reversed = this.isYAxisReversed(this.ySide);
           // Top-down, so the recorded order reads max, 0, min.
           for (let i = values.length - 1; i >= 0; i--) {
             const isMax = i === values.length - 1;
@@ -2087,7 +2099,7 @@ export class ObcChartLineBase extends LitElement {
             minValue: range.min,
             maxValue: range.max,
             ...(side === 'left' || side === 'right'
-              ? {reverse: this.isYAxisReversed()}
+              ? {reverse: this.isYAxisReversed(side)}
               : {}),
           }
         : {};
@@ -2258,7 +2270,7 @@ export class ObcChartLineBase extends LitElement {
         scale.minValue = range.min;
         scale.maxValue = range.max;
         if (side === 'left' || side === 'right') {
-          scale.reverse = this.isYAxisReversed();
+          scale.reverse = this.isYAxisReversed(side);
         }
       });
     };

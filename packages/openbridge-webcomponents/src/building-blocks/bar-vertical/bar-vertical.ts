@@ -64,7 +64,7 @@ export {
  *
  * @property minValue - Minimum scale value (manual mode)
  * @property maxValue - Maximum scale value (manual mode)
- * @property reverse - Plot `minValue` at the top so values grow downward (a depth).
+ * @property reverse - Plot `minValue` at the top so values grow downward.
  * @property height - Total height in pixels (including padding bands)
  * @property paddingTop - Padding above the drawing area
  * @property paddingBottom - Padding below the drawing area

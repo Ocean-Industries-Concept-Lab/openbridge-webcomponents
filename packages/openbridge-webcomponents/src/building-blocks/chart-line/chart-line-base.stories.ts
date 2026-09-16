@@ -1167,7 +1167,7 @@ export const FixedAspectRatioScaling: StoryObj = {
   },
 };
 
-/** Distance along track in metres; negative is astern, 0 is the vessel. */
+/** Distance along the x axis; negative is behind the origin, positive ahead. */
 const along = (
   from: number,
   to: number,
@@ -1294,12 +1294,12 @@ const CLIP_DATASETS: ChartLineDataset[] = [
 ];
 
 export const EllipseClip: Story = {
-  name: 'Ellipse Clip (Sonar Range, Reversed Y)',
+  name: 'Ellipse Clip (Radial Range, Reversed Y)',
   parameters: {
     docs: {
       description: {
         story:
-          'A dataset with `ellipseClip` is drawn only inside the ellipse: centre and `rx` in data units (a 150 m range around the vessel at (0, 0)), round in pixels because `ry` is omitted. The water column fill (`fill: {value: 0}`) is cut by the arc; the y axis is reversed so 0 sits at the top.',
+          'A dataset with `ellipseClip` is drawn only inside the ellipse: centre and `rx` in data units (a 150-unit range around the origin at (0, 0)), round in pixels because `ry` is omitted. The fill to `{value: 0}` is cut by the arc; the y axis is reversed so 0 sits at the top.',
       },
     },
   },

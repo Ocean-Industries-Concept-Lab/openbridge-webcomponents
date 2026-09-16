@@ -104,7 +104,7 @@ export {FillMode, ScaleType};
  * ></obc-gauge-trend>
  * ```
  *
- * ### Depth profile (0 at the top, positive depths grow downward)
+ * ### Reversed scale (0 at the top, values grow downward)
  * ```html
  * <obc-gauge-trend
  *   .reverse=${true}
@@ -113,7 +113,7 @@ export {FillMode, ScaleType};
  *   .value=${65.3}
  *   .chartFill=${true}
  *   .hasScale=${true}
- *   .data=${depthSamples}
+ *   .data=${samples}
  * ></obc-gauge-trend>
  * ```
  *

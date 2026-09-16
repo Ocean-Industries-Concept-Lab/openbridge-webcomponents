@@ -122,7 +122,7 @@ const meta: Meta = {
 export default meta;
 type Story = StoryObj;
 
-export const Regular: Story = {
+export const Default: Story = {
   name: 'Regular (History, Dot in the Band)',
 };
 
@@ -225,9 +225,13 @@ export const AutoRangeLive: Story = {
     };
     tick();
     const timer = setInterval(tick, 1000);
-    new MutationObserver(() => {
-      if (!el.isConnected) clearInterval(timer);
-    }).observe(document.body, {childList: true, subtree: true});
+    const observer = new MutationObserver(() => {
+      if (!el.isConnected) {
+        clearInterval(timer);
+        observer.disconnect();
+      }
+    });
+    observer.observe(document.body, {childList: true, subtree: true});
     const box = document.createElement('div');
     box.style.cssText = 'width: 384px; height: 384px';
     box.appendChild(el);

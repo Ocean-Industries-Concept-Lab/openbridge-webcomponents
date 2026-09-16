@@ -149,6 +149,29 @@ describe('obc-depth composition', () => {
     expect(chart.secondaryTickmarkInterval).toBe(50);
   });
 
+  it('pins a regular time history to its own extent so now is the right edge', async () => {
+    const {chart} = await mount((el) => {
+      el.data = [
+        {x: 1_000_000, value: 10},
+        {x: 1_300_000, value: 12},
+        {x: 1_600_000, value: 11},
+      ];
+    });
+    expect(chart.xAxis).toEqual({min: 1_000_000, max: 1_600_000});
+  });
+
+  it('re-resolves the range when the type changes', async () => {
+    const {el} = await mount((e) => {
+      e.autoRange = true;
+      e.data = track(-100, 0, () => 12);
+      e.scan = track(0, 100, () => 300);
+    });
+    expect(el.range.maxDepth).toBe(25);
+    el.type = DepthType.scanned;
+    await el.updateComplete;
+    expect(el.range.maxDepth).toBe(1000);
+  });
+
   it('draws no ladder without hasScale', async () => {
     const {chart} = await mount((el) => {
       el.data = track(-100, 0, () => 12);
@@ -178,5 +201,25 @@ describe('obc-depth-top-band', () => {
     expect(band.thickness).toBe(24);
     expect(seen).toContain(48);
     expect(seen).toContain(24);
+  });
+
+  it('keeps the silhouette inside the frame at either plot edge', async () => {
+    const host = document.createElement('div');
+    host.style.cssText = 'width: 336px';
+    document.body.appendChild(host);
+    mounted.push(host);
+    const band = document.createElement('obc-depth-top-band');
+    band.minValue = -100;
+    band.maxValue = 100;
+    host.appendChild(band);
+    const translateX = async (now: number) => {
+      band.now = now;
+      await band.updateComplete;
+      const t = band.shadowRoot!.querySelector('g')!.getAttribute('transform')!;
+      return Number(/translate\(([-\d.]+)/.exec(t)![1]);
+    };
+    // The group is translated by the art's left edge; the hull spans 12..147 of 160 at 0.6.
+    expect(await translateX(-100)).toBeGreaterThanOrEqual(-12 * 0.6);
+    expect((await translateX(100)) + 147 * 0.6).toBeLessThanOrEqual(336);
   });
 });
