@@ -9,6 +9,7 @@
 .alert-list {
   min-height: 0;
   flex-grow: 0;
+  --alert-list-grid-columns: 1fr;
 }
 
 .spacer {
@@ -33,13 +34,8 @@
 }
 
 obc-table::part(grid) {
-  grid-template-columns: 1fr repeat(4, min-content);
-}
-
-.wrapper.small obc-table::part(grid) {
-  grid-template-columns: 1fr min-content var(
-      --app-components-alert-table-row-ack-container-width-small
-    );
+  /* set from columns[].width */
+  grid-template-columns: var(--alert-list-grid-columns);
 }
 
 .empty-list {

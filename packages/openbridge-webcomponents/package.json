@@ -1,6 +1,6 @@
 {
   "name": "@oicl/openbridge-webcomponents",
-  "version": "2.0.0-next.153",
+  "version": "2.0.0-next.154",
   "type": "module",
   "repository": {
     "type": "git",
@@ -86,7 +86,7 @@
     "@lit-labs/cli-localize": "^0.2.2",
     "@oicl-lit/gen-wrapper-angular": "0.1.6",
     "@oicl-lit/gen-wrapper-react": "0.3.6",
-    "@oicl-lit/gen-wrapper-svelte": "0.1.1",
+    "@oicl-lit/gen-wrapper-svelte": "0.2.0",
     "@oicl-lit/gen-wrapper-vue": "0.4.4",
     "@open-wc/lit-helpers": "^0.7.0",
     "@playwright/test": "1.60.0",
