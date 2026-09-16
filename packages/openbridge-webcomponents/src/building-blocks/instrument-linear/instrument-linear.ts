@@ -83,6 +83,13 @@ export function watchfaceLinear(
     mainTickmarks?: number[];
     primaryTickmarkInterval?: number;
     secondaryTickmarkInterval?: number;
+    /**
+     * Label the scale ends and the primary ladder in a column outside the +x
+     * edge. Off by default so the existing gauges keep their geometry.
+     */
+    labels?: boolean;
+    /** Text for a labelled value; `String(value)` when unset. */
+    labelFormatter?: (value: number) => string;
   },
   advice: LinearAdviceRaw[]
 ) {
@@ -139,6 +146,7 @@ export function watchfaceLinear(
   }
 
   const tickmarksX = width / 2 - scaleWidth + 4;
+  const labelValues = new Set<number>([maxValue, minValue]);
 
   if (
     tickmarks.primaryTickmarkInterval !== undefined &&
@@ -156,7 +164,19 @@ export function watchfaceLinear(
     });
     tickmarksSvg.push(...svgs);
     skipValues.push(...values);
+    values.forEach((v) => labelValues.add(v));
   }
+  const labelsSvg: SVGTemplateResult[] = tickmarks.labels
+    ? [...labelValues]
+        .sort((a, b) => b - a)
+        .map((v) =>
+          linearScaleLabel(
+            width / 2 + LINEAR_LABEL_GAP + LINEAR_LABEL_COLUMN / 2,
+            valueToY(v, minValue, maxValue, height),
+            (tickmarks.labelFormatter ?? String)(v)
+          )
+        )
+    : [];
 
   if (
     tickmarks.secondaryTickmarkInterval !== undefined &&
@@ -197,6 +217,7 @@ export function watchfaceLinear(
     mask,
     containerStroke,
     svg`<g mask=${maskAttr}>${tickmarksSvg}${boxesSvg} </g>`,
+    labelsSvg,
     advicesSvg,
     barSvg,
   ];
@@ -205,6 +226,22 @@ export function watchfaceLinear(
   }
 
   return all;
+}
+
+/** Gap between a linear gauge's +x edge and its label column, and the column's width. */
+export const LINEAR_LABEL_GAP = 4;
+export const LINEAR_LABEL_COLUMN = 24;
+
+/**
+ * A scale label centred on `(x, y)`, in the tick-mark typography the linear
+ * and radial gauges share.
+ */
+export function linearScaleLabel(
+  x: number,
+  y: number,
+  text: string
+): SVGTemplateResult {
+  return svg`<text class="linear-label" x=${x} y=${y} text-anchor="middle" dominant-baseline="central" font-family="var(--font-family-main)" font-size="var(--global-typography-ui-label-font-size)" fill="var(--instrument-tick-mark-label-secondary-color)">${text}</text>`;
 }
 
 /**

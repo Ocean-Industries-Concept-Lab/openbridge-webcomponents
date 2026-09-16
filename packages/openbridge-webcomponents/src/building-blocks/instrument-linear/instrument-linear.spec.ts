@@ -1,5 +1,7 @@
 import {describe, it, expect} from 'vitest';
-import {linearTickInterval} from './instrument-linear.js';
+import {render} from 'lit';
+import {linearTickInterval, watchfaceLinear} from './instrument-linear.js';
+import {Priority} from '../../navigation-instruments/types.js';
 
 describe('linearTickInterval', () => {
   // The default minSpacing of 16 is load-bearing: it is chosen so the helper
@@ -41,5 +43,44 @@ describe('linearTickInterval', () => {
     expect(linearTickInterval(184, 0)).toBe(0);
     expect(linearTickInterval(Number.NaN, 10)).toBe(0);
     expect(linearTickInterval(184, Number.POSITIVE_INFINITY)).toBe(0);
+  });
+});
+
+describe('watchfaceLinear labels', () => {
+  const gauge = (labels: boolean, labelFormatter?: (v: number) => string) =>
+    watchfaceLinear(
+      {height: 280, width: 72, scaleWidth: 24, minValue: -100, maxValue: 0},
+      [],
+      undefined,
+      {container: 'white'},
+      {hideContainer: true, off: false, priority: Priority.regular},
+      {
+        primaryTickmarkInterval: 25,
+        secondaryTickmarkInterval: 5,
+        labels,
+        labelFormatter,
+      },
+      []
+    );
+
+  const texts = (parts: ReturnType<typeof watchfaceLinear>) => {
+    const host = document.createElement('div');
+    render(parts, host);
+    return [...host.querySelectorAll('text.linear-label')].map((t) => ({
+      text: t.textContent?.trim(),
+      x: Number(t.getAttribute('x')),
+      y: Number(t.getAttribute('y')),
+    }));
+  };
+
+  it('draws nothing without the option', () => {
+    expect(texts(gauge(false))).toEqual([]);
+  });
+
+  it('labels both ends and the primary ladder, top down, outside the +x edge', () => {
+    const labels = texts(gauge(true, (v) => String(-v)));
+    expect(labels.map((l) => l.text)).toEqual(['0', '25', '50', '75', '100']);
+    expect(labels.map((l) => l.y)).toEqual([-140, -70, 0, 70, 140]);
+    expect(labels.every((l) => l.x === 72 / 2 + 4 + 12)).toBe(true);
   });
 });
