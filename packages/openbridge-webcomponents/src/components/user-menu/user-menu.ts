@@ -42,6 +42,8 @@ export type ObcUserMenuUser = {
   role?: string;
 };
 
+export type ObcUserMenuRecentUserClickEvent = CustomEvent<ObcUserMenuUser>;
+
 export type ObcUserMenuSignedInAction = {
   id: string;
   label: string;
@@ -151,7 +153,7 @@ export type ObcUserMenuSignedInAction = {
  * @fires {CustomEvent<void>} sign-out-click - Fired when the sign-out button is clicked.
  * @fires {CustomEvent<void>} use-another-account-click - Fired when the "Use another account" button is clicked.
  * @fires {CustomEvent<{id: string, label: string}>} signed-in-action-click - Fired when a signed-in action is clicked.
- * @fires {CustomEvent<{initials: string, label: string, role?: string}>} recent-user-click - Fired when a recent user button is clicked, carrying that user's entry.
+ * @fires {ObcUserMenuRecentUserClickEvent} recent-user-click - Fired when a recent user button is clicked, carrying that user's entry.
  * @stable
  */
 @customElement('obc-user-menu')
@@ -316,7 +318,7 @@ export class ObcUserMenu extends LitElement {
 
   private handleRecentUserClick(user: ObcUserMenuUser) {
     this.dispatchEvent(
-      new CustomEvent('recent-user-click', {
+      new CustomEvent<ObcUserMenuUser>('recent-user-click', {
         detail: {...user},
       })
     );
