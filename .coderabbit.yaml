@@ -50,10 +50,12 @@ reviews:
     - "!.cursor/rules/**"
     - "!.claude/rules/**"
 
-    # ── Generated: icons and translations ────────────────────────────────────
-    # `npm run download:icons` (from Figma) and `npm run build:translations`.
+    # ── Generated: icons, translations and Figma art ─────────────────────────
+    # `npm run download:icons` (from Figma), `npm run build:translations`, and
+    # the course-arrow path data exported from Figma.
     - "!packages/openbridge-webcomponents/src/icons/**"
     - "!packages/openbridge-webcomponents/src/generated/**"
+    - "!packages/openbridge-webcomponents/src/navigation-instruments/course-arrows/course-arrows-art.ts"
 
     # ── Generated: framework wrappers ────────────────────────────────────────
     # `npm run wrappers` regenerates these wholesale from the core package's
@@ -72,7 +74,10 @@ reviews:
     - "!packages/openbridge-webcomponents/script/figmavariables.json"
 
     # ── Generated: build and release output ──────────────────────────────────
+    # Two committed snapshot suites: the Storybook baselines and the vue-demo
+    # Playwright baselines.
     - "!packages/openbridge-webcomponents/__vis__/**"
+    - "!packages/vue-demo/e2e/visual/__screenshots__/**"
     - "!packages/openbridge-webcomponents/CHANGELOG.md"
 
   path_instructions:
@@ -159,10 +164,17 @@ reviews:
         Canonical reference: docs/agents/a11y.md.
     - path: "packages/openbridge-webcomponents/src/automation/**"
       instructions: *a11y
+    - path: "packages/openbridge-webcomponents/src/internal/**"
+      instructions: *a11y
 
     # ── Story conventions ────────────────────────────────────────────────────
     - path: "packages/openbridge-webcomponents/src/**/*.stories.ts"
       instructions: |
+        Each docs/agents/*.md applies only where its `globs` frontmatter says;
+        docs/agents/jsdoc.md excludes `*.stories.ts` and `*.spec.ts`, so its
+        tone rule (no domain qualifiers) does not cover story names and
+        descriptions — a story may name the use case it shows.
+
         Story `title` and `name` use Title Case (enforced by the ESLint rule
         `openbridge/storybook-title-case`).
 
