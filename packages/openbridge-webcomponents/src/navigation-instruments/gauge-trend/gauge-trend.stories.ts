@@ -8,6 +8,7 @@ import {
   ScaleType,
 } from '../../building-blocks/bar-vertical/bar-vertical.js';
 import {Priority} from '../types.js';
+import type {ChartLineDataset} from '../../building-blocks/chart-line/chart-line-base.js';
 
 const SAMPLE_DATA = [
   {label: '00', value: 45},
@@ -1235,6 +1236,126 @@ export const DepthProfile: Story = {
       .primaryTickmarkInterval=${25}
       .secondaryTickmarkInterval=${5}
       .tertiaryTickmarkInterval=${1}
+    >
+    </obc-gauge-trend>
+  `,
+};
+
+/** Seabed depth along the track in metres; negative x is astern, 0 is the vessel. */
+const alongTrack = (from: number, to: number, f: (x: number) => number) =>
+  Array.from({length: (to - from) / 5 + 1}, (_, i) => {
+    const x = from + i * 5;
+    return {x, y: Math.round(f(x) * 10) / 10};
+  });
+const seabedAt = (x: number) =>
+  60 + Math.sin(x / 23) * 6 + Math.cos(x / 7) * 2.5;
+
+const TRACK_DATASETS: ChartLineDataset[] = [
+  {label: 'History', data: alongTrack(-200, 0, seabedAt), fill: false},
+  {
+    label: 'Prediction',
+    data: alongTrack(0, 200, (x) => seabedAt(x) - 4),
+    fill: false,
+    borderDash: [8, 4],
+  },
+];
+
+export const DatasetsAndMarkers: Story = {
+  name: 'Datasets and Markers (Dashed Prediction, Now Line)',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Two `datasets` on a number x axis: the history and a dashed prediction ahead of the vessel. `xMarker` puts the now-line and its dot at x = 0, `yMarker` the current depth across the plot. The scale is reversed so 0 sits at the top.',
+      },
+    },
+  },
+  play: async () => {
+    await new Promise((resolve) => setTimeout(resolve, 300));
+  },
+  args: {
+    width: 384,
+    height: 384,
+    priority: Priority.enhanced,
+    minValue: 0,
+    maxValue: 100,
+    reverse: true,
+    value: seabedAt(0),
+    hasBar: false,
+    hasScale: true,
+    hasAdvice: false,
+    chartFill: false,
+  },
+  render: (args) => html`
+    <obc-gauge-trend
+      .xAxisType=${'number'}
+      .xAxis=${{min: -200, max: 200}}
+      .datasets=${TRACK_DATASETS}
+      .xMarker=${{x: 0}}
+      .yMarker=${{y: seabedAt(0)}}
+      .width=${args.width}
+      .height=${args.height}
+      .priority=${args.priority}
+      .chartFill=${args.chartFill}
+      .minValue=${args.minValue}
+      .maxValue=${args.maxValue}
+      .reverse=${args.reverse}
+      .value=${args.value}
+      .hasBar=${args.hasBar}
+      .hasScale=${args.hasScale}
+      .hasAdvice=${args.hasAdvice}
+      .primaryTickmarkInterval=${25}
+      .secondaryTickmarkInterval=${5}
+      .scaleType=${ScaleType.condensed}
+    >
+    </obc-gauge-trend>
+  `,
+};
+
+export const MinMaxLabels: Story = {
+  name: 'Min Max Labels (no ladder, dot in the band)',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`showMainTickmarkLabels` with no tick intervals labels only the ends of the scale; the band keeps the current-value dot.',
+      },
+    },
+  },
+  play: async () => {
+    await new Promise((resolve) => setTimeout(resolve, 300));
+  },
+  args: {
+    width: 384,
+    height: 384,
+    priority: Priority.enhanced,
+    minValue: 0,
+    maxValue: 100,
+    reverse: true,
+    value: 62,
+    hasBar: false,
+    hasScale: true,
+    hasAdvice: false,
+    chartFill: false,
+  },
+  render: (args) => html`
+    <obc-gauge-trend
+      .data=${SAMPLE_DATA}
+      .width=${args.width}
+      .height=${args.height}
+      .priority=${args.priority}
+      .chartFill=${args.chartFill}
+      .minValue=${args.minValue}
+      .maxValue=${args.maxValue}
+      .reverse=${args.reverse}
+      .value=${args.value}
+      .hasBar=${args.hasBar}
+      .hasScale=${args.hasScale}
+      .showMainTickmarkLabels=${true}
+      .hasAdvice=${args.hasAdvice}
+      .primaryTickmarkInterval=${0}
+      .secondaryTickmarkInterval=${0}
+      .scaleType=${ScaleType.condensed}
     >
     </obc-gauge-trend>
   `,

@@ -169,6 +169,75 @@ export type ChartLineXAxisConfig = {
   max?: number;
 };
 
+/** Ellipse in data units that clips one dataset's drawing (a sonar range). */
+export type ChartLineEllipseClip = {
+  x: number;
+  y: number;
+  rx: number;
+  ry: number;
+};
+
+/** Fields the chart reads on a `datasets` entry beyond Chart.js' own. */
+export type ChartLineDatasetExtras = {
+  ellipseClip?: ChartLineEllipseClip;
+};
+
+export type ChartLineDataset = ChartDataset<'line', ChartLinePoint[]> &
+  ChartLineDatasetExtras;
+
+/**
+ * Vertical marker at an x value: a line from the plot top down to the
+ * dataset's value there, dotted from there to the plot bottom, and a dot.
+ */
+export type ChartLineXMarker = {
+  x: ChartXValue;
+  datasetIndex?: number;
+  showDot?: boolean;
+};
+
+/** Horizontal marker across the plot at a y value, in the dataset's colour. */
+export type ChartLineYMarker = {
+  y: number;
+  datasetIndex?: number;
+};
+
+/** Marker geometry, in CSS pixels, shared by the depth designs. */
+const MARKER = {
+  lineWidth: 1,
+  dash: [1, 2],
+  dotRadius: 6,
+  dotRingWidth: 2,
+  valueLineWidth: 2,
+  ringColorVar: '--border-silhouette-color',
+} as const;
+
+/**
+ * Linear interpolation of a dataset's y at `x`; `undefined` outside its data.
+ * Plain numbers are category points, indexed by position.
+ */
+export function interpolateDatasetY(
+  data: readonly ChartLinePoint[],
+  x: number
+): number | undefined {
+  const pts = data
+    .map((p, i) =>
+      typeof p === 'number' ? {x: i, y: p} : {x: Number(p.x), y: p.y}
+    )
+    .filter((p) => Number.isFinite(p.x) && Number.isFinite(p.y))
+    .sort((a, b) => a.x - b.x);
+  if (!pts.length || x < pts[0].x || x > pts[pts.length - 1].x) {
+    return undefined;
+  }
+  for (let i = 1; i < pts.length; i++) {
+    const a = pts[i - 1];
+    const b = pts[i];
+    if (x <= b.x) {
+      return b.x === a.x ? b.y : a.y + ((x - a.x) * (b.y - a.y)) / (b.x - a.x);
+    }
+  }
+  return pts[0].y;
+}
+
 const LINE_GRAPH_WATCHED_PROP_NAMES = [
   'data',
   'datasets',
@@ -178,6 +247,8 @@ const LINE_GRAPH_WATCHED_PROP_NAMES = [
   'yAxisPosition',
   'yAxes',
   'xAxis',
+  'xMarker',
+  'yMarker',
   'showGrid',
   'showGridX',
   'showGridY',
@@ -355,6 +426,9 @@ const LINE_GRAPH_DIMENSION_PROP_NAMES = [
  *   `{x, value}` items for time/number axes (x: epoch ms, ISO string, Date,
  *   or Temporal object). Points are drawn in array order (no sorting).
  * @property datasets - Chart.js-style datasets for multi-series use. If provided, takes precedence over `data`.
+ *   Explicit Chart.js styling on an entry (`borderColor`, `backgroundColor`, `borderDash`,
+ *   `borderCapStyle`, `fill`, `order`, `pointRadius`) wins over the derived defaults;
+ *   `ellipseClip` clips the entry's drawing to an ellipse given in data units.
  * @property labels - Optional explicit labels for the x-axis (category mode). If omitted labels are derived from `data`
  * @property colors - Custom color palette (CSS variable names or color strings).
  * @property legend - Show HTML legend below chart with series labels and colors.
@@ -380,6 +454,11 @@ const LINE_GRAPH_DIMENSION_PROP_NAMES = [
  *   axis spans exactly the data, so a window that is still filling stretches across the
  *   full width. In `minutes` display `max` is the `0min` reference.
  * @availableWhen xAxis xAxisType!=category
+ * @property xMarker - Vertical marker at an x value: solid from the plot top to the
+ *   dataset's value there (`datasetIndex`, default 0), dotted below it, with a dot on
+ *   the value unless `showDot` is false. Drawn in the dataset's line colour.
+ * @property yMarker - Horizontal 2px marker across the plot at a y value, in the
+ *   dataset's line colour (`datasetIndex`, default 0).
  * @property showGrid - Show grid lines.
  * @property showGridX - Show vertical grid lines (x-axis). Default: false.
  * @availableWhen showGridX showGrid==true
@@ -420,7 +499,7 @@ export class ObcChartLineBase extends LitElement {
   data: ChartLineDataItem[] = [];
 
   @property({type: Array, attribute: false})
-  datasets?: ChartDataset<'line', ChartLinePoint[]>[] = undefined;
+  datasets?: ChartLineDataset[] = undefined;
 
   @property({type: Array, attribute: false})
   labels?: (string | number)[] = undefined;
@@ -457,6 +536,12 @@ export class ObcChartLineBase extends LitElement {
 
   @property({type: Object, attribute: false})
   xAxis?: ChartLineXAxisConfig = undefined;
+
+  @property({type: Object, attribute: false})
+  xMarker?: ChartLineXMarker = undefined;
+
+  @property({type: Object, attribute: false})
+  yMarker?: ChartLineYMarker = undefined;
 
   @property({type: Boolean})
   showGrid = false;
@@ -739,6 +824,12 @@ export class ObcChartLineBase extends LitElement {
   /** @internal - Labels the range-labels plugin drew last, for tests. */
   lastRangeLabels: {axis: 'x' | 'y'; text: string; x: number; y: number}[] = [];
 
+  /** @internal - Marker pixels drawn last, for tests. */
+  lastMarkers: {x?: {x: number; y?: number}; y?: {y: number}} = {};
+
+  /** @internal - Ellipse clips applied last, in pixels by dataset index, for tests. */
+  lastClips: Record<number, ChartLineEllipseClip> = {};
+
   /**
    * Range labels for the current data and size, refreshed with every
    * `getChartOptions()` so the plugin never rebuilds the datasets on a draw.
@@ -913,6 +1004,129 @@ export class ObcChartLineBase extends LitElement {
     }
     this.rangeLabelCache = cache;
     return cache;
+  }
+
+  /**
+   * Value cursors drawn after the datasets, in the dataset's own colour, so no
+   * annotation dependency is needed. A no-op while both markers are unset.
+   */
+  private createMarkersPlugin() {
+    return {
+      id: 'markers',
+      afterDatasetsDraw: (chart: Chart) => {
+        this.lastMarkers = {};
+        if (!this.xMarker && !this.yMarker) return;
+        const area = chart.chartArea;
+        const ctx = chart.ctx;
+        const datasetOf = (index = 0) =>
+          chart.data.datasets[index] as ChartLineDataset | undefined;
+        const yScaleOf = (ds?: ChartLineDataset) =>
+          chart.scales[ds?.yAxisID ?? this.primaryYAxisId];
+        const colorOf = (ds?: ChartLineDataset) =>
+          typeof ds?.borderColor === 'string'
+            ? ds.borderColor
+            : getCssVariableValue(this, LINE_GRAPH_LABEL_CONFIG.fontColorVar);
+        ctx.save();
+
+        const xScale = chart.scales['x'];
+        if (this.xMarker && xScale) {
+          const ds = datasetOf(this.xMarker.datasetIndex);
+          const yScale = yScaleOf(ds);
+          const xValue = this.isNumericXAxis
+            ? normalizeXValue(this.xMarker.x, this.xValueMode)
+            : Number(this.xMarker.x);
+          // Half-pixel alignment keeps the 1px line crisp.
+          const x = Math.round(xScale.getPixelForValue(xValue)) + 0.5;
+          const yValue =
+            ds && yScale ? interpolateDatasetY(ds.data, xValue) : undefined;
+          const y =
+            yValue === undefined ? undefined : yScale!.getPixelForValue(yValue);
+          const color = colorOf(ds);
+          ctx.strokeStyle = color;
+          ctx.lineWidth = MARKER.lineWidth;
+          ctx.setLineDash([]);
+          ctx.beginPath();
+          ctx.moveTo(x, area.top);
+          ctx.lineTo(x, y ?? area.top);
+          ctx.stroke();
+          ctx.setLineDash([...MARKER.dash]);
+          ctx.beginPath();
+          ctx.moveTo(x, y ?? area.top);
+          ctx.lineTo(x, area.bottom);
+          ctx.stroke();
+          ctx.setLineDash([]);
+          if (y !== undefined && (this.xMarker.showDot ?? true)) {
+            ctx.beginPath();
+            ctx.arc(x, y, MARKER.dotRadius, 0, Math.PI * 2);
+            ctx.fillStyle = color;
+            ctx.fill();
+            ctx.lineWidth = MARKER.dotRingWidth;
+            ctx.strokeStyle = getCssVariableValue(this, MARKER.ringColorVar);
+            ctx.stroke();
+          }
+          this.lastMarkers.x = {x, y};
+        }
+
+        if (this.yMarker) {
+          const ds = datasetOf(this.yMarker.datasetIndex);
+          const yScale = yScaleOf(ds);
+          if (yScale) {
+            const y = yScale.getPixelForValue(this.yMarker.y);
+            // The 1px silhouette below the line lifts it off a same-coloured fill.
+            ctx.lineWidth = MARKER.lineWidth;
+            ctx.strokeStyle = getCssVariableValue(this, MARKER.ringColorVar);
+            ctx.beginPath();
+            ctx.moveTo(area.left, y + MARKER.valueLineWidth / 2 + 0.5);
+            ctx.lineTo(area.right, y + MARKER.valueLineWidth / 2 + 0.5);
+            ctx.stroke();
+            ctx.lineWidth = MARKER.valueLineWidth;
+            ctx.strokeStyle = colorOf(ds);
+            ctx.beginPath();
+            ctx.moveTo(area.left, y);
+            ctx.lineTo(area.right, y);
+            ctx.stroke();
+            this.lastMarkers.y = {y};
+          }
+        }
+        ctx.restore();
+      },
+    };
+  }
+
+  /**
+   * Clips a dataset's drawing to its `ellipseClip`, mapped through the x scale
+   * and the dataset's y scale so the radii stay true to the data units.
+   */
+  private createDatasetClipPlugin() {
+    const clipOf = (chart: Chart, index: number) => {
+      const ds = chart.data.datasets[index] as ChartLineDataset | undefined;
+      return {ds, clip: ds?.ellipseClip};
+    };
+    return {
+      id: 'datasetClip',
+      beforeDraw: () => {
+        this.lastClips = {};
+      },
+      beforeDatasetDraw: (chart: Chart, args: {index: number}) => {
+        const {ds, clip} = clipOf(chart, args.index);
+        const xScale = chart.scales['x'];
+        const yScale = chart.scales[ds?.yAxisID ?? this.primaryYAxisId];
+        if (!clip || !xScale || !yScale) return;
+        const x = xScale.getPixelForValue(clip.x);
+        const y = yScale.getPixelForValue(clip.y);
+        const rx = Math.abs(xScale.getPixelForValue(clip.x + clip.rx) - x);
+        const ry = Math.abs(yScale.getPixelForValue(clip.y + clip.ry) - y);
+        const ctx = chart.ctx;
+        ctx.save();
+        ctx.beginPath();
+        ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2);
+        ctx.clip();
+        this.lastClips[args.index] = {x, y, rx, ry};
+      },
+      afterDatasetDraw: (chart: Chart, args: {index: number}) => {
+        if (this.lastClips[args.index]) chart.ctx.restore();
+      },
+    };
   }
 
   /**
@@ -2405,7 +2619,12 @@ export class ObcChartLineBase extends LitElement {
       : null;
 
     const borderColor = existingDataset?.borderColor ?? currentColor;
-    const fillFlag = existingDataset?.fill ?? this.shouldApplyFill();
+    const explicitFill = existingDataset?.fill;
+    // A dataset index target of 0 is a valid fill, so test for presence, not truth.
+    const fillFlag =
+      explicitFill !== undefined
+        ? explicitFill !== false
+        : this.shouldApplyFill();
     const tension = this.lineMode === 'smooth' ? this.DEFAULT_TENSION : 0;
 
     // For stacked mode, add divider lines between datasets (except the topmost one)
@@ -2436,7 +2655,7 @@ export class ObcChartLineBase extends LitElement {
       data: existingDataset?.data ?? values!,
       yAxisID: existingDataset?.yAxisID ?? this.primaryYAxisId,
       borderColor,
-      backgroundColor,
+      backgroundColor: existingDataset?.backgroundColor ?? backgroundColor,
       borderWidth: existingDataset?.borderWidth ?? 2,
       showLine: existingDataset?.showLine ?? true,
       tension: existingDataset?.tension ?? tension,
@@ -2447,8 +2666,14 @@ export class ObcChartLineBase extends LitElement {
       pointBorderColor: existingDataset?.pointBorderColor ?? borderColor,
       pointBorderWidth: existingDataset?.pointBorderWidth ?? 2,
       stepped: existingDataset?.stepped ?? this.lineMode === 'stepped',
-      // Use 'start' to fill from chart bottom, not 'origin' (y=0)
-      fill: fillFlag ? 'start' : false,
+      // 'start' is the pixel bottom, not y=0; an explicit fill target (a
+      // dataset index, 'end', {value}) is the caller's and passes through.
+      fill:
+        explicitFill === undefined || explicitFill === true
+          ? fillFlag
+            ? 'start'
+            : false
+          : explicitFill,
       spanGaps: existingDataset?.spanGaps ?? true,
       // Add segment styling for stacked divider lines
       ...(needsDivider && {
@@ -2981,6 +3206,8 @@ export class ObcChartLineBase extends LitElement {
         ...(this.rangeLabels !== RangeLabels.none
           ? [this.createRangeLabelsPlugin()]
           : []),
+        this.createDatasetClipPlugin(),
+        this.createMarkersPlugin(),
       ],
     } as ChartConfiguration<'line'>);
 
