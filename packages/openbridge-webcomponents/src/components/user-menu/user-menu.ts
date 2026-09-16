@@ -97,7 +97,8 @@ export type ObcUserMenuSignedInAction = {
  * - `sign-in-click` – Fired when a sign-in button is clicked.
  * - `sign-out-click` – Fired when the sign-out button is clicked.
  * - `use-another-account-click` – Fired when the "Use another account" button
- *   is clicked. The menu keeps its own state; switch `type` to `sign-in` in
+ *   is clicked. "The menu does not change its own type; set it to sign-in in
+ *   the handler to show the full form."
  *   the handler to show the full sign-in form.
  * - `signed-in-action-click` – Fired when a signed-in action is clicked.
  * - `recent-user-click` – Fired when a recent user button is clicked.
