@@ -126,6 +126,10 @@ When working with building block components in this directory:
       for a range of 5 or less, `5`/`1` above that.
     - `linearTickInterval(height, range, minSpacing)` picks a 1-2-5 tick step by
       on-screen spacing, for scales whose height is dictated by a surrounding layout.
+    - `tickmarks.labels` (with an optional `labelFormatter`) labels both ends and
+      the primary ladder in a 24-unit column `LINEAR_LABEL_GAP` outside the +x
+      edge; `linearScaleLabel()` is the shared text fragment. Off by default, so
+      the gauges that never asked for labels keep their geometry.
     - `watchfaceLinear`'s `options.maskId` overrides the container clip-mask id.
       **Ids are document-scoped**, so any component rendering more than one gauge in
       a single shadow root MUST give each a distinct id — otherwise every gauge

@@ -98,6 +98,11 @@ When adding new features or fixing bugs:
    - `side: 'left' | 'right' | 'top' | 'bottom'` controls which edge attaches to chart
    - The chart edge is always at perpendicular coordinate `0`
    - Scale expands outward into positive/negative perpendicular space
+   - `reverse` puts `minValue` at the top (vertical) or right (horizontal): one
+     mirror of the value inside the range in `valueToMainAxis()`, which every
+     consumer reads, so fill, ticks, labels, advice, setpoint and the dot follow.
+     All four wrappers and `gauge-trend` expose it; `reverse=false` is inert
+     (`external-scale.spec.ts`, #1211)
 
 5. **Layout Model (Three Bands)**:
 
