@@ -97,9 +97,8 @@ export type ObcUserMenuSignedInAction = {
  * - `sign-in-click` – Fired when a sign-in button is clicked.
  * - `sign-out-click` – Fired when the sign-out button is clicked.
  * - `use-another-account-click` – Fired when the "Use another account" button
- *   is clicked. "The menu does not change its own type; set it to sign-in in
- *   the handler to show the full form."
- *   the handler to show the full sign-in form.
+ *   is clicked. The menu does not change its own type; set it to `sign-in` in
+ *   the handler to show the full form.
  * - `signed-in-action-click` – Fired when a signed-in action is clicked.
  * - `recent-user-click` – Fired when a recent user button is clicked.
  *
@@ -152,7 +151,7 @@ export type ObcUserMenuSignedInAction = {
  * @fires {CustomEvent<void>} sign-out-click - Fired when the sign-out button is clicked.
  * @fires {CustomEvent<void>} use-another-account-click - Fired when the "Use another account" button is clicked.
  * @fires {CustomEvent<{id: string, label: string}>} signed-in-action-click - Fired when a signed-in action is clicked.
- * @fires {CustomEvent<{initials: string, label: string}>} recent-user-click - Fired when a recent user button is clicked.
+ * @fires {CustomEvent<{initials: string, label: string, role?: string}>} recent-user-click - Fired when a recent user button is clicked, carrying that user's entry.
  * @stable
  */
 @customElement('obc-user-menu')
@@ -318,7 +317,7 @@ export class ObcUserMenu extends LitElement {
   private handleRecentUserClick(user: ObcUserMenuUser) {
     this.dispatchEvent(
       new CustomEvent('recent-user-click', {
-        detail: {initials: user.initials, label: user.label},
+        detail: {...user},
       })
     );
   }
