@@ -16,6 +16,7 @@ const meta: Meta<ObcUserMenu> = {
         'sign-out-click',
         'signed-in-action-click',
         'recent-user-click',
+        'use-another-account-click',
       ],
     },
   },
@@ -50,6 +51,8 @@ const meta: Meta<ObcUserMenu> = {
     passwordError: '',
     userInitials: 'AB',
     userLabel: 'Username',
+    userRole: '',
+    showUseAnotherAccount: true,
     recentUsers: [
       {initials: 'AB', label: 'Username'},
       {initials: 'CD', label: 'Username'},
@@ -77,6 +80,8 @@ const meta: Meta<ObcUserMenu> = {
         passwordError=${args.passwordError}
         .userInitials=${args.userInitials}
         .userLabel=${args.userLabel}
+        .userRole=${args.userRole}
+        .showUseAnotherAccount=${args.showUseAnotherAccount}
         .recentUsers=${args.recentUsers}
         .signedInActions=${args.signedInActions}
         .primaryActionId=${args.primaryActionId}
@@ -182,6 +187,53 @@ export const SignedInWithoutActions: Story = {
     size: ObcUserMenuSize.regular,
     signedInActions: [],
     primaryActionId: undefined,
+  },
+};
+
+export const UserSignInWithRoles: Story = {
+  args: {
+    type: ObcUserMenuType.userSignIn,
+    size: ObcUserMenuSize.regular,
+    hasRecentlySignedIn: true,
+    userRole: 'Role',
+    recentUsers: [
+      {initials: 'AB', label: 'Username', role: 'Role'},
+      {initials: 'CD', label: 'Username', role: 'Role'},
+      {initials: 'EF', label: 'Username', role: 'Role'},
+    ],
+  },
+};
+
+export const SignedInWithRole: Story = {
+  args: {
+    type: ObcUserMenuType.signedIn,
+    size: ObcUserMenuSize.regular,
+    userRole: 'Role',
+  },
+};
+
+export const UserSignInWithoutUseAnotherAccount: Story = {
+  args: {
+    type: ObcUserMenuType.userSignIn,
+    size: ObcUserMenuSize.regular,
+    showUseAnotherAccount: false,
+  },
+};
+
+export const UserSignInSmallWithoutUseAnotherAccount: Story = {
+  args: {
+    type: ObcUserMenuType.userSignIn,
+    size: ObcUserMenuSize.small,
+    showUseAnotherAccount: false,
+  },
+};
+
+export const UserSignInSmallWithRole: Story = {
+  args: {
+    type: ObcUserMenuType.userSignIn,
+    size: ObcUserMenuSize.small,
+    userRole: 'Role',
+    recentUsers: [{initials: 'AB', label: 'Username', role: 'Role'}],
   },
 };
 
