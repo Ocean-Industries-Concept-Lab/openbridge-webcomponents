@@ -228,14 +228,11 @@ export const UserSignInSmallWithoutUseAnotherAccount: Story = {
   },
 };
 
-/**
- * Roles are set here but the small layout draws none, so this renders exactly
- * as it would with no role at all.
- */
 export const UserSignInSmallIgnoresRole: Story = {
   args: {
     type: ObcUserMenuType.userSignIn,
     size: ObcUserMenuSize.small,
+    hasRecentlySignedIn: true,
     userRole: 'Role',
     recentUsers: [{initials: 'AB', label: 'Username', role: 'Role'}],
   },
