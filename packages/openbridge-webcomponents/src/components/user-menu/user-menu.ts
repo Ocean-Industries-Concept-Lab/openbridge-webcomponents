@@ -39,7 +39,10 @@ export enum ObcUserMenuSize {
 export type ObcUserMenuUser = {
   initials: string;
   label: string;
+  role?: string;
 };
+
+export type ObcUserMenuRecentUserClickEvent = CustomEvent<ObcUserMenuUser>;
 
 export type ObcUserMenuSignedInAction = {
   id: string;
@@ -80,8 +83,13 @@ export type ObcUserMenuSignedInAction = {
  * - `passwordError` (`string`): Error message for the password field.
  * - `userInitials` (`string`): Initials for the primary user profile.
  * - `userLabel` (`string`): Label for the primary user profile.
+ * - `userRole` (`string`): Role shown under the primary user's label. Omit it
+ *   to show no role; only the regular size draws one.
  * - `recentUsers` (`ObcUserMenuUser[]`): List of recent users shown in the
- *   "Recently signed in" section. Empty renders no section.
+ *   "Recently signed in" section. Empty renders no section. Each user may
+ *   carry its own `role`.
+ * - `showUseAnotherAccount` (`boolean`): Toggles the "Use another account"
+ *   button in the `user-sign-in` layouts, both sizes. Defaults to `true`.
  * - `signedInActions` (`ObcUserMenuSignedInAction[]`): Actions shown in the
  *   signed-in navigation list. Empty renders no actions.
  * - `primaryActionId` (`string`): Id of the action promoted to a button in the
@@ -90,6 +98,9 @@ export type ObcUserMenuSignedInAction = {
  * ### Events
  * - `sign-in-click` – Fired when a sign-in button is clicked.
  * - `sign-out-click` – Fired when the sign-out button is clicked.
+ * - `use-another-account-click` – Fired when the "Use another account" button
+ *   is clicked. The menu does not change its own type; set it to `sign-in` in
+ *   the handler to show the full form.
  * - `signed-in-action-click` – Fired when a signed-in action is clicked.
  * - `recent-user-click` – Fired when a recent user button is clicked.
  *
@@ -124,6 +135,8 @@ export type ObcUserMenuSignedInAction = {
  * @availableWhen userInitials type!=signIn
  * @property userLabel - Label for the primary user profile.
  * @availableWhen userLabel type!=signIn
+ * @property userRole - Role shown under the primary user's label; omit it to show no role.
+ * @availableWhen userRole type!=signIn && size==regular
  * @property recentUsers - Recent users for the "Recently signed in" section.
  * @property signedInActions - Actions shown in the signed-in navigation list.
  * @availableWhen signedInActions type==signedIn
@@ -133,11 +146,14 @@ export type ObcUserMenuSignedInAction = {
  * @availableWhen showPassword type in [signIn, userSignIn]
  * @property primaryActionId - Id of the action promoted to a button in the small signed-in layout.
  * @availableWhen primaryActionId type==signedIn && size==small
+ * @property showUseAnotherAccount - Controls the visibility of the "Use another account" button.
+ * @availableWhen showUseAnotherAccount type==userSignIn
  * @slot signed-in-action-icon-<id> - Optional icon for a signed-in action, one per action; `<id>` is the normalized action id (shown in the `signed-in` type).
  * @fires {CustomEvent<{username?: string, password?: string}>} sign-in-click - Fired when a sign-in button is clicked.
  * @fires {CustomEvent<void>} sign-out-click - Fired when the sign-out button is clicked.
+ * @fires {CustomEvent<void>} use-another-account-click - Fired when the "Use another account" button is clicked.
  * @fires {CustomEvent<{id: string, label: string}>} signed-in-action-click - Fired when a signed-in action is clicked.
- * @fires {CustomEvent<{initials: string, label: string}>} recent-user-click - Fired when a recent user button is clicked.
+ * @fires {ObcUserMenuRecentUserClickEvent} recent-user-click - Fired when a recent user button is clicked, carrying that user's entry.
  * @stable
  */
 @customElement('obc-user-menu')
@@ -168,6 +184,8 @@ export class ObcUserMenu extends LitElement {
 
   @property({type: String}) userLabel?: string;
 
+  @property({type: String}) userRole?: string;
+
   @property({type: Array, attribute: false})
   recentUsers: ObcUserMenuUser[] = [];
 
@@ -175,6 +193,9 @@ export class ObcUserMenu extends LitElement {
   signedInActions: ObcUserMenuSignedInAction[] = [];
 
   @property({type: String}) primaryActionId?: string;
+
+  @property({type: Boolean, attribute: false})
+  showUseAnotherAccount = true;
 
   private get showRecentUsers() {
     return this.hasRecentlySignedIn && this.recentUsers.length > 0;
@@ -223,6 +244,7 @@ export class ObcUserMenu extends LitElement {
               .size=${size}
               .initials=${user.initials}
               .label=${user.label}
+              .sublabel=${isLarge ? user.role : undefined}
               @click=${() => this.handleRecentUserClick(user)}
             ></obc-user-button>
           `
@@ -239,6 +261,7 @@ export class ObcUserMenu extends LitElement {
       return nothing;
     }
     const userButtonSize = size === 'large' ? Size.large : Size.regular;
+    const role = size === 'large' ? this.userRole : undefined;
     return html`
       <div
         class=${classMap({
@@ -250,12 +273,14 @@ export class ObcUserMenu extends LitElement {
           class=${classMap({
             'user-avatar': true,
             [`size-${size}`]: true,
+            'has-role': Boolean(role),
           })}
           .variant=${Variant.initials}
           .styleType=${StyleType.normal}
           .size=${userButtonSize}
           .initials=${this.userInitials ?? ''}
           .label=${this.userLabel ?? ''}
+          .sublabel=${role}
         ></obc-user-button>
       </div>
     `;
@@ -293,8 +318,8 @@ export class ObcUserMenu extends LitElement {
 
   private handleRecentUserClick(user: ObcUserMenuUser) {
     this.dispatchEvent(
-      new CustomEvent('recent-user-click', {
-        detail: {initials: user.initials, label: user.label},
+      new CustomEvent<ObcUserMenuUser>('recent-user-click', {
+        detail: {...user},
       })
     );
   }
@@ -350,6 +375,10 @@ export class ObcUserMenu extends LitElement {
 
   private handleSignOutClick() {
     this.dispatchEvent(new CustomEvent('sign-out-click'));
+  }
+
+  private handleUseAnotherAccountClick() {
+    this.dispatchEvent(new CustomEvent('use-another-account-click'));
   }
 
   private renderSignIn() {
@@ -488,6 +517,17 @@ export class ObcUserMenu extends LitElement {
           >
             ${msg('Sign in')}
           </obc-button>
+          ${this.showUseAnotherAccount
+            ? html`
+                <obc-button
+                  variant=${ButtonVariant.normal}
+                  fullWidth
+                  @click=${this.handleUseAnotherAccountClick}
+                >
+                  ${msg('Use another account')}
+                </obc-button>
+              `
+            : nothing}
         </div>
       </div>
       ${this.showRecentUsers
@@ -535,6 +575,17 @@ export class ObcUserMenu extends LitElement {
         >
           ${msg('Sign in')}
         </obc-button>
+        ${this.showUseAnotherAccount
+          ? html`
+              <obc-button
+                variant=${ButtonVariant.normal}
+                fullWidth
+                @click=${this.handleUseAnotherAccountClick}
+              >
+                ${msg('Use another account')}
+              </obc-button>
+            `
+          : nothing}
       </div>
       ${this.showRecentUsers
         ? html`
