@@ -8,7 +8,7 @@
     "directory": "packages/openbridge-webcomponents"
   },
   "homepage": "https://www.openbridge.no",
-  "license": "Apache-2.0",
+  "license": "AGPL-3.0-only",
   "scripts": {
     "👷_BUILD_____________________________________________________": "echo _____",
     "build": "npm run build:translations && npm run build:ts",
