@@ -8,7 +8,7 @@
     "directory": "packages/openbridge-webcomponents"
   },
   "homepage": "https://www.openbridge.no",
-  "license": "Apache-2.0",
+  "license": "AGPL-3.0-only",
   "scripts": {
     "👷_BUILD_____________________________________________________": "echo _____",
     "build": "npm run build:translations && npm run build:ts",
@@ -152,7 +152,10 @@
     "!dist/companylogo-day.png",
     "bundle/openbridge-webcomponents.bundle.js",
     "bundle/openbridge-webcomponents.bundle.js.map",
-    "custom-elements.json"
+    "custom-elements.json",
+    "LICENSE.txt",
+    "LICENSE-AGPL.txt",
+    "LICENSE-APACHE.txt"
   ],
   "publishConfig": {
     "access": "public"
