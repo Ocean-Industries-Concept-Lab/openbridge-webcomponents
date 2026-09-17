@@ -174,8 +174,9 @@ When adding new features or fixing bugs:
      (`LineElement.interpolate()`, so tension, stepped mode and gaps are
      honoured), dotted `[1, 2]` below it, a 6 px dot with a 2 px silhouette
      ring; and a 2 px
-     value line with a 1 px silhouette shadow. `lastMarkers` records the pixels
-     for specs.
+     value line with a 1 px silhouette shadow. The lines are clipped to the plot
+     area (the canvas paints above the slotted scales) and the dot is drawn only
+     while its centre lies inside it. `lastMarkers` records the pixels for specs.
    - **`ellipseClip` on a dataset** (centre and `rx` in data units, `ry` in data
      units or omitted for a circle in pixels) is applied by `datasetClipPlugin`,
      a **global** plugin registered ahead of `Filler`: plugin hooks run in

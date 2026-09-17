@@ -852,7 +852,8 @@ export class ObcChartLineBase extends LitElement {
   lastRangeLabels: {axis: 'x' | 'y'; text: string; x: number; y: number}[] = [];
 
   /** @internal - Marker pixels drawn last, for tests. */
-  lastMarkers: {x?: {x: number; y?: number}; y?: {y: number}} = {};
+  lastMarkers: {x?: {x: number; y?: number; dot: boolean}; y?: {y: number}} =
+    {};
 
   /** @internal - Ellipse clips applied last, in pixels by dataset index, for tests. */
   get lastClips(): Record<number, ChartLineEllipseClip> {
@@ -1055,8 +1056,19 @@ export class ObcChartLineBase extends LitElement {
           typeof ds?.borderColor === 'string'
             ? ds.borderColor
             : getCssVariableValue(this, LINE_GRAPH_LABEL_CONFIG.fontColorVar);
+        // Lines are clipped to the plot: a value outside the axis range maps
+        // outside it, and the canvas paints above the slotted scales.
         ctx.save();
+        ctx.beginPath();
+        ctx.rect(
+          area.left,
+          area.top,
+          area.right - area.left,
+          area.bottom - area.top
+        );
+        ctx.clip();
 
+        let dot: {x: number; y: number; color: string} | undefined;
         const xScale = chart.scales['x'];
         if (this.xMarker && xScale) {
           const ds = datasetOf(this.xMarker.datasetIndex);
@@ -1094,16 +1106,15 @@ export class ObcChartLineBase extends LitElement {
             ctx.lineTo(x, area.bottom);
             ctx.stroke();
             ctx.setLineDash([]);
-            if (y !== undefined && (this.xMarker.showDot ?? true)) {
-              ctx.beginPath();
-              ctx.arc(x, y, MARKER.dotRadius, 0, Math.PI * 2);
-              ctx.fillStyle = color;
-              ctx.fill();
-              ctx.lineWidth = MARKER.dotRingWidth;
-              ctx.strokeStyle = getCssVariableValue(this, MARKER.ringColorVar);
-              ctx.stroke();
-            }
-            this.lastMarkers.x = {x, y};
+            // The dot is drawn whole, so only while its centre is on the plot.
+            const inside =
+              y !== undefined &&
+              xPixel >= area.left &&
+              xPixel <= area.right &&
+              y >= area.top &&
+              y <= area.bottom;
+            if (inside && (this.xMarker.showDot ?? true)) dot = {x, y, color};
+            this.lastMarkers.x = {x, y, dot: dot !== undefined};
           }
         }
 
@@ -1129,6 +1140,18 @@ export class ObcChartLineBase extends LitElement {
           }
         }
         ctx.restore();
+
+        if (dot) {
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(dot.x, dot.y, MARKER.dotRadius, 0, Math.PI * 2);
+          ctx.fillStyle = dot.color;
+          ctx.fill();
+          ctx.lineWidth = MARKER.dotRingWidth;
+          ctx.strokeStyle = getCssVariableValue(this, MARKER.ringColorVar);
+          ctx.stroke();
+          ctx.restore();
+        }
       },
     };
   }

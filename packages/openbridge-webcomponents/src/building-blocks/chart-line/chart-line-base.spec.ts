@@ -992,6 +992,30 @@ describe('markers', () => {
     expect(chart.lastMarkers.x?.y).toBeUndefined();
   });
 
+  it('draws the dot only while its centre is on the plot', async () => {
+    const chart = await mountPlain(
+      (c) => {
+        c.xAxisType = XAxisType.number;
+        c.lineMode = LineMode.straight;
+        // Pinned on both axes: Chart.js drops a point outside the pinned y
+        // range from the x limits, which would collapse an auto x range.
+        c.xAxis = {min: 0, max: 10};
+        c.yAxes = [{id: 'y', position: 'left', min: 0, max: 20}];
+        c.data = twoPoints();
+        c.xMarker = {x: 2};
+      },
+      {width: 480, height: 320}
+    );
+    // At x = 2 the line reads 14, inside the pinned 0–20 range.
+    expect(chart.lastMarkers.x?.dot).toBe(true);
+    chart.xMarker = {x: 8};
+    await chart.updateComplete;
+    await frames();
+    // At x = 8 the line reads 26, above the plot: the line is clipped and the dot is skipped.
+    expect(chart.lastMarkers.x?.y).toBeLessThan(chartAreaOf(chart).top);
+    expect(chart.lastMarkers.x?.dot).toBe(false);
+  });
+
   it('accepts a negative x on a number axis and keeps the y marker when x is unknown', async () => {
     const chart = await mountPlain(
       (c) => {

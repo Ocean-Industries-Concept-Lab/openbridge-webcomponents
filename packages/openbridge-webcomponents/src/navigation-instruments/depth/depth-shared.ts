@@ -108,7 +108,8 @@ function syntheticRange(
  * `maxDepth` set: that rung, or a synthetic one for a maximum off the ladder.
  * `autoRange`: the smallest rung containing `dataMax`; from a larger rung it
  * steps down only when `dataMax` is under `DEPTH_RANGE_STEP_DOWN_FRACTION` of
- * the smaller rung's maximum. Neither: the Regular rung.
+ * the smaller rung's maximum. Neither: the rung in `current`, or the Regular
+ * rung when `current` is not on the ladder.
  */
 export function resolveDepthRange({
   ranges,
