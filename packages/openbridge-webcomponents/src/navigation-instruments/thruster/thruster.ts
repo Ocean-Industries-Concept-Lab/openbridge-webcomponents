@@ -759,6 +759,8 @@ export function thruster(
     let y = -160;
     if (options.singleDirection) {
       if (options.bottomPropeller !== PropellerType.none) {
+        // Top arrow to bottom propeller spans ~337 units here, so the 320-tall
+        // box used without a bottom propeller clips one end.
         viewBox = '-80 -300 160 356';
         y = -320;
       } else {
