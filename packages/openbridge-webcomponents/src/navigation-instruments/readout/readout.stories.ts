@@ -367,7 +367,7 @@ function argsToOptions(args: ReadoutStoryArgs): StoryOptions {
 
 const meta = {
   title: 'Instruments/Readout',
-  tags: ['autodocs', '6.0', 'beta'],
+  tags: ['autodocs', '6.0'],
   component: 'obc-readout',
   decorators: [centeredCanvasDecorator],
   render: (args) =>

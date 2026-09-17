@@ -122,7 +122,7 @@ function renderShowcase(cards: ShowcaseCard[]) {
 
 const meta = {
   title: 'Building Blocks/Readout Block',
-  tags: ['autodocs', '6.0', 'beta'],
+  tags: ['autodocs', '6.0'],
   component: 'obc-readout-block',
   decorators: [themedDecorator],
   parameters: {
