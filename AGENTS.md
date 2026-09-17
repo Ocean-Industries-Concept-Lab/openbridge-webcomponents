@@ -16,7 +16,7 @@
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | Name              | **Openbridge Web Components**                                                                                             |
 | Repo              | `Ocean-Industries-Concept-Lab/openbridge-webcomponents`                                                                   |
-| License           | Apache-2.0                                                                                                                |
+| License           | AGPL-3.0-only, each version additionally under Apache-2.0 from its change date (`LICENSE.txt`)                            |
 | Runtime           | Lit 3 + TypeScript (web components)                                                                                       |
 | Package manager   | npm (workspaces)                                                                                                          |
 | Monorepo packages | `openbridge-webcomponents` (core), `-react`, `-vue`, `-ng`, `-svelte` (auto-generated wrappers), `react-demo`, `vue-demo` |
