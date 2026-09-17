@@ -111,12 +111,10 @@ this task departs from it.
 The copies a search would have prevented were folded into their homes
 (#1210): `svghelpers/math.ts`, `charthelpers/label-threshold.ts`,
 `src/mixins/readout.css`, `src/mixins/indeterminate-slide.css`, and the
-`scrollbar` mixin applied where its body had been re-typed. One copy
-remains, on purpose; never make a second:
-
-| Copied                  | Where                                                                                                                                               | Until                                                                      |
-| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| a trimmed readout block | `automation/transmitter-button/transmitter-readout.ts`, with its own sign-aware hinted zeros (#1097 brings them to the block); the dash matches now | `obc-readout-block` leaves `@experimental`; then delete the module (#1209) |
+`scrollbar` mixin applied where its body had been re-typed. The last one — a
+trimmed readout block in the transmitter button — went when the automation
+readouts moved onto `obc-readout-block` (#1097). Nothing is copied on purpose
+any more; never start a new one.
 
 `formatNumericValue` is the readout formatter (`readout-formatters.ts`); the
 chart-side one is `formatChartNumber` (`charthelpers/canvas-layout.ts`).
