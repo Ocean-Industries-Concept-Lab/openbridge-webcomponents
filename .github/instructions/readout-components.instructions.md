@@ -271,6 +271,10 @@ Decisions carried into code from the 6.1 review (2026-08):
   consumes a zero (`012.3` / `-012.3`); the opt-in sign column
   (`hasSignSpacer`, mirrored by the list's automatic shared reserver) is what
   keeps widths stable across zero — see invariant 4b.
+- No minimum height on `obc-readout`: the design file's `container-min-height`
+  tokens (48 px on the regular and enhanced tiers) are not applied, so a
+  readout is as tall as its rows — a small vertical readout is 44 px with a
+  label, 40 px as a meta-only stacked one. `readout.spec.ts` pins it (#1252).
 - Two icon systems, on purpose. An **alert frame** flap carries the
   `obi-*-badge` glyphs — single-colour silhouettes on the flap's status
   colour (triangle alarm, circle warning, square caution, hexagon critical),

@@ -16,13 +16,13 @@ obc-readout-block {
 /* ---------- Root ----------
  * The root is an inline flex column (vertical) or row (horizontal). Private
  * `--_readout-*` variables are resolved per layout × size tier below; every
- * layout rule reads only the private variables. */
+ * layout rule reads only the private variables. A readout is as tall as its
+ * rows: the design's container-min-height tokens are not applied (#1252). */
 .readout {
   display: inline-flex;
   position: relative;
   padding-inline: var(--_readout-pad-h);
   padding-block: var(--_readout-pad-v);
-  min-block-size: var(--_readout-min-height, auto);
   border-radius: var(--global-border-radius-border-radius-base);
 }
 
@@ -532,14 +532,8 @@ obc-readout-block {
   --_readout-value-pad-v: var(
     --instrument-components-readout-group-vertical-regular-value-container-padding-vertical
   );
-  --_readout-min-height: var(
-    --instrument-components-readout-group-vertical-regular-container-min-height
-  );
 }
 
-/* The medium tiers set no `--_readout-min-height`: Figma defines the
- * container-min-height token only for the regular and enhanced tiers, so
- * medium readouts intentionally fall back to `min-block-size: auto`. */
 .readout.direction-vertical.stacking-inline.size-medium {
   --_readout-pad-h: var(
     --instrument-components-readout-group-vertical-medium-container-padding-horizontal
@@ -574,9 +568,6 @@ obc-readout-block {
   --_readout-value-pad-v: var(
     --instrument-components-readout-group-vertical-enhanced-vertical-value-container-padding-vertical
   );
-  --_readout-min-height: var(
-    --instrument-components-readout-group-vertical-enhanced-container-min-height
-  );
 }
 
 /* Stack (vertical, stacked meta) */
@@ -595,9 +586,6 @@ obc-readout-block {
   );
   --_readout-value-pad-v: var(
     --instrument-components-readout-stack-regular-value-container-padding-vertical
-  );
-  --_readout-min-height: var(
-    --instrument-components-readout-stack-regular-container-min-height
   );
 }
 
@@ -635,9 +623,6 @@ obc-readout-block {
   --_readout-value-pad-v: var(
     --instrument-components-readout-stack-enhanced-vertical-value-container-padding-vertical
   );
-  --_readout-min-height: var(
-    --instrument-components-readout-stack-enhanced-container-min-height
-  );
 }
 
 /* Group horizontal */
@@ -659,8 +644,6 @@ obc-readout-block {
   --_readout-divider-pad: var(
     --instrument-components-readout-group-horizontal-regular-divider-padding
   );
-  /* TODO(designer): verify; must also hold when only a unit is present */
-  --_readout-min-height: auto;
 }
 
 .readout.direction-horizontal.size-medium {
@@ -700,9 +683,6 @@ obc-readout-block {
   );
   --_readout-divider-pad: var(
     --instrument-components-readout-group-horizontal-enhanced-divider-padding
-  );
-  --_readout-min-height: var(
-    --instrument-components-readout-group-horizontal-enhanced-container-min-height
   );
 }
 
