@@ -4,14 +4,14 @@
     <meta charset="utf-8" />
     <title>Connector diagram — minimal example</title>
     <!-- The OpenBridge palette is imported from main.ts (Vite resolves it out
-         of node_modules). `data-obc-theme="dusk"` on <html> selects the dusk
+         of node_modules). `data-obc-theme="day"` on <html> selects the day
          variable set; the colours in style.css — and the pipe theme, resolved
          via themeFromCss — read from it. -->
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
     <h1>Connector diagram — motor, pump and valve</h1>
-    <p>Dusk palette. Open pipes draw filled, closed pipes draw as a single thin stroke.</p>
+    <p>Day palette. Open pipes draw filled, closed pipes draw as a single thin stroke.</p>
     <obc-button id="toggle-medium-color">Toggle Medium Color</obc-button>
     <div id="stage">
       <canvas id="pipes"></canvas>

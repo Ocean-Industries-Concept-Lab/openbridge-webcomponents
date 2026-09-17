@@ -2,7 +2,7 @@
   "name": "@oicl/connector-diagram",
   "version": "0.1.0",
   "description": "Canvas-based pipe/connector diagram renderer for OpenBridge",
-  "license": "MIT",
+  "license": "AGPL-3.0-only",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

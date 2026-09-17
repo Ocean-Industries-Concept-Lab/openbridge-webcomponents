@@ -5,9 +5,18 @@ import '@oicl/openbridge-webcomponents/dist/openbridge.css'
 import '@oicl/openbridge-webcomponents/dist/automation/motor/motor.js'
 import '@oicl/openbridge-webcomponents/dist/automation/pump/pump.js'
 import '@oicl/openbridge-webcomponents/dist/automation/digital-valve/digital-valve.js'
+import '@oicl/openbridge-webcomponents/dist/components/button/button.js'
 
 import {renderSegments, themeFromCss} from '../src/index.js'
-import type {PipeValue, ComponentBox, Direction, Segment} from '../src/index.js'
+import type {PipeValue, Direction, Segment} from '../src/index.js'
+
+type ComponentBox = {
+  componentId: string
+  x: number
+  y: number
+  w: number
+  h: number
+}
 
 const STAGE_W = 720
 const STAGE_H = 420
@@ -27,24 +36,6 @@ const boxes: ComponentBox[] = [
   {componentId: 'pump', x: 416, y: 96, w: ICON, h: ICON},
   {componentId: 'valve', x: 416, y: 312, w: ICON, h: ICON},
 ]
-
-/**
- * The port a pipe attaches to: the midpoint of the box edge on the given side.
- * The router needs the real edge point (not the centre) so it knows which way
- * the pipe leaves the part — the run to the centre is added separately by
- * routeToSegments when it is passed `boxes`.
- */
-function port(componentId: string, direction: Direction) {
-  const b = boxes.find(k => k.componentId === componentId)!
-  const cx = b.x + b.w / 2
-  const cy = b.y + b.h / 2
-  switch (direction) {
-    case 'top':    return {componentId, direction, x: cx, y: b.y} as const
-    case 'right':  return {componentId, direction, x: b.x + b.w, y: cy} as const
-    case 'bottom': return {componentId, direction, x: cx, y: b.y + b.h} as const
-    case 'left':   return {componentId, direction, x: b.x, y: cy} as const
-  }
-}
 
 const segments: Segment[] = [
   {
