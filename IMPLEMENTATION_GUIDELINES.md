@@ -21,6 +21,7 @@ The project is divided into three main parts:
    ⚠️ **Warning:** Do not edit the generated wrapper packages directly.
 
 3. [vue-demo](packages/vue-demo/README.md) / [react-demo](packages/react-demo/README.md) — demo applications
+4. [connector-diagram](packages/connector-diagram/README.md) — canvas renderer for pipe and connector diagrams
 
 ## 📚 Storybook stories
 

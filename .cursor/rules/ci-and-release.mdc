@@ -48,6 +48,7 @@ it. See [`generated-code.md`](../../docs/agents/generated-code.md).
 One release publishes **six** npm packages: the core, the vue / svelte / react
 wrappers, `openbridge-webcomponents-ng/dist`, and the full-bundle directory. The
 wrapper versions are synced first by `scripts/prepare-wrappers.js` (see below).
+`packages/connector-diagram` is not among them: it is not in `.releaserc.json`.
 
 ## The eight workflows
 
@@ -61,6 +62,10 @@ wrapper versions are synced first by `scripts/prepare-wrappers.js` (see below).
 | `firebase-hosting-merge.yml`               | push to `develop`                             | deploys the demo                                                                                      |
 | `firebase-hosting-pull-request.yml`        | PR                                            | builds the demo preview                                                                               |
 | `firebase-hosting-pull-request-deploy.yml` | after the build workflow completes            | publishes the preview                                                                                 |
+
+The lint job of `build.yml` and the `connector-diagram` job of
+`visual-testing.yml` also cover `packages/connector-diagram`
+([`connector-diagram.md`](../../docs/agents/connector-diagram.md)).
 
 **Regenerate baselines locally, on Linux.** The devcontainer's render is what
 the `test` job accepts; scope the run to the component and re-run without

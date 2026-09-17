@@ -25,11 +25,12 @@ const meta: Meta<typeof ObcTransmitter> = {
     size: TransmitterButtonSize.regular,
     lineType: LineType.fluid,
     value: 12.3,
-    unit: '°C',
+    unit: 'C',
     fractionDigits: 1,
     maxDigits: 0,
     hintedZeros: false,
     hasSignSpacer: false,
+    hasDegree: true,
     hasIcon: true,
     hasAdvice: false,
     adviceValue: 123,
@@ -96,6 +97,7 @@ function renderComponent(args: ObcTransmitter) {
       .maxDigits=${args.maxDigits}
       .hintedZeros=${args.hintedZeros}
       .hasSignSpacer=${args.hasSignSpacer}
+      .hasDegree=${args.hasDegree}
       .hasIcon=${args.hasIcon}
       .hasAdvice=${args.hasAdvice}
       .adviceValue=${args.adviceValue}
@@ -114,6 +116,16 @@ function renderComponent(args: ObcTransmitter) {
 }
 
 export const Value: Story = {
+  render: (args) => renderComponent(args as ObcTransmitter),
+};
+
+export const Left: Story = {
+  args: {orientation: TransmitterOrientation.left},
+  render: (args) => renderComponent(args as ObcTransmitter),
+};
+
+export const Right: Story = {
+  args: {orientation: TransmitterOrientation.right},
   render: (args) => renderComponent(args as ObcTransmitter),
 };
 

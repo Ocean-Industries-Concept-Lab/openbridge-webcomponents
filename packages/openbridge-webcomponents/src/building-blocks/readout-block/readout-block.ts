@@ -201,7 +201,7 @@ export enum ReadoutBlockHidePhase {
  * @csspart block-text - The `obc-textbox` rendering the number.
  * @csspart block-icon - The leading marker-icon container.
  * @csspart degree - The trailing degree-glyph column.
- * @beta
+ * @stable
  */
 @customElement('obc-readout-block')
 export class ObcReadoutBlock extends LitElement {
