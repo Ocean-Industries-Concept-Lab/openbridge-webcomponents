@@ -100,6 +100,36 @@ describe('resolveDepthRange', () => {
     ).toBe(regular);
   });
 
+  it('matches the current rung by value when the ladder is replaced', () => {
+    const copy = DEPTH_RANGES.map((r) => ({...r}));
+    const [, copyRegular, copyDeep] = copy;
+    // The same descent rule, with `current` from the previous ladder object.
+    expect(
+      resolveDepthRange({
+        ranges: copy,
+        autoRange: true,
+        dataMax: 5,
+        current: deep,
+      })
+    ).toBe(copyRegular);
+    expect(
+      resolveDepthRange({
+        ranges: copy,
+        autoRange: true,
+        dataMax: 80,
+        current: deep,
+      })
+    ).toBe(copyDeep);
+    expect(
+      resolveDepthRange({
+        ranges: copy,
+        autoRange: false,
+        dataMax: 0,
+        current: deep,
+      })
+    ).toBe(copyDeep);
+  });
+
   it('keeps the current rung for empty data', () => {
     expect(
       resolveDepthRange({...base, autoRange: true, dataMax: NaN, current: deep})

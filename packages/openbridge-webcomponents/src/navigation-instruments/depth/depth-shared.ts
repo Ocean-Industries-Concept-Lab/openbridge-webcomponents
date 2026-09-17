@@ -71,6 +71,13 @@ export interface ResolveDepthRangeOptions {
 const byMax = (ranges: readonly DepthRange[]) =>
   [...ranges].sort((a, b) => a.maxDepth - b.maxDepth);
 
+/** The rung `current` stands for in `sorted`, matched by value: a consumer may hand in equal objects. */
+const indexOfCurrent = (
+  sorted: readonly DepthRange[],
+  current: DepthRange | undefined
+): number =>
+  current ? sorted.findIndex((r) => r.maxDepth === current.maxDepth) : -1;
+
 /**
  * Layout traits for a maximum that is not on the ladder: the nearest rung at
  * or above it, with a 1-2-5 tick ladder sized for `frameLength`.
@@ -120,17 +127,19 @@ export function resolveDepthRange({
   }
   const fallback =
     sorted[Math.min(DEFAULT_DEPTH_RANGE_INDEX, sorted.length - 1)];
+  const currentIndex = indexOfCurrent(sorted, current);
+  const active = currentIndex < 0 ? undefined : sorted[currentIndex];
   if (!autoRange || !Number.isFinite(dataMax)) {
-    return current && sorted.includes(current) ? current : fallback;
+    return active ?? fallback;
   }
   const fitting =
     sorted.find((r) => r.maxDepth >= dataMax) ?? sorted[sorted.length - 1];
-  if (!current || !sorted.includes(current)) return fitting;
-  if (fitting.maxDepth > current.maxDepth) return fitting;
-  if (fitting.maxDepth === current.maxDepth) return current;
+  if (!active) return fitting;
+  if (fitting.maxDepth > active.maxDepth) return fitting;
+  if (fitting.maxDepth === active.maxDepth) return active;
   // Descend one rung at a time, and only once the data is well inside it.
-  const below = sorted[sorted.indexOf(current) - 1];
+  const below = sorted[currentIndex - 1];
   return dataMax < below.maxDepth * DEPTH_RANGE_STEP_DOWN_FRACTION
     ? below
-    : current;
+    : active;
 }

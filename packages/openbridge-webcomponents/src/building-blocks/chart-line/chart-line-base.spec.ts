@@ -13,7 +13,7 @@ import {
   XAxisType,
   TimeDisplay,
   RangeLabels,
-  interpolateDatasetY,
+  LineMode,
   type ChartLineDataset,
 } from './chart-line-base.js';
 
@@ -843,41 +843,6 @@ const builtDatasets = (chart: ObcAreaGraph) =>
   (chart as unknown as {chart: {data: {datasets: ChartLineDataset[]}}}).chart
     .data.datasets;
 
-describe('interpolateDatasetY', () => {
-  it('interpolates between neighbouring points', () => {
-    const data = [
-      {x: 0, y: 10},
-      {x: 10, y: 30},
-    ];
-    expect(interpolateDatasetY(data, 5)).toBe(20);
-    expect(interpolateDatasetY(data, 0)).toBe(10);
-    expect(interpolateDatasetY(data, 10)).toBe(30);
-  });
-
-  it('returns undefined outside the data and for empty data', () => {
-    const data = [
-      {x: 0, y: 10},
-      {x: 10, y: 30},
-    ];
-    expect(interpolateDatasetY(data, -1)).toBeUndefined();
-    expect(interpolateDatasetY(data, 11)).toBeUndefined();
-    expect(interpolateDatasetY([], 0)).toBeUndefined();
-  });
-
-  it('treats plain numbers as category points indexed by position', () => {
-    expect(interpolateDatasetY([4, 8, 6], 1.5)).toBe(7);
-  });
-
-  it('sorts unordered points and skips non-finite ones', () => {
-    const data = [
-      {x: 10, y: 30},
-      {x: NaN, y: 99},
-      {x: 0, y: 10},
-    ];
-    expect(interpolateDatasetY(data, 5)).toBe(20);
-  });
-});
-
 describe('dataset styling passthrough', () => {
   it('keeps an explicit fill target, background colour and dash', async () => {
     const chart = await mountPlain(
@@ -939,6 +904,7 @@ describe('markers', () => {
     const chart = await mountPlain(
       (c) => {
         c.xAxisType = XAxisType.number;
+        c.lineMode = LineMode.straight;
         c.data = twoPoints();
         c.xMarker = {x: 5};
         c.yMarker = {y: 25};
@@ -985,6 +951,45 @@ describe('markers', () => {
     await chart.updateComplete;
     await frames();
     expect(chart.lastMarkers.x).toBeUndefined();
+  });
+
+  it('follows the rendered line: step-before holds the next value across a segment', async () => {
+    const chart = await mountPlain(
+      (c) => {
+        c.xAxisType = XAxisType.number;
+        c.lineMode = LineMode.stepped;
+        c.data = twoPoints();
+        c.xMarker = {x: 5};
+      },
+      {width: 480, height: 320}
+    );
+    expect(chart.lastMarkers.x?.y).toBeCloseTo(
+      pixelScales(chart)['y'].getPixelForValue(30),
+      5
+    );
+  });
+
+  it('has no value inside a gap the line does not span', async () => {
+    const chart = await mountPlain(
+      (c) => {
+        c.xAxisType = XAxisType.number;
+        c.datasets = [
+          {
+            label: 'gappy',
+            data: [
+              {x: 0, y: 10},
+              {x: 5, y: NaN},
+              {x: 10, y: 30},
+            ],
+            spanGaps: false,
+          },
+        ];
+        c.xMarker = {x: 5};
+      },
+      {width: 480, height: 320}
+    );
+    expect(chart.lastMarkers.x).toBeDefined();
+    expect(chart.lastMarkers.x?.y).toBeUndefined();
   });
 
   it('accepts a negative x on a number axis and keeps the y marker when x is unknown', async () => {

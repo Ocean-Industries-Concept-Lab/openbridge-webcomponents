@@ -3,6 +3,7 @@ import {customElement} from '../../decorator.js';
 import {
   LINEAR_LABEL_COLUMN,
   LINEAR_LABEL_GAP,
+  formatLinearLabel,
   linearScaleLabel,
   watchfaceLinear,
 } from '../../building-blocks/instrument-linear/instrument-linear.js';
@@ -157,7 +158,7 @@ export class ObcDepthActual extends LitElement {
     const airDepth = airHeight / unitsPerDepth;
     const airLabels = [];
     for (let v = primary; primary > 0 && v <= airDepth + 1e-9; v += primary) {
-      airLabels.push(linearScaleLabel(labelX, toY(-v), String(v)));
+      airLabels.push(linearScaleLabel(labelX, toY(-v), formatLinearLabel(v)));
     }
 
     const frameOutline = `M ${HALF_FRAME} 0
@@ -324,7 +325,7 @@ export class ObcDepthActual extends LitElement {
                 primaryTickmarkInterval: primary,
                 secondaryTickmarkInterval: secondary,
                 labels: true,
-                labelFormatter: (v) => String(-v),
+                labelFormatter: (v) => formatLinearLabel(-v),
               },
               this._getAdvice()
             )}

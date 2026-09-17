@@ -1,6 +1,10 @@
 import {describe, it, expect} from 'vitest';
 import {render} from 'lit';
-import {linearTickInterval, watchfaceLinear} from './instrument-linear.js';
+import {
+  formatLinearLabel,
+  linearTickInterval,
+  watchfaceLinear,
+} from './instrument-linear.js';
 import {Priority} from '../../navigation-instruments/types.js';
 
 describe('linearTickInterval', () => {
@@ -72,6 +76,29 @@ describe('watchfaceLinear labels', () => {
       y: Number(t.getAttribute('y')),
     }));
   };
+
+  it('rounds the floating-point noise of an accumulated ladder away by default', () => {
+    expect(formatLinearLabel(0.1 + 0.1 + 0.1)).toBe('0.3');
+    expect(formatLinearLabel(-0.30000000000000004)).toBe('-0.3');
+    expect(formatLinearLabel(1000)).toBe('1000');
+    const parts = watchfaceLinear(
+      {height: 280, width: 72, scaleWidth: 24, minValue: -0.5, maxValue: 0},
+      [],
+      undefined,
+      {container: 'white'},
+      {hideContainer: true, off: false, priority: Priority.regular},
+      {primaryTickmarkInterval: 0.1, labels: true},
+      []
+    );
+    expect(texts(parts).map((l) => l.text)).toEqual([
+      '0',
+      '-0.1',
+      '-0.2',
+      '-0.3',
+      '-0.4',
+      '-0.5',
+    ]);
+  });
 
   it('draws nothing without the option', () => {
     expect(texts(gauge(false))).toEqual([]);

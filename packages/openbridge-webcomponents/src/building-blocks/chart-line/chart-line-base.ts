@@ -259,33 +259,6 @@ const datasetClipPlugin = {
 // Global plugins run in registration order: the clip must precede Filler.
 Chart.register(datasetClipPlugin, Filler);
 
-/**
- * Linear interpolation of a dataset's y at `x`; `undefined` outside its data.
- * Plain numbers are category points, indexed by position.
- */
-export function interpolateDatasetY(
-  data: readonly ChartLinePoint[],
-  x: number
-): number | undefined {
-  const pts = data
-    .map((p, i) =>
-      typeof p === 'number' ? {x: i, y: p} : {x: Number(p.x), y: p.y}
-    )
-    .filter((p) => Number.isFinite(p.x) && Number.isFinite(p.y))
-    .sort((a, b) => a.x - b.x);
-  if (!pts.length || x < pts[0].x || x > pts[pts.length - 1].x) {
-    return undefined;
-  }
-  for (let i = 1; i < pts.length; i++) {
-    const a = pts[i - 1];
-    const b = pts[i];
-    if (x <= b.x) {
-      return b.x === a.x ? b.y : a.y + ((x - a.x) * (b.y - a.y)) / (b.x - a.x);
-    }
-  }
-  return pts[0].y;
-}
-
 const LINE_GRAPH_WATCHED_PROP_NAMES = [
   'data',
   'datasets',
@@ -1087,7 +1060,6 @@ export class ObcChartLineBase extends LitElement {
         const xScale = chart.scales['x'];
         if (this.xMarker && xScale) {
           const ds = datasetOf(this.xMarker.datasetIndex);
-          const yScale = yScaleOf(ds);
           // On a category axis a string marker names a label; a number is an index.
           const xValue = this.isNumericXAxis
             ? normalizeXValue(this.xMarker.x, this.xValueMode)
@@ -1098,14 +1070,16 @@ export class ObcChartLineBase extends LitElement {
           const xValid =
             Number.isFinite(xValue) && (this.isNumericXAxis || xValue >= 0);
           if (xValid) {
+            const xPixel = xScale.getPixelForValue(xValue);
             // Half-pixel alignment keeps the 1px line crisp.
-            const x = Math.round(xScale.getPixelForValue(xValue)) + 0.5;
-            const yValue =
-              ds && yScale ? interpolateDatasetY(ds.data, xValue) : undefined;
-            const y =
-              yValue === undefined
-                ? undefined
-                : yScale!.getPixelForValue(yValue);
+            const x = Math.round(xPixel) + 0.5;
+            // The rendered line, not the data: tension, stepped mode and gaps
+            // decide where the value sits, and a gap has no value.
+            const line = chart.getDatasetMeta(this.xMarker.datasetIndex ?? 0)
+              .dataset as LineElement | undefined;
+            const hit = line?.interpolate({x: xPixel, y: 0}, 'x');
+            const hitY = (Array.isArray(hit) ? hit[0] : hit)?.y;
+            const y = typeof hitY === 'number' ? hitY : undefined;
             const color = colorOf(ds);
             ctx.strokeStyle = color;
             ctx.lineWidth = MARKER.lineWidth;

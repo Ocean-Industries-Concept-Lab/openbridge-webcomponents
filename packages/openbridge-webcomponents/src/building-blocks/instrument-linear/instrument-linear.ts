@@ -88,7 +88,7 @@ export function watchfaceLinear(
      * edge. Off by default so the existing gauges keep their geometry.
      */
     labels?: boolean;
-    /** Text for a labelled value; `String(value)` when unset. */
+    /** Text for a labelled value; `formatLinearLabel()` when unset. */
     labelFormatter?: (value: number) => string;
   },
   advice: LinearAdviceRaw[]
@@ -173,7 +173,7 @@ export function watchfaceLinear(
           linearScaleLabel(
             width / 2 + LINEAR_LABEL_GAP + LINEAR_LABEL_COLUMN / 2,
             valueToY(v, minValue, maxValue, height),
-            (tickmarks.labelFormatter ?? String)(v)
+            (tickmarks.labelFormatter ?? formatLinearLabel)(v)
           )
         )
     : [];
@@ -231,6 +231,14 @@ export function watchfaceLinear(
 /** Gap between a linear gauge's +x edge and its label column, and the column's width. */
 export const LINEAR_LABEL_GAP = 4;
 export const LINEAR_LABEL_COLUMN = 24;
+
+/**
+ * Label text for a scale value. A ladder is built by repeated addition, so a
+ * value such as `0.30000000000000004` has to be rounded back to `0.3`.
+ */
+export function formatLinearLabel(value: number): string {
+  return String(Number(value.toPrecision(12)));
+}
 
 /**
  * A scale label centred on `(x, y)`, in the tick-mark typography the linear

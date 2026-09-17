@@ -170,8 +170,10 @@ When adding new features or fixing bugs:
      `pointRadius` arrays pass through the spread.
    - **`xMarker` / `yMarker`** are drawn by the always-registered `markers`
      plugin in `afterDatasetsDraw`, in the referenced dataset's line colour: a
-     1 px line from the plot top to the interpolated value (`interpolateDatasetY()`),
-     dotted `[1, 2]` below it, a 6 px dot with a 2 px silhouette ring; and a 2 px
+     1 px line from the plot top to the value on the rendered line
+     (`LineElement.interpolate()`, so tension, stepped mode and gaps are
+     honoured), dotted `[1, 2]` below it, a 6 px dot with a 2 px silhouette
+     ring; and a 2 px
      value line with a 1 px silhouette shadow. `lastMarkers` records the pixels
      for specs.
    - **`ellipseClip` on a dataset** (centre and `rx` in data units, `ry` in data
