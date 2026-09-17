@@ -2,6 +2,7 @@ import {LitElement, html, svg, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import componentStyle from './compass-indicator.css?inline';
 import {customElement} from '../../decorator.js';
+import {normalizeAngle} from '../../svghelpers/math.js';
 
 const HEADING_ARROW_PATH =
   'M23.1426 11.978C23.5519 11.2972 24.6131 11.3458 24.9297 12.1235L32.3877 30.4536L32.4336 30.5796C32.8455 31.8831 31.3809 32.9849 30.209 32.2808V32.2798L24 28.5835L17.79 32.2798L17.791 32.2808C16.5815 33.0075 15.0606 31.8106 15.6123 30.4536L23.0703 12.1235L23.1426 11.978Z';
@@ -11,10 +12,6 @@ const COURSE_ARROW_PATH =
   'M23.1426 11.978C23.5519 11.2972 24.6131 11.3458 24.9297 12.1235L32.3877 30.4536L32.4336 30.5796C32.8455 31.8831 31.3809 32.9849 30.209 32.2808V32.2798L24 28.5835L17.79 32.2798L17.791 32.2808C16.5815 33.0075 15.0606 31.8106 15.6123 30.4536L23.0703 12.1235L23.1426 11.978ZM20.0889 27.4087L23.7451 25.2388L24 25.0864L24.2549 25.2388L27.9102 27.4087L24 17.7974L20.0889 27.4087Z';
 const CARDINAL_LABELS_8_WAY = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
 const CARDINAL_LABELS_CARDINAL = ['N', 'E', 'S', 'W'];
-
-function normalizeAngle(angle: number): number {
-  return ((angle % 360) + 360) % 360;
-}
 
 export enum CompassIndicatorType {
   Regular = 'regular',

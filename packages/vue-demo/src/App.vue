@@ -32,6 +32,7 @@ import type { App } from './router'
 import ObcIconButton from '@oicl/openbridge-webcomponents-vue/components/icon-button/ObcIconButton.vue'
 import { IconButtonVariant } from '@oicl/openbridge-webcomponents/dist/components/icon-button/icon-button.js'
 import { useHotkeys } from './composables/useHotkeys'
+import { MOBILE_BREAKPOINT_PX, useMobileLayout } from './composables/useMobileLayout'
 import router from './router'
 import type { ObcContextMenuInputChangeEvent } from '@oicl/openbridge-webcomponents/dist/components/context-menu-input/context-menu-input'
 
@@ -68,6 +69,7 @@ const smallScreen = computed(() => {
 })
 useComponentSize({ zoom })
 useSpeedAlerts(10, smallScreen)
+const { isMobile } = useMobileLayout()
 
 const inactivityDeadline = computed(() => {
   return smallScreen.value ? 10_000 : 120_000
@@ -209,10 +211,9 @@ function onMoreMenuChange(event: ObcContextMenuInputChangeEvent) {
       show-dimming-button
       show-clock
       :inactive="inactive"
-      :app-button-breakpoint-px="700"
-      :dimming-button-breakpoint-px="700"
-      :app-title-breakpoint-px="smallScreen ? 100000 : 400"
-      :clock-minimize-breakpoint-px="inactive && smallScreen ? 100000 : 300"
+      :app-button-breakpoint-px="MOBILE_BREAKPOINT_PX"
+      :dimming-button-breakpoint-px="MOBILE_BREAKPOINT_PX"
+      :app-title-breakpoint-px="smallScreen ? 100000 : MOBILE_BREAKPOINT_PX"
       :menu-button-activated="showNavigation"
       :dimming-button-activated="showBrilliance"
       :apps-button-activated="showAppMenu"
@@ -244,12 +245,7 @@ function onMoreMenuChange(event: ObcContextMenuInputChangeEvent) {
         />
       </template>
       <template #clock>
-        <ObcClock
-          :date="date"
-          :time-zone-offset-hours="offset"
-          show-timezone
-          :blink-only-breakpoint-px="600"
-        />
+        <ObcClock :date="date" :time-zone-offset-hours="offset" :show-timezone="!isMobile" />
       </template>
     </TopBar>
   </header>

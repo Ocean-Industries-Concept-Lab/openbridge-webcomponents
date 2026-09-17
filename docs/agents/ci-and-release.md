@@ -52,6 +52,7 @@ it. See [`generated-code.md`](generated-code.md).
 One release publishes **six** npm packages: the core, the vue / svelte / react
 wrappers, `openbridge-webcomponents-ng/dist`, and the full-bundle directory. The
 wrapper versions are synced first by `scripts/prepare-wrappers.js` (see below).
+`packages/connector-diagram` is not among them: it is not in `.releaserc.json`.
 
 ## The eight workflows
 
@@ -59,18 +60,25 @@ wrapper versions are synced first by `scripts/prepare-wrappers.js` (see below).
 | ------------------------------------------ | --------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
 | `build.yml`                                | push + PR, all branches                       | typecheck, `analyze`, the `lint:*` suite including `lint:agents`, `format:check`, `fix-imports:check` |
 | `visual-testing.yml`                       | push + PR on `develop` / `stable`             | Playwright snapshot suite                                                                             |
-| `update-snapshots.yml`                     | **PR comment containing `/update-snapshots`** | rebuilds baselines in the Docker image and pushes to the PR branch                                    |
+| `update-snapshots.yml`                     | **PR comment containing `/update-snapshots`** | rebuilds baselines in the Docker image and pushes to the PR branch — currently failing (#1179)        |
 | `pr-title-lint.yml`                        | PR opened / edited / synchronize / reopened   | Conventional Commits check on the PR title                                                            |
 | `release.yml`                              | push to `develop`, or manual                  | `build:full` then `semantic-release`                                                                  |
 | `firebase-hosting-merge.yml`               | push to `develop`                             | deploys the demo                                                                                      |
 | `firebase-hosting-pull-request.yml`        | PR                                            | builds the demo preview                                                                               |
 | `firebase-hosting-pull-request-deploy.yml` | after the build workflow completes            | publishes the preview                                                                                 |
 
-**`/update-snapshots` is the one to remember.** Snapshot baselines are
-environment-sensitive, so regenerating them locally on a non-Linux machine
-produces diffs CI will reject. Commenting `/update-snapshots` on the PR runs the
-regeneration inside the same Docker image CI uses and pushes the result. Prefer
-it over committing locally-generated baselines.
+The lint job of `build.yml` and the `connector-diagram` job of
+`visual-testing.yml` also cover `packages/connector-diagram`
+([`connector-diagram.md`](connector-diagram.md)).
+
+**Regenerate baselines locally, on Linux.** The devcontainer's render is what
+the `test` job accepts; scope the run to the component and re-run without
+`--update` afterwards ([`testing-visual.md`](testing-visual.md)). Baselines from
+a non-Linux machine produce diffs CI rejects — there, run
+`npm run test-storybook:docker -- -- component-name --update` from the package
+directory, then the same command without `--update`. The `/update-snapshots`
+comment workflow currently fails inside its Docker image, and fires on any
+comment containing that string (#1179).
 
 ## Two script directories, and they are not interchangeable
 

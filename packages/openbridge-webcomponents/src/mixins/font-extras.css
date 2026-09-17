@@ -12,10 +12,27 @@
  *     the generated `font-instrument-*` mixins to align numeric readouts to
  *     their baseline padding tokens. Consumed by `ar/poi-header` (and kept
  *     available for external consumers of the readout typography).
+ *   - `font-label-active-reserve` — holds a label at its selected (bold)
+ *     width in every state, so selecting one member of a content-sized row
+ *     cannot resize the row.
  *
  * Auto-loaded by `postcss-mixins` (see `postcss.config.mjs` → `mixinsDir`)
  * and audited by `npm run lint:mixins`.
  * ============================================================================ */
+
+/* Holds a label at its selected (bold) width in every state, so a layout sized
+ * from label content cannot reflow as the selection moves. Apply to an
+ * `aria-hidden` element repeating the label text — a `::after` cannot carry
+ * `aria-hidden`, and accessible-name implementations disagree on whether
+ * generated content is hidden by `visibility` alone (#1212). */
+@define-mixin font-label-active-reserve {
+  @mixin font-label-active;
+  display: block;
+  /* Contributes width to the parent without occupying a visible box. */
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+}
 
 @define-mixin font-overlay-outline-shadow {
   text-shadow:

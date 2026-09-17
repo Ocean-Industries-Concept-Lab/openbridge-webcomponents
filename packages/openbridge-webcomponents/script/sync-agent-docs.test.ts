@@ -45,6 +45,15 @@ describe('parseAgentDoc', () => {
     expect(doc.body).toBe('# Accessibility Instructions\n\nBody text.\n');
   });
 
+  it('parses frontmatter checked out with CRLF line endings', () => {
+    const doc = parseAgentDoc(
+      VALID.replace(/\n/g, '\r\n'),
+      'docs/agents/a11y.md'
+    );
+    expect(doc.name).toBe('a11y');
+    expect(doc.body).toBe('# Accessibility Instructions\n\nBody text.\n');
+  });
+
   it('strips single quotes used to escape leading "!"', () => {
     const raw = `---
 name: jsdoc

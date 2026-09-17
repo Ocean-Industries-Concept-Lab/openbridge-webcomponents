@@ -5,6 +5,7 @@ import {styleMap} from 'lit/directives/style-map.js';
 import componentStyle from './progress-button.css?inline';
 import {customElement} from '../../decorator.js';
 import {CircularProgressMode} from '../../building-blocks/circular-progress/circular-progress.js';
+import {clamp} from '../../svghelpers/math.js';
 
 export enum ProgressButtonType {
   Linear = 'linear',
@@ -195,7 +196,7 @@ export class ObcProgressButton extends LitElement {
   }
 
   private renderLinearProgress() {
-    const clampedValue = Math.max(0, Math.min(100, this.value));
+    const clampedValue = clamp(this.value, 0, 100);
     const progressWidth = `${clampedValue}%`;
 
     return html`

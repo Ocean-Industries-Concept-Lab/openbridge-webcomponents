@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Storybook / test artifacts
+storybook-static/
+__vis__/**/__results__/
+__vis__/**/__diffs__/
+
+# Local Claude Code config (machine-specific paths / permissions)
+.claude/
+
+# Local plans/specs — working documents, not part of the repo
+docs/
+
+# Editor / OS
+.DS_Store
+*.log

@@ -175,3 +175,32 @@ export const TooManyInitials: Story = {
     styleType: StyleType.flat,
   },
 };
+
+export const WithSublabel: Story = {
+  args: {
+    variant: Variant.initials,
+    styleType: StyleType.normal,
+    label: 'Anna',
+    sublabel: 'Captain',
+  },
+};
+
+export const LargeWithSublabel: Story = {
+  args: {
+    variant: Variant.initials,
+    styleType: StyleType.normal,
+    size: Size.large,
+    label: 'Anna',
+    sublabel: 'Captain',
+  },
+};
+
+export const StaticWithSublabel: Story = {
+  args: {
+    variant: Variant.initials,
+    styleType: StyleType.normal,
+    static: true,
+    label: 'Anna',
+    sublabel: 'Captain',
+  },
+};

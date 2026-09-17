@@ -20,6 +20,7 @@ import '../../icons/icon-alerts.js';
 import '../../icons/icon-link.js';
 import {property, state} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
+import {msg} from '@lit/localize';
 
 /**
  * `<obc-integration-bar>` – A compact top-level integration header for vessel and system navigation controls.
@@ -50,14 +51,14 @@ import {classMap} from 'lit/directives/class-map.js';
  * @slot clock - Custom clock content, rendered when `showClock` is true
  * @slot integration-buttons - Regular vessel integration buttons
  * @slot hug-buttons - Compact vessel integration buttons; slotted integration buttons are forced to hug type
- * @fires fleet-button-click - Fired when the fleet button is clicked
- * @fires link-button-clicked - Fired when the link button is clicked
- * @fires alert-button-clicked - Fired when the alert button is clicked
- * @fires notification-button-clicked - Fired when the notification button is clicked
- * @fires screen-button-clicked - Fired when the screen button is clicked
- * @fires system-button-clicked - Fired when the system button is clicked
- * @fires dimming-button-clicked - Fired when the dimming button is clicked
- * @fires user-button-clicked - Fired when the user button is clicked
+ * @fires {CustomEvent} fleet-button-click - Fired when the fleet button is clicked
+ * @fires {CustomEvent} link-button-clicked - Fired when the link button is clicked
+ * @fires {CustomEvent} alert-button-clicked - Fired when the alert button is clicked
+ * @fires {CustomEvent} notification-button-clicked - Fired when the notification button is clicked
+ * @fires {CustomEvent} screen-button-clicked - Fired when the screen button is clicked
+ * @fires {CustomEvent} system-button-clicked - Fired when the system button is clicked
+ * @fires {CustomEvent} dimming-button-clicked - Fired when the dimming button is clicked
+ * @fires {CustomEvent} user-button-clicked - Fired when the user button is clicked
  * @experimental
  */
 @customElement('obc-integration-bar')
@@ -114,7 +115,11 @@ export class ObcIntegrationBar extends LitElement {
       <nav class="wrapper">
         <div class="content-container">
           ${!this.hideHomeButton
-            ? html`<obc-icon-button class="home-button" variant="integration">
+            ? html`<obc-icon-button
+                class="home-button"
+                variant="integration"
+                aria-label=${msg('Home')}
+              >
                 <obi-home></obi-home>
               </obc-icon-button>`
             : null}
@@ -126,6 +131,7 @@ export class ObcIntegrationBar extends LitElement {
                 })}
                 part="link-button"
                 variant="integration"
+                aria-label=${msg('Link')}
                 @click=${() =>
                   this.dispatchEvent(new CustomEvent('link-button-clicked'))}
                 ?activated=${this.linkButtonActivated}
@@ -179,6 +185,7 @@ export class ObcIntegrationBar extends LitElement {
                 })}
                 part="alert-button"
                 variant="integration"
+                aria-label=${msg('Alerts')}
                 style=${this.alertButtonActivated
                   ? 'anchor-name: --settings-menu-anchor;'
                   : ''}
@@ -197,6 +204,7 @@ export class ObcIntegrationBar extends LitElement {
                 })}
                 part="notification-button"
                 variant="integration"
+                aria-label=${msg('Notifications')}
                 style=${this.notificationButtonActivated
                   ? 'anchor-name: --settings-menu-anchor;'
                   : ''}
@@ -217,6 +225,7 @@ export class ObcIntegrationBar extends LitElement {
                 })}
                 part="screen-button"
                 variant="integration"
+                aria-label=${msg('Screen')}
                 style=${this.screenButtonActivated
                   ? 'anchor-name: --settings-menu-anchor;'
                   : ''}
@@ -235,6 +244,7 @@ export class ObcIntegrationBar extends LitElement {
                 })}
                 part="system-button"
                 variant="integration"
+                aria-label=${msg('System')}
                 style=${this.systemButtonActivated
                   ? 'anchor-name: --settings-menu-anchor;'
                   : ''}
@@ -253,6 +263,7 @@ export class ObcIntegrationBar extends LitElement {
                 })}
                 part="dimming-button"
                 variant="integration"
+                aria-label=${msg('Dimming')}
                 style=${this.dimmingButtonActivated
                   ? 'anchor-name: --settings-menu-anchor;'
                   : ''}
@@ -271,6 +282,7 @@ export class ObcIntegrationBar extends LitElement {
                 })}
                 part="user-button"
                 variant="integration"
+                aria-label=${msg('User')}
                 style=${this.userButtonActivated
                   ? 'anchor-name: --settings-menu-anchor;'
                   : ''}

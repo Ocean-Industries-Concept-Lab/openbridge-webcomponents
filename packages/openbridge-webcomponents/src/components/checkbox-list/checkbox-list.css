@@ -1,0 +1,13 @@
+:host {
+  display: block;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+::slotted([hidden]) {
+  display: none; /* collapsed rows leave layout; :host is display:block so [hidden] alone would not win */
+}

@@ -10,6 +10,9 @@ export default defineConfig({
     browser: {
       enabled: true,
       provider: playwright(),
+      // Vitest only defaults to headless under CI; without this a local run
+      // waits for a display that never appears.
+      headless: true,
       instances: [{browser: 'chromium'}],
     },
   },

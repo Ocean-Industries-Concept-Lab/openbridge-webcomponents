@@ -199,6 +199,45 @@ onUnmounted(() => {
   grid-row: 1 / -1;
 }
 
+/* Mobile: one card under the other, the page scrolls. 768px is
+   MOBILE_BREAKPOINT_PX in composables/useMobileLayout.ts. */
+@media screen and (max-width: 768px) {
+  .container {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    min-height: calc(100vh - var(--app-components-topbar-touch-target-size));
+    overflow-y: visible;
+  }
+
+  .container > * {
+    flex: none; /* each card keeps the height below instead of sharing the column */
+    height: 320px;
+  }
+
+  .own-ship {
+    height: 440px;
+  }
+
+  .pitch-roll,
+  .wind {
+    height: 360px;
+  }
+
+  .speed,
+  .weather {
+    height: 200px;
+  }
+
+  .vessel-motion {
+    height: 560px;
+  }
+
+  .propulsion {
+    height: 720px;
+  }
+}
+
 .tunnel1,
 .tunnel2 {
   position: absolute;

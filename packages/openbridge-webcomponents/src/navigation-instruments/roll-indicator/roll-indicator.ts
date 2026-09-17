@@ -1,6 +1,7 @@
 import {LitElement, css, html, svg} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
+import {degToRad} from '../../svghelpers/math.js';
 
 export enum RollIndicatorType {
   enhanced = 'enhanced',
@@ -114,9 +115,8 @@ export class ObcRollIndicator extends LitElement {
   }
 
   private get sectorPathD(): string {
-    const baseRadians = (SECTOR_BASE_ANGLE_DEG * Math.PI) / 180;
-    const edgeRadians =
-      ((SECTOR_BASE_ANGLE_DEG + this.mappedTrackAngle) * Math.PI) / 180;
+    const baseRadians = degToRad(SECTOR_BASE_ANGLE_DEG);
+    const edgeRadians = degToRad(SECTOR_BASE_ANGLE_DEG + this.mappedTrackAngle);
 
     const baseX = CX + Math.cos(baseRadians) * SECTOR_RAY_PX;
     const baseY = CY + Math.sin(baseRadians) * SECTOR_RAY_PX;

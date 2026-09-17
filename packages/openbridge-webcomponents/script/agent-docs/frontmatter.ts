@@ -31,7 +31,7 @@ function unquote(value: string): string {
  * valid-but-unsupported construct can never be silently mis-emitted.
  */
 export function parseAgentDoc(raw: string, sourcePath: string): AgentDoc {
-  const lines = raw.split('\n');
+  const lines = raw.replace(/\r\n/g, '\n').split('\n');
   if (lines[0].trim() !== '---') {
     throw new Error(`${sourcePath}: must start with a "---" frontmatter block`);
   }

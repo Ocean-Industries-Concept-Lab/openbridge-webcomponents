@@ -912,8 +912,11 @@ export default [
     },
   },
   {
-    // Icon components carry no lifecycle tags by design.
-    files: ['src/icons/**/*.ts', 'src/manual-icon/**/*.ts'],
+    // Icon components carry no lifecycle tags by design. The `**/` prefix
+    // keeps the glob matching when eslint runs from the repo root (the
+    // lint-staged pre-commit hook does), where file paths carry the
+    // packages/openbridge-webcomponents/ prefix.
+    files: ['**/src/icons/**/*.ts', '**/src/manual-icon/**/*.ts'],
 
     rules: {
       'openbridge/component-lifecycle-tag': 'off',

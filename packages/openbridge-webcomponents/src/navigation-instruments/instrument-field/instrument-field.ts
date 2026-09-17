@@ -6,6 +6,7 @@ import '../../components/button/button.js';
 import '../../icons/icon-drop-down-google.js';
 import '../../components/navigation-item/navigation-item.js';
 import {customElement} from '../../decorator.js';
+import {READOUT_UNAVAILABLE_DASH} from '../readout/readout-formatters.js';
 
 /**
  * Enum for instrument field sizes.
@@ -106,11 +107,13 @@ export class ObcInstrumentField extends LitElement {
   dashedGenerator(): string {
     const n = this.showZeroPadding ? Math.max(this.maxDigits, 1) : 1;
     if (this.fractionDigits < 1) {
-      return '-'.repeat(n);
+      return READOUT_UNAVAILABLE_DASH.repeat(n);
     } else {
       const diff = n - this.fractionDigits;
       return (
-        '-'.repeat(Math.max(diff, 1)) + '.' + '-'.repeat(this.fractionDigits)
+        READOUT_UNAVAILABLE_DASH.repeat(Math.max(diff, 1)) +
+        '.' +
+        READOUT_UNAVAILABLE_DASH.repeat(this.fractionDigits)
       );
     }
   }

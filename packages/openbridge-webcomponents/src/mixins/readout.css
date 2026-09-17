@@ -1,0 +1,53 @@
+/* obc-readout and obc-readout-list-item are two layouts over obc-readout-block;
+   what they share about the block lives here (docs/agents/readout-components.md). */
+
+/* Bridge a layout's public colour custom properties onto the block's, so consumers
+   theme the value / setpoint / advice / hinted-zero colours under the layout's own
+   prefix even though they render inside obc-readout-block. Use inside obc-readout-block. */
+@define-mixin readout-block-color-bridge $prefix {
+  --obc-readout-block-value-color: var(
+    $(prefix)-value-color,
+    var(--element-neutral-color)
+  );
+  --obc-readout-block-value-enhanced-color: var(
+    $(prefix)-value-enhanced-color,
+    var(--element-neutral-enhanced-color)
+  );
+  --obc-readout-block-setpoint-color: var(
+    $(prefix)-setpoint-color,
+    var(--element-neutral-color)
+  );
+  --obc-readout-block-setpoint-enhanced-color: var(
+    $(prefix)-setpoint-enhanced-color,
+    var(--instrument-enhanced-secondary-color)
+  );
+  --obc-readout-block-setpoint-touching-outline-color: var(
+    $(prefix)-setpoint-touching-outline-color,
+    var(--element-neutral-enhanced-color)
+  );
+  --obc-readout-block-setpoint-touching-color: var(
+    $(prefix)-setpoint-touching-color,
+    var(--base-blue-100)
+  );
+  --obc-readout-block-advice-color: var(
+    $(prefix)-advice-color,
+    var(--element-neutral-color)
+  );
+  --obc-readout-block-hinted-color: var(
+    $(prefix)-hinted-color,
+    var(--element-disabled-color)
+  );
+}
+
+/* Size the consumer-provided block icons forwarded into obc-readout-block's `icon`
+   slot: the block sizes the forwarded slot element; this sizes the consumer's icon
+   to fill it. Use at the top level of the layout's stylesheet. */
+@define-mixin readout-block-slot-icons {
+  ::slotted([slot="value-icon"]),
+  ::slotted([slot="setpoint-icon"]),
+  ::slotted([slot="advice-icon"]) {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+  }
+}
