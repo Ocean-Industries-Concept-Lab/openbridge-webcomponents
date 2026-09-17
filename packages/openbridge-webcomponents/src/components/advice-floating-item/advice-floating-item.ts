@@ -83,6 +83,12 @@ import {
  * @property action2 - If true, renders a secondary action button in the advice message.
  *   Note: The secondary action is only shown if the primary action (`action`) is also enabled.
  *   Default: false.
+ * @property type - Variant of the advice message: `regular` (default) shows a single advice
+ *   icon, `application` adds a second application icon.
+ * @property direction - Layout direction: `horizontal` (default) puts content and icons
+ *   side-by-side, `vertical` stacks them.
+ * @property lineType - Content line type: `singleLine` (default) is a compact one-line message,
+ *   `multiLine` allows longer advice text to wrap.
  * @slot primary-icon - Custom main icon, projected into the child only when `type="application"` (the built-in advice icon is used otherwise).
  * @slot title - Title or heading of the advice message.
  * @slot description - Detailed advice or message text.
@@ -97,20 +103,8 @@ import {
  */
 @customElement('obc-advice-floating-item')
 export class ObcAdviceFloatingItem extends LitElement {
-  /**
-   * Defines the visual and behavioral variant of the advice message.
-   * - `regular`: Standard advice message with a single advice icon.
-   * - `application`: Application-type advice message with an additional icon.
-   * Default: `regular`.
-   */
   @property({type: String}) type = ObcFloatingItemType.Regular;
 
-  /**
-   * Sets the layout direction of the advice message.
-   * - `horizontal`: Content and icons are arranged side-by-side.
-   * - `vertical`: Content and icons are stacked vertically.
-   * Default: `horizontal`.
-   */
   @property({type: String}) direction = ObcFloatingItemDirection.horizontal;
 
   @property({type: Boolean}) hasTimestamp = false;
@@ -121,12 +115,6 @@ export class ObcAdviceFloatingItem extends LitElement {
 
   @property({type: Boolean}) action2 = false;
 
-  /**
-   * Sets the content line type for the advice message.
-   * - `singleLine`: Compact, one-line message.
-   * - `multiLine`: Allows for longer, multi-line advice text.
-   * Default: `singleLine`.
-   */
   @property({type: String}) lineType = ObcFloatingItemLineType.singleLine;
 
   protected override render() {

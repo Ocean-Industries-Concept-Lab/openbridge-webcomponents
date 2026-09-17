@@ -7,7 +7,7 @@ import {customElement} from '../../decorator.js';
 /**
  * `<obc-notification-badge-button>` – A compact action button for notification-related commands or acknowledgments.
  *
- * This component provides a visually distinct button, often used for quick actions such as acknowledging alerts, muting notifications, or similar context-specific responses. It supports both text and icon content, and can be styled to fit seamlessly into notification bars, toolbars, or grouped button sets.
+ * This component provides a visually distinct button, often used for quick actions such as acknowledging alerts, muting notifications, or similar context-specific responses. It supports both text and icon content, and can be styled to fit into notification bars, toolbars, or grouped button sets.
  *
  * ### Features
  * - **Icon or Text Content:** Supports either a text label (e.g., "ACK") or an icon via the default slot.
@@ -37,8 +37,8 @@ import {customElement} from '../../decorator.js';
  *
  * ### Best Practices
  * - Keep button content concise—use a single icon or a short label.
- * - When grouping multiple notification buttons, use the `openRight`/`openLeft` and `cornerLeft`/`cornerRight` properties for seamless visual integration.
- * - For accessibility, ensure that icon-only buttons have an appropriate `aria-label` or accessible text.
+ * - When grouping multiple notification buttons, use the `openRight`/`openLeft` and `cornerLeft`/`cornerRight` properties so the borders meet.
+ * - For accessibility, give icon-only buttons an `aria-label` or accessible text.
  *
  * ### Example:
  * ```
@@ -49,9 +49,9 @@ import {customElement} from '../../decorator.js';
  * <obc-notification-badge-button>ACK</obc-notification-badge-button>
  * ```
  *
- * @property openRight - Removes the right border for seamless grouping with adjacent buttons.
+ * @property openRight - Removes the right border so the button sits flush against the next one.
  *   Use when this button is not the last in a horizontal group.
- * @property openLeft - Removes the left border for seamless grouping with adjacent buttons.
+ * @property openLeft - Removes the left border so the button sits flush against the previous one.
  *   Use when this button is not the first in a horizontal group.
  * @property cornerLeft - Applies rounded corners to the left side of the button.
  *   Use for the first button in a group or when aligning to a container's left edge.

@@ -91,6 +91,12 @@ import {
  * @property action2 - If true, displays a secondary action button (e.g., "Undo").
  *   Only available if `action` is also true.
  *   Default is false.
+ * @property type - Notification type: `regular` (default) is the standard appearance,
+ *   `application` is the application-level one with a second icon.
+ * @property direction - Layout direction: `horizontal` (default) puts content and actions
+ *   side-by-side, `vertical` stacks them.
+ * @property lineType - Content line type: `singleLine` (default) is the compact one-line layout,
+ *   `multiLine` allows a longer description to wrap.
  * @slot primary-icon - Custom main icon, projected into the child only when `type="application"` (the built-in notification icon is used otherwise).
  * @slot title - Title or heading of the notification.
  * @slot description - Detailed message text.
@@ -105,20 +111,8 @@ import {
  */
 @customElement('obc-notification-floating-item')
 export class ObcNotificationFloatingItem extends LitElement {
-  /**
-   * Defines the notification type.
-   * - `regular`: Standard notification appearance.
-   * - `application`: Application-level notification with additional icon.
-   * Default is `regular`.
-   */
   @property({type: String}) type = ObcFloatingItemType.Regular;
 
-  /**
-   * Sets the layout direction of the notification.
-   * - `horizontal`: Content and actions are arranged side-by-side.
-   * - `vertical`: Content and actions are stacked.
-   * Default is `horizontal`.
-   */
   @property({type: String}) direction = ObcFloatingItemDirection.horizontal;
 
   @property({type: Boolean}) hasTimestamp = false;
@@ -129,12 +123,6 @@ export class ObcNotificationFloatingItem extends LitElement {
 
   @property({type: Boolean}) action2 = false;
 
-  /**
-   * Sets the line type for the notification content.
-   * - `singleLine`: Compact, single-line layout.
-   * - `multiLine`: Supports longer, multi-line descriptions.
-   * Default is `singleLine`.
-   */
   @property({type: String}) lineType = ObcFloatingItemLineType.singleLine;
 
   protected override render() {

@@ -67,6 +67,8 @@ export enum RichButtonDirection {
  * @property hasLeadingIcon - If true, displays the leading icon slot before the label.
  * @property hasTrailingIcon - If true, displays the trailing icon slot after the description.
  * @property disabled - If true, the button is disabled and cannot be interacted with.
+ * @property direction - Layout direction for the button content: `vertical` (default) stacks icons
+ *   and text, `horizontal` puts them side by side.
  * @slot leading-icon - Icon displayed before the label (shown when `hasLeadingIcon` is true)
  * @slot trailing-icon - Icon displayed after the description (shown when `hasTrailingIcon` is true)
  * @fires {CustomEvent<{label: string, description: string}>} rich-button-click - When the button is clicked and not disabled
@@ -78,11 +80,6 @@ export class ObcRichButton extends LitElement {
 
   @property({type: String}) description = '';
 
-  /**
-   * Layout direction for the button content.
-   * - `vertical` (default): Icons and text are stacked vertically.
-   * - `horizontal`: Icons and text are arranged side by side.
-   */
   @property({type: String}) direction: RichButtonDirection =
     RichButtonDirection.Vertical;
 

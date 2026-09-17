@@ -205,6 +205,21 @@ export interface AlertFrameConfig {
  *   never flashes. Acknowledged frames are always steady.
  * @property flashEffect - `outline` (default) grows the outline by 2 px, 1 px each side, while on in one step;
  *   `outline-eased` grows it over a 50 ms transition, a design-evaluation option.
+ * @property type - Visual variant: `regular` is the outlined frame alone, `small-side-flip`
+ *   (default) adds a small right-side flap with the status icon,
+ *   `large-side-flip` a large vertical flap with an optional custom icon, and
+ *   `bottom-flip` a bottom flap with status icon, label and timer.
+ * @property thickness - Border thickness: `small` (default) is the thin border, `large` the thick
+ *   one for higher emphasis.
+ * @property status - Alert status, which picks the colour scheme and the icon: `alarm`
+ *   (default) is the highest severity, then `warning` and `caution`. The
+ *   `level-critical`, `level-high`, `level-medium`, `level-low` and
+ *   `level-diagnostic` severities are styled to match their legacy
+ *   equivalents.
+ * @property mode - Acknowledgement state, which drives the frame's flashing: `acked-active`
+ *   (default) is active and acknowledged and never flashes, `unacked-active`
+ *   is active and unacknowledged and flashes, and `unacked-rectified` is a
+ *   cleared condition that has not been acknowledged.
  * @slot - Default slot for main alert content.
  * @slot icon - Custom icon for the flap (large-side-flip, bottom-flip).
  * @slot label - Label text for the bottom flap (bottom-flip only).
@@ -213,41 +228,14 @@ export interface AlertFrameConfig {
  */
 @customElement('obc-alert-frame')
 export class ObcAlertFrame extends LitElement {
-  /**
-   * Visual variant of the alert frame.
-   * - `regular`: Outlined frame only.
-   * - `small-side-flip`: Small right-side flap with status icon.
-   * - `large-side-flip`: Large vertical right-side flap with status icon and optional custom icon.
-   * - `bottom-flip`: Bottom flap with status icon, label, and timer.
-   *
-   * Default: `small-side-flip`
-   */
   @property({type: String}) type: ObcAlertFrameType =
     ObcAlertFrameType.SmallSideFlip;
 
-  /**
-   * Border thickness of the alert frame.
-   * - `small`: Thin border (default).
-   * - `large`: Thick border for higher emphasis.
-   */
   @property({type: String}) thickness: ObcAlertFrameThickness =
     ObcAlertFrameThickness.Small;
 
-  /**
-   * Status of the alert, controlling color scheme and icon.
-   * - `alarm`: Highest severity (default).
-   * - `warning`: Medium severity.
-   * - `caution`: Lower severity.
-   * - `level-critical`, `level-high`, `level-medium`, `level-low`, `level-diagnostic`: level severity levels, styled to match their legacy equivalents.
-   */
   @property({type: String}) status: AlertType = AlertType.Alarm;
 
-  /**
-   * Acknowledgement lifecycle state, controlling the frame's blinking/animation.
-   * - `acked-active`: Active and acknowledged (default); no blinking.
-   * - `unacked-active`: Active and not yet acknowledged; blinks.
-   * - `unacked-rectified`: Condition cleared but not yet acknowledged.
-   */
   @property({type: String}) mode: ObcAlertFrameMode =
     ObcAlertFrameMode.ackedActive;
 

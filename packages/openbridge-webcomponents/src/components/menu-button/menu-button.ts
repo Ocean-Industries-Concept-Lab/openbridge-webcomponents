@@ -145,6 +145,13 @@ export type ObcMenuButtonItemClickEvent = CustomEvent<{
  *   If true, the menu opens above the button; otherwise, it opens below.
  * @property disabled - Whether both parts of the button are disabled.
  *   Disables both the button and the menu.
+ * @property options - Menu options, each with a unique `value` and a `label`, and optionally an
+ *   `icon` template, `children` for a nested or flyout menu, and a `level`
+ *   giving the nesting depth in a hierarchical menu.
+ * @property menuType - Context menu variant, which sets the layout and the selection behaviour:
+ *   `regular` (default) is single-select, `checkboxes` and `nested-checkboxes`
+ *   are flat and hierarchical multi-select, `flyout` is a multi-level flyout,
+ *   and `multi` and `multi-with-subtitles` lay the menu out in columns.
  * @slot icon - Icon displayed at the start of the button when `hasIcon` is true.
  * @fires {ObcSplitButtonChangeEvent} change - Fired when the menu selection changes.
  * @fires {ObcMenuButtonItemClickEvent} item-click - Fired when a menu item is clicked.
@@ -156,15 +163,6 @@ export type ObcMenuButtonItemClickEvent = CustomEvent<{
 export class ObcMenuButton extends LitElement {
   @property({type: String}) label = '';
 
-  /**
-   * Array of menu options with value, label, and optional level, icon, and children.
-   * Each option can include:
-   * - `value`: Unique string identifier.
-   * - `label`: Display text.
-   * - `icon`: Optional icon (e.g., `<obi-placeholder></obi-placeholder>`).
-   * - `children`: Optional array of child options (for nested/flyout menus).
-   * - `level`: Optional nesting level (for hierarchical menus).
-   */
   @property({type: Array}) options: ContextMenuOption[] = [];
 
   @property({type: Array}) selectedValues: string[] = [];
@@ -173,17 +171,6 @@ export class ObcMenuButton extends LitElement {
 
   @property({type: Boolean}) hasIcon = false;
 
-  /**
-   * The variant type of context menu to display.
-   * Determines menu layout and selection behavior.
-   * - `Regular`: Standard single-select.
-   * - `Checkboxes`: Multi-select with checkboxes.
-   * - `NestedCheckboxes`: Hierarchical multi-select.
-   * - `Flyout`: Multi-level flyout menu.
-   * - `Multi`: Multi-column menu.
-   * - `MultiWithSubtitles`: Multi-column with group subtitles.
-   * @default ContextMenuType.Regular
-   */
   @property({type: String})
   menuType: ContextMenuType = ContextMenuType.Regular;
 

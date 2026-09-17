@@ -72,9 +72,14 @@ import {
  * @property terminalType - Terminal type for the group header in the Tree variant — one of `regular`
  *   (default), `aggregated-header`, or `group-header`. No effect in flat variants.
  * @property defaultOpen - Whether the group starts expanded. Useful for trees that open by default.
+ * @property alerts - Per-severity alert counts shown as trailing badges on the group header, in
+ *   the Tree variant only. Forwarded to the underlying
+ *   `obc-tree-navigation-item`; a header usually sets `combine` so it totals
+ *   the rows beneath it.
  * @slot icon - Custom icon displayed next to the group label.
  * @slot - Default slot for flyout content (typically navigation items).
  * @fires {CustomEvent<void>} open - When the group is expanded and the flyout is shown.
+ * @stable
  */
 @customElement('obc-navigation-item-group')
 export class ObcNavigationItemGroup extends LitElement {
@@ -97,12 +102,6 @@ export class ObcNavigationItemGroup extends LitElement {
 
   @property({type: String}) terminalType: string = TreeTerminalType.regular;
 
-  /**
-   * Per-severity alert counts shown as trailing badge(s) on the group header
-   * (Tree variant only). Forwarded to the underlying `obc-tree-navigation-item`;
-   * typically `{combine: true, ...}` so the header totals the rows beneath it.
-   * See {@link TreeNavigationItemAlerts}.
-   */
   @property({type: Object}) alerts?: TreeNavigationItemAlerts;
 
   @property({type: Boolean}) defaultOpen = false;

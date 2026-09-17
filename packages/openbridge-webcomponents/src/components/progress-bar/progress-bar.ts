@@ -110,6 +110,10 @@ export enum CircularProgressState {
  * @property progressiveIndeterminate - Uses a progressive indeterminate ring (spinning arc that grows with `value`); takes
  *   precedence over `circularState`.
  * @availableWhen progressiveIndeterminate type==circular
+ * @property showState - Shows the `stateLabel` next to the value.
+ *   **TODO(designer):** Confirm the intended purpose of the state indicator — the story labels
+ *   this a "future feature".
+ * @availableWhen showState type==linear && showValue==true && mode==determinate
  * @slot icon - Centered icon for the circular `indeterminate` and `icon` states.
  * @stable
  */
@@ -125,13 +129,6 @@ export class ObcProgressBar extends LitElement {
   @property({type: Boolean}) showUnit = false;
   @property({type: Boolean}) hasDescription = false;
   @property({type: String}) description = 'Description text';
-  /**
-   * Shows the `stateLabel` next to the value.
-   *
-   * **TODO(designer):** Confirm the intended purpose of the state indicator — the story labels
-   * this a "future feature".
-   * @availableWhen type==linear && showValue==true && mode==determinate
-   */
   @property({type: Boolean}) showState = false;
   @property({type: String}) stateLabel = 'Open';
   @property({type: Boolean}) progressiveIndeterminate = false;

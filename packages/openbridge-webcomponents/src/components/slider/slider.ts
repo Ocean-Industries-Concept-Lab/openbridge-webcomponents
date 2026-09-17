@@ -124,6 +124,32 @@ export type ObcSliderChangeEvent = CustomEvent<number>;
  *
  * In this example, the slider allows selection from 0 to 100 in steps of 10, with left/right arrow icons for quick adjustments.
  *
+ * @property value - The current value of the slider.
+ *   Updates as the user drags the thumb, clicks the track (if `allowSeeking`), or uses the increment/decrement buttons.
+ * @property min - The minimum allowed value for the slider.
+ *   Default is 0.
+ * @property max - The maximum allowed value for the slider.
+ *   Default is 100.
+ * @property step - The step granularity for slider value changes.
+ *   If set, the slider will snap to multiples of this value between min and max.
+ *   Optional; if not set, the slider is continuous.
+ * @property stepClick - The amount to increment or decrement the value when clicking the left/right icon buttons.
+ *   Default is 10.
+ * @availableWhen stepClick hasLeftIcon==true || hasRightIcon==true
+ * @property hasLeftIcon - Whether to display a left icon button for decrementing the value.
+ *   When true, the `icon-left` slot is rendered as a button.
+ * @property hasRightIcon - Whether to display a right icon button for incrementing the value.
+ *   When true, the `icon-right` slot is rendered as a button.
+ * @property allowSeeking - Enables animated seeking: clicking or dragging along the track will set the value to the clicked position, animating smoothly.
+ *   Default is false.
+ * @availableWhen allowSeeking variant!=no-input && disabled==false
+ * @property seekingSpeed - The speed of the smooth animation that moves the value to the clicked position (used when `allowSeeking` is false).
+ *   Expressed as the inverse of seconds to go from min to max (e.g., 1/3 means 3 seconds for full range).
+ *   Default is 1/3.
+ * @availableWhen seekingSpeed allowSeeking==false && variant!=no-input && disabled==false
+ * @property variant - Visual and interaction style: `normal` (default) is the standard
+ *   appearance, `enhanced` has a larger track and thumb for emphasis, and
+ *   `no-input` is read-only.
  * @slot icon-left - Slot for the left icon button (shown when `hasLeftIcon` is true)
  * @slot icon-right - Slot for the right icon button (shown when `hasRightIcon` is true)
  * @attr hugcontainer - If set, the slider will not have any spacing between the slider icons and the container
@@ -133,83 +159,24 @@ export type ObcSliderChangeEvent = CustomEvent<number>;
  */
 @customElement('obc-slider')
 export class ObcSlider extends LitElement {
-  /**
-   * The current value of the slider.
-   *
-   * Updates as the user drags the thumb, clicks the track (if `allowSeeking`), or uses the increment/decrement buttons.
-   */
   @property({type: Number}) value = 50;
 
-  /**
-   * The minimum allowed value for the slider.
-   *
-   * Default is 0.
-   */
   @property({type: Number}) min = 0;
 
-  /**
-   * The maximum allowed value for the slider.
-   *
-   * Default is 100.
-   */
   @property({type: Number}) max = 100;
 
-  /**
-   * The step granularity for slider value changes.
-   *
-   * If set, the slider will snap to multiples of this value between min and max.
-   * Optional; if not set, the slider is continuous.
-   */
   @property({type: Number}) step: number | undefined;
 
-  /**
-   * The amount to increment or decrement the value when clicking the left/right icon buttons.
-   *
-   * Default is 10.
-   * @availableWhen hasLeftIcon==true || hasRightIcon==true
-   */
   @property({type: Number}) stepClick = 10;
 
-  /**
-   * The visual and interaction style of the slider.
-   *
-   * - `normal`: Standard appearance.
-   * - `enhanced`: Larger track and thumb for emphasis.
-   * - `no-input`: Read-only; disables all user input.
-   *
-   * Default is `normal`.
-   */
   @property({type: String}) variant: ObcSliderVariant = ObcSliderVariant.Normal;
 
-  /**
-   * Whether to display a left icon button for decrementing the value.
-   *
-   * When true, the `icon-left` slot is rendered as a button.
-   */
   @property({type: Boolean}) hasLeftIcon = false;
 
-  /**
-   * Whether to display a right icon button for incrementing the value.
-   *
-   * When true, the `icon-right` slot is rendered as a button.
-   */
   @property({type: Boolean}) hasRightIcon = false;
 
-  /**
-   * Enables animated seeking: clicking or dragging along the track will set the value to the clicked position, animating smoothly.
-   *
-   * Default is false.
-   * @availableWhen variant!=no-input && disabled==false
-   */
   @property({type: Boolean}) allowSeeking = false;
 
-  /**
-   * The speed of the smooth animation that moves the value to the clicked position (used when `allowSeeking` is false).
-   *
-   * Expressed as the inverse of seconds to go from min to max (e.g., 1/3 means 3 seconds for full range).
-   * Default is 1/3.
-   * @availableWhen allowSeeking==false && variant!=no-input && disabled==false
-   */
   @property({type: Number}) seekingSpeed = 1 / 3;
 
   @property({type: Boolean}) disabled = false;

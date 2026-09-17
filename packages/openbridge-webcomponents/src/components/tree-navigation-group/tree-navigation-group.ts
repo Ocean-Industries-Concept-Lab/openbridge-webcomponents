@@ -60,9 +60,14 @@ import '../tree-navigation-item/tree-navigation-item.js';
  *   the terminal. One of `regular` (default), `aggregated-header`, or `group-header`.
  * @property href - The URL to navigate to when the header is activated. If set, the header row
  *   renders as a link; otherwise it acts as a button.
+ * @property alerts - Per-severity alert counts shown as trailing badges on the header row,
+ *   forwarded verbatim to the header `<obc-tree-navigation-item>`. A group
+ *   usually sets `combine` so its header shows one badge totalling the alerts
+ *   of the rows beneath it.
  * @slot icon - Leading icon for the group header (shown when `hasIcon` is true).
  * @slot - Child rows disclosed when the group is expanded.
  * @fires {CustomEvent<boolean>} expand-toggle - Fired when the header is activated; detail is the next `expanded` value.
+ * @beta
  */
 @customElement('obc-tree-navigation-group')
 export class ObcTreeNavigationGroup extends LitElement {
@@ -80,12 +85,6 @@ export class ObcTreeNavigationGroup extends LitElement {
 
   @property({type: String}) terminalType: string = TreeTerminalType.regular;
 
-  /**
-   * Per-severity alert counts shown as trailing badge(s) on the header row.
-   * Forwarded verbatim to the header `<obc-tree-navigation-item>` — typically a
-   * group sets `{combine: true, ...}` so its header shows one badge totalling
-   * the alerts of the rows beneath it. See {@link TreeNavigationItemAlerts}.
-   */
   @property({type: Object}) alerts?: TreeNavigationItemAlerts;
 
   @property({type: String}) href: string | undefined;

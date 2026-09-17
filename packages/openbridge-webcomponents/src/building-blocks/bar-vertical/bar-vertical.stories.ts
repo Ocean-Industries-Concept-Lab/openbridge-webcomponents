@@ -336,22 +336,6 @@ export const SmallRange: Story = {
   },
 };
 
-// export const WithSetpointAtZero: Story = {
-//   name: 'With setpoint at zero (within deadband)',
-//   args: {
-//     minValue: -100,
-//     maxValue: 100,
-//     height: 320,
-//     setpoint: 0.3,
-//     setpointAtZeroDeadband: 0.5,
-//     hasBar: true,
-//     priority: Priority.enhanced,
-//     primaryTickmarkInterval: 50,
-//     secondaryTickmarkInterval: 10,
-//     labels: true,
-//   },
-// };
-
 export const WithBarFillRight: Story = {
   name: 'With Bar Fill (right side, enhanced)',
 
