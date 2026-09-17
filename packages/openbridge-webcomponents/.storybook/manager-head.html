@@ -1,0 +1,39 @@
+<style>
+  /*
+    Sidebar floor width on desktop.
+
+    The lifecycle badges (Beta / Experimental / Deprecated) sit on the same row
+    as the story name, and below ~423px of sidebar the longer ones wrap onto a
+    second line, which makes the tree hard to scan. Storybook has no config for
+    a minimum sidebar width, so pin the floor here.
+
+    Storybook's manager lays the app out as a grid whose first track is
+    `minmax(0, var(--nav-width))`, and it writes `--nav-width` as an inline
+    style on that grid element on every resize. The inline style is the only
+    stable hook (the class name is Emotion-generated and changes per build), and
+    `!important` is what lets a stylesheet rule beat it.
+
+    The track expression is a floor, not a fixed width, so dragging the sidebar
+    wider still works:
+      max(var(--nav-width), 423px)      raises anything below the floor,
+      min(..., var(--nav-width) * 1000) keeps a collapsed sidebar collapsed —
+                                        at --nav-width: 0 the product is 0, so
+                                        the whole track computes to 0 instead of
+                                        leaving a 423px gap.
+
+    Gated at 1024px rather than Storybook's own 600px desktop breakpoint: below
+    that, a 423px sidebar plus the addon panel leaves almost nothing for the
+    canvas.
+  */
+  @media (min-width: 1024px) {
+    div[style*='--nav-width'] {
+      grid-template-columns:
+        minmax(
+          0,
+          min(max(var(--nav-width), 423px), calc(var(--nav-width) * 1000))
+        )
+        minmax(100px, 1fr)
+        minmax(0, var(--right-panel-width)) !important;
+    }
+  }
+</style>
