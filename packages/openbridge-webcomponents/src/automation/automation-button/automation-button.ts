@@ -239,12 +239,9 @@ export class ObcAutomationButton extends LitElement {
   }
 
   /**
-   * Renders the `<obc-alert-frame>` together with the `alert-icon`,
-   * `alert-label` and `alert-timer` slots so that slotted content reaches the
-   * frame regardless of the `positioning`. When `overlay` is true the frame is
-   * an absolutely-positioned overlay (used by `point` positioning) and
-   * `content` is empty; otherwise the frame wraps `content` (used by `symbol`
-   * and `button` positioning).
+   * One frame for every `positioning`, so the `alert-icon`, `alert-label` and
+   * `alert-timer` slots always reach it. `overlay` is the absolutely
+   * positioned `point` variant and takes no `content`; the others wrap it.
    */
   private renderAlertFrame(
     content: HTMLTemplateResult | typeof nothing,

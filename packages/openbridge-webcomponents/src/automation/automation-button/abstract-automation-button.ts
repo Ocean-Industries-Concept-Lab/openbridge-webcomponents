@@ -57,28 +57,24 @@ export enum AutomationButtonBadgeCommandLocked {
 }
 
 /**
- * Abstract base class for automation device buttons (e.g. valves, pumps,
- * tanks). Subclasses provide the device symbol through the `icon` getter and
- * its on/off state through `_on`, while this class renders the underlying
- * `<obc-automation-button>` and forwards the shared slots and properties.
+ * Abstract base for automation device buttons (valves, pumps, tanks).
+ * Subclasses supply the device symbol through the `icon` getter and the on/off
+ * state through `_on`; this class renders `<obc-automation-button>` and
+ * forwards the shared slots and properties.
  *
  * ### Alert frame slots
  *
- * When `alert` is enabled the button is wrapped in an `<obc-alert-frame>`. The
- * alert frame can show a custom icon, label and timer, depending on the
- * selected `alertFrameType`. These are exposed using the same slot names as
- * `<obc-automation-button>` and are forwarded all the way down to the alert
- * frame, for every `positioning` value:
+ * With `alert` set the button is wrapped in an `<obc-alert-frame>`, which shows
+ * a custom icon, label and timer depending on `alertFrameType`. The slots keep
+ * their `<obc-automation-button>` names, reach the frame for every
+ * `positioning`, and are renamed on the way down (`alert-icon` -> `icon`, and
+ * likewise for label and timer).
  *
  * | Slot Name    | Renders When...                                              | Purpose                                                                 |
  * |--------------|--------------------------------------------------------------|-------------------------------------------------------------------------|
  * | alert-icon   | `alert` and `showAlertIcon` and `alertFrameType` in [`large-side-flip`, `bottom-flip`, `top-flip`] | Custom icon shown in the alert frame flap, in addition to the alert category icon. |
  * | alert-label  | `alert` and `alertFrameType` in [`bottom-flip`, `top-flip`]  | Label text shown in the alert frame flap.                               |
  * | alert-timer  | `alert` and `alertFrameType` in [`bottom-flip`, `top-flip`]  | Timer / clock shown in the alert frame flap.                            |
- *
- * The slot content is remapped on its way down: `alert-icon`
- * (`obc-automation-button`) -> `icon` (`obc-alert-frame`), and likewise for
- * the label and timer slots.
  *
  * @availableWhen readoutPosition showReadoutStack==true
  * @availableWhen showStatus showReadoutStack==true
