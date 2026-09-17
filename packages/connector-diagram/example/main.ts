@@ -8,7 +8,7 @@ import '@oicl/openbridge-webcomponents/dist/automation/digital-valve/digital-val
 import '@oicl/openbridge-webcomponents/dist/components/button/button.js'
 
 import {renderSegments, themeFromCss} from '../src/index.js'
-import type {PipeValue, Direction, Segment} from '../src/index.js'
+import type {PipeValue, Segment} from '../src/index.js'
 
 type ComponentBox = {
   componentId: string
