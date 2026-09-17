@@ -12,14 +12,14 @@
 
 ## 1. Repository Overview
 
-| Item              | Value                                                                                                                     |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| Name              | **Openbridge Web Components**                                                                                             |
-| Repo              | `Ocean-Industries-Concept-Lab/openbridge-webcomponents`                                                                   |
-| License           | AGPL-3.0-only, each version additionally under Apache-2.0 from its change date (`LICENSE.txt`)                            |
-| Runtime           | Lit 3 + TypeScript (web components)                                                                                       |
-| Package manager   | npm (workspaces)                                                                                                          |
-| Monorepo packages | `openbridge-webcomponents` (core), `-react`, `-vue`, `-ng`, `-svelte` (auto-generated wrappers), `react-demo`, `vue-demo` |
+| Item              | Value                                                                                                |
+| ----------------- | ---------------------------------------------------------------------------------------------------- |
+| Name              | **Openbridge Web Components**                                                                        |
+| Repo              | `Ocean-Industries-Concept-Lab/openbridge-webcomponents`                                              |
+| License           | AGPL-3.0-only, each version additionally under Apache-2.0 from its change date (`LICENSE.txt`)       |
+| Runtime           | Lit 3 + TypeScript (web components)                                                                  |
+| Package manager   | npm (workspaces)                                                                                     |
+| Monorepo packages | `openbridge-webcomponents` (core), generated wrappers, `react-demo`, `vue-demo`, `connector-diagram` |
 
 The library provides maritime navigation and automation UI components.
 Framework wrappers are **auto-generated** — never edit them directly.
@@ -157,6 +157,7 @@ The table below is generated too. Edit `docs/agents/*.md`, never this block.
 | [ci-and-release](docs/agents/ci-and-release.md) | `.github/workflows/**`<br>`{.releaserc.json,package.json}`<br>`scripts/**`<br>`packages/openbridge-webcomponents/package.json`<br>`packages/openbridge-webcomponents/script/**`<br>`!packages/openbridge-webcomponents/script/docgen/**` | CI workflows, the semantic-release model, which commit types ship a release, and the two script directories |
 | [circular-charts](docs/agents/circular-charts.md) | `packages/openbridge-webcomponents/src/bars-graphs/{donut-chart,pie-chart,polar-chart,radial-bar-chart}/**`<br>`packages/openbridge-webcomponents/src/charthelpers/**` | Circular chart components (donut, pie, polar, radial-bar) |
 | [coding-standards](docs/agents/coding-standards.md) | `packages/openbridge-webcomponents/src/**/{*.ts,*.css}`<br>`packages/openbridge-webcomponents/script/**/{*.ts,*.mjs}`<br>`packages/openbridge-webcomponents/.storybook/**/*.ts`<br>`!packages/openbridge-webcomponents/src/{icons,generated,manual-icon}/**` | Comment rules, CSS why-comments, the writing-style ban list, boolean naming and Storybook titles |
+| [connector-diagram](docs/agents/connector-diagram.md) | `packages/connector-diagram/**` | Canvas pipe-drawing package — tests, snapshot baselines and the workspace lockfile |
 | [css-postcss](docs/agents/css-postcss.md) | `packages/openbridge-webcomponents/src/**/*.css` | PostCSS mixins, the two-layer colour model, size variants and font mixins |
 | [docgen](docs/agents/docgen.md) | `packages/openbridge-webcomponents/script/docgen/**` | The OpenAI-backed JSDoc generation CLI and its review-copy workflow |
 | [external-scale](docs/agents/external-scale.md) | `packages/openbridge-webcomponents/src/building-blocks/{external-scale,bar-vertical,bar-horizontal}/**`<br>`packages/openbridge-webcomponents/src/navigation-instruments/{gauge-vertical,gauge-horizontal,gauge-trend}/**` | External scale renderer and bar/gauge wrappers |

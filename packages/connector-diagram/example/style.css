@@ -1,0 +1,60 @@
+/* Noto Sans is the OpenBridge typeface. The webcomponents package ships the
+   font file but declares no @font-face, so the consumer does it. This is the
+   variable font, hence the 100-900 weight range from one file. Vite rewrites
+   the node_modules URL at serve/build time. */
+@font-face {
+  font-family: noto-sans;
+  src: url('@oicl/openbridge-webcomponents/dist/NotoSans.ttf') format('truetype-variations');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+body {
+  margin: 16px;
+  font-family: noto-sans, sans-serif;
+  background: var(--container-global-color);
+  color: var(--element-active-color);
+}
+
+h1 {
+  font-size: 16px;
+  font-weight: 600;
+  padding: 16px 0 0;
+  margin: 0;
+}
+
+p {
+  padding: 0;
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--element-neutral-color);
+}
+
+/* The stage is the world coordinate space: canvas fills it, components are
+   absolutely positioned on top of it — exactly how the Ignition module
+   lays out Perspective components over the pipe canvas. */
+#stage {
+  position: relative;
+  width: 720px;
+  height: 420px;
+  margin: 16px;
+  /* New stacking context, so the canvas's negative z-index stays behind
+     the components but still in front of the page background. */
+  isolation: isolate;
+}
+
+/* Behind the components — the same z-index: -1 canvas the Ignition module
+   uses. Each pipe extends from its port to the box CENTRE; the component
+   body covers that stub, so pipes appear to emerge from the component. */
+#pipes {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+
+obc-motor,
+obc-pump,
+obc-digital-valve {
+  position: absolute;
+}
