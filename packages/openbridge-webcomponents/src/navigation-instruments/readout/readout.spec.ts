@@ -1,6 +1,14 @@
 import {afterEach, describe, expect, it, vi} from 'vitest';
+import {render} from 'vitest-browser-lit';
+import {html, type TemplateResult} from 'lit';
+import '../../main.css';
 import './readout.js';
-import {ReadoutDirection, ReadoutSize, type ObcReadout} from './readout.js';
+import {
+  ReadoutDirection,
+  ReadoutSize,
+  ReadoutStacking,
+  type ObcReadout,
+} from './readout.js';
 
 /**
  * A horizontal readout given a `size` other than `large` warns once per
@@ -58,5 +66,70 @@ describe('obc-readout horizontal size warning', () => {
 
     update(probe(ReadoutSize.medium, ReadoutDirection.horizontal));
     expect(warn).toHaveBeenCalledTimes(2);
+  });
+});
+
+/**
+ * A readout is exactly as tall as its rows — the padding plus the value
+ * cluster and the meta zone. No tier applies the design file's
+ * container-min-height token (#1252). Measured over every vertical tier and
+ * both stackings: in the large tiers the content already exceeds the token,
+ * so a reintroduced minimum would stay invisible there.
+ */
+describe('obc-readout height', () => {
+  const SIZES = [ReadoutSize.small, ReadoutSize.medium, ReadoutSize.large];
+  const STACKINGS = [ReadoutStacking.inline, ReadoutStacking.stacked];
+
+  async function mount(template: TemplateResult) {
+    const screen = render(template);
+    const el = screen.container.querySelector('obc-readout') as ObcReadout;
+    await el.updateComplete;
+    return el.shadowRoot!.querySelector('.readout') as HTMLElement;
+  }
+
+  /** The height a column flex root has when nothing but its rows sizes it. */
+  function contentHeight(root: HTMLElement): number {
+    const {paddingTop, paddingBottom} = getComputedStyle(root);
+    const rows = Array.from(root.children).reduce(
+      (sum, row) => sum + row.getBoundingClientRect().height,
+      0
+    );
+    return rows + parseFloat(paddingTop) + parseFloat(paddingBottom);
+  }
+
+  for (const size of SIZES) {
+    for (const stacking of STACKINGS) {
+      it(`hugs its rows: ${size} / ${stacking}`, async () => {
+        const root = await mount(
+          html`<obc-readout
+            .size=${size}
+            .stacking=${stacking}
+            .value=${123}
+            label="SOG"
+            unit="kn"
+          ></obc-readout>`
+        );
+        expect(root.getBoundingClientRect().height).toBeCloseTo(
+          contentHeight(root),
+          0
+        );
+      });
+    }
+  }
+
+  it('hugs its rows: small / stacked, meta zone only', async () => {
+    const root = await mount(
+      html`<obc-readout
+        .size=${ReadoutSize.small}
+        .stacking=${ReadoutStacking.stacked}
+        .hasValue=${false}
+        label="Angle"
+        unit="DEG"
+      ></obc-readout>`
+    );
+    expect(root.getBoundingClientRect().height).toBeCloseTo(
+      contentHeight(root),
+      0
+    );
   });
 });
