@@ -27,9 +27,14 @@ render a value, and the two layout components built on them.
 > obc-textbox                 components/textbox/
 >   └─ obc-readout-block      building-blocks/readout-block/
 >        ├─ obc-readout-list-item   navigation-instruments/readout-list-item/
->        │    └─ obc-readout-list   navigation-instruments/readout-list/
+>        │    ├─ obc-readout-list   navigation-instruments/readout-list/
+>        │    └─ obc-transmitter-button   automation/transmitter-button/ (label-less)
 >        └─ obc-readout             navigation-instruments/readout/
 > ```
+>
+> `obc-transmitter-button` wraps a label-less list item in its chip (the Figma
+> "automation value"); `obc-transmitter` and `obc-transmitter-stack` render the
+> button, so a list-item change reaches all three.
 >
 > `obc-readout` is the same block in a different layout, used mostly **inside
 > radial instruments** (compass, gauge, pitch-roll, …) via

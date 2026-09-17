@@ -943,11 +943,21 @@ export class ObcReadoutListItem extends LitElement {
     `;
   }
 
-  private renderLabelContainer(): TemplateResult {
+  private renderLabelContainer(): TemplateResult | typeof nothing {
     const stacking = this.resolvedStacking;
     const showLeadingUnit =
       stacking === ReadoutListItemStacking.leadingUnit && Boolean(this.unit);
     const showLeadingSrc = this.hasLeadingSrc && Boolean(this.src);
+    // An empty container would still take the content gap, so a label-less
+    // row (the transmitter chip) could not hug its value.
+    if (
+      !this.hasLeadingIcon &&
+      !this.label &&
+      !showLeadingUnit &&
+      !showLeadingSrc
+    ) {
+      return nothing;
+    }
 
     return html`
       <div class="label-container" part="label-container">

@@ -11,7 +11,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: fit-content;
+  width: 100%; /* follows the host: hugs by default, fills a stretched grid cell */
   padding: 0;
   appearance: none;
   background: none;
@@ -21,52 +21,23 @@
   @mixin style style=normal visibleWrapperClass=.visible-wrapper;
 }
 
+/* Figma draws the 1 px stroke inside its 4 / 2 px padding, so the padding
+   gives the border back and the chip stays 24 px high. */
 .visible-wrapper {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 2px 4px;
+  padding: 1px 3px;
   border: 1px solid var(--normal-enabled-border-color);
   border-radius: 4px;
 }
 
-.value-container {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  padding: 0 2px;
-}
-
-.icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.unit {
-  @mixin font-instrument-unit;
-  align-self: flex-end;
-  color: var(--element-neutral-color);
-}
-
-.size-regular .icon ::slotted(*) {
-  width: 16px;
-  height: 16px;
-}
-
-.size-medium .icon ::slotted(*) {
-  width: 20px;
-  height: 20px;
-}
-
-.size-large .icon ::slotted(*) {
-  width: 24px;
-  height: 24px;
+obc-readout-list-item {
+  width: auto; /* the list item fills a row by default; hugging lets a stretched chip centre the reading */
 }
 
 .size-medium .visible-wrapper:not(.tag),
 .size-large .visible-wrapper:not(.tag) {
-  padding: 4px 8px;
+  padding: 3px 7px;
   border-radius: 6px;
 }
 
@@ -80,4 +51,8 @@
 .label {
   @mixin font-instrument-value-regular-neutral;
   color: var(--element-neutral-color);
+}
+
+.visually-hidden {
+  @mixin visually-hidden;
 }
