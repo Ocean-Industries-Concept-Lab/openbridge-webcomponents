@@ -66,7 +66,7 @@ export enum ObcTextboxFontWeight {
  *
  * @slot - The visible text content.
  * @slot length - Reserves a minimum width based on its content width.
- * @beta
+ * @stable
  */
 @customElement('obc-textbox')
 export class ObcTextbox extends LitElement {
