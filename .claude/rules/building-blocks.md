@@ -130,10 +130,11 @@ When working with building block components in this directory:
       on-screen spacing, for scales whose height is dictated by a surrounding layout.
     - `tickmarks.labels` (with an optional `labelFormatter`; the default is
       `formatLinearLabel()`, which strips floating-point noise) labels both ends
-      and the primary ladder in a column `LINEAR_LABEL_COLUMN` wide, placed
-      `LINEAR_LABEL_GAP` outside the +x edge; `linearScaleLabel()` is the shared
-      text fragment. Off by default, so the gauges that never asked for labels
-      keep their geometry.
+      and the primary ladder, start-anchored `LINEAR_LABEL_GAP` outside the +x
+      edge like the external scale's right-side labels; the consumer reserves
+      the room (`obc-depth-actual` grows its box by the design's label spacing).
+      `linearScaleLabel()` is the shared text fragment. Off by default, so the
+      gauges that never asked for labels keep their geometry.
     - `watchfaceLinear`'s `options.maskId` overrides the container clip-mask id.
       **Ids are document-scoped**, so any component rendering more than one gauge in
       a single shadow root MUST give each a distinct id — otherwise every gauge

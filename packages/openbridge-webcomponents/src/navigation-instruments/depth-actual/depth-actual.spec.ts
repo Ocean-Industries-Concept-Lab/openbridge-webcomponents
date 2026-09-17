@@ -35,13 +35,26 @@ describe('obc-depth-actual ranges', () => {
     expect(labels(el)).toEqual(['0', '25', '50', '75', '100']);
   });
 
-  it('Shallow puts the waterline halfway and labels the air band', async () => {
+  it('Shallow puts the waterline halfway and labels only the water scale', async () => {
     const el = await mount((e) => {
       e.maxDepth = 25;
       e.depth = 18.75;
     });
     expect(attr(el, 'rect.water', 'y')).toBe(0);
-    expect(labels(el)).toEqual(['0', '25', '25']);
+    expect(labels(el)).toEqual(['0', '25']);
+  });
+
+  it('reserves the design label spacing while labels show, and drops it without them', async () => {
+    const el = await mount((e) => {
+      e.depth = 75;
+    });
+    const viewBox = () =>
+      el.shadowRoot!.querySelector('svg')!.getAttribute('viewBox');
+    expect(viewBox()).toBe('-212 -212 424 424');
+    el.showLabels = false;
+    await el.updateComplete;
+    expect(viewBox()).toBe('-192 -192 384 384');
+    expect(labels(el)).toEqual([]);
   });
 
   it('Deep puts the waterline at the frame top and hides the depth marker at the range end', async () => {

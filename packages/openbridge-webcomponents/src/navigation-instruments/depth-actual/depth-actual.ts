@@ -1,10 +1,7 @@
 import {LitElement, html, css, nothing} from 'lit';
 import {customElement} from '../../decorator.js';
 import {
-  LINEAR_LABEL_COLUMN,
-  LINEAR_LABEL_GAP,
   formatLinearLabel,
-  linearScaleLabel,
   watchfaceLinear,
 } from '../../building-blocks/instrument-linear/instrument-linear.js';
 import {property, state} from 'lit/decorators.js';
@@ -23,10 +20,12 @@ import {
   type DepthRange,
 } from '../depth/depth-shared.js';
 
-/** Drawn frame, in viewBox units; the viewBox is 384 so the labels fit beside it. */
+/** Drawn frame and its box, in viewBox units, as on the design canvas. */
 const FRAME = 336;
 const HALF_FRAME = FRAME / 2;
-const VIEWBOX = 384;
+const BOX = 384;
+/** The design's label spacing: with labels the box grows by this on every side. */
+const LABEL_SPACING = 20;
 const FRAME_RADIUS = 8;
 /** The gauge pill: bar lane plus tick lane, at the frame's right edge. */
 const GAUGE_WIDTH = 72;
@@ -45,6 +44,10 @@ const VESSEL_ART_HALF = 80;
  * 1000) also decide how much air shows above the waterline and how large
  * the vessel is drawn; `autoRange` steps between them as the depth changes.
  *
+ * With `showLabels` the box grows by the design's label spacing on every
+ * side so the label column fits inside it, the way the external scale
+ * reserves its label band; without labels the box is the bare frame margin.
+ *
  * @property depth - Depth below the surface.
  * @property draft - Draught, drawn as the vessel's keel line.
  * @property advice - Advice zones on the gauge, in depth units.
@@ -52,6 +55,7 @@ const VESSEL_ART_HALF = 80;
  * @availableWhen vesselScale vesselImage!=''
  * @property vesselImage - Fore-view silhouette.
  * @property priority - `enhanced` draws the fills and lines in the enhanced palette.
+ * @property showLabels - Label the scale ends and the primary ladder beside the frame.
  * @property ranges - Range ladder shared with `obc-depth`.
  * @property maxDepth - Explicit scale maximum; wins over `autoRange`.
  * @property autoRange - Steps the ladder with `depth`.
@@ -68,6 +72,7 @@ export class ObcDepthActual extends LitElement {
   @property({type: Number}) vesselScale = 1;
   @property({type: String}) vesselImage: VesselImage = VesselImage.psvFore;
   @property({type: String}) priority: Priority = Priority.regular;
+  @property({type: Boolean, attribute: false}) showLabels = true;
 
   @property({type: Array, attribute: false}) ranges: readonly DepthRange[] =
     DEPTH_RANGES;
@@ -141,7 +146,7 @@ export class ObcDepthActual extends LitElement {
     const toY = (depth: number) => waterTop + depth * unitsPerDepth;
     const dividerX = HALF_FRAME - GAUGE_WIDTH;
     const scaleX = HALF_FRAME - SCALE_WIDTH;
-    const labelX = HALF_FRAME + LINEAR_LABEL_GAP + LINEAR_LABEL_COLUMN / 2;
+    const box = BOX + (this.showLabels ? 2 * LABEL_SPACING : 0);
     const primary =
       this.primaryTickmarkInterval ?? range.primaryTickmarkInterval;
     const secondary =
@@ -152,14 +157,6 @@ export class ObcDepthActual extends LitElement {
         : 'var(--instrument-regular-secondary-color)';
     const vesselFactor = range.vesselScale * this.vesselScale;
     const depthY = toY(Math.min(this.depth, maxDepth));
-
-    // The air band is labelled on the same scale, at the primary interval.
-    // TODO(designer): the design's Regular exports a "25" over a 20 m air band (#1248).
-    const airDepth = airHeight / unitsPerDepth;
-    const airLabels = [];
-    for (let v = primary; primary > 0 && v <= airDepth + 1e-9; v += primary) {
-      airLabels.push(linearScaleLabel(labelX, toY(-v), formatLinearLabel(v)));
-    }
 
     const frameOutline = `M ${HALF_FRAME} 0
       V ${-HALF_FRAME + FRAME_RADIUS}
@@ -174,7 +171,7 @@ export class ObcDepthActual extends LitElement {
 
     return html`
       <div class="container">
-        <svg viewBox="${-VIEWBOX / 2} ${-VIEWBOX / 2} ${VIEWBOX} ${VIEWBOX}">
+        <svg viewBox="${-box / 2} ${-box / 2} ${box} ${box}">
           <defs>
             <mask id="frameMask">
               <rect
@@ -324,13 +321,12 @@ export class ObcDepthActual extends LitElement {
               {
                 primaryTickmarkInterval: primary,
                 secondaryTickmarkInterval: secondary,
-                labels: true,
+                labels: this.showLabels,
                 labelFormatter: (v) => formatLinearLabel(-v),
               },
               this._getAdvice()
             )}
           </g>
-          ${airLabels}
 
           <path
             d=${frameOutline}
@@ -360,10 +356,6 @@ export class ObcDepthActual extends LitElement {
       left: 0;
       width: 100%;
       height: 100%;
-    }
-
-    svg {
-      overflow: visible; /* the label column sits outside the frame, as in the design */
     }
   `;
 }

@@ -104,10 +104,10 @@ describe('watchfaceLinear labels', () => {
     expect(texts(gauge(false))).toEqual([]);
   });
 
-  it('labels both ends and the primary ladder, top down, outside the +x edge', () => {
+  it('labels both ends and the primary ladder, top down, starting past the +x edge', () => {
     const labels = texts(gauge(true, (v) => String(-v)));
     expect(labels.map((l) => l.text)).toEqual(['0', '25', '50', '75', '100']);
     expect(labels.map((l) => l.y)).toEqual([-140, -70, 0, 70, 140]);
-    expect(labels.every((l) => l.x === 72 / 2 + 4 + 12)).toBe(true);
+    expect(labels.every((l) => l.x === 72 / 2 + 4)).toBe(true);
   });
 });

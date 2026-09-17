@@ -84,8 +84,9 @@ export function watchfaceLinear(
     primaryTickmarkInterval?: number;
     secondaryTickmarkInterval?: number;
     /**
-     * Label the scale ends and the primary ladder in a column outside the +x
-     * edge. Off by default so the existing gauges keep their geometry.
+     * Label the scale ends and the primary ladder, start-anchored
+     * `LINEAR_LABEL_GAP` outside the +x edge; the consumer reserves the room.
+     * Off by default so the existing gauges keep their geometry.
      */
     labels?: boolean;
     /** Text for a labelled value; `formatLinearLabel()` when unset. */
@@ -171,7 +172,7 @@ export function watchfaceLinear(
         .sort((a, b) => b - a)
         .map((v) =>
           linearScaleLabel(
-            width / 2 + LINEAR_LABEL_GAP + LINEAR_LABEL_COLUMN / 2,
+            width / 2 + LINEAR_LABEL_GAP,
             valueToY(v, minValue, maxValue, height),
             (tickmarks.labelFormatter ?? formatLinearLabel)(v)
           )
@@ -228,9 +229,8 @@ export function watchfaceLinear(
   return all;
 }
 
-/** Gap between a linear gauge's +x edge and its label column, and the column's width. */
+/** Gap between a linear gauge's +x edge and the start of its labels. */
 export const LINEAR_LABEL_GAP = 4;
-export const LINEAR_LABEL_COLUMN = 24;
 
 /**
  * Label text for a scale value. A ladder is built by repeated addition, so a
@@ -241,15 +241,16 @@ export function formatLinearLabel(value: number): string {
 }
 
 /**
- * A scale label centred on `(x, y)`, in the tick-mark typography the linear
- * and radial gauges share.
+ * A scale label starting at `(x, y)`, vertically centred, in the tick-mark
+ * typography the linear and radial gauges share. Start-anchored like the
+ * external scale's right-side labels, so a long value grows outward.
  */
 export function linearScaleLabel(
   x: number,
   y: number,
   text: string
 ): SVGTemplateResult {
-  return svg`<text class="linear-label" x=${x} y=${y} text-anchor="middle" dominant-baseline="central" font-family="var(--font-family-main)" font-size="var(--global-typography-ui-label-font-size)" fill="var(--instrument-tick-mark-label-secondary-color)">${text}</text>`;
+  return svg`<text class="linear-label" x=${x} y=${y} text-anchor="start" dominant-baseline="central" font-family="var(--font-family-main)" font-size="var(--global-typography-ui-label-font-size)" fill="var(--instrument-tick-mark-label-secondary-color)">${text}</text>`;
 }
 
 /**

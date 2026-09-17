@@ -18,6 +18,7 @@ const meta: Meta<typeof ObcDepthActual> = {
     vesselScale: 1,
     maxDepth: 100,
     autoRange: false,
+    showLabels: true,
     vesselImage: VesselImage.psvFore,
     priority: Priority.regular,
   },
@@ -28,6 +29,7 @@ const meta: Meta<typeof ObcDepthActual> = {
     vesselScale: {control: {type: 'range', min: 0.5, max: 2, step: 0.1}},
     maxDepth: {control: {type: 'select'}, options: [25, 100, 1000, 50]},
     autoRange: {control: 'boolean'},
+    showLabels: {control: 'boolean'},
     primaryTickmarkInterval: {control: {type: 'number'}},
     secondaryTickmarkInterval: {control: {type: 'number'}},
     vesselImage: {
@@ -111,6 +113,7 @@ export const AutoRangeLive: Story = {
     el.autoRange = true;
     el.draft = args.draft;
     el.priority = args.priority;
+    el.showLabels = args.showLabels;
     let t = 0;
     const tick = () => {
       t += 1;

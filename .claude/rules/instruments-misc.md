@@ -54,12 +54,12 @@ as a layout shell over those parts rather than an instrument in its own right.
 the rung sets the scale maximum, the tick pair, the air band above the
 waterline and the vessel factor, which is what the design's Shallow / Regular /
 Deep variants differ in (Figma `Depth-actual` 21150-180494). The frame is 336
-units of a 384 viewBox so the label column fits outside it (`svg { overflow:
-visible }` lets it overflow the box as the design does); labels come from
-`watchfaceLinear`'s opt-in `labels`. A depth at or past the range end draws no
-marker, as in the design's Deep example. The air band is labelled at primary
-multiples on the same scale (Shallow's top "25"); the design's "25" over
-Regular's 20 m air band is not reproduced.
+units in a 384 box; with `showLabels` (the default) the box grows by the
+design's 20-unit label spacing on every side, the `hasLabelSpacing` variant,
+so the start-anchored label column fits inside it the way the external scale
+reserves its label band. Labels come from `watchfaceLinear`'s opt-in `labels`;
+the air band above the waterline carries none. A depth at or past the range
+end draws no marker, as in the design's Deep example.
 
 ## Group 2 — no watch involvement
 
