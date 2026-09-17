@@ -75,10 +75,17 @@ Write like a developer with two sentences to spare. Not allowed:
   sentence, a list of three where one item is the point
 - hedging: "might potentially", "it should be noted that this may"
 - chatbot artefacts: "Great question", "Certainly", "Let me", "I've"
+- people: a name or handle as the subject or the authority — "X asked for",
+  "per Y's review", "address Z's feedback". Cite the role (the design team),
+  the artefact (a Figma node, `#1234`) or nothing; a rule stands on its own.
+  `CODEOWNERS`, `Co-authored-by` trailers and the README contact line are
+  configuration, not prose.
 
-**PRs:** summary and screenshot first, long-form at the end if needed. The PR
-body is where root cause, alternatives and verification belong — long is fine
-there, inline in the code it is not.
+**PRs:** a Conventional Commits title that names what shipped, then the body
+in the template's order — summary and up to three screenshots first (before /
+after, the variant sweep, the story at 2×: a bird's-eye view, not a gallery),
+long-form at the end if needed. The PR body is where root cause, alternatives
+and verification belong — long is fine there, inline in the code it is not.
 
 ## Boolean property naming
 

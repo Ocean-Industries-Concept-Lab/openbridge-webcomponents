@@ -118,6 +118,23 @@ const SUBJECTS: Subject[] = [
       ></obc-gauge-trend>`,
   },
   {
+    label: 'gauge-trend + range labels',
+    contract: SizingContract.fills,
+    feedsSize: true,
+    render: () =>
+      html`<obc-gauge-trend
+        style=${FILL_STYLE}
+        .data=${DATA}
+        .minValue=${0}
+        .maxValue=${100}
+        .value=${55}
+        .chartFill=${true}
+        .hasBar=${true}
+        .hasScale=${true}
+        .rangeLabels=${'xy'}
+      ></obc-gauge-trend>`,
+  },
+  {
     label: 'gauge-trend + advice + setpoint',
     contract: SizingContract.fills,
     feedsSize: true,

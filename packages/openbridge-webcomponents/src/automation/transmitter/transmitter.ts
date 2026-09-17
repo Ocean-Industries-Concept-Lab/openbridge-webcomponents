@@ -3,7 +3,11 @@ import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import componentStyle from './transmitter.css?inline';
 import {customElement} from '../../decorator.js';
-import {LineType, lineWidth} from '../index.js';
+import {LineType} from '../index.js';
+import {
+  TransmitterOrientation,
+  transmitterLeaderOffset,
+} from './transmitter-shared.js';
 import {
   TransmitterButtonSize,
   TransmitterButtonVariant,
@@ -17,12 +21,10 @@ import '../../navigation-instruments/indicator-graph/indicator-graph.js';
 import {ObcAlertFrameType} from '../../components/alert-frame/alert-frame.js';
 import '../../components/alert-frame/alert-frame.js';
 
-export enum TransmitterOrientation {
-  top = 'top',
-  right = 'right',
-  bottom = 'bottom',
-  left = 'left',
-}
+export {
+  TransmitterOrientation,
+  transmitterLeaderOffset,
+} from './transmitter-shared.js';
 
 export enum TransmitterType {
   indicator = 'indicator',
@@ -32,9 +34,9 @@ export enum TransmitterType {
 }
 
 /**
- * `<obc-transmitter>` – A readout label that attaches to a line on a process
- * diagram via a leader line, showing a measured value, a tag identifier, or a
- * value paired with a trend graph.
+ * `<obc-transmitter>` – A readout label that attaches to a line via a leader
+ * line, showing a measured value, a tag identifier, or a value paired with a
+ * trend graph.
  *
  * Positioning (orientation + leader line) follows `<obc-automation-readout>`.
  * The value chip is an `<obc-transmitter-button>` and the trend is an
@@ -49,11 +51,13 @@ export enum TransmitterType {
  *   `adviceValue` and a setpoint segment with `hasSetPoint`/`setpointValue`;
  *   both are read-only and shown in the value chip for non-`indicator` types.
  * - **`hasAlert`** – wraps the whole transmitter in an alarm `<obc-alert-frame>`.
- * - **Formatting** – `fractionDigits`, `maxDigits` and `hintedZeros` are
- *   forwarded to the value chip to control decimal precision and muted
- *   leading-zero padding (e.g. `0012.3`). The advice and setpoint segments reuse
- *   the same formatting. `value`, `adviceValue` and `setpointValue` render
- *   dashes when they are `NaN`, `null` or `undefined`.
+ * - **Formatting** – `fractionDigits`, `maxDigits`, `hintedZeros` and
+ *   `hasSignSpacer` are forwarded to the value chip to control decimal
+ *   precision, muted leading-zero padding (e.g. `0012.3`) and the sign
+ *   column. The advice and setpoint segments reuse the same formatting.
+ *   `hasDegree` adds a degree column between the value and the unit.
+ *   `value`, `adviceValue` and `setpointValue` render dashes when they are
+ *   `NaN`, `null` or `undefined`.
  *
  * ### Slots
  * | Slot Name | Conditions              | Purpose                         |
@@ -61,6 +65,10 @@ export enum TransmitterType {
  * | icon      | value/graph + `hasIcon` | Leading icon in the value chip. |
  *
  * @property maxDigits - Integer digits to reserve / hint (independent of `fractionDigits`).
+ * @property hasSignSpacer - Reserve a minus-sign column on every segment, filled by the real sign
+ *   only while a value is negative, so the chip's width does not change
+ *   across zero.
+ * @property hasDegree - Show a degree column between the value and the unit (e.g. `12.3°` then `C`).
  * @property hasAlert - Wrap the transmitter in an `<obc-alert-frame>` (alarm) when true.
  * @property adviceValue - Advisory value shown in the leading advice segment when `hasAdvice`.
  * @property setpointValue - Target value shown in the setpoint segment when `hasSetPoint`.
@@ -85,6 +93,8 @@ export class ObcTransmitter extends LitElement {
   @property({type: Number}) maxDigits = 0;
 
   @property({type: Boolean}) hintedZeros = false;
+  @property({type: Boolean}) hasSignSpacer = false;
+  @property({type: Boolean}) hasDegree = false;
   @property({type: String}) size: TransmitterButtonSize =
     TransmitterButtonSize.regular;
   @property({type: Boolean}) hasIcon = false;
@@ -111,10 +121,6 @@ export class ObcTransmitter extends LitElement {
     );
   }
 
-  private get lineOffset() {
-    return this.lineType === undefined ? 0 : lineWidth(this.lineType) / 2;
-  }
-
   private renderButton() {
     const isIndicator = this.type === TransmitterType.indicator;
     return html`
@@ -129,12 +135,15 @@ export class ObcTransmitter extends LitElement {
         .fractionDigits=${this.fractionDigits}
         .maxDigits=${this.maxDigits}
         .hintedZeros=${this.hintedZeros}
+        .hasSignSpacer=${this.hasSignSpacer}
+        .hasDegree=${this.hasDegree}
         .hasIcon=${this.hasIcon}
         .hasAdvice=${this.hasAdvice}
         .adviceValue=${this.adviceValue}
         .hasSetPoint=${this.hasSetPoint}
         .setpointValue=${this.setpointValue}
         .label=${this.tag}
+        .idTag=${this.idTag}
       >
         <slot name="icon" slot="icon"></slot>
       </obc-transmitter-button>
@@ -161,7 +170,7 @@ export class ObcTransmitter extends LitElement {
     if (!this.idTag) {
       return nothing;
     }
-    return html`<div class="id-tag">${this.idTag}</div>`;
+    return html`<div class="id-tag" aria-hidden="true">${this.idTag}</div>`;
   }
 
   private renderContent() {
@@ -194,7 +203,7 @@ export class ObcTransmitter extends LitElement {
           [`orientation-${this.orientation}`]: true,
           [`type-${this.type}`]: true,
         })}
-        style="--offset: ${this.lineOffset}px;"
+        style="--offset: ${transmitterLeaderOffset(this.lineType)}px;"
       >
         ${content}
       </div>

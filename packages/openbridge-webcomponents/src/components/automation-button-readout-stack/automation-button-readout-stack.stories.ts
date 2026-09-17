@@ -759,3 +759,22 @@ export const MixedIcons: Story = {
     ],
   },
 };
+
+export const SetpointRow: Story = {
+  args: {
+    size: AutomationButtonReadoutStackSize.regular,
+    idTagOrientation: IdTagOrientation.bottom,
+    tag: '#0001',
+    readouts: [
+      {type: 'setpoint', value: 65, nDigits: 3},
+      {
+        type: 'value',
+        value: 42,
+        nDigits: 3,
+        unit: '%',
+        direction: 'right',
+        icon: 'arrow',
+      },
+    ],
+  },
+};

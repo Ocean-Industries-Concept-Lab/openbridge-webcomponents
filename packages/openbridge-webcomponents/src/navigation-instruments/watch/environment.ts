@@ -38,6 +38,7 @@ import '../../icons/icon-wind-shaft-85.js';
 import '../../icons/icon-wind-shaft-90.js';
 import '../../icons/icon-wind-shaft-95.js';
 import '../../icons/icon-wind-shaft-100.js';
+import {degToRad} from '../../svghelpers/math.js';
 
 /**
  * Knots buckets available as `<obi-wind-true-N>` icons. The Figma source
@@ -199,7 +200,7 @@ export function renderWind(options: {
   if (!icon) {
     return svg``;
   }
-  const dirRad = (fromDirectionDeg * Math.PI) / 180;
+  const dirRad = degToRad(fromDirectionDeg);
   const x = Math.sin(dirRad) * radius;
   const y = -Math.cos(dirRad) * radius;
   const tipX = WIND_ICON_TIP_X * WIND_ICON_SCALE;
@@ -256,7 +257,7 @@ function renderEnvironment(options: {
   color?: string;
 }): SVGTemplateResult {
   const {filename, fromDirectionDeg, radius, color} = options;
-  const directionRad = ((fromDirectionDeg - 180) * Math.PI) / 180;
+  const directionRad = degToRad(fromDirectionDeg - 180);
   const symbol = environmentSvgs[filename];
   const styles = color ? {'--instrument-regular-secondary-color': color} : {};
   return svg`<g style=${styleMap(styles)} transform="translate(${-Math.sin(directionRad) * radius} ${Math.cos(directionRad) * radius}) rotate(${180 + fromDirectionDeg}) translate(-24, 0) scale(2)">

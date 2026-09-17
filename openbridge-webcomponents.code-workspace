@@ -15,6 +15,9 @@
 		},
 		{
 			"path": "packages/react-demo"
+		},
+		{
+			"path": "packages/connector-diagram"
 		}
 	],
 	"settings": {

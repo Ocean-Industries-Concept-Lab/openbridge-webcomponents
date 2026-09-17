@@ -8,6 +8,7 @@ import { ObcAlertButtonType } from '@oicl/openbridge-webcomponents/dist/componen
 import { ObcAlertMenuItemStatus } from '@oicl/openbridge-webcomponents/dist/components/alert-menu-item/alert-menu-item'
 import { AlertType } from '@oicl/openbridge-webcomponents/dist/types'
 import { useAlertStore } from '../stores/alert'
+import { MOBILE_BREAKPOINT_PX } from '../composables/useMobileLayout'
 
 const alertStore = useAlertStore()
 
@@ -85,6 +86,7 @@ const onMuteAlert = () => {
     :n-alerts="alertStore.activeAlerts.length"
     counter
     show-silence-button
+    :silence-button-min-breakpoint-px="MOBILE_BREAKPOINT_PX + 1"
     :blinking="!showAlertMenu"
     :silence-button-disabled="silenced"
     @click-alert="onToggleAlertMenu"

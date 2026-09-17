@@ -1,4 +1,5 @@
 import {svg, SVGTemplateResult} from 'lit';
+import {clampPercent} from '../../svghelpers/math.js';
 
 /**
  * Shared rendering core for linear automation indicators.
@@ -35,11 +36,6 @@ export interface Rect {
 
 const TREND_BAR_WIDTH = 4;
 const TREND_BAR_GAP = 1;
-
-export function clampPercent(value: number): number {
-  if (Number.isNaN(value)) return 0;
-  return Math.min(100, Math.max(0, value));
-}
 
 export function fillHeight(rect: Rect, level: number): number {
   return (rect.height * clampPercent(level)) / 100;

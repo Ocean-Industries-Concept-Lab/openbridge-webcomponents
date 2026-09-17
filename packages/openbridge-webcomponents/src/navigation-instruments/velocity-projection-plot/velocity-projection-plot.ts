@@ -11,6 +11,7 @@ import compentStyle from './velocity-projection-plot.css?inline';
 import '../watch/watch.js';
 import {VesselImage, VesselImageSize} from '../watch/watch.js';
 import {customElement} from '../../decorator.js';
+import {degToRad} from '../../svghelpers/math.js';
 
 export interface VelocityProjectionDatapoint {
   startAngleDeg: number;
@@ -109,8 +110,8 @@ export class ObcVelocityProjectionPlot extends LitElement {
     );
 
     const elements = dataPoints.map((dp) => {
-      const startAngle = (dp.startAngleDeg * Math.PI) / 180 - Math.PI / 2;
-      const endAngle = (dp.endAngleDeg * Math.PI) / 180 - Math.PI / 2;
+      const startAngle = degToRad(dp.startAngleDeg) - Math.PI / 2;
+      const endAngle = degToRad(dp.endAngleDeg) - Math.PI / 2;
 
       const c = this.color(dp);
 

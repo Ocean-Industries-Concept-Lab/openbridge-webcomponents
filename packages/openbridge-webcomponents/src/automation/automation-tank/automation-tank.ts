@@ -46,6 +46,7 @@ import {
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
+import {TankPositioning} from './tank-positioning.js';
 
 export enum TankTrend {
   fastRising = 'fast-rising',
@@ -68,41 +69,7 @@ export enum TankOrientation {
   horizontal = 'horizontal',
 }
 
-/**
- * Host positioning model.
- *
- * - `point`: the host has fixed default dimensions (per
- *   orientation and compact / static variant) and a P&ID anchor — the
- *   visual content is shifted with `translateX(-50%)` and (in non-compact)
- *   `top: -20px` so the tank's top-center aligns with the host's top-left
- *   placement coordinate. Use this when dropping the tank onto a P&ID
- *   canvas at a pipe-grid coordinate.
- * - `button` (default): the host fills its parent container (100% × 100%) with no
- *   anchor offset. Use this when embedding the tank inside a sized layout
- *   slot — the parent controls the footprint and the tank renders
- *   responsively inside it, just like a regular button. Compact / static
- *   inner layout still applies; only the host box is changed.
- *
- *   If the parent leaves *one* axis indefinite — a flex/grid slot sized with
- *   `min-height`/`max-height` rather than `height`, or a cross axis freed by
- *   `align-self: center` — the corresponding `100%` computes to `auto` and the
- *   tank derives that axis from the other one through the design aspect ratio
- *   of the matching `point` footprint (256×376 vertical, 420×256 horizontal,
- *   170×282 compact/static, 244×208 horizontal compact/static). The size then
- *   does not depend on the chart cell, which takes its own size from the cell
- *   it was measured in and would otherwise make the constraint circular
- *   (issue #1121).
- *
- *   If *both* axes are indefinite (a shrink-to-fit parent, e.g. an unsized
- *   `inline-block`) there is no axis left to derive from, so the host falls
- *   back to its text content. That is stable and non-circular, but much
- *   smaller than the design footprint — give the parent a definite size on at
- *   least one axis, and on both whenever the exact footprint matters.
- */
-export enum TankPositioning {
-  point = 'point',
-  button = 'button',
-}
+export {TankPositioning};
 
 export enum TankChartMode {
   /** Static fill bar driven by `value` / `max` (default, backward compatible). */

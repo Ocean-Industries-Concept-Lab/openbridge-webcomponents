@@ -26,6 +26,7 @@ import {
 } from '../../svghelpers/arc-frame.js';
 import {ROT_ZERO_DEADBAND_DEG} from '../rate-of-turn/rot-renderer.js';
 import {customElement} from '../../decorator.js';
+import {normalizeAngle} from '../../svghelpers/math.js';
 import {InstrumentState, Priority} from '../types.js';
 export {RotType, RotPosition};
 
@@ -65,10 +66,6 @@ function tickDensityForFOV(fov: number): TickDensity {
   } else {
     return {mainInterval: 90, primaryInterval: 30, secondaryInterval: 10};
   }
-}
-
-function normalizeAngle(a: number): number {
-  return ((a % 360) + 360) % 360;
 }
 
 /**

@@ -62,6 +62,7 @@ const onPaletteChange = (value: ObcToggleButtonGroupValueChangeEvent) => {
 
 <style scoped>
 .screen-control-container {
+  box-sizing: border-box; /* padding otherwise pushes the 100% width past the viewport */
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 1fr 6fr;
@@ -92,6 +93,19 @@ const onPaletteChange = (value: ObcToggleButtonGroupValueChangeEvent) => {
 .screen-row {
   display: flex;
   flex-direction: row;
+  justify-content: center;
   gap: 16px;
+}
+
+/* Mobile: screens wrap instead of overflowing the viewport. 768px is
+   MOBILE_BREAKPOINT_PX in composables/useMobileLayout.ts. */
+@media screen and (max-width: 768px) {
+  .screen-container {
+    padding: 32px 0;
+  }
+
+  .screen-row {
+    flex-wrap: wrap;
+  }
 }
 </style>

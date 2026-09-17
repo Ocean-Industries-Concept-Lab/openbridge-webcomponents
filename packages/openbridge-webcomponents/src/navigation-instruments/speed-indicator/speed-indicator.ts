@@ -4,6 +4,7 @@ import {customElement} from '../../decorator.js';
 import componentStyle from './speed-indicator.css?inline';
 import '../speed-arrows/speed-arrows.js';
 import {ActiveColor, Direction} from '../speed-arrows/speed-arrows.js';
+import {degToRad} from '../../svghelpers/math.js';
 
 export enum SpeedIndicatorType {
   Needle = 'Needle',
@@ -91,8 +92,8 @@ export class ObcSpeedIndicator extends LitElement {
     const speedAngle = progress * 225 - 90;
 
     const r = 20;
-    const x = 34 + r * Math.sin((speedAngle * Math.PI) / 180);
-    const y = 34 - r * Math.cos((speedAngle * Math.PI) / 180);
+    const x = 34 + r * Math.sin(degToRad(speedAngle));
+    const y = 34 - r * Math.cos(degToRad(speedAngle));
 
     const largeArc = speedAngle > 90 ? 1 : 0;
     const sweep = progress > 0 ? 1 : 0;

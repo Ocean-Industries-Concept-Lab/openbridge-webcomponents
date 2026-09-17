@@ -4,6 +4,7 @@ description: Storybook config, visual snapshot baselines, and the vue-demo Playw
 globs:
   - packages/openbridge-webcomponents/.storybook/**
   - packages/openbridge-webcomponents/__vis__/**
+  - packages/openbridge-webcomponents/vitest*.config.ts
   - packages/vue-demo/e2e/**
 ---
 
@@ -32,6 +33,22 @@ is the single most damaging mistake in this area.
 Always re-run without `--update` afterwards to confirm the new baselines are
 stable.
 
+Several components are separate substring filters, not a regex — `'a|b'`
+matches nothing and exits with "No test files found":
+
+```bash
+npx vitest run --project storybook heat-pump heat-exchanger hydraulic-separator --update
+```
+
+`--update` never prunes. A renamed or removed story leaves its
+`<story>-auto.png` behind, and a rewritten story file leaves the whole
+`__baselines__/<family>/<file>.stories.ts/` folder stale — `git rm` those before
+regenerating.
+
+Run `npm run analyze` before the first run of a new component's stories (see
+below); without the manifest the args never reach the element and the
+baselines capture the defaults.
+
 ## Baselines are environment-sensitive
 
 ```text
@@ -43,12 +60,35 @@ __vis__/darwin/__baselines__/   macOS, NOT committed
 Only the Linux baselines ship. Regenerating on macOS produces diffs CI will
 reject.
 
-**Prefer the CI path:** comment `/update-snapshots` on the pull request. The
-`update-snapshots.yml` workflow regenerates inside the same Docker image CI
-uses and pushes the result to the PR branch. Locally, the Docker route is
-`npm run test-storybook:docker` — see
-[IMPLEMENTATION_GUIDELINES.md § Docker Testing](../../IMPLEMENTATION_GUIDELINES.md#docker-testing)
-and [`ci-and-release.md`](ci-and-release.md).
+**Regenerate locally, on Linux.** The devcontainer (Ubuntu 24.04) renders what
+the CI `test` job (`mcr.microsoft.com/playwright:v1.60.0-noble`) accepts, so a
+scoped `--update` followed by a plain re-run is the whole procedure, except for
+small `<canvas>` charts ([`skip-test` or `!snapshot`](#skip-test-or-snapshot)).
+On macOS take the Docker route from the package directory (the scripts mount
+`$(pwd)`), keeping the filter in front of the flag — `update-snapshots:docker`
+has no filter and rewrites the whole suite:
+
+```bash
+npm run test-storybook:docker -- -- component-name --update
+npm run test-storybook:docker -- -- component-name
+```
+
+See [IMPLEMENTATION_GUIDELINES.md § Docker Testing](../../IMPLEMENTATION_GUIDELINES.md#docker-testing)
+and [`ci-and-release.md`](ci-and-release.md). The `/update-snapshots`
+PR-comment workflow is not a fallback (see Open), and it fires on any comment
+that merely contains that string — keep the command out of PR prose.
+
+## Checking a baseline against the design
+
+A baseline is the full 1280×720 story frame. Without a decorator the component
+sits at the top-left; under `crossDecorator` it is centred at `x = 480, y = 360`
+— the story renders in a 960 px-wide area of that frame, whatever the
+decorator's `width: 100%` suggests (measure a `cross` baseline: the guide lines
+sit in column 480 and row 360). Crop and upscale that region before comparing
+it with the Figma export (`pngjs` in `node_modules` does it in a few lines),
+and compare every value of the Figma variant property, not only the default
+story — a component built from a stale copy of the file looks right in its
+default state and wrong in the others.
 
 ## Storybook config
 
@@ -65,8 +105,30 @@ Two facts that bite:
   class JSDoc — see [`jsdoc.md`](jsdoc.md). Tooling tags (`autodocs`,
   `skip-test`, `!snapshot`) and version tags (`6.0`, `6.1`) stay hand-written.
 
-Use `skip-test` to exclude a story from snapshot testing — appropriate for
-anything genuinely non-deterministic rather than papering over a flake.
+### `skip-test` or `!snapshot`
+
+Both keep a story out of the baselines, and both are for output that is
+genuinely non-deterministic, never for papering over a regression.
+
+- **`skip-test`** — the snapshot project does not collect the story at all
+  (`tags.exclude` in `vitest.config.ts`): no render, no `play`, no baseline.
+  For a story with nothing to assert as a test, like the live harness stories
+  below.
+- **`!snapshot`** — the story still renders and runs `play` as a test, so a
+  thrown error fails CI; only the screenshot is skipped and no baseline is
+  written. For a story whose render is deterministic but whose pixels are not.
+
+Small `<canvas>` charts are the known case for `!snapshot`. The harness
+captures a story at about 0.8 of its CSS size, so their edges land on
+fractional pixels, and that anti-aliasing differs between CI runners even when
+every devcontainer run is identical (#1222). Pin the layout fact in a
+`.spec.ts` instead, and `git rm` the orphaned baseline — `--update` never
+prunes.
+
+Web Animations (alert flashing) ignore the zeroed CSS durations, so an
+`afterEach` in `vitest.setup.ts` parks every animation at 100 ms, inside the
+on phase of every flash tempo; snapshots of flashing elements always show the
+on state.
 
 ## Manifest-driven docs and controls
 
@@ -138,7 +200,21 @@ When adding one, keep the interval probes per-story and clear them before
 starting new ones — a rerender otherwise leaves two probe loops running and the
 readouts fight each other.
 
+## The spec project is not the snapshot project
+
+`npm run test:browser` runs `src/**/*.spec.ts` in Chromium through
+`vitest.browser.config.ts`; `npm run test-storybook` runs the stories through
+`vitest.config.ts`. Both set `headless: true` explicitly — Vitest only defaults
+to headless under `CI`, so without the line a local run opens no window and
+waits for a display forever. Node-only tests for the repo's tooling
+(`script/**/*.test.ts`) are the `rules` project, `npm run test:rules`.
+
 ## Stuck browsers
 
 Spawned Chromium processes sometimes hang and stall a run. Kill the strays and
 re-run scoped to the single component rather than retrying the whole suite.
+
+## Open
+
+- `update-snapshots.yml` fails inside its Docker image before writing anything, and triggers on any PR comment containing its command (#1179).
+- Element-cropped story screenshots (`npm run screenshots`, opt-in through `VITE_STORYBOOK_TAKE_SCREENSHOT`, sized from the `@snapshot-base-width` / `@snapshot-base-height` JSDoc tags) are in draft #731; until it lands, crop the 1280×720 baseline by hand as above.

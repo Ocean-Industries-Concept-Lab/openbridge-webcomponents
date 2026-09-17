@@ -44,7 +44,7 @@ import {
   ObcAlertFrameThickness,
   ObcAlertFrameMode,
 } from '../../components/alert-frame/alert-frame.js';
-import {AlertType} from '../../types.js';
+import {AlertType, FlashingSpeed} from '../../types.js';
 
 // The value weight maps straight to obc-textbox's font weights (regular /
 // semibold / bold). Re-exported so consumers can set `valueOptions.weight`
@@ -71,12 +71,15 @@ export type ReadoutListItemSize = ReadoutBlockSize;
  * Placement of the unit/source relative to the label and value.
  * - `trailing-unit`: unit after the value, source after a trailing divider.
  * - `leading-unit`: unit beside/under the label.
- * - `leading-src`: source beside/under the label (no trailing source).
+ * - `leading-src`: source under the label (no trailing source).
+ * - `leading-src-inline`: source on the label's line, after it (no trailing
+ *   source); keeps the row one line high.
  */
 export enum ReadoutListItemStacking {
   trailingUnit = 'trailing-unit',
   leadingUnit = 'leading-unit',
   leadingSrc = 'leading-src',
+  leadingSrcInline = 'leading-src-inline',
 }
 
 /**
@@ -134,8 +137,23 @@ export interface ReadoutBlockState {
  * content or changes the row height / column alignment (Figma 58:10120).
  */
 export interface ReadoutValueOptions extends ReadoutBlockState {
-  /** Render the unfilled leading positions as muted zeroes (requires `maxDigits`). */
+  /**
+   * Render the unfilled leading positions as muted zeroes (requires
+   * `maxDigits`). The sign never consumes a zero (`12.3` → `012.3`, `-12.3` →
+   * `-012.3` at `maxDigits` 3), so a negative reading is one character wider
+   * unless `hasSignSpacer` reserves the sign column; an unavailable value
+   * renders dashes across the whole reserved width.
+   */
   hintedZeros?: boolean;
+  /**
+   * Reserve a minus-sign column ahead of the digits, filled by the real sign
+   * only while the value is negative — the width does not change across zero.
+   * Enable it on rows whose value can go negative; inside `obc-readout-list`
+   * the shared column widens automatically once any row shows a sign, but a
+   * live value crossing zero still shifts the columns unless the rows that
+   * can go negative opt in up front.
+   */
+  hasSignSpacer?: boolean;
   /**
    * Value font weight — `regular` (default), `semibold`, or `bold` (the
    * obc-textbox weights). Affects weight only; it does NOT change the colour
@@ -181,6 +199,8 @@ export enum ReadoutListItemSetpointInteraction {
 
 export interface ReadoutSetpointOptions extends ReadoutBlockState {
   hintedZeros?: boolean;
+  /** Reserve a minus-sign column; see {@link ReadoutValueOptions.hasSignSpacer}. */
+  hasSignSpacer?: boolean;
   /** How the setpoint behaves relative to the value (default `always-visible`). */
   interaction?: ReadoutListItemSetpointInteraction;
   /**
@@ -196,6 +216,8 @@ export interface ReadoutSetpointOptions extends ReadoutBlockState {
 
 export interface ReadoutAdviceOptions extends ReadoutBlockState {
   hintedZeros?: boolean;
+  /** Reserve a minus-sign column; see {@link ReadoutValueOptions.hasSignSpacer}. */
+  hasSignSpacer?: boolean;
   /**
    * Semantic category (Figma 6.1) — picks the default marker icon and the
    * `active` styling; `regular` when unset.
@@ -208,7 +230,12 @@ export interface ReadoutAdviceOptions extends ReadoutBlockState {
 }
 
 export interface ReadoutReserverOptions {
-  /** Longest expected string to reserve width for (aligns multiple rows), e.g. `"miles"`. */
+  /**
+   * Longest expected string to reserve width for (aligns multiple rows), e.g.
+   * `"miles"`. A row without a unit still renders the reserved (blank)
+   * trailing column, so its value and degree stay on the grid of the rows
+   * that have one. `leading-unit` stacking has no trailing column to reserve.
+   */
   spaceReserver?: string;
 }
 
@@ -273,7 +300,8 @@ export interface ReadoutSrcOptions extends ReadoutBlockState {
  * - **Building blocks:** value, optional setpoint, and optional advice segments,
  *   each cap-height-aligned and able to reserve a stable width.
  * - **Sizes:** `small`, `medium`, `large` density scales.
- * - **Stacking:** `trailing-unit`, `leading-unit`, `leading-src` placement.
+ * - **Stacking:** `trailing-unit`, `leading-unit`, `leading-src`,
+ *   `leading-src-inline` placement.
  * - **Priority:** `regular`/`enhanced` colour emphasis; per-value `weight`
  *   (`regular`/`semibold`/`bold`) is independent of colour.
  * - **Setpoint flip-flop:** swaps emphasis between value and setpoint as the
@@ -291,10 +319,23 @@ export interface ReadoutSrcOptions extends ReadoutBlockState {
  * Use for dense readout rows in lists/tables. Prefer `<obc-readout>` for rich
  * multi-segment instrument layouts, source pickers, or flyout behaviour.
  *
+ * ### Slots
+ * | Slot Name     | Renders When                  | Purpose                                  |
+ * |---------------|-------------------------------|------------------------------------------|
+ * | leading-icon  | `hasLeadingIcon`              | Icon before the label.                   |
+ * | value-icon    | `valueOptions.hasIcon`        | Icon before the value.                   |
+ * | setpoint-icon | `hasSetpoint`                 | Overrides the default setpoint icon.     |
+ * | advice-icon   | `hasAdvice`                   | Overrides the default advice icon.       |
+ *
  * @property hasValue - Layout switch: `false` renders a deliberately value-less (label-only)
  *   row that hugs its remaining parts. For a temporarily missing value keep
  *   `hasValue` and set `value` to `null` instead — the dash keeps the value
  *   block at full size, so the row does not shift when data arrives.
+ * @property value - The value; `null` renders a dash. A number by default, or text when
+ *   `valueType` is `text`.
+ * @property valueType - How `value` is interpreted. `number` (default) formats it via
+ *   `fractionDigits`; `text` renders it verbatim and ignores the numeric
+ *   format options. Passing text while this is `number` throws.
  * @property off - Render the value as `offText` (e.g. equipment powered down). Affects the value only.
  * @property offText - Text shown in place of the value when `off` is true.
  * @availableWhen offText off==true
@@ -318,22 +359,12 @@ export interface ReadoutSrcOptions extends ReadoutBlockState {
  * @property showDebugOverlay - Development aid: outline the readout building blocks (red), the degree
  *   columns (blue) and the degree spacer (green) so reserver widths / alignment
  *   are visible. Off by default.
- * @experimental This component is the pilot for the new primitives + per-block
- * options Readout API; its API may change in a future release.
- *
- * ### Slots
- * | Slot Name     | Renders When                  | Purpose                                  |
- * |---------------|-------------------------------|------------------------------------------|
- * | leading-icon  | `hasLeadingIcon`              | Icon before the label.                   |
- * | value-icon    | `valueOptions.hasIcon`        | Icon before the value.                   |
- * | setpoint-icon | `hasSetpoint`                 | Overrides the default setpoint icon.     |
- * | advice-icon   | `hasAdvice`                   | Overrides the default advice icon.       |
- *
  * @slot leading-icon - Icon before the label.
  * @slot value-icon - Icon before the value.
  * @slot setpoint-icon - Overrides the default setpoint icon.
  * @slot advice-icon - Overrides the default advice icon.
  * @fires click - Fired when the item is activated. Only fired when `clickable` is set; otherwise the item renders as a non-interactive `<div>`.
+ * @stable
  */
 @customElement('obc-readout-list-item')
 export class ObcReadoutListItem extends LitElement {
@@ -343,16 +374,7 @@ export class ObcReadoutListItem extends LitElement {
   @property({type: String}) src?: string;
 
   @property({type: Boolean, attribute: false}) hasValue = true;
-  /**
-   * The value; `null` renders a dash. A number by default, or text when
-   * {@link valueType} is `text`.
-   */
   @property({type: String}) value: number | string | null = null;
-  /**
-   * How {@link value} is interpreted. `number` (default) formats it via
-   * `fractionDigits`; `text` renders it verbatim and ignores the numeric
-   * format options. Passing text while this is `number` throws.
-   */
   @property({type: String}) valueType: ReadoutValueType =
     ReadoutValueType.number;
   @property({type: Boolean}) off = false;
@@ -406,8 +428,28 @@ export class ObcReadoutListItem extends LitElement {
     return this.stacking ?? ReadoutListItemStacking.trailingUnit;
   }
 
+  /** Both leading-src stackings move the source into the label stack. */
+  private get hasLeadingSrc(): boolean {
+    const stacking = this.resolvedStacking;
+    return (
+      stacking === ReadoutListItemStacking.leadingSrc ||
+      stacking === ReadoutListItemStacking.leadingSrcInline
+    );
+  }
+
   private get resolvedPriority(): ReadoutListItemPriority {
     return this.priority ?? ReadoutListItemPriority.regular;
+  }
+
+  /**
+   * Whether a unit box follows the value: a unit, or a reserver alone — the
+   * blank reserved column keeps a unit-less row aligned with its neighbours.
+   */
+  private get hasTrailingUnitBox(): boolean {
+    return (
+      this.resolvedStacking !== ReadoutListItemStacking.leadingUnit &&
+      (Boolean(this.unit) || Boolean(this.unitOptions?.spaceReserver))
+    );
   }
 
   private get resolvedFractionDigits(): number {
@@ -531,12 +573,9 @@ export class ObcReadoutListItem extends LitElement {
   }
 
   private get valueSize(): ObcTextboxSize {
-    // The value de-emphasises (secondary size) whenever the setpoint is the
-    // focus — while actively adjusting (`touching`) or while a flip-flop holds
-    // the value away from the setpoint. So "grab the setpoint" shrinks the value for
-    // the whole adjustment (initiate + move read the same: setpoint big, value
-    // small), mirroring the flip-flop convention. `equal-size` opts out: both
-    // blocks always hold the primary size, even while touching.
+    // The value takes the secondary size whenever the setpoint has the focus
+    // (`touching`, or a flip-flop holding the value away from it); `equal-size`
+    // opts out and keeps both blocks at the primary size.
     return readoutValueSize({
       primary: this.primarySize,
       secondary: this.secondarySize,
@@ -615,6 +654,7 @@ export class ObcReadoutListItem extends LitElement {
     enhanced: boolean;
     weight: ObcTextboxFontWeight;
     hintedZeros: boolean;
+    hasSignSpacer?: boolean;
     spaceReserver?: string;
     off?: boolean;
     hasDegree?: boolean;
@@ -645,6 +685,7 @@ export class ObcReadoutListItem extends LitElement {
         .fractionDigits=${this.fractionDigits}
         .maxDigits=${this.maxDigits}
         .hintedZeros=${config.hintedZeros}
+        .hasSignSpacer=${config.hasSignSpacer ?? false}
         .spaceReserver=${config.spaceReserver}
         .off=${config.off ?? false}
         .offText=${this.offText}
@@ -713,16 +754,12 @@ export class ObcReadoutListItem extends LitElement {
     if (!this.hasValue) {
       return nothing;
     }
-    const hasTrailingUnit =
-      Boolean(this.unit) &&
-      this.resolvedStacking !== ReadoutListItemStacking.leadingUnit;
-
     if ((this.hasDegree ?? false) && !this.off) {
       return this.renderDegreeGlyph(this.valueSize, {
         enhanced: this.rowEnhanced,
       });
     }
-    if (hasTrailingUnit) {
+    if (this.hasTrailingUnitBox) {
       return html`<span class="value-unit-gap" aria-hidden="true"></span>`;
     }
     return nothing;
@@ -794,6 +831,7 @@ export class ObcReadoutListItem extends LitElement {
               enhanced: false,
               weight: ObcTextboxFontWeight.regular,
               hintedZeros: this.adviceOptions?.hintedZeros ?? false,
+              hasSignSpacer: this.adviceOptions?.hasSignSpacer ?? false,
               spaceReserver: this.adviceOptions?.spaceReserver,
               hasDegree: this.hasDegree ?? false,
               dataQuality: this.adviceOptions?.dataQuality,
@@ -812,6 +850,7 @@ export class ObcReadoutListItem extends LitElement {
               enhanced: this.rowEnhanced,
               weight: this.setpointWeight,
               hintedZeros: this.setpointOptions?.hintedZeros ?? false,
+              hasSignSpacer: this.setpointOptions?.hasSignSpacer ?? false,
               spaceReserver: this.setpointOptions?.spaceReserver,
               hasDegree: this.hasDegree ?? false,
               touching: this.setpointTouching,
@@ -857,6 +896,7 @@ export class ObcReadoutListItem extends LitElement {
               enhanced: this.rowEnhanced,
               weight: this.valueWeight,
               hintedZeros: this.valueOptions?.hintedZeros ?? false,
+              hasSignSpacer: this.valueOptions?.hasSignSpacer ?? false,
               spaceReserver: this.valueOptions?.spaceReserver,
               off: this.off,
               hasIcon: this.valueOptions?.hasIcon ?? false,
@@ -886,21 +926,14 @@ export class ObcReadoutListItem extends LitElement {
     }
     const thickness = alert.thickness ?? ObcAlertFrameThickness.Small;
     return html`
-      <div
-        class=${classMap({
-          'value-alert-overlay': true,
-          // The outward offset is thickness-dependent (see the CSS): large frames
-          // draw a wider outline, so the box must sit further out to stay centred.
-          'thickness-large': thickness === ObcAlertFrameThickness.Large,
-        })}
-        aria-hidden="true"
-      >
+      <div class="value-alert-overlay" aria-hidden="true">
         <obc-alert-frame
           part="value-alert-frame"
           .type=${alert.type ?? ObcAlertFrameType.Regular}
           .thickness=${thickness}
           .status=${alert.status ?? AlertType.Alarm}
           .mode=${alert.mode ?? ObcAlertFrameMode.ackedActive}
+          .flashingSpeed=${alert.flashingSpeed ?? FlashingSpeed.Default}
           .showIcon=${alert.showIcon ?? false}
           .showAlertCategoryIcon=${alert.showAlertCategoryIcon ?? true}
           .wrapContent=${false}
@@ -910,12 +943,21 @@ export class ObcReadoutListItem extends LitElement {
     `;
   }
 
-  private renderLabelContainer(): TemplateResult {
+  private renderLabelContainer(): TemplateResult | typeof nothing {
     const stacking = this.resolvedStacking;
     const showLeadingUnit =
       stacking === ReadoutListItemStacking.leadingUnit && Boolean(this.unit);
-    const showLeadingSrc =
-      stacking === ReadoutListItemStacking.leadingSrc && Boolean(this.src);
+    const showLeadingSrc = this.hasLeadingSrc && Boolean(this.src);
+    // An empty container would still take the content gap, so a label-less
+    // row (the transmitter chip) could not hug its value.
+    if (
+      !this.hasLeadingIcon &&
+      !this.label &&
+      !showLeadingUnit &&
+      !showLeadingSrc
+    ) {
+      return nothing;
+    }
 
     return html`
       <div class="label-container" part="label-container">
@@ -946,24 +988,20 @@ export class ObcReadoutListItem extends LitElement {
   }
 
   private renderTrailingUnit(): TemplateResult | typeof nothing {
-    if (
-      this.resolvedStacking === ReadoutListItemStacking.leadingUnit ||
-      !this.unit
-    ) {
+    if (!this.hasTrailingUnitBox) {
       return nothing;
     }
     return this.renderTextbox(
       'unit',
-      this.unit,
+      this.unit ?? '',
       this.unitOptions?.spaceReserver
     );
   }
 
   /**
    * The source text plus its optional state chip and deviation line. The
-   * plain (regular, no-deviation) case renders the bare textbox — byte-for-
-   * byte the pre-6.1 output; a state or a deviation wraps it in the
-   * `.source-block` stack.
+   * plain (regular, no-deviation) case renders the bare textbox; a state or a
+   * deviation wraps it in the `.source-block` stack.
    */
   private renderSourceBlock(): TemplateResult {
     const state = this.srcOptions?.state ?? ReadoutSourceState.regular;
@@ -1004,10 +1042,7 @@ export class ObcReadoutListItem extends LitElement {
   }
 
   private renderTrailingSource(): TemplateResult | typeof nothing {
-    if (
-      this.resolvedStacking === ReadoutListItemStacking.leadingSrc ||
-      !this.src
-    ) {
+    if (this.hasLeadingSrc || !this.src) {
       return nothing;
     }
     return html`
@@ -1030,13 +1065,9 @@ export class ObcReadoutListItem extends LitElement {
 
   protected override willUpdate(changed: Map<string, unknown>): void {
     super.willUpdate(changed);
-    // Validated on EVERY update, deliberately NOT gated on `value`/`valueType`
-    // appearing in `changed`. When this assertion throws, Lit's `performUpdate`
-    // catch calls `__markUpdated()`, which clears the changed-properties map. A
-    // later update driven by any OTHER property — inside `obc-readout-list`,
-    // `align()` writing the shared reservers — would then see no `value` in
-    // `changed`, skip the check, and render the invalid value as a plain dash:
-    // exactly the silent failure this assertion exists to prevent.
+    // Never gate this on `changed`: a throw clears Lit's changed map, so the
+    // next update would skip the check and render the invalid value as a dash
+    // (readout-components.md § 1, pinned by readout-block.spec.ts).
     assertReadoutValueType('obc-readout-list-item', this.value, this.valueType);
     assertReadoutFractionDigits('obc-readout-list-item', this.fractionDigits);
   }
@@ -1132,13 +1163,9 @@ export class ObcReadoutListItem extends LitElement {
         </button>`
       : html`<div class=${classes} part="root">${surface}</div>`;
 
-    // `alert` accepts `boolean` (so the generated Angular wrapper's widened
-    // `boolean` type assigns cleanly), but `wrapWithAlertFrame` ignores non-object
-    // truthy values. Normalise `true` → a default frame `{}` (like `clickable:
-    // true`) so it isn't a silent no-op; `false`/object pass through.
-    // fullWidth=true: the row-level alert frame stretches to the readout's full
-    // width (PR #1001) rather than hugging it. Per-block / src alert frames keep
-    // the default (hug) so they stay inline.
+    // `alert: true` (the Angular wrapper's widened `boolean`) becomes a default
+    // frame `{}`, as `wrapWithAlertFrame` ignores non-object truthy values. The
+    // row frame stretches full width; per-block frames hug (#1001).
     const alert = this.alert === true ? {} : this.alert;
     return wrapWithAlertFrame(alert, root, true);
   }

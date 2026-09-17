@@ -33,6 +33,7 @@ import type {
   LinearAdvice,
   LinearAdviceRaw,
 } from '../../building-blocks/instrument-linear/advice.js';
+import {degToRad, radToDeg} from '../../svghelpers/math.js';
 
 export enum ObcPitchRollHeaveType {
   /** Pitch on the right, roll at the bottom, heave in the left band slot. */
@@ -97,7 +98,7 @@ interface HeaveBand {
 function heaveColumnSize(band: HeaveBand): {width: number; height: number} {
   return {
     width: band.outerR - band.innerR,
-    height: 2 * band.capRadius * Math.sin((band.pitchDeg * Math.PI) / 180),
+    height: 2 * band.capRadius * Math.sin(degToRad(band.pitchDeg)),
   };
 }
 
@@ -397,7 +398,7 @@ export class ObcPitchRollHeave extends LitElement {
    */
   private renderComplement(pitchDeg: number): SVGTemplateResult {
     const r = OUTER_RING_RADIUS;
-    const rad = (pitchDeg * Math.PI) / 180;
+    const rad = degToRad(pitchDeg);
     // Ring runs clockwise from (270 + pitchDeg) through 0 to (90 - pitchDeg).
     const x1 = -r * Math.cos(rad);
     const y1 = -r * Math.sin(rad);
@@ -534,7 +535,6 @@ export class ObcPitchRollHeave extends LitElement {
     const rollFrame = buildFrame(rollReq);
 
     const OR = OUTER_RING_RADIUS;
-    const toRad = (deg: number) => (deg * Math.PI) / 180;
     const signedDist = (
       px: number,
       py: number,
@@ -567,8 +567,8 @@ export class ObcPitchRollHeave extends LitElement {
       );
     };
 
-    let aP = toRad(pitchReq);
-    let aR = toRad(rollReq);
+    let aP = degToRad(pitchReq);
+    let aR = degToRad(rollReq);
     if (minGap(aP, aR) < CORNER_GAP_PX) {
       let lo = 0;
       let hi = 1;
@@ -583,8 +583,8 @@ export class ObcPitchRollHeave extends LitElement {
       aP *= lo;
       aR *= lo;
     }
-    const pitchClampedDeg = Math.max(MIN_ARC_HALF_DEG, (aP * 180) / Math.PI);
-    let rollClampedDeg = Math.max(MIN_ARC_HALF_DEG, (aR * 180) / Math.PI);
+    const pitchClampedDeg = Math.max(MIN_ARC_HALF_DEG, radToDeg(aP));
+    let rollClampedDeg = Math.max(MIN_ARC_HALF_DEG, radToDeg(aR));
 
     const bandFor = (pitchDeg: number): HeaveBand => ({
       outerR: OR,
@@ -614,12 +614,12 @@ export class ObcPitchRollHeave extends LitElement {
           distanceToRect(innerX, innerY, x0, -y1, x1, y1)
         );
       };
-      if (heaveGap(toRad(rollClampedDeg)) < CORNER_GAP_PX) {
+      if (heaveGap(degToRad(rollClampedDeg)) < CORNER_GAP_PX) {
         let lo = 0;
         let hi = rollClampedDeg;
         for (let i = 0; i < 40; i++) {
           const mid = (lo + hi) / 2;
-          if (heaveGap(toRad(mid)) >= CORNER_GAP_PX) {
+          if (heaveGap(degToRad(mid)) >= CORNER_GAP_PX) {
             lo = mid;
           } else {
             hi = mid;
@@ -664,7 +664,7 @@ export class ObcPitchRollHeave extends LitElement {
     ): string => {
       const oxPct = (-frame.x / frame.width) * 100;
       const oyPct = (-frame.y / frame.height) * 100;
-      const dxPct = oyPct * Math.tan((halfDeg * Math.PI) / 180);
+      const dxPct = oyPct * Math.tan(degToRad(halfDeg));
       const lx = Math.max(0, oxPct - dxPct);
       const rx = Math.min(100, oxPct + dxPct);
       return `polygon(${oxPct}% ${oyPct}%, ${lx}% 0%, ${rx}% 0%)`;

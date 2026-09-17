@@ -1,0 +1,242 @@
+* {
+  box-sizing: border-box;
+}
+
+:host {
+  display: inline-flex;
+}
+
+.alert-button {
+  appearance: none;
+  background: none;
+  border: none;
+  padding: 0;
+  position: relative; /* containing block of the .blink layer */
+  display: flex;
+  flex-grow: 1; /* fills the width a parent gives the host */
+  align-items: center;
+  justify-content: center;
+  min-width: var(--app-components-alert-button-item-min-width);
+  height: var(--app-components-alert-button-item-touch-target-size);
+
+  &.fill-height {
+    height: 100%;
+  }
+}
+
+.icon {
+  display: block;
+  width: var(--app-components-alert-button-item-icon-size);
+  height: var(--app-components-alert-button-item-icon-size);
+}
+
+.visible-wrapper,
+.blink {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: var(--app-components-alert-button-item-visual-target-size);
+  min-width: var(--ui-components-icon-button-visual-target-size);
+  border-radius: var(--ui-components-button-border-radius-top-left)
+    var(--ui-components-button-border-radius-top-right)
+    var(--ui-components-button-border-radius-bottom-right)
+    var(--ui-components-button-border-radius-bottom-left);
+  color: var(--on-normal-neutral-color);
+  @mixin font-button;
+
+  .fill-height & {
+    height: 100%;
+  }
+
+  /* a parent joins another button to this end */
+  :host([data-group-item-not-last]) & {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+}
+
+.blink {
+  position: absolute;
+  inset: 0;
+  margin: auto; /* centres the fixed-height layer in the touch target */
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  gap: var(--app-components-alert-button-item-counter-spacing);
+}
+
+.counter .content {
+  /* the Figma stroke is drawn inside the frame, over this padding */
+  padding: 0 calc(var(--ui-components-button-padding-horizontal) - 1px);
+}
+
+.count {
+  padding-right: var(--app-components-alert-button-item-padding-counter-right);
+}
+
+.global-counter {
+  & .visible-wrapper {
+    /* the Figma stroke is drawn inside the frame, over this padding */
+    padding: 0
+      calc(var(--app-components-alert-button-item-padding-horizontal) - 1px);
+  }
+
+  & .content {
+    padding: 0 var(--ui-components-button-padding-horizontal);
+  }
+}
+
+.type-flat {
+  @mixin style style=flat visibleWrapperClass=.visible-wrapper;
+  @mixin style style=flat visibleWrapperClass=.blink;
+
+  & .visible-wrapper {
+    color: var(--on-flat-neutral-color);
+  }
+
+  & .blink {
+    width: min-content;
+  }
+}
+
+.type-normal .visible-wrapper,
+.type-enhanced .visible-wrapper {
+  width: 100%;
+}
+
+.type-normal {
+  @mixin style style=normal visibleWrapperClass=.visible-wrapper;
+  @mixin style style=normal visibleWrapperClass=.blink;
+}
+
+.type-enhanced.alert-type-alarm {
+  @mixin style style=normal visibleWrapperClass=.blink;
+  @mixin style style=alarm visibleWrapperClass=.visible-wrapper;
+  & .visible-wrapper {
+    color: var(--on-alarm-active-color);
+  }
+}
+
+.type-enhanced.alert-type-warning {
+  @mixin style style=normal visibleWrapperClass=.blink;
+  @mixin style style=warning visibleWrapperClass=.visible-wrapper;
+  & .visible-wrapper {
+    color: var(--on-warning-active-color);
+  }
+}
+
+.type-enhanced.alert-type-caution {
+  @mixin style style=normal visibleWrapperClass=.blink;
+  @mixin style style=caution visibleWrapperClass=.visible-wrapper;
+  & .visible-wrapper {
+    color: var(--on-caution-active-color);
+  }
+}
+
+.type-enhanced.alert-type-level-critical {
+  @mixin style style=normal visibleWrapperClass=.blink;
+  @mixin style style=critical visibleWrapperClass=.visible-wrapper;
+  & .visible-wrapper {
+    color: var(--on-critical-active-color);
+  }
+}
+
+.type-enhanced.alert-type-level-high {
+  @mixin style style=normal visibleWrapperClass=.blink;
+  @mixin style style=alarm visibleWrapperClass=.visible-wrapper;
+  & .visible-wrapper {
+    color: var(--on-alarm-active-color);
+  }
+}
+
+.type-enhanced.alert-type-level-medium {
+  @mixin style style=normal visibleWrapperClass=.blink;
+  @mixin style style=warning visibleWrapperClass=.visible-wrapper;
+  & .visible-wrapper {
+    color: var(--on-warning-active-color);
+  }
+}
+
+.type-enhanced.alert-type-level-low {
+  @mixin style style=normal visibleWrapperClass=.blink;
+  @mixin style style=caution visibleWrapperClass=.visible-wrapper;
+  & .visible-wrapper {
+    color: var(--on-caution-active-color);
+  }
+}
+
+.type-enhanced.alert-type-level-diagnostic {
+  @mixin style style=normal visibleWrapperClass=.blink;
+  @mixin style style=notification visibleWrapperClass=.visible-wrapper;
+  & .visible-wrapper {
+    color: var(--on-notification-active-color);
+  }
+}
+
+.flash-fast {
+  & .visible-wrapper {
+    opacity: var(--flash-fast-on);
+  }
+
+  & .blink {
+    opacity: var(--flash-fast-off);
+  }
+}
+
+.flash-slow {
+  & .visible-wrapper {
+    opacity: var(--flash-slow-on);
+  }
+
+  & .blink {
+    opacity: var(--flash-slow-off);
+  }
+}
+
+.flash-very-slow {
+  & .visible-wrapper {
+    opacity: var(--flash-very-slow-on);
+  }
+
+  & .blink {
+    opacity: var(--flash-very-slow-off);
+  }
+}
+
+.alert-type-alarm {
+  --icon-fill: var(--alarm-enabled-background-color);
+  --icon-stroke: var(--alarm-pressed-border-color);
+}
+
+.alert-type-warning {
+  --icon-fill: var(--warning-enabled-background-color);
+  --icon-stroke: var(--warning-pressed-border-color);
+}
+
+.alert-type-caution,
+.alert-type-level-low {
+  --icon-fill: var(--caution-enabled-background-color);
+  --icon-stroke: var(--caution-pressed-border-color);
+}
+
+.alert-type-level-critical {
+  --icon-fill: var(--alert-critical-color);
+  --icon-stroke: var(--alert-critical-outline-color);
+}
+
+.alert-type-level-high {
+  --icon-fill: var(--alarm-enabled-background-color);
+  --icon-stroke: var(--alarm-pressed-border-color);
+}
+
+.alert-type-level-medium {
+  --icon-fill: var(--warning-enabled-background-color);
+  --icon-stroke: var(--warning-pressed-border-color);
+}
+
+.alert-type-level-diagnostic {
+  --icon-fill: var(--alert-diagnostic-color);
+  --icon-stroke: var(--alert-diagnostic-outline-color);
+}
