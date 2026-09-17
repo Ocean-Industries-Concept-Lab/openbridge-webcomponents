@@ -1,36 +1,35 @@
 <style>
   /*
-    Sidebar floor width on desktop.
+    Sidebar floor width for the manager UI (never reaches the preview iframe).
 
-    The lifecycle badges (Beta / Experimental / Deprecated) sit on the same row
-    as the story name, and below ~423px of sidebar the longer ones wrap onto a
-    second line, which makes the tree hard to scan. Storybook has no config for
-    a minimum sidebar width, so pin the floor here.
+    The lifecycle badges (Beta / Experimental / Deprecated) share a row with the
+    story name, and a narrower sidebar wraps the longer ones onto a second line.
+    Storybook has no config for a minimum sidebar width, so pin the floor here.
 
-    Storybook's manager lays the app out as a grid whose first track is
-    `minmax(0, var(--nav-width))`, and it writes `--nav-width` as an inline
-    style on that grid element on every resize. The inline style is the only
-    stable hook (the class name is Emotion-generated and changes per build), and
-    `!important` is what lets a stylesheet rule beat it.
+    The manager lays the app out as a grid whose first track is
+    `minmax(0, var(--nav-width))`, and rewrites `--nav-width` inline on that
+    element on every resize. The inline style is the only stable hook — the
+    class name is Emotion-generated — and `!important` is what beats it.
 
-    The track expression is a floor, not a fixed width, so dragging the sidebar
-    wider still works:
-      max(var(--nav-width), 423px)      raises anything below the floor,
-      min(..., var(--nav-width) * 1000) keeps a collapsed sidebar collapsed —
-                                        at --nav-width: 0 the product is 0, so
-                                        the whole track computes to 0 instead of
-                                        leaving a 423px gap.
+    The track is a floor, not a fixed width, so the sidebar still resizes:
+    `max()` raises anything below the floor, and `min(…, --nav-width * 1000)`
+    keeps a collapsed sidebar collapsed, since that product is 0 at
+    `--nav-width: 0` and never the smaller term otherwise.
 
-    Gated at 1024px rather than Storybook's own 600px desktop breakpoint: below
-    that, a 423px sidebar plus the addon panel leaves almost nothing for the
-    canvas.
+    Gated above Storybook's own 600px desktop breakpoint: below 1024px, the
+    floor plus the addon panel leaves the canvas almost nothing.
   */
   @media (min-width: 1024px) {
     div[style*='--nav-width'] {
+      --ob-sidebar-min-width: 423px; /* measured: the widest badge + label pair */
+
       grid-template-columns:
         minmax(
           0,
-          min(max(var(--nav-width), 423px), calc(var(--nav-width) * 1000))
+          min(
+            max(var(--nav-width), var(--ob-sidebar-min-width)),
+            calc(var(--nav-width) * 1000)
+          )
         )
         minmax(100px, 1fr)
         minmax(0, var(--right-panel-width)) !important;
