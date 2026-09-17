@@ -152,7 +152,10 @@
     "!dist/companylogo-day.png",
     "bundle/openbridge-webcomponents.bundle.js",
     "bundle/openbridge-webcomponents.bundle.js.map",
-    "custom-elements.json"
+    "custom-elements.json",
+    "LICENSE.txt",
+    "LICENSE-AGPL.txt",
+    "LICENSE-APACHE.txt"
   ],
   "publishConfig": {
     "access": "public"

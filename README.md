@@ -40,8 +40,8 @@ We will **always remain open source**, but we have evolved our model to ensure c
 
 Under the new model, each release, both based on `develop` and `stable` branch, follows a "delayed" permissive license cycle:
 
-1.  **Initial Release:** Each new version is licensed under **AGPL** for the first 6 months.
-2.  **Transition:** After 6 months, the license for that specific version automatically switches to **Apache 2.0**.
+1.  **Initial Release:** Each new version is licensed under **AGPL** for the first 180 days.
+2.  **Transition:** After 180 days, the license for that specific version automatically switches to **Apache 2.0**.
 3.  **Supporter Access:** Project donors and sponsors receive **immediate access** to the code under the **Apache 2.0** license.
 
 > **Example:**
@@ -49,7 +49,7 @@ Under the new model, each release, both based on `develop` and `stable` branch, 
 >
 > - **open-source projects and internal users** can use it immediately under AGPL.
 > - **donors** can use it immediately under **Apache 2.0**.
-> - From **February 14, 2027**, version 1.2.2 becomes available to everyone under the **Apache 2.0** license (e.g., for commercial use without AGPL restrictions).
+> - From **February 10, 2027**, version 1.2.2 becomes available to everyone under the **Apache 2.0** license (e.g., for commercial use without AGPL restrictions).
 
 ## 💬 Slack
 
@@ -131,4 +131,6 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for bran
 | [Angular Wrapper](packages/openbridge-webcomponents-ng/README.md)                 | Usage and installation for Angular.                                                             |
 | [Svelte Wrapper](packages/openbridge-webcomponents-svelte/README.md)              | Usage and installation for Svelte.                                                              |
 | [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)                                          | Contributor Covenant Code of Conduct.                                                           |
-| [LICENSE.TXT](LICENSE.TXT)                                                        | Apache 2.0 license.                                                                             |
+| [LICENSE.txt](LICENSE.txt)                                                        | The license terms: AGPL-3.0-only, with the Apache-2.0 change date and the commercial option.    |
+| [LICENSE-AGPL.txt](LICENSE-AGPL.txt)                                              | Full text of the GNU Affero General Public License v3.0.                                        |
+| [LICENSE-APACHE.txt](LICENSE-APACHE.txt)                                          | Full text of the Apache License 2.0.                                                            |
