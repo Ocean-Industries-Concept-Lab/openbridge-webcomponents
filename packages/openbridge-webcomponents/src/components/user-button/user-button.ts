@@ -50,6 +50,8 @@ export enum Variant {
  *   - Provide a custom icon via the `icon` slot when using the `icon` variant.
  * - **Label Support:**
  *   - Optional `label` property displays text next to the button (not shown in static mode).
+ *   - Optional `sublabel` adds a second, lighter line under the label, for a
+ *     secondary detail such as the user's role.
  *
  * ## Usage Guidelines
  * Use `obc-user-button` to represent a user in navigation bars, toolbars, or menus where a compact, recognizable user indicator is needed. Ideal for profile menus, account switching, or user-related quick actions.
@@ -71,7 +73,8 @@ export enum Variant {
  * - Initials longer than two characters are truncated and a warning is logged.
  * - If `initials` is empty or invalid, the button falls back to the user icon.
  * - The `label` is only visible when the button is interactive (not static).
- * - For accessibility, the button uses `aria-label` based on initials or a default.
+ * - For accessibility, the button is named after its visible text — `label` and
+ *   `sublabel` — falling back to the initials when it shows no text.
  * - Only use the `static` property for non-interactive contexts; otherwise, the button is clickable.
  *
  * ## Example:
@@ -88,6 +91,8 @@ export enum Variant {
  * @availableWhen disabled static==false
  * @property label - Optional label text to display next to the button (not shown in static mode).
  * @availableWhen label static==false
+ * @property sublabel - Optional second line under the label, for a secondary detail such as a role (not shown in static mode).
+ * @availableWhen sublabel static==false
  * @slot icon - Custom icon for the user button (used only in `icon` variant; defaults to <obi-user> if not provided)
  * @stable
  */
@@ -121,6 +126,8 @@ export class ObcUserButton extends LitElement {
   @property({type: String}) initials: string = '';
 
   @property({type: String}) label?: string;
+
+  @property({type: String}) sublabel?: string;
 
   private get formattedInitials() {
     if (!this.initials) return '';
@@ -157,21 +164,33 @@ export class ObcUserButton extends LitElement {
       'mode-initials': !this.shouldShowIcon,
       'state-static': this.static,
       [`size-${this.size}`]: true,
+      'has-sublabel': Boolean(this.sublabel) && !this.static,
     };
 
     // Use button element when clickable, div when static
     const tag = this.static ? literal`div` : literal`button`;
+
+    const visibleText = [this.label, this.sublabel].filter(Boolean).join(', ');
+    const accessibleName =
+      (!this.static && visibleText) || this.initials || 'User button';
 
     const label =
       this.label && !this.static
         ? html`<span class="user-label" part="label">${this.label}</span>`
         : nothing;
 
+    const sublabel =
+      this.sublabel && !this.static
+        ? html`<span class="user-sublabel" part="sublabel">
+            ${this.sublabel}
+          </span>`
+        : nothing;
+
     return html`
         <${tag}
           class=${classMap(wrapperClasses)}
           ?disabled=${this.disabled}
-          aria-label=${this.initials || 'User button'}
+          aria-label=${accessibleName}
         >
         <div class="content-container" part="content-container">
           <div class="user-button-circle">
@@ -192,7 +211,7 @@ export class ObcUserButton extends LitElement {
                   `
             }
           </div>
-          ${label}
+          ${label} ${sublabel}
         </div>
         </${tag}>
       `;

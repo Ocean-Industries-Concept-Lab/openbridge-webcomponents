@@ -98,25 +98,39 @@
   --alert-notification-container-border-color: rgb(226, 240, 255);
 }
 
-@property --critical-blink-on {
+/* Animated per element by palettes/blinking.ts; registered so the numbers
+   feed calc() (#1224). */
+@property --flash-fast-on {
   syntax: "<number>";
   inherits: true;
   initial-value: 1;
 }
 
-@property --critical-blink-off {
+@property --flash-fast-off {
   syntax: "<number>";
   inherits: true;
   initial-value: 0;
 }
 
-@property --low-blink-on {
+@property --flash-slow-on {
   syntax: "<number>";
   inherits: true;
   initial-value: 1;
 }
 
-@property --low-blink-off {
+@property --flash-slow-off {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --flash-very-slow-on {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+
+@property --flash-very-slow-off {
   syntax: "<number>";
   inherits: true;
   initial-value: 0;

@@ -12,15 +12,9 @@ import {
 
 const ITEM_TAG = 'obc-readout-list-item';
 
-// Lit lowercases a property name to derive its attribute (it does not
-// kebab-case), so multi-word properties are observed as one lowercase word —
-// `valueType` becomes `valuetype`.
-//
-// The kebab-cased entries below are therefore INERT: the real attributes are
-// `maxdigits`, `fractiondigits`, `hasdegree`, `hassetpoint` and `hasadvice`, so
-// changing any of them does not currently re-trigger alignment. They predate
-// this list and are left as-is rather than silently activating five code paths
-// that have never run; see the follow-up issue before adding more entries.
+// Lit lowercases property names for attributes (`valuetype`, never
+// `value-type`), so the kebab-cased entries are inert and are left that way:
+// activating five dormant paths is untested (readout-components.md § 6).
 /** Child attributes whose change should re-trigger alignment (HTML-attribute usage). */
 const OBSERVED_ATTRIBUTES = [
   'unit',
@@ -76,6 +70,13 @@ function integerDigitCount(value: number | null | undefined): number {
  * - **Degree:** if any row has a degree, non-degree rows reserve the degree column
  *   (`hasDegreeSpacer`) so their digits line up with the degree rows; the spacer is
  *   cleared once no degree rows remain.
+ * - **Sign:** if any row shows a minus sign (a negative value / setpoint /
+ *   advice) or declares it can (`hasSignSpacer` on a numeric block's options),
+ *   the shared numeric reserve gains a sign column so every row's digits stay
+ *   aligned; the column closes once no such row remains. A live value crossing
+ *   zero re-aligns automatically only when it changes via attribute — rows
+ *   whose values can go negative should set `hasSignSpacer` up front so the
+ *   columns never shift.
  *
  * The list **owns** these reservers: it recomputes them from the rows' data on
  * every pass (and clears stale reservers / spacers when rows change), so a
@@ -90,12 +91,9 @@ function integerDigitCount(value: number | null | undefined): number {
  * @property showDebugOverlay - Development aid: outline each row's readout building blocks (red), degree
  *   columns (blue) and degree spacer (green) so the reserved column widths are
  *   visible. Propagated to every row. Off by default.
- * @experimental Pilot for the new primitives + per-block options Readout API; the
- * API may change in a future release.
- *
  * @slot - The `<obc-readout-list-item>` rows.
- *
  * @csspart list - The vertical stack container.
+ * @experimental
  */
 @customElement('obc-readout-list')
 export class ObcReadoutList extends LitElement {
@@ -145,16 +143,12 @@ export class ObcReadoutList extends LitElement {
     let longestUnit = '';
     let longestSrc = '';
     let anyDegree = false;
+    let anySign = false;
 
     for (const item of items) {
-      // A text value renders verbatim, so it contributes nothing to the numeric
-      // reserve: resolving it yields `undefined` and `integerDigitCount` returns
-      // 0. Its row's `maxDigits` / `fractionDigits` are skipped too — they are
-      // ignored by a text block, so counting them would let a text row inflate
-      // every other row's numeric column. They DO still count when the row also
-      // has a setpoint or advice block, which stay numeric and are formatted by
-      // them. Numeric rows driven by HTML attributes resolve back to numbers
-      // here, so they take part as usual.
+      // A text row's value and digit knobs stay out of the numeric reserve,
+      // unless a setpoint or advice block (always numeric) uses those knobs
+      // (readout-components.md § 5).
       const hasNumericBlock =
         !isTextValueRow(item) || item.hasSetpoint || item.hasAdvice;
       // Bounded per row: the list builds its own reserver string from these
@@ -171,17 +165,34 @@ export class ObcReadoutList extends LitElement {
           resolveReadoutDigitCount(item.maxDigits)
         );
       }
+      const numericValue = resolveReadoutNumericValue(
+        item.value,
+        item.valueType ?? ReadoutValueType.number
+      );
       maxIntegerDigits = Math.max(
         maxIntegerDigits,
-        integerDigitCount(
-          resolveReadoutNumericValue(
-            item.value,
-            item.valueType ?? ReadoutValueType.number
-          )
-        ),
+        integerDigitCount(numericValue),
         item.hasSetpoint ? integerDigitCount(item.setpoint) : 0,
         item.hasAdvice ? integerDigitCount(item.advice) : 0
       );
+      // The sign column opens once any row shows a sign (a currently-negative
+      // value / setpoint / advice) or declares it can (`hasSignSpacer` on a
+      // numeric block) — and closes again when no such row remains. Rows that
+      // can go negative should opt in, so a live value crossing zero widens
+      // nothing.
+      const showsSign =
+        (numericValue ?? 0) < 0 ||
+        (item.hasSetpoint && (item.setpoint ?? 0) < 0) ||
+        (item.hasAdvice && (item.advice ?? 0) < 0);
+      const reservesSign =
+        (hasNumericBlock &&
+          (item.valueOptions?.hasSignSpacer ||
+            item.setpointOptions?.hasSignSpacer ||
+            item.adviceOptions?.hasSignSpacer)) ??
+        false;
+      if (showsSign || reservesSign) {
+        anySign = true;
+      }
       if (item.unit && item.unit.length > longestUnit.length) {
         longestUnit = item.unit;
       }
@@ -193,9 +204,15 @@ export class ObcReadoutList extends LitElement {
       }
     }
 
+    // The sign prefix widens every numeric block's reserve by one sign column;
+    // the blocks right-align inside it, so positive rows leave the column
+    // blank and a negative row's sign fills it — digits stay aligned either
+    // way, and `obc-readout-block` skips its own prefix for a reserver that
+    // already leads with one.
     const numericReserver =
       maxIntegerDigits > 0
-        ? '0'.repeat(maxIntegerDigits) +
+        ? (anySign ? '-' : '') +
+          '0'.repeat(maxIntegerDigits) +
           (maxFractionDigits > 0 ? `.${'0'.repeat(maxFractionDigits)}` : '')
         : undefined;
 
@@ -203,13 +220,9 @@ export class ObcReadoutList extends LitElement {
     // the MutationObserver; disconnecting around them is belt-and-suspenders.
     this.mutationObserver?.disconnect();
     for (const item of items) {
-      // Recompute every reserver / spacer on every pass (do not gate on a value
-      // being present), so stale state clears when rows change — e.g. when the
-      // last degree row, the last unit, or the last source is removed.
-      // The numeric reserve is a width in DIGITS, so applying it to a text
-      // block would pad short text ("Auto" padded out to "0000.0"'s width).
-      // Text rows hug their own content instead. Setpoint / advice stay
-      // numeric and keep the shared reserve even on a text row.
+      // Overwrite every reserver on every pass so stale state clears when the
+      // last degree / unit / source row leaves. A text row gets no numeric
+      // reserve — it is a width in digits (readout-components.md § 5).
       item.valueOptions = {
         ...item.valueOptions,
         spaceReserver: isTextValueRow(item) ? undefined : numericReserver,

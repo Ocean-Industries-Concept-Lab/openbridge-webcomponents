@@ -16,10 +16,12 @@ const meta: Meta<typeof ObcTransmitterButton> = {
     variant: TransmitterButtonVariant.value,
     size: TransmitterButtonSize.regular,
     value: 12.3,
-    unit: '°C',
+    unit: 'C',
     fractionDigits: 1,
     maxDigits: 0,
     hintedZeros: false,
+    hasSignSpacer: false,
+    hasDegree: true,
     hasIcon: false,
     hasAdvice: false,
     adviceValue: 123,
@@ -79,6 +81,8 @@ function renderComponent(args: ObcTransmitterButton) {
       .fractionDigits=${args.fractionDigits}
       .maxDigits=${args.maxDigits}
       .hintedZeros=${args.hintedZeros}
+      .hasSignSpacer=${args.hasSignSpacer}
+      .hasDegree=${args.hasDegree}
       .hasIcon=${args.hasIcon}
       .hasAdvice=${args.hasAdvice}
       .adviceValue=${args.adviceValue}
@@ -169,6 +173,33 @@ export const ZeroPaddedNegativeValue: Story = {
     fractionDigits: 1,
     maxDigits: 4,
     hintedZeros: true,
+    hasIcon: true,
+  },
+  render: (args) => renderComponent(args as ObcTransmitterButton),
+};
+
+// The sign column pair: identical settings, so the two chips are the same
+// width — the invisible sign placeholder holds the column while the value is
+// positive and the real sign fills it when negative.
+export const ZeroPaddedSignColumn: Story = {
+  args: {
+    value: 12.3,
+    fractionDigits: 1,
+    maxDigits: 4,
+    hintedZeros: true,
+    hasSignSpacer: true,
+    hasIcon: true,
+  },
+  render: (args) => renderComponent(args as ObcTransmitterButton),
+};
+
+export const ZeroPaddedSignColumnNegative: Story = {
+  args: {
+    value: -12.3,
+    fractionDigits: 1,
+    maxDigits: 4,
+    hintedZeros: true,
+    hasSignSpacer: true,
     hasIcon: true,
   },
   render: (args) => renderComponent(args as ObcTransmitterButton),

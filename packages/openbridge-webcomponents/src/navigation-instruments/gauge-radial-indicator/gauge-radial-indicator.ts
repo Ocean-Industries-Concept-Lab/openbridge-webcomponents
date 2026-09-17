@@ -1,6 +1,7 @@
 import {LitElement, html, nothing, svg, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
+import {clamp, degToRad} from '../../svghelpers/math.js';
 import componentStyle from './gauge-radial-indicator.css?inline';
 import '../../icons/icon.js';
 import '../../icons/icon-placeholder.js';
@@ -37,15 +38,11 @@ export enum GaugeRadialIndicatorStyle {
   Flat = 'flat',
 }
 
-function clamp(value: number, min: number, max: number): number {
-  return Math.min(Math.max(value, min), max);
-}
-
 function pointOnCircle(
   angle: number,
   radius = TRACK_RADIUS
 ): {x: number; y: number} {
-  const radians = (angle * Math.PI) / 180;
+  const radians = degToRad(angle);
   return {
     x: CENTER + Math.sin(radians) * radius,
     y: CENTER - Math.cos(radians) * radius,

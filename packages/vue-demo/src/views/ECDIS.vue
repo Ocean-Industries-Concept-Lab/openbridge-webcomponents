@@ -632,6 +632,38 @@ const aisSource = computed((): GeoJSON.FeatureCollection => {
   min-width: 96px;
 }
 
+/* Mobile: map on top, wrapping toolbar, side panel in a capped scroll area
+   below. 768px is MOBILE_BREAKPOINT_PX in composables/useMobileLayout.ts. */
+@media screen and (max-width: 768px) {
+  .map-container {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(0, 1fr) min-content minmax(0, 45%);
+    grid-template-areas:
+      'map'
+      'toolbar'
+      'side-panel';
+  }
+
+  .side-panel {
+    width: 100%;
+    border-right: none;
+    border-top: 1px solid var(--border-outline-color);
+    overflow-y: auto; /* own-ship card and target list scroll inside the capped row */
+  }
+
+  .targets-card {
+    flex: none; /* flex: 1 collapses it to 0px under the taller own-ship card */
+    height: 320px;
+  }
+
+  .toolbar {
+    height: auto;
+    flex-wrap: wrap;
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+}
+
 .leaflet-pane {
   z-index: 0 !important;
 }

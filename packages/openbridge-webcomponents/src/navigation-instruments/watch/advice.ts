@@ -1,5 +1,6 @@
 import {SVGTemplateResult, nothing, svg} from 'lit';
 import {TickmarkStyle, TickmarkType, tickmark} from './tickmark.js';
+import {degToRad, normalizeAngle} from '../../svghelpers/math.js';
 
 export enum AdviceType {
   advice = 'advice',
@@ -38,14 +39,14 @@ export function adviceMask(
   stroke: string,
   radiusOffset = 0
 ): SVGTemplateResult | typeof nothing {
-  const spanDeg = (((maxAngle - minAngle) % 360) + 360) % 360;
-  const spanRad = (spanDeg * Math.PI) / 180;
+  const spanDeg = normalizeAngle(maxAngle - minAngle);
+  const spanRad = degToRad(spanDeg);
   if (spanRad <= deltaAngle * 2) return nothing;
   const trimmedSpanRad = spanRad - deltaAngle * 2;
   const largeArcFlag = trimmedSpanRad > Math.PI ? 1 : 0;
 
-  const radl = (minAngle * Math.PI) / 180 + deltaAngle;
-  const radh = (maxAngle * Math.PI) / 180 - deltaAngle;
+  const radl = degToRad(minAngle) + deltaAngle;
+  const radh = degToRad(maxAngle) - deltaAngle;
   const r1 = 328 / 2 + radiusOffset;
   const r2 = 344 / 2 + radiusOffset;
   const R = (r2 - r1) / 2;

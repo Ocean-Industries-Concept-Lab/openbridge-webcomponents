@@ -14,6 +14,10 @@ import '../../icons/icon-off.js';
 import '../../icons/icon-on.js';
 import '../../icons/icon-temperature-air.js';
 import '../button/button.js';
+import '../../building-blocks/readout-block/readout-block.js';
+import {ReadoutBlockSize} from '../../building-blocks/readout-block/readout-block.js';
+import {ObcTextboxSize} from '../../components/textbox/textbox.js';
+import {SETPOINT_PATH_FILLED} from '../../svghelpers/setpoint.js';
 
 export enum AutomationButtonReadoutStackSize {
   small = 'small',
@@ -26,6 +30,28 @@ export enum IdTagOrientation {
   bottom = 'bottom',
 }
 
+// The stack's three tiers map onto the readout block's: `small` is the block's
+// small tier at xs number typography, `regular` the small tier at its default
+// s, `enhanced` the large tier. The block's cap-height boxes (16 / 20 / 32)
+// match the tiers' former line-heights.
+const blockSizeBySize: Record<
+  AutomationButtonReadoutStackSize,
+  ReadoutBlockSize
+> = {
+  [AutomationButtonReadoutStackSize.small]: ReadoutBlockSize.small,
+  [AutomationButtonReadoutStackSize.regular]: ReadoutBlockSize.small,
+  [AutomationButtonReadoutStackSize.enhanced]: ReadoutBlockSize.large,
+};
+
+const valueSizeBySize: Record<
+  AutomationButtonReadoutStackSize,
+  ObcTextboxSize
+> = {
+  [AutomationButtonReadoutStackSize.small]: ObcTextboxSize.xs,
+  [AutomationButtonReadoutStackSize.regular]: ObcTextboxSize.s,
+  [AutomationButtonReadoutStackSize.enhanced]: ObcTextboxSize.l,
+};
+
 export interface AutomationButtonReadoutStackValue {
   type: 'value';
   value: number;
@@ -33,7 +59,13 @@ export interface AutomationButtonReadoutStackValue {
   fractionDigits?: number;
   unit: string;
   direction: 'up' | 'down' | 'left' | 'right' | 'none';
-  icon: 'none' | 'arrow' | 'chevron';
+  icon: 'none' | 'arrow' | 'chevron' | 'slot';
+  /**
+   * Host slot the row's icon is projected from when `icon` is `'slot'` —
+   * consumers place any icon element with this slot name in the stack's
+   * light DOM (e.g. a device-specific `<obi-*>` icon).
+   */
+  slotName?: string;
 }
 
 export interface AutomationButtonReadoutStackStateOn {
@@ -55,13 +87,31 @@ export interface AutomationButtonReadoutStackButton {
   unit: string;
 }
 
+export interface AutomationButtonReadoutStackSetpoint {
+  type: 'setpoint';
+  value: number;
+  nDigits: number;
+  unit?: string;
+}
+
 export type AutomationButtonReadoutStack =
   | AutomationButtonReadoutStackValue
   | AutomationButtonReadoutStackStateOn
   | AutomationButtonReadoutStackStateOff
-  | AutomationButtonReadoutStackButton;
+  | AutomationButtonReadoutStackButton
+  | AutomationButtonReadoutStackSetpoint;
 
 /**
+ * A value row with `icon: 'slot'` projects its icon from the host slot named
+ * by its `slotName` — a dynamic slot name, so it carries no `@slot` tag (the
+ * wrapper generator needs literal names).
+ *
+ * @property readouts - Rows rendered top-to-bottom: `value` (padded digits, unit,
+ *   optional direction icon), `state-on`/`state-off`, `button`, and `setpoint`
+ *   (shared setpoint glyph + padded digits).
+ * @property tag - Identifier line (e.g. '#0001'); `null` hides it.
+ * @property size - Typography tier of the rows (small / regular / enhanced).
+ * @property idTagOrientation - Whether the tag renders above or below the rows.
  * @experimental
  */
 @customElement('obc-automation-button-readout-stack')
@@ -96,12 +146,28 @@ export class ObcAutomationButtonReadoutStack extends LitElement {
     return html`<span class="value-text">${text}</span>`;
   }
 
-  renderValue(readout: AutomationButtonReadoutStackValue): HTMLTemplateResult {
-    const v = readout.value.toFixed(readout.fractionDigits ?? 0);
-    const zeroPadding =
-      v.length < readout.nDigits ? '0'.repeat(readout.nDigits - v.length) : '';
-    const paddedValue = zeroPadding + v;
+  /**
+   * A numeric segment on `obc-readout-block` — the block owns the formatting:
+   * hinted zeros fill the integer part to `maxDigits`, the sign is prepended
+   * without consuming a zero (`-005`), and an unavailable value renders the
+   * family's dash placeholder.
+   */
+  private renderNumber(
+    value: number,
+    format: {maxDigits?: number; fractionDigits?: number; hintedZeros?: boolean}
+  ): HTMLTemplateResult {
+    return html`<obc-readout-block
+      class="number"
+      .value=${value}
+      .size=${blockSizeBySize[this.size]}
+      .valueSize=${valueSizeBySize[this.size]}
+      .maxDigits=${format.maxDigits ?? 0}
+      .fractionDigits=${format.fractionDigits ?? 0}
+      .hintedZeros=${format.hintedZeros ?? false}
+    ></obc-readout-block>`;
+  }
 
+  renderValue(readout: AutomationButtonReadoutStackValue): HTMLTemplateResult {
     let directionIcon: HTMLTemplateResult | typeof nothing = nothing;
     if (readout.icon == 'arrow') {
       if (readout.direction == 'up') {
@@ -147,13 +213,41 @@ export class ObcAutomationButtonReadoutStack extends LitElement {
           useCssColor
         ></obi-chevron-double-right-google>`;
       }
+    } else if (readout.icon == 'slot' && readout.slotName) {
+      directionIcon = html`<slot class="icon" name=${readout.slotName}></slot>`;
     }
     const content = html`
-      ${this.renderValueText(paddedValue)}
+      ${this.renderNumber(readout.value, {
+        maxDigits: readout.nDigits,
+        fractionDigits: readout.fractionDigits,
+        hintedZeros: true,
+      })}
       <span class="unit">${readout.unit}</span>
     `;
 
     return this.renderValueContainer('value', directionIcon, content);
+  }
+
+  renderSetpoint(
+    readout: AutomationButtonReadoutStackSetpoint
+  ): HTMLTemplateResult {
+    const glyph = html`<svg
+      class="setpoint-glyph"
+      viewBox="2.5 -2.5 21 26"
+      aria-hidden="true"
+    >
+      <path d=${SETPOINT_PATH_FILLED} transform="rotate(-90 13 10.5)" />
+    </svg>`;
+    const content = html`
+      ${this.renderNumber(readout.value, {
+        maxDigits: readout.nDigits,
+        hintedZeros: true,
+      })}
+      ${readout.unit
+        ? html`<span class="unit">${readout.unit}</span>`
+        : nothing}
+    `;
+    return this.renderValueContainer('setpoint', glyph, content);
   }
 
   renderStateOff(
@@ -183,8 +277,6 @@ export class ObcAutomationButtonReadoutStack extends LitElement {
   renderButton(
     readout: AutomationButtonReadoutStackButton
   ): HTMLTemplateResult {
-    const v = readout.value.toFixed(1); // Format as 000.0
-
     let temperatureIcon: HTMLTemplateResult = html``;
     if (readout.hasIcon) {
       temperatureIcon = html`<obi-temperature-air
@@ -194,7 +286,7 @@ export class ObcAutomationButtonReadoutStack extends LitElement {
     }
 
     const content = html`
-      ${this.renderValueText(v)}
+      ${this.renderNumber(readout.value, {fractionDigits: 1})}
       <span class="unit">${readout.unit}</span>
     `;
 
@@ -212,6 +304,8 @@ export class ObcAutomationButtonReadoutStack extends LitElement {
       return this.renderStateOff(readout);
     } else if (readout.type === 'button') {
       return this.renderButton(readout);
+    } else if (readout.type === 'setpoint') {
+      return this.renderSetpoint(readout);
     } else {
       throw new Error('Invalid readout type');
     }
@@ -223,7 +317,8 @@ export class ObcAutomationButtonReadoutStack extends LitElement {
         readout.type === 'value' ||
         readout.type === 'state-off' ||
         readout.type === 'state-on' ||
-        readout.type === 'button'
+        readout.type === 'button' ||
+        readout.type === 'setpoint'
     );
 
     const renderedReadouts = displayableReadouts.map((r) =>

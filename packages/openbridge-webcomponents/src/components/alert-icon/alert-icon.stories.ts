@@ -2,7 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcAlertIcon} from './alert-icon.js';
 import './alert-icon.js';
 import {html} from 'lit';
-import {AlertType} from '../../types.js';
+import {AlertType, FlashingSpeed} from '../../types.js';
 
 const meta: Meta<typeof ObcAlertIcon> = {
   title: 'Application Components/Alerts/Alert Icon',
@@ -13,8 +13,13 @@ const meta: Meta<typeof ObcAlertIcon> = {
     acknowledged: false,
     active: true,
     outline: false,
+    flashingSpeed: FlashingSpeed.Default,
   },
   argTypes: {
+    flashingSpeed: {
+      options: Object.values(FlashingSpeed),
+      control: {type: 'select'},
+    },
     type: {
       control: {type: 'select', options: Object.values(AlertType)},
     },
@@ -31,6 +36,7 @@ const meta: Meta<typeof ObcAlertIcon> = {
         .type=${args.type}
         .acknowledged=${args.acknowledged}
         .active=${args.active}
+        .flashingSpeed=${args.flashingSpeed}
       ></obc-alert-icon>
     </div>`,
 } satisfies Meta<ObcAlertIcon>;

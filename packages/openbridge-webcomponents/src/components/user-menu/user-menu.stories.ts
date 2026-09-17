@@ -16,6 +16,7 @@ const meta: Meta<ObcUserMenu> = {
         'sign-out-click',
         'signed-in-action-click',
         'recent-user-click',
+        'use-another-account-click',
       ],
     },
   },
@@ -28,44 +29,30 @@ const meta: Meta<ObcUserMenu> = {
       control: {type: 'select'},
       options: Object.values(ObcUserMenuSize),
     },
-    hasRecentlySignedIn: {
-      control: {type: 'boolean'},
-    },
-    username: {
-      control: {type: 'text'},
-    },
-    password: {
-      control: {type: 'text'},
-    },
-    usernameError: {
-      control: {type: 'text'},
-    },
-    passwordError: {
-      control: {type: 'text'},
-    },
-    userInitials: {
-      control: {type: 'text'},
-    },
-    userLabel: {
-      control: {type: 'text'},
-    },
     recentUsers: {
       control: {type: 'object'},
     },
     signedInActions: {
       control: {type: 'object'},
     },
+    primaryActionId: {
+      control: {type: 'text'},
+    },
   },
   args: {
     type: ObcUserMenuType.signIn,
     size: ObcUserMenuSize.regular,
     hasRecentlySignedIn: false,
+    showUsername: true,
+    showPassword: true,
     username: '',
     password: '',
     usernameError: '',
     passwordError: '',
     userInitials: 'AB',
     userLabel: 'Username',
+    userRole: '',
+    showUseAnotherAccount: true,
     recentUsers: [
       {initials: 'AB', label: 'Username'},
       {initials: 'CD', label: 'Username'},
@@ -77,6 +64,7 @@ const meta: Meta<ObcUserMenu> = {
       {id: 'preferences', label: 'Preferences'},
       {id: 'user-account', label: 'User account'},
     ],
+    primaryActionId: 'preferences',
   },
   render: (args) => {
     return html`
@@ -84,14 +72,19 @@ const meta: Meta<ObcUserMenu> = {
         type=${args.type}
         size=${args.size}
         ?hasRecentlySignedIn=${args.hasRecentlySignedIn}
+        .showUsername=${args.showUsername}
+        .showPassword=${args.showPassword}
         username=${args.username}
         password=${args.password}
         usernameError=${args.usernameError}
         passwordError=${args.passwordError}
         .userInitials=${args.userInitials}
         .userLabel=${args.userLabel}
+        .userRole=${args.userRole}
+        .showUseAnotherAccount=${args.showUseAnotherAccount}
         .recentUsers=${args.recentUsers}
         .signedInActions=${args.signedInActions}
+        .primaryActionId=${args.primaryActionId}
       ></obc-user-menu>
     `;
   },
@@ -160,5 +153,96 @@ export const UserSignInSmall: Story = {
     type: ObcUserMenuType.userSignIn,
     size: ObcUserMenuSize.small,
     hasRecentlySignedIn: true,
+  },
+};
+
+export const SignInWithoutFields: Story = {
+  args: {
+    type: ObcUserMenuType.signIn,
+    size: ObcUserMenuSize.small,
+    showUsername: false,
+    showPassword: false,
+  },
+};
+
+export const UserSignInWithoutPasswordRegular: Story = {
+  args: {
+    type: ObcUserMenuType.userSignIn,
+    size: ObcUserMenuSize.regular,
+    showPassword: false,
+  },
+};
+
+export const UserSignInWithoutPasswordSmall: Story = {
+  args: {
+    type: ObcUserMenuType.userSignIn,
+    size: ObcUserMenuSize.small,
+    showPassword: false,
+  },
+};
+
+export const SignedInWithoutActions: Story = {
+  args: {
+    type: ObcUserMenuType.signedIn,
+    size: ObcUserMenuSize.regular,
+    signedInActions: [],
+    primaryActionId: undefined,
+  },
+};
+
+export const UserSignInWithRoles: Story = {
+  args: {
+    type: ObcUserMenuType.userSignIn,
+    size: ObcUserMenuSize.regular,
+    hasRecentlySignedIn: true,
+    userRole: 'Role',
+    recentUsers: [
+      {initials: 'AB', label: 'Username', role: 'Role'},
+      {initials: 'CD', label: 'Username', role: 'Role'},
+      {initials: 'EF', label: 'Username', role: 'Role'},
+    ],
+  },
+};
+
+export const SignedInWithRole: Story = {
+  args: {
+    type: ObcUserMenuType.signedIn,
+    size: ObcUserMenuSize.regular,
+    userRole: 'Role',
+  },
+};
+
+export const UserSignInWithoutUseAnotherAccount: Story = {
+  args: {
+    type: ObcUserMenuType.userSignIn,
+    size: ObcUserMenuSize.regular,
+    showUseAnotherAccount: false,
+  },
+};
+
+export const UserSignInSmallWithoutUseAnotherAccount: Story = {
+  args: {
+    type: ObcUserMenuType.userSignIn,
+    size: ObcUserMenuSize.small,
+    showUseAnotherAccount: false,
+  },
+};
+
+export const UserSignInSmallIgnoresRole: Story = {
+  args: {
+    type: ObcUserMenuType.userSignIn,
+    size: ObcUserMenuSize.small,
+    hasRecentlySignedIn: true,
+    userRole: 'Role',
+    recentUsers: [{initials: 'AB', label: 'Username', role: 'Role'}],
+  },
+};
+
+export const SignInWithoutRecentUsers: Story = {
+  args: {
+    type: ObcUserMenuType.signIn,
+    size: ObcUserMenuSize.small,
+    hasRecentlySignedIn: true,
+    recentUsers: [],
   },
 };

@@ -18,11 +18,12 @@ import {
   getChartColorsOrDefault,
   observeThemeChanges,
   calculateSumTotal,
-  formatNumericValue,
+  formatChartNumber,
   createArcOuterLabelPlugin,
   calculateFixedHeightChartLayout,
   getChartTooltipOptions,
   generateLegendHTML,
+  observeLabelThreshold,
 } from '../../charthelpers/index.js';
 import type {FixedHeightChartDimensions} from '../../charthelpers/canvas-layout.js';
 
@@ -236,9 +237,6 @@ export class ObcDonutChart extends LitElement {
   /** @internal - ResizeObserver for tracking height threshold crossings (e.g. MIN_HEIGHT_WITH_LABELS = 192px) */
   private resizeObserver?: ResizeObserver;
 
-  /** @internal - Track previous state to detect threshold crossing */
-  private wasAboveThreshold = false;
-
   private hasAnyChanged(
     changed: PropertyValues,
     props: readonly (keyof ObcDonutChart)[]
@@ -306,34 +304,24 @@ export class ObcDonutChart extends LitElement {
   }
 
   /**
-   * Setup resize observer to detect size threshold crossings
-   * Recreates chart when the layout's isTooSmall decision flips (fixedHeight
-   * crossing MIN_HEIGHT_WITH_LABELS, same threshold for half and full mode)
-   * Detect when fixedHeight property changes programmatically (e.g., via Storybook controls or user code)
+   * The layout's isTooSmall decides which side the chart is on (one
+   * threshold serves half and full circles); a flip changes the plugin
+   * set, so the chart is rebuilt rather than updated.
    */
   private setupResizeObserver() {
     if (!this.canvasEl) return;
 
-    this.resizeObserver = new ResizeObserver(() => {
-      if (!this.chart) return;
-
-      const isAboveThreshold = !this.lastDimensions?.isTooSmall;
-
-      // Only recreate chart if we crossed the threshold
-      if (isAboveThreshold !== this.wasAboveThreshold) {
-        this.wasAboveThreshold = isAboveThreshold;
-        this.chart.destroy();
-        this.createChart();
-      } else {
-        // Size changed but didn't cross threshold - just update
-        this.updateChart();
+    this.resizeObserver = observeLabelThreshold(
+      this.canvasEl,
+      () => !this.lastDimensions?.isTooSmall,
+      {
+        rebuild: () => {
+          this.chart?.destroy();
+          this.createChart();
+        },
+        update: () => this.updateChart(),
       }
-    });
-
-    this.resizeObserver.observe(this.canvasEl);
-
-    // Initialize threshold state
-    this.wasAboveThreshold = !this.lastDimensions?.isTooSmall;
+    );
   }
 
   private prepareChartData() {
@@ -452,7 +440,7 @@ export class ObcDonutChart extends LitElement {
                 this.max > 0 ? this.max : this.total > 0 ? this.total : 1;
               // Calculate percentage if unit is "%", otherwise use raw value
               const isPercentage = this.outerLabelUnit === '%';
-              const numericValue = formatNumericValue(
+              const numericValue = formatChartNumber(
                 value,
                 denominator,
                 isPercentage,
@@ -826,7 +814,7 @@ export class ObcDonutChart extends LitElement {
     try {
       const legendItems = this.data.map((item, i) => {
         const style = meta.controller.getStyle(i, false);
-        const numericValue = formatNumericValue(
+        const numericValue = formatChartNumber(
           item.value,
           denominator,
           isPercentage,

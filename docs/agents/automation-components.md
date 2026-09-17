@@ -18,11 +18,21 @@ Choose the correct base class when creating a new automation device:
 | Motorized device (on + speed) | `ObcAbstractAutomationButtonMotorized`       | `on`, `speed` + `speedUnit` (default `%`) + `speedMaxDigits` (default 3); `speedInPercent` is deprecated |
 | Binary on/off device          | `ObcAbstractAutomationButtonSquared`         | `on`                                                                                                     |
 | Analog device with value      | `ObcAbstractAutomationButton` + custom logic | `open`, `value` (0–100)                                                                                  |
+| Position selector (shuffle)   | `ObcShuffleButtonBase`                       | `selectedPosition`, `vertical`; fires `position-selected` (see § Shuffle selectors)                      |
+| HVAC tile (specialty tank)    | `ObcAbstractSpecialtyTank`                   | `medium`, `static`, `showIcon`, `tag`; tank-style `positioning`, `clickable`, `activated`, badges, alert |
 | Pure display (no button)      | `LitElement` directly                        | N/A                                                                                                      |
 
 All button-based components share `ObcAbstractAutomationButton` as root, which provides: positioning, readout stacks, badges, alert frames, tags, and label direction.
 
 > **Exception:** `obc-automation-tank` extends `LitElement` directly (not the abstract base) because its layout shell is fundamentally different (multi-cell readout/tag/halo grid, optional embedded `obc-gauge-trend`). It re-implements the alert-frame pattern locally — same 6 properties (`alert`, `alertFrameType`, `alertFrameThickness`, `alertFrameStatus`, `showAlertCategoryIcon`, `showAlertIcon`) and same 3 slots (`alert-icon`, `alert-label`, `alert-timer`) — and overlays the `<obc-alert-frame>` inside its `.halo` wrapper so the ring hugs the bordered tank area only. When changing the alert API on the abstract base, keep the tank in sync. The tank also adds `aria-live="polite" aria-atomic="true"` on its `.root` to announce slotted alert labels; the abstract base does not (yet) do this.
+
+> **Device-named gauge presets:** `obc-gauge-generator` and
+> `obc-gauge-motors-and-pumps` subclass `obc-gauge-proportional` (a navigation
+> instrument) to bake a device icon and type axis — like the tank exception,
+> they live in `src/automation/` but render on the watch stack;
+> `docs/agents/watch-radial-instruments.md` owns their rendering rules.
+> `obc-gauge-valve` is a direct `obc-watch` consumer in `src/automation/` for
+> the same reason.
 
 ## Icon Rendering Pattern
 
@@ -85,6 +95,27 @@ Analog valves render inline dynamic SVG (not icon swapping):
 - Fill visualization uses clipPath that extends based on value percentage
 - Use CSS variables for stroke/fill colors, not hard-coded values
 
+## Shuffle selectors (hydraulic valves)
+
+`obc-hydraulic-valve-4-3` and `obc-hydraulic-valve-x-2` extend `ObcShuffleButtonBase` (`src/automation/shuffle-button/`); `obc-hydraulic-check-valve` is display-only and reuses the same CSS for a single static slot. They are not anchored automation buttons: no `crossDecorator`, no badges, no readouts.
+
+- **The box is 2n−1 slots.** The selected thumb always occupies the fixed center slot and the other thumbs keep their logical order on either side, so the host never changes size with the selection. `shuffle-layout.ts` holds the pure math; `shuffle-layout.spec.ts` pins it.
+- **Selection is controlled.** A click or arrow key only fires `position-selected`; `selectedPosition` moves when the application sets it, so the symbol never shows a position the device has not reached. Stories wire the event back to the property so the control feels live.
+- **Keyboard is the APG radio group pattern** — one tab stop on the selected thumb, arrow keys with wrap-around. The departures are listed in the base class JSDoc.
+- **The base is a concrete class, not `abstract`.** The wrapper generators wrap every `LitElement` subclass and need a concrete constructor, like `ObcAbstractAutomationButton`.
+- **`PositionSelectedDetail` is declared in each concrete component.** The wrapper generators resolve event types in the component's own module; importing it from the base leaves the Vue wrapper without an import.
+- **`vertical` rotates the symbols −90°** so they follow a vertical flow path; the track and thumb geometry transpose.
+- **Colors** come from the automation pipe/device tokens; sizes from the global touch/visual target tokens, so the components scale with `obc-component-size-*`.
+
+## Specialty tanks (HVAC tiles)
+
+`obc-heat-pump`, `obc-hydraulic-separator` and `obc-heat-exchanger` extend `ObcAbstractSpecialtyTank` (`src/automation/specialty-tank/`). Each subclass supplies four getters — `equipmentIcon`, `equipmentName`, `frame` (`rounded` box or `pressurized` silhouette with 8px domed caps) and `splitMode` (`vertical`, `horizontal`, `diagonal`) — and its own `:host` footprint CSS (152×96 for the heat pump, 56×142 for the other two).
+
+- **The shell is the compact tank's.** Halo with the state-container padding, badge row, tank frame, tag; empty badge and tag cells collapse via `hidden` so the frame absorbs the space. `positioning` (`TankPositioning`, shared with the tank through `automation-tank/tank-positioning.ts`), `clickable`, `activated`, `static`, the four badge enums and the alert-frame API behave exactly as on `obc-automation-tank`, including the three root shapes (`<button>`, `<div>`, `<div role="img">`).
+- **`medium` mirrors the Figma `has Medium` property** — `regular` is one grey area, `graphic` two grey halves, `medium` hot/cold halves; the fourth value, Static, is the `static` property. The "divider" is a 4px gap between two bordered halves, not a painted bar. Colours: `--instrument-frame-secondary-color` / `--border-outline-color` when grey, `--base-red-200` + `--base-red-300` and `--base-blue-200` + `--base-blue-300` when medium.
+- **The diagonal split is one unit-viewBox SVG** with `preserveAspectRatio="none"` and non-scaling strokes, so borders and the gap keep their pixel widths at every aspect ratio. Keep it that way — a stretched viewBox with scaling strokes distorts them.
+- **Stories share `specialty-tank-story-meta.ts`**; add a story there so all three tiles get it.
+
 ## Storybook Conventions
 
 - Use shared argTypes helpers: `argTypesAbstractAutomationButton`, `argTypesAbstractAutomationButtonMotorized`, `argTypesAbstractAutomationButtonPassiveSquare`
@@ -125,3 +156,7 @@ Different components have different anchor points:
 | Line segments        | Left/top edge of line   | SVG typically drawn around the 24px grid center (for example x=12 or y=12) + visual offset by about half the grid to align to the host edge, with minor `±0.5px` stroke/viewBox adjustments and direction-specific shifts where needed |
 
 **Do not change the centering transforms** on automation components without understanding the anchor point intent. The browser's element overlay (host box) will often appear offset from the visual content — this is intentional because the host box starts at the placement coordinate while the visual content is shifted to align the anchor.
+
+## Open
+
+- Shuffle selectors slide 100 ms on selection change; the Figma frames are WIP and specify no motion, so keep or remove is a designer call (#1171).

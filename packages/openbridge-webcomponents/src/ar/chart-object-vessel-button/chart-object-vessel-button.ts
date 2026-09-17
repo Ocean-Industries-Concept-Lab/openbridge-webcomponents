@@ -9,6 +9,7 @@ import {
   VesselImage,
   vesselImages,
 } from '../../navigation-instruments/watch/vessel.js';
+import {degToRad} from '../../svghelpers/math.js';
 
 export enum SpeedIndicator {
   Stopped = 'stopped',
@@ -235,8 +236,8 @@ export class ObcChartObjectVesselButton extends LitElement {
     }
     const deg = (this.turnRate / 100) * 12;
     const R = 24;
-    const x = -R * Math.cos((deg * Math.PI) / 180) + R + 3;
-    const y = R * Math.sin((deg * Math.PI) / 180) + 8;
+    const x = -R * Math.cos(degToRad(deg)) + R + 3;
+    const y = R * Math.sin(degToRad(deg)) + 8;
 
     return html`
       <svg

@@ -24,8 +24,18 @@
   }
 
   .center {
-    display: flex;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(
+      var(--obc-integration-app-bar-app-width, max-content),
+      1fr
+    );
     gap: var(--app-components-app-menu-app-button-spacing);
     justify-content: center;
   }
+}
+
+/* Svelte wrappers add a slot container that must not become a grid item. */
+slot[name="apps"]::slotted(:not(obc-app-button)) {
+  display: contents;
 }

@@ -38,6 +38,10 @@ When a value-to-angle or value-to-state mapping already exists as a controller
 on the full instrument, **import the controller** rather than reimplementing the
 maths. That is the one thing that should be shared.
 
+The arithmetic under the drawing is shared too: `clamp`, `clampPercent`,
+`normalizeAngle`, `degToRad` and `radToDeg` come from `svghelpers/math.ts`. An
+indicator declares none of them locally.
+
 ## The canvas convention
 
 Most indicators draw on a **48 × 48** canvas via a local `VIEW_SIZE` constant.
@@ -85,7 +89,7 @@ deprecated path, and leave the tag in place until the property is removed.
 snapping a knots value to a bucket through the helpers in
 `watch/environment.ts`. Those icons come from Figma, so a family rename there
 propagates here — see
-[IMPLEMENTATION_GUIDELINES.md § Icons](../../IMPLEMENTATION_GUIDELINES.md#-icons),
+[`figma-refresh.md` § Consuming components](../../docs/agents/figma-refresh.md#consuming-components),
 which uses wind as its worked example.
 
 ## Related

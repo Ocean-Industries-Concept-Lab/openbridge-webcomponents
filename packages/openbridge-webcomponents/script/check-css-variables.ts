@@ -44,22 +44,9 @@ import fs from 'fs';
 import path from 'path';
 import {globby} from 'globby';
 
-// Bucket B from issue #916 — undefined CSS variables that still need a design
-// decision (token value, rename target, or removal). Tracked for follow-up.
-// See https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/916
+// Undefined CSS variables that only a fix in Figma can resolve (#929).
 const allowedUndefinedVariables = new Set([
-  // B-1: notification icon size (alert-menu-item.css, message-menu-item.css)
-  '--app-components-alert-components-general-notification-item-icon-size-large',
-  // B-2: alert counter spacing (alert-button.css)
-  '--app-components-global-alert-item-counter-spacing',
-  // B-3: likely typo for --normal-enabled-background-color (sequence-toolbar.css)
-  '--enabled-background-color',
-  // B-4: date-item vertical padding (date-item.css) — sibling tokens exist
-  '--menu-navigation-components-date-item-padding-vertical',
-  // B-5/B-6: instrument-field internal widths — unusual --obc- prefix
-  '--obc-instrument-field-source-width',
-  '--obc-instrument-field-tag-width',
-  // B-7: keyboard "numeric" tokens missing from the (misspelled) family
+  // B-7: Figma binds both to variables missing from Component-size
   '--ui-components-keyboard-numeric-component-height-min',
   '--ui-components-keyboard-numeric-touch-target-size',
 ]);
