@@ -72,6 +72,20 @@ export enum AutomationButtonBadgeCommandLocked {
  * and `ObcAbstractAutomationButtonMotorized` extend it further;
  * `obc-analog-valve` and `obc-digital-valve` extend it directly.
  *
+ * ### Alert frame slots
+ *
+ * With `alert` set the button is wrapped in an `<obc-alert-frame>`, which shows
+ * a custom icon, label and timer depending on `alertFrameType`. The slots keep
+ * their `<obc-automation-button>` names, reach the frame for every
+ * `positioning`, and are renamed on the way down (`alert-icon` -> `icon`, and
+ * likewise for label and timer).
+ *
+ * | Slot Name    | Renders When...                                              | Purpose                                                                 |
+ * |--------------|--------------------------------------------------------------|-------------------------------------------------------------------------|
+ * | alert-icon   | `alert` and `showAlertIcon` and `alertFrameType` in [`large-side-flip`, `bottom-flip`, `top-flip`] | Custom icon shown in the alert frame flap, in addition to the alert category icon. |
+ * | alert-label  | `alert` and `alertFrameType` in [`bottom-flip`, `top-flip`]  | Label text shown in the alert frame flap.                               |
+ * | alert-timer  | `alert` and `alertFrameType` in [`bottom-flip`, `top-flip`]  | Timer / clock shown in the alert frame flap.                            |
+ *
  * @availableWhen readoutPosition showReadoutStack==true
  * @availableWhen showStatus showReadoutStack==true
  * @availableWhen readoutSize showReadoutStack==true
@@ -86,6 +100,13 @@ export enum AutomationButtonBadgeCommandLocked {
  * @property progress - Shows a progress indicator, used to indicate that an user action is in progress
  * @availableWhen progressMode progress==true
  * @availableWhen progressValue progress==true && progressMode in [determinate, progressiveIndeterminate]
+ * @slot alert-icon - Custom icon shown in the alert frame flap (requires `showAlertIcon` and a flap variant that supports an icon).
+ * @slot alert-label - Label text shown in the alert frame flap (`bottom-flip`/`top-flip`).
+ * @slot alert-timer - Timer / clock shown in the alert frame flap (`bottom-flip`/`top-flip`).
+ * @slot badge-top-right - Custom badge in the top-right corner (overrides `badgeAlert`).
+ * @slot badge-top-left - Custom badge in the top-left corner (overrides `badgeControl`).
+ * @slot badge-bottom-left - Custom badge in the bottom-left corner (overrides `badgeInterlock`).
+ * @slot badge-bottom-right - Custom badge in the bottom-right corner (overrides `badgeCommandLocked`).
  */
 export class ObcAbstractAutomationButton extends LitElement {
   @property({type: Boolean, attribute: false}) showReadoutStack: boolean = true;
@@ -287,6 +308,9 @@ export class ObcAbstractAutomationButton extends LitElement {
       ?activated=${this.activated}
     >
       ${this.icon}
+      <slot name="alert-icon" slot="alert-icon"></slot>
+      <slot name="alert-label" slot="alert-label"></slot>
+      <slot name="alert-timer" slot="alert-timer"></slot>
       <slot
         name="badge-top-right"
         slot="badge-top-right"
