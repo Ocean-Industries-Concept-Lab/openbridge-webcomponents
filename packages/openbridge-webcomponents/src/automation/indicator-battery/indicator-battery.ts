@@ -68,6 +68,7 @@ const VERTICAL_TIP_PATH = 'M18 6 V4 A2 2 0 0 1 20 2 H28 A2 2 0 0 1 30 4 V6 Z';
  * @property level - Current charge, 0-100 (%)
  * @property data - History samples, 0-100 (%) each, oldest first
  * @slot icon - Centered icon overlay, defaults to `obi-energy-battery`
+ * @beta
  */
 @customElement('obc-indicator-battery')
 export class ObcIndicatorBattery extends LitElement {
