@@ -1,6 +1,6 @@
 {
   "name": "@oicl/connector-diagram",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Canvas-based pipe/connector diagram renderer for OpenBridge",
   "license": "AGPL-3.0-only",
   "repository": {
