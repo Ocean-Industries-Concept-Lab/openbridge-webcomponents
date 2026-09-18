@@ -141,7 +141,6 @@ export class ObcCommandMenu extends LitElement {
             <obc-start-stop-switch
               @change=${this.onChange}
               .checked=${this.inCommand}
-              showCheckedStateIcon
               .size=${'large'}
             >
               <div slot="to-checked-action-label">
