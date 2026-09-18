@@ -123,6 +123,11 @@ export enum ObcNotificationMessageItemSize {
  * @property emptyText - Text to show in the empty/inactive state.
  *   Used in the `empty` slot when `type="inactive"` or `empty` is true.
  * @availableWhen emptyText type==Inactive || empty==true
+ * @property type - Display type: `simple` (default) is the basic notification,
+ *   `with-button` adds a text action button, `with-icon-button` an icon
+ *   action, and `inactive` shows the empty state.
+ * @property size - Size variant: `regular` (default) is the compact layout, `tall` the
+ *   expanded one for longer content.
  * @slot secondary-icon - Additional icon for status/priority (shown when `hasSecondaryIcon` is true).
  * @fires {CustomEvent<void>} message-click - Fired when the notification item is clicked.
  * @fires {CustomEvent<void>} action-click - Fired when the action button or icon is clicked.
@@ -140,21 +145,9 @@ export class ObcNotificationMessageItem extends LitElement {
 
   @property({type: String}) actionLabel = 'View';
 
-  /**
-   * Display type of the notification.
-   * - `simple`: Basic notification (default).
-   * - `with-button`: Includes a text action button.
-   * - `with-icon-button`: Includes an icon action.
-   * - `inactive`: Shows empty/inactive state.
-   */
   @property({type: String}) type: ObcNotificationMessageItemType =
     ObcNotificationMessageItemType.Simple;
 
-  /**
-   * Size variant of the notification.
-   * - `regular`: Standard compact layout (default).
-   * - `tall`: Expanded layout for longer content.
-   */
   @property({type: String}) size: ObcNotificationMessageItemSize =
     ObcNotificationMessageItemSize.Regular;
 

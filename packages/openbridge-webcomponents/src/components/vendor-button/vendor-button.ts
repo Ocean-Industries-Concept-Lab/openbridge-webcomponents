@@ -39,24 +39,18 @@ import {customElement} from '../../decorator.js';
  * ></obc-vendor-button>
  * ```
  *
+ * @property imageSrc - The URL of the image to display as the button's content.
+ *   Typically this should be a logo or brand image representing a vendor or external service.
+ * @property alt - Alternative text for the image, used for accessibility.
+ *   This should describe the logo or vendor for screen readers.
  * @slot - (none; content is provided via properties)
  * @fires click - Fired when the button is clicked.
  * @stable
  */
 @customElement('obc-vendor-button')
 export class ObcVendorButton extends LitElement {
-  /**
-   * The URL of the image to display as the button's content.
-   *
-   * Typically this should be a logo or brand image representing a vendor or external service.
-   */
   @property({type: String}) imageSrc = '';
 
-  /**
-   * Alternative text for the image, used for accessibility.
-   *
-   * This should describe the logo or vendor for screen readers.
-   */
   @property({type: String}) alt = 'logo';
 
   override render() {

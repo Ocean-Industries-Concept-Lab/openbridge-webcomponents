@@ -48,6 +48,7 @@ import {property} from 'lit/decorators.js';
  *   If false, uses a compact layout sized to its content.
  *   Defaults to false.
  * @slot - (none) This component does not use content slots.
+ * @stable
  */
 @customElement('obc-progress-indicator-dots')
 export class ObcProgressIndicatorDots extends LitElement {

@@ -36,13 +36,11 @@ export enum CompassSectorPriorityElement {
   rot = 'rot',
 }
 
-// Fixed frame padding for both the zoomed and un-zoomed paths. This component
-// deliberately keeps its bespoke FOV-compression geometry and does NOT use
-// svghelpers/radial-frame.ts: the viewBox is cached per FOV (a
-// container-size-dependent label reserve would invalidate that), and the
-// 72-unit padding covers the 3-char degree labels at typical sizes.
-// TODO(#1021): adopt computeRadialFrame if degree labels ever clip when the
-// component is shrunk far below its design size.
+// Fixed frame padding for the zoomed and un-zoomed paths alike. The bespoke
+// FOV-compression geometry stays instead of svghelpers/radial-frame.ts: the
+// viewBox is cached per FOV, which a container-size-dependent label reserve
+// would invalidate, and 72 units covers the 3-char degree labels.
+// TODO(#1021): adopt computeRadialFrame if degree labels ever clip.
 const PADDING = 72;
 const WATCH_TYPE = WatchCircleType.triple;
 const INNER_RADIUS = innerRingRadiusFor(WATCH_TYPE);
@@ -134,6 +132,10 @@ function tickDensityForFOV(fov: number): TickDensity {
  * @availableWhen unit hasReadout==true
  * @property fractionDigits - Number of fraction digits shown in the readout. Default `0`.
  * @availableWhen fractionDigits hasReadout==true
+ * @property rotMaxValue - Bar-extent reference value in degrees per minute: the bar fills the full
+ *   ±`ARC_HALF_EXTENT` arc when the measured rate of turn reaches
+ *   ±`rotMaxValue`. The default `60` aligns with ES-TRIN 2025/1 Art. 3.02.
+ * @availableWhen rotMaxValue rotType==bar
  * @stable
  */
 @customElement('obc-compass-sector')
@@ -165,15 +167,6 @@ export class ObcCompassSector extends LitElement {
    * @availableWhen rotType!=undefined && rateOfTurnDegreesPerMinute==undefined
    */
   @property({type: Number}) rotationsPerMinute: number = 1;
-  /**
-   * Bar-extent reference value in **degrees per minute**. The bar fills the
-   * full ±`ARC_HALF_EXTENT` arc when the measured ROT equals
-   * ±`rotMaxValue`. Default `60` aligns with ES-TRIN 2025/1 Art. 3.02.
-   *
-   * Note: the unit changed from rotations per minute to degrees per minute
-   * with the introduction of `rateOfTurnDegreesPerMinute`.
-   * @availableWhen rotType==bar
-   */
   @property({type: Number}) rotMaxValue: number = 60;
   @property({type: Boolean}) rotPortStarboard: boolean = false;
   @property({type: Number}) rotAtZeroDeadband: number = ROT_ZERO_DEADBAND_DEG;

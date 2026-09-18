@@ -143,7 +143,7 @@ export const AlarmRectifiedNoAck: Story = {
 };
 
 export const ApiMatrix: Story = {
-  render: (args) =>
+  render: () =>
     html` <div
       style="display:grid;grid-template-columns: auto repeat(8,32px);gap:16px"
     >

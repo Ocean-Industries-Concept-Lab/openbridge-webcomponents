@@ -61,61 +61,40 @@ export enum ObcPivotItemDirection {
  * ```
  * In this example, the item displays a home icon and a label. When clicked (and not already selected/disabled), it emits a `selected` event.
  *
+ * @property value - The value associated with this pivot item. Used to identify the item within a group.
+ *   Set a unique value for each item in a group to track selection state.
+ * @property selected - Whether this item is currently selected. Only one item should be selected in a group.
+ *   When `true`, the item is visually highlighted and does not emit the `selected` event on click.
+ * @property direction - Layout direction for the item: `horizontal` (default) or `vertical`.
+ *   Should match the direction of the containing group.
+ *   Use `horizontal` for row/tab layouts and `vertical` for column/rail layouts.
+ * @property hasLeadingIcon - Whether to display a leading icon. If true, renders the `icon` slot.
+ *   Place an icon element (e.g., `<obi-home slot="icon"></obi-home>`) in the slot to show an icon.
+ * @property hasLabel - Whether to display a text label. If true and `label` is non-empty, shows the label.
+ *   Use in combination with `hasLeadingIcon` for icon+label layouts.
+ * @property label - The text label to display for the item. Only shown if `hasLabel` is true and label is non-empty.
+ *   Keep labels concise for best appearance, especially in horizontal layouts.
+ * @property disabled - Disables the item, preventing interaction and applying a disabled style.
+ *   When `true`, the item cannot be selected and is visually muted.
  * @slot icon - Leading icon slot (shown when `hasLeadingIcon` is true)
  * @fires {CustomEvent<{value: string}>} selected - When the item is clicked and becomes selected
  * @stable
  */
 @customElement('obc-pivot-item')
 export class ObcPivotItem extends LitElement {
-  /**
-   * The value associated with this pivot item. Used to identify the item within a group.
-   *
-   * Set a unique value for each item in a group to track selection state.
-   */
   @property({type: String}) value = '';
 
-  /**
-   * Whether this item is currently selected. Only one item should be selected in a group.
-   *
-   * When `true`, the item is visually highlighted and does not emit the `selected` event on click.
-   */
   @property({type: Boolean, reflect: true}) selected = false;
 
-  /**
-   * Layout direction for the item: `horizontal` (default) or `vertical`.
-   * Should match the direction of the containing group.
-   *
-   * Use `horizontal` for row/tab layouts and `vertical` for column/rail layouts.
-   */
   @property({type: String}) direction: ObcPivotItemDirection =
     ObcPivotItemDirection.horizontal;
 
-  /**
-   * Whether to display a leading icon. If true, renders the `icon` slot.
-   *
-   * Place an icon element (e.g., `<obi-home slot="icon"></obi-home>`) in the slot to show an icon.
-   */
   @property({type: Boolean}) hasLeadingIcon = false;
 
-  /**
-   * Whether to display a text label. If true and `label` is non-empty, shows the label.
-   *
-   * Use in combination with `hasLeadingIcon` for icon+label layouts.
-   */
   @property({type: Boolean}) hasLabel = false;
 
-  /**
-   * The text label to display for the item. Only shown if `hasLabel` is true and label is non-empty.
-   *
-   * Keep labels concise for best appearance, especially in horizontal layouts.
-   */
   @property({type: String}) label = '';
 
-  /**
-   * Disables the item, preventing interaction and applying a disabled style.
-   *
-   * When `true`, the item cannot be selected and is visually muted.
-   */
   @property({type: Boolean}) disabled = false;
 
   /**

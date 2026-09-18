@@ -28,6 +28,16 @@ describe('property-docs-in-class-jsdoc — reports', () => {
           ' * Thing.\n * @stable',
           '  /** internal */\n  @state() private _x = 0;'
         ),
+        // A decorated get/set pair is a manifest field, so a header tag
+        // naming one is not a ghost.
+        cls(
+          ' * Thing.\n * @property alias - Alias of `value`.\n * @stable',
+          '  @property({type: Number}) value = 0;\n  @property({type: Number})\n  get alias() {\n    return this.value;\n  }\n  set alias(v: number) {\n    this.value = v;\n  }'
+        ),
+        cls(
+          ' * Thing.\n * @availableWhen alias flag==true\n * @stable',
+          '  @property({type: Boolean}) flag = false;\n  @property({type: Number})\n  get alias() {\n    return 0;\n  }'
+        ),
       ],
       invalid: [],
     });

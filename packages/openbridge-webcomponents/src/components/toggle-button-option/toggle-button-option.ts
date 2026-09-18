@@ -121,6 +121,7 @@ export enum ObcToggleButtonOptionVariant {
  * @slot - Text label content for the option (when type includes text).
  * @slot icon - Icon content for the option (when type includes icons).
  * @fires {CustomEvent<{value: string}>} selected - Fired when the option is clicked and not already selected.
+ * @stable
  */
 @customElement('obc-toggle-button-option')
 export class ObcToggleButtonOption extends LitElement {

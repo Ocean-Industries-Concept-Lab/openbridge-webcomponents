@@ -45,6 +45,8 @@ export type {DateItemEvent};
  *   day name, month name, date number, and year from this Date object.
  *   Also accepts a timestamp (number) for compatibility with Storybook.
  * @property events - Array of events to display in the list.
+ * @property locale - Locale for date formatting, such as `en-US`, `nb-NO` or `de-DE`. Uses the
+ *   browser default when unset.
  * @slot - No slots. All content is provided via properties.
  * @beta
  */
@@ -56,10 +58,6 @@ export class ObcEventList extends LitElement {
 
   @property({type: Array, attribute: false}) events: DateItemEvent[] = [];
 
-  /**
-   * Locale for date formatting. Uses browser default if not specified.
-   * @example 'en-US', 'nb-NO', 'de-DE'
-   */
   @property({type: String}) locale?: string;
 
   /**

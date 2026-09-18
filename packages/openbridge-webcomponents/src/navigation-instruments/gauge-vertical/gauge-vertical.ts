@@ -401,17 +401,6 @@ export class ObcGaugeVertical extends SetpointMixin(LitElement, {
     // for both external scales and chart padding in fixedAspectRatioScaling mode.
     const dimensions = baseDimensions;
 
-    // console.debug(`[obc-gauge-vertical] Reporting dimensions:`, {
-    //   side: this.side,
-    //   thickness: dimensions.thickness,
-    //   height: this.height,
-    //   hasBar: this.hasBar,
-    //   hasScale: this.hasScale,
-    //   labels: this.labels,
-    //   fixedAspectRatio: this.fixedAspectRatio,
-    //   scale: this._scale,
-    // });
-
     this.dispatchEvent(
       new CustomEvent('scale-dimensions-changed', {
         detail: dimensions,

@@ -98,6 +98,31 @@ const DRAG_COMPLETE_THRESHOLD = 0.9;
  * </obc-start-stop-switch>
  * ```
  *
+ * @property checked - Whether the switch is in the checked (active) state.
+ *   When checked, the thumb is on the right side.
+ *   When unchecked, the thumb is on the left side.
+ *   Defaults to `false`.
+ * @property variant - Visual style of the checked side: `normal` (default) is
+ *   blue, `running` green for the running state and `loading` light blue for a
+ *   pending one. It does not move the thumb.
+ * @property disabled - Whether the switch is disabled.
+ *   When disabled, the switch cannot be interacted with and displays a muted appearance.
+ *   In the disabled state, the thumb is hidden and only the state label is shown.
+ *   Defaults to `false`.
+ * @property hasAlert - Whether to show an alert frame around the switch.
+ *   When true, displays a red alert border around the switch to indicate
+ *   an alarm or critical state.
+ *   Defaults to `false`.
+ * @property hasDescription - Whether to show the description below the switch.
+ *   When true, displays the description text below the switch track.
+ *   The component's minimum height is maintained at the touch target size.
+ *   Defaults to `false`.
+ * @property description - Description text displayed below the switch when `hasDescription` is true.
+ *   Use this to provide additional context about the switch's purpose or current state.
+ *   Defaults to `'Action description'`.
+ * @availableWhen description hasDescription==true
+ * @property size - Switch size: `regular` (default) has a 32px track height, `large` a 48px
+ *   one.
  * @slot checked-state-icon - Icon displayed in the checked (active) state area.
  * @slot unchecked-state-icon - Icon displayed in the unchecked (inactive) state area.
  * @slot checked-state-label - Label for the checked state (e.g., "Running", "Enabled").
@@ -109,77 +134,20 @@ const DRAG_COMPLETE_THRESHOLD = 0.9;
  */
 @customElement('obc-start-stop-switch')
 export class ObcStartStopSwitch extends LitElement {
-  /**
-   * Whether the switch is in the checked (active) state.
-   * When checked, the thumb is on the right side.
-   * When unchecked, the thumb is on the left side.
-   *
-   * Defaults to `false`.
-   */
   @property({type: Boolean, reflect: true}) checked = false;
 
-  /**
-   * The visual variant for the switch when checked.
-   * - `normal`: Standard blue appearance (default)
-   * - `running`: Green appearance indicating motor/process is running
-   * - `loading`: Light blue appearance indicating a pending/loading state
-   *
-   * This only affects the visual style, not the switch position.
-   *
-   * Defaults to `'normal'`.
-   */
   @property({type: String, reflect: true}) variant: StartStopSwitchVariant =
     StartStopSwitchVariant.normal;
 
-  /**
-   * The size of the switch.
-   * - `regular`: Standard size with 32px track height
-   * - `large`: Larger size with 48px track height
-   *
-   * Defaults to `'regular'`.
-   */
   @property({type: String, reflect: true}) size: StartStopSwitchSize =
     StartStopSwitchSize.regular;
 
-  /**
-   * Whether the switch is disabled.
-   *
-   * When disabled, the switch cannot be interacted with and displays a muted appearance.
-   * In the disabled state, the thumb is hidden and only the state label is shown.
-   *
-   * Defaults to `false`.
-   */
   @property({type: Boolean, reflect: true}) disabled = false;
 
-  /**
-   * Whether to show an alert frame around the switch.
-   *
-   * When true, displays a red alert border around the switch to indicate
-   * an alarm or critical state.
-   *
-   * Defaults to `false`.
-   */
   @property({type: Boolean}) hasAlert = false;
 
-  /**
-   * Whether to show the description below the switch.
-   *
-   * When true, displays the description text below the switch track.
-   * The component's minimum height is maintained at the touch target size.
-   *
-   * Defaults to `false`.
-   */
   @property({type: Boolean}) hasDescription = false;
 
-  /**
-   * Description text displayed below the switch when `hasDescription` is true.
-   *
-   * Use this to provide additional context about the switch's purpose or current state.
-   *
-   * Defaults to `'Action description'`.
-   *
-   * @availableWhen hasDescription==true
-   */
   @property({type: String}) description = 'Action description';
 
   @state() private dragging = false;

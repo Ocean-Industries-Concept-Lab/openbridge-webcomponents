@@ -41,19 +41,15 @@ export type BreadcrumbClickEvent = CustomEvent<BreadcrumbItem>;
  * ```
  * This will render: Home › Section › Subsection
  *
+ * @property items - The list of breadcrumb items to display, in order from root to current location.
+ *   Each item should be an object with a `label` property (string). The component renders each label in sequence, separated by a chevron icon.
+ *   Example: `[ {label: 'Home'}, {label: 'Section'}, {label: 'Page'} ]`
  * @fires {BreadcrumbClickEvent} breadcrumb-click - Fired when a breadcrumb item is clicked.
  * @slot - (none) This component does not use slots; all content is provided via the `items` property.
  * @stable
  */
 @customElement('obc-breadcrumb')
 export class ObcBreadcrumb extends LitElement {
-  /**
-   * The list of breadcrumb items to display, in order from root to current location.
-   *
-   * Each item should be an object with a `label` property (string). The component renders each label in sequence, separated by a chevron icon.
-   *
-   * Example: `[ {label: 'Home'}, {label: 'Section'}, {label: 'Page'} ]`
-   */
   @property({attribute: false}) items = [] as BreadcrumbItem[];
 
   @property({attribute: false}) iconOnly = false;
