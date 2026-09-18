@@ -105,6 +105,7 @@ export enum DateItemSize {
  */
 @customElement('obc-date-item')
 export class ObcDateItem extends LitElement {
+  /** @default DateItemSize.Small */
   @property({type: String}) size = DateItemSize.Small;
 
   @property({type: Boolean}) disabled = false;

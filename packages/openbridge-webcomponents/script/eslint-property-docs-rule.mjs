@@ -206,13 +206,25 @@ export const propertyDocsRule = {
     if (allow) return {};
     return {
       ClassDeclaration(node) {
+        const decorated = (m) =>
+          m.key.type === 'Identifier' &&
+          (m.decorators ?? []).some((d) => decoratorName(d) === 'property');
         const fields = node.body.body.filter(
-          (m) =>
-            m.type === 'PropertyDefinition' &&
-            m.key.type === 'Identifier' &&
-            (m.decorators ?? []).some((d) => decoratorName(d) === 'property')
+          (m) => m.type === 'PropertyDefinition' && decorated(m)
         );
-        const fieldNames = new Set(fields.map((f) => f.key.name));
+        // A decorated get/set pair is a manifest field too, so a class-header
+        // tag naming one is not a ghost — only the hoist targets are fields.
+        const fieldNames = new Set(
+          node.body.body
+            .filter(
+              (m) =>
+                (m.type === 'PropertyDefinition' ||
+                  (m.type === 'MethodDefinition' &&
+                    (m.kind === 'get' || m.kind === 'set'))) &&
+                decorated(m)
+            )
+            .map((m) => m.key.name)
+        );
         const direct =
           node.superClass &&
           node.superClass.type === 'Identifier' &&

@@ -171,6 +171,7 @@ export class ObcMenuButton extends LitElement {
 
   @property({type: Boolean}) hasIcon = false;
 
+  /** @default ContextMenuType.Regular */
   @property({type: String})
   menuType: ContextMenuType = ContextMenuType.Regular;
 

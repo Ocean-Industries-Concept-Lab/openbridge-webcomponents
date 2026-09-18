@@ -108,6 +108,7 @@ export type AdviceButtonClickEvent = CustomEvent<{
  */
 @customElement('obc-advice-button')
 export class ObcAdviceButton extends LitElement {
+  /** @default AdviceButtonStyle.Flat */
   @property({type: String}) buttonStyle: AdviceButtonStyle =
     AdviceButtonStyle.Flat;
 

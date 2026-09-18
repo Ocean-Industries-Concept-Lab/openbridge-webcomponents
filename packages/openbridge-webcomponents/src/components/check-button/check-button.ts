@@ -117,6 +117,7 @@ export enum CheckButtonCheckboxAppearance {
  */
 @customElement('obc-check-button')
 export class ObcCheckButton extends LitElement {
+  /** @default 'regular' */
   @property({type: String}) type: CheckButtonType = CheckButtonType.regular;
 
   @property({type: Boolean}) checked = false;
