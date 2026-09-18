@@ -770,7 +770,7 @@ row.tabs = [
 ></obc-readout>
 ```
 
-A vertical `obc-readout` at `size="small"` takes the height of its content, with no 48 px minimum ([#1252](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/1252)).
+`obc-readout` applies no minimum height: a small vertical readout is 44 px tall instead of 48, and a stacked one with no value is 40 px; the medium and large tiers are unchanged ([#1255](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1255)).
 
 #### Placeholder Dash
 
@@ -822,7 +822,7 @@ The point-of-interest components are experimental in 2.0. Besides the [import pa
 
 ## Deprecated Components
 
-Deprecated components and properties still work in 2.0 and are slated for removal. Components now show their status in Storybook: stable, beta, experimental or deprecated. The experimental ones, among them all AR and integration components, may still change their API.
+Deprecated components and properties still work in 2.0 and are slated for removal. Components now show their status in Storybook: stable, beta, experimental or deprecated. The experimental ones, among them all AR and integration components, may still change their API. The replacements below are the ones the components' own `@deprecated` notes name ([#1262](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1262)).
 
 <div style={{overflowX: 'auto'}}>
 
