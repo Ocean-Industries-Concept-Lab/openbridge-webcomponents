@@ -11,7 +11,8 @@ export enum ThreeWayLineDirection {
 }
 
 /**
- * @deprecated
+ *  * @deprecated The line components are deprecated and will be removed in future releases.
+ * Please use the @oicl/connector-diagram package instead.
  */
 @customElement('obc-three-way-line')
 export class ObcThreeWayLine extends LitElement {

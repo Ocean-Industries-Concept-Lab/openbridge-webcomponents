@@ -64,7 +64,8 @@ import {customElement} from '../../decorator.js';
  *   Useful for visually separating the button from others or indicating a secondary action.
  * @slot - Main content slot for icon or text label.
  * @fires click - Fired when the button is clicked (if not disabled).
- * @deprecated
+ * @deprecated The notification-badge-button component is deprecated and will be removed in future releases.
+ * Use <obc-icon-button> instead.
  */
 @customElement('obc-notification-badge-button')
 export class ObcNotificationBadgeButton extends LitElement {

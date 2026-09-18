@@ -11,7 +11,9 @@ export enum CornerLineDirection {
 }
 
 /**
- * @deprecated
+ *  * @deprecated The line components are deprecated and will be removed in future releases.
+ * Please use the @oicl/connector-diagram package instead. The line components are deprecated and will be removed in future releases.
+ * Please use the @oicl/connector-diagram package instead.
  */
 @customElement('obc-corner-line')
 export class ObcCornerLine extends LitElement {
