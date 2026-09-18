@@ -89,7 +89,20 @@ export interface SpeedAdvice {
  * ```
  *
  * @element obc-speed-gauge
- * @typedef {import('./speed-gauge.js').SpeedAdvice} SpeedAdvice
+ *
+ * @property tickmarksInside - Whether to render tickmarks inside the ring.
+ * @property tickmarkInterval - Interval for tickmarks in speed units.
+ *   When undefined or <= 0, no tickmarks are shown (only the zero mark).
+ * @property hasReadout - When `true`, shows a centered `<obc-readout>` (label `STW`, unit `KN`)
+ *   below the gauge with the current speed. Default `false`.
+ * @property label - Readout label. Default `STW`.
+ * @property unit - Readout unit. Default `KN`.
+ * @property fractionDigits - Number of fraction digits shown in the readout. Default `1`.
+ * @property faceDiameter - Outer-ring diameter in CSS pixels. When set, the instrument renders at a
+ *   fixed intrinsic size derived from the ring, arc shape and label reserve —
+ *   so instruments sharing the same value have identical ring circumference
+ *   regardless of label width or arc extent (like obc-donut-chart's
+ *   fixedHeight). When unset (default), the instrument fills its container.
  * @stable
  */
 @customElement('obc-speed-gauge')
@@ -98,12 +111,7 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
   @property({type: Number}) maxSpeed = 100;
   @property({type: Number}) minSpeed = 0;
   @property({type: Boolean}) showLabels: boolean = false;
-  /** Whether to render tickmarks inside the ring. */
   @property({type: Boolean}) tickmarksInside: boolean = false;
-  /**
-   * Interval for tickmarks in speed units.
-   * When undefined or <= 0, no tickmarks are shown (only the zero mark).
-   */
   @property({type: Number}) tickmarkInterval: number | undefined = 20;
   @property({type: String}) priority: Priority = Priority.regular;
   @property({type: String}) needleType: ObcSpeedGaugeNeedleType =
@@ -111,24 +119,10 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
   @property({type: Array, attribute: false}) speedAdvices: SpeedAdvice[] = [];
   @property({type: String}) tickmarkStyle: TickmarkStyle =
     TickmarkStyle.regular;
-  /**
-   * When `true`, shows a centered `<obc-readout>` (label `STW`, unit `KN`)
-   * below the gauge with the current speed. Default `false`.
-   */
   @property({type: Boolean}) hasReadout: boolean = false;
-  /** Readout label. Default `STW`. */
   @property({type: String}) label = 'STW';
-  /** Readout unit. Default `KN`. */
   @property({type: String}) unit = 'KN';
-  /** Number of fraction digits shown in the readout. Default `1`. */
   @property({type: Number}) fractionDigits = 1;
-  /**
-   * Outer-ring diameter in CSS pixels. When set, the instrument renders at a
-   * fixed intrinsic size derived from the ring, arc shape and label reserve —
-   * so instruments sharing the same value have identical ring circumference
-   * regardless of label width or arc extent (like obc-donut-chart's
-   * fixedHeight). When unset (default), the instrument fills its container.
-   */
   @property({type: Number, attribute: 'face-diameter'})
   faceDiameter: number | undefined;
 

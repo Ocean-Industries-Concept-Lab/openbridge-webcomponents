@@ -183,6 +183,10 @@ export enum CompassPriorityElement {
  *   so instruments sharing the same value have identical ring circumference
  *   regardless of label width or arc extent (like obc-donut-chart's
  *   fixedHeight). When unset (default), the instrument fills its container.
+ * @property rotMaxValue - Bar-extent reference value in degrees per minute: the bar fills the full
+ *   ±`rotArcExtent` arc when the measured rate of turn reaches ±`rotMaxValue`.
+ *   The default `60` aligns with ES-TRIN 2025/1 Art. 3.02.
+ * @availableWhen rotMaxValue rotType==bar
  * @stable
  */
 @customElement('obc-compass')
@@ -226,16 +230,6 @@ export class ObcCompass extends LitElement {
   @property({type: Number}) rotationsPerMinute: number = 1;
   @property({type: String}) rotType: RotType = RotType.dots;
   @property({type: String}) rotPosition: RotPosition = RotPosition.innerCircle;
-  /**
-   * Bar-extent reference value in **degrees per minute**. The bar fills the
-   * full ±`rotArcExtent` arc when the measured ROT equals ±`rotMaxValue`.
-   * Default `60` aligns with ES-TRIN 2025/1 Art. 3.02.
-   *
-   * Note: prior to the introduction of `rateOfTurnDegreesPerMinute` this
-   * property was interpreted in rotations per minute. The unit changed when
-   * the physical ROT API was introduced.
-   * @availableWhen rotType==bar
-   */
   @property({type: Number}) rotMaxValue: number = 60;
   @property({type: Number}) rotArcExtent: number = 60;
   @property({type: Boolean}) rotPortStarboard: boolean = false;
@@ -276,8 +270,8 @@ export class ObcCompass extends LitElement {
     this._headingSp.dispose();
   }
 
-  // @ts-expect-error TS6133: The controller ensures that the render
-  // function is called on resize of the element
+  // @ts-expect-error TS6133: the controller calls the render function on
+  // resize of the element
   private _resizeController = new ResizeController(this, {});
 
   /**

@@ -58,7 +58,7 @@ export type ObcToggleButtonGroupChangeEvent = CustomEvent<{
  * - **Disabled state:** Setting `disabled` on the group disables all contained options at once. Individual
  *   options can also be disabled independently while the group remains enabled.
  * - **Divider management:** Automatically shows visual dividers between options and hides the divider after
- *   the selected option for a seamless, unified appearance.
+ *   the selected option, so the group reads as one control.
  * - **Property propagation:** The group automatically synchronizes `type`, `variant`, `hugText`, and `large`
  *   properties to all child `<obc-toggle-button-option>` elements for consistent styling.
  * - **Automatic fallback selection:** If the current value is set to a disabled or non-existent option, the
@@ -124,6 +124,33 @@ export type ObcToggleButtonGroupChangeEvent = CustomEvent<{
  * </obc-toggle-button-group>
  * ```
  *
+ * @property value - The currently selected option's value.
+ *   Set this property to programmatically select an option. When the user selects a different option, this property updates and a `value` event is fired.
+ *   If set to a value that does not match any enabled option, the first enabled option is selected by default.
+ * @property activated - The value of the option that is activated.
+ *   When the group is controlled by an external source, this property is used to set the value of the option that is activated.
+ *   This is a visual indication that the option is clicked but not yet stored.
+ * @property hugText - If true, the group shrinks to fit its content ("hug" the text) instead of stretching to fill the container.
+ *   This setting is propagated to all child `<obc-toggle-button-option>` elements.
+ * @property externalControl - Makes a click emit `selected` without moving the selection, so the
+ *   parent decides by setting `value`. Setting `value` programmatically always
+ *   updates the selection, with or without this flag.
+ *   When true, the group will not update its selection when the `value` property changes.
+ *   Defaults to false.
+ * @property disabled - Disables the entire toggle button group and all contained options when true.
+ *   When disabled, no option can be selected or interacted with.
+ * @property large - If true, the group and all contained options use a larger size.
+ *   This setting is propagated to all child `<obc-toggle-button-option>` elements.
+ * @property type - Visual type of the options, propagated to every child
+ *   `<obc-toggle-button-option>`: `text` (default) is text only, `icon` an
+ *   icon only, `iconText` an icon beside the text, `iconTextUnder` an icon
+ *   above it.
+ * @property variant - Visual variant, propagated to every child `<obc-toggle-button-option>`:
+ *   `regular` (default) has a background and border, `flat` has neither, and
+ *   `normal` is the alternative style.
+ * @property allowEmptySelection - Lets the group hold no selection: a `value` matching no enabled option, or
+ *   a selected option that becomes disabled, clears the selection instead of
+ *   falling back to the first enabled option.
  * @slot - Place one or more `<obc-toggle-button-option>` elements here to define the selectable options.
  * @fires {CustomEvent<{value: string, previousValue: string}>} value - Fired when the selected value changes.
  * @fires {CustomEvent<{value: string}>} change - Fired when the selected value changes by user interaction.
@@ -131,85 +158,22 @@ export type ObcToggleButtonGroupChangeEvent = CustomEvent<{
  */
 @customElement('obc-toggle-button-group')
 export class ObcToggleButtonGroup extends LitElement {
-  /**
-   * The currently selected option's value.
-   *
-   * Set this property to programmatically select an option. When the user selects a different option, this property updates and a `value` event is fired.
-   *
-   * If set to a value that does not match any enabled option, the first enabled option is selected by default.
-   */
   @property({type: String}) value = '';
 
-  /**
-   * The value of the option that is activated.
-   *
-   * When the group is controlled by an external source, this property is used to set the value of the option that is activated.
-   * This is a visual indication that the option is clicked but not yet stored.
-   */
   @property({type: String}) activated: string | undefined;
 
-  /**
-   * The visual type of the toggle button options.
-   *
-   * - `text` (default): Options display text only.
-   * - `icon`: Options display only an icon.
-   * - `iconText`: Options display an icon and text side-by-side.
-   * - `iconTextUnder`: Options display an icon above the text.
-   *
-   * This setting is propagated to all child `<obc-toggle-button-option>` elements.
-   */
   @property({type: String}) type = ObcToggleButtonOptionType.text;
 
-  /**
-   * The visual variant of the toggle button group.
-   *
-   * - `regular` (default): Standard appearance with background and border.
-   * - `flat`: Minimal style with no background or border.
-   * - `normal`: Alternative style variant.
-   *
-   * This setting is propagated to all child `<obc-toggle-button-option>` elements.
-   */
   @property({type: String}) variant = ObcToggleButtonOptionVariant.regular;
 
-  /**
-   * If true, the group shrinks to fit its content ("hug" the text) instead of stretching to fill the container.
-   *
-   * This setting is propagated to all child `<obc-toggle-button-option>` elements.
-   */
   @property({type: Boolean}) hugText = false;
 
-  /**
-   * If true, the group is controlled by an external source.
-   *
-   * When true, the group will not update its selection when the `value` property changes.
-   *
-   * Defaults to false.
-   */
   @property({type: Boolean}) externalControl = false;
 
-  /**
-   * If true, a `value` that does not match any enabled option leaves the group with no option selected
-   * instead of defaulting to the first enabled option.
-   *
-   * This also applies when the currently selected option becomes disabled: the group clears its selection
-   * rather than falling back to another option.
-   *
-   * Defaults to false (the first enabled option is selected when the value does not match).
-   */
   @property({type: Boolean}) allowEmptySelection = false;
 
-  /**
-   * Disables the entire toggle button group and all contained options when true.
-   *
-   * When disabled, no option can be selected or interacted with.
-   */
   @property({type: Boolean, reflect: true}) disabled = false;
 
-  /**
-   * If true, the group and all contained options use a larger size.
-   *
-   * This setting is propagated to all child `<obc-toggle-button-option>` elements.
-   */
   @property({type: Boolean, reflect: true}) large = false;
 
   @queryAssignedElements({selector: 'obc-toggle-button-option'})

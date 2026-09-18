@@ -47,6 +47,10 @@ export enum CompassIndicatorDirection {
  *   nearest cardinal direction as text.
  * - Set `northUp` to `false` to render a heading-up / course-up presentation
  *   where the arrow stays vertical and the compass face rotates instead.
+ *
+ * @property northUp - When `true` (default) the compass face stays north-up and the arrow
+ *   rotates by `angle`; when `false` the arrow stays pointing up and the face
+ *   rotates instead, the heading-up presentation.
  * @stable
  */
 @customElement('obc-compass-indicator')
@@ -62,14 +66,6 @@ export class ObcCompassIndicator extends LitElement {
   @property({type: String})
   direction: CompassIndicatorDirection = CompassIndicatorDirection.Heading;
 
-  /**
-   * When `true` (default) the compass face stays north-up and the arrow
-   * rotates by `angle`. When `false` the arrow stays pointing up and the
-   * compass face rotates instead (heading-up / course-up presentation).
-   *
-   * Declared with `attribute: false` because the default is `true`; set it
-   * via the JavaScript property (or framework binding) to opt out.
-   */
   @property({type: Boolean, attribute: false})
   northUp: boolean = true;
 

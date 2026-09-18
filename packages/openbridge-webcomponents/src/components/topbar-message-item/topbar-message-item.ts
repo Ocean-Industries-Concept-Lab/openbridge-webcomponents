@@ -101,7 +101,7 @@ export enum ObcTopbarMessageItemSize {
  * ### Best Practices & Constraints
  * - Only one action button (text or icon) should be used at a time to keep interactions simple.
  * - Use the `inactive` type or `empty=true` to clearly indicate when there are no messages.
- * - For accessibility, ensure that action buttons have clear labels or icons.
+ * - For accessibility, give action buttons clear labels or icons.
  * - Truncation is applied to long titles and descriptions; keep content concise for best results.
  * - Deprecated properties: Prefer using `type` and `size` over `large` and `empty`.
  *
@@ -129,6 +129,11 @@ export enum ObcTopbarMessageItemSize {
  * @availableWhen hasTimestamp2 type!=Inactive
  * @property hasSecondaryIcon - Whether to display the secondary icon slot.
  * @availableWhen hasSecondaryIcon type!=Inactive
+ * @property type - Visual and interactive type: `simple` is message content alone,
+ *   `with-button` (default) adds a text action button, `with-icon-button` an
+ *   icon action button, and `inactive` shows the empty state.
+ * @property size - Vertical size: `regular` (default) is the compact height, `tall` the
+ *   expanded one.
  * @slot primary-icon - Main icon representing the message type or status.
  * @slot secondary-icon - Additional icon for context or severity (shown if `hasSecondaryIcon` is true).
  * @slot title - Title or heading of the message (shown if `showTitle` is true).
@@ -144,27 +149,9 @@ export enum ObcTopbarMessageItemSize {
  */
 @customElement('obc-topbar-message-item')
 export class ObcTopbarMessageItem extends LitElement {
-  /**
-   * Controls the visual and interactive type of the message item.
-   *
-   * - `simple`: No action button, just message content.
-   * - `with-button`: Shows a text-based action button.
-   * - `with-icon-button`: Shows an icon-based action button.
-   * - `inactive`: Shows an empty/inactive state.
-   *
-   * Defaults to `with-button`.
-   */
   @property({type: String}) type: ObcTopbarMessageItemType =
     ObcTopbarMessageItemType.WithButton;
 
-  /**
-   * Sets the vertical size of the message item.
-   *
-   * - `regular`: Standard compact height.
-   * - `tall`: Expanded height for more content.
-   *
-   * Defaults to `regular`.
-   */
   @property({type: String}) size: ObcTopbarMessageItemSize =
     ObcTopbarMessageItemSize.Regular;
 

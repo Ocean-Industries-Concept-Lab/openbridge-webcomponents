@@ -93,36 +93,28 @@ export enum Variant {
  * @availableWhen label static==false
  * @property sublabel - Optional second line under the label, for a secondary detail such as a role (not shown in static mode).
  * @availableWhen sublabel static==false
+ * @property variant - What the button displays: `icon` (default) a user icon, `initials` up to
+ *   two uppercase initials — falling back to the icon when `initials` is empty
+ *   or longer than two characters.
+ * @property styleType - Visual style: `flat` (default) is the minimal appearance, `normal` adds a
+ *   background and border, `selected` highlights the active state.
+ * @property initials - Initials shown when `variant` is `initials`. Whitespace is stripped and the
+ *   rest uppercased, then truncated to two characters — three at the `large`
+ *   size. An empty value falls back to the user icon.
  * @slot icon - Custom icon for the user button (used only in `icon` variant; defaults to <obi-user> if not provided)
  * @stable
  */
 @customElement('obc-user-button')
 export class ObcUserButton extends LitElement {
-  /**
-   * Controls whether the button displays a user icon (`icon`) or user initials (`initials`).
-   * - `icon`: Shows a user icon (default, or if initials are invalid).
-   * - `initials`: Shows up to two uppercase initials (falls back to icon if empty or longer than two characters).
-   */
   @property({type: String}) variant: Variant = Variant.icon;
   @property({type: String}) size: Size = Size.regular;
 
-  /**
-   * Sets the visual style of the button.
-   * - `flat`: Minimal, flat appearance (default).
-   * - `normal`: Outlined with background and border.
-   * - `selected`: Highlighted to indicate selection or active state.
-   */
   @property({type: String}) styleType: StyleType = StyleType.flat;
 
   @property({type: Boolean}) static: boolean = false;
 
   @property({type: Boolean}) disabled: boolean = false;
 
-  /**
-   * The initials to display when `variant="initials"`.
-   * - Only the first two non-whitespace characters are used and converted to uppercase.
-   * - If empty or longer than two characters, falls back to the user icon.
-   */
   @property({type: String}) initials: string = '';
 
   @property({type: String}) label?: string;

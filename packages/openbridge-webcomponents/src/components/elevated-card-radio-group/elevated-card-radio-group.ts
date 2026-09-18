@@ -89,24 +89,17 @@ export type ElevatedCardRadioGroupOption = {
  * @property disabled - Disables all options in the group when true.
  * @property required - Marks the group as required for form validation.
  * @property top - If true, applies "top" styling to the first card (e.g., for rounded corners). The last card always receives "bottom" styling.
+ * @property options - Array of options to display as card radios. Each option should be an object with a `label` (displayed text) and a `value` (submitted value).
+ *   Example: `[{label: 'Option 1', value: '1'}, {label: 'Option 2', value: '2'}]`
+ * @property name - Shared name for all radio inputs in the group. Ensures native radio group behavior and correct form submission.
  * @slot - No named slots. All content is provided via the `options` property.
  * @fires {ObcElevatedCardRadioGroupChangeEvent} change - Dispatched when the value changes
  * @stable
  */
 @customElement('obc-elevated-card-radio-group')
 export class ObcElevatedCardRadioGroup extends LitElement {
-  /**
-   * Array of options to display as card radios. Each option should be an object with a `label` (displayed text) and a `value` (submitted value).
-   *
-   * Example: `[{label: 'Option 1', value: '1'}, {label: 'Option 2', value: '2'}]`
-   */
   @property({type: Array}) options: ElevatedCardRadioGroupOption[] = [];
 
-  /**
-   * Shared name for all radio inputs in the group. Ensures native radio group behavior and correct form submission.
-   *
-   * Default: `'default'`
-   */
   @property({type: String}) name: string = 'default';
 
   @property({type: String}) value: string = '';

@@ -70,6 +70,9 @@ export enum ObcStepperBoxType {
  * @property helperText - Helper text displayed below the stepper. When set, the helper text is shown.
  * @property placeholder - Placeholder text shown when the input is empty.
  * @property readonly - If true, the input is non-editable; programmatic value changes still apply.
+ * @property type - Icons and directionality of the stepper buttons: `plus-minus` (default)
+ *   uses plus and minus icons, `up-down` and `left-right` the matching
+ *   chevrons.
  * @fires {CustomEvent<{value: number}>} down - Fired when the decrement (left or down) button is clicked
  * @fires {CustomEvent<{value: number}>} up - Fired when the increment (right or up) button is clicked
  * @fires {CustomEvent<{value: string}>} input - Fired when the user types in the number input field
@@ -78,14 +81,6 @@ export enum ObcStepperBoxType {
  */
 @customElement('obc-stepper-box')
 export class ObcStepperBox extends LitElement {
-  /**
-   * The visual and behavioral variant of the stepper box.
-   * - `plus-minus` (default): Uses plus and minus icons.
-   * - `up-down`: Uses up and down chevrons.
-   * - `left-right`: Uses left and right chevrons.
-   *
-   * Changing this property updates the icons and directionality of the stepper buttons.
-   */
   @property({type: String}) type: ObcStepperBoxType =
     ObcStepperBoxType.plusMinus;
 

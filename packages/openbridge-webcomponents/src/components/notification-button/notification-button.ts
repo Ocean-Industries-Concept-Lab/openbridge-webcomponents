@@ -61,7 +61,7 @@ export interface NotificationButtonClickEvent {
  *
  * - Use the `Flat` style for minimal, unobtrusive notification indicators.
  * - Use `Normal` or `Enhanced` styles when you want to emphasize the presence of new notifications, especially when the button is active.
- * - Show the counter badge only when it is important to indicate the number of unread notifications; otherwise, keep it hidden for a cleaner look.
+ * - Show the counter badge only where the number of unread notifications matters; otherwise keep it hidden for a cleaner look.
  * - The button does not manage notification state internally; it is up to the parent application to update `count` and `isActive` as needed.
  *
  * **TODO(designer):** Clarify recommended scenarios for using `Normal` vs. `Enhanced` styles, and any design guidelines for when to show the counter.
@@ -89,67 +89,43 @@ export interface NotificationButtonClickEvent {
  *
  * In this example, the button appears in the normal style, is active, and displays a counter badge with the value 5.
  *
+ * @property count - Number of notifications to display in the counter badge.
+ *   Only shown if `showCount` is true, `isActive` is true, and `buttonStyle` is `normal` or `enhanced`.
+ *   Ignored in `flat` style.
+ *   Defaults to 0.
+ * @availableWhen count isActive==true && showCount==true && buttonStyle in [Normal, Enhanced]
+ * @property showCount - Whether to display the notification count badge.
+ *   If true, and the style is `normal` or `enhanced` and `isActive` is true, the counter badge is shown.
+ *   Has no effect in `flat` style.
+ *   Defaults to false.
+ * @availableWhen showCount isActive==true && buttonStyle in [Normal, Enhanced]
+ * @property isActive - Whether the button is in the active (selected) state.
+ *   When true, the button uses the filled notification icon and applies the selected style (`normal` or `enhanced`).
+ *   When false, the button always appears in `flat` style with the outlined icon.
+ *   Defaults to false.
+ * @property ariaLabel - Accessibility label for the button.
+ *   Used as the `aria-label` attribute for screen readers. If the counter is visible, the label will include the count (e.g., "Notifications, 5 new").
+ *   Defaults to "Notifications".
+ * @property buttonStyle - Visual style: `flat` (default) is icon-only and never shows the counter,
+ *   `normal` is the standard button and `enhanced` adds a background and
+ *   accent colour — both show the counter badge while `showCount` and
+ *   `isActive` are true.
+ * @availableWhen buttonStyle isActive==true
  * @slot icon - Custom icon to display in place of the default notification icon.
  * @fires {CustomEvent<NotificationButtonClickEvent>} obc-click - Fired when the button is clicked, with the current count and new active state.
  * @stable
  */
 @customElement('obc-notification-button')
 export class ObcNotificationButton extends LitElement {
-  /**
-   * Visual style of the notification button.
-   *
-   * - `flat`: Minimal icon-only style. Counter is never shown.
-   * - `normal`: Standard notification button. Counter badge appears if `showCount` is true and `isActive` is true.
-   * - `enhanced`: Emphasized style with background and accent color. Counter badge appears if `showCount` is true and `isActive` is true.
-   *
-   * Defaults to `flat`.
-   *
-   * @availableWhen isActive==true
-   */
   @property({type: String}) buttonStyle: NotificationButtonStyle =
     NotificationButtonStyle.Flat;
 
-  /**
-   * Number of notifications to display in the counter badge.
-   *
-   * Only shown if `showCount` is true, `isActive` is true, and `buttonStyle` is `normal` or `enhanced`.
-   * Ignored in `flat` style.
-   *
-   * Defaults to 0.
-   *
-   * @availableWhen isActive==true && showCount==true && buttonStyle in [Normal, Enhanced]
-   */
   @property({type: Number}) count = 0;
 
-  /**
-   * Whether to display the notification count badge.
-   *
-   * If true, and the style is `normal` or `enhanced` and `isActive` is true, the counter badge is shown.
-   * Has no effect in `flat` style.
-   *
-   * Defaults to false.
-   *
-   * @availableWhen isActive==true && buttonStyle in [Normal, Enhanced]
-   */
   @property({type: Boolean}) showCount = false;
 
-  /**
-   * Whether the button is in the active (selected) state.
-   *
-   * When true, the button uses the filled notification icon and applies the selected style (`normal` or `enhanced`).
-   * When false, the button always appears in `flat` style with the outlined icon.
-   *
-   * Defaults to false.
-   */
   @property({type: Boolean}) isActive = false;
 
-  /**
-   * Accessibility label for the button.
-   *
-   * Used as the `aria-label` attribute for screen readers. If the counter is visible, the label will include the count (e.g., "Notifications, 5 new").
-   *
-   * Defaults to "Notifications".
-   */
   @property({type: String}) override ariaLabel = 'Notifications';
 
   override render() {

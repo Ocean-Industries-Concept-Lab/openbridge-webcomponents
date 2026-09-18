@@ -36,20 +36,15 @@ import {customElement} from '../../decorator.js';
  * - Place in a consistent location within toolbars or menus for predictable user experience.
  * - Pair with a tooltip or label if the icon meaning is not self-evident.
  *
+ * @property inCommand - Whether the command is currently active.
+ *   When `true`, the button displays the "in command" icon and uses active styling.
+ *   When `false`, the button displays the "no command" icon and uses default styling.
  * @slot - (none; icon is determined by state, no external slot)
  * @fires click - Fired when the button is clicked.
  * @beta
  */
 @customElement('obc-command-button')
 export class ObcCommandButton extends LitElement {
-  /**
-   * Whether the command is currently active.
-   *
-   * When `true`, the button displays the "in command" icon and uses active styling.
-   * When `false`, the button displays the "no command" icon and uses default styling.
-   *
-   * Default: `false`
-   */
   @property({type: Boolean}) inCommand = false;
 
   override render() {

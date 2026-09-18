@@ -53,6 +53,12 @@ export const INCLINOMETER_CENTRE_HALF = 200;
  *   the horizon line, rotating indicator and vessel. Default `false`.
  * @property priority - Colour palette for the scale fill / indicator and the readout value:
  *   `regular` (default) or `enhanced`.
+ * @property arcAngle - Half-extent of the watch arc in degrees: the arc spans `centre ± arcAngle`
+ *   and values sit at their true position within it, so `45` gives the
+ *   historical 90°-wide arc. With `zoomToFitArc`, a narrower arc is enlarged
+ *   on its own layer while the vessel image and the indicator line keep their
+ *   natural size on a separate central layer — the two layers are deliberately
+ *   disconnected.
  * @ignore This is an abstract base class. Use `obc-pitch` or `obc-roll` instead.
  * @experimental
  */
@@ -60,17 +66,6 @@ export class SingleAxisInclinometer extends LitElement {
   @property({type: Boolean}) zoomToFitArc: boolean = false;
   @property({type: Boolean}) hasReadout: boolean = false;
   @property({type: String}) priority: Priority = Priority.regular;
-  /**
-   * Half-extent of the watch arc in degrees. The arc spans `centre ± arcAngle`
-   * and values are placed at their true position within it. Default `45`
-   * reproduces the historical 90°-wide arc.
-   *
-   * Smaller values render a narrower arc. Combined with `zoomToFitArc`, the
-   * narrower arc is enlarged (its radius grows) on its own layer, while the
-   * vessel image and the rotating indicator line stay at their natural size and
-   * position on a separate central layer. The two layers are intentionally
-   * visually disconnected.
-   */
   @property({type: Number}) arcAngle: number = 45;
 
   protected _arcFrame: ZoomToFitArcFrame | undefined;

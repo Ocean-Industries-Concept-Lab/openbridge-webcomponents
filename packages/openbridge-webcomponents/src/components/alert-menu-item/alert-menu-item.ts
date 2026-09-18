@@ -119,6 +119,10 @@ export enum ObcAlertMenuItemActionState {
  *   `status`; it must be provided explicitly. The secondary action is only
  *   shown when a non-empty label is set and `secondaryActionState` is not
  *   `none`.
+ * @property primaryActionState - Appearance of the primary (ACK) action: `enabled`, `disabled` or `none`,
+ *   which hides it.
+ * @property secondaryActionState - Appearance of the secondary action: `enabled`, `disabled` or `none`, which
+ *   hides it.
  * @slot alert-icon - The main alert icon representing the alert type.
  * @slot title - Title content; falls back to the `title` property when empty.
  * @slot description - Description content; falls back to the `description` property when empty.
@@ -155,17 +159,9 @@ export class ObcAlertMenuItem extends LitElement {
 
   @property({type: String}) secondaryActionLabel = '';
 
-  /**
-   * Controls the appearance of the primary (ACK) action.
-   * See {@link ObcAlertMenuItemActionState} for the available states.
-   */
   @property({type: String}) primaryActionState: ObcAlertMenuItemActionState =
     ObcAlertMenuItemActionState.Enabled;
 
-  /**
-   * Controls the appearance of the secondary action.
-   * See {@link ObcAlertMenuItemActionState} for the available states.
-   */
   @property({type: String}) secondaryActionState: ObcAlertMenuItemActionState =
     ObcAlertMenuItemActionState.None;
 

@@ -64,12 +64,12 @@ export interface MicrophoneState {
 }
 
 export interface BatteryState {
-  level: number; // 0-100, 0 is empty, 100 is full
-  charging: boolean; // true if charging, false if not charging,
-  poweredNotCharging?: boolean; // true if powered and not charging, else false
-  notification?: boolean; // true if notification, else false
-  batterySavingMode?: boolean; // true if battery saving mode is enabled, false if not enabled, undefined if not supported
-  hasUsageButton: boolean; // true if usage button is should be shown, false if not shown
+  level: number; // percent, 0 empty to 100 full
+  charging: boolean;
+  poweredNotCharging?: boolean;
+  notification?: boolean;
+  batterySavingMode?: boolean; // undefined where the platform cannot report it
+  hasUsageButton: boolean;
   modes?: {
     name: string;
   }[];
