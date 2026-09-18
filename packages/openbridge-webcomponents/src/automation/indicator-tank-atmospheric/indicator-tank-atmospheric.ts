@@ -65,6 +65,7 @@ const FRAME_PATH =
  * @property level - Current level, 0-100 (%)
  * @property data - History samples, 0-100 (%) each, oldest first
  * @slot icon - Centered icon overlay, defaults to `obi-tank`
+ * @beta
  */
 @customElement('obc-indicator-tank-atmospheric')
 export class ObcIndicatorTankAtmospheric extends LitElement {
