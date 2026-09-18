@@ -113,6 +113,14 @@ export interface SpeedAdvice {
  *   so instruments sharing the same value have identical ring circumference
  *   regardless of label width or arc extent (like obc-donut-chart's
  *   fixedHeight). When unset (default), the instrument fills its container.
+ * @property portStarboard - Enables the maritime PORT/STBD (red/green) color mode: positive speed
+ *   renders green, astern red. The face is not tinted — the gauge shows a
+ *   centred readout.
+ * @property portStarboardElements - Which parts take part while `portStarboard` is on.
+ *   Defaults to everything except the setpoint. `face` has no effect here.
+ * @availableWhen portStarboardElements portStarboard==true
+ * @property portStarboardSides - Which halves the region tints paint while `portStarboard` is on.
+ * @availableWhen portStarboardSides portStarboard==true
  * @stable
  */
 @customElement('obc-speed-gauge')
@@ -135,25 +143,11 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
   @property({type: Number}) fractionDigits = 1;
   @property({type: Number, attribute: 'face-diameter'})
   faceDiameter: number | undefined;
-  /**
-   * Enables the maritime PORT/STBD (red/green) color mode: positive speed
-   * renders green, astern red. The face is not tinted — the gauge shows a
-   * centred readout.
-   */
   @property({type: Boolean}) portStarboard: boolean = false;
-  /**
-   * Which parts take part while `portStarboard` is on.
-   * Defaults to everything except the setpoint. `face` has no effect here.
-   * @availableWhen portStarboard==true
-   */
   @property({type: Array, attribute: false})
   portStarboardElements: PortStarboardElement[] = [
     ...PORT_STARBOARD_DEFAULT_ELEMENTS,
   ];
-  /**
-   * Which halves the region tints paint while `portStarboard` is on.
-   * @availableWhen portStarboard==true
-   */
   @property({type: String}) portStarboardSides: PortStarboardSides =
     PortStarboardSides.both;
 
