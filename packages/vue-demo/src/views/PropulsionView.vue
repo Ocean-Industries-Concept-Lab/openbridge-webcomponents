@@ -152,7 +152,7 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
         </div>
         <obc-readout class="value-readout" :off.prop="true" size="large" direction="horizontal" />
         <obc-readout
-          class="label-readout"
+          class="label-readout beside-horizontal"
           label="Power"
           unit="%"
           :hasValue.prop="false"
@@ -172,7 +172,7 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
           direction="horizontal"
         />
         <obc-readout
-          class="label-readout"
+          class="label-readout beside-horizontal"
           label="Angle"
           unit="DEG"
           :hasValue.prop="false"
@@ -180,7 +180,7 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
         />
         <obc-readout class="value-readout" :off.prop="true" size="large" direction="horizontal" />
         <obc-readout
-          class="label-readout"
+          class="label-readout beside-horizontal"
           label="Power"
           unit="%"
           :hasValue.prop="false"
@@ -204,7 +204,7 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
           stacking="stacked"
         />
         <obc-readout
-          class="label-readout"
+          class="label-readout beside-stacked"
           label="Pitch"
           unit="%"
           :priority.prop="'enhanced'"
@@ -223,7 +223,7 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
           stacking="stacked"
         />
         <obc-readout
-          class="label-readout"
+          class="label-readout beside-stacked"
           label="Speed"
           unit="RPM"
           :priority.prop="'enhanced'"
@@ -248,7 +248,7 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
           stacking="stacked"
         />
         <obc-readout
-          class="label-readout"
+          class="label-readout beside-stacked"
           label="Angle"
           unit="DEG"
           :priority.prop="'enhanced'"
@@ -435,6 +435,16 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
 .label-readout {
   align-self: end;
   --obc-readout-padding-horizontal-safe: 3px;
+}
+
+/* The label readout hugs its two text rows with a 4 px inset, so a bottom
+   margin equal to the value readout's bottom inset minus 4 px puts the unit's
+   cap bottom on the value's cap bottom. */
+.label-readout.beside-horizontal {
+  margin-bottom: 8px; /* horizontal value: 8 px root + 4 px row padding */
+}
+.label-readout.beside-stacked {
+  margin-bottom: 4px; /* stacked value: 4 px root + 4 px cluster padding */
 }
 
 obc-readout {
