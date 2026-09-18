@@ -12,7 +12,6 @@ import flashTempo from './migration-guide/flash-tempo.md?raw';
 import iconsRenamed from './migration-guide/icons-renamed.md?raw';
 import iconsWind from './migration-guide/icons-wind.md?raw';
 import svelteSnippets from './migration-guide/svelte-snippets.md?raw';
-import vueBooleans from './migration-guide/vue-booleans.md?raw';
 import windProperties from './migration-guide/wind-properties.md?raw';
 
 <Meta title="Introduction/Migration Guide" />
@@ -42,7 +41,6 @@ The [Changelog](?path=/docs/introduction-changelog--docs) lists every change. If
 - **License:** 2.0 is published under `AGPL-3.0-only`, and each version also becomes available under Apache-2.0 180 days after its release. 1.0.1 was Apache-2.0. See [License](#license).
 - **Core package:** only `dist/`, the CDN bundle and `custom-elements.json` are published, so imports from `src/` fail. See [The Core Package Ships Only dist/](#the-core-package-ships-only-dist).
 - **Angular:** every component has its own entry point, so every import changes. See [Angular](#angular).
-- **Vue:** boolean properties that default to `true` are off unless you bind them. See [Vue](#vue).
 - **React:** `onClick` on 13 components receives the native DOM event. See [React](#react).
 - **Svelte:** eight components renamed a snippet prop, and named slots no longer render a wrapping `div`. See [Svelte](#svelte).
 - **Alert flashing:** `--alarm-blink-*` and `--warning-blink-*` no longer animate; use `--flash-*` and `blinkingAll()`. See [Alert Flashing Variables](#alert-flashing-variables).
@@ -67,7 +65,7 @@ The [Changelog](?path=/docs/introduction-changelog--docs) lists every change. If
 
 2. **Fix the imports that no longer resolve:** paths into `src/`, the [AR modules](#ar-import-paths) and every [Angular](#angular) import.
 3. **Rename what was renamed:** properties, attributes and events in the [API mapping](#api-mapping-by-component), [CSS variables](#renamed-css-variables) and [icons](#icons). TypeScript reports most renamed properties on the framework wrappers, but an HTML attribute that no longer exists is ignored without a warning, so search your templates too.
-4. **Check the changes that do not fail loudly:** the [flashing variables](#alert-flashing-variables), the [Vue booleans](#vue), the reused [wind icon names](#icons) and every heading marked _(silent)_ in [Component Changes](#component-changes), such as the [`obc-card` timeouts](#obc-card-timeouts-in-seconds-silent), the [`obc-compass-indicator` orientation](#obc-compass-indicator-orientation-silent) and the [`obc-depth-actual` ranges](#obc-depth-actual-ranges-and-labels-silent).
+4. **Check the changes that do not fail loudly:** the [flashing variables](#alert-flashing-variables), the reused [wind icon names](#icons) and every heading marked _(silent)_ in [Component Changes](#component-changes), such as the [`obc-card` timeouts](#obc-card-timeouts-in-seconds-silent), the [`obc-compass-indicator` orientation](#obc-compass-indicator-orientation-silent) and the [`obc-depth-actual` ranges](#obc-depth-actual-ranges-and-labels-silent).
 5. **Compare screenshots.** The dusk and bright palettes were retuned and many components now follow the OpenBridge 6.1 design, so visual tests show differences that need no code change. See [Palette Values](#palette-values).
 
 ## License
@@ -177,20 +175,11 @@ Events that had no binding in 1.0.1 now have one, for example `onChange` on `Obc
 
 Import paths are unchanged apart from the [AR modules](#ar-import-paths). There is still no `v-model`: bind the property and listen to the event.
 
-Vue passes `false` for a boolean prop you leave out, and the wrapper sets that value on the element. A property that defaults to `true` is therefore off in a Vue app unless you bind it. On the elements that existed in 1.0.1, these properties are new in 2.0 or now default to `true`:
-
-<div style={{overflowX: 'auto'}}>
-
-<Markdown>{vueBooleans}</Markdown>
-
-</div>
-
-The same applies to every `true`-default boolean on the components added in 2.0.
+An omitted boolean prop no longer reaches the element as `false`. The 1.0.1 wrapper let Vue cast an absent boolean to `false` and wrote that over the element's default; the 2.0 wrapper declares boolean props with `default: undefined`, so the element's own default holds. This shows on the properties that default to `true`, such as `showStatus` on the automation devices, `hasCancelAction` and `hasCloseAction` on `obc-modal-window` and `clickable` on `obc-automation-tank`: they are on unless you bind `false`.
 
 ```html
-<!-- 2.0: bind the true-default booleans you want on -->
-<ObcPump :show-status="true" />
-<ObcModalWindow :has-cancel-action="true" :has-close-action="true" />
+<!-- 2.0: on by default; bind false to switch it off -->
+<ObcPump :show-status="false" />
 ```
 
 `@alert-list-click` on `ObcAlertMenu` is now `@go-to-alert-list-click`, and `ObcToggleSwitch` emits `change` as well as `input`.
@@ -214,15 +203,7 @@ Importing a wrapper now registers only its own element; in 1.0.1 any import regi
 import '@oicl/openbridge-webcomponents/dist/components/clock/clock.js';
 ```
 
-The entry points' type declarations re-export enums that their JavaScript does not export, so the build fails when you use one as a value. Import enums from the core package:
-
-```ts
-// Type-checks, then fails to bundle
-import {IconButtonVariant} from '@oicl/openbridge-webcomponents-ng/obc-icon-button';
-
-// Works
-import {IconButtonVariant} from '@oicl/openbridge-webcomponents/dist/components/icon-button/icon-button.js';
-```
+Each entry point also re-exports the enums and other values its property and event types use, so `import {IconButtonVariant} from '@oicl/openbridge-webcomponents-ng/obc-icon-button'` works as a value.
 
 Outputs keep their names, such as `(menuButtonClickedEvent)`. The alert menu's `(alertListClickEvent)` is now `(goToAlertListClickEvent)`.
 
@@ -462,7 +443,7 @@ The indicator was redrawn, with `type` (`arrow`, `shaft` or `labeled`) and `dire
 
 #### `obc-compass-indicator` Orientation _(silent)_
 
-`arrow` is now `direction` (`heading`, `course` or `north`) ([#785](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/785)). `northUp` now defaults to `true` and has no HTML attribute ([#909](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/909)), so markup that drew a heading-up indicator in 1.0.1 draws it north-up. Set `northUp = false` from JavaScript or a framework binding to keep heading-up. Vue apps stay heading-up until they bind `:north-up="true"`; see [Vue](#vue).
+`arrow` is now `direction` (`heading`, `course` or `north`) ([#785](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/785)). `northUp` now defaults to `true` and has no HTML attribute ([#909](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/909)), so markup that drew a heading-up indicator in 1.0.1 draws it north-up. Set `northUp = false` from JavaScript or a framework binding to keep heading-up.
 
 ```html
 <!-- 1.0.1: heading-up -->
@@ -731,6 +712,10 @@ row.tabs = [
 ];
 ```
 
+#### `obc-start-stop-switch` Icon Flags
+
+`showCheckedStateIcon` and `showUncheckedStateIcon` are removed ([#1279](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1279)). Neither had an effect: the `checked-state-icon` and `unchecked-state-icon` slots always render. Drop the attributes and keep the slots.
+
 #### Events and Keyboard
 
 - `obc-toggle-switch` fires `change` with `detail.checked` as well as `input`, and the `change` event of `obc-text-input-field` carries `detail.value` ([#1088](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1088)).
@@ -869,7 +854,7 @@ These tables compare the component manifests of 1.0.1 and 2.0, element by elemen
 </details>
 
 <details>
-<summary>UI Components (6 elements)</summary>
+<summary>UI Components (7 elements)</summary>
 
 <div style={{overflowX: 'auto'}}>
 
@@ -931,13 +916,11 @@ const iconTag = `obi-wind-true-${windKnotsToWindTrueBucket(19)}`; // obi-wind-tr
 
 - **An element renders nothing.** It was never registered; check `customElements.get('obc-…')` in the browser console. Look for a moved [AR import](#ar-import-paths), an [Angular import](#angular) that now registers only its own element, or a second copy of the core package ([Upgrade Steps](#upgrade-steps)).
 - **An attribute has no effect.** The property was renamed or removed ([API Mapping by Component](#api-mapping-by-component)), or it is a boolean that defaults to `true`, which has no attribute; set the property from JavaScript.
-- **A feature is off only in a Vue app.** Vue passes `false` for a boolean prop you leave out ([Vue](#vue)).
 - **An element styled with your own CSS stopped flashing.** It reads `--alarm-blink-*` or `--warning-blink-*` ([Alert Flashing Variables](#alert-flashing-variables)).
 - **A color or spacing set with a CSS variable is gone.** The variable was renamed ([Renamed CSS Variables](#renamed-css-variables)). Critical and diagnostic alert colors also need [`data-obc-theme`](#set-data-obc-theme).
 - **A dialog never closes.** `obc-card` timeouts are in [seconds](#obc-card-timeouts-in-seconds-silent).
 - **An `input` handler on a parent element is not called.** `obc-number-input-field` events no longer bubble; listen on the field ([details](#obc-number-input-field-value-and-events)).
 - **A Svelte event handler runs twice.** Remove the listener you added on the element as a workaround ([Svelte](#svelte)).
-- **The Angular build cannot find an enum.** Import it from the core package ([Angular](#angular)).
 - **TypeScript rejects a React `onClick` handler.** Type the event as `Event` ([React](#react)).
 - **A wind barb shows the wrong speed.** The wind icons are named by knots ([Icons](#icons)).
 - **A test that looks for `--` in a missing value fails.** Missing values use the [figure dash](#placeholder-dash).
