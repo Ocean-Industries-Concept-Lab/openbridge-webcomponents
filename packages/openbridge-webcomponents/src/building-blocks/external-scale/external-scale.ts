@@ -19,6 +19,7 @@
  *
  * ## Layout model
  * - `orientation`: `'vertical' | 'horizontal'` controls value→coordinate mapping
+ * - `reverse`: plots `minValue` at the top / right, for quantities measured downward
  * - `side`: where the scale attaches to the chart edge
  *   - vertical: `'left' | 'right'`
  *   - horizontal: `'top' | 'bottom'`
@@ -418,6 +419,12 @@ export interface ExternalScaleConfig {
   minValue: number;
   /** Maximum scale value. */
   maxValue: number;
+  /**
+   * Plot `minValue` at the top (vertical) or right (horizontal) so a quantity
+   * measured downward is fed as positive numbers.
+   * @default false
+   */
+  reverse?: boolean;
 
   // Layout bands (thickness, in px)
   /** Show scale tickmarks. */
@@ -1181,17 +1188,22 @@ function drawingLength(config: ExternalScaleConfig): number {
   return Math.max(0, config.length - config.paddingStart - config.paddingEnd);
 }
 
-function valueToMainAxis(config: ExternalScaleConfig, value: number): number {
+export function valueToMainAxis(
+  config: ExternalScaleConfig,
+  value: number
+): number {
   const dLen = drawingLength(config);
+  // Every consumer takes min/max of two mapped coordinates, so mirroring the
+  // value inside the range reverses fill, ticks, labels, advice and setpoint.
+  const v = config.reverse ? config.minValue + config.maxValue - value : value;
   if (isVertical(config)) {
     return (
-      valueToY(value, config.minValue, config.maxValue, dLen) +
+      valueToY(v, config.minValue, config.maxValue, dLen) +
       mainAxisOffset(config)
     );
   }
   return (
-    valueToX(value, config.minValue, config.maxValue, dLen) +
-    mainAxisOffset(config)
+    valueToX(v, config.minValue, config.maxValue, dLen) + mainAxisOffset(config)
   );
 }
 

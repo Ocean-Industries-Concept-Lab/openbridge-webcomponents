@@ -66,7 +66,6 @@ Chart.register(
   CategoryScale,
   LinearScale,
   TimeScale,
-  Filler,
   Tooltip
 );
 
@@ -87,6 +86,7 @@ export interface ExternalScaleDimensions {
 interface ExternalScaleElement extends HTMLElement {
   minValue?: number;
   maxValue?: number;
+  reverse?: boolean;
   height?: number;
   width?: number;
   paddingTop?: number;
@@ -158,6 +158,8 @@ export type ChartLineYAxisConfig = {
   position?: 'left' | 'right';
   min?: number;
   max?: number;
+  /** Plot `min` at the top. Area fills still reach the visual bottom. */
+  reverse?: boolean;
   grid?: boolean;
 };
 
@@ -165,6 +167,97 @@ export type ChartLineXAxisConfig = {
   min?: number;
   max?: number;
 };
+
+/**
+ * Ellipse that clips one dataset's drawing (a radial range). Centre and `rx`
+ * are in data units; `ry` too when given, else the clip is a circle in pixels.
+ */
+export type ChartLineEllipseClip = {
+  x: number;
+  y: number;
+  rx: number;
+  ry?: number;
+};
+
+/** Fields the chart reads on a `datasets` entry beyond Chart.js' own. */
+export type ChartLineDatasetExtras = {
+  ellipseClip?: ChartLineEllipseClip;
+};
+
+export type ChartLineDataset = ChartDataset<'line', ChartLinePoint[]> &
+  ChartLineDatasetExtras;
+
+/**
+ * Vertical marker at an x value: a line from the plot top down to the
+ * dataset's value there, dotted from there to the plot bottom, and a dot.
+ */
+export type ChartLineXMarker = {
+  x: ChartXValue;
+  datasetIndex?: number;
+  showDot?: boolean;
+};
+
+/** Horizontal marker across the plot at a y value, in the dataset's colour. */
+export type ChartLineYMarker = {
+  y: number;
+  datasetIndex?: number;
+};
+
+/** Marker geometry, in CSS pixels. */
+const MARKER = {
+  lineWidth: 1,
+  dash: [1, 2],
+  dotRadius: 6,
+  dotRingWidth: 2,
+  valueLineWidth: 2,
+  ringColorVar: '--border-silhouette-color',
+} as const;
+
+/** Ellipse clips applied on the last draw, in pixels by dataset index. */
+const datasetClipRecords = new WeakMap<
+  Chart,
+  Record<number, ChartLineEllipseClip>
+>();
+
+/**
+ * Clips a dataset's drawing to its `ellipseClip`, mapped through the x scale
+ * and the dataset's y scale so the radii stay true to the data units.
+ * Registered globally ahead of `Filler`, whose `beforeDatasetDraw` paints the
+ * area fill: a chart-level plugin would clip only the line.
+ */
+const datasetClipPlugin = {
+  id: 'datasetClip',
+  beforeDraw: (chart: Chart) => {
+    datasetClipRecords.set(chart, {});
+  },
+  beforeDatasetDraw: (chart: Chart, args: {index: number}) => {
+    const ds = chart.data.datasets[args.index] as ChartLineDataset | undefined;
+    const clip = ds?.ellipseClip;
+    const xScale = chart.scales['x'];
+    const yScale = ds?.yAxisID ? chart.scales[ds.yAxisID] : undefined;
+    if (!clip || !xScale || !yScale) return;
+    const x = xScale.getPixelForValue(clip.x);
+    const y = yScale.getPixelForValue(clip.y);
+    const rx = Math.abs(xScale.getPixelForValue(clip.x + clip.rx) - x);
+    const ry =
+      clip.ry === undefined
+        ? rx
+        : Math.abs(yScale.getPixelForValue(clip.y + clip.ry) - y);
+    const ctx = chart.ctx;
+    ctx.save();
+    ctx.beginPath();
+    ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2);
+    ctx.clip();
+    const records = datasetClipRecords.get(chart) ?? {};
+    records[args.index] = {x, y, rx, ry};
+    datasetClipRecords.set(chart, records);
+  },
+  afterDatasetDraw: (chart: Chart, args: {index: number}) => {
+    if (datasetClipRecords.get(chart)?.[args.index]) chart.ctx.restore();
+  },
+};
+// Global plugins run in registration order: the clip must precede Filler.
+Chart.register(datasetClipPlugin, Filler);
 
 const LINE_GRAPH_WATCHED_PROP_NAMES = [
   'data',
@@ -175,6 +268,8 @@ const LINE_GRAPH_WATCHED_PROP_NAMES = [
   'yAxisPosition',
   'yAxes',
   'xAxis',
+  'xMarker',
+  'yMarker',
   'showGrid',
   'showGridX',
   'showGridY',
@@ -352,6 +447,11 @@ const LINE_GRAPH_DIMENSION_PROP_NAMES = [
  *   `{x, value}` items for time/number axes (x: epoch ms, ISO string, Date,
  *   or Temporal object). Points are drawn in array order (no sorting).
  * @property datasets - Chart.js-style datasets for multi-series use. If provided, takes precedence over `data`.
+ *   Explicit Chart.js styling on an entry (`borderColor`, `backgroundColor`, `borderDash`,
+ *   `borderCapStyle`, `fill`, `order`, `pointRadius`) wins over the derived defaults
+ *   (`fill: true` selects the chart's own `'start'`);
+ *   `ellipseClip` clips the entry's drawing to an ellipse: centre and `rx` in data
+ *   units, `ry` in data units when given, else round in pixels.
  * @property labels - Optional explicit labels for the x-axis (category mode). If omitted labels are derived from `data`
  * @property colors - Custom color palette (CSS variable names or color strings).
  * @property legend - Show HTML legend below chart with series labels and colors.
@@ -371,10 +471,17 @@ const LINE_GRAPH_DIMENSION_PROP_NAMES = [
  *   numeric x-values.
  * @property yAxisPosition - Single y-axis position ('left' or 'right'). For multiple y-axes, use yAxes instead.
  * @property yAxes - Multiple y-axis definitions for complex multi-axis charts.
+ *   Each entry accepts `min`/`max` to pin the range and `reverse` to plot `min` at the
+ *   top; the primary axis' `reverse` cascades to slotted left/right scales.
  * @property xAxis - Pinned x range (`min`/`max`) for time and number axes. Without it the
  *   axis spans exactly the data, so a window that is still filling stretches across the
  *   full width. In `minutes` display `max` is the `0min` reference.
  * @availableWhen xAxis xAxisType!=category
+ * @property xMarker - Vertical marker at an x value: solid from the plot top to the
+ *   dataset's value there (`datasetIndex`, default 0), dotted below it, with a dot on
+ *   the value unless `showDot` is false. Drawn in the dataset's line colour.
+ * @property yMarker - Horizontal 2px marker across the plot at a y value, in the
+ *   dataset's line colour (`datasetIndex`, default 0).
  * @property showGrid - Show grid lines.
  * @property showGridX - Show vertical grid lines (x-axis). Default: false.
  * @availableWhen showGridX showGrid==true
@@ -415,7 +522,7 @@ export class ObcChartLineBase extends LitElement {
   data: ChartLineDataItem[] = [];
 
   @property({type: Array, attribute: false})
-  datasets?: ChartDataset<'line', ChartLinePoint[]>[] = undefined;
+  datasets?: ChartLineDataset[] = undefined;
 
   @property({type: Array, attribute: false})
   labels?: (string | number)[] = undefined;
@@ -452,6 +559,12 @@ export class ObcChartLineBase extends LitElement {
 
   @property({type: Object, attribute: false})
   xAxis?: ChartLineXAxisConfig = undefined;
+
+  @property({type: Object, attribute: false})
+  xMarker?: ChartLineXMarker = undefined;
+
+  @property({type: Object, attribute: false})
+  yMarker?: ChartLineYMarker = undefined;
 
   @property({type: Boolean})
   showGrid = false;
@@ -526,6 +639,17 @@ export class ObcChartLineBase extends LitElement {
     return this.xAxisType === XAxisType.number
       ? XValueMode.number
       : XValueMode.time;
+  }
+
+  /**
+   * `reverse` of the axis a side follows: the first axis positioned on that
+   * side, else the first entry — the selection `resolveAxisRange()` makes.
+   */
+  protected isYAxisReversed(side: 'left' | 'right' = 'left'): boolean {
+    if (!this.yAxes?.length) return false;
+    const axis =
+      this.yAxes.find((a) => (a.position ?? 'left') === side) ?? this.yAxes[0];
+    return axis.reverse ?? false;
   }
 
   /** @internal - Last data/datasets reference already warned about. */
@@ -727,6 +851,15 @@ export class ObcChartLineBase extends LitElement {
   /** @internal - Labels the range-labels plugin drew last, for tests. */
   lastRangeLabels: {axis: 'x' | 'y'; text: string; x: number; y: number}[] = [];
 
+  /** @internal - Marker pixels drawn last, for tests. */
+  lastMarkers: {x?: {x: number; y?: number; dot: boolean}; y?: {y: number}} =
+    {};
+
+  /** @internal - Ellipse clips applied last, in pixels by dataset index, for tests. */
+  get lastClips(): Record<number, ChartLineEllipseClip> {
+    return (this.chart && datasetClipRecords.get(this.chart)) ?? {};
+  }
+
   /**
    * Range labels for the current data and size, refreshed with every
    * `getChartOptions()` so the plugin never rebuilds the datasets on a draw.
@@ -904,6 +1037,126 @@ export class ObcChartLineBase extends LitElement {
   }
 
   /**
+   * Value cursors drawn after the datasets, in the dataset's own colour, so no
+   * annotation dependency is needed. A no-op while both markers are unset.
+   */
+  private createMarkersPlugin() {
+    return {
+      id: 'markers',
+      afterDatasetsDraw: (chart: Chart) => {
+        this.lastMarkers = {};
+        if (!this.xMarker && !this.yMarker) return;
+        const area = chart.chartArea;
+        const ctx = chart.ctx;
+        const datasetOf = (index = 0) =>
+          chart.data.datasets[index] as ChartLineDataset | undefined;
+        const yScaleOf = (ds?: ChartLineDataset) =>
+          chart.scales[ds?.yAxisID ?? this.primaryYAxisId];
+        const colorOf = (ds?: ChartLineDataset) =>
+          typeof ds?.borderColor === 'string'
+            ? ds.borderColor
+            : getCssVariableValue(this, LINE_GRAPH_LABEL_CONFIG.fontColorVar);
+        // Lines are clipped to the plot: a value outside the axis range maps
+        // outside it, and the canvas paints above the slotted scales.
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(
+          area.left,
+          area.top,
+          area.right - area.left,
+          area.bottom - area.top
+        );
+        ctx.clip();
+
+        let dot: {x: number; y: number; color: string} | undefined;
+        const xScale = chart.scales['x'];
+        if (this.xMarker && xScale) {
+          const ds = datasetOf(this.xMarker.datasetIndex);
+          // On a category axis a string marker names a label; a number is an index.
+          const xValue = this.isNumericXAxis
+            ? normalizeXValue(this.xMarker.x, this.xValueMode)
+            : typeof this.xMarker.x === 'number'
+              ? this.xMarker.x
+              : (chart.data.labels ?? []).indexOf(this.xMarker.x as string);
+          // A numeric axis may run negative; only a category index cannot.
+          const xValid =
+            Number.isFinite(xValue) && (this.isNumericXAxis || xValue >= 0);
+          if (xValid) {
+            const xPixel = xScale.getPixelForValue(xValue);
+            // Half-pixel alignment keeps the 1px line crisp.
+            const x = Math.round(xPixel) + 0.5;
+            // The rendered line, not the data: tension, stepped mode and gaps
+            // decide where the value sits, and a gap has no value.
+            const line = chart.getDatasetMeta(this.xMarker.datasetIndex ?? 0)
+              .dataset as LineElement | undefined;
+            const hit = line?.interpolate({x: xPixel, y: 0}, 'x');
+            const hitY = (Array.isArray(hit) ? hit[0] : hit)?.y;
+            const y = typeof hitY === 'number' ? hitY : undefined;
+            const color = colorOf(ds);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = MARKER.lineWidth;
+            ctx.setLineDash([]);
+            ctx.beginPath();
+            ctx.moveTo(x, area.top);
+            ctx.lineTo(x, y ?? area.top);
+            ctx.stroke();
+            ctx.setLineDash([...MARKER.dash]);
+            ctx.beginPath();
+            ctx.moveTo(x, y ?? area.top);
+            ctx.lineTo(x, area.bottom);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            // The dot is drawn whole, so only while its centre is on the plot.
+            const inside =
+              y !== undefined &&
+              xPixel >= area.left &&
+              xPixel <= area.right &&
+              y >= area.top &&
+              y <= area.bottom;
+            if (inside && (this.xMarker.showDot ?? true)) dot = {x, y, color};
+            this.lastMarkers.x = {x, y, dot: dot !== undefined};
+          }
+        }
+
+        if (this.yMarker) {
+          const ds = datasetOf(this.yMarker.datasetIndex);
+          const yScale = yScaleOf(ds);
+          if (yScale) {
+            const y = yScale.getPixelForValue(this.yMarker.y);
+            // The 1px silhouette below the line lifts it off a same-coloured fill.
+            ctx.lineWidth = MARKER.lineWidth;
+            ctx.strokeStyle = getCssVariableValue(this, MARKER.ringColorVar);
+            ctx.beginPath();
+            ctx.moveTo(area.left, y + MARKER.valueLineWidth / 2 + 0.5);
+            ctx.lineTo(area.right, y + MARKER.valueLineWidth / 2 + 0.5);
+            ctx.stroke();
+            ctx.lineWidth = MARKER.valueLineWidth;
+            ctx.strokeStyle = colorOf(ds);
+            ctx.beginPath();
+            ctx.moveTo(area.left, y);
+            ctx.lineTo(area.right, y);
+            ctx.stroke();
+            this.lastMarkers.y = {y};
+          }
+        }
+        ctx.restore();
+
+        if (dot) {
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(dot.x, dot.y, MARKER.dotRadius, 0, Math.PI * 2);
+          ctx.fillStyle = dot.color;
+          ctx.fill();
+          ctx.lineWidth = MARKER.dotRingWidth;
+          ctx.strokeStyle = getCssVariableValue(this, MARKER.ringColorVar);
+          ctx.stroke();
+          ctx.restore();
+        }
+      },
+    };
+  }
+
+  /**
    * Paints min / 0 / max and first / last once Chart.js has drawn, inside the
    * gutters `getChartOptions()` reserved. The end labels sit flush with the
    * plot edges so no vertical padding is needed for them.
@@ -932,15 +1185,19 @@ export class ObcChartLineBase extends LitElement {
           const x = onRight ? area.right + 8 : area.left - 8;
           ctx.textAlign = onRight ? 'left' : 'right';
           const values = yRangeLabelValues(bounds.min, bounds.max);
+          const reversed = this.isYAxisReversed(this.ySide);
           // Top-down, so the recorded order reads max, 0, min.
           for (let i = values.length - 1; i >= 0; i--) {
             const isMax = i === values.length - 1;
             const isMin = i === 0;
-            const y = isMax
-              ? area.top
-              : isMin
-                ? area.bottom
-                : scale.getPixelForValue(values[i]);
+            const isEnd = isMax || isMin;
+            // Under a reversed axis the max end sits at the plot bottom.
+            const atTop = isMax !== reversed;
+            const y = isEnd
+              ? atTop
+                ? area.top
+                : area.bottom
+              : scale.getPixelForValue(values[i]);
             // A 0 within a line of either end would collide with it.
             if (
               !isMax &&
@@ -949,7 +1206,7 @@ export class ObcChartLineBase extends LitElement {
             ) {
               continue;
             }
-            ctx.textBaseline = isMax ? 'top' : isMin ? 'bottom' : 'middle';
+            ctx.textBaseline = isEnd ? (atTop ? 'top' : 'bottom') : 'middle';
             ctx.fillText(yTexts[i], x, y);
             this.lastRangeLabels.push({axis: 'y', text: yTexts[i], x, y});
           }
@@ -1838,7 +2095,13 @@ export class ObcChartLineBase extends LitElement {
       range: {min: number; max: number}
     ): Partial<ExternalScaleElement> =>
       this.ownsSlottedScaleRange(side)
-        ? {minValue: range.min, maxValue: range.max}
+        ? {
+            minValue: range.min,
+            maxValue: range.max,
+            ...(side === 'left' || side === 'right'
+              ? {reverse: this.isYAxisReversed(side)}
+              : {}),
+          }
         : {};
 
     // Left scale
@@ -2006,6 +2269,9 @@ export class ObcChartLineBase extends LitElement {
       (slot.assignedElements() as ExternalScaleElement[]).forEach((scale) => {
         scale.minValue = range.min;
         scale.maxValue = range.max;
+        if (side === 'left' || side === 'right') {
+          scale.reverse = this.isYAxisReversed(side);
+        }
       });
     };
     apply('left', this.leftScaleSlot, this.resolveAxisRange('left'));
@@ -2380,7 +2646,12 @@ export class ObcChartLineBase extends LitElement {
       : null;
 
     const borderColor = existingDataset?.borderColor ?? currentColor;
-    const fillFlag = existingDataset?.fill ?? this.shouldApplyFill();
+    const explicitFill = existingDataset?.fill;
+    // A dataset index target of 0 is a valid fill, so test for presence, not truth.
+    const fillFlag =
+      explicitFill !== undefined
+        ? explicitFill !== false
+        : this.shouldApplyFill();
     const tension = this.lineMode === 'smooth' ? this.DEFAULT_TENSION : 0;
 
     // For stacked mode, add divider lines between datasets (except the topmost one)
@@ -2411,7 +2682,7 @@ export class ObcChartLineBase extends LitElement {
       data: existingDataset?.data ?? values!,
       yAxisID: existingDataset?.yAxisID ?? this.primaryYAxisId,
       borderColor,
-      backgroundColor,
+      backgroundColor: existingDataset?.backgroundColor ?? backgroundColor,
       borderWidth: existingDataset?.borderWidth ?? 2,
       showLine: existingDataset?.showLine ?? true,
       tension: existingDataset?.tension ?? tension,
@@ -2422,8 +2693,14 @@ export class ObcChartLineBase extends LitElement {
       pointBorderColor: existingDataset?.pointBorderColor ?? borderColor,
       pointBorderWidth: existingDataset?.pointBorderWidth ?? 2,
       stepped: existingDataset?.stepped ?? this.lineMode === 'stepped',
-      // Use 'start' to fill from chart bottom, not 'origin' (y=0)
-      fill: fillFlag ? 'start' : false,
+      // 'start' is the pixel bottom, not y=0; an explicit fill target (a
+      // dataset index, 'end', {value}) is the caller's and passes through.
+      fill:
+        explicitFill === undefined || explicitFill === true
+          ? fillFlag
+            ? 'start'
+            : false
+          : explicitFill,
       spanGaps: existingDataset?.spanGaps ?? true,
       // Add segment styling for stacked divider lines
       ...(needsDivider && {
@@ -2870,6 +3147,7 @@ export class ObcChartLineBase extends LitElement {
           position: axis.position ?? ('left' as 'left' | 'right'),
           min: axis.min,
           max: axis.max,
+          reverse: axis.reverse ?? false,
           gridDisplay: axis.grid ?? (this.showGrid && this.showGridY),
         }))
       : [
@@ -2878,17 +3156,19 @@ export class ObcChartLineBase extends LitElement {
             position: this.yAxisPosition,
             min: undefined,
             max: undefined,
+            reverse: false,
             gridDisplay: this.showGrid && this.showGridY,
           },
         ];
 
     const scalesRecord: Record<string, unknown> = {x};
 
-    yAxesConfig.forEach(({id, position, min, max, gridDisplay}) => {
+    yAxesConfig.forEach(({id, position, min, max, reverse, gridDisplay}) => {
       scalesRecord[id] = {
         type: 'linear',
         display: true,
         position,
+        reverse,
         stacked: this.shouldStack() && this.getFillMode() !== 'threshold',
         grace: isTooSmall ? 0 : undefined,
         bounds: isTooSmall ? 'data' : 'ticks',
@@ -2953,6 +3233,7 @@ export class ObcChartLineBase extends LitElement {
         ...(this.rangeLabels !== RangeLabels.none
           ? [this.createRangeLabelsPlugin()]
           : []),
+        this.createMarkersPlugin(),
       ],
     } as ChartConfiguration<'line'>);
 
