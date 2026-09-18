@@ -24,7 +24,7 @@ We invite industry partners to join our Joint Industry Project. By becoming a do
 By becoming a donor, you aren’t just supporting code—you’re joining a collaborative movement. To show our appreciation, donors receive a specialized benefits package valid for 12 months upon receipt of payment:
 
 - **Proudly Show Your Support:** You are authorized to use the official "OpenBridge Member" logo in your marketing materials and corporate communications.
-- **Early & Easy Access:** You gain the right to use all new releases of the project’s software components directly under the Apache License 2.0.
+- **Commercial License:** You can use every new release under a commercial license before its Apache 2.0 change date, without the AGPL obligations (see [LICENSE.txt](LICENSE.txt)).
 
 ### How to Support
 
@@ -38,17 +38,17 @@ We will **always remain open source**, but we have evolved our model to ensure c
 
 ### How it works:
 
-Under the new model, each release, both based on `develop` and `stable` branch, follows a "delayed" permissive license cycle:
+Under the new model, each version and each commit in the repository follows a "delayed" permissive license cycle, set out in [LICENSE.txt](LICENSE.txt):
 
-1.  **Initial Release:** Each new version is licensed under **AGPL** for the first 180 days.
-2.  **Transition:** After 180 days, the license for that specific version automatically switches to **Apache 2.0**.
-3.  **Supporter Access:** Project donors and sponsors receive **immediate access** to the code under the **Apache 2.0** license.
+1.  **Initial Release:** Each new version is licensed under **AGPL 3.0** for the first 180 days after it is first made public.
+2.  **Transition:** After 180 days (the "Change Date"), that version also becomes available under **Apache 2.0**, irrevocably.
+3.  **Supporter Access:** Project donors and sponsors can obtain a **commercial license** that permits use before the Change Date without the AGPL obligations. It does not include redistribution under Apache 2.0 before that date.
 
 > **Example:**
 > If version 1.2.2 is released on **August 14, 2026**:
 >
 > - **open-source projects and internal users** can use it immediately under AGPL.
-> - **donors** can use it immediately under **Apache 2.0**.
+> - **supporters** can use it immediately under a **commercial license**.
 > - From **February 10, 2027**, version 1.2.2 becomes available to everyone under the **Apache 2.0** license (e.g., for commercial use without AGPL restrictions).
 
 ## 💬 Slack

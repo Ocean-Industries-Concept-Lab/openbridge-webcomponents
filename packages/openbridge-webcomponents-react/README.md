@@ -28,12 +28,14 @@ We are thrilled if you would like to support the OpenBridge Web Components proje
 We invite industry partners to join our Joint Industry Project. By becoming a donor, you help secure the future of the project and gain influence over the roadmap.
 
 ### Donor Benefits
+
 By becoming a donor, you aren’t just supporting code—you’re joining a collaborative movement. To show our appreciation, donors receive a specialized benefits package valid for 12 months upon receipt of payment:
 
 - **Proudly Show Your Support:** You are authorized to use the official "OpenBridge Member" logo in your marketing materials and corporate communications.
-- **Early & Easy Access:** You gain the right to use all new releases of the project’s software components directly under the Apache License 2.0.
+- **Commercial License:** You can use every new release under a commercial license before its Apache 2.0 change date, without the AGPL obligations (see [LICENSE.txt](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/blob/develop/LICENSE.txt)).
 
 ### How to Support
+
 If you are interested in supporting the project, please fill out this **[Support Form](https://docs.google.com/forms/d/e/1FAIpQLSc6JVRyyIease2PkUArirNkG0DeTB__YnWEovjVwISlaYdktA/viewform?usp=header)**.
 
 For more information, please contact **Torstein A. Bø** at [torstein.bo@openstudio.no](mailto:torstein.bo@openstudio.no) or contact us on [Slack](https://join.slack.com/t/openbridgegroup/shared_invite/zt-2e4clvl6s-uZLkN5L3g8O~c1UZCN1reQ).
@@ -79,9 +81,7 @@ Import the desired components and use them in your React components:
 import { ObcTopBar } from "@oicl/openbridge-webcomponents-react";
 
 function App() {
-  return (
-    <ObcTopBar />
-  );
+  return <ObcTopBar />;
 }
 ```
 
