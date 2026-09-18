@@ -144,6 +144,10 @@ export enum ToggletipVariant {
  * @property secondaryButtonLabel - Label for the secondary action button.
  *   Only shown if `hasActions` is true.
  * @availableWhen secondaryButtonLabel hasActions==true
+ * @property variant - Visual style and meaning: `normal` (default) is informational, `raised`
+ *   carries a dark header for higher importance, `enhanced` marks primary
+ *   information, `eco-feedback` positive environmental feedback, and
+ *   `caution`, `warning` and `alarm` the three alert severities.
  * @slot leading-icon - Main icon representing the message type or context (shown when `hasLeadingIcon` is true)
  * @slot trailing-icon - Additional icon for secondary context or actions (shown when `hasTrailingIcon` is true)
  * @slot content - Custom content area for rich or interactive elements (shown when `hasContent` is true)
@@ -154,17 +158,6 @@ export enum ToggletipVariant {
  */
 @customElement('obc-toggletip')
 export class ObcToggletip extends LitElement {
-  /**
-   * Visual style and semantic meaning of the toggletip.
-   *
-   * - `normal` (default): Standard informational toggletip.
-   * - `raised`: Elevated importance with dark header.
-   * - `enhanced`: Used for enhanced or primary information.
-   * - `eco-feedback`: Environmental or positive feedback messaging.
-   * - `caution`: Indicates caution or minor issues.
-   * - `warning`: Highlights warnings or potential problems.
-   * - `alarm`: Signals critical or urgent conditions.
-   */
   @property({type: String}) variant = 'normal' as ToggletipVariant;
 
   @property({type: String}) override title: string = '';

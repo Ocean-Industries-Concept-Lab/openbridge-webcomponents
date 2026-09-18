@@ -57,10 +57,20 @@ export enum AutomationButtonBadgeCommandLocked {
 }
 
 /**
- * Abstract base for automation device buttons (valves, pumps, tanks).
- * Subclasses supply the device symbol through the `icon` getter and the on/off
- * state through `_on`; this class renders `<obc-automation-button>` and
- * forwards the shared slots and properties.
+ * Base class for the automation device buttons.
+ *
+ * Renders an `<obc-automation-button>` with the shared surface every device
+ * button needs: the readout stack and its status row, the alert frame, the
+ * circular progress indicator, and the four badge corners (control, alert,
+ * interlock, command-locked) with their slots and enum-driven fallbacks.
+ *
+ * ## Usage Guidelines
+ *
+ * Not registered as a custom element. A subclass supplies the device
+ * rendering through `icon`, `_on` and `_variant`, and may add rows to the
+ * readout stack through `extraReadouts`. `ObcAbstractAutomationButtonSquared`
+ * and `ObcAbstractAutomationButtonMotorized` extend it further;
+ * `obc-analog-valve` and `obc-digital-valve` extend it directly.
  *
  * ### Alert frame slots
  *

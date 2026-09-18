@@ -10,7 +10,7 @@ import './indicator-generator.js';
 const meta = {
   title: 'Automation/Indicators/Indicator Generator',
   component: 'obc-indicator-generator',
-  tags: ['autodocs', '6.0'],
+  tags: ['autodocs', '6.0', 'beta'],
   args: {
     variant: IndicatorGeneratorVariant.button,
     value: IndicatorGeneratorValue.off,

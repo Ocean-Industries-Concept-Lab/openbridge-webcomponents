@@ -128,6 +128,11 @@ export interface TreeNavigationItemAlerts extends AlertCounts {
  *   One of `regular` (default), `aggregated-header`, or `group-header`.
  * @property href - The URL to navigate to when the row is activated. If set, the row renders as
  *   a link; otherwise it acts as a button.
+ * @property alerts - Per-severity alert counts for the row's trailing badges; omit it, or leave
+ *   every count at 0, for a row with no alerts. Its `combine` flag collapses
+ *   them into one badge carrying the total and the highest severity present;
+ *   otherwise each non-zero count gets its own badge, ordered most to least
+ *   severe.
  * @slot icon - Leading icon slot (shown when `hasLeadingIcon` is true).
  * @fires {CustomEvent<boolean>} expand-toggle - Fired when an expandable row is activated; detail is the next `expanded` value.
  * @fires {CustomEvent<void>} click - Fired when the row is activated.
@@ -153,16 +158,6 @@ export class ObcTreeNavigationItem extends LitElement {
 
   @property({type: String}) terminalType: string = TreeTerminalType.regular;
 
-  /**
-   * Per-severity alert counts for the row's trailing badge(s). Omit (or leave
-   * every count at 0) for a row with no alerts. See {@link TreeNavigationItemAlerts}.
-   *
-   * - When `combine` is true, a single badge is shown: its number is the sum
-   *   of all counts and its severity is the highest category present, ranked
-   *   by `ALERT_SEVERITY_PRIORITY`.
-   * - Otherwise one badge is shown per count greater than 0, ordered most to
-   *   least severe and spaced by the alert-counter spacing token.
-   */
   @property({type: Object}) alerts?: TreeNavigationItemAlerts;
 
   @property({type: String}) href: string | undefined;

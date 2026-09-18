@@ -104,6 +104,32 @@ export {FillMode, ScaleType};
  * ></obc-gauge-trend>
  * ```
  *
+ * ### Reversed scale (0 at the top, values grow downward)
+ * ```html
+ * <obc-gauge-trend
+ *   .reverse=${true}
+ *   .minValue=${0}
+ *   .maxValue=${75}
+ *   .value=${65.3}
+ *   .chartFill=${true}
+ *   .hasScale=${true}
+ *   .data=${samples}
+ * ></obc-gauge-trend>
+ * ```
+ *
+ * ### Several series, a now-line and a value line
+ * `datasets`, `xMarker` and `yMarker` come from the chart base: explicit
+ * Chart.js styling on a dataset (`borderDash`, `fill`, `ellipseClip`…) wins
+ * over the derived defaults, and the markers follow the first dataset's colour.
+ * ```html
+ * <obc-gauge-trend
+ *   .xAxisType=${'number'}
+ *   .xAxis=${{min: -200, max: 200}}
+ *   .datasets=${[history, {label: 'Prediction', data, borderDash: [8, 4]}]}
+ *   .xMarker=${{x: 0}}
+ * ></obc-gauge-trend>
+ * ```
+ *
  * ### Time-based data with uneven intervals
  * ```html
  * <obc-gauge-trend
@@ -130,7 +156,12 @@ export {FillMode, ScaleType};
  *   When undefined, defaults to `minValue` to keep chart and scale aligned.
  * @property chartMaxValue - Maximum value for the chart y-axis.
  *   When undefined, defaults to `maxValue` to keep chart and scale aligned.
+ * @property reverse - Plot `minValue` at the top and grow downward, on both the chart
+ *   y axis and the vertical scale. The chart fill still reaches the visual bottom.
  * @property hasScale - Show scale tick marks and labels.
+ * @property showMainTickmarkLabels - Label only the main tickmarks (min / 0 / max) on the
+ *   vertical scale instead of the primary ladder.
+ * @availableWhen showMainTickmarkLabels hasScale==true
  * @property hasAdvice - Show advice overlays on the vertical scale.
  * @property fillMin - Fill origin value - the starting point for the bar fill.
  *   In both fill modes, the bar fills from this value toward the current value.
@@ -146,6 +177,27 @@ export {FillMode, ScaleType};
  * @property chartFill - Enable chart area fill.
  *   When true, fills the area under the line with semitransparent color.
  *   When false (default), renders as line-only chart.
+ * @property hasBar - Show bar on the vertical scale.
+ *   When `true`, displays a filled bar indicating the current value.
+ *   When `false`, a dot indicator is automatically shown at the value position instead.
+ * @property fillMax - Maximum fill value for the bar (only used in `'tint'` mode).
+ *   In `'fill'` mode, this property is **ignored** — the bar always fills to `value`.
+ *   In `'tint'` mode, this defines the upper bound of the highlighted range.
+ *   When `undefined`, defaults to `value`.
+ * @availableWhen fillMax hasBar==true && value!=undefined && fillMode==tint
+ * @property scaleType - Vertical scale type: `regular` (default) uses the standard tick lengths,
+ *   `condensed` the shorter ones for a compact display.
+ * @availableWhen scaleType hasScale==true
+ * @property value - Current value on the vertical scale, and the only property most callers
+ *   set: it drives the bar fill level when `hasBar` is true, the dot
+ *   indicator position when it is false, and `fillMax` when that is left
+ *   unset.
+ * @availableWhen value hasBar==true || hasScale==true
+ * @property fillMode - Bar fill mode, both measured from `fillMin` as the origin: `fill` runs to
+ *   `value` so the bar tracks the reading and `fillMax` is ignored, while
+ *   `tint` runs to `fillMax` for a fixed highlighted range independent of the
+ *   reading.
+ * @availableWhen fillMode hasBar==true && value!=undefined
  * @stable
  */
 @customElement('obc-gauge-trend')
@@ -194,6 +246,7 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
         position: 'left',
         min: this.chartMinValue ?? this.minValue,
         max: this.chartMaxValue ?? this.maxValue,
+        reverse: this.reverse,
       },
     ];
   }
@@ -252,9 +305,11 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
 
     barVertical.minValue = this.minValue;
     barVertical.maxValue = this.maxValue;
+    barVertical.reverse = this.reverse;
     barVertical.height = effectiveHeight;
     barVertical.side = 'right';
     barVertical.hasScale = this.hasScale;
+    barVertical.showMainTickmarkLabels = this.showMainTickmarkLabels;
     barVertical.hasBar = this.hasBar;
     // Bar thickness: 48 for scale mode, 24 for bar-only mode (internal, not user-configurable)
     barVertical.barThickness = this.hasScale ? 48 : 24;
@@ -320,14 +375,6 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
     barVertical.highlightCurrentValue = !this.hasBar;
   }
 
-  /**
-   * Scale type for the vertical scale.
-   * - `'regular'`: Standard tick lengths (default)
-   * - `'condensed'`: Shorter tick lengths for compact display
-   *
-   * Hidden from Storybook controls via argTypes configuration.
-   * @availableWhen hasScale==true
-   */
   @property({type: String})
   scaleType: ScaleType = ScaleType.regular;
 
@@ -343,26 +390,12 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
   @property({type: Number})
   chartMaxValue?: number = undefined;
 
-  /**
-   * Current value displayed on the vertical scale.
-   *
-   * This is the primary value property that drives:
-   * - The bar fill level (when `hasBar=true`)
-   * - The dot indicator position (when `hasBar=false`)
-   * - The `fillMax` value (when `fillMax` is not explicitly set)
-   *
-   * In typical usage, you only need to set this property to update the gauge.
-   * @availableWhen hasBar==true || hasScale==true
-   */
+  @property({type: Boolean})
+  reverse = false;
+
   @property({type: Number})
   value?: number = undefined;
 
-  /**
-   * Show bar on the vertical scale.
-   *
-   * When `true`, displays a filled bar indicating the current value.
-   * When `false`, a dot indicator is automatically shown at the value position instead.
-   */
   @property({type: Boolean})
   hasBar = false;
 
@@ -370,33 +403,17 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
   hasScale = false;
 
   @property({type: Boolean})
+  showMainTickmarkLabels = false;
+
+  @property({type: Boolean})
   hasAdvice = false;
 
-  /**
-   * Fill mode for the bar.
-   * - `'fill'`: Bar fills from `fillMin` to `value` — the bar visually tracks the current value.
-   *   The `fillMax` property is **ignored** in this mode.
-   * - `'tint'`: Bar fills from `fillMin` to `fillMax` — an explicit highlighted range.
-   *   Use this when you want to show a fixed range independent of the current value.
-   *
-   * In both modes, `fillMin` is the origin point (e.g., 0 in a -100..100 scale).
-   * @availableWhen hasBar==true && value!=undefined
-   */
   @property({type: String})
   fillMode: FillMode = FillMode.fill;
 
   @property({type: Number})
   fillMin = 0;
 
-  /**
-   * Maximum fill value for the bar (only used in `'tint'` mode).
-   *
-   * In `'fill'` mode, this property is **ignored** — the bar always fills to `value`.
-   *
-   * In `'tint'` mode, this defines the upper bound of the highlighted range.
-   * When `undefined`, defaults to `value`.
-   * @availableWhen hasBar==true && value!=undefined && fillMode==tint
-   */
   @property({type: Number})
   fillMax?: number = undefined;
 
@@ -485,7 +502,8 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
       changed.has('chartMinValue') ||
       changed.has('chartMaxValue') ||
       changed.has('minValue') ||
-      changed.has('maxValue')
+      changed.has('maxValue') ||
+      changed.has('reverse')
     ) {
       const chartMin = this.chartMinValue ?? this.minValue;
       const chartMax = this.chartMaxValue ?? this.maxValue;
@@ -495,6 +513,7 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
           position: 'left',
           min: chartMin,
           max: chartMax,
+          reverse: this.reverse,
         },
       ];
     }
@@ -528,6 +547,7 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
     const shouldUpdateScale =
       changed.has('minValue') ||
       changed.has('maxValue') ||
+      changed.has('reverse') ||
       changed.has('value') ||
       changed.has('setpoint') ||
       changed.has('newSetpoint') ||
@@ -539,6 +559,7 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
       changed.has('setpointOverride') ||
       changed.has('hasBar') ||
       changed.has('hasScale') ||
+      changed.has('showMainTickmarkLabels') ||
       changed.has('hasAdvice') ||
       changed.has('fillMode') ||
       changed.has('fillMin') ||

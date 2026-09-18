@@ -128,6 +128,30 @@ export enum TankChartMode {
  *   rather than percent, so this property has no effect there — pass a
  *   pre-formatted value through the `max-value` slot if fractional
  *   precision is needed (see the `WithFractionDigits` story).
+ * @property static - Display-only variant for a device whose current state is unknown: the
+ *   chart cell is hidden, the bordered area is filled with
+ *   `--container-section-color` and the readout is centred inside it. Always
+ *   compact-sized, so it overrides `compact`, and it renders as a
+ *   `<div role="img">` — outside the tab order and not announced as a control.
+ * @property clickable - Whether the tank is interactive. `true` renders the root as a `<button>`
+ *   with the flat-mixin interaction surface; `false` renders a `<div>` that
+ *   keeps the resting appearance (the mixin's `noClick` variant) but loses
+ *   hover, pressed and focus-visible and leaves the tab order. Everything
+ *   else — chart, badges, readout, tag and the alert frame — still renders,
+ *   so use it for a display-only tank that shows live data. No effect on a
+ *   `static` tank, which is already non-interactive.
+ * @property chartMode - Chart cell rendering mode: `bar` (default) is a static fill bar driven by
+ *   `value` and `max`, `graph` embeds an `obc-gauge-trend` line/area chart,
+ *   and `graphAndBar` embeds one with an integrated side bar.
+ * @property hasGraphIcon - Overlays a decorative icon centred on the chart cell — the energy-battery
+ *   icon for a battery tank, the generic tank icon otherwise. Works in every
+ *   `chartMode` and both orientations; the icon sits in a fixed CSS layer
+ *   above the bar or graph and is silhouetted so it stays legible on any
+ *   fill, and its size follows the ambient `obc-component-size-*` class.
+ * @property badgeControl - Control badge rendered in the `badges` cell. A non-`None` value renders an
+ *   `<obc-automation-badge>` as fallback content for the `badges` slot, so any
+ *   slotted content wins. The cell orders the four badges control, alert,
+ *   interlock, commandLocked, left to right.
  * @slot badges - Custom badges to be displayed in the badge area.
  * @slot tag - Text or element for the tank's tag/label.
  * @slot readout - Replaces the entire readout content block.
@@ -157,53 +181,11 @@ export class ObcAutomationTank extends SetpointMixin(LitElement) {
   @property({type: Boolean, reflect: true}) compact: boolean = false;
   @property({type: String, reflect: true}) positioning: TankPositioning =
     TankPositioning.button;
-  /**
-   * Static (display-only) variant. Always rendered at the compact size; the
-   * inner chart/bar is hidden, the bordered area is filled with
-   * `--container-section-color`, and the readout is centered inside the frame.
-   * Tag is rendered below the bordered area; badges (when slotted) sit above
-   * the frame inside the halo and shrink the frame just like in compact mode.
-   * Overrides `compact` (a static tank is always compact-sized).
-   *
-   * Static tanks render as a non-interactive `<div role="img">` (not a
-   * `<button>`), so they are not in the tab order and do not announce as
-   * activatable controls.
-   */
   @property({type: Boolean, reflect: true}) static: boolean = false;
-  /**
-   * Whether the tank is interactive. `true` (default) renders the root as a
-   * `<button>` with the full flat-mixin interaction surface. `false` renders a
-   * non-interactive `<div>` — the resting appearance is unchanged (same
-   * enabled-state colors and the same 1px border box, via the mixin's
-   * `noClick` variant), but the hover / pressed / focus-visible states are
-   * gone and the tank leaves the tab order.
-   *
-   * Everything else keeps rendering: the chart / bar, badges, readout, tag and
-   * the `alert` frame all behave exactly as they do on a clickable tank. Use
-   * this for a display-only tank that still shows live data — e.g. a row total
-   * aggregating the tanks beside it. For "device present, current state
-   * unknown" use `static` instead, which also hides the chart and shrinks to
-   * the compact footprint.
-   *
-   * `static` is already non-interactive, so this has no effect there.
-   *
-   * Property-only (`attribute: false`, per the repo's positive-default-true
-   * boolean convention — a `true` default cannot round-trip through an HTML
-   * boolean attribute). Set it as a property: `el.clickable = false`,
-   * `.clickable=${false}` in a Lit template, or the equivalent binding in the
-   * React / Vue / Angular / Svelte wrappers. A `clickable="false"` attribute in
-   * plain HTML is **not** observed and leaves the tank interactive.
-   */
   @property({type: Boolean, attribute: false}) clickable: boolean = true;
   @property({type: Boolean}) activated: boolean = false;
   @property({type: String}) tag: string = '';
 
-  /**
-   * Chart cell rendering mode.
-   * - `bar`: static fill bar driven by `value`/`max` (default).
-   * - `graph`: embedded `obc-gauge-trend` line/area chart.
-   * - `graphAndBar`: embedded `obc-gauge-trend` with an integrated side bar.
-   */
   @property({type: String, reflect: true, attribute: 'chart-mode'})
   chartMode: TankChartMode = TankChartMode.bar;
 
@@ -217,22 +199,6 @@ export class ObcAutomationTank extends SetpointMixin(LitElement) {
 
   @property({type: Boolean}) hasAdvice = false;
 
-  /**
-   * Overlay a 32×32 decorative icon (currently `<obi-tank>`) centered on the
-   * chart cell. Works in all three `chartMode` variants (bar, graph,
-   * graph-and-bar) and in both orientations. The icon is rendered above the
-   * bar/graph in a fixed CSS layer (does not scale with the SVG meet
-   * transform) and is silhouetted with a `--border-silhouette-color` halo so
-   * it stays legible on any underlying fill. The icon size scales with the
-   * ambient `obc-component-size-*` class on an ancestor via the design token
-   * `--automation-components-tanks-graphs-graph-icon-size` (32 → 48 → 64 → 64
-   * for regular → medium → large → xl).
-   *
-   * TODO(future): replace the hard-coded `<obi-tank>` with a `slot="graph-icon"`
-   * so consumers can pass any `<obi-*>` icon. The current API ships the
-   * smallest viable surface; the slot can be added without breaking the
-   * boolean property.
-   */
   @property({type: Boolean, attribute: false}) hasGraphIcon = false;
 
   @property({type: Boolean}) alert: boolean = false;
@@ -249,18 +215,6 @@ export class ObcAutomationTank extends SetpointMixin(LitElement) {
 
   @property({type: Number}) percentFractionDigits: number = 0;
 
-  /**
-   * Enum-driven badges rendered inside the `badges` cell. Mirrors the API
-   * introduced for `ObcAbstractAutomationButton` in PR #839 (#829). When set
-   * to a non-`None` value, an `<obc-automation-badge>` of the corresponding
-   * type is rendered as fallback content for the `badges` slot. Any content
-   * the consumer slots into `badges` overrides these defaults, preserving
-   * backward compatibility with the existing slot-based API.
-   *
-   * Render order (left → right): control, alert, interlock, commandLocked —
-   * matching the positional convention used by `ObcAbstractAutomationButton`
-   * (top-left, top-right, bottom-left, bottom-right) read row-by-row.
-   */
   @property({type: String}) badgeControl: AutomationButtonBadgeControl =
     AutomationButtonBadgeControl.None;
   @property({type: String}) badgeAlert: AutomationButtonBadgeAlert =
@@ -410,14 +364,10 @@ export class ObcAutomationTank extends SetpointMixin(LitElement) {
     changed: Map<string | number | symbol, unknown>
   ): void {
     super.updated(changed);
-    // No imperative forwarding here — child components receive `priority`
-    // via template property bindings (`.priority=${this.priority}`). Rely on
-    // their reactive `updated()` logic (e.g. `ObcGaugeTrend._updateBarVerticalProperties()`)
-    // to propagate palette changes internally.
-    // The chart cell DOM element is recreated when chartMode toggles between
-    // bar and graph modes (different class/contents), and may also appear/
-    // disappear with static/compact. Re-attach the observer to the current
-    // .bar-container instance.
+    // The chart cell element is recreated when `chartMode` moves between bar
+    // and graph, and appears or disappears with `static` and `compact`, so the
+    // observer is re-attached to the current `.bar-container`. `priority`
+    // needs no forwarding — children take it through template bindings.
     this._syncChartResizeObserver();
   }
 
@@ -494,13 +444,9 @@ export class ObcAutomationTank extends SetpointMixin(LitElement) {
   private renderAtmosphericCap(side: 'start' | 'end'): HTMLTemplateResult {
     const isHorizontal = this.orientation === TankOrientation.horizontal;
 
-    // Path data. Two variants — regular (14px tall, 12px corners) and compact
-    // (10px tall, 7px corners). Curve Y-values are proportionally scaled from
-    // the original 18/12-tall Figma reference so the corner curves stay
-    // continuous at the new thickness.
-    // Horizontal orientation reuses the same vertical path data inside an
-    // inner `<g transform="translate(0 H) rotate(-90)">`; the SVG viewBox is
-    // swapped accordingly. Cap-end is mirrored via CSS scaleY/scaleX(-1).
+    // Curve Y-values are scaled proportionally from the 18/12-tall Figma
+    // reference, so the corners stay continuous at both thicknesses
+    // (automation-components.md § Tank rendering).
     let cornerStartFill: string;
     let cornerStartStroke: string;
     let midFill: string;
@@ -533,12 +479,9 @@ export class ObcAutomationTank extends SetpointMixin(LitElement) {
       midW = 224;
       cornerStartFill =
         'M 12 6.5837 C 6.346 6.7737, 5.176 6.8744, 4.168 7.2537 C 2.6445 7.8272, 1.418 8.8983, 0.8613 10.1415 C 0.493 10.9641, 0.5 11.9099, 0.5 13.6111 L 0.5 14 L 12 14 Z';
-      // Stroke draws the curve + outer vertical edge only. The seam with
-      // `.middle` (y = capH) is painted by a 1px CSS `border-top` on
-      // `.tank-frame.type-atmospheric:not(.compact) .middle` so it pixel-
-      // snaps identically to the pressurized cap's CSS border. Drawing it
-      // as an SVG stroke here would render thinner / blurrier due to
-      // sub-pixel anti-aliasing.
+      // Curve and outer edge only: the seam with `.middle` is a 1px CSS
+      // `border-top` so it pixel-snaps like the pressurized cap's border,
+      // where an SVG stroke renders thinner and blurrier.
       cornerStartStroke =
         'M 12 6.5837 C 6.346 6.7737, 5.176 6.8744, 4.168 7.2537 C 2.6445 7.8272, 1.418 8.8983, 0.8613 10.1415 C 0.493 10.9641, 0.5 11.9099, 0.5 13.6111 L 0.5 14';
       midFill =
@@ -656,12 +599,9 @@ export class ObcAutomationTank extends SetpointMixin(LitElement) {
     const percent = Math.max(0, Math.min(100, (this.value / safeMax) * 100));
     const isCompact = this.isCompact;
 
-    // In compact/static the `.halo` is a fixed-size column flex container
-    // that holds badges + tank-frame + (compact only) readout + tag. To let
-    // the tank-frame absorb the freed space when adjacent cells are empty,
-    // we collapse the empty cells with the `hidden` attribute (see CSS).
-    // In non-compact mode cells live inside the inner `.grid` and always
-    // reserve their min-content rows — unchanged from previous behavior.
+    // Compact and static collapse their empty cells so the tank frame absorbs
+    // the space; non-compact cells sit in the inner `.grid` and always reserve
+    // their min-content rows (automation-components.md § Tank rendering).
     const controlBadge = this._badgeControlType();
     const alertBadge = this._badgeAlertType();
     const interlockBadge = this._badgeInterlockType();
@@ -706,13 +646,9 @@ export class ObcAutomationTank extends SetpointMixin(LitElement) {
         <slot name="tag" @slotchange=${this._onTagSlotChange}>${this.tag}</slot>
       </div>
     `;
-    // Static mode intentionally renders the tank's capacity (max + unit)
-    // instead of a percent reading: a static tank represents "device is
-    // present, current state unknown", so a percent value would be
-    // misleading. The trend icon is omitted for the same reason. Consumers
-    // who need a custom label can still override the whole cell via the
-    // `readout` slot, or supply formatted text through the existing
-    // `max-value` / `unit` slots (no new API).
+    // Static shows capacity rather than a percent: the state is unknown, so a
+    // reading would be a claim the tank cannot make, and the trend icon goes
+    // for the same reason (automation-components.md § Tank rendering).
     const readoutCell = this.static
       ? html`
           <div class="readout readout-compact readout-static">
@@ -765,16 +701,9 @@ export class ObcAutomationTank extends SetpointMixin(LitElement) {
               </slot>
             </div>
           `;
-    // Decorative icon overlay (centered on the chart cell). Two stacked
-    // icon elements: the back layer paints an inherited SVG `stroke` halo
-    // (the icon's paths use `fill="currentColor"`, and SVG `stroke` is
-    // inherited across the icon's shadow DOM); the front layer paints the
-    // colored fill via the `color` property. This mirrors the established
-    // silhouette pattern used by `obc-automation-button` (back-layer slot
-    // with stroke, front-layer slot with fill).
-    //
-    // The icon variant follows `type`: battery tanks show an energy-battery
-    // icon, all other types show the generic tank icon.
+    // Two stacked icons form the silhouette `obc-automation-button` uses: the
+    // back layer paints the inherited SVG `stroke` halo, the front layer the
+    // fill through `color` (automation-components.md § Tank rendering).
     const graphIconClasses = classMap({
       'graph-icon': true,
       'priority-enhanced': this.priority === Priority.enhanced,
@@ -816,13 +745,9 @@ export class ObcAutomationTank extends SetpointMixin(LitElement) {
       : null;
     let chartCell: HTMLTemplateResult;
     if (this._usesGaugeTrend) {
-      // Forward the measured cell size as the gauge-trend's width/height,
-      // which it interprets as an aspect-ratio reference. Its internal
-      // ResizeObserver then picks up its own wrapper's clientWidth (= cell
-      // width, since we set style width:100%) and computes height from the
-      // aspect ratio — so the chart matches the cell exactly. We delay
-      // rendering until both dimensions are measured to avoid a divide-by-
-      // zero in the aspect-ratio math on first paint.
+      // gauge-trend reads these as an aspect-ratio reference and derives its
+      // own height from its wrapper. Rendering waits for both measurements —
+      // a zero divides in that maths on first paint.
       const hasSize = this._cellWidth > 0 && this._cellHeight > 0;
       chartCell = html`
         <div class="bar-container chart-cell">
@@ -857,37 +782,16 @@ export class ObcAutomationTank extends SetpointMixin(LitElement) {
         </div>
       `;
     } else {
-      // Bar mode: render the shared SVG bar (`obc-bar-vertical` /
-      // `-horizontal`) — the same renderer used by gauge-trend's side bar —
-      // so advice overlays work the same way across all three chart modes.
-      //
-      // TODO(refactor): once `obc-gauge-trend` supports a bar-only layout at
-      // this size (no chart-line area), migrate this branch to gauge-trend
-      // too so all three chart modes share a single implementation.
-      //
-      // TODO(theming): the bar fill currently uses the standard instrument
-      // palette (`--instrument-regular-tertiary-color` for tint mode). The
-      // legacy CSS bar used per-medium colors (e.g. `--automation-medium-fuel`).
-      // Extend `external-scale.ts` (and the bar-vertical/-horizontal wrappers)
-      // to accept a medium / fuel color so the tank can restore its
-      // per-`medium` coloring through the shared renderer.
+      // The shared SVG bar, the renderer gauge-trend uses for its side bar, so
+      // advice overlays behave the same in all three chart modes; its fill
+      // follows the instrument palette, not the tank's `medium` colour.
+      // TODO(#1284): carry the medium colour through, and fold this branch
+      // into gauge-trend once it offers a bar-only layout at this size.
       const hasSize = this._cellWidth > 0 && this._cellHeight > 0;
-      // The inner bar always renders vertically, regardless of the tank's
-      // outer `orientation`. Only the tank's outer wrapper flips; its inner
-      // chart cell stays portrait. This matches gauge-trend behavior.
-      //
-      // Match gauge-trend's proportional sizing so advice pills (and other
-      // fixed-pixel SVG primitives) render at the same on-screen size in
-      // every chart mode. We mirror gauge-trend's defaults exactly:
-      // `fixedAspectRatio=true` + `scaleReferenceSize=384`. The bar SVG is
-      // then built in a 384-unit-tall viewBox and shrunk into the cell via
-      // `xMidYMid meet`, giving on-screen scale = cellHeight / 384.
-      //
-      // Because the meet transform scales the viewBox uniformly, we must
-      // also size `barThickness` in viewBox units (not cell pixels) so the
-      // bar still fills the cell width after scaling. We pick the viewBox
-      // cross-axis size so width-fit and height-fit ratios match exactly
-      // (no horizontal gutters): viewBoxCross = cellWidth * 384 / cellHeight.
+      // The inner bar is always portrait and mirrors gauge-trend's
+      // `fixedAspectRatio` sizing, so fixed-pixel SVG primitives keep one
+      // on-screen size; `barThickness` and the cross-axis size are therefore
+      // in viewBox units (automation-components.md § Tank rendering).
       const SCALE_REFERENCE_SIZE = 384;
       // The bar's viewBox cross-axis includes an outside-bar band for advice
       // pills and/or the setpoint marker (see computeExternalScaleLayout).
@@ -975,20 +879,10 @@ export class ObcAutomationTank extends SetpointMixin(LitElement) {
       </div>
     `;
 
-    // Whole component is one interactive element. The halo (flat-mixin
-    // border/background that appears on hover/pressed/focus) is painted on
-    // the inner `.halo` wrapper via `visibleWrapperClass`, so the surround
-    // hugs only the bordered area:
-    //   - non-compact: just the tank-frame (grid inside it carries badges,
-    //     readout, tag).
-    //   - compact: fixed-size column flex — badges, tank-frame (flex-grow),
-    //     readout, tag. Empty cells (badges/tag) collapse via `?hidden`
-    //     above so the tank-frame absorbs the freed space.
-    //   - static: same as compact but no separate readout cell (the readout
-    //     is centered INSIDE the tank-frame via `static-readout`).
-    //
-    // The alert-frame overlay is the last child of `.halo` so the ring
-    // overlays every cell (and any cell-collapse mechanics work uniformly).
+    // One interactive element: the flat mixin paints `.halo` through
+    // `visibleWrapperClass` so the surround hugs the bordered area only, and
+    // the alert-frame overlay is its last child so the ring covers every cell
+    // (automation-components.md § Tank rendering).
     let haloContents: HTMLTemplateResult;
     if (this.static) {
       haloContents = html`${badgesCell}${tankFrame}${tagCell}`;
@@ -1001,15 +895,10 @@ export class ObcAutomationTank extends SetpointMixin(LitElement) {
       <div class="halo">${haloContents}${alertFrameOverlay}</div>
     `;
 
-    // The `activated` class goes on the interactive `.root` so the shared
-    // `flat` style mixin paints the activated background/border on `.halo`
-    // (its `visibleWrapperClass`), same as the mixin's hover/pressed states.
-    //
-    // `.clickable` selects between the two flat-mixin variants in CSS: the
-    // full six-state one, or the `noClick` one that paints only the resting
-    // enabled state. `static` is already display-only, so it never counts as
-    // clickable. Same shape as `obc-elevated-card`'s `.not-clickable` split
-    // and `obc-readout-list-item`'s `.root.clickable`.
+    // Both classes sit on `.root` so the mixin paints `.halo`: `activated`
+    // like its hover and pressed states, `clickable` choosing between the
+    // six-state variant and the resting-only `noClick` one
+    // (automation-components.md § Tank rendering).
     const isClickable = this.clickable && !this.static;
     const rootClasses = classMap({
       root: true,
@@ -1017,25 +906,11 @@ export class ObcAutomationTank extends SetpointMixin(LitElement) {
       clickable: isClickable,
     });
 
-    // `aria-live="polite"` + `aria-atomic="true"` on the root so the
-    // slotted alert label (and any state change of the alert frame) is
-    // announced once when `alert` flips on. Always present — an empty live
-    // region is harmless and avoids screen-reader re-registration races.
-    // TODO(a11y): the rest of the automation component family still lacks
-    // this live-region announcement; consolidate when alert support is
-    // factored into a shared mixin.
-    // Three root shapes:
-    //   - static:            <div role="img"> — an opaque graphic standing in
-    //     for a device whose state is unknown, named by its tag.
-    //   - clickable false:  a plain <div>. Deliberately no `role="img"` and no
-    //     `aria-label` here: unlike a static tank this one still shows live
-    //     data, and both would collapse the readout into a single opaque name
-    //     and hide the percent / value / tag from screen readers. The visible
-    //     content is the accessible content. (Same reasoning as the non-
-    //     clickable branch of `obc-readout-list-item`.)
-    //   - default:           <button>.
-    // The live region stays on all three so an `alert` label is announced
-    // regardless of interactivity.
+    // The live region stays on all three root shapes, so an `alert` label is
+    // announced whatever the interactivity (automation-components.md § Tank
+    // rendering).
+    // TODO(a11y): the rest of the automation family lacks the live region;
+    // consolidate when alert support moves into a shared mixin.
     if (this.static) {
       return html`<div
         class=${rootClasses}

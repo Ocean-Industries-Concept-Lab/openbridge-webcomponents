@@ -10,6 +10,28 @@ export enum CircularProgressMode {
   progressiveIndeterminate = 'progressive-indeterminate',
 }
 
+/**
+ * `<obc-circular-progress>` — Ring-shaped progress indicator.
+ *
+ * Draws a single SVG circle whose stroke shows progress. Three modes:
+ * `determinate` sweeps the arc to `value`, `indeterminate` spins a fixed arc
+ * for work of unknown length, and `progressiveIndeterminate` spins an arc
+ * whose length grows with `value` — for work that reports rough progress.
+ *
+ * ## Usage Guidelines
+ *
+ * A building block rather than a page-level control: `obc-progress-bar`,
+ * `obc-progress-button` and the automation buttons compose it. `viewBoxSize`,
+ * `strokeWidth` and `padding` let a host match the ring to its own geometry.
+ *
+ * @property mode - Progress mode: `determinate`, `indeterminate` or `progressive-indeterminate`.
+ * @property value - Progress in percent, clamped to 0–100.
+ * @availableWhen value mode!=indeterminate
+ * @property strokeWidth - Ring stroke width in viewBox units.
+ * @property viewBoxSize - Side of the square viewBox the ring is drawn in.
+ * @property padding - Extra inset in viewBox units, shrinking the ring inside its box.
+ * @stable
+ */
 @customElement('obc-circular-progress')
 export class ObcCircularProgress extends LitElement {
   @property({type: String}) mode: CircularProgressMode =

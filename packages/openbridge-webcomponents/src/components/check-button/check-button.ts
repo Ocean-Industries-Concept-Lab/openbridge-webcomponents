@@ -103,6 +103,11 @@ export enum CheckButtonCheckboxAppearance {
  * @property hasUncheckedIcon - If true, uses the `unchecked-icon` slot for the unchecked state in checkbox mode.
  *   Otherwise, uses the default unchecked icon.
  * @availableWhen hasUncheckedIcon type==checkbox
+ * @property checked - Whether the button is currently checked (selected/on).
+ *   When clicked, this state toggles and the `check-button-click` event is fired.
+ * @property type - Visual style and toggle behaviour: `regular` (default) is a standard
+ *   button with an optional icon and label, `checkbox` is a checkbox-style
+ *   toggle with checked and unchecked icons.
  * @slot - Default slot for button label/content
  * @slot icon - Icon before label (regular mode, if showIcon is true)
  * @slot checked-icon - Custom icon for checked state (checkbox mode)
@@ -112,22 +117,9 @@ export enum CheckButtonCheckboxAppearance {
  */
 @customElement('obc-check-button')
 export class ObcCheckButton extends LitElement {
-  /**
-   * Determines the visual style and toggle behavior of the button.
-   * - `regular`: Standard button with optional icon and label.
-   * - `checkbox`: Checkbox-style toggle with checked/unchecked icons.
-   *
-   * @default 'regular'
-   */
+  /** @default 'regular' */
   @property({type: String}) type: CheckButtonType = CheckButtonType.regular;
 
-  /**
-   * Whether the button is currently checked (selected/on).
-   *
-   * When clicked, this state toggles and the `check-button-click` event is fired.
-   *
-   * @default false
-   */
   @property({type: Boolean}) checked = false;
 
   @property({type: Boolean}) disabled = false;

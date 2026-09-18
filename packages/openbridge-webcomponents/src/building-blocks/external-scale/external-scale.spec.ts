@@ -1,7 +1,8 @@
 import {describe, it, expect, vi, afterEach} from 'vitest';
-import {render, svg, type SVGTemplateResult} from 'lit';
+import {nothing, render, svg, type SVGTemplateResult} from 'lit';
 import {
   renderExternalScale,
+  valueToMainAxis,
   ExternalScaleOrientation,
   ExternalScaleSide,
   ScaleType,
@@ -150,5 +151,57 @@ describe('main tickmark labels (#1191)', () => {
       'auto',
       'hanging',
     ]);
+  });
+});
+
+describe('reverse (#1211)', () => {
+  const vertical = (overrides: Partial<ExternalScaleConfig>) =>
+    bottomScale({
+      orientation: ExternalScaleOrientation.vertical,
+      side: ExternalScaleSide.right,
+      ...overrides,
+    });
+
+  it('is inert when false', () => {
+    const plain = vertical({});
+    const off = vertical({reverse: false});
+    expect(valueToMainAxis(off, 0)).toBe(valueToMainAxis(plain, 0));
+    expect(valueToMainAxis(off, 100)).toBe(valueToMainAxis(plain, 100));
+  });
+
+  it('mirrors min and max on a vertical scale and keeps the midpoint', () => {
+    const plain = vertical({});
+    const rev = vertical({reverse: true});
+    expect(valueToMainAxis(rev, 0)).toBeCloseTo(valueToMainAxis(plain, 100));
+    expect(valueToMainAxis(rev, 100)).toBeCloseTo(valueToMainAxis(plain, 0));
+    expect(valueToMainAxis(rev, 50)).toBeCloseTo(valueToMainAxis(plain, 50));
+  });
+
+  it('mirrors on a horizontal scale too', () => {
+    const plain = bottomScale({});
+    const rev = bottomScale({reverse: true});
+    expect(valueToMainAxis(rev, 0)).toBeCloseTo(valueToMainAxis(plain, 100));
+    expect(valueToMainAxis(rev, 25)).toBeCloseTo(valueToMainAxis(plain, 75));
+  });
+
+  it('works on a range that does not start at zero', () => {
+    const plain = vertical({minValue: 20, maxValue: 60});
+    const rev = vertical({minValue: 20, maxValue: 60, reverse: true});
+    expect(valueToMainAxis(rev, 20)).toBeCloseTo(valueToMainAxis(plain, 60));
+    expect(valueToMainAxis(rev, 30)).toBeCloseTo(valueToMainAxis(plain, 50));
+  });
+
+  it('still renders a bar and a dot on a reversed scale', () => {
+    const parts = renderExternalScale(
+      vertical({
+        reverse: true,
+        hasBar: true,
+        value: 75,
+        fillMin: 0,
+        highlightCurrentValue: true,
+      })
+    );
+    expect(parts.barFill).not.toBe(nothing);
+    expect(parts.currentValueDot).not.toBe(nothing);
   });
 });

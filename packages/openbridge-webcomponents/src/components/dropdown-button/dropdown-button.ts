@@ -83,6 +83,11 @@ export type DropdownButtonOption = {
  * @property placeholder - Text shown when nothing is selected and `allowEmptySelection` is true. Default is an empty string.
  * @property openTop - If true, the dropdown menu opens above the button.
  * @property integration - If true, the select is integration style. Default is false, only for integration bar.
+ * @property options - Selectable options, each with a `value`, a `label` and an optional `level`
+ *   that indents it under the preceding option — `{value: 'xc90', label: 'XC
+ *   90', level: 2}` renders as a child row.
+ * @property type - Display type: `label` (default) is text only, `icon` is the icon alone,
+ *   `label-icon` puts the icon before the label.
  * @slot - (No named slots; all content is provided via properties)
  * @slot icon - Icon displayed at the start of the button when `type` is `icon` or `label-icon`.
  * @fires {ObcDropdownButtonChangeEvent} dropdown-change - Fires when the value of the select changes
@@ -91,15 +96,6 @@ export type DropdownButtonOption = {
  */
 @customElement('obc-dropdown-button')
 export class ObcDropdownButton extends LitElement {
-  /**
-   * List of selectable options. Each option is an object with a `value` (string), `label` (string), and optional `level` (number) for indentation/grouping.
-   *
-   * Example:
-   * [
-   *   { value: 'volvo', label: 'Volvo' },
-   *   { value: 'xc90', label: 'XC 90', level: 2 }
-   * ]
-   */
   @property({type: Array}) options: DropdownButtonOption[] = [];
 
   @property({type: String}) value: string | undefined;
@@ -111,12 +107,6 @@ export class ObcDropdownButton extends LitElement {
 
   @property({type: String}) placeholder = '';
 
-  /**
-   * Controls the button's display type.
-   * - `label`: Text label only (default)
-   * - `icon`: Icon only, no label
-   * - `label-icon`: Icon before the label
-   */
   @property({type: String}) type: DropdownButtonType = DropdownButtonType.label;
 
   @property({type: Boolean}) openTop = false;

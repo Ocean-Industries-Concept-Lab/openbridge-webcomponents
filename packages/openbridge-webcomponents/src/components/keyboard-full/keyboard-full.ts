@@ -31,7 +31,7 @@ export enum ObcKeyboardFullMode {
 }
 
 /**
- * `<obc-keyboard-full>` – A comprehensive virtual keyboard component for alphanumeric text input.
+ * `<obc-keyboard-full>` – A full virtual keyboard for alphanumeric text input.
  *
  * A full-featured on-screen keyboard that provides QWERTY layout with numeric and symbol modes,
  * designed for touch-screen interfaces where physical keyboards are unavailable or impractical.
@@ -54,8 +54,8 @@ export enum ObcKeyboardFullMode {
  *
  * - **Floating (`type="floating"`)**: Default presentation with shadow elevation and rounded corners,
  *   appearing to float above the UI. Suitable for modal or overlay contexts.
- * - **Flat (`type="flat"`)**: Minimalist presentation without shadows, designed to integrate seamlessly
- *   at the bottom of the screen or within embedded layouts. Uses a top border for subtle separation.
+ * - **Flat (`type="flat"`)**: Minimalist presentation without shadows, made to sit flush
+ *   at the bottom of the screen or inside embedded layouts. Uses a top border for subtle separation.
  *
  * ### Layout Configurations
  *

@@ -83,7 +83,19 @@ export interface GaugeRadialAdvice {
  * ```
  *
  * @element obc-rot-sector
- * @typedef {import('./rot-sector.js').GaugeRadialAdvice} GaugeRadialAdvice
+ *
+ * @property tickmarksInside - Whether to render tickmarks inside the ring.
+ * @property primaryTickmarkInterval - Interval for primary tickmarks in value units.
+ *   When undefined or <= 0, no primary tickmarks are shown.
+ * @property secondaryTickmarkInterval - Interval for secondary tickmarks in value units.
+ *   When undefined or <= 0, no secondary tickmarks are shown.
+ * @property tertiaryTickmarkInterval - Interval for tertiary tickmarks in value units.
+ *   When undefined or <= 0, no tertiary tickmarks are shown.
+ * @property hasReadout - When `true`, shows a centered `<obc-readout>` (label `ROT`, unit `DEG/min`)
+ *   under the arc with the current rate-of-turn value. Default `false`.
+ * @property label - Readout label. Default `ROT`.
+ * @property unit - Readout unit. Default `DEG/min`.
+ * @property fractionDigits - Number of fraction digits shown in the readout. Default `0`.
  * @stable
  */
 @customElement('obc-rot-sector')
@@ -118,22 +130,9 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
     return this.maxValue;
   }
   @property({type: Boolean}) showLabels: boolean = false;
-  /** Whether to render tickmarks inside the ring. */
   @property({type: Boolean}) tickmarksInside: boolean = false;
-  /**
-   * Interval for primary tickmarks in value units.
-   * When undefined or <= 0, no primary tickmarks are shown.
-   */
   @property({type: Number}) primaryTickmarkInterval: number | undefined = 50;
-  /**
-   * Interval for secondary tickmarks in value units.
-   * When undefined or <= 0, no secondary tickmarks are shown.
-   */
   @property({type: Number}) secondaryTickmarkInterval: number | undefined = 10;
-  /**
-   * Interval for tertiary tickmarks in value units.
-   * When undefined or <= 0, no tertiary tickmarks are shown.
-   */
   @property({type: Number}) tertiaryTickmarkInterval: number | undefined =
     undefined;
   @property({type: String}) priority: Priority = Priority.regular;
@@ -143,16 +142,9 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
   @property({type: Array, attribute: false}) advices: GaugeRadialAdvice[] = [];
   @property({type: Boolean}) zoomToFitArc: boolean = false;
   @property({type: Number}) rotArcExtent: number = 60;
-  /**
-   * When `true`, shows a centered `<obc-readout>` (label `ROT`, unit `DEG/min`)
-   * under the arc with the current rate-of-turn value. Default `false`.
-   */
   @property({type: Boolean}) hasReadout: boolean = false;
-  /** Readout label. Default `ROT`. */
   @property({type: String}) label = 'ROT';
-  /** Readout unit. Default `DEG/min`. */
   @property({type: String}) unit = 'DEG/min';
-  /** Number of fraction digits shown in the readout. Default `0`. */
   @property({type: Number}) fractionDigits = 0;
 
   getAngle = (v: number): number => {

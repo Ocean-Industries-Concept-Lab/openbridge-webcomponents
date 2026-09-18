@@ -59,7 +59,9 @@ export enum InstrumentFieldSize {
  *
  * @csspart label - The container for the tag and unit.
  * @csspart tag - The tag text element.
- * @deprecated
+ * @deprecated The instrument-field component is deprecated and will be removed in future releases.
+ * Please use the <obc-readout> component instead. See storybook for migration details.
+ * https://openbridge-next-storybook.web.app/?path=/docs/instruments-instrument-field-deprecated--docs
  */
 @customElement('obc-instrument-field')
 export class ObcInstrumentField extends LitElement {

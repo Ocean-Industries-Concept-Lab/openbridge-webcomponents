@@ -93,12 +93,10 @@ export function computeZoomToFitArcFrame(options: {
 
   const available = targetSize * (1 - 2 * margin);
 
-  // The binary search uses the arc-only bbox. `includeBox` is intentionally
-  // NOT applied here: forcing a fixed central region into the measured size
-  // would cap how large the arc can grow for narrow `arcAngle` values
-  // (the origin-to-arc distance would dominate). `includeBox` is applied
-  // only to the FINAL viewBox so the arc grows freely while the central
-  // element remains inside the visible viewport.
+  // The search measures the arc-only bbox: folding `includeBox` in here would
+  // let the origin-to-arc distance dominate and cap how far the arc can grow
+  // at narrow `arcAngle`. It is applied to the final viewBox instead, so the
+  // arc grows freely and the central element still fits.
   const measureSize = (radiusOffset: number) => {
     const bbox = computeAnnularArcBBox(
       areas,
