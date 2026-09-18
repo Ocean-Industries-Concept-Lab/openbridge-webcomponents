@@ -68,7 +68,7 @@ export type ObcAckAllVisibleClickEvent = CustomEvent<{
  * ### Best Practices and Constraints
  * - Only enable "ACK visible" when there are actionable, unacknowledged alerts in the current view.
  * - Use the "Shelved" tab only if your application supports shelving alerts; otherwise, omit it for simplicity.
- * - For accessibility, ensure that all alert items and action buttons are keyboard navigable.
+ * - For accessibility, keep all alert items and action buttons keyboard navigable.
  * - Do not use this component for persistent, always-on-screen alerts; use banners or dialogs for critical, persistent notifications.
  *
  * ### Example
@@ -84,6 +84,14 @@ export type ObcAckAllVisibleClickEvent = CustomEvent<{
  * </obc-alert-menu>
  * ```
  *
+ * @property hasShelved - If true, displays the "Shelved" tab and enables shelving support for alerts.
+ *   Set to false to hide the "Shelved" tab and related filtering.
+ * @property canAckAll - If true, enables the "ACK visible" button, allowing users to acknowledge all currently visible alerts in the active tab.
+ *   Should be set to true only when there are unacknowledged alerts in view.
+ * @property showSilenceButton - If true, shows the "Silence" button in the action bar.
+ *   When hidden, the "ACK visible" button expands to fill the freed space.
+ * @property showAlertListButton - If true, shows the "Alerts" navigation button in the action bar.
+ *   When hidden, the "ACK visible" button expands to fill the freed space.
  * @slot - The alerts items as ObcAlertMenuItem
  * @slot empty-<tab>-title - Custom empty-state title for the selected tab (`<tab>` is one of `unacked`, `all`, `shelved`)
  * @slot empty-<tab>-description - Custom empty-state description for the selected tab (`<tab>` is one of `unacked`, `all`, `shelved`)
@@ -98,37 +106,13 @@ export type ObcAckAllVisibleClickEvent = CustomEvent<{
  */
 @customElement('obc-alert-menu')
 export class ObcAlertMenu extends LitElement {
-  /**
-   * If true, displays the "Shelved" tab and enables shelving support for alerts.
-   * Set to false to hide the "Shelved" tab and related filtering.
-   *
-   * Default: false.
-   */
   @property({type: Boolean}) hasShelved: boolean = false;
 
-  /**
-   * If true, enables the "ACK visible" button, allowing users to acknowledge all currently visible alerts in the active tab.
-   * Should be set to true only when there are unacknowledged alerts in view.
-   *
-   * Default: false.
-   */
   @property({type: Boolean}) canAckAll: boolean = false;
 
-  /**
-   * If true, shows the "Silence" button in the action bar.
-   * When hidden, the "ACK visible" button expands to fill the freed space.
-   *
-   * Default: true.
-   */
   @property({type: Boolean, attribute: false}) showSilenceButton: boolean =
     true;
 
-  /**
-   * If true, shows the "Alerts" navigation button in the action bar.
-   * When hidden, the "ACK visible" button expands to fill the freed space.
-   *
-   * Default: true.
-   */
   @property({type: Boolean, attribute: false}) showAlertListButton: boolean =
     true;
 

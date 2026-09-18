@@ -118,6 +118,8 @@ enum NavigationItemRole {
  * @property treeBranches - Indentation columns for tree mode, assigned by `obc-navigation-menu`.
  * @property terminalType - Terminal type for the row in the Tree variant — one of `regular` (default),
  *   `aggregated-header`, or `group-header`. Has no effect in the flat variants.
+ * @property alerts - Per-severity alert counts shown as trailing badges, in the Tree variant
+ *   only. Forwarded to the underlying `obc-tree-navigation-item`.
  * @slot icon - Leading icon slot (optional, shown if provided). Set `hasIcon` to `true` to show the icon.
  * @slot trailing-icon - Trailing icon slot (optional, shown if provided). Set `hasTrailingIcon` to `true` to show.
  * @fires click - Fired when the navigation item is clicked, either as a link or as a button.
@@ -148,11 +150,6 @@ export class ObcNavigationItem extends LitElement {
 
   @property({type: String}) terminalType: string = TreeTerminalType.regular;
 
-  /**
-   * Per-severity alert counts shown as trailing badge(s) (Tree variant only).
-   * Forwarded to the underlying `obc-tree-navigation-item`. See
-   * {@link TreeNavigationItemAlerts}.
-   */
   @property({type: Object}) alerts?: TreeNavigationItemAlerts;
 
   @query('a') private anchorElement?: HTMLAnchorElement;

@@ -72,6 +72,14 @@ import {customElement} from '../../decorator.js';
  * </obc-card>
  * ```
  *
+ * @property hasDialog - Enables dialog mode. When true, the card acts as a button and opens a modal dialog on click.
+ *   When `hasDialog` is false, the card is a static container. When true, clicking the card opens a modal dialog overlay, displaying content from the `dialog-title` and `dialog-content` slots.
+ * @property dialogTimeOutSeconds - Total time in seconds before the dialog auto-closes. Use `0` to disable auto-close.
+ *   When greater than zero, the dialog closes after this duration unless reset by user activity. The countdown indicator appears for the last `dialogVisibleTimerSeconds` seconds.
+ * @availableWhen dialogTimeOutSeconds hasDialog==true
+ * @property dialogVisibleTimerSeconds - Duration in seconds for which the countdown indicator is shown before auto-dismiss.
+ *   The countdown indicator is visible for the last `dialogVisibleTimerSeconds` seconds of the dialog's lifetime when auto-close is enabled. User activity resets the timer.
+ * @availableWhen dialogVisibleTimerSeconds hasDialog==true
  * @slot title - Card header/title slot.
  * @slot - Default slot for main card content.
  * @slot dialog-title - Dialog overlay header/title (shown when `hasDialog` is true).
@@ -81,33 +89,10 @@ import {customElement} from '../../decorator.js';
 @customElement('obc-card')
 export class ObcCard extends LitElement {
   @property({type: Boolean, attribute: false}) showTitle: boolean = true;
-  /**
-   * Enables dialog mode. When true, the card acts as a button and opens a modal dialog on click.
-   *
-   * When `hasDialog` is false, the card is a static container. When true, clicking the card opens a modal dialog overlay, displaying content from the `dialog-title` and `dialog-content` slots.
-   *
-   * @default false
-   */
   @property({type: Boolean}) hasDialog = false;
 
-  /**
-   * Total time in seconds before the dialog auto-closes. Use `0` to disable auto-close.
-   *
-   * When greater than zero, the dialog closes after this duration unless reset by user activity. The countdown indicator appears for the last `dialogVisibleTimerSeconds` seconds.
-   *
-   * @default 20
-   * @availableWhen hasDialog==true
-   */
   @property({type: Number}) dialogTimeOutSeconds = 20;
 
-  /**
-   * Duration in seconds for which the countdown indicator is shown before auto-dismiss.
-   *
-   * The countdown indicator is visible for the last `dialogVisibleTimerSeconds` seconds of the dialog's lifetime when auto-close is enabled. User activity resets the timer.
-   *
-   * @default 10
-   * @availableWhen hasDialog==true
-   */
   @property({type: Number}) dialogVisibleTimerSeconds = 10;
 
   @query('dialog') dialog!: HTMLDialogElement;

@@ -69,3 +69,28 @@ npx vitest run --project storybook corner
   drops the wrapper workspaces from the lock. Check the lock diff afterwards:
   wrapper version lines follow those generated files, which can lag the
   release.
+
+## Publishing
+
+The package is published by hand: it is not in `.releaserc.json`, so a core
+release does not touch it and its version line is its own, unrelated to the
+core's `2.0.0-next.N`.
+
+```bash
+npm login --scope=@oicl
+npm publish              # from packages/connector-diagram
+```
+
+`prepack` runs `npm run build`, so `npm publish` and `npm pack` always compile
+`dist/` first — it is gitignored and never committed. Verify with
+`npm pack --dry-run` before publishing: the tarball must carry `dist/`, the
+README and all three licence files. A tarball of three files means `prepack`
+did not run.
+
+`files` lists the licence files explicitly. npm auto-includes `LICENSE.txt`
+only, and `LICENSE.txt` is meaningless without the `LICENSE-AGPL.txt` and
+`LICENSE-APACHE.txt` it refers to.
+
+A local publish gets no npm provenance; `release.yml` sets
+`NPM_CONFIG_PROVENANCE` for the six packages it publishes, and this one is not
+among them ([`ci-and-release.md`](../../docs/agents/ci-and-release.md)).

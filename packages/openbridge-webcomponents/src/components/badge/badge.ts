@@ -149,57 +149,36 @@ export enum BadgeVariant {
  *
  * In this example, the badge displays an alarm icon and the number 3.
  *
+ * @property number - The number to display in the badge. Set to 0 for no count.
+ *   If `showNumber` is false, the number is hidden.
+ * @availableWhen number showNumber==true
+ * @property showNumber - Shows the number in the badge when true.
+ *   Set to `false` for symbolic or icon-only badges.
+ * @property type - Visual style/type of the badge.
+ *   Possible values: `regular`, `alarm`, `warning`, `caution`, `level-critical`, `level-high`, `level-medium`, `level-low`, `level-diagnostic`, `running`, `notification`, `enhance`, `automation`, `outline`, `empty`.
+ *   Defaults to `regular`.
+ * @property size - Badge size.
+ *   Possible values: `regular` (default), `large`.
+ * @property showIcon - Whether to show an icon in the badge.
+ *   For built-in types (`alarm`, `warning`, `caution`, the `level-*` severities, and `running`), a contextual icon is shown automatically.
+ *   For other types, provide a custom icon in the `badge-icon` slot.
+ * @property variant - Badge variant: `default` has a filled background and border, `flat` a
+ *   minimal background and outline.
  * @slot badge-icon - Custom icon slot for badge types that do not have a built-in icon (e.g., notification, enhance, automation, outline, or custom types).
  * @beta
  */
 @customElement('obc-badge')
 export class ObcBadge extends LitElement {
-  /**
-   * The number to display in the badge. Set to 0 for no count.
-   *
-   * If `showNumber` is false, the number is hidden.
-   *
-   * @availableWhen showNumber==true
-   */
   @property({type: Number}) number = 0;
 
-  /**
-   * Shows the number in the badge when true.
-   *
-   * Set to `false` for symbolic or icon-only badges.
-   */
   @property({type: Boolean, attribute: false}) showNumber: boolean = true;
 
-  /**
-   * Visual style/type of the badge.
-   *
-   * Possible values: `regular`, `alarm`, `warning`, `caution`, `level-critical`, `level-high`, `level-medium`, `level-low`, `level-diagnostic`, `running`, `notification`, `enhance`, `automation`, `outline`, `empty`.
-   *
-   * Defaults to `regular`.
-   */
   @property({type: String}) type: string = BadgeType.regular;
 
-  /**
-   * Badge size.
-   *
-   * Possible values: `regular` (default), `large`.
-   */
   @property({type: String}) size: string = BadgeSize.regular;
 
-  /**
-   * Badge variant.
-   *
-   * - `default`: Filled background and border (default).
-   * - `flat`: Minimal background and outline.
-   */
   @property({type: String}) variant: BadgeVariant = BadgeVariant.default;
 
-  /**
-   * Whether to show an icon in the badge.
-   *
-   * For built-in types (`alarm`, `warning`, `caution`, the `level-*` severities, and `running`), a contextual icon is shown automatically.
-   * For other types, provide a custom icon in the `badge-icon` slot.
-   */
   @property({type: Boolean}) showIcon = false;
 
   private get effectiveType(): string {

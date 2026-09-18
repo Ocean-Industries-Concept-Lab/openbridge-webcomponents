@@ -182,8 +182,8 @@ export class ObcHeading extends LitElement {
     this._headingSp.dispose();
   }
 
-  // @ts-expect-error TS6133: The controller ensures that the render
-  // function is called on resize of the element
+  // @ts-expect-error TS6133: the controller calls the render function on
+  // resize of the element
   private _resizeController = new ResizeController(this, {});
 
   /**

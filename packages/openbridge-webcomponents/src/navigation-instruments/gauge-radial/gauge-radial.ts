@@ -125,7 +125,24 @@ const READOUT_META_Y_180 = -73.472;
  * ```
  *
  * @element obc-gauge-radial
- * @typedef {import('./gauge-radial.js').GaugeRadialAdvice} GaugeRadialAdvice
+ *
+ * @property tertiaryTickmarkInterval - Interval for tertiary tickmarks in value units.
+ *   When undefined or <= 0, no tertiary tickmarks are shown.
+ * @property advices - Caution/alert arcs. Ignored on `sector: 90-left` / `90-right`.
+ * @property horizontalAlignment - Horizontal placement of the dial when the host is wider than the dial
+ *   (e.g. a short, wide container shrinks the dial to fit the height, leaving
+ *   horizontal slack). Default `center`.
+ * @property verticalAlignment - Vertical placement of the dial when the host is taller than the dial
+ *   (e.g. a tall, narrow container shrinks the dial to fit the width, leaving
+ *   vertical slack). Default `center`.
+ * @property hasReadout - When `true`, shows the centre `<obc-readout>`(s) with the current value
+ *   (and optional `label`/`unit`). Layout depends on `sector` and `type`.
+ *   Default `false`.
+ * @property faceDiameter - Outer-ring diameter in CSS pixels. When set, the instrument renders at a
+ *   fixed intrinsic size derived from the ring, arc shape and label reserve —
+ *   so instruments sharing the same value have identical ring circumference
+ *   regardless of label width or arc extent (like obc-donut-chart's
+ *   fixedHeight). When unset (default), the instrument fills its container.
  * @stable
  */
 @customElement('obc-gauge-radial')
@@ -136,10 +153,6 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
   @property({type: Boolean}) showLabels: boolean = false;
   @property({type: Number}) primaryTickmarkInterval = 50;
   @property({type: Number}) secondaryTickmarkInterval = 10;
-  /**
-   * Interval for tertiary tickmarks in value units.
-   * When undefined or <= 0, no tertiary tickmarks are shown.
-   */
   @property({type: Number}) tertiaryTickmarkInterval: number | undefined =
     undefined;
   @property({type: String}) state: InstrumentState = InstrumentState.active;
@@ -149,41 +162,18 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
   @property({type: Boolean}) tickmarksInside: boolean = false;
   @property({type: String}) tickmarkStyle: TickmarkStyle =
     TickmarkStyle.regular;
-  /** Caution/alert arcs. Ignored on `sector: 90-left` / `90-right`. */
   @property({type: Array, attribute: false}) advices: GaugeRadialAdvice[] = [];
   @property({type: String, reflect: true}) sector: GaugeRadialSector =
     GaugeRadialSector.deg270;
-  /**
-   * Horizontal placement of the dial when the host is wider than the dial
-   * (e.g. a short, wide container shrinks the dial to fit the height, leaving
-   * horizontal slack). Default `center`.
-   */
   @property({type: String})
   horizontalAlignment: GaugeRadialHorizontalAlignment =
     GaugeRadialHorizontalAlignment.center;
-  /**
-   * Vertical placement of the dial when the host is taller than the dial
-   * (e.g. a tall, narrow container shrinks the dial to fit the width, leaving
-   * vertical slack). Default `center`.
-   */
   @property({type: String}) verticalAlignment: GaugeRadialVerticalAlignment =
     GaugeRadialVerticalAlignment.center;
-  /**
-   * When `true`, shows the centre `<obc-readout>`(s) with the current value
-   * (and optional `label`/`unit`). Layout depends on `sector` and `type`.
-   * Default `false`.
-   */
   @property({type: Boolean}) hasReadout = false;
   @property({type: String}) label = '';
   @property({type: String}) unit = '';
   @property({type: Number}) fractionDigits = 0;
-  /**
-   * Outer-ring diameter in CSS pixels. When set, the instrument renders at a
-   * fixed intrinsic size derived from the ring, arc shape and label reserve —
-   * so instruments sharing the same value have identical ring circumference
-   * regardless of label width or arc extent (like obc-donut-chart's
-   * fixedHeight). When unset (default), the instrument fills its container.
-   */
   @property({type: Number, attribute: 'face-diameter', reflect: true})
   faceDiameter: number | undefined;
 

@@ -85,6 +85,11 @@ const MIN_ARC_HALF_DEG = 2;
  *   `center ± arcAngle`. Default `30` reproduces the historical 60°-wide
  *   arcs; smaller values produce narrower arcs that, combined with
  *   `zoomToFitArc`, reveal more detail in the relevant motion range.
+ * @property pitchArcAngle - Per-axis override for the pitch arcs, top and bottom, falling back to
+ *   `arcAngle` when undefined — for rectangular layouts where pitch and roll
+ *   need different angular extents.
+ * @property rollArcAngle - Per-axis override for the roll arcs, left and right, falling back to
+ *   `arcAngle` when undefined.
  * @stable
  */
 @customElement('obc-pitch-roll')
@@ -116,16 +121,7 @@ export class ObcPitchRoll extends LitElement {
   @property({type: Number}) fractionDigits = 0;
   @property({type: Boolean}) zoomToFitArc: boolean = false;
   @property({type: Number}) arcAngle: number = 30;
-  /**
-   * Optional per-axis override for the pitch arcs (top + bottom). Falls
-   * back to {@link arcAngle} when undefined. Useful for rectangular layouts
-   * where pitch and roll need different angular extents.
-   */
   @property({type: Number}) pitchArcAngle?: number;
-  /**
-   * Optional per-axis override for the roll arcs (left + right). Falls
-   * back to {@link arcAngle} when undefined.
-   */
   @property({type: Number}) rollArcAngle?: number;
 
   private priorityFor(element: PitchRollPriorityElement): Priority {
@@ -381,14 +377,9 @@ export class ObcPitchRoll extends LitElement {
       );
       // Display scale: how many container px per obc-watch SVG unit.
       const scale = (CENTRE_HALF * 2) / subArcFrame.width;
-      // Outer- and inner-arc circle radii of the band, in central
-      // (container) px. The watch renders the area between
-      // (OUTER_RING_RADIUS + radiusOffset) and (innerRingRadius +
-      // radiusOffset), so radiusOffset shifts BOTH radii (band
-      // thickness stays constant). Both arcs are centred at the watch's
-      // SVG origin; that origin sits at central-coords (0, outerR-OR)
-      // along the band's cardinal direction (= outerR-OR below centre
-      // for the top band).
+      // Band radii in container px. `radiusOffset` shifts both, so the band
+      // keeps its thickness; both arcs are centred on the watch SVG origin,
+      // which sits `outerR - OR` along the band's cardinal direction.
       const outerR = (OUTER_RING_RADIUS + baseFrame.radiusOffset) * scale;
       const innerR = (innerNat + baseFrame.radiusOffset) * scale;
       return {subArcFrame, outerR, innerR};
@@ -400,41 +391,32 @@ export class ObcPitchRoll extends LitElement {
     const pitchFrame = buildFrame(pitchReq);
     const rollFrame = buildFrame(rollReq);
 
-    // ---- Method A: shorten visible arc to clear adjacent corners --------
-    // The frames stay UNCHANGED; only the half-extent passed to the
-    // band's `areas` shrinks. obc-watch then renders a shorter arc with
-    // its native rounded end-caps — same band thickness, same position,
-    // same zoom level.
-    //
-    // Geometry of one band (top, cardinal = -y in container coords):
-    //   outer-edge endpoint at angle θ from cardinal
-    //     P_out(θ) = (outerR·sin θ, (outerR − OR) − outerR·cos θ)
-    //   inner-edge endpoint at angle θ
-    //     P_in(θ)  = (innerR·sin θ, (outerR − OR) − innerR·cos θ)
-    // The right band is the same template rotated 90° CW
-    // (CSS rotate(90deg)): (x, y) → (−y, x).
-    //
-    // For pitch–roll layout the binding constraint is the diagonal
-    // gap between the top band's right corners and the right band's
-    // top corners (and analogously for the other three diagonals). Two
-    // pairs need to clear each other:
-    //   (a) inner-corner vs inner-corner   (P1 = P_in_top(+aP),
-    //                                       Q1 = rotate(P_in_right(−aR)))
-    //   (b) outer-corner vs outer-corner   (P2 = P_out_top(+aP),
-    //                                       Q2 = rotate(P_out_right(−aR)))
-    // Cap-line endpoints lie on the same arcs so any other point on
-    // the cap is at least as far away.
-    //
-    // Define a SIGNED diagonal gap: positive when the two corners are
-    // diagonally clear (both Δx > 0 AND Δy > 0), negative when either
-    // projection has crossed (i.e. the bands overlap). Its magnitude
-    // is the Euclidean distance between the corner pair. We bisect on
-    // a scalar s ∈ [0, 1] (aP = pitchReq·s, aR = rollReq·s) so the
-    // requested pitch:roll RATIO is preserved, until the MIN of the
-    // inner and outer signed gaps equals CORNER_GAP_PX.
+    // Corner clearance is bought by shortening the visible arc, never by
+    // moving the frames: only the half-extent passed to the band's `areas`
+    // shrinks, so thickness, position and zoom stay as the standalone
+    // instrument renders them.
     const OR = OUTER_RING_RADIUS;
     const aPreqRad = degToRad(pitchReq);
     const aRreqRad = degToRad(rollReq);
+    /**
+     * Signed diagonal gap between one corner pair, in container px.
+     *
+     * A band's edge endpoints at angle θ from its cardinal are
+     * `P_out(θ) = (outerR·sinθ, (outerR − OR) − outerR·cosθ)` on the outer
+     * edge and `P_in(θ)` with `innerR` on the inner edge; the right band is
+     * that template rotated 90° clockwise, `(x, y) → (−y, x)`. What binds the
+     * pitch–roll layout is the diagonal between the top band's right corners
+     * and the right band's top corners: inner-corner against inner-corner and
+     * outer-corner against outer-corner. Cap-line endpoints lie on the same
+     * arcs, so every other point of the cap is at least as far away.
+     *
+     * The result is positive when the pair is diagonally clear — both Δx and
+     * Δy positive — and negative once either projection has crossed, its
+     * magnitude being the Euclidean distance between the corners. The caller
+     * bisects on a scalar `s ∈ [0, 1]` (`aP = pitchReq·s`, `aR = rollReq·s`),
+     * which preserves the requested pitch-to-roll ratio, until the smaller of
+     * the inner and outer gaps reaches `CORNER_GAP_PX`.
+     */
     const signedDist = (
       px: number,
       py: number,
@@ -521,16 +503,18 @@ export class ObcPitchRoll extends LitElement {
       ...arcTickmarks(0, rollClampedDeg),
     ];
 
-    // Clip each sub-watch to the angular sector actually covered by the
-    // (possibly shortened) arc so the indicator pill and bar end-of-range
-    // limit lines cannot leak past the visible band when the value falls
-    // outside the clamped range. Advices are clamped to the band extent
-    // in `subAdvices` so they fit naturally and are not affected by this
-    // clip. The clip is a triangle in the element's CSS box, with one
-    // vertex at the watch origin (SVG 0,0 mapped to CSS px) and two
-    // vertices at the intersection of the sector edges with the top edge
-    // of the box. Applied in unrotated local coords; CSS rotation then
-    // carries it to the correct cardinal side.
+    /**
+     * Clip path for one sub-watch, covering the angular sector the arc
+     * actually draws.
+     *
+     * Without it the indicator pill and the bar's end-of-range limit lines
+     * leak past the visible band whenever the value falls outside the clamped
+     * range; advices are clamped to the band extent in `subAdvices`, so the
+     * clip never touches them. The shape is a triangle in the element's CSS
+     * box — one vertex at the watch origin, two where the sector edges meet
+     * the top edge — built in unrotated local coordinates, so the CSS
+     * rotation carries it to the right cardinal side.
+     */
     const sectorClip = (
       halfDeg: number,
       frame: typeof rollFrame.subArcFrame

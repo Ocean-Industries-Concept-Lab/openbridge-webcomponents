@@ -224,6 +224,19 @@ const LABELED_ARROW_TPL = svg`
  * Pass the wind speed in knots through `currentWindSpeedKnots`, matching
  * the convention used by `<obc-wind>`, `<obc-wind-propulsion>` and
  * `<obc-compass>`.
+ *
+ * @property rotationAngle - Rotation of the reference frame (course/heading) in degrees.
+ *   This could be the heading or the course of the vessel.
+ *   `0` means north-up.
+ * @property currentWindSpeedKnots - Wind speed in knots, snapped to the nearest authored bucket of the
+ *   wind-barb icon set — `<obi-wind-true-N>` for the arrow and labeled
+ *   variants, the finer `<obi-wind-shaft-N>` family for the shaft variant.
+ *   Calm (`0`) and shaft-only (`1`) cover the lowest two ranges and 5-knot
+ *   steps follow up to the heaviest icon; anything beyond it snaps to that
+ *   icon, and a non-finite or negative value falls back to calm.
+ * @property currentWindFromDirection - Direction the wind comes from, in degrees: `0` or `360` is wind from the
+ *   north, so the marker points down, and `180` is wind from the south, so it
+ *   points up.
  * @stable
  */
 @customElement('obc-wind-indicator')
@@ -236,36 +249,11 @@ export class ObcWindIndicator extends LitElement {
   @property({type: String}) priority: WindIndicatorPriority =
     WindIndicatorPriority.regular;
 
-  /**
-   * Wind speed in **knots**, used to pick the wind-barb icon.
-   *
-   * The value is snapped to the nearest authored knots bucket in the
-   * Figma icon set: `<obi-wind-true-N>` for the arrow / labeled
-   * variants and the higher-granularity `<obi-wind-shaft-N>` family
-   * for the shaft variant. Sub-pennant calm (`0`) and shaft-only (`1`)
-   * buckets cover the lowest two ranges; thereafter the buckets follow
-   * 5-knot steps up to the heaviest authored icon, with values beyond
-   * that snapping to it. Non-finite or negative values fall back to
-   * calm.
-   */
   @property({type: Number, attribute: 'current-wind-speed-knots'})
   currentWindSpeedKnots = 0;
 
-  /**
-   * Rotation of the reference frame (course/heading) in degrees.
-   *
-   * This could be the heading or the course of the vessel.
-   * `0` means north-up.
-   */
   @property({type: Number, attribute: 'rotation-angle'}) rotationAngle = 0;
 
-  /**
-   * Primary wind direction input (wind-from).
-   *
-   * Represents the direction the wind comes **from** in degrees.
-   * - `0` / `360`: wind from north → marker points south (down)
-   * - `180`: wind from south → marker points north (up)
-   */
   @property({type: Number, attribute: 'current-wind-from-direction'})
   currentWindFromDirection = 0;
 

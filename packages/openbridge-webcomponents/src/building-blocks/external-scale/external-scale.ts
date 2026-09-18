@@ -355,7 +355,7 @@ export function computeExternalScaleEffectiveBarThickness(
  * In condensed mode, ticks are shorter (max 10px for primary/main + 4px gap = 14px),
  * so the tick band doesn't need to be as thick as in regular mode (20px + 4px = 24px).
  *
- * This function ensures that:
+ * The result:
  * - In regular mode: tickThickness is used as-is (minimum 24px for full-length ticks)
  * - In condensed mode: tickThickness is capped at 14px (10px tick + 4px gap)
  *
@@ -1111,15 +1111,9 @@ function colors(config: ExternalScaleConfig): {
   markerStrokeColor: string;
   setpointColor: string;
 } {
-  // TODO(theming): extend the color resolution to support domain-specific
-  // palettes (e.g. automation medium / fuel colors used by `obc-automation-tank`'s
-  // legacy CSS bar — `--automation-medium-fuel`, `--automation-fresh-water`,
-  // etc.). Today the bar fill is locked to the instrument regular/enhanced
-  // palette; tanks rendered through this renderer therefore lose their
-  // per-`medium` coloring. A new optional `colorVariant` (or similar) on
-  // `ExternalScaleConfig`, plumbed through `obc-bar-vertical` /
-  // `obc-bar-horizontal`, would let the tank pass its medium token and
-  // restore the legacy look without forking the renderer.
+  // TODO(#1284): the bar fill is locked to the instrument regular/enhanced
+  // palette, so a tank drawn through this renderer loses its per-`medium`
+  // colour.
   const isEnhanced = config.priority === Priority.enhanced;
   // Fill mode uses secondary color, tint mode uses tertiary color
   let barFillColor =
@@ -1916,12 +1910,10 @@ function generateBarFill(
 ): SVGTemplateResult | typeof nothing {
   if (!config.hasBar || config.value === undefined) return nothing;
 
-  // NOTE:
-  // The bar container can have a larger radius (driven by component size CSS vars).
-  // When the fill segment is short, rounding the fill geometry directly must clamp the
-  // radius to avoid self-intersection, which makes the fill appear to ignore the larger
-  // radius. Instead, render the fill as a plain rect and clip it with the exact same
-  // shape as the bar container so the visible corners always match.
+  // Rounding the fill geometry directly would have to clamp the radius on a
+  // short segment to avoid self-intersection, and the fill would then look
+  // like it ignores the container's larger radius. A plain rect clipped by
+  // the container's own shape keeps the visible corners matching.
 
   // Clip-path id: only needs to be unique within the current <svg>.
   const clipId = `obc-bar-fill-clip-${Math.random().toString(36).slice(2)}`;
@@ -2590,16 +2582,9 @@ function generateCurrentValueDot(
   // Position on main axis (value to coordinate)
   const pos = valueToMainAxis(config, config.value);
 
-  // Position on perpendicular axis:
-  // The dot should be in the scale band, touching its inner edge (towards the chart/bar)
-  //
-  // The scale background (when shown) spans from barEdge to barEdge+backgroundThickness
-  // where backgroundThickness = mainTickLength + gap (e.g., 10+4=14 for condensed)
-  //
-  // For the dot to touch the INNER edge (toward chart) and stay INSIDE the scale band:
-  // - Inner edge of scale background = barEdge (or 0 if no bar)
-  // - Dot's inner edge should be at the inner edge of the scale band
-  // - So dot center = innerEdge + visualRadius
+  // The dot sits inside the scale band, touching the inner edge that faces
+  // the chart or bar — that edge is `barEdge`, or 0 without a bar — so its
+  // centre is one visual radius further out.
   const base = tickBasePerp(config);
 
   // Dot center should be positioned so the dot's inner edge touches the scale band's inner edge

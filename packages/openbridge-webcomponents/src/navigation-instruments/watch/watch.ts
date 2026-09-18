@@ -494,12 +494,11 @@ export class ObcWatch extends LitElement {
 
   private watchCircle(): SVGTemplateResult | SVGTemplateResult[] {
     const rings = [];
-    // Full-face circle behind everything, split in two: the fill goes under
-    // the rings and the outline goes on top of them — the masked track band
-    // reaches exactly the face radius, so an outline drawn underneath would
-    // lose its inner half wherever the band overlaps it and look thinner
-    // there than across the open sector gap. In the ring branch the existing
-    // outer ring already outlines the face, so only the fill applies.
+    // The face circle is split: fill under the rings, outline over them. The
+    // masked track band reaches exactly the face radius, so an outline drawn
+    // underneath loses its inner half where the band overlaps and reads
+    // thinner there than across the sector gap. The ring branch needs only
+    // the fill — its outer ring already outlines the face.
     const faceFill =
       this.hasBackgroundCircle && this.state !== InstrumentState.off
         ? svg`
@@ -1058,12 +1057,11 @@ export class ObcWatch extends LitElement {
       ? this.advices.map((a) => renderAdvice(a, rOff))
       : nothing;
 
-    // Compute label positions once – used for both rendering and crosshair
-    // knockout. NSWE labels are px-fixed outside decor, so they follow the
-    // same labelsHidden degradation as tick label texts. The north arrow is
-    // exempt: below the small-scale threshold it renders as a compact
-    // triangle at the ring that scales with the face, so it stays visible
-    // on the smallest faces without clipping.
+    // NSWE labels are px-fixed outside decor, so they degrade with
+    // `labelsHidden` like the tick label texts. The north arrow is exempt:
+    // below the small-scale threshold it becomes a compact triangle at the
+    // ring that scales with the face, so it survives the smallest faces
+    // without clipping.
     const showNsweLabels = this.showLabels && !this._labelsHidden;
     const showNorthArrow = this.northArrow;
     const insideLabels = this.tickmarksInside && showNsweLabels;
