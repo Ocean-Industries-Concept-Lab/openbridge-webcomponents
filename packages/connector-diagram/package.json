@@ -3,6 +3,12 @@
   "version": "0.1.0",
   "description": "Canvas-based pipe/connector diagram renderer for OpenBridge",
   "license": "AGPL-3.0-only",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents.git",
+    "directory": "packages/connector-diagram"
+  },
+  "homepage": "https://www.openbridge.no",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -14,9 +20,13 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "LICENSE.txt",
+    "LICENSE-AGPL.txt",
+    "LICENSE-APACHE.txt"
   ],
   "scripts": {
+    "prepack": "npm run build",
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "example": "vite serve example --open",
@@ -43,6 +53,9 @@
     "typescript": "^5.5.0",
     "vite": "^7.3.1",
     "vitest": "^4.0.18"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "overrides": {
     "storybook": "$storybook"
