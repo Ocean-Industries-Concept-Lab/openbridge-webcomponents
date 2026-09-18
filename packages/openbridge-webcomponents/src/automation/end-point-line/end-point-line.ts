@@ -10,8 +10,8 @@ export enum EndPointDirection {
 }
 
 /**
- *  * @deprecated The line components are deprecated and will be removed in future releases.
- * Please use the @oicl/connector-diagram package instead.
+ * @deprecated The line components are deprecated and will be removed in future releases.
+ * Please use the `@oicl/connector-diagram` package instead.
  */
 @customElement('obc-end-point-line')
 export class ObcEndPointLine extends LitElement {

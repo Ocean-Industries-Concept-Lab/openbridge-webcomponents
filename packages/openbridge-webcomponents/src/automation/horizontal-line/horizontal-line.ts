@@ -4,8 +4,8 @@ import {LineMedium, lineColor, LineType, lineWidth} from '../index.js';
 import {customElement} from '../../decorator.js';
 
 /**
- *  * @deprecated The line components are deprecated and will be removed in future releases.
- * Please use the @oicl/connector-diagram package instead.
+ * @deprecated The line components are deprecated and will be removed in future releases.
+ * Please use the `@oicl/connector-diagram` package instead.
  */
 @customElement('obc-horizontal-line')
 export class ObcHorizontalLine extends LitElement {
