@@ -10,6 +10,7 @@ import {
   YAxisPosition,
   LineMode,
   TimeDisplay,
+  type ChartLineDataset,
 } from './chart-line-base.js';
 import {AreaFillMode} from '../../bars-graphs/area-graph/area-graph.js';
 import {
@@ -1164,4 +1165,158 @@ export const FixedAspectRatioScaling: StoryObj = {
       </div>
     `;
   },
+};
+
+/** Distance along the x axis; negative is behind the origin, positive ahead. */
+const along = (
+  from: number,
+  to: number,
+  step: number,
+  f: (x: number) => number
+) =>
+  Array.from({length: Math.round((to - from) / step) + 1}, (_, i) => {
+    const x = from + i * step;
+    return {x, y: Math.round(f(x) * 10) / 10};
+  });
+const seabed = (x: number) => 60 + Math.sin(x / 23) * 6 + Math.cos(x / 7) * 2.5;
+
+const STYLED_DATASETS: ChartLineDataset[] = [
+  {
+    label: 'History',
+    data: along(-200, 0, 5, seabed),
+    fill: false,
+    order: 1,
+  },
+  {
+    label: 'Echo band',
+    data: along(
+      -200,
+      0,
+      5,
+      (x) => seabed(x) + 4 + Math.abs(Math.sin(x / 11)) * 4
+    ),
+    borderWidth: 0,
+    pointRadius: 0,
+    fill: 0,
+    order: 2,
+  },
+  {
+    label: 'Prediction',
+    data: along(0, 200, 5, (x) => seabed(x) - 4),
+    fill: false,
+    borderDash: [8, 4],
+  },
+  {
+    label: 'Past track',
+    data: along(-200, 0, 5, (x) => seabed(x) - 12),
+    fill: false,
+    borderDash: [0, 4],
+    borderCapStyle: 'round',
+  },
+];
+
+export const StyledDatasets: Story = {
+  name: 'Styled Datasets (Dashed, Dotted, Fill Between)',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Explicit Chart.js styling on a `datasets` entry wins over the derived defaults: `borderDash` and `borderCapStyle` give a dashed prediction and a dotted past track, `fill: 0` fills the band between the echo return and the line, and `fill: false` leaves the line unfilled.',
+      },
+    },
+  },
+  render: (_args) => html`
+    <obc-area-graph
+      .xAxisType=${XAxisType.number}
+      .xAxis=${{min: -200, max: 200}}
+      .yAxes=${[{id: 'y', position: 'left' as const, min: 0, max: 100}]}
+      .showGrid=${false}
+      .showTickMarks=${_args.showTickMarks}
+      .priority=${_args.priority}
+      .width=${_args.width}
+      .height=${_args.height}
+      .datasets=${STYLED_DATASETS}
+    ></obc-area-graph>
+  `,
+};
+
+const MARKER_DATASETS: ChartLineDataset[] = [
+  {label: 'History', data: along(-200, 0, 5, seabed), fill: false},
+  {
+    label: 'Prediction',
+    data: along(0, 200, 5, (x) => seabed(x) - 4),
+    fill: false,
+    borderDash: [8, 4],
+  },
+];
+
+export const Markers: Story = {
+  name: 'Markers (Now Line and Value Line)',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`xMarker` draws a solid line from the plot top down to the first dataset at `x`, a dotted line below it and a dot on the value; `yMarker` draws a 2px line across the plot at `y`. Both follow the dataset colour.',
+      },
+    },
+  },
+  render: (_args) => html`
+    <obc-area-graph
+      .xAxisType=${XAxisType.number}
+      .xAxis=${{min: -200, max: 200}}
+      .yAxes=${[{id: 'y', position: 'left' as const, min: 0, max: 100}]}
+      .showGrid=${false}
+      .showTickMarks=${_args.showTickMarks}
+      .priority=${_args.priority}
+      .width=${_args.width}
+      .height=${_args.height}
+      .datasets=${MARKER_DATASETS}
+      .xMarker=${{x: 0}}
+      .yMarker=${{y: seabed(0)}}
+    ></obc-area-graph>
+  `,
+};
+
+const CLIP_DATASETS: ChartLineDataset[] = [
+  {
+    label: 'Scan',
+    data: along(0, 250, 5, seabed),
+    fill: {value: 0},
+    ellipseClip: {x: 0, y: 0, rx: 150},
+  },
+  {
+    label: 'History',
+    data: along(-100, 0, 5, seabed),
+    fill: false,
+    borderDash: [0, 4],
+    borderCapStyle: 'round',
+  },
+];
+
+export const EllipseClip: Story = {
+  name: 'Ellipse Clip (Radial Range, Reversed Y)',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'A dataset with `ellipseClip` is drawn only inside the ellipse: centre and `rx` in data units (a 150-unit range around the origin at (0, 0)), round in pixels because `ry` is omitted. The fill to `{value: 0}` is cut by the arc; the y axis is reversed so 0 sits at the top.',
+      },
+    },
+  },
+  render: (_args) => html`
+    <obc-area-graph
+      .xAxisType=${XAxisType.number}
+      .xAxis=${{min: -100, max: 250}}
+      .yAxes=${[
+        {id: 'y', position: 'left' as const, min: 0, max: 100, reverse: true},
+      ]}
+      .showGrid=${false}
+      .showTickMarks=${_args.showTickMarks}
+      .priority=${_args.priority}
+      .width=${_args.width}
+      .height=${_args.height}
+      .datasets=${CLIP_DATASETS}
+      .xMarker=${{x: 0}}
+    ></obc-area-graph>
+  `,
 };

@@ -17,6 +17,7 @@ const meta: Meta = {
   argTypes: {
     minValue: {control: {type: 'range', min: -100, max: 100}},
     maxValue: {control: {type: 'range', min: 0, max: 1000}},
+    reverse: {control: {type: 'boolean'}},
     mainTickmarks: {
       control: {type: 'object'},
       table: {type: {summary: 'number[] | undefined'}},
@@ -51,6 +52,7 @@ const meta: Meta = {
   args: {
     minValue: 0,
     maxValue: 100,
+    reverse: false,
     mainTickmarks: [],
     primaryTickmarkInterval: 20,
     secondaryTickmarkInterval: 10,
@@ -76,6 +78,7 @@ const meta: Meta = {
     <obc-gauge-horizontal
       .minValue=${args.minValue}
       .maxValue=${args.maxValue}
+      .reverse=${args.reverse}
       .mainTickmarks=${args.mainTickmarks}
       .primaryTickmarkInterval=${args.primaryTickmarkInterval}
       .secondaryTickmarkInterval=${args.secondaryTickmarkInterval}
@@ -517,4 +520,27 @@ export const StateComparison: Story = {
       </div>
     </div>
   `,
+};
+
+export const Reversed: Story = {
+  name: 'Reversed (0 at Right, Minutes Ago)',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`reverse` puts `minValue` at the right edge so a "minutes ago" axis reads with positive numbers and 0 (now) on the right.',
+      },
+    },
+  },
+  args: {
+    minValue: 0,
+    maxValue: 10,
+    reverse: true,
+    value: 6,
+    fillMin: 0,
+    fillMax: undefined,
+    setpoint: undefined,
+    primaryTickmarkInterval: 2,
+    secondaryTickmarkInterval: 1,
+  },
 };

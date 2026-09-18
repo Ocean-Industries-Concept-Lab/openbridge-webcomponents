@@ -127,6 +127,7 @@ export {
  *
  * @property minValue - Minimum scale value
  * @property maxValue - Maximum scale value
+ * @property reverse - Plot `minValue` at the right so values grow leftward.
  * @property side - Which side of the chart area this scale lives on (top or bottom)
  * @property showLabels - Show numerical value labels at primary tickmarks
  * @property mainTickmarks - Array of values for main tickmarks. When undefined, no main tickmarks shown. When empty array [], defaults to [minValue, 0, maxValue].
@@ -153,6 +154,7 @@ export class ObcGaugeHorizontal extends SetpointMixin(LitElement, {
 }) {
   @property({type: Number}) minValue = 0;
   @property({type: Number}) maxValue = 100;
+  @property({type: Boolean}) reverse = false;
 
   private readonly width = 384;
   private readonly paddingLeft = CHART_DIMENSIONS.CANVAS_PADDING;
@@ -264,6 +266,7 @@ export class ObcGaugeHorizontal extends SetpointMixin(LitElement, {
       paddingEnd: this.paddingRight,
       minValue: this.minValue,
       maxValue: this.maxValue,
+      reverse: this.reverse,
       hasScale: this.hasScale,
       labels: this.showLabels,
       hasBar: this.hasBar,
