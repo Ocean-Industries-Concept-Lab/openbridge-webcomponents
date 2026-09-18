@@ -140,7 +140,7 @@ export type ObcSliderChangeEvent = CustomEvent<number>;
  *   When true, the `icon-left` slot is rendered as a button.
  * @property hasRightIcon - Whether to display a right icon button for incrementing the value.
  *   When true, the `icon-right` slot is rendered as a button.
- * @property allowSeeking - Enables animated seeking: clicking or dragging along the track will set the value to the clicked position, animating smoothly.
+ * @property allowSeeking - Moves the value straight to the position clicked or dragged to. Left off, the value animates there instead, at `seekingSpeed`.
  *   Default is false.
  * @availableWhen allowSeeking variant!=no-input && disabled==false
  * @property seekingSpeed - The speed of the smooth animation that moves the value to the clicked position (used when `allowSeeking` is false).

@@ -785,8 +785,8 @@ export class ObcAutomationTank extends SetpointMixin(LitElement) {
       // The shared SVG bar, the renderer gauge-trend uses for its side bar, so
       // advice overlays behave the same in all three chart modes; its fill
       // follows the instrument palette, not the tank's `medium` colour.
-      // TODO(refactor): move this branch to gauge-trend once it supports a
-      // bar-only layout at this size.
+      // TODO(#1284): carry the medium colour through, and fold this branch
+      // into gauge-trend once it offers a bar-only layout at this size.
       const hasSize = this._cellWidth > 0 && this._cellHeight > 0;
       // The inner bar is always portrait and mirrors gauge-trend's
       // `fixedAspectRatio` sizing, so fixed-pixel SVG primitives keep one

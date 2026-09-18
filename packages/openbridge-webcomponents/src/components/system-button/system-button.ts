@@ -103,7 +103,7 @@ export interface SystemState {
  *
  * - `variant` (`condensed` | `expanded` | `actions`): Controls the visual and interactive mode of the button. Default is `condensed`.
  * - `disabled` (boolean): Disables all interactions and renders the button(s) in a disabled state.
- * - `systemState` (object): Object describing the enabled state and current value for each system indicator (WiFi, audio, microphone, battery, GPS). Each sub-property (e.g., `wifi.enabled`, `audio.volume`) controls the presence and state of its corresponding icon.
+ * - `systemState` (object): Object describing the enabled state and current value for each system indicator (WiFi, audio, microphone, battery, GPS). Each sub-property (e.g., `wifi.connected`, `audio.volume`) controls the presence and state of its corresponding icon.
  * - `menuOpen` (boolean): Indicates whether a system panel is currently open (used internally for expanded/actions variants).
  * - `activePanel` (string or null): Indicates which panel (if any) is currently active (`microphone`, `volume`, `system-icons`, or `null`).
  *
@@ -145,7 +145,7 @@ export interface SystemState {
  * @property activePanel - Indicates which panel (if any) is currently active.
  *   One of: `'microphone'`, `'volume'`, `'system-icons'`, or `null`.
  * @property systemState - Object describing the enabled state and current value for each system indicator (WiFi, audio, microphone, battery, GPS).
- *   Each sub-property (e.g., `wifi.enabled`, `audio.volume`) controls the presence and state of its corresponding icon.
+ *   Each sub-property (e.g., `wifi.connected`, `audio.volume`) controls the presence and state of its corresponding icon.
  * @property variant - Visual and interactive mode: `condensed` (default) is a single icon
  *   button, `expanded` a horizontal button showing a row of system status
  *   icons, and `actions` a segmented group of system controls.

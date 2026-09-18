@@ -95,8 +95,8 @@ import {
  *   `application` is the application-level one with a second icon.
  * @property direction - Layout direction: `horizontal` (default) puts content and actions
  *   side-by-side, `vertical` stacks them.
- * @property lineType - Content line type: `singleLine` (default) is the compact one-line layout,
- *   `multiLine` allows a longer description to wrap.
+ * @property lineType - Content line type: `single-line` (default) is the compact one-line layout,
+ *   `multi-line` allows a longer description to wrap.
  * @slot primary-icon - Custom main icon, projected into the child only when `type="application"` (the built-in notification icon is used otherwise).
  * @slot title - Title or heading of the notification.
  * @slot description - Detailed message text.

@@ -73,9 +73,9 @@ import {
  *   (default), `aggregated-header`, or `group-header`. No effect in flat variants.
  * @property defaultOpen - Whether the group starts expanded. Useful for trees that open by default.
  * @property alerts - Per-severity alert counts shown as trailing badges on the group header, in
- *   the Tree variant only. Forwarded to the underlying
- *   `obc-tree-navigation-item`; a header usually sets `combine` so it totals
- *   the rows beneath it.
+ *   the Tree variant only and only while the group is collapsed — an expanded
+ *   group shows its rows' own badges instead. A header usually sets `combine`
+ *   so it totals the rows beneath it.
  * @slot icon - Custom icon displayed next to the group label.
  * @slot - Default slot for flyout content (typically navigation items).
  * @fires {CustomEvent<void>} open - When the group is expanded and the flyout is shown.

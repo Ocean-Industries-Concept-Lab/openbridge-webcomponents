@@ -1111,10 +1111,9 @@ function colors(config: ExternalScaleConfig): {
   markerStrokeColor: string;
   setpointColor: string;
 } {
-  // TODO(theming): the bar fill is locked to the instrument regular/enhanced
+  // TODO(#1284): the bar fill is locked to the instrument regular/enhanced
   // palette, so a tank drawn through this renderer loses its per-`medium`
-  // colour. An optional colour variant on `ExternalScaleConfig`, plumbed
-  // through the bar wrappers, would carry the medium token here.
+  // colour.
   const isEnhanced = config.priority === Priority.enhanced;
   // Fill mode uses secondary color, tint mode uses tertiary color
   let barFillColor =

@@ -60,10 +60,10 @@ import '../tree-navigation-item/tree-navigation-item.js';
  *   the terminal. One of `regular` (default), `aggregated-header`, or `group-header`.
  * @property href - The URL to navigate to when the header is activated. If set, the header row
  *   renders as a link; otherwise it acts as a button.
- * @property alerts - Per-severity alert counts shown as trailing badges on the header row,
- *   forwarded verbatim to the header `<obc-tree-navigation-item>`. A group
- *   usually sets `combine` so its header shows one badge totalling the alerts
- *   of the rows beneath it.
+ * @property alerts - Per-severity alert counts shown as trailing badges on the header row while
+ *   the group is collapsed; expanding it hides them, since the rows then carry
+ *   their own. A group usually sets `combine` so its header shows one badge
+ *   totalling the alerts of the rows beneath it.
  * @slot icon - Leading icon for the group header (shown when `hasIcon` is true).
  * @slot - Child rows disclosed when the group is expanded.
  * @fires {CustomEvent<boolean>} expand-toggle - Fired when the header is activated; detail is the next `expanded` value.

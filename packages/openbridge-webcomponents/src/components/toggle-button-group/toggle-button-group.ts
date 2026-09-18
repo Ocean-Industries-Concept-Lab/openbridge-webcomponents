@@ -132,7 +132,9 @@ export type ObcToggleButtonGroupChangeEvent = CustomEvent<{
  *   This is a visual indication that the option is clicked but not yet stored.
  * @property hugText - If true, the group shrinks to fit its content ("hug" the text) instead of stretching to fill the container.
  *   This setting is propagated to all child `<obc-toggle-button-option>` elements.
- * @property externalControl - If true, the group is controlled by an external source.
+ * @property externalControl - Makes a click emit `selected` without moving the selection, so the
+ *   parent decides by setting `value`. Setting `value` programmatically always
+ *   updates the selection, with or without this flag.
  *   When true, the group will not update its selection when the `value` property changes.
  *   Defaults to false.
  * @property disabled - Disables the entire toggle button group and all contained options when true.

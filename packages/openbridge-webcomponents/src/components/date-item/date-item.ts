@@ -97,8 +97,8 @@ export enum DateItemSize {
  * @property checked - Whether the date item is checked/selected.
  *   When true, uses selected styling (blue filled background).
  * @property size - Size of the date item: `small` (default) shows only the date and the event
- *   dots, `large` expands to show titles and descriptions for up to two
- *   events.
+ *   dots, `large` shows titles and descriptions for as many events as its
+ *   height fits and aggregates the rest into a count.
  * @fires {CustomEvent<{date: number, events: DateItemEvent[], isToday: boolean, checked: boolean}>} date-click - Fired when the date item is clicked.
  * @slot - No slots. All content is provided via properties.
  * @beta

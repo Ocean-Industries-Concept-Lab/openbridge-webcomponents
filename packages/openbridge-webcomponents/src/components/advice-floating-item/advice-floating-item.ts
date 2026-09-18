@@ -87,8 +87,8 @@ import {
  *   icon, `application` adds a second application icon.
  * @property direction - Layout direction: `horizontal` (default) puts content and icons
  *   side-by-side, `vertical` stacks them.
- * @property lineType - Content line type: `singleLine` (default) is a compact one-line message,
- *   `multiLine` allows longer advice text to wrap.
+ * @property lineType - Content line type: `single-line` (default) is a compact one-line message,
+ *   `multi-line` allows longer advice text to wrap.
  * @slot primary-icon - Custom main icon, projected into the child only when `type="application"` (the built-in advice icon is used otherwise).
  * @slot title - Title or heading of the advice message.
  * @slot description - Detailed advice or message text.

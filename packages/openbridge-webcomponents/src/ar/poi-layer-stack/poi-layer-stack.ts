@@ -408,7 +408,7 @@ export class ObcPoiLayerStack extends LitElement {
 
   private applySelectedTargetProjectionState(target: Poi) {
     // Leave `animatePosition` off: it drops the no-motion class, and the CSS
-    // transitions that enables fight the group's frame-by-frame expand and
+    // transitions that unlocks fight the group's frame-by-frame expand and
     // collapse, which shows up as X wiggle. The FLIP jump runs on the Web
     // Animations API and overrides CSS anyway.
     target.style.setProperty(

@@ -103,8 +103,8 @@ const DRAG_COMPLETE_THRESHOLD = 0.9;
  *   When unchecked, the thumb is on the left side.
  *   Defaults to `false`.
  * @property variant - Visual style of the checked side: `normal` (default) is
- *   blue, `running` green for a motor or process that is running, and
- *   `loading` light blue for a pending state. It does not move the thumb.
+ *   blue, `running` green for the running state and `loading` light blue for a
+ *   pending one. It does not move the thumb.
  * @property disabled - Whether the switch is disabled.
  *   When disabled, the switch cannot be interacted with and displays a muted appearance.
  *   In the disabled state, the thumb is hidden and only the state label is shown.

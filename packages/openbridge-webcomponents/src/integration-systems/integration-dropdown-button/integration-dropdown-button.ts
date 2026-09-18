@@ -61,7 +61,7 @@ export type IntegrationDropdownOption = {
  * @property fullWidth - If true, the select expands to fill the width of its container. Default is false.
  * @property openTop - If true, the dropdown menu opens above the button.
  * @property options - Selectable options, each with a `value`, a `label`, an `icon` template and
- *   an optional `disabled` flag.
+ *   optional `status` text and `disabled` flag.
  * @slot fleet - Fleet button displayed when `hasFleet` is true.
  * @fires {ObcIntegrationDropdownButtonChangeEvent} change - Fires when the value of the select changes
  * @experimental

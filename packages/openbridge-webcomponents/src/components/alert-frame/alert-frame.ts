@@ -208,7 +208,8 @@ export interface AlertFrameConfig {
  * @property type - Visual variant: `regular` is the outlined frame alone, `small-side-flip`
  *   (default) adds a small right-side flap with the status icon,
  *   `large-side-flip` a large vertical flap with an optional custom icon, and
- *   `bottom-flip` a bottom flap with status icon, label and timer.
+ *   `bottom-flip` and `top-flip` a flap below or above carrying the status
+ *   icon, an optional custom icon, a label and a timer.
  * @property thickness - Border thickness: `small` (default) is the thin border, `large` the thick
  *   one for higher emphasis.
  * @property status - Alert status, which picks the colour scheme and the icon: `alarm`

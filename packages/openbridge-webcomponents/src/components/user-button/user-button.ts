@@ -98,9 +98,9 @@ export enum Variant {
  *   or longer than two characters.
  * @property styleType - Visual style: `flat` (default) is the minimal appearance, `normal` adds a
  *   background and border, `selected` highlights the active state.
- * @property initials - Initials shown when `variant` is `initials`. Only the first two
- *   non-whitespace characters are used, uppercased; an empty value or more
- *   than two characters falls back to the user icon.
+ * @property initials - Initials shown when `variant` is `initials`. Whitespace is stripped and the
+ *   rest uppercased, then truncated to two characters — three at the `large`
+ *   size. An empty value falls back to the user icon.
  * @slot icon - Custom icon for the user button (used only in `icon` variant; defaults to <obi-user> if not provided)
  * @stable
  */

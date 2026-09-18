@@ -13,7 +13,7 @@ export enum RotIndicatorType {
  * @property rotDotAnimationFactor - Visual amplification applied to the spinning dot animation. Default `18`
  *   keeps the legacy visual feel (≈1 rpm at 20°/min). Has no effect when
  *   the legacy `rotationsPerMinute` API is used.
- * @property rateOfTurnDegreesPerMinute - Measured rate of turn in degrees per minute (positive = starboard).
+ * @property rateOfTurnDegreesPerMinute - Measured rate of turn in degrees per minute (positive = clockwise).
  *   Drives the spinner animation via `(rateOfTurnDegreesPerMinute / 360) *
  *   rotDotAnimationFactor` rotations per minute. When `undefined` the legacy
  *   `rotationsPerMinute` value is used instead.
