@@ -567,7 +567,7 @@ Without a type, the icon draws an alarm instead of the text "No alarm".
 
 #### `obc-card` Timeouts in Seconds _(silent)_
 
-`dialogTimeOutSeconds` and `dialogVisibleTimerSeconds` were read as milliseconds in 1.0.1, despite their names, and are now seconds ([#884](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/884)). A 1.0.1 value of `20000` keeps the dialog open for five and a half hours. `0` turns auto-close off.
+`dialogTimeOutSeconds` and `dialogVisibleTimerSeconds` were read as milliseconds in 1.0.1, despite their names, and are now seconds ([#884](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/884)). `dialogTimeOutSeconds="20000"` meant 20 seconds in 1.0.1; carried over unchanged it means 20000 seconds, five and a half hours. `0` turns auto-close off.
 
 ```html
 <!-- 1.0.1 -->
