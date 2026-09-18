@@ -63,18 +63,16 @@ export function classifyFieldDoc(lines, initializerText, initializerIsLiteral) {
   // checked" rather than "no initializer" — that's `null`, which never
   // matches a present @default tag and correctly falls through to `manual`.
   if (def && initializerText !== undefined) {
-    // In both cases below the tag is the manifest's only source of
-    // `.default`, so the doc stays inline and is not reported.
-    if (def.rest.trim() !== (initializerText ?? '').trim()) {
-      return {
-        ok: false,
-        reason: '@default differs from the initializer',
-        keep: true,
-      };
-    }
     // cem only emits `default` from the declaration for literal initializers
-    // (`384`, `'x'`, `-1`, …); for anything else (an enum member, a shared
-    // constant, …) hoisting would silently lose it.
+    // (`384`, `'x'`, `-1`, …); for anything else (an enum member, …) the tag
+    // is the manifest's only source, so the doc stays inline and is not
+    // reported. Over a literal, a differing tag contradicts what cem reads.
+    if (def.rest.trim() !== (initializerText ?? '').trim()) {
+      const reason = '@default differs from the initializer';
+      return initializerIsLiteral
+        ? {ok: false, reason}
+        : {ok: false, reason, keep: true};
+    }
     if (!initializerIsLiteral) {
       return {
         ok: false,

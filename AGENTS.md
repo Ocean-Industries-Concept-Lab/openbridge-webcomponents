@@ -100,9 +100,9 @@ Key points:
    `@availableWhen name condition` directly under their tag. No inline JSDoc
    above `@property()` fields (`npm run lint:comments` warns; `--fix` hoists
    them). A tag naming a property that does not exist is a ghost manifest
-   member — `npm run lint:slots` fails on it. Mixin-provided
-   (`svghelpers/setpoint-mixin.ts`, `svghelpers/setpoint-bundle.ts`) and
-   `@deprecated` properties keep their inline docs.
+   member — `npm run lint:slots` fails on it. Mixin-provided properties, and
+   docs carrying a member `@deprecated` or a `@default` cem cannot read from
+   the initializer, keep their inline docs.
 7. **Tone:** Do NOT mention "maritime", "industrial", "bridge", or domain qualifiers; keep text domain-agnostic.
 8. If purpose is unclear, insert `**TODO(designer)**` instead of guessing.
 9. **`@availableWhen` for conditional properties** — see [`docs/agents/jsdoc.md`](docs/agents/jsdoc.md).

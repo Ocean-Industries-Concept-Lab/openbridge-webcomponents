@@ -82,6 +82,24 @@ describe('property-docs-in-class-jsdoc — reports', () => {
           ],
           output: null,
         },
+        {
+          // cem reads the default from a literal initializer, so a tag that
+          // disagrees with it is a contradiction to report, not data to keep.
+          code: cls(
+            ' * Thing.\n * @stable',
+            '  /**\n   * Size.\n   * @default 385\n   */\n  @property({type: Number}) size = 384;'
+          ),
+          errors: [
+            {
+              messageId: 'manual',
+              data: {
+                name: 'size',
+                reason: '@default differs from the initializer',
+              },
+            },
+          ],
+          output: null,
+        },
       ],
     });
   });
@@ -344,6 +362,11 @@ describe('classifyFieldDoc', () => {
       ok: false,
       reason: '@default differs from the initializer',
       keep: true,
+    });
+    // A literal initializer is what cem reads, so the mismatch is reported.
+    expect(classifyFieldDoc(['Desc.', '@default 385'], '384', true)).toEqual({
+      ok: false,
+      reason: '@default differs from the initializer',
     });
     expect(classifyFieldDoc(['Desc.', '@default 384'], '384', true)).toEqual({
       ok: true,
