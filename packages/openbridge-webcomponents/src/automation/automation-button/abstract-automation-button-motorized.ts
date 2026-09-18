@@ -14,6 +14,20 @@ export enum MotorizedVariant {
   flatForward = 'flat-forward',
 }
 
+/**
+ * Base class for motor-driven automation buttons.
+ *
+ * Extends `ObcAbstractAutomationButton` with the running state and the speed
+ * readout: while the device is on it adds a value row carrying `speed` in
+ * `speedUnit`, and while it is off it adds the `Off` state row instead.
+ *
+ * ## Usage Guidelines
+ *
+ * Not registered as a custom element. `obc-fan`, `obc-motor` and `obc-pump`
+ * extend it and supply their own `icon` and `variant`.
+ *
+ * @availableWhen direction variant in [double, forward, flatForward]
+ */
 export class ObcAbstractAutomationButtonMotorized extends ObcAbstractAutomationButton {
   @property({type: Boolean}) on: boolean = false;
   /**
@@ -28,7 +42,6 @@ export class ObcAbstractAutomationButtonMotorized extends ObcAbstractAutomationB
     AutomationButtonLabelDirection.right;
   @property({type: String}) variant: MotorizedVariant =
     MotorizedVariant.regular;
-  /** @availableWhen variant in [double, forward, flatForward] */
   @property({type: String}) direction: AutomationButtonDirection =
     AutomationButtonDirection.forward;
 

@@ -28,6 +28,16 @@ describe('property-docs-in-class-jsdoc — reports', () => {
           ' * Thing.\n * @stable',
           '  /** internal */\n  @state() private _x = 0;'
         ),
+        // A decorated get/set pair is a manifest field, so a header tag
+        // naming one is not a ghost.
+        cls(
+          ' * Thing.\n * @property alias - Alias of `value`.\n * @stable',
+          '  @property({type: Number}) value = 0;\n  @property({type: Number})\n  get alias() {\n    return this.value;\n  }\n  set alias(v: number) {\n    this.value = v;\n  }'
+        ),
+        cls(
+          ' * Thing.\n * @availableWhen alias flag==true\n * @stable',
+          '  @property({type: Boolean}) flag = false;\n  @property({type: Number})\n  get alias() {\n    return 0;\n  }'
+        ),
       ],
       invalid: [],
     });
@@ -72,12 +82,66 @@ describe('property-docs-in-class-jsdoc — reports', () => {
         {
           code: cls(
             ' * Thing.\n * @stable',
-            '  /**\n   * The value.\n   * @deprecated use other\n   */\n  @property({type: Number}) value = 0;'
+            '  /**\n   * The value.\n   * @see other\n   */\n  @property({type: Number}) value = 0;'
           ),
-          errors: [{messageId: 'manual'}],
+          errors: [
+            {
+              messageId: 'manual',
+              data: {name: 'value', reason: 'contains @see'},
+            },
+          ],
+          output: null,
+        },
+        {
+          // cem reads the default from a literal initializer, so a tag that
+          // disagrees with it is a contradiction to report, not data to keep.
+          code: cls(
+            ' * Thing.\n * @stable',
+            '  /**\n   * Size.\n   * @default 385\n   */\n  @property({type: Number}) size = 384;'
+          ),
+          errors: [
+            {
+              messageId: 'manual',
+              data: {
+                name: 'size',
+                reason: '@default differs from the initializer',
+              },
+            },
+          ],
           output: null,
         },
       ],
+    });
+  });
+
+  it('does not report an inline doc the manifest can only read inline', () => {
+    tester.run('property-docs', propertyDocsRule, {
+      valid: [
+        // cem lifts a member @deprecated into the manifest; the class JSDoc
+        // has no tag for it, so the doc stays where it is.
+        cls(
+          ' * Thing.\n * @stable',
+          '  /**\n   * The value.\n   * @deprecated use other\n   */\n  @property({type: Number}) value = 0;'
+        ),
+        // Wherever @deprecated sits among the tags.
+        cls(
+          ' * Thing.\n * @stable',
+          '  /**\n   * The value.\n   * @see other\n   * @deprecated use other\n   */\n  @property({type: Number}) value = 0;'
+        ),
+        // A class without a JSDoc does not turn it back into a report.
+        "import {LitElement} from 'lit';\n@customElement('obc-x')\nexport class ObcX extends LitElement {\n  /** @deprecated use other */\n  @property({type: Number}) value = 0;\n}\n",
+        // cem reads `default` only from a literal initializer, so the tag is
+        // the manifest's only source here.
+        cls(
+          ' * Thing.\n * @stable',
+          '  /**\n   * Size.\n   * @default Size.normal\n   */\n  @property({type: String}) size = Size.normal;'
+        ),
+        cls(
+          ' * Thing.\n * @stable',
+          "  /**\n   * Size.\n   * @default 'normal'\n   */\n  @property({type: String}) size = Size.normal;"
+        ),
+      ],
+      invalid: [],
     });
   });
 
@@ -152,33 +216,6 @@ describe('property-docs-in-class-jsdoc — reports', () => {
     });
   });
 
-  it('treats a mismatched @default as manual, not hoistable', () => {
-    tester.run('property-docs', propertyDocsRule, {
-      valid: [],
-      invalid: [
-        {
-          // The doc's @default text ('normal') doesn't match the field's
-          // actual initializer (Size.normal) — don't trust the doc's word
-          // for what the manifest should show; leave it for a human.
-          code: cls(
-            ' * Thing.\n * @stable',
-            "  /**\n   * Size.\n   * @default 'normal'\n   */\n  @property({type: String}) size = Size.normal;"
-          ),
-          errors: [
-            {
-              messageId: 'manual',
-              data: {
-                name: 'size',
-                reason: '@default differs from the initializer',
-              },
-            },
-          ],
-          output: null,
-        },
-      ],
-    });
-  });
-
   it('treats a class JSDoc containing @typedef as unusable for hoisting', () => {
     tester.run('property-docs', propertyDocsRule, {
       valid: [],
@@ -194,35 +231,6 @@ describe('property-docs-in-class-jsdoc — reports', () => {
             {
               messageId: 'manual',
               data: {name: 'value', reason: 'class JSDoc contains @typedef'},
-            },
-          ],
-          output: null,
-        },
-      ],
-    });
-  });
-
-  it('treats a matching @default on a non-literal initializer as manual', () => {
-    tester.run('property-docs', propertyDocsRule, {
-      valid: [],
-      invalid: [
-        {
-          // The tag text matches the initializer verbatim, so it's not a
-          // *wrong* @default — but cem only reads `default` from a literal
-          // declaration, so dropping this tag would lose it from the
-          // manifest entirely (unlike `@default 384` over `= 384`, where
-          // cem reads the literal `384` itself once the tag is gone).
-          code: cls(
-            ' * Thing.\n * @stable',
-            '  /**\n   * Size.\n   * @default Size.normal\n   */\n  @property({type: String}) size = Size.normal;'
-          ),
-          errors: [
-            {
-              messageId: 'manual',
-              data: {
-                name: 'size',
-                reason: '@default on a non-literal initializer',
-              },
             },
           ],
           output: null,
@@ -326,8 +334,24 @@ describe('classifyFieldDoc', () => {
     expect(classifyFieldDoc(['Modes:', '- `a`: one', '- `b`: two']).ok).toBe(
       false
     );
-    expect(classifyFieldDoc(['Old.', '@deprecated use x']).ok).toBe(false);
+    expect(classifyFieldDoc(['Old.', '@see x'])).toEqual({
+      ok: false,
+      reason: 'contains @see',
+    });
     expect(classifyFieldDoc(['Para one.', '', 'Para two.']).ok).toBe(false);
+  });
+  it('marks a doc the manifest can only read inline as one to keep', () => {
+    expect(classifyFieldDoc(['Old.', '@deprecated use x'])).toEqual({
+      ok: false,
+      reason: 'contains @deprecated',
+      keep: true,
+    });
+    // @deprecated wins over an earlier foreign tag.
+    expect(classifyFieldDoc(['Old.', '@see x', '@deprecated use x'])).toEqual({
+      ok: false,
+      reason: 'contains @deprecated',
+      keep: true,
+    });
   });
   it('splits a same-line @availableWhen or @default off the description', () => {
     expect(classifyFieldDoc(['Desc. @availableWhen off==true'])).toEqual({
@@ -347,6 +371,12 @@ describe('classifyFieldDoc', () => {
     ).toEqual({
       ok: false,
       reason: '@default differs from the initializer',
+      keep: true,
+    });
+    // A literal initializer is what cem reads, so the mismatch is reported.
+    expect(classifyFieldDoc(['Desc.', '@default 385'], '384', true)).toEqual({
+      ok: false,
+      reason: '@default differs from the initializer',
     });
     expect(classifyFieldDoc(['Desc.', '@default 384'], '384', true)).toEqual({
       ok: true,
@@ -363,6 +393,7 @@ describe('classifyFieldDoc', () => {
     ).toEqual({
       ok: false,
       reason: '@default on a non-literal initializer',
+      keep: true,
     });
     expect(classifyFieldDoc(['Desc.', '@default 384'], '384', true)).toEqual({
       ok: true,

@@ -83,8 +83,8 @@ const COMPASS_TICKMARKS: Tickmark[] = [45, 135, 225, 315].map((angle) => ({
  */
 @customElement('obc-speed-directions')
 export class ObcSpeedDirections extends LitElement {
-  // @ts-expect-error TS6133: The controller ensures that the render
-  // function is called on resize of the element
+  // @ts-expect-error TS6133: the controller calls the render function on
+  // resize of the element
   private _resizeController = new ResizeController(this, {});
 
   @property({type: String})

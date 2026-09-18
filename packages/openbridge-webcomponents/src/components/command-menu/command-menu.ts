@@ -62,7 +62,7 @@ export type ObcCommandMenuChangeEvent = CustomEvent<{inCommand: boolean}>;
  * ### Best Practices & Constraints
  * - Use clear, concise labels for status and actions to ensure quick recognition.
  * - Only display the location if it is relevant to the command context.
- * - Ensure that only one command menu is active for a given system at a time to avoid conflicting states.
+ * - Keep only one command menu active per system at a time, so the states cannot conflict.
  * - For accessibility, provide meaningful icons and text in all slots.
  * - **TODO(designer):** Specify if there are any timing, animation, or accessibility requirements for the toggle interaction.
  *
@@ -141,7 +141,6 @@ export class ObcCommandMenu extends LitElement {
             <obc-start-stop-switch
               @change=${this.onChange}
               .checked=${this.inCommand}
-              showCheckedStateIcon
               .size=${'large'}
             >
               <div slot="to-checked-action-label">

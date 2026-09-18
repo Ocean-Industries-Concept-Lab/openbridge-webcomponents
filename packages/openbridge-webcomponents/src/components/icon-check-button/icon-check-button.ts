@@ -51,53 +51,35 @@ import {customElement} from '../../decorator.js';
  * </obc-icon-check-button>
  * ```
  *
+ * @property checked - Whether the button is currently checked (selected).
+ *   When true, the button displays its checked styling. Toggling this property updates the visual state.
+ * @property disabled - If true, prevents interaction and shows disabled styling.
+ *   When disabled, the button cannot be toggled and appears dimmed.
+ * @property hasLabel - If true, displays the label text below the icon.
+ *   When false, only the icon is shown (icon-only mode).
+ * @property label - Text to display below the icon (when `hasLabel` is true).
+ *   Used to describe the toggle action or state for clarity and accessibility.
+ * @availableWhen label hasLabel==true
+ * @property hasAlert - If true, adds alert styling to the button.
+ *   Use to visually indicate an alert, warning, or attention-required state.
+ * @property externalControl - If true, the button is controlled externally.
+ *   Use to control the button state from outside the component.
  * @slot icon - Main icon representing the toggle action or state.
  * @fires {CustomEvent<{checked: boolean}>} icon-check-button-click - Fired when the button is clicked and the checked state changes.
  * @stable
  */
 @customElement('obc-icon-check-button')
 export class ObcIconCheckButton extends LitElement {
-  /**
-   * Whether the button is currently checked (selected).
-   *
-   * When true, the button displays its checked styling. Toggling this property updates the visual state.
-   */
   @property({type: Boolean, reflect: true}) checked = false;
 
-  /**
-   * If true, prevents interaction and shows disabled styling.
-   *
-   * When disabled, the button cannot be toggled and appears dimmed.
-   */
   @property({type: Boolean, reflect: true}) disabled = false;
 
-  /**
-   * If true, displays the label text below the icon.
-   *
-   * When false, only the icon is shown (icon-only mode).
-   */
   @property({type: Boolean}) hasLabel = false;
 
-  /**
-   * Text to display below the icon (when `hasLabel` is true).
-   *
-   * Used to describe the toggle action or state for clarity and accessibility.
-   * @availableWhen hasLabel==true
-   */
   @property({type: String}) label = '';
 
-  /**
-   * If true, adds alert styling to the button.
-   *
-   * Use to visually indicate an alert, warning, or attention-required state.
-   */
   @property({type: Boolean}) hasAlert = false;
 
-  /**
-   * If true, the button is controlled externally.
-   *
-   * Use to control the button state from outside the component.
-   */
   @property({type: Boolean}) externalControl = false;
 
   private handleClick() {

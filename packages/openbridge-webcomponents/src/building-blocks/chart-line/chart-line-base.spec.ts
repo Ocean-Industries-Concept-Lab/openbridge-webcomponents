@@ -9,7 +9,13 @@ import type {ObcAreaGraph} from '../../bars-graphs/area-graph/area-graph.js';
 import type {ObcBarVertical} from '../bar-vertical/bar-vertical.js';
 import type {ObcBarHorizontal} from '../bar-horizontal/bar-horizontal.js';
 import {ExternalScaleSide} from '../external-scale/external-scale.js';
-import {XAxisType, TimeDisplay, RangeLabels} from './chart-line-base.js';
+import {
+  XAxisType,
+  TimeDisplay,
+  RangeLabels,
+  LineMode,
+  type ChartLineDataset,
+} from './chart-line-base.js';
 
 type ChartScales = {
   scales: Record<string, {min: number; max: number}>;
@@ -763,5 +769,371 @@ describe('range labels on a stacked chart (#1191)', () => {
       String(max),
       String(min),
     ]);
+  });
+});
+
+describe('reversed y axis (#1211)', () => {
+  const yReverse = (chart: ObcAreaGraph) =>
+    (
+      chartScales(chart) as unknown as Record<
+        string,
+        {options: {reverse?: boolean}}
+      >
+    )['y'].options.reverse;
+
+  it('passes reverse to the Chart.js scale and cascades it to the slotted scales', async () => {
+    const {chart, left, bottom} = await mount((c) => {
+      c.xAxisType = XAxisType.number;
+      c.yAxes = [{id: 'y', position: 'left', min: 0, max: 75, reverse: true}];
+      c.data = numberData([10, 70, 40]);
+    });
+    expect(yReverse(chart)).toBe(true);
+    expect(left.reverse).toBe(true);
+    expect(bottom.reverse).toBe(false);
+  });
+
+  it('gives each side the reversal of the axis it follows', async () => {
+    const {chart, left, right} = await mount(
+      (c) => {
+        c.xAxisType = XAxisType.number;
+        c.yAxes = [
+          {id: 'y', position: 'left', min: 0, max: 75, reverse: true},
+          {id: 'y-right', position: 'right', min: 0, max: 10},
+        ];
+        c.datasets = [
+          {
+            label: 'a',
+            data: [
+              {x: 0, y: 10},
+              {x: 1, y: 70},
+            ],
+          },
+          {
+            label: 'b',
+            data: [
+              {x: 0, y: 1},
+              {x: 1, y: 7},
+            ],
+            yAxisID: 'y-right',
+          },
+        ];
+      },
+      {withRight: true}
+    );
+    expect(yReverse(chart)).toBe(true);
+    expect(left.reverse).toBe(true);
+    expect(right.reverse).toBe(false);
+  });
+
+  it('keeps the slotted scales upright when reverse is unset', async () => {
+    const {chart, left} = await mount((c) => {
+      c.xAxisType = XAxisType.number;
+      c.yAxes = [{id: 'y', position: 'left', min: 0, max: 75}];
+      c.data = numberData([10, 70, 40]);
+    });
+    expect(yReverse(chart)).toBe(false);
+    expect(left.reverse).toBe(false);
+  });
+});
+
+type PixelScales = Record<string, {getPixelForValue(v: number): number}>;
+const pixelScales = (chart: ObcAreaGraph) =>
+  chartScales(chart) as unknown as PixelScales;
+const builtDatasets = (chart: ObcAreaGraph) =>
+  (chart as unknown as {chart: {data: {datasets: ChartLineDataset[]}}}).chart
+    .data.datasets;
+
+describe('dataset styling passthrough', () => {
+  it('keeps an explicit fill target, background colour and dash', async () => {
+    const chart = await mountPlain(
+      (c) => {
+        c.xAxisType = XAxisType.number;
+        c.datasets = [
+          {
+            label: 'a',
+            data: [
+              {x: 0, y: 1},
+              {x: 1, y: 2},
+            ],
+            fill: {value: 0},
+            backgroundColor: 'rgb(1, 2, 3)',
+            borderDash: [8, 4],
+            borderCapStyle: 'round',
+            order: 2,
+          },
+          {label: 'b', data: [1, 2]},
+        ];
+      },
+      {width: 480, height: 320}
+    );
+    const [a, b] = builtDatasets(chart);
+    expect(a.fill).toEqual({value: 0});
+    expect(a.backgroundColor).toBe('rgb(1, 2, 3)');
+    expect(a.borderDash).toEqual([8, 4]);
+    expect(a.borderCapStyle).toBe('round');
+    expect(a.order).toBe(2);
+    // The derived defaults still apply to an entry that sets nothing.
+    expect(b.fill).toBe('start');
+    expect(b.borderDash).toBeUndefined();
+  });
+
+  it('treats a dataset-index fill target of 0 as a fill', async () => {
+    const chart = await mountPlain(
+      (c) => {
+        c.datasets = [
+          {label: 'line', data: [1, 2], fill: false},
+          {label: 'band', data: [2, 3], fill: 0},
+        ];
+      },
+      {width: 480, height: 320}
+    );
+    const [line, band] = builtDatasets(chart);
+    expect(line.fill).toBe(false);
+    expect(band.fill).toBe(0);
+    expect(band.backgroundColor).not.toBe('transparent');
+  });
+});
+
+describe('markers', () => {
+  const twoPoints = () => [
+    {x: 0, value: 10},
+    {x: 10, value: 30},
+  ];
+
+  it('draws the x marker at the interpolated value and the y marker at its value', async () => {
+    const chart = await mountPlain(
+      (c) => {
+        c.xAxisType = XAxisType.number;
+        c.lineMode = LineMode.straight;
+        c.data = twoPoints();
+        c.xMarker = {x: 5};
+        c.yMarker = {y: 25};
+      },
+      {width: 480, height: 320}
+    );
+    const scales = pixelScales(chart);
+    expect(chart.lastMarkers.x?.x).toBeCloseTo(
+      Math.round(scales['x'].getPixelForValue(5)) + 0.5,
+      5
+    );
+    expect(chart.lastMarkers.x?.y).toBeCloseTo(
+      scales['y'].getPixelForValue(20),
+      5
+    );
+    expect(chart.lastMarkers.y?.y).toBeCloseTo(
+      scales['y'].getPixelForValue(25),
+      5
+    );
+  });
+
+  it('resolves a category marker from its label and skips an unknown one', async () => {
+    const chart = await mountPlain(
+      (c) => {
+        c.data = [
+          {label: 'a', value: 10},
+          {label: 'b', value: 30},
+          {label: 'c', value: 20},
+        ];
+        c.xMarker = {x: 'b'};
+      },
+      {width: 480, height: 320}
+    );
+    const scales = pixelScales(chart);
+    expect(chart.lastMarkers.x?.x).toBeCloseTo(
+      Math.round(scales['x'].getPixelForValue(1)) + 0.5,
+      5
+    );
+    expect(chart.lastMarkers.x?.y).toBeCloseTo(
+      scales['y'].getPixelForValue(30),
+      5
+    );
+    chart.xMarker = {x: 'zzz'};
+    await chart.updateComplete;
+    await frames();
+    expect(chart.lastMarkers.x).toBeUndefined();
+  });
+
+  it('follows the rendered line: step-before holds the next value across a segment', async () => {
+    const chart = await mountPlain(
+      (c) => {
+        c.xAxisType = XAxisType.number;
+        c.lineMode = LineMode.stepped;
+        c.data = twoPoints();
+        c.xMarker = {x: 5};
+      },
+      {width: 480, height: 320}
+    );
+    expect(chart.lastMarkers.x?.y).toBeCloseTo(
+      pixelScales(chart)['y'].getPixelForValue(30),
+      5
+    );
+  });
+
+  it('has no value inside a gap the line does not span', async () => {
+    const chart = await mountPlain(
+      (c) => {
+        c.xAxisType = XAxisType.number;
+        c.datasets = [
+          {
+            label: 'gappy',
+            data: [
+              {x: 0, y: 10},
+              {x: 5, y: NaN},
+              {x: 10, y: 30},
+            ],
+            spanGaps: false,
+          },
+        ];
+        c.xMarker = {x: 5};
+      },
+      {width: 480, height: 320}
+    );
+    expect(chart.lastMarkers.x).toBeDefined();
+    expect(chart.lastMarkers.x?.y).toBeUndefined();
+  });
+
+  it('draws the dot only while its centre is on the plot', async () => {
+    const chart = await mountPlain(
+      (c) => {
+        c.xAxisType = XAxisType.number;
+        c.lineMode = LineMode.straight;
+        // Pinned on both axes: Chart.js drops a point outside the pinned y
+        // range from the x limits, which would collapse an auto x range.
+        c.xAxis = {min: 0, max: 10};
+        c.yAxes = [{id: 'y', position: 'left', min: 0, max: 20}];
+        c.data = twoPoints();
+        c.xMarker = {x: 2};
+      },
+      {width: 480, height: 320}
+    );
+    // At x = 2 the line reads 14, inside the pinned 0–20 range.
+    expect(chart.lastMarkers.x?.dot).toBe(true);
+    chart.xMarker = {x: 8};
+    await chart.updateComplete;
+    await frames();
+    // At x = 8 the line reads 26, above the plot: the line is clipped and the dot is skipped.
+    expect(chart.lastMarkers.x?.y).toBeLessThan(chartAreaOf(chart).top);
+    expect(chart.lastMarkers.x?.dot).toBe(false);
+  });
+
+  it('accepts a negative x on a number axis and keeps the y marker when x is unknown', async () => {
+    const chart = await mountPlain(
+      (c) => {
+        c.xAxisType = XAxisType.number;
+        c.xAxis = {min: -200, max: 200};
+        c.data = [
+          {x: -100, value: 10},
+          {x: 100, value: 30},
+        ];
+        c.xMarker = {x: -50};
+        c.yMarker = {y: 20};
+      },
+      {width: 480, height: 320}
+    );
+    const scales = pixelScales(chart);
+    expect(chart.lastMarkers.x?.x).toBeCloseTo(
+      Math.round(scales['x'].getPixelForValue(-50)) + 0.5,
+      5
+    );
+    chart.xAxisType = XAxisType.category;
+    chart.data = [
+      {label: 'a', value: 10},
+      {label: 'b', value: 30},
+    ];
+    chart.xMarker = {x: 'zzz'};
+    await chart.updateComplete;
+    await frames();
+    expect(chart.lastMarkers.x).toBeUndefined();
+    expect(chart.lastMarkers.y?.y).toBeCloseTo(
+      pixelScales(chart)['y'].getPixelForValue(20),
+      5
+    );
+  });
+
+  it('draws the x marker without a value outside the data', async () => {
+    const chart = await mountPlain(
+      (c) => {
+        c.xAxisType = XAxisType.number;
+        c.data = twoPoints();
+        c.xAxis = {min: 0, max: 20};
+        c.xMarker = {x: 15};
+      },
+      {width: 480, height: 320}
+    );
+    expect(chart.lastMarkers.x).toBeDefined();
+    expect(chart.lastMarkers.x?.y).toBeUndefined();
+  });
+
+  it('records nothing while both markers are unset', async () => {
+    const chart = await mountPlain(
+      (c) => {
+        c.xAxisType = XAxisType.number;
+        c.data = twoPoints();
+      },
+      {width: 480, height: 320}
+    );
+    expect(chart.lastMarkers).toEqual({});
+  });
+});
+
+describe('ellipseClip', () => {
+  it('is round in pixels when ry is omitted', async () => {
+    const chart = await mountPlain(
+      (c) => {
+        c.xAxisType = XAxisType.number;
+        c.datasets = [
+          {
+            label: 'scan',
+            data: [
+              {x: 0, y: 10},
+              {x: 100, y: 20},
+            ],
+            ellipseClip: {x: 0, y: 0, rx: 50},
+          },
+        ];
+      },
+      {width: 480, height: 320}
+    );
+    const clip = chart.lastClips[0];
+    expect(clip.ry).toBeCloseTo(clip.rx, 5);
+  });
+
+  it('maps the ellipse through the scales in data units', async () => {
+    const chart = await mountPlain(
+      (c) => {
+        c.xAxisType = XAxisType.number;
+        c.yAxes = [
+          {id: 'y', position: 'left', min: 0, max: 100, reverse: true},
+        ];
+        c.datasets = [
+          {
+            label: 'scan',
+            data: [
+              {x: 0, y: 10},
+              {x: 100, y: 20},
+            ],
+            ellipseClip: {x: 0, y: 0, rx: 50, ry: 40},
+          },
+        ];
+      },
+      {width: 480, height: 320}
+    );
+    const scales = pixelScales(chart);
+    const clip = chart.lastClips[0];
+    expect(clip).toBeDefined();
+    expect(clip.x).toBeCloseTo(scales['x'].getPixelForValue(0), 5);
+    expect(clip.y).toBeCloseTo(scales['y'].getPixelForValue(0), 5);
+    expect(clip.rx).toBeCloseTo(
+      Math.abs(
+        scales['x'].getPixelForValue(50) - scales['x'].getPixelForValue(0)
+      ),
+      5
+    );
+    expect(clip.ry).toBeCloseTo(
+      Math.abs(
+        scales['y'].getPixelForValue(40) - scales['y'].getPixelForValue(0)
+      ),
+      5
+    );
   });
 });

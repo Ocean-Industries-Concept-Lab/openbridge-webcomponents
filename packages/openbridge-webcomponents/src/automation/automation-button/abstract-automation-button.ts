@@ -64,49 +64,67 @@ export interface AutomationButtonReadoutValue {
   unit: string;
 }
 
+/**
+ * Base class for the automation device buttons.
+ *
+ * Renders an `<obc-automation-button>` with the shared surface every device
+ * button needs: the readout stack and its status row, the alert frame, the
+ * circular progress indicator, and the four badge corners (control, alert,
+ * interlock, command-locked) with their slots and enum-driven fallbacks.
+ *
+ * ## Usage Guidelines
+ *
+ * Not registered as a custom element. A subclass supplies the device
+ * rendering through `icon`, `_on` and `_variant`, and may add rows to the
+ * readout stack through `extraReadouts` or `readoutValues`. `ObcAbstractAutomationButtonSquared`
+ * and `ObcAbstractAutomationButtonMotorized` extend it further;
+ * `obc-analog-valve` and `obc-digital-valve` extend it directly.
+ *
+ * @availableWhen readoutPosition showReadoutStack==true
+ * @availableWhen showStatus showReadoutStack==true
+ * @availableWhen readoutSize showReadoutStack==true
+ * @availableWhen tag showReadoutStack==true
+ * @property readoutValues - Values rendered as extra rows in the readout stack, each with a unit and optional digit counts.
+ * @availableWhen readoutValues showReadoutStack==true
+ * @property activated - Enables the activated background color, used to indicate that the button is activated/selected.
+ * @availableWhen alertFrameType alert==true
+ * @availableWhen alertFrameThickness alert==true
+ * @availableWhen alertFrameStatus alert==true
+ * @availableWhen alertFrameMode alert==true
+ * @availableWhen showAlertCategoryIcon alert==true
+ * @availableWhen showAlertIcon alert==true
+ * @property progress - Shows a progress indicator, used to indicate that an user action is in progress
+ * @availableWhen progressMode progress==true
+ * @availableWhen progressValue progress==true && progressMode in [determinate, progressiveIndeterminate]
+ */
 export class ObcAbstractAutomationButton extends LitElement {
   @property({type: Boolean, attribute: false}) showReadoutStack: boolean = true;
-  /** @availableWhen showReadoutStack==true */
   @property({type: String}) readoutPosition: AutomationButtonReadoutPosition =
     AutomationButtonReadoutPosition.bottom;
-  /** @availableWhen showReadoutStack==true */
   @property({type: Boolean, attribute: false}) showStatus: boolean = true;
-  /** @availableWhen showReadoutStack==true */
   @property({type: String}) readoutSize: AutomationButtonReadoutStackSize =
     AutomationButtonReadoutStackSize.regular;
-  /** @availableWhen showReadoutStack==true */
   @property({type: String}) tag: string | null = null;
-  /** @availableWhen showReadoutStack==true */
   @property({type: Array, attribute: false})
   readoutValues?: AutomationButtonReadoutValue[];
 
   @property({type: String}) positioning: AutomationButtonPositioning =
     AutomationButtonPositioning.point;
-  /** Enables the activated background color, used to indicate that the button is activated/selected. */
   @property({type: Boolean}) activated: boolean = false;
   @property({type: Boolean}) alert: boolean = false;
-  /** @availableWhen alert==true */
   @property({type: String}) alertFrameType: ObcAlertFrameType =
     ObcAlertFrameType.SmallSideFlip;
-  /** @availableWhen alert==true */
   @property({type: String}) alertFrameThickness: ObcAlertFrameThickness =
     ObcAlertFrameThickness.Small;
-  /** @availableWhen alert==true */
   @property({type: String}) alertFrameStatus: AlertType = AlertType.Alarm;
-  /** @availableWhen alert==true */
   @property({type: String}) alertFrameMode: ObcAlertFrameMode =
     ObcAlertFrameMode.ackedActive;
-  /** @availableWhen alert==true */
   @property({type: Boolean, attribute: false}) showAlertCategoryIcon: boolean =
     true;
-  /** @availableWhen alert==true */
   @property({type: Boolean}) showAlertIcon: boolean = false;
-  /** Shows a progress indicator, used to indicate that an user action is in progress */
   @property({type: Boolean}) progress: boolean = false;
-  /** @availableWhen progress==true */
   @property({type: String}) progressMode: CircularProgressMode =
     CircularProgressMode.indeterminate;
-  /** @availableWhen progress==true && progressMode in [determinate, progressiveIndeterminate] */
   @property({type: Number}) progressValue: number = 0;
 
   @property({type: String}) badgeControl: AutomationButtonBadgeControl =

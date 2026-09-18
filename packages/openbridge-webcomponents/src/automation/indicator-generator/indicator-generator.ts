@@ -66,6 +66,7 @@ const ICON_TILDE_PATH =
  * @property level - Outer progress ring sweep, 0-100 (%)
  * @property secondaryLevel - Inner progress ring sweep, 0-100 (%), double-bar only
  * @slot icon - Center icon, defaults to the generator G~ glyph
+ * @beta
  */
 @customElement('obc-indicator-generator')
 export class ObcIndicatorGenerator extends LitElement {

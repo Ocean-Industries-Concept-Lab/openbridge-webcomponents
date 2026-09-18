@@ -100,9 +100,9 @@ Key points:
    `@availableWhen name condition` directly under their tag. No inline JSDoc
    above `@property()` fields (`npm run lint:comments` warns; `--fix` hoists
    them). A tag naming a property that does not exist is a ghost manifest
-   member — `npm run lint:slots` fails on it. Mixin-provided properties
-   (`svghelpers/setpoint-mixin.ts`, `svghelpers/setpoint-bundle.ts`) keep their
-   inline docs.
+   member — `npm run lint:slots` fails on it. Mixin-provided properties, and
+   docs carrying a member `@deprecated` or a `@default` cem cannot read from
+   the initializer, keep their inline docs.
 7. **Tone:** Do NOT mention "maritime", "industrial", "bridge", or domain qualifiers; keep text domain-agnostic.
 8. If purpose is unclear, insert `**TODO(designer)**` instead of guessing.
 9. **`@availableWhen` for conditional properties** — see [`docs/agents/jsdoc.md`](docs/agents/jsdoc.md).
@@ -167,7 +167,7 @@ The table below is generated too. Edit `docs/agents/*.md`, never this block.
 | [instruments-misc](docs/agents/instruments-misc.md) | `packages/openbridge-webcomponents/src/navigation-instruments/{azimuth-thruster-labeled,badge-command,depth-actual,draft-trim,heave,instrument-field,main-engine,readout-list,readout-list-item,speed-arrows,thruster}/**` | Instruments outside the obc-watch core — readout rows, propulsion glyphs, and helper-borrowing SVG instruments |
 | [integration-systems](docs/agents/integration-systems.md) | `packages/openbridge-webcomponents/src/integration-systems/**` | Integration bar, fleet and vessel selection components built on the shared integration-button primitive |
 | [jsdoc](docs/agents/jsdoc.md) | `packages/openbridge-webcomponents/src/**/*.ts`<br>`!packages/openbridge-webcomponents/src/{icons,generated,manual-icon}/**`<br>`!packages/openbridge-webcomponents/src/**/{*.stories.ts,*.spec.ts}` | JSDoc template, slot/event tags, lifecycle tags, and the three documentation patterns |
-| [line-area-charts](docs/agents/line-area-charts.md) | `packages/openbridge-webcomponents/src/building-blocks/chart-line/**`<br>`packages/openbridge-webcomponents/src/bars-graphs/{line-graph,area-graph}/**`<br>`packages/openbridge-webcomponents/src/navigation-instruments/gauge-trend/**` | Line/area charts and composite gauge-trend component |
+| [line-area-charts](docs/agents/line-area-charts.md) | `packages/openbridge-webcomponents/src/building-blocks/chart-line/**`<br>`packages/openbridge-webcomponents/src/bars-graphs/{line-graph,area-graph}/**`<br>`packages/openbridge-webcomponents/src/navigation-instruments/{gauge-trend,depth}/**` | Line/area charts, the composite gauge-trend and the depth instrument built on it |
 | [pages](docs/agents/pages.md) | `packages/openbridge-webcomponents/src/pages/**` | Full-page composite examples that assemble many components into one screen |
 | [readout-components](docs/agents/readout-components.md) | `packages/openbridge-webcomponents/src/components/textbox/**`<br>`packages/openbridge-webcomponents/src/building-blocks/readout-block/**`<br>`packages/openbridge-webcomponents/src/navigation-instruments/{readout-list-item,readout-list}/**`<br>`packages/openbridge-webcomponents/src/navigation-instruments/readout/{readout.ts,readout-formatters.ts,readout-shared.ts}` | Readout composition stack (textbox → block → list-item → list) and its value/format contracts |
 | [setpoint](docs/agents/setpoint.md) | `packages/openbridge-webcomponents/src/svghelpers/{setpoint.ts,setpoint-mixin.ts,setpoint-bundle.ts}`<br>`packages/openbridge-webcomponents/src/building-blocks/setpoint/**` | Setpoint design layer, mixin/bundle, confirm animation |

@@ -111,6 +111,17 @@ export interface TabData {
  * - For accessibility, ensure tab titles are clear and concise.
  * - If using custom icons, provide them via the appropriate named slot for each tab.
  *
+ * @property selectedTabId - The `id` of the currently selected tab. Only one tab can be selected at a time.
+ *   Changing this property updates the selected tab visually and emits the `tab-selected` event when changed by user interaction.
+ * @property hasClose - Whether to display a close button on each tab. When enabled, users can remove tabs individually.
+ * @property hug - Enables "hug" mode for a more compact tab layout with reduced padding.
+ * @property showSubtitle - Whether to display subtitle text for each tab. Individual tabs can override this with `tab.showSubtitle`.
+ * @property hasAddNewTab - Whether to display an "add new tab" button at the end of the tab row. When clicked, emits the `add-new-tab` event.
+ * @property tabs - Tabs to display. Each carries a unique `id`, a `title`, an optional
+ *   `subtitle` with a per-tab `showSubtitle` override, `hasLeadingIcon`,
+ *   `disabled`, and a `badges` array that takes precedence over the deprecated
+ *   single-badge fields (`hasBadge`, `badgeCount`, `badgeType`, `badgeSize`,
+ *   `badgeShowNumber`, `showLeadingBadgeIcon`).
  * @slot tab-<id>-icon - Leading icon slot for each tab (shown when `hasLeadingIcon` is true for that tab)
  * @slot tab-<id>-<iconSlotName> - Custom badge icon slot for each tab, one per badge that declares an `iconSlotName`. The deprecated single-badge path uses `tab-<id>-badge-icon`.
  * @fires {CustomEvent<{tab: TabData, id: string, index: number}>} tab-selected - Fired when a tab is selected.
@@ -120,60 +131,18 @@ export interface TabData {
  */
 @customElement('obc-tab-row')
 export class ObcTabRow extends LitElement {
-  /**
-   * The list of tabs to display. Each tab is defined by an object with properties such as `id`, `title`, `subtitle`, `showSubtitle`, `hasLeadingIcon`, `hasBadge`, `badgeCount`, `badgeType`, `badgeSize`, `badgeShowNumber`, `showLeadingBadgeIcon`, and `disabled`.
-   *
-   * - `id` (string): Unique identifier for the tab.
-   * - `title` (string): Display label for the tab.
-   * - `subtitle` (string): Contextual text shown below the title when subtitle display is enabled.
-   * - `showSubtitle` (boolean): Optional per-tab override for displaying the subtitle.
-   * - `hasLeadingIcon` (boolean): Whether to show a leading icon (default: true).
-   * - `badges` (TabItemBadge[]): One or more badges to display on the tab. Takes precedence over the deprecated single-badge fields below.
-   * - `hasBadge` (boolean, deprecated): Whether to show a badge on the tab.
-   * - `badgeCount` (number, deprecated): Number to display in the badge.
-   * - `badgeType` (BadgeType, deprecated): Visual style of the badge (e.g., notification, alarm, enhance).
-   * - `badgeSize` (BadgeSize, deprecated): Size of the badge (e.g., regular, large).
-   * - `badgeShowNumber` (boolean, deprecated): If true, shows the badge number.
-   * - `showLeadingBadgeIcon` (boolean, deprecated): If true, shows a badge icon.
-   * - `disabled` (boolean): If true, disables the tab.
-   */
   @property({type: Array}) tabs: TabData[] = [];
 
-  /**
-   * The `id` of the currently selected tab. Only one tab can be selected at a time.
-   *
-   * Changing this property updates the selected tab visually and emits the `tab-selected` event when changed by user interaction.
-   */
   @property({type: String, attribute: 'selected-tab-id'}) selectedTabId = '';
 
-  /**
-   * Whether to display a close button on each tab. When enabled, users can remove tabs individually.
-   *
-   * Default: `false`.
-   */
   @property({type: Boolean, attribute: 'has-close'}) hasClose = false;
 
   @property({type: Boolean}) centerContent = false;
 
-  /**
-   * Enables "hug" mode for a more compact tab layout with reduced padding.
-   *
-   * Default: `false`.
-   */
   @property({type: Boolean}) hug = false;
 
-  /**
-   * Whether to display subtitle text for each tab. Individual tabs can override this with `tab.showSubtitle`.
-   *
-   * Default: `false`.
-   */
   @property({type: Boolean, attribute: 'show-subtitle'}) showSubtitle = false;
 
-  /**
-   * Whether to display an "add new tab" button at the end of the tab row. When clicked, emits the `add-new-tab` event.
-   *
-   * Default: `false`.
-   */
   @property({type: Boolean, attribute: 'has-add-new-tab'}) hasAddNewTab = false;
 
   private handleTabClick(_: Event, tabId: string) {

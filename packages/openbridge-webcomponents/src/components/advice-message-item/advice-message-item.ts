@@ -132,6 +132,11 @@ export enum ObcAdviceMessageItemSize {
  * @property emptyText - Text to display in the empty/inactive state.
  *   Shown in the `empty` slot when `type="inactive"` or `empty` is true.
  * @availableWhen emptyText type==Inactive
+ * @property type - Display type: `simple` (default) is title, description and timestamp,
+ *   `with-button` adds a text action button, `with-icon-button` an icon action
+ *   button, and `inactive` shows the empty state.
+ * @property size - Size variant: `regular` (default) is the compact layout, `tall` is the
+ *   more spacious one.
  * @slot secondary-icon - Optional overlay icon for additional status/category (shown when `hasSecondaryIcon` is true)
  * @fires {CustomEvent<void>} message-click - When the main message area is clicked
  * @fires {CustomEvent<void>} action-click - When the action button (text or icon) is clicked
@@ -149,25 +154,9 @@ export class ObcAdviceMessageItem extends LitElement {
 
   @property({type: String}) actionLabel = 'View';
 
-  /**
-   * Display type of the advice message.
-   * - `simple`: Standard message with optional title, description, and timestamp.
-   * - `with-button`: Includes a text action button.
-   * - `with-icon-button`: Includes an icon action button.
-   * - `inactive`: Shows the empty/inactive state.
-   *
-   * Default: `simple`
-   */
   @property({type: String}) type: ObcAdviceMessageItemType =
     ObcAdviceMessageItemType.Simple;
 
-  /**
-   * Size variant of the advice message.
-   * - `regular`: Default compact layout.
-   * - `tall`: Larger, more spacious layout.
-   *
-   * Default: `regular`
-   */
   @property({type: String}) size: ObcAdviceMessageItemSize =
     ObcAdviceMessageItemSize.Regular;
 

@@ -117,7 +117,7 @@ export const Full: Story = {
 };
 
 /**
- * Note that Icon only should not be used when there are items with sub items.
+ * Icon only should not be used when there are items with sub items.
  * Use IconOnlyLarge instead.
  */
 export const IconOnly: Story = {

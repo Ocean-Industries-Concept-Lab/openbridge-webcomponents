@@ -103,6 +103,14 @@ export enum ObcFloatingItemLineType {
  *   Only applied when `action` is also `true`.
  *   Use sparingly for secondary actions (e.g., "Undo").
  * @availableWhen action2 action==true
+ * @property type - Visual style: `regular` (default) is a standard notification with a single
+ *   icon, `application` carries a primary and a secondary icon — use it to set
+ *   system-level or application-specific messages apart.
+ * @property direction - Layout direction: `horizontal` (default) puts icon, content and actions
+ *   side-by-side, `vertical` stacks icon and content with the actions below —
+ *   the better fit for a narrow container.
+ * @property lineType - Line wrapping for the message content: `single-line` (default) truncates
+ *   to one line, `multi-line` allows up to eight.
  * @slot primary-icon - Main icon to represent the message’s category.
  * @slot secondary-icon - Additional icon for application-type messages.
  * @slot title - Title or heading of the message.
@@ -118,22 +126,8 @@ export enum ObcFloatingItemLineType {
  */
 @customElement('obc-floating-item')
 export class ObcFloatingItem extends LitElement {
-  /**
-   * Visual style of the message.
-   * - `regular` (default): Standard notification with a single icon.
-   * - `application`: Enhanced style with primary and secondary icons.
-   *
-   * Use `application` when you want to visually distinguish system-level or application-specific messages.
-   */
   @property({type: String}) type = ObcFloatingItemType.Regular;
 
-  /**
-   * Layout direction of the component.
-   * - `horizontal` (default): Icon/content/actions arranged side-by-side.
-   * - `vertical`: Icon/content stacked, actions below.
-   *
-   * Choose `vertical` for narrow containers or when space is limited.
-   */
   @property({type: String}) direction = ObcFloatingItemDirection.horizontal;
 
   @property({type: Boolean}) hasTimestamp = false;
@@ -144,13 +138,6 @@ export class ObcFloatingItem extends LitElement {
 
   @property({type: Boolean}) action2 = false;
 
-  /**
-   * Line wrapping style for the message content.
-   * - `single-line` (default): Truncates to one line.
-   * - `multi-line`: Allows up to 8 lines of content.
-   *
-   * Use `multi-line` for longer messages or detailed descriptions.
-   */
   @property({type: String}) lineType = ObcFloatingItemLineType.singleLine;
 
   /** Dispatches **action-click** when the first action button is clicked. */

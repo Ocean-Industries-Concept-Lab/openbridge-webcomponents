@@ -45,7 +45,7 @@ export enum RotPosition {
   innerCircle = 'innerCircle',
 }
 
-// TODO: RotStyle.port / RotStyle.starboard for port/starboard coloring
+// TODO(#1093): RotStyle.port / RotStyle.starboard for port/starboard colouring
 
 const DOT_COUNT = 5;
 const DOT_ANGLES = Array.from(
@@ -276,7 +276,7 @@ export enum LinearRotPosition {
  * animated by `RateOfTurnController` in translate mode.
  *
  * Enough dots are generated to cover `visibleWidth` plus one full
- * animation cycle (`5 * dotSpacing`) on each side for seamless looping.
+ * animation cycle (`5 * dotSpacing`) on each side, so the loop has no visible seam.
  */
 function linearDotStrip(
   color: string,

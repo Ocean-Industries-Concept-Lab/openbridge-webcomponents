@@ -203,6 +203,28 @@ export enum ContextMenuType {
  *
  * @property title - Title text displayed in the title bar (if `hasTitleBar` is true).
  * @availableWhen title hasTitleBar==true
+ * @property selectedValues - Array of currently selected option values.
+ *   For multi-select variants, can contain multiple values. For single-select, contains at most one value.
+ * @property hasTitleBar - Whether to show a title bar with close button at the top of the menu.
+ *   If true, displays the `title` property and a close icon button.
+ * @property columnGroups - Array of column groups for the `multi-with-subtitles` layout.
+ *   Each group defines a `title`, `columns` (number of columns in the group), and `options` (array of options for that group).
+ * @availableWhen columnGroups type==MultiWithSubtitles
+ * @property itemsPerColumn - Number of items per column in multi-column layouts.
+ *   Used in `multi` and `multi-with-subtitles` variants to control column splitting.
+ * @availableWhen itemsPerColumn type in [Multi, MultiWithSubtitles]
+ * @property multiSelect - Whether multiple selections are allowed.
+ *   If not set, defaults to true for checkbox/multi variants, false for regular/flyout.
+ * @property selectPerGroup - If true, restricts selection to one option per group or column (used in flyout and multi-column).
+ *   When enabled, only one option can be selected in each group or column.
+ * @property type - Menu variant: `regular` (default) is a single-select navigation menu,
+ *   `checkboxes` and `nested-checkboxes` are flat and hierarchical
+ *   multi-select, `flyout` has expandable cascading groups, and `multi` and
+ *   `multi-with-subtitles` lay the menu out in columns, the latter with group
+ *   subtitles.
+ * @property options - Menu options, each with a unique `value` and a `label`, and optionally an
+ *   `icon` template for the leading icon, a `level` giving the nesting depth
+ *   for nested checkboxes, and `children` for a flyout or nested menu.
  * @slot - Optionally used for custom icons in options (e.g., `<obi-placeholder slot="icon"></obi-placeholder>`)
  * @fires {ObcContextMenuInputChangeEvent} change - Fired when the selection changes.
  * @fires {ObcContextMenuInputItemClickEvent} item-click - Fired when a menu item is clicked.
@@ -211,77 +233,23 @@ export enum ContextMenuType {
  */
 @customElement('obc-context-menu-input')
 export class ObcContextMenuInput extends LitElement {
-  /**
-   * The variant type of context menu to display.
-   *
-   * - `'regular'`: Single-select navigation menu.
-   * - `'checkboxes'`: Multi-select with checkboxes.
-   * - `'nested-checkboxes'`: Multi-select with nested/hierarchical checkboxes.
-   * - `'flyout'`: Menu with expandable/cascading groups.
-   * - `'multi'`: Multi-column menu.
-   * - `'multi-with-subtitles'`: Multi-column menu with group subtitles.
-   *
-   * Defaults to `'regular'`.
-   */
   @property({type: String})
   type: ContextMenuType = ContextMenuType.Regular;
 
-  /**
-   * Array of menu options to display.
-   *
-   * Each option should have a unique `value`, a `label`, and can optionally include:
-   * - `icon`: TemplateResult for a leading icon (e.g., `<obi-placeholder slot="icon"></obi-placeholder>`)
-   * - `level`: For nested checkboxes, indicates nesting depth.
-   * - `children`: For flyout/nested menus, an array of child options.
-   */
   @property({type: Array}) options: ContextMenuOption[] = [];
 
-  /**
-   * Array of currently selected option values.
-   *
-   * For multi-select variants, can contain multiple values. For single-select, contains at most one value.
-   */
   @property({type: Array}) selectedValues: string[] = [];
 
-  /**
-   * Whether to show a title bar with close button at the top of the menu.
-   *
-   * If true, displays the `title` property and a close icon button.
-   */
   @property({type: Boolean}) hasTitleBar = false;
 
   @property({type: String}) override title = '';
 
-  /**
-   * Array of column groups for the `multi-with-subtitles` layout.
-   *
-   * Each group defines a `title`, `columns` (number of columns in the group), and `options` (array of options for that group).
-   *
-   * @availableWhen type==MultiWithSubtitles
-   */
   @property({type: Array}) columnGroups: ColumnGroup[] = [];
 
-  /**
-   * Number of items per column in multi-column layouts.
-   *
-   * Used in `multi` and `multi-with-subtitles` variants to control column splitting.
-   *
-   * @availableWhen type in [Multi, MultiWithSubtitles]
-   */
   @property({type: Number}) itemsPerColumn = 5;
 
-  /**
-   * Whether multiple selections are allowed.
-   *
-   * If not set, defaults to true for checkbox/multi variants, false for regular/flyout.
-   */
   @property({type: Boolean}) multiSelect?: boolean;
 
-  /**
-   * If true, restricts selection to one option per group or column (used in flyout and multi-column).
-   *
-   * When enabled, only one option can be selected in each group or column.
-   */
   @property({type: Boolean, reflect: true}) selectPerGroup?: boolean;
 
   private getMenuItems(): HTMLElement[] {

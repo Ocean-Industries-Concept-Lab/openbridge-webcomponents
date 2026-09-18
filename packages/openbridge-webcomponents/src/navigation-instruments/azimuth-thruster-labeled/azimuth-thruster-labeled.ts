@@ -33,7 +33,8 @@ export enum AzimuthThrusterLabeledSize {
  * @availableWhen autoAtThrustSetpointDeadband thrustSetpoint!=undefined && autoAtThrustSetpoint==true
  * @availableWhen thrustSetpointAtZeroDeadband thrustSetpoint!=undefined
  * @availableWhen thrustSetpointOverride thrustSetpoint!=undefined
- * @deprecated
+ * @deprecated The azimuth-thruster-labeled component is deprecated and will be removed in future releases.
+ * Please make a combined component by using <obc-azimuth-thruster> in combination with <obc-readout> instead.
  */
 @customElement('obc-azimuth-thruster-labeled')
 export class ObcAzimuthThrusterLabeled extends LitElement {

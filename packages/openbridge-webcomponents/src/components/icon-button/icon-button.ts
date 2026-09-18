@@ -38,7 +38,7 @@ export enum IconButtonVariant {
  * - **Label Support:**
  *   - Optionally displays a text label below the icon when `hasLabel` is true and content is provided in the `label` slot.
  * - **Corner Alignment:**
- *   - `cornerLeft` and `cornerRight` adjust the button's border radius and alignment for seamless placement at the start or end of a container.
+ *   - `cornerLeft` and `cornerRight` adjust the button's border radius and alignment for flush placement at the start or end of a container.
  * - **Active State:**
  *   - `activated` visually highlights the button as selected or toggled.
  *   - `activeColor` applies an accent color for emphasis.
@@ -98,6 +98,8 @@ export enum IconButtonVariant {
  * @property hasLabel - If true, displays a label below the icon using the `label` slot.
  * @property showDivider - If false, and cornerLeft or cornerRight is true, the divider is not shown.
  * @property ariaLabel - Accessible name forwarded to the inner `<button>`, mapped to the `aria-label` attribute. `aria-labelledby` is not supported: ID references cannot cross the shadow boundary.
+ * @property variant - Visual style: `normal` (default) is the standard appearance, `raised` adds
+ *   a shadow, `flat` drops the background.
  * @slot - Icon slot (default): Place an icon such as <obi-search> here.
  * @slot label - Optional label shown below the icon when `hasLabel` is true.
  * @fires click - Fired when the button is clicked (if not disabled).
@@ -105,12 +107,6 @@ export enum IconButtonVariant {
  */
 @customElement('obc-icon-button')
 export class ObcIconButton extends LitElement {
-  /**
-   * Visual style of the button.
-   * - `normal`: Standard appearance (default).
-   * - `raised`: Elevated with shadow.
-   * - `flat`: Minimal, backgroundless style.
-   */
   @property({type: String}) variant: IconButtonVariant =
     IconButtonVariant.normal;
 

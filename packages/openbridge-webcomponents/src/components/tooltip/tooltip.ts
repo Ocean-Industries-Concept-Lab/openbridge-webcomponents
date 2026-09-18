@@ -112,53 +112,28 @@ export enum TooltipVariant {
  * ```
  * In this example, the tooltip displays a warning icon and the label "Low battery" with warning styling.
  *
+ * @property label - Text content displayed in the tooltip (only used when `type="label"`).
+ * @availableWhen label type==label
+ * @property showIcon - Whether to show the leading icon when `type="label"`.
+ *   Has no effect when `type="icon"`.
+ * @availableWhen showIcon type==label
+ * @property type - Display type: `label` (default) shows text with an optional leading icon,
+ *   `icon` shows the icon alone.
+ * @property variant - Visual style and meaning: `normal` (default) is informational, `enhanced`
+ *   is a highlighted blue notification, `eco` a green positive state, `raised`
+ *   the elevated style, and `caution`, `warning` and `alarm` the yellow,
+ *   orange and red alert severities.
  * @slot icon - Leading icon slot (shown when `type="icon"` or `type="label"` with `showIcon=true`)
  * @stable
  */
 @customElement('obc-tooltip')
 export class ObcTooltip extends LitElement {
-  /**
-   * Type of tooltip display.
-   *
-   * - `icon`: Shows only an icon.
-   * - `label`: Shows text with optional leading icon.
-   *
-   * Default: `label`
-   */
   @property({type: String}) type: TooltipType = TooltipType.label;
 
-  /**
-   * Visual style and semantic meaning of the tooltip.
-   *
-   * - `normal` (default): Standard informational tooltip.
-   * - `enhanced`: Highlighted/important notification (blue).
-   * - `eco`: Environmental/positive state (green).
-   * - `raised`: Elevated/raised visual style.
-   * - `caution`: Indicates caution or minor issues (yellow).
-   * - `warning`: Highlights warnings or potential problems (orange).
-   * - `alarm`: Signals critical or urgent conditions (red).
-   *
-   * Default: `normal`
-   */
   @property({type: String}) variant: TooltipVariant = TooltipVariant.normal;
 
-  /**
-   * Text content displayed in the tooltip (only used when `type="label"`).
-   *
-   * Default: `'Label'`
-   *
-   * @availableWhen type==label
-   */
   @property({type: String}) label = 'Label';
 
-  /**
-   * Whether to show the leading icon when `type="label"`.
-   * Has no effect when `type="icon"`.
-   *
-   * Default: `false`
-   *
-   * @availableWhen type==label
-   */
   @property({type: Boolean}) showIcon = false;
 
   override render() {

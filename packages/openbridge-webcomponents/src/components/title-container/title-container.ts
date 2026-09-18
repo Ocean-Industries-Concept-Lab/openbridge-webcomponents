@@ -39,7 +39,7 @@ export enum ObcTitleContainerState {
  *   action order.
  *
  * **Best Practices**
- * - Keep actions deterministic in order to preserve stable event indexing.
+ * - Keep actions deterministic to preserve stable event indexing.
  * - Keep title and label concise to avoid truncation in narrow layouts.
  * - Use this component as a header boundary and keep business logic in parent
  *   containers.
