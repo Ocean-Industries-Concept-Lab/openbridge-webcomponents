@@ -89,7 +89,7 @@
     "@oicl-lit/gen-wrapper-svelte": "0.2.0",
     "@oicl-lit/gen-wrapper-vue": "0.4.6",
     "@open-wc/lit-helpers": "^0.7.0",
-    "@playwright/test": "1.60.0",
+    "@playwright/test": "1.63.0",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/commit-analyzer": "^13.0.1",
     "@semantic-release/exec": "^7.1.0",
