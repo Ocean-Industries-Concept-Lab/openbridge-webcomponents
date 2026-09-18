@@ -19,7 +19,6 @@ import {
   removeGroupingFromDisplay,
   valuesEqual,
 } from './number-input-format.js';
-import {getCssVariableValue} from '../../charthelpers/colors.js';
 
 export type ObcNumberInputFieldInputEvent = CustomEvent<{value: number}>;
 export type ObcNumberInputFieldChangeEvent = CustomEvent<{value: number}>;
@@ -41,23 +40,6 @@ export enum ObcNumberInputFieldPlacement {
   Right = 'right',
 }
 
-const characterWidth = 9.15199279785156;
-const symbolWidth = 4.287994384765653;
-const baseFontSize = 16;
-
-/** Product of the CSS `zoom` of the element and every ancestor, across shadow roots. */
-function cssZoomOf(element: Element): number {
-  let zoom = 1;
-  let node: Element | null = element;
-  while (node) {
-    const value = Number.parseFloat(getComputedStyle(node).zoom);
-    if (Number.isFinite(value) && value > 0) zoom *= value;
-    const root = node.getRootNode();
-    node =
-      node.parentElement ?? (root instanceof ShadowRoot ? root.host : null);
-  }
-  return zoom;
-}
 /**
  * `<obc-number-input-field>` – A specialized input field for numerical values with optional unit display.
  *
@@ -170,7 +152,6 @@ export class ObcNumberInputField extends LitElement {
     const parsed = parseNumberInput(raw);
     this.value = parsed;
     this.previousDisplayText = raw;
-    this.updateCenterAlignedInputWidth(raw);
     this.dispatchInput();
   }
 
@@ -293,41 +274,11 @@ export class ObcNumberInputField extends LitElement {
     return this.displayText;
   }
 
-  private updateCenterAlignedInputWidth(value: string) {
-    if (this.textAlign !== ObcNumberInputFieldTextAlign.Center) {
-      this.style.removeProperty('--obc-number-input-center-width');
-      return;
-    }
-
-    const fontSize = Number.parseFloat(
-      getCssVariableValue(
-        this,
-        '--global-typography-instrument-value-regular-font-size'
-      )
-    );
-
-    const characters = value.replaceAll(/[.,]/g, '');
-    const symbols = value.length - characters.length;
-    // These values are based on the font size of 16px
-
-    const calculatedWidth =
-      characters.length * characterWidth + symbols * symbolWidth;
-
-    const measuredWidth = Math.ceil(
-      (calculatedWidth * fontSize) / baseFontSize
-    );
-    this.style.setProperty(
-      '--obc-number-input-center-width',
-      `${measuredWidth}px`
-    );
-  }
-
   override firstUpdated() {
     if (!this.displayText && !this.displayOverride) {
       this.displayText = this.formatValueForDisplay(this.value);
     }
     this.lastCommittedValue = this.value;
-    this.updateCenterAlignedInputWidth(this.getEffectiveDisplay());
   }
 
   private get isEmpty(): boolean {
@@ -372,8 +323,6 @@ export class ObcNumberInputField extends LitElement {
     ) {
       this.previousValue = this.value;
     }
-
-    this.updateCenterAlignedInputWidth(this.getEffectiveDisplay());
   }
 
   private renderFooterText(
@@ -395,62 +344,14 @@ export class ObcNumberInputField extends LitElement {
     </div>`;
   }
 
+  /**
+   * Keeps focus where it is while the chrome around the value is clicked.
+   * The wrapper is a `<label>`, so the click itself focuses the input; without
+   * this the pointerdown would blur it first and commit an unfinished edit.
+   */
   private onPointerDown(e: PointerEvent) {
-    if (this.disabled) return;
-    if (this.readonly) return;
-    if (!this.inputElement) return;
-    e.stopPropagation();
-  }
-
-  private onClick(e: MouseEvent) {
-    if (this.disabled) return;
-    if (this.readonly) return;
-    const input = this.inputElement;
-    if (!input) return;
-    // A click on the input is left to the browser: it derives the caret from the
-    // real glyph metrics and stays correct under CSS zoom.
-    if (e.composedPath().includes(input)) return;
-
-    // Everywhere else in the field (label, unit, icon, padding) holds no text, so
-    // anchor the caret to whichever end of the value was clicked towards. Decide
-    // before focusing, which reformats the value and reflows the field.
-    e.preventDefault();
-    const toStart = this.clickedBeforeValue(e, input);
-    input.focus();
-    // Focusing swaps in the editing representation; setting `value` resets the
-    // selection, so place the caret only once that render has landed.
-    void this.updateComplete.then(() => {
-      const caret = toStart ? 0 : input.value.length;
-      input.setSelectionRange(caret, caret);
-    });
-  }
-
-  /** Whether a click outside the input was aimed at the start of the value. */
-  private clickedBeforeValue(e: MouseEvent, input: HTMLInputElement): boolean {
-    const inputBox = input.getBoundingClientRect();
-
-    // An element that sits beside the input answers this without pointer maths,
-    // because both rects come from the same coordinate space.
-    for (const node of e.composedPath()) {
-      if (node === this) break;
-      if (!(node instanceof Element)) continue;
-      const box = node.getBoundingClientRect();
-      if (box.width === 0) continue;
-      if (box.right <= inputBox.left) return true;
-      if (box.left >= inputBox.right) return false;
-    }
-
-    // Padding of an element that wraps the input, so only the pointer can say which
-    // side it was. getBoundingClientRect() is zoom-adjusted on newer engines and
-    // unzoomed on older ones, so calibrate the two spaces instead of assuming.
-    const rectScale = input.offsetWidth
-      ? inputBox.width / input.offsetWidth
-      : 1;
-    const rectToClient = rectScale ? cssZoomOf(input) / rectScale : 1;
-    // A wrapper reaches above and below the value as well as beside it, so compare
-    // against the middle of the value: the nearer end is the one that was aimed at.
-    const middle = inputBox.left + inputBox.width / 2;
-    return e.clientX < middle * rectToClient;
+    if (this.disabled || this.readonly) return;
+    if (e.target !== this.inputElement) e.preventDefault();
   }
 
   override render() {
@@ -480,7 +381,6 @@ export class ObcNumberInputField extends LitElement {
           squared: this.squared,
         })}
         @pointerdown=${this.onPointerDown}
-        @click=${this.onClick}
       >
         ${this.label
           ? html`<div

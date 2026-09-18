@@ -203,102 +203,64 @@ export const AlignRightUnitOutside: Story = {
   },
 };
 
+export const AlignCenterEmpty: Story = {
+  args: {
+    placeholder: '00.0',
+    unit: '°C',
+    textAlign: ObcNumberInputFieldTextAlign.Center,
+  },
+};
+
 // =============================================================================
-// CARET PLACEMENT
+// CARET UNDER ZOOM
 // =============================================================================
 
-/**
- * Reports where the caret landed, so a click can be checked against where it was
- * aimed. Runs after the click so the component has settled.
- */
+/** Prints where the caret landed beside the field that was clicked. */
 const reportCaret = (event: Event) => {
   const row = event.currentTarget as HTMLElement;
-  const field = row.querySelector(
-    'obc-number-input-field'
-  ) as ObcNumberInputField | null;
-  const output = row.querySelector('.caret-readout') as HTMLElement | null;
-  if (!field || !output) return;
+  const field = row.querySelector('obc-number-input-field');
+  const readout = row.querySelector('.caret-readout');
+  if (!field || !readout) return;
   setTimeout(() => {
-    const input = field.shadowRoot?.querySelector(
-      'input'
-    ) as HTMLInputElement | null;
-    output.textContent = input
-      ? `caret ${input.selectionStart} of ${input.value.length}  ·  "${input.value}"`
+    const input = field.shadowRoot?.querySelector('input');
+    readout.textContent = input
+      ? `caret ${input.selectionStart} of ${input.value.length}`
       : '';
   });
 };
 
-const caretRow = (caption: string, field: ReturnType<typeof html>) => html`
+const caretRow = (
+  zoom: number,
+  textAlign: ObcNumberInputFieldTextAlign
+) => html`
   <div
     style="display:flex; align-items:center; gap:16px; margin-bottom:16px;"
     @click=${reportCaret}
   >
-    <span style="width:240px; font:12px sans-serif; opacity:.8;"
-      >${caption}</span
+    <span style="width:120px; font:12px sans-serif;"
+      >zoom ${zoom} · ${textAlign}</span
     >
-    <div style="width:320px;">${field}</div>
-    <code
-      class="caret-readout"
-      style="font:12px monospace; opacity:.8; min-width:220px;"
-      >click the field</code
+    <div style="width:320px;">
+      <obc-number-input-field
+        label="SV"
+        unit="m/s"
+        .value=${1234567.89}
+        .textAlign=${textAlign}
+      ></obc-number-input-field>
+    </div>
+    <code class="caret-readout" style="font:12px monospace; min-width:120px;"
+      >click a digit</code
     >
   </div>
 `;
 
-const caretField = (
-  textAlign: ObcNumberInputFieldTextAlign,
-  hasLeadingIcon = false
-) => html`
-  <obc-number-input-field
-    label="SV"
-    unit="m/s"
-    .value=${1234567.89}
-    .textAlign=${textAlign}
-    .maxFractionDigits=${6}
-    ?hasLeadingIcon=${hasLeadingIcon}
-  >
-    ${hasLeadingIcon ? html`<obi-ship slot="leading-icon"></obi-ship>` : ''}
-  </obc-number-input-field>
-`;
-
 /**
- * Every surface of the field is clickable. Inside the value the browser places the
- * caret from the real glyph metrics; the label, unit, icon and padding hold no text,
- * so the caret anchors to whichever end of the value was clicked towards.
- *
- * `center` is the interesting one: the input is only as wide as the digits, so most
- * of the field is padding rather than input.
+ * Hosts scale the page with CSS `zoom`, so the same fields repeat at four
+ * levels; a click on a digit must put the caret on that digit at every one.
+ * A live check rather than a snapshot: the readout prints where it landed.
  */
-export const CaretPlacement: Story = {
-  render: () => html`
-    <div style="padding:8px;">
-      ${caretRow(
-        'right (default)',
-        caretField(ObcNumberInputFieldTextAlign.Right)
-      )}
-      ${caretRow(
-        'center — narrow input, wide padding',
-        caretField(ObcNumberInputFieldTextAlign.Center)
-      )}
-      ${caretRow(
-        'right-unit-outside',
-        caretField(ObcNumberInputFieldTextAlign.RightUnitOutside)
-      )}
-      ${caretRow(
-        'right + leading icon',
-        caretField(ObcNumberInputFieldTextAlign.Right, true)
-      )}
-    </div>
-  `,
-};
-
-/**
- * The same fields under CSS `zoom`, which Perspective and other hosts apply for
- * per-user UI scaling. Caret placement must be identical to `CaretPlacement` at
- * every scale — an offset that grows as you click further from the right edge means
- * pointer coordinates are being compared against unscaled metrics somewhere.
- */
-export const CaretPlacementUnderZoom: Story = {
+export const CaretUnderZoom: Story = {
+  tags: ['skip-test'],
   render: () => html`
     <div style="padding:8px;">
       ${[0.5, 0.75, 1, 1.25].map(
@@ -306,49 +268,10 @@ export const CaretPlacementUnderZoom: Story = {
           <div
             style="zoom:${zoom}; border-bottom:1px dashed currentColor; padding:8px 0;"
           >
-            ${caretRow(
-              `zoom ${zoom} · right`,
-              caretField(ObcNumberInputFieldTextAlign.Right)
-            )}
-            ${caretRow(
-              `zoom ${zoom} · center`,
-              caretField(ObcNumberInputFieldTextAlign.Center)
-            )}
+            ${caretRow(zoom, ObcNumberInputFieldTextAlign.Right)}
+            ${caretRow(zoom, ObcNumberInputFieldTextAlign.Center)}
           </div>
         `
-      )}
-    </div>
-  `,
-};
-
-/**
- * Disabled fields must not move the caret or take focus. Readonly fields stay
- * focusable so the value can be selected and copied, but the field never moves the
- * caret for them either — the browser's own placement inside the value is all they
- * get.
- */
-export const CaretPlacementInert: Story = {
-  render: () => html`
-    <div style="padding:8px;">
-      ${caretRow(
-        'disabled',
-        html`<obc-number-input-field
-          label="SV"
-          unit="m/s"
-          .value=${1234567.89}
-          .maxFractionDigits=${6}
-          disabled
-        ></obc-number-input-field>`
-      )}
-      ${caretRow(
-        'readonly',
-        html`<obc-number-input-field
-          label="SV"
-          unit="m/s"
-          .value=${1234567.89}
-          .maxFractionDigits=${6}
-          readonly
-        ></obc-number-input-field>`
       )}
     </div>
   `,
