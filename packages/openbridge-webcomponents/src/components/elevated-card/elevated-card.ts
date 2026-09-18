@@ -154,6 +154,14 @@ export enum ObcElevatedCardTag {
  *   for a clickable card with an `href`, or `overrideTag="a"`; `isClickable=false`, `hasAction` or another
  *   `overrideTag` render a tag on which the URL has no effect.
  * @property target - Specifies the target for the link when `href` is set (e.g., `_blank`).
+ * @property position - Visual grouping and border radius: `regular` (default) is an ungrouped
+ *   card, while `top`, `center` and `bottom` shape it for the first, an inner
+ *   and the last card of a stack.
+ * @property size - Content layout: `single-line` (default) is the label alone,
+ *   `double-line` adds a one-line description, `multi-line` a wrapping one.
+ * @property overrideTag - Forces the card's host tag to `button`, `a`, `article` or `div`. Left
+ *   unset, the tag follows `href` and `isClickable`: an anchor when `href` is
+ *   set, a button when clickable, an article otherwise.
  * @slot graphic - Prominent graphic or illustration at the top of the card (shown when `hasGraphic` is true)
  * @slot leading-icon - Icon displayed before the label (shown when `hasLeadingIcon` is true)
  * @slot label - Main label or title of the card (always shown)
@@ -166,34 +174,12 @@ export enum ObcElevatedCardTag {
  */
 @customElement('obc-elevated-card')
 export class ObcElevatedCard extends LitElement {
-  /**
-   * Controls the card's visual grouping and border radius.
-   * - `regular` (default): Standard card, not visually grouped.
-   * - `top`: Card is visually grouped at the top of a section or stack.
-   * - `bottom`: Card is visually grouped at the bottom of a section or stack.
-   * - `center`: Card is visually grouped in the middle of a section or stack.
-   */
   @property({type: String}) position: ObcElevatedCardPosition =
     ObcElevatedCardPosition.Regular;
 
-  /**
-   * Controls the card's content layout:
-   * - `single-line`: Label only, compact.
-   * - `double-line`: Label + single-line description.
-   * - `multi-line`: Label + multi-line description.
-   * Default is `single-line`.
-   */
   @property({type: String}) size: ObcElevatedCardSize =
     ObcElevatedCardSize.SingleLine;
 
-  /**
-   * Overrides the HTML tag used to render the card.
-   * - `button`: Renders as a <button> (default for clickable cards).
-   * - `a`: Renders as an <a> anchor (when `href` is set).
-   * - `article`: Renders as an <article> (for non-interactive or action cards).
-   * - `div`: Renders as a <div> (generic container).
-   * If not set, the tag is determined automatically based on `href` and `isClickable`.
-   */
   @property({type: String}) overrideTag: ObcElevatedCardTag | undefined;
 
   @property({type: Boolean, attribute: false}) isClickable: boolean = true;

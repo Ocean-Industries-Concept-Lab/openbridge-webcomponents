@@ -96,6 +96,13 @@ export type ObcCheckboxChangeEvent = CustomEvent<{
  * ```
  *
  * @property hasHoverEffects - Internal: controls hover effects on the checkbox. Used by wrapper components such as `obc-checkbox-item`.
+ * @property status - Controls the checkbox status: `checked`, `unchecked`, or `mixed` (indeterminate).
+ *   Defaults to `unchecked`.
+ * @property state - Controls the visual state: `enabled` or `loading`.
+ *   Defaults to `enabled`.
+ * @property disabled - Disables the checkbox and prevents user interaction.
+ *   When `true`, the checkbox is visually styled as disabled and does not respond to user input.
+ *   Interaction is also locked when `state === loading`.
  * @slot - No named slots.
  * @fires {ObcCheckboxChangeEvent} change - Emitted when the status changes.
  * @fires {ObcCheckboxChangeEvent} disabled - Emitted when the disabled state changes.
@@ -103,26 +110,10 @@ export type ObcCheckboxChangeEvent = CustomEvent<{
  */
 @customElement('obc-checkbox')
 export class ObcCheckbox extends LitElement {
-  /**
-   * Controls the checkbox status: `checked`, `unchecked`, or `mixed` (indeterminate).
-   *
-   * Defaults to `unchecked`.
-   */
   @property({type: String}) status: CheckboxStatus = CheckboxStatus.unchecked;
 
-  /**
-   * Controls the visual state: `enabled` or `loading`.
-   *
-   * Defaults to `enabled`.
-   */
   @property({type: String}) state: CheckboxState = CheckboxState.enabled;
 
-  /**
-   * Disables the checkbox and prevents user interaction.
-   *
-   * When `true`, the checkbox is visually styled as disabled and does not respond to user input.
-   * Interaction is also locked when `state === loading`.
-   */
   @property({type: Boolean}) disabled = false;
 
   @property({type: Boolean, attribute: false}) hasHoverEffects = true;

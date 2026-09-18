@@ -154,6 +154,11 @@ export enum ObcNavigationMenuFlyoutVariant {
  *   One of `Full` (default) or `Compact`.
  * @availableWhen flyoutVariant variant==Full
  * @property smallScreen - When `true`, adapts the layout for small screens (e.g., moves logo into the footer area and adjusts item layout).
+ * @property variant - Visual style and layout: `full` (default) shows icons and labels,
+ *   `icon-only` is the compact icon-only menu and takes no flyouts or groups,
+ *   `icon-only-large` is the icon-only menu that does, `compact` is the
+ *   space-saving menu, and `tree` expands groups inline and indents rows by
+ *   depth.
  * @slot main - Slot for primary navigation items and groups.
  * @slot footer - Slot for secondary navigation items (e.g., settings, help).
  * @slot logo - Slot for branding/logo area.
@@ -161,15 +166,6 @@ export enum ObcNavigationMenuFlyoutVariant {
  */
 @customElement('obc-navigation-menu')
 export class ObcNavigationMenu extends LitElement {
-  /**
-   * Controls the visual style and layout of the navigation menu.
-   *
-   * - `full`: Standard menu with icons and labels (default).
-   * - `icon-only`: Compact, icon-only menu (use only when no flyouts/groups are present).
-   * - `icon-only-large`: Icon-only menu supporting flyouts/groups.
-   * - `compact`: Minimal, space-saving menu.
-   * - `tree`: Hierarchical tree — groups expand inline and rows are indented by depth.
-   */
   @property({type: String}) variant: ObcNavigationMenuVariant =
     ObcNavigationMenuVariant.Full;
 

@@ -11,7 +11,7 @@ import {IndicatorDirection} from '../indicator-shared/linear-indicator.js';
 const meta = {
   title: 'Automation/Indicators/Indicator Tank Atmospheric',
   component: 'obc-indicator-tank-atmospheric',
-  tags: ['autodocs', '6.0'],
+  tags: ['autodocs', '6.0', 'beta'],
   args: {
     direction: IndicatorDirection.vertical,
     variant: IndicatorTankAtmosphericVariant.bar,

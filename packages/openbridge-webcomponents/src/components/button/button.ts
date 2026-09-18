@@ -105,6 +105,11 @@ export enum segmentPosition {
  *   Use for navigation actions.
  * @property target - Specifies the target for the anchor link (only applies when `href` is set).
  *   Common values: `_blank`, `_self`, `_parent`, `_top`.
+ * @property variant - Visual style: `normal` (default) is the standard button, `raised` is
+ *   elevated for emphasis, `flat` is minimal and low-emphasis.
+ * @property segmentPosition - Position within a segmented button group: `single` stands alone, `start`,
+ *   `middle` and `end` shape the button for the first, an inner and the last
+ *   segment.
  * @fires click - Fired when the button is clicked (if not disabled).
  *
  * @slot - Default slot for button label text (required for accessibility)
@@ -114,12 +119,6 @@ export enum segmentPosition {
  */
 @customElement('obc-button')
 export class ObcButton extends LitElement {
-  /**
-   * Controls the button's visual style.
-   * - `normal`: Standard button (default)
-   * - `raised`: Elevated button for emphasis
-   * - `flat`: Minimal, low-emphasis button
-   */
   @property({type: String}) variant: ButtonVariant = ButtonVariant.normal;
 
   @property({type: Boolean, reflect: true}) fullWidth = false;
@@ -134,13 +133,6 @@ export class ObcButton extends LitElement {
 
   @property({type: String}) target?: string = undefined;
 
-  /**
-   * Defines the segment position when used in a segmented button group.
-   * - `single`: Standalone button
-   * - `start`: First button in a group
-   * - `middle`: Middle button in a group
-   * - `end`: Last button in a group
-   */
   @property({type: String}) segmentPosition: segmentPosition =
     segmentPosition.single;
 

@@ -26,7 +26,7 @@ import {customElement} from '../../decorator.js';
  *
  * ### Best Practices and Constraints
  * - The component is purely visual and does not provide interactive controls; pair it with buttons or sliders for volume adjustment if needed.
- * - For accessibility, ensure that volume state is also conveyed via ARIA attributes or alternative text if used in interactive contexts.
+ * - For accessibility, also convey the volume state through ARIA attributes or alternative text when the component sits in an interactive context.
  * **TODO(designer):** Should the component include ARIA labeling or support for screen readers?
  *
  * ### Example:

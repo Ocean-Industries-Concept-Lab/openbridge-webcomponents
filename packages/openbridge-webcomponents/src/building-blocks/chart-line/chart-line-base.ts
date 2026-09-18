@@ -515,6 +515,12 @@ const LINE_GRAPH_DIMENSION_PROP_NAMES = [
  *   When instrumentMode=true, this value is used directly (defaults to 8px).
  *   When instrumentMode=false, this is ignored and border radius is read from CSS variable.
  * @availableWhen borderRadius instrumentMode==true
+ * @property hasLabelPadding - Reserves canvas padding for axis tick labels on the sides that have no
+ *   slotted external scale. `false` renders those sides edge-to-edge and hides
+ *   the tick labels so they cannot be clipped, and it also suppresses the
+ *   automatic edge-to-edge switch below the 192px threshold, removing the
+ *   padding jump at that crossing. Set it when a host owns the framing and
+ *   never wants axis labels, as `obc-automation-tank` does.
  * @experimental
  */
 export class ObcChartLineBase extends LitElement {
@@ -578,23 +584,6 @@ export class ObcChartLineBase extends LitElement {
   @property({type: Boolean})
   showTickMarks = false;
 
-  /**
-   * Reserve canvas padding for axis tick labels on sides without an external scale.
-   *
-   * When `true` (default), the chart leaves room for tick labels and renders them
-   * (subject to `showTickMarks` and the 192px auto-compact threshold).
-   *
-   * When `false`, the chart renders edge-to-edge on sides without a slotted external
-   * scale AND axis tick labels are force-hidden so they cannot be clipped. This also
-   * suppresses the automatic edge-to-edge switch that normally happens below the
-   * 192px threshold, eliminating the visible padding "jump" when crossing it.
-   *
-   * Useful when embedding the chart inside another component that owns framing
-   * and never wants to show axis labels (e.g. `obc-automation-tank`).
-   *
-   * Defaults to `true` to preserve existing behavior. Declared with `attribute: false`
-   * because a `true`-default boolean cannot work as an HTML boolean attribute.
-   */
   @property({type: Boolean, attribute: false})
   hasLabelPadding = true;
 
@@ -1990,12 +1979,10 @@ export class ObcChartLineBase extends LitElement {
     const effectiveWidth = this.getEffectiveWidth();
     const effectiveHeight = this.getEffectiveHeight();
 
-    // Determine if we should show labels (above threshold).
-    // When `hasLabelPadding=false` the chart reserves no room for axis labels,
-    // so slotted scales must also hide their labels — otherwise their
-    // `labelThickness` band stays in the reported thickness and the chart
-    // gets re-padded inward (leaving whitespace on the scale's side), and any
-    // visible labels would be clipped against the canvas edge.
+    // Without label padding the slotted scales must hide their labels too:
+    // their `labelThickness` band would stay in the reported thickness, the
+    // chart would be re-padded inward, and the labels would clip on the
+    // canvas edge.
     const aboveThreshold =
       effectiveWidth >= RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS &&
       effectiveHeight >= RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS;
@@ -2393,19 +2380,11 @@ export class ObcChartLineBase extends LitElement {
       return;
     }
 
-    // `computedWidth` / `computedHeight` are the pixel size everything below
-    // derives from (`--chart-height`, the slotted scales' height, the padding
-    // scale factor). They were only ever refreshed from the wrapper's
-    // ResizeObserver, so re-assigning `width` / `height` rebuilt the chart
-    // against the *previous* aspect ratio and the new one only took effect on
-    // the next container resize (issue #1138).
-    //
-    // This runs before the `hasLabelPadding` branch below: the two can change
-    // in the same update (the tank sets both on its embedded gauge-trend), and
-    // taking the label-padding path first would rebuild against a stale
-    // derived size. Nothing is lost by going through here instead — a rebuild
-    // from `updateComputedDimensions()` goes via `syncScalesAndChart()`, which
-    // performs the same `updateScaleProperties()` cascade.
+    // Refresh the derived size before the `hasLabelPadding` branch below:
+    // both can change in one update (the tank sets both on its embedded
+    // gauge-trend), and the label-padding path would then rebuild against a
+    // stale size. Nothing is lost — `updateComputedDimensions()` rebuilds via
+    // `syncScalesAndChart()`, the same `updateScaleProperties()` cascade.
     if (this.hasAnyChanged(changed, LINE_GRAPH_DIMENSION_PROP_NAMES)) {
       // Recreates the chart itself when the derived size actually moved.
       if (this.updateComputedDimensions()) return;
@@ -2533,7 +2512,7 @@ export class ObcChartLineBase extends LitElement {
    * Refresh `computedWidth` / `computedHeight`, the derived pixel size the
    * chart and its slotted scales are laid out from.
    *
-   * In pixel mode they simply mirror `width` / `height`. Only in
+   * In pixel mode they mirror `width` / `height`. Only in
    * `fixedAspectRatioScaling` mode are they derived — from the wrapper's
    * measured width and the aspect ratio the `width` / `height` pair defines —
    * and only then can this rebuild the chart.

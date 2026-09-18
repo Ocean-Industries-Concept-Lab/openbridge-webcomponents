@@ -102,6 +102,32 @@ export interface TabItemBadge {
  * </obc-tab-item>
  * ```
  *
+ * @property hug - Shrinks the tab width to fit its content instead of using the default fixed width.
+ *   When enabled, the tab will use `width: fit-content` and a minimum width.
+ * @property centerContent - Centers the content (icon, title, badge) horizontally within the tab.
+ *   When enabled, content is centered rather than left-aligned.
+ * @property checked - Marks the tab as selected/active.
+ *   Only one tab in a group should have `checked` set to true.
+ * @property hasClose - Displays a close button at the end of the tab.
+ *   Use for tabs that can be removed by the user.
+ * @property hasLeadingIcon - Shows a leading icon at the start of the tab.
+ *   Supply icon content via the `leading-icon` slot.
+ * @property hasTitle - Displays the tab's title/label.
+ *   Content can be provided via the `title` slot or the `title` property.
+ * @property hasDivider - Shows a vertical divider on the left edge of the tab (except when checked).
+ *   Useful for visually separating tabs.
+ * @availableWhen hasDivider checked==false
+ * @property icon - (Deprecated/Unused) Icon name for the tab.
+ *   Icon content should be provided via the `leading-icon` slot.
+ * @property title - The tab's title/label text.
+ *   Can be overridden by slotting content into the `title` slot.
+ * @property showSubtitle - Shows contextual text below the tab title.
+ * @property subtitle - Contextual text shown below the tab title when `showSubtitle` is true.
+ * @property disabled - Disables the tab, preventing user interaction and applying disabled styles.
+ * @property badges - Badges shown on the tab. A non-empty array takes precedence over the
+ *   deprecated single-badge properties (`hasBadge`, `badgeType`, `badgeSize`,
+ *   `badgeCount`, `badgeShowNumber`, `showLeadingBadgeIcon`); an empty one
+ *   falls back to them, gated by `hasBadge`.
  * @slot leading-icon - Slot for the leading icon (shown when `hasLeadingIcon` is true)
  * @slot title - Slot for the tab's label/title (shown when `hasTitle` is true)
  * @slot badge-icon - Slot for an icon inside the badge (shown when `hasBadge` and `showLeadingBadgeIcon` are true)
@@ -111,74 +137,21 @@ export interface TabItemBadge {
  */
 @customElement('obc-tab-item')
 export class ObcTabItem extends LitElement {
-  /**
-   * Shrinks the tab width to fit its content instead of using the default fixed width.
-   * When enabled, the tab will use `width: fit-content` and a minimum width.
-   *
-   * Default: false
-   */
   @property({type: Boolean, reflect: true}) hug = false;
 
-  /**
-   * Centers the content (icon, title, badge) horizontally within the tab.
-   * When enabled, content is centered rather than left-aligned.
-   *
-   * Default: false
-   */
   @property({type: Boolean}) centerContent = false;
 
-  /**
-   * Marks the tab as selected/active.
-   * Only one tab in a group should have `checked` set to true.
-   *
-   * Default: false
-   */
   @property({type: Boolean, reflect: true}) checked = false;
 
-  /**
-   * Displays a close button at the end of the tab.
-   * Use for tabs that can be removed by the user.
-   *
-   * Default: false
-   */
   @property({type: Boolean, attribute: 'has-close'}) hasClose = false;
 
-  /**
-   * Shows a leading icon at the start of the tab.
-   * Supply icon content via the `leading-icon` slot.
-   *
-   * Default: false
-   */
   @property({type: Boolean, attribute: 'has-leading-icon'}) hasLeadingIcon =
     false;
 
-  /**
-   * Displays the tab's title/label.
-   * Content can be provided via the `title` slot or the `title` property.
-   *
-   * Default: false
-   */
   @property({type: Boolean, attribute: 'has-title'}) hasTitle = false;
 
-  /**
-   * Shows a vertical divider on the left edge of the tab (except when checked).
-   * Useful for visually separating tabs.
-   *
-   * Default: false
-   * @availableWhen checked==false
-   */
   @property({type: Boolean, attribute: 'has-divider'}) hasDivider = false;
 
-  /**
-   * One or more badges (count/status) to display on the tab.
-   *
-   * When this array is non-empty it takes precedence over the deprecated
-   * single-badge props (`hasBadge`, `badgeType`, `badgeSize`, `badgeCount`,
-   * `badgeShowNumber`, `showLeadingBadgeIcon`). When empty, the deprecated
-   * props are used instead (gated by `hasBadge`).
-   *
-   * Default: []
-   */
   @property({type: Array, attribute: false}) badges: TabItemBadge[] = [];
 
   /**
@@ -191,41 +164,14 @@ export class ObcTabItem extends LitElement {
    */
   @property({type: Boolean, attribute: 'has-badge'}) hasBadge = false;
 
-  /**
-   * (Deprecated/Unused) Icon name for the tab.
-   * Icon content should be provided via the `leading-icon` slot.
-   *
-   * Default: 'placeholder'
-   */
   @property({type: String}) icon = 'placeholder';
 
-  /**
-   * The tab's title/label text.
-   * Can be overridden by slotting content into the `title` slot.
-   *
-   * Default: 'Tab title'
-   */
   @property({type: String}) override title = 'Tab title';
 
-  /**
-   * Shows contextual text below the tab title.
-   *
-   * Default: false
-   */
   @property({type: Boolean, attribute: 'show-subtitle'}) showSubtitle = false;
 
-  /**
-   * Contextual text shown below the tab title when `showSubtitle` is true.
-   *
-   * Default: ''
-   */
   @property({type: String}) subtitle = '';
 
-  /**
-   * Disables the tab, preventing user interaction and applying disabled styles.
-   *
-   * Default: false
-   */
   @property({type: Boolean}) disabled = false;
 
   /**

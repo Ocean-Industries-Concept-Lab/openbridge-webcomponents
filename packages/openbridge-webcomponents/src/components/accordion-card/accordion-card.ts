@@ -120,6 +120,11 @@ export enum Position {
  * @property alertFrameStatus - Status of the alert frame overlay (used when `hasAlert` is true).
  *   See `obc-alert-frame` for available statuses.
  * @availableWhen alertFrameStatus hasAlert==true
+ * @property position - Border radius for stacking: `regular` (default) rounds every corner,
+ *   `top` flattens the bottom edge, `bottom` flattens the top edge, and
+ *   `center` flattens both for a card in the middle of a stack.
+ * @property size - Layout variant: `single-line` (default) is a compact title-only header,
+ *   `large` adds a description beneath the title.
  * @slot leading-icon - Icon at the start of the header (shown when `hasLeadingIcon` is true)
  * @slot expanded-content - Content revealed when the accordion is expanded
  * @slot alert-icon - Icon for the alert overlay (used when `hasAlert` is true)
@@ -148,20 +153,8 @@ export class ObcAccordionCard extends LitElement {
 
   @property({type: Boolean}) hasLeadingIcon = false;
 
-  /**
-   * Controls border radius/edge styling for stacking multiple accordions.
-   * - `regular` (default): Standard border radius.
-   * - `top`: Flat bottom edge (for top of a stack).
-   * - `bottom`: Flat top edge (for bottom of a stack).
-   * - `center`: Flat top and bottom edges (for middle of a stack).
-   */
   @property({type: String}) position: Position = Position.regular;
 
-  /**
-   * Layout variant of the accordion card.
-   * - `single-line` (default): Compact header with only title.
-   * - `large`: Header includes a description beneath the title.
-   */
   @property({type: String}) size: AccordionSize = AccordionSize.SingleLine;
 
   @property({type: String}) alertFrameType: ObcAlertFrameType =

@@ -21,7 +21,7 @@ export type ObcTabbedCardChangeEvent = CustomEvent<{
  *   - **Named Slot Mode:** When `hasDefaultSlotOnly` is false (default), each tab uses its own named slots (`tab-title-x`, `tab-content-x`) for title and content.
  * - **Keyboard Navigation:** Supports Left/Right Arrow to move between tabs, Home/End to jump to first/last tab, following WAI-ARIA Tabs Pattern for accessibility.
  * - **Active Tab Highlighting:** Visually distinguishes the selected tab and its content panel.
- * - **Automatic Tab Activation:** Tabs activate on focus, streamlining keyboard navigation.
+ * - **Automatic Tab Activation:** Tabs activate on focus, which shortens keyboard navigation.
  * - **Responsive Layout:** Adapts to container width and height.
  *
  * ---
