@@ -42,13 +42,13 @@ Under the new model, each version and each commit in the repository follows a "d
 
 1.  **Initial Release:** Each new version, and each commit in the repository, is licensed under **AGPL-3.0-only** for the first 180 days after it is first made public.
 2.  **Transition:** After 180 days (the "Change Date"), that version or commit also becomes available under **Apache 2.0**, irrevocably.
-3.  **Supporter Access:** Project donors and sponsors can obtain a **commercial license** that permits use before the Change Date without the AGPL obligations. It does not include redistribution under Apache 2.0 before that date.
+3.  **JIP Members:** Members of the [Joint Industry Project](#-support-the-project) can obtain a **commercial license** that permits use before the Change Date without the AGPL obligations. It does not include redistribution under Apache 2.0 before that date.
 
 > **Example:**
 > If version 1.2.2 is released on **August 14, 2026**:
 >
 > - **open-source projects and internal users** can use it immediately under AGPL-3.0-only.
-> - **supporters** can use it immediately under a **commercial license**.
+> - **JIP members** can use it immediately under a **commercial license**.
 > - From **February 10, 2027**, version 1.2.2 becomes available to everyone under the **Apache 2.0** license (e.g., for commercial use without AGPL restrictions).
 
 ## 💬 Slack
