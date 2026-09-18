@@ -84,7 +84,7 @@
     "@jackolope/ts-lit-plugin": "^3.1.6",
     "@oicl-lit/cli": "0.6.7",
     "@lit-labs/cli-localize": "^0.2.2",
-    "@oicl-lit/gen-wrapper-angular": "0.1.6",
+    "@oicl-lit/gen-wrapper-angular": "0.1.7",
     "@oicl-lit/gen-wrapper-react": "0.3.6",
     "@oicl-lit/gen-wrapper-svelte": "0.2.0",
     "@oicl-lit/gen-wrapper-vue": "0.4.6",
