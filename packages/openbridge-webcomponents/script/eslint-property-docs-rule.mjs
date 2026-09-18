@@ -42,6 +42,10 @@ export function classifyFieldDoc(lines, initializerText, initializerIsLiteral) {
     else if (tags.length) tags[tags.length - 1].rest += ' ' + l.trim();
     else text.push(l);
   }
+  // cem lifts a member @deprecated into the manifest and the class JSDoc has
+  // no tag for it, so this doc has to stay inline (`keep`: not reported).
+  if (tags.some((t) => t.tag === 'deprecated'))
+    return {ok: false, reason: 'contains @deprecated', keep: true};
   const foreign = tags.find(
     (t) => t.tag !== 'availableWhen' && t.tag !== 'default'
   );
@@ -59,15 +63,22 @@ export function classifyFieldDoc(lines, initializerText, initializerIsLiteral) {
   // checked" rather than "no initializer" — that's `null`, which never
   // matches a present @default tag and correctly falls through to `manual`.
   if (def && initializerText !== undefined) {
-    if (def.rest.trim() !== (initializerText ?? '').trim()) {
-      return {ok: false, reason: '@default differs from the initializer'};
-    }
     // cem only emits `default` from the declaration for literal initializers
-    // (`384`, `'x'`, `-1`, …); for anything else (an enum member, a shared
-    // constant, …) the now-dropped @default tag was the manifest's only
-    // source of `.default`, so hoisting would silently lose it.
+    // (`384`, `'x'`, `-1`, …); for anything else (an enum member, …) the tag
+    // is the manifest's only source, so the doc stays inline and is not
+    // reported. Over a literal, a differing tag contradicts what cem reads.
+    if (def.rest.trim() !== (initializerText ?? '').trim()) {
+      const reason = '@default differs from the initializer';
+      return initializerIsLiteral
+        ? {ok: false, reason}
+        : {ok: false, reason, keep: true};
+    }
     if (!initializerIsLiteral) {
-      return {ok: false, reason: '@default on a non-literal initializer'};
+      return {
+        ok: false,
+        reason: '@default on a non-literal initializer',
+        keep: true,
+      };
     }
   }
   const avail = tags.find((t) => t.tag === 'availableWhen');
@@ -266,6 +277,7 @@ export const propertyDocsRule = {
             f.value ? sourceCode.getText(f.value) : null,
             isLiteralInitializer(f.value)
           );
+          if (cls.keep) continue;
           if (!cls.ok || !classDoc || hasTypedef) {
             const reason = !classDoc
               ? 'class has no JSDoc'

@@ -92,8 +92,9 @@ default state and wrong in the others.
 ## Storybook config
 
 `.storybook/` holds `main.ts`, `preview.tsx`, `manager.ts` (sidebar badges for
-the lifecycle tags), `openbridgeTheme.ts`, and `vitest.setup.ts`, which wires the
-snapshot project.
+the lifecycle tags), `manager-head.html` (CSS injected into the manager UI, not
+into stories — it pins a minimum sidebar width so the badges stay on one line),
+`openbridgeTheme.ts`, and `vitest.setup.ts`, which wires the snapshot project.
 
 Two facts that bite:
 
