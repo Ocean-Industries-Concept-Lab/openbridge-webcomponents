@@ -1,0 +1,923 @@
+import {Meta, Markdown} from '@storybook/addon-docs/blocks';
+import apiAr from './migration-guide/api-ar.md?raw';
+import apiAutomation from './migration-guide/api-automation.md?raw';
+import apiBuildingBlocks from './migration-guide/api-building-blocks.md?raw';
+import apiInstruments from './migration-guide/api-instruments.md?raw';
+import apiUiComponents from './migration-guide/api-ui-components.md?raw';
+import arPaths from './migration-guide/ar-paths.md?raw';
+import cssVariables from './migration-guide/css-variables.md?raw';
+import deprecatedComponents from './migration-guide/deprecated-components.md?raw';
+import deprecatedMembers from './migration-guide/deprecated-members.md?raw';
+import flashTempo from './migration-guide/flash-tempo.md?raw';
+import iconsRenamed from './migration-guide/icons-renamed.md?raw';
+import iconsWind from './migration-guide/icons-wind.md?raw';
+import svelteSnippets from './migration-guide/svelte-snippets.md?raw';
+import windProperties from './migration-guide/wind-properties.md?raw';
+
+<Meta title="Introduction/Migration Guide" />
+
+# Migrating from 1.x to 2.0
+
+This guide takes an app from `@oicl/openbridge-webcomponents` 1.0.1, the last release on the `latest` channel, to 2.0. It follows the order you meet the changes in: installing, importing, styling, then component by component. Changes that still compile and run but behave differently come with before/after code.
+
+The [Changelog](?path=/docs/introduction-changelog--docs) lists every change. If you already run a `2.0.0-next` prerelease, use it for the changes between prereleases; this guide covers the difference from 1.0.1.
+
+## Contents
+
+1. [Major Breaking Changes](#major-breaking-changes)
+2. [Upgrade Steps](#upgrade-steps)
+3. [License](#license)
+4. [Packages and Imports](#packages-and-imports)
+5. [Framework Wrappers](#framework-wrappers)
+6. [CSS and Theming](#css-and-theming)
+7. [Component Changes](#component-changes)
+8. [Deprecated Components](#deprecated-components)
+9. [API Mapping by Component](#api-mapping-by-component)
+10. [Icons](#icons)
+11. [Troubleshooting](#troubleshooting)
+
+## Major Breaking Changes
+
+- **License:** 2.0 is published under `AGPL-3.0-only`, and each version also becomes available under Apache-2.0 180 days after it is first made public. 1.0.1 was Apache-2.0. See [License](#license).
+- **Core package:** only `dist/`, the CDN bundle and `custom-elements.json` are published, so imports from `src/` fail. See [The Core Package Ships Only dist/](#the-core-package-ships-only-dist).
+- **Angular:** every component has its own entry point, so every import changes. See [Angular](#angular).
+- **React:** `onClick` on 13 components receives the native DOM event. See [React](#react).
+- **Svelte:** eight components renamed a snippet prop, and named slots no longer render a wrapping `div`. See [Svelte](#svelte).
+- **Alert flashing:** `--alarm-blink-*` and `--warning-blink-*` no longer animate; use `--flash-*` and `blinkingAll()`. See [Alert Flashing Variables](#alert-flashing-variables).
+- **CSS variables:** 141 were renamed or removed, and the old names fail without an error. See [Renamed CSS Variables](#renamed-css-variables).
+- **Component APIs:** properties were renamed, retyped or given new defaults, among them the [automation badges](#badges-take-values-silent), [wind speeds in knots](#wind-speed-in-knots-silent), [`obc-card` timeouts in seconds](#obc-card-timeouts-in-seconds-silent) and [`obc-number-input-field` values as numbers](#obc-number-input-field-value-and-events). See [Component Changes](#component-changes) and [API Mapping by Component](#api-mapping-by-component).
+- **Icons:** 50 icons were renamed, and the wind icons ending in `-1`, `-5` and `-10` kept their names but show a different glyph. See [Icons](#icons).
+- **Deprecations:** 11 components are deprecated. They still work in 2.0. See [Deprecated Components](#deprecated-components).
+
+## Upgrade Steps
+
+1. **Update the core package and your framework wrapper together.** Each wrapper depends on the core package of the same version:
+
+   ```bash
+   npm install @oicl/openbridge-webcomponents@^2.0.0 @oicl/openbridge-webcomponents-react@^2.0.0
+   ```
+
+   Then check that only one copy of the core package is installed. When two copies load, the first to register an element wins and the other is ignored without an error.
+
+   ```bash
+   npm ls @oicl/openbridge-webcomponents
+   ```
+
+2. **Fix the imports that no longer resolve:** paths into `src/`, the [AR modules](#ar-import-paths) and every [Angular](#angular) import.
+3. **Rename what was renamed:** properties, attributes and events in the [API mapping](#api-mapping-by-component), [CSS variables](#renamed-css-variables) and [icons](#icons). TypeScript reports most renamed properties on the framework wrappers, but an HTML attribute that no longer exists is ignored without a warning, so search your templates too.
+4. **Check the changes that do not fail loudly:** the [flashing variables](#alert-flashing-variables), the reused [wind icon names](#icons) and every heading marked _(silent)_ in [Component Changes](#component-changes), such as the [`obc-card` timeouts](#obc-card-timeouts-in-seconds-silent), the [`obc-compass-indicator` orientation](#obc-compass-indicator-orientation-silent) and the [`obc-depth-actual` ranges](#obc-depth-actual-ranges-and-labels-silent).
+5. **Compare screenshots.** The dusk and bright palettes were retuned and many components now follow the OpenBridge 6.1 design, so visual tests show differences that need no code change. See [Palette Values](#palette-values).
+
+## License
+
+1.0.1 and earlier were published under the Apache License 2.0. From 2.0, every package is published under `AGPL-3.0-only` and ships `LICENSE.txt`, `LICENSE-AGPL.txt` and `LICENSE-APACHE.txt`; each version also becomes available under Apache-2.0 180 days after it is first made public. The `2.0.0-next` prereleases carry these terms from `2.0.0-next.156`.
+
+The terms are in [`LICENSE.txt`](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/blob/develop/LICENSE.txt), and [Getting Started](?path=/docs/introduction-getting-started--docs#licensing-model) summarises them. Read them before you upgrade an app that cannot take on the AGPL obligations.
+
+## Packages and Imports
+
+Paths under `dist/` for components, icons and `openbridge.css` are unchanged, and so is the CDN bundle at `bundle/openbridge-webcomponents.bundle.js`. The supported framework versions are the same as in 1.0.1: React 17 to 19, Vue 3, Angular 20 and Svelte 5.
+
+### The Core Package Ships Only `dist/`
+
+1.0.1 published the whole package folder, TypeScript sources included. 2.0 publishes `dist/`, the CDN bundle, `custom-elements.json` and the license files, so imports from `src/` fail ([#911](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/911)):
+
+```js
+// 1.0.1
+import '@oicl/openbridge-webcomponents/src/palettes/variables.css';
+import {iconIds} from '@oicl/openbridge-webcomponents/src/icons/names';
+
+// 2.0
+import '@oicl/openbridge-webcomponents/dist/openbridge.css';
+import {iconIds} from '@oicl/openbridge-webcomponents/dist/icons/names.js';
+```
+
+The TypeScript sources, the PostCSS mixins, the translation files and these docs moved to a separate package. Install it at the same version as the core package:
+
+```bash
+npm install @oicl/openbridge-webcomponents-full-bundle@^2.0.0
+```
+
+### AR Import Paths
+
+The point-of-interest modules moved into three folders ([#761](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/761)). Tag names are unchanged; the deep imports change in the core package and in the React and Vue wrappers, which follow the same folders. Svelte imports from the package root and needs no change.
+
+<div style={{overflowX: 'auto'}}>
+
+<Markdown>{arPaths}</Markdown>
+
+</div>
+
+The two abstract base classes lost their prefix: `ObcPoiBase` is now `PoiBase`, and `ObcAbstractPoiObject` is now `AbstractPoiObject`.
+
+### CDN Bundle
+
+The 1.0.1 bundle stops with an error while it loads, and some components, `obc-top-bar` among them, never register. The 2.0 bundle loads completely ([#801](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/801)):
+
+```html
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/@oicl/openbridge-webcomponents@2/dist/openbridge.css"
+/>
+<script
+  type="module"
+  src="https://cdn.jsdelivr.net/npm/@oicl/openbridge-webcomponents@2/bundle/openbridge-webcomponents.bundle.js"
+></script>
+```
+
+The bundle does not include the flashing helper; see [Alert Flashing Variables](#alert-flashing-variables).
+
+### Fonts
+
+The package still loads no font. `bundle/NotoSans.ttf` is no longer published, so point `@font-face` at `dist/NotoSans.ttf`:
+
+```css
+/* 1.0.1 */
+@font-face {
+  font-family: 'Noto Sans';
+  src: url('/node_modules/@oicl/openbridge-webcomponents/bundle/NotoSans.ttf');
+}
+
+/* 2.0 */
+@font-face {
+  font-family: 'Noto Sans';
+  src: url('/node_modules/@oicl/openbridge-webcomponents/dist/NotoSans.ttf');
+}
+```
+
+## Framework Wrappers
+
+The wrappers are generated from the components, so the property, event and slot changes in [API Mapping by Component](#api-mapping-by-component) apply to them too. This section covers what changed in the wrappers themselves. In all four, the alert menu's `alert-list-click` binding, which never fired, is replaced by `go-to-alert-list-click`, and the compass sector's `None` event is gone.
+
+### React
+
+Import paths are unchanged apart from the [AR modules](#ar-import-paths).
+
+`onClick` on these components is now attached with `addEventListener` and receives the native `PointerEvent` instead of a React synthetic event: `ObcAppButton`, `ObcAutomationButton`, `ObcAutomationReadout`, `ObcAutomationTank`, `ObcCommandButton`, `ObcIconButton`, `ObcIntegrationButton`, `ObcIntegrationFleetButton`, `ObcIntegrationTabs`, `ObcNotificationBadgeButton`, `ObcPoiButton`, `ObcSequenceStep` and `ObcVendorButton`. A handler typed `React.MouseEvent` no longer compiles, and `stopPropagation()` in the handler now also stops native listeners on ancestor elements.
+
+```tsx
+// 1.0.1
+<ObcIconButton onClick={(e: React.MouseEvent<HTMLElement>) => save()} />
+<ObcAlertMenu onAlertListClick={openList} />
+
+// 2.0
+<ObcIconButton onClick={(e: Event) => save()} />
+<ObcAlertMenu onGoToAlertListClick={openList} />
+```
+
+Events that had no binding in 1.0.1 now have one, for example `onChange` on `ObcToggleSwitch` and `onLayerSelectionChanged` on `ObcPoiLayer`. A handler passed for them was never called before; it runs now.
+
+### Vue
+
+Import paths are unchanged apart from the [AR modules](#ar-import-paths). There is still no `v-model`: bind the property and listen to the event.
+
+An omitted boolean prop no longer reaches the element as `false`. The 1.0.1 wrapper let Vue cast an absent boolean to `false` and wrote that over the element's default; the 2.0 wrapper declares boolean props with `default: undefined`, so the element's own default holds. This shows on the properties that default to `true`, such as `showStatus` on the automation devices, `hasCancelAction` and `hasCloseAction` on `obc-modal-window` and `clickable` on `obc-automation-tank`: they are on unless you bind `false`.
+
+```html
+<!-- 2.0: on by default; bind false to switch it off -->
+<ObcPump :show-status="false" />
+```
+
+`@alert-list-click` on `ObcAlertMenu` is now `@go-to-alert-list-click`, and `ObcToggleSwitch` emits `change` as well as `input`.
+
+### Angular
+
+The package root no longer exports components. Import each component from the entry point named after its tag:
+
+```ts
+// 1.0.1
+import {ObcTopBar, ObcIconButton} from '@oicl/openbridge-webcomponents-ng';
+
+// 2.0
+import {ObcTopBar} from '@oicl/openbridge-webcomponents-ng/obc-top-bar';
+import {ObcIconButton} from '@oicl/openbridge-webcomponents-ng/obc-icon-button';
+```
+
+Importing a wrapper now registers only its own element; in 1.0.1 any import registered all of them. If a template uses a tag whose wrapper you do not import, import the element from the core package:
+
+```ts
+import '@oicl/openbridge-webcomponents/dist/components/clock/clock.js';
+```
+
+Each entry point also re-exports the enums and other values its property and event types use, so `import {IconButtonVariant} from '@oicl/openbridge-webcomponents-ng/obc-icon-button'` works as a value.
+
+Outputs keep their names, such as `(menuButtonClickedEvent)`. The alert menu's `(alertListClickEvent)` is now `(goToAlertListClickEvent)`.
+
+### Svelte
+
+Imports from the package root are unchanged.
+
+- **Events:** callback props are attached with `addEventListener`. In 1.0.1, `onInput`, `onChange` and `onClick` on 20 components were never called, because those events do not bubble. They are called now, so remove any workaround that listened on the element directly, or the handler runs twice.
+- **Named slots:** snippet content is no longer wrapped in `<div slot="…">`. The slot attribute goes on the elements your snippet renders, and text goes into a `span` with `display: contents`. CSS that targets the wrapping `div` needs updating.
+- **Snippet props:** where a slot name matches a property name, the snippet prop gained a `Snippet` suffix.
+
+<div style={{overflowX: 'auto'}}>
+
+<Markdown>{svelteSnippets}</Markdown>
+
+</div>
+
+```html
+<!-- 1.0.1 -->
+<ObcTabItem>{#snippet title()}<b>Engine</b>{/snippet}</ObcTabItem>
+
+<!-- 2.0: set the property, or use the renamed snippet -->
+<ObcTabItem title="Engine" />
+<ObcTabItem>{#snippet titleSnippet()}<b>Engine</b>{/snippet}</ObcTabItem>
+```
+
+## CSS and Theming
+
+The `data-obc-theme` values (`day`, `dusk`, `night`, `bright`) and the size classes (`obc-component-size-regular`, `-medium`, `-large`, `-xl`) are unchanged.
+
+### Alert Flashing Variables
+
+In 1.0.1, `openbridge.css` animated `--alarm-blink-on`, `--alarm-blink-off`, `--warning-blink-on` and `--warning-blink-off` on the root element, and any stylesheet could read them. 2.0 removes that animation ([#1116](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1116)). The four variables are still registered but keep their initial values, so an element that reads them stops flashing without an error.
+
+Flashing now uses three tempos, each with an `on` and an `off` variable, animated per element by `blinkingAll()` ([#1135](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1135)):
+
+<div style={{overflowX: 'auto'}}>
+
+<Markdown>{flashTempo}</Markdown>
+
+</div>
+
+Caution and diagnostic alerts do not flash.
+
+```css
+/* 1.0.1 */
+.my-alarm-lamp {
+  opacity: var(--alarm-blink-on);
+}
+
+/* 2.0 */
+.my-alarm-lamp {
+  opacity: var(--flash-fast-on);
+}
+```
+
+```js
+// 2.0: animate the variables on a container; its descendants inherit them
+import {blinkingAll} from '@oicl/openbridge-webcomponents/dist/palettes/blinking.js';
+
+const stop = blinkingAll(document.querySelector('#alarm-panel'));
+// call stop() when the container is removed
+```
+
+The CDN bundle does not export `blinkingAll`. On a plain HTML page, import the module file:
+
+```html
+<script type="module">
+  import {blinkingAll} from 'https://cdn.jsdelivr.net/npm/@oicl/openbridge-webcomponents@2/dist/palettes/blinking.js';
+  blinkingAll(document.querySelector('#alarm-panel'));
+</script>
+```
+
+The alert components animate themselves at the new tempos, so a blinking alarm flashes faster than in 1.0.1. `obc-alert-button`, `obc-alert-icon` and `obc-alert-frame` take a `flashingSpeed` to pick a tempo, or `fixed` to stop flashing.
+
+### Renamed CSS Variables
+
+141 custom properties from 1.0.1 are gone. A `var()` that names one resolves to nothing, and an override that sets one no longer reaches the component; neither raises an error. All but one have a new name:
+
+<div style={{overflowX: 'auto'}}>
+
+<Markdown>{cssVariables}</Markdown>
+
+</div>
+
+`lenght` is the 2.0 spelling. The three spelling fixes (`seconday`, `horizonal`) also changed a value: in the bright theme for the two weather colors and in the dusk theme for `--data-weather-cloud-secondary-color`, and at the `xl` size for the list item padding (24 px to 8 px).
+
+```css
+/* 1.0.1 */
+obc-badge {
+  --app-components-badge-padding: 6px;
+}
+
+/* 2.0 */
+obc-badge {
+  --ui-components-badge-padding: 6px;
+}
+```
+
+### Set `data-obc-theme`
+
+A page without `data-obc-theme` on `<html>` still gets the day palette, but the colors of the new critical and diagnostic alert levels are defined only under the attribute. Set it explicitly:
+
+```html
+<html lang="en" data-obc-theme="day"></html>
+```
+
+### Palette Values
+
+534 variables kept their names and changed value in at least one theme or size. Most of the changes are in the dusk and bright palettes; in the night and bright themes, the running colors changed from purple to green. No code needs to change, but screenshot tests will show the difference. To keep a 1.0.1 value, override the variable under its theme:
+
+```css
+:root[data-obc-theme='night'] {
+  --shadow-flat-color: rgb(230 175 112 / 0);
+}
+```
+
+## Component Changes
+
+The changes are grouped by family. A heading marked _(silent)_ is a change that compiles and runs without an error but changes what users see or what your code receives. Every renamed or removed property is also listed in [API Mapping by Component](#api-mapping-by-component).
+
+### Automation
+
+#### Badges Take Values _(silent)_
+
+On the automation devices (`obc-pump`, `obc-fan`, `obc-analog-valve` and the other elements built on the automation button), `badgeAuto`, `badgeDuty` and `badgeAlertOff` are gone, and `badgeCommandLocked` takes a value instead of being a boolean ([#839](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/839)). Four properties choose the badges:
+
+- `badgeControl`: `none`, `local`, `local-only`, `manual`, `manual-only` or `auto`
+- `badgeInterlock`: `none`, `interlock` or `interlock-inhibit`
+- `badgeAlert`: `none`, `silence`, `caution`, `warning`, `alarm` or one of the `level-*` alert levels
+- `badgeCommandLocked`: `none` or `command-locked`
+
+The old attributes are ignored, and a bare `badgeCommandLocked` attribute now hides the badge. On `obc-automation-badge`, `type="duty"` is now `interlock` and `type="alert-off"` is `alert-silenced`.
+
+```html
+<!-- 1.0.1 -->
+<obc-pump badgeAuto badgeDuty badgeAlertOff badgeCommandLocked></obc-pump>
+<obc-automation-badge type="duty"></obc-automation-badge>
+
+<!-- 2.0 -->
+<obc-pump
+  badgeControl="auto"
+  badgeInterlock="interlock"
+  badgeAlert="silence"
+  badgeCommandLocked="command-locked"
+></obc-pump>
+<obc-automation-badge type="interlock"></obc-automation-badge>
+```
+
+#### ID Tag Shows Whenever `tag` Is Set _(silent)_
+
+`hasIdTag` is removed, and `tag` is a string that renders exactly as given ([03fe7cd](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/03fe7cdff)). In 1.0.1 the tag showed only with `hasIdTag`, and a number was formatted as `#0012`. A page that always sets `tag` now always shows it; leave `tag` unset, or set it to `null`, to hide it. On `obc-automation-button` and `obc-automation-button-readout-stack`, `tag` was an object with a `value` number and is now the same string.
+
+```html
+<!-- 1.0.1 -->
+<obc-pump tag="12" hasIdTag></obc-pump>
+
+<!-- 2.0 -->
+<obc-pump tag="#0012"></obc-pump>
+```
+
+#### `obc-automation-tank` Redesign
+
+The tank follows the OpenBridge 6.1 design and is larger at every size ([#862](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/862), [#962](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/962)):
+
+- `variant="compact"` is now the boolean `compact`, and `orientation` (`vertical` or `horizontal`) picks the layout.
+- `positioning` defaults to `button`, which fills the parent element. 1.0.1 always anchored the tank at a point, so a tank placed on a diagram needs `positioning="point"`.
+- The tank renders as a button. Set `clickable = false` from JavaScript for a tank that only displays.
+
+```html
+<!-- 1.0.1 -->
+<obc-automation-tank
+  variant="compact"
+  value="42"
+  max="100"
+  tag="T1"
+></obc-automation-tank>
+
+<!-- 2.0 -->
+<obc-automation-tank
+  compact
+  positioning="point"
+  value="42"
+  max="100"
+  tag="T1"
+></obc-automation-tank>
+```
+
+#### `direction` Only on Motors, Pumps and Fans
+
+`direction` moved to `obc-motor`, `obc-pump` and `obc-fan` ([#982](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/982)). It drew nothing on the other devices, so only TypeScript and wrapper code that sets it needs a change.
+
+#### Readout Rows
+
+The value and setpoint rows under a device render through `obc-readout-block` ([#1097](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1097)). A missing value shows the figure dash `‒` instead of the text `NaN`, and hinted zeros are drawn in a dimmed color. The device icon colors moved from the pipe tokens to the automation button tokens, and the new `activated` property draws the selected background ([#967](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/967)).
+
+### Instruments
+
+#### Wind Speed in Knots _(silent)_
+
+Wind inputs that took a Beaufort number or a glyph index now take knots, under new names ([#909](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/909)). The old properties are gone, so an old attribute is ignored and the instrument shows its default.
+
+<div style={{overflowX: 'auto'}}>
+
+<Markdown>{windProperties}</Markdown>
+
+</div>
+
+```html
+<!-- 1.0.1: Beaufort 5 -->
+<obc-wind currentWindFromDirection="45" currentWindSpeedBeaufort="5"></obc-wind>
+<obc-compass heading="10" windFromDirection="45" windSpeed="5"></obc-compass>
+
+<!-- 2.0: knots (Beaufort 5 is 17 to 21 knots) -->
+<obc-wind currentWindFromDirection="45" currentWindSpeedKnots="19"></obc-wind>
+<obc-compass
+  heading="10"
+  windFromDirection="45"
+  currentWindSpeedKnots="19"
+></obc-compass>
+```
+
+#### `obc-wind-indicator` Redesign
+
+The indicator was redrawn, with `type` (`arrow`, `shaft` or `labeled`) and `direction` (`true` or `relative`) ([#785](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/785)). `speed` is now `currentWindSpeedKnots`, and `angle` is deprecated in favor of `currentWindFromDirection`. Both use dashed attribute names. `northUp` is removed: for a view relative to the vessel, set `direction="relative"` and `rotation-angle` to the heading.
+
+```html
+<!-- 1.0.1 -->
+<obc-wind-indicator speed="5" angle="120"></obc-wind-indicator>
+
+<!-- 2.0 -->
+<obc-wind-indicator
+  current-wind-speed-knots="19"
+  current-wind-from-direction="120"
+></obc-wind-indicator>
+```
+
+#### `obc-compass-indicator` Orientation _(silent)_
+
+`arrow` is now `direction` (`heading`, `course` or `north`) ([#785](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/785)). `northUp` now defaults to `true` and has no HTML attribute ([#909](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/909)), so markup that drew a heading-up indicator in 1.0.1 draws it north-up. Set `northUp = false` from JavaScript or a framework binding to keep heading-up.
+
+```html
+<!-- 1.0.1: heading-up -->
+<obc-compass-indicator angle="45" arrow="course"></obc-compass-indicator>
+
+<!-- 2.0: north-up; set northUp = false for heading-up -->
+<obc-compass-indicator angle="45" direction="course"></obc-compass-indicator>
+```
+
+#### Rate of Turn in Degrees per Minute _(silent)_
+
+`rateOfTurnDegreesPerMinute` replaces `rotationsPerMinute` on the compass family, the watch, `obc-rate-of-turn` and `obc-rot-indicator` ([#818](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/818)). `rotationsPerMinute` still works while the new property is unset. `rotMaxValue`, the full scale of the rate-of-turn bar, is now in degrees per minute and defaults to `60` instead of `10`, so a bar driven by `rotationsPerMinute` with the default `rotMaxValue` is six times shorter.
+
+```html
+<!-- 1.0.1: bar at 50 % -->
+<obc-compass rotType="bar" rotationsPerMinute="5"></obc-compass>
+
+<!-- 2.0: bar at 50 % -->
+<obc-compass rotType="bar" rateOfTurnDegreesPerMinute="30"></obc-compass>
+```
+
+#### `obc-gauge-radial` Value Mapping _(silent)_
+
+The needle and bar map `minValue` to `maxValue` onto the full dial ([f0121f8](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/commit/f0121f877)). 1.0.1 ignored a positive `minValue` and assumed a symmetric range for a negative one, so the same value can point elsewhere. The gauge also fills its container and centers the dial in it; `verticalAlignment` and `horizontalAlignment` place the dial.
+
+```html
+<!-- 1.0.1 and 2.0: the same markup -->
+<obc-gauge-radial minValue="50" maxValue="150" value="100"></obc-gauge-radial>
+<!-- 1.0.1: the needle points 45° right of top; 2.0: straight up, at mid-scale -->
+```
+
+#### `obc-speed-gauge` Readout
+
+`showReadout` is now `hasReadout` ([#949](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/949)). The readout also takes `label`, `unit` and `fractionDigits`.
+
+```html
+<!-- 1.0.1 -->
+<obc-speed-gauge showReadout></obc-speed-gauge>
+
+<!-- 2.0 -->
+<obc-speed-gauge hasReadout></obc-speed-gauge>
+```
+
+#### `obc-depth-actual` Ranges and Labels _(silent)_
+
+The same markup draws a different instrument ([#1247](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1247)). The default range is 100 instead of 10, the tick intervals and the waterline follow the range, a label column sits beside the frame, and the depth marker is hidden when the depth is past the range. `maxDepth` sets the range, with `instrumentRange` kept as an alias, and `autoRange` steps between 25, 100 and 1000 as the depth changes.
+
+```html
+<!-- 1.0.1: range 10 -->
+<obc-depth-actual depth="4"></obc-depth-actual>
+
+<!-- 2.0: the 1.0.1 range and ticks; showLabels = false removes the label column -->
+<obc-depth-actual
+  depth="4"
+  maxDepth="10"
+  primaryTickmarkInterval="50"
+  secondaryTickmarkInterval="10"
+></obc-depth-actual>
+```
+
+#### Vessel Image `fore-fore` Removed
+
+`VesselImage` no longer has `fore-fore` ([#833](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/833)). Pick another fore view, such as the default `psv-fore`, on `obc-roll`, `obc-pitch-roll` and the other instruments that take a vessel image.
+
+#### Instrument Layout
+
+- Radial instruments reserve room for their tick labels and hide the labels when the instrument is too small, instead of clipping them. `faceDiameter` pins the ring size so instruments line up ([#1049](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1049)).
+- `obc-wind` picks a small, medium or large drawing from its size and shows compass labels ([#864](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/864), [#1083](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1083)).
+- `obc-bearing-indicator`, `obc-compass-indicator`, `obc-gauge-horizontal` and `obc-gauge-vertical` no longer leave a gap of about 4 px below them ([#1130](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1130)).
+
+### Alerts
+
+The flashing variables and tempos are described in [Alert Flashing Variables](#alert-flashing-variables).
+
+#### `obc-alert-icon` Glyphs
+
+The icon draws the alert levels and changed three properties ([#1039](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1039)):
+
+- `outline` is removed; use an outline icon element such as `obi-alarm-badge-outline` instead.
+- `type` is deprecated in favor of `alertType`.
+- `acknowledged` shows the steady acknowledged glyph. The alternating glyph that 1.0.1 showed for an acknowledged alarm now needs `silenced`.
+
+Without a type, the icon draws an alarm instead of the text "No alarm".
+
+```html
+<!-- 1.0.1 -->
+<obc-alert-icon type="alarm" outline></obc-alert-icon>
+<obc-alert-icon type="alarm" acknowledged></obc-alert-icon>
+
+<!-- 2.0 -->
+<obi-alarm-badge-outline></obi-alarm-badge-outline>
+<obc-alert-icon alertType="alarm" silenced></obc-alert-icon>
+```
+
+#### `obc-alert-frame` States and Stroke
+
+- `mode` sets the alert state: `acked-active` (the default, steady), `unacked-active` (flashes) or `unacked-rectified` (dashed, flashes very slowly). The frame never flashed in 1.0.1 ([#947](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/947)).
+- `flashingSpeed` on `obc-alert-frame`, `obc-alert-icon` and `obc-alert-button` picks a tempo, or `fixed` for none ([#1135](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1135)).
+- The stroke is centered on the frame's edge instead of sitting outside it, so remove any offset that made room for it ([#1236](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1236)).
+
+```html
+<!-- 2.0 -->
+<obc-alert-frame status="alarm" mode="unacked-active">…</obc-alert-frame>
+<obc-alert-button
+  alertType="warning"
+  nAlerts="3"
+  counter
+  blinking
+  flashingSpeed="fixed"
+></obc-alert-button>
+```
+
+#### New Alert Levels
+
+`AlertType` adds `level-critical`, `level-high`, `level-medium`, `level-low` and `level-diagnostic` to `alarm`, `warning` and `caution` ([#947](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/947)). TypeScript code that handles every `AlertType` value gets new cases. `ObcAlertFrameStatus` remains as an alias of `AlertType`.
+
+#### Smaller Alert Changes
+
+- `obc-alert-menu`: setting `showSilenceButton` or `showAlertListButton` to `false` from JavaScript hides that footer button.
+- `obc-alert-list-details`: the column header reads `Status` instead of `status`.
+- `obc-alert-menu-item`: long titles and descriptions wrap instead of overflowing.
+- `obc-alert-button`: the bell and count are drawn by the new `obc-alert-button-item` and sit one pixel further left ([#1236](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1236)).
+
+### UI Components
+
+#### `obc-card` Timeouts in Seconds _(silent)_
+
+`dialogTimeOutSeconds` and `dialogVisibleTimerSeconds` were read as milliseconds in 1.0.1, despite their names, and are now seconds ([#884](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/884)). `dialogTimeOutSeconds="20000"` meant 20 seconds in 1.0.1; carried over unchanged it means 20000 seconds, five and a half hours. `0` turns auto-close off.
+
+```html
+<!-- 1.0.1 -->
+<obc-card
+  hasDialog
+  dialogTimeOutSeconds="30000"
+  dialogVisibleTimerSeconds="5000"
+></obc-card>
+
+<!-- 2.0 -->
+<obc-card
+  hasDialog
+  dialogTimeOutSeconds="30"
+  dialogVisibleTimerSeconds="5"
+></obc-card>
+```
+
+#### `obc-number-input-field` Value and Events
+
+`value` is a number, and `NaN` when the field is empty ([#887](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/887)). The `input` event is a `CustomEvent` with `detail.value` that does not bubble, so listen on the element, not on a parent. `change` fires when the field loses focus. While the field is not focused, the value is shown with the separators of the browser's locale.
+
+```js
+// 1.0.1
+field.value = '12.5';
+form.addEventListener('input', (e) => save(e.target.value));
+
+// 2.0
+field.value = 12.5;
+field.addEventListener('input', (e) => save(e.detail.value));
+field.addEventListener('change', (e) => commit(e.detail.value));
+```
+
+#### `obc-stepper-box` Value
+
+The stepper box now holds a numeric value ([#886](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/886)). The default, `unit` and `helper-text` slots and `hasHelperText` are gone; set `value`, `unit` and `helperText`, and optionally `min` and `max`. The buttons change `value` themselves and then fire `up` or `down` and `change`, each with `detail.value`, so an app that also increments on `up` steps twice. An unset `value` shows `1`.
+
+```html
+<!-- 1.0.1 -->
+<obc-stepper-box hasHelperText>
+  <div>5</div>
+  <div slot="unit">kg</div>
+  <div slot="helper-text">Set weight</div>
+</obc-stepper-box>
+
+<!-- 2.0 -->
+<obc-stepper-box
+  value="5"
+  unit="kg"
+  helperText="Set weight"
+  min="0"
+></obc-stepper-box>
+```
+
+#### `obc-checkbox-item` Levels
+
+`isNested`, `isLevel1` and `isLevel2` are replaced by `level` ([#1201](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1201)): `isNested` becomes `level="1"`, `isLevel1` becomes `level="1" expandable`, and `isLevel2` becomes `level="2"`. `expanded` sets the chevron's direction. The chevron fires `expand-toggle` and leaves the checkbox and `expanded` alone; the new `obc-checkbox-list` handles `expanded` and hides the rows under a collapsed parent. Rows are indented 32 px per level instead of 48 px.
+
+```html
+<!-- 1.0.1 -->
+<obc-checkbox-item isLevel1 label="Engines"></obc-checkbox-item>
+<obc-checkbox-item isLevel2 label="Port engine"></obc-checkbox-item>
+
+<!-- 2.0 -->
+<obc-checkbox-list>
+  <obc-checkbox-item
+    level="1"
+    expandable
+    expanded
+    label="Engines"
+  ></obc-checkbox-item>
+  <obc-checkbox-item level="2" label="Port engine"></obc-checkbox-item>
+</obc-checkbox-list>
+```
+
+#### `obc-user-menu` Content _(silent)_
+
+In 1.0.1 an empty user menu showed made-up rows, an avatar and recently signed-in users. 2.0 shows only what you pass: `signedInActions` for the rows, `recentUsers`, and `userInitials` or `userLabel` for the avatar ([#1168](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1168)). The small signed-in layout shows a primary button only for the action that `primaryActionId` names. The sign-in layouts add a "Use another account" button, which fires `use-another-account-click` and hides with `showUseAnotherAccount = false` ([#1246](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1246)).
+
+```js
+// 2.0
+menu.signedInActions = [
+  {id: 'preferences', label: 'Preferences'},
+  {id: 'log', label: 'Log'},
+];
+menu.primaryActionId = 'preferences';
+```
+
+#### `obc-modal-window` Height and Actions
+
+The modal takes the height of its content, up to 90 % of the viewport, instead of a fixed 407 px ([#1047](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1047)). `--obc-modal-window-height` sets a fixed height ([#1156](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1156)). `hasCancelAction` and `hasCloseAction` hide the cancel and close buttons; both default to `true` ([#883](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/883)).
+
+```html
+<!-- 2.0: the 1.0.1 height -->
+<obc-modal-window style="--obc-modal-window-height: 407px"></obc-modal-window>
+```
+
+#### Integration Buttons _(silent)_
+
+`obc-integration-fleet-button` shows its alerts only with `showAlerts` ([#961](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/961)), and `obc-integration-button` shows the `status` slot only with `hasStatus` ([#624](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/624)). All integration components are experimental in 2.0.
+
+```html
+<!-- 1.0.1 -->
+<obc-integration-fleet-button></obc-integration-fleet-button>
+<obc-integration-button>
+  <span slot="status">Online</span>
+</obc-integration-button>
+
+<!-- 2.0 -->
+<obc-integration-fleet-button showAlerts></obc-integration-fleet-button>
+<obc-integration-button hasStatus>
+  <span slot="status">Online</span>
+</obc-integration-button>
+```
+
+#### Tab Badges
+
+`obc-tab-item` and the `tabs` of `obc-tab-row` take a `badges` array, so a tab can show several badges ([#1011](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1011)). `hasBadge`, `badgeCount`, `badgeType`, `badgeSize`, `badgeShowNumber` and `showLeadingBadgeIcon` are deprecated and still work.
+
+```js
+// 1.0.1
+row.tabs = [
+  {
+    id: 'alarms',
+    title: 'Alarms',
+    hasBadge: true,
+    badgeCount: 3,
+    badgeType: 'alarm',
+  },
+];
+
+// 2.0
+row.tabs = [
+  {
+    id: 'alarms',
+    title: 'Alarms',
+    badges: [{type: 'alarm', size: 'regular', count: 3}],
+  },
+];
+```
+
+#### `obc-start-stop-switch` Icon Flags
+
+`showCheckedStateIcon` and `showUncheckedStateIcon` are removed ([#1279](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1279)). Neither had an effect: the `checked-state-icon` and `unchecked-state-icon` slots always render. Drop the attributes and keep the slots.
+
+#### Events and Keyboard
+
+- `obc-toggle-switch` fires `change` with `detail.checked` as well as `input`, and the `change` event of `obc-text-input-field` carries `detail.value` ([#1088](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1088)).
+- `obc-navigation-item` no longer dispatches an extra `click` on `window`; the click from the item itself still bubbles ([#1112](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1112)).
+- `obc-icon-button` passes its `aria-label` to the inner button ([#1202](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1202)).
+- `obc-menu-button` and `obc-split-button` move focus into the open menu and support the arrow keys, Home, End and Escape ([#811](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/811)).
+- `obc-slide-button` completes with Space or Enter, and `obc-start-stop-switch` toggles with them ([#1075](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1075)).
+
+#### Component Layout
+
+- Buttons with and without a border share one visible height ([#830](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/830)).
+- `obc-top-bar` keeps its controls on screen and shortens the title first when space runs out ([#1213](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1213)).
+- `obc-navigation-menu` scrolls its items and keeps the footer and logo in place ([#895](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/895)).
+
+### Readouts
+
+#### `obc-instrument-field` Is Deprecated
+
+`obc-instrument-field` still works in 2.0 and is deprecated in favor of `obc-readout` ([#1146](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1146)). The most common renames are `tag` to `label`, `size="regular"` and `size="enhanced"` to `size="small"` and `size="large"`, and `neutralColor` to `priority="regular"`; `maxDigits` counts digits differently. The [Instrument Field (deprecated)](?path=/docs/instruments-instrument-field-deprecated--docs) page maps every property and shows each case next to its `obc-readout` equivalent.
+
+```html
+<!-- 1.0.1 -->
+<obc-instrument-field
+  tag="HDG"
+  unit="DEG"
+  value="182"
+  size="enhanced"
+></obc-instrument-field>
+
+<!-- 2.0 -->
+<obc-readout
+  label="HDG"
+  unit="DEG"
+  value="182"
+  size="large"
+  priority="enhanced"
+></obc-readout>
+```
+
+`obc-readout` applies no minimum height: a small vertical readout is 44 px tall instead of 48, and a stacked one with no value is 40 px; the medium and large tiers are unchanged ([#1255](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1255)).
+
+#### Placeholder Dash
+
+A missing value is drawn with the figure dash `‒` (U+2012) instead of a hyphen, so `--.-` becomes `‒‒.‒` ([#1210](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1210)). Update text assertions in tests. The character is exported as `READOUT_UNAVAILABLE_DASH` from `dist/navigation-instruments/readout/readout-formatters.js`.
+
+### Charts
+
+#### Line and Area Chart Axes _(silent)_
+
+Under custom `yAxes`, a dataset without `yAxisID` is plotted against the first axis in `yAxes`; 1.0.1 created an extra axis from 0 to 1 for it ([#1222](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1222)). A chart smaller than 192 px also leaves room for a slotted scale instead of drawing over it.
+
+```js
+chart.yAxes = [{id: 'power', position: 'left'}];
+// 1.0.1: plotted against an extra 0 to 1 axis
+// 2.0: plotted against 'power'
+chart.datasets = [{label: 'kW', data: [1, 2, 3]}];
+```
+
+#### Chart Size
+
+- `obc-gauge-trend` fills its container at any aspect ratio; 1.0.1 limited the canvas width to twice its height ([#1139](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1139)).
+- The donut, pie, polar and radial bar charts render at their computed size. With a legend, 1.0.1 drew them about twice as large ([#1074](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1074)).
+
+#### Chart Properties That Did Nothing
+
+1.0.1's typings listed `fill`, `fillMode` and `stacked` on `obc-line-graph`, `fill` on `obc-area-graph`, `enhanced`, `fill` and `stacked` on `obc-gauge-trend`, and `trimToDiscreteStops` on `obc-polar-chart`, but setting them had no effect. The wrappers no longer offer them ([#1046](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1046)). For a filled, stacked chart, use `fillMode` and `stacked` on `obc-area-graph`.
+
+#### `formatChartNumber`
+
+The chart helper `formatNumericValue` in `dist/charthelpers/canvas-layout.js` is now `formatChartNumber` ([#1210](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1210)).
+
+### AR
+
+The point-of-interest components are experimental in 2.0. Besides the [import paths](#ar-import-paths) ([#761](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/761)):
+
+- `lineCompensationY` is removed from `obc-poi-aton`, `obc-poi-data` and `obc-poi-vessel`; the layer computes the offset.
+- `obc-poi-layer` reads the `is-selected` attribute instead of `isselected`.
+- `ObcPoiObjectAtonState` and `ObcPoiObjectDataState` are merged into `ObcPoiObjectState`, and `ObcPoiObjectDataStyle` is now `ObcPoiObjectStyle`. The old names are still exported from `dist/ar/poi-button/poi-button-aton.js` and `dist/ar/poi-button/poi-button-data.js`.
+
+```html
+<!-- 1.0.1 -->
+<obc-poi-data line-compensation-y="12"></obc-poi-data>
+<obc-poi-layer isSelected></obc-poi-layer>
+
+<!-- 2.0 -->
+<obc-poi-data></obc-poi-data>
+<obc-poi-layer is-selected></obc-poi-layer>
+```
+
+## Deprecated Components
+
+Deprecated components and properties still work in 2.0 and are slated for removal. Components now show their status in Storybook: stable, beta, experimental or deprecated. The experimental ones, among them all AR and integration components, may still change their API. The replacements below are the ones the components' own `@deprecated` notes name ([#1262](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1262)).
+
+<div style={{overflowX: 'auto'}}>
+
+<Markdown>{deprecatedComponents}</Markdown>
+
+</div>
+
+These properties are deprecated on components that stay:
+
+<div style={{overflowX: 'auto'}}>
+
+<Markdown>{deprecatedMembers}</Markdown>
+
+</div>
+
+The `ArrowStyle` enum and the `arrow()` function in `dist/navigation-instruments/compass/arrow.js` and `dist/navigation-instruments/heading/arrow.js` are deprecated as well; use `HdgArrowStyle`, `CogArrowStyle`, `hdgArrow` and `cogArrow` from `dist/navigation-instruments/course-arrows/course-arrows.js`.
+
+## API Mapping by Component
+
+These tables compare the component manifests of 1.0.1 and 2.0, element by element. They list renamed and removed properties, changed types and defaults, and attribute, slot and wrapper event changes; properties added in 2.0 are left out, and so are type changes that only gave an existing type a name. Search the page for an element or property name; Chrome and Edge open a closed section when they find a match in it.
+
+"All automation devices" stands for `obc-analog-valve`, `obc-bipolar-transistor`, `obc-capacitor`, `obc-converter`, `obc-damper`, `obc-digital-valve`, `obc-diodes`, `obc-fan`, `obc-filter`, `obc-ground`, `obc-logic`, `obc-mosfet`, `obc-motor`, `obc-pump`, `obc-resistor`, `obc-router`, `obc-source`, `obc-switch` and `obc-transformer`. Chart and integration components have no entries; the chart properties that were listed in 1.0.1 but did nothing are covered in [Chart Properties That Did Nothing](#chart-properties-that-did-nothing).
+
+<details>
+<summary>Automation (22 elements)</summary>
+
+<div style={{overflowX: 'auto'}}>
+
+<Markdown>{apiAutomation}</Markdown>
+
+</div>
+
+</details>
+
+<details>
+<summary>Instruments (10 elements)</summary>
+
+<div style={{overflowX: 'auto'}}>
+
+<Markdown>{apiInstruments}</Markdown>
+
+</div>
+
+</details>
+
+<details>
+<summary>UI Components (7 elements)</summary>
+
+<div style={{overflowX: 'auto'}}>
+
+<Markdown>{apiUiComponents}</Markdown>
+
+</div>
+
+</details>
+
+<details>
+<summary>Building Blocks (1 element)</summary>
+
+<div style={{overflowX: 'auto'}}>
+
+<Markdown>{apiBuildingBlocks}</Markdown>
+
+</div>
+
+</details>
+
+<details>
+<summary>AR (8 elements)</summary>
+
+<div style={{overflowX: 'auto'}}>
+
+<Markdown>{apiAr}</Markdown>
+
+</div>
+
+</details>
+
+## Icons
+
+50 icon elements were renamed. The instruments that draw wind barbs pick the icon from the wind speed themselves, so only code that renders an `obi-*` icon directly, or builds its name, needs a change. A renamed icon that is still used renders nothing.
+
+<div style={{overflowX: 'auto'}}>
+
+<Markdown>{iconsRenamed}</Markdown>
+
+</div>
+
+The wind barb icons are named by wind speed in knots instead of a number from 1 to 14 ([#933](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/933)). The same suffixes apply to `obi-wind-apparent-*`, `obi-wind-shaft-*` and `obi-wind-true-*`. The names ending in `-1`, `-5` and `-10` still exist and now show a different barb, so they render the wrong speed without an error:
+
+<div style={{overflowX: 'auto'}}>
+
+<Markdown>{iconsWind}</Markdown>
+
+</div>
+
+To pick a barb from a speed, use the helpers the instruments use:
+
+```js
+import {windKnotsToWindTrueBucket} from '@oicl/openbridge-webcomponents/dist/navigation-instruments/watch/environment.js';
+
+const iconTag = `obi-wind-true-${windKnotsToWindTrueBucket(19)}`; // obi-wind-true-20
+```
+
+## Troubleshooting
+
+- **An element renders nothing.** It was never registered; check `customElements.get('obc-…')` in the browser console. Look for a moved [AR import](#ar-import-paths), an [Angular import](#angular) that now registers only its own element, or a second copy of the core package ([Upgrade Steps](#upgrade-steps)).
+- **An attribute has no effect.** The property was renamed or removed ([API Mapping by Component](#api-mapping-by-component)), or it is a boolean that defaults to `true`, which has no attribute; set the property from JavaScript.
+- **An element styled with your own CSS stopped flashing.** It reads `--alarm-blink-*` or `--warning-blink-*` ([Alert Flashing Variables](#alert-flashing-variables)).
+- **A color or spacing set with a CSS variable is gone.** The variable was renamed ([Renamed CSS Variables](#renamed-css-variables)). Critical and diagnostic alert colors also need [`data-obc-theme`](#set-data-obc-theme).
+- **A dialog never closes.** `obc-card` timeouts are in [seconds](#obc-card-timeouts-in-seconds-silent).
+- **An `input` handler on a parent element is not called.** `obc-number-input-field` events no longer bubble; listen on the field ([details](#obc-number-input-field-value-and-events)).
+- **A Svelte event handler runs twice.** Remove the listener you added on the element as a workaround ([Svelte](#svelte)).
+- **TypeScript rejects a React `onClick` handler.** Type the event as `Event` ([React](#react)).
+- **A wind barb shows the wrong speed.** The wind icons are named by knots ([Icons](#icons)).
+- **A test that looks for `--` in a missing value fails.** Missing values use the [figure dash](#placeholder-dash).
+- **A layout moved.** `obc-automation-tank` [fills its parent](#obc-automation-tank-redesign), `obc-modal-window` [takes its content height](#obc-modal-window-height-and-actions) and `obc-gauge-radial` [centers its dial](#obc-gauge-radial-value-mapping-silent).
