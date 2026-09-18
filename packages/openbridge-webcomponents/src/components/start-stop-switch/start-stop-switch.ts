@@ -124,10 +124,6 @@ export class ObcStartStopSwitch extends LitElement {
    * - `running`: Green appearance indicating motor/process is running
    * - `loading`: Light blue appearance indicating a pending/loading state
    *
-   * If `true`, the content of the `checked-state-icon` slot will be displayed when checked.
-   */
-  @property({type: Boolean}) showUncheckedStateIcon = false;
-  /**
    * This only affects the visual style, not the switch position.
    *
    * Defaults to `'normal'`.
@@ -137,11 +133,6 @@ export class ObcStartStopSwitch extends LitElement {
 
   /**
    * The size of the switch.
-   *
-   * If `true`, the content of the `unchecked-state-icon` slot will be displayed when unchecked.
-   */
-  @property({type: Boolean}) showCheckedStateIcon = false;
-  /**
    * - `regular`: Standard size with 32px track height
    * - `large`: Larger size with 48px track height
    *
