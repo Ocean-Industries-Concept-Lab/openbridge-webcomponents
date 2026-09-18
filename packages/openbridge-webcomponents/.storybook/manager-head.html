@@ -1,0 +1,38 @@
+<style>
+  /*
+    Sidebar floor width for the manager UI (never reaches the preview iframe).
+
+    The lifecycle badges (Beta / Experimental / Deprecated) share a row with the
+    story name, and a narrower sidebar wraps the longer ones onto a second line.
+    Storybook has no config for a minimum sidebar width, so pin the floor here.
+
+    The manager lays the app out as a grid whose first track is
+    `minmax(0, var(--nav-width))`, and rewrites `--nav-width` inline on that
+    element on every resize. The inline style is the only stable hook — the
+    class name is Emotion-generated — and `!important` is what beats it.
+
+    The track is a floor, not a fixed width, so the sidebar still resizes:
+    `max()` raises anything below the floor, and `min(…, --nav-width * 1000)`
+    keeps a collapsed sidebar collapsed, since that product is 0 at
+    `--nav-width: 0` and never the smaller term otherwise.
+
+    Gated above Storybook's own 600px desktop breakpoint: below 1024px, the
+    floor plus the addon panel leaves the canvas almost nothing.
+  */
+  @media (min-width: 1024px) {
+    div[style*='--nav-width'] {
+      --ob-sidebar-min-width: 423px; /* measured: the widest badge + label pair */
+
+      grid-template-columns:
+        minmax(
+          0,
+          min(
+            max(var(--nav-width), var(--ob-sidebar-min-width)),
+            calc(var(--nav-width) * 1000)
+          )
+        )
+        minmax(100px, 1fr)
+        minmax(0, var(--right-panel-width)) !important;
+    }
+  }
+</style>
