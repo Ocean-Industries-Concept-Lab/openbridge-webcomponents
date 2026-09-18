@@ -16,6 +16,7 @@ type MainEngineStoryArgs = {
   rpmValue: number;
   pitchValue: number;
   hasSilhouette: boolean;
+  portStarboard?: boolean;
 };
 
 function storyStateToProps(storyState: MainEngineStoryState): {
@@ -55,6 +56,7 @@ function renderMainEngine(args: MainEngineStoryArgs) {
     .rpmValue=${args.rpmValue}
     .pitchValue=${args.pitchValue}
     .hasSilhouette=${args.hasSilhouette}
+    .portStarboard=${args.portStarboard ?? false}
   ></obc-main-engine-indicator>`;
 }
 
@@ -101,6 +103,26 @@ export const Default = {
     rpmValue: 0.34,
     pitchValue: 0.46,
     hasSilhouette: false,
+  },
+} satisfies Story;
+
+export const PortStarboardAhead = {
+  args: {
+    storyState: MainEngineStoryState.inCommand,
+    rpmValue: 0.34,
+    pitchValue: 0.46,
+    hasSilhouette: false,
+    portStarboard: true,
+  },
+} satisfies Story;
+
+export const PortStarboardAstern = {
+  args: {
+    storyState: MainEngineStoryState.inCommand,
+    rpmValue: 0.34,
+    pitchValue: -0.46,
+    hasSilhouette: false,
+    portStarboard: true,
   },
 } satisfies Story;
 
