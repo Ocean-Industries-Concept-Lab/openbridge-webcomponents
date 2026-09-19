@@ -102,6 +102,18 @@ export const SingleDirection: Story = {
   },
 };
 
+export const SingleDirectionWithPropellers: Story = {
+  args: {
+    singleDirection: true,
+    thrust: 50,
+    setpoint: 30,
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
+    topPropeller: PropellerType.single,
+    bottomPropeller: PropellerType.cap,
+  },
+};
+
 export const SingleDirectionSingleSidedWithAdvice: Story = {
   args: {
     singleDirection: true,
