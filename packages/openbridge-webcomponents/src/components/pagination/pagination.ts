@@ -296,16 +296,18 @@ export class ObcPagination extends LitElement {
           <obi-chevron-left-google></obi-chevron-left-google>
         </obc-icon-button>
 
-        ${this.isCondensed
-          ? this.renderProgressIndicatorDots()
-          : html`<obc-toggle-button-group
-              .value=${this.validatedCurrentPage.toString()}
-              .variant=${this.toggleButtonVariant}
-              ?disabled=${this.disabled}
-              @value=${this.handlePageChange}
-            >
-              ${this.renderToggleButtons()}
-            </obc-toggle-button-group>`}
+        ${
+          this.isCondensed
+            ? this.renderProgressIndicatorDots()
+            : html`<obc-toggle-button-group
+                .value=${this.validatedCurrentPage.toString()}
+                .variant=${this.toggleButtonVariant}
+                ?disabled=${this.disabled}
+                @value=${this.handlePageChange}
+              >
+                ${this.renderToggleButtons()}
+              </obc-toggle-button-group>`
+        }
 
         <obc-icon-button
           variant="flat"

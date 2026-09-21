@@ -508,34 +508,38 @@ export class ObcKeyboardFull extends LitElement {
     return html`
       <div class="container-left">
         <div class="keys-container">
-          ${this.showNumberRow
-            ? html`
-                <div class="row row-numbers">
-                  ${this.numberRow.map(
-                    (key) => html`
-                      <obc-button
-                        class="key-button"
-                        variant="raised"
-                        @mousedown=${this.preventFocusLoss}
-                        @click=${() => this.onKeyPress(key)}
-                      >
-                        ${key}
-                      </obc-button>
-                    `
-                  )}
-                </div>
-              `
-            : nothing}
+          ${
+            this.showNumberRow
+              ? html`
+                  <div class="row row-numbers">
+                    ${this.numberRow.map(
+                      (key) => html`
+                        <obc-button
+                          class="key-button"
+                          variant="raised"
+                          @mousedown=${this.preventFocusLoss}
+                          @click=${() => this.onKeyPress(key)}
+                        >
+                          ${key}
+                        </obc-button>
+                      `
+                    )}
+                  </div>
+                `
+              : nothing
+          }
           ${this.qwertyLayout.map(
             (row, index) => html`
               <div class="row row-${index + 1}">
-                ${index === 2 && row.length < 10
-                  ? Array(10 - row.length)
-                      .fill(0)
-                      .map(
-                        () => html`<div class="key-button-placeholder"></div>`
-                      )
-                  : nothing}
+                ${
+                  index === 2 && row.length < 10
+                    ? Array(10 - row.length)
+                        .fill(0)
+                        .map(
+                          () => html`<div class="key-button-placeholder"></div>`
+                        )
+                    : nothing
+                }
                 ${row.map((key) => {
                   const label = this.letterKeyLabel(key);
                   return html`
@@ -687,16 +691,18 @@ export class ObcKeyboardFull extends LitElement {
   protected override render() {
     return html`
       <div class="wrapper type-${this.type}">
-        ${this.showTopBar
-          ? html`
-              <div class="top-bar">
-                <div class="parameter-name">${this.parameterName}</div>
-                <obc-icon-button variant="flat" @click=${this.onCloseClick}>
-                  <obi-close-google></obi-close-google>
-                </obc-icon-button>
-              </div>
-            `
-          : nothing}
+        ${
+          this.showTopBar
+            ? html`
+                <div class="top-bar">
+                  <div class="parameter-name">${this.parameterName}</div>
+                  <obc-icon-button variant="flat" @click=${this.onCloseClick}>
+                    <obi-close-google></obi-close-google>
+                  </obc-icon-button>
+                </div>
+              `
+            : nothing
+        }
 
         <div class="container-content">
           <div class="input-container">

@@ -58,9 +58,11 @@ const meta: Meta<typeof ObcToggleButtonGroup> = {
   },
   render: (args) =>
     html` <div
-      style="width: ${args.type === ObcToggleButtonOptionType.iconText
-        ? 'fit-content'
-        : 'fit-content'}"
+      style="width: ${
+        args.type === ObcToggleButtonOptionType.iconText
+          ? 'fit-content'
+          : 'fit-content'
+      }"
     >
       <obc-toggle-button-group
         value=${args.value}
@@ -434,9 +436,11 @@ export const ExternalControlActivatedDemo: Story = {
   },
   render: (args) => html`
     <div
-      style="width: ${args.type === ObcToggleButtonOptionType.iconText
-        ? 'fit-content'
-        : 'fit-content'}"
+      style="width: ${
+        args.type === ObcToggleButtonOptionType.iconText
+          ? 'fit-content'
+          : 'fit-content'
+      }"
     >
       <obc-toggle-button-group
         value=${args.value}

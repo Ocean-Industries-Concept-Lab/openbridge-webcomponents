@@ -106,9 +106,11 @@ export class ObcAdviceMenuItem extends LitElement {
           slot="primary-icon"
           style="color: var(--instrument-starboard-primary-color)"
         ></obi-notification-advice-active>
-        ${this.hasIcon
-          ? html`<slot name="icon" slot="secondary-icon"></slot>`
-          : nothing}
+        ${
+          this.hasIcon
+            ? html`<slot name="icon" slot="secondary-icon"></slot>`
+            : nothing
+        }
       </obc-message-menu-item>
     `;
   }

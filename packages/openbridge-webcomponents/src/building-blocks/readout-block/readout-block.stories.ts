@@ -71,9 +71,11 @@ function renderBlock(args: Partial<BlockArgs>) {
       .alignment=${args.alignment ?? ObcTextboxAlignment.Right}
       .dataQuality=${args.dataQuality === NONE ? undefined : args.dataQuality}
     >
-      ${args.hasIcon
-        ? html`<obi-placeholder slot="icon"></obi-placeholder>`
-        : nothing}
+      ${
+        args.hasIcon
+          ? html`<obi-placeholder slot="icon"></obi-placeholder>`
+          : nothing
+      }
     </obc-readout-block>
   `;
 }

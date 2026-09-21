@@ -519,8 +519,7 @@ export const Manual: Story = {
   `,
   play: async ({canvasElement}) => {
     const list = canvasElement.querySelector('#manual-list') as
-      | (HTMLElement & {align: () => void})
-      | null;
+      (HTMLElement & {align: () => void}) | null;
     const status = canvasElement.querySelector(
       '#m-status'
     ) as HTMLElement | null;

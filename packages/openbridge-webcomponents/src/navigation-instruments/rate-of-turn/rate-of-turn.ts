@@ -197,24 +197,28 @@ export class ObcRateOfTurn extends LitElement {
         .watchCircleType=${this.watchCircleType}
         .priority=${this.priority}
         .tickmarks=${this.hasTrackBar ? this.trackTickmarks : []}
-        .barAreas=${this.hasTrackBar
-          ? [
-              {
-                startAngle: 0,
-                endAngle: this.trackBarAngle,
-                fillColor: this.trackBarColor,
-              },
-            ]
-          : []}
-        .needles=${this.hasTrackBar
-          ? [
-              {
-                angle: this.trackBarAngle,
-                fillColor: this.trackNeedleColor,
-                strokeColor: 'var(--border-silhouette-color)',
-              },
-            ]
-          : []}
+        .barAreas=${
+          this.hasTrackBar
+            ? [
+                {
+                  startAngle: 0,
+                  endAngle: this.trackBarAngle,
+                  fillColor: this.trackBarColor,
+                },
+              ]
+            : []
+        }
+        .needles=${
+          this.hasTrackBar
+            ? [
+                {
+                  angle: this.trackBarAngle,
+                  fillColor: this.trackNeedleColor,
+                  strokeColor: 'var(--border-silhouette-color)',
+                },
+              ]
+            : []
+        }
         .rotType=${this.rotType}
         .rotPosition=${this.rotPosition}
         .rotStartAngle=${this.barStartAngle}
@@ -225,22 +229,24 @@ export class ObcRateOfTurn extends LitElement {
         .rotPortStarboard=${this.rotPortStarboard}
         .rotAtZeroDeadband=${this.rotAtZeroDeadband}
       ></obc-watch>
-      ${this.hasReadout
-        ? html`<div class="center-readout-overlay">
-            ${renderCenterReadouts([
-              {
-                value: this.rateOfTurnDegreesPerMinute ?? null,
-                label: this.label,
-                unit: this.unit,
-                fractionDigits: this.fractionDigits,
-                size: ReadoutSize.large,
-                priority: this.priority,
-                centerValue: true,
-                centerMeta: true,
-              },
-            ])}
-          </div>`
-        : nothing}
+      ${
+        this.hasReadout
+          ? html`<div class="center-readout-overlay">
+              ${renderCenterReadouts([
+                {
+                  value: this.rateOfTurnDegreesPerMinute ?? null,
+                  label: this.label,
+                  unit: this.unit,
+                  fractionDigits: this.fractionDigits,
+                  size: ReadoutSize.large,
+                  priority: this.priority,
+                  centerValue: true,
+                  centerMeta: true,
+                },
+              ])}
+            </div>`
+          : nothing
+      }
     </div>`;
   }
 }

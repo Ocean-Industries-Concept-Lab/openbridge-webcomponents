@@ -104,29 +104,31 @@ function renderIntegrationButtons({
       <div slot="info-label">Info Label</div>
       <div slot="info-status">Info Status</div>
       <div slot="status">Status</div>
-      ${showIntegrationMenu
-        ? html`<obc-integration-vessel-menu slot="integration-vessel-menu"
-            ><obc-button
-              slot="buttons"
-              ?fullWidth=${true}
-              ?showLeadingIcon=${true}
-              @click=${() => console.log('Boat Button 1 clicked')}
-              ><obi-placeholder slot="leading-icon"></obi-placeholder
-              >Select</obc-button
-            >
-            <obc-button
-              slot="buttons"
-              ?fullWidth=${true}
-              ?showLeadingIcon=${true}
-              @click=${() => console.log('Boat Button 2 clicked')}
-              ><obi-placeholder slot="leading-icon"></obi-placeholder
-              >Dismiss</obc-button
-            >
-            <div slot="content" style="padding: 24px;">
-              <p>Boat is working just fine.</p>
-            </div></obc-integration-vessel-menu
-          >`
-        : nothing}
+      ${
+        showIntegrationMenu
+          ? html`<obc-integration-vessel-menu slot="integration-vessel-menu"
+              ><obc-button
+                slot="buttons"
+                ?fullWidth=${true}
+                ?showLeadingIcon=${true}
+                @click=${() => console.log('Boat Button 1 clicked')}
+                ><obi-placeholder slot="leading-icon"></obi-placeholder
+                >Select</obc-button
+              >
+              <obc-button
+                slot="buttons"
+                ?fullWidth=${true}
+                ?showLeadingIcon=${true}
+                @click=${() => console.log('Boat Button 2 clicked')}
+                ><obi-placeholder slot="leading-icon"></obi-placeholder
+                >Dismiss</obc-button
+              >
+              <div slot="content" style="padding: 24px;">
+                <p>Boat is working just fine.</p>
+              </div></obc-integration-vessel-menu
+            >`
+          : nothing
+      }
     </obc-integration-button>
     <obc-integration-button
       hasLeadingIcon
@@ -148,29 +150,31 @@ function renderIntegrationButtons({
       <div slot="info-label">Info Label</div>
       <div slot="info-status">Info Status</div>
       <div slot="status">Status</div>
-      ${showIntegrationMenu
-        ? html`<obc-integration-vessel-menu slot="integration-vessel-menu"
-            ><obc-button
-              slot="buttons"
-              ?fullWidth=${true}
-              ?showLeadingIcon=${true}
-              @click=${() => console.log('Space Ship Button 1 clicked')}
-              ><obi-placeholder slot="leading-icon"></obi-placeholder
-              >Select</obc-button
-            >
-            <obc-button
-              slot="buttons"
-              ?fullWidth=${true}
-              ?showLeadingIcon=${true}
-              @click=${() => console.log('Space Ship Button 2 clicked')}
-              ><obi-placeholder slot="leading-icon"></obi-placeholder
-              >Dismiss</obc-button
-            >
-            <div slot="content" style="padding: 24px;">
-              <p>Space Ship is working just fine.</p>
-            </div></obc-integration-vessel-menu
-          >`
-        : nothing}
+      ${
+        showIntegrationMenu
+          ? html`<obc-integration-vessel-menu slot="integration-vessel-menu"
+              ><obc-button
+                slot="buttons"
+                ?fullWidth=${true}
+                ?showLeadingIcon=${true}
+                @click=${() => console.log('Space Ship Button 1 clicked')}
+                ><obi-placeholder slot="leading-icon"></obi-placeholder
+                >Select</obc-button
+              >
+              <obc-button
+                slot="buttons"
+                ?fullWidth=${true}
+                ?showLeadingIcon=${true}
+                @click=${() => console.log('Space Ship Button 2 clicked')}
+                ><obi-placeholder slot="leading-icon"></obi-placeholder
+                >Dismiss</obc-button
+              >
+              <div slot="content" style="padding: 24px;">
+                <p>Space Ship is working just fine.</p>
+              </div></obc-integration-vessel-menu
+            >`
+          : nothing
+      }
     </obc-integration-button>
     <obc-integration-button
       hasLeadingIcon
@@ -192,29 +196,31 @@ function renderIntegrationButtons({
       <div slot="info-label">Info Label</div>
       <div slot="info-status">Info Status</div>
       <div slot="status">Status</div>
-      ${showIntegrationMenu
-        ? html`<obc-integration-vessel-menu slot="integration-vessel-menu"
-            ><obc-button
-              slot="buttons"
-              ?fullWidth=${true}
-              ?showLeadingIcon=${true}
-              @click=${() => console.log('Vessel Button 1 clicked')}
-              ><obi-placeholder slot="leading-icon"></obi-placeholder
-              >Select</obc-button
-            >
-            <obc-button
-              slot="buttons"
-              ?fullWidth=${true}
-              ?showLeadingIcon=${true}
-              @click=${() => console.log('Vessel Button 2 clicked')}
-              ><obi-placeholder slot="leading-icon"></obi-placeholder
-              >Dismiss</obc-button
-            >
-            <div slot="content" style="padding: 24px;">
-              <p>Vessel is working just fine.</p>
-            </div></obc-integration-vessel-menu
-          >`
-        : nothing}
+      ${
+        showIntegrationMenu
+          ? html`<obc-integration-vessel-menu slot="integration-vessel-menu"
+              ><obc-button
+                slot="buttons"
+                ?fullWidth=${true}
+                ?showLeadingIcon=${true}
+                @click=${() => console.log('Vessel Button 1 clicked')}
+                ><obi-placeholder slot="leading-icon"></obi-placeholder
+                >Select</obc-button
+              >
+              <obc-button
+                slot="buttons"
+                ?fullWidth=${true}
+                ?showLeadingIcon=${true}
+                @click=${() => console.log('Vessel Button 2 clicked')}
+                ><obi-placeholder slot="leading-icon"></obi-placeholder
+                >Dismiss</obc-button
+              >
+              <div slot="content" style="padding: 24px;">
+                <p>Vessel is working just fine.</p>
+              </div></obc-integration-vessel-menu
+            >`
+          : nothing
+      }
     </obc-integration-button>
     <obc-integration-button
       hasLeadingIcon
@@ -236,29 +242,31 @@ function renderIntegrationButtons({
       <div slot="info-label">Info Label</div>
       <div slot="info-status">Info Status</div>
       <div slot="status">Status</div>
-      ${showIntegrationMenu
-        ? html`<obc-integration-vessel-menu slot="integration-vessel-menu"
-            ><obc-button
-              slot="buttons"
-              ?fullWidth=${true}
-              ?showLeadingIcon=${true}
-              @click=${() => console.log('Last Button 1 clicked')}
-              ><obi-placeholder slot="leading-icon"></obi-placeholder
-              >Select</obc-button
-            >
-            <obc-button
-              slot="buttons"
-              ?fullWidth=${true}
-              ?showLeadingIcon=${true}
-              @click=${() => console.log('Last Button 2 clicked')}
-              ><obi-placeholder slot="leading-icon"></obi-placeholder
-              >Dismiss</obc-button
-            >
-            <div slot="content" style="padding: 24px;">
-              <p>Last is working just fine.</p>
-            </div></obc-integration-vessel-menu
-          >`
-        : nothing}
+      ${
+        showIntegrationMenu
+          ? html`<obc-integration-vessel-menu slot="integration-vessel-menu"
+              ><obc-button
+                slot="buttons"
+                ?fullWidth=${true}
+                ?showLeadingIcon=${true}
+                @click=${() => console.log('Last Button 1 clicked')}
+                ><obi-placeholder slot="leading-icon"></obi-placeholder
+                >Select</obc-button
+              >
+              <obc-button
+                slot="buttons"
+                ?fullWidth=${true}
+                ?showLeadingIcon=${true}
+                @click=${() => console.log('Last Button 2 clicked')}
+                ><obi-placeholder slot="leading-icon"></obi-placeholder
+                >Dismiss</obc-button
+              >
+              <div slot="content" style="padding: 24px;">
+                <p>Last is working just fine.</p>
+              </div></obc-integration-vessel-menu
+            >`
+          : nothing
+      }
     </obc-integration-button>
   `;
 }

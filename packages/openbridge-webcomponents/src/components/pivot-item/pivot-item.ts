@@ -141,14 +141,18 @@ export class ObcPivotItem extends LitElement {
         <div class="visible-wrapper">
           <div class="placeholder">
             <div class="icon-label-container">
-              ${this.hasLeadingIcon
-                ? html`<div class="icon">
-                    <slot name="icon"></slot>
-                  </div>`
-                : nothing}
-              ${shouldShowLabel
-                ? html`<div class="label">${this.label}</div>`
-                : nothing}
+              ${
+                this.hasLeadingIcon
+                  ? html`<div class="icon">
+                      <slot name="icon"></slot>
+                    </div>`
+                  : nothing
+              }
+              ${
+                shouldShowLabel
+                  ? html`<div class="label">${this.label}</div>`
+                  : nothing
+              }
             </div>
           </div>
         </div>

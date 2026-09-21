@@ -137,21 +137,25 @@ export class ObcSpeedArrows extends LitElement {
 
     return html`
       <div class="wrapper">
-        ${this.readout
-          ? html`<obc-readout
-              class="readout"
-              .value=${this.speedKnots}
-              unit="KN"
-              label="Speed"
-              .size=${ReadoutSize.large}
-              .direction=${ReadoutDirection.vertical}
-              .fractionDigits=${this.fractionDigits}
-              .maxDigits=${this.maxDigits}
-              .priority=${this.activeColor === ActiveColor.Regular
-                ? Priority.regular
-                : Priority.enhanced}
-            ></obc-readout>`
-          : nothing}
+        ${
+          this.readout
+            ? html`<obc-readout
+                class="readout"
+                .value=${this.speedKnots}
+                unit="KN"
+                label="Speed"
+                .size=${ReadoutSize.large}
+                .direction=${ReadoutDirection.vertical}
+                .fractionDigits=${this.fractionDigits}
+                .maxDigits=${this.maxDigits}
+                .priority=${
+                  this.activeColor === ActiveColor.Regular
+                    ? Priority.regular
+                    : Priority.enhanced
+                }
+              ></obc-readout>`
+            : nothing
+        }
         <div class="arrow-container">
           <svg
             width="96"
@@ -161,27 +165,33 @@ export class ObcSpeedArrows extends LitElement {
             xmlns="http://www.w3.org/2000/svg"
           >
             <g transform="rotate(${this.getRotation()}, 48, 48)">
-              ${this.tintedArrows || this.nActiveArrows > 0
-                ? renderChevronBand(
-                    CHEVRON_PATHS[0],
-                    this.getFillColor(this.nActiveArrows > 0, colors),
-                    this.getStrokeColor(this.nActiveArrows > 0, colors)
-                  )
-                : nothing}
-              ${this.tintedArrows || this.nActiveArrows > 1
-                ? renderChevronBand(
-                    CHEVRON_PATHS[1],
-                    this.getFillColor(this.nActiveArrows > 1, colors),
-                    this.getStrokeColor(this.nActiveArrows > 1, colors)
-                  )
-                : nothing}
-              ${this.tintedArrows || this.nActiveArrows > 2
-                ? renderChevronBand(
-                    CHEVRON_PATHS[2],
-                    this.getFillColor(this.nActiveArrows > 2, colors),
-                    this.getStrokeColor(this.nActiveArrows > 2, colors)
-                  )
-                : nothing}
+              ${
+                this.tintedArrows || this.nActiveArrows > 0
+                  ? renderChevronBand(
+                      CHEVRON_PATHS[0],
+                      this.getFillColor(this.nActiveArrows > 0, colors),
+                      this.getStrokeColor(this.nActiveArrows > 0, colors)
+                    )
+                  : nothing
+              }
+              ${
+                this.tintedArrows || this.nActiveArrows > 1
+                  ? renderChevronBand(
+                      CHEVRON_PATHS[1],
+                      this.getFillColor(this.nActiveArrows > 1, colors),
+                      this.getStrokeColor(this.nActiveArrows > 1, colors)
+                    )
+                  : nothing
+              }
+              ${
+                this.tintedArrows || this.nActiveArrows > 2
+                  ? renderChevronBand(
+                      CHEVRON_PATHS[2],
+                      this.getFillColor(this.nActiveArrows > 2, colors),
+                      this.getStrokeColor(this.nActiveArrows > 2, colors)
+                    )
+                  : nothing
+              }
             </g>
           </svg>
         </div>

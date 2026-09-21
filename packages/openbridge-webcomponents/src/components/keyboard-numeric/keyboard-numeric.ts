@@ -380,16 +380,21 @@ export class ObcKeyboardNumeric extends LitElement {
 
     return html`
       <div class="wrapper type-${this.type}">
-        ${showTitleBar
-          ? html`
-              <div class="top-bar">
-                <div class="parameter-name">${this.label}</div>
-                <obc-icon-button variant="flat" @click=${this.handleCloseClick}>
-                  <obi-close-google></obi-close-google>
-                </obc-icon-button>
-              </div>
-            `
-          : nothing}
+        ${
+          showTitleBar
+            ? html`
+                <div class="top-bar">
+                  <div class="parameter-name">${this.label}</div>
+                  <obc-icon-button
+                    variant="flat"
+                    @click=${this.handleCloseClick}
+                  >
+                    <obi-close-google></obi-close-google>
+                  </obc-icon-button>
+                </div>
+              `
+            : nothing
+        }
 
         <div class="container-content">
           ${this.renderInputField()}
@@ -418,19 +423,23 @@ export class ObcKeyboardNumeric extends LitElement {
                   >
                     CLEAR
                   </obc-button>
-                  ${this.has2Symbols
-                    ? html`
-                        <obc-button
-                          class="action-button symbols"
-                          variant="normal"
-                          @click=${this.handleToggleContent}
-                        >
-                          ${this.content === ObcKeyboardNumericContent.Numbers
-                            ? '#+='
-                            : '123'}
-                        </obc-button>
-                      `
-                    : nothing}
+                  ${
+                    this.has2Symbols
+                      ? html`
+                          <obc-button
+                            class="action-button symbols"
+                            variant="normal"
+                            @click=${this.handleToggleContent}
+                          >
+                            ${
+                              this.content === ObcKeyboardNumericContent.Numbers
+                                ? '#+='
+                                : '123'
+                            }
+                          </obc-button>
+                        `
+                      : nothing
+                  }
                 </div>
                 <obc-button
                   class="action-button done"

@@ -203,19 +203,21 @@ export class ObcAlertList extends LitElement {
   override render() {
     return html` <obc-scrollbar class="alert-list" id="scrollbar">
       <slot @slotchange=${this.handleSlotChange}></slot>
-      ${this._empty
-        ? html` <div class="empty-list">
-            <div class="icon">
-              <slot name="empty-icon"></slot>
-            </div>
-            <div class="empty-title">
-              <slot name="empty-title"></slot>
-            </div>
-            <div class="empty-description">
-              <slot name="empty-description"></slot>
-            </div>
-          </div>`
-        : nothing}
+      ${
+        this._empty
+          ? html` <div class="empty-list">
+              <div class="icon">
+                <slot name="empty-icon"></slot>
+              </div>
+              <div class="empty-title">
+                <slot name="empty-title"></slot>
+              </div>
+              <div class="empty-description">
+                <slot name="empty-description"></slot>
+              </div>
+            </div>`
+          : nothing
+      }
     </obc-scrollbar>`;
   }
 

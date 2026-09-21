@@ -128,12 +128,14 @@ export class ObcCommandMenu extends LitElement {
                 <div class="command-description">
                   <slot name="command-description"></slot>
                 </div>
-                ${this.showLocation
-                  ? html` <div class="divider"></div>
-                      <div class="command-location">
-                        <slot name="command-location"></slot>
-                      </div>`
-                  : nothing}
+                ${
+                  this.showLocation
+                    ? html` <div class="divider"></div>
+                        <div class="command-location">
+                          <slot name="command-location"></slot>
+                        </div>`
+                    : nothing
+                }
               </div>
             </div>
           </div>

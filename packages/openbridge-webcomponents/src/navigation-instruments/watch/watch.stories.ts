@@ -853,9 +853,9 @@ export const SizingPlayground: StoryObj<SizingPlaygroundArgs> = {
                   .faceDiameter=${fd(index)}
                   .tickmarks=${g.ticks}
                   .areas=${g.areas ?? []}
-                  .watchCircleType=${g.areas
-                    ? WatchCircleType.double
-                    : WatchCircleType.single}
+                  .watchCircleType=${
+                    g.areas ? WatchCircleType.double : WatchCircleType.single
+                  }
                 ></obc-watch>
               `,
               {pinned: fd(index) !== undefined}

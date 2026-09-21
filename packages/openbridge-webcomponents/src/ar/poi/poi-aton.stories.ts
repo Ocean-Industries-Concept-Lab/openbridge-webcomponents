@@ -85,16 +85,18 @@ const renderPoiAton = (args: ObcPoiAton) => html`
     .atonState=${args.atonState}
     .atonInteractive=${args.atonInteractive}
   >
-    ${args.hasHeader
-      ? html`<obc-poi-header
-          slot="header"
-          content="B1"
-          type="id"
-          state="selected"
-          size="regular"
-          has-indicator
-        ></obc-poi-header>`
-      : html``}
+    ${
+      args.hasHeader
+        ? html`<obc-poi-header
+            slot="header"
+            content="B1"
+            type="id"
+            state="selected"
+            size="regular"
+            has-indicator
+          ></obc-poi-header>`
+        : html``
+    }
     <obi-beacon-general-east></obi-beacon-general-east>
   </obc-poi-aton>
 `;

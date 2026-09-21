@@ -71,18 +71,22 @@ const meta: Meta<typeof ObcButton> = {
       .disabled=${args.disabled}
       .segmentPosition=${args.segmentPosition}
     >
-      ${args.showLeadingIcon
-        ? iconIdToIconHtml(args.leadingIcon as unknown as string, {
-            size: '24',
-            slot: 'leading-icon',
-          })
-        : ''}
-      ${args.showTrailingIcon
-        ? iconIdToIconHtml(args.trailingIcon as unknown as string, {
-            size: '24',
-            slot: 'trailing-icon',
-          })
-        : ''}
+      ${
+        args.showLeadingIcon
+          ? iconIdToIconHtml(args.leadingIcon as unknown as string, {
+              size: '24',
+              slot: 'leading-icon',
+            })
+          : ''
+      }
+      ${
+        args.showTrailingIcon
+          ? iconIdToIconHtml(args.trailingIcon as unknown as string, {
+              size: '24',
+              slot: 'trailing-icon',
+            })
+          : ''
+      }
       ${args.label}
     </obc-button>`,
 } satisfies Meta<ObcButton>;

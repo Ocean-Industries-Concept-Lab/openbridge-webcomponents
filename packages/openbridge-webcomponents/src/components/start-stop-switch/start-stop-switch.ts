@@ -373,9 +373,11 @@ export class ObcStartStopSwitch extends LitElement {
                                 ></obi-arrow-right-google>
                                 <div class="button-label">
                                   <slot
-                                    name=${isChecked
-                                      ? 'to-unchecked-action-label'
-                                      : 'to-checked-action-label'}
+                                    name=${
+                                      isChecked
+                                        ? 'to-unchecked-action-label'
+                                        : 'to-checked-action-label'
+                                    }
                                   ></slot>
                                 </div>
                               </div>

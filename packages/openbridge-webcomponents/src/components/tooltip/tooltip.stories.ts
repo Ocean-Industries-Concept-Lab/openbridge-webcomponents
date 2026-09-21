@@ -21,10 +21,12 @@ const meta: Meta<typeof ObcTooltip> = {
       label="${args.label}"
       .showIcon=${args.showIcon}
     >
-      ${args.type === TooltipType.icon ||
-      (args.type === TooltipType.label && args.showIcon)
-        ? html`<obi-placeholder slot="icon"></obi-placeholder>`
-        : nothing}
+      ${
+        args.type === TooltipType.icon ||
+        (args.type === TooltipType.label && args.showIcon)
+          ? html`<obi-placeholder slot="icon"></obi-placeholder>`
+          : nothing
+      }
     </obc-tooltip>`,
   argTypes: {
     type: {
