@@ -209,5 +209,11 @@ the semantic diff (renamed, removed, changed per block) belong there too.
 - `--base-categorical-*` is absent from the palette export because the plugin
   skips aliases into the ten-mode `Color-categorical` collection; the block in
   `src/palettes/manual.css` bridges it until the plugin emits the modes as
-  classes (#1187).
+  classes (#1187, obc-figma-plugin#5). The first export made with that plugin
+  release carries the classes itself, under the same public names: in that
+  export's PR delete the `manual.css` block (grep `#1187`) and the
+  "hand-written … until" sentences in `css-postcss.md` and in
+  `IMPLEMENTATION_GUIDELINES.md` § Categorical Colour Classes. The story
+  "Palettes/Categorical Colour" must not move a pixel; if it does, the export
+  and the block disagree.
 - Token typos in Figma (#985).
