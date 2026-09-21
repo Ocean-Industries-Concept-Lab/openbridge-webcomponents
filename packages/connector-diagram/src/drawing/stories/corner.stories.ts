@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from '@storybook/html'
+import type {Meta, StoryObj} from '@storybook/html-vite'
 import {renderSegments} from '../renderer.js'
 import {GRID, DEFAULT_THEME, type PipeValue, type PipeSize} from '../../model/types.js'
 import {canvasStory} from '../../stories/canvasStory.js'
