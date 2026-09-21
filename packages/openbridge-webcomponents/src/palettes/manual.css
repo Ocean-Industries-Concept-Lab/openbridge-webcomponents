@@ -99,7 +99,9 @@
 }
 
 /* Ten Color-categorical modes from Figma as classes, like the size classes; the
-   plugin export does not carry that collection yet (#1187). */
+   plugin export does not carry that collection yet (#1187). Every mode-dependent
+   token sits inside the class rule: a var() is substituted where it is declared,
+   so an alias on :root would freeze the neutral ramp for the whole tree. */
 :root,
 .obc-categorical-color-neutral {
   --categorical-shade-050: var(--base-gray-050);
@@ -110,6 +112,14 @@
   --categorical-shade-500: var(--base-gray-500);
   --categorical-shade-600: var(--base-gray-600);
   --categorical-shade-050-tint: var(--base-gray-050-tint);
+  --base-categorical-050: var(--categorical-shade-050);
+  --base-categorical-100: var(--categorical-shade-100);
+  --base-categorical-200: var(--categorical-shade-200);
+  --base-categorical-300: var(--categorical-shade-300);
+  --base-categorical-400: var(--categorical-shade-400);
+  --base-categorical-500: var(--categorical-shade-500);
+  --base-categorical-600: var(--categorical-shade-600);
+  --base-categorical-050-tint: var(--categorical-shade-050-tint);
   --vessel-background-color: var(
     --integration-selected-enabled-background-color
   );
@@ -127,6 +137,14 @@
   --categorical-shade-500: var(--base-blue-500);
   --categorical-shade-600: var(--base-blue-600);
   --categorical-shade-050-tint: var(--base-blue-050-tint);
+  --base-categorical-050: var(--categorical-shade-050);
+  --base-categorical-100: var(--categorical-shade-100);
+  --base-categorical-200: var(--categorical-shade-200);
+  --base-categorical-300: var(--categorical-shade-300);
+  --base-categorical-400: var(--categorical-shade-400);
+  --base-categorical-500: var(--categorical-shade-500);
+  --base-categorical-600: var(--categorical-shade-600);
+  --base-categorical-050-tint: var(--categorical-shade-050-tint);
   --vessel-background-color: var(--base-blue-050);
   --vessel-border-color: var(--base-blue-100);
   --vessel-neutral-color: var(--base-blue-500);
@@ -142,6 +160,14 @@
   --categorical-shade-500: var(--base-cyan-500);
   --categorical-shade-600: var(--base-cyan-600);
   --categorical-shade-050-tint: var(--base-cyan-050-tint);
+  --base-categorical-050: var(--categorical-shade-050);
+  --base-categorical-100: var(--categorical-shade-100);
+  --base-categorical-200: var(--categorical-shade-200);
+  --base-categorical-300: var(--categorical-shade-300);
+  --base-categorical-400: var(--categorical-shade-400);
+  --base-categorical-500: var(--categorical-shade-500);
+  --base-categorical-600: var(--categorical-shade-600);
+  --base-categorical-050-tint: var(--categorical-shade-050-tint);
   --vessel-background-color: var(--base-cyan-050);
   --vessel-border-color: var(--base-cyan-100);
   --vessel-neutral-color: var(--base-cyan-500);
@@ -157,6 +183,14 @@
   --categorical-shade-500: var(--base-teal-500);
   --categorical-shade-600: var(--base-teal-600);
   --categorical-shade-050-tint: var(--base-teal-050-tint);
+  --base-categorical-050: var(--categorical-shade-050);
+  --base-categorical-100: var(--categorical-shade-100);
+  --base-categorical-200: var(--categorical-shade-200);
+  --base-categorical-300: var(--categorical-shade-300);
+  --base-categorical-400: var(--categorical-shade-400);
+  --base-categorical-500: var(--categorical-shade-500);
+  --base-categorical-600: var(--categorical-shade-600);
+  --base-categorical-050-tint: var(--categorical-shade-050-tint);
   --vessel-background-color: var(--base-teal-050);
   --vessel-border-color: var(--base-teal-100);
   --vessel-neutral-color: var(--base-teal-500);
@@ -172,6 +206,14 @@
   --categorical-shade-500: var(--base-mint-500);
   --categorical-shade-600: var(--base-mint-600);
   --categorical-shade-050-tint: var(--base-mint-050-tint);
+  --base-categorical-050: var(--categorical-shade-050);
+  --base-categorical-100: var(--categorical-shade-100);
+  --base-categorical-200: var(--categorical-shade-200);
+  --base-categorical-300: var(--categorical-shade-300);
+  --base-categorical-400: var(--categorical-shade-400);
+  --base-categorical-500: var(--categorical-shade-500);
+  --base-categorical-600: var(--categorical-shade-600);
+  --base-categorical-050-tint: var(--categorical-shade-050-tint);
   --vessel-background-color: var(--base-mint-050);
   --vessel-border-color: var(--base-mint-100);
   --vessel-neutral-color: var(--base-mint-500);
@@ -187,6 +229,14 @@
   --categorical-shade-500: var(--base-yellow-500);
   --categorical-shade-600: var(--base-yellow-600);
   --categorical-shade-050-tint: var(--base-yellow-050-tint);
+  --base-categorical-050: var(--categorical-shade-050);
+  --base-categorical-100: var(--categorical-shade-100);
+  --base-categorical-200: var(--categorical-shade-200);
+  --base-categorical-300: var(--categorical-shade-300);
+  --base-categorical-400: var(--categorical-shade-400);
+  --base-categorical-500: var(--categorical-shade-500);
+  --base-categorical-600: var(--categorical-shade-600);
+  --base-categorical-050-tint: var(--categorical-shade-050-tint);
   --vessel-background-color: var(--base-yellow-050);
   --vessel-border-color: var(--base-yellow-100);
   --vessel-neutral-color: var(--base-yellow-500);
@@ -202,6 +252,14 @@
   --categorical-shade-500: var(--base-orange-500);
   --categorical-shade-600: var(--base-orange-600);
   --categorical-shade-050-tint: var(--base-orange-050-tint);
+  --base-categorical-050: var(--categorical-shade-050);
+  --base-categorical-100: var(--categorical-shade-100);
+  --base-categorical-200: var(--categorical-shade-200);
+  --base-categorical-300: var(--categorical-shade-300);
+  --base-categorical-400: var(--categorical-shade-400);
+  --base-categorical-500: var(--categorical-shade-500);
+  --base-categorical-600: var(--categorical-shade-600);
+  --base-categorical-050-tint: var(--categorical-shade-050-tint);
   --vessel-background-color: var(--base-orange-050);
   --vessel-border-color: var(--base-orange-100);
   --vessel-neutral-color: var(--base-orange-500);
@@ -217,6 +275,14 @@
   --categorical-shade-500: var(--base-red-500);
   --categorical-shade-600: var(--base-red-600);
   --categorical-shade-050-tint: var(--base-red-050-tint);
+  --base-categorical-050: var(--categorical-shade-050);
+  --base-categorical-100: var(--categorical-shade-100);
+  --base-categorical-200: var(--categorical-shade-200);
+  --base-categorical-300: var(--categorical-shade-300);
+  --base-categorical-400: var(--categorical-shade-400);
+  --base-categorical-500: var(--categorical-shade-500);
+  --base-categorical-600: var(--categorical-shade-600);
+  --base-categorical-050-tint: var(--categorical-shade-050-tint);
   --vessel-background-color: var(--base-red-050);
   --vessel-border-color: var(--base-red-100);
   --vessel-neutral-color: var(--base-red-500);
@@ -232,6 +298,14 @@
   --categorical-shade-500: var(--base-purple-500);
   --categorical-shade-600: var(--base-purple-600);
   --categorical-shade-050-tint: var(--base-purple-050-tint);
+  --base-categorical-050: var(--categorical-shade-050);
+  --base-categorical-100: var(--categorical-shade-100);
+  --base-categorical-200: var(--categorical-shade-200);
+  --base-categorical-300: var(--categorical-shade-300);
+  --base-categorical-400: var(--categorical-shade-400);
+  --base-categorical-500: var(--categorical-shade-500);
+  --base-categorical-600: var(--categorical-shade-600);
+  --base-categorical-050-tint: var(--categorical-shade-050-tint);
   --vessel-background-color: var(--base-purple-050);
   --vessel-border-color: var(--base-purple-100);
   --vessel-neutral-color: var(--base-purple-500);
@@ -247,14 +321,6 @@
   --categorical-shade-500: var(--base-indigo-500);
   --categorical-shade-600: var(--base-indigo-600);
   --categorical-shade-050-tint: var(--base-indigo-050-tint);
-  --vessel-background-color: var(--base-indigo-050);
-  --vessel-border-color: var(--base-indigo-100);
-  --vessel-neutral-color: var(--base-indigo-500);
-  --vessel-active-color: var(--base-indigo-600);
-}
-
-/* The Palette names the vessel icons read; the same in every theme. */
-:root {
   --base-categorical-050: var(--categorical-shade-050);
   --base-categorical-100: var(--categorical-shade-100);
   --base-categorical-200: var(--categorical-shade-200);
@@ -263,6 +329,10 @@
   --base-categorical-500: var(--categorical-shade-500);
   --base-categorical-600: var(--categorical-shade-600);
   --base-categorical-050-tint: var(--categorical-shade-050-tint);
+  --vessel-background-color: var(--base-indigo-050);
+  --vessel-border-color: var(--base-indigo-100);
+  --vessel-neutral-color: var(--base-indigo-500);
+  --vessel-active-color: var(--base-indigo-600);
 }
 
 /* Animated per element by palettes/blinking.ts; registered so the numbers

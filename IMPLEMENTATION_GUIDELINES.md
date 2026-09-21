@@ -525,11 +525,13 @@ Figma's `Color-categorical` collection has ten modes, exported as classes the
 same way: `obc-categorical-color-neutral` (the `:root` default), `-blue`,
 `-cyan`, `-teal`, `-green`, `-yellow`, `-orange`, `-red`, `-purple`,
 `-indigo`. Each class sets `--categorical-shade-{050…600,050-tint}` to one
-`--base-*` ramp and the four `--vessel-*` tokens, so the values follow the
-active theme; `--base-categorical-*` are the Palette names the vessel icons
-read and alias the shades. Put the class on `<html>` for an app-wide default or
-on any ancestor for one subtree, at or below the element carrying
-`data-obc-theme`:
+`--base-*` ramp, the `--base-categorical-*` names the vessel icons read, and
+the four `--vessel-*` tokens, all as `var()` references so the values follow
+the active theme. Every mode-dependent token is declared inside the class rule
+on purpose: a `var()` is substituted on the element that declares it, so an
+alias on `:root` would freeze the neutral ramp for the whole tree. Put the
+class on `<html>` for an app-wide default or on any ancestor for one subtree,
+at or below the element carrying `data-obc-theme`:
 
 ```html
 <div class="obc-categorical-color-green">
