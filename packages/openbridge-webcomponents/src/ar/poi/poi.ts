@@ -506,9 +506,11 @@ export class ObcPoi extends LitElement {
     return html`
       <obc-poi-pointer
         class="pointer"
-        style="--obc-poi-pointer-x: ${this
-          .lineOffset}px; --obc-poi-pointer-y: ${this.targetAnchorY +
-        this.targetProjectionY}px;"
+        style="--obc-poi-pointer-x: ${
+          this.lineOffset
+        }px; --obc-poi-pointer-y: ${
+          this.targetAnchorY + this.targetProjectionY
+        }px;"
         .type=${this.resolvedPointerType}
         .state=${this.resolvedPointerState}
         .boxWidth=${this.pointerBoxWidthExtra}
@@ -531,8 +533,9 @@ export class ObcPoi extends LitElement {
     const value = this.pointerSelected ? 'checked' : 'unchecked';
     return html`<div
       class="outside-arrow"
-      style="--obc-poi-outside-arrow-x: ${xOffset}px; --obc-poi-outside-arrow-y: ${yOffset}px; --obc-poi-outside-arrow-angle: ${this
-        .outsideAngle}deg;"
+      style="--obc-poi-outside-arrow-x: ${xOffset}px; --obc-poi-outside-arrow-y: ${yOffset}px; --obc-poi-outside-arrow-angle: ${
+        this.outsideAngle
+      }deg;"
     >
       ${poiArrow(value)}
     </div>`;

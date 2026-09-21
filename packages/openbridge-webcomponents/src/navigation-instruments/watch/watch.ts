@@ -1129,34 +1129,42 @@ export class ObcWatch extends LitElement {
         transform="rotate(${this.rotation ?? 0})"
       >
         ${this.watchCircle()} ${this.renderBars()}
-        ${this.crosshairEnabled
-          ? this.renderCrosshair(
-              OUTER_RING_RADIUS + rOff,
-              insideLabels && labelPositions
-                ? {
-                    positions: labelPositions,
-                    rotation: this.rotation,
-                    scale,
-                    innerRingRadius: this.innerRingRadius + rOff,
-                  }
-                : undefined,
-              this.crosshairCenterCutout
-                ? this.innerRingRadius + rOff
-                : undefined
-            )
-          : nothing}
+        ${
+          this.crosshairEnabled
+            ? this.renderCrosshair(
+                OUTER_RING_RADIUS + rOff,
+                insideLabels && labelPositions
+                  ? {
+                      positions: labelPositions,
+                      rotation: this.rotation,
+                      scale,
+                      innerRingRadius: this.innerRingRadius + rOff,
+                    }
+                  : undefined,
+                this.crosshairCenterCutout
+                  ? this.innerRingRadius + rOff
+                  : undefined
+              )
+            : nothing
+        }
         ${northArrowEl} ${this.renderStarboardPortIndicator()} ${current}
         ${this._renderTickFadeDefs()} ${wind}
-        ${this.tickFadeAngle > 0 && this.areas.length > 0
-          ? svg`<g mask="url(#tickFadeMask)">${tickmarks}</g>`
-          : tickmarks}
-        ${this.areas.length > 0
-          ? svg`<g clip-path="url(#rot-arc-clip)">${this.renderRot()}</g>`
-          : this.renderRot()}
+        ${
+          this.tickFadeAngle > 0 && this.areas.length > 0
+            ? svg`<g mask="url(#tickFadeMask)">${tickmarks}</g>`
+            : tickmarks
+        }
+        ${
+          this.areas.length > 0
+            ? svg`<g clip-path="url(#rot-arc-clip)">${this.renderRot()}</g>`
+            : this.renderRot()
+        }
         ${advices} ${angleSetpoint}
-        ${this.tickFadeAngle > 0 && this.areas.length > 0
-          ? svg`<g mask="url(#tickFadeMask)">${labels}</g>`
-          : labels}
+        ${
+          this.tickFadeAngle > 0 && this.areas.length > 0
+            ? svg`<g mask="url(#tickFadeMask)">${labels}</g>`
+            : labels
+        }
         ${this.renderVesselImage()} ${this.renderNeedles()}
       </svg>
     `;

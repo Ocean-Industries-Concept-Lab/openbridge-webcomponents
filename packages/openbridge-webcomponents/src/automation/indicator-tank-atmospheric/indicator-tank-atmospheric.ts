@@ -111,21 +111,25 @@ export class ObcIndicatorTankAtmospheric extends LitElement {
         <g transform=${frameTransform}>
           <path class="frame" d=${FRAME_PATH} />
         </g>
-        ${this.variant === IndicatorTankAtmosphericVariant.trend
-          ? renderTrendGraph(
-              barRect,
-              this.data,
-              this.level,
-              this.scheme,
-              'tank'
-            )
-          : renderLinearBar(barRect, this.level, this.scheme, 'tank')}
+        ${
+          this.variant === IndicatorTankAtmosphericVariant.trend
+            ? renderTrendGraph(
+                barRect,
+                this.data,
+                this.level,
+                this.scheme,
+                'tank'
+              )
+            : renderLinearBar(barRect, this.level, this.scheme, 'tank')
+        }
       </svg>
-      ${showIcon
-        ? html`<div class="icon-wrapper">
-            <slot name="icon"><obi-tank usecsscolor></obi-tank></slot>
-          </div>`
-        : nothing}
+      ${
+        showIcon
+          ? html`<div class="icon-wrapper">
+              <slot name="icon"><obi-tank usecsscolor></obi-tank></slot>
+            </div>`
+          : nothing
+      }
     `;
   }
 

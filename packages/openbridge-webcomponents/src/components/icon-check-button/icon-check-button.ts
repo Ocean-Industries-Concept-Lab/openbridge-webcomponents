@@ -122,11 +122,13 @@ export class ObcIconCheckButton extends LitElement {
             <slot name="icon"></slot>
           </div>
         </div>
-        ${this.hasLabel
-          ? html`<div class="label-container">
-              <div class="label">${this.label}</div>
-            </div>`
-          : ''}
+        ${
+          this.hasLabel
+            ? html`<div class="label-container">
+                <div class="label">${this.label}</div>
+              </div>`
+            : ''
+        }
       </button>
     `;
   }

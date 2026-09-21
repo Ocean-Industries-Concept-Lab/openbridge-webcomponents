@@ -230,9 +230,11 @@ export class ObcAlertMenuItem extends LitElement {
         <slot name="alert-icon" slot="primary-icon"></slot>
         <slot name="title" slot="title">${this.title}</slot>
         <slot name="description" slot="description">${this.description}</slot>
-        ${this.hasIcon
-          ? html`<slot name="icon" slot="secondary-icon"></slot>`
-          : nothing}
+        ${
+          this.hasIcon
+            ? html`<slot name="icon" slot="secondary-icon"></slot>`
+            : nothing
+        }
         ${choose(this.status, [
           [
             ObcAlertMenuItemStatus.NoAckAlarm,

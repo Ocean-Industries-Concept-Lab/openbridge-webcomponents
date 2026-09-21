@@ -212,8 +212,9 @@ export class ObcIndicatorGraph extends LitElement {
   override render() {
     return html`
       <div
-        class="chart-container ${this._effectivePriority} ${this
-          ._effectiveSize}"
+        class="chart-container ${this._effectivePriority} ${
+          this._effectiveSize
+        }"
       >
         <div id="chart"></div>
         <div

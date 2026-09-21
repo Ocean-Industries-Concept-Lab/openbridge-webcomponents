@@ -221,18 +221,20 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
         .zoomToFitArc=${this.zoomToFitArc}
       >
       </obc-instrument-radial>
-      ${this.hasReadout
-        ? html`<div class="readout" style="top: ${this._readoutTopPercent}%">
-            ${renderInstrumentReadout({
-              value: this.value,
-              priority: this.priority,
-              label: this.label,
-              unit: this.unit,
-              fractionDigits: this.fractionDigits,
-              centerValue: true,
-            })}
-          </div>`
-        : nothing}
+      ${
+        this.hasReadout
+          ? html`<div class="readout" style="top: ${this._readoutTopPercent}%">
+              ${renderInstrumentReadout({
+                value: this.value,
+                priority: this.priority,
+                label: this.label,
+                unit: this.unit,
+                fractionDigits: this.fractionDigits,
+                centerValue: true,
+              })}
+            </div>`
+          : nothing
+      }
     `;
   }
 

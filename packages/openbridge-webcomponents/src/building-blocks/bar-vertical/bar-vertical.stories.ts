@@ -918,19 +918,21 @@ export const ChartIntegrationRight: Story = {
         .showLabels=${_args.vScaleShowLabels}
         .hasBar=${_args.vScaleHasBar}
         .barThickness=${_args.vScaleBarThickness}
-        .fillMode=${_args.vScaleFillMode === 'fill'
-          ? FillMode.fill
-          : FillMode.tint}
+        .fillMode=${
+          _args.vScaleFillMode === 'fill' ? FillMode.fill : FillMode.tint
+        }
         .fillMin=${_args.vScaleFillMin}
         .fillMax=${_args.vScaleFillMax}
         .value=${_args.vScaleValue}
         .setpoint=${_args.vScaleSetpoint}
         .advices=${_args.vScaleAdvices}
-        .advicePosition=${_args.vScaleAdvicePosition === 'inner'
-          ? AdvicePosition.inner
-          : _args.vScaleAdvicePosition === 'center'
-            ? AdvicePosition.center
-            : AdvicePosition.outer}
+        .advicePosition=${
+          _args.vScaleAdvicePosition === 'inner'
+            ? AdvicePosition.inner
+            : _args.vScaleAdvicePosition === 'center'
+              ? AdvicePosition.center
+              : AdvicePosition.outer
+        }
         .primaryTickmarkInterval=${1}
         .secondaryTickmarkInterval=${0.5}
         .tertiaryTickmarkInterval=${0.125}
@@ -1029,19 +1031,21 @@ export const ChartIntegrationRightBackground: Story = {
         .showLabels=${_args.vScaleShowLabels}
         .hasBar=${_args.vScaleHasBar}
         .barThickness=${_args.vScaleBarThickness}
-        .fillMode=${_args.vScaleFillMode === 'fill'
-          ? FillMode.fill
-          : FillMode.tint}
+        .fillMode=${
+          _args.vScaleFillMode === 'fill' ? FillMode.fill : FillMode.tint
+        }
         .fillMin=${_args.vScaleFillMin}
         .fillMax=${_args.vScaleFillMax}
         .value=${_args.vScaleValue}
         .setpoint=${_args.vScaleSetpoint}
         .advices=${_args.vScaleAdvices}
-        .advicePosition=${_args.vScaleAdvicePosition === 'inner'
-          ? AdvicePosition.inner
-          : _args.vScaleAdvicePosition === 'center'
-            ? AdvicePosition.center
-            : AdvicePosition.outer}
+        .advicePosition=${
+          _args.vScaleAdvicePosition === 'inner'
+            ? AdvicePosition.inner
+            : _args.vScaleAdvicePosition === 'center'
+              ? AdvicePosition.center
+              : AdvicePosition.outer
+        }
         .primaryTickmarkInterval=${1}
         .secondaryTickmarkInterval=${0.5}
         .tertiaryTickmarkInterval=${0.125}
@@ -1153,19 +1157,21 @@ export const GaugeTrend: Story = {
         .showLabels=${_args.vScaleShowLabels}
         .hasBar=${_args.vScaleHasBar}
         .barThickness=${_args.vScaleBarThickness}
-        .fillMode=${_args.vScaleFillMode === 'fill'
-          ? FillMode.fill
-          : FillMode.tint}
+        .fillMode=${
+          _args.vScaleFillMode === 'fill' ? FillMode.fill : FillMode.tint
+        }
         .fillMin=${_args.vScaleFillMin}
         .fillMax=${_args.vScaleFillMax}
         .value=${_args.vScaleValue}
         .setpoint=${_args.vScaleSetpoint}
         .advices=${_args.vScaleAdvices}
-        .advicePosition=${_args.vScaleAdvicePosition === 'inner'
-          ? AdvicePosition.inner
-          : _args.vScaleAdvicePosition === 'center'
-            ? AdvicePosition.center
-            : AdvicePosition.outer}
+        .advicePosition=${
+          _args.vScaleAdvicePosition === 'inner'
+            ? AdvicePosition.inner
+            : _args.vScaleAdvicePosition === 'center'
+              ? AdvicePosition.center
+              : AdvicePosition.outer
+        }
         .primaryTickmarkInterval=${1}
         .secondaryTickmarkInterval=${0.5}
         .tertiaryTickmarkInterval=${0.125}

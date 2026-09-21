@@ -85,13 +85,15 @@ export class ObcFormFooterContainer extends LitElement {
   override render() {
     return html`
       <div class="wrapper" part="wrapper">
-        ${this.hasActions
-          ? html`
-              <div class="actions" part="actions">
-                <slot @slotchange=${this.syncActionElementListeners}></slot>
-              </div>
-            `
-          : nothing}
+        ${
+          this.hasActions
+            ? html`
+                <div class="actions" part="actions">
+                  <slot @slotchange=${this.syncActionElementListeners}></slot>
+                </div>
+              `
+            : nothing
+        }
       </div>
     `;
   }

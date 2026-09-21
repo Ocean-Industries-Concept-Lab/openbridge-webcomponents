@@ -210,9 +210,11 @@ export class ObcStepperBox extends LitElement {
             ${this.rightIcon}
           </obc-icon-button>
         </div>
-        ${showHelper
-          ? html`<div class="helper-text">${this.helperText}</div>`
-          : nothing}
+        ${
+          showHelper
+            ? html`<div class="helper-text">${this.helperText}</div>`
+            : nothing
+        }
       </div>
     `;
   }

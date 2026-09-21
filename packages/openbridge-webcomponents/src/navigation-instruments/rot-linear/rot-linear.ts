@@ -171,18 +171,22 @@ export class ObcRotLinear extends LitElement {
         <obc-watch-flat
           .labels=${this.scaleLabels}
           .tickmarks=${this.scaleTickmarks}
-          .barAreas=${hasValue
-            ? [{startX: 0, endX: this.barEndX, fillColor: this.barColor}]
-            : []}
-          .needles=${hasValue
-            ? [
-                {
-                  x: this.barEndX,
-                  fillColor: this.needleColor,
-                  strokeColor: 'var(--border-silhouette-color)',
-                },
-              ]
-            : []}
+          .barAreas=${
+            hasValue
+              ? [{startX: 0, endX: this.barEndX, fillColor: this.barColor}]
+              : []
+          }
+          .needles=${
+            hasValue
+              ? [
+                  {
+                    x: this.barEndX,
+                    fillColor: this.needleColor,
+                    strokeColor: 'var(--border-silhouette-color)',
+                  },
+                ]
+              : []
+          }
         ></obc-watch-flat>
       </div>
     `;

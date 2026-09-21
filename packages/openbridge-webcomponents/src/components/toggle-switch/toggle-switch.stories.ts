@@ -54,9 +54,11 @@ const renderToggleSwitch = (args) => {
       ?hasBottomDivider=${args.hasBottomDivider}
       ?hasIcon=${args.hasIcon}
     >
-      ${args.hasIcon
-        ? html`<obi-placeholder slot="icon"></obi-placeholder>`
-        : ''}
+      ${
+        args.hasIcon
+          ? html`<obi-placeholder slot="icon"></obi-placeholder>`
+          : ''
+      }
     </obc-toggle-switch>
   </div>`;
 };

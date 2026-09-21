@@ -105,25 +105,27 @@ export class ObcEventList extends LitElement {
   override render() {
     return html`
       <div class="wrapper">
-        ${this.showHeader
-          ? html`
-              <div class="title-container">
-                <div class="label-container">
-                  <div class="label">
-                    <span class="day-container">
-                      <span class="day">${this._dayName}</span>
-                      <span class="comma">,</span>
-                    </span>
-                    <span class="date-container">
-                      <span>${this._dateNumber}</span>
-                      <span class="month">${this._monthName}</span>
-                    </span>
-                    <span class="year">${this._year}</span>
+        ${
+          this.showHeader
+            ? html`
+                <div class="title-container">
+                  <div class="label-container">
+                    <div class="label">
+                      <span class="day-container">
+                        <span class="day">${this._dayName}</span>
+                        <span class="comma">,</span>
+                      </span>
+                      <span class="date-container">
+                        <span>${this._dateNumber}</span>
+                        <span class="month">${this._monthName}</span>
+                      </span>
+                      <span class="year">${this._year}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            `
-          : nothing}
+              `
+            : nothing
+        }
         <div class="content-container">
           <div class="event-container" role="list" aria-label="Events">
             ${repeat(
@@ -137,8 +139,9 @@ export class ObcEventList extends LitElement {
                   .description=${event.description ?? ''}
                   .startTime=${event.startTime}
                   .endTime=${event.endTime}
-                  .eventItemType=${event.eventItemType ??
-                  EventItemType.SingleLine}
+                  .eventItemType=${
+                    event.eventItemType ?? EventItemType.SingleLine
+                  }
                   .hasArrow=${event.hasArrow ?? false}
                   .hasTime=${event.hasTime ?? false}
                   .hasEndTime=${event.hasEndTime ?? false}

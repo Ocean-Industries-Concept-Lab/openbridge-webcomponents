@@ -284,13 +284,15 @@ export class ObcSlideButton extends LitElement {
           >
             <div class=${classMap(buttonClasses)}>
               <div class="button-content">
-                ${this.hasLeadingIcon
-                  ? html`
-                      <div class="leading-icon">
-                        <slot name="leading-icon"></slot>
-                      </div>
-                    `
-                  : nothing}
+                ${
+                  this.hasLeadingIcon
+                    ? html`
+                        <div class="leading-icon">
+                          <slot name="leading-icon"></slot>
+                        </div>
+                      `
+                    : nothing
+                }
                 <div class="button-label">
                   <slot name="label"></slot>
                 </div>

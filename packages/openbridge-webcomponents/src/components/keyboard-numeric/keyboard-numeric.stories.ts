@@ -173,9 +173,11 @@ const renderKeyboard = (args: ObcKeyboardNumericArgs) => html`
     }}
     @close-click=${() => console.log('close-click')}
   >
-    ${args.hasLeadingIcon
-      ? html`<obi-placeholder slot="leading-icon"></obi-placeholder>`
-      : ''}
+    ${
+      args.hasLeadingIcon
+        ? html`<obi-placeholder slot="leading-icon"></obi-placeholder>`
+        : ''
+    }
   </obc-keyboard-numeric>
 `;
 
