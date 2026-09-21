@@ -58,7 +58,9 @@ export default defineConfig(({mode}) => {
             {
               format: 'es',
               entryFileNames: (opt) => {
-                return `${opt.name}.js`;
+                // Rolldown keeps the `?inline` query in the chunk name; a `?` in
+                // a published filename breaks URL-based imports for consumers.
+                return `${opt.name.split('?')[0]}.js`;
               },
               preserveModules: true,
               preserveModulesRoot: 'src',

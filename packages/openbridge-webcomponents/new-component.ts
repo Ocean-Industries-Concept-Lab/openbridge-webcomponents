@@ -1,19 +1,18 @@
 import fs from 'fs';
 import path from 'path';
 
-import {question, select, multiselect} from '@topcli/prompts';
+import {question, select, multiselect, validators} from '@topcli/prompts';
 
 const name = await question(
   'Component name (without obc prefix, and UpperCamelCase) ?',
   {
     validators: [
+      validators.required(),
       {
-        validate: (value) => /^[A-Z][a-zA-Z0-9]+$/.test(value),
-        message: 'Component name must be UpperCamelCase',
-      },
-      {
-        message: 'Component name is required',
-        validate: (value) => !!value,
+        validate: (value) =>
+          /^[A-Z][a-zA-Z0-9]+$/.test(value)
+            ? null
+            : 'Component name must be UpperCamelCase',
       },
     ],
   }

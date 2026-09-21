@@ -12,12 +12,9 @@
     "packages/*"
   ],
   "license": "AGPL-3.0-only",
-  "dependencies": {
-    "tough-cookie": "^5.1.2"
-  },
   "devDependencies": {
     "husky": "^9.1.7",
-    "lint-staged": "^16.2.7"
+    "lint-staged": "^17.5.1"
   },
   "lint-staged": {
     "packages/openbridge-webcomponents/src/**/*.ts": [

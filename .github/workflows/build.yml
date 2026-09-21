@@ -63,7 +63,7 @@ jobs:
 
   test-browser:
     container:
-      image: mcr.microsoft.com/playwright:v1.60.0-noble
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

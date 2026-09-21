@@ -77,12 +77,8 @@ import '@oicl/openbridge-webcomponents/dist/icons/icon-center-iec'
 import '@oicl/openbridge-webcomponents/dist/icons/icon-center-off-iec'
 import { getAisStream, getVesselImage, vesselImages, type AisData } from '@/business/aisData'
 import { ObcToggleButtonOptionType } from '@oicl/openbridge-webcomponents/dist/components/toggle-button-option/toggle-button-option.js'
-import maplibregl, {
-  type MapOptions,
-  Map as MaplibreglMap,
-  GeoJSONSource,
-  LngLat
-} from 'maplibre-gl'
+import * as maplibregl from 'maplibre-gl'
+import { type MapOptions, Map as MaplibreglMap, GeoJSONSource, LngLat } from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { Protocol, PMTiles } from 'pmtiles'
 
