@@ -162,3 +162,75 @@ export const AllButtonsActivated: Story = {
     userButtonActivated: true,
   },
 };
+
+export const SlottedRightTrayLeading: Story = {
+  render: (args) =>
+    html`<obc-integration-bar-dropdown
+      .showHomeButton=${false}
+      .homeButtonActivated=${args.homeButtonActivated}
+      .showLinkButton=${args.showLinkButton}
+      .linkButtonActivated=${args.linkButtonActivated}
+      .showClock=${args.showClock}
+      .showAlertButton=${args.showAlertButton}
+      .alertButtonActivated=${args.alertButtonActivated}
+      .showNotificationButton=${args.showNotificationButton}
+      .notificationButtonActivated=${args.notificationButtonActivated}
+      .showNotificationCount=${args.showNotificationCount}
+      .notificationCount=${args.notificationCount}
+      .showScreenButton=${args.showScreenButton}
+      .screenButtonActivated=${args.screenButtonActivated}
+      .showSystemButton=${args.showSystemButton}
+      .systemButtonActivated=${args.systemButtonActivated}
+      .showDimmingButton=${args.showDimmingButton}
+      .dimmingButtonActivated=${args.dimmingButtonActivated}
+      .showUserButton=${args.showUserButton}
+      .userButtonActivated=${args.userButtonActivated}
+      .nStatusFields=${args.nStatusFields}
+    >
+      <obc-integration-dropdown-button
+        slot="vessel-selector"
+        value="Vessel 1"
+        .hasFleet=${true}
+        .fleetLabel=${'Fleet name'}
+        .options=${[
+          {
+            value: 'Vessel 1',
+            label: 'Vessel Name 1',
+            icon: html`<obi-placeholder slot="icon"></obi-placeholder>`,
+          },
+        ]}
+      >
+        <obc-integration-button
+          slot="fleet"
+          .readouts=${[{label: 'Label', value: 'Value', unit: 'Unit'}]}
+          type=${IntegrationButtonType.rich}
+        >
+          <div slot="label">Fleet name</div>
+          <div slot="info-label">Label</div>
+          <div slot="info-status">Status</div>
+        </obc-integration-button>
+      </obc-integration-dropdown-button>
+      <obi-placeholder slot="status-icon-1"></obi-placeholder>
+      <div slot="status-label-1">Status</div>
+      <obi-placeholder slot="status-icon-2"></obi-placeholder>
+      <div slot="status-label-2">Status 2</div>
+      <obi-placeholder slot="status-icon-3"></obi-placeholder>
+      <div slot="status-label-3">Status 3</div>
+      <obc-clock
+        integrationBarMode
+        .date=${args.date}
+        .showDate=${args.showDate}
+        slot="clock"
+        .showTimezone=${args.showTimezone}
+        .timeZoneOffsetHours=${args.timeZoneOffsetHours}
+        .blinkOnlyBreakpointPx=${args.clockMinimizeBreakpointPx}
+      ></obc-clock>
+      <obc-icon-button
+        slot="right-tray-leading"
+        variant="integration"
+        aria-label="Custom action"
+      >
+        <obi-placeholder></obi-placeholder>
+      </obc-icon-button>
+    </obc-integration-bar-dropdown>`,
+};
