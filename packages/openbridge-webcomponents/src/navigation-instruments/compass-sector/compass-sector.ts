@@ -532,22 +532,29 @@ export class ObcCompassSector extends LitElement {
             rOff
           )}
         </svg>
-        ${this.hasReadout
-          ? html`<div class="readout" style="top: ${this._readoutTopPercent}%">
-              ${renderCenterReadouts([
-                {
-                  value: this.heading,
-                  label: this.label,
-                  unit: this.unit,
-                  fractionDigits: this.fractionDigits,
-                  size: ReadoutSize.large,
-                  priority: this.priorityFor(CompassSectorPriorityElement.hdg),
-                  centerValue: true,
-                  centerMeta: true,
-                },
-              ])}
-            </div>`
-          : nothing}
+        ${
+          this.hasReadout
+            ? html`<div
+                class="readout"
+                style="top: ${this._readoutTopPercent}%"
+              >
+                ${renderCenterReadouts([
+                  {
+                    value: this.heading,
+                    label: this.label,
+                    unit: this.unit,
+                    fractionDigits: this.fractionDigits,
+                    size: ReadoutSize.large,
+                    priority: this.priorityFor(
+                      CompassSectorPriorityElement.hdg
+                    ),
+                    centerValue: true,
+                    centerMeta: true,
+                  },
+                ])}
+              </div>`
+            : nothing
+        }
       </div>
     `;
   }

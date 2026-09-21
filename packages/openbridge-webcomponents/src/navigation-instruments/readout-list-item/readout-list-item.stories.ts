@@ -201,12 +201,16 @@ function renderItem(config: ReadoutItemConfig) {
       .srcOptions=${o.src}
       .showDebugOverlay=${config.showDebugOverlay ?? false}
     >
-      ${config.hasLeadingIcon
-        ? html`<obi-placeholder slot="leading-icon"></obi-placeholder>`
-        : nothing}
-      ${config.hasValueIcon
-        ? html`<obi-placeholder slot="value-icon"></obi-placeholder>`
-        : nothing}
+      ${
+        config.hasLeadingIcon
+          ? html`<obi-placeholder slot="leading-icon"></obi-placeholder>`
+          : nothing
+      }
+      ${
+        config.hasValueIcon
+          ? html`<obi-placeholder slot="value-icon"></obi-placeholder>`
+          : nothing
+      }
     </obc-readout-list-item>
   `;
 }
@@ -238,9 +242,11 @@ function renderShowcase(sections: ShowcaseSection[]) {
             <h3 class="rli-section-title">${section.title}</h3>
             <div
               class="rli-grid"
-              style=${section.columns
-                ? `grid-template-columns: repeat(${section.columns}, max-content);`
-                : nothing}
+              style=${
+                section.columns
+                  ? `grid-template-columns: repeat(${section.columns}, max-content);`
+                  : nothing
+              }
             >
               ${section.cases.map(
                 (item) => html`

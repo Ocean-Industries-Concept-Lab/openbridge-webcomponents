@@ -65,9 +65,11 @@ export class ObcEndPointLine extends LitElement {
         class="${this.direction}"
       >
         <path
-          d="M${12 - h} 25 V${12 + h}h-${(terminalWidth - width) /
-          2}v-${width}h${terminalWidth}v${width}h-${(terminalWidth - width) /
-          2}V25Z"
+          d="M${12 - h} 25 V${12 + h}h-${
+            (terminalWidth - width) / 2
+          }v-${width}h${terminalWidth}v${width}h-${
+            (terminalWidth - width) / 2
+          }V25Z"
           fill="var(${color.inner})"
           stroke="var(${color.outer})"
         />

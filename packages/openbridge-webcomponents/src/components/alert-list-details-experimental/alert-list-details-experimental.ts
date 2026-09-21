@@ -657,30 +657,32 @@ export class ObcAlertListDetailsExperimental extends LitElement {
 
     return html`
       <div class="wrapper">
-        ${data.length > 0
-          ? html` <obc-table
-                class="alert-list"
-                style="--alert-list-grid-columns: ${this.gridColumns}"
-                .data=${data}
-                .columns=${this.tableColumns}
-                .striped=${true}
-                .showHeader=${this.showHeader}
-                @row-click=${this.onRowClick}
-                @cell-button-click=${this.onCellButtonClick}
-                @expand-toggle=${this.onExpandToggle}
-              >
-                ${repeat(
-                  this.slotNames(data),
-                  (name) => name,
-                  // Forwards the host's slot into the one obc-table renders in the cell.
-                  (name) => html`<slot name=${name} slot=${name}></slot>`
-                )}
-              </obc-table>
-              <div class="spacer"></div>`
-          : html` <div class="empty-list">
-              <div class="icon">${selectedList.emptyIcon}</div>
-              <div class="empty-title">${selectedList.emptyTitle}</div>
-            </div>`}
+        ${
+          data.length > 0
+            ? html` <obc-table
+                  class="alert-list"
+                  style="--alert-list-grid-columns: ${this.gridColumns}"
+                  .data=${data}
+                  .columns=${this.tableColumns}
+                  .striped=${true}
+                  .showHeader=${this.showHeader}
+                  @row-click=${this.onRowClick}
+                  @cell-button-click=${this.onCellButtonClick}
+                  @expand-toggle=${this.onExpandToggle}
+                >
+                  ${repeat(
+                    this.slotNames(data),
+                    (name) => name,
+                    // Forwards the host's slot into the one obc-table renders in the cell.
+                    (name) => html`<slot name=${name} slot=${name}></slot>`
+                  )}
+                </obc-table>
+                <div class="spacer"></div>`
+            : html` <div class="empty-list">
+                <div class="icon">${selectedList.emptyIcon}</div>
+                <div class="empty-title">${selectedList.emptyTitle}</div>
+              </div>`
+        }
       </div>
     `;
   }

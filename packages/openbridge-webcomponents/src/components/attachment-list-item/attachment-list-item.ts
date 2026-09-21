@@ -147,38 +147,48 @@ export class ObcAttachmentListItem extends LitElement {
         ${this.showDivider ? html`<div class="divider"></div>` : nothing}
         <div class="content-container">
           <div class="label-group">
-            ${this.hasIndex
-              ? html`<span class="index-label">${this.index}</span>`
-              : nothing}
-            ${this.hasLeadingIcon
-              ? html`<div class="leading-icon">
-                  <slot name="leading-icon"></slot>
-                </div>`
-              : nothing}
+            ${
+              this.hasIndex
+                ? html`<span class="index-label">${this.index}</span>`
+                : nothing
+            }
+            ${
+              this.hasLeadingIcon
+                ? html`<div class="leading-icon">
+                    <slot name="leading-icon"></slot>
+                  </div>`
+                : nothing
+            }
             <div class="file-name-container">
               <span class="file-name">${this.label}</span>
             </div>
           </div>
-          ${this.hasTag
-            ? html`<div class="tag-container">
-                <slot name="tag"></slot>
-              </div>`
-            : nothing}
+          ${
+            this.hasTag
+              ? html`<div class="tag-container">
+                  <slot name="tag"></slot>
+                </div>`
+              : nothing
+          }
           <div class="trailing-group">
-            ${this.hasTimeDate
-              ? html`<div class="time-date-container">
-                  <span class="date-label">${this.date}</span>
-                  <span class="time-label">${this.time}</span>
-                </div>`
-              : nothing}
-            ${this.hasTrailingAction
-              ? html`<div class="trailing-action">
-                  <slot
-                    name="trailing-action"
-                    @slotchange=${this._handleTrailingActionSlotChange}
-                  ></slot>
-                </div>`
-              : nothing}
+            ${
+              this.hasTimeDate
+                ? html`<div class="time-date-container">
+                    <span class="date-label">${this.date}</span>
+                    <span class="time-label">${this.time}</span>
+                  </div>`
+                : nothing
+            }
+            ${
+              this.hasTrailingAction
+                ? html`<div class="trailing-action">
+                    <slot
+                      name="trailing-action"
+                      @slotchange=${this._handleTrailingActionSlotChange}
+                    ></slot>
+                  </div>`
+                : nothing
+            }
           </div>
         </div>
       </button>

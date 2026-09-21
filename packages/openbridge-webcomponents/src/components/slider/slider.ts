@@ -412,15 +412,17 @@ export class ObcSlider extends LitElement {
 
   override render() {
     return html`
-      ${this.hasLeftIcon
-        ? html` <obc-icon-button
-            ?disabled=${this.disabled}
-            @click=${this.onReduceClick}
-            variant="normal"
-          >
-            <slot name="icon-left"></slot>
-          </obc-icon-button>`
-        : null}
+      ${
+        this.hasLeftIcon
+          ? html` <obc-icon-button
+              ?disabled=${this.disabled}
+              @click=${this.onReduceClick}
+              variant="normal"
+            >
+              <slot name="icon-left"></slot>
+            </obc-icon-button>`
+          : null
+      }
       <div
         class=${classMap({
           wrapper: true,
@@ -438,8 +440,9 @@ export class ObcSlider extends LitElement {
           max=${this.max}
           step=${ifDefined(this.step)}
           .value=${this.value.toString()}
-          ?disabled=${this.variant === ObcSliderVariant.NoInput ||
-          this.disabled}
+          ?disabled=${
+            this.variant === ObcSliderVariant.NoInput || this.disabled
+          }
           class="slider"
           @input=${(event: Event) => {
             this.value = Number((event.target as HTMLInputElement).value);
@@ -476,15 +479,17 @@ export class ObcSlider extends LitElement {
         <div class="interactive-track"></div>
         <div class="thumb"></div>
       </div>
-      ${this.hasRightIcon
-        ? html`<obc-icon-button
-            ?disabled=${this.disabled}
-            @click=${this.onIncreaseClick}
-            variant="normal"
-          >
-            <slot name="icon-right"></slot>
-          </obc-icon-button>`
-        : null}
+      ${
+        this.hasRightIcon
+          ? html`<obc-icon-button
+              ?disabled=${this.disabled}
+              @click=${this.onIncreaseClick}
+              variant="normal"
+            >
+              <slot name="icon-right"></slot>
+            </obc-icon-button>`
+          : null
+      }
     `;
   }
 

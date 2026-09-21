@@ -120,23 +120,27 @@ export class ObcIndicatorBattery extends LitElement {
           height=${shell.height}
           rx="4"
         />
-        ${this.variant === IndicatorBatteryVariant.trend
-          ? renderTrendGraph(
-              barRect,
-              this.data,
-              this.level,
-              this.scheme,
-              'battery'
-            )
-          : renderLinearBar(barRect, this.level, this.scheme, 'battery')}
+        ${
+          this.variant === IndicatorBatteryVariant.trend
+            ? renderTrendGraph(
+                barRect,
+                this.data,
+                this.level,
+                this.scheme,
+                'battery'
+              )
+            : renderLinearBar(barRect, this.level, this.scheme, 'battery')
+        }
       </svg>
-      ${showIcon
-        ? html`<div class="icon-wrapper">
-            <slot name="icon">
-              <obi-energy-battery usecsscolor></obi-energy-battery>
-            </slot>
-          </div>`
-        : nothing}
+      ${
+        showIcon
+          ? html`<div class="icon-wrapper">
+              <slot name="icon">
+                <obi-energy-battery usecsscolor></obi-energy-battery>
+              </slot>
+            </div>`
+          : nothing
+      }
     `;
   }
 

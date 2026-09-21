@@ -288,53 +288,59 @@ export class ObcPitchRollHeave extends LitElement {
         <svg viewBox=${overlayViewBox}>
           ${this.showsReadout ? nothing : this.renderCrosshair()}
           ${this.renderOverlayVessels()}
-          ${this.zoomToFitArc || this.isDualScale
-            ? nothing
-            : this.renderComplement(pitchReq)}
+          ${
+            this.zoomToFitArc || this.isDualScale
+              ? nothing
+              : this.renderComplement(pitchReq)
+          }
           ${this.renderHeaveColumn(band)}
         </svg>
-        ${layout
-          ? this.renderZoomedArcs(layout)
-          : this.renderFullWatch(pitchReq, rollReq)}
-        ${this.showsReadout
-          ? html`<div class="readout">
-              ${renderCenterReadouts(
-                [
-                  {
-                    value: this.pitch,
-                    label: this.pitchLabel,
-                    unit: this.unit,
-                    fractionDigits: this.fractionDigits,
-                    size: ReadoutSize.large,
-                    priority: this.priorityFor(
-                      PitchRollHeavePriorityElement.pitch
-                    ),
-                  },
-                  {
-                    value: this.roll,
-                    label: this.rollLabel,
-                    unit: this.unit,
-                    fractionDigits: this.fractionDigits,
-                    size: ReadoutSize.large,
-                    priority: this.priorityFor(
-                      PitchRollHeavePriorityElement.roll
-                    ),
-                  },
-                  {
-                    value: this.heave,
-                    label: this.heaveLabel,
-                    unit: this.heaveUnit,
-                    fractionDigits: this.fractionDigits,
-                    size: ReadoutSize.large,
-                    priority: this.priorityFor(
-                      PitchRollHeavePriorityElement.heave
-                    ),
-                  },
-                ],
-                CenterReadoutArrangement.stacked
-              )}
-            </div>`
-          : nothing}
+        ${
+          layout
+            ? this.renderZoomedArcs(layout)
+            : this.renderFullWatch(pitchReq, rollReq)
+        }
+        ${
+          this.showsReadout
+            ? html`<div class="readout">
+                ${renderCenterReadouts(
+                  [
+                    {
+                      value: this.pitch,
+                      label: this.pitchLabel,
+                      unit: this.unit,
+                      fractionDigits: this.fractionDigits,
+                      size: ReadoutSize.large,
+                      priority: this.priorityFor(
+                        PitchRollHeavePriorityElement.pitch
+                      ),
+                    },
+                    {
+                      value: this.roll,
+                      label: this.rollLabel,
+                      unit: this.unit,
+                      fractionDigits: this.fractionDigits,
+                      size: ReadoutSize.large,
+                      priority: this.priorityFor(
+                        PitchRollHeavePriorityElement.roll
+                      ),
+                    },
+                    {
+                      value: this.heave,
+                      label: this.heaveLabel,
+                      unit: this.heaveUnit,
+                      fractionDigits: this.fractionDigits,
+                      size: ReadoutSize.large,
+                      priority: this.priorityFor(
+                        PitchRollHeavePriorityElement.heave
+                      ),
+                    },
+                  ],
+                  CenterReadoutArrangement.stacked
+                )}
+              </div>`
+            : nothing
+        }
       </div>
     `;
   }
@@ -746,9 +752,11 @@ export class ObcPitchRollHeave extends LitElement {
 
     return html`
       ${subWatch(90, pitchAxis)} ${subWatch(180, rollAxis)}
-      ${this.isDualScale
-        ? html`${subWatch(270, pitchAxis)} ${subWatch(0, rollAxis)}`
-        : nothing}
+      ${
+        this.isDualScale
+          ? html`${subWatch(270, pitchAxis)} ${subWatch(0, rollAxis)}`
+          : nothing
+      }
     `;
   }
 
@@ -863,20 +871,22 @@ export class ObcPitchRollHeave extends LitElement {
         .areas=${areas}
         .barAreas=${barAreas}
         .needles=${needles}
-        .vessels=${this.isDualScale || this.showsReadout
-          ? []
-          : [
-              {
-                size: VesselImageSize.large,
-                vesselImage: this.vesselImageSide,
-                transform: `rotate(${this.pitch}deg)`,
-              },
-              {
-                size: VesselImageSize.large,
-                vesselImage: this.vesselImageFore,
-                transform: `rotate(${this.roll}deg) scale(${this.normalizedScaleForeImage})`,
-              },
-            ]}
+        .vessels=${
+          this.isDualScale || this.showsReadout
+            ? []
+            : [
+                {
+                  size: VesselImageSize.large,
+                  vesselImage: this.vesselImageSide,
+                  transform: `rotate(${this.pitch}deg)`,
+                },
+                {
+                  size: VesselImageSize.large,
+                  vesselImage: this.vesselImageFore,
+                  transform: `rotate(${this.roll}deg) scale(${this.normalizedScaleForeImage})`,
+                },
+              ]
+        }
         .tickmarks=${tickmarks}
         .advices=${this.advices(pitchDeg, rollDeg)}
       ></obc-watch>

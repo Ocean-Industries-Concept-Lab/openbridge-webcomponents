@@ -162,34 +162,42 @@ export class ObcProgressButton extends LitElement {
         ?disabled="${this.disabled}"
         @click="${this.handleClick}"
         aria-label="${this.label}"
-        aria-busy="${this.showProgress &&
-        this.mode === ProgressMode.Indeterminate}"
-        aria-valuenow="${this.showProgress &&
-        this.mode === ProgressMode.Determinate
-          ? this.value
-          : nothing}"
-        aria-valuemin="${this.showProgress &&
-        this.mode === ProgressMode.Determinate
-          ? 0
-          : nothing}"
-        aria-valuemax="${this.showProgress &&
-        this.mode === ProgressMode.Determinate
-          ? 100
-          : nothing}"
+        aria-busy="${
+          this.showProgress && this.mode === ProgressMode.Indeterminate
+        }"
+        aria-valuenow="${
+          this.showProgress && this.mode === ProgressMode.Determinate
+            ? this.value
+            : nothing
+        }"
+        aria-valuemin="${
+          this.showProgress && this.mode === ProgressMode.Determinate
+            ? 0
+            : nothing
+        }"
+        aria-valuemax="${
+          this.showProgress && this.mode === ProgressMode.Determinate
+            ? 100
+            : nothing
+        }"
         role="button"
       >
         ${this.showProgress ? this.renderLinearProgress() : nothing}
 
         <div class="${classMap(visibleWrapperClasses)}">
           <div class="linear-label-icon-container">
-            ${this.hasLeadingIcon
-              ? html`<slot name="leading-icon"></slot>`
-              : nothing}
+            ${
+              this.hasLeadingIcon
+                ? html`<slot name="leading-icon"></slot>`
+                : nothing
+            }
             <span class="button-text">${this.label}</span>
           </div>
-          ${this.hasTrailingIcon
-            ? html`<slot name="trailing-icon"></slot>`
-            : nothing}
+          ${
+            this.hasTrailingIcon
+              ? html`<slot name="trailing-icon"></slot>`
+              : nothing
+          }
         </div>
       </button>
     `;
@@ -202,14 +210,16 @@ export class ObcProgressButton extends LitElement {
     return html`
       <div class="linear-progress-container">
         <div class="linear-progress-bar">
-          ${this.mode === ProgressMode.Determinate
-            ? html`
-                <div
-                  class="linear-progress-fill"
-                  style=${styleMap({width: progressWidth})}
-                ></div>
-              `
-            : html` <div class="linear-progress-indeterminate"></div> `}
+          ${
+            this.mode === ProgressMode.Determinate
+              ? html`
+                  <div
+                    class="linear-progress-fill"
+                    style=${styleMap({width: progressWidth})}
+                  ></div>
+                `
+              : html` <div class="linear-progress-indeterminate"></div> `
+          }
         </div>
       </div>
     `;
@@ -229,20 +239,28 @@ export class ObcProgressButton extends LitElement {
         ?disabled="${this.disabled}"
         @click="${this.handleClick}"
         aria-label="${this.label}"
-        aria-busy="${this.showProgress &&
-        this.getCircularProgressMode() !== CircularProgressMode.determinate}"
-        aria-valuenow="${this.showProgress &&
-        this.getCircularProgressMode() === CircularProgressMode.determinate
-          ? this.value
-          : nothing}"
-        aria-valuemin="${this.showProgress &&
-        this.getCircularProgressMode() === CircularProgressMode.determinate
-          ? 0
-          : nothing}"
-        aria-valuemax="${this.showProgress &&
-        this.getCircularProgressMode() === CircularProgressMode.determinate
-          ? 100
-          : nothing}"
+        aria-busy="${
+          this.showProgress &&
+          this.getCircularProgressMode() !== CircularProgressMode.determinate
+        }"
+        aria-valuenow="${
+          this.showProgress &&
+          this.getCircularProgressMode() === CircularProgressMode.determinate
+            ? this.value
+            : nothing
+        }"
+        aria-valuemin="${
+          this.showProgress &&
+          this.getCircularProgressMode() === CircularProgressMode.determinate
+            ? 0
+            : nothing
+        }"
+        aria-valuemax="${
+          this.showProgress &&
+          this.getCircularProgressMode() === CircularProgressMode.determinate
+            ? 100
+            : nothing
+        }"
         role="button"
       >
         <div class="circular-icon-container">
@@ -253,9 +271,11 @@ export class ObcProgressButton extends LitElement {
           </div>
         </div>
 
-        ${this.showLabel
-          ? html`<div class="circular-label">${this.label}</div>`
-          : nothing}
+        ${
+          this.showLabel
+            ? html`<div class="circular-label">${this.label}</div>`
+            : nothing
+        }
       </button>
     `;
   }
@@ -273,22 +293,24 @@ export class ObcProgressButton extends LitElement {
   private renderCircularProgress() {
     return html`
       <div class="circular-progress-svg-container">
-        ${this.hasAlert
-          ? html`<svg
-              class="circular-alert-svg"
-              viewBox="0 0 42 42"
-              preserveAspectRatio="xMidYMid meet"
-            >
-              <circle
-                class="circular-alert-ring"
-                cx="21"
-                cy="21"
-                r="20"
-                stroke-width="2"
-                fill="none"
-              />
-            </svg>`
-          : nothing}
+        ${
+          this.hasAlert
+            ? html`<svg
+                class="circular-alert-svg"
+                viewBox="0 0 42 42"
+                preserveAspectRatio="xMidYMid meet"
+              >
+                <circle
+                  class="circular-alert-ring"
+                  cx="21"
+                  cy="21"
+                  r="20"
+                  stroke-width="2"
+                  fill="none"
+                />
+              </svg>`
+            : nothing
+        }
         <obc-circular-progress
           .mode=${this.getCircularProgressMode()}
           .value=${this.value}

@@ -116,14 +116,16 @@ const renderToolbar = (args: SequenceToolbarArgs) => {
                 .type=${SequenceType.large}
                 .styleType=${SequenceStyle.point}
                 .value=${step.value}
-                .showStepInputConnector=${args.type ===
-                SequenceToolbarType.unordered
-                  ? false
-                  : index !== 0}
-                .showStepOutputConnector=${args.type ===
-                SequenceToolbarType.unordered
-                  ? false
-                  : index !== stepItems.length - 1}
+                .showStepInputConnector=${
+                  args.type === SequenceToolbarType.unordered
+                    ? false
+                    : index !== 0
+                }
+                .showStepOutputConnector=${
+                  args.type === SequenceToolbarType.unordered
+                    ? false
+                    : index !== stepItems.length - 1
+                }
                 .hasIcon=${false}
               >
                 ${step.label}

@@ -19,14 +19,20 @@ export class ObcIntegrationVesselSelector extends LitElement {
   override render() {
     return html`
       <div class="wrapper">
-        ${this.hasTopbar
-          ? html`<div class="topbar-wrapper"><slot name="topbar"></slot></div>`
-          : nothing}
-        ${this.hasFleet
-          ? html`<div class="fleet-wrapper">
-              <slot name="fleet"></slot>
-            </div>`
-          : nothing}
+        ${
+          this.hasTopbar
+            ? html`<div class="topbar-wrapper">
+                <slot name="topbar"></slot>
+              </div>`
+            : nothing
+        }
+        ${
+          this.hasFleet
+            ? html`<div class="fleet-wrapper">
+                <slot name="fleet"></slot>
+              </div>`
+            : nothing
+        }
         <slot class="vessel-wrapper"></slot>
       </div>
     `;

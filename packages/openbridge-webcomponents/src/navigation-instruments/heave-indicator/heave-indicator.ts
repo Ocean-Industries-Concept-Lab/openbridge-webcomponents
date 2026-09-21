@@ -231,9 +231,11 @@ export class ObcHeaveIndicator extends LitElement {
       >
         ${this.renderCenterLine()} ${this.renderTrackFill()}
         ${this.renderTrackBorder()} ${this.renderHighlight()}
-        ${this.isNeutral
-          ? this.renderPointer(POINTER_NEUTRAL_TOP, this.highlightColor)
-          : null}
+        ${
+          this.isNeutral
+            ? this.renderPointer(POINTER_NEUTRAL_TOP, this.highlightColor)
+            : null
+        }
         ${this.renderMovingVessel()} ${this.renderFrameStroke()}
       </svg>
     `;

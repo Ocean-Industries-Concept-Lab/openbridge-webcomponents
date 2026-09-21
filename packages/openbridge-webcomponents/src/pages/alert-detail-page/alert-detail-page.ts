@@ -169,27 +169,31 @@ export class ObcAlertDetailPage extends LitElement {
           <div class="title">
             <span>${this.alert.source}</span>
           </div>
-          ${showCloseButton
-            ? html`<div class="close-button">
-                <obc-icon-button variant="flat">
-                  <obi-close-google></obi-close-google>
-                </obc-icon-button>
-              </div>`
-            : nothing}
+          ${
+            showCloseButton
+              ? html`<div class="close-button">
+                  <obc-icon-button variant="flat">
+                    <obi-close-google></obi-close-google>
+                  </obc-icon-button>
+                </div>`
+              : nothing
+          }
         </div>
         <div class="divider"></div>
         <div class="body">
           <div class="description">
             <span>${this.alert.text}</span>
           </div>
-          ${this.hasNote
-            ? html`<div class="description sub-description">
-                <div class="label">
-                  <slot name="note-label">${msg('Note')}</slot>
-                </div>
-                <slot name="note">${this.alert.note}</slot>
-              </div>`
-            : nothing}
+          ${
+            this.hasNote
+              ? html`<div class="description sub-description">
+                  <div class="label">
+                    <slot name="note-label">${msg('Note')}</slot>
+                  </div>
+                  <slot name="note">${this.alert.note}</slot>
+                </div>`
+              : nothing
+          }
           ${this.renderDetail(
             this.hasTagId,
             'tagId',
@@ -246,24 +250,28 @@ export class ObcAlertDetailPage extends LitElement {
             msg('Shelved by'),
             (alert) => alert.shelved && alert.shelved.shelvedBy
           )}
-          ${this.hasReadoutGraph
-            ? html`
-                <div class="readout-graph">
-                  <div class="readout-graph-title">
-                    <slot name="readout-graph-title">${msg('Readout')}</slot>
+          ${
+            this.hasReadoutGraph
+              ? html`
+                  <div class="readout-graph">
+                    <div class="readout-graph-title">
+                      <slot name="readout-graph-title">${msg('Readout')}</slot>
+                    </div>
+                    <div class="readout-graph-container">
+                      <slot name="readout-graph"></slot>
+                    </div>
                   </div>
-                  <div class="readout-graph-container">
-                    <slot name="readout-graph"></slot>
-                  </div>
-                </div>
-              `
-            : nothing}
+                `
+              : nothing
+          }
         </div>
-        ${this.hasActions
-          ? html`<div class="actions">
-              <slot name="action"></slot>
-            </div>`
-          : nothing}
+        ${
+          this.hasActions
+            ? html`<div class="actions">
+                <slot name="action"></slot>
+              </div>`
+            : nothing
+        }
       </div>
     `;
   }

@@ -106,9 +106,11 @@ export class ObcNotificationMenuItem extends LitElement {
           slot="primary-icon"
           style="color: var(--notification-enabled-background-color)"
         ></obi-notification-filled>
-        ${this.hasIcon
-          ? html`<slot name="icon" slot="secondary-icon"></slot>`
-          : nothing}
+        ${
+          this.hasIcon
+            ? html`<slot name="icon" slot="secondary-icon"></slot>`
+            : nothing
+        }
       </obc-message-menu-item>
     `;
   }
