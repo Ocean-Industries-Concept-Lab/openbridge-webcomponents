@@ -243,21 +243,27 @@ export class ObcMessageMenuItem extends LitElement {
       >
         <div class="content-container">
           <div class="icon-container">
-            ${this.isShelved
-              ? html`<div class="icon">
-                  <obi-alerts-shelf></obi-alerts-shelf>
-                </div>`
-              : nothing}
-            ${this.hasPrimaryIcon
-              ? html`<div class="icon primary">
-                  <slot name="primary-icon"></slot>
-                </div>`
-              : nothing}
-            ${this.hasSecondaryIcon
-              ? html`<div class="icon secondary">
-                  <slot name="secondary-icon"></slot>
-                </div>`
-              : nothing}
+            ${
+              this.isShelved
+                ? html`<div class="icon">
+                    <obi-alerts-shelf></obi-alerts-shelf>
+                  </div>`
+                : nothing
+            }
+            ${
+              this.hasPrimaryIcon
+                ? html`<div class="icon primary">
+                    <slot name="primary-icon"></slot>
+                  </div>`
+                : nothing
+            }
+            ${
+              this.hasSecondaryIcon
+                ? html`<div class="icon secondary">
+                    <slot name="secondary-icon"></slot>
+                  </div>`
+                : nothing
+            }
           </div>
           <div class="text-container">
             <div class="title-container">
@@ -266,52 +272,66 @@ export class ObcMessageMenuItem extends LitElement {
             <div class="description-container">
               <slot name="description">${this.description}</slot>
             </div>
-            ${this.hasTimestamp
-              ? html`<div class="date-container">
-                  ${this.hasDay ? html`<span>${this.day}</span>` : nothing}
-                  <span>${this.time}</span>
-                </div>`
-              : nothing}
+            ${
+              this.hasTimestamp
+                ? html`<div class="date-container">
+                    ${this.hasDay ? html`<span>${this.day}</span>` : nothing}
+                    <span>${this.time}</span>
+                  </div>`
+                : nothing
+            }
             <div class="chevron">
-              ${this.open
-                ? html`<obi-chevron-up-google></obi-chevron-up-google>`
-                : html`<obi-chevron-down-google></obi-chevron-down-google>`}
+              ${
+                this.open
+                  ? html`<obi-chevron-up-google></obi-chevron-up-google>`
+                  : html`<obi-chevron-down-google></obi-chevron-down-google>`
+              }
             </div>
           </div>
         </div>
-        ${this.hasPrimaryAction ||
-        this.hasSecondaryAction ||
-        (this.hasTrailingIcon && !this.isVertical)
-          ? html`<div class="action-button-container" part="action-container">
-              ${this.hasSecondaryAction
-                ? html`<obc-button
-                    variant="normal"
-                    .fullWidth=${this.isVertical}
-                    @click=${this.handleSecondaryActionClick}
-                    ?disabled=${!this.enableSecondaryAction}
-                  >
-                    ${this.secondaryActionLabel}
-                  </obc-button>`
-                : nothing}
-              ${this.hasPrimaryAction
-                ? html`<obc-button
-                    variant="normal"
-                    .fullWidth=${this.isVertical}
-                    @click=${this.handlePrimaryActionClick}
-                    ?disabled=${!this.enablePrimaryAction}
-                  >
-                    ${this.hasActionLabelSlot
-                      ? html`<slot name="action-label"></slot>`
-                      : this.primaryActionLabel}
-                  </obc-button>`
-                : nothing}
-              ${this.hasTrailingIcon && !this.isVertical
-                ? html`<div class="trailing-icon" part="trailing-icon">
-                    <slot name="trailing-icon"></slot>
-                  </div>`
-                : nothing}
-            </div>`
-          : nothing}
+        ${
+          this.hasPrimaryAction ||
+          this.hasSecondaryAction ||
+          (this.hasTrailingIcon && !this.isVertical)
+            ? html`<div class="action-button-container" part="action-container">
+                ${
+                  this.hasSecondaryAction
+                    ? html`<obc-button
+                        variant="normal"
+                        .fullWidth=${this.isVertical}
+                        @click=${this.handleSecondaryActionClick}
+                        ?disabled=${!this.enableSecondaryAction}
+                      >
+                        ${this.secondaryActionLabel}
+                      </obc-button>`
+                    : nothing
+                }
+                ${
+                  this.hasPrimaryAction
+                    ? html`<obc-button
+                        variant="normal"
+                        .fullWidth=${this.isVertical}
+                        @click=${this.handlePrimaryActionClick}
+                        ?disabled=${!this.enablePrimaryAction}
+                      >
+                        ${
+                          this.hasActionLabelSlot
+                            ? html`<slot name="action-label"></slot>`
+                            : this.primaryActionLabel
+                        }
+                      </obc-button>`
+                    : nothing
+                }
+                ${
+                  this.hasTrailingIcon && !this.isVertical
+                    ? html`<div class="trailing-icon" part="trailing-icon">
+                        <slot name="trailing-icon"></slot>
+                      </div>`
+                    : nothing
+                }
+              </div>`
+            : nothing
+        }
       </div>
     `;
   }

@@ -151,9 +151,11 @@ export class ObcCurrent extends LitElement {
           .currentSymbolRadius=${CURRENT_ICON_PERIPHERY_RADIUS}
           .currentIconCentered=${!isVessel}
           .scaleCurrentIcon=${isVessel ? 1 : CURRENT_DIRECTION_ICON_SCALE}
-          .currentColor=${this.enhanced
-            ? 'var(--instrument-enhanced-secondary-color)'
-            : undefined}
+          .currentColor=${
+            this.enhanced
+              ? 'var(--instrument-enhanced-secondary-color)'
+              : undefined
+          }
           .showLabels=${true}
           .insideLabelsFlush=${true}
           crosshairEnabled

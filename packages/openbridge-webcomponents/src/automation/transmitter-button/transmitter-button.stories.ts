@@ -90,9 +90,11 @@ function renderComponent(args: ObcTransmitterButton) {
       .setpointValue=${args.setpointValue}
       .label=${args.label}
     >
-      ${args.hasIcon
-        ? html`<obi-temperature-air slot="icon"></obi-temperature-air>`
-        : ''}
+      ${
+        args.hasIcon
+          ? html`<obi-temperature-air slot="icon"></obi-temperature-air>`
+          : ''
+      }
     </obc-transmitter-button>
   `;
 }

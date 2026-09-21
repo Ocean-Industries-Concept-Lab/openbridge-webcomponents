@@ -208,9 +208,9 @@ export class ObcNavigationItem extends LitElement {
           .terminalType=${this.terminalType}
           .alerts=${this.alerts}
         >
-          ${this.hasIcon
-            ? html`<slot name="icon" slot="icon"></slot>`
-            : nothing}
+          ${
+            this.hasIcon ? html`<slot name="icon" slot="icon"></slot>` : nothing
+          }
         </obc-tree-navigation-item>
       `;
     }
@@ -234,37 +234,45 @@ export class ObcNavigationItem extends LitElement {
         role=${ifDefined(this.getItemRole())}
       >
         <div class="visible-wrapper">
-          ${this.hasIcon
-            ? html`<slot name="icon" class="icon leading"></slot>`
-            : nothing}
-          ${![
-            ObcNavigationMenuVariant.IconOnly,
-            ObcNavigationMenuVariant.IconOnlyLarge,
-          ].includes(this.variant)
-            ? html`
-                <span
-                  part="label"
-                  class=${classMap({
-                    label: true,
-                    'label-flyout': showFlyout && !isCompact,
-                  })}
-                >
-                  ${this.label}
-                </span>
-              `
-            : nothing}
-          ${showFlyout
-            ? html`
-                <div class="flyout-wrapper">
-                  <obi-arrow-flyout-google
-                    class="icon trailing"
-                  ></obi-arrow-flyout-google>
-                </div>
-              `
-            : nothing}
-          ${this.hasTrailingIcon && !showFlyout
-            ? html`<slot name="trailing-icon" class="icon trailing"></slot>`
-            : nothing}
+          ${
+            this.hasIcon
+              ? html`<slot name="icon" class="icon leading"></slot>`
+              : nothing
+          }
+          ${
+            ![
+              ObcNavigationMenuVariant.IconOnly,
+              ObcNavigationMenuVariant.IconOnlyLarge,
+            ].includes(this.variant)
+              ? html`
+                  <span
+                    part="label"
+                    class=${classMap({
+                      label: true,
+                      'label-flyout': showFlyout && !isCompact,
+                    })}
+                  >
+                    ${this.label}
+                  </span>
+                `
+              : nothing
+          }
+          ${
+            showFlyout
+              ? html`
+                  <div class="flyout-wrapper">
+                    <obi-arrow-flyout-google
+                      class="icon trailing"
+                    ></obi-arrow-flyout-google>
+                  </div>
+                `
+              : nothing
+          }
+          ${
+            this.hasTrailingIcon && !showFlyout
+              ? html`<slot name="trailing-icon" class="icon trailing"></slot>`
+              : nothing
+          }
         </div>
       </a>
     `;

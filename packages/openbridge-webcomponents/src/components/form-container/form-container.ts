@@ -56,13 +56,15 @@ export class ObcFormContainer extends LitElement {
   private renderContentBody(): TemplateResult {
     return html`
       <div class="content-body" part="content-body">
-        ${this.contentTitle.trim() !== ''
-          ? html`
-              <div class="content-title" part="content-title">
-                <slot name="content-title">${this.contentTitle}</slot>
-              </div>
-            `
-          : html`<slot name="content-title"></slot>`}
+        ${
+          this.contentTitle.trim() !== ''
+            ? html`
+                <div class="content-title" part="content-title">
+                  <slot name="content-title">${this.contentTitle}</slot>
+                </div>
+              `
+            : html`<slot name="content-title"></slot>`
+        }
         <slot></slot>
       </div>
     `;
@@ -88,13 +90,18 @@ export class ObcFormContainer extends LitElement {
     return html`
       <div class=${classMap(wrapperClassMap)} part="wrapper">
         ${this.renderTitle()}
-        ${this.type === ObcFormContainerType.Completed
-          ? html`
-              <obc-scrollbar class="content-scrollbar" part="content-scrollbar">
-                ${this.renderMainSection()}
-              </obc-scrollbar>
-            `
-          : this.renderMainSection()}
+        ${
+          this.type === ObcFormContainerType.Completed
+            ? html`
+                <obc-scrollbar
+                  class="content-scrollbar"
+                  part="content-scrollbar"
+                >
+                  ${this.renderMainSection()}
+                </obc-scrollbar>
+              `
+            : this.renderMainSection()
+        }
       </div>
     `;
   }

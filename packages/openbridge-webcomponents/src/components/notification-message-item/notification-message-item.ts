@@ -227,26 +227,38 @@ export class ObcNotificationMessageItem extends LitElement {
       >
         <obi-notification-filled slot="primary-icon"></obi-notification-filled>
 
-        ${this.hasSecondaryIcon
-          ? html`<slot name="secondary-icon" slot="secondary-icon"></slot>`
-          : nothing}
-        ${this.title && this.showTitle
-          ? html`<span slot="title">${this.title}</span>`
-          : nothing}
-        ${this.description && this.showDescription
-          ? html`<span slot="description">${this.description}</span>`
-          : nothing}
-        ${this.time && this.showTimestamp
-          ? html`<span slot="time">${this.time}</span>`
-          : nothing}
-        ${this.timeSecondary && this.hasTimestamp2
-          ? html`<span slot="time-secondary">${this.timeSecondary}</span>`
-          : nothing}
-        ${this.type === ObcNotificationMessageItemType.WithButton
-          ? html`<span slot="action-text">${this.actionLabel}</span>`
-          : this.type === ObcNotificationMessageItemType.WithIconButton
-            ? html`<obi-close-google slot="action-icon"></obi-close-google>`
-            : nothing}
+        ${
+          this.hasSecondaryIcon
+            ? html`<slot name="secondary-icon" slot="secondary-icon"></slot>`
+            : nothing
+        }
+        ${
+          this.title && this.showTitle
+            ? html`<span slot="title">${this.title}</span>`
+            : nothing
+        }
+        ${
+          this.description && this.showDescription
+            ? html`<span slot="description">${this.description}</span>`
+            : nothing
+        }
+        ${
+          this.time && this.showTimestamp
+            ? html`<span slot="time">${this.time}</span>`
+            : nothing
+        }
+        ${
+          this.timeSecondary && this.hasTimestamp2
+            ? html`<span slot="time-secondary">${this.timeSecondary}</span>`
+            : nothing
+        }
+        ${
+          this.type === ObcNotificationMessageItemType.WithButton
+            ? html`<span slot="action-text">${this.actionLabel}</span>`
+            : this.type === ObcNotificationMessageItemType.WithIconButton
+              ? html`<obi-close-google slot="action-icon"></obi-close-google>`
+              : nothing
+        }
 
         <span slot="empty">${this.emptyText}</span>
       </obc-topbar-message-item>

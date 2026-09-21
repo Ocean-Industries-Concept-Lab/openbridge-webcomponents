@@ -318,121 +318,136 @@ export class ObcBrillianceMenu extends LitElement {
 
     return html`${title}
       <div class="content-container brilliance">
-        ${this.variant === ObcBrillianceMenuVariant.compact
-          ? html` <obc-slider
-              value=${this.brightness}
-              @value=${this.handleBrightnessChanged}
-              min="0"
-              max=${this.brightnessMax}
-              variant=${ObcSliderVariant.Normal}
-              haslefticon
-              hasrighticon
-            >
-              <obi-display-brilliance-low
-                slot="icon-left"
-              ></obi-display-brilliance-low>
-              <obi-display-brilliance-proposal
-                slot="icon-right"
-              ></obi-display-brilliance-proposal>
-            </obc-slider>`
-          : html`
-              <div class="value-container">
-                <div class="value-label-container">
-                  <obi-display-brilliance-proposal
-                    class="icon"
-                  ></obi-display-brilliance-proposal>
-                  <div class="label-container" style="width: ${valueLength}ch">
-                    <div class="value">${this.brightness.toFixed(0)}</div>
-                    <div class="unit">${this.brightnessUnit}</div>
+        ${
+          this.variant === ObcBrillianceMenuVariant.compact
+            ? html` <obc-slider
+                value=${this.brightness}
+                @value=${this.handleBrightnessChanged}
+                min="0"
+                max=${this.brightnessMax}
+                variant=${ObcSliderVariant.Normal}
+                haslefticon
+                hasrighticon
+              >
+                <obi-display-brilliance-low
+                  slot="icon-left"
+                ></obi-display-brilliance-low>
+                <obi-display-brilliance-proposal
+                  slot="icon-right"
+                ></obi-display-brilliance-proposal>
+              </obc-slider>`
+            : html`
+                <div class="value-container">
+                  <div class="value-label-container">
+                    <obi-display-brilliance-proposal
+                      class="icon"
+                    ></obi-display-brilliance-proposal>
+                    <div
+                      class="label-container"
+                      style="width: ${valueLength}ch"
+                    >
+                      <div class="value">${this.brightness.toFixed(0)}</div>
+                      <div class="unit">${this.brightnessUnit}</div>
+                    </div>
+                  </div>
+                  <div class="value-slider-container">
+                    ${
+                      this.brightnessInputVariant ===
+                      ObcBrillianceInputVariant.buttons
+                        ? html`
+                            <obc-slider
+                              value=${this.brightness}
+                              variant=${ObcSliderVariant.NoInput}
+                              min="0"
+                              max=${this.brightnessMax}
+                            ></obc-slider>
+                          `
+                        : html`
+                            <obc-slider
+                              value=${this.brightness}
+                              variant=${ObcSliderVariant.Enhanced}
+                              @value=${this.handleBrightnessChanged}
+                              min="0"
+                              max=${this.brightnessMax}
+                            ></obc-slider>
+                          `
+                    }
                   </div>
                 </div>
-                <div class="value-slider-container">
-                  ${this.brightnessInputVariant ===
+                ${
+                  this.brightnessInputVariant ===
                   ObcBrillianceInputVariant.buttons
                     ? html`
-                        <obc-slider
-                          value=${this.brightness}
-                          variant=${ObcSliderVariant.NoInput}
-                          min="0"
-                          max=${this.brightnessMax}
-                        ></obc-slider>
+                        <div class="icon-button-container">
+                          <obc-button
+                            segmentPosition="start"
+                            fullWidth
+                            ?disabled=${!this.canDecreaseBrightness}
+                            class=${this.canDecreaseBrightness ? '' : 'disabled'}
+                            @click=${() =>
+                              this.increaseBrightness(
+                                -this.brightnessMajorStep
+                              )}
+                          >
+                            <obi-chevron-double-left-google
+                              class="btn-icon"
+                            ></obi-chevron-double-left-google>
+                          </obc-button>
+                          <obc-button
+                            segmentPosition="middle"
+                            fullWidth
+                            ?disabled=${!this.canDecreaseBrightness}
+                            class=${this.canDecreaseBrightness ? '' : 'disabled'}
+                            @click=${() =>
+                              this.increaseBrightness(
+                                -this.brightnessMinorStep
+                              )}
+                          >
+                            <obi-chevron-left-google
+                              class="btn-icon"
+                            ></obi-chevron-left-google>
+                          </obc-button>
+                          <obc-button
+                            segmentPosition="middle"
+                            fullWidth
+                            ?disabled=${!this.canIncreaseBrightness}
+                            class=${this.canIncreaseBrightness ? '' : 'disabled'}
+                            @click=${() =>
+                              this.increaseBrightness(this.brightnessMinorStep)}
+                          >
+                            <obi-chevron-right-google
+                              class="btn-icon"
+                            ></obi-chevron-right-google>
+                          </obc-button>
+                          <obc-button
+                            segmentPosition="end"
+                            fullWidth
+                            ?disabled=${!this.canIncreaseBrightness}
+                            class=${this.canIncreaseBrightness ? '' : 'disabled'}
+                            @click=${() =>
+                              this.increaseBrightness(this.brightnessMajorStep)}
+                          >
+                            <obi-chevron-double-right-google
+                              class="btn-icon"
+                            ></obi-chevron-double-right-google>
+                          </obc-button>
+                        </div>
                       `
-                    : html`
-                        <obc-slider
-                          value=${this.brightness}
-                          variant=${ObcSliderVariant.Enhanced}
-                          @value=${this.handleBrightnessChanged}
-                          min="0"
-                          max=${this.brightnessMax}
-                        ></obc-slider>
-                      `}
-                </div>
-              </div>
-              ${this.brightnessInputVariant ===
-              ObcBrillianceInputVariant.buttons
-                ? html`
-                    <div class="icon-button-container">
-                      <obc-button
-                        segmentPosition="start"
-                        fullWidth
-                        ?disabled=${!this.canDecreaseBrightness}
-                        class=${this.canDecreaseBrightness ? '' : 'disabled'}
-                        @click=${() =>
-                          this.increaseBrightness(-this.brightnessMajorStep)}
-                      >
-                        <obi-chevron-double-left-google
-                          class="btn-icon"
-                        ></obi-chevron-double-left-google>
-                      </obc-button>
-                      <obc-button
-                        segmentPosition="middle"
-                        fullWidth
-                        ?disabled=${!this.canDecreaseBrightness}
-                        class=${this.canDecreaseBrightness ? '' : 'disabled'}
-                        @click=${() =>
-                          this.increaseBrightness(-this.brightnessMinorStep)}
-                      >
-                        <obi-chevron-left-google
-                          class="btn-icon"
-                        ></obi-chevron-left-google>
-                      </obc-button>
-                      <obc-button
-                        segmentPosition="middle"
-                        fullWidth
-                        ?disabled=${!this.canIncreaseBrightness}
-                        class=${this.canIncreaseBrightness ? '' : 'disabled'}
-                        @click=${() =>
-                          this.increaseBrightness(this.brightnessMinorStep)}
-                      >
-                        <obi-chevron-right-google
-                          class="btn-icon"
-                        ></obi-chevron-right-google>
-                      </obc-button>
-                      <obc-button
-                        segmentPosition="end"
-                        fullWidth
-                        ?disabled=${!this.canIncreaseBrightness}
-                        class=${this.canIncreaseBrightness ? '' : 'disabled'}
-                        @click=${() =>
-                          this.increaseBrightness(this.brightnessMajorStep)}
-                      >
-                        <obi-chevron-double-right-google
-                          class="btn-icon"
-                        ></obi-chevron-double-right-google>
-                      </obc-button>
-                    </div>
-                  `
-                : nothing}
-            `}
-        ${this.showLinkBrightness
-          ? html`<obc-toggle-switch
-              .label="${msg('Link')}"
-              hasicon
-              @input=${this.onLinkBrightnessChanged}
-            >
-              <obi-link slot="icon"></obi-link>
-            </obc-toggle-switch>`
-          : nothing}
+                    : nothing
+                }
+              `
+        }
+        ${
+          this.showLinkBrightness
+            ? html`<obc-toggle-switch
+                .label="${msg('Link')}"
+                hasicon
+                @input=${this.onLinkBrightnessChanged}
+              >
+                <obi-link slot="icon"></obi-link>
+              </obc-toggle-switch>`
+            : nothing
+        }
       </div>`;
   }
 
@@ -505,79 +520,88 @@ export class ObcBrillianceMenu extends LitElement {
     const previousPalette = paletteNames[palettes[previousIndex]];
 
     return html`
-      ${this.variant === ObcBrillianceMenuVariant.tabbed
-        ? nothing
-        : html`
-            <div class="title-container">
-              <h3>${msg('Day')}/${msg('Night')}</h3>
-            </div>
-          `}
-      <div
-        class="content-container palette ${this.showLinkPalette
-          ? 'with-link'
-          : 'without-link'}"
-      >
-        ${this.variant === ObcBrillianceMenuVariant.compact
-          ? html` <obc-toggle-button-group
-              value=${this.effectivePalette}
-              @value=${this.onPaletteChanged}
-              variant=${ObcToggleButtonOptionVariant.regular}
-              type=${ObcToggleButtonOptionType.icon}
-            >
-              ${this.paletteOptions()}
-            </obc-toggle-button-group>`
+      ${
+        this.variant === ObcBrillianceMenuVariant.tabbed
+          ? nothing
           : html`
-              <div class="value-container">
-                <div class="value-label-container">
-                  ${this.paletteIcon}
-                  <div class="label-container" style="width: ${valueLength}ch">
-                    <div class="value">${currentPaletteName}</div>
+              <div class="title-container">
+                <h3>${msg('Day')}/${msg('Night')}</h3>
+              </div>
+            `
+      }
+      <div
+        class="content-container palette ${
+          this.showLinkPalette ? 'with-link' : 'without-link'
+        }"
+      >
+        ${
+          this.variant === ObcBrillianceMenuVariant.compact
+            ? html` <obc-toggle-button-group
+                value=${this.effectivePalette}
+                @value=${this.onPaletteChanged}
+                variant=${ObcToggleButtonOptionVariant.regular}
+                type=${ObcToggleButtonOptionType.icon}
+              >
+                ${this.paletteOptions()}
+              </obc-toggle-button-group>`
+            : html`
+                <div class="value-container">
+                  <div class="value-label-container">
+                    ${this.paletteIcon}
+                    <div
+                      class="label-container"
+                      style="width: ${valueLength}ch"
+                    >
+                      <div class="value">${currentPaletteName}</div>
+                    </div>
                   </div>
+                  <obc-progress-indicator-dots
+                    .totalSteps=${palettes.length}
+                    .currentStep=${index + 1}
+                  ></obc-progress-indicator-dots>
                 </div>
-                <obc-progress-indicator-dots
-                  .totalSteps=${palettes.length}
-                  .currentStep=${index + 1}
-                ></obc-progress-indicator-dots>
-              </div>
-              <div class="icon-button-container">
-                <obc-button
-                  segmentPosition="start"
-                  fullWidth
-                  showLeadingIcon
-                  ?disabled=${!this.canDecreasePalette}
-                  class=${this.canDecreasePalette ? '' : 'disabled'}
-                  @click=${() => this.previousPalette()}
-                >
-                  ${previousPalette}
-                  <obi-chevron-left-google
-                    slot="leading-icon"
-                  ></obi-chevron-left-google>
-                </obc-button>
+                <div class="icon-button-container">
+                  <obc-button
+                    segmentPosition="start"
+                    fullWidth
+                    showLeadingIcon
+                    ?disabled=${!this.canDecreasePalette}
+                    class=${this.canDecreasePalette ? '' : 'disabled'}
+                    @click=${() => this.previousPalette()}
+                  >
+                    ${previousPalette}
+                    <obi-chevron-left-google
+                      slot="leading-icon"
+                    ></obi-chevron-left-google>
+                  </obc-button>
 
-                <obc-button
-                  segmentPosition="end"
-                  fullWidth
-                  showTrailingIcon
-                  ?disabled=${!this.canIncreasePalette}
-                  class=${this.canIncreasePalette ? '' : 'disabled'}
-                  @click=${() => this.nextPalette()}
-                >
-                  ${nextPalette}
-                  <obi-chevron-right-google
-                    slot="trailing-icon"
-                  ></obi-chevron-right-google>
-                </obc-button>
-              </div>
-            `}
-        ${this.showLinkPalette
-          ? html`<obc-toggle-switch
-              .label="${msg('Link')}"
-              hasicon
-              @input=${this.onLinkPaletteChanged}
-            >
-              <obi-link slot="icon"></obi-link>
-            </obc-toggle-switch>`
-          : nothing}
+                  <obc-button
+                    segmentPosition="end"
+                    fullWidth
+                    showTrailingIcon
+                    ?disabled=${!this.canIncreasePalette}
+                    class=${this.canIncreasePalette ? '' : 'disabled'}
+                    @click=${() => this.nextPalette()}
+                  >
+                    ${nextPalette}
+                    <obi-chevron-right-google
+                      slot="trailing-icon"
+                    ></obi-chevron-right-google>
+                  </obc-button>
+                </div>
+              `
+        }
+        ${
+          this.showLinkPalette
+            ? html`<obc-toggle-switch
+                .label="${msg('Link')}"
+                hasicon
+                @input=${this.onLinkPaletteChanged}
+              >
+                <obi-link slot="icon"></obi-link>
+              </obc-toggle-switch>`
+            : nothing
+        }
       </div>
     `;
   }
@@ -623,9 +647,11 @@ export class ObcBrillianceMenu extends LitElement {
       return html`
         <div class="card ${this.variant}">
           ${this.showBrightness ? this.renderBrightness() : nothing}
-          ${this.showBrightness && this.showPalette
-            ? html`<div class="divider"></div>`
-            : nothing}
+          ${
+            this.showBrightness && this.showPalette
+              ? html`<div class="divider"></div>`
+              : nothing
+          }
           ${this.showPalette ? this.renderPalette() : nothing}
           ${this.renderScreenControlLink()}
         </div>

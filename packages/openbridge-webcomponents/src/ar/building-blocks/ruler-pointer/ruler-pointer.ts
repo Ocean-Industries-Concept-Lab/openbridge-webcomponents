@@ -68,12 +68,14 @@ export class ObcRulerPointer extends LitElement {
           selected: isSelected,
         })}
       >
-        ${isDefault
-          ? html`<div class="dot default"></div>`
-          : html`
-              <div class="dot outer"></div>
-              ${isRegular ? html`<div class="dot inner regular"></div>` : null}
-            `}
+        ${
+          isDefault
+            ? html`<div class="dot default"></div>`
+            : html`
+                <div class="dot outer"></div>
+                ${isRegular ? html`<div class="dot inner regular"></div>` : null}
+              `
+        }
       </div>
     `;
   }

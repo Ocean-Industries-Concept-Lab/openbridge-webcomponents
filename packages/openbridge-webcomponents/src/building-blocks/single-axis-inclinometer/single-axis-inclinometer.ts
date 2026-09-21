@@ -190,9 +190,10 @@ export class SingleAxisInclinometer extends LitElement {
     return html`
       <div class="container">
         <svg viewBox="${centreViewBox}">
-          ${this.hasReadout
-            ? nothing
-            : svg`
+          ${
+            this.hasReadout
+              ? nothing
+              : svg`
                 <line
                   x1="-${INCLINOMETER_WATCH_RADIUS}"
                   y1="0"
@@ -202,22 +203,25 @@ export class SingleAxisInclinometer extends LitElement {
                 />
                 ${this.renderIndicator(needleTransform)}
                 ${this.renderVesselOverlay(vesselScale)}
-              `}
+              `
+          }
           ${this.zoomToFitArc ? nothing : this.renderComplement(arcAngle)}
         </svg>
         ${this.renderScale(areas, false)}
         ${this.isDualScale ? this.renderScale(areas, true) : nothing}
-        ${this.hasReadout
-          ? html`<div class="readout">
-              ${renderInstrumentReadout({
-                value: this.value,
-                priority: this.priority,
-                label: this.label,
-                unit: this.unit,
-                fractionDigits: this.fractionDigits,
-              })}
-            </div>`
-          : nothing}
+        ${
+          this.hasReadout
+            ? html`<div class="readout">
+                ${renderInstrumentReadout({
+                  value: this.value,
+                  priority: this.priority,
+                  label: this.label,
+                  unit: this.unit,
+                  fractionDigits: this.fractionDigits,
+                })}
+              </div>`
+            : nothing
+        }
       </div>
     `;
   }
@@ -251,9 +255,11 @@ export class SingleAxisInclinometer extends LitElement {
             strokeColor: 'var(--border-silhouette-color)',
           },
         ]}
-        .vessels=${opposite || this.zoomToFitArc || this.hasReadout
-          ? []
-          : this.scaleVessels}
+        .vessels=${
+          opposite || this.zoomToFitArc || this.hasReadout
+            ? []
+            : this.scaleVessels
+        }
         .tickmarks=${[
           {angle: centerAngle, type: TickmarkType.main},
           ...arcTickmarks(centerAngle, arcAngle),

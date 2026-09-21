@@ -76,16 +76,18 @@ const meta: Meta<typeof ObcNavigationMenu> = {
         <obc-navigation-item slot="footer" label="Alert" hasIcon href="#">
           <obi-alert-list slot="icon"></obi-alert-list>
         </obc-navigation-item>
-        ${args.variant === ObcNavigationMenuVariant.Full && !args.smallScreen
-          ? html` <obc-vendor-button
-              imageSrc="/companylogo-day.png"
-              alt="logo"
-              slot="logo"
-            >
-            </obc-vendor-button>`
-          : html` <obc-navigation-item slot="logo" label="Oicl" hasIcon>
-              <img src="/oicl.svg" alt="logo" slot="icon" />
-            </obc-navigation-item>`}
+        ${
+          args.variant === ObcNavigationMenuVariant.Full && !args.smallScreen
+            ? html` <obc-vendor-button
+                imageSrc="/companylogo-day.png"
+                alt="logo"
+                slot="logo"
+              >
+              </obc-vendor-button>`
+            : html` <obc-navigation-item slot="logo" label="Oicl" hasIcon>
+                <img src="/oicl.svg" alt="logo" slot="icon" />
+              </obc-navigation-item>`
+        }
       </obc-navigation-menu>
     `;
   },

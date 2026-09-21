@@ -107,28 +107,34 @@ export class ObcRichButton extends LitElement {
 
   private renderContent() {
     return html`
-      ${this.hasLeadingIcon
-        ? html`
-            <div class="icon-container leading-icon">
-              <slot name="leading-icon"></slot>
-            </div>
-          `
-        : ''}
+      ${
+        this.hasLeadingIcon
+          ? html`
+              <div class="icon-container leading-icon">
+                <slot name="leading-icon"></slot>
+              </div>
+            `
+          : ''
+      }
 
       <div class="content-container">
         <div class="label">${this.label}</div>
-        ${this.description
-          ? html`<div class="description">${this.description}</div>`
-          : ''}
+        ${
+          this.description
+            ? html`<div class="description">${this.description}</div>`
+            : ''
+        }
       </div>
 
-      ${this.hasTrailingIcon
-        ? html`
-            <div class="icon-container trailing-icon">
-              <slot name="trailing-icon"></slot>
-            </div>
-          `
-        : ''}
+      ${
+        this.hasTrailingIcon
+          ? html`
+              <div class="icon-container trailing-icon">
+                <slot name="trailing-icon"></slot>
+              </div>
+            `
+          : ''
+      }
     `;
   }
 

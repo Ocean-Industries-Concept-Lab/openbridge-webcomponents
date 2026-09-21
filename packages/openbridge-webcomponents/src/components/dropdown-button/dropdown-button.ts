@@ -165,22 +165,30 @@ export class ObcDropdownButton extends LitElement {
         })}
       >
         <div class="visible-wrapper">
-          ${this.type !== DropdownButtonType.label
-            ? html`<div class="icon-container"><slot name="icon"></slot></div>`
-            : nothing}
-          ${this.type !== DropdownButtonType.icon
-            ? html`<div class="label">${this.selectedLabel}</div>`
-            : nothing}
+          ${
+            this.type !== DropdownButtonType.label
+              ? html`<div class="icon-container">
+                  <slot name="icon"></slot>
+                </div>`
+              : nothing
+          }
+          ${
+            this.type !== DropdownButtonType.icon
+              ? html`<div class="label">${this.selectedLabel}</div>`
+              : nothing
+          }
           <div class="icon">
             <obi-drop-down-google></obi-drop-down-google>
           </div>
         </div>
         <select @change=${this.changeHandler} ?disabled=${this.disabled}>
-          ${this.allowEmptySelection && this.selectedValue === ''
-            ? html`<option value="" disabled selected hidden>
-                ${this.placeholder}
-              </option>`
-            : nothing}
+          ${
+            this.allowEmptySelection && this.selectedValue === ''
+              ? html`<option value="" disabled selected hidden>
+                  ${this.placeholder}
+                </option>`
+              : nothing
+          }
           ${this.options.map((item) => {
             const indent = item.level ? (item.level - 1) * 2 : 0;
             const indentText = [];

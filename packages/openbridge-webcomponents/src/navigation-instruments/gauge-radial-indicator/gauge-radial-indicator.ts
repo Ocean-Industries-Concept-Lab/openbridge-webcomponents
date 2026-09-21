@@ -699,15 +699,16 @@ export class ObcGaugeRadialIndicator extends LitElement {
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
-          ${this.usesExactRegular270Track
-            ? this.renderExactRegular270Track()
-            : this.usesExactRegular180Track
-              ? this.renderExactRegular180Track()
-              : this.usesExactFlat270Track
-                ? this.renderExactFlat270Track()
-                : this.usesExactFlat180Track
-                  ? this.renderExactFlat180Track()
-                  : svg`
+          ${
+            this.usesExactRegular270Track
+              ? this.renderExactRegular270Track()
+              : this.usesExactRegular180Track
+                ? this.renderExactRegular180Track()
+                : this.usesExactFlat270Track
+                  ? this.renderExactFlat270Track()
+                  : this.usesExactFlat180Track
+                    ? this.renderExactFlat180Track()
+                    : svg`
                 <defs>
                   <mask
                     id="${this.needleClipId}"
@@ -750,20 +751,25 @@ export class ObcGaugeRadialIndicator extends LitElement {
                 ${this.renderGenericTrack(trackPath)}
                 ${this.renderGenericActiveTrack()}
                 ${this.renderGenericTrackOutline(trackPath)}
-              `}
-          ${this.usesExactFlat270Track || this.usesExactFlat180Track
-            ? this.renderFlatNeedle()
-            : this.usesExactRegular270Track || this.usesExactRegular180Track
-              ? this.renderNeedle()
-              : this.renderNeedle()}
+              `
+          }
+          ${
+            this.usesExactFlat270Track || this.usesExactFlat180Track
+              ? this.renderFlatNeedle()
+              : this.usesExactRegular270Track || this.usesExactRegular180Track
+                ? this.renderNeedle()
+                : this.renderNeedle()
+          }
         </svg>
-        ${this.hasIcon
-          ? html`
-              <div class="gauge-radial-indicator-icon">
-                <slot name="icon">${this.renderDefaultIcon()}</slot>
-              </div>
-            `
-          : nothing}
+        ${
+          this.hasIcon
+            ? html`
+                <div class="gauge-radial-indicator-icon">
+                  <slot name="icon">${this.renderDefaultIcon()}</slot>
+                </div>
+              `
+            : nothing
+        }
       </div>
     `;
   }

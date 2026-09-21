@@ -167,9 +167,9 @@ export class ObcNavigationItemGroup extends LitElement {
           .alerts=${this.expanded ? undefined : this.alerts}
           @expand-toggle=${this.onClickGroup}
         >
-          ${this.hasIcon
-            ? html`<slot name="icon" slot="icon"></slot>`
-            : nothing}
+          ${
+            this.hasIcon ? html`<slot name="icon" slot="icon"></slot>` : nothing
+          }
         </obc-tree-navigation-item>
         <div part="children" role="group" ?hidden=${!this.openContainer}>
           <slot></slot>

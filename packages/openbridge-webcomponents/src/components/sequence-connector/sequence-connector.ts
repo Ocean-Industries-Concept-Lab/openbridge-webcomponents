@@ -107,9 +107,11 @@ export class ObcSequenceConnector extends LitElement {
           part="wrapper"
         >
           <div class="line" part="line">
-            ${this.state === SequenceConnectorState.loading
-              ? html`<span class="loading-bar" part="loading-bar"></span>`
-              : nothing}
+            ${
+              this.state === SequenceConnectorState.loading
+                ? html`<span class="loading-bar" part="loading-bar"></span>`
+                : nothing
+            }
           </div>
         </div>
       </div>

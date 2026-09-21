@@ -52,20 +52,28 @@ export class ObcChatMessage extends LitElement {
         round,
       })}
     >
-      ${this.showName || this.showDate
-        ? html`<div class="header">
-            ${this.showName
-              ? html`<div class="name">${this.name}</div>`
-              : nothing}
-            ${this.showDate
-              ? html`<div class="date">
-                  ${this.date !== undefined
-                    ? this.dateFormatter(this.date)
-                    : nothing}
-                </div>`
-              : nothing}
-          </div>`
-        : nothing}
+      ${
+        this.showName || this.showDate
+          ? html`<div class="header">
+              ${
+                this.showName
+                  ? html`<div class="name">${this.name}</div>`
+                  : nothing
+              }
+              ${
+                this.showDate
+                  ? html`<div class="date">
+                      ${
+                        this.date !== undefined
+                          ? this.dateFormatter(this.date)
+                          : nothing
+                      }
+                    </div>`
+                  : nothing
+              }
+            </div>`
+          : nothing
+      }
       <div class="content">
         <slot></slot>
       </div>

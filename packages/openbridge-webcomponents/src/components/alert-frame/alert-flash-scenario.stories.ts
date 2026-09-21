@@ -437,9 +437,11 @@ class AlertFlashScenarioStory extends LitElement {
     const alert = this.alerts[top.id];
     return html`<obc-topbar-message-item
       slot="alerts"
-      .type=${needsAcknowledgement(top, alert)
-        ? ObcTopbarMessageItemType.WithButton
-        : ObcTopbarMessageItemType.Simple}
+      .type=${
+        needsAcknowledgement(top, alert)
+          ? ObcTopbarMessageItemType.WithButton
+          : ObcTopbarMessageItemType.Simple
+      }
       @action-click=${() => this.acknowledge(top.id)}
     >
       ${this.renderIcon(top, 'primary-icon')}
@@ -499,12 +501,14 @@ class AlertFlashScenarioStory extends LitElement {
       .fullWidth=${true}
     >
       ${card}
-      ${panel.frameType === ObcAlertFrameType.BottomFlip
-        ? html`<div slot="label">${panel.alertTitle}</div>
-            <div slot="timer">
-              ${elapsedTime(this.second - alert.raisedAt)}
-            </div>`
-        : nothing}
+      ${
+        panel.frameType === ObcAlertFrameType.BottomFlip
+          ? html`<div slot="label">${panel.alertTitle}</div>
+              <div slot="timer">
+                ${elapsedTime(this.second - alert.raisedAt)}
+              </div>`
+          : nothing
+      }
     </obc-alert-frame>`;
   }
 

@@ -479,20 +479,22 @@ export class ObcSliderDouble extends LitElement {
 
   override render() {
     return html`
-      ${this.showLeftReadout
-        ? html`
-            <div
-              class=${classMap({
-                label: true,
-                min: true,
-                disabled: this.disabled,
-              })}
-              style="width: ${this.labelWidth};"
-            >
-              <slot name="left-readout">${this.formatLabel(this.low)}</slot>
-            </div>
-          `
-        : null}
+      ${
+        this.showLeftReadout
+          ? html`
+              <div
+                class=${classMap({
+                  label: true,
+                  min: true,
+                  disabled: this.disabled,
+                })}
+                style="width: ${this.labelWidth};"
+              >
+                <slot name="left-readout">${this.formatLabel(this.low)}</slot>
+              </div>
+            `
+          : null
+      }
       <div
         class=${classMap({
           wrapper: true,
@@ -517,8 +519,9 @@ export class ObcSliderDouble extends LitElement {
           class="slider min"
           step=${ifDefined(this.step)}
           .value=${this.low.toString()}
-          ?disabled=${this.variant === ObcSliderDoubleVariant.NoInput ||
-          this.disabled}
+          ?disabled=${
+            this.variant === ObcSliderDoubleVariant.NoInput || this.disabled
+          }
           @input=${this.onInput}
           @change=${() => this.fireChangeEvent()}
         />
@@ -529,8 +532,9 @@ export class ObcSliderDouble extends LitElement {
           max=${this.max}
           step=${ifDefined(this.step)}
           .value=${this.high.toString()}
-          ?disabled=${this.variant === ObcSliderDoubleVariant.NoInput ||
-          this.disabled}
+          ?disabled=${
+            this.variant === ObcSliderDoubleVariant.NoInput || this.disabled
+          }
           @input=${this.onInput}
           @change=${() => this.fireChangeEvent()}
         />
@@ -538,20 +542,22 @@ export class ObcSliderDouble extends LitElement {
         <div class="thumb min"></div>
         <div class="thumb max"></div>
       </div>
-      ${this.showRightReadout
-        ? html`
-            <div
-              class=${classMap({
-                label: true,
-                max: true,
-                disabled: this.disabled,
-              })}
-              style="width: ${this.labelWidth};"
-            >
-              <slot name="right-readout">${this.formatLabel(this.high)}</slot>
-            </div>
-          `
-        : null}
+      ${
+        this.showRightReadout
+          ? html`
+              <div
+                class=${classMap({
+                  label: true,
+                  max: true,
+                  disabled: this.disabled,
+                })}
+                style="width: ${this.labelWidth};"
+              >
+                <slot name="right-readout">${this.formatLabel(this.high)}</slot>
+              </div>
+            `
+          : null
+      }
     `;
   }
 
