@@ -730,7 +730,7 @@ row.tabs = [
 
 #### `obc-instrument-field` Is Deprecated
 
-`obc-instrument-field` still works in 2.0 and is deprecated in favor of `obc-readout` ([#1146](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1146)). The most common renames are `tag` to `label`, `size="regular"` and `size="enhanced"` to `size="small"` and `size="large"`, and `neutralColor` to `priority="regular"`; `maxDigits` counts digits differently. The [Instrument Field (deprecated)](?path=/docs/instruments-instrument-field-deprecated--docs) page maps every property and shows each case next to its `obc-readout` equivalent.
+`obc-instrument-field` still works in 2.0 and is deprecated in favor of `obc-readout` ([#1146](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1146)). The most common renames are `tag` to `label`, and `size="regular"` and `size="enhanced"` to `size="small"` and `size="large"`. Color moves to `priority`: `neutralColor` becomes `priority="regular"`, and the 1.0.1 default with `neutralColor` unset becomes `priority="enhanced"`. `obc-readout` resolves an unset `priority` to `regular`, so a field that relied on the 1.0.1 default has to set `priority="enhanced"` explicitly, as the example below does. `maxDigits` counts digits differently. The [Instrument Field (deprecated)](?path=/docs/instruments-instrument-field-deprecated--docs) page maps every property and shows each case next to its `obc-readout` equivalent.
 
 ```html
 <!-- 1.0.1 -->
