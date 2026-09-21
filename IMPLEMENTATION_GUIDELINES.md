@@ -519,6 +519,30 @@ Components should never reference a specific size class internally — they cons
 
 ---
 
+### Categorical Colour Classes
+
+Figma's `Color-categorical` collection has ten modes, exported as classes the
+same way: `obc-categorical-color-neutral` (the `:root` default), `-blue`,
+`-cyan`, `-teal`, `-green`, `-yellow`, `-orange`, `-red`, `-purple`,
+`-indigo`. Each class sets `--categorical-shade-{050…600,050-tint}` to one
+`--base-*` ramp and the four `--vessel-*` tokens, so the values follow the
+active theme; `--base-categorical-*` are the Palette names the vessel icons
+read and alias the shades. Put the class on `<html>` for an app-wide default or
+on any ancestor for one subtree, at or below the element carrying
+`data-obc-theme`:
+
+```html
+<div class="obc-categorical-color-green">
+  <obi-vessel-type-cargo-colour usecsscolor></obi-vessel-type-cargo-colour>
+</div>
+```
+
+The block is hand-written in `src/palettes/manual.css` until the plugin
+exports the collection (#1187); the story _Palettes/Categorical Colour_ renders
+every mode.
+
+---
+
 ### Theme Switching
 
 Four theme blocks in `variables.css` override hundreds of color variables:

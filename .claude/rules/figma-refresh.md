@@ -208,6 +208,8 @@ the semantic diff (renamed, removed, changed per block) belong there too.
 - The plugin still emits the blink keyframes and root animation, and modes
   with spaces in their names; `palette:strip` covers for it until both are
   fixed at the source.
-- `--base-categorical-*` is referenced by generated icons and absent from
-  the palette export (#1187).
+- `--base-categorical-*` is absent from the palette export because the plugin
+  skips aliases into the ten-mode `Color-categorical` collection; the block in
+  `src/palettes/manual.css` bridges it until the plugin emits the modes as
+  classes (#1187).
 - Token typos in Figma (#985).

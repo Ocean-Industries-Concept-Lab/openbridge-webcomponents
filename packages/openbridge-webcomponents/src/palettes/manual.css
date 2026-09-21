@@ -98,6 +98,173 @@
   --alert-notification-container-border-color: rgb(226, 240, 255);
 }
 
+/* Ten Color-categorical modes from Figma as classes, like the size classes; the
+   plugin export does not carry that collection yet (#1187). */
+:root,
+.obc-categorical-color-neutral {
+  --categorical-shade-050: var(--base-gray-050);
+  --categorical-shade-100: var(--base-gray-100);
+  --categorical-shade-200: var(--base-gray-200);
+  --categorical-shade-300: var(--base-gray-300);
+  --categorical-shade-400: var(--base-gray-400);
+  --categorical-shade-500: var(--base-gray-500);
+  --categorical-shade-600: var(--base-gray-600);
+  --categorical-shade-050-tint: var(--base-gray-050-tint);
+  --vessel-background-color: var(
+    --integration-selected-enabled-background-color
+  );
+  --vessel-border-color: var(--integration-selected-enabled-border-color);
+  --vessel-neutral-color: var(--integration-on-selected-neutral-color);
+  --vessel-active-color: var(--integration-on-selected-active-color);
+}
+
+.obc-categorical-color-blue {
+  --categorical-shade-050: var(--base-blue-050);
+  --categorical-shade-100: var(--base-blue-100);
+  --categorical-shade-200: var(--base-blue-200);
+  --categorical-shade-300: var(--base-blue-300);
+  --categorical-shade-400: var(--base-blue-400);
+  --categorical-shade-500: var(--base-blue-500);
+  --categorical-shade-600: var(--base-blue-600);
+  --categorical-shade-050-tint: var(--base-blue-050-tint);
+  --vessel-background-color: var(--base-blue-050);
+  --vessel-border-color: var(--base-blue-100);
+  --vessel-neutral-color: var(--base-blue-500);
+  --vessel-active-color: var(--base-blue-600);
+}
+
+.obc-categorical-color-cyan {
+  --categorical-shade-050: var(--base-cyan-050);
+  --categorical-shade-100: var(--base-cyan-100);
+  --categorical-shade-200: var(--base-cyan-200);
+  --categorical-shade-300: var(--base-cyan-300);
+  --categorical-shade-400: var(--base-cyan-400);
+  --categorical-shade-500: var(--base-cyan-500);
+  --categorical-shade-600: var(--base-cyan-600);
+  --categorical-shade-050-tint: var(--base-cyan-050-tint);
+  --vessel-background-color: var(--base-cyan-050);
+  --vessel-border-color: var(--base-cyan-100);
+  --vessel-neutral-color: var(--base-cyan-500);
+  --vessel-active-color: var(--base-cyan-600);
+}
+
+.obc-categorical-color-teal {
+  --categorical-shade-050: var(--base-teal-050);
+  --categorical-shade-100: var(--base-teal-100);
+  --categorical-shade-200: var(--base-teal-200);
+  --categorical-shade-300: var(--base-teal-300);
+  --categorical-shade-400: var(--base-teal-400);
+  --categorical-shade-500: var(--base-teal-500);
+  --categorical-shade-600: var(--base-teal-600);
+  --categorical-shade-050-tint: var(--base-teal-050-tint);
+  --vessel-background-color: var(--base-teal-050);
+  --vessel-border-color: var(--base-teal-100);
+  --vessel-neutral-color: var(--base-teal-500);
+  --vessel-active-color: var(--base-teal-600);
+}
+
+.obc-categorical-color-green {
+  --categorical-shade-050: var(--base-mint-050);
+  --categorical-shade-100: var(--base-mint-100);
+  --categorical-shade-200: var(--base-mint-200);
+  --categorical-shade-300: var(--base-mint-300);
+  --categorical-shade-400: var(--base-mint-400);
+  --categorical-shade-500: var(--base-mint-500);
+  --categorical-shade-600: var(--base-mint-600);
+  --categorical-shade-050-tint: var(--base-mint-050-tint);
+  --vessel-background-color: var(--base-mint-050);
+  --vessel-border-color: var(--base-mint-100);
+  --vessel-neutral-color: var(--base-mint-500);
+  --vessel-active-color: var(--base-mint-600);
+}
+
+.obc-categorical-color-yellow {
+  --categorical-shade-050: var(--base-yellow-050);
+  --categorical-shade-100: var(--base-yellow-100);
+  --categorical-shade-200: var(--base-yellow-200);
+  --categorical-shade-300: var(--base-yellow-300);
+  --categorical-shade-400: var(--base-yellow-400);
+  --categorical-shade-500: var(--base-yellow-500);
+  --categorical-shade-600: var(--base-yellow-600);
+  --categorical-shade-050-tint: var(--base-yellow-050-tint);
+  --vessel-background-color: var(--base-yellow-050);
+  --vessel-border-color: var(--base-yellow-100);
+  --vessel-neutral-color: var(--base-yellow-500);
+  --vessel-active-color: var(--base-yellow-600);
+}
+
+.obc-categorical-color-orange {
+  --categorical-shade-050: var(--base-orange-050);
+  --categorical-shade-100: var(--base-orange-100);
+  --categorical-shade-200: var(--base-orange-200);
+  --categorical-shade-300: var(--base-orange-300);
+  --categorical-shade-400: var(--base-orange-400);
+  --categorical-shade-500: var(--base-orange-500);
+  --categorical-shade-600: var(--base-orange-600);
+  --categorical-shade-050-tint: var(--base-orange-050-tint);
+  --vessel-background-color: var(--base-orange-050);
+  --vessel-border-color: var(--base-orange-100);
+  --vessel-neutral-color: var(--base-orange-500);
+  --vessel-active-color: var(--base-orange-600);
+}
+
+.obc-categorical-color-red {
+  --categorical-shade-050: var(--base-red-050);
+  --categorical-shade-100: var(--base-red-100);
+  --categorical-shade-200: var(--base-red-200);
+  --categorical-shade-300: var(--base-red-300);
+  --categorical-shade-400: var(--base-red-400);
+  --categorical-shade-500: var(--base-red-500);
+  --categorical-shade-600: var(--base-red-600);
+  --categorical-shade-050-tint: var(--base-red-050-tint);
+  --vessel-background-color: var(--base-red-050);
+  --vessel-border-color: var(--base-red-100);
+  --vessel-neutral-color: var(--base-red-500);
+  --vessel-active-color: var(--base-red-600);
+}
+
+.obc-categorical-color-purple {
+  --categorical-shade-050: var(--base-purple-050);
+  --categorical-shade-100: var(--base-purple-100);
+  --categorical-shade-200: var(--base-purple-200);
+  --categorical-shade-300: var(--base-purple-300);
+  --categorical-shade-400: var(--base-purple-400);
+  --categorical-shade-500: var(--base-purple-500);
+  --categorical-shade-600: var(--base-purple-600);
+  --categorical-shade-050-tint: var(--base-purple-050-tint);
+  --vessel-background-color: var(--base-purple-050);
+  --vessel-border-color: var(--base-purple-100);
+  --vessel-neutral-color: var(--base-purple-500);
+  --vessel-active-color: var(--base-purple-600);
+}
+
+.obc-categorical-color-indigo {
+  --categorical-shade-050: var(--base-indigo-050);
+  --categorical-shade-100: var(--base-indigo-100);
+  --categorical-shade-200: var(--base-indigo-200);
+  --categorical-shade-300: var(--base-indigo-300);
+  --categorical-shade-400: var(--base-indigo-400);
+  --categorical-shade-500: var(--base-indigo-500);
+  --categorical-shade-600: var(--base-indigo-600);
+  --categorical-shade-050-tint: var(--base-indigo-050-tint);
+  --vessel-background-color: var(--base-indigo-050);
+  --vessel-border-color: var(--base-indigo-100);
+  --vessel-neutral-color: var(--base-indigo-500);
+  --vessel-active-color: var(--base-indigo-600);
+}
+
+/* The Palette names the vessel icons read; the same in every theme. */
+:root {
+  --base-categorical-050: var(--categorical-shade-050);
+  --base-categorical-100: var(--categorical-shade-100);
+  --base-categorical-200: var(--categorical-shade-200);
+  --base-categorical-300: var(--categorical-shade-300);
+  --base-categorical-400: var(--categorical-shade-400);
+  --base-categorical-500: var(--categorical-shade-500);
+  --base-categorical-600: var(--categorical-shade-600);
+  --base-categorical-050-tint: var(--categorical-shade-050-tint);
+}
+
 /* Animated per element by palettes/blinking.ts; registered so the numbers
    feed calc() (#1224). */
 @property --flash-fast-on {
