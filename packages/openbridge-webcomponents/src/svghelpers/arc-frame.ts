@@ -13,6 +13,14 @@ export interface ZoomToFitArcFrame extends ArcViewBox {
   radiusOffset: number;
 }
 
+/** Shape of the zoom viewBox. */
+export enum ArcFrameFit {
+  /** Square around the arc — what instruments with a round face expect. */
+  square = 'square',
+  /** The arc's own bounding box, which crops a flat arc's empty height. */
+  bbox = 'bbox',
+}
+
 /**
  * Normalize a user-supplied watch-arc half-extent (in degrees) to a finite
  * value clamped into a sane range. Guards against `NaN`/`Infinity` produced
@@ -68,6 +76,7 @@ export function computeZoomToFitArcFrame(options: {
   targetSize: number;
   margin?: number;
   includeBox?: {xMin: number; yMin: number; xMax: number; yMax: number};
+  fit?: ArcFrameFit;
 }): ZoomToFitArcFrame {
   const {
     areas,
@@ -77,6 +86,7 @@ export function computeZoomToFitArcFrame(options: {
     targetSize,
     margin = 0.06,
     includeBox,
+    fit = ArcFrameFit.square,
   } = options;
 
   if (areas.length === 0) {
@@ -139,15 +149,19 @@ export function computeZoomToFitArcFrame(options: {
   const rawW = bbox.xMax - bbox.xMin;
   const rawH = bbox.yMax - bbox.yMin;
   const side = Math.max(rawW, rawH);
-  const padded = side * (1 + margin * 2);
+  const pad = side * margin;
 
   const cx = (bbox.xMin + bbox.xMax) / 2;
   const cy = (bbox.yMin + bbox.yMax) / 2;
 
-  const x = round4(cx - padded / 2);
-  const y = round4(cy - padded / 2);
-  const w = round4(padded);
-  const h = round4(padded);
+  // 'bbox' hugs the arc; a flat arc in a square box is mostly empty.
+  const boxW = fit === ArcFrameFit.bbox ? rawW + pad * 2 : side + pad * 2;
+  const boxH = fit === ArcFrameFit.bbox ? rawH + pad * 2 : side + pad * 2;
+
+  const x = round4(cx - boxW / 2);
+  const y = round4(cy - boxH / 2);
+  const w = round4(boxW);
+  const h = round4(boxH);
 
   return {
     radiusOffset,

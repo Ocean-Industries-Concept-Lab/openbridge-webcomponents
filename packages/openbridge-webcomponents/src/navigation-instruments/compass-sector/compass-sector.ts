@@ -1,5 +1,6 @@
 import {LitElement, PropertyValues, html, svg, unsafeCSS, nothing} from 'lit';
 import {property} from 'lit/decorators.js';
+import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import componentStyle from './compass-sector.css?inline';
 import '../watch/watch.js';
 import {
@@ -21,12 +22,15 @@ import {
 } from '../watch/watch.js';
 import {SetpointBundle} from '../../svghelpers/setpoint-bundle.js';
 import {
-  computeZoomToFitArcFrame,
-  type ZoomToFitArcFrame,
-} from '../../svghelpers/arc-frame.js';
+  computeRadialFrame,
+  estimateLabelWidthPx,
+  measureContainerPx,
+  observeInnerBox,
+  type RadialFrame,
+} from '../../svghelpers/radial-frame.js';
 import {ROT_ZERO_DEADBAND_DEG} from '../rate-of-turn/rot-renderer.js';
 import {customElement} from '../../decorator.js';
-import {normalizeAngle} from '../../svghelpers/math.js';
+import {degToRad, normalizeAngle} from '../../svghelpers/math.js';
 import {InstrumentState, Priority} from '../types.js';
 export {RotType, RotPosition};
 
@@ -36,12 +40,27 @@ export enum CompassSectorPriorityElement {
   rot = 'rot',
 }
 
-// Fixed frame padding for the zoomed and un-zoomed paths alike. The bespoke
-// FOV-compression geometry stays instead of svghelpers/radial-frame.ts: the
-// viewBox is cached per FOV, which a container-size-dependent label reserve
-// would invalidate, and 72 units covers the 3-char degree labels.
-// TODO(#1021): adopt computeRadialFrame if degree labels ever clip.
-const PADDING = 72;
+/** The sector instruments' shared box: 40 units around the outer ring. */
+const BASE_PADDING = 48;
+/**
+ * Bottom crops, % of the 448 box, one per feature that hangs below the band.
+ * Each leaves its lowest paint the same 40-unit margin the ring gets above —
+ * `100 · (184 − y) / 448` — and `_clipBottom()` takes the deepest in play.
+ * The band's own floor is the filleted inner corner at ±60°, y ≈ −47.
+ */
+const SECTOR_CLIP_BOTTOM = 51.5;
+/** ROT dots and bar ride the inner-circle track, ~5 units below the band. */
+const SECTOR_CLIP_BOTTOM_ROT = 50.4;
+/** Inside labels sit under the inner ring, far below the band's floor. */
+const SECTOR_CLIP_BOTTOM_INSIDE_LABELS = 47.3;
+/** The readout is px-sized, so it needs the room obc-gauge-radial's 180° sector reserves. */
+const SECTOR_CLIP_BOTTOM_READOUT = 44;
+/**
+ * Clearance the zoom flattens the arc out to. Zero puts the arc ends on the
+ * side edges, which is the point of zooming; the un-zoomed 120° arc stops
+ * well short of them because the box keeps the whole circle's width.
+ */
+const SECTOR_SIDE_MARGIN = 0;
 const WATCH_TYPE = WatchCircleType.triple;
 const INNER_RADIUS = innerRingRadiusFor(WATCH_TYPE);
 /** Half of the fixed 120° arc on the watch face. */
@@ -193,12 +212,20 @@ export class ObcCompassSector extends LitElement {
   private _halfFOV = 30;
   private _arcHalfExtent = ARC_HALF_EXTENT;
   private _scale = 1;
-  private _radiusOffset = 0;
-  private _cachedViewBox = '';
-  private _cachedArcFrame: ZoomToFitArcFrame | undefined;
   private _cachedAreas: WatchArea[] = [];
   private _cachedTickmarks: Tickmark[] = [];
   private _cachedAdvices: AngleAdviceRaw[] = [];
+
+  // The frame follows the host box, which no property change announces.
+  private _resizeController = new ResizeController(this, {});
+
+  private _aspectWidth = 448;
+  private _aspectHeight = 217.28;
+
+  override firstUpdated(changed: PropertyValues): void {
+    super.firstUpdated(changed);
+    observeInnerBox(this._resizeController, this.renderRoot);
+  }
 
   override willUpdate(changed: PropertyValues): void {
     super.willUpdate(changed);
@@ -253,13 +280,21 @@ export class ObcCompassSector extends LitElement {
         },
       ];
 
-      this._computeViewBox();
       this._cachedTickmarks = this._buildTickmarks();
     }
 
     if (arcInputsChanged || changed.has('headingAdvices')) {
       this._cachedAdvices = this._buildAdvices();
     }
+  }
+
+  override updated(changed: PropertyValues): void {
+    super.updated(changed);
+    // The host IS the canvas, so its box follows the frame the render used.
+    this.style.setProperty(
+      '--obc-compass-sector-aspect',
+      `${this._aspectWidth} / ${this._aspectHeight}`
+    );
   }
 
   override disconnectedCallback(): void {
@@ -337,25 +372,57 @@ export class ObcCompassSector extends LitElement {
   // ViewBox
   // ---------------------------------------------------------------------------
 
-  private _computeViewBox(): void {
-    if (this.zoomToFitArc) {
-      const targetSize = (176 + PADDING) * 2;
-      const frame = computeZoomToFitArcFrame({
-        areas: this._cachedAreas,
-        outerRadius: OUTER_RING_RADIUS,
-        innerRadius: INNER_RADIUS,
-        extension: PADDING,
-        targetSize,
-      });
-      this._radiusOffset = frame.radiusOffset;
-      this._cachedViewBox = frame.viewBox;
-      this._cachedArcFrame = frame;
-    } else {
-      this._radiusOffset = 0;
-      const width = (176 + PADDING) * 2;
-      this._cachedViewBox = `-${width / 2} -${width / 2} ${width} ${width}`;
-      this._cachedArcFrame = undefined;
+  /** Deepest crop the active features need, so none of them is shaved. */
+  private _clipBottom(): number {
+    const clips = [SECTOR_CLIP_BOTTOM];
+    if (
+      this.rotType !== undefined &&
+      this.rotPosition === RotPosition.innerCircle
+    ) {
+      clips.push(SECTOR_CLIP_BOTTOM_ROT);
     }
+    if (this.tickmarksInside) {
+      clips.push(SECTOR_CLIP_BOTTOM_INSIDE_LABELS);
+    }
+    if (this.hasReadout) {
+      clips.push(SECTOR_CLIP_BOTTOM_READOUT);
+    }
+    return Math.min(...clips);
+  }
+
+  /**
+   * One frame per render, feeding both layers: the shared sector box cropped
+   * to the arc. Zoom enlarges the arc rather than the window, so the window
+   * only slides outward by the radius offset and the canvas holds still.
+   */
+  private _buildFrame(): RadialFrame {
+    const frame = computeRadialFrame({
+      basePadding: BASE_PADDING,
+      labelWidthPx: this.tickmarksInside
+        ? 0
+        : estimateLabelWidthPx(this._cachedTickmarks.map((t) => t.text)),
+      clips: {top: 0, bottom: this._clipBottom(), left: 0, right: 0},
+      containerPx: measureContainerPx(this),
+    });
+
+    if (!this.zoomToFitArc) {
+      return frame;
+    }
+
+    // Flatten the arc until its ends reach the same margin the 120° arc keeps,
+    // measured off the window rather than the live heading — a frame fitted
+    // where the arc currently points swings its box around the circle and the
+    // arc drifts with it (#1152).
+    const halfWidth = frame.width / 2 - SECTOR_SIDE_MARGIN;
+    const sin = Math.sin(degToRad(this._arcHalfExtent));
+    const radiusOffset = Math.max(0, halfWidth / sin - OUTER_RING_RADIUS);
+    const y = frame.y - radiusOffset;
+    return {
+      ...frame,
+      y,
+      radiusOffset,
+      viewBox: `${frame.x} ${y} ${frame.width} ${frame.height}`,
+    };
   }
 
   // ---------------------------------------------------------------------------
@@ -425,30 +492,18 @@ export class ObcCompassSector extends LitElement {
   }
 
   /**
-   * Vertical placement of the readout as a percentage of the host height.
+   * Vertical placement of the readout as a percentage of the frame height.
    *
-   * With `zoomToFitArc` the arc is reframed by `computeZoomToFitArcFrame`, whose
-   * `radiusOffset`/`viewBox` depend on the arc's *absolute* orientation (which
-   * cardinal axes its bounding box crosses), not just its bend. The arc itself
-   * is always rotated back to the top, so it stays put on screen — but a
-   * frame-derived offset would swing wildly as `heading` rotates the bbox around
-   * the circle. So in zoom we use a fixed offset, which keeps the readout steady
-   * under the (stationary) arc regardless of heading.
-   *
-   * Without zoom the viewBox is the fixed, origin-symmetric 120° framing, so the
-   * geometry is orientation-independent: place the readout halfway down the inner
-   * radius from the watch center toward the arc's inner edge.
+   * The anchor sits halfway down the inner radius, below the arc's inner edge.
+   * Zoom pushes that edge out by the radius offset, so the anchor follows it
+   * and the gap under the arc reads the same in both modes.
    */
-  private get _readoutTopPercent(): number {
-    if (this.zoomToFitArc) {
-      return 70;
-    }
-    const [, vy, , vh] = this._cachedViewBox.split(' ').map(Number);
-    if (!vh || Number.isNaN(vy)) {
+  private _readoutTopPercent(frame: RadialFrame): number {
+    if (!frame.height) {
       return 50;
     }
-    const anchorY = -INNER_RADIUS * 0.5;
-    return Math.round(((anchorY - vy) / vh) * 1000) / 10;
+    const anchorY = -INNER_RADIUS * 0.5 - frame.radiusOffset;
+    return Math.round(((anchorY - frame.y) / frame.height) * 1000) / 10;
   }
 
   // ---------------------------------------------------------------------------
@@ -457,8 +512,18 @@ export class ObcCompassSector extends LitElement {
 
   override render() {
     const rotation = -this.heading;
-    const viewBox = this._cachedViewBox;
-    const rOff = this._radiusOffset;
+    const frame = this._buildFrame();
+    const viewBox = frame.viewBox;
+    const rOff = frame.radiusOffset;
+    // The overlay rotates its element box like obc-watch does, so it needs the
+    // same pivot: the cropped frame's centre is not the compass centre.
+    const pivotX = (-frame.x / frame.width) * 100;
+    const pivotY = (-frame.y / frame.height) * 100;
+    this._aspectWidth = frame.width;
+    this._aspectHeight = frame.height;
+    const tickmarks = frame.labelsHidden
+      ? this._cachedTickmarks.map((t) => ({...t, text: undefined}))
+      : this._cachedTickmarks;
 
     const mappedCOG = this._mapAngle(this.courseOverGround);
     const mappedSetpoint =
@@ -474,17 +539,15 @@ export class ObcCompassSector extends LitElement {
       <div class="container">
         <obc-watch
           .touching=${this.touching}
-          .padding=${PADDING}
           .advices=${this._cachedAdvices}
-          .tickmarks=${this._cachedTickmarks}
+          .tickmarks=${tickmarks}
           .tickmarkStyle=${TickmarkStyle.regular}
           .tickmarksInside=${this.tickmarksInside}
           .state=${this.state}
           .watchCircleType=${WATCH_TYPE}
           .northArrow=${false}
           .areas=${this._cachedAreas}
-          .arcFrame=${this._cachedArcFrame}
-          .zoomToFitArc=${this.zoomToFitArc}
+          .arcFrame=${frame}
           .tickFadeAngle=${this._arcHalfExtent * 0.2}
           .rotation=${rotation}
           .angleSetpoint=${mappedSetpoint}
@@ -506,7 +569,11 @@ export class ObcCompassSector extends LitElement {
           .rotationsPerMinute=${this.rotationsPerMinute}
         >
         </obc-watch>
-        <svg viewBox="${viewBox}" transform="rotate(${rotation})">
+        <svg
+          viewBox="${viewBox}"
+          transform="rotate(${rotation})"
+          style="transform-origin: ${pivotX}% ${pivotY}%"
+        >
           <g transform="rotate(${this.heading})">
             <line
               x1="0"
@@ -536,7 +603,7 @@ export class ObcCompassSector extends LitElement {
           this.hasReadout
             ? html`<div
                 class="readout"
-                style="top: ${this._readoutTopPercent}%"
+                style="top: ${this._readoutTopPercent(frame)}%"
               >
                 ${renderCenterReadouts([
                   {

@@ -184,6 +184,29 @@ export const WithRotBarEnhanced: Story = {
   },
 };
 
+export const ShortWideContainer: Story = {
+  args: {
+    headingSetpoint: 311,
+    width: 600,
+    height: 200,
+  },
+};
+
+export const SmallWidth: Story = {
+  args: {
+    headingSetpoint: 311,
+    width: 200,
+  },
+};
+
+export const NarrowFovZoomed: Story = {
+  args: {
+    heading: 90,
+    courseOverGround: 90,
+    minFOV: 5,
+  },
+};
+
 export const WithRateOfTurnDegreesPerMinute: Story = {
   tags: ['skip-test'],
   args: {
