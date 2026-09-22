@@ -274,6 +274,20 @@ describe('trigger-opened panel keeps its state', () => {
     expect(panel.open).toBe(true);
   });
 
+  it('mirrors a direct open in the same task as a property change', async () => {
+    const {panel} = await fixture();
+
+    // No task boundary, so the queued `toggle` has not run when the Lit
+    // update's microtask reaches sync().
+    panel.showPopover();
+    panel.brightness = 3;
+    await panel.updateComplete;
+    await nextTask();
+
+    expect(isOpen(panel)).toBe(true);
+    expect(panel.open).toBe(true);
+  });
+
   it('mirrors an open that nothing set `open` for', async () => {
     const {panel} = await fixture();
 

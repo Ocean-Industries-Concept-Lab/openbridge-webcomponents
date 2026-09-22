@@ -25,10 +25,10 @@ export interface SoftDismissHost extends LitElement {
  * `z-index` no longer clips it.
  *
  * The host keeps `open` as its public API, and the controller mirrors the DOM
- * back into it in both directions: a dismissal the browser performs sets it
- * to `false` and fires `close`, and an open the browser performs sets it to
- * `true`. Without that second half the next `sync()` would read a stale
- * `false` and close a popover something else had just opened.
+ * back into it in both directions: a dismissal sets it to `false` and fires
+ * `close`, and an open performed elsewhere sets it to `true`. Without that
+ * second half the next `sync()` would read a stale `false` and close a
+ * popover something else had just opened.
  *
  * The trigger lives outside the host in every current consumer, so binding it
  * is {@link bindPopoverTrigger}'s job, not this controller's.
@@ -41,6 +41,7 @@ export class PopoverController implements ReactiveController {
   }
 
   hostConnected(): void {
+    this.host.addEventListener('beforetoggle', this.onBeforeToggle);
     this.host.addEventListener('toggle', this.onToggle);
     if (this.host.hasUpdated) {
       this.sync();
@@ -52,8 +53,25 @@ export class PopoverController implements ReactiveController {
   }
 
   hostDisconnected(): void {
+    this.host.removeEventListener('beforetoggle', this.onBeforeToggle);
     this.host.removeEventListener('toggle', this.onToggle);
   }
+
+  /**
+   * An open performed by something other than `open` — a `popovertarget`
+   * invoker, or a direct `showPopover()`.
+   *
+   * This is `beforetoggle` rather than `toggle` because it has to be
+   * synchronous: `toggle` is queued as a task, and a Lit update scheduled in
+   * the same task is a microtask, so `sync()` would run first, read a stale
+   * `false` and hide what was just opened. `beforetoggle` fires inside the
+   * `showPopover()` call itself.
+   */
+  private readonly onBeforeToggle = (event: Event): void => {
+    if (!this.host.softDismiss) return;
+    if ((event as ToggleEvent).newState !== 'open') return;
+    this.host.open = true;
+  };
 
   /**
    * A close the browser performed. `open` is already `false` whenever this
@@ -67,15 +85,7 @@ export class PopoverController implements ReactiveController {
    */
   private readonly onToggle = (event: Event): void => {
     if (!this.host.softDismiss) return;
-
-    if ((event as ToggleEvent).newState === 'open') {
-      // Opened by something other than `open` — a `popovertarget` invoker, or
-      // a direct `showPopover()`. Mirror it, or the next `sync()` reads a
-      // stale `false` and closes what was just opened.
-      this.host.open = true;
-      return;
-    }
-
+    if ((event as ToggleEvent).newState !== 'closed') return;
     if (!this.host.open) return;
     this.host.open = false;
     /**
