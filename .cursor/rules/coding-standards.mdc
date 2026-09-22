@@ -19,6 +19,17 @@ Storybook titles.
 Write for a developer reading this file in a month, not for the reviewer of
 this PR. If they would get it from the code, don't write it.
 
+- **Write it for whoever picks this up after you.** A comment carries the
+  point of the thing — why it exists, what it is for, what it deliberately
+  leaves alone — the way you would hand the work over to a colleague. The
+  mechanism is usually not the interesting part: the code is right there, and
+  the long version belongs in the PR body or a spec.
+- **Plain words before jargon.** Say what happens — "the browser closes the
+  menu when you click outside it" — and leave the term of art, the event
+  order and the spec detail out unless a reader is stuck without them. "Light
+  dismiss on the UA sheet" tells someone who already knows nothing new, and
+  everyone else nothing at all. Compression only the informed can decode is
+  not brevity.
 - **WHY, never WHAT.** A comment that restates the code is deleted.
 - **Explanation belongs on the declaration.** Document a class, property or
   method in its JSDoc. A comment inside a method body is allowed only for a
@@ -58,6 +69,14 @@ commenting them. A one-line `/* ---- Section ---- */` banner is fine in files
 over ~150 lines. Same limits as TS: three lines, no history, no commented-out
 declarations. Delete placeholder-only CSS files.
 
+**A shared mixin's header is documentation, not a comment.** A file in
+`src/mixins/` has no class or JSDoc to carry its intent, so the block at the
+top does the job a module JSDoc does in TypeScript: what the mixin is for,
+when to reach for it, and what it deliberately leaves alone. The three-line
+limit does not apply to that header — the writing-style rules do. Everything
+below it is an ordinary CSS comment and keeps the one-line-per-declaration
+shape.
+
 ### Writing style (comments, JSDoc, docs, PR and issue text)
 
 Write like a developer with two sentences to spare. Not allowed:
@@ -70,6 +89,10 @@ Write like a developer with two sentences to spare. Not allowed:
 - decoration: emoji, bold on every other phrase, more than one em dash per
   sentence, a list of three where one item is the point
 - hedging: "might potentially", "it should be noted that this may"
+- unexplained jargon: a spec term, an abbreviation or an API name used as if
+  the reader already knows it — "the UA sheet", "light dismiss", "the top
+  layer", "the invoker", "a microtask beats the queued task". Describe the
+  behaviour; add the term only where a reader would need it to search
 - chatbot artefacts: "Great question", "Certainly", "Let me", "I've"
 - people: a name or handle as the subject or the authority — "X asked for",
   "per Y's review", "address Z's feedback". Cite the role (the design team),
