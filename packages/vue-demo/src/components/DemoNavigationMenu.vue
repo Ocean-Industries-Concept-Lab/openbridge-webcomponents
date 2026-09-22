@@ -51,9 +51,7 @@ function hideAll() {
 
 /* Only the Full variant lays over the content. The rail variants stay in
    flow beside it, where there is nothing to dismiss. */
-const isOverlay = computed(
-  () => props.navigationMenuVariant === ObcNavigationMenuVariant.Full
-)
+const isOverlay = computed(() => props.navigationMenuVariant === ObcNavigationMenuVariant.Full)
 
 function openVendorLink() {
   window.open('https://www.oicl.no/', '_blank')

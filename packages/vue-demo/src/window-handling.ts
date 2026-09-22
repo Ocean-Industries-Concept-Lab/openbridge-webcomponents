@@ -1,12 +1,7 @@
 import { onScopeDispose, ref, type Ref } from 'vue'
 
 export type MenuName =
-  | 'navigation'
-  | 'brilliance'
-  | 'appMenu'
-  | 'alertMenu'
-  | 'moreMenu'
-  | 'commandMenu'
+  'navigation' | 'brilliance' | 'appMenu' | 'alertMenu' | 'moreMenu' | 'commandMenu'
 
 /**
  * Open/closed state for the top bar's menus.
