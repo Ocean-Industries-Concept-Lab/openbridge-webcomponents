@@ -1,4 +1,5 @@
-import {LitElement, css, html, nothing, unsafeCSS} from 'lit';
+import {LitElement, PropertyValues, html, nothing, unsafeCSS} from 'lit';
+import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import {property} from 'lit/decorators.js';
 import '../watch/watch.js';
 import {WatchCircleType, RotType, RotPosition} from '../watch/watch.js';
@@ -9,11 +10,20 @@ import {
 } from '../readout/center-readout.js';
 import {ReadoutSize} from '../readout/readout.js';
 import instrumentReadoutStyle from '../readout/instrument-readout.css?inline';
+import componentStyle from './rate-of-turn.css?inline';
 import {ROT_ZERO_DEADBAND_DEG} from './rot-renderer.js';
 import {customElement} from '../../decorator.js';
+import {
+  computeRadialFrame,
+  measureContainerPx,
+  observeInnerBox,
+} from '../../svghelpers/radial-frame.js';
 import {Priority} from '../types.js';
 
 export {RotType, RotPosition};
+
+/** The radial instruments' shared box: 40 units around the outer ring. */
+const BASE_PADDING = 48;
 
 /**
  * `<obc-rate-of-turn>` — Standalone rate-of-turn indicator rendered on a circular watch face.
@@ -85,6 +95,14 @@ export {RotType, RotPosition};
  */
 @customElement('obc-rate-of-turn')
 export class ObcRateOfTurn extends LitElement {
+  // The frame follows the host box, which no property change announces.
+  private _resizeController = new ResizeController(this, {});
+
+  override firstUpdated(changed: PropertyValues): void {
+    super.firstUpdated(changed);
+    observeInnerBox(this._resizeController, this.renderRoot);
+  }
+
   @property({type: Number}) rateOfTurnDegreesPerMinute: number | undefined;
 
   @property({type: Number}) rotDotAnimationFactor: number = 18;
@@ -163,62 +181,44 @@ export class ObcRateOfTurn extends LitElement {
   static override styles = [
     unsafeCSS(instrumentReadoutStyle),
     centerReadoutStyles,
-    css`
-      * {
-        box-sizing: border-box;
-      }
-
-      .container {
-        position: relative;
-        width: 100%;
-        height: 100%;
-      }
-
-      .container > * {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-      }
-
-      .center-readout-overlay {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        pointer-events: none;
-      }
-    `,
+    unsafeCSS(componentStyle),
   ];
 
   override render() {
-    return html`<div class="container">
+    // The same 40-unit margin the other radial instruments carry, instead of
+    // obc-watch's bare default.
+    const frame = computeRadialFrame({
+      basePadding: BASE_PADDING,
+      containerPx: measureContainerPx(this),
+    });
+
+    return html`<div
+      class="container"
+      style="aspect-ratio: ${frame.width} / ${frame.height}"
+    >
       <obc-watch
+        .arcFrame=${frame}
         .watchCircleType=${this.watchCircleType}
         .priority=${this.priority}
         .tickmarks=${this.hasTrackBar ? this.trackTickmarks : []}
-        .barAreas=${
-          this.hasTrackBar
-            ? [
-                {
-                  startAngle: 0,
-                  endAngle: this.trackBarAngle,
-                  fillColor: this.trackBarColor,
-                },
-              ]
-            : []
-        }
-        .needles=${
-          this.hasTrackBar
-            ? [
-                {
-                  angle: this.trackBarAngle,
-                  fillColor: this.trackNeedleColor,
-                  strokeColor: 'var(--border-silhouette-color)',
-                },
-              ]
-            : []
-        }
+        .barAreas=${this.hasTrackBar
+          ? [
+              {
+                startAngle: 0,
+                endAngle: this.trackBarAngle,
+                fillColor: this.trackBarColor,
+              },
+            ]
+          : []}
+        .needles=${this.hasTrackBar
+          ? [
+              {
+                angle: this.trackBarAngle,
+                fillColor: this.trackNeedleColor,
+                strokeColor: 'var(--border-silhouette-color)',
+              },
+            ]
+          : []}
         .rotType=${this.rotType}
         .rotPosition=${this.rotPosition}
         .rotStartAngle=${this.barStartAngle}
@@ -229,24 +229,22 @@ export class ObcRateOfTurn extends LitElement {
         .rotPortStarboard=${this.rotPortStarboard}
         .rotAtZeroDeadband=${this.rotAtZeroDeadband}
       ></obc-watch>
-      ${
-        this.hasReadout
-          ? html`<div class="center-readout-overlay">
-              ${renderCenterReadouts([
-                {
-                  value: this.rateOfTurnDegreesPerMinute ?? null,
-                  label: this.label,
-                  unit: this.unit,
-                  fractionDigits: this.fractionDigits,
-                  size: ReadoutSize.large,
-                  priority: this.priority,
-                  centerValue: true,
-                  centerMeta: true,
-                },
-              ])}
-            </div>`
-          : nothing
-      }
+      ${this.hasReadout
+        ? html`<div class="center-readout-overlay">
+            ${renderCenterReadouts([
+              {
+                value: this.rateOfTurnDegreesPerMinute ?? null,
+                label: this.label,
+                unit: this.unit,
+                fractionDigits: this.fractionDigits,
+                size: ReadoutSize.large,
+                priority: this.priority,
+                centerValue: true,
+                centerMeta: true,
+              },
+            ])}
+          </div>`
+        : nothing}
     </div>`;
   }
 }
