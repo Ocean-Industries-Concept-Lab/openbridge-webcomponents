@@ -370,6 +370,10 @@ export class ObcContextMenuInput extends LitElement {
         this.focusLastItem();
         break;
       case 'Escape':
+        // Under softDismiss the browser closes the popover on Escape and the
+        // controller reports it. Preventing the default here would suppress
+        // that and leave the panel open with `open` still true.
+        if (this.softDismiss) break;
         event.preventDefault();
         this.dispatchEvent(new CustomEvent('close'));
         break;
