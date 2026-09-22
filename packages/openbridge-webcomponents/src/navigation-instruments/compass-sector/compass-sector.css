@@ -32,10 +32,13 @@
 
 :host {
   display: block;
-  /* The element is the cropped canvas, not a square holding one: the aspect
-     comes from the frame, which the crop and the label reserve both move. */
+  /* The element is the cropped canvas, not a square holding one, so the
+     aspect comes from the frame each render — the crop and the label reserve
+     both move it. 448 / 217 is the default crop's box (448 wide × 448·(1 −
+     51.5%) tall); keep in sync with `SECTOR_CLIP_BOTTOM` in
+     compass-sector.ts. */
   @mixin contain-aspect;
-  aspect-ratio: var(--obc-compass-sector-aspect, 448 / 217.28);
+  aspect-ratio: var(--obc-compass-sector-aspect, 448 / 217);
 
   /* Both layers paint past their viewBox so the rotation can carry the arc in;
      this is the edge that bounds the component. */

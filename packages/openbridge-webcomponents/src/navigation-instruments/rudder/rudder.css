@@ -18,8 +18,10 @@
 
 :host {
   display: block;
-  /* The element is the cropped canvas, not a square holding one: the aspect
-     comes from the frame, which the top crop and zoom both move. */
+  /* The element is the cropped canvas, not a square holding one, so the
+     aspect comes from the frame each render — the top crop and zoom both move
+     it. 448 / 269 is the un-zoomed box (448 wide × 448·(1 − 40%) tall); keep
+     in sync with the `clips` top in rudder.ts. */
   @mixin contain-aspect;
-  aspect-ratio: var(--obc-rudder-aspect, 448 / 268.8);
+  aspect-ratio: var(--obc-rudder-aspect, 448 / 269);
 }
