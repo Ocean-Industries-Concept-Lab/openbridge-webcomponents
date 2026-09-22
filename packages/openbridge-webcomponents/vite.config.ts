@@ -15,6 +15,7 @@ const input = globbySync('src/**/*.ts', {
     'src/**/*.d.ts',
     'src/storybook-util.ts',
     'src/ar/_test-utils.ts',
+    'src/internal/_keyboard-test-utils.ts',
   ],
 });
 
