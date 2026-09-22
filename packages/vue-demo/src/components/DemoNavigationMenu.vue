@@ -31,6 +31,7 @@ interface Props {
 
 interface Emits {
   (e: 'hideAll'): void
+  (e: 'close'): void
 }
 
 const props = defineProps<Props>()
@@ -48,6 +49,12 @@ function hideAll() {
   emit('hideAll')
 }
 
+/* Only the Full variant lays over the content. The rail variants stay in
+   flow beside it, where there is nothing to dismiss. */
+const isOverlay = computed(
+  () => props.navigationMenuVariant === ObcNavigationMenuVariant.Full
+)
+
 function openVendorLink() {
   window.open('https://www.oicl.no/', '_blank')
 }
@@ -57,9 +64,12 @@ function openVendorLink() {
   <NavigationMenu
     v-show="!props.inactive"
     v-if="props.showNavigationMenu"
+    :soft-dismiss="isOverlay"
+    open
     :variant="props.navigationMenuVariant"
     :small-screen="props.smallScreen"
     class="navigation-menu"
+    @close="emit('close')"
   >
     <template v-if="app" #main>
       <DemoRouterLink

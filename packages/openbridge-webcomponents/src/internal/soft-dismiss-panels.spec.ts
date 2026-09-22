@@ -4,19 +4,23 @@ import '../components/alert-menu/alert-menu.js';
 import '../components/app-menu/app-menu.js';
 import '../components/brilliance-menu/brilliance-menu.js';
 import '../components/command-menu/command-menu.js';
+import '../components/context-menu-input/context-menu-input.js';
+import '../components/navigation-menu/navigation-menu.js';
 import '../components/system-menu/system-menu.js';
 import '../components/user-menu/user-menu.js';
 import type {SoftDismissHost} from './popover-controller.js';
 
 /**
- * The panels the top bar opens. They share no base class, so the only thing
- * keeping them in step is this spec (#1293).
+ * Every panel that opted into `softDismiss`. They share no base class, so the
+ * only thing keeping them in step is this spec (#1293).
  */
 const PANELS = [
   'obc-alert-menu',
   'obc-app-menu',
   'obc-brilliance-menu',
   'obc-command-menu',
+  'obc-context-menu-input',
+  'obc-navigation-menu',
   'obc-system-menu',
   'obc-user-menu',
 ] as const;
