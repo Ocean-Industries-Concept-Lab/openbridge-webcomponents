@@ -9,6 +9,7 @@ import {InstrumentState, Priority} from '../types.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
 import {customElement} from '../../decorator.js';
+import {degToRad} from '../../svghelpers/math.js';
 import {ArcFrameFit} from '../../svghelpers/arc-frame.js';
 import {
   applyPinnedHostSize,
@@ -127,6 +128,32 @@ export class ObcRudder extends SetpointMixin(LitElement) {
       this._frame,
       this._hostSizePinned
     );
+  }
+
+  /**
+   * Radial reach of the needle path about the watch centre, and its half
+   * width — the zoomed arc's own box stops short of the inner end.
+   */
+  private static readonly NEEDLE_INNER_RADIUS = -16.5;
+  private static readonly NEEDLE_OUTER_RADIUS = 160.65;
+  private static readonly NEEDLE_HALF_WIDTH = 16.5;
+
+  /** Box the zoomed frame must keep visible, in SVG units. */
+  private _needleIncludeBox(radiusOffset: number) {
+    if (this.variant !== ObcRudderVariant.Needle) {
+      return undefined;
+    }
+    const rad = degToRad(this.getAngle(this.angle));
+    const u = {x: Math.sin(rad), y: -Math.cos(rad)};
+    const inner = ObcRudder.NEEDLE_INNER_RADIUS + radiusOffset;
+    const outer = ObcRudder.NEEDLE_OUTER_RADIUS + radiusOffset;
+    const w = ObcRudder.NEEDLE_HALF_WIDTH;
+    return {
+      xMin: Math.min(inner * u.x, outer * u.x) - w,
+      xMax: Math.max(inner * u.x, outer * u.x) + w,
+      yMin: Math.min(inner * u.y, outer * u.y) - w,
+      yMax: Math.max(inner * u.y, outer * u.y) + w,
+    };
   }
 
   private get _needleTransform(): string {
@@ -273,7 +300,7 @@ export class ObcRudder extends SetpointMixin(LitElement) {
       };
     });
 
-    const frame = computeRadialFrame({
+    const frameOptions = {
       basePadding: 48,
       labelWidthPx: this.tickmarksInside
         ? 0
@@ -288,7 +315,16 @@ export class ObcRudder extends SetpointMixin(LitElement) {
       zoomFit: ArcFrameFit.bbox,
       areas,
       innerRadius: innerRingRadiusFor(WatchCircleType.double),
-    });
+    };
+    // `includeBox` never feeds the radius search, so the offset the first pass
+    // returns is the one the needle box is drawn against.
+    const probe = computeRadialFrame(frameOptions);
+    const zoomIncludeBox = this.zoomToFitArc
+      ? this._needleIncludeBox(probe.radiusOffset)
+      : undefined;
+    const frame = zoomIncludeBox
+      ? computeRadialFrame({...frameOptions, zoomIncludeBox})
+      : probe;
     this._radiusOffset = frame.radiusOffset;
     this._frame = frame;
     const shownTickmarks = frame.labelsHidden

@@ -677,12 +677,12 @@ compass-sector keeps one crop per feature that hangs below the band (ROT
 track, inside labels, readout) and takes the deepest in play, because a single
 value shaves whichever feature reaches lowest.
 
-**A partial arc also needs side crops.** The box is as wide as the whole
-circle, so a 120° arc reaching `x = ±155.7` would otherwise sit ~60 units from
-the side edges against ~20 above. compass-sector crops 8.1% per side, leaving
-the 32 units the design frame does, and its zoom targets that same margin —
-which is why a zoomed arc keeps the framing of the un-zoomed one instead of
-being sized against a square.
+**Sides stay uncropped.** The box keeps the full circle's width, so a 120°
+arc reaching `x = ±155.7` sits further from the side edges than from the top,
+and `zoomToFitArc` is what takes that space back: it flattens the arc until
+its ends reach the 32-unit margin the design frame draws. Cropping the sides
+too was tried and reverted — it magnified the instrument by about a fifth and
+left zoom nothing to do at a full 120° arc.
 
 ### Radial label model (design language)
 

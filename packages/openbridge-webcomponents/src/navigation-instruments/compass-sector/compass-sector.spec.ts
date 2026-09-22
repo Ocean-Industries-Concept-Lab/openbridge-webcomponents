@@ -49,10 +49,10 @@ describe('obc-compass-sector — the canvas holds still', () => {
   it('crops the square box to a wide canvas', async () => {
     const {viewBox, aspect} = await frameOf(0, false);
     const [x, , width, height] = viewBox.split(' ').map(Number);
-    // 448 less 8.1% per side, and the arc's 40-unit bottom margin.
-    expect(width).toBeCloseTo(375.42, 1);
+    // Full width, cropped to the arc's 40-unit bottom margin.
+    expect(width).toBe(448);
     expect(height).toBeCloseTo(217.28, 1);
-    expect(x).toBeCloseTo(-187.71, 1);
+    expect(x).toBe(-224);
     expect(aspect).toBe(`${width} / ${height}`);
   });
 });

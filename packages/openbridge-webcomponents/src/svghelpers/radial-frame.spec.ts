@@ -324,10 +324,7 @@ describe('computeRadialFrame — sector crop (compass-sector)', () => {
   });
 
   it('fits the zoomed arc inside the cropped window at every field of view', () => {
-    const frame = computeRadialFrame({
-      basePadding: 48,
-      clips: {...SECTOR_CLIP, left: 8.1, right: 8.1},
-    });
+    const frame = computeRadialFrame({basePadding: 48, clips: SECTOR_CLIP});
     const OUTER = 184;
     const INNER = 88;
     const SIDE_MARGIN = 32;

@@ -56,13 +56,10 @@ const SECTOR_CLIP_BOTTOM_INSIDE_LABELS = 47.3;
 /** The readout is px-sized, so it needs the room obc-gauge-radial's 180° sector reserves. */
 const SECTOR_CLIP_BOTTOM_READOUT = 44;
 /**
- * Side crop, % per edge. The box is as wide as the whole circle, but a 120°
- * arc only reaches x = ±155.7, so without this the ends sit ~60 units from
- * the edge against ~20 above. This leaves the 32 the design frame does
- * (Figma 18487:163314): `100 · (224 − 187.7) / 448`.
+ * Clearance between an arc end and the side edge, which is what the zoom
+ * flattens the arc to reach. The box keeps the full circle's width, so the
+ * un-zoomed 120° arc stops short of it (Figma 18487:163314 draws 32).
  */
-const SECTOR_CLIP_SIDE = 8.1;
-/** Clearance the design leaves between an arc end and the side edge. */
 const SECTOR_SIDE_MARGIN = 32;
 const WATCH_TYPE = WatchCircleType.triple;
 const INNER_RADIUS = innerRingRadiusFor(WATCH_TYPE);
@@ -392,12 +389,7 @@ export class ObcCompassSector extends LitElement {
       labelWidthPx: this.tickmarksInside
         ? 0
         : estimateLabelWidthPx(this._cachedTickmarks.map((t) => t.text)),
-      clips: {
-        top: 0,
-        bottom: this._clipBottom(),
-        left: SECTOR_CLIP_SIDE,
-        right: SECTOR_CLIP_SIDE,
-      },
+      clips: {top: 0, bottom: this._clipBottom(), left: 0, right: 0},
       containerPx: measureContainerPx(this),
     });
 

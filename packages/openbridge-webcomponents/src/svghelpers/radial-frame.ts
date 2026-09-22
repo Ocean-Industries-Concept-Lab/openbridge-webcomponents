@@ -128,6 +128,12 @@ export interface RadialFrameOptions {
   innerRadius?: number;
   /** Zoom viewBox shape; `bbox` crops a flat arc's empty height. */
   zoomFit?: ArcFrameFit;
+  /**
+   * Region that must stay inside the zoomed viewBox — an overlay the arc's own
+   * box would leave out, such as a needle reaching in toward the centre. It
+   * widens the final box only; the arc still grows freely.
+   */
+  zoomIncludeBox?: {xMin: number; yMin: number; xMax: number; yMax: number};
 }
 
 export interface RadialFrame extends ZoomToFitArcFrame {
@@ -491,6 +497,7 @@ function zoomFrameAt(
     extension,
     targetSize: (RADIAL_VIEWBOX_BASE + extension) * 2,
     fit: opts.zoomFit,
+    includeBox: opts.zoomIncludeBox,
   });
 }
 
