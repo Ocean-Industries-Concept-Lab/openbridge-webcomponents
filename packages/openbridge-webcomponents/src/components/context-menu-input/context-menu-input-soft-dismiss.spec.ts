@@ -38,8 +38,8 @@ describe('obc-context-menu-input under softDismiss', () => {
     let closes = 0;
     menu.addEventListener('close', () => closes++);
 
-    // The component's own keydown handler returns early with no options, so
-    // an empty menu never reaches its Escape branch.
+    // A menu with no options bails out of the key handler before it ever
+    // looks at Escape, so it has to have options to test this.
     menu.focusFirstItem();
     await nextTask();
 

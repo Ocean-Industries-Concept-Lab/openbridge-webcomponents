@@ -93,8 +93,8 @@ export type ObcAckAllVisibleClickEvent = CustomEvent<{
  *   When hidden, the "ACK visible" button expands to fill the freed space.
  * @property showAlertListButton - If true, shows the "Alerts" navigation button in the action bar.
  *   When hidden, the "ACK visible" button expands to fill the freed space.
- * @property softDismiss - Opt in to light dismiss. The panel moves to the browser's top layer, where a click outside, `Escape`, or another popover opening closes it. Leave it off to keep owning visibility yourself.
- * @property open - Whether the panel is showing.
+ * @property softDismiss - Let the browser close this menu on its own: on a click outside it, on `Escape`, or when another menu opens. Leave it off to keep showing and hiding the menu yourself.
+ * @property open - Whether the menu is showing.
  * @availableWhen open softDismiss==true
  * @slot - The alerts items as ObcAlertMenuItem
  * @slot empty-<tab>-title - Custom empty-state title for the selected tab (`<tab>` is one of `unacked`, `all`, `shelved`)
@@ -103,7 +103,7 @@ export type ObcAckAllVisibleClickEvent = CustomEvent<{
  * @fires {ObcAckAllVisibleClickEvent} ack-all-visible-click - Fired when the ack all visible button is clicked
  * @fires {CustomEvent} silence-click - Fired when the silence button is clicked
  * @fires {CustomEvent} go-to-alert-list-click - Fired when the go to alert list button is clicked
- * @fires {CustomEvent<void>} close - Fired when the panel closed itself: a click outside, `Escape`, or another popover opening. `open` is already `false` by then.
+ * @fires {CustomEvent<void>} close - Fired when the menu closed on its own, from a click outside, `Escape`, or another menu opening. `open` is already `false` by the time it arrives.
  */
 @localized()
 /**

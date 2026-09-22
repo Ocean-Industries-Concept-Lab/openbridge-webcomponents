@@ -48,12 +48,12 @@ import {PopoverController} from '../../internal/popover-controller.js';
  * ```
  * In this example, the menu displays a search bar and a grid of app buttons, each with an icon.
  *
- * @property softDismiss - Opt in to light dismiss. The panel moves to the browser's top layer, where a click outside, `Escape`, or another popover opening closes it. Leave it off to keep owning visibility yourself.
- * @property open - Whether the panel is showing.
+ * @property softDismiss - Let the browser close this menu on its own: on a click outside it, on `Escape`, or when another menu opens. Leave it off to keep showing and hiding the menu yourself.
+ * @property open - Whether the menu is showing.
  * @availableWhen open softDismiss==true
  * @slot - Default slot for app buttons or custom menu items
  * @fires {CustomEvent<string>} search - Fired when the search input value changes, with the current value in `detail`.
- * @fires {CustomEvent<void>} close - Fired when the panel closed itself: a click outside, `Escape`, or another popover opening. `open` is already `false` by then.
+ * @fires {CustomEvent<void>} close - Fired when the menu closed on its own, from a click outside, `Escape`, or another menu opening. `open` is already `false` by the time it arrives.
  * @stable
  */
 @customElement('obc-app-menu')

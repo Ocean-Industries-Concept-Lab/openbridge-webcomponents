@@ -226,13 +226,13 @@ export enum ContextMenuType {
  * @property options - Menu options, each with a unique `value` and a `label`, and optionally an
  *   `icon` template for the leading icon, a `level` giving the nesting depth
  *   for nested checkboxes, and `children` for a flyout or nested menu.
- * @property softDismiss - Opt in to light dismiss. The panel moves to the browser's top layer, where a click outside, `Escape`, or another popover opening closes it. Leave it off to keep owning visibility yourself.
- * @property open - Whether the panel is showing.
+ * @property softDismiss - Let the browser close this menu on its own: on a click outside it, on `Escape`, or when another menu opens. Leave it off to keep showing and hiding the menu yourself.
+ * @property open - Whether the menu is showing.
  * @availableWhen open softDismiss==true
  * @slot - Optionally used for custom icons in options (e.g., `<obi-placeholder slot="icon"></obi-placeholder>`)
  * @fires {ObcContextMenuInputChangeEvent} change - Fired when the selection changes.
  * @fires {ObcContextMenuInputItemClickEvent} item-click - Fired when a menu item is clicked.
- * @fires {CustomEvent<void>} close - Fired when the close button is clicked, on `Escape`, and, under `softDismiss`, when the panel closed itself on a click outside or another popover opening.
+ * @fires {CustomEvent<void>} close - Fired when the close button is clicked, on `Escape`, and, with `softDismiss` on, when the menu closed on its own from a click outside or another menu opening.
  * @beta
  */
 @customElement('obc-context-menu-input')
@@ -370,9 +370,9 @@ export class ObcContextMenuInput extends LitElement {
         this.focusLastItem();
         break;
       case 'Escape':
-        // Under softDismiss the browser closes the popover on Escape and the
-        // controller reports it. Preventing the default here would suppress
-        // that and leave the panel open with `open` still true.
+        // With softDismiss on, the browser closes the menu on Escape by
+        // itself. Blocking the default here would stop that and leave the
+        // menu open.
         if (this.softDismiss) break;
         event.preventDefault();
         this.dispatchEvent(new CustomEvent('close'));

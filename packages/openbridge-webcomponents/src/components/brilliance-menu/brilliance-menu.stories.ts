@@ -74,19 +74,18 @@ export const NoDuskPaletteCompact: Story = {
 };
 
 /**
- * `softDismiss` hands dismissal to the browser: the menu moves to the top
- * layer, and a click outside, `Escape`, or another popover opening closes it
- * (#1293). Click the button, then click the page behind it — the click both
- * closes the menu and lands on what it hit, which is what a backdrop element
- * cannot do.
+ * With `softDismiss` on, the browser closes the menu for you: click outside
+ * it, press `Escape`, or open another menu (#1293).
  *
- * `bindPopoverTrigger` wires the button. A naive toggle in a click handler
- * would leave the menu stuck open, because light dismiss already closed it on
- * `pointerdown`.
+ * Try the button below the menu. The click that closes the menu also presses
+ * that button, which is the part a see-through overlay cannot do — there the
+ * first click is swallowed and nothing happens.
+ *
+ * `bindPopoverTrigger` hooks up the button that opens it.
  */
 export const SoftDismiss: Story = {
-  // A live behaviour, not a look: snapshotting it would pin one frame of an
-  // interaction and tell a reader nothing.
+  // There is nothing to snapshot here: this story is about what happens when
+  // you click, not about how the menu looks.
   tags: ['skip-test'],
   args: {
     softDismiss: true,

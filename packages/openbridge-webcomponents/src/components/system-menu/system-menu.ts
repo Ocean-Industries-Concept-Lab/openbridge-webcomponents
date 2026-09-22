@@ -94,8 +94,8 @@ export enum SystemMenuControlMode {
 export type VolumeChangeEvent = CustomEvent<number>;
 
 /**
- * @property softDismiss - Opt in to light dismiss. The panel moves to the browser's top layer, where a click outside, `Escape`, or another popover opening closes it. Leave it off to keep owning visibility yourself.
- * @property open - Whether the panel is showing.
+ * @property softDismiss - Let the browser close this menu on its own: on a click outside it, on `Escape`, or when another menu opens. Leave it off to keep showing and hiding the menu yourself.
+ * @property open - Whether the menu is showing.
  * @availableWhen open softDismiss==true
  * @fires wifi-click - When the Wi-Fi button is clicked
  * @fires audio-click - When the Audio button is clicked
@@ -113,7 +113,7 @@ export type VolumeChangeEvent = CustomEvent<number>;
  * @fires wifi-options-click - When the Wi-Fi options are clicked
  * @fires wifi-disconnect-click - When the Wi-Fi disconnect is clicked
  * @slot battery-status - Custom battery status text (falls back to the built-in charging/battery label).
- * @fires {CustomEvent<void>} close - Fired when the panel closed itself: a click outside, `Escape`, or another popover opening. `open` is already `false` by then.
+ * @fires {CustomEvent<void>} close - Fired when the menu closed on its own, from a click outside, `Escape`, or another menu opening. `open` is already `false` by the time it arrives.
  * @stable
  */
 @customElement('obc-system-menu')

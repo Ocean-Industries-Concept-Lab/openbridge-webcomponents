@@ -127,15 +127,15 @@ export type ObcLinkBrightnessChangeEvent = CustomEvent<{value: boolean}>;
  * @property brightnessMajorStep - The major step of the brightness slider.
  * @property brightnessInputVariant - The variant of the brightness input.
  * @property showScreenControlLink - If true, displays the screen control link.
- * @property softDismiss - Opt in to light dismiss. The panel moves to the browser's top layer, where a click outside, `Escape`, or another popover opening closes it. Leave it off to keep owning visibility yourself.
- * @property open - Whether the panel is showing.
+ * @property softDismiss - Let the browser close this menu on its own: on a click outside it, on `Escape`, or when another menu opens. Leave it off to keep showing and hiding the menu yourself.
+ * @property open - Whether the menu is showing.
  * @availableWhen open softDismiss==true
  * @fires {ObcPaletteChangeEvent} palette-changed - When the palette is changed
  * @fires {ObcBrightnessChangeEvent} brightness-changed - When the brightness is changed
  * @fires {ObcLinkPaletteChangeEvent} link-palette-changed - When the link palette toggle is changed
  * @fires {ObcLinkBrightnessChangeEvent} link-brightness-changed - When the link brightness toggle is changed
  * @fires {CustomEvent} screen-control-link-clicked - When the screen control link is clicked
- * @fires {CustomEvent<void>} close - Fired when the panel closed itself: a click outside, `Escape`, or another popover opening. `open` is already `false` by then.
+ * @fires {CustomEvent<void>} close - Fired when the menu closed on its own, from a click outside, `Escape`, or another menu opening. `open` is already `false` by the time it arrives.
  */
 @localized()
 /**
