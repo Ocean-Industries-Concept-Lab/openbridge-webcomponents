@@ -239,3 +239,52 @@ describe('bindPopoverTrigger', () => {
     expect(isOpen(panel)).toBe(false);
   });
 });
+
+describe('trigger-opened panel keeps its state', () => {
+  it('survives an unrelated property change while open', async () => {
+    const {panel, trigger} = await fixture();
+    cleanup.push(bindPopoverTrigger(trigger, panel));
+
+    await userEvent.click(trigger);
+    await nextTask();
+    expect(isOpen(panel)).toBe(true);
+
+    // Any reactive property runs the controller's sync(); it must not read a
+    // stale `open` and close a popover the trigger just opened.
+    panel.brightness = 42;
+    await panel.updateComplete;
+    await nextTask();
+
+    expect(isOpen(panel)).toBe(true);
+    expect(panel.open).toBe(true);
+  });
+
+  it('survives a property change in the same task as the click', async () => {
+    const {panel, trigger} = await fixture();
+    cleanup.push(bindPopoverTrigger(trigger, panel));
+
+    // No task boundary, so the queued `toggle` has not run yet and only the
+    // synchronous write in bindPopoverTrigger can keep sync() honest.
+    await userEvent.click(trigger);
+    panel.brightness = 7;
+    await panel.updateComplete;
+    await nextTask();
+
+    expect(isOpen(panel)).toBe(true);
+    expect(panel.open).toBe(true);
+  });
+
+  it('mirrors an open that nothing set `open` for', async () => {
+    const {panel} = await fixture();
+
+    // What a `popovertarget` invoker or a direct showPopover() call does.
+    panel.showPopover();
+    await nextTask();
+
+    expect(panel.open).toBe(true);
+
+    panel.brightness = 9;
+    await panel.updateComplete;
+    expect(isOpen(panel)).toBe(true);
+  });
+});
