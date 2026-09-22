@@ -342,9 +342,9 @@ export class ObcRudder extends SetpointMixin(LitElement) {
           .arcFrame=${frame}
           .areas=${areas}
           .angleSetpoint=${setpointAngle}
-          .newAngleSetpoint=${this.newSetpoint !== undefined
-            ? 180 - this.newSetpoint
-            : undefined}
+          .newAngleSetpoint=${
+            this.newSetpoint !== undefined ? 180 - this.newSetpoint : undefined
+          }
           .atAngleSetpoint=${this.computeAtSetpoint(this.angle)}
           .angleSetpointAtZeroDeadband=${this.setpointAtZeroDeadband}
           .setpointOverride=${this.setpointOverride}

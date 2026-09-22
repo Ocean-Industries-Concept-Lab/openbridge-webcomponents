@@ -56,11 +56,11 @@ const SECTOR_CLIP_BOTTOM_INSIDE_LABELS = 47.3;
 /** The readout is px-sized, so it needs the room obc-gauge-radial's 180° sector reserves. */
 const SECTOR_CLIP_BOTTOM_READOUT = 44;
 /**
- * Clearance between an arc end and the side edge, which is what the zoom
- * flattens the arc to reach. The box keeps the full circle's width, so the
- * un-zoomed 120° arc stops short of it (Figma 18487:163314 draws 32).
+ * Clearance the zoom flattens the arc out to. Zero puts the arc ends on the
+ * side edges, which is the point of zooming; the un-zoomed 120° arc stops
+ * well short of them because the box keeps the whole circle's width.
  */
-const SECTOR_SIDE_MARGIN = 32;
+const SECTOR_SIDE_MARGIN = 0;
 const WATCH_TYPE = WatchCircleType.triple;
 const INNER_RADIUS = innerRingRadiusFor(WATCH_TYPE);
 /** Half of the fixed 120° arc on the watch face. */
@@ -588,25 +588,29 @@ export class ObcCompassSector extends LitElement {
             rOff
           )}
         </svg>
-        ${this.hasReadout
-          ? html`<div
-              class="readout"
-              style="top: ${this._readoutTopPercent(frame)}%"
-            >
-              ${renderCenterReadouts([
-                {
-                  value: this.heading,
-                  label: this.label,
-                  unit: this.unit,
-                  fractionDigits: this.fractionDigits,
-                  size: ReadoutSize.large,
-                  priority: this.priorityFor(CompassSectorPriorityElement.hdg),
-                  centerValue: true,
-                  centerMeta: true,
-                },
-              ])}
-            </div>`
-          : nothing}
+        ${
+          this.hasReadout
+            ? html`<div
+                class="readout"
+                style="top: ${this._readoutTopPercent(frame)}%"
+              >
+                ${renderCenterReadouts([
+                  {
+                    value: this.heading,
+                    label: this.label,
+                    unit: this.unit,
+                    fractionDigits: this.fractionDigits,
+                    size: ReadoutSize.large,
+                    priority: this.priorityFor(
+                      CompassSectorPriorityElement.hdg
+                    ),
+                    centerValue: true,
+                    centerMeta: true,
+                  },
+                ])}
+              </div>`
+            : nothing
+        }
       </div>
     `;
   }
