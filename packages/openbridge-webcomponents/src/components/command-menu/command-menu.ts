@@ -6,6 +6,7 @@ import '../../icons/icon-command-in.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {ObcStartStopSwitchChangeEvent} from '../start-stop-switch/start-stop-switch.js';
 import {customElement} from '../../decorator.js';
+import {PopoverController} from '../../internal/popover-controller.js';
 
 export type ObcCommandMenuChangeEvent = CustomEvent<{inCommand: boolean}>;
 
@@ -86,6 +87,9 @@ export type ObcCommandMenuChangeEvent = CustomEvent<{inCommand: boolean}>;
  *   Controls the toggle and visual state.
  * @property showLocation - Whether to display the location slot.
  *   If false, the location is omitted from the menu.
+ * @property softDismiss - Opt in to light dismiss. The panel moves to the browser's top layer, where a click outside, `Escape`, or another popover opening closes it. Leave it off to keep owning visibility yourself.
+ * @property open - Whether the panel is showing.
+ * @availableWhen open softDismiss==true
  * @slot command-icon - Main icon representing the current command state.
  * @slot command-status - Status label (e.g., "Joystick", "NO CMD").
  * @slot command-description - Description of the command state.
@@ -96,10 +100,17 @@ export type ObcCommandMenuChangeEvent = CustomEvent<{inCommand: boolean}>;
  * @slot toogle-state-no-command-label - Status label when in "no command" state.
  * @slot toogle-state-in-command-icon - Icon for the "in command" state (defaults to `<obi-command-in>`).
  * @fires {CustomEvent<{inCommand: boolean}>} change - Fired when the command state is toggled.
+ * @fires {CustomEvent<void>} close - Fired when the panel closed itself: a click outside, `Escape`, or another popover opening. `open` is already `false` by then.
  * @beta
  */
 @customElement('obc-command-menu')
 export class ObcCommandMenu extends LitElement {
+  @property({type: Boolean}) softDismiss = false;
+
+  @property({type: Boolean}) open = false;
+
+  protected readonly softDismissController = new PopoverController(this);
+
   @property({type: Boolean}) inCommand = false;
 
   @property({type: Boolean, attribute: false}) showLocation: boolean = true;

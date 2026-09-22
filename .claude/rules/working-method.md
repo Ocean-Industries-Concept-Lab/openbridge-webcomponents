@@ -58,6 +58,7 @@ judgement call.
    | `internal/roving-navigator.ts`, `tree-roving-navigator.ts`                           | roving tabindex for flat composites (tabs, option groups, menus) and for tree hosts                    | 3 / 2                                                                   |
    | `internal/focus.ts`, `modal-focus-controller.ts`                                     | composed-tree focus queries; the dialog focus contract                                                 | 2 / 1                                                                   |
    | `internal/events.ts`                                                                 | `stopPropagation`, the stable listener that keeps a child's event inside the component that renders it | 9                                                                       |
+   | `internal/popover-controller.ts`                                                     | light dismiss for overlays, and the trigger binding that goes with it | 6                                                                       |
    | `src/mixins/*.css`                                                                   | PostCSS mixins — global, no import (`postcss.config.mjs` `mixinsDir`)                                  | `font-body` 52, `font-label` 36, `card` 5, `scrollbar` 2, `readout-*` 2 |
 
    A `Math.min(Math.max(…))`, a `((a % 360) + 360) % 360`, a `* Math.PI / 180`

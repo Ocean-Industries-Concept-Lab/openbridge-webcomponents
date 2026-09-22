@@ -15,6 +15,7 @@ import '../../building-blocks/alert-list/alert-list.js';
 import {ObcAlertList} from '../../building-blocks/alert-list/alert-list.js';
 import {ObcTabbedCardChangeEvent} from '../tabbed-card/tabbed-card.js';
 import {ObcAlertMenuItemStatus} from '../alert-menu-item/alert-menu-item.js';
+import {PopoverController} from '../../internal/popover-controller.js';
 
 export type ObcAckAllVisibleClickEvent = CustomEvent<{
   visibleElements: {element: HTMLElement; index: number}[];
@@ -92,6 +93,9 @@ export type ObcAckAllVisibleClickEvent = CustomEvent<{
  *   When hidden, the "ACK visible" button expands to fill the freed space.
  * @property showAlertListButton - If true, shows the "Alerts" navigation button in the action bar.
  *   When hidden, the "ACK visible" button expands to fill the freed space.
+ * @property softDismiss - Opt in to light dismiss. The panel moves to the browser's top layer, where a click outside, `Escape`, or another popover opening closes it. Leave it off to keep owning visibility yourself.
+ * @property open - Whether the panel is showing.
+ * @availableWhen open softDismiss==true
  * @slot - The alerts items as ObcAlertMenuItem
  * @slot empty-<tab>-title - Custom empty-state title for the selected tab (`<tab>` is one of `unacked`, `all`, `shelved`)
  * @slot empty-<tab>-description - Custom empty-state description for the selected tab (`<tab>` is one of `unacked`, `all`, `shelved`)
@@ -99,6 +103,7 @@ export type ObcAckAllVisibleClickEvent = CustomEvent<{
  * @fires {ObcAckAllVisibleClickEvent} ack-all-visible-click - Fired when the ack all visible button is clicked
  * @fires {CustomEvent} silence-click - Fired when the silence button is clicked
  * @fires {CustomEvent} go-to-alert-list-click - Fired when the go to alert list button is clicked
+ * @fires {CustomEvent<void>} close - Fired when the panel closed itself: a click outside, `Escape`, or another popover opening. `open` is already `false` by then.
  */
 @localized()
 /**
@@ -106,6 +111,12 @@ export type ObcAckAllVisibleClickEvent = CustomEvent<{
  */
 @customElement('obc-alert-menu')
 export class ObcAlertMenu extends LitElement {
+  @property({type: Boolean}) softDismiss = false;
+
+  @property({type: Boolean}) open = false;
+
+  protected readonly softDismissController = new PopoverController(this);
+
   @property({type: Boolean}) hasShelved: boolean = false;
 
   @property({type: Boolean}) canAckAll: boolean = false;

@@ -37,6 +37,7 @@ import {stopPropagation} from '../../internal/events.js';
 import '../../icons/icon-display-brilliance-iec.js';
 import '../../icons/icon-palette-day-night-iec.js';
 import {clamp} from '../../svghelpers/math.js';
+import {PopoverController} from '../../internal/popover-controller.js';
 
 export enum ObcPalette {
   night = 'night',
@@ -133,12 +134,16 @@ const PALETTE_TAB_ID = 'palette';
  * @property brightnessInputVariant - The variant of the brightness input.
  * @property showScreenControlLink - If true, displays the screen control link.
  * @property showAdditionalScreenControls - If true, displays the additional screen controls slot.
+ * @property softDismiss - Opt in to light dismiss. The panel moves to the browser's top layer, where a click outside, `Escape`, or another popover opening closes it. Leave it off to keep owning visibility yourself.
+ * @property open - Whether the panel is showing.
+ * @availableWhen open softDismiss==true
  * @slot additional-screen-controls - Consumer-defined controls, placed after the screen control link; rendered when `showAdditionalScreenControls` is true
  * @fires {ObcPaletteChangeEvent} palette-changed - When the palette is changed
  * @fires {ObcBrightnessChangeEvent} brightness-changed - When the brightness is changed
  * @fires {ObcLinkPaletteChangeEvent} link-palette-changed - When the link palette toggle is changed
  * @fires {ObcLinkBrightnessChangeEvent} link-brightness-changed - When the link brightness toggle is changed
  * @fires {CustomEvent} screen-control-link-clicked - When the screen control link is clicked
+ * @fires {CustomEvent<void>} close - Fired when the panel closed itself: a click outside, `Escape`, or another popover opening. `open` is already `false` by then.
  */
 @localized()
 /**
@@ -146,6 +151,12 @@ const PALETTE_TAB_ID = 'palette';
  */
 @customElement('obc-brilliance-menu')
 export class ObcBrillianceMenu extends LitElement {
+  @property({type: Boolean}) softDismiss = false;
+
+  @property({type: Boolean}) open = false;
+
+  protected readonly softDismissController = new PopoverController(this);
+
   @property({type: String}) palette: ObcPalette = ObcPalette.day;
 
   @property({type: Number}) brightness = 50;
