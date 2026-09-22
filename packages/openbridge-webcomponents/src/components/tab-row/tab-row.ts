@@ -232,13 +232,15 @@ export class ObcTabRow extends LitElement {
         @tab-click=${(e: Event) => this.handleTabClick(e, tab.id)}
         @tab-close=${(e: Event) => this.handleTabClose(e, tab.id)}
       >
-        ${tab.hasLeadingIcon !== false
-          ? html`
-              <slot name="tab-${tab.id}-icon" slot="leading-icon">
-                <obi-placeholder></obi-placeholder>
-              </slot>
-            `
-          : ''}
+        ${
+          tab.hasLeadingIcon !== false
+            ? html`
+                <slot name="tab-${tab.id}-icon" slot="leading-icon">
+                  <obi-placeholder></obi-placeholder>
+                </slot>
+              `
+            : ''
+        }
         <span slot="title">${tab.title}</span>
         ${badgeIconSlots.map(
           (slotName) => html`
@@ -259,18 +261,20 @@ export class ObcTabRow extends LitElement {
           (t) => t.id,
           (t, i) => this.renderTab(t, i)
         )}
-        ${this.hasAddNewTab
-          ? html`
-              <obc-icon-button
-                class="add-new-tab"
-                variant="flat"
-                @click=${this.handleAddNewTab}
-                aria-label="Add new tab"
-              >
-                <obi-up-iec></obi-up-iec>
-              </obc-icon-button>
-            `
-          : ''}
+        ${
+          this.hasAddNewTab
+            ? html`
+                <obc-icon-button
+                  class="add-new-tab"
+                  variant="flat"
+                  @click=${this.handleAddNewTab}
+                  aria-label="Add new tab"
+                >
+                  <obi-up-iec></obi-up-iec>
+                </obc-icon-button>
+              `
+            : ''
+        }
       </div>
     `;
   }

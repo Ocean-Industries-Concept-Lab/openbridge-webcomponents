@@ -226,9 +226,11 @@ export class ObcTreeNavigationItem extends LitElement {
     >
       ${hasVertical ? html`<div class="branch-vertical"></div>` : nothing}
       ${hasHorizontal ? html`<div class="branch-horizontal"></div>` : nothing}
-      ${type === TreeBranchType.corner
-        ? html`<div class="branch-elbow"></div>`
-        : nothing}
+      ${
+        type === TreeBranchType.corner
+          ? html`<div class="branch-elbow"></div>`
+          : nothing
+      }
     </div>`;
   }
 
@@ -268,43 +270,53 @@ export class ObcTreeNavigationItem extends LitElement {
           <div class="tree-node-row">
             ${this.branches.map((branch) => this.renderBranch(branch))}
             <div class="terminal">
-              ${this.isRoot || this.isBlankAncestry
-                ? nothing
-                : html`<div class="terminal-connector"></div>`}
-              ${!this.isRoot &&
-              !this.isBlankAncestry &&
-              this.expandable &&
-              this.expanded
-                ? html`<div class="terminal-dropdown"></div>`
-                : nothing}
-              ${this.expandable
-                ? html`<div class="chevron" aria-hidden="true">
-                    <obi-chevron-right-google></obi-chevron-right-google>
-                  </div>`
-                : nothing}
+              ${
+                this.isRoot || this.isBlankAncestry
+                  ? nothing
+                  : html`<div class="terminal-connector"></div>`
+              }
+              ${
+                !this.isRoot &&
+                !this.isBlankAncestry &&
+                this.expandable &&
+                this.expanded
+                  ? html`<div class="terminal-dropdown"></div>`
+                  : nothing
+              }
+              ${
+                this.expandable
+                  ? html`<div class="chevron" aria-hidden="true">
+                      <obi-chevron-right-google></obi-chevron-right-google>
+                    </div>`
+                  : nothing
+              }
               ${this.renderTerminalHeader()}
             </div>
           </div>
           <div class="label-container">
-            ${this.hasLeadingIcon
-              ? html`<div class="leading-icon">
-                  <slot name="icon"></slot>
-                </div>`
-              : nothing}
+            ${
+              this.hasLeadingIcon
+                ? html`<div class="leading-icon">
+                    <slot name="icon"></slot>
+                  </div>`
+                : nothing
+            }
             <span part="label" class="label">${this.label}</span>
           </div>
-          ${this.alertBadges.length > 0
-            ? html`<div class="alert-badges">
-                ${this.alertBadges.map(
-                  (badge) =>
-                    html`<obc-badge
-                      class="alert-badge"
-                      .type=${badge.type}
-                      .number=${badge.count}
-                    ></obc-badge>`
-                )}
-              </div>`
-            : nothing}
+          ${
+            this.alertBadges.length > 0
+              ? html`<div class="alert-badges">
+                  ${this.alertBadges.map(
+                    (badge) =>
+                      html`<obc-badge
+                        class="alert-badge"
+                        .type=${badge.type}
+                        .number=${badge.count}
+                      ></obc-badge>`
+                  )}
+                </div>`
+              : nothing
+          }
         </div>
       </div>
     `;

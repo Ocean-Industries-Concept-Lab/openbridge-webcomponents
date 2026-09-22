@@ -623,9 +623,11 @@ export class ObcSurgeSwayYaw extends LitElement {
       <div class="container">
         <obc-watch
           .arcFrame=${frame}
-          .watchCircleType=${this.isInputOutput
-            ? WatchCircleType.doubleThin
-            : WatchCircleType.single}
+          .watchCircleType=${
+            this.isInputOutput
+              ? WatchCircleType.doubleThin
+              : WatchCircleType.single
+          }
           .tickmarks=${shownTickmarks}
           .crosshairEnabled=${true}
           .state=${this.state}

@@ -342,9 +342,11 @@ export class ObcSplitButton extends LitElement {
           @click=${this.handlePrimaryClick}
           .fullWidth=${this.fullWidth}
         >
-          ${this.hasIcon
-            ? html`<slot name="icon" slot="leading-icon"></slot>`
-            : nothing}
+          ${
+            this.hasIcon
+              ? html`<slot name="icon" slot="leading-icon"></slot>`
+              : nothing
+          }
           ${this.label}
         </obc-button>
 
@@ -363,8 +365,9 @@ export class ObcSplitButton extends LitElement {
         </obc-icon-button>
 
         <!-- Context Menu -->
-        ${this.isDropdownOpen && this.options.length > 0
-          ? html`
+        ${
+          this.isDropdownOpen && this.options.length > 0
+            ? html`
             <obc-context-menu-input
               class="positioned-menu"
               .options=${this.options}
@@ -381,7 +384,8 @@ export class ObcSplitButton extends LitElement {
               @item-click=${this.handleMenuItemClick}
             /></obc-context-menu-input>
             `
-          : nothing}
+            : nothing
+        }
       </div>
     `;
   }

@@ -442,9 +442,11 @@ export class ObcAlertFrame extends LitElement {
     if (this.type === ObcAlertFrameType.LargeSideFlip) {
       return html`<div class="flap large">
         ${icon}
-        ${this.showIcon
-          ? html`<div class="icon"><slot name="icon"></slot></div>`
-          : nothing}
+        ${
+          this.showIcon
+            ? html`<div class="icon"><slot name="icon"></slot></div>`
+            : nothing
+        }
         <div class="mask up"></div>
         <div class="mask down"></div>
       </div>`;
@@ -454,14 +456,16 @@ export class ObcAlertFrame extends LitElement {
       this.type === ObcAlertFrameType.TopFlip
     ) {
       return html`<div
-        class="flap ${this.type === ObcAlertFrameType.BottomFlip
-          ? 'bottom'
-          : 'top'}"
+        class="flap ${
+          this.type === ObcAlertFrameType.BottomFlip ? 'bottom' : 'top'
+        }"
       >
         ${icon}
-        ${this.showIcon
-          ? html`<div class="icon"><slot name="icon"></slot></div>`
-          : nothing}
+        ${
+          this.showIcon
+            ? html`<div class="icon"><slot name="icon"></slot></div>`
+            : nothing
+        }
         <div class="label"><slot name="label"></slot></div>
         <div class="spacer"></div>
         <div class="timer"><slot name="timer"></slot></div>

@@ -164,8 +164,7 @@ export const SingleSeries: Story = {
   play: async ({canvasElement}) => {
     await document.fonts.ready;
     const chart = canvasElement.querySelector('obc-line-graph') as
-      | (HTMLElement & {chart?: {update(): void}})
-      | null;
+      (HTMLElement & {chart?: {update(): void}}) | null;
     chart?.chart?.update();
   },
   render: (_args) => html`
@@ -208,8 +207,7 @@ export const UnevenTimeIntervals: Story = {
   play: async ({canvasElement}) => {
     await document.fonts.ready;
     const chart = canvasElement.querySelector('obc-line-graph') as
-      | (HTMLElement & {chart?: {update(): void}})
-      | null;
+      (HTMLElement & {chart?: {update(): void}}) | null;
     chart?.chart?.update();
   },
   args: {
@@ -246,8 +244,7 @@ export const DateObjectsTimeAxis: Story = {
   play: async ({canvasElement}) => {
     await document.fonts.ready;
     const chart = canvasElement.querySelector('obc-line-graph') as
-      | (HTMLElement & {chart?: {update(): void}})
-      | null;
+      (HTMLElement & {chart?: {update(): void}}) | null;
     chart?.chart?.update();
   },
   args: {
@@ -285,8 +282,7 @@ export const NumberAxis: Story = {
   play: async ({canvasElement}) => {
     await document.fonts.ready;
     const chart = canvasElement.querySelector('obc-line-graph') as
-      | (HTMLElement & {chart?: {update(): void}})
-      | null;
+      (HTMLElement & {chart?: {update(): void}}) | null;
     chart?.chart?.update();
   },
   args: {
@@ -475,24 +471,28 @@ export const SingleSeriesExternalScales: Story = {
         .hasScale=${true}
         .showLabels=${_args.vScaleShowLabels}
         .hasBar=${_args.vScaleHasBar}
-        .fillMode=${_args.vScaleFillMode === 'fill'
-          ? FillMode.fill
-          : FillMode.tint}
+        .fillMode=${
+          _args.vScaleFillMode === 'fill' ? FillMode.fill : FillMode.tint
+        }
         .fillMin=${_args.vScaleFillMin}
         .fillMax=${_args.vScaleFillMax}
         .value=${_args.vScaleValue}
         .setpoint=${_args.vScaleSetpoint}
-        .advicePosition=${_args.vScaleAdvicePosition === 'inner'
-          ? AdvicePosition.inner
-          : _args.vScaleAdvicePosition === 'center'
-            ? AdvicePosition.center
-            : AdvicePosition.outer}
-        .advices=${_args.vScaleAdvices
-          ? [
-              {min: 3, max: 5, type: AdviceType.caution, hinted: true},
-              {min: 6, max: 7, type: AdviceType.advice, hinted: false},
-            ]
-          : []}
+        .advicePosition=${
+          _args.vScaleAdvicePosition === 'inner'
+            ? AdvicePosition.inner
+            : _args.vScaleAdvicePosition === 'center'
+              ? AdvicePosition.center
+              : AdvicePosition.outer
+        }
+        .advices=${
+          _args.vScaleAdvices
+            ? [
+                {min: 3, max: 5, type: AdviceType.caution, hinted: true},
+                {min: 6, max: 7, type: AdviceType.advice, hinted: false},
+              ]
+            : []
+        }
         .primaryTickmarkInterval=${1}
         .secondaryTickmarkInterval=${0.5}
         .tertiaryTickmarkInterval=${0.125}
@@ -507,24 +507,28 @@ export const SingleSeriesExternalScales: Story = {
         .hasScale=${true}
         .showLabels=${_args.hScaleShowLabels}
         .hasBar=${_args.hScaleHasBar}
-        .fillMode=${_args.hScaleFillMode === 'fill'
-          ? FillMode.fill
-          : FillMode.tint}
+        .fillMode=${
+          _args.hScaleFillMode === 'fill' ? FillMode.fill : FillMode.tint
+        }
         .fillMin=${_args.hScaleFillMin}
         .fillMax=${_args.hScaleFillMax}
         .value=${_args.hScaleValue}
         .setpoint=${_args.hScaleSetpoint}
-        .advicePosition=${_args.hScaleAdvicePosition === 'inner'
-          ? AdvicePosition.inner
-          : _args.hScaleAdvicePosition === 'center'
-            ? AdvicePosition.center
-            : AdvicePosition.outer}
-        .advices=${_args.hScaleAdvices
-          ? [
-              {min: 3, max: 5, type: AdviceType.caution, hinted: true},
-              {min: 8, max: 10, type: AdviceType.advice, hinted: false},
-            ]
-          : []}
+        .advicePosition=${
+          _args.hScaleAdvicePosition === 'inner'
+            ? AdvicePosition.inner
+            : _args.hScaleAdvicePosition === 'center'
+              ? AdvicePosition.center
+              : AdvicePosition.outer
+        }
+        .advices=${
+          _args.hScaleAdvices
+            ? [
+                {min: 3, max: 5, type: AdviceType.caution, hinted: true},
+                {min: 8, max: 10, type: AdviceType.advice, hinted: false},
+              ]
+            : []
+        }
         .primaryTickmarkInterval=${2}
         .secondaryTickmarkInterval=${1}
         .tertiaryTickmarkInterval=${0.25}

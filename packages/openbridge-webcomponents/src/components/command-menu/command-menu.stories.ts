@@ -49,9 +49,11 @@ class CommandMenuStoryWrapper extends LitElement {
         @change=${this.onCommandChange}
       >
         <div slot="command-icon">
-          ${this.inCommand
-            ? html`<obi-joystick></obi-joystick>`
-            : html`<obi-command-no></obi-command-no>`}
+          ${
+            this.inCommand
+              ? html`<obi-joystick></obi-joystick>`
+              : html`<obi-command-no></obi-command-no>`
+          }
         </div>
         <div slot="command-status">
           ${this.inCommand ? 'Joystick' : 'NO CMD'}

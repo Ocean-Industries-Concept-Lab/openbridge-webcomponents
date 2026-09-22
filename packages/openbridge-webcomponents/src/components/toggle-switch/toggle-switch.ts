@@ -188,14 +188,20 @@ export class ObcToggleSwitch extends LitElement {
         })}
       >
         <div class="icon-label-container">
-          ${this.hasIcon
-            ? html`<div class="icon-container"><slot name="icon"></slot></div>`
-            : nothing}
+          ${
+            this.hasIcon
+              ? html`<div class="icon-container">
+                  <slot name="icon"></slot>
+                </div>`
+              : nothing
+          }
           <div class="label-container">
             <span class="label">${this.label}</span>
-            ${this.hasDescription
-              ? html`<span class="description">${this.description}</span>`
-              : nothing}
+            ${
+              this.hasDescription
+                ? html`<span class="description">${this.description}</span>`
+                : nothing
+            }
           </div>
         </div>
         <div class="switch">
@@ -210,9 +216,11 @@ export class ObcToggleSwitch extends LitElement {
             />
           </div>
         </div>
-        ${this.hasBottomDivider
-          ? html`<div class="bottom-divider"></div>`
-          : nothing}
+        ${
+          this.hasBottomDivider
+            ? html`<div class="bottom-divider"></div>`
+            : nothing
+        }
       </label>
     `;
   }

@@ -537,9 +537,9 @@ export class ObcTextareaField extends LitElement {
     return html`
       <div class="title-text-container">
         <p id="title-text" class="title-text">${this.label}</p>
-        ${this.required
-          ? html`<div class="required-indicator"></div>`
-          : nothing}
+        ${
+          this.required ? html`<div class="required-indicator"></div>` : nothing
+        }
       </div>
     `;
   }
@@ -640,81 +640,89 @@ export class ObcTextareaField extends LitElement {
 
     return html`
       <div class="tool-bar-container">
-        ${this.recording
-          ? this.renderRecordingToolbar()
-          : this.renderNormalToolbar()}
+        ${
+          this.recording
+            ? this.renderRecordingToolbar()
+            : this.renderNormalToolbar()
+        }
       </div>
     `;
   }
 
   private renderNormalToolbar() {
     return html`
-      ${this.showToolbar
-        ? html`
-            <div class="tool-container">
-              <div class="divider"></div>
-              <obc-icon-button
-                variant="flat"
-                @click=${this.handleAddClick}
-                ?disabled=${this.disabled}
-                aria-label="Add content"
-              >
-                <obi-up-iec></obi-up-iec>
-              </obc-icon-button>
-              <obc-icon-button
-                variant="flat"
-                @click=${this.handleScreenshotClick}
-                ?disabled=${this.disabled}
-                aria-label="Take screenshot"
-              >
-                <obi-screen-shot></obi-screen-shot>
-              </obc-icon-button>
-              <obc-icon-button
-                variant="flat"
-                @click=${this.handleImageClick}
-                ?disabled=${this.disabled}
-                aria-label="Add image"
-              >
-                <obi-image></obi-image>
-              </obc-icon-button>
-              <obc-icon-button
-                variant="flat"
-                @click=${this.handleAttachmentClick}
-                ?disabled=${this.disabled}
-                aria-label="Add attachment"
-              >
-                <obi-attachment></obi-attachment>
-              </obc-icon-button>
-            </div>
-          `
-        : nothing}
+      ${
+        this.showToolbar
+          ? html`
+              <div class="tool-container">
+                <div class="divider"></div>
+                <obc-icon-button
+                  variant="flat"
+                  @click=${this.handleAddClick}
+                  ?disabled=${this.disabled}
+                  aria-label="Add content"
+                >
+                  <obi-up-iec></obi-up-iec>
+                </obc-icon-button>
+                <obc-icon-button
+                  variant="flat"
+                  @click=${this.handleScreenshotClick}
+                  ?disabled=${this.disabled}
+                  aria-label="Take screenshot"
+                >
+                  <obi-screen-shot></obi-screen-shot>
+                </obc-icon-button>
+                <obc-icon-button
+                  variant="flat"
+                  @click=${this.handleImageClick}
+                  ?disabled=${this.disabled}
+                  aria-label="Add image"
+                >
+                  <obi-image></obi-image>
+                </obc-icon-button>
+                <obc-icon-button
+                  variant="flat"
+                  @click=${this.handleAttachmentClick}
+                  ?disabled=${this.disabled}
+                  aria-label="Add attachment"
+                >
+                  <obi-attachment></obi-attachment>
+                </obc-icon-button>
+              </div>
+            `
+          : nothing
+      }
 
       <div class="action-container ${this.isEmpty ? 'inactive' : ''}">
-        ${this.showVoiceRecording
-          ? html`
-              <obc-icon-button
-                variant="normal"
-                @click=${this.handleVoiceRecordingStart}
-                ?disabled=${this.disabled}
-                aria-label="Start voice recording"
-              >
-                <obi-com-microphone></obi-com-microphone>
-              </obc-icon-button>
-            `
-          : nothing}
-        ${this.isMessageType
-          ? html`
-              <obc-icon-button
-                class="send-button"
-                variant=${this.canSend && !this.disabled ? 'raised' : 'normal'}
-                @click=${this.handleSendClick}
-                ?disabled=${this.disabled || !this.canSend}
-                aria-label="Send message"
-              >
-                <obi-arrow-up-google></obi-arrow-up-google>
-              </obc-icon-button>
-            `
-          : nothing}
+        ${
+          this.showVoiceRecording
+            ? html`
+                <obc-icon-button
+                  variant="normal"
+                  @click=${this.handleVoiceRecordingStart}
+                  ?disabled=${this.disabled}
+                  aria-label="Start voice recording"
+                >
+                  <obi-com-microphone></obi-com-microphone>
+                </obc-icon-button>
+              `
+            : nothing
+        }
+        ${
+          this.isMessageType
+            ? html`
+                <obc-icon-button
+                  class="send-button"
+                  variant=${this.canSend && !this.disabled ? 'raised' : 'normal'}
+                  @click=${this.handleSendClick}
+                  ?disabled=${this.disabled || !this.canSend}
+                  aria-label="Send message"
+                >
+                  <obi-arrow-up-google></obi-arrow-up-google>
+                </obc-icon-button>
+              `
+            : nothing
+        }
       </div>
     `;
   }
@@ -730,17 +738,21 @@ export class ObcTextareaField extends LitElement {
     return html`
       <obc-icon-button
         variant="normal"
-        @click=${this.isPausedOrPlayback
-          ? this.handleVoiceRecordingResume
-          : this.handleVoiceRecordingPause}
+        @click=${
+          this.isPausedOrPlayback
+            ? this.handleVoiceRecordingResume
+            : this.handleVoiceRecordingPause
+        }
         ?disabled=${this.disabled}
-        aria-label=${this.isPausedOrPlayback
-          ? 'Resume recording'
-          : 'Pause recording'}
+        aria-label=${
+          this.isPausedOrPlayback ? 'Resume recording' : 'Pause recording'
+        }
       >
-        ${this.isPausedOrPlayback
-          ? html`<obi-com-microphone></obi-com-microphone>`
-          : html`<obi-media-pause></obi-media-pause>`}
+        ${
+          this.isPausedOrPlayback
+            ? html`<obi-com-microphone></obi-com-microphone>`
+            : html`<obi-media-pause></obi-media-pause>`
+        }
       </obc-icon-button>
     `;
   }

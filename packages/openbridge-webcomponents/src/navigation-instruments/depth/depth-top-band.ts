@@ -184,9 +184,11 @@ export class ObcDepthTopBand extends LitElement {
         preserveAspectRatio="none"
         style="--scale: ${scale}"
       >
-        ${this.type === DepthTopBandType.vessel
-          ? this.renderVessel(height)
-          : this.renderLabels(height)}
+        ${
+          this.type === DepthTopBandType.vessel
+            ? this.renderVessel(height)
+            : this.renderLabels(height)
+        }
       </svg>
     `;
   }

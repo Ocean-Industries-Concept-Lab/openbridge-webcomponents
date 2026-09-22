@@ -150,20 +150,22 @@ export class ObcNotificationFloatingItem extends LitElement {
             new CustomEvent('dismiss-click', {detail: e.detail})
           )}
       >
-        ${isApplication
-          ? html`
-              <slot name="primary-icon" slot="primary-icon"></slot>
-              <obi-notification-filled
-                slot="secondary-icon"
-                style="color: var(--notification-enabled-background-color)"
-              ></obi-notification-filled>
-            `
-          : html`
-              <obi-notification-filled
-                slot="primary-icon"
-                style="color: var(--notification-enabled-background-color)"
-              ></obi-notification-filled>
-            `}
+        ${
+          isApplication
+            ? html`
+                <slot name="primary-icon" slot="primary-icon"></slot>
+                <obi-notification-filled
+                  slot="secondary-icon"
+                  style="color: var(--notification-enabled-background-color)"
+                ></obi-notification-filled>
+              `
+            : html`
+                <obi-notification-filled
+                  slot="primary-icon"
+                  style="color: var(--notification-enabled-background-color)"
+                ></obi-notification-filled>
+              `
+        }
         <slot name="title" slot="title"></slot>
         <slot name="description" slot="description"></slot>
         <slot name="time" slot="time"></slot>

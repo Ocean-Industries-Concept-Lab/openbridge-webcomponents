@@ -48,16 +48,20 @@ const meta: Meta<typeof ObcRichButton> = {
       .fullWidth=${args.fullWidth}
       .fullHeight=${args.fullHeight}
     >
-      ${args.hasLeadingIcon
-        ? html`<div slot="leading-icon">
-            <obi-placeholder></obi-placeholder>
-          </div>`
-        : ''}
-      ${args.hasTrailingIcon
-        ? html`<div slot="trailing-icon">
-            <obi-placeholder></obi-placeholder>
-          </div>`
-        : ''}
+      ${
+        args.hasLeadingIcon
+          ? html`<div slot="leading-icon">
+              <obi-placeholder></obi-placeholder>
+            </div>`
+          : ''
+      }
+      ${
+        args.hasTrailingIcon
+          ? html`<div slot="trailing-icon">
+              <obi-placeholder></obi-placeholder>
+            </div>`
+          : ''
+      }
     </obc-rich-button>
   `,
 } satisfies Meta<ObcRichButton>;

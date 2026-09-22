@@ -55,16 +55,20 @@ const meta: Meta<typeof ObcSlider> = {
       .variant=${args.variant}
       .disabled=${args.disabled}
     >
-      ${args.iconLeft
-        ? iconIdToIconHtml(args.iconLeft as unknown as string, {
-            slot: 'icon-left',
-          })
-        : ''}
-      ${args.iconRight
-        ? iconIdToIconHtml(args.iconRight as unknown as string, {
-            slot: 'icon-right',
-          })
-        : ''}
+      ${
+        args.iconLeft
+          ? iconIdToIconHtml(args.iconLeft as unknown as string, {
+              slot: 'icon-left',
+            })
+          : ''
+      }
+      ${
+        args.iconRight
+          ? iconIdToIconHtml(args.iconRight as unknown as string, {
+              slot: 'icon-right',
+            })
+          : ''
+      }
     </obc-slider>`;
   },
 } satisfies Meta<ObcSlider>;

@@ -401,15 +401,17 @@ export class ObcCompass extends LitElement {
           .setpointOverride=${this.headingSetpointOverride}
           .priority=${this.priority}
           .animateSetpoint=${this.animateSetpoint}
-          .vessels=${this.hasCenterReadouts
-            ? []
-            : [
-                {
-                  size: VesselImageSize.medium,
-                  vesselImage: this.vesselImage,
-                  transform: `rotate(${this.heading}deg)`,
-                },
-              ]}
+          .vessels=${
+            this.hasCenterReadouts
+              ? []
+              : [
+                  {
+                    size: VesselImageSize.medium,
+                    vesselImage: this.vesselImage,
+                    transform: `rotate(${this.heading}deg)`,
+                  },
+                ]
+          }
           .windKnots=${this.currentWindSpeedKnots}
           .windFromDirectionDeg=${this.windFromDirection}
           .windColor=${this.colorFor(CompassPriorityElement.wind)}
@@ -420,10 +422,12 @@ export class ObcCompass extends LitElement {
           .rotType=${this.rotType}
           .rotPosition=${this.rotPosition}
           .rotStartAngle=${this.heading + (this.getRotation() ?? 0)}
-          .rotEndAngle=${this.heading +
-          (this._effectiveRotDegPerMin / (this.rotMaxValue || 1)) *
-            this.rotArcExtent +
-          (this.getRotation() ?? 0)}
+          .rotEndAngle=${
+            this.heading +
+            (this._effectiveRotDegPerMin / (this.rotMaxValue || 1)) *
+              this.rotArcExtent +
+            (this.getRotation() ?? 0)
+          }
           .rotPriority=${this.priorityFor(CompassPriorityElement.rot)}
           .rotPortStarboard=${this.rotPortStarboard}
           .rotAtZeroDeadband=${this.rotAtZeroDeadband}
@@ -444,18 +448,20 @@ export class ObcCompass extends LitElement {
             this.priorityFor(CompassPriorityElement.cog)
           )}
         </svg>
-        ${this.hasCenterReadouts
-          ? html`<div class="center-readout-overlay">
-              ${renderCenterReadouts(
-                resolveCompassCenterReadouts(this.centerReadouts, {
-                  heading: this.heading,
-                  courseOverGround: this.courseOverGround,
-                  rateOfTurnDegreesPerMinute: this.rateOfTurnDegreesPerMinute,
-                  priorityFor: (source) => this.readoutPriorityFor(source),
-                })
-              )}
-            </div>`
-          : nothing}
+        ${
+          this.hasCenterReadouts
+            ? html`<div class="center-readout-overlay">
+                ${renderCenterReadouts(
+                  resolveCompassCenterReadouts(this.centerReadouts, {
+                    heading: this.heading,
+                    courseOverGround: this.courseOverGround,
+                    rateOfTurnDegreesPerMinute: this.rateOfTurnDegreesPerMinute,
+                    priorityFor: (source) => this.readoutPriorityFor(source),
+                  })
+                )}
+              </div>`
+            : nothing
+        }
       </div>
     `;
   }

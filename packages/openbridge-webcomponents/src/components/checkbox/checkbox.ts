@@ -226,25 +226,27 @@ export class ObcCheckbox extends LitElement {
       >
         <div class="checkbox-container">
           <div class="checkbox-box">
-            ${this.state === CheckboxState.loading
-              ? html`
-                  <svg
-                    class="checkbox-loading-spinner type-indeterminate size-small style-regular"
-                    viewBox="0 0 16 16"
-                    aria-hidden="true"
-                  >
-                    <circle cx="8" cy="8" r="6"></circle>
-                  </svg>
-                `
-              : this.status === 'checked'
-                ? html`<obi-check-google
-                    class="checkbox-icon"
-                  ></obi-check-google>`
-                : this.status === 'mixed'
-                  ? html`<obi-check-mixed
+            ${
+              this.state === CheckboxState.loading
+                ? html`
+                    <svg
+                      class="checkbox-loading-spinner type-indeterminate size-small style-regular"
+                      viewBox="0 0 16 16"
+                      aria-hidden="true"
+                    >
+                      <circle cx="8" cy="8" r="6"></circle>
+                    </svg>
+                  `
+                : this.status === 'checked'
+                  ? html`<obi-check-google
                       class="checkbox-icon"
-                    ></obi-check-mixed>`
-                  : html`<span class="checkbox-icon"></span>`}
+                    ></obi-check-google>`
+                  : this.status === 'mixed'
+                    ? html`<obi-check-mixed
+                        class="checkbox-icon"
+                      ></obi-check-mixed>`
+                    : html`<span class="checkbox-icon"></span>`
+            }
           </div>
         </div>
       </div>

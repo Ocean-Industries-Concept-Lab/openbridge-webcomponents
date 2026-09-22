@@ -780,16 +780,20 @@ export class ObcGaugeProportional extends SetpointMixin(LitElement) {
     }
     return html`
       <div class="icon-anchor">${this.icon}</div>
-      ${this.large && this.hasReadout
-        ? html`
-            <div class="readout-row">
-              ${renderCenterReadouts(entries, CenterReadoutArrangement.row)}
-            </div>
-          `
-        : nothing}
-      ${this.large && this.name
-        ? html`<div class="gauge-name">${this.name}</div>`
-        : nothing}
+      ${
+        this.large && this.hasReadout
+          ? html`
+              <div class="readout-row">
+                ${renderCenterReadouts(entries, CenterReadoutArrangement.row)}
+              </div>
+            `
+          : nothing
+      }
+      ${
+        this.large && this.name
+          ? html`<div class="gauge-name">${this.name}</div>`
+          : nothing
+      }
     `;
   }
 
@@ -869,17 +873,19 @@ export class ObcGaugeProportional extends SetpointMixin(LitElement) {
         : nothing;
     const face = html`
       <div class="container" style=${faceStyle}>
-        ${this.isOff
-          ? html`<svg class="layer" viewBox=${frame.viewBox}>
-              <circle
-                r=${OFF_DISC_RADIUS}
-                fill="var(--instrument-frame-secondary-color)"
-                stroke="var(--instrument-frame-tertiary-color)"
-                stroke-width="1"
-                vector-effect="non-scaling-stroke"
-              ></circle>
-            </svg>`
-          : nothing}
+        ${
+          this.isOff
+            ? html`<svg class="layer" viewBox=${frame.viewBox}>
+                <circle
+                  r=${OFF_DISC_RADIUS}
+                  fill="var(--instrument-frame-secondary-color)"
+                  stroke="var(--instrument-frame-tertiary-color)"
+                  stroke-width="1"
+                  vector-effect="non-scaling-stroke"
+                ></circle>
+              </svg>`
+            : nothing
+        }
         <obc-watch
           class="layer"
           .state=${effectiveState}
@@ -922,25 +928,30 @@ export class ObcGaugeProportional extends SetpointMixin(LitElement) {
         })}
         style=${anchors}
       >
-        ${this.large
-          ? face
-          : html`
-              <div class="compact-column">
-                ${face}
-                ${this.hasLabelStack
-                  ? html`
-                      <obc-automation-button-readout-stack
-                        class="label-stack"
-                        .readouts=${this.labelStackReadouts}
-                        .tag=${this.tag || null}
-                        .idTagOrientation=${IdTagOrientation.bottom}
-                        >${this
-                          .secondaryStackIcon}</obc-automation-button-readout-stack
-                      >
-                    `
-                  : nothing}
-              </div>
-            `}
+        ${
+          this.large
+            ? face
+            : html`
+                <div class="compact-column">
+                  ${face}
+                  ${
+                    this.hasLabelStack
+                      ? html`
+                          <obc-automation-button-readout-stack
+                            class="label-stack"
+                            .readouts=${this.labelStackReadouts}
+                            .tag=${this.tag || null}
+                            .idTagOrientation=${IdTagOrientation.bottom}
+                            >${
+                              this.secondaryStackIcon
+                            }</obc-automation-button-readout-stack
+                          >
+                        `
+                      : nothing
+                  }
+                </div>
+              `
+        }
       </div>
     `;
   }

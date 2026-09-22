@@ -116,13 +116,15 @@ const meta: Meta<typeof ObcNumberInputField> = {
           ?hasLeadingIcon=${args.hasLeadingIcon}
           .helperText=${args.helperText ?? ''}
           ?hasHelperIcon=${args.hasHelperIcon}
-          .helperPlacement=${args.helperPlacement ??
-          ObcNumberInputFieldPlacement.Left}
+          .helperPlacement=${
+            args.helperPlacement ?? ObcNumberInputFieldPlacement.Left
+          }
           .label=${args.label ?? ''}
           ?required=${args.required}
           ?hasLabelIcon=${args.hasLabelIcon}
-          .labelPlacement=${args.labelPlacement ??
-          ObcNumberInputFieldPlacement.Left}
+          .labelPlacement=${
+            args.labelPlacement ?? ObcNumberInputFieldPlacement.Left
+          }
           .decimalSeparator=${args.decimalSeparator ?? '.'}
           .groupSeparator=${args.groupSeparator ?? ','}
           .minFractionDigits=${args.minFractionDigits ?? 0}
@@ -130,15 +132,21 @@ const meta: Meta<typeof ObcNumberInputField> = {
           @input=${console.log}
           @change=${console.log}
         >
-          ${args.hasLeadingIcon
-            ? html`<obi-ship slot="leading-icon"></obi-ship>`
-            : ''}
-          ${args.hasLabelIcon
-            ? html`<obi-placeholder slot="label-icon"></obi-placeholder>`
-            : ''}
-          ${args.hasHelperIcon
-            ? html`<obi-placeholder slot="helper-icon"></obi-placeholder>`
-            : ''}
+          ${
+            args.hasLeadingIcon
+              ? html`<obi-ship slot="leading-icon"></obi-ship>`
+              : ''
+          }
+          ${
+            args.hasLabelIcon
+              ? html`<obi-placeholder slot="label-icon"></obi-placeholder>`
+              : ''
+          }
+          ${
+            args.hasHelperIcon
+              ? html`<obi-placeholder slot="helper-icon"></obi-placeholder>`
+              : ''
+          }
         </obc-number-input-field>
       </div>
     `;

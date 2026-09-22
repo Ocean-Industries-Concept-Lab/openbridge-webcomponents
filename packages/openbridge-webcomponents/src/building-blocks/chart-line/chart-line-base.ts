@@ -2304,9 +2304,7 @@ export class ObcChartLineBase extends LitElement {
     chart.data.datasets.forEach((ds, _idx) => {
       const dataset = ds as ChartDataset<'line'> & {
         fill?:
-          | boolean
-          | number
-          | {target: number; above: string; below: string};
+          boolean | number | {target: number; above: string; below: string};
         yAxisID?: string;
       };
 

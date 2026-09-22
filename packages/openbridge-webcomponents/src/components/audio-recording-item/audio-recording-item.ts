@@ -258,26 +258,32 @@ export class ObcAudioRecordingItem extends LitElement {
         })}
       >
         <div class="recording-container">
-          ${isPlayback
-            ? html`
-                <obc-icon-button
-                  class="status-toggle-button"
-                  variant="normal"
-                  cornerLeft
-                  @click=${this.handleStatusToggle}
-                  aria-label=${this.isPlaying ? 'Pause' : 'Play'}
-                >
-                  ${this.isPlaying
-                    ? html`<obi-media-pause></obi-media-pause>`
-                    : html`<obi-media-play></obi-media-play>`}
-                </obc-icon-button>
-              `
-            : nothing}
-          ${isPlayback
-            ? this.renderPlaybackSlider()
-            : html`<div class="audio-recording-container">
-                ${this.renderWaveform()}
-              </div>`}
+          ${
+            isPlayback
+              ? html`
+                  <obc-icon-button
+                    class="status-toggle-button"
+                    variant="normal"
+                    cornerLeft
+                    @click=${this.handleStatusToggle}
+                    aria-label=${this.isPlaying ? 'Pause' : 'Play'}
+                  >
+                    ${
+                      this.isPlaying
+                        ? html`<obi-media-pause></obi-media-pause>`
+                        : html`<obi-media-play></obi-media-play>`
+                    }
+                  </obc-icon-button>
+                `
+              : nothing
+          }
+          ${
+            isPlayback
+              ? this.renderPlaybackSlider()
+              : html`<div class="audio-recording-container">
+                  ${this.renderWaveform()}
+                </div>`
+          }
           <div class="duration-container">
             <span class="duration-label"
               >${this.formatDuration(this.duration)}</span

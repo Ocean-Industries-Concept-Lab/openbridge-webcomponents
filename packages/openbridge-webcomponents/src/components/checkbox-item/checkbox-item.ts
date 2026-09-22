@@ -190,13 +190,15 @@ export class ObcCheckboxItem extends LitElement {
       @click=${this.handleChevronClick}
     >
       <span class="chevron-visible">
-        ${this.expanded
-          ? html`<obi-chevron-down-google
-              class="chevron-icon"
-            ></obi-chevron-down-google>`
-          : html`<obi-chevron-right-google
-              class="chevron-icon"
-            ></obi-chevron-right-google>`}
+        ${
+          this.expanded
+            ? html`<obi-chevron-down-google
+                class="chevron-icon"
+              ></obi-chevron-down-google>`
+            : html`<obi-chevron-right-google
+                class="chevron-icon"
+              ></obi-chevron-right-google>`
+        }
       </span>
     </button>`;
   }
@@ -223,16 +225,20 @@ export class ObcCheckboxItem extends LitElement {
         })}
         @click=${this.handleItemClick}
       >
-        ${depth > 0
-          ? html`<div
-              class="nested-spacer"
-              aria-hidden="true"
-              style=${styleMap({'--checkbox-item-depth': String(depth)})}
-            ></div>`
-          : nothing}
-        ${hasChevronSlot
-          ? html`<div class="chevron-container">${this.renderChevron()}</div>`
-          : nothing}
+        ${
+          depth > 0
+            ? html`<div
+                class="nested-spacer"
+                aria-hidden="true"
+                style=${styleMap({'--checkbox-item-depth': String(depth)})}
+              ></div>`
+            : nothing
+        }
+        ${
+          hasChevronSlot
+            ? html`<div class="chevron-container">${this.renderChevron()}</div>`
+            : nothing
+        }
         <div class="content-container">
           <obc-checkbox
             .status=${this.status}
@@ -245,11 +251,13 @@ export class ObcCheckboxItem extends LitElement {
           ></obc-checkbox>
           <div class="checkbox-label-container">
             <span class="checkbox-label">${this.label}</span>
-            ${this.description
-              ? html`<span class="checkbox-description"
-                  >${this.description}</span
-                >`
-              : nothing}
+            ${
+              this.description
+                ? html`<span class="checkbox-description"
+                    >${this.description}</span
+                  >`
+                : nothing
+            }
           </div>
         </div>
       </div>

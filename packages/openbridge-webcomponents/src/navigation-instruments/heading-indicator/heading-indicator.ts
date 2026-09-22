@@ -228,8 +228,9 @@ export class ObcHeadingIndicator extends LitElement {
           />
         </svg>
         <g
-          transform="rotate(${this
-            .normalizedAngle}, ${arrowCenterX}, ${arrowCenterY})"
+          transform="rotate(${
+            this.normalizedAngle
+          }, ${arrowCenterX}, ${arrowCenterY})"
         >
           <svg
             x=${arrowX}

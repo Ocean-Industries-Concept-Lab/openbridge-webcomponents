@@ -295,26 +295,34 @@ export class ObcAbstractSpecialtyTank extends LitElement {
     const badgesCell = html`
       <div class="badges" ?hidden=${badgesHidden}>
         <slot name="badges" @slotchange=${this._onBadgesSlotChange}>
-          ${controlBadge
-            ? html`<obc-automation-badge
-                .type=${controlBadge}
-              ></obc-automation-badge>`
-            : nothing}
-          ${alertBadge
-            ? html`<obc-automation-badge
-                .type=${alertBadge}
-              ></obc-automation-badge>`
-            : nothing}
-          ${interlockBadge
-            ? html`<obc-automation-badge
-                .type=${interlockBadge}
-              ></obc-automation-badge>`
-            : nothing}
-          ${commandLockedBadge
-            ? html`<obc-automation-badge
-                .type=${commandLockedBadge}
-              ></obc-automation-badge>`
-            : nothing}
+          ${
+            controlBadge
+              ? html`<obc-automation-badge
+                  .type=${controlBadge}
+                ></obc-automation-badge>`
+              : nothing
+          }
+          ${
+            alertBadge
+              ? html`<obc-automation-badge
+                  .type=${alertBadge}
+                ></obc-automation-badge>`
+              : nothing
+          }
+          ${
+            interlockBadge
+              ? html`<obc-automation-badge
+                  .type=${interlockBadge}
+                ></obc-automation-badge>`
+              : nothing
+          }
+          ${
+            commandLockedBadge
+              ? html`<obc-automation-badge
+                  .type=${commandLockedBadge}
+                ></obc-automation-badge>`
+              : nothing
+          }
         </slot>
       </div>
     `;
@@ -343,9 +351,11 @@ export class ObcAbstractSpecialtyTank extends LitElement {
         <div class="middle">
           <div class="content">
             ${this.static ? nothing : this.renderGraphic()}
-            ${this.showIcon
-              ? html`<div class="icon-frame">${this.equipmentIcon}</div>`
-              : nothing}
+            ${
+              this.showIcon
+                ? html`<div class="icon-frame">${this.equipmentIcon}</div>`
+                : nothing
+            }
           </div>
         </div>
         ${cap('end')}

@@ -89,17 +89,17 @@ export class ObcCornerLine extends LitElement {
             fill="var(${color.inner})"
           />
           <path
-            d="M ${12 +
-            0.5 +
-            width / 2} 24 v -4 a ${r1} ${r1} 0 0 1 ${r1} -${r1} h 4"
+            d="M ${
+              12 + 0.5 + width / 2
+            } 24 v -4 a ${r1} ${r1} 0 0 1 ${r1} -${r1} h 4"
             stroke-width="1"
             stroke="var(${color.outer})"
             fill="none"
           />
           <path
-            d="M ${12 -
-            0.5 -
-            width / 2} 24 v -6 a ${r2} ${r2} 0 0 1 ${r2} -${r2} h 6"
+            d="M ${
+              12 - 0.5 - width / 2
+            } 24 v -6 a ${r2} ${r2} 0 0 1 ${r2} -${r2} h 6"
             stroke-width="1"
             stroke="var(${color.outer})"
             fill="none"
@@ -123,17 +123,17 @@ export class ObcCornerLine extends LitElement {
             fill="none"
           />
           <path
-            d="M ${12 +
-            0.5 +
-            width / 2} 24 v -6 a ${r1} ${r1} 0 0 1 ${r1} -${r1} h 6"
+            d="M ${
+              12 + 0.5 + width / 2
+            } 24 v -6 a ${r1} ${r1} 0 0 1 ${r1} -${r1} h 6"
             stroke-width="1"
             stroke="var(${color.outer})"
             fill="none"
           />
           <path
-            d="M ${12 -
-            0.5 -
-            width / 2} 24 v -6 a ${r2} ${r2} 0 0 1 ${r2} -${r2} h 6"
+            d="M ${
+              12 - 0.5 - width / 2
+            } 24 v -6 a ${r2} ${r2} 0 0 1 ${r2} -${r2} h 6"
             stroke-width="1"
             stroke="var(${color.outer})"
             fill="none"

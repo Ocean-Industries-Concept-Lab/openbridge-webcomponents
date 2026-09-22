@@ -184,9 +184,11 @@ export class ObcFormItem extends LitElement {
     return html`
       <div class="action" part="action">
         <obc-checkbox
-          .status=${this.actionChecked
-            ? CheckboxStatus.checked
-            : CheckboxStatus.unchecked}
+          .status=${
+            this.actionChecked
+              ? CheckboxStatus.checked
+              : CheckboxStatus.unchecked
+          }
           .disabled=${this.actionDisabled}
           aria-label=${ariaLabel}
           @change=${this.handleActionChange}
@@ -271,25 +273,29 @@ export class ObcFormItem extends LitElement {
     return html`
       <div class=${classMap(wrapperClassMap)} part="wrapper">
         <div class="content-container" part="content-container">
-          ${resolvedHasShader
-            ? html`
-                <div class="shader-container" part="shader-container">
-                  <div class="shader" part="shader"></div>
-                  <div class="divider" part="divider"></div>
-                </div>
-              `
-            : nothing}
+          ${
+            resolvedHasShader
+              ? html`
+                  <div class="shader-container" part="shader-container">
+                    <div class="shader" part="shader"></div>
+                    <div class="divider" part="divider"></div>
+                  </div>
+                `
+              : nothing
+          }
           ${this.renderLeading()}
           <div class="text" part="text">
             <slot></slot>
           </div>
           ${this.renderTrailing()}
         </div>
-        ${this.isActionType && this.hasError && this.errorText.trim() !== ''
-          ? html`<div class="error-text" part="error-text">
-              ${this.errorText.trim()}
-            </div>`
-          : nothing}
+        ${
+          this.isActionType && this.hasError && this.errorText.trim() !== ''
+            ? html`<div class="error-text" part="error-text">
+                ${this.errorText.trim()}
+              </div>`
+            : nothing
+        }
       </div>
     `;
   }

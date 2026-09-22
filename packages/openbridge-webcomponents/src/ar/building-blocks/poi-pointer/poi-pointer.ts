@@ -368,12 +368,10 @@ export class ObcPoiPointer extends LitElement {
   }
 
   private renderCameraSelectionFrame() {
-    if (
-      !(
-        this.type === ObcPoiPointerType.Camera &&
-        this.state === ObcPoiPointerState.Selected
-      )
-    ) {
+    if (!(
+      this.type === ObcPoiPointerType.Camera &&
+      this.state === ObcPoiPointerState.Selected
+    )) {
       return nothing;
     }
 
@@ -384,10 +382,12 @@ export class ObcPoiPointer extends LitElement {
           .type=${ObcPoiSelectionFrameType.Button}
           .state=${ObcPoiSelectionFrameState.Regular}
           .customMode=${true}
-          .boxWidth=${CAMERA_SELECTION_FRAME_BOX_WIDTH_PX +
-          this.filteredBoxWidth}
-          .boxHeight=${CAMERA_SELECTION_FRAME_BOX_HEIGHT_PX +
-          this.filteredBoxHeight}
+          .boxWidth=${
+            CAMERA_SELECTION_FRAME_BOX_WIDTH_PX + this.filteredBoxWidth
+          }
+          .boxHeight=${
+            CAMERA_SELECTION_FRAME_BOX_HEIGHT_PX + this.filteredBoxHeight
+          }
         ></obc-poi-selection-frame>
       </div>
     `;

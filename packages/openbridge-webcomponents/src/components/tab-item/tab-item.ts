@@ -285,9 +285,11 @@ export class ObcTabItem extends LitElement {
         .showNumber=${badge.count !== undefined}
         .showIcon=${badge.showIcon ?? false}
       >
-        ${badge.iconSlotName
-          ? html`<slot name=${badge.iconSlotName} slot="badge-icon"></slot>`
-          : nothing}
+        ${
+          badge.iconSlotName
+            ? html`<slot name=${badge.iconSlotName} slot="badge-icon"></slot>`
+            : nothing
+        }
       </obc-badge>
     `;
   }
@@ -317,48 +319,60 @@ export class ObcTabItem extends LitElement {
         @keydown=${this.handleKeyDown}
       >
         <div class="content">
-          ${this.hasLeadingIcon
-            ? html`
-                <div class="leading-icon">
-                  <slot name="leading-icon"></slot>
-                </div>
-              `
-            : nothing}
-          ${this.hasTitle
-            ? html`
-                <div class="text-content">
-                  <div class="title">
-                    <slot name="title">${this.title}</slot>
+          ${
+            this.hasLeadingIcon
+              ? html`
+                  <div class="leading-icon">
+                    <slot name="leading-icon"></slot>
                   </div>
-                  ${this.showSubtitle && this.subtitle
-                    ? html`<div class="subtitle">${this.subtitle}</div>`
-                    : nothing}
-                </div>
-              `
-            : nothing}
-          ${this.centerContent && hasBadge
+                `
+              : nothing
+          }
+          ${
+            this.hasTitle
+              ? html`
+                  <div class="text-content">
+                    <div class="title">
+                      <slot name="title">${this.title}</slot>
+                    </div>
+                    ${
+                      this.showSubtitle && this.subtitle
+                        ? html`<div class="subtitle">${this.subtitle}</div>`
+                        : nothing
+                    }
+                  </div>
+                `
+              : nothing
+          }
+          ${
+            this.centerContent && hasBadge
+              ? html`<div class="badges">
+                  ${badges.map((badge) => this.renderBadge(badge))}
+                </div>`
+              : nothing
+          }
+        </div>
+        ${
+          !this.centerContent && hasBadge
             ? html`<div class="badges">
                 ${badges.map((badge) => this.renderBadge(badge))}
               </div>`
-            : nothing}
-        </div>
-        ${!this.centerContent && hasBadge
-          ? html`<div class="badges">
-              ${badges.map((badge) => this.renderBadge(badge))}
-            </div>`
-          : nothing}
-        ${this.hasClose
-          ? html`
-              <obc-icon-button
-                class="close-button"
-                variant="flat"
-                @click=${this.handleClose}
-                aria-label="Close tab"
-                .disabled=${this.disabled}
-                ><obi-close-google></obi-close-google
-              ></obc-icon-button>
-            `
-          : nothing}
+            : nothing
+        }
+        ${
+          this.hasClose
+            ? html`
+                <obc-icon-button
+                  class="close-button"
+                  variant="flat"
+                  @click=${this.handleClose}
+                  aria-label="Close tab"
+                  .disabled=${this.disabled}
+                  ><obi-close-google></obi-close-google
+                ></obc-icon-button>
+              `
+            : nothing
+        }
       </div>
     `;
   }
