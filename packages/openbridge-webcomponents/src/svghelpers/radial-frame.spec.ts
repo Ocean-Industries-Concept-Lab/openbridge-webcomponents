@@ -294,6 +294,60 @@ describe('computeRadialFrame — zoom path', () => {
   });
 });
 
+describe('computeRadialFrame — sector crop (compass-sector)', () => {
+  const SECTOR_CLIP = {top: 0, bottom: 51.5, left: 0, right: 0};
+
+  it('crops the bottom to a wide canvas and leaves the clips alone', () => {
+    const f = computeRadialFrame({basePadding: 48, clips: SECTOR_CLIP});
+    expect(f.x).toBe(-224);
+    expect(f.y).toBe(-224);
+    expect(f.width).toBe(448);
+    expect(f.height).toBeCloseTo(217.28, 2);
+    // A static aspect-ratio on the host is only safe while this stays false.
+    expect(f.clipsAdjusted).toBe(false);
+  });
+
+  it('keeps the aspect constant as the label reserve grows the box', () => {
+    const labelWidthPx = estimateLabelWidthPx(['330']);
+    const aspects = [600, 400, 200].map((px) => {
+      const f = computeRadialFrame({
+        basePadding: 48,
+        labelWidthPx,
+        clips: SECTOR_CLIP,
+        containerPx: {width: px, height: px},
+      });
+      return f.width / f.height;
+    });
+    for (const aspect of aspects) {
+      expect(aspect).toBeCloseTo(aspects[0], 10);
+    }
+  });
+
+  it('fits the zoomed arc inside the cropped window at every field of view', () => {
+    const frame = computeRadialFrame({
+      basePadding: 48,
+      clips: {...SECTOR_CLIP, left: 8.1, right: 8.1},
+    });
+    const OUTER = 184;
+    const INNER = 88;
+    const SIDE_MARGIN = 32;
+
+    for (const halfExtent of [5, 15, 30, 45, 60]) {
+      const rad = (halfExtent * Math.PI) / 180;
+      // compass-sector flattens the arc until its ends reach SIDE_MARGIN.
+      const halfWidth = frame.width / 2 - SIDE_MARGIN;
+      const radiusOffset = Math.max(0, halfWidth / Math.sin(rad) - OUTER);
+      const ends = (OUTER + radiusOffset) * Math.sin(rad);
+      // Top of the ring down to the arc ends' inner corners.
+      const height =
+        OUTER + radiusOffset - (INNER + radiusOffset) * Math.cos(rad);
+
+      expect(ends).toBeLessThanOrEqual(frame.width / 2);
+      expect(height).toBeLessThanOrEqual(frame.height);
+    }
+  });
+});
+
 describe('estimateLabelWidthPx', () => {
   it('is maxChars * 7', () => {
     expect(estimateLabelWidthPx(['0', '3600', undefined])).toBe(28);

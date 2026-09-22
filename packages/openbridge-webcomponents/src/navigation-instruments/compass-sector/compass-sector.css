@@ -4,8 +4,15 @@
 
 .container {
   position: relative;
-  width: 100%;
-  height: 100%;
+  /* `aspect-ratio` is set inline from the frame, which the crop and the label
+     reserve both move. */
+  @mixin contain-aspect;
+
+  /* Centre the arc in whichever axis the host has slack on. */
+  margin-left: auto;
+  margin-right: auto;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .container > * {
@@ -14,6 +21,13 @@
   left: 0;
   width: 100%;
   height: 100%;
+}
+
+.container > svg {
+  /* The arc is drawn where it points and rotated into the window, so it paints
+     outside the cropped viewBox; `transform-origin` (set inline) keeps that
+     rotation on the compass centre. */
+  overflow: visible;
 }
 
 .container > .readout {
@@ -27,14 +41,7 @@
   display: block;
   width: 100%;
   height: 100%;
-  /* Clips the rotated overlay <svg transform="rotate(...)">, whose corners
-     swing outside the host and leak arc pixels in wide layouts (same
-     protection obc-watch has had since #994). Known trade-off: the HDG/COG
-     arrow apexes previously painted 1-2px past the host's top edge and are
-     now shaved flat at the box edge — imperceptible at normal viewing.
-     TODO(designer): if the shave is unwanted, the frame needs headroom so
-     the arrow tips fit inside the box — see "Host clipping & the arrow-apex
-     shave" in docs/agents/watch-radial-instruments.md before changing
-     (interacts with the #1021/#1049 label-reserve geometry). */
+  /* Both layers paint past their viewBox so the rotation can carry the arc in;
+     this is the edge that bounds the component. */
   overflow: hidden;
 }
