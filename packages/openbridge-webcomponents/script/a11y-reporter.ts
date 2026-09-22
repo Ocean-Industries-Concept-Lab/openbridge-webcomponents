@@ -37,7 +37,6 @@ type Row = {
 class A11yReporter implements Reporter {
   private rows: Row[] = [];
   private stories = 0;
-  private theme = process.env.VITE_A11Y_THEME ?? 'day';
 
   onTestCaseResult(testCase: TestCase) {
     const meta = testCase.meta() as {
@@ -70,11 +69,7 @@ class A11yReporter implements Reporter {
     const outFile = path.join(process.cwd(), 'a11y-report.json');
     fs.writeFileSync(
       outFile,
-      JSON.stringify(
-        {theme: this.theme, stories: this.stories, violations: this.rows},
-        null,
-        2
-      )
+      JSON.stringify({stories: this.stories, violations: this.rows}, null, 2)
     );
 
     const byRule = new Map<string, {stories: Set<string>; nodes: number}>();
@@ -88,7 +83,7 @@ class A11yReporter implements Reporter {
 
     const lines = [
       '',
-      `axe (${this.theme}): ${affected.size} of ${this.stories} stories with violations`,
+      `axe: ${affected.size} of ${this.stories} stories with violations`,
       ...[...byRule.entries()]
         .sort((a, b) => b[1].stories.size - a[1].stories.size)
         .map(

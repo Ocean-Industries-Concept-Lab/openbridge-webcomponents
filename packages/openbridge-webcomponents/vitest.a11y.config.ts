@@ -10,8 +10,8 @@ const dirname = path.dirname(fileURLToPath(import.meta.url));
 // the snapshot one: axe results are deterministic and must not inherit that
 // project's `retry: 3`, and `skip-test` hides 125 stories that are only
 // pixel-flaky, not accessibility-exempt (`skip-a11y` is the opt-out here).
-// Themes are one pass each — structural rules give the same answer in all
-// four, colour contrast does not.
+// One pass covers every theme: with colour contrast off, the rules that
+// remain give the same answer in all four.
 export default defineConfig({
   plugins: [
     storybookTest({

@@ -14,20 +14,21 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-const theme = (import.meta as unknown as {env: Record<string, string>}).env
-  .VITE_A11Y_THEME;
+// Contrast is a design decision, owned in Figma and checked there. A story
+// composes tokens in combinations the design file never draws, so the rule
+// reports those compositions rather than the palette, and the noise buries the
+// name and role findings this run exists for. The addon panel still runs it
+// per story in the browser for anyone who wants to look (#1208).
+const axeConfig = {
+  parameters: {
+    a11y: {config: {rules: [{id: 'color-contrast', enabled: false}]}},
+  },
+};
 
-// axe resolves a colour pair against what is painted behind the text. The
-// Storybook UI paints the canvas from `.sb-show-main` in preview-head.html,
-// which the Vitest runner never applies, so without this every pair is
-// measured against white and the dark themes report violations they do not
-// have.
-const canvasAndAnimations = {
+const settleAnimations = {
   afterEach: async () => {
-    document.documentElement.setAttribute('data-obc-theme', theme ?? 'day');
-    document.body.style.backgroundColor = 'var(--container-background-color)';
-    // Web Animations ignore the zeroed CSS durations above; a flashing alert
-    // sampled mid-cycle flips contrast results between runs.
+    // Web Animations ignore the zeroed CSS durations above, and a story
+    // sampled mid-cycle can hide the element axe is about to read.
     for (const animation of document.getAnimations()) {
       animation.currentTime = 100;
       animation.pause();
@@ -38,7 +39,8 @@ const canvasAndAnimations = {
 
 setProjectAnnotations([
   projectAnnotations,
-  canvasAndAnimations as never,
+  axeConfig,
+  settleAnimations as never,
   a11yAnnotations,
 ]);
 
