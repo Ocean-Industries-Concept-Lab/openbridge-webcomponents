@@ -150,39 +150,47 @@ export class ObcEventItem extends LitElement {
       >
         <div class="visible-wrapper">
           <div class="event-content">
-            ${this.hasTime && this.startTime
-              ? html`
-                  <div class="time-container">
-                    <span class="time">${this.startTime}</span>
-                    ${this.hasEndTime && this.endTime
-                      ? html`
-                          <span class="time-separator">–</span>
-                          <span class="time">${this.endTime}</span>
-                        `
-                      : nothing}
-                  </div>
-                `
-              : nothing}
+            ${
+              this.hasTime && this.startTime
+                ? html`
+                    <div class="time-container">
+                      <span class="time">${this.startTime}</span>
+                      ${
+                        this.hasEndTime && this.endTime
+                          ? html`
+                              <span class="time-separator">–</span>
+                              <span class="time">${this.endTime}</span>
+                            `
+                          : nothing
+                      }
+                    </div>
+                  `
+                : nothing
+            }
             <div class="label-container">
               <div class="title-container">
                 <p class="title">
                   ${isAggregated ? this._getAggregatedText() : this.title}
                 </p>
               </div>
-              ${isDoubleLine && this.description
-                ? html`
-                    <div class="description-container">
-                      <p class="description">${this.description}</p>
-                    </div>
-                  `
-                : nothing}
+              ${
+                isDoubleLine && this.description
+                  ? html`
+                      <div class="description-container">
+                        <p class="description">${this.description}</p>
+                      </div>
+                    `
+                  : nothing
+              }
             </div>
           </div>
-          ${this.hasArrow
-            ? html`<div class="arrow">
-                <obi-arrow-flyout-google></obi-arrow-flyout-google>
-              </div>`
-            : nothing}
+          ${
+            this.hasArrow
+              ? html`<div class="arrow">
+                  <obi-arrow-flyout-google></obi-arrow-flyout-google>
+                </div>`
+              : nothing
+          }
         </div>
       </button>
     `;

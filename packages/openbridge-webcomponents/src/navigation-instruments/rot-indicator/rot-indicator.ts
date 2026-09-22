@@ -224,10 +224,12 @@ export class ObcRotIndicator extends LitElement {
              H ${segmentRightX}
              V ${segmentBottomY}
              H ${segmentX + segmentRadius}
-             A ${segmentRadius} ${segmentRadius} 0 0 1 ${segmentX} ${segmentY +
-          segmentRadius}
-             A ${segmentRadius} ${segmentRadius} 0 0 1 ${segmentX +
-          segmentRadius} ${segmentY}
+             A ${segmentRadius} ${segmentRadius} 0 0 1 ${segmentX} ${
+            segmentY + segmentRadius
+          }
+             A ${segmentRadius} ${segmentRadius} 0 0 1 ${
+            segmentX + segmentRadius
+          } ${segmentY}
              Z"
           fill="var(--instrument-port-secondary-color)"
         />

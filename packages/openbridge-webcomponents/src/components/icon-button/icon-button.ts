@@ -211,11 +211,13 @@ export class ObcIconButton extends LitElement {
             <slot></slot>
           </div>
         </div>
-        ${this.hasLabel
-          ? html`<div class="label" part="label">
-              <slot name="label"></slot>
-            </div>`
-          : nothing}
+        ${
+          this.hasLabel
+            ? html`<div class="label" part="label">
+                <slot name="label"></slot>
+              </div>`
+            : nothing
+        }
       </button>
     `;
   }

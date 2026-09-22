@@ -243,9 +243,9 @@ export class ObcAutomationButtonReadoutStack extends LitElement {
         maxDigits: readout.nDigits,
         hintedZeros: true,
       })}
-      ${readout.unit
-        ? html`<span class="unit">${readout.unit}</span>`
-        : nothing}
+      ${
+        readout.unit ? html`<span class="unit">${readout.unit}</span>` : nothing
+      }
     `;
     return this.renderValueContainer('setpoint', glyph, content);
   }

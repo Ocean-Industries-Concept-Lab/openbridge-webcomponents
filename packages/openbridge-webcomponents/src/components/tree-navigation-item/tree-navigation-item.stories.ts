@@ -57,9 +57,11 @@ const meta: Meta<typeof ObcTreeNavigationItem> = {
         (e.currentTarget as ObcTreeNavigationItem).expanded = e.detail;
       }}
     >
-      ${args.hasLeadingIcon && args.icon
-        ? iconIdToIconHtml(args.icon as unknown as string, {slot: 'icon'})
-        : ''}
+      ${
+        args.hasLeadingIcon && args.icon
+          ? iconIdToIconHtml(args.icon as unknown as string, {slot: 'icon'})
+          : ''
+      }
     </obc-tree-navigation-item>`;
   },
 } satisfies Meta<ObcTreeNavigationItem>;

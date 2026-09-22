@@ -202,12 +202,15 @@ export class ObcPitchRoll extends LitElement {
     return html`
       <div class="container">
         <svg viewBox="${overlayViewBox}">
-          ${this.isSingleScale && !this.zoomToFitArc
-            ? this.renderRingComplement(pitchReq, rollReq)
-            : nothing}
-          ${this.hasReadout
-            ? nothing
-            : svg`
+          ${
+            this.isSingleScale && !this.zoomToFitArc
+              ? this.renderRingComplement(pitchReq, rollReq)
+              : nothing
+          }
+          ${
+            this.hasReadout
+              ? nothing
+              : svg`
             ${
               this.isSingleScale
                 ? svg`
@@ -262,33 +265,38 @@ export class ObcPitchRoll extends LitElement {
             >
               ${this.zoomToFitArc ? vesselImages[this.vesselImageFore] : nothing}
             </g>
-          `}
+          `
+          }
         </svg>
-        ${this.zoomToFitArc
-          ? this.renderZoomedArcs(pitchReq, rollReq)
-          : this.renderFullWatch(areas)}
-        ${this.hasReadout
-          ? html`<div class="readout">
-              ${renderCenterReadouts([
-                {
-                  value: this.pitch,
-                  label: this.pitchLabel,
-                  unit: this.unit,
-                  fractionDigits: this.fractionDigits,
-                  size: ReadoutSize.large,
-                  priority: this.priorityFor(PitchRollPriorityElement.pitch),
-                },
-                {
-                  value: this.roll,
-                  label: this.rollLabel,
-                  unit: this.unit,
-                  fractionDigits: this.fractionDigits,
-                  size: ReadoutSize.large,
-                  priority: this.priorityFor(PitchRollPriorityElement.roll),
-                },
-              ])}
-            </div>`
-          : nothing}
+        ${
+          this.zoomToFitArc
+            ? this.renderZoomedArcs(pitchReq, rollReq)
+            : this.renderFullWatch(areas)
+        }
+        ${
+          this.hasReadout
+            ? html`<div class="readout">
+                ${renderCenterReadouts([
+                  {
+                    value: this.pitch,
+                    label: this.pitchLabel,
+                    unit: this.unit,
+                    fractionDigits: this.fractionDigits,
+                    size: ReadoutSize.large,
+                    priority: this.priorityFor(PitchRollPriorityElement.pitch),
+                  },
+                  {
+                    value: this.roll,
+                    label: this.rollLabel,
+                    unit: this.unit,
+                    fractionDigits: this.fractionDigits,
+                    size: ReadoutSize.large,
+                    priority: this.priorityFor(PitchRollPriorityElement.roll),
+                  },
+                ])}
+              </div>`
+            : nothing
+        }
       </div>
     `;
   }
@@ -592,18 +600,20 @@ export class ObcPitchRoll extends LitElement {
     `;
 
     return html`
-      ${this.isSingleScale
-        ? nothing
-        : subWatch(
-            0,
-            rollFrame.subArcFrame,
-            rollAreas,
-            rollBars,
-            rollNeedles,
-            rollAdvices,
-            rollClip,
-            rollTickmarks
-          )}
+      ${
+        this.isSingleScale
+          ? nothing
+          : subWatch(
+              0,
+              rollFrame.subArcFrame,
+              rollAreas,
+              rollBars,
+              rollNeedles,
+              rollAdvices,
+              rollClip,
+              rollTickmarks
+            )
+      }
       ${subWatch(
         90,
         pitchFrame.subArcFrame,
@@ -624,18 +634,20 @@ export class ObcPitchRoll extends LitElement {
         rollClip,
         rollTickmarks
       )}
-      ${this.isSingleScale
-        ? nothing
-        : subWatch(
-            270,
-            pitchFrame.subArcFrame,
-            pitchAreas,
-            pitchBars,
-            pitchNeedles,
-            pitchAdvices,
-            pitchClip,
-            pitchTickmarks
-          )}
+      ${
+        this.isSingleScale
+          ? nothing
+          : subWatch(
+              270,
+              pitchFrame.subArcFrame,
+              pitchAreas,
+              pitchBars,
+              pitchNeedles,
+              pitchAdvices,
+              pitchClip,
+              pitchTickmarks
+            )
+      }
     `;
   }
 
@@ -748,20 +760,22 @@ export class ObcPitchRoll extends LitElement {
         .areas=${areas}
         .barAreas=${barAreas}
         .needles=${needles}
-        .vessels=${this.hasReadout
-          ? []
-          : [
-              {
-                size: VesselImageSize.large,
-                vesselImage: this.vesselImageSide,
-                transform: `rotate(${this.pitch}deg)`,
-              },
-              {
-                size: VesselImageSize.large,
-                vesselImage: this.vesselImageFore,
-                transform: `rotate(${this.roll}deg) scale(${this.normalizedScaleForeImage})`,
-              },
-            ]}
+        .vessels=${
+          this.hasReadout
+            ? []
+            : [
+                {
+                  size: VesselImageSize.large,
+                  vesselImage: this.vesselImageSide,
+                  transform: `rotate(${this.pitch}deg)`,
+                },
+                {
+                  size: VesselImageSize.large,
+                  vesselImage: this.vesselImageFore,
+                  transform: `rotate(${this.roll}deg) scale(${this.normalizedScaleForeImage})`,
+                },
+              ]
+        }
         .tickmarks=${tickmarks}
         .advices=${this.advices}
       ></obc-watch>

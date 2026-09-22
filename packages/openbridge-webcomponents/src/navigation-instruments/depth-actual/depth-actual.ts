@@ -235,9 +235,9 @@ export class ObcDepthActual extends LitElement {
               fill="url(#seabedPattern)"
             />
             <g
-              transform="translate(${-GAUGE_WIDTH / 2}, ${toY(this.draft) -
-              VESSEL_KEEL_OFFSET *
-                vesselFactor}) scale(${vesselFactor}) translate(${-VESSEL_ART_HALF}, ${-VESSEL_ART_HALF})"
+              transform="translate(${-GAUGE_WIDTH / 2}, ${
+                toY(this.draft) - VESSEL_KEEL_OFFSET * vesselFactor
+              }) scale(${vesselFactor}) translate(${-VESSEL_ART_HALF}, ${-VESSEL_ART_HALF})"
             >
               ${this.vesselImage ? vesselImages[this.vesselImage] : nothing}
             </g>
@@ -283,8 +283,9 @@ export class ObcDepthActual extends LitElement {
           </g>
 
           <g
-            transform="translate(${dividerX + GAUGE_WIDTH / 2}, ${waterTop +
-            waterHeight / 2})"
+            transform="translate(${dividerX + GAUGE_WIDTH / 2}, ${
+              waterTop + waterHeight / 2
+            })"
           >
             ${watchfaceLinear(
               {

@@ -142,20 +142,22 @@ export class ObcAdviceFloatingItem extends LitElement {
             new CustomEvent('dismiss-click', {detail: e.detail})
           )}
       >
-        ${isApplication
-          ? html`
-              <slot name="primary-icon" slot="primary-icon"></slot>
-              <obi-notification-advice-active
-                slot="secondary-icon"
-                style="color: var(--instrument-starboard-primary-color)"
-              ></obi-notification-advice-active>
-            `
-          : html`
-              <obi-notification-advice-active
-                slot="primary-icon"
-                style="color: var(--instrument-starboard-primary-color)"
-              ></obi-notification-advice-active>
-            `}
+        ${
+          isApplication
+            ? html`
+                <slot name="primary-icon" slot="primary-icon"></slot>
+                <obi-notification-advice-active
+                  slot="secondary-icon"
+                  style="color: var(--instrument-starboard-primary-color)"
+                ></obi-notification-advice-active>
+              `
+            : html`
+                <obi-notification-advice-active
+                  slot="primary-icon"
+                  style="color: var(--instrument-starboard-primary-color)"
+                ></obi-notification-advice-active>
+              `
+        }
         <slot name="title" slot="title"></slot>
         <slot name="description" slot="description"></slot>
         <slot name="time" slot="time"></slot>

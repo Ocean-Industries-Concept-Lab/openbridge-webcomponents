@@ -67,20 +67,22 @@ export class ObcAlertFloatingItem extends LitElement {
             new CustomEvent('dismiss-click', {detail: e.detail})
           )}
       >
-        ${isApplication
-          ? html`
-              <slot name="primary-icon" slot="primary-icon"></slot>
-              <obi-alarm-unacknowledged-iec
-                slot="secondary-icon"
-                useCssColor
-              ></obi-alarm-unacknowledged-iec>
-            `
-          : html`
-              <obi-alarm-unacknowledged-iec
-                slot="primary-icon"
-                useCssColor
-              ></obi-alarm-unacknowledged-iec>
-            `}
+        ${
+          isApplication
+            ? html`
+                <slot name="primary-icon" slot="primary-icon"></slot>
+                <obi-alarm-unacknowledged-iec
+                  slot="secondary-icon"
+                  useCssColor
+                ></obi-alarm-unacknowledged-iec>
+              `
+            : html`
+                <obi-alarm-unacknowledged-iec
+                  slot="primary-icon"
+                  useCssColor
+                ></obi-alarm-unacknowledged-iec>
+              `
+        }
         <slot name="title" slot="title"></slot>
         <slot name="description" slot="description"></slot>
         <slot name="time" slot="time"></slot>

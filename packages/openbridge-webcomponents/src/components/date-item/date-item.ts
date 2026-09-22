@@ -303,9 +303,11 @@ export class ObcDateItem extends LitElement {
         >
           <div class="date-container">
             <div class="date" aria-hidden="true">${this.date}</div>
-            ${hasAnyEvents
-              ? html`<div class="event-dot" aria-hidden="true"></div>`
-              : nothing}
+            ${
+              hasAnyEvents
+                ? html`<div class="event-dot" aria-hidden="true"></div>`
+                : nothing
+            }
           </div>
         </button>
       `;
@@ -331,42 +333,47 @@ export class ObcDateItem extends LitElement {
           </div>
         </div>
 
-        ${hasAnyEvents
-          ? html`
-              <div class="content-container">
-                ${repeat(
-                  visibleEvents,
-                  (event, index) =>
-                    `${event.title}-${event.startTime}-${event.endTime}-${index}`,
-                  (event) => html`
-                    <obc-event-item
-                      .title=${event.title}
-                      .description=${event.description ?? ''}
-                      .startTime=${event.startTime}
-                      .endTime=${event.endTime}
-                      .eventItemType=${event.eventItemType ??
-                      EventItemType.SingleLine}
-                      .hasArrow=${event.hasArrow ?? false}
-                      .hasTime=${event.hasTime ?? false}
-                      .hasEndTime=${event.hasEndTime ?? false}
-                      .aggregatedCount=${event.aggregatedCount ?? 0}
-                      .colorCoded=${event.colorCoded ?? false}
-                      .disabled=${this.disabled || !!event.disabled}
-                    ></obc-event-item>
-                  `
-                )}
-                ${aggregatedCount > 0
-                  ? html`
+        ${
+          hasAnyEvents
+            ? html`
+                <div class="content-container">
+                  ${repeat(
+                    visibleEvents,
+                    (event, index) =>
+                      `${event.title}-${event.startTime}-${event.endTime}-${index}`,
+                    (event) => html`
                       <obc-event-item
-                        .eventItemType=${EventItemType.Aggregated}
-                        .aggregatedCount=${aggregatedCount}
-                        ?disabled=${this.disabled}
+                        .title=${event.title}
+                        .description=${event.description ?? ''}
+                        .startTime=${event.startTime}
+                        .endTime=${event.endTime}
+                        .eventItemType=${
+                          event.eventItemType ?? EventItemType.SingleLine
+                        }
+                        .hasArrow=${event.hasArrow ?? false}
+                        .hasTime=${event.hasTime ?? false}
+                        .hasEndTime=${event.hasEndTime ?? false}
+                        .aggregatedCount=${event.aggregatedCount ?? 0}
+                        .colorCoded=${event.colorCoded ?? false}
+                        .disabled=${this.disabled || !!event.disabled}
                       ></obc-event-item>
                     `
-                  : nothing}
-              </div>
-            `
-          : nothing}
+                  )}
+                  ${
+                    aggregatedCount > 0
+                      ? html`
+                          <obc-event-item
+                            .eventItemType=${EventItemType.Aggregated}
+                            .aggregatedCount=${aggregatedCount}
+                            ?disabled=${this.disabled}
+                          ></obc-event-item>
+                        `
+                      : nothing
+                  }
+                </div>
+              `
+            : nothing
+        }
       </div>
     `;
   }

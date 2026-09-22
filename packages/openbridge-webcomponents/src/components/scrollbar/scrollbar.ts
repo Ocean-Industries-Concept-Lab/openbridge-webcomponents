@@ -61,14 +61,16 @@ export class ObcScrollbar extends LitElement {
       >
         <slot></slot>
       </div>
-      ${this.transparentTrack && this._showOverlayThumb
-        ? html`<div class="overlay-track">
-            <div
-              class="overlay-thumb"
-              style="top:${this._thumbTop}%;height:${this._thumbHeight}%"
-            ></div>
-          </div>`
-        : nothing}
+      ${
+        this.transparentTrack && this._showOverlayThumb
+          ? html`<div class="overlay-track">
+              <div
+                class="overlay-thumb"
+                style="top:${this._thumbTop}%;height:${this._thumbHeight}%"
+              ></div>
+            </div>`
+          : nothing
+      }
     `;
   }
 

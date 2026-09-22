@@ -329,7 +329,7 @@ in `custom-elements.json` but absent from every framework wrapper).
 events, and bare `dispatchEvent(` calls.
 
 ● Do **NOT** mix Markdown headings inside the tag block.  
- Example skeleton:
+Example skeleton:
 
 ```js
 /**

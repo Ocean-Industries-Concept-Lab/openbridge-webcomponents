@@ -498,9 +498,9 @@ export class ObcNavigationMenu extends LitElement {
   override render() {
     return html`
       <div
-        class="wrapper ${this.variant} ${this.smallScreen
-          ? 'small-screen'
-          : ''}"
+        class="wrapper ${this.variant} ${
+          this.smallScreen ? 'small-screen' : ''
+        }"
       >
         <nav class="main">
           <ol>
@@ -514,13 +514,15 @@ export class ObcNavigationMenu extends LitElement {
               ${this.smallScreen ? html` <slot name="logo"></slot> ` : nothing}
             </ol>
           </nav>
-          ${this.smallScreen
-            ? nothing
-            : html`
-                <div class="logo">
-                  <slot name="logo"></slot>
-                </div>
-              `}
+          ${
+            this.smallScreen
+              ? nothing
+              : html`
+                  <div class="logo">
+                    <slot name="logo"></slot>
+                  </div>
+                `
+          }
         </div>
       </div>
     `;

@@ -30,12 +30,16 @@ const meta: Meta<ObcTabItem> = {
       .centerContent=${args.centerContent}
       .badges=${args.badges ?? []}
     >
-      ${args.hasLeadingIcon
-        ? html`<obi-placeholder slot="leading-icon"></obi-placeholder>`
-        : null}
-      ${args.hasBadge
-        ? html`<obi-placeholder slot="badge-icon"></obi-placeholder>`
-        : null}
+      ${
+        args.hasLeadingIcon
+          ? html`<obi-placeholder slot="leading-icon"></obi-placeholder>`
+          : null
+      }
+      ${
+        args.hasBadge
+          ? html`<obi-placeholder slot="badge-icon"></obi-placeholder>`
+          : null
+      }
       ${(args.badges ?? [])
         .filter((badge) => badge.iconSlotName)
         .map(

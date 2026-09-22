@@ -117,13 +117,15 @@ export class ObcCard extends LitElement {
                 <div class="title">
                   <slot name="title"></slot>
                 </div>
-                ${this.hasDialog
-                  ? html`
-                      <obi-chevron-right-google
-                        class="icon"
-                      ></obi-chevron-right-google>
-                    `
-                  : html`<div></div>`}
+                ${
+                  this.hasDialog
+                    ? html`
+                        <obi-chevron-right-google
+                          class="icon"
+                        ></obi-chevron-right-google>
+                      `
+                    : html`<div></div>`
+                }
               </div>`
         }
         <div class="content">
@@ -141,9 +143,9 @@ export class ObcCard extends LitElement {
                   </div>
                   <div class="actions">
                     <div class="close-action">
-                      ${this.showCountdown
-                        ? this.dialogTimerIndicator
-                        : nothing}
+                      ${
+                        this.showCountdown ? this.dialogTimerIndicator : nothing
+                      }
                       <obc-icon-button
                         @click=${this.closeDialog}
                         variant="flat"

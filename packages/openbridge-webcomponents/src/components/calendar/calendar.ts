@@ -278,18 +278,20 @@ export class ObcCalendar extends LitElement {
             <obi-calendar-google></obi-calendar-google>
             <span class="month-label">${monthYearLabel}</span>
           </div>
-          ${showNewEvent
-            ? html`
-                <obc-button
-                  variant="raised"
-                  showLeadingIcon
-                  @click=${this._handleNewEventClick}
-                >
-                  <obi-up-iec slot="leading-icon"></obi-up-iec>
-                  New event
-                </obc-button>
-              `
-            : nothing}
+          ${
+            showNewEvent
+              ? html`
+                  <obc-button
+                    variant="raised"
+                    showLeadingIcon
+                    @click=${this._handleNewEventClick}
+                  >
+                    <obi-up-iec slot="leading-icon"></obi-up-iec>
+                    New event
+                  </obc-button>
+                `
+              : nothing
+          }
           ${this._renderNavigation()}
         </div>
       `;
@@ -304,18 +306,20 @@ export class ObcCalendar extends LitElement {
           .value=${this._monthValue}
           @change=${this._handleMonthDropdownChange}
         ></obc-dropdown-button>
-        ${showNewEvent
-          ? html`
-              <obc-button
-                variant="flat"
-                showLeadingIcon
-                @click=${this._handleNewEventClick}
-              >
-                <obi-up-iec slot="leading-icon"></obi-up-iec>
-                New event
-              </obc-button>
-            `
-          : nothing}
+        ${
+          showNewEvent
+            ? html`
+                <obc-button
+                  variant="flat"
+                  showLeadingIcon
+                  @click=${this._handleNewEventClick}
+                >
+                  <obi-up-iec slot="leading-icon"></obi-up-iec>
+                  New event
+                </obc-button>
+              `
+            : nothing
+        }
         <obc-divider></obc-divider>
         ${this._renderNavigation()}
       </div>
@@ -394,9 +398,11 @@ export class ObcCalendar extends LitElement {
                       .date=${cell.dayNumber}
                       .events=${cell.events}
                       ?isToday=${cell.isToday}
-                      ?checked=${this.selectedDate
-                        ? isSameDay(cell.date, this.selectedDate)
-                        : false}
+                      ?checked=${
+                        this.selectedDate
+                          ? isSameDay(cell.date, this.selectedDate)
+                          : false
+                      }
                       ?disabled=${!cell.isCurrentMonth}
                       @date-click=${() => this._handleDateClick(cell)}
                     ></obc-date-item>

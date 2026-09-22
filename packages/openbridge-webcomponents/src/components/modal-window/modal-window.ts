@@ -136,20 +136,27 @@ export class ObcModalWindow extends LitElement {
           })}
         >
           <div class="title-content">
-            ${this.hasLeadingIcon
-              ? html`<div class="leading-icon">
-                  <slot name="leading-icon"></slot>
-                </div>`
-              : nothing}
+            ${
+              this.hasLeadingIcon
+                ? html`<div class="leading-icon">
+                    <slot name="leading-icon"></slot>
+                  </div>`
+                : nothing
+            }
             <div class="label-container">
               <slot name="title">Title</slot>
             </div>
           </div>
-          ${this.hasCloseAction
-            ? html`<obc-icon-button variant="flat" @click=${this.onCloseClick}>
-                <obi-close-google></obi-close-google>
-              </obc-icon-button>`
-            : nothing}
+          ${
+            this.hasCloseAction
+              ? html`<obc-icon-button
+                  variant="flat"
+                  @click=${this.onCloseClick}
+                >
+                  <obi-close-google></obi-close-google>
+                </obc-icon-button>`
+              : nothing
+          }
           <div class="divider"></div>
         </div>
 
@@ -159,13 +166,15 @@ export class ObcModalWindow extends LitElement {
 
         <div class="action-container">
           <div class="divider"></div>
-          ${this.hasOptionalAction
-            ? html`<div class="optional-action-container">
-                <obc-button @click=${this.onOptionClick} .fullWidth=${true}>
-                  <slot name="option-label">Option</slot>
-                </obc-button>
-              </div>`
-            : nothing}
+          ${
+            this.hasOptionalAction
+              ? html`<div class="optional-action-container">
+                  <obc-button @click=${this.onOptionClick} .fullWidth=${true}>
+                    <slot name="option-label">Option</slot>
+                  </obc-button>
+                </div>`
+              : nothing
+          }
 
           <div
             class=${classMap({
@@ -176,14 +185,16 @@ export class ObcModalWindow extends LitElement {
               'without-cancel': !this.hasCancelAction,
             })}
           >
-            ${this.hasCancelAction
-              ? html`<obc-button
-                  @click=${this.onCancelClick}
-                  .fullWidth=${stretchFooterActions}
-                >
-                  <slot name="cancel-label">Cancel</slot>
-                </obc-button>`
-              : nothing}
+            ${
+              this.hasCancelAction
+                ? html`<obc-button
+                    @click=${this.onCancelClick}
+                    .fullWidth=${stretchFooterActions}
+                  >
+                    <slot name="cancel-label">Cancel</slot>
+                  </obc-button>`
+                : nothing
+            }
             <obc-button
               variant="raised"
               @click=${this.onDoneClick}

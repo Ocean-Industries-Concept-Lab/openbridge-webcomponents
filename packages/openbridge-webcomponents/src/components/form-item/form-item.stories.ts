@@ -17,12 +17,7 @@ type FormItemArgs = {
   type?: ObcFormItemType;
   itemId?: string;
   basicState?:
-    | 'enabled'
-    | 'hover'
-    | 'active'
-    | 'focused'
-    | 'disabled'
-    | 'amplified';
+    'enabled' | 'hover' | 'active' | 'focused' | 'disabled' | 'amplified';
   hasError?: boolean;
   errorText?: string;
   hasIcon?: boolean;
@@ -220,9 +215,11 @@ const renderItem = (args: FormItemArgs = {}) => {
       data-demo-state=${demoState}
       @action-change=${args.onActionChange}
     >
-      ${resolved.hasIcon
-        ? html`<obi-placeholder slot="icon"></obi-placeholder>`
-        : nothing}
+      ${
+        resolved.hasIcon
+          ? html`<obi-placeholder slot="icon"></obi-placeholder>`
+          : nothing
+      }
       ${resolved.text}
     </obc-form-item>
   `;

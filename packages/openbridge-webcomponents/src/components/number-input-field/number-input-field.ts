@@ -374,9 +374,13 @@ export class ObcNumberInputField extends LitElement {
         [`helper-placement-${this.helperPlacement}`]: true,
       })}
     >
-      ${this.hasHelperIcon
-        ? html`<div class="helper-icon"><slot name="helper-icon"></slot></div>`
-        : nothing}
+      ${
+        this.hasHelperIcon
+          ? html`<div class="helper-icon">
+              <slot name="helper-icon"></slot>
+            </div>`
+          : nothing
+      }
       ${text}
     </div>`;
   }
@@ -450,32 +454,40 @@ export class ObcNumberInputField extends LitElement {
         })}
         @pointerdown=${this.onPointerDown}
       >
-        ${this.label
-          ? html`<div
-              class=${classMap({
-                'label-text-container': true,
-                [`label-placement-${this.labelPlacement}`]: true,
-              })}
-            >
-              ${this.hasLabelIcon
-                ? html`<div class="label-icon">
-                    <slot name="label-icon"></slot>
-                  </div>`
-                : nothing}
-              <span class="label-text">${this.label}</span>
-              ${this.required
-                ? html`<div class="required-indicator"></div>`
-                : nothing}
-            </div>`
-          : nothing}
+        ${
+          this.label
+            ? html`<div
+                class=${classMap({
+                  'label-text-container': true,
+                  [`label-placement-${this.labelPlacement}`]: true,
+                })}
+              >
+                ${
+                  this.hasLabelIcon
+                    ? html`<div class="label-icon">
+                        <slot name="label-icon"></slot>
+                      </div>`
+                    : nothing
+                }
+                <span class="label-text">${this.label}</span>
+                ${
+                  this.required
+                    ? html`<div class="required-indicator"></div>`
+                    : nothing
+                }
+              </div>`
+            : nothing
+        }
 
         <div class="horizontal-container">
           <div class="input-field-container" part="input-field-container">
-            ${this.hasLeadingIcon
-              ? html`<div class="leading-icon">
-                  <slot name="leading-icon"></slot>
-                </div>`
-              : nothing}
+            ${
+              this.hasLeadingIcon
+                ? html`<div class="leading-icon">
+                    <slot name="leading-icon"></slot>
+                  </div>`
+                : nothing
+            }
             <div class="label-container">
               <input
                 type="text"
@@ -499,19 +511,25 @@ export class ObcNumberInputField extends LitElement {
                 @beforeinput=${this.onBeforeInput}
                 @input=${this.onInput}
               />
-              ${unitInside
-                ? html`<span class="unit-text">${this.unit}</span>`
-                : nothing}
+              ${
+                unitInside
+                  ? html`<span class="unit-text">${this.unit}</span>`
+                  : nothing
+              }
             </div>
           </div>
-          ${unitOutside
-            ? html`<span class="unit-text external">${this.unit}</span>`
-            : nothing}
+          ${
+            unitOutside
+              ? html`<span class="unit-text external">${this.unit}</span>`
+              : nothing
+          }
         </div>
 
-        ${this.error && this.errorText
-          ? this.renderFooterText(this.errorText, true)
-          : this.renderFooterText(this.helperText, false)}
+        ${
+          this.error && this.errorText
+            ? this.renderFooterText(this.errorText, true)
+            : this.renderFooterText(this.helperText, false)
+        }
       </label>
     `;
   }

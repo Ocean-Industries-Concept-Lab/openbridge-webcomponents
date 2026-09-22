@@ -95,8 +95,9 @@ export class ObcLineCross extends LitElement {
         xmlns="http://www.w3.org/2000/svg"
       >
         <path
-          d="M-1 ${12 - h} H${12 - r} A${r} ${r} 0 0 1 ${12 - h} ${12 -
-          r} V${-1}
+          d="M-1 ${12 - h} H${12 - r} A${r} ${r} 0 0 1 ${12 - h} ${
+            12 - r
+          } V${-1}
             h${width} V${12 - r} A${r} ${r} 0 0 1 ${12 + r} ${12 - h} H25
             V${12 + h} H${12 + r} A${r} ${r} 0 0 1 ${12 + h} ${12 + r} V25
             h-${width} V${12 + r} A${r} ${r} 0 0 1 ${12 - r} ${12 + h} H-1 Z"

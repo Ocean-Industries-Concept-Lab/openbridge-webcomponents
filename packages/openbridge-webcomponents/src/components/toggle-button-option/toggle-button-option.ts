@@ -190,20 +190,26 @@ export class ObcToggleButtonOption extends LitElement {
         @click=${this.onClick}
       >
         <div class="visible-wrapper" part="visible-wrapper">
-          ${hasIcon
-            ? html`<div class="icon" part="icon">
-                <slot name="icon"></slot>
-              </div>`
-            : ''}
-          ${hasLabel && !isIconTextUnder
-            ? html`<div class="label"><slot></slot></div>`
-            : ''}
+          ${
+            hasIcon
+              ? html`<div class="icon" part="icon">
+                  <slot name="icon"></slot>
+                </div>`
+              : ''
+          }
+          ${
+            hasLabel && !isIconTextUnder
+              ? html`<div class="label"><slot></slot></div>`
+              : ''
+          }
         </div>
-        ${hasLabel && isIconTextUnder
-          ? html`<div class="label-container">
-              <div class="label"><slot></slot></div>
-            </div>`
-          : ''}
+        ${
+          hasLabel && isIconTextUnder
+            ? html`<div class="label-container">
+                <div class="label"><slot></slot></div>
+              </div>`
+            : ''
+        }
       </button>
     `;
   }

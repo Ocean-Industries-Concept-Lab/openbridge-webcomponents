@@ -164,14 +164,18 @@ export const VariantMatrix: Story = {
                     <obc-poi-pointer
                       .type=${type}
                       .state=${state}
-                      .boxWidth=${state === ObcPoiPointerState.Active ||
-                      state === ObcPoiPointerState.Selected
-                        ? args.boxWidth
-                        : null}
-                      .boxHeight=${state === ObcPoiPointerState.Active ||
-                      state === ObcPoiPointerState.Selected
-                        ? args.boxHeight
-                        : null}
+                      .boxWidth=${
+                        state === ObcPoiPointerState.Active ||
+                        state === ObcPoiPointerState.Selected
+                          ? args.boxWidth
+                          : null
+                      }
+                      .boxHeight=${
+                        state === ObcPoiPointerState.Active ||
+                        state === ObcPoiPointerState.Selected
+                          ? args.boxHeight
+                          : null
+                      }
                     ></obc-poi-pointer>
                   </div>
                 </div>

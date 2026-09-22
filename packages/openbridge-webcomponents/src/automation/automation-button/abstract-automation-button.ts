@@ -287,9 +287,9 @@ export class ObcAbstractAutomationButton extends LitElement {
     const badgeCommandLockedType = this.getBadgeCommandLockedType();
 
     return html`<obc-automation-button
-      .state=${this._on
-        ? AutomationButtonState.open
-        : AutomationButtonState.closed}
+      .state=${
+        this._on ? AutomationButtonState.open : AutomationButtonState.closed
+      }
       .readouts=${readouts}
       .tag=${this.tag}
       .showReadoutStack=${this.showReadoutStack}
@@ -318,44 +318,52 @@ export class ObcAbstractAutomationButton extends LitElement {
         slot="badge-top-right"
         @slotchange=${this.handleBadgeSlotChange}
       >
-        ${badgeAlertType
-          ? html`<obc-automation-badge
-              .type=${badgeAlertType}
-            ></obc-automation-badge>`
-          : nothing}
+        ${
+          badgeAlertType
+            ? html`<obc-automation-badge
+                .type=${badgeAlertType}
+              ></obc-automation-badge>`
+            : nothing
+        }
       </slot>
       <slot
         name="badge-top-left"
         slot="badge-top-left"
         @slotchange=${this.handleBadgeSlotChange}
       >
-        ${badgeControlType
-          ? html`<obc-automation-badge
-              .type=${badgeControlType}
-            ></obc-automation-badge>`
-          : nothing}
+        ${
+          badgeControlType
+            ? html`<obc-automation-badge
+                .type=${badgeControlType}
+              ></obc-automation-badge>`
+            : nothing
+        }
       </slot>
       <slot
         name="badge-bottom-left"
         slot="badge-bottom-left"
         @slotchange=${this.handleBadgeSlotChange}
       >
-        ${badgeInterlockType
-          ? html`<obc-automation-badge
-              .type=${badgeInterlockType}
-            ></obc-automation-badge>`
-          : nothing}
+        ${
+          badgeInterlockType
+            ? html`<obc-automation-badge
+                .type=${badgeInterlockType}
+              ></obc-automation-badge>`
+            : nothing
+        }
       </slot>
       <slot
         name="badge-bottom-right"
         slot="badge-bottom-right"
         @slotchange=${this.handleBadgeSlotChange}
       >
-        ${badgeCommandLockedType
-          ? html`<obc-automation-badge
-              .type=${badgeCommandLockedType}
-            ></obc-automation-badge>`
-          : nothing}
+        ${
+          badgeCommandLockedType
+            ? html`<obc-automation-badge
+                .type=${badgeCommandLockedType}
+              ></obc-automation-badge>`
+            : nothing
+        }
       </slot>
     </obc-automation-button>`;
   }

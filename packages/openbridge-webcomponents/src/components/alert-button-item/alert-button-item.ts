@@ -260,14 +260,16 @@ export class ObcAlertButtonItem extends LitElement {
         })}
         aria-label=${this.accessibleName}
       >
-        ${tempo === FlashingSpeed.Fixed
-          ? nothing
-          : html`<div class="blink" aria-hidden="true">
-              <div class="content">
-                ${this.renderIcon(styleType, true)}
-                ${showCount ? this.renderCount() : nothing}
-              </div>
-            </div>`}
+        ${
+          tempo === FlashingSpeed.Fixed
+            ? nothing
+            : html`<div class="blink" aria-hidden="true">
+                <div class="content">
+                  ${this.renderIcon(styleType, true)}
+                  ${showCount ? this.renderCount() : nothing}
+                </div>
+              </div>`
+        }
         <div class="visible-wrapper">
           ${this.globalCounter ? this.renderCounts() : nothing}
           <div class="content">

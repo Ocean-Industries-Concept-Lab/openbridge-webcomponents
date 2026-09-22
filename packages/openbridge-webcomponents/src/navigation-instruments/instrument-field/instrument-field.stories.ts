@@ -223,12 +223,14 @@ function renderComparison(config: {
         <div class="cmp-col">
           <span class="cmp-tag">&lt;obc-readout&gt;</span>
           <div class="cmp-stage">${config.modern}</div>
-          ${config.modernAlt
-            ? html`
-                <span class="cmp-tag cmp-alt">${config.modernAlt.tag}</span>
-                <div class="cmp-stage">${config.modernAlt.content}</div>
-              `
-            : nothing}
+          ${
+            config.modernAlt
+              ? html`
+                  <span class="cmp-tag cmp-alt">${config.modernAlt.tag}</span>
+                  <div class="cmp-stage">${config.modernAlt.content}</div>
+                `
+              : nothing
+          }
         </div>
       </div>
       <div class="cmp-notes">${config.notes}</div>

@@ -773,18 +773,19 @@ export class ObcContextMenuInput extends LitElement {
             ${allCols.map(
               (c) =>
                 html`<div
-                  class="column-with-header ${!c.isFirstGroup &&
-                  c.isFirstInGroup
-                    ? 'column-divider'
-                    : ''}"
+                  class="column-with-header ${
+                    !c.isFirstGroup && c.isFirstInGroup ? 'column-divider' : ''
+                  }"
                 >
-                  ${c.isFirstInGroup
-                    ? html`<div class="column-header">
-                        <div class="subtitle-container">
-                          <div class="subtitle-text">${c.groupTitle}</div>
-                        </div>
-                      </div>`
-                    : html`<div class="column-header-spacer"></div>`}
+                  ${
+                    c.isFirstInGroup
+                      ? html`<div class="column-header">
+                          <div class="subtitle-container">
+                            <div class="subtitle-text">${c.groupTitle}</div>
+                          </div>
+                        </div>`
+                      : html`<div class="column-header-spacer"></div>`
+                  }
                   <div class="column-content">${renderColumn(c.options)}</div>
                 </div>`
             )}

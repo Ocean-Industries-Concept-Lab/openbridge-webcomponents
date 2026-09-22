@@ -394,29 +394,35 @@ export class ObcGaugeTrendIndicator extends LitElement {
           vector-effect="non-scaling-stroke"
         />
 
-        ${type === ObcGaugeTrendIndicatorType.Point && areaPath
-          ? svg`<path
+        ${
+          type === ObcGaugeTrendIndicatorType.Point && areaPath
+            ? svg`<path
               d=${areaPath}
               class="area"
               clip-path="url(#${frameClipId})"
             />`
-          : nothing}
-        ${linePath
-          ? svg`<path
+            : nothing
+        }
+        ${
+          linePath
+            ? svg`<path
               d=${linePath}
               class="line"
               clip-path="url(#${frameClipId})"
               vector-effect="non-scaling-stroke"
             />`
-          : nothing}
+            : nothing
+        }
         <path
           d="M${DIVIDER_X} ${FRAME_Y}V${FRAME_Y + FRAME_HEIGHT}"
           class="divider"
           vector-effect="non-scaling-stroke"
         />
-        ${type === ObcGaugeTrendIndicatorType.Fill
-          ? this.renderFill()
-          : this.renderPoint()}
+        ${
+          type === ObcGaugeTrendIndicatorType.Fill
+            ? this.renderFill()
+            : this.renderPoint()
+        }
 
         <path
           d=${FRAME_PATH}

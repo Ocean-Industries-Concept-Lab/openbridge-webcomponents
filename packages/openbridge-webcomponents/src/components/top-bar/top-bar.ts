@@ -349,18 +349,22 @@ export class ObcTopBar extends LitElement {
           html`<div class="menu-button ${this.wideMenuButton ? 'wide' : null}">
             <obc-icon-button
               variant="flat"
-              aria-label=${this.menuButtonIcon === ObcTopBarMenuButtonIcon.Menu
-                ? msg('Menu')
-                : msg('Home')}
+              aria-label=${
+                this.menuButtonIcon === ObcTopBarMenuButtonIcon.Menu
+                  ? msg('Menu')
+                  : msg('Home')
+              }
               @pointerdown=${() =>
                 this.leftButtonDown(new CustomEvent('menu-button-clicked'))}
               @pointerup=${() => this.leftButtonUp()}
               @pointerleave=${() => this.leftButtonLeave()}
               ?activated=${this.menuButtonActivated}
             >
-              ${this.menuButtonIcon === ObcTopBarMenuButtonIcon.Menu
-                ? html`<obi-menu-iec></obi-menu-iec>`
-                : html`<obi-home></obi-home>`}
+              ${
+                this.menuButtonIcon === ObcTopBarMenuButtonIcon.Menu
+                  ? html`<obi-menu-iec></obi-menu-iec>`
+                  : html`<obi-home></obi-home>`
+              }
             </obc-icon-button>
           </div>`
         );
@@ -437,56 +441,64 @@ export class ObcTopBar extends LitElement {
           <div class="alert-container">
             <slot name="alerts"></slot>
           </div>
-          ${this.showDimmingButton && !this.inactive
-            ? html`<obc-icon-button
-                class="dimming-button"
-                part="dimming-button"
-                variant="flat"
-                aria-label=${msg('Dimming')}
-                @click=${this.dimmingButtonClicked}
-                ?activated=${this.dimmingButtonActivated}
-              >
-                <obi-palette-day-night-iec></obi-palette-day-night-iec>
-              </obc-icon-button>`
-            : null}
-          ${this.showUserButton && !this.inactive
-            ? html`<obc-icon-button
-                class="user-button"
-                variant="flat"
-                part="user-button"
-                aria-label=${msg('User')}
-                @click=${this.userButtonClicked}
-                ?activated=${this.userButtonActivated}
-                ?disabled=${this.userButtonDisabled}
-              >
-                <obi-user></obi-user>
-              </obc-icon-button>`
-            : null}
-          ${this.showAppsButton && !this.inactive
-            ? html`<obc-icon-button
-                class="apps-button"
-                variant="flat"
-                part="apps-button"
-                aria-label=${msg('Apps')}
-                @click=${this.appsButtonClicked}
-                ?activated=${this.appsButtonActivated}
-              >
-                <obi-applications></obi-applications>
-              </obc-icon-button>`
-            : null}
+          ${
+            this.showDimmingButton && !this.inactive
+              ? html`<obc-icon-button
+                  class="dimming-button"
+                  part="dimming-button"
+                  variant="flat"
+                  aria-label=${msg('Dimming')}
+                  @click=${this.dimmingButtonClicked}
+                  ?activated=${this.dimmingButtonActivated}
+                >
+                  <obi-palette-day-night-iec></obi-palette-day-night-iec>
+                </obc-icon-button>`
+              : null
+          }
+          ${
+            this.showUserButton && !this.inactive
+              ? html`<obc-icon-button
+                  class="user-button"
+                  variant="flat"
+                  part="user-button"
+                  aria-label=${msg('User')}
+                  @click=${this.userButtonClicked}
+                  ?activated=${this.userButtonActivated}
+                  ?disabled=${this.userButtonDisabled}
+                >
+                  <obi-user></obi-user>
+                </obc-icon-button>`
+              : null
+          }
+          ${
+            this.showAppsButton && !this.inactive
+              ? html`<obc-icon-button
+                  class="apps-button"
+                  variant="flat"
+                  part="apps-button"
+                  aria-label=${msg('Apps')}
+                  @click=${this.appsButtonClicked}
+                  ?activated=${this.appsButtonActivated}
+                >
+                  <obi-applications></obi-applications>
+                </obc-icon-button>`
+              : null
+          }
           ${this.showClock ? html`<slot name="clock"></slot>` : null}
-          ${!this.inactive
-            ? html`<obc-icon-button
-                class="left-more-button"
-                part="left-more-button"
-                variant="flat"
-                aria-label=${msg('More')}
-                @click=${this.leftMoreButtonClicked}
-                ?activated=${this.leftMoreButtonActivated}
-              >
-                <obi-more-vertical-google></obi-more-vertical-google>
-              </obc-icon-button>`
-            : null}
+          ${
+            !this.inactive
+              ? html`<obc-icon-button
+                  class="left-more-button"
+                  part="left-more-button"
+                  variant="flat"
+                  aria-label=${msg('More')}
+                  @click=${this.leftMoreButtonClicked}
+                  ?activated=${this.leftMoreButtonActivated}
+                >
+                  <obi-more-vertical-google></obi-more-vertical-google>
+                </obc-icon-button>`
+              : null
+          }
         </div>
       </nav>
     `;
