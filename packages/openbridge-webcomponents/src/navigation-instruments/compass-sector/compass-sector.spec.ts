@@ -24,12 +24,11 @@ async function frameOf(
     'obc-compass-sector'
   ) as ObcCompassSector;
   await el.updateComplete;
-  const root = el.shadowRoot!;
-  const overlay = root.querySelector('svg') as SVGSVGElement;
-  const container = root.querySelector('.container') as HTMLElement;
+  const overlay = el.shadowRoot!.querySelector('svg') as SVGSVGElement;
   return {
     viewBox: overlay.getAttribute('viewBox') ?? '',
-    aspect: getComputedStyle(container).aspectRatio,
+    // The host itself is the canvas, so its box is what must follow the frame.
+    aspect: getComputedStyle(el).aspectRatio,
   };
 }
 

@@ -689,8 +689,11 @@ cropped frame moves it, so `watch.ts` emits `transform-origin` derived from
 the frame — `(-x/w)%, (-y/h)%`, which evaluates to the default `50% 50%` for
 every origin-centred frame, so nothing else moves. **The percentage form is
 only the user-space origin while the box aspect equals the viewBox aspect**,
-which is why a cropped consumer must give its root the frame's
-`aspect-ratio` (`@mixin contain-aspect`, `src/mixins/contain-aspect.css`).
+which is why a cropped consumer must carry the frame's `aspect-ratio`
+(`@mixin contain-aspect`, `src/mixins/contain-aspect.css`) — on `:host`, not
+on an inner wrapper. A host left at `height: 100%` stays square inside a
+square cell and only centres the rectangle within it; the element itself is
+the canvas, so its own box is what has to follow the frame.
 
 The crop also means the arc is painted where it points and only the rotation
 brings it into the window, so the svg viewport — which clips _before_ the

@@ -123,6 +123,14 @@ export class ObcRudder extends SetpointMixin(LitElement) {
 
   override updated(changed: PropertyValues): void {
     super.updated(changed);
+    // The host IS the canvas, so its box follows the frame the render used.
+    const frame = this._frame;
+    if (frame) {
+      this.style.setProperty(
+        '--obc-rudder-aspect',
+        `${frame.width} / ${frame.height}`
+      );
+    }
     this._hostSizePinned = applyPinnedHostSize(
       this,
       this._frame,
@@ -333,10 +341,7 @@ export class ObcRudder extends SetpointMixin(LitElement) {
     const overlayViewBox = frame.viewBox;
 
     return html`
-      <div
-        class="container"
-        style="aspect-ratio: ${frame.width} / ${frame.height}"
-      >
+      <div class="container">
         <obc-watch
           .touching=${this.touching}
           .arcFrame=${frame}

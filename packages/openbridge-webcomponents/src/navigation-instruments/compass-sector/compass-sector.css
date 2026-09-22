@@ -4,15 +4,8 @@
 
 .container {
   position: relative;
-  /* `aspect-ratio` is set inline from the frame, which the crop and the label
-     reserve both move. */
-  @mixin contain-aspect;
-
-  /* Centre the arc in whichever axis the host has slack on. */
-  margin-left: auto;
-  margin-right: auto;
-  top: 50%;
-  transform: translateY(-50%);
+  width: 100%;
+  height: 100%;
 }
 
 .container > * {
@@ -39,8 +32,11 @@
 
 :host {
   display: block;
-  width: 100%;
-  height: 100%;
+  /* The element is the cropped canvas, not a square holding one: the aspect
+     comes from the frame, which the crop and the label reserve both move. */
+  @mixin contain-aspect;
+  aspect-ratio: var(--obc-compass-sector-aspect, 448 / 217.28);
+
   /* Both layers paint past their viewBox so the rotation can carry the arc in;
      this is the edge that bounds the component. */
   overflow: hidden;

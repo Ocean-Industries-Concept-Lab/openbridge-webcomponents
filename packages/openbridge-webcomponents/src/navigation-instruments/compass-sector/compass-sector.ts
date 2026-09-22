@@ -219,6 +219,9 @@ export class ObcCompassSector extends LitElement {
   // The frame follows the host box, which no property change announces.
   private _resizeController = new ResizeController(this, {});
 
+  private _aspectWidth = 448;
+  private _aspectHeight = 217.28;
+
   override firstUpdated(changed: PropertyValues): void {
     super.firstUpdated(changed);
     observeInnerBox(this._resizeController, this.renderRoot);
@@ -283,6 +286,15 @@ export class ObcCompassSector extends LitElement {
     if (arcInputsChanged || changed.has('headingAdvices')) {
       this._cachedAdvices = this._buildAdvices();
     }
+  }
+
+  override updated(changed: PropertyValues): void {
+    super.updated(changed);
+    // The host IS the canvas, so its box follows the frame the render used.
+    this.style.setProperty(
+      '--obc-compass-sector-aspect',
+      `${this._aspectWidth} / ${this._aspectHeight}`
+    );
   }
 
   override disconnectedCallback(): void {
@@ -507,6 +519,8 @@ export class ObcCompassSector extends LitElement {
     // same pivot: the cropped frame's centre is not the compass centre.
     const pivotX = (-frame.x / frame.width) * 100;
     const pivotY = (-frame.y / frame.height) * 100;
+    this._aspectWidth = frame.width;
+    this._aspectHeight = frame.height;
     const tickmarks = frame.labelsHidden
       ? this._cachedTickmarks.map((t) => ({...t, text: undefined}))
       : this._cachedTickmarks;
@@ -522,10 +536,7 @@ export class ObcCompassSector extends LitElement {
         : undefined;
 
     return html`
-      <div
-        class="container"
-        style="aspect-ratio: ${frame.width} / ${frame.height}"
-      >
+      <div class="container">
         <obc-watch
           .touching=${this.touching}
           .advices=${this._cachedAdvices}
