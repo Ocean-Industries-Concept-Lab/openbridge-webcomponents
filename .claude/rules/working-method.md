@@ -56,6 +56,7 @@ judgement call.
    | `building-blocks/{instrument-linear,external-scale,circular-progress,readout-block}` | the pieces instruments compose                                        | 9 / 9 / 6 / 5                                                           |
    | `navigation-instruments/watch/watch.ts`                                              | everything more than one radial instrument draws                      | 6                                                                       |
    | `internal/tree-roving-navigator.ts`                                                  | roving tabindex for tree hosts                                        | 2                                                                       |
+   | `internal/popover-controller.ts`                                                     | light dismiss for overlays, and the trigger binding that goes with it | 6                                                                       |
    | `src/mixins/*.css`                                                                   | PostCSS mixins — global, no import (`postcss.config.mjs` `mixinsDir`) | `font-body` 52, `font-label` 36, `card` 5, `scrollbar` 2, `readout-*` 2 |
 
    A `Math.min(Math.max(…))`, a `((a % 360) + 360) % 360`, a `* Math.PI / 180`

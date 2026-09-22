@@ -25,6 +25,7 @@ import '../navigation-item/navigation-item.js';
 import '../accordion-item/accordion-item.js';
 import '../button/button.js';
 import '../scrollbar/scrollbar.js';
+import {PopoverController} from '../../internal/popover-controller.js';
 
 export interface WifiState {
   enabled: boolean;
@@ -93,6 +94,9 @@ export enum SystemMenuControlMode {
 export type VolumeChangeEvent = CustomEvent<number>;
 
 /**
+ * @property softDismiss - Opt in to light dismiss. The panel moves to the browser's top layer, where a click outside, `Escape`, or another popover opening closes it. Leave it off to keep owning visibility yourself.
+ * @property open - Whether the panel is showing.
+ * @availableWhen open softDismiss==true
  * @fires wifi-click - When the Wi-Fi button is clicked
  * @fires audio-click - When the Audio button is clicked
  * @fires {VolumeChangeEvent} audio-volume-change - When the Audio volume is changed
@@ -109,11 +113,18 @@ export type VolumeChangeEvent = CustomEvent<number>;
  * @fires wifi-options-click - When the Wi-Fi options are clicked
  * @fires wifi-disconnect-click - When the Wi-Fi disconnect is clicked
  * @slot battery-status - Custom battery status text (falls back to the built-in charging/battery label).
+ * @fires {CustomEvent<void>} close - Fired when the panel closed itself: a click outside, `Escape`, or another popover opening. `open` is already `false` by then.
  * @stable
  */
 @customElement('obc-system-menu')
 @localized()
 export class ObcSystemMenu extends LitElement {
+  @property({type: Boolean}) softDismiss = false;
+
+  @property({type: Boolean}) open = false;
+
+  protected readonly softDismissController = new PopoverController(this);
+
   @property({attribute: false}) wifiState: WifiState | undefined;
   @property({attribute: false}) audioState: AudioState | undefined;
   @property({attribute: false}) microphoneState: MicrophoneState | undefined;

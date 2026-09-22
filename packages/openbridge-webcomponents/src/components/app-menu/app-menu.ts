@@ -1,9 +1,11 @@
 import {customElement} from '../../decorator.js';
+import {property} from 'lit/decorators.js';
 import {LitElement, html, unsafeCSS} from 'lit';
 import compentStyle from './app-menu.css?inline';
 import '../text-input-field/text-input-field.js';
 import '../app-button/app-button.js';
 import '../../icons/icon-search.js';
+import {PopoverController} from '../../internal/popover-controller.js';
 
 /**
  * `<obc-app-menu>` – A vertical application menu component with integrated search and customizable app buttons.
@@ -46,12 +48,22 @@ import '../../icons/icon-search.js';
  * ```
  * In this example, the menu displays a search bar and a grid of app buttons, each with an icon.
  *
+ * @property softDismiss - Opt in to light dismiss. The panel moves to the browser's top layer, where a click outside, `Escape`, or another popover opening closes it. Leave it off to keep owning visibility yourself.
+ * @property open - Whether the panel is showing.
+ * @availableWhen open softDismiss==true
  * @slot - Default slot for app buttons or custom menu items
  * @fires {CustomEvent<string>} search - Fired when the search input value changes, with the current value in `detail`.
+ * @fires {CustomEvent<void>} close - Fired when the panel closed itself: a click outside, `Escape`, or another popover opening. `open` is already `false` by then.
  * @stable
  */
 @customElement('obc-app-menu')
 export class ObcAppMenu extends LitElement {
+  @property({type: Boolean}) softDismiss = false;
+
+  @property({type: Boolean}) open = false;
+
+  protected readonly softDismissController = new PopoverController(this);
+
   /**
    * Handles input events from the search field and emits a `search` event with the current value.
    *

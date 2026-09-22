@@ -1,0 +1,23 @@
+/* Undoes the UA sheet for a panel that opted into `softDismiss` (#1293).
+ *
+ * `[popover]` arrives with `inset: 0; margin: auto` plus a border, padding and
+ * `background-color: Canvas`, which would centre the panel and paint chrome
+ * around it. None of these panels declare a `:host` box of their own, so
+ * without this reset the opt-in changes how they look and where they sit.
+ *
+ * Only `inset` and the chrome are cleared. `position` is left to the UA's
+ * `fixed`, and an outer-tree rule beats `:host` in the cascade whatever its
+ * specificity, so a consumer's own anchor positioning still wins. */
+@define-mixin soft-dismiss {
+  :host([popover]) {
+    inset: auto;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: none;
+    overflow: visible;
+    width: auto;
+    height: auto;
+    color: inherit;
+  }
+}

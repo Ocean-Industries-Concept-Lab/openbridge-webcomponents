@@ -175,3 +175,39 @@ walk is `checkbox-list-visibility.ts`, guarded by its spec. Reserve `level`
 for lists with expandable rows: a level above 0 always reserves the 48px
 chevron slot, so flat lists such as the context menu's nested checkboxes keep
 their own compact padding instead.
+
+## Soft dismiss (menus and overlays)
+
+A panel that opens over content closes on a click outside, on `Escape`, and
+when another panel opens. The browser does all three. `PopoverController`
+(`src/internal/popover-controller.ts`) puts `popover="auto"` on the host and
+keeps it in step with the host's `open` property (#1293).
+
+Adopting it takes three things on the host: a `softDismiss` boolean, an `open`
+boolean, and `@mixin soft-dismiss;` in the component CSS. `obc-brilliance-menu`
+is the reference.
+
+- `softDismiss` is opt-in because `[popover]` is `display: none` until shown.
+  On by default it would hide every panel a consumer already positions and
+  shows itself.
+- The `@mixin soft-dismiss` reset is not optional. The UA sheet gives
+  `[popover]` `inset: 0; margin: auto` plus a border, padding and a `Canvas`
+  background, so without it the panel is re-centred with chrome around it. An
+  outer-tree rule beats `:host` whatever its specificity, so a consumer's own
+  anchor positioning still wins.
+- The browser writes `open` back to `false` and fires `close` when it
+  dismisses. A consumer mirroring that state in a button's `activated` flag
+  listens for `close` rather than re-deriving it from its own flag.
+- `popovertarget` does not cross shadow roots, so a trigger inside one
+  component cannot declare a panel that lives in another tree. That is what
+  `bindPopoverTrigger(trigger, panel)` is for. A plain
+  `open ? hide() : show()` in a click handler leaves the panel stuck open,
+  because light dismiss already closed it on `pointerdown`.
+- Light dismiss passes the click through to whatever sits underneath, where a
+  backdrop element swallows it. A consumer that relied on that dead first
+  click changes behaviour when it moves over.
+
+Four overlays still hand-roll dismissal, listed in #1293: `obc-split-button`
+and `obc-readout`'s source picker each run a `window` `pointerdown` listener,
+`obc-poi-group` renders a backdrop div, and `obc-navigation-item-group` has
+nothing at all.

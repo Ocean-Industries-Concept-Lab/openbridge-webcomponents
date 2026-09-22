@@ -5,6 +5,7 @@ import {
   ObcBrillianceMenuVariant,
 } from './brilliance-menu.js';
 import './brilliance-menu.js';
+import {bindPopoverTrigger} from '../../internal/popover-controller.js';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof ObcBrillianceMenu> = {
@@ -69,5 +70,49 @@ export const NoDuskPaletteCompact: Story = {
   args: {
     variant: ObcBrillianceMenuVariant.compact,
     showDuskPalette: false,
+  },
+};
+
+/**
+ * `softDismiss` hands dismissal to the browser: the menu moves to the top
+ * layer, and a click outside, `Escape`, or another popover opening closes it
+ * (#1293). Click the button, then click the page behind it — the click both
+ * closes the menu and lands on what it hit, which is what a backdrop element
+ * cannot do.
+ *
+ * `bindPopoverTrigger` wires the button. A naive toggle in a click handler
+ * would leave the menu stuck open, because light dismiss already closed it on
+ * `pointerdown`.
+ */
+export const SoftDismiss: Story = {
+  // A live behaviour, not a look: snapshotting it would pin one frame of an
+  // interaction and tell a reader nothing.
+  tags: ['skip-test'],
+  args: {
+    softDismiss: true,
+  },
+  render: (args) => {
+    const menu = document.createElement('obc-brilliance-menu');
+    Object.assign(menu, args);
+    menu.style.cssText =
+      'position: fixed; position-anchor: --soft-dismiss-demo;' +
+      'top: calc(anchor(bottom) + 4px); left: anchor(left);';
+
+    const trigger = document.createElement('button');
+    trigger.textContent = 'Brilliance';
+    trigger.style.cssText = 'anchor-name: --soft-dismiss-demo;';
+    bindPopoverTrigger(trigger, menu);
+
+    let hits = 0;
+    const behind = document.createElement('button');
+    behind.textContent = 'a button behind the menu';
+    behind.style.cssText = 'display: block; margin-top: 240px;';
+    behind.addEventListener('click', () => {
+      behind.textContent = `clicked ${++hits} time${hits === 1 ? '' : 's'}`;
+    });
+
+    const root = document.createElement('div');
+    root.append(trigger, menu, behind);
+    return root;
   },
 };

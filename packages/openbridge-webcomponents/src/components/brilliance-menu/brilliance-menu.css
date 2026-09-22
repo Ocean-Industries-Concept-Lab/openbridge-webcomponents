@@ -1,3 +1,5 @@
+@mixin soft-dismiss;
+
 * {
   box-sizing: border-box;
 }
