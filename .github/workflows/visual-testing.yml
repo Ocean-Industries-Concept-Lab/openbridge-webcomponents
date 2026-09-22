@@ -43,6 +43,20 @@ jobs:
           path: packages/openbridge-webcomponents/__vis__/linux/__diffs__
           retention-days: 30
 
+      # Reports only. The gate moves to `parameters.a11y.test: 'error'` per
+      # story section as each is triaged (#1208).
+      - name: Accessibility check
+        if: always()
+        run: npm run test-a11y
+        working-directory: packages/openbridge-webcomponents
+
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: a11y-report
+          path: packages/openbridge-webcomponents/a11y-report.json
+          retention-days: 30
+
   connector-diagram:
     timeout-minutes: 30
     runs-on: ubuntu-latest

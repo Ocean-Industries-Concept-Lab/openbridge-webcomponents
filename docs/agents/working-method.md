@@ -223,8 +223,8 @@ Decisions:
 ## Accessibility, forwards and backwards
 
 [`a11y.md`](a11y.md) is the bar for new interactive components and for any
-existing one a change touches. Its § 9 says what runs automatically (nothing
-yet, #1208) and which seven components to look at first.
+existing one a change touches. Its § 9 says what `npm run test-a11y` covers,
+what it cannot see, and which components to look at first.
 
 ## Pull requests
 
@@ -247,4 +247,4 @@ current one ([`docgen.md`](docgen.md)).
 
 ## Open
 
-- Automated accessibility checks (#1208).
+- The accessibility lint rules, keyboard `play` functions and the axe gate (#1208).

@@ -214,6 +214,7 @@ npm run build-storybook   # static build
 
 # Tests
 npm run test-storybook          # visual snapshot tests (Vitest + Playwright)
+npm run test-a11y               # axe over every story, report-only
 npm run test-storybook:watch    # watch mode
 npm run update-snapshots        # replace baselines
 

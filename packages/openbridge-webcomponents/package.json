@@ -66,7 +66,8 @@
     "analyze:watch": "cem analyze --watch",
     "clean": "rm -rf node_modules dist bundle custom-elements.json",
     "言_TRANSLATIONS______________________________________________": "echo _____",
-    "translations:extract": "lit localize extract"
+    "translations:extract": "lit localize extract",
+    "test-a11y": "vitest run --config vitest.a11y.config.ts"
   },
   "dependencies": {
     "@lit-labs/observers": "^2.1.0",
@@ -82,8 +83,8 @@
     "@eslint/js": "^10.0.1",
     "@figma/rest-api-spec": "^0.37.0",
     "@jackolope/ts-lit-plugin": "^3.1.6",
-    "@oicl-lit/cli": "0.6.7",
     "@lit-labs/cli-localize": "^0.2.2",
+    "@oicl-lit/cli": "0.6.7",
     "@oicl-lit/gen-wrapper-angular": "0.1.7",
     "@oicl-lit/gen-wrapper-react": "0.3.6",
     "@oicl-lit/gen-wrapper-svelte": "0.2.0",
@@ -97,6 +98,7 @@
     "@semantic-release/github": "github:semantic-release/github",
     "@semantic-release/npm": "^13.1.5",
     "@semantic-release/release-notes-generator": "^14.1.0",
+    "@storybook/addon-a11y": "^10.2.17",
     "@storybook/addon-docs": "^10.2.17",
     "@storybook/addon-links": "^10.2.17",
     "@storybook/addon-themes": "^10.2.19",
