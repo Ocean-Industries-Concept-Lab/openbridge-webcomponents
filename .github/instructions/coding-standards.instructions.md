@@ -11,7 +11,9 @@ applyTo: "packages/openbridge-webcomponents/src/**/*.ts,packages/openbridge-webc
 `AGENTS.md` § 2 carries the summary; `docs/agents/coding-standards.md` is the
 source of truth for comments, CSS comments, writing style, boolean naming and
 Storybook titles.
-`npm run lint:comments` reports what breaks the comment rules.
+`npm run lint:comments` reports what breaks these rules in `src/**/*.ts`.
+Nothing lints CSS comments — those are the comment pass's job, and the
+reviewer's.
 
 ## Comments
 
@@ -68,13 +70,13 @@ commenting them. A one-line `/* ---- Section ---- */` banner is fine in files
 over ~150 lines. Same limits as TS: three lines, no history, no commented-out
 declarations. Delete placeholder-only CSS files.
 
-**A shared mixin's header is documentation, not a comment.** A file in
-`src/mixins/` has no class or JSDoc to carry its intent, so the block at the
-top does the job a module JSDoc does in TypeScript: what the mixin is for,
-when to reach for it, and what it deliberately leaves alone. The three-line
-limit does not apply to that header — the writing-style rules do. Everything
-below it is an ordinary CSS comment and keeps the one-line-per-declaration
-shape.
+**A shared mixin's header is documentation, not a comment.** A
+`src/mixins/*.css` file has no class or JSDoc to carry its intent, so the
+block at the top does the job a module JSDoc does in TypeScript: what the
+mixin is for, when to reach for it, and what it deliberately leaves alone.
+The three-line limit does not apply to that header — the writing-style rules
+do. Everything below it is an ordinary CSS comment and keeps the
+one-line-per-declaration shape.
 
 ### Writing style (comments, JSDoc, docs, PR and issue text)
 
