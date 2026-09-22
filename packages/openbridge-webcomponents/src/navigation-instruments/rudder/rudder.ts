@@ -1,5 +1,6 @@
-import {LitElement, PropertyValues, css, html, nothing, svg} from 'lit';
+import {LitElement, PropertyValues, html, nothing, svg, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
+import componentStyle from './rudder.css?inline';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import '../watch/watch.js';
 import {Tickmark, TickmarkStyle, TickmarkType} from '../watch/tickmark.js';
@@ -8,6 +9,7 @@ import {InstrumentState, Priority} from '../types.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
 import {customElement} from '../../decorator.js';
+import {ArcFrameFit} from '../../svghelpers/arc-frame.js';
 import {
   applyPinnedHostSize,
   computeRadialFrame,
@@ -282,6 +284,8 @@ export class ObcRudder extends SetpointMixin(LitElement) {
       containerPx: measureContainerPx(this),
       faceDiameter: this.faceDiameter,
       zoomToFitArc: this.zoomToFitArc,
+      // The zoomed arc is flat; a square box would be mostly empty height.
+      zoomFit: ArcFrameFit.bbox,
       areas,
       innerRadius: innerRingRadiusFor(WatchCircleType.double),
     });
@@ -293,15 +297,18 @@ export class ObcRudder extends SetpointMixin(LitElement) {
     const overlayViewBox = frame.viewBox;
 
     return html`
-      <div class="container">
+      <div
+        class="container"
+        style="aspect-ratio: ${frame.width} / ${frame.height}"
+      >
         <obc-watch
           .touching=${this.touching}
           .arcFrame=${frame}
           .areas=${areas}
           .angleSetpoint=${setpointAngle}
-          .newAngleSetpoint=${
-            this.newSetpoint !== undefined ? 180 - this.newSetpoint : undefined
-          }
+          .newAngleSetpoint=${this.newSetpoint !== undefined
+            ? 180 - this.newSetpoint
+            : undefined}
           .atAngleSetpoint=${this.computeAtSetpoint(this.angle)}
           .angleSetpointAtZeroDeadband=${this.setpointAtZeroDeadband}
           .setpointOverride=${this.setpointOverride}
@@ -320,25 +327,7 @@ export class ObcRudder extends SetpointMixin(LitElement) {
     `;
   }
 
-  static override styles = css`
-    * {
-      box-sizing: border-box;
-    }
-
-    .container {
-      position: relative;
-      width: 100%;
-      height: 100%;
-    }
-
-    .container > * {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
-  `;
+  static override styles = unsafeCSS(componentStyle);
 }
 
 declare global {

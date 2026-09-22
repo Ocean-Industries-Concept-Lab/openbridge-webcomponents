@@ -1,5 +1,9 @@
 import type {WatchArea} from '../navigation-instruments/watch/watch.js';
-import {computeZoomToFitArcFrame, type ZoomToFitArcFrame} from './arc-frame.js';
+import {
+  computeZoomToFitArcFrame,
+  ArcFrameFit,
+  type ZoomToFitArcFrame,
+} from './arc-frame.js';
 
 /**
  * Shared frame computation for circular/radial watch-based instruments.
@@ -122,6 +126,8 @@ export interface RadialFrameOptions {
   areas?: WatchArea[];
   /** Innermost visible radius (depends on WatchCircleType); zoom path only. */
   innerRadius?: number;
+  /** Zoom viewBox shape; `bbox` crops a flat arc's empty height. */
+  zoomFit?: ArcFrameFit;
 }
 
 export interface RadialFrame extends ZoomToFitArcFrame {
@@ -484,6 +490,7 @@ function zoomFrameAt(
     innerRadius: opts.innerRadius ?? OUTER_RING_RADIUS,
     extension,
     targetSize: (RADIAL_VIEWBOX_BASE + extension) * 2,
+    fit: opts.zoomFit,
   });
 }
 
