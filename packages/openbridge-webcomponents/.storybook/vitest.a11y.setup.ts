@@ -17,21 +17,6 @@ document.head.appendChild(style);
 const theme = (import.meta as unknown as {env: Record<string, string>}).env
   .VITE_A11Y_THEME;
 
-type A11yStoryContext = {
-  tags: string[];
-  globals: {a11y?: {manual?: boolean}};
-};
-
-// The addon reads globals, not tags, so the exemption tag needs a shim. Same
-// mechanism storybook-addon-vis uses for `!snapshot`.
-const exemptionShim = {
-  beforeEach: (context: A11yStoryContext) => {
-    if (context.tags?.includes('skip-a11y')) {
-      context.globals.a11y = {...context.globals.a11y, manual: true};
-    }
-  },
-};
-
 // axe resolves a colour pair against what is painted behind the text. The
 // Storybook UI paints the canvas from `.sb-show-main` in preview-head.html,
 // which the Vitest runner never applies, so without this every pair is
@@ -53,7 +38,6 @@ const canvasAndAnimations = {
 
 setProjectAnnotations([
   projectAnnotations,
-  exemptionShim as never,
   canvasAndAnimations as never,
   a11yAnnotations,
 ]);
