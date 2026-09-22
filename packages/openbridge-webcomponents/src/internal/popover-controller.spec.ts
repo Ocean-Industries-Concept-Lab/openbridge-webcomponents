@@ -5,10 +5,10 @@ import type {ObcBrillianceMenu} from '../components/brilliance-menu/brilliance-m
 import {bindPopoverTrigger} from './popover-controller.js';
 
 /**
- * Driven through a real host rather than a fixture element: `lit labs gen`
- * wraps every module-scope LitElement subclass it finds, spec files included,
- * and the wrapper it emits for one (`tagName: 'undefined'`) fails the wrapper
- * packages' build.
+ * Tested against a real component instead of a throwaway one on purpose. The
+ * wrapper generator picks up any component class it finds, spec files
+ * included, and the broken wrapper it writes for a test-only class fails the
+ * React and Angular builds.
  */
 
 const cleanup: Array<() => void> = [];
@@ -16,7 +16,7 @@ afterEach(() => {
   while (cleanup.length) cleanup.pop()!();
 });
 
-/** The popover `toggle` event is queued, not dispatched synchronously. */
+/** The browser reports a menu opening or closing a moment later, not at once. */
 const nextTask = () => new Promise((resolve) => setTimeout(resolve, 0));
 
 let nextRow = 0;
@@ -35,7 +35,8 @@ async function fixture(softDismiss = true) {
   cleanup.push(() => root.remove());
 
   const panel = root.querySelector<ObcBrillianceMenu>('obc-brilliance-menu')!;
-  // Clear of the buttons, so a real click lands where the test aims.
+  // Away from the buttons, so a click meant for them is not caught by the
+  // menu sitting on top.
   panel.style.cssText = 'position:fixed;left:320px;top:320px';
   panel.softDismiss = softDismiss;
   await panel.updateComplete;
@@ -113,8 +114,9 @@ describe('PopoverController', () => {
     await nextTask();
 
     expect(isOpen(panel)).toBe(false);
-    // The whole point of light dismiss over a backdrop div: one click, not a
-    // dead one (#1293).
+    // This is the reason for the whole change: one click that both closes
+    // the menu and presses what is underneath, instead of a wasted one
+    // (#1293).
     expect(clicks).toBe(1);
   });
 
@@ -189,8 +191,8 @@ describe('bindPopoverTrigger', () => {
     await nextTask();
     expect(isOpen(panel)).toBe(true);
 
-    // Without the guard this is the stuck-open case: light dismiss closes the
-    // panel on pointerdown and a naive handler reopens it on click (#1293).
+    // The menu looks stuck open without the guard: the browser closes it as
+    // the mouse goes down, then the click opens it again (#1293).
     await userEvent.click(trigger);
     await nextTask();
     expect(isOpen(panel)).toBe(false);
@@ -249,8 +251,8 @@ describe('trigger-opened panel keeps its state', () => {
     await nextTask();
     expect(isOpen(panel)).toBe(true);
 
-    // Any reactive property runs the controller's sync(); it must not read a
-    // stale `open` and close a popover the trigger just opened.
+    // Changing any property makes the component re-render, and that must not
+    // close a menu the button just opened.
     panel.brightness = 42;
     await panel.updateComplete;
     await nextTask();
@@ -263,8 +265,8 @@ describe('trigger-opened panel keeps its state', () => {
     const {panel, trigger} = await fixture();
     cleanup.push(bindPopoverTrigger(trigger, panel));
 
-    // No task boundary, so the queued `toggle` has not run yet and only the
-    // synchronous write in bindPopoverTrigger can keep sync() honest.
+    // Nothing waits here, so the browser has not reported the opening yet.
+    // Only what bindPopoverTrigger wrote straight away can keep this right.
     await userEvent.click(trigger);
     panel.brightness = 7;
     await panel.updateComplete;
@@ -277,8 +279,8 @@ describe('trigger-opened panel keeps its state', () => {
   it('mirrors a direct open in the same task as a property change', async () => {
     const {panel} = await fixture();
 
-    // No task boundary, so the queued `toggle` has not run when the Lit
-    // update's microtask reaches sync().
+    // The re-render lands before the browser gets round to reporting that
+    // the menu opened.
     panel.showPopover();
     panel.brightness = 3;
     await panel.updateComplete;
@@ -291,7 +293,7 @@ describe('trigger-opened panel keeps its state', () => {
   it('mirrors an open that nothing set `open` for', async () => {
     const {panel} = await fixture();
 
-    // What a `popovertarget` invoker or a direct showPopover() call does.
+    // What happens when a button is wired straight to the menu in HTML.
     panel.showPopover();
     await nextTask();
 

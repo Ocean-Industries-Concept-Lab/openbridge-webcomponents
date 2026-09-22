@@ -87,8 +87,8 @@ export type ObcCommandMenuChangeEvent = CustomEvent<{inCommand: boolean}>;
  *   Controls the toggle and visual state.
  * @property showLocation - Whether to display the location slot.
  *   If false, the location is omitted from the menu.
- * @property softDismiss - Opt in to light dismiss. The panel moves to the browser's top layer, where a click outside, `Escape`, or another popover opening closes it. Leave it off to keep owning visibility yourself.
- * @property open - Whether the panel is showing.
+ * @property softDismiss - Let the browser close this menu on its own: on a click outside it, on `Escape`, or when another menu opens. Leave it off to keep showing and hiding the menu yourself.
+ * @property open - Whether the menu is showing.
  * @availableWhen open softDismiss==true
  * @slot command-icon - Main icon representing the current command state.
  * @slot command-status - Status label (e.g., "Joystick", "NO CMD").
@@ -100,7 +100,7 @@ export type ObcCommandMenuChangeEvent = CustomEvent<{inCommand: boolean}>;
  * @slot toogle-state-no-command-label - Status label when in "no command" state.
  * @slot toogle-state-in-command-icon - Icon for the "in command" state (defaults to `<obi-command-in>`).
  * @fires {CustomEvent<{inCommand: boolean}>} change - Fired when the command state is toggled.
- * @fires {CustomEvent<void>} close - Fired when the panel closed itself: a click outside, `Escape`, or another popover opening. `open` is already `false` by then.
+ * @fires {CustomEvent<void>} close - Fired when the menu closed on its own, from a click outside, `Escape`, or another menu opening. `open` is already `false` by the time it arrives.
  * @beta
  */
 @customElement('obc-command-menu')

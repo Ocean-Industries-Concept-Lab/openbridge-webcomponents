@@ -49,8 +49,8 @@ function hideAll() {
   emit('hideAll')
 }
 
-/* Only the Full variant lays over the content. The rail variants stay in
-   flow beside it, where there is nothing to dismiss. */
+/* Only the full-width menu covers the page. The narrow rails sit beside the
+   content, so there is nothing to close. */
 const isOverlay = computed(() => props.navigationMenuVariant === ObcNavigationMenuVariant.Full)
 
 function openVendorLink() {

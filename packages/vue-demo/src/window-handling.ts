@@ -4,12 +4,11 @@ export type MenuName =
   'navigation' | 'brilliance' | 'appMenu' | 'alertMenu' | 'moreMenu' | 'commandMenu'
 
 /**
- * Open/closed state for the top bar's menus.
+ * Which top bar menu is open.
  *
- * The menus dismiss themselves now (`softDismiss`), so this only mirrors that
- * state for the top bar's `*-activated` props. `onMenuClose` keeps the mirror
- * honest, and the pointerdown snapshot keeps a second click on the same
- * button from reopening what light dismiss just closed.
+ * The menus close themselves now, so these flags exist only to keep the top
+ * bar's buttons looking pressed while their menu is up. `onMenuClose` is what
+ * puts a flag back when the browser closed a menu on its own.
  */
 export function useWindowHandling() {
   const showNavigation = ref(false)
@@ -30,14 +29,16 @@ export function useWindowHandling() {
   const all = Object.values(menus)
 
   /**
-   * Light dismiss runs on pointerdown, so by the time a top-bar button's
-   * click arrives the menu it belongs to is already closed, and a toggle
-   * reading the live value would reopen it (#1293).
+   * Remembers which menu was open as the mouse goes down.
    *
-   * The top bar reports its buttons as bare CustomEvents, so there is no
-   * `MouseEvent.detail` here to tell a pointer activation from a keyboard
-   * one. Clearing the snapshot on keydown does the same job: a keyboard
-   * activation then reads the live value, which light dismiss never touched.
+   * The browser closes an open menu at that point, before the top bar tells
+   * us the button was clicked. Without this, clicking the same button again
+   * would look like "nothing is open, so open it" and the menu would never
+   * shut (#1293).
+   *
+   * Keyboard presses do not trigger that early close, and the top bar's
+   * events do not say which kind of press it was. Clearing this on keydown
+   * covers it: a keyboard press then reads the live value instead.
    */
   let openAtPointerDown: Ref<boolean> | null | undefined
   const snapshot = () => {
@@ -66,7 +67,7 @@ export function useWindowHandling() {
     }
   }
 
-  /** The browser dismissed this menu; drop the mirrored state with it. */
+  /** The browser closed this menu; let its button stop looking pressed. */
   function onMenuClose(name: MenuName) {
     menus[name].value = false
   }

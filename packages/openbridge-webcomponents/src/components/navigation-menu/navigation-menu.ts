@@ -160,13 +160,13 @@ export enum ObcNavigationMenuFlyoutVariant {
  *   `icon-only-large` is the icon-only menu that does, `compact` is the
  *   space-saving menu, and `tree` expands groups inline and indents rows by
  *   depth.
- * @property softDismiss - Opt in to light dismiss. The panel moves to the browser's top layer, where a click outside, `Escape`, or another popover opening closes it. Leave it off to keep owning visibility yourself.
- * @property open - Whether the panel is showing.
+ * @property softDismiss - Let the browser close this menu on its own: on a click outside it, on `Escape`, or when another menu opens. Leave it off to keep showing and hiding the menu yourself.
+ * @property open - Whether the menu is showing.
  * @availableWhen open softDismiss==true
  * @slot main - Slot for primary navigation items and groups.
  * @slot footer - Slot for secondary navigation items (e.g., settings, help).
  * @slot logo - Slot for branding/logo area.
- * @fires {CustomEvent<void>} close - Fired when the panel closed itself: a click outside, `Escape`, or another popover opening. `open` is already `false` by then.
+ * @fires {CustomEvent<void>} close - Fired when the menu closed on its own, from a click outside, `Escape`, or another menu opening. `open` is already `false` by the time it arrives.
  * @stable
  */
 @customElement('obc-navigation-menu')
