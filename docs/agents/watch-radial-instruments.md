@@ -713,9 +713,11 @@ value shaves whichever feature reaches lowest.
 **Sides stay uncropped.** The box keeps the full circle's width, so a 120°
 arc reaching `x = ±155.7` sits further from the side edges than from the top,
 and `zoomToFitArc` is what takes that space back: it flattens the arc until
-its ends reach the 32-unit margin the design frame draws. Cropping the sides
-too was tried and reverted — it magnified the instrument by about a fifth and
-left zoom nothing to do at a full 120° arc.
+its ends reach the side edges, `SECTOR_SIDE_MARGIN` being the clearance left
+there (zero — the un-zoomed view already carries that padding, and zooming is
+what spends it). Cropping the sides too was tried and reverted — it magnified
+the instrument by about a fifth and left zoom nothing to do at a full 120°
+arc.
 
 ### Radial label model (design language)
 
@@ -727,8 +729,10 @@ Labels follow the design model with three placements:
 
 > **Validated combinations:** pitch/roll/pitch-roll-heave use `zoomToFitArc` + `shiftArcFrameToOuterEdge`;
 > `gauge-radial` uses per-sector `clip*` and `endLabelsMaxMin` on the 180° sector;
-> `compass-sector` pairs `clip*` with `zoomToFitArc` by shifting the cropped
-> window instead of reframing it (see "Sector crops and the rotation pivot").
+> `compass-sector` pairs a crop with `zoomToFitArc` by shifting the cropped
+> window instead of reframing it — the crops go into the frame it computes and
+> hands to `<obc-watch .arcFrame>`, which is why obc-watch's own `clip*` never
+> enter it (see "Sector crops and the rotation pivot").
 > `endLabelsMaxMin` + `zoomToFitArc` is still unvalidated.
 
 ---
