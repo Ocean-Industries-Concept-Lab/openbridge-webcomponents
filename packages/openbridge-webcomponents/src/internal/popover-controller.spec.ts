@@ -1,54 +1,17 @@
 import {userEvent} from '@vitest/browser/context';
-import {css, html, LitElement} from 'lit';
-import {property} from 'lit/decorators.js';
 import {afterEach, describe, expect, it} from 'vitest';
-import {
-  bindPopoverTrigger,
-  PopoverController,
-  type SoftDismissHost,
-} from './popover-controller.js';
+import '../components/brilliance-menu/brilliance-menu.js';
+import type {ObcBrillianceMenu} from '../components/brilliance-menu/brilliance-menu.js';
+import {bindPopoverTrigger} from './popover-controller.js';
 
-/** Fixture only: registered by hand so the component lint rules skip it. */
-class TestPanel extends LitElement implements SoftDismissHost {
-  @property({type: Boolean}) softDismiss = false;
-  @property({type: Boolean}) open = false;
-
-  constructor() {
-    super();
-    new PopoverController(this);
-  }
-
-  // Pinned clear of the triggers so a real click lands where the test aims.
-  static override styles = css`
-    :host {
-      position: fixed;
-      inset: auto;
-      top: 200px;
-      left: 200px;
-      width: 150px;
-      height: 150px;
-      margin: 0;
-      padding: 0;
-      border: none;
-      background: #ccc;
-    }
-  `;
-
-  override render() {
-    return html`<button id="inside">inside</button>`;
-  }
-}
-
-customElements.define('test-soft-dismiss-panel', TestPanel);
-
-declare global {
-  interface HTMLElementTagNameMap {
-    'test-soft-dismiss-panel': TestPanel;
-  }
-}
+/**
+ * Driven through a real host rather than a fixture element: `lit labs gen`
+ * wraps every module-scope LitElement subclass it finds, spec files included,
+ * and the wrapper it emits for one (`tagName: 'undefined'`) fails the wrapper
+ * packages' build.
+ */
 
 const cleanup: Array<() => void> = [];
-
 afterEach(() => {
   while (cleanup.length) cleanup.pop()!();
 });
@@ -56,26 +19,24 @@ afterEach(() => {
 /** The popover `toggle` event is queued, not dispatched synchronously. */
 const nextTask = () => new Promise((resolve) => setTimeout(resolve, 0));
 
-let nextOffset = 0;
+let nextRow = 0;
 
 async function fixture(softDismiss = true) {
-  // Each fixture gets its own row so two of them never overlap.
-  const top = nextOffset;
-  nextOffset += 40;
-  cleanup.push(() => {
-    nextOffset = 0;
-  });
+  const top = nextRow;
+  nextRow = (nextRow + 40) % 120;
 
   const root = document.createElement('div');
   root.style.cssText = `position:fixed;left:0;top:${top}px;z-index:1`;
   root.innerHTML = `
     <button id="trigger">trigger</button>
     <button id="outside">outside</button>
-    <test-soft-dismiss-panel></test-soft-dismiss-panel>`;
+    <obc-brilliance-menu></obc-brilliance-menu>`;
   document.body.append(root);
   cleanup.push(() => root.remove());
 
-  const panel = root.querySelector('test-soft-dismiss-panel')!;
+  const panel = root.querySelector<ObcBrillianceMenu>('obc-brilliance-menu')!;
+  // Clear of the buttons, so a real click lands where the test aims.
+  panel.style.cssText = 'position:fixed;left:320px;top:320px';
   panel.softDismiss = softDismiss;
   await panel.updateComplete;
 
@@ -88,7 +49,7 @@ async function fixture(softDismiss = true) {
 
 const isOpen = (el: Element) => el.matches(':popover-open');
 
-async function show(panel: TestPanel) {
+async function show(panel: ObcBrillianceMenu) {
   panel.open = true;
   await panel.updateComplete;
   await nextTask();
@@ -161,7 +122,7 @@ describe('PopoverController', () => {
     const {panel} = await fixture();
     await show(panel);
 
-    await userEvent.click(panel.shadowRoot!.querySelector('#inside')!);
+    await userEvent.click(panel);
     await nextTask();
 
     expect(isOpen(panel)).toBe(true);

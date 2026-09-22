@@ -204,6 +204,14 @@ is the reference.
 - Light dismiss passes the click through to whatever sits underneath, where a
   backdrop element swallows it. A consumer that relied on that dead first
   click changes behaviour when it moves over.
+- Where the trigger is not an element the consumer holds — `obc-top-bar`
+  reports its buttons as bare CustomEvents — the same guard goes in the
+  consumer: snapshot which menu was open on a capture-phase `pointerdown` and
+  clear it on `keydown`, so a keyboard activation reads the live value
+  instead. `vue-demo`'s `useWindowHandling` is the worked example.
+- A panel that is only mounted while open keeps its `v-if`: mounting a menu
+  eagerly also builds its contents, and in `vue-demo` that meant router links
+  for routes that did not exist yet.
 
 Four overlays still hand-roll dismissal, listed in #1293: `obc-split-button`
 and `obc-readout`'s source picker each run a `window` `pointerdown` listener,

@@ -57,8 +57,14 @@ export class PopoverController implements ReactiveController {
    * A close the browser performed. `open` is already `false` whenever this
    * controller did the closing, so a still-true `open` is what distinguishes
    * light dismiss and `Escape` from a programmatic one.
+   *
+   * The `softDismiss` check matters for a host another component opens as a
+   * popover of its own: `obc-menu-button` sets `popover="auto"` on
+   * `obc-context-menu-input` in its template, and that panel's dismissals are
+   * the menu button's business, not this controller's.
    */
   private readonly onToggle = (event: Event): void => {
+    if (!this.host.softDismiss) return;
     if ((event as ToggleEvent).newState !== 'closed') return;
     if (!this.host.open) return;
     this.host.open = false;

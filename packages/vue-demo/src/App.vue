@@ -46,8 +46,8 @@ const {
   showAppMenu,
   showAlertMenu,
   showMoreMenu,
-  showBackdrop,
   hideAll,
+  onMenuClose,
   toggleNavigation,
   toggleBrilliance,
   toggleAppMenu,
@@ -258,7 +258,6 @@ function onMoreMenuChange(event: ObcContextMenuInputChangeEvent) {
   >
     <div class="content">
       <router-view></router-view>
-      <div v-show="showBackdrop" class="backdrop" @click.stop="hideAll"></div>
       <!-- Use v-show so that company logo is loaded agressively -->
       <DemoNavigationMenu
         :inactive="inactive"
@@ -266,10 +265,17 @@ function onMoreMenuChange(event: ObcContextMenuInputChangeEvent) {
         :navigation-menu-variant="navigationMenuVariant"
         :small-screen="smallScreen ?? false"
         @hide-all="hideAll"
+        @close="onMenuClose('navigation')"
       />
-      <DemoCommandMenu v-if="showCommandMenu" @change="onCommandChange" />
+      <DemoCommandMenu
+        soft-dismiss
+        :open="showCommandMenu"
+        @change="onCommandChange"
+        @close="onMenuClose('commandMenu')"
+      />
       <BrillianceMenu
-        v-if="showBrilliance"
+        soft-dismiss
+        :open="showBrilliance"
         :palette="palette"
         :brightness="bridgeStore.brightness"
         show-brightness
@@ -282,15 +288,26 @@ function onMoreMenuChange(event: ObcContextMenuInputChangeEvent) {
         class="brilliance"
         @palette-changed="onPaletteChange"
         @brightness-changed="onBrightnessChange"
+        @close="onMenuClose('brilliance')"
       >
       </BrillianceMenu>
-      <DemoAppMenu :show-app-menu="showAppMenu" @hide-all="hideAll" />
-      <DemoAlertMenu v-model="showAlertMenu" />
+      <DemoAppMenu
+        :show-app-menu="showAppMenu"
+        @hide-all="hideAll"
+        @close="onMenuClose('appMenu')"
+      />
+      <DemoAlertMenu
+        :open="showAlertMenu"
+        @close="onMenuClose('alertMenu')"
+        @go-to-list="hideAll"
+      />
       <ObcContextMenuInput
-        v-if="showMoreMenu"
+        soft-dismiss
+        :open="showMoreMenu"
         class="more-menu"
         :options="moreMenuOptions"
         @change="onMoreMenuChange"
+        @close="onMenuClose('moreMenu')"
       >
       </ObcContextMenuInput>
     </div>
@@ -327,13 +344,6 @@ header {
   min-height: 100%;
   height: 100%;
 
-  .backdrop {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-  }
 }
 
 .nav-type-compact .content {

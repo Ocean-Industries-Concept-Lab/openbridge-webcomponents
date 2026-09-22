@@ -12,6 +12,7 @@ import {
   TreeRovingNavigator,
   TreeRovingAdapter,
 } from '../../internal/tree-roving-navigator.js';
+import {PopoverController} from '../../internal/popover-controller.js';
 
 /** A nav-menu tree row is either a navigation item or a navigation item group. */
 type NavTreeRow = ObcNavigationItem | ObcNavigationItemGroup;
@@ -159,13 +160,23 @@ export enum ObcNavigationMenuFlyoutVariant {
  *   `icon-only-large` is the icon-only menu that does, `compact` is the
  *   space-saving menu, and `tree` expands groups inline and indents rows by
  *   depth.
+ * @property softDismiss - Opt in to light dismiss. The panel moves to the browser's top layer, where a click outside, `Escape`, or another popover opening closes it. Leave it off to keep owning visibility yourself.
+ * @property open - Whether the panel is showing.
+ * @availableWhen open softDismiss==true
  * @slot main - Slot for primary navigation items and groups.
  * @slot footer - Slot for secondary navigation items (e.g., settings, help).
  * @slot logo - Slot for branding/logo area.
+ * @fires {CustomEvent<void>} close - Fired when the panel closed itself: a click outside, `Escape`, or another popover opening. `open` is already `false` by then.
  * @stable
  */
 @customElement('obc-navigation-menu')
 export class ObcNavigationMenu extends LitElement {
+  @property({type: Boolean}) softDismiss = false;
+
+  @property({type: Boolean}) open = false;
+
+  protected readonly softDismissController = new PopoverController(this);
+
   @property({type: String}) variant: ObcNavigationMenuVariant =
     ObcNavigationMenuVariant.Full;
 
