@@ -24,9 +24,11 @@ export interface SoftDismissHost extends LitElement {
  * the top layer, so an ancestor's `overflow: hidden`, `transform` or
  * `z-index` no longer clips it.
  *
- * The host keeps `open` as its public API. A dismissal the browser performs
- * writes `open` back to `false` and fires `close`, so a consumer that mirrors
- * the state in a button's `activated` flag stays in step.
+ * The host keeps `open` as its public API, and the controller mirrors the DOM
+ * back into it in both directions: a dismissal the browser performs sets it
+ * to `false` and fires `close`, and an open the browser performs sets it to
+ * `true`. Without that second half the next `sync()` would read a stale
+ * `false` and close a popover something else had just opened.
  *
  * The trigger lives outside the host in every current consumer, so binding it
  * is {@link bindPopoverTrigger}'s job, not this controller's.
@@ -65,7 +67,15 @@ export class PopoverController implements ReactiveController {
    */
   private readonly onToggle = (event: Event): void => {
     if (!this.host.softDismiss) return;
-    if ((event as ToggleEvent).newState !== 'closed') return;
+
+    if ((event as ToggleEvent).newState === 'open') {
+      // Opened by something other than `open` — a `popovertarget` invoker, or
+      // a direct `showPopover()`. Mirror it, or the next `sync()` reads a
+      // stale `false` and closes what was just opened.
+      this.host.open = true;
+      return;
+    }
+
     if (!this.host.open) return;
     this.host.open = false;
     /**
@@ -124,7 +134,7 @@ export class PopoverController implements ReactiveController {
  */
 export function bindPopoverTrigger(
   trigger: HTMLElement,
-  panel: HTMLElement
+  panel: SoftDismissHost
 ): () => void {
   let openBeforeLightDismiss = false;
 
@@ -137,6 +147,10 @@ export function bindPopoverTrigger(
       event.detail > 0
         ? openBeforeLightDismiss
         : panel.matches(':popover-open');
+    // Written before the native call, not left to the queued `toggle` event:
+    // a Lit update is a microtask and would run first, with `sync()` reading
+    // the stale value.
+    panel.open = !wasOpen;
     if (wasOpen) {
       panel.hidePopover();
     } else {
