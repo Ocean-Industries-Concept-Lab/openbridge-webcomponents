@@ -50,6 +50,13 @@ async function fixture(softDismiss = true) {
 
 const isOpen = (el: Element) => el.matches(':popover-open');
 
+/**
+ * While a menu is open its cover sits over everything else, and Playwright
+ * refuses to click an element another one is covering. `force` skips that
+ * check and clicks the spot anyway, which is exactly what a user does.
+ */
+const clickSpot = (el: Element) => userEvent.click(el, {force: true});
+
 async function show(panel: ObcBrillianceMenu) {
   panel.open = true;
   await panel.updateComplete;
@@ -63,9 +70,13 @@ describe('PopoverController', () => {
     expect(getComputedStyle(panel).display).not.toBe('none');
   });
 
-  it('opting in makes the host a popover', async () => {
+  it('opting in makes the host a popover with a cover to hand', async () => {
     const {panel} = await fixture();
+    await show(panel);
     expect(panel.getAttribute('popover')).toBe('auto');
+    expect(
+      panel.shadowRoot!.querySelector('[part~="backdrop"]')
+    ).not.toBeNull();
   });
 
   it('open shows and hides the popover', async () => {
@@ -96,7 +107,7 @@ describe('PopoverController', () => {
     panel.addEventListener('close', () => closes++);
 
     await show(panel);
-    await userEvent.click(outside);
+    await clickSpot(outside);
     await nextTask();
 
     expect(isOpen(panel)).toBe(false);
@@ -104,20 +115,47 @@ describe('PopoverController', () => {
     expect(closes).toBe(1);
   });
 
-  it('the dismissing click still reaches the element underneath', async () => {
+  it('the dismissing click does not reach the element underneath', async () => {
     const {panel, outside} = await fixture();
     let clicks = 0;
     outside.addEventListener('click', () => clicks++);
 
     await show(panel);
-    await userEvent.click(outside);
+    await clickSpot(outside);
     await nextTask();
 
     expect(isOpen(panel)).toBe(false);
-    // This is the reason for the whole change: one click that both closes
-    // the menu and presses what is underneath, instead of a wasted one
-    // (#1293).
-    expect(clicks).toBe(1);
+    // The first click only closes the menu. Whatever sat under the pointer
+    // waits for the next one (#1293).
+    expect(clicks).toBe(0);
+  });
+
+  it('the cover takes the pointer while the menu is open', async () => {
+    const {panel, outside} = await fixture();
+    await show(panel);
+
+    // Seen from the page, the cover is the menu itself. Whatever is under
+    // the pointer gets neither clicks nor hover.
+    const r = outside.getBoundingClientRect();
+    const hit = document.elementFromPoint(
+      r.x + r.width / 2,
+      r.y + r.height / 2
+    );
+    expect(hit).toBe(panel);
+  });
+
+  it('the page is free again once the menu has closed', async () => {
+    const {panel, outside} = await fixture();
+    await show(panel);
+    await clickSpot(outside);
+    await nextTask();
+
+    const r = outside.getBoundingClientRect();
+    const hit = document.elementFromPoint(
+      r.x + r.width / 2,
+      r.y + r.height / 2
+    );
+    expect(hit).toBe(outside);
   });
 
   it('a click inside leaves it open', async () => {
@@ -191,11 +229,14 @@ describe('bindPopoverTrigger', () => {
     await nextTask();
     expect(isOpen(panel)).toBe(true);
 
-    // The menu looks stuck open without the guard: the browser closes it as
-    // the mouse goes down, then the click opens it again (#1293).
-    await userEvent.click(trigger);
+    // The second click lands on the cover, not the button, and the cover
+    // closes the menu.
+    let triggerClicks = 0;
+    trigger.addEventListener('click', () => triggerClicks++);
+    await clickSpot(trigger);
     await nextTask();
     expect(isOpen(panel)).toBe(false);
+    expect(triggerClicks).toBe(0);
 
     await userEvent.click(trigger);
     await nextTask();
@@ -223,7 +264,7 @@ describe('bindPopoverTrigger', () => {
 
     await userEvent.click(trigger);
     await nextTask();
-    await userEvent.click(outside);
+    await clickSpot(outside);
     await nextTask();
     expect(isOpen(panel)).toBe(false);
 

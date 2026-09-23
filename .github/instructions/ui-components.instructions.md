@@ -177,10 +177,11 @@ their own compact padding instead.
 
 ## Soft dismiss (menus and overlays)
 
-A panel that opens over content closes on a click outside, on `Escape`, and
-when another panel opens. The browser does all three. `PopoverController`
-(`src/internal/popover-controller.ts`) puts `popover="auto"` on the host and
-keeps it in step with the host's `open` property (#1293).
+A panel that opens over content closes on a click outside and on `Escape`,
+and that click does nothing else. `PopoverController`
+(`src/internal/popover-controller.ts`) puts `popover="auto"` on the host,
+keeps it in step with the host's `open` property, and holds a see-through
+cover over the page while the panel is open (#1293).
 
 Adopting it takes three things on the host: a `softDismiss` boolean, an `open`
 boolean, and `@mixin soft-dismiss;` in the component CSS. `obc-brilliance-menu`
@@ -199,17 +200,16 @@ is the reference.
   listens for `close` rather than re-deriving it from its own flag.
 - `popovertarget` does not cross shadow roots, so a trigger inside one
   component cannot declare a panel that lives in another tree. That is what
-  `bindPopoverTrigger(trigger, panel)` is for. A plain
-  `open ? hide() : show()` in a click handler leaves the panel stuck open,
-  because light dismiss already closed it on `pointerdown`.
-- Light dismiss passes the click through to whatever sits underneath, where a
-  backdrop element swallows it. A consumer that relied on that dead first
-  click changes behaviour when it moves over.
-- Where the trigger is not an element the consumer holds — `obc-top-bar`
-  reports its buttons as bare CustomEvents — the same guard goes in the
-  consumer: snapshot which menu was open on a capture-phase `pointerdown` and
-  clear it on `keydown`, so a keyboard activation reads the live value
-  instead. `vue-demo`'s `useWindowHandling` is the worked example.
+  `bindPopoverTrigger(trigger, panel)` is for.
+- The click outside is swallowed. The controller keeps a transparent cover
+  (`part="backdrop"`) over the whole page while the panel is open, stacked
+  just under it, so the first click only closes the panel and the page gets
+  no hover or wheel either. A consumer that wants a tint styles
+  `::part(backdrop)`; nothing else about it is a consumer's concern.
+- The cover sits over the panel's own trigger too, so no guard is needed
+  against a second click reopening it: that click never reaches the button.
+  Keyboard focus is not held in the panel, though — a `Tab` still moves into
+  the page the mouse cannot reach.
 - A panel that is only mounted while open keeps its `v-if`: mounting a menu
   eagerly also builds its contents, and in `vue-demo` that meant router links
   for routes that did not exist yet.

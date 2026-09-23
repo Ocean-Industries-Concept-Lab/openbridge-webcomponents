@@ -74,12 +74,13 @@ export const NoDuskPaletteCompact: Story = {
 };
 
 /**
- * With `softDismiss` on, the browser closes the menu for you: click outside
- * it, press `Escape`, or open another menu (#1293).
+ * With `softDismiss` on, the menu closes itself: click outside it or press
+ * `Escape` (#1293).
  *
- * Try the button below the menu. The click that closes the menu also presses
- * that button, which is the part a see-through overlay cannot do — there the
- * first click is swallowed and nothing happens.
+ * Try the button below the menu. The click that closes the menu stops there
+ * — the button is not pressed until the next click, and the page does not
+ * react to the mouse at all while the menu is up. The menu keeps a
+ * see-through cover over the page for that; tint it with `::part(backdrop)`.
  *
  * `bindPopoverTrigger` hooks up the button that opens it.
  */
