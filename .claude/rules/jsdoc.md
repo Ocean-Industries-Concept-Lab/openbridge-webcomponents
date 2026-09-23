@@ -236,6 +236,11 @@ Implementation comments follow [`coding-standards.md`](../../docs/agents/coding-
 lines, no history, state-then-cite, CSS one-liners, writing style). The class
 and module JSDoc described in this file is separate and always required.
 
+The plain-words rule applies hardest here, because a `@property` or `@fires`
+description is shipped: it reaches Storybook, `custom-elements.json` and every
+framework wrapper, where it is read by people who have never opened this
+file.
+
 The JSDoc _content_ template (overview, features, usage, slots, events,
 example) is maintained in `script/docgen/prompt-system.txt`, which the docgen
 CLI feeds to the model — edit it there; this file only carries the rules the
