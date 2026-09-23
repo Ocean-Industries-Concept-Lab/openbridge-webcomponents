@@ -108,7 +108,8 @@ describe.each(PANELS)('%s soft dismiss', (tag) => {
     await panel.updateComplete;
     await nextTask();
 
-    await userEvent.click(outside);
+    // The menu's cover sits over the button; `force` clicks the spot anyway.
+    await userEvent.click(outside, {force: true});
     await nextTask();
 
     expect(panel.matches(':popover-open')).toBe(false);

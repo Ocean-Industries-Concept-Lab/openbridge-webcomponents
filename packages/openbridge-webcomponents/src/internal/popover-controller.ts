@@ -17,13 +17,20 @@ export interface SoftDismissHost extends LitElement {
 /**
  * Lets a menu close itself the way people expect (#1293).
  *
- * Click outside an open menu and it should go away. So should pressing
- * `Escape`, and opening a different menu. The browser can do all of this on
- * its own for an element marked as a popover, which is what this controller
- * switches on, so none of it is written by hand here. It comes with two
- * things that are hard to get right otherwise: focus returns to the button
- * that opened the menu, and the menu is drawn above the rest of the page
- * whatever its container does with `overflow`, `transform` or `z-index`.
+ * Click outside an open menu and it should go away — and that click should
+ * do nothing else. So should pressing `Escape`. The browser does most of
+ * this on its own for an element marked as a popover, which is what this
+ * controller switches on, and it brings two things that are hard to get
+ * right by hand: focus returns to the button that opened the menu, and the
+ * menu is drawn above the rest of the page whatever its container does with
+ * `overflow`, `transform` or `z-index`.
+ *
+ * The one thing the browser will not do is swallow that outside click: left
+ * alone it closes the menu *and* presses whatever was underneath. So while a
+ * menu is open the controller keeps a see-through cover over the whole page,
+ * drawn just under the menu. Clicks and hovers land on the cover instead of
+ * the page, and the cover closes the menu. Consumers can tint it through
+ * `::part(backdrop)`.
  *
  * A component keeps `open` as the property people set. Since the browser can
  * also open and close the menu on its own, the controller writes what the
@@ -37,6 +44,7 @@ export interface SoftDismissHost extends LitElement {
  */
 export class PopoverController implements ReactiveController {
   private installed = false;
+  private backdrop?: HTMLElement;
 
   constructor(private readonly host: SoftDismissHost) {
     host.addController(this);
@@ -67,10 +75,16 @@ export class PopoverController implements ReactiveController {
    * in time. It fires during the call that opens the menu, while `toggle`
    * waits its turn in the queue. A re-render can get in before that turn,
    * see `open` still saying `false`, and close the menu again.
+   *
+   * The cover goes up here too, and for a reason of its own: things drawn
+   * above the page stack in the order they were shown, and at this point the
+   * menu has not been shown yet. Showing the cover now is what puts it
+   * underneath the menu, whichever way the menu was opened.
    */
   private readonly onBeforeToggle = (event: Event): void => {
     if (!this.host.softDismiss) return;
     if ((event as ToggleEvent).newState !== 'open') return;
+    this.coverPage();
     this.host.open = true;
   };
 
@@ -88,6 +102,7 @@ export class PopoverController implements ReactiveController {
   private readonly onToggle = (event: Event): void => {
     if (!this.host.softDismiss) return;
     if ((event as ToggleEvent).newState !== 'closed') return;
+    this.uncoverPage();
     if (!this.host.open) return;
     this.host.open = false;
     /**
@@ -108,6 +123,10 @@ export class PopoverController implements ReactiveController {
         // element, which is what it was before opting in.
         host.removeAttribute('popover');
         this.installed = false;
+        // onToggle will not run for that close: softDismiss is already off.
+        this.uncoverPage();
+        this.backdrop?.remove();
+        this.backdrop = undefined;
       }
       return;
     }
@@ -127,22 +146,51 @@ export class PopoverController implements ReactiveController {
       host.hidePopover();
     }
   }
+
+  /**
+   * The see-through cover that swallows clicks while the menu is open.
+   *
+   * It lives inside the component, so nothing in the page can end up on top
+   * of it or squeeze in between it and the menu. Being inside the component
+   * also means the browser treats a click on it as a click *inside* the menu
+   * and leaves the menu open — so the cover closes the menu itself.
+   */
+  private coverPage(): void {
+    const root = this.host.shadowRoot;
+    if (!root) return;
+    if (!this.backdrop) {
+      const cover = document.createElement('div');
+      cover.setAttribute('popover', 'manual');
+      cover.setAttribute('part', 'backdrop');
+      // Fills the viewport whatever the page's own layout does. The browser
+      // would otherwise size and centre it like a dialog.
+      cover.style.cssText =
+        'position:fixed;inset:0;width:auto;height:auto;margin:0;padding:0;' +
+        'border:0;background:transparent';
+      cover.addEventListener('click', () => this.host.hidePopover());
+      root.append(cover);
+      this.backdrop = cover;
+    }
+    if (this.backdrop.isConnected && !this.backdrop.matches(':popover-open')) {
+      this.backdrop.showPopover();
+    }
+  }
+
+  private uncoverPage(): void {
+    if (this.backdrop?.matches(':popover-open')) {
+      this.backdrop.hidePopover();
+    }
+  }
 }
 
 /**
  * Makes a button open and close a menu. Returns a function that unhooks it.
  *
- * Writing this by hand is where people get caught out. Clicking the button a
- * second time looks like it should close the menu, but the browser has
- * already closed it by then — that happens as the mouse goes down, before
- * the click arrives — so a handler that just flips the state opens it right
- * back up, and the menu appears stuck. Checking the state as the mouse goes
- * down instead is what makes the second click work (#1293, and the likely
- * cause of #1235).
- *
- * Keyboard presses never trigger that early close, so they read the current
- * state instead. `MouseEvent.detail` is how the two are told apart: it is `0`
- * only for the click that `Enter` and `Space` produce.
+ * There is less here than it looks like there should be. While the menu is
+ * open its cover sits over the button as well, so a second mouse click never
+ * reaches this handler: it lands on the cover, which closes the menu. What
+ * does reach here is a keyboard press on the still-focused button, and for
+ * that the live state is the right thing to read.
  *
  * HTML can pair a button with a popover on its own, but only inside the same
  * component. Reach for this when the button and the menu live apart.
@@ -151,15 +199,8 @@ export function bindPopoverTrigger(
   trigger: HTMLElement,
   panel: SoftDismissHost
 ): () => void {
-  let openBeforeAutoClose = false;
-
-  const onPointerDown = (): void => {
-    openBeforeAutoClose = panel.matches(':popover-open');
-  };
-
-  const onClick = (event: MouseEvent): void => {
-    const wasOpen =
-      event.detail > 0 ? openBeforeAutoClose : panel.matches(':popover-open');
+  const onClick = (): void => {
+    const wasOpen = panel.matches(':popover-open');
     // Set before opening or closing, so a re-render in the same moment sees
     // the state the user just asked for.
     panel.open = !wasOpen;
@@ -170,11 +211,6 @@ export function bindPopoverTrigger(
     }
   };
 
-  trigger.addEventListener('pointerdown', onPointerDown);
   trigger.addEventListener('click', onClick);
-
-  return () => {
-    trigger.removeEventListener('pointerdown', onPointerDown);
-    trigger.removeEventListener('click', onClick);
-  };
+  return () => trigger.removeEventListener('click', onClick);
 }

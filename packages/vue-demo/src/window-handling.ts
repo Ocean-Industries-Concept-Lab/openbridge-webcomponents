@@ -1,4 +1,4 @@
-import { onScopeDispose, ref, type Ref } from 'vue'
+import { ref, type Ref } from 'vue'
 
 export type MenuName =
   'navigation' | 'brilliance' | 'appMenu' | 'alertMenu' | 'moreMenu' | 'commandMenu'
@@ -8,7 +8,11 @@ export type MenuName =
  *
  * The menus close themselves now, so these flags exist only to keep the top
  * bar's buttons looking pressed while their menu is up. `onMenuClose` is what
- * puts a flag back when the browser closed a menu on its own.
+ * puts a flag back when a menu closed on its own.
+ *
+ * Nothing here guards against a second click on the same button. While a
+ * menu is open it covers the page, that button included, so the click that
+ * closes the menu never reaches the top bar.
  */
 export function useWindowHandling() {
   const showNavigation = ref(false)
@@ -28,35 +32,8 @@ export function useWindowHandling() {
   }
   const all = Object.values(menus)
 
-  /**
-   * Remembers which menu was open as the mouse goes down.
-   *
-   * The browser closes an open menu at that point, before the top bar tells
-   * us the button was clicked. Without this, clicking the same button again
-   * would look like "nothing is open, so open it" and the menu would never
-   * shut (#1293).
-   *
-   * Keyboard presses do not trigger that early close, and the top bar's
-   * events do not say which kind of press it was. Clearing this on keydown
-   * covers it: a keyboard press then reads the live value instead.
-   */
-  let openAtPointerDown: Ref<boolean> | null | undefined
-  const snapshot = () => {
-    openAtPointerDown = all.find((menu) => menu.value) ?? null
-  }
-  const clearSnapshot = () => {
-    openAtPointerDown = undefined
-  }
-  document.addEventListener('pointerdown', snapshot, true)
-  document.addEventListener('keydown', clearSnapshot, true)
-  onScopeDispose(() => {
-    document.removeEventListener('pointerdown', snapshot, true)
-    document.removeEventListener('keydown', clearSnapshot, true)
-  })
-
   function toggleAndhideOthers(value: Ref<boolean>) {
-    const wasOpen = openAtPointerDown === undefined ? value.value : openAtPointerDown === value
-    clearSnapshot()
+    const wasOpen = value.value
     hideAll()
     value.value = !wasOpen
   }
@@ -67,7 +44,7 @@ export function useWindowHandling() {
     }
   }
 
-  /** The browser closed this menu; let its button stop looking pressed. */
+  /** A menu closed on its own; let its button stop looking pressed. */
   function onMenuClose(name: MenuName) {
     menus[name].value = false
   }
