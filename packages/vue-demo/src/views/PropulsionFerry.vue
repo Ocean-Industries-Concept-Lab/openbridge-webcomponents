@@ -190,7 +190,8 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
   width: 100%;
   height: 100%;
   display: grid;
-  grid-template-columns: 1fr min-content;
+  /* same track list as PropulsionView.vue: a bare fr grows with an instrument's aspect box (#1213) */
+  grid-template-columns: minmax(0, 1fr) min-content;
   grid-template-rows: min-content 1fr 1fr;
   justify-content: center;
   justify-items: space-between;
