@@ -116,17 +116,12 @@
   display: grid;
   /* 0fr to 1fr is the only track that eases to content height in every engine. */
   grid-template-rows: 0fr;
-  /* Takes the collapsed content out of the tab order and the a11y tree. */
-  visibility: hidden;
   width: 100%;
-  transition:
-    grid-template-rows var(--_expand-duration) ease,
-    visibility var(--_expand-duration);
+  transition: grid-template-rows var(--_expand-duration) ease;
 }
 
 .wrapper.open-true .panel {
   grid-template-rows: 1fr;
-  visibility: visible;
 }
 
 .panel-inner {

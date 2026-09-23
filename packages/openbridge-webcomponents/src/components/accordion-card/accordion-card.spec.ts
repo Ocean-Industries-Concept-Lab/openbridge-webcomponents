@@ -15,6 +15,8 @@ async function mount(setup: (el: ObcAccordionCard) => void = () => {}) {
   return el;
 }
 
+const frame = () => new Promise((r) => requestAnimationFrame(() => r(null)));
+
 const sr = (el: ObcAccordionCard) => el.shadowRoot!;
 const panel = (el: ObcAccordionCard) =>
   sr(el).querySelector<HTMLElement>('.panel')!;
@@ -44,15 +46,30 @@ describe('obc-accordion-card expand animation', () => {
 
   it('hides the collapsed panel from the tab order', async () => {
     const el = await mount();
-    expect(getComputedStyle(panel(el)).visibility).toBe('hidden');
+    expect(panel(el).hasAttribute('inert')).toBe(true);
     const inner = el.querySelector<HTMLButtonElement>('#inner')!;
+    inner.focus();
+    expect(document.activeElement).not.toBe(inner);
+  });
+
+  it('drops keyboard access as soon as it starts closing', async () => {
+    const el = await mount((e) => (e.expanded = true));
+    await frame();
+    await frame();
+    const inner = el.querySelector<HTMLButtonElement>('#inner')!;
+
+    el.expanded = false;
+    await el.updateComplete;
+    await frame();
+
+    expect(getComputedStyle(panel(el)).gridTemplateRows).not.toBe('0px');
     inner.focus();
     expect(document.activeElement).not.toBe(inner);
   });
 
   it('reveals the panel when expanded', async () => {
     const el = await mount((e) => (e.expanded = true));
-    expect(getComputedStyle(panel(el)).visibility).toBe('visible');
+    expect(panel(el).hasAttribute('inert')).toBe(false);
     const inner = el.querySelector<HTMLButtonElement>('#inner')!;
     inner.focus();
     expect(document.activeElement).toBe(inner);

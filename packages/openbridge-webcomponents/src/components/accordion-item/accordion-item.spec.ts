@@ -15,6 +15,8 @@ async function mount(setup: (el: ObcAccordionItem) => void = () => {}) {
   return el;
 }
 
+const frame = () => new Promise((r) => requestAnimationFrame(() => r(null)));
+
 const sr = (el: ObcAccordionItem) => el.shadowRoot!;
 const panel = (el: ObcAccordionItem) =>
   sr(el).querySelector<HTMLElement>('.panel')!;
@@ -44,15 +46,30 @@ describe('obc-accordion-item expand animation', () => {
 
   it('hides the closed panel from the tab order', async () => {
     const el = await mount();
-    expect(getComputedStyle(panel(el)).visibility).toBe('hidden');
+    expect(panel(el).hasAttribute('inert')).toBe(true);
     const inner = el.querySelector<HTMLButtonElement>('#inner')!;
+    inner.focus();
+    expect(document.activeElement).not.toBe(inner);
+  });
+
+  it('drops keyboard access as soon as it starts closing', async () => {
+    const el = await mount((e) => (e.open = true));
+    await frame();
+    await frame();
+    const inner = el.querySelector<HTMLButtonElement>('#inner')!;
+
+    el.open = false;
+    await el.updateComplete;
+    await frame();
+
+    expect(getComputedStyle(panel(el)).gridTemplateRows).not.toBe('0px');
     inner.focus();
     expect(document.activeElement).not.toBe(inner);
   });
 
   it('reveals the panel when open', async () => {
     const el = await mount((e) => (e.open = true));
-    expect(getComputedStyle(panel(el)).visibility).toBe('visible');
+    expect(panel(el).hasAttribute('inert')).toBe(false);
     const inner = el.querySelector<HTMLButtonElement>('#inner')!;
     inner.focus();
     expect(document.activeElement).toBe(inner);

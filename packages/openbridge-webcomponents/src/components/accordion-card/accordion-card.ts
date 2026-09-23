@@ -234,7 +234,7 @@ export class ObcAccordionCard extends LitElement {
 
   private renderContentAdditional() {
     return html`
-      <div class="panel" id="accordion-content">
+      <div class="panel" id="accordion-content" ?inert=${!this.expanded}>
         <div class="panel-inner">
           <div class="container-content-additional">
             <slot name="expanded-content"></slot>
