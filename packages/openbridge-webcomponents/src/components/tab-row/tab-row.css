@@ -18,6 +18,12 @@
   min-width: 0;
 }
 
+/* Hugging tabs size to their content, so the row must not stretch past them
+   and push the add button to the far edge. */
+:host([hug]) .tablist {
+  flex: 0 1 auto;
+}
+
 .add-new-tab {
   flex-shrink: 0;
   box-shadow:

@@ -159,7 +159,7 @@ export class ObcTabRow extends LitElement {
 
   @property({type: Boolean}) centerContent = false;
 
-  @property({type: Boolean}) hug = false;
+  @property({type: Boolean, reflect: true}) hug = false;
 
   @property({type: Boolean, attribute: 'show-subtitle'}) showSubtitle = false;
 
