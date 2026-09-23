@@ -15,8 +15,9 @@ globs:
 [`working-method.md`](working-method.md) says how to think before the first
 edit. This doc is the order of the commands from a fresh clone to a merged
 pull request, for a change verified in Storybook and in the vue demo. Blocks
-run from `packages/openbridge-webcomponents` unless they say otherwise; the
-other docs carry the reasons, this one carries the sequence.
+run from `packages/openbridge-webcomponents`; one that starts elsewhere says
+so on its first line. The other docs carry the reasons, this one carries the
+sequence.
 
 ## 1. A fresh clone, or a rebuilt container
 
@@ -98,7 +99,7 @@ npm run test-a11y                # PRs to develop: axe over every story, then th
 ```
 
 ```bash
-cd packages/vue-demo && npm run lint:check && npm run format:check && npm run type-check
+(cd ../vue-demo && npm run lint:check && npm run format:check && npm run type-check)
 ```
 
 `npm run lint` in `vue-demo` is `eslint . --fix` and rewrites files;
@@ -115,10 +116,11 @@ below is what the `build_demo` job runs; `npm run build:demo` at the repo root
 runs it in one go.
 
 ```bash
-cd packages/openbridge-webcomponents && npm run build:full   # translations, typecheck, bundle, vite, analyze, inject:dts, wrappers
-npm install                                                  # repo root again: link the wrapper packages the previous step wrote
-cd packages/openbridge-webcomponents-vue && npm run build    # declarations, then vite
-cd packages/vue-demo && npm run dev                          # http://localhost:5173
+cd ../..                                                     # repository root
+npm run build:full -w packages/openbridge-webcomponents      # translations, typecheck, bundle, vite, analyze, inject:dts, wrappers
+npm install                                                  # link the wrapper packages the previous step wrote
+npm run build -w packages/openbridge-webcomponents-vue       # declarations, then vite
+npm run dev -w packages/vue-demo                             # http://localhost:5173
 ```
 
 - After an API change (a property, `@fires`, `@slot`) the wrappers are stale
@@ -131,8 +133,8 @@ cd packages/vue-demo && npm run dev                          # http://localhost:
   server itself, or reuses one already on 5173:
 
 ```bash
-npm run test:visual -- -g <route>            # the routes your change touches, against the committed baselines
-npm run test:visual:update -- -g <route>     # then test:visual again
+(cd ../vue-demo && npm run test:visual -- -g <name>)         # <name> as in visual.spec.ts, e.g. conning-psv — not the URL
+(cd ../vue-demo && npm run test:visual:update -- -g <name>)  # then test:visual again
 ```
 
 The suite does not run in CI, so a baseline elsewhere may already be stale:

@@ -158,10 +158,13 @@ resolve.
 `packages/vue-demo/e2e/` runs from that package:
 
 ```bash
-npm run test:visual -- -g <route>          # compare the routes you touched against the committed baselines
-npm run test:visual:update -- -g <route>   # regenerate after an intended change
-npm run test:visual -- -g <route>          # ALWAYS re-run to confirm stability
+npm run test:visual -- -g <name>          # compare the routes you touched against the committed baselines
+npm run test:visual:update -- -g <name>   # regenerate after an intended change
+npm run test:visual -- -g <name>          # ALWAYS re-run to confirm stability
 ```
+
+`-g` matches the test title, `route: <name>` — the name from `visual.spec.ts`
+(`conning-psv`, `ias`), never the URL; `-g conning` takes every conning route.
 
 - The config starts `vite dev` itself, or reuses a server already on 5173;
   under `CI` it serves `vite preview`, so build the demo first there. The

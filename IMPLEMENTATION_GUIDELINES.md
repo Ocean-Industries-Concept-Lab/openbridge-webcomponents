@@ -119,11 +119,11 @@ From `packages/openbridge-webcomponents`:
 npm run test-storybook:docker
 ```
 
-Note: The script uses `--user $(id -u):$(id -g)` to ensure that any files created by the container (like snapshot results) are owned by your host user. It uses a temporary directory for visual results (`/tmp/openbridge-webcomponents-vis-results`) to avoid permission conflicts.
+The script runs as your host user (`--user $(id -u):$(id -g)`) and mounts the package directory, so the results the container writes to `__vis__/linux/__results__/` (gitignored) are owned by you.
 
 #### 3. Regenerate Baselines in Docker
 
-The results of a run land in `/tmp/openbridge-webcomponents-vis-results` on your host. To regenerate baselines, run the same image with the filter in front of the flag, then once more without it (`update-snapshots:docker` has no filter and rewrites the whole suite):
+To regenerate baselines, run the same image with the filter in front of the flag, then once more without it (`update-snapshots:docker` has no filter and rewrites the whole suite):
 
 ```bash
 # From packages/openbridge-webcomponents
