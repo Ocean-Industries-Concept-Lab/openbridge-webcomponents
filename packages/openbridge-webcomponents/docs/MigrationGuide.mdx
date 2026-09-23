@@ -509,6 +509,7 @@ The same markup draws a different instrument ([#1247](https://github.com/Ocean-I
 - Radial instruments reserve room for their tick labels and hide the labels when the instrument is too small, instead of clipping them. `faceDiameter` pins the ring size so instruments line up ([#1049](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1049)).
 - `obc-wind` picks a small, medium or large drawing from its size and shows compass labels ([#864](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/864), [#1083](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1083)).
 - `obc-bearing-indicator`, `obc-compass-indicator`, `obc-gauge-horizontal` and `obc-gauge-vertical` no longer leave a gap of about 4 px below them ([#1130](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1130)).
+- `obc-compass-sector` and `obc-rudder` are the drawing rather than a square holding it: the host takes the frame's aspect ratio, `448 / 217` and `448 / 269` by default, and fits inside the container ([#1292](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1292)). 1.0.1 let `obc-compass-sector` fill its container, so a square box left the 120° arc floating in empty space, and a layout that reserved one now gets a shorter element. On `obc-compass-sector` the ROT track, inside tick labels and the readout each crop less, which makes the box taller.
 
 ### Alerts
 
