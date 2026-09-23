@@ -71,7 +71,10 @@ export enum ObcAlertButtonType {
  * ### Usage Guidelines
  * - Keep `nAlerts` and `counts` consistent; the item shows both as given.
  * - The generated label reads e.g. "Alerts, 12, 2 Alarm, 4 Warning,
- *   6 Caution"; an `aria-label` on the host replaces it.
+ *   6 Caution"; an `aria-label` on the host replaces it. A visually hidden
+ *   polite live region repeats that name, so a change of counts is announced
+ *   without the button holding focus; the name attribute alone would change
+ *   silently.
  * - A native button, so Enter and Space activate it (APG button pattern).
  * - A parent that joins another button to the item's end sets the
  *   `data-group-item-not-last` attribute on the host.
@@ -278,6 +281,9 @@ export class ObcAlertButtonItem extends LitElement {
           </div>
         </div>
       </button>
+      <span class="announcement" aria-live="polite" aria-atomic="true"
+        >${this.accessibleName}</span
+      >
     `;
   }
 

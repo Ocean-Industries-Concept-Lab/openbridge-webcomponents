@@ -176,12 +176,13 @@ export enum ObcKeyboardFullMode {
  * @availableWhen parameterName showTopBar==true
  * @property inputType - Input type forwarded to the embedded input field. Set to `password` to mask
  *   the entered value (a show/hide toggle is then shown inside the field).
+ * @property closeLabel - Accessible name of the close button; the icon carries none.
  * @fires {CustomEvent<{value: string}>} value-change - Dispatched whenever the text value changes
  *   (on key press, backspace, space, or direct input field editing). The `detail.value` contains
  *   the complete current text string.
  * @fires {CustomEvent<{value: string}>} done-click - Dispatched when the DONE button is clicked,
  *   indicating the user has completed text entry. The `detail.value` contains the final text string.
- * @fires {CustomEvent<void>} close-click - Dispatched when the close button (in top bar) is clicked,
+ * @fires {CustomEvent<void>} close-click - Dispatched when the close button (in top bar) is clicked or `Escape` is pressed inside the keyboard,
  *   allowing the application to dismiss the keyboard without submitting the value.
  * @beta
  */
@@ -189,6 +190,8 @@ export enum ObcKeyboardFullMode {
 export class ObcKeyboardFull extends LitElement {
   @property({type: String}) type: ObcKeyboardFullType =
     ObcKeyboardFullType.Floating;
+
+  @property({type: String}) closeLabel = 'Close';
 
   @property({type: Boolean}) showTopBar = false;
   @property({type: String}) parameterName = 'Parameter name';
@@ -245,6 +248,13 @@ export class ObcKeyboardFull extends LitElement {
     ['~', '_', '|', '<', '>', '$', '€', '£'],
     ['"', "'", '?', '!', ';', ':', ',', '.', '-'],
   ];
+
+  // The keyboard is an overlay: Escape dismisses it from any focused key.
+  private onKeydown = (event: KeyboardEvent) => {
+    if (event.key !== 'Escape') return;
+    event.preventDefault();
+    this.onCloseClick();
+  };
 
   private onCloseClick = () => {
     this.dispatchEvent(
@@ -402,6 +412,7 @@ export class ObcKeyboardFull extends LitElement {
           variant="normal"
           cornerLeft
           @mousedown=${this.preventFocusLoss}
+          aria-label="Move cursor left"
           @click=${this.onCursorLeft}
         >
           <obi-arrow-left-google></obi-arrow-left-google>
@@ -410,6 +421,7 @@ export class ObcKeyboardFull extends LitElement {
           variant="normal"
           cornerRight
           @mousedown=${this.preventFocusLoss}
+          aria-label="Move cursor right"
           @click=${this.onCursorRight}
         >
           <obi-arrow-right-google></obi-arrow-right-google>
@@ -690,13 +702,17 @@ export class ObcKeyboardFull extends LitElement {
 
   protected override render() {
     return html`
-      <div class="wrapper type-${this.type}">
+      <div class="wrapper type-${this.type}" @keydown=${this.onKeydown}>
         ${
           this.showTopBar
             ? html`
                 <div class="top-bar">
                   <div class="parameter-name">${this.parameterName}</div>
-                  <obc-icon-button variant="flat" @click=${this.onCloseClick}>
+                  <obc-icon-button
+                    variant="flat"
+                    aria-label=${this.closeLabel}
+                    @click=${this.onCloseClick}
+                  >
                     <obi-close-google></obi-close-google>
                   </obc-icon-button>
                 </div>

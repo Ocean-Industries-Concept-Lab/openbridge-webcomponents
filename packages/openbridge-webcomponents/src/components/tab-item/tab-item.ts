@@ -1,4 +1,5 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
+import {ifDefined} from 'lit/directives/if-defined.js';
 import {customElement} from '../../decorator.js';
 import {classMap} from 'lit/directives/class-map.js';
 import compentStyle from './tab-item.css?inline';
@@ -75,6 +76,11 @@ export interface TabItemBadge {
  *
  * ### Events
  * - `tab-click` – Fired when the tab is clicked or activated via keyboard.
+ *
+ * ## Keyboard
+ * One tab of the [APG Tabs pattern](https://www.w3.org/WAI/ARIA/apg/patterns/tabs/):
+ * `Enter` and `Space` activate it; the arrow keys, `Home` and `End` belong to
+ * the row. `aria-selected` mirrors `checked`.
  * - `tab-close` – Fired when the close button is clicked.
  *
  * ### Best Practices
@@ -124,6 +130,8 @@ export interface TabItemBadge {
  * @property showSubtitle - Shows contextual text below the tab title.
  * @property subtitle - Contextual text shown below the tab title when `showSubtitle` is true.
  * @property disabled - Disables the tab, preventing user interaction and applying disabled styles.
+ * @property focusable - Whether the tab is in the tab order. `obc-tab-row` manages this as a
+ *   roving tabindex (one tab focusable at a time); a standalone tab stays tabbable.
  * @property badges - Badges shown on the tab. A non-empty array takes precedence over the
  *   deprecated single-badge properties (`hasBadge`, `badgeType`, `badgeSize`,
  *   `badgeCount`, `badgeShowNumber`, `showLeadingBadgeIcon`); an empty one
@@ -173,6 +181,8 @@ export class ObcTabItem extends LitElement {
   @property({type: String}) subtitle = '';
 
   @property({type: Boolean}) disabled = false;
+
+  @property({type: Boolean, attribute: false}) focusable = true;
 
   /**
    * @deprecated Use the `badges` array instead.
@@ -250,6 +260,13 @@ export class ObcTabItem extends LitElement {
     this.dispatchEvent(closeEvent);
   }
 
+  /** Focus lands on the `role="tab"` control, not on the host. */
+  public override focus(options?: FocusOptions): void {
+    (this.shadowRoot?.querySelector('.wrapper') as HTMLElement | null)?.focus(
+      options
+    );
+  }
+
   private handleKeyDown(event: KeyboardEvent) {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
@@ -314,7 +331,9 @@ export class ObcTabItem extends LitElement {
       <div
         class=${classMap(wrapperClasses)}
         role="tab"
-        tabindex=${this.disabled ? '-1' : '0'}
+        aria-selected=${this.checked}
+        aria-disabled=${ifDefined(this.disabled ? 'true' : undefined)}
+        tabindex=${this.disabled ? -1 : this.focusable ? 0 : -1}
         @click=${this.handleClick}
         @keydown=${this.handleKeyDown}
       >

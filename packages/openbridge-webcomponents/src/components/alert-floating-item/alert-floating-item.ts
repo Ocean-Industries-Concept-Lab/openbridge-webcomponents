@@ -9,6 +9,7 @@ import {
   ObcFloatingItemType,
   ObcFloatingItemDirection,
   ObcFloatingItemLineType,
+  ObcFloatingItemLiveRole,
 } from '../floating-item/floating-item.js';
 
 /**
@@ -47,6 +48,7 @@ export class ObcAlertFloatingItem extends LitElement {
 
     return html`
       <obc-floating-item
+        .liveRole=${ObcFloatingItemLiveRole.Alert}
         .type=${this.type}
         .direction=${this.direction}
         .hasTimestamp=${this.hasTimestamp}

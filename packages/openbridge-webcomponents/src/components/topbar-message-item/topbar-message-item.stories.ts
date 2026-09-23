@@ -73,6 +73,7 @@ const meta: Meta<StoryArgs> = {
   render: (args) => html`
     <obc-topbar-message-item
       .type=${args.type ?? ObcTopbarMessageItemType.WithButton}
+      .actionLabel=${args.actionLabel ?? ''}
       .size=${args.size ?? ObcTopbarMessageItemSize.Regular}
       .showTitle=${args.showTitle ?? true}
       .showDescription=${args.showDescription ?? true}
@@ -121,6 +122,7 @@ export const VeryLongTitleText: Story = {
 
 export const IconAction: Story = {
   args: {
+    actionLabel: 'Open',
     type: ObcTopbarMessageItemType.WithIconButton,
   },
 };
@@ -146,6 +148,7 @@ export const TextActionLarge: Story = {
 
 export const IconActionLarge: Story = {
   args: {
+    actionLabel: 'Open',
     type: ObcTopbarMessageItemType.WithIconButton,
     size: ObcTopbarMessageItemSize.Tall,
   },

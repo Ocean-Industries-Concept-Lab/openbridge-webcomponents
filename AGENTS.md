@@ -214,6 +214,8 @@ npm run build-storybook   # static build
 
 # Tests
 npm run test-storybook          # visual snapshot tests (Vitest + Playwright)
+npm run test-a11y               # axe over every story; fails on a violation the baseline does not carry
+npm run test-a11y:update        # rewrite __a11y__/baseline.json after fixing or adding violations
 npm run test-storybook:watch    # watch mode
 npm run update-snapshots        # replace baselines
 
@@ -260,10 +262,15 @@ Commits that fail lint or format checks are blocked automatically.
    - Do **not** hand-write a lifecycle tag here — see step 6.
 5. Write JSDoc following the three-pattern strategy (see § 3), including
    exactly one lifecycle tag on the class (see § 3 Component lifecycle tags).
-6. Run `npm run lint:fix:stories` to populate the story's lifecycle tag from
+6. Interactive? Name the APG pattern in the JSDoc, pin its keys in a
+   `component-name-keyboard.spec.ts`, and give every control a name
+   ([`docs/agents/a11y.md`](docs/agents/a11y.md) § 1, § 4, § 9). `npm run
+test-a11y` fails on any violation the committed baseline does not carry, so
+   a new component starts from zero.
+7. Run `npm run lint:fix:stories` to populate the story's lifecycle tag from
    that class JSDoc.
-7. Run `npm run analyze` to update `custom-elements.json`.
-8. Run `npm run lint && npm run typecheck` to validate.
+8. Run `npm run analyze` to update `custom-elements.json`.
+9. Run `npm run lint && npm run typecheck` to validate.
 
 ---
 
@@ -296,7 +303,7 @@ automatically when editing a `.css` file.
 1. **Read before writing.** The source, its story, and every `docs/agents/*.md` whose glob matches a file in your diff (§ 4) — the adapters list them, they do not inline them.
 2. **Follow the three-pattern strategy** (§ 3) when writing or updating JSDoc.
 3. **Two docs disagree?** Ask which is current instead of picking one ([`docs/agents/working-method.md` § Missing](docs/agents/working-method.md)).
-4. **Accessibility is required for interactive components, old and new.** Every new or modified component in `src/components/**` or `src/automation/**` supports full keyboard navigation and meets WCAG 2.1 AA; touching an existing one brings it through the checklist. Keyboard behaviour follows the [WAI-ARIA APG patterns](https://www.w3.org/WAI/ARIA/apg/patterns/) — the matching pattern, or the closest one. The ladder, the activation-key table, ARIA rules, focus handling, the checklist and the automated checks (§ 9) are in [`docs/agents/a11y.md`](docs/agents/a11y.md).
+4. **Accessibility is required for interactive components, old and new.** Every new or modified component in `src/components/**` or `src/automation/**` supports full keyboard navigation and meets WCAG 2.1 AA; touching an existing one brings it through the checklist. Keyboard behaviour follows the [WAI-ARIA APG patterns](https://www.w3.org/WAI/ARIA/apg/patterns/) — the matching pattern, or the closest one. The ladder, the activation-key table, ARIA rules, focus handling, the checklist and the automated checks (§ 9) are in [`docs/agents/a11y.md`](docs/agents/a11y.md). Two gates run in CI: the keyboard specs (`npm run test:browser`, every branch) and the axe baseline (`npm run test-a11y`, PRs to `develop` and `stable`), which fails on any violation `__a11y__/baseline.json` does not carry and adds no lint warning.
 5. **Do not edit auto-generated packages** (`-react`, `-vue`, `-ng`, `-svelte`). Run `npm run wrappers` instead.
 6. **Run `npm run analyze`** after adding or renaming a `@customElement`, and **before** testing a new component's stories — story args reach the element only through the manifest. Never hand-edit `custom-elements.json`; fix the `@slot`/`@fires`/property JSDoc (§ 3) and run `npm run lint:slots`.
 7. **Run `npm run lint`** after code changes to catch issues early.
