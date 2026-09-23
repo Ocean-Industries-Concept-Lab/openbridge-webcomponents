@@ -96,6 +96,8 @@ export type ObcCheckboxChangeEvent = CustomEvent<{
  * ```
  *
  * @property hasHoverEffects - Internal: controls hover effects on the checkbox. Used by wrapper components such as `obc-checkbox-item`.
+ * @property focusable - Whether the checkbox is in the tab order. A menu that owns a roving tabindex manages this
+ *   through `obc-checkbox-item`; a standalone checkbox stays tabbable.
  * @property status - Controls the checkbox status: `checked`, `unchecked`, or `mixed` (indeterminate).
  *   Defaults to `unchecked`.
  * @property state - Controls the visual state: `enabled` or `loading`.
@@ -117,6 +119,8 @@ export class ObcCheckbox extends LitElement {
   @property({type: Boolean}) disabled = false;
 
   @property({type: Boolean, attribute: false}) hasHoverEffects = true;
+
+  @property({type: Boolean, attribute: false}) focusable = true;
 
   @query('.visually-hidden') private checkboxControl?: HTMLDivElement;
 
@@ -218,7 +222,7 @@ export class ObcCheckbox extends LitElement {
         aria-describedby=${ifDefined(hostAriaDescribedBy)}
         aria-disabled=${this._isInteractionLocked ? 'true' : 'false'}
         aria-busy=${this.state === CheckboxState.loading ? 'true' : 'false'}
-        tabindex=${this._isInteractionLocked ? '-1' : '0'}
+        tabindex=${this._isInteractionLocked || !this.focusable ? '-1' : '0'}
         @click=${this.toggleStatus}
         @keydown=${this.handleKeydown}
         @focus=${this.handleControlFocus}

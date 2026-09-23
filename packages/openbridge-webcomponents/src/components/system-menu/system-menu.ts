@@ -367,6 +367,7 @@ export class ObcSystemMenu extends LitElement {
           this.condensed && showMoreButton
             ? html` <obc-icon-button
                 .variant=${IconButtonVariant.flat}
+                aria-label=${msg('Wi-Fi settings')}
                 @click=${() => this.handleToSubMenuClick(SystemSubMenu.wifi)}
               >
                 <obi-chevron-right-google></obi-chevron-right-google>
@@ -418,6 +419,7 @@ export class ObcSystemMenu extends LitElement {
           this.condensed && showMoreButton
             ? html` <obc-icon-button
                 .variant=${IconButtonVariant.flat}
+                aria-label=${msg('Audio settings')}
                 @click=${() => this.handleToSubMenuClick(SystemSubMenu.audio)}
               >
                 <obi-chevron-right-google></obi-chevron-right-google>
@@ -471,6 +473,7 @@ export class ObcSystemMenu extends LitElement {
           this.condensed && showMoreButton
             ? html` <obc-icon-button
                 .variant=${IconButtonVariant.flat}
+                aria-label=${msg('Microphone settings')}
                 @click=${() =>
                   this.handleToSubMenuClick(SystemSubMenu.microphone)}
               >
@@ -533,6 +536,7 @@ export class ObcSystemMenu extends LitElement {
           this.condensed && showMoreButton
             ? html` <obc-icon-button
                 .variant=${IconButtonVariant.flat}
+                aria-label=${msg('Battery settings')}
                 @click=${() => this.handleToSubMenuClick(SystemSubMenu.battery)}
               >
                 <obi-chevron-right-google></obi-chevron-right-google>
@@ -565,6 +569,7 @@ export class ObcSystemMenu extends LitElement {
       <div class="title-container sub-menu-title">
         <obc-icon-button
           .variant=${IconButtonVariant.normal}
+          aria-label=${msg('Back')}
           @click=${() => this.handleToSubMenuClick(SystemSubMenu.main)}
         >
           <obi-chevron-left-google></obi-chevron-left-google>

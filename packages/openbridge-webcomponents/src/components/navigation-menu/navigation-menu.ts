@@ -193,7 +193,7 @@ export class ObcNavigationMenu extends LitElement {
    * navigator that drives `obc-tree-navigation`. Engaged only while
    * `variant === Tree` (see `onTreeKeydown`).
    */
-  private readonly treeNavigator = new TreeRovingNavigator<NavTreeRow>(this, {
+  private readonly treeNavigator = new TreeRovingNavigator<NavTreeRow>({
     getRows: () => this.treeRootRows(),
     childRows: (row) => this.treeChildRows(row),
     isGroup: (row) => isNavGroup(row),

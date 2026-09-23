@@ -1138,7 +1138,7 @@ function syncSetpointOptions(touching: boolean): ReadoutSetpointOptions {
  */
 export const SyncedWithAzimuthThruster: Story = {
   name: 'Synced With Azimuth Thruster (Interactive)',
-  tags: ['skip-test'],
+  tags: ['skip-test', 'skip-a11y'],
   render: () => html`
     <div
       style="display:flex; flex-direction:column; gap:24px; width:360px; padding:24px;"

@@ -297,3 +297,19 @@ describe('obc-alert-button-item accessibility', () => {
     expect(clicks).toBe(2);
   });
 });
+
+describe('obc-alert-button-item announcement', () => {
+  it('carries its name in a polite live region that follows the counts', async () => {
+    const el = await setup({nAlerts: 3, alertType: AlertType.Alarm});
+
+    const region = el.shadowRoot!.querySelector('[aria-live="polite"]');
+    expect(region?.textContent?.trim()).toBe(
+      button(el).getAttribute('aria-label')
+    );
+
+    el.nAlerts = 4;
+    await el.updateComplete;
+
+    expect(region?.textContent?.trim()).toBe('Alerts, 4, Alarm');
+  });
+});
