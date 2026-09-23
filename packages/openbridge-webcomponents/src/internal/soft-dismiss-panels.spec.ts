@@ -41,7 +41,8 @@ async function mount(tag: string) {
   // The panel is in the top layer once open, so the button it is clicked away
   // from has to sit somewhere the panel does not cover.
   const outside = root.querySelector<HTMLButtonElement>('#outside')!;
-  outside.style.cssText = 'position:fixed;left:4px;top:4px;z-index:1';
+  // Below the strip the cover leaves open for the top bar.
+  outside.style.cssText = 'position:fixed;left:4px;top:200px;z-index:1';
 
   const panel = root.querySelector(tag) as SoftDismissHost;
   panel.style.cssText = 'position:fixed;left:300px;top:300px';

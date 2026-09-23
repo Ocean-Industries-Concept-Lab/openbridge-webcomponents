@@ -1,4 +1,7 @@
 import {userEvent} from '@vitest/browser/context';
+// The cover's top edge reads the top bar's size token, which the palette
+// defines per size class.
+import '../main.css';
 import {afterEach, describe, expect, it} from 'vitest';
 import '../components/brilliance-menu/brilliance-menu.js';
 import type {ObcBrillianceMenu} from '../components/brilliance-menu/brilliance-menu.js';
@@ -11,6 +14,8 @@ import {bindPopoverTrigger} from './popover-controller.js';
  * React and Angular builds.
  */
 
+document.documentElement.classList.add('obc-component-size-regular');
+
 const cleanup: Array<() => void> = [];
 afterEach(() => {
   while (cleanup.length) cleanup.pop()!();
@@ -22,7 +27,8 @@ const nextTask = () => new Promise((resolve) => setTimeout(resolve, 0));
 let nextRow = 0;
 
 async function fixture(softDismiss = true) {
-  const top = nextRow;
+  // Rows start below the strip the cover leaves open for the top bar.
+  const top = 100 + nextRow;
   nextRow = (nextRow + 40) % 120;
 
   const root = document.createElement('div');
@@ -144,6 +150,50 @@ describe('PopoverController', () => {
     expect(hit).toBe(panel);
   });
 
+  it('the strip along the top stays reachable, for the top bar', async () => {
+    const {panel} = await fixture();
+    const strip = document.createElement('button');
+    strip.textContent = 'top bar';
+    strip.style.cssText = 'position:fixed;left:4px;top:4px;z-index:1';
+    panel.parentElement!.append(strip);
+    let clicks = 0;
+    strip.addEventListener('click', () => clicks++);
+    let closes = 0;
+    panel.addEventListener('close', () => closes++);
+
+    await show(panel);
+    const r = strip.getBoundingClientRect();
+    expect(document.elementFromPoint(r.x + 4, r.y + 4)).toBe(strip);
+
+    // A click there closes the menu, as any click outside does, and also
+    // presses what it hit: switching top-bar menus is one click.
+    await clickSpot(strip);
+    await nextTask();
+    expect(isOpen(panel)).toBe(false);
+    expect(clicks).toBe(1);
+    expect(closes).toBe(1);
+  });
+
+  it('an app without a top bar closes the strip with --topbar-height: 0', async () => {
+    const {panel} = await fixture();
+    panel.style.setProperty('--topbar-height', '0px');
+    const strip = document.createElement('button');
+    strip.textContent = 'top bar';
+    strip.style.cssText = 'position:fixed;left:4px;top:4px;z-index:1';
+    panel.parentElement!.append(strip);
+    let clicks = 0;
+    strip.addEventListener('click', () => clicks++);
+
+    await show(panel);
+    const r = strip.getBoundingClientRect();
+    expect(document.elementFromPoint(r.x + 4, r.y + 4)).toBe(panel);
+
+    await clickSpot(strip);
+    await nextTask();
+    expect(isOpen(panel)).toBe(false);
+    expect(clicks).toBe(0);
+  });
+
   it('the page is free again once the menu has closed', async () => {
     const {panel, outside} = await fixture();
     await show(panel);
@@ -237,6 +287,29 @@ describe('bindPopoverTrigger', () => {
     await nextTask();
     expect(isOpen(panel)).toBe(false);
     expect(triggerClicks).toBe(0);
+
+    await userEvent.click(trigger);
+    await nextTask();
+    expect(isOpen(panel)).toBe(true);
+  });
+
+  it('a button in the uncovered strip toggles too, without sticking open', async () => {
+    const {panel} = await fixture();
+    const trigger = document.createElement('button');
+    trigger.textContent = 'strip trigger';
+    trigger.style.cssText = 'position:fixed;left:4px;top:4px;z-index:1';
+    panel.parentElement!.append(trigger);
+    cleanup.push(bindPopoverTrigger(trigger, panel));
+
+    await userEvent.click(trigger);
+    await nextTask();
+    expect(isOpen(panel)).toBe(true);
+
+    // The browser closes the menu as the mouse goes down on the button; a
+    // handler reading the live state at click time would reopen it (#1293).
+    await userEvent.click(trigger);
+    await nextTask();
+    expect(isOpen(panel)).toBe(false);
 
     await userEvent.click(trigger);
     await nextTask();
