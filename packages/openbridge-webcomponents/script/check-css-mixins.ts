@@ -86,9 +86,14 @@ async function run(): Promise<void> {
 
   for (const file of cssFiles) {
     const content = fs.readFileSync(file, 'utf8');
+    // A comment can mention a mixin without defining or using it. Blank the
+    // comments out at equal length so the line numbers still point into the file.
+    const code = content.replace(/\/\*[\s\S]*?\*\//g, (comment) =>
+      comment.replace(/[^\n]/g, ' ')
+    );
 
     const defineRegex = /@define-mixin\s+([A-Za-z0-9_-]+)/g;
-    for (const match of content.matchAll(defineRegex)) {
+    for (const match of code.matchAll(defineRegex)) {
       const name = match[1];
       const index = match.index;
       if (index == null) {
@@ -99,7 +104,7 @@ async function run(): Promise<void> {
     }
 
     const usageRegex = /@mixin\s+([A-Za-z0-9_-]+)/g;
-    for (const match of content.matchAll(usageRegex)) {
+    for (const match of code.matchAll(usageRegex)) {
       const name = match[1];
       const index = match.index;
       if (index == null) {
