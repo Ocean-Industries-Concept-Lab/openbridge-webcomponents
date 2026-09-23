@@ -265,6 +265,9 @@ export class ObcTabItem extends LitElement {
   }
 
   private handleKeyDown(event: KeyboardEvent) {
+    // Keys from the close button retarget to the tab on their way out, so
+    // activation has to come from the tab wrapper itself.
+    if (event.composedPath()[0] !== this.wrapperElement) return;
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       this.handleClick(event);

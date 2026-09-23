@@ -1,4 +1,5 @@
 import {afterEach, describe, expect, it} from 'vitest';
+import {userEvent} from '@vitest/browser/context';
 import './tab-row.js';
 import type {ObcTabRow, TabData} from './tab-row.js';
 import type {ObcTabItem} from '../tab-item/tab-item.js';
@@ -26,6 +27,13 @@ function items(row: ObcTabRow): ObcTabItem[] {
 
 function wrapperOf(item: ObcTabItem): HTMLElement {
   return item.shadowRoot!.querySelector<HTMLElement>('.wrapper')!;
+}
+
+/** The native button inside a tab's close control. */
+function closeButtonOf(item: ObcTabItem): HTMLButtonElement {
+  return wrapperOf(item)
+    .querySelector('obc-icon-button')!
+    .shadowRoot!.querySelector('button')!;
 }
 
 function tabIndexes(row: ObcTabRow): (string | null)[] {
@@ -201,6 +209,21 @@ describe('obc-tab-row', () => {
     row.selectedTabId = 'c';
     await row.updateComplete;
     expect(tabIndexes(row)).toEqual(['-1', '-1', '0']);
+  });
+
+  it('closes a tab from its close button on Enter and Space, without selecting it', async () => {
+    const row = await mount(tabs, 'a');
+
+    closeButtonOf(items(row)[1]).focus();
+    await userEvent.keyboard('{Enter}');
+    await row.updateComplete;
+    expect(row.tabs.map((tab) => tab.id)).toEqual(['a', 'c']);
+
+    closeButtonOf(items(row)[1]).focus();
+    await userEvent.keyboard(' ');
+    await row.updateComplete;
+    expect(row.tabs.map((tab) => tab.id)).toEqual(['a']);
+    expect(row.selectedTabId).toBe('a');
   });
 
   it('re-points the tab stop when the tab it sat on is removed', async () => {
