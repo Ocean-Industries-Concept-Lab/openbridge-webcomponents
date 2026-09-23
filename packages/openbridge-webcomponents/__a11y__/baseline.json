@@ -1,37 +1,4 @@
 {
-  "application-components-alerts-alert-floating-item--alert-all-props-off": [
-    "button-name"
-  ],
-  "application-components-alerts-alert-floating-item--alert-all-props-on": [
-    "button-name"
-  ],
-  "application-components-alerts-alert-floating-item--alert-horizontal-multi-application": [
-    "button-name"
-  ],
-  "application-components-alerts-alert-floating-item--alert-horizontal-multi-regular": [
-    "button-name"
-  ],
-  "application-components-alerts-alert-floating-item--alert-horizontal-single-application": [
-    "button-name"
-  ],
-  "application-components-alerts-alert-floating-item--alert-horizontal-single-regular": [
-    "button-name"
-  ],
-  "application-components-alerts-alert-floating-item--alert-long-message": [
-    "button-name"
-  ],
-  "application-components-alerts-alert-floating-item--alert-vertical-multi-application": [
-    "button-name"
-  ],
-  "application-components-alerts-alert-floating-item--alert-vertical-multi-regular": [
-    "button-name"
-  ],
-  "application-components-alerts-alert-floating-item--alert-vertical-single-application": [
-    "button-name"
-  ],
-  "application-components-alerts-alert-floating-item--alert-vertical-single-regular": [
-    "button-name"
-  ],
   "application-components-alerts-alert-list--primary": ["nested-interactive"],
   "application-components-alerts-alert-list--with-controls": [
     "nested-interactive"
@@ -170,73 +137,8 @@
     "nested-interactive"
   ],
   "application-components-calendar-date-item--today": ["nested-interactive"],
-  "application-components-containers-modal-window--large": ["button-name"],
-  "application-components-containers-modal-window--large-without-optional-action": [
-    "button-name"
-  ],
-  "application-components-containers-modal-window--medium": ["button-name"],
-  "application-components-containers-modal-window--medium-without-optional-action": [
-    "button-name"
-  ],
-  "application-components-containers-modal-window--small": ["button-name"],
-  "application-components-containers-modal-window--small-without-optional-action": [
-    "button-name"
-  ],
-  "application-components-containers-modal-window--without-cancel": [
-    "button-name"
-  ],
-  "application-components-containers-modal-window--without-leading-icon": [
-    "button-name"
-  ],
-  "application-components-containers-modal-window-sizing--content-height-by-default": [
-    "button-name"
-  ],
-  "application-components-containers-modal-window-sizing--fill-container": [
-    "button-name"
-  ],
   "application-components-containers-modal-window-sizing--fixed-height": [
-    "button-name",
     "scrollable-region-focusable"
-  ],
-  "application-components-input-keyboard-full--custom-parameter-name": [
-    "button-name"
-  ],
-  "application-components-input-keyboard-full--custom-placeholder": [
-    "button-name"
-  ],
-  "application-components-input-keyboard-full--default": ["button-name"],
-  "application-components-input-keyboard-full--flat-style": ["button-name"],
-  "application-components-input-keyboard-full--password": ["button-name"],
-  "application-components-input-keyboard-full--playground": ["button-name"],
-  "application-components-input-keyboard-full--with-initial-value": [
-    "button-name"
-  ],
-  "application-components-input-keyboard-full--with-number-row": [
-    "button-name"
-  ],
-  "application-components-input-keyboard-full--without-top-bar": [
-    "button-name"
-  ],
-  "application-components-input-keyboard-numeric--default": ["button-name"],
-  "application-components-input-keyboard-numeric--flat-style": ["button-name"],
-  "application-components-input-keyboard-numeric--floating-with-all-features": [
-    "button-name"
-  ],
-  "application-components-input-keyboard-numeric--no-calculation-row": [
-    "button-name"
-  ],
-  "application-components-input-keyboard-numeric--no-symbol-toggle": [
-    "button-name"
-  ],
-  "application-components-input-keyboard-numeric--playground": ["button-name"],
-  "application-components-input-keyboard-numeric--with-helper-text": [
-    "button-name"
-  ],
-  "application-components-input-keyboard-numeric--with-initial-value": [
-    "button-name"
-  ],
-  "application-components-input-keyboard-numeric--with-leading-icon": [
-    "button-name"
   ],
   "application-components-menus-brilliance-menu--compact": [
     "button-name",
@@ -336,7 +238,6 @@
     "button-name",
     "label"
   ],
-  "application-components-menus-system-menu--battery-sub-menu": ["button-name"],
   "application-components-menus-system-menu--condensed": [
     "button-name",
     "label"
@@ -358,40 +259,6 @@
     "label"
   ],
   "application-components-menus-system-menu--small-screen-microphone": [
-    "button-name"
-  ],
-  "application-components-menus-system-menu--wifi-sub-menu": ["button-name"],
-  "application-components-notifications-advice-floating-item--advice-all-props-off": [
-    "button-name"
-  ],
-  "application-components-notifications-advice-floating-item--advice-all-props-on": [
-    "button-name"
-  ],
-  "application-components-notifications-advice-floating-item--advice-horizontal-multi-application": [
-    "button-name"
-  ],
-  "application-components-notifications-advice-floating-item--advice-horizontal-multi-regular": [
-    "button-name"
-  ],
-  "application-components-notifications-advice-floating-item--advice-horizontal-single-application": [
-    "button-name"
-  ],
-  "application-components-notifications-advice-floating-item--advice-horizontal-single-regular": [
-    "button-name"
-  ],
-  "application-components-notifications-advice-floating-item--advice-long-message": [
-    "button-name"
-  ],
-  "application-components-notifications-advice-floating-item--advice-vertical-multi-application": [
-    "button-name"
-  ],
-  "application-components-notifications-advice-floating-item--advice-vertical-multi-regular": [
-    "button-name"
-  ],
-  "application-components-notifications-advice-floating-item--advice-vertical-single-application": [
-    "button-name"
-  ],
-  "application-components-notifications-advice-floating-item--advice-vertical-single-regular": [
     "button-name"
   ],
   "application-components-notifications-advice-menu-item--double-line": [
@@ -419,39 +286,6 @@
     "button-name"
   ],
   "application-components-notifications-advice-message-item--multiple-advice-items": [
-    "button-name"
-  ],
-  "application-components-notifications-notification-floating-item--notification-all-props-off": [
-    "button-name"
-  ],
-  "application-components-notifications-notification-floating-item--notification-all-props-on": [
-    "button-name"
-  ],
-  "application-components-notifications-notification-floating-item--notification-horizontal-multi-application": [
-    "button-name"
-  ],
-  "application-components-notifications-notification-floating-item--notification-horizontal-multi-regular": [
-    "button-name"
-  ],
-  "application-components-notifications-notification-floating-item--notification-horizontal-single-application": [
-    "button-name"
-  ],
-  "application-components-notifications-notification-floating-item--notification-horizontal-single-regular": [
-    "button-name"
-  ],
-  "application-components-notifications-notification-floating-item--notification-long-message": [
-    "button-name"
-  ],
-  "application-components-notifications-notification-floating-item--notification-vertical-multi-application": [
-    "button-name"
-  ],
-  "application-components-notifications-notification-floating-item--notification-vertical-multi-regular": [
-    "button-name"
-  ],
-  "application-components-notifications-notification-floating-item--notification-vertical-single-application": [
-    "button-name"
-  ],
-  "application-components-notifications-notification-floating-item--notification-vertical-single-regular": [
     "button-name"
   ],
   "application-components-notifications-notification-menu-item--double-line": [
@@ -700,39 +534,20 @@
   "integration-systems-integration-vessel-menu--with-buttons-wrapped-in-div-without-styling": [
     "nested-interactive"
   ],
-  "pages-alert-detail-page--blocked": ["button-name"],
-  "pages-alert-detail-page--modal": ["button-name"],
-  "pages-alert-detail-page--no-readout-graph": ["button-name"],
-  "pages-alert-detail-page--resolved": ["button-name"],
-  "pages-alert-detail-page--shelved": ["button-name"],
-  "pages-alert-list-small--ack-all-test": ["button-name", "select-name"],
+  "pages-alert-list-small--ack-all-test": ["select-name"],
   "pages-alert-list-small--acknowledgment-test": [
     "aria-allowed-role",
-    "button-name",
     "select-name"
   ],
   "pages-alert-list-small--custom-time-formatter": [
     "aria-allowed-role",
-    "button-name",
     "select-name"
   ],
-  "pages-alert-list-small--empty": ["button-name", "select-name"],
-  "pages-alert-list-small--make-empty-test": ["button-name", "select-name"],
-  "pages-alert-list-small--no-shelf": [
-    "aria-allowed-role",
-    "button-name",
-    "select-name"
-  ],
-  "pages-alert-list-small--one-item": [
-    "aria-allowed-role",
-    "button-name",
-    "select-name"
-  ],
-  "pages-alert-list-small--regular": [
-    "aria-allowed-role",
-    "button-name",
-    "select-name"
-  ],
+  "pages-alert-list-small--empty": ["select-name"],
+  "pages-alert-list-small--make-empty-test": ["select-name"],
+  "pages-alert-list-small--no-shelf": ["aria-allowed-role", "select-name"],
+  "pages-alert-list-small--one-item": ["aria-allowed-role", "select-name"],
+  "pages-alert-list-small--regular": ["aria-allowed-role", "select-name"],
   "ui-components-buttons-app-button--small-hide-label": ["button-name"],
   "ui-components-buttons-dropdown-button--disabled": ["select-name"],
   "ui-components-buttons-dropdown-button--disabled-with-icon": ["select-name"],
@@ -747,16 +562,6 @@
   "ui-components-buttons-dropdown-button--open-top": ["select-name"],
   "ui-components-buttons-dropdown-button--open-top-with-icon": ["select-name"],
   "ui-components-buttons-dropdown-button--pre-selected": ["select-name"],
-  "ui-components-buttons-icon-button--corner-left": ["button-name"],
-  "ui-components-buttons-icon-button--corner-right": ["button-name"],
-  "ui-components-buttons-icon-button--disabled": ["button-name"],
-  "ui-components-buttons-icon-button--flat": ["button-name"],
-  "ui-components-buttons-icon-button--flat-activated": ["button-name"],
-  "ui-components-buttons-icon-button--large": ["button-name"],
-  "ui-components-buttons-icon-button--normal": ["button-name"],
-  "ui-components-buttons-icon-button--normal-wide": ["button-name"],
-  "ui-components-buttons-icon-button--progress": ["button-name"],
-  "ui-components-buttons-icon-button--raised": ["button-name"],
   "ui-components-buttons-menu-button--icon-only": ["button-name"],
   "ui-components-buttons-notification-badge-button--corner-left": [
     "button-name"
@@ -774,23 +579,6 @@
   "ui-components-buttons-notification-badge-button--mute-open-right": [
     "button-name"
   ],
-  "ui-components-buttons-split-button--basic": ["button-name"],
-  "ui-components-buttons-split-button--disabled": ["button-name"],
-  "ui-components-buttons-split-button--flyout-menu": ["button-name"],
-  "ui-components-buttons-split-button--full-width": ["button-name"],
-  "ui-components-buttons-split-button--multi-column": ["button-name"],
-  "ui-components-buttons-split-button--multi-column-group-selection": [
-    "button-name"
-  ],
-  "ui-components-buttons-split-button--multi-column-with-subtitles": [
-    "button-name"
-  ],
-  "ui-components-buttons-split-button--multi-column-with-subtitles-group-selection": [
-    "button-name"
-  ],
-  "ui-components-buttons-split-button--multi-select": ["button-name"],
-  "ui-components-buttons-split-button--open-top": ["button-name"],
-  "ui-components-buttons-split-button--with-icon": ["button-name"],
   "ui-components-buttons-user-button--static-icon": ["aria-prohibited-attr"],
   "ui-components-communication-communication-table--no-description-icon": [
     "aria-allowed-role"
@@ -802,15 +590,12 @@
     "aria-allowed-role"
   ],
   "ui-components-input-controls-slider--allow-seeking": ["label"],
-  "ui-components-input-controls-slider--disabled": ["button-name", "label"],
+  "ui-components-input-controls-slider--disabled": ["label"],
   "ui-components-input-controls-slider--enhanced": ["label"],
-  "ui-components-input-controls-slider--hug-container": [
-    "button-name",
-    "label"
-  ],
+  "ui-components-input-controls-slider--hug-container": ["label"],
   "ui-components-input-controls-slider--no-icons": ["label"],
   "ui-components-input-controls-slider--no-value": ["label"],
-  "ui-components-input-controls-slider--primary": ["button-name", "label"],
+  "ui-components-input-controls-slider--primary": ["label"],
   "ui-components-input-controls-slider--step": ["label"],
   "ui-components-input-controls-slider-double--allow-seeking": ["label"],
   "ui-components-input-controls-slider-double--disabled": ["label"],
@@ -1021,39 +806,6 @@
   "ui-components-message-and-alerts-alert-flash-scenario--scenario": [
     "nested-interactive",
     "scrollable-region-focusable"
-  ],
-  "ui-components-message-and-alerts-floating-item--all-props-off": [
-    "button-name"
-  ],
-  "ui-components-message-and-alerts-floating-item--all-props-on": [
-    "button-name"
-  ],
-  "ui-components-message-and-alerts-floating-item--horizontal-multi-application": [
-    "button-name"
-  ],
-  "ui-components-message-and-alerts-floating-item--horizontal-multi-regular": [
-    "button-name"
-  ],
-  "ui-components-message-and-alerts-floating-item--horizontal-single-application": [
-    "button-name"
-  ],
-  "ui-components-message-and-alerts-floating-item--horizontal-single-regular": [
-    "button-name"
-  ],
-  "ui-components-message-and-alerts-floating-item--too-long-message": [
-    "button-name"
-  ],
-  "ui-components-message-and-alerts-floating-item--vertical-multi-application": [
-    "button-name"
-  ],
-  "ui-components-message-and-alerts-floating-item--vertical-multi-regular": [
-    "button-name"
-  ],
-  "ui-components-message-and-alerts-floating-item--vertical-single-application": [
-    "button-name"
-  ],
-  "ui-components-message-and-alerts-floating-item--vertical-single-regular": [
-    "button-name"
   ],
   "ui-components-message-and-alerts-message-menu-item--horizontal-double-line": [
     "nested-interactive"
@@ -1318,30 +1070,21 @@
     "button-name"
   ],
   "ui-components-tables-and-lists-attachment-list-item--all-states": [
-    "button-name",
     "nested-interactive"
   ],
   "ui-components-tables-and-lists-attachment-list-item--amplified": [
-    "button-name",
     "nested-interactive"
   ],
   "ui-components-tables-and-lists-attachment-list-item--default": [
-    "button-name",
     "nested-interactive"
   ],
-  "ui-components-tables-and-lists-attachment-list-item--disabled": [
-    "button-name"
-  ],
   "ui-components-tables-and-lists-attachment-list-item--with-divider": [
-    "button-name",
     "nested-interactive"
   ],
   "ui-components-tables-and-lists-attachment-list-item--with-index": [
-    "button-name",
     "nested-interactive"
   ],
   "ui-components-tables-and-lists-attachment-list-item--with-tag": [
-    "button-name",
     "nested-interactive"
   ],
   "ui-components-tables-building-blocks-table-header-item--icon-only": [

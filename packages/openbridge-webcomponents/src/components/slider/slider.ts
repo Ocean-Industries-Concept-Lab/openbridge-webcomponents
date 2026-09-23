@@ -150,6 +150,8 @@ export type ObcSliderChangeEvent = CustomEvent<number>;
  * @property variant - Visual and interaction style: `normal` (default) is the standard
  *   appearance, `enhanced` has a larger track and thumb for emphasis, and
  *   `no-input` is read-only.
+ * @property decrementLabel - Accessible name of the left step button; the slotted icon carries none.
+ * @property incrementLabel - Accessible name of the right step button; the slotted icon carries none.
  * @slot icon-left - Slot for the left icon button (shown when `hasLeftIcon` is true)
  * @slot icon-right - Slot for the right icon button (shown when `hasRightIcon` is true)
  * @attr hugcontainer - If set, the slider will not have any spacing between the slider icons and the container
@@ -174,6 +176,10 @@ export class ObcSlider extends LitElement {
   @property({type: Boolean}) hasLeftIcon = false;
 
   @property({type: Boolean}) hasRightIcon = false;
+
+  @property({type: String}) decrementLabel = 'Decrease';
+
+  @property({type: String}) incrementLabel = 'Increase';
 
   @property({type: Boolean}) allowSeeking = false;
 
@@ -416,6 +422,7 @@ export class ObcSlider extends LitElement {
         this.hasLeftIcon
           ? html` <obc-icon-button
               ?disabled=${this.disabled}
+              aria-label=${this.decrementLabel}
               @click=${this.onReduceClick}
               variant="normal"
             >
@@ -483,6 +490,7 @@ export class ObcSlider extends LitElement {
         this.hasRightIcon
           ? html`<obc-icon-button
               ?disabled=${this.disabled}
+              aria-label=${this.incrementLabel}
               @click=${this.onIncreaseClick}
               variant="normal"
             >

@@ -91,8 +91,14 @@ export enum ObcModalWindowSize {
  * @property hasLeadingIcon - Whether to show the leading icon slot in the header.
  * @property hasCancelAction - Whether to show the footer cancel button.
  * @property hasCloseAction - Whether to show the header close (X) button.
+<<<<<<< Updated upstream
  * @fires {CustomEvent} close-click - Fired when the close button is clicked, or `Escape` is pressed while it is shown.
  * @fires {CustomEvent} cancel-click - Fired when the cancel button is clicked, or `Escape` is pressed while there is no close button.
+=======
+ * @property closeLabel - Accessible name of the header close button; the icon carries none.
+ * @fires {CustomEvent} close-click - Fired when the close button is clicked.
+ * @fires {CustomEvent} cancel-click - Fired when the cancel button is clicked.
+>>>>>>> Stashed changes
  * @fires {CustomEvent} done-click - Fired when the done button is clicked.
  * @fires {CustomEvent} option-click - Fired when the optional action button is clicked.
  *
@@ -116,6 +122,8 @@ export class ObcModalWindow extends LitElement {
   @property({type: Boolean, attribute: false}) hasCancelAction = true;
 
   @property({type: Boolean, attribute: false}) hasCloseAction = true;
+
+  @property({type: String}) closeLabel = 'Close';
 
   private onCloseClick = () =>
     this.dispatchEvent(new CustomEvent('close-click'));
@@ -184,6 +192,7 @@ export class ObcModalWindow extends LitElement {
             this.hasCloseAction
               ? html`<obc-icon-button
                   variant="flat"
+                  aria-label=${this.closeLabel}
                   @click=${this.onCloseClick}
                 >
                   <obi-close-google></obi-close-google>

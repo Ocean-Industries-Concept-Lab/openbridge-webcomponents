@@ -111,6 +111,7 @@ export enum ObcFloatingItemLineType {
  *   the better fit for a narrow container.
  * @property lineType - Line wrapping for the message content: `single-line` (default) truncates
  *   to one line, `multi-line` allows up to eight.
+ * @property dismissLabel - Accessible name of the dismiss button; the icon carries none.
  * @slot primary-icon - Main icon to represent the message’s category.
  * @slot secondary-icon - Additional icon for application-type messages.
  * @slot title - Title or heading of the message.
@@ -139,6 +140,8 @@ export class ObcFloatingItem extends LitElement {
   @property({type: Boolean}) action2 = false;
 
   @property({type: String}) lineType = ObcFloatingItemLineType.singleLine;
+
+  @property({type: String}) dismissLabel = 'Dismiss';
 
   /** Dispatches **action-click** when the first action button is clicked. */
   private onActionClick = () =>
@@ -179,6 +182,7 @@ export class ObcFloatingItem extends LitElement {
     const closeInMessage = horiz
       ? html`<obc-icon-button
           .variant=${IconButtonVariant.flat}
+          aria-label=${this.dismissLabel}
           @click=${this.onDismissClick}
         >
           <obi-close-google></obi-close-google>
@@ -189,6 +193,7 @@ export class ObcFloatingItem extends LitElement {
     const dismissInAction = !horiz
       ? html`<obc-icon-button
           .variant=${IconButtonVariant.flat}
+          aria-label=${this.dismissLabel}
           @click=${this.onDismissClick}
         >
           <obi-close-google></obi-close-google>

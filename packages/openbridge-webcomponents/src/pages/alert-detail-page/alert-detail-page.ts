@@ -172,7 +172,7 @@ export class ObcAlertDetailPage extends LitElement {
           ${
             showCloseButton
               ? html`<div class="close-button">
-                  <obc-icon-button variant="flat">
+                  <obc-icon-button variant="flat" aria-label="Close">
                     <obi-close-google></obi-close-google>
                   </obc-icon-button>
                 </div>`

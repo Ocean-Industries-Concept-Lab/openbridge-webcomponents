@@ -163,6 +163,7 @@ export class ObcAlertListPageSmall extends LitElement {
               variant="normal"
               @click=${() =>
                 this.dispatchEvent(new CustomEvent('silence-click'))}
+              aria-label="Silence"
             >
               <obi-silence-iec></obi-silence-iec>
             </obc-icon-button>
