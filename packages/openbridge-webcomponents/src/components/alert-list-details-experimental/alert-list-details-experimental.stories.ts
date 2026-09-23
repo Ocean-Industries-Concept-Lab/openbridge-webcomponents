@@ -617,3 +617,67 @@ export const SlottedAckButtons: Story = {
     </obc-alert-list-details-experimental>`;
   },
 };
+
+export const AllStatesActive: Story = {
+  args: {
+    alerts: [
+      {
+        id: '1',
+        tagId: '1',
+        source: 'ECDIS',
+        text: 'Risk of collision with vessel MV NORDIC at CPA 0.2nm',
+        acknowledged: false,
+        active: true,
+        type: AlertType.Alarm,
+        time: new Date('2024-01-15T14:32:15Z'),
+      },
+      {
+        id: '2',
+        tagId: '2',
+        source: 'ME 1',
+        text: 'Main engine overspeed',
+        acknowledged: {
+          acknowledgedBy: 'John Doe',
+          acknowledgedAt: new Date('2024-01-15T14:30:00Z'),
+        },
+        active: true,
+        type: AlertType.LevelHigh,
+        time: new Date('2024-01-15T14:30:00Z'),
+      },
+      {
+        id: '3',
+        tagId: '3',
+        source: 'Tank 1',
+        text: 'Tank level approaching high limit',
+        acknowledged: false,
+        active: {
+          rectifiedTime: new Date('2024-01-15T14:25:00Z'),
+        },
+        type: AlertType.LevelMedium,
+        time: new Date('2024-01-15T14:28:00Z'),
+      },
+      {
+        id: '4',
+        tagId: '4',
+        source: 'HVAC',
+        text: 'Filter maintenance due',
+        acknowledged: {
+          acknowledgedBy: 'John Doe',
+          acknowledgedAt: new Date('2024-01-15T14:25:00Z'),
+        },
+        active: {
+          rectifiedTime: new Date('2024-01-15T14:25:00Z'),
+        },
+        type: AlertType.LevelLow,
+        time: new Date('2024-01-15T14:25:00Z'),
+      },
+    ],
+  },
+};
+
+export const AllStatesUnacknowledged: Story = {
+  args: {
+    filterMode: FilterModes.UNACKED,
+    alerts: AllStatesActive.args?.alerts,
+  },
+};

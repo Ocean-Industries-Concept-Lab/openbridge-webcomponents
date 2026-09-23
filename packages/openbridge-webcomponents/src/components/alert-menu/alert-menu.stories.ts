@@ -271,6 +271,59 @@ export const OneItem: Story = {
   },
 };
 
+export const AllStatesUnacknowledged: Story = {
+  render: () => {
+    return html` <obc-alert-menu @ack-all-visible-click=${handleAckAllVisible}>
+      <obc-alert-menu-item
+        .status=${ObcAlertMenuItemStatus.Unacknowledged}
+        title="Unacknowledged Alert"
+        description="Port main engine temperature exceeds normal operating range"
+        time="09:12:34"
+      >
+        <obc-alert-icon slot="alert-icon" type="alarm" active></obc-alert-icon>
+      </obc-alert-menu-item>
+      <obc-alert-menu-item
+        .status=${ObcAlertMenuItemStatus.Acknowledged}
+        title="Acknowledged Alert"
+        description="Vessel has deviated from planned route by 0.5nm"
+        time="09:13:22"
+      >
+        <obc-alert-icon
+          slot="alert-icon"
+          type="alarm"
+          active
+          acknowledged
+        ></obc-alert-icon>
+      </obc-alert-menu-item>
+      <obc-alert-menu-item
+        .status=${ObcAlertMenuItemStatus.RectifiedUnacknowledged}
+        title="Rectified Unacknowledged Alert"
+        description="HFO temperature approaching lower limit: 115°C"
+        time="09:17:20"
+      >
+        <obc-alert-icon
+          slot="alert-icon"
+          type="alarm"
+          .active=${false}
+        ></obc-alert-icon>
+      </obc-alert-menu-item>
+      <obc-alert-menu-item
+        .status=${ObcAlertMenuItemStatus.Rectified}
+        title="Rectified Alert"
+        description="Rectified alert description"
+        time="09:18:02"
+      >
+        <obc-alert-icon
+          slot="alert-icon"
+          type="alarm"
+          acknowledged
+          .active=${false}
+        ></obc-alert-icon>
+      </obc-alert-menu-item>
+    </obc-alert-menu>`;
+  },
+};
+
 export const NoShelf: Story = {
   args: {
     hasShelved: false,

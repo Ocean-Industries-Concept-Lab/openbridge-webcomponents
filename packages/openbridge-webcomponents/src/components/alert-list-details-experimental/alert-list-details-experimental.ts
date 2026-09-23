@@ -120,7 +120,6 @@ export function getFilterModeData(filterMode: FilterModes) {
       emptyIcon: html`<obi-unacknowledged></obi-unacknowledged>`,
       filter: (alert: Alert) =>
         !isAcknowledged(alert) &&
-        isActive(alert) &&
         !excludedFromUnackedFilter(alert.type) &&
         !isShelved(alert),
     };
