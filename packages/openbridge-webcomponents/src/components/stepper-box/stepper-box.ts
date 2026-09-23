@@ -54,6 +54,14 @@ export enum ObcStepperBoxType {
  * - Place concise values and units to maintain compact layout.
  * - Avoid using for free-form input; this is for step-based changes only.
  *
+ * ## Keyboard
+ * The keys of the [APG Spinbutton pattern](https://www.w3.org/WAI/ARIA/apg/patterns/spinbutton/),
+ * wherever focus sits inside the stepper: `Up` and `Down` step the value,
+ * `Home` and `End` go to `min` and `max` when they are set. While focus is in
+ * the text field, `Home` and `End` keep moving the caret. The field is
+ * announced as a text box, not a spinbutton, because it carries no bounds of
+ * its own (TODO(#1208)).
+ *
  * **Example:**
  * ```
  * <obc-stepper-box type="up-down" value="5" unit="kg" helperText="Set weight"></obc-stepper-box>
@@ -70,6 +78,8 @@ export enum ObcStepperBoxType {
  * @property helperText - Helper text displayed below the stepper. When set, the helper text is shown.
  * @property placeholder - Placeholder text shown when the input is empty.
  * @property readonly - If true, the input is non-editable; programmatic value changes still apply.
+ * @property decrementLabel - Accessible name of the decrement button; the icon carries none.
+ * @property incrementLabel - Accessible name of the increment button; the icon carries none.
  * @property type - Icons and directionality of the stepper buttons: `plus-minus` (default)
  *   uses plus and minus icons, `up-down` and `left-right` the matching
  *   chevrons.
@@ -103,6 +113,10 @@ export class ObcStepperBox extends LitElement {
   @property({type: String}) placeholder = '';
 
   @property({type: Boolean}) readonly = false;
+
+  @property({type: String}) decrementLabel = 'Decrease';
+
+  @property({type: String}) incrementLabel = 'Increase';
 
   private get downDisabled(): boolean {
     return (
@@ -179,11 +193,12 @@ export class ObcStepperBox extends LitElement {
     const showHelper = Boolean(this.helperText);
 
     return html`
-      <div class="wrapper">
+      <div class="wrapper" @keydown=${this.handleKeydown}>
         <div class="display">
           <obc-icon-button
             cornerleft
             .showDivider=${false}
+            aria-label=${this.decrementLabel}
             ?disabled=${this.downDisabled}
             @click=${() => this.down()}
           >
@@ -204,6 +219,7 @@ export class ObcStepperBox extends LitElement {
           <obc-icon-button
             cornerright
             .showDivider=${false}
+            aria-label=${this.incrementLabel}
             ?disabled=${this.upDisabled}
             @click=${() => this.up()}
           >
@@ -244,6 +260,51 @@ export class ObcStepperBox extends LitElement {
     if (previous !== this.value) {
       this.dispatchChange(this.value);
     }
+  }
+
+  /**
+   * APG spinbutton keys, wherever focus sits inside the stepper. Home and End
+   * are left to the caret while focus is in the text field.
+   */
+  private handleKeydown(event: KeyboardEvent) {
+    if (event.altKey || event.ctrlKey || event.metaKey) return;
+    const inField = event
+      .composedPath()
+      .some((target) => target instanceof HTMLInputElement);
+    switch (event.key) {
+      case 'ArrowUp':
+        event.preventDefault();
+        this.up();
+        break;
+      case 'ArrowDown':
+        event.preventDefault();
+        this.down();
+        break;
+      case 'Home':
+        if (inField) return;
+        event.preventDefault();
+        this.toBound(this.min);
+        break;
+      case 'End':
+        if (inField) return;
+        event.preventDefault();
+        this.toBound(this.max);
+        break;
+    }
+  }
+
+  private toBound(bound: number | undefined) {
+    if (
+      bound === undefined ||
+      this.disabled ||
+      this.readonly ||
+      this.value == null ||
+      this.value === bound
+    ) {
+      return;
+    }
+    this.value = bound;
+    this.dispatchChange(bound);
   }
 
   private dispatchChange(value: number | null) {

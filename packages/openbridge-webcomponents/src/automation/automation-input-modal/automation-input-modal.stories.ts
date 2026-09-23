@@ -54,7 +54,7 @@ export const Compact: Story = {
         line-height: 16px; /* 133.333% */
       }
     </style>
-    <obc-automation-input-modal>
+    <obc-automation-input-modal aria-label="Speed">
       <div slot="header">
         <obc-icon-button variant="flat">
           <obi-close-google></obi-close-google>

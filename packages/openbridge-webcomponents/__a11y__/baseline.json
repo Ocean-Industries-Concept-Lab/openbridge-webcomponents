@@ -821,15 +821,7 @@
   "ui-components-input-controls-slider-double--primary": ["label"],
   "ui-components-input-controls-slider-double--slotted-readouts": ["label"],
   "ui-components-input-controls-slider-double--step": ["label"],
-  "ui-components-input-controls-stepper-box--disabled": ["button-name"],
-  "ui-components-input-controls-stepper-box--left-right": ["button-name"],
-  "ui-components-input-controls-stepper-box--plus-minus": ["button-name"],
-  "ui-components-input-controls-stepper-box--up-down": ["button-name"],
-  "ui-components-input-controls-stepper-box--with-helper-text": ["button-name"],
-  "ui-components-input-controls-stepper-box--without-unit": [
-    "button-name",
-    "label"
-  ],
+  "ui-components-input-controls-stepper-box--without-unit": ["label"],
   "ui-components-input-controls-text-input-field--align-center": ["label"],
   "ui-components-input-controls-text-input-field--align-left": ["label"],
   "ui-components-input-controls-text-input-field--size-large": ["label"],
