@@ -72,6 +72,10 @@ describe('obc-top-bar keyboard', () => {
   it('keeps the hold gesture: a long press brightens instead of opening', async () => {
     const {events, leftButton} = await setup();
 
+    // A leave cancels the hold, so park the real cursor first: it is still
+    // over the button from the click above, and any file running alongside
+    // may move it.
+    await userEvent.unhover(leftButton);
     leftButton.dispatchEvent(
       new PointerEvent('pointerdown', {bubbles: true, composed: true})
     );
