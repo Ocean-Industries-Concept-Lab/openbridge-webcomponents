@@ -1,9 +1,10 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {customElement} from '../../decorator.js';
 import {classMap} from 'lit/directives/class-map.js';
+import {ifDefined} from 'lit/directives/if-defined.js';
 import compentStyle from './tab-item.css?inline';
 import '../icon-button/icon-button.js';
-import {property} from 'lit/decorators.js';
+import {property, query} from 'lit/decorators.js';
 import '../../icons/icon-close-google.js';
 import '../badge/badge.js';
 import {BadgeSize, BadgeType} from '../badge/badge.js';
@@ -46,7 +47,9 @@ export interface TabItemBadge {
  *   - **Center Content:** Centers content within the tab (`centerContent` property).
  * - **Divider:** Optional divider line for visual separation.
  * - **Disabled State:** Prevents interaction and visually indicates non-interactive state.
- * - **Keyboard Accessible:** Supports activation via Enter/Space keys.
+ * - **Keyboard Accessible:** Activates on Enter and Space. Arrow-key navigation
+ *   between tabs belongs to the containing `obc-tab-row`, which drives
+ *   `focusable` as a roving tabindex.
  *
  * ### Variants and Configuration
  * - **Badge Types:** Supports all badge types from `obc-badge` (e.g., `alarm`, `warning`, `notification`, etc.).
@@ -124,6 +127,8 @@ export interface TabItemBadge {
  * @property showSubtitle - Shows contextual text below the tab title.
  * @property subtitle - Contextual text shown below the tab title when `showSubtitle` is true.
  * @property disabled - Disables the tab, preventing user interaction and applying disabled styles.
+ * @property focusable - Whether the tab holds the tab stop. A tab row manages this as a roving
+ *   tabindex (one tab focusable at a time); a standalone tab stays tabbable.
  * @property badges - Badges shown on the tab. A non-empty array takes precedence over the
  *   deprecated single-badge properties (`hasBadge`, `badgeType`, `badgeSize`,
  *   `badgeCount`, `badgeShowNumber`, `showLeadingBadgeIcon`); an empty one
@@ -151,6 +156,8 @@ export class ObcTabItem extends LitElement {
   @property({type: Boolean, attribute: 'has-title'}) hasTitle = false;
 
   @property({type: Boolean, attribute: 'has-divider'}) hasDivider = false;
+
+  @property({type: Boolean, attribute: false}) focusable = true;
 
   @property({type: Array, attribute: false}) badges: TabItemBadge[] = [];
 
@@ -227,6 +234,13 @@ export class ObcTabItem extends LitElement {
    */
   @property({type: Boolean}) showLeadingBadgeIcon = false;
 
+  @query('.wrapper') private wrapperElement?: HTMLElement;
+
+  /** Focuses the tab's interactive wrapper (the host itself is not focusable). */
+  public override focus(options?: FocusOptions): void {
+    this.wrapperElement?.focus(options);
+  }
+
   private handleClick(event: Event) {
     if (this.disabled) {
       event.preventDefault();
@@ -285,11 +299,9 @@ export class ObcTabItem extends LitElement {
         .showNumber=${badge.count !== undefined}
         .showIcon=${badge.showIcon ?? false}
       >
-        ${
-          badge.iconSlotName
-            ? html`<slot name=${badge.iconSlotName} slot="badge-icon"></slot>`
-            : nothing
-        }
+        ${badge.iconSlotName
+          ? html`<slot name=${badge.iconSlotName} slot="badge-icon"></slot>`
+          : nothing}
       </obc-badge>
     `;
   }
@@ -314,65 +326,55 @@ export class ObcTabItem extends LitElement {
       <div
         class=${classMap(wrapperClasses)}
         role="tab"
-        tabindex=${this.disabled ? '-1' : '0'}
+        aria-selected=${this.checked ? 'true' : 'false'}
+        aria-disabled=${ifDefined(this.disabled ? 'true' : undefined)}
+        tabindex=${this.disabled ? -1 : this.focusable ? 0 : -1}
         @click=${this.handleClick}
         @keydown=${this.handleKeyDown}
       >
         <div class="content">
-          ${
-            this.hasLeadingIcon
-              ? html`
-                  <div class="leading-icon">
-                    <slot name="leading-icon"></slot>
+          ${this.hasLeadingIcon
+            ? html`
+                <div class="leading-icon">
+                  <slot name="leading-icon"></slot>
+                </div>
+              `
+            : nothing}
+          ${this.hasTitle
+            ? html`
+                <div class="text-content">
+                  <div class="title">
+                    <slot name="title">${this.title}</slot>
                   </div>
-                `
-              : nothing
-          }
-          ${
-            this.hasTitle
-              ? html`
-                  <div class="text-content">
-                    <div class="title">
-                      <slot name="title">${this.title}</slot>
-                    </div>
-                    ${
-                      this.showSubtitle && this.subtitle
-                        ? html`<div class="subtitle">${this.subtitle}</div>`
-                        : nothing
-                    }
-                  </div>
-                `
-              : nothing
-          }
-          ${
-            this.centerContent && hasBadge
-              ? html`<div class="badges">
-                  ${badges.map((badge) => this.renderBadge(badge))}
-                </div>`
-              : nothing
-          }
-        </div>
-        ${
-          !this.centerContent && hasBadge
+                  ${this.showSubtitle && this.subtitle
+                    ? html`<div class="subtitle">${this.subtitle}</div>`
+                    : nothing}
+                </div>
+              `
+            : nothing}
+          ${this.centerContent && hasBadge
             ? html`<div class="badges">
                 ${badges.map((badge) => this.renderBadge(badge))}
               </div>`
-            : nothing
-        }
-        ${
-          this.hasClose
-            ? html`
-                <obc-icon-button
-                  class="close-button"
-                  variant="flat"
-                  @click=${this.handleClose}
-                  aria-label="Close tab"
-                  .disabled=${this.disabled}
-                  ><obi-close-google></obi-close-google
-                ></obc-icon-button>
-              `
-            : nothing
-        }
+            : nothing}
+        </div>
+        ${!this.centerContent && hasBadge
+          ? html`<div class="badges">
+              ${badges.map((badge) => this.renderBadge(badge))}
+            </div>`
+          : nothing}
+        ${this.hasClose
+          ? html`
+              <obc-icon-button
+                class="close-button"
+                variant="flat"
+                @click=${this.handleClose}
+                aria-label="Close tab"
+                .disabled=${this.disabled}
+                ><obi-close-google></obi-close-google
+              ></obc-icon-button>
+            `
+          : nothing}
       </div>
     `;
   }

@@ -1,9 +1,9 @@
-import {LitElement, html, unsafeCSS} from 'lit';
-import {property} from 'lit/decorators.js';
+import {LitElement, html, unsafeCSS, type PropertyValues} from 'lit';
+import {property, state} from 'lit/decorators.js';
 import {repeat} from 'lit/directives/repeat.js';
 import compentStyle from './tab-row.css?inline';
 import '../tab-item/tab-item.js';
-import type {TabItemBadge} from '../tab-item/tab-item.js';
+import type {ObcTabItem, TabItemBadge} from '../tab-item/tab-item.js';
 import '../icon-button/icon-button.js';
 import '../../icons/icon-placeholder.js';
 import {customElement} from '../../decorator.js';
@@ -45,6 +45,8 @@ export interface TabData {
  *
  * ### Features
  * - **Tab Selection:** Only one tab can be selected at a time; selection is managed via the `selectedTabId` property.
+ * - **Keyboard Navigation:** One tab stop for the row (roving tabindex), Left/Right arrows to move
+ *   between tabs, Home/End to jump to the first/last, Enter or Space to select the focused tab.
  * - **Closeable Tabs:** Optionally display a close button on each tab (`hasClose`), allowing users to remove tabs dynamically.
  * - **Add New Tab:** Optionally show an "add new tab" button at the end of the row (`hasAddNewTab`), emitting an event when clicked.
  * - **Subtitles:** Optionally show secondary contextual text below each tab title (`showSubtitle` and `subtitle`).
@@ -65,6 +67,22 @@ export interface TabData {
  * - For best accessibility, ensure each tab has a unique `id` and descriptive `title`.
  *
  * **TODO(designer):** Confirm if there are recommended limits on the number of tabs, or guidance for handling overflow (e.g., scrolling, collapsing).
+ *
+ * ---
+ *
+ * ### Keyboard and ARIA
+ *
+ * Follows the [WAI-ARIA Tabs pattern](https://www.w3.org/WAI/ARIA/apg/patterns/tabs/) with manual
+ * activation: the row is one tab stop, Left/Right move focus between tabs, Home/End jump to the
+ * first/last, and Enter or Space selects the focused tab. Disabled tabs are skipped. Set
+ * `automaticActivation` for the pattern's other mode, where an arrow key also selects.
+ *
+ * Three parts of the pattern are out of scope here:
+ * - `aria-controls`/`aria-labelledby` between a tab and its panel, because an IDREF cannot cross a
+ *   shadow root: the tabs live in this component's shadow DOM and the panel in the consumer's. Give
+ *   the panel an `aria-label` instead.
+ * - `Delete` to close a tab; the close button carries that action.
+ * - The "add new tab" button sits inside the `tablist` element, which the pattern reserves for tabs.
  *
  * ---
  *
@@ -113,6 +131,9 @@ export interface TabData {
  *
  * @property selectedTabId - The `id` of the currently selected tab. Only one tab can be selected at a time.
  *   Changing this property updates the selected tab visually and emits the `tab-selected` event when changed by user interaction.
+ * @property automaticActivation - Selects a tab as soon as an arrow key focuses it, instead of
+ *   waiting for Enter or Space. Only for rows whose panels are already rendered.
+ * @property label - Accessible name of the tab list, announced before the tabs themselves.
  * @property hasClose - Whether to display a close button on each tab. When enabled, users can remove tabs individually.
  * @property hug - Enables "hug" mode for a more compact tab layout with reduced padding.
  * @property showSubtitle - Whether to display subtitle text for each tab. Individual tabs can override this with `tab.showSubtitle`.
@@ -145,10 +166,95 @@ export class ObcTabRow extends LitElement {
 
   @property({type: Boolean, attribute: 'has-add-new-tab'}) hasAddNewTab = false;
 
-  private handleTabClick(_: Event, tabId: string) {
+  @property({type: Boolean}) automaticActivation = false;
+
+  @property({type: String}) label = 'Tabs';
+
+  /** The tab that holds the row's single tab stop; arrow keys move it. */
+  @state() private rovingTabId = '';
+
+  /** Tabs an arrow key can land on, in document order. */
+  private get navigableTabs(): TabData[] {
+    return this.tabs.filter((tab) => !tab.disabled);
+  }
+
+  /** Whether the keyboard focus currently sits on one of the tabs. */
+  private get hasFocusWithin(): boolean {
+    return this.shadowRoot?.activeElement != null;
+  }
+
+  protected override willUpdate(changed: PropertyValues<this>) {
+    // A selection made elsewhere takes the tab stop with it, but not while the
+    // user is arrowing through the row.
+    if (changed.has('selectedTabId') && !this.hasFocusWithin) {
+      this.rovingTabId = this.selectedTabId;
+    }
+    if (changed.has('tabs') || changed.has('selectedTabId')) {
+      this.refreshRovingTab();
+    }
+  }
+
+  /**
+   * Re-point the tab stop without moving focus: keep it where it is while that
+   * tab is still navigable, else follow the selection, else the first tab.
+   */
+  private refreshRovingTab() {
+    const navigable = this.navigableTabs;
+    if (navigable.some((tab) => tab.id === this.rovingTabId)) return;
+    const selected = navigable.find((tab) => tab.id === this.selectedTabId);
+    this.rovingTabId = selected?.id ?? navigable[0]?.id ?? '';
+  }
+
+  private async moveFocusTo(tabId: string) {
+    this.rovingTabId = tabId;
+    if (this.automaticActivation) {
+      this.selectTab(tabId);
+    }
+    await this.updateComplete;
+    this.tabItem(tabId)?.focus();
+  }
+
+  private tabItem(tabId: string): ObcTabItem | null {
+    return (
+      this.shadowRoot?.querySelector<ObcTabItem>(
+        `obc-tab-item[data-tab-id="${tabId}"]`
+      ) ?? null
+    );
+  }
+
+  private handleKeyDown(event: KeyboardEvent) {
+    const navigable = this.navigableTabs;
+    const current = navigable.findIndex((tab) => tab.id === this.rovingTabId);
+    if (current === -1 || navigable.length === 0) return;
+
+    let target: TabData | undefined;
+    switch (event.key) {
+      case 'ArrowRight':
+        target = navigable[(current + 1) % navigable.length];
+        break;
+      case 'ArrowLeft':
+        target = navigable[(current - 1 + navigable.length) % navigable.length];
+        break;
+      case 'Home':
+        target = navigable[0];
+        break;
+      case 'End':
+        target = navigable[navigable.length - 1];
+        break;
+      default:
+        return;
+    }
+
+    event.preventDefault();
+    void this.moveFocusTo(target.id);
+  }
+
+  private selectTab(tabId: string) {
     const tabIndex = this.tabs.findIndex((t) => t.id === tabId);
     if (tabIndex === -1) return;
+    if (this.tabs[tabIndex].disabled) return;
     this.selectedTabId = this.tabs[tabIndex].id;
+    this.rovingTabId = this.selectedTabId;
     this.dispatchEvent(
       new CustomEvent('tab-selected', {
         detail: {tab: this.tabs[tabIndex], id: tabId, index: tabIndex},
@@ -156,6 +262,10 @@ export class ObcTabRow extends LitElement {
         composed: true,
       })
     );
+  }
+
+  private handleTabClick(_: Event, tabId: string) {
+    this.selectTab(tabId);
   }
 
   private handleTabClose(event: Event, tabId: string) {
@@ -211,6 +321,8 @@ export class ObcTabRow extends LitElement {
     }
     return html`
       <obc-tab-item
+        data-tab-id=${tab.id}
+        .focusable=${tab.id === this.rovingTabId}
         .title=${tab.title}
         .subtitle=${tab.subtitle ?? ''}
         .showSubtitle=${showSubtitle}
@@ -232,15 +344,13 @@ export class ObcTabRow extends LitElement {
         @tab-click=${(e: Event) => this.handleTabClick(e, tab.id)}
         @tab-close=${(e: Event) => this.handleTabClose(e, tab.id)}
       >
-        ${
-          tab.hasLeadingIcon !== false
-            ? html`
-                <slot name="tab-${tab.id}-icon" slot="leading-icon">
-                  <obi-placeholder></obi-placeholder>
-                </slot>
-              `
-            : ''
-        }
+        ${tab.hasLeadingIcon !== false
+          ? html`
+              <slot name="tab-${tab.id}-icon" slot="leading-icon">
+                <obi-placeholder></obi-placeholder>
+              </slot>
+            `
+          : ''}
         <span slot="title">${tab.title}</span>
         ${badgeIconSlots.map(
           (slotName) => html`
@@ -255,29 +365,38 @@ export class ObcTabRow extends LitElement {
 
   override render() {
     return html`
-      <div class="wrapper" role="tablist">
+      <div
+        class="wrapper"
+        role="tablist"
+        aria-label=${this.label}
+        @keydown=${this.handleKeyDown}
+      >
         ${repeat(
           this.tabs,
           (t) => t.id,
           (t, i) => this.renderTab(t, i)
         )}
-        ${
-          this.hasAddNewTab
-            ? html`
-                <obc-icon-button
-                  class="add-new-tab"
-                  variant="flat"
-                  @click=${this.handleAddNewTab}
-                  aria-label="Add new tab"
-                >
-                  <obi-up-iec></obi-up-iec>
-                </obc-icon-button>
-              `
-            : ''
-        }
+        ${this.hasAddNewTab
+          ? html`
+              <obc-icon-button
+                class="add-new-tab"
+                variant="flat"
+                @click=${this.handleAddNewTab}
+                aria-label="Add new tab"
+              >
+                <obi-up-iec></obi-up-iec>
+              </obc-icon-button>
+            `
+          : ''}
       </div>
     `;
   }
 
   static override styles = unsafeCSS(compentStyle);
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'obc-tab-row': ObcTabRow;
+  }
 }
