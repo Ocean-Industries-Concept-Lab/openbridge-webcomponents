@@ -994,6 +994,8 @@ export class ObcWatch extends LitElement {
   override render() {
     let width: number;
     let height: number;
+    let frameX: number;
+    let frameY: number;
     let viewBox: string;
 
     if (this.arcFrame) {
@@ -1002,6 +1004,8 @@ export class ObcWatch extends LitElement {
       this._ownFrame = undefined;
       width = this.arcFrame.width;
       height = this.arcFrame.height;
+      frameX = this.arcFrame.x;
+      frameY = this.arcFrame.y;
       viewBox = this.arcFrame.viewBox;
     } else {
       const frame = computeRadialFrame({
@@ -1024,11 +1028,21 @@ export class ObcWatch extends LitElement {
       this._ownFrame = frame;
       width = frame.width;
       height = frame.height;
+      frameX = frame.x;
+      frameY = frame.y;
       viewBox = frame.viewBox;
     }
 
     const rOff = this._rOff;
     const scale = this.getScale({width, height});
+    // `rotation` turns the element box, which pivots on the box centre — the
+    // watch centre only while the frame is origin-centred. A cropped frame
+    // (sector window) moves it, so pin the pivot to the SVG origin instead.
+    const pivotX = width > 0 ? (-frameX / width) * 100 : 50;
+    const pivotY = height > 0 ? (-frameY / height) * 100 : 50;
+    // A cropped frame paints beyond the viewBox, which the viewport would cut
+    // before the rotation brings it into view. Only those need the escape.
+    const cropped = pivotX !== 50 || pivotY !== 50;
     const angleSetpoint = this.renderSetpoint();
     // Route through _bandRadius so inside labels track the (zoom-shifted) inner
     // band edge; the coupling is intentional (see _bandRadius INVARIANT).
@@ -1122,10 +1136,11 @@ export class ObcWatch extends LitElement {
         : nothing;
     return html`
       <svg
+        class=${cropped ? 'cropped' : nothing}
         width="100%"
         height="100%"
         viewBox=${viewBox}
-        style="--scale: ${scale}"
+        style="--scale: ${scale}; transform-origin: ${pivotX}% ${pivotY}%"
         transform="rotate(${this.rotation ?? 0})"
       >
         ${this.watchCircle()} ${this.renderBars()}
