@@ -89,6 +89,13 @@ export enum ObcTopBarMenuButtonIcon {
  * - `emergency-brightness-start` – Fired when the menu button is held for 500ms. This should increase the brightness of the screen slowly. Used when the screen is too dark.
  * - `emergency-brightness-stop` – Fired when the menu button is released.
  *
+ * ## Keyboard
+ * Every control in the bar is its own tab stop and activates on `Enter` and
+ * `Space`. The bar is a navigation landmark, not an APG toolbar: its controls
+ * are separate components and slotted consumer content, so a roving tabindex
+ * across them is deliberately not implemented. The emergency-brightness hold
+ * is a pointer gesture only; from the keyboard the menu button opens the menu.
+ *
  * ## Best Practices and Constraints
  * - Only show interactive elements relevant to the current context to avoid clutter.
  * - Use the `alerts` slot for transient or critical notifications; persistent alerts may require a different component.
@@ -293,6 +300,19 @@ export class ObcTopBar extends LitElement {
     this.isLeftButtonDown = false;
   }
 
+  /**
+   * Keyboard and assistive-technology activation of the hold button.
+   *
+   * Enter, Space and a screen reader's activate command arrive as a `click`
+   * with `detail` 0 and never as a pointer sequence, so they cannot pass
+   * through the hold timer; a pointer click arrives with `detail` 1 after
+   * `leftButtonUp()` has already dispatched.
+   */
+  private leftButtonActivate(event: MouseEvent, type: string) {
+    if (event.detail !== 0) return;
+    this.dispatchEvent(new CustomEvent(type));
+  }
+
   private leftButtonLeave() {
     if (!this.isLeftButtonDown) return;
     if (this.leftButtonTimeout) {
@@ -317,6 +337,8 @@ export class ObcTopBar extends LitElement {
             @pointerdown=${() => this.leftButtonDown(new CustomEvent('close'))}
             @pointerup=${() => this.leftButtonUp()}
             @pointerleave=${() => this.leftButtonLeave()}
+            @click=${(event: MouseEvent) =>
+              this.leftButtonActivate(event, 'close')}
           >
             <obi-close-google></obi-close-google>
           </obc-icon-button>
@@ -358,6 +380,8 @@ export class ObcTopBar extends LitElement {
                 this.leftButtonDown(new CustomEvent('menu-button-clicked'))}
               @pointerup=${() => this.leftButtonUp()}
               @pointerleave=${() => this.leftButtonLeave()}
+              @click=${(event: MouseEvent) =>
+                this.leftButtonActivate(event, 'menu-button-clicked')}
               ?activated=${this.menuButtonActivated}
             >
               ${
@@ -434,7 +458,6 @@ export class ObcTopBar extends LitElement {
           settings: this.settings,
           tall: this.tall,
         })}
-        role="menubar"
       >
         <div class="left group">${leftGroup}</div>
         <div class="right group">

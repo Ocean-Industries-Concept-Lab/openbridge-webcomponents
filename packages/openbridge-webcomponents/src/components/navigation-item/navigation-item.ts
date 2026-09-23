@@ -13,9 +13,10 @@ import {
   type TreeNavigationItemAlerts,
 } from '../tree-navigation-item/tree-navigation-item.js';
 
-enum NavigationItemRole {
+export enum NavigationItemRole {
   Button = 'button',
   MenuItem = 'menuitem',
+  MenuItemRadio = 'menuitemradio',
 }
 
 /**
@@ -97,6 +98,11 @@ enum NavigationItemRole {
  * ```
  *
  * @property label - The text label displayed for the navigation item.
+ * @property itemRole - Role of the item's control inside a composite widget, set by the parent:
+ *   `menuitem`, or `menuitemradio` with `aria-checked` mirroring `checked`. The role belongs on
+ *   the control, not on the host: a role on the host wraps a focusable control in another one.
+ * @property focusable - Whether the item is in the tab order. A menu that owns a roving tabindex,
+ *   such as `obc-context-menu-input`, manages this (one item focusable at a time); a standalone item stays tabbable.
  *   Hidden in icon-only variants.
  * @availableWhen label variant in [Full, Compact]
  * @property href - The URL to navigate to when the item is clicked.
@@ -129,6 +135,10 @@ enum NavigationItemRole {
 @customElement('obc-navigation-item')
 export class ObcNavigationItem extends LitElement {
   @property({type: String}) label = 'Label';
+
+  @property({type: Boolean, attribute: false}) focusable = true;
+
+  @property({type: String, attribute: false}) itemRole?: NavigationItemRole;
 
   @property({type: String}) href: string | undefined;
 
@@ -174,15 +184,20 @@ export class ObcNavigationItem extends LitElement {
   }
 
   private getItemRole(): NavigationItemRole | undefined {
+    if (this.itemRole !== undefined) return this.itemRole;
     const hostRole = this.getAttribute('role');
     if (hostRole === NavigationItemRole.MenuItem) {
       return NavigationItemRole.MenuItem;
+    }
+    if (hostRole === NavigationItemRole.MenuItemRadio) {
+      return NavigationItemRole.MenuItemRadio;
     }
 
     return this.href === undefined ? NavigationItemRole.Button : undefined;
   }
 
   private getItemTabIndex(): number | undefined {
+    if (!this.focusable) return -1;
     const hostTabIndex = this.getAttribute('tabindex');
     if (hostTabIndex !== null) {
       const parsedTabIndex = Number(hostTabIndex);
@@ -232,6 +247,13 @@ export class ObcNavigationItem extends LitElement {
         @keydown=${this.handleKeydown}
         tabindex=${ifDefined(this.getItemTabIndex())}
         role=${ifDefined(this.getItemRole())}
+        aria-checked=${ifDefined(
+          this.getItemRole() === NavigationItemRole.MenuItemRadio
+            ? this.checked
+              ? 'true'
+              : 'false'
+            : undefined
+        )}
       >
         <div class="visible-wrapper">
           ${

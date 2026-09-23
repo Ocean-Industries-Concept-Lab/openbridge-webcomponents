@@ -15,6 +15,7 @@ const input = globbySync('src/**/*.ts', {
     'src/**/*.d.ts',
     'src/storybook-util.ts',
     'src/ar/_test-utils.ts',
+    'src/internal/_test-utils.ts',
   ],
 });
 
@@ -76,6 +77,7 @@ export default defineConfig(({mode}) => {
           'src/**/*.test.ts',
           'src/storybook-util.ts',
           'src/ar/_test-utils.ts',
+          'src/internal/_test-utils.ts',
         ],
       }),
       {

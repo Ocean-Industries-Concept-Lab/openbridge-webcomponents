@@ -60,7 +60,7 @@ wrapper versions are synced first by `scripts/prepare-wrappers.js` (see below).
 | Workflow                                   | Trigger                                       | Purpose                                                                                               |
 | ------------------------------------------ | --------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
 | `build.yml`                                | push + PR, all branches                       | typecheck, `analyze`, the `lint:*` suite including `lint:agents`, `format:check`, `fix-imports:check` |
-| `visual-testing.yml`                       | push + PR on `develop` / `stable`             | Playwright snapshot suite                                                                             |
+| `visual-testing.yml`                       | push + PR on `develop` / `stable`             | Playwright snapshot suite, then the axe run against `__a11y__/baseline.json`                          |
 | `update-snapshots.yml`                     | **PR comment containing `/update-snapshots`** | rebuilds baselines in the Docker image and pushes to the PR branch — currently failing (#1179)        |
 | `pr-title-lint.yml`                        | PR opened / edited / synchronize / reopened   | Conventional Commits check on the PR title                                                            |
 | `release.yml`                              | push to `develop`, or manual                  | `build:full` then `semantic-release`                                                                  |
@@ -130,6 +130,27 @@ files from source.
 runs in **test-browser**, which has no `analyze` step — tooling tests must not
 import the manifest.
 
+## The accessibility gates
+
+Two, neither of them a lint warning:
+
+- `npm run test:browser` (`build.yml`, every branch) runs the
+  `*-keyboard.spec.ts` files with every other browser spec. A key binding
+  that stops working fails the job like any other test.
+- `npm run test-a11y` (`visual-testing.yml`, PRs to `develop` and `stable`)
+  runs axe over every story — about 40 s — and then
+  `script/check-a11y-baseline.ts` compares the report with
+  `__a11y__/baseline.json`. A story or rule the baseline does not carry fails
+  the step with `story-id: rule` lines; entries that no longer fail are
+  printed for pruning; `npm run test-a11y:update` rewrites the file. The debt
+  can only shrink, a new component starts from zero, and adding to the
+  baseline is a reviewable diff that needs its reason in the PR body.
+  `a11y-report.json` is uploaded as an artifact on every run.
+
+What neither gate sees is a new widget with no keyboard model at all, since
+axe cannot see keys: that is the component-creation checklist
+([`a11y.md`](../../docs/agents/a11y.md) § 9).
+
 ## Local equivalents of the CI gates
 
 ```bash
@@ -137,6 +158,8 @@ npm run lint          # includes lint:agents — the agent-doc drift check
 npm run typecheck
 npm run format:check
 npm run test:rules    # node-side tests for the custom ESLint rules and tooling
+npm run test:browser  # the keyboard specs, with the other browser specs
+npm run test-a11y     # axe over every story, then the baseline check
 ```
 
 Run these before pushing; `build.yml` runs the same set on every branch.

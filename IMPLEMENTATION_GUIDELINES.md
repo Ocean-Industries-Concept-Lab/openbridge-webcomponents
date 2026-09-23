@@ -66,6 +66,31 @@ npm run update-snapshots
 
 Snapshot baselines are stored in `__vis__/linux/__baselines__/` (and `__vis__/darwin/__baselines__/` for macOS). Since snapshot results are highly dependent on the environment (OS, fonts, etc.), it is recommended to use Docker for generating canonical snapshots.
 
+### Accessibility Tests
+
+Keyboard operability is tested, colour contrast deliberately is not, and no
+accessibility check is an ESLint warning. Two gates run in CI:
+
+```bash
+# Keyboard specs (*-keyboard.spec.ts), with every other browser spec — build.yml, every branch
+npm run test:browser
+
+# axe over every story, then the baseline check — visual-testing.yml, PRs to develop and stable
+npm run test-a11y
+
+# Rewrite __a11y__/baseline.json after fixing violations, or after adding some with a reason in the PR
+npm run test-a11y:update
+```
+
+`__a11y__/baseline.json` freezes the violations the library ships with, by
+story and rule. A story or rule it does not carry fails `test-a11y` with
+`story-id: rule` lines, so a new component starts from zero and the debt can
+only shrink; entries that stopped failing are printed for pruning. What no
+gate sees is a widget without a keyboard model, since axe cannot see keys:
+the component-creation checklist in `AGENTS.md` § 5 asks for the pattern and
+the spec. Rules, patterns and the harness details:
+[`docs/agents/a11y.md`](docs/agents/a11y.md).
+
 ### Docker Testing
 
 For a consistent testing environment, it is recommended to run tests using Docker. This ensures that snapshots are always generated on the same Linux environment as the CI.
@@ -516,6 +541,32 @@ Each class overrides the same variable names (`--global-size-spacing-touch-targe
 ```
 
 Components should never reference a specific size class internally — they consume the tokens and let the ancestor decide.
+
+---
+
+### Categorical Colour Classes
+
+Figma's `Color-categorical` collection has ten modes, exported as classes the
+same way: `obc-categorical-color-neutral` (the `:root` default), `-blue`,
+`-cyan`, `-teal`, `-green`, `-yellow`, `-orange`, `-red`, `-purple`,
+`-indigo`. Each class sets `--categorical-shade-{050…600,050-tint}` to one
+`--base-*` ramp, the `--base-categorical-*` names the vessel icons read, and
+the four `--vessel-*` tokens, all as `var()` references so the values follow
+the active theme. Every mode-dependent token is declared inside the class rule
+on purpose: a `var()` is substituted on the element that declares it, so an
+alias on `:root` would freeze the neutral ramp for the whole tree. Put the
+class on `<html>` for an app-wide default or on any ancestor for one subtree,
+at or below the element carrying `data-obc-theme`:
+
+```html
+<div class="obc-categorical-color-green">
+  <obi-vessel-type-cargo-colour usecsscolor></obi-vessel-type-cargo-colour>
+</div>
+```
+
+The block is hand-written in `src/palettes/manual.css` until the plugin
+exports the collection (#1187); the story _Palettes/Categorical Colour_ renders
+every mode.
 
 ---
 

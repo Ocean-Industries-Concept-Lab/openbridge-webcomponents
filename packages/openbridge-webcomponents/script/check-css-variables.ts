@@ -45,11 +45,7 @@ import path from 'path';
 import {globby} from 'globby';
 
 // Undefined CSS variables that only a fix in Figma can resolve (#929).
-const allowedUndefinedVariables = new Set([
-  // B-7: Figma binds both to variables missing from Component-size
-  '--ui-components-keyboard-numeric-component-height-min',
-  '--ui-components-keyboard-numeric-touch-target-size',
-]);
+const allowedUndefinedVariables = new Set<string>([]);
 
 interface VariableDefinitionLocation {
   file: string;

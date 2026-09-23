@@ -547,14 +547,14 @@ The zoom works by adding a **radius offset** (`_rOff` / `_radiusOffset`) to all 
 
 ### File roles
 
-| File                   | Role                                                                                                                                                                                                                                                                      |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `arc-frame.ts`         | Pure geometry: `computeZoomToFitArcFrame()` binary-searches for the `radiusOffset` that makes the arc's bounding box fill the available space. Also exports `computeAnnularArcBBox()`.                                                                                    |
-| `watch.ts`             | Owns `zoomToFitArc` property and `_rOff` field. Applies offset to ALL radius references (rings, tickmarks, labels, advices, bars, setpoint, needles). Recalculates viewBox.                                                                                               |
-| `instrument-radial.ts` | Forwards `zoomToFitArc` to `obc-watch`. Tracks `_radiusOffset` for needle position adjustments.                                                                                                                                                                           |
-| `rudder.ts`            | Has `_needleTransform` getter that translates the needle outward by `rOff` so the tip reaches the enlarged ring. Uses `translate(0, -rOff)` — an intentional visual compromise that preserves needle proportions at the cost of a slight mismatch at extreme zoom levels. |
-| `rot-sector.ts`        | Exposes `rotArcExtent` (default 60°) and forwards `zoomToFitArc` to `instrument-radial`.                                                                                                                                                                                  |
-| `compass-sector.ts`    | Has its own zoom logic: when `zoomToFitArc` is true and the FOV is small, renders a 1:1-scale arc cropped to content; otherwise uses FOV compression capped at 120°.                                                                                                      |
+| File                   | Role                                                                                                                                                                                                                                                                                                                                                                                  |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `arc-frame.ts`         | Pure geometry: `computeZoomToFitArcFrame()` binary-searches for the `radiusOffset` that makes the arc's bounding box fill the available space. `fit: 'bbox'` returns that bounding box instead of the square around it. Also exports `computeAnnularArcBBox()`.                                                                                                                       |
+| `watch.ts`             | Owns `zoomToFitArc` property and `_rOff` field. Applies offset to ALL radius references (rings, tickmarks, labels, advices, bars, setpoint, needles). Recalculates viewBox.                                                                                                                                                                                                           |
+| `instrument-radial.ts` | Forwards `zoomToFitArc` to `obc-watch`. Tracks `_radiusOffset` for needle position adjustments.                                                                                                                                                                                                                                                                                       |
+| `rudder.ts`            | Passes `zoomFit: 'bbox'`, since a zoomed half-circle is flat and a square box would be mostly empty height. Has `_needleTransform` getter that translates the needle outward by `rOff` so the tip reaches the enlarged ring. Uses `translate(0, -rOff)` — an intentional visual compromise that preserves needle proportions at the cost of a slight mismatch at extreme zoom levels. |
+| `rot-sector.ts`        | Exposes `rotArcExtent` (default 60°) and forwards `zoomToFitArc` to `instrument-radial`.                                                                                                                                                                                                                                                                                              |
+| `compass-sector.ts`    | Flattens the arc until its ends reach the window's side margin, then slides its cropped window out by that `radiusOffset`, so the canvas is the same rectangle at every heading. FOV compression is capped at 120° as before.                                                                                                                                                         |
 
 ### `radiusOffset` propagation
 
@@ -629,11 +629,12 @@ All frame/viewBox geometry is centralized in `computeRadialFrame()`:
   deleted in favor of this).
 - **Consumers on the helper:** watch (standalone), instrument-radial
   (+ gauge-radial, rot-sector), speed-gauge, azimuth-thruster, compass,
-  heading, rudder. `obc-instrument-radial` exposes the frame via a
+  heading, rudder, rate-of-turn, compass-sector (whose FOV compression
+  stays local; only the framing is shared).
+  `obc-instrument-radial` exposes the frame via a
   `frame` getter and a `frame-changed` event (gauge-radial re-anchors its
   %-positioned readouts from it).
-- **Not on the helper:** compass-sector (bespoke FOV compression, see the
-  `PADDING` comment there), pitch/roll/pitch-roll (labels inside ⇒ no
+- **Not on the helper:** pitch/roll/pitch-roll (labels inside ⇒ no
   reserve; the pitch-roll composite has a coupled `buildFrame` contract),
   wind-propulsion and velocity-projection-plot (explicit `padding`
   override path, unchanged by design). pitch-roll-heave follows pitch-roll
@@ -665,57 +666,60 @@ All frame/viewBox geometry is centralized in `computeRadialFrame()`:
   `.container > * {position: absolute}` the host is blockified and the
   host observation works).
 
-### Host clipping & the arrow-apex shave (PR #1016)
+### Host clipping & sector crops
 
 `obc-watch` (since #994) and `obc-compass-sector` (since #1016) set
 `:host { overflow: hidden }` because both rotate their `<svg>` **element box**
 (`transform="rotate(...)"` on the element, not an inner `<g>`): a rotated
 100%-sized box swings its corners outside the host and leaks visible arc
-pixels over neighboring UI in wide layouts. The clip is the fix; the sibling
-`svg { display: block }` rules (watch, watch-flat, thruster) fix a different
-issue — the inline-SVG line-box gap that added ~3–5px of phantom height below
-the graphic (mystery scrollbars in `overflow: auto` cells).
+pixels over neighboring UI in wide layouts. The host is the edge that bounds
+the component; the sibling `svg { display: block }` rules (watch, watch-flat,
+thruster) fix a different issue — the inline-SVG line-box gap that added
+~3–5px of phantom height below the graphic (mystery scrollbars in
+`overflow: auto` cells).
 
-The leak needs a **cropped** frame to show: a full-circle face in its
-origin-centred square viewBox is rotation-invariant, so nothing new is exposed
-when it turns — compass-sector leaks because its sector crop leaves painted
-arc in the corners of a wide, short box. Rotating an inner `<g>` instead of
-the element would keep the box axis-aligned and let the svg's own viewport
-clip contain everything by construction — but this was **measured and
-rejected** (issue #1129, 2026-08-11): an element-level `transform` update
-reuses the display list (only re-raster runs), while mutating a `<g>` inside
-dirties the SVG content and rebuilds it — ~3× the main-thread `Paint` time at
-10 Hz heading updates (raster cost equal, both 60 fps on desktop hardware).
-It is also only a drop-in where the viewBox is origin-centred: the element
-rotates about its **box centre**, an inner `<g>` about the **user-space
-origin** — on compass-sector's cropped frame the two differ and a naive swap
-visibly displaces the arc (11 of 12 baselines). And it buys no visual
-improvement — the apex shave below happens either way at the same box edge.
+Rotating an inner `<g>` instead of the element would keep the box
+axis-aligned, but this was **measured and rejected** (issue #1129,
+2026-08-11): an element-level `transform` update reuses the display list
+(only re-raster runs), while mutating a `<g>` inside dirties the SVG content
+and rebuilds it — ~3× the main-thread `Paint` time at 10 Hz heading updates
+(raster cost equal, both 60 fps on desktop hardware).
 
-**Known, deliberate trade-off:** in compass-sector's current framing the
-HDG/COG **arrow apexes extend 1–2px past the host's top edge**. Before #1016
-those pixels painted _outside_ the component (`overflow: visible` default) and
-the arrow looked complete; with the clip they are shaved flat at the box edge.
-This is imperceptible at normal viewing (an anti-aliased point) and was
-accepted because the same "allowed to escape" mechanism is what leaked whole
-arc chunks in wide containers.
+**Sector crops and the rotation pivot.** An element box rotates about its own
+centre, which is the watch centre only while the viewBox is origin-centred. A
+cropped frame moves it, so `watch.ts` emits `transform-origin` derived from
+the frame — `(-x/w)%, (-y/h)%`, which evaluates to the default `50% 50%` for
+every origin-centred frame, so nothing else moves. **The percentage form is
+only the user-space origin while the box aspect equals the viewBox aspect**,
+which is why a cropped consumer must carry the frame's `aspect-ratio`
+(`@mixin contain-aspect`, `src/mixins/contain-aspect.css`) — on `:host`, not
+on an inner wrapper. A host left at `height: 100%` stays square inside a
+square cell and only centres the rectangle within it; the element itself is
+the canvas, so its own box is what has to follow the frame.
 
-**TODO(designer):** if the shaved tips are ever unacceptable, the zero-cut fix
-is giving the frame headroom so the arrow tips fit _inside_ the box — do NOT
-simply remove the `overflow: hidden` (that re-opens the wide-layout leak).
-Cautions for whoever picks this up:
+The crop also means the arc is painted where it points and only the rotation
+brings it into the window, so the svg viewport — which clips _before_ the
+transform — would cut it away. `watch.ts` marks those frames with a `cropped`
+class and `watch.css` gives that class `overflow: visible`; the host clip
+above is what bounds the result. The class is deliberately narrow: on a host
+left inline, `:host { overflow: hidden }` is inert, so an unconditional rule
+would leave such a watch unclipped.
 
-- Headroom re-frames the arc: **all** compass-sector baselines move (the
-  shave-only change moved 8), and the readout `_readoutTopPercent` anchors
-  must be re-derived.
-- compass-sector is **not** on `computeRadialFrame()` (bespoke `PADDING = 72`
-  plus a per-FOV cached viewBox). Adding headroom by touching `PADDING` — or
-  by migrating it onto the helper — interacts with the #1021/#1049
-  label-reserve geometry: `basePadding` feeds the closed-form reserve, so
-  re-validate label padding at small sizes after any change.
-- The same decision applies family-wide: `obc-watch` has clipped since #994,
-  so any "tips must never be cut" ruling should audit watch-based instruments
-  (setpoint markers and arrows near the box edge), not just compass-sector.
+Sector instruments share one framing rule: `basePadding: 48`, i.e. 40 units
+around the outer ring — a touch tighter than `obc-donut-chart`'s 32 px on a
+256 px ring — and a bottom `clip` that leaves the arc the same margin.
+compass-sector keeps one crop per feature that hangs below the band (ROT
+track, inside labels, readout) and takes the deepest in play, because a single
+value shaves whichever feature reaches lowest.
+
+**Sides stay uncropped.** The box keeps the full circle's width, so a 120°
+arc reaching `x = ±155.7` sits further from the side edges than from the top,
+and `zoomToFitArc` is what takes that space back: it flattens the arc until
+its ends reach the side edges, `SECTOR_SIDE_MARGIN` being the clearance left
+there (zero — the un-zoomed view already carries that padding, and zooming is
+what spends it). Cropping the sides too was tried and reverted — it magnified
+the instrument by about a fifth and left zoom nothing to do at a full 120°
+arc.
 
 ### Radial label model (design language)
 
@@ -726,9 +730,12 @@ Labels follow the design model with three placements:
 - **Max-min** — labels at the arc ends (`endLabelsMaxMin`), e.g. the 180° gauge.
 
 > **Validated combinations:** pitch/roll/pitch-roll-heave use `zoomToFitArc` + `shiftArcFrameToOuterEdge`;
-> `gauge-radial` uses per-sector `clip*` and `endLabelsMaxMin` on the 180° sector.
-> Pairings like `clip*` + `zoomToFitArc` or `endLabelsMaxMin` + `zoomToFitArc` are not
-> currently validated.
+> `gauge-radial` uses per-sector `clip*` and `endLabelsMaxMin` on the 180° sector;
+> `compass-sector` pairs a crop with `zoomToFitArc` by shifting the cropped
+> window instead of reframing it — the crops go into the frame it computes and
+> hands to `<obc-watch .arcFrame>`, which is why obc-watch's own `clip*` never
+> enter it (see "Sector crops and the rotation pivot").
+> `endLabelsMaxMin` + `zoomToFitArc` is still unvalidated.
 
 ---
 

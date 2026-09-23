@@ -63,3 +63,6 @@ bundle.ts
 
 /tmp
 /.full-bundle-publish/
+
+# axe report from `npm run test-a11y`
+a11y-report.json

@@ -1,5 +1,6 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
+import {ifDefined} from 'lit/directives/if-defined.js';
 import compentStyle from './topbar-message-item.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
@@ -134,6 +135,7 @@ export enum ObcTopbarMessageItemSize {
  *   icon action button, and `inactive` shows the empty state.
  * @property size - Vertical size: `regular` (default) is the compact height, `tall` the
  *   expanded one.
+ * @property actionLabel - Accessible name of the icon action button (`with-icon-button`); the slotted icon carries none.
  * @slot primary-icon - Main icon representing the message type or status.
  * @slot secondary-icon - Additional icon for context or severity (shown if `hasSecondaryIcon` is true).
  * @slot title - Title or heading of the message (shown if `showTitle` is true).
@@ -160,6 +162,8 @@ export class ObcTopbarMessageItem extends LitElement {
   @property({type: Boolean, attribute: false}) showDescription: boolean = true;
 
   @property({type: Boolean, attribute: false}) showTimestamp: boolean = true;
+
+  @property({type: String}) actionLabel = '';
 
   @property({type: Boolean}) hasTimestamp2 = false;
 
@@ -299,6 +303,7 @@ export class ObcTopbarMessageItem extends LitElement {
                       ? html`
                           <button
                             class="action-wrapper action-icon-button"
+                            aria-label=${ifDefined(this.actionLabel || undefined)}
                             @click=${this.onActionClick}
                           >
                             <div class="action">
