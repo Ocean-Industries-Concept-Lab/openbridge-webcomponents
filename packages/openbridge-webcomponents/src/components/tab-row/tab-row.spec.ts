@@ -226,6 +226,49 @@ describe('obc-tab-row', () => {
     expect(row.selectedTabId).toBe('a');
   });
 
+  it('keeps the close buttons out of the tab sequence', async () => {
+    const row = await mount(tabs, 'a');
+    expect(items(row).map((item) => closeButtonOf(item).tabIndex)).toEqual([
+      -1, -1, -1,
+    ]);
+  });
+
+  it('leaves the tab list for the add button on Tab', async () => {
+    const row = await mount(tabs, 'a');
+    await focusRow(row);
+    await userEvent.tab();
+    expect(row.shadowRoot!.activeElement).toBe(
+      row.shadowRoot!.querySelector('.add-new-tab')
+    );
+  });
+
+  it('closes the focused tab on Delete and focuses the one after it', async () => {
+    const row = await mount(tabs, 'a');
+    await focusRow(row);
+    await pressKey(row, 'Delete');
+
+    expect(row.tabs.map((tab) => tab.id)).toEqual(['b', 'c']);
+    expect(focusedTabId(row)).toBe('b');
+  });
+
+  it('focuses the last tab when Delete closes the final one', async () => {
+    const row = await mount(tabs, 'c');
+    await focusRow(row);
+    await pressKey(row, 'Delete');
+
+    expect(row.tabs.map((tab) => tab.id)).toEqual(['a', 'b']);
+    expect(focusedTabId(row)).toBe('b');
+  });
+
+  it('does not close on Delete when the tab has no close button', async () => {
+    const row = await mount(tabs, 'a');
+    row.hasClose = false;
+    await row.updateComplete;
+    await focusRow(row);
+    await pressKey(row, 'Delete');
+    expect(row.tabs.map((tab) => tab.id)).toEqual(['a', 'b', 'c']);
+  });
+
   it('re-points the tab stop when the tab it sat on is removed', async () => {
     const row = await mount(tabs, 'c');
     row.tabs = tabs.filter((tab) => tab.id !== 'c');

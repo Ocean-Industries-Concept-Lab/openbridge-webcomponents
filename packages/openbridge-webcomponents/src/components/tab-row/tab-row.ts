@@ -75,12 +75,13 @@ export interface TabData {
  * first/last, and Enter or Space selects the focused tab. Disabled tabs are skipped. Set
  * `automaticActivation` for the pattern's other mode, where an arrow key also selects.
  *
- * Three parts of the pattern are out of scope here:
- * - `aria-controls`/`aria-labelledby` between a tab and its panel, because an IDREF cannot cross a
- *   shadow root: the tabs live in this component's shadow DOM and the panel in the consumer's. Give
- *   the panel an `aria-label` instead.
- * - `Delete` to close a tab; the close button carries that action.
- * - The "add new tab" button sits inside the `tablist` element, which the pattern reserves for tabs.
+ * `Delete` closes the focused tab when `hasClose` is set, and focus moves to the tab that follows
+ * it. The close button is not in the tab sequence, so the row keeps its single tab stop, and the
+ * "add new tab" button sits outside the `tablist`, where Tab reaches it and arrow keys do not.
+ *
+ * One part of the pattern is out of scope: `aria-controls`/`aria-labelledby` between a tab and its
+ * panel, because an IDREF cannot cross a shadow root — the tabs live in this component's shadow DOM
+ * and the panel in the consumer's. Give the panel an `aria-label` instead.
  *
  * ---
  *
@@ -289,9 +290,9 @@ export class ObcTabRow extends LitElement {
       ...this.tabs.slice(0, tabIndex),
       ...this.tabs.slice(tabIndex + 1),
     ];
-    if (removedTab.id === this.selectedTabId && this.tabs.length) {
-      const newIdx = Math.min(tabIndex, this.tabs.length - 1);
-      this.selectedTabId = this.tabs[newIdx].id;
+    const follower = this.tabs[Math.min(tabIndex, this.tabs.length - 1)];
+    if (removedTab.id === this.selectedTabId && follower) {
+      this.selectedTabId = follower.id;
     }
     this.dispatchEvent(
       new CustomEvent('tab-closed', {
@@ -302,10 +303,9 @@ export class ObcTabRow extends LitElement {
     );
     // Closing the focused tab removes the focused element, which would drop
     // focus to the document instead of leaving it in the row.
-    if (closingFocusedTab) {
-      void this.updateComplete.then(() =>
-        this.tabItem(this.rovingTabId)?.focus()
-      );
+    if (closingFocusedTab && follower) {
+      this.rovingTabId = follower.id;
+      void this.updateComplete.then(() => this.tabItem(follower.id)?.focus());
     }
   }
 
@@ -363,15 +363,13 @@ export class ObcTabRow extends LitElement {
         @tab-click=${(e: Event) => this.handleTabClick(e, tab.id)}
         @tab-close=${(e: Event) => this.handleTabClose(e, tab.id)}
       >
-        ${
-          tab.hasLeadingIcon !== false
-            ? html`
-                <slot name="tab-${tab.id}-icon" slot="leading-icon">
-                  <obi-placeholder></obi-placeholder>
-                </slot>
-              `
-            : ''
-        }
+        ${tab.hasLeadingIcon !== false
+          ? html`
+              <slot name="tab-${tab.id}-icon" slot="leading-icon">
+                <obi-placeholder></obi-placeholder>
+              </slot>
+            `
+          : ''}
         <span slot="title">${tab.title}</span>
         ${badgeIconSlots.map(
           (slotName) => html`
@@ -386,32 +384,32 @@ export class ObcTabRow extends LitElement {
 
   override render() {
     return html`
-      <div
-        class="wrapper"
-        role="tablist"
-        aria-label=${this.label}
-        @keydown=${this.handleKeyDown}
-        @focusout=${this.handleFocusOut}
-      >
-        ${repeat(
-          this.tabs,
-          (t) => t.id,
-          (t, i) => this.renderTab(t, i)
-        )}
-        ${
-          this.hasAddNewTab
-            ? html`
-                <obc-icon-button
-                  class="add-new-tab"
-                  variant="flat"
-                  @click=${this.handleAddNewTab}
-                  aria-label="Add new tab"
-                >
-                  <obi-up-iec></obi-up-iec>
-                </obc-icon-button>
-              `
-            : ''
-        }
+      <div class="wrapper">
+        <div
+          class="tablist"
+          role="tablist"
+          aria-label=${this.label}
+          @keydown=${this.handleKeyDown}
+          @focusout=${this.handleFocusOut}
+        >
+          ${repeat(
+            this.tabs,
+            (t) => t.id,
+            (t, i) => this.renderTab(t, i)
+          )}
+        </div>
+        ${this.hasAddNewTab
+          ? html`
+              <obc-icon-button
+                class="add-new-tab"
+                variant="flat"
+                @click=${this.handleAddNewTab}
+                aria-label="Add new tab"
+              >
+                <obi-up-iec></obi-up-iec>
+              </obc-icon-button>
+            `
+          : ''}
       </div>
     `;
   }

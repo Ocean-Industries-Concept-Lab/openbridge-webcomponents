@@ -11,6 +11,13 @@
   width: 100%;
 }
 
+.tablist {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+}
+
 .add-new-tab {
   flex-shrink: 0;
   box-shadow:
