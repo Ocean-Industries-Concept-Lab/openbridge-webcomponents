@@ -1,6 +1,7 @@
 import {LitElement, html, nothing, unsafeCSS, PropertyValues} from 'lit';
 import {property} from 'lit/decorators.js';
 import compentStyle from './stepper-box.css?inline';
+import {composedTabbables} from '../../internal/focus.js';
 import '../../icons/icon-down-iec.js';
 import '../icon-button/icon-button.js';
 import '../../icons/icon-up-iec.js';
@@ -290,7 +291,24 @@ export class ObcStepperBox extends LitElement {
         event.preventDefault();
         this.toBound(this.max);
         break;
+      default:
+        return;
     }
+    this.keepFocusInside();
+  }
+
+  /**
+   * A step that reaches a bound disables the button that was pressed, and the
+   * browser drops focus from a disabled button. Focus moves to the field so
+   * the next key still reaches the stepper.
+   */
+  private async keepFocusInside() {
+    await this.updateComplete;
+    if (this.matches(':focus-within')) return;
+    const tabbables = composedTabbables(this.shadowRoot!);
+    (
+      tabbables.find((el) => el instanceof HTMLInputElement) ?? tabbables[0]
+    )?.focus();
   }
 
   private toBound(bound: number | undefined) {

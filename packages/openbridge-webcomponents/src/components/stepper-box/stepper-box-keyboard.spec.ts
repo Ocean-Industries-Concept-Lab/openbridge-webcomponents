@@ -60,12 +60,16 @@ describe('obc-stepper-box keyboard', () => {
 
     await userEvent.keyboard('{End}');
     expect(el.value).toBe(10);
+    expect(containsDeep(el, deepActiveElement())).toBe(true);
     await userEvent.keyboard('{ArrowUp}');
     expect(el.value).toBe(10);
     await userEvent.keyboard('{Home}');
     expect(el.value).toBe(0);
+    expect(containsDeep(el, deepActiveElement())).toBe(true);
     await userEvent.keyboard('{ArrowDown}');
     expect(el.value).toBe(0);
+    await userEvent.keyboard('{ArrowUp}');
+    expect(el.value).toBe(2);
   });
 
   it('steps from a focused step button as well', async () => {

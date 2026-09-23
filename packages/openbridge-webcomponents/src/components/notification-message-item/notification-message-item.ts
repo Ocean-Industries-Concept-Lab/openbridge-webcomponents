@@ -101,7 +101,7 @@ export enum ObcNotificationMessageItemSize {
  * @property timeSecondary - Secondary timestamp (e.g., relative time like "2m ago").
  *   Shown in the time-secondary slot if `hasTimestamp2` is true.
  * @availableWhen timeSecondary hasTimestamp2==true && type!=Inactive && empty==false
- * @property actionLabel - Label for the action button (used when `type` is `WithButton`).
+ * @property actionLabel - Label for the action button (used when `type` is `WithButton`). The icon action button shows the close icon and is named "Close".
  * @availableWhen actionLabel type==WithButton
  * @property showTitle - Whether to show the title.
  * @availableWhen showTitle type!=Inactive && empty==false
@@ -216,7 +216,11 @@ export class ObcNotificationMessageItem extends LitElement {
     return html`
       <obc-topbar-message-item
         .type=${this.mappedType}
-        .actionLabel=${this.actionLabel}
+        .actionLabel=${
+          this.type === ObcNotificationMessageItemType.WithIconButton
+            ? 'Close'
+            : this.actionLabel
+        }
         .size=${this.mappedSize}
         .showTitle=${this.showTitle}
         .showDescription=${this.showDescription}
