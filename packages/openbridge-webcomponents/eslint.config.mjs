@@ -907,6 +907,12 @@ export default [
     // Generated locale files use string-literal unions from lit-localize
     files: ['**/generated/locales/*.ts'],
 
+    // lit-localize writes both disable directives into every locale file
+    // whether or not the translations need them, so an idle one is not a
+    // stale directive to delete — a translation carrying a non-breaking
+    // space would put it back to work.
+    linterOptions: {reportUnusedDisableDirectives: 'off'},
+
     rules: {
       'openbridge/prefer-enum-over-string-literal-union': 'off',
     },
