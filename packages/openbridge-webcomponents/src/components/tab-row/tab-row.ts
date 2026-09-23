@@ -45,8 +45,6 @@ export interface TabData {
  *
  * ### Features
  * - **Tab Selection:** Only one tab can be selected at a time; selection is managed via the `selectedTabId` property.
- * - **Keyboard Navigation:** One tab stop for the row (roving tabindex), Left/Right arrows to move
- *   between tabs, Home/End to jump to the first/last, Enter or Space to select the focused tab.
  * - **Closeable Tabs:** Optionally display a close button on each tab (`hasClose`), allowing users to remove tabs dynamically.
  * - **Add New Tab:** Optionally show an "add new tab" button at the end of the row (`hasAddNewTab`), emitting an event when clicked.
  * - **Subtitles:** Optionally show secondary contextual text below each tab title (`showSubtitle` and `subtitle`).
@@ -170,15 +168,12 @@ export class ObcTabRow extends LitElement {
 
   @property({type: String}) label = 'Tabs';
 
-  /** The tab that holds the row's single tab stop; arrow keys move it. */
   @state() private rovingTabId = '';
 
-  /** Tabs an arrow key can land on, in document order. */
   private get navigableTabs(): TabData[] {
     return this.tabs.filter((tab) => !tab.disabled);
   }
 
-  /** Whether the keyboard focus currently sits on one of the tabs. */
   private get hasFocusWithin(): boolean {
     return this.shadowRoot?.activeElement != null;
   }
@@ -194,10 +189,6 @@ export class ObcTabRow extends LitElement {
     }
   }
 
-  /**
-   * Re-point the tab stop without moving focus: keep it where it is while that
-   * tab is still navigable, else follow the selection, else the first tab.
-   */
   private refreshRovingTab() {
     const navigable = this.navigableTabs;
     if (navigable.some((tab) => tab.id === this.rovingTabId)) return;
