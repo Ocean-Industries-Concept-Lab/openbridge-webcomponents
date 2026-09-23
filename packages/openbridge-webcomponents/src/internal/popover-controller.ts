@@ -26,10 +26,11 @@ export interface SoftDismissHost extends LitElement {
  * `overflow`, `transform` or `z-index`.
  *
  * The one thing the browser will not do is swallow that outside click: left
- * alone it closes the menu *and* presses whatever was underneath. So while a
- * menu is open the controller keeps a see-through cover over the whole page,
- * drawn just under the menu. Clicks and hovers land on the cover instead of
- * the page, and the cover closes the menu. Consumers can tint it through
+ * alone it closes the menu *and* presses whatever was underneath. So the
+ * controller gives the menu a see-through cover the size of the page, kept
+ * behind the menu's own content. The menu is drawn above everything else on
+ * the page, so its cover is too: clicks and hovers land on the cover instead
+ * of the page, and the cover closes the menu. Consumers can tint it through
  * `::part(backdrop)`.
  *
  * A component keeps `open` as the property people set. Since the browser can
@@ -88,11 +89,6 @@ export class PopoverController implements ReactiveController {
    * turn, read an `open` that still says the old thing, and undo what just
    * happened — close a menu that was just opened, or reopen one that was
    * just closed.
-   *
-   * The cover goes up here too, for a reason of its own: things drawn above
-   * the page stack in the order they were shown, and at this point the menu
-   * has not been shown yet. Showing the cover now is what puts it underneath
-   * the menu, whichever way the menu was opened.
    */
   private readonly onBeforeToggle = (event: Event): void => {
     if (!this.host.softDismiss) return;
@@ -104,7 +100,7 @@ export class PopoverController implements ReactiveController {
       this.toggling = false;
     }, 0);
     if ((event as ToggleEvent).newState === 'open') {
-      this.coverPage();
+      this.ensureCover();
       this.host.open = true;
       return;
     }
@@ -128,7 +124,6 @@ export class PopoverController implements ReactiveController {
     if (!this.host.softDismiss) return;
     this.toggling = false;
     if ((event as ToggleEvent).newState !== 'closed') return;
-    this.uncoverPage();
     if (!this.dismissed) return;
     this.dismissed = false;
     /**
@@ -149,8 +144,6 @@ export class PopoverController implements ReactiveController {
         // element, which is what it was before opting in.
         host.removeAttribute('popover');
         this.installed = false;
-        // onToggle will not run for that close: softDismiss is already off.
-        this.uncoverPage();
         this.backdrop?.remove();
         this.backdrop = undefined;
       }
@@ -160,6 +153,7 @@ export class PopoverController implements ReactiveController {
     if (!this.installed) {
       host.setAttribute('popover', 'auto');
       this.installed = true;
+      this.ensureCover();
     }
 
     // Showing a popover that is not on the page throws.
@@ -177,36 +171,29 @@ export class PopoverController implements ReactiveController {
   /**
    * The see-through cover that swallows clicks while the menu is open.
    *
-   * It lives inside the component, so nothing in the page can end up on top
-   * of it or squeeze in between it and the menu. Being inside the component
-   * also means the browser treats a click on it as a click *inside* the menu
-   * and leaves the menu open — so the cover closes the menu itself.
+   * It is an ordinary child of the menu, not a popover of its own: the
+   * browser refuses to show one popover while another is on its way up, so
+   * the cover cannot be a popover shown as the menu opens. It does not need
+   * to be. The menu is drawn above the whole page, so a child of the menu
+   * that reaches over the page is drawn above the page as well, and a
+   * negative `z-index` keeps it behind the menu's own content. It shows and
+   * hides with the menu and never has to be told.
+   *
+   * Being inside the menu also means the browser treats a click on it as a
+   * click *inside* the menu and leaves the menu open — so the cover closes
+   * the menu itself.
    */
-  private coverPage(): void {
+  private ensureCover(): void {
     const root = this.host.shadowRoot;
-    if (!root) return;
-    if (!this.backdrop) {
-      const cover = document.createElement('div');
-      cover.setAttribute('popover', 'manual');
-      cover.setAttribute('part', 'backdrop');
-      // Fills the viewport whatever the page's own layout does. The browser
-      // would otherwise size and centre it like a dialog.
-      cover.style.cssText =
-        'position:fixed;inset:0;width:auto;height:auto;margin:0;padding:0;' +
-        'border:0;background:transparent';
-      cover.addEventListener('click', () => this.host.hidePopover());
-      root.append(cover);
-      this.backdrop = cover;
-    }
-    if (this.backdrop.isConnected && !this.backdrop.matches(':popover-open')) {
-      this.backdrop.showPopover();
-    }
-  }
-
-  private uncoverPage(): void {
-    if (this.backdrop?.matches(':popover-open')) {
-      this.backdrop.hidePopover();
-    }
+    if (!root || this.backdrop) return;
+    const cover = document.createElement('div');
+    cover.setAttribute('part', 'backdrop');
+    cover.style.cssText =
+      'position:fixed;inset:0;z-index:-1;margin:0;padding:0;border:0;' +
+      'background:transparent';
+    cover.addEventListener('click', () => this.host.hidePopover());
+    root.append(cover);
+    this.backdrop = cover;
   }
 }
 
