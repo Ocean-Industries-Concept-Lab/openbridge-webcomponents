@@ -205,15 +205,23 @@ export class ObcTabRow extends LitElement {
     this.tabItem(tabId)?.focus();
   }
 
+  private tabItems(): ObcTabItem[] {
+    return [
+      ...(this.shadowRoot?.querySelectorAll<ObcTabItem>('obc-tab-item') ?? []),
+    ];
+  }
+
   private tabItem(tabId: string): ObcTabItem | null {
-    return (
-      this.shadowRoot?.querySelector<ObcTabItem>(
-        `obc-tab-item[data-tab-id="${tabId}"]`
-      ) ?? null
-    );
+    return this.tabItems().find((item) => item.dataset.tabId === tabId) ?? null;
   }
 
   private handleKeyDown(event: KeyboardEvent) {
+    if (!(
+      event.target instanceof Element && event.target.matches('obc-tab-item')
+    )) {
+      return;
+    }
+
     const navigable = this.navigableTabs;
     const current = navigable.findIndex((tab) => tab.id === this.rovingTabId);
     if (current === -1 || navigable.length === 0) return;
@@ -240,6 +248,15 @@ export class ObcTabRow extends LitElement {
     void this.moveFocusTo(target.id);
   }
 
+  private handleFocusOut(event: FocusEvent) {
+    const next = event.relatedTarget;
+    const movedToAnotherTab =
+      next instanceof Element && this.tabItems().includes(next as ObcTabItem);
+    if (movedToAnotherTab) return;
+    this.rovingTabId = this.selectedTabId;
+    this.refreshRovingTab();
+  }
+
   private selectTab(tabId: string) {
     const tabIndex = this.tabs.findIndex((t) => t.id === tabId);
     if (tabIndex === -1) return;
@@ -264,6 +281,8 @@ export class ObcTabRow extends LitElement {
     const tabIndex = this.tabs.findIndex((t) => t.id === tabId);
     if (tabIndex === -1) return;
     const removedTab = this.tabs[tabIndex];
+    const closingFocusedTab =
+      this.shadowRoot?.activeElement === this.tabItem(tabId);
     this.tabs = [
       ...this.tabs.slice(0, tabIndex),
       ...this.tabs.slice(tabIndex + 1),
@@ -279,6 +298,13 @@ export class ObcTabRow extends LitElement {
         composed: true,
       })
     );
+    // Closing the focused tab removes the focused element, which would drop
+    // focus to the document instead of leaving it in the row.
+    if (closingFocusedTab) {
+      void this.updateComplete.then(() =>
+        this.tabItem(this.rovingTabId)?.focus()
+      );
+    }
   }
 
   private handleAddNewTab() {
@@ -335,13 +361,15 @@ export class ObcTabRow extends LitElement {
         @tab-click=${(e: Event) => this.handleTabClick(e, tab.id)}
         @tab-close=${(e: Event) => this.handleTabClose(e, tab.id)}
       >
-        ${tab.hasLeadingIcon !== false
-          ? html`
-              <slot name="tab-${tab.id}-icon" slot="leading-icon">
-                <obi-placeholder></obi-placeholder>
-              </slot>
-            `
-          : ''}
+        ${
+          tab.hasLeadingIcon !== false
+            ? html`
+                <slot name="tab-${tab.id}-icon" slot="leading-icon">
+                  <obi-placeholder></obi-placeholder>
+                </slot>
+              `
+            : ''
+        }
         <span slot="title">${tab.title}</span>
         ${badgeIconSlots.map(
           (slotName) => html`
@@ -361,24 +389,27 @@ export class ObcTabRow extends LitElement {
         role="tablist"
         aria-label=${this.label}
         @keydown=${this.handleKeyDown}
+        @focusout=${this.handleFocusOut}
       >
         ${repeat(
           this.tabs,
           (t) => t.id,
           (t, i) => this.renderTab(t, i)
         )}
-        ${this.hasAddNewTab
-          ? html`
-              <obc-icon-button
-                class="add-new-tab"
-                variant="flat"
-                @click=${this.handleAddNewTab}
-                aria-label="Add new tab"
-              >
-                <obi-up-iec></obi-up-iec>
-              </obc-icon-button>
-            `
-          : ''}
+        ${
+          this.hasAddNewTab
+            ? html`
+                <obc-icon-button
+                  class="add-new-tab"
+                  variant="flat"
+                  @click=${this.handleAddNewTab}
+                  aria-label="Add new tab"
+                >
+                  <obi-up-iec></obi-up-iec>
+                </obc-icon-button>
+              `
+            : ''
+        }
       </div>
     `;
   }
