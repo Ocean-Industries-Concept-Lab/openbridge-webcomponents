@@ -13,6 +13,7 @@
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
     "lint": "eslint . --fix",
+    "lint:check": "eslint . --max-warnings=0",
     "format": "prettier --write src/",
     "format:check": "prettier --check src/"
   },

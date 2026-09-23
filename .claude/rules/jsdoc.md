@@ -82,7 +82,7 @@ every severity, so it silently rewrites unrelated files (today it strips
 
 Two ESLint rules enforce this, both part of `npm run lint:eslint`:
 
-- **`openbridge/component-lifecycle-tag`** (warning) — fires on a source file
+- **`openbridge/component-lifecycle-tag`** (error) — fires on a source file
   whose `@customElement` class has no lifecycle tag, or more than one. Not
   auto-fixable: classifying a component is a human decision.
 - **`openbridge/story-lifecycle-tags`** (error, auto-fixable) — fires on a
@@ -168,7 +168,7 @@ The two tags behave differently, and both are easy to get silently wrong
 
 Run **`npm run lint:slots`** (part of `npm run lint`) to catch missing/phantom
 `@slot` tags, undocumented events, and bare `dispatchEvent(` calls automatically.
-It reports empty descriptions as warnings for class-level tags only.
+An empty description on a class-level tag fails it as well.
 
 ## Conditional properties (`@availableWhen`)
 

@@ -21,7 +21,7 @@
   },
   "lint-staged": {
     "packages/openbridge-webcomponents/src/**/*.ts": [
-      "eslint --config packages/openbridge-webcomponents/eslint.config.mjs --max-warnings=4",
+      "eslint --config packages/openbridge-webcomponents/eslint.config.mjs --max-warnings=0",
       "prettier --write"
     ],
     "packages/openbridge-webcomponents/**/*.{cjs,html,js,json,md,css}": [

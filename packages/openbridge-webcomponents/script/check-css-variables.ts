@@ -9,7 +9,7 @@
  * - Scans all CSS files under the src directory (using glob src/\*\* / *.css).
  * - Identifies unique variable definitions and their locations.
  * - Identifies unique variable usages and their locations (including fallback detection).
- * - Detects duplicate variable definitions (warning).
+ * - Detects duplicate variable definitions (info: the four themes each define the palette).
  * - Detects usages of undefined variables (error), excluding a predefined set of allowed undefined variables.
  * - Scans `src/palettes/variables.css` for `var(...)` usages too: its semantic tokens reference primitives in the same file, so a missing primitive (e.g. a token dropped from the Figma export) would otherwise go undetected.
  * - Exits with code 1 if any undefined variable usages (without fallbacks) are found.
@@ -208,7 +208,7 @@ async function run(): Promise<void> {
   printSection('Defined variables', definitionLines);
   printSection('Used variables', usageLines);
   printSection(
-    'Duplicate variable definitions (warning)',
+    'Duplicate variable definitions (info)',
     duplicateDefinitionLines
   );
   printSection('Used but undefined variables (error)', undefinedUsageLines);

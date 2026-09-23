@@ -66,7 +66,7 @@ is a trailing `(#1234)` pointer, never the explanation. CSS gets one short why
 per non-obvious declaration. No filler, inflated vocabulary or chatbot
 phrasing. The full rules, the writing-style ban list and the PR exemption are
 in [`docs/agents/coding-standards.md`](docs/agents/coding-standards.md);
-`npm run lint:comments` reports what breaks them.
+`npm run lint:comments` fails on what breaks them.
 
 ### Boolean property naming
 
@@ -98,7 +98,7 @@ Key points:
    without a type — `@property name - description` — placed after the Markdown
    sections and before `@slot`/`@fires`. Conditional properties add a line
    `@availableWhen name condition` directly under their tag. No inline JSDoc
-   above `@property()` fields (`npm run lint:comments` warns; `--fix` hoists
+   above `@property()` fields (`npm run lint:comments` fails; `--fix` hoists
    them). A tag naming a property that does not exist is a ghost manifest
    member — `npm run lint:slots` fails on it. Mixin-provided properties, and
    docs carrying a member `@deprecated` or a `@default` cem cannot read from
@@ -245,7 +245,7 @@ live: [`docs/agents/testing-visual.md` § vue-demo Playwright suite](docs/agents
 
 Husky runs `lint-staged` on every commit:
 
-- **TypeScript files** → ESLint (max 4 warnings) + Prettier
+- **TypeScript files** → ESLint (no warnings allowed) + Prettier
 - **CSS, HTML, JSON, MD** → Prettier only
 
 Commits that fail lint or format checks are blocked automatically.

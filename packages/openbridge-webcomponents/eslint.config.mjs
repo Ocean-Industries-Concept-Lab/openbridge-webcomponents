@@ -865,7 +865,7 @@ export default [
       '@typescript-eslint/no-non-null-assertion': 'off',
 
       '@typescript-eslint/no-unused-vars': [
-        'warn',
+        'error',
         {
           argsIgnorePattern: '^_',
         },
@@ -874,7 +874,7 @@ export default [
       'openbridge/prefer-enum-over-string-literal-union': 'error',
       'openbridge/prefer-boolean-property-default-false': 'error',
       'openbridge/prefer-array-property-type-and-item-interface': 'error',
-      'openbridge/component-lifecycle-tag': 'warn',
+      'openbridge/component-lifecycle-tag': 'error',
       'openbridge/storybook-title-case': 'off',
       'openbridge/story-lifecycle-tags': 'off',
       // Disabled because eslint-plugin-file-extension-in-import-ts is not yet
