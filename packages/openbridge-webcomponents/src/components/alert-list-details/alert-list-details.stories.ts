@@ -40,7 +40,7 @@ const meta: Meta<typeof ObcAlertListDetails> = {
   tags: ['6.0'],
   component: 'obc-alert-list-details',
   args: {
-    selectedMode: AlertListMode.ALL,
+    selectedMode: AlertListMode.ACTIVE,
     showTime: true,
     alerts: [
       {

@@ -42,7 +42,7 @@ import '../scrollbar/scrollbar.js';
 
 export enum FilterModes {
   UNACKED = 'unacked',
-  ALL = 'all',
+  ACTIVE = 'active',
   SHELVED = 'shelved',
   BLOCKED = 'blocked',
   RECTIFIED = 'rectified',
@@ -104,10 +104,10 @@ export interface AlertListRow {
 }
 
 export function getFilterModeData(filterMode: FilterModes) {
-  if (filterMode === FilterModes.ALL)
+  if (filterMode === FilterModes.ACTIVE)
     return {
-      name: FilterModes.ALL,
-      title: msg('All'),
+      name: FilterModes.ACTIVE,
+      title: msg('Active'),
       emptyTitle: msg('No active alerts'),
       emptyIcon: html`<obi-alerts></obi-alerts>`,
       filter: (alert: Alert) => !isShelved(alert) && isActive(alert),
@@ -377,7 +377,7 @@ export function getAlertRows(
  * - **Column factories:** `statusColumn()`, `ackColumn()`, `timeColumn()` and
  *   `tagIdColumn()` build the standard data columns; each takes overrides
  *   such as `label`, `width` or `dividerRight`.
- * - **Filter modes:** `filterMode` lists unacknowledged, all, shelved,
+ * - **Filter modes:** `filterMode` lists unacknowledged, active, shelved,
  *   blocked or rectified alerts, with an empty state per filter mode.
  * - **Grouping:** an alert listing group ids in `memberOf` renders under each
  *   of those groups; groups nest and can be collapsed.
@@ -421,7 +421,7 @@ export function getAlertRows(
  */
 @customElement('obc-alert-list-details-experimental')
 export class ObcAlertListDetailsExperimental extends LitElement {
-  @property({type: String}) filterMode: FilterModes = FilterModes.ALL;
+  @property({type: String}) filterMode: FilterModes = FilterModes.ACTIVE;
   @property({type: Array}) alerts: Alert[] = [];
   @property({type: Array, attribute: false}) columns: AlertListColumn[] = [
     statusColumn(),

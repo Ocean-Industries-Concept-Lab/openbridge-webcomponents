@@ -18,7 +18,7 @@ import {ObcAlertMenuItemStatus} from '../alert-menu-item/alert-menu-item.js';
 
 export type ObcAckAllVisibleClickEvent = CustomEvent<{
   visibleElements: {element: HTMLElement; index: number}[];
-  tabName: 'shelved' | 'unacked' | 'all';
+  tabName: 'shelved' | 'unacked' | 'active';
 }>;
 
 /**
@@ -50,9 +50,9 @@ export type ObcAckAllVisibleClickEvent = CustomEvent<{
  * | Slot Name                        | Renders When...                  | Purpose                                                        |
  * |----------------------------------|----------------------------------|----------------------------------------------------------------|
  * | (default)                        | Always                           | Place one or more `<obc-alert-menu-item>` elements as alert rows. |
- * | empty-<tab>-title                | Selected tab is empty            | Custom title for the empty state (`<tab>` is one of `unacked`, `all`, `shelved`). |
- * | empty-<tab>-description          | Selected tab is empty            | Custom description for the empty state (`<tab>` is one of `unacked`, `all`, `shelved`). |
- * | empty-<tab>-icon                 | Selected tab is empty            | Custom icon for the empty state (`<tab>` is one of `unacked`, `all`, `shelved`). |
+ * | empty-<tab>-title                | Selected tab is empty            | Custom title for the empty state (`<tab>` is one of `unacked`, `active`, `shelved`). |
+ * | empty-<tab>-description          | Selected tab is empty            | Custom description for the empty state (`<tab>` is one of `unacked`, `active`, `shelved`). |
+ * | empty-<tab>-icon                 | Selected tab is empty            | Custom icon for the empty state (`<tab>` is one of `unacked`, `active`, `shelved`). |
  *
  * ### Properties
  * - `hasShelved` (boolean): If true, displays the "Shelved" tab and enables shelving support. Default: false.
@@ -93,9 +93,9 @@ export type ObcAckAllVisibleClickEvent = CustomEvent<{
  * @property showAlertListButton - If true, shows the "Alerts" navigation button in the action bar.
  *   When hidden, the "ACK visible" button expands to fill the freed space.
  * @slot - The alerts items as ObcAlertMenuItem
- * @slot empty-<tab>-title - Custom empty-state title for the selected tab (`<tab>` is one of `unacked`, `all`, `shelved`)
- * @slot empty-<tab>-description - Custom empty-state description for the selected tab (`<tab>` is one of `unacked`, `all`, `shelved`)
- * @slot empty-<tab>-icon - Custom empty-state icon for the selected tab (`<tab>` is one of `unacked`, `all`, `shelved`)
+ * @slot empty-<tab>-title - Custom empty-state title for the selected tab (`<tab>` is one of `unacked`, `active`, `shelved`)
+ * @slot empty-<tab>-description - Custom empty-state description for the selected tab (`<tab>` is one of `unacked`, `active`, `shelved`)
+ * @slot empty-<tab>-icon - Custom empty-state icon for the selected tab (`<tab>` is one of `unacked`, `active`, `shelved`)
  * @fires {ObcAckAllVisibleClickEvent} ack-all-visible-click - Fired when the ack all visible button is clicked
  * @fires {CustomEvent} silence-click - Fired when the silence button is clicked
  * @fires {CustomEvent} go-to-alert-list-click - Fired when the go to alert list button is clicked
@@ -171,13 +171,13 @@ export class ObcAlertMenu extends LitElement {
       };
     } else {
       return {
-        name: 'all',
+        name: 'active',
         emptyTitle: msg('No active alerts'),
         emptyDescription: msg(
           "Go to the 'Alert list' for more details or to manage existing alerts."
         ),
         emptyIcon: html`<obi-alerts></obi-alerts>`,
-        class: 'all',
+        class: 'active',
         filter: (item: HTMLElement) => {
           return !item.hasAttribute('shelved');
         },

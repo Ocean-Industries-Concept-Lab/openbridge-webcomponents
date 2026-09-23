@@ -23,12 +23,12 @@ function alert(id: string, overrides: Partial<Alert> = {}): Alert {
   } as Alert;
 }
 
-const rowIds = (alerts: Alert[], filterMode = FilterModes.ALL) =>
+const rowIds = (alerts: Alert[], filterMode = FilterModes.ACTIVE) =>
   getAlertRows(alerts, filterMode).map((row) => row.rowId);
 
 describe('getAlertRows', () => {
   it('gives an ungrouped alert its encoded id as row id', () => {
-    const rows = getAlertRows([alert('a/b')], FilterModes.ALL);
+    const rows = getAlertRows([alert('a/b')], FilterModes.ACTIVE);
     expect(rows).toEqual([
       {
         rowId: 'a%2Fb',
@@ -47,7 +47,7 @@ describe('getAlertRows', () => {
         alert('sensor', {memberOf: ['gyro']}),
         alert('drift', {memberOf: ['sensor']}),
       ],
-      FilterModes.ALL
+      FilterModes.ACTIVE
     );
     expect(
       rows.map(({rowId, level, expandable}) => [rowId, level, expandable])
@@ -73,7 +73,7 @@ describe('getAlertRows', () => {
       alert('group', {active: {rectifiedTime: new Date()}}),
       alert('member', {memberOf: ['group']}),
     ];
-    expect(rowIds(alerts, FilterModes.ALL)).toEqual(['member']);
+    expect(rowIds(alerts, FilterModes.ACTIVE)).toEqual(['member']);
     expect(rowIds(alerts, FilterModes.RECTIFIED)).toEqual(['group']);
   });
 

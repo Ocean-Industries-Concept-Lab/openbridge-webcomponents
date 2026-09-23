@@ -40,7 +40,7 @@ import '../scrollbar/scrollbar.js';
 
 export enum AlertListMode {
   UNACKED = 'unacked',
-  ALL = 'all',
+  ACTIVE = 'active',
   SHELVED = 'shelved',
   BLOCKED = 'blocked',
   RECTIFIED = 'rectified',
@@ -55,10 +55,10 @@ export type ObcRowClickEvent = CustomEvent<{
 }>;
 
 export function getAlertListModeData(selectedMode: AlertListMode) {
-  if (selectedMode === AlertListMode.ALL)
+  if (selectedMode === AlertListMode.ACTIVE)
     return {
-      name: AlertListMode.ALL,
-      title: msg('All'),
+      name: AlertListMode.ACTIVE,
+      title: msg('Active'),
       emptyTitle: msg('No active alerts'),
       emptyIcon: html`<obi-alerts></obi-alerts>`,
       filter: (alert: Alert) => !isShelved(alert) && isActive(alert),
@@ -118,7 +118,7 @@ export function canAckFilter(filter: (alert: Alert) => boolean) {
  */
 @customElement('obc-alert-list-details')
 export class ObcAlertListDetails extends LitElement {
-  @property({type: String}) selectedMode: AlertListMode = AlertListMode.ALL;
+  @property({type: String}) selectedMode: AlertListMode = AlertListMode.ACTIVE;
   @property({type: Array}) alerts: Alert[] = [];
   @property({type: Boolean}) showTime: boolean = false;
   @property({attribute: false}) timeFormatter: (time: Date) => string = (

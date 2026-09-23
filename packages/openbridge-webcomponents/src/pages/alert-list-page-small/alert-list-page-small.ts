@@ -25,7 +25,7 @@ import {ButtonVariant} from '../../components/button/button.js';
 
 export enum AlertListMode {
   UNACKED = 'unacked',
-  ALL = 'all',
+  ACTIVE = 'active',
   SHELVED = 'shelved',
 }
 
@@ -52,14 +52,14 @@ export type ObcRowClickEvent = CustomEvent<{
 @customElement('obc-alert-list-page-small')
 export class ObcAlertListPageSmall extends LitElement {
   @property({type: Boolean}) hasShelved: boolean = false;
-  @property({type: String}) selectedMode: AlertListMode = AlertListMode.ALL;
+  @property({type: String}) selectedMode: AlertListMode = AlertListMode.ACTIVE;
   @property({type: Array}) alerts: Alert[] = [];
   @property({type: Boolean}) showTime: boolean = false;
   @property({attribute: false}) timeFormatter: (time: Date) => string = (
     time: Date
   ) => time.toLocaleTimeString(undefined, {hour12: false});
 
-  @state() private _mode: AlertListMode = AlertListMode.ALL;
+  @state() private _mode: AlertListMode = AlertListMode.ACTIVE;
 
   @query('obc-alert-list-details')
   private alertList!: ObcAlertListDetails;
@@ -113,21 +113,9 @@ export class ObcAlertListPageSmall extends LitElement {
   }
 
   override render() {
-    const lists = [
-      {
-        name: AlertListMode.ALL,
-        title: msg('All'),
-      },
-      {
-        name: AlertListMode.UNACKED,
-        title: msg('Unacked'),
-      },
-    ];
+    const modes = [AlertListMode.ACTIVE, AlertListMode.UNACKED];
     if (this.hasShelved) {
-      lists.push({
-        name: AlertListMode.SHELVED,
-        title: msg('Shelved'),
-      });
+      modes.push(AlertListMode.SHELVED);
     }
 
     const metadata = this.metadata;
@@ -150,9 +138,9 @@ export class ObcAlertListPageSmall extends LitElement {
             <obc-dropdown-button
               .value=${this._mode}
               @change=${this.onModeSelect}
-              .options=${lists.map((v) => ({
-                value: v.name,
-                label: v.title,
+              .options=${modes.map((mode) => ({
+                value: mode,
+                label: getAlertListModeData(mode).title,
               }))}
             >
             </obc-dropdown-button>
