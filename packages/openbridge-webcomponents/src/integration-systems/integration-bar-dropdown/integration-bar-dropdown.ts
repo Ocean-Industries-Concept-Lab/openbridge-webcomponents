@@ -58,6 +58,7 @@ import {msg} from '@lit/localize';
  * @slot status-label-3 - Label for the third status field
  * @slot status-icon-3 - Icon for the third status field
  * @slot clock - Custom clock content, rendered when `showClock` is true
+ * @slot right-tray-leading - Consumer-defined controls, placed first in the right-hand button group
  *
  * @fires {CustomEvent} home-button-clicked - Fired when the home button is clicked
  * @fires {CustomEvent} link-button-clicked - Fired when the link button is clicked

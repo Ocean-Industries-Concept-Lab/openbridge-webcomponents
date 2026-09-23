@@ -51,6 +51,7 @@ import {msg} from '@lit/localize';
  * @slot clock - Custom clock content, rendered when `showClock` is true
  * @slot integration-buttons - Regular vessel integration buttons
  * @slot hug-buttons - Compact vessel integration buttons; slotted integration buttons are forced to hug type
+ * @slot right-tray-leading - Consumer-defined controls, placed first in the right-hand button group
  * @fires {CustomEvent} fleet-button-click - Fired when the fleet button is clicked
  * @fires {CustomEvent} link-button-clicked - Fired when the link button is clicked
  * @fires {CustomEvent} alert-button-clicked - Fired when the alert button is clicked
@@ -114,60 +115,50 @@ export class ObcIntegrationBar extends LitElement {
     return html`
       <nav class="wrapper">
         <div class="content-container">
-          ${
-            !this.hideHomeButton
-              ? html`<obc-icon-button
-                  class="home-button"
-                  variant="integration"
-                  aria-label=${msg('Home')}
-                >
-                  <obi-home></obi-home>
-                </obc-icon-button>`
-              : null
-          }
-          ${
-            this.showLinkButton
-              ? html`<obc-icon-button
-                  class=${classMap({
-                    'link-button': true,
-                    activated: this.linkButtonActivated,
-                  })}
-                  part="link-button"
-                  variant="integration"
-                  aria-label=${msg('Link')}
-                  @click=${() =>
-                    this.dispatchEvent(new CustomEvent('link-button-clicked'))}
-                  ?activated=${this.linkButtonActivated}
-                >
-                  <obi-link></obi-link>
-                </obc-icon-button>`
-              : null
-          }
+          ${!this.hideHomeButton
+            ? html`<obc-icon-button
+                class="home-button"
+                variant="integration"
+                aria-label=${msg('Home')}
+              >
+                <obi-home></obi-home>
+              </obc-icon-button>`
+            : null}
+          ${this.showLinkButton
+            ? html`<obc-icon-button
+                class=${classMap({
+                  'link-button': true,
+                  activated: this.linkButtonActivated,
+                })}
+                part="link-button"
+                variant="integration"
+                aria-label=${msg('Link')}
+                @click=${() =>
+                  this.dispatchEvent(new CustomEvent('link-button-clicked'))}
+                ?activated=${this.linkButtonActivated}
+              >
+                <obi-link></obi-link>
+              </obc-icon-button>`
+            : null}
           <div class=${classMap({'fleet-vessel-container': true})}>
-            ${
-              this.showFleetButton
-                ? html`<obc-integration-button
-                    class="fleet-button"
-                    .variant=${IntegrationButtonVariant.normal}
-                    ?selected=${this.fleetButtonSelected}
-                    ?activated=${this.fleetButtonActivated}
-                    style=${
-                      isFleetButtonAnchored
-                        ? 'anchor-name: --integration-menu-anchor;'
-                        : ''
-                    }
-                    @click=${() => this.onFleetButtonClick()}
-                  >
-                    <span slot="label">${this.fleetButtonLabel}</span>
-                  </obc-integration-button>`
-                : nothing
-            }
+            ${this.showFleetButton
+              ? html`<obc-integration-button
+                  class="fleet-button"
+                  .variant=${IntegrationButtonVariant.normal}
+                  ?selected=${this.fleetButtonSelected}
+                  ?activated=${this.fleetButtonActivated}
+                  style=${isFleetButtonAnchored
+                    ? 'anchor-name: --integration-menu-anchor;'
+                    : ''}
+                  @click=${() => this.onFleetButtonClick()}
+                >
+                  <span slot="label">${this.fleetButtonLabel}</span>
+                </obc-integration-button>`
+              : nothing}
             <div class="vessel-container">
-              ${
-                this.buttonsOnBar
-                  ? nothing
-                  : html`<div class="vessel-button-placeholder"></div>`
-              }
+              ${this.buttonsOnBar
+                ? nothing
+                : html`<div class="vessel-button-placeholder"></div>`}
               <slot
                 class="hug-buttons-slot"
                 name="hug-buttons"
@@ -187,152 +178,123 @@ export class ObcIntegrationBar extends LitElement {
             'right-content-container': true,
           })}
         >
-          ${
-            this.showAlertButton
-              ? html`<obc-icon-button
-                  class=${classMap({
-                    'alert-button': true,
-                    activated: this.alertButtonActivated,
-                  })}
-                  part="alert-button"
-                  variant="integration"
-                  aria-label=${msg('Alerts')}
-                  style=${
-                    this.alertButtonActivated
-                      ? 'anchor-name: --settings-menu-anchor;'
-                      : ''
-                  }
-                  @click=${() =>
-                    this.dispatchEvent(new CustomEvent('alert-button-clicked'))}
-                  ?activated=${this.alertButtonActivated}
-                >
-                  <obi-alerts></obi-alerts>
-                </obc-icon-button>`
-              : null
-          }
-          ${
-            this.showNotificationButton
-              ? html`<obc-icon-button
-                  class=${classMap({
-                    'notification-button': true,
-                    activated: this.notificationButtonActivated,
-                  })}
-                  part="notification-button"
-                  variant="integration"
-                  aria-label=${msg('Notifications')}
-                  style=${
-                    this.notificationButtonActivated
-                      ? 'anchor-name: --settings-menu-anchor;'
-                      : ''
-                  }
-                  @click=${() =>
-                    this.dispatchEvent(
-                      new CustomEvent('notification-button-clicked')
-                    )}
-                  ?activated=${this.notificationButtonActivated}
-                >
-                  <obi-notification></obi-notification>
-                </obc-icon-button>`
-              : null
-          }
-          ${
-            this.showScreenButton
-              ? html`<obc-icon-button
-                  class=${classMap({
-                    'screen-button': true,
-                    activated: this.screenButtonActivated,
-                  })}
-                  part="screen-button"
-                  variant="integration"
-                  aria-label=${msg('Screen')}
-                  style=${
-                    this.screenButtonActivated
-                      ? 'anchor-name: --settings-menu-anchor;'
-                      : ''
-                  }
-                  @click=${() =>
-                    this.dispatchEvent(
-                      new CustomEvent('screen-button-clicked')
-                    )}
-                  ?activated=${this.screenButtonActivated}
-                >
-                  <obi-screen-desk></obi-screen-desk>
-                </obc-icon-button>`
-              : null
-          }
-          ${
-            this.showSystemButton
-              ? html`<obc-icon-button
-                  class=${classMap({
-                    'system-button': true,
-                    activated: this.systemButtonActivated,
-                  })}
-                  part="system-button"
-                  variant="integration"
-                  aria-label=${msg('System')}
-                  style=${
-                    this.systemButtonActivated
-                      ? 'anchor-name: --settings-menu-anchor;'
-                      : ''
-                  }
-                  @click=${() =>
-                    this.dispatchEvent(
-                      new CustomEvent('system-button-clicked')
-                    )}
-                  ?activated=${this.systemButtonActivated}
-                >
-                  <obi-configure></obi-configure>
-                </obc-icon-button>`
-              : null
-          }
-          ${
-            this.showDimmingButton
-              ? html`<obc-icon-button
-                  class=${classMap({
-                    'dimming-button': true,
-                    activated: this.dimmingButtonActivated,
-                  })}
-                  part="dimming-button"
-                  variant="integration"
-                  aria-label=${msg('Dimming')}
-                  style=${
-                    this.dimmingButtonActivated
-                      ? 'anchor-name: --settings-menu-anchor;'
-                      : ''
-                  }
-                  @click=${() =>
-                    this.dispatchEvent(
-                      new CustomEvent('dimming-button-clicked')
-                    )}
-                  ?activated=${this.dimmingButtonActivated}
-                >
-                  <obi-palette-day-night-iec></obi-palette-day-night-iec>
-                </obc-icon-button>`
-              : null
-          }
-          ${
-            this.showUserButton
-              ? html`<obc-icon-button
-                  class=${classMap({
-                    'user-button': true,
-                    activated: this.userButtonActivated,
-                  })}
-                  part="user-button"
-                  variant="integration"
-                  aria-label=${msg('User')}
-                  style=${
-                    this.userButtonActivated
-                      ? 'anchor-name: --settings-menu-anchor;'
-                      : ''
-                  }
-                  @click=${() =>
-                    this.dispatchEvent(new CustomEvent('user-button-clicked'))}
-                  ?activated=${this.userButtonActivated}
-                >
-                  <obi-user></obi-user>
-                </obc-icon-button>`
-              : null
-          }
+          <slot name="right-tray-leading"></slot>
+          ${this.showAlertButton
+            ? html`<obc-icon-button
+                class=${classMap({
+                  'alert-button': true,
+                  activated: this.alertButtonActivated,
+                })}
+                part="alert-button"
+                variant="integration"
+                aria-label=${msg('Alerts')}
+                style=${this.alertButtonActivated
+                  ? 'anchor-name: --settings-menu-anchor;'
+                  : ''}
+                @click=${() =>
+                  this.dispatchEvent(new CustomEvent('alert-button-clicked'))}
+                ?activated=${this.alertButtonActivated}
+              >
+                <obi-alerts></obi-alerts>
+              </obc-icon-button>`
+            : null}
+          ${this.showNotificationButton
+            ? html`<obc-icon-button
+                class=${classMap({
+                  'notification-button': true,
+                  activated: this.notificationButtonActivated,
+                })}
+                part="notification-button"
+                variant="integration"
+                aria-label=${msg('Notifications')}
+                style=${this.notificationButtonActivated
+                  ? 'anchor-name: --settings-menu-anchor;'
+                  : ''}
+                @click=${() =>
+                  this.dispatchEvent(
+                    new CustomEvent('notification-button-clicked')
+                  )}
+                ?activated=${this.notificationButtonActivated}
+              >
+                <obi-notification></obi-notification>
+              </obc-icon-button>`
+            : null}
+          ${this.showScreenButton
+            ? html`<obc-icon-button
+                class=${classMap({
+                  'screen-button': true,
+                  activated: this.screenButtonActivated,
+                })}
+                part="screen-button"
+                variant="integration"
+                aria-label=${msg('Screen')}
+                style=${this.screenButtonActivated
+                  ? 'anchor-name: --settings-menu-anchor;'
+                  : ''}
+                @click=${() =>
+                  this.dispatchEvent(new CustomEvent('screen-button-clicked'))}
+                ?activated=${this.screenButtonActivated}
+              >
+                <obi-screen-desk></obi-screen-desk>
+              </obc-icon-button>`
+            : null}
+          ${this.showSystemButton
+            ? html`<obc-icon-button
+                class=${classMap({
+                  'system-button': true,
+                  activated: this.systemButtonActivated,
+                })}
+                part="system-button"
+                variant="integration"
+                aria-label=${msg('System')}
+                style=${this.systemButtonActivated
+                  ? 'anchor-name: --settings-menu-anchor;'
+                  : ''}
+                @click=${() =>
+                  this.dispatchEvent(new CustomEvent('system-button-clicked'))}
+                ?activated=${this.systemButtonActivated}
+              >
+                <obi-configure></obi-configure>
+              </obc-icon-button>`
+            : null}
+          ${this.showDimmingButton
+            ? html`<obc-icon-button
+                class=${classMap({
+                  'dimming-button': true,
+                  activated: this.dimmingButtonActivated,
+                })}
+                part="dimming-button"
+                variant="integration"
+                aria-label=${msg('Dimming')}
+                style=${this.dimmingButtonActivated
+                  ? 'anchor-name: --settings-menu-anchor;'
+                  : ''}
+                @click=${() =>
+                  this.dispatchEvent(new CustomEvent('dimming-button-clicked'))}
+                ?activated=${this.dimmingButtonActivated}
+              >
+                <obi-palette-day-night-iec></obi-palette-day-night-iec>
+              </obc-icon-button>`
+            : null}
+          ${this.showUserButton
+            ? html`<obc-icon-button
+                class=${classMap({
+                  'user-button': true,
+                  activated: this.userButtonActivated,
+                })}
+                part="user-button"
+                variant="integration"
+                aria-label=${msg('User')}
+                style=${this.userButtonActivated
+                  ? 'anchor-name: --settings-menu-anchor;'
+                  : ''}
+                @click=${() =>
+                  this.dispatchEvent(new CustomEvent('user-button-clicked'))}
+                ?activated=${this.userButtonActivated}
+              >
+                <obi-user></obi-user>
+              </obc-icon-button>`
+            : null}
           ${this.showClock ? html`<slot name="clock"></slot>` : null}
         </div>
       </nav>

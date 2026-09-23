@@ -5,6 +5,8 @@ import {
   ObcBrillianceMenuVariant,
 } from './brilliance-menu.js';
 import './brilliance-menu.js';
+import {html} from 'lit';
+import {ObcSliderVariant} from '../slider/slider.js';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof ObcBrillianceMenu> = {
@@ -70,4 +72,25 @@ export const NoDuskPaletteCompact: Story = {
     variant: ObcBrillianceMenuVariant.compact,
     showDuskPalette: false,
   },
+};
+
+export const AdditionalScreenControls: Story = {
+  render: (args) =>
+    html`<obc-brilliance-menu
+      .showScreenControlLink=${args.showScreenControlLink}
+    >
+      <div
+        slot="additional-screen-controls"
+        style="display: flex; align-items: center; padding: 0px 12px;"
+      >
+        <div style="min-width: 50px;">Zoom:</div>
+        <obc-slider
+          style="flex: 1;"
+          value="50"
+          variant=${ObcSliderVariant.NoInput}
+          min="0"
+          max="100"
+        ></obc-slider>
+      </div>
+    </obc-brilliance-menu>`,
 };
