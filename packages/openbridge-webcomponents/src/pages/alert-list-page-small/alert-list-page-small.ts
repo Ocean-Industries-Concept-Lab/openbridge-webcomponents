@@ -17,17 +17,14 @@ import '../../icons/icon-warning-noack-iec.js';
 import {Alert} from '../../types.js';
 import '../../components/alert-list-details/alert-list-details.js';
 import {
+  AlertListMode,
   canAckFilter,
   getAlertListModeData,
   ObcAlertListDetails,
 } from '../../components/alert-list-details/alert-list-details.js';
 import {ButtonVariant} from '../../components/button/button.js';
 
-export enum AlertListMode {
-  UNACKED = 'unacked',
-  ACTIVE = 'active',
-  SHELVED = 'shelved',
-}
+export {AlertListMode};
 
 export type ObcAlertListPageAckAllClickEvent = CustomEvent<{
   mode: AlertListMode;
