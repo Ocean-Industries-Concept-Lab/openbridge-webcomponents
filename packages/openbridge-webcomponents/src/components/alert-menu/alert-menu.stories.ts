@@ -197,6 +197,21 @@ const meta: Meta<typeof ObcAlertMenu> = {
         ></obi-caution-color-iec>
       </obc-alert-menu-item>
 
+      <!-- Rectified unacknowledged Alerts -->
+      <obc-alert-menu-item
+        .status=${ObcAlertMenuItemStatus.RectifiedUnacknowledged}
+        title="Fuel Oil Temperature"
+        description="HFO temperature approaching lower limit: 115°C"
+        time="09:17:20"
+      >
+        <obc-alert-icon
+          slot="alert-icon"
+          type="alarm"
+          .active=${false}
+          .acknowledged=${false}
+        ></obc-alert-icon>
+      </obc-alert-menu-item>
+
       <!-- Shelved Alerts -->
       <obc-alert-menu-item
         .status=${ObcAlertMenuItemStatus.Unacknowledged}

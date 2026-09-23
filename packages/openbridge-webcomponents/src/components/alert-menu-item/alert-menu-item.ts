@@ -18,6 +18,7 @@ export enum ObcAlertMenuItemStatus {
   NoAckAlarm = 'no-ack-alarm',
   NoAckWarning = 'no-ack-warning',
   Rectified = 'rectified',
+  RectifiedUnacknowledged = 'rectified-unacknowledged',
 }
 
 /**
@@ -165,11 +166,18 @@ export class ObcAlertMenuItem extends LitElement {
   @property({type: String}) secondaryActionState: ObcAlertMenuItemActionState =
     ObcAlertMenuItemActionState.None;
 
+  private get canAck() {
+    return (
+      this.status === ObcAlertMenuItemStatus.Unacknowledged ||
+      this.status === ObcAlertMenuItemStatus.RectifiedUnacknowledged
+    );
+  }
+
   private get primaryActionLabel() {
     if (this.primaryActionState === ObcAlertMenuItemActionState.None) {
       return '';
     }
-    return this.status === ObcAlertMenuItemStatus.Unacknowledged ? 'ACK' : '';
+    return this.canAck ? 'ACK' : '';
   }
 
   private get secondaryActionLabelToShow() {
@@ -189,7 +197,7 @@ export class ObcAlertMenuItem extends LitElement {
 
   private get hasTrailingIcon() {
     // True when we need the action container but don't have an ACK button
-    return this.status !== ObcAlertMenuItemStatus.Unacknowledged;
+    return !this.canAck;
   }
 
   private handleMessageClick() {
