@@ -160,10 +160,16 @@ resolve.
 `packages/vue-demo/e2e/` runs from that package:
 
 ```bash
-npm run test:visual          # compare against committed baselines
-npm run test:visual:update    # regenerate after an intended change
-npm run test:visual           # ALWAYS re-run to confirm stability
+npm run test:visual -- -g <route>          # compare the routes you touched against the committed baselines
+npm run test:visual:update -- -g <route>   # regenerate after an intended change
+npm run test:visual -- -g <route>          # ALWAYS re-run to confirm stability
 ```
+
+- The config starts `vite dev` itself, or reuses a server already on 5173;
+  under `CI` it serves `vite preview`, so build the demo first there. The
+  `visual` project is always headless.
+- Nothing in CI runs this suite, so a baseline can be stale on `develop`;
+  refresh only the routes your change touches and say which moved in the PR.
 
 - `e2e/visual/` is its own Playwright project (`--project=visual`); the
   functional suite `e2e/mainpage.spec.ts` ignores it and needs no baselines.
