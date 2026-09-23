@@ -82,7 +82,9 @@
   will-change: transform;
 }
 
-.alert-list.active ::slotted([shelved]) {
+.alert-list.active ::slotted([shelved]),
+.alert-list.active ::slotted([status="rectified-unacknowledged"]),
+.alert-list.active ::slotted([status="rectified"]) {
   display: none;
 }
 
@@ -91,7 +93,9 @@
 }
 
 .alert-list.unacked {
-  ::slotted(:not([status="unacknowledged"])),
+  ::slotted(
+    :not([status="unacknowledged"]):not([status="rectified-unacknowledged"])
+  ),
   ::slotted([shelved]) {
     display: none;
   }
