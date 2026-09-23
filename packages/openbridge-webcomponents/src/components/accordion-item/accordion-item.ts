@@ -11,11 +11,10 @@ import '../../icons/icon-chevron-down-google.js';
  * Provides a single expandable/collapsible section with a clickable header and an optional content area. Useful for organizing related information in a compact, vertically stacked layout, allowing users to reveal or hide details as needed.
  *
  * ### Features
- * - **Toggleable Expansion:** Click the header to expand or collapse the content area. The chevron icon visually indicates the current state.
+ * - **Toggleable Expansion:** Click the header to expand or collapse the content area. The panel slides open and closed, and the chevron turns with it; `prefers-reduced-motion: reduce` switches instantly instead.
  * - **Disabled State:** Prevents user interaction and visually indicates non-interactivity.
  * - **Customizable Content:** Slot for custom expanded content (`expanded-content`), supporting any HTML or component.
  * - **Optional Divider:** Can display a divider line below the item for visual separation in lists.
- * - **Show/Hide Content Area:** Optionally hide the expanded content area entirely (e.g., for header-only items).
  * - **Accessible:** Uses a button for the header with appropriate ARIA attributes for accessibility.
  *
  * ### Usage Guidelines
@@ -32,7 +31,7 @@ import '../../icons/icon-chevron-down-google.js';
  * ### Slots
  * | Slot Name         | Renders When...           | Purpose                                         |
  * |-------------------|--------------------------|-------------------------------------------------|
- * | expanded-content  | When `open` and `showContent` are true | Custom content displayed when expanded           |
+ * | expanded-content  | Always                   | Custom content revealed while the item is open  |
  *
  * ### Events
  * - `accordion-item-toggle` – Fired when the item is toggled open or closed. Event detail: `{ open: boolean, title: string }`
@@ -57,8 +56,9 @@ import '../../icons/icon-chevron-down-google.js';
  * @property disabled - Disables the accordion item, preventing user interaction and dimming the appearance.
  * @property showDivider - Displays a divider line below the item for visual separation.
  *   Useful when stacking multiple items in a list.
- * @slot expanded-content - Content displayed when the item is expanded and `showContent` is true.
+ * @slot expanded-content - Content revealed while the item is open.
  * @fires {CustomEvent<{open: boolean, title: string}>} accordion-item-toggle - Fired when the item is toggled open or closed.
+ * @cssprop [--obc-accordion-expand-duration=200ms] - How long the panel takes to open and close. The chevron and the header's corners follow it. Ignored under `prefers-reduced-motion: reduce`.
  * @stable
  */
 @customElement('obc-accordion-item')
@@ -102,11 +102,13 @@ export class ObcAccordionItem extends LitElement {
   }
 
   private renderExpandedContent() {
-    if (!this.open) return '';
-
     return html`
-      <div class="content-container">
-        <slot name="expanded-content"></slot>
+      <div class="panel" id="accordion-content">
+        <div class="panel-inner">
+          <div class="content-container">
+            <slot name="expanded-content"></slot>
+          </div>
+        </div>
       </div>
     `;
   }
@@ -132,6 +134,7 @@ export class ObcAccordionItem extends LitElement {
           @click=${this.handleToggle}
           ?disabled=${this.disabled}
           aria-expanded=${this.open}
+          aria-controls="accordion-content"
         >
           ${this.renderContent()}
         </button>

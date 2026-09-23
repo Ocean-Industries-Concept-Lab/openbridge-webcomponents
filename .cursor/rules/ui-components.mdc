@@ -175,3 +175,29 @@ walk is `checkbox-list-visibility.ts`, guarded by its spec. Reserve `level`
 for lists with expandable rows: a level above 0 always reserves the 48px
 chevron slot, so flat lists such as the context menu's nested checkboxes keep
 their own compact padding instead.
+
+## Disclosure animation
+
+The accordions slide their panel open on a `grid-template-rows: 0fr → 1fr`
+track (#1291). It is the only technique that eases to content height in
+Chromium, Firefox and WebKit alike: `interpolate-size: allow-keywords` is
+Chromium-only, and a large `max-height` runs the easing against a number the
+content never reaches, so a short panel finishes early and a tall one is cut
+off. Follow it for any new collapsing component.
+
+- The panel is **always rendered** — a panel that only exists while open has
+  nothing to animate. `visibility: hidden` is what keeps the collapsed content
+  out of the tab order and the accessibility tree; it needs no `inert` and no
+  script, and it transitions correctly by itself, staying visible for the whole
+  close and flipping only at the end.
+- **Three levels, not two.** The grid item can carry neither padding nor a
+  border: padding holds the closed track open by its own height, and a border
+  is left out of the open track and clipped off. So `.panel` owns the track,
+  `.panel-inner` clips (`min-height: 0; overflow: hidden`), and the padded or
+  framed element sits inside that.
+- Anything else that changes with the state and would otherwise snap while the
+  panel is still moving — the corner radii, the card surface, the chevron —
+  transitions over the same duration. Components read it from
+  `--_expand-duration`, aliased from the consumer-settable
+  `--obc-accordion-expand-duration` so an ancestor can still set it.
+- `prefers-reduced-motion: reduce` drops every one of those transitions.
