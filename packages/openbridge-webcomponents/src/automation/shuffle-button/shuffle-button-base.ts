@@ -38,7 +38,7 @@ export type PositionSelectedEvent = CustomEvent<PositionSelectedDetail>;
  * ## Keyboard
  * Follows the WAI-ARIA radio group pattern
  * (https://www.w3.org/WAI/ARIA/apg/patterns/radio/): `role="radiogroup"` with
- * one `role="radio"` thumb per position, a single tab stop on the selected
+ * one `role="radio"` thumb per position named by `positionLabel()`, a single tab stop on the selected
  * thumb, and Left/Up and Right/Down moving to the previous/next position with
  * wrap-around. Departures: arrow keys request the position rather than moving
  * the checked state (controlled selection above), and focus follows the thumb
@@ -73,6 +73,15 @@ export class ObcShuffleButtonBase extends LitElement {
 
   protected renderPositionIcon(_position: number): TemplateResult {
     return html``;
+  }
+
+  /**
+   * Accessible name of one thumb. The thumbs are icon-only, so without this
+   * a screen reader announces "radio, 2 of 3" and nothing else; subclasses
+   * with meaningful positions override it.
+   */
+  protected positionLabel(position: number): string {
+    return `Position ${position + 1}`;
   }
 
   override render() {
@@ -110,6 +119,7 @@ export class ObcShuffleButtonBase extends LitElement {
         class=${classMap({thumb: true, selected: isSelected})}
         type="button"
         role="radio"
+        aria-label=${this.positionLabel(position)}
         aria-checked=${isSelected}
         tabindex=${isSelected ? 0 : -1}
         @click=${() => this.requestPosition(position)}

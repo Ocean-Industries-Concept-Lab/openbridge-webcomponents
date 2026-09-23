@@ -279,10 +279,15 @@ export class ObcKeyboardNumeric extends LitElement {
     if (e.key === 'Enter') {
       e.preventDefault();
       this.handleDone();
-    } else if (e.key === 'Escape') {
-      e.preventDefault();
-      this.handleCloseClick();
     }
+  }
+
+  // The keypad is an overlay: Escape dismisses it from the value field and
+  // from any focused key alike.
+  private handleKeydown(e: KeyboardEvent) {
+    if (e.key !== 'Escape') return;
+    e.preventDefault();
+    this.handleCloseClick();
   }
 
   private renderCalculationRow() {
@@ -379,7 +384,7 @@ export class ObcKeyboardNumeric extends LitElement {
       this.hasTitleBar && this.type === ObcKeyboardNumericType.Floating;
 
     return html`
-      <div class="wrapper type-${this.type}">
+      <div class="wrapper type-${this.type}" @keydown=${this.handleKeydown}>
         ${
           showTitleBar
             ? html`

@@ -160,3 +160,13 @@ describe('obc-hydraulic-valve-4-3 keyboard', () => {
     expect(checkedStates(el)).toEqual(['false', 'true', 'false']);
   });
 });
+
+describe('obc-hydraulic-valve-4-3 names', () => {
+  it('names each position, so a radio announces more than its index', async () => {
+    const {el} = await setup();
+
+    expect(thumbs(el).map((thumb) => thumb.getAttribute('aria-label'))).toEqual(
+      ['Position 1', 'Position 2', 'Position 3']
+    );
+  });
+});

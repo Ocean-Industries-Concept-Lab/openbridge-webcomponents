@@ -1,4 +1,5 @@
 import {userEvent} from '@vitest/browser/context';
+import {deepActiveElement} from './focus.js';
 
 /**
  * Focus and key helpers for keyboard specs.
@@ -8,13 +9,22 @@ import {userEvent} from '@vitest/browser/context';
  * side. These walk the tree the way the browser's focus actually sits.
  */
 
-/** The focused element, following every open shadow root down. */
-export function deepActiveElement(): Element | null {
-  let active = document.activeElement;
-  while (active?.shadowRoot?.activeElement) {
-    active = active.shadowRoot.activeElement;
+export {deepActiveElement};
+
+/**
+ * Whether `node` sits under `ancestor`, crossing shadow boundaries.
+ * `Element.contains()` stops at a shadow root, so a host never "contains"
+ * the control it renders.
+ */
+export function containsDeep(ancestor: Element, node: Node | null): boolean {
+  let current: Node | null = node;
+  while (current) {
+    if (current === ancestor) return true;
+    current =
+      current.parentNode ??
+      (current instanceof ShadowRoot ? current.host : null);
   }
-  return active;
+  return false;
 }
 
 /** Presses Tab `count` times and records where focus lands each time. */

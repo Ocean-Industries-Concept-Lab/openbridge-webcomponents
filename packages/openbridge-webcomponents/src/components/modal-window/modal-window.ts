@@ -2,6 +2,7 @@ import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
+import {ModalFocusController} from '../../internal/modal-focus-controller.js';
 import componentStyle from './modal-window.css?inline';
 
 import '../button/button.js';
@@ -54,6 +55,17 @@ export enum ObcModalWindowSize {
  * - `done-click`: Fired when the done button is clicked.
  * - `option-click`: Fired when the optional action button is clicked.
  *
+ * ### Keyboard
+ * Follows the APG modal dialog pattern
+ * (https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/). The component has
+ * no open state: rendering it opens it and removing it closes it, so focus
+ * moves onto the dialog when it connects, `Tab` and `Shift+Tab` cycle inside
+ * it, and focus returns to the element that opened it when it disconnects.
+ * `Escape` fires `close-click`, or `cancel-click` when there is no close
+ * button; a dialog with neither has to be resolved with its Done button.
+ * Focus lands on the dialog container rather than its first button, so a
+ * dialog opened with `Enter` cannot be dismissed by the same key press.
+ *
  * ### Sizing
  * By default the modal is as tall as its content, capped at `90vh`. To give it
  * an explicit height, set the `--obc-modal-window-height` custom property on
@@ -79,8 +91,8 @@ export enum ObcModalWindowSize {
  * @property hasLeadingIcon - Whether to show the leading icon slot in the header.
  * @property hasCancelAction - Whether to show the footer cancel button.
  * @property hasCloseAction - Whether to show the header close (X) button.
- * @fires {CustomEvent} close-click - Fired when the close button is clicked.
- * @fires {CustomEvent} cancel-click - Fired when the cancel button is clicked.
+ * @fires {CustomEvent} close-click - Fired when the close button is clicked, or `Escape` is pressed while it is shown.
+ * @fires {CustomEvent} cancel-click - Fired when the cancel button is clicked, or `Escape` is pressed while there is no close button.
  * @fires {CustomEvent} done-click - Fired when the done button is clicked.
  * @fires {CustomEvent} option-click - Fired when the optional action button is clicked.
  *
@@ -116,6 +128,22 @@ export class ObcModalWindow extends LitElement {
   private onOptionClick = () =>
     this.dispatchEvent(new CustomEvent('option-click'));
 
+  protected readonly focusController = new ModalFocusController(
+    this,
+    () => this.shadowRoot?.querySelector('.wrapper') ?? null
+  );
+
+  private onKeydown(event: KeyboardEvent) {
+    if (event.key !== 'Escape') return;
+    if (this.hasCloseAction) {
+      event.preventDefault();
+      this.onCloseClick();
+    } else if (this.hasCancelAction) {
+      event.preventDefault();
+      this.onCancelClick();
+    }
+  }
+
   protected override render() {
     const isLarge = this.size === ObcModalWindowSize.Large;
     const isMedium = this.size === ObcModalWindowSize.Medium;
@@ -128,6 +156,11 @@ export class ObcModalWindow extends LitElement {
           wrapper: true,
           [`size-${this.size}`]: true,
         })}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="title"
+        tabindex="-1"
+        @keydown=${this.onKeydown}
       >
         <div
           class=${classMap({
@@ -143,7 +176,7 @@ export class ObcModalWindow extends LitElement {
                   </div>`
                 : nothing
             }
-            <div class="label-container">
+            <div class="label-container" id="title">
               <slot name="title">Title</slot>
             </div>
           </div>

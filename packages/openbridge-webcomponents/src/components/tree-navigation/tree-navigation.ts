@@ -1,4 +1,6 @@
 import {LitElement, html, unsafeCSS} from 'lit';
+import {property} from 'lit/decorators.js';
+import {ifDefined} from 'lit/directives/if-defined.js';
 import componentStyle from './tree-navigation.css?inline';
 import {customElement} from '../../decorator.js';
 import {
@@ -62,10 +64,15 @@ function isRow(el: Element): el is TreeRow {
  * | (default) | Always          | Top-level rows (`obc-tree-navigation-group`/`-item`). |
  *
  * @slot - Top-level tree rows (groups and items).
+ * @property ariaLabel - Accessible name of the tree, mapped to the `aria-label` attribute and forwarded to the `role="tree"` element. `aria-labelledby` is not supported: ID references cannot cross the shadow boundary.
  * @beta
  */
 @customElement('obc-tree-navigation')
 export class ObcTreeNavigation extends LitElement {
+  // Reactive so a consumer changing the name re-renders the tree.
+  @property({type: String, attribute: 'aria-label'})
+  override ariaLabel: string | null = null;
+
   private mutationObserver?: MutationObserver;
 
   /** The focusable header item for a row: a leaf is itself; a group's is its shadow header. */
@@ -174,7 +181,10 @@ export class ObcTreeNavigation extends LitElement {
   }
 
   override render() {
-    return html`<div role="tree">
+    return html`<div
+      role="tree"
+      aria-label=${ifDefined(this.ariaLabel ?? undefined)}
+    >
       <slot @slotchange=${() => this.updateBranches()}></slot>
     </div>`;
   }

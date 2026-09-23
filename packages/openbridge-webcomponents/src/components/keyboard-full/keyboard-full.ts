@@ -181,7 +181,7 @@ export enum ObcKeyboardFullMode {
  *   the complete current text string.
  * @fires {CustomEvent<{value: string}>} done-click - Dispatched when the DONE button is clicked,
  *   indicating the user has completed text entry. The `detail.value` contains the final text string.
- * @fires {CustomEvent<void>} close-click - Dispatched when the close button (in top bar) is clicked,
+ * @fires {CustomEvent<void>} close-click - Dispatched when the close button (in top bar) is clicked or `Escape` is pressed inside the keyboard,
  *   allowing the application to dismiss the keyboard without submitting the value.
  * @beta
  */
@@ -245,6 +245,13 @@ export class ObcKeyboardFull extends LitElement {
     ['~', '_', '|', '<', '>', '$', '€', '£'],
     ['"', "'", '?', '!', ';', ':', ',', '.', '-'],
   ];
+
+  // The keyboard is an overlay: Escape dismisses it from any focused key.
+  private onKeydown = (event: KeyboardEvent) => {
+    if (event.key !== 'Escape') return;
+    event.preventDefault();
+    this.onCloseClick();
+  };
 
   private onCloseClick = () => {
     this.dispatchEvent(
@@ -690,7 +697,7 @@ export class ObcKeyboardFull extends LitElement {
 
   protected override render() {
     return html`
-      <div class="wrapper type-${this.type}">
+      <div class="wrapper type-${this.type}" @keydown=${this.onKeydown}>
         ${
           this.showTopBar
             ? html`

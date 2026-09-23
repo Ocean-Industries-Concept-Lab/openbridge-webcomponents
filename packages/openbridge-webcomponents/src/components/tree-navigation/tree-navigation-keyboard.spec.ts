@@ -223,3 +223,19 @@ describe('obc-tree-navigation keyboard', () => {
     expect(parseFloat(ring.outlineWidth)).toBeGreaterThan(0);
   });
 });
+
+describe('obc-tree-navigation name', () => {
+  it('forwards aria-label to the tree, which is what a consumer can set', async () => {
+    const screen = render(
+      html`<obc-tree-navigation aria-label="Sections"></obc-tree-navigation>`
+    );
+    const el = screen.container.querySelector(
+      'obc-tree-navigation'
+    ) as ObcTreeNavigation;
+    await el.updateComplete;
+
+    expect(
+      el.shadowRoot!.querySelector('[role="tree"]')?.getAttribute('aria-label')
+    ).toBe('Sections');
+  });
+});

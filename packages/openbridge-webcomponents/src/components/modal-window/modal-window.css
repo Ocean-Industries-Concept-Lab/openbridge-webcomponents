@@ -19,6 +19,7 @@
   width: 100%;
   height: var(--obc-modal-window-height, auto);
   max-height: 90vh;
+  outline: none; /* focus lands here on open; the ring belongs on the controls */
 }
 
 .title-container {
