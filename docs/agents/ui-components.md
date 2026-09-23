@@ -184,10 +184,15 @@ content never reaches, so a short panel finishes early and a tall one is cut
 off. Follow it for any new collapsing component.
 
 - The panel is **always rendered** — a panel that only exists while open has
-  nothing to animate. `visibility: hidden` is what keeps the collapsed content
-  out of the tab order and the accessibility tree; it needs no `inert` and no
-  script, and it transitions correctly by itself, staying visible for the whole
-  close and flipping only at the end.
+  nothing to animate. `inert` on the panel, bound to the open state, is what
+  keeps the collapsed content out of the tab order, the accessibility tree and
+  find-in-page. It reaches slotted light-DOM content through the slot.
+- **Keyboard availability is not a visual property.** `visibility: hidden` also
+  removes content from the tab order, but transitioning it holds `visible` for
+  the whole close, so for the length of the animation a Tab press lands on a
+  control that is about to disappear, and focus falls to `<body>` when it does.
+  Anything driven by the transition is the wrong switch; `inert` flips with the
+  state instead, on the same render that starts the animation (#1291).
 - **Three levels, not two.** The grid item can carry neither padding nor a
   border: padding holds the closed track open by its own height, and a border
   is left out of the open track and clipped off. So `.panel` owns the track,

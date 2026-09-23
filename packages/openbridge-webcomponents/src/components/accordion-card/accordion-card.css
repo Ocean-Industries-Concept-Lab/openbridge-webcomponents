@@ -136,12 +136,8 @@
     display: grid;
     /* 0fr to 1fr is the only track that eases to content height in every engine. */
     grid-template-rows: 0fr;
-    /* Takes the collapsed content out of the tab order and the a11y tree. */
-    visibility: hidden;
     align-self: stretch;
-    transition:
-      grid-template-rows var(--_expand-duration) ease,
-      visibility var(--_expand-duration);
+    transition: grid-template-rows var(--_expand-duration) ease;
   }
 
   .panel-inner {
@@ -163,7 +159,6 @@
   &.state-expanded {
     & .panel {
       grid-template-rows: 1fr;
-      visibility: visible;
     }
 
     & .card-container {

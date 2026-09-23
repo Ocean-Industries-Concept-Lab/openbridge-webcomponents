@@ -103,7 +103,7 @@ export class ObcAccordionItem extends LitElement {
 
   private renderExpandedContent() {
     return html`
-      <div class="panel" id="accordion-content">
+      <div class="panel" id="accordion-content" ?inert=${!this.open}>
         <div class="panel-inner">
           <div class="content-container">
             <slot name="expanded-content"></slot>
