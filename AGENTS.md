@@ -214,7 +214,8 @@ npm run build-storybook   # static build
 
 # Tests
 npm run test-storybook          # visual snapshot tests (Vitest + Playwright)
-npm run test-a11y               # axe over every story, report-only
+npm run test-a11y               # axe over every story; fails on a violation the baseline does not carry
+npm run test-a11y:update        # rewrite __a11y__/baseline.json after fixing or adding violations
 npm run test-storybook:watch    # watch mode
 npm run update-snapshots        # replace baselines
 
@@ -261,10 +262,15 @@ Commits that fail lint or format checks are blocked automatically.
    - Do **not** hand-write a lifecycle tag here — see step 6.
 5. Write JSDoc following the three-pattern strategy (see § 3), including
    exactly one lifecycle tag on the class (see § 3 Component lifecycle tags).
-6. Run `npm run lint:fix:stories` to populate the story's lifecycle tag from
+6. Interactive? Name the APG pattern in the JSDoc, pin its keys in a
+   `component-name-keyboard.spec.ts`, and give every control a name
+   ([`docs/agents/a11y.md`](docs/agents/a11y.md) § 1, § 4, § 9). `npm run
+test-a11y` fails on any violation the committed baseline does not carry, so
+   a new component starts from zero.
+7. Run `npm run lint:fix:stories` to populate the story's lifecycle tag from
    that class JSDoc.
-7. Run `npm run analyze` to update `custom-elements.json`.
-8. Run `npm run lint && npm run typecheck` to validate.
+8. Run `npm run analyze` to update `custom-elements.json`.
+9. Run `npm run lint && npm run typecheck` to validate.
 
 ---
 

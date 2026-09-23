@@ -43,12 +43,11 @@ jobs:
           path: packages/openbridge-webcomponents/__vis__/linux/__diffs__
           retention-days: 30
 
-      # Reports only, so a violation must not fail the job. The gate moves to
-      # `parameters.a11y.test: 'error'` per story section as each is triaged
+      # Fails only on a violation the committed baseline does not carry, so
+      # the existing debt cannot grow and a new component starts from zero
       # (#1208).
       - name: Accessibility check
         if: always()
-        continue-on-error: true
         run: npm run test-a11y
         working-directory: packages/openbridge-webcomponents
 

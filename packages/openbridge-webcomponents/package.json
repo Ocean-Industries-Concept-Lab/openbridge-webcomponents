@@ -67,7 +67,8 @@
     "clean": "rm -rf node_modules dist bundle custom-elements.json",
     "言_TRANSLATIONS______________________________________________": "echo _____",
     "translations:extract": "lit localize extract",
-    "test-a11y": "vitest run --config vitest.a11y.config.ts"
+    "test-a11y": "vitest run --config vitest.a11y.config.ts && tsx ./script/check-a11y-baseline.ts",
+    "test-a11y:update": "vitest run --config vitest.a11y.config.ts && tsx ./script/check-a11y-baseline.ts --update"
   },
   "dependencies": {
     "@lit-labs/observers": "^2.1.0",
