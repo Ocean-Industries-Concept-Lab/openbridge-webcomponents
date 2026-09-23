@@ -1,6 +1,7 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
+import {ifDefined} from 'lit/directives/if-defined.js';
 import {customElement} from '../../decorator.js';
 import componentStyle from './floating-item.css?inline';
 
@@ -16,6 +17,15 @@ export enum ObcFloatingItemType {
 export enum ObcFloatingItemDirection {
   horizontal = 'horizontal',
   vertical = 'vertical',
+}
+
+/**
+ * How the item announces itself: an alert interrupts, a status waits its
+ * turn. Set by the alert, notification and advice items.
+ */
+export enum ObcFloatingItemLiveRole {
+  Alert = 'alert',
+  Status = 'status',
 }
 
 export enum ObcFloatingItemLineType {
@@ -112,6 +122,7 @@ export enum ObcFloatingItemLineType {
  * @property lineType - Line wrapping for the message content: `single-line` (default) truncates
  *   to one line, `multi-line` allows up to eight.
  * @property dismissLabel - Accessible name of the dismiss button; the icon carries none.
+ * @property liveRole - How the item announces itself when it appears: `alert` interrupts, `status` waits its turn. The alert, notification and advice items set it; the bare item announces nothing.
  * @slot primary-icon - Main icon to represent the message’s category.
  * @slot secondary-icon - Additional icon for application-type messages.
  * @slot title - Title or heading of the message.
@@ -142,6 +153,8 @@ export class ObcFloatingItem extends LitElement {
   @property({type: String}) lineType = ObcFloatingItemLineType.singleLine;
 
   @property({type: String}) dismissLabel = 'Dismiss';
+
+  @property({type: String}) liveRole?: ObcFloatingItemLiveRole;
 
   /** Dispatches **action-click** when the first action button is clicked. */
   private onActionClick = () =>
@@ -212,6 +225,7 @@ export class ObcFloatingItem extends LitElement {
           'single-line': this.lineType === ObcFloatingItemLineType.singleLine,
           'multi-line': this.lineType === ObcFloatingItemLineType.multiLine,
         })}
+        role=${ifDefined(this.liveRole)}
       >
         <div class="content-container">
           ${/* only render icons *outside* when horiz */ ''}
