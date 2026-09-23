@@ -150,8 +150,10 @@ export class ObcAlertMenu extends LitElement {
         class: 'unacked',
         filter: (item: HTMLElement) => {
           return (
-            item.getAttribute('status') ===
-              ObcAlertMenuItemStatus.Unacknowledged &&
+            [
+              ObcAlertMenuItemStatus.Unacknowledged,
+              ObcAlertMenuItemStatus.RectifiedUnacknowledged,
+            ].includes(item.getAttribute('status') as ObcAlertMenuItemStatus) &&
             !item.hasAttribute('shelved')
           );
         },
@@ -179,7 +181,13 @@ export class ObcAlertMenu extends LitElement {
         emptyIcon: html`<obi-alerts></obi-alerts>`,
         class: 'active',
         filter: (item: HTMLElement) => {
-          return !item.hasAttribute('shelved');
+          return (
+            !item.hasAttribute('shelved') &&
+            ![
+              ObcAlertMenuItemStatus.RectifiedUnacknowledged,
+              ObcAlertMenuItemStatus.Rectified,
+            ].includes(item.getAttribute('status') as ObcAlertMenuItemStatus)
+          );
         },
       };
     }

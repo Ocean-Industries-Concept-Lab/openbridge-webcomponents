@@ -203,6 +203,7 @@ const meta: Meta<typeof ObcAlertMenu> = {
         title="Fuel Oil Temperature"
         description="HFO temperature approaching lower limit: 115°C"
         time="09:17:20"
+        @ack-click=${handleAck}
       >
         <obc-alert-icon
           slot="alert-icon"
