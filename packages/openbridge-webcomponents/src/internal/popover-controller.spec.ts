@@ -307,7 +307,8 @@ describe('trigger-opened panel keeps its state', () => {
     cleanup.push(bindPopoverTrigger(trigger, panel));
 
     // Nothing waits here, so the browser has not reported the opening yet.
-    // Only what bindPopoverTrigger wrote straight away can keep this right.
+    // The controller's own mirror, made the moment the menu opens, is what
+    // keeps this right — the trigger itself never touches `open`.
     await userEvent.click(trigger);
     panel.brightness = 7;
     await panel.updateComplete;
@@ -329,6 +330,45 @@ describe('trigger-opened panel keeps its state', () => {
 
     expect(isOpen(panel)).toBe(true);
     expect(panel.open).toBe(true);
+  });
+
+  it('a close performed elsewhere is not undone by a re-render', async () => {
+    const {panel} = await fixture();
+    await show(panel);
+
+    // This is what the cover's click handler does. The browser reports the
+    // close a moment later; a re-render in between must not read a stale
+    // `open` and put the menu straight back.
+    panel.hidePopover();
+    panel.brightness = 5;
+    await panel.updateComplete;
+    await nextTask();
+
+    expect(isOpen(panel)).toBe(false);
+    expect(panel.open).toBe(false);
+  });
+
+  it('a button wired to it in HTML opens it once, not twice', async () => {
+    const {panel} = await fixture();
+    panel.id = 'wired-panel';
+    const button = document.createElement('button');
+    button.setAttribute('popovertarget', 'wired-panel');
+    button.style.cssText = 'position:fixed;left:0;top:130px';
+    panel.parentElement!.append(button);
+
+    // The browser opens the menu here with no script on the stack, so a
+    // re-render can run in the middle of it. That must not turn into a
+    // second, nested open.
+    let opens = 0;
+    panel.addEventListener('beforetoggle', (e) => {
+      if ((e as ToggleEvent).newState === 'open') opens++;
+    });
+    await userEvent.click(button);
+    await nextTask();
+
+    expect(isOpen(panel)).toBe(true);
+    expect(panel.open).toBe(true);
+    expect(opens).toBe(1);
   });
 
   it('mirrors an open that nothing set `open` for', async () => {

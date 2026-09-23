@@ -196,9 +196,12 @@ is the reference.
   background, so without it the panel is re-centred with chrome around it. An
   outer-tree rule beats `:host` whatever its specificity, so a consumer's own
   anchor positioning still wins.
-- The browser writes `open` back to `false` and fires `close` when it
-  dismisses. A consumer mirroring that state in a button's `activated` flag
-  listens for `close` rather than re-deriving it from its own flag.
+- When the panel closes for a reason other than `open` being set — a click
+  on the cover, `Escape` — the controller writes `open` back to `false` and
+  fires `close`. The browser only reports the change; the property and the
+  event are the component's. A consumer mirroring that state in a button's
+  `activated` flag listens for `close` rather than re-deriving it from its
+  own flag.
 - `popovertarget` does not cross shadow roots, so a trigger inside one
   component cannot declare a panel that lives in another tree. That is what
   `bindPopoverTrigger(trigger, panel)` is for.
