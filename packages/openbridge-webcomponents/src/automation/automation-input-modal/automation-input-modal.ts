@@ -37,7 +37,7 @@ export class ObcAutomationInputModal extends LitElement {
   );
 
   private onKeydown(event: KeyboardEvent) {
-    if (event.key !== 'Escape') return;
+    if (event.key !== 'Escape' || event.defaultPrevented) return;
     event.preventDefault();
     this.dispatchEvent(new CustomEvent('close-click'));
   }

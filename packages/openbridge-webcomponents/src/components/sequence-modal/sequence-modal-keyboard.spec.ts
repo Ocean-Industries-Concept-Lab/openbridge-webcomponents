@@ -5,10 +5,7 @@ import {html} from 'lit';
 import '../../main.css';
 import './sequence-modal.js';
 import type {ObcSequenceModal} from './sequence-modal.js';
-import {
-  containsDeep,
-  deepActiveElement,
-} from '../../internal/_keyboard-test-utils.js';
+import {containsDeep, deepActiveElement} from '../../internal/_test-utils.js';
 
 /**
  * APG modal dialog pattern, the way `obc-modal-window` implements it: the
@@ -71,5 +68,15 @@ describe('obc-sequence-modal keyboard', () => {
     el.remove();
 
     expect(deepActiveElement()?.id).toBe('opener');
+  });
+
+  it('carries no empty name when modalTitle is unset', async () => {
+    const screen = render(html`<div id="bare"></div>`);
+    const el = document.createElement('obc-sequence-modal') as ObcSequenceModal;
+    screen.container.querySelector('#bare')!.appendChild(el);
+    await el.updateComplete;
+
+    const dialog = el.shadowRoot!.querySelector('[role="dialog"]');
+    expect(dialog?.hasAttribute('aria-label')).toBe(false);
   });
 });

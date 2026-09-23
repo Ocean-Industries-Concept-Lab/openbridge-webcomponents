@@ -9,7 +9,7 @@ import {
   type ContextMenuOption,
   type ObcContextMenuInput,
 } from './context-menu-input.js';
-import {deepActiveElement} from '../../internal/_keyboard-test-utils.js';
+import {deepActiveElement} from '../../internal/_test-utils.js';
 
 const options: ContextMenuOption[] = [
   {value: 'one', label: 'One'},
@@ -26,15 +26,29 @@ const options: ContextMenuOption[] = [
  * `main.css` has to be loaded: the component skips items with no client rects,
  * so an unstyled menu offers nothing to move between.
  */
+const flyoutOptions: ContextMenuOption[] = [
+  {value: 'one', label: 'One'},
+  {
+    value: 'group',
+    label: 'Group',
+    children: [
+      {value: 'g1', label: 'G1'},
+      {value: 'g2', label: 'G2'},
+    ],
+  },
+  {value: 'three', label: 'Three'},
+];
+
 async function setup(
   selectedValues: string[] = [],
-  type: ContextMenuType = ContextMenuType.Regular
+  type: ContextMenuType = ContextMenuType.Regular,
+  menuOptions: ContextMenuOption[] = options
 ) {
   const screen = render(
     html`<button id="outside">Outside</button>
       <obc-context-menu-input
         .type=${type}
-        .options=${options}
+        .options=${menuOptions}
         .selectedValues=${selectedValues}
       ></obc-context-menu-input>
       <button id="after">After</button>`
@@ -217,5 +231,40 @@ describe('obc-context-menu-input as one tab stop', () => {
     expect(hosts.some((host) => host.hasAttribute('aria-selected'))).toBe(
       false
     );
+  });
+});
+
+describe('obc-context-menu-input flyout as one tab stop', () => {
+  it('stays one tab stop before and after a group opens, and the arrows reach the children', async () => {
+    const {el} = await setup([], ContextMenuType.Flyout, flyoutOptions);
+    (document.getElementById('outside') as HTMLElement).focus();
+
+    await userEvent.tab();
+    expect(focusedValue()).toBe('one');
+    await userEvent.tab();
+    expect(deepActiveElement()?.id).toBe('after');
+
+    const group = el.shadowRoot!.querySelector(
+      'obc-navigation-item-group[data-menu-value="group"]'
+    ) as HTMLElement & {open(): void; updateComplete: Promise<unknown>};
+    group.open();
+    await group.updateComplete;
+    await el.updateComplete;
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    (document.getElementById('outside') as HTMLElement).focus();
+    await userEvent.tab();
+    expect(focusedValue()).toBe('one');
+    await userEvent.tab();
+    expect(deepActiveElement()?.id).toBe('after');
+
+    (document.getElementById('outside') as HTMLElement).focus();
+    await userEvent.tab();
+    await userEvent.keyboard('{ArrowDown}');
+    expect(focusedValue()).toBe('group');
+    await userEvent.keyboard('{ArrowDown}');
+    expect(focusedValue()).toBe('g1');
+    await userEvent.tab();
+    expect(deepActiveElement()?.id).toBe('after');
   });
 });

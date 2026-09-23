@@ -3,7 +3,7 @@ import {render} from 'vitest-browser-lit';
 import {userEvent} from '@vitest/browser/context';
 import {html} from 'lit';
 import {RovingNavigator, type RovingOptions} from './roving-navigator.js';
-import {deepActiveElement} from './_keyboard-test-utils.js';
+import {deepActiveElement} from './_test-utils.js';
 
 /**
  * A plain-button fixture: the navigator owns the tab stop and the arrow keys,

@@ -5,10 +5,7 @@ import {html} from 'lit';
 import '../../main.css';
 import './keyboard-full.js';
 import type {ObcKeyboardFull} from './keyboard-full.js';
-import {
-  containsDeep,
-  deepActiveElement,
-} from '../../internal/_keyboard-test-utils.js';
+import {containsDeep, deepActiveElement} from '../../internal/_test-utils.js';
 
 /**
  * The on-screen keyboard is an overlay: § 2 of the a11y doc gives an overlay

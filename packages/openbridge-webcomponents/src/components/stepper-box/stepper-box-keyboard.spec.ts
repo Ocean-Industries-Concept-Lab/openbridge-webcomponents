@@ -5,10 +5,7 @@ import {html} from 'lit';
 import '../../main.css';
 import './stepper-box.js';
 import type {ObcStepperBox} from './stepper-box.js';
-import {
-  containsDeep,
-  deepActiveElement,
-} from '../../internal/_keyboard-test-utils.js';
+import {containsDeep, deepActiveElement} from '../../internal/_test-utils.js';
 
 /**
  * APG Spinbutton keys (https://www.w3.org/WAI/ARIA/apg/patterns/spinbutton/):

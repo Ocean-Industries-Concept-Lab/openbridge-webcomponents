@@ -5,10 +5,7 @@ import {html} from 'lit';
 import '../../main.css';
 import './modal-window.js';
 import type {ObcModalWindow} from './modal-window.js';
-import {
-  containsDeep,
-  deepActiveElement,
-} from '../../internal/_keyboard-test-utils.js';
+import {containsDeep, deepActiveElement} from '../../internal/_test-utils.js';
 
 /**
  * APG modal dialog pattern: https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/
@@ -113,5 +110,30 @@ describe('obc-modal-window keyboard', () => {
     el.remove();
 
     expect(deepActiveElement()?.id).toBe('opener');
+  });
+
+  it('leaves an Escape that a nested control already handled alone', async () => {
+    const {events} = await setup();
+    const field = document.getElementById('field') as HTMLElement;
+    field.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') event.preventDefault();
+    });
+    field.focus();
+
+    await userEvent.keyboard('{Escape}');
+
+    expect(events).toEqual([]);
+  });
+
+  it('moves focus in again when it is re-attached', async () => {
+    const {el} = await setup();
+    const host = el.parentElement as HTMLElement;
+    el.remove();
+    (document.getElementById('opener') as HTMLElement).focus();
+
+    host.appendChild(el);
+    await el.updateComplete;
+
+    expect(containsDeep(el, deepActiveElement())).toBe(true);
   });
 });

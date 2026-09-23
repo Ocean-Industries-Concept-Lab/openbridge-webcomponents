@@ -8,10 +8,7 @@ import '../tree-navigation-group/tree-navigation-group.js';
 import '../tree-navigation-item/tree-navigation-item.js';
 import type {ObcTreeNavigation} from './tree-navigation.js';
 import type {ObcTreeNavigationItem} from '../tree-navigation-item/tree-navigation-item.js';
-import {
-  deepActiveElement,
-  tabStops,
-} from '../../internal/_keyboard-test-utils.js';
+import {deepActiveElement, tabStops} from '../../internal/_test-utils.js';
 
 /**
  * Pins the [Tree View](https://www.w3.org/WAI/ARIA/apg/patterns/treeview/)

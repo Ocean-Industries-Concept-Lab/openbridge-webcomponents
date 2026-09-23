@@ -9,7 +9,7 @@
 }
 
 .sequence-modal {
-  outline: none; /* focus lands here on open; the ring belongs on the controls */
+  outline: none; /* the landing point for focus on open, not a control; the ring stays on the controls */
   width: 100%;
   height: 506px;
 }

@@ -111,7 +111,7 @@ export enum ObcAdviceMessageItemSize {
  * @property timeSecondary - Secondary timestamp (e.g., duration, relative time).
  *   Shown in the `time-secondary` slot if `hasTimestamp2` is true.
  * @availableWhen timeSecondary hasTimestamp2==true && type!=Inactive
- * @property actionLabel - Label for the action button (when `type` is "with-button").
+ * @property actionLabel - Label for the action button (when `type` is "with-button"), and the accessible name of the icon action button (when `type` is "with-icon-button").
  *   Shown in the `action-text` slot.
  * @availableWhen actionLabel type==WithButton
  * @property showTitle - Whether to show the title.
@@ -209,6 +209,7 @@ export class ObcAdviceMessageItem extends LitElement {
     return html`
       <obc-topbar-message-item
         .type=${this.mappedType}
+        .actionLabel=${this.actionLabel}
         .size=${this.size}
         .showTitle=${this.showTitle}
         .showDescription=${this.showDescription}

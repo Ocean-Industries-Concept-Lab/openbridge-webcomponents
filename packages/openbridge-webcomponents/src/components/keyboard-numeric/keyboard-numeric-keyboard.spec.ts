@@ -5,10 +5,7 @@ import {html} from 'lit';
 import '../../main.css';
 import './keyboard-numeric.js';
 import type {ObcKeyboardNumeric} from './keyboard-numeric.js';
-import {
-  containsDeep,
-  deepActiveElement,
-} from '../../internal/_keyboard-test-utils.js';
+import {containsDeep, deepActiveElement} from '../../internal/_test-utils.js';
 
 /**
  * The numeric keypad is an overlay: § 2 of the a11y doc gives an overlay one

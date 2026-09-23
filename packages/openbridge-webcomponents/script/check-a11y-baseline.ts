@@ -48,7 +48,7 @@ export function diffAgainstBaseline(
   };
 }
 
-function main() {
+async function main() {
   const packageDir = path.resolve(
     path.dirname(fileURLToPath(import.meta.url)),
     '..'
@@ -65,9 +65,11 @@ function main() {
 
   if (process.argv.includes('--update')) {
     fs.mkdirSync(path.dirname(baselineFile), {recursive: true});
+    // Written the way prettier would, so format:check stays quiet after an update.
+    const {format} = await import('prettier');
     fs.writeFileSync(
       baselineFile,
-      JSON.stringify(toBaseline(report), null, 2) + '\n'
+      await format(JSON.stringify(toBaseline(report)), {filepath: baselineFile})
     );
     console.log(
       `a11y-baseline: wrote ${Object.keys(toBaseline(report)).length} stories to ${path.relative(packageDir, baselineFile)}`
@@ -100,5 +102,8 @@ if (
   process.argv[1] &&
   import.meta.url === new URL(`file://${process.argv[1]}`).href
 ) {
-  main();
+  main().catch((error) => {
+    console.error(error);
+    process.exit(2);
+  });
 }

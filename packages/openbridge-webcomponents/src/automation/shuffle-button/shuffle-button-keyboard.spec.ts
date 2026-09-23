@@ -6,10 +6,7 @@ import '../../main.css';
 import '../hydraulic-valve-4-3/hydraulic-valve-4-3.js';
 import type {ObcHydraulicValve43} from '../hydraulic-valve-4-3/hydraulic-valve-4-3.js';
 import type {PositionSelectedEvent} from './shuffle-button-base.js';
-import {
-  deepActiveElement,
-  tabStops,
-} from '../../internal/_keyboard-test-utils.js';
+import {deepActiveElement, tabStops} from '../../internal/_test-utils.js';
 
 interface Harness {
   el: ObcHydraulicValve43;

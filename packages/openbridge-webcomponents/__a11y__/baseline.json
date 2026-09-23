@@ -273,21 +273,6 @@
   "application-components-notifications-advice-menu-item--with-one-action": [
     "nested-interactive"
   ],
-  "application-components-notifications-advice-message-item--advice-no-description": [
-    "button-name"
-  ],
-  "application-components-notifications-advice-message-item--advice-only-secondary-timestamp": [
-    "button-name"
-  ],
-  "application-components-notifications-advice-message-item--advice-with-icon-button": [
-    "button-name"
-  ],
-  "application-components-notifications-advice-message-item--advice-with-icon-button-tall": [
-    "button-name"
-  ],
-  "application-components-notifications-advice-message-item--multiple-advice-items": [
-    "button-name"
-  ],
   "application-components-notifications-notification-menu-item--double-line": [
     "nested-interactive"
   ],
@@ -299,21 +284,6 @@
   ],
   "application-components-notifications-notification-menu-item--with-one-action": [
     "nested-interactive"
-  ],
-  "application-components-notifications-notification-message-item--multiple-notifications": [
-    "button-name"
-  ],
-  "application-components-notifications-notification-message-item--no-description": [
-    "button-name"
-  ],
-  "application-components-notifications-notification-message-item--only-secondary-timestamp": [
-    "button-name"
-  ],
-  "application-components-notifications-notification-message-item--with-icon-button": [
-    "button-name"
-  ],
-  "application-components-notifications-notification-message-item--with-icon-button-tall": [
-    "button-name"
   ],
   "application-components-top-elements-topbar--home-button-icon": [
     "button-name"
@@ -863,12 +833,6 @@
   ],
   "ui-components-message-and-alerts-message-menu-item--vertical-with-two-actions": [
     "nested-interactive"
-  ],
-  "ui-components-message-and-alerts-topbar-message-item--icon-action": [
-    "button-name"
-  ],
-  "ui-components-message-and-alerts-topbar-message-item--icon-action-large": [
-    "button-name"
   ],
   "ui-components-messages-and-notifications-progress-button--circular": [
     "aria-allowed-attr"

@@ -644,8 +644,19 @@ export class ObcContextMenuInput extends LitElement {
     });
   }
 
+  /**
+   * Rows a group shows or hides join or leave the roving set only once the
+   * group has rendered; until then a newly shown row is its own tab stop.
+   */
+  private async refreshAfterDisclosure(group: ObcNavigationItemGroup) {
+    await group.updateComplete;
+    await this.updateComplete;
+    this.navigator.refresh();
+  }
+
   private handleFlyoutGroupClick(option: ContextMenuOption, event: Event) {
     event.preventDefault();
+    this.refreshAfterDisclosure(event.currentTarget as ObcNavigationItemGroup);
     this.dispatchEvent(
       new CustomEvent<ObcContextMenuInputItemClickEvent['detail']>(
         'item-click',
@@ -670,13 +681,16 @@ export class ObcContextMenuInput extends LitElement {
           .hug=${true}
           .hasIcon=${!!o.icon}
           @click=${(e: Event) => this.handleFlyoutGroupClick(o, e)}
-          @open=${() => {
+          @open=${(e: Event) => {
             this.shadowRoot
               ?.querySelectorAll('obc-navigation-item-group')
               .forEach((g) => {
                 const group = g as ObcNavigationItemGroup;
                 if (group.label !== o.label) group.close();
               });
+            this.refreshAfterDisclosure(
+              e.currentTarget as ObcNavigationItemGroup
+            );
           }}
         >
           ${o.icon ? html`<div slot="icon">${o.icon}</div>` : nothing}

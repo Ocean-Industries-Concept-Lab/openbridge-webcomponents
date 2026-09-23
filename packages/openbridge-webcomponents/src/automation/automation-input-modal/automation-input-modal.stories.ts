@@ -56,7 +56,7 @@ export const Compact: Story = {
     </style>
     <obc-automation-input-modal aria-label="Speed">
       <div slot="header">
-        <obc-icon-button variant="flat">
+        <obc-icon-button variant="flat" aria-label="Close">
           <obi-close-google></obi-close-google>
         </obc-icon-button>
       </div>

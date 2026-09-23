@@ -216,6 +216,7 @@ export class ObcNotificationMessageItem extends LitElement {
     return html`
       <obc-topbar-message-item
         .type=${this.mappedType}
+        .actionLabel=${this.actionLabel}
         .size=${this.mappedSize}
         .showTitle=${this.showTitle}
         .showDescription=${this.showDescription}

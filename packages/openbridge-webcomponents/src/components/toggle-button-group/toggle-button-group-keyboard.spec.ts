@@ -7,10 +7,7 @@ import './toggle-button-group.js';
 import '../toggle-button-option/toggle-button-option.js';
 import type {ObcToggleButtonGroup} from './toggle-button-group.js';
 import type {ObcToggleButtonOption} from '../toggle-button-option/toggle-button-option.js';
-import {
-  containsDeep,
-  deepActiveElement,
-} from '../../internal/_keyboard-test-utils.js';
+import {containsDeep, deepActiveElement} from '../../internal/_test-utils.js';
 
 /**
  * A single-select group of buttons is a radio group to the keyboard
@@ -103,6 +100,26 @@ describe('obc-toggle-button-group keyboard', () => {
     expect(changes).toEqual(['4']);
     expect(el.value).toBe('2');
     expect(focusedValue(el)).toBe('2');
+  });
+
+  it('follows an accepted request under externalControl: focus and the tab stop move with the value', async () => {
+    const {el, changes} = await setup(true);
+    el.addEventListener('change', (event) => {
+      el.value = (event as CustomEvent<{value: string}>).detail.value;
+    });
+    (document.getElementById('before') as HTMLElement).focus();
+    await userEvent.tab();
+
+    await userEvent.keyboard('{ArrowRight}');
+    await el.updateComplete;
+    expect(el.value).toBe('4');
+    expect(focusedValue(el)).toBe('4');
+    await userEvent.keyboard('{ArrowRight}');
+    await el.updateComplete;
+
+    expect(el.value).toBe('1');
+    expect(focusedValue(el)).toBe('1');
+    expect(changes).toEqual(['4', '1']);
   });
 
   it('is a labelled radio group whose options carry aria-checked', async () => {

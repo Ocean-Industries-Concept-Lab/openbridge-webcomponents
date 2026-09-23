@@ -5,10 +5,7 @@ import {html} from 'lit';
 import '../../main.css';
 import './top-bar.js';
 import type {ObcTopBar} from './top-bar.js';
-import {
-  containsDeep,
-  deepActiveElement,
-} from '../../internal/_keyboard-test-utils.js';
+import {containsDeep, deepActiveElement} from '../../internal/_test-utils.js';
 
 /**
  * The left-most button of the bar doubles as the emergency-brightness hold,

@@ -5,10 +5,7 @@ import {html} from 'lit';
 import '../../main.css';
 import './automation-input-modal.js';
 import type {ObcAutomationInputModal} from './automation-input-modal.js';
-import {
-  containsDeep,
-  deepActiveElement,
-} from '../../internal/_keyboard-test-utils.js';
+import {containsDeep, deepActiveElement} from '../../internal/_test-utils.js';
 
 /**
  * APG modal dialog pattern, the way `obc-modal-window` implements it: the

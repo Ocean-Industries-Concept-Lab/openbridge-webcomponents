@@ -1,5 +1,6 @@
 import {LitElement, html, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
+import {ifDefined} from 'lit/directives/if-defined.js';
 import {customElement} from '../../decorator.js';
 import {ModalFocusController} from '../../internal/modal-focus-controller.js';
 import componentStyle from './sequence-modal.css?inline';
@@ -70,7 +71,7 @@ export enum ObcSequenceModalType {
  *
  * @slot actions - Actions row content (shown when `hasActions` is true).
  * @slot - Main content area.
- * @fires close-click - Fired when the close icon is clicked or `Escape` is pressed.
+ * @fires {CustomEvent<void>} close-click - Fired when the close icon is clicked or `Escape` is pressed.
  * @experimental
  */
 @customElement('obc-sequence-modal')
@@ -98,7 +99,7 @@ export class ObcSequenceModal extends LitElement {
   );
 
   private onKeydown(event: KeyboardEvent) {
-    if (event.key !== 'Escape') return;
+    if (event.key !== 'Escape' || event.defaultPrevented) return;
     event.preventDefault();
     this.onCloseClick();
   }
@@ -120,7 +121,7 @@ export class ObcSequenceModal extends LitElement {
         class="sequence-modal type-${this.type}"
         role="dialog"
         aria-modal="true"
-        aria-label=${this.modalTitle}
+        aria-label=${ifDefined(this.modalTitle || undefined)}
         tabindex="-1"
         @keydown=${this.onKeydown}
       >

@@ -5,10 +5,7 @@ import {html} from 'lit';
 import '../../main.css';
 import './tab-row.js';
 import type {ObcTabRow, TabData} from './tab-row.js';
-import {
-  containsDeep,
-  deepActiveElement,
-} from '../../internal/_keyboard-test-utils.js';
+import {containsDeep, deepActiveElement} from '../../internal/_test-utils.js';
 
 /**
  * APG Tabs pattern with manual activation:

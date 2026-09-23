@@ -27,6 +27,8 @@ export class ModalFocusController implements ReactiveController {
     this.opener = deepActiveElement();
     this.landed = false;
     this.host.addEventListener('keydown', this.cycle);
+    // A reconnected element does not update on its own; the landing does.
+    this.host.requestUpdate();
   }
 
   hostUpdated() {

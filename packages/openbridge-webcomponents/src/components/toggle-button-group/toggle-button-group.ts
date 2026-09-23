@@ -479,6 +479,16 @@ export class ObcToggleButtonGroup extends LitElement {
   override updated(changedProperties: PropertyValues) {
     super.updated(changedProperties);
     this.navigator.refresh();
+    // The selected option is the radio group's tab stop, and takes focus with
+    // it while focus is inside the group — that is how an accepted external
+    // request brings the keys along.
+    if (changedProperties.has('value')) {
+      const selected = this.getOptionByValue(this.value);
+      if (selected && !selected.disabled) {
+        this.navigator.setActive(selected, false);
+        if (this.matches(':focus-within')) selected.focus();
+      }
+    }
 
     const currentOption = this.getOptionByValue(this.value);
     if (currentOption?.disabled && this.hasAnyEnabledOption()) {
