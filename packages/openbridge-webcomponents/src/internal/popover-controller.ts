@@ -45,6 +45,15 @@ export interface SoftDismissHost extends LitElement {
 export class PopoverController implements ReactiveController {
   private installed = false;
   private backdrop?: HTMLElement;
+  /** Noted at a close that `open` did not ask for, so it can be reported. */
+  private dismissed = false;
+  /**
+   * True from `beforetoggle` to `toggle`, while the browser is mid-way through
+   * opening or closing. `sync()` stands down for that stretch: it would see
+   * `open` already updated but the menu not yet moved, and try to move it
+   * itself — nested inside the move the browser is making.
+   */
+  private toggling = false;
 
   constructor(private readonly host: SoftDismissHost) {
     host.addController(this);
@@ -65,35 +74,51 @@ export class PopoverController implements ReactiveController {
   hostDisconnected(): void {
     this.host.removeEventListener('beforetoggle', this.onBeforeToggle);
     this.host.removeEventListener('toggle', this.onToggle);
+    this.toggling = false;
   }
 
   /**
-   * Someone opened the menu without setting `open` — a button wired straight
-   * to it, or a `showPopover()` call.
+   * The menu is about to open or close for a reason other than `open` being
+   * set — a button wired straight to it, `Escape`, a click on the cover, a
+   * direct `showPopover()`. `open` is brought into line here, at once.
    *
-   * The browser offers two events for this, and only `beforetoggle` arrives
-   * in time. It fires during the call that opens the menu, while `toggle`
-   * waits its turn in the queue. A re-render can get in before that turn,
-   * see `open` still saying `false`, and close the menu again.
+   * The browser offers two events for this and only `beforetoggle` arrives
+   * in time. It fires during the call that opens or closes the menu, while
+   * `toggle` waits its turn in the queue. A re-render can get in before that
+   * turn, read an `open` that still says the old thing, and undo what just
+   * happened — close a menu that was just opened, or reopen one that was
+   * just closed.
    *
-   * The cover goes up here too, and for a reason of its own: things drawn
-   * above the page stack in the order they were shown, and at this point the
-   * menu has not been shown yet. Showing the cover now is what puts it
-   * underneath the menu, whichever way the menu was opened.
+   * The cover goes up here too, for a reason of its own: things drawn above
+   * the page stack in the order they were shown, and at this point the menu
+   * has not been shown yet. Showing the cover now is what puts it underneath
+   * the menu, whichever way the menu was opened.
    */
   private readonly onBeforeToggle = (event: Event): void => {
     if (!this.host.softDismiss) return;
-    if ((event as ToggleEvent).newState !== 'open') return;
-    this.coverPage();
-    this.host.open = true;
+    this.toggling = true;
+    // `toggle` clears this. Should it never come — someone cancelled the
+    // opening — the flag must not stay up, or `open` could never drive the
+    // menu again. A timer runs after the browser has finished either way.
+    setTimeout(() => {
+      this.toggling = false;
+    }, 0);
+    if ((event as ToggleEvent).newState === 'open') {
+      this.coverPage();
+      this.host.open = true;
+      return;
+    }
+    // `open` is already false when this controller asked for the close;
+    // still true means somebody else did, and the consumer should hear.
+    this.dismissed = this.host.open;
+    this.host.open = false;
   };
 
   /**
-   * The menu closed. Report it only when the browser did the closing.
+   * The menu has closed. Report it only when `open` did not ask for it.
    *
-   * `open` tells the two apart: it is already `false` when the closing came
-   * from this controller, and still `true` when the browser closed the menu
-   * on a click outside or on `Escape`.
+   * By now `open` is `false` either way — `beforetoggle` saw to that — so
+   * the note it left in `dismissed` is what tells the two apart.
    *
    * The `softDismiss` check keeps this out of the way of components that run
    * a popover themselves. `obc-menu-button` does that with
@@ -101,10 +126,11 @@ export class PopoverController implements ReactiveController {
    */
   private readonly onToggle = (event: Event): void => {
     if (!this.host.softDismiss) return;
+    this.toggling = false;
     if ((event as ToggleEvent).newState !== 'closed') return;
     this.uncoverPage();
-    if (!this.host.open) return;
-    this.host.open = false;
+    if (!this.dismissed) return;
+    this.dismissed = false;
     /**
      * Fired when the popover closed on its own — a click outside, `Escape`,
      * or another popover opening.
@@ -138,6 +164,7 @@ export class PopoverController implements ReactiveController {
 
     // Showing a popover that is not on the page throws.
     if (!host.isConnected) return;
+    if (this.toggling) return;
 
     const isOpen = host.matches(':popover-open');
     if (host.open && !isOpen) {
@@ -189,8 +216,9 @@ export class PopoverController implements ReactiveController {
  * There is less here than it looks like there should be. While the menu is
  * open its cover sits over the button as well, so a second mouse click never
  * reaches this handler: it lands on the cover, which closes the menu. What
- * does reach here is a keyboard press on the still-focused button, and for
- * that the live state is the right thing to read.
+ * does reach here is a keyboard press on the still-focused button. `open` is
+ * not touched at all: the controller mirrors what the browser does, in both
+ * directions, the moment it happens.
  *
  * HTML can pair a button with a popover on its own, but only inside the same
  * component. Reach for this when the button and the menu live apart.
@@ -200,11 +228,7 @@ export function bindPopoverTrigger(
   panel: SoftDismissHost
 ): () => void {
   const onClick = (): void => {
-    const wasOpen = panel.matches(':popover-open');
-    // Set before opening or closing, so a re-render in the same moment sees
-    // the state the user just asked for.
-    panel.open = !wasOpen;
-    if (wasOpen) {
+    if (panel.matches(':popover-open')) {
       panel.hidePopover();
     } else {
       panel.showPopover();
