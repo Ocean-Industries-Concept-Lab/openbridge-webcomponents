@@ -8,6 +8,8 @@ import {
 import componentStyle from './toggle-button-group.css?inline';
 import {customElement} from '../../decorator.js';
 import {classMap} from 'lit/directives/class-map.js';
+import {ifDefined} from 'lit/directives/if-defined.js';
+import {RovingNavigator} from '../../internal/roving-navigator.js';
 
 export type ObcToggleButtonGroupValueChangeEvent = CustomEvent<{
   value: string;
@@ -103,6 +105,15 @@ export type ObcToggleButtonGroupChangeEvent = CustomEvent<{
  * ### Events
  *
  * - `value` – Fired when the selected value changes, either through user interaction or programmatic change.
+ *
+ * ## Keyboard
+ * A single-select group is a radio group to the keyboard
+ * ([APG Radio Group](https://www.w3.org/WAI/ARIA/apg/patterns/radio/)): one
+ * tab stop on the selected option, and the arrow keys move focus and selection
+ * together, wrapping and skipping disabled options. `Enter` and `Space` on an
+ * option select it through its button. Under `externalControl` an arrow key
+ * emits `value` and `change` for the next option the way a click does, and
+ * the selection waits for the host.
  *   Event detail: `{ value: string, previousValue: string }`. Listen to this event to react to selection changes.
  *
  * ### Example
@@ -148,6 +159,7 @@ export type ObcToggleButtonGroupChangeEvent = CustomEvent<{
  * @property variant - Visual variant, propagated to every child `<obc-toggle-button-option>`:
  *   `regular` (default) has a background and border, `flat` has neither, and
  *   `normal` is the alternative style.
+ * @property ariaLabel - Accessible name of the group, mapped to the `aria-label` attribute; the options are its radios. `aria-labelledby` is not supported: ID references cannot cross the shadow boundary.
  * @property allowEmptySelection - Lets the group hold no selection: a `value` matching no enabled option, or
  *   a selected option that becomes disabled, clears the selection instead of
  *   falling back to the first enabled option.
@@ -175,6 +187,45 @@ export class ObcToggleButtonGroup extends LitElement {
   @property({type: Boolean, reflect: true}) disabled = false;
 
   @property({type: Boolean, reflect: true}) large = false;
+
+  // Reactive so a consumer changing the name re-renders the group.
+  @property({type: String, attribute: 'aria-label'})
+  override ariaLabel: string | null = null;
+
+  private readonly navigator = new RovingNavigator<ObcToggleButtonOption>(
+    {
+      items: () => Array.from(this.options),
+      isDisabled: (option) => option.disabled,
+      preferred: () => this.getOptionByValue(this.value) ?? undefined,
+      setFocusable: (option, focusable) => {
+        option.focusable = focusable;
+      },
+      // Under external control the keys only ask, so focus stays put.
+      focusItem: (option) => {
+        if (!this.externalControl) option.focus();
+      },
+    },
+    {orientation: 'both'}
+  );
+
+  /**
+   * Arrow keys move selection with focus, the way a radio group does. Under
+   * `externalControl` they emit the request the way a click does and the tab
+   * stop stays on the selected option.
+   */
+  private handleKeydown(event: KeyboardEvent) {
+    const previous = this.navigator.activeItem;
+    if (!this.navigator.handleKeydown(event)) return;
+    event.preventDefault();
+    const target = this.navigator.activeItem;
+    if (!target) return;
+    if (this.externalControl) {
+      this.requestOption(target.value);
+      if (previous) this.navigator.setActive(previous, false);
+    } else {
+      this.updateSelection(target.value, true, true);
+    }
+  }
 
   @queryAssignedElements({selector: 'obc-toggle-button-option'})
   options!: NodeListOf<ObcToggleButtonOption>;
@@ -368,20 +419,23 @@ export class ObcToggleButtonGroup extends LitElement {
   handleOptionClick(event: Event) {
     const {value} = (event as CustomEvent).detail;
     if (this.externalControl) {
-      this.dispatchEvent(
-        new CustomEvent('value', {
-          detail: {value, previousValue: this.value},
-        })
-      );
-
-      this.dispatchEvent(
-        new CustomEvent('change', {
-          detail: {value},
-        })
-      );
+      this.requestOption(value);
     } else {
       this.updateSelection(value, true, true);
     }
+  }
+
+  private requestOption(value: string) {
+    this.dispatchEvent(
+      new CustomEvent('value', {
+        detail: {value, previousValue: this.value},
+      })
+    );
+    this.dispatchEvent(
+      new CustomEvent('change', {
+        detail: {value},
+      })
+    );
   }
 
   override willUpdate(changedProperties: PropertyValues) {
@@ -424,6 +478,7 @@ export class ObcToggleButtonGroup extends LitElement {
 
   override updated(changedProperties: PropertyValues) {
     super.updated(changedProperties);
+    this.navigator.refresh();
 
     const currentOption = this.getOptionByValue(this.value);
     if (currentOption?.disabled && this.hasAnyEnabledOption()) {
@@ -450,9 +505,15 @@ export class ObcToggleButtonGroup extends LitElement {
     };
 
     return html`
-      <div class=${classMap(classes)}>
+      <div
+        class=${classMap(classes)}
+        role="radiogroup"
+        aria-label=${ifDefined(this.ariaLabel ?? undefined)}
+        @keydown=${this.handleKeydown}
+        @focusin=${(event: Event) => this.navigator.handleFocusin(event)}
+      >
         <div class="wrapper">
-          <slot></slot>
+          <slot @slotchange=${() => this.navigator.refresh()}></slot>
         </div>
       </div>
     `;

@@ -1,9 +1,10 @@
 import {LitElement, html, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
+import {RovingNavigator} from '../../internal/roving-navigator.js';
 import {repeat} from 'lit/directives/repeat.js';
 import compentStyle from './tab-row.css?inline';
 import '../tab-item/tab-item.js';
-import type {TabItemBadge} from '../tab-item/tab-item.js';
+import type {ObcTabItem, TabItemBadge} from '../tab-item/tab-item.js';
 import '../icon-button/icon-button.js';
 import '../../icons/icon-placeholder.js';
 import {customElement} from '../../decorator.js';
@@ -97,6 +98,14 @@ export interface TabData {
  *
  * ---
  *
+ * ### Keyboard
+ * [APG Tabs](https://www.w3.org/WAI/ARIA/apg/patterns/tabs/) with manual
+ * activation: the row is one tab stop, entered on the selected tab; `Left`
+ * and `Right` move focus between enabled tabs and wrap, `Home` and `End` go to
+ * the edges, and `Enter` or `Space` selects the focused tab. Focus does not
+ * select on its own, so a keyboard user can pass over tabs without loading
+ * each panel. The add-new-tab button is its own tab stop after the row.
+ *
  * ### Events
  * - `tab-selected` – Fired when a tab is selected. Detail: `{tab, id, index}`.
  * - `tab-closed` – Fired when a tab's close button is clicked. Detail: `{tab, id, index}`.
@@ -144,6 +153,30 @@ export class ObcTabRow extends LitElement {
   @property({type: Boolean, attribute: 'show-subtitle'}) showSubtitle = false;
 
   @property({type: Boolean, attribute: 'has-add-new-tab'}) hasAddNewTab = false;
+
+  private readonly navigator = new RovingNavigator<ObcTabItem>(
+    {
+      items: () => this.tabItems(),
+      isDisabled: (item) => item.disabled,
+      preferred: () => this.tabItems().find((item) => item.checked),
+      setFocusable: (item, focusable) => {
+        item.focusable = focusable;
+      },
+    },
+    {orientation: 'horizontal'}
+  );
+
+  private tabItems(): ObcTabItem[] {
+    return Array.from(this.shadowRoot?.querySelectorAll('obc-tab-item') ?? []);
+  }
+
+  private handleKeydown(event: KeyboardEvent) {
+    if (this.navigator.handleKeydown(event)) event.preventDefault();
+  }
+
+  override updated() {
+    this.navigator.refresh();
+  }
 
   private handleTabClick(_: Event, tabId: string) {
     const tabIndex = this.tabs.findIndex((t) => t.id === tabId);
@@ -255,7 +288,12 @@ export class ObcTabRow extends LitElement {
 
   override render() {
     return html`
-      <div class="wrapper" role="tablist">
+      <div
+        class="wrapper"
+        role="tablist"
+        @keydown=${this.handleKeydown}
+        @focusin=${(event: Event) => this.navigator.handleFocusin(event)}
+      >
         ${repeat(
           this.tabs,
           (t) => t.id,

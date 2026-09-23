@@ -842,9 +842,7 @@
   "ui-components-media-audio-recording-item--playback-playing": ["label"],
   "ui-components-menus-and-navigation-breadcrumb--icon": ["button-name"],
   "ui-components-menus-and-navigation-context-menu-input--action-only-flyout": [
-    "aria-allowed-attr",
-    "aria-required-children",
-    "aria-required-parent"
+    "aria-required-children"
   ],
   "ui-components-menus-and-navigation-context-menu-input--checkboxes": [
     "aria-required-children"
@@ -853,39 +851,25 @@
     "aria-required-children"
   ],
   "ui-components-menus-and-navigation-context-menu-input--multi-column-group-selection": [
-    "aria-allowed-attr",
-    "aria-required-children",
-    "aria-required-parent"
+    "aria-required-children"
   ],
   "ui-components-menus-and-navigation-context-menu-input--multi-column-with-subtitles": [
     "aria-required-children"
   ],
   "ui-components-menus-and-navigation-context-menu-input--multi-column-with-subtitles-group-selection": [
-    "aria-allowed-attr",
-    "aria-required-children",
-    "aria-required-parent"
+    "aria-required-children"
   ],
   "ui-components-menus-and-navigation-context-menu-input--multi-select-flyout": [
-    "aria-allowed-attr",
-    "aria-required-children",
-    "aria-required-parent"
+    "aria-required-children"
   ],
   "ui-components-menus-and-navigation-context-menu-input--nested-checkboxes": [
     "aria-required-children"
   ],
   "ui-components-menus-and-navigation-context-menu-input--per-group-select-flyout": [
-    "aria-allowed-attr",
-    "aria-required-children",
-    "aria-required-parent"
-  ],
-  "ui-components-menus-and-navigation-context-menu-input--regular": [
-    "aria-allowed-attr",
-    "aria-required-parent"
+    "aria-required-children"
   ],
   "ui-components-menus-and-navigation-context-menu-input--single-select-flyout": [
-    "aria-allowed-attr",
-    "aria-required-children",
-    "aria-required-parent"
+    "aria-required-children"
   ],
   "ui-components-menus-and-navigation-navigation-item--group-icon-only-large": [
     "aria-command-name"

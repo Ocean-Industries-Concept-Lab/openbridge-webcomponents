@@ -116,6 +116,8 @@ export enum ObcToggleButtonOptionVariant {
  * @availableWhen hugText type!=icon-text-under
  * @property disabled - If true, the option is disabled and cannot be interacted with.
  * @property large - If true, the option uses a larger size.
+ * @property focusable - Whether the option is in the tab order. `obc-toggle-button-group` manages
+ *   this as a roving tabindex (one option focusable at a time); a standalone option stays tabbable.
  * @availableWhen large type!=icon-text-under
  * @property showDivider - If true, renders the divider between options.
  * @slot - Text label content for the option (when type includes text).
@@ -143,6 +145,13 @@ export class ObcToggleButtonOption extends LitElement {
   @property({type: Boolean, reflect: true}) disabled = false;
 
   @property({type: Boolean, reflect: true}) large = false;
+
+  @property({type: Boolean, attribute: false}) focusable = true;
+
+  /** Focus lands on the option's button, not on the host. */
+  public override focus(options?: FocusOptions): void {
+    this.shadowRoot?.querySelector('button')?.focus(options);
+  }
 
   /**
    * Fired when the option is clicked and not already selected.
@@ -187,6 +196,9 @@ export class ObcToggleButtonOption extends LitElement {
           large: this.large,
         })}
         ?disabled=${this.disabled}
+        role="radio"
+        aria-checked=${this.selected}
+        tabindex=${this.focusable ? 0 : -1}
         @click=${this.onClick}
       >
         <div class="visible-wrapper" part="visible-wrapper">

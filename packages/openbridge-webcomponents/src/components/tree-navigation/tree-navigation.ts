@@ -82,7 +82,7 @@ export class ObcTreeNavigation extends LitElement {
       : row;
   }
 
-  private readonly navigator = new TreeRovingNavigator<TreeRow>(this, {
+  private readonly navigator = new TreeRovingNavigator<TreeRow>({
     getRows: () => this.childRows(this),
     childRows: (row) => this.childRows(row),
     isGroup: (row) => isGroup(row),

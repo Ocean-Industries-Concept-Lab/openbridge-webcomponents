@@ -26,22 +26,28 @@ const options: ContextMenuOption[] = [
  * `main.css` has to be loaded: the component skips items with no client rects,
  * so an unstyled menu offers nothing to move between.
  */
-async function setup(selectedValues: string[] = []) {
+async function setup(
+  selectedValues: string[] = [],
+  type: ContextMenuType = ContextMenuType.Regular
+) {
   const screen = render(
     html`<button id="outside">Outside</button>
       <obc-context-menu-input
-        .type=${ContextMenuType.Regular}
+        .type=${type}
         .options=${options}
         .selectedValues=${selectedValues}
-      ></obc-context-menu-input>`
+      ></obc-context-menu-input>
+      <button id="after">After</button>`
   );
   const el = screen.container.querySelector(
     'obc-context-menu-input'
   ) as ObcContextMenuInput;
   await el.updateComplete;
   await Promise.all(
-    Array.from(el.shadowRoot!.querySelectorAll('obc-navigation-item')).map(
-      (item) => item.updateComplete
+    Array.from(
+      el.shadowRoot!.querySelectorAll('obc-navigation-item, obc-checkbox-item'),
+      (item) =>
+        (item as unknown as {updateComplete: Promise<unknown>}).updateComplete
     )
   );
   return {
@@ -165,6 +171,51 @@ describe('obc-context-menu-input keyboard', () => {
     expect(focusedValue()).toBe('two');
     expect((deepActiveElement() as HTMLElement).matches(':focus-visible')).toBe(
       true
+    );
+  });
+});
+
+describe('obc-context-menu-input as one tab stop', () => {
+  it('is entered on the selected item and left on the next Tab', async () => {
+    await setup(['two']);
+    (document.getElementById('outside') as HTMLElement).focus();
+
+    await userEvent.tab();
+    expect(focusedValue()).toBe('two');
+    await userEvent.tab();
+    expect(deepActiveElement()?.id).toBe('after');
+  });
+
+  it('is one tab stop for a checkbox menu as well, with arrows between the boxes', async () => {
+    await setup([], ContextMenuType.Checkboxes);
+    (document.getElementById('outside') as HTMLElement).focus();
+
+    await userEvent.tab();
+    expect(focusedValue()).toBe('one');
+    await userEvent.keyboard('{ArrowDown}');
+    expect(focusedValue()).toBe('two');
+    await userEvent.tab();
+    expect(deepActiveElement()?.id).toBe('after');
+  });
+
+  it('exposes the selection as aria-checked on menuitemradio controls, not on the hosts', async () => {
+    const {el} = await setup(['two']);
+
+    const hosts = Array.from(
+      el.shadowRoot!.querySelectorAll('[data-menu-item="true"]')
+    );
+    const controls = hosts.map((host) => host.shadowRoot!.querySelector('a'));
+    expect(controls.map((control) => control?.getAttribute('role'))).toEqual([
+      'menuitemradio',
+      'menuitemradio',
+      'menuitemradio',
+    ]);
+    expect(
+      controls.map((control) => control?.getAttribute('aria-checked'))
+    ).toEqual(['false', 'true', 'false']);
+    expect(hosts.some((host) => host.hasAttribute('role'))).toBe(false);
+    expect(hosts.some((host) => host.hasAttribute('aria-selected'))).toBe(
+      false
     );
   });
 });
