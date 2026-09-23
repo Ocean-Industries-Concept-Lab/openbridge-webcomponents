@@ -27,11 +27,16 @@ export interface SoftDismissHost extends LitElement {
  *
  * The one thing the browser will not do is swallow that outside click: left
  * alone it closes the menu *and* presses whatever was underneath. So the
- * controller gives the menu a see-through cover the size of the page, kept
- * behind the menu's own content. The menu is drawn above everything else on
- * the page, so its cover is too: clicks and hovers land on the cover instead
- * of the page, and the cover closes the menu. Consumers can tint it through
- * `::part(backdrop)`.
+ * controller gives the menu a see-through cover over the page, kept behind
+ * the menu's own content. The menu is drawn above everything else on the
+ * page, so its cover is too: clicks and hovers land on the cover instead of
+ * the page, and the cover closes the menu.
+ *
+ * The cover starts below the top bar, so the bar itself stays usable while a
+ * menu is open and moving from one menu to the next is a single click. Its
+ * top edge is `--topbar-height`, falling back to the top bar's size token; an
+ * app without a top bar sets that to `0`. Consumers can also restyle or tint
+ * it through `::part(backdrop)`.
  *
  * A component keeps `open` as the property people set. Since the browser can
  * also open and close the menu on its own, the controller writes what the
@@ -188,8 +193,13 @@ export class PopoverController implements ReactiveController {
     if (!root || this.backdrop) return;
     const cover = document.createElement('div');
     cover.setAttribute('part', 'backdrop');
+    // The last fallback keeps the whole page covered where no palette is
+    // loaded; an `auto` top would leave the cover wherever it happened to
+    // land.
     cover.style.cssText =
-      'position:fixed;inset:0;z-index:-1;margin:0;padding:0;border:0;' +
+      'position:fixed;' +
+      'top:var(--topbar-height,var(--app-components-topbar-touch-target-size,0px));' +
+      'right:0;bottom:0;left:0;z-index:-1;margin:0;padding:0;border:0;' +
       'background:transparent';
     cover.addEventListener('click', () => this.host.hidePopover());
     root.append(cover);
@@ -200,12 +210,18 @@ export class PopoverController implements ReactiveController {
 /**
  * Makes a button open and close a menu. Returns a function that unhooks it.
  *
- * There is less here than it looks like there should be. While the menu is
- * open its cover sits over the button as well, so a second mouse click never
- * reaches this handler: it lands on the cover, which closes the menu. What
- * does reach here is a keyboard press on the still-focused button. `open` is
- * not touched at all: the controller mirrors what the browser does, in both
- * directions, the moment it happens.
+ * Most such buttons sit in the top bar, which the cover leaves reachable, and
+ * that is where people get caught out. Clicking the button a second time
+ * looks like it should close the menu, but the browser has already closed it
+ * as the mouse went down, before the click arrives — so a handler that reads
+ * the live state opens it right back up and the menu looks stuck.
+ * Remembering the state as the mouse goes down is what makes the second click
+ * work. Keyboard presses never trigger that early close, so they read the
+ * live state; `MouseEvent.detail` is `0` only for the click that `Enter` and
+ * `Space` produce, which is how the two are told apart.
+ *
+ * `open` is not touched here: the controller mirrors what the browser does,
+ * in both directions, the moment it happens.
  *
  * HTML can pair a button with a popover on its own, but only inside the same
  * component. Reach for this when the button and the menu live apart.
@@ -214,14 +230,27 @@ export function bindPopoverTrigger(
   trigger: HTMLElement,
   panel: SoftDismissHost
 ): () => void {
-  const onClick = (): void => {
-    if (panel.matches(':popover-open')) {
+  let openBeforeAutoClose = false;
+
+  const onPointerDown = (): void => {
+    openBeforeAutoClose = panel.matches(':popover-open');
+  };
+
+  const onClick = (event: MouseEvent): void => {
+    const wasOpen =
+      event.detail > 0 ? openBeforeAutoClose : panel.matches(':popover-open');
+    if (wasOpen) {
       panel.hidePopover();
     } else {
       panel.showPopover();
     }
   };
 
+  trigger.addEventListener('pointerdown', onPointerDown);
   trigger.addEventListener('click', onClick);
-  return () => trigger.removeEventListener('click', onClick);
+
+  return () => {
+    trigger.removeEventListener('pointerdown', onPointerDown);
+    trigger.removeEventListener('click', onClick);
+  };
 }

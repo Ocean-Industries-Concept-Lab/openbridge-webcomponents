@@ -209,10 +209,19 @@ is the reference.
   just under it, so the first click only closes the panel and the page gets
   no hover or wheel either. A consumer that wants a tint styles
   `::part(backdrop)`; nothing else about it is a consumer's concern.
-- The cover sits over the panel's own trigger too, so no guard is needed
-  against a second click reopening it: that click never reaches the button.
-  Keyboard focus is not held in the panel, though — a `Tab` still moves into
-  the page the mouse cannot reach.
+- The cover starts below the top bar: its `top` is `--topbar-height`,
+  falling back to `--app-components-topbar-touch-target-size`. The bar stays
+  usable while a panel is open, so moving between top-bar menus is one click;
+  an app without a top bar sets `--topbar-height: 0`. A consumer's
+  `::part(backdrop)` rule still wins over the cover's own styling.
+- Because the bar is reachable, a second click on a panel's own button
+  arrives after the browser has already closed the panel. `bindPopoverTrigger`
+  remembers the state as the mouse goes down for exactly that reason; a
+  consumer toggling its own flag from the button's event is fine as well,
+  since the click arrives before `close` does. Reading `:popover-open` inside
+  a click handler is the one thing that reopens the panel.
+- Keyboard focus is not held in the panel — a `Tab` still moves into the
+  page the mouse cannot reach.
 - A panel that is only mounted while open keeps its `v-if`: mounting a menu
   eagerly also builds its contents, and in `vue-demo` that meant router links
   for routes that did not exist yet.
