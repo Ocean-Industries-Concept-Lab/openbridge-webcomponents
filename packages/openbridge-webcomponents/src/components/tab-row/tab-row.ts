@@ -174,14 +174,15 @@ export class ObcTabRow extends LitElement {
     return this.tabs.filter((tab) => !tab.disabled);
   }
 
-  private get hasFocusWithin(): boolean {
-    return this.shadowRoot?.activeElement != null;
+  private get focusedTab(): ObcTabItem | null {
+    const active = this.shadowRoot?.activeElement;
+    return this.tabItems().find((item) => item === active) ?? null;
   }
 
   protected override willUpdate(changed: PropertyValues<this>) {
     // A selection made elsewhere takes the tab stop with it, but not while the
-    // user is arrowing through the row.
-    if (changed.has('selectedTabId') && !this.hasFocusWithin) {
+    // user is arrowing through the tabs.
+    if (changed.has('selectedTabId') && !this.focusedTab) {
       this.rovingTabId = this.selectedTabId;
     }
     if (changed.has('tabs') || changed.has('selectedTabId')) {
@@ -216,9 +217,10 @@ export class ObcTabRow extends LitElement {
   }
 
   private handleKeyDown(event: KeyboardEvent) {
-    if (!(
-      event.target instanceof Element && event.target.matches('obc-tab-item')
-    )) {
+    // Shadow-DOM retargeting reports every key from inside a tab as coming from
+    // the tab itself, close button included, so read the original target.
+    const origin = event.composedPath()[0];
+    if (!(origin instanceof Element && origin.matches('[role="tab"]'))) {
       return;
     }
 

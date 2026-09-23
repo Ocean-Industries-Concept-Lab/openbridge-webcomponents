@@ -176,6 +176,33 @@ describe('obc-tab-row', () => {
     expect(tabIndexes(row)).toEqual(['0', '-1', '-1']);
   });
 
+  it('ignores navigation keys from a close button inside a tab', async () => {
+    const row = await mount(tabs, 'a');
+    await focusRow(row);
+    wrapperOf(items(row)[0])
+      .querySelector('obc-icon-button')!
+      .dispatchEvent(
+        new KeyboardEvent('keydown', {
+          key: 'ArrowRight',
+          bubbles: true,
+          composed: true,
+        })
+      );
+    await row.updateComplete;
+    expect(tabIndexes(row)).toEqual(['0', '-1', '-1']);
+  });
+
+  it('follows a selection change made while the add button has focus', async () => {
+    const row = await mount(tabs, 'a');
+    row
+      .shadowRoot!.querySelector('.add-new-tab')!
+      .shadowRoot!.querySelector<HTMLElement>('button')!
+      .focus();
+    row.selectedTabId = 'c';
+    await row.updateComplete;
+    expect(tabIndexes(row)).toEqual(['-1', '-1', '0']);
+  });
+
   it('re-points the tab stop when the tab it sat on is removed', async () => {
     const row = await mount(tabs, 'c');
     row.tabs = tabs.filter((tab) => tab.id !== 'c');
