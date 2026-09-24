@@ -23,6 +23,7 @@ import {
 } from '../progress-bar/progress-bar.js';
 import {Size, StyleType, Variant} from '../user-button/user-button.js';
 import {localized, msg} from '@lit/localize';
+import {PopoverController} from '../../internal/popover-controller.js';
 
 export enum ObcUserMenuType {
   signIn = 'sign-in',
@@ -148,17 +149,27 @@ export type ObcUserMenuSignedInAction = {
  * @availableWhen primaryActionId type==signedIn && size==small
  * @property showUseAnotherAccount - Controls the visibility of the "Use another account" button.
  * @availableWhen showUseAnotherAccount type==userSignIn
+ * @property softDismiss - Let the browser close this menu on its own: on a click outside it, on `Escape`, or when another menu opens. Leave it off to keep showing and hiding the menu yourself.
+ * @property open - Whether the menu is showing.
+ * @availableWhen open softDismiss==true
  * @slot signed-in-action-icon-<id> - Optional icon for a signed-in action, one per action; `<id>` is the normalized action id (shown in the `signed-in` type).
  * @fires {CustomEvent<{username?: string, password?: string}>} sign-in-click - Fired when a sign-in button is clicked.
  * @fires {CustomEvent<void>} sign-out-click - Fired when the sign-out button is clicked.
  * @fires {CustomEvent<void>} use-another-account-click - Fired when the "Use another account" button is clicked.
  * @fires {CustomEvent<{id: string, label: string}>} signed-in-action-click - Fired when a signed-in action is clicked.
  * @fires {ObcUserMenuRecentUserClickEvent} recent-user-click - Fired when a recent user button is clicked, carrying that user's entry.
+ * @fires {CustomEvent<void>} close - Fired when the menu closed on its own, from a click outside, `Escape`, or another menu opening. `open` is already `false` by the time it arrives.
  * @stable
  */
 @customElement('obc-user-menu')
 @localized()
 export class ObcUserMenu extends LitElement {
+  @property({type: Boolean}) softDismiss = false;
+
+  @property({type: Boolean}) open = false;
+
+  protected readonly softDismissController = new PopoverController(this);
+
   @property({type: String}) type: ObcUserMenuType = ObcUserMenuType.signIn;
 
   @property({type: String}) size: ObcUserMenuSize = ObcUserMenuSize.regular;

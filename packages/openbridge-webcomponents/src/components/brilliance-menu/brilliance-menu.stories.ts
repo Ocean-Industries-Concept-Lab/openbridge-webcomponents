@@ -5,6 +5,7 @@ import {
   ObcBrillianceMenuVariant,
 } from './brilliance-menu.js';
 import './brilliance-menu.js';
+import {bindPopoverTrigger} from '../../internal/popover-controller.js';
 
 // More on how to set up stories at: https://storybook.js.org/docs/web-components/writing-stories/introduction
 const meta: Meta<typeof ObcBrillianceMenu> = {
@@ -69,5 +70,49 @@ export const NoDuskPaletteCompact: Story = {
   args: {
     variant: ObcBrillianceMenuVariant.compact,
     showDuskPalette: false,
+  },
+};
+
+/**
+ * With `softDismiss` on, the menu closes itself: click outside it or press
+ * `Escape` (#1293).
+ *
+ * Try the button below the menu. The click that closes the menu stops there
+ * — the button is not pressed until the next click, and the page does not
+ * react to the mouse at all while the menu is up. The menu keeps a
+ * see-through cover over the page for that; tint it with `::part(backdrop)`.
+ *
+ * `bindPopoverTrigger` hooks up the button that opens it.
+ */
+export const SoftDismiss: Story = {
+  // There is nothing to snapshot here: this story is about what happens when
+  // you click, not about how the menu looks.
+  tags: ['skip-test'],
+  args: {
+    softDismiss: true,
+  },
+  render: (args) => {
+    const menu = document.createElement('obc-brilliance-menu');
+    Object.assign(menu, args);
+    menu.style.cssText =
+      'position: fixed; position-anchor: --soft-dismiss-demo;' +
+      'top: calc(anchor(bottom) + 4px); left: anchor(left);';
+
+    const trigger = document.createElement('button');
+    trigger.textContent = 'Brilliance';
+    trigger.style.cssText = 'anchor-name: --soft-dismiss-demo;';
+    bindPopoverTrigger(trigger, menu);
+
+    let hits = 0;
+    const behind = document.createElement('button');
+    behind.textContent = 'a button behind the menu';
+    behind.style.cssText = 'display: block; margin-top: 240px;';
+    behind.addEventListener('click', () => {
+      behind.textContent = `clicked ${++hits} time${hits === 1 ? '' : 's'}`;
+    });
+
+    const root = document.createElement('div');
+    root.append(trigger, menu, behind);
+    return root;
   },
 };

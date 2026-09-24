@@ -284,11 +284,13 @@ export class ObcTopBar extends LitElement {
     }, 500);
   }
 
+  /**
+   * Ends a hold. The event a short press stands for is dispatched from the
+   * `click` that follows, not here: a menu opened while the pointer is still
+   * going up gets closed again by that same click in current browsers, which
+   * see it as a click outside a popover that has just opened.
+   */
   private leftButtonUp() {
-    if (this.leftButtonEvent) {
-      this.dispatchEvent(this.leftButtonEvent);
-      this.leftButtonEvent = null;
-    }
     if (this.leftButtonTimeout) {
       clearTimeout(this.leftButtonTimeout);
       this.leftButtonTimeout = null;
@@ -301,16 +303,22 @@ export class ObcTopBar extends LitElement {
   }
 
   /**
-   * Keyboard and assistive-technology activation of the hold button.
+   * Sends the event a press of the hold button stands for.
    *
    * Enter, Space and a screen reader's activate command arrive as a `click`
-   * with `detail` 0 and never as a pointer sequence, so they cannot pass
-   * through the hold timer; a pointer click arrives with `detail` 1 after
-   * `leftButtonUp()` has already dispatched.
+   * with `detail` 0 and no pointer press before it, so they get the event
+   * directly. A pointer click arrives with `detail` 1 after the press: the
+   * event stored on the way down is sent now, unless the press ran long
+   * enough to start emergency brightness, which used it up.
    */
   private leftButtonActivate(event: MouseEvent, type: string) {
-    if (event.detail !== 0) return;
-    this.dispatchEvent(new CustomEvent(type));
+    if (event.detail === 0) {
+      this.dispatchEvent(new CustomEvent(type));
+      return;
+    }
+    if (!this.leftButtonEvent) return;
+    this.dispatchEvent(this.leftButtonEvent);
+    this.leftButtonEvent = null;
   }
 
   private leftButtonLeave() {

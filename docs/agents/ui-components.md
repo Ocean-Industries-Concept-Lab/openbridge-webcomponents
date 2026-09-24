@@ -173,3 +173,59 @@ walk is `checkbox-list-visibility.ts`, guarded by its spec. Reserve `level`
 for lists with expandable rows: a level above 0 always reserves the 48px
 chevron slot, so flat lists such as the context menu's nested checkboxes keep
 their own compact padding instead.
+
+## Soft dismiss (menus and overlays)
+
+A panel that opens over content closes on a click outside and on `Escape`,
+and that click does nothing else. `PopoverController`
+(`src/internal/popover-controller.ts`) puts `popover="auto"` on the host,
+keeps it in step with the host's `open` property, and holds a see-through
+cover over the page while the panel is open (#1293).
+
+Adopting it takes three things on the host: a `softDismiss` boolean, an `open`
+boolean, and `@mixin soft-dismiss;` in the component CSS. `obc-brilliance-menu`
+is the reference.
+
+- `softDismiss` is opt-in because `[popover]` is `display: none` until shown.
+  On by default it would hide every panel a consumer already positions and
+  shows itself.
+- The `@mixin soft-dismiss` reset is not optional. The UA sheet gives
+  `[popover]` `inset: 0; margin: auto` plus a border, padding and a `Canvas`
+  background, so without it the panel is re-centred with chrome around it. An
+  outer-tree rule beats `:host` whatever its specificity, so a consumer's own
+  anchor positioning still wins.
+- When the panel closes for a reason other than `open` being set — a click
+  on the cover, `Escape` — the controller writes `open` back to `false` and
+  fires `close`. The browser only reports the change; the property and the
+  event are the component's. A consumer mirroring that state in a button's
+  `activated` flag listens for `close` rather than re-deriving it from its
+  own flag.
+- `popovertarget` does not cross shadow roots, so a trigger inside one
+  component cannot declare a panel that lives in another tree. That is what
+  `bindPopoverTrigger(trigger, panel)` is for.
+- The click outside is swallowed. The controller keeps a transparent cover
+  (`part="backdrop"`) over the whole page while the panel is open, stacked
+  just under it, so the first click only closes the panel and the page gets
+  no hover or wheel either. A consumer that wants a tint styles
+  `::part(backdrop)`; nothing else about it is a consumer's concern.
+- The cover starts below the top bar: its `top` is `--topbar-height`,
+  falling back to `--app-components-topbar-touch-target-size`. The bar stays
+  usable while a panel is open, so moving between top-bar menus is one click;
+  an app without a top bar sets `--topbar-height: 0`. A consumer's
+  `::part(backdrop)` rule still wins over the cover's own styling.
+- Because the bar is reachable, a second click on a panel's own button
+  arrives after the browser has already closed the panel. `bindPopoverTrigger`
+  remembers the state as the mouse goes down for exactly that reason; a
+  consumer toggling its own flag from the button's event is fine as well,
+  since the click arrives before `close` does. Reading `:popover-open` inside
+  a click handler is the one thing that reopens the panel.
+- Keyboard focus is not held in the panel — a `Tab` still moves into the
+  page the mouse cannot reach.
+- A panel that is only mounted while open keeps its `v-if`: mounting a menu
+  eagerly also builds its contents, and in `vue-demo` that meant router links
+  for routes that did not exist yet.
+
+Four overlays still hand-roll dismissal, listed in #1293: `obc-split-button`
+and `obc-readout`'s source picker each run a `window` `pointerdown` listener,
+`obc-poi-group` renders a backdrop div, and `obc-navigation-item-group` has
+nothing at all.

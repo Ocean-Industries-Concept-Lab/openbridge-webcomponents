@@ -1,0 +1,32 @@
+/* Undoes the browser's default popover styling for components using
+ * `softDismiss` (#1293).
+ *
+ * The browser gives any element with a `popover` attribute a ready-made
+ * dialog look: a border, padding, a solid background, and a place in the
+ * middle of the screen. These menus already have their own look, and whoever
+ * uses them decides where they sit, so all of that has to go.
+ *
+ * Placement is left alone on purpose. A rule written outside the component
+ * beats a `:host` rule no matter how specific, so a consumer positioning the
+ * menu under its button still gets what it asked for. */
+@define-mixin soft-dismiss {
+  :host([popover]) {
+    /* The browser pins a popover to all four edges and lets the automatic
+       margins centre it. Unpinning drops it back where it would normally sit,
+       for the consumer to position from. */
+    inset: auto;
+    margin: 0;
+
+    padding: 0;
+    border: none;
+    background: none;
+    color: inherit;
+
+    /* The menus scroll their own content. */
+    overflow: visible;
+
+    /* The browser shrink-wraps a popover to its contents. */
+    width: auto;
+    height: auto;
+  }
+}
