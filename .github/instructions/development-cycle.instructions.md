@@ -187,11 +187,13 @@ gh run view <run-id> --log-failed              # empty output: gh api repos/<own
 
 The preview is a build behind: it deploys after the whole `build_demo` run
 has finished, and the channel serves `max-age=3600`, so a link can show the
-previous push for up to an hour. The channel is `pr-<number>`, so a link keeps
-working for the life of the pull request, and retitling, draft and ready change
-nothing. Each site has a Firebase channel quota; when it fills, the deploy
-fails with a 429 on an otherwise green build and stale channels have to be
-deleted before previews come back.
+previous push for up to an hour. The channel is `pr-<number>`, so one link
+serves every later push to that pull request, and retitling, draft and ready
+change nothing. It is not permanent: the workflow sets no `expires`, so a
+channel with no deploy for seven days expires and an idle pull request's link
+stops working until the next push revives it. Each site also has a channel
+quota; when it fills, the deploy fails with a 429 on an otherwise green build,
+and stale channels have to be deleted before previews come back at all.
 
 ## 10. Done
 
