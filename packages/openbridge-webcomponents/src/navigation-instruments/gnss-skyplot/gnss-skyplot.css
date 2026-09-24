@@ -1,0 +1,125 @@
+* {
+  box-sizing: border-box;
+}
+
+.container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.container > obc-watch,
+.container > svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Marker hues. The `.obc-categorical-color-*` classes in palettes/manual.css
+   are global, so they cannot reach into this shadow root — and one plot needs
+   a different hue per marker anyway. Same four shades, bound per hue here. */
+.hue-regular,
+.legend-swatch:not([class*="hue-"]) {
+  --sat-strong: var(--base-gray-500);
+  --sat-strong-contrast: var(--base-gray-050);
+  --sat-tint: var(--base-gray-100);
+  --sat-tint-border: var(--base-gray-300);
+}
+
+.hue-enhanced,
+.hue-gps {
+  --sat-strong: var(--base-blue-500);
+  --sat-strong-contrast: var(--base-blue-050);
+  --sat-tint: var(--base-blue-100);
+  --sat-tint-border: var(--base-blue-300);
+}
+
+.hue-glonass {
+  --sat-strong: var(--base-orange-500);
+  --sat-strong-contrast: var(--base-orange-050);
+  --sat-tint: var(--base-orange-100);
+  --sat-tint-border: var(--base-orange-300);
+}
+
+.hue-beidou {
+  --sat-strong: var(--base-teal-500);
+  --sat-strong-contrast: var(--base-teal-050);
+  --sat-tint: var(--base-teal-100);
+  --sat-tint-border: var(--base-teal-300);
+}
+
+/* TODO(designer): Galileo is absent from the BETA mock, which colours GPS,
+   GLONASS and BeiDou only. Mint is the next unused categorical mode. */
+.hue-galileo {
+  --sat-strong: var(--base-mint-500);
+  --sat-strong-contrast: var(--base-mint-050);
+  --sat-tint: var(--base-mint-100);
+  --sat-tint-border: var(--base-mint-300);
+}
+
+.marker-halo {
+  fill: none;
+  stroke: var(--border-silhouette-color);
+}
+
+.marker-disc {
+  fill: var(--sat-tint);
+  stroke: var(--sat-tint-border);
+}
+
+.marker.tracked .marker-disc {
+  fill: var(--sat-strong);
+  stroke: var(--sat-strong);
+}
+
+.marker-id {
+  @mixin font-generic-beta-xs-semibold;
+  /* The number holds its on-screen size as the instrument scales, like a tick
+     label — but only while three digits still fit the disc. Past that it
+     shrinks with the marker instead of spilling over it. */
+  font-size: min(
+    calc(var(--global-typography-generic-xs-font-size) / var(--scale, 1)),
+    13px
+  );
+  /* Lining, tabular figures keep two- and three-digit numbers centred alike. */
+  font-feature-settings:
+    "lnum" 1,
+    "tnum" 1;
+  fill: var(--sat-strong);
+  dominant-baseline: central;
+  text-anchor: middle;
+}
+
+.marker.tracked .marker-id {
+  fill: var(--sat-strong-contrast);
+}
+
+.legend {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  pointer-events: none;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.legend-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: var(--sat-strong);
+}
+
+.legend-label {
+  @mixin font-generic-beta-xs-regular;
+  color: var(--element-neutral-color);
+}
