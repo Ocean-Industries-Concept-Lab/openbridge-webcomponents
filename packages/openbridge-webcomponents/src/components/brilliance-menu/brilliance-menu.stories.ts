@@ -75,9 +75,13 @@ export const NoDuskPaletteCompact: Story = {
 };
 
 export const AdditionalScreenControls: Story = {
+  args: {
+    showAdditionalScreenControls: true,
+  },
   render: (args) =>
     html`<obc-brilliance-menu
       .showScreenControlLink=${args.showScreenControlLink}
+      .showAdditionalScreenControls=${args.showAdditionalScreenControls}
     >
       <div
         slot="additional-screen-controls"
