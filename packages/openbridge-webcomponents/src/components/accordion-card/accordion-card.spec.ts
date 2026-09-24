@@ -17,6 +17,14 @@ async function mount(setup: (el: ObcAccordionCard) => void = () => {}) {
 
 const frame = () => new Promise((r) => requestAnimationFrame(() => r(null)));
 
+/**
+ * Whether the panel transitions at all. Under `prefers-reduced-motion: reduce`
+ * the track snaps, so there is no mid-slide moment to observe — the focus half
+ * of that test still has to hold in both modes.
+ */
+const animates = () =>
+  !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
 const sr = (el: ObcAccordionCard) => el.shadowRoot!;
 const panel = (el: ObcAccordionCard) =>
   sr(el).querySelector<HTMLElement>('.panel')!;
@@ -62,7 +70,9 @@ describe('obc-accordion-card expand animation', () => {
     await el.updateComplete;
     await frame();
 
-    expect(getComputedStyle(panel(el)).gridTemplateRows).not.toBe('0px');
+    if (animates()) {
+      expect(getComputedStyle(panel(el)).gridTemplateRows).not.toBe('0px');
+    }
     inner.focus();
     expect(document.activeElement).not.toBe(inner);
   });
@@ -101,5 +111,34 @@ describe('obc-accordion-card expand animation', () => {
     sr(el).querySelector<HTMLButtonElement>('.content-button')!.click();
     expect(el.expanded).toBe(true);
     expect(seen).toEqual([true]);
+  });
+
+  it('returns focus to the header when it closes with focus inside', async () => {
+    const el = await mount((e) => (e.expanded = true));
+    const inner = el.querySelector<HTMLButtonElement>('#inner')!;
+    inner.focus();
+    expect(document.activeElement).toBe(inner);
+
+    el.expanded = false;
+    await el.updateComplete;
+    await frame();
+    await frame();
+
+    const header = sr(el).querySelector<HTMLButtonElement>('.content-button')!;
+    expect(sr(el).activeElement).toBe(header);
+    expect(document.activeElement).not.toBe(document.body);
+  });
+
+  it('leaves focus alone when it closes from the header', async () => {
+    const el = await mount((e) => (e.expanded = true));
+    const header = sr(el).querySelector<HTMLButtonElement>('.content-button')!;
+    header.focus();
+
+    header.click();
+    await el.updateComplete;
+    await frame();
+    await frame();
+
+    expect(sr(el).activeElement).toBe(header);
   });
 });
