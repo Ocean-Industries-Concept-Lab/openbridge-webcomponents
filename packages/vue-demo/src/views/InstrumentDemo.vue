@@ -150,7 +150,9 @@ onUnmounted(() => {
   box-sizing: border-box;
   display: grid;
   padding: 4px;
-  grid-template-columns: repeat(6, 1fr) 6fr 6fr;
+  /* a bare fr never shrinks below its content, and in Chromium the rudders'
+     aspect box widens the propulsion column to the whole page (#1213) */
+  grid-template-columns: repeat(6, minmax(0, 1fr)) minmax(0, 6fr) minmax(0, 6fr);
   grid-template-rows: 6fr repeat(6, 1fr);
   height: calc(100vh - var(--app-components-topbar-touch-target-size));
   width: 100%;
