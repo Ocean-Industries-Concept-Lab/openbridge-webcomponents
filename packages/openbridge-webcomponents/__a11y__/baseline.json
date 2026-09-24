@@ -140,6 +140,10 @@
   "application-components-containers-modal-window-sizing--fixed-height": [
     "scrollable-region-focusable"
   ],
+  "application-components-menus-brilliance-menu--additional-screen-controls": [
+    "button-name",
+    "label"
+  ],
   "application-components-menus-brilliance-menu--compact": [
     "button-name",
     "label"
@@ -467,6 +471,10 @@
     "select-name"
   ],
   "integration-systems-integration-bar-dropdown--primary": [
+    "nested-interactive",
+    "select-name"
+  ],
+  "integration-systems-integration-bar-dropdown--slotted-right-tray-leading": [
     "nested-interactive",
     "select-name"
   ],
