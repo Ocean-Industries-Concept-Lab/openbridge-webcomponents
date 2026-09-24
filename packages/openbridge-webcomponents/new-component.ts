@@ -27,6 +27,7 @@ import {
   componentDir,
   rejectUnless,
   renderFiles,
+  toDefaultTitle,
   toKebabCase,
   type ComponentType,
   type Lifecycle,
@@ -125,7 +126,7 @@ const version = await select('Design version tag', {
   ],
 });
 
-const defaultTitle = name.replace(/([a-z0-9])([A-Z])/g, '$1 $2');
+const defaultTitle = toDefaultTitle(name);
 const title = await question(
   `Storybook title under ${FAMILIES[type].group}/ (Title Case)`,
   {

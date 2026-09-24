@@ -80,21 +80,39 @@ export const FAMILIES: Readonly<Record<ComponentType, FamilyEntry>> = {
 };
 
 /**
+ * UpperCamelCase into its words, an acronym counting as one.
+ *
+ * A naive `([a-z0-9])([A-Z])` split misses the acronym boundary, which leaves
+ * `GNSSSkyplot` as a single word and `GPSWidget` as a single title. Digits stay
+ * attached: the tag wants them separated, a Storybook title does not
+ * (`Valve X-2` is how the shipped story spells it), so each caller decides.
+ */
+export function splitWords(name: string): string[] {
+  return name
+    .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')
+    .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+    .split(' ')
+    .filter(Boolean);
+}
+
+/**
  * UpperCamelCase to the kebab-case half of an element tag.
  *
- * Acronyms and digits are the two boundaries a naive `([a-z0-9])([A-Z])` split
- * misses: it turns `GNSSSkyplot` into `gnssskyplot` and `HydraulicValveX2` into
- * `hydraulic-valvex2`. Digit groups still cannot be inferred — `Valve43` could
- * be `valve-43` or the shipped `valve-4-3` — which is why the caller confirms
- * the tag rather than trusting this.
+ * Digit groups cannot be inferred — `Valve43` could be `valve-43` or the
+ * shipped `valve-4-3` — which is why the caller confirms the tag rather than
+ * trusting this.
  */
 export function toKebabCase(name: string): string {
-  return name
-    .replace(/([A-Z]+)([A-Z][a-z])/g, '$1-$2')
-    .replace(/([a-z])([A-Z])/g, '$1-$2')
+  return splitWords(name)
+    .join('-')
     .replace(/([a-zA-Z])(\d)/g, '$1-$2')
     .replace(/(\d)([a-zA-Z])/g, '$1-$2')
     .toLowerCase();
+}
+
+/** The Storybook title offered as the prompt default, in Title Case. */
+export function toDefaultTitle(name: string): string {
+  return splitWords(name).join(' ');
 }
 
 /** UpperCamelCase, so `Obc${name}` is a legal class name. */

@@ -18,7 +18,9 @@ import {
   quote,
   rejectUnless,
   renderStories,
+  splitWords,
   storyTags,
+  toDefaultTitle,
   toKebabCase,
   type ComponentType,
   type Lifecycle,
@@ -100,6 +102,40 @@ describe('quote', () => {
         await prettier.format(source, {...config, filepath: absPath}),
         value
       ).toBe(source);
+    }
+  });
+});
+
+describe('splitWords', () => {
+  it('keeps an acronym as one word', () => {
+    expect(splitWords('GPSWidget')).toEqual(['GPS', 'Widget']);
+    expect(splitWords('GNSSSkyplot')).toEqual(['GNSS', 'Skyplot']);
+    expect(splitWords('ARPoiButton')).toEqual(['AR', 'Poi', 'Button']);
+    expect(splitWords('TopBar')).toEqual(['Top', 'Bar']);
+    expect(splitWords('Watch')).toEqual(['Watch']);
+  });
+});
+
+describe('toDefaultTitle', () => {
+  it('splits acronyms, which the tag rule alone would not', () => {
+    expect(toDefaultTitle('GPSWidget')).toBe('GPS Widget');
+    expect(toDefaultTitle('ThrusterDial')).toBe('Thruster Dial');
+    expect(toDefaultTitle('ARPoiButton')).toBe('AR Poi Button');
+  });
+
+  it('leaves digits attached, the way the shipped titles spell them', () => {
+    // The story is titled `Valve X-2`, never `Valve X 2`; the tag wants the
+    // split, a title does not, and the prompt default is editable either way.
+    expect(toDefaultTitle('HydraulicValveX2')).toBe('Hydraulic Valve X2');
+    expect(toKebabCase('HydraulicValveX2')).toBe('hydraulic-valve-x-2');
+  });
+
+  it('is already Title Case, as the story lint rule requires', () => {
+    for (const name of ['GPSWidget', 'ThrusterDial', 'PitchRollHeave']) {
+      const title = toDefaultTitle(name);
+      for (const word of title.split(' ')) {
+        expect(word[0], title).toBe(word[0].toUpperCase());
+      }
     }
   });
 });
