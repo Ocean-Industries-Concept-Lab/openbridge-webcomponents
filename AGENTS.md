@@ -159,6 +159,7 @@ The table below is generated too. Edit `docs/agents/*.md`, never this block.
 | [coding-standards](docs/agents/coding-standards.md) | `packages/openbridge-webcomponents/src/**/{*.ts,*.css}`<br>`packages/openbridge-webcomponents/script/**/{*.ts,*.mjs}`<br>`packages/openbridge-webcomponents/.storybook/**/*.ts`<br>`!packages/openbridge-webcomponents/src/{icons,generated,manual-icon}/**` | Comment rules, CSS why-comments, the writing-style ban list, boolean naming and Storybook titles |
 | [connector-diagram](docs/agents/connector-diagram.md) | `packages/connector-diagram/**` | Canvas pipe-drawing package — tests, snapshot baselines and the workspace lockfile |
 | [css-postcss](docs/agents/css-postcss.md) | `packages/openbridge-webcomponents/src/**/*.css` | PostCSS mixins, the two-layer colour model, size variants and font mixins |
+| [development-cycle](docs/agents/development-cycle.md) | `packages/openbridge-webcomponents/src/**`<br>`!packages/openbridge-webcomponents/src/{icons,generated,manual-icon}/**`<br>`packages/vue-demo/{src,e2e}/**` | The commands of one change, in order — fresh clone, the inner loop, snapshots, the gates, wrappers and the demos, merging develop, reviews, CI and the preview links |
 | [docgen](docs/agents/docgen.md) | `packages/openbridge-webcomponents/script/docgen/**` | The OpenAI-backed JSDoc generation CLI and its review-copy workflow |
 | [external-scale](docs/agents/external-scale.md) | `packages/openbridge-webcomponents/src/building-blocks/{external-scale,bar-vertical,bar-horizontal}/**`<br>`packages/openbridge-webcomponents/src/navigation-instruments/{gauge-vertical,gauge-horizontal,gauge-trend}/**` | External scale renderer and bar/gauge wrappers |
 | [figma-refresh](docs/agents/figma-refresh.md) | `packages/openbridge-webcomponents/src/palettes/variables.css`<br>`packages/openbridge-webcomponents/src/mixins/fonts.css`<br>`packages/openbridge-webcomponents/script/{figmavariables.json,download-icons.ts,convert-icons.ts,check-icon-hex-leaks.ts}`<br>`packages/openbridge-webcomponents/src/icons/**` | Regenerating variables.css, fonts.css, figmavariables.json and the icons from Figma, with the tripwires and the commit shape |
@@ -183,6 +184,8 @@ The table below is generated too. Edit `docs/agents/*.md`, never this block.
 ## 5. Build, Test & Run
 
 All commands are run from `packages/openbridge-webcomponents/` unless noted.
+Their order over one change, from a fresh clone to a merged PR, is
+[`docs/agents/development-cycle.md`](docs/agents/development-cycle.md).
 
 ```bash
 # Install dependencies (from repo root)
@@ -217,7 +220,7 @@ npm run test-storybook          # visual snapshot tests (Vitest + Playwright)
 npm run test-a11y               # axe over every story; fails on a violation the baseline does not carry
 npm run test-a11y:update        # rewrite __a11y__/baseline.json after fixing or adding violations
 npm run test-storybook:watch    # watch mode
-npm run update-snapshots        # replace baselines
+npx vitest run --project storybook 'component-name' --update   # regenerate that component's baselines (rule 12)
 
 # Custom element manifest
 npm run analyze           # regenerate custom-elements.json

@@ -235,7 +235,8 @@ sweep, the story at 2× — so a reviewer sees the change before reading it. No
 names or handles anywhere
 ([`coding-standards.md` § Writing style](coding-standards.md)). The
 Verification section names the snapshot filters that ran and the a11y § 8
-items checked.
+items checked. The commands of the whole cycle, in order, are in
+[`development-cycle.md`](development-cycle.md).
 
 ## Model choice
 
