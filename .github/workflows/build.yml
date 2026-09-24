@@ -55,6 +55,12 @@ jobs:
       - name: Check formatting vue-demo
         run: cd packages/vue-demo && npm run format:check
 
+      - name: Lint vue-demo
+        run: cd packages/vue-demo && npm run lint:check
+
+      - name: Lint react-demo
+        run: cd packages/react-demo && npm run lint
+
       - name: Typecheck connector-diagram
         run: cd packages/connector-diagram && npm run typecheck
 

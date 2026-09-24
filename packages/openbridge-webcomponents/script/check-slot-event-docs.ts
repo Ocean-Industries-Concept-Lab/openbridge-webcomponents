@@ -36,9 +36,9 @@
  *   `slot="name"` *projection attribute* in the template does NOT suppress this
  *   (it exposes nothing); only a genuine imperative read of the consumer's
  *   children (e.g. `getAttribute('slot') === 'name'`) counts as a real slot.
- * - **Empty description (warning):** a `@slot`/`@fires` tag with only a name and
+ * - **Empty description (error):** a `@slot`/`@fires` tag with only a name and
  *   no descriptive text. These become blank cells in the manifest / Storybook
- *   controls; warnings do not fail CI.
+ *   controls.
  * - **Ghost class-level `@property` tag (error):** class-level `@property`
  *   tags are the documentation home for properties (AGENTS.md §3.6). A
  *   `@property`/`@prop` tag in the class JSDoc whose name is not a
@@ -262,7 +262,6 @@ async function run(): Promise<void> {
   });
 
   const errors: Finding[] = [];
-  const warnings: Finding[] = [];
   let componentCount = 0;
 
   for (const rel of files.sort()) {
@@ -338,18 +337,18 @@ async function run(): Promise<void> {
       }
     }
 
-    // Empty description (warning) — a @slot/@fires tag with only a name produces
-    // a blank cell in the manifest / Storybook controls. Class-level tags only.
+    // Empty description — a @slot/@fires tag with only a name produces a blank
+    // cell in the manifest / Storybook controls. Class-level tags only.
     const classDocs = topLevelDocblocks(source);
     for (const tag of parseSlotTags(classDocs)) {
       if (!tag.hasDescription) {
         const label = tag.name === '-' ? 'default slot' : `@slot ${tag.name}`;
-        warnings.push({file: rel, message: `${label} has no description`});
+        errors.push({file: rel, message: `${label} has no description`});
       }
     }
     for (const tag of parseEventTags(classDocs)) {
       if (!tag.hasDescription) {
-        warnings.push({
+        errors.push({
           file: rel,
           message: `@fires ${tag.name} has no description`,
         });
@@ -400,27 +399,18 @@ async function run(): Promise<void> {
     }
   };
 
-  if (warnings.length > 0) {
-    console.warn(
-      `\n⚠️  ${warnings.length} empty-description warning(s) (non-blocking):`
-    );
-    printByFile(warnings, (m) => console.warn(m));
-  }
-
   if (errors.length > 0) {
     console.error(`\nFound ${errors.length} issue(s):`);
     printByFile(errors, (m) => console.error(m));
     console.error(
       `\n❌ Slot & event documentation audit failed. Add the missing @slot/@fires ` +
-        `tags (or remove the phantom ones). See docs/agents/jsdoc.md.`
+        `tags, describe the empty ones, or remove the phantom ones. See docs/agents/jsdoc.md.`
     );
     process.exitCode = 1;
     return;
   }
 
-  const suffix =
-    warnings.length > 0 ? ` (${warnings.length} non-blocking warning(s))` : '';
-  console.log(`\n✅ Slot & event documentation audit passed.${suffix}`);
+  console.log('\n✅ Slot & event documentation audit passed.');
 }
 
 run().catch((error: unknown) => {
