@@ -63,9 +63,8 @@ reject.
 the CI `test` job (`mcr.microsoft.com/playwright:v1.60.0-noble`) accepts, so a
 scoped `--update` followed by a plain re-run is the whole procedure, except for
 small `<canvas>` charts ([`skip-test` or `!snapshot`](#skip-test-or-snapshot)).
-On macOS take the Docker route from the package directory (the scripts mount
-`$(pwd)`), keeping the filter in front of the flag — `update-snapshots:docker`
-has no filter and rewrites the whole suite:
+On macOS take the Docker route from the package directory (the script mounts
+`$(pwd)`), keeping the filter in front of the flag:
 
 ```bash
 npm run test-storybook:docker -- -- component-name --update
@@ -73,9 +72,9 @@ npm run test-storybook:docker -- -- component-name
 ```
 
 See [IMPLEMENTATION_GUIDELINES.md § Docker Testing](../../IMPLEMENTATION_GUIDELINES.md#docker-testing)
-and [`ci-and-release.md`](../../docs/agents/ci-and-release.md). The `/update-snapshots`
-PR-comment workflow is not a fallback (see Open), and it fires on any comment
-that merely contains that string — keep the command out of PR prose.
+and [`ci-and-release.md`](../../docs/agents/ci-and-release.md). That image is the one the retired
+`/update-snapshots` workflow could never import the Vitest setup file inside, so
+confirm it still works before trusting a baseline it produces (see Open).
 
 ## Checking a baseline against the design
 
@@ -225,5 +224,5 @@ re-run scoped to the single component rather than retrying the whole suite.
 
 ## Open
 
-- `update-snapshots.yml` fails inside its Docker image before writing anything, and triggers on any PR comment containing its command (#1179).
+- The Docker route (`test-storybook:docker`) runs the image whose Vitest setup import failed in every `update-snapshots.yml` run; the workflow is retired, the image is unverified (#1179).
 - Element-cropped story screenshots (`npm run screenshots`, opt-in through `VITE_STORYBOOK_TAKE_SCREENSHOT`, sized from the `@snapshot-base-width` / `@snapshot-base-height` JSDoc tags) are in draft #731; until it lands, crop the 1280×720 baseline by hand as above.
