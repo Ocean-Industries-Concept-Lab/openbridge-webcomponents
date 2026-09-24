@@ -28,6 +28,7 @@ globs:
   - packages/openbridge-webcomponents/src/navigation-instruments/gauge-proportional/**
   - packages/openbridge-webcomponents/src/navigation-instruments/pitch-roll-yaw/**
   - packages/openbridge-webcomponents/src/navigation-instruments/position-deviation/**
+  - packages/openbridge-webcomponents/src/navigation-instruments/gnss-skyplot/**
   - packages/openbridge-webcomponents/src/navigation-instruments/speed-directions/**
   - packages/openbridge-webcomponents/src/navigation-instruments/top-view-propulsion/**
   - packages/openbridge-webcomponents/src/navigation-instruments/velocity-projection-plot/**
@@ -175,6 +176,17 @@ When adding new features or fixing bugs:
   here) because the watch's `splitBand` draws the lane chrome itself;
   consumers (`top-view-propulsion`, `gauge-proportional`) keep only their
   value graphics.
+- **`watch/concentric-grid.ts`** — the polar reference grid the design calls
+  `Watch-face-concentric`: evenly spaced rings, a centre circle and radial
+  spokes, all in the watch's own coordinates and angle convention. Consumed by
+  `pitch-roll-yaw` (4 spokes, no outer ring) and `gnss-skyplot` (8 spokes);
+  the movement plot (Figma 23787-69676) is the next consumer. The Figma radii
+  are 164 / 123 / 82 / 41 with a centre circle of 12, which is the usual
+  4-unit inset from the code's 160 / 120 / 80 / 40 — the outermost division
+  therefore lands exactly on `obc-watch`'s `single` inner ring, so consumers
+  pass `hasOuterRing: false` rather than doubling that stroke. Spokes are
+  emitted as diameters, half as many elements as spokes, so an even count
+  leaves no seam at the centre.
 - **Interval tick ladder** — `tickmark.ts`'s `buildIntervalTickmarks()` is
   the one value→tick implementation for interval-configured gauges
   (`instrument-radial`, `gauge-proportional`): primary/secondary/tertiary
@@ -532,6 +544,7 @@ Common instrument CSS variables used in `watch.ts` and helpers:
 | `rot-sector`                | `instrument-radial`                      | Rate of turn sector gauge                                                                                            |
 | `azimuth-thruster`          | `obc-watch` + overlay                    | Thruster with angle setpoint and thrust bar                                                                          |
 | `gauge-valve` (automation/) | `obc-watch`                              | Per-port track sectors (`areas` + `roundRadius`/`outlined`), cap-pill `needles`, 60° scale, `scalePosition` rotation |
+| `gnss-skyplot`              | `obc-watch` + `concentric-grid`          | Satellites by azimuth/elevation on the concentric face; categorical hue per constellation, optional legend           |
 
 ---
 
