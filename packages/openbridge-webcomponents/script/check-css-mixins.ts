@@ -42,7 +42,7 @@
 import fs from 'fs';
 import path from 'path';
 import {globby} from 'globby';
-import {maskCssComments} from './css/comments.js';
+import {maskCssText} from './css/mask.js';
 
 interface MixinDefinitionLocation {
   file: string;
@@ -87,8 +87,9 @@ async function run(): Promise<void> {
 
   for (const file of cssFiles) {
     const content = fs.readFileSync(file, 'utf8');
-    // A comment can name a mixin without defining or using it.
-    const code = maskCssComments(content);
+    // A comment or a quoted value can name a mixin without defining or
+    // using it.
+    const code = maskCssText(content);
 
     const defineRegex = /@define-mixin\s+([A-Za-z0-9_-]+)/g;
     for (const match of code.matchAll(defineRegex)) {

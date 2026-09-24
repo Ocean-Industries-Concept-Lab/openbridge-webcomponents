@@ -43,7 +43,7 @@
 import fs from 'fs';
 import path from 'path';
 import {globby} from 'globby';
-import {maskCssComments} from './css/comments.js';
+import {maskCssText} from './css/mask.js';
 
 // Undefined CSS variables that only a fix in Figma can resolve (#929).
 const allowedUndefinedVariables = new Set<string>([]);
@@ -90,8 +90,9 @@ async function run(): Promise<void> {
 
   for (const file of cssFiles) {
     const content = fs.readFileSync(file, 'utf8');
-    // A comment can name a variable without defining or using it.
-    const code = maskCssComments(content);
+    // A comment or a quoted value can name a variable without defining or
+    // using it.
+    const code = maskCssText(content);
 
     const definitionRegex = /(^|[;{\s])(\-\-[A-Za-z0-9_-]+)\s*:/gm;
     for (const match of code.matchAll(definitionRegex)) {
