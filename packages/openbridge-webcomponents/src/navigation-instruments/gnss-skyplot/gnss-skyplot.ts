@@ -209,7 +209,13 @@ export class ObcGnssSkyplot extends LitElement {
 
   private renderLegend() {
     const entries = this.legendEntries;
-    if (!this.showLegend || entries.length === 0) {
+    // The swatches carry constellation hues; without colorByConstellation the
+    // markers do not, and the key would contradict the plot.
+    if (
+      !this.showLegend ||
+      !this.colorByConstellation ||
+      entries.length === 0
+    ) {
       return nothing;
     }
     return html`

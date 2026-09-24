@@ -117,6 +117,31 @@ describe('obc-gnss-skyplot — the legend follows the satellites', () => {
     expect(labels).toEqual(['GPS', 'BeiDou']);
   });
 
+  it('draws no legend while the markers carry no constellation hue', async () => {
+    const screen = render(
+      html`<div style="width: 512px; height: 512px">
+        <obc-gnss-skyplot
+          showLegend
+          .satellites=${
+            [
+              {
+                id: 1,
+                azimuth: 0,
+                elevation: 30,
+                constellation: SatelliteConstellation.gps,
+              },
+            ] satisfies Satellite[]
+          }
+        ></obc-gnss-skyplot>
+      </div>`
+    );
+    const el = screen.container.querySelector(
+      'obc-gnss-skyplot'
+    ) as ObcGnssSkyplot;
+    await el.updateComplete;
+    expect(el.shadowRoot!.querySelector('.legend')).toBeNull();
+  });
+
   it('draws no legend for satellites that carry no constellation', async () => {
     const screen = render(
       html`<div style="width: 512px; height: 512px">

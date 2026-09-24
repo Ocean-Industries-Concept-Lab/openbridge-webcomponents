@@ -18,10 +18,8 @@
 }
 
 /* Marker hues. The `.obc-categorical-color-*` classes in palettes/manual.css
-   are global, and a global class cannot reach into this shadow root — nor
-   would one do, since a mixed-constellation fix needs a different hue per
-   marker inside a single instrument. Each class below binds the same four
-   categorical shades the design's marker uses. */
+   are global, so they cannot reach into this shadow root — and one plot needs
+   a different hue per marker anyway. Same four shades, bound per hue here. */
 .hue-regular,
 .legend-swatch:not([class*="hue-"]) {
   --sat-strong: var(--base-gray-500);
