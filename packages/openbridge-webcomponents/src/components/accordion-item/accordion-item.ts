@@ -102,7 +102,8 @@ export class ObcAccordionItem extends LitElement {
     if (!panel) return;
     releaseFocusBefore(
       panel,
-      this.shadowRoot?.querySelector<HTMLButtonElement>('.content-button')
+      this.shadowRoot?.querySelector<HTMLButtonElement>('.content-button'),
+      this.shadowRoot?.querySelector<HTMLElement>('.wrapper')
     );
   }
 
@@ -142,6 +143,7 @@ export class ObcAccordionItem extends LitElement {
   override render() {
     return html`
       <div
+        tabindex="-1"
         class=${classMap({
           wrapper: true,
           'state-disabled': this.disabled,

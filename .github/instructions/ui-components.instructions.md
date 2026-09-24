@@ -209,5 +209,9 @@ off. Follow it for any new collapsing component.
   collapsing a panel while a slotted control has focus loses the user's place
   and the next Tab starts from the top of the document. Both components move
   focus to their header in `willUpdate`, through `releaseFocusBefore()` in
-  `internal/focus.ts`; a spec per component pins it.
+  `internal/focus.ts`, which tries each fallback and checks whether focus
+  actually left — a `disabled` header takes none, so the shadow wrapper carries
+  `tabindex="-1"` as the last resort. The tabindex sits on the wrapper and never
+  on the host, so a parent still controls the tab order. A spec per component
+  pins both paths.
 - `prefers-reduced-motion: reduce` drops every one of those transitions.

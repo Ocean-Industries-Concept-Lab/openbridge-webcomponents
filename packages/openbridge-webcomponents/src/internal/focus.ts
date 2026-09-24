@@ -40,20 +40,28 @@ export function composedContains(root: Node, node: Node | null): boolean {
 }
 
 /**
- * Moves focus to `fallback` when it currently sits inside `hidden`.
+ * Moves focus out of `hidden`, to the first fallback that will take it.
  *
  * Call it just before a region becomes `inert` or is taken out of the page.
  * The browser blurs whatever it hides, and focus lands on `<body>` a frame or
  * two later, so the next Tab press starts from the top of the document instead
  * of where the user was.
+ *
+ * Each candidate is tried and then checked, rather than inspected first: a
+ * `disabled` button, a hidden one and an element with no tabindex all refuse
+ * focus for different reasons, and the only reliable question is whether focus
+ * actually left.
  */
 export function releaseFocusBefore(
   hidden: Node,
-  fallback: HTMLElement | null | undefined
+  ...fallbacks: (HTMLElement | null | undefined)[]
 ): void {
-  if (!fallback) return;
   if (!composedContains(hidden, deepActiveElement())) return;
-  fallback.focus();
+  for (const candidate of fallbacks) {
+    if (!candidate) continue;
+    candidate.focus();
+    if (!composedContains(hidden, deepActiveElement())) return;
+  }
 }
 
 function isTabbable(element: Element): element is HTMLElement {
