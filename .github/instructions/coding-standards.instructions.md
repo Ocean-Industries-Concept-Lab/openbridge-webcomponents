@@ -11,7 +11,7 @@ applyTo: "packages/openbridge-webcomponents/src/**/*.ts,packages/openbridge-webc
 `AGENTS.md` § 2 carries the summary; `docs/agents/coding-standards.md` is the
 source of truth for comments, CSS comments, writing style, boolean naming and
 Storybook titles.
-`npm run lint:comments` reports what breaks these rules in `src/**/*.ts`.
+`npm run lint:comments` fails on what breaks these rules in `src/**/*.ts`.
 Nothing lints CSS comments — those are the comment pass's job, and the
 reviewer's.
 
