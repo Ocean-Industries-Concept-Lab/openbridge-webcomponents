@@ -15,6 +15,8 @@ import {
   TAG_PATTERN,
   componentDir,
   renderFiles,
+  quote,
+  rejectUnless,
   renderStories,
   storyTags,
   toKebabCase,
@@ -66,6 +68,38 @@ describe('toKebabCase', () => {
     ]) {
       expect(NAME_PATTERN.test(name)).toBe(true);
       expect(TAG_PATTERN.test(`obc-${toKebabCase(name)}`)).toBe(true);
+    }
+  });
+});
+
+describe('rejectUnless', () => {
+  it('rejects in the only shape the prompt library reads', () => {
+    // A boolean or a string return is treated as valid by its isValid(), so a
+    // validator written either way passes every answer.
+    expect(rejectUnless(false, 'nope')).toEqual({
+      isValid: false,
+      error: 'nope',
+    });
+    expect(rejectUnless(true, 'nope')).toBeNull();
+  });
+});
+
+describe('quote', () => {
+  it('matches the literal prettier would write', async () => {
+    const absPath = path.join(PKG, 'src/components/thruster-dial/probe.ts');
+    const config = await prettier.resolveConfig(absPath);
+    for (const value of [
+      'Thruster Dial',
+      "Captain's Chair",
+      'Say "ahead"',
+      'It\'s a "mix"',
+      'Back\\slash',
+    ]) {
+      const source = `const title = ${quote(value)};\n`;
+      expect(
+        await prettier.format(source, {...config, filepath: absPath}),
+        value
+      ).toBe(source);
     }
   });
 });
@@ -154,6 +188,16 @@ describe('storyTags', () => {
     expect(storyTags(current)).toContain(component.tags[0]);
   });
 
+  it('survives an apostrophe in the title', async () => {
+    const story = renderStories(spec({title: "Captain's Chair"}));
+    const absPath = path.join(PKG, 'src/components/thruster-dial/x.stories.ts');
+    const config = await prettier.resolveConfig(absPath);
+    await expect(
+      prettier.format(story, {...config, filepath: absPath})
+    ).resolves.toBeTypeOf('string');
+    expect(story).toContain("Captain's Chair");
+  });
+
   it('titles the story in the family group, and exports Default', () => {
     const story = renderStories(spec({type: 'application'}));
     expect(story).toContain("title: 'Application Components/Thruster Dial'");
@@ -165,8 +209,12 @@ describe('storyTags', () => {
 describe('generated files', () => {
   it('are already prettier-clean, so format:check passes on a fresh scaffold', async () => {
     for (const type of Object.keys(FAMILIES) as ComponentType[]) {
-      for (const hasCss of [true, false]) {
-        const files = renderFiles(spec({type, hasCss}));
+      for (const [hasCss, title] of [
+        [true, 'Thruster Dial'],
+        [false, "Captain's Chair"],
+        [true, 'Say "ahead"'],
+      ] as [boolean, string][]) {
+        const files = renderFiles(spec({type, hasCss, title}));
         for (const [relPath, content] of Object.entries(files)) {
           if (!content.trim()) continue;
           const absPath = path.join(PKG, 'src', relPath);

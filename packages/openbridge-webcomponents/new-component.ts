@@ -25,6 +25,7 @@ import {
   TAG_PATTERN,
   baseName,
   componentDir,
+  rejectUnless,
   renderFiles,
   toKebabCase,
   type ComponentType,
@@ -58,8 +59,11 @@ const name = await question(
   {
     validators: [
       {
-        validate: (value) => NAME_PATTERN.test(value),
-        message: 'Must be UpperCamelCase, e.g. HydraulicValveX2',
+        validate: (value) =>
+          rejectUnless(
+            NAME_PATTERN.test(value),
+            'Must be UpperCamelCase, e.g. HydraulicValveX2'
+          ),
       },
     ],
   }
@@ -81,8 +85,11 @@ const tag =
     defaultValue: suggestedTag,
     validators: [
       {
-        validate: (value) => !value || TAG_PATTERN.test(value),
-        message: 'Must look like obc-hydraulic-valve-x-2',
+        validate: (value) =>
+          rejectUnless(
+            !value || TAG_PATTERN.test(value),
+            'Must look like obc-hydraulic-valve-x-2'
+          ),
       },
     ],
   })) || suggestedTag;
@@ -100,6 +107,8 @@ if (clash) {
   process.exit(1);
 }
 
+// `deprecated` is the fourth tag the lint contract accepts, deliberately not
+// offered: a component is deprecated once it exists, never scaffolded as one.
 const lifecycle = await select<Lifecycle>('Lifecycle (class JSDoc tag)', {
   choices: [
     {value: 'experimental', label: 'experimental — early stage, API will move'},
@@ -116,10 +125,18 @@ const version = await select('Design version tag', {
   ],
 });
 
+const defaultTitle = name.replace(/([a-z0-9])([A-Z])/g, '$1 $2');
 const title = await question(
   `Storybook title under ${FAMILIES[type].group}/ (Title Case)`,
   {
-    defaultValue: name.replace(/([a-z0-9])([A-Z])/g, '$1 $2'),
+    defaultValue: defaultTitle,
+    validators: [
+      {
+        // The title is also the class JSDoc summary, where this ends the block.
+        validate: (value) =>
+          rejectUnless(!value.includes('*/'), 'Cannot contain */'),
+      },
+    ],
   }
 );
 
@@ -133,7 +150,7 @@ const spec = {
   tag,
   type,
   lifecycle,
-  title: title || name.replace(/([a-z0-9])([A-Z])/g, '$1 $2'),
+  title: title || defaultTitle,
   version: version === 'none' ? undefined : version,
   hasCss: files.includes('css'),
 };
@@ -145,13 +162,20 @@ async function format(content: string, absPath: string): Promise<string> {
   return prettier.format(content, {...config, filepath: absPath});
 }
 
-fs.mkdirSync(dir, {recursive: true});
-const written: string[] = [];
+// Everything is formatted before anything is written: prettier throws on a
+// template it cannot parse, and a half-written directory would then block the
+// next run with "already exists".
+const formatted: [string, string][] = [];
 for (const [relPath, content] of Object.entries(renderFiles(spec))) {
   const absPath = path.join(SRC, relPath);
-  fs.writeFileSync(absPath, await format(content, absPath));
-  written.push(path.join('src', relPath));
+  formatted.push([absPath, await format(content, absPath)]);
 }
+
+fs.mkdirSync(dir, {recursive: true});
+const written = formatted.map(([absPath, content]) => {
+  fs.writeFileSync(absPath, content);
+  return path.relative(ROOT, absPath);
+});
 
 const base = baseName(spec);
 console.log(`\nCreated:\n${written.map((file) => `  ${file}`).join('\n')}`);

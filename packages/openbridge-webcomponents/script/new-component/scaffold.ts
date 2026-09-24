@@ -103,6 +103,40 @@ export const NAME_PATTERN = /^[A-Z][a-zA-Z0-9]*$/;
 /** A custom element tag: the `obc-` prefix and lowercase dash-separated words. */
 export const TAG_PATTERN = /^obc-[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
+/**
+ * A string literal prettier will leave alone.
+ *
+ * The prompts are free text, so a legitimate Title Case name like
+ * `Captain's Chair` reaches the template and an unescaped apostrophe closes the
+ * literal early — prettier then refuses to parse the story at all. Prettier
+ * prefers the configured single quote but switches to double when that needs
+ * strictly fewer escapes, so matching it here keeps the generated source
+ * byte-identical to its formatted form.
+ */
+export function quote(value: string): string {
+  const singles = (value.match(/'/g) ?? []).length;
+  const doubles = (value.match(/"/g) ?? []).length;
+  const mark = doubles < singles ? '"' : "'";
+  const escaped = value.replace(/\\/g, '\\\\').replaceAll(mark, `\\${mark}`);
+  return `${mark}${escaped}${mark}`;
+}
+
+/**
+ * A prompt validator response `@topcli/prompts` actually honours.
+ *
+ * Its `isValid()` returns `true` for anything that is not an object, so a
+ * `validate` returning a plain boolean passes every answer — and a non-empty
+ * string counts as valid too, not as the error it looks like. The `message`
+ * property that used to sit beside these validators is not in the library's
+ * interface either. `{isValid: false, error}` is the only rejection it reads.
+ */
+export function rejectUnless(
+  ok: boolean,
+  error: string
+): null | {isValid: false; error: string} {
+  return ok ? null : {isValid: false, error};
+}
+
 export interface ScaffoldSpec {
   /** UpperCamelCase name without the `Obc` prefix. */
   readonly name: string;
@@ -194,7 +228,7 @@ import {Obc${spec.name}} from './${base}.js';
 import './${base}.js';
 
 const meta: Meta<typeof Obc${spec.name}> = {
-  title: '${FAMILIES[spec.type].group}/${spec.title}',
+  title: ${quote(`${FAMILIES[spec.type].group}/${spec.title}`)},
   tags: [${tags}],
   component: '${spec.tag}',
   args: {},

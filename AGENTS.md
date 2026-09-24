@@ -256,9 +256,10 @@ Commits that fail lint or format checks are blocked automatically.
 ### Component Creation Checklist
 
 1. Run `npm run new:component`. It asks for the family, the element tag, the
-   lifecycle and the design version, then writes a component, a story and a
-   stylesheet that already pass `npm run lint` and `npm run format:check`, so
-   the first run of the gates reports your work and not the scaffold's.
+   lifecycle and the design version, then writes a component, a story, and a
+   stylesheet unless you opt out at the `Create files` prompt. All of it
+   already passes `npm run lint` and `npm run format:check`, so the first run
+   of the gates reports your work and not the scaffold's.
 2. Implement the component in `component-name.ts` (extend `LitElement`, register with `@customElement`).
 3. Write styles in `component-name.css` (PostCSS, use mixins from § 7).
 4. Write stories in `component-name.stories.ts`:
