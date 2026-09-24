@@ -18,8 +18,9 @@ const meta: Meta<typeof GnssSkyplot> = {
     showGlonassSatellites: true,
     showGalileioSatellites: true,
     showBeiDouSatellites: true,
-    showStrongSignalsOnly: false,
     showSatelliteIDs: true,
+    showStrongSignalsOnly: false,
+    showActiveSatellitesOnly: false
   },
   argTypes: {
     width: {control: {type: 'range', min: 32, max: 1028, step: 1}},

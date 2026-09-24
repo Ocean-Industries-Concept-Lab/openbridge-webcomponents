@@ -1,4 +1,4 @@
-import {LitElement, svg, html, nothing} from 'lit';
+import {LitElement, svg, html, nothing, PropertyValues} from 'lit';
 import {property} from 'lit/decorators.js';
 import { customElement } from '../../decorator.js';
 
@@ -75,6 +75,8 @@ export class GnssSkyplot extends LitElement {
     {id: 14, type: SatelliteType.Galileio, strength: 15, azimuth: 130, elevation: 53, spoofing: false, jamming: false, spoJamConfirmed: false},
     {id: 15, type: SatelliteType.BeiDou, strength: 45, azimuth: 260, elevation: 14, spoofing: false, jamming: false, spoJamConfirmed: false}
   ];
+
+  private mappedSatellites: SatelliteData[] = [];
   
   @property({type: Boolean}) showGpsSatellites: boolean = false;
   @property({type: Boolean}) showGlonassSatellites: boolean = false;
@@ -85,9 +87,16 @@ export class GnssSkyplot extends LitElement {
   @property({type: Boolean}) showStrongSignalsOnly: boolean = false;
   @property({type: Boolean}) showActiveSatellitesOnly: boolean = false;
 
+  // this.satellites = this.mapSatellitesToCircle(this.generateRandomSatellites());
+
+  override willUpdate(changedProperties: PropertyValues<this>) {
+  if (changedProperties.has('satellites')) {
+    this.mappedSatellites = this.mapSatellitesToCircle(this.satellites);
+  }
+}
+
   override render() {
-    // this.satellites = this.mapSatellitesToCircle(this.generateRandomSatellites());
-    this.satellites = this.mapSatellitesToCircle(this.satellites);
+    // this.satellites = this.mapSatellitesToCircle(this.satellites);
     return html`
       <div class="container">
         ${this.getGnssSkylot()}
@@ -444,12 +453,59 @@ export class GnssSkyplot extends LitElement {
     }
   }
 
+  private shouldShowSatellite(satellite: Satellite): boolean {
+    const isActive = this.isSatelliteActive(satellite);
+    
+    // Active-only filter
+    if (this.showActiveSatellitesOnly && !isActive) {
+      return false;
+    }
+  
+    // Strong-only filter
+    if (this.showStrongSignalsOnly && satellite.strength !== Strength.Strong) {
+      return false;
+    }
+  
+    return true;
+  }
+  
+  private isSatelliteActive(satellite: Satellite): boolean {
+    switch (satellite.type) {
+      case SatelliteType.GPS:
+        return this.showGpsSatellites;
+    
+      case SatelliteType.GLONASS:
+        return this.showGlonassSatellites;
+    
+      case SatelliteType.Galileio:
+        return this.showGalileioSatellites;
+    
+      case SatelliteType.BeiDou:
+        return this.showBeiDouSatellites;
+    
+      default:
+        return false;
+    }
+  }
+
+  private getSatellites() {
+    return svg`
+      ${this.mappedSatellites.map(s =>
+        this.shouldShowSatellite(s)
+          ? this.renderSignalIcon(s)
+          : nothing
+      )}
+    `;
+  }
+
+  /*
   private getSatellites() {
     return svg`
       ${this.satellites.map(s => {
         if (this.showStrongSignalsOnly == true) {
-          if (s.strength == Strength.Strong)
+          if (s.strength == Strength.Strong) {
             return this.renderSignalIcon(s);
+          }
         }
         else {
           if (s.type == SatelliteType.GPS && this.showGpsSatellites == true) {
@@ -470,6 +526,7 @@ export class GnssSkyplot extends LitElement {
       }
     `;
   }
+  */
 
   /*
   private getSignalStrengthLegend() {
