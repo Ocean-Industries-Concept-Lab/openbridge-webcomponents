@@ -58,6 +58,9 @@ export type ObcBrightnessChangeEvent = CustomEvent<{value: number}>;
 export type ObcLinkPaletteChangeEvent = CustomEvent<{value: boolean}>;
 export type ObcLinkBrightnessChangeEvent = CustomEvent<{value: boolean}>;
 
+const BRILLIANCE_TAB_ID = 'brilliance';
+const PALETTE_TAB_ID = 'palette';
+
 /**
  * Event fired when the palette is changed.
  * @typedef {CustomEvent<{value: ObcPalette}>} ObcPaletteChangeEvent
@@ -284,7 +287,7 @@ export class ObcBrillianceMenu extends LitElement {
     return idx > 0;
   }
 
-  @state() private selectedTabId = 'brilliance';
+  @state() private selectedTabId = BRILLIANCE_TAB_ID;
 
   private onTabSelected(event: CustomEvent<{id: string}>) {
     this.selectedTabId = event.detail.id;
@@ -658,12 +661,12 @@ export class ObcBrillianceMenu extends LitElement {
           <obc-tab-row
             .tabs=${[
               {
-                id: 'brilliance',
+                id: BRILLIANCE_TAB_ID,
                 title: msg('Brilliance'),
                 hasLeadingIcon: true,
               },
               {
-                id: 'palette',
+                id: PALETTE_TAB_ID,
                 title: `${msg('Day')}/${msg('Night')}`,
                 hasLeadingIcon: true,
               },
@@ -673,15 +676,15 @@ export class ObcBrillianceMenu extends LitElement {
             @tab-selected=${this.onTabSelected}
           >
             <obi-display-brilliance-iec
-              slot="tab-brilliance-icon"
+              slot="tab-${BRILLIANCE_TAB_ID}-icon"
             ></obi-display-brilliance-iec>
             <obi-palette-day-night-iec
-              slot="tab-palette-icon"
+              slot="tab-${PALETTE_TAB_ID}-icon"
             ></obi-palette-day-night-iec>
           </obc-tab-row>
           <div role="tabpanel">
             ${
-              this.selectedTabId === 'brilliance'
+              this.selectedTabId === BRILLIANCE_TAB_ID
                 ? this.renderBrightness()
                 : this.renderPalette()
             }
