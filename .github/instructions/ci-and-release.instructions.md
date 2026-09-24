@@ -49,13 +49,14 @@ wrappers, `openbridge-webcomponents-ng/dist`, and the full-bundle directory. The
 wrapper versions are synced first by `scripts/prepare-wrappers.js` (see below).
 `packages/connector-diagram` is not among them: it is not in `.releaserc.json`.
 
-## The seven workflows
+## The eight workflows
 
 | Workflow                                   | Trigger                                     | Purpose                                                                                                                         |
 | ------------------------------------------ | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
 | `build.yml`                                | push + PR, all branches                     | typecheck, `analyze`, the `lint:*` suite including `lint:agents`, `format:check`, `fix-imports:check`, ESLint for the two demos |
 | `visual-testing.yml`                       | push + PR on `develop` / `stable`           | Playwright snapshot suite, then the axe run against `__a11y__/baseline.json`                                                    |
 | `pr-title-lint.yml`                        | PR opened / edited / synchronize / reopened | Conventional Commits check on the PR title                                                                                      |
+| `windows-angular-build.yml`                | push + PR, all branches                     | the Angular wrapper built on `windows-latest` — CRLF and backslash path separators have leaked into generated imports before    |
 | `release.yml`                              | push to `develop`, or manual                | `build:full` then `semantic-release`                                                                                            |
 | `firebase-hosting-merge.yml`               | push to `develop`                           | deploys the demo                                                                                                                |
 | `firebase-hosting-pull-request.yml`        | PR                                          | builds the demo preview                                                                                                         |
