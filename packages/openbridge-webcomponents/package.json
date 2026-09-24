@@ -1,6 +1,6 @@
 {
   "name": "@oicl/openbridge-webcomponents",
-  "version": "2.0.0-next.164",
+  "version": "2.0.0-next.165",
   "type": "module",
   "repository": {
     "type": "git",
@@ -46,8 +46,8 @@
     "palette:strip": "tsx ./script/strip-palette-export.ts",
     "palette:diff": "tsx ./script/diff-palette-export.ts",
     "lint:icons": "tsx ./script/check-icon-hex-leaks.ts",
-    "lint:eslint": "eslint 'src/**/*.ts'",
-    "lint:comments": "eslint -c eslint.comments.config.mjs 'src/**/*.ts'",
+    "lint:eslint": "eslint 'src/**/*.ts' --max-warnings=0",
+    "lint:comments": "eslint -c eslint.comments.config.mjs 'src/**/*.ts' --max-warnings=0",
     "comments:rewrite": "tsx ./script/comment-pass.ts",
     "lint:lit-analyzer": "lit-analyzer --strict --maxWarnings 0",
     "lint:fix:stories": "eslint 'src/**/*.stories.ts' --fix",

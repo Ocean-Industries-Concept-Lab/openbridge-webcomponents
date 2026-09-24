@@ -8,10 +8,10 @@
  * - Scans all CSS files under the src directory (using glob src/\*\* / *.css).
  * - Identifies unique mixin definitions and their locations.
  * - Identifies unique mixin usages and their locations.
- * - Detects duplicate definitions (warning).
+ * - Detects duplicate definitions (error).
  * - Detects usages of undefined mixins (error).
- * - Detects unused mixin definitions (warning).
- * - Exits with code 1 if any undefined mixin usages are found, suitable for CI pipelines.
+ * - Detects unused mixin definitions (info).
+ * - Exits with code 1 on an undefined usage or a duplicate definition, suitable for CI pipelines.
  *
  * Usage Examples:
  * ```bash
@@ -42,6 +42,7 @@
 import fs from 'fs';
 import path from 'path';
 import {globby} from 'globby';
+import {maskCssText} from './css/mask.js';
 
 interface MixinDefinitionLocation {
   file: string;
@@ -86,9 +87,12 @@ async function run(): Promise<void> {
 
   for (const file of cssFiles) {
     const content = fs.readFileSync(file, 'utf8');
+    // A comment or a quoted value can name a mixin without defining or
+    // using it.
+    const code = maskCssText(content);
 
     const defineRegex = /@define-mixin\s+([A-Za-z0-9_-]+)/g;
-    for (const match of content.matchAll(defineRegex)) {
+    for (const match of code.matchAll(defineRegex)) {
       const name = match[1];
       const index = match.index;
       if (index == null) {
@@ -99,7 +103,7 @@ async function run(): Promise<void> {
     }
 
     const usageRegex = /@mixin\s+([A-Za-z0-9_-]+)/g;
-    for (const match of content.matchAll(usageRegex)) {
+    for (const match of code.matchAll(usageRegex)) {
       const name = match[1];
       const index = match.index;
       if (index == null) {
@@ -164,22 +168,21 @@ async function run(): Promise<void> {
 
   printSection('Defined mixins', definitionLines);
   printSection('Used mixins', usageLines);
-  printSection(
-    'Duplicate mixin definitions (warning)',
-    duplicateDefinitionLines
-  );
+  printSection('Duplicate mixin definitions (error)', duplicateDefinitionLines);
   printSection('Used but undefined mixins (error)', undefinedUsageLines);
-  printSection('Defined but unused mixins (warning)', unusedDefinitionLines);
+  printSection('Defined but unused mixins (info)', unusedDefinitionLines);
 
-  if (undefinedUsages.length > 0) {
+  if (undefinedUsages.length > 0 || duplicateDefinitions.length > 0) {
     console.error(
-      `\n❌ CSS mixin audit failed: ${undefinedUsages.length} undefined mixin name(s) found.`
+      `\n❌ CSS mixin audit failed: ${undefinedUsages.length} undefined mixin name(s), ${duplicateDefinitions.length} duplicate definition(s).`
     );
     process.exitCode = 1;
     return;
   }
 
-  console.log('\n✅ CSS mixin audit passed: no undefined mixin usages found.');
+  console.log(
+    '\n✅ CSS mixin audit passed: no undefined or duplicate mixin names.'
+  );
 }
 
 run().catch((error: unknown) => {

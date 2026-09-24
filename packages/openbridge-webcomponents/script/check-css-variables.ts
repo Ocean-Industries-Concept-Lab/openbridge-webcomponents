@@ -9,7 +9,7 @@
  * - Scans all CSS files under the src directory (using glob src/\*\* / *.css).
  * - Identifies unique variable definitions and their locations.
  * - Identifies unique variable usages and their locations (including fallback detection).
- * - Detects duplicate variable definitions (warning).
+ * - Detects duplicate variable definitions (info: the four themes each define the palette).
  * - Detects usages of undefined variables (error), excluding a predefined set of allowed undefined variables.
  * - Scans `src/palettes/variables.css` for `var(...)` usages too: its semantic tokens reference primitives in the same file, so a missing primitive (e.g. a token dropped from the Figma export) would otherwise go undetected.
  * - Exits with code 1 if any undefined variable usages (without fallbacks) are found.
@@ -43,6 +43,7 @@
 import fs from 'fs';
 import path from 'path';
 import {globby} from 'globby';
+import {maskCssText} from './css/mask.js';
 
 // Undefined CSS variables that only a fix in Figma can resolve (#929).
 const allowedUndefinedVariables = new Set<string>([]);
@@ -89,9 +90,12 @@ async function run(): Promise<void> {
 
   for (const file of cssFiles) {
     const content = fs.readFileSync(file, 'utf8');
+    // A comment or a quoted value can name a variable without defining or
+    // using it.
+    const code = maskCssText(content);
 
     const definitionRegex = /(^|[;{\s])(\-\-[A-Za-z0-9_-]+)\s*:/gm;
-    for (const match of content.matchAll(definitionRegex)) {
+    for (const match of code.matchAll(definitionRegex)) {
       const name = match[2];
       const index = match.index;
       if (index == null) {
@@ -102,7 +106,7 @@ async function run(): Promise<void> {
     }
 
     const propertyDefinitionRegex = /@property\s+(\-\-[A-Za-z0-9_-]+)/g;
-    for (const match of content.matchAll(propertyDefinitionRegex)) {
+    for (const match of code.matchAll(propertyDefinitionRegex)) {
       const name = match[1];
       const index = match.index;
       if (index == null) {
@@ -113,16 +117,16 @@ async function run(): Promise<void> {
     }
 
     let start = 0;
-    while ((start = content.indexOf('var(', start)) !== -1) {
+    while ((start = code.indexOf('var(', start)) !== -1) {
       let openParens = 1;
       let end = start + 4;
       let commaIndex = -1;
-      while (openParens > 0 && end < content.length) {
-        if (content[end] === '(') {
+      while (openParens > 0 && end < code.length) {
+        if (code[end] === '(') {
           openParens++;
-        } else if (content[end] === ')') {
+        } else if (code[end] === ')') {
           openParens--;
-        } else if (content[end] === ',' && openParens === 1) {
+        } else if (code[end] === ',' && openParens === 1) {
           if (commaIndex === -1) {
             commaIndex = end;
           }
@@ -133,8 +137,8 @@ async function run(): Promise<void> {
       if (openParens === 0) {
         const firstArg =
           commaIndex !== -1
-            ? content.slice(start + 4, commaIndex)
-            : content.slice(start + 4, end - 1);
+            ? code.slice(start + 4, commaIndex)
+            : code.slice(start + 4, end - 1);
 
         const nameMatch = firstArg.trim().match(/^--[A-Za-z0-9_-]+/);
         if (nameMatch) {
@@ -208,7 +212,7 @@ async function run(): Promise<void> {
   printSection('Defined variables', definitionLines);
   printSection('Used variables', usageLines);
   printSection(
-    'Duplicate variable definitions (warning)',
+    'Duplicate variable definitions (info)',
     duplicateDefinitionLines
   );
   printSection('Used but undefined variables (error)', undefinedUsageLines);
