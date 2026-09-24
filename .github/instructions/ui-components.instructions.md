@@ -174,3 +174,44 @@ walk is `checkbox-list-visibility.ts`, guarded by its spec. Reserve `level`
 for lists with expandable rows: a level above 0 always reserves the 48px
 chevron slot, so flat lists such as the context menu's nested checkboxes keep
 their own compact padding instead.
+
+## Disclosure animation
+
+The accordions slide their panel open on a `grid-template-rows: 0fr → 1fr`
+track (#1291). It is the only technique that eases to content height in
+Chromium, Firefox and WebKit alike: `interpolate-size: allow-keywords` is
+Chromium-only, and a large `max-height` runs the easing against a number the
+content never reaches, so a short panel finishes early and a tall one is cut
+off. Follow it for any new collapsing component.
+
+- The panel is **always rendered** — a panel that only exists while open has
+  nothing to animate. `inert` on the panel, bound to the open state, is what
+  keeps the collapsed content out of the tab order, the accessibility tree and
+  find-in-page. It reaches slotted light-DOM content through the slot.
+- **Keyboard availability is not a visual property.** `visibility: hidden` also
+  removes content from the tab order, but transitioning it holds `visible` for
+  the whole close, so for the length of the animation a Tab press lands on a
+  control that is about to disappear, and focus falls to `<body>` when it does.
+  Anything driven by the transition is the wrong switch; `inert` flips with the
+  state instead, on the same render that starts the animation (#1291).
+- **Three levels, not two.** The grid item can carry neither padding nor a
+  border: padding holds the closed track open by its own height, and a border
+  is left out of the open track and clipped off. So `.panel` owns the track,
+  `.panel-inner` clips (`min-height: 0; overflow: hidden`), and the padded or
+  framed element sits inside that.
+- Anything else that changes with the state and would otherwise snap while the
+  panel is still moving — the corner radii, the card surface, the chevron —
+  transitions over the same duration. Components read it from
+  `--_expand-duration`, aliased from the consumer-settable
+  `--obc-accordion-expand-duration` so an ancestor can still set it.
+- **Hand focus back before the panel goes inert.** The browser blurs whatever
+  it makes inert, and focus lands on `<body>` two frames later — so a consumer
+  collapsing a panel while a slotted control has focus loses the user's place
+  and the next Tab starts from the top of the document. Both components move
+  focus to their header in `willUpdate`, through `releaseFocusBefore()` in
+  `internal/focus.ts`, which tries each fallback and checks whether focus
+  actually left — a `disabled` header takes none, so the shadow wrapper carries
+  `tabindex="-1"` as the last resort. The tabindex sits on the wrapper and never
+  on the host, so a parent still controls the tab order. A spec per component
+  pins both paths.
+- `prefers-reduced-motion: reduce` drops every one of those transitions.

@@ -873,10 +873,6 @@
   "ui-components-messages-and-notifications-progress-button--linear-with-progress": [
     "aria-allowed-attr"
   ],
-  "ui-components-sections-accordion-card--expanded": ["aria-valid-attr-value"],
-  "ui-components-sections-accordion-card--with-custom-content": [
-    "aria-valid-attr-value"
-  ],
   "ui-components-sections-sequence-card--playground": ["aria-required-parent"],
   "ui-components-sections-sequence-card--regular-centered": [
     "aria-allowed-role",

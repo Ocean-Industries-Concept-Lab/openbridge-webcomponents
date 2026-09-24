@@ -1,9 +1,9 @@
-import {LitElement, html, unsafeCSS} from 'lit';
+import {LitElement, html, unsafeCSS, type PropertyValues} from 'lit';
 import {customElement} from '../../decorator.js';
+import {releaseFocusBefore} from '../../internal/focus.js';
 import {classMap} from 'lit/directives/class-map.js';
 import compentStyle from './accordion-card.css?inline';
 import {property} from 'lit/decorators.js';
-import '../../icons/icon-chevron-up-google.js';
 import '../../icons/icon-chevron-down-google.js';
 import '../alert-frame/alert-frame.js';
 import {
@@ -30,7 +30,7 @@ export enum Position {
  * Provides a summary row with optional icon, title, description, and status label. Expands to reveal additional content on click/tap, supporting both single-line and large layouts. Can display an alert overlay for contextual warnings or notifications.
  *
  * ### Features
- * - **Expandable/collapsible:** Click/tap toggles between collapsed and expanded states, revealing or hiding additional content.
+ * - **Expandable/collapsible:** Click/tap toggles between collapsed and expanded states, revealing or hiding additional content. The panel slides open and closed, and the chevron turns with it; `prefers-reduced-motion: reduce` switches instantly instead.
  * - **Variants:**
  *   - **Single-line:** Compact header with only title (and optional icon/status).
  *   - **Large:** Header includes a description beneath the title for more detail.
@@ -131,6 +131,7 @@ export enum Position {
  * @slot alert-label - Label text for the alert overlay (used when `hasAlert` is true)
  * @slot alert-timer - Timer/duration text for the alert overlay (used when `hasAlert` is true)
  * @fires {CustomEvent<{expanded: boolean, cardTitle: string}>} accordion-toggle - Fired when the accordion is expanded or collapsed
+ * @cssprop [--obc-accordion-expand-duration=200ms] - How long the panel takes to open and close. The chevron and the card's corners follow it. Ignored under `prefers-reduced-motion: reduce`.
  * @stable
  */
 @customElement('obc-accordion-card')
@@ -192,6 +193,26 @@ export class ObcAccordionCard extends LitElement {
     );
   }
 
+  /**
+   * Keeps the keyboard somewhere predictable when the panel closes.
+   *
+   * A collapsed panel is `inert`, and the browser drops focus out of anything
+   * it makes inert — onto `<body>`, two frames later. Clicking the header
+   * already leaves focus there; a consumer setting `expanded` while a slotted
+   * control has focus is the case that needs the transfer.
+   */
+  override willUpdate(changed: PropertyValues<this>) {
+    if (!changed.has('expanded') || this.expanded) return;
+
+    const panel = this.shadowRoot?.querySelector('.panel');
+    if (!panel) return;
+    releaseFocusBefore(
+      panel,
+      this.shadowRoot?.querySelector<HTMLButtonElement>('.content-button'),
+      this.shadowRoot?.querySelector<HTMLElement>('.wrapper')
+    );
+  }
+
   private renderContentMain() {
     return html`
       <div class="header-container">
@@ -225,11 +246,7 @@ export class ObcAccordionCard extends LitElement {
               : ''
           }
           <div class="trailing-icon">
-            ${
-              this.expanded
-                ? html`<obi-chevron-up-google></obi-chevron-up-google>`
-                : html`<obi-chevron-down-google></obi-chevron-down-google>`
-            }
+            <obi-chevron-down-google></obi-chevron-down-google>
           </div>
         </div>
       </div>
@@ -237,11 +254,13 @@ export class ObcAccordionCard extends LitElement {
   }
 
   private renderContentAdditional() {
-    if (!this.expanded) return '';
-
     return html`
-      <div class="container-content-additional">
-        <slot name="expanded-content"></slot>
+      <div class="panel" id="accordion-content" ?inert=${!this.expanded}>
+        <div class="panel-inner">
+          <div class="container-content-additional">
+            <slot name="expanded-content"></slot>
+          </div>
+        </div>
       </div>
     `;
   }
@@ -258,6 +277,7 @@ export class ObcAccordionCard extends LitElement {
   override render() {
     return html`
       <div
+        tabindex="-1"
         class=${classMap({
           wrapper: true,
           'state-expanded': this.expanded,
