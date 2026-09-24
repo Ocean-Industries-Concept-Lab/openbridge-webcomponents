@@ -204,4 +204,10 @@ off. Follow it for any new collapsing component.
   transitions over the same duration. Components read it from
   `--_expand-duration`, aliased from the consumer-settable
   `--obc-accordion-expand-duration` so an ancestor can still set it.
+- **Hand focus back before the panel goes inert.** The browser blurs whatever
+  it makes inert, and focus lands on `<body>` two frames later — so a consumer
+  collapsing a panel while a slotted control has focus loses the user's place
+  and the next Tab starts from the top of the document. Both components move
+  focus to their header in `willUpdate`, through `releaseFocusBefore()` in
+  `internal/focus.ts`; a spec per component pins it.
 - `prefers-reduced-motion: reduce` drops every one of those transitions.

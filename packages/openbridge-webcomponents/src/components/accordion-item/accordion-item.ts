@@ -1,5 +1,6 @@
-import {LitElement, html, unsafeCSS} from 'lit';
+import {LitElement, html, unsafeCSS, type PropertyValues} from 'lit';
 import {customElement} from '../../decorator.js';
+import {releaseFocusBefore} from '../../internal/focus.js';
 import {classMap} from 'lit/directives/class-map.js';
 import componentStyle from './accordion-item.css?inline';
 import {property} from 'lit/decorators.js';
@@ -83,6 +84,25 @@ export class ObcAccordionItem extends LitElement {
           title: this.title,
         },
       })
+    );
+  }
+
+  /**
+   * Keeps the keyboard somewhere predictable when the panel closes.
+   *
+   * A collapsed panel is `inert`, and the browser drops focus out of anything
+   * it makes inert — onto `<body>`, two frames later. Clicking the header
+   * already leaves focus there; a consumer setting `open` while a slotted
+   * control has focus is the case that needs the transfer.
+   */
+  override willUpdate(changed: PropertyValues<this>) {
+    if (!changed.has('open') || this.open) return;
+
+    const panel = this.shadowRoot?.querySelector('.panel');
+    if (!panel) return;
+    releaseFocusBefore(
+      panel,
+      this.shadowRoot?.querySelector<HTMLButtonElement>('.content-button')
     );
   }
 

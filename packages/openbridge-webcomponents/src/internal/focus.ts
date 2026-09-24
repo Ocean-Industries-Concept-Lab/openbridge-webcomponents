@@ -19,6 +19,43 @@ export function deepActiveElement(): Element | null {
   return active;
 }
 
+/**
+ * Whether `node` sits inside `root` in the composed tree.
+ *
+ * `Node.contains()` walks the DOM tree, where slotted light-DOM content is a
+ * child of the host and not of the slot — so it answers no for exactly the
+ * content a component projects into itself. This follows `assignedSlot` and
+ * shadow hosts as well.
+ */
+export function composedContains(root: Node, node: Node | null): boolean {
+  let current: Node | null = node;
+  while (current) {
+    if (current === root) return true;
+    current =
+      (current as Element).assignedSlot ??
+      current.parentNode ??
+      (current instanceof ShadowRoot ? current.host : null);
+  }
+  return false;
+}
+
+/**
+ * Moves focus to `fallback` when it currently sits inside `hidden`.
+ *
+ * Call it just before a region becomes `inert` or is taken out of the page.
+ * The browser blurs whatever it hides, and focus lands on `<body>` a frame or
+ * two later, so the next Tab press starts from the top of the document instead
+ * of where the user was.
+ */
+export function releaseFocusBefore(
+  hidden: Node,
+  fallback: HTMLElement | null | undefined
+): void {
+  if (!fallback) return;
+  if (!composedContains(hidden, deepActiveElement())) return;
+  fallback.focus();
+}
+
 function isTabbable(element: Element): element is HTMLElement {
   if (!element.matches(TABBABLE_SELECTOR)) return false;
   if ((element as HTMLElement).tabIndex < 0) return false;
