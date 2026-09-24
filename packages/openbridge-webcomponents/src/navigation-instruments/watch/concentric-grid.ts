@@ -31,8 +31,9 @@ export interface ConcentricGridOptions {
  * in any one of them. Angles follow the watch convention: 0° at the top,
  * clockwise.
  *
- * Spokes are emitted as diameters, half as many elements as spokes, so an even
- * spoke count never leaves a seam where two segments would meet at the centre.
+ * An even spoke count is emitted as diameters, half as many elements, so no
+ * seam is left where two collinear rays would meet at the centre. An odd count
+ * has no collinear pairs and is emitted as individual rays.
  */
 export function concentricGrid({
   radius,
@@ -57,15 +58,16 @@ export function concentricGrid({
     `);
   }
 
-  const diameters: SVGTemplateResult[] = [];
-  for (let i = 0; i < Math.floor(spokes / 2); i++) {
+  const paired = spokes % 2 === 0;
+  const lines: SVGTemplateResult[] = [];
+  for (let i = 0; i < (paired ? spokes / 2 : spokes); i++) {
     const rad = degToRad((i * 360) / spokes);
     const x = radius * Math.sin(rad);
     const y = -radius * Math.cos(rad);
-    diameters.push(svg`
+    lines.push(svg`
       <line
-        x1=${-x}
-        y1=${-y}
+        x1=${paired ? -x : 0}
+        y1=${paired ? -y : 0}
         x2=${x}
         y2=${y}
         stroke=${stroke}
@@ -90,6 +92,6 @@ export function concentricGrid({
         `
         : nothing
     }
-    ${diameters}
+    ${lines}
   `;
 }
