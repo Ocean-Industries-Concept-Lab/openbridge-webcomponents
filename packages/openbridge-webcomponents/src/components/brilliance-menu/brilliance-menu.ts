@@ -669,6 +669,7 @@ export class ObcBrillianceMenu extends LitElement {
               },
             ]}
             .selectedTabId=${this.selectedTabId}
+            .centerContent=${true}
             @tab-selected=${this.onTabSelected}
           >
             <obi-display-brilliance-iec
