@@ -25,7 +25,6 @@
     "test-a11y": "vitest run --config vitest.a11y.config.ts && tsx ./script/check-a11y-baseline.ts",
     "test-a11y:update": "vitest run --config vitest.a11y.config.ts && tsx ./script/check-a11y-baseline.ts --update",
     "test-storybook:docker": "docker run -it --user $(id -u):$(id -g) -v $(pwd):/app/packages/openbridge-webcomponents -w /app/packages/openbridge-webcomponents openbridge-webcomponents-storybook npm run test-storybook",
-    "update-snapshots:docker": "docker run --user $(id -u):$(id -g) -v $(pwd):/app/packages/openbridge-webcomponents -w /app/packages/openbridge-webcomponents openbridge-webcomponents-storybook sh -c \"npm run test-storybook -- -u\"",
     "build-storybook": "storybook build",
     "storybook:server": "http-server -p 6006 storybook-static",
     "preview": "vite preview",

@@ -318,7 +318,7 @@ automatically when editing a `.css` file.
     npx vitest run --project storybook 'component-name'
     npx vitest run --project storybook heat-pump heat-exchanger hydraulic-separator
     ```
-12. **Update baselines for those components only, locally on Linux** — the devcontainer's render is what CI accepts, so do not rely on the `/update-snapshots` PR comment ([`docs/agents/testing-visual.md`](docs/agents/testing-visual.md)). The filter must come **before** `--update` — after it, the FULL suite runs in update mode and rewrites unrelated flaky baselines. `--update` never prunes — `git rm` the baselines of renamed or removed stories first:
+12. **Update baselines for those components only, locally on Linux** — the devcontainer's render is what CI accepts ([`docs/agents/testing-visual.md`](docs/agents/testing-visual.md)). The filter must come **before** `--update` — after it, the FULL suite runs in update mode and rewrites unrelated flaky baselines. `--update` never prunes — `git rm` the baselines of renamed or removed stories first:
     ```bash
     npx vitest run --project storybook 'component-name' --update
     ```

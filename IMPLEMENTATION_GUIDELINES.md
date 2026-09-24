@@ -123,7 +123,7 @@ The script runs as your host user (`--user $(id -u):$(id -g)`) and mounts the pa
 
 #### 3. Regenerate Baselines in Docker
 
-To regenerate baselines, run the same image with the filter in front of the flag, then once more without it (`update-snapshots:docker` has no filter and rewrites the whole suite):
+To regenerate baselines, run the same image with the filter in front of the flag, then once more without it:
 
 ```bash
 # From packages/openbridge-webcomponents
