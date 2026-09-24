@@ -255,23 +255,27 @@ Commits that fail lint or format checks are blocked automatically.
 
 ### Component Creation Checklist
 
-1. Run `npm run new:component` to scaffold files.
+1. Run `npm run new:component`. It asks for the family, the element tag, the
+   lifecycle and the design version, then writes a component, a story and a
+   stylesheet that already pass `npm run lint` and `npm run format:check`, so
+   the first run of the gates reports your work and not the scaffold's.
 2. Implement the component in `component-name.ts` (extend `LitElement`, register with `@customElement`).
 3. Write styles in `component-name.css` (PostCSS, use mixins from § 7).
 4. Write stories in `component-name.stories.ts`:
-   - Add `tags: ['autodocs', '6.0']` for documented OB 6.0 components.
+   - Tag the design release the component implements — `tags: ['autodocs', '6.1']` for OB 6.1.
    - Export a `Default` story plus stories for key states and variants.
    - Use Title Case for story titles (see § 2).
-   - Do **not** hand-write a lifecycle tag here — see step 6.
-5. Write JSDoc following the three-pattern strategy (see § 3), including
-   exactly one lifecycle tag on the class (see § 3 Component lifecycle tags).
+   - Do **not** hand-write the lifecycle tag here — see step 7.
+5. Replace the scaffolded `TODO(designer)` block with real JSDoc, following the
+   three-pattern strategy (see § 3) and keeping exactly one lifecycle tag on
+   the class (see § 3 Component lifecycle tags).
 6. Interactive? Name the APG pattern in the JSDoc, pin its keys in a
    `component-name-keyboard.spec.ts`, and give every control a name
    ([`docs/agents/a11y.md`](docs/agents/a11y.md) § 1, § 4, § 9). `npm run
 test-a11y` fails on any violation the committed baseline does not carry, so
    a new component starts from zero.
-7. Run `npm run lint:fix:stories` to populate the story's lifecycle tag from
-   that class JSDoc.
+7. Run `npm run lint:fix:stories` if you changed the class's lifecycle tag, so
+   the story's `meta.tags` follows it.
 8. Run `npm run analyze` to update `custom-elements.json`.
 9. Run `npm run lint && npm run typecheck` to validate.
 

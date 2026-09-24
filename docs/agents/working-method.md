@@ -65,8 +65,9 @@ judgement call.
    the first three are `svghelpers/math.ts`, the chart observer is
    `charthelpers/label-threshold.ts`.
 
-2. **The sibling exists.** `npm run new:component` writes a blank element, an
-   empty CSS file and a one-story file; it copies nothing. The next step is
+2. **The sibling exists.** `npm run new:component` writes a lint-clean
+   skeleton — a `TODO(designer)` class JSDoc, an empty CSS file and one
+   story; it copies nothing. The next step is
    the nearest sibling — same directory, same base name with another suffix
    (`-indicator`, `-flat`, `-horizontal`), same Figma page. Read it whole
    ([`building-blocks.md`](building-blocks.md)) and start from its structure,
