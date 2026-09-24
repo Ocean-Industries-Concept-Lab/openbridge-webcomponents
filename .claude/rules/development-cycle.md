@@ -79,8 +79,8 @@ git status                                                   # only __vis__/linu
 - The a11y baseline is the same ratchet: `npm run test-a11y`, and
   `npm run test-a11y:update` only for violations you fixed or, with the
   reason in the PR body, added.
-- Linux only. On macOS take the Docker route in `testing-visual.md`; the
-  `/update-snapshots` PR comment is not a fallback.
+- Linux only. On macOS take the Docker route in `testing-visual.md`, and check
+  #1179 first — that image is unverified.
 
 ## 5. The gates, before every push
 
@@ -171,8 +171,6 @@ thread gets the same treatment whoever opened it:
 - Fix what holds, push, then reply on the thread: `Done` with the commit, or
   `Not changed` and the reason. Resolve a bot's thread after replying; a
   person's thread is theirs to resolve.
-- Keep the string `/update-snapshots` out of PR prose: it triggers the broken
-  workflow (#1179).
 - Enable auto-merge only when the PR is complete. The squash message is
   captured at that moment, so a PR that grew afterwards is re-armed with the
   new message.

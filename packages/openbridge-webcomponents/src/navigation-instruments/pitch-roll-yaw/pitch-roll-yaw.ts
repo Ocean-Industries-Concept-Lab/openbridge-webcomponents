@@ -18,6 +18,7 @@ import {
   observeInnerBox,
 } from '../../svghelpers/radial-frame.js';
 import {degToRad} from '../../svghelpers/math.js';
+import {concentricGrid} from '../watch/concentric-grid.js';
 
 export enum PitchRollYawType {
   /** Combined attitude dot only — no vessel image. */
@@ -38,8 +39,6 @@ export interface PitchRollSample {
 const PITCH_ROLL_SCALE_RADIUS = 160;
 /** Number of evenly spaced polar-grid divisions inside the ring. */
 const GRID_DIVISIONS = 4;
-/** Radius of the small circle marking the face centre. */
-const CENTER_CIRCLE_RADIUS = 12;
 /** Centre radius of the yaw band/dot track on the scale (matches the ROT bar). */
 const SCALE_TRACK_RADIUS = 172;
 /** Half thickness of the yaw trend band. */
@@ -167,47 +166,12 @@ export class ObcPitchRollYaw extends LitElement {
 
   /** Polar reference grid: evenly spaced circles, centre circle, crosshair. */
   private renderGrid() {
-    const stroke = 'var(--instrument-frame-tertiary-color)';
-    const circles = [];
-    for (let i = 1; i < GRID_DIVISIONS; i++) {
-      circles.push(svg`
-        <circle
-          cx="0"
-          cy="0"
-          r=${(PITCH_ROLL_SCALE_RADIUS * i) / GRID_DIVISIONS}
-          fill="none"
-          stroke=${stroke}
-          vector-effect="non-scaling-stroke"
-        />
-      `);
-    }
-    return svg`
-      ${circles}
-      <circle
-        cx="0"
-        cy="0"
-        r=${CENTER_CIRCLE_RADIUS}
-        fill="none"
-        stroke=${stroke}
-        vector-effect="non-scaling-stroke"
-      />
-      <line
-        x1=${-PITCH_ROLL_SCALE_RADIUS}
-        y1="0"
-        x2=${PITCH_ROLL_SCALE_RADIUS}
-        y2="0"
-        stroke=${stroke}
-        vector-effect="non-scaling-stroke"
-      />
-      <line
-        x1="0"
-        y1=${-PITCH_ROLL_SCALE_RADIUS}
-        x2="0"
-        y2=${PITCH_ROLL_SCALE_RADIUS}
-        stroke=${stroke}
-        vector-effect="non-scaling-stroke"
-      />
-    `;
+    return concentricGrid({
+      radius: PITCH_ROLL_SCALE_RADIUS,
+      divisions: GRID_DIVISIONS,
+      // The ring band's inner edge already sits on the outermost division.
+      hasOuterRing: false,
+    });
   }
 
   private renderMotionEnvelope() {
