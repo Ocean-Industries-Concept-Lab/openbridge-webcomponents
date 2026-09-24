@@ -208,7 +208,8 @@ export class ObcAccordionCard extends LitElement {
     if (!panel) return;
     releaseFocusBefore(
       panel,
-      this.shadowRoot?.querySelector<HTMLButtonElement>('.content-button')
+      this.shadowRoot?.querySelector<HTMLButtonElement>('.content-button'),
+      this.shadowRoot?.querySelector<HTMLElement>('.wrapper')
     );
   }
 
@@ -276,6 +277,7 @@ export class ObcAccordionCard extends LitElement {
   override render() {
     return html`
       <div
+        tabindex="-1"
         class=${classMap({
           wrapper: true,
           'state-expanded': this.expanded,

@@ -141,4 +141,31 @@ describe('obc-accordion-card expand animation', () => {
 
     expect(sr(el).activeElement).toBe(header);
   });
+
+  it('falls back to the wrapper when the header is disabled', async () => {
+    const el = await mount((e) => {
+      e.expanded = true;
+      e.disabled = true;
+    });
+    const inner = el.querySelector<HTMLButtonElement>('#inner')!;
+    inner.focus();
+    expect(document.activeElement).toBe(inner);
+
+    el.expanded = false;
+    await el.updateComplete;
+    await frame();
+    await frame();
+
+    // The disabled header cannot take focus, so the wrapper holds the place
+    // rather than letting it fall to <body>.
+    expect(sr(el).activeElement).toBe(sr(el).querySelector('.wrapper'));
+    expect(document.activeElement).not.toBe(document.body);
+  });
+
+  it('keeps the wrapper out of the tab order', async () => {
+    const el = await mount();
+    expect(sr(el).querySelector('.wrapper')!.getAttribute('tabindex')).toBe(
+      '-1'
+    );
+  });
 });
