@@ -1,0 +1,205 @@
+---
+name: development-cycle
+description: The commands of one change, in order — fresh clone, the inner loop, snapshots, the gates, wrappers and the demos, merging develop, reviews, CI and the preview links
+globs:
+  - packages/openbridge-webcomponents/src/**
+  - "!packages/openbridge-webcomponents/src/icons/**"
+  - "!packages/openbridge-webcomponents/src/generated/**"
+  - "!packages/openbridge-webcomponents/src/manual-icon/**"
+  - packages/vue-demo/src/**
+  - packages/vue-demo/e2e/**
+---
+
+# Development Cycle
+
+[`working-method.md`](working-method.md) says how to think before the first
+edit. This doc is the order of the commands from a fresh clone to a merged
+pull request, for a change verified in Storybook and in the vue demo. Blocks
+run from `packages/openbridge-webcomponents`; one that starts elsewhere says
+so on its first line. The other docs carry the reasons, this one carries the
+sequence.
+
+## 1. A fresh clone, or a rebuilt container
+
+```bash
+npm install                                    # repo root: links the workspaces, installs husky, writes CLAUDE.md and the adapters
+cd packages/openbridge-webcomponents
+npm run build                                  # translations, then vite → dist/
+npm run analyze                                # custom-elements.json is gitignored: every checkout regenerates it
+npx playwright install --with-deps chromium    # the browser the specs and the snapshots run in
+```
+
+The devcontainer's `postCreateCommand` runs all of this except `analyze`.
+Without the manifest a story's args never reach the element, so the first
+snapshot run in a fresh container captures the defaults
+([`testing-visual.md`](testing-visual.md)).
+
+## 2. Before the first edit
+
+```bash
+git switch -c feat/<issue>-<slug> origin/develop
+gh issue view <n> --comments                                 # the decision and the cross-links
+gh pr list --state all --search "<component>" --limit 40
+```
+
+Read the tracker and the family doc first
+([`working-method.md` § History](working-method.md)). A new component starts
+from `npm run new:component` and its nearest sibling; the creation checklist
+is `AGENTS.md` § 5.
+
+## 3. The inner loop
+
+```bash
+npm run analyze                                              # after adding or renaming a @customElement, @property, @slot or @fires
+npm run storybook                                            # :6006 when you need to look; runs analyze first
+npx vitest run --config=vitest.browser.config.ts <name>      # the component's specs: keyboard, behaviour
+npx vitest run --project storybook <name>                    # its stories against the committed baselines
+```
+
+`<name>` is a substring of the file path; several names are several filters,
+never a regex. `npm run test:browser` and `npm run test-storybook` are the
+same runs without `run`, which is watch mode outside CI.
+
+## 4. Snapshots
+
+Only the baselines your change is meant to move get regenerated; every other
+diff is a regression to explain, not to overwrite.
+
+```bash
+npx vitest run --project storybook <name> --update           # the filter comes BEFORE the flag
+npx vitest run --project storybook <name>                    # re-run without it: the new baselines must be stable
+git status                                                   # only __vis__/linux/__baselines__/<family>/<name>… may have moved
+```
+
+- `--update` never prunes: `git rm` the baselines of a renamed or removed
+  story first.
+- A failed spec run leaves screenshots under `src/**/__screenshots__/` and
+  `.vitest-attachments/`; delete them before staging.
+- Compare the cropped baseline with every Figma variant value
+  ([`testing-visual.md` § Checking a baseline](testing-visual.md)).
+- The a11y baseline is the same ratchet: `npm run test-a11y`, and
+  `npm run test-a11y:update` only for violations you fixed or, with the
+  reason in the PR body, added.
+- Linux only. On macOS take the Docker route in `testing-visual.md`, and check
+  #1179 first — that image is unverified.
+
+## 5. The gates, before every push
+
+What `build.yml` and `visual-testing.yml` run, in their order. The pre-commit
+hook covers only the staged TypeScript, so it is not the gate.
+
+```bash
+npm run typecheck
+npm run lint                     # mixins, variables, palette, icons, slots, agents, lit-analyzer, eslint, comments; no warnings allowed
+npm run format:check             # npm run format to fix; covers the root and docs/agents Markdown too
+npm run fix-imports:check
+npx vitest run --config=vitest.browser.config.ts             # every spec
+npm run test:rules               # when script/ or an ESLint rule changed
+npm run test-a11y                # PRs to develop: axe over every story, then the baseline check
+```
+
+```bash
+(cd ../vue-demo && npm run lint:check && npm run format:check && npm run type-check)
+```
+
+`npm run lint` in `vue-demo` is `eslint . --fix` and rewrites files;
+`lint:check` is the check. A doc change ends with `npm run agents:sync` and
+`npm run lint:agents`, so the adapters and the routing table in `AGENTS.md`
+are committed with it.
+
+## 6. The wrappers and the demos
+
+The wrapper packages are generated from the source JSDoc and gitignored, so a
+fresh checkout has none; the vue demo imports the generated Vue wrappers, and
+their build writes the declarations the demo's type-check needs. The order
+below is what the `build_demo` job runs; `npm run build:demo` at the repo root
+runs it in one go.
+
+```bash
+cd ../..                                                     # repository root
+npm run build:full -w packages/openbridge-webcomponents      # translations, typecheck, bundle, vite, analyze, inject:dts, wrappers
+npm install                                                  # link the wrapper packages the previous step wrote
+npm run build -w packages/openbridge-webcomponents-vue       # declarations, then vite
+npm run dev -w packages/vue-demo                             # http://localhost:5173
+```
+
+- After an API change (a property, `@fires`, `@slot`) the wrappers are stale
+  until `npm run wrappers` or `build:full` ran; the demo binds the old shape
+  until then. `wrappers` alone regenerates the four packages and needs
+  `custom-elements.json` for its Svelte docs pass.
+- Which views a component change reaches:
+  `grep -rl "Obc<Name>\|obc-<name>" packages/vue-demo/src`.
+- The demo's visual suite runs from `packages/vue-demo` and starts the dev
+  server itself, or reuses one already on 5173:
+
+```bash
+(cd ../vue-demo && npm run test:visual -- -g <name>)         # <name> as in visual.spec.ts, e.g. conning-psv — not the URL
+(cd ../vue-demo && npm run test:visual:update -- -g <name>)  # then test:visual again
+```
+
+The suite does not run in CI, so a baseline elsewhere may already be stale:
+refresh only the routes your change touches and say in the PR body which
+moved and why.
+
+## 7. Merging develop, and conflicts
+
+- Rebase a branch only you have pushed to. Once someone else has pushed to
+  it, or the PR carries review threads, merge instead
+  (`git merge origin/develop`) and never force-push.
+- A conflict in a generated file is never hand-merged: take either side, then
+  regenerate — `npm run agents:sync` for the adapters and the routing table,
+  `npm run analyze`, `npm run wrappers`.
+- A conflict in a baseline is decided, not merged: keep the side whose change
+  explains the pixels — yours when the PR is meant to move that story,
+  otherwise develop's — then re-run that filter on the merged tree and
+  regenerate only if the remaining diff is yours. The merged tree is the
+  truth, never the branch alone.
+- After every merge, re-run the touched components' specs and snapshots
+  before pushing: develop may have moved the same baseline for another
+  reason, and the diff has to be explainable by your change.
+- A rebase replays commits, not a hand-resolved merge. After rebasing a
+  branch that had merged develop, make a throwaway merge of the old head with
+  develop and diff the two trees; they must be identical.
+
+## 8. Reviews
+
+CodeRabbit and Copilot review every PR at once; people review after. Each
+thread gets the same treatment whoever opened it:
+
+- Decide whether the point holds against the code and the tracker. A
+  suggestion that contradicts a verified finding is answered with the
+  evidence, not adopted ([`working-method.md` § Missing](working-method.md)).
+- Fix what holds, push, then reply on the thread: `Done` with the commit, or
+  `Not changed` and the reason. Resolve a bot's thread after replying; a
+  person's thread is theirs to resolve.
+- Enable auto-merge only when the PR is complete. The squash message is
+  captured at that moment, so a PR that grew afterwards is re-armed with the
+  new message.
+
+## 9. CI, and the preview links
+
+| Workflow                               | Runs                          | Gates                                                                                                                            |
+| -------------------------------------- | ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `build.yml`                            | every push                    | typecheck, analyze, the `lint:*` suite, format, imports, the demos' ESLint, the browser specs, `test:rules`, every package build |
+| `visual-testing.yml`                   | PRs to `develop` and `stable` | the snapshot suite against `__vis__/linux/__baselines__`, then axe against `__a11y__/baseline.json`                              |
+| `build_demo`, then the deploy workflow | every PR push                 | builds Storybook and the vue demo, publishes both to a per-PR preview channel and edits its two comments on the PR               |
+
+```bash
+gh pr checks <n> --watch                       # green before asking for review
+gh run view <run-id> --log-failed              # empty output: gh api repos/<owner>/<repo>/actions/jobs/<job-id>/logs
+```
+
+The preview is a build behind: it deploys after the whole `build_demo` run
+has finished, and the channel serves `max-age=3600`, so a link can show the
+previous push for up to an hour. The channel name is the PR number plus the
+PR title, so retitling the PR creates a new channel: the comment on the PR is
+updated, and a link copied earlier keeps serving the old build. Draft and
+ready change nothing.
+
+## 10. Done
+
+The PR body follows the template (`AGENTS.md` § 8 rule 20); its Verification
+section names the filters that ran and the baselines that moved; the docs
+changed in the same PR carry their synced adapters; the comment pass is done.
+The squash commit takes the PR title: `fix:` and `feat:` ship a release,
+`docs:` and `chore:` do not ([`ci-and-release.md`](ci-and-release.md)).

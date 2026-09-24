@@ -62,9 +62,8 @@ reject.
 the CI `test` job (`mcr.microsoft.com/playwright:v1.60.0-noble`) accepts, so a
 scoped `--update` followed by a plain re-run is the whole procedure, except for
 small `<canvas>` charts ([`skip-test` or `!snapshot`](#skip-test-or-snapshot)).
-On macOS take the Docker route from the package directory (the scripts mount
-`$(pwd)`), keeping the filter in front of the flag — `update-snapshots:docker`
-has no filter and rewrites the whole suite:
+On macOS take the Docker route from the package directory (the script mounts
+`$(pwd)`), keeping the filter in front of the flag:
 
 ```bash
 npm run test-storybook:docker -- -- component-name --update
@@ -72,9 +71,10 @@ npm run test-storybook:docker -- -- component-name
 ```
 
 See [IMPLEMENTATION_GUIDELINES.md § Docker Testing](../../IMPLEMENTATION_GUIDELINES.md#docker-testing)
-and [`ci-and-release.md`](../../docs/agents/ci-and-release.md). The `/update-snapshots`
-PR-comment workflow is not a fallback (see Open), and it fires on any comment
-that merely contains that string — keep the command out of PR prose.
+and [`ci-and-release.md`](../../docs/agents/ci-and-release.md). That image is the one the retired
+`/update-snapshots` workflow could never import the Vitest setup file inside on
+any run that got that far, so confirm it still works before trusting a baseline
+it produces (see Open).
 
 ## Checking a baseline against the design
 
@@ -156,10 +156,19 @@ resolve.
 `packages/vue-demo/e2e/` runs from that package:
 
 ```bash
-npm run test:visual          # compare against committed baselines
-npm run test:visual:update    # regenerate after an intended change
-npm run test:visual           # ALWAYS re-run to confirm stability
+npm run test:visual -- -g <name>          # compare the routes you touched against the committed baselines
+npm run test:visual:update -- -g <name>   # regenerate after an intended change
+npm run test:visual -- -g <name>          # ALWAYS re-run to confirm stability
 ```
+
+`-g` matches the test title, `route: <name>` — the name from `visual.spec.ts`
+(`conning-psv`, `ias`), never the URL; `-g conning` takes every conning route.
+
+- The config starts `vite dev` itself, or reuses a server already on 5173;
+  under `CI` it serves `vite preview`, so build the demo first there. The
+  `visual` project is always headless.
+- Nothing in CI runs this suite, so a baseline can be stale on `develop`;
+  refresh only the routes your change touches and say which moved in the PR.
 
 - `e2e/visual/` is its own Playwright project (`--project=visual`); the
   functional suite `e2e/mainpage.spec.ts` ignores it and needs no baselines.
@@ -215,5 +224,5 @@ re-run scoped to the single component rather than retrying the whole suite.
 
 ## Open
 
-- `update-snapshots.yml` fails inside its Docker image before writing anything, and triggers on any PR comment containing its command (#1179).
+- The Docker route (`test-storybook:docker`) runs the image whose Vitest setup import failed in every attempted `update-snapshots.yml` run; the workflow is retired, the image is unverified (#1179).
 - Element-cropped story screenshots (`npm run screenshots`, opt-in through `VITE_STORYBOOK_TAKE_SCREENSHOT`, sized from the `@snapshot-base-width` / `@snapshot-base-height` JSDoc tags) are in draft #731; until it lands, crop the 1280×720 baseline by hand as above.
