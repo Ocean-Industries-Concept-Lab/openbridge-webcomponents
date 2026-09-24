@@ -15,7 +15,7 @@ The project is divided into three main parts:
    Vue, React, Angular, and Svelte wrappers are auto-generated from the web components:
 
    ```bash
-   npm run build:wrappers
+   cd packages/openbridge-webcomponents && npm run wrappers   # after npm run analyze
    ```
 
    ⚠️ **Warning:** Do not edit the generated wrapper packages directly.
@@ -59,9 +59,9 @@ npx playwright install --with-deps chromium
 # Run all snapshot tests
 npm run test-storybook
 
-# Update snapshots interactively (press 'u' in Vitest terminal)
-# Or replace baselines wholesale:
-npm run update-snapshots
+# Regenerate one component's baselines — the filter before the flag — then re-run without it
+npx vitest run --project storybook 'component-name' --update
+npx vitest run --project storybook 'component-name'
 ```
 
 Snapshot baselines are stored in `__vis__/linux/__baselines__/` (and `__vis__/darwin/__baselines__/` for macOS). Since snapshot results are highly dependent on the environment (OS, fonts, etc.), it is recommended to use Docker for generating canonical snapshots.
@@ -119,22 +119,16 @@ From `packages/openbridge-webcomponents`:
 npm run test-storybook:docker
 ```
 
-Note: The script uses `--user $(id -u):$(id -g)` to ensure that any files created by the container (like snapshot results) are owned by your host user. It uses a temporary directory for visual results (`/tmp/openbridge-webcomponents-vis-results`) to avoid permission conflicts.
+The script runs as your host user (`--user $(id -u):$(id -g)`) and mounts the package directory, so the results the container writes to `__vis__/linux/__results__/` (gitignored) are owned by you.
 
-#### 3. Update Snapshots from Docker Results
+#### 3. Regenerate Baselines in Docker
 
-After running the tests in Docker, the results are stored in `/tmp/openbridge-webcomponents-vis-results` on your host. To update your local baselines with these results:
+To regenerate baselines, run the same image with the filter in front of the flag, then once more without it (`update-snapshots:docker` has no filter and rewrites the whole suite):
 
 ```bash
 # From packages/openbridge-webcomponents
-# 1. Create results directory if it doesn't exist
-mkdir -p __vis__/linux/__results__
-
-# 2. Copy results from temp to package directory
-cp -r /tmp/openbridge-webcomponents-vis-results/* __vis__/linux/__results__/
-
-# 3. Run the update script (replaces baselines with results)
-npm run update-snapshots
+npm run test-storybook:docker -- -- component-name --update
+npm run test-storybook:docker -- -- component-name
 ```
 
 ## 🎨 PostCSS
