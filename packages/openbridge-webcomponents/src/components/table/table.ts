@@ -28,6 +28,7 @@ import {
   Priority,
   ScaleType,
 } from '../../building-blocks/bar-horizontal/bar-horizontal.js';
+import {clamp} from '../../svghelpers/math.js';
 
 export enum ObcTableCellType {
   Regular = 'regular',
@@ -478,7 +479,7 @@ export class ObcTable extends LitElement {
       )
     );
     if (headers.length === 0) return;
-    const clampedIndex = Math.max(0, Math.min(index, headers.length - 1));
+    const clampedIndex = clamp(index, 0, headers.length - 1);
     const headerItem = headers[clampedIndex];
     const innerButton = (headerItem.shadowRoot?.querySelector('button') ??
       null) as HTMLButtonElement | null;
@@ -663,8 +664,7 @@ export class ObcTable extends LitElement {
         el.element.style.transform = `translateY(${previousPosition.top - el.top}px)`;
       }
       el.element.style.transition = 'none';
-      // Force a reflow to ensure the animation is applied
-      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions -- the read forces the reflow that restarts the transition
       el.element.offsetHeight;
       el.element.style.transition =
         'transform 100ms ease-in-out, opacity 100ms ease-in-out';

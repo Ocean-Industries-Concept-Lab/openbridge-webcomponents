@@ -1,5 +1,7 @@
 import {describe, expect, it} from 'vitest';
-import {RuleTester} from 'eslint';
+import {ESLint, RuleTester} from 'eslint';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
 import tsParser from '@typescript-eslint/parser';
 
 // @ts-expect-error - eslint.config.mjs is untyped JavaScript.
@@ -221,6 +223,216 @@ describe('openbridge/story-lifecycle-tags', () => {
             // A plain `const meta = {…}` with no `satisfies` clause.
             code: `const meta = {\n  title: 'A/B',\n  component: 'obc-deprecated-thing',\n};\nexport default meta;\n`,
             output: `const meta = {\n  title: 'A/B',\n  tags: ['deprecated'],\n  component: 'obc-deprecated-thing',\n};\nexport default meta;\n`,
+            errors: 1,
+          },
+        ],
+      }
+    );
+  });
+});
+
+// Directives aimed at rules this tester does not load would otherwise be
+// reported as unused.
+const quietTester = new RuleTester({
+  languageOptions: {parser: tsParser, ecmaVersion: 2020, sourceType: 'module'},
+  linterOptions: {reportUnusedDisableDirectives: 'off'},
+});
+
+describe('openbridge/suppression-reason', () => {
+  it('requires a reason on a directive that names its rules', () => {
+    quietTester.run(
+      'suppression-reason',
+      openbridgePlugin.rules['suppression-reason'],
+      {
+        valid: [
+          '// eslint-disable-next-line no-console -- logs only in the demo\nconsole.log(1);',
+          '/* eslint-disable no-console, no-debugger -- a debugging script */\nconsole.log(1);',
+          'console.log(1); // eslint-disable-line no-console -- demo output',
+          '// eslint-enable no-console\nconsole.log(1);',
+          '// a comment that mentions eslint-disable in passing\nconst a = 1;',
+          "const s = '// eslint-disable-next-line no-console';",
+        ],
+        invalid: [
+          {
+            code: '// eslint-disable-next-line no-console\nconsole.log(1);',
+            errors: [{message: /reason after ` -- `/}],
+          },
+          {
+            code: '/* eslint no-console: "off" */\nconsole.log(1);',
+            errors: [{message: /not in an inline comment/}],
+          },
+        ],
+      }
+    );
+  });
+
+  // A directive without rule names switches every rule off, this one
+  // included, so these cases run the real lint:suppressions config the way
+  // the script does: with inline directives ignored.
+  describe('through lint:suppressions', () => {
+    const packageDir = path.resolve(
+      path.dirname(fileURLToPath(import.meta.url)),
+      '..'
+    );
+    const eslint = new ESLint({
+      cwd: packageDir,
+      overrideConfigFile: path.join(
+        packageDir,
+        'eslint.suppressions.config.mjs'
+      ),
+      allowInlineConfig: false,
+    });
+    const lint = async (code: string, file = 'src/probe.ts') => {
+      const [result] = await eslint.lintText(code, {
+        filePath: path.join(packageDir, file),
+      });
+      return result.messages.map((m) => `${m.ruleId}: ${m.message}`);
+    };
+
+    it('reports a directive that names no rules', async () => {
+      expect(await lint('/* eslint-disable */\nexport const a = 1;\n')).toEqual(
+        [
+          expect.stringMatching(
+            /^openbridge\/suppression-reason: Name the rules/
+          ),
+        ]
+      );
+      expect(
+        await lint('export const a = 1; // eslint-disable-line -- all\n')
+      ).toEqual([
+        expect.stringMatching(
+          /^openbridge\/suppression-reason: Name the rules/
+        ),
+      ]);
+    });
+
+    it('bans @ts-ignore and a @ts-expect-error without a reason', async () => {
+      expect(
+        await lint('// @ts-ignore\nexport const a: number = "x";\n')
+      ).toEqual([expect.stringMatching(/^@typescript-eslint\/ban-ts-comment/)]);
+      expect(
+        await lint('// @ts-expect-error\nexport const a: number = "x";\n')
+      ).toEqual([expect.stringMatching(/^@typescript-eslint\/ban-ts-comment/)]);
+      expect(
+        await lint(
+          '// @ts-expect-error - the fixture is deliberately mistyped\nexport const a: number = "x";\n'
+        )
+      ).toEqual([]);
+    });
+
+    it('leaves the generated locales alone', async () => {
+      const messages = await lint(
+        '/* eslint-disable no-irregular-whitespace */\nexport const a = 1;\n',
+        'src/generated/locales/fi-FI.ts'
+      );
+      expect(messages.filter((m) => !m.startsWith('null:'))).toEqual([]);
+    });
+  });
+});
+
+describe('openbridge/no-skipped-tests', () => {
+  it('rejects skip, only and todo on it, test and describe', () => {
+    ruleTester.run(
+      'no-skipped-tests',
+      openbridgePlugin.rules['no-skipped-tests'],
+      {
+        valid: [
+          "it('runs', () => {});",
+          "it.each([1])('runs %s', () => {});",
+          "describe('group', () => {});",
+          'toolbar.skip();',
+        ],
+        invalid: [
+          {code: "it.skip('x', () => {});", errors: 1},
+          {code: "describe.only('x', () => {});", errors: 1},
+          {code: "test.todo('x');", errors: 1},
+          {code: "describe.skip.each([1])('x', () => {});", errors: 1},
+        ],
+      }
+    );
+  });
+});
+
+describe('openbridge/use-math-helpers', () => {
+  it('points hand-written clamps, wraps and angle conversions at svghelpers/math.ts', () => {
+    ruleTester.run(
+      'use-math-helpers',
+      openbridgePlugin.rules['use-math-helpers'],
+      {
+        valid: [
+          'Math.min(a, b);',
+          'Math.max(a, Math.round(b));',
+          'a % 360;',
+          'x / 180;',
+          {
+            code: 'Math.min(Math.max(v, 0), 1);',
+            filename: '/repo/src/svghelpers/math.ts',
+          },
+        ],
+        invalid: [
+          {code: 'Math.min(Math.max(v, 0), 1);', errors: 1},
+          {code: 'Math.max(0, Math.min(1, v));', errors: 1},
+          {code: '((a % 360) + 360) % 360;', errors: 1},
+          {code: '(end - start + 360) % 360;', errors: 1},
+          {code: '(deg * Math.PI) / 180;', errors: 1},
+          {code: 'deg * (Math.PI / 180);', errors: 1},
+          {code: '(rad * 180) / Math.PI;', errors: 1},
+          {code: '180 / Math.PI;', errors: 1},
+        ],
+      }
+    );
+  });
+});
+
+describe('openbridge/no-positive-tabindex', () => {
+  it('rejects a tabindex above 0 in templates, properties and setAttribute', () => {
+    ruleTester.run(
+      'no-positive-tabindex',
+      openbridgePlugin.rules['no-positive-tabindex'],
+      {
+        valid: [
+          'html`<div tabindex="0"></div>`;',
+          'html`<div tabindex="-1"></div>`;',
+          'el.tabIndex = -1;',
+          "el.setAttribute('tabindex', '0');",
+        ],
+        invalid: [
+          {code: 'html`<div tabindex="1"></div>`;', errors: 1},
+          {
+            code: 'html`<div tabindex=${x} data-a tabindex=2></div>`;',
+            errors: 1,
+          },
+          {code: 'el.tabIndex = 3;', errors: 1},
+          {code: "el.setAttribute('tabindex', '4');", errors: 1},
+        ],
+      }
+    );
+  });
+});
+
+describe('openbridge/positive-boolean-name', () => {
+  it('rejects boolean properties named for what they turn off', () => {
+    ruleTester.run(
+      'positive-boolean-name',
+      openbridgePlugin.rules['positive-boolean-name'],
+      {
+        valid: [
+          'class A { @property({type: Boolean}) showLabels = true; }',
+          'class A { @property({type: Boolean}) disabled = false; }',
+          'class A { @property({type: Number}) noOfItems = 1; }',
+          'class A { hideTimer = 0; }',
+        ],
+        invalid: [
+          {
+            code: 'class A { @property({type: Boolean}) hideLabels = false; }',
+            errors: 1,
+          },
+          {
+            code: 'class A { @property({type: Boolean, reflect: true}) noTooltip = false; }',
+            errors: 1,
+          },
+          {
+            code: 'class A { @property({type: Boolean}) disableAutoAtSetpoint = false; }',
             errors: 1,
           },
         ],
