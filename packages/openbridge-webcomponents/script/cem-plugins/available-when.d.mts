@@ -10,13 +10,14 @@ export type AvailableWhenIf =
 
 export function parseCondition(
   cond: string,
-  resolveEnum: (id: string) => string | undefined
+  resolveEnum: (id: string) => string | number | undefined
 ): AvailableWhenIf | undefined;
 
+/** Enum member names and string values, mapped to their values; numeric members map to numbers. */
 export function collectEnums(
   tsModule: typeof ts,
   sourceFile: ts.SourceFile,
   seen?: Set<string>
-): Map<string, string>;
+): Map<string, string | number>;
 
 export function availableWhenPlugin(): Plugin;
