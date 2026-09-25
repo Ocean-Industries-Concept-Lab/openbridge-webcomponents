@@ -120,9 +120,11 @@ ends `... build:bundle && analyze && inject:dts`. Putting `inject:dts` before a
 `vite build` throws the injected docs away — that build regenerates the `.d.ts`
 files from source.
 
-`lint:comments`, `lint:slots`, `lint:events` and `lint:apg` run in
-`build.yml`'s **lint** job, which names each script: a new `lint:*` script
-goes into that step as well as into the `lint` chain, or CI never runs it.
+Every `lint:*` script runs in `build.yml`'s **lint** job, which names each
+one instead of running `npm run lint`. `script/ci-coverage.test.ts` (in
+`test:rules`) keeps the two in step: it fails when any package's lint, type
+check, test or build script runs in no workflow and is not listed there with
+the reason, and when a `lint:*` script is missing from the `lint` chain.
 `test:rules` runs in **test-browser**, which has no `analyze` step — tooling
 tests must not import the manifest.
 

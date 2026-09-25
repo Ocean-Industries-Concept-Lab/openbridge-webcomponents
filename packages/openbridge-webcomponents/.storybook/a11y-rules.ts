@@ -19,7 +19,7 @@
  * The walk follows the tree as it renders: into shadow roots and through
  * slots to what they show.
  */
-import axe, {type Spec, type VirtualNode} from 'axe-core';
+import axe, {type Spec} from 'axe-core';
 
 const COMPOSITE_ROLES = [
   'tablist',
@@ -107,8 +107,8 @@ function allElements(root: ParentNode = document): Element[] {
   return out;
 }
 
-function nameOf(virtualNode: VirtualNode): string {
-  return axe.commons.text.accessibleTextVirtual(virtualNode).trim();
+function nameOf(element: Element): string {
+  return axe.commons.text.accessibleText(element).trim();
 }
 
 export const obcA11yRules: Spec = {
@@ -132,8 +132,8 @@ export const obcA11yRules: Spec = {
     },
     {
       id: 'obc-has-name',
-      evaluate(_node: Element, _options: unknown, virtualNode: VirtualNode) {
-        return nameOf(virtualNode) !== '';
+      evaluate(node: Element) {
+        return nameOf(node) !== '';
       },
       metadata: {
         impact: 'serious',
@@ -171,6 +171,8 @@ export const obcA11yRules: Spec = {
         description:
           'A composite widget is one stop in the tab sequence (WAI-ARIA APG)',
         help: 'Composite widgets must hold a single tab stop',
+        helpUrl:
+          'https://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/#kbd_general_within',
       },
     },
     {
@@ -182,6 +184,8 @@ export const obcA11yRules: Spec = {
         description:
           'Tab lists, radio groups, trees and menus have an accessible name (WAI-ARIA APG)',
         help: 'Composite widgets must be named',
+        helpUrl:
+          'https://www.w3.org/WAI/ARIA/apg/practices/names-and-descriptions/',
       },
     },
     {
@@ -193,6 +197,7 @@ export const obcA11yRules: Spec = {
         description:
           'A tab panel is named and a tab points at it (WAI-ARIA APG Tabs)',
         help: 'Tab panels must be named and controlled by a tab',
+        helpUrl: 'https://www.w3.org/WAI/ARIA/apg/patterns/tabs/',
       },
     },
   ],
