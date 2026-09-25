@@ -141,7 +141,7 @@ const meta: Meta<typeof ObcAlertListDetailsExperimental> = {
       },
       {
         id: '8',
-        tagId: '8'
+        tagId: '8',
         source: 'AlertList',
         text: 'This alert is acked but has no acknowledgedBy information',
         acknowledged: {
