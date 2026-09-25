@@ -12,6 +12,7 @@ import '../../icons/icon-chevron-left-google.js';
 import {customElement} from '../../decorator.js';
 import '../number-input-field/number-input-field.js';
 import {ObcNumberInputFieldTextAlign} from '../number-input-field/number-input-field.js';
+import {clamp} from '../../svghelpers/math.js';
 
 /**
  * The visual and behavioral variant of the stepper box.
@@ -157,10 +158,7 @@ export class ObcStepperBox extends LitElement {
   }
 
   private clamp(value: number): number {
-    return Math.min(
-      Math.max(value, this.min ?? -Infinity),
-      this.max ?? Infinity
-    );
+    return clamp(value, this.min ?? -Infinity, this.max ?? Infinity);
   }
 
   private normalizedStep(step: number): number {

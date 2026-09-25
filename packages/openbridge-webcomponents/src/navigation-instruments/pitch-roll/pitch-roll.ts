@@ -24,7 +24,7 @@ import {
   normalizeArcAngle,
   shiftArcFrameToOuterEdge,
 } from '../../svghelpers/arc-frame.js';
-import {degToRad, radToDeg} from '../../svghelpers/math.js';
+import {degToRad, radToDeg, clamp} from '../../svghelpers/math.js';
 
 export enum PitchRollPriorityElement {
   pitch = 'pitch',
@@ -147,7 +147,7 @@ export class ObcPitchRoll extends LitElement {
     if (!Number.isFinite(this.scaleForeImage)) {
       return 1;
     }
-    return Math.max(0, Math.min(2, this.scaleForeImage));
+    return clamp(this.scaleForeImage, 0, 2);
   }
 
   /** Requested (clamped to a minimum) half-extent for each axis. */

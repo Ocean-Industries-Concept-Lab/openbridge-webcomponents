@@ -263,7 +263,11 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
 
   override render() {
     const barColor = this.barColor ?? this._derivedBarColor;
-    const barStartValue = Math.max(this.minValue, Math.min(0, this.maxValue));
+    const barStartValue = clamp(
+      0,
+      this.minValue,
+      Math.max(this.minValue, this.maxValue)
+    );
     const value = this.clampedValue;
     const setpointAngle =
       this.setpoint !== undefined ? this.mapAngle(this.setpoint) : undefined;

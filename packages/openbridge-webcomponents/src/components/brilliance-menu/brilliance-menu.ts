@@ -36,6 +36,7 @@ import type {TabData} from '../tab-row/tab-row.js';
 import {stopPropagation} from '../../internal/events.js';
 import '../../icons/icon-display-brilliance-iec.js';
 import '../../icons/icon-palette-day-night-iec.js';
+import {clamp} from '../../svghelpers/math.js';
 
 export enum ObcPalette {
   night = 'night',
@@ -223,9 +224,10 @@ export class ObcBrillianceMenu extends LitElement {
   }
 
   increaseBrightness(step: number) {
-    this.brightness = Math.max(
+    this.brightness = clamp(
+      this.brightness + step,
       0,
-      Math.min(this.brightness + step, this.brightnessMax)
+      Math.max(0, this.brightnessMax)
     );
     this.dispatchEvent(
       new CustomEvent('brightness-changed', {

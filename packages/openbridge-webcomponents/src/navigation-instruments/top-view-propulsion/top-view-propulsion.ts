@@ -32,6 +32,7 @@ import {Tickmark, TickmarkStyle, TickmarkType} from '../watch/tickmark.js';
 import {PropellerImage, propellerImages} from '../watch/propeller.js';
 import {customElement} from '../../decorator.js';
 import componentStyle from './top-view-propulsion.css?inline';
+import {clamp} from '../../svghelpers/math.js';
 
 export enum TopViewPropulsionType {
   power = 'power',
@@ -46,7 +47,7 @@ function percentToAngle(value: number): number {
   if (!Number.isFinite(value)) {
     return 0;
   }
-  return Math.max(-100, Math.min(100, value)) * 1.8;
+  return clamp(value, -100, 100) * 1.8;
 }
 
 /**

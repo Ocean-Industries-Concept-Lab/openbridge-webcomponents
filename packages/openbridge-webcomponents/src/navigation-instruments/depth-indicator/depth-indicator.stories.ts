@@ -5,6 +5,7 @@ import {
   ObcDepthIndicatorVariant,
 } from './depth-indicator.js';
 import './depth-indicator.js';
+import {clamp} from '../../svghelpers/math.js';
 
 const DEPTH_INDICATOR_LAYOUT_PX = 48;
 
@@ -31,10 +32,7 @@ class DepthIndicatorStreamingDemoElement extends LitElement {
 
     if (this.timer) return;
     this.timer = window.setInterval(() => {
-      const next = Math.max(
-        0,
-        Math.min(1, (Math.random() + Math.random()) / 2)
-      );
+      const next = clamp((Math.random() + Math.random()) / 2, 0, 1);
       this.values = [...this.values.slice(1), next];
       this.requestUpdate();
     }, 250);

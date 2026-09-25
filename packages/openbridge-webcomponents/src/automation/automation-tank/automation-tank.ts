@@ -47,6 +47,7 @@ import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import {TankPositioning} from './tank-positioning.js';
+import {clamp} from '../../svghelpers/math.js';
 
 export enum TankTrend {
   fastRising = 'fast-rising',
@@ -596,7 +597,7 @@ export class ObcAutomationTank extends SetpointMixin(LitElement) {
 
   override render() {
     const safeMax = this.max > 0 ? this.max : 1;
-    const percent = Math.max(0, Math.min(100, (this.value / safeMax) * 100));
+    const percent = clamp((this.value / safeMax) * 100, 0, 100);
     const isCompact = this.isCompact;
 
     // Compact and static collapse their empty cells so the tank frame absorbs

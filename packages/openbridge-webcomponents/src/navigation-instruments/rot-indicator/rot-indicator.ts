@@ -3,6 +3,7 @@ import {property, query} from 'lit/decorators.js';
 import componentStyle from './rot-indicator.css?inline';
 import {RateOfTurnController} from '../rate-of-turn/rate-of-turn.controller.js';
 import {customElement} from '../../decorator.js';
+import {clamp} from '../../svghelpers/math.js';
 
 export enum RotIndicatorType {
   radial = 'radial',
@@ -166,7 +167,7 @@ export class ObcRotIndicator extends LitElement {
   }
 
   private clamp(value: number, min: number, max: number): number {
-    return Math.min(max, Math.max(min, value));
+    return clamp(min, value, max);
   }
 
   private getLinearDotCenterX(): number {

@@ -1,7 +1,12 @@
 import {LitElement, css, html, svg} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
-import {degToRad, normalizeAngle, radToDeg} from '../../svghelpers/math.js';
+import {
+  degToRad,
+  normalizeAngle,
+  radToDeg,
+  clamp,
+} from '../../svghelpers/math.js';
 import {InstrumentState} from '../types.js';
 
 export enum PropulsionAzimuthIndicatorType {
@@ -56,7 +61,7 @@ function arcSegmentPath(
 ): string {
   const start = circlePoint(radius, startAngle);
   const end = circlePoint(radius, endAngle);
-  const delta = (endAngle - startAngle + 360) % 360;
+  const delta = normalizeAngle(endAngle - startAngle);
   const largeArcFlag = delta > 180 ? 1 : 0;
 
   return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} 1 ${end.x} ${end.y}`;
@@ -140,7 +145,7 @@ export class ObcPropulsionAzimuthIndicator extends LitElement {
 
   private get barCenterLocalY(): number {
     const v = Number.isFinite(this.value) ? this.value : 0;
-    const clamped = Math.max(-1, Math.min(1, v));
+    const clamped = clamp(v, -1, 1);
     return BAR_CENTER_NEUTRAL + clamped * BAR_HALF_SPAN;
   }
 

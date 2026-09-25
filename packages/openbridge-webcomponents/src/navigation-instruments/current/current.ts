@@ -10,6 +10,7 @@ import {
 import {renderCurrentForcePattern} from '../watch/force-pattern.js';
 import {Priority} from '../types.js';
 import {customElement} from '../../decorator.js';
+import {clamp} from '../../svghelpers/math.js';
 
 export enum CurrentType {
   vessel = 'vessel',
@@ -38,7 +39,7 @@ export function clampCurrentSpeed(value: number | null): number | null {
   if (value == null || !Number.isFinite(value)) {
     return null;
   }
-  return Math.min(4, Math.max(0, Math.round(value)));
+  return clamp(Math.round(value), 0, 4);
 }
 
 /**

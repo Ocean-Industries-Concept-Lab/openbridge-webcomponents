@@ -8,6 +8,7 @@ import '../poi/poi-aton.js';
 import '../poi/poi-vessel.js';
 import '../../icons/icon-beacon-general-east.js';
 import '../../icons/icon-vessel-type-psv-outlined.js';
+import {normalizeAngle, radToDeg} from '../../svghelpers/math.js';
 
 const isVitestBrowser = Boolean(
   (globalThis as {__vitest_browser__?: unknown}).__vitest_browser__
@@ -338,7 +339,7 @@ export const SelectionMultiAnimated: Story = {
     const headingOffsetDeg = 0;
     const headingSmoothing = 0.25;
     const normalizeDeg = (deg: number): number =>
-      ((((deg + 180) % 360) + 360) % 360) - 180;
+      normalizeAngle(deg + 180) - 180;
     const lerpAngleDeg = (from: number, to: number, alpha: number): number =>
       normalizeDeg(from + normalizeDeg(to - from) * alpha);
 
@@ -375,8 +376,7 @@ export const SelectionMultiAnimated: Story = {
           lateralRange[i] * Math.cos(lateralWave) * (freq[i] * 0.6);
         const vx = dirX * dForward + perpX * dLateral;
         const vy = dirY * dForward + perpY * dLateral;
-        const headingDeg =
-          (Math.atan2(vy, vx) * 180) / Math.PI + headingOffsetDeg;
+        const headingDeg = radToDeg(Math.atan2(vy, vx)) + headingOffsetDeg;
         const currentHeading = Number.isFinite(target.relativeDirection)
           ? target.relativeDirection
           : base[i].relativeDirection;

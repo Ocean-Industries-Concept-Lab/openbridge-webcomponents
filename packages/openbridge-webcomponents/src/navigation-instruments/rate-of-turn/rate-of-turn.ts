@@ -12,6 +12,7 @@ import instrumentReadoutStyle from '../readout/instrument-readout.css?inline';
 import {ROT_ZERO_DEADBAND_DEG} from './rot-renderer.js';
 import {customElement} from '../../decorator.js';
 import {Priority} from '../types.js';
+import {clamp} from '../../svghelpers/math.js';
 
 export {RotType, RotPosition};
 
@@ -116,7 +117,7 @@ export class ObcRateOfTurn extends LitElement {
   private get trackBarAngle(): number {
     const max = this.rotMaxValue || 1;
     const rot = this.rateOfTurnDegreesPerMinute ?? 0;
-    const ratio = Math.max(-1, Math.min(1, rot / max));
+    const ratio = clamp(rot / max, -1, 1);
     return ratio * this.rotArcExtent;
   }
 
