@@ -82,7 +82,8 @@ export interface TabItemBadge {
  * One tab of the [APG Tabs pattern](https://www.w3.org/WAI/ARIA/apg/patterns/tabs/):
  * `Enter` and `Space` activate it, and `Delete` closes it when it has a close
  * button; the arrow keys, `Home` and `End` belong to the row. `aria-selected`
- * mirrors `checked`, and `panel` becomes the tab's `aria-controls`. The close
+ * mirrors `checked`, and `panel` becomes the tab's `aria-controls` through
+ * element reflection (`ariaControlsElements`). The close
  * button stays out of the tab sequence so the row keeps one tab stop, and the
  * tab announces `Delete` as its shortcut instead.
  *

@@ -70,7 +70,10 @@ function isRow(el: Element): el is TreeRow {
  * to its parent, and `Home` and `End` go to the first and last visible item;
  * the items handle `Enter` and `Space`. Name the tree with `aria-label`.
  *
- * Left out: type-ahead, and `*` to expand every group at one level.
+ * Left out: type-ahead, and `*` to expand every group at one level. The
+ * `group` that holds a parent's children is a sibling of the parent's row,
+ * not inside its `treeitem`, and `aria-owns` cannot reach across the shadow
+ * boundary to say so.
  *
  * @slot - Top-level tree rows (groups and items).
  * @property ariaLabel - Accessible name of the tree, mapped to the `aria-label` attribute and forwarded to the `role="tree"` element. `aria-labelledby` is not supported: ID references cannot cross the shadow boundary.

@@ -18,12 +18,16 @@
  *   on part of the component's API and gives the framework wrappers a binding.
  *
  * The event chain is followed through every level: an event one component
- * lets out undeclared is also checked on each component that renders it.
+ * lets out undeclared is also checked on each component that renders it. A
+ * component is read with its base classes and with the helper modules that
+ * render elements for it (`source-links.ts`), since both are where a child,
+ * a listener or a dispatch can hide from a one-file reading.
  *
  * Regex-based like `check-slot-event-docs.ts`, and conservative in the same
  * way: an event is counted only when the host itself dispatches it
- * (`this.dispatchEvent(new CustomEvent('name', …))`, inline or through a
- * variable) with a literal name and both flags written out.
+ * (`this.dispatchEvent(new CustomEvent('name', …))`, inline, through a
+ * variable, or through a method that takes the name as a parameter) with a
+ * literal name and both flags written out.
  *
  * Usage:
  * ```bash
@@ -35,6 +39,7 @@ import path from 'path';
 import {fileURLToPath} from 'url';
 import {globby} from 'globby';
 import {classDoc} from './check-apg-records.js';
+import {linkedSources, stripComments, type Reader} from './source-links.js';
 
 export interface ComponentEvents {
   tag: string;
@@ -57,12 +62,6 @@ export interface Leak {
   from: string;
   /** Whether the parent listens for the event (and still lets it out). */
   handled: boolean;
-}
-
-function stripComments(source: string): string {
-  return source
-    .replace(/\/\*[\s\S]*?\*\//g, '')
-    .replace(/(^|[^:])\/\/[^\n]*/g, '$1');
 }
 
 /** The text from the `(` at or after `from` to its matching `)`. */
@@ -134,24 +133,95 @@ function composedHostEvents(code: string): Set<string> {
       !/\bcomposed\s*:\s*true/.test(args)
     )
       continue;
-    const before = code.slice(Math.max(0, m.index - 80), m.index);
+    const before = code.slice(Math.max(0, m.index - 120), m.index);
     const inline = /this\.dispatchEvent\(\s*$/.test(before);
-    const variable = /(?:const|let)\s+(\w+)\s*=\s*$/.exec(before);
+    // `const event: SomeType = new CustomEvent(…)` carries an annotation.
+    const variable = /(?:const|let)\s+(\w+)(?:\s*:\s*[^=]+)?\s*=\s*$/.exec(
+      before
+    );
     const viaVariable =
       variable !== null &&
       new RegExp(`this\\.dispatchEvent\\(\\s*${variable[1]}\\s*\\)`).test(code);
     if (inline || viaVariable) events.add(m[1]);
   }
+  for (const event of emittedThroughMethods(code)) events.add(event);
   return events;
 }
 
+/**
+ * Events sent through a method that takes the name as a parameter —
+ * `emit('send-click', detail)` over `this.dispatchEvent(new CustomEvent(name,
+ * {bubbles: true, composed: true}))` — and through methods that forward to it.
+ */
+function emittedThroughMethods(code: string): Set<string> {
+  const emitters = new Set<string>();
+  const method =
+    /(?:^|[\s;}])(?:private |protected |public |async )*(\w+)\s*\(\s*(\w+)\s*:\s*string\b/gm;
+  let grew = true;
+  while (grew) {
+    grew = false;
+    let m: RegExpExecArray | null;
+    while ((m = method.exec(code)) !== null) {
+      const [, name, param] = m;
+      if (emitters.has(name)) continue;
+      const body = memberBody(code, name);
+      const ctor = new RegExp(
+        `this\\.dispatchEvent\\(\\s*new\\s+(?:Custom)?Event\\s*\\(\\s*${param}\\b`
+      );
+      const composed =
+        /\bbubbles\s*:\s*true/.test(body) && /\bcomposed\s*:\s*true/.test(body);
+      const forwards = [...emitters].some((e) =>
+        new RegExp(`this\\.${e}\\(\\s*${param}\\b`).test(body)
+      );
+      if ((ctor.test(body) && composed) || forwards) {
+        emitters.add(name);
+        grew = true;
+      }
+    }
+    method.lastIndex = 0;
+  }
+  const events = new Set<string>();
+  for (const name of emitters) {
+    for (const call of code.matchAll(
+      new RegExp(`this\\.${name}\\(\\s*['"]([^'"]+)['"]`, 'g')
+    )) {
+      events.add(call[1]);
+    }
+  }
+  return events;
+}
+
+/**
+ * The template facts of one source file: the `obc-*` elements it renders, the
+ * events it listens for and whether the listener stops them, and the composed
+ * events it dispatches on the host.
+ */
+function templateFacts(code: string) {
+  const children = new Set(
+    Array.from(code.matchAll(/<(obc-[a-z0-9-]+)/g), (m) => m[1])
+  );
+  const listeners = new Map<string, boolean>();
+  for (const m of code.matchAll(/@([a-z][\w-]*)=\$\{/g)) {
+    const handler = balanced(code, m.index + m[0].length - 1, '{', '}');
+    const stops = isStopping(handler, code);
+    listeners.set(m[1], (listeners.get(m[1]) ?? true) && stops);
+  }
+  return {children, listeners, composed: composedHostEvents(code)};
+}
+
+/**
+ * Reads one component: its own file, then its base classes (children,
+ * listeners and dispatches) and the helper modules that render for it
+ * (children and listeners). `@fires` comes from the concrete class only,
+ * the doc the manifest and the wrappers read.
+ */
 export function parseComponent(
   source: string,
-  file: string
+  file: string,
+  read: Reader = () => null
 ): ComponentEvents | null {
   const tag = /@customElement\(\s*['"]([^'"]+)['"]\s*\)/.exec(source)?.[1];
   if (!tag) return null;
-  const code = stripComments(source);
   const fires = new Set(
     Array.from(
       classDoc(source).matchAll(
@@ -160,24 +230,22 @@ export function parseComponent(
       (m) => m[1]
     )
   );
-  const children = new Set(
-    Array.from(code.matchAll(/<(obc-[a-z0-9-]+)/g), (m) => m[1])
-  );
-  children.delete(tag);
-  const listeners = new Map<string, boolean>();
-  for (const m of code.matchAll(/@([a-z][\w-]*)=\$\{/g)) {
-    const handler = balanced(code, m.index + m[0].length - 1, '{', '}');
-    const stops = isStopping(handler, code);
-    listeners.set(m[1], (listeners.get(m[1]) ?? true) && stops);
+  const own = templateFacts(stripComments(source));
+  const children = own.children;
+  const listeners = own.listeners;
+  const composed = own.composed;
+  for (const linked of linkedSources(source, file, read)) {
+    const facts = templateFacts(stripComments(linked.source));
+    for (const child of facts.children) children.add(child);
+    for (const [event, stops] of facts.listeners) {
+      listeners.set(event, (listeners.get(event) ?? true) && stops);
+    }
+    if (linked.kind === 'base') {
+      for (const event of facts.composed) composed.add(event);
+    }
   }
-  return {
-    tag,
-    file,
-    fires,
-    composed: composedHostEvents(code),
-    children,
-    listeners,
-  };
+  children.delete(tag);
+  return {tag, file, fires, composed, children, listeners};
 }
 
 export function findLeaks(components: ComponentEvents[]): Leak[] {
@@ -237,10 +305,19 @@ async function main() {
       'src/generated/**',
     ],
   });
+  const sources = new Map<string, string | null>();
+  const read: Reader = (file) => {
+    if (!sources.has(file)) {
+      const abs = path.join(root, file);
+      sources.set(
+        file,
+        fs.existsSync(abs) ? fs.readFileSync(abs, 'utf8') : null
+      );
+    }
+    return sources.get(file)!;
+  };
   const components = files
-    .map((file) =>
-      parseComponent(fs.readFileSync(path.join(root, file), 'utf8'), file)
-    )
+    .map((file) => parseComponent(read(file)!, file, read))
     .filter((c): c is ComponentEvents => c !== null);
   const leaks = findLeaks(components);
   for (const leak of leaks) {

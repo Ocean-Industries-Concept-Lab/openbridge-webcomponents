@@ -17,12 +17,18 @@
  * - a line that starts with `Left out:` — `Left out: nothing.` when the
  *   component follows the whole pattern.
  *
- * A composite widget (a tab list, radio group, menu, listbox, tree, grid or
- * toolbar) also needs a `*-keyboard.spec.ts` next to it: its keys are the part
- * no scanner can check (a11y.md § 9).
+ * A composite widget (a tab list, radio group, menu, menu bar, listbox, tree,
+ * tree grid, grid or toolbar) also needs a `*-keyboard.spec.ts` in its
+ * directory, or in the directory of the base class that renders the widget:
+ * its keys are the part no scanner can check (a11y.md § 9).
  *
- * Roles are read from the templates: literal `role="…"` attributes, and the
- * quoted roles inside a bound `role=${…}` expression.
+ * Roles are read from the templates: literal `role="…"` attributes, the
+ * quoted roles inside a bound `role=${…}` expression, and, for a binding that
+ * quotes none (`role=${this.itemRole}`), every widget role the file spells
+ * out as a string, such as the members of an enum. A component is read with
+ * its base classes and the helper modules that render for it
+ * (`source-links.ts`), so a role a base class renders counts for every
+ * element registered on it.
  *
  * Usage:
  * ```bash
@@ -33,6 +39,7 @@ import fs from 'fs';
 import path from 'path';
 import {fileURLToPath} from 'url';
 import {globby} from 'globby';
+import {linkedSources, stripComments, type Reader} from './source-links.js';
 
 /** Roles whose behaviour an APG pattern describes. */
 const WIDGET_ROLES = new Set([
@@ -76,24 +83,36 @@ export const COMPOSITE_ROLES = new Set([
   'treegrid',
 ]);
 
-function stripComments(source: string): string {
-  return source
-    .replace(/\/\*[\s\S]*?\*\//g, '')
-    .replace(/(^|[^:])\/\/[^\n]*/g, '$1');
-}
-
 export function widgetRoles(source: string): string[] {
   const roles = new Set<string>();
   const code = stripComments(source);
+  let unquotedBinding = false;
   for (const m of code.matchAll(
     /(?<!\[)\brole=(?:"([^"]*)"|'([^']*)'|\$\{([^}]*)\})/g
   )) {
     const literal = m[1] ?? m[2];
-    const candidates =
-      literal !== undefined
-        ? literal.split(/\s+/)
-        : Array.from(m[3].matchAll(/['"]([a-z]+)['"]/g), (q) => q[1]);
-    for (const role of candidates) if (WIDGET_ROLES.has(role)) roles.add(role);
+    const quoted =
+      literal === undefined
+        ? Array.from(m[3].matchAll(/['"]([a-z]+)['"]/g), (q) => q[1])
+        : null;
+    if (quoted !== null && quoted.length === 0) unquotedBinding = true;
+    for (const role of quoted ?? literal!.split(/\s+/)) {
+      if (WIDGET_ROLES.has(role)) roles.add(role);
+    }
+  }
+  if (unquotedBinding) {
+    // The value comes from elsewhere in the file: the members of a `…Role`
+    // enum, or a string on a line that names a role.
+    const enums = Array.from(
+      code.matchAll(/\benum\s+\w*Roles?\s*\{([^}]*)\}/g),
+      (m) => m[1]
+    );
+    const lines = code.split('\n').filter((line) => /\brole\b/i.test(line));
+    for (const text of [...enums, ...lines]) {
+      for (const m of text.matchAll(/(?<!role=)['"]([a-z]+)['"]/g)) {
+        if (WIDGET_ROLES.has(m[1])) roles.add(m[1]);
+      }
+    }
   }
   return [...roles];
 }
@@ -107,15 +126,32 @@ export function classDoc(source: string): string {
   return start < 0 ? '' : before.slice(start);
 }
 
+export interface RecordContext {
+  /** Other source files, for the base classes and helpers of the component. */
+  read?: Reader;
+  /** Whether a directory holds a `*-keyboard.spec.ts`. */
+  hasKeyboardSpec?: (dir: string) => boolean;
+}
+
 export function checkRecord(
   source: string,
   file: string,
-  hasKeyboardSpec = true
+  context: RecordContext | boolean = {}
 ): string[] {
+  const {read = () => null, hasKeyboardSpec = () => true} =
+    typeof context === 'boolean' ? {hasKeyboardSpec: () => context} : context;
   const tag = /@customElement\(\s*['"]([^'"]+)['"]\s*\)/.exec(source)?.[1];
   if (!tag) return [];
-  const roles = widgetRoles(source);
+  const linked = linkedSources(source, file, read);
+  const roles = [
+    ...new Set([source, ...linked.map((l) => l.source)].flatMap(widgetRoles)),
+  ];
   if (roles.length === 0) return [];
+  const specDirs = [
+    file,
+    ...linked.filter((l) => l.kind === 'base').map((l) => l.file),
+  ].map((f) => path.dirname(f));
+  const specBeside = specDirs.some(hasKeyboardSpec);
   const doc = classDoc(source);
   const renders = `${file}: <${tag}> renders ${roles
     .map((role) => `role="${role}"`)
@@ -131,9 +167,9 @@ export function checkRecord(
       `${renders} but its class JSDoc has no "Left out:" line (write "Left out: nothing." when it follows the whole pattern)`
     );
   }
-  if (!hasKeyboardSpec && roles.some((role) => COMPOSITE_ROLES.has(role))) {
+  if (!specBeside && roles.some((role) => COMPOSITE_ROLES.has(role))) {
     problems.push(
-      `${renders}, a composite widget, but ${path.dirname(file)} has no *-keyboard.spec.ts pinning its keys (docs/agents/a11y.md § 9)`
+      `${renders}, a composite widget, but ${specDirs.join(' or ')} has no *-keyboard.spec.ts pinning its keys (docs/agents/a11y.md § 9)`
     );
   }
   return problems;
@@ -151,14 +187,23 @@ async function main() {
       'src/generated/**',
     ],
   });
+  const sources = new Map<string, string | null>();
+  const read: Reader = (file) => {
+    if (!sources.has(file)) {
+      const abs = path.join(root, file);
+      sources.set(
+        file,
+        fs.existsSync(abs) ? fs.readFileSync(abs, 'utf8') : null
+      );
+    }
+    return sources.get(file)!;
+  };
+  const hasKeyboardSpec = (dir: string) =>
+    fs
+      .readdirSync(path.join(root, dir))
+      .some((name) => name.endsWith('-keyboard.spec.ts'));
   const problems = files.flatMap((file) =>
-    checkRecord(
-      fs.readFileSync(path.join(root, file), 'utf8'),
-      file,
-      fs
-        .readdirSync(path.join(root, path.dirname(file)))
-        .some((name) => name.endsWith('-keyboard.spec.ts'))
-    )
+    checkRecord(read(file)!, file, {read, hasKeyboardSpec})
   );
   for (const problem of problems) console.error(problem);
   if (problems.length > 0) {

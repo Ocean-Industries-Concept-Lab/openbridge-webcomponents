@@ -36,6 +36,16 @@ describe('widgetRoles', () => {
     ).toEqual([]);
   });
 
+  it('reads the widget roles a dynamic binding can take from a Role enum', () => {
+    expect(
+      widgetRoles(
+        `enum ItemRole { Button = 'button', MenuItem = 'menuitem' }
+const kinds = ['tree', 'list'];
+` + component('', '<div role=${ifDefined(this.itemRole)}></div>')
+      )
+    ).toEqual(['menuitem']);
+  });
+
   it('ignores roles mentioned in comments', () => {
     expect(
       widgetRoles(
@@ -87,6 +97,51 @@ describe('checkRecord', () => {
   it('does not ask a single control for one', () => {
     expect(
       checkRecord(recorded('<div role="checkbox"></div>'), 'src/w/w.ts', false)
+    ).toEqual([]);
+  });
+});
+
+describe('checkRecord across files', () => {
+  const base = `
+export class ObcGroupBase extends LitElement {
+  render() { return html\`<div role="radiogroup"><button role="radio"></button></div>\`; }
+}
+`;
+  const sub = (doc: string) => `
+import {ObcGroupBase} from '../group/group-base.js';
+/**
+ * A valve.
+${doc}
+ * @stable
+ */
+@customElement('obc-valve')
+export class ObcValve extends ObcGroupBase {}
+`;
+  const read = (file: string) =>
+    file === 'src/group/group-base.ts' ? base : null;
+
+  it('counts the roles a base class renders for the element registered on the subclass', () => {
+    expect(
+      checkRecord(sub(''), 'src/valve/valve.ts', {
+        read,
+        hasKeyboardSpec: () => false,
+      })
+    ).toEqual([
+      'src/valve/valve.ts: <obc-valve> renders role="radiogroup", role="radio" but its class JSDoc links no APG pattern (https://www.w3.org/WAI/ARIA/apg/patterns/…)',
+      'src/valve/valve.ts: <obc-valve> renders role="radiogroup", role="radio" but its class JSDoc has no "Left out:" line (write "Left out: nothing." when it follows the whole pattern)',
+      'src/valve/valve.ts: <obc-valve> renders role="radiogroup", role="radio", a composite widget, but src/valve or src/group has no *-keyboard.spec.ts pinning its keys (docs/agents/a11y.md § 9)',
+    ]);
+  });
+
+  it('accepts the keyboard spec beside the base class that renders the widget', () => {
+    const recorded = sub(
+      ' * [APG](https://www.w3.org/WAI/ARIA/apg/patterns/radio/)\n *\n * Left out: nothing.'
+    );
+    expect(
+      checkRecord(recorded, 'src/valve/valve.ts', {
+        read,
+        hasKeyboardSpec: (dir) => dir === 'src/group',
+      })
     ).toEqual([]);
   });
 });

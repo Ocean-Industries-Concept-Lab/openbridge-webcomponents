@@ -253,6 +253,9 @@ function cssPart(value: ObcTableCellData, subpart: string): string | undefined {
  *
  * Left out: cell-level arrow navigation, and one tab stop for the grid. Each
  * row is a button in the tab sequence, and so is every control inside a cell.
+ * Rows are `<button role="row">`, cells are `cell` rather than `gridcell`, and
+ * a selectable hierarchy renders no `aria-selected` on its rows and no
+ * `aria-multiselectable` on the grid.
  *
  * Best Practices
  * - Keep column `key` values stable across renders to avoid selection or sorting resets.

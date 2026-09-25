@@ -8,8 +8,8 @@
  * finding, and the axe baseline ratchet treats it like any other rule.
  *
  * - `obc-composite-one-tab-stop` — a composite widget (tab list, radio group,
- *   menu, listbox, tree, grid, toolbar) is one stop in the tab sequence; the
- *   arrow keys move inside it.
+ *   menu, menu bar, listbox, tree, tree grid, grid, toolbar) is one stop in
+ *   the tab sequence; the arrow keys move inside it.
  * - `obc-composite-name` — a tab list, radio group, tree, tree grid, menu or
  *   menu bar has an accessible name, so a screen reader can say which one the
  *   user is in.

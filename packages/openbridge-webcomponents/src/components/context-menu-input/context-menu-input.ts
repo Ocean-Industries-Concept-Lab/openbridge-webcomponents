@@ -174,7 +174,11 @@ export enum ContextMenuType {
  * control, not on the host; checkbox menus
  * keep their checkboxes and move between them the same way.
  *
- * Left out: wrapping at the ends, and type-ahead.
+ * Left out: wrapping at the ends, and type-ahead. The checkbox variants put
+ * `role="checkbox"` items in the menu where the pattern asks for
+ * `menuitemcheckbox`. A flyout's header is a plain button without
+ * `aria-haspopup` or `aria-expanded`, its children sit in a `group` rather
+ * than a nested `menu`, and `Right` and `Left` do not open and close it.
  *
  * ## Events
  *

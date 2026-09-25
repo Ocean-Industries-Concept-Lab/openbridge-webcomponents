@@ -183,3 +183,75 @@ export class ObcPanel extends LitElement {
     ]);
   });
 });
+
+describe('parseComponent across files', () => {
+  const files: Record<string, string> = {
+    'src/base/base.ts': `
+export class Base extends LitElement {
+  protected report() {
+    this.dispatchEvent(new CustomEvent('base-change', {bubbles: true, composed: true}));
+  }
+  render() { return html\`<obc-inner @inner-click=\${stopPropagation}></obc-inner>\`; }
+}
+`,
+    'src/helpers/render.ts': `
+export function renderPart() { return html\`<obc-part @part-close=\${stopPropagation}></obc-part>\`; }
+`,
+  };
+  const read = (file: string) => files[file] ?? null;
+
+  it('reads a base class for its children, listeners and dispatches, and a helper for its template', () => {
+    const parsed = parseComponent(
+      `
+import {Base} from '../base/base.js';
+import {renderPart} from '../helpers/render.js';
+/**
+ * A sub.
+ * @stable
+ */
+@customElement('obc-sub')
+export class ObcSub extends Base {
+  render() { return html\`\${renderPart()}\`; }
+}
+`,
+      'src/sub/sub.ts',
+      read
+    )!;
+    expect([...parsed.children].sort()).toEqual(['obc-inner', 'obc-part']);
+    expect([...parsed.composed]).toEqual(['base-change']);
+    expect(Object.fromEntries(parsed.listeners)).toEqual({
+      'inner-click': true,
+      'part-close': true,
+    });
+  });
+
+  it('attributes an event held in a type-annotated variable', () => {
+    const parsed = parseComponent(
+      list(`
+  private handleClick() {
+    const event: ObcListClickEvent = new CustomEvent('obc-click', {bubbles: true, composed: true});
+    this.dispatchEvent(event);
+  }`),
+      'list.ts'
+    )!;
+    expect([...parsed.composed]).toEqual(['obc-click']);
+  });
+
+  it('follows a method that dispatches the name it is given, and the ones forwarding to it', () => {
+    const parsed = parseComponent(
+      list(`
+  private emit(eventName: string, detail?: unknown) {
+    this.dispatchEvent(new CustomEvent(eventName, {detail, bubbles: true, composed: true}));
+  }
+  private emitIfEnabled(eventName: string, detail?: unknown) {
+    if (!this.disabled) this.emit(eventName, detail);
+  }
+  private send() {
+    this.emitIfEnabled('send-click', {value: 1});
+    this.emit('voice-action');
+  }`),
+      'list.ts'
+    )!;
+    expect([...parsed.composed].sort()).toEqual(['send-click', 'voice-action']);
+  });
+});

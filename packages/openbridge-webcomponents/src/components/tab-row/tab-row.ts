@@ -113,7 +113,8 @@ export interface TabData {
  * after it as its own tab stop.
  *
  * With `hasPanels`, each panel is a `tabpanel` named after its tab and each
- * tab points at its panel through `aria-controls`. Use it rather than panels
+ * tab points at its panel through `aria-controls`, set by element reflection
+ * (`ariaControlsElements`), which an engine without it ignores. Use it rather than panels
  * of your own next to the row: the row cannot link those, and a panel outside
  * cannot name itself after a tab inside, because a reference can point out of
  * a shadow root but never into one. Such a panel needs its own `aria-label`.
