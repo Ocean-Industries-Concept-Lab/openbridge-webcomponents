@@ -9,7 +9,6 @@
  * ran in CI. A check covers the scripts its command calls, so the members of
  * a chain and the `type-check` inside the vue demo's `build` count.
  */
-import {execFileSync} from 'child_process';
 import fs from 'fs';
 import path from 'path';
 import {fileURLToPath} from 'url';
@@ -56,25 +55,24 @@ const LOCAL_GATE_JOBS = [
 type Scripts = Record<string, string>;
 
 /**
- * Every workspace package the repository tracks, with its scripts, keyed by
- * directory name; `root` is the repository. The framework wrappers are left
- * out: `npm run wrappers` writes their `package.json` into gitignored folders,
- * so they exist only in a checkout that has built them, never in CI's.
+ * The framework wrappers, which `npm run wrappers` generates into gitignored
+ * folders (the same `openbridge-webcomponents-*` glob its `wrappers:clean`
+ * wipes): they exist only in a checkout that has built them, never in CI's.
  */
+const GENERATED_PACKAGE = /^openbridge-webcomponents-/;
+
+/** Every workspace package with its scripts, keyed by directory name; `root` is the repository. */
 function packages(): Map<string, Scripts> {
   const out = new Map<string, Scripts>();
-  const tracked = execFileSync(
-    'git',
-    ['ls-files', '--', 'package.json', 'packages/*/package.json'],
-    {cwd: repo, encoding: 'utf8'}
-  )
-    .split('\n')
-    .filter(Boolean);
-  for (const file of tracked) {
-    const dir = path.dirname(file);
-    const name = dir === '.' ? 'root' : path.basename(dir);
-    const manifest = JSON.parse(fs.readFileSync(path.join(repo, file), 'utf8'));
-    out.set(name, manifest.scripts ?? {});
+  const root = JSON.parse(
+    fs.readFileSync(path.join(repo, 'package.json'), 'utf8')
+  );
+  out.set('root', root.scripts ?? {});
+  for (const dir of fs.readdirSync(path.join(repo, 'packages'))) {
+    if (GENERATED_PACKAGE.test(dir)) continue;
+    const file = path.join(repo, 'packages', dir, 'package.json');
+    if (!fs.existsSync(file)) continue;
+    out.set(dir, JSON.parse(fs.readFileSync(file, 'utf8')).scripts ?? {});
   }
   return out;
 }
@@ -263,9 +261,12 @@ describe('CI coverage', () => {
 
   it('leaves out the generated wrapper packages, which only a local build writes', () => {
     const generated = [...all.keys()].filter((name) =>
-      /^openbridge-webcomponents-(ng|react|svelte|vue)$/.test(name)
+      GENERATED_PACKAGE.test(name)
     );
     expect(generated).toEqual([]);
+    expect(all.get('openbridge-webcomponents')!['wrappers:clean']).toContain(
+      '../openbridge-webcomponents-*'
+    );
   });
 
   it('reads the job each workflow step belongs to', () => {
