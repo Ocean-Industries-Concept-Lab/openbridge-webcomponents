@@ -9,6 +9,7 @@
  * ran in CI. A check covers the scripts its command calls, so the members of
  * a chain and the `type-check` inside the vue demo's `build` count.
  */
+import {execFileSync} from 'child_process';
 import fs from 'fs';
 import path from 'path';
 import {fileURLToPath} from 'url';
@@ -54,17 +55,26 @@ const LOCAL_GATE_JOBS = [
 
 type Scripts = Record<string, string>;
 
-/** Every workspace package with its scripts, keyed by directory name; `root` is the repository. */
+/**
+ * Every workspace package the repository tracks, with its scripts, keyed by
+ * directory name; `root` is the repository. The framework wrappers are left
+ * out: `npm run wrappers` writes their `package.json` into gitignored folders,
+ * so they exist only in a checkout that has built them, never in CI's.
+ */
 function packages(): Map<string, Scripts> {
   const out = new Map<string, Scripts>();
-  const root = JSON.parse(
-    fs.readFileSync(path.join(repo, 'package.json'), 'utf8')
-  );
-  out.set('root', root.scripts ?? {});
-  for (const dir of fs.readdirSync(path.join(repo, 'packages'))) {
-    const file = path.join(repo, 'packages', dir, 'package.json');
-    if (!fs.existsSync(file)) continue;
-    out.set(dir, JSON.parse(fs.readFileSync(file, 'utf8')).scripts ?? {});
+  const tracked = execFileSync(
+    'git',
+    ['ls-files', '--', 'package.json', 'packages/*/package.json'],
+    {cwd: repo, encoding: 'utf8'}
+  )
+    .split('\n')
+    .filter(Boolean);
+  for (const file of tracked) {
+    const dir = path.dirname(file);
+    const name = dir === '.' ? 'root' : path.basename(dir);
+    const manifest = JSON.parse(fs.readFileSync(path.join(repo, file), 'utf8'));
+    out.set(name, manifest.scripts ?? {});
   }
   return out;
 }
@@ -132,8 +142,8 @@ function ciCommands(): CiCommand[] {
 }
 
 /**
- * The scripts a command runs, as `package:script`: `npm run <name>`, in the
- * package `-w packages/<dir>` names or in every package that has it with
+ * The scripts a command runs, as `package:script`: `npm run <name>`, in each
+ * package a `-w packages/<dir>` names or in every package that has it with
  * `--workspaces`, and the arguments of npm-run-all's `run-p` and `run-s`. A
  * word that only matches a script name is no call.
  */
@@ -146,16 +156,20 @@ function calls(
   for (const part of command.split(/&&|\|\||;|\n/)) {
     const npm = /\bnpm run ([\w:.-]+)(.*)/.exec(part);
     if (npm) {
-      const workspace =
-        /(?:-w|--workspace)[=\s]+(?:\.\/)?packages\/([\w-]+)/.exec(npm[2]);
+      const workspaces = Array.from(
+        npm[2].matchAll(/(?:-w|--workspace)[=\s]+(?:\.\/)?packages\/([\w-]+)/g),
+        (m) => m[1]
+      );
       if (/(?:^|\s)(?:-ws|--workspaces)(?:\s|$)/.test(npm[2])) {
         for (const [name, scripts] of all) {
           if (name !== 'root' && npm[1] in scripts) {
             out.push(`${name}:${npm[1]}`);
           }
         }
+      } else if (workspaces.length > 0) {
+        for (const name of workspaces) out.push(`${name}:${npm[1]}`);
       } else {
-        out.push(`${workspace?.[1] ?? pkg}:${npm[1]}`);
+        out.push(`${pkg}:${npm[1]}`);
       }
       continue;
     }
@@ -216,6 +230,16 @@ describe('script calls', () => {
     ).toEqual(['vue-demo:type-check', 'vue-demo:build-only']);
   });
 
+  it('reads every package a repeated -w names', () => {
+    expect(
+      calls(
+        'root',
+        'npm run check -w packages/openbridge-webcomponents -w packages/vue-demo',
+        all
+      )
+    ).toEqual(['openbridge-webcomponents:check', 'vue-demo:check']);
+  });
+
   it('reads --workspaces as a call in every package that has the script', () => {
     expect(
       calls('root', 'npm run check --workspaces --if-present', all)
@@ -236,6 +260,13 @@ describe('CI coverage', () => {
   const all = packages();
   const ci = ciCommands();
   const covered = reachable(all, ci);
+
+  it('leaves out the generated wrapper packages, which only a local build writes', () => {
+    const generated = [...all.keys()].filter((name) =>
+      /^openbridge-webcomponents-(ng|react|svelte|vue)$/.test(name)
+    );
+    expect(generated).toEqual([]);
+  });
 
   it('reads the job each workflow step belongs to', () => {
     const jobs = new Set(ci.map((c) => `${c.file}:${c.job}`));
