@@ -48,10 +48,11 @@ import {msg} from '@lit/localize';
  * @property fleetButtonSelected - Selected state of fleet button
  * @property fleetButtonActivated - Active state of fleet button while selection is pending
  * @property fleetButtonLabel - Label for the fleet button
+ * @property hasRightTrayLeading - Renders the `right-tray-leading` slot first in the right-hand button group
  * @slot clock - Custom clock content, rendered when `showClock` is true
  * @slot integration-buttons - Regular vessel integration buttons
  * @slot hug-buttons - Compact vessel integration buttons; slotted integration buttons are forced to hug type
- * @slot right-tray-leading - Consumer-defined controls, placed first in the right-hand button group
+ * @slot right-tray-leading - Consumer-defined controls, placed first in the right-hand button group; rendered when `hasRightTrayLeading` is true
  * @fires {CustomEvent} fleet-button-click - Fired when the fleet button is clicked
  * @fires {CustomEvent} link-button-clicked - Fired when the link button is clicked
  * @fires {CustomEvent} alert-button-clicked - Fired when the alert button is clicked
@@ -84,6 +85,7 @@ export class ObcIntegrationBar extends LitElement {
   @property({type: Boolean}) fleetButtonSelected = false;
   @property({type: Boolean}) fleetButtonActivated = false;
   @property({type: String}) fleetButtonLabel = 'Fleet';
+  @property({type: Boolean}) hasRightTrayLeading = false;
 
   @state() private buttonsOnBar = false;
 
@@ -188,7 +190,11 @@ export class ObcIntegrationBar extends LitElement {
             'right-content-container': true,
           })}
         >
-          <slot name="right-tray-leading"></slot>
+          ${
+            this.hasRightTrayLeading
+              ? html`<slot name="right-tray-leading"></slot>`
+              : nothing
+          }
           ${
             this.showAlertButton
               ? html`<obc-icon-button

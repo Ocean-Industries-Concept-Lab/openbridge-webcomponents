@@ -51,7 +51,6 @@ type IntegrationBarStoryArgs = ObcIntegrationBar & {
   showStatus: boolean;
   showIntegrationMenu: boolean;
   customSelectedColors: boolean;
-  withRightTrayLeading: boolean;
 };
 
 function renderIntegrationButtons({
@@ -315,7 +314,7 @@ const meta: Meta<IntegrationBarStoryArgs> = {
     makeLabelNamesShort: false,
     showIntegrationMenu: false,
     customSelectedColors: false,
-    withRightTrayLeading: false,
+    hasRightTrayLeading: false,
   },
   argTypes: {
     containerWidthPx: {
@@ -435,6 +434,7 @@ const meta: Meta<IntegrationBarStoryArgs> = {
           .showLinkButton=${args.showLinkButton}
           .linkButtonActivated=${args.linkButtonActivated}
           .showClock=${args.showClock}
+          .hasRightTrayLeading=${args.hasRightTrayLeading}
           .showUserButton=${args.showUserButton}
           .userButtonActivated=${args.userButtonActivated}
           .showDimmingButton=${args.showDimmingButton}
@@ -472,7 +472,7 @@ const meta: Meta<IntegrationBarStoryArgs> = {
             customSelectedColors: args.customSelectedColors,
           })}
           ${
-            args.withRightTrayLeading
+            args.hasRightTrayLeading
               ? html`<obc-icon-button
                   slot="right-tray-leading"
                   variant="integration"
@@ -530,6 +530,6 @@ export const CustomSelectedColors: Story = {
 
 export const WithRightTrayLeading: Story = {
   args: {
-    withRightTrayLeading: true,
+    hasRightTrayLeading: true,
   },
 };

@@ -186,6 +186,7 @@ export const SlottedRightTrayLeading: Story = {
       .showUserButton=${args.showUserButton}
       .userButtonActivated=${args.userButtonActivated}
       .nStatusFields=${args.nStatusFields}
+      .hasRightTrayLeading=${true}
     >
       <obc-integration-dropdown-button
         slot="vessel-selector"

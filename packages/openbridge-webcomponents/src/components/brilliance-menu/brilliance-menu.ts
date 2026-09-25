@@ -32,6 +32,8 @@ import '../navigation-item/navigation-item.js';
 import '../app-button/app-button.js';
 import '../user-button/user-button.js';
 import '../tab-row/tab-row.js';
+import type {TabData} from '../tab-row/tab-row.js';
+import {ifDefined} from 'lit/directives/if-defined.js';
 import '../../icons/icon-display-brilliance-iec.js';
 import '../../icons/icon-palette-day-night-iec.js';
 
@@ -291,6 +293,21 @@ export class ObcBrillianceMenu extends LitElement {
 
   private onTabSelected(event: CustomEvent<{id: string}>) {
     this.selectedTabId = event.detail.id;
+  }
+
+  private get tabs(): TabData[] {
+    return [
+      {
+        id: BRILLIANCE_TAB_ID,
+        title: msg('Brilliance'),
+        hasLeadingIcon: true,
+      },
+      {
+        id: PALETTE_TAB_ID,
+        title: `${msg('Day')}/${msg('Night')}`,
+        hasLeadingIcon: true,
+      },
+    ];
   }
 
   nextPalette() {
@@ -656,21 +673,12 @@ export class ObcBrillianceMenu extends LitElement {
 
   override render() {
     if (this.variant === ObcBrillianceMenuVariant.tabbed) {
+      const tabs = this.tabs;
+      const selectedTab = tabs.find((tab) => tab.id === this.selectedTabId);
       return html`
         <div class="card tabbed">
           <obc-tab-row
-            .tabs=${[
-              {
-                id: BRILLIANCE_TAB_ID,
-                title: msg('Brilliance'),
-                hasLeadingIcon: true,
-              },
-              {
-                id: PALETTE_TAB_ID,
-                title: `${msg('Day')}/${msg('Night')}`,
-                hasLeadingIcon: true,
-              },
-            ]}
+            .tabs=${tabs}
             .selectedTabId=${this.selectedTabId}
             .centerContent=${true}
             @tab-selected=${this.onTabSelected}
@@ -682,7 +690,8 @@ export class ObcBrillianceMenu extends LitElement {
               slot="tab-${PALETTE_TAB_ID}-icon"
             ></obi-palette-day-night-iec>
           </obc-tab-row>
-          <div role="tabpanel">
+          <!-- TODO(#1312): link the panel to its tab once obc-tab-row supports it -->
+          <div role="tabpanel" aria-label=${ifDefined(selectedTab?.title)}>
             ${
               this.selectedTabId === BRILLIANCE_TAB_ID
                 ? this.renderBrightness()
