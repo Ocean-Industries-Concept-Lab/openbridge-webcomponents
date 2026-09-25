@@ -27,6 +27,10 @@
     ],
     "packages/openbridge-webcomponents/**/*.{cjs,html,js,json,md,css}": [
       "prettier --write"
+    ],
+    "packages/openbridge-webcomponents/{script,.storybook}/**/*.{ts,tsx,mts,mjs}": [
+      "eslint --config packages/openbridge-webcomponents/eslint.config.mjs --max-warnings=0",
+      "prettier --write"
     ]
   }
 }

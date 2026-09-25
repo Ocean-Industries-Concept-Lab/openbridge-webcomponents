@@ -49,7 +49,7 @@ export interface IconRef {
   styles: {[colorCode: string]: {cssClass: string | undefined}};
 }
 
-export function getSingleColorIcon(imageData: string, icon: IconRef): string {
+export function getSingleColorIcon(imageData: string, _icon: IconRef): string {
   // replace fill color with currentColor
   const fillRegex = /fill="[^"]+"/g;
   let imageDataNew = imageData.replace(fillRegex, 'fill="currentColor"');
@@ -81,7 +81,7 @@ export function getCssColorIcon(imageData: string, icon: IconRef): string {
   // replace fill color with currentColor
   const fillRegex = /fill="([^"]+)"/g;
 
-  const replace = (match: string, color: string) => {
+  const replace = (_match: string, color: string) => {
     const cssClass = icon.styles[color];
     if (cssClass === undefined) {
       if (color === 'black') return 'fill="currentColor"';
@@ -112,7 +112,7 @@ export function getCssColorIcon(imageData: string, icon: IconRef): string {
 
   // replace stroke color with currentColor
   const strokeRegex = /stroke="([^"]+)"/g;
-  const replaceStroke = (match: string, color: string) => {
+  const replaceStroke = (_match: string, color: string) => {
     const cssClass = icon.styles[color];
     if (cssClass === undefined) {
       if (color === 'black') return 'stroke="currentColor"';
@@ -191,8 +191,8 @@ export function getStylesForNode(
               );
             }
             fils = rgbaToHexOrColorName(fill.color!);
-            if ('boundVariables' in fill) {
-              const variableId = fill.boundVariables.color.id;
+            const variableId = fill.boundVariables?.color?.id;
+            if (variableId !== undefined) {
               out[fils] = {cssClass: resolveFigmaVariable(variableId)};
             }
           }
@@ -205,8 +205,8 @@ export function getStylesForNode(
         }
       }
       if ('strokes' in child) {
-        let strokes: string;
-        child.strokes.forEach((stroke) => {
+        let strokes: string | undefined;
+        (child.strokes ?? []).forEach((stroke) => {
           if (stroke.type === 'SOLID') {
             if (strokes !== undefined) {
               console.warn(
@@ -216,28 +216,29 @@ export function getStylesForNode(
               );
             }
             strokes = rgbaToHexOrColorName(stroke.color!);
-            if ('boundVariables' in stroke) {
-              const variableId = stroke.boundVariables.color.id;
+            const variableId = stroke.boundVariables?.color?.id;
+            if (variableId !== undefined) {
               out[strokes] = {cssClass: resolveFigmaVariable(variableId)};
             }
           }
         });
-        if (strokes !== undefined && child.styles?.stroke) {
-          const styleId = child.styles.stroke;
-          const figmaStyle = styles[styleId];
+        const strokeStyleId =
+          'styles' in child ? child.styles?.stroke : undefined;
+        if (strokes !== undefined && strokeStyleId) {
+          const figmaStyle = styles[strokeStyleId];
           const cssClass = styleToCssClass(figmaStyle);
           out[strokes] = {cssClass: cssClass};
         }
       }
       if ('fillOverrideTable' in child) {
-        for (const fill of Object.values(child.fillOverrideTable)) {
+        for (const fill of Object.values(child.fillOverrideTable ?? {})) {
           if (fill === null) continue;
           if ('fills' in fill) {
-            for (const f of fill.fills) {
+            for (const f of fill.fills ?? []) {
               if (f.type === 'SOLID') {
                 const color = rgbaToHexOrColorName(f.color!);
-                if ('boundVariables' in f) {
-                  const variableId = f.boundVariables.color.id;
+                const variableId = f.boundVariables?.color?.id;
+                if (variableId !== undefined) {
                   out[color] = {cssClass: resolveFigmaVariable(variableId)};
                 }
               }
@@ -245,8 +246,12 @@ export function getStylesForNode(
           }
           if (!('inheritFillStyleId' in fill)) continue;
           const styleId = fill.inheritFillStyleId;
+          const firstFill = fill.fills?.[0];
+          if (styleId === undefined || !firstFill || !('color' in firstFill)) {
+            continue;
+          }
           const figmaStyle = styles[styleId];
-          const color = rgbaToHexOrColorName(fill.fills[0].color!);
+          const color = rgbaToHexOrColorName(firstFill.color!);
           const cssClass = styleToCssClass(figmaStyle);
           out[color] = {cssClass: cssClass};
         }
@@ -277,5 +282,5 @@ function rgbaToHexOrColorName(rgba: RGBA): string {
 }
 
 function styleToCssClass(style: Style): string {
-  return style.name.replace(/[\/ ]/g, '-').toLocaleLowerCase();
+  return style.name.replace(/[/ ]/g, '-').toLocaleLowerCase();
 }

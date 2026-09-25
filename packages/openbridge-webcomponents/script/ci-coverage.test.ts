@@ -20,7 +20,7 @@ const repo = path.resolve(
 
 /** Script names that check something: lints, type checks, tests and builds. */
 const CHECK =
-  /^(lint(:(?!fix)[\w-]+)?|typecheck|type-check|format:check|fix-imports:check|test([:-][\w:-]+)?|build([:-][\w:-]+)?)$/;
+  /^(lint(:(?!fix)[\w-]+)?|typecheck(:[\w-]+)?|type-check|format:check|fix-imports:check|test([:-][\w:-]+)?|build([:-][\w:-]+)?)$/;
 
 /** `package:script` → why CI does not run it. */
 const NOT_IN_CI: Record<string, string> = {

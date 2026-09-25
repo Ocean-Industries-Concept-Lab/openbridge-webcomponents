@@ -883,6 +883,33 @@ export default [
     },
   },
   {
+    // The tooling: scripts and configs that run in Node, and the Storybook
+    // setup. Node's globals apply, and the rules written for components do not.
+    files: [
+      '**/script/**/*.{ts,mts,mjs}',
+      '**/.storybook/**/*.{ts,tsx}',
+      '**/*.config.{ts,mjs}',
+      '**/new-component.ts',
+      '**/fix-imports.mjs',
+      '**/fix-js-extensions.mjs',
+    ],
+
+    languageOptions: {
+      globals: {
+        ...globals.node,
+        ...globals.browser,
+      },
+    },
+
+    rules: {
+      'custom-element/prefer-local-decorator': 'off',
+      'openbridge/prefer-enum-over-string-literal-union': 'off',
+      'openbridge/prefer-boolean-property-default-false': 'off',
+      'openbridge/prefer-array-property-type-and-item-interface': 'off',
+      'openbridge/component-lifecycle-tag': 'off',
+    },
+  },
+  {
     files: ['**/rollup.config.js', '**/web-test-runner.config.js'],
 
     languageOptions: {

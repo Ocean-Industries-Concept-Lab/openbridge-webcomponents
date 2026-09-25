@@ -8,12 +8,14 @@ const name = await question(
   {
     validators: [
       {
-        validate: (value) => /^[A-Z][a-zA-Z0-9]+$/.test(value),
-        message: 'Component name must be UpperCamelCase',
+        // The prompt treats anything but an error string (or `{isValid: false}`) as valid.
+        validate: (value) =>
+          /^[A-Z][a-zA-Z0-9]+$/.test(value)
+            ? null
+            : 'Component name must be UpperCamelCase',
       },
       {
-        message: 'Component name is required',
-        validate: (value) => !!value,
+        validate: (value) => (value ? null : 'Component name is required'),
       },
     ],
   }
@@ -103,7 +105,7 @@ if (files.includes('css')) {
 
 // Create storybook file
 if (files.includes('storybook')) {
-  let storybookGroup = '';
+  let storybookGroup: string;
   if (componentType === 'ar') {
     storybookGroup = 'AR';
   } else if (componentType === 'automation') {

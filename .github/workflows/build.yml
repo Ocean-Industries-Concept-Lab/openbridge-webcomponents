@@ -34,6 +34,9 @@ jobs:
       - name: Typecheck openbridge-webcomponents
         run: cd packages/openbridge-webcomponents && npm run typecheck
 
+      - name: Typecheck the tooling (scripts, Storybook setup, configs)
+        run: cd packages/openbridge-webcomponents && npm run typecheck:tooling
+
       - name: Lint CSS mixins openbridge-webcomponents
         run: cd packages/openbridge-webcomponents && npm run lint:mixins
 
