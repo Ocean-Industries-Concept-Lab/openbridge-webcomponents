@@ -17,6 +17,10 @@
  * - a line that starts with `Left out:` — `Left out: nothing.` when the
  *   component follows the whole pattern.
  *
+ * A composite widget (a tab list, radio group, menu, listbox, tree, grid or
+ * toolbar) also needs a `*-keyboard.spec.ts` next to it: its keys are the part
+ * no scanner can check (a11y.md § 9).
+ *
  * Roles are read from the templates: literal `role="…"` attributes, and the
  * quoted roles inside a bound `role=${…}` expression.
  *
@@ -59,6 +63,19 @@ const WIDGET_ROLES = new Set([
   'treeitem',
 ]);
 
+/** Widget roles that hold other widgets and move focus among them. */
+export const COMPOSITE_ROLES = new Set([
+  'grid',
+  'listbox',
+  'menu',
+  'menubar',
+  'radiogroup',
+  'tablist',
+  'toolbar',
+  'tree',
+  'treegrid',
+]);
+
 function stripComments(source: string): string {
   return source
     .replace(/\/\*[\s\S]*?\*\//g, '')
@@ -90,7 +107,11 @@ export function classDoc(source: string): string {
   return start < 0 ? '' : before.slice(start);
 }
 
-export function checkRecord(source: string, file: string): string[] {
+export function checkRecord(
+  source: string,
+  file: string,
+  hasKeyboardSpec = true
+): string[] {
   const tag = /@customElement\(\s*['"]([^'"]+)['"]\s*\)/.exec(source)?.[1];
   if (!tag) return [];
   const roles = widgetRoles(source);
@@ -110,6 +131,11 @@ export function checkRecord(source: string, file: string): string[] {
       `${renders} but its class JSDoc has no "Left out:" line (write "Left out: nothing." when it follows the whole pattern)`
     );
   }
+  if (!hasKeyboardSpec && roles.some((role) => COMPOSITE_ROLES.has(role))) {
+    problems.push(
+      `${renders}, a composite widget, but ${path.dirname(file)} has no *-keyboard.spec.ts pinning its keys (docs/agents/a11y.md § 9)`
+    );
+  }
   return problems;
 }
 
@@ -126,17 +152,23 @@ async function main() {
     ],
   });
   const problems = files.flatMap((file) =>
-    checkRecord(fs.readFileSync(path.join(root, file), 'utf8'), file)
+    checkRecord(
+      fs.readFileSync(path.join(root, file), 'utf8'),
+      file,
+      fs
+        .readdirSync(path.join(root, path.dirname(file)))
+        .some((name) => name.endsWith('-keyboard.spec.ts'))
+    )
   );
   for (const problem of problems) console.error(problem);
   if (problems.length > 0) {
     console.error(
-      `\n${problems.length} missing pattern record(s) — see docs/agents/a11y.md § 1.`
+      `\n${problems.length} problem(s) — see docs/agents/a11y.md § 1 and § 9.`
     );
     process.exit(1);
   }
   console.log(
-    'lint:apg: every component with a widget role records its pattern.'
+    'lint:apg: every component with a widget role records its pattern, and every composite widget has a keyboard spec.'
   );
 }
 

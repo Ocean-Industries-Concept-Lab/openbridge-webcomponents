@@ -66,4 +66,27 @@ describe('checkRecord', () => {
   it('skips a component without a widget role', () => {
     expect(checkRecord(component('', '<div></div>'), 'widget.ts')).toEqual([]);
   });
+
+  const recorded = (markup: string) =>
+    component(
+      ' * [APG](https://www.w3.org/WAI/ARIA/apg/patterns/radio/)\n *\n * Left out: nothing.',
+      markup
+    );
+
+  it('asks a composite widget for a keyboard spec', () => {
+    expect(
+      checkRecord(recorded(template), 'src/widget/widget.ts', false)
+    ).toEqual([
+      'src/widget/widget.ts: <obc-widget> renders role="radiogroup", a composite widget, but src/widget has no *-keyboard.spec.ts pinning its keys (docs/agents/a11y.md § 9)',
+    ]);
+    expect(
+      checkRecord(recorded(template), 'src/widget/widget.ts', true)
+    ).toEqual([]);
+  });
+
+  it('does not ask a single control for one', () => {
+    expect(
+      checkRecord(recorded('<div role="checkbox"></div>'), 'src/w/w.ts', false)
+    ).toEqual([]);
+  });
 });
