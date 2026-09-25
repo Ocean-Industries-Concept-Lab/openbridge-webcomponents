@@ -39,7 +39,7 @@ import {
   SIDE_LABEL_DROP_PX,
   type RadialFrame,
 } from '../../svghelpers/radial-frame.js';
-import {normalizeAngle} from '../../svghelpers/math.js';
+import {normalizeAngle, clamp} from '../../svghelpers/math.js';
 import {
   CenterReadoutArrangement,
   centerReadoutStyles,
@@ -338,7 +338,7 @@ export class ObcGaugeProportional extends SetpointMixin(LitElement) {
   private get compactContainerPx(): {width: number; height: number} {
     const {width, height} = measureContainerPx(this);
     const dialHeight = height - this.compactStackAllowancePx;
-    const fit = height > 0 ? Math.min(width, Math.max(0, dialHeight)) : width;
+    const fit = height > 0 ? clamp(dialHeight, 0, width) : width;
     const side = Math.min(fit, COMPACT_NATURAL_BOX_PX);
     return {width: side, height: side};
   }
@@ -368,7 +368,7 @@ export class ObcGaugeProportional extends SetpointMixin(LitElement) {
   private clamp(value: number): number {
     const lowerBound = Math.min(this.minValue, this.maxValue);
     const upperBound = Math.max(this.minValue, this.maxValue);
-    return Math.max(lowerBound, Math.min(value, upperBound));
+    return clamp(value, lowerBound, upperBound);
   }
 
   private get clampedValue(): number {

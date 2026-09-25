@@ -1,7 +1,6 @@
 import {describe, expect, it} from 'vitest';
 import {RuleTester} from 'eslint';
 import tsParser from '@typescript-eslint/parser';
-// @ts-expect-error - untyped JavaScript module
 import {
   propertyDocsRule,
   classifyFieldDoc,

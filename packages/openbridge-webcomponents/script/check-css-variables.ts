@@ -94,7 +94,7 @@ async function run(): Promise<void> {
     // using it.
     const code = maskCssText(content);
 
-    const definitionRegex = /(^|[;{\s])(\-\-[A-Za-z0-9_-]+)\s*:/gm;
+    const definitionRegex = /(^|[;{\s])(--[A-Za-z0-9_-]+)\s*:/gm;
     for (const match of code.matchAll(definitionRegex)) {
       const name = match[2];
       const index = match.index;
@@ -105,7 +105,7 @@ async function run(): Promise<void> {
       definitions.set(name, [...(definitions.get(name) ?? []), location]);
     }
 
-    const propertyDefinitionRegex = /@property\s+(\-\-[A-Za-z0-9_-]+)/g;
+    const propertyDefinitionRegex = /@property\s+(--[A-Za-z0-9_-]+)/g;
     for (const match of code.matchAll(propertyDefinitionRegex)) {
       const name = match[1];
       const index = match.index;

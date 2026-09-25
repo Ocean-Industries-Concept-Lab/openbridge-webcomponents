@@ -1056,8 +1056,7 @@ export const RealtimeShifting: Story = {
     };
 
     // Gauge 1: With bar (enhanced mode) - existing example
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const g1 = gauge1 as any;
+    const g1 = gauge1;
     g1.data = commonProps.data;
     g1.width = commonProps.width;
     g1.height = commonProps.height;
@@ -1069,15 +1068,14 @@ export const RealtimeShifting: Story = {
     g1.chartMaxValue = commonProps.chartMaxValue;
     g1.hasBar = true;
     g1.hasScale = commonProps.hasScale;
-    g1.fillMode = 'tint';
+    g1.fillMode = FillMode.tint;
     g1.fillMin = 0;
     g1.fillMax = 50;
     g1.primaryTickmarkInterval = 50;
     g1.secondaryTickmarkInterval = 10;
 
     // Gauge 2: Without bar (scale only) - from GaugeTrendWithoutBar
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const g2 = gauge2 as any;
+    const g2 = gauge2;
     g2.data = [...dataPoints];
     g2.width = commonProps.width;
     g2.height = commonProps.height;
@@ -1089,7 +1087,7 @@ export const RealtimeShifting: Story = {
     g2.chartMaxValue = commonProps.chartMaxValue;
     g2.hasBar = false;
     g2.hasScale = commonProps.hasScale;
-    g2.fillMode = 'fill';
+    g2.fillMode = FillMode.fill;
     g2.fillMin = 0;
     g2.fillMax = 50;
     g2.primaryTickmarkInterval = 50;
@@ -1097,8 +1095,7 @@ export const RealtimeShifting: Story = {
     // Note: highlightCurrentValue is auto-derived (true when hasBar=false)
 
     // Gauge 3: Condensed scale (labels only) - from GaugeTrendLabelsOnly
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const g3 = gauge3 as any;
+    const g3 = gauge3;
     g3.data = [...dataPoints];
     g3.width = commonProps.width;
     g3.height = commonProps.height;
@@ -1110,7 +1107,7 @@ export const RealtimeShifting: Story = {
     g3.chartMaxValue = commonProps.chartMaxValue;
     g3.hasBar = false;
     g3.hasScale = commonProps.hasScale;
-    g3.fillMode = 'fill';
+    g3.fillMode = FillMode.fill;
     g3.fillMin = 0;
     g3.fillMax = 50;
     g3.primaryTickmarkInterval = 100;

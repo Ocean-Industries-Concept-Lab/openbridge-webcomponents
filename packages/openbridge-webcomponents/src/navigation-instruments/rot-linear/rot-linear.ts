@@ -12,6 +12,7 @@ import {
 import {ReadoutSize} from '../readout/readout.js';
 import {customElement} from '../../decorator.js';
 import {Priority} from '../types.js';
+import {clamp} from '../../svghelpers/math.js';
 
 /** Width of the strip content in SVG user-space units (watch-flat default). */
 const STRIP_WIDTH = 352;
@@ -88,7 +89,7 @@ export class ObcRotLinear extends LitElement {
 
   private get barEndX(): number {
     const rot = this.rateOfTurnDegreesPerMinute ?? 0;
-    const ratio = Math.max(-1, Math.min(1, rot / this.safeMaxValue));
+    const ratio = clamp(rot / this.safeMaxValue, -1, 1);
     return ratio * (STRIP_WIDTH / 2);
   }
 

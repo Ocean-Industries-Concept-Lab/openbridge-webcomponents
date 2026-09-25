@@ -1,5 +1,5 @@
 import type {WatchArea} from '../navigation-instruments/watch/watch.js';
-import {degToRad, normalizeAngle} from './math.js';
+import {degToRad, normalizeAngle, clamp} from './math.js';
 
 export interface ArcViewBox {
   x: number;
@@ -37,7 +37,7 @@ export function normalizeArcAngle(
   fallback: number
 ): number {
   const v = Number.isFinite(value) ? (value as number) : fallback;
-  return Math.min(180, Math.max(2, v));
+  return clamp(v, 2, 180);
 }
 
 /**

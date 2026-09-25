@@ -55,18 +55,19 @@ wrappers, `openbridge-webcomponents-ng/dist`, and the full-bundle directory. The
 wrapper versions are synced first by `scripts/prepare-wrappers.js` (see below).
 `packages/connector-diagram` is not among them: it is not in `.releaserc.json`.
 
-## The eight workflows
+## The nine workflows
 
-| Workflow                                   | Trigger                                     | Purpose                                                                                                                         |
-| ------------------------------------------ | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| `build.yml`                                | push + PR, all branches                     | typecheck, `analyze`, the `lint:*` suite including `lint:agents`, `format:check`, `fix-imports:check`, ESLint for the two demos |
-| `visual-testing.yml`                       | push + PR on `develop` / `stable`           | Playwright snapshot suite, then the axe run against `__a11y__/baseline.json`                                                    |
-| `pr-title-lint.yml`                        | PR opened / edited / synchronize / reopened | Conventional Commits check on the PR title                                                                                      |
-| `windows-angular-build.yml`                | push + PR, all branches                     | the Angular wrapper built on `windows-latest` — CRLF and backslash path separators have leaked into generated imports before    |
-| `release.yml`                              | push to `develop`, or manual                | `build:full` then `semantic-release`                                                                                            |
-| `firebase-hosting-merge.yml`               | push to `develop`                           | deploys the demo                                                                                                                |
-| `firebase-hosting-pull-request.yml`        | PR                                          | builds the demo preview                                                                                                         |
-| `firebase-hosting-pull-request-deploy.yml` | after the build workflow completes          | publishes the preview                                                                                                           |
+| Workflow                                   | Trigger                                     | Purpose                                                                                                                                    |
+| ------------------------------------------ | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `build.yml`                                | push + PR, all branches                     | typecheck, `analyze`, the `lint:*` suite including `lint:agents`, `format:check`, `fix-imports:check`, ESLint for the two demos            |
+| `visual-testing.yml`                       | push + PR on `develop` / `stable`           | Playwright snapshot suite, then the axe run against `__a11y__/baseline.json`; the vue demo's functional and visual Playwright tests        |
+| `pr-title-lint.yml`                        | PR opened / edited / synchronize / reopened | Conventional Commits check on the PR title                                                                                                 |
+| `pr-body.yml`                              | PR opened / edited / synchronize / reopened | the PR body against the template and the diff: sections, Docs boxes, named baselines, axe entries and opt-out tags, no `CHANGELOG.md` edit |
+| `windows-angular-build.yml`                | push + PR, all branches                     | the Angular wrapper built on `windows-latest` — CRLF and backslash path separators have leaked into generated imports before               |
+| `release.yml`                              | push to `develop`, or manual                | `build:full` then `semantic-release`                                                                                                       |
+| `firebase-hosting-merge.yml`               | push to `develop`                           | deploys the demo                                                                                                                           |
+| `firebase-hosting-pull-request.yml`        | PR                                          | builds the demo preview                                                                                                                    |
+| `firebase-hosting-pull-request-deploy.yml` | after the build workflow completes          | publishes the preview                                                                                                                      |
 
 The lint job of `build.yml` and the `connector-diagram` job of
 `visual-testing.yml` also cover `packages/connector-diagram`
@@ -126,13 +127,19 @@ ends `... build:bundle && analyze && inject:dts`. Putting `inject:dts` before a
 `vite build` throws the injected docs away — that build regenerates the `.d.ts`
 files from source.
 
-`lint:comments` and `lint:slots` run in `build.yml`'s **lint** job; `test:rules`
-runs in **test-browser**, which has no `analyze` step — tooling tests must not
-import the manifest.
+Every `lint:*` script runs in `build.yml`'s **lint** job, which names each
+one instead of running `npm run lint`. `script/ci-coverage.test.ts` (in
+`test:rules`) keeps the two in step: it fails when any package's lint, type
+check, test or build script runs in no workflow and is not listed there with
+the reason, when a `lint:*` script is missing from the `lint` chain, and
+when `npm run check` at the repository root runs less than the **lint** and
+**test-browser** jobs, or anything CI does not. `test:rules` runs in
+**test-browser**, which has no `analyze` step — tooling tests must not import
+the manifest.
 
 ## The accessibility gates
 
-Two, neither of them a lint warning:
+Three, none of them a lint warning:
 
 - `npm run test:browser` (`build.yml`, every branch) runs the
   `*-keyboard.spec.ts` files with every other browser spec. A key binding
@@ -145,21 +152,28 @@ Two, neither of them a lint warning:
   printed for pruning; `npm run test-a11y:update` rewrites the file. The debt
   can only shrink, a new component starts from zero, and adding to the
   baseline is a reviewable diff that needs its reason in the PR body.
-  `a11y-report.json` is uploaded as an artifact on every run.
+  `a11y-report.json` is uploaded as an artifact on every run. Three rules of
+  our own run with axe's (`.storybook/a11y-rules.ts`): one tab stop per
+  composite widget, a name for it, and a named tab panel a tab points at.
+- `npm run lint:apg` (`build.yml`, every branch) fails on a component that
+  renders an ARIA widget role without a linked APG pattern and a
+  `Left out:` line in its class JSDoc, and on a composite widget with no
+  `*-keyboard.spec.ts` beside it.
 
-What neither gate sees is a new widget with no keyboard model at all, since
-axe cannot see keys: that is the component-creation checklist
+What no gate sees is whether the keys a record promises work, since axe
+cannot press them: that is the component-creation checklist
 ([`a11y.md`](../../docs/agents/a11y.md) § 9).
 
 ## Local equivalents of the CI gates
 
 ```bash
-npm run lint          # includes lint:agents — the agent-doc drift check
-npm run typecheck
-npm run format:check
-npm run test:rules    # node-side tests for the custom ESLint rules and tooling
-npm run test:browser  # the keyboard specs, with the other browser specs
-npm run test-a11y     # axe over every story, then the baseline check
+(cd ../.. && npm run check)   # build.yml's lint and test-browser jobs, package by package
+npm run test-a11y             # axe over every story, then the baseline check (visual-testing.yml)
+npm run test-storybook        # the snapshot suite (visual-testing.yml); locally, the touched components only
 ```
 
-Run these before pushing; `build.yml` runs the same set on every branch.
+`check` runs `lint` (with `lint:agents`, the agent-doc drift check),
+`typecheck`, `typecheck:tooling`, `format:check`, `fix-imports:check`,
+`test:rules` and the browser specs here, then the demos' and
+`connector-diagram`'s checks. Run it before pushing; `build.yml` runs the
+same set on every branch, and the coverage guard fails when the two differ.

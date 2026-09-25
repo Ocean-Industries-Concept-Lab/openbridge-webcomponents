@@ -13,6 +13,7 @@ import {
   ObcPoiPointerType,
 } from '../building-blocks/poi-pointer/poi-pointer.js';
 import {POI_ATTR, Poi, PoiDataVisualRectPreference} from './poi.js';
+import {clamp} from '../../svghelpers/math.js';
 export {ObcPoiValue as PoiBaseValue};
 export {PoiDataVisualRectPreference as PoiBaseVisualRectPreference};
 
@@ -165,10 +166,7 @@ export class PoiBase extends LitElement implements Poi {
 
     const dtSeconds =
       this.lastXFilterTimestampMs > 0
-        ? Math.min(
-            0.25,
-            Math.max(1 / 120, (nowMs - this.lastXFilterTimestampMs) / 1000)
-          )
+        ? clamp((nowMs - this.lastXFilterTimestampMs) / 1000, 1 / 120, 0.25)
         : 1 / 60;
     this.lastXFilterTimestampMs = nowMs;
 

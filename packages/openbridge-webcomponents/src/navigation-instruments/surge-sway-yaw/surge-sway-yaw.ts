@@ -32,6 +32,7 @@ import {
   linearTickInterval,
   watchfaceLinear,
 } from '../../building-blocks/instrument-linear/instrument-linear.js';
+import {clamp} from '../../svghelpers/math.js';
 
 export enum SurgeSwayYawType {
   /** Setpoint markers only, on a thin ring with full-length cross scales. */
@@ -81,7 +82,7 @@ function clampPercent(value: number): number {
   if (!Number.isFinite(value)) {
     return 0;
   }
-  return Math.max(-100, Math.min(100, value));
+  return clamp(value, -100, 100);
 }
 
 /** Yaw for rendering and at-setpoint use: non-finite → 0, clamped to ±180. */
@@ -89,7 +90,7 @@ function normalizeYaw(value: number): number {
   if (!Number.isFinite(value)) {
     return 0;
   }
-  return Math.max(-180, Math.min(180, value));
+  return clamp(value, -180, 180);
 }
 
 /**

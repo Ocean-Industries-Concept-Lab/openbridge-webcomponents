@@ -1,5 +1,6 @@
 import {SVGTemplateResult, svg, nothing} from 'lit';
 import {InstrumentState, Priority} from '../types.js';
+import {clamp} from '../../svghelpers/math.js';
 
 /**
  * Renders the resultant force bar SVG for the wind propulsion instrument.
@@ -24,9 +25,7 @@ export function renderForceBar(
   maskId: string
 ): SVGTemplateResult | typeof nothing {
   const safeMax = Number.isFinite(maxForce) && maxForce > 0 ? maxForce : 100;
-  const clampedForce = Number.isFinite(force)
-    ? Math.max(0, Math.min(safeMax, force))
-    : 0;
+  const clampedForce = Number.isFinite(force) ? clamp(force, 0, safeMax) : 0;
 
   const barX = 232;
   const barY = 116;

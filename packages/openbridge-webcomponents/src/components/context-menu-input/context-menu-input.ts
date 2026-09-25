@@ -14,6 +14,7 @@ import {classMap} from 'lit/directives/class-map.js';
 import '../icon-button/icon-button.js';
 import '../navigation-item-group/navigation-item-group.js';
 import {ObcNavigationItemGroup} from '../navigation-item-group/navigation-item-group.js';
+import {stopPropagation} from '../../internal/events.js';
 
 /**
  * Event fired when the selection changes in `<obc-context-menu-input>`.
@@ -167,11 +168,17 @@ export enum ContextMenuType {
  * [APG Menu](https://www.w3.org/WAI/ARIA/apg/patterns/menu/): the menu is one
  * tab stop, entered on the selected item or the first one; `Up` and `Down`
  * move between items and stop at the ends, `Home` and `End` jump to them,
- * `Enter` and `Space` select through the item, and `Escape` fires `close`.
+ * `Enter` and `Space` select through the item, and `Escape` fires `close`, which
+ * is also why the title bar's close button stays out of the tab sequence.
  * Single-select items are `menuitemradio` with `aria-checked` on their
  * control, not on the host; checkbox menus
- * keep their checkboxes and move between them the same way. Departure from
- * the pattern: the arrows do not wrap, and there is no type-ahead.
+ * keep their checkboxes and move between them the same way.
+ *
+ * Left out: wrapping at the ends, and type-ahead. The checkbox variants put
+ * `role="checkbox"` items in the menu where the pattern asks for
+ * `menuitemcheckbox`. A flyout's header is a plain button without
+ * `aria-haspopup` or `aria-expanded`, its children sit in a `group` rather
+ * than a nested `menu`, and `Right` and `Left` do not open and close it.
  *
  * ## Events
  *
@@ -555,6 +562,7 @@ export class ObcContextMenuInput extends LitElement {
           variant="flat"
           @click=${this.handleCloseClick}
           aria-label="Close menu"
+          .focusable=${false}
         >
           <obi-close-google></obi-close-google>
         </obc-icon-button>
@@ -583,6 +591,7 @@ export class ObcContextMenuInput extends LitElement {
           data-menu-value=${o.value}
           .label=${o.label}
           .status=${isSelected ? 'checked' : 'unchecked'}
+          @expand-toggle=${stopPropagation}
           @change=${(e: Event) => this.handleCheckboxChange(o, e)}
         ></obc-checkbox-item>
       </div>`;
@@ -622,6 +631,7 @@ export class ObcContextMenuInput extends LitElement {
             data-menu-value=${c.value}
             .label=${c.label}
             .status=${isSelected ? 'checked' : 'unchecked'}
+            @expand-toggle=${stopPropagation}
             @change=${(e: Event) => this.handleCheckboxChange(c, e)}
           ></obc-checkbox-item>
         </div>`;
@@ -717,6 +727,7 @@ export class ObcContextMenuInput extends LitElement {
               data-menu-value=${o.value}
               .label=${o.label}
               .status=${isSelected ? 'checked' : 'unchecked'}
+              @expand-toggle=${stopPropagation}
               @change=${(e: Event) => this.handleCheckboxChange(o, e)}
             ></obc-checkbox-item>
           </div>`;

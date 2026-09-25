@@ -53,7 +53,10 @@ export enum ObcSequenceModalType {
  *   the card has no open state, so rendering it opens it and removing it
  *   closes it. Focus lands on the dialog on connect, `Tab` and `Shift+Tab`
  *   cycle inside it, `Escape` fires `close-click`, and focus returns to the
- *   opener on disconnect. The dialog is named by `modalTitle`.
+ *   opener on disconnect. The dialog is named by `modalTitle`, and unnamed
+ *   while that is empty.
+ *
+ * Left out: a description (`aria-describedby`).
  *
  * Best Practices:
  * - Keep titles short; use `subtitle` for additional context.

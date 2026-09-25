@@ -63,6 +63,7 @@ export const Compact: Story = {
       <div slot="preview"></div>
       <obc-toggle-button-group
         slot="action-primary"
+        aria-label="Operation"
         .variant=${ObcToggleButtonOptionVariant.regular}
         value="run"
         .type=${ObcToggleButtonOptionType.iconTextUnder}

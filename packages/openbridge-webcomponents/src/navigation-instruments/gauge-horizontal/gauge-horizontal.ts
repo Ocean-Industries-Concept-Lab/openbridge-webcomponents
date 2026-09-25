@@ -145,7 +145,7 @@ export {
  * @property highlightCurrentValue - When true, displays a dot indicator at the current value position.
  *   The dot is rendered in the scale band, touching its inner edge (towards the chart).
  *   This provides an alternative to bar fill for highlighting the current value.
- * @fires {CustomEvent} scale-dimensions-changed - Fired when layout-affecting properties change, providing dimension info for parent chart integration.
+ * @fires {CustomEvent} scale-dimensions-changed - Fired when layout-affecting properties change, providing dimension info for parent chart integration. It bubbles to the chart slot the gauge sits in and does not leave the shadow root around it.
  * @stable
  */
 @customElement('obc-gauge-horizontal')
@@ -405,7 +405,6 @@ export class ObcGaugeHorizontal extends SetpointMixin(LitElement, {
       new CustomEvent('scale-dimensions-changed', {
         detail: dimensions,
         bubbles: true,
-        composed: true,
       })
     );
   }

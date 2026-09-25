@@ -153,6 +153,7 @@ const meta: Meta<typeof ObcAlertListDetailsExperimental> = {
   },
   render: (args) => {
     return html` <obc-alert-list-details-experimental
+      aria-label="Alerts"
       data-testid="alert-menu"
       .filterMode=${args.filterMode}
       .columns=${args.columns}
@@ -190,6 +191,7 @@ export const Empty: Story = {
   args: {},
   render: () =>
     html` <obc-alert-list-details-experimental
+      aria-label="Alerts"
       style="height: 100vh; display: block;"
     ></obc-alert-list-details-experimental>`,
 };
@@ -211,6 +213,7 @@ export const OneItem: Story = {
   },
   render: (args) => {
     return html` <obc-alert-list-details-experimental
+      aria-label="Alerts"
       @cell-click=${handleAck}
       .filterMode=${args.filterMode}
       .alerts=${args.alerts}
@@ -277,6 +280,7 @@ export const LevelCategories: Story = {
   },
   render: (args) => {
     return html` <obc-alert-list-details-experimental
+      aria-label="Alerts"
       @cell-click=${handleAck}
       .filterMode=${args.filterMode}
       .alerts=${args.alerts}
@@ -377,6 +381,7 @@ export const GroupedAlerts: Story = {
   },
   render: (args) => {
     return html` <obc-alert-list-details-experimental
+      aria-label="Alerts"
       @cell-click=${handleAck}
       .filterMode=${args.filterMode}
       .alerts=${args.alerts}
@@ -409,6 +414,7 @@ export const SelectedRow: Story = {
           : event.detail.rowId;
     };
     return html` <obc-alert-list-details-experimental
+      aria-label="Alerts"
       @cell-click=${handleAck}
       @row-click=${toggleSelection}
       .filterMode=${args.filterMode}
@@ -468,6 +474,7 @@ export const CyclicGrouping: Story = {
   },
   render: (args) => {
     return html` <obc-alert-list-details-experimental
+      aria-label="Alerts"
       @cell-click=${handleAck}
       .filterMode=${args.filterMode}
       .alerts=${args.alerts}
@@ -559,6 +566,7 @@ export const CycleWithDescendants: Story = {
   },
   render: (args) => {
     return html` <obc-alert-list-details-experimental
+      aria-label="Alerts"
       @cell-click=${handleAck}
       .filterMode=${args.filterMode}
       .alerts=${args.alerts}
@@ -596,6 +604,7 @@ export const SlottedAckButtons: Story = {
         .forEach((button) => (button.disabled = true));
     };
     return html` <obc-alert-list-details-experimental
+      aria-label="Alerts"
       .filterMode=${args.filterMode}
       .alerts=${args.alerts}
       .columns=${args.columns}

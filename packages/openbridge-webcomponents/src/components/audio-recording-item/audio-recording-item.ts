@@ -7,6 +7,7 @@ import '../icon-button/icon-button.js';
 import '../slider/slider.js';
 import '../../icons/icon-media-pause.js';
 import '../../icons/icon-media-play.js';
+import {clamp} from '../../svghelpers/math.js';
 
 /**
  * Audio recording status
@@ -218,7 +219,7 @@ export class ObcAudioRecordingItem extends LitElement {
     // Show the most recent levels (from the end of the array)
     const startIndex = levelCount - barsToShow;
     for (let i = 0; i < barsToShow; i++) {
-      const level = Math.max(0, Math.min(1, this.audioLevels[startIndex + i]));
+      const level = clamp(this.audioLevels[startIndex + i], 0, 1);
       const height = minBarHeight + level * (maxBarHeight - minBarHeight);
       bars.push(
         html`<div class="waveform-bar" style="height: ${height}px"></div>`

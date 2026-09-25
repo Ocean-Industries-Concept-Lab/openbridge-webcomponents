@@ -98,6 +98,17 @@ export type ObcTabbedCardChangeEvent = CustomEvent<{
  *
  * In this example, three tabs are shown, each with its own title and content panel.
  *
+ * ### Keyboard
+ * [APG Tabs](https://www.w3.org/WAI/ARIA/apg/patterns/tabs/) with automatic
+ * activation: the tab list is one tab stop on the selected tab, `Left` and
+ * `Right` move to the previous and next tab and wrap, `Home` and `End` go to
+ * the ends, and a tab is selected as soon as it has focus. Each tab points at
+ * its panel, and each panel is named by its tab.
+ *
+ * Left out: `Delete`, since the tabs cannot be closed; and with
+ * `hasDefaultSlotOnly` the tabs other than the selected one point at no panel,
+ * because there is only one.
+ *
  * @property nTabs - Number of tabs to display (1–5). Determines how many tab-title/content slot pairs are rendered.
  * @property selectedTab - Index of the currently selected tab (zero-based). Updates automatically on user interaction.
  * @property hasDefaultSlotOnly - If true, only the default slot is rendered for tab content, and the consumer is responsible for toggling content based on the selected tab.
@@ -160,6 +171,8 @@ export class ObcTabbedCard extends LitElement {
   }
 
   private setSelectedTab(index: number) {
+    // A click focuses the tab before it clicks it, and both select it.
+    if (index === this.selectedTab) return;
     this.selectedTab = index;
     /**
      * Fired when the selected tab changes.

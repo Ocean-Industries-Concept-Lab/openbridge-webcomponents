@@ -8,6 +8,7 @@ import '../../building-blocks/instrument-radial/instrument-radial.js';
 import {renderInstrumentReadout} from '../readout/instrument-readout.js';
 import instrumentReadoutStyle from '../readout/instrument-readout.css?inline';
 import {TickmarkStyle} from '../watch/tickmark.js';
+import {clamp} from '../../svghelpers/math.js';
 
 export enum ObcGaugeRadialType {
   filled = 'filled',
@@ -186,7 +187,7 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
     }
     const narrowTop = 70; // rotArcExtent ~10
     const wideTop = 66; // rotArcExtent ~60
-    const extent = Math.min(60, Math.max(10, this.rotArcExtent));
+    const extent = clamp(this.rotArcExtent, 10, 60);
     return narrowTop + ((wideTop - narrowTop) * (extent - 10)) / (60 - 10);
   }
 

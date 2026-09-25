@@ -103,6 +103,8 @@ Slot visibility is controlled by boolean properties (e.g. `showLeadingIcon`). Al
   export type ObcSliderValueEvent = CustomEvent<number>;
   ```
 - Common event names: `click`, `change`, `close-click`, `cancel-click`, `done-click`, `option-click`
+- Stop or declare the composed events of the components you render; they
+  leave yours otherwise ([`jsdoc.md`](jsdoc.md), `npm run lint:events`).
 
 ## Enum Conventions
 

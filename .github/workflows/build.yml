@@ -34,17 +34,23 @@ jobs:
       - name: Typecheck openbridge-webcomponents
         run: cd packages/openbridge-webcomponents && npm run typecheck
 
+      - name: Typecheck the tooling (scripts, Storybook setup, configs)
+        run: cd packages/openbridge-webcomponents && npm run typecheck:tooling
+
       - name: Lint CSS mixins openbridge-webcomponents
         run: cd packages/openbridge-webcomponents && npm run lint:mixins
 
       - name: Lint CSS variables openbridge-webcomponents
         run: cd packages/openbridge-webcomponents && npm run lint:variables
 
+      - name: Check the palette export and the icons
+        run: cd packages/openbridge-webcomponents && npm run lint:palette && npm run lint:icons
+
       - name: Check agent docs are in sync
         run: cd packages/openbridge-webcomponents && npm run lint:agents
 
       - name: Lint openbridge-webcomponents
-        run: cd packages/openbridge-webcomponents && npm run lint:lit-analyzer && npm run lint:eslint && npm run lint:slots && npm run lint:comments
+        run: cd packages/openbridge-webcomponents && npm run lint:lit-analyzer && npm run lint:eslint && npm run lint:suppressions && npm run lint:slots && npm run lint:events && npm run lint:apg && npm run lint:comments
 
       - name: Check formatting openbridge-webcomponents
         run: cd packages/openbridge-webcomponents && npm run format:check
@@ -134,6 +140,10 @@ jobs:
 
       - name: Build openbridge-webcomponents-react
         working-directory: ./packages/openbridge-webcomponents-react
+        run: npm run build
+
+      - name: Build react-demo
+        working-directory: ./packages/react-demo
         run: npm run build
 
       - name: Build openbridge-webcomponents-svelte

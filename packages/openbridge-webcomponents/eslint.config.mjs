@@ -828,6 +828,255 @@ export const openbridgePlugin = {
         };
       },
     },
+
+    // A suppression is a decision the reviewer should see the reason for, not
+    // a way past a failing check. Runs in `lint:suppressions`, with inline
+    // directives off, so a directive cannot silence the rule that checks it.
+    'suppression-reason': {
+      meta: {
+        type: 'problem',
+        docs: {
+          description:
+            'Require named rules and a reason on every eslint-disable directive, and no inline rule configuration',
+        },
+        schema: [],
+      },
+      create(context) {
+        const sourceCode = context.sourceCode ?? context.getSourceCode();
+        const doc = '(docs/agents/coding-standards.md § Suppressions)';
+        return {
+          Program() {
+            for (const comment of sourceCode.getAllComments()) {
+              const text = comment.value.trim();
+              const report = (message) =>
+                context.report({
+                  loc: comment.loc,
+                  message: `${message} ${doc}`,
+                });
+              if (
+                comment.type === 'Block' &&
+                /^eslint\s+[@\w/-]+\s*:/.test(text)
+              ) {
+                report(
+                  'Configure rules in eslint.config.mjs, not in an inline comment.'
+                );
+                continue;
+              }
+              const directive =
+                /^eslint-disable(?:-next-line|-line)?(?:\s+([\s\S]*))?$/.exec(
+                  text
+                );
+              if (!directive) continue;
+              const body = directive[1] ?? '';
+              const at = body.search(/(?:^|\s)--(?:\s|$)/);
+              const rules = (at < 0 ? body : body.slice(0, at)).trim();
+              const reason =
+                at < 0
+                  ? ''
+                  : body
+                      .slice(at)
+                      .replace(/^\s*--/, '')
+                      .trim();
+              if (!rules) {
+                report(
+                  'Name the rules it turns off; without them it silences every check.'
+                );
+              } else if (!reason) {
+                report('Give the reason after ` -- `.');
+              }
+            }
+          },
+        };
+      },
+    },
+
+    // A behaviour a component does not implement is a gap to write down, never
+    // a test that no longer runs.
+    'no-skipped-tests': {
+      meta: {
+        type: 'problem',
+        docs: {
+          description:
+            'Disallow .skip, .only and .todo on it, test and describe',
+        },
+        schema: [],
+      },
+      create(context) {
+        return {
+          MemberExpression(node) {
+            if (node.object.type !== 'Identifier') return;
+            if (!['it', 'test', 'describe'].includes(node.object.name)) return;
+            if (node.property.type !== 'Identifier') return;
+            if (!['skip', 'only', 'todo'].includes(node.property.name)) return;
+            context.report({
+              node,
+              message: `\`${node.object.name}.${node.property.name}\` leaves tests unrun: fix the test, or delete it and record the gap (docs/agents/a11y.md § 9).`,
+            });
+          },
+        };
+      },
+    },
+
+    // The shapes a search for svghelpers/math.ts would have replaced.
+    'use-math-helpers': {
+      meta: {
+        type: 'suggestion',
+        docs: {
+          description:
+            'Use clamp, normalizeAngle, degToRad and radToDeg from svghelpers/math.ts',
+        },
+        schema: [],
+      },
+      create(context) {
+        if (/svghelpers[\\/]math\.ts$/.test(context.filename)) return {};
+        const isMath = (n, name) =>
+          n?.type === 'MemberExpression' &&
+          n.object.type === 'Identifier' &&
+          n.object.name === 'Math' &&
+          n.property.type === 'Identifier' &&
+          n.property.name === name;
+        const isMathCall = (n, name) =>
+          n?.type === 'CallExpression' && isMath(n.callee, name);
+        const isNumber = (n, value) =>
+          n?.type === 'Literal' && n.value === value;
+        const factors = (n) =>
+          n?.type === 'BinaryExpression' && n.operator === '*'
+            ? [...factors(n.left), ...factors(n.right)]
+            : [n];
+        const hasPi = (n) => factors(n).some((f) => isMath(f, 'PI'));
+        const has180 = (n) => factors(n).some((f) => isNumber(f, 180));
+        const report = (node, helper) =>
+          context.report({
+            node,
+            message: `Use ${helper} from svghelpers/math.ts (docs/agents/working-method.md § Search before you write).`,
+          });
+        return {
+          CallExpression(node) {
+            const nested = (inner) =>
+              node.arguments.some((arg) => isMathCall(arg, inner));
+            if (
+              (isMathCall(node, 'min') && nested('max')) ||
+              (isMathCall(node, 'max') && nested('min'))
+            ) {
+              report(node, 'clamp()');
+            }
+          },
+          BinaryExpression(node) {
+            if (
+              node.operator === '%' &&
+              isNumber(node.right, 360) &&
+              node.left.type === 'BinaryExpression' &&
+              node.left.operator === '+' &&
+              isNumber(node.left.right, 360)
+            ) {
+              report(node, 'normalizeAngle()');
+            }
+            if (node.operator !== '/') return;
+            if (hasPi(node.left) && has180(node.right))
+              report(node, 'degToRad()');
+            else if (has180(node.left) && hasPi(node.right)) {
+              report(node, 'radToDeg()');
+            }
+          },
+        };
+      },
+    },
+
+    // DOM order sets the tab sequence; a positive tabindex jumps the queue.
+    'no-positive-tabindex': {
+      meta: {
+        type: 'problem',
+        docs: {description: 'Disallow a tabindex above 0'},
+        schema: [],
+      },
+      create(context) {
+        const message =
+          'A tabindex above 0 overrides the DOM order; use 0 or -1 (docs/agents/a11y.md § 2).';
+        const positive = (n) =>
+          n?.type === 'Literal' &&
+          (typeof n.value === 'number'
+            ? n.value > 0
+            : /^\s*[1-9]/.test(String(n.value)));
+        const inText = (node, text) => {
+          if (/\btabindex\s*=\s*["']?\s*[1-9]/i.test(text)) {
+            context.report({node, message});
+          }
+        };
+        return {
+          TemplateElement(node) {
+            inText(node, node.value.raw);
+          },
+          Literal(node) {
+            if (typeof node.value === 'string') inText(node, node.value);
+          },
+          AssignmentExpression(node) {
+            if (
+              node.left.type === 'MemberExpression' &&
+              node.left.property.type === 'Identifier' &&
+              node.left.property.name === 'tabIndex' &&
+              positive(node.right)
+            ) {
+              context.report({node, message});
+            }
+          },
+          CallExpression(node) {
+            const [name, value] = node.arguments;
+            if (
+              node.callee.type === 'MemberExpression' &&
+              node.callee.property.type === 'Identifier' &&
+              node.callee.property.name === 'setAttribute' &&
+              name?.type === 'Literal' &&
+              String(name.value).toLowerCase() === 'tabindex' &&
+              positive(value)
+            ) {
+              context.report({node, message});
+            }
+          },
+        };
+      },
+    },
+
+    // `true` means the feature is on, so bindings never read as double
+    // negatives.
+    'positive-boolean-name': {
+      meta: {
+        type: 'suggestion',
+        docs: {description: 'Name boolean @property fields positively'},
+        schema: [],
+      },
+      create(context) {
+        const isBooleanProperty = (node) =>
+          (node.decorators ?? []).some((decorator) => {
+            const expr = decorator.expression;
+            if (
+              expr?.type !== 'CallExpression' ||
+              expr.callee.type !== 'Identifier' ||
+              expr.callee.name !== 'property'
+            ) {
+              return false;
+            }
+            return (expr.arguments[0]?.properties ?? []).some(
+              (p) =>
+                p.type === 'Property' &&
+                p.key.type === 'Identifier' &&
+                p.key.name === 'type' &&
+                p.value.type === 'Identifier' &&
+                p.value.name === 'Boolean'
+            );
+          });
+        return {
+          PropertyDefinition(node) {
+            if (node.key.type !== 'Identifier') return;
+            if (!/^(hide|disable|no)[A-Z]/.test(node.key.name)) return;
+            if (!isBooleanProperty(node)) return;
+            context.report({
+              node: node.key,
+              message: `Name the property for what it turns on (show…, has…), not \`${node.key.name}\` (docs/agents/coding-standards.md § Boolean property naming).`,
+            });
+          },
+        };
+      },
+    },
   },
 };
 
@@ -875,11 +1124,45 @@ export default [
       'openbridge/prefer-boolean-property-default-false': 'error',
       'openbridge/prefer-array-property-type-and-item-interface': 'error',
       'openbridge/component-lifecycle-tag': 'error',
+      'openbridge/no-skipped-tests': 'error',
+      'openbridge/use-math-helpers': 'error',
+      'openbridge/no-positive-tabindex': 'error',
+      'openbridge/positive-boolean-name': 'error',
       'openbridge/storybook-title-case': 'off',
       'openbridge/story-lifecycle-tags': 'off',
       // Disabled because eslint-plugin-file-extension-in-import-ts is not yet
       // compatible with ESLint v10 (it still uses deprecated context methods).
       'file-extension-in-import-ts/file-extension-in-import-ts': 'off',
+    },
+  },
+  {
+    // The tooling: scripts and configs that run in Node, and the Storybook
+    // setup. Node's globals apply, and the rules written for components do not.
+    files: [
+      '**/script/**/*.{ts,mts,mjs}',
+      '**/.storybook/**/*.{ts,tsx}',
+      '**/*.config.{ts,mjs}',
+      '**/new-component.ts',
+      '**/fix-imports.mjs',
+      '**/fix-js-extensions.mjs',
+    ],
+
+    languageOptions: {
+      globals: {
+        ...globals.node,
+        ...globals.browser,
+      },
+    },
+
+    rules: {
+      'custom-element/prefer-local-decorator': 'off',
+      'openbridge/prefer-enum-over-string-literal-union': 'off',
+      'openbridge/prefer-boolean-property-default-false': 'off',
+      'openbridge/prefer-array-property-type-and-item-interface': 'off',
+      'openbridge/component-lifecycle-tag': 'off',
+      'openbridge/use-math-helpers': 'off',
+      'openbridge/no-positive-tabindex': 'off',
+      'openbridge/positive-boolean-name': 'off',
     },
   },
   {
@@ -926,6 +1209,15 @@ export default [
 
     rules: {
       'openbridge/component-lifecycle-tag': 'off',
+    },
+  },
+  {
+    // A test states the expected value with the raw formula; calling the
+    // helper there would check the helper against itself.
+    files: ['**/*.spec.ts', '**/*.test.ts'],
+
+    rules: {
+      'openbridge/use-math-helpers': 'off',
     },
   },
   {

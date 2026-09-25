@@ -6,6 +6,7 @@ import componentStyle from './slider.css?inline';
 import '../icon-button/icon-button.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
+import {clamp} from '../../svghelpers/math.js';
 
 /**
  * Enum of slider visual and interaction variants.
@@ -192,7 +193,7 @@ export class ObcSlider extends LitElement {
     if (!Number.isFinite(range) || range <= 0) return 0;
     const ratio = (this.value - this.min) / range;
     if (!Number.isFinite(ratio)) return 0;
-    return Math.max(0, Math.min(1, ratio));
+    return clamp(ratio, 0, 1);
   }
 
   private animationFrame: number | null = null;

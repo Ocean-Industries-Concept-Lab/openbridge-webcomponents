@@ -56,6 +56,7 @@ import {
   startExternalScaleBorderRadiusObserver,
   ScaleType,
 } from '../external-scale/external-scale.js';
+import {clamp} from '../../svghelpers/math.js';
 
 // Register Chart.js components used by the line graph (scales, elements, plugins)
 Chart.register(
@@ -1437,9 +1438,10 @@ export class ObcChartLineBase extends LitElement {
       // Guard: Avoid invalid paths
       if (width <= 0 || height <= 0) return;
 
-      const r = Math.max(
+      const r = clamp(
+        cornerRadius,
         0,
-        Math.min(cornerRadius, Math.min(width, height) / 2)
+        Math.max(0, Math.min(width, height) / 2)
       );
 
       // Start at top-left corner (accounting for radius)
@@ -1553,9 +1555,10 @@ export class ObcChartLineBase extends LitElement {
         ctx.lineWidth = borderWidthPx;
 
         const {x, y, width, height} = rect;
-        const r = Math.max(
+        const r = clamp(
+          strokeRadius,
           0,
-          Math.min(strokeRadius, Math.min(width, height) / 2)
+          Math.max(0, Math.min(width, height) / 2)
         );
 
         // Draw border segments, skipping edges that have visible external scales
@@ -2342,7 +2345,7 @@ export class ObcChartLineBase extends LitElement {
       if (!Number.isFinite(stop) || range === 0) {
         stop = 0.5; // Fallback to middle if calculation fails
       } else {
-        stop = Math.max(0, Math.min(1, stop));
+        stop = clamp(stop, 0, 1);
       }
 
       // Extract threshold color variables (used for both fill and border)

@@ -61,7 +61,7 @@ const VESSEL_EDGE_MARGIN = 2;
  * @property scaleReferenceSize - Reference width the paddings are expressed in under
  *   `fixedAspectRatio`; pushed by the hosting chart.
  * @availableWhen scaleReferenceSize fixedAspectRatio==true
- * @fires {CustomEvent} scale-dimensions-changed - Reports `{side: 'top', thickness}` so the chart reserves the band's height. Bubbles and is composed.
+ * @fires {CustomEvent} scale-dimensions-changed - Reports `{side: 'top', thickness}` so the chart reserves the band's height. It bubbles to the chart slot the band sits in and does not leave the shadow root around it.
  * @experimental
  */
 @customElement('obc-depth-top-band')
@@ -107,7 +107,6 @@ export class ObcDepthTopBand extends LitElement {
       new CustomEvent('scale-dimensions-changed', {
         detail: {side: 'top', thickness: this.thickness},
         bubbles: true,
-        composed: true,
       })
     );
   }
@@ -159,12 +158,10 @@ export class ObcDepthTopBand extends LitElement {
     const r = FRAME_RADIUS;
     const artHalf = (VESSEL_ART_SIZE * VESSEL_ART_SCALE) / 2;
     // A now-line at either plot edge would push the hull past the frame.
-    const centre = Math.max(
+    const centre = clamp(
+      now - VESSEL_CENTRE_OFFSET,
       VESSEL_EDGE_MARGIN + VESSEL_STERN_REACH,
-      Math.min(
-        now - VESSEL_CENTRE_OFFSET,
-        FRAME_WIDTH - VESSEL_EDGE_MARGIN - VESSEL_BOW_REACH
-      )
+      FRAME_WIDTH - VESSEL_EDGE_MARGIN - VESSEL_BOW_REACH
     );
     const outline = `M0.5 ${height} V${r + 0.5} A${r} ${r} 0 0 1 ${r + 0.5} 0.5 H${FRAME_WIDTH - r - 0.5} A${r} ${r} 0 0 1 ${FRAME_WIDTH - 0.5} ${r + 0.5} V${height}`;
     return svg`

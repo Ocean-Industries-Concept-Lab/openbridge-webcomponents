@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import type {Reporter, TestCase} from 'vitest/reporters';
+import type {Reporter, TestCase} from 'vitest/node';
 
 type AxeNode = {target: string[]; failureSummary?: string; html?: string};
 type AxeViolation = {

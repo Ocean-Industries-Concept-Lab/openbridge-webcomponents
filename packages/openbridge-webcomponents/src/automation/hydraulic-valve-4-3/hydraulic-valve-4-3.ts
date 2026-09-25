@@ -62,6 +62,15 @@ export enum HydraulicValve43Type {
  * - `position-selected` – Fired when the user requests a position (click or
  *   arrow key). Detail: `{position: number}` (0 = left, 1 = center, 2 = right).
  *
+ * ## Keyboard
+ * [APG Radio Group](https://www.w3.org/WAI/ARIA/apg/patterns/radio/), as
+ * `ObcShuffleButtonBase` implements it: one tab stop on the selected thumb,
+ * `Left`/`Up` and `Right`/`Down` request the previous and next position and
+ * wrap, `Space` and `Enter` request the focused one.
+ *
+ * Left out: `Home` and `End`; and the arrow keys request a position rather
+ * than move the checked state, which the host confirms.
+ *
  * @property type - Center-position symbol variant.
  * @property ariaLabel - Accessible name for the control.
  * @fires {CustomEvent<PositionSelectedDetail>} position-selected - Fired when the user requests a position (click or arrow key).

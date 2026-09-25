@@ -2,6 +2,7 @@ import {LitElement, html, nothing, svg, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import {InstrumentState, Priority} from '../types.js';
+import {clamp} from '../../svghelpers/math.js';
 
 const componentStyle = `:host {
   display: block;
@@ -148,7 +149,7 @@ export class ObcMainEngineIndicator extends LitElement {
       return 0;
     }
 
-    return Math.max(0, Math.min(1, value));
+    return clamp(value, 0, 1);
   }
 
   private clampPitchValue(value: number): number {
@@ -156,7 +157,7 @@ export class ObcMainEngineIndicator extends LitElement {
       return 0;
     }
 
-    return Math.max(-1, Math.min(1, value));
+    return clamp(value, -1, 1);
   }
 
   private getThrustBodyHeight(thrust: number): number {
@@ -164,12 +165,10 @@ export class ObcMainEngineIndicator extends LitElement {
       return 0;
     }
 
-    return Math.max(
+    return clamp(
+      Math.round((Math.abs(thrust) / 100) * THRUST_HALF_HEIGHT),
       2,
-      Math.min(
-        THRUST_HALF_HEIGHT,
-        Math.round((Math.abs(thrust) / 100) * THRUST_HALF_HEIGHT)
-      )
+      THRUST_HALF_HEIGHT
     );
   }
 

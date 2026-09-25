@@ -1,6 +1,7 @@
 import {LitElement, html, nothing, svg, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
+import {clamp} from '../../svghelpers/math.js';
 
 const componentStyle = `:host {
   display: inline-block;
@@ -117,7 +118,7 @@ export class ObcTunnelThruster extends LitElement {
 
   private get normalizedValue(): number {
     const v = Number.isFinite(this.value) ? this.value : 0;
-    return Math.max(-1, Math.min(1, v));
+    return clamp(v, -1, 1);
   }
 
   private get clampedThrust(): number {

@@ -44,28 +44,32 @@ judgement call.
 
 1. **The helper exists.** The hubs, by number of importing files:
 
-   | Helper                                                                               | For                                                                                 | Importers                                                               |
-   | ------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-   | `svghelpers/setpoint-mixin.ts`, `setpoint-bundle.ts`, `setpoint.ts`                  | setpoint properties, marker drawing, angular distance                               | 15 / 7 / 5                                                              |
-   | `svghelpers/radial-frame.ts`                                                         | radial viewBox, container measurement, `observeInnerBox()`                          | 15                                                                      |
-   | `svghelpers/math.ts`                                                                 | `clamp`, `clampPercent`, `normalizeAngle`, `degToRad`, `radToDeg`                   | 39                                                                      |
-   | `svghelpers/arc-frame.ts`, `stroke-aware.ts`                                         | arc normalisation and zoom-to-fit; half-pixel non-scaling strokes                   | 5 / 2                                                                   |
-   | `charthelpers/` (`constants.ts`, `canvas-layout.ts`, `chart-common.css`)             | Chart.js layout, labels, the shared chart CSS                                       | 5                                                                       |
-   | `charthelpers/label-threshold.ts`                                                    | the chart resize observer: rebuild on a label-threshold crossing                    | 5                                                                       |
-   | `navigation-instruments/readout/readout-formatters.ts`                               | value formatting and the figure-dash placeholder (imports nothing)                  | the readout stack                                                       |
-   | `building-blocks/{instrument-linear,external-scale,circular-progress,readout-block}` | the pieces instruments compose                                                      | 9 / 9 / 6 / 5                                                           |
-   | `navigation-instruments/watch/watch.ts`                                              | everything more than one radial instrument draws                                    | 6                                                                       |
-   | `internal/roving-navigator.ts`, `tree-roving-navigator.ts`                           | roving tabindex for flat composites (tabs, option groups, menus) and for tree hosts | 3 / 2                                                                   |
-   | `internal/focus.ts`, `modal-focus-controller.ts`                                     | composed-tree focus queries; the dialog focus contract                              | 2 / 1                                                                   |
-   | `src/mixins/*.css`                                                                   | PostCSS mixins — global, no import (`postcss.config.mjs` `mixinsDir`)               | `font-body` 52, `font-label` 36, `card` 5, `scrollbar` 2, `readout-*` 2 |
+   | Helper                                                                               | For                                                                                                    | Importers                                                               |
+   | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------- |
+   | `svghelpers/setpoint-mixin.ts`, `setpoint-bundle.ts`, `setpoint.ts`                  | setpoint properties, marker drawing, angular distance                                                  | 15 / 7 / 5                                                              |
+   | `svghelpers/radial-frame.ts`                                                         | radial viewBox, container measurement, `observeInnerBox()`                                             | 15                                                                      |
+   | `svghelpers/math.ts`                                                                 | `clamp`, `clampPercent`, `normalizeAngle`, `degToRad`, `radToDeg`                                      | 39                                                                      |
+   | `svghelpers/arc-frame.ts`, `stroke-aware.ts`                                         | arc normalisation and zoom-to-fit; half-pixel non-scaling strokes                                      | 5 / 2                                                                   |
+   | `charthelpers/` (`constants.ts`, `canvas-layout.ts`, `chart-common.css`)             | Chart.js layout, labels, the shared chart CSS                                                          | 5                                                                       |
+   | `charthelpers/label-threshold.ts`                                                    | the chart resize observer: rebuild on a label-threshold crossing                                       | 5                                                                       |
+   | `navigation-instruments/readout/readout-formatters.ts`                               | value formatting and the figure-dash placeholder (imports nothing)                                     | the readout stack                                                       |
+   | `building-blocks/{instrument-linear,external-scale,circular-progress,readout-block}` | the pieces instruments compose                                                                         | 9 / 9 / 6 / 5                                                           |
+   | `navigation-instruments/watch/watch.ts`                                              | everything more than one radial instrument draws                                                       | 6                                                                       |
+   | `internal/roving-navigator.ts`, `tree-roving-navigator.ts`                           | roving tabindex for flat composites (tabs, option groups, menus) and for tree hosts                    | 3 / 2                                                                   |
+   | `internal/focus.ts`, `modal-focus-controller.ts`                                     | composed-tree focus queries; the dialog focus contract                                                 | 2 / 1                                                                   |
+   | `internal/events.ts`                                                                 | `stopPropagation`, the stable listener that keeps a child's event inside the component that renders it | 9                                                                       |
+   | `src/mixins/*.css`                                                                   | PostCSS mixins — global, no import (`postcss.config.mjs` `mixinsDir`)                                  | `font-body` 52, `font-label` 36, `card` 5, `scrollbar` 2, `readout-*` 2 |
 
    A `Math.min(Math.max(…))`, a `((a % 360) + 360) % 360`, a `* Math.PI / 180`
    or a hand-rolled `ResizeObserver` in a new file means this step was skipped:
    the first three are `svghelpers/math.ts`, the chart observer is
-   `charthelpers/label-threshold.ts`.
+   `charthelpers/label-threshold.ts`. `npm run lint:eslint` fails on the first
+   three shapes anywhere outside the tests, which keep the raw formula as
+   their expected value.
 
-2. **The sibling exists.** `npm run new:component` writes a blank element, an
-   empty CSS file and a one-story file; it copies nothing. The next step is
+2. **The sibling exists.** `npm run new:component` writes a lint-clean
+   skeleton — a `TODO(designer)` class JSDoc, an empty CSS file and one
+   story; it copies nothing. The next step is
    the nearest sibling — same directory, same base name with another suffix
    (`-indicator`, `-flat`, `-horizontal`), same Figma page. Read it whole
    ([`building-blocks.md`](../../docs/agents/building-blocks.md)) and start from its structure,
@@ -98,6 +102,12 @@ gh pr list --state merged --limit 60            # the last few months by eye
 git log --oneline --since='3 months ago' -- packages/openbridge-webcomponents/src/<family>/
 ```
 
+A PR closed because another one superseded it is compared by running, not by
+reading. Put its spec files into the branch that replaces it and run them:
+every test that fails there is covered elsewhere, filed, or dropped on
+purpose, and the closing comment says which. A reading of #1298 against #1297
+missed several of its items, and one of them came back as #1312.
+
 Then dig only where a title or description touches the task: `gh pr view N`
 for the design record and its Alternatives section, `gh issue view N
 --comments` for the decision and the cross-links, `gh pr diff N` when the
@@ -114,8 +124,10 @@ The copies a search would have prevented were folded into their homes
 `src/mixins/readout.css`, `src/mixins/indeterminate-slide.css`, and the
 `scrollbar` mixin applied where its body had been re-typed. The last one — a
 trimmed readout block in the transmitter button — went when the automation
-readouts moved onto `obc-readout-block` (#1097). Nothing is copied on purpose
-any more; never start a new one.
+readouts moved onto `obc-readout-block` (#1097). The 77 hand-written clamps,
+angle wraps and degree conversions that were still left went onto the
+`svghelpers/math.ts` helpers when the lint arrived. Nothing is copied on
+purpose any more; never start a new one.
 
 `formatNumericValue` is the readout formatter (`readout-formatters.ts`); the
 chart-side one is `formatChartNumber` (`charthelpers/canvas-layout.ts`).
@@ -224,7 +236,27 @@ Decisions:
 
 [`a11y.md`](../../docs/agents/a11y.md) is the bar for new interactive components and for any
 existing one a change touches. Its § 9 says what `npm run test-a11y` covers,
-what it cannot see, and which components to look at first.
+what it cannot see, and which components to look at first. Where a rule can be
+checked, it is: `npm run lint:apg` holds a component with a widget role to its
+pattern record, `npm run lint:events` holds it to the events it lets out, and
+the `obc-*` axe rules hold a composite widget to one tab stop and a name.
+
+## CI is the floor, not the review
+
+CI fails on what a check can see; the rest is the reviewer's, and yours.
+
+- A failing check is fixed, never silenced: a suppression carries its reason
+  (`coding-standards.md` § Suppressions), a test is never skipped, and a
+  baseline is regenerated only for a change you meant.
+- An exception is an edit the reviewer reads: every baseline the PR moves,
+  every story added to `__a11y__/baseline.json`, every new `skip-test` or
+  `!snapshot` tag is named in the PR body, and `pr-body.yml` fails until it
+  is. An entry in `ci-coverage.test.ts`'s `NOT_IN_CI` carries its reason in
+  the entry.
+- No check sees the tracker, the family, the Figma node, the APG pattern's
+  roles and states, the focus ring in four themes, a screen reader or a
+  target size. The Verification section says which of these you checked,
+  and a skipped one is named, not implied.
 
 ## Pull requests
 

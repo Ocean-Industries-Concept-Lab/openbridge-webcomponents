@@ -3,6 +3,7 @@ import {customElement} from '../../decorator.js';
 import {classMap} from 'lit/directives/class-map.js';
 import compentStyle from './progress-indicator-dots.css?inline';
 import {property} from 'lit/decorators.js';
+import {clamp} from '../../svghelpers/math.js';
 
 /**
  * `<obc-progress-indicator-dots>` – A visual step indicator component that displays a horizontal row of dots to represent progress through a sequence of steps (also known as a stepper, pagination indicator, or progress dots).
@@ -59,7 +60,7 @@ export class ObcProgressIndicatorDots extends LitElement {
   @property({type: Boolean}) fullwidth = false;
 
   private get validCurrentStep() {
-    return Math.max(1, Math.min(this.currentStep, this.totalSteps));
+    return clamp(this.currentStep, 1, Math.max(1, this.totalSteps));
   }
 
   private get validTotalSteps() {
