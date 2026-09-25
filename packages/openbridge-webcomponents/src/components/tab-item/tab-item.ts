@@ -87,11 +87,8 @@ export interface TabItemBadge {
  * button stays out of the tab sequence so the row keeps one tab stop, and the
  * tab announces `Delete` as its shortcut instead.
  *
- * **TODO(designer):** Nothing on screen tells a sighted keyboard user that
- * `Delete` closes the focused tab; the shortcut is announced to screen readers
- * only. A visible cue needs a design.
- *
- * Left out: nothing the tab itself owns; the row lists what it leaves out.
+ * Left out: a visible hint that `Delete` closes the tab, which only screen
+ * readers announce; the row lists what it leaves out of the pattern.
  *
  * ### Best Practices
  * - Only one tab in a group should have `checked` set to true.
