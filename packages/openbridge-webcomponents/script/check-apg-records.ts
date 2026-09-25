@@ -81,8 +81,8 @@ export function widgetRoles(source: string): string[] {
   return [...roles];
 }
 
-/** The JSDoc block directly above `@customElement(…)`. */
-function classDoc(source: string): string {
+/** The JSDoc block directly above `@customElement(…)`: the only one the manifest and the wrappers read. */
+export function classDoc(source: string): string {
   const at = source.indexOf('@customElement(');
   if (at < 0) return '';
   const before = source.slice(0, at);

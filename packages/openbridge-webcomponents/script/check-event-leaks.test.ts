@@ -124,6 +124,24 @@ describe('findLeaks', () => {
     expect(findLeaks([child, parent])).toEqual([]);
   });
 
+  it('counts only the class JSDoc as a declaration, as the wrappers do', () => {
+    const parent = parseComponent(
+      list(`
+  /**
+   * Passes the item's click on.
+   * @fires item-click
+   */
+  private onClick() {}
+  override render() {
+    return html\`<obc-item @item-click=\${this.onClick} @item-close=\${stopPropagation}></obc-item>\`;
+  }`),
+      'list.ts'
+    )!;
+    expect(findLeaks([child, parent]).map((leak) => leak.event)).toEqual([
+      'item-click',
+    ]);
+  });
+
   it('follows an event through every component that lets it out', () => {
     const middle = parseComponent(
       list(`

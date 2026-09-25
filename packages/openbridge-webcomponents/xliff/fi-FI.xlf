@@ -130,6 +130,10 @@
   <source>Readout</source>
   <target>Lukeminen</target>
 </trans-unit>
+<trans-unit id="s1125d159f7e64df5">
+  <source>Display</source>
+  <target>Näyttö</target>
+</trans-unit>
 </body>
 </file>
 </xliff>

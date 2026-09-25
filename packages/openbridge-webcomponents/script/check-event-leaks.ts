@@ -34,11 +34,12 @@ import fs from 'fs';
 import path from 'path';
 import {fileURLToPath} from 'url';
 import {globby} from 'globby';
+import {classDoc} from './check-apg-records.js';
 
 export interface ComponentEvents {
   tag: string;
   file: string;
-  /** Events the class documents with `@fires` / `@event`. */
+  /** Events the class JSDoc documents with `@fires` / `@event`; a tag elsewhere reaches no wrapper. */
   fires: Set<string>;
   /** Events the host dispatches with `bubbles: true` and `composed: true`. */
   composed: Set<string>;
@@ -153,7 +154,7 @@ export function parseComponent(
   const code = stripComments(source);
   const fires = new Set(
     Array.from(
-      source.matchAll(
+      classDoc(source).matchAll(
         /@(?:fires|event)\s+(?:\{(?:[^{}]|\{[^{}]*\})*\}\s+)?([\w-]+)/g
       ),
       (m) => m[1]

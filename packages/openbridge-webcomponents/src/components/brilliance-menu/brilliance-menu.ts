@@ -682,6 +682,7 @@ export class ObcBrillianceMenu extends LitElement {
             .selectedTabId=${this.selectedTabId}
             .centerContent=${true}
             .hasPanels=${true}
+            .label=${msg('Display')}
             @tab-selected=${this.onTabSelected}
             @tab-closed=${stopPropagation}
             @add-new-tab=${stopPropagation}

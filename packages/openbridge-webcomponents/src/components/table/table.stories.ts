@@ -887,7 +887,7 @@ export const CyclicHierarchy: Story = {
       <div>
         <p>Unsorted</p>
         <obc-table
-          aria-label="Equipment"
+          aria-label="Unsorted equipment"
           .data=${cyclicRows()}
           .columns=${columns(false)}
         ></obc-table>
@@ -895,7 +895,7 @@ export const CyclicHierarchy: Story = {
       <div>
         <p>Sorted on System — the cyclic rows are recovered</p>
         <obc-table
-          aria-label="Equipment"
+          aria-label="Equipment sorted on System"
           .data=${cyclicRows()}
           .columns=${columns(true)}
         ></obc-table>
@@ -963,7 +963,7 @@ export const CycleWithDescendants: Story = {
       <div>
         <p>Unsorted</p>
         <obc-table
-          aria-label="Equipment"
+          aria-label="Unsorted equipment"
           .data=${cycleWithDescendantRows()}
           .columns=${columns(false)}
         ></obc-table>
@@ -971,7 +971,7 @@ export const CycleWithDescendants: Story = {
       <div>
         <p>Sorted on System — the cycle and its descendant are recovered</p>
         <obc-table
-          aria-label="Equipment"
+          aria-label="Equipment sorted on System"
           .data=${cycleWithDescendantRows()}
           .columns=${columns(true)}
         ></obc-table>

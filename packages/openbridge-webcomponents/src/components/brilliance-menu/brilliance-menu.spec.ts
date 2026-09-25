@@ -65,6 +65,15 @@ describe('obc-brilliance-menu tabbed', () => {
     expect(tabControl(row, 1).ariaControlsElements).toEqual([panels[1]]);
   });
 
+  it("names its tab list in the menu's own words", async () => {
+    const {row} = await setup();
+    expect(
+      row
+        .shadowRoot!.querySelector('[role="tablist"]')!
+        .getAttribute('aria-label')
+    ).toBe('Display');
+  });
+
   it('switches panels when the other tab is selected', async () => {
     const {row} = await setup();
     await userEvent.click(tabControl(row, 1));
