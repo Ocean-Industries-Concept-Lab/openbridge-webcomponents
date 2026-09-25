@@ -140,8 +140,8 @@ const meta: Meta<typeof ObcAlertListDetailsExperimental> = {
         time: new Date('2024-01-15T08:39:42Z'),
       },
       {
-        id: '2',
-        tagId: '2',
+        id: '8',
+        tagId: '8'
         source: 'AlertList',
         text: 'This alert is acked but has no acknowledgedBy information',
         acknowledged: {
