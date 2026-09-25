@@ -20,7 +20,7 @@ const repo = path.resolve(
 
 /** Script names that check something: lints, type checks, tests and builds. */
 const CHECK =
-  /^(lint(:(?!fix)[\w-]+)?|typecheck(:[\w-]+)?|type-check|format:check|fix-imports:check|test([:-][\w:-]+)?|build([:-][\w:-]+)?)$/;
+  /^(lint(:(?!fix)[\w-]+)?|typecheck(:[\w-]+)?|type-check(:[\w-]+)?|format:check|fix-imports:check|test([:-][\w:-]+)?|build([:-][\w:-]+)?)$/;
 
 /** `package:script` → why CI does not run it. */
 const NOT_IN_CI: Record<string, string> = {
@@ -31,6 +31,8 @@ const NOT_IN_CI: Record<string, string> = {
     'the local Docker route for macOS; CI runs test-storybook directly',
   'openbridge-webcomponents:test-a11y:update': 'rewrites the baseline',
   'openbridge-webcomponents:build:ts:watch': 'watch mode',
+  'openbridge-webcomponents:build':
+    'prepack runs it when the release publishes; build:full, which CI runs, starts with the same two steps',
   'root:build:docker-for-storybook-testing': 'builds the local Docker image',
   'vue-demo:lint': 'eslint --fix; lint:check is the check',
   'vue-demo:test:visual': 'the visual project of test:e2e, which CI runs',
@@ -106,23 +108,76 @@ function ciCommands(): {pkg: string; command: string}[] {
   return runs;
 }
 
+/**
+ * The scripts a command runs, as `package:script`: `npm run <name>`, in the
+ * package `-w packages/<dir>` names, and the arguments of npm-run-all's
+ * `run-p` and `run-s`. A word that only matches a script name is no call.
+ */
+function calls(pkg: string, command: string): string[] {
+  const out: string[] = [];
+  for (const part of command.split(/&&|\|\||;|\n/)) {
+    const npm = /\bnpm run ([\w:.-]+)(.*)/.exec(part);
+    if (npm) {
+      const workspace =
+        /(?:-w|--workspace)[=\s]+(?:\.\/)?packages\/([\w-]+)/.exec(npm[2]);
+      out.push(`${workspace?.[1] ?? pkg}:${npm[1]}`);
+      continue;
+    }
+    const runAll = /\brun-[ps]\s+(.*)/.exec(part);
+    if (!runAll) continue;
+    const args = runAll[1].split(/\s--(?:\s|$)/)[0];
+    for (const m of args.matchAll(/"([^"]*)"|'([^']*)'|(\S+)/g)) {
+      const name = (m[1] ?? m[2] ?? m[3]).trim().split(/\s+/)[0];
+      if (name && !name.startsWith('-')) out.push(`${pkg}:${name}`);
+    }
+  }
+  return out;
+}
+
 /** `package:script` for every script CI runs, directly or from another script. */
 function coveredByCi(all: Map<string, Scripts>): Set<string> {
   const covered = new Set<string>();
-  const visit = (pkg: string, script: string) => {
-    const key = `${pkg}:${script}`;
+  const visit = (key: string) => {
+    const [pkg, ...rest] = key.split(':');
+    const script = rest.join(':');
     const scripts = all.get(pkg);
     if (covered.has(key) || !scripts?.[script]) return;
     covered.add(key);
-    for (const word of scripts[script].match(/[\w:.-]+/g) ?? []) {
-      if (word in scripts) visit(pkg, word);
+    // npm runs pre<name> and post<name> with <name>.
+    for (const hook of [`pre${script}`, `post${script}`]) {
+      if (hook in scripts) visit(`${pkg}:${hook}`);
     }
+    for (const call of calls(pkg, scripts[script])) visit(call);
   };
   for (const {pkg, command} of ciCommands()) {
-    for (const m of command.matchAll(/npm run ([\w:.-]+)/g)) visit(pkg, m[1]);
+    for (const call of calls(pkg, command)) visit(call);
   }
   return covered;
 }
+
+describe('script calls', () => {
+  it('reads npm run, the package -w names, and the arguments of run-p', () => {
+    expect(
+      calls(
+        'root',
+        'npm run build:full -w packages/openbridge-webcomponents && npm install && npm run build'
+      )
+    ).toEqual(['openbridge-webcomponents:build:full', 'root:build']);
+    expect(calls('vue-demo', 'run-p type-check "build-only {@}" --')).toEqual([
+      'vue-demo:type-check',
+      'vue-demo:build-only',
+    ]);
+  });
+
+  it('does not count a word that only matches a script name', () => {
+    expect(calls('openbridge-webcomponents', 'vite build')).toEqual([]);
+  });
+
+  it('counts a type check with a suffix as a check', () => {
+    expect(CHECK.test('typecheck:tooling')).toBe(true);
+    expect(CHECK.test('type-check:e2e')).toBe(true);
+  });
+});
 
 describe('CI coverage', () => {
   const all = packages();
