@@ -17,6 +17,8 @@ import {
 import type {LinearAdvice} from '../../building-blocks/instrument-linear/advice.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import '../../building-blocks/bar-vertical/bar-vertical.js';
+import type {ObcBarVertical} from '../../building-blocks/bar-vertical/bar-vertical.js';
+import {ExternalScaleSide} from '../../building-blocks/external-scale/external-scale.js';
 
 // Re-export FillMode and ScaleType for user convenience
 export {FillMode, ScaleType};
@@ -202,7 +204,7 @@ export {FillMode, ScaleType};
  */
 @customElement('obc-gauge-trend')
 export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
-  private _barVerticalElement?: HTMLElement;
+  private _barVerticalElement?: ObcBarVertical;
   private _isFirstUpdate = false;
   private _explicitXAxisType = false;
   private _autoAppliedXAxisType?: XAxisType;
@@ -296,8 +298,7 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
       return;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const barVertical = this._barVerticalElement as any;
+    const barVertical = this._barVerticalElement;
 
     // Use getEffectiveHeight() which returns computed height in fixedAspectRatioScaling mode
     // This ensures the bar-vertical gets the correct height that matches the chart's actual size
@@ -307,7 +308,7 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
     barVertical.maxValue = this.maxValue;
     barVertical.reverse = this.reverse;
     barVertical.height = effectiveHeight;
-    barVertical.side = 'right';
+    barVertical.side = ExternalScaleSide.right;
     barVertical.hasScale = this.hasScale;
     barVertical.showMainTickmarkLabels = this.showMainTickmarkLabels;
     barVertical.hasBar = this.hasBar;
@@ -348,11 +349,6 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
     barVertical.fixedAspectRatio = this.fixedAspectRatioScaling;
     // Pass scaleReferenceSize from parent (inherited from ObcChartLineBase)
     barVertical.scaleReferenceSize = this.scaleReferenceSize;
-    // Derive tickmark visibility from whether intervals are defined
-    barVertical.hasPrimaryTickmarks =
-      this.primaryTickmarkInterval !== undefined;
-    barVertical.hasTertiaryTickmarks =
-      this.tertiaryTickmarkInterval !== undefined;
     barVertical.priority = this.priority;
     // Scale state inherits from parent 'state' property automatically
     barVertical.state = this.state;
