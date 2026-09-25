@@ -11,6 +11,10 @@
   user-select: none;
 }
 
+.card.tabbed {
+  overflow: hidden;
+}
+
 .title-container {
   padding: var(--app-components-system-menu-margin-vertical)
     calc(
