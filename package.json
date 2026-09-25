@@ -31,6 +31,10 @@
     "packages/openbridge-webcomponents/{script,.storybook}/**/*.{ts,tsx,mts,mjs}": [
       "eslint --config packages/openbridge-webcomponents/eslint.config.mjs --max-warnings=0",
       "prettier --write"
+    ],
+    "packages/openbridge-webcomponents/*.{ts,mts,mjs}": [
+      "eslint --config packages/openbridge-webcomponents/eslint.config.mjs --max-warnings=0",
+      "prettier --write"
     ]
   }
 }
