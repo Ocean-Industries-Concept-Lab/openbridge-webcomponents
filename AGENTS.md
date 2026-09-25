@@ -66,7 +66,7 @@ is a trailing `(#1234)` pointer, never the explanation. CSS gets one short why
 per non-obvious declaration. No filler, inflated vocabulary or chatbot
 phrasing. The full rules, the writing-style ban list and the PR exemption are
 in [`docs/agents/coding-standards.md`](docs/agents/coding-standards.md);
-`npm run lint:comments` reports what breaks them.
+`npm run lint:comments` fails on what breaks them.
 
 ### Boolean property naming
 
@@ -98,7 +98,7 @@ Key points:
    without a type — `@property name - description` — placed after the Markdown
    sections and before `@slot`/`@fires`. Conditional properties add a line
    `@availableWhen name condition` directly under their tag. No inline JSDoc
-   above `@property()` fields (`npm run lint:comments` warns; `--fix` hoists
+   above `@property()` fields (`npm run lint:comments` fails; `--fix` hoists
    them). A tag naming a property that does not exist is a ghost manifest
    member — `npm run lint:slots` fails on it. Mixin-provided properties, and
    docs carrying a member `@deprecated` or a `@default` cem cannot read from
@@ -159,6 +159,7 @@ The table below is generated too. Edit `docs/agents/*.md`, never this block.
 | [coding-standards](docs/agents/coding-standards.md) | `packages/openbridge-webcomponents/src/**/{*.ts,*.css}`<br>`packages/openbridge-webcomponents/script/**/{*.ts,*.mjs}`<br>`packages/openbridge-webcomponents/.storybook/**/*.ts`<br>`!packages/openbridge-webcomponents/src/{icons,generated,manual-icon}/**` | Comment rules, CSS why-comments, the writing-style ban list, boolean naming and Storybook titles |
 | [connector-diagram](docs/agents/connector-diagram.md) | `packages/connector-diagram/**` | Canvas pipe-drawing package — tests, snapshot baselines and the workspace lockfile |
 | [css-postcss](docs/agents/css-postcss.md) | `packages/openbridge-webcomponents/src/**/*.css` | PostCSS mixins, the two-layer colour model, size variants and font mixins |
+| [development-cycle](docs/agents/development-cycle.md) | `packages/openbridge-webcomponents/src/**`<br>`!packages/openbridge-webcomponents/src/{icons,generated,manual-icon}/**`<br>`packages/vue-demo/{src,e2e}/**` | The commands of one change, in order — fresh clone, the inner loop, snapshots, the gates, wrappers and the demos, merging develop, reviews, CI and the preview links |
 | [docgen](docs/agents/docgen.md) | `packages/openbridge-webcomponents/script/docgen/**` | The OpenAI-backed JSDoc generation CLI and its review-copy workflow |
 | [external-scale](docs/agents/external-scale.md) | `packages/openbridge-webcomponents/src/building-blocks/{external-scale,bar-vertical,bar-horizontal}/**`<br>`packages/openbridge-webcomponents/src/navigation-instruments/{gauge-vertical,gauge-horizontal,gauge-trend}/**` | External scale renderer and bar/gauge wrappers |
 | [figma-refresh](docs/agents/figma-refresh.md) | `packages/openbridge-webcomponents/src/palettes/variables.css`<br>`packages/openbridge-webcomponents/src/mixins/fonts.css`<br>`packages/openbridge-webcomponents/script/{figmavariables.json,download-icons.ts,convert-icons.ts,check-icon-hex-leaks.ts}`<br>`packages/openbridge-webcomponents/src/icons/**` | Regenerating variables.css, fonts.css, figmavariables.json and the icons from Figma, with the tripwires and the commit shape |
@@ -173,7 +174,7 @@ The table below is generated too. Edit `docs/agents/*.md`, never this block.
 | [setpoint](docs/agents/setpoint.md) | `packages/openbridge-webcomponents/src/svghelpers/{setpoint.ts,setpoint-mixin.ts,setpoint-bundle.ts}`<br>`packages/openbridge-webcomponents/src/building-blocks/setpoint/**` | Setpoint design layer, mixin/bundle, confirm animation |
 | [testing-visual](docs/agents/testing-visual.md) | `packages/openbridge-webcomponents/{.storybook,__vis__}/**`<br>`packages/openbridge-webcomponents/vitest*.config.ts`<br>`packages/vue-demo/e2e/**` | Storybook config, visual snapshot baselines, and the vue-demo Playwright suite |
 | [ui-components](docs/agents/ui-components.md) | `packages/openbridge-webcomponents/src/components/**` | General UI components (buttons, cards, inputs, feedback) |
-| [watch-radial-instruments](docs/agents/watch-radial-instruments.md) | `packages/openbridge-webcomponents/src/navigation-instruments/{watch,compass,compass-sector,heading,rudder,wind,pitch,roll,pitch-roll,pitch-roll-heave,speed-gauge,gauge-radial,rot-sector,rate-of-turn,course-arrows,readout,watch-flat,compass-flat,rot-linear,azimuth-thruster,current,gauge-proportional,pitch-roll-yaw,position-deviation,speed-directions,top-view-propulsion,velocity-projection-plot,wind-propulsion}/**`<br>`packages/openbridge-webcomponents/src/building-blocks/{single-axis-inclinometer,instrument-radial}/**`<br>`packages/openbridge-webcomponents/src/automation/{gauge-valve,gauge-generator,gauge-motors-and-pumps}/**` | Watch-based instruments (radial core + linear strip counterparts), radial gauges, shared arrow/readout modules |
+| [watch-radial-instruments](docs/agents/watch-radial-instruments.md) | `packages/openbridge-webcomponents/src/navigation-instruments/{watch,compass,compass-sector,heading,rudder,wind,pitch,roll,pitch-roll,pitch-roll-heave,speed-gauge,gauge-radial,rot-sector,rate-of-turn,course-arrows,readout,watch-flat,compass-flat,rot-linear,azimuth-thruster,current,gauge-proportional,pitch-roll-yaw,position-deviation,gnss-skyplot,speed-directions,top-view-propulsion,velocity-projection-plot,wind-propulsion}/**`<br>`packages/openbridge-webcomponents/src/building-blocks/{single-axis-inclinometer,instrument-radial}/**`<br>`packages/openbridge-webcomponents/src/automation/{gauge-valve,gauge-generator,gauge-motors-and-pumps}/**` | Watch-based instruments (radial core + linear strip counterparts), radial gauges, shared arrow/readout modules |
 | [working-method](docs/agents/working-method.md) | `packages/openbridge-webcomponents/src/**`<br>`!packages/openbridge-webcomponents/src/{icons,generated,manual-icon}/**` | How to enter the codebase before editing — search for prior art, fix the family not the member, Figma as target and code as precedent, PR shape, model choice |
 <!-- prettier-ignore-end -->
 <!-- agents:routing:end -->
@@ -183,6 +184,8 @@ The table below is generated too. Edit `docs/agents/*.md`, never this block.
 ## 5. Build, Test & Run
 
 All commands are run from `packages/openbridge-webcomponents/` unless noted.
+Their order over one change, from a fresh clone to a merged PR, is
+[`docs/agents/development-cycle.md`](docs/agents/development-cycle.md).
 
 ```bash
 # Install dependencies (from repo root)
@@ -217,7 +220,7 @@ npm run test-storybook          # visual snapshot tests (Vitest + Playwright)
 npm run test-a11y               # axe over every story; fails on a violation the baseline does not carry
 npm run test-a11y:update        # rewrite __a11y__/baseline.json after fixing or adding violations
 npm run test-storybook:watch    # watch mode
-npm run update-snapshots        # replace baselines
+npx vitest run --project storybook 'component-name' --update   # regenerate that component's baselines (rule 12)
 
 # Custom element manifest
 npm run analyze           # regenerate custom-elements.json
@@ -245,7 +248,7 @@ live: [`docs/agents/testing-visual.md` § vue-demo Playwright suite](docs/agents
 
 Husky runs `lint-staged` on every commit:
 
-- **TypeScript files** → ESLint (max 4 warnings) + Prettier
+- **TypeScript files** → ESLint (no warnings allowed) + Prettier
 - **CSS, HTML, JSON, MD** → Prettier only
 
 Commits that fail lint or format checks are blocked automatically.
@@ -315,7 +318,7 @@ automatically when editing a `.css` file.
     npx vitest run --project storybook 'component-name'
     npx vitest run --project storybook heat-pump heat-exchanger hydraulic-separator
     ```
-12. **Update baselines for those components only, locally on Linux** — the devcontainer's render is what CI accepts, so do not rely on the `/update-snapshots` PR comment ([`docs/agents/testing-visual.md`](docs/agents/testing-visual.md)). The filter must come **before** `--update` — after it, the FULL suite runs in update mode and rewrites unrelated flaky baselines. `--update` never prunes — `git rm` the baselines of renamed or removed stories first:
+12. **Update baselines for those components only, locally on Linux** — the devcontainer's render is what CI accepts ([`docs/agents/testing-visual.md`](docs/agents/testing-visual.md)). The filter must come **before** `--update` — after it, the FULL suite runs in update mode and rewrites unrelated flaky baselines. `--update` never prunes — `git rm` the baselines of renamed or removed stories first:
     ```bash
     npx vitest run --project storybook 'component-name' --update
     ```
