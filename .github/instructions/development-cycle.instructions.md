@@ -99,7 +99,8 @@ npm run test-a11y                # PRs to develop: axe over every story, then th
 ```
 
 `npm run lint` in `vue-demo` is `eslint . --fix` and rewrites files;
-`lint:check` is the check. A doc change ends with `npm run agents:sync` and
+`lint:check` is the check. The demo's Playwright suite is a gate as well;
+§ 6 builds the demo and runs it. A doc change ends with `npm run agents:sync` and
 `npm run lint:agents`, so the adapters and the routing table in `AGENTS.md`
 are committed with it.
 
@@ -131,11 +132,12 @@ npm run dev -w packages/vue-demo                             # http://localhost:
 ```bash
 (cd ../vue-demo && npm run test:visual -- -g <name>)         # <name> as in visual.spec.ts, e.g. conning-psv — not the URL
 (cd ../vue-demo && npm run test:visual:update -- -g <name>)  # then test:visual again
+(cd ../vue-demo && npm run test:e2e)                         # both projects, the functional spec too, as CI runs them
 ```
 
-The suite does not run in CI, so a baseline elsewhere may already be stale:
-refresh only the routes your change touches and say in the PR body which
-moved and why.
+CI runs the whole suite (`visual-testing.yml`, the `vue-demo` job), so a demo
+route your change moves fails there until its baseline is refreshed:
+regenerate those routes and say in the PR body which moved and why.
 
 ## 7. Merging develop, and conflicts
 
@@ -174,11 +176,11 @@ thread gets the same treatment whoever opened it:
 
 ## 9. CI, and the preview links
 
-| Workflow                               | Runs                          | Gates                                                                                                                            |
-| -------------------------------------- | ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| `build.yml`                            | every push                    | typecheck, analyze, the `lint:*` suite, format, imports, the demos' ESLint, the browser specs, `test:rules`, every package build |
-| `visual-testing.yml`                   | PRs to `develop` and `stable` | the snapshot suite against `__vis__/linux/__baselines__`, then axe against `__a11y__/baseline.json`                              |
-| `build_demo`, then the deploy workflow | every PR push                 | builds Storybook and the vue demo, publishes both to a per-PR preview channel and edits its two comments on the PR               |
+| Workflow                               | Runs                          | Gates                                                                                                                                |
+| -------------------------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `build.yml`                            | every push                    | typecheck, analyze, the `lint:*` suite, format, imports, the demos' ESLint, the browser specs, `test:rules`, every package build     |
+| `visual-testing.yml`                   | PRs to `develop` and `stable` | the snapshot suite against `__vis__/linux/__baselines__`, then axe against `__a11y__/baseline.json`; the vue demo's Playwright suite |
+| `build_demo`, then the deploy workflow | every PR push                 | builds Storybook and the vue demo, publishes both to a per-PR preview channel and edits its two comments on the PR                   |
 
 ```bash
 gh pr checks <n> --watch                       # green before asking for review

@@ -167,10 +167,14 @@ npm run test:visual -- -g <name>          # ALWAYS re-run to confirm stability
 (`conning-psv`, `ias`), never the URL; `-g conning` takes every conning route.
 
 - The config starts `vite dev` itself, or reuses a server already on 5173;
-  under `CI` it serves `vite preview`, so build the demo first there. The
-  `visual` project is always headless.
-- Nothing in CI runs this suite, so a baseline can be stale on `develop`;
-  refresh only the routes your change touches and say which moved in the PR.
+  under `CI` it serves `vite preview`, so build the demo first there
+  (`npm run build:demo` at the repository root). The `visual` project is
+  always headless.
+- The `vue-demo` job of `visual-testing.yml` runs both projects on PRs to
+  `develop` and `stable`, in the same Playwright image as the snapshot job. A
+  change that moves a route fails there until its baseline is refreshed:
+  regenerate the routes your change moves, on Linux, and say in the PR which
+  moved and why. A failed run uploads the report and the diffs.
 
 - `e2e/visual/` is its own Playwright project (`--project=visual`); the
   functional suite `e2e/mainpage.spec.ts` ignores it and needs no baselines.

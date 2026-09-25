@@ -32,12 +32,8 @@ const NOT_IN_CI: Record<string, string> = {
   'openbridge-webcomponents:test-a11y:update': 'rewrites the baseline',
   'openbridge-webcomponents:build:ts:watch': 'watch mode',
   'root:build:docker-for-storybook-testing': 'builds the local Docker image',
-  'root:build:demo':
-    'the local shortcut for the steps the build_demo job runs one by one',
   'vue-demo:lint': 'eslint --fix; lint:check is the check',
-  'vue-demo:test:e2e':
-    'the Playwright suite needs the demo served, and its baselines are refreshed by hand (testing-visual.md)',
-  'vue-demo:test:visual': 'the visual half of test:e2e, see above',
+  'vue-demo:test:visual': 'the visual project of test:e2e, which CI runs',
   'vue-demo:test:visual:update': 'rewrites the baselines',
   'connector-diagram:test:unit': 'watch mode of test',
   'connector-diagram:test-storybook:watch': 'watch mode',

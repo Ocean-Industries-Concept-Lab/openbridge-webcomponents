@@ -58,6 +58,49 @@ jobs:
           path: packages/openbridge-webcomponents/a11y-report.json
           retention-days: 30
 
+  vue-demo:
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.60.0-noble
+    env:
+      LANG: en_US.UTF-8
+      LC_ALL: en_US.UTF-8
+      LC_NUMERIC: en_US.UTF-8
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Install dependencies
+        run: npm ci
+
+      # The demo imports the Vue wrappers, which are generated and gitignored,
+      # so the core and the wrappers are built before it.
+      - name: Build the vue demo
+        run: npm run build:demo
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps chromium
+        working-directory: packages/vue-demo
+
+      # Both projects: the functional spec and the visual one against
+      # e2e/visual/__screenshots__/linux. Under CI the config serves the build.
+      - name: Run the vue demo tests
+        run: npm run test:e2e
+        working-directory: packages/vue-demo
+
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: playwright-report-vue-demo
+          path: |
+            packages/vue-demo/playwright-report
+            packages/vue-demo/test-results
+          retention-days: 30
+
   connector-diagram:
     timeout-minutes: 30
     runs-on: ubuntu-latest
