@@ -126,13 +126,15 @@ ends `... build:bundle && analyze && inject:dts`. Putting `inject:dts` before a
 `vite build` throws the injected docs away — that build regenerates the `.d.ts`
 files from source.
 
-`lint:comments` and `lint:slots` run in `build.yml`'s **lint** job; `test:rules`
-runs in **test-browser**, which has no `analyze` step — tooling tests must not
-import the manifest.
+`lint:comments`, `lint:slots`, `lint:events` and `lint:apg` run in
+`build.yml`'s **lint** job, which names each script: a new `lint:*` script
+goes into that step as well as into the `lint` chain, or CI never runs it.
+`test:rules` runs in **test-browser**, which has no `analyze` step — tooling
+tests must not import the manifest.
 
 ## The accessibility gates
 
-Two, neither of them a lint warning:
+Three, none of them a lint warning:
 
 - `npm run test:browser` (`build.yml`, every branch) runs the
   `*-keyboard.spec.ts` files with every other browser spec. A key binding
@@ -145,10 +147,15 @@ Two, neither of them a lint warning:
   printed for pruning; `npm run test-a11y:update` rewrites the file. The debt
   can only shrink, a new component starts from zero, and adding to the
   baseline is a reviewable diff that needs its reason in the PR body.
-  `a11y-report.json` is uploaded as an artifact on every run.
+  `a11y-report.json` is uploaded as an artifact on every run. Three rules of
+  our own run with axe's (`.storybook/a11y-rules.ts`): one tab stop per
+  composite widget, a name for it, and a named tab panel a tab points at.
+- `npm run lint:apg` (`build.yml`, every branch) fails on a component that
+  renders an ARIA widget role without a linked APG pattern and a
+  `Left out:` line in its class JSDoc.
 
-What neither gate sees is a new widget with no keyboard model at all, since
-axe cannot see keys: that is the component-creation checklist
+What no gate sees is whether the keys a record promises work, since axe
+cannot press them: that is the component-creation checklist
 ([`a11y.md`](../../docs/agents/a11y.md) § 9).
 
 ## Local equivalents of the CI gates

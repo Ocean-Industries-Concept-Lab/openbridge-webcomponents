@@ -55,6 +55,8 @@ export enum ObcSequenceModalType {
  *   cycle inside it, `Escape` fires `close-click`, and focus returns to the
  *   opener on disconnect. The dialog is named by `modalTitle`.
  *
+ * Left out: a description (`aria-describedby`).
+ *
  * Best Practices:
  * - Keep titles short; use `subtitle` for additional context.
  * - Prefer a single row of actions for compact layouts.

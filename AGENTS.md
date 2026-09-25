@@ -201,7 +201,7 @@ npm run build:full
 npm run typecheck
 
 # Lint
-npm run lint              # css mixins/variables/icons + slots + lit-analyzer + eslint
+npm run lint              # css mixins/variables/icons + slots + events + apg + lit-analyzer + eslint
 npm run lint:eslint       # eslint only (includes the lifecycle-tag rules, § 3)
 npm run lint:fix:stories  # eslint --fix on stories only (rewrites meta.tags lifecycle entries)
 npm run lint:slots        # audit @slot/@fires JSDoc vs templates & dispatched events
@@ -265,8 +265,10 @@ Commits that fail lint or format checks are blocked automatically.
    - Do **not** hand-write a lifecycle tag here — see step 6.
 5. Write JSDoc following the three-pattern strategy (see § 3), including
    exactly one lifecycle tag on the class (see § 3 Component lifecycle tags).
-6. Interactive? Name the APG pattern in the JSDoc, pin its keys in a
-   `component-name-keyboard.spec.ts`, and give every control a name
+6. Interactive? Link the APG pattern in the JSDoc and end with a `Left out:`
+   line (`npm run lint:apg`), pin its keys in a
+   `component-name-keyboard.spec.ts` whose fixtures cover every configuration
+   the stories use, and give every control a name
    ([`docs/agents/a11y.md`](docs/agents/a11y.md) § 1, § 4, § 9). `npm run
 test-a11y` fails on any violation the committed baseline does not carry, so
    a new component starts from zero.

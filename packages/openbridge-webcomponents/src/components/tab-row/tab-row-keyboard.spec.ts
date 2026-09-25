@@ -19,29 +19,60 @@ const tabs: TabData[] = [
   {id: 'four', title: 'Four'},
 ];
 
-async function setup(selectedTabId = 'two', hasAddNewTab = false) {
+/** Tabs a user can close, none disabled. */
+const closable: TabData[] = [
+  {id: 'a', title: 'A'},
+  {id: 'b', title: 'B'},
+  {id: 'c', title: 'C'},
+];
+
+async function setup(
+  selectedTabId = 'two',
+  hasAddNewTab = false,
+  {hasClose = false, data = tabs}: {hasClose?: boolean; data?: TabData[]} = {}
+) {
   const selected: string[] = [];
+  const closed: string[] = [];
   const screen = render(
     html`<button id="before">before</button>
       <obc-tab-row
-        .tabs=${tabs}
+        .tabs=${[...data]}
         .selectedTabId=${selectedTabId}
         .hasAddNewTab=${hasAddNewTab}
+        .hasClose=${hasClose}
         @tab-selected=${(event: CustomEvent<{id: string}>) =>
           selected.push(event.detail.id)}
+        @tab-closed=${(event: CustomEvent<{id: string}>) =>
+          closed.push(event.detail.id)}
       ></obc-tab-row>
       <button id="after">after</button>`
   );
   const el = screen.container.querySelector('obc-tab-row') as ObcTabRow;
+  await settle(el);
+  return {el, selected, closed};
+}
+
+/** Waits for the row, its tabs and their close buttons to render. */
+async function settle(el: ObcTabRow) {
   await el.updateComplete;
-  await Promise.all(
+  const pending = (root: ParentNode) =>
     Array.from(
-      el.shadowRoot!.querySelectorAll('obc-tab-item'),
-      (item) =>
-        (item as unknown as {updateComplete: Promise<unknown>}).updateComplete
+      root.querySelectorAll('obc-tab-item, obc-icon-button'),
+      (child) =>
+        (child as unknown as {updateComplete: Promise<unknown>}).updateComplete
+    );
+  await Promise.all(pending(el.shadowRoot!));
+  await Promise.all(
+    Array.from(el.shadowRoot!.querySelectorAll('obc-tab-item'), (item) =>
+      Promise.all(pending(item.shadowRoot!))
     )
   );
-  return {el, selected};
+}
+
+/** The native button inside a tab's close control. */
+function closeButtonOf(item: HTMLElement): HTMLButtonElement {
+  const control = item.shadowRoot!.querySelector('.close-button')!;
+  return control.shadowRoot!.querySelector('button')!;
 }
 
 function items(el: ObcTabRow): HTMLElement[] {
@@ -143,5 +174,85 @@ describe('obc-tab-row keyboard', () => {
         deepActiveElement()
       )
     ).toBe(true);
+  });
+  it('stays one tab stop when the tabs have close buttons', async () => {
+    const {el} = await setup('two', false, {hasClose: true});
+    (document.getElementById('before') as HTMLElement).focus();
+
+    await userEvent.tab();
+    expect(focusedTab(el)).toBe('Two');
+    await userEvent.tab();
+    expect(deepActiveElement()?.id).toBe('after');
+  });
+
+  it('closes the focused tab on Delete and focuses the one after it', async () => {
+    const {el, closed} = await setup('b', false, {
+      hasClose: true,
+      data: closable,
+    });
+    (document.getElementById('before') as HTMLElement).focus();
+    await userEvent.tab();
+
+    await userEvent.keyboard('{Delete}');
+    await settle(el);
+    expect(closed).toEqual(['b']);
+    expect(focusedTab(el)).toBe('C');
+  });
+
+  it('focuses the tab before it when Delete closes the last tab', async () => {
+    const {el, closed} = await setup('c', false, {
+      hasClose: true,
+      data: closable,
+    });
+    (document.getElementById('before') as HTMLElement).focus();
+    await userEvent.tab();
+
+    await userEvent.keyboard('{Delete}');
+    await settle(el);
+    expect(closed).toEqual(['c']);
+    expect(focusedTab(el)).toBe('B');
+  });
+
+  it('ignores Delete on tabs without a close button', async () => {
+    const {el, closed} = await setup('b', false, {data: closable});
+    (document.getElementById('before') as HTMLElement).focus();
+    await userEvent.tab();
+
+    await userEvent.keyboard('{Delete}');
+    await settle(el);
+    expect(closed).toEqual([]);
+    expect(items(el)).toHaveLength(3);
+  });
+
+  it('closes the tab, without selecting it, on Enter and Space from its close button', async () => {
+    for (const key of ['{Enter}', ' ']) {
+      const {el, selected, closed} = await setup('a', false, {
+        hasClose: true,
+        data: closable,
+      });
+      closeButtonOf(items(el)[1]).focus();
+
+      await userEvent.keyboard(key);
+      await settle(el);
+      expect(closed).toEqual(['b']);
+      expect(selected).toEqual([]);
+    }
+  });
+
+  it('names the tab list', async () => {
+    const {el} = await setup();
+    const tablist = el.shadowRoot!.querySelector('[role="tablist"]')!;
+    expect(tablist.getAttribute('aria-label')).toBe('Tabs');
+
+    el.label = 'Documents';
+    await el.updateComplete;
+    expect(tablist.getAttribute('aria-label')).toBe('Documents');
+  });
+
+  it('keeps the add-new-tab button outside the tab list', async () => {
+    const {el} = await setup('two', true);
+    const tablist = el.shadowRoot!.querySelector('[role="tablist"]')!;
+    expect(el.shadowRoot!.querySelector('.add-new-tab')).not.toBeNull();
+    expect(tablist.querySelector('.add-new-tab')).toBeNull();
   });
 });

@@ -63,6 +63,15 @@ function isRow(el: Element): el is TreeRow {
  * |-----------|-----------------|----------------------------------------------------|
  * | (default) | Always          | Top-level rows (`obc-tree-navigation-group`/`-item`). |
  *
+ * ### Keyboard
+ * [APG Tree View](https://www.w3.org/WAI/ARIA/apg/patterns/treeview/): the tree
+ * is one tab stop. `Up` and `Down` move between visible items, `Right` opens a
+ * closed group or moves into an open one, `Left` closes an open group or moves
+ * to its parent, and `Home` and `End` go to the first and last visible item;
+ * the items handle `Enter` and `Space`. Name the tree with `aria-label`.
+ *
+ * Left out: type-ahead, and `*` to expand every group at one level.
+ *
  * @slot - Top-level tree rows (groups and items).
  * @property ariaLabel - Accessible name of the tree, mapped to the `aria-label` attribute and forwarded to the `role="tree"` element. `aria-labelledby` is not supported: ID references cannot cross the shadow boundary.
  * @beta

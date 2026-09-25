@@ -61,7 +61,7 @@ const VESSEL_EDGE_MARGIN = 2;
  * @property scaleReferenceSize - Reference width the paddings are expressed in under
  *   `fixedAspectRatio`; pushed by the hosting chart.
  * @availableWhen scaleReferenceSize fixedAspectRatio==true
- * @fires {CustomEvent} scale-dimensions-changed - Reports `{side: 'top', thickness}` so the chart reserves the band's height. Bubbles and is composed.
+ * @fires {CustomEvent} scale-dimensions-changed - Reports `{side: 'top', thickness}` so the chart reserves the band's height. It bubbles to the chart slot the band sits in and does not leave the shadow root around it.
  * @experimental
  */
 @customElement('obc-depth-top-band')
@@ -107,7 +107,6 @@ export class ObcDepthTopBand extends LitElement {
       new CustomEvent('scale-dimensions-changed', {
         detail: {side: 'top', thickness: this.thickness},
         bubbles: true,
-        composed: true,
       })
     );
   }

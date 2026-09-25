@@ -33,6 +33,7 @@ import '../app-button/app-button.js';
 import '../user-button/user-button.js';
 import '../tab-row/tab-row.js';
 import type {TabData} from '../tab-row/tab-row.js';
+import {stopPropagation} from '../../internal/events.js';
 import '../../icons/icon-display-brilliance-iec.js';
 import '../../icons/icon-palette-day-night-iec.js';
 
@@ -291,6 +292,7 @@ export class ObcBrillianceMenu extends LitElement {
   @state() private selectedTabId = BRILLIANCE_TAB_ID;
 
   private onTabSelected(event: CustomEvent<{id: string}>) {
+    event.stopPropagation();
     this.selectedTabId = event.detail.id;
   }
 
@@ -566,6 +568,7 @@ export class ObcBrillianceMenu extends LitElement {
         ${
           this.variant === ObcBrillianceMenuVariant.compact
             ? html` <obc-toggle-button-group
+                aria-label=${`${msg('Day')}/${msg('Night')}`}
                 value=${this.effectivePalette}
                 @value=${this.onPaletteChanged}
                 variant=${ObcToggleButtonOptionVariant.regular}
@@ -672,15 +675,16 @@ export class ObcBrillianceMenu extends LitElement {
 
   override render() {
     if (this.variant === ObcBrillianceMenuVariant.tabbed) {
-      const tabs = this.tabs;
-      const [brillianceTab, paletteTab] = tabs;
       return html`
         <div class="card tabbed">
           <obc-tab-row
-            .tabs=${tabs}
+            .tabs=${this.tabs}
             .selectedTabId=${this.selectedTabId}
             .centerContent=${true}
+            .hasPanels=${true}
             @tab-selected=${this.onTabSelected}
+            @tab-closed=${stopPropagation}
+            @add-new-tab=${stopPropagation}
           >
             <obi-display-brilliance-iec
               slot="tab-${BRILLIANCE_TAB_ID}-icon"
@@ -688,22 +692,13 @@ export class ObcBrillianceMenu extends LitElement {
             <obi-palette-day-night-iec
               slot="tab-${PALETTE_TAB_ID}-icon"
             ></obi-palette-day-night-iec>
+            <div slot="tab-${BRILLIANCE_TAB_ID}-panel">
+              ${this.renderBrightness()}
+            </div>
+            <div slot="tab-${PALETTE_TAB_ID}-panel">
+              ${this.renderPalette()}
+            </div>
           </obc-tab-row>
-          <!-- TODO(#1312): link the panels to their tabs once obc-tab-row supports it -->
-          <div
-            role="tabpanel"
-            aria-label=${brillianceTab.title}
-            ?hidden=${this.selectedTabId !== BRILLIANCE_TAB_ID}
-          >
-            ${this.renderBrightness()}
-          </div>
-          <div
-            role="tabpanel"
-            aria-label=${paletteTab.title}
-            ?hidden=${this.selectedTabId !== PALETTE_TAB_ID}
-          >
-            ${this.renderPalette()}
-          </div>
           ${this.renderScreenControlLink()}
         </div>
       `;

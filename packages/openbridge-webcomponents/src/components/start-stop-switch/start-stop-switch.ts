@@ -98,6 +98,13 @@ const DRAG_COMPLETE_THRESHOLD = 0.9;
  * </obc-start-stop-switch>
  * ```
  *
+ * ### Keyboard
+ * [APG Switch](https://www.w3.org/WAI/ARIA/apg/patterns/switch/): `Space` and
+ * `Enter` toggle it. The knob inside is a drag handle for pointers and stays
+ * out of the tab sequence.
+ *
+ * Left out: nothing.
+ *
  * @property checked - Whether the switch is in the checked (active) state.
  *   When checked, the thumb is on the right side.
  *   When unchecked, the thumb is on the left side.

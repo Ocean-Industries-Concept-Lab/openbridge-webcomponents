@@ -300,6 +300,7 @@ export class ObcPagination extends LitElement {
           this.isCondensed
             ? this.renderProgressIndicatorDots()
             : html`<obc-toggle-button-group
+                aria-label="Pages"
                 .value=${this.validatedCurrentPage.toString()}
                 .variant=${this.toggleButtonVariant}
                 ?disabled=${this.disabled}

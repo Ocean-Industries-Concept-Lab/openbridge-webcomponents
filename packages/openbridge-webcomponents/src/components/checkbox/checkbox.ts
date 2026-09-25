@@ -95,6 +95,14 @@ export type ObcCheckboxChangeEvent = CustomEvent<{
  * ></obc-checkbox>
  * ```
  *
+ * ### Keyboard
+ * [APG Checkbox](https://www.w3.org/WAI/ARIA/apg/patterns/checkbox/): `Space`
+ * toggles it, and `mixed` is announced as a mixed state. `Enter` toggles it as
+ * well, which the pattern does not ask for, so a checkbox inside a menu answers
+ * the menu's keys.
+ *
+ * Left out: nothing.
+ *
  * @property hasHoverEffects - Internal: controls hover effects on the checkbox. Used by wrapper components such as `obc-checkbox-item`.
  * @property focusable - Whether the checkbox is in the tab order. A menu that owns a roving tabindex manages this
  *   through `obc-checkbox-item`; a standalone checkbox stays tabbable.

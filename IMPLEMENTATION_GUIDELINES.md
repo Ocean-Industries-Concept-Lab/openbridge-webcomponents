@@ -69,7 +69,7 @@ Snapshot baselines are stored in `__vis__/linux/__baselines__/` (and `__vis__/da
 ### Accessibility Tests
 
 Keyboard operability is tested, colour contrast deliberately is not, and no
-accessibility check is an ESLint warning. Two gates run in CI:
+accessibility check is an ESLint warning. Three gates run in CI:
 
 ```bash
 # Keyboard specs (*-keyboard.spec.ts), with every other browser spec — build.yml, every branch
@@ -78,6 +78,9 @@ npm run test:browser
 # axe over every story, then the baseline check — visual-testing.yml, PRs to develop and stable
 npm run test-a11y
 
+# A widget role without its APG pattern record — build.yml, every branch
+npm run lint:apg
+
 # Rewrite __a11y__/baseline.json after fixing violations, or after adding some with a reason in the PR
 npm run test-a11y:update
 ```
@@ -85,10 +88,12 @@ npm run test-a11y:update
 `__a11y__/baseline.json` freezes the violations the library ships with, by
 story and rule. A story or rule it does not carry fails `test-a11y` with
 `story-id: rule` lines, so a new component starts from zero and the debt can
-only shrink; entries that stopped failing are printed for pruning. What no
-gate sees is a widget without a keyboard model, since axe cannot see keys:
-the component-creation checklist in `AGENTS.md` § 5 asks for the pattern and
-the spec. Rules, patterns and the harness details:
+only shrink; entries that stopped failing are printed for pruning. Besides
+axe's own rules the run checks that a composite widget is one tab stop and
+has a name, and that a tab panel is named and linked from its tab. What no
+gate sees is whether the promised keys work, since axe cannot press them: the
+component-creation checklist in `AGENTS.md` § 5 asks for the pattern record
+and the spec. Rules, patterns and the harness details:
 [`docs/agents/a11y.md`](docs/agents/a11y.md).
 
 ### Docker Testing

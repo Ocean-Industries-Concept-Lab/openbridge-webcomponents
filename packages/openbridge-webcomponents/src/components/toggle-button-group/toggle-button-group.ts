@@ -105,8 +105,9 @@ export type ObcToggleButtonGroupChangeEvent = CustomEvent<{
  * ### Events
  *
  * - `value` – Fired when the selected value changes, either through user interaction or programmatic change.
+ *   Event detail: `{ value: string, previousValue: string }`. Listen to this event to react to selection changes.
  *
- * ## Keyboard
+ * ### Keyboard
  * A single-select group is a radio group to the keyboard
  * ([APG Radio Group](https://www.w3.org/WAI/ARIA/apg/patterns/radio/)): one
  * tab stop on the selected option, and the arrow keys move focus and selection
@@ -114,7 +115,8 @@ export type ObcToggleButtonGroupChangeEvent = CustomEvent<{
  * option select it through its button. Under `externalControl` an arrow key
  * emits `value` and `change` for the next option the way a click does, and
  * the selection waits for the host.
- *   Event detail: `{ value: string, previousValue: string }`. Listen to this event to react to selection changes.
+ *
+ * Left out: nothing.
  *
  * ### Example
  *

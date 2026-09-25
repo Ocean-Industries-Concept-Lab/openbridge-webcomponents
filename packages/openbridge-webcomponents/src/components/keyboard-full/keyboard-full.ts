@@ -17,6 +17,7 @@ import {
 } from '../text-input-field/text-input-field.js';
 import '../button/button.js';
 import '../check-button/check-button.js';
+import {stopPropagation} from '../../internal/events.js';
 
 export enum ObcKeyboardFullType {
   Floating = 'floating',
@@ -729,6 +730,8 @@ export class ObcKeyboardFull extends LitElement {
               .size=${this.inputSize}
               .type=${this.inputType}
               @input=${this.onInputFieldValueChanged}
+              @change=${stopPropagation}
+              @clear=${stopPropagation}
             >
             </obc-text-input-field>
 

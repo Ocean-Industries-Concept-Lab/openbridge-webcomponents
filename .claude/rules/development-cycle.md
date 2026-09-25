@@ -89,7 +89,7 @@ hook covers only the staged TypeScript, so it is not the gate.
 
 ```bash
 npm run typecheck
-npm run lint                     # mixins, variables, palette, icons, slots, agents, lit-analyzer, eslint, comments; no warnings allowed
+npm run lint                     # mixins, variables, palette, icons, slots, events, apg, agents, lit-analyzer, eslint, comments; no warnings allowed
 npm run format:check             # npm run format to fix; covers the root and docs/agents Markdown too
 npm run fix-imports:check
 npx vitest run --config=vitest.browser.config.ts             # every spec

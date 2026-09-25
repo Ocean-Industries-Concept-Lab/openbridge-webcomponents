@@ -68,6 +68,9 @@ export enum ObcModalWindowSize {
  * container is a landing point, not an operable control, so it carries no
  * focus ring; the ring stays on the dialog's controls.
  *
+ * Left out: a description (`aria-describedby`), and `Escape` for a dialog
+ * that has neither a close nor a cancel button.
+ *
  * ### Sizing
  * By default the modal is as tall as its content, capped at `90vh`. To give it
  * an explicit height, set the `--obc-modal-window-height` custom property on

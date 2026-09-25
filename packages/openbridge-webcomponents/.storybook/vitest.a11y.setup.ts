@@ -2,6 +2,7 @@ import {setProjectAnnotations} from '@storybook/web-components-vite';
 import {beforeEach} from 'vitest';
 import * as projectAnnotations from './preview.js';
 import * as a11yAnnotations from '@storybook/addon-a11y/preview';
+import {obcA11yRules} from './a11y-rules.js';
 
 const style = document.createElement('style');
 style.textContent = `
@@ -21,7 +22,12 @@ document.head.appendChild(style);
 // per story in the browser for anyone who wants to look (#1208).
 const axeConfig = {
   parameters: {
-    a11y: {config: {rules: [{id: 'color-contrast', enabled: false}]}},
+    a11y: {
+      config: {
+        checks: obcA11yRules.checks,
+        rules: [{id: 'color-contrast', enabled: false}, ...obcA11yRules.rules!],
+      },
+    },
   },
 };
 

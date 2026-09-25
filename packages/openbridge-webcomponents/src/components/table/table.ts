@@ -250,6 +250,9 @@ function cssPart(value: ObcTableCellData, subpart: string): string | undefined {
  * arrow navigation, which the full pattern also specifies, is out of scope —
  * arrow keys move between rows, matching the flat table.
  *
+ * Left out: cell-level arrow navigation, and one tab stop for the grid. Each
+ * row is a button in the tab sequence, and so is every control inside a cell.
+ *
  * Best Practices
  * - Keep column `key` values stable across renders to avoid selection or sorting resets.
  * - Prefer `selectedRowIds` for deterministic state in apps with external stores.
@@ -270,6 +273,7 @@ function cssPart(value: ObcTableCellData, subpart: string): string | undefined {
  * @availableWhen selectedRowIds selectable==true
  * @availableWhen defaultSelectedRowIds selectable==true && selectedRowIds==undefined
  * @availableWhen selectAllAriaLabel selectable==true && showHeader==true
+ * @property ariaLabel - Accessible name of the table, mapped to the `aria-label` attribute and forwarded to the grid. `aria-labelledby` is not supported: ID references cannot cross the shadow boundary.
  * @fires {ObcTableRowClickEvent} row-click - Fired when a row is clicked.
  * @fires {ObcTableCellClickEvent} cell-button-click - Fired when a cell button is clicked.
  * @fires {ObcTableCellCheckboxChangeEvent} cell-checkbox-change - Fired when a cell checkbox is changed.
@@ -280,6 +284,10 @@ function cssPart(value: ObcTableCellData, subpart: string): string | undefined {
  */
 @customElement('obc-table')
 export class ObcTable extends LitElement {
+  // Reactive so a consumer changing the name re-renders the grid.
+  @property({type: String, attribute: 'aria-label'})
+  override ariaLabel: string | null = null;
+
   @property({type: Array}) data: ObcTableRow[] = [];
   @property({type: Array}) columns: ObcTableColumn[] = [];
   @property({type: Boolean}) rowDivider = false;
@@ -770,6 +778,7 @@ export class ObcTable extends LitElement {
           --selection-column-width: var(--menu-navigation-components-table-item-touch-target-size);
         "
         role=${this.hasHierarchy ? 'treegrid' : 'table'}
+        aria-label=${ifDefined(this.ariaLabel ?? undefined)}
       >
         ${
           this.showHeader
