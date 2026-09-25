@@ -64,7 +64,7 @@ const meta: Meta<typeof ObcAlertListPageSmall> = {
   component: 'obc-alert-list-page-small',
   args: {
     hasShelved: true,
-    selectedMode: AlertListMode.ALL,
+    selectedMode: AlertListMode.ACTIVE,
     showTime: true,
     timeFormatter: (time) =>
       time.toLocaleTimeString(undefined, {hour12: false}),

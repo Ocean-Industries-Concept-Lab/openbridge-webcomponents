@@ -52,7 +52,7 @@ const meta: Meta<typeof ObcAlertListDetailsExperimental> = {
   tags: ['6.0', 'experimental'],
   component: 'obc-alert-list-details-experimental',
   args: {
-    filterMode: FilterModes.ALL,
+    filterMode: FilterModes.ACTIVE,
     showHeader: true,
     columns: [
       statusColumn(),

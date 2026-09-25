@@ -82,7 +82,7 @@
   will-change: transform;
 }
 
-.alert-list.all ::slotted([shelved]) {
+.alert-list.active ::slotted([shelved]) {
   display: none;
 }
 
