@@ -87,7 +87,7 @@ hook covers only the staged TypeScript, so it is not the gate.
 
 ```bash
 npm run typecheck
-npm run lint                     # mixins, variables, palette, icons, slots, events, apg, agents, lit-analyzer, eslint, comments; no warnings allowed
+npm run lint                     # mixins, variables, palette, icons, slots, events, apg, agents, lit-analyzer, eslint, suppressions, comments; no warnings allowed
 npm run format:check             # npm run format to fix; covers the root and docs/agents Markdown too
 npm run fix-imports:check
 npx vitest run --config=vitest.browser.config.ts             # every spec
@@ -182,6 +182,7 @@ thread gets the same treatment whoever opened it:
 | `build.yml`                            | every push                    | typecheck, analyze, the `lint:*` suite, format, imports, the demos' ESLint, the browser specs, `test:rules`, every package build     |
 | `visual-testing.yml`                   | PRs to `develop` and `stable` | the snapshot suite against `__vis__/linux/__baselines__`, then axe against `__a11y__/baseline.json`; the vue demo's Playwright suite |
 | `build_demo`, then the deploy workflow | every PR push                 | builds Storybook and the vue demo, publishes both to a per-PR preview channel and edits its two comments on the PR                   |
+| `pr-body.yml`                          | every PR edit and push        | the PR body: template sections, Docs boxes, named baselines, axe entries and opt-out tags, no `CHANGELOG.md` edit                    |
 
 ```bash
 gh pr checks <n> --watch                       # green before asking for review
@@ -200,5 +201,15 @@ ready change nothing.
 The PR body follows the template (`AGENTS.md` § 8 rule 20); its Verification
 section names the filters that ran and the baselines that moved; the docs
 changed in the same PR carry their synced adapters; the comment pass is done.
+
+`pr-body.yml` checks the body on every edit: the template's sections, the Docs
+boxes ticked, every moved baseline, new axe-baseline story and new opt-out tag
+named, and no hand edit to `CHANGELOG.md`. Run it on the draft before opening
+the PR:
+
+```bash
+node script/check-pr-body.ts --body-file <draft.md> --base origin/develop
+```
+
 The squash commit takes the PR title: `fix:` and `feat:` ship a release,
 `docs:` and `chore:` do not ([`ci-and-release.md`](../../docs/agents/ci-and-release.md)).

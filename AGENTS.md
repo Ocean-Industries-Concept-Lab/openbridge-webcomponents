@@ -201,7 +201,7 @@ npm run build:full
 npm run typecheck
 
 # Lint
-npm run lint              # css mixins/variables/icons + slots + events + apg + lit-analyzer + eslint
+npm run lint              # css mixins/variables/icons + slots + events + apg + lit-analyzer + eslint + suppressions
 npm run lint:eslint       # eslint only (includes the lifecycle-tag rules, § 3)
 npm run lint:fix:stories  # eslint --fix on stories only (rewrites meta.tags lifecycle entries)
 npm run lint:slots        # audit @slot/@fires JSDoc vs templates & dispatched events
@@ -267,7 +267,7 @@ Commits that fail lint or format checks are blocked automatically.
    exactly one lifecycle tag on the class (see § 3 Component lifecycle tags).
 6. Interactive? Link the APG pattern in the JSDoc and end with a `Left out:`
    line (`npm run lint:apg`), pin its keys in a
-   `component-name-keyboard.spec.ts` whose fixtures cover every configuration
+   `component-name-keyboard.spec.ts` (a composite widget fails `lint:apg` without one) whose fixtures cover every configuration
    the stories use, and give every control a name
    ([`docs/agents/a11y.md`](docs/agents/a11y.md) § 1, § 4, § 9). `npm run
 test-a11y` fails on any violation the committed baseline does not carry, so
@@ -338,7 +338,7 @@ automatically when editing a `.css` file.
     the relevant ones ([`docs/agents/working-method.md` § History](docs/agents/working-method.md)).
     Auto-memory and local plan files are private to one developer — never a
     coordination surface.
-20. **Open a draft PR early** with the design record in the template's sections, a Conventional Commits title, and up to three screenshots for anything visual ([`docs/agents/coding-standards.md` § Writing style](docs/agents/coding-standards.md)).
+20. **Open a draft PR early** with the design record in the template's sections, a Conventional Commits title, and up to three screenshots for anything visual ([`docs/agents/coding-standards.md` § Writing style](docs/agents/coding-standards.md)). `pr-body.yml` checks the body.
 21. **Comment pass is part of done** — the comments in the diff, and the PR body and issue comments you post, re-read against the writing-style list (§ 2; [`docs/agents/coding-standards.md`](docs/agents/coding-standards.md)).
 22. **Search before you write.** 283 elements share a few helper hubs and come in twin families: find the helper, sibling or pattern first, and fix the family, not the member ([`docs/agents/working-method.md`](docs/agents/working-method.md)).
 23. **Figma is the target, the code is the precedent.** Aim for 1:1; where deliberate code geometry or a property name disagrees with the file, keep the code and leave a `TODO(designer)`. Generated tokens and icons flow from Figma (rule 17).

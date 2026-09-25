@@ -78,7 +78,7 @@ npm run test:browser
 # axe over every story, then the baseline check — visual-testing.yml, PRs to develop and stable
 npm run test-a11y
 
-# A widget role without its APG pattern record — build.yml, every branch
+# A widget role without its APG pattern record, or a composite widget without a keyboard spec — build.yml, every branch
 npm run lint:apg
 
 # Rewrite __a11y__/baseline.json after fixing violations, or after adding some with a reason in the PR

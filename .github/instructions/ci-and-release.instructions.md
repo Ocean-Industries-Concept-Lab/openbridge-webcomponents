@@ -49,18 +49,19 @@ wrappers, `openbridge-webcomponents-ng/dist`, and the full-bundle directory. The
 wrapper versions are synced first by `scripts/prepare-wrappers.js` (see below).
 `packages/connector-diagram` is not among them: it is not in `.releaserc.json`.
 
-## The eight workflows
+## The nine workflows
 
-| Workflow                                   | Trigger                                     | Purpose                                                                                                                             |
-| ------------------------------------------ | ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| `build.yml`                                | push + PR, all branches                     | typecheck, `analyze`, the `lint:*` suite including `lint:agents`, `format:check`, `fix-imports:check`, ESLint for the two demos     |
-| `visual-testing.yml`                       | push + PR on `develop` / `stable`           | Playwright snapshot suite, then the axe run against `__a11y__/baseline.json`; the vue demo's functional and visual Playwright tests |
-| `pr-title-lint.yml`                        | PR opened / edited / synchronize / reopened | Conventional Commits check on the PR title                                                                                          |
-| `windows-angular-build.yml`                | push + PR, all branches                     | the Angular wrapper built on `windows-latest` — CRLF and backslash path separators have leaked into generated imports before        |
-| `release.yml`                              | push to `develop`, or manual                | `build:full` then `semantic-release`                                                                                                |
-| `firebase-hosting-merge.yml`               | push to `develop`                           | deploys the demo                                                                                                                    |
-| `firebase-hosting-pull-request.yml`        | PR                                          | builds the demo preview                                                                                                             |
-| `firebase-hosting-pull-request-deploy.yml` | after the build workflow completes          | publishes the preview                                                                                                               |
+| Workflow                                   | Trigger                                     | Purpose                                                                                                                                    |
+| ------------------------------------------ | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `build.yml`                                | push + PR, all branches                     | typecheck, `analyze`, the `lint:*` suite including `lint:agents`, `format:check`, `fix-imports:check`, ESLint for the two demos            |
+| `visual-testing.yml`                       | push + PR on `develop` / `stable`           | Playwright snapshot suite, then the axe run against `__a11y__/baseline.json`; the vue demo's functional and visual Playwright tests        |
+| `pr-title-lint.yml`                        | PR opened / edited / synchronize / reopened | Conventional Commits check on the PR title                                                                                                 |
+| `pr-body.yml`                              | PR opened / edited / synchronize / reopened | the PR body against the template and the diff: sections, Docs boxes, named baselines, axe entries and opt-out tags, no `CHANGELOG.md` edit |
+| `windows-angular-build.yml`                | push + PR, all branches                     | the Angular wrapper built on `windows-latest` — CRLF and backslash path separators have leaked into generated imports before               |
+| `release.yml`                              | push to `develop`, or manual                | `build:full` then `semantic-release`                                                                                                       |
+| `firebase-hosting-merge.yml`               | push to `develop`                           | deploys the demo                                                                                                                           |
+| `firebase-hosting-pull-request.yml`        | PR                                          | builds the demo preview                                                                                                                    |
+| `firebase-hosting-pull-request-deploy.yml` | after the build workflow completes          | publishes the preview                                                                                                                      |
 
 The lint job of `build.yml` and the `connector-diagram` job of
 `visual-testing.yml` also cover `packages/connector-diagram`
@@ -148,7 +149,8 @@ Three, none of them a lint warning:
   composite widget, a name for it, and a named tab panel a tab points at.
 - `npm run lint:apg` (`build.yml`, every branch) fails on a component that
   renders an ARIA widget role without a linked APG pattern and a
-  `Left out:` line in its class JSDoc.
+  `Left out:` line in its class JSDoc, and on a composite widget with no
+  `*-keyboard.spec.ts` beside it.
 
 What no gate sees is whether the keys a record promises work, since axe
 cannot press them: that is the component-creation checklist

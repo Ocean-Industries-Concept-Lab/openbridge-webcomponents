@@ -64,7 +64,9 @@ judgement call.
    A `Math.min(Math.max(…))`, a `((a % 360) + 360) % 360`, a `* Math.PI / 180`
    or a hand-rolled `ResizeObserver` in a new file means this step was skipped:
    the first three are `svghelpers/math.ts`, the chart observer is
-   `charthelpers/label-threshold.ts`.
+   `charthelpers/label-threshold.ts`. `npm run lint:eslint` fails on the first
+   three shapes anywhere outside the tests, which keep the raw formula as
+   their expected value.
 
 2. **The sibling exists.** `npm run new:component` writes a blank element, an
    empty CSS file and a one-story file; it copies nothing. The next step is
@@ -122,8 +124,10 @@ The copies a search would have prevented were folded into their homes
 `src/mixins/readout.css`, `src/mixins/indeterminate-slide.css`, and the
 `scrollbar` mixin applied where its body had been re-typed. The last one — a
 trimmed readout block in the transmitter button — went when the automation
-readouts moved onto `obc-readout-block` (#1097). Nothing is copied on purpose
-any more; never start a new one.
+readouts moved onto `obc-readout-block` (#1097). The 77 hand-written clamps,
+angle wraps and degree conversions that were still left went onto the
+`svghelpers/math.ts` helpers when the lint arrived. Nothing is copied on
+purpose any more; never start a new one.
 
 `formatNumericValue` is the readout formatter (`readout-formatters.ts`); the
 chart-side one is `formatChartNumber` (`charthelpers/canvas-layout.ts`).
@@ -236,6 +240,23 @@ what it cannot see, and which components to look at first. Where a rule can be
 checked, it is: `npm run lint:apg` holds a component with a widget role to its
 pattern record, `npm run lint:events` holds it to the events it lets out, and
 the `obc-*` axe rules hold a composite widget to one tab stop and a name.
+
+## CI is the floor, not the review
+
+CI fails on what a check can see; the rest is the reviewer's, and yours.
+
+- A failing check is fixed, never silenced: a suppression carries its reason
+  (`coding-standards.md` § Suppressions), a test is never skipped, and a
+  baseline is regenerated only for a change you meant.
+- An exception is an edit the reviewer reads: every baseline the PR moves,
+  every story added to `__a11y__/baseline.json`, every new `skip-test` or
+  `!snapshot` tag is named in the PR body, and `pr-body.yml` fails until it
+  is. An entry in `ci-coverage.test.ts`'s `NOT_IN_CI` carries its reason in
+  the entry.
+- No check sees the tracker, the family, the Figma node, the APG pattern's
+  roles and states, the focus ring in four themes, a screen reader or a
+  target size. The Verification section says which of these you checked,
+  and a skipped one is named, not implied.
 
 ## Pull requests
 

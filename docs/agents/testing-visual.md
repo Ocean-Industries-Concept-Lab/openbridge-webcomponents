@@ -57,6 +57,10 @@ __vis__/linux/__results__/      local output, gitignored
 __vis__/darwin/__baselines__/   macOS, NOT committed
 ```
 
+The PR body names every baseline the PR adds, moves or removes, as
+`component/story` (`tab-row/with-panels`) or `vue-demo/<route>`, with why it
+moved; `pr-body.yml` fails until it does and prints the names it wants.
+
 Only the Linux baselines ship. Regenerating on macOS produces diffs CI will
 reject.
 
@@ -109,7 +113,9 @@ Two facts that bite:
 ### `skip-test` or `!snapshot`
 
 Both keep a story out of the baselines, and both are for output that is
-genuinely non-deterministic, never for papering over a regression.
+genuinely non-deterministic, never for papering over a regression. A PR that
+adds either tag, or `skip-a11y`, names the stories file and the reason in its
+body; `pr-body.yml` fails until it does.
 
 - **`skip-test`** — the snapshot project does not collect the story at all
   (`tags.exclude` in `vitest.config.ts`): no render, no `play`, no baseline.
