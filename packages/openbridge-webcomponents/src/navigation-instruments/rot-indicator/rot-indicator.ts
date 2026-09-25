@@ -166,12 +166,8 @@ export class ObcRotIndicator extends LitElement {
     `;
   }
 
-  private clamp(value: number, min: number, max: number): number {
-    return clamp(min, value, max);
-  }
-
   private getLinearDotCenterX(): number {
-    const clamped = this.clamp(this._effectiveRpm, -3, 3);
+    const clamped = clamp(this._effectiveRpm, -3, 3);
     const t = clamped / 3;
     const centerX = 24;
     const maxOffset = 15;
@@ -190,7 +186,7 @@ export class ObcRotIndicator extends LitElement {
 
     const segmentWidth = 11;
     const segmentDotOffsetX = 4;
-    const segmentX = this.clamp(
+    const segmentX = clamp(
       dotCx - segmentDotOffsetX,
       trackX,
       trackX + trackWidth - segmentWidth
