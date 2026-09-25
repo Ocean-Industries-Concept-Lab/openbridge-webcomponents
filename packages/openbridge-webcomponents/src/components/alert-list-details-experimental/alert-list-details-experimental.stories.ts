@@ -139,6 +139,20 @@ const meta: Meta<typeof ObcAlertListDetailsExperimental> = {
         type: AlertType.Caution,
         time: new Date('2024-01-15T08:39:42Z'),
       },
+      {
+        id: '2',
+        tagId: '2',
+        source: 'AlertList',
+        text: 'This alert is acked but has no acknowledgedBy information',
+        acknowledged: {
+          acknowledgedBy: '',
+          acknowledgedAt: new Date('2024-01-15T14:34:00Z'),
+        },
+        active: true,
+        type: AlertType.Warning,
+        time: new Date('2024-01-15T13:45:22Z'),
+        noAck: true,
+      },
     ] as Alert[],
   },
   parameters: {

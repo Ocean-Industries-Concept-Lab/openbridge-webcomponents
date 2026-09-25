@@ -16,6 +16,11 @@ import '../../icons/icon-alarm-noack-iec.js';
 import '../../icons/icon-warning-noack-iec.js';
 import '../alert-icon/alert-icon.js';
 import {
+  StyleType,
+  Variant,
+  initialsFromName,
+} from '../user-button/user-button.js';
+import {
   Alert,
   comparePriorityAlerts,
   isActive,
@@ -198,11 +203,23 @@ export function ackColumn(
     key: 'ack',
     label: 'ACK-status',
     cell: (alert) => {
-      if (
-        isAcknowledged(alert) ||
-        !isActive(alert) ||
-        !requiresAcknowledgement(alert.type)
-      ) {
+      if (isAcknowledged(alert) && alert.acknowledged) {
+        const ackedBy = alert.acknowledged.acknowledgedBy;
+        if (!ackedBy || ackedBy.trim() === '')
+          return {type: ObcTableCellType.Regular};
+        return {
+          type: ObcTableCellType.Regular,
+          largeIcon: true,
+          icon: html`<obc-user-button
+            .variant=${Variant.initials}
+            .initials=${initialsFromName(ackedBy)}
+            .static=${true}
+            .styleType=${StyleType.normal}
+          ></obc-user-button>`,
+          align: 'center',
+        };
+      }
+      if (!isActive(alert) || !requiresAcknowledgement(alert.type)) {
         return {type: ObcTableCellType.Regular};
       }
       if (alert.noAck) {
