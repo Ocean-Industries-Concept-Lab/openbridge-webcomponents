@@ -33,7 +33,6 @@ import '../app-button/app-button.js';
 import '../user-button/user-button.js';
 import '../tab-row/tab-row.js';
 import type {TabData} from '../tab-row/tab-row.js';
-import {ifDefined} from 'lit/directives/if-defined.js';
 import '../../icons/icon-display-brilliance-iec.js';
 import '../../icons/icon-palette-day-night-iec.js';
 
@@ -674,7 +673,7 @@ export class ObcBrillianceMenu extends LitElement {
   override render() {
     if (this.variant === ObcBrillianceMenuVariant.tabbed) {
       const tabs = this.tabs;
-      const selectedTab = tabs.find((tab) => tab.id === this.selectedTabId);
+      const [brillianceTab, paletteTab] = tabs;
       return html`
         <div class="card tabbed">
           <obc-tab-row
@@ -690,13 +689,20 @@ export class ObcBrillianceMenu extends LitElement {
               slot="tab-${PALETTE_TAB_ID}-icon"
             ></obi-palette-day-night-iec>
           </obc-tab-row>
-          <!-- TODO(#1312): link the panel to its tab once obc-tab-row supports it -->
-          <div role="tabpanel" aria-label=${ifDefined(selectedTab?.title)}>
-            ${
-              this.selectedTabId === BRILLIANCE_TAB_ID
-                ? this.renderBrightness()
-                : this.renderPalette()
-            }
+          <!-- TODO(#1312): link the panels to their tabs once obc-tab-row supports it -->
+          <div
+            role="tabpanel"
+            aria-label=${brillianceTab.title}
+            ?hidden=${this.selectedTabId !== BRILLIANCE_TAB_ID}
+          >
+            ${this.renderBrightness()}
+          </div>
+          <div
+            role="tabpanel"
+            aria-label=${paletteTab.title}
+            ?hidden=${this.selectedTabId !== PALETTE_TAB_ID}
+          >
+            ${this.renderPalette()}
           </div>
           ${this.renderScreenControlLink()}
         </div>
