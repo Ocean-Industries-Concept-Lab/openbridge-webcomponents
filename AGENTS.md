@@ -4,8 +4,6 @@
 > this repository (GitHub Copilot, Cursor, Cline, Aider, Windsurf, Codex,
 > OpenAI Codex CLI, or any other agent that reads `AGENTS.md`).
 
-**Quick nav:** [Overview](#1-repository-overview) · [Coding Standards](#2-coding-standards) · [JSDoc](#3-documentation-rules-jsdoc) · [Instructions](#4-path-scoped-instruction-files) · [Build & Test](#5-build-test--run) · [SVG](#6-svg-component-guidelines) · [CSS](#7-css--postcss-reference) · [Behavioral Rules](#8-behavioral-rules-for-ai-agents) · [Related Docs](#9-related-documentation)
-
 **Before the first edit:** the path-scoped docs in `docs/agents/` are listed to you, not inlined. Open every one whose glob matches a file you will change (§ 4 table) before writing code, PR text or an issue comment. `coding-standards.md`, `jsdoc.md` and `working-method.md` match every `src/**/*.ts` file, so they are always in scope.
 
 ---
@@ -242,16 +240,21 @@ staged. It is not the gate; `npm run check` is.
 
 ### Component Creation Checklist
 
-1. Run `npm run new:component` to scaffold files.
+1. Run `npm run new:component`. It asks for the family, the element tag, the
+   lifecycle and the design version, then writes a component, a story, and a
+   stylesheet unless you opt out at the `Create files` prompt. All of it
+   already passes `npm run lint` and `npm run format:check`, so the first run
+   of the gates reports your work and not the scaffold's.
 2. Implement the component in `component-name.ts` (extend `LitElement`, register with `@customElement`).
 3. Write styles in `component-name.css` (PostCSS, use mixins from § 7).
 4. Write stories in `component-name.stories.ts`:
-   - Add `tags: ['autodocs', '6.0']` for documented OB 6.0 components.
+   - Tag the design release the component implements — `tags: ['autodocs', '6.1']` for OB 6.1.
    - Export a `Default` story plus stories for key states and variants.
    - Use Title Case for story titles (see § 2).
-   - Do **not** hand-write a lifecycle tag here — see step 6.
-5. Write JSDoc following the three-pattern strategy (see § 3), including
-   exactly one lifecycle tag on the class (see § 3 Component lifecycle tags).
+   - Do **not** hand-write the lifecycle tag here — see step 7.
+5. Replace the scaffolded `TODO(designer)` block with real JSDoc, following the
+   three-pattern strategy (see § 3) and keeping exactly one lifecycle tag on
+   the class (see § 3 Component lifecycle tags).
 6. Interactive? Link the APG pattern in the JSDoc and end with a `Left out:`
    line (`npm run lint:apg`), pin its keys in a
    `component-name-keyboard.spec.ts` (a composite widget fails `lint:apg` without one) whose fixtures cover every configuration
@@ -259,8 +262,8 @@ staged. It is not the gate; `npm run check` is.
    ([`docs/agents/a11y.md`](docs/agents/a11y.md) § 1, § 4, § 9). `npm run
 test-a11y` fails on any violation the committed baseline does not carry, so
    a new component starts from zero.
-7. Run `npm run lint:fix:stories` to populate the story's lifecycle tag from
-   that class JSDoc.
+7. Run `npm run lint:fix:stories` if you changed the class's lifecycle tag, so
+   the story's `meta.tags` follows it.
 8. Run `npm run analyze` to update `custom-elements.json`.
 9. Run `npm run check` from the repo root to validate.
 

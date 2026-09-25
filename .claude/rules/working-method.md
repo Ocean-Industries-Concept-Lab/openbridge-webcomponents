@@ -67,8 +67,9 @@ judgement call.
    three shapes anywhere outside the tests, which keep the raw formula as
    their expected value.
 
-2. **The sibling exists.** `npm run new:component` writes a blank element, an
-   empty CSS file and a one-story file; it copies nothing. The next step is
+2. **The sibling exists.** `npm run new:component` writes a lint-clean
+   skeleton — a `TODO(designer)` class JSDoc, an empty CSS file and one
+   story; it copies nothing. The next step is
    the nearest sibling — same directory, same base name with another suffix
    (`-indicator`, `-flat`, `-horizontal`), same Figma page. Read it whole
    ([`building-blocks.md`](../../docs/agents/building-blocks.md)) and start from its structure,
