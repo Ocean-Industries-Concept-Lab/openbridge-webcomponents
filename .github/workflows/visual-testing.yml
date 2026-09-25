@@ -77,6 +77,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # The container's root user does not own the checkout, so git refuses
+      # it, and the wrapper build cleans the wrapper folders with git.
+      - name: Trust the checkout
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
       # The demo imports the Vue wrappers, which are generated and gitignored,
       # so the core and the wrappers are built before it.
       - name: Build the vue demo
