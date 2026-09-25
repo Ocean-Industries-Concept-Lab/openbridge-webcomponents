@@ -125,9 +125,11 @@ Every `lint:*` script runs in `build.yml`'s **lint** job, which names each
 one instead of running `npm run lint`. `script/ci-coverage.test.ts` (in
 `test:rules`) keeps the two in step: it fails when any package's lint, type
 check, test or build script runs in no workflow and is not listed there with
-the reason, and when a `lint:*` script is missing from the `lint` chain.
-`test:rules` runs in **test-browser**, which has no `analyze` step — tooling
-tests must not import the manifest.
+the reason, when a `lint:*` script is missing from the `lint` chain, and
+when `npm run check` at the repository root runs less than the **lint** and
+**test-browser** jobs, or anything CI does not. `test:rules` runs in
+**test-browser**, which has no `analyze` step — tooling tests must not import
+the manifest.
 
 ## The accessibility gates
 
@@ -159,12 +161,13 @@ cannot press them: that is the component-creation checklist
 ## Local equivalents of the CI gates
 
 ```bash
-npm run lint          # includes lint:agents — the agent-doc drift check
-npm run typecheck
-npm run format:check
-npm run test:rules    # node-side tests for the custom ESLint rules and tooling
-npm run test:browser  # the keyboard specs, with the other browser specs
-npm run test-a11y     # axe over every story, then the baseline check
+(cd ../.. && npm run check)   # build.yml's lint and test-browser jobs, package by package
+npm run test-a11y             # axe over every story, then the baseline check (visual-testing.yml)
+npm run test-storybook        # the snapshot suite (visual-testing.yml); locally, the touched components only
 ```
 
-Run these before pushing; `build.yml` runs the same set on every branch.
+`check` runs `lint` (with `lint:agents`, the agent-doc drift check),
+`typecheck`, `typecheck:tooling`, `format:check`, `fix-imports:check`,
+`test:rules` and the browser specs here, then the demos' and
+`connector-diagram`'s checks. Run it before pushing; `build.yml` runs the
+same set on every branch, and the coverage guard fails when the two differ.

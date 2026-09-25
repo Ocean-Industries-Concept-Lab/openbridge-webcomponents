@@ -12,6 +12,7 @@
     "test:visual:update": "playwright test --project=visual --update-snapshots",
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false && vue-tsc --noEmit -p tsconfig.node.json --composite false && vue-tsc --noEmit -p e2e/tsconfig.json",
+    "check": "npm run format:check && npm run lint:check",
     "lint": "eslint . --fix",
     "lint:check": "eslint . --max-warnings=0",
     "format": "prettier --write src/",

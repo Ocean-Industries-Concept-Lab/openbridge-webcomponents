@@ -28,24 +28,24 @@ Framework wrappers are **auto-generated** — never edit them directly.
 
 All paths below are relative to `packages/openbridge-webcomponents/`.
 
-| Directory                     | Contents                                                                                                       |
-| ----------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| `src/components/`             | General UI components (buttons, cards, top-bar, etc.)                                                          |
-| `src/navigation-instruments/` | Instruments (compass, heading, gauge, etc.) and indicators (bearing, speed, ROT)                               |
-| `src/building-blocks/`        | Low-level instrument pieces (scales, bars, chart bases) — mostly SVG; some are plain DOM, e.g. `readout-block` |
-| `src/bars-graphs/`            | Chart components (line graph, area graph, donut, pie, polar, radial-bar)                                       |
-| `src/automation/`             | Automation system components (valves, pumps, motors, etc.)                                                     |
-| `src/ar/`                     | Augmented reality components                                                                                   |
-| `src/icons/`                  | Auto-generated icon components (do not edit manually)                                                          |
-| `src/svghelpers/`             | Shared SVG utility functions and mixins                                                                        |
-| `src/charthelpers/`           | Shared chart utility functions                                                                                 |
-| `src/integration-systems/`    | Integration system components                                                                                  |
-| `src/internal/`               | Shared internal helpers (e.g. `tree-roving-navigator.ts`)                                                      |
-| `src/pages/`                  | Full-page composite examples                                                                                   |
-| `src/mixins/`                 | PostCSS mixins — `fonts.css` is generated, the rest are hand-written                                           |
-| `src/palettes/`               | Colour tokens — `variables.css` is generated, `manual.css` is hand-written                                     |
-| `src/generated/`              | Generated localisation output (do not edit manually)                                                           |
-| `src/manual-icon/`            | **Hand-written** icon components — unlike `src/icons/`, these are not generated                                |
+| Directory                     | Contents                                                                         |
+| ----------------------------- | -------------------------------------------------------------------------------- |
+| `src/components/`             | General UI components (buttons, cards, top-bar, etc.)                            |
+| `src/navigation-instruments/` | Instruments (compass, heading, gauge, etc.) and indicators (bearing, speed, ROT) |
+| `src/building-blocks/`        | Low-level instrument pieces (scales, bars, chart bases), SVG or plain DOM        |
+| `src/bars-graphs/`            | Chart components (line graph, area graph, donut, pie, polar, radial-bar)         |
+| `src/automation/`             | Automation system components (valves, pumps, motors, etc.)                       |
+| `src/ar/`                     | Augmented reality components                                                     |
+| `src/icons/`                  | Auto-generated icon components (do not edit manually)                            |
+| `src/svghelpers/`             | Shared SVG utility functions and mixins                                          |
+| `src/charthelpers/`           | Shared chart utility functions                                                   |
+| `src/integration-systems/`    | Integration system components                                                    |
+| `src/internal/`               | Shared internal helpers (e.g. `tree-roving-navigator.ts`)                        |
+| `src/pages/`                  | Full-page composite examples                                                     |
+| `src/mixins/`                 | PostCSS mixins — `fonts.css` is generated, the rest are hand-written             |
+| `src/palettes/`               | Colour tokens — `variables.css` is generated, `manual.css` is hand-written       |
+| `src/generated/`              | Generated localisation output (do not edit manually)                             |
+| `src/manual-icon/`            | **Hand-written** icon components, unlike the generated `src/icons/`              |
 
 ---
 
@@ -77,10 +77,8 @@ declared with `attribute: false`. Rule and examples:
 ### Storybook title conventions
 
 Story `title` and `name` use Title Case (ESLint `openbridge/storybook-title-case`,
-auto-fixable). The lifecycle entry in `meta.tags` is derived from the class
-JSDoc and never hand-written — see
-[`docs/agents/coding-standards.md`](docs/agents/coding-standards.md#storybook-title-conventions)
-and [`docs/agents/jsdoc.md` § Component lifecycle tags](docs/agents/jsdoc.md).
+auto-fixable); the lifecycle entry in `meta.tags` is derived from the class
+JSDoc, never hand-written ([`docs/agents/jsdoc.md` § Component lifecycle tags](docs/agents/jsdoc.md)).
 
 ---
 
@@ -94,23 +92,16 @@ Key points:
 3. **Usage Guidelines** — when and how to use the component; contrast with similar components.
 4. **Slots** — table of slot names, conditions, and purposes.
 5. **Events** — a `@fires` tag for every event the component exposes, custom **and** native (a passthrough `<button>`'s `click` included). See [`docs/agents/jsdoc.md`](docs/agents/jsdoc.md).
-6. **Properties are documented in the class JSDoc**, one tag per public property,
-   without a type — `@property name - description` — placed after the Markdown
-   sections and before `@slot`/`@fires`. Conditional properties add a line
-   `@availableWhen name condition` directly under their tag. No inline JSDoc
-   above `@property()` fields (`npm run lint:comments` fails; `--fix` hoists
-   them). A tag naming a property that does not exist is a ghost manifest
-   member — `npm run lint:slots` fails on it. Mixin-provided properties, and
-   docs carrying a member `@deprecated` or a `@default` cem cannot read from
-   the initializer, keep their inline docs.
+6. **Properties are documented in the class JSDoc**, one `@property name - description`
+   tag per public property (no type), after the Markdown sections and before
+   `@slot`/`@fires`, with `@availableWhen name condition` under a conditional one.
+   No inline JSDoc above `@property()` fields (`npm run lint:comments` fails;
+   `--fix` hoists them; the exceptions are in [`docs/agents/jsdoc.md`](docs/agents/jsdoc.md)).
+   A tag naming a property that does not exist fails `npm run lint:slots`.
 7. **Tone:** Do NOT mention "maritime", "industrial", "bridge", or domain qualifiers; keep text domain-agnostic.
 8. If purpose is unclear, insert `**TODO(designer)**` instead of guessing.
 9. **`@availableWhen` for conditional properties** — see [`docs/agents/jsdoc.md`](docs/agents/jsdoc.md).
 10. **Exactly one lifecycle tag** on every `@customElement` class — see [`docs/agents/jsdoc.md`](docs/agents/jsdoc.md).
-
-> **The full template, the `@slot`/`@fires` contract, `@availableWhen`,
-> component lifecycle tags, and the three documentation patterns live in
-> [`docs/agents/jsdoc.md`](docs/agents/jsdoc.md).**
 
 ---
 
@@ -141,6 +132,7 @@ changelog, a plan, or a status board.
 - `## Open` — one line per open question, each pointing at an issue. The only
   status content allowed.
 - Under 300 lines (`lint:agents` warns). Split by sub-family when it grows.
+  This file stays under 32 KiB (`lint:agents` fails): Codex reads no further.
 - One home per fact: if it is explained here, the code carries a pointer, not
   a copy. Update the doc in the PR that changes the behaviour.
 
@@ -191,36 +183,36 @@ Their order over one change, from a fresh clone to a merged PR, is
 # Install dependencies (from repo root)
 npm install
 
+# The gate, from the repo root, before every push: every static check and spec CI runs on a
+# push (translations, analyze, typecheck + tooling, the lint chain, format, imports, the rule
+# tests, the browser specs, the demos' and connector-diagram's checks). A guard keeps it equal
+# to build.yml; CI fails on every warning.
+npm run check
+
 # Dev build (translations → vite)
 npm run build
 
 # Full build (translations → typecheck → bundle → vite → CEM → wrappers)
 npm run build:full
 
-# Type-check only
+# The pieces
 npm run typecheck
-
-# Lint
-npm run lint              # css mixins/variables/icons + slots + events + apg + lit-analyzer + eslint + suppressions
-npm run lint:eslint       # eslint only (includes the lifecycle-tag rules, § 3)
+npm run lint              # css mixins/variables/palette/icons + slots + events + apg + agents + lit-analyzer + eslint + suppressions + comments
 npm run lint:fix:stories  # eslint --fix on stories only (rewrites meta.tags lifecycle entries)
-npm run lint:slots        # audit @slot/@fires JSDoc vs templates & dispatched events
-npm run test:rules        # unit tests for the repo's custom ESLint rules
-
-# Format
-npm run format            # prettier write
-npm run format:check      # prettier check
+npm run format            # prettier write (format:check to check)
+npm run test:rules        # unit tests for the custom ESLint rules and the tooling
+npx vitest run --config=vitest.browser.config.ts               # the browser specs, keyboard specs included
 
 # Storybook
 npm run storybook         # dev server on :6006
 npm run build-storybook   # static build
 
-# Tests
+# Visual and accessibility suites (CI runs them on PRs to develop and stable)
 npm run test-storybook          # visual snapshot tests (Vitest + Playwright)
 npm run test-a11y               # axe over every story; fails on a violation the baseline does not carry
 npm run test-a11y:update        # rewrite __a11y__/baseline.json after fixing or adding violations
-npm run test-storybook:watch    # watch mode
 npx vitest run --project storybook 'component-name' --update   # regenerate that component's baselines (rule 12)
+(cd ../vue-demo && npm run test:e2e)                           # the vue demo's Playwright suite, functional + visual
 
 # Custom element manifest
 npm run analyze           # regenerate custom-elements.json
@@ -237,21 +229,16 @@ npm run download:icons
 
 Snapshot baselines: `__vis__/linux/__baselines__/` (CI) and `__vis__/darwin/__baselines__/` (macOS).
 
-### vue-demo visual smoke tests
+The vue demo's suite (`packages/vue-demo/e2e/`): how it stays deterministic,
+what it skips and where its baselines live —
+[`docs/agents/testing-visual.md` § vue-demo Playwright suite](docs/agents/testing-visual.md#vue-demo-playwright-suite).
 
-A Playwright suite in `packages/vue-demo/e2e/visual/` snapshots the demo
-screens (`npm run test:visual` / `npm run test:visual:update` from that
-package). How it stays deterministic, what it skips and where the baselines
-live: [`docs/agents/testing-visual.md` § vue-demo Playwright suite](docs/agents/testing-visual.md#vue-demo-playwright-suite).
+### Pre-commit hook
 
-### Pre-commit Hooks
-
-Husky runs `lint-staged` on every commit:
-
-- **TypeScript files** → ESLint (no warnings allowed) + Prettier
-- **CSS, HTML, JSON, MD** → Prettier only
-
-Commits that fail lint or format checks are blocked automatically.
+Husky runs `lint-staged` (ESLint with no warnings and Prettier on the staged
+TypeScript, Prettier on CSS, HTML, JSON and MD), then `lint:slots`,
+`lint:events` and `lint:apg` over the whole package when a component file is
+staged. It is not the gate; `npm run check` is.
 
 ### Component Creation Checklist
 
@@ -275,7 +262,7 @@ test-a11y` fails on any violation the committed baseline does not carry, so
 7. Run `npm run lint:fix:stories` to populate the story's lifecycle tag from
    that class JSDoc.
 8. Run `npm run analyze` to update `custom-elements.json`.
-9. Run `npm run lint && npm run typecheck` to validate.
+9. Run `npm run check` from the repo root to validate.
 
 ---
 
@@ -308,12 +295,12 @@ automatically when editing a `.css` file.
 1. **Read before writing.** The source, its story, and every `docs/agents/*.md` whose glob matches a file in your diff (§ 4) — the adapters list them, they do not inline them.
 2. **Follow the three-pattern strategy** (§ 3) when writing or updating JSDoc.
 3. **Two docs disagree?** Ask which is current instead of picking one ([`docs/agents/working-method.md` § Missing](docs/agents/working-method.md)).
-4. **Accessibility is required for interactive components, old and new.** Every new or modified component in `src/components/**` or `src/automation/**` supports full keyboard navigation and meets WCAG 2.1 AA; touching an existing one brings it through the checklist. Keyboard behaviour follows the [WAI-ARIA APG patterns](https://www.w3.org/WAI/ARIA/apg/patterns/) — the matching pattern, or the closest one. The ladder, the activation-key table, ARIA rules, focus handling, the checklist and the automated checks (§ 9) are in [`docs/agents/a11y.md`](docs/agents/a11y.md). Two gates run in CI: the keyboard specs (`npm run test:browser`, every branch) and the axe baseline (`npm run test-a11y`, PRs to `develop` and `stable`), which fails on any violation `__a11y__/baseline.json` does not carry and adds no lint warning.
+4. **Accessibility is required for interactive components, old and new.** Every new or modified component in `src/components/**` or `src/automation/**` supports full keyboard navigation and meets WCAG 2.1 AA; touching an existing one brings it through the checklist. Keyboard behaviour follows the [WAI-ARIA APG patterns](https://www.w3.org/WAI/ARIA/apg/patterns/), the matching one or the closest. The ladder, the key table, ARIA rules, focus handling, the checklist and the three CI gates (`lint:apg`, the keyboard specs, the axe baseline) are in [`docs/agents/a11y.md`](docs/agents/a11y.md).
 5. **Do not edit auto-generated packages** (`-react`, `-vue`, `-ng`, `-svelte`). Run `npm run wrappers` instead.
 6. **Run `npm run analyze`** after adding or renaming a `@customElement`, and **before** testing a new component's stories — story args reach the element only through the manifest. Never hand-edit `custom-elements.json`; fix the `@slot`/`@fires`/property JSDoc (§ 3) and run `npm run lint:slots`.
-7. **Run `npm run lint`** after code changes to catch issues early.
+7. **Run `npm run check`** (repo root) before every push: it is what CI runs, and CI fails on every warning.
 8. **Insert `TODO(designer)`** for any documentation detail whose purpose is unclear from code alone.
-9. **Keep stories tagged** with `['autodocs', '6.0']` for documented OB 6.0 components; `['skip-test']` to exclude from visual tests. The lifecycle entry (`beta` / `experimental` / `deprecated`) is **never hand-written** — put `@stable`/`@beta`/`@experimental`/`@deprecated` on the component class and run `npm run lint:fix:stories`. The old `'wip'` and `'alpha'` tags are retired; see [`docs/agents/jsdoc.md` § Component lifecycle tags](docs/agents/jsdoc.md).
+9. **Keep stories tagged** with `['autodocs', '6.0']` for documented OB 6.0 components; `['skip-test']` to exclude from visual tests. The lifecycle entry is **never hand-written**: put `@stable`/`@beta`/`@experimental`/`@deprecated` on the class and run `npm run lint:fix:stories` ([`docs/agents/jsdoc.md` § Component lifecycle tags](docs/agents/jsdoc.md)).
 10. **Do not run full builds or start Storybook unasked** (`npm run build`, `npm run storybook`) — expensive and long-running.
 11. **Run visual tests for the components you touched** instead of the full suite. Several names are separate substring filters, not a regex (`'a|b'` matches nothing):
     ```bash
@@ -350,16 +337,12 @@ automatically when editing a `.css` file.
 
 ## 9. Related Documentation
 
-| Document                                                                                             | Purpose                                                                                                           |
-| ---------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| [IMPLEMENTATION_GUIDELINES.md](IMPLEMENTATION_GUIDELINES.md)                                         | Detailed architecture, PostCSS mixins, SVG practices, component creation                                          |
-| [CONTRIBUTING.md](CONTRIBUTING.md)                                                                   | Contribution workflow, commit conventions, PR guidelines                                                          |
-| [.devcontainer/README.md](.devcontainer/README.md)                                                   | Dev container persistent-home volume: per-developer tooling setup & rebuild guide                                 |
-| [packages/openbridge-webcomponents/README.md](packages/openbridge-webcomponents/README.md)           | Installation, setup, bundle usage                                                                                 |
-| [docs/agents/jsdoc.md](docs/agents/jsdoc.md)                                                         | Full JSDoc template and structured-tag rules                                                                      |
-| [docs/agents/](docs/agents/)                                                                         | Path-scoped instruction files for component families (canonical; `.github/instructions/` is generated from these) |
-| [packages/openbridge-webcomponents/script/docgen/](packages/openbridge-webcomponents/script/docgen/) | OpenAI-powered JSDoc generation CLI (`docs-gen.ts`)                                                               |
-| [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)                                                             | Contributor Covenant — expected conduct in community spaces                                                       |
-| [docs/getting-started-react.md](docs/getting-started-react.md)                                       | End-user tutorial: build a multi-view React app with the React wrapper                                            |
-| [docs/getting-started-angular.md](docs/getting-started-angular.md)                                   | End-user tutorial: build a multi-view Angular app with the Angular wrapper                                        |
-| [docs/graph.md](docs/graph.md)                                                                       | End-user guide: custom Chart.js plots with OpenBridge theming                                                     |
+- [IMPLEMENTATION_GUIDELINES.md](IMPLEMENTATION_GUIDELINES.md) — architecture, PostCSS mixins, SVG practices, component creation
+- [CONTRIBUTING.md](CONTRIBUTING.md) — contribution workflow, commit conventions, PR guidelines
+- [.devcontainer/README.md](.devcontainer/README.md) — dev container persistent-home volume: per-developer tooling setup and rebuild
+- [packages/openbridge-webcomponents/README.md](packages/openbridge-webcomponents/README.md) — installation, setup, bundle usage
+- [docs/agents/](docs/agents/) — the path-scoped family docs (canonical; the adapters are generated from them)
+- [packages/openbridge-webcomponents/script/docgen/](packages/openbridge-webcomponents/script/docgen/) — OpenAI-powered JSDoc generation CLI (`docs-gen.ts`)
+- [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) — Contributor Covenant
+- [docs/getting-started-react.md](docs/getting-started-react.md), [docs/getting-started-angular.md](docs/getting-started-angular.md) — end-user tutorials for the React and Angular wrappers
+- [docs/graph.md](docs/graph.md) — end-user guide: custom Chart.js plots with OpenBridge theming

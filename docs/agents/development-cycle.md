@@ -85,28 +85,38 @@ git status                                                   # only __vis__/linu
 
 ## 5. The gates, before every push
 
-What `build.yml` and `visual-testing.yml` run, in their order. The pre-commit
-hook covers only the staged TypeScript, so it is not the gate.
+One command at the repository root runs what `build.yml` runs on every push,
+in its order, and `script/ci-coverage.test.ts` fails when the two drift
+apart. The pre-commit hook runs the staged-file lints and the three
+whole-package source checks (`lint:slots`, `lint:events`, `lint:apg`); it is
+not the gate.
+
+```bash
+(cd ../.. && npm run check)      # translations, analyze, typecheck (+ tooling), the lint chain, format,
+                                 # imports, test:rules, every browser spec; then react-demo, vue-demo
+                                 # and connector-diagram's own checks. No warnings allowed.
+```
+
+The pieces, for a quick loop on one of them:
 
 ```bash
 npm run typecheck
-npm run lint                     # mixins, variables, palette, icons, slots, events, apg, agents, lit-analyzer, eslint, suppressions, comments; no warnings allowed
+npm run lint                     # mixins, variables, palette, icons, slots, events, apg, agents, lit-analyzer, eslint, suppressions, comments
 npm run format:check             # npm run format to fix; covers the root and docs/agents Markdown too
 npm run fix-imports:check
 npx vitest run --config=vitest.browser.config.ts             # every spec
-npm run test:rules               # when script/ or an ESLint rule changed
+npm run test:rules               # the custom ESLint rules, the checkers and the CI coverage guard
 npm run test-a11y                # PRs to develop: axe over every story, then the baseline check
 ```
 
-```bash
-(cd ../vue-demo && npm run lint:check && npm run format:check && npm run type-check)
-```
-
 `npm run lint` in `vue-demo` is `eslint . --fix` and rewrites files;
-`lint:check` is the check. The demo's Playwright suite is a gate as well;
+`lint:check` is the check, and the demo's `check` runs it with
+`format:check`. Its `type-check` needs the built wrappers, so it runs inside
+`build:demo` (§ 6), as in CI. The demo's Playwright suite is a gate as well;
 § 6 builds the demo and runs it. A doc change ends with `npm run agents:sync` and
 `npm run lint:agents`, so the adapters and the routing table in `AGENTS.md`
-are committed with it.
+are committed with it; `lint:agents` also fails when `AGENTS.md` passes
+32 KiB, the point past which Codex stops reading it.
 
 ## 6. The wrappers and the demos
 

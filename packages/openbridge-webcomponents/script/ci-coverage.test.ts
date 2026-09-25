@@ -1,6 +1,7 @@
 /**
  * Every check a package defines runs in CI, or is listed in `NOT_IN_CI` with
- * the reason it does not.
+ * the reason it does not; and `npm run check` at the repository root runs
+ * what CI's static jobs run, so the local gate and CI cannot drift apart.
  *
  * `build.yml` names each step instead of running `npm run lint`, so a check
  * added to a package runs nowhere until someone also adds it to a workflow:
@@ -45,6 +46,12 @@ const NOT_IN_CI: Record<string, string> = {
     'test-storybook renders every story; the static build is not published',
 };
 
+/** The jobs `npm run check` mirrors: the static checks and the specs, not the builds or the snapshot suites. */
+const LOCAL_GATE_JOBS = [
+  {file: 'build.yml', job: 'lint'},
+  {file: 'build.yml', job: 'test-browser'},
+];
+
 type Scripts = Record<string, string>;
 
 /** Every workspace package with its scripts, keyed by directory name; `root` is the repository. */
@@ -62,21 +69,37 @@ function packages(): Map<string, Scripts> {
   return out;
 }
 
-/** The `run:` commands of every workflow, with the package each runs in. */
-function ciCommands(): {pkg: string; command: string}[] {
-  const runs: {pkg: string; command: string}[] = [];
+interface CiCommand {
+  file: string;
+  job: string;
+  pkg: string;
+  command: string;
+}
+
+/** The `run:` commands of every workflow, with the job and the package each runs in. */
+function ciCommands(): CiCommand[] {
+  const runs: CiCommand[] = [];
   const dir = path.join(repo, '.github', 'workflows');
   for (const file of fs.readdirSync(dir)) {
     const lines = fs.readFileSync(path.join(dir, file), 'utf8').split('\n');
+    let inJobs = false;
+    let job = '';
     let step: {dir: string; commands: string[]} | null = null;
     const flush = () => {
       for (const command of step?.commands ?? []) {
         const cd = /cd (?:\.\/)?packages\/([\w-]+)/.exec(command)?.[1];
-        runs.push({pkg: cd ?? (step!.dir || 'root'), command});
+        runs.push({file, job, pkg: cd ?? (step!.dir || 'root'), command});
       }
     };
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
+      if (/^\S/.test(line)) inJobs = /^jobs:\s*$/.test(line);
+      const jobName = inJobs && /^ {2}([\w-]+):\s*$/.exec(line)?.[1];
+      if (jobName) {
+        flush();
+        step = null;
+        job = jobName;
+      }
       if (/^\s*- (name|uses|run):/.test(line)) {
         flush();
         step = {dir: '', commands: []};
@@ -110,17 +133,30 @@ function ciCommands(): {pkg: string; command: string}[] {
 
 /**
  * The scripts a command runs, as `package:script`: `npm run <name>`, in the
- * package `-w packages/<dir>` names, and the arguments of npm-run-all's
- * `run-p` and `run-s`. A word that only matches a script name is no call.
+ * package `-w packages/<dir>` names or in every package that has it with
+ * `--workspaces`, and the arguments of npm-run-all's `run-p` and `run-s`. A
+ * word that only matches a script name is no call.
  */
-function calls(pkg: string, command: string): string[] {
+function calls(
+  pkg: string,
+  command: string,
+  all: Map<string, Scripts>
+): string[] {
   const out: string[] = [];
   for (const part of command.split(/&&|\|\||;|\n/)) {
     const npm = /\bnpm run ([\w:.-]+)(.*)/.exec(part);
     if (npm) {
       const workspace =
         /(?:-w|--workspace)[=\s]+(?:\.\/)?packages\/([\w-]+)/.exec(npm[2]);
-      out.push(`${workspace?.[1] ?? pkg}:${npm[1]}`);
+      if (/(?:^|\s)(?:-ws|--workspaces)(?:\s|$)/.test(npm[2])) {
+        for (const [name, scripts] of all) {
+          if (name !== 'root' && npm[1] in scripts) {
+            out.push(`${name}:${npm[1]}`);
+          }
+        }
+      } else {
+        out.push(`${workspace?.[1] ?? pkg}:${npm[1]}`);
+      }
       continue;
     }
     const runAll = /\brun-[ps]\s+(.*)/.exec(part);
@@ -134,8 +170,11 @@ function calls(pkg: string, command: string): string[] {
   return out;
 }
 
-/** `package:script` for every script CI runs, directly or from another script. */
-function coveredByCi(all: Map<string, Scripts>): Set<string> {
+/** `package:script` for every script the seeds run, directly or from another script. */
+function reachable(
+  all: Map<string, Scripts>,
+  seeds: {pkg: string; command: string}[]
+): Set<string> {
   const covered = new Set<string>();
   const visit = (key: string) => {
     const [pkg, ...rest] = key.split(':');
@@ -147,30 +186,44 @@ function coveredByCi(all: Map<string, Scripts>): Set<string> {
     for (const hook of [`pre${script}`, `post${script}`]) {
       if (hook in scripts) visit(`${pkg}:${hook}`);
     }
-    for (const call of calls(pkg, scripts[script])) visit(call);
+    for (const call of calls(pkg, scripts[script], all)) visit(call);
   };
-  for (const {pkg, command} of ciCommands()) {
-    for (const call of calls(pkg, command)) visit(call);
+  for (const {pkg, command} of seeds) {
+    for (const call of calls(pkg, command, all)) visit(call);
   }
   return covered;
 }
 
+const isCheck = (key: string) => CHECK.test(key.split(':').slice(1).join(':'));
+
 describe('script calls', () => {
+  const all = new Map<string, Scripts>([
+    ['root', {}],
+    ['openbridge-webcomponents', {check: 'npm run lint'}],
+    ['vue-demo', {check: 'npm run lint:check'}],
+  ]);
+
   it('reads npm run, the package -w names, and the arguments of run-p', () => {
     expect(
       calls(
         'root',
-        'npm run build:full -w packages/openbridge-webcomponents && npm install && npm run build'
+        'npm run build:full -w packages/openbridge-webcomponents && npm install && npm run build',
+        all
       )
     ).toEqual(['openbridge-webcomponents:build:full', 'root:build']);
-    expect(calls('vue-demo', 'run-p type-check "build-only {@}" --')).toEqual([
-      'vue-demo:type-check',
-      'vue-demo:build-only',
-    ]);
+    expect(
+      calls('vue-demo', 'run-p type-check "build-only {@}" --', all)
+    ).toEqual(['vue-demo:type-check', 'vue-demo:build-only']);
+  });
+
+  it('reads --workspaces as a call in every package that has the script', () => {
+    expect(
+      calls('root', 'npm run check --workspaces --if-present', all)
+    ).toEqual(['openbridge-webcomponents:check', 'vue-demo:check']);
   });
 
   it('does not count a word that only matches a script name', () => {
-    expect(calls('openbridge-webcomponents', 'vite build')).toEqual([]);
+    expect(calls('openbridge-webcomponents', 'vite build', all)).toEqual([]);
   });
 
   it('counts a type check with a suffix as a check', () => {
@@ -181,7 +234,15 @@ describe('script calls', () => {
 
 describe('CI coverage', () => {
   const all = packages();
-  const covered = coveredByCi(all);
+  const ci = ciCommands();
+  const covered = reachable(all, ci);
+
+  it('reads the job each workflow step belongs to', () => {
+    const jobs = new Set(ci.map((c) => `${c.file}:${c.job}`));
+    expect(jobs).toContain('build.yml:lint');
+    expect(jobs).toContain('build.yml:test-browser');
+    expect(jobs).toContain('visual-testing.yml:vue-demo');
+  });
 
   it('runs every check script, or says why not', () => {
     const missing: string[] = [];
@@ -213,5 +274,30 @@ describe('CI coverage', () => {
       (s) => /^lint:/.test(s) && !/^lint:fix:/.test(s)
     );
     expect(lints.filter((s) => !chain.has(s))).toEqual([]);
+  });
+});
+
+describe('the local gate', () => {
+  const all = packages();
+  const ci = ciCommands();
+  const gate = reachable(all, [{pkg: 'root', command: 'npm run check'}]);
+  const jobs = reachable(
+    all,
+    ci.filter((c) =>
+      LOCAL_GATE_JOBS.some((j) => j.file === c.file && j.job === c.job)
+    )
+  );
+
+  it('runs every check of the static and spec jobs of build.yml', () => {
+    const missing = [...jobs].filter((key) => isCheck(key) && !gate.has(key));
+    expect(missing).toEqual([]);
+  });
+
+  it('runs no check CI does not', () => {
+    const covered = reachable(all, ci);
+    const extra = [...gate].filter(
+      (key) => isCheck(key) && !covered.has(key) && !(key in NOT_IN_CI)
+    );
+    expect(extra).toEqual([]);
   });
 });

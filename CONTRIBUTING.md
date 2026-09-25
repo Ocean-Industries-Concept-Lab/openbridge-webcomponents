@@ -106,6 +106,7 @@ Please ensure your title is clear and follows the syntax.
 - Give the pull request a Conventional Commits title and, for anything visual, up to three screenshots or GIFs (before / after, the variant sweep, the story) — a bird's-eye view, not a gallery.
 - Cite roles, issues or Figma nodes, never a person or a handle — in the PR body, the commits and the code ([`docs/agents/coding-standards.md` § Writing style](docs/agents/coding-standards.md)).
 - Follow the coding conventions of the project.
+- Before you push, run `npm run check` at the repository root: it is what CI runs (lint, type checks, formatting, the browser specs), and CI fails on every warning. The snapshot and accessibility suites, and which baselines to regenerate: [`docs/agents/development-cycle.md`](docs/agents/development-cycle.md) § 4–5.
 - Document new code following [`docs/agents/coding-standards.md`](docs/agents/coding-standards.md) (comments) and [`docs/agents/jsdoc.md`](docs/agents/jsdoc.md) (JSDoc). Before committing, `npm run lint:comments` reports comment-style warnings; `npm run comments:rewrite -- <folder>` (Claude Code, uses your own tokens) rewrites them. Claude Code users may prefer the `Concise` output style (`/config` → Output style).
 - End all files with a newline.
 

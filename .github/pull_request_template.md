@@ -12,7 +12,7 @@
 
 ## Verification
 
-<!-- what you ran; baselines that moved and why -->
+<!-- what you ran (`npm run check` at the root, the snapshot filters, `test-a11y`); baselines that moved and why -->
 
 ## Docs
 
