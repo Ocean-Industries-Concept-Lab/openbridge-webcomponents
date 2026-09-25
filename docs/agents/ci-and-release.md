@@ -56,16 +56,16 @@ wrapper versions are synced first by `scripts/prepare-wrappers.js` (see below).
 
 ## The eight workflows
 
-| Workflow                                   | Trigger                                       | Purpose                                                                                               |
-| ------------------------------------------ | --------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| `build.yml`                                | push + PR, all branches                       | typecheck, `analyze`, the `lint:*` suite including `lint:agents`, `format:check`, `fix-imports:check` |
-| `visual-testing.yml`                       | push + PR on `develop` / `stable`             | Playwright snapshot suite, then the axe run against `__a11y__/baseline.json`                          |
-| `update-snapshots.yml`                     | **PR comment containing `/update-snapshots`** | rebuilds baselines in the Docker image and pushes to the PR branch — currently failing (#1179)        |
-| `pr-title-lint.yml`                        | PR opened / edited / synchronize / reopened   | Conventional Commits check on the PR title                                                            |
-| `release.yml`                              | push to `develop`, or manual                  | `build:full` then `semantic-release`                                                                  |
-| `firebase-hosting-merge.yml`               | push to `develop`                             | deploys the demo                                                                                      |
-| `firebase-hosting-pull-request.yml`        | PR                                            | builds the demo preview                                                                               |
-| `firebase-hosting-pull-request-deploy.yml` | after the build workflow completes            | publishes the preview                                                                                 |
+| Workflow                                   | Trigger                                     | Purpose                                                                                                                         |
+| ------------------------------------------ | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `build.yml`                                | push + PR, all branches                     | typecheck, `analyze`, the `lint:*` suite including `lint:agents`, `format:check`, `fix-imports:check`, ESLint for the two demos |
+| `visual-testing.yml`                       | push + PR on `develop` / `stable`           | Playwright snapshot suite, then the axe run against `__a11y__/baseline.json`                                                    |
+| `pr-title-lint.yml`                        | PR opened / edited / synchronize / reopened | Conventional Commits check on the PR title                                                                                      |
+| `windows-angular-build.yml`                | push + PR, all branches                     | the Angular wrapper built on `windows-latest` — CRLF and backslash path separators have leaked into generated imports before    |
+| `release.yml`                              | push to `develop`, or manual                | `build:full` then `semantic-release`                                                                                            |
+| `firebase-hosting-merge.yml`               | push to `develop`                           | deploys the demo                                                                                                                |
+| `firebase-hosting-pull-request.yml`        | PR                                          | builds the demo preview                                                                                                         |
+| `firebase-hosting-pull-request-deploy.yml` | after the build workflow completes          | publishes the preview                                                                                                           |
 
 The lint job of `build.yml` and the `connector-diagram` job of
 `visual-testing.yml` also cover `packages/connector-diagram`
@@ -76,9 +76,9 @@ the `test` job accepts; scope the run to the component and re-run without
 `--update` afterwards ([`testing-visual.md`](testing-visual.md)). Baselines from
 a non-Linux machine produce diffs CI rejects — there, run
 `npm run test-storybook:docker -- -- component-name --update` from the package
-directory, then the same command without `--update`. The `/update-snapshots`
-comment workflow currently fails inside its Docker image, and fires on any
-comment containing that string (#1179).
+directory, then the same command without `--update` — that route runs the same
+image the retired `/update-snapshots` workflow failed in, so check #1179 before
+relying on it.
 
 ## Two script directories, and they are not interchangeable
 
@@ -115,7 +115,7 @@ The manifest is the single source for property docs, so several steps hang off
 | `script/cem-plugins/`            | `available-when.mjs` resolves `@availableWhen` into `availableWhenIf`; `module-docs.mjs` lifts `@module` |
 | `script/inject-docs.ts`          | writes manifest descriptions into `dist/**/*.d.ts` (`--dts`) and the Svelte wrappers (`--svelte`)        |
 | `script/compare-manifests.ts`    | diffs two `custom-elements.json` files — the guard for "docs moved, manifest unchanged" refactors        |
-| `npm run lint:comments`          | the warn-only comment-style ESLint config (`eslint.comments.config.mjs`)                                 |
+| `npm run lint:comments`          | the comment-style ESLint config (`eslint.comments.config.mjs`); every rule is an error                   |
 | `npm run lint:fix:property-docs` | the same config with `--fix`; hoists inline property JSDoc into the class header                         |
 
 Order matters: injection reads the manifest and writes into build output, so it

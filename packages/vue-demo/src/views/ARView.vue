@@ -173,8 +173,8 @@ const setPosition = (
 ) => {
   if (f === null) throw new Error('f is null')
 
-  let x = frames[0]?.x ?? 0
-  let h = frames[0]?.h ?? 0
+  let x: number
+  let h: number
 
   if (frames[0] && t <= frames[0].t) {
     x = frames[0].x
