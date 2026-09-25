@@ -8,14 +8,16 @@ const name = await question(
   {
     validators: [
       {
-        // The prompt treats anything but an error string (or `{isValid: false}`) as valid.
+        // Only `{isValid: false}` rejects: @topcli/prompts 2.x reads a returned
+        // error string, like `false`, as valid.
         validate: (value) =>
           /^[A-Z][a-zA-Z0-9]+$/.test(value)
             ? null
-            : 'Component name must be UpperCamelCase',
+            : {isValid: false, error: 'Component name must be UpperCamelCase'},
       },
       {
-        validate: (value) => (value ? null : 'Component name is required'),
+        validate: (value) =>
+          value ? null : {isValid: false, error: 'Component name is required'},
       },
     ],
   }
