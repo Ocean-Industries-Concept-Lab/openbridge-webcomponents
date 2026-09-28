@@ -114,7 +114,7 @@
     "@vitest/browser-playwright": "^4.1.11",
     "conventional-changelog-conventionalcommits": "^9.3.1",
     "dotenv": "^18.0.0",
-    "eslint": "^10.10.0",
+    "eslint": "^10.11.0",
     "eslint-plugin-storybook": "^10.6.0",
     "figma-api": "^2.2.1-beta",
     "glob": "^13.0.6",
