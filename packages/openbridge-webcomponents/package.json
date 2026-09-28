@@ -141,7 +141,7 @@
     "vite": "^8.3.0",
     "vite-plugin-dts": "^5.1.0",
     "vite-plugin-full-reload": "^1.2.0",
-    "vitest": "^4.1.11",
+    "vitest": "^5.0.2",
     "vitest-browser-lit": "^1.0.1",
     "vitest-plugin-vis": "file:vitest-plugin-vis-4.1.0.tgz"
   },
