@@ -50,12 +50,15 @@ down the stack is the usual cause of bugs here.
   is where most layout behaviour lives. It emits `grouping-change`
   (`{clusters, front, behind, pregrouped}`, de-duplicated by signature) — the
   supported way to observe grouping; the `data-*` attributes it writes on
-  targets are styling hooks, not an API.
+  targets are styling hooks, not an API. A target joining an expanded
+  auto-group (`joinWhileExpanded`) is reported too, with the live group
+  memberships as `clusters`.
 - **`obc-poi-group`** — one cluster: collapsed trigger ↔ expanded spread.
 - **`obc-poi-data` / `-vessel` / `-aton`** — individual targets. `x` and `y`
   both pass through a built-in low-pass filter (`xFilterCutoffHz` /
   `yFilterCutoffHz`, default 16 Hz, `0` disables); the controller forwards its
-  own values when set.
+  own values, and `null` returns its targets to the default
+  (`poi-controller/poi-controller.spec.ts`).
 
 ## Overlap resolution: two strategies, not one
 
@@ -102,13 +105,13 @@ hold:
 | Selection   | The target stays a child of its home layer with `data-stack-selected`; the stack projects its button into the selected layer via `--obc-poi-button-projection-y` (and its pointer via `--obc-poi-target-projection-y`) and FLIP-animates the measured jump with the Web Animations API. |
 | Auto-groups | Shadow chrome plus manual slot assignment, as described above.                                                                                                                                                                                                                          |
 
-`poi/poi-dom-ownership.spec.ts` pins the contract (header identity, no
-re-parenting on select/deselect, no light-DOM group injection, framework-style
+`poi/poi-dom-ownership.spec.ts` pins the contract (header identity, a header
+added after the first render, no re-parenting on select/deselect, no light-DOM
+group injection, `grouping-change` on a join while expanded, framework-style
 node replacement). It is a browser spec: it runs under `npm run test:browser`
-(CI `build.yml`), **not** in the `storybook` Vitest project, so
-`npx vitest run --project storybook 'poi'` does not execute it. Do not run
-`test:browser` locally — it hangs and leaves Chromium processes behind; rely on
-CI for this file.
+and `npm run check`, **not** in the `storybook` Vitest project, so
+`npx vitest run --project storybook 'poi'` does not execute it. Run the AR
+specs alone with `npx vitest run --config=vitest.browser.config.ts src/ar`.
 
 Anyone who located selected targets by querying the selected layer's children,
 or auto-groups by querying `[data-auto-group]` in the light DOM, must switch to
