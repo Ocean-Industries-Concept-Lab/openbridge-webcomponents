@@ -1,5 +1,6 @@
 // This file has been automatically migrated to valid ESM format by Storybook.
 import {createRequire} from 'node:module';
+import {fileURLToPath} from 'node:url';
 import {dirname, join} from 'path';
 import type {StorybookConfig} from '@storybook/web-components-vite';
 import FullReload from 'vite-plugin-full-reload';
@@ -32,6 +33,13 @@ const config: StorybookConfig = {
   staticDirs: [{from: '../public', to: '/assets'}],
 
   async viteFinal(viteConfig) {
+    // Vite applies a tsconfig only to the files its include matches, and ours
+    // leaves stories out, so a story's Lit decorators would reach the browser
+    // untransformed.
+    viteConfig.tsconfig = fileURLToPath(
+      new URL('../tsconfig.json', import.meta.url)
+    );
+
     // full reload whenever a TypeScript, CSS (or HTML) file in /src changes
     viteConfig.plugins ??= [];
     viteConfig.plugins.push(FullReload(['src/**/*.{ts,css,html}']));
