@@ -1,5 +1,5 @@
 import {HTMLTemplateResult, LitElement, html, nothing, unsafeCSS} from 'lit';
-import {property} from 'lit/decorators.js';
+import {property, state} from 'lit/decorators.js';
 import componentStyle from './brilliance-menu.css?inline';
 import '../button/button.js';
 import '../slider/slider.js';
@@ -31,9 +31,13 @@ import '../progress-indicator-dots/progress-indicator-dots.js';
 import '../navigation-item/navigation-item.js';
 import '../app-button/app-button.js';
 import '../user-button/user-button.js';
-import '../tabbed-card/tabbed-card.js';
+import '../tab-row/tab-row.js';
+import type {TabData} from '../tab-row/tab-row.js';
+import {stopPropagation} from '../../internal/events.js';
 import '../../icons/icon-display-brilliance-iec.js';
 import '../../icons/icon-palette-day-night-iec.js';
+import {clamp} from '../../svghelpers/math.js';
+import {PopoverController} from '../../internal/popover-controller.js';
 
 export enum ObcPalette {
   night = 'night',
@@ -57,6 +61,9 @@ export type ObcPaletteChangeEvent = CustomEvent<{value: ObcPalette}>;
 export type ObcBrightnessChangeEvent = CustomEvent<{value: number}>;
 export type ObcLinkPaletteChangeEvent = CustomEvent<{value: boolean}>;
 export type ObcLinkBrightnessChangeEvent = CustomEvent<{value: boolean}>;
+
+const BRILLIANCE_TAB_ID = 'brilliance';
+const PALETTE_TAB_ID = 'palette';
 
 /**
  * Event fired when the palette is changed.
@@ -126,11 +133,17 @@ export type ObcLinkBrightnessChangeEvent = CustomEvent<{value: boolean}>;
  * @property brightnessMajorStep - The major step of the brightness slider.
  * @property brightnessInputVariant - The variant of the brightness input.
  * @property showScreenControlLink - If true, displays the screen control link.
+ * @property showAdditionalScreenControls - If true, displays the additional screen controls slot.
+ * @property softDismiss - Let the browser close this menu on its own: on a click outside it, on `Escape`, or when another menu opens. Leave it off to keep showing and hiding the menu yourself.
+ * @property open - Whether the menu is showing.
+ * @availableWhen open softDismiss==true
+ * @slot additional-screen-controls - Consumer-defined controls, placed after the screen control link; rendered when `showAdditionalScreenControls` is true
  * @fires {ObcPaletteChangeEvent} palette-changed - When the palette is changed
  * @fires {ObcBrightnessChangeEvent} brightness-changed - When the brightness is changed
  * @fires {ObcLinkPaletteChangeEvent} link-palette-changed - When the link palette toggle is changed
  * @fires {ObcLinkBrightnessChangeEvent} link-brightness-changed - When the link brightness toggle is changed
  * @fires {CustomEvent} screen-control-link-clicked - When the screen control link is clicked
+ * @fires {CustomEvent<void>} close - Fired when the menu closed on its own, from a click outside, `Escape`, or another menu opening. `open` is already `false` by the time it arrives.
  */
 @localized()
 /**
@@ -138,6 +151,12 @@ export type ObcLinkBrightnessChangeEvent = CustomEvent<{value: boolean}>;
  */
 @customElement('obc-brilliance-menu')
 export class ObcBrillianceMenu extends LitElement {
+  @property({type: Boolean}) softDismiss = false;
+
+  @property({type: Boolean}) open = false;
+
+  protected readonly softDismissController = new PopoverController(this);
+
   @property({type: String}) palette: ObcPalette = ObcPalette.day;
 
   @property({type: Number}) brightness = 50;
@@ -170,6 +189,8 @@ export class ObcBrillianceMenu extends LitElement {
     ObcBrillianceInputVariant.buttons;
 
   @property({type: Boolean}) showScreenControlLink = false;
+
+  @property({type: Boolean}) showAdditionalScreenControls = false;
 
   override willUpdate(_changed: Map<string, unknown>) {
     if (this.showPalette) {
@@ -214,9 +235,10 @@ export class ObcBrillianceMenu extends LitElement {
   }
 
   increaseBrightness(step: number) {
-    this.brightness = Math.max(
+    this.brightness = clamp(
+      this.brightness + step,
       0,
-      Math.min(this.brightness + step, this.brightnessMax)
+      Math.max(0, this.brightnessMax)
     );
     this.dispatchEvent(
       new CustomEvent('brightness-changed', {
@@ -278,6 +300,28 @@ export class ObcBrillianceMenu extends LitElement {
     const palettes = this.availablePalettes;
     const idx = palettes.indexOf(this.palette);
     return idx > 0;
+  }
+
+  @state() private selectedTabId = BRILLIANCE_TAB_ID;
+
+  private onTabSelected(event: CustomEvent<{id: string}>) {
+    event.stopPropagation();
+    this.selectedTabId = event.detail.id;
+  }
+
+  private get tabs(): TabData[] {
+    return [
+      {
+        id: BRILLIANCE_TAB_ID,
+        title: msg('Brilliance'),
+        hasLeadingIcon: true,
+      },
+      {
+        id: PALETTE_TAB_ID,
+        title: `${msg('Day')}/${msg('Night')}`,
+        hasLeadingIcon: true,
+      },
+    ];
   }
 
   nextPalette() {
@@ -537,6 +581,7 @@ export class ObcBrillianceMenu extends LitElement {
         ${
           this.variant === ObcBrillianceMenuVariant.compact
             ? html` <obc-toggle-button-group
+                aria-label=${`${msg('Day')}/${msg('Night')}`}
                 value=${this.effectivePalette}
                 @value=${this.onPaletteChanged}
                 variant=${ObcToggleButtonOptionVariant.regular}
@@ -607,42 +652,70 @@ export class ObcBrillianceMenu extends LitElement {
   }
 
   renderScreenControlLink() {
-    if (!this.showScreenControlLink) {
-      return nothing;
+    if (this.showScreenControlLink || this.showAdditionalScreenControls) {
+      return html`
+        <div class="footer">
+          ${
+            this.showScreenControlLink
+              ? html`
+                  <obc-navigation-item
+                    .label="${msg('Screen Control')}"
+                    @click=${() => this.handleScreenControlLinkClicked()}
+                    hasicon
+                  >
+                    <obc-user-button
+                      slot="icon"
+                      static
+                      variant="icon"
+                      styleType="normal"
+                    >
+                      <obi-screen-desk slot="icon"></obi-screen-desk>
+                    </obc-user-button>
+                  </obc-navigation-item>
+                `
+              : nothing
+          }
+          ${
+            this.showAdditionalScreenControls
+              ? html`<slot name="additional-screen-controls"></slot>`
+              : nothing
+          }
+        </div>
+      `;
     }
-    return html`
-      <div class="footer">
-        <obc-navigation-item
-          .label="${msg('Screen Control')}"
-          @click=${() => this.handleScreenControlLinkClicked()}
-          hasicon
-        >
-          <obc-user-button slot="icon" static variant="icon" styleType="normal">
-            <obi-screen-desk slot="icon"></obi-screen-desk>
-          </obc-user-button>
-        </obc-navigation-item>
-      </div>
-    `;
+    return nothing;
   }
 
   override render() {
     if (this.variant === ObcBrillianceMenuVariant.tabbed) {
-      return html`<obc-tabbed-card class="card" nTabs=${2} hasTabIcons>
-        <span slot="tab-title-0">${msg('Brilliance')}</span>
-        <obi-display-brilliance-iec
-          slot="tab-icon-0"
-        ></obi-display-brilliance-iec>
-        <span slot="tab-title-1">${msg('Day')}/${msg('Night')}</span>
-        <obi-palette-day-night-iec
-          slot="tab-icon-1"
-        ></obi-palette-day-night-iec>
-        <div slot="tab-content-0">
-          ${this.renderBrightness()} ${this.renderScreenControlLink()}
+      return html`
+        <div class="card tabbed">
+          <obc-tab-row
+            .tabs=${this.tabs}
+            .selectedTabId=${this.selectedTabId}
+            .centerContent=${true}
+            .hasPanels=${true}
+            .label=${msg('Display')}
+            @tab-selected=${this.onTabSelected}
+            @tab-closed=${stopPropagation}
+            @add-new-tab=${stopPropagation}
+          >
+            <obi-display-brilliance-iec
+              slot="tab-${BRILLIANCE_TAB_ID}-icon"
+            ></obi-display-brilliance-iec>
+            <obi-palette-day-night-iec
+              slot="tab-${PALETTE_TAB_ID}-icon"
+            ></obi-palette-day-night-iec>
+            <div slot="tab-${BRILLIANCE_TAB_ID}-panel">
+              ${this.renderBrightness()}
+            </div>
+            <div slot="tab-${PALETTE_TAB_ID}-panel">
+              ${this.renderPalette()}
+            </div>
+          </obc-tab-row>
+          ${this.renderScreenControlLink()}
         </div>
-        <div slot="tab-content-1">
-          ${this.renderPalette()} ${this.renderScreenControlLink()}
-        </div>
-      </obc-tabbed-card>`;
+      `;
     } else {
       return html`
         <div class="card ${this.variant}">

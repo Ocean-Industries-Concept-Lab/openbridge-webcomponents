@@ -71,6 +71,8 @@ import {
  * @property treeBranches - Indentation columns for tree mode, assigned by `obc-navigation-menu`.
  * @property terminalType - Terminal type for the group header in the Tree variant — one of `regular`
  *   (default), `aggregated-header`, or `group-header`. No effect in flat variants.
+ * @property focusable - Whether the group header is in the tab order. A menu that owns a roving tabindex, such as
+ *   `obc-context-menu-input`, manages this (one item focusable at a time); a standalone group stays tabbable.
  * @property defaultOpen - Whether the group starts expanded. Useful for trees that open by default.
  * @property alerts - Per-severity alert counts shown as trailing badges on the group header, in
  *   the Tree variant only and only while the group is collapsed — an expanded
@@ -105,6 +107,8 @@ export class ObcNavigationItemGroup extends LitElement {
   @property({type: Object}) alerts?: TreeNavigationItemAlerts;
 
   @property({type: Boolean}) defaultOpen = false;
+
+  @property({type: Boolean, attribute: false}) focusable = true;
 
   @state() private openContainer = false;
 
@@ -180,6 +184,7 @@ export class ObcNavigationItemGroup extends LitElement {
     return html`
       <obc-navigation-item
         @click=${this.onClickGroup}
+        .focusable=${this.focusable}
         .checked=${this.checked}
         .groupSelected=${this.openContainer}
         .href=${this.href}

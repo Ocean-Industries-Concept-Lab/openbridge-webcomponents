@@ -111,6 +111,13 @@ export interface TreeNavigationItemAlerts extends AlertCounts {
  * |----------------|---------------------------------|-------------------------------------------------------------------------|
  * | icon           | `hasLeadingIcon` is true        | Leading icon for the row, e.g. `<obi-placeholder slot="icon">`.         |
  *
+ * ### Keyboard
+ * One item of the [APG Tree View](https://www.w3.org/WAI/ARIA/apg/patterns/treeview/):
+ * `Enter` and `Space` activate it, and the tree it sits in owns the arrow keys
+ * and the single tab stop.
+ *
+ * Left out: nothing at the item level.
+ *
  * @property label - The text label displayed for the row.
  * @property branches - Guide line for each ancestor level, outermost first; one 32px column per
  *   entry. Computed by `obc-tree-navigation` — rarely set by hand.

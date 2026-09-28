@@ -1,4 +1,5 @@
 import {LitElement, PropertyValues, html, unsafeCSS} from 'lit';
+import {ifDefined} from 'lit/directives/if-defined.js';
 import {customElement} from '../../decorator.js';
 import compentStyle from './alert-list-details-experimental.css?inline';
 import {msg} from '@lit/localize';
@@ -15,6 +16,11 @@ import '../../icons/icon-unacknowledged.js';
 import '../../icons/icon-alarm-noack-iec.js';
 import '../../icons/icon-warning-noack-iec.js';
 import '../alert-icon/alert-icon.js';
+import {
+  StyleType,
+  Variant,
+  initialsFromName,
+} from '../user-button/user-button.js';
 import {
   Alert,
   comparePriorityAlerts,
@@ -198,11 +204,23 @@ export function ackColumn(
     key: 'ack',
     label: 'ACK-status',
     cell: (alert) => {
-      if (
-        isAcknowledged(alert) ||
-        !isActive(alert) ||
-        !requiresAcknowledgement(alert.type)
-      ) {
+      if (isAcknowledged(alert) && alert.acknowledged) {
+        const ackedBy = alert.acknowledged.acknowledgedBy;
+        if (!ackedBy || ackedBy.trim() === '')
+          return {type: ObcTableCellType.Regular};
+        return {
+          type: ObcTableCellType.Regular,
+          largeIcon: true,
+          icon: html`<obc-user-button
+            .variant=${Variant.initials}
+            .initials=${initialsFromName(ackedBy)}
+            .static=${true}
+            .styleType=${StyleType.normal}
+          ></obc-user-button>`,
+          align: 'center',
+        };
+      }
+      if (!isActive(alert) || !requiresAcknowledgement(alert.type)) {
         return {type: ObcTableCellType.Regular};
       }
       if (alert.noAck) {
@@ -413,6 +431,7 @@ export function getAlertRows(
  * @property showHeader - Whether to show the column header row.
  * @property defaultExpanded - Whether groups start expanded. Set false to open the list collapsed.
  * @property selectedRowId - Row id to highlight, as given by `row-click` or `getAlertRows()`. Nothing is highlighted when no row has this id.
+ * @property ariaLabel - Accessible name of the list, mapped to the `aria-label` attribute and forwarded to its table. `aria-labelledby` is not supported: ID references cannot cross the shadow boundary.
  * @slot cell-<key>:<rowId> - Content of the cell in slot column `<key>` for row `<rowId>`.
  * @fires {ObcAlertListCellClickEvent} cell-click - Fired when the user clicks a button rendered by a data column, such as the one from `ackColumn()`.
  * @fires {ObcRowClickEvent} row-click - Fired when the user clicks a row.
@@ -421,6 +440,10 @@ export function getAlertRows(
  */
 @customElement('obc-alert-list-details-experimental')
 export class ObcAlertListDetailsExperimental extends LitElement {
+  // Reactive so a consumer changing the name re-renders the table.
+  @property({type: String, attribute: 'aria-label'})
+  override ariaLabel: string | null = null;
+
   @property({type: String}) filterMode: FilterModes = FilterModes.ALL;
   @property({type: Array}) alerts: Alert[] = [];
   @property({type: Array, attribute: false}) columns: AlertListColumn[] = [
@@ -661,6 +684,7 @@ export class ObcAlertListDetailsExperimental extends LitElement {
           data.length > 0
             ? html` <obc-table
                   class="alert-list"
+                  aria-label=${ifDefined(this.ariaLabel ?? undefined)}
                   style="--alert-list-grid-columns: ${this.gridColumns}"
                   .data=${data}
                   .columns=${this.tableColumns}

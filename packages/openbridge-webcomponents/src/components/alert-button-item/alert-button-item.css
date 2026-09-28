@@ -240,3 +240,8 @@
   --icon-fill: var(--alert-diagnostic-color);
   --icon-stroke: var(--alert-diagnostic-outline-color);
 }
+
+/* The name lives on the button; a change of counts is announced from here. */
+.announcement {
+  @mixin visually-hidden;
+}

@@ -1,3 +1,4 @@
+import {clamp} from './math.js';
 export interface RoundedRect {
   x: number;
   y: number;
@@ -20,7 +21,7 @@ export function roundedRectPath({
   radii,
 }: RoundedRect): string {
   const max = Math.min(width, height) / 2;
-  const [tl, tr, br, bl] = radii.map((r) => Math.max(0, Math.min(r, max)));
+  const [tl, tr, br, bl] = radii.map((r) => clamp(r, 0, Math.max(0, max)));
   const right = x + width;
   const bottom = y + height;
   const arc = (r: number, endX: number, endY: number) =>

@@ -1,12 +1,10 @@
 import {describe, expect, it} from 'vitest';
-import {create, ts} from '@custom-elements-manifest/analyzer';
-// @ts-expect-error - untyped JavaScript modules
+import * as analyzerModule from '@custom-elements-manifest/analyzer';
 import {
   availableWhenPlugin,
   collectEnums,
   parseCondition,
 } from './cem-plugins/available-when.mjs';
-// @ts-expect-error - untyped JavaScript modules
 import {moduleDocsPlugin} from './cem-plugins/module-docs.mjs';
 // `create()` alone never registers a tagName or builds `attributes[]` for a
 // `@customElement()`-decorated class — that wiring lives entirely in the lit
@@ -16,6 +14,17 @@ import {moduleDocsPlugin} from './cem-plugins/module-docs.mjs';
 // @ts-expect-error - untyped JavaScript modules
 import {litPlugin} from '@custom-elements-manifest/analyzer/src/features/framework-plugins/lit/lit.js';
 
+// The analyzer exports `create()` and the TypeScript it parses with, which
+// the sources must come from; its typings declare neither.
+const {create, ts} = analyzerModule as unknown as {
+  create(options: {
+    modules: import('typescript').SourceFile[];
+    plugins: unknown[];
+    context: Record<string, unknown>;
+  }): unknown;
+  ts: typeof import('typescript');
+};
+
 const sf = (name: string, code: string) =>
   ts.createSourceFile(name, code, ts.ScriptTarget.ES2020, true);
 const analyze = (files: Record<string, string>) =>
@@ -23,11 +32,34 @@ const analyze = (files: Record<string, string>) =>
     modules: Object.entries(files).map(([n, c]) => sf(n, c)),
     plugins: [...litPlugin(), availableWhenPlugin(), moduleDocsPlugin()],
     context: {dev: false},
-  }) as any;
-const decl = (m: any, tag: string) =>
+  }) as Manifest;
+
+/** The slice of a custom-elements manifest these tests read. */
+interface Member {
+  name: string;
+  description?: string;
+  availableWhen?: string;
+  availableWhenIf?: unknown;
+}
+interface Declaration {
+  tagName?: string;
+  members?: Member[];
+  attributes?: {fieldName?: string; description?: string}[];
+}
+interface Manifest {
+  modules: {
+    summary?: string;
+    description?: string;
+    declarations?: Declaration[];
+  }[];
+}
+
+const decl = (m: Manifest, tag: string): Declaration =>
   m.modules
-    .flatMap((x: any) => x.declarations ?? [])
-    .find((d: any) => d.tagName === tag);
+    .flatMap((x) => x.declarations ?? [])
+    .find((d) => d.tagName === tag)!;
+const member = (d: Declaration, name: string): Member =>
+  d.members!.find((m) => m.name === name)!;
 
 describe('parseCondition', () => {
   it('maps the single-test forms', () => {
@@ -87,18 +119,19 @@ export class ObcThing extends LitElement {
 `;
   it('attaches availableWhen, availableWhenIf and the description sentence', () => {
     const d = decl(analyze({'src/thing.ts': src}), 'obc-thing');
-    const mode = d.members.find((m: any) => m.name === 'mode');
+    const mode = member(d, 'mode');
     expect(mode.availableWhen).toBe('kind==linear');
     expect(mode.availableWhenIf).toEqual({arg: 'kind', eq: 'linear'});
     expect(mode.description).toBe(
       'The mode.\n\nAvailable when `kind==linear`.'
     );
     expect(
-      d.attributes.find((a: any) => a.fieldName === 'mode').description
+      d.attributes!.find((a) => a.fieldName === 'mode')!.description
     ).toContain('Available when');
-    expect(
-      d.members.find((m: any) => m.name === 'size').availableWhenIf
-    ).toEqual({arg: 'hasSize', truthy: true});
+    expect(member(d, 'size').availableWhenIf).toEqual({
+      arg: 'hasSize',
+      truthy: true,
+    });
   });
   it('propagates to subclasses through inheritance', () => {
     const base = src
@@ -115,9 +148,10 @@ export class ObcThing extends LitElement {
       }),
       'obc-sub'
     );
-    expect(
-      d.members.find((m: any) => m.name === 'size').availableWhenIf
-    ).toEqual({arg: 'hasSize', truthy: true});
+    expect(member(d, 'size').availableWhenIf).toEqual({
+      arg: 'hasSize',
+      truthy: true,
+    });
   });
   it('applies availableWhen to mixin members and propagates through a mixin consumer', () => {
     const mixinSrc = `
@@ -137,9 +171,10 @@ export function ThingMixin(superClass) {
       analyze({'src/thing-mixin.ts': mixinSrc, 'src/user.ts': userSrc}),
       'obc-user'
     );
-    expect(
-      d.members.find((m: any) => m.name === 'size').availableWhenIf
-    ).toEqual({arg: 'hasSize', truthy: true});
+    expect(member(d, 'size').availableWhenIf).toEqual({
+      arg: 'hasSize',
+      truthy: true,
+    });
   });
   it('applies the sentence exactly once when a property carries both a class-level and a field-level tag', () => {
     const both = src.replace(
@@ -147,8 +182,8 @@ export function ThingMixin(superClass) {
       "/** @availableWhen kind==linear */\n  @property({type: String}) mode = 'a';"
     );
     const d = decl(analyze({'src/thing-both.ts': both}), 'obc-thing');
-    const mode = d.members.find((m: any) => m.name === 'mode');
-    expect((mode.description.match(/Available when/g) ?? []).length).toBe(1);
+    const mode = member(d, 'mode');
+    expect((mode.description?.match(/Available when/g) ?? []).length).toBe(1);
     expect(mode.description).toBe(
       'The mode.\n\nAvailable when `kind==linear`.'
     );

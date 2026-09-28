@@ -15,6 +15,7 @@ import '../../icons/icon-link.js';
 import {NotificationButtonStyle} from '../../components/notification-button/notification-button.js';
 import {property} from 'lit/decorators.js';
 import {msg} from '@lit/localize';
+import {stopPropagation} from '../../internal/events.js';
 
 /**
  * `<obc-integration-bar-dropdown>` – A compact top-level integration header with a dropdown selector, status fields and system action buttons.
@@ -49,6 +50,7 @@ import {msg} from '@lit/localize';
  * @property systemButtonActivated - Pressed styling for the system button.
  * @availableWhen systemButtonActivated showSystemButton==true
  * @property nStatusFields - How many `status-icon-N`/`status-label-N` slot pairs are rendered.
+ * @property hasRightTrayLeading - Renders the `right-tray-leading` slot first in the right-hand button group.
  *
  * @slot vessel-selector - Vessel selector content
  * @slot status-label-1 - Label for the first status field
@@ -58,6 +60,7 @@ import {msg} from '@lit/localize';
  * @slot status-label-3 - Label for the third status field
  * @slot status-icon-3 - Icon for the third status field
  * @slot clock - Custom clock content, rendered when `showClock` is true
+ * @slot right-tray-leading - Consumer-defined controls, placed first in the right-hand button group; rendered when `hasRightTrayLeading` is true
  *
  * @fires {CustomEvent} home-button-clicked - Fired when the home button is clicked
  * @fires {CustomEvent} link-button-clicked - Fired when the link button is clicked
@@ -91,6 +94,7 @@ export class ObcIntegrationBarDropdown extends LitElement {
   @property({type: Boolean}) showSystemButton = false;
   @property({type: Boolean}) systemButtonActivated = false;
   @property({type: Number}) nStatusFields = 0;
+  @property({type: Boolean}) hasRightTrayLeading = false;
 
   private renderStatusFields() {
     if (this.nStatusFields <= 0) {
@@ -164,6 +168,11 @@ export class ObcIntegrationBarDropdown extends LitElement {
         </div>
         <div class="right-side">
           ${
+            this.hasRightTrayLeading
+              ? html`<slot name="right-tray-leading"></slot>`
+              : nothing
+          }
+          ${
             this.showAlertButton
               ? this.renderIconButton(
                   'alert',
@@ -180,6 +189,7 @@ export class ObcIntegrationBarDropdown extends LitElement {
               ? // TODO(designer): keep the Enhanced badge button here, or match the
                 // sibling bar's plain notification icon button? (#624)
                 html`<obc-notification-button
+                  @obc-click=${stopPropagation}
                   @click=${() =>
                     this.dispatchEvent(
                       new CustomEvent('notification-button-clicked')

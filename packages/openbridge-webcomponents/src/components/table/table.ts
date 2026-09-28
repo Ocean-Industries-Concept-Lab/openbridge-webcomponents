@@ -28,6 +28,7 @@ import {
   Priority,
   ScaleType,
 } from '../../building-blocks/bar-horizontal/bar-horizontal.js';
+import {clamp} from '../../svghelpers/math.js';
 
 export enum ObcTableCellType {
   Regular = 'regular',
@@ -250,6 +251,12 @@ function cssPart(value: ObcTableCellData, subpart: string): string | undefined {
  * arrow navigation, which the full pattern also specifies, is out of scope —
  * arrow keys move between rows, matching the flat table.
  *
+ * Left out: cell-level arrow navigation, and one tab stop for the grid. Each
+ * row is a button in the tab sequence, and so is every control inside a cell.
+ * Rows are `<button role="row">`, cells are `cell` rather than `gridcell`, and
+ * a selectable hierarchy renders no `aria-selected` on its rows and no
+ * `aria-multiselectable` on the grid.
+ *
  * Best Practices
  * - Keep column `key` values stable across renders to avoid selection or sorting resets.
  * - Prefer `selectedRowIds` for deterministic state in apps with external stores.
@@ -270,6 +277,7 @@ function cssPart(value: ObcTableCellData, subpart: string): string | undefined {
  * @availableWhen selectedRowIds selectable==true
  * @availableWhen defaultSelectedRowIds selectable==true && selectedRowIds==undefined
  * @availableWhen selectAllAriaLabel selectable==true && showHeader==true
+ * @property ariaLabel - Accessible name of the table, mapped to the `aria-label` attribute and forwarded to the grid. `aria-labelledby` is not supported: ID references cannot cross the shadow boundary.
  * @fires {ObcTableRowClickEvent} row-click - Fired when a row is clicked.
  * @fires {ObcTableCellClickEvent} cell-button-click - Fired when a cell button is clicked.
  * @fires {ObcTableCellCheckboxChangeEvent} cell-checkbox-change - Fired when a cell checkbox is changed.
@@ -280,6 +288,10 @@ function cssPart(value: ObcTableCellData, subpart: string): string | undefined {
  */
 @customElement('obc-table')
 export class ObcTable extends LitElement {
+  // Reactive so a consumer changing the name re-renders the grid.
+  @property({type: String, attribute: 'aria-label'})
+  override ariaLabel: string | null = null;
+
   @property({type: Array}) data: ObcTableRow[] = [];
   @property({type: Array}) columns: ObcTableColumn[] = [];
   @property({type: Boolean}) rowDivider = false;
@@ -470,7 +482,7 @@ export class ObcTable extends LitElement {
       )
     );
     if (headers.length === 0) return;
-    const clampedIndex = Math.max(0, Math.min(index, headers.length - 1));
+    const clampedIndex = clamp(index, 0, headers.length - 1);
     const headerItem = headers[clampedIndex];
     const innerButton = (headerItem.shadowRoot?.querySelector('button') ??
       null) as HTMLButtonElement | null;
@@ -655,8 +667,7 @@ export class ObcTable extends LitElement {
         el.element.style.transform = `translateY(${previousPosition.top - el.top}px)`;
       }
       el.element.style.transition = 'none';
-      // Force a reflow to ensure the animation is applied
-      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions -- the read forces the reflow that restarts the transition
       el.element.offsetHeight;
       el.element.style.transition =
         'transform 100ms ease-in-out, opacity 100ms ease-in-out';
@@ -770,6 +781,7 @@ export class ObcTable extends LitElement {
           --selection-column-width: var(--menu-navigation-components-table-item-touch-target-size);
         "
         role=${this.hasHierarchy ? 'treegrid' : 'table'}
+        aria-label=${ifDefined(this.ariaLabel ?? undefined)}
       >
         ${
           this.showHeader

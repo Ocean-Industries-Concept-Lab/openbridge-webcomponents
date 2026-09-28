@@ -16,7 +16,7 @@ export class ObcPump extends ObcAbstractAutomationButtonMotorized {
 
   override get icon() {
     if (this.vertical) {
-      if (this.on) {
+      if (this.turnedOn) {
         return html`<obi-pump-on-vertical
             usecsscolor
             slot="icon"
@@ -36,7 +36,7 @@ export class ObcPump extends ObcAbstractAutomationButtonMotorized {
           ></obi-pump-off-vertical>`;
       }
     } else {
-      if (this.on) {
+      if (this.turnedOn) {
         return html`<obi-pump-on-horizontal
             usecsscolor
             slot="icon"

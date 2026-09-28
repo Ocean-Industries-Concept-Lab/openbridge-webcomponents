@@ -76,7 +76,8 @@ export class ObcAdviceMenuItem extends LitElement {
   @property({type: String}) primaryActionLabel = '';
   @property({type: String}) secondaryActionLabel = '';
 
-  private handleMessageClick() {
+  private handleMessageClick(event: Event) {
+    event.stopPropagation();
     this.open = !this.open;
     this.dispatchEvent(
       new CustomEvent('item-click', {

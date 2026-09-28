@@ -1,6 +1,7 @@
 import {LitElement, css, html, svg} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
+import {clamp} from '../../svghelpers/math.js';
 
 export enum HeaveIndicatorType {
   enhanced = 'enhanced',
@@ -102,7 +103,7 @@ export class ObcHeaveIndicator extends LitElement {
     if (!Number.isFinite(value)) {
       return 0;
     }
-    return Math.max(-1, Math.min(1, value));
+    return clamp(value, -1, 1);
   }
 
   private get clampedValue() {

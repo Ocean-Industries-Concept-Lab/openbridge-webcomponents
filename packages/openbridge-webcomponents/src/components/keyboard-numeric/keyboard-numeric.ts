@@ -98,6 +98,7 @@ const ALLOWED_CHARS_PATTERN = `^[${ALLOWED_CHARS.map((c) =>
  * @property unit - Unit text (%, kg, °C, etc.)
  * @property inputFieldTextAlign - Text alignment in input field
  * @property validationPattern - Optional regex pattern for validation (applies to both keyboard and direct input)
+ * @property closeLabel - Accessible name of the close button; the icon carries none.
  * @slot leading-icon - Custom leading icon shown inside the input field (rendered when `hasLeadingIcon` is true).
  * @fires {CustomEvent<void>} close-click - Fired when the close button (or Escape) dismisses the keyboard.
  * @fires {CustomEvent<{value: string}>} value-change - Fired whenever the current value changes.
@@ -112,6 +113,8 @@ export class ObcKeyboardNumeric extends LitElement {
   @property({type: Boolean}) hasTitleBar = false;
 
   @property({type: String}) label = 'Parameter name';
+
+  @property({type: String}) closeLabel = 'Close';
 
   @property({type: String}) value = '';
 
@@ -279,10 +282,15 @@ export class ObcKeyboardNumeric extends LitElement {
     if (e.key === 'Enter') {
       e.preventDefault();
       this.handleDone();
-    } else if (e.key === 'Escape') {
-      e.preventDefault();
-      this.handleCloseClick();
     }
+  }
+
+  // The keypad is an overlay: Escape dismisses it from the value field and
+  // from any focused key alike.
+  private handleKeydown(e: KeyboardEvent) {
+    if (e.key !== 'Escape') return;
+    e.preventDefault();
+    this.handleCloseClick();
   }
 
   private renderCalculationRow() {
@@ -292,30 +300,35 @@ export class ObcKeyboardNumeric extends LitElement {
       <div class="calculation-container">
         <obc-icon-button
           class="calculation-button"
+          aria-label="Plus"
           @click=${() => this.handleCalculationKey('+')}
         >
           <obi-up-iec></obi-up-iec>
         </obc-icon-button>
         <obc-icon-button
           class="calculation-button"
+          aria-label="Minus"
           @click=${() => this.handleCalculationKey('-')}
         >
           <obi-down-iec></obi-down-iec>
         </obc-icon-button>
         <obc-icon-button
           class="calculation-button"
+          aria-label="Multiply"
           @click=${() => this.handleCalculationKey('×')}
         >
           <obi-multiply></obi-multiply>
         </obc-icon-button>
         <obc-icon-button
           class="calculation-button"
+          aria-label="Divide"
           @click=${() => this.handleCalculationKey('÷')}
         >
           <obi-divide></obi-divide>
         </obc-icon-button>
         <obc-icon-button
           class="calculation-button"
+          aria-label="Equals"
           @click=${() => this.handleCalculationKey('=')}
         >
           <obi-equal></obi-equal>
@@ -379,7 +392,7 @@ export class ObcKeyboardNumeric extends LitElement {
       this.hasTitleBar && this.type === ObcKeyboardNumericType.Floating;
 
     return html`
-      <div class="wrapper type-${this.type}">
+      <div class="wrapper type-${this.type}" @keydown=${this.handleKeydown}>
         ${
           showTitleBar
             ? html`
@@ -387,6 +400,7 @@ export class ObcKeyboardNumeric extends LitElement {
                   <div class="parameter-name">${this.label}</div>
                   <obc-icon-button
                     variant="flat"
+                    aria-label=${this.closeLabel}
                     @click=${this.handleCloseClick}
                   >
                     <obi-close-google></obi-close-google>

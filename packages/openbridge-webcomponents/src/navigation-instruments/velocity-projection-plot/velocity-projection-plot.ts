@@ -11,7 +11,7 @@ import compentStyle from './velocity-projection-plot.css?inline';
 import '../watch/watch.js';
 import {VesselImage, VesselImageSize} from '../watch/watch.js';
 import {customElement} from '../../decorator.js';
-import {degToRad} from '../../svghelpers/math.js';
+import {degToRad, clamp} from '../../svghelpers/math.js';
 
 export interface VelocityProjectionDatapoint {
   startAngleDeg: number;
@@ -43,7 +43,7 @@ export class ObcVelocityProjectionPlot extends LitElement {
     const currentLevel =
       this.currentSpeedKnots == null
         ? null
-        : Math.max(0, Math.min(4, Math.round(this.currentSpeedKnots)));
+        : clamp(Math.round(this.currentSpeedKnots), 0, 4);
 
     return html`
       <div class="container">

@@ -23,7 +23,7 @@ export class ObcTransformer extends ObcAbstractAutomationButtonSquared {
   override get icon() {
     switch (this.alternativeIcon) {
       case TransformerAlternativeIcon.transformer02:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-transformer-02-on
               usecsscolor
               slot="icon"
@@ -43,7 +43,7 @@ export class ObcTransformer extends ObcAbstractAutomationButtonSquared {
             ></obi-transformer-02-off>`;
         }
       default:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-transformer-01-on
               usecsscolor
               slot="icon"

@@ -819,6 +819,7 @@ export const Hierarchy: Story = {
   },
   render: (args) => {
     return html`<obc-table
+      aria-label="Equipment"
       .data=${hierarchyRows(systemTree)}
       .columns=${args.columns}
       .striped=${true}
@@ -885,11 +886,19 @@ export const CyclicHierarchy: Story = {
     return html`<div style="display: grid; gap: 24px; width: ${args.width}px;">
       <div>
         <p>Unsorted</p>
-        <obc-table .data=${cyclicRows()} .columns=${columns(false)}></obc-table>
+        <obc-table
+          aria-label="Unsorted equipment"
+          .data=${cyclicRows()}
+          .columns=${columns(false)}
+        ></obc-table>
       </div>
       <div>
         <p>Sorted on System — the cyclic rows are recovered</p>
-        <obc-table .data=${cyclicRows()} .columns=${columns(true)}></obc-table>
+        <obc-table
+          aria-label="Equipment sorted on System"
+          .data=${cyclicRows()}
+          .columns=${columns(true)}
+        ></obc-table>
       </div>
     </div>`;
   },
@@ -954,6 +963,7 @@ export const CycleWithDescendants: Story = {
       <div>
         <p>Unsorted</p>
         <obc-table
+          aria-label="Unsorted equipment"
           .data=${cycleWithDescendantRows()}
           .columns=${columns(false)}
         ></obc-table>
@@ -961,6 +971,7 @@ export const CycleWithDescendants: Story = {
       <div>
         <p>Sorted on System — the cycle and its descendant are recovered</p>
         <obc-table
+          aria-label="Equipment sorted on System"
           .data=${cycleWithDescendantRows()}
           .columns=${columns(true)}
         ></obc-table>
