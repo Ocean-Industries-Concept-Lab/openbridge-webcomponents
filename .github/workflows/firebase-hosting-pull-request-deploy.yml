@@ -1,3 +1,11 @@
+# Deploys the Storybook and vue-demo builds to a per-pull-request preview
+# channel.
+#
+# The channel id is `pr-<number>` and nothing else. It used to carry the PR
+# title as well, which meant every retitle abandoned a channel and created
+# another: the comment was updated but any link copied earlier kept serving the
+# old build, and the sites ran into Firebase's per-site channel quota (429,
+# "channel quota reached") with the deploy failing on a green build.
 name: Deploy to Firebase Hosting on pull request
 
 on:
@@ -43,21 +51,16 @@ jobs:
 
       - run: unzip pr.zip
 
-      - name: "Store github pr number and title"
+      - name: "Store github pr number"
         uses: actions/github-script@v8
-        id: store_pr_number_and_title
+        id: store_pr_number
         with:
           script: |
             let fs = require('fs');
-            var prNumber = fs.readFileSync('${{github.workspace}}/NR', 'utf8');
-            var pr = await github.rest.pulls.get({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: prNumber
-            });
-            var prTitle = pr.data.title;
-            core.setOutput('prNumber', prNumber);
-            core.setOutput('prTitle', prTitle);
+            core.setOutput(
+              'prNumber',
+              fs.readFileSync('${{github.workspace}}/NR', 'utf8').trim()
+            );
 
       - name: "Download artifact"
         uses: actions/github-script@v8
@@ -98,7 +101,7 @@ jobs:
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_OPENBRIDGE_DEMO }}"
           projectId: openbridge-demo
           entrypoint: "packages/openbridge-webcomponents"
-          channelId: "${{ steps.store_pr_number_and_title.outputs.prNumber }}-${{ steps.store_pr_number_and_title.outputs.prTitle }}"
+          channelId: "pr-${{ steps.store_pr_number.outputs.prNumber }}"
 
       - name: "Comment on PR"
         uses: actions/github-script@v8
@@ -106,7 +109,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             var fs = require('fs');
-            var issue_number = ${{ steps.store_pr_number_and_title.outputs.prNumber }}
+            var issue_number = ${{ steps.store_pr_number.outputs.prNumber }}
             // check if comment already exists
             var comments = await github.rest.issues.listComments({
               owner: context.repo.owner,
@@ -166,21 +169,16 @@ jobs:
 
       - run: unzip pr.zip
 
-      - name: "Store github pr number and title"
+      - name: "Store github pr number"
         uses: actions/github-script@v8
-        id: store_pr_number_and_title
+        id: store_pr_number
         with:
           script: |
             let fs = require('fs');
-            var prNumber = fs.readFileSync('${{github.workspace}}/NR', 'utf8');
-            var pr = await github.rest.pulls.get({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: prNumber
-            });
-            var prTitle = pr.data.title;
-            core.setOutput('prNumber', prNumber);
-            core.setOutput('prTitle', prTitle);
+            core.setOutput(
+              'prNumber',
+              fs.readFileSync('${{github.workspace}}/NR', 'utf8').trim()
+            );
 
       - name: "Download artifact"
         uses: actions/github-script@v8
@@ -221,7 +219,7 @@ jobs:
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_OPENBRIDGE_DEMO }}"
           projectId: openbridge-demo
           entrypoint: "packages/vue-demo"
-          channelId: "${{ steps.store_pr_number_and_title.outputs.prNumber }}-${{ steps.store_pr_number_and_title.outputs.prTitle }}"
+          channelId: "pr-${{ steps.store_pr_number.outputs.prNumber }}"
 
       - name: "Comment on PR"
         uses: actions/github-script@v8
@@ -229,7 +227,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             var fs = require('fs');
-            var issue_number = ${{ steps.store_pr_number_and_title.outputs.prNumber }}
+            var issue_number = ${{ steps.store_pr_number.outputs.prNumber }}
             // check if comment already exists
             var comments = await github.rest.issues.listComments({
               owner: context.repo.owner,
