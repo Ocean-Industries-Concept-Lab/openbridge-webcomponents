@@ -17,11 +17,11 @@
       <canvas id="pipes"></canvas>
 
       <!-- `tag` is the component's own label, so it sits correctly inside the
-           readout stack instead of colliding with it. Motor and pump run (`on`,
+           readout stack instead of colliding with it. Motor and pump run (`turnedOn`,
            driving the two open pipes); the valve is shut, so its pipes read
            closed. -->
-      <obc-motor id="motor" on tag="Motor" readoutposition="top"></obc-motor>
-      <obc-pump id="pump" on tag="Pump" readoutposition="top"></obc-pump>
+      <obc-motor id="motor" turnedon tag="Motor" readoutposition="top"></obc-motor>
+      <obc-pump id="pump" turnedon tag="Pump" readoutposition="top"></obc-pump>
       <obc-digital-valve id="valve" tag="Valve" readoutposition="bottom"></obc-digital-valve>
     </div>
 

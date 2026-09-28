@@ -88,6 +88,7 @@ export const argTypesAbstractAutomationButtonPassiveRound = {
 
 export const argTypesAbstractAutomationButtonPassiveSquare = {
   ...argTypesAbstractAutomationButton,
+  on: {table: {disable: true}, control: false},
   variant: {
     options: ['square', 'flat'],
     control: {type: 'radio'},
@@ -100,6 +101,7 @@ export const argTypesAbstractAutomationButtonPassiveSquare = {
 
 export const argTypesAbstractAutomationButtonMotorized = {
   ...argTypesAbstractAutomationButton,
+  on: {table: {disable: true}, control: false},
   speedInPercent: {
     control: {type: 'range', min: 0, max: 100, step: 1},
     description: 'Deprecated, use `speed` together with `speedUnit` instead.',

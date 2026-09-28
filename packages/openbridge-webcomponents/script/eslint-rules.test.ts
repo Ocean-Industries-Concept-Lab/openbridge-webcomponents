@@ -440,3 +440,47 @@ describe('openbridge/positive-boolean-name', () => {
     );
   });
 });
+
+describe('openbridge/no-event-like-property-name', () => {
+  it('rejects properties and attributes that start with on', () => {
+    ruleTester.run(
+      'no-event-like-property-name',
+      openbridgePlugin.rules['no-event-like-property-name'],
+      {
+        valid: [
+          'class A { @property({type: Boolean}) turnedOn = false; }',
+          "class A { @property({type: Boolean, attribute: 'is-on'}) active = false; }",
+          'class A { @state() onHold = false; }',
+          'class A { get _on() { return true; } }',
+          'class A { onClick = () => {}; }',
+        ],
+        invalid: [
+          {
+            code: 'class A { @property({type: Boolean}) on = false; }',
+            errors: 1,
+          },
+          {
+            code: 'class A { @property({type: String}) onTop = ""; }',
+            errors: 1,
+          },
+          {
+            code: "class A { @property({type: Boolean, attribute: 'on-state'}) active = false; }",
+            errors: 1,
+          },
+          {
+            code: "class A { @property({type: Boolean, attribute: 'hold'}) onHold = false; }",
+            errors: 1,
+          },
+          {
+            code: 'class A { @property({type: Boolean}) set on(v) {} }',
+            errors: 1,
+          },
+          {
+            code: 'class A { @property({type: Boolean}) accessor onHold = false; }',
+            errors: 1,
+          },
+        ],
+      }
+    );
+  });
+});
