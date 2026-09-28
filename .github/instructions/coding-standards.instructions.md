@@ -159,6 +159,14 @@ When refactoring an existing negative boolean, also rename it in the interface, 
 `disable…` or `no…`. The one left, `obc-integration-bar`'s `hideHomeButton`,
 is public API and carries its suppression with that reason.
 
+## Property names
+
+No `@property` name or attribute starts with `on`. Svelte binds any
+`on…={…}` markup attribute as an event listener, and Vue binds `on` followed by
+anything but a lowercase letter (`onHold`, `on-hold`) the same way, so such a
+property cannot be set from a template: `turnedOn`, not `on` (#1090).
+`npm run lint:eslint` rejects one.
+
 ## Storybook title conventions
 
 Story `title` and `name` fields must use **Title Case** — enforced by ESLint rule `openbridge/storybook-title-case` (auto-fixable).

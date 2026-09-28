@@ -1077,6 +1077,56 @@ export const openbridgePlugin = {
         };
       },
     },
+
+    // Svelte binds an `on…={…}` markup attribute as an event listener, so a
+    // property named like one cannot be set from a template (#1090).
+    'no-event-like-property-name': {
+      meta: {
+        type: 'problem',
+        docs: {
+          description:
+            'Keep @property names and attributes from starting with `on`',
+        },
+        schema: [],
+      },
+      create(context) {
+        const propertyOptions = (node) => {
+          for (const decorator of node.decorators ?? []) {
+            const expr = decorator.expression;
+            if (
+              expr?.type === 'CallExpression' &&
+              expr.callee.type === 'Identifier' &&
+              expr.callee.name === 'property'
+            ) {
+              return expr.arguments[0]?.properties ?? [];
+            }
+          }
+          return null;
+        };
+        const check = (node) => {
+          if (node.key.type !== 'Identifier') return;
+          const options = propertyOptions(node);
+          if (!options) return;
+          const attribute = options.find(
+            (p) =>
+              p.type === 'Property' &&
+              p.key.type === 'Identifier' &&
+              p.key.name === 'attribute' &&
+              p.value.type === 'Literal' &&
+              typeof p.value.value === 'string'
+          )?.value.value;
+          const name = [node.key.name, attribute].find(
+            (n) => typeof n === 'string' && /^on/i.test(n)
+          );
+          if (!name) return;
+          context.report({
+            node: node.key,
+            message: `\`${name}\` starts with \`on\`, which Svelte binds as an event listener in markup, so the property cannot be set there (docs/agents/coding-standards.md § Property names).`,
+          });
+        };
+        return {PropertyDefinition: check, MethodDefinition: check};
+      },
+    },
   },
 };
 
@@ -1128,6 +1178,7 @@ export default [
       'openbridge/use-math-helpers': 'error',
       'openbridge/no-positive-tabindex': 'error',
       'openbridge/positive-boolean-name': 'error',
+      'openbridge/no-event-like-property-name': 'error',
       'openbridge/storybook-title-case': 'off',
       'openbridge/story-lifecycle-tags': 'off',
       // Disabled because eslint-plugin-file-extension-in-import-ts is not yet
@@ -1163,6 +1214,7 @@ export default [
       'openbridge/use-math-helpers': 'off',
       'openbridge/no-positive-tabindex': 'off',
       'openbridge/positive-boolean-name': 'off',
+      'openbridge/no-event-like-property-name': 'off',
     },
   },
   {
