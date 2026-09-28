@@ -33,7 +33,7 @@ export default defineConfig(({mode}) => {
         fileName: 'openbridge-webcomponents',
         formats: ['es'],
       },
-      rollupOptions: {
+      rolldownOptions: {
         input: isBundleMode ? 'bundle.ts' : input,
         external: isBundleMode
           ? // For bundle mode, bundle everything (no externals)
@@ -53,17 +53,18 @@ export default defineConfig(({mode}) => {
               entryFileNames: 'openbridge-webcomponents.bundle.js',
               dir: 'bundle',
               preserveModules: false,
-              inlineDynamicImports: true,
+              codeSplitting: false,
             }
           : // Regular mode: preserve modules
             {
               format: 'es',
               entryFileNames: (opt) => {
-                return `${opt.name}.js`;
+                // Rolldown keeps the `?inline` query in the chunk name; a `?` in
+                // a published filename breaks URL-based imports for consumers.
+                return `${opt.name.split('?')[0]}.js`;
               },
               preserveModules: true,
               preserveModulesRoot: 'src',
-              inlineDynamicImports: false,
             },
       },
     },
@@ -83,12 +84,15 @@ export default defineConfig(({mode}) => {
       {
         name: 'custom-postcss',
         async generateBundle() {
-          const inputCSS = path.resolve(__dirname, 'src/main.css'); // Your source CSS
+          const inputCSS = path.resolve(import.meta.dirname, 'src/main.css'); // Your source CSS
           // Make dist folder if it doesn't exist
-          if (!fs.existsSync(path.resolve(__dirname, 'dist'))) {
-            fs.mkdirSync(path.resolve(__dirname, 'dist'));
+          if (!fs.existsSync(path.resolve(import.meta.dirname, 'dist'))) {
+            fs.mkdirSync(path.resolve(import.meta.dirname, 'dist'));
           }
-          const outputCSS = path.resolve(__dirname, 'dist/openbridge.css'); // Destination
+          const outputCSS = path.resolve(
+            import.meta.dirname,
+            'dist/openbridge.css'
+          ); // Destination
 
           if (fs.existsSync(inputCSS)) {
             const css = fs.readFileSync(inputCSS, 'utf-8');

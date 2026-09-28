@@ -296,13 +296,14 @@ export class ObcStepperBox extends LitElement {
   }
 
   /**
-   * A step that reaches a bound disables the button that was pressed, and the
-   * browser drops focus from a disabled button. Focus moves to the field so
-   * the next key still reaches the stepper.
+   * A step to a bound disables the pressed button, and Chromium drops its focus
+   * only after this runs; checking that button, not `:focus-within`, lets
+   * focus move to the field so the next key still reaches the stepper.
    */
   private async keepFocusInside() {
     await this.updateComplete;
-    if (this.matches(':focus-within')) return;
+    const focused = this.shadowRoot!.activeElement;
+    if (focused && !focused.hasAttribute('disabled')) return;
     const tabbables = composedTabbables(this.shadowRoot!);
     (
       tabbables.find((el) => el instanceof HTMLInputElement) ?? tabbables[0]

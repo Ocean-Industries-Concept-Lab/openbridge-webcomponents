@@ -56,9 +56,12 @@ npx vitest run --project storybook corner
 
 - The package is a workspace member; the root `package-lock.json` pins its
   dependencies.
-- `storybook`, `@storybook/addon-vitest`, `@storybook/html` and
-  `@storybook/html-vite` are pinned to the version the root lock resolves for
-  the core. A caret range resolves a newer Storybook and nests a second copy.
+- `storybook`, `@storybook/addon-vitest` and `@storybook/html-vite` are
+  pinned to the version the root lock resolves for the core, and move in the
+  same commit as the core's. A caret range resolves a newer Storybook and nests
+  a second copy; a pin left behind is hoisted to the root instead, where the
+  core's `storybook-addon-vis` resolves it and the core's `typecheck:tooling`
+  fails on its `.storybook/vitest.setup.ts`.
 - `@oicl/openbridge-webcomponents` is `"*"`: `build.yml` rewrites the core
   version before its `npm install`, and a caret range stops matching the
   workspace copy.

@@ -3,7 +3,7 @@ import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescri
 import skipFormattingConfig from '@vue/eslint-config-prettier/skip-formatting'
 import js from '@eslint/js'
 
-import { includeIgnoreFile } from '@eslint/compat'
+import { includeIgnoreFile } from 'eslint/config'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import vueParser from 'vue-eslint-parser'
