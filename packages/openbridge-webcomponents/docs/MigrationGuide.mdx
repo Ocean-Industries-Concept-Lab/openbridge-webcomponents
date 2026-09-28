@@ -48,7 +48,7 @@ The [Changelog](?path=/docs/introduction-changelog--docs) lists every change. If
 - **Alert flashing:** `--alarm-blink-*` and `--warning-blink-*` no longer animate; use `--flash-*` and `blinkingAll()`. See [Alert Flashing Variables](#alert-flashing-variables).
 - **CSS variables:** 141 were renamed or removed, and the old names fail without an error. See [Renamed CSS Variables](#renamed-css-variables).
 - **Component APIs:** properties were renamed, retyped or given new defaults, among them the [automation badges](#badges-take-values-silent), [wind speeds in knots](#wind-speed-in-knots-silent), [`obc-card` timeouts in seconds](#obc-card-timeouts-in-seconds-silent), [`obc-number-input-field` values as numbers](#obc-number-input-field-value-and-events) and [the motorized buttons' `on` as `turnedOn`](#on-is-now-turnedon-silent). See [Component Changes](#component-changes) and [API Mapping by Component](#api-mapping-by-component).
-- **Keyboard:** the tab row, the toggle button group, the context menu and the navigation menu are one tab stop each, with the arrow keys moving between their items, and the modals take focus when they connect. See [Keyboard, Focus and Events](#keyboard-focus-and-events).
+- **Keyboard:** the tab row, the toggle button group and the context menu are one tab stop each, with the arrow keys moving between their items, and the modals take focus when they connect. See [Keyboard, Focus and Events](#keyboard-focus-and-events).
 - **Icons:** 50 icons were renamed, and the wind icons ending in `-1`, `-5` and `-10` kept their names but show a different glyph. See [Icons](#icons).
 - **Deprecations:** 11 components are deprecated. They still work in 2.0. See [Deprecated Components](#deprecated-components).
 
@@ -823,7 +823,7 @@ The components that carry a widget role follow the [WAI-ARIA Authoring Practices
 
 ### One Tab Stop per Composite Widget _(silent)_
 
-`obc-tab-row`, `obc-toggle-button-group`, `obc-context-menu-input` and `obc-navigation-menu` hold a single tab stop each, and the arrow keys move between their items, with `Home` and `End` for the first and last. In 1.0.1 every item was its own tab stop, so a test that reached the last of five tabs with five presses of `Tab` now leaves the row on the second.
+`obc-tab-row`, `obc-toggle-button-group` and `obc-context-menu-input` hold a single tab stop each, and the arrow keys move between their items, with `Home` and `End` for the first and last. In 1.0.1 every item was its own tab stop, so a test that reached the last of five tabs with five presses of `Tab` now leaves the row on the second.
 
 Two buttons left the tab order, each with a key in its place:
 
@@ -842,7 +842,7 @@ A page that keeps a modal in the DOM and hides it with CSS now takes focus on lo
 
 ### Accessible Names in English
 
-Icon-only buttons name themselves for a screen reader, and the defaults are English. A localized page sets them:
+Icon-only buttons name themselves for a screen reader, and the defaults are English, so a localized page sets them. `obc-topbar-message-item` is the exception: its `actionLabel` is empty by default and the button stays unnamed until the page sets it.
 
 <div style={{overflowX: 'auto'}}>
 
@@ -850,11 +850,11 @@ Icon-only buttons name themselves for a screen reader, and the defaults are Engl
 
 </div>
 
-`obc-tab-row` and `obc-toggle-button-group` take their own name from `label`, and `obc-table` and `obc-alert-list-details-experimental` forward `aria-label`.
+`obc-tab-row` names its tab list through `label`, and `obc-toggle-button-group`, `obc-table` and `obc-alert-list-details-experimental` take their name from `aria-label`.
 
 ### Events Stay Inside Their Component _(silent)_
 
-A component no longer lets a child's event out unless it documents that event itself, so what an element fires is what its `@fires` list in the docs shows. 75 events that crossed the shadow boundary in 1.0.1 now stop where they are handled, among them the readout source events of the instruments and `tab-click` inside `obc-tab-row`. None of them was documented in 1.0.1 either.
+A component no longer lets a child's event out unless it documents that event itself, so what an element fires is what its `@fires` list in the docs shows. 75 events that crossed the shadow boundary in 1.0.1 without any element documenting them were closed off: most are stopped where they are handled, among them the readout source events of the instruments and `tab-click` inside `obc-tab-row`, and the rest now carry an `@fires` entry on the component that passes them on, as `event-click` does on `obc-date-item` and `obc-calendar`.
 
 One documented event changed: `obc-bar-horizontal`, `obc-bar-vertical`, `obc-gauge-horizontal` and `obc-gauge-vertical` fire `scale-dimensions-changed` without `composed`, so it no longer crosses out of the shadow root of a component that renders one of them. A listener on the scale itself, or on an ancestor in the same tree, still sees it.
 
