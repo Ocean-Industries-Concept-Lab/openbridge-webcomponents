@@ -81,7 +81,7 @@ export type ObcCheckboxItemExpandToggleEvent = CustomEvent<boolean>;
  * @property status - Checkbox status: `unchecked`, `checked` or `mixed`.
  * @property state - Item state: `enabled` or `disabled`.
  * @property disabled - Disables the row and the inner checkbox.
- * @property label - Text label; also the checkbox's accessible name.
+ * @property label - Text label; also the accessible name of the checkbox and the chevron button, so it must not be empty.
  * @property description - Secondary line under the label; hidden when empty.
  * @property level - Depth in a nested list. 0 is a plain row; 1 reserves the chevron slot; each level above 1 adds a spacer.
  * @property expandable - Shows the chevron button that fires `expand-toggle`.
@@ -89,6 +89,8 @@ export type ObcCheckboxItemExpandToggleEvent = CustomEvent<boolean>;
  * @availableWhen expanded expandable==true
  * @property hoverStyle - Which box shows hover and focus: the whole row (`touch-target`) or the checkbox (`visual-target`).
  * @property ariaDescribedBy - Forwarded to the inner checkbox as `aria-describedby`.
+ * @property focusable - Whether the row's checkbox is in the tab order. `obc-context-menu-input` manages
+ *   this as a roving tabindex (one item focusable at a time); a standalone row stays tabbable.
  * @fires {ObcCheckboxChangeEvent} change - Emitted when status changes.
  * @fires {ObcCheckboxItemExpandToggleEvent} expand-toggle - Emitted when the chevron is activated; detail is the next `expanded` value. Bubbles and is composed.
  * @stable
@@ -101,6 +103,8 @@ export class ObcCheckboxItem extends LitElement {
     ObcCheckboxItemState.enabled;
 
   @property({type: Boolean}) disabled = false;
+
+  @property({type: Boolean, attribute: false}) focusable = true;
 
   @property({type: String}) label = '';
 
@@ -190,13 +194,15 @@ export class ObcCheckboxItem extends LitElement {
       @click=${this.handleChevronClick}
     >
       <span class="chevron-visible">
-        ${this.expanded
-          ? html`<obi-chevron-down-google
-              class="chevron-icon"
-            ></obi-chevron-down-google>`
-          : html`<obi-chevron-right-google
-              class="chevron-icon"
-            ></obi-chevron-right-google>`}
+        ${
+          this.expanded
+            ? html`<obi-chevron-down-google
+                class="chevron-icon"
+              ></obi-chevron-down-google>`
+            : html`<obi-chevron-right-google
+                class="chevron-icon"
+              ></obi-chevron-right-google>`
+        }
       </span>
     </button>`;
   }
@@ -223,18 +229,23 @@ export class ObcCheckboxItem extends LitElement {
         })}
         @click=${this.handleItemClick}
       >
-        ${depth > 0
-          ? html`<div
-              class="nested-spacer"
-              aria-hidden="true"
-              style=${styleMap({'--checkbox-item-depth': String(depth)})}
-            ></div>`
-          : nothing}
-        ${hasChevronSlot
-          ? html`<div class="chevron-container">${this.renderChevron()}</div>`
-          : nothing}
+        ${
+          depth > 0
+            ? html`<div
+                class="nested-spacer"
+                aria-hidden="true"
+                style=${styleMap({'--checkbox-item-depth': String(depth)})}
+              ></div>`
+            : nothing
+        }
+        ${
+          hasChevronSlot
+            ? html`<div class="chevron-container">${this.renderChevron()}</div>`
+            : nothing
+        }
         <div class="content-container">
           <obc-checkbox
+            .focusable=${this.focusable}
             .status=${this.status}
             .state=${CheckboxState.enabled}
             .disabled=${isDisabled}
@@ -245,11 +256,13 @@ export class ObcCheckboxItem extends LitElement {
           ></obc-checkbox>
           <div class="checkbox-label-container">
             <span class="checkbox-label">${this.label}</span>
-            ${this.description
-              ? html`<span class="checkbox-description"
-                  >${this.description}</span
-                >`
-              : nothing}
+            ${
+              this.description
+                ? html`<span class="checkbox-description"
+                    >${this.description}</span
+                  >`
+                : nothing
+            }
           </div>
         </div>
       </div>

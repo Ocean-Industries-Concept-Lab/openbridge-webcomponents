@@ -8,3 +8,4 @@ export * from './tooltip.js';
 export * from './legend.js';
 export * from './x-value.js';
 export * from './label-threshold.js';
+export * from './range-labels.js';

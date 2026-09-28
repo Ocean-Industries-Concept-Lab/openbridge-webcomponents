@@ -19,20 +19,22 @@ normally.
 
 ## What is generated, and by what
 
-| Path                                     | Regenerate with                  | Source of truth                                            |
-| ---------------------------------------- | -------------------------------- | ---------------------------------------------------------- |
-| `src/icons/**` (2000+ components)        | `npm run download:icons`         | The OpenBridge Icons Figma file                            |
-| `src/generated/**` _(gitignored)_        | `npm run build:translations`     | `lit localize` extraction from `msg()` calls in source     |
-| `src/palettes/variables.css`             | obc-figma-plugin `cssvariables`  | OpenBridge 6.1 Figma file (variable definitions)           |
-| `src/mixins/fonts.css`                   | obc-figma-plugin `font-exports`  | OpenBridge 6.1 Figma file (text styles)                    |
-| `script/figmavariables.json`             | obc-figma-plugin `variables map` | OpenBridge **Icons** Figma file — not the main design file |
-| `packages/openbridge-webcomponents-*/**` | `npm run wrappers`               | The core package's source JSDoc, via `lit labs gen`        |
-| `custom-elements.json`                   | `npm run analyze`                | The core package's source JSDoc, via `cem analyze`         |
-| `.github/instructions/**`                | `npm run agents:sync`            | `docs/agents/*.md`                                         |
-| `.github/copilot-instructions.md`        | `npm run agents:sync`            | `docs/agents/*.md`                                         |
-| `.cursor/rules/**`                       | `npm run agents:sync`            | `docs/agents/*.md`                                         |
-| `CLAUDE.md` _(gitignored)_               | `npm run agents:sync`            | pointer only — carries no rules of its own                 |
-| `AGENTS.md` § 4 routing table            | `npm run agents:sync`            | the `globs` frontmatter of every `docs/agents/*.md`        |
+| Path                                                                                              | Regenerate with                                                                      | Source of truth                                            |
+| ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ | ---------------------------------------------------------- |
+| `src/icons/**` (2000+ components)                                                                 | `npm run download:icons`                                                             | The OpenBridge Icons Figma file                            |
+| `src/generated/**` _(gitignored)_                                                                 | `npm run build:translations`                                                         | `lit localize` extraction from `msg()` calls in source     |
+| `src/palettes/variables.css`                                                                      | obc-figma-plugin `cssvariables`                                                      | OpenBridge 6.1 Figma file (variable definitions)           |
+| `src/mixins/fonts.css`                                                                            | obc-figma-plugin `font-exports`                                                      | OpenBridge 6.1 Figma file (text styles)                    |
+| `script/figmavariables.json`                                                                      | obc-figma-plugin `variables map`                                                     | OpenBridge **Icons** Figma file — not the main design file |
+| `packages/openbridge-webcomponents-*/**`                                                          | `npm run wrappers`                                                                   | The core package's source JSDoc, via `lit labs gen`        |
+| `src/navigation-instruments/course-arrows/course-arrows-art.ts`                                   | export from Figma (see `watch-radial-instruments.md`)                                | OpenBridge 6.1 Figma file (HDG/COG arrow art)              |
+| `packages/openbridge-webcomponents/__vis__/**`, `packages/vue-demo/e2e/visual/__screenshots__/**` | `npx vitest run --project storybook <filter> --update`, `npm run test:visual:update` | the stories and demo routes, rendered on Linux             |
+| `custom-elements.json`                                                                            | `npm run analyze`                                                                    | The core package's source JSDoc, via `cem analyze`         |
+| `.github/instructions/**`                                                                         | `npm run agents:sync`                                                                | `docs/agents/*.md`                                         |
+| `.github/copilot-instructions.md`                                                                 | `npm run agents:sync`                                                                | `docs/agents/*.md`                                         |
+| `.cursor/rules/**`                                                                                | `npm run agents:sync`                                                                | `docs/agents/*.md`                                         |
+| `CLAUDE.md` _(gitignored)_                                                                        | `npm run agents:sync`                                                                | pointer only — carries no rules of its own                 |
+| `AGENTS.md` § 4 routing table                                                                     | `npm run agents:sync`                                                                | the `globs` frontmatter of every `docs/agents/*.md`        |
 
 `custom-elements.json` is also **gitignored** — it is regenerated per checkout
 rather than committed.
@@ -49,15 +51,16 @@ per-machine — a fresh clone or new laptop never has it.
 2. Put it in `packages/openbridge-webcomponents/.env`:
    `FIGMA_TOKEN=<token>`
 3. Verify against the icons file, not `/v1/me` — a file-scoped token returns
-   403 on `/v1/me` while working fine for the download:
+   403 on `/v1/me` while working fine for the download. The scripts load
+   `.env` themselves; a shell does not:
    ```bash
-   curl -s -H "X-Figma-Token: $FIGMA_TOKEN" \
-     "https://api.figma.com/v1/files/IkDwOtza6OdjLbIdWA7mI7?depth=1" | head -c 200
+   set -a; source .env; set +a
+   curl -s -o /dev/null -w '%{http_code}\n' -H "X-Figma-Token: $FIGMA_TOKEN" \
+     "https://api.figma.com/v1/files/IkDwOtza6OdjLbIdWA7mI7?depth=1"   # 200
    ```
 
-The full refresh playbook (variable map, tripwires, snapshots, bundle cap)
-lives in
-[IMPLEMENTATION_GUIDELINES.md § Icons](../../IMPLEMENTATION_GUIDELINES.md#-icons).
+The full refresh procedure (palette export, variable map, tripwires,
+snapshots, bundle cap) is [`figma-refresh.md`](../../docs/agents/figma-refresh.md).
 
 ## VariableID anatomy — why a refresh can "lose" every icon colour
 
@@ -106,8 +109,7 @@ Two more refresh gotchas:
   `script/figmavariables.json`. Re-run the plugin's `variables map` codegen
   against the **icons** Figma file (the map keys embed icon component node IDs,
   so the main design file produces a map that silently matches nothing), then
-  re-run `npm run download:icons`. See
-  [IMPLEMENTATION_GUIDELINES.md § Icons](../../IMPLEMENTATION_GUIDELINES.md#-icons).
+  re-run `npm run download:icons`. See [`figma-refresh.md`](../../docs/agents/figma-refresh.md).
 - **A missing colour token** → add it in Figma, re-run the `cssvariables`
   codegen, and replace `variables.css` wholesale. `npm run lint:variables`
   catches consumer CSS referencing tokens that do not exist, but cannot catch a

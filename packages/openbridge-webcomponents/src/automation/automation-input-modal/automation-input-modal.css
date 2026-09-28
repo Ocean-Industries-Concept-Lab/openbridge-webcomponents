@@ -3,6 +3,7 @@
 }
 
 .wrapper {
+  outline: none; /* the landing point for focus on open, not a control; the ring stays on the controls */
   width: min-content;
   display: grid;
   grid-template-columns: min-content min-content;

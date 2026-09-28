@@ -127,6 +127,7 @@ export {
  *
  * @property minValue - Minimum scale value
  * @property maxValue - Maximum scale value
+ * @property reverse - Plot `minValue` at the top so values grow downward.
  * @property side - Which side of the chart area this scale lives on (left or right)
  * @property showLabels - Show numerical value labels at primary tickmarks
  * @property mainTickmarks - Array of values for main tickmarks. When undefined, no main tickmarks shown. When empty array [], defaults to [minValue, 0, maxValue].
@@ -144,7 +145,7 @@ export {
  * @property highlightCurrentValue - When true, displays a dot indicator at the current value position.
  *   The dot is rendered in the scale band, touching its inner edge (towards the chart).
  *   This provides an alternative to bar fill for highlighting the current value.
- * @fires {CustomEvent} scale-dimensions-changed - Fired when layout-affecting properties change, providing dimension info for parent chart integration.
+ * @fires {CustomEvent} scale-dimensions-changed - Fired when layout-affecting properties change, providing dimension info for parent chart integration. It bubbles to the chart slot the gauge sits in and does not leave the shadow root around it.
  * @stable
  */
 @customElement('obc-gauge-vertical')
@@ -153,6 +154,7 @@ export class ObcGaugeVertical extends SetpointMixin(LitElement, {
 }) {
   @property({type: Number}) minValue = 0;
   @property({type: Number}) maxValue = 100;
+  @property({type: Boolean}) reverse = false;
 
   private readonly height = 384;
   private readonly paddingTop = CHART_DIMENSIONS.CANVAS_PADDING;
@@ -264,6 +266,7 @@ export class ObcGaugeVertical extends SetpointMixin(LitElement, {
       paddingEnd: this.paddingBottom,
       minValue: this.minValue,
       maxValue: this.maxValue,
+      reverse: this.reverse,
       hasScale: this.hasScale,
       labels: this.showLabels,
       hasBar: this.hasBar,
@@ -324,9 +327,9 @@ export class ObcGaugeVertical extends SetpointMixin(LitElement, {
         height=${this.fixedAspectRatio ? '100%' : `${this.height}px`}
         viewBox="${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}"
         preserveAspectRatio="${preserveAspectRatio}"
-        style="--scale: ${this.fixedAspectRatio
-          ? this._scale
-          : 1}; display: block;"
+        style="--scale: ${
+          this.fixedAspectRatio ? this._scale : 1
+        }; display: block;"
         part="svg"
       >
         ${parts.barContainer} ${parts.barFill} ${parts.scaleBackground}
@@ -398,22 +401,10 @@ export class ObcGaugeVertical extends SetpointMixin(LitElement, {
     // for both external scales and chart padding in fixedAspectRatioScaling mode.
     const dimensions = baseDimensions;
 
-    // console.debug(`[obc-gauge-vertical] Reporting dimensions:`, {
-    //   side: this.side,
-    //   thickness: dimensions.thickness,
-    //   height: this.height,
-    //   hasBar: this.hasBar,
-    //   hasScale: this.hasScale,
-    //   labels: this.labels,
-    //   fixedAspectRatio: this.fixedAspectRatio,
-    //   scale: this._scale,
-    // });
-
     this.dispatchEvent(
       new CustomEvent('scale-dimensions-changed', {
         detail: dimensions,
         bubbles: true,
-        composed: true,
       })
     );
   }

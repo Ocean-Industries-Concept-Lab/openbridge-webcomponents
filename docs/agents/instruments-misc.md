@@ -47,6 +47,18 @@ as a layout shell over those parts rather than an instrument in its own right.
 
 `obc-main-engine` builds on `thruster` and shares its thrust-bar vocabulary.
 
+`obc-depth-actual` takes its range from `navigation-instruments/depth/depth-shared.ts`
+(`ranges`, `maxDepth`, `autoRange`; `instrumentRange` is a deprecated alias):
+the rung sets the scale maximum, the tick pair, the air band above the
+waterline and the vessel factor, which is what the design's Shallow / Regular /
+Deep variants differ in (Figma `Depth-actual` 21150-180494). The frame is 336
+units in a 384 box; with `showLabels` (the default) the box grows by the
+design's 20-unit label spacing on every side, the `hasLabelSpacing` variant,
+so the start-anchored label column fits inside it the way the external scale
+reserves its label band. Labels come from `watchfaceLinear`'s opt-in `labels`;
+the air band above the waterline carries none. A depth at or past the range
+end draws no marker, as in the design's Deep example.
+
 ## Group 2 — no watch involvement
 
 `badge-command`, `instrument-field`, `readout-list`, `readout-list-item`,

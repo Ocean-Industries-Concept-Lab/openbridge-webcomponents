@@ -109,6 +109,70 @@ Analog valves render inline dynamic SVG (not icon swapping):
 - **`vertical` rotates the symbols −90°** so they follow a vertical flow path; the track and thumb geometry transpose.
 - **Colors** come from the automation pipe/device tokens; sizes from the global touch/visual target tokens, so the components scale with `obc-component-size-*`.
 
+## Tank rendering
+
+`obc-automation-tank` is one interactive element with a nested layout, and most
+of its invariants are invisible in the template.
+
+- **The halo carries the surround.** The flat mixin paints border and
+  background on the inner `.halo` through `visibleWrapperClass`, so hover,
+  pressed and focus hug only the bordered area. Non-compact puts badges,
+  readout and tag in a `.grid` inside the tank frame; compact is a fixed-size
+  column flex where empty badge and tag cells collapse with `hidden` so the
+  frame absorbs the space; static drops the separate readout cell and centres
+  the readout inside the frame. The alert-frame overlay is the last child of
+  `.halo`, so the ring covers every cell whatever collapsed.
+- **Three root shapes, and only one of them is opaque.** `static` renders
+  `<div role="img">` named by its tag — a device whose state is unknown.
+  `clickable="false"` renders a plain `<div>` with **no** `role="img"` and no
+  `aria-label`: it still shows live data, and either would collapse the
+  readout into one name and hide the percent, value and tag. The default is a
+  `<button>`. Same reasoning as the non-clickable branch of
+  `obc-readout-list-item`. `aria-live="polite"` with `aria-atomic` stays on all
+  three so an `alert` label is announced regardless of interactivity.
+- **`activated` and `clickable` both go through the mixin.** The `activated`
+  class sits on the interactive `.root` so the mixin paints `.halo` exactly as
+  it paints hover and pressed; `.clickable` selects between the six-state flat
+  variant and the `noClick` one that paints only the resting state. A `static`
+  tank never counts as clickable. Same shape as `obc-elevated-card`'s
+  `.not-clickable` split.
+- **Static shows capacity, not percent.** A static tank means "present, state
+  unknown", so a percent reading would be a claim it cannot make; the trend
+  icon is dropped for the same reason. Consumers override the whole cell
+  through the `readout` slot, or pass text through `max-value` / `unit`.
+- **Bar mode renders the shared SVG bar**, the renderer gauge-trend uses for
+  its side bar, so advice overlays behave the same in all three chart modes.
+  The inner bar is always portrait — only the outer wrapper flips with
+  `orientation` — and it mirrors gauge-trend's `fixedAspectRatio` with
+  `scaleReferenceSize=384`, so fixed-pixel SVG primitives keep one on-screen
+  size everywhere. Because `xMidYMid meet` scales the viewBox uniformly,
+  `barThickness` is expressed in viewBox units, and the cross-axis size is
+  picked as `cellWidth * 384 / cellHeight` so width-fit and height-fit match
+  and no horizontal gutter appears.
+- **Graph mode forwards the measured cell size** as gauge-trend's width and
+  height, which it reads as an aspect-ratio reference; its own ResizeObserver
+  then takes the wrapper's `clientWidth` and derives the height. Rendering
+  waits for both measurements — a zero divides in the aspect-ratio maths on
+  first paint.
+- **The graph icon is the two-layer silhouette** used by
+  `obc-automation-button`: a back layer painting an inherited SVG `stroke`
+  halo and a front layer painting the fill through `color`. The icon follows
+  `type` — energy-battery for a battery tank, the generic tank otherwise.
+- **The atmospheric cap is one path scaled two ways** — 14px tall with 12px
+  corners, 10px compact with 7px corners — with the curve Y-values scaled
+  proportionally from the 18/12-tall Figma reference so the corners stay
+  continuous. Horizontal reuses the vertical path inside
+  `<g transform="translate(0 H) rotate(-90)">` with the viewBox swapped, and
+  mirrors the cap end with CSS `scale`. Its stroke draws the curve and the
+  outer edge only: the seam with `.middle` is a 1px CSS `border-top` so it
+  pixel-snaps like the pressurized cap's border, where an SVG stroke would
+  render thinner and blurrier.
+- **`priority` is never forwarded imperatively.** Children take it through
+  template bindings and propagate it in their own `updated()`. What the tank's
+  `updated()` does re-attach is the chart-cell observer: that element is
+  recreated when `chartMode` moves between bar and graph, and appears or
+  disappears with `static` and `compact`.
+
 ## Specialty tanks (HVAC tiles)
 
 `obc-heat-pump`, `obc-hydraulic-separator` and `obc-heat-exchanger` extend `ObcAbstractSpecialtyTank` (`src/automation/specialty-tank/`). Each subclass supplies four getters — `equipmentIcon`, `equipmentName`, `frame` (`rounded` box or `pressurized` silhouette with 8px domed caps) and `splitMode` (`vertical`, `horizontal`, `diagonal`) — and its own `:host` footprint CSS (152×96 for the heat pump, 56×142 for the other two).

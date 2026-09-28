@@ -1,3 +1,5 @@
+@mixin soft-dismiss;
+
 * {
   box-sizing: border-box;
 }
@@ -141,6 +143,14 @@
     obc-user-button::part(label) {
       @mixin font-overline;
       color: var(--element-neutral-color);
+    }
+
+    obc-user-button:not(.has-role)::part(label) {
+      font-weight: var(--font-weight-regular);
+    }
+
+    obc-user-button::part(sublabel) {
+      @mixin font-body;
     }
   }
 

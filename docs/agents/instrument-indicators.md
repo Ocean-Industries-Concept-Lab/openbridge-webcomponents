@@ -104,7 +104,7 @@ deprecated path, and leave the tag in place until the property is removed.
 snapping a knots value to a bucket through the helpers in
 `watch/environment.ts`. Those icons come from Figma, so a family rename there
 propagates here — see
-[IMPLEMENTATION_GUIDELINES.md § Icons](../../IMPLEMENTATION_GUIDELINES.md#-icons),
+[`figma-refresh.md` § Consuming components](figma-refresh.md#consuming-components),
 which uses wind as its worked example.
 
 ## Related

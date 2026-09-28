@@ -66,22 +66,26 @@ const renderDemo = (args: PoiProjectionArgs) => {
     <div
       style="position: relative; width: ${args.renderWidth}px; height: ${args.renderHeight}px; border: 1px solid var(--instrument-frame-primary-color, #888); overflow: hidden;"
     >
-      ${projection
-        ? html`
-            <div
-              style="position: absolute; left: ${projection.offsetX}px; top: ${projection.offsetY}px; width: ${projection.contentWidth}px; height: ${projection.contentHeight}px; background: var(--container-backdrop-color, rgb(0 0 0 / 8%));"
-            ></div>
-          `
-        : null}
-      ${point
-        ? html`
-            <div
-              style="position: absolute; left: ${point.x -
-              4}px; top: ${point.y -
-              4}px; width: 8px; height: 8px; border-radius: 50%; background: var(--instrument-enhanced-primary-color, #2a6);"
-            ></div>
-          `
-        : null}
+      ${
+        projection
+          ? html`
+              <div
+                style="position: absolute; left: ${projection.offsetX}px; top: ${projection.offsetY}px; width: ${projection.contentWidth}px; height: ${projection.contentHeight}px; background: var(--container-backdrop-color, rgb(0 0 0 / 8%));"
+              ></div>
+            `
+          : null
+      }
+      ${
+        point
+          ? html`
+              <div
+                style="position: absolute; left: ${point.x - 4}px; top: ${
+                  point.y - 4
+                }px; width: 8px; height: 8px; border-radius: 50%; background: var(--instrument-enhanced-primary-color, #2a6);"
+              ></div>
+            `
+          : null
+      }
     </div>
   `;
 };

@@ -35,6 +35,9 @@ type Row = {
   labelSize?: ObcTextboxSize;
   hasDegree?: boolean;
   fractionDigits?: number;
+  maxDigits?: number;
+  hintedZeros?: boolean;
+  hasSignSpacer?: boolean;
   priority?: ReadoutListItemPriority;
   weight?: ObcTextboxFontWeight;
   hasSetpoint?: boolean;
@@ -53,11 +56,17 @@ type Row = {
 
 function renderRow(row: Row) {
   const valueOptions =
-    row.valueDataQuality || row.valueAlert || row.weight
+    row.valueDataQuality ||
+    row.valueAlert ||
+    row.weight ||
+    row.hintedZeros ||
+    row.hasSignSpacer
       ? {
           dataQuality: row.valueDataQuality,
           alert: row.valueAlert,
           weight: row.weight,
+          hintedZeros: row.hintedZeros,
+          hasSignSpacer: row.hasSignSpacer,
         }
       : undefined;
   const setpointOptions = row.setpointDataQuality
@@ -75,6 +84,7 @@ function renderRow(row: Row) {
       .labelOptions=${row.labelSize ? {size: row.labelSize} : undefined}
       .hasDegree=${row.hasDegree ?? false}
       .fractionDigits=${row.fractionDigits ?? 0}
+      .maxDigits=${row.maxDigits ?? 0}
       .priority=${row.priority}
       .off=${row.off ?? false}
       .hasSetpoint=${row.hasSetpoint ?? false}
@@ -107,7 +117,7 @@ const meta = {
   tags: ['autodocs', '6.0', 'experimental'],
   component: 'obc-readout-list',
   args: {
-    showDebugOverlay: true,
+    showDebugOverlay: false,
   },
   argTypes: {
     showDebugOverlay: {control: {type: 'boolean'}},
@@ -183,6 +193,43 @@ export const Degrees: Story = {
   render: (args) => renderList(DEGREE_ROWS, args.showDebugOverlay),
 };
 
+const SIGNED_ROWS: Row[] = [
+  {label: 'Trim', value: -1.2, unit: 'm', fractionDigits: 1},
+  {label: 'Draft', value: 8.4, unit: 'm', fractionDigits: 1},
+  // A hinted-zeros row fills its muted zeros inside the same shared column.
+  {label: 'Rate', value: 12, unit: '/min', maxDigits: 3, hintedZeros: true},
+];
+
+const OPTED_IN_ROWS: Row[] = [
+  {
+    label: 'Trim',
+    value: 1.2,
+    unit: 'm',
+    fractionDigits: 1,
+    hasSignSpacer: true,
+  },
+  {label: 'Draft', value: 8.4, unit: 'm', fractionDigits: 1},
+];
+
+/**
+ * **Sign column.** Once any row shows a minus sign — or declares it can via
+ * `valueOptions.hasSignSpacer` — the shared numeric reserve gains a sign
+ * column, so every row's digits stay aligned; the column closes again when no
+ * such row remains. The first list derives it from the negative "Trim" row.
+ * The second list is all-positive but reserves it up front (`hasSignSpacer`
+ * on the row that can go negative), so nothing shifts the moment that value
+ * drops below zero — the recommended shape for live data. A value crossing
+ * zero via a property write still needs the documented `align()` call.
+ */
+export const SignColumn: Story = {
+  render: (args) => html`
+    <div style="display: flex; gap: 24px;">
+      ${renderList(SIGNED_ROWS, args.showDebugOverlay)}
+      ${renderList(OPTED_IN_ROWS, args.showDebugOverlay)}
+    </div>
+  `,
+};
+
 /**
  * **Source on the label's line.** `stacking="leading-src-inline"` keeps each
  * row one line high with the source after the label (Figma 46596:102880 pairs
@@ -225,7 +272,6 @@ const INLINE_SOURCE_ROWS: Row[] = [
 }));
 
 export const LeadingSrcInline: Story = {
-  args: {showDebugOverlay: false},
   render: (args) => renderList(INLINE_SOURCE_ROWS, args.showDebugOverlay),
 };
 
@@ -473,8 +519,7 @@ export const Manual: Story = {
   `,
   play: async ({canvasElement}) => {
     const list = canvasElement.querySelector('#manual-list') as
-      | (HTMLElement & {align: () => void})
-      | null;
+      (HTMLElement & {align: () => void}) | null;
     const status = canvasElement.querySelector(
       '#m-status'
     ) as HTMLElement | null;

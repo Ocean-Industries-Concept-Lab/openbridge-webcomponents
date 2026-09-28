@@ -1,6 +1,7 @@
 import {LitElement, html, nothing, unsafeCSS, PropertyValues} from 'lit';
 import {property} from 'lit/decorators.js';
 import compentStyle from './stepper-box.css?inline';
+import {composedTabbables} from '../../internal/focus.js';
 import '../../icons/icon-down-iec.js';
 import '../icon-button/icon-button.js';
 import '../../icons/icon-up-iec.js';
@@ -11,6 +12,7 @@ import '../../icons/icon-chevron-left-google.js';
 import {customElement} from '../../decorator.js';
 import '../number-input-field/number-input-field.js';
 import {ObcNumberInputFieldTextAlign} from '../number-input-field/number-input-field.js';
+import {clamp} from '../../svghelpers/math.js';
 
 /**
  * The visual and behavioral variant of the stepper box.
@@ -54,6 +56,14 @@ export enum ObcStepperBoxType {
  * - Place concise values and units to maintain compact layout.
  * - Avoid using for free-form input; this is for step-based changes only.
  *
+ * ## Keyboard
+ * The keys of the [APG Spinbutton pattern](https://www.w3.org/WAI/ARIA/apg/patterns/spinbutton/),
+ * wherever focus sits inside the stepper: `Up` and `Down` step the value,
+ * `Home` and `End` go to `min` and `max` when they are set. While focus is in
+ * the text field, `Home` and `End` keep moving the caret. The field is
+ * announced as a text box, not a spinbutton, because it carries no bounds of
+ * its own (TODO(#1208)).
+ *
  * **Example:**
  * ```
  * <obc-stepper-box type="up-down" value="5" unit="kg" helperText="Set weight"></obc-stepper-box>
@@ -70,6 +80,11 @@ export enum ObcStepperBoxType {
  * @property helperText - Helper text displayed below the stepper. When set, the helper text is shown.
  * @property placeholder - Placeholder text shown when the input is empty.
  * @property readonly - If true, the input is non-editable; programmatic value changes still apply.
+ * @property decrementLabel - Accessible name of the decrement button; the icon carries none.
+ * @property incrementLabel - Accessible name of the increment button; the icon carries none.
+ * @property type - Icons and directionality of the stepper buttons: `plus-minus` (default)
+ *   uses plus and minus icons, `up-down` and `left-right` the matching
+ *   chevrons.
  * @fires {CustomEvent<{value: number}>} down - Fired when the decrement (left or down) button is clicked
  * @fires {CustomEvent<{value: number}>} up - Fired when the increment (right or up) button is clicked
  * @fires {CustomEvent<{value: string}>} input - Fired when the user types in the number input field
@@ -78,14 +93,6 @@ export enum ObcStepperBoxType {
  */
 @customElement('obc-stepper-box')
 export class ObcStepperBox extends LitElement {
-  /**
-   * The visual and behavioral variant of the stepper box.
-   * - `plus-minus` (default): Uses plus and minus icons.
-   * - `up-down`: Uses up and down chevrons.
-   * - `left-right`: Uses left and right chevrons.
-   *
-   * Changing this property updates the icons and directionality of the stepper buttons.
-   */
   @property({type: String}) type: ObcStepperBoxType =
     ObcStepperBoxType.plusMinus;
 
@@ -108,6 +115,10 @@ export class ObcStepperBox extends LitElement {
   @property({type: String}) placeholder = '';
 
   @property({type: Boolean}) readonly = false;
+
+  @property({type: String}) decrementLabel = 'Decrease';
+
+  @property({type: String}) incrementLabel = 'Increase';
 
   private get downDisabled(): boolean {
     return (
@@ -147,10 +158,7 @@ export class ObcStepperBox extends LitElement {
   }
 
   private clamp(value: number): number {
-    return Math.min(
-      Math.max(value, this.min ?? -Infinity),
-      this.max ?? Infinity
-    );
+    return clamp(value, this.min ?? -Infinity, this.max ?? Infinity);
   }
 
   private normalizedStep(step: number): number {
@@ -184,11 +192,12 @@ export class ObcStepperBox extends LitElement {
     const showHelper = Boolean(this.helperText);
 
     return html`
-      <div class="wrapper">
+      <div class="wrapper" @keydown=${this.handleKeydown}>
         <div class="display">
           <obc-icon-button
             cornerleft
             .showDivider=${false}
+            aria-label=${this.decrementLabel}
             ?disabled=${this.downDisabled}
             @click=${() => this.down()}
           >
@@ -209,15 +218,18 @@ export class ObcStepperBox extends LitElement {
           <obc-icon-button
             cornerright
             .showDivider=${false}
+            aria-label=${this.incrementLabel}
             ?disabled=${this.upDisabled}
             @click=${() => this.up()}
           >
             ${this.rightIcon}
           </obc-icon-button>
         </div>
-        ${showHelper
-          ? html`<div class="helper-text">${this.helperText}</div>`
-          : nothing}
+        ${
+          showHelper
+            ? html`<div class="helper-text">${this.helperText}</div>`
+            : nothing
+        }
       </div>
     `;
   }
@@ -247,6 +259,69 @@ export class ObcStepperBox extends LitElement {
     if (previous !== this.value) {
       this.dispatchChange(this.value);
     }
+  }
+
+  /**
+   * APG spinbutton keys, wherever focus sits inside the stepper. Home and End
+   * are left to the caret while focus is in the text field.
+   */
+  private handleKeydown(event: KeyboardEvent) {
+    if (event.altKey || event.ctrlKey || event.metaKey) return;
+    const inField = event
+      .composedPath()
+      .some((target) => target instanceof HTMLInputElement);
+    switch (event.key) {
+      case 'ArrowUp':
+        event.preventDefault();
+        this.up();
+        break;
+      case 'ArrowDown':
+        event.preventDefault();
+        this.down();
+        break;
+      case 'Home':
+        if (inField) return;
+        event.preventDefault();
+        this.toBound(this.min);
+        break;
+      case 'End':
+        if (inField) return;
+        event.preventDefault();
+        this.toBound(this.max);
+        break;
+      default:
+        return;
+    }
+    this.keepFocusInside();
+  }
+
+  /**
+   * A step to a bound disables the pressed button, and Chromium drops its focus
+   * only after this runs; checking that button, not `:focus-within`, lets
+   * focus move to the field so the next key still reaches the stepper.
+   */
+  private async keepFocusInside() {
+    await this.updateComplete;
+    const focused = this.shadowRoot!.activeElement;
+    if (focused && !focused.hasAttribute('disabled')) return;
+    const tabbables = composedTabbables(this.shadowRoot!);
+    (
+      tabbables.find((el) => el instanceof HTMLInputElement) ?? tabbables[0]
+    )?.focus();
+  }
+
+  private toBound(bound: number | undefined) {
+    if (
+      bound === undefined ||
+      this.disabled ||
+      this.readonly ||
+      this.value == null ||
+      this.value === bound
+    ) {
+      return;
+    }
+    this.value = bound;
+    this.dispatchChange(bound);
   }
 
   private dispatchChange(value: number | null) {

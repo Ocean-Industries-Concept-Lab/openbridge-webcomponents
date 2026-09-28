@@ -45,7 +45,10 @@ export type {DateItemEvent};
  *   day name, month name, date number, and year from this Date object.
  *   Also accepts a timestamp (number) for compatibility with Storybook.
  * @property events - Array of events to display in the list.
+ * @property locale - Locale for date formatting, such as `en-US`, `nb-NO` or `de-DE`. Uses the
+ *   browser default when unset.
  * @slot - No slots. All content is provided via properties.
+ * @fires {CustomEvent<{title: string, startTime: string, endTime: string}>} event-click - Passed on from the listed event items when one is clicked, with its title, start and end time.
  * @beta
  */
 @customElement('obc-event-list')
@@ -56,10 +59,6 @@ export class ObcEventList extends LitElement {
 
   @property({type: Array, attribute: false}) events: DateItemEvent[] = [];
 
-  /**
-   * Locale for date formatting. Uses browser default if not specified.
-   * @example 'en-US', 'nb-NO', 'de-DE'
-   */
   @property({type: String}) locale?: string;
 
   /**
@@ -107,25 +106,27 @@ export class ObcEventList extends LitElement {
   override render() {
     return html`
       <div class="wrapper">
-        ${this.showHeader
-          ? html`
-              <div class="title-container">
-                <div class="label-container">
-                  <div class="label">
-                    <span class="day-container">
-                      <span class="day">${this._dayName}</span>
-                      <span class="comma">,</span>
-                    </span>
-                    <span class="date-container">
-                      <span>${this._dateNumber}</span>
-                      <span class="month">${this._monthName}</span>
-                    </span>
-                    <span class="year">${this._year}</span>
+        ${
+          this.showHeader
+            ? html`
+                <div class="title-container">
+                  <div class="label-container">
+                    <div class="label">
+                      <span class="day-container">
+                        <span class="day">${this._dayName}</span>
+                        <span class="comma">,</span>
+                      </span>
+                      <span class="date-container">
+                        <span>${this._dateNumber}</span>
+                        <span class="month">${this._monthName}</span>
+                      </span>
+                      <span class="year">${this._year}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            `
-          : nothing}
+              `
+            : nothing
+        }
         <div class="content-container">
           <div class="event-container" role="list" aria-label="Events">
             ${repeat(
@@ -139,8 +140,9 @@ export class ObcEventList extends LitElement {
                   .description=${event.description ?? ''}
                   .startTime=${event.startTime}
                   .endTime=${event.endTime}
-                  .eventItemType=${event.eventItemType ??
-                  EventItemType.SingleLine}
+                  .eventItemType=${
+                    event.eventItemType ?? EventItemType.SingleLine
+                  }
                   .hasArrow=${event.hasArrow ?? false}
                   .hasTime=${event.hasTime ?? false}
                   .hasEndTime=${event.hasEndTime ?? false}

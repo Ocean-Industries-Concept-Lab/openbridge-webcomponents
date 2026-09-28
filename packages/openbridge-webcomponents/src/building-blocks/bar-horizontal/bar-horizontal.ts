@@ -66,6 +66,7 @@ export {
  *
  * @property minValue - Minimum scale value (manual mode)
  * @property maxValue - Maximum scale value (manual mode)
+ * @property reverse - Plot `minValue` at the right so values grow leftward.
  * @property width - Total width in pixels (including padding bands)
  * @availableWhen width fixedAspectRatio==false
  * @property paddingLeft - Padding left of the drawing area
@@ -79,6 +80,10 @@ export {
  *   Above this width, the scale grows proportionally; below, it shrinks.
  * @availableWhen scaleReferenceSize fixedAspectRatio==true
  * @property hasScale - Show scale tickmarks
+ * @property showMainTickmarkLabels - Label the main tickmarks (min / 0 / max) instead of the
+ *   primary interval ladder, for a scale too short for a ladder. A chart sets it on its
+ *   slotted scales below its label threshold.
+ * @availableWhen showMainTickmarkLabels showLabels==true
  * @property hasBar - Show bar
  * @property scaleBackground - Show background behind the scale tickmarks.
  * @property barContainerStyle - Bar container background style.
@@ -131,7 +136,7 @@ export {
  * @property highlightCurrentValue - When true, displays a dot indicator at the current value position.
  *   The dot is rendered in the scale band, touching its inner edge (towards the chart).
  *   This provides an alternative to bar fill for highlighting the current value.
- * @fires {CustomEvent} scale-dimensions-changed - Fired when the scale's computed layout thickness changes; a parent chart listens for this to reserve space for the scale. Bubbles and is composed.
+ * @fires {CustomEvent} scale-dimensions-changed - Fired when the scale's computed layout thickness changes; a parent chart listens for this to reserve space for the scale. It bubbles to the chart slot the scale sits in and does not leave the shadow root around it.
  * @beta
  */
 @customElement('obc-bar-horizontal')
@@ -140,6 +145,7 @@ export class ObcBarHorizontal extends SetpointMixin(LitElement, {
 }) {
   @property({type: Number}) minValue = 0;
   @property({type: Number}) maxValue = 100;
+  @property({type: Boolean}) reverse = false;
 
   @property({type: Number}) width = 320;
 
@@ -187,6 +193,7 @@ export class ObcBarHorizontal extends SetpointMixin(LitElement, {
   // Bands (thickness)
   @property({type: Boolean, attribute: false}) hasScale = true;
   @property({type: Boolean, attribute: false}) showLabels = true;
+  @property({type: Boolean}) showMainTickmarkLabels = false;
   @property({type: Boolean}) hasBar = false;
   @property({type: Boolean})
   scaleBackground = false;
@@ -265,8 +272,10 @@ export class ObcBarHorizontal extends SetpointMixin(LitElement, {
       paddingEnd: this.paddingRight,
       minValue: this.minValue,
       maxValue: this.maxValue,
+      reverse: this.reverse,
       hasScale: this.hasScale,
       labels: this.showLabels,
+      mainTickmarkLabels: this.showMainTickmarkLabels,
       hasBar: this.hasBar,
       scaleBackground: this.scaleBackground,
       barContainerStyle: this.barContainerStyle,
@@ -366,6 +375,7 @@ export class ObcBarHorizontal extends SetpointMixin(LitElement, {
     const layoutChanged =
       changed.has('side') ||
       changed.has('showLabels') ||
+      changed.has('showMainTickmarkLabels') ||
       changed.has('hasScale') ||
       changed.has('hasBar') ||
       changed.has('barThickness') ||
@@ -436,7 +446,6 @@ export class ObcBarHorizontal extends SetpointMixin(LitElement, {
       new CustomEvent('scale-dimensions-changed', {
         detail: dimensions,
         bubbles: true,
-        composed: true,
       })
     );
   }

@@ -27,6 +27,18 @@ export enum Variant {
   initials = 'initials',
 }
 
+export function initialsFromName(name: string): string {
+  const trimmedName = name.trim();
+  if (trimmedName === '') return '';
+
+  const words = trimmedName.split(/\s+/);
+  const firstWord = words[0];
+  if (words.length === 1) return firstWord[0];
+
+  const lastWord = words[words.length - 1];
+  return firstWord[0] + lastWord[0];
+}
+
 /**
  * `obc-user-button` – A compact, circular button for representing a user via icon or initials.
  *
@@ -50,6 +62,8 @@ export enum Variant {
  *   - Provide a custom icon via the `icon` slot when using the `icon` variant.
  * - **Label Support:**
  *   - Optional `label` property displays text next to the button (not shown in static mode).
+ *   - Optional `sublabel` adds a second, lighter line under the label, for a
+ *     secondary detail such as the user's role.
  *
  * ## Usage Guidelines
  * Use `obc-user-button` to represent a user in navigation bars, toolbars, or menus where a compact, recognizable user indicator is needed. Ideal for profile menus, account switching, or user-related quick actions.
@@ -71,7 +85,8 @@ export enum Variant {
  * - Initials longer than two characters are truncated and a warning is logged.
  * - If `initials` is empty or invalid, the button falls back to the user icon.
  * - The `label` is only visible when the button is interactive (not static).
- * - For accessibility, the button uses `aria-label` based on initials or a default.
+ * - For accessibility, the button is named after its visible text — `label` and
+ *   `sublabel` — falling back to the initials when it shows no text.
  * - Only use the `static` property for non-interactive contexts; otherwise, the button is clickable.
  *
  * ## Example:
@@ -88,39 +103,35 @@ export enum Variant {
  * @availableWhen disabled static==false
  * @property label - Optional label text to display next to the button (not shown in static mode).
  * @availableWhen label static==false
+ * @property sublabel - Optional second line under the label, for a secondary detail such as a role (not shown in static mode).
+ * @availableWhen sublabel static==false
+ * @property variant - What the button displays: `icon` (default) a user icon, `initials` up to
+ *   two uppercase initials — falling back to the icon when `initials` is empty
+ *   or longer than two characters.
+ * @property styleType - Visual style: `flat` (default) is the minimal appearance, `normal` adds a
+ *   background and border, `selected` highlights the active state.
+ * @property initials - Initials shown when `variant` is `initials`. Whitespace is stripped and the
+ *   rest uppercased, then truncated to two characters — three at the `large`
+ *   size. An empty value falls back to the user icon.
  * @slot icon - Custom icon for the user button (used only in `icon` variant; defaults to <obi-user> if not provided)
  * @stable
  */
 @customElement('obc-user-button')
 export class ObcUserButton extends LitElement {
-  /**
-   * Controls whether the button displays a user icon (`icon`) or user initials (`initials`).
-   * - `icon`: Shows a user icon (default, or if initials are invalid).
-   * - `initials`: Shows up to two uppercase initials (falls back to icon if empty or longer than two characters).
-   */
   @property({type: String}) variant: Variant = Variant.icon;
   @property({type: String}) size: Size = Size.regular;
 
-  /**
-   * Sets the visual style of the button.
-   * - `flat`: Minimal, flat appearance (default).
-   * - `normal`: Outlined with background and border.
-   * - `selected`: Highlighted to indicate selection or active state.
-   */
   @property({type: String}) styleType: StyleType = StyleType.flat;
 
   @property({type: Boolean}) static: boolean = false;
 
   @property({type: Boolean}) disabled: boolean = false;
 
-  /**
-   * The initials to display when `variant="initials"`.
-   * - Only the first two non-whitespace characters are used and converted to uppercase.
-   * - If empty or longer than two characters, falls back to the user icon.
-   */
   @property({type: String}) initials: string = '';
 
   @property({type: String}) label?: string;
+
+  @property({type: String}) sublabel?: string;
 
   private get formattedInitials() {
     if (!this.initials) return '';
@@ -157,21 +168,33 @@ export class ObcUserButton extends LitElement {
       'mode-initials': !this.shouldShowIcon,
       'state-static': this.static,
       [`size-${this.size}`]: true,
+      'has-sublabel': Boolean(this.sublabel) && !this.static,
     };
 
     // Use button element when clickable, div when static
     const tag = this.static ? literal`div` : literal`button`;
+
+    const visibleText = [this.label, this.sublabel].filter(Boolean).join(', ');
+    const accessibleName =
+      (!this.static && visibleText) || this.initials || 'User button';
 
     const label =
       this.label && !this.static
         ? html`<span class="user-label" part="label">${this.label}</span>`
         : nothing;
 
+    const sublabel =
+      this.sublabel && !this.static
+        ? html`<span class="user-sublabel" part="sublabel">
+            ${this.sublabel}
+          </span>`
+        : nothing;
+
     return html`
         <${tag}
           class=${classMap(wrapperClasses)}
           ?disabled=${this.disabled}
-          aria-label=${this.initials || 'User button'}
+          aria-label=${accessibleName}
         >
         <div class="content-container" part="content-container">
           <div class="user-button-circle">
@@ -192,7 +215,7 @@ export class ObcUserButton extends LitElement {
                   `
             }
           </div>
-          ${label}
+          ${label} ${sublabel}
         </div>
         </${tag}>
       `;

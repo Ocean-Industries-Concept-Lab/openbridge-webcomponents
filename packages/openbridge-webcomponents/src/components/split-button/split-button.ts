@@ -125,6 +125,7 @@ export type ObcSplitButtonChangeEvent = CustomEvent<{
  * @property columnGroups - Array of column group definitions for multi-column/grouped menus.
  *   Use instead of `options` for grouped or subtitle layouts.
  * @availableWhen columnGroups menuType==MultiWithSubtitles
+ * @property dropdownLabel - Accessible name of the dropdown button; the chevron carries none.
  * @slot icon - Leading icon for the primary button (shown when `hasIcon` is true)
  * @fires {ObcSplitButtonClickEvent} click - Fired when the primary or dropdown button is clicked.
  * @fires {ObcSplitButtonChangeEvent} change - Fired when the dropdown menu selection changes.
@@ -151,6 +152,8 @@ export class ObcSplitButton extends LitElement {
   @property({type: Boolean}) hasTitleBar = false;
 
   @property({type: String}) menuTitle = '';
+
+  @property({type: String}) dropdownLabel = 'More options';
 
   @property({type: Boolean}) fullWidth = false;
 
@@ -342,9 +345,11 @@ export class ObcSplitButton extends LitElement {
           @click=${this.handlePrimaryClick}
           .fullWidth=${this.fullWidth}
         >
-          ${this.hasIcon
-            ? html`<slot name="icon" slot="leading-icon"></slot>`
-            : nothing}
+          ${
+            this.hasIcon
+              ? html`<slot name="icon" slot="leading-icon"></slot>`
+              : nothing
+          }
           ${this.label}
         </obc-button>
 
@@ -354,6 +359,7 @@ export class ObcSplitButton extends LitElement {
           .cornerRight=${true}
           .disabled=${this.disabled}
           .activated=${this.isDropdownOpen}
+          aria-label=${this.dropdownLabel}
           @click=${this.handleDropdownClick}
           @keydown=${this.handleDropdownKeydown}
           aria-expanded=${this.isDropdownOpen}
@@ -363,8 +369,9 @@ export class ObcSplitButton extends LitElement {
         </obc-icon-button>
 
         <!-- Context Menu -->
-        ${this.isDropdownOpen && this.options.length > 0
-          ? html`
+        ${
+          this.isDropdownOpen && this.options.length > 0
+            ? html`
             <obc-context-menu-input
               class="positioned-menu"
               .options=${this.options}
@@ -381,7 +388,8 @@ export class ObcSplitButton extends LitElement {
               @item-click=${this.handleMenuItemClick}
             /></obc-context-menu-input>
             `
-          : nothing}
+            : nothing
+        }
       </div>
     `;
   }

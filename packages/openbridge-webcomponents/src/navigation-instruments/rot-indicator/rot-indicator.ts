@@ -3,6 +3,7 @@ import {property, query} from 'lit/decorators.js';
 import componentStyle from './rot-indicator.css?inline';
 import {RateOfTurnController} from '../rate-of-turn/rate-of-turn.controller.js';
 import {customElement} from '../../decorator.js';
+import {clamp} from '../../svghelpers/math.js';
 
 export enum RotIndicatorType {
   radial = 'radial',
@@ -13,6 +14,10 @@ export enum RotIndicatorType {
  * @property rotDotAnimationFactor - Visual amplification applied to the spinning dot animation. Default `18`
  *   keeps the legacy visual feel (≈1 rpm at 20°/min). Has no effect when
  *   the legacy `rotationsPerMinute` API is used.
+ * @property rateOfTurnDegreesPerMinute - Measured rate of turn in degrees per minute (positive = clockwise).
+ *   Drives the spinner animation via `(rateOfTurnDegreesPerMinute / 360) *
+ *   rotDotAnimationFactor` rotations per minute. When `undefined` the legacy
+ *   `rotationsPerMinute` value is used instead.
  * @stable
  */
 @customElement('obc-rot-indicator')
@@ -20,13 +25,6 @@ export class ObcRotIndicator extends LitElement {
   @property({type: String})
   type: RotIndicatorType = RotIndicatorType.radial;
 
-  /**
-   * Measured rate of turn in degrees per minute (positive = starboard).
-   *
-   * Drives the spinner animation via `(rateOfTurnDegreesPerMinute / 360) *
-   * rotDotAnimationFactor` rotations per minute. When `undefined` the legacy
-   * `rotationsPerMinute` value is used instead.
-   */
   @property({type: Number}) rateOfTurnDegreesPerMinute: number | undefined;
 
   @property({type: Number}) rotDotAnimationFactor: number = 18;
@@ -168,12 +166,8 @@ export class ObcRotIndicator extends LitElement {
     `;
   }
 
-  private clamp(value: number, min: number, max: number): number {
-    return Math.min(max, Math.max(min, value));
-  }
-
   private getLinearDotCenterX(): number {
-    const clamped = this.clamp(this._effectiveRpm, -3, 3);
+    const clamped = clamp(this._effectiveRpm, -3, 3);
     const t = clamped / 3;
     const centerX = 24;
     const maxOffset = 15;
@@ -192,7 +186,7 @@ export class ObcRotIndicator extends LitElement {
 
     const segmentWidth = 11;
     const segmentDotOffsetX = 4;
-    const segmentX = this.clamp(
+    const segmentX = clamp(
       dotCx - segmentDotOffsetX,
       trackX,
       trackX + trackWidth - segmentWidth
@@ -227,10 +221,12 @@ export class ObcRotIndicator extends LitElement {
              H ${segmentRightX}
              V ${segmentBottomY}
              H ${segmentX + segmentRadius}
-             A ${segmentRadius} ${segmentRadius} 0 0 1 ${segmentX} ${segmentY +
-          segmentRadius}
-             A ${segmentRadius} ${segmentRadius} 0 0 1 ${segmentX +
-          segmentRadius} ${segmentY}
+             A ${segmentRadius} ${segmentRadius} 0 0 1 ${segmentX} ${
+            segmentY + segmentRadius
+          }
+             A ${segmentRadius} ${segmentRadius} 0 0 1 ${
+            segmentX + segmentRadius
+          } ${segmentY}
              Z"
           fill="var(--instrument-port-secondary-color)"
         />

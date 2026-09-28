@@ -206,24 +206,26 @@ const renderTitle = (args: FormContainerArgs) => {
       <obi-placeholder slot="icon"></obi-placeholder>
       <span slot="title">${title}</span>
       <span slot="label">${label}</span>
-      ${showActions
-        ? html`
-            <obc-icon-button
-              slot="actions"
-              variant="flat"
-              aria-label="Action 1"
-            >
-              <obi-placeholder></obi-placeholder>
-            </obc-icon-button>
-            <obc-icon-button
-              slot="actions"
-              variant="flat"
-              aria-label="Action 2"
-            >
-              <obi-placeholder></obi-placeholder>
-            </obc-icon-button>
-          `
-        : null}
+      ${
+        showActions
+          ? html`
+              <obc-icon-button
+                slot="actions"
+                variant="flat"
+                aria-label="Action 1"
+              >
+                <obi-placeholder></obi-placeholder>
+              </obc-icon-button>
+              <obc-icon-button
+                slot="actions"
+                variant="flat"
+                aria-label="Action 2"
+              >
+                <obi-placeholder></obi-placeholder>
+              </obc-icon-button>
+            `
+          : null
+      }
     </obc-title-container>
   `;
 };
@@ -248,22 +250,24 @@ const renderFooter = () => {
         );
       }}
     >
-      ${showActions
-        ? html`
-            <obc-icon-button variant="flat" aria-label="Action 1">
-              <obi-placeholder></obi-placeholder>
-            </obc-icon-button>
-            <obc-icon-button variant="flat" aria-label="Action 2">
-              <obi-placeholder></obi-placeholder>
-            </obc-icon-button>
-            <obc-icon-button variant="flat" aria-label="Action 3">
-              <obi-placeholder></obi-placeholder>
-            </obc-icon-button>
-            <obc-icon-button variant="flat" aria-label="Action 4">
-              <obi-placeholder></obi-placeholder>
-            </obc-icon-button>
-          `
-        : null}
+      ${
+        showActions
+          ? html`
+              <obc-icon-button variant="flat" aria-label="Action 1">
+                <obi-placeholder></obi-placeholder>
+              </obc-icon-button>
+              <obc-icon-button variant="flat" aria-label="Action 2">
+                <obi-placeholder></obi-placeholder>
+              </obc-icon-button>
+              <obc-icon-button variant="flat" aria-label="Action 3">
+                <obi-placeholder></obi-placeholder>
+              </obc-icon-button>
+              <obc-icon-button variant="flat" aria-label="Action 4">
+                <obi-placeholder></obi-placeholder>
+              </obc-icon-button>
+            `
+          : null
+      }
     </obc-form-footer-container>
   `;
 };
@@ -277,9 +281,11 @@ const renderFormContainer = (
   return html`
     <obc-form-container .type=${type}>
       ${renderTitle(args)}
-      ${showContentTitle
-        ? html`<span slot="content-title">${contentTitle}</span>`
-        : null}
+      ${
+        showContentTitle
+          ? html`<span slot="content-title">${contentTitle}</span>`
+          : null
+      }
       ${renderContent(type, showDashExample)} ${renderFooter()}
     </obc-form-container>
   `;

@@ -29,6 +29,7 @@ import compentStyle from './divider.css?inline';
  * - The divider is purely decorative and should not be used as a focusable or interactive element.
  *
  * @slot - (none; this component does not use slots)
+ * @stable
  */
 @customElement('obc-divider')
 export class ObcDivider extends LitElement {

@@ -14,6 +14,7 @@ import {LinearAdvice} from '../thruster/advice.js';
 import {PropellerType} from '../thruster/propeller.js';
 import {TickmarkStyle} from '../watch/tickmark.js';
 import {customElement} from '../../decorator.js';
+import {stopPropagation} from '../../internal/events.js';
 
 export enum AzimuthThrusterLabeledSize {
   medium = 'medium',
@@ -33,7 +34,8 @@ export enum AzimuthThrusterLabeledSize {
  * @availableWhen autoAtThrustSetpointDeadband thrustSetpoint!=undefined && autoAtThrustSetpoint==true
  * @availableWhen thrustSetpointAtZeroDeadband thrustSetpoint!=undefined
  * @availableWhen thrustSetpointOverride thrustSetpoint!=undefined
- * @deprecated
+ * @deprecated The azimuth-thruster-labeled component is deprecated and will be removed in future releases.
+ * Please make a combined component by using <obc-azimuth-thruster> in combination with <obc-readout> instead.
  */
 @customElement('obc-azimuth-thruster-labeled')
 export class ObcAzimuthThrusterLabeled extends LitElement {
@@ -107,6 +109,8 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
         </div>
         <obc-readout
           class="readout-angle"
+          @source-change=${stopPropagation}
+          @source-flyout-click=${stopPropagation}
           .size=${effectiveReadoutSize}
           .direction=${ReadoutDirection.vertical}
           .hasSetpoint=${true}
@@ -132,6 +136,8 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
         </obc-readout>
         <obc-readout
           class="readout-power"
+          @source-change=${stopPropagation}
+          @source-flyout-click=${stopPropagation}
           .size=${effectiveReadoutSize}
           .direction=${ReadoutDirection.vertical}
           .hasSetpoint=${true}

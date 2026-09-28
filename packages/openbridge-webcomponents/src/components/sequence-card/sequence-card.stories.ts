@@ -128,56 +128,62 @@ const renderSequenceCard = (args: SequenceCardStoryArgs) => html`
       .progressLabel=${args.progressLabel}
       .progressValue=${args.progressValue}
     >
-      ${args.hasLeadingIcon
-        ? html`
-            <span slot="leading-icon">
-              <obi-placeholder></obi-placeholder>
-            </span>
-          `
-        : nothing}
-      ${args.hasContent
-        ? html`
-            <!-- Demo-only placeholder content for Storybook. -->
-            <div class="content-placeholder">
-              <div class="placeholder-icon">
+      ${
+        args.hasLeadingIcon
+          ? html`
+              <span slot="leading-icon">
                 <obi-placeholder></obi-placeholder>
-              </div>
-              <div class="placeholder-title">Content placeholder</div>
-              <div class="placeholder-subtitle">
-                Instance swap with custom components
-              </div>
-            </div>
-          `
-        : nothing}
-      ${args.hasActions
-        ? html`
-            <!-- Demo-only action buttons for Storybook. -->
-            <obc-button
-              slot="actions"
-              variant="normal"
-              .showLeadingIcon=${true}
-              .fullWidth=${true}
-              @click=${() => args.onActionClick?.()}
-            >
-              <span slot="leading-icon">
-                <obi-check-google></obi-check-google>
               </span>
-              Label
-            </obc-button>
-            <obc-button
-              slot="actions"
-              variant="normal"
-              .showLeadingIcon=${true}
-              .fullWidth=${true}
-              @click=${() => args.onAction2Click?.()}
-            >
-              <span slot="leading-icon">
-                <obi-close-google></obi-close-google>
-              </span>
-              Label
-            </obc-button>
-          `
-        : nothing}
+            `
+          : nothing
+      }
+      ${
+        args.hasContent
+          ? html`
+              <!-- Demo-only placeholder content for Storybook. -->
+              <div class="content-placeholder">
+                <div class="placeholder-icon">
+                  <obi-placeholder></obi-placeholder>
+                </div>
+                <div class="placeholder-title">Content placeholder</div>
+                <div class="placeholder-subtitle">
+                  Instance swap with custom components
+                </div>
+              </div>
+            `
+          : nothing
+      }
+      ${
+        args.hasActions
+          ? html`
+              <!-- Demo-only action buttons for Storybook. -->
+              <obc-button
+                slot="actions"
+                variant="normal"
+                .showLeadingIcon=${true}
+                .fullWidth=${true}
+                @click=${() => args.onActionClick?.()}
+              >
+                <span slot="leading-icon">
+                  <obi-check-google></obi-check-google>
+                </span>
+                Label
+              </obc-button>
+              <obc-button
+                slot="actions"
+                variant="normal"
+                .showLeadingIcon=${true}
+                .fullWidth=${true}
+                @click=${() => args.onAction2Click?.()}
+              >
+                <span slot="leading-icon">
+                  <obi-close-google></obi-close-google>
+                </span>
+                Label
+              </obc-button>
+            `
+          : nothing
+      }
     </obc-sequence-card>
   </div>
 `;

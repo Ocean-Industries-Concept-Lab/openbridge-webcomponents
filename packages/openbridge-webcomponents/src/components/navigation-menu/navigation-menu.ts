@@ -12,6 +12,7 @@ import {
   TreeRovingNavigator,
   TreeRovingAdapter,
 } from '../../internal/tree-roving-navigator.js';
+import {PopoverController} from '../../internal/popover-controller.js';
 
 /** A nav-menu tree row is either a navigation item or a navigation item group. */
 type NavTreeRow = ObcNavigationItem | ObcNavigationItemGroup;
@@ -154,22 +155,28 @@ export enum ObcNavigationMenuFlyoutVariant {
  *   One of `Full` (default) or `Compact`.
  * @availableWhen flyoutVariant variant==Full
  * @property smallScreen - When `true`, adapts the layout for small screens (e.g., moves logo into the footer area and adjusts item layout).
+ * @property variant - Visual style and layout: `full` (default) shows icons and labels,
+ *   `icon-only` is the compact icon-only menu and takes no flyouts or groups,
+ *   `icon-only-large` is the icon-only menu that does, `compact` is the
+ *   space-saving menu, and `tree` expands groups inline and indents rows by
+ *   depth.
+ * @property softDismiss - Let the browser close this menu on its own: on a click outside it, on `Escape`, or when another menu opens. Leave it off to keep showing and hiding the menu yourself.
+ * @property open - Whether the menu is showing.
+ * @availableWhen open softDismiss==true
  * @slot main - Slot for primary navigation items and groups.
  * @slot footer - Slot for secondary navigation items (e.g., settings, help).
  * @slot logo - Slot for branding/logo area.
+ * @fires {CustomEvent<void>} close - Fired when the menu closed on its own, from a click outside, `Escape`, or another menu opening. `open` is already `false` by the time it arrives.
  * @stable
  */
 @customElement('obc-navigation-menu')
 export class ObcNavigationMenu extends LitElement {
-  /**
-   * Controls the visual style and layout of the navigation menu.
-   *
-   * - `full`: Standard menu with icons and labels (default).
-   * - `icon-only`: Compact, icon-only menu (use only when no flyouts/groups are present).
-   * - `icon-only-large`: Icon-only menu supporting flyouts/groups.
-   * - `compact`: Minimal, space-saving menu.
-   * - `tree`: Hierarchical tree — groups expand inline and rows are indented by depth.
-   */
+  @property({type: Boolean}) softDismiss = false;
+
+  @property({type: Boolean}) open = false;
+
+  protected readonly softDismissController = new PopoverController(this);
+
   @property({type: String}) variant: ObcNavigationMenuVariant =
     ObcNavigationMenuVariant.Full;
 
@@ -186,7 +193,7 @@ export class ObcNavigationMenu extends LitElement {
    * navigator that drives `obc-tree-navigation`. Engaged only while
    * `variant === Tree` (see `onTreeKeydown`).
    */
-  private readonly treeNavigator = new TreeRovingNavigator<NavTreeRow>(this, {
+  private readonly treeNavigator = new TreeRovingNavigator<NavTreeRow>({
     getRows: () => this.treeRootRows(),
     childRows: (row) => this.treeChildRows(row),
     isGroup: (row) => isNavGroup(row),
@@ -502,9 +509,9 @@ export class ObcNavigationMenu extends LitElement {
   override render() {
     return html`
       <div
-        class="wrapper ${this.variant} ${this.smallScreen
-          ? 'small-screen'
-          : ''}"
+        class="wrapper ${this.variant} ${
+          this.smallScreen ? 'small-screen' : ''
+        }"
       >
         <nav class="main">
           <ol>
@@ -518,13 +525,15 @@ export class ObcNavigationMenu extends LitElement {
               ${this.smallScreen ? html` <slot name="logo"></slot> ` : nothing}
             </ol>
           </nav>
-          ${this.smallScreen
-            ? nothing
-            : html`
-                <div class="logo">
-                  <slot name="logo"></slot>
-                </div>
-              `}
+          ${
+            this.smallScreen
+              ? nothing
+              : html`
+                  <div class="logo">
+                    <slot name="logo"></slot>
+                  </div>
+                `
+          }
         </div>
       </div>
     `;

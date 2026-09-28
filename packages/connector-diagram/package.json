@@ -1,0 +1,63 @@
+{
+  "name": "@oicl/connector-diagram",
+  "version": "1.0.0",
+  "description": "Canvas-based pipe/connector diagram renderer for OpenBridge",
+  "license": "AGPL-3.0-only",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents.git",
+    "directory": "packages/connector-diagram"
+  },
+  "homepage": "https://www.openbridge.no",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "LICENSE.txt",
+    "LICENSE-AGPL.txt",
+    "LICENSE-APACHE.txt"
+  ],
+  "scripts": {
+    "prepack": "npm run build",
+    "build": "tsc",
+    "check": "npm run typecheck && npm run test",
+    "typecheck": "tsc --noEmit",
+    "example": "vite serve example --open",
+    "test": "vitest run --project=unit",
+    "storybook": "storybook dev -p 6007 --no-open",
+    "build-storybook": "storybook build",
+    "test:unit": "vitest --project=unit",
+    "test-storybook": "vitest --project=storybook",
+    "test-storybook:watch": "vitest --project=storybook --watch",
+    "update-snapshots": "vitest run --project=storybook --update",
+    "clean": "rm -rf node_modules dist storybook-static"
+  },
+  "devDependencies": {
+    "@oicl/openbridge-webcomponents": "*",
+    "@playwright/test": "1.63.0",
+    "@storybook/addon-vitest": "10.6.0",
+    "@storybook/html-vite": "10.6.0",
+    "@types/node": "^26.6.1",
+    "@vitest/browser-playwright": "^4.1.11",
+    "playwright": "^1.63.0",
+    "storybook": "10.6.0",
+    "storybook-addon-vis": "3.0.1",
+    "typescript": "^5.9.3",
+    "vite": "^8.3.0",
+    "vitest": "^4.1.11"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "overrides": {
+    "storybook": "$storybook"
+  }
+}

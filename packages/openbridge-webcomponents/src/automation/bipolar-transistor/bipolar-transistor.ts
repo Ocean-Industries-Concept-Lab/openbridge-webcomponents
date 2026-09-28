@@ -1,15 +1,15 @@
 import {html} from 'lit';
 import {property} from 'lit/decorators.js';
-import '../../icons/icon-bipolar_transistor-on.js';
-import '../../icons/icon-bipolar_transistor-off.js';
-import '../../icons/icon-bipolar_transistor-02-on.js';
-import '../../icons/icon-bipolar_transistor-02-off.js';
-import '../../icons/icon-bipolar_transistor-03-on.js';
-import '../../icons/icon-bipolar_transistor-03-off.js';
-import '../../icons/icon-bipolar_transistor-04-on.js';
-import '../../icons/icon-bipolar_transistor-04-off.js';
-import '../../icons/icon-bipolar_transistor-03-flat.js';
-import '../../icons/icon-bipolar_transistor-04-flat.js';
+import '../../icons/icon-bipolar-transistor-on.js';
+import '../../icons/icon-bipolar-transistor-off.js';
+import '../../icons/icon-bipolar-transistor-02-on.js';
+import '../../icons/icon-bipolar-transistor-02-off.js';
+import '../../icons/icon-bipolar-transistor-03-on.js';
+import '../../icons/icon-bipolar-transistor-03-off.js';
+import '../../icons/icon-bipolar-transistor-04-on.js';
+import '../../icons/icon-bipolar-transistor-04-off.js';
+import '../../icons/icon-bipolar-transistor-03-flat.js';
+import '../../icons/icon-bipolar-transistor-04-flat.js';
 import {customElement} from '../../decorator.js';
 import {ObcAbstractAutomationButtonSquared} from '../automation-button/abstract-automation-button-squared.js';
 
@@ -34,101 +34,101 @@ export class ObcBipolarTransistor extends ObcAbstractAutomationButtonSquared {
     switch (this.alternativeIcon) {
       case BipolarTransistorAlternativeIcon.bipolarTransistor02:
         if (this.on) {
-          return html`<obi-bipolar_transistor-02-on
+          return html`<obi-bipolar-transistor-02-on
               usecsscolor
               slot="icon"
-            ></obi-bipolar_transistor-02-on>
-            <obi-bipolar_transistor-02-on
+            ></obi-bipolar-transistor-02-on>
+            <obi-bipolar-transistor-02-on
               usecsscolor
               slot="icon-silhouette"
-            ></obi-bipolar_transistor-02-on>`;
+            ></obi-bipolar-transistor-02-on>`;
         } else {
-          return html`<obi-bipolar_transistor-02-off
+          return html`<obi-bipolar-transistor-02-off
               usecsscolor
               slot="icon"
-            ></obi-bipolar_transistor-02-off>
-            <obi-bipolar_transistor-02-off
+            ></obi-bipolar-transistor-02-off>
+            <obi-bipolar-transistor-02-off
               usecsscolor
               slot="icon-silhouette"
-            ></obi-bipolar_transistor-02-off>`;
+            ></obi-bipolar-transistor-02-off>`;
         }
       case BipolarTransistorAlternativeIcon.bipolarTransistor03:
         if (this.on) {
-          return html`<obi-bipolar_transistor-03-on
+          return html`<obi-bipolar-transistor-03-on
               usecsscolor
               slot="icon"
-            ></obi-bipolar_transistor-03-on>
-            <obi-bipolar_transistor-03-on
+            ></obi-bipolar-transistor-03-on>
+            <obi-bipolar-transistor-03-on
               usecsscolor
               slot="icon-silhouette"
-            ></obi-bipolar_transistor-03-on>`;
+            ></obi-bipolar-transistor-03-on>`;
         } else {
-          return html`<obi-bipolar_transistor-03-off
+          return html`<obi-bipolar-transistor-03-off
               usecsscolor
               slot="icon"
-            ></obi-bipolar_transistor-03-off>
-            <obi-bipolar_transistor-03-off
+            ></obi-bipolar-transistor-03-off>
+            <obi-bipolar-transistor-03-off
               usecsscolor
               slot="icon-silhouette"
-            ></obi-bipolar_transistor-03-off>`;
+            ></obi-bipolar-transistor-03-off>`;
         }
       case BipolarTransistorAlternativeIcon.bipolarTransistor04:
         if (this.on) {
-          return html`<obi-bipolar_transistor-04-on
+          return html`<obi-bipolar-transistor-04-on
               usecsscolor
               slot="icon"
-            ></obi-bipolar_transistor-04-on>
-            <obi-bipolar_transistor-04-on
+            ></obi-bipolar-transistor-04-on>
+            <obi-bipolar-transistor-04-on
               usecsscolor
               slot="icon-silhouette"
-            ></obi-bipolar_transistor-04-on>`;
+            ></obi-bipolar-transistor-04-on>`;
         } else {
-          return html`<obi-bipolar_transistor-04-off
+          return html`<obi-bipolar-transistor-04-off
               usecsscolor
               slot="icon"
-            ></obi-bipolar_transistor-04-off>
-            <obi-bipolar_transistor-04-off
+            ></obi-bipolar-transistor-04-off>
+            <obi-bipolar-transistor-04-off
               usecsscolor
               slot="icon-silhouette"
-            ></obi-bipolar_transistor-04-off>`;
+            ></obi-bipolar-transistor-04-off>`;
         }
       case BipolarTransistorAlternativeIcon.bipolarTransistor03Flat:
-        return html`<obi-bipolar_transistor-03-flat
+        return html`<obi-bipolar-transistor-03-flat
             usecsscolor
             slot="icon"
-          ></obi-bipolar_transistor-03-flat>
-          <obi-bipolar_transistor-03-flat
+          ></obi-bipolar-transistor-03-flat>
+          <obi-bipolar-transistor-03-flat
             usecsscolor
             slot="icon-silhouette"
-          ></obi-bipolar_transistor-03-flat>`;
+          ></obi-bipolar-transistor-03-flat>`;
       case BipolarTransistorAlternativeIcon.bipolarTransistor04Flat:
-        return html`<obi-bipolar_transistor-04-flat
+        return html`<obi-bipolar-transistor-04-flat
             usecsscolor
             slot="icon"
-          ></obi-bipolar_transistor-04-flat>
-          <obi-bipolar_transistor-04-flat
+          ></obi-bipolar-transistor-04-flat>
+          <obi-bipolar-transistor-04-flat
             usecsscolor
             slot="icon-silhouette"
-          ></obi-bipolar_transistor-04-flat>`;
+          ></obi-bipolar-transistor-04-flat>`;
       default:
         if (this.on) {
-          return html`<obi-bipolar_transistor-on
+          return html`<obi-bipolar-transistor-on
               usecsscolor
               slot="icon"
-            ></obi-bipolar_transistor-on>
-            <obi-bipolar_transistor-on
+            ></obi-bipolar-transistor-on>
+            <obi-bipolar-transistor-on
               usecsscolor
               slot="icon-silhouette"
-            ></obi-bipolar_transistor-on>`;
+            ></obi-bipolar-transistor-on>`;
         } else {
-          return html`<obi-bipolar_transistor-off
+          return html`<obi-bipolar-transistor-off
               usecsscolor
               slot="icon"
-            ></obi-bipolar_transistor-off>
-            <obi-bipolar_transistor-off
+            ></obi-bipolar-transistor-off>
+            <obi-bipolar-transistor-off
               usecsscolor
               slot="icon-silhouette"
-            ></obi-bipolar_transistor-off>`;
+            ></obi-bipolar-transistor-off>`;
         }
     }
   }

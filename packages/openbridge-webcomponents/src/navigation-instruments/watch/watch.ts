@@ -494,12 +494,11 @@ export class ObcWatch extends LitElement {
 
   private watchCircle(): SVGTemplateResult | SVGTemplateResult[] {
     const rings = [];
-    // Full-face circle behind everything, split in two: the fill goes under
-    // the rings and the outline goes on top of them — the masked track band
-    // reaches exactly the face radius, so an outline drawn underneath would
-    // lose its inner half wherever the band overlaps it and look thinner
-    // there than across the open sector gap. In the ring branch the existing
-    // outer ring already outlines the face, so only the fill applies.
+    // The face circle is split: fill under the rings, outline over them. The
+    // masked track band reaches exactly the face radius, so an outline drawn
+    // underneath loses its inner half where the band overlaps and reads
+    // thinner there than across the sector gap. The ring branch needs only
+    // the fill — its outer ring already outlines the face.
     const faceFill =
       this.hasBackgroundCircle && this.state !== InstrumentState.off
         ? svg`
@@ -995,6 +994,8 @@ export class ObcWatch extends LitElement {
   override render() {
     let width: number;
     let height: number;
+    let frameX: number;
+    let frameY: number;
     let viewBox: string;
 
     if (this.arcFrame) {
@@ -1003,6 +1004,8 @@ export class ObcWatch extends LitElement {
       this._ownFrame = undefined;
       width = this.arcFrame.width;
       height = this.arcFrame.height;
+      frameX = this.arcFrame.x;
+      frameY = this.arcFrame.y;
       viewBox = this.arcFrame.viewBox;
     } else {
       const frame = computeRadialFrame({
@@ -1025,11 +1028,21 @@ export class ObcWatch extends LitElement {
       this._ownFrame = frame;
       width = frame.width;
       height = frame.height;
+      frameX = frame.x;
+      frameY = frame.y;
       viewBox = frame.viewBox;
     }
 
     const rOff = this._rOff;
     const scale = this.getScale({width, height});
+    // `rotation` turns the element box, which pivots on the box centre — the
+    // watch centre only while the frame is origin-centred. A cropped frame
+    // (sector window) moves it, so pin the pivot to the SVG origin instead.
+    const pivotX = width > 0 ? (-frameX / width) * 100 : 50;
+    const pivotY = height > 0 ? (-frameY / height) * 100 : 50;
+    // A cropped frame paints beyond the viewBox, which the viewport would cut
+    // before the rotation brings it into view. Only those need the escape.
+    const cropped = pivotX !== 50 || pivotY !== 50;
     const angleSetpoint = this.renderSetpoint();
     // Route through _bandRadius so inside labels track the (zoom-shifted) inner
     // band edge; the coupling is intentional (see _bandRadius INVARIANT).
@@ -1058,12 +1071,11 @@ export class ObcWatch extends LitElement {
       ? this.advices.map((a) => renderAdvice(a, rOff))
       : nothing;
 
-    // Compute label positions once – used for both rendering and crosshair
-    // knockout. NSWE labels are px-fixed outside decor, so they follow the
-    // same labelsHidden degradation as tick label texts. The north arrow is
-    // exempt: below the small-scale threshold it renders as a compact
-    // triangle at the ring that scales with the face, so it stays visible
-    // on the smallest faces without clipping.
+    // NSWE labels are px-fixed outside decor, so they degrade with
+    // `labelsHidden` like the tick label texts. The north arrow is exempt:
+    // below the small-scale threshold it becomes a compact triangle at the
+    // ring that scales with the face, so it survives the smallest faces
+    // without clipping.
     const showNsweLabels = this.showLabels && !this._labelsHidden;
     const showNorthArrow = this.northArrow;
     const insideLabels = this.tickmarksInside && showNsweLabels;
@@ -1124,41 +1136,50 @@ export class ObcWatch extends LitElement {
         : nothing;
     return html`
       <svg
+        class=${cropped ? 'cropped' : nothing}
         width="100%"
         height="100%"
         viewBox=${viewBox}
-        style="--scale: ${scale}"
+        style="--scale: ${scale}; transform-origin: ${pivotX}% ${pivotY}%"
         transform="rotate(${this.rotation ?? 0})"
       >
         ${this.watchCircle()} ${this.renderBars()}
-        ${this.crosshairEnabled
-          ? this.renderCrosshair(
-              OUTER_RING_RADIUS + rOff,
-              insideLabels && labelPositions
-                ? {
-                    positions: labelPositions,
-                    rotation: this.rotation,
-                    scale,
-                    innerRingRadius: this.innerRingRadius + rOff,
-                  }
-                : undefined,
-              this.crosshairCenterCutout
-                ? this.innerRingRadius + rOff
-                : undefined
-            )
-          : nothing}
+        ${
+          this.crosshairEnabled
+            ? this.renderCrosshair(
+                OUTER_RING_RADIUS + rOff,
+                insideLabels && labelPositions
+                  ? {
+                      positions: labelPositions,
+                      rotation: this.rotation,
+                      scale,
+                      innerRingRadius: this.innerRingRadius + rOff,
+                    }
+                  : undefined,
+                this.crosshairCenterCutout
+                  ? this.innerRingRadius + rOff
+                  : undefined
+              )
+            : nothing
+        }
         ${northArrowEl} ${this.renderStarboardPortIndicator()} ${current}
         ${this._renderTickFadeDefs()} ${wind}
-        ${this.tickFadeAngle > 0 && this.areas.length > 0
-          ? svg`<g mask="url(#tickFadeMask)">${tickmarks}</g>`
-          : tickmarks}
-        ${this.areas.length > 0
-          ? svg`<g clip-path="url(#rot-arc-clip)">${this.renderRot()}</g>`
-          : this.renderRot()}
+        ${
+          this.tickFadeAngle > 0 && this.areas.length > 0
+            ? svg`<g mask="url(#tickFadeMask)">${tickmarks}</g>`
+            : tickmarks
+        }
+        ${
+          this.areas.length > 0
+            ? svg`<g clip-path="url(#rot-arc-clip)">${this.renderRot()}</g>`
+            : this.renderRot()
+        }
         ${advices} ${angleSetpoint}
-        ${this.tickFadeAngle > 0 && this.areas.length > 0
-          ? svg`<g mask="url(#tickFadeMask)">${labels}</g>`
-          : labels}
+        ${
+          this.tickFadeAngle > 0 && this.areas.length > 0
+            ? svg`<g mask="url(#tickFadeMask)">${labels}</g>`
+            : labels
+        }
         ${this.renderVesselImage()} ${this.renderNeedles()}
       </svg>
     `;

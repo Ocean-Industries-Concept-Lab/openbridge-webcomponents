@@ -1,6 +1,20 @@
 import {LitElement, html, css, svg} from 'lit';
 import {customElement} from '../../decorator.js';
 
+/**
+ * `<obi-diagnostic-badge>` — Diagnostic asterisk mark.
+ *
+ * Renders the six-armed asterisk that marks an alert as diagnostic. It carries
+ * no state and no properties; the host sets its size and `color`.
+ *
+ * ## Usage Guidelines
+ *
+ * Used inside `obc-alert-frame` and `obc-alert-icon` for the diagnostic
+ * severity. It is not part of the generated icon set, so it lives here rather
+ * than in `src/icons/`.
+ *
+ * @beta
+ */
 @customElement('obi-diagnostic-badge')
 export class ObiDiagnosticBadge extends LitElement {
   private icon = svg`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="100" height="100">

@@ -108,8 +108,11 @@ export enum ObcToggleButtonLabelPlacement {
  * @property disabled - If true, the option is disabled and cannot be interacted with.
  * @property showDivider - If true, renders the divider after this option.
  *   Managed by the parent group.
+ * @property labelPlacement - Layout of icon and label: `inline` puts them side-by-side, `under` puts
+ *   the label below the icon.
  * @slot icon - Icon content for the option (when hasIcon is true).
  * @fires {CustomEvent<{value: string}>} selected - Fired when the option is clicked.
+ * @stable
  */
 @customElement('obc-toggle-button-vertical-option')
 export class ObcToggleButtonVerticalOption extends LitElement {
@@ -128,11 +131,6 @@ export class ObcToggleButtonVerticalOption extends LitElement {
 
   @property({type: Boolean, reflect: true}) disabled = false;
 
-  /**
-   * Controls the layout of icon and label.
-   * - `inline`: Icon and label displayed side-by-side.
-   * - `under`: Label displayed below the icon.
-   */
   @property({type: String})
   labelPlacement: ObcToggleButtonLabelPlacement =
     ObcToggleButtonLabelPlacement.inline;
@@ -198,18 +196,22 @@ export class ObcToggleButtonVerticalOption extends LitElement {
         <div class="visible-wrapper">
           <div class="icon-label-container">
             <div class="icon">
-              ${labelUnder && !this.hasIcon
-                ? nothing
-                : this.hasIcon
-                  ? html`<slot name="icon"></slot>`
-                  : nothing}
+              ${
+                labelUnder && !this.hasIcon
+                  ? nothing
+                  : this.hasIcon
+                    ? html`<slot name="icon"></slot>`
+                    : nothing
+              }
             </div>
 
-            ${labelUnder
-              ? html`<div class="label">${labelText}</div>`
-              : hasLabel
-                ? html`<div class="label">${this.label}</div>`
-                : nothing}
+            ${
+              labelUnder
+                ? html`<div class="label">${labelText}</div>`
+                : hasLabel
+                  ? html`<div class="label">${this.label}</div>`
+                  : nothing
+            }
           </div>
 
           ${!this.selected ? html`<div class="bottom-divider"></div>` : nothing}

@@ -1,6 +1,7 @@
 import {LitElement, html, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
+import {msg} from '@lit/localize';
 import compentStyle from './top-bar.css?inline';
 import '../icon-button/icon-button.js';
 import '../clock/clock.js';
@@ -76,27 +77,6 @@ export enum ObcTopBarMenuButtonIcon {
  * | `alerts`         | Always (if provided)            | Area for alert indicators, notification badges, or alert items.|
  * | `clock`          | Always (if provided)            | Clock component for displaying the current time.              |
  *
- * ## Properties and Attributes
- * - `appTitle` (string): Sets the main application title (default: "App").
- * - `pageName` (string): Sets the current page or section name (default: "Page").
- * - `menuButtonActivated` (boolean): Highlights the menu button as active.
- * - `dimmingButtonActivated` (boolean): Highlights the dimming button as active.
- * - `appsButtonActivated` (boolean): Highlights the apps button as active.
- * - `leftMoreButtonActivated` (boolean): Highlights the left more button as active.
- * - `userButtonActivated` (boolean): Highlights the user button as active.
- * - `tall` (boolean): Increases the bar height for larger touch targets.
- * - `wideMenuButton` (boolean): Expands the menu button for wide-rail layouts.
- * - `showAppsButton` (boolean): Shows/hides the apps button.
- * - `showDimmingButton` (boolean): Shows/hides the dimming (day/night) button.
- * - `showUserButton` (boolean): Shows/hides the user/profile button.
- * - `showClock` (boolean): Shows/hides the clock.
- * - `showDate` (boolean): Shows/hides the date in the clock.
- * - `showAppIcon` (boolean): Shows/hides the app icon slot.
- * - `inactive` (boolean): Disables interaction and visually de-emphasizes the bar.
- * - `settings` (boolean): Enables settings mode (shows close, back, forward, breadcrumbs).
- * - `breadcrumbItems` (BreadcrumbItem[]): Array of breadcrumb items for navigation.
- * - Breakpoint properties (`appButtonBreakpointPx`, `dimmingButtonBreakpointPx`, `appTitleBreakpointPx`, `userButtonBreakpointPx`, `appIconBreakpointPx`): Control responsive visibility of each section.
- *
  * ## Events
  * - `menu-button-clicked` – Fired when the menu button is clicked.
  * - `dimming-button-clicked` – Fired when the dimming (day/night) button is clicked.
@@ -109,10 +89,17 @@ export enum ObcTopBarMenuButtonIcon {
  * - `emergency-brightness-start` – Fired when the menu button is held for 500ms. This should increase the brightness of the screen slowly. Used when the screen is too dark.
  * - `emergency-brightness-stop` – Fired when the menu button is released.
  *
+ * ## Keyboard
+ * Every control in the bar is its own tab stop and activates on `Enter` and
+ * `Space`. The bar is a navigation landmark, not an APG toolbar: its controls
+ * are separate components and slotted consumer content, so a roving tabindex
+ * across them is deliberately not implemented. The emergency-brightness hold
+ * is a pointer gesture only; from the keyboard the menu button opens the menu.
+ *
  * ## Best Practices and Constraints
  * - Only show interactive elements relevant to the current context to avoid clutter.
  * - Use the `alerts` slot for transient or critical notifications; persistent alerts may require a different component.
- * - For accessibility, ensure that all interactive elements have appropriate labels and focus handling.
+ * - For accessibility, give all interactive elements labels and focus handling.
  * - Adjust breakpoint properties to optimize the layout for different device sizes.
  * - In settings mode, use breadcrumbs to provide clear navigation context.
  *
@@ -136,6 +123,39 @@ export enum ObcTopBarMenuButtonIcon {
  * ```
  *
  * @availableWhen menuButtonIcon settings==false && inactive==false
+ * @property appTitle - Sets the main application title displayed in the top bar.
+ * @property pageName - Sets the current page or section name displayed in the top bar.
+ * @availableWhen pageName settings==false
+ * @property menuButtonActivated - Highlights the menu button as active.
+ * @availableWhen menuButtonActivated settings==false && inactive==false
+ * @property dimmingButtonActivated - Highlights the dimming (day/night) button as active.
+ * @availableWhen dimmingButtonActivated showDimmingButton==true && inactive==false
+ * @property appsButtonActivated - Highlights the apps button as active.
+ * @availableWhen appsButtonActivated showAppsButton==true && inactive==false
+ * @property leftMoreButtonActivated - Highlights the left more button as active.
+ * @availableWhen leftMoreButtonActivated inactive==false
+ * @property userButtonActivated - Highlights the user/profile button as active.
+ * @availableWhen userButtonActivated showUserButton==true && inactive==false
+ * @property userButtonDisabled - Disables the user/profile button.
+ * @availableWhen userButtonDisabled showUserButton==true && inactive==false
+ * @property tall - Increases the height of the top bar for larger touch targets.
+ * @property wideMenuButton - Expands the menu button for wide-rail layouts.
+ * @availableWhen wideMenuButton settings==false && inactive==false
+ * @property showAppsButton - Shows or hides the apps button.
+ * @property showDimmingButton - Shows or hides the dimming (day/night) button.
+ * @property showUserButton - Shows or hides the user/profile button.
+ * @property showClock - Shows or hides the clock.
+ * @property showDate - Shows or hides the date in the clock display.
+ * @property showAppIcon - Shows or hides the app icon slot.
+ * @property inactive - Disables interaction and visually de-emphasizes the bar.
+ * @property appButtonBreakpointPx - Controls the breakpoint (in px) for showing/hiding the apps button.
+ * @property dimmingButtonBreakpointPx - Controls the breakpoint (in px) for showing/hiding the dimming button.
+ * @property appTitleBreakpointPx - Controls the breakpoint (in px) for showing/hiding the app title.
+ * @property userButtonBreakpointPx - Controls the breakpoint (in px) for showing/hiding the user button.
+ * @property appIconBreakpointPx - Controls the breakpoint (in px) for showing/hiding the app icon.
+ * @property settings - Enables settings mode, displaying close, back buttons, breadcrumbs, and app title.
+ * @property breadcrumbItems - Array of breadcrumb items for navigation (used in settings mode).
+ * @availableWhen breadcrumbItems settings==true
  * @slot app-icon - Custom icon representing the application or brand (shown when `showAppIcon` is true)
  * @slot command-button - Primary command/action button for the current context
  * @slot alerts - Area for alert indicators, notification badges, or alert items
@@ -154,195 +174,66 @@ export enum ObcTopBarMenuButtonIcon {
  */
 @customElement('obc-top-bar')
 export class ObcTopBar extends LitElement {
-  /**
-   * Sets the main application title displayed in the top bar.
-   * @type {string}
-   * @default "App"
-   */
   @property({type: String}) appTitle = 'App';
 
-  /**
-   * Sets the current page or section name displayed in the top bar.
-   * @type {string}
-   * @default "Page"
-   * @availableWhen settings==false
-   */
   @property({type: String}) pageName = 'Page';
 
   @property({type: String}) menuButtonIcon = ObcTopBarMenuButtonIcon.Menu;
 
-  /**
-   * Highlights the menu button as active.
-   * @type {boolean}
-   * @default false
-   * @availableWhen settings==false && inactive==false
-   */
   @property({type: Boolean})
   menuButtonActivated = false;
 
-  /**
-   * Highlights the dimming (day/night) button as active.
-   * @type {boolean}
-   * @default false
-   * @availableWhen showDimmingButton==true && inactive==false
-   */
   @property({type: Boolean})
   dimmingButtonActivated = false;
 
-  /**
-   * Highlights the apps button as active.
-   * @type {boolean}
-   * @default false
-   * @availableWhen showAppsButton==true && inactive==false
-   */
   @property({type: Boolean})
   appsButtonActivated = false;
 
-  /**
-   * Highlights the left more button as active.
-   * @type {boolean}
-   * @default false
-   * @availableWhen inactive==false
-   */
   @property({type: Boolean})
   leftMoreButtonActivated = false;
 
-  /**
-   * Highlights the user/profile button as active.
-   * @type {boolean}
-   * @default false
-   * @availableWhen showUserButton==true && inactive==false
-   */
   @property({type: Boolean})
   userButtonActivated = false;
 
-  /**
-   * Disables the user/profile button.
-   * @type {boolean}
-   * @default false
-   * @availableWhen showUserButton==true && inactive==false
-   */
   @property({type: Boolean})
   userButtonDisabled = false;
 
-  /**
-   * Increases the height of the top bar for larger touch targets.
-   * @type {boolean}
-   * @default false
-   */
   @property({type: Boolean}) tall = false;
 
-  /**
-   * Expands the menu button for wide-rail layouts.
-   * @type {boolean}
-   * @default false
-   * @availableWhen settings==false && inactive==false
-   */
   @property({type: Boolean}) wideMenuButton = false;
 
-  /**
-   * Shows or hides the apps button.
-   * @type {boolean}
-   * @default false
-   */
   @property({type: Boolean}) showAppsButton = false;
 
-  /**
-   * Shows or hides the dimming (day/night) button.
-   * @type {boolean}
-   * @default false
-   */
   @property({type: Boolean})
   showDimmingButton = false;
 
-  /**
-   * Shows or hides the user/profile button.
-   * @type {boolean}
-   * @default false
-   */
   @property({type: Boolean}) showUserButton = false;
 
-  /**
-   * Shows or hides the clock.
-   * @type {boolean}
-   * @default false
-   */
   @property({type: Boolean}) showClock = false;
 
-  /**
-   * Shows or hides the date in the clock display.
-   * @type {boolean}
-   * @default false
-   */
   @property({type: Boolean}) showDate = false;
 
-  /**
-   * Shows or hides the app icon slot.
-   * @type {boolean}
-   * @default false
-   */
   @property({type: Boolean}) showAppIcon = false;
 
-  /**
-   * Disables interaction and visually de-emphasizes the bar.
-   * @type {boolean}
-   * @default false
-   */
   @property({type: Boolean}) inactive = false;
 
-  /**
-   * Controls the breakpoint (in px) for showing/hiding the apps button.
-   * @type {number}
-   * @default 500
-   */
   @property({type: Number})
   appButtonBreakpointPx = 500;
 
-  /**
-   * Controls the breakpoint (in px) for showing/hiding the dimming button.
-   * @type {number}
-   * @default 500
-   */
   @property({type: Number})
   dimmingButtonBreakpointPx = 500;
 
-  /**
-   * Controls the breakpoint (in px) for showing/hiding the app title.
-   * @type {number}
-   * @default 500
-   */
   @property({type: Number})
   appTitleBreakpointPx = 500;
 
-  /**
-   * Controls the breakpoint (in px) for showing/hiding the user button.
-   * @type {number}
-   * @default 500
-   */
   @property({type: Number})
   userButtonBreakpointPx = 500;
 
-  /**
-   * Controls the breakpoint (in px) for showing/hiding the app icon.
-   * @type {number}
-   * @default 500
-   */
   @property({type: Number})
   appIconBreakpointPx = 500;
 
-  /**
-   * Enables settings mode, displaying close, back buttons, breadcrumbs, and app title.
-   * @type {boolean}
-   * @default false
-   */
   @property({type: Boolean}) settings = false;
 
-  /**
-   * Array of breadcrumb items for navigation (used in settings mode).
-   * @type {BreadcrumbItem[]}
-   * @default []
-   * @availableWhen settings==true
-   */
   @property({type: Array})
   breadcrumbItems: BreadcrumbItem[] = [];
 
@@ -393,11 +284,13 @@ export class ObcTopBar extends LitElement {
     }, 500);
   }
 
+  /**
+   * Ends a hold. The event a short press stands for is dispatched from the
+   * `click` that follows, not here: a menu opened while the pointer is still
+   * going up gets closed again by that same click in current browsers, which
+   * see it as a click outside a popover that has just opened.
+   */
   private leftButtonUp() {
-    if (this.leftButtonEvent) {
-      this.dispatchEvent(this.leftButtonEvent);
-      this.leftButtonEvent = null;
-    }
     if (this.leftButtonTimeout) {
       clearTimeout(this.leftButtonTimeout);
       this.leftButtonTimeout = null;
@@ -407,6 +300,25 @@ export class ObcTopBar extends LitElement {
       this.isEmergencyBrightness = false;
     }
     this.isLeftButtonDown = false;
+  }
+
+  /**
+   * Sends the event a press of the hold button stands for.
+   *
+   * Enter, Space and a screen reader's activate command arrive as a `click`
+   * with `detail` 0 and no pointer press before it, so they get the event
+   * directly. A pointer click arrives with `detail` 1 after the press: the
+   * event stored on the way down is sent now, unless the press ran long
+   * enough to start emergency brightness, which used it up.
+   */
+  private leftButtonActivate(event: MouseEvent, type: string) {
+    if (event.detail === 0) {
+      this.dispatchEvent(new CustomEvent(type));
+      return;
+    }
+    if (!this.leftButtonEvent) return;
+    this.dispatchEvent(this.leftButtonEvent);
+    this.leftButtonEvent = null;
   }
 
   private leftButtonLeave() {
@@ -429,9 +341,12 @@ export class ObcTopBar extends LitElement {
         html`<div class="menu-button">
           <obc-icon-button
             variant="flat"
+            aria-label=${msg('Close')}
             @pointerdown=${() => this.leftButtonDown(new CustomEvent('close'))}
             @pointerup=${() => this.leftButtonUp()}
             @pointerleave=${() => this.leftButtonLeave()}
+            @click=${(event: MouseEvent) =>
+              this.leftButtonActivate(event, 'close')}
           >
             <obi-close-google></obi-close-google>
           </obc-icon-button>
@@ -440,6 +355,7 @@ export class ObcTopBar extends LitElement {
       leftGroup.push(
         html`<obc-icon-button
           variant="flat"
+          aria-label=${msg('Back')}
           @click=${() => this.dispatchEvent(new CustomEvent('back'))}
         >
           <obi-arrow-left-google></obi-arrow-left-google>
@@ -463,15 +379,24 @@ export class ObcTopBar extends LitElement {
           html`<div class="menu-button ${this.wideMenuButton ? 'wide' : null}">
             <obc-icon-button
               variant="flat"
+              aria-label=${
+                this.menuButtonIcon === ObcTopBarMenuButtonIcon.Menu
+                  ? msg('Menu')
+                  : msg('Home')
+              }
               @pointerdown=${() =>
                 this.leftButtonDown(new CustomEvent('menu-button-clicked'))}
               @pointerup=${() => this.leftButtonUp()}
               @pointerleave=${() => this.leftButtonLeave()}
+              @click=${(event: MouseEvent) =>
+                this.leftButtonActivate(event, 'menu-button-clicked')}
               ?activated=${this.menuButtonActivated}
             >
-              ${this.menuButtonIcon === ObcTopBarMenuButtonIcon.Menu
-                ? html`<obi-menu-iec></obi-menu-iec>`
-                : html`<obi-home></obi-home>`}
+              ${
+                this.menuButtonIcon === ObcTopBarMenuButtonIcon.Menu
+                  ? html`<obi-menu-iec></obi-menu-iec>`
+                  : html`<obi-home></obi-home>`
+              }
             </obc-icon-button>
           </div>`
         );
@@ -518,7 +443,7 @@ export class ObcTopBar extends LitElement {
 
         @media (max-width: ${this.appTitleBreakpointPx}px) {
           .title {
-            display: none;
+            display: none !important; /* the stylesheet's display wins over this inline rule otherwise */
           }
         }
 
@@ -541,59 +466,70 @@ export class ObcTopBar extends LitElement {
           settings: this.settings,
           tall: this.tall,
         })}
-        role="menubar"
       >
         <div class="left group">${leftGroup}</div>
         <div class="right group">
           <div class="alert-container">
             <slot name="alerts"></slot>
           </div>
-          ${this.showDimmingButton && !this.inactive
-            ? html`<obc-icon-button
-                class="dimming-button"
-                part="dimming-button"
-                variant="flat"
-                @click=${this.dimmingButtonClicked}
-                ?activated=${this.dimmingButtonActivated}
-              >
-                <obi-palette-day-night-iec></obi-palette-day-night-iec>
-              </obc-icon-button>`
-            : null}
-          ${this.showUserButton && !this.inactive
-            ? html`<obc-icon-button
-                class="user-button"
-                variant="flat"
-                part="user-button"
-                @click=${this.userButtonClicked}
-                ?activated=${this.userButtonActivated}
-                ?disabled=${this.userButtonDisabled}
-              >
-                <obi-user></obi-user>
-              </obc-icon-button>`
-            : null}
-          ${this.showAppsButton && !this.inactive
-            ? html`<obc-icon-button
-                class="apps-button"
-                variant="flat"
-                part="apps-button"
-                @click=${this.appsButtonClicked}
-                ?activated=${this.appsButtonActivated}
-              >
-                <obi-applications></obi-applications>
-              </obc-icon-button>`
-            : null}
+          ${
+            this.showDimmingButton && !this.inactive
+              ? html`<obc-icon-button
+                  class="dimming-button"
+                  part="dimming-button"
+                  variant="flat"
+                  aria-label=${msg('Dimming')}
+                  @click=${this.dimmingButtonClicked}
+                  ?activated=${this.dimmingButtonActivated}
+                >
+                  <obi-palette-day-night-iec></obi-palette-day-night-iec>
+                </obc-icon-button>`
+              : null
+          }
+          ${
+            this.showUserButton && !this.inactive
+              ? html`<obc-icon-button
+                  class="user-button"
+                  variant="flat"
+                  part="user-button"
+                  aria-label=${msg('User')}
+                  @click=${this.userButtonClicked}
+                  ?activated=${this.userButtonActivated}
+                  ?disabled=${this.userButtonDisabled}
+                >
+                  <obi-user></obi-user>
+                </obc-icon-button>`
+              : null
+          }
+          ${
+            this.showAppsButton && !this.inactive
+              ? html`<obc-icon-button
+                  class="apps-button"
+                  variant="flat"
+                  part="apps-button"
+                  aria-label=${msg('Apps')}
+                  @click=${this.appsButtonClicked}
+                  ?activated=${this.appsButtonActivated}
+                >
+                  <obi-applications></obi-applications>
+                </obc-icon-button>`
+              : null
+          }
           ${this.showClock ? html`<slot name="clock"></slot>` : null}
-          ${!this.inactive
-            ? html`<obc-icon-button
-                class="left-more-button"
-                part="left-more-button"
-                variant="flat"
-                @click=${this.leftMoreButtonClicked}
-                ?activated=${this.leftMoreButtonActivated}
-              >
-                <obi-more-vertical-google></obi-more-vertical-google>
-              </obc-icon-button>`
-            : null}
+          ${
+            !this.inactive
+              ? html`<obc-icon-button
+                  class="left-more-button"
+                  part="left-more-button"
+                  variant="flat"
+                  aria-label=${msg('More')}
+                  @click=${this.leftMoreButtonClicked}
+                  ?activated=${this.leftMoreButtonActivated}
+                >
+                  <obi-more-vertical-google></obi-more-vertical-google>
+                </obc-icon-button>`
+              : null
+          }
         </div>
       </nav>
     `;

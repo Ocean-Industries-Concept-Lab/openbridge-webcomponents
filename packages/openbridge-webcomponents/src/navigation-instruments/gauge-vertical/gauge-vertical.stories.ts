@@ -18,6 +18,7 @@ const meta: Meta = {
   argTypes: {
     minValue: {control: {type: 'range', min: -100, max: 100}},
     maxValue: {control: {type: 'range', min: 0, max: 1000}},
+    reverse: {control: {type: 'boolean'}},
     mainTickmarks: {
       control: {type: 'object'},
       table: {type: {summary: 'number[] | undefined'}},
@@ -52,6 +53,7 @@ const meta: Meta = {
   args: {
     minValue: 0,
     maxValue: 100,
+    reverse: false,
     mainTickmarks: [],
     primaryTickmarkInterval: 20,
     secondaryTickmarkInterval: 10,
@@ -77,6 +79,7 @@ const meta: Meta = {
     <obc-gauge-vertical
       .minValue=${args.minValue}
       .maxValue=${args.maxValue}
+      .reverse=${args.reverse}
       .mainTickmarks=${args.mainTickmarks}
       .primaryTickmarkInterval=${args.primaryTickmarkInterval}
       .secondaryTickmarkInterval=${args.secondaryTickmarkInterval}
@@ -568,4 +571,28 @@ export const EnhancedModeComparison: Story = {
       </div>
     </div>
   `,
+};
+
+export const Reversed: Story = {
+  name: 'Reversed (0 at Top, Depth 0 to 75 m)',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`reverse` puts `minValue` at the top so a quantity measured downward is plotted with positive numbers. The bar fills from `fillMin` (0, the surface) down to `value`.',
+      },
+    },
+  },
+  args: {
+    minValue: 0,
+    maxValue: 75,
+    reverse: true,
+    value: 65.3,
+    fillMin: 0,
+    fillMax: undefined,
+    setpoint: 70,
+    primaryTickmarkInterval: 25,
+    secondaryTickmarkInterval: 5,
+    advices: [{min: 65, max: 75, type: AdviceType.caution, hinted: false}],
+  },
 };

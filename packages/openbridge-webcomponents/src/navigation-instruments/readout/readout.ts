@@ -55,7 +55,7 @@ import {
   ObcAlertFrameThickness,
   ObcAlertFrameMode,
 } from '../../components/alert-frame/alert-frame.js';
-import {AlertType} from '../../types.js';
+import {AlertType, FlashingSpeed} from '../../types.js';
 import '../../components/button/button.js';
 import '../../components/context-menu-input/context-menu-input.js';
 import {
@@ -237,10 +237,24 @@ export interface ReadoutSourceOptions extends ReadoutSrcOptions {
  * lists/tables (label left, value right) and `<obc-readout-list>` for
  * auto-aligned groups of rows.
  *
+ * ### Slots
+ * | Slot Name          | Renders When                          | Purpose                              |
+ * |--------------------|---------------------------------------|--------------------------------------|
+ * | leading-icon       | `hasLeadingIcon`                      | Icon before the label/unit meta zone.|
+ * | value-icon         | `valueOptions.hasIcon`                | Icon before the value.               |
+ * | setpoint-icon      | `hasSetpoint`                         | Overrides the default setpoint icon. |
+ * | advice-icon        | `hasAdvice`                           | Overrides the default advice icon.   |
+ * | src-picker-content | `srcOptions.interaction == 'picker'`  | Source picker context-menu content.  |
+ *
  * @property hasValue - Layout switch: `false` renders a deliberately value-less (label-only)
  *   readout that hugs its remaining parts. For a temporarily missing value
  *   keep `hasValue` and set `value` to `null` instead — the dash keeps the
  *   value block at full size, so the layout does not shift when data arrives.
+ * @property value - The value; `null` renders a dash. A number by default, or text when
+ *   `valueType` is `text`.
+ * @property valueType - How `value` is interpreted. `number` (default) formats it via
+ *   `fractionDigits`; `text` renders it verbatim and ignores the numeric
+ *   format options. Passing text while this is `number` throws.
  * @property off - Render the value as `offText` (e.g. equipment powered down). Affects the value only.
  * @property offText - Text shown in place of the value when `off` is true.
  * @availableWhen offText off==true
@@ -283,26 +297,14 @@ export interface ReadoutSourceOptions extends ReadoutSrcOptions {
  * @property showDebugOverlay - Development aid: outline the readout building blocks (red), the degree
  *   columns (blue) and the degree spacer (green) so reserved widths / alignment
  *   are visible. Off by default.
- * @experimental Part of the primitives + per-block options Readout API pilot;
- * the API may change in a future release.
- *
- * ### Slots
- * | Slot Name          | Renders When                          | Purpose                              |
- * |--------------------|---------------------------------------|--------------------------------------|
- * | leading-icon       | `hasLeadingIcon`                      | Icon before the label/unit meta zone.|
- * | value-icon         | `valueOptions.hasIcon`                | Icon before the value.               |
- * | setpoint-icon      | `hasSetpoint`                         | Overrides the default setpoint icon. |
- * | advice-icon        | `hasAdvice`                           | Overrides the default advice icon.   |
- * | src-picker-content | `srcOptions.interaction == 'picker'`  | Source picker context-menu content.  |
- *
- * @fires {CustomEvent<{value: string, label?: string}>} source-change - Fired when a source picker option is selected.
- * @fires {CustomEvent<{src: string}>} source-flyout-click - Fired when the source row is clicked while `srcOptions.interaction == 'flyout'`.
- *
  * @slot leading-icon - Icon before the label/unit meta zone.
  * @slot value-icon - Icon before the value.
  * @slot setpoint-icon - Overrides the default setpoint icon.
  * @slot advice-icon - Overrides the default advice icon.
  * @slot src-picker-content - Provides the source picker context menu content.
+ * @fires {CustomEvent<{value: string, label?: string}>} source-change - Fired when a source picker option is selected.
+ * @fires {CustomEvent<{src: string}>} source-flyout-click - Fired when the source row is clicked while `srcOptions.interaction == 'flyout'`.
+ * @stable
  */
 @customElement('obc-readout')
 export class ObcReadout extends LitElement {
@@ -312,16 +314,7 @@ export class ObcReadout extends LitElement {
   @property({type: String}) src?: string;
 
   @property({type: Boolean, attribute: false}) hasValue = true;
-  /**
-   * The value; `null` renders a dash. A number by default, or text when
-   * {@link valueType} is `text`.
-   */
   @property({type: String}) value: number | string | null = null;
-  /**
-   * How {@link value} is interpreted. `number` (default) formats it via
-   * `fractionDigits`; `text` renders it verbatim and ignores the numeric
-   * format options. Passing text while this is `number` throws.
-   */
   @property({type: String}) valueType: ReadoutValueType =
     ReadoutValueType.number;
   @property({type: Boolean}) off = false;
@@ -385,9 +378,8 @@ export class ObcReadout extends LitElement {
   };
 
   private get resolvedSize(): ReadoutSize {
-    // The horizontal arrangement exists only in the large tier (Figma 6.1 /
-    // design review 2026-08-18): it relies on the label+unit stack aligning
-    // with the L-size value caps, so `size` is ignored when horizontal.
+    // The horizontal arrangement exists only in the large tier (Figma 6.1): it
+    // relies on the label+unit stack aligning with the L-size value caps.
     if (this.isHorizontal) {
       return ReadoutSize.large;
     }
@@ -570,7 +562,6 @@ export class ObcReadout extends LitElement {
    * scannable label should not sit at the smallest permitted size — while
    * small/medium tiers stay `xs`; `labelOptions.size` overrides either way
    * (per the design team, for context / density / secondary instruments).
-   * The `s` default was confirmed by the design team (2026-08-17).
    * TODO(designer): the medium-tier default is unverified in the new sheets
    * (only XS and S exist on the title's size axis).
    */
@@ -634,6 +625,7 @@ export class ObcReadout extends LitElement {
     enhanced: boolean;
     weight: ObcTextboxFontWeight;
     hintedZeros: boolean;
+    hasSignSpacer?: boolean;
     spaceReserver?: string;
     off?: boolean;
     hasDegree?: boolean;
@@ -671,6 +663,7 @@ export class ObcReadout extends LitElement {
         .fractionDigits=${this.fractionDigits}
         .maxDigits=${this.maxDigits}
         .hintedZeros=${config.hintedZeros}
+        .hasSignSpacer=${config.hasSignSpacer ?? false}
         .spaceReserver=${config.spaceReserver}
         .off=${config.off ?? false}
         .offText=${this.offText}
@@ -771,10 +764,8 @@ export class ObcReadout extends LitElement {
   }
 
   // `hasDegree` is deliberately NOT forwarded to the advice / setpoint blocks:
-  // the degree glyph renders on the actual value only (Figma 6.1 review,
-  // 2026-08-18) — the unit is written once for the whole readout, and the
-  // degree follows the same rule; the setpoint / advice implicitly share it.
-  // `obc-readout-list-item` keeps its own per-row convention.
+  // the unit is written once per readout and the degree follows the same rule
+  // (Figma 6.1). `obc-readout-list-item` keeps its own per-row convention.
   private renderAdviceBlock(): TemplateResult {
     return this.renderBlock({
       variant: ReadoutBlockVariant.advice,
@@ -783,6 +774,7 @@ export class ObcReadout extends LitElement {
       enhanced: false,
       weight: ObcTextboxFontWeight.regular,
       hintedZeros: this.adviceOptions?.hintedZeros ?? false,
+      hasSignSpacer: this.adviceOptions?.hasSignSpacer ?? false,
       spaceReserver: this.adviceOptions?.spaceReserver,
       dataQuality: this.adviceOptions?.dataQuality,
       alert: this.adviceOptions?.alert,
@@ -801,6 +793,7 @@ export class ObcReadout extends LitElement {
       enhanced: this.rowEnhanced,
       weight: this.setpointWeight,
       hintedZeros: this.setpointOptions?.hintedZeros ?? false,
+      hasSignSpacer: this.setpointOptions?.hasSignSpacer ?? false,
       spaceReserver: this.setpointOptions?.spaceReserver,
       touching: this.setpointTouching,
       hidePhase: this.setpointHidePhase,
@@ -833,6 +826,7 @@ export class ObcReadout extends LitElement {
           enhanced: this.rowEnhanced,
           weight: this.valueWeight,
           hintedZeros: this.valueOptions?.hintedZeros ?? false,
+          hasSignSpacer: this.valueOptions?.hasSignSpacer ?? false,
           spaceReserver: this.valueOptions?.spaceReserver,
           off: this.off,
           hasIcon: this.valueOptions?.hasIcon ?? false,
@@ -857,21 +851,14 @@ export class ObcReadout extends LitElement {
     }
     const thickness = alert.thickness ?? ObcAlertFrameThickness.Small;
     return html`
-      <div
-        class=${classMap({
-          'value-alert-overlay': true,
-          // The outward offset is thickness-dependent (see the CSS): large frames
-          // draw a wider outline, so the box must sit further out to stay centred.
-          'thickness-large': thickness === ObcAlertFrameThickness.Large,
-        })}
-        aria-hidden="true"
-      >
+      <div class="value-alert-overlay" aria-hidden="true">
         <obc-alert-frame
           part="value-alert-frame"
           .type=${alert.type ?? ObcAlertFrameType.Regular}
           .thickness=${thickness}
           .status=${alert.status ?? AlertType.Alarm}
           .mode=${alert.mode ?? ObcAlertFrameMode.ackedActive}
+          .flashingSpeed=${alert.flashingSpeed ?? FlashingSpeed.Default}
           .showIcon=${alert.showIcon ?? false}
           .showAlertCategoryIcon=${alert.showAlertCategoryIcon ?? true}
           .wrapContent=${false}
@@ -900,26 +887,32 @@ export class ObcReadout extends LitElement {
         })}
         part="meta-wrapper"
       >
-        ${this.hasLeadingIcon
-          ? html`<span class="leading-icon" aria-hidden="true"
-              ><slot name="leading-icon"></slot
-            ></span>`
-          : nothing}
+        ${
+          this.hasLeadingIcon
+            ? html`<span class="leading-icon" aria-hidden="true"
+                ><slot name="leading-icon"></slot
+              ></span>`
+            : nothing
+        }
         <div class="meta-labels" part="meta-labels">
-          ${this.label
-            ? this.renderTextbox(
-                'label',
-                this.label,
-                this.labelOptions?.spaceReserver
-              )
-            : nothing}
-          ${this.unit
-            ? this.renderTextbox(
-                'unit',
-                this.unit,
-                this.unitOptions?.spaceReserver
-              )
-            : nothing}
+          ${
+            this.label
+              ? this.renderTextbox(
+                  'label',
+                  this.label,
+                  this.labelOptions?.spaceReserver
+                )
+              : nothing
+          }
+          ${
+            this.unit
+              ? this.renderTextbox(
+                  'unit',
+                  this.unit,
+                  this.unitOptions?.spaceReserver
+                )
+              : nothing
+          }
         </div>
       </div>
     `;
@@ -987,9 +980,9 @@ export class ObcReadout extends LitElement {
   /**
    * The plain (non-interactive) source: the textbox plus its optional state
    * chip and deviation line. The regular no-deviation case renders the bare
-   * textbox — the pre-6.1 output; a state or deviation wraps it in the
-   * `.source-block` stack. The picker / flyout button variants do not carry
-   * state / deviation yet — TODO(designer): undefined in the 6.1 sheets.
+   * textbox; a state or deviation wraps it in the `.source-block` stack. The
+   * picker / flyout button variants do not carry state / deviation yet —
+   * TODO(designer): undefined in the 6.1 sheets.
    */
   private renderSourceBlock(src: string): TemplateResult {
     const state = this.srcOptions?.state ?? ReadoutSourceState.regular;
@@ -1013,18 +1006,20 @@ export class ObcReadout extends LitElement {
         part="source-block"
       >
         ${box}
-        ${hasDeviation
-          ? html`<span class="source-deviation">
-              <obi-delta aria-hidden="true"></obi-delta>
-              <obc-textbox
-                class="source-deviation-value"
-                .size=${ObcTextboxSize.xs}
-                .tabularNums=${true}
-                alignment="left"
-                >${deviation}</obc-textbox
-              >
-            </span>`
-          : nothing}
+        ${
+          hasDeviation
+            ? html`<span class="source-deviation">
+                <obi-delta aria-hidden="true"></obi-delta>
+                <obc-textbox
+                  class="source-deviation-value"
+                  .size=${ObcTextboxSize.xs}
+                  .tabularNums=${true}
+                  alignment="left"
+                  >${deviation}</obc-textbox
+                >
+              </span>`
+            : nothing
+        }
       </div>
     `;
   }
@@ -1041,13 +1036,15 @@ export class ObcReadout extends LitElement {
       return nothing;
     }
     return html`
-      ${this.isHorizontal
-        ? html`<div
-            class="divider divider-vertical"
-            part="divider"
-            aria-hidden="true"
-          ></div>`
-        : nothing}
+      ${
+        this.isHorizontal
+          ? html`<div
+              class="divider divider-vertical"
+              part="divider"
+              aria-hidden="true"
+            ></div>`
+          : nothing
+      }
       <div class="source-row" part="source-wrapper">
         ${this.renderSourceContent()}
       </div>
@@ -1221,6 +1218,7 @@ export class ObcReadout extends LitElement {
             // renders on the actual value only), so the ghost mirrors it.
             weight: ObcTextboxFontWeight.semibold,
             hintedZeros: this.setpointOptions?.hintedZeros ?? false,
+            hasSignSpacer: this.setpointOptions?.hasSignSpacer ?? false,
             spaceReserver: this.setpointOptions?.spaceReserver,
             alert: this.setpointOptions?.alert,
             ghost: true,
@@ -1233,6 +1231,7 @@ export class ObcReadout extends LitElement {
             enhanced: false,
             weight: this.valueWeight,
             hintedZeros: this.valueOptions?.hintedZeros ?? false,
+            hasSignSpacer: this.valueOptions?.hasSignSpacer ?? false,
             spaceReserver: this.valueOptions?.spaceReserver,
             off: this.off,
             hasIcon: this.valueOptions?.hasIcon ?? false,
@@ -1251,23 +1250,29 @@ export class ObcReadout extends LitElement {
   private renderVerticalLayout(): TemplateResult {
     return html`
       <div class="value-cluster" part="value-cluster">
-        ${this.hasAdvice
-          ? html`<div class="advice-row" part="advice-wrapper">
-              ${this.renderAdviceBlock()}
-            </div>`
-          : nothing}
-        ${this.hasSetpoint
-          ? html`<div class="setpoint-row" part="setpoint-wrapper">
-              ${this.renderSetpointBlock()}
-              ${this.renderSetpointWidthReserve('setpoint')}
-            </div>`
-          : nothing}
-        ${this.hasValue
-          ? html`<div class="value-row" part="value-wrapper">
-              ${this.renderValueReading()}
-              ${this.renderSetpointWidthReserve('value')}
-            </div>`
-          : nothing}
+        ${
+          this.hasAdvice
+            ? html`<div class="advice-row" part="advice-wrapper">
+                ${this.renderAdviceBlock()}
+              </div>`
+            : nothing
+        }
+        ${
+          this.hasSetpoint
+            ? html`<div class="setpoint-row" part="setpoint-wrapper">
+                ${this.renderSetpointBlock()}
+                ${this.renderSetpointWidthReserve('setpoint')}
+              </div>`
+            : nothing
+        }
+        ${
+          this.hasValue
+            ? html`<div class="value-row" part="value-wrapper">
+                ${this.renderValueReading()}
+                ${this.renderSetpointWidthReserve('value')}
+              </div>`
+            : nothing
+        }
       </div>
       ${this.renderMetaZone()} ${this.renderSource()}
     `;
@@ -1281,21 +1286,27 @@ export class ObcReadout extends LitElement {
   private renderHorizontalLayout(): TemplateResult {
     return html`
       <div class="inline-row" part="value-cluster">
-        ${this.hasAdvice
-          ? html`<div class="advice-row" part="advice-wrapper">
-              ${this.renderAdviceBlock()}
-            </div>`
-          : nothing}
-        ${this.hasSetpoint
-          ? html`<div class="setpoint-row" part="setpoint-wrapper">
-              ${this.renderSetpointBlock()}
-            </div>`
-          : nothing}
-        ${this.hasValue
-          ? html`<div class="value-row" part="value-wrapper">
-              ${this.renderValueReading()}
-            </div>`
-          : nothing}
+        ${
+          this.hasAdvice
+            ? html`<div class="advice-row" part="advice-wrapper">
+                ${this.renderAdviceBlock()}
+              </div>`
+            : nothing
+        }
+        ${
+          this.hasSetpoint
+            ? html`<div class="setpoint-row" part="setpoint-wrapper">
+                ${this.renderSetpointBlock()}
+              </div>`
+            : nothing
+        }
+        ${
+          this.hasValue
+            ? html`<div class="value-row" part="value-wrapper">
+                ${this.renderValueReading()}
+              </div>`
+            : nothing
+        }
         ${this.renderMetaZone()} ${this.renderSource()}
       </div>
     `;
@@ -1303,13 +1314,9 @@ export class ObcReadout extends LitElement {
 
   protected override willUpdate(changed: Map<string, unknown>): void {
     super.willUpdate(changed);
-    // Validated on EVERY update, deliberately NOT gated on `value`/`valueType`
-    // appearing in `changed`. When this assertion throws, Lit's `performUpdate`
-    // catch calls `__markUpdated()`, which clears the changed-properties map. A
-    // later update driven by any OTHER property — inside `obc-readout-list`,
-    // `align()` writing the shared reservers — would then see no `value` in
-    // `changed`, skip the check, and render the invalid value as a plain dash:
-    // exactly the silent failure this assertion exists to prevent.
+    // Never gate this on `changed`: a throw clears Lit's changed map, so the
+    // next update would skip the check and render the invalid value as a dash
+    // (readout-components.md § 1, pinned by readout-block.spec.ts).
     assertReadoutValueType('obc-readout', this.value, this.valueType);
     assertReadoutFractionDigits('obc-readout', this.fractionDigits);
     this.warnHorizontalSizeIgnored();
@@ -1429,9 +1436,11 @@ export class ObcReadout extends LitElement {
 
     const root = html`
       <div class=${classes} part="root">
-        ${this.isHorizontal
-          ? this.renderHorizontalLayout()
-          : this.renderVerticalLayout()}
+        ${
+          this.isHorizontal
+            ? this.renderHorizontalLayout()
+            : this.renderVerticalLayout()
+        }
         ${this.renderSourcePickerSlot()}
       </div>
       ${this.renderSourcePickerContent()}

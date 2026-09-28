@@ -22,7 +22,6 @@
 </template>
 
 <script setup lang="ts">
-import { html } from 'lit'
 import ObiIcon from '@oicl/openbridge-webcomponents-vue/icons/ObiIcon.vue'
 import ObcContextMenuInput from '@oicl/openbridge-webcomponents-vue/components/context-menu-input/ObcContextMenuInput.vue'
 import { computed, ref } from 'vue'
@@ -123,6 +122,15 @@ const onContextMenuChange = (event: ObcContextMenuInputChangeEvent) => {
 .middle-screens .screen {
   width: 480px;
   height: 288px;
+}
+
+/* Mobile: no screen tile wider than the viewport. 768px is
+   MOBILE_BREAKPOINT_PX in composables/useMobileLayout.ts. */
+@media screen and (max-width: 768px) {
+  .screen {
+    box-sizing: border-box; /* the cap must include the 1px borders */
+    max-width: calc(100vw - 32px);
+  }
 }
 
 .screen-icon {

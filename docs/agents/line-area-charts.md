@@ -1,11 +1,12 @@
 ---
 name: line-area-charts
-description: Line/area charts and composite gauge-trend component
+description: Line/area charts, the composite gauge-trend and the depth instrument built on it
 globs:
   - packages/openbridge-webcomponents/src/building-blocks/chart-line/**
   - packages/openbridge-webcomponents/src/bars-graphs/line-graph/**
   - packages/openbridge-webcomponents/src/bars-graphs/area-graph/**
   - packages/openbridge-webcomponents/src/navigation-instruments/gauge-trend/**
+  - packages/openbridge-webcomponents/src/navigation-instruments/depth/**
 ---
 
 # Line/Area Charts & Gauge Trend
@@ -113,6 +114,76 @@ When adding new features or fixing bugs:
    - Listens for `scale-dimensions-changed` events from slotted elements
    - Adjusts chart padding to accommodate external scale thickness
    - Syncs scale properties (min/max, padding, enhanced, state, etc.)
+   - **Ranges come from `resolveAxisRange()`**: a range pinned in `yAxes` / `xAxis`
+     wins; otherwise the live Chart.js scale is read under the id
+     `buildScalesConfig()` assigns (`y0`, `y1`… when an entry has no id, `y` only
+     when `yAxes` is unset). The left slot takes the first left-positioned axis, the
+     right slot the first right-positioned one; a side without an axis of its own
+     follows the first entry. Datasets that name no `yAxisID` land on
+     `primaryYAxisId` — without that Chart.js adds a default `y` scale beside the
+     configured ones and draws it.
+   - `updateScaleProperties()` runs **before** the chart is rebuilt and so reads the
+     previous chart; `syncSlottedScaleRanges()` pushes ranges again after every
+     `createChart()` / `updateChart()`, which is also what keeps an auto-ranged
+     scale following the data.
+   - **A subclass that ranges its own slotted scale overrides
+     `ownsSlottedScaleRange(side)`.** Both range writers go through it. `obc-gauge-trend`
+     returns false for `right`: its bar is ranged by `minValue` / `maxValue`, which
+     `chartMinValue` / `chartMaxValue` exist to differ from, and the chart's axis is
+     left-positioned so the right slot would otherwise fall back to it (#1214).
+   - **Crossing the threshold re-runs the cascade.** In pixel mode
+     `updateComputedDimensions()` returns false, so a `width` / `height` change reaches
+     a plain rebuild and never re-cascades; `updated()` compares against the remembered
+     side so a chart that shrank and grew back gets its scales' bands and labels back.
+   - **Never push epoch milliseconds to a slotted scale.** A scale labels values
+     verbatim and a plausible tick interval over an epoch-ms range overflows the
+     stack. `resolveSlottedXRange()` converts a `time` axis to minutes relative to
+     the reference in `minutes` display; in `date` display it leaves the top/bottom
+     scales alone and warns once.
+   - `xAxis: {min, max}` pins the x range (time and number axes only; a category
+     axis is ignored). In `minutes` display `xAxis.max` is the `0min` reference, so
+     the right edge reads as now while a buffer is still filling.
+   - **Below the threshold** (`RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS`,
+     tested on both dimensions) every axis label is hidden unless `rangeLabels`
+     opts in. Then a free side gets a _measured_ gutter (`charthelpers/range-labels.ts`:
+     widest label + 8, or one line + 4 at the bottom) and the `rangeLabels` plugin
+     paints min / 0 / max flush with the plot's top and bottom and first / last x in
+     the bottom gutter — no vertical space is taken for y. A slotted side is switched to
+     `showMainTickmarkLabels` with a compact `labelThickness` measured the same way.
+     Both are **borrowed, not owned**: each is saved per scale on the way into compact
+     mode and handed back on the way out, so a scale that asked for main-tickmark
+     labels itself keeps them and one that never did returns to false.
+     The y bounds come from the datasets' own extent, except under `stacked`, where the
+     axis spans the accumulated series and only the laid-out scale knows the range.
+     Padding is decided **per side** in `computeChartPadding()`, which feeds both the
+     Chart.js layout and the padding cascaded to slotted scales — the two used to be
+     separate paths, so below the threshold a scale sat 32 px inset inside a chart
+     that had no padding. A slotted scale always gets its reported thickness, at any
+     size — "too small ⇒ 0 everywhere" painted the canvas over it.
+   - **`reverse` on a `yAxes` entry** plots `min` at the top through Chart.js'
+     own `scale.reverse`; the primary axis' flag cascades to slotted left/right
+     scales in both range writers, and the range-labels plugin paints the max
+     label at whichever plot edge the max sits on. `fill: 'start'` is the pixel
+     bottom, so an area fill stays on the visual bottom under reverse (#1211).
+   - **Explicit dataset styling wins.** `buildDataset()` derives `borderColor`,
+     `backgroundColor` and `fill` only when a `datasets` entry does not set
+     them; a fill target of `0` (a dataset index) is a fill, so test for
+     presence, not truth. `borderDash`, `borderCapStyle`, `order` and
+     `pointRadius` arrays pass through the spread.
+   - **`xMarker` / `yMarker`** are drawn by the always-registered `markers`
+     plugin in `afterDatasetsDraw`, in the referenced dataset's line colour: a
+     1 px line from the plot top to the value on the rendered line
+     (`LineElement.interpolate()`, so tension, stepped mode and gaps are
+     honoured), dotted `[1, 2]` below it, a 6 px dot with a 2 px silhouette
+     ring; and a 2 px
+     value line with a 1 px silhouette shadow. The lines are clipped to the plot
+     area (the canvas paints above the slotted scales) and the dot is drawn only
+     while its centre lies inside it. `lastMarkers` records the pixels for specs.
+   - **`ellipseClip` on a dataset** (centre and `rx` in data units, `ry` in data
+     units or omitted for a circle in pixels) is applied by `datasetClipPlugin`,
+     a **global** plugin registered ahead of `Filler`: plugin hooks run in
+     registration order and Filler paints the area in `beforeDatasetDraw`, so a
+     chart-level plugin would clip only the line. `lastClips` records the pixels.
 
 5. **Property Change Tracking**:
    - `LINE_GRAPH_WATCHED_PROP_NAMES`: Properties that trigger chart data/options update
@@ -182,6 +253,46 @@ When adding new features or fixing bugs:
 4. **Property Sync**:
    - On property changes, sync to `bar-vertical` (or perhaps `bar-horizontal`) element via `_updateBarVerticalProperties()`
    - Handle mapping of enum types between gauge-trend and bar-vertical namespaces
+
+---
+
+## `packages/openbridge-webcomponents/src/navigation-instruments/depth/**`
+
+### Depth (composite over gauge-trend)
+
+1. **Purpose**: history and current depth on a chart — `regular` (history,
+   dot in the band), `prediction` (now-line in the middle, dashed prediction,
+   range labels above), `scanned` (dotted past track, scanned seabed with the
+   water column filled to the surface and cut at the sonar range, dotted
+   predicted depth beyond it). Figma `Depth` 331-30844.
+2. **Composition**: `obc-depth` measures its own box (`ResizeObserver`,
+   `contentRect`) and pins an `obc-gauge-trend` to it, feeding the cell size as
+   `width` / `height`. It builds the chart's `datasets` itself (index 0 is the
+   series the markers follow), sets `reverse`, `hasLabelPadding=false` (the
+   design plots edge to edge) and `hasBar=false` with `hasScale=true` — the
+   band keeps the current-value dot; the ladder is switched by passing 0 / the
+   rung intervals. Colours are resolved with `getCssVariableValue()` at render
+   and rebuilt on a theme change, because the canvas keeps resolved strings.
+3. **`obc-depth-top-band`** is slotted into the chart's `top-scale` slot as
+   either the range-label row (24 px) or the vessel band (48 px): the chart
+   pushes it the x range, `width` and the paddings (viewBox units under
+   `fixedAspectRatio`, px otherwise — convert before use) and reserves its
+   `scale-dimensions-changed` thickness. Its `hasBar` / `hasScale` are `false`
+   so the border plugin treats it as invisible and keeps drawing the chart's
+   own frame under it. The silhouette is clamped inside the frame because the
+   condensed band is narrower than the design's.
+4. **Range**: `depth-shared.ts` holds the ladder (`DEPTH_RANGES`: 25 / 100 /
+   1000 with tick pair, air fraction and vessel factor) and
+   `resolveDepthRange()` — explicit `maxDepth` (a synthetic rung off the
+   ladder), or `autoRange` that climbs at once and steps down one rung only
+   under `DEPTH_RANGE_STEP_DOWN_FRACTION` of the smaller rung. `obc-depth-actual`
+   uses the same module.
+5. **Known departures from the design** (each a `TODO(designer)` in the
+   stories or code): the right band is gauge-trend's 14 px condensed tick band,
+   not 24 px; the now-line sits at the plot centre, not the frame centre; the
+   "None" style has no min/max labels because edge-to-edge plotting turns the
+   cascaded labels off; the scan cut-off is the physical slant range in metres,
+   not the design's decorative arc; the range labels are signed.
 
 ---
 

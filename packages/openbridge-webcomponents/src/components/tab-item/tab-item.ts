@@ -1,4 +1,5 @@
-import {LitElement, html, nothing, unsafeCSS} from 'lit';
+import {LitElement, html, nothing, unsafeCSS, type PropertyValues} from 'lit';
+import {ifDefined} from 'lit/directives/if-defined.js';
 import {customElement} from '../../decorator.js';
 import {classMap} from 'lit/directives/class-map.js';
 import compentStyle from './tab-item.css?inline';
@@ -46,7 +47,7 @@ export interface TabItemBadge {
  *   - **Center Content:** Centers content within the tab (`centerContent` property).
  * - **Divider:** Optional divider line for visual separation.
  * - **Disabled State:** Prevents interaction and visually indicates non-interactive state.
- * - **Keyboard Accessible:** Supports activation via Enter/Space keys.
+ * - **Keyboard Accessible:** `Enter` and `Space` activate the tab; `Delete` closes it when it has a close button.
  *
  * ### Variants and Configuration
  * - **Badge Types:** Supports all badge types from `obc-badge` (e.g., `alarm`, `warning`, `notification`, etc.).
@@ -75,7 +76,19 @@ export interface TabItemBadge {
  *
  * ### Events
  * - `tab-click` – Fired when the tab is clicked or activated via keyboard.
- * - `tab-close` – Fired when the close button is clicked.
+ * - `tab-close` – Fired when the close button is clicked, or `Delete` is pressed on the tab.
+ *
+ * ### Keyboard
+ * One tab of the [APG Tabs pattern](https://www.w3.org/WAI/ARIA/apg/patterns/tabs/):
+ * `Enter` and `Space` activate it, and `Delete` closes it when it has a close
+ * button; the arrow keys, `Home` and `End` belong to the row. `aria-selected`
+ * mirrors `checked`, and `panel` becomes the tab's `aria-controls` through
+ * element reflection (`ariaControlsElements`). The close
+ * button stays out of the tab sequence so the row keeps one tab stop, and the
+ * tab announces `Delete` as its shortcut instead.
+ *
+ * Left out: a visible hint that `Delete` closes the tab, which only screen
+ * readers announce; the row lists what it leaves out of the pattern.
  *
  * ### Best Practices
  * - Only one tab in a group should have `checked` set to true.
@@ -102,6 +115,36 @@ export interface TabItemBadge {
  * </obc-tab-item>
  * ```
  *
+ * @property hug - Shrinks the tab width to fit its content instead of using the default fixed width.
+ *   When enabled, the tab will use `width: fit-content` and a minimum width.
+ * @property centerContent - Centers the content (icon, title, badge) horizontally within the tab.
+ *   When enabled, content is centered rather than left-aligned.
+ * @property checked - Marks the tab as selected/active.
+ *   Only one tab in a group should have `checked` set to true.
+ * @property hasClose - Displays a close button at the end of the tab.
+ *   Use for tabs that can be removed by the user.
+ * @property hasLeadingIcon - Shows a leading icon at the start of the tab.
+ *   Supply icon content via the `leading-icon` slot.
+ * @property hasTitle - Displays the tab's title/label.
+ *   Content can be provided via the `title` slot or the `title` property.
+ * @property hasDivider - Shows a vertical divider on the left edge of the tab (except when checked).
+ *   Useful for visually separating tabs.
+ * @availableWhen hasDivider checked==false
+ * @property icon - (Deprecated/Unused) Icon name for the tab.
+ *   Icon content should be provided via the `leading-icon` slot.
+ * @property title - The tab's title/label text.
+ *   Can be overridden by slotting content into the `title` slot.
+ * @property showSubtitle - Shows contextual text below the tab title.
+ * @property subtitle - Contextual text shown below the tab title when `showSubtitle` is true.
+ * @property disabled - Disables the tab, preventing user interaction and applying disabled styles.
+ * @property panel - The panel this tab shows, announced as the tab's `aria-controls`. `obc-tab-row`
+ *   sets it when it renders panels; the panel has to live in this tab's tree or one it sits inside.
+ * @property focusable - Whether the tab is in the tab order. `obc-tab-row` manages this as a
+ *   roving tabindex (one tab focusable at a time); a standalone tab stays tabbable.
+ * @property badges - Badges shown on the tab. A non-empty array takes precedence over the
+ *   deprecated single-badge properties (`hasBadge`, `badgeType`, `badgeSize`,
+ *   `badgeCount`, `badgeShowNumber`, `showLeadingBadgeIcon`); an empty one
+ *   falls back to them, gated by `hasBadge`.
  * @slot leading-icon - Slot for the leading icon (shown when `hasLeadingIcon` is true)
  * @slot title - Slot for the tab's label/title (shown when `hasTitle` is true)
  * @slot badge-icon - Slot for an icon inside the badge (shown when `hasBadge` and `showLeadingBadgeIcon` are true)
@@ -111,74 +154,21 @@ export interface TabItemBadge {
  */
 @customElement('obc-tab-item')
 export class ObcTabItem extends LitElement {
-  /**
-   * Shrinks the tab width to fit its content instead of using the default fixed width.
-   * When enabled, the tab will use `width: fit-content` and a minimum width.
-   *
-   * Default: false
-   */
   @property({type: Boolean, reflect: true}) hug = false;
 
-  /**
-   * Centers the content (icon, title, badge) horizontally within the tab.
-   * When enabled, content is centered rather than left-aligned.
-   *
-   * Default: false
-   */
   @property({type: Boolean}) centerContent = false;
 
-  /**
-   * Marks the tab as selected/active.
-   * Only one tab in a group should have `checked` set to true.
-   *
-   * Default: false
-   */
   @property({type: Boolean, reflect: true}) checked = false;
 
-  /**
-   * Displays a close button at the end of the tab.
-   * Use for tabs that can be removed by the user.
-   *
-   * Default: false
-   */
   @property({type: Boolean, attribute: 'has-close'}) hasClose = false;
 
-  /**
-   * Shows a leading icon at the start of the tab.
-   * Supply icon content via the `leading-icon` slot.
-   *
-   * Default: false
-   */
   @property({type: Boolean, attribute: 'has-leading-icon'}) hasLeadingIcon =
     false;
 
-  /**
-   * Displays the tab's title/label.
-   * Content can be provided via the `title` slot or the `title` property.
-   *
-   * Default: false
-   */
   @property({type: Boolean, attribute: 'has-title'}) hasTitle = false;
 
-  /**
-   * Shows a vertical divider on the left edge of the tab (except when checked).
-   * Useful for visually separating tabs.
-   *
-   * Default: false
-   * @availableWhen checked==false
-   */
   @property({type: Boolean, attribute: 'has-divider'}) hasDivider = false;
 
-  /**
-   * One or more badges (count/status) to display on the tab.
-   *
-   * When this array is non-empty it takes precedence over the deprecated
-   * single-badge props (`hasBadge`, `badgeType`, `badgeSize`, `badgeCount`,
-   * `badgeShowNumber`, `showLeadingBadgeIcon`). When empty, the deprecated
-   * props are used instead (gated by `hasBadge`).
-   *
-   * Default: []
-   */
   @property({type: Array, attribute: false}) badges: TabItemBadge[] = [];
 
   /**
@@ -191,42 +181,19 @@ export class ObcTabItem extends LitElement {
    */
   @property({type: Boolean, attribute: 'has-badge'}) hasBadge = false;
 
-  /**
-   * (Deprecated/Unused) Icon name for the tab.
-   * Icon content should be provided via the `leading-icon` slot.
-   *
-   * Default: 'placeholder'
-   */
   @property({type: String}) icon = 'placeholder';
 
-  /**
-   * The tab's title/label text.
-   * Can be overridden by slotting content into the `title` slot.
-   *
-   * Default: 'Tab title'
-   */
   @property({type: String}) override title = 'Tab title';
 
-  /**
-   * Shows contextual text below the tab title.
-   *
-   * Default: false
-   */
   @property({type: Boolean, attribute: 'show-subtitle'}) showSubtitle = false;
 
-  /**
-   * Contextual text shown below the tab title when `showSubtitle` is true.
-   *
-   * Default: ''
-   */
   @property({type: String}) subtitle = '';
 
-  /**
-   * Disables the tab, preventing user interaction and applying disabled styles.
-   *
-   * Default: false
-   */
   @property({type: Boolean}) disabled = false;
+
+  @property({type: Boolean, attribute: false}) focusable = true;
+
+  @property({attribute: false}) panel: Element | null = null;
 
   /**
    * @deprecated Use the `badges` array instead.
@@ -304,10 +271,34 @@ export class ObcTabItem extends LitElement {
     this.dispatchEvent(closeEvent);
   }
 
+  /** Focus lands on the `role="tab"` control, not on the host. */
+  public override focus(options?: FocusOptions): void {
+    (this.shadowRoot?.querySelector('.wrapper') as HTMLElement | null)?.focus(
+      options
+    );
+  }
+
   private handleKeyDown(event: KeyboardEvent) {
+    // Keys on the close button are its own: Enter there closes the tab.
+    const closeButton = this.shadowRoot?.querySelector('.close-button');
+    if (closeButton && event.composedPath().includes(closeButton)) return;
+    if (event.key === 'Delete') {
+      if (this.hasClose && !this.disabled) {
+        event.preventDefault();
+        this.handleClose(event);
+      }
+      return;
+    }
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       this.handleClick(event);
+    }
+  }
+
+  override updated(changed: PropertyValues<this>) {
+    if (changed.has('panel')) {
+      const tab = this.shadowRoot?.querySelector<HTMLElement>('[role="tab"]');
+      if (tab) tab.ariaControlsElements = this.panel ? [this.panel] : null;
     }
   }
 
@@ -339,9 +330,11 @@ export class ObcTabItem extends LitElement {
         .showNumber=${badge.count !== undefined}
         .showIcon=${badge.showIcon ?? false}
       >
-        ${badge.iconSlotName
-          ? html`<slot name=${badge.iconSlotName} slot="badge-icon"></slot>`
-          : nothing}
+        ${
+          badge.iconSlotName
+            ? html`<slot name=${badge.iconSlotName} slot="badge-icon"></slot>`
+            : nothing
+        }
       </obc-badge>
     `;
   }
@@ -366,53 +359,71 @@ export class ObcTabItem extends LitElement {
       <div
         class=${classMap(wrapperClasses)}
         role="tab"
-        tabindex=${this.disabled ? '-1' : '0'}
+        aria-selected=${this.checked}
+        aria-disabled=${ifDefined(this.disabled ? 'true' : undefined)}
+        aria-keyshortcuts=${ifDefined(
+          this.hasClose && !this.disabled ? 'Delete' : undefined
+        )}
+        tabindex=${this.disabled ? -1 : this.focusable ? 0 : -1}
         @click=${this.handleClick}
         @keydown=${this.handleKeyDown}
       >
         <div class="content">
-          ${this.hasLeadingIcon
-            ? html`
-                <div class="leading-icon">
-                  <slot name="leading-icon"></slot>
-                </div>
-              `
-            : nothing}
-          ${this.hasTitle
-            ? html`
-                <div class="text-content">
-                  <div class="title">
-                    <slot name="title">${this.title}</slot>
+          ${
+            this.hasLeadingIcon
+              ? html`
+                  <div class="leading-icon">
+                    <slot name="leading-icon"></slot>
                   </div>
-                  ${this.showSubtitle && this.subtitle
-                    ? html`<div class="subtitle">${this.subtitle}</div>`
-                    : nothing}
-                </div>
-              `
-            : nothing}
-          ${this.centerContent && hasBadge
+                `
+              : nothing
+          }
+          ${
+            this.hasTitle
+              ? html`
+                  <div class="text-content">
+                    <div class="title">
+                      <slot name="title">${this.title}</slot>
+                    </div>
+                    ${
+                      this.showSubtitle && this.subtitle
+                        ? html`<div class="subtitle">${this.subtitle}</div>`
+                        : nothing
+                    }
+                  </div>
+                `
+              : nothing
+          }
+          ${
+            this.centerContent && hasBadge
+              ? html`<div class="badges">
+                  ${badges.map((badge) => this.renderBadge(badge))}
+                </div>`
+              : nothing
+          }
+        </div>
+        ${
+          !this.centerContent && hasBadge
             ? html`<div class="badges">
                 ${badges.map((badge) => this.renderBadge(badge))}
               </div>`
-            : nothing}
-        </div>
-        ${!this.centerContent && hasBadge
-          ? html`<div class="badges">
-              ${badges.map((badge) => this.renderBadge(badge))}
-            </div>`
-          : nothing}
-        ${this.hasClose
-          ? html`
-              <obc-icon-button
-                class="close-button"
-                variant="flat"
-                @click=${this.handleClose}
-                aria-label="Close tab"
-                .disabled=${this.disabled}
-                ><obi-close-google></obi-close-google
-              ></obc-icon-button>
-            `
-          : nothing}
+            : nothing
+        }
+        ${
+          this.hasClose
+            ? html`
+                <obc-icon-button
+                  class="close-button"
+                  variant="flat"
+                  @click=${this.handleClose}
+                  aria-label="Close tab"
+                  .focusable=${false}
+                  .disabled=${this.disabled}
+                  ><obi-close-google></obi-close-google
+                ></obc-icon-button>
+              `
+            : nothing
+        }
       </div>
     `;
   }

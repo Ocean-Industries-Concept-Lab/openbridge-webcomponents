@@ -50,9 +50,10 @@ const preview: Preview = {
           {value: 'obc-component-size-large', title: 'Large'},
           {value: 'obc-component-size-xl', title: 'XL'},
         ],
-        showName: true,
       },
     },
+    // Storybook types toolbar values as strings, but a global carries any
+    // JSON value, and storybook-util.ts reads this one as a boolean.
     cross: {
       name: 'Cross',
       description: 'Cross',
@@ -63,16 +64,15 @@ const preview: Preview = {
           {value: false, title: 'Cross: off'},
           {value: true, title: 'Cross: on'},
         ],
-        showName: true,
       },
-    },
+    } as unknown as NonNullable<Preview['globalTypes']>[string],
   },
   parameters: {
     options: {
       storySort: {
         order: [
           'Introduction',
-          ['Introduction', 'Getting Started'],
+          ['Introduction', 'Getting Started', 'Migration Guide'],
           'Application Components',
           'UI Components',
           'Bars and Graphs',

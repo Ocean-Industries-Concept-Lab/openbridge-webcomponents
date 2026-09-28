@@ -76,7 +76,8 @@ export class ObcNotificationMenuItem extends LitElement {
   @property({type: String}) primaryActionLabel = '';
   @property({type: String}) secondaryActionLabel = '';
 
-  private handleMessageClick() {
+  private handleMessageClick(event: Event) {
+    event.stopPropagation();
     this.open = !this.open;
     this.dispatchEvent(
       new CustomEvent('item-click', {
@@ -106,9 +107,11 @@ export class ObcNotificationMenuItem extends LitElement {
           slot="primary-icon"
           style="color: var(--notification-enabled-background-color)"
         ></obi-notification-filled>
-        ${this.hasIcon
-          ? html`<slot name="icon" slot="secondary-icon"></slot>`
-          : nothing}
+        ${
+          this.hasIcon
+            ? html`<slot name="icon" slot="secondary-icon"></slot>`
+            : nothing
+        }
       </obc-message-menu-item>
     `;
   }

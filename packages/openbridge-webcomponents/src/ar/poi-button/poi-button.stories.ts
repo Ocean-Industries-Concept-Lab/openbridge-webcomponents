@@ -230,24 +230,28 @@ const renderMatrixButton = (cfg: MatrixButtonConfig) => html`
         .data=${cfg.data ?? []}
       >
         <obi-placeholder></obi-placeholder>
-        ${cfg.hasRelation
-          ? html`<obi-collision-avoidance-overtaking
-              slot="relation"
-              part="relation"
-            ></obi-collision-avoidance-overtaking>`
-          : html``}
-        ${cfg.hasHeader
-          ? html`<obc-poi-header
-              slot="header"
-              .content=${'1'}
-              .type=${ObcPoiHeaderType.Id}
-              .state=${ObcPoiHeaderState.Selected}
-              .size=${ObcPoiHeaderSize.Regular}
-              .hasIndicator=${true}
-            >
-              <obi-placeholder slot="indicator"></obi-placeholder>
-            </obc-poi-header>`
-          : html``}
+        ${
+          cfg.hasRelation
+            ? html`<obi-collision-avoidance-overtaking
+                slot="relation"
+                part="relation"
+              ></obi-collision-avoidance-overtaking>`
+            : html``
+        }
+        ${
+          cfg.hasHeader
+            ? html`<obc-poi-header
+                slot="header"
+                .content=${'1'}
+                .type=${ObcPoiHeaderType.Id}
+                .state=${ObcPoiHeaderState.Selected}
+                .size=${ObcPoiHeaderSize.Regular}
+                .hasIndicator=${true}
+              >
+                <obi-placeholder slot="indicator"></obi-placeholder>
+              </obc-poi-header>`
+            : html``
+        }
       </obc-poi-button>
     </div>
     <div style=${labelStyle}>${cfg.label}</div>

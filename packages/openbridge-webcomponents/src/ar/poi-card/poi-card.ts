@@ -104,7 +104,7 @@ export enum PointerDirection {
  * @csspart header - The `obc-poi-card-header` element, rendered when `showHeader` is true.
  * @csspart content - Body area wrapping the default slot.
  * @fires {CustomEvent<PoiCardClickDetail>} card-click - Fired when the card is activated in interactive mode.
- * @fires {CustomEvent<void>} close-click - Fired when the header close button is pressed (`hasCloseButton` with the detailed header variant). Dispatched by the nested `obc-poi-card-header`; bubbles and is composed, so it re-targets to this element.
+ * @fires {CustomEvent<void>} close-click - Passed on from the header when its close button is pressed (`hasCloseButton` with the detailed header variant).
  * @experimental
  */
 @customElement('obc-poi-card')

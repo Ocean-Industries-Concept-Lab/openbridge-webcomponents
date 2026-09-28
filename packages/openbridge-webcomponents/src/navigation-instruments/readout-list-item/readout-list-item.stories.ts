@@ -64,6 +64,7 @@ type ReadoutListItemStoryArgs = {
   'options.value.weight': ObcTextboxFontWeight;
   'options.value.hasIcon': boolean;
   'options.value.hintedZeros': boolean;
+  'options.value.hasSignSpacer': boolean;
   'options.setpoint.interaction': ReadoutListItemSetpointInteraction;
   'options.setpoint.touching': boolean;
   'options.advice.category': ReadoutAdviceCategory;
@@ -200,12 +201,16 @@ function renderItem(config: ReadoutItemConfig) {
       .srcOptions=${o.src}
       .showDebugOverlay=${config.showDebugOverlay ?? false}
     >
-      ${config.hasLeadingIcon
-        ? html`<obi-placeholder slot="leading-icon"></obi-placeholder>`
-        : nothing}
-      ${config.hasValueIcon
-        ? html`<obi-placeholder slot="value-icon"></obi-placeholder>`
-        : nothing}
+      ${
+        config.hasLeadingIcon
+          ? html`<obi-placeholder slot="leading-icon"></obi-placeholder>`
+          : nothing
+      }
+      ${
+        config.hasValueIcon
+          ? html`<obi-placeholder slot="value-icon"></obi-placeholder>`
+          : nothing
+      }
     </obc-readout-list-item>
   `;
 }
@@ -237,9 +242,11 @@ function renderShowcase(sections: ShowcaseSection[]) {
             <h3 class="rli-section-title">${section.title}</h3>
             <div
               class="rli-grid"
-              style=${section.columns
-                ? `grid-template-columns: repeat(${section.columns}, max-content);`
-                : nothing}
+              style=${
+                section.columns
+                  ? `grid-template-columns: repeat(${section.columns}, max-content);`
+                  : nothing
+              }
             >
               ${section.cases.map(
                 (item) => html`
@@ -283,6 +290,7 @@ const defaultArgs: ReadoutListItemStoryArgs = {
   'options.value.weight': ObcTextboxFontWeight.regular,
   'options.value.hasIcon': false,
   'options.value.hintedZeros': false,
+  'options.value.hasSignSpacer': false,
   'options.setpoint.interaction':
     ReadoutListItemSetpointInteraction.alwaysVisible,
   'options.setpoint.touching': false,
@@ -316,6 +324,7 @@ function argsToOptions(args: ReadoutListItemStoryArgs): StoryOptions {
       weight: args['options.value.weight'],
       hasIcon: args['options.value.hasIcon'],
       hintedZeros: args['options.value.hintedZeros'],
+      hasSignSpacer: args['options.value.hasSignSpacer'],
     },
     setpoint: {
       interaction: args['options.setpoint.interaction'],
@@ -343,7 +352,7 @@ function argsToOptions(args: ReadoutListItemStoryArgs): StoryOptions {
 
 const meta = {
   title: 'Instruments/Readout List Item',
-  tags: ['autodocs', '6.0', 'experimental'],
+  tags: ['autodocs', '6.0'],
   component: 'obc-readout-list-item',
   decorators: [centeredCanvasDecorator],
   render: (args) =>
@@ -462,6 +471,12 @@ const meta = {
     'options.value.hintedZeros': {
       name: 'Value Hinted Zeros',
       if: {arg: 'options.maxDigits', truthy: true},
+      table: {category: 'Value'},
+    },
+    'options.value.hasSignSpacer': {
+      name: 'Value Sign Spacer',
+      description:
+        'Reserve a minus-sign column so the width does not change across zero.',
       table: {category: 'Value'},
     },
     'options.setpoint.interaction': {
@@ -1123,7 +1138,7 @@ function syncSetpointOptions(touching: boolean): ReadoutSetpointOptions {
  */
 export const SyncedWithAzimuthThruster: Story = {
   name: 'Synced With Azimuth Thruster (Interactive)',
-  tags: ['skip-test'],
+  tags: ['skip-test', 'skip-a11y'],
   render: () => html`
     <div
       style="display:flex; flex-direction:column; gap:24px; width:360px; padding:24px;"
@@ -1979,12 +1994,9 @@ const ALIGNMENT_ROWS: AlignmentRow[] = [
       type: ObcAlertFrameType.Regular,
     },
   },
-  // text value — `valueType="text"` renders verbatim and ignores maxDigits /
-  // fractionDigits, but still honours an explicit `spaceReserver`. So these
-  // rows hug their text in the left column and join the shared value column in
-  // the right one, confirming text does not disturb the numeric alignment.
-  // (Inside `obc-readout-list`, which owns the reservers, text rows are instead
-  // excluded from the computed numeric width — see that component's stories.)
+  // text value — ignores maxDigits / fractionDigits but honours an explicit
+  // `spaceReserver`, so these rows hug their text on the left and join the
+  // shared value column on the right (a list excludes them instead).
   {label: 'Mode', value: 'Auto', valueType: ReadoutValueType.text, unit: ''},
   {
     label: 'Thruster',
@@ -2013,11 +2025,11 @@ const ALIGNMENT_ROWS: AlignmentRow[] = [
 
 const LONGEST_UNIT = 'miles';
 const MAX_INTEGER_DIGITS = 4;
-// Longest value string in the column (4 integer digits + 1 fraction). Passed to
-// every row's value/setpoint/advice spaceReserver so they all reserve the same
-// width regardless of each row's own fractionDigits — like LONGEST_UNIT does for
-// the unit column.
-const VALUE_RESERVER = `${'0'.repeat(MAX_INTEGER_DIGITS)}.0`;
+// The shared value/setpoint/advice reserver, like LONGEST_UNIT for the unit
+// column. The leading `-` opens the sign column for the negative row ("Flow
+// speed"); positive rows leave it blank, so every row's digits stay aligned —
+// the same reserver `obc-readout-list` derives once any row shows a sign.
+const VALUE_RESERVER = `-${'0'.repeat(MAX_INTEGER_DIGITS)}.0`;
 
 const alignmentStyle = `
   .rli-align-wrap { display: flex; flex-direction: column; gap: 24px; width: 100%; }

@@ -89,16 +89,14 @@ export enum AreaFillMode {
  *
  * @property stacked - Stack multi-series datasets vertically on y-axis.
  *   Ignored for single-series and threshold fill mode.
+ * @property fillMode - Fill rendering mode: `semitransparent` (default) fills at 50% alpha,
+ *   `solid` fills opaque, and `threshold` colours above and below the
+ *   threshold — single-series only, falling back to semitransparent when the
+ *   chart has more than one series.
  * @beta
  */
 @customElement('obc-area-graph')
 export class ObcAreaGraph extends ObcChartLineBase {
-  /**
-   * Fill rendering mode for area charts.
-   * - `'semitransparent'`: 50% alpha fill (default)
-   * - `'solid'`: Opaque fill
-   * - `'threshold'`: single-series only, falls back to semitransparent for multi-series
-   */
   @property({type: String})
   fillMode: AreaFillMode = AreaFillMode.semitransparent;
 

@@ -103,6 +103,10 @@ const meta: Meta = {
     showGridX: {control: 'boolean'},
     showGridY: {control: 'boolean'},
     showTickMarks: {control: 'boolean'},
+    rangeLabels: {
+      control: {type: 'radio'},
+      options: ['none', 'y', 'x', 'xy'],
+    },
     xTicksLimit: {control: {type: 'number'}},
     xStepSize: {control: {type: 'number'}},
     yTicksLimit: {control: {type: 'number'}},
@@ -134,6 +138,7 @@ const meta: Meta = {
     showGridX: true, // Component defaults to false, but stories show grid by default
     showGridY: true, // Component defaults to false, but stories show grid by default
     showTickMarks: true, // Component defaults to false, but stories show tick marks by default
+    rangeLabels: 'none',
     xTicksLimit: undefined,
     xStepSize: undefined,
     yTicksLimit: undefined,
@@ -159,8 +164,7 @@ export const SingleSeries: Story = {
   play: async ({canvasElement}) => {
     await document.fonts.ready;
     const chart = canvasElement.querySelector('obc-line-graph') as
-      | (HTMLElement & {chart?: {update(): void}})
-      | null;
+      (HTMLElement & {chart?: {update(): void}}) | null;
     chart?.chart?.update();
   },
   render: (_args) => html`
@@ -174,6 +178,7 @@ export const SingleSeries: Story = {
       .showGridX=${_args.showGridX}
       .showGridY=${_args.showGridY}
       .showTickMarks=${_args.showTickMarks}
+      .rangeLabels=${_args.rangeLabels}
       .xTicksLimit=${_args.xTicksLimit}
       .xStepSize=${_args.xStepSize}
       .yTicksLimit=${_args.yTicksLimit}
@@ -202,8 +207,7 @@ export const UnevenTimeIntervals: Story = {
   play: async ({canvasElement}) => {
     await document.fonts.ready;
     const chart = canvasElement.querySelector('obc-line-graph') as
-      | (HTMLElement & {chart?: {update(): void}})
-      | null;
+      (HTMLElement & {chart?: {update(): void}}) | null;
     chart?.chart?.update();
   },
   args: {
@@ -240,8 +244,7 @@ export const DateObjectsTimeAxis: Story = {
   play: async ({canvasElement}) => {
     await document.fonts.ready;
     const chart = canvasElement.querySelector('obc-line-graph') as
-      | (HTMLElement & {chart?: {update(): void}})
-      | null;
+      (HTMLElement & {chart?: {update(): void}}) | null;
     chart?.chart?.update();
   },
   args: {
@@ -279,8 +282,7 @@ export const NumberAxis: Story = {
   play: async ({canvasElement}) => {
     await document.fonts.ready;
     const chart = canvasElement.querySelector('obc-line-graph') as
-      | (HTMLElement & {chart?: {update(): void}})
-      | null;
+      (HTMLElement & {chart?: {update(): void}}) | null;
     chart?.chart?.update();
   },
   args: {
@@ -469,24 +471,28 @@ export const SingleSeriesExternalScales: Story = {
         .hasScale=${true}
         .showLabels=${_args.vScaleShowLabels}
         .hasBar=${_args.vScaleHasBar}
-        .fillMode=${_args.vScaleFillMode === 'fill'
-          ? FillMode.fill
-          : FillMode.tint}
+        .fillMode=${
+          _args.vScaleFillMode === 'fill' ? FillMode.fill : FillMode.tint
+        }
         .fillMin=${_args.vScaleFillMin}
         .fillMax=${_args.vScaleFillMax}
         .value=${_args.vScaleValue}
         .setpoint=${_args.vScaleSetpoint}
-        .advicePosition=${_args.vScaleAdvicePosition === 'inner'
-          ? AdvicePosition.inner
-          : _args.vScaleAdvicePosition === 'center'
-            ? AdvicePosition.center
-            : AdvicePosition.outer}
-        .advices=${_args.vScaleAdvices
-          ? [
-              {min: 3, max: 5, type: AdviceType.caution, hinted: true},
-              {min: 6, max: 7, type: AdviceType.advice, hinted: false},
-            ]
-          : []}
+        .advicePosition=${
+          _args.vScaleAdvicePosition === 'inner'
+            ? AdvicePosition.inner
+            : _args.vScaleAdvicePosition === 'center'
+              ? AdvicePosition.center
+              : AdvicePosition.outer
+        }
+        .advices=${
+          _args.vScaleAdvices
+            ? [
+                {min: 3, max: 5, type: AdviceType.caution, hinted: true},
+                {min: 6, max: 7, type: AdviceType.advice, hinted: false},
+              ]
+            : []
+        }
         .primaryTickmarkInterval=${1}
         .secondaryTickmarkInterval=${0.5}
         .tertiaryTickmarkInterval=${0.125}
@@ -501,24 +507,28 @@ export const SingleSeriesExternalScales: Story = {
         .hasScale=${true}
         .showLabels=${_args.hScaleShowLabels}
         .hasBar=${_args.hScaleHasBar}
-        .fillMode=${_args.hScaleFillMode === 'fill'
-          ? FillMode.fill
-          : FillMode.tint}
+        .fillMode=${
+          _args.hScaleFillMode === 'fill' ? FillMode.fill : FillMode.tint
+        }
         .fillMin=${_args.hScaleFillMin}
         .fillMax=${_args.hScaleFillMax}
         .value=${_args.hScaleValue}
         .setpoint=${_args.hScaleSetpoint}
-        .advicePosition=${_args.hScaleAdvicePosition === 'inner'
-          ? AdvicePosition.inner
-          : _args.hScaleAdvicePosition === 'center'
-            ? AdvicePosition.center
-            : AdvicePosition.outer}
-        .advices=${_args.hScaleAdvices
-          ? [
-              {min: 3, max: 5, type: AdviceType.caution, hinted: true},
-              {min: 8, max: 10, type: AdviceType.advice, hinted: false},
-            ]
-          : []}
+        .advicePosition=${
+          _args.hScaleAdvicePosition === 'inner'
+            ? AdvicePosition.inner
+            : _args.hScaleAdvicePosition === 'center'
+              ? AdvicePosition.center
+              : AdvicePosition.outer
+        }
+        .advices=${
+          _args.hScaleAdvices
+            ? [
+                {min: 3, max: 5, type: AdviceType.caution, hinted: true},
+                {min: 8, max: 10, type: AdviceType.advice, hinted: false},
+              ]
+            : []
+        }
         .primaryTickmarkInterval=${2}
         .secondaryTickmarkInterval=${1}
         .tertiaryTickmarkInterval=${0.25}
@@ -563,6 +573,24 @@ export const MinHeight: Story = {
   args: {
     width: 72,
     height: 48,
+  },
+};
+
+export const MinHeightRangeLabels: Story = {
+  name: 'Minimal Height With Range Labels (48px)',
+  args: {
+    width: 120,
+    height: 48,
+    rangeLabels: 'xy',
+  },
+};
+
+export const BelowThresholdRangeLabels: Story = {
+  name: 'Below Threshold With Range Labels (191px, Y Only)',
+  args: {
+    width: 288,
+    height: 191,
+    rangeLabels: 'y',
   },
 };
 

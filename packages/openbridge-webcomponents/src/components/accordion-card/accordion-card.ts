@@ -120,6 +120,11 @@ export enum Position {
  * @property alertFrameStatus - Status of the alert frame overlay (used when `hasAlert` is true).
  *   See `obc-alert-frame` for available statuses.
  * @availableWhen alertFrameStatus hasAlert==true
+ * @property position - Border radius for stacking: `regular` (default) rounds every corner,
+ *   `top` flattens the bottom edge, `bottom` flattens the top edge, and
+ *   `center` flattens both for a card in the middle of a stack.
+ * @property size - Layout variant: `single-line` (default) is a compact title-only header,
+ *   `large` adds a description beneath the title.
  * @slot leading-icon - Icon at the start of the header (shown when `hasLeadingIcon` is true)
  * @slot expanded-content - Content revealed when the accordion is expanded
  * @slot alert-icon - Icon for the alert overlay (used when `hasAlert` is true)
@@ -148,20 +153,8 @@ export class ObcAccordionCard extends LitElement {
 
   @property({type: Boolean}) hasLeadingIcon = false;
 
-  /**
-   * Controls border radius/edge styling for stacking multiple accordions.
-   * - `regular` (default): Standard border radius.
-   * - `top`: Flat bottom edge (for top of a stack).
-   * - `bottom`: Flat top edge (for bottom of a stack).
-   * - `center`: Flat top and bottom edges (for middle of a stack).
-   */
   @property({type: String}) position: Position = Position.regular;
 
-  /**
-   * Layout variant of the accordion card.
-   * - `single-line` (default): Compact header with only title.
-   * - `large`: Header includes a description beneath the title.
-   */
   @property({type: String}) size: AccordionSize = AccordionSize.SingleLine;
 
   @property({type: String}) alertFrameType: ObcAlertFrameType =
@@ -203,30 +196,40 @@ export class ObcAccordionCard extends LitElement {
     return html`
       <div class="header-container">
         <div class="content-container">
-          ${this.hasLeadingIcon
-            ? html`
-                <div class="container-icon">
-                  <slot name="leading-icon"></slot>
-                </div>
-              `
-            : ''}
+          ${
+            this.hasLeadingIcon
+              ? html`
+                  <div class="container-icon">
+                    <slot name="leading-icon"></slot>
+                  </div>
+                `
+              : ''
+          }
           <div class="container-labels">
             <div class="label-title">${this.cardTitle}</div>
-            ${this.shouldShowDescription
-              ? html` <div class="label-description">${this.description}</div> `
-              : ''}
+            ${
+              this.shouldShowDescription
+                ? html`
+                    <div class="label-description">${this.description}</div>
+                  `
+                : ''
+            }
           </div>
-          ${this.hasStatusLabel
-            ? html`
-                <div class="container-status">
-                  <div class="status">${this.statusLabel}</div>
-                </div>
-              `
-            : ''}
+          ${
+            this.hasStatusLabel
+              ? html`
+                  <div class="container-status">
+                    <div class="status">${this.statusLabel}</div>
+                  </div>
+                `
+              : ''
+          }
           <div class="trailing-icon">
-            ${this.expanded
-              ? html`<obi-chevron-up-google></obi-chevron-up-google>`
-              : html`<obi-chevron-down-google></obi-chevron-down-google>`}
+            ${
+              this.expanded
+                ? html`<obi-chevron-up-google></obi-chevron-up-google>`
+                : html`<obi-chevron-down-google></obi-chevron-down-google>`
+            }
           </div>
         </div>
       </div>
@@ -282,24 +285,26 @@ export class ObcAccordionCard extends LitElement {
           ${this.renderContentAdditional()}
         </div>
 
-        ${this.hasAlert
-          ? html`
-              <obc-alert-frame
-                class="alert alert-${this.alertFrameStatus}"
-                .sharpEdgeTopLeft=${this.isShartEdgeTop()}
-                .sharpEdgeTopRight=${this.isShartEdgeTop()}
-                .sharpEdgeBottomLeft=${this.isShartEdgeBottom()}
-                .sharpEdgeBottomRight=${this.isShartEdgeBottom()}
-                .type=${this.alertFrameType}
-                .thickness=${this.alertFrameThickness}
-                .status=${this.alertFrameStatus}
-              >
-                <slot name="alert-icon" slot="icon"></slot>
-                <slot name="alert-label" slot="label"></slot>
-                <slot name="alert-timer" slot="timer"></slot>
-              </obc-alert-frame>
-            `
-          : ''}
+        ${
+          this.hasAlert
+            ? html`
+                <obc-alert-frame
+                  class="alert alert-${this.alertFrameStatus}"
+                  .sharpEdgeTopLeft=${this.isShartEdgeTop()}
+                  .sharpEdgeTopRight=${this.isShartEdgeTop()}
+                  .sharpEdgeBottomLeft=${this.isShartEdgeBottom()}
+                  .sharpEdgeBottomRight=${this.isShartEdgeBottom()}
+                  .type=${this.alertFrameType}
+                  .thickness=${this.alertFrameThickness}
+                  .status=${this.alertFrameStatus}
+                >
+                  <slot name="alert-icon" slot="icon"></slot>
+                  <slot name="alert-label" slot="label"></slot>
+                  <slot name="alert-timer" slot="timer"></slot>
+                </obc-alert-frame>
+              `
+            : ''
+        }
       </div>
     `;
   }

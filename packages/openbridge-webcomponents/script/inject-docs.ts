@@ -10,6 +10,7 @@ type Member = {
 };
 type Manifest = {
   modules: Array<{
+    path?: string;
     declarations?: Array<{kind: string; name?: string; members?: Member[]}>;
   }>;
 };

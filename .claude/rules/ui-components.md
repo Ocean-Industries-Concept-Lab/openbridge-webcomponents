@@ -39,6 +39,52 @@ Most interactive components support elevation variants (`flat`, `normal`, `raise
 - Interactive state colors follow `--{variant}-{state}-background-color` / `--{variant}-{state}-border-color` (see full convention in IMPLEMENTATION_GUIDELINES.md)
 - Use `noClick` for display-only sub-parts that need colors but no interactivity
 
+## Alert flashing
+
+Alert frame, alert icon and alert button flash on one tempo table (#1224):
+fast 400/400, slow 400/1200, very-slow 400/2800 ms on/off. The table lives in
+`src/palettes/blinking.ts` and nowhere else.
+
+- `resolveFlashingSpeed(speed, type, phase)` in `src/alert-severity.ts` is the
+  only place that maps an alert type to a tempo. Components map acknowledged
+  to `fixed` before calling it.
+- Components never call `el.animate` themselves: `FlashingController(host,
+() => host.resolvedFlashingSpeed)` (`src/palettes/flashing-controller.ts`)
+  installs one animation per host and owns connect/disconnect. CSS reads
+  `--flash-<tempo>-on/off` through a `flash-<tempo>` class.
+- Every animation starts at document time 0, so all elements light up
+  together; do not add per-element delays.
+- The frame's stroke is centred on the frame edge (`outline-offset` of minus
+  half the width), so frames on touching components share one edge, and the
+  flash grows it 1 px on each side. Place the frame box on the edge to frame;
+  never offset it by half a stroke.
+- The rectified frame is an SVG overlay (`svg.dash`, one `roundedRectPath`
+  stroke on the wrapper edge, `stroke-dasharray: 12 6`) because CSS outlines
+  have no dash array. The flash animates `stroke-width` on that one path; a
+  second, wider path has longer corner arcs and its dashes drift around the
+  frame. Geometry is measured from the wrapper, never derived from props.
+- Visual tests park all Web Animations at 100 ms (see `testing-visual.md`),
+  so flashing stories snapshot the on state.
+
+## Alert button layers
+
+`obc-badge` → `obc-alert-counter-item` → `obc-alert-button-item` →
+`obc-alert-button`, the nesting of the Figma Alert counter item, Alert
+button item and Alert button (#1236).
+
+- `obc-alert-button-item` draws the bell, the counter and the global
+  counter, and holds the alert button's `FlashingController`.
+  `obc-alert-button` forwards its properties to the item, the global counter
+  included (a flat button drops it), and adds the silence button and the
+  breakpoints; it never draws a bell of its own.
+- `rankAlertCounts(counts, combine)` in `src/alert-severity.ts` is the only
+  per-severity count ranking, over the shared `AlertCounts` shape
+  (`src/types.ts`); the tree navigation badges and the counter item call it.
+- A parent squares the item's end with `data-group-item-not-last` (see Data
+  Attributes for Group Styling).
+- Guarded by `alert-button-item.spec.ts`, `alert-counter-item.spec.ts`,
+  `alert-button.spec.ts` and `alert-severity.spec.ts`.
+
 ## Slot Conventions
 
 | Pattern                                      | Usage                                  |
@@ -59,6 +105,8 @@ Slot visibility is controlled by boolean properties (e.g. `showLeadingIcon`). Al
   export type ObcSliderValueEvent = CustomEvent<number>;
   ```
 - Common event names: `click`, `change`, `close-click`, `cancel-click`, `done-click`, `option-click`
+- Stop or declare the composed events of the components you render; they
+  leave yours otherwise ([`jsdoc.md`](../../docs/agents/jsdoc.md), `npm run lint:events`).
 
 ## Enum Conventions
 
@@ -129,3 +177,59 @@ walk is `checkbox-list-visibility.ts`, guarded by its spec. Reserve `level`
 for lists with expandable rows: a level above 0 always reserves the 48px
 chevron slot, so flat lists such as the context menu's nested checkboxes keep
 their own compact padding instead.
+
+## Soft dismiss (menus and overlays)
+
+A panel that opens over content closes on a click outside and on `Escape`,
+and that click does nothing else. `PopoverController`
+(`src/internal/popover-controller.ts`) puts `popover="auto"` on the host,
+keeps it in step with the host's `open` property, and holds a see-through
+cover over the page while the panel is open (#1293).
+
+Adopting it takes three things on the host: a `softDismiss` boolean, an `open`
+boolean, and `@mixin soft-dismiss;` in the component CSS. `obc-brilliance-menu`
+is the reference.
+
+- `softDismiss` is opt-in because `[popover]` is `display: none` until shown.
+  On by default it would hide every panel a consumer already positions and
+  shows itself.
+- The `@mixin soft-dismiss` reset is not optional. The UA sheet gives
+  `[popover]` `inset: 0; margin: auto` plus a border, padding and a `Canvas`
+  background, so without it the panel is re-centred with chrome around it. An
+  outer-tree rule beats `:host` whatever its specificity, so a consumer's own
+  anchor positioning still wins.
+- When the panel closes for a reason other than `open` being set — a click
+  on the cover, `Escape` — the controller writes `open` back to `false` and
+  fires `close`. The browser only reports the change; the property and the
+  event are the component's. A consumer mirroring that state in a button's
+  `activated` flag listens for `close` rather than re-deriving it from its
+  own flag.
+- `popovertarget` does not cross shadow roots, so a trigger inside one
+  component cannot declare a panel that lives in another tree. That is what
+  `bindPopoverTrigger(trigger, panel)` is for.
+- The click outside is swallowed. The controller keeps a transparent cover
+  (`part="backdrop"`) over the whole page while the panel is open, stacked
+  just under it, so the first click only closes the panel and the page gets
+  no hover or wheel either. A consumer that wants a tint styles
+  `::part(backdrop)`; nothing else about it is a consumer's concern.
+- The cover starts below the top bar: its `top` is `--topbar-height`,
+  falling back to `--app-components-topbar-touch-target-size`. The bar stays
+  usable while a panel is open, so moving between top-bar menus is one click;
+  an app without a top bar sets `--topbar-height: 0`. A consumer's
+  `::part(backdrop)` rule still wins over the cover's own styling.
+- Because the bar is reachable, a second click on a panel's own button
+  arrives after the browser has already closed the panel. `bindPopoverTrigger`
+  remembers the state as the mouse goes down for exactly that reason; a
+  consumer toggling its own flag from the button's event is fine as well,
+  since the click arrives before `close` does. Reading `:popover-open` inside
+  a click handler is the one thing that reopens the panel.
+- Keyboard focus is not held in the panel — a `Tab` still moves into the
+  page the mouse cannot reach.
+- A panel that is only mounted while open keeps its `v-if`: mounting a menu
+  eagerly also builds its contents, and in `vue-demo` that meant router links
+  for routes that did not exist yet.
+
+Four overlays still hand-roll dismissal, listed in #1293: `obc-split-button`
+and `obc-readout`'s source picker each run a `window` `pointerdown` listener,
+`obc-poi-group` renders a backdrop div, and `obc-navigation-item-group` has
+nothing at all.

@@ -328,6 +328,11 @@ export const LinearProgressAnimation: Story = {
             );
             let value = 0;
             const interval = setInterval(() => {
+              // The story can be torn down while the timer still runs.
+              if (!progressBar?.isConnected) {
+                clearInterval(interval);
+                return;
+              }
               value += 1;
               if (value > 100) {
                 value = 100;
@@ -369,6 +374,11 @@ export const CircularProgressAnimation: Story = {
             );
             let value = 0;
             const interval = setInterval(() => {
+              // The story can be torn down while the timer still runs.
+              if (!progressBar?.isConnected) {
+                clearInterval(interval);
+                return;
+              }
               value += 1;
               if (value > 100) {
                 value = 100;
@@ -409,6 +419,11 @@ export const CircularProgressiveIndeterminateAnimation: Story = {
             );
             let value = 0;
             const interval = setInterval(() => {
+              // The story can be torn down while the timer still runs.
+              if (!progressBar?.isConnected) {
+                clearInterval(interval);
+                return;
+              }
               value += 1;
               if (value > 100) {
                 value = 100;

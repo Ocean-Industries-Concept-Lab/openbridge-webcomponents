@@ -110,6 +110,10 @@ export enum CircularProgressState {
  * @property progressiveIndeterminate - Uses a progressive indeterminate ring (spinning arc that grows with `value`); takes
  *   precedence over `circularState`.
  * @availableWhen progressiveIndeterminate type==circular
+ * @property showState - Shows the `stateLabel` next to the value.
+ *   **TODO(designer):** Confirm the intended purpose of the state indicator — the story labels
+ *   this a "future feature".
+ * @availableWhen showState type==linear && showValue==true && mode==determinate
  * @slot icon - Centered icon for the circular `indeterminate` and `icon` states.
  * @stable
  */
@@ -125,13 +129,6 @@ export class ObcProgressBar extends LitElement {
   @property({type: Boolean}) showUnit = false;
   @property({type: Boolean}) hasDescription = false;
   @property({type: String}) description = 'Description text';
-  /**
-   * Shows the `stateLabel` next to the value.
-   *
-   * **TODO(designer):** Confirm the intended purpose of the state indicator — the story labels
-   * this a "future feature".
-   * @availableWhen type==linear && showValue==true && mode==determinate
-   */
   @property({type: Boolean}) showState = false;
   @property({type: String}) stateLabel = 'Open';
   @property({type: Boolean}) progressiveIndeterminate = false;
@@ -180,9 +177,9 @@ export class ObcProgressBar extends LitElement {
       return html`
         <div class="circular-label-container">
           <span class="circular-value">${Math.round(this.value)}</span>
-          ${this.showUnit
-            ? html`<span class="circular-unit">%</span>`
-            : nothing}
+          ${
+            this.showUnit ? html`<span class="circular-unit">%</span>` : nothing
+          }
         </div>
       `;
     }
@@ -191,9 +188,9 @@ export class ObcProgressBar extends LitElement {
       return html`
         <div class="circular-label-container">
           <span class="circular-value">${Math.round(this.value)}</span>
-          ${this.showUnit
-            ? html`<span class="circular-unit">%</span>`
-            : nothing}
+          ${
+            this.showUnit ? html`<span class="circular-unit">%</span>` : nothing
+          }
         </div>
       `;
     } else if (this.circularState === CircularProgressState.indeterminate) {
@@ -228,23 +225,27 @@ export class ObcProgressBar extends LitElement {
         ${this.showValue ? this.renderLabel() : ''}
 
         <div class=${classMap(barClasses)}>
-          ${this.mode === ProgressBarMode.determinate
-            ? html`
-                <div
-                  class="loaded"
-                  style=${styleMap({width: progressWidth})}
-                ></div>
-              `
-            : html` <div class="indeterminate-track"></div> `}
+          ${
+            this.mode === ProgressBarMode.determinate
+              ? html`
+                  <div
+                    class="loaded"
+                    style=${styleMap({width: progressWidth})}
+                  ></div>
+                `
+              : html` <div class="indeterminate-track"></div> `
+          }
         </div>
 
-        ${this.hasDescription
-          ? html`
-              <div class="description-container">
-                <span class="description-text">${this.description}</span>
-              </div>
-            `
-          : nothing}
+        ${
+          this.hasDescription
+            ? html`
+                <div class="description-container">
+                  <span class="description-text">${this.description}</span>
+                </div>
+              `
+            : nothing
+        }
       </div>
     `;
   }
@@ -257,9 +258,11 @@ export class ObcProgressBar extends LitElement {
             <span class="value-number">${Math.round(this.value)}</span>
             <span class="value-unit">%</span>
           </div>
-          ${this.showState
-            ? html` <span class="state">${this.stateLabel}</span> `
-            : nothing}
+          ${
+            this.showState
+              ? html` <span class="state">${this.stateLabel}</span> `
+              : nothing
+          }
         </div>
       `;
     } else {

@@ -2,6 +2,7 @@ import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import iconStyle from './icon-button.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
+import {ifDefined} from 'lit/directives/if-defined.js';
 import {customElement} from '../../decorator.js';
 import {degToRad} from '../../svghelpers/math.js';
 
@@ -37,7 +38,7 @@ export enum IconButtonVariant {
  * - **Label Support:**
  *   - Optionally displays a text label below the icon when `hasLabel` is true and content is provided in the `label` slot.
  * - **Corner Alignment:**
- *   - `cornerLeft` and `cornerRight` adjust the button's border radius and alignment for seamless placement at the start or end of a container.
+ *   - `cornerLeft` and `cornerRight` adjust the button's border radius and alignment for flush placement at the start or end of a container.
  * - **Active State:**
  *   - `activated` visually highlights the button as selected or toggled.
  *   - `activeColor` applies an accent color for emphasis.
@@ -96,6 +97,11 @@ export enum IconButtonVariant {
  *   If undefined, no progress indicator is shown.
  * @property hasLabel - If true, displays a label below the icon using the `label` slot.
  * @property showDivider - If false, and cornerLeft or cornerRight is true, the divider is not shown.
+ * @property ariaLabel - Accessible name forwarded to the inner `<button>`, mapped to the `aria-label` attribute. `aria-labelledby` is not supported: ID references cannot cross the shadow boundary.
+ * @property focusable - Whether the button is in the tab sequence. Turn it off for a button inside a
+ *   composite widget that owns the tab stop, and give the widget a key for the action.
+ * @property variant - Visual style: `normal` (default) is the standard appearance, `raised` adds
+ *   a shadow, `flat` drops the background.
  * @slot - Icon slot (default): Place an icon such as <obi-search> here.
  * @slot label - Optional label shown below the icon when `hasLabel` is true.
  * @fires click - Fired when the button is clicked (if not disabled).
@@ -103,12 +109,6 @@ export enum IconButtonVariant {
  */
 @customElement('obc-icon-button')
 export class ObcIconButton extends LitElement {
-  /**
-   * Visual style of the button.
-   * - `normal`: Standard appearance (default).
-   * - `raised`: Elevated with shadow.
-   * - `flat`: Minimal, backgroundless style.
-   */
   @property({type: String}) variant: IconButtonVariant =
     IconButtonVariant.normal;
 
@@ -129,6 +129,12 @@ export class ObcIconButton extends LitElement {
   @property({type: Boolean}) hasLabel: boolean = false;
 
   @property({type: Boolean, attribute: false}) showDivider = true;
+
+  @property({type: Boolean, attribute: false}) focusable = true;
+
+  // Reactive so a consumer swapping the name (Play → Pause) re-renders the shadow button.
+  @property({type: String, attribute: 'aria-label'})
+  override ariaLabel: string | null = null;
 
   get progressSpinner() {
     if (this.progress === undefined) {
@@ -200,6 +206,8 @@ export class ObcIconButton extends LitElement {
           'hide-divider': !this.showDivider,
         })}
         ?disabled=${this.disabled}
+        aria-label=${ifDefined(this.ariaLabel ?? undefined)}
+        tabindex=${ifDefined(this.focusable ? undefined : -1)}
         part="wrapper"
       >
         ${this.progress !== undefined ? this.progressSpinner : nothing}
@@ -208,11 +216,13 @@ export class ObcIconButton extends LitElement {
             <slot></slot>
           </div>
         </div>
-        ${this.hasLabel
-          ? html`<div class="label" part="label">
-              <slot name="label"></slot>
-            </div>`
-          : nothing}
+        ${
+          this.hasLabel
+            ? html`<div class="label" part="label">
+                <slot name="label"></slot>
+              </div>`
+            : nothing
+        }
       </button>
     `;
   }

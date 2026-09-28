@@ -6,6 +6,15 @@
 
   color: var(--element-active-color, #1f1f1f);
 
+  /* Bridge the stack's colours onto the embedded readout blocks: the number
+     follows the row colour, the hinted zeros keep the stack's public
+     override var. */
+  --obc-readout-block-value-color: var(--element-active-color, #1f1f1f);
+  --obc-readout-block-hinted-color: var(
+    --obc-automation-button-readout-stack-hinted-color,
+    var(--element-disabled-color)
+  );
+
   .icon {
     display: block;
     width: 16px;
@@ -77,14 +86,6 @@
     justify-content: center;
     align-items: center;
     gap: 0;
-  }
-
-  .value-text .hinted-zero {
-    color: var(
-      --obc-automation-button-readout-stack-hinted-color,
-      var(--element-disabled-color)
-    );
-    font-weight: var(--global-typography-generic-l-font-weight-regular);
   }
 
   &.small .readout-item {

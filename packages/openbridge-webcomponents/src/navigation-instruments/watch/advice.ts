@@ -86,16 +86,11 @@ export function renderAdvice(
     }
     const radialPattern = [];
     if (radiusOffset > 0) {
-      // Draw hatch lines directly as short segments crossing the enlarged
-      // annular band. The radial-fan-tile approach (rotate + translate) causes
-      // artifacts at large offsets because each tile's center orbits the origin,
-      // making stripes cross the band at inconsistent widths/angles.
-      //
-      // Geometry is derived from the original pattern at base radius:
-      //   - 45 tiles × 2 stripes = 90 crossings over 360° → 4° arc step
-      //   - At base rAvg 168, arc spacing ≈ 11.73 px
-      //   - Stripe slant ≈ 40.4° from radial direction
-      //   - Perpendicular line width ≈ 4 px
+      // Short segments crossing the enlarged annular band, not radial fan
+      // tiles: a tile's centre orbits the origin, so at large offsets the
+      // stripes cross the band at inconsistent widths and angles. The
+      // constants below reproduce the base-radius pattern — 90 crossings over
+      // 360°, ~11.73 px arc spacing at rAvg 168, ~40.4° slant, 4 px wide.
       const r1z = 328 / 2 + radiusOffset;
       const r2z = 344 / 2 + radiusOffset;
       const rAvg = (r1z + r2z) / 2;

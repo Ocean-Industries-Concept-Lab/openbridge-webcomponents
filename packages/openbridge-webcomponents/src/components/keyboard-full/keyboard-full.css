@@ -109,8 +109,8 @@ obc-input::part(input) {
 .key-button {
   display: flex;
   flex: 1 0 0;
-  min-width: var(--ui-components-keyboard-numeric-touch-target-size);
-  min-height: var(--ui-components-keyboard-numeric-button-size-min);
+  min-width: var(--ui-components-keyboard-button-size-min);
+  min-height: var(--ui-components-keyboard-button-size-min);
 }
 
 obc-button.key-button::part(wrapper) {
@@ -121,8 +121,8 @@ obc-button.key-button::part(visible-wrapper) {
   box-sizing: border-box;
   display: flex;
   width: 100%;
-  min-width: var(--ui-components-keyboard-numeric-touch-target-size);
-  min-height: var(--ui-components-keyboard-numeric-button-size-min);
+  min-width: var(--ui-components-keyboard-button-size-min);
+  min-height: var(--ui-components-keyboard-button-size-min);
   align-items: center;
   justify-content: center;
   align-self: stretch;

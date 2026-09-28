@@ -19,6 +19,7 @@
  *
  * ## Layout model
  * - `orientation`: `'vertical' | 'horizontal'` controls value→coordinate mapping
+ * - `reverse`: plots `minValue` at the top / right, for quantities measured downward
  * - `side`: where the scale attaches to the chart edge
  *   - vertical: `'left' | 'right'`
  *   - horizontal: `'top' | 'bottom'`
@@ -155,6 +156,7 @@ import {
   SETPOINT_HEIGHT,
   SETPOINT_ZERO_OFFSET,
 } from '../../svghelpers/setpoint.js';
+import {clamp} from '../../svghelpers/math.js';
 
 /** Main axis orientation for the external scale renderer. */
 export enum ExternalScaleOrientation {
@@ -354,7 +356,7 @@ export function computeExternalScaleEffectiveBarThickness(
  * In condensed mode, ticks are shorter (max 10px for primary/main + 4px gap = 14px),
  * so the tick band doesn't need to be as thick as in regular mode (20px + 4px = 24px).
  *
- * This function ensures that:
+ * The result:
  * - In regular mode: tickThickness is used as-is (minimum 24px for full-length ticks)
  * - In condensed mode: tickThickness is capped at 14px (10px tick + 4px gap)
  *
@@ -418,12 +420,23 @@ export interface ExternalScaleConfig {
   minValue: number;
   /** Maximum scale value. */
   maxValue: number;
+  /**
+   * Plot `minValue` at the top (vertical) or right (horizontal) so a quantity
+   * measured downward is fed as positive numbers.
+   * @default false
+   */
+  reverse?: boolean;
 
   // Layout bands (thickness, in px)
   /** Show scale tickmarks. */
   hasScale: boolean;
   /** Show labels at primary tickmark intervals. */
   labels?: boolean;
+  /**
+   * Label the main tickmarks (`mainTickmarks`, or min / 0 / max) instead of
+   * the primary interval ladder. For scales too short for a ladder.
+   */
+  mainTickmarkLabels?: boolean;
   /** Show bar. */
   hasBar: boolean;
   /** Show background behind the scale tickmarks. */
@@ -932,6 +945,50 @@ function rangeIncludesZero(minValue: number, maxValue: number): boolean {
   return minValue <= 0 && maxValue >= 0;
 }
 
+/** The main tickmark values inside the range, ascending, without repeats. */
+function resolveMainTickmarkValues(
+  config: Pick<ExternalScaleConfig, 'mainTickmarks' | 'minValue' | 'maxValue'>
+): number[] {
+  const source = config.mainTickmarks?.length
+    ? config.mainTickmarks
+    : [config.minValue, 0, config.maxValue];
+  return [...new Set(source)]
+    .filter((v) => v >= config.minValue && v <= config.maxValue)
+    .sort((a, b) => a - b);
+}
+
+/**
+ * Ticks one ladder (primary, secondary, tertiary or labels) may hold. A
+ * denser ladder cannot be read on any scale length, and building it would
+ * exhaust the call stack.
+ */
+export const EXTERNAL_SCALE_MAX_TICKS = 1000;
+
+// Bounded: a scale re-renders on every property change, and a live range
+// that stays dense would otherwise grow this without limit.
+const DENSE_LADDER_WARNINGS_KEPT = 64;
+const warnedDenseLadders = new Set<string>();
+
+/** True when `interval` would put more than the cap on the range; warns once per pair. */
+function isLadderTooDense(
+  config: Pick<ExternalScaleConfig, 'minValue' | 'maxValue'>,
+  interval: number
+): boolean {
+  const count = Math.floor((config.maxValue - config.minValue) / interval) + 1;
+  if (!(count > EXTERNAL_SCALE_MAX_TICKS)) return false;
+  const key = `${config.minValue}/${config.maxValue}/${interval}`;
+  if (!warnedDenseLadders.has(key)) {
+    if (warnedDenseLadders.size >= DENSE_LADDER_WARNINGS_KEPT) {
+      warnedDenseLadders.clear();
+    }
+    warnedDenseLadders.add(key);
+    console.warn(
+      `[external-scale] tick interval ${interval} over the range ${config.minValue}…${config.maxValue} is ${count} ticks; the ladder is not drawn (limit ${EXTERNAL_SCALE_MAX_TICKS}). A range in epoch milliseconds needs an interval in milliseconds.`
+    );
+  }
+  return true;
+}
+
 function calculateAtSetpoint(config: ExternalScaleConfig): boolean {
   const isTouching = config.touching ?? false;
   return computeAtSetpoint({
@@ -1055,15 +1112,9 @@ function colors(config: ExternalScaleConfig): {
   markerStrokeColor: string;
   setpointColor: string;
 } {
-  // TODO(theming): extend the color resolution to support domain-specific
-  // palettes (e.g. automation medium / fuel colors used by `obc-automation-tank`'s
-  // legacy CSS bar — `--automation-medium-fuel`, `--automation-fresh-water`,
-  // etc.). Today the bar fill is locked to the instrument regular/enhanced
-  // palette; tanks rendered through this renderer therefore lose their
-  // per-`medium` coloring. A new optional `colorVariant` (or similar) on
-  // `ExternalScaleConfig`, plumbed through `obc-bar-vertical` /
-  // `obc-bar-horizontal`, would let the tank pass its medium token and
-  // restore the legacy look without forking the renderer.
+  // TODO(#1284): the bar fill is locked to the instrument regular/enhanced
+  // palette, so a tank drawn through this renderer loses its per-`medium`
+  // colour.
   const isEnhanced = config.priority === Priority.enhanced;
   // Fill mode uses secondary color, tint mode uses tertiary color
   let barFillColor =
@@ -1132,17 +1183,22 @@ function drawingLength(config: ExternalScaleConfig): number {
   return Math.max(0, config.length - config.paddingStart - config.paddingEnd);
 }
 
-function valueToMainAxis(config: ExternalScaleConfig, value: number): number {
+export function valueToMainAxis(
+  config: ExternalScaleConfig,
+  value: number
+): number {
   const dLen = drawingLength(config);
+  // Every consumer takes min/max of two mapped coordinates, so mirroring the
+  // value inside the range reverses fill, ticks, labels, advice and setpoint.
+  const v = config.reverse ? config.minValue + config.maxValue - value : value;
   if (isVertical(config)) {
     return (
-      valueToY(value, config.minValue, config.maxValue, dLen) +
+      valueToY(v, config.minValue, config.maxValue, dLen) +
       mainAxisOffset(config)
     );
   }
   return (
-    valueToX(value, config.minValue, config.maxValue, dLen) +
-    mainAxisOffset(config)
+    valueToX(v, config.minValue, config.maxValue, dLen) + mainAxisOffset(config)
   );
 }
 
@@ -1207,6 +1263,7 @@ function generateTickmarksAtInterval(
   const values: number[] = [];
 
   if (interval <= 0 || !Number.isFinite(interval)) return {svgs, values};
+  if (isLadderTooDense(config, interval)) return {svgs, values};
 
   const includesZero = rangeIncludesZero(config.minValue, config.maxValue);
 
@@ -1271,16 +1328,7 @@ function generateTickmarks(config: ExternalScaleConfig): SVGTemplateResult[] {
     const mainLen = config.frameStyle === 'flat' ? main + 4 : main;
     const dirLen = isOutwardPositive(config) ? mainLen : -mainLen;
 
-    // Use provided array or default to [minValue, 0, maxValue]
-    const mainTickValues =
-      config.mainTickmarks.length > 0
-        ? config.mainTickmarks
-        : [config.minValue, 0, config.maxValue];
-
-    for (const value of mainTickValues) {
-      // Skip if outside range
-      if (value < config.minValue || value > config.maxValue) continue;
-
+    for (const value of resolveMainTickmarkValues(config)) {
       // Skip min/max tickmarks when scaleBackground is enabled (they align with the background edges)
       if (
         config.scaleBackground &&
@@ -1347,10 +1395,7 @@ function generateTickmarks(config: ExternalScaleConfig): SVGTemplateResult[] {
 }
 
 function generateLabels(config: ExternalScaleConfig): SVGTemplateResult[] {
-  if (!config.labels || config.primaryTickmarkInterval === undefined) return [];
-
-  const interval = config.primaryTickmarkInterval;
-  if (interval <= 0 || !Number.isFinite(interval)) return [];
+  if (!config.labels) return [];
 
   const fontFamily = 'var(--font-family-main)';
   const fontColor = 'var(--instrument-tick-mark-label-secondary-color)';
@@ -1365,18 +1410,17 @@ function generateLabels(config: ExternalScaleConfig): SVGTemplateResult[] {
     ? base + (config.hasScale ? effectiveTickThickness : 0) + labelGap()
     : base - (config.hasScale ? effectiveTickThickness : 0) - labelGap();
 
-  const includesZero = rangeIncludesZero(config.minValue, config.maxValue);
-
   const labels: SVGTemplateResult[] = [];
 
-  const push = (v: number) => {
+  const push = (v: number, edge?: {anchor: string; baseline: string}) => {
     const main = valueToMainAxis(config, v);
     if (isVertical(config)) {
       const x = labelPos;
       const y = main;
       const anchor = isOutwardPositive(config) ? 'start' : 'end';
+      const baseline = edge?.baseline ?? 'middle';
       labels.push(
-        svg`<text x=${x} y=${y} text-anchor=${anchor} dominant-baseline="middle" font-family=${fontFamily} style="font-size: ${fontSize}" fill=${fontColor}>${v}</text>`
+        svg`<text x=${x} y=${y} text-anchor=${anchor} dominant-baseline=${baseline} font-family=${fontFamily} style="font-size: ${fontSize}" fill=${fontColor}>${v}</text>`
       );
       return;
     }
@@ -1384,12 +1428,33 @@ function generateLabels(config: ExternalScaleConfig): SVGTemplateResult[] {
     const y = labelPos;
     const x = main;
     const baseline = isOutwardPositive(config) ? 'hanging' : 'auto';
+    const anchor = edge?.anchor ?? 'middle';
     labels.push(
-      svg`<text x=${x} y=${y} text-anchor="middle" dominant-baseline=${baseline} font-family=${fontFamily} style="font-size: ${fontSize}" fill=${fontColor}>${v}</text>`
+      svg`<text x=${x} y=${y} text-anchor=${anchor} dominant-baseline=${baseline} font-family=${fontFamily} style="font-size: ${fontSize}" fill=${fontColor}>${v}</text>`
     );
   };
 
-  if (includesZero) {
+  if (config.mainTickmarkLabels) {
+    // The end labels turn inward so they stay inside the drawing length.
+    for (const v of resolveMainTickmarkValues(config)) {
+      const edge =
+        v === config.minValue
+          ? {anchor: 'start', baseline: 'auto'}
+          : v === config.maxValue
+            ? {anchor: 'end', baseline: 'hanging'}
+            : undefined;
+      push(v, edge);
+    }
+    return labels;
+  }
+
+  const interval = config.primaryTickmarkInterval;
+  if (interval === undefined || interval <= 0 || !Number.isFinite(interval)) {
+    return [];
+  }
+  if (isLadderTooDense(config, interval)) return [];
+
+  if (rangeIncludesZero(config.minValue, config.maxValue)) {
     for (let v = 0; v <= config.maxValue; v += interval) push(v);
     for (let v = -interval; v >= config.minValue; v -= interval) push(v);
   } else {
@@ -1846,12 +1911,10 @@ function generateBarFill(
 ): SVGTemplateResult | typeof nothing {
   if (!config.hasBar || config.value === undefined) return nothing;
 
-  // NOTE:
-  // The bar container can have a larger radius (driven by component size CSS vars).
-  // When the fill segment is short, rounding the fill geometry directly must clamp the
-  // radius to avoid self-intersection, which makes the fill appear to ignore the larger
-  // radius. Instead, render the fill as a plain rect and clip it with the exact same
-  // shape as the bar container so the visible corners always match.
+  // Rounding the fill geometry directly would have to clamp the radius on a
+  // short segment to avoid self-intersection, and the fill would then look
+  // like it ignores the container's larger radius. A plain rect clipped by
+  // the container's own shape keeps the visible corners matching.
 
   // Clip-path id: only needs to be unique within the current <svg>.
   const clipId = `obc-bar-fill-clip-${Math.random().toString(36).slice(2)}`;
@@ -1866,8 +1929,16 @@ function generateBarFill(
   const fillMin = config.fillMin ?? 0;
   const fillMax = config.fillMax ?? config.value;
 
-  const v0 = Math.max(Math.min(fillMin, config.maxValue), config.minValue);
-  const v1 = Math.max(Math.min(fillMax, config.maxValue), config.minValue);
+  const v0 = clamp(
+    fillMin,
+    config.minValue,
+    Math.max(config.minValue, config.maxValue)
+  );
+  const v1 = clamp(
+    fillMax,
+    config.minValue,
+    Math.max(config.minValue, config.maxValue)
+  );
 
   const a0 = valueToMainAxis(config, v0);
   const a1 = valueToMainAxis(config, v1);
@@ -2520,16 +2591,9 @@ function generateCurrentValueDot(
   // Position on main axis (value to coordinate)
   const pos = valueToMainAxis(config, config.value);
 
-  // Position on perpendicular axis:
-  // The dot should be in the scale band, touching its inner edge (towards the chart/bar)
-  //
-  // The scale background (when shown) spans from barEdge to barEdge+backgroundThickness
-  // where backgroundThickness = mainTickLength + gap (e.g., 10+4=14 for condensed)
-  //
-  // For the dot to touch the INNER edge (toward chart) and stay INSIDE the scale band:
-  // - Inner edge of scale background = barEdge (or 0 if no bar)
-  // - Dot's inner edge should be at the inner edge of the scale band
-  // - So dot center = innerEdge + visualRadius
+  // The dot sits inside the scale band, touching the inner edge that faces
+  // the chart or bar — that edge is `barEdge`, or 0 without a bar — so its
+  // centre is one visual radius further out.
   const base = tickBasePerp(config);
 
   // Dot center should be positioned so the dot's inner edge touches the scale band's inner edge

@@ -17,20 +17,22 @@
 .wrapper {
   --bg-color: var(--alert-alarm-color);
   --thickness: var(--global-size-spacing-border-weight-alertframe);
-  --blink-on: var(--alarm-blink-on);
+  /* 0/1 from the flash-<tempo> classes below; steady when no class applies. */
+  --blink-on: 0;
+  --blink-off: 1;
   color: var(--on-alarm-active-color);
   position: relative;
   width: 100%;
   height: 100%;
-  border-radius: calc(
-    var(--ui-components-button-border-radius) + var(--thickness) / 2
-  );
+  /* The stroke's centreline follows this radius, like a Figma centre stroke. */
+  border-radius: var(--ui-components-button-border-radius);
   outline: var(--thickness) solid var(--bg-color);
-  outline-offset: 0;
+  /* Centre stroke: frames on touching components share one edge. */
+  outline-offset: calc(-1 * var(--thickness) / 2);
+  /* +2 px while on, 1 px each side, both thicknesses (Figma Flash=yes: 2 → 4 px). */
   --blink-width: 2px;
   &.thickness-small {
     --thickness: 2px;
-    --blink-width: 1px;
   }
 
   &.wrap-content {
@@ -42,14 +44,62 @@
     width: 100%;
   }
 
-  --blink-width-dynamic: calc(var(--blink-width) * var(--blink-on));
+  &.flash-fast {
+    --blink-on: var(--flash-fast-on);
+    --blink-off: var(--flash-fast-off);
+  }
 
-  &.unacked-active {
+  &.flash-slow {
+    --blink-on: var(--flash-slow-on);
+    --blink-off: var(--flash-slow-off);
+  }
+
+  &.flash-very-slow {
+    --blink-on: var(--flash-very-slow-on);
+    --blink-off: var(--flash-very-slow-off);
+  }
+
+  --flash-transition: 50ms linear;
+
+  &.flash-effect-outline-eased {
+    transition:
+      outline-width var(--flash-transition),
+      outline-offset var(--flash-transition);
+
+    .flap {
+      transition: box-shadow var(--flash-transition);
+    }
+
+    .mask {
+      transition:
+        top var(--flash-transition),
+        bottom var(--flash-transition),
+        left var(--flash-transition),
+        right var(--flash-transition);
+    }
+
+    .dash path {
+      transition: stroke-width var(--flash-transition);
+    }
+  }
+
+  --blink-width-dynamic: calc(var(--blink-width) * var(--blink-on));
+  /* One knob for flap and masks, so they cannot drift apart from the outline. */
+  --flap-grow: 0px;
+
+  &.unacked-active,
+  &.unacked-rectified {
     outline-width: calc(var(--thickness) + var(--blink-width-dynamic));
+    outline-offset: calc(
+      -1 * (var(--thickness) + var(--blink-width-dynamic)) / 2
+    );
+    /* The stroke grows on both sides, so its outer edge moves by half. */
+    --flap-grow: calc(var(--blink-width-dynamic) / 2);
   }
 
   &.unacked-rectified {
-    outline-style: dashed;
+    /* The dash pattern (12/6) needs an SVG stroke; outlines have no dash array. */
+    outline-style: none;
   }
 
   &.alarm,
@@ -61,24 +111,17 @@
   &.warning,
   &.level-medium {
     --bg-color: var(--alert-warning-color);
-    --blink-on: var(--warning-blink-on);
     color: var(--on-warning-active-color);
   }
 
   &.caution,
   &.level-low {
     --bg-color: var(--alert-caution-color);
-    --blink-on: 1;
     color: var(--on-caution-active-color);
-  }
-
-  &.level-low {
-    --blink-on: var(--low-blink-on);
   }
 
   &.level-critical {
     --bg-color: var(--critical-enabled-background-color);
-    --blink-on: var(--critical-blink-on);
     color: var(--on-critical-active-color);
   }
 
@@ -115,9 +158,9 @@
   gap: 2px;
 
   &.small {
-    top: calc(-1 * var(--thickness));
+    top: calc(-1 * var(--thickness) / 2);
     right: calc(
-      -1 * var(--app-components-alert-frame-icon-size) - var(--thickness) / 2 -
+      -1 * var(--app-components-alert-frame-icon-size) -
         var(--ui-components-badge-padding) * 2
     );
   }
@@ -132,7 +175,7 @@
       width: calc(
         var(--ui-components-button-border-radius) + var(--thickness) + 0.5px
       );
-      top: 0;
+      top: calc(-1 * var(--flap-grow));
       left: calc(
         -1 * var(--ui-components-button-border-radius) - var(--thickness)
       );
@@ -143,17 +186,13 @@
         calc(100% - var(--thickness)) 50%,
         50% var(--thickness)
       );
-
-      .unacked-active & {
-        top: calc(-1 * var(--blink-width-dynamic));
-      }
     }
 
     &.down {
       width: calc(
         var(--ui-components-button-border-radius) + var(--thickness) + 0.5px
       );
-      bottom: 0;
+      bottom: calc(-1 * var(--flap-grow));
       left: calc(
         -1 * var(--ui-components-button-border-radius) - var(--thickness)
       );
@@ -164,10 +203,6 @@
         50% calc(100% - var(--thickness)),
         calc(100% - var(--thickness)) 50%
       );
-
-      .unacked-active & {
-        bottom: calc(-1 * var(--blink-width-dynamic));
-      }
     }
 
     &.left {
@@ -177,7 +212,7 @@
       top: calc(
         -1 * var(--ui-components-button-border-radius) - var(--thickness)
       );
-      left: 0;
+      left: calc(-1 * var(--flap-grow));
       clip-path: polygon(
         0 0,
         0 100%,
@@ -185,10 +220,6 @@
         50% calc(100% - var(--thickness)),
         var(--thickness) 50%
       );
-
-      .unacked-active & {
-        left: calc(-1 * var(--blink-width-dynamic));
-      }
 
       .top & {
         top: unset;
@@ -212,7 +243,7 @@
       top: calc(
         -1 * var(--ui-components-button-border-radius) - var(--thickness)
       );
-      right: 0;
+      right: calc(-1 * var(--flap-grow));
       clip-path: polygon(
         100% 0,
         100% 100%,
@@ -234,19 +265,15 @@
           calc(100% - var(--thickness)) 50%
         );
       }
-
-      .unacked-active & {
-        right: calc(-1 * var(--blink-width-dynamic));
-      }
     }
   }
 
   &.large {
     flex-direction: column;
-    top: calc(-1 * var(--thickness));
-    bottom: calc(-1 * var(--thickness));
+    top: calc(-1 * var(--thickness) / 2);
+    bottom: calc(-1 * var(--thickness) / 2);
     right: calc(
-      -1 * var(--app-components-alert-frame-icon-size) + var(--thickness) / 2 -
+      -1 * var(--app-components-alert-frame-icon-size) + var(--thickness) -
         var(--ui-components-badge-padding) * 2
     );
     border-radius: 0px
@@ -256,13 +283,12 @@
 
   &.bottom,
   &.top {
-    left: calc(-1 * var(--thickness));
-    right: calc(-1 * var(--thickness));
+    left: calc(-1 * var(--thickness) / 2);
+    right: calc(-1 * var(--thickness) / 2);
     padding: var(--app-components-alert-frame-large-flip-padding-vertical)
       var(--app-components-alert-frame-large-flip-4px-padding-horizontal);
     bottom: calc(
-      -1 * var(--thickness) / 2 -
-        var(--global-typography-ui-label-line-height) -
+      -1 * var(--global-typography-ui-label-line-height) -
         var(--app-components-alert-frame-large-flip-padding-vertical) * 2
     );
     border-radius: 0px 0px var(--button-border-radius-bottom-right)
@@ -279,7 +305,7 @@
     .text-size-large & {
       @mixin font-body;
       bottom: calc(
-        var(--thickness) / 2 - var(--global-typography-ui-body-line-height) -
+        var(--thickness) - var(--global-typography-ui-body-line-height) -
           var(--app-components-alert-frame-large-flip-padding-vertical) * 2
       );
 
@@ -292,8 +318,7 @@
   &.top {
     bottom: unset !important;
     top: calc(
-      -1 * var(--thickness) / 2 -
-        var(--global-typography-ui-label-line-height) -
+      -1 * var(--global-typography-ui-label-line-height) -
         var(--app-components-alert-frame-large-flip-padding-vertical) * 2
     );
     border-radius: var(--button-border-radius-bottom-right)
@@ -301,7 +326,7 @@
 
     .text-size-large & {
       top: calc(
-        var(--thickness) / 2 - var(--global-typography-ui-body-line-height) -
+        var(--thickness) - var(--global-typography-ui-body-line-height) -
           var(--app-components-alert-frame-large-flip-padding-vertical) * 2
       );
     }
@@ -315,8 +340,34 @@
   }
 }
 
-.unacked-active .flap {
-  outline: var(--bg-color) solid var(--blink-width-dynamic);
+/* Grows the flap outward with the outline, never toward the content: shifted
+   copies leave the inner edge where it is (an outline would cross it). */
+.flap.small,
+.flap.large {
+  box-shadow:
+    var(--flap-grow) 0 0 0 var(--bg-color),
+    0 calc(-1 * var(--flap-grow)) 0 0 var(--bg-color),
+    0 var(--flap-grow) 0 0 var(--bg-color),
+    var(--flap-grow) calc(-1 * var(--flap-grow)) 0 0 var(--bg-color),
+    var(--flap-grow) var(--flap-grow) 0 0 var(--bg-color);
+}
+
+.flap.bottom {
+  box-shadow:
+    0 var(--flap-grow) 0 0 var(--bg-color),
+    calc(-1 * var(--flap-grow)) 0 0 0 var(--bg-color),
+    var(--flap-grow) 0 0 0 var(--bg-color),
+    calc(-1 * var(--flap-grow)) var(--flap-grow) 0 0 var(--bg-color),
+    var(--flap-grow) var(--flap-grow) 0 0 var(--bg-color);
+}
+
+.flap.top {
+  box-shadow:
+    0 calc(-1 * var(--flap-grow)) 0 0 var(--bg-color),
+    calc(-1 * var(--flap-grow)) 0 0 0 var(--bg-color),
+    var(--flap-grow) 0 0 0 var(--bg-color),
+    calc(-1 * var(--flap-grow)) calc(-1 * var(--flap-grow)) 0 0 var(--bg-color),
+    var(--flap-grow) calc(-1 * var(--flap-grow)) 0 0 var(--bg-color);
 }
 
 ::slotted([slot="label"]) {
@@ -330,4 +381,22 @@
   height: var(--app-components-alert-frame-icon-size);
   display: block;
   flex-shrink: 0;
+}
+
+.dash {
+  /* Overridden inline per render from the measured thickness. */
+  --dash-pad: 0px;
+  position: absolute;
+  top: calc(-1 * var(--dash-pad));
+  left: calc(-1 * var(--dash-pad));
+  overflow: visible;
+  pointer-events: none;
+  fill: none;
+  stroke: var(--bg-color);
+  stroke-dasharray: 12 6;
+}
+
+.dash path {
+  /* Animated on the one path: a wider second path would drift its dashes. */
+  stroke-width: calc(var(--thickness) + var(--blink-width-dynamic));
 }

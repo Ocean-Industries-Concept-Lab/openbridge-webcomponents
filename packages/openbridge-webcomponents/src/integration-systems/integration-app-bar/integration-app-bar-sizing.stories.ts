@@ -16,7 +16,7 @@ const appLabels = [
   'Logs',
 ];
 
-const appBar = (labels: string[]) => html`
+const appBar = (labels: string[], checkedIndex = 0) => html`
   <obc-integration-app-bar>
     ${labels.map(
       (label, i) => html`
@@ -25,7 +25,7 @@ const appBar = (labels: string[]) => html`
           size="small"
           label=${label}
           integration
-          ?checked=${i === 0}
+          ?checked=${i === checkedIndex}
         >
           <obi-placeholder slot="icon"></obi-placeholder>
         </obc-app-button>
@@ -59,6 +59,18 @@ export const EightLabelledApps: Story = {
       description: {
         story:
           'In a wide bar, the grid gives every app the same column width, resolved from the widest label in the set. Short labels keep extra inline space, long labels stay on one line, and the row remains centred because every track uses the same size.',
+      },
+    },
+  },
+};
+
+export const WidestLabelSelected: Story = {
+  render: () => appBar(appLabels, appLabels.indexOf('System Overview')),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'The same eight apps with the widest label selected instead of the first. A selected label is set in the bold active weight, which is wider than the same text unselected, so a row sized from the rendered labels would grow whenever the widest one is picked. Each label reserves its bold width in every state, which makes this baseline identical to the one above.',
       },
     },
   },

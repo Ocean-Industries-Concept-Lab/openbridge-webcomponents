@@ -96,21 +96,19 @@ const sim = useSim()
 const sortBy = ref<'distance' | 'cpa' | 'tcpa'>('distance')
 
 // Convert sim data to AisData format for CPA calculation
-const ownShipData = computed(
-  (): AisData => ({
-    mmsi: 0, // Own ship
-    latitude: sim.north.value,
-    longitude: sim.east.value,
-    courseOverGround: sim.vessel.courseOverGroundDeg.value,
-    speedOverGround: sim.vessel.speedForwardOverGroundKnots.value,
-    name: 'Own Ship',
-    msgtime: new Date().toISOString(),
-    shipType: 0,
-    trueHeading: sim.vessel.headingDeg.value,
-    rateOfTurn: sim.vessel.rotationDegPerMinute.value / 60, // Convert to degrees per second
-    navigationStatus: 0
-  })
-)
+const ownShipData = computed((): AisData => ({
+  mmsi: 0, // Own ship
+  latitude: sim.north.value,
+  longitude: sim.east.value,
+  courseOverGround: sim.vessel.courseOverGroundDeg.value,
+  speedOverGround: sim.vessel.speedForwardOverGroundKnots.value,
+  name: 'Own Ship',
+  msgtime: new Date().toISOString(),
+  shipType: 0,
+  trueHeading: sim.vessel.headingDeg.value,
+  rateOfTurn: sim.vessel.rotationDegPerMinute.value / 60, // Convert to degrees per second
+  navigationStatus: 0
+}))
 
 // Calculate CPA for all targets
 const targetsWithCpa = computed((): TargetWithCpa[] => {

@@ -1,6 +1,6 @@
 ## Summary
 
-<!-- two or three sentences; screenshot or story link for anything visual -->
+<!-- two or three sentences; up to three screenshots (before / after, the variant sweep, the story) or a story link for anything visual; no names or handles anywhere in the body -->
 
 ## Why
 
@@ -12,7 +12,7 @@
 
 ## Verification
 
-<!-- what you ran; baselines that moved and why -->
+<!-- what you ran (`npm run check` at the root, the snapshot filters, `test-a11y`); baselines that moved and why -->
 
 ## Docs
 

@@ -33,12 +33,12 @@ export default [
       },
     },
     rules: {
-      'openbridge-comments/comment-max-lines': ['warn', {max: 5}],
-      'openbridge-comments/no-commented-out-code': 'warn',
-      'openbridge-comments/todo-format': 'warn',
-      'openbridge-comments/comment-style': 'warn',
+      'openbridge-comments/comment-max-lines': ['error', {max: 5}],
+      'openbridge-comments/no-commented-out-code': 'error',
+      'openbridge-comments/todo-format': 'error',
+      'openbridge-comments/comment-style': 'error',
       'openbridge-comments/property-docs-in-class-jsdoc': [
-        'warn',
+        'error',
         {
           allowFiles: [
             'src/svghelpers/setpoint-mixin.ts',

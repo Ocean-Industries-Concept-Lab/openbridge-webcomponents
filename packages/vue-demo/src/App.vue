@@ -32,6 +32,7 @@ import type { App } from './router'
 import ObcIconButton from '@oicl/openbridge-webcomponents-vue/components/icon-button/ObcIconButton.vue'
 import { IconButtonVariant } from '@oicl/openbridge-webcomponents/dist/components/icon-button/icon-button.js'
 import { useHotkeys } from './composables/useHotkeys'
+import { MOBILE_BREAKPOINT_PX, useMobileLayout } from './composables/useMobileLayout'
 import router from './router'
 import type { ObcContextMenuInputChangeEvent } from '@oicl/openbridge-webcomponents/dist/components/context-menu-input/context-menu-input'
 
@@ -45,8 +46,8 @@ const {
   showAppMenu,
   showAlertMenu,
   showMoreMenu,
-  showBackdrop,
   hideAll,
+  onMenuClose,
   toggleNavigation,
   toggleBrilliance,
   toggleAppMenu,
@@ -68,6 +69,7 @@ const smallScreen = computed(() => {
 })
 useComponentSize({ zoom })
 useSpeedAlerts(10, smallScreen)
+const { isMobile } = useMobileLayout()
 
 const inactivityDeadline = computed(() => {
   return smallScreen.value ? 10_000 : 120_000
@@ -209,10 +211,9 @@ function onMoreMenuChange(event: ObcContextMenuInputChangeEvent) {
       show-dimming-button
       show-clock
       :inactive="inactive"
-      :app-button-breakpoint-px="700"
-      :dimming-button-breakpoint-px="700"
-      :app-title-breakpoint-px="smallScreen ? 100000 : 400"
-      :clock-minimize-breakpoint-px="inactive && smallScreen ? 100000 : 300"
+      :app-button-breakpoint-px="MOBILE_BREAKPOINT_PX"
+      :dimming-button-breakpoint-px="MOBILE_BREAKPOINT_PX"
+      :app-title-breakpoint-px="smallScreen ? 100000 : MOBILE_BREAKPOINT_PX"
       :menu-button-activated="showNavigation"
       :dimming-button-activated="showBrilliance"
       :apps-button-activated="showAppMenu"
@@ -244,12 +245,7 @@ function onMoreMenuChange(event: ObcContextMenuInputChangeEvent) {
         />
       </template>
       <template #clock>
-        <ObcClock
-          :date="date"
-          :time-zone-offset-hours="offset"
-          show-timezone
-          :blink-only-breakpoint-px="600"
-        />
+        <ObcClock :date="date" :time-zone-offset-hours="offset" :show-timezone="!isMobile" />
       </template>
     </TopBar>
   </header>
@@ -262,7 +258,6 @@ function onMoreMenuChange(event: ObcContextMenuInputChangeEvent) {
   >
     <div class="content">
       <router-view></router-view>
-      <div v-show="showBackdrop" class="backdrop" @click.stop="hideAll"></div>
       <!-- Use v-show so that company logo is loaded agressively -->
       <DemoNavigationMenu
         :inactive="inactive"
@@ -270,10 +265,17 @@ function onMoreMenuChange(event: ObcContextMenuInputChangeEvent) {
         :navigation-menu-variant="navigationMenuVariant"
         :small-screen="smallScreen ?? false"
         @hide-all="hideAll"
+        @close="onMenuClose('navigation')"
       />
-      <DemoCommandMenu v-if="showCommandMenu" @change="onCommandChange" />
+      <DemoCommandMenu
+        soft-dismiss
+        :open="showCommandMenu"
+        @change="onCommandChange"
+        @close="onMenuClose('commandMenu')"
+      />
       <BrillianceMenu
-        v-if="showBrilliance"
+        soft-dismiss
+        :open="showBrilliance"
         :palette="palette"
         :brightness="bridgeStore.brightness"
         show-brightness
@@ -286,15 +288,26 @@ function onMoreMenuChange(event: ObcContextMenuInputChangeEvent) {
         class="brilliance"
         @palette-changed="onPaletteChange"
         @brightness-changed="onBrightnessChange"
+        @close="onMenuClose('brilliance')"
       >
       </BrillianceMenu>
-      <DemoAppMenu :show-app-menu="showAppMenu" @hide-all="hideAll" />
-      <DemoAlertMenu v-model="showAlertMenu" />
+      <DemoAppMenu
+        :show-app-menu="showAppMenu"
+        @hide-all="hideAll"
+        @close="onMenuClose('appMenu')"
+      />
+      <DemoAlertMenu
+        :open="showAlertMenu"
+        @close="onMenuClose('alertMenu')"
+        @go-to-list="hideAll"
+      />
       <ObcContextMenuInput
-        v-if="showMoreMenu"
+        soft-dismiss
+        :open="showMoreMenu"
         class="more-menu"
         :options="moreMenuOptions"
         @change="onMoreMenuChange"
+        @close="onMenuClose('moreMenu')"
       >
       </ObcContextMenuInput>
     </div>
@@ -330,14 +343,6 @@ header {
   isolation: isolate;
   min-height: 100%;
   height: 100%;
-
-  .backdrop {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-  }
 }
 
 .nav-type-compact .content {

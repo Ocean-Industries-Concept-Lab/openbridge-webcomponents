@@ -11,13 +11,26 @@ applyTo: "packages/openbridge-webcomponents/src/**/*.ts,packages/openbridge-webc
 `AGENTS.md` § 2 carries the summary; `docs/agents/coding-standards.md` is the
 source of truth for comments, CSS comments, writing style, boolean naming and
 Storybook titles.
-`npm run lint:comments` reports what breaks the comment rules.
+`npm run lint:comments` fails on what breaks these rules in `src/**/*.ts`.
+Nothing lints CSS comments — those are the comment pass's job, and the
+reviewer's.
 
 ## Comments
 
 Write for a developer reading this file in a month, not for the reviewer of
 this PR. If they would get it from the code, don't write it.
 
+- **Write it for whoever picks this up after you.** A comment carries the
+  point of the thing — why it exists, what it is for, what it deliberately
+  leaves alone — the way you would hand the work over to a colleague. The
+  mechanism is usually not the interesting part: the code is right there, and
+  the long version belongs in the PR body or a spec.
+- **Plain words before jargon.** Say what happens — "the browser closes the
+  menu when you click outside it" — and leave the term of art, the event
+  order and the spec detail out unless a reader is stuck without them. "Light
+  dismiss on the UA sheet" tells someone who already knows nothing new, and
+  everyone else nothing at all. Compression only the informed can decode is
+  not brevity.
 - **WHY, never WHAT.** A comment that restates the code is deleted.
 - **Explanation belongs on the declaration.** Document a class, property or
   method in its JSDoc. A comment inside a method body is allowed only for a
@@ -57,6 +70,14 @@ commenting them. A one-line `/* ---- Section ---- */` banner is fine in files
 over ~150 lines. Same limits as TS: three lines, no history, no commented-out
 declarations. Delete placeholder-only CSS files.
 
+**A shared mixin's header is documentation, not a comment.** A
+`src/mixins/*.css` file has no class or JSDoc to carry its intent, so the
+block at the top does the job a module JSDoc does in TypeScript: what the
+mixin is for, when to reach for it, and what it deliberately leaves alone.
+The three-line limit does not apply to that header — the writing-style rules
+do. Everything below it is an ordinary CSS comment and keeps the
+one-line-per-declaration shape.
+
 ### Writing style (comments, JSDoc, docs, PR and issue text)
 
 Write like a developer with two sentences to spare. Not allowed:
@@ -69,11 +90,39 @@ Write like a developer with two sentences to spare. Not allowed:
 - decoration: emoji, bold on every other phrase, more than one em dash per
   sentence, a list of three where one item is the point
 - hedging: "might potentially", "it should be noted that this may"
+- unexplained jargon: a spec term, an abbreviation or an API name used as if
+  the reader already knows it — "the UA sheet", "light dismiss", "the top
+  layer", "the invoker", "a microtask beats the queued task". Describe the
+  behaviour; add the term only where a reader would need it to search
 - chatbot artefacts: "Great question", "Certainly", "Let me", "I've"
+- people: a name or handle as the subject or the authority — "X asked for",
+  "per Y's review", "address Z's feedback". Cite the role (the design team),
+  the artefact (a Figma node, `#1234`) or nothing; a rule stands on its own.
+  `CODEOWNERS`, `Co-authored-by` trailers and the README contact line are
+  configuration, not prose.
 
-**PRs:** summary and screenshot first, long-form at the end if needed. The PR
-body is where root cause, alternatives and verification belong — long is fine
-there, inline in the code it is not.
+**PRs:** a Conventional Commits title that names what shipped, then the body
+in the template's order — summary and up to three screenshots first (before /
+after, the variant sweep, the story at 2×: a bird's-eye view, not a gallery),
+long-form at the end if needed. The PR body is where root cause, alternatives
+and verification belong — long is fine there, inline in the code it is not.
+
+## Suppressions
+
+A suppression is a decision the reviewer should see the reason for, never a
+way past a failing check. `npm run lint:suppressions` holds it to that, with
+inline directives switched off so no directive can silence it:
+
+- An `eslint-disable`, `eslint-disable-line` or `eslint-disable-next-line`
+  names the rules it turns off and gives the reason after `--`:
+  `// eslint-disable-next-line @typescript-eslint/no-unused-expressions -- the read forces a reflow`.
+- No inline rule configuration (`/* eslint rule: "off" */`); change
+  `eslint.config.mjs` instead.
+- `@ts-expect-error` with its reason; never `@ts-ignore` or `@ts-nocheck`.
+
+A test is never skipped: `.skip`, `.only` and `.todo` on `it`, `test` or
+`describe` fail `npm run lint:eslint`. A behaviour a component lacks is
+written down (a11y.md § 9), not parked in a test that no longer runs.
 
 ## Boolean property naming
 
@@ -105,6 +154,10 @@ Always name boolean properties and parameters using **positive** (affirmative) p
 Framework wrappers (React, Vue, Angular, Svelte) always set values via properties, so removing the attribute has no effect on wrapper consumers. For plain HTML usage, the property must be set via JavaScript (`el.autoAtSetpoint = false`).
 
 When refactoring an existing negative boolean, also rename it in the interface, mixin/bundle, stories, and all consumer components to keep the public API consistent.
+
+`npm run lint:eslint` rejects a `Boolean` `@property` named `hide…`,
+`disable…` or `no…`. The one left, `obc-integration-bar`'s `hideHomeButton`,
+is public API and carries its suppression with that reason.
 
 ## Storybook title conventions
 

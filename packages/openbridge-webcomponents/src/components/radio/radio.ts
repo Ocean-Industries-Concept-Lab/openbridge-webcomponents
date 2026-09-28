@@ -13,7 +13,7 @@ import {classMap} from 'lit/directives/class-map.js';
  * ---
  *
  * ### Features
- * - **Native grouping:** Multiple `<obc-radio>` elements with the same `name` behave as a group, allowing only one to be selected at a time (leverages browser's native radio input mechanics).
+ * - **Native grouping:** Multiple `<obc-radio>` elements with the same `name` behave as a group, allowing only one to be selected at a time (uses the browser's native radio input mechanics).
  * - **Optional label:** Supports an inline label via the `label` property, or can be rendered without a label for custom layouts.
  * - **State options:** Supports `checked`, `disabled`, and `required` states for form integration.
  * - **Customizable value:** The `value` property sets the value submitted with the form when selected.

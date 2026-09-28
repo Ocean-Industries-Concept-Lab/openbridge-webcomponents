@@ -83,6 +83,14 @@ export function watchfaceLinear(
     mainTickmarks?: number[];
     primaryTickmarkInterval?: number;
     secondaryTickmarkInterval?: number;
+    /**
+     * Label the scale ends and the primary ladder, start-anchored
+     * `LINEAR_LABEL_GAP` outside the +x edge; the consumer reserves the room.
+     * Off by default so the existing gauges keep their geometry.
+     */
+    labels?: boolean;
+    /** Text for a labelled value; `formatLinearLabel()` when unset. */
+    labelFormatter?: (value: number) => string;
   },
   advice: LinearAdviceRaw[]
 ) {
@@ -139,6 +147,7 @@ export function watchfaceLinear(
   }
 
   const tickmarksX = width / 2 - scaleWidth + 4;
+  const labelValues = new Set<number>([maxValue, minValue]);
 
   if (
     tickmarks.primaryTickmarkInterval !== undefined &&
@@ -156,7 +165,19 @@ export function watchfaceLinear(
     });
     tickmarksSvg.push(...svgs);
     skipValues.push(...values);
+    values.forEach((v) => labelValues.add(v));
   }
+  const labelsSvg: SVGTemplateResult[] = tickmarks.labels
+    ? [...labelValues]
+        .sort((a, b) => b - a)
+        .map((v) =>
+          linearScaleLabel(
+            width / 2 + LINEAR_LABEL_GAP,
+            valueToY(v, minValue, maxValue, height),
+            (tickmarks.labelFormatter ?? formatLinearLabel)(v)
+          )
+        )
+    : [];
 
   if (
     tickmarks.secondaryTickmarkInterval !== undefined &&
@@ -197,6 +218,7 @@ export function watchfaceLinear(
     mask,
     containerStroke,
     svg`<g mask=${maskAttr}>${tickmarksSvg}${boxesSvg} </g>`,
+    labelsSvg,
     advicesSvg,
     barSvg,
   ];
@@ -205,6 +227,30 @@ export function watchfaceLinear(
   }
 
   return all;
+}
+
+/** Gap between a linear gauge's +x edge and the start of its labels. */
+export const LINEAR_LABEL_GAP = 4;
+
+/**
+ * Label text for a scale value. A ladder is built by repeated addition, so a
+ * value such as `0.30000000000000004` has to be rounded back to `0.3`.
+ */
+export function formatLinearLabel(value: number): string {
+  return String(Number(value.toPrecision(12)));
+}
+
+/**
+ * A scale label starting at `(x, y)`, vertically centred, in the tick-mark
+ * typography the linear and radial gauges share. Start-anchored like the
+ * external scale's right-side labels, so a long value grows outward.
+ */
+export function linearScaleLabel(
+  x: number,
+  y: number,
+  text: string
+): SVGTemplateResult {
+  return svg`<text class="linear-label" x=${x} y=${y} text-anchor="start" dominant-baseline="central" font-family="var(--font-family-main)" font-size="var(--global-typography-ui-label-font-size)" fill="var(--instrument-tick-mark-label-secondary-color)">${text}</text>`;
 }
 
 /**

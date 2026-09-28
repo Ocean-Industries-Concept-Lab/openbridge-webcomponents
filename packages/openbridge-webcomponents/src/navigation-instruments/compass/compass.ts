@@ -183,6 +183,10 @@ export enum CompassPriorityElement {
  *   so instruments sharing the same value have identical ring circumference
  *   regardless of label width or arc extent (like obc-donut-chart's
  *   fixedHeight). When unset (default), the instrument fills its container.
+ * @property rotMaxValue - Bar-extent reference value in degrees per minute: the bar fills the full
+ *   ±`rotArcExtent` arc when the measured rate of turn reaches ±`rotMaxValue`.
+ *   The default `60` aligns with ES-TRIN 2025/1 Art. 3.02.
+ * @availableWhen rotMaxValue rotType==bar
  * @stable
  */
 @customElement('obc-compass')
@@ -226,16 +230,6 @@ export class ObcCompass extends LitElement {
   @property({type: Number}) rotationsPerMinute: number = 1;
   @property({type: String}) rotType: RotType = RotType.dots;
   @property({type: String}) rotPosition: RotPosition = RotPosition.innerCircle;
-  /**
-   * Bar-extent reference value in **degrees per minute**. The bar fills the
-   * full ±`rotArcExtent` arc when the measured ROT equals ±`rotMaxValue`.
-   * Default `60` aligns with ES-TRIN 2025/1 Art. 3.02.
-   *
-   * Note: prior to the introduction of `rateOfTurnDegreesPerMinute` this
-   * property was interpreted in rotations per minute. The unit changed when
-   * the physical ROT API was introduced.
-   * @availableWhen rotType==bar
-   */
   @property({type: Number}) rotMaxValue: number = 60;
   @property({type: Number}) rotArcExtent: number = 60;
   @property({type: Boolean}) rotPortStarboard: boolean = false;
@@ -276,8 +270,8 @@ export class ObcCompass extends LitElement {
     this._headingSp.dispose();
   }
 
-  // @ts-expect-error TS6133: The controller ensures that the render
-  // function is called on resize of the element
+  // @ts-expect-error TS6133: the controller calls the render function on
+  // resize of the element
   private _resizeController = new ResizeController(this, {});
 
   /**
@@ -407,15 +401,17 @@ export class ObcCompass extends LitElement {
           .setpointOverride=${this.headingSetpointOverride}
           .priority=${this.priority}
           .animateSetpoint=${this.animateSetpoint}
-          .vessels=${this.hasCenterReadouts
-            ? []
-            : [
-                {
-                  size: VesselImageSize.medium,
-                  vesselImage: this.vesselImage,
-                  transform: `rotate(${this.heading}deg)`,
-                },
-              ]}
+          .vessels=${
+            this.hasCenterReadouts
+              ? []
+              : [
+                  {
+                    size: VesselImageSize.medium,
+                    vesselImage: this.vesselImage,
+                    transform: `rotate(${this.heading}deg)`,
+                  },
+                ]
+          }
           .windKnots=${this.currentWindSpeedKnots}
           .windFromDirectionDeg=${this.windFromDirection}
           .windColor=${this.colorFor(CompassPriorityElement.wind)}
@@ -426,10 +422,12 @@ export class ObcCompass extends LitElement {
           .rotType=${this.rotType}
           .rotPosition=${this.rotPosition}
           .rotStartAngle=${this.heading + (this.getRotation() ?? 0)}
-          .rotEndAngle=${this.heading +
-          (this._effectiveRotDegPerMin / (this.rotMaxValue || 1)) *
-            this.rotArcExtent +
-          (this.getRotation() ?? 0)}
+          .rotEndAngle=${
+            this.heading +
+            (this._effectiveRotDegPerMin / (this.rotMaxValue || 1)) *
+              this.rotArcExtent +
+            (this.getRotation() ?? 0)
+          }
           .rotPriority=${this.priorityFor(CompassPriorityElement.rot)}
           .rotPortStarboard=${this.rotPortStarboard}
           .rotAtZeroDeadband=${this.rotAtZeroDeadband}
@@ -450,18 +448,20 @@ export class ObcCompass extends LitElement {
             this.priorityFor(CompassPriorityElement.cog)
           )}
         </svg>
-        ${this.hasCenterReadouts
-          ? html`<div class="center-readout-overlay">
-              ${renderCenterReadouts(
-                resolveCompassCenterReadouts(this.centerReadouts, {
-                  heading: this.heading,
-                  courseOverGround: this.courseOverGround,
-                  rateOfTurnDegreesPerMinute: this.rateOfTurnDegreesPerMinute,
-                  priorityFor: (source) => this.readoutPriorityFor(source),
-                })
-              )}
-            </div>`
-          : nothing}
+        ${
+          this.hasCenterReadouts
+            ? html`<div class="center-readout-overlay">
+                ${renderCenterReadouts(
+                  resolveCompassCenterReadouts(this.centerReadouts, {
+                    heading: this.heading,
+                    courseOverGround: this.courseOverGround,
+                    rateOfTurnDegreesPerMinute: this.rateOfTurnDegreesPerMinute,
+                    priorityFor: (source) => this.readoutPriorityFor(source),
+                  })
+                )}
+              </div>`
+            : nothing
+        }
       </div>
     `;
   }

@@ -101,7 +101,7 @@ export enum ObcNotificationMessageItemSize {
  * @property timeSecondary - Secondary timestamp (e.g., relative time like "2m ago").
  *   Shown in the time-secondary slot if `hasTimestamp2` is true.
  * @availableWhen timeSecondary hasTimestamp2==true && type!=Inactive && empty==false
- * @property actionLabel - Label for the action button (used when `type` is `WithButton`).
+ * @property actionLabel - Label for the action button (used when `type` is `WithButton`). The icon action button shows the close icon and is named "Close".
  * @availableWhen actionLabel type==WithButton
  * @property showTitle - Whether to show the title.
  * @availableWhen showTitle type!=Inactive && empty==false
@@ -123,6 +123,11 @@ export enum ObcNotificationMessageItemSize {
  * @property emptyText - Text to show in the empty/inactive state.
  *   Used in the `empty` slot when `type="inactive"` or `empty` is true.
  * @availableWhen emptyText type==Inactive || empty==true
+ * @property type - Display type: `simple` (default) is the basic notification,
+ *   `with-button` adds a text action button, `with-icon-button` an icon
+ *   action, and `inactive` shows the empty state.
+ * @property size - Size variant: `regular` (default) is the compact layout, `tall` the
+ *   expanded one for longer content.
  * @slot secondary-icon - Additional icon for status/priority (shown when `hasSecondaryIcon` is true).
  * @fires {CustomEvent<void>} message-click - Fired when the notification item is clicked.
  * @fires {CustomEvent<void>} action-click - Fired when the action button or icon is clicked.
@@ -140,21 +145,9 @@ export class ObcNotificationMessageItem extends LitElement {
 
   @property({type: String}) actionLabel = 'View';
 
-  /**
-   * Display type of the notification.
-   * - `simple`: Basic notification (default).
-   * - `with-button`: Includes a text action button.
-   * - `with-icon-button`: Includes an icon action.
-   * - `inactive`: Shows empty/inactive state.
-   */
   @property({type: String}) type: ObcNotificationMessageItemType =
     ObcNotificationMessageItemType.Simple;
 
-  /**
-   * Size variant of the notification.
-   * - `regular`: Standard compact layout (default).
-   * - `tall`: Expanded layout for longer content.
-   */
   @property({type: String}) size: ObcNotificationMessageItemSize =
     ObcNotificationMessageItemSize.Regular;
 
@@ -223,6 +216,11 @@ export class ObcNotificationMessageItem extends LitElement {
     return html`
       <obc-topbar-message-item
         .type=${this.mappedType}
+        .actionLabel=${
+          this.type === ObcNotificationMessageItemType.WithIconButton
+            ? 'Close'
+            : this.actionLabel
+        }
         .size=${this.mappedSize}
         .showTitle=${this.showTitle}
         .showDescription=${this.showDescription}
@@ -234,26 +232,38 @@ export class ObcNotificationMessageItem extends LitElement {
       >
         <obi-notification-filled slot="primary-icon"></obi-notification-filled>
 
-        ${this.hasSecondaryIcon
-          ? html`<slot name="secondary-icon" slot="secondary-icon"></slot>`
-          : nothing}
-        ${this.title && this.showTitle
-          ? html`<span slot="title">${this.title}</span>`
-          : nothing}
-        ${this.description && this.showDescription
-          ? html`<span slot="description">${this.description}</span>`
-          : nothing}
-        ${this.time && this.showTimestamp
-          ? html`<span slot="time">${this.time}</span>`
-          : nothing}
-        ${this.timeSecondary && this.hasTimestamp2
-          ? html`<span slot="time-secondary">${this.timeSecondary}</span>`
-          : nothing}
-        ${this.type === ObcNotificationMessageItemType.WithButton
-          ? html`<span slot="action-text">${this.actionLabel}</span>`
-          : this.type === ObcNotificationMessageItemType.WithIconButton
-            ? html`<obi-close-google slot="action-icon"></obi-close-google>`
-            : nothing}
+        ${
+          this.hasSecondaryIcon
+            ? html`<slot name="secondary-icon" slot="secondary-icon"></slot>`
+            : nothing
+        }
+        ${
+          this.title && this.showTitle
+            ? html`<span slot="title">${this.title}</span>`
+            : nothing
+        }
+        ${
+          this.description && this.showDescription
+            ? html`<span slot="description">${this.description}</span>`
+            : nothing
+        }
+        ${
+          this.time && this.showTimestamp
+            ? html`<span slot="time">${this.time}</span>`
+            : nothing
+        }
+        ${
+          this.timeSecondary && this.hasTimestamp2
+            ? html`<span slot="time-secondary">${this.timeSecondary}</span>`
+            : nothing
+        }
+        ${
+          this.type === ObcNotificationMessageItemType.WithButton
+            ? html`<span slot="action-text">${this.actionLabel}</span>`
+            : this.type === ObcNotificationMessageItemType.WithIconButton
+              ? html`<obi-close-google slot="action-icon"></obi-close-google>`
+              : nothing
+        }
 
         <span slot="empty">${this.emptyText}</span>
       </obc-topbar-message-item>

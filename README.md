@@ -24,7 +24,7 @@ We invite industry partners to join our Joint Industry Project. By becoming a do
 By becoming a donor, you aren’t just supporting code—you’re joining a collaborative movement. To show our appreciation, donors receive a specialized benefits package valid for 12 months upon receipt of payment:
 
 - **Proudly Show Your Support:** You are authorized to use the official "OpenBridge Member" logo in your marketing materials and corporate communications.
-- **Early & Easy Access:** You gain the right to use all new releases of the project’s software components directly under the Apache License 2.0.
+- **Commercial License:** You can use every new release under a commercial license before its Apache 2.0 change date, without the AGPL obligations (see [LICENSE.txt](LICENSE.txt)).
 
 ### How to Support
 
@@ -38,18 +38,18 @@ We will **always remain open source**, but we have evolved our model to ensure c
 
 ### How it works:
 
-Under the new model, each release, both based on `develop` and `stable` branch, follows a "delayed" permissive license cycle:
+Under the new model, each version and each commit in the repository follows a "delayed" permissive license cycle, set out in [LICENSE.txt](LICENSE.txt):
 
-1.  **Initial Release:** Each new version is licensed under **AGPL** for the first 6 months.
-2.  **Transition:** After 6 months, the license for that specific version automatically switches to **Apache 2.0**.
-3.  **Supporter Access:** Project donors and sponsors receive **immediate access** to the code under the **Apache 2.0** license.
+1.  **Initial Release:** Each new version, and each commit in the repository, is licensed under **AGPL-3.0-only** for the first 180 days after it is first made public.
+2.  **Transition:** After 180 days (the "Change Date"), that version or commit also becomes available under **Apache 2.0**, irrevocably.
+3.  **JIP Members:** Members of the [Joint Industry Project](#-support-the-project) can obtain a **commercial license** that permits use before the Change Date without the AGPL obligations. Membership is granted by the project: you register through the [support form](#how-to-support) and pay the membership fee; contributing code does not make you a member. A commercial license does not include redistribution under Apache 2.0 before the Change Date.
 
 > **Example:**
 > If version 1.2.2 is released on **August 14, 2026**:
 >
-> - **open-source projects and internal users** can use it immediately under AGPL.
-> - **donors** can use it immediately under **Apache 2.0**.
-> - From **February 14, 2027**, version 1.2.2 becomes available to everyone under the **Apache 2.0** license (e.g., for commercial use without AGPL restrictions).
+> - **open-source projects and internal users** can use it immediately under AGPL-3.0-only.
+> - **JIP members** can use it immediately under a **commercial license**.
+> - From **February 10, 2027**, version 1.2.2 becomes available to everyone under the **Apache 2.0** license (e.g., for commercial use without AGPL restrictions).
 
 ## 💬 Slack
 
@@ -78,6 +78,7 @@ This repository uses npm workspaces and is organized as follows:
 | [`packages/openbridge-webcomponents-svelte`](packages/openbridge-webcomponents-svelte) | Auto-generated Svelte wrappers.                  |
 | `packages/vue-demo`                                                                    | Demo application using Vue.js.                   |
 | `packages/react-demo`                                                                  | Demo application using React.                    |
+| [`packages/connector-diagram`](packages/connector-diagram)                             | Canvas renderer for pipe and connector diagrams. |
 
 ## 📚 Storybook & Demo
 
@@ -131,4 +132,6 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for bran
 | [Angular Wrapper](packages/openbridge-webcomponents-ng/README.md)                 | Usage and installation for Angular.                                                             |
 | [Svelte Wrapper](packages/openbridge-webcomponents-svelte/README.md)              | Usage and installation for Svelte.                                                              |
 | [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)                                          | Contributor Covenant Code of Conduct.                                                           |
-| [LICENSE.TXT](LICENSE.TXT)                                                        | Apache 2.0 license.                                                                             |
+| [LICENSE.txt](LICENSE.txt)                                                        | The license terms: AGPL-3.0-only, with the Apache-2.0 change date and the commercial option.    |
+| [LICENSE-AGPL.txt](LICENSE-AGPL.txt)                                              | Full text of the GNU Affero General Public License v3.0.                                        |
+| [LICENSE-APACHE.txt](LICENSE-APACHE.txt)                                          | Full text of the Apache License 2.0.                                                            |

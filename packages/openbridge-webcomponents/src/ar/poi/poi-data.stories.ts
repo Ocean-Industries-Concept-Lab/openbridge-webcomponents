@@ -74,16 +74,18 @@ const renderPoiData = (args: ObcPoiData) => html`
     .data=${args.data}
     .fixedTarget=${args.fixedTarget}
   >
-    ${args.hasHeader
-      ? html`<obc-poi-header
-          slot="header"
-          content="1"
-          type="id"
-          state="selected"
-          size="regular"
-          has-indicator
-        ></obc-poi-header>`
-      : html``}
+    ${
+      args.hasHeader
+        ? html`<obc-poi-header
+            slot="header"
+            content="1"
+            type="id"
+            state="selected"
+            size="regular"
+            has-indicator
+          ></obc-poi-header>`
+        : html``
+    }
   </obc-poi-data>
 `;
 

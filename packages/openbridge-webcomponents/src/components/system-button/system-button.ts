@@ -103,7 +103,7 @@ export interface SystemState {
  *
  * - `variant` (`condensed` | `expanded` | `actions`): Controls the visual and interactive mode of the button. Default is `condensed`.
  * - `disabled` (boolean): Disables all interactions and renders the button(s) in a disabled state.
- * - `systemState` (object): Object describing the enabled state and current value for each system indicator (WiFi, audio, microphone, battery, GPS). Each sub-property (e.g., `wifi.enabled`, `audio.volume`) controls the presence and state of its corresponding icon.
+ * - `systemState` (object): Object describing the enabled state and current value for each system indicator (WiFi, audio, microphone, battery, GPS). Each sub-property (e.g., `wifi.connected`, `audio.volume`) controls the presence and state of its corresponding icon.
  * - `menuOpen` (boolean): Indicates whether a system panel is currently open (used internally for expanded/actions variants).
  * - `activePanel` (string or null): Indicates which panel (if any) is currently active (`microphone`, `volume`, `system-icons`, or `null`).
  *
@@ -121,7 +121,7 @@ export interface SystemState {
  * - In the actions variant, avoid overloading the UI with too many segments; keep the number of quick actions manageable.
  * - Each segment in the actions variant should have a clear, distinct purpose.
  * - The component is intended for summary/status and quick access, not for detailed configuration (which should be handled in dedicated panels).
- * - For accessibility, ensure that all interactive segments are reachable via keyboard and provide appropriate labels.
+ * - For accessibility, keep all interactive segments reachable by keyboard and give them labels.
  *
  * ## Example
  *
@@ -144,6 +144,11 @@ export interface SystemState {
  * @property menuOpen - Indicates whether a system panel is currently open (used internally for expanded/actions variants).
  * @property activePanel - Indicates which panel (if any) is currently active.
  *   One of: `'microphone'`, `'volume'`, `'system-icons'`, or `null`.
+ * @property systemState - Object describing the enabled state and current value for each system indicator (WiFi, audio, microphone, battery, GPS).
+ *   Each sub-property (e.g., `wifi.connected`, `audio.volume`) controls the presence and state of its corresponding icon.
+ * @property variant - Visual and interactive mode: `condensed` (default) is a single icon
+ *   button, `expanded` a horizontal button showing a row of system status
+ *   icons, and `actions` a segmented group of system controls.
  * @fires {CustomEvent<{open: boolean}>} menu-toggle - When the expanded variant is toggled open or closed
  * @fires {CustomEvent<{state: SystemState}>} system-state-change - When the system state is updated
  * @fires {CustomEvent<void>} microphone-panel-open - When the microphone action segment is activated
@@ -153,27 +158,11 @@ export interface SystemState {
  */
 @customElement('obc-system-button')
 export class ObcSystemButton extends LitElement {
-  /**
-   * Controls the visual and interactive mode of the system button.
-   *
-   * - `condensed`: Single icon button for minimal UI.
-   * - `expanded`: Horizontal button showing a row of system status icons.
-   * - `actions`: Segmented button group for quick access to system controls.
-   *
-   * Default: `condensed`
-   */
   @property({type: String}) variant: SystemButtonVariant =
     SystemButtonVariant.condensed;
 
   @property({type: Boolean}) disabled = false;
 
-  /**
-   * Object describing the enabled state and current value for each system indicator (WiFi, audio, microphone, battery, GPS).
-   *
-   * Each sub-property (e.g., `wifi.enabled`, `audio.volume`) controls the presence and state of its corresponding icon.
-   *
-   * Default: all indicators disabled except WiFi (connected), audio (volume 65), microphone (sensitivity 80), battery (level 78), GPS (quality medium).
-   */
   @property({type: Object}) systemState: SystemState = {
     wifi: {connected: true, strength: 3},
     audio: {muted: false, volume: 65},

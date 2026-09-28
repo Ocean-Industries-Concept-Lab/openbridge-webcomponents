@@ -104,6 +104,11 @@ When adding new features or fixing bugs:
    - `side: 'left' | 'right' | 'top' | 'bottom'` controls which edge attaches to chart
    - The chart edge is always at perpendicular coordinate `0`
    - Scale expands outward into positive/negative perpendicular space
+   - `reverse` puts `minValue` at the top (vertical) or right (horizontal): one
+     mirror of the value inside the range in `valueToMainAxis()`, which every
+     consumer reads, so fill, ticks, labels, advice, setpoint and the dot follow.
+     All four wrappers and `gauge-trend` expose it; `reverse=false` is inert
+     (`external-scale.spec.ts`, #1211)
 
 5. **Layout Model (Three Bands)**:
 
@@ -198,7 +203,7 @@ When adding new features or fixing bugs:
    - Use `computeFixedAspectRatioScale()` to calculate the scale factor
 
 5. **Dimension Reporting**:
-   - Dispatch `scale-dimensions-changed` CustomEvent when layout-affecting properties change
+   - Dispatch `scale-dimensions-changed` CustomEvent when layout-affecting properties change, with `bubbles: true` and without `composed`: the chart listens on the slot the scale sits in, which receives the event either way, and `composed` would carry it out of every table, tank or instrument that renders a scale
    - Include `{side, thickness}` in event detail
    - Parent charts use this for padding integration
    - **IMPORTANT**: barThickness, tickThickness, labelThickness, hasBar, hasScale... all affect reported thickness and must be considered, especially in fixed aspect ratio mode.
@@ -251,6 +256,8 @@ The external-scale system has **several independent code paths** that compute "h
 
 **Lesson from past bugs:**
 
+- `mainTickmarkLabels` labels the resolved main tickmarks (`resolveMainTickmarkValues()`: `mainTickmarks`, or min / 0 / max, inside the range) instead of the primary ladder, with the end labels turned inward so they stay inside the drawing length. It is what a chart cascades to a slotted scale below its label threshold as `showMainTickmarkLabels`; the band is still `labelThickness`, which the chart narrows to the measured labels while compact. A chart **borrows** both — it saves each scale's own value entering compact mode and restores it on the way out — so `showMainTickmarkLabels` is usable on a slotted scale at any size, not only a compact one.
+- A tick ladder is capped at `EXTERNAL_SCALE_MAX_TICKS` (1000) per level: `generateTickmarksAtInterval()` and `generateLabels()` skip a denser ladder and warn once per range/interval pair. The case that produced it was a chart cascading an epoch-millisecond range to a slotted scale whose interval was meant for minutes — 330 000 ticks, and the spread that collected them overflowed the call stack. The cap is the renderer's own guard; the chart side of the fix is in `line-area-charts.md`.
 - Advice pills don't render inside `barSpace + scaleSpace + labelSpace`; they need a dedicated allowance. `computeAdviceBandThickness()` solves this for the `hasAdvice` case — apply the same pattern for any future overlay that lives outside the bar.
 - Hiding labels via a chart-level flag (`hasLabelPadding=false`) requires **three** coordinated changes: (a) cascade `showLabels=false` to the slotted bar in `updateScaleProperties`, (b) honor the flag in `calculatePaddingFromScales`'s fallback constant, (c) honor it in `getChartOptions`/`buildScalesConfig`. Touching only one produces clipped labels or right-side gutters.
 - Positive-default boolean properties (e.g. `hasLabelPadding = true`) must be declared with `attribute: false` (see [`coding-standards.md`](../../docs/agents/coding-standards.md#boolean-property-naming)) and added to the watched-property list for change detection.
@@ -330,8 +337,7 @@ private _dispatchDimensionsChanged() {
   }));
   this.dispatchEvent(new CustomEvent('scale-dimensions-changed', {
     detail: dims,
-    bubbles: true,
-    composed: true,
+    bubbles: true, // the chart's slot receives it; no composed, so it stays in the renderer's tree
   }));
 }
 ```
