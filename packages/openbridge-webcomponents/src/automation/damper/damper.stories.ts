@@ -35,12 +35,12 @@ type Story = StoryObj<ObcDamper>;
 
 export const On: Story = {
   args: {
-    on: true,
+    turnedOn: true,
   },
 };
 
 export const Off: Story = {
   args: {
-    on: false,
+    turnedOn: false,
   },
 };

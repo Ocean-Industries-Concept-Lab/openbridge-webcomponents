@@ -14,14 +14,14 @@ These instructions apply to all automation schematic components: motorized devic
 
 Choose the correct base class when creating a new automation device:
 
-| Use case                      | Base class                                   | State properties                                                                                         |
-| ----------------------------- | -------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| Motorized device (on + speed) | `ObcAbstractAutomationButtonMotorized`       | `on`, `speed` + `speedUnit` (default `%`) + `speedMaxDigits` (default 3); `speedInPercent` is deprecated |
-| Binary on/off device          | `ObcAbstractAutomationButtonSquared`         | `on`                                                                                                     |
-| Analog device with value      | `ObcAbstractAutomationButton` + custom logic | `open`, `value` (0–100)                                                                                  |
-| Position selector (shuffle)   | `ObcShuffleButtonBase`                       | `selectedPosition`, `vertical`; fires `position-selected` (see § Shuffle selectors)                      |
-| HVAC tile (specialty tank)    | `ObcAbstractSpecialtyTank`                   | `medium`, `static`, `showIcon`, `tag`; tank-style `positioning`, `clickable`, `activated`, badges, alert |
-| Pure display (no button)      | `LitElement` directly                        | N/A                                                                                                      |
+| Use case                      | Base class                                   | State properties                                                                                                                            |
+| ----------------------------- | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Motorized device (on + speed) | `ObcAbstractAutomationButtonMotorized`       | `turnedOn` (`on` is a deprecated alias), `speed` + `speedUnit` (default `%`) + `speedMaxDigits` (default 3); `speedInPercent` is deprecated |
+| Binary on/off device          | `ObcAbstractAutomationButtonSquared`         | `turnedOn` (`on` is a deprecated alias)                                                                                                     |
+| Analog device with value      | `ObcAbstractAutomationButton` + custom logic | `open`, `value` (0–100)                                                                                                                     |
+| Position selector (shuffle)   | `ObcShuffleButtonBase`                       | `selectedPosition`, `vertical`; fires `position-selected` (see § Shuffle selectors)                                                         |
+| HVAC tile (specialty tank)    | `ObcAbstractSpecialtyTank`                   | `medium`, `static`, `showIcon`, `tag`; tank-style `positioning`, `clickable`, `activated`, badges, alert                                    |
+| Pure display (no button)      | `LitElement` directly                        | N/A                                                                                                                                         |
 
 All button-based components share `ObcAbstractAutomationButton` as root, which provides: positioning, readout stacks, badges, alert frames, tags, and label direction.
 
@@ -53,17 +53,17 @@ Rules:
 - Always include the `usecsscolor` attribute so CSS variable color overrides work
 - Provide both horizontal and vertical icon variants when `this.vertical` is true
 - Apply rotation via a wrapper `div` with `style="transform: rotate(90deg)"`, not on the icon itself
-- Switch between on/off icon variants based on `this.on` state
+- Switch between on/off icon variants based on `this.turnedOn`
 
 ## State and Readout Getters
 
 Subclasses expose state through getters that the base class reads during render:
 
 ```ts
-get _on(): boolean { return this.on; }
+get _on(): boolean { return this.turnedOn; }
 
 override get extraReadouts(): AutomationButtonReadoutStack[] {
-  return this.on
+  return this.turnedOn
     ? [{type: 'state-on', value: 'On', hasIcon: true}]
     : [];
 }
@@ -72,6 +72,12 @@ override get extraReadouts(): AutomationButtonReadoutStack[] {
 - `_on` maps the component's state to the base class's `open`/`closed` AutomationButtonState
 - `extraReadouts` provides state-derived readout entries (On/Off, speed percentage, etc.)
 - Do not set readouts as properties — compute them from state
+- The deprecated `on` is a plain field with no default that `willUpdate` copies
+  into `turnedOn` whenever it is set. Keep it that way: the generated Vue
+  wrapper writes every prop's value from element creation back on its second
+  render, so a getter/setter alias would write `false` over `turnedOn`, and a
+  `!changed.has('turnedOn')` guard would drop `<obc-pump on>` on the first
+  render (`turned-on.spec.ts`)
 
 ## Enums
 

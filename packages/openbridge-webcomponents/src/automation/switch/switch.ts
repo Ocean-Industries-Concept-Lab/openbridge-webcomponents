@@ -29,7 +29,7 @@ export class ObcSwitch extends ObcAbstractAutomationButtonSquared {
   override get icon() {
     switch (this.alternativeIcon) {
       case SwitchAlternativeIcon.s1:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-switch-01-on
               usecsscolor
               slot="icon"
@@ -49,7 +49,7 @@ export class ObcSwitch extends ObcAbstractAutomationButtonSquared {
             ></obi-switch-01-off>`;
         }
       case SwitchAlternativeIcon.s2:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-switch-02-on
               usecsscolor
               slot="icon"
@@ -69,7 +69,7 @@ export class ObcSwitch extends ObcAbstractAutomationButtonSquared {
             ></obi-switch-02-off>`;
         }
       case SwitchAlternativeIcon.s3:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-switch-03-on
               usecsscolor
               slot="icon"
@@ -89,7 +89,7 @@ export class ObcSwitch extends ObcAbstractAutomationButtonSquared {
             ></obi-switch-03-off>`;
         }
       default:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-switch-horizontal-on
               usecsscolor
               slot="icon"

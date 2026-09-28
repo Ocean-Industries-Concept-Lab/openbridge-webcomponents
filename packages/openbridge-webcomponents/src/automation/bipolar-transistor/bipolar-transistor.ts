@@ -33,7 +33,7 @@ export class ObcBipolarTransistor extends ObcAbstractAutomationButtonSquared {
   override get icon() {
     switch (this.alternativeIcon) {
       case BipolarTransistorAlternativeIcon.bipolarTransistor02:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-bipolar-transistor-02-on
               usecsscolor
               slot="icon"
@@ -53,7 +53,7 @@ export class ObcBipolarTransistor extends ObcAbstractAutomationButtonSquared {
             ></obi-bipolar-transistor-02-off>`;
         }
       case BipolarTransistorAlternativeIcon.bipolarTransistor03:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-bipolar-transistor-03-on
               usecsscolor
               slot="icon"
@@ -73,7 +73,7 @@ export class ObcBipolarTransistor extends ObcAbstractAutomationButtonSquared {
             ></obi-bipolar-transistor-03-off>`;
         }
       case BipolarTransistorAlternativeIcon.bipolarTransistor04:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-bipolar-transistor-04-on
               usecsscolor
               slot="icon"
@@ -111,7 +111,7 @@ export class ObcBipolarTransistor extends ObcAbstractAutomationButtonSquared {
             slot="icon-silhouette"
           ></obi-bipolar-transistor-04-flat>`;
       default:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-bipolar-transistor-on
               usecsscolor
               slot="icon"

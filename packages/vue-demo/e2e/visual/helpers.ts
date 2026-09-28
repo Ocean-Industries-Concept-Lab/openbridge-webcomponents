@@ -1,3 +1,5 @@
+// The addInitScript callbacks below run in the page, not in Node.
+/// <reference lib="dom" />
 import { type Page, expect } from '@playwright/test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'

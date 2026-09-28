@@ -65,7 +65,7 @@ Only the Linux baselines ship. Regenerating on macOS produces diffs CI will
 reject.
 
 **Regenerate locally, on Linux.** The devcontainer (Ubuntu 24.04) renders what
-the CI `test` job (`mcr.microsoft.com/playwright:v1.60.0-noble`) accepts, so a
+the CI `test` job (the Playwright image `visual-testing.yml` pins) accepts, so a
 scoped `--update` followed by a plain re-run is the whole procedure, except for
 small `<canvas>` charts ([`skip-test` or `!snapshot`](#skip-test-or-snapshot)).
 On macOS take the Docker route from the package directory (the script mounts
