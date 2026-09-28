@@ -1124,7 +1124,11 @@ export const openbridgePlugin = {
             message: `\`${name}\` starts with \`on\`, which Svelte binds as an event listener in markup, so the property cannot be set there (docs/agents/coding-standards.md § Property names).`,
           });
         };
-        return {PropertyDefinition: check, MethodDefinition: check};
+        return {
+          PropertyDefinition: check,
+          MethodDefinition: check,
+          AccessorProperty: check,
+        };
       },
     },
   },

@@ -475,6 +475,10 @@ describe('openbridge/no-event-like-property-name', () => {
             code: 'class A { @property({type: Boolean}) set on(v) {} }',
             errors: 1,
           },
+          {
+            code: 'class A { @property({type: Boolean}) accessor onHold = false; }',
+            errors: 1,
+          },
         ],
       }
     );
