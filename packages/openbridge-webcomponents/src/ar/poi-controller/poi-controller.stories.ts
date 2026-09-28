@@ -124,7 +124,7 @@ const meta: Meta<PoiControllerArgs> = {
           .fit=${args.fit}
           .classFilter=${args.classFilter}
         >
-          <img slot="media" src="/assets/AR-test-image.png" />
+          <img slot="media" src="/assets/AR-test-image.png" alt="Camera view" />
           <obc-poi-layer-stack
             slot="stack"
             selection-mode=${PoiLayerSelectionMode.Multi}
@@ -204,7 +204,7 @@ export const SelectionMultiAnimated: Story = {
           .fit=${args.fit}
           .classFilter=${args.classFilter}
         >
-          <img slot="media" src="/assets/AR-test-image.png" />
+          <img slot="media" src="/assets/AR-test-image.png" alt="Camera view" />
           <obc-poi-layer-stack
             slot="stack"
             class="stack-animated"
@@ -421,7 +421,7 @@ export const BottomLayerWithValues: Story = {
           .fit=${args.fit}
           .classFilter=${args.classFilter}
         >
-          <img slot="media" src="/assets/AR-test-image.png" />
+          <img slot="media" src="/assets/AR-test-image.png" alt="Camera view" />
           <obc-poi-layer-stack
             slot="stack"
             class="stack-values"
@@ -536,7 +536,7 @@ export const DetectionVariants: Story = {
       </style>
       <div class="variants-stage">
         <obc-poi-controller .detections=${detections} .fit=${args.fit}>
-          <img slot="media" src="/assets/AR-test-image.png" />
+          <img slot="media" src="/assets/AR-test-image.png" alt="Camera view" />
           <obc-poi-layer-stack
             slot="stack"
             selection-mode=${PoiLayerSelectionMode.Single}
