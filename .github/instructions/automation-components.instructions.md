@@ -14,14 +14,14 @@ These instructions apply to all automation schematic components: motorized devic
 
 Choose the correct base class when creating a new automation device:
 
-| Use case                      | Base class                                   | State properties                                                                                         |
-| ----------------------------- | -------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| Motorized device (on + speed) | `ObcAbstractAutomationButtonMotorized`       | `on`, `speed` + `speedUnit` (default `%`) + `speedMaxDigits` (default 3); `speedInPercent` is deprecated |
-| Binary on/off device          | `ObcAbstractAutomationButtonSquared`         | `on`                                                                                                     |
-| Analog device with value      | `ObcAbstractAutomationButton` + custom logic | `open`, `value` (0–100)                                                                                  |
-| Position selector (shuffle)   | `ObcShuffleButtonBase`                       | `selectedPosition`, `vertical`; fires `position-selected` (see § Shuffle selectors)                      |
-| HVAC tile (specialty tank)    | `ObcAbstractSpecialtyTank`                   | `medium`, `static`, `showIcon`, `tag`; tank-style `positioning`, `clickable`, `activated`, badges, alert |
-| Pure display (no button)      | `LitElement` directly                        | N/A                                                                                                      |
+| Use case                      | Base class                                   | State properties                                                                                               |
+| ----------------------------- | -------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Motorized device (on + speed) | `ObcAbstractAutomationButtonMotorized`       | `turnedOn`, `speed` + `speedUnit` (default `%`) + `speedMaxDigits` (default 3); `speedInPercent` is deprecated |
+| Binary on/off device          | `ObcAbstractAutomationButtonSquared`         | `turnedOn`                                                                                                     |
+| Analog device with value      | `ObcAbstractAutomationButton` + custom logic | `open`, `value` (0–100)                                                                                        |
+| Position selector (shuffle)   | `ObcShuffleButtonBase`                       | `selectedPosition`, `vertical`; fires `position-selected` (see § Shuffle selectors)                            |
+| HVAC tile (specialty tank)    | `ObcAbstractSpecialtyTank`                   | `medium`, `static`, `showIcon`, `tag`; tank-style `positioning`, `clickable`, `activated`, badges, alert       |
+| Pure display (no button)      | `LitElement` directly                        | N/A                                                                                                            |
 
 All button-based components share `ObcAbstractAutomationButton` as root, which provides: positioning, readout stacks, badges, alert frames, tags, and label direction.
 
@@ -53,17 +53,17 @@ Rules:
 - Always include the `usecsscolor` attribute so CSS variable color overrides work
 - Provide both horizontal and vertical icon variants when `this.vertical` is true
 - Apply rotation via a wrapper `div` with `style="transform: rotate(90deg)"`, not on the icon itself
-- Switch between on/off icon variants based on `this.on` state
+- Switch between on/off icon variants based on `this.turnedOn`
 
 ## State and Readout Getters
 
 Subclasses expose state through getters that the base class reads during render:
 
 ```ts
-get _on(): boolean { return this.on; }
+get _on(): boolean { return this.turnedOn; }
 
 override get extraReadouts(): AutomationButtonReadoutStack[] {
-  return this.on
+  return this.turnedOn
     ? [{type: 'state-on', value: 'On', hasIcon: true}]
     : [];
 }

@@ -8,8 +8,25 @@ export enum SquaredVariant {
   flat = 'flat',
 }
 
+/**
+ * Base class for two-state automation buttons.
+ *
+ * Extends `ObcAbstractAutomationButton` with the on/off state: the subclass
+ * picks its icon from `turnedOn`, and the readout adds the `On` or `Off`
+ * state row.
+ *
+ * ## Usage Guidelines
+ *
+ * Not registered as a custom element. `obc-switch`, `obc-converter`,
+ * `obc-diodes` and the other two-state devices extend it and supply their own
+ * `icon`.
+ *
+ * @property turnedOn - Whether the device is on. Selects the on icon and the
+ * `On` state row instead of `Off`. Not named `on`, which Svelte binds as an
+ * event listener in markup (#1090).
+ */
 export class ObcAbstractAutomationButtonSquared extends ObcAbstractAutomationButton {
-  @property({type: Boolean}) on: boolean = false;
+  @property({type: Boolean}) turnedOn: boolean = false;
   @property({type: String}) variant: SquaredVariant = SquaredVariant.square;
   @property({type: String}) orientation: AutomationButtonOrientation =
     AutomationButtonOrientation.horizontal;
@@ -22,7 +39,7 @@ export class ObcAbstractAutomationButtonSquared extends ObcAbstractAutomationBut
     if (!this.showStatus) {
       return [];
     }
-    if (this.on) {
+    if (this.turnedOn) {
       return [
         {
           type: 'state-on',
@@ -42,6 +59,6 @@ export class ObcAbstractAutomationButtonSquared extends ObcAbstractAutomationBut
   }
 
   override get _on(): boolean {
-    return this.on;
+    return this.turnedOn;
   }
 }

@@ -18,7 +18,7 @@ export class ObcMotor extends ObcAbstractAutomationButtonMotorized {
 
   override get icon() {
     if (this.vertical) {
-      if (this.on) {
+      if (this.turnedOn) {
         return html`<obi-motor-on-vertical
             usecsscolor
             slot="icon"
@@ -38,7 +38,7 @@ export class ObcMotor extends ObcAbstractAutomationButtonMotorized {
           ></obi-motor-off-vertical>`;
       }
     } else {
-      if (this.on) {
+      if (this.turnedOn) {
         return html`<obi-motor-on-horizontal
             usecsscolor
             slot="icon"

@@ -26,10 +26,13 @@ export enum MotorizedVariant {
  * Not registered as a custom element. `obc-fan`, `obc-motor` and `obc-pump`
  * extend it and supply their own `icon` and `variant`.
  *
+ * @property turnedOn - Whether the device is running. Selects the running
+ * icon and the speed readout instead of the `Off` state. Not named `on`,
+ * which Svelte binds as an event listener in markup (#1090).
  * @availableWhen direction variant in [double, forward, flatForward]
  */
 export class ObcAbstractAutomationButtonMotorized extends ObcAbstractAutomationButton {
-  @property({type: Boolean}) on: boolean = false;
+  @property({type: Boolean}) turnedOn: boolean = false;
   /**
    * @deprecated Use `speed` together with `speedUnit` instead. When `speed`
    * is set it takes precedence over `speedInPercent`.
@@ -50,7 +53,7 @@ export class ObcAbstractAutomationButtonMotorized extends ObcAbstractAutomationB
     if (!this.showStatus) {
       return [];
     }
-    if (speed !== undefined && speed !== null && this.on) {
+    if (speed !== undefined && speed !== null && this.turnedOn) {
       return [
         {
           type: 'value',
@@ -64,7 +67,7 @@ export class ObcAbstractAutomationButtonMotorized extends ObcAbstractAutomationB
               : 'chevron',
         },
       ];
-    } else if (!this.on) {
+    } else if (!this.turnedOn) {
       return [
         {
           type: 'state-off',
@@ -77,6 +80,6 @@ export class ObcAbstractAutomationButtonMotorized extends ObcAbstractAutomationB
   }
 
   override get _on(): boolean {
-    return this.on;
+    return this.turnedOn;
   }
 }
