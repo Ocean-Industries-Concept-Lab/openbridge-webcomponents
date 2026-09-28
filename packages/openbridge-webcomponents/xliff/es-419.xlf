@@ -102,6 +102,10 @@
 <trans-unit id="sa711a6fcc9552dbf">
   <source>Readout</source>
 </trans-unit>
+<trans-unit id="s1125d159f7e64df5">
+  <source>Display</source>
+  <target>Pantalla</target>
+</trans-unit>
 </body>
 </file>
 </xliff>

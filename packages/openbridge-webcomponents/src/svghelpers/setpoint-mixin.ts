@@ -114,7 +114,7 @@ import {computeAtSetpoint, getSetpointAnimationDurationMs} from './setpoint.js';
  * Constructor type helper for mixins.
  * @see https://lit.dev/docs/composition/mixins/#typing-the-subclass
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- TypeScript requires any[] in a mixin constructor (TS2545)
 type Constructor<T = object> = new (...args: any[]) => T;
 
 /**

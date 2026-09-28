@@ -5,6 +5,7 @@ import {classMap} from 'lit/directives/class-map.js';
 import {styleMap} from 'lit/directives/style-map.js';
 import {customElement} from '../../decorator.js';
 import componentStyle from './sequence-loading-spinner.css?inline';
+import {clamp} from '../../svghelpers/math.js';
 
 const DETERMINATE_MS_PER_PERCENT = 50;
 const DETERMINATE_MIN_DURATION_MS = 1200;
@@ -99,7 +100,7 @@ export class ObcSequenceLoadingSpinner extends LitElement {
     const percent = Number.isFinite(this.progressPercent)
       ? this.progressPercent
       : 0;
-    return Math.min(100, Math.max(0, percent));
+    return clamp(percent, 0, 100);
   }
 
   private get determinateRenderPercent(): number {
@@ -187,12 +188,10 @@ export class ObcSequenceLoadingSpinner extends LitElement {
     const generation = this.fillAnimGeneration;
     const start = this.clampedProgressPercent;
     const remaining = Math.max(0, 100 - start);
-    const duration = Math.min(
-      DETERMINATE_MAX_DURATION_MS,
-      Math.max(
-        DETERMINATE_MIN_DURATION_MS,
-        remaining * DETERMINATE_MS_PER_PERCENT
-      )
+    const duration = clamp(
+      remaining * DETERMINATE_MS_PER_PERCENT,
+      DETERMINATE_MIN_DURATION_MS,
+      DETERMINATE_MAX_DURATION_MS
     );
 
     if (start >= 100) {

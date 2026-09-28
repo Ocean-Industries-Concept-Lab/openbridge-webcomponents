@@ -97,6 +97,15 @@ export enum NavigationItemRole {
  * </obc-navigation-item>
  * ```
  *
+ * ## Keyboard
+ * One item of the [APG Menu](https://www.w3.org/WAI/ARIA/apg/patterns/menu/)
+ * pattern when `itemRole`, or the host's `role`, makes it a `menuitem` or a
+ * `menuitemradio` with `aria-checked` mirroring `checked`: `Enter` and
+ * `Space` activate it, and the arrow keys, `Home` and `End` belong to the
+ * menu that owns it. Without a role it is a plain button or link.
+ *
+ * Left out: nothing the item itself owns; the menu lists what it leaves out.
+ *
  * @property label - The text label displayed for the navigation item.
  * @property itemRole - Role of the item's control inside a composite widget, set by the parent:
  *   `menuitem`, or `menuitemradio` with `aria-checked` mirroring `checked`. The role belongs on

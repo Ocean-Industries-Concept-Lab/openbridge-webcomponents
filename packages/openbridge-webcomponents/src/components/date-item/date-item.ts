@@ -99,8 +99,9 @@ export enum DateItemSize {
  * @property size - Size of the date item: `small` (default) shows only the date and the event
  *   dots, `large` shows titles and descriptions for as many events as its
  *   height fits and aggregates the rest into a count.
- * @fires {CustomEvent<{date: number, events: DateItemEvent[], isToday: boolean, checked: boolean}>} date-click - Fired when the date item is clicked.
  * @slot - No slots. All content is provided via properties.
+ * @fires {CustomEvent<{date: number, events: DateItemEvent[], isToday: boolean, checked: boolean}>} date-click - Fired when the date item is clicked.
+ * @fires {CustomEvent<{title: string, startTime: string, endTime: string}>} event-click - Passed on from the event items in the cell when one is clicked, with its title, start and end time.
  * @beta
  */
 @customElement('obc-date-item')

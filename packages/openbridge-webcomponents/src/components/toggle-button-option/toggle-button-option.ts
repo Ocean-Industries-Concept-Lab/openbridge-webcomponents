@@ -104,6 +104,13 @@ export enum ObcToggleButtonOptionVariant {
  * </obc-toggle-button-group>
  * ```
  *
+ * ### Keyboard
+ * One option of the [APG Radio Group](https://www.w3.org/WAI/ARIA/apg/patterns/radio/)
+ * that `obc-toggle-button-group` renders: the group owns the single tab stop
+ * and the arrow keys, and `Enter` or `Space` selects the option.
+ *
+ * Left out: nothing at the option level.
+ *
  * @property value - Value associated with this option. Used in selection events.
  * @property selected - Whether this option is currently selected (toggles visual state).
  * @property activated - Whether this option is currently activated (toggles visual state).

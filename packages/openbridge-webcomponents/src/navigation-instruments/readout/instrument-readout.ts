@@ -1,6 +1,7 @@
 import {html, type TemplateResult} from 'lit';
 import {classMap} from 'lit/directives/class-map.js';
 import './readout.js';
+import {stopPropagation} from '../../internal/events.js';
 import {
   ReadoutAlignment,
   ReadoutDirection,
@@ -90,6 +91,8 @@ export function renderInstrumentReadout(
       .unit=${unit}
       .valueOptions=${hintedZeros ? {hintedZeros} : undefined}
       .maxDigits=${maxDigits}
+      @source-flyout-click=${stopPropagation}
+      @source-change=${stopPropagation}
     ></obc-readout>
   `;
 }

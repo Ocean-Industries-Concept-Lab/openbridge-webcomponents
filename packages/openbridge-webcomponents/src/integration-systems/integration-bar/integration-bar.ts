@@ -65,6 +65,7 @@ import {msg} from '@lit/localize';
  */
 @customElement('obc-integration-bar')
 export class ObcIntegrationBar extends LitElement {
+  // eslint-disable-next-line openbridge/positive-boolean-name -- public API; renaming it breaks consumers
   @property({type: Boolean}) hideHomeButton = false;
   @property({type: Boolean}) showClock = false;
   @property({type: Boolean}) showLinkButton = false;

@@ -13,6 +13,7 @@ import '../../icons/icon-chevron-left-google.js';
 import '../../icons/icon-chevron-right-google.js';
 import '../../icons/icon-page-last-google.js';
 import {ObcToggleButtonOptionVariant} from '../toggle-button-option/toggle-button-option.js';
+import {clamp} from '../../svghelpers/math.js';
 
 /**
  * Enumerates the supported style variants for the Pagination component.
@@ -151,7 +152,7 @@ export class ObcPagination extends LitElement {
   }
 
   private get validatedCurrentPage() {
-    return Math.max(1, Math.min(this.currentPage, this.validatedPages));
+    return clamp(this.currentPage, 1, this.validatedPages);
   }
 
   private get canNavigatePrevious() {
@@ -185,7 +186,7 @@ export class ObcPagination extends LitElement {
   }
 
   private setCurrentPage(newPage: number) {
-    const page = Math.max(1, Math.min(newPage, this.validatedPages));
+    const page = clamp(newPage, 1, this.validatedPages);
     if (page === this.currentPage) {
       return false;
     }
@@ -300,6 +301,7 @@ export class ObcPagination extends LitElement {
           this.isCondensed
             ? this.renderProgressIndicatorDots()
             : html`<obc-toggle-button-group
+                aria-label="Pages"
                 .value=${this.validatedCurrentPage.toString()}
                 .variant=${this.toggleButtonVariant}
                 ?disabled=${this.disabled}

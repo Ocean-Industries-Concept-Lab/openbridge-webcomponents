@@ -15,6 +15,7 @@ import '../../icons/icon-link.js';
 import {NotificationButtonStyle} from '../../components/notification-button/notification-button.js';
 import {property} from 'lit/decorators.js';
 import {msg} from '@lit/localize';
+import {stopPropagation} from '../../internal/events.js';
 
 /**
  * `<obc-integration-bar-dropdown>` – A compact top-level integration header with a dropdown selector, status fields and system action buttons.
@@ -188,6 +189,7 @@ export class ObcIntegrationBarDropdown extends LitElement {
               ? // TODO(designer): keep the Enhanced badge button here, or match the
                 // sibling bar's plain notification icon button? (#624)
                 html`<obc-notification-button
+                  @obc-click=${stopPropagation}
                   @click=${() =>
                     this.dispatchEvent(
                       new CustomEvent('notification-button-clicked')

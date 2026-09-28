@@ -43,6 +43,7 @@ import {
   valveAreas,
   valvePorts,
 } from './gauge-valve-geometry.js';
+import {stopPropagation} from '../../internal/events.js';
 
 /** Scale interval (%) between minor ticks. */
 const TICK_SECONDARY_STEP = 5;
@@ -320,6 +321,8 @@ export class ObcGaugeValve extends SetpointMixin(LitElement) {
       return html`
         <obc-readout
           class="gauge-valve-readout"
+          @source-change=${stopPropagation}
+          @source-flyout-click=${stopPropagation}
           .size=${ReadoutSize.large}
           .hasSetpoint=${false}
           .hasAdvice=${false}

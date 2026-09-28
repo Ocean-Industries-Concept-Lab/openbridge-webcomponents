@@ -98,6 +98,8 @@ export enum IconButtonVariant {
  * @property hasLabel - If true, displays a label below the icon using the `label` slot.
  * @property showDivider - If false, and cornerLeft or cornerRight is true, the divider is not shown.
  * @property ariaLabel - Accessible name forwarded to the inner `<button>`, mapped to the `aria-label` attribute. `aria-labelledby` is not supported: ID references cannot cross the shadow boundary.
+ * @property focusable - Whether the button is in the tab sequence. Turn it off for a button inside a
+ *   composite widget that owns the tab stop, and give the widget a key for the action.
  * @property variant - Visual style: `normal` (default) is the standard appearance, `raised` adds
  *   a shadow, `flat` drops the background.
  * @slot - Icon slot (default): Place an icon such as <obi-search> here.
@@ -127,6 +129,8 @@ export class ObcIconButton extends LitElement {
   @property({type: Boolean}) hasLabel: boolean = false;
 
   @property({type: Boolean, attribute: false}) showDivider = true;
+
+  @property({type: Boolean, attribute: false}) focusable = true;
 
   // Reactive so a consumer swapping the name (Play → Pause) re-renders the shadow button.
   @property({type: String, attribute: 'aria-label'})
@@ -203,6 +207,7 @@ export class ObcIconButton extends LitElement {
         })}
         ?disabled=${this.disabled}
         aria-label=${ifDefined(this.ariaLabel ?? undefined)}
+        tabindex=${ifDefined(this.focusable ? undefined : -1)}
         part="wrapper"
       >
         ${this.progress !== undefined ? this.progressSpinner : nothing}

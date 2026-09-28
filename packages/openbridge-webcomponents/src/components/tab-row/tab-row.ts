@@ -1,7 +1,8 @@
-import {LitElement, html, unsafeCSS} from 'lit';
+import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {RovingNavigator} from '../../internal/roving-navigator.js';
 import {repeat} from 'lit/directives/repeat.js';
+import {classMap} from 'lit/directives/class-map.js';
 import compentStyle from './tab-row.css?inline';
 import '../tab-item/tab-item.js';
 import type {ObcTabItem, TabItemBadge} from '../tab-item/tab-item.js';
@@ -48,6 +49,7 @@ export interface TabData {
  * - **Tab Selection:** Only one tab can be selected at a time; selection is managed via the `selectedTabId` property.
  * - **Closeable Tabs:** Optionally display a close button on each tab (`hasClose`), allowing users to remove tabs dynamically.
  * - **Add New Tab:** Optionally show an "add new tab" button at the end of the row (`hasAddNewTab`), emitting an event when clicked.
+ * - **Panels:** With `hasPanels`, the row also renders one panel per tab from the `tab-<id>-panel` slot, shows the selected one and links each tab to its panel.
  * - **Subtitles:** Optionally show secondary contextual text below each tab title (`showSubtitle` and `subtitle`).
  * - **Badges:** Tabs can display badges with counts and types (e.g., notification, alarm, enhance), supporting different badge sizes and optional hiding of the number.
  * - **Icons:** Each tab can show a leading icon (customizable via slot), and optionally a badge icon.
@@ -95,6 +97,7 @@ export interface TabData {
  * |--------------------------|------------------------------------|------------------------------------------------------|
  * | `tab-<id>-icon`              | If `hasLeadingIcon` is true                          | Leading icon for a specific tab (replaceable)        |
  * | `tab-<id>-<iconSlotName>`    | For each badge that declares an `iconSlotName`       | Custom icon for a specific tab's badge (replaceable). The deprecated single-badge path uses `tab-<id>-badge-icon`. |
+ * | `tab-<id>-panel`           | If `hasPanels` is true                               | Content of the panel a specific tab shows               |
  *
  * ---
  *
@@ -104,11 +107,25 @@ export interface TabData {
  * and `Right` move focus between enabled tabs and wrap, `Home` and `End` go to
  * the edges, and `Enter` or `Space` selects the focused tab. Focus does not
  * select on its own, so a keyboard user can pass over tabs without loading
- * each panel. The add-new-tab button is its own tab stop after the row.
+ * each panel. With `hasClose`, `Delete` closes the focused tab and focus
+ * moves to the tab that takes its place; the close buttons stay out of the tab
+ * sequence. The tab list is named by `label`, and the add-new-tab button sits
+ * after it as its own tab stop.
+ *
+ * With `hasPanels`, each panel is a `tabpanel` named after its tab and each
+ * tab points at its panel through `aria-controls`, set by element reflection
+ * (`ariaControlsElements`), which an engine without it ignores. Use it rather than panels
+ * of your own next to the row: the row cannot link those, and a panel outside
+ * cannot name itself after a tab inside, because a reference can point out of
+ * a shadow root but never into one. Such a panel needs its own `aria-label`.
+ *
+ * Left out: `aria-labelledby` on the panels, which cannot reach a tab inside
+ * `obc-tab-item`, so they carry the tab's title as `aria-label` instead; and
+ * activating the next tab after a `Delete`, which the pattern makes optional.
  *
  * ### Events
  * - `tab-selected` – Fired when a tab is selected. Detail: `{tab, id, index}`.
- * - `tab-closed` – Fired when a tab's close button is clicked. Detail: `{tab, id, index}`.
+ * - `tab-closed` – Fired when a tab's close button is clicked, or `Delete` is pressed on a tab. Detail: `{tab, id, index}`.
  * - `add-new-tab` – Fired when the "add new tab" button is clicked. No detail.
  *
  * ---
@@ -126,6 +143,9 @@ export interface TabData {
  * @property hug - Enables "hug" mode for a more compact tab layout with reduced padding.
  * @property showSubtitle - Whether to display subtitle text for each tab. Individual tabs can override this with `tab.showSubtitle`.
  * @property hasAddNewTab - Whether to display an "add new tab" button at the end of the tab row. When clicked, emits the `add-new-tab` event.
+ * @property hasPanels - Renders one panel per tab from its `tab-<id>-panel` slot, shows the selected
+ *   one, and links each tab to its panel for assistive technology.
+ * @property label - Accessible name of the tab list, read out before its tabs.
  * @property tabs - Tabs to display. Each carries a unique `id`, a `title`, an optional
  *   `subtitle` with a per-tab `showSubtitle` override, `hasLeadingIcon`,
  *   `disabled`, and a `badges` array that takes precedence over the deprecated
@@ -133,8 +153,9 @@ export interface TabData {
  *   `badgeShowNumber`, `showLeadingBadgeIcon`).
  * @slot tab-<id>-icon - Leading icon slot for each tab (shown when `hasLeadingIcon` is true for that tab)
  * @slot tab-<id>-<iconSlotName> - Custom badge icon slot for each tab, one per badge that declares an `iconSlotName`. The deprecated single-badge path uses `tab-<id>-badge-icon`.
+ * @slot tab-<id>-panel - Content of the panel for each tab (rendered when `hasPanels` is true)
  * @fires {CustomEvent<{tab: TabData, id: string, index: number}>} tab-selected - Fired when a tab is selected.
- * @fires {CustomEvent<{tab: TabData, id: string, index: number}>} tab-closed - Fired when a tab's close button is clicked.
+ * @fires {CustomEvent<{tab: TabData, id: string, index: number}>} tab-closed - Fired when a tab's close button is clicked, or `Delete` is pressed on a tab.
  * @fires {CustomEvent<void>} add-new-tab - Fired when the "add new tab" button is clicked.
  * @stable
  */
@@ -153,6 +174,10 @@ export class ObcTabRow extends LitElement {
   @property({type: Boolean, attribute: 'show-subtitle'}) showSubtitle = false;
 
   @property({type: Boolean, attribute: 'has-add-new-tab'}) hasAddNewTab = false;
+
+  @property({type: Boolean, attribute: 'has-panels'}) hasPanels = false;
+
+  @property({type: String}) label = 'Tabs';
 
   private readonly navigator = new RovingNavigator<ObcTabItem>(
     {
@@ -176,9 +201,17 @@ export class ObcTabRow extends LitElement {
 
   override updated() {
     this.navigator.refresh();
+    const panels = Array.from(
+      this.shadowRoot?.querySelectorAll<HTMLElement>('.panel') ?? []
+    );
+    this.tabItems().forEach((item, index) => {
+      item.panel = panels[index] ?? null;
+    });
   }
 
-  private handleTabClick(_: Event, tabId: string) {
+  private handleTabClick(event: Event, tabId: string) {
+    // The row reports the click as `tab-selected`; the item's own event stays in here.
+    event.stopPropagation();
     const tabIndex = this.tabs.findIndex((t) => t.id === tabId);
     if (tabIndex === -1) return;
     this.selectedTabId = this.tabs[tabIndex].id;
@@ -196,6 +229,7 @@ export class ObcTabRow extends LitElement {
     const tabIndex = this.tabs.findIndex((t) => t.id === tabId);
     if (tabIndex === -1) return;
     const removedTab = this.tabs[tabIndex];
+    const hadFocus = this.tabItems()[tabIndex]?.matches(':focus-within');
     this.tabs = [
       ...this.tabs.slice(0, tabIndex),
       ...this.tabs.slice(tabIndex + 1),
@@ -211,6 +245,20 @@ export class ObcTabRow extends LitElement {
         composed: true,
       })
     );
+    if (hadFocus) void this.focusAfterClose(tabIndex);
+  }
+
+  /** The browser drops focus with the closed tab; give it to the one that takes its place. */
+  private async focusAfterClose(closedIndex: number) {
+    await this.updateComplete;
+    const items = this.tabItems();
+    const next =
+      items.slice(closedIndex).find((item) => !item.disabled) ??
+      items
+        .slice(0, closedIndex)
+        .reverse()
+        .find((item) => !item.disabled);
+    if (next) this.navigator.setActive(next, true);
   }
 
   private handleAddNewTab() {
@@ -288,17 +336,20 @@ export class ObcTabRow extends LitElement {
 
   override render() {
     return html`
-      <div
-        class="wrapper"
-        role="tablist"
-        @keydown=${this.handleKeydown}
-        @focusin=${(event: Event) => this.navigator.handleFocusin(event)}
-      >
-        ${repeat(
-          this.tabs,
-          (t) => t.id,
-          (t, i) => this.renderTab(t, i)
-        )}
+      <div class="wrapper">
+        <div
+          class=${classMap({tabs: true, hug: this.hug})}
+          role="tablist"
+          aria-label=${this.label}
+          @keydown=${this.handleKeydown}
+          @focusin=${(event: Event) => this.navigator.handleFocusin(event)}
+        >
+          ${repeat(
+            this.tabs,
+            (t) => t.id,
+            (t, i) => this.renderTab(t, i)
+          )}
+        </div>
         ${
           this.hasAddNewTab
             ? html`
@@ -314,8 +365,33 @@ export class ObcTabRow extends LitElement {
             : ''
         }
       </div>
+      ${this.hasPanels ? this.renderPanels() : nothing}
     `;
   }
 
+  private renderPanels() {
+    return repeat(
+      this.tabs,
+      (tab) => tab.id,
+      (tab) => html`
+        <div
+          class="panel"
+          role="tabpanel"
+          aria-label=${tab.title}
+          tabindex="0"
+          ?hidden=${tab.id !== this.selectedTabId}
+        >
+          <slot name="tab-${tab.id}-panel"></slot>
+        </div>
+      `
+    );
+  }
+
   static override styles = unsafeCSS(compentStyle);
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'obc-tab-row': ObcTabRow;
+  }
 }

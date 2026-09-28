@@ -1,4 +1,5 @@
 import {nothing, svg, SVGTemplateResult} from 'lit';
+import {clamp} from '../../svghelpers/math.js';
 
 /**
  * Options for the force-graphics pattern underlays (wind streaks / current
@@ -95,7 +96,7 @@ export function renderCurrentForcePattern(
       ? options.waveLength!
       : 1;
   const intensity = Number.isFinite(options.waveHeight)
-    ? Math.max(0, Math.min(1, options.waveHeight!))
+    ? clamp(options.waveHeight!, 0, 1)
     : 1;
   const speed = Number.isFinite(options.waveSpeed) ? options.waveSpeed! : 0;
   const tile = CURRENT_TILE * patternScale * lengthScale;

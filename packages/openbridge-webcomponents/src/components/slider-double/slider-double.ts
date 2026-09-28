@@ -6,6 +6,7 @@ import componentStyle from './slider-double.css?inline';
 import '../icon-button/icon-button.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
+import {clamp} from '../../svghelpers/math.js';
 
 /**
  * Enum for slider double variants.
@@ -212,7 +213,7 @@ export class ObcSliderDouble extends LitElement {
     if (!Number.isFinite(range) || range <= 0) return 0;
     const ratio = (value - this.min) / range;
     if (!Number.isFinite(ratio)) return 0;
-    return Math.max(0, Math.min(1, ratio));
+    return clamp(ratio, 0, 1);
   }
 
   private animationFrame: number | null = null;
@@ -387,15 +388,13 @@ export class ObcSliderDouble extends LitElement {
       this.targetValue = unroundedValue;
     }
     if (this.isTargetingLow) {
-      this.targetValue = Math.max(
+      this.targetValue = clamp(
+        this.targetValue,
         this.min,
-        Math.min(this.targetValue, this.high)
+        Math.max(this.min, this.high)
       );
     } else {
-      this.targetValue = Math.min(
-        this.max,
-        Math.max(this.targetValue, this.low)
-      );
+      this.targetValue = clamp(this.targetValue, this.low, this.max);
     }
   }
 

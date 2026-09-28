@@ -23,6 +23,7 @@ import {
 } from '../progress-bar/progress-bar.js';
 import {Size, StyleType, Variant} from '../user-button/user-button.js';
 import {localized, msg} from '@lit/localize';
+import {stopPropagation} from '../../internal/events.js';
 
 export enum ObcUserMenuType {
   signIn = 'sign-in',
@@ -220,6 +221,8 @@ export class ObcUserMenu extends LitElement {
         .required=${true}
         .hasClearButton=${!isPassword}
         @input=${onInput}
+        @change=${stopPropagation}
+        @clear=${stopPropagation}
       >
       </obc-text-input-field>
     `;

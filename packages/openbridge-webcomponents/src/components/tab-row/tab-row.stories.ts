@@ -42,6 +42,18 @@ interface TabRowStoryArgs {
   showSubtitle?: boolean;
   hasAddNewTab?: boolean;
   centerContent?: boolean;
+  hasPanels?: boolean;
+  label?: string;
+}
+
+/** A panel's content, slotted into the row as `tab-<id>-panel`. */
+function createPanel(tab: TabData): HTMLElement {
+  const panel = document.createElement('p');
+  panel.slot = `tab-${tab.id}-panel`;
+  panel.textContent = `Content of ${tab.title}.`;
+  panel.style.cssText =
+    'margin: 0; padding: 16px; color: var(--element-active-color);';
+  return panel;
 }
 
 function InteractiveTabRow(args: TabRowStoryArgs) {
@@ -60,6 +72,9 @@ function InteractiveTabRow(args: TabRowStoryArgs) {
   tabRow.showSubtitle = args.showSubtitle ?? false;
   tabRow.hasAddNewTab = args.hasAddNewTab ?? true;
   tabRow.centerContent = args.centerContent ?? false;
+  tabRow.hasPanels = args.hasPanels ?? false;
+  if (args.label) tabRow.label = args.label;
+  if (tabRow.hasPanels) tabRow.append(...currentTabs.map(createPanel));
 
   tabRow.addEventListener('tab-selected', (e: Event) => {
     const detail = (e as CustomEvent<{id: string}>).detail;
@@ -69,6 +84,9 @@ function InteractiveTabRow(args: TabRowStoryArgs) {
     const detail = (e as CustomEvent<{id: string}>).detail;
     currentTabs = currentTabs.filter((tab) => tab.id !== detail.id);
     tabRow.tabs = currentTabs;
+    Array.from(tabRow.children)
+      .find((child) => child.slot === `tab-${detail.id}-panel`)
+      ?.remove();
     if (tabRow.selectedTabId === detail.id && currentTabs.length) {
       tabRow.selectedTabId = currentTabs[0].id;
     }
@@ -81,6 +99,7 @@ function InteractiveTabRow(args: TabRowStoryArgs) {
     };
     currentTabs = [...currentTabs, newTab];
     tabRow.tabs = currentTabs;
+    if (tabRow.hasPanels) tabRow.append(createPanel(newTab));
     tabRow.selectedTabId = newTab.id;
   });
 
@@ -250,6 +269,19 @@ export const NoLeadingIcons: Story = {
     selectedTabId: 'tab1',
     hasAddNewTab: true,
     hasClose: true,
+    hug: false,
+  },
+  render: InteractiveTabRow,
+};
+
+export const WithPanels: Story = {
+  args: {
+    tabs: defaultTabs.slice(0, 3),
+    selectedTabId: 'tab2',
+    hasPanels: true,
+    label: 'Positions',
+    hasClose: false,
+    hasAddNewTab: true,
     hug: false,
   },
   render: InteractiveTabRow,

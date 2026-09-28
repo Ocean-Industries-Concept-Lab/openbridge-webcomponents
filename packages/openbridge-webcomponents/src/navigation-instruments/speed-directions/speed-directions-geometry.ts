@@ -10,7 +10,7 @@ export enum SpeedDirectionsFrameStyle {
   compass = 'compass',
 }
 
-// eslint-disable-next-line openbridge/prefer-enum-over-string-literal-union
+// eslint-disable-next-line openbridge/prefer-enum-over-string-literal-union -- an internal geometry key, never the type of a @property
 export type SpeedAxis = 'along' | 'athwartBow' | 'athwartStern' | 'athwartMid';
 
 export interface CellSpec {

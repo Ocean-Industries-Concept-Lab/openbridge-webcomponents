@@ -282,6 +282,7 @@ export class ObcSystemMenu extends LitElement {
   }
 
   private handleWifiClick(event: CustomEvent<{checked: boolean}>) {
+    event.stopPropagation();
     this.wifiState!.enabled = event.detail.checked;
     this.dispatchEvent(
       new CustomEvent('wifi-click', {detail: {enabled: event.detail.checked}})
@@ -289,6 +290,7 @@ export class ObcSystemMenu extends LitElement {
   }
 
   private handleAudioClick(event: CustomEvent) {
+    event.stopPropagation();
     this.audioState!.muted = !event.detail.checked;
     this.dispatchEvent(
       new CustomEvent('audio-click', {detail: {muted: !event.detail.checked}})
@@ -619,6 +621,7 @@ export class ObcSystemMenu extends LitElement {
   }
 
   private handleMicrophoneClick(event: CustomEvent<{checked: boolean}>) {
+    event.stopPropagation();
     this.microphoneState!.muted = !event.detail.checked;
     this.dispatchEvent(
       new CustomEvent('microphone-click', {

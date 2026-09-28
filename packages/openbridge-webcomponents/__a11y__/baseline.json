@@ -16,13 +16,16 @@
     "aria-allowed-role"
   ],
   "application-components-alerts-alert-list-details-experimental--cycle-with-descendants": [
-    "aria-allowed-role"
+    "aria-allowed-role",
+    "obc-composite-one-tab-stop"
   ],
   "application-components-alerts-alert-list-details-experimental--cyclic-grouping": [
-    "aria-allowed-role"
+    "aria-allowed-role",
+    "obc-composite-one-tab-stop"
   ],
   "application-components-alerts-alert-list-details-experimental--grouped-alerts": [
-    "aria-allowed-role"
+    "aria-allowed-role",
+    "obc-composite-one-tab-stop"
   ],
   "application-components-alerts-alert-list-details-experimental--level-categories": [
     "aria-allowed-role"
@@ -34,10 +37,12 @@
     "aria-allowed-role"
   ],
   "application-components-alerts-alert-list-details-experimental--selected-row": [
-    "aria-allowed-role"
+    "aria-allowed-role",
+    "obc-composite-one-tab-stop"
   ],
   "application-components-alerts-alert-list-details-experimental--slotted-ack-buttons": [
-    "aria-allowed-role"
+    "aria-allowed-role",
+    "obc-composite-one-tab-stop"
   ],
   "application-components-alerts-alert-list-details-experimental--small": [
     "aria-allowed-role"
@@ -712,37 +717,22 @@
     "aria-required-parent"
   ],
   "ui-components-menus-and-navigation-tab-row--center-content": [
-    "aria-required-children",
     "nested-interactive"
   ],
   "ui-components-menus-and-navigation-tab-row--disabled-tabs": [
-    "aria-required-children",
     "nested-interactive"
   ],
   "ui-components-menus-and-navigation-tab-row--hug-mode": [
-    "aria-required-children",
     "nested-interactive"
-  ],
-  "ui-components-menus-and-navigation-tab-row--hug-mode-no-close": [
-    "aria-required-children"
-  ],
-  "ui-components-menus-and-navigation-tab-row--no-close": [
-    "aria-required-children"
   ],
   "ui-components-menus-and-navigation-tab-row--no-leading-icons": [
-    "aria-required-children",
     "nested-interactive"
   ],
-  "ui-components-menus-and-navigation-tab-row--primary": [
-    "aria-required-children",
-    "nested-interactive"
-  ],
+  "ui-components-menus-and-navigation-tab-row--primary": ["nested-interactive"],
   "ui-components-menus-and-navigation-tab-row--with-add-new-tab": [
-    "aria-required-children",
     "nested-interactive"
   ],
   "ui-components-menus-and-navigation-tab-row--with-badges": [
-    "aria-required-children",
     "nested-interactive"
   ],
   "ui-components-menus-and-navigation-tree-navigation-item--aggregated-alert-badge": [
@@ -923,22 +913,6 @@
   "ui-components-selection-controls-and-switches-check-button--hug-text": [
     "aria-allowed-attr"
   ],
-  "ui-components-selection-controls-and-switches-filter-chip--checked-no-icon": [
-    "aria-allowed-attr",
-    "aria-required-attr"
-  ],
-  "ui-components-selection-controls-and-switches-filter-chip--checked-with-icon": [
-    "aria-allowed-attr",
-    "aria-required-attr"
-  ],
-  "ui-components-selection-controls-and-switches-filter-chip--unchecked-no-icon": [
-    "aria-allowed-attr",
-    "aria-required-attr"
-  ],
-  "ui-components-selection-controls-and-switches-filter-chip--unchecked-with-icon": [
-    "aria-allowed-attr",
-    "aria-required-attr"
-  ],
   "ui-components-selection-controls-and-switches-icon-check-button--icon-only": [
     "button-name"
   ],
@@ -1064,10 +1038,19 @@
   ],
   "ui-components-tables-table--adding-data": ["aria-allowed-role"],
   "ui-components-tables-table--checkbox-cells": ["aria-allowed-role"],
-  "ui-components-tables-table--cycle-with-descendants": ["aria-allowed-role"],
-  "ui-components-tables-table--cyclic-hierarchy": ["aria-allowed-role"],
+  "ui-components-tables-table--cycle-with-descendants": [
+    "aria-allowed-role",
+    "obc-composite-one-tab-stop"
+  ],
+  "ui-components-tables-table--cyclic-hierarchy": [
+    "aria-allowed-role",
+    "obc-composite-one-tab-stop"
+  ],
   "ui-components-tables-table--full-height-case": ["aria-allowed-role"],
-  "ui-components-tables-table--hierarchy": ["aria-allowed-role"],
+  "ui-components-tables-table--hierarchy": [
+    "aria-allowed-role",
+    "obc-composite-one-tab-stop"
+  ],
   "ui-components-tables-table--horizontal-bar-cells": ["aria-allowed-role"],
   "ui-components-tables-table--interactive": ["aria-allowed-role"],
   "ui-components-tables-table--narrow-header": ["aria-allowed-role"],
