@@ -115,7 +115,7 @@
 }
 
 .dialog-wrapper {
-  position: fixed; /* absolute lets the open dialog grow its own containing block past the viewport in Chromium 153 */
+  position: fixed; /* absolute lets the open dialog grow its own containing block past the viewport in Chromium */
   position-anchor: --card;
   left: anchor(left);
   top: anchor(top);

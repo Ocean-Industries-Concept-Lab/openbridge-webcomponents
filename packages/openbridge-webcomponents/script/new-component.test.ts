@@ -75,7 +75,7 @@ describe('toKebabCase', () => {
 });
 
 describe('rejectUnless', () => {
-  it('rejects in the only shape the prompt library reads', () => {
+  it('rejects with the {isValid: false, error} object', () => {
     // A boolean return is treated as valid by its isValid(), so a validator
     // returning false passes every answer.
     expect(rejectUnless(false, 'nope')).toEqual({

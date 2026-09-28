@@ -142,10 +142,8 @@ export function quote(value: string): string {
 /**
  * A prompt validator response `@topcli/prompts` actually honours.
  *
- * Its `isValid()` returns `true` for a boolean, so a `validate` returning
- * `false` passes every answer. A non-empty string does reject, but the typed
- * response is `{isValid: false, error}`, and the `message` property that used
- * to sit beside these validators is not in the library's interface at all.
+ * Its `isValid()` treats a boolean as valid, so a `validate` returning `false`
+ * would pass every answer. The object form rejects and carries the error text.
  */
 export function rejectUnless(
   ok: boolean,
