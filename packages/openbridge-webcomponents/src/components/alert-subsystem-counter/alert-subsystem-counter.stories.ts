@@ -95,9 +95,11 @@ const renderCounter = (
       .hasAlert=${args.hasAlert}
       emptytext=${ifDefined(args.emptyText)}
     >
-      ${options.withIcon === false
-        ? nothing
-        : html`<obi-placeholder slot="icon"></obi-placeholder>`}
+      ${
+        options.withIcon === false
+          ? nothing
+          : html`<obi-placeholder slot="icon"></obi-placeholder>`
+      }
       ${options.badges ?? badges}
     </obc-alert-subsystem-counter>
   </div>`;

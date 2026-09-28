@@ -271,13 +271,15 @@ export class ObcSequenceCard extends LitElement {
 
     const verticalLeftRail = html`
       <div class="vertical-progress-container">
-        ${this.hasTimeStamp
-          ? html`
-              <div class="stamp-container">
-                <slot name="left-time-stamp">${this.leftTime}</slot>
-              </div>
-            `
-          : nothing}
+        ${
+          this.hasTimeStamp
+            ? html`
+                <div class="stamp-container">
+                  <slot name="left-time-stamp">${this.leftTime}</slot>
+                </div>
+              `
+            : nothing
+        }
         <div class="progress-container">
           <obc-sequence-step
             .orientation=${SequenceOrientation.vertical}
@@ -315,171 +317,209 @@ export class ObcSequenceCard extends LitElement {
       <div class=${classMap(classes)}>
         ${showLeftRail ? verticalLeftRail : nothing}
         <div class="card-container">
-          ${this.horizontal
-            ? html`
-                <div class="card-row">
-                  ${showLeftRailHorizontal ? horizontalLeftRail : nothing}
+          ${
+            this.horizontal
+              ? html`
+                  <div class="card-row">
+                    ${showLeftRailHorizontal ? horizontalLeftRail : nothing}
+                    <div class="card">
+                      <div class="header-row">
+                        <div class="title-container" part="title-container">
+                          ${
+                            showLeftRail || showLeftRailHorizontal
+                              ? nothing
+                              : this.renderStepIndicator()
+                          }
+                          <div class="content-container-placeholder">
+                            ${
+                              this.hasLeadingIcon
+                                ? html`
+                                    <div class="leading-icon">
+                                      <slot name="leading-icon"></slot>
+                                    </div>
+                                  `
+                                : nothing
+                            }
+                            <div class="text-container">
+                              <div class="text-wrapper">
+                                <div class="title-text" part="title-text">
+                                  <slot name="title">${this.cardTitle}</slot>
+                                </div>
+                                ${
+                                  this.showSubtitle
+                                    ? html`
+                                        <div class="subtitle-text">
+                                          <slot name="subtitle"
+                                            >${this.subtitle}</slot
+                                          >
+                                        </div>
+                                      `
+                                    : nothing
+                                }
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="header-right">
+                          ${
+                            this.hasTimeStamp
+                              ? html`
+                                  <div class="time-stamp">
+                                    <slot name="time-stamp">
+                                      <div class="time-label">
+                                        ${this.timeLabel}
+                                      </div>
+                                      <div class="time-value">${this.time}</div>
+                                    </slot>
+                                  </div>
+                                `
+                              : nothing
+                          }
+                          <slot name="header-actions"></slot>
+                        </div>
+                      </div>
+                      ${
+                        this.hasContent
+                          ? html`
+                              <div class="content-container-placeholder">
+                                <slot></slot>
+                              </div>
+                            `
+                          : nothing
+                      }
+                      ${
+                        this.hasActions
+                          ? html`
+                              <div
+                                class="action-container"
+                                part="action-container"
+                              >
+                                <slot name="actions"></slot>
+                              </div>
+                            `
+                          : nothing
+                      }
+                    </div>
+
+                    ${
+                      showHorizontalConnector
+                        ? html`
+                            <div class="horizontal-progress-container">
+                              <obc-sequence-step
+                                .orientation=${SequenceOrientation.horizontal}
+                                .type=${this.horizontalConnectorType}
+                                .styleType=${SequenceStyle.connector}
+                                .value=${this.progressValue}
+                                .showStepInputConnector=${false}
+                                .showStepOutputConnector=${true}
+                                .hasIcon=${false}
+                              ></obc-sequence-step>
+                            </div>
+                          `
+                        : nothing
+                    }
+                  </div>
+                `
+              : html`
                   <div class="card">
                     <div class="header-row">
                       <div class="title-container" part="title-container">
-                        ${showLeftRail || showLeftRailHorizontal
-                          ? nothing
-                          : this.renderStepIndicator()}
+                        ${
+                          showLeftRail || showLeftRailHorizontal
+                            ? nothing
+                            : this.renderStepIndicator()
+                        }
                         <div class="content-container-placeholder">
-                          ${this.hasLeadingIcon
-                            ? html`
-                                <div class="leading-icon">
-                                  <slot name="leading-icon"></slot>
-                                </div>
-                              `
-                            : nothing}
+                          ${
+                            this.hasLeadingIcon
+                              ? html`
+                                  <div class="leading-icon">
+                                    <slot name="leading-icon"></slot>
+                                  </div>
+                                `
+                              : nothing
+                          }
                           <div class="text-container">
                             <div class="text-wrapper">
                               <div class="title-text" part="title-text">
                                 <slot name="title">${this.cardTitle}</slot>
                               </div>
-                              ${this.showSubtitle
-                                ? html`
-                                    <div class="subtitle-text">
-                                      <slot name="subtitle"
-                                        >${this.subtitle}</slot
-                                      >
-                                    </div>
-                                  `
-                                : nothing}
+                              ${
+                                this.showSubtitle
+                                  ? html`
+                                      <div class="subtitle-text">
+                                        <slot name="subtitle"
+                                          >${this.subtitle}</slot
+                                        >
+                                      </div>
+                                    `
+                                  : nothing
+                              }
                             </div>
                           </div>
                         </div>
                       </div>
                       <div class="header-right">
-                        ${this.hasTimeStamp
-                          ? html`
-                              <div class="time-stamp">
-                                <slot name="time-stamp">
-                                  <div class="time-label">
-                                    ${this.timeLabel}
-                                  </div>
-                                  <div class="time-value">${this.time}</div>
-                                </slot>
-                              </div>
-                            `
-                          : nothing}
+                        ${
+                          this.hasTimeStamp
+                            ? html`
+                                <div class="time-stamp">
+                                  <slot name="time-stamp">
+                                    <div class="time-label">
+                                      ${this.timeLabel}
+                                    </div>
+                                    <div class="time-value">${this.time}</div>
+                                  </slot>
+                                </div>
+                              `
+                            : nothing
+                        }
                         <slot name="header-actions"></slot>
                       </div>
                     </div>
-                    ${this.hasContent
-                      ? html`
-                          <div class="content-container-placeholder">
-                            <slot></slot>
-                          </div>
-                        `
-                      : nothing}
-                    ${this.hasActions
-                      ? html`
-                          <div class="action-container" part="action-container">
-                            <slot name="actions"></slot>
-                          </div>
-                        `
-                      : nothing}
-                  </div>
-
-                  ${showHorizontalConnector
-                    ? html`
-                        <div class="horizontal-progress-container">
-                          <obc-sequence-step
-                            .orientation=${SequenceOrientation.horizontal}
-                            .type=${this.horizontalConnectorType}
-                            .styleType=${SequenceStyle.connector}
-                            .value=${this.progressValue}
-                            .showStepInputConnector=${false}
-                            .showStepOutputConnector=${true}
-                            .hasIcon=${false}
-                          ></obc-sequence-step>
-                        </div>
-                      `
-                    : nothing}
-                </div>
-              `
-            : html`
-                <div class="card">
-                  <div class="header-row">
-                    <div class="title-container" part="title-container">
-                      ${showLeftRail || showLeftRailHorizontal
-                        ? nothing
-                        : this.renderStepIndicator()}
-                      <div class="content-container-placeholder">
-                        ${this.hasLeadingIcon
-                          ? html`
-                              <div class="leading-icon">
-                                <slot name="leading-icon"></slot>
-                              </div>
-                            `
-                          : nothing}
-                        <div class="text-container">
-                          <div class="text-wrapper">
-                            <div class="title-text" part="title-text">
-                              <slot name="title">${this.cardTitle}</slot>
-                            </div>
-                            ${this.showSubtitle
-                              ? html`
-                                  <div class="subtitle-text">
-                                    <slot name="subtitle"
-                                      >${this.subtitle}</slot
-                                    >
-                                  </div>
-                                `
-                              : nothing}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="header-right">
-                      ${this.hasTimeStamp
+                    ${
+                      this.hasContent
                         ? html`
-                            <div class="time-stamp">
-                              <slot name="time-stamp">
-                                <div class="time-label">${this.timeLabel}</div>
-                                <div class="time-value">${this.time}</div>
-                              </slot>
+                            <div class="content-container-placeholder">
+                              <slot></slot>
                             </div>
                           `
-                        : nothing}
-                      <slot name="header-actions"></slot>
-                    </div>
+                        : nothing
+                    }
+                    ${
+                      this.hasActions
+                        ? html`
+                            <div
+                              class="action-container"
+                              part="action-container"
+                            >
+                              <slot name="actions"></slot>
+                            </div>
+                          `
+                        : nothing
+                    }
                   </div>
-                  ${this.hasContent
-                    ? html`
-                        <div class="content-container-placeholder">
-                          <slot></slot>
-                        </div>
-                      `
-                    : nothing}
-                  ${this.hasActions
-                    ? html`
-                        <div class="action-container" part="action-container">
-                          <slot name="actions"></slot>
-                        </div>
-                      `
-                    : nothing}
-                </div>
-              `}
+                `
+          }
         </div>
-        ${showCenteredConnector
-          ? html`
-              <div class="vertical-progress-container is-centered">
-                <obc-sequence-step
-                  .orientation=${SequenceOrientation.vertical}
-                  .type=${this.verticalConnectorType}
-                  .styleType=${SequenceStyle.connector}
-                  .value=${this.progressValue}
-                  .showStepInputConnector=${true}
-                  .showStepOutputConnector=${true}
-                  .inputConnectorExtended=${true}
-                  .hasIcon=${false}
-                ></obc-sequence-step>
-              </div>
-            `
-          : nothing}
+        ${
+          showCenteredConnector
+            ? html`
+                <div class="vertical-progress-container is-centered">
+                  <obc-sequence-step
+                    .orientation=${SequenceOrientation.vertical}
+                    .type=${this.verticalConnectorType}
+                    .styleType=${SequenceStyle.connector}
+                    .value=${this.progressValue}
+                    .showStepInputConnector=${true}
+                    .showStepOutputConnector=${true}
+                    .inputConnectorExtended=${true}
+                    .hasIcon=${false}
+                  ></obc-sequence-step>
+                </div>
+              `
+            : nothing
+        }
       </div>
     `;
   }

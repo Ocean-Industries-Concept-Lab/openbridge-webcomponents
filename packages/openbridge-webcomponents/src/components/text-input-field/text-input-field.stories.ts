@@ -134,25 +134,33 @@ const meta: Meta<typeof ObcTextInputField> = {
           ?hasClearButton=${args.hasClearButton}
           .helperText=${args.helperText ?? ''}
           ?hasHelperIcon=${args.hasHelperIcon}
-          .helperPlacement=${args.helperPlacement ??
-          ObcTextInputFieldPlacement.Left}
+          .helperPlacement=${
+            args.helperPlacement ?? ObcTextInputFieldPlacement.Left
+          }
           .label=${args.label ?? ''}
           ?required=${args.required}
           ?hasLabelIcon=${args.hasLabelIcon}
-          .labelPlacement=${args.labelPlacement ??
-          ObcTextInputFieldPlacement.Left}
+          .labelPlacement=${
+            args.labelPlacement ?? ObcTextInputFieldPlacement.Left
+          }
           .rejectUpdates=${args.rejectUpdates}
           .rejectUpdatesOnFocus=${args.rejectUpdatesOnFocus}
         >
-          ${args.hasLeadingIcon
-            ? html`<obi-search slot="leading-icon"></obi-search>`
-            : ''}
-          ${args.hasLabelIcon
-            ? html`<obi-placeholder slot="label-icon"></obi-placeholder>`
-            : ''}
-          ${args.hasHelperIcon
-            ? html`<obi-placeholder slot="helper-icon"></obi-placeholder>`
-            : ''}
+          ${
+            args.hasLeadingIcon
+              ? html`<obi-search slot="leading-icon"></obi-search>`
+              : ''
+          }
+          ${
+            args.hasLabelIcon
+              ? html`<obi-placeholder slot="label-icon"></obi-placeholder>`
+              : ''
+          }
+          ${
+            args.hasHelperIcon
+              ? html`<obi-placeholder slot="helper-icon"></obi-placeholder>`
+              : ''
+          }
         </obc-text-input-field>
       </div>
     `;

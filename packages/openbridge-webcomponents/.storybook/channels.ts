@@ -24,7 +24,9 @@ export const getBranch = (): 'stable' | 'develop' => {
   // These are injected/defined in main.ts.
   const envBranch =
     (typeof process !== 'undefined' && process.env?.VITE_STORYBOOK_BRANCH) ||
-    (typeof window !== 'undefined' && (window as any).VITE_STORYBOOK_BRANCH);
+    (typeof window !== 'undefined' &&
+      (window as unknown as {VITE_STORYBOOK_BRANCH?: string})
+        .VITE_STORYBOOK_BRANCH);
 
   if (envBranch === 'stable' || envBranch === 'develop') {
     return envBranch as 'stable' | 'develop';

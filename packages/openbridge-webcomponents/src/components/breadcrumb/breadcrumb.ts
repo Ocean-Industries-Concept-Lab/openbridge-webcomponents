@@ -62,33 +62,41 @@ export class ObcBreadcrumb extends LitElement {
             const isLast = i === this.items.length - 1;
             return html`
               <li>
-                ${i > 0
-                  ? html`<span class="divider">
-                      <obi-chevron-right-google class="icon">
-                      </obi-chevron-right-google>
-                    </span>`
-                  : nothing}
-                ${isLast
-                  ? html` <div class="label-wrapper active">
-                      <div class="visible-wrapper">
-                        ${item.icon ? item.icon() : nothing}
-                        ${this.iconOnly && !isLast
-                          ? nothing
-                          : html`<span class="label">${item.label}</span>`}
-                      </div>
-                    </div>`
-                  : html` <button
-                      role="link"
-                      @click=${() => this.handleClick(item)}
-                      class="label-wrapper"
-                    >
-                      <div class="visible-wrapper">
-                        ${item.icon ? item.icon() : nothing}
-                        ${this.iconOnly && !isLast
-                          ? nothing
-                          : html`<span class="label">${item.label}</span>`}
-                      </div>
-                    </button>`}
+                ${
+                  i > 0
+                    ? html`<span class="divider">
+                        <obi-chevron-right-google class="icon">
+                        </obi-chevron-right-google>
+                      </span>`
+                    : nothing
+                }
+                ${
+                  isLast
+                    ? html` <div class="label-wrapper active">
+                        <div class="visible-wrapper">
+                          ${item.icon ? item.icon() : nothing}
+                          ${
+                            this.iconOnly && !isLast
+                              ? nothing
+                              : html`<span class="label">${item.label}</span>`
+                          }
+                        </div>
+                      </div>`
+                    : html` <button
+                        role="link"
+                        @click=${() => this.handleClick(item)}
+                        class="label-wrapper"
+                      >
+                        <div class="visible-wrapper">
+                          ${item.icon ? item.icon() : nothing}
+                          ${
+                            this.iconOnly && !isLast
+                              ? nothing
+                              : html`<span class="label">${item.label}</span>`
+                          }
+                        </div>
+                      </button>`
+                }
               </li>
             `;
           })}

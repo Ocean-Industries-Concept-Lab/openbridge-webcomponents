@@ -283,16 +283,18 @@ export class ObcPoiButton extends LitElement {
 
     return html`
       <div class="id-label">
-        ${this.hasHeaderContent
-          ? html`<slot
-              name="header"
-              @slotchange=${this.handleHeaderSlotChange}
-            ></slot>`
-          : html`<obc-poi-header
-              .content=${this.headerContent}
-              .state=${this.resolvedHeaderState}
-              .type=${ObcPoiHeaderType.Id}
-            ></obc-poi-header>`}
+        ${
+          this.hasHeaderContent
+            ? html`<slot
+                name="header"
+                @slotchange=${this.handleHeaderSlotChange}
+              ></slot>`
+            : html`<obc-poi-header
+                .content=${this.headerContent}
+                .state=${this.resolvedHeaderState}
+                .type=${ObcPoiHeaderType.Id}
+              ></obc-poi-header>`
+        }
       </div>
     `;
   }
@@ -412,11 +414,13 @@ export class ObcPoiButton extends LitElement {
         <div class="button-wrapper">
           ${this.renderSelectionFrame()} ${this.renderPoiObject()}
         </div>
-        ${this.hasRelation
-          ? html`<div class="relation-wrapper" part="relation-wrapper">
-              <slot name="relation" class="relation" part="relation"></slot>
-            </div>`
-          : nothing}
+        ${
+          this.hasRelation
+            ? html`<div class="relation-wrapper" part="relation-wrapper">
+                <slot name="relation" class="relation" part="relation"></slot>
+              </div>`
+            : nothing
+        }
         <div class="alert-ring"></div>
       </button>
     `;

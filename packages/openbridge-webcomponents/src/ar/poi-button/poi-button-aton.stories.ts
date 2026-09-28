@@ -125,18 +125,20 @@ const renderMatrixButton = (cfg: MatrixConfig) => html`
         .data=${cfg.data ?? []}
       >
         <obi-placeholder></obi-placeholder>
-        ${cfg.hasHeader
-          ? html`<obc-poi-header
-              slot="header"
-              .content=${'1'}
-              .type=${ObcPoiHeaderType.Id}
-              .state=${ObcPoiHeaderState.Selected}
-              .size=${ObcPoiHeaderSize.Regular}
-              .hasIndicator=${true}
-            >
-              <obi-placeholder slot="indicator"></obi-placeholder>
-            </obc-poi-header>`
-          : html``}
+        ${
+          cfg.hasHeader
+            ? html`<obc-poi-header
+                slot="header"
+                .content=${'1'}
+                .type=${ObcPoiHeaderType.Id}
+                .state=${ObcPoiHeaderState.Selected}
+                .size=${ObcPoiHeaderSize.Regular}
+                .hasIndicator=${true}
+              >
+                <obi-placeholder slot="indicator"></obi-placeholder>
+              </obc-poi-header>`
+            : html``
+        }
       </obc-poi-button-aton>
     </div>
     <div style=${labelStyle}>${cfg.label}</div>

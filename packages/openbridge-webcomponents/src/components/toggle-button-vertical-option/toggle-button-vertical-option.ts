@@ -196,18 +196,22 @@ export class ObcToggleButtonVerticalOption extends LitElement {
         <div class="visible-wrapper">
           <div class="icon-label-container">
             <div class="icon">
-              ${labelUnder && !this.hasIcon
-                ? nothing
-                : this.hasIcon
-                  ? html`<slot name="icon"></slot>`
-                  : nothing}
+              ${
+                labelUnder && !this.hasIcon
+                  ? nothing
+                  : this.hasIcon
+                    ? html`<slot name="icon"></slot>`
+                    : nothing
+              }
             </div>
 
-            ${labelUnder
-              ? html`<div class="label">${labelText}</div>`
-              : hasLabel
-                ? html`<div class="label">${this.label}</div>`
-                : nothing}
+            ${
+              labelUnder
+                ? html`<div class="label">${labelText}</div>`
+                : hasLabel
+                  ? html`<div class="label">${this.label}</div>`
+                  : nothing
+            }
           </div>
 
           ${!this.selected ? html`<div class="bottom-divider"></div>` : nothing}

@@ -111,7 +111,7 @@ export enum ObcAdviceMessageItemSize {
  * @property timeSecondary - Secondary timestamp (e.g., duration, relative time).
  *   Shown in the `time-secondary` slot if `hasTimestamp2` is true.
  * @availableWhen timeSecondary hasTimestamp2==true && type!=Inactive
- * @property actionLabel - Label for the action button (when `type` is "with-button").
+ * @property actionLabel - Label for the action button (when `type` is "with-button"). The icon action button shows the close icon and is named "Close".
  *   Shown in the `action-text` slot.
  * @availableWhen actionLabel type==WithButton
  * @property showTitle - Whether to show the title.
@@ -209,6 +209,11 @@ export class ObcAdviceMessageItem extends LitElement {
     return html`
       <obc-topbar-message-item
         .type=${this.mappedType}
+        .actionLabel=${
+          this.type === ObcAdviceMessageItemType.WithIconButton
+            ? 'Close'
+            : this.actionLabel
+        }
         .size=${this.size}
         .showTitle=${this.showTitle}
         .showDescription=${this.showDescription}
@@ -222,26 +227,38 @@ export class ObcAdviceMessageItem extends LitElement {
           slot="primary-icon"
         ></obi-notification-advice-active>
 
-        ${this.hasSecondaryIcon
-          ? html`<slot name="secondary-icon" slot="secondary-icon"></slot>`
-          : nothing}
-        ${this.title && this.showTitle
-          ? html`<span slot="title">${this.title}</span>`
-          : nothing}
-        ${this.description && this.showDescription
-          ? html`<span slot="description">${this.description}</span>`
-          : nothing}
-        ${this.time && this.showTimestamp
-          ? html`<span slot="time">${this.time}</span>`
-          : nothing}
-        ${this.timeSecondary && this.hasTimestamp2
-          ? html`<span slot="time-secondary">${this.timeSecondary}</span>`
-          : nothing}
-        ${this.type === ObcAdviceMessageItemType.WithButton
-          ? html`<span slot="action-text">${this.actionLabel}</span>`
-          : this.type === ObcAdviceMessageItemType.WithIconButton
-            ? html`<obi-close-google slot="action-icon"></obi-close-google>`
-            : nothing}
+        ${
+          this.hasSecondaryIcon
+            ? html`<slot name="secondary-icon" slot="secondary-icon"></slot>`
+            : nothing
+        }
+        ${
+          this.title && this.showTitle
+            ? html`<span slot="title">${this.title}</span>`
+            : nothing
+        }
+        ${
+          this.description && this.showDescription
+            ? html`<span slot="description">${this.description}</span>`
+            : nothing
+        }
+        ${
+          this.time && this.showTimestamp
+            ? html`<span slot="time">${this.time}</span>`
+            : nothing
+        }
+        ${
+          this.timeSecondary && this.hasTimestamp2
+            ? html`<span slot="time-secondary">${this.timeSecondary}</span>`
+            : nothing
+        }
+        ${
+          this.type === ObcAdviceMessageItemType.WithButton
+            ? html`<span slot="action-text">${this.actionLabel}</span>`
+            : this.type === ObcAdviceMessageItemType.WithIconButton
+              ? html`<obi-close-google slot="action-icon"></obi-close-google>`
+              : nothing
+        }
 
         <span slot="empty">${this.emptyText}</span>
       </obc-topbar-message-item>

@@ -1137,9 +1137,11 @@ export class ObcPoiLayer extends LitElement {
   override render() {
     return html`
       <div class="wrapper${this.debug ? ' debug' : ''}">
-        ${this.debug
-          ? html`<span class="debug-label">${this.label || 'Layer'}</span>`
-          : nothing}
+        ${
+          this.debug
+            ? html`<span class="debug-label">${this.label || 'Layer'}</span>`
+            : nothing
+        }
         <slot></slot>
       </div>
     `;

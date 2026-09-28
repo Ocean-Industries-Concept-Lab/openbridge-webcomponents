@@ -106,19 +106,21 @@ export class ObcValveAnalogThreeWayIcon extends LitElement {
                 stroke-width="1"
               />
             </g>
-            ${this.horisontal
-              ? svg`
+            ${
+              this.horisontal
+                ? svg`
         <g clip-path="url(#clip2)">
           <rect y="0" x=${ymax} height="24" width=${y - ymax} fill="var(--automation-device-secondary-color)"/>
           <line y1="0" x1=${y} y2="24" x2=${y} stroke="var(--automation-device-tertiary-color)" stroke-width="1"/>
         </g>
           `
-              : svg`
+                : svg`
         <g clip-path="url(#clip1)">
           <rect x="0" y=${ymax} width="24" height=${y - ymax} fill="var(--automation-device-secondary-color)"/>
           <line x1="0" y1=${y} x2="24" y2=${y} stroke="var(--automation-device-tertiary-color)" stroke-width="1"/>
         </g>
-        `}
+        `
+            }
             <defs>
               <clipPath id="clip0">
                 <path

@@ -123,9 +123,11 @@ export class ObcGaugeBarIndicator extends LitElement {
               style=${unfilledStyle}
             ></div>
             <div class=${fillClasses} part="fill" style=${fillStyle}>
-              ${type === 'tinted'
-                ? html`<div class=${pointerClasses} part="pointer"></div>`
-                : null}
+              ${
+                type === 'tinted'
+                  ? html`<div class=${pointerClasses} part="pointer"></div>`
+                  : null
+              }
             </div>
           </div>
         </div>

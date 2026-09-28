@@ -203,7 +203,7 @@ When adding new features or fixing bugs:
    - Use `computeFixedAspectRatioScale()` to calculate the scale factor
 
 5. **Dimension Reporting**:
-   - Dispatch `scale-dimensions-changed` CustomEvent when layout-affecting properties change
+   - Dispatch `scale-dimensions-changed` CustomEvent when layout-affecting properties change, with `bubbles: true` and without `composed`: the chart listens on the slot the scale sits in, which receives the event either way, and `composed` would carry it out of every table, tank or instrument that renders a scale
    - Include `{side, thickness}` in event detail
    - Parent charts use this for padding integration
    - **IMPORTANT**: barThickness, tickThickness, labelThickness, hasBar, hasScale... all affect reported thickness and must be considered, especially in fixed aspect ratio mode.
@@ -337,8 +337,7 @@ private _dispatchDimensionsChanged() {
   }));
   this.dispatchEvent(new CustomEvent('scale-dimensions-changed', {
     detail: dims,
-    bubbles: true,
-    composed: true,
+    bubbles: true, // the chart's slot receives it; no composed, so it stays in the renderer's tree
   }));
 }
 ```

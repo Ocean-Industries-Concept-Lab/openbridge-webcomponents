@@ -182,25 +182,30 @@ export class ObcPoiGroup extends LitElement {
 
   override render() {
     return html`
-      ${this.expand
-        ? html`<div @click=${this.onBackdropClick} class="backdrop"></div>`
-        : null}
+      ${
+        this.expand
+          ? html`<div @click=${this.onBackdropClick} class="backdrop"></div>`
+          : null
+      }
       <slot></slot>
-      ${!this.expand && this.wrapperVisible
-        ? html`<button
-            @click=${this.onClick}
-            class=${classMap({
-              wrapper: true,
-              'with-values': this.wrapperHasValues,
-            })}
-            style="left: 0; top: ${this.positionVertical}; width: ${this
-              .wrapperWidth}; height: ${this
-              .wrapperHeight}; --obc-poi-group-wrapper-x: ${this
-              .wrapperOffsetX};"
-          >
-            <div class="visible-wrapper"></div>
-          </button>`
-        : null}
+      ${
+        !this.expand && this.wrapperVisible
+          ? html`<button
+              @click=${this.onClick}
+              class=${classMap({
+                wrapper: true,
+                'with-values': this.wrapperHasValues,
+              })}
+              style="left: 0; top: ${this.positionVertical}; width: ${
+                this.wrapperWidth
+              }; height: ${this.wrapperHeight}; --obc-poi-group-wrapper-x: ${
+                this.wrapperOffsetX
+              };"
+            >
+              <div class="visible-wrapper"></div>
+            </button>`
+          : null
+      }
     `;
   }
 

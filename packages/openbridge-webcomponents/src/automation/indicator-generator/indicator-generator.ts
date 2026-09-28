@@ -132,35 +132,45 @@ export class ObcIndicatorGenerator extends LitElement {
     const size = doubleBar ? 56 : 48;
     return html`
       <svg viewBox="0 0 ${size} ${size}" aria-hidden="true">
-        ${this.variant === IndicatorGeneratorVariant.button
-          ? svg`<circle class="silhouette" cx=${c} cy=${c} r=${BUTTON_SILHOUETTE_RADIUS} />`
-          : nothing}
-        ${bar
-          ? svg`<circle class="silhouette-ring" cx=${c} cy=${c} r=${BAR_SILHOUETTE_RADIUS} stroke-width=${BAR_SILHOUETTE_STROKE_WIDTH} />`
-          : nothing}
+        ${
+          this.variant === IndicatorGeneratorVariant.button
+            ? svg`<circle class="silhouette" cx=${c} cy=${c} r=${BUTTON_SILHOUETTE_RADIUS} />`
+            : nothing
+        }
+        ${
+          bar
+            ? svg`<circle class="silhouette-ring" cx=${c} cy=${c} r=${BAR_SILHOUETTE_RADIUS} stroke-width=${BAR_SILHOUETTE_STROKE_WIDTH} />`
+            : nothing
+        }
         <circle class="disc" cx=${c} cy=${c} r=${this.discRadius} />
-        ${this.showOutline
-          ? svg`<circle
+        ${
+          this.showOutline
+            ? svg`<circle
               class="outline"
               cx=${c}
               cy=${c}
               r=${doubleBar ? DOUBLE_BAR_OUTLINE_RADIUS : BAR_OUTLINE_RADIUS}
               stroke-width=${OUTLINE_STROKE_WIDTH}
             />`
-          : nothing}
-        ${bar && showRings
-          ? this.renderRing(
-              BAR_TRACK_RADIUS,
-              BAR_TRACK_STROKE_WIDTH,
-              this.level
-            )
-          : nothing}
-        ${doubleBar && showRings
-          ? svg`
+            : nothing
+        }
+        ${
+          bar && showRings
+            ? this.renderRing(
+                BAR_TRACK_RADIUS,
+                BAR_TRACK_STROKE_WIDTH,
+                this.level
+              )
+            : nothing
+        }
+        ${
+          doubleBar && showRings
+            ? svg`
               ${this.renderRing(DOUBLE_BAR_OUTER_RADIUS, DOUBLE_BAR_OUTER_STROKE_WIDTH, this.level)}
               ${this.renderRing(DOUBLE_BAR_INNER_RADIUS, DOUBLE_BAR_INNER_STROKE_WIDTH, this.secondaryLevel)}
             `
-          : nothing}
+            : nothing
+        }
       </svg>
       <div class="icon-wrapper">
         <slot name="icon">

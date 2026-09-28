@@ -267,7 +267,8 @@ const thrusterAdvice = computed((): LinearAdvice[] => {
   width: 100%;
   height: 100%;
   display: grid;
-  grid-template-columns: 1fr 1fr min-content;
+  /* the rudders' aspect box must not widen the columns (#1213) */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) min-content;
   grid-template-rows: min-content minmax(auto, 15%) 1fr 1fr 1fr;
   justify-content: center;
   justify-items: space-between;

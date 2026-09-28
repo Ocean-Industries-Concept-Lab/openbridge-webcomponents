@@ -99,8 +99,9 @@ export enum DateItemSize {
  * @property size - Size of the date item: `small` (default) shows only the date and the event
  *   dots, `large` shows titles and descriptions for as many events as its
  *   height fits and aggregates the rest into a count.
- * @fires {CustomEvent<{date: number, events: DateItemEvent[], isToday: boolean, checked: boolean}>} date-click - Fired when the date item is clicked.
  * @slot - No slots. All content is provided via properties.
+ * @fires {CustomEvent<{date: number, events: DateItemEvent[], isToday: boolean, checked: boolean}>} date-click - Fired when the date item is clicked.
+ * @fires {CustomEvent<{title: string, startTime: string, endTime: string}>} event-click - Passed on from the event items in the cell when one is clicked, with its title, start and end time.
  * @beta
  */
 @customElement('obc-date-item')
@@ -303,9 +304,11 @@ export class ObcDateItem extends LitElement {
         >
           <div class="date-container">
             <div class="date" aria-hidden="true">${this.date}</div>
-            ${hasAnyEvents
-              ? html`<div class="event-dot" aria-hidden="true"></div>`
-              : nothing}
+            ${
+              hasAnyEvents
+                ? html`<div class="event-dot" aria-hidden="true"></div>`
+                : nothing
+            }
           </div>
         </button>
       `;
@@ -331,42 +334,47 @@ export class ObcDateItem extends LitElement {
           </div>
         </div>
 
-        ${hasAnyEvents
-          ? html`
-              <div class="content-container">
-                ${repeat(
-                  visibleEvents,
-                  (event, index) =>
-                    `${event.title}-${event.startTime}-${event.endTime}-${index}`,
-                  (event) => html`
-                    <obc-event-item
-                      .title=${event.title}
-                      .description=${event.description ?? ''}
-                      .startTime=${event.startTime}
-                      .endTime=${event.endTime}
-                      .eventItemType=${event.eventItemType ??
-                      EventItemType.SingleLine}
-                      .hasArrow=${event.hasArrow ?? false}
-                      .hasTime=${event.hasTime ?? false}
-                      .hasEndTime=${event.hasEndTime ?? false}
-                      .aggregatedCount=${event.aggregatedCount ?? 0}
-                      .colorCoded=${event.colorCoded ?? false}
-                      .disabled=${this.disabled || !!event.disabled}
-                    ></obc-event-item>
-                  `
-                )}
-                ${aggregatedCount > 0
-                  ? html`
+        ${
+          hasAnyEvents
+            ? html`
+                <div class="content-container">
+                  ${repeat(
+                    visibleEvents,
+                    (event, index) =>
+                      `${event.title}-${event.startTime}-${event.endTime}-${index}`,
+                    (event) => html`
                       <obc-event-item
-                        .eventItemType=${EventItemType.Aggregated}
-                        .aggregatedCount=${aggregatedCount}
-                        ?disabled=${this.disabled}
+                        .title=${event.title}
+                        .description=${event.description ?? ''}
+                        .startTime=${event.startTime}
+                        .endTime=${event.endTime}
+                        .eventItemType=${
+                          event.eventItemType ?? EventItemType.SingleLine
+                        }
+                        .hasArrow=${event.hasArrow ?? false}
+                        .hasTime=${event.hasTime ?? false}
+                        .hasEndTime=${event.hasEndTime ?? false}
+                        .aggregatedCount=${event.aggregatedCount ?? 0}
+                        .colorCoded=${event.colorCoded ?? false}
+                        .disabled=${this.disabled || !!event.disabled}
                       ></obc-event-item>
                     `
-                  : nothing}
-              </div>
-            `
-          : nothing}
+                  )}
+                  ${
+                    aggregatedCount > 0
+                      ? html`
+                          <obc-event-item
+                            .eventItemType=${EventItemType.Aggregated}
+                            .aggregatedCount=${aggregatedCount}
+                            ?disabled=${this.disabled}
+                          ></obc-event-item>
+                        `
+                      : nothing
+                  }
+                </div>
+              `
+            : nothing
+        }
       </div>
     `;
   }

@@ -182,9 +182,9 @@ export class ObcCheckButton extends LitElement {
     if (this.type === CheckButtonType.checkbox) {
       return html`
         <div class="icon-container">
-          ${this.checked
-            ? this.renderCheckedIcon()
-            : this.renderUncheckedIcon()}
+          ${
+            this.checked ? this.renderCheckedIcon() : this.renderUncheckedIcon()
+          }
         </div>
       `;
     }

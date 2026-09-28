@@ -363,9 +363,11 @@ export class ObcCompassFlat extends LitElement {
           .bottomBar=${!!this.rotType}
           .rotType=${this.rotType}
           .rotStartX=${0}
-          .rotEndX=${(this._effectiveRotDegPerMin / (this.rotMaxValue || 1)) *
-          this.rotArcExtent *
-          translationScale}
+          .rotEndX=${
+            (this._effectiveRotDegPerMin / (this.rotMaxValue || 1)) *
+            this.rotArcExtent *
+            translationScale
+          }
           .rotDotSpacing=${LINEAR_DOT_ANGLE_SPACING * translationScale}
           .rateOfTurnDegreesPerMinute=${this.rateOfTurnDegreesPerMinute}
           .rotDotAnimationFactor=${this.rotDotAnimationFactor}

@@ -15,6 +15,7 @@ import '../../icons/icon-link.js';
 import {NotificationButtonStyle} from '../../components/notification-button/notification-button.js';
 import {property} from 'lit/decorators.js';
 import {msg} from '@lit/localize';
+import {stopPropagation} from '../../internal/events.js';
 
 /**
  * `<obc-integration-bar-dropdown>` – A compact top-level integration header with a dropdown selector, status fields and system action buttons.
@@ -49,6 +50,7 @@ import {msg} from '@lit/localize';
  * @property systemButtonActivated - Pressed styling for the system button.
  * @availableWhen systemButtonActivated showSystemButton==true
  * @property nStatusFields - How many `status-icon-N`/`status-label-N` slot pairs are rendered.
+ * @property hasRightTrayLeading - Renders the `right-tray-leading` slot first in the right-hand button group.
  *
  * @slot vessel-selector - Vessel selector content
  * @slot status-label-1 - Label for the first status field
@@ -58,6 +60,7 @@ import {msg} from '@lit/localize';
  * @slot status-label-3 - Label for the third status field
  * @slot status-icon-3 - Icon for the third status field
  * @slot clock - Custom clock content, rendered when `showClock` is true
+ * @slot right-tray-leading - Consumer-defined controls, placed first in the right-hand button group; rendered when `hasRightTrayLeading` is true
  *
  * @fires {CustomEvent} home-button-clicked - Fired when the home button is clicked
  * @fires {CustomEvent} link-button-clicked - Fired when the link button is clicked
@@ -91,6 +94,7 @@ export class ObcIntegrationBarDropdown extends LitElement {
   @property({type: Boolean}) showSystemButton = false;
   @property({type: Boolean}) systemButtonActivated = false;
   @property({type: Number}) nStatusFields = 0;
+  @property({type: Boolean}) hasRightTrayLeading = false;
 
   private renderStatusFields() {
     if (this.nStatusFields <= 0) {
@@ -135,91 +139,118 @@ export class ObcIntegrationBarDropdown extends LitElement {
     return html`
       <div class="wrapper">
         <div class="left-side">
-          ${this.showHomeButton
-            ? this.renderIconButton(
-                'home',
-                this.homeButtonActivated,
-                msg('Home'),
-                html`<obi-home></obi-home>`,
-                () => this.dispatchEvent(new CustomEvent('home-button-clicked'))
-              )
-            : nothing}
-          ${this.showLinkButton
-            ? this.renderIconButton(
-                'link',
-                this.linkButtonActivated,
-                msg('Link'),
-                html`<obi-link></obi-link>`,
-                () => this.dispatchEvent(new CustomEvent('link-button-clicked'))
-              )
-            : nothing}
+          ${
+            this.showHomeButton
+              ? this.renderIconButton(
+                  'home',
+                  this.homeButtonActivated,
+                  msg('Home'),
+                  html`<obi-home></obi-home>`,
+                  () =>
+                    this.dispatchEvent(new CustomEvent('home-button-clicked'))
+                )
+              : nothing
+          }
+          ${
+            this.showLinkButton
+              ? this.renderIconButton(
+                  'link',
+                  this.linkButtonActivated,
+                  msg('Link'),
+                  html`<obi-link></obi-link>`,
+                  () =>
+                    this.dispatchEvent(new CustomEvent('link-button-clicked'))
+                )
+              : nothing
+          }
           <slot name="vessel-selector"></slot>
           ${this.renderStatusFields()}
         </div>
         <div class="right-side">
-          ${this.showAlertButton
-            ? this.renderIconButton(
-                'alert',
-                this.alertButtonActivated,
-                msg('Alerts'),
-                html`<obi-alerts></obi-alerts>`,
-                () =>
-                  this.dispatchEvent(new CustomEvent('alert-button-clicked'))
-              )
-            : nothing}
-          ${this.showNotificationButton
-            ? // TODO(designer): keep the Enhanced badge button here, or match the
-              // sibling bar's plain notification icon button? (#624)
-              html`<obc-notification-button
-                @click=${() =>
-                  this.dispatchEvent(
-                    new CustomEvent('notification-button-clicked')
-                  )}
-                .buttonStyle=${NotificationButtonStyle.Enhanced}
-                .showCount=${this.showNotificationCount}
-                .count=${this.notificationCount}
-                ?isActive=${this.notificationButtonActivated}
-              ></obc-notification-button>`
-            : nothing}
-          ${this.showScreenButton
-            ? this.renderIconButton(
-                'screen',
-                this.screenButtonActivated,
-                msg('Screen'),
-                html`<obi-screen-desk></obi-screen-desk>`,
-                () =>
-                  this.dispatchEvent(new CustomEvent('screen-button-clicked'))
-              )
-            : nothing}
-          ${this.showSystemButton
-            ? this.renderIconButton(
-                'system',
-                this.systemButtonActivated,
-                msg('System'),
-                html`<obi-configure></obi-configure>`,
-                () =>
-                  this.dispatchEvent(new CustomEvent('system-button-clicked'))
-              )
-            : nothing}
-          ${this.showDimmingButton
-            ? this.renderIconButton(
-                'dimming',
-                this.dimmingButtonActivated,
-                msg('Dimming'),
-                html`<obi-palette-day-night-iec></obi-palette-day-night-iec>`,
-                () =>
-                  this.dispatchEvent(new CustomEvent('dimming-button-clicked'))
-              )
-            : nothing}
-          ${this.showUserButton
-            ? this.renderIconButton(
-                'user',
-                this.userButtonActivated,
-                msg('User'),
-                html`<obi-user></obi-user>`,
-                () => this.dispatchEvent(new CustomEvent('user-button-clicked'))
-              )
-            : nothing}
+          ${
+            this.hasRightTrayLeading
+              ? html`<slot name="right-tray-leading"></slot>`
+              : nothing
+          }
+          ${
+            this.showAlertButton
+              ? this.renderIconButton(
+                  'alert',
+                  this.alertButtonActivated,
+                  msg('Alerts'),
+                  html`<obi-alerts></obi-alerts>`,
+                  () =>
+                    this.dispatchEvent(new CustomEvent('alert-button-clicked'))
+                )
+              : nothing
+          }
+          ${
+            this.showNotificationButton
+              ? // TODO(designer): keep the Enhanced badge button here, or match the
+                // sibling bar's plain notification icon button? (#624)
+                html`<obc-notification-button
+                  @obc-click=${stopPropagation}
+                  @click=${() =>
+                    this.dispatchEvent(
+                      new CustomEvent('notification-button-clicked')
+                    )}
+                  .buttonStyle=${NotificationButtonStyle.Enhanced}
+                  .showCount=${this.showNotificationCount}
+                  .count=${this.notificationCount}
+                  ?isActive=${this.notificationButtonActivated}
+                ></obc-notification-button>`
+              : nothing
+          }
+          ${
+            this.showScreenButton
+              ? this.renderIconButton(
+                  'screen',
+                  this.screenButtonActivated,
+                  msg('Screen'),
+                  html`<obi-screen-desk></obi-screen-desk>`,
+                  () =>
+                    this.dispatchEvent(new CustomEvent('screen-button-clicked'))
+                )
+              : nothing
+          }
+          ${
+            this.showSystemButton
+              ? this.renderIconButton(
+                  'system',
+                  this.systemButtonActivated,
+                  msg('System'),
+                  html`<obi-configure></obi-configure>`,
+                  () =>
+                    this.dispatchEvent(new CustomEvent('system-button-clicked'))
+                )
+              : nothing
+          }
+          ${
+            this.showDimmingButton
+              ? this.renderIconButton(
+                  'dimming',
+                  this.dimmingButtonActivated,
+                  msg('Dimming'),
+                  html`<obi-palette-day-night-iec></obi-palette-day-night-iec>`,
+                  () =>
+                    this.dispatchEvent(
+                      new CustomEvent('dimming-button-clicked')
+                    )
+                )
+              : nothing
+          }
+          ${
+            this.showUserButton
+              ? this.renderIconButton(
+                  'user',
+                  this.userButtonActivated,
+                  msg('User'),
+                  html`<obi-user></obi-user>`,
+                  () =>
+                    this.dispatchEvent(new CustomEvent('user-button-clicked'))
+                )
+              : nothing
+          }
           ${this.showClock ? html`<slot name="clock"></slot>` : nothing}
         </div>
       </div>

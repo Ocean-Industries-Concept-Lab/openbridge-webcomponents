@@ -136,14 +136,16 @@ export class ObcClock extends LitElement {
     const query = `@media (max-width: ${this.blinkOnlyBreakpointPx}px )`;
 
     const firstRow = html`<div class="clock">
-        ${hoursString}${ticks}${minutesString}${this.showSeconds
-          ? html`${ticks}${secondsString}`
-          : ''}${ampm}
+        ${hoursString}${ticks}${minutesString}${
+          this.showSeconds ? html`${ticks}${secondsString}` : ''
+        }${ampm}
       </div>
 
-      ${this.showTimezone
-        ? html`<div class="timezone">${this.timezoneString}</div>`
-        : null}`;
+      ${
+        this.showTimezone
+          ? html`<div class="timezone">${this.timezoneString}</div>`
+          : null
+      }`;
 
     return html`
       <style>

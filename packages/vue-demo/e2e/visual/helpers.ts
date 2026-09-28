@@ -61,7 +61,7 @@ export async function freezeAndStub(page: Page): Promise<void> {
     // (unlike toHaveScreenshot) does not depend on rAF.
     window.requestAnimationFrame = () => 0
     window.cancelAnimationFrame = () => {}
-    window.setInterval = (() => 0) as typeof window.setInterval
+    window.setInterval = (() => 0) as unknown as typeof window.setInterval
     window.clearInterval = (() => {}) as typeof window.clearInterval
     const inject = () => {
       const style = document.createElement('style')

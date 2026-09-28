@@ -21,14 +21,17 @@ export default defineConfigWithVueTs(
   {
     files: ['*.vue', '**/*.vue'],
     languageOptions: {
-      parser: vueParser,
-    },
+      parser: vueParser
+    }
   },
   {
     rules: {
+      // A hyphenated `.prop` binding on a custom element sets a property
+      // named `max-digits`; the components take camelCase.
+      'vue/attribute-hyphenation': ['warn', 'always', { ignoreTags: ['/^obc-/', '/^obi-/'] }],
       'vue/no-deprecated-slot-attribute': 'off',
       'vue/no-v-text-v-html-on-component': 'off',
-      'vue/no-v-html': 'off',
-    },
-  },
+      'vue/no-v-html': 'off'
+    }
+  }
 )

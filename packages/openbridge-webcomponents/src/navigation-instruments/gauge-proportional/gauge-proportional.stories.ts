@@ -102,17 +102,19 @@ const meta = {
       .hasLabelStack=${args.hasLabelStack ?? true}
       .tag=${args.tag ?? ''}
     >
-      ${args.hasIcon
-        ? args.priority === GaugeProportionalPriority.off
-          ? html`<obi-placeholder-device-off-f
-              slot="icon"
-              .useCssColor=${true}
-            ></obi-placeholder-device-off-f>`
-          : html`<obi-placeholder-device-on
-              slot="icon"
-              .useCssColor=${true}
-            ></obi-placeholder-device-on>`
-        : ''}
+      ${
+        args.hasIcon
+          ? args.priority === GaugeProportionalPriority.off
+            ? html`<obi-placeholder-device-off-f
+                slot="icon"
+                .useCssColor=${true}
+              ></obi-placeholder-device-off-f>`
+            : html`<obi-placeholder-device-on
+                slot="icon"
+                .useCssColor=${true}
+              ></obi-placeholder-device-on>`
+          : ''
+      }
     </obc-gauge-proportional>
   `,
 } satisfies Meta<GaugeProportionalStoryArgs>;

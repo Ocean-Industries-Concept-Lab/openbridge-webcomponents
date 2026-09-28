@@ -180,14 +180,16 @@ export function renderCenterReadouts(
   return html`
     <div class="center-readout-group">
       ${renderEntry(first)}
-      ${rest.length > 0
-        ? html`
-            <div class="center-readout-divider"></div>
-            <div class="center-readout-secondary-row">
-              ${rest.map((entry) => renderEntry(entry))}
-            </div>
-          `
-        : nothing}
+      ${
+        rest.length > 0
+          ? html`
+              <div class="center-readout-divider"></div>
+              <div class="center-readout-secondary-row">
+                ${rest.map((entry) => renderEntry(entry))}
+              </div>
+            `
+          : nothing
+      }
     </div>
   `;
 }

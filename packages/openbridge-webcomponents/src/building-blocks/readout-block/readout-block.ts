@@ -549,13 +549,17 @@ export class ObcReadoutBlock extends LitElement {
             .alignment=${this.alignment}
             .tabularNums=${true}
           >
-            ${sign}${showSignSpacer
-              ? html`<span class="sign-spacer" aria-hidden="true">-</span>`
-              : nothing}${hinted
-              ? html`<span class="hinted-zero" aria-hidden="true"
-                  >${hinted}</span
-                >`
-              : nothing}${magnitude}
+            ${sign}${
+              showSignSpacer
+                ? html`<span class="sign-spacer" aria-hidden="true">-</span>`
+                : nothing
+            }${
+              hinted
+                ? html`<span class="hinted-zero" aria-hidden="true"
+                    >${hinted}</span
+                  >`
+                : nothing
+            }${magnitude}
             ${reserver ? html`<span slot="length">${reserver}</span>` : nothing}
           </obc-textbox>
           ${this.hasDegree ? this.renderDegreeGlyph(valueSize) : nothing}
