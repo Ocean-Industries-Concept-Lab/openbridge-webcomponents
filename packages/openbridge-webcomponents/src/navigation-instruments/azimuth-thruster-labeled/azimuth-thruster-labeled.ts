@@ -14,6 +14,7 @@ import {LinearAdvice} from '../thruster/advice.js';
 import {PropellerType} from '../thruster/propeller.js';
 import {TickmarkStyle} from '../watch/tickmark.js';
 import {customElement} from '../../decorator.js';
+import {stopPropagation} from '../../internal/events.js';
 
 export enum AzimuthThrusterLabeledSize {
   medium = 'medium',
@@ -108,6 +109,8 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
         </div>
         <obc-readout
           class="readout-angle"
+          @source-change=${stopPropagation}
+          @source-flyout-click=${stopPropagation}
           .size=${effectiveReadoutSize}
           .direction=${ReadoutDirection.vertical}
           .hasSetpoint=${true}
@@ -133,6 +136,8 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
         </obc-readout>
         <obc-readout
           class="readout-power"
+          @source-change=${stopPropagation}
+          @source-flyout-click=${stopPropagation}
           .size=${effectiveReadoutSize}
           .direction=${ReadoutDirection.vertical}
           .hasSetpoint=${true}

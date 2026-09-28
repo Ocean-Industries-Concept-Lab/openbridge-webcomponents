@@ -17,6 +17,9 @@ import {ModalFocusController} from '../../internal/modal-focus-controller.js';
  * returns to the opener on disconnect. The dialog is named by `aria-label`
  * when set, else by its header, which then has to carry text.
  *
+ * Left out: a description (`aria-describedby`); the dialog is announced by
+ * its name only.
+ *
  * @property ariaLabel - Accessible name of the dialog, mapped to the `aria-label` attribute. Without it the header slot names the dialog, so an icon-only header needs it.
  * @slot header - Header content shown at the top of the modal.
  * @slot preview - Preview content shown in the body of the modal.

@@ -26,6 +26,7 @@ import {
   AutomationButtonBadgeControl,
   AutomationButtonBadgeInterlock,
 } from '../automation-button/abstract-automation-button.js';
+import {clamp} from '../../svghelpers/math.js';
 
 type StoryArgs = ObcAutomationTank;
 
@@ -741,10 +742,7 @@ export const DashboardRow: Story = {
     const series = (value: number, max: number, seed: number) =>
       Array.from({length: 16}, (_, i) => ({
         label: String(i).padStart(2, '0'),
-        value: Math.min(
-          max,
-          Math.max(0, value * (0.55 + 0.03 * ((i + seed) % 15)))
-        ),
+        value: clamp(value * (0.55 + 0.03 * ((i + seed) % 15)), 0, max),
       }));
     // `position: static` opts out of the shared `crossDecorator`'s
     // `position: absolute; top: 50%; left: 50%`, which would push a full-width

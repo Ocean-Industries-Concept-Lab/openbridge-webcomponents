@@ -6,6 +6,7 @@ import {ReadoutDirection, ReadoutSize} from '../readout/readout.js';
 import {Priority} from '../types.js';
 import {customElement} from '../../decorator.js';
 import {CHEVRON_PATHS, renderChevronBand} from './speed-arrows-art.js';
+import {stopPropagation} from '../../internal/events.js';
 
 export enum Direction {
   forward = 'forward',
@@ -141,6 +142,8 @@ export class ObcSpeedArrows extends LitElement {
           this.readout
             ? html`<obc-readout
                 class="readout"
+                @source-change=${stopPropagation}
+                @source-flyout-click=${stopPropagation}
                 .value=${this.speedKnots}
                 unit="KN"
                 label="Speed"

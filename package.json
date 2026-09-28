@@ -4,6 +4,7 @@
   "scripts": {
     "clean": "npm run clean --workspaces --if-present && rm -rf node_modules",
     "clean:full": "npm run clean && rm -rf packages/openbridge-webcomponents/.full-bundle-publish && find packages/openbridge-webcomponents-ng packages/openbridge-webcomponents-react packages/openbridge-webcomponents-svelte packages/openbridge-webcomponents-vue -mindepth 1 ! -name 'README.md' ! -name 'AGENTS.md' -exec rm -rf {} + || true",
+    "check": "npm run check -w packages/openbridge-webcomponents -w packages/react-demo -w packages/vue-demo -w packages/connector-diagram",
     "format:all": "npm run format --workspaces --if-present",
     "build:docker-for-storybook-testing": "docker build -t openbridge-webcomponents-storybook .",
     "build:demo": "npm run build:full -w packages/openbridge-webcomponents && npm install && npm run build -w packages/openbridge-webcomponents-vue && npm run build -w packages/vue-demo",
@@ -26,6 +27,14 @@
       "prettier --write"
     ],
     "packages/openbridge-webcomponents/**/*.{cjs,html,js,json,md,css}": [
+      "prettier --write"
+    ],
+    "packages/openbridge-webcomponents/{script,.storybook}/**/*.{ts,tsx,mts,mjs}": [
+      "eslint --config packages/openbridge-webcomponents/eslint.config.mjs --max-warnings=0",
+      "prettier --write"
+    ],
+    "packages/openbridge-webcomponents/*.{ts,mts,mjs}": [
+      "eslint --config packages/openbridge-webcomponents/eslint.config.mjs --max-warnings=0",
       "prettier --write"
     ]
   }

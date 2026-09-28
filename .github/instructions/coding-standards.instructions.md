@@ -107,6 +107,23 @@ after, the variant sweep, the story at 2×: a bird's-eye view, not a gallery),
 long-form at the end if needed. The PR body is where root cause, alternatives
 and verification belong — long is fine there, inline in the code it is not.
 
+## Suppressions
+
+A suppression is a decision the reviewer should see the reason for, never a
+way past a failing check. `npm run lint:suppressions` holds it to that, with
+inline directives switched off so no directive can silence it:
+
+- An `eslint-disable`, `eslint-disable-line` or `eslint-disable-next-line`
+  names the rules it turns off and gives the reason after `--`:
+  `// eslint-disable-next-line @typescript-eslint/no-unused-expressions -- the read forces a reflow`.
+- No inline rule configuration (`/* eslint rule: "off" */`); change
+  `eslint.config.mjs` instead.
+- `@ts-expect-error` with its reason; never `@ts-ignore` or `@ts-nocheck`.
+
+A test is never skipped: `.skip`, `.only` and `.todo` on `it`, `test` or
+`describe` fail `npm run lint:eslint`. A behaviour a component lacks is
+written down (a11y.md § 9), not parked in a test that no longer runs.
+
 ## Boolean property naming
 
 Always name boolean properties and parameters using **positive** (affirmative) phrasing — `true` means the feature is on — whatever the default is. Most positive booleans default to `false` (opt-in); the ones below default to `true`, which is why they also need the `attribute: false` rule further down.
@@ -137,6 +154,10 @@ Always name boolean properties and parameters using **positive** (affirmative) p
 Framework wrappers (React, Vue, Angular, Svelte) always set values via properties, so removing the attribute has no effect on wrapper consumers. For plain HTML usage, the property must be set via JavaScript (`el.autoAtSetpoint = false`).
 
 When refactoring an existing negative boolean, also rename it in the interface, mixin/bundle, stories, and all consumer components to keep the public API consistent.
+
+`npm run lint:eslint` rejects a `Boolean` `@property` named `hide…`,
+`disable…` or `no…`. The one left, `obc-integration-bar`'s `hideHomeButton`,
+is public API and carries its suppression with that reason.
 
 ## Storybook title conventions
 

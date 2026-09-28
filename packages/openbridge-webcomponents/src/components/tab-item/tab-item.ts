@@ -1,4 +1,4 @@
-import {LitElement, html, nothing, unsafeCSS} from 'lit';
+import {LitElement, html, nothing, unsafeCSS, type PropertyValues} from 'lit';
 import {ifDefined} from 'lit/directives/if-defined.js';
 import {customElement} from '../../decorator.js';
 import {classMap} from 'lit/directives/class-map.js';
@@ -47,7 +47,7 @@ export interface TabItemBadge {
  *   - **Center Content:** Centers content within the tab (`centerContent` property).
  * - **Divider:** Optional divider line for visual separation.
  * - **Disabled State:** Prevents interaction and visually indicates non-interactive state.
- * - **Keyboard Accessible:** Supports activation via Enter/Space keys.
+ * - **Keyboard Accessible:** `Enter` and `Space` activate the tab; `Delete` closes it when it has a close button.
  *
  * ### Variants and Configuration
  * - **Badge Types:** Supports all badge types from `obc-badge` (e.g., `alarm`, `warning`, `notification`, etc.).
@@ -76,12 +76,19 @@ export interface TabItemBadge {
  *
  * ### Events
  * - `tab-click` – Fired when the tab is clicked or activated via keyboard.
+ * - `tab-close` – Fired when the close button is clicked, or `Delete` is pressed on the tab.
  *
- * ## Keyboard
+ * ### Keyboard
  * One tab of the [APG Tabs pattern](https://www.w3.org/WAI/ARIA/apg/patterns/tabs/):
- * `Enter` and `Space` activate it; the arrow keys, `Home` and `End` belong to
- * the row. `aria-selected` mirrors `checked`.
- * - `tab-close` – Fired when the close button is clicked.
+ * `Enter` and `Space` activate it, and `Delete` closes it when it has a close
+ * button; the arrow keys, `Home` and `End` belong to the row. `aria-selected`
+ * mirrors `checked`, and `panel` becomes the tab's `aria-controls` through
+ * element reflection (`ariaControlsElements`). The close
+ * button stays out of the tab sequence so the row keeps one tab stop, and the
+ * tab announces `Delete` as its shortcut instead.
+ *
+ * Left out: a visible hint that `Delete` closes the tab, which only screen
+ * readers announce; the row lists what it leaves out of the pattern.
  *
  * ### Best Practices
  * - Only one tab in a group should have `checked` set to true.
@@ -130,6 +137,8 @@ export interface TabItemBadge {
  * @property showSubtitle - Shows contextual text below the tab title.
  * @property subtitle - Contextual text shown below the tab title when `showSubtitle` is true.
  * @property disabled - Disables the tab, preventing user interaction and applying disabled styles.
+ * @property panel - The panel this tab shows, announced as the tab's `aria-controls`. `obc-tab-row`
+ *   sets it when it renders panels; the panel has to live in this tab's tree or one it sits inside.
  * @property focusable - Whether the tab is in the tab order. `obc-tab-row` manages this as a
  *   roving tabindex (one tab focusable at a time); a standalone tab stays tabbable.
  * @property badges - Badges shown on the tab. A non-empty array takes precedence over the
@@ -183,6 +192,8 @@ export class ObcTabItem extends LitElement {
   @property({type: Boolean}) disabled = false;
 
   @property({type: Boolean, attribute: false}) focusable = true;
+
+  @property({attribute: false}) panel: Element | null = null;
 
   /**
    * @deprecated Use the `badges` array instead.
@@ -268,9 +279,26 @@ export class ObcTabItem extends LitElement {
   }
 
   private handleKeyDown(event: KeyboardEvent) {
+    // Keys on the close button are its own: Enter there closes the tab.
+    const closeButton = this.shadowRoot?.querySelector('.close-button');
+    if (closeButton && event.composedPath().includes(closeButton)) return;
+    if (event.key === 'Delete') {
+      if (this.hasClose && !this.disabled) {
+        event.preventDefault();
+        this.handleClose(event);
+      }
+      return;
+    }
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       this.handleClick(event);
+    }
+  }
+
+  override updated(changed: PropertyValues<this>) {
+    if (changed.has('panel')) {
+      const tab = this.shadowRoot?.querySelector<HTMLElement>('[role="tab"]');
+      if (tab) tab.ariaControlsElements = this.panel ? [this.panel] : null;
     }
   }
 
@@ -333,6 +361,9 @@ export class ObcTabItem extends LitElement {
         role="tab"
         aria-selected=${this.checked}
         aria-disabled=${ifDefined(this.disabled ? 'true' : undefined)}
+        aria-keyshortcuts=${ifDefined(
+          this.hasClose && !this.disabled ? 'Delete' : undefined
+        )}
         tabindex=${this.disabled ? -1 : this.focusable ? 0 : -1}
         @click=${this.handleClick}
         @keydown=${this.handleKeyDown}
@@ -386,6 +417,7 @@ export class ObcTabItem extends LitElement {
                   variant="flat"
                   @click=${this.handleClose}
                   aria-label="Close tab"
+                  .focusable=${false}
                   .disabled=${this.disabled}
                   ><obi-close-google></obi-close-google
                 ></obc-icon-button>

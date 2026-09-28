@@ -2,7 +2,7 @@ import {LitElement, html, svg, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import componentStyle from './heading-indicator.css?inline';
 import {customElement} from '../../decorator.js';
-import {normalizeAngle} from '../../svghelpers/math.js';
+import {normalizeAngle, clamp} from '../../svghelpers/math.js';
 
 const COMPASS_NORTH_MARKER_PATH =
   'M23.5929 1.56961L19.5645 7.20938C19.3281 7.54031 19.5646 8 19.9713 8L28.0281 8C28.4348 8 28.6714 7.54031 28.435 7.20938L24.4066 1.56961C24.2072 1.29044 23.7923 1.29044 23.5929 1.56961Z';
@@ -196,7 +196,7 @@ export class ObcHeadingIndicator extends LitElement {
       XTD_FRAME_X + XTD_FRAME_INNER_WIDTH - XTD_ARROW_WIDTH - XTD_ARROW_X_BASE
     );
     const xtd = Number.isFinite(this.xtd) ? this.xtd : 0;
-    const clampedXtd = Math.max(-1, Math.min(1, xtd));
+    const clampedXtd = clamp(xtd, -1, 1);
     const offsetPx = clampedXtd * maxOffsetPx;
     const arrowX = XTD_ARROW_X_BASE + offsetPx;
     const arrowCenterX = arrowX + XTD_ARROW_WIDTH / 2;

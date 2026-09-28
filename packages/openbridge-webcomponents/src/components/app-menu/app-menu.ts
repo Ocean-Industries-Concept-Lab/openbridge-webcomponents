@@ -4,6 +4,7 @@ import compentStyle from './app-menu.css?inline';
 import '../text-input-field/text-input-field.js';
 import '../app-button/app-button.js';
 import '../../icons/icon-search.js';
+import {stopPropagation} from '../../internal/events.js';
 
 /**
  * `<obc-app-menu>` – A vertical application menu component with integrated search and customizable app buttons.
@@ -70,6 +71,8 @@ export class ObcAppMenu extends LitElement {
         <obc-text-input-field
           placeholder="Search"
           @input=${this.onSearchInput}
+          @change=${stopPropagation}
+          @clear=${stopPropagation}
           hasLeadingIcon
         >
           <obi-search slot="leading-icon"></obi-search>

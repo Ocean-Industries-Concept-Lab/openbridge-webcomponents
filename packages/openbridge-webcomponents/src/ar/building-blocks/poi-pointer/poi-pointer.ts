@@ -9,6 +9,7 @@ import {
   ObcPoiSelectionFrameType,
 } from '../poi-selection-frame/poi-selection-frame.js';
 import '../poi-selection-frame/poi-selection-frame.js';
+import {clamp} from '../../../svghelpers/math.js';
 
 export enum ObcPoiPointerType {
   Point = 'point',
@@ -197,10 +198,7 @@ export class ObcPoiPointer extends LitElement {
 
     const dtSeconds =
       this.lastFilterTimestampMs > 0
-        ? Math.min(
-            0.25,
-            Math.max(1 / 120, (nowMs - this.lastFilterTimestampMs) / 1000)
-          )
+        ? clamp((nowMs - this.lastFilterTimestampMs) / 1000, 1 / 120, 0.25)
         : 1 / 60;
     this.lastFilterTimestampMs = nowMs;
 

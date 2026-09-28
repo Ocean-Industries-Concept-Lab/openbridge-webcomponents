@@ -33,7 +33,7 @@ import type {
   LinearAdvice,
   LinearAdviceRaw,
 } from '../../building-blocks/instrument-linear/advice.js';
-import {degToRad, radToDeg} from '../../svghelpers/math.js';
+import {degToRad, radToDeg, clamp} from '../../svghelpers/math.js';
 
 export enum ObcPitchRollHeaveType {
   /** Pitch on the right, roll at the bottom, heave in the left band slot. */
@@ -234,7 +234,7 @@ export class ObcPitchRollHeave extends LitElement {
     if (!Number.isFinite(this.scaleForeImage)) {
       return 1;
     }
-    return Math.max(0, Math.min(2, this.scaleForeImage));
+    return clamp(this.scaleForeImage, 0, 2);
   }
 
   private get isDualScale(): boolean {
@@ -265,7 +265,7 @@ export class ObcPitchRollHeave extends LitElement {
   private get requestedRollArcAngle(): number {
     const roll = normalizeArcAngle(this.rollArcAngle, 45);
     const headroom = 90 - this.requestedPitchArcAngle;
-    return Math.max(MIN_ARC_HALF_DEG, Math.min(roll, headroom));
+    return clamp(roll, MIN_ARC_HALF_DEG, headroom);
   }
 
   override render() {

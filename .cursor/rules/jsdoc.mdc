@@ -161,6 +161,14 @@ The two tags behave differently, and both are easy to get silently wrong
   before React's root delegation, killing `onClick` on React ancestors. This is a
   public-API change; note it in the release notes when adding the tag to an
   existing component.
+- **A child's event leaves your component too.** An event dispatched with
+  `bubbles: true, composed: true` crosses every shadow root above it, so it
+  reaches your consumers when you render its dispatcher. Stop it in the
+  listener you bind on the child (the shared `stopPropagation` in
+  `src/internal/events.ts` when nothing else happens there), or declare it
+  with `@fires` when passing it on is part of your API. Reporting it under a
+  new name and letting the original out gives consumers an event nobody
+  documented (#1313). `npm run lint:events` fails on each one.
 - **Always dispatch with `this.`.** A bare `dispatchEvent(new CustomEvent('x'))`
   inside a class method resolves to `globalThis.dispatchEvent`, firing the event
   on `window` where no consumer of the element can observe it (fixed in

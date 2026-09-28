@@ -81,27 +81,38 @@ git status                                                   # only __vis__/linu
 
 ## 5. The gates, before every push
 
-What `build.yml` and `visual-testing.yml` run, in their order. The pre-commit
-hook covers only the staged TypeScript, so it is not the gate.
+One command at the repository root runs what `build.yml` runs on every push,
+in its order, and `script/ci-coverage.test.ts` fails when the two drift
+apart. The pre-commit hook runs the staged-file lints and the three
+whole-package source checks (`lint:slots`, `lint:events`, `lint:apg`); it is
+not the gate.
+
+```bash
+(cd ../.. && npm run check)      # translations, analyze, typecheck (+ tooling), the lint chain, format,
+                                 # imports, test:rules, every browser spec; then react-demo, vue-demo
+                                 # and connector-diagram's own checks. No warnings allowed.
+```
+
+The pieces, for a quick loop on one of them:
 
 ```bash
 npm run typecheck
-npm run lint                     # mixins, variables, palette, icons, slots, agents, lit-analyzer, eslint, comments; no warnings allowed
+npm run lint                     # mixins, variables, palette, icons, slots, events, apg, agents, lit-analyzer, eslint, suppressions, comments
 npm run format:check             # npm run format to fix; covers the root and docs/agents Markdown too
 npm run fix-imports:check
 npx vitest run --config=vitest.browser.config.ts             # every spec
-npm run test:rules               # when script/ or an ESLint rule changed
+npm run test:rules               # the custom ESLint rules, the checkers and the CI coverage guard
 npm run test-a11y                # PRs to develop: axe over every story, then the baseline check
 ```
 
-```bash
-(cd ../vue-demo && npm run lint:check && npm run format:check && npm run type-check)
-```
-
 `npm run lint` in `vue-demo` is `eslint . --fix` and rewrites files;
-`lint:check` is the check. A doc change ends with `npm run agents:sync` and
+`lint:check` is the check, and the demo's `check` runs it with
+`format:check`. Its `type-check` needs the built wrappers, so it runs inside
+`build:demo` (§ 6), as in CI. The demo's Playwright suite is a gate as well;
+§ 6 builds the demo and runs it. A doc change ends with `npm run agents:sync` and
 `npm run lint:agents`, so the adapters and the routing table in `AGENTS.md`
-are committed with it.
+are committed with it; `lint:agents` also fails when `AGENTS.md` passes
+32 KiB, the point past which Codex stops reading it.
 
 ## 6. The wrappers and the demos
 
@@ -131,11 +142,12 @@ npm run dev -w packages/vue-demo                             # http://localhost:
 ```bash
 (cd ../vue-demo && npm run test:visual -- -g <name>)         # <name> as in visual.spec.ts, e.g. conning-psv — not the URL
 (cd ../vue-demo && npm run test:visual:update -- -g <name>)  # then test:visual again
+(cd ../vue-demo && npm run test:e2e)                         # both projects, the functional spec too, as CI runs them
 ```
 
-The suite does not run in CI, so a baseline elsewhere may already be stale:
-refresh only the routes your change touches and say in the PR body which
-moved and why.
+CI runs the whole suite (`visual-testing.yml`, the `vue-demo` job), so a demo
+route your change moves fails there until its baseline is refreshed:
+regenerate those routes and say in the PR body which moved and why.
 
 ## 7. Merging develop, and conflicts
 
@@ -174,11 +186,12 @@ thread gets the same treatment whoever opened it:
 
 ## 9. CI, and the preview links
 
-| Workflow                               | Runs                          | Gates                                                                                                                            |
-| -------------------------------------- | ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| `build.yml`                            | every push                    | typecheck, analyze, the `lint:*` suite, format, imports, the demos' ESLint, the browser specs, `test:rules`, every package build |
-| `visual-testing.yml`                   | PRs to `develop` and `stable` | the snapshot suite against `__vis__/linux/__baselines__`, then axe against `__a11y__/baseline.json`                              |
-| `build_demo`, then the deploy workflow | every PR push                 | builds Storybook and the vue demo, publishes both to a per-PR preview channel and edits its two comments on the PR               |
+| Workflow                               | Runs                          | Gates                                                                                                                                |
+| -------------------------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `build.yml`                            | every push                    | typecheck, analyze, the `lint:*` suite, format, imports, the demos' ESLint, the browser specs, `test:rules`, every package build     |
+| `visual-testing.yml`                   | PRs to `develop` and `stable` | the snapshot suite against `__vis__/linux/__baselines__`, then axe against `__a11y__/baseline.json`; the vue demo's Playwright suite |
+| `build_demo`, then the deploy workflow | every PR push                 | builds Storybook and the vue demo, publishes both to a per-PR preview channel and edits its two comments on the PR                   |
+| `pr-body.yml`                          | every PR edit and push        | the PR body: template sections, Docs boxes, named baselines, axe entries and opt-out tags, no `CHANGELOG.md` edit                    |
 
 ```bash
 gh pr checks <n> --watch                       # green before asking for review
@@ -197,5 +210,15 @@ ready change nothing.
 The PR body follows the template (`AGENTS.md` § 8 rule 20); its Verification
 section names the filters that ran and the baselines that moved; the docs
 changed in the same PR carry their synced adapters; the comment pass is done.
+
+`pr-body.yml` checks the body on every edit: the template's sections, the Docs
+boxes ticked, every moved baseline, new axe-baseline story and new opt-out tag
+named, and no hand edit to `CHANGELOG.md`. Run it on the draft before opening
+the PR:
+
+```bash
+node script/check-pr-body.ts --body-file <draft.md> --base origin/develop
+```
+
 The squash commit takes the PR title: `fix:` and `feat:` ship a release,
 `docs:` and `chore:` do not ([`ci-and-release.md`](../../docs/agents/ci-and-release.md)).
