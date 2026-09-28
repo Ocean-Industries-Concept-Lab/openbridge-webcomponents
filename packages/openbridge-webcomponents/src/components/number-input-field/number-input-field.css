@@ -61,7 +61,6 @@
 .wrapper.align-center .value-input {
   field-sizing: content; /* the unit hugs the value; without support the input keeps its intrinsic width */
   width: auto;
-  min-width: 40px;
   text-align: right;
   flex: 0 0 auto;
 }

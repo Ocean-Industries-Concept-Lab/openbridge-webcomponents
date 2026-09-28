@@ -599,6 +599,14 @@ describe('obc-number-input-field', () => {
       const advances = textAdvances(input, input.value);
       const width = advances[advances.length - 1];
       expect(Math.abs(input.offsetWidth - width)).toBeLessThanOrEqual(1);
+    });
+
+    it('hugs a short value, so the value and unit stay centred', async () => {
+      el.value = 1;
+      await settle();
+
+      const advances = textAdvances(input, input.value);
+      const width = advances[advances.length - 1];
       expect(Math.abs(input.offsetWidth - width)).toBeLessThanOrEqual(1);
     });
 
