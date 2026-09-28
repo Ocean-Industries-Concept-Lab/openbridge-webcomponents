@@ -192,16 +192,19 @@ export class ObcAlertMenuItem extends LitElement {
     return this.status !== ObcAlertMenuItemStatus.Unacknowledged;
   }
 
-  private handleMessageClick() {
+  private handleMessageClick(event: Event) {
+    event.stopPropagation();
     this.dispatchEvent(new CustomEvent('item-click'));
     this.open = !this.open;
   }
 
-  private handleActionClick() {
+  private handleActionClick(event: Event) {
+    event.stopPropagation();
     this.dispatchEvent(new CustomEvent('ack-click'));
   }
 
-  private handleSecondaryActionClick() {
+  private handleSecondaryActionClick(event: Event) {
+    event.stopPropagation();
     this.dispatchEvent(new CustomEvent('ack-secondary-click'));
   }
 
@@ -230,9 +233,11 @@ export class ObcAlertMenuItem extends LitElement {
         <slot name="alert-icon" slot="primary-icon"></slot>
         <slot name="title" slot="title">${this.title}</slot>
         <slot name="description" slot="description">${this.description}</slot>
-        ${this.hasIcon
-          ? html`<slot name="icon" slot="secondary-icon"></slot>`
-          : nothing}
+        ${
+          this.hasIcon
+            ? html`<slot name="icon" slot="secondary-icon"></slot>`
+            : nothing
+        }
         ${choose(this.status, [
           [
             ObcAlertMenuItemStatus.NoAckAlarm,

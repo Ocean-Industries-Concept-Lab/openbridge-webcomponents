@@ -4,7 +4,7 @@ import {customElement} from '../../decorator.js';
 import componentStyle from './speed-indicator.css?inline';
 import '../speed-arrows/speed-arrows.js';
 import {ActiveColor, Direction} from '../speed-arrows/speed-arrows.js';
-import {degToRad} from '../../svghelpers/math.js';
+import {degToRad, clamp} from '../../svghelpers/math.js';
 
 export enum SpeedIndicatorType {
   Needle = 'Needle',
@@ -66,7 +66,7 @@ export class ObcSpeedIndicator extends LitElement {
       if (typeof v !== 'number' || !Number.isFinite(v)) {
         return 0;
       }
-      return Math.max(0, Math.min(3, Math.floor(v)));
+      return clamp(Math.floor(v), 0, 3);
     });
   }
 
@@ -87,8 +87,7 @@ export class ObcSpeedIndicator extends LitElement {
         ? this.speed
         : 0;
 
-    const progress =
-      maxSpeed > 0 ? Math.max(0, Math.min(1, rawSpeed / maxSpeed)) : 0;
+    const progress = maxSpeed > 0 ? clamp(rawSpeed / maxSpeed, 0, 1) : 0;
     const speedAngle = progress * 225 - 90;
 
     const r = 20;

@@ -84,16 +84,18 @@ const renderFooter = (args: FormFooterContainerArgs) => html`
     .hasActions=${args.hasActions}
     @action-click=${args.onActionClick}
   >
-    ${args.hasActions
-      ? Array.from({length: Math.max(0, args.actionsCount)}, (_, index) => {
-          const action = index + 1;
-          return html`
-            <obc-icon-button variant="flat" aria-label=${`Action ${action}`}>
-              <obi-placeholder></obi-placeholder>
-            </obc-icon-button>
-          `;
-        })
-      : null}
+    ${
+      args.hasActions
+        ? Array.from({length: Math.max(0, args.actionsCount)}, (_, index) => {
+            const action = index + 1;
+            return html`
+              <obc-icon-button variant="flat" aria-label=${`Action ${action}`}>
+                <obi-placeholder></obi-placeholder>
+              </obc-icon-button>
+            `;
+          })
+        : null
+    }
   </obc-form-footer-container>
 `;
 

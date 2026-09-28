@@ -11,7 +11,7 @@ import {
   SingleAxisInclinometer,
   INCLINOMETER_WATCH_RADIUS,
 } from '../../building-blocks/single-axis-inclinometer/single-axis-inclinometer.js';
-import {degToRad} from '../../svghelpers/math.js';
+import {degToRad, clamp} from '../../svghelpers/math.js';
 
 const watchRadius = INCLINOMETER_WATCH_RADIUS;
 
@@ -57,7 +57,7 @@ export class ObcRoll extends SingleAxisInclinometer {
     if (!Number.isFinite(this.scaleForeImage)) {
       return 1;
     }
-    return Math.max(0, Math.min(2, this.scaleForeImage));
+    return clamp(this.scaleForeImage, 0, 2);
   }
 
   protected override get centerAngle(): number {

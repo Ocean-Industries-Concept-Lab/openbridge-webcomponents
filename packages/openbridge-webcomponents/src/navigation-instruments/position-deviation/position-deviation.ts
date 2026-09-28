@@ -12,6 +12,7 @@ import {
   observeInnerBox,
 } from '../../svghelpers/radial-frame.js';
 import {directionIndicator, setpointMarker} from './shapes.js';
+import {clamp} from '../../svghelpers/math.js';
 
 export enum PositionDeviationOrientation {
   /** North stays at the top; the heading arrow rotates. */
@@ -200,7 +201,7 @@ export class ObcPositionDeviation extends LitElement {
 
   private toRadius(value: number): number {
     const radius = Number.isFinite(value) ? value * this.radiusPerUnit : 0;
-    return Math.min(Math.max(radius, 0), MAX_DEVIATION_RADIUS);
+    return clamp(radius, 0, MAX_DEVIATION_RADIUS);
   }
 
   private renderDeviationZone() {

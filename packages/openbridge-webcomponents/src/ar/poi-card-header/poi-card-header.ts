@@ -155,11 +155,13 @@ export class ObcPoiCardHeader extends LitElement {
     return html`
       <div class="id-container">${this.renderIndexBadge()}</div>
       <div class="header-container">
-        ${this.hasLeadingIcon
-          ? html`<div class="icon-container">
-              <slot class="leading-icon" name="leading-icon"></slot>
-            </div>`
-          : nothing}
+        ${
+          this.hasLeadingIcon
+            ? html`<div class="icon-container">
+                <slot class="leading-icon" name="leading-icon"></slot>
+              </div>`
+            : nothing
+        }
         <span class="title">${this.cardTitle}</span>
       </div>
       ${this.renderSourceBadge()}
@@ -185,20 +187,24 @@ export class ObcPoiCardHeader extends LitElement {
         </div>
         <div class="meta-container">
           ${this.renderSourceBadge()}
-          ${this.timestamp
-            ? html`<span class="timestamp">${this.timestamp}</span>`
-            : nothing}
+          ${
+            this.timestamp
+              ? html`<span class="timestamp">${this.timestamp}</span>`
+              : nothing
+          }
         </div>
       </div>
-      ${this.hasCloseButton
-        ? html`<obc-icon-button
-            variant="flat"
-            class="close-button"
-            @click=${this.handleCloseClick}
-          >
-            <obi-close-google></obi-close-google>
-          </obc-icon-button>`
-        : nothing}
+      ${
+        this.hasCloseButton
+          ? html`<obc-icon-button
+              variant="flat"
+              class="close-button"
+              @click=${this.handleCloseClick}
+            >
+              <obi-close-google></obi-close-google>
+            </obc-icon-button>`
+          : nothing
+      }
     `;
   }
 
@@ -211,13 +217,15 @@ export class ObcPoiCardHeader extends LitElement {
           [`variant-${this.variant}`]: true,
         })}
       >
-        ${this.variant === ObcPoiCardHeaderVariant.Tag
-          ? this.renderTagVariant()
-          : this.variant === ObcPoiCardHeaderVariant.Condensed
-            ? this.renderCondensedVariant()
-            : this.variant === ObcPoiCardHeaderVariant.Regular
-              ? this.renderRegularVariant()
-              : this.renderDetailedVariant()}
+        ${
+          this.variant === ObcPoiCardHeaderVariant.Tag
+            ? this.renderTagVariant()
+            : this.variant === ObcPoiCardHeaderVariant.Condensed
+              ? this.renderCondensedVariant()
+              : this.variant === ObcPoiCardHeaderVariant.Regular
+                ? this.renderRegularVariant()
+                : this.renderDetailedVariant()
+        }
       </div>
     `;
   }

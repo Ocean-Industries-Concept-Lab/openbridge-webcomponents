@@ -208,9 +208,9 @@ export class ObcBadge extends LitElement {
               cy="6"
               r="4.5"
               fill=${isFlat ? 'var(--alert-warning-color)' : 'currentColor'}
-              stroke=${isFlat
-                ? 'var(--alert-warning-outline-color)'
-                : 'currentColor'}
+              stroke=${
+                isFlat ? 'var(--alert-warning-outline-color)' : 'currentColor'
+              }
             />
           </svg>
         `;
@@ -220,9 +220,9 @@ export class ObcBadge extends LitElement {
             <path
               d="M2.2998 2H9.7002C9.848 2 9.92907 2.00015 9.9873 2.00488C9.98955 2.00507 9.99213 2.0047 9.99414 2.00488C9.99436 2.0072 9.9949 2.01006 9.99512 2.0127C9.99985 2.07093 10 2.152 10 2.2998V9.7002C10 9.848 9.99985 9.92907 9.99512 9.9873C9.99493 9.98958 9.99433 9.9921 9.99414 9.99414C9.9921 9.99433 9.98958 9.99493 9.9873 9.99512C9.92907 9.99985 9.848 10 9.7002 10H2.2998C2.152 10 2.07093 9.99985 2.0127 9.99512C2.01006 9.9949 2.0072 9.99436 2.00488 9.99414C2.0047 9.99213 2.00507 9.98955 2.00488 9.9873C2.00015 9.92907 2 9.848 2 9.7002V2.2998L2.00488 2.0127C2.0051 2.01009 2.00467 2.00718 2.00488 2.00488C2.00718 2.00467 2.01009 2.0051 2.0127 2.00488L2.2998 2Z"
               fill=${isFlat ? 'var(--alert-caution-color)' : 'currentColor'}
-              stroke=${isFlat
-                ? 'var(--alert-caution-outline-color)'
-                : 'currentColor'}
+              stroke=${
+                isFlat ? 'var(--alert-caution-outline-color)' : 'currentColor'
+              }
             />
           </svg>
         `;
@@ -243,9 +243,9 @@ export class ObcBadge extends LitElement {
               cy="6"
               r="4.5"
               fill=${isFlat ? 'var(--alert-warning-color)' : 'currentColor'}
-              stroke=${isFlat
-                ? 'var(--alert-warning-outline-color)'
-                : 'currentColor'}
+              stroke=${
+                isFlat ? 'var(--alert-warning-outline-color)' : 'currentColor'
+              }
             />
           </svg>
         `;
@@ -255,9 +255,9 @@ export class ObcBadge extends LitElement {
             <path
               d="M2.2998 2H9.7002C9.848 2 9.92907 2.00015 9.9873 2.00488C9.98955 2.00507 9.99213 2.0047 9.99414 2.00488C9.99436 2.0072 9.9949 2.01006 9.99512 2.0127C9.99985 2.07093 10 2.152 10 2.2998V9.7002C10 9.848 9.99985 9.92907 9.99512 9.9873C9.99493 9.98958 9.99433 9.9921 9.99414 9.99414C9.9921 9.99433 9.98958 9.99493 9.9873 9.99512C9.92907 9.99985 9.848 10 9.7002 10H2.2998C2.152 10 2.07093 9.99985 2.0127 9.99512C2.01006 9.9949 2.0072 9.99436 2.00488 9.99414C2.0047 9.99213 2.00507 9.98955 2.00488 9.9873C2.00015 9.92907 2 9.848 2 9.7002V2.2998L2.00488 2.0127C2.0051 2.01009 2.00467 2.00718 2.00488 2.00488C2.00718 2.00467 2.01009 2.0051 2.0127 2.00488L2.2998 2Z"
               fill=${isFlat ? 'var(--alert-caution-color)' : 'currentColor'}
-              stroke=${isFlat
-                ? 'var(--alert-caution-outline-color)'
-                : 'currentColor'}
+              stroke=${
+                isFlat ? 'var(--alert-caution-outline-color)' : 'currentColor'
+              }
             />
           </svg>
         `;
@@ -266,9 +266,11 @@ export class ObcBadge extends LitElement {
           <svg width="100%" height="100%" viewBox="0 0 12 12" fill="none">
             <path
               d="M11 6L8.5 10.33H3.5L1 6L3.5 1.67H8.5L11 6Z"
-              fill=${isFlat
-                ? 'var(--critical-enabled-background-color)'
-                : 'currentColor'}
+              fill=${
+                isFlat
+                  ? 'var(--critical-enabled-background-color)'
+                  : 'currentColor'
+              }
             />
           </svg>
         `;
@@ -277,9 +279,11 @@ export class ObcBadge extends LitElement {
           <svg width="100%" height="100%" viewBox="0 0 12 12" fill="none">
             <path
               d="M5.25 1H6.75V5.7L9.955 3.85L10.705 5.15L7.5 7L10.705 8.85L9.955 10.15L6.75 8.3V11H5.25V8.3L2.045 10.15L1.295 8.85L4.5 7L1.295 5.15L2.045 3.85L5.25 5.7V1Z"
-              fill=${isFlat
-                ? 'var(--notification-enabled-background-color)'
-                : 'currentColor'}
+              fill=${
+                isFlat
+                  ? 'var(--notification-enabled-background-color)'
+                  : 'currentColor'
+              }
             />
           </svg>
         `;
@@ -311,27 +315,33 @@ export class ObcBadge extends LitElement {
           hideNumber: !this.showNumber,
         })}
       >
-        ${this.effectiveType !== BadgeType.empty
-          ? html`
-              ${this.showIcon
-                ? html`
-                    <div
-                      class=${classMap({
-                        icon: true,
-                        ['type-' + this.type]: isFlat,
-                      })}
-                    >
-                      ${this.renderIcon()}
-                    </div>
-                  `
-                : nothing}
-              ${this.showNumber
-                ? html`<div class="number">
-                    <span class="number-text">${this.number}</span>
-                  </div>`
-                : ''}
-            `
-          : ''}
+        ${
+          this.effectiveType !== BadgeType.empty
+            ? html`
+                ${
+                  this.showIcon
+                    ? html`
+                        <div
+                          class=${classMap({
+                            icon: true,
+                            ['type-' + this.type]: isFlat,
+                          })}
+                        >
+                          ${this.renderIcon()}
+                        </div>
+                      `
+                    : nothing
+                }
+                ${
+                  this.showNumber
+                    ? html`<div class="number">
+                        <span class="number-text">${this.number}</span>
+                      </div>`
+                    : ''
+                }
+              `
+            : ''
+        }
       </div>
     `;
   }

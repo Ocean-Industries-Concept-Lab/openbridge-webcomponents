@@ -57,9 +57,11 @@ export class ObcCommandButton extends LitElement {
       >
         <div class="visible-wrapper" part="visible-wrapper">
           <div class="icon" part="icon">
-            ${this.inCommand
-              ? html`<obi-command-in></obi-command-in>`
-              : html`<obi-command-no></obi-command-no>`}
+            ${
+              this.inCommand
+                ? html`<obi-command-in></obi-command-in>`
+                : html`<obi-command-no></obi-command-no>`
+            }
           </div>
         </div>
       </button>

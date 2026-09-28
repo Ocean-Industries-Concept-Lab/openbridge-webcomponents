@@ -145,9 +145,9 @@ export function playgroundColumn(
   {pinned = false}: {pinned?: boolean} = {}
 ): HTMLTemplateResult {
   return html`<div
-    style="flex: ${pinned
-      ? '0 0 auto'
-      : '1 1 0'}; min-width: 0; display: flex; flex-direction: column; gap: 2px;"
+    style="flex: ${
+      pinned ? '0 0 auto' : '1 1 0'
+    }; min-width: 0; display: flex; flex-direction: column; gap: 2px;"
   >
     <span
       style="flex: 0 0 auto; font-family: var(--font-family-main, sans-serif); font-size: 11px; color: var(--instrument-frame-secondary-color, gray); white-space: nowrap;"

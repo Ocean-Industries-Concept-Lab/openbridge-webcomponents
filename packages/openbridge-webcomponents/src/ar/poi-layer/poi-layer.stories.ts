@@ -2,6 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
 import {createRef, ref} from 'lit/directives/ref.js';
 import {OverlapMode} from './poi-layer.js';
+import type {ObcPoiLayer} from './poi-layer.js';
 import './poi-layer.js';
 import '../poi/poi-data.js';
 import {ObcPoiData, PoiDataValue} from '../poi/poi-data.js';
@@ -383,6 +384,9 @@ export const Overlap: Story = {
     label: 'Overlap',
     debug: true,
   },
+  play: async () => {
+    await waitForStorySettle({drainTransitions: true});
+  },
   render(args) {
     return html`
       <style>
@@ -416,6 +420,9 @@ export const OverlapWithGroup: Story = {
   args: {
     label: 'Overlap Group',
     debug: true,
+  },
+  play: async () => {
+    await waitForStorySettle({drainTransitions: true});
   },
   render(args) {
     return html`
@@ -455,6 +462,9 @@ export const OverlapWithGroupNumbers: Story = {
   args: {
     label: 'Overlap Group (Numbers)',
     debug: true,
+  },
+  play: async () => {
+    await waitForStorySettle({drainTransitions: true});
   },
   render(args) {
     return html`
@@ -496,6 +506,9 @@ export const EnterGroupFromTwo: Story = {
     label: 'Enter Group (2)',
     debug: true,
   },
+  play: async () => {
+    await waitForStorySettle({drainTransitions: true});
+  },
   render(args) {
     const hostRef = createRef<HTMLDivElement>();
     const startFirstX = 180;
@@ -507,11 +520,9 @@ export const EnterGroupFromTwo: Story = {
       root.dataset.animating = 'true';
 
       const a = root.querySelector('obc-poi-data.a') as
-        | (HTMLElement & {x: number; y: number})
-        | null;
+        (HTMLElement & {x: number; y: number}) | null;
       const b = root.querySelector('obc-poi-data.b') as
-        | (HTMLElement & {x: number; y: number})
-        | null;
+        (HTMLElement & {x: number; y: number}) | null;
       if (!a || !b) return;
 
       const start = performance.now();
@@ -608,11 +619,9 @@ export const ExitGroup: Story = {
       root.dataset.animating = 'true';
 
       const a = root.querySelector('obc-poi-data.a') as
-        | (HTMLElement & {x: number; y: number})
-        | null;
+        (HTMLElement & {x: number; y: number}) | null;
       const b = root.querySelector('obc-poi-data.b') as
-        | (HTMLElement & {x: number; y: number})
-        | null;
+        (HTMLElement & {x: number; y: number}) | null;
       if (!a || !b) return;
 
       const start = performance.now();
@@ -682,6 +691,9 @@ export const JoinGroup: Story = {
     label: 'Join Group (3)',
     debug: true,
   },
+  play: async () => {
+    await waitForStorySettle({drainTransitions: true});
+  },
   render(args) {
     const hostRef = createRef<HTMLDivElement>();
     const startAnimation = (root: HTMLElement | null) => {
@@ -689,14 +701,11 @@ export const JoinGroup: Story = {
       root.dataset.animating = 'true';
 
       const a = root.querySelector('obc-poi-data.a') as
-        | (HTMLElement & {x: number; y: number})
-        | null;
+        (HTMLElement & {x: number; y: number}) | null;
       const b = root.querySelector('obc-poi-data.b') as
-        | (HTMLElement & {x: number; y: number})
-        | null;
+        (HTMLElement & {x: number; y: number}) | null;
       const c = root.querySelector('obc-poi-data.c') as
-        | (HTMLElement & {x: number; y: number})
-        | null;
+        (HTMLElement & {x: number; y: number}) | null;
       if (!a || !b || !c) return;
 
       const start = performance.now();
@@ -777,11 +786,9 @@ export const JoinExpandedGroup: Story = {
       root.dataset.animating = 'true';
 
       const a = root.querySelector('obc-poi-data.a') as
-        | (HTMLElement & {x: number; y: number})
-        | null;
+        (HTMLElement & {x: number; y: number}) | null;
       const b = root.querySelector('obc-poi-data.b') as
-        | (HTMLElement & {x: number; y: number})
-        | null;
+        (HTMLElement & {x: number; y: number}) | null;
       if (!a || !b) return;
 
       a.x = 300;
@@ -842,23 +849,22 @@ export const JoinExpandedGroup: Story = {
       setTimeout(() => spawnLateTarget(hostRef.value ?? null), 0);
     }
     setTimeout(() => {
-      const layer = layerRef.value;
+      const layer = layerRef.value as ObcPoiLayer | null;
       if (!layer) return;
       const applyInitialExpand = () => {
-        const group = layer.querySelector('obc-poi-group[data-auto-group]') as {
-          expand: boolean;
-        } | null;
+        const group = layer.autoGroups[0] as
+          (HTMLElement & {expand: boolean}) | undefined;
         if (!group) return false;
         group.expand = !!args.expand;
         return true;
       };
       if (applyInitialExpand()) return;
-      const observer = new MutationObserver(() => {
+      const onGroupingChange = () => {
         if (applyInitialExpand()) {
-          observer.disconnect();
+          layer.removeEventListener('grouping-change', onGroupingChange);
         }
-      });
-      observer.observe(layer, {childList: true, subtree: true});
+      };
+      layer.addEventListener('grouping-change', onGroupingChange);
     }, 0);
     return html`
       <style>
@@ -887,9 +893,11 @@ export const JoinExpandedGroup: Story = {
         >
           <obc-poi-data class="a" .x=${300} .y=${140}></obc-poi-data>
           <obc-poi-data class="b" .x=${320} .y=${100}></obc-poi-data>
-          ${isVitestBrowser
-            ? html`<obc-poi-data class="c" .x=${340} .y=${80}></obc-poi-data>`
-            : html``}
+          ${
+            isVitestBrowser
+              ? html`<obc-poi-data class="c" .x=${340} .y=${80}></obc-poi-data>`
+              : html``
+          }
         </obc-poi-layer>
       </div>
     `;
@@ -913,14 +921,11 @@ export const LeaveExpandedGroup: Story = {
       root.dataset.animating = 'true';
 
       const a = root.querySelector('obc-poi-data.a') as
-        | (HTMLElement & {x: number; y: number})
-        | null;
+        (HTMLElement & {x: number; y: number}) | null;
       const b = root.querySelector('obc-poi-data.b') as
-        | (HTMLElement & {x: number; y: number})
-        | null;
+        (HTMLElement & {x: number; y: number}) | null;
       const c = root.querySelector('obc-poi-data.c') as
-        | (HTMLElement & {x: number; y: number})
-        | null;
+        (HTMLElement & {x: number; y: number}) | null;
       if (!a || !b || !c) return;
 
       a.x = 300;
@@ -963,23 +968,22 @@ export const LeaveExpandedGroup: Story = {
       setTimeout(() => startAnimation(hostRef.value ?? null), 0);
     }
     setTimeout(() => {
-      const layer = layerRef.value;
+      const layer = layerRef.value as ObcPoiLayer | null;
       if (!layer) return;
       const applyInitialExpand = () => {
-        const group = layer.querySelector('obc-poi-group') as {
-          expand: boolean;
-        } | null;
+        const group = layer.autoGroups[0] as
+          (HTMLElement & {expand: boolean}) | undefined;
         if (!group) return false;
         group.expand = !!args.expand;
         return true;
       };
       if (applyInitialExpand()) return;
-      const observer = new MutationObserver(() => {
+      const onGroupingChange = () => {
         if (applyInitialExpand()) {
-          observer.disconnect();
+          layer.removeEventListener('grouping-change', onGroupingChange);
         }
-      });
-      observer.observe(layer, {childList: true, subtree: true});
+      };
+      layer.addEventListener('grouping-change', onGroupingChange);
     }, 0);
     return html`
       <style>
@@ -1037,11 +1041,9 @@ export const CrossingMode: Story = {
       const root = hostRef.value;
       if (!root) return;
       const staticPoi = root.querySelector('obc-poi-data.static') as
-        | (HTMLElement & {x: number; y: number})
-        | null;
+        (HTMLElement & {x: number; y: number}) | null;
       const movingPoi = root.querySelector('obc-poi-data.moving') as
-        | (HTMLElement & {x: number; y: number})
-        | null;
+        (HTMLElement & {x: number; y: number}) | null;
       if (!staticPoi || !movingPoi) return;
       staticPoi.x = staticX;
       movingPoi.x = leftX;
@@ -1084,11 +1086,9 @@ export const CrossingMode: Story = {
         const t = (elapsed % duration) / duration;
 
         const movingPoi = root.querySelector('obc-poi-data.moving') as
-          | (HTMLElement & {x: number; y: number})
-          | null;
+          (HTMLElement & {x: number; y: number}) | null;
         const staticPoi = root.querySelector('obc-poi-data.static') as
-          | (HTMLElement & {x: number; y: number})
-          | null;
+          (HTMLElement & {x: number; y: number}) | null;
         if (!movingPoi || !staticPoi) return;
 
         staticPoi.x = staticX;

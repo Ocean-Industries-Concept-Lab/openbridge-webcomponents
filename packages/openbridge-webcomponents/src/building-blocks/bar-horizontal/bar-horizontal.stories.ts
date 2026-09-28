@@ -839,24 +839,28 @@ export const ChartIntegrationBottom: Story = {
         .showLabels=${_args.hScaleShowLabels}
         .hasBar=${_args.hScaleHasBar}
         .barThickness=${_args.hScaleBarThickness}
-        .fillMode=${_args.hScaleFillMode === 'fill'
-          ? FillMode.fill
-          : FillMode.tint}
+        .fillMode=${
+          _args.hScaleFillMode === 'fill' ? FillMode.fill : FillMode.tint
+        }
         .fillMin=${_args.hScaleFillMin}
         .fillMax=${_args.hScaleFillMax}
         .value=${_args.hScaleValue}
         .setpoint=${_args.hScaleSetpoint}
-        .advicePosition=${_args.hScaleAdvicePosition === 'inner'
-          ? AdvicePosition.inner
-          : _args.hScaleAdvicePosition === 'center'
-            ? AdvicePosition.center
-            : AdvicePosition.outer}
-        .advices=${_args.hScaleAdvices
-          ? [
-              {min: 2, max: 5, type: AdviceType.caution, hinted: true},
-              {min: 8, max: 9.5, type: AdviceType.advice, hinted: false},
-            ]
-          : []}
+        .advicePosition=${
+          _args.hScaleAdvicePosition === 'inner'
+            ? AdvicePosition.inner
+            : _args.hScaleAdvicePosition === 'center'
+              ? AdvicePosition.center
+              : AdvicePosition.outer
+        }
+        .advices=${
+          _args.hScaleAdvices
+            ? [
+                {min: 2, max: 5, type: AdviceType.caution, hinted: true},
+                {min: 8, max: 9.5, type: AdviceType.advice, hinted: false},
+              ]
+            : []
+        }
         .primaryTickmarkInterval=${1}
         .secondaryTickmarkInterval=${0.5}
         .tertiaryTickmarkInterval=${0.125}
@@ -955,18 +959,20 @@ export const ChartIntegrationBottomBackground: Story = {
         .showLabels=${_args.hScaleShowLabels}
         .hasBar=${_args.hScaleHasBar}
         .barThickness=${_args.hScaleBarThickness}
-        .fillMode=${_args.hScaleFillMode === 'fill'
-          ? FillMode.fill
-          : FillMode.tint}
+        .fillMode=${
+          _args.hScaleFillMode === 'fill' ? FillMode.fill : FillMode.tint
+        }
         .fillMin=${_args.hScaleFillMin}
         .fillMax=${_args.hScaleFillMax}
         .value=${_args.hScaleValue}
         .setpoint=${_args.hScaleSetpoint}
-        .advicePosition=${_args.hScaleAdvicePosition === 'inner'
-          ? AdvicePosition.inner
-          : _args.hScaleAdvicePosition === 'center'
-            ? AdvicePosition.center
-            : AdvicePosition.outer}
+        .advicePosition=${
+          _args.hScaleAdvicePosition === 'inner'
+            ? AdvicePosition.inner
+            : _args.hScaleAdvicePosition === 'center'
+              ? AdvicePosition.center
+              : AdvicePosition.outer
+        }
         .advices=${[
           {min: 2, max: 5, type: AdviceType.caution, hinted: true},
           {min: 8, max: 9.5, type: AdviceType.advice, hinted: false},

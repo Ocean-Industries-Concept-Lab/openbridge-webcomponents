@@ -165,8 +165,7 @@ export function createArcOuterLabelPlugin(
       // Arc (pie/donut) chart logic
       if (!options.type || options.type === 'arc') {
         const dataset = chart.data.datasets?.[0] as
-          | ChartDataset<'pie' | 'doughnut', number[]>
-          | undefined;
+          ChartDataset<'pie' | 'doughnut', number[]> | undefined;
         const labels = chart.data.labels ?? [];
         if (!dataset) return;
 
@@ -174,9 +173,7 @@ export function createArcOuterLabelPlugin(
         if (!meta?.data.length) return;
 
         const values = (Array.isArray(dataset.data) ? dataset.data : []) as (
-          | number
-          | null
-          | undefined
+          number | null | undefined
         )[];
 
         meta.data.forEach((element, index) => {

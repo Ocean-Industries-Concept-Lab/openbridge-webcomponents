@@ -10,7 +10,7 @@ export enum SpeedDirectionsFrameStyle {
   compass = 'compass',
 }
 
-// eslint-disable-next-line openbridge/prefer-enum-over-string-literal-union
+// eslint-disable-next-line openbridge/prefer-enum-over-string-literal-union -- an internal geometry key, never the type of a @property
 export type SpeedAxis = 'along' | 'athwartBow' | 'athwartStern' | 'athwartMid';
 
 export interface CellSpec {
@@ -40,10 +40,7 @@ export function speedSteps(
     return 0;
   }
   return Math.min(Math.ceil(Math.abs(speedKnots) / stepKnots), 3) as
-    | 0
-    | 1
-    | 2
-    | 3;
+    0 | 1 | 2 | 3;
 }
 
 /** Half-length of a circle chord drawn at the given offset from center. */

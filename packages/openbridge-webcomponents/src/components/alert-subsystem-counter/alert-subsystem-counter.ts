@@ -119,9 +119,11 @@ export class ObcAlertSubsystemCounter extends LitElement {
           <div class="label">${this.label}</div>
         </div>
         <div class="trailing-container">
-          ${this.hasAlert
-            ? html`<slot name="badges" class="badges"></slot>`
-            : html`<span class="empty">${this.emptyText}</span>`}
+          ${
+            this.hasAlert
+              ? html`<slot name="badges" class="badges"></slot>`
+              : html`<span class="empty">${this.emptyText}</span>`
+          }
         </div>
       </div>
     `;

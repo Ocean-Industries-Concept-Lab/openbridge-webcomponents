@@ -1,4 +1,5 @@
 import {ObcTreeNavigationItem} from '../components/tree-navigation-item/tree-navigation-item.js';
+import {itemFromEvent} from './roving-navigator.js';
 
 /**
  * Host-specific row resolution. The two tree hosts differ only in row tags,
@@ -28,19 +29,18 @@ export interface TreeRovingAdapter<Row extends HTMLElement = HTMLElement> {
  * The host owns the DOM and the event wiring; this class owns the navigation
  * logic. The host calls {@link handleKeydown} from its `keydown` listener and
  * {@link refresh} whenever the structure changes, and supplies a
- * {@link TreeRovingAdapter} for row resolution. Focus only moves on user keys;
+ * {@link TreeRovingAdapter} for row resolution. Flat widgets use
+ * `RovingNavigator` instead. Focus only moves on user keys;
  * `refresh` re-points the roving tabindex without stealing focus.
  */
 export class TreeRovingNavigator<Row extends HTMLElement = HTMLElement> {
   private readonly adapter: TreeRovingAdapter<Row>;
-  private readonly host: HTMLElement;
 
   /** The row that currently holds the single tab stop (roving tabindex). */
   private activeRow?: Row;
 
-  constructor(host: HTMLElement, adapter: TreeRovingAdapter<Row>) {
+  constructor(adapter: TreeRovingAdapter<Row>) {
     this.adapter = adapter;
-    this.host = host;
   }
 
   private isDisabled(row: Row): boolean {
@@ -134,34 +134,23 @@ export class TreeRovingNavigator<Row extends HTMLElement = HTMLElement> {
 
   /**
    * The originating tree row for a keydown. A group's header lives in the
-   * group's own shadow root, so the host-root check resolves a header to its
-   * group rather than the inner header item.
+   * group's own shadow root, so matching against the row list resolves a
+   * header to its group rather than the inner header item.
    */
   private rowFromEvent(event: KeyboardEvent): Row | undefined {
-    // Read the root live: the navigator is constructed before the host connects.
-    const root = this.host.getRootNode();
-    for (const target of event.composedPath()) {
-      if (
-        target instanceof HTMLElement &&
-        target.getRootNode() === root &&
-        this.isRow(target)
-      ) {
-        return target as Row;
-      }
-    }
-    return undefined;
+    return itemFromEvent(event, this.allRows());
   }
 
-  /** Whether an element is one of this tree's rows (group or leaf). */
-  private isRow(el: HTMLElement): boolean {
-    const tops = this.adapter.getRows();
-    const stack = [...tops];
+  /** Every row of the tree, expanded or not. */
+  private allRows(): Row[] {
+    const out: Row[] = [];
+    const stack = [...this.adapter.getRows()];
     while (stack.length) {
       const row = stack.pop()!;
-      if (row === el) return true;
+      out.push(row);
       if (this.adapter.isGroup(row)) stack.push(...this.adapter.childRows(row));
     }
-    return false;
+    return out;
   }
 
   /** Handle a `keydown`; returns true if the key was consumed. */

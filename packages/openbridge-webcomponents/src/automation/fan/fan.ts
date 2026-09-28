@@ -10,7 +10,7 @@ import {ObcAbstractAutomationButtonMotorized} from '../automation-button/abstrac
 @customElement('obc-fan')
 export class ObcFan extends ObcAbstractAutomationButtonMotorized {
   override get icon() {
-    if (this.on) {
+    if (this.turnedOn) {
       return html`<obi-fan-on usecsscolor slot="icon"></obi-fan-on>
         <obi-fan-on usecsscolor slot="icon-silhouette"></obi-fan-on>`;
     } else {

@@ -149,22 +149,26 @@ export class ObcTooltip extends LitElement {
           [this.variant]: true,
         })}
       >
-        ${showIconSlot
-          ? html`
-              <div class="icon-container">
-                <slot name="icon">
-                  <obi-placeholder></obi-placeholder>
-                </slot>
-              </div>
-            `
-          : nothing}
-        ${this.type === TooltipType.label
-          ? html`
-              <div class="label-container">
-                <span class="label-text">${this.label}</span>
-              </div>
-            `
-          : nothing}
+        ${
+          showIconSlot
+            ? html`
+                <div class="icon-container">
+                  <slot name="icon">
+                    <obi-placeholder></obi-placeholder>
+                  </slot>
+                </div>
+              `
+            : nothing
+        }
+        ${
+          this.type === TooltipType.label
+            ? html`
+                <div class="label-container">
+                  <span class="label-text">${this.label}</span>
+                </div>
+              `
+            : nothing
+        }
 
         <div class="bottom-arrow">
           <svg width="10" height="6" viewBox="0 0 10 6" fill="none">

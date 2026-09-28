@@ -12,6 +12,7 @@ import {
   TreeRovingNavigator,
   TreeRovingAdapter,
 } from '../../internal/tree-roving-navigator.js';
+import {PopoverController} from '../../internal/popover-controller.js';
 
 /** A nav-menu tree row is either a navigation item or a navigation item group. */
 type NavTreeRow = ObcNavigationItem | ObcNavigationItemGroup;
@@ -159,13 +160,23 @@ export enum ObcNavigationMenuFlyoutVariant {
  *   `icon-only-large` is the icon-only menu that does, `compact` is the
  *   space-saving menu, and `tree` expands groups inline and indents rows by
  *   depth.
+ * @property softDismiss - Let the browser close this menu on its own: on a click outside it, on `Escape`, or when another menu opens. Leave it off to keep showing and hiding the menu yourself.
+ * @property open - Whether the menu is showing.
+ * @availableWhen open softDismiss==true
  * @slot main - Slot for primary navigation items and groups.
  * @slot footer - Slot for secondary navigation items (e.g., settings, help).
  * @slot logo - Slot for branding/logo area.
+ * @fires {CustomEvent<void>} close - Fired when the menu closed on its own, from a click outside, `Escape`, or another menu opening. `open` is already `false` by the time it arrives.
  * @stable
  */
 @customElement('obc-navigation-menu')
 export class ObcNavigationMenu extends LitElement {
+  @property({type: Boolean}) softDismiss = false;
+
+  @property({type: Boolean}) open = false;
+
+  protected readonly softDismissController = new PopoverController(this);
+
   @property({type: String}) variant: ObcNavigationMenuVariant =
     ObcNavigationMenuVariant.Full;
 
@@ -182,7 +193,7 @@ export class ObcNavigationMenu extends LitElement {
    * navigator that drives `obc-tree-navigation`. Engaged only while
    * `variant === Tree` (see `onTreeKeydown`).
    */
-  private readonly treeNavigator = new TreeRovingNavigator<NavTreeRow>(this, {
+  private readonly treeNavigator = new TreeRovingNavigator<NavTreeRow>({
     getRows: () => this.treeRootRows(),
     childRows: (row) => this.treeChildRows(row),
     isGroup: (row) => isNavGroup(row),
@@ -498,9 +509,9 @@ export class ObcNavigationMenu extends LitElement {
   override render() {
     return html`
       <div
-        class="wrapper ${this.variant} ${this.smallScreen
-          ? 'small-screen'
-          : ''}"
+        class="wrapper ${this.variant} ${
+          this.smallScreen ? 'small-screen' : ''
+        }"
       >
         <nav class="main">
           <ol>
@@ -514,13 +525,15 @@ export class ObcNavigationMenu extends LitElement {
               ${this.smallScreen ? html` <slot name="logo"></slot> ` : nothing}
             </ol>
           </nav>
-          ${this.smallScreen
-            ? nothing
-            : html`
-                <div class="logo">
-                  <slot name="logo"></slot>
-                </div>
-              `}
+          ${
+            this.smallScreen
+              ? nothing
+              : html`
+                  <div class="logo">
+                    <slot name="logo"></slot>
+                  </div>
+                `
+          }
         </div>
       </div>
     `;

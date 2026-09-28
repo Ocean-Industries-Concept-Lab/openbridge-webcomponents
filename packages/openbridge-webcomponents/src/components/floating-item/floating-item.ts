@@ -1,6 +1,7 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
+import {ifDefined} from 'lit/directives/if-defined.js';
 import {customElement} from '../../decorator.js';
 import componentStyle from './floating-item.css?inline';
 
@@ -16,6 +17,15 @@ export enum ObcFloatingItemType {
 export enum ObcFloatingItemDirection {
   horizontal = 'horizontal',
   vertical = 'vertical',
+}
+
+/**
+ * How the item announces itself: an alert interrupts, a status waits its
+ * turn. Set by the alert, notification and advice items.
+ */
+export enum ObcFloatingItemLiveRole {
+  Alert = 'alert',
+  Status = 'status',
 }
 
 export enum ObcFloatingItemLineType {
@@ -111,6 +121,8 @@ export enum ObcFloatingItemLineType {
  *   the better fit for a narrow container.
  * @property lineType - Line wrapping for the message content: `single-line` (default) truncates
  *   to one line, `multi-line` allows up to eight.
+ * @property dismissLabel - Accessible name of the dismiss button; the icon carries none.
+ * @property liveRole - How the item announces itself when it appears: `alert` interrupts, `status` waits its turn. The alert, notification and advice items set it; the bare item announces nothing.
  * @slot primary-icon - Main icon to represent the message’s category.
  * @slot secondary-icon - Additional icon for application-type messages.
  * @slot title - Title or heading of the message.
@@ -139,6 +151,10 @@ export class ObcFloatingItem extends LitElement {
   @property({type: Boolean}) action2 = false;
 
   @property({type: String}) lineType = ObcFloatingItemLineType.singleLine;
+
+  @property({type: String}) dismissLabel = 'Dismiss';
+
+  @property({type: String}) liveRole?: ObcFloatingItemLiveRole;
 
   /** Dispatches **action-click** when the first action button is clicked. */
   private onActionClick = () =>
@@ -179,6 +195,7 @@ export class ObcFloatingItem extends LitElement {
     const closeInMessage = horiz
       ? html`<obc-icon-button
           .variant=${IconButtonVariant.flat}
+          aria-label=${this.dismissLabel}
           @click=${this.onDismissClick}
         >
           <obi-close-google></obi-close-google>
@@ -189,6 +206,7 @@ export class ObcFloatingItem extends LitElement {
     const dismissInAction = !horiz
       ? html`<obc-icon-button
           .variant=${IconButtonVariant.flat}
+          aria-label=${this.dismissLabel}
           @click=${this.onDismissClick}
         >
           <obi-close-google></obi-close-google>
@@ -207,103 +225,127 @@ export class ObcFloatingItem extends LitElement {
           'single-line': this.lineType === ObcFloatingItemLineType.singleLine,
           'multi-line': this.lineType === ObcFloatingItemLineType.multiLine,
         })}
+        role=${ifDefined(this.liveRole)}
       >
         <div class="content-container">
           ${/* only render icons *outside* when horiz */ ''}
           ${horiz ? iconsTemplate : nothing}
 
           <div class="notification-container">
-            ${horiz
-              ? html`
-                  <div class="horizontal-message-container">
+            ${
+              horiz
+                ? html`
+                    <div class="horizontal-message-container">
+                      <div class="message-container">
+                        <div class="title-container">
+                          <div class="title"><slot name="title"></slot></div>
+                          ${
+                            this.hasTimestamp
+                              ? html`<div class="timestamp">
+                                  ${
+                                    this.hasDay
+                                      ? html`<slot name="day"></slot>`
+                                      : nothing
+                                  }
+                                  <slot name="time"></slot>
+                                </div>`
+                              : nothing
+                          }
+                        </div>
+                        <div class="notification">
+                          <slot name="description"></slot>
+                        </div>
+                      </div>
+                      ${closeInMessage}
+                    </div>
+                  `
+                : html`
+                    ${/* non-horiz still gets icons INSIDE */ ''}
+                    ${iconsTemplate}
                     <div class="message-container">
                       <div class="title-container">
                         <div class="title"><slot name="title"></slot></div>
-                        ${this.hasTimestamp
-                          ? html`<div class="timestamp">
-                              ${this.hasDay
-                                ? html`<slot name="day"></slot>`
-                                : nothing}
-                              <slot name="time"></slot>
-                            </div>`
-                          : nothing}
+                        ${
+                          this.hasTimestamp
+                            ? html`<div class="timestamp">
+                                ${
+                                  this.hasDay
+                                    ? html`<slot name="day"></slot>`
+                                    : nothing
+                                }
+                                <slot name="time"></slot>
+                              </div>`
+                            : nothing
+                        }
                       </div>
                       <div class="notification">
                         <slot name="description"></slot>
                       </div>
                     </div>
-                    ${closeInMessage}
-                  </div>
-                `
-              : html`
-                  ${/* non-horiz still gets icons INSIDE */ ''} ${iconsTemplate}
-                  <div class="message-container">
-                    <div class="title-container">
-                      <div class="title"><slot name="title"></slot></div>
-                      ${this.hasTimestamp
-                        ? html`<div class="timestamp">
-                            ${this.hasDay
-                              ? html`<slot name="day"></slot>`
-                              : nothing}
-                            <slot name="time"></slot>
-                          </div>`
-                        : nothing}
+                  `
+            }
+            ${
+              horiz && (showBtn1 || showBtn2)
+                ? html`
+                    <div class="action-container">
+                      ${
+                        showBtn1
+                          ? html`<obc-button
+                              @click=${this.onActionClick}
+                              .fullWidth=${true}
+                            >
+                              <slot name="action"></slot>
+                            </obc-button>`
+                          : nothing
+                      }
+                      ${
+                        showBtn2
+                          ? html`<obc-button
+                              @click=${this.onAction2Click}
+                              .fullWidth=${true}
+                            >
+                              <slot name="action2"></slot>
+                            </obc-button>`
+                          : nothing
+                      }
                     </div>
-                    <div class="notification">
-                      <slot name="description"></slot>
-                    </div>
-                  </div>
-                `}
-            ${horiz && (showBtn1 || showBtn2)
-              ? html`
-                  <div class="action-container">
-                    ${showBtn1
-                      ? html`<obc-button
-                          @click=${this.onActionClick}
-                          .fullWidth=${true}
-                        >
-                          <slot name="action"></slot>
-                        </obc-button>`
-                      : nothing}
-                    ${showBtn2
-                      ? html`<obc-button
-                          @click=${this.onAction2Click}
-                          .fullWidth=${true}
-                        >
-                          <slot name="action2"></slot>
-                        </obc-button>`
-                      : nothing}
-                  </div>
-                `
-              : nothing}
+                  `
+                : nothing
+            }
           </div>
 
           ${/* vertical actions / dismiss */ ''}
-          ${!horiz && (showBtn1 || showBtn2 || dismissInAction)
-            ? html`
-                <div class="vertical-outer-action-container">
-                  <div class="action-container">
-                    ${showBtn1
-                      ? html`<obc-button
-                          @click=${this.onActionClick}
-                          .fullWidth=${true}
-                        >
-                          <slot name="action"></slot>
-                        </obc-button>`
-                      : nothing}
-                    ${showBtn2
-                      ? html`<obc-button
-                          @click=${this.onAction2Click}
-                          .fullWidth=${true}
-                        >
-                          <slot name="action2"></slot>
-                        </obc-button>`
-                      : nothing}
+          ${
+            !horiz && (showBtn1 || showBtn2 || dismissInAction)
+              ? html`
+                  <div class="vertical-outer-action-container">
+                    <div class="action-container">
+                      ${
+                        showBtn1
+                          ? html`<obc-button
+                              @click=${this.onActionClick}
+                              .fullWidth=${true}
+                            >
+                              <slot name="action"></slot>
+                            </obc-button>`
+                          : nothing
+                      }
+                      ${
+                        showBtn2
+                          ? html`<obc-button
+                              @click=${this.onAction2Click}
+                              .fullWidth=${true}
+                            >
+                              <slot name="action2"></slot>
+                            </obc-button>`
+                          : nothing
+                      }
+                    </div>
+                    ${dismissInAction}
                   </div>
-                  ${dismissInAction}
-                </div>
-              `
-            : nothing}
+                `
+              : nothing
+          }
         </div>
       </div>
     `;

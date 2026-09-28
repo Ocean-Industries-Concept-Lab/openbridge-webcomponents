@@ -135,9 +135,11 @@ export class ObcTransmitterButton extends LitElement {
         .advice=${this.adviceValue ?? undefined}
         .adviceOptions=${format}
       >
-        ${this.hasIcon
-          ? html`<slot name="icon" slot="value-icon"></slot>`
-          : nothing}
+        ${
+          this.hasIcon
+            ? html`<slot name="icon" slot="value-icon"></slot>`
+            : nothing
+        }
       </obc-readout-list-item>
     `;
   }
@@ -152,13 +154,17 @@ export class ObcTransmitterButton extends LitElement {
             tag: this.isTag,
           })}
         >
-          ${this.isTag
-            ? html`<span class="label">${this.label}</span>`
-            : this.renderReading()}
+          ${
+            this.isTag
+              ? html`<span class="label">${this.label}</span>`
+              : this.renderReading()
+          }
         </div>
-        ${this.idTag
-          ? html`<span class="visually-hidden">${this.idTag}</span>`
-          : nothing}
+        ${
+          this.idTag
+            ? html`<span class="visually-hidden">${this.idTag}</span>`
+            : nothing
+        }
       </button>
     `;
   }
