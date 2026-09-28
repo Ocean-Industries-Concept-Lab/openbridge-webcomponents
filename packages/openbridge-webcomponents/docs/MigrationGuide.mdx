@@ -1,4 +1,5 @@
 import {Meta, Markdown} from '@storybook/addon-docs/blocks';
+import a11yLabels from './migration-guide/a11y-labels.md?raw';
 import apiAr from './migration-guide/api-ar.md?raw';
 import apiAutomation from './migration-guide/api-automation.md?raw';
 import apiBuildingBlocks from './migration-guide/api-building-blocks.md?raw';
@@ -31,10 +32,11 @@ The [Changelog](?path=/docs/introduction-changelog--docs) lists every change. If
 5. [Framework Wrappers](#framework-wrappers)
 6. [CSS and Theming](#css-and-theming)
 7. [Component Changes](#component-changes)
-8. [Deprecated Components](#deprecated-components)
-9. [API Mapping by Component](#api-mapping-by-component)
-10. [Icons](#icons)
-11. [Troubleshooting](#troubleshooting)
+8. [Keyboard, Focus and Events](#keyboard-focus-and-events)
+9. [Deprecated Components](#deprecated-components)
+10. [API Mapping by Component](#api-mapping-by-component)
+11. [Icons](#icons)
+12. [Troubleshooting](#troubleshooting)
 
 ## Major Breaking Changes
 
@@ -45,7 +47,8 @@ The [Changelog](?path=/docs/introduction-changelog--docs) lists every change. If
 - **Svelte:** eight components renamed a snippet prop, and named slots no longer render a wrapping `div`. See [Svelte](#svelte).
 - **Alert flashing:** `--alarm-blink-*` and `--warning-blink-*` no longer animate; use `--flash-*` and `blinkingAll()`. See [Alert Flashing Variables](#alert-flashing-variables).
 - **CSS variables:** 141 were renamed or removed, and the old names fail without an error. See [Renamed CSS Variables](#renamed-css-variables).
-- **Component APIs:** properties were renamed, retyped or given new defaults, among them the [automation badges](#badges-take-values-silent), [wind speeds in knots](#wind-speed-in-knots-silent), [`obc-card` timeouts in seconds](#obc-card-timeouts-in-seconds-silent) and [`obc-number-input-field` values as numbers](#obc-number-input-field-value-and-events). See [Component Changes](#component-changes) and [API Mapping by Component](#api-mapping-by-component).
+- **Component APIs:** properties were renamed, retyped or given new defaults, among them the [automation badges](#badges-take-values-silent), [wind speeds in knots](#wind-speed-in-knots-silent), [`obc-card` timeouts in seconds](#obc-card-timeouts-in-seconds-silent), [`obc-number-input-field` values as numbers](#obc-number-input-field-value-and-events) and [the motorized buttons' `on` as `turnedOn`](#on-is-now-turnedon-silent). See [Component Changes](#component-changes) and [API Mapping by Component](#api-mapping-by-component).
+- **Keyboard:** the tab row, the toggle button group, the context menu and the navigation menu are one tab stop each, with the arrow keys moving between their items, and the modals take focus when they connect. See [Keyboard, Focus and Events](#keyboard-focus-and-events).
 - **Icons:** 50 icons were renamed, and the wind icons ending in `-1`, `-5` and `-10` kept their names but show a different glyph. See [Icons](#icons).
 - **Deprecations:** 11 components are deprecated. They still work in 2.0. See [Deprecated Components](#deprecated-components).
 
@@ -395,6 +398,18 @@ The tank follows the OpenBridge 6.1 design and is larger at every size ([#862](h
 #### Readout Rows
 
 The value and setpoint rows under a device render through `obc-readout-block` ([#1097](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1097)). A missing value shows the figure dash `‒` instead of the text `NaN`, and hinted zeros are drawn in a dimmed color. The device icon colors moved from the pipe tokens to the automation button tokens, and the new `activated` property draws the selected background ([#967](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/967)).
+
+#### `on` Is Now `turnedOn` _(silent)_
+
+The run state of `obc-motor`, `obc-pump` and `obc-fan` is `turnedOn` ([#1090](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/1090)). The old name begins with `on`, which Svelte and other frameworks read as an event binding, so `on={running}` in a Svelte template registered a listener for an empty event name and left the property at `false`. An `on` attribute is ignored in 2.0 and the device draws its off state.
+
+```html
+<!-- 1.0.1 -->
+<obc-pump on></obc-pump>
+
+<!-- 2.0 -->
+<obc-pump turnedOn></obc-pump>
+```
 
 ### Instruments
 
@@ -801,6 +816,47 @@ The point-of-interest components are experimental in 2.0. Besides the [import pa
 <obc-poi-data></obc-poi-data>
 <obc-poi-layer is-selected></obc-poi-layer>
 ```
+
+## Keyboard, Focus and Events
+
+The components that carry a widget role follow the [WAI-ARIA Authoring Practices](https://www.w3.org/WAI/ARIA/apg/patterns/) in 2.0 ([#1297](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1297), [#1314](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1314)). No property was removed. What changed is how the components answer the keyboard, when they take focus, and which events leave them, so a page that drives them from script or asserts their keyboard behavior in tests needs a second look.
+
+### One Tab Stop per Composite Widget _(silent)_
+
+`obc-tab-row`, `obc-toggle-button-group`, `obc-context-menu-input` and `obc-navigation-menu` hold a single tab stop each, and the arrow keys move between their items, with `Home` and `End` for the first and last. In 1.0.1 every item was its own tab stop, so a test that reached the last of five tabs with five presses of `Tab` now leaves the row on the second.
+
+Two buttons left the tab order, each with a key in its place:
+
+- a tab's close button under `hasClose`, with `Delete` on the focused tab,
+- the close button in `obc-context-menu-input`'s title bar, with `Escape`.
+
+Both still fire the events they fired before, `tab-closed` and `close`.
+
+### Modals Take Focus _(silent)_
+
+`obc-modal-window`, `obc-sequence-modal` and `obc-automation-input-modal` follow the APG dialog pattern: focus moves onto the dialog when the element connects, `Tab` and `Shift+Tab` cycle inside it, and focus returns to the element that opened it when the element disconnects. Focus lands on the dialog container rather than on its first button, so the `Enter` that opened a dialog cannot activate anything in it.
+
+A page that keeps a modal in the DOM and hides it with CSS now takes focus on load. Render the modal only while it is open.
+
+`Escape` also closes `obc-keyboard-full` and `obc-keyboard-numeric`, through the same event as their close button, and `obc-stepper-box` answers the [spinbutton](https://www.w3.org/WAI/ARIA/apg/patterns/spinbutton/) keys wherever focus sits inside it. On `obc-modal-window`, `Escape` fires `close-click`, or `cancel-click` when there is no close button.
+
+### Accessible Names in English
+
+Icon-only buttons name themselves for a screen reader, and the defaults are English. A localized page sets them:
+
+<div style={{overflowX: 'auto'}}>
+
+<Markdown>{a11yLabels}</Markdown>
+
+</div>
+
+`obc-tab-row` and `obc-toggle-button-group` take their own name from `label`, and `obc-table` and `obc-alert-list-details-experimental` forward `aria-label`.
+
+### Events Stay Inside Their Component _(silent)_
+
+A component no longer lets a child's event out unless it documents that event itself, so what an element fires is what its `@fires` list in the docs shows. 75 events that crossed the shadow boundary in 1.0.1 now stop where they are handled, among them the readout source events of the instruments and `tab-click` inside `obc-tab-row`. None of them was documented in 1.0.1 either.
+
+One documented event changed: `obc-bar-horizontal`, `obc-bar-vertical`, `obc-gauge-horizontal` and `obc-gauge-vertical` fire `scale-dimensions-changed` without `composed`, so it no longer crosses out of the shadow root of a component that renders one of them. A listener on the scale itself, or on an ancestor in the same tree, still sees it.
 
 ## Deprecated Components
 
