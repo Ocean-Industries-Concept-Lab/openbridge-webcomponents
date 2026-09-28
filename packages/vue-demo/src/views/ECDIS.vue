@@ -79,8 +79,13 @@ import { getAisStream, getVesselImage, vesselImages, type AisData } from '@/busi
 import { ObcToggleButtonOptionType } from '@oicl/openbridge-webcomponents/dist/components/toggle-button-option/toggle-button-option.js'
 import * as maplibregl from 'maplibre-gl'
 import { type MapOptions, Map as MaplibreglMap, GeoJSONSource, LngLat } from 'maplibre-gl'
+import maplibreWorkerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { Protocol, PMTiles } from 'pmtiles'
+
+// MapLibre 6 finds its worker next to its own module, which Vite neither
+// emits nor serves; `?worker&url` bundles the worker with its shared chunk.
+maplibregl.setWorkerUrl(maplibreWorkerUrl)
 
 const shouldCenter = ref(true)
 
