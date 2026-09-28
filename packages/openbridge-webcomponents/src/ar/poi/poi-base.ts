@@ -6,7 +6,6 @@ import {
   ObcPoiButtonType,
   ObcPoiButtonDataItem,
 } from '../poi-button/poi-button.js';
-import {ObcPoiHeaderState} from '../building-blocks/poi-header/poi-header.js';
 import {
   DEFAULT_LINE_LENGTH_PX,
   ObcPoiState,
@@ -39,8 +38,8 @@ function stripWhitespaceTextNodes(el: Element): void {
   }
 }
 
-const X_FILTER_CUTOFF_HZ = 16;
-const Y_FILTER_CUTOFF_HZ = 16;
+export const X_FILTER_CUTOFF_HZ = 16;
+export const Y_FILTER_CUTOFF_HZ = 16;
 const X_FILTER_DEADBAND_PX = 0.1;
 const X_MOVING_HINT_MS = 120;
 const VALID_POI_TYPES = new Set(Object.values(ObcPoiType));
@@ -717,22 +716,6 @@ export class PoiBase extends LitElement implements Poi {
         <slot name="header" slot="header"></slot>
       </obc-poi-button>
     `;
-  }
-
-  protected get resolvedHeaderState(): ObcPoiHeaderState {
-    switch (this.resolvedPoiState) {
-      case ObcPoiState.Caution:
-        return ObcPoiHeaderState.Caution;
-      case ObcPoiState.Warning:
-        return ObcPoiHeaderState.Warning;
-      case ObcPoiState.Alarm:
-        return ObcPoiHeaderState.Alarm;
-      case ObcPoiState.Enabled:
-      default:
-        return this.selected
-          ? ObcPoiHeaderState.Selected
-          : ObcPoiHeaderState.Enabled;
-    }
   }
 
   /**

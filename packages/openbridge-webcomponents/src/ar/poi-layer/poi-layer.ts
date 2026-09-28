@@ -775,12 +775,31 @@ export class ObcPoiLayer extends LitElement {
         (group) => group.expand === true || group.collapsing === true
       );
       if (expandedAutoGroup) {
-        if (this.joinWhileExpanded) {
-          this.tryJoinExpandedGroup(
-            expandedAutoGroup,
-            targets,
-            rects,
-            enterThreshold
+        const joined = this.joinWhileExpanded
+          ? this.tryJoinExpandedGroup(
+              expandedAutoGroup,
+              targets,
+              rects,
+              enterThreshold
+            )
+          : null;
+        if (joined) {
+          // The geometric clusters predate the join; report the live groups.
+          const liveClusters = existingGroups.map((group) =>
+            this.getGroupMembers(group)
+          );
+          const liveFront = new Set<Poi>();
+          liveClusters.forEach((cluster) => {
+            const front = this.getFrontTarget(cluster, rects);
+            if (front) liveFront.add(front);
+          });
+          behindTargets.delete(joined);
+          preGrouped.delete(joined);
+          this.notifyGroupingChange(
+            liveClusters,
+            liveFront,
+            behindTargets,
+            preGrouped
           );
         }
         return;
@@ -953,9 +972,9 @@ export class ObcPoiLayer extends LitElement {
     targets: Poi[],
     rects: Map<Poi, DOMRect>,
     enterThreshold: number
-  ) {
+  ): Poi | null {
     const groupTargets = this.getGroupTargets(group);
-    if (groupTargets.length === 0) return;
+    if (groupTargets.length === 0) return null;
 
     const groupTargetSet = new Set(groupTargets);
     const candidates = targets.filter(
@@ -964,7 +983,7 @@ export class ObcPoiLayer extends LitElement {
         target.parentElement?.tagName.toLowerCase() !== 'obc-poi-group' &&
         this.getAutoGroupOf(target) === null
     );
-    if (candidates.length === 0) return;
+    if (candidates.length === 0) return null;
 
     const useButtonRects = group.expand === true || group.collapsing === true;
     const groupCenters = groupTargets
@@ -973,7 +992,7 @@ export class ObcPoiLayer extends LitElement {
       )
       .filter((rect): rect is DOMRect => !!rect)
       .map((rect) => rect.left + rect.width / 2);
-    if (groupCenters.length === 0) return;
+    if (groupCenters.length === 0) return null;
 
     const leftMost = Math.min(...groupCenters);
     const rightMost = Math.max(...groupCenters);
@@ -1008,7 +1027,7 @@ export class ObcPoiLayer extends LitElement {
       }
     }
 
-    if (!bestCandidate) return;
+    if (!bestCandidate) return null;
 
     bestCandidate.setAttribute('data-joined-expanded', 'true');
 
@@ -1055,6 +1074,7 @@ export class ObcPoiLayer extends LitElement {
     }
 
     group.refreshExpandedLayout?.(true);
+    return bestCandidate;
   }
 
   private applyStandaloneVisualState(target: Poi, overlap: boolean) {

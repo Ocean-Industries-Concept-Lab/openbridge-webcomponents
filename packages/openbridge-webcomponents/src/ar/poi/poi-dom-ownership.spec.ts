@@ -90,6 +90,30 @@ describe('obc-poi header ownership', () => {
     expect(header.getAttribute('state')).toBe('selected');
     expect(header.parentElement).toBe(poi);
   });
+
+  it('renders a header added after the first render', async () => {
+    const host = mount(`<obc-poi has-header></obc-poi>`);
+    const poi = host.querySelector('obc-poi') as ObcPoi;
+    await settle(poi);
+    const button = poi.shadowRoot?.querySelector('obc-poi-button');
+    const slotBefore = button?.shadowRoot?.querySelector('slot[name="header"]');
+    expect(slotBefore).toBeNull();
+
+    // The forwarding slot sits in obc-poi's shadow tree, so the button only
+    // learns about the new header from the slotchange that bubbles to it.
+    const header = document.createElement('obc-poi-header');
+    header.setAttribute('slot', 'header');
+    header.setAttribute('content', '2');
+    poi.appendChild(header);
+    await settle(poi);
+
+    const headerSlot = button?.shadowRoot?.querySelector(
+      'slot[name="header"]'
+    ) as HTMLSlotElement | null;
+    expect(headerSlot?.assignedElements({flatten: true})).toContain(header);
+    expect(header.getAttribute('state')).toBe('selected');
+    expect(header.parentElement).toBe(poi);
+  });
 });
 
 describe('obc-poi-data header ownership', () => {
@@ -259,6 +283,46 @@ describe('obc-poi-data header ownership', () => {
       layer.shadowRoot?.querySelectorAll('obc-poi-group[data-auto-group]')
         .length
     ).toBe(0);
+  });
+
+  it('reports a target joining an expanded auto-group', async () => {
+    const host = mount(`
+      <obc-poi-layer join-while-expanded style="width: 640px; --obc-poi-layer-min-height: 96px">
+        <obc-poi-data id="g1" x="300" y="90"></obc-poi-data>
+        <obc-poi-data id="g2" x="304" y="110"></obc-poi-data>
+        <obc-poi-data id="late" x="560" y="100"></obc-poi-data>
+      </obc-poi-layer>
+    `);
+    const layer = host.querySelector('obc-poi-layer') as ObcPoiLayer;
+    const late = host.querySelector('#late') as ObcPoiData;
+    await settle(layer, late);
+    await new Promise((r) => setTimeout(r, 400));
+    const [group] = layer.autoGroups as Array<HTMLElement & {expand: boolean}>;
+    expect(group).toBeDefined();
+    group.expand = true;
+    await new Promise((r) => setTimeout(r, 600));
+
+    const events: Array<{clusters: unknown[][]}> = [];
+    layer.addEventListener('grouping-change', (event) => {
+      events.push((event as CustomEvent<{clusters: unknown[][]}>).detail);
+    });
+    // Walk the target in so it reaches the spread-out buttons from outside.
+    for (let x = 560; x >= 300; x -= 20) {
+      late.x = x;
+      await new Promise((r) => setTimeout(r, 60));
+      if (late.hasAttribute('data-joined-expanded')) break;
+    }
+    await new Promise((r) => setTimeout(r, 200));
+
+    expect(late.hasAttribute('data-joined-expanded')).toBe(true);
+    expect(late.parentElement).toBe(layer);
+    expect(
+      events.some((detail) =>
+        detail.clusters.some(
+          (cluster) => cluster.length === 3 && cluster.includes(late)
+        )
+      )
+    ).toBe(true);
   });
 
   it('framework re-renders can replace and reorder grouped targets', async () => {
