@@ -101,8 +101,7 @@ export interface ObcPoiButtonDataItem {
  * - `data` (default `[]`): when non-empty, renders value/label/unit rows.
  * - `hasHeader` + `header` slot: renders a header area and syncs slotted `obc-poi-header` state.
  * - `hasRelation` (default `false`): enables optional relation content in data mode.
- * - `inExpandedGroup` (default `false`): applies `expanded` CSS class.
- * - TODO(designer): Confirm intended UX semantics for `inExpandedGroup` beyond styling.
+ * - `inExpandedGroup` (default `false`): expanded-group presentation state, applied by the owning group composition during expand/collapse orchestration; consumers should not set it directly.
  *
  * ## Usage Guidelines
  * - Use `layout="anchored"` for standalone marker buttons.
@@ -131,6 +130,9 @@ export interface ObcPoiButtonDataItem {
  * </obc-poi-button>
  * ```
  *
+ * @property inExpandedGroup - Expanded-group presentation state, applied by the owning group composition
+ *   while the button is shown inside an expanded `obc-poi-group` and during
+ *   its collapse animations. Consumers should not set it directly.
  * @slot - Icon/content rendered inside `obc-poi-object`.
  * @slot header - Optional header content rendered above the marker body.
  * @slot relation - Optional relation icon/content in data mode when `hasRelation` is true.
@@ -158,13 +160,24 @@ export class ObcPoiButton extends LitElement {
   @property({type: String, attribute: 'header-content'}) headerContent = '';
   private headerContentObserver?: MutationObserver;
 
+  // Forwarding slots from an outer shadow tree (`<slot name="header"
+  // slot="header">` rendered by obc-poi / PoiBase variants) fire
+  // `slotchange` that bubbles through this element; re-render so
+  // `hasHeaderContent` re-evaluates the forwarded assignment.
+  private handleLightSlotChange = () => {
+    this.requestUpdate();
+    this.syncSlottedHeaderState();
+  };
+
   override connectedCallback() {
     super.connectedCallback();
+    this.addEventListener('slotchange', this.handleLightSlotChange);
     this.setupHeaderContentObserver();
   }
 
   override disconnectedCallback() {
     super.disconnectedCallback();
+    this.removeEventListener('slotchange', this.handleLightSlotChange);
     this.headerContentObserver?.disconnect();
     this.headerContentObserver = undefined;
   }
@@ -231,7 +244,16 @@ export class ObcPoiButton extends LitElement {
   }
 
   private get hasHeaderContent(): boolean {
-    return this.querySelector('[slot="header"]') !== null;
+    for (const child of this.querySelectorAll('[slot="header"]')) {
+      if (child instanceof HTMLSlotElement) {
+        if (child.assignedElements({flatten: true}).length > 0) {
+          return true;
+        }
+      } else {
+        return true;
+      }
+    }
+    return false;
   }
 
   private get hasGeneratedHeaderContent(): boolean {

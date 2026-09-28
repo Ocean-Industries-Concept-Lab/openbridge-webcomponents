@@ -1,18 +1,18 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
 import './poi-controller.js';
-import {PoiFitMode} from './poi-controller.js';
+import {PoiDetectionVariant, PoiFitMode} from './poi-controller.js';
 import {PoiLayerSelectionMode} from '../poi-layer-stack/poi-layer-stack.js';
 import '../poi/poi-data.js';
 import '../poi/poi-aton.js';
 import '../poi/poi-vessel.js';
 import '../../icons/icon-beacon-general-east.js';
 import '../../icons/icon-vessel-type-psv-outlined.js';
+import {
+  isVitestBrowser,
+  waitForStorySettle as waitForSharedStorySettle,
+} from '../_test-utils.js';
 import {normalizeAngle, radToDeg} from '../../svghelpers/math.js';
-
-const isVitestBrowser = Boolean(
-  (globalThis as {__vitest_browser__?: unknown}).__vitest_browser__
-);
 
 type PoiControllerArgs = {
   fit: PoiFitMode;
@@ -59,22 +59,7 @@ const waitForStorySettle = async (
     });
   }
 
-  if ('fonts' in document) {
-    await (document as Document & {fonts?: FontFaceSet}).fonts?.ready;
-  }
-
-  await new Promise<void>((resolve) =>
-    requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
-  );
-
-  if (options.drainTransitions && isVitestBrowser) {
-    await new Promise<void>((resolve) => {
-      setTimeout(resolve, 220);
-    });
-    await new Promise<void>((resolve) =>
-      requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
-    );
-  }
+  await waitForSharedStorySettle(options);
 };
 
 const meta: Meta<PoiControllerArgs> = {
@@ -139,7 +124,7 @@ const meta: Meta<PoiControllerArgs> = {
           .fit=${args.fit}
           .classFilter=${args.classFilter}
         >
-          <img slot="media" src="/assets/AR-test-image.png" />
+          <img slot="media" src="/assets/AR-test-image.png" alt="Camera view" />
           <obc-poi-layer-stack
             slot="stack"
             selection-mode=${PoiLayerSelectionMode.Multi}
@@ -219,7 +204,7 @@ export const SelectionMultiAnimated: Story = {
           .fit=${args.fit}
           .classFilter=${args.classFilter}
         >
-          <img slot="media" src="/assets/AR-test-image.png" />
+          <img slot="media" src="/assets/AR-test-image.png" alt="Camera view" />
           <obc-poi-layer-stack
             slot="stack"
             class="stack-animated"
@@ -436,7 +421,7 @@ export const BottomLayerWithValues: Story = {
           .fit=${args.fit}
           .classFilter=${args.classFilter}
         >
-          <img slot="media" src="/assets/AR-test-image.png" />
+          <img slot="media" src="/assets/AR-test-image.png" alt="Camera view" />
           <obc-poi-layer-stack
             slot="stack"
             class="stack-values"
@@ -498,5 +483,72 @@ export const BottomLayerWithValues: Story = {
         requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
       );
     }
+  },
+};
+
+export const DetectionVariants: Story = {
+  args: {},
+  render: (args) => {
+    const detections = [
+      {
+        x: 420,
+        y: 1180,
+        box_width: 46,
+        box_height: 38,
+        id: 'vessel-1',
+        variant: PoiDetectionVariant.Vessel,
+        icon: 'obi-vessel-type-psv-outlined',
+        heading: 45,
+        data: [{label: 'SPD', value: '9.2', unit: 'kts'}],
+      },
+      {
+        x: 900,
+        y: 1150,
+        box_width: 30,
+        box_height: 40,
+        id: 'aton-1',
+        variant: PoiDetectionVariant.Aton,
+        icon: 'obi-beacon-general-east',
+      },
+      {
+        x: 1400,
+        y: 1210,
+        box_width: 40,
+        box_height: 36,
+        id: 'data-1',
+      },
+    ];
+
+    return html`
+      <style>
+        .variants-stage {
+          width: 100%;
+          max-width: 1200px;
+          aspect-ratio: 16 / 9;
+        }
+
+        .variants-stage img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
+        }
+      </style>
+      <div class="variants-stage">
+        <obc-poi-controller .detections=${detections} .fit=${args.fit}>
+          <img slot="media" src="/assets/AR-test-image.png" alt="Camera view" />
+          <obc-poi-layer-stack
+            slot="stack"
+            selection-mode=${PoiLayerSelectionMode.Single}
+          >
+            <obc-poi-layer .isSelected=${true}></obc-poi-layer>
+            <obc-poi-layer data-controller-layer="background"></obc-poi-layer>
+          </obc-poi-layer-stack>
+        </obc-poi-controller>
+      </div>
+    `;
+  },
+  play: async ({canvasElement}) => {
+    await waitForStorySettle(canvasElement);
   },
 };
