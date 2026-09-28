@@ -2,7 +2,7 @@ import {LitElement, html, nothing, svg, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import componentStyle from './rudder-indicator.css?inline';
-import {degToRad} from '../../svghelpers/math.js';
+import {degToRad, clamp} from '../../svghelpers/math.js';
 
 export enum RudderIndicatorState {
   InCommand = 'in-command',
@@ -213,7 +213,7 @@ function clampAngle(value: number): number {
     return 0;
   }
 
-  return Math.max(-90, Math.min(90, value));
+  return clamp(value, -90, 90);
 }
 
 function pointOnArc(

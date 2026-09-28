@@ -70,9 +70,11 @@ const template: AlertFloatingItemTemplate = (args) => html`
     .action=${args.action}
     .action2=${args.action2}
   >
-    ${args.type === ObcFloatingItemType.Application
-      ? html`<div slot="primary-icon"><obi-ship></obi-ship></div>`
-      : ''}
+    ${
+      args.type === ObcFloatingItemType.Application
+        ? html`<div slot="primary-icon"><obi-ship></obi-ship></div>`
+        : ''
+    }
     <span slot="title">Alert title</span>
     <span slot="description">
       ${'A long message of more than one line of text and meaningful content.'}
@@ -174,9 +176,11 @@ export const AlertLongMessage: Story = {
       .action=${args.action}
       .action2=${args.action2}
     >
-      ${args.type === ObcFloatingItemType.Application
-        ? html`<div slot="primary-icon"><obi-ship></obi-ship></div>`
-        : ''}
+      ${
+        args.type === ObcFloatingItemType.Application
+          ? html`<div slot="primary-icon"><obi-ship></obi-ship></div>`
+          : ''
+      }
       <span slot="title">Important Alert</span>
       <span slot="description">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia

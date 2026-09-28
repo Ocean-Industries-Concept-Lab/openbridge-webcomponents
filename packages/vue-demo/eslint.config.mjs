@@ -3,7 +3,7 @@ import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescri
 import skipFormattingConfig from '@vue/eslint-config-prettier/skip-formatting'
 import js from '@eslint/js'
 
-import { includeIgnoreFile } from '@eslint/compat'
+import { includeIgnoreFile } from 'eslint/config'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import vueParser from 'vue-eslint-parser'
@@ -21,14 +21,17 @@ export default defineConfigWithVueTs(
   {
     files: ['*.vue', '**/*.vue'],
     languageOptions: {
-      parser: vueParser,
-    },
+      parser: vueParser
+    }
   },
   {
     rules: {
+      // A hyphenated `.prop` binding on a custom element sets a property
+      // named `max-digits`; the components take camelCase.
+      'vue/attribute-hyphenation': ['warn', 'always', { ignoreTags: ['/^obc-/', '/^obi-/'] }],
       'vue/no-deprecated-slot-attribute': 'off',
       'vue/no-v-text-v-html-on-component': 'off',
-      'vue/no-v-html': 'off',
-    },
-  },
+      'vue/no-v-html': 'off'
+    }
+  }
 )

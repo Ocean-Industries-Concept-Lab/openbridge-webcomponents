@@ -207,27 +207,33 @@ function renderReadout(config: ReadoutConfig) {
       .srcOptions=${o.src}
       .showDebugOverlay=${config.showDebugOverlay ?? false}
     >
-      ${config.hasValueIcon
-        ? html`<obi-placeholder slot="value-icon"></obi-placeholder>`
-        : nothing}
-      ${o.hasLeadingIcon
-        ? html`<obi-placeholder slot="leading-icon"></obi-placeholder>`
-        : nothing}
-      ${config.srcPickerSources
-        ? html`<div slot="src-picker-content">
-            ${config.srcPickerSources.map(
-              (name) => html`
-                <obc-navigation-item
-                  label=${name}
-                  data-value=${name}
-                  ?checked=${name === config.src}
-                >
-                  <obi-placeholder slot="icon"></obi-placeholder>
-                </obc-navigation-item>
-              `
-            )}
-          </div>`
-        : nothing}
+      ${
+        config.hasValueIcon
+          ? html`<obi-placeholder slot="value-icon"></obi-placeholder>`
+          : nothing
+      }
+      ${
+        o.hasLeadingIcon
+          ? html`<obi-placeholder slot="leading-icon"></obi-placeholder>`
+          : nothing
+      }
+      ${
+        config.srcPickerSources
+          ? html`<div slot="src-picker-content">
+              ${config.srcPickerSources.map(
+                (name) => html`
+                  <obc-navigation-item
+                    label=${name}
+                    data-value=${name}
+                    ?checked=${name === config.src}
+                  >
+                    <obi-placeholder slot="icon"></obi-placeholder>
+                  </obc-navigation-item>
+                `
+              )}
+            </div>`
+          : nothing
+      }
     </obc-readout>
   `;
 }
@@ -258,9 +264,11 @@ function renderShowcase(sections: ShowcaseSection[]) {
             <h3 class="ro-section-title">${section.title}</h3>
             <div
               class="ro-grid"
-              style=${section.columns
-                ? `grid-template-columns: repeat(${section.columns}, max-content);`
-                : nothing}
+              style=${
+                section.columns
+                  ? `grid-template-columns: repeat(${section.columns}, max-content);`
+                  : nothing
+              }
             >
               ${section.cases.map(
                 (item) => html`

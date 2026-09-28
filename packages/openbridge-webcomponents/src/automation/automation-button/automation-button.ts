@@ -200,20 +200,24 @@ export class ObcAutomationButton extends LitElement {
             <slot name="badge-bottom-right"></slot>
           </div>
         </div>
-        ${this.showReadoutStack
-          ? html`
-              <div class="badge-spacer"></div>
-              <obc-automation-button-readout-stack
-                .readouts=${this.readouts}
-                .tag=${this.tag}
-                .size=${this.readoutSize}
-                .idTagOrientation=${this.getIdTagOrientation()}
-              ></obc-automation-button-readout-stack>
-            `
-          : nothing}
-        ${this.alert && this.positioning === AutomationButtonPositioning.point
-          ? this.renderAlertFrame(nothing, true)
-          : nothing}
+        ${
+          this.showReadoutStack
+            ? html`
+                <div class="badge-spacer"></div>
+                <obc-automation-button-readout-stack
+                  .readouts=${this.readouts}
+                  .tag=${this.tag}
+                  .size=${this.readoutSize}
+                  .idTagOrientation=${this.getIdTagOrientation()}
+                ></obc-automation-button-readout-stack>
+              `
+            : nothing
+        }
+        ${
+          this.alert && this.positioning === AutomationButtonPositioning.point
+            ? this.renderAlertFrame(nothing, true)
+            : nothing
+        }
       </button>
     `);
   }
@@ -302,16 +306,20 @@ export class ObcAutomationButton extends LitElement {
     ].includes(effectiveVariant);
     return html`<div class=${iconHolderClasses}>
       ${direction}
-      ${showIcon
-        ? html`<div class="icon-primary">
-              <slot name="icon"></slot>
-            </div>
-            ${effectiveVariant === AutomationButtonVariant.flat
-              ? html` <div class="icon-silhouette">
-                  <slot name="icon-silhouette"></slot>
-                </div>`
-              : nothing} `
-        : nothing}
+      ${
+        showIcon
+          ? html`<div class="icon-primary">
+                <slot name="icon"></slot>
+              </div>
+              ${
+                effectiveVariant === AutomationButtonVariant.flat
+                  ? html` <div class="icon-silhouette">
+                      <slot name="icon-silhouette"></slot>
+                    </div>`
+                  : nothing
+              } `
+          : nothing
+      }
       ${progressRing}
     </div>`;
   }

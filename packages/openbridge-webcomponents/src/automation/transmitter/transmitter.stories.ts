@@ -108,9 +108,11 @@ function renderComponent(args: ObcTransmitter) {
       .idTag=${args.idTag}
       .data=${args.data}
     >
-      ${args.hasIcon
-        ? html`<obi-temperature-air slot="icon"></obi-temperature-air>`
-        : ''}
+      ${
+        args.hasIcon
+          ? html`<obi-temperature-air slot="icon"></obi-temperature-air>`
+          : ''
+      }
     </obc-transmitter>
   `;
 }

@@ -157,9 +157,11 @@ export class ObcAdviceButton extends LitElement {
           <div class="icon-container">
             <slot name="icon"> ${this.renderDefaultIcon()} </slot>
           </div>
-          ${hasCounter
-            ? html` <span class="count-label">${this.count}</span> `
-            : nothing}
+          ${
+            hasCounter
+              ? html` <span class="count-label">${this.count}</span> `
+              : nothing
+          }
         </div>
       </button>
     `;

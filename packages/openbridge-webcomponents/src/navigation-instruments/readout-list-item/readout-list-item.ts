@@ -823,42 +823,46 @@ export class ObcReadoutListItem extends LitElement {
     );
     return html`
       <div class="value-cluster" part="value-cluster">
-        ${this.hasAdvice
-          ? this.renderBlock({
-              variant: ReadoutBlockVariant.advice,
-              value: this.advice,
-              valueSize: this.secondarySize,
-              enhanced: false,
-              weight: ObcTextboxFontWeight.regular,
-              hintedZeros: this.adviceOptions?.hintedZeros ?? false,
-              hasSignSpacer: this.adviceOptions?.hasSignSpacer ?? false,
-              spaceReserver: this.adviceOptions?.spaceReserver,
-              hasDegree: this.hasDegree ?? false,
-              dataQuality: this.adviceOptions?.dataQuality,
-              alert: this.adviceOptions?.alert,
-              category: this.adviceOptions?.category,
-              active: this.adviceOptions?.active,
-            })
-          : nothing}
-        ${this.hasSetpoint
-          ? this.renderBlock({
-              variant: ReadoutBlockVariant.setpoint,
-              value: this.setpoint,
-              valueSize: this.setpointSize,
-              // Value and setpoint share the enhanced colour state (both neutral
-              // or both enhanced); the setpoint is bold only while emphasised.
-              enhanced: this.rowEnhanced,
-              weight: this.setpointWeight,
-              hintedZeros: this.setpointOptions?.hintedZeros ?? false,
-              hasSignSpacer: this.setpointOptions?.hasSignSpacer ?? false,
-              spaceReserver: this.setpointOptions?.spaceReserver,
-              hasDegree: this.hasDegree ?? false,
-              touching: this.setpointTouching,
-              hidePhase: setpointHidePhase,
-              dataQuality: this.setpointOptions?.dataQuality,
-              alert: this.setpointOptions?.alert,
-            })
-          : nothing}
+        ${
+          this.hasAdvice
+            ? this.renderBlock({
+                variant: ReadoutBlockVariant.advice,
+                value: this.advice,
+                valueSize: this.secondarySize,
+                enhanced: false,
+                weight: ObcTextboxFontWeight.regular,
+                hintedZeros: this.adviceOptions?.hintedZeros ?? false,
+                hasSignSpacer: this.adviceOptions?.hasSignSpacer ?? false,
+                spaceReserver: this.adviceOptions?.spaceReserver,
+                hasDegree: this.hasDegree ?? false,
+                dataQuality: this.adviceOptions?.dataQuality,
+                alert: this.adviceOptions?.alert,
+                category: this.adviceOptions?.category,
+                active: this.adviceOptions?.active,
+              })
+            : nothing
+        }
+        ${
+          this.hasSetpoint
+            ? this.renderBlock({
+                variant: ReadoutBlockVariant.setpoint,
+                value: this.setpoint,
+                valueSize: this.setpointSize,
+                // Value and setpoint share the enhanced colour state (both neutral
+                // or both enhanced); the setpoint is bold only while emphasised.
+                enhanced: this.rowEnhanced,
+                weight: this.setpointWeight,
+                hintedZeros: this.setpointOptions?.hintedZeros ?? false,
+                hasSignSpacer: this.setpointOptions?.hasSignSpacer ?? false,
+                spaceReserver: this.setpointOptions?.spaceReserver,
+                hasDegree: this.hasDegree ?? false,
+                touching: this.setpointTouching,
+                hidePhase: setpointHidePhase,
+                dataQuality: this.setpointOptions?.dataQuality,
+                alert: this.setpointOptions?.alert,
+              })
+            : nothing
+        }
         ${this.renderValueReading()}
       </div>
     `;
@@ -887,21 +891,23 @@ export class ObcReadoutListItem extends LitElement {
         })}
         part="value-reading"
       >
-        ${this.hasValue
-          ? this.renderBlock({
-              variant: ReadoutBlockVariant.value,
-              value: this.value,
-              valueType: this.valueType,
-              valueSize: this.valueSize,
-              enhanced: this.rowEnhanced,
-              weight: this.valueWeight,
-              hintedZeros: this.valueOptions?.hintedZeros ?? false,
-              hasSignSpacer: this.valueOptions?.hasSignSpacer ?? false,
-              spaceReserver: this.valueOptions?.spaceReserver,
-              off: this.off,
-              hasIcon: this.valueOptions?.hasIcon ?? false,
-            })
-          : nothing}
+        ${
+          this.hasValue
+            ? this.renderBlock({
+                variant: ReadoutBlockVariant.value,
+                value: this.value,
+                valueType: this.valueType,
+                valueSize: this.valueSize,
+                enhanced: this.rowEnhanced,
+                weight: this.valueWeight,
+                hintedZeros: this.valueOptions?.hintedZeros ?? false,
+                hasSignSpacer: this.valueOptions?.hasSignSpacer ?? false,
+                spaceReserver: this.valueOptions?.spaceReserver,
+                off: this.off,
+                hasIcon: this.valueOptions?.hasIcon ?? false,
+              })
+            : nothing
+        }
         ${this.renderValueUnitGap()}
         <div class="unit-area" part="unit-area">
           ${this.renderTrailingUnit()} ${this.renderDegreeSpacer()}
@@ -961,26 +967,32 @@ export class ObcReadoutListItem extends LitElement {
 
     return html`
       <div class="label-container" part="label-container">
-        ${this.hasLeadingIcon
-          ? html`<span class="leading-icon" aria-hidden="true"
-              ><slot name="leading-icon"></slot
-            ></span>`
-          : nothing}
+        ${
+          this.hasLeadingIcon
+            ? html`<span class="leading-icon" aria-hidden="true"
+                ><slot name="leading-icon"></slot
+              ></span>`
+            : nothing
+        }
         <div class="label-stack" part="label-stack">
-          ${this.label
-            ? this.renderTextbox(
-                'label',
-                this.label,
-                this.labelOptions?.spaceReserver
-              )
-            : nothing}
-          ${showLeadingUnit
-            ? this.renderTextbox(
-                'unit',
-                this.unit ?? '',
-                this.unitOptions?.spaceReserver
-              )
-            : nothing}
+          ${
+            this.label
+              ? this.renderTextbox(
+                  'label',
+                  this.label,
+                  this.labelOptions?.spaceReserver
+                )
+              : nothing
+          }
+          ${
+            showLeadingUnit
+              ? this.renderTextbox(
+                  'unit',
+                  this.unit ?? '',
+                  this.unitOptions?.spaceReserver
+                )
+              : nothing
+          }
           ${showLeadingSrc ? this.renderSourceBlock() : nothing}
         </div>
       </div>
@@ -1025,18 +1037,20 @@ export class ObcReadoutListItem extends LitElement {
         part="source-block"
       >
         ${box}
-        ${hasDeviation
-          ? html`<span class="source-deviation">
-              <obi-delta aria-hidden="true"></obi-delta>
-              <obc-textbox
-                class="source-deviation-value"
-                .size=${ObcTextboxSize.xs}
-                .tabularNums=${true}
-                alignment="left"
-                >${deviation}</obc-textbox
-              >
-            </span>`
-          : nothing}
+        ${
+          hasDeviation
+            ? html`<span class="source-deviation">
+                <obi-delta aria-hidden="true"></obi-delta>
+                <obc-textbox
+                  class="source-deviation-value"
+                  .size=${ObcTextboxSize.xs}
+                  .tabularNums=${true}
+                  alignment="left"
+                  >${deviation}</obc-textbox
+                >
+              </span>`
+            : nothing
+        }
       </div>
     `;
   }

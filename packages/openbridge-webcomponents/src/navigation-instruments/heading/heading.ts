@@ -291,15 +291,17 @@ export class ObcHeading extends LitElement {
           .advices=${this.angleAdviceRaw}
           .tickmarks=${tickmarks}
           .watchCircleType=${this.watchCircleType}
-          .vessels=${this.vesselImage !== undefined && !this.hasCenterReadouts
-            ? [
-                {
-                  size: VesselImageSize.medium,
-                  vesselImage: this.vesselImage,
-                  transform: `rotate(${this.heading}deg)`,
-                },
-              ]
-            : []}
+          .vessels=${
+            this.vesselImage !== undefined && !this.hasCenterReadouts
+              ? [
+                  {
+                    size: VesselImageSize.medium,
+                    vesselImage: this.vesselImage,
+                    transform: `rotate(${this.heading}deg)`,
+                  },
+                ]
+              : []
+          }
           .showLabels=${this.showLabels && !frame.labelsHidden}
           .tickmarksInside=${this.tickmarksInside}
           .crosshairEnabled=${true}
@@ -327,17 +329,19 @@ export class ObcHeading extends LitElement {
             this.priorityFor(HeadingPriorityElement.cog)
           )}
         </svg>
-        ${this.hasCenterReadouts
-          ? html`<div class="center-readout-overlay">
-              ${renderCenterReadouts(
-                resolveCompassCenterReadouts(this.centerReadouts, {
-                  heading: this.heading,
-                  courseOverGround: this.courseOverGround,
-                  priorityFor: (source) => this.readoutPriorityFor(source),
-                })
-              )}
-            </div>`
-          : nothing}
+        ${
+          this.hasCenterReadouts
+            ? html`<div class="center-readout-overlay">
+                ${renderCenterReadouts(
+                  resolveCompassCenterReadouts(this.centerReadouts, {
+                    heading: this.heading,
+                    courseOverGround: this.courseOverGround,
+                    priorityFor: (source) => this.readoutPriorityFor(source),
+                  })
+                )}
+              </div>`
+            : nothing
+        }
       </div>
     `;
   }

@@ -126,9 +126,11 @@ export class ObcTransmitter extends LitElement {
     return html`
       <obc-transmitter-button
         class="chip"
-        .variant=${isIndicator
-          ? TransmitterButtonVariant.tag
-          : TransmitterButtonVariant.value}
+        .variant=${
+          isIndicator
+            ? TransmitterButtonVariant.tag
+            : TransmitterButtonVariant.value
+        }
         .size=${this.size}
         .value=${this.value}
         .unit=${this.unit}

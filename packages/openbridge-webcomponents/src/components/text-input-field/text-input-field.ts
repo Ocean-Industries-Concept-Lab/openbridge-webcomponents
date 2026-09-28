@@ -190,9 +190,13 @@ export class ObcTextInputField extends LitElement {
         [`helper-placement-${this.helperPlacement}`]: true,
       })}
     >
-      ${this.hasHelperIcon
-        ? html`<div class="helper-icon"><slot name="helper-icon"></slot></div>`
-        : nothing}
+      ${
+        this.hasHelperIcon
+          ? html`<div class="helper-icon">
+              <slot name="helper-icon"></slot>
+            </div>`
+          : nothing
+      }
       ${text}
     </div>`;
   }
@@ -281,32 +285,40 @@ export class ObcTextInputField extends LitElement {
           'has-trailing-button': hasTrailingButton,
         })}
       >
-        ${this.label
-          ? html`<div
-              class=${classMap({
-                'label-text-container': true,
-                [`label-placement-${this.labelPlacement}`]: true,
-              })}
-            >
-              ${this.hasLabelIcon
-                ? html`<div class="label-icon">
-                    <slot name="label-icon"></slot>
-                  </div>`
-                : nothing}
-              <span class="label-text">${this.label}</span>
-              ${this.required
-                ? html`<div class="required-indicator"></div>`
-                : nothing}
-            </div>`
-          : nothing}
+        ${
+          this.label
+            ? html`<div
+                class=${classMap({
+                  'label-text-container': true,
+                  [`label-placement-${this.labelPlacement}`]: true,
+                })}
+              >
+                ${
+                  this.hasLabelIcon
+                    ? html`<div class="label-icon">
+                        <slot name="label-icon"></slot>
+                      </div>`
+                    : nothing
+                }
+                <span class="label-text">${this.label}</span>
+                ${
+                  this.required
+                    ? html`<div class="required-indicator"></div>`
+                    : nothing
+                }
+              </div>`
+            : nothing
+        }
 
         <div class="horizontal-container">
           <div class="input-field-container">
-            ${this.hasLeadingIcon
-              ? html`<div class="leading-icon">
-                  <slot name="leading-icon"></slot>
-                </div>`
-              : nothing}
+            ${
+              this.hasLeadingIcon
+                ? html`<div class="leading-icon">
+                    <slot name="leading-icon"></slot>
+                  </div>`
+                : nothing
+            }
             <div class="label-container">
               <input
                 type=${effectiveType}
@@ -331,36 +343,44 @@ export class ObcTextInputField extends LitElement {
                 @change=${this.fireChangeEvent}
               />
             </div>
-            ${showPasswordToggle
-              ? html`<obc-icon-button
-                  variant="flat"
-                  class="trailing-icon-button"
-                  @click=${this.togglePasswordVisibility}
-                  aria-label=${this.passwordVisible
-                    ? 'Hide password'
-                    : 'Show password'}
-                >
-                  ${this.passwordVisible
-                    ? html`<obi-visibility-on-google></obi-visibility-on-google>`
-                    : html`<obi-visibility-off-google></obi-visibility-off-google>`}
-                </obc-icon-button>`
-              : nothing}
-            ${isClearButtonVisible
-              ? html`<obc-icon-button
-                  variant="flat"
-                  class="trailing-icon-button"
-                  @click=${this.handleClear}
-                  aria-label="Clear input"
-                >
-                  <obi-close-google></obi-close-google>
-                </obc-icon-button>`
-              : nothing}
+            ${
+              showPasswordToggle
+                ? html`<obc-icon-button
+                    variant="flat"
+                    class="trailing-icon-button"
+                    @click=${this.togglePasswordVisibility}
+                    aria-label=${
+                      this.passwordVisible ? 'Hide password' : 'Show password'
+                    }
+                  >
+                    ${
+                      this.passwordVisible
+                        ? html`<obi-visibility-on-google></obi-visibility-on-google>`
+                        : html`<obi-visibility-off-google></obi-visibility-off-google>`
+                    }
+                  </obc-icon-button>`
+                : nothing
+            }
+            ${
+              isClearButtonVisible
+                ? html`<obc-icon-button
+                    variant="flat"
+                    class="trailing-icon-button"
+                    @click=${this.handleClear}
+                    aria-label="Clear input"
+                  >
+                    <obi-close-google></obi-close-google>
+                  </obc-icon-button>`
+                : nothing
+            }
           </div>
         </div>
 
-        ${this.error && this.errorText
-          ? this.renderFooterText(this.errorText, true)
-          : this.renderFooterText(this.helperText, false)}
+        ${
+          this.error && this.errorText
+            ? this.renderFooterText(this.errorText, true)
+            : this.renderFooterText(this.helperText, false)
+        }
       </label>
     `;
   }

@@ -23,6 +23,8 @@ import {
 } from '../progress-bar/progress-bar.js';
 import {Size, StyleType, Variant} from '../user-button/user-button.js';
 import {localized, msg} from '@lit/localize';
+import {stopPropagation} from '../../internal/events.js';
+import {PopoverController} from '../../internal/popover-controller.js';
 
 export enum ObcUserMenuType {
   signIn = 'sign-in',
@@ -148,17 +150,27 @@ export type ObcUserMenuSignedInAction = {
  * @availableWhen primaryActionId type==signedIn && size==small
  * @property showUseAnotherAccount - Controls the visibility of the "Use another account" button.
  * @availableWhen showUseAnotherAccount type==userSignIn
+ * @property softDismiss - Let the browser close this menu on its own: on a click outside it, on `Escape`, or when another menu opens. Leave it off to keep showing and hiding the menu yourself.
+ * @property open - Whether the menu is showing.
+ * @availableWhen open softDismiss==true
  * @slot signed-in-action-icon-<id> - Optional icon for a signed-in action, one per action; `<id>` is the normalized action id (shown in the `signed-in` type).
  * @fires {CustomEvent<{username?: string, password?: string}>} sign-in-click - Fired when a sign-in button is clicked.
  * @fires {CustomEvent<void>} sign-out-click - Fired when the sign-out button is clicked.
  * @fires {CustomEvent<void>} use-another-account-click - Fired when the "Use another account" button is clicked.
  * @fires {CustomEvent<{id: string, label: string}>} signed-in-action-click - Fired when a signed-in action is clicked.
  * @fires {ObcUserMenuRecentUserClickEvent} recent-user-click - Fired when a recent user button is clicked, carrying that user's entry.
+ * @fires {CustomEvent<void>} close - Fired when the menu closed on its own, from a click outside, `Escape`, or another menu opening. `open` is already `false` by the time it arrives.
  * @stable
  */
 @customElement('obc-user-menu')
 @localized()
 export class ObcUserMenu extends LitElement {
+  @property({type: Boolean}) softDismiss = false;
+
+  @property({type: Boolean}) open = false;
+
+  protected readonly softDismissController = new PopoverController(this);
+
   @property({type: String}) type: ObcUserMenuType = ObcUserMenuType.signIn;
 
   @property({type: String}) size: ObcUserMenuSize = ObcUserMenuSize.regular;
@@ -220,6 +232,8 @@ export class ObcUserMenu extends LitElement {
         .required=${true}
         .hasClearButton=${!isPassword}
         @input=${onInput}
+        @change=${stopPropagation}
+        @clear=${stopPropagation}
       >
       </obc-text-input-field>
     `;
@@ -392,24 +406,28 @@ export class ObcUserMenu extends LitElement {
           'signin-only': !this.showRecentUsers,
         })}
       >
-        ${this.showUsername
-          ? this.renderTextInput(
-              msg('Username'),
-              HTMLInputTypeAttribute.Text,
-              this.username,
-              this.handleUsernameInput.bind(this),
-              this.usernameError
-            )
-          : nothing}
-        ${this.showPassword
-          ? this.renderTextInput(
-              msg('Password'),
-              HTMLInputTypeAttribute.Password,
-              this.password,
-              this.handlePasswordInput.bind(this),
-              this.passwordError
-            )
-          : nothing}
+        ${
+          this.showUsername
+            ? this.renderTextInput(
+                msg('Username'),
+                HTMLInputTypeAttribute.Text,
+                this.username,
+                this.handleUsernameInput.bind(this),
+                this.usernameError
+              )
+            : nothing
+        }
+        ${
+          this.showPassword
+            ? this.renderTextInput(
+                msg('Password'),
+                HTMLInputTypeAttribute.Password,
+                this.password,
+                this.handlePasswordInput.bind(this),
+                this.passwordError
+              )
+            : nothing
+        }
         <obc-button
           variant=${ButtonVariant.raised}
           fullWidth
@@ -418,18 +436,20 @@ export class ObcUserMenu extends LitElement {
           ${msg('Sign in')}
         </obc-button>
       </div>
-      ${this.showRecentUsers
-        ? html`
-            <div class="recent-container">
-              <div class="title-container">
-                <div class="subtitle">${msg('Recently signed in')}</div>
+      ${
+        this.showRecentUsers
+          ? html`
+              <div class="recent-container">
+                <div class="title-container">
+                  <div class="subtitle">${msg('Recently signed in')}</div>
+                </div>
+                <div class="actions-container">
+                  ${this.renderUserButtons(3, true)}
+                </div>
               </div>
-              <div class="actions-container">
-                ${this.renderUserButtons(3, true)}
-              </div>
-            </div>
-          `
-        : nothing}
+            `
+          : nothing
+      }
     `;
   }
 
@@ -444,24 +464,28 @@ export class ObcUserMenu extends LitElement {
           'signin-only': !this.showRecentUsers,
         })}
       >
-        ${this.showUsername
-          ? this.renderTextInput(
-              msg('Username'),
-              HTMLInputTypeAttribute.Text,
-              this.username,
-              this.handleUsernameInput.bind(this),
-              this.usernameError
-            )
-          : nothing}
-        ${this.showPassword
-          ? this.renderTextInput(
-              msg('Password'),
-              HTMLInputTypeAttribute.Password,
-              this.password,
-              this.handlePasswordInput.bind(this),
-              this.passwordError
-            )
-          : nothing}
+        ${
+          this.showUsername
+            ? this.renderTextInput(
+                msg('Username'),
+                HTMLInputTypeAttribute.Text,
+                this.username,
+                this.handleUsernameInput.bind(this),
+                this.usernameError
+              )
+            : nothing
+        }
+        ${
+          this.showPassword
+            ? this.renderTextInput(
+                msg('Password'),
+                HTMLInputTypeAttribute.Password,
+                this.password,
+                this.handlePasswordInput.bind(this),
+                this.passwordError
+              )
+            : nothing
+        }
         <obc-button
           variant=${ButtonVariant.raised}
           fullWidth
@@ -470,19 +494,21 @@ export class ObcUserMenu extends LitElement {
           ${msg('Sign in')}
         </obc-button>
       </div>
-      ${this.showRecentUsers
-        ? html`
-            <div class="divider" aria-hidden="true"></div>
-            <div class="recent-container recent">
-              <div class="title-container">
-                <div class="subtitle">${msg('Recent')}</div>
+      ${
+        this.showRecentUsers
+          ? html`
+              <div class="divider" aria-hidden="true"></div>
+              <div class="recent-container recent">
+                <div class="title-container">
+                  <div class="subtitle">${msg('Recent')}</div>
+                </div>
+                <div class="actions-container">
+                  ${this.renderUserButtons(3, false)}
+                </div>
               </div>
-              <div class="actions-container">
-                ${this.renderUserButtons(3, false)}
-              </div>
-            </div>
-          `
-        : nothing}
+            `
+          : nothing
+      }
     `;
   }
 
@@ -501,15 +527,17 @@ export class ObcUserMenu extends LitElement {
           ${this.renderUserProfile('vertical', 'large')}
         </div>
         <div class="fields">
-          ${this.showPassword
-            ? this.renderTextInput(
-                msg('Password'),
-                HTMLInputTypeAttribute.Password,
-                this.password,
-                this.handlePasswordInput.bind(this),
-                this.passwordError
-              )
-            : nothing}
+          ${
+            this.showPassword
+              ? this.renderTextInput(
+                  msg('Password'),
+                  HTMLInputTypeAttribute.Password,
+                  this.password,
+                  this.handlePasswordInput.bind(this),
+                  this.passwordError
+                )
+              : nothing
+          }
           <obc-button
             variant=${ButtonVariant.raised}
             fullWidth
@@ -517,31 +545,35 @@ export class ObcUserMenu extends LitElement {
           >
             ${msg('Sign in')}
           </obc-button>
-          ${this.showUseAnotherAccount
-            ? html`
-                <obc-button
-                  variant=${ButtonVariant.normal}
-                  fullWidth
-                  @click=${this.handleUseAnotherAccountClick}
-                >
-                  ${msg('Use another account')}
-                </obc-button>
-              `
-            : nothing}
+          ${
+            this.showUseAnotherAccount
+              ? html`
+                  <obc-button
+                    variant=${ButtonVariant.normal}
+                    fullWidth
+                    @click=${this.handleUseAnotherAccountClick}
+                  >
+                    ${msg('Use another account')}
+                  </obc-button>
+                `
+              : nothing
+          }
         </div>
       </div>
-      ${this.showRecentUsers
-        ? html`
-            <div class="recent-container">
-              <div class="title-container">
-                <div class="subtitle">${msg('Recently signed in')}</div>
+      ${
+        this.showRecentUsers
+          ? html`
+              <div class="recent-container">
+                <div class="title-container">
+                  <div class="subtitle">${msg('Recently signed in')}</div>
+                </div>
+                <div class="actions-container">
+                  ${this.renderUserButtons(3, true)}
+                </div>
               </div>
-              <div class="actions-container">
-                ${this.renderUserButtons(3, true)}
-              </div>
-            </div>
-          `
-        : nothing}
+            `
+          : nothing
+      }
     `;
   }
 
@@ -559,15 +591,17 @@ export class ObcUserMenu extends LitElement {
           'signin-only': !this.showRecentUsers,
         })}
       >
-        ${this.showPassword
-          ? this.renderTextInput(
-              msg('Password'),
-              HTMLInputTypeAttribute.Password,
-              this.password,
-              this.handlePasswordInput.bind(this),
-              this.passwordError
-            )
-          : nothing}
+        ${
+          this.showPassword
+            ? this.renderTextInput(
+                msg('Password'),
+                HTMLInputTypeAttribute.Password,
+                this.password,
+                this.handlePasswordInput.bind(this),
+                this.passwordError
+              )
+            : nothing
+        }
         <obc-button
           variant=${ButtonVariant.raised}
           fullWidth
@@ -575,31 +609,35 @@ export class ObcUserMenu extends LitElement {
         >
           ${msg('Sign in')}
         </obc-button>
-        ${this.showUseAnotherAccount
-          ? html`
-              <obc-button
-                variant=${ButtonVariant.normal}
-                fullWidth
-                @click=${this.handleUseAnotherAccountClick}
-              >
-                ${msg('Use another account')}
-              </obc-button>
-            `
-          : nothing}
+        ${
+          this.showUseAnotherAccount
+            ? html`
+                <obc-button
+                  variant=${ButtonVariant.normal}
+                  fullWidth
+                  @click=${this.handleUseAnotherAccountClick}
+                >
+                  ${msg('Use another account')}
+                </obc-button>
+              `
+            : nothing
+        }
       </div>
-      ${this.showRecentUsers
-        ? html`
-            <div class="divider" aria-hidden="true"></div>
-            <div class="recent-container recent">
-              <div class="title-container">
-                <div class="subtitle">${msg('Recent')}</div>
+      ${
+        this.showRecentUsers
+          ? html`
+              <div class="divider" aria-hidden="true"></div>
+              <div class="recent-container recent">
+                <div class="title-container">
+                  <div class="subtitle">${msg('Recent')}</div>
+                </div>
+                <div class="actions-container">
+                  ${this.renderUserButtons(3, false)}
+                </div>
               </div>
-              <div class="actions-container">
-                ${this.renderUserButtons(3, false)}
-              </div>
-            </div>
-          `
-        : nothing}
+            `
+          : nothing
+      }
     `;
   }
 
@@ -646,28 +684,30 @@ export class ObcUserMenu extends LitElement {
         ${this.renderUserProfile('vertical', 'large')}
       </div>
       <div class="divider" aria-hidden="true"></div>
-      ${this.signedInActions.length
-        ? html`
-            <div class="nav-container">
-              ${this.signedInActions.map((action) => {
-                const normalizedId = this.normalizeActionId(action.id);
-                return html`
-                  <obc-navigation-item
-                    .label=${action.label}
-                    hasIcon
-                    @click=${() => this.handleSignedInActionClick(action)}
-                  >
-                    <span slot="icon">
-                      <slot name="signed-in-action-icon-${normalizedId}">
-                        ${this.getSignedInActionIcon(normalizedId)}
-                      </slot>
-                    </span>
-                  </obc-navigation-item>
-                `;
-              })}
-            </div>
-          `
-        : nothing}
+      ${
+        this.signedInActions.length
+          ? html`
+              <div class="nav-container">
+                ${this.signedInActions.map((action) => {
+                  const normalizedId = this.normalizeActionId(action.id);
+                  return html`
+                    <obc-navigation-item
+                      .label=${action.label}
+                      hasIcon
+                      @click=${() => this.handleSignedInActionClick(action)}
+                    >
+                      <span slot="icon">
+                        <slot name="signed-in-action-icon-${normalizedId}">
+                          ${this.getSignedInActionIcon(normalizedId)}
+                        </slot>
+                      </span>
+                    </obc-navigation-item>
+                  `;
+                })}
+              </div>
+            `
+          : nothing
+      }
       <div class="button-container">
         <obc-button
           variant=${ButtonVariant.normal}
@@ -692,17 +732,19 @@ export class ObcUserMenu extends LitElement {
         ${this.renderUserProfile('horizontal', 'regular')}
       </div>
       <div class="button-container">
-        ${primaryAction
-          ? html`
-              <obc-button
-                variant=${ButtonVariant.normal}
-                fullWidth
-                @click=${() => this.handleSignedInActionClick(primaryAction)}
-              >
-                ${primaryAction.label}
-              </obc-button>
-            `
-          : nothing}
+        ${
+          primaryAction
+            ? html`
+                <obc-button
+                  variant=${ButtonVariant.normal}
+                  fullWidth
+                  @click=${() => this.handleSignedInActionClick(primaryAction)}
+                >
+                  ${primaryAction.label}
+                </obc-button>
+              `
+            : nothing
+        }
         <obc-button
           variant=${ButtonVariant.normal}
           fullWidth

@@ -105,11 +105,20 @@ const onMuteAlert = () => {
 
 :global(.alert-menu) {
   position: fixed;
-  position-anchor: --notification-message;
+  /* the message is only in the DOM while an alert is showing, and an anchor
+     that is not there drops the menu at its static position — the top-left
+     corner, now that it opens in the top layer */
+  position-anchor: --alert-button;
   top: calc(anchor(bottom) + 4px);
+  right: calc(anchor(right) + 4px);
+  left: unset;
+  max-width: calc(100% - 8px);
+}
+
+:global(body:has(.notification-message) .alert-menu) {
+  position-anchor: --notification-message;
   right: calc(anchor(right));
   left: calc(anchor(left));
-  max-width: calc(100% - 8px);
   position-try-fallbacks: --alert-menu-stick-to-button;
 }
 

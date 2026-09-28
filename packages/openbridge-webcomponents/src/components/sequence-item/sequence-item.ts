@@ -143,16 +143,20 @@ export class ObcSequenceItem extends LitElement {
         <slot name="title">
           <div class="title-block" part="title-block">
             <div class="title" part="title">${this.title}</div>
-            ${this.hasSubtitle
-              ? html`<div class="subtitle" part="subtitle">
-                  ${this.subtitle}
-                </div>`
-              : ''}
-            ${this.shouldInlineDescription
-              ? html`<div class="description" part="description">
-                  ${this.description}
-                </div>`
-              : ''}
+            ${
+              this.hasSubtitle
+                ? html`<div class="subtitle" part="subtitle">
+                    ${this.subtitle}
+                  </div>`
+                : ''
+            }
+            ${
+              this.shouldInlineDescription
+                ? html`<div class="description" part="description">
+                    ${this.description}
+                  </div>`
+                : ''
+            }
           </div>
         </slot>
       </div>
@@ -175,16 +179,20 @@ export class ObcSequenceItem extends LitElement {
     return html`
       <slot name="meta">
         <div class="meta-row" part="meta-row">
-          ${this.hasTimeStamp
-            ? html`<div class="meta timestamp" part="timestamp">
-                ${this.timeStamp}
-              </div>`
-            : ''}
-          ${this.hasDistanceStamp
-            ? html`<div class="meta distance" part="distance">
-                ${this.distanceStamp}
-              </div>`
-            : ''}
+          ${
+            this.hasTimeStamp
+              ? html`<div class="meta timestamp" part="timestamp">
+                  ${this.timeStamp}
+                </div>`
+              : ''
+          }
+          ${
+            this.hasDistanceStamp
+              ? html`<div class="meta distance" part="distance">
+                  ${this.distanceStamp}
+                </div>`
+              : ''
+          }
         </div>
       </slot>
     `;
@@ -219,9 +227,11 @@ export class ObcSequenceItem extends LitElement {
         <div class="step-wrapper" part="indicator">
           <slot name="step">${this.renderStep()}</slot>
         </div>
-        ${this.orientation === SequenceItemOrientation.horizontal
-          ? html`<div class="content" part="content">${textContent}</div>`
-          : textContent}
+        ${
+          this.orientation === SequenceItemOrientation.horizontal
+            ? html`<div class="content" part="content">${textContent}</div>`
+            : textContent
+        }
       </div>
     `;
   }

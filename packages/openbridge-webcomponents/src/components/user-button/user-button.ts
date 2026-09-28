@@ -27,6 +27,18 @@ export enum Variant {
   initials = 'initials',
 }
 
+export function initialsFromName(name: string): string {
+  const trimmedName = name.trim();
+  if (trimmedName === '') return '';
+
+  const words = trimmedName.split(/\s+/);
+  const firstWord = words[0];
+  if (words.length === 1) return firstWord[0];
+
+  const lastWord = words[words.length - 1];
+  return firstWord[0] + lastWord[0];
+}
+
 /**
  * `obc-user-button` – A compact, circular button for representing a user via icon or initials.
  *

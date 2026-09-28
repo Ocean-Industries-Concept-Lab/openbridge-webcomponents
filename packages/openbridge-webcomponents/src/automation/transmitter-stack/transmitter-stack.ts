@@ -116,9 +116,9 @@ export class ObcTransmitterStack extends LitElement {
           .variant=${TransmitterButtonVariant.value}
           .value=${entry.value}
           .unit=${entry.unit ?? ''}
-          .fractionDigits=${'fractionDigits' in entry
-            ? (entry.fractionDigits ?? NaN)
-            : 1}
+          .fractionDigits=${
+            'fractionDigits' in entry ? (entry.fractionDigits ?? NaN) : 1
+          }
           .maxDigits=${'maxDigits' in entry ? (entry.maxDigits ?? NaN) : 0}
           .hintedZeros=${entry.hintedZeros ?? false}
           .hasSignSpacer=${entry.hasSignSpacer ?? false}
@@ -127,15 +127,19 @@ export class ObcTransmitterStack extends LitElement {
           .idTag=${entry.idTag ?? ''}
           @click=${() => this.handleValueClick(index, entry)}
         >
-          ${entry.iconSlotName
-            ? html`<slot name=${entry.iconSlotName} slot="icon"></slot>`
-            : nothing}
+          ${
+            entry.iconSlotName
+              ? html`<slot name=${entry.iconSlotName} slot="icon"></slot>`
+              : nothing
+          }
         </obc-transmitter-button>
-        ${hasIdTags
-          ? html`<div class="id-tag" aria-hidden="true">
-              ${entry.idTag ?? ''}
-            </div>`
-          : nothing}
+        ${
+          hasIdTags
+            ? html`<div class="id-tag" aria-hidden="true">
+                ${entry.idTag ?? ''}
+              </div>`
+            : nothing
+        }
       </div>
     `;
   }

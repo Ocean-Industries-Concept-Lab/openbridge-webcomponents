@@ -15,6 +15,7 @@ import '../../building-blocks/alert-list/alert-list.js';
 import {ObcAlertList} from '../../building-blocks/alert-list/alert-list.js';
 import {ObcTabbedCardChangeEvent} from '../tabbed-card/tabbed-card.js';
 import {ObcAlertMenuItemStatus} from '../alert-menu-item/alert-menu-item.js';
+import {PopoverController} from '../../internal/popover-controller.js';
 
 export type ObcAckAllVisibleClickEvent = CustomEvent<{
   visibleElements: {element: HTMLElement; index: number}[];
@@ -92,6 +93,9 @@ export type ObcAckAllVisibleClickEvent = CustomEvent<{
  *   When hidden, the "ACK visible" button expands to fill the freed space.
  * @property showAlertListButton - If true, shows the "Alerts" navigation button in the action bar.
  *   When hidden, the "ACK visible" button expands to fill the freed space.
+ * @property softDismiss - Let the browser close this menu on its own: on a click outside it, on `Escape`, or when another menu opens. Leave it off to keep showing and hiding the menu yourself.
+ * @property open - Whether the menu is showing.
+ * @availableWhen open softDismiss==true
  * @slot - The alerts items as ObcAlertMenuItem
  * @slot empty-<tab>-title - Custom empty-state title for the selected tab (`<tab>` is one of `unacked`, `all`, `shelved`)
  * @slot empty-<tab>-description - Custom empty-state description for the selected tab (`<tab>` is one of `unacked`, `all`, `shelved`)
@@ -99,6 +103,7 @@ export type ObcAckAllVisibleClickEvent = CustomEvent<{
  * @fires {ObcAckAllVisibleClickEvent} ack-all-visible-click - Fired when the ack all visible button is clicked
  * @fires {CustomEvent} silence-click - Fired when the silence button is clicked
  * @fires {CustomEvent} go-to-alert-list-click - Fired when the go to alert list button is clicked
+ * @fires {CustomEvent<void>} close - Fired when the menu closed on its own, from a click outside, `Escape`, or another menu opening. `open` is already `false` by the time it arrives.
  */
 @localized()
 /**
@@ -106,6 +111,12 @@ export type ObcAckAllVisibleClickEvent = CustomEvent<{
  */
 @customElement('obc-alert-menu')
 export class ObcAlertMenu extends LitElement {
+  @property({type: Boolean}) softDismiss = false;
+
+  @property({type: Boolean}) open = false;
+
+  protected readonly softDismissController = new PopoverController(this);
+
   @property({type: Boolean}) hasShelved: boolean = false;
 
   @property({type: Boolean}) canAckAll: boolean = false;
@@ -199,9 +210,11 @@ export class ObcAlertMenu extends LitElement {
       >
         <span slot="tab-title-0">${msg('Unacked')}</span>
         <span slot="tab-title-1">${msg('Active')}</span>
-        ${this.hasShelved
-          ? html`<span slot="tab-title-2">${msg('Shelved')}</span>`
-          : nothing}
+        ${
+          this.hasShelved
+            ? html`<span slot="tab-title-2">${msg('Shelved')}</span>`
+            : nothing
+        }
         <div class="container">
           <obc-alert-list class="alert-list ${t.class}" .filter=${t.filter}>
             <slot></slot>
@@ -226,38 +239,42 @@ export class ObcAlertMenu extends LitElement {
             >
               ${msg('ACK visible')}
             </obc-button>
-            ${this.showSilenceButton
-              ? html`<obc-button
-                  variant="normal"
-                  fullWidth
-                  class="btn"
-                  showLeadingIcon
-                  @click=${() =>
-                    this.dispatchEvent(new CustomEvent('silence-click'))}
-                >
-                  <obi-silence-iec slot="leading-icon"></obi-silence-iec>
-                  ${msg('Silence')}
-                </obc-button>`
-              : nothing}
-            ${this.showAlertListButton
-              ? html`<obc-button
-                  variant="normal"
-                  class="btn"
-                  fullWidth
-                  showLeadingIcon
-                  showTrailingIcon
-                  @click=${() =>
-                    this.dispatchEvent(
-                      new CustomEvent('go-to-alert-list-click')
-                    )}
-                >
-                  <obi-alert-list slot="leading-icon"></obi-alert-list>
-                  <obi-chevron-right-google
-                    slot="trailing-icon"
-                  ></obi-chevron-right-google>
-                  ${msg('Alerts')}
-                </obc-button>`
-              : nothing}
+            ${
+              this.showSilenceButton
+                ? html`<obc-button
+                    variant="normal"
+                    fullWidth
+                    class="btn"
+                    showLeadingIcon
+                    @click=${() =>
+                      this.dispatchEvent(new CustomEvent('silence-click'))}
+                  >
+                    <obi-silence-iec slot="leading-icon"></obi-silence-iec>
+                    ${msg('Silence')}
+                  </obc-button>`
+                : nothing
+            }
+            ${
+              this.showAlertListButton
+                ? html`<obc-button
+                    variant="normal"
+                    class="btn"
+                    fullWidth
+                    showLeadingIcon
+                    showTrailingIcon
+                    @click=${() =>
+                      this.dispatchEvent(
+                        new CustomEvent('go-to-alert-list-click')
+                      )}
+                  >
+                    <obi-alert-list slot="leading-icon"></obi-alert-list>
+                    <obi-chevron-right-google
+                      slot="trailing-icon"
+                    ></obi-chevron-right-google>
+                    ${msg('Alerts')}
+                  </obc-button>`
+                : nothing
+            }
           </div>
         </div>
       </obc-tabbed-card>

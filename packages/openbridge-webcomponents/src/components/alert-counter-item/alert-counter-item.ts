@@ -101,19 +101,25 @@ export class ObcAlertCounterItem extends LitElement {
               .number=${entry.count}
             ></obc-badge>`
         )}
-        ${this.shelvedCount > 0
-          ? html`<obc-badge
-              size=${BadgeSize.large}
-              type=${BadgeType.regular}
-              .variant=${variant}
-              .showIcon=${alertLevel}
-              .number=${this.shelvedCount}
-            >
-              ${alertLevel
-                ? html`<obi-alerts-shelf slot="badge-icon"></obi-alerts-shelf>`
-                : nothing}
-            </obc-badge>`
-          : nothing}
+        ${
+          this.shelvedCount > 0
+            ? html`<obc-badge
+                size=${BadgeSize.large}
+                type=${BadgeType.regular}
+                .variant=${variant}
+                .showIcon=${alertLevel}
+                .number=${this.shelvedCount}
+              >
+                ${
+                  alertLevel
+                    ? html`<obi-alerts-shelf
+                        slot="badge-icon"
+                      ></obi-alerts-shelf>`
+                    : nothing
+                }
+              </obc-badge>`
+            : nothing
+        }
       </div>
     `;
   }

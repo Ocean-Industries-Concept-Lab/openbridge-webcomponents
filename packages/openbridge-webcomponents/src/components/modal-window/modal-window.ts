@@ -2,6 +2,7 @@ import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
+import {ModalFocusController} from '../../internal/modal-focus-controller.js';
 import componentStyle from './modal-window.css?inline';
 
 import '../button/button.js';
@@ -54,6 +55,22 @@ export enum ObcModalWindowSize {
  * - `done-click`: Fired when the done button is clicked.
  * - `option-click`: Fired when the optional action button is clicked.
  *
+ * ### Keyboard
+ * Follows the APG modal dialog pattern
+ * (https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/). The component has
+ * no open state: rendering it opens it and removing it closes it, so focus
+ * moves onto the dialog when it connects, `Tab` and `Shift+Tab` cycle inside
+ * it, and focus returns to the element that opened it when it disconnects.
+ * `Escape` fires `close-click`, or `cancel-click` when there is no close
+ * button; a dialog with neither has to be resolved with its Done button.
+ * Focus lands on the dialog container rather than its first button, so a
+ * dialog opened with `Enter` cannot be dismissed by the same key press. The
+ * container is a landing point, not an operable control, so it carries no
+ * focus ring; the ring stays on the dialog's controls.
+ *
+ * Left out: a description (`aria-describedby`), and `Escape` for a dialog
+ * that has neither a close nor a cancel button.
+ *
  * ### Sizing
  * By default the modal is as tall as its content, capped at `90vh`. To give it
  * an explicit height, set the `--obc-modal-window-height` custom property on
@@ -79,8 +96,9 @@ export enum ObcModalWindowSize {
  * @property hasLeadingIcon - Whether to show the leading icon slot in the header.
  * @property hasCancelAction - Whether to show the footer cancel button.
  * @property hasCloseAction - Whether to show the header close (X) button.
- * @fires {CustomEvent} close-click - Fired when the close button is clicked.
- * @fires {CustomEvent} cancel-click - Fired when the cancel button is clicked.
+ * @property closeLabel - Accessible name of the header close button; the icon carries none.
+ * @fires {CustomEvent} close-click - Fired when the close button is clicked, or `Escape` is pressed while it is shown.
+ * @fires {CustomEvent} cancel-click - Fired when the cancel button is clicked, or `Escape` is pressed while there is no close button.
  * @fires {CustomEvent} done-click - Fired when the done button is clicked.
  * @fires {CustomEvent} option-click - Fired when the optional action button is clicked.
  *
@@ -105,6 +123,8 @@ export class ObcModalWindow extends LitElement {
 
   @property({type: Boolean, attribute: false}) hasCloseAction = true;
 
+  @property({type: String}) closeLabel = 'Close';
+
   private onCloseClick = () =>
     this.dispatchEvent(new CustomEvent('close-click'));
 
@@ -115,6 +135,22 @@ export class ObcModalWindow extends LitElement {
 
   private onOptionClick = () =>
     this.dispatchEvent(new CustomEvent('option-click'));
+
+  protected readonly focusController = new ModalFocusController(
+    this,
+    () => this.shadowRoot?.querySelector('.wrapper') ?? null
+  );
+
+  private onKeydown(event: KeyboardEvent) {
+    if (event.key !== 'Escape' || event.defaultPrevented) return;
+    if (this.hasCloseAction) {
+      event.preventDefault();
+      this.onCloseClick();
+    } else if (this.hasCancelAction) {
+      event.preventDefault();
+      this.onCancelClick();
+    }
+  }
 
   protected override render() {
     const isLarge = this.size === ObcModalWindowSize.Large;
@@ -128,6 +164,11 @@ export class ObcModalWindow extends LitElement {
           wrapper: true,
           [`size-${this.size}`]: true,
         })}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="title"
+        tabindex="-1"
+        @keydown=${this.onKeydown}
       >
         <div
           class=${classMap({
@@ -136,20 +177,28 @@ export class ObcModalWindow extends LitElement {
           })}
         >
           <div class="title-content">
-            ${this.hasLeadingIcon
-              ? html`<div class="leading-icon">
-                  <slot name="leading-icon"></slot>
-                </div>`
-              : nothing}
-            <div class="label-container">
+            ${
+              this.hasLeadingIcon
+                ? html`<div class="leading-icon">
+                    <slot name="leading-icon"></slot>
+                  </div>`
+                : nothing
+            }
+            <div class="label-container" id="title">
               <slot name="title">Title</slot>
             </div>
           </div>
-          ${this.hasCloseAction
-            ? html`<obc-icon-button variant="flat" @click=${this.onCloseClick}>
-                <obi-close-google></obi-close-google>
-              </obc-icon-button>`
-            : nothing}
+          ${
+            this.hasCloseAction
+              ? html`<obc-icon-button
+                  variant="flat"
+                  aria-label=${this.closeLabel}
+                  @click=${this.onCloseClick}
+                >
+                  <obi-close-google></obi-close-google>
+                </obc-icon-button>`
+              : nothing
+          }
           <div class="divider"></div>
         </div>
 
@@ -159,13 +208,15 @@ export class ObcModalWindow extends LitElement {
 
         <div class="action-container">
           <div class="divider"></div>
-          ${this.hasOptionalAction
-            ? html`<div class="optional-action-container">
-                <obc-button @click=${this.onOptionClick} .fullWidth=${true}>
-                  <slot name="option-label">Option</slot>
-                </obc-button>
-              </div>`
-            : nothing}
+          ${
+            this.hasOptionalAction
+              ? html`<div class="optional-action-container">
+                  <obc-button @click=${this.onOptionClick} .fullWidth=${true}>
+                    <slot name="option-label">Option</slot>
+                  </obc-button>
+                </div>`
+              : nothing
+          }
 
           <div
             class=${classMap({
@@ -176,14 +227,16 @@ export class ObcModalWindow extends LitElement {
               'without-cancel': !this.hasCancelAction,
             })}
           >
-            ${this.hasCancelAction
-              ? html`<obc-button
-                  @click=${this.onCancelClick}
-                  .fullWidth=${stretchFooterActions}
-                >
-                  <slot name="cancel-label">Cancel</slot>
-                </obc-button>`
-              : nothing}
+            ${
+              this.hasCancelAction
+                ? html`<obc-button
+                    @click=${this.onCancelClick}
+                    .fullWidth=${stretchFooterActions}
+                  >
+                    <slot name="cancel-label">Cancel</slot>
+                  </obc-button>`
+                : nothing
+            }
             <obc-button
               variant="raised"
               @click=${this.onDoneClick}

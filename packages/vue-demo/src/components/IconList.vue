@@ -6,7 +6,7 @@
           <ObcTextInputField
             placeholder="Search for icons"
             class="icon-search"
-            :hasLeadingIcon="true"
+            :has-leading-icon="true"
             @input="onInput"
           >
             <obi-search slot="leading-icon"></obi-search>
@@ -101,7 +101,7 @@
     </div>
 
     <div v-if="selectedIcon" class="icon-detail-wrapper">
-      <ObcCard class="icon-detail-panel" :showTitle="false">
+      <ObcCard class="icon-detail-panel" :show-title="false">
         <ObcIconButton
           class="panel-close"
           :variant="IconButtonVariant.flat"
@@ -123,7 +123,7 @@
             <div class="panel-actions">
               <ObcButton
                 :variant="ButtonVariant.raised"
-                :showLeadingIcon="true"
+                :show-leading-icon="true"
                 @click="copy(importSnippet(selectedIcon.name), 'import')"
               >
                 <obi-check-google v-if="copied === 'import'" slot="leading-icon"></obi-check-google>
@@ -132,7 +132,7 @@
               </ObcButton>
               <ObcButton
                 :variant="ButtonVariant.raised"
-                :showLeadingIcon="true"
+                :show-leading-icon="true"
                 @click="copy(tagSnippet(selectedIcon.name), 'tag')"
               >
                 <obi-check-google v-if="copied === 'tag'" slot="leading-icon"></obi-check-google>
@@ -373,7 +373,7 @@ function importSnippet(name: string): string {
 }
 
 async function copy(text: string, kind: 'tag' | 'import') {
-  let success = false
+  let success: boolean
   try {
     await navigator.clipboard.writeText(text)
     success = true

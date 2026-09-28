@@ -82,8 +82,7 @@ export class ObcIntegrationDropdownButton extends LitElement {
   @property({type: Boolean}) openTop = false;
 
   private get selectedItem():
-    | {value: string; label: string; icon: HTMLTemplateResult}
-    | undefined {
+    {value: string; label: string; icon: HTMLTemplateResult} | undefined {
     if (this.options.length === 0) {
       return undefined;
     }
@@ -137,17 +136,19 @@ export class ObcIntegrationDropdownButton extends LitElement {
           </div>
         </div>
         <select @change=${this.changeHandler} ?disabled=${this.disabled}>
-          ${this.hasFleet
-            ? html`
-                <option
-                  value="fleet"
-                  class="fleet-option"
-                  ?selected=${this.fleetSelected}
-                >
-                  <slot name="fleet"></slot>
-                </option>
-              `
-            : nothing}
+          ${
+            this.hasFleet
+              ? html`
+                  <option
+                    value="fleet"
+                    class="fleet-option"
+                    ?selected=${this.fleetSelected}
+                  >
+                    <slot name="fleet"></slot>
+                  </option>
+                `
+              : nothing
+          }
           ${this.options.map((item) => {
             return html`<option
               value=${item.value}
@@ -157,9 +158,11 @@ export class ObcIntegrationDropdownButton extends LitElement {
               <div class="icon">${item.icon}</div>
               <div class="text-container">
                 <div class="label">${item.label}</div>
-                ${item.status
-                  ? html`<div class="status">${item.status}</div>`
-                  : nothing}
+                ${
+                  item.status
+                    ? html`<div class="status">${item.status}</div>`
+                    : nothing
+                }
               </div>
             </option>`;
           })}

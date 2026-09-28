@@ -170,8 +170,9 @@ export class ObcAlertButton extends LitElement {
           .alertType=${this.alertType}
           .nAlerts=${this.nAlerts}
           .counter=${this.counter}
-          .globalCounter=${this.globalCounter &&
-          this.activeType !== ObcAlertButtonType.Flat}
+          .globalCounter=${
+            this.globalCounter && this.activeType !== ObcAlertButtonType.Flat
+          }
           .counts=${this.counts}
           .shelvedCount=${this.shelvedCount}
           .blinking=${this.blinking}
@@ -180,21 +181,23 @@ export class ObcAlertButton extends LitElement {
           ?data-group-item-not-last=${showSilence}
           @click=${() => this.dispatchEvent(new CustomEvent('click-alert'))}
         ></obc-alert-button-item>
-        ${showSilence
-          ? html`
-              <button
-                class="silence-button"
-                aria-label=${msg('Silence')}
-                @click=${() =>
-                  this.dispatchEvent(new CustomEvent('click-silence'))}
-                ?disabled=${this.silenceButtonDisabled}
-              >
-                <div class="visible-wrapper">
-                  <obi-silence-iec class="icon"></obi-silence-iec>
-                </div>
-              </button>
-            `
-          : nothing}
+        ${
+          showSilence
+            ? html`
+                <button
+                  class="silence-button"
+                  aria-label=${msg('Silence')}
+                  @click=${() =>
+                    this.dispatchEvent(new CustomEvent('click-silence'))}
+                  ?disabled=${this.silenceButtonDisabled}
+                >
+                  <div class="visible-wrapper">
+                    <obi-silence-iec class="icon"></obi-silence-iec>
+                  </div>
+                </button>
+              `
+            : nothing
+        }
       </div>
     `;
   }

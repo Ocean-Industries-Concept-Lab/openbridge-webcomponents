@@ -332,14 +332,16 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
         className: 'gauge-readout-value',
         withMeta: false,
       })}
-      ${this.label || this.unit
-        ? this.renderReadout({
-            className: 'gauge-readout-meta',
-            stacking: ReadoutStacking.stacked,
-            alignment: ReadoutAlignment.center,
-            withValue: false,
-          })
-        : nothing}
+      ${
+        this.label || this.unit
+          ? this.renderReadout({
+              className: 'gauge-readout-meta',
+              stacking: ReadoutStacking.stacked,
+              alignment: ReadoutAlignment.center,
+              withValue: false,
+            })
+          : nothing
+      }
     `;
   }
 

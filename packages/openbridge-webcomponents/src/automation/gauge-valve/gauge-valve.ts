@@ -43,6 +43,7 @@ import {
   valveAreas,
   valvePorts,
 } from './gauge-valve-geometry.js';
+import {stopPropagation} from '../../internal/events.js';
 
 /** Scale interval (%) between minor ticks. */
 const TICK_SECONDARY_STEP = 5;
@@ -320,6 +321,8 @@ export class ObcGaugeValve extends SetpointMixin(LitElement) {
       return html`
         <obc-readout
           class="gauge-valve-readout"
+          @source-change=${stopPropagation}
+          @source-flyout-click=${stopPropagation}
           .size=${ReadoutSize.large}
           .hasSetpoint=${false}
           .hasAdvice=${false}
@@ -382,41 +385,43 @@ export class ObcGaugeValve extends SetpointMixin(LitElement) {
         : nothing;
     return html`
       <div
-        class="root ${this.large ? 'large' : 'small'} ${this.isThreeWay
-          ? 'three-way'
-          : 'two-way'} priority-${this.priority} style-${this
-          .barStyle} scale-${this.scalePosition} ${this.faceDiameter !==
-        undefined
-          ? 'pinned'
-          : ''}"
+        class="root ${this.large ? 'large' : 'small'} ${
+          this.isThreeWay ? 'three-way' : 'two-way'
+        } priority-${this.priority} style-${
+          this.barStyle
+        } scale-${this.scalePosition} ${
+          this.faceDiameter !== undefined ? 'pinned' : ''
+        }"
         style=${anchors}
       >
         <div class="face-area">
           <div
-            class="face-box ${this.faceDiameter !== undefined
-              ? 'face-pinned'
-              : ''}"
+            class="face-box ${
+              this.faceDiameter !== undefined ? 'face-pinned' : ''
+            }"
             style=${faceBoxStyle}
           >
-            ${this.isOff
-              ? html`<svg class="layer" viewBox=${frame.viewBox}>
-                  <circle
-                    r=${OUTER_RING_RADIUS}
-                    fill="var(--instrument-frame-secondary-color)"
-                  />
-                </svg>`
-              : nothing}
+            ${
+              this.isOff
+                ? html`<svg class="layer" viewBox=${frame.viewBox}>
+                    <circle
+                      r=${OUTER_RING_RADIUS}
+                      fill="var(--instrument-frame-secondary-color)"
+                    />
+                  </svg>`
+                : nothing
+            }
             <obc-watch
               class="layer"
-              .state=${this.isOff
-                ? InstrumentState.off
-                : InstrumentState.active}
+              .state=${
+                this.isOff ? InstrumentState.off : InstrumentState.active
+              }
               .priority=${this.sharedPriority}
               .watchCircleType=${WatchCircleType.double}
               .hasBackgroundCircle=${!this.isOff}
-              .areas=${this.isOff
-                ? []
-                : valveAreas(this.isThreeWay, this.rotation)}
+              .areas=${
+                this.isOff ? [] : valveAreas(this.isThreeWay, this.rotation)
+              }
               .roundBandCuts=${true}
               .barAreas=${this.barAreas}
               .needles=${this.capNeedles}

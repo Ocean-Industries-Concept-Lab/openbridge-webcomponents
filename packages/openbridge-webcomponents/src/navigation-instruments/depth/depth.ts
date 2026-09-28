@@ -416,42 +416,50 @@ export class ObcDepth extends LitElement {
         : undefined;
     return html`
       <div class="container">
-        ${hasSize
-          ? html`<obc-gauge-trend
-              .xAxisType=${this.xAxisType}
-              .timeDisplay=${TimeDisplay.minutes}
-              .xAxis=${this.effectiveXAxis}
-              .labels=${labels}
-              .datasets=${this.buildDatasets()}
-              .minValue=${0}
-              .maxValue=${range.maxDepth}
-              .reverse=${true}
-              .value=${this.type === DepthType.regular
-                ? this.currentDepth
-                : undefined}
-              .hasBar=${false}
-              .hasScale=${true}
-              .hasLabelPadding=${false}
-              .scaleType=${ScaleType.condensed}
-              .primaryTickmarkInterval=${this.hasScale
-                ? (this.primaryTickmarkInterval ??
-                  range.primaryTickmarkInterval)
-                : 0}
-              .secondaryTickmarkInterval=${this.hasScale
-                ? (this.secondaryTickmarkInterval ??
-                  range.secondaryTickmarkInterval)
-                : 0}
-              .hasAdvice=${this.hasAdvice}
-              .advice=${this.advice}
-              .xMarker=${this.xMarker}
-              .yMarker=${this.yMarker}
-              .priority=${this.priority}
-              .state=${this.state}
-              .width=${this._cellWidth}
-              .height=${this._cellHeight}
-              >${this.renderTopBand()}</obc-gauge-trend
-            >`
-          : nothing}
+        ${
+          hasSize
+            ? html`<obc-gauge-trend
+                .xAxisType=${this.xAxisType}
+                .timeDisplay=${TimeDisplay.minutes}
+                .xAxis=${this.effectiveXAxis}
+                .labels=${labels}
+                .datasets=${this.buildDatasets()}
+                .minValue=${0}
+                .maxValue=${range.maxDepth}
+                .reverse=${true}
+                .value=${
+                  this.type === DepthType.regular
+                    ? this.currentDepth
+                    : undefined
+                }
+                .hasBar=${false}
+                .hasScale=${true}
+                .hasLabelPadding=${false}
+                .scaleType=${ScaleType.condensed}
+                .primaryTickmarkInterval=${
+                  this.hasScale
+                    ? (this.primaryTickmarkInterval ??
+                      range.primaryTickmarkInterval)
+                    : 0
+                }
+                .secondaryTickmarkInterval=${
+                  this.hasScale
+                    ? (this.secondaryTickmarkInterval ??
+                      range.secondaryTickmarkInterval)
+                    : 0
+                }
+                .hasAdvice=${this.hasAdvice}
+                .advice=${this.advice}
+                .xMarker=${this.xMarker}
+                .yMarker=${this.yMarker}
+                .priority=${this.priority}
+                .state=${this.state}
+                .width=${this._cellWidth}
+                .height=${this._cellHeight}
+                >${this.renderTopBand()}</obc-gauge-trend
+              >`
+            : nothing
+        }
       </div>
     `;
   }

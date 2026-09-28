@@ -320,21 +320,23 @@ export class ObcAlertListDetails extends LitElement {
 
     return html`
       <div class="wrapper ${this.small ? 'small' : ''}">
-        ${data.length > 0
-          ? html` <obc-table
-                class="alert-list"
-                .data=${data}
-                .columns=${this.columns}
-                .striped=${true}
-                .showHeader=${!this.small}
-                @row-click=${this.onRowClick}
-                @cell-button-click=${this.onCellButtonClick}
-              ></obc-table>
-              <div class="spacer"></div>`
-          : html` <div class="empty-list">
-              <div class="icon">${selectedList.emptyIcon}</div>
-              <div class="empty-title">${selectedList.emptyTitle}</div>
-            </div>`}
+        ${
+          data.length > 0
+            ? html` <obc-table
+                  class="alert-list"
+                  .data=${data}
+                  .columns=${this.columns}
+                  .striped=${true}
+                  .showHeader=${!this.small}
+                  @row-click=${this.onRowClick}
+                  @cell-button-click=${this.onCellButtonClick}
+                ></obc-table>
+                <div class="spacer"></div>`
+            : html` <div class="empty-list">
+                <div class="icon">${selectedList.emptyIcon}</div>
+                <div class="empty-title">${selectedList.emptyTitle}</div>
+              </div>`
+        }
       </div>
     `;
   }

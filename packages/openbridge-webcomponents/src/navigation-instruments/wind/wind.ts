@@ -31,9 +31,7 @@ export enum WindVisualization {
 }
 
 type ResolvedWindVariant =
-  | WindVariant.small
-  | WindVariant.medium
-  | WindVariant.large;
+  WindVariant.small | WindVariant.medium | WindVariant.large;
 
 const WIND_SMALL_MAX_PX_DEFAULT = 96;
 const WIND_MEDIUM_MAX_PX_DEFAULT = 200;
@@ -168,9 +166,11 @@ export class ObcWind extends LitElement {
           .priority=${this.priority}
           .windKnots=${this.currentWindSpeedKnots}
           .windFromDirectionDeg=${this.currentWindFromDirection}
-          .windColor=${this.priority === Priority.enhanced
-            ? 'var(--instrument-enhanced-secondary-color)'
-            : undefined}
+          .windColor=${
+            this.priority === Priority.enhanced
+              ? 'var(--instrument-enhanced-secondary-color)'
+              : undefined
+          }
           .windSymbolRadius=${windSymbolRadius}
           .scaleWindIcon=${scaleWindIcon}
           crosshairEnabled

@@ -195,15 +195,17 @@ export class ObcSequenceStep extends LitElement {
 
     return html`
       <div class="node" part="node" aria-hidden="true">
-        ${this.value === SequenceValue.loading
-          ? this.renderLoadingSpinner()
-          : showCheck
-            ? html`<obi-check-google
-                class="small-check"
-                part="state-icon"
-                aria-hidden="true"
-              ></obi-check-google>`
-            : nothing}
+        ${
+          this.value === SequenceValue.loading
+            ? this.renderLoadingSpinner()
+            : showCheck
+              ? html`<obi-check-google
+                  class="small-check"
+                  part="state-icon"
+                  aria-hidden="true"
+                ></obi-check-google>`
+              : nothing
+        }
       </div>
     `;
   }
@@ -273,9 +275,11 @@ export class ObcSequenceStep extends LitElement {
           : nothing;
       return html`
         <div
-          class="node ${this.type === 'medium' && this.styleType === 'point'
-            ? 'medium-point'
-            : ''}"
+          class="node ${
+            this.type === 'medium' && this.styleType === 'point'
+              ? 'medium-point'
+              : ''
+          }"
           part="node"
         >
           ${loadingSpinner}
@@ -309,18 +313,22 @@ export class ObcSequenceStep extends LitElement {
           aria-current=${ifDefined(this.stepAriaCurrent ?? undefined)}
         >
           <div class="body" part="body">
-            ${this.showInputConnector
-              ? html`<span
-                  class="connector input"
-                  part="connector input"
-                ></span>`
-              : ''}
-            ${this.showOutputConnector
-              ? html`<span
-                  class="connector output"
-                  part="connector output"
-                ></span>`
-              : ''}
+            ${
+              this.showInputConnector
+                ? html`<span
+                    class="connector input"
+                    part="connector input"
+                  ></span>`
+                : ''
+            }
+            ${
+              this.showOutputConnector
+                ? html`<span
+                    class="connector output"
+                    part="connector output"
+                  ></span>`
+                : ''
+            }
           </div>
         </div>
       `;
@@ -331,9 +339,9 @@ export class ObcSequenceStep extends LitElement {
     const verticalInput =
       this.isVertical && this.showInputConnector
         ? html`<span
-            class="connector input ${this.isSpecialLoadingConnector
-              ? 'loading-special'
-              : ''}"
+            class="connector input ${
+              this.isSpecialLoadingConnector ? 'loading-special' : ''
+            }"
             part="connector input"
           ></span>`
         : '';
@@ -345,9 +353,9 @@ export class ObcSequenceStep extends LitElement {
     const horizontalInput =
       !this.isVertical && this.showInputConnector
         ? html`<span
-            class="connector input ${this.isSpecialLoadingConnector
-              ? 'loading-special'
-              : ''}"
+            class="connector input ${
+              this.isSpecialLoadingConnector ? 'loading-special' : ''
+            }"
             part="connector input"
           ></span>`
         : '';

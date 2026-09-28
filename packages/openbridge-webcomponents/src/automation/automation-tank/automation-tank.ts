@@ -47,6 +47,7 @@ import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import {TankPositioning} from './tank-positioning.js';
+import {clamp} from '../../svghelpers/math.js';
 
 export enum TankTrend {
   fastRising = 'fast-rising',
@@ -596,7 +597,7 @@ export class ObcAutomationTank extends SetpointMixin(LitElement) {
 
   override render() {
     const safeMax = this.max > 0 ? this.max : 1;
-    const percent = Math.max(0, Math.min(100, (this.value / safeMax) * 100));
+    const percent = clamp((this.value / safeMax) * 100, 0, 100);
     const isCompact = this.isCompact;
 
     // Compact and static collapse their empty cells so the tank frame absorbs
@@ -618,26 +619,34 @@ export class ObcAutomationTank extends SetpointMixin(LitElement) {
     const badgesCell = html`
       <div class="badges" ?hidden=${badgesHidden}>
         <slot name="badges" @slotchange=${this._onBadgesSlotChange}>
-          ${controlBadge
-            ? html`<obc-automation-badge
-                .type=${controlBadge}
-              ></obc-automation-badge>`
-            : nothing}
-          ${alertBadge
-            ? html`<obc-automation-badge
-                .type=${alertBadge}
-              ></obc-automation-badge>`
-            : nothing}
-          ${interlockBadge
-            ? html`<obc-automation-badge
-                .type=${interlockBadge}
-              ></obc-automation-badge>`
-            : nothing}
-          ${commandLockedBadge
-            ? html`<obc-automation-badge
-                .type=${commandLockedBadge}
-              ></obc-automation-badge>`
-            : nothing}
+          ${
+            controlBadge
+              ? html`<obc-automation-badge
+                  .type=${controlBadge}
+                ></obc-automation-badge>`
+              : nothing
+          }
+          ${
+            alertBadge
+              ? html`<obc-automation-badge
+                  .type=${alertBadge}
+                ></obc-automation-badge>`
+              : nothing
+          }
+          ${
+            interlockBadge
+              ? html`<obc-automation-badge
+                  .type=${interlockBadge}
+                ></obc-automation-badge>`
+              : nothing
+          }
+          ${
+            commandLockedBadge
+              ? html`<obc-automation-badge
+                  .type=${commandLockedBadge}
+                ></obc-automation-badge>`
+              : nothing
+          }
         </slot>
       </div>
     `;
@@ -751,33 +760,35 @@ export class ObcAutomationTank extends SetpointMixin(LitElement) {
       const hasSize = this._cellWidth > 0 && this._cellHeight > 0;
       chartCell = html`
         <div class="bar-container chart-cell">
-          ${hasSize
-            ? html`<obc-gauge-trend
-                .data=${this.chartData}
-                .minValue=${0}
-                .maxValue=${safeMax}
-                .value=${this.value}
-                .hasBar=${this.chartMode === TankChartMode.graphAndBar}
-                .hasScale=${false}
-                .hasLabelPadding=${false}
-                .chartFill=${true}
-                .hasAdvice=${this.hasAdvice}
-                .advice=${this.advice}
-                .width=${this._cellWidth}
-                .height=${this._cellHeight}
-                .setpoint=${this.setpoint}
-                .newSetpoint=${this.newSetpoint}
-                .touching=${this.touching}
-                .atSetpoint=${this.atSetpoint}
-                .autoAtSetpoint=${this.autoAtSetpoint}
-                .autoAtSetpointDeadband=${this.autoAtSetpointDeadband}
-                .setpointAtZeroDeadband=${this.setpointAtZeroDeadband}
-                .setpointOverride=${this.setpointOverride}
-                .animateSetpoint=${this.animateSetpoint}
-                style="width: 100%; height: 100%;"
-                .priority=${this.priority}
-              ></obc-gauge-trend>`
-            : null}
+          ${
+            hasSize
+              ? html`<obc-gauge-trend
+                  .data=${this.chartData}
+                  .minValue=${0}
+                  .maxValue=${safeMax}
+                  .value=${this.value}
+                  .hasBar=${this.chartMode === TankChartMode.graphAndBar}
+                  .hasScale=${false}
+                  .hasLabelPadding=${false}
+                  .chartFill=${true}
+                  .hasAdvice=${this.hasAdvice}
+                  .advice=${this.advice}
+                  .width=${this._cellWidth}
+                  .height=${this._cellHeight}
+                  .setpoint=${this.setpoint}
+                  .newSetpoint=${this.newSetpoint}
+                  .touching=${this.touching}
+                  .atSetpoint=${this.atSetpoint}
+                  .autoAtSetpoint=${this.autoAtSetpoint}
+                  .autoAtSetpointDeadband=${this.autoAtSetpointDeadband}
+                  .setpointAtZeroDeadband=${this.setpointAtZeroDeadband}
+                  .setpointOverride=${this.setpointOverride}
+                  .animateSetpoint=${this.animateSetpoint}
+                  style="width: 100%; height: 100%;"
+                  .priority=${this.priority}
+                ></obc-gauge-trend>`
+              : null
+          }
           ${this.hasGraphIcon ? graphIconOverlay : null}
         </div>
       `;

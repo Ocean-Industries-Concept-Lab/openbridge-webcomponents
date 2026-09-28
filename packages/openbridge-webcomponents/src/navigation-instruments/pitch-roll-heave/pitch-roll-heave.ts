@@ -33,7 +33,7 @@ import type {
   LinearAdvice,
   LinearAdviceRaw,
 } from '../../building-blocks/instrument-linear/advice.js';
-import {degToRad, radToDeg} from '../../svghelpers/math.js';
+import {degToRad, radToDeg, clamp} from '../../svghelpers/math.js';
 
 export enum ObcPitchRollHeaveType {
   /** Pitch on the right, roll at the bottom, heave in the left band slot. */
@@ -234,7 +234,7 @@ export class ObcPitchRollHeave extends LitElement {
     if (!Number.isFinite(this.scaleForeImage)) {
       return 1;
     }
-    return Math.max(0, Math.min(2, this.scaleForeImage));
+    return clamp(this.scaleForeImage, 0, 2);
   }
 
   private get isDualScale(): boolean {
@@ -265,7 +265,7 @@ export class ObcPitchRollHeave extends LitElement {
   private get requestedRollArcAngle(): number {
     const roll = normalizeArcAngle(this.rollArcAngle, 45);
     const headroom = 90 - this.requestedPitchArcAngle;
-    return Math.max(MIN_ARC_HALF_DEG, Math.min(roll, headroom));
+    return clamp(roll, MIN_ARC_HALF_DEG, headroom);
   }
 
   override render() {
@@ -288,53 +288,59 @@ export class ObcPitchRollHeave extends LitElement {
         <svg viewBox=${overlayViewBox}>
           ${this.showsReadout ? nothing : this.renderCrosshair()}
           ${this.renderOverlayVessels()}
-          ${this.zoomToFitArc || this.isDualScale
-            ? nothing
-            : this.renderComplement(pitchReq)}
+          ${
+            this.zoomToFitArc || this.isDualScale
+              ? nothing
+              : this.renderComplement(pitchReq)
+          }
           ${this.renderHeaveColumn(band)}
         </svg>
-        ${layout
-          ? this.renderZoomedArcs(layout)
-          : this.renderFullWatch(pitchReq, rollReq)}
-        ${this.showsReadout
-          ? html`<div class="readout">
-              ${renderCenterReadouts(
-                [
-                  {
-                    value: this.pitch,
-                    label: this.pitchLabel,
-                    unit: this.unit,
-                    fractionDigits: this.fractionDigits,
-                    size: ReadoutSize.large,
-                    priority: this.priorityFor(
-                      PitchRollHeavePriorityElement.pitch
-                    ),
-                  },
-                  {
-                    value: this.roll,
-                    label: this.rollLabel,
-                    unit: this.unit,
-                    fractionDigits: this.fractionDigits,
-                    size: ReadoutSize.large,
-                    priority: this.priorityFor(
-                      PitchRollHeavePriorityElement.roll
-                    ),
-                  },
-                  {
-                    value: this.heave,
-                    label: this.heaveLabel,
-                    unit: this.heaveUnit,
-                    fractionDigits: this.fractionDigits,
-                    size: ReadoutSize.large,
-                    priority: this.priorityFor(
-                      PitchRollHeavePriorityElement.heave
-                    ),
-                  },
-                ],
-                CenterReadoutArrangement.stacked
-              )}
-            </div>`
-          : nothing}
+        ${
+          layout
+            ? this.renderZoomedArcs(layout)
+            : this.renderFullWatch(pitchReq, rollReq)
+        }
+        ${
+          this.showsReadout
+            ? html`<div class="readout">
+                ${renderCenterReadouts(
+                  [
+                    {
+                      value: this.pitch,
+                      label: this.pitchLabel,
+                      unit: this.unit,
+                      fractionDigits: this.fractionDigits,
+                      size: ReadoutSize.large,
+                      priority: this.priorityFor(
+                        PitchRollHeavePriorityElement.pitch
+                      ),
+                    },
+                    {
+                      value: this.roll,
+                      label: this.rollLabel,
+                      unit: this.unit,
+                      fractionDigits: this.fractionDigits,
+                      size: ReadoutSize.large,
+                      priority: this.priorityFor(
+                        PitchRollHeavePriorityElement.roll
+                      ),
+                    },
+                    {
+                      value: this.heave,
+                      label: this.heaveLabel,
+                      unit: this.heaveUnit,
+                      fractionDigits: this.fractionDigits,
+                      size: ReadoutSize.large,
+                      priority: this.priorityFor(
+                        PitchRollHeavePriorityElement.heave
+                      ),
+                    },
+                  ],
+                  CenterReadoutArrangement.stacked
+                )}
+              </div>`
+            : nothing
+        }
       </div>
     `;
   }
@@ -746,9 +752,11 @@ export class ObcPitchRollHeave extends LitElement {
 
     return html`
       ${subWatch(90, pitchAxis)} ${subWatch(180, rollAxis)}
-      ${this.isDualScale
-        ? html`${subWatch(270, pitchAxis)} ${subWatch(0, rollAxis)}`
-        : nothing}
+      ${
+        this.isDualScale
+          ? html`${subWatch(270, pitchAxis)} ${subWatch(0, rollAxis)}`
+          : nothing
+      }
     `;
   }
 
@@ -863,20 +871,22 @@ export class ObcPitchRollHeave extends LitElement {
         .areas=${areas}
         .barAreas=${barAreas}
         .needles=${needles}
-        .vessels=${this.isDualScale || this.showsReadout
-          ? []
-          : [
-              {
-                size: VesselImageSize.large,
-                vesselImage: this.vesselImageSide,
-                transform: `rotate(${this.pitch}deg)`,
-              },
-              {
-                size: VesselImageSize.large,
-                vesselImage: this.vesselImageFore,
-                transform: `rotate(${this.roll}deg) scale(${this.normalizedScaleForeImage})`,
-              },
-            ]}
+        .vessels=${
+          this.isDualScale || this.showsReadout
+            ? []
+            : [
+                {
+                  size: VesselImageSize.large,
+                  vesselImage: this.vesselImageSide,
+                  transform: `rotate(${this.pitch}deg)`,
+                },
+                {
+                  size: VesselImageSize.large,
+                  vesselImage: this.vesselImageFore,
+                  transform: `rotate(${this.roll}deg) scale(${this.normalizedScaleForeImage})`,
+                },
+              ]
+        }
         .tickmarks=${tickmarks}
         .advices=${this.advices(pitchDeg, rollDeg)}
       ></obc-watch>

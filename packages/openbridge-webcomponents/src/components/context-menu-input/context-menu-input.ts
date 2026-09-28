@@ -5,12 +5,17 @@ import '../../icons/icon-arrow-flyout-google.js';
 import '../../icons/icon-close-google.js';
 import '../checkbox-item/checkbox-item.js';
 import '../navigation-item/navigation-item.js';
+import {NavigationItemRole} from '../navigation-item/navigation-item.js';
 import {ObcNavigationMenuVariant} from '../navigation-menu/navigation-menu.js';
 import {customElement} from '../../decorator.js';
+import {RovingNavigator} from '../../internal/roving-navigator.js';
+import {clamp} from '../../svghelpers/math.js';
 import {classMap} from 'lit/directives/class-map.js';
 import '../icon-button/icon-button.js';
 import '../navigation-item-group/navigation-item-group.js';
 import {ObcNavigationItemGroup} from '../navigation-item-group/navigation-item-group.js';
+import {stopPropagation} from '../../internal/events.js';
+import {PopoverController} from '../../internal/popover-controller.js';
 
 /**
  * Event fired when the selection changes in `<obc-context-menu-input>`.
@@ -69,6 +74,9 @@ export interface ColumnGroup {
  * - `Multi`: Multi-column menu.
  * - `MultiWithSubtitles`: Multi-column menu with group subtitles.
  */
+/** A menu row: `obc-navigation-item` or `obc-checkbox-item`, both with the roving hook. */
+type MenuItemElement = HTMLElement & {focusable: boolean};
+
 export enum ContextMenuType {
   Regular = 'regular',
   Checkboxes = 'checkboxes',
@@ -157,6 +165,22 @@ export enum ContextMenuType {
  * - `selectPerGroup` (boolean): If true, restricts selection to one per group/column (used in flyout and multi-column).
  * - `persistSelection` (boolean): If true, keeps selected items highlighted after interaction.
  *
+ * ## Keyboard
+ * [APG Menu](https://www.w3.org/WAI/ARIA/apg/patterns/menu/): the menu is one
+ * tab stop, entered on the selected item or the first one; `Up` and `Down`
+ * move between items and stop at the ends, `Home` and `End` jump to them,
+ * `Enter` and `Space` select through the item, and `Escape` fires `close`, which
+ * is also why the title bar's close button stays out of the tab sequence.
+ * Single-select items are `menuitemradio` with `aria-checked` on their
+ * control, not on the host; checkbox menus
+ * keep their checkboxes and move between them the same way.
+ *
+ * Left out: wrapping at the ends, and type-ahead. The checkbox variants put
+ * `role="checkbox"` items in the menu where the pattern asks for
+ * `menuitemcheckbox`. A flyout's header is a plain button without
+ * `aria-haspopup` or `aria-expanded`, its children sit in a `group` rather
+ * than a nested `menu`, and `Right` and `Left` do not open and close it.
+ *
  * ## Events
  *
  * - `change` – Fired when the selection changes.
@@ -225,14 +249,23 @@ export enum ContextMenuType {
  * @property options - Menu options, each with a unique `value` and a `label`, and optionally an
  *   `icon` template for the leading icon, a `level` giving the nesting depth
  *   for nested checkboxes, and `children` for a flyout or nested menu.
+ * @property softDismiss - Let the browser close this menu on its own: on a click outside it, on `Escape`, or when another menu opens. Leave it off to keep showing and hiding the menu yourself.
+ * @property open - Whether the menu is showing.
+ * @availableWhen open softDismiss==true
  * @slot - Optionally used for custom icons in options (e.g., `<obi-placeholder slot="icon"></obi-placeholder>`)
  * @fires {ObcContextMenuInputChangeEvent} change - Fired when the selection changes.
  * @fires {ObcContextMenuInputItemClickEvent} item-click - Fired when a menu item is clicked.
- * @fires {CustomEvent<void>} close - Fired when the close button is clicked.
+ * @fires {CustomEvent<void>} close - Fired when the close button is clicked, on `Escape`, and, with `softDismiss` on, when the menu closed on its own from a click outside or another menu opening.
  * @beta
  */
 @customElement('obc-context-menu-input')
 export class ObcContextMenuInput extends LitElement {
+  @property({type: Boolean}) softDismiss = false;
+
+  @property({type: Boolean}) open = false;
+
+  protected readonly softDismissController = new PopoverController(this);
+
   @property({type: String})
   type: ContextMenuType = ContextMenuType.Regular;
 
@@ -252,54 +285,45 @@ export class ObcContextMenuInput extends LitElement {
 
   @property({type: Boolean, reflect: true}) selectPerGroup?: boolean;
 
-  private getMenuItems(): HTMLElement[] {
+  private readonly navigator = new RovingNavigator<MenuItemElement>(
+    {
+      items: () => this.getMenuItems(),
+      preferred: () => this.selectedMenuItem(),
+      setFocusable: (item, focusable) => {
+        item.focusable = focusable;
+      },
+    },
+    {orientation: 'vertical', wrap: false}
+  );
+
+  override updated() {
+    this.navigator.refresh();
+  }
+
+  private getMenuItems(): MenuItemElement[] {
     return Array.from(
-      this.renderRoot.querySelectorAll<HTMLElement>('[data-menu-item="true"]')
+      this.renderRoot.querySelectorAll<MenuItemElement>(
+        '[data-menu-item="true"]'
+      )
     ).filter((item) => item.getClientRects().length > 0);
   }
 
-  private getFocusedMenuItemIndex(): number {
-    const activeElement =
-      this.renderRoot instanceof ShadowRoot
-        ? this.renderRoot.activeElement
-        : document.activeElement;
-
-    if (!(activeElement instanceof HTMLElement)) {
-      return -1;
-    }
-
+  private selectedMenuItem(): MenuItemElement | undefined {
     const items = this.getMenuItems();
-    let closestIndex = -1;
-    let closestDistance = Number.POSITIVE_INFINITY;
-
-    items.forEach((item, index) => {
-      if (item !== activeElement && !item.contains(activeElement)) {
-        return;
-      }
-
-      let distance = 0;
-      let currentElement: HTMLElement | null = activeElement;
-      while (currentElement !== null && currentElement !== item) {
-        currentElement = currentElement.parentElement;
-        distance += 1;
-      }
-
-      if (currentElement === item && distance < closestDistance) {
-        closestDistance = distance;
-        closestIndex = index;
-      }
-    });
-
-    return closestIndex;
+    return this.selectedValues
+      .map((value) =>
+        items.find((item) => item.getAttribute('data-menu-value') === value)
+      )
+      .find((item): item is MenuItemElement => item !== undefined);
   }
 
   private focusMenuItem(index: number) {
     const items = this.getMenuItems();
     if (items.length === 0) return;
 
-    const normalizedIndex = Math.max(0, Math.min(index, items.length - 1));
-    items[normalizedIndex].focus();
-    items[normalizedIndex].scrollIntoView({block: 'nearest'});
+    const item = items[clamp(index, 0, items.length - 1)];
+    this.navigator.setActive(item, true);
+    item.scrollIntoView({block: 'nearest'});
   }
 
   public focusFirstItem() {
@@ -317,14 +341,9 @@ export class ObcContextMenuInput extends LitElement {
     const items = this.getMenuItems();
     if (items.length === 0) return;
 
-    const selectedItem = this.selectedValues
-      .map((value) =>
-        items.find((item) => item.getAttribute('data-menu-value') === value)
-      )
-      .find((item): item is HTMLElement => item !== undefined);
-
+    const selectedItem = this.selectedMenuItem();
     if (selectedItem !== undefined) {
-      selectedItem.focus();
+      this.navigator.setActive(selectedItem, true);
       selectedItem.scrollIntoView({block: 'nearest'});
       return;
     }
@@ -333,23 +352,23 @@ export class ObcContextMenuInput extends LitElement {
   }
 
   private handleKeydown(event: KeyboardEvent) {
+    if (this.navigator.handleKeydown(event)) {
+      event.preventDefault();
+      this.navigator.activeItem?.scrollIntoView({block: 'nearest'});
+      return;
+    }
     const items = this.getMenuItems();
     if (items.length === 0) return;
 
-    const currentIndex = this.getFocusedMenuItemIndex();
-
+    // Focus is on the menu itself, not on an item: the arrows enter the list.
     switch (event.key) {
       case 'ArrowDown':
         event.preventDefault();
-        this.focusMenuItem(
-          currentIndex < 0 ? 0 : Math.min(currentIndex + 1, items.length - 1)
-        );
+        this.focusFirstItem();
         break;
       case 'ArrowUp':
         event.preventDefault();
-        this.focusMenuItem(
-          currentIndex < 0 ? items.length - 1 : Math.max(currentIndex - 1, 0)
-        );
+        this.focusLastItem();
         break;
       case 'Home':
         event.preventDefault();
@@ -360,6 +379,10 @@ export class ObcContextMenuInput extends LitElement {
         this.focusLastItem();
         break;
       case 'Escape':
+        // With softDismiss on, the browser closes the menu on Escape by
+        // itself. Blocking the default here would stop that and leave the
+        // menu open.
+        if (this.softDismiss) break;
         event.preventDefault();
         this.dispatchEvent(new CustomEvent('close'));
         break;
@@ -553,6 +576,7 @@ export class ObcContextMenuInput extends LitElement {
           variant="flat"
           @click=${this.handleCloseClick}
           aria-label="Close menu"
+          .focusable=${false}
         >
           <obi-close-google></obi-close-google>
         </obc-icon-button>
@@ -581,6 +605,7 @@ export class ObcContextMenuInput extends LitElement {
           data-menu-value=${o.value}
           .label=${o.label}
           .status=${isSelected ? 'checked' : 'unchecked'}
+          @expand-toggle=${stopPropagation}
           @change=${(e: Event) => this.handleCheckboxChange(o, e)}
         ></obc-checkbox-item>
       </div>`;
@@ -601,8 +626,7 @@ export class ObcContextMenuInput extends LitElement {
         .checked=${isSelected}
         .variant=${ObcNavigationMenuVariant.Full}
         @click=${(e: Event) => this.handleMenuItemClick(o, e)}
-        role="menuitem"
-        aria-selected=${isSelected}
+        .itemRole=${NavigationItemRole.MenuItemRadio}
         ?hasIcon=${!!o.icon}
       >
         ${o.icon ? html`<div slot="icon">${o.icon}</div>` : nothing}
@@ -621,6 +645,7 @@ export class ObcContextMenuInput extends LitElement {
             data-menu-value=${c.value}
             .label=${c.label}
             .status=${isSelected ? 'checked' : 'unchecked'}
+            @expand-toggle=${stopPropagation}
             @change=${(e: Event) => this.handleCheckboxChange(c, e)}
           ></obc-checkbox-item>
         </div>`;
@@ -635,8 +660,7 @@ export class ObcContextMenuInput extends LitElement {
         .checked=${isSelected}
         .variant=${ObcNavigationMenuVariant.Full}
         @click=${(e: Event) => this.handleMenuItemClick(c, e)}
-        role="menuitem"
-        aria-selected=${isSelected}
+        .itemRole=${NavigationItemRole.MenuItemRadio}
         ?hasIcon=${!!c.icon}
       >
         ${c.icon ? html`<div slot="icon">${c.icon}</div>` : nothing}
@@ -644,8 +668,19 @@ export class ObcContextMenuInput extends LitElement {
     });
   }
 
+  /**
+   * Rows a group shows or hides join or leave the roving set only once the
+   * group has rendered; until then a newly shown row is its own tab stop.
+   */
+  private async refreshAfterDisclosure(group: ObcNavigationItemGroup) {
+    await group.updateComplete;
+    await this.updateComplete;
+    this.navigator.refresh();
+  }
+
   private handleFlyoutGroupClick(option: ContextMenuOption, event: Event) {
     event.preventDefault();
+    this.refreshAfterDisclosure(event.currentTarget as ObcNavigationItemGroup);
     this.dispatchEvent(
       new CustomEvent<ObcContextMenuInputItemClickEvent['detail']>(
         'item-click',
@@ -670,13 +705,16 @@ export class ObcContextMenuInput extends LitElement {
           .hug=${true}
           .hasIcon=${!!o.icon}
           @click=${(e: Event) => this.handleFlyoutGroupClick(o, e)}
-          @open=${() => {
+          @open=${(e: Event) => {
             this.shadowRoot
               ?.querySelectorAll('obc-navigation-item-group')
               .forEach((g) => {
                 const group = g as ObcNavigationItemGroup;
                 if (group.label !== o.label) group.close();
               });
+            this.refreshAfterDisclosure(
+              e.currentTarget as ObcNavigationItemGroup
+            );
           }}
         >
           ${o.icon ? html`<div slot="icon">${o.icon}</div>` : nothing}
@@ -703,6 +741,7 @@ export class ObcContextMenuInput extends LitElement {
               data-menu-value=${o.value}
               .label=${o.label}
               .status=${isSelected ? 'checked' : 'unchecked'}
+              @expand-toggle=${stopPropagation}
               @change=${(e: Event) => this.handleCheckboxChange(o, e)}
             ></obc-checkbox-item>
           </div>`;
@@ -773,18 +812,19 @@ export class ObcContextMenuInput extends LitElement {
             ${allCols.map(
               (c) =>
                 html`<div
-                  class="column-with-header ${!c.isFirstGroup &&
-                  c.isFirstInGroup
-                    ? 'column-divider'
-                    : ''}"
+                  class="column-with-header ${
+                    !c.isFirstGroup && c.isFirstInGroup ? 'column-divider' : ''
+                  }"
                 >
-                  ${c.isFirstInGroup
-                    ? html`<div class="column-header">
-                        <div class="subtitle-container">
-                          <div class="subtitle-text">${c.groupTitle}</div>
-                        </div>
-                      </div>`
-                    : html`<div class="column-header-spacer"></div>`}
+                  ${
+                    c.isFirstInGroup
+                      ? html`<div class="column-header">
+                          <div class="subtitle-container">
+                            <div class="subtitle-text">${c.groupTitle}</div>
+                          </div>
+                        </div>`
+                      : html`<div class="column-header-spacer"></div>`
+                  }
                   <div class="column-content">${renderColumn(c.options)}</div>
                 </div>`
             )}
@@ -845,6 +885,7 @@ export class ObcContextMenuInput extends LitElement {
       role="menu"
       aria-label=${this.hasTitleBar ? this.title : 'Context menu'}
       @keydown=${this.handleKeydown}
+      @focusin=${(event: Event) => this.navigator.handleFocusin(event)}
     >
       ${this.renderTitleBar()}
       <div class="menu-content">${this.renderMenuContent()}</div>

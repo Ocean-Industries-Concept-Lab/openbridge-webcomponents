@@ -2,6 +2,7 @@ import {LitElement, html, nothing, svg, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import componentStyle from './depth-indicator.css?inline';
 import {customElement} from '../../decorator.js';
+import {clamp} from '../../svghelpers/math.js';
 
 export enum ObcDepthIndicatorVariant {
   outline = 'outline',
@@ -31,7 +32,7 @@ export class ObcDepthIndicator extends LitElement {
 
   private clamp01(value: number): number {
     if (!Number.isFinite(value)) return 0;
-    return Math.max(0, Math.min(1, value));
+    return clamp(value, 0, 1);
   }
 
   private get points(): Array<{x: number; y: number}> {
@@ -122,31 +123,37 @@ export class ObcDepthIndicator extends LitElement {
           vector-effect="non-scaling-stroke"
         />
 
-        ${isFilled && fillPath
-          ? svg`<path
+        ${
+          isFilled && fillPath
+            ? svg`<path
               d=${fillPath}
               class="fill"
               clip-path="url(#${clipId})"
               vector-effect="non-scaling-stroke"
             />`
-          : nothing}
-        ${linePath
-          ? svg`<path
+            : nothing
+        }
+        ${
+          linePath
+            ? svg`<path
               d=${linePath}
               class="line"
               clip-path="url(#${clipId})"
               vector-effect="non-scaling-stroke"
             />`
-          : nothing}
-        ${dot
-          ? svg`<circle
+            : nothing
+        }
+        ${
+          dot
+            ? svg`<circle
               cx=${dot.x}
               cy=${dot.y}
               r=${DOT_R}
               class="dot"
               vector-effect="non-scaling-stroke"
             />`
-          : nothing}
+            : nothing
+        }
       </svg>
     `;
   }

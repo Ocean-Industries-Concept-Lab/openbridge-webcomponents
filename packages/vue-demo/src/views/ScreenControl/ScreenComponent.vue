@@ -22,7 +22,6 @@
 </template>
 
 <script setup lang="ts">
-import { html } from 'lit'
 import ObiIcon from '@oicl/openbridge-webcomponents-vue/icons/ObiIcon.vue'
 import ObcContextMenuInput from '@oicl/openbridge-webcomponents-vue/components/context-menu-input/ObcContextMenuInput.vue'
 import { computed, ref } from 'vue'

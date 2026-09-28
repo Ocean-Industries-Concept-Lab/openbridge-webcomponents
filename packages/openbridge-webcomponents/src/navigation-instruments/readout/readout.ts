@@ -887,26 +887,32 @@ export class ObcReadout extends LitElement {
         })}
         part="meta-wrapper"
       >
-        ${this.hasLeadingIcon
-          ? html`<span class="leading-icon" aria-hidden="true"
-              ><slot name="leading-icon"></slot
-            ></span>`
-          : nothing}
+        ${
+          this.hasLeadingIcon
+            ? html`<span class="leading-icon" aria-hidden="true"
+                ><slot name="leading-icon"></slot
+              ></span>`
+            : nothing
+        }
         <div class="meta-labels" part="meta-labels">
-          ${this.label
-            ? this.renderTextbox(
-                'label',
-                this.label,
-                this.labelOptions?.spaceReserver
-              )
-            : nothing}
-          ${this.unit
-            ? this.renderTextbox(
-                'unit',
-                this.unit,
-                this.unitOptions?.spaceReserver
-              )
-            : nothing}
+          ${
+            this.label
+              ? this.renderTextbox(
+                  'label',
+                  this.label,
+                  this.labelOptions?.spaceReserver
+                )
+              : nothing
+          }
+          ${
+            this.unit
+              ? this.renderTextbox(
+                  'unit',
+                  this.unit,
+                  this.unitOptions?.spaceReserver
+                )
+              : nothing
+          }
         </div>
       </div>
     `;
@@ -1000,18 +1006,20 @@ export class ObcReadout extends LitElement {
         part="source-block"
       >
         ${box}
-        ${hasDeviation
-          ? html`<span class="source-deviation">
-              <obi-delta aria-hidden="true"></obi-delta>
-              <obc-textbox
-                class="source-deviation-value"
-                .size=${ObcTextboxSize.xs}
-                .tabularNums=${true}
-                alignment="left"
-                >${deviation}</obc-textbox
-              >
-            </span>`
-          : nothing}
+        ${
+          hasDeviation
+            ? html`<span class="source-deviation">
+                <obi-delta aria-hidden="true"></obi-delta>
+                <obc-textbox
+                  class="source-deviation-value"
+                  .size=${ObcTextboxSize.xs}
+                  .tabularNums=${true}
+                  alignment="left"
+                  >${deviation}</obc-textbox
+                >
+              </span>`
+            : nothing
+        }
       </div>
     `;
   }
@@ -1028,13 +1036,15 @@ export class ObcReadout extends LitElement {
       return nothing;
     }
     return html`
-      ${this.isHorizontal
-        ? html`<div
-            class="divider divider-vertical"
-            part="divider"
-            aria-hidden="true"
-          ></div>`
-        : nothing}
+      ${
+        this.isHorizontal
+          ? html`<div
+              class="divider divider-vertical"
+              part="divider"
+              aria-hidden="true"
+            ></div>`
+          : nothing
+      }
       <div class="source-row" part="source-wrapper">
         ${this.renderSourceContent()}
       </div>
@@ -1240,23 +1250,29 @@ export class ObcReadout extends LitElement {
   private renderVerticalLayout(): TemplateResult {
     return html`
       <div class="value-cluster" part="value-cluster">
-        ${this.hasAdvice
-          ? html`<div class="advice-row" part="advice-wrapper">
-              ${this.renderAdviceBlock()}
-            </div>`
-          : nothing}
-        ${this.hasSetpoint
-          ? html`<div class="setpoint-row" part="setpoint-wrapper">
-              ${this.renderSetpointBlock()}
-              ${this.renderSetpointWidthReserve('setpoint')}
-            </div>`
-          : nothing}
-        ${this.hasValue
-          ? html`<div class="value-row" part="value-wrapper">
-              ${this.renderValueReading()}
-              ${this.renderSetpointWidthReserve('value')}
-            </div>`
-          : nothing}
+        ${
+          this.hasAdvice
+            ? html`<div class="advice-row" part="advice-wrapper">
+                ${this.renderAdviceBlock()}
+              </div>`
+            : nothing
+        }
+        ${
+          this.hasSetpoint
+            ? html`<div class="setpoint-row" part="setpoint-wrapper">
+                ${this.renderSetpointBlock()}
+                ${this.renderSetpointWidthReserve('setpoint')}
+              </div>`
+            : nothing
+        }
+        ${
+          this.hasValue
+            ? html`<div class="value-row" part="value-wrapper">
+                ${this.renderValueReading()}
+                ${this.renderSetpointWidthReserve('value')}
+              </div>`
+            : nothing
+        }
       </div>
       ${this.renderMetaZone()} ${this.renderSource()}
     `;
@@ -1270,21 +1286,27 @@ export class ObcReadout extends LitElement {
   private renderHorizontalLayout(): TemplateResult {
     return html`
       <div class="inline-row" part="value-cluster">
-        ${this.hasAdvice
-          ? html`<div class="advice-row" part="advice-wrapper">
-              ${this.renderAdviceBlock()}
-            </div>`
-          : nothing}
-        ${this.hasSetpoint
-          ? html`<div class="setpoint-row" part="setpoint-wrapper">
-              ${this.renderSetpointBlock()}
-            </div>`
-          : nothing}
-        ${this.hasValue
-          ? html`<div class="value-row" part="value-wrapper">
-              ${this.renderValueReading()}
-            </div>`
-          : nothing}
+        ${
+          this.hasAdvice
+            ? html`<div class="advice-row" part="advice-wrapper">
+                ${this.renderAdviceBlock()}
+              </div>`
+            : nothing
+        }
+        ${
+          this.hasSetpoint
+            ? html`<div class="setpoint-row" part="setpoint-wrapper">
+                ${this.renderSetpointBlock()}
+              </div>`
+            : nothing
+        }
+        ${
+          this.hasValue
+            ? html`<div class="value-row" part="value-wrapper">
+                ${this.renderValueReading()}
+              </div>`
+            : nothing
+        }
         ${this.renderMetaZone()} ${this.renderSource()}
       </div>
     `;
@@ -1414,9 +1436,11 @@ export class ObcReadout extends LitElement {
 
     const root = html`
       <div class=${classes} part="root">
-        ${this.isHorizontal
-          ? this.renderHorizontalLayout()
-          : this.renderVerticalLayout()}
+        ${
+          this.isHorizontal
+            ? this.renderHorizontalLayout()
+            : this.renderVerticalLayout()
+        }
         ${this.renderSourcePickerSlot()}
       </div>
       ${this.renderSourcePickerContent()}

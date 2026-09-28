@@ -186,9 +186,11 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
         <obc-watch
           .touching=${this.touching}
           .angleSetpoint=${setpointAngle}
-          .newAngleSetpoint=${this.newSetpoint !== undefined
-            ? this.getAngle(this.newSetpoint)
-            : undefined}
+          .newAngleSetpoint=${
+            this.newSetpoint !== undefined
+              ? this.getAngle(this.newSetpoint)
+              : undefined
+          }
           .atAngleSetpoint=${this.computeAtSetpoint(this.speed)}
           .angleSetpointAtZeroDeadband=${this.setpointAtZeroDeadband}
           .setpointOverride=${this.setpointOverride}
@@ -216,20 +218,22 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
           ]}
         ></obc-watch>
         <svg class="rudder" viewBox=${frame.viewBox}>${this.needle}</svg>
-        ${this.hasReadout
-          ? html`
-              ${renderInstrumentReadout({
-                className: 'speed-gauge-value',
-                direction: ReadoutDirection.horizontal,
-                value: this.speed,
-                label: this.label,
-                unit: this.unit,
-                fractionDigits: this.fractionDigits,
-                maxDigits,
-                priority: this.priority,
-              })}
-            `
-          : nothing}
+        ${
+          this.hasReadout
+            ? html`
+                ${renderInstrumentReadout({
+                  className: 'speed-gauge-value',
+                  direction: ReadoutDirection.horizontal,
+                  value: this.speed,
+                  label: this.label,
+                  unit: this.unit,
+                  fractionDigits: this.fractionDigits,
+                  maxDigits,
+                  priority: this.priority,
+                })}
+              `
+            : nothing
+        }
       </div>
     `;
   }

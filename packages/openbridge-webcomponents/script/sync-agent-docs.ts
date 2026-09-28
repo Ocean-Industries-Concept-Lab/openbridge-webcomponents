@@ -113,14 +113,25 @@ plan(
 );
 
 const agentsPath = path.join(ROOT, 'AGENTS.md');
-plan(
-  agentsPath,
-  replaceMarkedBlock(
-    fs.readFileSync(agentsPath, 'utf8'),
-    ROUTING_MARKER,
-    renderRoutingTable(routable)
-  )
+const agentsMd = replaceMarkedBlock(
+  fs.readFileSync(agentsPath, 'utf8'),
+  ROUTING_MARKER,
+  renderRoutingTable(routable)
 );
+plan(agentsPath, agentsMd);
+
+/**
+ * Check 5 — AGENTS.md fits the smallest reader. OpenAI Codex stops reading
+ * at `project_doc_max_bytes` (32 KiB by default), so every rule past that
+ * line is silently dropped for it; a routing row costs about 250 bytes.
+ */
+const AGENTS_MD_MAX_BYTES = 32 * 1024;
+const agentsMdBytes = Buffer.byteLength(agentsMd, 'utf8');
+if (agentsMdBytes > AGENTS_MD_MAX_BYTES) {
+  problems.push(
+    `AGENTS.md is ${agentsMdBytes} bytes; agents that stop at ${AGENTS_MD_MAX_BYTES} skip the rest — trim it (compress a § 8 rule that duplicates a family doc into a pointer)`
+  );
+}
 
 plan(path.join(ROOT, 'CLAUDE.md'), renderClaudeMd());
 

@@ -111,6 +111,13 @@ export interface TreeNavigationItemAlerts extends AlertCounts {
  * |----------------|---------------------------------|-------------------------------------------------------------------------|
  * | icon           | `hasLeadingIcon` is true        | Leading icon for the row, e.g. `<obi-placeholder slot="icon">`.         |
  *
+ * ### Keyboard
+ * One item of the [APG Tree View](https://www.w3.org/WAI/ARIA/apg/patterns/treeview/):
+ * `Enter` and `Space` activate it, and the tree it sits in owns the arrow keys
+ * and the single tab stop.
+ *
+ * Left out: nothing at the item level.
+ *
  * @property label - The text label displayed for the row.
  * @property branches - Guide line for each ancestor level, outermost first; one 32px column per
  *   entry. Computed by `obc-tree-navigation` — rarely set by hand.
@@ -226,9 +233,11 @@ export class ObcTreeNavigationItem extends LitElement {
     >
       ${hasVertical ? html`<div class="branch-vertical"></div>` : nothing}
       ${hasHorizontal ? html`<div class="branch-horizontal"></div>` : nothing}
-      ${type === TreeBranchType.corner
-        ? html`<div class="branch-elbow"></div>`
-        : nothing}
+      ${
+        type === TreeBranchType.corner
+          ? html`<div class="branch-elbow"></div>`
+          : nothing
+      }
     </div>`;
   }
 
@@ -268,43 +277,53 @@ export class ObcTreeNavigationItem extends LitElement {
           <div class="tree-node-row">
             ${this.branches.map((branch) => this.renderBranch(branch))}
             <div class="terminal">
-              ${this.isRoot || this.isBlankAncestry
-                ? nothing
-                : html`<div class="terminal-connector"></div>`}
-              ${!this.isRoot &&
-              !this.isBlankAncestry &&
-              this.expandable &&
-              this.expanded
-                ? html`<div class="terminal-dropdown"></div>`
-                : nothing}
-              ${this.expandable
-                ? html`<div class="chevron" aria-hidden="true">
-                    <obi-chevron-right-google></obi-chevron-right-google>
-                  </div>`
-                : nothing}
+              ${
+                this.isRoot || this.isBlankAncestry
+                  ? nothing
+                  : html`<div class="terminal-connector"></div>`
+              }
+              ${
+                !this.isRoot &&
+                !this.isBlankAncestry &&
+                this.expandable &&
+                this.expanded
+                  ? html`<div class="terminal-dropdown"></div>`
+                  : nothing
+              }
+              ${
+                this.expandable
+                  ? html`<div class="chevron" aria-hidden="true">
+                      <obi-chevron-right-google></obi-chevron-right-google>
+                    </div>`
+                  : nothing
+              }
               ${this.renderTerminalHeader()}
             </div>
           </div>
           <div class="label-container">
-            ${this.hasLeadingIcon
-              ? html`<div class="leading-icon">
-                  <slot name="icon"></slot>
-                </div>`
-              : nothing}
+            ${
+              this.hasLeadingIcon
+                ? html`<div class="leading-icon">
+                    <slot name="icon"></slot>
+                  </div>`
+                : nothing
+            }
             <span part="label" class="label">${this.label}</span>
           </div>
-          ${this.alertBadges.length > 0
-            ? html`<div class="alert-badges">
-                ${this.alertBadges.map(
-                  (badge) =>
-                    html`<obc-badge
-                      class="alert-badge"
-                      .type=${badge.type}
-                      .number=${badge.count}
-                    ></obc-badge>`
-                )}
-              </div>`
-            : nothing}
+          ${
+            this.alertBadges.length > 0
+              ? html`<div class="alert-badges">
+                  ${this.alertBadges.map(
+                    (badge) =>
+                      html`<obc-badge
+                        class="alert-badge"
+                        .type=${badge.type}
+                        .number=${badge.count}
+                      ></obc-badge>`
+                  )}
+                </div>`
+              : nothing
+          }
         </div>
       </div>
     `;

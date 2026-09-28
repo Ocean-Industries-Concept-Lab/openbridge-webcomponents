@@ -298,17 +298,18 @@ export class ObcCompassIndicator extends LitElement {
           ${label}
         </text>
         <g
-          transform="translate(24 32) rotate(${this
-            .normalizedAngle}) translate(-8 -8)"
+          transform="translate(24 32) rotate(${
+            this.normalizedAngle
+          }) translate(-8 -8)"
         >
           <path
             d="${LABELED_HEADING_ARROW_PATH}"
-            fill="${isHeading
-              ? 'var(--instrument-enhanced-secondary-color)'
-              : 'none'}"
-            stroke="${isHeading
-              ? 'none'
-              : 'var(--instrument-enhanced-secondary-color)'}"
+            fill="${
+              isHeading ? 'var(--instrument-enhanced-secondary-color)' : 'none'
+            }"
+            stroke="${
+              isHeading ? 'none' : 'var(--instrument-enhanced-secondary-color)'
+            }"
             stroke-width="${isHeading ? '0' : '1'}"
             stroke-linejoin="round"
           />

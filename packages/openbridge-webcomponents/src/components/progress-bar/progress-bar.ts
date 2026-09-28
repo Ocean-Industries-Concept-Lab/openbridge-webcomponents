@@ -177,9 +177,9 @@ export class ObcProgressBar extends LitElement {
       return html`
         <div class="circular-label-container">
           <span class="circular-value">${Math.round(this.value)}</span>
-          ${this.showUnit
-            ? html`<span class="circular-unit">%</span>`
-            : nothing}
+          ${
+            this.showUnit ? html`<span class="circular-unit">%</span>` : nothing
+          }
         </div>
       `;
     }
@@ -188,9 +188,9 @@ export class ObcProgressBar extends LitElement {
       return html`
         <div class="circular-label-container">
           <span class="circular-value">${Math.round(this.value)}</span>
-          ${this.showUnit
-            ? html`<span class="circular-unit">%</span>`
-            : nothing}
+          ${
+            this.showUnit ? html`<span class="circular-unit">%</span>` : nothing
+          }
         </div>
       `;
     } else if (this.circularState === CircularProgressState.indeterminate) {
@@ -225,23 +225,27 @@ export class ObcProgressBar extends LitElement {
         ${this.showValue ? this.renderLabel() : ''}
 
         <div class=${classMap(barClasses)}>
-          ${this.mode === ProgressBarMode.determinate
-            ? html`
-                <div
-                  class="loaded"
-                  style=${styleMap({width: progressWidth})}
-                ></div>
-              `
-            : html` <div class="indeterminate-track"></div> `}
+          ${
+            this.mode === ProgressBarMode.determinate
+              ? html`
+                  <div
+                    class="loaded"
+                    style=${styleMap({width: progressWidth})}
+                  ></div>
+                `
+              : html` <div class="indeterminate-track"></div> `
+          }
         </div>
 
-        ${this.hasDescription
-          ? html`
-              <div class="description-container">
-                <span class="description-text">${this.description}</span>
-              </div>
-            `
-          : nothing}
+        ${
+          this.hasDescription
+            ? html`
+                <div class="description-container">
+                  <span class="description-text">${this.description}</span>
+                </div>
+              `
+            : nothing
+        }
       </div>
     `;
   }
@@ -254,9 +258,11 @@ export class ObcProgressBar extends LitElement {
             <span class="value-number">${Math.round(this.value)}</span>
             <span class="value-unit">%</span>
           </div>
-          ${this.showState
-            ? html` <span class="state">${this.stateLabel}</span> `
-            : nothing}
+          ${
+            this.showState
+              ? html` <span class="state">${this.stateLabel}</span> `
+              : nothing
+          }
         </div>
       `;
     } else {
