@@ -9,3 +9,4 @@
 | all automation devices                                                                 | `tag` = `''`                                       | `tag` = `null`                                              |
 | `obc-automation-button`, `obc-automation-button-readout-stack`                         | `tag`: `AutomationButtonReadoutStackTag` or `null` | `tag`: `string` or `null`                                   |
 | `obc-automation-tank`                                                                  | `variant`                                          | `orientation`; `variant="compact"` is now `compact`         |
+| `obc-fan`, `obc-motor`, `obc-pump`                                                     | `on`                                               | `turnedOn`                                                  |
