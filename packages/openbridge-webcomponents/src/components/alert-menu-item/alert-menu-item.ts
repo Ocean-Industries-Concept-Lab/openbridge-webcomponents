@@ -18,6 +18,7 @@ export enum ObcAlertMenuItemStatus {
   NoAckAlarm = 'no-ack-alarm',
   NoAckWarning = 'no-ack-warning',
   Rectified = 'rectified',
+  RectifiedUnacknowledged = 'rectified-unacknowledged',
 }
 
 /**
@@ -40,12 +41,13 @@ export enum ObcAlertMenuItemActionState {
  * ### Features
  * - **Status Variants:** Supports multiple alert states via the `status` property:
  *   - **Unacknowledged:** Shows an action button (ACK) for user acknowledgment.
+ *   - **RectifiedUnacknowledged:** The alert condition has cleared but the alert still awaits acknowledgment, so the ACK action stays available.
  *   - **Caution, Acknowledged, Rectified:** Display different visual cues for alert progression.
  *   - **NoAckAlarm / NoAckWarning:** Show special icons indicating unacknowledged alarms or warnings.
  * - **Icon Support:** Optional secondary icon (e.g., system or source) and a primary alert icon. Tertiary "shelved" icon appears if the alert is shelved.
  * - **Time and Day Display:** Optionally shows day and/or time for the alert occurrence.
  * - **Expandable:** Can be toggled open/closed for additional details (via click).
- * - **Action Buttons:** Displays an "ACK" button for unacknowledged alerts and an optional secondary action (label set via `secondaryActionLabel`); each triggers an event when clicked.
+ * - **Action Buttons:** Displays an "ACK" button for the statuses that still await acknowledgment (`unacknowledged` and `rectified-unacknowledged`) and an optional secondary action (label set via `secondaryActionLabel`); each triggers an event when clicked.
  *   - Each action's appearance is controlled independently via `primaryActionState` / `secondaryActionState` (`enabled`, `disabled`, or `none`).
  * - **Animated Intro:** Optional animation when the item appears.
  * - **Size Options:** Supports single-line or multi-line layouts (see `size` property).
@@ -105,7 +107,8 @@ export enum ObcAlertMenuItemActionState {
  * @property time - The time label for the alert (e.g., "14:30").
  * @property status - The current status of the alert item.
  *   Determines visual style, icon, and action button visibility.
- *   Possible values: 'unacknowledged', 'caution', 'acknowledged', 'no-ack-alarm', 'no-ack-warning', 'rectified'.
+ *   Possible values: 'unacknowledged', 'caution', 'acknowledged', 'no-ack-alarm', 'no-ack-warning', 'rectified', 'rectified-unacknowledged'.
+ *   'unacknowledged' and 'rectified-unacknowledged' show the ACK action; the other values show a trailing icon instead.
  *   Default is 'unacknowledged'.
  * @property open - Whether the item is expanded/open to show additional details.
  *   Toggled by clicking the item.
@@ -165,11 +168,18 @@ export class ObcAlertMenuItem extends LitElement {
   @property({type: String}) secondaryActionState: ObcAlertMenuItemActionState =
     ObcAlertMenuItemActionState.None;
 
+  private get canAck() {
+    return (
+      this.status === ObcAlertMenuItemStatus.Unacknowledged ||
+      this.status === ObcAlertMenuItemStatus.RectifiedUnacknowledged
+    );
+  }
+
   private get primaryActionLabel() {
     if (this.primaryActionState === ObcAlertMenuItemActionState.None) {
       return '';
     }
-    return this.status === ObcAlertMenuItemStatus.Unacknowledged ? 'ACK' : '';
+    return this.canAck ? 'ACK' : '';
   }
 
   private get secondaryActionLabelToShow() {
@@ -189,7 +199,7 @@ export class ObcAlertMenuItem extends LitElement {
 
   private get hasTrailingIcon() {
     // True when we need the action container but don't have an ACK button
-    return this.status !== ObcAlertMenuItemStatus.Unacknowledged;
+    return !this.canAck;
   }
 
   private handleMessageClick() {

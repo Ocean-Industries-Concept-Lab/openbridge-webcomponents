@@ -71,7 +71,6 @@ export function getAlertListModeData(selectedMode: AlertListMode) {
       emptyIcon: html`<obi-unacknowledged></obi-unacknowledged>`,
       filter: (alert: Alert) =>
         !isAcknowledged(alert) &&
-        isActive(alert) &&
         !excludedFromUnackedFilter(alert.type) &&
         !isShelved(alert),
     };
@@ -257,11 +256,7 @@ export class ObcAlertListDetails extends LitElement {
       let action: ObcTableCellData = {
         type: ObcTableCellType.Regular,
       };
-      if (
-        !isAcknowledged(alert) &&
-        isActive(alert) &&
-        requiresAcknowledgement(alert.type)
-      ) {
+      if (!isAcknowledged(alert) && requiresAcknowledgement(alert.type)) {
         if (alert.noAck) {
           const icon = usesAlarmNoAckIcon(alert.type)
             ? html`<obi-alarm-noack-iec usecsscolor></obi-alarm-noack-iec>`
