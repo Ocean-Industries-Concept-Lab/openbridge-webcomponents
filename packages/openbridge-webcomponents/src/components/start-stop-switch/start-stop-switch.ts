@@ -5,6 +5,7 @@ import {classMap} from 'lit/directives/class-map.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
 import '../../icons/icon-arrow-right-google.js';
 import {customElement} from '../../decorator.js';
+import {clamp} from '../../svghelpers/math.js';
 
 /**
  * The visual variant for the start-stop switch when checked.
@@ -97,6 +98,13 @@ const DRAG_COMPLETE_THRESHOLD = 0.9;
  *   <div slot="to-unchecked-action-label">Stop</div>
  * </obc-start-stop-switch>
  * ```
+ *
+ * ### Keyboard
+ * [APG Switch](https://www.w3.org/WAI/ARIA/apg/patterns/switch/): `Space` and
+ * `Enter` toggle it. The knob inside is a drag handle for pointers and stays
+ * out of the tab sequence.
+ *
+ * Left out: nothing.
  *
  * @property checked - Whether the switch is in the checked (active) state.
  *   When checked, the thumb is on the right side.
@@ -262,12 +270,12 @@ export class ObcStartStopSwitch extends LitElement {
     if (this.checked) {
       let right = -1 - this.dragOffset;
       const maxRight = this.trackWidth - this.buttonWidth + 1;
-      right = Math.max(-1, Math.min(right, maxRight));
+      right = clamp(right, -1, Math.max(-1, maxRight));
       return `right: ${right}px; left: auto; transition: none;`;
     } else {
       let left = -1 + this.dragOffset;
       const maxLeft = this.trackWidth - this.buttonWidth + 1;
-      left = Math.max(-1, Math.min(left, maxLeft));
+      left = clamp(left, -1, Math.max(-1, maxLeft));
       return `left: ${left}px; right: auto; transition: none;`;
     }
   }

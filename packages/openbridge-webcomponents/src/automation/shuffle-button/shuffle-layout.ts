@@ -1,3 +1,4 @@
+import {clamp} from '../../svghelpers/math.js';
 /**
  * Pure layout math for the shuffle-button mechanism: a selector whose selected
  * thumb always occupies the fixed center slot of a (2n-1)-slot row while the
@@ -6,7 +7,7 @@
 
 export function clampPosition(positionCount: number, position: number): number {
   const rounded = Number.isNaN(position) ? 0 : Math.round(position);
-  return Math.min(Math.max(rounded, 0), positionCount - 1);
+  return clamp(rounded, 0, positionCount - 1);
 }
 
 export function shuffleSlotCount(positionCount: number): number {

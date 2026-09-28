@@ -314,6 +314,7 @@ const meta: Meta<IntegrationBarStoryArgs> = {
     makeLabelNamesShort: false,
     showIntegrationMenu: false,
     customSelectedColors: false,
+    hasRightTrayLeading: false,
   },
   argTypes: {
     containerWidthPx: {
@@ -433,6 +434,7 @@ const meta: Meta<IntegrationBarStoryArgs> = {
           .showLinkButton=${args.showLinkButton}
           .linkButtonActivated=${args.linkButtonActivated}
           .showClock=${args.showClock}
+          .hasRightTrayLeading=${args.hasRightTrayLeading}
           .showUserButton=${args.showUserButton}
           .userButtonActivated=${args.userButtonActivated}
           .showDimmingButton=${args.showDimmingButton}
@@ -469,6 +471,17 @@ const meta: Meta<IntegrationBarStoryArgs> = {
             showIntegrationMenu: args.showIntegrationMenu,
             customSelectedColors: args.customSelectedColors,
           })}
+          ${
+            args.hasRightTrayLeading
+              ? html`<obc-icon-button
+                  slot="right-tray-leading"
+                  variant="integration"
+                  aria-label="Custom action"
+                >
+                  <obi-placeholder></obi-placeholder>
+                </obc-icon-button>`
+              : nothing
+          }
         </obc-integration-bar>
       </div>
     </div>`;
@@ -512,5 +525,11 @@ export const WithIntegrationMenu: Story = {
 export const CustomSelectedColors: Story = {
   args: {
     customSelectedColors: true,
+  },
+};
+
+export const WithRightTrayLeading: Story = {
+  args: {
+    hasRightTrayLeading: true,
   },
 };

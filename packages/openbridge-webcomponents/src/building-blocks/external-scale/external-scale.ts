@@ -156,6 +156,7 @@ import {
   SETPOINT_HEIGHT,
   SETPOINT_ZERO_OFFSET,
 } from '../../svghelpers/setpoint.js';
+import {clamp} from '../../svghelpers/math.js';
 
 /** Main axis orientation for the external scale renderer. */
 export enum ExternalScaleOrientation {
@@ -1928,8 +1929,16 @@ function generateBarFill(
   const fillMin = config.fillMin ?? 0;
   const fillMax = config.fillMax ?? config.value;
 
-  const v0 = Math.max(Math.min(fillMin, config.maxValue), config.minValue);
-  const v1 = Math.max(Math.min(fillMax, config.maxValue), config.minValue);
+  const v0 = clamp(
+    fillMin,
+    config.minValue,
+    Math.max(config.minValue, config.maxValue)
+  );
+  const v1 = clamp(
+    fillMax,
+    config.minValue,
+    Math.max(config.minValue, config.maxValue)
+  );
 
   const a0 = valueToMainAxis(config, v0);
   const a1 = valueToMainAxis(config, v1);

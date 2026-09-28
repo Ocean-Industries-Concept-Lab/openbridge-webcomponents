@@ -1,3 +1,5 @@
+@mixin soft-dismiss;
+
 * {
   box-sizing: border-box;
 }
@@ -9,6 +11,10 @@
   box-sizing: border-box;
   width: 320px;
   user-select: none;
+}
+
+.card.tabbed {
+  overflow: hidden;
 }
 
 .title-container {

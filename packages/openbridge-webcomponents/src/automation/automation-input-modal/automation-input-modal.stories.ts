@@ -54,15 +54,16 @@ export const Compact: Story = {
         line-height: 16px; /* 133.333% */
       }
     </style>
-    <obc-automation-input-modal>
+    <obc-automation-input-modal aria-label="Speed">
       <div slot="header">
-        <obc-icon-button variant="flat">
+        <obc-icon-button variant="flat" aria-label="Close">
           <obi-close-google></obi-close-google>
         </obc-icon-button>
       </div>
       <div slot="preview"></div>
       <obc-toggle-button-group
         slot="action-primary"
+        aria-label="Operation"
         .variant=${ObcToggleButtonOptionVariant.regular}
         value="run"
         .type=${ObcToggleButtonOptionType.iconTextUnder}

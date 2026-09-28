@@ -90,6 +90,7 @@ export {
  * @fires {CustomEvent<void>} today-click - Fired when the "Today" button is clicked.
  * @fires {CustomEvent<void>} new-event-click - Fired when the "+ New event" button is clicked (Large/XLarge only).
  * @fires {CustomEvent<void>} calendar-click - Fired when the footer "Calendar" navigation link is clicked.
+ * @fires {CustomEvent<{title: string, startTime: string, endTime: string}>} event-click - Passed on from the event items in a date cell when one is clicked, with its title, start and end time.
  * @beta
  */
 @customElement('obc-calendar')
@@ -404,7 +405,10 @@ export class ObcCalendar extends LitElement {
                           : false
                       }
                       ?disabled=${!cell.isCurrentMonth}
-                      @date-click=${() => this._handleDateClick(cell)}
+                      @date-click=${(event: Event) => {
+                        event.stopPropagation();
+                        this._handleDateClick(cell);
+                      }}
                     ></obc-date-item>
                   `
                 )}

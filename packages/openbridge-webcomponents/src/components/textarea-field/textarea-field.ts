@@ -522,12 +522,14 @@ export class ObcTextareaField extends LitElement {
   private handleVoicePlaybackToggle(e: CustomEvent) {
     // The audio-recording-item emits the desired isPlaying state when toggled.
     // Update internal state and notify parent.
+    e.stopPropagation();
     const playing = e.detail.isPlaying as boolean;
     this._isPlayingRecording = playing;
     this.emitVoiceAction(VoiceAction.PlaybackToggle, playing);
   }
 
-  private handleAttachmentRemove(attachment: Attachment) {
+  private handleAttachmentRemove(event: Event, attachment: Attachment) {
+    event.stopPropagation();
     this.emitIfEnabled('attachment-remove', {id: attachment.id});
   }
 
@@ -612,7 +614,8 @@ export class ObcTextareaField extends LitElement {
               .label=${attachment.label}
               .showIcon=${attachment.showIcon ?? false}
               ?disabled=${this.disabled}
-              @remove-chip=${() => this.handleAttachmentRemove(attachment)}
+              @remove-chip=${(event: Event) =>
+                this.handleAttachmentRemove(event, attachment)}
             ></obc-input-chip>
           `
         )}

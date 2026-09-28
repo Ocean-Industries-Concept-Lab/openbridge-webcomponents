@@ -48,6 +48,7 @@ export type {DateItemEvent};
  * @property locale - Locale for date formatting, such as `en-US`, `nb-NO` or `de-DE`. Uses the
  *   browser default when unset.
  * @slot - No slots. All content is provided via properties.
+ * @fires {CustomEvent<{title: string, startTime: string, endTime: string}>} event-click - Passed on from the listed event items when one is clicked, with its title, start and end time.
  * @beta
  */
 @customElement('obc-event-list')

@@ -34,19 +34,19 @@ type Story = StoryObj<ObcConverter>;
 
 export const On: Story = {
   args: {
-    on: true,
+    turnedOn: true,
   },
 };
 
 export const Off: Story = {
   args: {
-    on: false,
+    turnedOn: false,
   },
 };
 
 export const MultipleReadouts: Story = {
   args: {
-    on: true,
+    turnedOn: true,
     showStatus: false,
     readoutValues: [
       {

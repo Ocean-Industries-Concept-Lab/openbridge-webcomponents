@@ -56,16 +56,19 @@ __vis__/linux/__results__/      local output, gitignored
 __vis__/darwin/__baselines__/   macOS, NOT committed
 ```
 
+The PR body names every baseline the PR adds, moves or removes, as
+`component/story` (`tab-row/with-panels`) or `vue-demo/<route>`, with why it
+moved; `pr-body.yml` fails until it does and prints the names it wants.
+
 Only the Linux baselines ship. Regenerating on macOS produces diffs CI will
 reject.
 
 **Regenerate locally, on Linux.** The devcontainer (Ubuntu 24.04) renders what
-the CI `test` job (`mcr.microsoft.com/playwright:v1.60.0-noble`) accepts, so a
+the CI `test` job (the Playwright image `visual-testing.yml` pins) accepts, so a
 scoped `--update` followed by a plain re-run is the whole procedure, except for
 small `<canvas>` charts ([`skip-test` or `!snapshot`](#skip-test-or-snapshot)).
-On macOS take the Docker route from the package directory (the scripts mount
-`$(pwd)`), keeping the filter in front of the flag — `update-snapshots:docker`
-has no filter and rewrites the whole suite:
+On macOS take the Docker route from the package directory (the script mounts
+`$(pwd)`), keeping the filter in front of the flag:
 
 ```bash
 npm run test-storybook:docker -- -- component-name --update
@@ -73,9 +76,10 @@ npm run test-storybook:docker -- -- component-name
 ```
 
 See [IMPLEMENTATION_GUIDELINES.md § Docker Testing](../../IMPLEMENTATION_GUIDELINES.md#docker-testing)
-and [`ci-and-release.md`](../../docs/agents/ci-and-release.md). The `/update-snapshots`
-PR-comment workflow is not a fallback (see Open), and it fires on any comment
-that merely contains that string — keep the command out of PR prose.
+and [`ci-and-release.md`](../../docs/agents/ci-and-release.md). That image is the one the retired
+`/update-snapshots` workflow could never import the Vitest setup file inside on
+any run that got that far, so confirm it still works before trusting a baseline
+it produces (see Open).
 
 ## Checking a baseline against the design
 
@@ -108,7 +112,9 @@ Two facts that bite:
 ### `skip-test` or `!snapshot`
 
 Both keep a story out of the baselines, and both are for output that is
-genuinely non-deterministic, never for papering over a regression.
+genuinely non-deterministic, never for papering over a regression. A PR that
+adds either tag, or `skip-a11y`, names the stories file and the reason in its
+body; `pr-body.yml` fails until it does.
 
 - **`skip-test`** — the snapshot project does not collect the story at all
   (`tags.exclude` in `vitest.config.ts`): no render, no `play`, no baseline.
@@ -157,10 +163,23 @@ resolve.
 `packages/vue-demo/e2e/` runs from that package:
 
 ```bash
-npm run test:visual          # compare against committed baselines
-npm run test:visual:update    # regenerate after an intended change
-npm run test:visual           # ALWAYS re-run to confirm stability
+npm run test:visual -- -g <name>          # compare the routes you touched against the committed baselines
+npm run test:visual:update -- -g <name>   # regenerate after an intended change
+npm run test:visual -- -g <name>          # ALWAYS re-run to confirm stability
 ```
+
+`-g` matches the test title, `route: <name>` — the name from `visual.spec.ts`
+(`conning-psv`, `ias`), never the URL; `-g conning` takes every conning route.
+
+- The config starts `vite dev` itself, or reuses a server already on 5173;
+  under `CI` it serves `vite preview`, so build the demo first there
+  (`npm run build:demo` at the repository root). The `visual` project is
+  always headless.
+- The `vue-demo` job of `visual-testing.yml` runs both projects on PRs to
+  `develop` and `stable`, in the same Playwright image as the snapshot job. A
+  change that moves a route fails there until its baseline is refreshed:
+  regenerate the routes your change moves, on Linux, and say in the PR which
+  moved and why. A failed run uploads the report and the diffs.
 
 - `e2e/visual/` is its own Playwright project (`--project=visual`); the
   functional suite `e2e/mainpage.spec.ts` ignores it and needs no baselines.
@@ -216,5 +235,5 @@ re-run scoped to the single component rather than retrying the whole suite.
 
 ## Open
 
-- `update-snapshots.yml` fails inside its Docker image before writing anything, and triggers on any PR comment containing its command (#1179).
+- The Docker route (`test-storybook:docker`) runs the image whose Vitest setup import failed in every attempted `update-snapshots.yml` run; the workflow is retired, the image is unverified (#1179).
 - Element-cropped story screenshots (`npm run screenshots`, opt-in through `VITE_STORYBOOK_TAKE_SCREENSHOT`, sized from the `@snapshot-base-width` / `@snapshot-base-height` JSDoc tags) are in draft #731; until it lands, crop the 1280×720 baseline by hand as above.

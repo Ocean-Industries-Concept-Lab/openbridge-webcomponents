@@ -40,7 +40,7 @@ type Story = StoryObj<ObcMotor>;
 
 export const OnVertical: Story = {
   args: {
-    on: true,
+    turnedOn: true,
     vertical: true,
     direction: AutomationButtonDirection.forward,
     labelDirection: AutomationButtonLabelDirection.up,
@@ -49,7 +49,7 @@ export const OnVertical: Story = {
 
 export const OnHorizontal: Story = {
   args: {
-    on: true,
+    turnedOn: true,
     vertical: false,
     direction: AutomationButtonDirection.backwardFast,
     labelDirection: AutomationButtonLabelDirection.left,
@@ -58,7 +58,7 @@ export const OnHorizontal: Story = {
 
 export const OffVertical: Story = {
   args: {
-    on: false,
+    turnedOn: false,
     vertical: true,
     direction: AutomationButtonDirection.standby,
     labelDirection: AutomationButtonLabelDirection.up,
@@ -67,7 +67,7 @@ export const OffVertical: Story = {
 
 export const OffHorizontal: Story = {
   args: {
-    on: false,
+    turnedOn: false,
     vertical: false,
     direction: AutomationButtonDirection.backwardStopped,
     labelDirection: AutomationButtonLabelDirection.right,
@@ -76,7 +76,7 @@ export const OffHorizontal: Story = {
 
 export const OnVerticalRpm: Story = {
   args: {
-    on: true,
+    turnedOn: true,
     vertical: true,
     direction: AutomationButtonDirection.forward,
     labelDirection: AutomationButtonLabelDirection.up,
@@ -88,7 +88,7 @@ export const OnVerticalRpm: Story = {
 
 export const IdOnly: Story = {
   args: {
-    on: true,
+    turnedOn: true,
     vertical: true,
     direction: AutomationButtonDirection.forward,
     labelDirection: AutomationButtonLabelDirection.up,
@@ -101,7 +101,7 @@ export const IdOnly: Story = {
 
 export const VariantDoubleSizeLarge: Story = {
   args: {
-    on: true,
+    turnedOn: true,
     vertical: true,
     direction: AutomationButtonDirection.forward,
     labelDirection: AutomationButtonLabelDirection.up,

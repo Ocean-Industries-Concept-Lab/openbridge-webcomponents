@@ -136,7 +136,7 @@ export {
  * @property highlightCurrentValue - When true, displays a dot indicator at the current value position.
  *   The dot is rendered in the scale band, touching its inner edge (towards the chart).
  *   This provides an alternative to bar fill for highlighting the current value.
- * @fires {CustomEvent} scale-dimensions-changed - Fired when the scale's computed layout thickness changes; a parent chart listens for this to reserve space for the scale. Bubbles and is composed.
+ * @fires {CustomEvent} scale-dimensions-changed - Fired when the scale's computed layout thickness changes; a parent chart listens for this to reserve space for the scale. It bubbles to the chart slot the scale sits in and does not leave the shadow root around it.
  * @beta
  */
 @customElement('obc-bar-horizontal')
@@ -446,7 +446,6 @@ export class ObcBarHorizontal extends SetpointMixin(LitElement, {
       new CustomEvent('scale-dimensions-changed', {
         detail: dimensions,
         bubbles: true,
-        composed: true,
       })
     );
   }

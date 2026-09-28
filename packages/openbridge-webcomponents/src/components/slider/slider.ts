@@ -6,6 +6,7 @@ import componentStyle from './slider.css?inline';
 import '../icon-button/icon-button.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
+import {clamp} from '../../svghelpers/math.js';
 
 /**
  * Enum of slider visual and interaction variants.
@@ -150,6 +151,8 @@ export type ObcSliderChangeEvent = CustomEvent<number>;
  * @property variant - Visual and interaction style: `normal` (default) is the standard
  *   appearance, `enhanced` has a larger track and thumb for emphasis, and
  *   `no-input` is read-only.
+ * @property decrementLabel - Accessible name of the left step button; the slotted icon carries none.
+ * @property incrementLabel - Accessible name of the right step button; the slotted icon carries none.
  * @slot icon-left - Slot for the left icon button (shown when `hasLeftIcon` is true)
  * @slot icon-right - Slot for the right icon button (shown when `hasRightIcon` is true)
  * @attr hugcontainer - If set, the slider will not have any spacing between the slider icons and the container
@@ -175,6 +178,10 @@ export class ObcSlider extends LitElement {
 
   @property({type: Boolean}) hasRightIcon = false;
 
+  @property({type: String}) decrementLabel = 'Decrease';
+
+  @property({type: String}) incrementLabel = 'Increase';
+
   @property({type: Boolean}) allowSeeking = false;
 
   @property({type: Number}) seekingSpeed = 1 / 3;
@@ -186,7 +193,7 @@ export class ObcSlider extends LitElement {
     if (!Number.isFinite(range) || range <= 0) return 0;
     const ratio = (this.value - this.min) / range;
     if (!Number.isFinite(ratio)) return 0;
-    return Math.max(0, Math.min(1, ratio));
+    return clamp(ratio, 0, 1);
   }
 
   private animationFrame: number | null = null;
@@ -416,6 +423,7 @@ export class ObcSlider extends LitElement {
         this.hasLeftIcon
           ? html` <obc-icon-button
               ?disabled=${this.disabled}
+              aria-label=${this.decrementLabel}
               @click=${this.onReduceClick}
               variant="normal"
             >
@@ -483,6 +491,7 @@ export class ObcSlider extends LitElement {
         this.hasRightIcon
           ? html`<obc-icon-button
               ?disabled=${this.disabled}
+              aria-label=${this.incrementLabel}
               @click=${this.onIncreaseClick}
               variant="normal"
             >

@@ -89,6 +89,8 @@ export type ObcCheckboxItemExpandToggleEvent = CustomEvent<boolean>;
  * @availableWhen expanded expandable==true
  * @property hoverStyle - Which box shows hover and focus: the whole row (`touch-target`) or the checkbox (`visual-target`).
  * @property ariaDescribedBy - Forwarded to the inner checkbox as `aria-describedby`.
+ * @property focusable - Whether the row's checkbox is in the tab order. `obc-context-menu-input` manages
+ *   this as a roving tabindex (one item focusable at a time); a standalone row stays tabbable.
  * @fires {ObcCheckboxChangeEvent} change - Emitted when status changes.
  * @fires {ObcCheckboxItemExpandToggleEvent} expand-toggle - Emitted when the chevron is activated; detail is the next `expanded` value. Bubbles and is composed.
  * @stable
@@ -101,6 +103,8 @@ export class ObcCheckboxItem extends LitElement {
     ObcCheckboxItemState.enabled;
 
   @property({type: Boolean}) disabled = false;
+
+  @property({type: Boolean, attribute: false}) focusable = true;
 
   @property({type: String}) label = '';
 
@@ -241,6 +245,7 @@ export class ObcCheckboxItem extends LitElement {
         }
         <div class="content-container">
           <obc-checkbox
+            .focusable=${this.focusable}
             .status=${this.status}
             .state=${CheckboxState.enabled}
             .disabled=${isDisabled}

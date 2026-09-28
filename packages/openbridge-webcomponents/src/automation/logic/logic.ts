@@ -35,7 +35,7 @@ export class ObcLogic extends ObcAbstractAutomationButtonSquared {
   override get icon() {
     switch (this.alternativeIcon) {
       case LogicAlternativeIcon.logic02:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-logic-02-on
               usecsscolor
               slot="icon"
@@ -55,7 +55,7 @@ export class ObcLogic extends ObcAbstractAutomationButtonSquared {
             ></obi-logic-02-off>`;
         }
       case LogicAlternativeIcon.logic03:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-logic-03-on
               usecsscolor
               slot="icon"
@@ -75,7 +75,7 @@ export class ObcLogic extends ObcAbstractAutomationButtonSquared {
             ></obi-logic-03-off>`;
         }
       case LogicAlternativeIcon.logic04:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-logic-04-on
               usecsscolor
               slot="icon"
@@ -95,7 +95,7 @@ export class ObcLogic extends ObcAbstractAutomationButtonSquared {
             ></obi-logic-04-off>`;
         }
       case LogicAlternativeIcon.logic05:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-logic-05-on
               usecsscolor
               slot="icon"
@@ -115,7 +115,7 @@ export class ObcLogic extends ObcAbstractAutomationButtonSquared {
             ></obi-logic-05-off>`;
         }
       case LogicAlternativeIcon.logic06:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-logic-06-on
               usecsscolor
               slot="icon"
@@ -135,7 +135,7 @@ export class ObcLogic extends ObcAbstractAutomationButtonSquared {
             ></obi-logic-06-off>`;
         }
       default:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-logic-01-on
               usecsscolor
               slot="icon"

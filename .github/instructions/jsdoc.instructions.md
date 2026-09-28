@@ -19,7 +19,7 @@ Key points:
 3. **Usage Guidelines** — when and how to use the component; contrast with similar components.
 4. **Slots** — table of slot names, conditions, and purposes.
 5. **Events** — a `@fires` tag for every event the component exposes, custom **and** native (a passthrough `<button>`'s `click` included). See below.
-6. **Properties are documented in the class JSDoc**, one tag per public property, without a type — `@property name - description` — placed after the Markdown sections and before `@slot`/`@fires`. Conditional properties add a line `@availableWhen name condition` directly under their tag. No inline JSDoc above `@property()` fields (`npm run lint:comments` warns; `--fix` hoists them), except one that carries a member `@deprecated` or a `@default` the manifest cannot read from the initializer: the class JSDoc has no tag for those, so the doc stays inline and the lint does not report it. A tag naming a property that does not exist is a ghost manifest member — `npm run lint:slots` fails on it. Mixin-provided properties (`svghelpers/setpoint-mixin.ts`, `svghelpers/setpoint-bundle.ts`) keep their inline docs.
+6. **Properties are documented in the class JSDoc**, one tag per public property, without a type — `@property name - description` — placed after the Markdown sections and before `@slot`/`@fires`. Conditional properties add a line `@availableWhen name condition` directly under their tag. No inline JSDoc above `@property()` fields (`npm run lint:comments` fails; `--fix` hoists them), except one that carries a member `@deprecated` or a `@default` the manifest cannot read from the initializer: the class JSDoc has no tag for those, so the doc stays inline and the lint does not report it. A tag naming a property that does not exist is a ghost manifest member — `npm run lint:slots` fails on it. Mixin-provided properties (`svghelpers/setpoint-mixin.ts`, `svghelpers/setpoint-bundle.ts`) keep their inline docs.
 7. **Tone:** Do NOT mention "maritime", "industrial", "bridge", or domain qualifiers; keep text domain-agnostic.
 8. If purpose is unclear, insert `**TODO(designer)**` instead of guessing.
 9. **`@availableWhen` for conditional properties** — see below.
@@ -81,7 +81,7 @@ every severity, so it silently rewrites unrelated files (today it strips
 
 Two ESLint rules enforce this, both part of `npm run lint:eslint`:
 
-- **`openbridge/component-lifecycle-tag`** (warning) — fires on a source file
+- **`openbridge/component-lifecycle-tag`** (error) — fires on a source file
   whose `@customElement` class has no lifecycle tag, or more than one. Not
   auto-fixable: classifying a component is a human decision.
 - **`openbridge/story-lifecycle-tags`** (error, auto-fixable) — fires on a
@@ -160,6 +160,14 @@ The two tags behave differently, and both are easy to get silently wrong
   before React's root delegation, killing `onClick` on React ancestors. This is a
   public-API change; note it in the release notes when adding the tag to an
   existing component.
+- **A child's event leaves your component too.** An event dispatched with
+  `bubbles: true, composed: true` crosses every shadow root above it, so it
+  reaches your consumers when you render its dispatcher. Stop it in the
+  listener you bind on the child (the shared `stopPropagation` in
+  `src/internal/events.ts` when nothing else happens there), or declare it
+  with `@fires` when passing it on is part of your API. Reporting it under a
+  new name and letting the original out gives consumers an event nobody
+  documented (#1313). `npm run lint:events` fails on each one.
 - **Always dispatch with `this.`.** A bare `dispatchEvent(new CustomEvent('x'))`
   inside a class method resolves to `globalThis.dispatchEvent`, firing the event
   on `window` where no consumer of the element can observe it (fixed in
@@ -167,7 +175,7 @@ The two tags behave differently, and both are easy to get silently wrong
 
 Run **`npm run lint:slots`** (part of `npm run lint`) to catch missing/phantom
 `@slot` tags, undocumented events, and bare `dispatchEvent(` calls automatically.
-It reports empty descriptions as warnings for class-level tags only.
+An empty description on a class-level tag fails it as well.
 
 ## Conditional properties (`@availableWhen`)
 
@@ -234,6 +242,11 @@ reaches the manifest and the description. Write a manual `if:` in the story's
 Implementation comments follow [`coding-standards.md`](../../docs/agents/coding-standards.md) (why-only, three
 lines, no history, state-then-cite, CSS one-liners, writing style). The class
 and module JSDoc described in this file is separate and always required.
+
+The plain-words rule applies hardest here, because a `@property` or `@fires`
+description is shipped: it reaches Storybook, `custom-elements.json` and every
+framework wrapper, where it is read by people who have never opened this
+file.
 
 The JSDoc _content_ template (overview, features, usage, slots, events,
 example) is maintained in `script/docgen/prompt-system.txt`, which the docgen
