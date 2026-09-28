@@ -165,7 +165,8 @@ No `@property` name or attribute starts with `on`. Svelte binds any
 `on…={…}` markup attribute as an event listener, and Vue binds `on` followed by
 anything but a lowercase letter (`onHold`, `on-hold`) the same way, so such a
 property cannot be set from a template: `turnedOn`, not `on` (#1090).
-`npm run lint:eslint` rejects one.
+`npm run lint:eslint` rejects one. The deprecated `on` alias on the two
+automation button bases is the one left and carries its suppression.
 
 ## Storybook title conventions
 
