@@ -558,20 +558,12 @@ export class ObcReadout extends LitElement {
   }
 
   /**
-   * Label size. The Figma 6.1 title block defaults large readouts to `s` — a
-   * scannable label should not sit at the smallest permitted size — while
-   * small/medium tiers stay `xs`; `labelOptions.size` overrides either way
-   * (per the design team, for context / density / secondary instruments).
-   * TODO(designer): the medium-tier default is unverified in the new sheets
-   * (only XS and S exist on the title's size axis).
+   * Label size: `xs` in every tier, as in `obc-readout-list-item`.
+   * `labelOptions.size: 's'` is the design's larger option for a stand-alone
+   * readout whose label has to be scannable (see {@link ReadoutLabelOptions}).
    */
   private get labelSize(): ObcTextboxSize {
-    return (
-      this.labelOptions?.size ??
-      (this.resolvedSize === ReadoutSize.large
-        ? ObcTextboxSize.s
-        : ObcTextboxSize.xs)
-    );
+    return this.labelOptions?.size ?? ObcTextboxSize.xs;
   }
 
   /**
@@ -731,7 +723,7 @@ export class ObcReadout extends LitElement {
     reserver?: string,
     blockState?: ReadoutBlockState
   ): TemplateResult {
-    // The label carries its own size (labelOptions / tier default) and
+    // The label carries its own size (labelOptions, xs by default) and
     // priority-driven weight; unit and source stay xs / regular.
     const weight =
       role === 'label' ? this.labelWeight : ObcTextboxFontWeight.regular;

@@ -238,9 +238,9 @@ Decisions carried into code from the 6.1 review (2026-08):
 - Vertical readouts draw **no divider** above the source; horizontal keeps
   its vertical source divider (so does the list item).
 - Marker icons size by the block's **rendered value size**, not the tier.
-- Label defaults: `s` on large `obc-readout` (scannability), `xs` in the
-  dense list item; SemiBold only when enhanced. Both overridable via
-  `labelOptions`.
+- Label default: `xs` in every tier of both layouts, `s` through
+  `labelOptions.size` for a stand-alone readout whose label has to be
+  scannable; SemiBold only when enhanced.
 - Source placement in the list item is one `stacking` value per arrangement
   (`leading-src` stacks the source under the label, `leading-src-inline`
   keeps it on the label's line) rather than a generic primary/secondary
@@ -303,9 +303,6 @@ Do not treat these as settled when editing:
   may still change. The four layers below it are `@stable`: their public API is
   a compatibility promise now, so the merge above would ship as a major, and
   the open design questions (#1151) may only be answered additively.
-- The large-tier label-`s` default and the regular-weight label are
-  **confirmed** by the design team (2026-08-17); only the medium-tier label
-  default remains unverified (`labelSize` carries the TODO).
 - Advice categories: for triggered optimal / eco the tint covers the whole
   diamond (Figma tints only the inner plus — needs a two-tone asset), and the
   advice `Enhanced` (indent chip) state is not implemented. The triggered
