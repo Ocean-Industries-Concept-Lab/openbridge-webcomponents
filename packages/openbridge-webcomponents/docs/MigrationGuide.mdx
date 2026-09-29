@@ -816,7 +816,8 @@ The POI components also stopped touching the consumer's light DOM, and selection
 - A bare `obc-poi` places its button 192 px above the anchor instead of 96.
 - `--obc-poi-layer-line-length` is removed.
 - `obc-poi-layer-stack` leaves the selected target where you put it instead of moving it into the selected layer, and projects its button instead. Read `selectedTargets`, or listen for `selection-change`, in place of reading the DOM. `selectTarget`, `deselectTarget` and `clearSelection` drive the selection from script.
-- `obc-poi-layer` keeps its auto-groups as shadow chrome and assigns members to slots, so no group element appears in your markup. Read `layer.autoGroups` after `grouping-change`.
+- `obc-poi-layer` builds its auto-groups inside its own shadow DOM and assigns the members to them through slots. 1.0.1 inserted the group elements among the layer's own children, so a page that read them from its markup reads `layer.autoGroups` after `grouping-change` instead.
+- Header content slotted into a POI stays in your markup. 1.0.1 moved those nodes into the button the component renders inside its shadow DOM, so they left `poi.children`; 2.0 forwards them through a chain of `<slot name="header">` and leaves them where you wrote them. The markup does not change, only where the nodes are found.
 
 ```html
 <!-- 1.0.1 -->
