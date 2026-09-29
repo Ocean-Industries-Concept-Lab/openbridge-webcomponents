@@ -85,7 +85,7 @@
     "@custom-elements-manifest/analyzer": "^0.11.0",
     "@eslint/eslintrc": "^3.3.7",
     "@eslint/js": "^10.0.1",
-    "@figma/rest-api-spec": "^0.42.0",
+    "@figma/rest-api-spec": "^0.43.0",
     "@jackolope/ts-lit-plugin": "^3.1.6",
     "@lit-labs/cli-localize": "^0.2.2",
     "@oicl-lit/cli": "0.6.7",
