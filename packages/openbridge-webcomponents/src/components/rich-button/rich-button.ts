@@ -62,43 +62,31 @@ export enum RichButtonDirection {
  * </obc-rich-button>
  * ```
  *
+ * @property label - The main label text displayed on the button (single line, truncated if too long).
+ * @property description - Optional supporting description text (up to two lines, truncated if too long).
+ * @property hasLeadingIcon - If true, displays the leading icon slot before the label.
+ * @property hasTrailingIcon - If true, displays the trailing icon slot after the description.
+ * @property disabled - If true, the button is disabled and cannot be interacted with.
+ * @property direction - Layout direction for the button content: `vertical` (default) stacks icons
+ *   and text, `horizontal` puts them side by side.
  * @slot leading-icon - Icon displayed before the label (shown when `hasLeadingIcon` is true)
  * @slot trailing-icon - Icon displayed after the description (shown when `hasTrailingIcon` is true)
- * @fires rich-button-click {CustomEvent<{label: string, description: string}>} When the button is clicked and not disabled
+ * @fires {CustomEvent<{label: string, description: string}>} rich-button-click - When the button is clicked and not disabled
+ * @beta
  */
 @customElement('obc-rich-button')
 export class ObcRichButton extends LitElement {
-  /**
-   * The main label text displayed on the button (single line, truncated if too long).
-   */
   @property({type: String}) label: string | HTMLTemplateResult = '';
 
-  /**
-   * Optional supporting description text (up to two lines, truncated if too long).
-   */
   @property({type: String}) description = '';
 
-  /**
-   * Layout direction for the button content.
-   * - `vertical` (default): Icons and text are stacked vertically.
-   * - `horizontal`: Icons and text are arranged side by side.
-   */
   @property({type: String}) direction: RichButtonDirection =
     RichButtonDirection.Vertical;
 
-  /**
-   * If true, displays the leading icon slot before the label.
-   */
   @property({type: Boolean}) hasLeadingIcon = false;
 
-  /**
-   * If true, displays the trailing icon slot after the description.
-   */
   @property({type: Boolean}) hasTrailingIcon = false;
 
-  /**
-   * If true, the button is disabled and cannot be interacted with.
-   */
   @property({type: Boolean}) disabled = false;
 
   @property({type: Boolean}) fullWidth = false;
@@ -119,28 +107,34 @@ export class ObcRichButton extends LitElement {
 
   private renderContent() {
     return html`
-      ${this.hasLeadingIcon
-        ? html`
-            <div class="icon-container leading-icon">
-              <slot name="leading-icon"></slot>
-            </div>
-          `
-        : ''}
+      ${
+        this.hasLeadingIcon
+          ? html`
+              <div class="icon-container leading-icon">
+                <slot name="leading-icon"></slot>
+              </div>
+            `
+          : ''
+      }
 
       <div class="content-container">
         <div class="label">${this.label}</div>
-        ${this.description
-          ? html`<div class="description">${this.description}</div>`
-          : ''}
+        ${
+          this.description
+            ? html`<div class="description">${this.description}</div>`
+            : ''
+        }
       </div>
 
-      ${this.hasTrailingIcon
-        ? html`
-            <div class="icon-container trailing-icon">
-              <slot name="trailing-icon"></slot>
-            </div>
-          `
-        : ''}
+      ${
+        this.hasTrailingIcon
+          ? html`
+              <div class="icon-container trailing-icon">
+                <slot name="trailing-icon"></slot>
+              </div>
+            `
+          : ''
+      }
     `;
   }
 

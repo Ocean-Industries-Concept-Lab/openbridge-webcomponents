@@ -12,6 +12,9 @@ export enum CommandStatus {
   Blocked = 'blocked',
 }
 
+/**
+ * @stable
+ */
 @customElement('obc-badge-command')
 export class ObcBadgeCommand extends LitElement {
   @property({type: String}) status: CommandStatus = CommandStatus.NoCommand;

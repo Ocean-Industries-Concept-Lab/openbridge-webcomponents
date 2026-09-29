@@ -11,6 +11,7 @@ import {
   ContextMenuOption,
   ColumnGroup,
 } from '../context-menu-input/context-menu-input.js';
+import type {ObcContextMenuInput} from '../context-menu-input/context-menu-input.js';
 
 export type ObcSplitButtonChangeEvent = CustomEvent<{
   selectedValues: string[];
@@ -120,114 +121,85 @@ export type ObcMenuButtonItemClickEvent = CustomEvent<{
  * ```
  * In this example, the button displays an icon and label, and opens a menu with two options (one with an icon).
  *
+ * @property label - The label displayed on the button.
+ *   If empty, the button can be rendered as icon-only.
+ * @property selectedValues - Array of currently selected option values.
+ *   Used to control which options are checked/selected in the menu.
+ * @property fullWidth - Whether the button should fill the full width of its container.
+ *   If true, the button stretches to 100% width.
+ * @property hasIcon - Whether the button should show an icon slot.
+ *   If true, the `icon` slot is rendered at the start of the button.
+ * @property multiSelect - Whether multiple selections are allowed.
+ *   Overrides the default selection mode for the chosen variant.
+ *   If not explicitly set, defaults based on `menuType`.
+ * @property selectPerGroup - Allows single selection per group (flyout/multi-column only).
+ *   When true, only one item per group/column can be selected.
+ * @property hasTitleBar - Whether to show a title bar with close button at the top of the menu.
+ *   If true, the menu displays a title bar (use `menuTitle` for text).
+ * @property menuTitle - Title text displayed in the title bar (if `hasTitleBar` is true).
+ * @property columnGroups - Array of column groups for the `multi-with-subtitles` layout.
+ *   Used to define grouped columns with subtitles in multi-column menus.
+ * @property itemsPerColumn - Number of items per column in multi-column layouts.
+ *   Used for `Multi` and `MultiWithSubtitles` menu types.
+ * @property openTop - Render the dropdown context menu above or below the button.
+ *   If true, the menu opens above the button; otherwise, it opens below.
+ * @property disabled - Whether both parts of the button are disabled.
+ *   Disables both the button and the menu.
+ * @property options - Menu options, each with a unique `value` and a `label`, and optionally an
+ *   `icon` template, `children` for a nested or flyout menu, and a `level`
+ *   giving the nesting depth in a hierarchical menu.
+ * @property menuType - Context menu variant, which sets the layout and the selection behaviour:
+ *   `regular` (default) is single-select, `checkboxes` and `nested-checkboxes`
+ *   are flat and hierarchical multi-select, `flyout` is a multi-level flyout,
+ *   and `multi` and `multi-with-subtitles` lay the menu out in columns.
  * @slot icon - Icon displayed at the start of the button when `hasIcon` is true.
- * @fires change {CustomEvent<{selectedValues: string[], selectedOptions: Array<ContextMenuOption>}>} Fired when the menu selection changes.
- * @fires item-click {CustomEvent<{value: string, option: ContextMenuOption}>} Fired when a menu item is clicked.
- * @fires open {CustomEvent<void>} Fired when the menu is opened.
- * @fires close {CustomEvent<void>} Fired when the menu is closed.
+ * @fires {ObcSplitButtonChangeEvent} change - Fired when the menu selection changes.
+ * @fires {ObcMenuButtonItemClickEvent} item-click - Fired when a menu item is clicked.
+ * @fires {CustomEvent<void>} open - Fired when the menu is opened.
+ * @fires {CustomEvent<void>} close - Fired when the menu is closed.
+ * @beta
  */
 @customElement('obc-menu-button')
 export class ObcMenuButton extends LitElement {
-  /**
-   * The label displayed on the button.
-   * If empty, the button can be rendered as icon-only.
-   */
   @property({type: String}) label = '';
 
-  /**
-   * Array of menu options with value, label, and optional level, icon, and children.
-   * Each option can include:
-   * - `value`: Unique string identifier.
-   * - `label`: Display text.
-   * - `icon`: Optional icon (e.g., `<obi-placeholder></obi-placeholder>`).
-   * - `children`: Optional array of child options (for nested/flyout menus).
-   * - `level`: Optional nesting level (for hierarchical menus).
-   */
   @property({type: Array}) options: ContextMenuOption[] = [];
 
-  /**
-   * Array of currently selected option values.
-   * Used to control which options are checked/selected in the menu.
-   */
   @property({type: Array}) selectedValues: string[] = [];
 
-  /**
-   * Whether the button should fill the full width of its container.
-   * If true, the button stretches to 100% width.
-   */
   @property({type: Boolean}) fullWidth = false;
 
-  /**
-   * Whether the button should show an icon slot.
-   * If true, the `icon` slot is rendered at the start of the button.
-   */
   @property({type: Boolean}) hasIcon = false;
 
-  /**
-   * The variant type of context menu to display.
-   * Determines menu layout and selection behavior.
-   * - `Regular`: Standard single-select.
-   * - `Checkboxes`: Multi-select with checkboxes.
-   * - `NestedCheckboxes`: Hierarchical multi-select.
-   * - `Flyout`: Multi-level flyout menu.
-   * - `Multi`: Multi-column menu.
-   * - `MultiWithSubtitles`: Multi-column with group subtitles.
-   * @default ContextMenuType.Regular
-   */
+  /** @default ContextMenuType.Regular */
   @property({type: String})
   menuType: ContextMenuType = ContextMenuType.Regular;
 
-  /**
-   * Whether multiple selections are allowed.
-   * Overrides the default selection mode for the chosen variant.
-   * If not explicitly set, defaults based on `menuType`.
-   */
   @property({type: Boolean}) multiSelect?: boolean;
 
-  /**
-   * Allows single selection per group (flyout/multi-column only).
-   * When true, only one item per group/column can be selected.
-   */
   @property({type: Boolean}) selectPerGroup?: boolean;
 
-  /**
-   * Whether to show a title bar with close button at the top of the menu.
-   * If true, the menu displays a title bar (use `menuTitle` for text).
-   */
   @property({type: Boolean}) hasTitleBar = false;
 
-  /**
-   * Title text displayed in the title bar (if `hasTitleBar` is true).
-   */
   @property({type: String}) menuTitle = '';
 
-  /**
-   * Array of column groups for the `multi-with-subtitles` layout.
-   * Used to define grouped columns with subtitles in multi-column menus.
-   */
   @property({type: Array}) columnGroups: ColumnGroup[] = [];
 
-  /**
-   * Number of items per column in multi-column layouts.
-   * Used for `Multi` and `MultiWithSubtitles` menu types.
-   */
   @property({type: Number}) itemsPerColumn = 5;
 
-  /**
-   * Render the dropdown context menu above or below the button.
-   * If true, the menu opens above the button; otherwise, it opens below.
-   */
   @property({type: Boolean}) openTop = false;
 
-  /**
-   * Whether both parts of the button are disabled.
-   * Disables both the button and the menu.
-   */
   @property({type: Boolean}) disabled = false;
 
   @state() private isOpen = false;
 
-  @query('.positioned-menu') private menu?: HTMLElement;
+  private restoreFocusOnClose = false;
+
+  private menuFocusStrategy: 'first' | 'selected' | 'last' = 'selected';
+
+  @query('.positioned-menu') private menu?: HTMLElement & ObcContextMenuInput;
+
+  @query('button.wrapper') private triggerButton?: HTMLButtonElement;
 
   private get effectiveMultiSelect(): boolean {
     if (this.multiSelect !== undefined) return this.multiSelect;
@@ -256,6 +228,7 @@ export class ObcMenuButton extends LitElement {
   private handlePopoverToggle = (e: ToggleEvent) => {
     this.isOpen = e.newState === 'open';
     if (e.newState === 'open') {
+      void this.focusMenuAfterOpen();
       /**
        * Fired when the menu is opened.
        * @event open
@@ -264,6 +237,10 @@ export class ObcMenuButton extends LitElement {
       this.dispatchEvent(new CustomEvent('open'));
     }
     if (e.newState === 'closed') {
+      if (this.restoreFocusOnClose) {
+        this.restoreFocusOnClose = false;
+        this.triggerButton?.focus();
+      }
       /**
        * Fired when the menu is closed.
        * @event close
@@ -272,6 +249,50 @@ export class ObcMenuButton extends LitElement {
       this.dispatchEvent(new CustomEvent('close'));
     }
   };
+
+  private async focusMenuAfterOpen() {
+    await this.updateComplete;
+    if (this.menuFocusStrategy === 'last') {
+      this.menu?.focusLastItem();
+    } else if (this.menuFocusStrategy === 'first') {
+      this.menu?.focusFirstItem();
+    } else {
+      this.menu?.focusSelectedItem();
+    }
+    this.menuFocusStrategy = 'selected';
+  }
+
+  private openMenu(focusStrategy: 'first' | 'selected' | 'last' = 'selected') {
+    if (this.disabled) return;
+
+    this.menuFocusStrategy = focusStrategy;
+    this.menu?.showPopover();
+  }
+
+  private handleTriggerKeydown(event: KeyboardEvent) {
+    if (this.disabled) return;
+
+    switch (event.key) {
+      case 'ArrowDown':
+        event.preventDefault();
+        this.openMenu('first');
+        break;
+      case 'ArrowUp':
+        event.preventDefault();
+        this.openMenu('last');
+        break;
+      case 'Home':
+        event.preventDefault();
+        this.openMenu('first');
+        break;
+      case 'End':
+        event.preventDefault();
+        this.openMenu('last');
+        break;
+      default:
+        break;
+    }
+  }
 
   private handleMenuChange(
     e: CustomEvent<{
@@ -318,6 +339,7 @@ export class ObcMenuButton extends LitElement {
 
   private handleMenuClose() {
     if (this.menu === undefined) return;
+    this.restoreFocusOnClose = true;
     this.menu.hidePopover();
   }
 
@@ -350,6 +372,7 @@ export class ObcMenuButton extends LitElement {
         popovertarget="menu-popover"
         aria-expanded=${this.isOpen}
         aria-haspopup="menu"
+        @keydown=${this.handleTriggerKeydown}
       >
         <div class="visible-wrapper">
           <div class="content-container">

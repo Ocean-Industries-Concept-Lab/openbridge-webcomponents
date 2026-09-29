@@ -50,6 +50,7 @@ const cardStyle = `
 
 const meta: Meta = {
   title: 'Automation/Sequence Step',
+  tags: ['beta'],
   component: 'obc-sequence-step',
   parameters: {layout: 'centered'},
   argTypes: {
@@ -106,9 +107,11 @@ const renderStateGrid = ({
       (orientation) => html`
         <div>
           <strong style="display: block; margin-bottom: 12px;"
-            >${orientation === SequenceOrientation.horizontal
-              ? 'Horizontal'
-              : 'Vertical'}</strong
+            >${
+              orientation === SequenceOrientation.horizontal
+                ? 'Horizontal'
+                : 'Vertical'
+            }</strong
           >
           <div
             style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: center;"
@@ -124,12 +127,14 @@ const renderStateGrid = ({
                     .orientation=${orientation}
                     .hasIcon=${includeIcon}
                   >
-                    ${includeIcon
-                      ? iconIdToIconHtml(iconId, {
-                          slot: 'leading-icon',
-                          useCssColor: '',
-                        })
-                      : nothing}
+                    ${
+                      includeIcon
+                        ? iconIdToIconHtml(iconId, {
+                            slot: 'leading-icon',
+                            useCssColor: '',
+                          })
+                        : nothing
+                    }
                     ${labelText}
                   </obc-sequence-step>
                 </div>
@@ -159,12 +164,14 @@ export const Playground: Story = {
         .showStepOutputConnector=${args.showStepOutputConnector}
         .hasIcon=${args.hasIcon}
       >
-        ${args.hasIcon
-          ? iconIdToIconHtml(args.leadingIcon as string, {
-              slot: 'leading-icon',
-              useCssColor: '',
-            })
-          : nothing}
+        ${
+          args.hasIcon
+            ? iconIdToIconHtml(args.leadingIcon as string, {
+                slot: 'leading-icon',
+                useCssColor: '',
+              })
+            : nothing
+        }
         ${labelText}
       </obc-sequence-step>
     `;
@@ -203,12 +210,14 @@ export const TypeOverview: Story = {
               .orientation=${SequenceOrientation.horizontal}
               .hasIcon=${item.type !== SequenceType.small}
             >
-              ${item.type !== SequenceType.small
-                ? iconIdToIconHtml('placeholder', {
-                    slot: 'leading-icon',
-                    useCssColor: '',
-                  })
-                : nothing}
+              ${
+                item.type !== SequenceType.small
+                  ? iconIdToIconHtml('placeholder', {
+                      slot: 'leading-icon',
+                      useCssColor: '',
+                    })
+                  : nothing
+              }
               Label
             </obc-sequence-step>
           </div>
@@ -429,12 +438,14 @@ export const ConnectorFlags: Story = {
                 .showStepOutputConnector=${variant.hasOutput}
                 .hasIcon=${variant.hasIcon}
               >
-                ${variant.hasIcon
-                  ? iconIdToIconHtml('placeholder', {
-                      slot: 'leading-icon',
-                      useCssColor: '',
-                    })
-                  : nothing}
+                ${
+                  variant.hasIcon
+                    ? iconIdToIconHtml('placeholder', {
+                        slot: 'leading-icon',
+                        useCssColor: '',
+                      })
+                    : nothing
+                }
                 Label
               </obc-sequence-step>
             </div>
@@ -464,12 +475,14 @@ export const OrientationShowcase: Story = {
                 .showStepOutputConnector=${true}
                 .hasIcon=${type !== SequenceType.small}
               >
-                ${type !== SequenceType.small
-                  ? iconIdToIconHtml('placeholder', {
-                      slot: 'leading-icon',
-                      useCssColor: '',
-                    })
-                  : nothing}
+                ${
+                  type !== SequenceType.small
+                    ? iconIdToIconHtml('placeholder', {
+                        slot: 'leading-icon',
+                        useCssColor: '',
+                      })
+                    : nothing
+                }
                 Label
               </obc-sequence-step>
             </div>
@@ -484,12 +497,14 @@ export const OrientationShowcase: Story = {
                 .showStepOutputConnector=${true}
                 .hasIcon=${type !== SequenceType.small}
               >
-                ${type !== SequenceType.small
-                  ? iconIdToIconHtml('placeholder', {
-                      slot: 'leading-icon',
-                      useCssColor: '',
-                    })
-                  : nothing}
+                ${
+                  type !== SequenceType.small
+                    ? iconIdToIconHtml('placeholder', {
+                        slot: 'leading-icon',
+                        useCssColor: '',
+                      })
+                    : nothing
+                }
                 Label
               </obc-sequence-step>
             </div>

@@ -4,6 +4,30 @@ import compentStyle from './navigation-menu.css?inline';
 import {ObcNavigationItemGroup} from '../navigation-item-group/navigation-item-group.js';
 import {ObcNavigationItem} from '../navigation-item/navigation-item.js';
 import {customElement} from '../../decorator.js';
+import {
+  ObcTreeNavigationItem,
+  TreeBranchType,
+} from '../tree-navigation-item/tree-navigation-item.js';
+import {
+  TreeRovingNavigator,
+  TreeRovingAdapter,
+} from '../../internal/tree-roving-navigator.js';
+import {PopoverController} from '../../internal/popover-controller.js';
+
+/** A nav-menu tree row is either a navigation item or a navigation item group. */
+type NavTreeRow = ObcNavigationItem | ObcNavigationItemGroup;
+
+const NAV_ITEM_TAG = 'obc-navigation-item';
+const NAV_GROUP_TAG = 'obc-navigation-item-group';
+
+function isNavGroup(el: Element): el is ObcNavigationItemGroup {
+  return el.tagName.toLowerCase() === NAV_GROUP_TAG;
+}
+
+function isNavRow(el: Element): el is NavTreeRow {
+  const tag = el.tagName.toLowerCase();
+  return tag === NAV_ITEM_TAG || tag === NAV_GROUP_TAG;
+}
 
 /**
  * `ObcNavigationMenuVariant` – Enumerates the available visual and behavioral variants for `<obc-navigation-menu>`.
@@ -12,6 +36,7 @@ import {customElement} from '../../decorator.js';
  * - `IconOnly`: Compact menu showing only icons (should only be used when no flyouts/submenus are present).
  * - `IconOnlyLarge`: Icon-only menu variant designed for use when flyouts/submenus are present.
  * - `Compact`: Space-saving menu with reduced padding and layout.
+ * - `Tree`: Hierarchical tree — groups expand inline and rows are indented by depth.
  *
  * Use these variants to adapt the navigation menu to different layouts or device sizes.
  */
@@ -20,6 +45,7 @@ export enum ObcNavigationMenuVariant {
   IconOnly = 'icon-only', // Should only be used when no flyouts are present in the navigation menu
   IconOnlyLarge = 'icon-only-large', // Should be used when flyouts are present in the navigation menu
   Compact = 'compact',
+  Tree = 'tree',
 }
 
 /**
@@ -49,6 +75,11 @@ export enum ObcNavigationMenuFlyoutVariant {
  *   - **IconOnly:** Shows only icons for a compact appearance. *Should only be used when no navigation items have sub-items or flyouts.*
  *   - **IconOnlyLarge:** Icon-only mode that supports flyouts/submenus. Use when navigation contains groups or nested items.
  *   - **Compact:** Reduces padding and overall width for a space-saving layout.
+ *   - **Tree:** Renders the same `obc-navigation-item` / `obc-navigation-item-group`
+ *     markup as a hierarchical tree. Groups expand inline (instead of as flyouts),
+ *     rows are indented by depth, multiple branches can stay open at once, and the
+ *     tree-row presentation (alert badges, terminal marker) is available via the
+ *     items' `alerts`/`terminalType` properties.
  * - **Responsive Layout:**
  *   - `smallScreen` property adapts the footer and logo layout for smaller viewports.
  * - **Slot-based Content:**
@@ -71,6 +102,10 @@ export enum ObcNavigationMenuFlyoutVariant {
  * - Use the `Full` variant for standard navigation with both icons and labels.
  * - Use `IconOnly` only when there are no nested groups or flyouts; otherwise, use `IconOnlyLarge` for icon-only navigation with flyout support.
  * - The `Compact` variant is suitable for layouts with limited space or when a minimal navigation appearance is desired.
+ * - Use the `Tree` variant for hierarchical navigation (file trees, nested
+ *   sections). The existing item/group markup is reused unchanged — only the
+ *   `variant` changes. Footer and logo slots remain flat. Mark a group with
+ *   `defaultOpen` to have it start expanded.
  * - Set `smallScreen` to `true` to optimize the layout for smaller devices or responsive breakpoints.
  *
  * **TODO(designer):** Provide additional guidance on when to use each variant and recommended slot content for best usability.
@@ -116,37 +151,95 @@ export enum ObcNavigationMenuFlyoutVariant {
  *
  * In this example, the menu displays a group with sub-items in the main navigation, several footer actions, and a logo.
  *
+ * @property flyoutVariant - Visual variant of the flyout.
+ *   One of `Full` (default) or `Compact`.
+ * @availableWhen flyoutVariant variant==Full
+ * @property smallScreen - When `true`, adapts the layout for small screens (e.g., moves logo into the footer area and adjusts item layout).
+ * @property variant - Visual style and layout: `full` (default) shows icons and labels,
+ *   `icon-only` is the compact icon-only menu and takes no flyouts or groups,
+ *   `icon-only-large` is the icon-only menu that does, `compact` is the
+ *   space-saving menu, and `tree` expands groups inline and indents rows by
+ *   depth.
+ * @property softDismiss - Let the browser close this menu on its own: on a click outside it, on `Escape`, or when another menu opens. Leave it off to keep showing and hiding the menu yourself.
+ * @property open - Whether the menu is showing.
+ * @availableWhen open softDismiss==true
  * @slot main - Slot for primary navigation items and groups.
  * @slot footer - Slot for secondary navigation items (e.g., settings, help).
  * @slot logo - Slot for branding/logo area.
+ * @fires {CustomEvent<void>} close - Fired when the menu closed on its own, from a click outside, `Escape`, or another menu opening. `open` is already `false` by the time it arrives.
+ * @stable
  */
 @customElement('obc-navigation-menu')
 export class ObcNavigationMenu extends LitElement {
-  /**
-   * Controls the visual style and layout of the navigation menu.
-   *
-   * - `full`: Standard menu with icons and labels (default).
-   * - `icon-only`: Compact, icon-only menu (use only when no flyouts/groups are present).
-   * - `icon-only-large`: Icon-only menu supporting flyouts/groups.
-   * - `compact`: Minimal, space-saving menu.
-   */
+  @property({type: Boolean}) softDismiss = false;
+
+  @property({type: Boolean}) open = false;
+
+  protected readonly softDismissController = new PopoverController(this);
+
   @property({type: String}) variant: ObcNavigationMenuVariant =
     ObcNavigationMenuVariant.Full;
 
-  /**
-   * Visual variant of the flyout.
-   * One of `Full` (default) or `Compact`.
-   */
   @property({type: String}) flyoutVariant: ObcNavigationMenuFlyoutVariant =
     ObcNavigationMenuFlyoutVariant.Full;
 
-  /**
-   * When `true`, adapts the layout for small screens (e.g., moves logo into the footer area and adjusts item layout).
-   */
   @property({type: Boolean}) smallScreen = false;
 
   private slotObservers: MutationObserver[] = [];
   @state() private hasFooter = false;
+
+  /**
+   * Roving-tabindex + arrow-key navigation for the Tree variant, sharing the
+   * navigator that drives `obc-tree-navigation`. Engaged only while
+   * `variant === Tree` (see `onTreeKeydown`).
+   */
+  private readonly treeNavigator = new TreeRovingNavigator<NavTreeRow>({
+    getRows: () => this.treeRootRows(),
+    childRows: (row) => this.treeChildRows(row),
+    isGroup: (row) => isNavGroup(row),
+    // Read the group's own synchronous open state, not the shadow header's
+    // attribute (which lags a render tick behind a keyboard expand/collapse).
+    isExpanded: (row) => isNavGroup(row) && row.expanded,
+    setExpanded: (row, expanded) => {
+      if (!isNavGroup(row)) return;
+      if (expanded) row.open();
+      else row.close();
+    },
+    innerItem: (row) => this.treeInnerItem(row),
+  } satisfies TreeRovingAdapter<NavTreeRow>);
+
+  /** Top-level tree rows of the main slot (mirrors `assignTreeBranches`'s filter). */
+  private treeRootRows(): NavTreeRow[] {
+    return Array.from(this.children).filter((child): child is NavTreeRow => {
+      if (!isNavRow(child)) return false;
+      const slot = child.getAttribute('slot');
+      return slot === null || slot === 'main';
+    });
+  }
+
+  /** Direct tree-row children of a row, in document order. */
+  private treeChildRows(row: NavTreeRow): NavTreeRow[] {
+    return Array.from(row.children).filter(isNavRow);
+  }
+
+  /** The inline `obc-tree-navigation-item` a tree-mode row renders in its shadow root. */
+  private treeInnerItem(row: NavTreeRow): ObcTreeNavigationItem | null {
+    return (
+      row.shadowRoot?.querySelector<ObcTreeNavigationItem>(
+        'obc-tree-navigation-item'
+      ) ?? null
+    );
+  }
+
+  private onTreeKeydown = (event: KeyboardEvent): void => {
+    if (this.variant !== ObcNavigationMenuVariant.Tree) return;
+    if (this.treeNavigator.handleKeydown(event)) event.preventDefault();
+  };
+
+  override connectedCallback(): void {
+    super.connectedCallback();
+    this.addEventListener('keydown', this.onTreeKeydown);
+  }
 
   findAllElements<T extends Element>(
     el: Element,
@@ -212,6 +305,7 @@ export class ObcNavigationMenu extends LitElement {
   registerGroup(groups: ObcNavigationItemGroup[]) {
     groups.forEach((group) => {
       group.addEventListener('open', () => {
+        if (this.variant === ObcNavigationMenuVariant.Tree) return;
         groups.forEach((g) => {
           if (g !== group) {
             g.close();
@@ -296,6 +390,7 @@ export class ObcNavigationMenu extends LitElement {
   override disconnectedCallback(): void {
     super.disconnectedCallback();
     this.cleanupSlotObservers();
+    this.removeEventListener('keydown', this.onTreeKeydown);
   }
 
   private handleSlotChange() {
@@ -303,7 +398,68 @@ export class ObcNavigationMenu extends LitElement {
     this.setupSlotObservers();
   }
 
+  private assignTreeBranches(el: Element, depth: number): void {
+    for (const child of el.children) {
+      const tag = child.tagName.toLowerCase();
+      const isItem = tag === 'obc-navigation-item';
+      const isGroup = tag === 'obc-navigation-item-group';
+      if (!isItem && !isGroup) continue;
+      // Top-level rows are slotted; only treeify the main slot. Nested rows have
+      // no slot attribute and always belong to their group's tree.
+      if (depth === 0) {
+        const slot = child.getAttribute('slot');
+        if (slot !== null && slot !== 'main') continue;
+      }
+      const branches: TreeBranchType[] = Array.from(
+        {length: depth},
+        () => TreeBranchType.blank
+      );
+      const row = child as ObcNavigationItem | ObcNavigationItemGroup;
+      row.treeMode = true;
+      row.treeBranches = branches;
+      if (isGroup) {
+        this.assignTreeBranches(child, depth + 1);
+      }
+    }
+  }
+
+  // Reset tree mode on every descendant item/group so switching away from the
+  // Tree variant restores the flat rendering.
+  private clearTreeMode(el: Element): void {
+    for (const child of el.children) {
+      const tag = child.tagName.toLowerCase();
+      const isItem = tag === 'obc-navigation-item';
+      const isGroup = tag === 'obc-navigation-item-group';
+      if (!isItem && !isGroup) continue;
+      const row = child as ObcNavigationItem | ObcNavigationItemGroup;
+      row.treeMode = false;
+      row.treeBranches = [];
+      if (isGroup) {
+        this.clearTreeMode(child);
+      }
+    }
+  }
+
   private setupItems() {
+    if (this.variant === ObcNavigationMenuVariant.Tree) {
+      this.assignTreeBranches(this, 0);
+      // Footer and logo are not part of the tree — keep them as flat full-variant
+      // items (and clear any tree mode left over from the main slot's walk).
+      (['footer', 'logo'] as const).forEach((slot) => {
+        this.findAllItems(this, slot).forEach((item) => {
+          item.treeMode = false;
+          item.treeBranches = [];
+          item.variant = ObcNavigationMenuVariant.Full;
+        });
+      });
+      // Defer so the rows' inline tree-item headers exist before the roving
+      // tabindex is assigned to them.
+      queueMicrotask(() => this.treeNavigator.refresh());
+      return;
+    }
+
+    this.clearTreeMode(this);
+
     const hug =
       this.variant !== ObcNavigationMenuVariant.Full ||
       this.flyoutVariant === ObcNavigationMenuFlyoutVariant.Compact;
@@ -353,9 +509,9 @@ export class ObcNavigationMenu extends LitElement {
   override render() {
     return html`
       <div
-        class="wrapper ${this.variant} ${this.smallScreen
-          ? 'small-screen'
-          : ''}"
+        class="wrapper ${this.variant} ${
+          this.smallScreen ? 'small-screen' : ''
+        }"
       >
         <nav class="main">
           <ol>
@@ -369,13 +525,15 @@ export class ObcNavigationMenu extends LitElement {
               ${this.smallScreen ? html` <slot name="logo"></slot> ` : nothing}
             </ol>
           </nav>
-          ${this.smallScreen
-            ? nothing
-            : html`
-                <div class="logo">
-                  <slot name="logo"></slot>
-                </div>
-              `}
+          ${
+            this.smallScreen
+              ? nothing
+              : html`
+                  <div class="logo">
+                    <slot name="logo"></slot>
+                  </div>
+                `
+          }
         </div>
       </div>
     `;

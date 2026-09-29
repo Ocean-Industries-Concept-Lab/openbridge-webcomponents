@@ -14,13 +14,11 @@ const meta: Meta<typeof ObcTabRow> = {
   argTypes: {
     tabs: {control: 'object'},
     selectedTabId: {control: 'text'},
-    hasClose: {control: 'boolean'},
-    hug: {control: 'boolean'},
-    hasAddNewTab: {control: 'boolean'},
   },
   args: {
     hasClose: true,
     hug: false,
+    showSubtitle: false,
     hasAddNewTab: true,
     selectedTabId: 'tab2',
   },
@@ -29,11 +27,11 @@ export default meta;
 type Story = StoryObj<ObcTabRow>;
 
 const defaultTabs: TabData[] = [
-  {id: 'tab1', title: 'Tab 1'},
-  {id: 'tab2', title: 'Tab 2'},
-  {id: 'tab3', title: 'Tab 3'},
-  {id: 'tab4', title: 'Tab 4'},
-  {id: 'tab5', title: 'Tab 5'},
+  {id: 'tab1', title: 'Tab 1', subtitle: '61.482 3.104'},
+  {id: 'tab2', title: 'Tab 2', subtitle: '58.923 5.730'},
+  {id: 'tab3', title: 'Tab 3', subtitle: '60.118 4.202'},
+  {id: 'tab4', title: 'Tab 4', subtitle: '55.000 4.900'},
+  {id: 'tab5', title: 'Tab 5', subtitle: '56.000 5.100'},
 ];
 
 interface TabRowStoryArgs {
@@ -41,7 +39,21 @@ interface TabRowStoryArgs {
   selectedTabId?: string;
   hasClose?: boolean;
   hug?: boolean;
+  showSubtitle?: boolean;
   hasAddNewTab?: boolean;
+  centerContent?: boolean;
+  hasPanels?: boolean;
+  label?: string;
+}
+
+/** A panel's content, slotted into the row as `tab-<id>-panel`. */
+function createPanel(tab: TabData): HTMLElement {
+  const panel = document.createElement('p');
+  panel.slot = `tab-${tab.id}-panel`;
+  panel.textContent = `Content of ${tab.title}.`;
+  panel.style.cssText =
+    'margin: 0; padding: 16px; color: var(--element-active-color);';
+  return panel;
 }
 
 function InteractiveTabRow(args: TabRowStoryArgs) {
@@ -57,7 +69,12 @@ function InteractiveTabRow(args: TabRowStoryArgs) {
   tabRow.selectedTabId = args.selectedTabId || '';
   tabRow.hasClose = args.hasClose ?? true;
   tabRow.hug = args.hug ?? false;
+  tabRow.showSubtitle = args.showSubtitle ?? false;
   tabRow.hasAddNewTab = args.hasAddNewTab ?? true;
+  tabRow.centerContent = args.centerContent ?? false;
+  tabRow.hasPanels = args.hasPanels ?? false;
+  if (args.label) tabRow.label = args.label;
+  if (tabRow.hasPanels) tabRow.append(...currentTabs.map(createPanel));
 
   tabRow.addEventListener('tab-selected', (e: Event) => {
     const detail = (e as CustomEvent<{id: string}>).detail;
@@ -67,6 +84,9 @@ function InteractiveTabRow(args: TabRowStoryArgs) {
     const detail = (e as CustomEvent<{id: string}>).detail;
     currentTabs = currentTabs.filter((tab) => tab.id !== detail.id);
     tabRow.tabs = currentTabs;
+    Array.from(tabRow.children)
+      .find((child) => child.slot === `tab-${detail.id}-panel`)
+      ?.remove();
     if (tabRow.selectedTabId === detail.id && currentTabs.length) {
       tabRow.selectedTabId = currentTabs[0].id;
     }
@@ -79,6 +99,7 @@ function InteractiveTabRow(args: TabRowStoryArgs) {
     };
     currentTabs = [...currentTabs, newTab];
     tabRow.tabs = currentTabs;
+    if (tabRow.hasPanels) tabRow.append(createPanel(newTab));
     tabRow.selectedTabId = newTab.id;
   });
 
@@ -91,6 +112,7 @@ export const Primary: Story = {
     tabs: defaultTabs,
     hasClose: true,
     hug: false,
+    showSubtitle: false,
     hasAddNewTab: true,
     selectedTabId: 'tab2',
   },
@@ -104,6 +126,18 @@ export const HugMode: Story = {
     hasClose: true,
     hasAddNewTab: true,
     selectedTabId: 'tab2',
+  },
+  render: InteractiveTabRow,
+};
+
+export const CenterContent: Story = {
+  args: {
+    tabs: defaultTabs,
+    hug: false,
+    hasClose: true,
+    hasAddNewTab: true,
+    selectedTabId: 'tab2',
+    centerContent: true,
   },
   render: InteractiveTabRow,
 };
@@ -147,24 +181,20 @@ export const WithBadges: Story = {
       {
         id: 'tab1',
         title: 'Inbox',
-        hasBadge: true,
-        badgeCount: 12,
-        badgeType: BadgeType.notification,
+        badges: [{type: BadgeType.warning, size: BadgeSize.regular, count: 12}],
       },
       {
         id: 'tab2',
         title: 'Notifications',
-        hasBadge: true,
-        badgeCount: 3,
-        badgeType: BadgeType.alarm,
+        badges: [
+          {type: BadgeType.alarm, size: BadgeSize.regular, count: 3},
+          {type: BadgeType.warning, size: BadgeSize.regular, count: 7},
+        ],
       },
       {
         id: 'tab3',
         title: 'Updates',
-        hasBadge: true,
-        badgeCount: 99,
-        badgeType: BadgeType.enhance,
-        badgeSize: BadgeSize.large,
+        badges: [{type: BadgeType.caution, size: BadgeSize.regular, count: 99}],
       },
       {id: 'tab4', title: 'Messages'},
     ],
@@ -172,6 +202,43 @@ export const WithBadges: Story = {
     hasAddNewTab: true,
     hasClose: true,
     hug: false,
+  },
+  render: InteractiveTabRow,
+};
+
+export const WithSubtitles: Story = {
+  args: {
+    tabs: [
+      {
+        id: 'tab1',
+        title: 'Coastal Alpha',
+        subtitle: '61.482 3.104',
+        hasLeadingIcon: false,
+      },
+      {
+        id: 'tab2',
+        title: 'Northern Passage',
+        subtitle: '58.923 5.730',
+        hasLeadingIcon: false,
+      },
+      {
+        id: 'tab3',
+        title: 'Transit Midpoint',
+        subtitle: '60.118 4.202',
+        hasLeadingIcon: false,
+      },
+      {
+        id: 'tab4',
+        title: 'Survey Vessel at 55N',
+        subtitle: '55.000 4.900',
+        hasLeadingIcon: false,
+      },
+    ],
+    selectedTabId: 'tab1',
+    hasAddNewTab: false,
+    hasClose: false,
+    hug: false,
+    showSubtitle: true,
   },
   render: InteractiveTabRow,
 };
@@ -202,6 +269,19 @@ export const NoLeadingIcons: Story = {
     selectedTabId: 'tab1',
     hasAddNewTab: true,
     hasClose: true,
+    hug: false,
+  },
+  render: InteractiveTabRow,
+};
+
+export const WithPanels: Story = {
+  args: {
+    tabs: defaultTabs.slice(0, 3),
+    selectedTabId: 'tab2',
+    hasPanels: true,
+    label: 'Positions',
+    hasClose: false,
+    hasAddNewTab: true,
     hug: false,
   },
   render: InteractiveTabRow,

@@ -21,7 +21,7 @@ export type ObcTabbedCardChangeEvent = CustomEvent<{
  *   - **Named Slot Mode:** When `hasDefaultSlotOnly` is false (default), each tab uses its own named slots (`tab-title-x`, `tab-content-x`) for title and content.
  * - **Keyboard Navigation:** Supports Left/Right Arrow to move between tabs, Home/End to jump to first/last tab, following WAI-ARIA Tabs Pattern for accessibility.
  * - **Active Tab Highlighting:** Visually distinguishes the selected tab and its content panel.
- * - **Automatic Tab Activation:** Tabs activate on focus, streamlining keyboard navigation.
+ * - **Automatic Tab Activation:** Tabs activate on focus, which shortens keyboard navigation.
  * - **Responsive Layout:** Adapts to container width and height.
  *
  * ---
@@ -98,6 +98,22 @@ export type ObcTabbedCardChangeEvent = CustomEvent<{
  *
  * In this example, three tabs are shown, each with its own title and content panel.
  *
+ * ### Keyboard
+ * [APG Tabs](https://www.w3.org/WAI/ARIA/apg/patterns/tabs/) with automatic
+ * activation: the tab list is one tab stop on the selected tab, `Left` and
+ * `Right` move to the previous and next tab and wrap, `Home` and `End` go to
+ * the ends, and a tab is selected as soon as it has focus. Each tab points at
+ * its panel, and each panel is named by its tab.
+ *
+ * Left out: `Delete`, since the tabs cannot be closed; and with
+ * `hasDefaultSlotOnly` the tabs other than the selected one point at no panel,
+ * because there is only one.
+ *
+ * @property nTabs - Number of tabs to display (1–5). Determines how many tab-title/content slot pairs are rendered.
+ * @property selectedTab - Index of the currently selected tab (zero-based). Updates automatically on user interaction.
+ * @property hasDefaultSlotOnly - If true, only the default slot is rendered for tab content, and the consumer is responsible for toggling content based on the selected tab.
+ *   When false (default), each tab uses its own named slots for title and content.
+ * @property hasTabIcons - If true, each tab will have an icon slot.
  * @slot - Default slot for tab content (used only when `hasDefaultSlotOnly` is true)
  * @slot tab-title-0 - Title for the first tab
  * @slot tab-content-0 - Content for the first tab
@@ -114,33 +130,17 @@ export type ObcTabbedCardChangeEvent = CustomEvent<{
  * @slot tab-icon-2 - Icon for the third tab
  * @slot tab-icon-3 - Icon for the fourth tab
  * @slot tab-icon-4 - Icon for the fifth tab
- * @fires tab-change {CustomEvent<{tab:number}>} Fired when the selected tab changes
+ * @fires {CustomEvent<{tab:number}>} tab-change - Fired when the selected tab changes
+ * @stable
  */
 @customElement('obc-tabbed-card')
 export class ObcTabbedCard extends LitElement {
-  /**
-   * Number of tabs to display (1–5). Determines how many tab-title/content slot pairs are rendered.
-   * @default 1
-   */
   @property({type: Number}) nTabs: number = 1;
 
-  /**
-   * Index of the currently selected tab (zero-based). Updates automatically on user interaction.
-   * @default 0
-   */
   @property({type: Number}) selectedTab: number = 0;
 
-  /**
-   * If true, only the default slot is rendered for tab content, and the consumer is responsible for toggling content based on the selected tab.
-   * When false (default), each tab uses its own named slots for title and content.
-   * @default false
-   */
   @property({type: Boolean}) hasDefaultSlotOnly: boolean = false;
 
-  /**
-   * If true, each tab will have an icon slot.
-   * @default false
-   */
   @property({type: Boolean}) hasTabIcons: boolean = false;
 
   private _handleKeyDown(e: KeyboardEvent) {
@@ -171,10 +171,12 @@ export class ObcTabbedCard extends LitElement {
   }
 
   private setSelectedTab(index: number) {
+    // A click focuses the tab before it clicks it, and both select it.
+    if (index === this.selectedTab) return;
     this.selectedTab = index;
     /**
      * Fired when the selected tab changes.
-     * @fires tab-change {CustomEvent<{tab:number}>}
+     * @fires tab-change
      */
     this.dispatchEvent(new CustomEvent('tab-change', {detail: {tab: index}}));
   }

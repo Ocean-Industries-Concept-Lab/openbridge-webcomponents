@@ -43,9 +43,11 @@ export type ObcRowClickEvent = CustomEvent<{
 }>;
 
 /**
- * @fires ack-all-visible-click {ObcAlertListPageAckAllClickEvent} - Fired when the user clicks the "ACK visible" button.
- * @fires ack-click {ObcAckClickEvent} - Fired when the user clicks the "ACK" button.
- * @fires row-click {ObcRowClickEvent} - Fired when the user clicks a row.
+ * @fires {ObcAlertListPageAckAllClickEvent} ack-all-visible-click - Fired when the user clicks the "ACK visible" button.
+ * @fires {ObcAckClickEvent} ack-click - Fired when the user clicks the "ACK" button.
+ * @fires {ObcRowClickEvent} row-click - Fired when the user clicks a row.
+ * @fires {CustomEvent<void>} silence-click - Fired when the user clicks the "Silence" button.
+ * @beta
  */
 @customElement('obc-alert-list-page-small')
 export class ObcAlertListPageSmall extends LitElement {
@@ -161,6 +163,7 @@ export class ObcAlertListPageSmall extends LitElement {
               variant="normal"
               @click=${() =>
                 this.dispatchEvent(new CustomEvent('silence-click'))}
+              aria-label=${msg('Silence')}
             >
               <obi-silence-iec></obi-silence-iec>
             </obc-icon-button>

@@ -15,6 +15,9 @@ export enum GroundAlternativeIcon {
   ground3 = 'ground3',
 }
 
+/**
+ * @stable
+ */
 @customElement('obc-ground')
 export class ObcGround extends ObcAbstractAutomationButtonSquared {
   @property({type: String}) alternativeIcon: GroundAlternativeIcon =
@@ -23,7 +26,7 @@ export class ObcGround extends ObcAbstractAutomationButtonSquared {
   override get icon() {
     switch (this.alternativeIcon) {
       case GroundAlternativeIcon.ground2:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-ground-2-on
               usecsscolor
               slot="icon"
@@ -43,7 +46,7 @@ export class ObcGround extends ObcAbstractAutomationButtonSquared {
             ></obi-ground-2-off>`;
         }
       case GroundAlternativeIcon.ground3:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-ground-3-on
               usecsscolor
               slot="icon"
@@ -63,7 +66,7 @@ export class ObcGround extends ObcAbstractAutomationButtonSquared {
             ></obi-ground-3-off>`;
         }
       default:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-ground-1-on
               usecsscolor
               slot="icon"

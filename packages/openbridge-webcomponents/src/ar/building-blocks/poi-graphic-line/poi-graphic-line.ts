@@ -295,6 +295,7 @@ export const POI_VISUAL_VARIANTS: Array<{
  * ```html
  * <obc-poi-graphic-line .lineStyle=${POIStyle.Enhanced} .lineType=${POILineType.Regular} .lineHeight=${96} .offset=${0}></obc-poi-graphic-line>
  * ```
+ * @experimental
  */
 @customElement('obc-poi-graphic-line')
 export class ObcPoiGraphicLine extends LitElement {

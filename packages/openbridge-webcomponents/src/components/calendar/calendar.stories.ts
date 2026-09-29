@@ -338,7 +338,7 @@ function renderCalendar(args: CalendarStoryArgs) {
 
 const meta: Meta<CalendarStoryArgs> = {
   title: 'Application Components/Calendar/Calendar',
-  tags: ['autodocs', '6.0'],
+  tags: ['autodocs', '6.0', 'beta'],
   component: 'obc-calendar',
   render: renderCalendar,
   argTypes: {

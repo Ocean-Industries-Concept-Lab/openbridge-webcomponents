@@ -18,6 +18,9 @@ export enum ConverterAlternativeIcon {
   converterFilter1 = 'converterFilter1',
 }
 
+/**
+ * @stable
+ */
 @customElement('obc-converter')
 export class ObcConverter extends ObcAbstractAutomationButtonSquared {
   @property({type: String}) alternativeIcon: ConverterAlternativeIcon =
@@ -26,7 +29,7 @@ export class ObcConverter extends ObcAbstractAutomationButtonSquared {
   override get icon() {
     switch (this.alternativeIcon) {
       case ConverterAlternativeIcon.converterDcac:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-converter-dcac-on
               usecsscolor
               slot="icon"
@@ -46,7 +49,7 @@ export class ObcConverter extends ObcAbstractAutomationButtonSquared {
             ></obi-converter-dcac-off>`;
         }
       case ConverterAlternativeIcon.converterAcdc:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-converter-acdc-on
               usecsscolor
               slot="icon"
@@ -66,7 +69,7 @@ export class ObcConverter extends ObcAbstractAutomationButtonSquared {
             ></obi-converter-acdc-off>`;
         }
       case ConverterAlternativeIcon.converterFilter1:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-converter-filter-1-on
               usecsscolor
               slot="icon"
@@ -86,7 +89,7 @@ export class ObcConverter extends ObcAbstractAutomationButtonSquared {
             ></obi-converter-filter-1-off>`;
         }
       default:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-converter-dcdc-on
               usecsscolor
               slot="icon"

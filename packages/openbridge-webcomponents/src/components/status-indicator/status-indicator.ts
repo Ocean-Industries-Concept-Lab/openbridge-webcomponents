@@ -13,6 +13,10 @@ export enum StatusIndicatorStatus {
   running = 'running',
 }
 
+/**
+ * @slot - Label content shown next to the status indicator.
+ * @beta
+ */
 @customElement('obc-status-indicator')
 export class ObcStatusIndicator extends LitElement {
   @property({type: String}) status = StatusIndicatorStatus.active;

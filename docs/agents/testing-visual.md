@@ -1,0 +1,240 @@
+---
+name: testing-visual
+description: Storybook config, visual snapshot baselines, and the vue-demo Playwright suite
+globs:
+  - packages/openbridge-webcomponents/.storybook/**
+  - packages/openbridge-webcomponents/__vis__/**
+  - packages/openbridge-webcomponents/vitest*.config.ts
+  - packages/vue-demo/e2e/**
+---
+
+# Visual Testing and Storybook Config
+
+## Run one component, not the suite
+
+The full snapshot suite is slow and its failures are hard to attribute. Always
+scope to the component you changed:
+
+```bash
+npx vitest run --project storybook 'component-name'
+```
+
+**Updating baselines — the filter must come BEFORE `--update`:**
+
+```bash
+npx vitest run --project storybook 'component-name' --update   # correct
+npx vitest run --project storybook --update 'component-name'   # WRONG
+```
+
+Written after the flag, the name is consumed as the flag's value and the **full
+suite runs in update mode**, silently rewriting unrelated flaky baselines. This
+is the single most damaging mistake in this area.
+
+Always re-run without `--update` afterwards to confirm the new baselines are
+stable.
+
+Several components are separate substring filters, not a regex — `'a|b'`
+matches nothing and exits with "No test files found":
+
+```bash
+npx vitest run --project storybook heat-pump heat-exchanger hydraulic-separator --update
+```
+
+`--update` never prunes. A renamed or removed story leaves its
+`<story>-auto.png` behind, and a rewritten story file leaves the whole
+`__baselines__/<family>/<file>.stories.ts/` folder stale — `git rm` those before
+regenerating.
+
+Run `npm run analyze` before the first run of a new component's stories (see
+below); without the manifest the args never reach the element and the
+baselines capture the defaults.
+
+## Baselines are environment-sensitive
+
+```text
+__vis__/linux/__baselines__/    committed — what CI compares against
+__vis__/linux/__results__/      local output, gitignored
+__vis__/darwin/__baselines__/   macOS, NOT committed
+```
+
+The PR body names every baseline the PR adds, moves or removes, as
+`component/story` (`tab-row/with-panels`) or `vue-demo/<route>`, with why it
+moved; `pr-body.yml` fails until it does and prints the names it wants.
+
+Only the Linux baselines ship. Regenerating on macOS produces diffs CI will
+reject.
+
+**Regenerate locally, on Linux.** The devcontainer (Ubuntu 24.04) renders what
+the CI `test` job (the Playwright image `visual-testing.yml` pins) accepts, so a
+scoped `--update` followed by a plain re-run is the whole procedure, except for
+small `<canvas>` charts ([`skip-test` or `!snapshot`](#skip-test-or-snapshot)).
+On macOS take the Docker route from the package directory (the script mounts
+`$(pwd)`), keeping the filter in front of the flag:
+
+```bash
+npm run test-storybook:docker -- -- component-name --update
+npm run test-storybook:docker -- -- component-name
+```
+
+See [IMPLEMENTATION_GUIDELINES.md § Docker Testing](../../IMPLEMENTATION_GUIDELINES.md#docker-testing)
+and [`ci-and-release.md`](ci-and-release.md). That image is the one the retired
+`/update-snapshots` workflow could never import the Vitest setup file inside on
+any run that got that far, so confirm it still works before trusting a baseline
+it produces (see Open).
+
+## Checking a baseline against the design
+
+A baseline is the full 1280×720 story frame. Without a decorator the component
+sits at the top-left; under `crossDecorator` it is centred at `x = 480, y = 360`
+— the story renders in a 960 px-wide area of that frame, whatever the
+decorator's `width: 100%` suggests (measure a `cross` baseline: the guide lines
+sit in column 480 and row 360). Crop and upscale that region before comparing
+it with the Figma export (`pngjs` in `node_modules` does it in a few lines),
+and compare every value of the Figma variant property, not only the default
+story — a component built from a stale copy of the file looks right in its
+default state and wrong in the others.
+
+## Storybook config
+
+`.storybook/` holds `main.ts`, `preview.tsx`, `manager.ts` (sidebar badges for
+the lifecycle tags), `manager-head.html` (CSS injected into the manager UI, not
+into stories — it pins a minimum sidebar width so the badges stay on one line),
+`openbridgeTheme.ts`, and `vitest.setup.ts`, which wires the snapshot project.
+
+Two facts that bite:
+
+- **Run `npm run analyze` before testing a new component's stories.** Storybook
+  resolves story args to element properties through `custom-elements.json`;
+  without it the args silently never reach the element.
+- **Lifecycle badges are derived, never hand-written.** `meta.tags` mirrors the
+  class JSDoc — see [`jsdoc.md`](jsdoc.md). Tooling tags (`autodocs`,
+  `skip-test`, `!snapshot`) and version tags (`6.0`, `6.1`) stay hand-written.
+
+### `skip-test` or `!snapshot`
+
+Both keep a story out of the baselines, and both are for output that is
+genuinely non-deterministic, never for papering over a regression. A PR that
+adds either tag, or `skip-a11y`, names the stories file and the reason in its
+body; `pr-body.yml` fails until it does.
+
+- **`skip-test`** — the snapshot project does not collect the story at all
+  (`tags.exclude` in `vitest.config.ts`): no render, no `play`, no baseline.
+  For a story with nothing to assert as a test, like the live harness stories
+  below.
+- **`!snapshot`** — the story still renders and runs `play` as a test, so a
+  thrown error fails CI; only the screenshot is skipped and no baseline is
+  written. For a story whose render is deterministic but whose pixels are not.
+
+Small `<canvas>` charts are the known case for `!snapshot`. The harness
+captures a story at about 0.8 of its CSS size, so their edges land on
+fractional pixels, and that anti-aliasing differs between CI runners even when
+every devcontainer run is identical (#1222). Pin the layout fact in a
+`.spec.ts` instead, and `git rm` the orphaned baseline — `--update` never
+prunes.
+
+Web Animations (alert flashing) ignore the zeroed CSS durations, so an
+`afterEach` in `vitest.setup.ts` parks every animation at 100 ms, inside the
+on phase of every flash tempo; snapshots of flashing elements always show the
+on state.
+
+## Manifest-driven docs and controls
+
+`.storybook/manifest-docs-core.ts` holds the helpers; `manifest-docs.ts` binds
+them to `custom-elements.json` and is what stories import. The split keeps the
+helpers testable without the gitignored manifest — `script/manifest-docs.test.ts`
+imports the core module, and the `rules` project runs in a CI job that never
+calls `analyze`.
+
+- `moduleDocs('path/suffix.ts')` — a pure-function module's `@module` block, for
+  a story with no `component:` to resolve.
+- `classDocs('ObcChartLineBase')` — an abstract base's description, for a story
+  whose `component:` points at a concrete subclass.
+- `availableWhenEnhancer` — registered in `preview.tsx`; turns a member's
+  `availableWhenIf` into the argType's `if:`.
+
+**The enhancer's contract:** a gate applies only when the story itself sets the
+gate arg. Storybook never seeds args from component defaults, and an arg whose
+`if` is false is dropped from `render()`, not just hidden in the controls panel
+— so gating on an unset arg would delete properties the story does set. See
+[`jsdoc.md`](jsdoc.md) for the tag and the conditions the CEM plugin cannot
+resolve.
+
+## vue-demo Playwright suite
+
+`packages/vue-demo/e2e/` runs from that package:
+
+```bash
+npm run test:visual -- -g <name>          # compare the routes you touched against the committed baselines
+npm run test:visual:update -- -g <name>   # regenerate after an intended change
+npm run test:visual -- -g <name>          # ALWAYS re-run to confirm stability
+```
+
+`-g` matches the test title, `route: <name>` — the name from `visual.spec.ts`
+(`conning-psv`, `ias`), never the URL; `-g conning` takes every conning route.
+
+- The config starts `vite dev` itself, or reuses a server already on 5173;
+  under `CI` it serves `vite preview`, so build the demo first there
+  (`npm run build:demo` at the repository root). The `visual` project is
+  always headless.
+- The `vue-demo` job of `visual-testing.yml` runs both projects on PRs to
+  `develop` and `stable`, in the same Playwright image as the snapshot job. A
+  change that moves a route fails there until its baseline is refreshed:
+  regenerate the routes your change moves, on Linux, and say in the PR which
+  moved and why. A failed run uploads the report and the diffs.
+
+- `e2e/visual/` is its own Playwright project (`--project=visual`); the
+  functional suite `e2e/mainpage.spec.ts` ignores it and needs no baselines.
+- **Determinism is engineered in** `e2e/visual/helpers.ts`: it freezes `Date`
+  via `page.clock`, neutralises `setInterval` and `requestAnimationFrame` so
+  simulations render a fixed first frame, stubs external data (weather, logos,
+  QR), blocks other external origins, waits for network idle, and captures with
+  `animations: 'disabled'` so transitions inside shadow DOM settle. New routes
+  must go through these helpers or they will flake.
+- **`/ecdis` and `/ar` are deliberately skipped** — a live WebGL map with an AIS
+  stream, and CDN HLS video, cannot be frozen into a deterministic frame.
+- Baselines live in `e2e/visual/__screenshots__/<platform>/` and are
+  environment-sensitive in the same way as the core suite.
+
+## Live harness stories (not snapshots)
+
+Some behaviour cannot be pinned by a snapshot because it only appears at a
+container shape, a zoom level or a resize sequence that no single story
+captures. For those there are **live harness stories**: they measure the DOM on
+an interval and print their own PASS/FAIL, and they carry `skip-test` so they
+add no baselines.
+
+`skip-test` is narrower than it sounds — it is a tag exclusion on the Storybook
+**snapshot project** (`tags.exclude` in `vitest.config.ts`) and nothing else.
+These stories are still bundled by `build_storybook`, still type-checked and
+still linted, so a module-scope error in one breaks CI like any other file.
+
+- **Building Blocks → Chart Sizing Battleground** — every chart subject
+  (`gauge-trend` in five configurations, line/area graph, `automation-tank` in
+  its chart modes, the bar and gauge building blocks) across nine container
+  shapes, six zoom levels, and a resize sweep that counts distinct rendered
+  sizes per step to catch a layout that rings instead of settling. Check it
+  after any change to chart sizing or `chart-common.css`; see
+  `line-area-charts.md` for the invariants it guards.
+
+When adding one, keep the interval probes per-story and clear them before
+starting new ones — a rerender otherwise leaves two probe loops running and the
+readouts fight each other.
+
+## The spec project is not the snapshot project
+
+`npm run test:browser` runs `src/**/*.spec.ts` in Chromium through
+`vitest.browser.config.ts`; `npm run test-storybook` runs the stories through
+`vitest.config.ts`. Both set `headless: true` explicitly — Vitest only defaults
+to headless under `CI`, so without the line a local run opens no window and
+waits for a display forever. Node-only tests for the repo's tooling
+(`script/**/*.test.ts`) are the `rules` project, `npm run test:rules`.
+
+## Stuck browsers
+
+Spawned Chromium processes sometimes hang and stall a run. Kill the strays and
+re-run scoped to the single component rather than retrying the whole suite.
+
+## Open
+
+- The Docker route (`test-storybook:docker`) runs the image whose Vitest setup import failed in every attempted `update-snapshots.yml` run; the workflow is retired, the image is unverified (#1179).
+- Element-cropped story screenshots (`npm run screenshots`, opt-in through `VITE_STORYBOOK_TAKE_SCREENSHOT`, sized from the `@snapshot-base-width` / `@snapshot-base-height` JSDoc tags) are in draft #731; until it lands, crop the 1280×720 baseline by hand as above.

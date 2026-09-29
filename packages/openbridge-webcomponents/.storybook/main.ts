@@ -1,5 +1,6 @@
 // This file has been automatically migrated to valid ESM format by Storybook.
 import {createRequire} from 'node:module';
+import {fileURLToPath} from 'node:url';
 import {dirname, join} from 'path';
 import type {StorybookConfig} from '@storybook/web-components-vite';
 import FullReload from 'vite-plugin-full-reload';
@@ -19,6 +20,7 @@ const config: StorybookConfig = {
     getAbsolutePath('@storybook/addon-themes'),
     getAbsolutePath('storybook-addon-tag-badges'),
     getAbsolutePath('@storybook/addon-docs'),
+    getAbsolutePath('@storybook/addon-a11y'),
     getAbsolutePath('@storybook/addon-vitest'),
     // getAbsolutePath('storybook-addon-vis'),
   ],
@@ -31,9 +33,25 @@ const config: StorybookConfig = {
   staticDirs: [{from: '../public', to: '/assets'}],
 
   async viteFinal(viteConfig) {
+    // Vite applies a tsconfig only to the files its include matches, and ours
+    // leaves stories out, so a story's Lit decorators would reach the browser
+    // untransformed.
+    viteConfig.tsconfig = fileURLToPath(
+      new URL('../tsconfig.json', import.meta.url)
+    );
+
     // full reload whenever a TypeScript, CSS (or HTML) file in /src changes
     viteConfig.plugins ??= [];
     viteConfig.plugins.push(FullReload(['src/**/*.{ts,css,html}']));
+
+    // Ensure process.env.VITE_STORYBOOK_BRANCH is replaced in the preview
+    viteConfig.define = {
+      ...viteConfig.define,
+      'process.env.VITE_STORYBOOK_BRANCH': JSON.stringify(
+        process.env.VITE_STORYBOOK_BRANCH || ''
+      ),
+    };
+
     return viteConfig;
   },
 
@@ -43,18 +61,21 @@ const config: StorybookConfig = {
     <style>
     @font-face {
     font-family: Noto Sans;
-    src: url(/assets/NotoSans.ttf);
+    src: url(./assets/NotoSans.ttf);
     }
 
      @font-face {
     font-family: 'noto-sans';
-    src: url(/assets/NotoSans.ttf);
+    src: url(./assets/NotoSans.ttf);
     }
 </style>
   `,
 
-  managerHead: (head, options) => `
+  managerHead: (head) => `
   ${head}
+  <script>
+    window.VITE_STORYBOOK_BRANCH = "${process.env.VITE_STORYBOOK_BRANCH || ''}";
+  </script>
   <style>
     /* OpenBridge Storybook UI Fixes */
 

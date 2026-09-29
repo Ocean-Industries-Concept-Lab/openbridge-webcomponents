@@ -2,23 +2,26 @@ import {Meta} from '@storybook/addon-docs/blocks';
 
 <Meta title="Introduction/Getting Started" />
 
+# 🚀 Project Status
+
+**v2.0.0 is out.** It adds close to 60 components, among them motion and depth instruments, propulsion and
+hydraulic automation symbols, tree navigation and a new readout family, together with about 100 fixes. Keyboard
+navigation and accessibility are now tested on every change, next to the visual snapshots, so what works in your
+application keeps working. Coming from 1.x? The [migration guide](?path=/docs/introduction-migration-guide--docs)
+shows what to update.
+
+v1.0.0 closed an incredibly productive first year, with more than 200 components implemented. The code was
+officially opened by **Prince Sverre Magnus of Norway** and is publicly available, marking our first stable milestone.
+
 # Getting Started
 
-## Access Requirements
-
-> **Note:** Access to the OpenBridge Web Components library is currently restricted to JIP partners and donors until the public release in March 2026. To gain access, you must join the project as a partner or donor. [Register your interest here.](https://docs.google.com/forms/d/e/1FAIpQLSd2H7bbL_duBTMhHzjw7W52H9XXAiJ9A3sL7PsrfCTW_bNUhw/viewform)
+Upgrading from 1.x? The [Migration Guide](?path=/docs/introduction-migration-guide--docs) lists what changed in 2.0.
 
 ## Installation
 
-To use the components in your project, you need access to the private package repository. Once you have access:
+The package is publicly available on [npm](https://www.npmjs.com/package/@oicl/openbridge-webcomponents) — no authentication required.
 
-1. **Create a GitHub personal access token** with `read:packages` permission. [Create token here.](https://github.com/settings/tokens/new)
-2. **Login to the GitHub package registry:**
-   ```bash
-   npm login --registry https://npm.pkg.github.com/ --scope=@oicl
-   ```
-   Use your GitHub username and the generated token as password.
-3. **Install the package:**
+1. **Install the package:**
    ```bash
    npm install @oicl/openbridge-webcomponents
    ```
@@ -26,6 +29,11 @@ To use the components in your project, you need access to the private package re
    ```bash
    npm install @oicl/openbridge-webcomponents-vue
    ```
+   React, Angular, and Svelte wrappers are published as `@oicl/openbridge-webcomponents-react`, `-ng`, and `-svelte`.
+
+2. **Choose a release channel:**
+   - The `latest` tag tracks the stable, production-ready releases (updated from the `stable` branch).
+   - The `next` tag tracks the active development releases (from the `develop` branch) and may include breaking changes. Install it with `npm install @oicl/openbridge-webcomponents@next`.
 
 ## Usage
 
@@ -71,4 +79,19 @@ To use the components in your project, you need access to the private package re
    <ObcTopBar></ObcTopBar>
    ```
 
-For more details, see the [README](../../readme.md) or visit the [OpenBridge Design System website](https://www.openbridge.no/).
+## Licensing Model
+
+The project will **always remain open source**, but with the 1.0.0 release it has transitioned to a new licensing system. Each version and each commit in the repository follows a "delayed" permissive license cycle, set out in [LICENSE.txt](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/blob/develop/LICENSE.txt):
+
+1. **Initial Release:** Each new version, and each commit in the repository, is licensed under **AGPL-3.0-only** for the first 180 days after it is first made public.
+2. **Transition:** After 180 days (the "Change Date"), that version or commit also becomes available under **Apache 2.0**, irrevocably.
+3. **JIP Members:** Members of the [Joint Industry Project](?path=/docs/introduction-join-the-project--docs) can obtain a **commercial license** that permits use before the Change Date without the AGPL obligations. Membership is granted by the project: you register through the [support form](https://docs.google.com/forms/d/e/1FAIpQLSc6JVRyyIease2PkUArirNkG0DeTB__YnWEovjVwISlaYdktA/viewform) and pay the membership fee; contributing code does not make you a member. A commercial license does not include redistribution under Apache 2.0 before the Change Date.
+
+> **Example:**
+> If version 1.2.2 is released on **August 14, 2026**:
+>
+> - **open-source projects and internal users** can use it immediately under AGPL-3.0-only.
+> - **JIP members** can use it immediately under a **commercial license**.
+> - From **February 10, 2027**, version 1.2.2 becomes available to everyone under the **Apache 2.0** license (e.g., for commercial use without AGPL restrictions).
+
+For more details visit the [OpenBridge Design System website](https://www.openbridge.no/).

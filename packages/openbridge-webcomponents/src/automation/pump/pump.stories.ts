@@ -17,12 +17,11 @@ const meta: Meta<typeof ObcPump> = {
   component: 'obc-pump',
   decorators: [crossDecorator],
   args: {
-    tag: '007',
+    tag: '#0007',
     readoutPosition: AutomationButtonReadoutPosition.bottom,
     readoutSize: AutomationButtonReadoutStackSize.regular,
     alert: false,
     progress: false,
-    hasIdTag: true,
   },
   argTypes: {
     ...argTypesAbstractAutomationButtonMotorized,
@@ -34,7 +33,7 @@ type Story = StoryObj<ObcPump>;
 
 export const OnVerical: Story = {
   args: {
-    on: true,
+    turnedOn: true,
     vertical: true,
     direction: AutomationButtonDirection.forward,
     labelDirection: AutomationButtonLabelDirection.up,
@@ -43,7 +42,7 @@ export const OnVerical: Story = {
 
 export const OnHorizontal: Story = {
   args: {
-    on: true,
+    turnedOn: true,
     vertical: false,
     direction: AutomationButtonDirection.backwardFast,
     labelDirection: AutomationButtonLabelDirection.left,
@@ -52,7 +51,7 @@ export const OnHorizontal: Story = {
 
 export const OffVertical: Story = {
   args: {
-    on: false,
+    turnedOn: false,
     vertical: true,
     direction: AutomationButtonDirection.standby,
     labelDirection: AutomationButtonLabelDirection.up,
@@ -61,7 +60,7 @@ export const OffVertical: Story = {
 
 export const OffHorizontal: Story = {
   args: {
-    on: false,
+    turnedOn: false,
     vertical: false,
     direction: AutomationButtonDirection.backwardStopped,
     labelDirection: AutomationButtonLabelDirection.right,
@@ -70,7 +69,7 @@ export const OffHorizontal: Story = {
 
 export const VariantDoubleSizeLarge: Story = {
   args: {
-    on: true,
+    turnedOn: true,
     vertical: true,
     direction: AutomationButtonDirection.forward,
     labelDirection: AutomationButtonLabelDirection.up,

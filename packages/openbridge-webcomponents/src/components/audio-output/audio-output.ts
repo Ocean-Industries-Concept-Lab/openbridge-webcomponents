@@ -26,7 +26,7 @@ import {customElement} from '../../decorator.js';
  *
  * ### Best Practices and Constraints
  * - The component is purely visual and does not provide interactive controls; pair it with buttons or sliders for volume adjustment if needed.
- * - For accessibility, ensure that volume state is also conveyed via ARIA attributes or alternative text if used in interactive contexts.
+ * - For accessibility, also convey the volume state through ARIA attributes or alternative text when the component sits in an interactive context.
  * **TODO(designer):** Should the component include ARIA labeling or support for screen readers?
  *
  * ### Example:
@@ -35,25 +35,17 @@ import {customElement} from '../../decorator.js';
  * ```
  * In this example, four bars are highlighted to indicate a medium volume level.
  *
- * /**
+ * @property volume - The volume level to display, represented as the number of highlighted bars (0–8).
+ *   Set to 0 for muted/no volume, up to 8 for maximum volume.
+ * @property disabled - If true, the component is visually muted and indicates a disabled or non-interactive state.
+ *   Use to represent muted audio or when volume control is unavailable.
  * @slot - (none) – This component does not use slots; all content is rendered internally.
+ * @beta
  */
 @customElement('obc-audio-output')
 export class ObcAudioOutput extends LitElement {
-  /**
-   * The volume level to display, represented as the number of highlighted bars (0–8).
-   * Set to 0 for muted/no volume, up to 8 for maximum volume.
-   *
-   * @default 0
-   */
   @property({type: Number}) volume: number = 0;
 
-  /**
-   * If true, the component is visually muted and indicates a disabled or non-interactive state.
-   * Use to represent muted audio or when volume control is unavailable.
-   *
-   * @default false
-   */
   @property({type: Boolean}) disabled: boolean = false;
 
   override render() {

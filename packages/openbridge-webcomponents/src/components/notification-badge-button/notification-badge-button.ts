@@ -7,7 +7,7 @@ import {customElement} from '../../decorator.js';
 /**
  * `<obc-notification-badge-button>` – A compact action button for notification-related commands or acknowledgments.
  *
- * This component provides a visually distinct button, often used for quick actions such as acknowledging alerts, muting notifications, or similar context-specific responses. It supports both text and icon content, and can be styled to fit seamlessly into notification bars, toolbars, or grouped button sets.
+ * This component provides a visually distinct button, often used for quick actions such as acknowledging alerts, muting notifications, or similar context-specific responses. It supports both text and icon content, and can be styled to fit into notification bars, toolbars, or grouped button sets.
  *
  * ### Features
  * - **Icon or Text Content:** Supports either a text label (e.g., "ACK") or an icon via the default slot.
@@ -37,8 +37,8 @@ import {customElement} from '../../decorator.js';
  *
  * ### Best Practices
  * - Keep button content concise—use a single icon or a short label.
- * - When grouping multiple notification buttons, use the `openRight`/`openLeft` and `cornerLeft`/`cornerRight` properties for seamless visual integration.
- * - For accessibility, ensure that icon-only buttons have an appropriate `aria-label` or accessible text.
+ * - When grouping multiple notification buttons, use the `openRight`/`openLeft` and `cornerLeft`/`cornerRight` properties so the borders meet.
+ * - For accessibility, give icon-only buttons an `aria-label` or accessible text.
  *
  * ### Example:
  * ```
@@ -49,49 +49,40 @@ import {customElement} from '../../decorator.js';
  * <obc-notification-badge-button>ACK</obc-notification-badge-button>
  * ```
  *
+ * @property openRight - Removes the right border so the button sits flush against the next one.
+ *   Use when this button is not the last in a horizontal group.
+ * @property openLeft - Removes the left border so the button sits flush against the previous one.
+ *   Use when this button is not the first in a horizontal group.
+ * @property cornerLeft - Applies rounded corners to the left side of the button.
+ *   Use for the first button in a group or when aligning to a container's left edge.
+ * @property cornerRight - Applies rounded corners to the right side of the button.
+ *   Use for the last button in a group or when aligning to a container's right edge.
+ * @property icon - Applies icon-specific styling for icon-only buttons.
+ *   When true, supply an icon in the default slot.
+ * @property disabled - Disables the button, preventing user interaction and applying a muted style.
+ * @property indent - Applies an indented background style for emphasis or grouping.
+ *   Useful for visually separating the button from others or indicating a secondary action.
  * @slot - Main content slot for icon or text label.
+ * @fires click - Fired when the button is clicked (if not disabled).
+ * @deprecated The notification-badge-button component is deprecated and will be removed in future releases.
+ * Use `obc-icon-button` instead; `openLeft`, `openRight` and `indent` have no
+ * equivalent, and its default slot takes the icon while text goes in the `label`
+ * slot behind `hasLabel`.
  */
 @customElement('obc-notification-badge-button')
 export class ObcNotificationBadgeButton extends LitElement {
-  /**
-   * Removes the right border for seamless grouping with adjacent buttons.
-   * Use when this button is not the last in a horizontal group.
-   */
   @property({type: Boolean}) openRight = false;
 
-  /**
-   * Removes the left border for seamless grouping with adjacent buttons.
-   * Use when this button is not the first in a horizontal group.
-   */
   @property({type: Boolean}) openLeft = false;
 
-  /**
-   * Applies rounded corners to the left side of the button.
-   * Use for the first button in a group or when aligning to a container's left edge.
-   */
   @property({type: Boolean}) cornerLeft = false;
 
-  /**
-   * Applies rounded corners to the right side of the button.
-   * Use for the last button in a group or when aligning to a container's right edge.
-   */
   @property({type: Boolean}) cornerRight = false;
 
-  /**
-   * Applies icon-specific styling for icon-only buttons.
-   * When true, supply an icon in the default slot.
-   */
   @property({type: Boolean}) icon = false;
 
-  /**
-   * Disables the button, preventing user interaction and applying a muted style.
-   */
   @property({type: Boolean}) disabled = false;
 
-  /**
-   * Applies an indented background style for emphasis or grouping.
-   * Useful for visually separating the button from others or indicating a secondary action.
-   */
   @property({type: Boolean}) indent = false;
 
   override render() {

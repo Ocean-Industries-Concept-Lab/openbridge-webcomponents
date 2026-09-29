@@ -37,7 +37,7 @@ action2	If action2 is true	Label for the secondary action button.
 
 This example (based on obc-floating-item) shows how to communicate what each slot is for and under what conditions it appears. It’s crucial for developers to understand how to supply content (icons, text, etc.) to the component. If a component doesn’t use slots (for example, a plain <obc-radio> might just have a text label property instead), you can omit this section or mention how content is provided (e.g., “text content is set via the label attribute”).
 Properties and Attributes
-Even though each property will have its own JSDoc comment in code, the component’s main description should highlight any particularly important or complex properties that affect usage. For example:
+Even though each property is documented by its `@property` tag in the class JSDoc, the component’s main description should highlight any particularly important or complex properties that affect usage. For example:
 Configuration Flags: e.g., hasTimestamp or action2 – explain what turning them on/off does in practical terms (like “enabling action2 adds a second action button, but only if action (primary) is enabled first”). This manages expectations for how properties interact.
 Enum Properties: If a property uses an enum (like type or direction), ensure the Features or Variants section already explains each possible value. You might not need a separate list here if it’s covered above.
 Defaults: It’s helpful to mention default values or behaviors (“by default, type is regular”). This can be in parentheses after describing the feature.
@@ -50,7 +50,7 @@ action2-click – Fired when the secondary action button is clicked.
 dismiss-click – Fired when the component is dismissed (e.g., close icon clicked or auto-hide, if applicable).
 Also use the JSDoc @fires annotation for each event (as in the code snippet) so that IDEs and documentation generators capture the event contract. For example:
 
- * @fires action-click {CustomEvent<void>} When the first action button is clicked.
+ * @fires {CustomEvent<void>} action-click - When the first action button is clicked.
 
 Documenting events is important for developers to know how to listen for interactions. It’s also helpful for the RAG model – if a user asks “How do I know when the toast is dismissed?”, the documentation should make it clear that a dismiss-click event is dispatched.
 Best Practices and Constraints
@@ -109,12 +109,15 @@ By following this layout for each component, we’ll create consistent, rich doc
 
 ## Structured-tag rules  (apply to EVERY component)
 
-● After all Markdown sections, append a short **tag block** that contains only:
+● After all Markdown sections, append a short **tag block**, in this order:
+  - one `@property name - description` tag per public property (no type —
+    the TypeScript declaration is the type); a conditional property adds
+    `@availableWhen name condition` on the next line. Do NOT write JSDoc
+    above the field declarations.
   - one `@slot` tag for each content slot
-  - one `@fires` (or `@event`) tag for each custom event
-
-● Do **NOT** include `@property` tags in that block—properties are already
-  documented inline above their field declarations.
+  - one `@fires {Type} name - description` tag for each event the component
+    exposes — the type comes first
+  - exactly one lifecycle tag, last
 
 ● Do **NOT** mix Markdown headings inside the tag block.  
   Example skeleton:
@@ -123,21 +126,24 @@ By following this layout for each component, we’ll create consistent, rich doc
   /**
    * <markdown sections …>
    *
+   * @property showIcon - Whether to show the leading-icon slot.
    * @slot - Default leading-icon slot (shown when `showIcon` is true)
-   * @fires remove-chip {CustomEvent<{label:string}>}
+   * @fires {CustomEvent<{label:string}>} remove-chip - Fired when the chip's remove button is clicked.
+   * @stable
    */
 
 ● When you're using icons as examples, instead of writing emojis, use <obi-placeholder></obi-placeholder>, or other similar icons. OpenBridge has 1000+ icons and you can use them in slots by using this format. Another working icon import example: <obi-arrow></obi-arrow>, <obi-search></obi-search>. 
 
 ## Documentation by code pattern (regular components, pure functions, abstract classes)
 
-Not all code in this repo is a concrete Lit web component. The three main patterns require different documentation approaches because Storybook's autodocs system relies on the `custom-elements.json` manifest, which only contains entries for registered custom elements.
+Not all code in this repo is a concrete Lit web component. The three main patterns require different documentation approaches because Storybook's autodocs resolves a story to its docs through the `custom-elements.json` entry that carries a `tagName`; modules and abstract bases are in the manifest too, but only a registered custom element is found automatically.
 
 ### a) Regular concrete components (default case)
 
 Examples: `obc-area-graph`, `obc-line-graph`, `obc-bar-vertical`
 
 - JSDoc lives **on the class** (following the full template above).
+- Properties are documented in the class JSDoc tag block (`@property name - description`); Storybook reads them from the manifest exactly as it read inline docs.
 - The story meta uses `component: 'obc-tag-name'` to link Storybook autodocs to the `custom-elements.json` entry.
 - Storybook **automatically extracts** the class JSDoc, `@property` types, `@slot` tags, and `@fires` events.
 - The story file does **not** need `parameters.docs.description.component` — autodocs handles it.
@@ -148,40 +154,36 @@ This is the standard path. The template sections above (Overview, Features, Slot
 
 Examples: `external-scale.ts` (exports `renderExternalScale()`, `computeExternalScaleLayout()`, etc.)
 
-These modules export pure functions that return `SVGTemplateResult` fragments, not a LitElement. There is no custom element tag and no `custom-elements.json` entry, so autodocs cannot extract anything automatically.
+These modules export pure functions that return `SVGTemplateResult` fragments, not a LitElement. The manifest does carry the module (its `/** @module … */` description and each exported function), but there is no custom element tag, so autodocs cannot wire the docs to a component on its own.
 
 **Source file:**
 - Place a comprehensive JSDoc block comment at the **top of the module** (above the first export). Use the same structure as a component JSDoc (overview, features, usage examples) — but write it as a module description rather than a component description.
 
 **Story file:**
-- **Omit** `component:` from the story meta (there is no tag to point to).
-- **Provide** the full documentation via `parameters.docs.description.component` as a Markdown string.
-- **Manually define** all `argTypes` (since there is no manifest to auto-extract from).
-- If the module's functions need a DOM host to render, create a minimal **throwaway inline wrapper** element to give Storybook a renderable surface.
-
-**Keeping docs in sync:** The module-level JSDoc is the **source of truth**. The story's `parameters.docs.description.component` should mirror it.
+- **Omit** `component:` (there is no tag to point to).
+- Read the module JSDoc from the manifest: `parameters: {docs: {description: {component: moduleDocs('building-blocks/external-scale/external-scale.ts')}}}` (`moduleDocs` from `.storybook/manifest-docs.js`). The `/** @module … */` block at the top of the source is the single source; `npm run analyze` copies it into `custom-elements.json`.
+- **Manually define** `argTypes` (no manifest members to extract from).
 
 ### c) Abstract base classes
 
 Examples: `ObcChartLineBase` (abstract base for `obc-line-graph` and `obc-area-graph`)
 
-The class has rich JSDoc and `@property` declarations, but it cannot be instantiated and is not registered as a custom element. Storybook cannot auto-extract its docs via `custom-elements.json`.
+The class has rich JSDoc and `@property` declarations, but it cannot be instantiated and is not registered as a custom element. It is in the manifest — description and members included — yet with no `tagName` for autodocs to resolve, the story reads it with `classDocs()`.
 
 **Source file:**
-- Place the full JSDoc on the abstract class just like a regular component, but append `@ignore` at the end of the JSDoc tag block. This signals to doc generators that the class is not meant to appear as a standalone API entry.
+- Place the full JSDoc on the abstract class just like a regular component. Do **not** add `@ignore` — the class must stay in the manifest so subclasses inherit its property docs and stories can read its description with `classDocs('ObcChartLineBase')`.
 
 **Story file:**
-- Set `component:` to a **concrete subclass tag** (e.g., `'obc-area-graph'`) so Storybook can at least resolve property controls.
-- **Override** the auto-extracted description with `parameters.docs.description.component` containing the base class documentation as Markdown.
+- Set `component:` to a concrete subclass tag and `parameters.docs.description.component: classDocs('ObcChartLineBase')`.
 
-**Keeping docs in sync:** Same as pure functions — the abstract class JSDoc is the source of truth, and the story description should mirror/replicate it.
+The story reads the class docs from the manifest via `classDocs()`; there is no copy to keep in sync.
 
 ### Summary table
 
 | Aspect                                 | Concrete component         | Pure function module                    | Abstract base class                       |
 |----------------------------------------|---------------------------|-----------------------------------------|-------------------------------------------|
-| JSDoc location                         | On the class              | Module-level block comment              | On the abstract class (with `@ignore`)     |
+| JSDoc location                         | On the class              | Module-level block comment              | On the abstract class (no `@ignore`)       |
 | Story `meta.component`                 | `'obc-tag-name'`          | Omitted                                | Concrete subclass tag                      |
-| Story `parameters.docs.description`    | Not needed (auto)         | Required (full Markdown)               | Required (override with base class docs)   |
+| Story `parameters.docs.description`    | Not needed (auto)         | `moduleDocs()`                          | `classDocs()`                              |
 | `argTypes`                             | Auto from manifest        | Manual                                 | Partially auto (from concrete subclass)    |
-| Rendering in story                     | Direct `<obc-tag>`        | Throwaway inline wrapper               | Concrete subclass element                  |
+| Rendering in story                     | Direct `<obc-tag>`        | Inline element built in `render()` (e.g. an `<svg>`) | Concrete subclass element                  |

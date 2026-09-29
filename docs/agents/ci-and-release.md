@@ -1,0 +1,181 @@
+---
+name: ci-and-release
+description: CI workflows, the semantic-release model, which commit types ship a release, and the two script directories
+globs:
+  - .github/workflows/**
+  - .releaserc.json
+  - scripts/**
+  - package.json
+  - packages/openbridge-webcomponents/package.json
+  - packages/openbridge-webcomponents/script/**
+  - "!packages/openbridge-webcomponents/script/docgen/**"
+---
+
+# CI and Release
+
+## Your commit type decides whether anything ships
+
+`.releaserc.json` drives semantic-release, and its `releaseRules` mean most
+commit types produce **no release at all**:
+
+| Commit type                                                              | Release   |
+| ------------------------------------------------------------------------ | --------- |
+| `feat!:` / any `BREAKING CHANGE:`                                        | **major** |
+| `feat:`                                                                  | **minor** |
+| `fix:` · `perf:` · `revert:`                                             | **patch** |
+| `docs:` · `style:` · `refactor:` · `test:` · `build:` · `ci:` · `chore:` | **none**  |
+
+Pick the type for the effect you want. A user-visible fix committed as
+`refactor:` never reaches consumers; a docs-only change committed as `fix:`
+ships a version nobody needs. When a change is genuinely non-shipping, the
+no-release types are the correct choice, not a fallback.
+
+The same convention is enforced on **PR titles** by
+`.github/workflows/pr-title-lint.yml` — the squashed PR title is what
+semantic-release reads, so the title matters more than the individual commits.
+
+## Release model
+
+| Branch    | npm dist-tag | Version shape               |
+| --------- | ------------ | --------------------------- |
+| `stable`  | `latest`     | `2.0.0`                     |
+| `develop` | `next`       | `2.0.0-next.N` (prerelease) |
+
+`release.yml` runs on push to **`develop`** or **`stable`**, and on manual
+`workflow_dispatch`, so merging a PR into `stable` publishes to `latest`.
+After a stable release, merge `stable` back into `develop`: until develop
+carries the new tag, its next prerelease is numbered against the old one.
+A release commits back as `chore(release): <version> [skip ci]`, updating
+`packages/openbridge-webcomponents/CHANGELOG.md`, the core `package.json`, and
+`package-lock.json`.
+
+**CHANGELOG.md is generated** by `@semantic-release/changelog` — never hand-edit
+it. See [`generated-code.md`](generated-code.md).
+
+One release publishes **six** npm packages: the core, the vue / svelte / react
+wrappers, `openbridge-webcomponents-ng/dist`, and the full-bundle directory. The
+wrapper versions are synced first by `scripts/prepare-wrappers.js` (see below).
+`packages/connector-diagram` is not among them: it is not in `.releaserc.json`.
+
+## The nine workflows
+
+| Workflow                                   | Trigger                                     | Purpose                                                                                                                                    |
+| ------------------------------------------ | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `build.yml`                                | push + PR, all branches                     | typecheck, `analyze`, the `lint:*` suite including `lint:agents`, `format:check`, `fix-imports:check`, ESLint for the two demos            |
+| `visual-testing.yml`                       | push + PR on `develop` / `stable`           | Playwright snapshot suite, then the axe run against `__a11y__/baseline.json`; the vue demo's functional and visual Playwright tests        |
+| `pr-title-lint.yml`                        | PR opened / edited / synchronize / reopened | Conventional Commits check on the PR title                                                                                                 |
+| `pr-body.yml`                              | PR opened / edited / synchronize / reopened | the PR body against the template and the diff: sections, Docs boxes, named baselines, axe entries and opt-out tags, no `CHANGELOG.md` edit |
+| `windows-angular-build.yml`                | push + PR, all branches                     | the Angular wrapper built on `windows-latest` — CRLF and backslash path separators have leaked into generated imports before               |
+| `release.yml`                              | push to `develop` / `stable`, or manual     | `build:full` then `semantic-release`                                                                                                       |
+| `firebase-hosting-merge.yml`               | after `release.yml` on `develop` / `stable` | deploys Storybook and the vue demo from the branch tip: develop to `openbridge-next-*`, stable to `openbridge-*`                           |
+| `firebase-hosting-pull-request.yml`        | PR                                          | builds the demo preview                                                                                                                    |
+| `firebase-hosting-pull-request-deploy.yml` | after the build workflow completes          | publishes the preview                                                                                                                      |
+
+The lint job of `build.yml` and the `connector-diagram` job of
+`visual-testing.yml` also cover `packages/connector-diagram`
+([`connector-diagram.md`](connector-diagram.md)).
+
+**Regenerate baselines locally, on Linux.** The devcontainer's render is what
+the `test` job accepts; scope the run to the component and re-run without
+`--update` afterwards ([`testing-visual.md`](testing-visual.md)). Baselines from
+a non-Linux machine produce diffs CI rejects — there, run
+`npm run test-storybook:docker -- -- component-name --update` from the package
+directory, then the same command without `--update` — that route runs the same
+image the retired `/update-snapshots` workflow failed in, so check #1179 before
+relying on it.
+
+## Two script directories, and they are not interchangeable
+
+| Directory                                                  | Contents                                                            | Reached from                                       |
+| ---------------------------------------------------------- | ------------------------------------------------------------------- | -------------------------------------------------- |
+| `scripts/` (repo root, **plural**)                         | `prepare-wrappers.js` only                                          | `.releaserc.json`'s `prepareCmd`, during a release |
+| `packages/openbridge-webcomponents/script/` (**singular**) | the `check-*`, `convert-*`, `download-*`, `sync-agent-docs` tooling | `npm run` scripts in the core package              |
+
+`scripts/prepare-wrappers.js` stamps the release version into each wrapper
+package and builds it; the Angular wrapper additionally gets the version written
+into its `dist/package.json`. It runs only during a release and is invoked by
+path, not by an npm script — so it is easy to miss when grepping.
+
+Everything else lives in the singular `script/` directory. Adding release-time
+tooling to the wrong one silently does nothing.
+
+## package.json section markers
+
+`packages/openbridge-webcomponents/package.json` divides its scripts with seven
+emoji separator keys — `👷_BUILD___`, `📚_STORYBOOK___`, `🧩_COMPONENT___`,
+`🧪_CHECKS___`, `📦_WRAPPERS___`, `📜_SCRIPTS___`, `言_TRANSLATIONS___`. They are
+no-op `echo` entries that exist purely to group the script list.
+
+A new script goes **inside the matching section**, not appended at the end. No
+other package in the monorepo uses this convention.
+
+## Documentation tooling in the build
+
+The manifest is the single source for property docs, so several steps hang off
+`npm run analyze` (`cem analyze` + `script/sort-custom-element-manifest.ts`):
+
+| Piece                            | What it does                                                                                             |
+| -------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `script/cem-plugins/`            | `available-when.mjs` resolves `@availableWhen` into `availableWhenIf`; `module-docs.mjs` lifts `@module` |
+| `script/inject-docs.ts`          | writes manifest descriptions into `dist/**/*.d.ts` (`--dts`) and the Svelte wrappers (`--svelte`)        |
+| `script/compare-manifests.ts`    | diffs two `custom-elements.json` files — the guard for "docs moved, manifest unchanged" refactors        |
+| `npm run lint:comments`          | the comment-style ESLint config (`eslint.comments.config.mjs`); every rule is an error                   |
+| `npm run lint:fix:property-docs` | the same config with `--fix`; hoists inline property JSDoc into the class header                         |
+
+Order matters: injection reads the manifest and writes into build output, so it
+runs **after** both. `build:full` ends `... build:ts && analyze && inject:dts &&
+wrappers` (the wrapper step's `post-fix` runs the `--svelte` pass), and `prepack`
+ends `... build:bundle && analyze && inject:dts`. Putting `inject:dts` before a
+`vite build` throws the injected docs away — that build regenerates the `.d.ts`
+files from source.
+
+Every `lint:*` script runs in `build.yml`'s **lint** job, which names each
+one instead of running `npm run lint`. `script/ci-coverage.test.ts` (in
+`test:rules`) keeps the two in step: it fails when any package's lint, type
+check, test or build script runs in no workflow and is not listed there with
+the reason, when a `lint:*` script is missing from the `lint` chain, and
+when `npm run check` at the repository root runs less than the **lint** and
+**test-browser** jobs, or anything CI does not. `test:rules` runs in
+**test-browser**, which has no `analyze` step — tooling tests must not import
+the manifest.
+
+## The accessibility gates
+
+Three, none of them a lint warning:
+
+- `npm run test:browser` (`build.yml`, every branch) runs the
+  `*-keyboard.spec.ts` files with every other browser spec. A key binding
+  that stops working fails the job like any other test.
+- `npm run test-a11y` (`visual-testing.yml`, PRs to `develop` and `stable`)
+  runs axe over every story — about 40 s — and then
+  `script/check-a11y-baseline.ts` compares the report with
+  `__a11y__/baseline.json`. A story or rule the baseline does not carry fails
+  the step with `story-id: rule` lines; entries that no longer fail are
+  printed for pruning; `npm run test-a11y:update` rewrites the file. The debt
+  can only shrink, a new component starts from zero, and adding to the
+  baseline is a reviewable diff that needs its reason in the PR body.
+  `a11y-report.json` is uploaded as an artifact on every run. Three rules of
+  our own run with axe's (`.storybook/a11y-rules.ts`): one tab stop per
+  composite widget, a name for it, and a named tab panel a tab points at.
+- `npm run lint:apg` (`build.yml`, every branch) fails on a component that
+  renders an ARIA widget role without a linked APG pattern and a
+  `Left out:` line in its class JSDoc, and on a composite widget with no
+  `*-keyboard.spec.ts` beside it.
+
+What no gate sees is whether the keys a record promises work, since axe
+cannot press them: that is the component-creation checklist
+([`a11y.md`](../../docs/agents/a11y.md) § 9).
+
+## Local equivalents of the CI gates
+
+```bash
+(cd ../.. && npm run check)   # build.yml's lint and test-browser jobs, package by package
+npm run test-a11y             # axe over every story, then the baseline check (visual-testing.yml)
+npm run test-storybook        # the snapshot suite (visual-testing.yml); locally, the touched components only
+```
+
+`check` runs `lint` (with `lint:agents`, the agent-doc drift check),
+`typecheck`, `typecheck:tooling`, `format:check`, `fix-imports:check`,
+`test:rules` and the browser specs here, then the demos' and
+`connector-diagram`'s checks. Run it before pushing; `build.yml` runs the
+same set on every branch, and the coverage guard fails when the two differ.

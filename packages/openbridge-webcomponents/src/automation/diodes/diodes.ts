@@ -24,6 +24,9 @@ export enum DiodesAlternativeIcon {
   diodes06 = 'diodes06',
 }
 
+/**
+ * @stable
+ */
 @customElement('obc-diodes')
 export class ObcDiodes extends ObcAbstractAutomationButtonSquared {
   @property({type: String}) alternativeIcon: DiodesAlternativeIcon =
@@ -32,7 +35,7 @@ export class ObcDiodes extends ObcAbstractAutomationButtonSquared {
   override get icon() {
     switch (this.alternativeIcon) {
       case DiodesAlternativeIcon.diodes02:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-diodes-02-on
               usecsscolor
               slot="icon"
@@ -52,7 +55,7 @@ export class ObcDiodes extends ObcAbstractAutomationButtonSquared {
             ></obi-diodes-02-off>`;
         }
       case DiodesAlternativeIcon.diodes03:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-diodes-03-on
               usecsscolor
               slot="icon"
@@ -72,7 +75,7 @@ export class ObcDiodes extends ObcAbstractAutomationButtonSquared {
             ></obi-diodes-03-off>`;
         }
       case DiodesAlternativeIcon.diodes04:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-diodes-04-on
               usecsscolor
               slot="icon"
@@ -92,7 +95,7 @@ export class ObcDiodes extends ObcAbstractAutomationButtonSquared {
             ></obi-diodes-04-off>`;
         }
       case DiodesAlternativeIcon.diodes05:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-diodes-05-on
               usecsscolor
               slot="icon"
@@ -112,7 +115,7 @@ export class ObcDiodes extends ObcAbstractAutomationButtonSquared {
             ></obi-diodes-05-off>`;
         }
       case DiodesAlternativeIcon.diodes06:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-diodes-06-on
               usecsscolor
               slot="icon"
@@ -132,7 +135,7 @@ export class ObcDiodes extends ObcAbstractAutomationButtonSquared {
             ></obi-diodes-06-off>`;
         }
       default:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-diodes-01-on
               usecsscolor
               slot="icon"

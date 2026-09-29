@@ -25,6 +25,12 @@ const meta: Meta<ObcDropdownButton> = {
     openTop: {
       control: 'boolean',
     },
+    allowEmptySelection: {
+      control: 'boolean',
+    },
+    placeholder: {
+      control: 'text',
+    },
   },
   args: {
     options: [
@@ -169,5 +175,21 @@ export const DisabledWithIcon: Story = {
     >
       <obi-placeholder slot="icon"></obi-placeholder>
     </obc-dropdown-button>
+  `,
+};
+
+export const EmptySelection: Story = {
+  args: {
+    value: 'none',
+    allowEmptySelection: true,
+    placeholder: 'Select a brand',
+  },
+  render: (args) => html`
+    <obc-dropdown-button
+      .options=${args.options}
+      .value=${args.value}
+      .allowEmptySelection=${args.allowEmptySelection}
+      .placeholder=${args.placeholder}
+    ></obc-dropdown-button>
   `,
 };

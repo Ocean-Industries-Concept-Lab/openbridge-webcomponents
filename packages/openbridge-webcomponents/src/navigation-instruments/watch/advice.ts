@@ -1,5 +1,6 @@
 import {SVGTemplateResult, nothing, svg} from 'lit';
 import {TickmarkStyle, TickmarkType, tickmark} from './tickmark.js';
+import {degToRad, normalizeAngle} from '../../svghelpers/math.js';
 
 export enum AdviceType {
   advice = 'advice',
@@ -38,12 +39,14 @@ export function adviceMask(
   stroke: string,
   radiusOffset = 0
 ): SVGTemplateResult | typeof nothing {
-  const spanDeg = (((maxAngle - minAngle) % 360) + 360) % 360;
-  const spanRad = (spanDeg * Math.PI) / 180;
+  const spanDeg = normalizeAngle(maxAngle - minAngle);
+  const spanRad = degToRad(spanDeg);
   if (spanRad <= deltaAngle * 2) return nothing;
+  const trimmedSpanRad = spanRad - deltaAngle * 2;
+  const largeArcFlag = trimmedSpanRad > Math.PI ? 1 : 0;
 
-  const radl = (minAngle * Math.PI) / 180 + deltaAngle;
-  const radh = (maxAngle * Math.PI) / 180 - deltaAngle;
+  const radl = degToRad(minAngle) + deltaAngle;
+  const radh = degToRad(maxAngle) - deltaAngle;
   const r1 = 328 / 2 + radiusOffset;
   const r2 = 344 / 2 + radiusOffset;
   const R = (r2 - r1) / 2;
@@ -58,9 +61,9 @@ export function adviceMask(
   const y2h = -Math.cos(radh) * r2;
 
   const path = `M ${x1l} ${y1l} 
-                    A ${r1} ${r1} 0 0 1 ${x1h} ${y1h}
+                    A ${r1} ${r1} 0 ${largeArcFlag} 1 ${x1h} ${y1h}
                     A ${R} ${R} 0 0 0 ${x2h} ${y2h}
-                    A ${r2} ${r2} 0 0 0 ${x2l} ${y2l}
+                    A ${r2} ${r2} 0 ${largeArcFlag} 0 ${x2l} ${y2l}
                     A ${R} ${R} 0 0 0 ${x1l} ${y1l}
                     Z`;
   return svg`<path d=${path} fill=${fill} stroke=${stroke} stroke-width="1" vector-effect="non-scaling-stroke" />`;
@@ -83,16 +86,11 @@ export function renderAdvice(
     }
     const radialPattern = [];
     if (radiusOffset > 0) {
-      // Draw hatch lines directly as short segments crossing the enlarged
-      // annular band. The radial-fan-tile approach (rotate + translate) causes
-      // artifacts at large offsets because each tile's center orbits the origin,
-      // making stripes cross the band at inconsistent widths/angles.
-      //
-      // Geometry is derived from the original pattern at base radius:
-      //   - 45 tiles × 2 stripes = 90 crossings over 360° → 4° arc step
-      //   - At base rAvg 168, arc spacing ≈ 11.73 px
-      //   - Stripe slant ≈ 40.4° from radial direction
-      //   - Perpendicular line width ≈ 4 px
+      // Short segments crossing the enlarged annular band, not radial fan
+      // tiles: a tile's centre orbits the origin, so at large offsets the
+      // stripes cross the band at inconsistent widths and angles. The
+      // constants below reproduce the base-radius pattern — 90 crossings over
+      // 360°, ~11.73 px arc spacing at rAvg 168, ~40.4° slant, 4 px wide.
       const r1z = 328 / 2 + radiusOffset;
       const r2z = 344 / 2 + radiusOffset;
       const rAvg = (r1z + r2z) / 2;

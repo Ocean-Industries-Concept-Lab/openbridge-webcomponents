@@ -83,7 +83,7 @@ const SAMPLE_MULTI_DATASETS = [
 const meta: Meta = {
   title: 'Bars and Graphs/Line Graph',
   component: 'obc-line-graph',
-  tags: ['autodocs', '6.0'],
+  tags: ['autodocs', '6.0', 'beta'],
   argTypes: {
     // Data sources
     data: {control: 'object'},
@@ -93,7 +93,7 @@ const meta: Meta = {
     // Axis and layout
     xAxisType: {
       control: {type: 'radio'},
-      options: [XAxisType.category, XAxisType.time],
+      options: [XAxisType.category, XAxisType.time, XAxisType.number],
     },
     yAxisPosition: {
       control: {type: 'radio'},
@@ -103,6 +103,10 @@ const meta: Meta = {
     showGridX: {control: 'boolean'},
     showGridY: {control: 'boolean'},
     showTickMarks: {control: 'boolean'},
+    rangeLabels: {
+      control: {type: 'radio'},
+      options: ['none', 'y', 'x', 'xy'],
+    },
     xTicksLimit: {control: {type: 'number'}},
     xStepSize: {control: {type: 'number'}},
     yTicksLimit: {control: {type: 'number'}},
@@ -134,6 +138,7 @@ const meta: Meta = {
     showGridX: true, // Component defaults to false, but stories show grid by default
     showGridY: true, // Component defaults to false, but stories show grid by default
     showTickMarks: true, // Component defaults to false, but stories show tick marks by default
+    rangeLabels: 'none',
     xTicksLimit: undefined,
     xStepSize: undefined,
     yTicksLimit: undefined,
@@ -159,8 +164,7 @@ export const SingleSeries: Story = {
   play: async ({canvasElement}) => {
     await document.fonts.ready;
     const chart = canvasElement.querySelector('obc-line-graph') as
-      | (HTMLElement & {chart?: {update(): void}})
-      | null;
+      (HTMLElement & {chart?: {update(): void}}) | null;
     chart?.chart?.update();
   },
   render: (_args) => html`
@@ -174,6 +178,7 @@ export const SingleSeries: Story = {
       .showGridX=${_args.showGridX}
       .showGridY=${_args.showGridY}
       .showTickMarks=${_args.showTickMarks}
+      .rangeLabels=${_args.rangeLabels}
       .xTicksLimit=${_args.xTicksLimit}
       .xStepSize=${_args.xStepSize}
       .yTicksLimit=${_args.yTicksLimit}
@@ -186,6 +191,150 @@ export const SingleSeries: Story = {
       .height=${_args.height}
     ></obc-line-graph>
   `,
+};
+
+const UNEVEN_TIME_DATA = [
+  {x: '2026-07-06T10:00:00Z', value: 10},
+  {x: '2026-07-06T10:02:00Z', value: 14},
+  {x: '2026-07-06T10:03:00Z', value: 12},
+  {x: '2026-07-06T10:10:00Z', value: 18},
+  {x: '2026-07-06T10:30:00Z', value: 8},
+  {x: '2026-07-06T11:00:00Z', value: 15},
+];
+
+export const UnevenTimeIntervals: Story = {
+  name: 'Uneven Time Intervals (Time Axis)',
+  play: async ({canvasElement}) => {
+    await document.fonts.ready;
+    const chart = canvasElement.querySelector('obc-line-graph') as
+      (HTMLElement & {chart?: {update(): void}}) | null;
+    chart?.chart?.update();
+  },
+  args: {
+    xAxisType: XAxisType.time,
+    timeDisplay: TimeDisplay.minutes,
+  },
+  render: (_args) => html`
+    <obc-line-graph
+      .data=${UNEVEN_TIME_DATA}
+      .lineMode=${_args.lineMode}
+      .xAxisType=${_args.xAxisType}
+      .timeDisplay=${_args.timeDisplay}
+      .showGrid=${_args.showGrid}
+      .showGridX=${_args.showGridX}
+      .showGridY=${_args.showGridY}
+      .showTickMarks=${_args.showTickMarks}
+      .showPoints=${_args.showPoints}
+      .priority=${_args.priority}
+      .width=${_args.width}
+      .height=${_args.height}
+    ></obc-line-graph>
+  `,
+};
+
+const DATE_OBJECT_TIME_DATA = [
+  {x: new Date('2026-07-06T10:00:00Z'), value: 10},
+  {x: new Date('2026-07-06T10:04:00Z'), value: 14},
+  {x: '2026-07-06T10:12:00Z', value: 12},
+  {x: Date.parse('2026-07-06T10:30:00Z'), value: 18},
+];
+
+export const DateObjectsTimeAxis: Story = {
+  name: 'Date Objects (Time Axis)',
+  play: async ({canvasElement}) => {
+    await document.fonts.ready;
+    const chart = canvasElement.querySelector('obc-line-graph') as
+      (HTMLElement & {chart?: {update(): void}}) | null;
+    chart?.chart?.update();
+  },
+  args: {
+    xAxisType: XAxisType.time,
+    timeDisplay: TimeDisplay.minutes,
+  },
+  render: (_args) => html`
+    <obc-line-graph
+      .data=${DATE_OBJECT_TIME_DATA}
+      .lineMode=${_args.lineMode}
+      .xAxisType=${_args.xAxisType}
+      .timeDisplay=${_args.timeDisplay}
+      .showGrid=${_args.showGrid}
+      .showGridX=${_args.showGridX}
+      .showGridY=${_args.showGridY}
+      .showTickMarks=${_args.showTickMarks}
+      .showPoints=${_args.showPoints}
+      .priority=${_args.priority}
+      .width=${_args.width}
+      .height=${_args.height}
+    ></obc-line-graph>
+  `,
+};
+
+const NUMBER_AXIS_DATA = [
+  {x: 0, value: 2},
+  {x: 1, value: 5},
+  {x: 2.5, value: 3},
+  {x: 7, value: 9},
+  {x: 10, value: 6},
+];
+
+export const NumberAxis: Story = {
+  name: 'Number X-Axis',
+  play: async ({canvasElement}) => {
+    await document.fonts.ready;
+    const chart = canvasElement.querySelector('obc-line-graph') as
+      (HTMLElement & {chart?: {update(): void}}) | null;
+    chart?.chart?.update();
+  },
+  args: {
+    xAxisType: XAxisType.number,
+  },
+  render: (_args) => html`
+    <obc-line-graph
+      .data=${NUMBER_AXIS_DATA}
+      .lineMode=${_args.lineMode}
+      .xAxisType=${_args.xAxisType}
+      .showGrid=${_args.showGrid}
+      .showGridX=${_args.showGridX}
+      .showGridY=${_args.showGridY}
+      .showTickMarks=${_args.showTickMarks}
+      .showPoints=${_args.showPoints}
+      .priority=${_args.priority}
+      .width=${_args.width}
+      .height=${_args.height}
+    ></obc-line-graph>
+  `,
+};
+
+export const TemporalInput: Story = {
+  name: 'Temporal API Input',
+  tags: ['skip-test'],
+  render: () => {
+    const T = (
+      globalThis as {
+        Temporal?: {Instant: {from(s: string): {epochMilliseconds: number}}};
+      }
+    ).Temporal;
+    if (!T) {
+      return html`<p>
+        Temporal API is not available in this browser — pass ISO strings, Date
+        objects or epoch milliseconds instead.
+      </p>`;
+    }
+    const chart = document.createElement('obc-line-graph');
+    chart.xAxisType = XAxisType.time;
+    chart.timeDisplay = TimeDisplay.minutes;
+    chart.showGrid = true;
+    chart.showGridX = true;
+    chart.showGridY = true;
+    chart.showTickMarks = true;
+    chart.data = [
+      {x: T.Instant.from('2026-07-06T10:00:00Z'), value: 10},
+      {x: T.Instant.from('2026-07-06T10:04:00Z'), value: 14},
+      {x: T.Instant.from('2026-07-06T10:05:00Z'), value: 12},
+      {x: T.Instant.from('2026-07-06T10:20:00Z'), value: 18},
+    ];
+    return chart;
+  },
 };
 
 export const SingleSeriesExternalScales: Story = {
@@ -322,24 +471,28 @@ export const SingleSeriesExternalScales: Story = {
         .hasScale=${true}
         .showLabels=${_args.vScaleShowLabels}
         .hasBar=${_args.vScaleHasBar}
-        .fillMode=${_args.vScaleFillMode === 'fill'
-          ? FillMode.fill
-          : FillMode.tint}
+        .fillMode=${
+          _args.vScaleFillMode === 'fill' ? FillMode.fill : FillMode.tint
+        }
         .fillMin=${_args.vScaleFillMin}
         .fillMax=${_args.vScaleFillMax}
         .value=${_args.vScaleValue}
         .setpoint=${_args.vScaleSetpoint}
-        .advicePosition=${_args.vScaleAdvicePosition === 'inner'
-          ? AdvicePosition.inner
-          : _args.vScaleAdvicePosition === 'center'
-            ? AdvicePosition.center
-            : AdvicePosition.outer}
-        .advices=${_args.vScaleAdvices
-          ? [
-              {min: 3, max: 5, type: AdviceType.caution, hinted: true},
-              {min: 6, max: 7, type: AdviceType.advice, hinted: false},
-            ]
-          : []}
+        .advicePosition=${
+          _args.vScaleAdvicePosition === 'inner'
+            ? AdvicePosition.inner
+            : _args.vScaleAdvicePosition === 'center'
+              ? AdvicePosition.center
+              : AdvicePosition.outer
+        }
+        .advices=${
+          _args.vScaleAdvices
+            ? [
+                {min: 3, max: 5, type: AdviceType.caution, hinted: true},
+                {min: 6, max: 7, type: AdviceType.advice, hinted: false},
+              ]
+            : []
+        }
         .primaryTickmarkInterval=${1}
         .secondaryTickmarkInterval=${0.5}
         .tertiaryTickmarkInterval=${0.125}
@@ -354,24 +507,28 @@ export const SingleSeriesExternalScales: Story = {
         .hasScale=${true}
         .showLabels=${_args.hScaleShowLabels}
         .hasBar=${_args.hScaleHasBar}
-        .fillMode=${_args.hScaleFillMode === 'fill'
-          ? FillMode.fill
-          : FillMode.tint}
+        .fillMode=${
+          _args.hScaleFillMode === 'fill' ? FillMode.fill : FillMode.tint
+        }
         .fillMin=${_args.hScaleFillMin}
         .fillMax=${_args.hScaleFillMax}
         .value=${_args.hScaleValue}
         .setpoint=${_args.hScaleSetpoint}
-        .advicePosition=${_args.hScaleAdvicePosition === 'inner'
-          ? AdvicePosition.inner
-          : _args.hScaleAdvicePosition === 'center'
-            ? AdvicePosition.center
-            : AdvicePosition.outer}
-        .advices=${_args.hScaleAdvices
-          ? [
-              {min: 3, max: 5, type: AdviceType.caution, hinted: true},
-              {min: 8, max: 10, type: AdviceType.advice, hinted: false},
-            ]
-          : []}
+        .advicePosition=${
+          _args.hScaleAdvicePosition === 'inner'
+            ? AdvicePosition.inner
+            : _args.hScaleAdvicePosition === 'center'
+              ? AdvicePosition.center
+              : AdvicePosition.outer
+        }
+        .advices=${
+          _args.hScaleAdvices
+            ? [
+                {min: 3, max: 5, type: AdviceType.caution, hinted: true},
+                {min: 8, max: 10, type: AdviceType.advice, hinted: false},
+              ]
+            : []
+        }
         .primaryTickmarkInterval=${2}
         .secondaryTickmarkInterval=${1}
         .tertiaryTickmarkInterval=${0.25}
@@ -416,6 +573,24 @@ export const MinHeight: Story = {
   args: {
     width: 72,
     height: 48,
+  },
+};
+
+export const MinHeightRangeLabels: Story = {
+  name: 'Minimal Height With Range Labels (48px)',
+  args: {
+    width: 120,
+    height: 48,
+    rangeLabels: 'xy',
+  },
+};
+
+export const BelowThresholdRangeLabels: Story = {
+  name: 'Below Threshold With Range Labels (191px, Y Only)',
+  args: {
+    width: 288,
+    height: 191,
+    rangeLabels: 'y',
   },
 };
 

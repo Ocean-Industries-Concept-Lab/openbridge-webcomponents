@@ -1,6 +1,7 @@
 import typescriptEslint from '@typescript-eslint/eslint-plugin';
 import globals from 'globals';
 import tsParser from '@typescript-eslint/parser';
+import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import js from '@eslint/js';
@@ -159,8 +160,178 @@ function toTitleCase(segment) {
   });
 }
 
-// Custom plugin for local OpenBridge lint rules
-const openbridgePlugin = {
+// --- Component lifecycle tags (AGENTS.md § 3) -------------------------------
+// The class-level JSDoc tag on an `@customElement` class is the single source
+// of truth for a component's lifecycle state; a story's `meta.tags` mirrors it.
+
+const LIFECYCLE_JSDOC_TAGS = ['stable', 'beta', 'experimental', 'deprecated'];
+
+// `@stable` deliberately maps to no story tag, so a sidebar badge always means
+// "there is a caveat here" rather than decorating every entry.
+const LIFECYCLE_STORY_TAG = {
+  beta: 'beta',
+  experimental: 'experimental',
+  deprecated: 'deprecated',
+};
+
+// Story tags this rule owns and will rewrite. `wip` and `alpha` are the retired
+// names, listed so the autofix removes them.
+const OWNED_STORY_TAGS = new Set([
+  'beta',
+  'experimental',
+  'deprecated',
+  'wip',
+  'alpha',
+]);
+
+const SRC_DIR = path.join(__dirname, 'src');
+
+// A JSDoc block (`/** … */` — never a plain `/* … */`) immediately preceding a
+// `@customElement('…')` decorator. The inner group forbids `*/` so an earlier,
+// unrelated JSDoc block cannot be stretched across intervening code to reach
+// the decorator.
+const CUSTOM_ELEMENT_WITH_DOC =
+  /\/\*\*((?:(?!\*\/)[\s\S])*)\*\/\s*@customElement\(\s*['"]([^'"]+)['"]\s*\)/g;
+// Anchored to the start of a line so a `@customElement(…)` written inside a
+// JSDoc code fence (where the line starts with ` * `) is not mistaken for a
+// real decorator.
+const CUSTOM_ELEMENT_ANY =
+  /(?:^|\r?\n)[ \t]*@customElement\(\s*['"]([^'"]+)['"]\s*\)/g;
+
+const lifecycleTagPatterns = new Map(
+  LIFECYCLE_JSDOC_TAGS.map((tag) => [
+    tag,
+    new RegExp(`^[ \\t]*\\*?[ \\t]*@${tag}\\b`, 'm'),
+  ])
+);
+
+// Every `@customElement` in a source text, with the lifecycle tags declared in
+// its class JSDoc. Shared by both rules so they can never disagree.
+function extractComponents(source) {
+  const components = [];
+  const seen = new Set();
+  let match;
+
+  CUSTOM_ELEMENT_WITH_DOC.lastIndex = 0;
+  while ((match = CUSTOM_ELEMENT_WITH_DOC.exec(source)) !== null) {
+    const doc = match[1];
+    const decoratorOffset = match[0].lastIndexOf('@customElement');
+    components.push({
+      tag: match[2],
+      tags: LIFECYCLE_JSDOC_TAGS.filter((tag) =>
+        lifecycleTagPatterns.get(tag).test(doc)
+      ),
+      index: match.index + decoratorOffset,
+      length: match[0].length - decoratorOffset,
+    });
+    seen.add(match[2]);
+  }
+
+  CUSTOM_ELEMENT_ANY.lastIndex = 0;
+  while ((match = CUSTOM_ELEMENT_ANY.exec(source)) !== null) {
+    if (seen.has(match[1])) continue;
+    seen.add(match[1]);
+    const decoratorOffset = match[0].indexOf('@customElement');
+    components.push({
+      tag: match[1],
+      tags: [],
+      index: match.index + decoratorOffset,
+      length: match[0].length - decoratorOffset,
+    });
+  }
+
+  return components;
+}
+
+function collectComponentSources(dir, out) {
+  for (const entry of fs.readdirSync(dir, {withFileTypes: true})) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      // Icons are generated and carry no lifecycle tags by design.
+      if (entry.name === 'icons' && dir === SRC_DIR) continue;
+      collectComponentSources(full, out);
+    } else if (
+      entry.name.endsWith('.ts') &&
+      !entry.name.endsWith('.stories.ts')
+    ) {
+      out.push(full);
+    }
+  }
+  return out;
+}
+
+// ESLint has no cross-file API, so the tag → lifecycle map is built by reading
+// the sources directly. The result is cached: rebuilt at most once every two
+// seconds so a long-lived editor process still picks up JSDoc edits, while a
+// single CLI run over hundreds of story files pays for it only a few times.
+const COMPONENT_INDEX_TTL_MS = 2000;
+let componentIndex = null;
+let componentIndexBuiltAt = 0;
+let componentIndexPinned = false;
+
+function getComponentIndex() {
+  if (componentIndexPinned) return componentIndex;
+
+  const now = Date.now();
+  if (componentIndex && now - componentIndexBuiltAt < COMPONENT_INDEX_TTL_MS) {
+    return componentIndex;
+  }
+
+  const index = new Map();
+  let files;
+  try {
+    files = collectComponentSources(SRC_DIR, []);
+  } catch {
+    files = [];
+  }
+
+  for (const file of files) {
+    let source;
+    try {
+      source = fs.readFileSync(file, 'utf8');
+    } catch {
+      continue;
+    }
+    if (!source.includes('@customElement')) continue;
+    for (const component of extractComponents(source)) {
+      index.set(component.tag, {file, tags: component.tags});
+    }
+  }
+
+  componentIndex = index;
+  componentIndexBuiltAt = now;
+  return index;
+}
+
+function unwrapTypeExpression(node) {
+  let current = node;
+  while (
+    current &&
+    (current.type === 'TSSatisfiesExpression' ||
+      current.type === 'TSAsExpression')
+  ) {
+    current = current.expression;
+  }
+  return current;
+}
+
+function findObjectProperty(objectExpression, name) {
+  return objectExpression.properties.find(
+    (property) =>
+      property.type === 'Property' &&
+      !property.computed &&
+      property.key.type === 'Identifier' &&
+      property.key.name === name
+  );
+}
+
+function quoteList(names) {
+  return names.map((name) => `'${name}'`).join(', ');
+}
+
+// Custom plugin for local OpenBridge lint rules. Exported so
+// eslint.comments.config.mjs can register the same rule objects.
+export const openbridgePlugin = {
   rules: {
     'storybook-title-case': {
       meta: {
@@ -268,6 +439,170 @@ const openbridgePlugin = {
         };
       },
     },
+    'component-lifecycle-tag': {
+      meta: {
+        type: 'suggestion',
+        docs: {
+          description:
+            'Require exactly one lifecycle tag (@stable, @beta, @experimental, @deprecated) in the class JSDoc of every @customElement',
+        },
+        schema: [],
+      },
+      create(context) {
+        const sourceCode = context.sourceCode ?? context.getSourceCode();
+
+        return {
+          'Program:exit'() {
+            const text = sourceCode.getText();
+            if (!text.includes('@customElement')) return;
+
+            for (const component of extractComponents(text)) {
+              if (component.tags.length === 1) continue;
+
+              context.report({
+                loc: {
+                  start: sourceCode.getLocFromIndex(component.index),
+                  end: sourceCode.getLocFromIndex(
+                    component.index + component.length
+                  ),
+                },
+                message:
+                  component.tags.length === 0
+                    ? `<${component.tag}> has no lifecycle tag in its class JSDoc. Add exactly one of @stable, @beta, @experimental or @deprecated (see AGENTS.md § 3).`
+                    : `<${component.tag}> declares more than one lifecycle tag (${component.tags
+                        .map((tag) => `@${tag}`)
+                        .join(', ')}). Exactly one is allowed.`,
+              });
+            }
+          },
+        };
+      },
+    },
+    'story-lifecycle-tags': {
+      meta: {
+        type: 'problem',
+        docs: {
+          description:
+            "Keep a story's meta.tags lifecycle entry in sync with the class JSDoc lifecycle tag of its meta.component",
+        },
+        fixable: 'code',
+        schema: [],
+      },
+      create(context) {
+        const sourceCode = context.sourceCode ?? context.getSourceCode();
+
+        return {
+          VariableDeclarator(node) {
+            if (node.id.type !== 'Identifier' || node.id.name !== 'meta')
+              return;
+
+            const meta = unwrapTypeExpression(node.init);
+            if (!meta || meta.type !== 'ObjectExpression') return;
+
+            const componentProperty = findObjectProperty(meta, 'component');
+            if (
+              !componentProperty ||
+              componentProperty.value.type !== 'Literal' ||
+              typeof componentProperty.value.value !== 'string'
+            )
+              return;
+
+            const componentTag = componentProperty.value.value;
+            const component = getComponentIndex().get(componentTag);
+
+            // A component with no tag, or more than one, is reported against
+            // its own source file by `component-lifecycle-tag`; there is no
+            // single correct story tag to fix towards here.
+            if (!component || component.tags.length !== 1) return;
+
+            const lifecycle = component.tags[0];
+            const expected = LIFECYCLE_STORY_TAG[lifecycle];
+            const desired = expected ? [expected] : [];
+            const tagsProperty = findObjectProperty(meta, 'tags');
+
+            if (!tagsProperty) {
+              if (!expected) return;
+
+              context.report({
+                node: componentProperty.value,
+                message: `<${componentTag}> is @${lifecycle}, so meta.tags must contain '${expected}', but meta has no tags.`,
+                fix(fixer) {
+                  const titleProperty = findObjectProperty(meta, 'title');
+                  if (titleProperty) {
+                    const next = sourceCode.getTokenAfter(titleProperty);
+                    return next && next.value === ','
+                      ? fixer.insertTextAfter(
+                          next,
+                          `\n  tags: ['${expected}'],`
+                        )
+                      : fixer.insertTextAfter(
+                          titleProperty,
+                          `,\n  tags: ['${expected}']`
+                        );
+                  }
+                  const first = meta.properties[0];
+                  return first
+                    ? fixer.insertTextBefore(
+                        first,
+                        `tags: ['${expected}'],\n  `
+                      )
+                    : null;
+                },
+              });
+              return;
+            }
+
+            if (tagsProperty.value.type !== 'ArrayExpression') return;
+
+            const elements = tagsProperty.value.elements.filter(Boolean);
+            const owned = elements.filter(
+              (element) =>
+                element.type === 'Literal' &&
+                typeof element.value === 'string' &&
+                OWNED_STORY_TAGS.has(element.value)
+            );
+            const found = owned.map((element) => element.value);
+
+            if (
+              found.length === desired.length &&
+              found.every((name, i) => name === desired[i])
+            )
+              return;
+
+            const kept = elements.filter((element) => !owned.includes(element));
+            const nextElements = [
+              ...kept.map((element) => sourceCode.getText(element)),
+              ...desired.map((name) => `'${name}'`),
+            ];
+
+            context.report({
+              node: tagsProperty.value,
+              message: expected
+                ? `<${componentTag}> is @${lifecycle}, so meta.tags must carry ${quoteList(desired)}, but it carries ${found.length ? quoteList(found) : 'no lifecycle tag'}.`
+                : `<${componentTag}> is @${lifecycle}, so meta.tags must carry no lifecycle tag, but it carries ${quoteList(found)}.`,
+              fix(fixer) {
+                if (nextElements.length > 0) {
+                  return fixer.replaceText(
+                    tagsProperty.value,
+                    `[${nextElements.join(', ')}]`
+                  );
+                }
+                const previous = sourceCode.getTokenBefore(tagsProperty);
+                const next = sourceCode.getTokenAfter(tagsProperty);
+                const start = previous
+                  ? previous.range[1]
+                  : tagsProperty.range[0];
+                const end =
+                  next && next.value === ','
+                    ? next.range[1]
+                    : tagsProperty.range[1];
+                return fixer.removeRange([start, end]);
+              },
+            });
+          },
+        };
+      },
+    },
     'prefer-boolean-property-default-false': {
       meta: {
         type: 'problem',
@@ -292,7 +627,7 @@ const openbridgePlugin = {
             );
             if (!propertyDecorator) return;
             // Check if the property decorator has attribute: false — that's the
-            // accepted escape hatch for true-default booleans (see AGENTS.md § 2).
+            // accepted escape hatch for true-default booleans (see docs/agents/coding-standards.md).
             const property =
               propertyDecorator.expression?.arguments[0]?.properties?.find(
                 (p) =>
@@ -301,16 +636,11 @@ const openbridgePlugin = {
                   p.key.type === 'Identifier' &&
                   p.key.name === 'attribute'
               );
-            const isBuildingBlock =
-              typeof context.filename === 'string' &&
-              context.filename.includes('building-blocks');
             if (property?.value?.value === false) {
               return;
             }
-            let message = 'Prefer boolean property default values of false';
-            if (isBuildingBlock) {
-              message += ' or set Attribute: false on the property decorator';
-            }
+            let message =
+              'Prefer boolean property default values of false or set attribute: false on the property decorator';
             context.report({
               node,
               message,
@@ -404,6 +734,403 @@ const openbridgePlugin = {
         };
       },
     },
+    'prefer-array-property-type-and-item-interface': {
+      meta: {
+        type: 'problem',
+        docs: {
+          description:
+            'Require @property array fields to declare {type: Array} and avoid inline item object types',
+        },
+        schema: [],
+      },
+      create(context) {
+        function getPropertyDecorator(node) {
+          return (node.decorators ?? []).find((decorator) => {
+            const expr = decorator.expression;
+            return (
+              expr &&
+              expr.type === 'CallExpression' &&
+              expr.callee &&
+              expr.callee.type === 'Identifier' &&
+              expr.callee.name === 'property'
+            );
+          });
+        }
+
+        function getArrayElementType(typeNode) {
+          if (!typeNode) return null;
+          if (typeNode.type === 'TSArrayType') {
+            return typeNode.elementType;
+          }
+          if (
+            typeNode.type === 'TSTypeReference' &&
+            typeNode.typeName &&
+            typeNode.typeName.type === 'Identifier' &&
+            typeNode.typeName.name === 'Array'
+          ) {
+            return typeNode.typeArguments?.params?.[0] ?? null;
+          }
+          return null;
+        }
+
+        function hasTypeArrayOption(propertyDecorator) {
+          const options = propertyDecorator.expression.arguments?.[0];
+          if (!options || options.type !== 'ObjectExpression') return false;
+          return options.properties.some((prop) => {
+            if (!prop || prop.type !== 'Property') return false;
+            if (prop.key.type !== 'Identifier' || prop.key.name !== 'type')
+              return false;
+            return (
+              prop.value &&
+              prop.value.type === 'Identifier' &&
+              prop.value.name === 'Array'
+            );
+          });
+        }
+
+        function containsInlineObjectType(typeNode) {
+          if (!typeNode) return false;
+          if (typeNode.type === 'TSTypeLiteral') return true;
+          if (typeNode.type === 'TSUnionType') {
+            return typeNode.types.some((t) => containsInlineObjectType(t));
+          }
+          if (typeNode.type === 'TSIntersectionType') {
+            return typeNode.types.some((t) => containsInlineObjectType(t));
+          }
+          return false;
+        }
+
+        return {
+          PropertyDefinition(node) {
+            const propertyDecorator = getPropertyDecorator(node);
+            if (!propertyDecorator) return;
+
+            const typeAnnotation = node.typeAnnotation?.typeAnnotation;
+            const arrayElementType = getArrayElementType(typeAnnotation);
+            if (!arrayElementType) return;
+
+            if (!hasTypeArrayOption(propertyDecorator)) {
+              context.report({
+                node: propertyDecorator,
+                message:
+                  'Array properties decorated with @property must include {type: Array}.',
+              });
+            }
+
+            if (containsInlineObjectType(arrayElementType)) {
+              context.report({
+                node: arrayElementType,
+                message:
+                  'Array item type must be a named interface/type (avoid inline object types like Array<{...}>).',
+              });
+            }
+          },
+        };
+      },
+    },
+
+    // A suppression is a decision the reviewer should see the reason for, not
+    // a way past a failing check. Runs in `lint:suppressions`, with inline
+    // directives off, so a directive cannot silence the rule that checks it.
+    'suppression-reason': {
+      meta: {
+        type: 'problem',
+        docs: {
+          description:
+            'Require named rules and a reason on every eslint-disable directive, and no inline rule configuration',
+        },
+        schema: [],
+      },
+      create(context) {
+        const sourceCode = context.sourceCode ?? context.getSourceCode();
+        const doc = '(docs/agents/coding-standards.md § Suppressions)';
+        return {
+          Program() {
+            for (const comment of sourceCode.getAllComments()) {
+              const text = comment.value.trim();
+              const report = (message) =>
+                context.report({
+                  loc: comment.loc,
+                  message: `${message} ${doc}`,
+                });
+              if (
+                comment.type === 'Block' &&
+                /^eslint\s+[@\w/-]+\s*:/.test(text)
+              ) {
+                report(
+                  'Configure rules in eslint.config.mjs, not in an inline comment.'
+                );
+                continue;
+              }
+              const directive =
+                /^eslint-disable(?:-next-line|-line)?(?:\s+([\s\S]*))?$/.exec(
+                  text
+                );
+              if (!directive) continue;
+              const body = directive[1] ?? '';
+              const at = body.search(/(?:^|\s)--(?:\s|$)/);
+              const rules = (at < 0 ? body : body.slice(0, at)).trim();
+              const reason =
+                at < 0
+                  ? ''
+                  : body
+                      .slice(at)
+                      .replace(/^\s*--/, '')
+                      .trim();
+              if (!rules) {
+                report(
+                  'Name the rules it turns off; without them it silences every check.'
+                );
+              } else if (!reason) {
+                report('Give the reason after ` -- `.');
+              }
+            }
+          },
+        };
+      },
+    },
+
+    // A behaviour a component does not implement is a gap to write down, never
+    // a test that no longer runs.
+    'no-skipped-tests': {
+      meta: {
+        type: 'problem',
+        docs: {
+          description:
+            'Disallow .skip, .only and .todo on it, test and describe',
+        },
+        schema: [],
+      },
+      create(context) {
+        return {
+          MemberExpression(node) {
+            if (node.object.type !== 'Identifier') return;
+            if (!['it', 'test', 'describe'].includes(node.object.name)) return;
+            if (node.property.type !== 'Identifier') return;
+            if (!['skip', 'only', 'todo'].includes(node.property.name)) return;
+            context.report({
+              node,
+              message: `\`${node.object.name}.${node.property.name}\` leaves tests unrun: fix the test, or delete it and record the gap (docs/agents/a11y.md § 9).`,
+            });
+          },
+        };
+      },
+    },
+
+    // The shapes a search for svghelpers/math.ts would have replaced.
+    'use-math-helpers': {
+      meta: {
+        type: 'suggestion',
+        docs: {
+          description:
+            'Use clamp, normalizeAngle, degToRad and radToDeg from svghelpers/math.ts',
+        },
+        schema: [],
+      },
+      create(context) {
+        if (/svghelpers[\\/]math\.ts$/.test(context.filename)) return {};
+        const isMath = (n, name) =>
+          n?.type === 'MemberExpression' &&
+          n.object.type === 'Identifier' &&
+          n.object.name === 'Math' &&
+          n.property.type === 'Identifier' &&
+          n.property.name === name;
+        const isMathCall = (n, name) =>
+          n?.type === 'CallExpression' && isMath(n.callee, name);
+        const isNumber = (n, value) =>
+          n?.type === 'Literal' && n.value === value;
+        const factors = (n) =>
+          n?.type === 'BinaryExpression' && n.operator === '*'
+            ? [...factors(n.left), ...factors(n.right)]
+            : [n];
+        const hasPi = (n) => factors(n).some((f) => isMath(f, 'PI'));
+        const has180 = (n) => factors(n).some((f) => isNumber(f, 180));
+        const report = (node, helper) =>
+          context.report({
+            node,
+            message: `Use ${helper} from svghelpers/math.ts (docs/agents/working-method.md § Search before you write).`,
+          });
+        return {
+          CallExpression(node) {
+            const nested = (inner) =>
+              node.arguments.some((arg) => isMathCall(arg, inner));
+            if (
+              (isMathCall(node, 'min') && nested('max')) ||
+              (isMathCall(node, 'max') && nested('min'))
+            ) {
+              report(node, 'clamp()');
+            }
+          },
+          BinaryExpression(node) {
+            if (
+              node.operator === '%' &&
+              isNumber(node.right, 360) &&
+              node.left.type === 'BinaryExpression' &&
+              node.left.operator === '+' &&
+              isNumber(node.left.right, 360)
+            ) {
+              report(node, 'normalizeAngle()');
+            }
+            if (node.operator !== '/') return;
+            if (hasPi(node.left) && has180(node.right))
+              report(node, 'degToRad()');
+            else if (has180(node.left) && hasPi(node.right)) {
+              report(node, 'radToDeg()');
+            }
+          },
+        };
+      },
+    },
+
+    // DOM order sets the tab sequence; a positive tabindex jumps the queue.
+    'no-positive-tabindex': {
+      meta: {
+        type: 'problem',
+        docs: {description: 'Disallow a tabindex above 0'},
+        schema: [],
+      },
+      create(context) {
+        const message =
+          'A tabindex above 0 overrides the DOM order; use 0 or -1 (docs/agents/a11y.md § 2).';
+        const positive = (n) =>
+          n?.type === 'Literal' &&
+          (typeof n.value === 'number'
+            ? n.value > 0
+            : /^\s*[1-9]/.test(String(n.value)));
+        const inText = (node, text) => {
+          if (/\btabindex\s*=\s*["']?\s*[1-9]/i.test(text)) {
+            context.report({node, message});
+          }
+        };
+        return {
+          TemplateElement(node) {
+            inText(node, node.value.raw);
+          },
+          Literal(node) {
+            if (typeof node.value === 'string') inText(node, node.value);
+          },
+          AssignmentExpression(node) {
+            if (
+              node.left.type === 'MemberExpression' &&
+              node.left.property.type === 'Identifier' &&
+              node.left.property.name === 'tabIndex' &&
+              positive(node.right)
+            ) {
+              context.report({node, message});
+            }
+          },
+          CallExpression(node) {
+            const [name, value] = node.arguments;
+            if (
+              node.callee.type === 'MemberExpression' &&
+              node.callee.property.type === 'Identifier' &&
+              node.callee.property.name === 'setAttribute' &&
+              name?.type === 'Literal' &&
+              String(name.value).toLowerCase() === 'tabindex' &&
+              positive(value)
+            ) {
+              context.report({node, message});
+            }
+          },
+        };
+      },
+    },
+
+    // `true` means the feature is on, so bindings never read as double
+    // negatives.
+    'positive-boolean-name': {
+      meta: {
+        type: 'suggestion',
+        docs: {description: 'Name boolean @property fields positively'},
+        schema: [],
+      },
+      create(context) {
+        const isBooleanProperty = (node) =>
+          (node.decorators ?? []).some((decorator) => {
+            const expr = decorator.expression;
+            if (
+              expr?.type !== 'CallExpression' ||
+              expr.callee.type !== 'Identifier' ||
+              expr.callee.name !== 'property'
+            ) {
+              return false;
+            }
+            return (expr.arguments[0]?.properties ?? []).some(
+              (p) =>
+                p.type === 'Property' &&
+                p.key.type === 'Identifier' &&
+                p.key.name === 'type' &&
+                p.value.type === 'Identifier' &&
+                p.value.name === 'Boolean'
+            );
+          });
+        return {
+          PropertyDefinition(node) {
+            if (node.key.type !== 'Identifier') return;
+            if (!/^(hide|disable|no)[A-Z]/.test(node.key.name)) return;
+            if (!isBooleanProperty(node)) return;
+            context.report({
+              node: node.key,
+              message: `Name the property for what it turns on (show…, has…), not \`${node.key.name}\` (docs/agents/coding-standards.md § Boolean property naming).`,
+            });
+          },
+        };
+      },
+    },
+
+    // Svelte binds an `on…={…}` markup attribute as an event listener, so a
+    // property named like one cannot be set from a template (#1090).
+    'no-event-like-property-name': {
+      meta: {
+        type: 'problem',
+        docs: {
+          description:
+            'Keep @property names and attributes from starting with `on`',
+        },
+        schema: [],
+      },
+      create(context) {
+        const propertyOptions = (node) => {
+          for (const decorator of node.decorators ?? []) {
+            const expr = decorator.expression;
+            if (
+              expr?.type === 'CallExpression' &&
+              expr.callee.type === 'Identifier' &&
+              expr.callee.name === 'property'
+            ) {
+              return expr.arguments[0]?.properties ?? [];
+            }
+          }
+          return null;
+        };
+        const check = (node) => {
+          if (node.key.type !== 'Identifier') return;
+          const options = propertyOptions(node);
+          if (!options) return;
+          const attribute = options.find(
+            (p) =>
+              p.type === 'Property' &&
+              p.key.type === 'Identifier' &&
+              p.key.name === 'attribute' &&
+              p.value.type === 'Literal' &&
+              typeof p.value.value === 'string'
+          )?.value.value;
+          const name = [node.key.name, attribute].find(
+            (n) => typeof n === 'string' && /^on/i.test(n)
+          );
+          if (!name) return;
+          context.report({
+            node: node.key,
+            message: `\`${name}\` starts with \`on\`, which Svelte binds as an event listener in markup, so the property cannot be set there (docs/agents/coding-standards.md § Property names).`,
+          });
+        };
+        return {
+          PropertyDefinition: check,
+          MethodDefinition: check,
+          AccessorProperty: check,
+        };
+      },
+    },
   },
 };
 
@@ -441,7 +1168,7 @@ export default [
       '@typescript-eslint/no-non-null-assertion': 'off',
 
       '@typescript-eslint/no-unused-vars': [
-        'warn',
+        'error',
         {
           argsIgnorePattern: '^_',
         },
@@ -449,10 +1176,49 @@ export default [
       'custom-element/prefer-local-decorator': 'error',
       'openbridge/prefer-enum-over-string-literal-union': 'error',
       'openbridge/prefer-boolean-property-default-false': 'error',
+      'openbridge/prefer-array-property-type-and-item-interface': 'error',
+      'openbridge/component-lifecycle-tag': 'error',
+      'openbridge/no-skipped-tests': 'error',
+      'openbridge/use-math-helpers': 'error',
+      'openbridge/no-positive-tabindex': 'error',
+      'openbridge/positive-boolean-name': 'error',
+      'openbridge/no-event-like-property-name': 'error',
       'openbridge/storybook-title-case': 'off',
+      'openbridge/story-lifecycle-tags': 'off',
       // Disabled because eslint-plugin-file-extension-in-import-ts is not yet
       // compatible with ESLint v10 (it still uses deprecated context methods).
       'file-extension-in-import-ts/file-extension-in-import-ts': 'off',
+    },
+  },
+  {
+    // The tooling: scripts and configs that run in Node, and the Storybook
+    // setup. Node's globals apply, and the rules written for components do not.
+    files: [
+      '**/script/**/*.{ts,mts,mjs}',
+      '**/.storybook/**/*.{ts,tsx}',
+      '**/*.config.{ts,mjs}',
+      '**/new-component.ts',
+      '**/fix-imports.mjs',
+      '**/fix-js-extensions.mjs',
+    ],
+
+    languageOptions: {
+      globals: {
+        ...globals.node,
+        ...globals.browser,
+      },
+    },
+
+    rules: {
+      'custom-element/prefer-local-decorator': 'off',
+      'openbridge/prefer-enum-over-string-literal-union': 'off',
+      'openbridge/prefer-boolean-property-default-false': 'off',
+      'openbridge/prefer-array-property-type-and-item-interface': 'off',
+      'openbridge/component-lifecycle-tag': 'off',
+      'openbridge/use-math-helpers': 'off',
+      'openbridge/no-positive-tabindex': 'off',
+      'openbridge/positive-boolean-name': 'off',
+      'openbridge/no-event-like-property-name': 'off',
     },
   },
   {
@@ -480,8 +1246,34 @@ export default [
     // Generated locale files use string-literal unions from lit-localize
     files: ['**/generated/locales/*.ts'],
 
+    // lit-localize writes both disable directives into every locale file
+    // whether or not the translations need them, so an idle one is not a
+    // stale directive to delete — a translation carrying a non-breaking
+    // space would put it back to work.
+    linterOptions: {reportUnusedDisableDirectives: 'off'},
+
     rules: {
       'openbridge/prefer-enum-over-string-literal-union': 'off',
+    },
+  },
+  {
+    // Icon components carry no lifecycle tags by design. The `**/` prefix
+    // keeps the glob matching when eslint runs from the repo root (the
+    // lint-staged pre-commit hook does), where file paths carry the
+    // packages/openbridge-webcomponents/ prefix.
+    files: ['**/src/icons/**/*.ts', '**/src/manual-icon/**/*.ts'],
+
+    rules: {
+      'openbridge/component-lifecycle-tag': 'off',
+    },
+  },
+  {
+    // A test states the expected value with the raw formula; calling the
+    // helper there would check the helper against itself.
+    files: ['**/*.spec.ts', '**/*.test.ts'],
+
+    rules: {
+      'openbridge/use-math-helpers': 'off',
     },
   },
   {
@@ -489,6 +1281,21 @@ export default [
 
     rules: {
       'openbridge/storybook-title-case': 'error',
+      'openbridge/story-lifecycle-tags': 'error',
+      'openbridge/component-lifecycle-tag': 'off',
     },
   },
 ];
+
+// ESLint reads only the default export. These named exports exist for
+// script/eslint-rules.test.ts, which unit-tests the lifecycle-tag rules.
+export const __testables = {
+  openbridgePlugin,
+  extractComponents,
+  pinComponentIndex(entries) {
+    componentIndex = new Map(
+      Object.entries(entries).map(([tag, tags]) => [tag, {file: tag, tags}])
+    );
+    componentIndexPinned = true;
+  },
+};

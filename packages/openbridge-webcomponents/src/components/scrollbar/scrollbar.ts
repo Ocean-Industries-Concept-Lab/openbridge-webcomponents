@@ -19,7 +19,7 @@ import compentStyle from './scrollbar.css?inline';
  *
  * ## Usage Guidelines
  *
- * Choose the `type` (obc-wide-scrollbar, obc-normal-scrollbar, obc-thin-scrollbar) based on the context, note that this is not a property of the component, but a CSS class.
+ * Choose the `type` (obc-wide-scrollbar, obc-normal-scrollbar, obc-thin-scrollbar) based on the context — it is a CSS class, not a property of the component.
  * - **obc-wide-scrollbar:** Recommended for touch interfaces where gloves are worn or for low sensitivity touch screens.
  * - **obc-normal-scrollbar:** Suitable for touch interfaces where a scrollbar is used to navigate.
  * - **obc-thin-scrollbar:** Suitable for desktop use or for touch interfaces where swipe gestures are used to navigate.
@@ -36,6 +36,7 @@ import compentStyle from './scrollbar.css?inline';
  * - Use only one scrollbar per scrollable region to avoid nested scrollbars, which can confuse users.
  *
  * @slot - Default slot for scrollable content (renders all children inside the scrollable area)
+ * @stable
  */
 @customElement('obc-scrollbar')
 export class ObcScrollbar extends LitElement {
@@ -60,14 +61,16 @@ export class ObcScrollbar extends LitElement {
       >
         <slot></slot>
       </div>
-      ${this.transparentTrack && this._showOverlayThumb
-        ? html`<div class="overlay-track">
-            <div
-              class="overlay-thumb"
-              style="top:${this._thumbTop}%;height:${this._thumbHeight}%"
-            ></div>
-          </div>`
-        : nothing}
+      ${
+        this.transparentTrack && this._showOverlayThumb
+          ? html`<div class="overlay-track">
+              <div
+                class="overlay-thumb"
+                style="top:${this._thumbTop}%;height:${this._thumbHeight}%"
+              ></div>
+            </div>`
+          : nothing
+      }
     `;
   }
 

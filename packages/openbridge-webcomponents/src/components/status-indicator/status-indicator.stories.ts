@@ -5,7 +5,7 @@ import {html} from 'lit';
 
 const meta: Meta<typeof ObcStatusIndicator> = {
   title: 'UI Components/Message and Alerts/Status Indicator',
-  tags: ['alpha'],
+  tags: ['beta'],
   component: 'obc-status-indicator',
   args: {},
   render: (args) => {

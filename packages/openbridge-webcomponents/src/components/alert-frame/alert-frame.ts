@@ -1,11 +1,37 @@
-import {LitElement, html, unsafeCSS, nothing, TemplateResult} from 'lit';
-import {property} from 'lit/decorators.js';
+import {
+  LitElement,
+  html,
+  unsafeCSS,
+  nothing,
+  TemplateResult,
+  HTMLTemplateResult,
+} from 'lit';
+import {property, query, state} from 'lit/decorators.js';
 import compentStyle from './alert-frame.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import '../../icons/icon-alarm-badge.js';
 import '../../icons/icon-warning-badge.js';
 import '../../icons/icon-caution-badge.js';
+import '../../icons/icon-critical-badge.js';
+import './diagnostic-badge.js';
 import {customElement} from '../../decorator.js';
+import {
+  AlertType,
+  FlashingSpeed,
+  type ResolvedFlashingSpeed,
+} from '../../types.js';
+import {
+  getAlertBadgeComponent,
+  AlertBadgeComponent,
+} from '../../alert-severity.js';
+import {FlashingController} from '../../palettes/flashing-controller.js';
+import {
+  roundedRectPath,
+  type RoundedRect,
+} from '../../svghelpers/rounded-rect.js';
+import {AlertFlashPhase, resolveFlashingSpeed} from '../../alert-severity.js';
+
+export {AlertType as ObcAlertFrameStatus} from '../../types.js';
 
 /**
  * Enum representing the available frame styles for an alert component.
@@ -33,16 +59,21 @@ export enum ObcAlertFrameThickness {
   Large = 'large',
 }
 
+export enum ObcAlertFrameMode {
+  ackedActive = 'acked-active',
+  unackedActive = 'unacked-active',
+  unackedRectified = 'unacked-rectified',
+}
+
 /**
- * Status options for the alert frame, controlling color and icon.
- * - `alarm`: Highest severity (default).
- * - `warning`: Medium severity.
- * - `caution`: Lower severity.
+ * How the frame renders the on phase of a flash: `outline` grows the centred
+ * stroke by 2 px, 1 px on each side, in one step (the design); `outline-eased`
+ * grows it the same way over a 50 ms transition. The eased variant exists for
+ * design evaluation and may be removed (#1224).
  */
-export enum ObcAlertFrameStatus {
-  Alarm = 'alarm',
-  Warning = 'warning',
-  Caution = 'caution',
+export enum ObcAlertFrameFlashEffect {
+  Outline = 'outline',
+  OutlineEased = 'outline-eased',
 }
 
 /**
@@ -53,6 +84,38 @@ export enum ObcAlertFrameStatus {
 export enum AlertFrameTextSize {
   Regular = 'regular',
   Large = 'large',
+}
+
+/** Wrapper geometry the dashed overlay is drawn from; measured, never derived from props. */
+interface DashBox {
+  width: number;
+  height: number;
+  thickness: number;
+  radii: RoundedRect['radii'];
+}
+
+/** On-phase stroke growth; the svg leaves half of stroke plus growth around the box. */
+const DASH_FLASH_GROWTH_PX = 2;
+
+function sameDashBox(a: DashBox, b: DashBox | undefined): boolean {
+  return (
+    b !== undefined &&
+    a.width === b.width &&
+    a.height === b.height &&
+    a.thickness === b.thickness &&
+    a.radii.every((r, i) => r === b.radii[i])
+  );
+}
+
+export interface AlertFrameConfig {
+  type?: ObcAlertFrameType;
+  thickness?: ObcAlertFrameThickness;
+  status?: AlertType;
+  mode?: ObcAlertFrameMode;
+  flashingSpeed?: FlashingSpeed;
+  textSize?: AlertFrameTextSize;
+  showIcon?: boolean;
+  showAlertCategoryIcon?: boolean;
 }
 
 /**
@@ -67,7 +130,10 @@ export enum AlertFrameTextSize {
  *   - `large-side-flip`: Adds a larger, vertical side flap with a status icon and optional custom icon.
  *   - `bottom-flip`: Adds a bottom flap with a status icon, label, and timer slots.
  * - **Thickness options:** Choose between `small` (thin border) and `large` (thick border) for visual emphasis.
- * - **Status indication:** Displays different color schemes and icons for `alarm`, `warning`, or `caution` states.
+ * - **Centred stroke:** The stroke straddles the frame edge, half over the content and half outside, so frames on touching components share one edge. While flashing it grows by 1 px on each side.
+ * - **Status indication:** Displays different color schemes and icons for the legacy statuses (`alarm`, `warning`, `caution`) and the level statuses (`level-critical`, `level-high`, `level-medium`, `level-low`, `level-diagnostic`).
+ * - **Acknowledgement mode:** The `mode` property reflects the alert lifecycle state — `acked-active` (default, steady), `unacked-active` (flashes) and `unacked-rectified` (dashed, flashes) — and `flashingSpeed` picks the tempo.
+ * - **Content wrapping:** When `wrapContent` is true, the frame wraps and sizes itself to its slotted content rather than overlaying a fixed region.
  * - **Customizable corners:** Each corner can be set to a sharp (non-rounded) edge for integration with other UI elements.
  * - **Slot-based content:** Supports custom icons, labels, and timers in flap variants via named slots.
  *
@@ -83,7 +149,8 @@ export enum AlertFrameTextSize {
  *   - `large-side-flip`: Large vertical right-side flap with status icon and optional custom icon.
  *   - `bottom-flip`: Bottom flap with status icon, label, and timer.
  * - **Thickness:** `small` (default) or `large` for border width.
- * - **Status:** `alarm`, `warning`, or `caution`—affects color and icon.
+ * - **Status:** `alarm`, `warning`, `caution`, or the level severities (`level-critical`, `level-high`, `level-medium`, `level-low`, `level-diagnostic`)—affects color and icon.
+ * - **Mode:** `acked-active` (default), `unacked-active`, or `unacked-rectified`—affects blinking/animation.
  * - **Corner Customization:** Each corner can be made sharp (not rounded) via boolean properties.
  *
  * ### Slots and Content Structure
@@ -98,7 +165,9 @@ export enum AlertFrameTextSize {
  * ### Properties and Attributes
  * - `type`: Selects the visual variant/flap style. Default is `small-side-flip`.
  * - `thickness`: Controls border thickness (`small` or `large`). Default is `small`.
- * - `status`: Sets the alert status and color/icon (`alarm`, `warning`, `caution`). Default is `alarm`.
+ * - `status`: Sets the alert status and color/icon (`alarm`, `warning`, `caution`, or the `level-*` severities). Default is `alarm`.
+ * - `mode`: Acknowledgement lifecycle state (`acked-active`, `unacked-active`, `unacked-rectified`) controlling blinking/animation. Default is `acked-active`.
+ * - `wrapContent`: When true, the frame wraps and sizes to its slotted content instead of overlaying a fixed region. Default is `false`.
  * - `sharpEdgeTopLeft`, `sharpEdgeTopRight`, `sharpEdgeBottomLeft`, `sharpEdgeBottomRight`: Boolean flags to make each corner sharp instead of rounded.
  *
  * ### Best Practices and Constraints
@@ -122,60 +191,186 @@ export enum AlertFrameTextSize {
  * </obc-alert-frame>
  * ```
  *
+ * @property wrapContent - When true, the frame wraps and sizes itself to its slotted content instead
+ *   of overlaying a fixed region. Reflected to an attribute for CSS styling.
+ * @property fullWidth - When true, the frame stretches to fill the full width of its container
+ *   instead of hugging its content. Reflected to an attribute for CSS styling.
+ * @property sharpEdgeTopLeft - If true, the top-left corner will be sharp (not rounded).
+ * @property sharpEdgeTopRight - If true, the top-right corner will be sharp (not rounded).
+ * @property sharpEdgeBottomLeft - If true, the bottom-left corner will be sharp (not rounded).
+ * @property sharpEdgeBottomRight - If true, the bottom-right corner will be sharp (not rounded).
+ * @property flashingSpeed - Flash tempo: `default` resolves from the alert type and mode
+ *   (critical/alarm/high fast, warning/medium slow, low very slow, every rectified alert very
+ *   slow, caution and diagnostic fixed), `fast`, `slow`, `very-slow` force a tempo, `fixed`
+ *   never flashes. Acknowledged frames are always steady.
+ * @property flashEffect - `outline` (default) grows the outline by 2 px, 1 px each side, while on in one step;
+ *   `outline-eased` grows it over a 50 ms transition, a design-evaluation option.
+ * @property type - Visual variant: `regular` is the outlined frame alone, `small-side-flip`
+ *   (default) adds a small right-side flap with the status icon,
+ *   `large-side-flip` a large vertical flap with an optional custom icon, and
+ *   `bottom-flip` and `top-flip` a flap below or above carrying the status
+ *   icon, an optional custom icon, a label and a timer.
+ * @property thickness - Border thickness: `small` (default) is the thin border, `large` the thick
+ *   one for higher emphasis.
+ * @property status - Alert status, which picks the colour scheme and the icon: `alarm`
+ *   (default) is the highest severity, then `warning` and `caution`. The
+ *   `level-critical`, `level-high`, `level-medium`, `level-low` and
+ *   `level-diagnostic` severities are styled to match their legacy
+ *   equivalents.
+ * @property mode - Acknowledgement state, which drives the frame's flashing: `acked-active`
+ *   (default) is active and acknowledged and never flashes, `unacked-active`
+ *   is active and unacknowledged and flashes, and `unacked-rectified` is a
+ *   cleared condition that has not been acknowledged.
  * @slot - Default slot for main alert content.
  * @slot icon - Custom icon for the flap (large-side-flip, bottom-flip).
  * @slot label - Label text for the bottom flap (bottom-flip only).
  * @slot timer - Timer or time label for the bottom flap (bottom-flip only).
+ * @beta
  */
 @customElement('obc-alert-frame')
 export class ObcAlertFrame extends LitElement {
-  /**
-   * Visual variant of the alert frame.
-   * - `regular`: Outlined frame only.
-   * - `small-side-flip`: Small right-side flap with status icon.
-   * - `large-side-flip`: Large vertical right-side flap with status icon and optional custom icon.
-   * - `bottom-flip`: Bottom flap with status icon, label, and timer.
-   *
-   * Default: `small-side-flip`
-   */
   @property({type: String}) type: ObcAlertFrameType =
     ObcAlertFrameType.SmallSideFlip;
 
-  /**
-   * Border thickness of the alert frame.
-   * - `small`: Thin border (default).
-   * - `large`: Thick border for higher emphasis.
-   */
   @property({type: String}) thickness: ObcAlertFrameThickness =
     ObcAlertFrameThickness.Small;
 
-  /**
-   * Status of the alert, controlling color scheme and icon.
-   * - `alarm`: Highest severity (default).
-   * - `warning`: Medium severity.
-   * - `caution`: Lower severity.
-   */
-  @property({type: String}) status: ObcAlertFrameStatus =
-    ObcAlertFrameStatus.Alarm;
+  @property({type: String}) status: AlertType = AlertType.Alarm;
 
-  /**
-   * If true, the top-left corner will be sharp (not rounded).
-   */
+  @property({type: String}) mode: ObcAlertFrameMode =
+    ObcAlertFrameMode.ackedActive;
+
+  @property({type: String}) flashingSpeed: FlashingSpeed =
+    FlashingSpeed.Default;
+
+  @property({type: String}) flashEffect: ObcAlertFrameFlashEffect =
+    ObcAlertFrameFlashEffect.Outline;
+
+  protected readonly flashing = new FlashingController(
+    this,
+    () => this.resolvedFlashingSpeed
+  );
+
+  @state() private dashBox?: DashBox;
+
+  @query('.wrapper') private wrapper?: HTMLElement;
+
+  private dashObserver?: ResizeObserver;
+
+  private measureDash = (): void => {
+    const wrapper = this.wrapper;
+    if (!wrapper) {
+      return;
+    }
+    const style = getComputedStyle(wrapper);
+    const px = (value: string) => parseFloat(value) || 0;
+    const box: DashBox = {
+      width: wrapper.offsetWidth,
+      height: wrapper.offsetHeight,
+      thickness: px(style.getPropertyValue('--thickness')),
+      radii: [
+        px(style.borderTopLeftRadius),
+        px(style.borderTopRightRadius),
+        px(style.borderBottomRightRadius),
+        px(style.borderBottomLeftRadius),
+      ],
+    };
+    // Setting state from updated() re-renders; only do it for a real change.
+    if (!sameDashBox(box, this.dashBox)) {
+      this.dashBox = box;
+    }
+  };
+
+  override connectedCallback() {
+    super.connectedCallback();
+    if (this.hasUpdated) {
+      this.requestUpdate();
+    }
+  }
+
+  override updated() {
+    const wantsDash =
+      this.mode === ObcAlertFrameMode.unackedRectified && this.isConnected;
+    if (wantsDash && !this.dashObserver && this.wrapper) {
+      this.dashObserver = new ResizeObserver(this.measureDash);
+      this.dashObserver.observe(this.wrapper);
+    }
+    if (wantsDash) {
+      // thickness and sharpEdge* change the radii without a resize.
+      this.measureDash();
+    }
+    if (!wantsDash && this.dashObserver) {
+      this.dashObserver.disconnect();
+      this.dashObserver = undefined;
+      this.dashBox = undefined;
+    }
+  }
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    this.dashObserver?.disconnect();
+    this.dashObserver = undefined;
+  }
+
+  private renderDash(): TemplateResult | typeof nothing {
+    const box = this.dashBox;
+    if (this.mode !== ObcAlertFrameMode.unackedRectified || !box) {
+      return nothing;
+    }
+    const pad = (box.thickness + DASH_FLASH_GROWTH_PX) / 2;
+    // The centreline is the wrapper edge, as for the solid outline. A second,
+    // wider path for the on phase would have longer corner arcs and its
+    // dashes would drift around the frame.
+    const centreline: RoundedRect = {
+      x: pad,
+      y: pad,
+      width: box.width,
+      height: box.height,
+      radii: box.radii,
+    };
+    const width = box.width + 2 * pad;
+    const height = box.height + 2 * pad;
+    return html`<svg
+      class="dash"
+      aria-hidden="true"
+      width=${width}
+      height=${height}
+      viewBox="0 0 ${width} ${height}"
+      style="--dash-pad: ${pad}px"
+    >
+      <path d=${roundedRectPath(centreline)}></path>
+    </svg>`;
+  }
+
+  get resolvedFlashingSpeed(): ResolvedFlashingSpeed {
+    switch (this.mode) {
+      case ObcAlertFrameMode.unackedActive:
+        return resolveFlashingSpeed(
+          this.flashingSpeed,
+          this.status,
+          AlertFlashPhase.Active
+        );
+      case ObcAlertFrameMode.unackedRectified:
+        return resolveFlashingSpeed(
+          this.flashingSpeed,
+          this.status,
+          AlertFlashPhase.Rectified
+        );
+      default:
+        return FlashingSpeed.Fixed;
+    }
+  }
+
+  @property({type: Boolean, reflect: true}) wrapContent: boolean = false;
+
+  @property({type: Boolean, reflect: true}) fullWidth: boolean = false;
+
   @property({type: Boolean}) sharpEdgeTopLeft: boolean = false;
 
-  /**
-   * If true, the top-right corner will be sharp (not rounded).
-   */
   @property({type: Boolean}) sharpEdgeTopRight: boolean = false;
 
-  /**
-   * If true, the bottom-left corner will be sharp (not rounded).
-   */
   @property({type: Boolean}) sharpEdgeBottomLeft: boolean = false;
 
-  /**
-   * If true, the bottom-right corner will be sharp (not rounded).
-   */
   @property({type: Boolean}) sharpEdgeBottomRight: boolean = false;
 
   @property({type: String}) textSize: AlertFrameTextSize =
@@ -190,6 +385,8 @@ export class ObcAlertFrame extends LitElement {
       <div
         class=${classMap({
           wrapper: true,
+          'wrap-content': this.wrapContent,
+          'full-width': this.fullWidth,
           ['thickness-' + this.thickness]: true,
           [this.type]: true,
           [this.status]: true,
@@ -198,10 +395,13 @@ export class ObcAlertFrame extends LitElement {
           'sharp-edge-top-right': this.sharpEdgeTopRight,
           'sharp-edge-bottom-left': this.sharpEdgeBottomLeft,
           'sharp-edge-bottom-right': this.sharpEdgeBottomRight,
+          [this.mode]: true,
+          ['flash-' + this.resolvedFlashingSpeed]: true,
+          ['flash-effect-' + this.flashEffect]: true,
         })}
       >
         <slot></slot>
-        ${this.flap()}
+        ${this.renderDash()} ${this.flap()}
       </div>
     `;
   }
@@ -211,15 +411,26 @@ export class ObcAlertFrame extends LitElement {
       return nothing;
     }
 
-    let icon: TemplateResult | typeof nothing = html`<obi-alarm-badge
-      class="icon badge"
-    ></obi-alarm-badge>`;
+    if (
+      this.type === ObcAlertFrameType.SmallSideFlip &&
+      !this.showAlertCategoryIcon
+    ) {
+      return nothing;
+    }
+
+    if (
+      this.type === ObcAlertFrameType.LargeSideFlip &&
+      !this.showIcon &&
+      !this.showAlertCategoryIcon
+    ) {
+      return nothing;
+    }
+
+    let icon: TemplateResult | typeof nothing;
     if (!this.showAlertCategoryIcon) {
       icon = nothing;
-    } else if (this.status === ObcAlertFrameStatus.Warning) {
-      icon = html`<obi-warning-badge class="icon badge"></obi-warning-badge>`;
-    } else if (this.status === ObcAlertFrameStatus.Caution) {
-      icon = html`<obi-caution-badge class="icon badge"></obi-caution-badge>`;
+    } else {
+      icon = this.renderBadgeIcon();
     }
 
     if (this.type === ObcAlertFrameType.SmallSideFlip) {
@@ -231,9 +442,11 @@ export class ObcAlertFrame extends LitElement {
     if (this.type === ObcAlertFrameType.LargeSideFlip) {
       return html`<div class="flap large">
         ${icon}
-        ${this.showIcon
-          ? html`<div class="icon"><slot name="icon"></slot></div>`
-          : nothing}
+        ${
+          this.showIcon
+            ? html`<div class="icon"><slot name="icon"></slot></div>`
+            : nothing
+        }
         <div class="mask up"></div>
         <div class="mask down"></div>
       </div>`;
@@ -243,14 +456,16 @@ export class ObcAlertFrame extends LitElement {
       this.type === ObcAlertFrameType.TopFlip
     ) {
       return html`<div
-        class="flap ${this.type === ObcAlertFrameType.BottomFlip
-          ? 'bottom'
-          : 'top'}"
+        class="flap ${
+          this.type === ObcAlertFrameType.BottomFlip ? 'bottom' : 'top'
+        }"
       >
         ${icon}
-        ${this.showIcon
-          ? html`<div class="icon"><slot name="icon"></slot></div>`
-          : nothing}
+        ${
+          this.showIcon
+            ? html`<div class="icon"><slot name="icon"></slot></div>`
+            : nothing
+        }
         <div class="label"><slot name="label"></slot></div>
         <div class="spacer"></div>
         <div class="timer"><slot name="timer"></slot></div>
@@ -262,7 +477,48 @@ export class ObcAlertFrame extends LitElement {
     return nothing;
   }
 
+  private renderBadgeIcon(): TemplateResult {
+    switch (getAlertBadgeComponent(this.status)) {
+      case AlertBadgeComponent.Critical:
+        return html`<obi-critical-badge
+          class="icon badge"
+        ></obi-critical-badge>`;
+      case AlertBadgeComponent.Warning:
+        return html`<obi-warning-badge class="icon badge"></obi-warning-badge>`;
+      case AlertBadgeComponent.Caution:
+        return html`<obi-caution-badge class="icon badge"></obi-caution-badge>`;
+      case AlertBadgeComponent.Diagnostic:
+        return html`<obi-diagnostic-badge
+          class="icon badge"
+        ></obi-diagnostic-badge>`;
+      default:
+        return html`<obi-alarm-badge class="icon badge"></obi-alarm-badge>`;
+    }
+  }
+
   static override styles = unsafeCSS(compentStyle);
+}
+
+export function wrapWithAlertFrame(
+  options: AlertFrameConfig | boolean | undefined,
+  content: HTMLTemplateResult,
+  fullWidth: boolean = false
+): HTMLTemplateResult {
+  if (typeof options !== 'object' || options === null) {
+    return content;
+  }
+  return html`<obc-alert-frame
+    .type=${options.type ?? ObcAlertFrameType.SmallSideFlip}
+    .thickness=${options.thickness ?? ObcAlertFrameThickness.Small}
+    .status=${options.status ?? AlertType.Alarm}
+    .mode=${options.mode ?? ObcAlertFrameMode.ackedActive}
+    .flashingSpeed=${options.flashingSpeed ?? FlashingSpeed.Default}
+    .showIcon=${options.showIcon ?? false}
+    .showAlertCategoryIcon=${options.showAlertCategoryIcon ?? true}
+    .wrapContent=${true}
+    .fullWidth=${fullWidth}
+    >${content}</obc-alert-frame
+  >`;
 }
 
 declare global {

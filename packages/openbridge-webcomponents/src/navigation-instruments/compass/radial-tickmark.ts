@@ -1,5 +1,6 @@
 import {SVGTemplateResult, svg} from 'lit';
 import {TickmarkType, TickmarkStyle, tickmarkColor} from '../watch/tickmark.js';
+import {degToRad} from '../../svghelpers/math.js';
 
 export function radialTickmarks(
   minAngle: number,
@@ -20,10 +21,10 @@ export function radialTickmarks(
   const tickWidth = type === TickmarkType.secondary ? 4 : 1;
   const tickmarks: SVGTemplateResult[] = [];
 
-  const sinMin = Math.sin((minAngle * Math.PI) / 180);
-  const cosMin = Math.cos((minAngle * Math.PI) / 180);
-  const sinMax = Math.sin((maxAngle * Math.PI) / 180);
-  const cosMax = Math.cos((maxAngle * Math.PI) / 180);
+  const sinMin = Math.sin(degToRad(minAngle));
+  const cosMin = Math.cos(degToRad(minAngle));
+  const sinMax = Math.sin(degToRad(maxAngle));
+  const cosMax = Math.cos(degToRad(maxAngle));
 
   const deltaIncrement = tickWidth * margin;
 

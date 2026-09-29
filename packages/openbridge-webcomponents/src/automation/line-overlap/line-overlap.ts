@@ -3,6 +3,10 @@ import {property} from 'lit/decorators.js';
 import {LineMedium, LineType, lineColor, lineWidth} from '../index.js';
 import {customElement} from '../../decorator.js';
 
+/**
+ * @deprecated The line components are deprecated and will be removed in future releases.
+ * Please use the `@oicl/connector-diagram` package instead.
+ */
 @customElement('obc-line-overlap')
 export class ObcLineOverlap extends LitElement {
   @property({type: String}) medium: LineMedium = LineMedium.normal;

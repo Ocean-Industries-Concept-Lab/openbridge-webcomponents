@@ -13,7 +13,7 @@ import '../../icons/icon-notification-advice-active.js';
  * - `Normal`: Standard appearance, visually highlighted when active.
  * - `Enhanced`: Most prominent style, used for high emphasis or active states.
  *
- * The selected style affects the button's background, border, and icon color. Note that `Normal` and `Enhanced` styles are only visually distinct when `isActive` is true.
+ * The selected style affects the button's background, border, and icon color. `Normal` and `Enhanced` are only visually distinct when `isActive` is true.
  */
 export enum AdviceButtonStyle {
   Flat = 'flat',
@@ -89,53 +89,35 @@ export type AdviceButtonClickEvent = CustomEvent<{
  * </obc-advice-button>
  * ```
  *
+ * @property count - Number of advice items or notifications to display in the badge.
+ *   Only shown when `showCount` is true and style is `normal` or `enhanced`.
+ * @property showCount - Whether to display the advice count badge.
+ *   If false, the count is hidden even if `count` is set.
+ * @availableWhen showCount isActive==true && buttonStyle in [Normal, Enhanced]
+ * @property isActive - Whether the button is in the active/selected state.
+ *   Changes the icon and style when true.
+ * @property ariaLabel - Accessibility label for the button.
+ *   Used for screen readers via `aria-label`.
+ * @property buttonStyle - Visual style: `flat` (default) is minimal and low-emphasis, `normal` is
+ *   standard and highlighted while active, `enhanced` is the most prominent
+ *   with an accent background and border while active.
+ * @availableWhen buttonStyle isActive==true
  * @slot icon - Custom icon slot (replaces the default advice icon)
- * @fires obc-click {AdviceButtonClickEvent} Fired when the button is clicked.
+ * @fires {AdviceButtonClickEvent} obc-click - Fired when the button is clicked.
+ * @stable
  */
 @customElement('obc-advice-button')
 export class ObcAdviceButton extends LitElement {
-  /**
-   * Visual style of the button.
-   *
-   * - `flat`: Minimal, low-emphasis appearance (default).
-   * - `normal`: Standard, highlighted when active (`isActive` must be true for effect).
-   * - `enhanced`: Most prominent, accent background/border when active (`isActive` must be true for effect).
-   *
-   * @default AdviceButtonStyle.Flat
-   */
+  /** @default AdviceButtonStyle.Flat */
   @property({type: String}) buttonStyle: AdviceButtonStyle =
     AdviceButtonStyle.Flat;
 
-  /**
-   * Number of advice items or notifications to display in the badge.
-   * Only shown when `showCount` is true and style is `normal` or `enhanced`.
-   *
-   * @default 0
-   */
   @property({type: Number}) count = 0;
 
-  /**
-   * Whether to display the advice count badge.
-   * If false, the count is hidden even if `count` is set.
-   *
-   * @default false
-   */
   @property({type: Boolean}) showCount = false;
 
-  /**
-   * Whether the button is in the active/selected state.
-   * Changes the icon and style when true.
-   *
-   * @default false
-   */
   @property({type: Boolean}) isActive = false;
 
-  /**
-   * Accessibility label for the button.
-   * Used for screen readers via `aria-label`.
-   *
-   * @default "Advice"
-   */
   @property({type: String}) override ariaLabel = 'Advice';
 
   override render() {
@@ -175,9 +157,11 @@ export class ObcAdviceButton extends LitElement {
           <div class="icon-container">
             <slot name="icon"> ${this.renderDefaultIcon()} </slot>
           </div>
-          ${hasCounter
-            ? html` <span class="count-label">${this.count}</span> `
-            : nothing}
+          ${
+            hasCounter
+              ? html` <span class="count-label">${this.count}</span> `
+              : nothing
+          }
         </div>
       </button>
     `;

@@ -10,7 +10,7 @@ import {crossDecorator} from '../../storybook-util.js';
 
 const meta: Meta<typeof ObcAutomationReadout> = {
   title: 'Automation/Readouts/Readout',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'experimental'],
   component: 'obc-automation-readout',
   decorators: [crossDecorator],
   args: {

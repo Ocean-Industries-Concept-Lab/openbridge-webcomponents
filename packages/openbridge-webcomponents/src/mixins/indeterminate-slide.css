@@ -1,0 +1,16 @@
+/* The sweep the linear progress bar and the progress button share while
+   indeterminate: one pass left to right, then a hold before the next. Use at
+   the top level of the stylesheet; nested in a rule it is not hoisted. */
+@define-mixin indeterminate-slide-keyframes {
+  @keyframes indeterminate-slide {
+    0% {
+      transform: translateX(-100%);
+    }
+    60% {
+      transform: translateX(100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+}

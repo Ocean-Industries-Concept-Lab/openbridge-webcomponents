@@ -2,9 +2,11 @@
 applyTo: "packages/openbridge-webcomponents/src/svghelpers/setpoint.ts,packages/openbridge-webcomponents/src/svghelpers/setpoint-mixin.ts,packages/openbridge-webcomponents/src/svghelpers/setpoint-bundle.ts,packages/openbridge-webcomponents/src/building-blocks/setpoint/**"
 ---
 
-# GitHub Copilot Custom Instructions
+<!-- GENERATED FILE — DO NOT EDIT.
+     Source: docs/agents/setpoint.md
+     Regenerate: npm run agents:sync -w packages/openbridge-webcomponents -->
 
-## Path-Specific Instructions for Setpoint System
+# Setpoint System
 
 These instructions apply to the **setpoint subsystem** — the cross-cutting design layer, state management, and animation logic used by all instrument components that display a setpoint marker.
 
@@ -169,13 +171,13 @@ A confirm is detected when:
 
 ### What Animates
 
-| Element                       | Animation                                           | Duration         |
-| ----------------------------- | --------------------------------------------------- | ---------------- |
-| Original setpoint marker      | Slides from old position to new position            | 300ms `ease-out` |
-| Original setpoint marker      | Opacity `0.75 → 1.0` (was dimmed during adjustment) | 300ms `ease-out` |
-| Departing new-setpoint marker | Fades out `opacity: 1 → 0`                          | 300ms `ease-out` |
+| Element                       | Animation                                           | Duration             |
+| ----------------------------- | --------------------------------------------------- | -------------------- |
+| Original setpoint marker      | Slides from old position to new position            | duration, `ease-out` |
+| Original setpoint marker      | Opacity `0.75 → 1.0` (was dimmed during adjustment) | duration, `ease-out` |
+| Departing new-setpoint marker | Fades out `opacity: 1 → 0`                          | duration, `ease-out` |
 
-After 300ms, the departing marker is removed from DOM.
+After the effective animation duration (300 ms by default — see the caveat below), the departing marker is removed from the DOM.
 
 ### CSS Implementation
 
@@ -199,14 +201,32 @@ obc-gauge-horizontal {
 
 ### The "Departing" Pattern
 
-When a confirm occurs, the new-setpoint marker needs to stay in the DOM for 300ms to complete its fade-out. The pattern:
+When a confirm occurs, the new-setpoint marker needs to stay in the DOM for the effective animation duration (300 ms by default) to complete its fade-out. The pattern:
 
 1. **Detect confirm** in `willUpdate()` (mixin) or `sync()` (bundle)
 2. **Store** the old `newSetpoint` value as `departingNewSetpoint`
-3. **Start a `setTimeout`** for `SETPOINT_ANIMATION_DURATION_MS` (300ms)
+3. **Start a `setTimeout`** for the animation duration — see the caveat below
 4. **Renderer** checks `departingNewSetpoint` and renders a fading marker
 5. **Timer fires** → clear `departingNewSetpoint` → remove marker from DOM
 6. **Bundle only:** call `onAnimationEnd()` callback → `requestUpdate()` to re-render
+
+> **⚠️ The two paths do not agree on step 3, and the bundle path has a latent bug.**
+>
+> | Path                                        | Timer source                                    | Honours `--setpoint-animation-duration`? |
+> | ------------------------------------------- | ----------------------------------------------- | ---------------------------------------- |
+> | `SetpointMixin` (`setpoint-mixin.ts:435`)   | `getSetpointAnimationDurationMs(this)`          | ✅ yes                                   |
+> | `SetpointBundle` (`setpoint-bundle.ts:235`) | `SETPOINT_ANIMATION_DURATION_MS` (fixed 300 ms) | ❌ no                                    |
+>
+> With an override of `500ms`, a bundle-based instrument (`compass`, `heading`,
+> `azimuth-thruster`) removes the departing marker 200 ms **before** its CSS
+> transition finishes, cutting the fade short. Treat 300 ms as the _default_,
+> not the contract.
+>
+> Fixing this means routing the bundle's timer through
+> `getSetpointAnimationDurationMs()` too, which needs the host element the
+> bundle does not currently hold. That is a behaviour change with snapshot
+> implications, so it is recorded here rather than changed in passing — if you
+> are touching `setpoint-bundle.ts`, fix it properly and drop this note.
 
 ### `cssSafeAngle()` for Short-Path Rotation (Radial Only)
 

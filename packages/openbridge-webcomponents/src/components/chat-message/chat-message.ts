@@ -11,6 +11,15 @@ export enum ObcChatMessagePosition {
   Single = 'single',
 }
 
+/**
+ * `<obc-chat-message>` – A single chat message bubble with optional name and date header.
+ *
+ * @availableWhen name showName==true
+ * @availableWhen date showDate==true
+ * @availableWhen dateFormatter showDate==true
+ * @slot - The message content (body of the chat bubble).
+ * @stable
+ */
 @customElement('obc-chat-message')
 export class ObcChatMessage extends LitElement {
   @property({type: String}) name!: string;
@@ -43,20 +52,28 @@ export class ObcChatMessage extends LitElement {
         round,
       })}
     >
-      ${this.showName || this.showDate
-        ? html`<div class="header">
-            ${this.showName
-              ? html`<div class="name">${this.name}</div>`
-              : nothing}
-            ${this.showDate
-              ? html`<div class="date">
-                  ${this.date !== undefined
-                    ? this.dateFormatter(this.date)
-                    : nothing}
-                </div>`
-              : nothing}
-          </div>`
-        : nothing}
+      ${
+        this.showName || this.showDate
+          ? html`<div class="header">
+              ${
+                this.showName
+                  ? html`<div class="name">${this.name}</div>`
+                  : nothing
+              }
+              ${
+                this.showDate
+                  ? html`<div class="date">
+                      ${
+                        this.date !== undefined
+                          ? this.dateFormatter(this.date)
+                          : nothing
+                      }
+                    </div>`
+                  : nothing
+              }
+            </div>`
+          : nothing
+      }
       <div class="content">
         <slot></slot>
       </div>

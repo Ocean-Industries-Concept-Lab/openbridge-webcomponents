@@ -5,7 +5,7 @@ import {crossDecorator} from '../../storybook-util.js';
 
 const meta: Meta<typeof ObcEndPointLine> = {
   title: 'Automation/Line/End Point Line',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'deprecated'],
   component: 'obc-end-point-line',
   decorators: [crossDecorator],
   argTypes: {

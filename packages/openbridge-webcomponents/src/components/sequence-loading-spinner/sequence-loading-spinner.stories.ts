@@ -28,7 +28,7 @@ const types = [
 const meta = {
   title: 'Building Blocks/Sequence Loading Spinner',
   component: 'obc-sequence-loading-spinner',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'experimental'],
   parameters: {
     layout: 'centered',
     controls: {

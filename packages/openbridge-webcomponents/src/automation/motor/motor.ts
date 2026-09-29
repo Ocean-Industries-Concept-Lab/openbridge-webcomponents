@@ -9,13 +9,16 @@ import '../../icons/icon-motor-off-horizontal.js';
 import {customElement} from '../../decorator.js';
 import {ObcAbstractAutomationButtonMotorized} from '../automation-button/abstract-automation-button-motorized.js';
 
+/**
+ * @stable
+ */
 @customElement('obc-motor')
 export class ObcMotor extends ObcAbstractAutomationButtonMotorized {
   @property({type: Boolean}) vertical: boolean = false;
 
   override get icon() {
     if (this.vertical) {
-      if (this.on) {
+      if (this.turnedOn) {
         return html`<obi-motor-on-vertical
             usecsscolor
             slot="icon"
@@ -35,7 +38,7 @@ export class ObcMotor extends ObcAbstractAutomationButtonMotorized {
           ></obi-motor-off-vertical>`;
       }
     } else {
-      if (this.on) {
+      if (this.turnedOn) {
         return html`<obi-motor-on-horizontal
             usecsscolor
             slot="icon"

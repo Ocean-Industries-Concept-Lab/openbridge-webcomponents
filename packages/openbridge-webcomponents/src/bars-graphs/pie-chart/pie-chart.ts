@@ -26,10 +26,12 @@ import {
   createArcOuterLabelPlugin,
   calculateFixedHeightChartLayout,
   formatSingleLabel,
-  formatNumericValue,
+  formatChartNumber,
   getChartTooltipOptions,
   generateLegendHTML,
+  observeLabelThreshold,
 } from '../../charthelpers/index.js';
+import type {FixedHeightChartDimensions} from '../../charthelpers/canvas-layout.js';
 
 // Register Chart.js components
 Chart.register(PieController, DoughnutController, ArcElement, Tooltip);
@@ -66,6 +68,17 @@ const PIE_WATCHED_PROP_NAMES = [
   'showDebugOverlay',
   'fixedHeight',
 ] as const;
+
+type PieChartChildDataItem = {
+  label: string;
+  value: number;
+};
+
+export type PieChartDataItem = {
+  label: string;
+  value: number;
+  children?: PieChartChildDataItem[];
+};
 
 /**
  * `<obc-pie-chart>` – A customizable pie chart component for visualizing proportional data as segments, with optional sunburst subsegments and outer labels.
@@ -145,28 +158,26 @@ const PIE_WATCHED_PROP_NAMES = [
  * </script>
  * ```
  *
- * @property {Array<{label: string, value: number, children?: Array<{label: string, value: number}>}>} data - Chart data segments with optional children subsegments for sunburst mode (set via JavaScript)
- * @property {string[]} colors - Custom segment colors (set via JavaScript) with fallback to theme palette
- * @property {boolean} showOuterLabels - Show outer labels, default: false
- * @property {boolean} showUnit - Whether to show unit in labels, default: false
- * @property {boolean} sunburst - Enable sunburst mode with interactive children subsegments, default: false
- * @property {string} outerLabelUnit - Unit string to append to outer labels, default: "%"
- * @property {number} outerLabelMaxLength - Maximum character length for labels before trim (0 = no limit), default: 0
- * @property {number} outerLabelDecimalPlaces - Number of decimal places in labels, default: 0
- * @property {boolean} showDebugOverlay - Show debug overlay for development, default: false
- * @property {number} fixedHeight - Fixed height of the chart in pixels (mandatory, determines chart circumference), default: 320. The chart's circumference is always based on this fixed height to match other radial instruments.
- * @property {boolean} legend - Whether to display the legend below the chart, default: false
+ * @property data - Chart data segments with optional children subsegments for sunburst mode (set via JavaScript).
+ * @property colors - Custom segment colors (set via JavaScript) with fallback to theme palette
+ * @property showOuterLabels - Show outer labels, default: false
+ * @property showUnit - Whether to show unit in labels, default: false
+ * @property sunburst - Enable sunburst mode: clicking a segment expands or collapses its children as an outer ring, default: false
+ * @property outerLabelUnit - Unit string to append to outer labels, default: "%"
+ * @property outerLabelMaxLength - Maximum character length for labels before trim (0 = no limit), default: 0
+ * @availableWhen outerLabelMaxLength showOuterLabels==true
+ * @property outerLabelDecimalPlaces - Number of decimal places in labels, default: 0
+ * @property legend - Whether to display the legend below the chart, default: false
+ * @property showDebugOverlay - Show debug overlay for development, default: false
+ * @property fixedHeight - Fixed height of the chart in pixels (determines chart circumference), default: 320. The chart's circumference is always based on this fixed height to match other radial instruments.
+ * @beta
  */
 @customElement('obc-pie-chart')
 export class ObcPieChart extends LitElement {
-  @property({attribute: false})
-  data: {
-    label: string;
-    value: number;
-    children?: {label: string; value: number}[];
-  }[] = [];
+  @property({type: Array, attribute: false})
+  data: PieChartDataItem[] = [];
 
-  @property({attribute: false})
+  @property({type: Array, attribute: false})
   colors: string[] = [];
 
   @property({type: String})
@@ -221,14 +232,14 @@ export class ObcPieChart extends LitElement {
   /** @internal */
   private chart?: Chart;
 
+  /** @internal - Latest layout dimensions computed by getChartOptions() */
+  private lastDimensions?: FixedHeightChartDimensions;
+
   /** @internal */
   private themeObserver?: MutationObserver;
 
   /** @internal - ResizeObserver for tracking height threshold crossings */
   private resizeObserver?: ResizeObserver;
-
-  /** @internal - Track previous state to detect threshold crossing */
-  private wasAboveThreshold = false;
 
   private hasAnyChanged(
     changed: PropertyValues,
@@ -303,35 +314,25 @@ export class ObcPieChart extends LitElement {
   }
 
   /**
-   * Setup resize observer to detect when fixedHeight property changes programmatically
-   * (e.g., via Storybook controls or user code)
+   * Crossing MIN_HEIGHT_WITH_LABELS changes the plugin set, so the chart is
+   * rebuilt rather than updated.
    */
   private setupResizeObserver() {
     if (!this.canvasEl) return;
 
-    this.resizeObserver = new ResizeObserver(() => {
-      if (!this.chart) return;
-
-      const height = this.canvasEl?.clientHeight ?? 0;
-      const isAboveThreshold =
-        height >= CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS;
-
-      // Only recreate chart if we crossed the threshold
-      if (isAboveThreshold !== this.wasAboveThreshold) {
-        this.wasAboveThreshold = isAboveThreshold;
-        this.chart.destroy();
-        this.createChart();
-      } else {
-        // Height changed but didn't cross threshold - just update
-        this.updateChart();
+    this.resizeObserver = observeLabelThreshold(
+      this.canvasEl,
+      () =>
+        (this.canvasEl?.clientHeight ?? 0) >=
+        CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS,
+      {
+        rebuild: () => {
+          this.chart?.destroy();
+          this.createChart();
+        },
+        update: () => this.updateChart(),
       }
-    });
-
-    this.resizeObserver.observe(this.canvasEl);
-
-    // Initialize threshold state
-    const height = this.canvasEl.clientHeight;
-    this.wasAboveThreshold = height >= CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS;
+    );
   }
 
   /** @internal */
@@ -450,6 +451,9 @@ export class ObcPieChart extends LitElement {
       host: this,
     });
 
+    // Store dimensions for explicit canvas sizing in createChart/updateChart
+    this.lastDimensions = dimensions;
+
     // Store formatted labels for use in plugins
     this.formattedLabels = dimensions.formattedLabels;
 
@@ -468,9 +472,10 @@ export class ObcPieChart extends LitElement {
         };
 
     return {
-      responsive: true,
-      maintainAspectRatio: true,
-      aspectRatio: dimensions.aspectRatio,
+      // Chart.js responsive mode stays off — see the note in donut-chart.ts (#1061).
+      responsive: false,
+      maintainAspectRatio: false,
+      devicePixelRatio: window.devicePixelRatio,
       radius: `${radiusPercentage}%`,
       layout: {
         padding: dynamicPadding ?? PIE_DIMENSIONS.CANVAS_PADDING,
@@ -501,7 +506,7 @@ export class ObcPieChart extends LitElement {
               const value = context.parsed;
               const denominator = this.total > 0 ? this.total : 1;
               const isPercentage = this.outerLabelUnit === '%';
-              const numericValue = formatNumericValue(
+              const numericValue = formatChartNumber(
                 value,
                 denominator,
                 isPercentage,
@@ -558,8 +563,16 @@ export class ObcPieChart extends LitElement {
       },
     ];
 
-    const height = this.canvasEl?.clientHeight ?? 0;
-    const isTooSmall = height < CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS;
+    const options = this.getChartOptions();
+
+    // Non-responsive mode: set the canvas render size explicitly from the
+    // computed layout; Chart.js applies devicePixelRatio scaling on top
+    if (this.lastDimensions) {
+      this.canvasEl.width = this.lastDimensions.calculatedWidth;
+      this.canvasEl.height = this.lastDimensions.actualHeight;
+    }
+
+    const isTooSmall = this.lastDimensions?.isTooSmall ?? false;
 
     this.chart = new Chart(ctx, {
       type: 'pie',
@@ -567,7 +580,7 @@ export class ObcPieChart extends LitElement {
         labels,
         datasets,
       },
-      options: this.getChartOptions(),
+      options,
       plugins: [
         // Only show outer labels if enabled AND height is large enough
         ...(this.showOuterLabels && !isTooSmall
@@ -749,6 +762,15 @@ export class ObcPieChart extends LitElement {
     // Guard: Verify chart and canvas still exist and are connected
     if (!this.chart || !this.canvasEl || !this.canvasEl.isConnected) return;
 
+    // Non-responsive mode: apply the computed layout size explicitly
+    // (no-op when the size is unchanged)
+    if (this.lastDimensions) {
+      this.chart.resize(
+        this.lastDimensions.calculatedWidth,
+        this.lastDimensions.actualHeight
+      );
+    }
+
     this.chart.update();
 
     // Update legend after chart update completes to ensure metadata is ready
@@ -765,7 +787,6 @@ export class ObcPieChart extends LitElement {
 
     const {colors, sunburstColors} = this.prepareChartData();
 
-    // Update dataset colors
     if (this.chart.data.datasets[0]) {
       this.chart.data.datasets[0].backgroundColor = colors;
     }
@@ -792,13 +813,11 @@ export class ObcPieChart extends LitElement {
     // Guard: Check if chart metadata is available
     const meta = this.chart.getDatasetMeta(0);
     if (!meta || !meta.controller) {
-      // console.debug('[obc-pie-chart] updateLegend: skipped - chart metadata not yet initialized');
       return;
     }
 
     // Guard: Check if dataset has data
     if (!this.data || this.data.length === 0) {
-      // console.debug('[obc-pie-chart] updateLegend: skipped - no data available');
       this.legendDiv.innerHTML = '';
       return;
     }
@@ -810,7 +829,7 @@ export class ObcPieChart extends LitElement {
     try {
       const legendItems = this.data.map((item, i) => {
         const style = meta.controller.getStyle(i, false);
-        const numericValue = formatNumericValue(
+        const numericValue = formatChartNumber(
           item.value,
           denominator,
           isPercentage,

@@ -1,5 +1,6 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
+import {ifDefined} from 'lit/directives/if-defined.js';
 import compentStyle from './topbar-message-item.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
@@ -101,7 +102,7 @@ export enum ObcTopbarMessageItemSize {
  * ### Best Practices & Constraints
  * - Only one action button (text or icon) should be used at a time to keep interactions simple.
  * - Use the `inactive` type or `empty=true` to clearly indicate when there are no messages.
- * - For accessibility, ensure that action buttons have clear labels or icons.
+ * - For accessibility, give action buttons clear labels or icons.
  * - Truncation is applied to long titles and descriptions; keep content concise for best results.
  * - Deprecated properties: Prefer using `type` and `size` over `large` and `empty`.
  *
@@ -119,6 +120,22 @@ export enum ObcTopbarMessageItemSize {
  * </obc-topbar-message-item>
  * ```
  *
+ * @property showTitle - Whether to show the title slot.
+ * @availableWhen showTitle type!=Inactive
+ * @property showDescription - Whether to show the description slot.
+ * @availableWhen showDescription type!=Inactive
+ * @property showTimestamp - Whether to show the primary timestamp slot.
+ * @availableWhen showTimestamp type!=Inactive
+ * @property hasTimestamp2 - Whether to display the secondary timestamp slot.
+ * @availableWhen hasTimestamp2 type!=Inactive
+ * @property hasSecondaryIcon - Whether to display the secondary icon slot.
+ * @availableWhen hasSecondaryIcon type!=Inactive
+ * @property type - Visual and interactive type: `simple` is message content alone,
+ *   `with-button` (default) adds a text action button, `with-icon-button` an
+ *   icon action button, and `inactive` shows the empty state.
+ * @property size - Vertical size: `regular` (default) is the compact height, `tall` the
+ *   expanded one.
+ * @property actionLabel - Accessible name of the icon action button (`with-icon-button`); the slotted icon carries none.
  * @slot primary-icon - Main icon representing the message type or status.
  * @slot secondary-icon - Additional icon for context or severity (shown if `hasSecondaryIcon` is true).
  * @slot title - Title or heading of the message (shown if `showTitle` is true).
@@ -128,58 +145,28 @@ export enum ObcTopbarMessageItemSize {
  * @slot action-text - Content for the text action button (shown if type is `with-button`).
  * @slot action-icon - Icon for the icon action button (shown if type is `with-icon-button`).
  * @slot empty - Content for the empty/inactive state (shown if type is `inactive` or `empty` is true).
- * @fires message-click {CustomEvent<void>} Fired when the main message area is clicked.
- * @fires action-click {CustomEvent<void>} Fired when the action button (text or icon) is clicked.
+ * @fires {CustomEvent<void>} message-click - Fired when the main message area is clicked.
+ * @fires {CustomEvent<void>} action-click - Fired when the action button (text or icon) is clicked.
+ * @stable
  */
 @customElement('obc-topbar-message-item')
 export class ObcTopbarMessageItem extends LitElement {
-  /**
-   * Controls the visual and interactive type of the message item.
-   *
-   * - `simple`: No action button, just message content.
-   * - `with-button`: Shows a text-based action button.
-   * - `with-icon-button`: Shows an icon-based action button.
-   * - `inactive`: Shows an empty/inactive state.
-   *
-   * Defaults to `with-button`.
-   */
   @property({type: String}) type: ObcTopbarMessageItemType =
     ObcTopbarMessageItemType.WithButton;
 
-  /**
-   * Sets the vertical size of the message item.
-   *
-   * - `regular`: Standard compact height.
-   * - `tall`: Expanded height for more content.
-   *
-   * Defaults to `regular`.
-   */
   @property({type: String}) size: ObcTopbarMessageItemSize =
     ObcTopbarMessageItemSize.Regular;
 
-  /**
-   * Whether to show the title slot.
-   */
   @property({type: Boolean, attribute: false}) showTitle: boolean = true;
 
-  /**
-   * Whether to show the description slot.
-   */
   @property({type: Boolean, attribute: false}) showDescription: boolean = true;
 
-  /**
-   * Whether to show the primary timestamp slot.
-   */
   @property({type: Boolean, attribute: false}) showTimestamp: boolean = true;
 
-  /**
-   * Whether to display the secondary timestamp slot.
-   */
+  @property({type: String}) actionLabel = '';
+
   @property({type: Boolean}) hasTimestamp2 = false;
 
-  /**
-   * Whether to display the secondary icon slot.
-   */
   @property({type: Boolean}) hasSecondaryIcon = false;
 
   private onMessageClick() {
@@ -213,95 +200,121 @@ export class ObcTopbarMessageItem extends LitElement {
           [`type-${this.type}`]: true,
         })}
       >
-        ${isInactive
-          ? html`<div class="empty-message">
-              <slot name="empty">No active messages</slot>
-            </div>`
-          : html`
-              <button class="message-item-touch" @click=${this.onMessageClick}>
-                <div class="message-item">
-                  <div class="icon primary">
-                    <slot name="primary-icon"></slot>
-                  </div>
-                  <div class="content-container">
-                    ${this.hasSecondaryIcon
-                      ? html`<div class="icon secondary">
-                          <slot name="secondary-icon"></slot>
-                        </div>`
-                      : nothing}
-                    <div class="message-container ${isLarge ? 'large' : ''}">
-                      <div class="title-container">
-                        ${this.showTitle
-                          ? html`<div class="title">
-                              <slot name="title"></slot>
+        ${
+          isInactive
+            ? html`<div class="empty-message">
+                <slot name="empty">No active messages</slot>
+              </div>`
+            : html`
+                <button
+                  class="message-item-touch"
+                  @click=${this.onMessageClick}
+                >
+                  <div class="message-item">
+                    <div class="icon primary">
+                      <slot name="primary-icon"></slot>
+                    </div>
+                    <div class="content-container">
+                      ${
+                        this.hasSecondaryIcon
+                          ? html`<div class="icon secondary">
+                              <slot name="secondary-icon"></slot>
                             </div>`
-                          : nothing}
-                        ${isLarge
-                          ? html`
-                              <div class="timestamp-container">
-                                ${this.showTimestamp
+                          : nothing
+                      }
+                      <div class="message-container ${isLarge ? 'large' : ''}">
+                        <div class="title-container">
+                          ${
+                            this.showTitle
+                              ? html`<div class="title">
+                                  <slot name="title"></slot>
+                                </div>`
+                              : nothing
+                          }
+                          ${
+                            isLarge
+                              ? html`
+                                  <div class="timestamp-container">
+                                    ${
+                                      this.showTimestamp
+                                        ? html`<div class="time">
+                                            <slot name="time"></slot>
+                                          </div>`
+                                        : nothing
+                                    }
+                                    ${
+                                      this.hasTimestamp2
+                                        ? html`<div class="time">
+                                            <slot name="time-secondary"></slot>
+                                          </div>`
+                                        : nothing
+                                    }
+                                  </div>
+                                `
+                              : nothing
+                          }
+                        </div>
+                        ${
+                          this.showDescription
+                            ? html`<div class="description">
+                                <slot name="description"></slot>
+                              </div>`
+                            : nothing
+                        }
+                      </div>
+                    </div>
+                    ${
+                      !isLarge
+                        ? html`
+                            <div class="timestamp-container">
+                              ${
+                                this.showTimestamp
                                   ? html`<div class="time">
                                       <slot name="time"></slot>
                                     </div>`
-                                  : nothing}
-                                ${this.hasTimestamp2
-                                  ? html`<div class="time">
+                                  : nothing
+                              }
+                              ${
+                                this.hasTimestamp2
+                                  ? html`<div class="time secondary">
                                       <slot name="time-secondary"></slot>
                                     </div>`
-                                  : nothing}
-                              </div>
-                            `
-                          : nothing}
-                      </div>
-                      ${this.showDescription
-                        ? html`<div class="description">
-                            <slot name="description"></slot>
-                          </div>`
-                        : nothing}
-                    </div>
+                                  : nothing
+                              }
+                            </div>
+                          `
+                        : nothing
+                    }
                   </div>
-                  ${!isLarge
+                </button>
+                ${
+                  this.type === ObcTopbarMessageItemType.WithButton
                     ? html`
-                        <div class="timestamp-container">
-                          ${this.showTimestamp
-                            ? html`<div class="time">
-                                <slot name="time"></slot>
-                              </div>`
-                            : nothing}
-                          ${this.hasTimestamp2
-                            ? html`<div class="time secondary">
-                                <slot name="time-secondary"></slot>
-                              </div>`
-                            : nothing}
-                        </div>
+                        <button
+                          class="action-wrapper action-text-button"
+                          @click=${this.onActionClick}
+                        >
+                          <div class="action">
+                            <slot name="action-text"></slot>
+                          </div>
+                        </button>
                       `
-                    : nothing}
-                </div>
-              </button>
-              ${this.type === ObcTopbarMessageItemType.WithButton
-                ? html`
-                    <button
-                      class="action-wrapper action-text-button"
-                      @click=${this.onActionClick}
-                    >
-                      <div class="action">
-                        <slot name="action-text"></slot>
-                      </div>
-                    </button>
-                  `
-                : this.type === ObcTopbarMessageItemType.WithIconButton
-                  ? html`
-                      <button
-                        class="action-wrapper action-icon-button"
-                        @click=${this.onActionClick}
-                      >
-                        <div class="action">
-                          <slot name="action-icon"></slot>
-                        </div>
-                      </button>
-                    `
-                  : nothing}
-            `}
+                    : this.type === ObcTopbarMessageItemType.WithIconButton
+                      ? html`
+                          <button
+                            class="action-wrapper action-icon-button"
+                            aria-label=${ifDefined(this.actionLabel || undefined)}
+                            @click=${this.onActionClick}
+                          >
+                            <div class="action">
+                              <slot name="action-icon"></slot>
+                            </div>
+                          </button>
+                        `
+                      : nothing
+                }
+              `
+        }
       </div>
     `;
   }

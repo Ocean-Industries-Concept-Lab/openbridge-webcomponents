@@ -8,7 +8,7 @@ import {ifDefined} from 'lit/directives/if-defined.js';
 
 const meta: Meta<typeof ObcToggletip> = {
   title: 'UI Components/Message and Alerts/Toggletip',
-  tags: ['autodocs', '6.0'],
+  tags: ['autodocs', '6.0', 'beta'],
   component: 'obc-toggletip',
   args: {
     variant: ToggletipVariant.normal,
@@ -94,25 +94,31 @@ const meta: Meta<typeof ObcToggletip> = {
         secondaryButtonLabel="${args.secondaryButtonLabel}"
         customWidth=${ifDefined(args.customWidth)}
       >
-        ${args.hasLeadingIcon &&
-        iconIdToIconHtml(args.icon as string, {slot: 'leading-icon'})}
-        ${args.hasTrailingIcon &&
-        iconIdToIconHtml(args.trailingIcon as string, {slot: 'trailing-icon'})}
-        ${args.hasContent
-          ? html`
-              <div slot="content" class="placeholder">
-                <div class="placeholder-inner">
-                  <div class="placeholder-icon">
-                    ${iconIdToIconHtml('placeholder', {})}
-                  </div>
-                  <div class="placeholder-title">Content placeholder</div>
-                  <div class="placeholder-subtitle">
-                    Instance swap with custom components
+        ${
+          args.hasLeadingIcon &&
+          iconIdToIconHtml(args.icon as string, {slot: 'leading-icon'})
+        }
+        ${
+          args.hasTrailingIcon &&
+          iconIdToIconHtml(args.trailingIcon as string, {slot: 'trailing-icon'})
+        }
+        ${
+          args.hasContent
+            ? html`
+                <div slot="content" class="placeholder">
+                  <div class="placeholder-inner">
+                    <div class="placeholder-icon">
+                      ${iconIdToIconHtml('placeholder', {})}
+                    </div>
+                    <div class="placeholder-title">Content placeholder</div>
+                    <div class="placeholder-subtitle">
+                      Instance swap with custom components
+                    </div>
                   </div>
                 </div>
-              </div>
-            `
-          : nothing}
+              `
+            : nothing
+        }
       </obc-toggletip>`,
   argTypes: {
     variant: {

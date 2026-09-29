@@ -11,11 +11,13 @@ import '../../icons/icon-arrow-left-google.js';
 import '../../icons/icon-shift-lock.js';
 import '../text-input-field/text-input-field.js';
 import {
+  HTMLInputTypeAttribute,
   ObcTextInputField,
   ObcTextInputFieldSize,
 } from '../text-input-field/text-input-field.js';
 import '../button/button.js';
 import '../check-button/check-button.js';
+import {stopPropagation} from '../../internal/events.js';
 
 export enum ObcKeyboardFullType {
   Floating = 'floating',
@@ -30,7 +32,7 @@ export enum ObcKeyboardFullMode {
 }
 
 /**
- * `<obc-keyboard-full>` – A comprehensive virtual keyboard component for alphanumeric text input.
+ * `<obc-keyboard-full>` – A full virtual keyboard for alphanumeric text input.
  *
  * A full-featured on-screen keyboard that provides QWERTY layout with numeric and symbol modes,
  * designed for touch-screen interfaces where physical keyboards are unavailable or impractical.
@@ -53,8 +55,8 @@ export enum ObcKeyboardFullMode {
  *
  * - **Floating (`type="floating"`)**: Default presentation with shadow elevation and rounded corners,
  *   appearing to float above the UI. Suitable for modal or overlay contexts.
- * - **Flat (`type="flat"`)**: Minimalist presentation without shadows, designed to integrate seamlessly
- *   at the bottom of the screen or within embedded layouts. Uses a top border for subtle separation.
+ * - **Flat (`type="flat"`)**: Minimalist presentation without shadows, made to sit flush
+ *   at the bottom of the screen or inside embedded layouts. Uses a top border for subtle separation.
  *
  * ### Layout Configurations
  *
@@ -143,10 +145,16 @@ export enum ObcKeyboardFullMode {
  * </obc-keyboard-full>
  * ```
  *
- * **Flat keyboard with number row for password input:**
+ * **Masked password entry:**
+ *
+ * Set `inputType="password"` to mask the entered value in the input field. A
+ * show/hide toggle appears inside the field so users can reveal what they typed.
+ * The `value-change` and `done-click` events still carry the real (unmasked)
+ * string.
  * ```html
  * <obc-keyboard-full
  *   type="flat"
+ *   inputType="password"
  *   parameterName="Password"
  *   placeholder="Enter password"
  *   showNumberRow
@@ -166,18 +174,25 @@ export enum ObcKeyboardFullMode {
  * </obc-keyboard-full>
  * ```
  *
- * @fires value-change {CustomEvent<{value: string}>} Dispatched whenever the text value changes
+ * @availableWhen parameterName showTopBar==true
+ * @property inputType - Input type forwarded to the embedded input field. Set to `password` to mask
+ *   the entered value (a show/hide toggle is then shown inside the field).
+ * @property closeLabel - Accessible name of the close button; the icon carries none.
+ * @fires {CustomEvent<{value: string}>} value-change - Dispatched whenever the text value changes
  *   (on key press, backspace, space, or direct input field editing). The `detail.value` contains
  *   the complete current text string.
- * @fires done-click {CustomEvent<{value: string}>} Dispatched when the DONE button is clicked,
+ * @fires {CustomEvent<{value: string}>} done-click - Dispatched when the DONE button is clicked,
  *   indicating the user has completed text entry. The `detail.value` contains the final text string.
- * @fires close-click {CustomEvent<void>} Dispatched when the close button (in top bar) is clicked,
+ * @fires {CustomEvent<void>} close-click - Dispatched when the close button (in top bar) is clicked or `Escape` is pressed inside the keyboard,
  *   allowing the application to dismiss the keyboard without submitting the value.
+ * @beta
  */
 @customElement('obc-keyboard-full')
 export class ObcKeyboardFull extends LitElement {
   @property({type: String}) type: ObcKeyboardFullType =
     ObcKeyboardFullType.Floating;
+
+  @property({type: String}) closeLabel = 'Close';
 
   @property({type: Boolean}) showTopBar = false;
   @property({type: String}) parameterName = 'Parameter name';
@@ -187,6 +202,9 @@ export class ObcKeyboardFull extends LitElement {
   @property({type: Boolean}) showNumberRow = false;
   @property({type: String}) inputSize: ObcTextInputFieldSize =
     ObcTextInputFieldSize.Large;
+
+  @property({type: String}) inputType: HTMLInputTypeAttribute =
+    HTMLInputTypeAttribute.Text;
 
   @state() private mode: ObcKeyboardFullMode = ObcKeyboardFullMode.ABC;
   @state() private capsLock = false;
@@ -232,6 +250,13 @@ export class ObcKeyboardFull extends LitElement {
     ['"', "'", '?', '!', ';', ':', ',', '.', '-'],
   ];
 
+  // The keyboard is an overlay: Escape dismisses it from any focused key.
+  private onKeydown = (event: KeyboardEvent) => {
+    if (event.key !== 'Escape') return;
+    event.preventDefault();
+    this.onCloseClick();
+  };
+
   private onCloseClick = () => {
     this.dispatchEvent(
       new CustomEvent('close-click', {
@@ -245,14 +270,7 @@ export class ObcKeyboardFull extends LitElement {
     e.preventDefault();
   };
 
-  private onKeyPress = async (key: string) => {
-    const char =
-      this.capsLock &&
-      this.mode === ObcKeyboardFullMode.ABC &&
-      !this.showNumberRow
-        ? key.toUpperCase()
-        : key.toLowerCase();
-
+  private onKeyPress = async (char: string) => {
     const inputElement = this.inputField?.shadowRoot?.querySelector(
       'input'
     ) as HTMLInputElement | null;
@@ -322,6 +340,14 @@ export class ObcKeyboardFull extends LitElement {
     this.capsLock = !this.capsLock;
   };
 
+  /**
+   * The character a letter key both shows and inserts. CAPS applies wherever
+   * the alphabetic layout is rendered, including the number-row variant.
+   */
+  private letterKeyLabel(key: string): string {
+    return this.capsLock ? key.toUpperCase() : key.toLowerCase();
+  }
+
   private onToggleMode = (mode: ObcKeyboardFullMode) => {
     this.mode = mode;
   };
@@ -387,6 +413,7 @@ export class ObcKeyboardFull extends LitElement {
           variant="normal"
           cornerLeft
           @mousedown=${this.preventFocusLoss}
+          aria-label="Move cursor left"
           @click=${this.onCursorLeft}
         >
           <obi-arrow-left-google></obi-arrow-left-google>
@@ -395,6 +422,7 @@ export class ObcKeyboardFull extends LitElement {
           variant="normal"
           cornerRight
           @mousedown=${this.preventFocusLoss}
+          aria-label="Move cursor right"
           @click=${this.onCursorRight}
         >
           <obi-arrow-right-google></obi-arrow-right-google>
@@ -493,46 +521,51 @@ export class ObcKeyboardFull extends LitElement {
     return html`
       <div class="container-left">
         <div class="keys-container">
-          ${this.showNumberRow
-            ? html`
-                <div class="row row-numbers">
-                  ${this.numberRow.map(
-                    (key) => html`
-                      <obc-button
-                        class="key-button"
-                        variant="raised"
-                        @mousedown=${this.preventFocusLoss}
-                        @click=${() => this.onKeyPress(key)}
-                      >
-                        ${key}
-                      </obc-button>
-                    `
-                  )}
-                </div>
-              `
-            : nothing}
+          ${
+            this.showNumberRow
+              ? html`
+                  <div class="row row-numbers">
+                    ${this.numberRow.map(
+                      (key) => html`
+                        <obc-button
+                          class="key-button"
+                          variant="raised"
+                          @mousedown=${this.preventFocusLoss}
+                          @click=${() => this.onKeyPress(key)}
+                        >
+                          ${key}
+                        </obc-button>
+                      `
+                    )}
+                  </div>
+                `
+              : nothing
+          }
           ${this.qwertyLayout.map(
             (row, index) => html`
               <div class="row row-${index + 1}">
-                ${index === 2 && row.length < 10
-                  ? Array(10 - row.length)
-                      .fill(0)
-                      .map(
-                        () => html`<div class="key-button-placeholder"></div>`
-                      )
-                  : nothing}
-                ${row.map(
-                  (key) => html`
+                ${
+                  index === 2 && row.length < 10
+                    ? Array(10 - row.length)
+                        .fill(0)
+                        .map(
+                          () => html`<div class="key-button-placeholder"></div>`
+                        )
+                    : nothing
+                }
+                ${row.map((key) => {
+                  const label = this.letterKeyLabel(key);
+                  return html`
                     <obc-button
                       class="key-button"
                       variant="normal"
                       @mousedown=${this.preventFocusLoss}
-                      @click=${() => this.onKeyPress(key)}
+                      @click=${() => this.onKeyPress(label)}
                     >
-                      ${this.capsLock ? key.toUpperCase() : key.toLowerCase()}
+                      ${label}
                     </obc-button>
-                  `
-                )}
+                  `;
+                })}
               </div>
             `
           )}
@@ -670,17 +703,23 @@ export class ObcKeyboardFull extends LitElement {
 
   protected override render() {
     return html`
-      <div class="wrapper type-${this.type}">
-        ${this.showTopBar
-          ? html`
-              <div class="top-bar">
-                <div class="parameter-name">${this.parameterName}</div>
-                <obc-icon-button variant="flat" @click=${this.onCloseClick}>
-                  <obi-close-google></obi-close-google>
-                </obc-icon-button>
-              </div>
-            `
-          : nothing}
+      <div class="wrapper type-${this.type}" @keydown=${this.onKeydown}>
+        ${
+          this.showTopBar
+            ? html`
+                <div class="top-bar">
+                  <div class="parameter-name">${this.parameterName}</div>
+                  <obc-icon-button
+                    variant="flat"
+                    aria-label=${this.closeLabel}
+                    @click=${this.onCloseClick}
+                  >
+                    <obi-close-google></obi-close-google>
+                  </obc-icon-button>
+                </div>
+              `
+            : nothing
+        }
 
         <div class="container-content">
           <div class="input-container">
@@ -689,7 +728,10 @@ export class ObcKeyboardFull extends LitElement {
               .value=${this.value}
               .placeholder=${this.placeholder}
               .size=${this.inputSize}
+              .type=${this.inputType}
               @input=${this.onInputFieldValueChanged}
+              @change=${stopPropagation}
+              @clear=${stopPropagation}
             >
             </obc-text-input-field>
 

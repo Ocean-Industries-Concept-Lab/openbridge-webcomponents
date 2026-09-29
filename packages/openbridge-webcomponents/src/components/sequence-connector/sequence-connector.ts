@@ -4,6 +4,7 @@ import {classMap} from 'lit/directives/class-map.js';
 import {styleMap} from 'lit/directives/style-map.js';
 import {customElement} from '../../decorator.js';
 import componentStyle from './sequence-connector.css?inline';
+import {clamp} from '../../svghelpers/math.js';
 
 export enum SequenceConnectorType {
   small = 'small',
@@ -61,6 +62,7 @@ export enum SequenceConnectorDirection {
  * ```
  *
  * Keywords: sequence, connector, progress, timeline, stepper, loading, horizontal, vertical.
+ * @beta
  */
 @customElement('obc-sequence-connector')
 export class ObcSequenceConnector extends LitElement {
@@ -92,7 +94,7 @@ export class ObcSequenceConnector extends LitElement {
     const percent = Number.isFinite(this.loadingBarPercent)
       ? this.loadingBarPercent
       : 66;
-    return Math.min(100, Math.max(0, percent));
+    return clamp(percent, 0, 100);
   }
 
   override render() {
@@ -106,9 +108,11 @@ export class ObcSequenceConnector extends LitElement {
           part="wrapper"
         >
           <div class="line" part="line">
-            ${this.state === SequenceConnectorState.loading
-              ? html`<span class="loading-bar" part="loading-bar"></span>`
-              : nothing}
+            ${
+              this.state === SequenceConnectorState.loading
+                ? html`<span class="loading-bar" part="loading-bar"></span>`
+                : nothing
+            }
           </div>
         </div>
       </div>

@@ -9,6 +9,7 @@ import {
   VesselImage,
   vesselImages,
 } from '../../navigation-instruments/watch/vessel.js';
+import {degToRad} from '../../svghelpers/math.js';
 
 export enum SpeedIndicator {
   Stopped = 'stopped',
@@ -83,17 +84,21 @@ export enum Type {
  * </obc-chart-object-vessel-button>
  * ```
  *
+ * @property heading - Heading in degrees
+ * @property course - Course over ground in degrees
+ * @availableWhen course courseArrowPx!=undefined
+ * @availableWhen speedIndicator type in [ButtonSpeedRot, FlatSpeedRot]
+ * @availableWhen turnRate type in [ButtonSpeedRot, FlatSpeedRot]
  * @slot - Primary vessel icon.
  * @slot silhouette - Optional secondary vessel silhouette icon.
  * @slot number - Optional content for the number badge.
  * @slot name - Optional content for the name badge.
  * @slot vessel-image - Optional vessel image content used when `vesselImage` is not set.
+ * @experimental
  */
 @customElement('obc-chart-object-vessel-button')
 export class ObcChartObjectVesselButton extends LitElement {
-  /** Heading in degrees */
   @property({type: Number}) heading = 0;
-  /** Course over ground in degrees */
   @property({type: Number}) course = 0;
   @property({type: String}) speedIndicator: SpeedIndicator = SpeedIndicator.Two;
   @property({type: Number}) turnRate = 0; // -100 (PORT) to 100 (STBD)
@@ -231,8 +236,8 @@ export class ObcChartObjectVesselButton extends LitElement {
     }
     const deg = (this.turnRate / 100) * 12;
     const R = 24;
-    const x = -R * Math.cos((deg * Math.PI) / 180) + R + 3;
-    const y = R * Math.sin((deg * Math.PI) / 180) + 8;
+    const x = -R * Math.cos(degToRad(deg)) + R + 3;
+    const y = R * Math.sin(degToRad(deg)) + 8;
 
     return html`
       <svg

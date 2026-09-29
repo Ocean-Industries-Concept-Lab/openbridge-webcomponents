@@ -41,18 +41,15 @@ export type BreadcrumbClickEvent = CustomEvent<BreadcrumbItem>;
  * ```
  * This will render: Home › Section › Subsection
  *
- * @fires breadcrumb-click {BreadcrumbClickEvent} - Fired when a breadcrumb item is clicked.
+ * @property items - The list of breadcrumb items to display, in order from root to current location.
+ *   Each item should be an object with a `label` property (string). The component renders each label in sequence, separated by a chevron icon.
+ *   Example: `[ {label: 'Home'}, {label: 'Section'}, {label: 'Page'} ]`
+ * @fires {BreadcrumbClickEvent} breadcrumb-click - Fired when a breadcrumb item is clicked.
  * @slot - (none) This component does not use slots; all content is provided via the `items` property.
+ * @stable
  */
 @customElement('obc-breadcrumb')
 export class ObcBreadcrumb extends LitElement {
-  /**
-   * The list of breadcrumb items to display, in order from root to current location.
-   *
-   * Each item should be an object with a `label` property (string). The component renders each label in sequence, separated by a chevron icon.
-   *
-   * Example: `[ {label: 'Home'}, {label: 'Section'}, {label: 'Page'} ]`
-   */
   @property({attribute: false}) items = [] as BreadcrumbItem[];
 
   @property({attribute: false}) iconOnly = false;
@@ -65,33 +62,41 @@ export class ObcBreadcrumb extends LitElement {
             const isLast = i === this.items.length - 1;
             return html`
               <li>
-                ${i > 0
-                  ? html`<span class="divider">
-                      <obi-chevron-right-google class="icon">
-                      </obi-chevron-right-google>
-                    </span>`
-                  : nothing}
-                ${isLast
-                  ? html` <div class="label-wrapper active">
-                      <div class="visible-wrapper">
-                        ${item.icon ? item.icon() : nothing}
-                        ${this.iconOnly && !isLast
-                          ? nothing
-                          : html`<span class="label">${item.label}</span>`}
-                      </div>
-                    </div>`
-                  : html` <button
-                      role="link"
-                      @click=${() => this.handleClick(item)}
-                      class="label-wrapper"
-                    >
-                      <div class="visible-wrapper">
-                        ${item.icon ? item.icon() : nothing}
-                        ${this.iconOnly && !isLast
-                          ? nothing
-                          : html`<span class="label">${item.label}</span>`}
-                      </div>
-                    </button>`}
+                ${
+                  i > 0
+                    ? html`<span class="divider">
+                        <obi-chevron-right-google class="icon">
+                        </obi-chevron-right-google>
+                      </span>`
+                    : nothing
+                }
+                ${
+                  isLast
+                    ? html` <div class="label-wrapper active">
+                        <div class="visible-wrapper">
+                          ${item.icon ? item.icon() : nothing}
+                          ${
+                            this.iconOnly && !isLast
+                              ? nothing
+                              : html`<span class="label">${item.label}</span>`
+                          }
+                        </div>
+                      </div>`
+                    : html` <button
+                        role="link"
+                        @click=${() => this.handleClick(item)}
+                        class="label-wrapper"
+                      >
+                        <div class="visible-wrapper">
+                          ${item.icon ? item.icon() : nothing}
+                          ${
+                            this.iconOnly && !isLast
+                              ? nothing
+                              : html`<span class="label">${item.label}</span>`
+                          }
+                        </div>
+                      </button>`
+                }
               </li>
             `;
           })}

@@ -17,7 +17,6 @@ import {
   formatTimeSince,
   isAcknowledged,
   isActive,
-  isBlocked,
   TimeSinceFn,
 } from '../../types.js';
 import {classMap} from 'lit/directives/class-map.js';
@@ -30,6 +29,16 @@ export enum AlertDetailPageType {
 }
 
 @localized()
+/**
+ * @slot note-label - Label for the note section, rendered when `hasNote` is true
+ * @slot note - Note content, rendered when `hasNote` is true
+ * @slot readout-graph-title - Title for the readout graph, rendered when `hasReadoutGraph` is true
+ * @slot readout-graph - Readout graph content, rendered when `hasReadoutGraph` is true
+ * @slot action - Action controls, rendered when `hasActions` is true
+ * @slot <detail>-label - Overrides the label of the `<detail>` field (e.g. `tagId-label`, `category-label`, `time-label`)
+ * @slot <detail>-value - Overrides the value of the `<detail>` field (e.g. `tagId-value`, `category-value`, `time-value`)
+ * @beta
+ */
 @customElement('obc-alert-detail-page')
 export class ObcAlertDetailPage extends LitElement {
   @property({type: String}) type: AlertDetailPageType =
@@ -155,33 +164,36 @@ export class ObcAlertDetailPage extends LitElement {
               .type=${this.alert.type}
               .acknowledged=${isAcknowledged(this.alert)}
               .active=${isActive(this.alert)}
-              .outline=${isBlocked(this.alert)}
             ></obc-alert-icon>
           </div>
           <div class="title">
             <span>${this.alert.source}</span>
           </div>
-          ${showCloseButton
-            ? html`<div class="close-button">
-                <obc-icon-button variant="flat">
-                  <obi-close-google></obi-close-google>
-                </obc-icon-button>
-              </div>`
-            : nothing}
+          ${
+            showCloseButton
+              ? html`<div class="close-button">
+                  <obc-icon-button variant="flat" aria-label=${msg('Close')}>
+                    <obi-close-google></obi-close-google>
+                  </obc-icon-button>
+                </div>`
+              : nothing
+          }
         </div>
         <div class="divider"></div>
         <div class="body">
           <div class="description">
             <span>${this.alert.text}</span>
           </div>
-          ${this.hasNote
-            ? html`<div class="description sub-description">
-                <div class="label">
-                  <slot name="note-label">${msg('Note')}</slot>
-                </div>
-                <slot name="note">${this.alert.note}</slot>
-              </div>`
-            : nothing}
+          ${
+            this.hasNote
+              ? html`<div class="description sub-description">
+                  <div class="label">
+                    <slot name="note-label">${msg('Note')}</slot>
+                  </div>
+                  <slot name="note">${this.alert.note}</slot>
+                </div>`
+              : nothing
+          }
           ${this.renderDetail(
             this.hasTagId,
             'tagId',
@@ -238,24 +250,28 @@ export class ObcAlertDetailPage extends LitElement {
             msg('Shelved by'),
             (alert) => alert.shelved && alert.shelved.shelvedBy
           )}
-          ${this.hasReadoutGraph
-            ? html`
-                <div class="readout-graph">
-                  <div class="readout-graph-title">
-                    <slot name="readout-graph-title">${msg('Readout')}</slot>
+          ${
+            this.hasReadoutGraph
+              ? html`
+                  <div class="readout-graph">
+                    <div class="readout-graph-title">
+                      <slot name="readout-graph-title">${msg('Readout')}</slot>
+                    </div>
+                    <div class="readout-graph-container">
+                      <slot name="readout-graph"></slot>
+                    </div>
                   </div>
-                  <div class="readout-graph-container">
-                    <slot name="readout-graph"></slot>
-                  </div>
-                </div>
-              `
-            : nothing}
+                `
+              : nothing
+          }
         </div>
-        ${this.hasActions
-          ? html`<div class="actions">
-              <slot name="action"></slot>
-            </div>`
-          : nothing}
+        ${
+          this.hasActions
+            ? html`<div class="actions">
+                <slot name="action"></slot>
+              </div>`
+            : nothing
+        }
       </div>
     `;
   }

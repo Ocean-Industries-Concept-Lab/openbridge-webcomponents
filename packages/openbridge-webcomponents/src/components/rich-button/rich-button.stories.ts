@@ -6,7 +6,7 @@ import '../../icons/icon-placeholder.js';
 
 const meta: Meta<typeof ObcRichButton> = {
   title: 'UI Components/Buttons/Rich Button',
-  tags: ['6.0'],
+  tags: ['6.0', 'beta'],
   component: 'obc-rich-button',
   argTypes: {
     direction: {
@@ -48,16 +48,20 @@ const meta: Meta<typeof ObcRichButton> = {
       .fullWidth=${args.fullWidth}
       .fullHeight=${args.fullHeight}
     >
-      ${args.hasLeadingIcon
-        ? html`<div slot="leading-icon">
-            <obi-placeholder></obi-placeholder>
-          </div>`
-        : ''}
-      ${args.hasTrailingIcon
-        ? html`<div slot="trailing-icon">
-            <obi-placeholder></obi-placeholder>
-          </div>`
-        : ''}
+      ${
+        args.hasLeadingIcon
+          ? html`<div slot="leading-icon">
+              <obi-placeholder></obi-placeholder>
+            </div>`
+          : ''
+      }
+      ${
+        args.hasTrailingIcon
+          ? html`<div slot="trailing-icon">
+              <obi-placeholder></obi-placeholder>
+            </div>`
+          : ''
+      }
     </obc-rich-button>
   `,
 } satisfies Meta<ObcRichButton>;

@@ -24,7 +24,7 @@ import {ObcNumberInputFieldTextAlign} from '../../components/number-input-field/
 
 const meta: Meta<typeof ObcAutomationInputModal> = {
   title: 'Automation/Automation Control',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'experimental'],
   component: 'obc-automation-input-modal',
   args: {},
 } satisfies Meta<ObcAutomationInputModal>;
@@ -54,15 +54,16 @@ export const Compact: Story = {
         line-height: 16px; /* 133.333% */
       }
     </style>
-    <obc-automation-input-modal>
+    <obc-automation-input-modal aria-label="Speed">
       <div slot="header">
-        <obc-icon-button variant="flat">
+        <obc-icon-button variant="flat" aria-label="Close">
           <obi-close-google></obi-close-google>
         </obc-icon-button>
       </div>
       <div slot="preview"></div>
       <obc-toggle-button-group
         slot="action-primary"
+        aria-label="Operation"
         .variant=${ObcToggleButtonOptionVariant.regular}
         value="run"
         .type=${ObcToggleButtonOptionType.iconTextUnder}
@@ -90,7 +91,7 @@ export const Compact: Story = {
           <obi-chevron-left-google></obi-chevron-left-google>
         </obc-notification-badge-button>
         <obc-number-input-field
-          value="10"
+          .value=${10}
           .textAlign=${ObcNumberInputFieldTextAlign.Center}
           .squared=${true}
         ></obc-number-input-field>

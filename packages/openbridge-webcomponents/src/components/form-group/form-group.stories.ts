@@ -44,6 +44,7 @@ const mapGroupTypeToItemType = (type: ObcFormGroupType): ObcFormItemType => {
 
 const meta = {
   title: 'UI Components/Forms/Form Group',
+  tags: ['beta'],
   component: 'obc-form-group',
   decorators: [
     (story) =>

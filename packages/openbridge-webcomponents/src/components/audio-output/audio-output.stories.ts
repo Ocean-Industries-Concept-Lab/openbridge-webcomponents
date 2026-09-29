@@ -4,7 +4,7 @@ import './audio-output.js';
 
 const meta: Meta<ObcAudioOutput> = {
   title: 'UI Components/Media/Audio Output',
-  tags: ['6.0'],
+  tags: ['6.0', 'beta'],
   component: 'obc-audio-output',
   args: {},
   argTypes: {

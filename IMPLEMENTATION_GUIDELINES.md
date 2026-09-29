@@ -15,19 +15,19 @@ The project is divided into three main parts:
    Vue, React, Angular, and Svelte wrappers are auto-generated from the web components:
 
    ```bash
-   npm run build:wrappers
+   cd packages/openbridge-webcomponents && npm run wrappers   # after npm run analyze
    ```
 
    ⚠️ **Warning:** Do not edit the generated wrapper packages directly.
 
 3. [vue-demo](packages/vue-demo/README.md) / [react-demo](packages/react-demo/README.md) — demo applications
+4. [connector-diagram](packages/connector-diagram/README.md) — canvas renderer for pipe and connector diagrams
 
 ## 📚 Storybook stories
 
 Each component's `*.stories.ts` file should:
 
 - Use `tags: ['autodocs', '6.0']` for documented OpenBridge 6.0 components
-- Use `tags: ['alpha']` for components still in development
 - Use `tags: ['skip-test']` to exclude a story from visual snapshot testing
 - Export a `Default` story and additional stories for key states and variants
 
@@ -46,24 +46,121 @@ This is enforced by the ESLint rule `openbridge/storybook-title-case` (auto-fixa
 
 ## 🧪 Testing
 
-Visual snapshot tests are run via [Vitest](https://vitest.dev/) + [storybook-addon-vis](https://github.com/nickelspy/storybook-addon-vis) + Playwright:
+Visual snapshot tests are run via [Vitest](https://vitest.dev/) + [storybook-addon-vis](https://github.com/nickelspy/storybook-addon-vis) + Playwright.
+
+### Local Testing
+
+To run tests locally, you need to have Playwright browsers installed:
 
 ```bash
+# Install Chromium (required for snapshot tests)
+npx playwright install --with-deps chromium
+
 # Run all snapshot tests
 npm run test-storybook
 
-# Update snapshots interactively (press 'u' in Vitest terminal)
-# Or replace baselines wholesale:
-npm run update-snapshots
+# Regenerate one component's baselines — the filter before the flag — then re-run without it
+npx vitest run --project storybook 'component-name' --update
+npx vitest run --project storybook 'component-name'
 ```
 
-Snapshot baselines are stored in `__vis__/linux/__baselines__/` (and `__vis__/darwin/__baselines__/` for macOS).
+Snapshot baselines are stored in `__vis__/linux/__baselines__/` (and `__vis__/darwin/__baselines__/` for macOS). Since snapshot results are highly dependent on the environment (OS, fonts, etc.), it is recommended to use Docker for generating canonical snapshots.
+
+### Accessibility Tests
+
+Keyboard operability is tested, colour contrast deliberately is not, and no
+accessibility check is an ESLint warning. Three gates run in CI:
+
+```bash
+# Keyboard specs (*-keyboard.spec.ts), with every other browser spec — build.yml, every branch
+npm run test:browser
+
+# axe over every story, then the baseline check — visual-testing.yml, PRs to develop and stable
+npm run test-a11y
+
+# A widget role without its APG pattern record, or a composite widget without a keyboard spec — build.yml, every branch
+npm run lint:apg
+
+# Rewrite __a11y__/baseline.json after fixing violations, or after adding some with a reason in the PR
+npm run test-a11y:update
+```
+
+`__a11y__/baseline.json` freezes the violations the library ships with, by
+story and rule. A story or rule it does not carry fails `test-a11y` with
+`story-id: rule` lines, so a new component starts from zero and the debt can
+only shrink; entries that stopped failing are printed for pruning. Besides
+axe's own rules the run checks that a composite widget is one tab stop and
+has a name, and that a tab panel is named and linked from its tab. What no
+gate sees is whether the promised keys work, since axe cannot press them: the
+component-creation checklist in `AGENTS.md` § 5 asks for the pattern record
+and the spec. Rules, patterns and the harness details:
+[`docs/agents/a11y.md`](docs/agents/a11y.md).
+
+### Docker Testing
+
+For a consistent testing environment, it is recommended to run tests using Docker. This ensures that snapshots are always generated on the same Linux environment as the CI.
+
+#### Requirements
+
+- Docker must be installed and running on your machine.
+- On Linux, your user should have permissions to run Docker commands without `sudo`.
+- The `openbridge-webcomponents` package is built (from repository root): `npm ci && cd packages/openbridge-webcomponents && npm run build`
+
+#### 1. Build the Docker Image
+
+The Docker image is based on the Playwright Ubuntu image and contains all dependencies. Run the following command from the repository root:
+
+```bash
+npm run build:docker-for-storybook-testing
+```
+
+#### 2. Run Tests in Docker
+
+You can run the Storybook tests inside the container. This will mount your local files into the container, allowing it to write snapshot results back to your host machine.
+
+From `packages/openbridge-webcomponents`:
+
+```bash
+npm run test-storybook:docker
+```
+
+The script runs as your host user (`--user $(id -u):$(id -g)`) and mounts the package directory, so the results the container writes to `__vis__/linux/__results__/` (gitignored) are owned by you.
+
+#### 3. Regenerate Baselines in Docker
+
+To regenerate baselines, run the same image with the filter in front of the flag, then once more without it:
+
+```bash
+# From packages/openbridge-webcomponents
+npm run test-storybook:docker -- -- component-name --update
+npm run test-storybook:docker -- -- component-name
+```
 
 ## 🎨 PostCSS
 
 The CSS files are post-processed by [PostCSS](https://postcss.org/).
 There is one global CSS file for the palettes, `variables.css`, which contains the color palettes for the components.
 All other CSS code should be kept in the `*.css` files in the component folders.
+
+> **⚠️ `src/palettes/variables.css` is generated, not authored.** The
+> [obc-figma-plugin](https://github.com/Ocean-Industries-Concept-Lab/obc-figma-plugin)
+> `cssvariables` codegen emits the whole file from the OpenBridge 6.1 Figma
+> file: the four `.obc-component-size-*` blocks, the `* { … }` primitives, the
+> four `:root[data-obc-theme="…"]` blocks with alias chains flattened to
+> literal `rgb(…)`, and the `@property` blink registrations. The same plugin
+> produces `src/mixins/fonts.css` (`font-exports`) and
+> `script/figmavariables.json` (`variables map`, from the icons file).
+>
+> Do not hand-edit any of the three: change the token in Figma (or the
+> plugin's `rename()`), re-run the codegen, replace the file wholesale and
+> run `npm run palette:strip` (`npm run lint:palette` fails CI otherwise).
+> Which file feeds which codegen, how to run the plugin and how to diff the
+> result (`npm run palette:diff`) are in
+> [docs/agents/figma-refresh.md](docs/agents/figma-refresh.md). Hand-curated
+> font mixins the plugin does not emit live in `src/mixins/font-extras.css`;
+> `npm run lint:mixins` fails on a dropped definition, and
+> `npm run lint:variables` on a consumer of a token the export no longer
+> defines.
 
 Most mixins are defined in `src/mixins/` and auto-loaded via `postcss-mixins` (configured in `postcss.config.mjs`); the `style` mixin used for elevation variants is defined inline in `postcss.config.mjs`. All mixins are available globally in component CSS — no `@import` is needed.
 
@@ -90,10 +187,10 @@ The outer layer is sized to meet minimum touch-target accessibility requirements
 
 **Token naming convention:**
 
-| Layer | Token pattern | Example |
-|-------|---------------|---------|
-| Touch target | `--{namespace}-{component}-touch-target-size` | `--ui-components-button-touch-target-size` |
-| Visual target | `--{namespace}-{component}-visual-size` (or `-visual-target-size`) | `--ui-components-button-visual-size` |
+| Layer         | Token pattern                                                      | Example                                    |
+| ------------- | ------------------------------------------------------------------ | ------------------------------------------ |
+| Touch target  | `--{namespace}-{component}-touch-target-size`                      | `--ui-components-button-touch-target-size` |
+| Visual target | `--{namespace}-{component}-visual-size` (or `-visual-target-size`) | `--ui-components-button-visual-size`       |
 
 These tokens are defined per size variant (see [Size Variants](#size-variant-classes) below), so scaling is automatic.
 
@@ -101,7 +198,7 @@ These tokens are defined per size variant (see [Size Variants](#size-variant-cla
 
 ```css
 .wrapper {
-  height: var(--ui-components-button-touch-target-size);   /* 48px */
+  height: var(--ui-components-button-touch-target-size); /* 48px */
   min-width: var(--ui-components-button-touch-target-size);
   display: flex;
   align-items: center;
@@ -111,7 +208,7 @@ These tokens are defined per size variant (see [Size Variants](#size-variant-cla
 }
 
 .visible-wrapper {
-  height: var(--ui-components-button-visual-size);         /* 32px */
+  height: var(--ui-components-button-visual-size); /* 32px */
   border-radius: var(--ui-components-button-border-radius);
   /* background and border injected by @mixin style */
 }
@@ -138,24 +235,24 @@ The `style` mixin (defined in `postcss.config.mjs`) generates background, border
 
 #### Parameters
 
-| Parameter | Required | Values | Description |
-|-----------|----------|--------|-------------|
-| `style` | Yes | `flat`, `normal`, `raised`, `amplified`, `indent`, `selected` | Elevation variant — determines which color variable family is used |
-| `visibleWrapperClass` | No | CSS selector (e.g. `.visible-wrapper`) | Targets the inner visual element; if omitted, styles apply directly to the element with the mixin |
-| `noClick` | No | (flag) | Emits only the `enabled` state — no hover, active, focus, or disabled rules. Used for display-only sub-parts |
+| Parameter             | Required | Values                                                        | Description                                                                                                  |
+| --------------------- | -------- | ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `style`               | Yes      | `flat`, `normal`, `raised`, `amplified`, `indent`, `selected` | Elevation variant — determines which color variable family is used                                           |
+| `visibleWrapperClass` | No       | CSS selector (e.g. `.visible-wrapper`)                        | Targets the inner visual element; if omitted, styles apply directly to the element with the mixin            |
+| `noClick`             | No       | (flag)                                                        | Emits only the `enabled` state — no hover, active, focus, or disabled rules. Used for display-only sub-parts |
 
 #### Generated states
 
 For `@mixin style style=normal visibleWrapperClass=.visible-wrapper` the mixin expands to:
 
-| State | Selector | What it sets |
-|-------|----------|-------------|
-| **Enabled** | `& .visible-wrapper` | `border-color: var(--normal-enabled-border-color)`, `background-color: var(--normal-enabled-background-color)`, `cursor: pointer` |
-| **Activated** | `&.activated .visible-wrapper` | `border-color: var(--normal-activated-border-color)`, … |
-| **Hover** | `@media (hover:hover) { &:hover .visible-wrapper }` | Uses `color-mix()` with `--obc-can-hover` for smooth hover control |
-| **Pressed** | `&:active .visible-wrapper` | `border-color: var(--normal-pressed-border-color)`, … |
-| **Focus-visible** | `&:focus-visible .visible-wrapper` | `outline-color: var(--border-focus-color)`, `outline-width: var(--global-size-spacing-border-weight-focusframe)` |
-| **Disabled** | `&:disabled .visible-wrapper`, `&.disabled .visible-wrapper` | `cursor: not-allowed`, `color: var(--on-normal-disabled-color)` |
+| State             | Selector                                                     | What it sets                                                                                                                      |
+| ----------------- | ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| **Enabled**       | `& .visible-wrapper`                                         | `border-color: var(--normal-enabled-border-color)`, `background-color: var(--normal-enabled-background-color)`, `cursor: pointer` |
+| **Activated**     | `&.activated .visible-wrapper`                               | `border-color: var(--normal-activated-border-color)`, …                                                                           |
+| **Hover**         | `@media (hover:hover) { &:hover .visible-wrapper }`          | Uses `color-mix()` with `--obc-can-hover` for smooth hover control                                                                |
+| **Pressed**       | `&:active .visible-wrapper`                                  | `border-color: var(--normal-pressed-border-color)`, …                                                                             |
+| **Focus-visible** | `&:focus-visible .visible-wrapper`                           | `outline-color: var(--border-focus-color)`, `outline-width: var(--global-size-spacing-border-weight-focusframe)`                  |
+| **Disabled**      | `&:disabled .visible-wrapper`, `&.disabled .visible-wrapper` | `cursor: not-allowed`, `color: var(--on-normal-disabled-color)`                                                                   |
 
 It also sets `cursor: pointer` on `&` itself and `outline: none` on `&:focus` (visible outline only on `:focus-visible`).
 
@@ -163,13 +260,14 @@ It also sets `cursor: pointer` on `&` itself and `outline: none` on `&:focus` (v
 
 The mixin references color variables that follow a consistent pattern:
 
-| Purpose | Pattern | Example |
-|---------|---------|---------|
-| Surface background | `--{variant}-{state}-background-color` | `--flat-enabled-background-color` |
-| Surface border | `--{variant}-{state}-border-color` | `--raised-hover-border-color` |
-| Text / icon on surface | `--on-{variant}-{role}-color` | `--on-normal-active-color`, `--on-flat-neutral-color`, `--on-raised-disabled-color` |
+| Purpose                | Pattern                                | Example                                                                             |
+| ---------------------- | -------------------------------------- | ----------------------------------------------------------------------------------- |
+| Surface background     | `--{variant}-{state}-background-color` | `--flat-enabled-background-color`                                                   |
+| Surface border         | `--{variant}-{state}-border-color`     | `--raised-hover-border-color`                                                       |
+| Text / icon on surface | `--on-{variant}-{role}-color`          | `--on-normal-active-color`, `--on-flat-neutral-color`, `--on-raised-disabled-color` |
 
 Where:
+
 - **variant** = `flat`, `normal`, `raised`, `amplified`, `indent`, `selected` (or `integration-normal`, etc.)
 - **state** = `enabled`, `activated`, `hover`, `pressed`, `focused`, `disabled`
 - **role** = `active` (primary text/icon), `neutral` (secondary), `disabled`
@@ -210,17 +308,23 @@ The mixin always generates an `.activated` rule. Toggle it programmatically via 
 
 .wrapper.flat {
   @mixin style style=flat visibleWrapperClass=.visible-wrapper;
-  .button-text { color: var(--on-flat-active-color); }
+  .button-text {
+    color: var(--on-flat-active-color);
+  }
 }
 
 .wrapper.normal {
   @mixin style style=normal visibleWrapperClass=.visible-wrapper;
-  .button-text { color: var(--on-normal-active-color); }
+  .button-text {
+    color: var(--on-normal-active-color);
+  }
 }
 
 .wrapper.raised {
   @mixin style style=raised visibleWrapperClass=.visible-wrapper;
-  .button-text { color: var(--on-raised-active-color); }
+  .button-text {
+    color: var(--on-raised-active-color);
+  }
 }
 
 /* Visual target */
@@ -240,15 +344,19 @@ The mixin always generates an `.activated` rule. Toggle it programmatically via 
 Defined in `src/main.css`:
 
 ```css
-html { --obc-can-hover: 1; }
+html {
+  --obc-can-hover: 1;
+}
 ```
 
 The `@mixin style` hover state uses `color-mix()` to blend hover colors based on this variable:
 
 ```css
-background-color: color-mix(in srgb,
+background-color: color-mix(
+  in srgb,
   var(--flat-hover-background-color) calc(var(--obc-can-hover) * 100%),
-  var(--base-background-color));
+  var(--base-background-color)
+);
 ```
 
 - `1` → full hover feedback (default)
@@ -262,11 +370,11 @@ This is wrapped in `@media (hover:hover)`, so touch-only devices never see hover
 
 Three alert-level mixins in `src/mixins/alert.css` provide interaction states for alarm-colored buttons:
 
-| Mixin | Color variable prefix | Usage |
-|-------|----------------------|-------|
-| `@mixin alert-alarm $wrapperClass` | `--alarm-*` | Highest severity |
-| `@mixin alert-critical $wrapperClass` | `--critical-*` | Critical severity |
-| `@mixin alert-caution $wrapperClass` | `--caution-*` | Caution/warning severity |
+| Mixin                                 | Color variable prefix | Usage                    |
+| ------------------------------------- | --------------------- | ------------------------ |
+| `@mixin alert-alarm $wrapperClass`    | `--alarm-*`           | Highest severity         |
+| `@mixin alert-critical $wrapperClass` | `--critical-*`        | Critical severity        |
+| `@mixin alert-caution $wrapperClass`  | `--caution-*`         | Caution/warning severity |
 
 Each generates `enabled`, `hover`, `active`, and `focus-visible` states — same pattern as `@mixin style` but with alarm-specific color families.
 
@@ -275,33 +383,68 @@ Each generates `enabled`, `hover`, `active`, and `focus-visible` states — same
 `variables.css` registers four CSS `@property` values used for blink animation:
 
 ```css
-@property --alarm-blink-on  { syntax: "<number>"; inherits: true; initial-value: 1; }
-@property --alarm-blink-off { syntax: "<number>"; inherits: true; initial-value: 0; }
-@property --warning-blink-on  { syntax: "<number>"; inherits: true; initial-value: 1; }
-@property --warning-blink-off { syntax: "<number>"; inherits: true; initial-value: 0; }
+@property --alarm-blink-on {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+@property --alarm-blink-off {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+@property --warning-blink-on {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+@property --warning-blink-off {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
 ```
 
-A shared `@keyframes warning-blink` orchestrates two blink rates:
-- **Alarm** blinks 4× per cycle (fast)
-- **Warning** blinks 2× per cycle (slow)
+The animation itself is driven from TypeScript, **not** from a CSS `@keyframes`.
+`src/palettes/blinking.ts` exports `blinkingInstall()`, which uses the Web
+Animations API (`el.animate()`) to alternate the `-on` / `-off` pair over a
+per-severity period:
+
+| Severity | Period  |
+| -------- | ------- |
+| Critical | 1000 ms |
+| Alarm    | 2000 ms |
+| Warning  | 4000 ms |
+| Low      | 8000 ms |
+
+Call sites: `alert-frame`, `alert-icon` and `alert-button`. The plugin still
+emits the old `@keyframes warning-blink` and a `:root { animation: … }` rule;
+`npm run palette:strip` removes both when regenerating `variables.css`
+(#1116, #1134).
 
 Components apply the animation by binding opacity to these properties:
 
 ```css
-.blinking.alert-type-alarm .visible-wrapper { opacity: var(--alarm-blink-on); }
-.blinking.alert-type-alarm .blink           { opacity: var(--alarm-blink-off); }
+.blinking.alert-type-alarm .visible-wrapper {
+  opacity: var(--alarm-blink-on);
+}
+.blinking.alert-type-alarm .blink {
+  opacity: var(--alarm-blink-off);
+}
 ```
 
 ---
 
 ### Other CSS Mixins
 
-| File | Mixin | Purpose |
-|------|-------|---------|
-| `src/mixins/card.css` | `@mixin card` | Card surface: `border-radius: 8px`, `background: var(--container-global-color)`, `box-shadow: var(--shadow-floating)` |
-| `src/mixins/outline-inward.css` | `@mixin outline-inward $wrapperClass` | Focus outline with `outline-offset: -2px` applied on `:focus-visible` |
-| `src/mixins/base-input-field.css` | Several (`base-input-field-wrapper`, `base-input-field-label`, etc.) | Shared input field chrome: labels, helper text, error borders, disabled states |
-| `src/mixins/scrollbar.css` | `@mixin scrollbar` | Custom scrollbar styling via `::-webkit-scrollbar-*` pseudo-elements. Uses `--obc-scrollbar-*` variables |
+| File                                 | Mixin                                                                          | Purpose                                                                                                                                                                                                                                                |
+| ------------------------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `src/mixins/card.css`                | `@mixin card`                                                                  | Card surface: `border-radius: 8px`, `background: var(--container-global-color)`, `box-shadow: var(--shadow-floating)`                                                                                                                                  |
+| `src/mixins/outline-inward.css`      | `@mixin outline-inward $wrapperClass`                                          | Focus outline with `outline-offset: -2px` applied on `:focus-visible`                                                                                                                                                                                  |
+| `src/mixins/base-input-field.css`    | Several (`base-input-field-wrapper`, `base-input-field-label`, etc.)           | Shared input field chrome: labels, helper text, error borders, disabled states                                                                                                                                                                         |
+| `src/mixins/scrollbar.css`           | `@mixin scrollbar`                                                             | Custom scrollbar styling via `::-webkit-scrollbar-*` pseudo-elements. Uses `--obc-scrollbar-*` variables. Apply on an ancestor of the scrolling element (`:host` in `obc-scrollbar`, the grid container in `obc-table`): the rules nest as descendants |
+| `src/mixins/indeterminate-slide.css` | `@mixin indeterminate-slide-keyframes`                                         | The `indeterminate-slide` keyframes the progress bar and the progress button share; use at the top level of the stylesheet                                                                                                                             |
+| `src/mixins/readout.css`             | `@mixin readout-block-color-bridge $prefix`, `@mixin readout-block-slot-icons` | What `obc-readout` and `obc-readout-list-item` share about `obc-readout-block`: the colour-variable bridge and the forwarded icon sizing                                                                                                               |
 
 ---
 
@@ -313,56 +456,56 @@ All font mixins are defined in `src/mixins/fonts.css`. Each sets `font-family`, 
 
 For buttons, labels, body text, and headings:
 
-| Mixin | Typical use |
-|-------|-------------|
-| `@mixin font-button` | Button labels |
-| `@mixin font-button-two-line` | Two-line button labels |
-| `@mixin font-button-l` | Large button labels |
-| `@mixin font-label` | Secondary labels, captions |
-| `@mixin font-label-active` | Active/selected labels |
-| `@mixin font-body` | Body text |
-| `@mixin font-body-active` | Bold body text |
-| `@mixin font-overline` | Overline text |
-| `@mixin font-overline-new` | Updated overline text  |
-| `@mixin font-subtitle` | Subtitles |
-| `@mixin font-title` | Titles |
+| Mixin                         | Typical use                |
+| ----------------------------- | -------------------------- |
+| `@mixin font-button`          | Button labels              |
+| `@mixin font-button-two-line` | Two-line button labels     |
+| `@mixin font-button-l`        | Large button labels        |
+| `@mixin font-label`           | Secondary labels, captions |
+| `@mixin font-label-active`    | Active/selected labels     |
+| `@mixin font-body`            | Body text                  |
+| `@mixin font-body-active`     | Bold body text             |
+| `@mixin font-overline`        | Overline text              |
+| `@mixin font-overline-new`    | Updated overline text      |
+| `@mixin font-subtitle`        | Subtitles                  |
+| `@mixin font-title`           | Titles                     |
 
 #### Instrument fonts
 
 For numeric readouts, units, and scale labels in gauges and instruments:
 
-| Mixin | Typical use |
-|-------|-------------|
-| `@mixin font-instrument-value-small-active` | Small active numeric value |
-| `@mixin font-instrument-value-small-neutral` | Small neutral numeric value |
-| `@mixin font-instrument-value-regular-active` | Regular active numeric value |
-| `@mixin font-instrument-value-regular-neutral` | Regular neutral numeric value |
-| `@mixin font-instrument-value-m-active` | Medium active numeric value |
-| `@mixin font-instrument-value-m-neutral` | Medium neutral numeric value |
-| `@mixin font-instrument-value-enhanced-active` | Enhanced active numeric value |
+| Mixin                                           | Typical use                    |
+| ----------------------------------------------- | ------------------------------ |
+| `@mixin font-instrument-value-small-active`     | Small active numeric value     |
+| `@mixin font-instrument-value-small-neutral`    | Small neutral numeric value    |
+| `@mixin font-instrument-value-regular-active`   | Regular active numeric value   |
+| `@mixin font-instrument-value-regular-neutral`  | Regular neutral numeric value  |
+| `@mixin font-instrument-value-m-active`         | Medium active numeric value    |
+| `@mixin font-instrument-value-m-neutral`        | Medium neutral numeric value   |
+| `@mixin font-instrument-value-enhanced-active`  | Enhanced active numeric value  |
 | `@mixin font-instrument-value-enhanced-neutral` | Enhanced neutral numeric value |
-| `@mixin font-instrument-label` | Instrument labels and units |
-| `@mixin font-instrument-unit` | Unit suffixes (%, °, kn) |
-| `@mixin font-instrument-tick-mark` | Scale tick labels |
-| `@mixin font-instrument-tick-mark-active` | Active scale tick labels |
+| `@mixin font-instrument-label`                  | Instrument labels and units    |
+| `@mixin font-instrument-unit`                   | Unit suffixes (%, °, kn)       |
+| `@mixin font-instrument-tick-mark`              | Scale tick labels              |
+| `@mixin font-instrument-tick-mark-active`       | Active scale tick labels       |
 
 #### Automation fonts
 
 For automation readouts and state labels:
 
-| Mixin | Typical use |
-|-------|-------------|
-| `@mixin font-automation-value-small` | Small automation readout (on) |
-| `@mixin font-automation-value-small-off` | Small automation readout (off) |
-| `@mixin font-automation-value-regular` | Regular automation readout (on) |
+| Mixin                                      | Typical use                      |
+| ------------------------------------------ | -------------------------------- |
+| `@mixin font-automation-value-small`       | Small automation readout (on)    |
+| `@mixin font-automation-value-small-off`   | Small automation readout (off)   |
+| `@mixin font-automation-value-regular`     | Regular automation readout (on)  |
 | `@mixin font-automation-value-regular-off` | Regular automation readout (off) |
-| `@mixin font-automation-value-enhanced` | Enhanced automation readout |
+| `@mixin font-automation-value-enhanced`    | Enhanced automation readout      |
 
 #### Overlay font
 
-| Mixin | Purpose |
-|-------|---------|
-| `@mixin font-overlay-outline-shadow` | Text shadow for legibility on map/video overlays |
+| Mixin                                | Purpose                                                                                    |
+| ------------------------------------ | ------------------------------------------------------------------------------------------ |
+| `@mixin font-overlay-outline-shadow` | Text shadow for legibility on map/video overlays (defined in `src/mixins/font-extras.css`) |
 
 ---
 
@@ -370,12 +513,20 @@ For automation readouts and state labels:
 
 All size-dependent tokens are defined four times in `variables.css`, once per size class:
 
-| Class | Touch target | Visual target | Icon size |
-|-------|-------------|---------------|-----------|
-| `:root`, `.obc-component-size-regular` | 48 px | 32 px | 24 px |
-| `.obc-component-size-medium` | 56 px | 40 px | 32 px |
-| `.obc-component-size-large` | 72 px | 56 px | 40 px |
-| `.obc-component-size-xl` | (larger) | (larger) | (larger) |
+| Class                                  | Touch target | Visual target | Icon size |
+| -------------------------------------- | ------------ | ------------- | --------- |
+| `:root`, `.obc-component-size-regular` | 48 px        | 32 px         | 24 px     |
+| `.obc-component-size-medium`           | 56 px        | 40 px         | 32 px     |
+| `.obc-component-size-large`            | 72 px        | 56 px         | 40 px     |
+| `.obc-component-size-xl`               | 96 px        | 72 px         | 48 px     |
+
+`regular` is the smallest size class, and `:root` carries the same values, so
+48 px is the touch-target floor even when no size class is set. Individual
+components may follow their own scaling curve through their per-component
+tokens (e.g. `--automation-components-button-touch-target-size` is 48/72/96/96
+across the four classes), but no class takes any touch target below 48 px.
+Minimum-size rules and the standards behind them live in
+[`docs/agents/a11y.md` § Touch & pointer target size](docs/agents/a11y.md).
 
 Each class overrides the same variable names (`--global-size-spacing-touch-target-min`, `--global-size-spacing-visual-target-min`, `--global-size-spacing-icon-icon-size-regular`, all `--ui-components-*` sizing tokens, typography tokens, etc.) with scaled values.
 
@@ -383,11 +534,38 @@ Each class overrides the same variable names (`--global-size-spacing-touch-targe
 
 ```html
 <div class="obc-component-size-large">
-  <obc-button label="Bigger"></obc-button>   <!-- 72px touch, 56px visual -->
+  <obc-button label="Bigger"></obc-button>
+  <!-- 72px touch, 56px visual -->
 </div>
 ```
 
 Components should never reference a specific size class internally — they consume the tokens and let the ancestor decide.
+
+---
+
+### Categorical Colour Classes
+
+Figma's `Color-categorical` collection has ten modes, exported as classes the
+same way: `obc-categorical-color-neutral` (the `:root` default), `-blue`,
+`-cyan`, `-teal`, `-green`, `-yellow`, `-orange`, `-red`, `-purple`,
+`-indigo`. Each class sets `--categorical-shade-{050…600,050-tint}` to one
+`--base-*` ramp, the `--base-categorical-*` names the vessel icons read, and
+the four `--vessel-*` tokens, all as `var()` references so the values follow
+the active theme. Every mode-dependent token is declared inside the class rule
+on purpose: a `var()` is substituted on the element that declares it, so an
+alias on `:root` would freeze the neutral ramp for the whole tree. Put the
+class on `<html>` for an app-wide default or on any ancestor for one subtree,
+at or below the element carrying `data-obc-theme`:
+
+```html
+<div class="obc-categorical-color-green">
+  <obi-vessel-type-cargo-colour usecsscolor></obi-vessel-type-cargo-colour>
+</div>
+```
+
+The block is hand-written in `src/palettes/manual.css` until the plugin
+exports the collection (#1187); the story _Palettes/Categorical Colour_ renders
+every mode.
 
 ---
 
@@ -396,16 +574,25 @@ Components should never reference a specific size class internally — they cons
 Four theme blocks in `variables.css` override hundreds of color variables:
 
 ```css
-:root, :root[data-obc-theme="day"]   { /* default */ }
-:root[data-obc-theme="dusk"]          { /* ... */ }
-:root[data-obc-theme="night"]         { /* ... */ }
-:root[data-obc-theme="bright"]        { /* ... */ }
+:root,
+:root[data-obc-theme="day"] {
+  /* default */
+}
+:root[data-obc-theme="dusk"] {
+  /* ... */
+}
+:root[data-obc-theme="night"] {
+  /* ... */
+}
+:root[data-obc-theme="bright"] {
+  /* ... */
+}
 ```
 
 Set `data-obc-theme` on `<html>` or any ancestor to switch themes:
 
 ```html
-<html data-obc-theme="night">
+<html data-obc-theme="night"></html>
 ```
 
 Every theme overrides the same variable names (`--element-active-color`, `--container-global-color`, `--flat-enabled-background-color`, etc.), so components reference variables directly and are theme-agnostic.
@@ -416,15 +603,15 @@ Every theme overrides the same variable names (`--element-active-color`, `--cont
 
 These patterns appear across most components and can be used as a baseline when creating new ones:
 
-| Pattern | Usage | Where |
-|---------|-------|-------|
-| `* { box-sizing: border-box; }` | Prevents padding from expanding elements | Top of most component CSS files |
-| `user-select: none` | Prevents text selection on interactive elements | `.wrapper` of all buttons/controls |
-| `appearance: none; border: none; background: none;` | Resets native `<button>` styling | `.wrapper` when using `<button>` as the outer element |
-| `:host { display: block; }` | Block-level components (tables, modals, lists) | Component host |
-| `:host { display: inline-block; }` | Inline interactive elements (buttons) | Component host |
-| `:host { display: inline-flex; }` | Charts and inline containers | Component host |
-| `* { -webkit-tap-highlight-color: transparent; }` | Removes blue tap flash on mobile | Auto-injected by PostCSS plugin in `postcss.config.mjs` |
+| Pattern                                             | Usage                                           | Where                                                   |
+| --------------------------------------------------- | ----------------------------------------------- | ------------------------------------------------------- |
+| `* { box-sizing: border-box; }`                     | Prevents padding from expanding elements        | Top of most component CSS files                         |
+| `user-select: none`                                 | Prevents text selection on interactive elements | `.wrapper` of all buttons/controls                      |
+| `appearance: none; border: none; background: none;` | Resets native `<button>` styling                | `.wrapper` when using `<button>` as the outer element   |
+| `:host { display: block; }`                         | Block-level components (tables, modals, lists)  | Component host                                          |
+| `:host { display: inline-block; }`                  | Inline interactive elements (buttons)           | Component host                                          |
+| `:host { display: inline-flex; }`                   | Charts and inline containers                    | Component host                                          |
+| `* { -webkit-tap-highlight-color: transparent; }`   | Removes blue tap flash on mobile                | Auto-injected by PostCSS plugin in `postcss.config.mjs` |
 
 #### `::slotted()` styling for icons
 
@@ -439,8 +626,24 @@ Slotted icons are constrained to the component's icon-size token:
 
 ## 🎴 Icons
 
-The icons are exported to webcomponents in the `packages/openbridge-webcomponents/src/icons` directory.
-They are exported from figma by running: `npm run download:icons`.
+All icon components live in `packages/openbridge-webcomponents/src/icons` and are
+**fully generated** from Figma — never hand-edit them. The pipeline is:
+
+1. `script/download-icons.ts` (`npm run download:icons`) fetches every node tagged
+   as an icon from the OpenBridge Figma file via the [`figma-api`](https://www.npmjs.com/package/figma-api)
+   package, rasterises each node's vector data to an SVG payload, and writes the
+   raw SVGs to `script/.cache/icons/*.svg` (gitignored).
+2. `script/convert-icons.ts` walks the cache and emits one Lit element per icon
+   (`src/icons/icon-<kebab-name>.ts`, registered as `<obi-<kebab-name>>`), plus
+   the barrel `src/icons/index.ts` and the runtime registry `src/icons/names.ts`.
+3. For each fill/stroke color the converter looks up the Figma `VariableID` in
+   `script/figmavariables.json` and rewrites the literal hex into
+   `var(--<token>)` so themed icons follow the active palette. Unknown IDs fall
+   back to the literal hex color (see "Unknown variable fallback" below).
+
+Inputs, the step-by-step refresh, the unresolved-variable fallback, the
+consuming-component checklist (wind is the worked example) and the snapshot
+strategy are in [docs/agents/figma-refresh.md](docs/agents/figma-refresh.md).
 
 ## 📄 Create a new component
 
@@ -472,7 +675,7 @@ Booleans that default to `true` must use `attribute: false` to remove the HTML a
 
 Framework wrappers (React, Vue, etc.) always set values via properties, so removing the attribute has no effect on wrapper consumers.
 
-See [AGENTS.md § 2](AGENTS.md#2-coding-standards) for the full rule and examples.
+See [docs/agents/coding-standards.md § Boolean property naming](docs/agents/coding-standards.md#boolean-property-naming) for the full rule and examples.
 
 ## 🧭 SVG based components
 

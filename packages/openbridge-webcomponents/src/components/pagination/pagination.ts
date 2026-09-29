@@ -13,6 +13,7 @@ import '../../icons/icon-chevron-left-google.js';
 import '../../icons/icon-chevron-right-google.js';
 import '../../icons/icon-page-last-google.js';
 import {ObcToggleButtonOptionVariant} from '../toggle-button-option/toggle-button-option.js';
+import {clamp} from '../../svghelpers/math.js';
 
 /**
  * Enumerates the supported style variants for the Pagination component.
@@ -40,6 +41,14 @@ export type ObcPaginationValueChangeEvent = CustomEvent<{value: number}>;
 export type ObcPaginationNavigateEvent = CustomEvent<{
   action: 'first' | 'previous' | 'next' | 'last';
   currentPage: number;
+}>;
+
+/**
+ * Event fired when a page is selected.
+ * @event
+ */
+export type ObcPaginationSelectPageEvent = CustomEvent<{
+  page: number;
 }>;
 
 /**
@@ -97,49 +106,32 @@ export type ObcPaginationNavigateEvent = CustomEvent<{
  *
  * - `value` – Fired when the current page changes (via user interaction).
  * - `navigate` – Fired when a navigation arrow (first, previous, next, last) is clicked.
+ * - `select-page` – Fired when a specific page is selected.
  *
- * @fires value {ObcPaginationValueChangeEvent} Emitted whenever the current page changes.
- * @fires navigate {ObcPaginationNavigateEvent} Emitted when a navigation arrow is clicked.
+ * @property pages - Total number of pages available for navigation.
+ *   Must be a positive integer (minimum 1). If set below 1, defaults to 1.
+ * @property currentPage - The currently selected (active) page, 1-based index.
+ *   If set below 1 or above the total number of pages, it is clamped to the valid range.
+ * @property fullWidth - Expands the pagination controls to fill the width of the container.
+ *   When enabled, the page indicators (toggle button group or progress dots) stretch to align with the container.
+ * @property variant - Visual variant: `regular` (default) shows numbered page buttons and
+ *   navigation arrows, `flat` is the low-elevation style with flat toggle
+ *   buttons, and `condensed` replaces the numbers with progress indicator
+ *   dots.
+ * @fires {ObcPaginationValueChangeEvent} value - Emitted whenever the current page changes.
+ * @fires {ObcPaginationNavigateEvent} navigate - Emitted when a navigation arrow is clicked.
+ * @fires {ObcPaginationSelectPageEvent} select-page - Emitted when a specific page is selected.
+ * @stable
  */
 @customElement('obc-pagination')
 export class ObcPagination extends LitElement {
-  /**
-   * Visual style variant of the pagination component.
-   *
-   * - `regular`: Standard pagination with numbered page buttons and navigation arrows.
-   * - `flat`: Minimalist, low-elevation style with flat toggle buttons.
-   * - `condensed`: Compact mode with progress indicator dots and navigation arrows only.
-   *
-   * Default: `regular`
-   */
   @property({type: String}) variant: PaginationVariant =
     PaginationVariant.regular;
 
-  /**
-   * Total number of pages available for navigation.
-   *
-   * Must be a positive integer (minimum 1). If set below 1, defaults to 1.
-   *
-   * Default: `3`
-   */
   @property({type: Number}) pages = 3;
 
-  /**
-   * The currently selected (active) page, 1-based index.
-   *
-   * If set below 1 or above the total number of pages, it is clamped to the valid range.
-   *
-   * Default: `1`
-   */
   @property({type: Number, attribute: 'current-page'}) currentPage = 1;
 
-  /**
-   * Expands the pagination controls to fill the width of the container.
-   *
-   * When enabled, the page indicators (toggle button group or progress dots) stretch to align with the container.
-   *
-   * Default: `false`
-   */
   @property({type: Boolean, attribute: 'full-width', reflect: true}) fullWidth =
     false;
 
@@ -160,7 +152,7 @@ export class ObcPagination extends LitElement {
   }
 
   private get validatedCurrentPage() {
-    return Math.max(1, Math.min(this.currentPage, this.validatedPages));
+    return clamp(this.currentPage, 1, this.validatedPages);
   }
 
   private get canNavigatePrevious() {
@@ -194,14 +186,19 @@ export class ObcPagination extends LitElement {
   }
 
   private setCurrentPage(newPage: number) {
-    const page = Math.max(1, Math.min(newPage, this.validatedPages));
-    if (page === this.currentPage) return;
+    const page = clamp(newPage, 1, this.validatedPages);
+    if (page === this.currentPage) {
+      return false;
+    }
+
     this.currentPage = page;
     this.dispatchEvent(
       new CustomEvent('value', {
         detail: {value: page},
       }) as ObcPaginationValueChangeEvent
     );
+
+    return true;
   }
 
   private dispatchNavigateEvent(
@@ -215,7 +212,15 @@ export class ObcPagination extends LitElement {
   }
 
   private handlePageChange = (event: CustomEvent<{value: string}>) => {
-    this.setCurrentPage(Number(event.detail.value));
+    const success = this.setCurrentPage(Number(event.detail.value));
+
+    if (success) {
+      this.dispatchEvent(
+        new CustomEvent('select-page', {
+          detail: {page: Number(event.detail.value)},
+        }) as ObcPaginationSelectPageEvent
+      );
+    }
   };
 
   private handleFirstClick = () => {
@@ -292,16 +297,19 @@ export class ObcPagination extends LitElement {
           <obi-chevron-left-google></obi-chevron-left-google>
         </obc-icon-button>
 
-        ${this.isCondensed
-          ? this.renderProgressIndicatorDots()
-          : html`<obc-toggle-button-group
-              .value=${this.validatedCurrentPage.toString()}
-              .variant=${this.toggleButtonVariant}
-              ?disabled=${this.disabled}
-              @value=${this.handlePageChange}
-            >
-              ${this.renderToggleButtons()}
-            </obc-toggle-button-group>`}
+        ${
+          this.isCondensed
+            ? this.renderProgressIndicatorDots()
+            : html`<obc-toggle-button-group
+                aria-label="Pages"
+                .value=${this.validatedCurrentPage.toString()}
+                .variant=${this.toggleButtonVariant}
+                ?disabled=${this.disabled}
+                @value=${this.handlePageChange}
+              >
+                ${this.renderToggleButtons()}
+              </obc-toggle-button-group>`
+        }
 
         <obc-icon-button
           variant="flat"

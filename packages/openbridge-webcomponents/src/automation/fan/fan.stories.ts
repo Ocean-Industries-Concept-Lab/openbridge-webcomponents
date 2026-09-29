@@ -17,13 +17,12 @@ const meta: Meta<typeof ObcFan> = {
   component: 'obc-fan',
   decorators: [crossDecorator],
   args: {
-    tag: '0012',
+    tag: '#0012',
     readoutPosition: AutomationButtonReadoutPosition.bottom,
     readoutSize: AutomationButtonReadoutStackSize.regular,
     alert: false,
     progress: false,
     showReadoutStack: true,
-    hasIdTag: true,
   },
   argTypes: {
     ...argTypesAbstractAutomationButtonMotorized,
@@ -38,7 +37,7 @@ type Story = StoryObj<ObcFan>;
 
 export const FanOn: Story = {
   args: {
-    on: true,
+    turnedOn: true,
     direction: AutomationButtonDirection.forward,
     labelDirection: AutomationButtonLabelDirection.up,
   },
@@ -46,7 +45,7 @@ export const FanOn: Story = {
 
 export const FanOff: Story = {
   args: {
-    on: false,
+    turnedOn: false,
     direction: AutomationButtonDirection.backwardFast,
     labelDirection: AutomationButtonLabelDirection.left,
   },
@@ -54,7 +53,7 @@ export const FanOff: Story = {
 
 export const FanComponentSize: Story = {
   args: {
-    on: true,
+    turnedOn: true,
     direction: AutomationButtonDirection.forward,
     labelDirection: AutomationButtonLabelDirection.up,
     variant: AutomationButtonVariant.double,

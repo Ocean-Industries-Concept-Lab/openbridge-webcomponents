@@ -7,6 +7,7 @@ import '../icon-button/icon-button.js';
 import '../slider/slider.js';
 import '../../icons/icon-media-pause.js';
 import '../../icons/icon-media-play.js';
+import {clamp} from '../../svghelpers/math.js';
 
 /**
  * Audio recording status
@@ -80,41 +81,30 @@ export enum AudioRecordingStatus {
  *
  * ---
  *
- * @fires status-toggle {CustomEvent<{isPlaying: boolean}>} Fired when the play/pause button is clicked, containing the desired isPlaying state.
+ * @property audioLevels - Array of audio level values (0-1) for waveform visualization.
+ *   New values should be added to the end (right side) and old values shift left.
+ * @property duration - Current duration in seconds, displayed as MM:SS.
+ * @property status - Recording status - 'recording', 'paused', or 'playback'.
+ * @property playbackPosition - Current playback position (0-1) for playback mode slider.
+ * @property isPlaying - Whether audio is currently playing (only relevant in playback mode).
+ *   When true, shows pause icon; when false, shows play icon.
+ * @property enhanced - Enhanced style that displays waveform bars with neutral enhanced color.
+ * @fires {CustomEvent<{isPlaying: boolean}>} status-toggle - Fired when the play/pause button is clicked, containing the desired isPlaying state.
+ * @beta
  */
 @customElement('obc-audio-recording-item')
 export class ObcAudioRecordingItem extends LitElement {
-  /**
-   * Array of audio level values (0-1) for waveform visualization.
-   * New values should be added to the end (right side) and old values shift left.
-   */
   @property({type: Array}) audioLevels: number[] = [];
 
-  /**
-   * Current duration in seconds, displayed as MM:SS.
-   */
   @property({type: Number}) duration = 0;
 
-  /**
-   * Recording status - 'recording', 'paused', or 'playback'.
-   */
   @property({type: String}) status: AudioRecordingStatus =
     AudioRecordingStatus.Recording;
 
-  /**
-   * Current playback position (0-1) for playback mode slider.
-   */
   @property({type: Number}) playbackPosition = 0;
 
-  /**
-   * Whether audio is currently playing (only relevant in playback mode).
-   * When true, shows pause icon; when false, shows play icon.
-   */
   @property({type: Boolean}) isPlaying = false;
 
-  /**
-   * Enhanced style that displays waveform bars with neutral enhanced color.
-   */
   @property({type: Boolean}) enhanced = false;
 
   @state() private barCount = 40;
@@ -229,7 +219,7 @@ export class ObcAudioRecordingItem extends LitElement {
     // Show the most recent levels (from the end of the array)
     const startIndex = levelCount - barsToShow;
     for (let i = 0; i < barsToShow; i++) {
-      const level = Math.max(0, Math.min(1, this.audioLevels[startIndex + i]));
+      const level = clamp(this.audioLevels[startIndex + i], 0, 1);
       const height = minBarHeight + level * (maxBarHeight - minBarHeight);
       bars.push(
         html`<div class="waveform-bar" style="height: ${height}px"></div>`
@@ -269,26 +259,32 @@ export class ObcAudioRecordingItem extends LitElement {
         })}
       >
         <div class="recording-container">
-          ${isPlayback
-            ? html`
-                <obc-icon-button
-                  class="status-toggle-button"
-                  variant="normal"
-                  cornerLeft
-                  @click=${this.handleStatusToggle}
-                  aria-label=${this.isPlaying ? 'Pause' : 'Play'}
-                >
-                  ${this.isPlaying
-                    ? html`<obi-media-pause></obi-media-pause>`
-                    : html`<obi-media-play></obi-media-play>`}
-                </obc-icon-button>
-              `
-            : nothing}
-          ${isPlayback
-            ? this.renderPlaybackSlider()
-            : html`<div class="audio-recording-container">
-                ${this.renderWaveform()}
-              </div>`}
+          ${
+            isPlayback
+              ? html`
+                  <obc-icon-button
+                    class="status-toggle-button"
+                    variant="normal"
+                    cornerLeft
+                    @click=${this.handleStatusToggle}
+                    aria-label=${this.isPlaying ? 'Pause' : 'Play'}
+                  >
+                    ${
+                      this.isPlaying
+                        ? html`<obi-media-pause></obi-media-pause>`
+                        : html`<obi-media-play></obi-media-play>`
+                    }
+                  </obc-icon-button>
+                `
+              : nothing
+          }
+          ${
+            isPlayback
+              ? this.renderPlaybackSlider()
+              : html`<div class="audio-recording-container">
+                  ${this.renderWaveform()}
+                </div>`
+          }
           <div class="duration-container">
             <span class="duration-label"
               >${this.formatDuration(this.duration)}</span

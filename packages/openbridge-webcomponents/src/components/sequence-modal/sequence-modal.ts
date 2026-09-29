@@ -1,6 +1,8 @@
 import {LitElement, html, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
+import {ifDefined} from 'lit/directives/if-defined.js';
 import {customElement} from '../../decorator.js';
+import {ModalFocusController} from '../../internal/modal-focus-controller.js';
 import componentStyle from './sequence-modal.css?inline';
 import {
   SequenceStyle,
@@ -44,7 +46,17 @@ export enum ObcSequenceModalType {
  * - Default slot: Main content area.
  *
  * Events:
- * - `close-click`: Fired when the close icon is clicked.
+ * - `close-click`: Fired when the close icon is clicked or `Escape` is pressed.
+ *
+ * Keyboard:
+ * - APG modal dialog (https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/):
+ *   the card has no open state, so rendering it opens it and removing it
+ *   closes it. Focus lands on the dialog on connect, `Tab` and `Shift+Tab`
+ *   cycle inside it, `Escape` fires `close-click`, and focus returns to the
+ *   opener on disconnect. The dialog is named by `modalTitle`, and unnamed
+ *   while that is empty.
+ *
+ * Left out: a description (`aria-describedby`).
  *
  * Best Practices:
  * - Keep titles short; use `subtitle` for additional context.
@@ -59,6 +71,11 @@ export enum ObcSequenceModalType {
  * ```
  *
  * Keywords: modal, sequence, step, dialog, progress, actions.
+ *
+ * @slot actions - Actions row content (shown when `hasActions` is true).
+ * @slot - Main content area.
+ * @fires {CustomEvent<void>} close-click - Fired when the close icon is clicked or `Escape` is pressed.
+ * @experimental
  */
 @customElement('obc-sequence-modal')
 export class ObcSequenceModal extends LitElement {
@@ -79,6 +96,17 @@ export class ObcSequenceModal extends LitElement {
 
   @property({type: String}) closeLabel = 'Close';
 
+  protected readonly focusController = new ModalFocusController(
+    this,
+    () => this.shadowRoot?.querySelector('.sequence-modal') ?? null
+  );
+
+  private onKeydown(event: KeyboardEvent) {
+    if (event.key !== 'Escape' || event.defaultPrevented) return;
+    event.preventDefault();
+    this.onCloseClick();
+  }
+
   private get isTwoLine() {
     return this.type === ObcSequenceModalType.TwoLine;
   }
@@ -92,7 +120,14 @@ export class ObcSequenceModal extends LitElement {
     const subtitle = this.isTwoLine ? this.subtitle : '';
 
     return html`
-      <div class="sequence-modal type-${this.type}">
+      <div
+        class="sequence-modal type-${this.type}"
+        role="dialog"
+        aria-modal="true"
+        aria-label=${ifDefined(this.modalTitle || undefined)}
+        tabindex="-1"
+        @keydown=${this.onKeydown}
+      >
         <obc-sequence-card
           class="sequence-modal-card"
           .size=${ObcSequenceCardSize.Regular}

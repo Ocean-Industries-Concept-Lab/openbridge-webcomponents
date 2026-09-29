@@ -32,6 +32,40 @@ import {
 
 export {RotType, LinearRotPosition};
 
+/** Filled segment of the track band, in SVG user-space x-coordinates (center-origin). */
+export interface WatchFlatBarArea {
+  startX: number;
+  endX: number;
+  fillColor: string;
+}
+
+/** Needle marker spanning the track band at `x` (center-origin). */
+export interface WatchFlatNeedle {
+  x: number;
+  fillColor: string;
+  strokeColor: string;
+}
+
+/**
+ * @property barAreas - Filled segments rendered inside the track band (the linear counterpart of the radial bar areas).
+ * @property needles - Needle markers spanning the track band (the linear counterpart of the radial needles).
+ * @availableWhen rotPosition rotType!=undefined
+ * @property rotStartX - Bar start position in SVG user-space x-coordinates (center-origin). Computed by the parent instrument.
+ * @availableWhen rotStartX rotType!=undefined
+ * @property rotEndX - Bar end position in SVG user-space x-coordinates (center-origin). Computed by the parent instrument.
+ * @availableWhen rotEndX rotType!=undefined
+ * @property rotDotSpacing - Pixel spacing between adjacent dots in the linear ROT strip.
+ *   Must be > 0 to enable animation; the default `0` intentionally disables
+ *   the spinning dots so the parent instrument must supply a meaningful value
+ *   derived from the current scale (e.g. `LINEAR_DOT_ANGLE_SPACING * translationScale`).
+ * @availableWhen rotDotSpacing rotType!=undefined
+ * @availableWhen rotPriority rotType!=undefined
+ * @availableWhen rotPortStarboard rotType!=undefined
+ * @availableWhen rotAtZeroDeadband rotType==bar
+ * @availableWhen rateOfTurnDegreesPerMinute rotType!=undefined
+ * @availableWhen rotDotAnimationFactor rotType!=undefined
+ * @experimental
+ */
 @customElement('obc-watch-flat')
 export class ObcWatchFlat extends LitElement {
   @property({type: Number}) width = 352;
@@ -48,38 +82,46 @@ export class ObcWatchFlat extends LitElement {
   @property({type: Number}) ticksHeight = this.height - this.trackHeight;
   @property({type: Number}) borderRadius = 8;
   @property({type: Boolean}) bottomBar = false;
+  @property({type: Array, attribute: false}) barAreas: WatchFlatBarArea[] = [];
+  @property({type: Array, attribute: false}) needles: WatchFlatNeedle[] = [];
 
   @property({type: String}) rotType: RotType | undefined;
   @property({type: String}) rotPosition: LinearRotPosition =
     LinearRotPosition.track;
-  /** Bar start position in SVG user-space x-coordinates (center-origin). Computed by the parent instrument. */
   @property({type: Number}) rotStartX: number = 0;
-  /** Bar end position in SVG user-space x-coordinates (center-origin). Computed by the parent instrument. */
   @property({type: Number}) rotEndX: number = 0;
-  /**
-   * Pixel spacing between adjacent dots in the linear ROT strip.
-   * Must be > 0 to enable animation; the default `0` intentionally disables
-   * the spinning dots so the parent instrument must supply a meaningful value
-   * derived from the current scale (e.g. `LINEAR_DOT_ANGLE_SPACING * translationScale`).
-   */
   @property({type: Number}) rotDotSpacing: number = 0;
   @property({type: String}) rotPriority: Priority = Priority.regular;
   @property({type: Boolean}) rotPortStarboard: boolean = false;
   @property({type: Number}) rotAtZeroDeadband: number = ROT_ZERO_DEADBAND_PX;
 
+  @property({type: Number}) rateOfTurnDegreesPerMinute: number | undefined;
+  @property({type: Number}) rotDotAnimationFactor: number = 18;
+
+  /**
+   * @deprecated Use `rateOfTurnDegreesPerMinute` (and optionally
+   * `rotDotAnimationFactor`) instead. Takes effect only when
+   * `rateOfTurnDegreesPerMinute` is `undefined`.
+   */
   @property({type: Number})
   set rotationsPerMinute(value: number) {
-    this._rotationsPerMinute = value;
-    if (this._rotController) {
-      this._rotController.rotationsPerMinute = value;
-    }
+    this._legacyRotationsPerMinute = value;
   }
   get rotationsPerMinute() {
-    return this._rotationsPerMinute;
+    return this._legacyRotationsPerMinute;
   }
 
-  private _rotationsPerMinute = 0;
+  private _legacyRotationsPerMinute = 0;
   private _rotController?: RateOfTurnController;
+
+  private get _effectiveRpm(): number {
+    if (this.rateOfTurnDegreesPerMinute != null) {
+      return (
+        (this.rateOfTurnDegreesPerMinute / 360) * this.rotDotAnimationFactor
+      );
+    }
+    return this._legacyRotationsPerMinute;
+  }
 
   private get totalHeight(): number {
     return this.bottomBar ? this.height + this.ticksHeight : this.height;
@@ -189,6 +231,54 @@ export class ObcWatchFlat extends LitElement {
     `;
   }
 
+  /** Top edge of the track band in SVG user space. */
+  private get trackBandY(): number {
+    return (
+      this.totalHeight / 2 -
+      this.trackHeight -
+      (this.bottomBar ? this.ticksHeight : 0)
+    );
+  }
+
+  private renderBandBars(): SVGTemplateResult[] | typeof nothing {
+    if (this.barAreas.length === 0) {
+      return nothing;
+    }
+    return this.barAreas.map(
+      (bar) => svg`
+        <rect
+          x="${Math.min(bar.startX, bar.endX)}"
+          y="${this.trackBandY}"
+          width="${Math.abs(bar.endX - bar.startX)}"
+          height="${this.trackHeight}"
+          fill=${bar.fillColor}
+        />
+      `
+    );
+  }
+
+  private renderBandNeedles(): SVGTemplateResult[] | typeof nothing {
+    if (this.needles.length === 0) {
+      return nothing;
+    }
+    return this.needles.map(
+      (needle) => svg`
+        <rect
+          x="${needle.x - 4}"
+          y="${this.trackBandY}"
+          width="8"
+          height="${this.trackHeight}"
+          rx="4"
+          fill=${needle.fillColor}
+          stroke=${needle.strokeColor}
+          stroke-width="1"
+          vector-effect="non-scaling-stroke"
+          paint-order="stroke fill"
+        />
+      `
+    );
+  }
+
   // ---------------------------------------------------------------------------
   // ROT (Rate of Turn) — linear
   // ---------------------------------------------------------------------------
@@ -216,7 +306,7 @@ export class ObcWatchFlat extends LitElement {
       const direction =
         this.rotType === RotType.bar
           ? this.rotEndX - this.rotStartX
-          : this._rotationsPerMinute;
+          : this._effectiveRpm;
 
       if (direction > 0) {
         return {
@@ -285,9 +375,9 @@ export class ObcWatchFlat extends LitElement {
       : 'var(--instrument-regular-secondary-color)';
     let dotsColor = neutralDotsColor;
     if (this.rotPortStarboard) {
-      if (this._rotationsPerMinute > 0) {
+      if (this._effectiveRpm > 0) {
         dotsColor = 'var(--instrument-starboard-secondary-color)';
-      } else if (this._rotationsPerMinute < 0) {
+      } else if (this._effectiveRpm < 0) {
         dotsColor = 'var(--instrument-port-secondary-color)';
       }
     }
@@ -318,11 +408,19 @@ export class ObcWatchFlat extends LitElement {
       this._rotController = new RateOfTurnController(
         this,
         el,
-        this._rotationsPerMinute,
+        this._effectiveRpm,
         cyclePx
       );
     } else {
       this._rotController.cyclePx = cyclePx;
+    }
+
+    if (
+      changed.has('rateOfTurnDegreesPerMinute') ||
+      changed.has('rotDotAnimationFactor') ||
+      changed.has('rotationsPerMinute')
+    ) {
+      this._rotController.rotationsPerMinute = this._effectiveRpm;
     }
   }
 
@@ -347,6 +445,9 @@ export class ObcWatchFlat extends LitElement {
         style="--scale: ${scale}"
       >
         ${this.watchFace()} ${this.renderLabelMask()}
+        <g clip-path="url(#frameClipPath)">
+          ${this.renderBandBars()} ${this.renderBandNeedles()}
+        </g>
 
         <g transform="translate(0, ${contentOffsetY})">
           <g clip-path="url(#frameClipPath)">
@@ -365,6 +466,13 @@ export class ObcWatchFlat extends LitElement {
         ${this.FOVIndicator}
 
         <g clip-path="url(#frameClipPath)">${this.renderRot()}</g>
+        ${svg`<line
+          x1="0" y1="${-this.totalHeight / 2 + this.ticksHeight}"
+          x2="0" y2="${this.totalHeight / 2}"
+          stroke="var(--instrument-frame-tertiary-color)"
+          stroke-width="1"
+          vector-effect="non-scaling-stroke"
+        />`}
       </svg>
     `;
   }

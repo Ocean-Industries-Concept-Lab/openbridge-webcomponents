@@ -1,11 +1,23 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
-import {property} from 'lit/decorators.js';
+import {property, query} from 'lit/decorators.js';
 import compentStyle from './navigation-item.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
 import '../../icons/icon-arrow-flyout-google.js';
 import {ObcNavigationMenuVariant} from '../navigation-menu/navigation-menu.js';
 import {customElement} from '../../decorator.js';
+import '../tree-navigation-item/tree-navigation-item.js';
+import {
+  TreeBranchType,
+  TreeTerminalType,
+  type TreeNavigationItemAlerts,
+} from '../tree-navigation-item/tree-navigation-item.js';
+
+export enum NavigationItemRole {
+  Button = 'button',
+  MenuItem = 'menuitem',
+  MenuItemRadio = 'menuitemradio',
+}
 
 /**
  * `<obc-navigation-item>` – A navigation menu item component for use in navigation bars, side menus, or toolbars.
@@ -85,67 +97,148 @@ import {customElement} from '../../decorator.js';
  * </obc-navigation-item>
  * ```
  *
+ * ## Keyboard
+ * One item of the [APG Menu](https://www.w3.org/WAI/ARIA/apg/patterns/menu/)
+ * pattern when `itemRole`, or the host's `role`, makes it a `menuitem` or a
+ * `menuitemradio` with `aria-checked` mirroring `checked`: `Enter` and
+ * `Space` activate it, and the arrow keys, `Home` and `End` belong to the
+ * menu that owns it. Without a role it is a plain button or link.
+ *
+ * Left out: nothing the item itself owns; the menu lists what it leaves out.
+ *
+ * @property label - The text label displayed for the navigation item.
+ * @property itemRole - Role of the item's control inside a composite widget, set by the parent:
+ *   `menuitem`, or `menuitemradio` with `aria-checked` mirroring `checked`. The role belongs on
+ *   the control, not on the host: a role on the host wraps a focusable control in another one.
+ * @property focusable - Whether the item is in the tab order. A menu that owns a roving tabindex,
+ *   such as `obc-context-menu-input`, manages this (one item focusable at a time); a standalone item stays tabbable.
+ *   Hidden in icon-only variants.
+ * @availableWhen label variant in [Full, Compact]
+ * @property href - The URL to navigate to when the item is clicked.
+ *   If set, the item is rendered as a link (`<a href="..." />`).
+ *   If undefined, acts as a button.
+ * @property checked - Whether the navigation item is currently selected/active.
+ *   Use to indicate the current location or selection.
+ * @property variant - Visual variant of the navigation item.
+ *   One of `Full` (default), `IconOnly`, `IconOnlyLarge`, or `Compact`.
+ *   Controls layout and visibility of icon/label.
+ * @property group - Enables group mode for the item, displaying a flyout indicator and supporting group selection.
+ *   Use for items that open submenus or represent grouped navigation.
+ * @property groupSelected - Highlights the item as selected within a group.
+ *   Only relevant when `group` is true.
+ * @availableWhen groupSelected group==true
+ * @property hasIcon - Whether the item has a leading icon.
+ * @availableWhen hasTrailingIcon group==false || variant==IconOnly
+ * @property treeMode - Set by `obc-navigation-menu` in its Tree variant — renders the row as a tree item.
+ * @property treeBranches - Indentation columns for tree mode, assigned by `obc-navigation-menu`.
+ * @property terminalType - Terminal type for the row in the Tree variant — one of `regular` (default),
+ *   `aggregated-header`, or `group-header`. Has no effect in the flat variants.
+ * @property alerts - Per-severity alert counts shown as trailing badges, in the Tree variant
+ *   only. Forwarded to the underlying `obc-tree-navigation-item`.
  * @slot icon - Leading icon slot (optional, shown if provided). Set `hasIcon` to `true` to show the icon.
  * @slot trailing-icon - Trailing icon slot (optional, shown if provided). Set `hasTrailingIcon` to `true` to show.
- * @fires click {CustomEvent<void>} Fired when the navigation item is clicked.
+ * @fires click - Fired when the navigation item is clicked, either as a link or as a button.
+ * @stable
  */
 
 @customElement('obc-navigation-item')
 export class ObcNavigationItem extends LitElement {
-  /**
-   * The text label displayed for the navigation item.
-   * Hidden in icon-only variants.
-   */
   @property({type: String}) label = 'Label';
 
-  /**
-   * The URL to navigate to when the item is clicked.
-   * If set, the item is rendered as a link (`<a href="..." />`).
-   * If undefined, acts as a button.
-   */
+  @property({type: Boolean, attribute: false}) focusable = true;
+
+  @property({type: String, attribute: false}) itemRole?: NavigationItemRole;
+
   @property({type: String}) href: string | undefined;
 
-  /**
-   * Whether the navigation item is currently selected/active.
-   * Use to indicate the current location or selection.
-   */
   @property({type: Boolean}) checked = false;
 
-  /**
-   * Visual variant of the navigation item.
-   * One of `Full` (default), `IconOnly`, `IconOnlyLarge`, or `Compact`.
-   * Controls layout and visibility of icon/label.
-   */
   @property({type: String}) variant = ObcNavigationMenuVariant.Full;
 
-  /**
-   * Enables group mode for the item, displaying a flyout indicator and supporting group selection.
-   * Use for items that open submenus or represent grouped navigation.
-   */
   @property({type: Boolean}) group = false;
 
-  /**
-   * Highlights the item as selected within a group.
-   * Only relevant when `group` is true.
-   */
   @property({type: Boolean}) groupSelected = false;
 
-  /**
-   * Whether the item has a leading icon.
-   */
   @property({type: Boolean, reflect: true}) hasIcon = false;
 
   @property({type: Boolean}) hasTrailingIcon = false;
 
-  /**
-   * Fired when the navigation item is clicked (either as a link or button).
-   * @fires click {CustomEvent<void>}
-   */
-  onClick() {
-    dispatchEvent(new CustomEvent('click'));
+  @property({type: Boolean}) treeMode = false;
+
+  @property({type: Array}) treeBranches: TreeBranchType[] = [];
+
+  @property({type: String}) terminalType: string = TreeTerminalType.regular;
+
+  @property({type: Object}) alerts?: TreeNavigationItemAlerts;
+
+  @query('a') private anchorElement?: HTMLAnchorElement;
+
+  // In tree mode the row renders an `obc-tree-navigation-item` instead of an `<a>`.
+  @query('obc-tree-navigation-item') private treeItemElement?: HTMLElement;
+
+  private handleKeydown(event: KeyboardEvent) {
+    const isMenuItem =
+      this.getAttribute('role') === NavigationItemRole.MenuItem;
+    if (this.href !== undefined && !isMenuItem) return;
+    if (event.key !== 'Enter' && event.key !== ' ') {
+      return;
+    }
+
+    event.preventDefault();
+    this.anchorElement?.click();
+  }
+
+  public override focus(options?: FocusOptions): void {
+    (this.treeItemElement ?? this.anchorElement)?.focus(options);
+  }
+
+  private getItemRole(): NavigationItemRole | undefined {
+    if (this.itemRole !== undefined) return this.itemRole;
+    const hostRole = this.getAttribute('role');
+    if (hostRole === NavigationItemRole.MenuItem) {
+      return NavigationItemRole.MenuItem;
+    }
+    if (hostRole === NavigationItemRole.MenuItemRadio) {
+      return NavigationItemRole.MenuItemRadio;
+    }
+
+    return this.href === undefined ? NavigationItemRole.Button : undefined;
+  }
+
+  private getItemTabIndex(): number | undefined {
+    if (!this.focusable) return -1;
+    const hostTabIndex = this.getAttribute('tabindex');
+    if (hostTabIndex !== null) {
+      const parsedTabIndex = Number(hostTabIndex);
+      return Number.isNaN(parsedTabIndex) ? undefined : parsedTabIndex;
+    }
+
+    return this.href === undefined ? 0 : undefined;
   }
 
   override render() {
+    if (this.treeMode) {
+      // Delegate the whole row to the tree item: it owns focus, keyboard
+      // activation, the checked-inert behavior, and href navigation. Forward its
+      // activation as this item's own `click` so selection wiring is unchanged.
+      return html`
+        <obc-tree-navigation-item
+          class="tree"
+          .label=${this.label}
+          .branches=${this.treeBranches}
+          ?checked=${this.checked}
+          .hasLeadingIcon=${this.hasIcon}
+          .href=${this.href}
+          .terminalType=${this.terminalType}
+          .alerts=${this.alerts}
+        >
+          ${
+            this.hasIcon ? html`<slot name="icon" slot="icon"></slot>` : nothing
+          }
+        </obc-tree-navigation-item>
+      `;
+    }
+
     const showFlyout =
       this.group && this.variant !== ObcNavigationMenuVariant.IconOnly;
     const isCompact = this.variant === ObcNavigationMenuVariant.Compact;
@@ -160,40 +253,57 @@ export class ObcNavigationItem extends LitElement {
           [this.variant]: true,
         })}"
         href=${ifDefined(this.href)}
-        @click=${this.onClick}
+        @keydown=${this.handleKeydown}
+        tabindex=${ifDefined(this.getItemTabIndex())}
+        role=${ifDefined(this.getItemRole())}
+        aria-checked=${ifDefined(
+          this.getItemRole() === NavigationItemRole.MenuItemRadio
+            ? this.checked
+              ? 'true'
+              : 'false'
+            : undefined
+        )}
       >
         <div class="visible-wrapper">
-          ${this.hasIcon
-            ? html`<slot name="icon" class="icon leading"></slot>`
-            : nothing}
-          ${![
-            ObcNavigationMenuVariant.IconOnly,
-            ObcNavigationMenuVariant.IconOnlyLarge,
-          ].includes(this.variant)
-            ? html`
-                <span
-                  part="label"
-                  class=${classMap({
-                    label: true,
-                    'label-flyout': showFlyout && !isCompact,
-                  })}
-                >
-                  ${this.label}
-                </span>
-              `
-            : nothing}
-          ${showFlyout
-            ? html`
-                <div class="flyout-wrapper">
-                  <obi-arrow-flyout-google
-                    class="icon trailing"
-                  ></obi-arrow-flyout-google>
-                </div>
-              `
-            : nothing}
-          ${this.hasTrailingIcon && !showFlyout
-            ? html`<slot name="trailing-icon" class="icon trailing"></slot>`
-            : nothing}
+          ${
+            this.hasIcon
+              ? html`<slot name="icon" class="icon leading"></slot>`
+              : nothing
+          }
+          ${
+            ![
+              ObcNavigationMenuVariant.IconOnly,
+              ObcNavigationMenuVariant.IconOnlyLarge,
+            ].includes(this.variant)
+              ? html`
+                  <span
+                    part="label"
+                    class=${classMap({
+                      label: true,
+                      'label-flyout': showFlyout && !isCompact,
+                    })}
+                  >
+                    ${this.label}
+                  </span>
+                `
+              : nothing
+          }
+          ${
+            showFlyout
+              ? html`
+                  <div class="flyout-wrapper">
+                    <obi-arrow-flyout-google
+                      class="icon trailing"
+                    ></obi-arrow-flyout-google>
+                  </div>
+                `
+              : nothing
+          }
+          ${
+            this.hasTrailingIcon && !showFlyout
+              ? html`<slot name="trailing-icon" class="icon trailing"></slot>`
+              : nothing
+          }
         </div>
       </a>
     `;

@@ -13,14 +13,13 @@ export type ObcFormFooterActionClickEvent = CustomEvent<{
  * Structure:
  * - actions row (slotted action elements)
  *
+ * @property hasActions - Shows the action buttons when true.
  * @slot - Action elements (typically `obc-icon-button`) rendered in the footer row.
- * @fires action-click {ObcFormFooterActionClickEvent} Fired when a slotted action element is clicked.
+ * @fires {ObcFormFooterActionClickEvent} action-click - Fired when a slotted action element is clicked.
+ * @beta
  */
 @customElement('obc-form-footer-container')
 export class ObcFormFooterContainer extends LitElement {
-  /**
-   * Shows the action buttons when true.
-   */
   @property({type: Boolean, attribute: 'has-actions'}) hasActions = false;
 
   static override styles = unsafeCSS(componentStyle);
@@ -86,13 +85,15 @@ export class ObcFormFooterContainer extends LitElement {
   override render() {
     return html`
       <div class="wrapper" part="wrapper">
-        ${this.hasActions
-          ? html`
-              <div class="actions" part="actions">
-                <slot @slotchange=${this.syncActionElementListeners}></slot>
-              </div>
-            `
-          : nothing}
+        ${
+          this.hasActions
+            ? html`
+                <div class="actions" part="actions">
+                  <slot @slotchange=${this.syncActionElementListeners}></slot>
+                </div>
+              `
+            : nothing
+        }
       </div>
     `;
   }

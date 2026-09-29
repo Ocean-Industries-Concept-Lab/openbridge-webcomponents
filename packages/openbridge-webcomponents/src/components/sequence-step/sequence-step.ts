@@ -47,11 +47,23 @@ export enum SequenceVariant {
   toolbarPrev = 'toolbar-prev',
 }
 
+/**
+ * @property hasIcon - Displays the built-in state icon for medium/large regular steps.
+ * @availableWhen hasIcon styleType==regular && type in [medium, large]
+ * @property inputConnectorExtended - Extends the input connector to match the height/width of multi-line content.
+ *   Applies only when `hasInputConnector` is true.
+ * @availableWhen inputConnectorExtended showStepInputConnector==true
+ * @fires click - Fired when the step is activated. Only fired when the step renders as a button, i.e. `type="large"` with the `regular` or `point` style; other combinations render a non-interactive wrapper.
+ * @beta
+ */
 @customElement('obc-sequence-step')
 /**
  * `<obc-sequence-step>` renders the visual node of a sequence diagram.
  * Supports three sizes, multiple styles (regular/point/connector), and can show
  * leading/trailing connectors as well as state-specific icons.
+ *
+ * @slot leading-icon - Custom leading state icon (shown for medium/large regular steps with `hasIcon`, when the value has no built-in icon).
+ * @slot - Step label content (shown for non-small steps).
  */
 export class ObcSequenceStep extends LitElement {
   @property({type: String}) orientation: SequenceOrientation =
@@ -60,16 +72,11 @@ export class ObcSequenceStep extends LitElement {
   @property({type: String}) styleType: SequenceStyle = SequenceStyle.regular;
   @property({type: String}) value: SequenceValue = SequenceValue.regular;
   @property({type: String, reflect: true}) variant?: SequenceVariant;
-  /** Displays the built-in state icon for medium/large regular steps. */
   @property({type: Boolean}) hasIcon = false;
   @property({type: Boolean, attribute: false}) showStepInputConnector: boolean =
     true;
   @property({type: Boolean, attribute: false})
   showStepOutputConnector: boolean = true;
-  /**
-   * Extends the input connector to match the height/width of multi-line content.
-   * Applies only when `hasInputConnector` is true.
-   */
   @property({type: Boolean}) inputConnectorExtended = false;
 
   private get isVertical() {
@@ -188,15 +195,17 @@ export class ObcSequenceStep extends LitElement {
 
     return html`
       <div class="node" part="node" aria-hidden="true">
-        ${this.value === SequenceValue.loading
-          ? this.renderLoadingSpinner()
-          : showCheck
-            ? html`<obi-check-google
-                class="small-check"
-                part="state-icon"
-                aria-hidden="true"
-              ></obi-check-google>`
-            : nothing}
+        ${
+          this.value === SequenceValue.loading
+            ? this.renderLoadingSpinner()
+            : showCheck
+              ? html`<obi-check-google
+                  class="small-check"
+                  part="state-icon"
+                  aria-hidden="true"
+                ></obi-check-google>`
+              : nothing
+        }
       </div>
     `;
   }
@@ -266,9 +275,11 @@ export class ObcSequenceStep extends LitElement {
           : nothing;
       return html`
         <div
-          class="node ${this.type === 'medium' && this.styleType === 'point'
-            ? 'medium-point'
-            : ''}"
+          class="node ${
+            this.type === 'medium' && this.styleType === 'point'
+              ? 'medium-point'
+              : ''
+          }"
           part="node"
         >
           ${loadingSpinner}
@@ -302,18 +313,22 @@ export class ObcSequenceStep extends LitElement {
           aria-current=${ifDefined(this.stepAriaCurrent ?? undefined)}
         >
           <div class="body" part="body">
-            ${this.showInputConnector
-              ? html`<span
-                  class="connector input"
-                  part="connector input"
-                ></span>`
-              : ''}
-            ${this.showOutputConnector
-              ? html`<span
-                  class="connector output"
-                  part="connector output"
-                ></span>`
-              : ''}
+            ${
+              this.showInputConnector
+                ? html`<span
+                    class="connector input"
+                    part="connector input"
+                  ></span>`
+                : ''
+            }
+            ${
+              this.showOutputConnector
+                ? html`<span
+                    class="connector output"
+                    part="connector output"
+                  ></span>`
+                : ''
+            }
           </div>
         </div>
       `;
@@ -324,9 +339,9 @@ export class ObcSequenceStep extends LitElement {
     const verticalInput =
       this.isVertical && this.showInputConnector
         ? html`<span
-            class="connector input ${this.isSpecialLoadingConnector
-              ? 'loading-special'
-              : ''}"
+            class="connector input ${
+              this.isSpecialLoadingConnector ? 'loading-special' : ''
+            }"
             part="connector input"
           ></span>`
         : '';
@@ -338,9 +353,9 @@ export class ObcSequenceStep extends LitElement {
     const horizontalInput =
       !this.isVertical && this.showInputConnector
         ? html`<span
-            class="connector input ${this.isSpecialLoadingConnector
-              ? 'loading-special'
-              : ''}"
+            class="connector input ${
+              this.isSpecialLoadingConnector ? 'loading-special' : ''
+            }"
             part="connector input"
           ></span>`
         : '';

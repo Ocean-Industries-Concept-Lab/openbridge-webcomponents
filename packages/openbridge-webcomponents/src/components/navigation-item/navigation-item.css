@@ -185,3 +185,8 @@
     min-width: 0;
   }
 }
+
+obc-tree-navigation-item.tree {
+  display: block;
+  width: 100%;
+}

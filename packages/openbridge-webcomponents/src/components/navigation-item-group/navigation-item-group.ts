@@ -1,9 +1,15 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
-import {property, state} from 'lit/decorators.js';
+import {property, query, state} from 'lit/decorators.js';
 import compentStyle from './navigation-item-group.css?inline';
 import {ObcNavigationMenuVariant} from '../navigation-menu/navigation-menu.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
+import '../tree-navigation-item/tree-navigation-item.js';
+import {
+  TreeBranchType,
+  TreeTerminalType,
+  type TreeNavigationItemAlerts,
+} from '../tree-navigation-item/tree-navigation-item.js';
 
 /**
  * `<obc-navigation-item-group>` – A collapsible navigation group component for organizing related navigation items under a single expandable label.
@@ -52,45 +58,75 @@ import {customElement} from '../../decorator.js';
  * </obc-navigation-item-group>
  * ```
  *
+ * @property label - The label text displayed for the navigation group.
+ * @property href - Optional URL to navigate to when the group label is clicked.
+ *   If set, clicking the group label will navigate to this URL.
+ * @property checked - Whether the group is currently checked/selected.
+ *   Use to highlight the group as active.
+ * @property variant - Visual variant of the navigation group.
+ *   Accepts values from `ObcNavigationMenuVariant` (e.g., 'full', 'compact').
+ *   Controls the styling and layout of the group and its flyout.
+ * @property hug - If true, the flyout panel appears tightly anchored to the group label with compact styling.
+ * @property treeMode - Set by `obc-navigation-menu` in its Tree variant — renders the group as a tree row.
+ * @property treeBranches - Indentation columns for tree mode, assigned by `obc-navigation-menu`.
+ * @property terminalType - Terminal type for the group header in the Tree variant — one of `regular`
+ *   (default), `aggregated-header`, or `group-header`. No effect in flat variants.
+ * @property focusable - Whether the group header is in the tab order. A menu that owns a roving tabindex, such as
+ *   `obc-context-menu-input`, manages this (one item focusable at a time); a standalone group stays tabbable.
+ * @property defaultOpen - Whether the group starts expanded. Useful for trees that open by default.
+ * @property alerts - Per-severity alert counts shown as trailing badges on the group header, in
+ *   the Tree variant only and only while the group is collapsed — an expanded
+ *   group shows its rows' own badges instead. A header usually sets `combine`
+ *   so it totals the rows beneath it.
  * @slot icon - Custom icon displayed next to the group label.
  * @slot - Default slot for flyout content (typically navigation items).
- * @fires open {CustomEvent<void>} When the group is expanded and the flyout is shown.
+ * @fires {CustomEvent<void>} open - When the group is expanded and the flyout is shown.
+ * @stable
  */
 @customElement('obc-navigation-item-group')
 export class ObcNavigationItemGroup extends LitElement {
-  /**
-   * The label text displayed for the navigation group.
-   */
   @property({type: String}) label = 'Label';
 
-  /**
-   * Optional URL to navigate to when the group label is clicked.
-   * If set, clicking the group label will navigate to this URL.
-   */
   @property({type: String}) href: string | undefined;
 
-  /**
-   * Whether the group is currently checked/selected.
-   * Use to highlight the group as active.
-   */
   @property({type: Boolean}) checked = false;
 
-  /**
-   * Visual variant of the navigation group.
-   * Accepts values from `ObcNavigationMenuVariant` (e.g., 'full', 'compact').
-   * Controls the styling and layout of the group and its flyout.
-   */
   @property({type: String}) variant: ObcNavigationMenuVariant =
     ObcNavigationMenuVariant.Full;
 
-  /**
-   * If true, the flyout panel appears tightly anchored to the group label with compact styling.
-   */
   @property({type: Boolean}) hug = false;
 
   @property({type: Boolean}) hasIcon = false;
 
+  @property({type: Boolean}) treeMode = false;
+
+  @property({type: Array}) treeBranches: TreeBranchType[] = [];
+
+  @property({type: String}) terminalType: string = TreeTerminalType.regular;
+
+  @property({type: Object}) alerts?: TreeNavigationItemAlerts;
+
+  @property({type: Boolean}) defaultOpen = false;
+
+  @property({type: Boolean, attribute: false}) focusable = true;
+
   @state() private openContainer = false;
+
+  // Flat mode renders an `obc-navigation-item` header; tree mode renders an
+  // `obc-tree-navigation-item`. Match whichever is present so `focus()` works in both.
+  @query('obc-navigation-item, obc-tree-navigation-item')
+  private groupItem?: HTMLElement;
+
+  override firstUpdated() {
+    if (this.defaultOpen) {
+      this.openContainer = true;
+    }
+  }
+
+  /** Whether the group is currently open (its children are disclosed). */
+  public get expanded(): boolean {
+    return this.openContainer;
+  }
 
   private onClickGroup() {
     if (this.openContainer) {
@@ -116,10 +152,39 @@ export class ObcNavigationItemGroup extends LitElement {
     });
   }
 
+  public override focus(options?: FocusOptions): void {
+    this.groupItem?.focus(options);
+  }
+
   override render() {
+    if (this.treeMode) {
+      return html`
+        <obc-tree-navigation-item
+          part="header"
+          .label=${this.label}
+          .branches=${this.treeBranches}
+          expandable
+          ?expanded=${this.openContainer}
+          ?checked=${this.checked}
+          .hasLeadingIcon=${this.hasIcon}
+          .terminalType=${this.terminalType}
+          .alerts=${this.expanded ? undefined : this.alerts}
+          @expand-toggle=${this.onClickGroup}
+        >
+          ${
+            this.hasIcon ? html`<slot name="icon" slot="icon"></slot>` : nothing
+          }
+        </obc-tree-navigation-item>
+        <div part="children" role="group" ?hidden=${!this.openContainer}>
+          <slot></slot>
+        </div>
+      `;
+    }
+
     return html`
       <obc-navigation-item
         @click=${this.onClickGroup}
+        .focusable=${this.focusable}
         .checked=${this.checked}
         .groupSelected=${this.openContainer}
         .href=${this.href}

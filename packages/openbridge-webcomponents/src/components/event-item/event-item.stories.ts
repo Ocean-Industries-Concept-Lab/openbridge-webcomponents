@@ -9,7 +9,7 @@ interface EventItemStoryArgs extends Partial<ObcEventItem> {
 
 const meta: Meta<EventItemStoryArgs> = {
   title: 'Application Components/Calendar/Event Item',
-  tags: ['6.0'],
+  tags: ['6.0', 'beta'],
   component: 'obc-event-item',
   decorators: [widthDecorator],
   argTypes: {

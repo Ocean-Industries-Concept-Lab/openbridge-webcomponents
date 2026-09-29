@@ -7,13 +7,16 @@ import '../../icons/icon-pump-on-vertical.js';
 import {ObcAbstractAutomationButtonMotorized} from '../automation-button/abstract-automation-button-motorized.js';
 import {customElement} from '../../decorator.js';
 
+/**
+ * @stable
+ */
 @customElement('obc-pump')
 export class ObcPump extends ObcAbstractAutomationButtonMotorized {
   @property({type: Boolean}) vertical: boolean = false;
 
   override get icon() {
     if (this.vertical) {
-      if (this.on) {
+      if (this.turnedOn) {
         return html`<obi-pump-on-vertical
             usecsscolor
             slot="icon"
@@ -33,7 +36,7 @@ export class ObcPump extends ObcAbstractAutomationButtonMotorized {
           ></obi-pump-off-vertical>`;
       }
     } else {
-      if (this.on) {
+      if (this.turnedOn) {
         return html`<obi-pump-on-horizontal
             usecsscolor
             slot="icon"

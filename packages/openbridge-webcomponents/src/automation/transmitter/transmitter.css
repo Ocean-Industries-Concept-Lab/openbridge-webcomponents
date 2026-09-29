@@ -1,0 +1,80 @@
+* {
+  box-sizing: border-box;
+}
+
+:host {
+  display: block;
+}
+
+.transmitter {
+  @mixin transmitter-leader;
+}
+
+.content {
+  position: relative; /* containing block for the left/right id tag (transmitter-leader) */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.alert-frame .content {
+  padding: 4px;
+}
+
+/* Top orientation places the id-tag above the chip (leader line below). */
+.orientation-top .content {
+  flex-direction: column-reverse;
+}
+
+.body {
+  display: flex;
+}
+
+.type-horizontal-graph .body {
+  flex-direction: row;
+  align-items: stretch;
+}
+
+.type-vertical-graph .body {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.graph-box {
+  overflow: hidden;
+  border: 1px solid var(--instrument-regular-tertiary-color);
+}
+
+.type-horizontal-graph .graph-box {
+  width: 64px;
+  border-left: none;
+  border-radius: 0 4px 4px 0;
+}
+
+.type-vertical-graph .graph-box {
+  height: 48px;
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+}
+
+/* Flatten the chip corners and drop the shared border where the graph joins. */
+.type-horizontal-graph .chip::part(button) {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right: none;
+}
+
+.type-vertical-graph .chip::part(button) {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom: none;
+}
+
+.type-vertical-graph .chip {
+  width: 100%;
+}
+
+.id-tag {
+  @mixin transmitter-id-tag;
+}

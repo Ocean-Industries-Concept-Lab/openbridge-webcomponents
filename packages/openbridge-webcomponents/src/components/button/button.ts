@@ -95,63 +95,44 @@ export enum segmentPosition {
  * </obc-button>
  * ```
  *
+ * @property fullWidth - Expands the button to fill the width of its container when true.
+ * @property disabled - Disables the button or link, preventing user interaction and applying disabled styling.
+ * @property showLeadingIcon - Whether to show the leading icon slot (`slot="leading-icon"`).
+ *   When true, content in the `leading-icon` slot will be displayed before the label.
+ * @property showTrailingIcon - Whether to show the trailing icon slot (`slot="trailing-icon"`).
+ *   When true, content in the `trailing-icon` slot will be displayed after the label.
+ * @property href - When provided, renders the button as an anchor link (`<a>`) instead of a native button.
+ *   Use for navigation actions.
+ * @property target - Specifies the target for the anchor link (only applies when `href` is set).
+ *   Common values: `_blank`, `_self`, `_parent`, `_top`.
+ * @property variant - Visual style: `normal` (default) is the standard button, `raised` is
+ *   elevated for emphasis, `flat` is minimal and low-emphasis.
+ * @property segmentPosition - Position within a segmented button group: `single` stands alone, `start`,
+ *   `middle` and `end` shape the button for the first, an inner and the last
+ *   segment.
  * @fires click - Fired when the button is clicked (if not disabled).
  *
  * @slot - Default slot for button label text (required for accessibility)
  * @slot leading-icon - Slot for an icon to appear before the label (shown when `showLeadingIcon` is true)
  * @slot trailing-icon - Slot for an icon to appear after the label (shown when `showTrailingIcon` is true)
+ * @stable
  */
 @customElement('obc-button')
 export class ObcButton extends LitElement {
-  /**
-   * Controls the button's visual style.
-   * - `normal`: Standard button (default)
-   * - `raised`: Elevated button for emphasis
-   * - `flat`: Minimal, low-emphasis button
-   */
   @property({type: String}) variant: ButtonVariant = ButtonVariant.normal;
 
-  /**
-   * Expands the button to fill the width of its container when true.
-   */
   @property({type: Boolean, reflect: true}) fullWidth = false;
 
-  /**
-   * Disables the button or link, preventing user interaction and applying disabled styling.
-   */
   @property({type: Boolean}) disabled = false;
 
-  /**
-   * Whether to show the leading icon slot (`slot="leading-icon"`).
-   * When true, content in the `leading-icon` slot will be displayed before the label.
-   */
   @property({type: Boolean}) showLeadingIcon = false;
 
-  /**
-   * Whether to show the trailing icon slot (`slot="trailing-icon"`).
-   * When true, content in the `trailing-icon` slot will be displayed after the label.
-   */
   @property({type: Boolean}) showTrailingIcon = false;
 
-  /**
-   * When provided, renders the button as an anchor link (`<a>`) instead of a native button.
-   * Use for navigation actions.
-   */
   @property({type: String}) href?: string = undefined;
 
-  /**
-   * Specifies the target for the anchor link (only applies when `href` is set).
-   * Common values: `_blank`, `_self`, `_parent`, `_top`.
-   */
   @property({type: String}) target?: string = undefined;
 
-  /**
-   * Defines the segment position when used in a segmented button group.
-   * - `single`: Standalone button
-   * - `start`: First button in a group
-   * - `middle`: Middle button in a group
-   * - `end`: Last button in a group
-   */
   @property({type: String}) segmentPosition: segmentPosition =
     segmentPosition.single;
 

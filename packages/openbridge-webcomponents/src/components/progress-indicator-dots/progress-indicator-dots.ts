@@ -3,6 +3,7 @@ import {customElement} from '../../decorator.js';
 import {classMap} from 'lit/directives/class-map.js';
 import compentStyle from './progress-indicator-dots.css?inline';
 import {property} from 'lit/decorators.js';
+import {clamp} from '../../svghelpers/math.js';
 
 /**
  * `<obc-progress-indicator-dots>` – A visual step indicator component that displays a horizontal row of dots to represent progress through a sequence of steps (also known as a stepper, pagination indicator, or progress dots).
@@ -39,33 +40,27 @@ import {property} from 'lit/decorators.js';
  * <obc-progress-indicator-dots totalSteps="4" currentStep="2" fullwidth></obc-progress-indicator-dots>
  * ```
  *
- * /**
+ * @property totalSteps - Sets the total number of steps/dots to display.
+ *   Must be at least 1. Defaults to 5.
+ * @property currentStep - Indicates the currently active step (1-based index).
+ *   Values outside the valid range are clamped to [1, totalSteps].
+ *   Defaults to 1.
+ * @property fullwidth - If true, the indicator stretches to fill the container width.
+ *   If false, uses a compact layout sized to its content.
+ *   Defaults to false.
  * @slot - (none) This component does not use content slots.
+ * @stable
  */
 @customElement('obc-progress-indicator-dots')
 export class ObcProgressIndicatorDots extends LitElement {
-  /**
-   * Sets the total number of steps/dots to display.
-   * Must be at least 1. Defaults to 5.
-   */
   @property({type: Number}) totalSteps = 5;
 
-  /**
-   * Indicates the currently active step (1-based index).
-   * Values outside the valid range are clamped to [1, totalSteps].
-   * Defaults to 1.
-   */
   @property({type: Number}) currentStep = 1;
 
-  /**
-   * If true, the indicator stretches to fill the container width.
-   * If false, uses a compact layout sized to its content.
-   * Defaults to false.
-   */
   @property({type: Boolean}) fullwidth = false;
 
   private get validCurrentStep() {
-    return Math.max(1, Math.min(this.currentStep, this.totalSteps));
+    return clamp(this.currentStep, 1, Math.max(1, this.totalSteps));
   }
 
   private get validTotalSteps() {

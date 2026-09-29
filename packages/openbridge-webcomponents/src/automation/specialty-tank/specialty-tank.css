@@ -1,0 +1,292 @@
+* {
+  box-sizing: border-box;
+}
+
+/* ---- Host ----
+ * The concrete tile supplies its design footprint (`:host` width/height and
+ * the `positioning="button"` aspect ratio); the shell below is shared. */
+:host {
+  display: inline-block;
+  position: relative; /* P&ID anchor: the root is offset from the host box */
+}
+
+/* positioning="button": fill the parent, no anchor offset. */
+:host([positioning="button"]) {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+:host([positioning="button"]) .root {
+  position: static;
+  transform: none;
+}
+
+/* ---- Root + halo ----
+ * The root <button> is the touch target and stays transparent; the flat
+ * mixin paints the interactive surround on `.halo` (`visibleWrapperClass`).
+ * `translateX(-50%)` aligns the tile's centerline with the host's left edge,
+ * the P&ID drop coordinate. */
+.root {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  appearance: none;
+  display: block;
+}
+
+.root.clickable {
+  cursor: pointer;
+  /* prettier-ignore */
+  @mixin style style=flat visibleWrapperClass=.halo;
+}
+
+/* `noClick` keeps the resting colours and border box, drops the states. */
+.root:not(.clickable) {
+  cursor: default;
+  /* prettier-ignore */
+  @mixin style style=flat noClick visibleWrapperClass=.halo;
+}
+
+.root:focus {
+  outline: none; /* the mixin draws the focus-visible ring on .halo */
+}
+
+:host([static]) .root {
+  pointer-events: none;
+}
+
+.halo {
+  width: 100%;
+  height: 100%;
+  padding: var(--automation-components-tanks-state-container-padding);
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--automation-components-tanks-regular-value-padding);
+  position: relative; /* anchors the alert-frame overlay */
+}
+
+/* -1px inset so the ring sits on the halo's outer edge, as on the tank. */
+.alert-frame {
+  position: absolute;
+  inset: -1px;
+}
+
+/* ---- Cells ---- */
+.badges {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 2px;
+  padding: var(--automation-components-tanks-regular-badge-padding-vertical)
+    var(--automation-components-tanks-regular-badge-padding-horizontal);
+}
+
+.tag {
+  flex: 0 0 auto;
+  padding: 0 2px;
+  text-align: center;
+  @mixin font-instrument-label;
+  color: var(--element-neutral-color);
+  white-space: nowrap; /* a tag is an identifier; it never wraps */
+}
+
+/* The cells set their own display, which would beat `hidden`; removing them
+ * from the flex column also removes their gap so the frame absorbs the space. */
+.badges[hidden],
+.tag[hidden] {
+  display: none !important;
+}
+
+/* ---- Tank frame ---- */
+.tank-frame {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  --_hot-fill: var(--instrument-frame-secondary-color);
+  --_hot-stroke: var(--border-outline-color);
+  --_cold-fill: var(--instrument-frame-secondary-color);
+  --_cold-stroke: var(--border-outline-color);
+  --_cap-height: 8px;
+}
+
+.tank-frame.medium-medium {
+  --_hot-fill: var(--base-red-200);
+  --_hot-stroke: var(--base-red-300);
+  --_cold-fill: var(--base-blue-200);
+  --_cold-stroke: var(--base-blue-300);
+}
+
+.middle {
+  flex: 1 1 auto;
+  min-height: 0;
+  background: var(--instrument-frame-primary-color);
+  border: 1px solid var(--instrument-frame-tertiary-color);
+}
+
+.frame-rounded .middle {
+  border-radius: var(--automation-components-tanks-border-radius);
+  padding: 4px;
+}
+
+.frame-pressurized .middle {
+  border-top: none;
+  border-bottom: none;
+  padding: 2px 4px;
+}
+
+.content {
+  position: relative; /* anchors the graphic area and the icon frame */
+  width: 100%;
+  height: 100%;
+}
+
+/* ---- Caps (pressurized frame) ----
+ * The Figma silhouette keeps 2.5px of clear space above the dome inside an
+ * 8px cap, so the dome is a bottom-aligned child rather than the cap itself. */
+.cap {
+  flex: 0 0 var(--_cap-height);
+  height: var(--_cap-height);
+  position: relative;
+}
+.cap-dome {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 6px;
+  background: var(--instrument-frame-primary-color);
+  border: 1px solid var(--instrument-frame-tertiary-color);
+  border-bottom: none;
+  border-radius: 7px 7px 0 0 / 6px 6px 0 0;
+}
+.cap-end {
+  transform: scaleY(-1);
+}
+
+/* ---- Graphic area ---- */
+.area {
+  border: 1px solid var(--_hot-stroke);
+  background: var(--_hot-fill);
+}
+.area-single {
+  position: absolute;
+  inset: 0;
+  border-radius: 2px;
+}
+.area-cold {
+  border-color: var(--_cold-stroke);
+  background: var(--_cold-fill);
+}
+
+/* Two halves with the frame background showing through a 4px gap. */
+.halves {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  gap: 4px;
+}
+.halves > .area {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
+}
+.split-vertical .halves {
+  flex-direction: row;
+}
+.split-vertical .area-hot {
+  border-radius: 2px 0 0 2px;
+}
+.split-vertical .area-cold {
+  border-radius: 0 2px 2px 0;
+}
+.split-horizontal .halves {
+  flex-direction: column;
+}
+.split-horizontal .area-hot {
+  border-radius: 2px 2px 0 0;
+}
+.split-horizontal .area-cold {
+  border-radius: 0 0 2px 2px;
+}
+
+/* Diagonal: stroke widths are pixels (non-scaling), so the outer stroke is
+ * clipped to its half to leave 1px, and the gap edges are 6px lines under
+ * the 4px gap line, leaving 1px of colour on each side of the gap. */
+.diagonal {
+  position: absolute;
+  inset: 0;
+  border-radius: 2px;
+  overflow: hidden; /* rounds the SVG corners */
+}
+.diagonal > svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.area-fill.area-hot {
+  fill: var(--_hot-fill);
+}
+.area-fill.area-cold {
+  fill: var(--_cold-fill);
+}
+.area-stroke {
+  fill: none;
+  stroke-width: 2;
+}
+.area-stroke.area-hot,
+.gap-edge.area-hot {
+  stroke: var(--_hot-stroke);
+}
+.area-stroke.area-cold,
+.gap-edge.area-cold {
+  stroke: var(--_cold-stroke);
+}
+.gap-edge {
+  stroke-width: 6;
+}
+.gap {
+  stroke: var(--instrument-frame-primary-color);
+  stroke-width: 4;
+}
+
+/* ---- Equipment icon ---- */
+.icon-frame {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 4px;
+  border: 1px solid var(--border-outline-color);
+  border-radius: 4px;
+  background: var(--instrument-frame-primary-color);
+  color: var(--element-active-color);
+  display: flex;
+}
+.icon-frame > * {
+  display: block;
+  width: var(--automation-components-tanks-specialty-tanks-icon-size);
+  height: var(--automation-components-tanks-specialty-tanks-icon-size);
+}
+
+/* ---- Static ----
+ * Flat grey tile with a bare icon; the graphic area is not rendered. */
+.tank-frame.static .middle,
+.tank-frame.static .cap-dome {
+  background: var(--instrument-frame-secondary-color);
+}
+.tank-frame.static .icon-frame {
+  border-color: transparent;
+  background: transparent;
+}

@@ -27,7 +27,8 @@
   position: absolute;
   width: 4px;
   height: 4px;
-  right: -3px;
+  right: -3.5px;
+  bottom: 0;
   border-radius: 50%;
   background: var(--element-neutral-color);
   border: 1px solid var(--border-silhouette-color);

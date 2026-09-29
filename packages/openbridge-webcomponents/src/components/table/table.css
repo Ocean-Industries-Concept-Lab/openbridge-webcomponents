@@ -10,7 +10,7 @@
 .grid-container {
   display: grid;
   height: 100%;
-  grid-template-columns: repeat(var(--grid-columns), auto);
+  grid-template-columns: repeat(var(--grid-columns, 1), auto);
   align-content: start;
   grid-template-rows: min-content min-content 1fr;
 
@@ -20,7 +20,7 @@
         --selection-column-width,
         var(--menu-navigation-components-table-item-touch-target-size)
       )
-      repeat(var(--grid-columns-rest), minmax(0, 1fr));
+      repeat(var(--grid-columns-rest, 1), minmax(0, 1fr));
   }
 
   .grid-header {
@@ -195,6 +195,48 @@
         width: var(--menu-navigation-components-table-item-icon-size);
         height: var(--menu-navigation-components-table-item-icon-size);
         flex-shrink: 0;
+      }
+
+      /* ---- Hierarchy ---- */
+
+      /*
+       * Indent gutter for a hierarchical row. One step per level plus one for
+       * the chevron itself, so a leaf and a group at the same level align.
+       */
+      .row-expander {
+        --row-indent-step: var(
+          --menu-navigation-components-table-item-icon-size
+        );
+        /* Depth of this row; the row's inline style overrides it. */
+        --row-level: 0;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        flex-shrink: 0;
+        align-self: stretch;
+        width: calc((var(--row-level) + 1) * var(--row-indent-step));
+      }
+
+      .row-expander .chevron {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        /* Pointer target floor, and the gutter is only one step wide. */
+        min-width: var(--row-indent-step);
+        min-height: var(--row-indent-step);
+        align-self: stretch;
+        color: var(--on-flat-neutral-color);
+        transition: transform 100ms ease-in-out;
+      }
+
+      .row-expander .chevron.expanded {
+        transform: rotate(90deg);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .row-expander .chevron {
+          transition: none;
+        }
       }
 
       &.large-icon .icon {

@@ -2,7 +2,11 @@ import {LitElement, html, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import compentStyle from './bearing-indicator.css?inline';
 import {customElement} from '../../decorator.js';
+import {degToRad} from '../../svghelpers/math.js';
 
+/**
+ * @stable
+ */
 @customElement('obc-bearing-indicator')
 export class ObcBearingIndicator extends LitElement {
   @property({type: Number})
@@ -10,11 +14,11 @@ export class ObcBearingIndicator extends LitElement {
 
   override render() {
     const r = 13;
-    const x = 25 + r * Math.sin((this.bearingDeg * Math.PI) / 180);
-    const y = 25 - r * Math.cos((this.bearingDeg * Math.PI) / 180);
+    const x = 25 + r * Math.sin(degToRad(this.bearingDeg));
+    const y = 25 - r * Math.cos(degToRad(this.bearingDeg));
     const R = 17.5;
-    const x2 = 25 + R * Math.sin((this.bearingDeg * Math.PI) / 180);
-    const y2 = 25 - R * Math.cos((this.bearingDeg * Math.PI) / 180);
+    const x2 = 25 + R * Math.sin(degToRad(this.bearingDeg));
+    const y2 = 25 - R * Math.cos(degToRad(this.bearingDeg));
     return html`
       <svg
         width="48"

@@ -63,6 +63,7 @@ enum ObcPoiSelectionCornerPosition {
  *   box-height="12"
  * ></obc-poi-selection-frame>
  * ```
+ * @experimental
  */
 @customElement('obc-poi-selection-frame')
 export class ObcPoiSelectionFrame extends LitElement {
@@ -162,9 +163,9 @@ export class ObcPoiSelectionFrame extends LitElement {
 
   override render() {
     return html`<span
-      class="frame type-${this.type} state-${this.state}${this.customMode
-        ? ' custom-mode'
-        : ''}"
+      class="frame type-${this.type} state-${this.state}${
+        this.customMode ? ' custom-mode' : ''
+      }"
       part="frame"
       aria-hidden="true"
       >${this.renderFrame()}</span

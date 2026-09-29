@@ -76,16 +76,18 @@ const meta: Meta<typeof ObcNavigationMenu> = {
         <obc-navigation-item slot="footer" label="Alert" hasIcon href="#">
           <obi-alert-list slot="icon"></obi-alert-list>
         </obc-navigation-item>
-        ${args.variant === ObcNavigationMenuVariant.Full && !args.smallScreen
-          ? html` <obc-vendor-button
-              imageSrc="/companylogo-day.png"
-              alt="logo"
-              slot="logo"
-            >
-            </obc-vendor-button>`
-          : html` <obc-navigation-item slot="logo" label="Oicl" hasIcon>
-              <img src="/oicl.svg" alt="logo" slot="icon" />
-            </obc-navigation-item>`}
+        ${
+          args.variant === ObcNavigationMenuVariant.Full && !args.smallScreen
+            ? html` <obc-vendor-button
+                imageSrc="/companylogo-day.png"
+                alt="logo"
+                slot="logo"
+              >
+              </obc-vendor-button>`
+            : html` <obc-navigation-item slot="logo" label="Oicl" hasIcon>
+                <img src="/oicl.svg" alt="logo" slot="icon" />
+              </obc-navigation-item>`
+        }
       </obc-navigation-menu>
     `;
   },
@@ -117,7 +119,7 @@ export const Full: Story = {
 };
 
 /**
- * Note that Icon only should not be used when there are items with sub items.
+ * Icon only should not be used when there are items with sub items.
  * Use IconOnlyLarge instead.
  */
 export const IconOnly: Story = {
@@ -250,5 +252,87 @@ export const TestDynamicElementsInSpan: Story = {
     await expect(newItem).toBeInTheDocument();
     await new Promise((resolve) => requestAnimationFrame(resolve));
     await expect(newItem.variant).toBe(ObcNavigationMenuVariant.Compact);
+  },
+};
+
+export const Tree: Story = {
+  args: {
+    variant: ObcNavigationMenuVariant.Tree,
+  },
+  render: (args) => {
+    return html`
+      <obc-navigation-menu
+        .variant=${args.variant}
+        style="position: fixed; top: 0; bottom: 0; left: 0;"
+      >
+        <obc-navigation-item-group
+          slot="main"
+          label="Vessel"
+          hasIcon
+          defaultOpen
+          .alerts=${{
+            combine: true,
+            countLevelCritical: 1,
+            countLevelHigh: 1,
+            countLevelMedium: 2,
+            countLevelLow: 1,
+          }}
+        >
+          <obi-placeholder slot="icon"></obi-placeholder>
+          <obc-navigation-item-group
+            label="Engine room"
+            hasIcon
+            defaultOpen
+            terminalType="aggregated-header"
+            .alerts=${{
+              combine: true,
+              countLevelCritical: 1,
+              countLevelHigh: 1,
+            }}
+          >
+            <obi-placeholder slot="icon"></obi-placeholder>
+            <obc-navigation-item
+              label="Main engine"
+              hasIcon
+              checked
+              .alerts=${{countLevelHigh: 1}}
+            >
+              <obi-placeholder slot="icon"></obi-placeholder>
+            </obc-navigation-item>
+            <obc-navigation-item
+              label="Cooling system"
+              hasIcon
+              .alerts=${{countLevelCritical: 1}}
+            >
+              <obi-placeholder slot="icon"></obi-placeholder>
+            </obc-navigation-item>
+          </obc-navigation-item-group>
+          <obc-navigation-item-group
+            label="Bridge"
+            hasIcon
+            .alerts=${{combine: true, countLevelMedium: 2, countLevelLow: 1}}
+          >
+            <obi-placeholder slot="icon"></obi-placeholder>
+            <obc-navigation-item
+              label="Radar"
+              hasIcon
+              .alerts=${{countLevelMedium: 2}}
+            >
+              <obi-placeholder slot="icon"></obi-placeholder>
+            </obc-navigation-item>
+            <obc-navigation-item
+              label="Autopilot"
+              hasIcon
+              .alerts=${{countLevelLow: 1}}
+            >
+              <obi-placeholder slot="icon"></obi-placeholder>
+            </obc-navigation-item>
+          </obc-navigation-item-group>
+          <obc-navigation-item label="Deck" hasIcon>
+            <obi-placeholder slot="icon"></obi-placeholder>
+          </obc-navigation-item>
+        </obc-navigation-item-group>
+      </obc-navigation-menu>
+    `;
   },
 };

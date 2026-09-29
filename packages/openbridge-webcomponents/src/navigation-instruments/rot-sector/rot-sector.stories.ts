@@ -36,6 +36,10 @@ const meta: Meta<typeof ObcRotSector> = {
     rotArcExtent: {
       control: {type: 'range', min: 10, max: 60, step: 5},
     },
+    hasReadout: {control: 'boolean'},
+    label: {control: 'text'},
+    unit: {control: 'text'},
+    fractionDigits: {control: 'number'},
   },
 } satisfies Meta<ObcRotSector>;
 
@@ -46,6 +50,21 @@ export const Regular: Story = {
   args: {
     value: 50,
     portStarboard: false,
+  },
+};
+
+export const WithReadout: Story = {
+  args: {
+    value: 50,
+    hasReadout: true,
+  },
+};
+
+export const EnhancedWithReadout: Story = {
+  args: {
+    value: 50,
+    priority: Priority.enhanced,
+    hasReadout: true,
   },
 };
 

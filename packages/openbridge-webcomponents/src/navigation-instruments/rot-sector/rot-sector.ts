@@ -1,11 +1,14 @@
-import {LitElement, html} from 'lit';
+import {LitElement, html, css, nothing, unsafeCSS} from 'lit';
 import {customElement} from '../../decorator.js';
 import {property} from 'lit/decorators.js';
 import {AdviceType} from '../watch/advice.js';
 import {Priority} from '../types.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import '../../building-blocks/instrument-radial/instrument-radial.js';
+import {renderInstrumentReadout} from '../readout/instrument-readout.js';
+import instrumentReadoutStyle from '../readout/instrument-readout.css?inline';
 import {TickmarkStyle} from '../watch/tickmark.js';
+import {clamp} from '../../svghelpers/math.js';
 
 export enum ObcGaugeRadialType {
   filled = 'filled',
@@ -81,29 +84,56 @@ export interface GaugeRadialAdvice {
  * ```
  *
  * @element obc-rot-sector
- * @typedef {import('./rot-sector.js').GaugeRadialAdvice} GaugeRadialAdvice
+ *
+ * @property tickmarksInside - Whether to render tickmarks inside the ring.
+ * @property primaryTickmarkInterval - Interval for primary tickmarks in value units.
+ *   When undefined or <= 0, no primary tickmarks are shown.
+ * @property secondaryTickmarkInterval - Interval for secondary tickmarks in value units.
+ *   When undefined or <= 0, no secondary tickmarks are shown.
+ * @property tertiaryTickmarkInterval - Interval for tertiary tickmarks in value units.
+ *   When undefined or <= 0, no tertiary tickmarks are shown.
+ * @property hasReadout - When `true`, shows a centered `<obc-readout>` (label `ROT`, unit `DEG/min`)
+ *   under the arc with the current rate-of-turn value. Default `false`.
+ * @property label - Readout label. Default `ROT`.
+ * @property unit - Readout unit. Default `DEG/min`.
+ * @property fractionDigits - Number of fraction digits shown in the readout. Default `0`.
+ * @stable
  */
 @customElement('obc-rot-sector')
 export class ObcRotSector extends SetpointMixin(LitElement) {
   @property({type: Number}) value = 0;
   @property({type: Number}) maxValue = 100;
+
+  /**
+   * Measured rate of turn in degrees per minute (positive = starboard).
+   * Alias for `value` provided for cross-component consistency with
+   * `obc-compass`, `obc-compass-sector`, `obc-compass-flat`, and
+   * `obc-rate-of-turn`. Setting this updates `value`.
+   */
+  @property({type: Number})
+  set rateOfTurn(v: number) {
+    this.value = v;
+  }
+  get rateOfTurn(): number {
+    return this.value;
+  }
+
+  /**
+   * Maximum measured rate of turn in degrees per minute. Alias for
+   * `maxValue` provided for cross-component consistency. Setting this
+   * updates `maxValue`.
+   */
+  @property({type: Number})
+  set rateOfTurnMax(v: number) {
+    this.maxValue = v;
+  }
+  get rateOfTurnMax(): number {
+    return this.maxValue;
+  }
   @property({type: Boolean}) showLabels: boolean = false;
-  /** Whether to render tickmarks inside the ring. */
   @property({type: Boolean}) tickmarksInside: boolean = false;
-  /**
-   * Interval for primary tickmarks in value units.
-   * When undefined or <= 0, no primary tickmarks are shown.
-   */
   @property({type: Number}) primaryTickmarkInterval: number | undefined = 50;
-  /**
-   * Interval for secondary tickmarks in value units.
-   * When undefined or <= 0, no secondary tickmarks are shown.
-   */
   @property({type: Number}) secondaryTickmarkInterval: number | undefined = 10;
-  /**
-   * Interval for tertiary tickmarks in value units.
-   * When undefined or <= 0, no tertiary tickmarks are shown.
-   */
   @property({type: Number}) tertiaryTickmarkInterval: number | undefined =
     undefined;
   @property({type: String}) priority: Priority = Priority.regular;
@@ -113,6 +143,10 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
   @property({type: Array, attribute: false}) advices: GaugeRadialAdvice[] = [];
   @property({type: Boolean}) zoomToFitArc: boolean = false;
   @property({type: Number}) rotArcExtent: number = 60;
+  @property({type: Boolean}) hasReadout: boolean = false;
+  @property({type: String}) label = 'ROT';
+  @property({type: String}) unit = 'DEG/min';
+  @property({type: Number}) fractionDigits = 0;
 
   getAngle = (v: number): number => {
     if (!this.maxValue) return 0;
@@ -138,6 +172,23 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
     }
 
     return 'var(--instrument-enhanced-tertiary-color)';
+  }
+
+  /**
+   * Vertical position of the readout, in % of the host. In the zoomed view the
+   * arc's lower edge shifts with `rotArcExtent`, so the position is interpolated
+   * between the narrow- and wide-arc anchors to keep a roughly constant gap
+   * between the arc and the readout. The static (unzoomed) arc uses a fixed
+   * position.
+   */
+  private get _readoutTopPercent(): number {
+    if (!this.zoomToFitArc) {
+      return 60;
+    }
+    const narrowTop = 70; // rotArcExtent ~10
+    const wideTop = 66; // rotArcExtent ~60
+    const extent = clamp(this.rotArcExtent, 10, 60);
+    return narrowTop + ((wideTop - narrowTop) * (extent - 10)) / (60 - 10);
   }
 
   override render() {
@@ -171,6 +222,20 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
         .zoomToFitArc=${this.zoomToFitArc}
       >
       </obc-instrument-radial>
+      ${
+        this.hasReadout
+          ? html`<div class="readout" style="top: ${this._readoutTopPercent}%">
+              ${renderInstrumentReadout({
+                value: this.value,
+                priority: this.priority,
+                label: this.label,
+                unit: this.unit,
+                fractionDigits: this.fractionDigits,
+                centerValue: true,
+              })}
+            </div>`
+          : nothing
+      }
     `;
   }
 
@@ -191,6 +256,23 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
 
     return 'var(--instrument-enhanced-secondary-color)';
   }
+
+  static override styles = [
+    unsafeCSS(instrumentReadoutStyle),
+    css`
+      :host {
+        position: relative;
+        display: block;
+        height: 100%;
+      }
+
+      .readout {
+        position: absolute;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+    `,
+  ];
 }
 
 declare global {

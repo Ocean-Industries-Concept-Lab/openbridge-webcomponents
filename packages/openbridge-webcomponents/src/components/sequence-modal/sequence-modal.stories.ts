@@ -95,32 +95,34 @@ const renderSequenceModal = (args: SequenceModalStoryArgs) => {
             Instance swap with custom components
           </div>
         </div>
-        ${args.hasActions
-          ? html`
-              <obc-button
-                slot="actions"
-                variant="normal"
-                .showLeadingIcon=${true}
-                @click=${(event: PointerEvent) => onAction1Click(event)}
-              >
-                <span slot="leading-icon">
-                  <obi-placeholder></obi-placeholder>
-                </span>
-                Label
-              </obc-button>
-              <obc-button
-                slot="actions"
-                variant="raised"
-                .showLeadingIcon=${true}
-                @click=${(event: PointerEvent) => onAction2Click(event)}
-              >
-                <span slot="leading-icon">
-                  <obi-placeholder></obi-placeholder>
-                </span>
-                Label
-              </obc-button>
-            `
-          : nothing}
+        ${
+          args.hasActions
+            ? html`
+                <obc-button
+                  slot="actions"
+                  variant="normal"
+                  .showLeadingIcon=${true}
+                  @click=${(event: PointerEvent) => onAction1Click(event)}
+                >
+                  <span slot="leading-icon">
+                    <obi-placeholder></obi-placeholder>
+                  </span>
+                  Label
+                </obc-button>
+                <obc-button
+                  slot="actions"
+                  variant="raised"
+                  .showLeadingIcon=${true}
+                  @click=${(event: PointerEvent) => onAction2Click(event)}
+                >
+                  <span slot="leading-icon">
+                    <obi-placeholder></obi-placeholder>
+                  </span>
+                  Label
+                </obc-button>
+              `
+            : nothing
+        }
       </obc-sequence-modal>
     </div>
   `;
@@ -128,7 +130,7 @@ const renderSequenceModal = (args: SequenceModalStoryArgs) => {
 
 const meta: Meta<SequenceModalStoryArgs> = {
   title: 'UI Components/Sections/Sequence Modal',
-  tags: ['6.1'],
+  tags: ['6.1', 'experimental'],
   component: 'obc-sequence-modal',
   parameters: {
     layout: 'centered',

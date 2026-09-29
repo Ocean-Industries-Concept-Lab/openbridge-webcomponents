@@ -20,6 +20,7 @@ import {AdviceType} from '../../navigation-instruments/watch/advice.js';
 // Import the component for side-effects (custom element registration)
 import '../bar-vertical/bar-vertical.js';
 import type {ObcBarVertical} from '../bar-vertical/bar-vertical.js';
+import {moduleDocs} from '../../../.storybook/manifest-docs.js';
 
 type ExternalScaleStoryArgs = Omit<ExternalScaleConfig, 'side'> & {
   /** Used when orientation==='vertical'. */
@@ -207,111 +208,9 @@ const meta = {
   parameters: {
     docs: {
       description: {
-        component: `# External Scale renderer (pure SVG building block)
-
-This module provides a side-aware, orientation-aware SVG “ruler/axis” renderer that can be used standalone, as an overlay axis for charts, or composed inside other components.
-
-Unlike Lit components, this file exports **pure functions** that return \`SVGTemplateResult\` fragments. Consumers are responsible for creating the outer \`<svg>\` element (including \`viewBox\`, sizing, and \`preserveAspectRatio\`).
-
-## What it renders
-- **Bar container**: a rounded rectangle band (optional)
-- **Bar fill**: value fill (0→value) or tinted range fill (fillMin→fillMax)
-- **Tickmarks**: main + primary + secondary + tertiary tick lines (optional)
-- **Labels**: numeric labels at primary tick interval (optional)
-- **Advice overlays**: alert/advice/caution ranges with canonical dashed bounds
-- **Setpoint marker**: a triangular marker that flips by side and scales when “at setpoint”
-
-## Layout model
-- \`orientation\`: \`'vertical' | 'horizontal'\` controls value→coordinate mapping
-- \`side\`: where the scale attaches to the chart edge
-  - vertical: \`'left' | 'right'\`
-  - horizontal: \`'top' | 'bottom'\`
-- The **chart edge is always at perpendicular coordinate \`0\`**. The scale expands outward into positive or negative perpendicular space depending on \`side\`.
-
-Use \`computeExternalScaleLayout()\` to compute the minimal viewBox thickness for the selected bands (bar/ticks/labels).
-
-## Theming & responsive sizing
-This renderer uses CSS variables directly in SVG attributes.
-
-It is designed to inherit theme and sizing variables from parent containers (e.g. \`.obc-component-size-*\` wrappers) the same way web components do.
-
-Common variables involved:
-- \`--global-typography-ui-label-font-size\`
-- \`--instrument-frame-*-color\`, \`--instrument-*-*-color\`
-- \`--instrument-components-watchface-frame-regular-border-radius\`
-
-**Browser note (SVG geometry + CSS variables):**
-Some browsers (notably Chrome) do not reliably resolve \`var(--...)\` inside SVG geometry attributes like \`rx\`/\`ry\`. The bar container and fill masks therefore provide numeric fallbacks and also set \`rx\`/\`ry\` via CSS geometry properties to allow theme overrides where supported.
-
-## Usage examples
-
-### Standalone usage
-\`\`\`ts
-import {html} from 'lit';
-import {computeExternalScaleLayout, renderExternalScale} from './external-scale.js';
-
-const config = {
-  orientation: 'vertical',
-  side: 'right',
-  length: 320,
-  paddingStart: 32,
-  paddingEnd: 32,
-  minValue: 0,
-  maxValue: 100,
-  hasBar: true,
-  hasScale: true,
-  labels: true,
-  scaleBackground: false,
-  barThickness: 24,
-  tickThickness: 24,
-  labelThickness: 60,
-  mainTickmarks: [],
-  primaryTickmarkInterval: 20,
-  secondaryTickmarkInterval: 10,
-  tertiaryTickmarkInterval: 2,
-  scaleType: ScaleType.regular,
-  frameStyle: FrameStyle.regular,
-  priority: Priority.enhanced,
-  fillMode: FillMode.fill,
-  fillMin: 0,
-  fillMax: 40,
-  value: 40,
-  setpoint: 50,
-  atSetpoint: false,
-  autoAtSetpoint: true,
-  autoAtSetpointDeadband: 1,
-  setpointAtZeroDeadband: 0.5,
-  state: 'active',
-  advicePosition: AdvicePosition.inner,
-  advices: [{min: 60, max: 80, type: AdviceType.caution, hinted: true}],
-};
-
-const layout = computeExternalScaleLayout(config);
-const parts = renderExternalScale(config);
-
-// Wrap returned fragments in an SVG.
-const tpl = html\`<svg
-  width="\${layout.viewBoxThickness}px"
-  height="\${config.length}px"
-  viewBox="\${layout.viewBoxPerpStart} \${-config.length / 2} \${layout.viewBoxThickness} \${config.length}"
-  preserveAspectRatio="none"
->
-  \${parts.barContainer}
-  \${parts.barFill}
-  \${parts.scaleBackground}
-  \${parts.tickmarks}
-  \${parts.labels}
-  \${parts.adviceOverlays}
-  \${parts.setpoint}
-</svg>\`;
-\`\`\`
-
-### Web component wrappers
-For common usage, prefer the thin wrappers:
-- \`obc-bar-vertical\` (sets up vertical viewBox)
-- \`obc-bar-horizontal\` (sets up horizontal viewBox)
-
-Source of truth: \`packages/openbridge-webcomponents/src/building-blocks/external-scale/external-scale.ts\``,
+        component: moduleDocs(
+          'building-blocks/external-scale/external-scale.ts'
+        ),
       },
     },
   },

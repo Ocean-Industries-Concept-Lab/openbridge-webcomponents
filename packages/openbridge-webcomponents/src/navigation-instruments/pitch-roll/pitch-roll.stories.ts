@@ -1,10 +1,17 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {ObcPitchRoll, PitchRollPriorityElement} from './pitch-roll.js';
+import {
+  ObcPitchRoll,
+  PitchRollPriorityElement,
+  PitchRollType,
+} from './pitch-roll.js';
 import './pitch-roll.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {Priority} from '../types.js';
 import {VesselImage} from '../watch/vessel.js';
-import {sideVessels, foreVessels} from '../watch/vessels/storybook-helper.js';
+import {
+  foreVessels,
+  fadedSideVessels,
+} from '../watch/vessels/storybook-helper.js';
 
 const meta: Meta<typeof ObcPitchRoll> = {
   title: 'Instruments/Pitch Roll',
@@ -22,6 +29,7 @@ const meta: Meta<typeof ObcPitchRoll> = {
     maxRollAdvice: 15,
     triggerPitchAdvice: true,
     triggerRollAdvice: false,
+    scaleForeImage: 1,
     priority: Priority.enhanced,
     priorityElements: [
       PitchRollPriorityElement.pitch,
@@ -30,8 +38,11 @@ const meta: Meta<typeof ObcPitchRoll> = {
   },
   argTypes: {
     width: {control: {type: 'range', min: 100, max: 1000, step: 1}},
+    type: {control: 'select', options: Object.values(PitchRollType)},
+    isSingleScale: {control: false, table: {disable: true}},
     pitch: {control: {type: 'range', min: -10, max: 10, step: 0.1}},
     roll: {control: {type: 'range', min: -10, max: 10, step: 0.1}},
+    scaleForeImage: {control: {type: 'range', min: 0, max: 2, step: 0.01}},
     priority: {control: 'select', options: Object.values(Priority)},
     priorityElements: {
       control: 'multi-select',
@@ -39,12 +50,19 @@ const meta: Meta<typeof ObcPitchRoll> = {
     },
     vesselImageSide: {
       control: 'select',
-      options: sideVessels,
+      options: fadedSideVessels,
     },
     vesselImageFore: {
       control: 'select',
       options: foreVessels,
     },
+    hasReadout: {control: 'boolean'},
+    pitchLabel: {control: 'text'},
+    rollLabel: {control: 'text'},
+    unit: {control: 'text'},
+    fractionDigits: {control: 'number'},
+    zoomToFitArc: {control: 'boolean'},
+    arcAngle: {control: {type: 'range', min: 5, max: 45, step: 1}},
   },
   decorators: [widthDecorator],
 } satisfies Meta<ObcPitchRoll>;
@@ -56,9 +74,87 @@ export const Primary: Story = {
   args: {},
 };
 
+export const WithReadout: Story = {
+  args: {
+    hasReadout: true,
+  },
+};
+
+export const ZoomedInWithReadout: Story = {
+  args: {
+    zoomToFitArc: true,
+    hasReadout: true,
+  },
+};
+
 export const Rov: Story = {
   args: {
-    vesselImageSide: VesselImage.rovSide,
+    vesselImageSide: VesselImage.rovSideFaded,
     vesselImageFore: VesselImage.rovFront,
+  },
+};
+
+export const ScaledForeImage: Story = {
+  args: {
+    vesselImageSide: VesselImage.carFerrySideFaded,
+    vesselImageFore: VesselImage.carFerryFore,
+    scaleForeImage: 1.6,
+  },
+};
+
+export const ZoomedIn: Story = {
+  args: {
+    zoomToFitArc: true,
+  },
+};
+
+export const ZoomedInNarrow: Story = {
+  args: {
+    zoomToFitArc: true,
+    arcAngle: 10,
+    pitch: 4,
+    roll: 6,
+    minAvgPitch: -3,
+    maxAvgPitch: 5,
+    minAvgRoll: -4,
+    maxAvgRoll: 7,
+    maxPitchAdvice: 6,
+    maxRollAdvice: 8,
+  },
+};
+
+export const ZoomedInRectangular: Story = {
+  args: {
+    zoomToFitArc: true,
+    pitchArcAngle: 6,
+    rollArcAngle: 14,
+    pitch: 3,
+    roll: 8,
+    minAvgPitch: -2,
+    maxAvgPitch: 4,
+    minAvgRoll: -6,
+    maxAvgRoll: 10,
+    maxPitchAdvice: 4,
+    maxRollAdvice: 12,
+  },
+};
+
+export const SingleScale: Story = {
+  args: {
+    type: PitchRollType.singleScale,
+  },
+};
+
+export const SingleScaleWithReadout: Story = {
+  args: {
+    type: PitchRollType.singleScale,
+    hasReadout: true,
+  },
+};
+
+export const SingleScaleZoomedIn: Story = {
+  args: {
+    type: PitchRollType.singleScale,
+    zoomToFitArc: true,
   },
 };

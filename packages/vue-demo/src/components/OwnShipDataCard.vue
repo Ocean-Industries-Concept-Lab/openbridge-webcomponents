@@ -5,152 +5,81 @@
       <ObcCompassIndicator
         class="indicator"
         :angle="sim.vessel.headingDeg.value"
-        :arrow="CompassIndicatorArrow.Heading"
-        :show-labels="true"
+        :direction="CompassIndicatorDirection.Heading"
       >
       </ObcCompassIndicator>
-      <ObcInstrumentField
+      <obc-readout
         class="field"
-        :max-digits="3"
-        :value="mapTo360Degrees(sim.vessel.headingDeg.value)"
-        :size="InstrumentFieldSize.enhanced"
+        :value.prop="mapTo360Degrees(sim.vessel.headingDeg.value)"
+        :maxDigits.prop="3"
+        :src.prop="headingSrc"
+        size="large"
+        :priority.prop="'enhanced'"
         unit="DEG"
-        tag="HDG"
-        horizontal
-        has-src
-        :src="headingSrc"
-        has-src-picker
-      >
-        <obc-navigation-item
-          slot="src-picker-content"
-          label="GYR1"
-          @click="headingSrc = 'GYR1'"
-        ></obc-navigation-item>
-        <obc-navigation-item
-          slot="src-picker-content"
-          label="GYR2"
-          @click="headingSrc = 'GYR2'"
-        ></obc-navigation-item>
-        <obc-navigation-item
-          slot="src-picker-content"
-          label="GPS1"
-          @click="headingSrc = 'GPS1'"
-        ></obc-navigation-item>
-      </ObcInstrumentField>
+        label="HDG"
+        direction="horizontal"
+      />
       <ObcCompassIndicator
         class="indicator"
         :angle="sim.vessel.courseOverGroundDeg.value"
-        :arrow="CompassIndicatorArrow.Course"
+        :direction="CompassIndicatorDirection.Course"
         src="GPS1"
       />
-      <ObcInstrumentField
+      <obc-readout
         class="field"
-        :max-digits="3"
-        :value="mapTo360Degrees(sim.vessel.courseOverGroundDeg.value)"
-        :size="InstrumentFieldSize.enhanced"
+        :value.prop="mapTo360Degrees(sim.vessel.courseOverGroundDeg.value)"
+        :maxDigits.prop="3"
+        :src.prop="courseOverGroundSrc"
+        size="large"
+        :priority.prop="'enhanced'"
         unit="DEG"
-        tag="COG"
-        horizontal
-        has-src
-        src="GPS1"
-        has-src-picker
-      >
-        <obc-navigation-item
-          slot="src-picker-content"
-          label="GYR1"
-          @click="courseOverGroundSrc = 'GYR1'"
-        ></obc-navigation-item>
-        <obc-navigation-item
-          slot="src-picker-content"
-          label="GYR2"
-          @click="courseOverGroundSrc = 'GYR2'"
-        ></obc-navigation-item>
-        <obc-navigation-item
-          slot="src-picker-content"
-          label="GPS1"
-          @click="courseOverGroundSrc = 'GPS1'"
-        ></obc-navigation-item>
-      </ObcInstrumentField>
+        label="COG"
+        direction="horizontal"
+      />
       <ObcRotIndicator
         class="indicator"
         :rotations-per-minute="sim.vessel.rotationDegPerMinute.value"
       />
-      <ObcInstrumentField
+      <obc-readout
         class="field"
-        :max-digits="3"
-        :value="sim.vessel.rotationDegPerMinute.value"
-        :size="InstrumentFieldSize.enhanced"
+        :value.prop="sim.vessel.rotationDegPerMinute.value"
+        :maxDigits.prop="3"
+        :src.prop="rotationSrc"
+        size="large"
+        :priority.prop="'enhanced'"
         unit="DEG/min"
-        tag="ROT"
-        horizontal
-        has-src
-        src="GYR1"
-        has-src-picker
-      >
-        <obc-navigation-item
-          slot="src-picker-content"
-          label="GYR1"
-          @click="rotationSrc = 'GYR1'"
-        ></obc-navigation-item>
-        <obc-navigation-item
-          slot="src-picker-content"
-          label="GYR2"
-          @click="rotationSrc = 'GYR2'"
-        ></obc-navigation-item>
-      </ObcInstrumentField>
+        label="ROT"
+        direction="horizontal"
+      />
       <div class="divider"></div>
       <ObcSpeedIndicator
         class="indicator"
         :speed="sim.vessel.speedForwardThroughWaterKnots.value"
         :max-speed="20"
       />
-      <ObcInstrumentField
+      <obc-readout
         class="field"
-        :max-digits="3"
-        :value="sim.vessel.speedForwardThroughWaterKnots.value"
-        :size="InstrumentFieldSize.enhanced"
+        :value.prop="sim.vessel.speedForwardThroughWaterKnots.value"
+        :maxDigits.prop="3"
+        :src.prop="speedSrc"
+        size="large"
+        :priority.prop="'enhanced'"
         unit="KN"
-        tag="STW"
-        horizontal
-        has-src
-        src="GYR1"
-        has-src-picker
-      >
-        <obc-navigation-item
-          slot="src-picker-content"
-          label="GYR1"
-          @click="speedSrc = 'GYR1'"
-        ></obc-navigation-item>
-        <obc-navigation-item
-          slot="src-picker-content"
-          label="GYR2"
-          @click="speedSrc = 'GYR2'"
-        ></obc-navigation-item>
-      </ObcInstrumentField>
+        label="STW"
+        direction="horizontal"
+      />
       <ObcGraphMini :data="depthDataLast30" class="indicator" :max-y="0" />
-      <ObcInstrumentField
+      <obc-readout
         class="field"
-        :max-digits="3"
-        :value="sim.depth.value"
-        :size="InstrumentFieldSize.enhanced"
+        :value.prop="sim.depth.value"
+        :maxDigits.prop="3"
+        :src.prop="depthSrc"
+        size="large"
+        :priority.prop="'enhanced'"
         unit="m"
-        tag="Depth"
-        horizontal
-        has-src
-        src="ECH1"
-        has-src-picker
-      >
-        <obc-navigation-item
-          slot="src-picker-content"
-          label="ECH1"
-          @click="depthSrc = 'ECH1'"
-        ></obc-navigation-item>
-        <obc-navigation-item
-          slot="src-picker-content"
-          label="ECH2"
-          @click="depthSrc = 'ECH2'"
-        ></obc-navigation-item>
-      </ObcInstrumentField>
+        label="Depth"
+        direction="horizontal"
+      />
 
       <div class="divider"></div>
       <svg
@@ -263,14 +192,11 @@
 import { ref, computed } from 'vue'
 import { useSim } from '@/composables/useSim'
 import ObcCard from '@oicl/openbridge-webcomponents-vue/components/card/ObcCard.vue'
-import ObcInstrumentField from '@oicl/openbridge-webcomponents-vue/navigation-instruments/instrument-field/ObcInstrumentField.vue'
-import { InstrumentFieldSize } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field'
-import { CompassIndicatorArrow } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/compass-indicator/compass-indicator'
+import { CompassIndicatorDirection } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/compass-indicator/compass-indicator'
 import ObcCompassIndicator from '@oicl/openbridge-webcomponents-vue/navigation-instruments/compass-indicator/ObcCompassIndicator.vue'
 import ObcRotIndicator from '@oicl/openbridge-webcomponents-vue/navigation-instruments/rot-indicator/ObcRotIndicator.vue'
 import ObcSpeedIndicator from '@oicl/openbridge-webcomponents-vue/navigation-instruments/speed-indicator/ObcSpeedIndicator.vue'
 import ObcGraphMini from '@oicl/openbridge-webcomponents-vue/navigation-instruments/graph-mini/ObcGraphMini.vue'
-import ObcNavigationItem from '@oicl/openbridge-webcomponents-vue/components/navigation-item/ObcNavigationItem.vue'
 
 const sim = useSim()
 const headingSrc = ref('GYR1')
@@ -326,8 +252,6 @@ const depthDataLast30 = computed(() => {
   flex-direction: column;
   align-items: center;
   gap: 4px;
-  --obc-instrument-field-source-width: 70px;
-  --obc-instrument-field-tag-width: 50px;
 }
 
 .field {
@@ -383,7 +307,7 @@ const depthDataLast30 = computed(() => {
     grid-column: 3 / 4;
     grid-row: 1 / -1;
     align-self: center;
-    width: var(--obc-instrument-field-source-width);
+    width: 70px;
     color: var(--element-neutral-color);
     font-feature-settings:
       'liga' off,

@@ -30,6 +30,9 @@ export enum MosfetAlternativeIcon {
   mosfetPtype4 = 'mosfetPtype4',
 }
 
+/**
+ * @stable
+ */
 @customElement('obc-mosfet')
 export class ObcMosfet extends ObcAbstractAutomationButtonSquared {
   @property({type: String}) alternativeIcon: MosfetAlternativeIcon =
@@ -38,7 +41,7 @@ export class ObcMosfet extends ObcAbstractAutomationButtonSquared {
   override get icon() {
     switch (this.alternativeIcon) {
       case MosfetAlternativeIcon.mosfetNtype2:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-mosfet-ntype-2-on
               usecsscolor
               slot="icon"
@@ -58,7 +61,7 @@ export class ObcMosfet extends ObcAbstractAutomationButtonSquared {
             ></obi-mosfet-ntype-2-off>`;
         }
       case MosfetAlternativeIcon.mosfetNtype3:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-mosfet-ntype-3-on
               usecsscolor
               slot="icon"
@@ -78,7 +81,7 @@ export class ObcMosfet extends ObcAbstractAutomationButtonSquared {
             ></obi-mosfet-ntype-3-off>`;
         }
       case MosfetAlternativeIcon.mosfetNtype4:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-mosfet-ntype-4-on
               usecsscolor
               slot="icon"
@@ -98,7 +101,7 @@ export class ObcMosfet extends ObcAbstractAutomationButtonSquared {
             ></obi-mosfet-ntype-4-off>`;
         }
       case MosfetAlternativeIcon.mosfetPtype1:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-mosfet-ptype-1-on
               usecsscolor
               slot="icon"
@@ -118,7 +121,7 @@ export class ObcMosfet extends ObcAbstractAutomationButtonSquared {
             ></obi-mosfet-ptype-1-off>`;
         }
       case MosfetAlternativeIcon.mosfetPtype2:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-mosfet-ptype-2-on
               usecsscolor
               slot="icon"
@@ -138,7 +141,7 @@ export class ObcMosfet extends ObcAbstractAutomationButtonSquared {
             ></obi-mosfet-ptype-2-off>`;
         }
       case MosfetAlternativeIcon.mosfetPtype3:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-mosfet-ptype-3-on
               usecsscolor
               slot="icon"
@@ -158,7 +161,7 @@ export class ObcMosfet extends ObcAbstractAutomationButtonSquared {
             ></obi-mosfet-ptype-3-off>`;
         }
       case MosfetAlternativeIcon.mosfetPtype4:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-mosfet-ptype-4-on
               usecsscolor
               slot="icon"
@@ -178,7 +181,7 @@ export class ObcMosfet extends ObcAbstractAutomationButtonSquared {
             ></obi-mosfet-ptype-4-off>`;
         }
       default:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-mosfet-ntype-1-on
               usecsscolor
               slot="icon"

@@ -8,10 +8,16 @@ import {
 import componentStyle from './toggle-button-group.css?inline';
 import {customElement} from '../../decorator.js';
 import {classMap} from 'lit/directives/class-map.js';
+import {ifDefined} from 'lit/directives/if-defined.js';
+import {RovingNavigator} from '../../internal/roving-navigator.js';
 
 export type ObcToggleButtonGroupValueChangeEvent = CustomEvent<{
   value: string;
   previousValue: string;
+}>;
+
+export type ObcToggleButtonGroupChangeEvent = CustomEvent<{
+  value: string;
 }>;
 
 /**
@@ -47,10 +53,14 @@ export type ObcToggleButtonGroupValueChangeEvent = CustomEvent<{
  * - **External control mode:** When `externalControl` is true, the group emits selection events but does not
  *   update its own `value` property, allowing parent components to manage state (useful for form libraries or
  *   custom state management).
+ * - **Empty selection mode:** When `allowEmptySelection` is true, a `value` that does not match any enabled
+ *   option leaves the group with no option selected, instead of defaulting to the first enabled option. Use
+ *   this when a selection may legitimately be absent (e.g. unset, loading, or error states) so the UI does not
+ *   imply a choice the user has not made.
  * - **Disabled state:** Setting `disabled` on the group disables all contained options at once. Individual
  *   options can also be disabled independently while the group remains enabled.
  * - **Divider management:** Automatically shows visual dividers between options and hides the divider after
- *   the selected option for a seamless, unified appearance.
+ *   the selected option, so the group reads as one control.
  * - **Property propagation:** The group automatically synchronizes `type`, `variant`, `hugText`, and `large`
  *   properties to all child `<obc-toggle-button-option>` elements for consistent styling.
  * - **Automatic fallback selection:** If the current value is set to a disabled or non-existent option, the
@@ -97,6 +107,17 @@ export type ObcToggleButtonGroupValueChangeEvent = CustomEvent<{
  * - `value` – Fired when the selected value changes, either through user interaction or programmatic change.
  *   Event detail: `{ value: string, previousValue: string }`. Listen to this event to react to selection changes.
  *
+ * ### Keyboard
+ * A single-select group is a radio group to the keyboard
+ * ([APG Radio Group](https://www.w3.org/WAI/ARIA/apg/patterns/radio/)): one
+ * tab stop on the selected option, and the arrow keys move focus and selection
+ * together, wrapping and skipping disabled options. `Enter` and `Space` on an
+ * option select it through its button. Under `externalControl` an arrow key
+ * emits `value` and `change` for the next option the way a click does, and
+ * the selection waits for the host.
+ *
+ * Left out: nothing.
+ *
  * ### Example
  *
  * ```html
@@ -116,80 +137,97 @@ export type ObcToggleButtonGroupValueChangeEvent = CustomEvent<{
  * </obc-toggle-button-group>
  * ```
  *
+ * @property value - The currently selected option's value.
+ *   Set this property to programmatically select an option. When the user selects a different option, this property updates and a `value` event is fired.
+ *   If set to a value that does not match any enabled option, the first enabled option is selected by default.
+ * @property activated - The value of the option that is activated.
+ *   When the group is controlled by an external source, this property is used to set the value of the option that is activated.
+ *   This is a visual indication that the option is clicked but not yet stored.
+ * @property hugText - If true, the group shrinks to fit its content ("hug" the text) instead of stretching to fill the container.
+ *   This setting is propagated to all child `<obc-toggle-button-option>` elements.
+ * @property externalControl - Makes a click emit `selected` without moving the selection, so the
+ *   parent decides by setting `value`. Setting `value` programmatically always
+ *   updates the selection, with or without this flag.
+ *   When true, the group will not update its selection when the `value` property changes.
+ *   Defaults to false.
+ * @property disabled - Disables the entire toggle button group and all contained options when true.
+ *   When disabled, no option can be selected or interacted with.
+ * @property large - If true, the group and all contained options use a larger size.
+ *   This setting is propagated to all child `<obc-toggle-button-option>` elements.
+ * @property type - Visual type of the options, propagated to every child
+ *   `<obc-toggle-button-option>`: `text` (default) is text only, `icon` an
+ *   icon only, `iconText` an icon beside the text, `iconTextUnder` an icon
+ *   above it.
+ * @property variant - Visual variant, propagated to every child `<obc-toggle-button-option>`:
+ *   `regular` (default) has a background and border, `flat` has neither, and
+ *   `normal` is the alternative style.
+ * @property ariaLabel - Accessible name of the group, mapped to the `aria-label` attribute; the options are its radios. `aria-labelledby` is not supported: ID references cannot cross the shadow boundary.
+ * @property allowEmptySelection - Lets the group hold no selection: a `value` matching no enabled option, or
+ *   a selected option that becomes disabled, clears the selection instead of
+ *   falling back to the first enabled option.
  * @slot - Place one or more `<obc-toggle-button-option>` elements here to define the selectable options.
- * @fires value {CustomEvent<{value: string, previousValue: string}>} Fired when the selected value changes.
+ * @fires {CustomEvent<{value: string, previousValue: string}>} value - Fired when the selected value changes.
+ * @fires {CustomEvent<{value: string}>} change - Fired when the selected value changes by user interaction.
+ * @stable
  */
 @customElement('obc-toggle-button-group')
 export class ObcToggleButtonGroup extends LitElement {
-  /**
-   * The currently selected option's value.
-   *
-   * Set this property to programmatically select an option. When the user selects a different option, this property updates and a `value` event is fired.
-   *
-   * If set to a value that does not match any enabled option, the first enabled option is selected by default.
-   */
   @property({type: String}) value = '';
 
-  /**
-   * The value of the option that is activated.
-   *
-   * When the group is controlled by an external source, this property is used to set the value of the option that is activated.
-   * This is a visual indication that the option is clicked but not yet stored.
-   */
   @property({type: String}) activated: string | undefined;
 
-  /**
-   * The visual type of the toggle button options.
-   *
-   * - `text` (default): Options display text only.
-   * - `icon`: Options display only an icon.
-   * - `iconText`: Options display an icon and text side-by-side.
-   * - `iconTextUnder`: Options display an icon above the text.
-   *
-   * This setting is propagated to all child `<obc-toggle-button-option>` elements.
-   */
   @property({type: String}) type = ObcToggleButtonOptionType.text;
 
-  /**
-   * The visual variant of the toggle button group.
-   *
-   * - `regular` (default): Standard appearance with background and border.
-   * - `flat`: Minimal style with no background or border.
-   * - `normal`: Alternative style variant.
-   *
-   * This setting is propagated to all child `<obc-toggle-button-option>` elements.
-   */
   @property({type: String}) variant = ObcToggleButtonOptionVariant.regular;
 
-  /**
-   * If true, the group shrinks to fit its content ("hug" the text) instead of stretching to fill the container.
-   *
-   * This setting is propagated to all child `<obc-toggle-button-option>` elements.
-   */
   @property({type: Boolean}) hugText = false;
 
-  /**
-   * If true, the group is controlled by an external source.
-   *
-   * When true, the group will not update its selection when the `value` property changes.
-   *
-   * Defaults to false.
-   */
   @property({type: Boolean}) externalControl = false;
 
-  /**
-   * Disables the entire toggle button group and all contained options when true.
-   *
-   * When disabled, no option can be selected or interacted with.
-   */
+  @property({type: Boolean}) allowEmptySelection = false;
+
   @property({type: Boolean, reflect: true}) disabled = false;
 
-  /**
-   * If true, the group and all contained options use a larger size.
-   *
-   * This setting is propagated to all child `<obc-toggle-button-option>` elements.
-   */
   @property({type: Boolean, reflect: true}) large = false;
+
+  // Reactive so a consumer changing the name re-renders the group.
+  @property({type: String, attribute: 'aria-label'})
+  override ariaLabel: string | null = null;
+
+  private readonly navigator = new RovingNavigator<ObcToggleButtonOption>(
+    {
+      items: () => Array.from(this.options),
+      isDisabled: (option) => option.disabled,
+      preferred: () => this.getOptionByValue(this.value) ?? undefined,
+      setFocusable: (option, focusable) => {
+        option.focusable = focusable;
+      },
+      // Under external control the keys only ask, so focus stays put.
+      focusItem: (option) => {
+        if (!this.externalControl) option.focus();
+      },
+    },
+    {orientation: 'both'}
+  );
+
+  /**
+   * Arrow keys move selection with focus, the way a radio group does. Under
+   * `externalControl` they emit the request the way a click does and the tab
+   * stop stays on the selected option.
+   */
+  private handleKeydown(event: KeyboardEvent) {
+    const previous = this.navigator.activeItem;
+    if (!this.navigator.handleKeydown(event)) return;
+    event.preventDefault();
+    const target = this.navigator.activeItem;
+    if (!target) return;
+    if (this.externalControl) {
+      this.requestOption(target.value);
+      if (previous) this.navigator.setActive(previous, false);
+    } else {
+      this.updateSelection(target.value, true, true);
+    }
+  }
 
   @queryAssignedElements({selector: 'obc-toggle-button-option'})
   options!: NodeListOf<ObcToggleButtonOption>;
@@ -214,7 +252,11 @@ export class ObcToggleButtonGroup extends LitElement {
     return Array.from(this.options).find((opt) => !opt.disabled) || null;
   }
 
-  private updateSelection(newValue: string, emitEvent: boolean = true) {
+  private updateSelection(
+    newValue: string,
+    emitValueEvent: boolean = true,
+    emitChangeEvent: boolean = false
+  ) {
     const oldValue = this.value;
 
     if (!this.hasAnyEnabledOption()) {
@@ -233,8 +275,12 @@ export class ObcToggleButtonGroup extends LitElement {
         this.setNoDivider();
         return;
       }
-      const fallback = this.getFirstSelectableOption();
-      newValue = fallback?.value || '';
+      if (this.allowEmptySelection) {
+        newValue = '';
+      } else {
+        const fallback = this.getFirstSelectableOption();
+        newValue = fallback?.value || '';
+      }
     }
 
     this.value = newValue;
@@ -245,10 +291,18 @@ export class ObcToggleButtonGroup extends LitElement {
 
     this.setNoDivider();
 
-    if (emitEvent && oldValue !== newValue) {
+    if (emitValueEvent && oldValue !== newValue) {
       this.dispatchEvent(
         new CustomEvent('value', {
           detail: {value: newValue, previousValue: oldValue},
+        })
+      );
+    }
+
+    if (emitChangeEvent && oldValue !== newValue) {
+      this.dispatchEvent(
+        new CustomEvent('change', {
+          detail: {value: newValue},
         })
       );
     }
@@ -333,9 +387,13 @@ export class ObcToggleButtonGroup extends LitElement {
     });
 
     if (!this.value || !this.getOptionByValue(this.value)) {
-      const firstSelectable = this.getFirstSelectableOption();
-      if (firstSelectable) {
-        this.updateSelection(firstSelectable.value, false);
+      if (this.allowEmptySelection) {
+        this.updateSelection('', false);
+      } else {
+        const firstSelectable = this.getFirstSelectableOption();
+        if (firstSelectable) {
+          this.updateSelection(firstSelectable.value, false);
+        }
       }
     } else {
       this.updateSelection(this.value, false);
@@ -349,6 +407,10 @@ export class ObcToggleButtonGroup extends LitElement {
   private handleOptionDisabledChange() {
     const currentOption = this.getOptionByValue(this.value);
     if (currentOption?.disabled && this.hasAnyEnabledOption()) {
+      if (this.allowEmptySelection) {
+        this.updateSelection('');
+        return;
+      }
       const firstSelectable = this.getFirstSelectableOption();
       if (firstSelectable) {
         this.updateSelection(firstSelectable.value);
@@ -359,14 +421,23 @@ export class ObcToggleButtonGroup extends LitElement {
   handleOptionClick(event: Event) {
     const {value} = (event as CustomEvent).detail;
     if (this.externalControl) {
-      this.dispatchEvent(
-        new CustomEvent('value', {
-          detail: {value, previousValue: this.value},
-        })
-      );
+      this.requestOption(value);
     } else {
-      this.updateSelection(value);
+      this.updateSelection(value, true, true);
     }
+  }
+
+  private requestOption(value: string) {
+    this.dispatchEvent(
+      new CustomEvent('value', {
+        detail: {value, previousValue: this.value},
+      })
+    );
+    this.dispatchEvent(
+      new CustomEvent('change', {
+        detail: {value},
+      })
+    );
   }
 
   override willUpdate(changedProperties: PropertyValues) {
@@ -409,9 +480,24 @@ export class ObcToggleButtonGroup extends LitElement {
 
   override updated(changedProperties: PropertyValues) {
     super.updated(changedProperties);
+    this.navigator.refresh();
+    // The selected option is the radio group's tab stop, and takes focus with
+    // it while focus is inside the group — that is how an accepted external
+    // request brings the keys along.
+    if (changedProperties.has('value')) {
+      const selected = this.getOptionByValue(this.value);
+      if (selected && !selected.disabled) {
+        this.navigator.setActive(selected, false);
+        if (this.matches(':focus-within')) selected.focus();
+      }
+    }
 
     const currentOption = this.getOptionByValue(this.value);
     if (currentOption?.disabled && this.hasAnyEnabledOption()) {
+      if (this.allowEmptySelection) {
+        this.updateSelection('');
+        return;
+      }
       const firstSelectable = this.getFirstSelectableOption();
       if (firstSelectable) {
         this.updateSelection(firstSelectable.value);
@@ -431,9 +517,15 @@ export class ObcToggleButtonGroup extends LitElement {
     };
 
     return html`
-      <div class=${classMap(classes)}>
+      <div
+        class=${classMap(classes)}
+        role="radiogroup"
+        aria-label=${ifDefined(this.ariaLabel ?? undefined)}
+        @keydown=${this.handleKeydown}
+        @focusin=${(event: Event) => this.navigator.handleFocusin(event)}
+      >
         <div class="wrapper">
-          <slot></slot>
+          <slot @slotchange=${() => this.navigator.refresh()}></slot>
         </div>
       </div>
     `;

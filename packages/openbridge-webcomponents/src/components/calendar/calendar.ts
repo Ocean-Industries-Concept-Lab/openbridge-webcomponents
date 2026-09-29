@@ -83,18 +83,22 @@ export {
  * ></obc-calendar>
  * ```
  *
+ * @availableWhen footerLabel hasFooter==true && type!=XLarge
+ * @availableWhen footerHref hasFooter==true && type!=XLarge
  * @fires {CustomEvent<{date: Date}>} month-change - Fired when the displayed month changes via navigation.
  * @fires {CustomEvent<{date: Date, events: CalendarEvent[]}>} date-select - Fired when a date cell is clicked.
  * @fires {CustomEvent<void>} today-click - Fired when the "Today" button is clicked.
  * @fires {CustomEvent<void>} new-event-click - Fired when the "+ New event" button is clicked (Large/XLarge only).
  * @fires {CustomEvent<void>} calendar-click - Fired when the footer "Calendar" navigation link is clicked.
+ * @fires {CustomEvent<{title: string, startTime: string, endTime: string}>} event-click - Passed on from the event items in a date cell when one is clicked, with its title, start and end time.
+ * @beta
  */
 @customElement('obc-calendar')
 export class ObcCalendar extends LitElement {
   @property({type: String}) type = CalendarType.Regular;
   @property({attribute: false}) date: Date = new Date();
   @property({attribute: false}) selectedDate: Date | null = null;
-  @property({attribute: false}) events: CalendarEvent[] = [];
+  @property({type: Array, attribute: false}) events: CalendarEvent[] = [];
   @property({type: Boolean, attribute: false}) hasEventList = true;
   @property({type: Boolean, attribute: false}) hasFooter = true;
   @property({type: String}) locale?: string;
@@ -275,18 +279,20 @@ export class ObcCalendar extends LitElement {
             <obi-calendar-google></obi-calendar-google>
             <span class="month-label">${monthYearLabel}</span>
           </div>
-          ${showNewEvent
-            ? html`
-                <obc-button
-                  variant="raised"
-                  showLeadingIcon
-                  @click=${this._handleNewEventClick}
-                >
-                  <obi-up-iec slot="leading-icon"></obi-up-iec>
-                  New event
-                </obc-button>
-              `
-            : nothing}
+          ${
+            showNewEvent
+              ? html`
+                  <obc-button
+                    variant="raised"
+                    showLeadingIcon
+                    @click=${this._handleNewEventClick}
+                  >
+                    <obi-up-iec slot="leading-icon"></obi-up-iec>
+                    New event
+                  </obc-button>
+                `
+              : nothing
+          }
           ${this._renderNavigation()}
         </div>
       `;
@@ -301,18 +307,20 @@ export class ObcCalendar extends LitElement {
           .value=${this._monthValue}
           @change=${this._handleMonthDropdownChange}
         ></obc-dropdown-button>
-        ${showNewEvent
-          ? html`
-              <obc-button
-                variant="flat"
-                showLeadingIcon
-                @click=${this._handleNewEventClick}
-              >
-                <obi-up-iec slot="leading-icon"></obi-up-iec>
-                New event
-              </obc-button>
-            `
-          : nothing}
+        ${
+          showNewEvent
+            ? html`
+                <obc-button
+                  variant="flat"
+                  showLeadingIcon
+                  @click=${this._handleNewEventClick}
+                >
+                  <obi-up-iec slot="leading-icon"></obi-up-iec>
+                  New event
+                </obc-button>
+              `
+            : nothing
+        }
         <obc-divider></obc-divider>
         ${this._renderNavigation()}
       </div>
@@ -391,11 +399,16 @@ export class ObcCalendar extends LitElement {
                       .date=${cell.dayNumber}
                       .events=${cell.events}
                       ?isToday=${cell.isToday}
-                      ?checked=${this.selectedDate
-                        ? isSameDay(cell.date, this.selectedDate)
-                        : false}
+                      ?checked=${
+                        this.selectedDate
+                          ? isSameDay(cell.date, this.selectedDate)
+                          : false
+                      }
                       ?disabled=${!cell.isCurrentMonth}
-                      @date-click=${() => this._handleDateClick(cell)}
+                      @date-click=${(event: Event) => {
+                        event.stopPropagation();
+                        this._handleDateClick(cell);
+                      }}
                     ></obc-date-item>
                   `
                 )}

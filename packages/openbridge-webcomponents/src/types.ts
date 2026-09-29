@@ -9,6 +9,58 @@ export enum AlertType {
   Alarm = 'alarm',
   Warning = 'warning',
   Caution = 'caution',
+  LevelCritical = 'level-critical',
+  LevelHigh = 'level-high',
+  LevelMedium = 'level-medium',
+  LevelLow = 'level-low',
+  LevelDiagnostic = 'level-diagnostic',
+}
+
+/**
+ * Flash tempo of an alert element. `default` resolves per alert type and
+ * phase (see `resolveFlashingSpeed` in `alert-severity.ts`); `fixed` never
+ * flashes.
+ */
+export enum FlashingSpeed {
+  Default = 'default',
+  Fast = 'fast',
+  Slow = 'slow',
+  VerySlow = 'very-slow',
+  Fixed = 'fixed',
+}
+
+export type ResolvedFlashingSpeed = Exclude<
+  FlashingSpeed,
+  FlashingSpeed.Default
+>;
+
+export type FlashTempo = Exclude<ResolvedFlashingSpeed, FlashingSpeed.Fixed>;
+
+export const ALERT_SEVERITY_PRIORITY = [
+  AlertType.LevelCritical,
+  AlertType.Alarm,
+  AlertType.LevelHigh,
+  AlertType.Warning,
+  AlertType.LevelMedium,
+  AlertType.Caution,
+  AlertType.LevelLow,
+  AlertType.LevelDiagnostic,
+];
+
+/**
+ * Number of active alerts per severity: the level severities and the IEC
+ * severities `alarm`, `warning` and `caution`. `rankAlertCounts` in
+ * `alert-severity.ts` orders them and leaves out counts of zero or less.
+ */
+export interface AlertCounts {
+  countLevelCritical?: number;
+  countAlarm?: number;
+  countLevelHigh?: number;
+  countWarning?: number;
+  countLevelMedium?: number;
+  countCaution?: number;
+  countLevelLow?: number;
+  countLevelDiagnostic?: number;
 }
 
 export enum AlertCategory {
@@ -18,11 +70,11 @@ export enum AlertCategory {
 }
 
 export interface Alert {
-  id: string; // The id of the alert
-  tagId: string; // The tag ID visible to the user
+  id: string;
+  tagId: string;
   source: string;
   text: string;
-  note?: string; // The note of the alert, typically by the operator
+  note?: string;
   acknowledged:
     | false
     | {
@@ -51,8 +103,10 @@ export interface Alert {
         blockedEndTime?: Date;
         blockedBy?: string;
       };
-  noAck?: boolean; // If true, the alarm has no ack button
+  noAck?: boolean;
+  noSilence?: boolean;
   category?: AlertCategory;
+  memberOf?: string[];
 }
 
 export function isActive(alert: Alert) {
@@ -71,11 +125,12 @@ export function isBlocked(alert: Alert) {
   return alert.blocked !== false && alert.blocked !== undefined;
 }
 
-const priorityOrder = [AlertType.Alarm, AlertType.Warning, AlertType.Caution];
-
 export function comparePriorityAlerts(a: Alert, b: Alert) {
   if (a.type !== b.type) {
-    return priorityOrder.indexOf(b.type) - priorityOrder.indexOf(a.type);
+    return (
+      ALERT_SEVERITY_PRIORITY.indexOf(b.type) -
+      ALERT_SEVERITY_PRIORITY.indexOf(a.type)
+    );
   }
 
   if (isActive(a) !== isActive(b)) {

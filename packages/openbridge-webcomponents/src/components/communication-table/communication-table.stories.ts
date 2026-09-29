@@ -8,7 +8,7 @@ import '../user-button/user-button.js';
 
 const meta: Meta<typeof ObcCommunicationTable> = {
   title: 'UI Components/Communication/Communication Table',
-  tags: ['6.0'],
+  tags: ['6.0', 'beta'],
   component: 'obc-communication-table',
   args: {
     data: [

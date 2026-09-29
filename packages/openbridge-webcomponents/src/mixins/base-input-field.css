@@ -40,11 +40,43 @@
     }
   }
 
+  /* A read-only field is still focusable and selectable, but it accepts no
+     edits — so it must not advertise the hover/pressed affordances that
+     `@mixin style` renders. Zeroing --obc-can-hover makes the mixin's hover
+     colour-mix collapse back onto the enabled colours; the pressed state has
+     no such switch and is restored explicitly. */
+  &.readonly {
+    --obc-can-hover: 0;
+  }
+
+  &.readonly:not(.disabled):active .input-field-container {
+    border-color: var(--normal-enabled-border-color);
+    background: var(--normal-enabled-background-color);
+  }
+
   &.helpertext,
   &.haslabel {
     flex-direction: column;
     align-items: flex-start;
     flex: 1 0 0;
+  }
+
+  &.empty:not(.disabled) .input-field-container {
+    background: var(--container-background-color);
+  }
+
+  &.readonly.empty:not(.disabled):active .input-field-container {
+    background: var(--container-background-color);
+  }
+
+  &.empty:not(.disabled):focus-within .input-field-container {
+    background: var(--normal-enabled-background-color);
+  }
+
+  @media (hover: hover) {
+    &.empty:not(.disabled):hover:not(:focus-within) .input-field-container {
+      background: var(--container-background-color);
+    }
   }
 }
 

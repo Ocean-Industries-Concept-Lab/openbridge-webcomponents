@@ -1,16 +1,16 @@
-import {LitElement, html, unsafeCSS} from 'lit';
+import {LitElement, html, unsafeCSS, type PropertyValues} from 'lit';
 import {customElement} from '../../decorator.js';
+import {releaseFocusBefore} from '../../internal/focus.js';
 import {classMap} from 'lit/directives/class-map.js';
 import compentStyle from './accordion-card.css?inline';
 import {property} from 'lit/decorators.js';
-import '../../icons/icon-chevron-up-google.js';
 import '../../icons/icon-chevron-down-google.js';
 import '../alert-frame/alert-frame.js';
 import {
-  ObcAlertFrameStatus,
   ObcAlertFrameThickness,
   ObcAlertFrameType,
 } from '../alert-frame/alert-frame.js';
+import {AlertType} from '../../types.js';
 
 export enum AccordionSize {
   SingleLine = 'single-line',
@@ -30,7 +30,7 @@ export enum Position {
  * Provides a summary row with optional icon, title, description, and status label. Expands to reveal additional content on click/tap, supporting both single-line and large layouts. Can display an alert overlay for contextual warnings or notifications.
  *
  * ### Features
- * - **Expandable/collapsible:** Click/tap toggles between collapsed and expanded states, revealing or hiding additional content.
+ * - **Expandable/collapsible:** Click/tap toggles between collapsed and expanded states, revealing or hiding additional content. The panel slides open and closed, and the chevron turns with it; `prefers-reduced-motion: reduce` switches instantly instead.
  * - **Variants:**
  *   - **Single-line:** Compact header with only title (and optional icon/status).
  *   - **Large:** Header includes a description beneath the title for more detail.
@@ -100,96 +100,71 @@ export enum Position {
  * </obc-accordion-card>
  * ```
  *
+ * @property cardTitle - Main title text displayed in the accordion header.
+ * @property description - Supporting description text shown under the title (only in large size and if `hasDescription` is true).
+ * @availableWhen description size==large && hasDescription==true
+ * @property statusLabel - Optional status label displayed in the header (shown if `hasStatusLabel` is true).
+ * @availableWhen statusLabel hasStatusLabel==true
+ * @property expanded - Whether the accordion card is expanded (shows additional content).
+ * @property disabled - Disables the accordion card, preventing user interaction and dimming its appearance.
+ * @property hasAlert - Shows an alert overlay above the card when true. Configure appearance with `alertFrameType`, `alertFrameThickness`, and `alertFrameStatus`.
+ * @property hasDescription - Enables the description text in the header (only in large size).
+ * @property hasStatusLabel - Enables the status label in the header.
+ * @property hasLeadingIcon - Enables the leading icon slot in the header.
+ * @property alertFrameType - Type of the alert frame overlay (used when `hasAlert` is true).
+ *   See `obc-alert-frame` for available types.
+ * @availableWhen alertFrameType hasAlert==true
+ * @property alertFrameThickness - Thickness of the alert frame overlay (used when `hasAlert` is true).
+ *   See `obc-alert-frame` for available thickness values.
+ * @availableWhen alertFrameThickness hasAlert==true
+ * @property alertFrameStatus - Status of the alert frame overlay (used when `hasAlert` is true).
+ *   See `obc-alert-frame` for available statuses.
+ * @availableWhen alertFrameStatus hasAlert==true
+ * @property position - Border radius for stacking: `regular` (default) rounds every corner,
+ *   `top` flattens the bottom edge, `bottom` flattens the top edge, and
+ *   `center` flattens both for a card in the middle of a stack.
+ * @property size - Layout variant: `single-line` (default) is a compact title-only header,
+ *   `large` adds a description beneath the title.
  * @slot leading-icon - Icon at the start of the header (shown when `hasLeadingIcon` is true)
  * @slot expanded-content - Content revealed when the accordion is expanded
  * @slot alert-icon - Icon for the alert overlay (used when `hasAlert` is true)
  * @slot alert-label - Label text for the alert overlay (used when `hasAlert` is true)
  * @slot alert-timer - Timer/duration text for the alert overlay (used when `hasAlert` is true)
- * @fires accordion-toggle {CustomEvent<{expanded: boolean, cardTitle: string}>} Fired when the accordion is expanded or collapsed
+ * @fires {CustomEvent<{expanded: boolean, cardTitle: string}>} accordion-toggle - Fired when the accordion is expanded or collapsed
+ * @cssprop [--obc-accordion-expand-duration=200ms] - How long the panel takes to open and close. The chevron and the card's corners follow it. Ignored under `prefers-reduced-motion: reduce`.
+ * @stable
  */
 @customElement('obc-accordion-card')
 export class ObcAccordionCard extends LitElement {
-  /**
-   * Main title text displayed in the accordion header.
-   */
   @property({type: String}) cardTitle = '';
 
-  /**
-   * Supporting description text shown under the title (only in large size and if `hasDescription` is true).
-   */
   @property({type: String}) description = '';
 
-  /**
-   * Optional status label displayed in the header (shown if `hasStatusLabel` is true).
-   */
   @property({type: String}) statusLabel = '';
 
-  /**
-   * Whether the accordion card is expanded (shows additional content).
-   */
   @property({type: Boolean}) expanded = false;
 
-  /**
-   * Disables the accordion card, preventing user interaction and dimming its appearance.
-   */
   @property({type: Boolean}) disabled = false;
 
-  /**
-   * Shows an alert overlay above the card when true. Configure appearance with `alertFrameType`, `alertFrameThickness`, and `alertFrameStatus`.
-   */
   @property({type: Boolean}) hasAlert = false;
 
-  /**
-   * Enables the description text in the header (only in large size).
-   */
   @property({type: Boolean}) hasDescription = false;
 
-  /**
-   * Enables the status label in the header.
-   */
   @property({type: Boolean}) hasStatusLabel = false;
 
-  /**
-   * Enables the leading icon slot in the header.
-   */
   @property({type: Boolean}) hasLeadingIcon = false;
 
-  /**
-   * Controls border radius/edge styling for stacking multiple accordions.
-   * - `regular` (default): Standard border radius.
-   * - `top`: Flat bottom edge (for top of a stack).
-   * - `bottom`: Flat top edge (for bottom of a stack).
-   * - `center`: Flat top and bottom edges (for middle of a stack).
-   */
   @property({type: String}) position: Position = Position.regular;
 
-  /**
-   * Layout variant of the accordion card.
-   * - `single-line` (default): Compact header with only title.
-   * - `large`: Header includes a description beneath the title.
-   */
   @property({type: String}) size: AccordionSize = AccordionSize.SingleLine;
 
-  /**
-   * Type of the alert frame overlay (used when `hasAlert` is true).
-   * See `obc-alert-frame` for available types.
-   */
   @property({type: String}) alertFrameType: ObcAlertFrameType =
     ObcAlertFrameType.Regular;
 
-  /**
-   * Thickness of the alert frame overlay (used when `hasAlert` is true).
-   * See `obc-alert-frame` for available thickness values.
-   */
   @property({type: String}) alertFrameThickness: ObcAlertFrameThickness =
     ObcAlertFrameThickness.Small;
 
-  /**
-   * Status of the alert frame overlay (used when `hasAlert` is true).
-   * See `obc-alert-frame` for available statuses.
-   */
-  @property({type: String}) alertFrameStatus: ObcAlertFrameStatus =
-    ObcAlertFrameStatus.Alarm;
+  @property({type: String}) alertFrameStatus: AlertType = AlertType.Alarm;
 
   private get shouldShowDescription() {
     return (
@@ -206,7 +181,7 @@ export class ObcAccordionCard extends LitElement {
 
     /**
      * Fired when the accordion is expanded or collapsed.
-     * @fires accordion-toggle {CustomEvent<{expanded: boolean, cardTitle: string}>}
+     * @fires accordion-toggle
      */
     this.dispatchEvent(
       new CustomEvent('accordion-toggle', {
@@ -218,34 +193,60 @@ export class ObcAccordionCard extends LitElement {
     );
   }
 
+  /**
+   * Keeps the keyboard somewhere predictable when the panel closes.
+   *
+   * A collapsed panel is `inert`, and the browser drops focus out of anything
+   * it makes inert — onto `<body>`, two frames later. Clicking the header
+   * already leaves focus there; a consumer setting `expanded` while a slotted
+   * control has focus is the case that needs the transfer.
+   */
+  override willUpdate(changed: PropertyValues<this>) {
+    if (!changed.has('expanded') || this.expanded) return;
+
+    const panel = this.shadowRoot?.querySelector('.panel');
+    if (!panel) return;
+    releaseFocusBefore(
+      panel,
+      this.shadowRoot?.querySelector<HTMLButtonElement>('.content-button'),
+      this.shadowRoot?.querySelector<HTMLElement>('.wrapper')
+    );
+  }
+
   private renderContentMain() {
     return html`
       <div class="header-container">
         <div class="content-container">
-          ${this.hasLeadingIcon
-            ? html`
-                <div class="container-icon">
-                  <slot name="leading-icon"></slot>
-                </div>
-              `
-            : ''}
+          ${
+            this.hasLeadingIcon
+              ? html`
+                  <div class="container-icon">
+                    <slot name="leading-icon"></slot>
+                  </div>
+                `
+              : ''
+          }
           <div class="container-labels">
             <div class="label-title">${this.cardTitle}</div>
-            ${this.shouldShowDescription
-              ? html` <div class="label-description">${this.description}</div> `
-              : ''}
+            ${
+              this.shouldShowDescription
+                ? html`
+                    <div class="label-description">${this.description}</div>
+                  `
+                : ''
+            }
           </div>
-          ${this.hasStatusLabel
-            ? html`
-                <div class="container-status">
-                  <div class="status">${this.statusLabel}</div>
-                </div>
-              `
-            : ''}
+          ${
+            this.hasStatusLabel
+              ? html`
+                  <div class="container-status">
+                    <div class="status">${this.statusLabel}</div>
+                  </div>
+                `
+              : ''
+          }
           <div class="trailing-icon">
-            ${this.expanded
-              ? html`<obi-chevron-up-google></obi-chevron-up-google>`
-              : html`<obi-chevron-down-google></obi-chevron-down-google>`}
+            <obi-chevron-down-google></obi-chevron-down-google>
           </div>
         </div>
       </div>
@@ -253,11 +254,13 @@ export class ObcAccordionCard extends LitElement {
   }
 
   private renderContentAdditional() {
-    if (!this.expanded) return '';
-
     return html`
-      <div class="container-content-additional">
-        <slot name="expanded-content"></slot>
+      <div class="panel" id="accordion-content" ?inert=${!this.expanded}>
+        <div class="panel-inner">
+          <div class="container-content-additional">
+            <slot name="expanded-content"></slot>
+          </div>
+        </div>
       </div>
     `;
   }
@@ -274,6 +277,7 @@ export class ObcAccordionCard extends LitElement {
   override render() {
     return html`
       <div
+        tabindex="-1"
         class=${classMap({
           wrapper: true,
           'state-expanded': this.expanded,
@@ -301,24 +305,26 @@ export class ObcAccordionCard extends LitElement {
           ${this.renderContentAdditional()}
         </div>
 
-        ${this.hasAlert
-          ? html`
-              <obc-alert-frame
-                class="alert"
-                .sharpEdgeTopLeft=${this.isShartEdgeTop()}
-                .sharpEdgeTopRight=${this.isShartEdgeTop()}
-                .sharpEdgeBottomLeft=${this.isShartEdgeBottom()}
-                .sharpEdgeBottomRight=${this.isShartEdgeBottom()}
-                .type=${this.alertFrameType}
-                .thickness=${this.alertFrameThickness}
-                .status=${this.alertFrameStatus}
-              >
-                <slot name="alert-icon" slot="icon"></slot>
-                <slot name="alert-label" slot="label"></slot>
-                <slot name="alert-timer" slot="timer"></slot>
-              </obc-alert-frame>
-            `
-          : ''}
+        ${
+          this.hasAlert
+            ? html`
+                <obc-alert-frame
+                  class="alert alert-${this.alertFrameStatus}"
+                  .sharpEdgeTopLeft=${this.isShartEdgeTop()}
+                  .sharpEdgeTopRight=${this.isShartEdgeTop()}
+                  .sharpEdgeBottomLeft=${this.isShartEdgeBottom()}
+                  .sharpEdgeBottomRight=${this.isShartEdgeBottom()}
+                  .type=${this.alertFrameType}
+                  .thickness=${this.alertFrameThickness}
+                  .status=${this.alertFrameStatus}
+                >
+                  <slot name="alert-icon" slot="icon"></slot>
+                  <slot name="alert-label" slot="label"></slot>
+                  <slot name="alert-timer" slot="timer"></slot>
+                </obc-alert-frame>
+              `
+            : ''
+        }
       </div>
     `;
   }

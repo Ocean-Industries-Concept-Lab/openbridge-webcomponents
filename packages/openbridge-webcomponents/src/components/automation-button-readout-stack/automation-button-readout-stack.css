@@ -6,6 +6,15 @@
 
   color: var(--element-active-color, #1f1f1f);
 
+  /* Bridge the stack's colours onto the embedded readout blocks: the number
+     follows the row colour, the hinted zeros keep the stack's public
+     override var. */
+  --obc-readout-block-value-color: var(--element-active-color, #1f1f1f);
+  --obc-readout-block-hinted-color: var(
+    --obc-automation-button-readout-stack-hinted-color,
+    var(--element-disabled-color)
+  );
+
   .icon {
     display: block;
     width: 16px;
@@ -18,6 +27,30 @@
   }
 
   &.enhanced .icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  /* Slot-projected row icons: the slot hugs its content so an unfilled slot
+     collapses like icon 'none'; the projected element takes the icon size. */
+  slot.icon {
+    display: flex;
+    width: auto;
+    height: auto;
+  }
+
+  slot.icon::slotted(*) {
+    display: block;
+    width: 16px;
+    height: 16px;
+  }
+
+  &.small slot.icon::slotted(*) {
+    width: 12px;
+    height: 12px;
+  }
+
+  &.enhanced slot.icon::slotted(*) {
     width: 24px;
     height: 24px;
   }
@@ -52,7 +85,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 10px;
+    gap: 0;
   }
 
   &.small .readout-item {
@@ -75,6 +108,18 @@
 
   .readout-item.state-on {
     /* Styles for state-on type */
+  }
+
+  /* The setpoint row is a bare 16px line — the gap to the value rows below is
+     carried by the fonts' own leading, per the design. */
+  .readout-item.setpoint {
+    height: 16px;
+  }
+
+  .setpoint-glyph {
+    width: 4px;
+    height: 5px;
+    fill: var(--element-neutral-color);
   }
 
   obc-button::part(wrapper) {

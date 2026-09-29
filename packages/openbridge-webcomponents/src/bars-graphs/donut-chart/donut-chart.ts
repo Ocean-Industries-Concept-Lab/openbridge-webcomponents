@@ -18,12 +18,14 @@ import {
   getChartColorsOrDefault,
   observeThemeChanges,
   calculateSumTotal,
-  formatNumericValue,
+  formatChartNumber,
   createArcOuterLabelPlugin,
   calculateFixedHeightChartLayout,
   getChartTooltipOptions,
   generateLegendHTML,
+  observeLabelThreshold,
 } from '../../charthelpers/index.js';
+import type {FixedHeightChartDimensions} from '../../charthelpers/canvas-layout.js';
 
 // Register Chart.js components
 Chart.register(DoughnutController, ArcElement, Tooltip);
@@ -67,12 +69,17 @@ const DONUT_WATCHED_PROP_NAMES = [
   'fixedHeight',
 ] as const;
 
+export type DonutChartDataItem = {
+  label: string;
+  value: number;
+};
+
 /**
  * `<obc-donut-chart>` – A customizable donut chart component for visualizing proportional data with a center total readout.
  *
  * This component renders an interactive donut chart powered by Chart.js, displaying data segments as arcs with optional outer labels and a centered total value. It supports both full-circle (360°) and half-circle (180°) layouts, making it versatile for dashboards, analytics, and data visualization interfaces.
  *
- * The chart automatically calculates percentages, handles remaining/unfilled capacity, and adapts its layout based on available space. Labels and center readouts are hidden when the chart is too small (< 192px height), ensuring visual clarity at all sizes.
+ * The chart automatically calculates percentages, handles remaining/unfilled capacity, and adapts its layout based on available space. Labels and center readouts are hidden when the chart is too small (`fixedHeight` < 192px; the same threshold applies to half circles, whose arc is just as large as a full circle's at the same `fixedHeight`), ensuring visual clarity at all sizes.
  *
  * ## Features
  * - **Fixed Height ⇒ Fixed Circumference:** The chart's circumference is determined by the `fixedHeight` property (default: 320px). This ensures the donut's circumference remains consistent and matches other radial instruments, regardless of the available browser or container width. The chart does not scale to fill the width; instead, it always uses the specified fixed height to define its size and circumference.
@@ -94,7 +101,8 @@ const DONUT_WATCHED_PROP_NAMES = [
  * - **Color Priority:** Set `priority` to `Priority.enhanced` to use the blue/enhanced
  *   color palette instead of the default gray/regular palette (default: `Priority.regular`).
  * - **Responsive Behavior:**
- *   - Automatically hides labels and center readout when height < 192px.
+ *   - Automatically hides labels and center readout when `fixedHeight` < 192px
+ *     (same threshold for full and half circle mode).
  *   - Maintains aspect ratio and adjusts padding for optimal label positioning.
  * - **Theme Integration:**
  *   - Colors update automatically when the `data-obc-theme` attribute changes on the `<html>` element.
@@ -133,28 +141,30 @@ const DONUT_WATCHED_PROP_NAMES = [
  * </script>
  * ```
  *
- * @property {Array<{label: string, value: number}>} data - Chart data segments (set via JavaScript)
- * @property {string[]} colors - Custom segment colors (set via JavaScript) with fallback to theme palette
- * @property {boolean} half - Whether to display as half-circle (180°) or full circle (360°), default: false
- * @property {boolean} showOuterLabels - Show outer labels, default: false
- * @property {boolean} showUnit - Whether to show unit in labels, default: false
- * @property {string} outerLabelUnit - Unit string to append to outer labels, default: "%"
- * @property {number} outerLabelMaxLength - Maximum character length for labels before trim (0 = no limit), default: 0
- * @property {number} outerLabelDecimalPlaces - Number of decimal places in labels, default: 0
- * @property {string} centerReadoutLabel - Text label shown below the center total value, default: "Total"
- * @property {string} centerReadoutUnit - Unit string shown inline after the label in the center readout, default: "%"
- * @property {number} max - Maximum value for calculating remaining empty sector, default: 100
- * @property {number} thickness - Donut ring thickness in pixels, default: 24
- * @property {boolean} showDebugOverlay - Show debug overlay for development, default: false
- * @property {number} fixedHeight - Fixed height of the chart in pixels (mandatory, determines chart circumference), default: 320. The chart's circumference is always based on this fixed height to match other radial instruments.
- * @property {boolean} legend - Whether to display the legend below the chart, default: false
+ * @property data - Chart data segments (set via JavaScript)
+ * @property colors - Custom segment colors (set via JavaScript) with fallback to theme palette
+ * @property half - Whether to display as half-circle (180°) or full circle (360°), default: false
+ * @property showOuterLabels - Show outer labels, default: false
+ * @property showUnit - Whether to show unit in labels, default: false
+ * @property outerLabelUnit - Unit string to append to outer labels, default: "%"
+ * @property outerLabelMaxLength - Maximum character length for labels before trim (0 = no limit), default: 0
+ * @availableWhen outerLabelMaxLength showOuterLabels==true
+ * @property outerLabelDecimalPlaces - Number of decimal places in labels, default: 0
+ * @property centerReadoutLabel - Text label shown below the center total value, default: "Total"
+ * @property centerReadoutUnit - Unit string shown inline after the label in the center readout, default: "%"
+ * @property max - Maximum value for calculating remaining empty sector, default: 100
+ * @property thickness - Donut ring thickness in pixels, default: 24
+ * @property legend - Whether to display the legend below the chart, default: false
+ * @property showDebugOverlay - Show debug overlay for development, default: false
+ * @property fixedHeight - Fixed height of the chart in pixels (determines chart circumference), default: 320. The chart's circumference is always based on this fixed height to match other radial instruments.
+ * @beta
  */
 @customElement('obc-donut-chart')
 export class ObcDonutChart extends LitElement {
-  @property({attribute: false})
-  data: {label: string; value: number}[] = [];
+  @property({type: Array, attribute: false})
+  data: DonutChartDataItem[] = [];
 
-  @property({attribute: false})
+  @property({type: Array, attribute: false})
   colors: string[] = [];
 
   @property({type: String})
@@ -218,14 +228,14 @@ export class ObcDonutChart extends LitElement {
   /** @internal */
   private chart?: Chart;
 
+  /** @internal - Latest layout dimensions computed by getChartOptions() */
+  private lastDimensions?: FixedHeightChartDimensions;
+
   /** @internal */
   private themeObserver?: MutationObserver;
 
   /** @internal - ResizeObserver for tracking height threshold crossings (e.g. MIN_HEIGHT_WITH_LABELS = 192px) */
   private resizeObserver?: ResizeObserver;
-
-  /** @internal - Track previous state to detect threshold crossing */
-  private wasAboveThreshold = false;
 
   private hasAnyChanged(
     changed: PropertyValues,
@@ -294,36 +304,24 @@ export class ObcDonutChart extends LitElement {
   }
 
   /**
-   * Setup resize observer to detect height threshold crossings
-   * Recreates chart when crossing MIN_HEIGHT_WITH_LABELS (192px) to show/hide labels
-   * Detect when fixedHeight property changes programmatically (e.g., via Storybook controls or user code)
+   * The layout's isTooSmall decides which side the chart is on (one
+   * threshold serves half and full circles); a flip changes the plugin
+   * set, so the chart is rebuilt rather than updated.
    */
   private setupResizeObserver() {
     if (!this.canvasEl) return;
 
-    this.resizeObserver = new ResizeObserver(() => {
-      if (!this.chart) return;
-
-      const height = this.canvasEl?.clientHeight ?? 0;
-      const isAboveThreshold =
-        height >= CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS;
-
-      // Only recreate chart if we crossed the threshold
-      if (isAboveThreshold !== this.wasAboveThreshold) {
-        this.wasAboveThreshold = isAboveThreshold;
-        this.chart.destroy();
-        this.createChart();
-      } else {
-        // Height changed but didn't cross threshold - just update
-        this.updateChart();
+    this.resizeObserver = observeLabelThreshold(
+      this.canvasEl,
+      () => !this.lastDimensions?.isTooSmall,
+      {
+        rebuild: () => {
+          this.chart?.destroy();
+          this.createChart();
+        },
+        update: () => this.updateChart(),
       }
-    });
-
-    this.resizeObserver.observe(this.canvasEl);
-
-    // Initialize threshold state
-    const height = this.canvasEl.clientHeight;
-    this.wasAboveThreshold = height >= CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS;
+    );
   }
 
   private prepareChartData() {
@@ -387,6 +385,9 @@ export class ObcDonutChart extends LitElement {
       host: this,
     });
 
+    // Store dimensions for explicit canvas sizing in createChart/updateChart
+    this.lastDimensions = dimensions;
+
     // Store formatted labels for use in plugins
     this.formattedLabels = dimensions.formattedLabels;
 
@@ -405,9 +406,12 @@ export class ObcDonutChart extends LitElement {
         };
 
     return {
-      responsive: true,
-      maintainAspectRatio: true,
-      aspectRatio: dimensions.aspectRatio,
+      // Chart.js responsive mode must stay off: it measures the wrapper,
+      // whose size derives from the canvas, and re-applies stale deferred
+      // resizes on the first mouse-over (#1061).
+      responsive: false,
+      maintainAspectRatio: false,
+      devicePixelRatio: window.devicePixelRatio,
       rotation: this.half ? -90 : 0,
       circumference: this.half ? 180 : 360,
       cutout: `${((DONUT_DIMENSIONS.CHART_WIDTH - this.thickness * 2) / DONUT_DIMENSIONS.CHART_WIDTH) * 100}%`,
@@ -436,7 +440,7 @@ export class ObcDonutChart extends LitElement {
                 this.max > 0 ? this.max : this.total > 0 ? this.total : 1;
               // Calculate percentage if unit is "%", otherwise use raw value
               const isPercentage = this.outerLabelUnit === '%';
-              const numericValue = formatNumericValue(
+              const numericValue = formatChartNumber(
                 value,
                 denominator,
                 isPercentage,
@@ -465,13 +469,14 @@ export class ObcDonutChart extends LitElement {
       formattedLabels: this.formattedLabels,
     }) as Plugin<'doughnut'>;
 
-    // Wrap the afterDatasetsDraw to check height first
+    // Wrap the afterDatasetsDraw to check the size threshold first
     const originalAfterDatasetsDraw = basePlugin.afterDatasetsDraw;
     if (originalAfterDatasetsDraw) {
       basePlugin.afterDatasetsDraw = (chart, args, pluginOptions, options) => {
-        // Check height before drawing labels
-        const canvasHeight = this.canvasEl?.clientHeight ?? 0;
-        if (canvasHeight < CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS) {
+        // Use the layout decision (fixedHeight-based), NOT the rendered canvas
+        // height: in half mode the canvas is only about half of fixedHeight
+        // tall while the arc is just as large as a full donut's
+        if (this.lastDimensions?.isTooSmall) {
           return;
         }
         originalAfterDatasetsDraw(chart, args, pluginOptions, options);
@@ -488,9 +493,10 @@ export class ObcDonutChart extends LitElement {
         const {ctx, chartArea} = chart;
         const {width, height, left, top} = chartArea;
 
-        // Hide center readout if canvas is too small
-        const canvasHeight = this.canvasEl?.clientHeight ?? 0;
-        if (canvasHeight < CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS) {
+        // Hide center readout if the chart is too small; use the layout
+        // decision (fixedHeight-based), not the rendered canvas height, so
+        // half and full mode agree
+        if (this.lastDimensions?.isTooSmall) {
           return;
         }
 
@@ -621,7 +627,6 @@ export class ObcDonutChart extends LitElement {
         const unitWidth = unitMetrics.width;
         const totalWidth =
           labelWidth + (centerReadoutUnitText ? spaceWidth + unitWidth : 0);
-        // Draw label
         ctx.font = `${labelFontWeight} ${labelFontSize} ${fontFamily}`;
         ctx.fillStyle = labelColor;
         ctx.fillText(
@@ -703,6 +708,14 @@ export class ObcDonutChart extends LitElement {
     if (!ctx) return;
 
     const {values, labels, colors} = this.prepareChartData();
+    const options = this.getChartOptions();
+
+    // Non-responsive mode: set the canvas render size explicitly from the
+    // computed layout; Chart.js applies devicePixelRatio scaling on top
+    if (this.lastDimensions) {
+      this.canvasEl.width = this.lastDimensions.calculatedWidth;
+      this.canvasEl.height = this.lastDimensions.actualHeight;
+    }
 
     this.chart = new Chart(ctx, {
       type: 'doughnut',
@@ -710,7 +723,7 @@ export class ObcDonutChart extends LitElement {
         labels,
         datasets: [this.createDatasetConfig(values, colors)],
       },
-      options: this.getChartOptions(),
+      options,
       plugins: [
         // Always include plugins; they check height internally during rendering
         ...(this.showOuterLabels ? [this.createOuterLabelDonutPlugin()] : []),
@@ -736,6 +749,15 @@ export class ObcDonutChart extends LitElement {
       Object.assign(this.chart.options, latestOptions);
     }
 
+    // Non-responsive mode: apply the computed layout size explicitly
+    // (no-op when the size is unchanged)
+    if (this.lastDimensions) {
+      this.chart.resize(
+        this.lastDimensions.calculatedWidth,
+        this.lastDimensions.actualHeight
+      );
+    }
+
     this.chart.update();
 
     // Update legend after chart update completes to ensure metadata is ready
@@ -751,7 +773,6 @@ export class ObcDonutChart extends LitElement {
 
     const {colors} = this.prepareChartData();
 
-    // Update dataset colors
     if (this.chart.data.datasets[0]) {
       this.chart.data.datasets[0].backgroundColor = colors;
       this.chart.data.datasets[0].borderColor = getCssVariableValue(
@@ -776,13 +797,11 @@ export class ObcDonutChart extends LitElement {
     // Guard: Check if chart metadata is available
     const meta = this.chart.getDatasetMeta(0);
     if (!meta || !meta.controller) {
-      // console.debug('[obc-donut-chart] updateLegend: skipped - chart metadata not yet initialized');
       return;
     }
 
     // Guard: Check if dataset has data
     if (!this.data || this.data.length === 0) {
-      // console.debug('[obc-donut-chart] updateLegend: skipped - no data available');
       this.legendDiv.innerHTML = '';
       return;
     }
@@ -795,7 +814,7 @@ export class ObcDonutChart extends LitElement {
     try {
       const legendItems = this.data.map((item, i) => {
         const style = meta.controller.getStyle(i, false);
-        const numericValue = formatNumericValue(
+        const numericValue = formatChartNumber(
           item.value,
           denominator,
           isPercentage,

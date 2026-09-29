@@ -13,13 +13,12 @@ const meta: Meta<typeof ObcDiodes> = {
   component: 'obc-diodes',
   decorators: [crossDecorator],
   args: {
-    tag: '0012',
+    tag: '#0012',
     readoutPosition: AutomationButtonReadoutPosition.bottom,
     readoutSize: AutomationButtonReadoutStackSize.regular,
     alert: false,
     progress: false,
     showReadoutStack: true,
-    hasIdTag: true,
   },
   argTypes: {
     alternativeIcon: {
@@ -35,12 +34,12 @@ type Story = StoryObj<ObcDiodes>;
 
 export const On: Story = {
   args: {
-    on: true,
+    turnedOn: true,
   },
 };
 
 export const Off: Story = {
   args: {
-    on: false,
+    turnedOn: false,
   },
 };

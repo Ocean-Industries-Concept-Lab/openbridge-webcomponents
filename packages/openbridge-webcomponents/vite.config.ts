@@ -7,7 +7,17 @@ import postcssConfig from './postcss.config.mjs';
 import fs from 'fs';
 import path from 'path';
 
-const input = globbySync('src/**/*.ts', {ignore: ['src/**/*.stories.ts']});
+const input = globbySync('src/**/*.ts', {
+  ignore: [
+    'src/**/*.stories.ts',
+    'src/**/*.spec.ts',
+    'src/**/*.test.ts',
+    'src/**/*.d.ts',
+    'src/storybook-util.ts',
+    'src/ar/_test-utils.ts',
+    'src/internal/_test-utils.ts',
+  ],
+});
 
 // https://vitejs.dev/config/
 export default defineConfig(({mode}) => {
@@ -16,13 +26,14 @@ export default defineConfig(({mode}) => {
   return {
     build: {
       minify: false,
+      sourcemap: true,
       lib: {
         entry: 'src/index.ts',
         name: 'openbridge-webcomponents',
         fileName: 'openbridge-webcomponents',
         formats: ['es'],
       },
-      rollupOptions: {
+      rolldownOptions: {
         input: isBundleMode ? 'bundle.ts' : input,
         external: isBundleMode
           ? // For bundle mode, bundle everything (no externals)
@@ -41,20 +52,19 @@ export default defineConfig(({mode}) => {
               format: 'es',
               entryFileNames: 'openbridge-webcomponents.bundle.js',
               dir: 'bundle',
-              sourcemap: true,
               preserveModules: false,
-              inlineDynamicImports: true,
+              codeSplitting: false,
             }
           : // Regular mode: preserve modules
             {
               format: 'es',
               entryFileNames: (opt) => {
-                return `${opt.name}.js`;
+                // Rolldown keeps the `?inline` query in the chunk name; a `?` in
+                // a published filename breaks URL-based imports for consumers.
+                return `${opt.name.split('?')[0]}.js`;
               },
-              sourcemap: true,
               preserveModules: true,
               preserveModulesRoot: 'src',
-              inlineDynamicImports: false,
             },
       },
     },
@@ -62,16 +72,27 @@ export default defineConfig(({mode}) => {
       postcssLit(),
       dts({
         clearPureImport: false,
+        exclude: [
+          'src/**/*.stories.ts',
+          'src/**/*.spec.ts',
+          'src/**/*.test.ts',
+          'src/storybook-util.ts',
+          'src/ar/_test-utils.ts',
+          'src/internal/_test-utils.ts',
+        ],
       }),
       {
         name: 'custom-postcss',
         async generateBundle() {
-          const inputCSS = path.resolve(__dirname, 'src/main.css'); // Your source CSS
+          const inputCSS = path.resolve(import.meta.dirname, 'src/main.css'); // Your source CSS
           // Make dist folder if it doesn't exist
-          if (!fs.existsSync(path.resolve(__dirname, 'dist'))) {
-            fs.mkdirSync(path.resolve(__dirname, 'dist'));
+          if (!fs.existsSync(path.resolve(import.meta.dirname, 'dist'))) {
+            fs.mkdirSync(path.resolve(import.meta.dirname, 'dist'));
           }
-          const outputCSS = path.resolve(__dirname, 'dist/openbridge.css'); // Destination
+          const outputCSS = path.resolve(
+            import.meta.dirname,
+            'dist/openbridge.css'
+          ); // Destination
 
           if (fs.existsSync(inputCSS)) {
             const css = fs.readFileSync(inputCSS, 'utf-8');

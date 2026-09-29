@@ -89,9 +89,13 @@ export type ObcFormItemActionChangeEvent = CustomEvent<{
  * </obc-form-item>
  * ```
  *
+ * @availableWhen itemId type in [EnabledActionFirst, EnabledActionLast]
+ * @availableWhen errorText type in [EnabledActionFirst, EnabledActionLast] && hasError==true
+ * @availableWhen statusIcon type in [FilledStatusFirst, FilledStatusLast]
  * @slot icon - Optional leading icon content.
  * @slot - Main row text or content.
- * @fires action-change {ObcFormItemActionChangeEvent} Fired when the internal checkbox state changes.
+ * @fires {ObcFormItemActionChangeEvent} action-change - Fired when the internal checkbox state changes.
+ * @beta
  */
 @customElement('obc-form-item')
 export class ObcFormItem extends LitElement {
@@ -180,9 +184,11 @@ export class ObcFormItem extends LitElement {
     return html`
       <div class="action" part="action">
         <obc-checkbox
-          .status=${this.actionChecked
-            ? CheckboxStatus.checked
-            : CheckboxStatus.unchecked}
+          .status=${
+            this.actionChecked
+              ? CheckboxStatus.checked
+              : CheckboxStatus.unchecked
+          }
           .disabled=${this.actionDisabled}
           aria-label=${ariaLabel}
           @change=${this.handleActionChange}
@@ -267,25 +273,29 @@ export class ObcFormItem extends LitElement {
     return html`
       <div class=${classMap(wrapperClassMap)} part="wrapper">
         <div class="content-container" part="content-container">
-          ${resolvedHasShader
-            ? html`
-                <div class="shader-container" part="shader-container">
-                  <div class="shader" part="shader"></div>
-                  <div class="divider" part="divider"></div>
-                </div>
-              `
-            : nothing}
+          ${
+            resolvedHasShader
+              ? html`
+                  <div class="shader-container" part="shader-container">
+                    <div class="shader" part="shader"></div>
+                    <div class="divider" part="divider"></div>
+                  </div>
+                `
+              : nothing
+          }
           ${this.renderLeading()}
           <div class="text" part="text">
             <slot></slot>
           </div>
           ${this.renderTrailing()}
         </div>
-        ${this.isActionType && this.hasError && this.errorText.trim() !== ''
-          ? html`<div class="error-text" part="error-text">
-              ${this.errorText.trim()}
-            </div>`
-          : nothing}
+        ${
+          this.isActionType && this.hasError && this.errorText.trim() !== ''
+            ? html`<div class="error-text" part="error-text">
+                ${this.errorText.trim()}
+              </div>`
+            : nothing
+        }
       </div>
     `;
   }

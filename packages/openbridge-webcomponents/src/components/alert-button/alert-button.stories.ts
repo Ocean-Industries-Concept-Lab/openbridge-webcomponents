@@ -1,6 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcAlertButton, ObcAlertButtonType} from './alert-button.js';
-import {AlertType} from '../../types.js';
+import {AlertType, FlashingSpeed} from '../../types.js';
 import './alert-button.js';
 import {widthDecorator} from '../../storybook-util.js';
 
@@ -27,6 +27,12 @@ const meta: Meta<typeof ObcAlertButton> = {
       options: Object.values(ObcAlertButtonType),
       control: {type: 'select'},
     },
+    flashingSpeed: {
+      options: Object.values(FlashingSpeed),
+      control: {type: 'select'},
+    },
+    counts: {control: {type: 'object'}},
+    shelvedCount: {control: {type: 'number', min: 0}},
     width: {control: {type: 'range', min: 64, max: 1028, step: 1}},
   },
   decorators: [widthDecorator],
@@ -205,5 +211,70 @@ export const EnhancedCaution: Story = {
     alertType: AlertType.Caution,
     type: ObcAlertButtonType.Enhanced,
     nAlerts: 3,
+  },
+};
+
+export const EnhancedLevelCritical: Story = {
+  args: {
+    alertType: AlertType.LevelCritical,
+    type: ObcAlertButtonType.Enhanced,
+    nAlerts: 3,
+    blinking: true,
+  },
+};
+
+export const NormalLevelHigh: Story = {
+  args: {
+    alertType: AlertType.LevelHigh,
+    type: ObcAlertButtonType.Normal,
+    nAlerts: 2,
+    blinking: true,
+  },
+};
+
+export const NormalLevelMedium: Story = {
+  args: {
+    alertType: AlertType.LevelMedium,
+    type: ObcAlertButtonType.Normal,
+    nAlerts: 1,
+    blinking: true,
+  },
+};
+
+export const FlatLevelLow: Story = {
+  args: {
+    alertType: AlertType.LevelLow,
+    type: ObcAlertButtonType.Flat,
+    nAlerts: 1,
+  },
+};
+
+export const NormalLevelDiagnostic: Story = {
+  args: {
+    alertType: AlertType.LevelDiagnostic,
+    type: ObcAlertButtonType.Normal,
+    nAlerts: 1,
+  },
+};
+
+const GLOBAL_COUNTS = {countAlarm: 1, countWarning: 10, countCaution: 15};
+
+export const GlobalCounter: Story = {
+  args: {
+    globalCounter: true,
+    nAlerts: 26,
+    counts: GLOBAL_COUNTS,
+    width: 168,
+  },
+};
+
+export const GlobalCounterShelvedSilence: Story = {
+  args: {
+    globalCounter: true,
+    nAlerts: 26,
+    counts: GLOBAL_COUNTS,
+    shelvedCount: 9,
+    showSilenceButton: true,
+    width: 244,
   },
 };

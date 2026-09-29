@@ -1,5 +1,6 @@
 :host {
   display: block;
+  flex: 1;
   width: 100%;
 }
 
@@ -8,6 +9,17 @@
   align-items: center;
   flex-direction: row;
   width: 100%;
+}
+
+.tabs {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  min-width: 0; /* the tabs shrink below their 240px basis, as they did as direct children of .wrapper */
+}
+
+.tabs.hug {
+  flex: 0 1 auto; /* hugging tabs keep the add button right after the last tab */
 }
 
 .add-new-tab {

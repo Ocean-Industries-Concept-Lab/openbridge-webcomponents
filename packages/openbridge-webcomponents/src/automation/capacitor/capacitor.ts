@@ -18,6 +18,9 @@ export enum CapacitorAlternativeIcon {
   capacitor04 = 'capacitor04',
 }
 
+/**
+ * @stable
+ */
 @customElement('obc-capacitor')
 export class ObcCapacitor extends ObcAbstractAutomationButtonSquared {
   @property({type: String}) alternativeIcon: CapacitorAlternativeIcon =
@@ -26,7 +29,7 @@ export class ObcCapacitor extends ObcAbstractAutomationButtonSquared {
   override get icon() {
     switch (this.alternativeIcon) {
       case CapacitorAlternativeIcon.capacitor02:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-capacitor-02-on
               usecsscolor
               slot="icon"
@@ -46,7 +49,7 @@ export class ObcCapacitor extends ObcAbstractAutomationButtonSquared {
             ></obi-capacitor-02-off>`;
         }
       case CapacitorAlternativeIcon.capacitor03:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-capacitor-03-on
               usecsscolor
               slot="icon"
@@ -66,7 +69,7 @@ export class ObcCapacitor extends ObcAbstractAutomationButtonSquared {
             ></obi-capacitor-03-off>`;
         }
       case CapacitorAlternativeIcon.capacitor04:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-capacitor-04-on
               usecsscolor
               slot="icon"
@@ -86,7 +89,7 @@ export class ObcCapacitor extends ObcAbstractAutomationButtonSquared {
             ></obi-capacitor-04-off>`;
         }
       default:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-capacitor-01-on
               usecsscolor
               slot="icon"

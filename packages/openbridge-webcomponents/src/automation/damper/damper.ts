@@ -4,10 +4,13 @@ import '../../icons/icon-damper-horizontal-off.js';
 import {customElement} from '../../decorator.js';
 import {ObcAbstractAutomationButtonSquared} from '../automation-button/abstract-automation-button-squared.js';
 
+/**
+ * @stable
+ */
 @customElement('obc-damper')
 export class ObcDamper extends ObcAbstractAutomationButtonSquared {
   override get icon() {
-    if (this.on) {
+    if (this.turnedOn) {
       return html`<obi-damper-horizontal-on
           usecsscolor
           slot="icon"

@@ -300,7 +300,7 @@
 .course-arrow {
   position: absolute;
   left: 50%;
-  transform: translate(-50%, -50%) rotate(calc(var(--course)));
+  transform: translate(-50%, -50%) rotate(calc(var(--course, 0deg)));
   transform-origin: center bottom;
 }
 
@@ -308,7 +308,7 @@
   position: absolute;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%) rotate(calc(var(--heading)));
+  transform: translate(-50%, -50%) rotate(calc(var(--heading, 0deg)));
   transform-origin: center center;
 }
 
@@ -316,16 +316,16 @@
   position: absolute;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%) rotate(calc(var(--heading)));
+  transform: translate(-50%, -50%) rotate(calc(var(--heading, 0deg)));
   transform-origin: center center;
 
   & > slot {
-    width: var(--image-size);
-    height: var(--image-size);
+    width: var(--image-size, 0px);
+    height: var(--image-size, 0px);
   }
 
   & > svg {
-    width: calc(var(--image-size) * 160 / 136.87);
-    height: calc(var(--image-size) * 160 / 136.87);
+    width: calc(var(--image-size, 0px) * 160 / 136.87);
+    height: calc(var(--image-size, 0px) * 160 / 136.87);
   }
 }

@@ -11,7 +11,7 @@ type ObcToggleButtonThreeStateArgs = {
 const meta: Meta<ObcToggleButtonThreeStateArgs> = {
   title:
     'UI Components/Selection Controls and Switches/Toggle Button - Three State',
-  tags: ['autodocs', '6.0'],
+  tags: ['autodocs', '6.0', 'beta'],
   component: 'obc-toggle-button-three-state',
   args: {
     state: ObcToggleButtonThreeStateValue.noInput,

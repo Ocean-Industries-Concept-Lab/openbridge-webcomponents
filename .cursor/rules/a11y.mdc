@@ -1,0 +1,322 @@
+---
+globs: packages/openbridge-webcomponents/src/components/**,packages/openbridge-webcomponents/src/automation/**,packages/openbridge-webcomponents/src/internal/**
+alwaysApply: false
+---
+
+<!-- GENERATED FILE — DO NOT EDIT.
+     Source: docs/agents/a11y.md
+     Regenerate: npm run agents:sync -w packages/openbridge-webcomponents -->
+
+# Accessibility Instructions
+
+These instructions apply to all interactive UI components and automation components. Target: **WCAG 2.1 AA**, plus WCAG 2.2 § 2.5.8 for pointer target size (§ 7) — 2.1 has no target-size criterion at AA level. The primary focus is **keyboard navigation** — every new interactive component must be fully operable without a mouse.
+
+The bar applies backwards as well as forwards: touching an existing component means bringing it through § 8, and a gap left in place is written down (a `TODO(#issue)` at the site, or the issue itself), never silently inherited.
+
+Display-only SVG instruments (navigation-instruments, building-blocks, bars-graphs) are out of scope unless they expose interactive affordances (e.g. draggable setpoints).
+
+## 1. Follow the WAI-ARIA Authoring Practices
+
+Keyboard behaviour rarely needs to be designed from scratch. Before writing a key handler, look the widget up in the [WAI-ARIA Authoring Practices Guide (APG) patterns](https://www.w3.org/WAI/ARIA/apg/patterns/) — it is the industry-standard reference for how each widget type is expected to behave, and it is what keyboard and screen-reader users have already learned from every other application. A component that invents its own bindings is usually harder to use, not more discoverable.
+
+This section is guidance, not a conformance checklist: it describes the default worth starting from, and it assumes you will exercise judgement. Work down the ladder and stop at the first step that applies:
+
+1. **An APG pattern matches the widget.** Follow it — its roles, its states, and its keyboard interaction table — as closely as the component allows. Leaving out part of a pattern is a normal call to make (some behaviours the APG lists are optional, others are not worth the complexity for a given component); just note what you left out in the implementation's JSDoc, so an intentional gap doesn't read as a bug.
+2. **No exact match, but a close one exists.** Adapt the closest pattern rather than starting over, and keep its key bindings for the parts that do map. Say which pattern you adapted and where the component departs from it.
+3. **Nothing in the APG applies.** Design a pattern, then write it down in the component's JSDoc and the PR body. A home-grown pattern should still reuse conventional keys with their conventional meanings (`Enter`/`Space` activate, `Escape` cancels or backs out, arrow keys move within a composite widget), avoid overriding keys the browser or assistive technology owns, expose its state through ARIA so it is announced rather than only visible, and never leave the user stuck in a keyboard trap.
+
+Link the pattern you followed from the implementation so the next reader can check the code against the spec, and end the record with a line that starts `Left out:` — `Left out: nothing.` when the component follows the whole pattern. A pattern is its roles, states and properties as well as its keys: a tab row whose tabs cannot point at their panels leaves out part of the Tabs pattern just as surely as one without arrow keys (#1312). `npm run lint:apg` fails on any component that renders an ARIA widget role (`tablist`, `radiogroup`, `dialog`, …) without both lines in its class JSDoc.
+
+The record is the requirement, not the whole pattern. A component that is reachable, operable and announced from the keyboard and a screen reader is good enough to ship; the APG 1:1 is the aim to move towards, never a blocker. What the `Left out:` line records is taken up when the component is next reopened, one gap at a time, not as a condition of the change that found it. The tree navigation components are the reference example of step 1, spread across three files: [`tree-navigation.ts`](../../packages/openbridge-webcomponents/src/components/tree-navigation/tree-navigation.ts) renders `role="tree"`, [`tree-navigation-item.ts`](../../packages/openbridge-webcomponents/src/components/tree-navigation-item/tree-navigation-item.ts) renders `role="treeitem"` and handles activation, and [`TreeRovingNavigator`](../../packages/openbridge-webcomponents/src/internal/tree-roving-navigator.ts) contributes the navigation half — roving tabindex plus Up/Down, Left/Right and Home/End — linking the [Tree View pattern](https://www.w3.org/WAI/ARIA/apg/patterns/treeview/) from its JSDoc and stating that type-ahead and `*` are intentionally out of scope.
+
+Step 3 is rare, but it comes up where a maritime interaction has no desktop-widget equivalent. `obc-slide-button` ([issue #1070](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/1070)) is the open example: slide-to-confirm exists to force a deliberate action, and no APG pattern covers it, so the keyboard equivalent has to be designed rather than borrowed — say, `Enter` or `Space` to arm and the same key again to confirm, with `Escape` to disarm, keeping both activation keys working as § 2 expects. The specifics belong to that issue; the point here is that the resulting pattern gets written down. Departing from the APG because a domain constraint calls for it is fine; departing from it without noticing is what this section is meant to prevent.
+
+## 2. Keyboard Navigation
+
+Every interactive element must be reachable and operable with the keyboard alone.
+
+### Reachability
+
+- Prefer native focusable elements (`<button>`, `<a>`, `<input>`, `<select>`, `<textarea>`) inside the component's shadow DOM for their focus, activation, and semantic behavior.
+- **Do not silently swap a non-native element for a native one in an existing component.** Changing a `<div>` wrapper to a `<button>` can break layout, event bubbling, form submission, ARIA overrides, and visual regression snapshots. If a component currently uses a non-native element and would benefit from a native one, **propose the change and wait for user confirmation** before implementing it.
+- When the component's host element itself is the interactive target (no native element inside), make the host focusable by setting `tabindex="0"` on the outer touch-target wrapper — not on `:host` directly, so parent components can still override tab order.
+- Never put `tabindex` values greater than `0`. Use DOM order to control tab sequence. `npm run lint:eslint` fails on one in a template, a `tabIndex` assignment or a `setAttribute`.
+- A `disabled` interactive component must be removed from the tab order (native elements do this automatically; for custom wrappers use `tabindex="-1"` when `disabled`).
+
+### Activation keys
+
+| Element                                                                            | Keys that must activate                                                                                                                             |
+| ---------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Button, toggle                                                                     | `Enter` and `Space`                                                                                                                                 |
+| Checkbox                                                                           | `Space` only (per WAI-ARIA APG — `Enter` is not part of the checkbox pattern)                                                                       |
+| Link                                                                               | `Enter` only                                                                                                                                        |
+| Radio group                                                                        | Arrow keys move focus **and** change selection in one step; `Space` checks a focused-but-unchecked radio (edge case, e.g. when nested in a toolbar) |
+| Tabs — manual activation (default)                                                 | Arrow keys move focus between tabs; `Enter` or `Space` activates the focused tab and shows its panel                                                |
+| Tabs — automatic activation (only when panels preload with no perceptible latency) | Arrow keys move focus and activate the panel simultaneously                                                                                         |
+| Menu / dropdown                                                                    | Arrow keys to move, `Enter` to select, `Escape` to close                                                                                            |
+| Slider, stepper                                                                    | Arrow keys to change value, `Home`/`End` for extremes                                                                                               |
+| Modal, dialog, overlay                                                             | `Escape` to dismiss                                                                                                                                 |
+
+Tab activation defaults to **manual**. Only switch to automatic activation when every tab panel's content is already loaded in the DOM and there is no user-perceptible latency on activation — otherwise automatic activation slows keyboard users who are just trying to traverse the tab list. Follow the [APG tabs pattern](https://www.w3.org/WAI/ARIA/apg/patterns/tabs/) for the full specification.
+
+Pattern for custom activation handlers:
+
+```ts
+private handleKeydown(event: KeyboardEvent) {
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault();
+    this.activate();
+  }
+}
+```
+
+### Composite widgets
+
+Groups of related controls (tab groups, radio groups, menus, toolbars, trees) use a single tab stop with arrow-key navigation inside the group — not one tab stop per item. That includes the controls inside an item: a tab's close button or a menu's close button stays out of the tab sequence (`obc-icon-button`'s `focusable`), and the widget gives its action a key instead — `Delete` on a tab, `Escape` on a menu. Follow the APG pattern for the widget type (§ 1); `TreeRovingNavigator` in [`src/internal/tree-roving-navigator.ts`](../../packages/openbridge-webcomponents/src/internal/tree-roving-navigator.ts) is a reusable implementation of the roving-tabindex mechanics for tree hosts.
+
+### Focus trapping
+
+- Do **not** trap focus in normal components.
+- Modal dialogs **must** trap focus while open and restore focus to the invoking element on close.
+- `Escape` must close the modal.
+
+## 3. Focus Indication
+
+- The `@mixin style` already renders a `:focus-visible` ring across all six interaction states. Do not override or disable it.
+- Never write `outline: none` without providing a visible replacement of equal or better prominence.
+- The focus ring belongs on the **touch-target** layer (outer wrapper), not the visible wrapper — this matches the two-layer DOM convention described in `AGENTS.md` § 7.
+- A dialog container that receives focus when it opens is a landing point, not an operable control: it is not in the tab order and carries no ring. The ring stays on the dialog's controls, which the first `Tab` reaches. `obc-modal-window` is the reference; the rule is one CSS line per dialog if the design side ever wants a ring there.
+- Verify the ring is visible in all four themes (`day`, `dusk`, `night`, `bright`) before merging.
+
+## 4. ARIA & Semantics
+
+- If a native element does the job, use it; don't reach for `role=` when `<button>` works.
+- Custom wrappers that act as a button/checkbox/etc. must declare a matching `role` and mirror the relevant state attributes:
+
+  | State                  | Attribute                                                 |
+  | ---------------------- | --------------------------------------------------------- |
+  | Pressed toggle         | `aria-pressed="true\|false"`                              |
+  | Expanded disclosure    | `aria-expanded="true\|false"`                             |
+  | Selected tab/option    | `aria-selected="true\|false"`                             |
+  | Checked checkbox/radio | `aria-checked="true\|false\|mixed"`                       |
+  | Disabled               | `aria-disabled="true"` **or** native `disabled` attribute |
+  | Current page/step      | `aria-current="page\|step\|…"`                            |
+
+- Interactive components without visible text need `aria-label` or `aria-labelledby`. Icon-only buttons fall in this category.
+- Alert/alarm surfaces should use `role="alert"` or an `aria-live` region so screen readers announce state changes.
+- Grouped controls need a group label: `aria-labelledby` pointing at a heading, or `aria-label` on the group element.
+
+## 5. Disabled vs `aria-disabled`
+
+- `disabled` (HTML attribute) — removes the element from the tab order and disables activation. Preferred for buttons and form controls.
+- `aria-disabled="true"` — keeps the element in the tab order but announces it as unavailable. Use only when the element must remain focusable (e.g. a disabled item that still shows a tooltip explaining why).
+- The existing `disabled` boolean property on components should map to the HTML attribute unless a design reason dictates otherwise.
+
+## 6. Color & Contrast
+
+- **Never hardcode colors or guess contrast values.** The correct palette tokens live in Figma and are mirrored in `src/palettes/variables.css`.
+- Use the existing CSS variables for all backgrounds, borders, text, and icons. If a needed token is missing, ask the designer — do not invent a fallback hex.
+- Four themes (`day`, `dusk`, `night`, `bright`) are already contrast-checked. Custom color choices bypass this guarantee.
+- Icon and text colors follow the `--on-{variant}-{role}-color` convention; use `active`, `neutral`, or `disabled` roles as defined in `AGENTS.md` § 7.
+
+## 7. Touch & Pointer Target Size
+
+The floor every interactive component **must meet** is WCAG 2.2 **[2.5.8 Target Size (Minimum)](https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html)**: every pointer target at least **24 × 24 CSS px** (exceptions: spacing, equivalent control, inline text, user-agent default, essential). The standard way to clear it — with margin — is the two-layer touch/visual pattern ([IMPLEMENTATION_GUIDELINES.md § Component Layout Architecture](../../IMPLEMENTATION_GUIDELINES.md#component-layout-architecture)): a transparent outer touch target of `--global-size-spacing-touch-target-min` — **48 px** at `regular`, the smallest size class (56 / 72 / 96 px at medium / large / xl), which also satisfies the stricter AAA criterion 2.5.5 (44 px). A few existing components fall short of the pattern (e.g. `obc-transmitter-button`'s tightly-sized native button); treat those as defects to bring into line when touched, not as precedent.
+
+Rules when building or changing components:
+
+- Size the hit area from the component's `-touch-target-size` token (which aliases the global minimum), never a raw px value. No property, variant, or size class may take an interactive target below 24 CSS px — and nothing should go below the 48 px token without a designer decision recorded in the JSDoc.
+- The touch target is the invisible outer wrapper, not the visible surface (a slider thumb draws 12 × 28 but hits 48 × 48). The focus ring lives on that outer layer (§ 3).
+- **SVG glyphs are not touch targets by themselves.** Instrument decorations like the setpoint marker (26 × 21 SVG units) scale with the instrument's viewBox, not with the size-class tokens — under `fixedAspectRatioScaling` they render _smaller_ than designed (~17 × 14 px at gauge-trend's default height). The shipped setpoint is display-only; if any SVG affordance is ever made draggable/clickable, give it an explicit invisible hit shape (`pointer-events` rect/circle) that stays ≥ 24 CSS px at the smallest supported rendering, and state that size in the story.
+- Scrollbars: the default (`*`) profile is the 12 px **thin** one — acceptable for wheel/trackpad, below the floor for touch dragging. Surfaces meant to be scrolled by touch opt into `.obc-normal-scrollbar` (24 px) or `.obc-wide-scrollbar` (48 px) from `src/main.css`.
+
+### The units these guarantees live in
+
+All sizes are **CSS px**, and they only hold if the page does not scale them away:
+
+- Any page hosting the components on a phone or tablet must declare `<meta name="viewport" content="width=device-width, initial-scale=1" />`. Without it, mobile browsers lay out at ~980 px and shrink to fit, rendering a nominal 48 px target at ~19 effective px on a 390 px-wide phone — below the WCAG floor. This is a prerequisite, not a tuning knob: do not use other `initial-scale` values to resize the UI (desktop browsers ignore the viewport meta; pinch-zoom overrides it) — pick a size class instead.
+- Physical-size regimes are a **deployment** concern, not a component one. Type-approved maritime equipment (IEC 62288, which points to IEC 60945) requires a 15 mm minimum touch target; 15 mm ÷ 48 px = **0.3125 mm per CSS px**, so a compliant installation calibrates each screen (OS display scaling or browser zoom on known hardware) so one CSS px renders at ≥ 0.3125 mm — or uses a larger size class. The components stay in CSS px and enforce only the WCAG floor; IEC numbers belong to the design guideline and the integration, never to component code.
+
+## 8. Testing Checklist
+
+Before marking an interactive component as done:
+
+1. **Pattern check** — the component follows the APG pattern named in its JSDoc where it matters for use, and the `Left out:` line records the rest, roles and states as well as keys, so the next reader can decide. A recorded gap is not a finding to fix here (§ 1). A home-grown pattern belongs in the PR body too.
+2. **Tab through** the component in every configuration its stories use — close buttons, add buttons, panels — so that every interactive element receives focus in a sensible order and a composite widget stays one stop.
+3. **Activate with keyboard only** — `Enter`, `Space`, arrow keys and `Escape` behave per the table in § 2, plus any keys specific to the component's pattern (`Home`/`End` and Left/Right for a tree, for example).
+4. **Focus ring** is visible in all four themes.
+5. **Screen-reader smoke test** — run NVDA (Windows), VoiceOver (macOS), or Orca (Linux) and confirm the component announces its role, label, and state.
+6. **Disabled state** is skipped by `Tab` (unless deliberately using `aria-disabled`).
+7. **Modal focus trap** (if applicable) — `Tab` cycles within the modal; `Escape` closes and returns focus to the invoker.
+8. **Target size** — every pointer target is ≥ 24 × 24 CSS px (§ 7); the standard tokens deliver 48 px+. Check the `regular` size class, every variant, and — for anything SVG-interactive — the smallest story size.
+
+## 9. Automated checks
+
+Keyboard operability is the priority, and it is the half no scanner reaches.
+Everything below is ordered by that: the keyboard specs are the work, the axe
+run is the cheap backstop underneath them.
+
+### Keyboard specs
+
+A composite widget's keyboard model is pinned by a `*-keyboard.spec.ts` next to
+the component, run in Chromium by `npm run test:browser` on every branch:
+
+```bash
+npx vitest run --config vitest.browser.config.ts tree-navigation
+```
+
+`src/internal/_test-utils.ts` carries the focus helpers for specs.
+`document.activeElement` stops at the outermost host, so a component that
+focuses a control inside its shadow root reads as unfocused — use
+`deepActiveElement()` for any focus assertion, and `tabStops(n)` to record
+where a run of Tab presses lands. Assert the tab-stop count as well as the
+keys: a composite widget is one tab stop, and a row of six that takes six is
+the defect the count catches.
+
+What each spec asserts comes from the APG pattern named in the component's
+JSDoc (§ 1). A behaviour the component does not implement is a gap to write
+down, never a skipped test; `.skip`, `.only` and `.todo` fail
+`npm run lint:eslint`. The fixtures cover every configuration the
+stories use (close buttons, add buttons, panels): a stop no fixture renders
+is a stop no assertion counts.
+
+The mechanics are shared, so a new composite widget is a wiring job, not a
+reimplementation: `src/internal/roving-navigator.ts` owns the single tab stop
+and the arrow keys of a flat widget (the host forwards `keydown` and `focusin`,
+calls `refresh()` after each render, and exposes a `focusable` property on its
+items for the navigator to set), `tree-roving-navigator.ts` is the tree
+variant, and `modal-focus-controller.ts` over `focus.ts` is the dialog focus
+contract. Escape stays in each component, because what it fires differs.
+
+### In CI
+
+- `npm run test:browser` (`build.yml`, every branch) runs the keyboard specs
+  with every other browser spec.
+- `npm run test-a11y` (`visual-testing.yml`, PRs to `develop` and `stable`)
+  runs axe and then the baseline check below. It adds no lint warning: ESLint
+  is untouched, and the axe run never fails a story on its own.
+- `npm run lint:apg` (`build.yml`, every branch) fails on a component that
+  renders an ARIA widget role without its pattern record (§ 1), and on a
+  composite widget (tab list, radio group, menu, menu bar, listbox, tree,
+  tree grid, grid, toolbar) with no `*-keyboard.spec.ts` in its directory or
+  in the directory of the base class that renders the widget. It reads a
+  component with its base classes and the helper modules that render for it,
+  and takes the roles of a `role=${…}` binding from the file's `…Role` enum.
+  What it exempts: `button` and `link`, the roles a native element gives,
+  which is why `obc-slide-button`'s home-grown pattern (§ 1) is held to its
+  record by review, not by the lint.
+- What blocks a new component: a violation its stories produce that the
+  baseline does not carry, and a composite widget without a keyboard spec.
+  What nothing blocks: a spec that asserts less than the pattern asks, which
+  is why the spec's assertions come from the pattern's tables.
+
+### The axe run
+
+`npm run test-a11y` runs axe-core over every story in its own Vitest project
+(`vitest.a11y.config.ts`), writes `a11y-report.json` plus a per-rule summary,
+and then compares the report with `__a11y__/baseline.json`. The baseline
+freezes the violations the library ships with, by story and rule: a story or
+a rule that is not in it fails the run, an entry that no longer fails is
+printed for pruning, and `npm run test-a11y:update` rewrites it. The debt can
+only shrink, a new component starts from zero, and none of it shows up as a
+lint warning. Adding to the baseline is allowed with the reason in the PR body
+(#1208). The whole library takes about 40 seconds.
+
+```bash
+npm run test-a11y                                          # every story, then the baseline check
+npm run test-a11y:update                                   # rewrite the baseline
+npx vitest run --config vitest.a11y.config.ts alert-menu   # one component, no baseline check
+```
+
+Underneath, `@storybook/addon-a11y` runs at its default
+`parameters.a11y.test: 'todo'`, so a story never fails on its own; the
+baseline check is the only gate.
+
+### Rules axe does not ship
+
+axe checks what ARIA requires, not what the APG patterns ask for.
+`.storybook/a11y-rules.ts` adds three rules to the same run and baseline:
+
+- `obc-composite-one-tab-stop` — a tab list, radio group, menu, menu bar,
+  listbox, tree, tree grid, grid or toolbar holds one tab stop. It counts
+  through shadow roots and slots, so a close button inside a tab counts.
+- `obc-composite-name` — a tab list, radio group, tree, tree grid, menu or
+  menu bar has an accessible name.
+- `obc-tabpanel-link` — a tab panel has a name and a tab that points at it
+  through `aria-controls`, read through element reflection
+  (`ariaControlsElements`) so a tab inside a shadow root counts; in an engine
+  without it every panel fails, so the run needs the Playwright Chromium the
+  config pins.
+
+A reference can point out of a shadow root but never into one, which is why
+`obc-tab-row` renders its panels itself (`hasPanels`).
+
+It is a separate project rather than an assertion inside the snapshot one: the
+snapshot project sets `retry: 3` for pixel flake, which an axe result never
+needs and which hides a failure behind a re-render; a failing assertion also
+makes the vis matcher skip that story's screenshot comparison; and its
+`tags.exclude: ['skip-test']` withholds stories that are only pixel-flaky. The
+accessibility opt-out is its own tag, `skip-a11y`, excluded by this project and
+nothing else — two interactive setpoint stories carry it because they never
+settle and time out. Per story, `parameters: {a11y: {test: 'off'}}` does the
+same thing; the addon itself reads parameters and globals, never tags.
+
+Three things about the run itself:
+
+- **`todo` mode prints nothing.** The results live on the test's `meta.reports`;
+  `script/a11y-reporter.ts` is what turns them into a file, and
+  `script/check-a11y-baseline.ts` is what reads it back.
+- **One pass covers every theme.** With contrast off, the rules that remain
+  give the same answer in `day`, `dusk`, `night` and `bright`.
+- **`parameters.a11y.element` throws** (`ElementA11yParameterError`); the
+  parameter is `context`. The default context is `document.body`, axe walks
+  open shadow roots unaided, and nothing here uses a closed root, so no story
+  needs a selector.
+
+### Contrast is not part of the axe run
+
+`color-contrast` is disabled in `.storybook/vitest.a11y.setup.ts`, deliberately. Contrast
+is a design decision, owned in the Figma file and checked there against the
+four themes (§ 6). A story composes tokens in combinations the design file
+never draws — a readout on a transparent instrument canvas, a chip over a
+gauge — so the rule reports those compositions, not the palette, and it
+reported five times more stories than every naming and role rule put together.
+Keeping it on would bury the findings this run exists for.
+
+Where contrast does get checked: in Figma by the design side, and per story in
+the addon panel for anyone who wants to look at a specific composition. A
+contrast complaint from a consumer is a design question, not a test failure to
+chase (#1208).
+
+### What the axe run cannot see
+
+Whether a key does anything, focus order, focus traps, Escape, arrow keys —
+that is the keyboard specs' job; the rules above see only structure. By construction it also skips landmarks,
+`lang` and document title, whose rules select outside the include context.
+`region` is disabled by the addon. `target-size` and eight other rules are
+disabled by axe itself; enabling it takes an explicit
+`parameters.a11y.config.rules` entry, and even then its matcher skips the SVG
+namespace and anything without a widget role, so § 7 stays a human check.
+
+### Where to look first
+
+`obc-alert-counter-item` wraps its breakdown in `role="img"`, which prunes
+the subtree, so a live region under it would announce nothing; the alert
+button's polite region carries the counts instead, and the floating items
+announce themselves (`role="alert"` for an alert, `role="status"` for a
+notification or advice). `obc-alert-list` has no `role="log"` yet. `obc-tabbed-card`
+activates a tab on focus, which § 2 reserves for preloaded panels.
+`obc-number-input-field` has no arrow-key stepping. None of these produce an
+axe violation. The table's tree grid holds one tab stop per row and per cell
+control, as its `Left out:` line says; that finding sits in the baseline.
+
+The patterns to copy each have a keyboard spec: `obc-tab-row` (tabs, with its panels),
+`obc-toggle-button-group` and the shuffle-button base (radio group),
+`obc-context-menu-input` (menu), `obc-tree-navigation` (tree),
+`obc-modal-window` (dialog), `obc-top-bar` (a landmark of buttons with a
+pointer-only hold gesture).
+
+## Open
+
+- Keyboard specs for the widgets that have no keyboard model, `eslint-plugin-lit-a11y`, and the `'error'` flip (#1208).
+- The table's tree grid keyboard model: cell navigation and one tab stop for the grid (#1208).

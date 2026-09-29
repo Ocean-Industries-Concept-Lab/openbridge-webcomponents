@@ -6,7 +6,7 @@ import {ObcMessageMenuItemSize} from '../message-menu-item/message-menu-item.js'
 
 const meta: Meta<typeof ObcAdviceMenuItem> = {
   title: 'Application Components/Notifications/Advice Menu Item',
-  tags: ['autodocs', '6.0'],
+  tags: ['autodocs', '6.0', 'beta'],
   component: 'obc-advice-menu-item',
   args: {
     title: 'Advice title',

@@ -5,19 +5,25 @@ import {
   ObcAlertFrameType,
   ObcAlertFrameStatus,
   AlertFrameTextSize,
+  ObcAlertFrameMode,
+  ObcAlertFrameFlashEffect,
 } from './alert-frame.js';
+import {AlertType, FlashingSpeed} from '../../types.js';
 import './alert-frame.js';
 import '../../icons/icon-placeholder.js';
 import {html} from 'lit';
 
 const meta: Meta<typeof ObcAlertFrame> = {
   title: 'UI Components/Message and Alerts/Alert Frame',
-  tags: ['autodocs', '6.0'],
+  tags: ['autodocs', '6.0', 'beta'],
   component: 'obc-alert-frame',
   args: {
     type: ObcAlertFrameType.SmallSideFlip,
     thickness: ObcAlertFrameThickness.Small,
     status: ObcAlertFrameStatus.Alarm,
+    mode: ObcAlertFrameMode.ackedActive,
+    flashingSpeed: FlashingSpeed.Default,
+    flashEffect: ObcAlertFrameFlashEffect.Outline,
     demoWidth: 200,
     showIcon: true,
     showAlertCategoryIcon: true,
@@ -28,6 +34,22 @@ const meta: Meta<typeof ObcAlertFrame> = {
       control: {
         type: 'select',
       },
+    },
+    mode: {
+      options: Object.values(ObcAlertFrameMode),
+      control: {
+        type: 'select',
+      },
+    },
+    flashingSpeed: {
+      options: Object.values(FlashingSpeed),
+      control: {type: 'select'},
+      if: {arg: 'mode', neq: ObcAlertFrameMode.ackedActive},
+    },
+    flashEffect: {
+      options: Object.values(ObcAlertFrameFlashEffect),
+      control: {type: 'select'},
+      if: {arg: 'mode', neq: ObcAlertFrameMode.ackedActive},
     },
     thickness: {
       options: Object.values(ObcAlertFrameThickness),
@@ -52,17 +74,21 @@ const meta: Meta<typeof ObcAlertFrame> = {
   },
   render(args) {
     return html` <div style="width: fit-content; position: relative;">
-      <div
-        style="width: ${args.demoWidth}px; height: 150px; background-color: #999"
-      ></div>
       <obc-alert-frame
         .type=${args.type}
         .thickness=${args.thickness}
+        .mode=${args.mode}
+        .flashingSpeed=${args.flashingSpeed}
+        .flashEffect=${args.flashEffect}
         .status=${args.status}
         .textSize=${args.textSize}
         .showIcon=${args.showIcon}
         .showAlertCategoryIcon=${args.showAlertCategoryIcon}
+        .wrapContent=${true}
       >
+        <div
+          style="width: ${args.demoWidth}px; height: 150px; background-color: #999"
+        ></div>
         <obi-placeholder slot="icon"></obi-placeholder>
         <div slot="label">Label</div>
         <div slot="timer">00:00</div>
@@ -84,6 +110,14 @@ export const AlarmThick: Story = {
 export const AlarmThinn: Story = {
   args: {
     thickness: ObcAlertFrameThickness.Small,
+    type: ObcAlertFrameType.Regular,
+  },
+};
+
+export const UnackedActiveThick: Story = {
+  args: {
+    mode: ObcAlertFrameMode.unackedActive,
+    thickness: ObcAlertFrameThickness.Large,
     type: ObcAlertFrameType.Regular,
   },
 };
@@ -200,4 +234,150 @@ export const AlarmThickTopFlipNoIcons: Story = {
     showAlertCategoryIcon: false,
   },
   render: AlarmThickTopFlip.render,
+};
+
+export const LevelCritical: Story = {
+  args: {
+    status: ObcAlertFrameStatus.LevelCritical,
+  },
+};
+
+export const LevelHigh: Story = {
+  args: {
+    status: ObcAlertFrameStatus.LevelHigh,
+  },
+};
+
+export const LevelMedium: Story = {
+  args: {
+    status: ObcAlertFrameStatus.LevelMedium,
+  },
+};
+
+export const LevelLow: Story = {
+  args: {
+    status: ObcAlertFrameStatus.LevelLow,
+  },
+};
+
+export const LevelDiagnostic: Story = {
+  args: {
+    status: ObcAlertFrameStatus.LevelDiagnostic,
+  },
+};
+
+export const RectifiedUnactive: Story = {
+  args: {
+    type: ObcAlertFrameType.Regular,
+    thickness: ObcAlertFrameThickness.Large,
+    status: ObcAlertFrameStatus.Alarm,
+    demoWidth: 200,
+    showIcon: true,
+    showAlertCategoryIcon: true,
+    mode: ObcAlertFrameMode.unackedRectified,
+  },
+};
+
+export const CriticalUnacked: Story = {
+  args: {
+    type: ObcAlertFrameType.SmallSideFlip,
+    thickness: ObcAlertFrameThickness.Small,
+    status: ObcAlertFrameStatus.LevelCritical,
+    mode: ObcAlertFrameMode.unackedActive,
+    demoWidth: 200,
+    showIcon: true,
+    showAlertCategoryIcon: true,
+  },
+};
+
+const ADJACENT_FRAMES: {
+  status: AlertType;
+  mode: ObcAlertFrameMode;
+  thickness: ObcAlertFrameThickness;
+}[] = [
+  {
+    status: AlertType.Warning,
+    mode: ObcAlertFrameMode.unackedActive,
+    thickness: ObcAlertFrameThickness.Small,
+  },
+  {
+    status: AlertType.Alarm,
+    mode: ObcAlertFrameMode.ackedActive,
+    thickness: ObcAlertFrameThickness.Small,
+  },
+  {
+    status: AlertType.Caution,
+    mode: ObcAlertFrameMode.ackedActive,
+    thickness: ObcAlertFrameThickness.Large,
+  },
+];
+
+export const AdjacentFrames: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Frames on touching components share one edge: every stroke is centred on the edge of its component. The top frame is in its on phase, so its wider stroke shows on both sides of the thinner one below it.',
+      },
+    },
+  },
+  render: () =>
+    html`<div style="display: grid; width: 240px; padding: 16px">
+      ${ADJACENT_FRAMES.map(
+        (frame) =>
+          html`<div style="position: relative; height: 56px">
+            <obc-alert-frame
+              .type=${ObcAlertFrameType.Regular}
+              .status=${frame.status}
+              .mode=${frame.mode}
+              .thickness=${frame.thickness}
+            ></obc-alert-frame>
+          </div>`
+      )}
+    </div>`,
+};
+
+export const FlashComparison: Story = {
+  tags: ['skip-test'],
+  render: () => {
+    const statuses = [
+      AlertType.LevelCritical,
+      AlertType.Alarm,
+      AlertType.Warning,
+      AlertType.Caution,
+      AlertType.LevelLow,
+    ];
+    const modes = [
+      ObcAlertFrameMode.unackedActive,
+      ObcAlertFrameMode.unackedRectified,
+    ];
+    return html`<style>
+        .flash-grid {
+          display: grid;
+          grid-template-columns: repeat(2, 200px);
+          gap: 24px;
+          padding: 16px;
+        }
+      </style>
+      ${Object.values(ObcAlertFrameFlashEffect).map(
+        (effect) =>
+          html`<h4>${effect}</h4>
+            <div class="flash-grid">
+              ${statuses.flatMap((status) =>
+                modes.map(
+                  (mode) =>
+                    html`<obc-alert-frame
+                      .type=${ObcAlertFrameType.Regular}
+                      .status=${status}
+                      .mode=${mode}
+                      .flashEffect=${effect}
+                      wrapContent
+                    >
+                      <div style="width: 200px; height: 48px"></div>
+                    </obc-alert-frame>`
+                )
+              )}
+            </div>`
+      )}`;
+  },
 };

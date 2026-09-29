@@ -1,5 +1,25 @@
 const fs = require('fs');
 
+// LICENSE.txt refers to the other two by filename, so all three have to ship.
+// npm auto-includes LICENSE.txt only, which is why they are listed explicitly.
+const LICENSE_FILES = ['LICENSE.txt', 'LICENSE-AGPL.txt', 'LICENSE-APACHE.txt'];
+
+function copyLicenses(directory) {
+  for (const file of LICENSE_FILES) {
+    fs.copyFileSync(file, `../${directory}/${file}`);
+  }
+}
+
+// Angular publishes from dist/, and ng-packagr copies only a file literally
+// named LICENSE, so the license files have to be declared as assets.
+function addNgPackageAssets(directory) {
+  const ngPackagePath = `../${directory}/ng-package.json`;
+  const ngPackage = require(ngPackagePath);
+  const assets = new Set([...(ngPackage.assets ?? []), ...LICENSE_FILES]);
+  ngPackage.assets = [...assets];
+  fs.writeFileSync(ngPackagePath, JSON.stringify(ngPackage, null, 2) + '\n');
+}
+
 function fixPackageJson(packageName, directory) {
   const packageJsonPath = `../${directory}/package.json`;
   const corePackageJson = require('./package.json');
@@ -25,14 +45,29 @@ function fixPackageJson(packageName, directory) {
 
   packageJson.homepage = 'https://www.openbridge.no';
 
-  packageJson.license = 'Apache-2.0';
+  packageJson.license = 'AGPL-3.0-only';
 
   packageJson.publishConfig = {
     access: 'public',
   };
 
-  if (packageJson.files && !packageJson.files.includes('README.md')) {
-    packageJson.files.push('README.md');
+  copyLicenses(directory);
+
+  // Angular publishes from dist/, which ng-packagr builds to contain exactly
+  // the right output. ng-packagr copies `files` through to dist/package.json,
+  // so setting it here would cap the published package at just those entries.
+  if (packageName !== 'angular') {
+    if (!packageJson.files) {
+      packageJson.files = [];
+    }
+    for (const file of ['README.md', ...LICENSE_FILES]) {
+      if (!packageJson.files.includes(file)) {
+        packageJson.files.push(file);
+      }
+    }
+  } else {
+    delete packageJson.files;
+    addNgPackageAssets(directory);
   }
 
   if (packageName === 'vue') {

@@ -31,11 +31,12 @@ const SAMPLE_DATA = [
 
 const meta: Meta = {
   title: 'Bars and Graphs/Bar Horizontal',
-  tags: ['autodocs', '6.0'],
+  tags: ['autodocs', '6.0', 'beta'],
   component: 'obc-bar-horizontal',
   argTypes: {
     minValue: {control: {type: 'range', min: -100, max: 100}},
     maxValue: {control: {type: 'range', min: 0, max: 1000}},
+    reverse: {control: {type: 'boolean'}},
     width: {control: {type: 'range', min: 0, max: 768}},
     barThickness: {control: {type: 'range', min: 8, max: 48}},
     hasScale: {control: {type: 'boolean'}},
@@ -94,6 +95,7 @@ const meta: Meta = {
   args: {
     minValue: 0,
     maxValue: 100,
+    reverse: false,
     width: 480,
     barThickness: 24,
     hasScale: true,
@@ -128,6 +130,7 @@ const meta: Meta = {
     <obc-bar-horizontal
       .minValue=${args.minValue}
       .maxValue=${args.maxValue}
+      .reverse=${args.reverse}
       .width=${args.width}
       .barThickness=${args.barThickness}
       .hasScale=${args.hasScale}
@@ -836,24 +839,28 @@ export const ChartIntegrationBottom: Story = {
         .showLabels=${_args.hScaleShowLabels}
         .hasBar=${_args.hScaleHasBar}
         .barThickness=${_args.hScaleBarThickness}
-        .fillMode=${_args.hScaleFillMode === 'fill'
-          ? FillMode.fill
-          : FillMode.tint}
+        .fillMode=${
+          _args.hScaleFillMode === 'fill' ? FillMode.fill : FillMode.tint
+        }
         .fillMin=${_args.hScaleFillMin}
         .fillMax=${_args.hScaleFillMax}
         .value=${_args.hScaleValue}
         .setpoint=${_args.hScaleSetpoint}
-        .advicePosition=${_args.hScaleAdvicePosition === 'inner'
-          ? AdvicePosition.inner
-          : _args.hScaleAdvicePosition === 'center'
-            ? AdvicePosition.center
-            : AdvicePosition.outer}
-        .advices=${_args.hScaleAdvices
-          ? [
-              {min: 2, max: 5, type: AdviceType.caution, hinted: true},
-              {min: 8, max: 9.5, type: AdviceType.advice, hinted: false},
-            ]
-          : []}
+        .advicePosition=${
+          _args.hScaleAdvicePosition === 'inner'
+            ? AdvicePosition.inner
+            : _args.hScaleAdvicePosition === 'center'
+              ? AdvicePosition.center
+              : AdvicePosition.outer
+        }
+        .advices=${
+          _args.hScaleAdvices
+            ? [
+                {min: 2, max: 5, type: AdviceType.caution, hinted: true},
+                {min: 8, max: 9.5, type: AdviceType.advice, hinted: false},
+              ]
+            : []
+        }
         .primaryTickmarkInterval=${1}
         .secondaryTickmarkInterval=${0.5}
         .tertiaryTickmarkInterval=${0.125}
@@ -952,18 +959,20 @@ export const ChartIntegrationBottomBackground: Story = {
         .showLabels=${_args.hScaleShowLabels}
         .hasBar=${_args.hScaleHasBar}
         .barThickness=${_args.hScaleBarThickness}
-        .fillMode=${_args.hScaleFillMode === 'fill'
-          ? FillMode.fill
-          : FillMode.tint}
+        .fillMode=${
+          _args.hScaleFillMode === 'fill' ? FillMode.fill : FillMode.tint
+        }
         .fillMin=${_args.hScaleFillMin}
         .fillMax=${_args.hScaleFillMax}
         .value=${_args.hScaleValue}
         .setpoint=${_args.hScaleSetpoint}
-        .advicePosition=${_args.hScaleAdvicePosition === 'inner'
-          ? AdvicePosition.inner
-          : _args.hScaleAdvicePosition === 'center'
-            ? AdvicePosition.center
-            : AdvicePosition.outer}
+        .advicePosition=${
+          _args.hScaleAdvicePosition === 'inner'
+            ? AdvicePosition.inner
+            : _args.hScaleAdvicePosition === 'center'
+              ? AdvicePosition.center
+              : AdvicePosition.outer
+        }
         .advices=${[
           {min: 2, max: 5, type: AdviceType.caution, hinted: true},
           {min: 8, max: 9.5, type: AdviceType.advice, hinted: false},
@@ -1095,5 +1104,30 @@ export const FixedAspectRatioComparison: StoryObj = {
     wrapper.appendChild(containerFixed);
 
     return wrapper;
+  },
+};
+
+export const Reversed: Story = {
+  name: 'Reversed (0 at Right, Minutes Ago)',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`reverse` puts `minValue` at the right edge so a "minutes ago" axis reads with positive numbers and 0 (now) on the right.',
+      },
+    },
+  },
+  args: {
+    minValue: 0,
+    maxValue: 10,
+    reverse: true,
+    width: 480,
+    hasBar: true,
+    value: 6,
+    fillMin: 0,
+    fillMax: undefined,
+    setpoint: undefined,
+    primaryTickmarkInterval: 2,
+    secondaryTickmarkInterval: 1,
   },
 };

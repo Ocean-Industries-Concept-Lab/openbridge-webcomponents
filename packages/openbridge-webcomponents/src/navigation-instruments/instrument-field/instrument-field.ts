@@ -6,6 +6,7 @@ import '../../components/button/button.js';
 import '../../icons/icon-drop-down-google.js';
 import '../../components/navigation-item/navigation-item.js';
 import {customElement} from '../../decorator.js';
+import {READOUT_UNAVAILABLE_DASH} from '../readout/readout-formatters.js';
 
 /**
  * Enum for instrument field sizes.
@@ -36,66 +37,69 @@ export enum InstrumentFieldSize {
  * |---------------------|-------------------------------------------------------------------------|
  * | off-value           | Content to display when the `off` property is true (defaults to "OFF"). |
  *
+ * @property size - The size of the instrument field.
+ * @property setpoint - The setpoint value to display.
+ * @property hasSetpoint - Whether to show the setpoint.
+ * @property hasSrc - Whether to show the source (src) field.
+ * @property value - The primary value to display.
+ * @property maxDigits - The maximum number of integer digits to show (for zero padding).
+ * @property showZeroPadding - Whether to show leading zeros up to `maxDigits`.
+ * @property fractionDigits - The number of decimal places to display.
+ * @property tag - The tag or label for the data (e.g., "HDG", "SPD").
+ * @property unit - The unit of measurement (e.g., "DEG", "KN").
+ * @property src - The current source name (e.g., "GPS 1").
+ * @property neutralColor - If true, uses a neutral color scheme instead of the default instrument color.
+ * @property horizontal - If true, uses a horizontal layout.
+ * @property center - If true, centers the content.
+ * @property labelOnly - If true, only the label (tag and unit) is displayed.
+ * @property off - If true, displays the "off" state (e.g., showing "OFF" instead of value).
+ * @property autoHideSetpoint - If true, automatically hides the setpoint when the value is close to it.
+ * @property autoHideDeadband - The deadband within which the setpoint is hidden if `autoHideSetpoint` is true.
  * @slot off-value - Content to display when the `off` property is true (defaults to "OFF").
  *
  * @csspart label - The container for the tag and unit.
  * @csspart tag - The tag text element.
+ * @deprecated The instrument-field component is deprecated and will be removed in future releases.
+ * Please use the <obc-readout> component instead. See storybook for migration details.
+ * https://openbridge-next-storybook.web.app/?path=/docs/instruments-instrument-field-deprecated--docs
  */
 @customElement('obc-instrument-field')
 export class ObcInstrumentField extends LitElement {
-  /** The size of the instrument field. */
   @property({type: String}) size: InstrumentFieldSize =
     InstrumentFieldSize.regular;
 
-  /** The setpoint value to display. */
   @property({type: Number}) setpoint: number | undefined;
 
-  /** Whether to show the setpoint. */
   @property({type: Boolean}) hasSetpoint = false;
 
-  /** Whether to show the source (src) field. */
   @property({type: Boolean}) hasSrc = false;
 
-  /** The primary value to display. */
   @property({type: Number}) value: number | undefined;
 
-  /** The maximum number of integer digits to show (for zero padding). */
   @property({type: Number}) maxDigits = 1;
 
-  /** Whether to show leading zeros up to `maxDigits`. */
   @property({type: Boolean}) showZeroPadding = false;
 
-  /** The number of decimal places to display. */
   @property({type: Number}) fractionDigits = 0;
 
-  /** The tag or label for the data (e.g., "HDG", "SPD"). */
   @property({type: String}) tag = '';
 
-  /** The unit of measurement (e.g., "DEG", "KN"). */
   @property({type: String}) unit = '';
 
-  /** The current source name (e.g., "GPS 1"). */
   @property({type: String}) src = '';
 
-  /** If true, uses a neutral color scheme instead of the default instrument color. */
   @property({type: Boolean}) neutralColor = false;
 
-  /** If true, uses a horizontal layout. */
   @property({type: Boolean}) horizontal = false;
 
-  /** If true, centers the content. */
   @property({type: Boolean}) center = false;
 
-  /** If true, only the label (tag and unit) is displayed. */
   @property({type: Boolean}) labelOnly = false;
 
-  /** If true, displays the "off" state (e.g., showing "OFF" instead of value). */
   @property({type: Boolean}) off = false;
 
-  /** If true, automatically hides the setpoint when the value is close to it. */
   @property({type: Boolean}) autoHideSetpoint = false;
 
-  /** The deadband within which the setpoint is hidden if `autoHideSetpoint` is true. */
   @property({type: Number}) autoHideDeadband = 0;
 
   /**
@@ -105,11 +109,13 @@ export class ObcInstrumentField extends LitElement {
   dashedGenerator(): string {
     const n = this.showZeroPadding ? Math.max(this.maxDigits, 1) : 1;
     if (this.fractionDigits < 1) {
-      return '-'.repeat(n);
+      return READOUT_UNAVAILABLE_DASH.repeat(n);
     } else {
       const diff = n - this.fractionDigits;
       return (
-        '-'.repeat(Math.max(diff, 1)) + '.' + '-'.repeat(this.fractionDigits)
+        READOUT_UNAVAILABLE_DASH.repeat(Math.max(diff, 1)) +
+        '.' +
+        READOUT_UNAVAILABLE_DASH.repeat(this.fractionDigits)
       );
     }
   }
@@ -137,52 +143,68 @@ export class ObcInstrumentField extends LitElement {
           'show-zero-padding': this.showZeroPadding,
         })}
       >
-        ${this.horizontal && this.size === InstrumentFieldSize.regular
-          ? html`<div class="label">
-              <div class="tag" part="tag">${this.tag}</div>
-            </div>`
-          : nothing}
-        ${this.hasSetpoint
-          ? html`<div class="setpoint">
-              <svg
-                class="setpoint-arrow"
-                width="16"
-                height="16"
-                viewBox="0 0 16 16"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  fill="var(--instrument-enhanced-secondary-color)"
-                  d="M4.66797 4.80263C4.66797 4.14363 5.45194 3.76746 6.0013 4.16286L10.4456 7.17243C11.0312 7.56899 11.0314 8.43154 10.4459 8.82828L6.0013 11.8401C5.45194 12.2355 4.66797 11.8593 4.66797 11.2003L4.66797 4.80263Z"
-                  fill="var(--instrument-enhanced-primary-color)"
-                />
-              </svg>
-              <div class="setpoint-value">${this.setpointValueBlueNumbers}</div>
-            </div>`
-          : nothing}
-        ${this.horizontal && !this.labelOnly && this.hasSetpoint
-          ? html`<div class="divider"></div>`
-          : nothing}
-        ${!this.labelOnly
-          ? html` <div class="value">
-              ${this.off
-                ? html`<div class="value-blue">
-                    <slot name="off-value">OFF</slot>
-                  </div>`
-                : html` <div class="value-hint-zero">${this.hintZeros}</div>
-                    <div class="value-blue">${this.valueBlueNumbers}</div>`}
-            </div>`
-          : nothing}
+        ${
+          this.horizontal && this.size === InstrumentFieldSize.regular
+            ? html`<div class="label">
+                <div class="tag" part="tag">${this.tag}</div>
+              </div>`
+            : nothing
+        }
+        ${
+          this.hasSetpoint
+            ? html`<div class="setpoint">
+                <svg
+                  class="setpoint-arrow"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fill="var(--instrument-enhanced-secondary-color)"
+                    d="M4.66797 4.80263C4.66797 4.14363 5.45194 3.76746 6.0013 4.16286L10.4456 7.17243C11.0312 7.56899 11.0314 8.43154 10.4459 8.82828L6.0013 11.8401C5.45194 12.2355 4.66797 11.8593 4.66797 11.2003L4.66797 4.80263Z"
+                    fill="var(--instrument-enhanced-primary-color)"
+                  />
+                </svg>
+                <div class="setpoint-value">
+                  ${this.setpointValueBlueNumbers}
+                </div>
+              </div>`
+            : nothing
+        }
+        ${
+          this.horizontal && !this.labelOnly && this.hasSetpoint
+            ? html`<div class="divider"></div>`
+            : nothing
+        }
+        ${
+          !this.labelOnly
+            ? html` <div class="value">
+                ${
+                  this.off
+                    ? html`<div class="value-blue">
+                        <slot name="off-value">OFF</slot>
+                      </div>`
+                    : html` <div class="value-hint-zero">${this.hintZeros}</div>
+                        <div class="value-blue">${this.valueBlueNumbers}</div>`
+                }
+              </div>`
+            : nothing
+        }
         <div class="label" part="label">
-          ${this.horizontal && this.size === InstrumentFieldSize.regular
-            ? nothing
-            : html`<div class="tag" part="tag">${this.tag}</div>`}
+          ${
+            this.horizontal && this.size === InstrumentFieldSize.regular
+              ? nothing
+              : html`<div class="tag" part="tag">${this.tag}</div>`
+          }
           <div class="unit">${this.unit}</div>
         </div>
-        ${this.hasSrc && this.horizontal
-          ? html`<div class="divider src-divider"></div>`
-          : nothing}
+        ${
+          this.hasSrc && this.horizontal
+            ? html`<div class="divider src-divider"></div>`
+            : nothing
+        }
         ${this.hasSrc ? html`<div class="src">${this.src}</div>` : nothing}
       </div>
     `;

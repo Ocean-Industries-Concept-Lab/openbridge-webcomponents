@@ -1,3 +1,5 @@
+import {degToRad} from './math.js';
+
 export function roundedArch({
   startAngle,
   endAngle,
@@ -5,6 +7,7 @@ export function roundedArch({
   R,
   roundOutsideCut,
   roundInsideCut,
+  roundRadius = 8,
 }: {
   startAngle: number;
   R: number;
@@ -12,9 +15,12 @@ export function roundedArch({
   endAngle: number;
   roundOutsideCut: boolean;
   roundInsideCut: boolean;
+  /** Corner fillet radius of the rounded cuts; at half the arch width the
+   * flat cut edge vanishes and the end becomes an inscribed round tip. */
+  roundRadius?: number;
 }) {
-  const a1 = (startAngle * Math.PI) / 180;
-  const a2 = (endAngle * Math.PI) / 180;
+  const a1 = degToRad(startAngle);
+  const a2 = degToRad(endAngle);
 
   const X1 = Math.sin(a1) * R;
   const Y1 = -Math.cos(a1) * R;
@@ -24,10 +30,16 @@ export function roundedArch({
   const Y2 = -Math.cos(a2) * R;
   const x2 = Math.sin(a2) * r;
   const y2 = -Math.cos(a2) * r;
-  const roundRadius = 8;
+
+  // Guard against degenerate radii: corner rounding requires the ring
+  // radius to be at least `roundRadius`, otherwise Math.asin(roundRadius/r)
+  // returns NaN and produces an invalid SVG path. Fall back to a square cut
+  // in that case (notably when r === 0 for pie-slice clip paths).
+  const safeRoundOutsideCut = roundOutsideCut && R >= roundRadius;
+  const safeRoundInsideCut = roundInsideCut && r >= roundRadius;
 
   let svgPath = '';
-  if (roundOutsideCut) {
+  if (safeRoundOutsideCut) {
     const roundDeltaAngle = Math.asin(roundRadius / R);
     const largeArcFlag =
       a2 - roundDeltaAngle - (a1 + roundDeltaAngle) <= Math.PI ? 0 : 1;
@@ -50,7 +62,7 @@ export function roundedArch({
     svgPath += `M ${X1} ${Y1} A ${R} ${R} 1 ${largeArcFlag} 1 ${X2} ${Y2}`;
   }
 
-  if (roundInsideCut) {
+  if (safeRoundInsideCut) {
     const roundDeltaAngle = Math.asin(roundRadius / r);
     const largeArcFlag =
       a2 - roundDeltaAngle - (a1 + roundDeltaAngle) <= Math.PI ? 0 : 1;

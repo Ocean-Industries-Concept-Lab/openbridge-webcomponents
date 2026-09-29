@@ -1,21 +1,67 @@
-import {LitElement, html, css, TemplateResult} from 'lit';
+import {LitElement, html, css, TemplateResult, nothing} from 'lit';
 import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
-import {alarmRectifiedA} from './icons/icon-alarm-rectified.js';
-import {warningRectifiedA} from './icons/icon-warning-rectified.js';
-import {alarmSilencedA, alarmSilencedB} from './icons/icon-alarm-silenced.js';
-import {
-  warningSilencedA,
-  warningSilencedB,
-} from './icons/icon-warning-silenced.js';
-import {alarmUnackA, alarmUnackB} from './icons/icon-alarm-unack.js';
-import {warningUnackA, warningUnackB} from './icons/icon-warning-unack.js';
 import '../../icons/icon-caution-color-iec.js';
 import {customElement} from '../../decorator.js';
-import {AlertType} from '../../types.js';
+import {
+  AlertType,
+  FlashingSpeed,
+  type ResolvedFlashingSpeed,
+} from '../../types.js';
+import {
+  AlertFlashPhase,
+  getBamAlertTypeForBlinking,
+  resolveFlashingSpeed,
+} from '../../alert-severity.js';
 import '../../icons/icon-alarm-badge-outline.js';
 import '../../icons/icon-warning-badge-outline.js';
 import '../../icons/icon-caution-badge-outline.js';
+import '../../icons/icon-alarm-acknowledged-iec.js';
+import '../../icons/icon-warning-acknowledged-iec.js';
+import '../../icons/icon-alarm-rectified-iec.js';
+import '../../icons/icon-warning-rectified-iec.js';
+import '../../icons/icon-alarm-rectified-outlined.js';
+import '../../icons/icon-warning-rectified-outlined.js';
+import '../../icons/icon-alarm-silenced-iec.js';
+import '../../icons/icon-alarm-silenced-outlined.js';
+import '../../icons/icon-warning-silenced-iec.js';
+import '../../icons/icon-warning-silenced-outlined.js';
+import '../../icons/icon-alarm-unacknowledged-iec.js';
+import '../../icons/icon-alarm-acknowledged-outlined.js';
+import '../../icons/icon-warning-unacknowledged-iec.js';
+import '../../icons/icon-warning-unacknowledged-outlined.js';
+
+import '../../icons/icon-critical-badge.js';
+import '../alert-frame/diagnostic-badge.js';
+import {criticalA, criticalB} from './icons/icon-critical.js';
+import {
+  criticalUnacknowledgedA,
+  criticalUnacknowledgedB,
+} from './icons/icon-critical-unacknowledged.js';
+import {
+  criticalSilencedA,
+  criticalSilencedB,
+} from './icons/icon-critical-silenced.js';
+import {
+  criticalRectifiedA,
+  criticalRectifiedB,
+} from './icons/icon-critical-rectified.js';
+import {criticalAcknowledged} from './icons/icon-critical-acknowledged.js';
+import {
+  lowUnacknowledgedA,
+  lowUnacknowledgedB,
+} from './icons/icon-low-unacknowledged.js';
+import {lowSilencedA, lowSilencedB} from './icons/icon-low-silenced.js';
+import {lowRectifiedA, lowRectifiedB} from './icons/icon-low-rectified.js';
+import {lowAcknowledged} from './icons/icon-low-acknowledged.js';
+import {FlashingController} from '../../palettes/flashing-controller.js';
+
+enum AlertIconState {
+  Silenced = 'silenced',
+  Unacknowledged = 'unacknowledged',
+  Acknowledged = 'acknowledged',
+  Rectified = 'rectified',
+}
 
 enum AlertIconName {
   AlarmSilenced = 'alarm-silenced',
@@ -24,32 +70,85 @@ enum AlertIconName {
   WarningUnack = 'warning-unack',
   WarningRectified = 'warning-rectified',
   WarningSilenced = 'warning-silenced',
+  Critical = 'critical',
+  CriticalUnack = 'critical-unack',
+  CriticalSilenced = 'critical-silenced',
+  CriticalRectified = 'critical-rectified',
+  LowUnack = 'low-unack',
+  LowSilenced = 'low-silenced',
+  LowRectified = 'low-rectified',
 }
 
 const mapping = {
   [AlertIconName.AlarmSilenced]: {
-    a: alarmSilencedA,
-    b: alarmSilencedB,
+    a: html`<obi-alarm-silenced-iec usecsscolor></obi-alarm-silenced-iec>`,
+    b: html`<obi-alarm-silenced-outlined
+      usecsscolor
+    ></obi-alarm-silenced-outlined>`,
   },
   [AlertIconName.AlarmUnack]: {
-    a: alarmUnackA,
-    b: alarmUnackB,
+    a: html`<obi-alarm-unacknowledged-iec
+      usecsscolor
+    ></obi-alarm-unacknowledged-iec>`,
+    b: html`<obi-alarm-acknowledged-outlined
+      usecsscolor
+    ></obi-alarm-acknowledged-outlined>`,
   },
   [AlertIconName.AlarmRectified]: {
-    a: alarmRectifiedA,
-    b: alarmRectifiedA,
+    a: html`<obi-alarm-rectified-iec usecsscolor></obi-alarm-rectified-iec>`,
+    b: html`<obi-alarm-rectified-outlined
+      usecsscolor
+    ></obi-alarm-rectified-outlined>`,
   },
   [AlertIconName.WarningUnack]: {
-    a: warningUnackA,
-    b: warningUnackB,
+    a: html`<obi-warning-unacknowledged-iec
+      usecsscolor
+    ></obi-warning-unacknowledged-iec>`,
+    b: html`<obi-warning-unacknowledged-outlined
+      usecsscolor
+    ></obi-warning-unacknowledged-outlined>`,
   },
   [AlertIconName.WarningRectified]: {
-    a: warningRectifiedA,
-    b: warningRectifiedA,
+    a: html`<obi-warning-rectified-iec
+      usecsscolor
+    ></obi-warning-rectified-iec>`,
+    b: html`<obi-warning-rectified-outlined
+      usecsscolor
+    ></obi-warning-rectified-outlined>`,
   },
   [AlertIconName.WarningSilenced]: {
-    a: warningSilencedA,
-    b: warningSilencedB,
+    a: html`<obi-warning-silenced-iec usecsscolor></obi-warning-silenced-iec>`,
+    b: html`<obi-warning-silenced-outlined
+      usecsscolor
+    ></obi-warning-silenced-outlined>`,
+  },
+  [AlertIconName.Critical]: {
+    a: criticalA,
+    b: criticalB,
+  },
+  [AlertIconName.CriticalUnack]: {
+    a: criticalUnacknowledgedA,
+    b: criticalUnacknowledgedB,
+  },
+  [AlertIconName.CriticalSilenced]: {
+    a: criticalSilencedA,
+    b: criticalSilencedB,
+  },
+  [AlertIconName.CriticalRectified]: {
+    a: criticalRectifiedA,
+    b: criticalRectifiedB,
+  },
+  [AlertIconName.LowUnack]: {
+    a: lowUnacknowledgedA,
+    b: lowUnacknowledgedB,
+  },
+  [AlertIconName.LowSilenced]: {
+    a: lowSilencedA,
+    b: lowSilencedB,
+  },
+  [AlertIconName.LowRectified]: {
+    a: lowRectifiedA,
+    b: lowRectifiedB,
   },
 };
 /**
@@ -61,7 +160,7 @@ const mapping = {
  *
  * ## Features
  * - **Multiple Icon Types:** Supports all alarm and warning types.
- * - **Blinking Animation:** Uses two SVG layers with alternating opacity to create a blinking effect, visually emphasizing the alert or warning state.
+ * - **Flashing:** Two SVG layers alternate at the design tempo (fast for critical/alarm/high, slow for warning/medium, very slow for low and for every rectified alert); acknowledged icons are steady.
  * - **Adaptive Styling:** Applies different CSS variables for alarm and warning types to allow for distinct visual cues (e.g., color, blink timing).
  * - **Scalable:** Designed to fit any container size; scales with its parent element.
  *
@@ -84,24 +183,101 @@ const mapping = {
  * <obc-alert-icon .alarmType=${alarm.type} .alarmStatus=${alarm.status}></obc-alert-icon>
  * ```
  *
+ * @property flashingSpeed - Flash tempo: `default` resolves from the alert type and state,
+ *   `fast`, `slow`, `very-slow` force a tempo, `fixed` never flashes. Acknowledged icons are
+ *   always steady.
+ * @availableWhen acknowledged type in [Alarm, Warning, LevelCritical, LevelHigh, LevelMedium, LevelLow]
+ * @availableWhen active type in [Alarm, Warning, LevelCritical, LevelHigh, LevelMedium, LevelLow]
+ * @stable
  */
 @customElement('obc-alert-icon')
 export class ObcAlertIcon extends LitElement {
-  @property({type: String}) type!: AlertType;
-  @property({type: Boolean}) acknowledged!: boolean;
-  @property({type: Boolean}) active!: boolean;
-  @property({type: Boolean}) outline!: boolean;
+  @property({type: String}) alertType: AlertType = AlertType.Alarm;
+  /* @deprecated use `alertType` instead */
+  @property({type: String}) type?: AlertType;
+  @property({type: Boolean}) acknowledged?: boolean;
+  @property({type: Boolean}) active?: boolean;
+  @property({type: Boolean}) silenced?: boolean;
+
+  @property({type: String}) flashingSpeed: FlashingSpeed =
+    FlashingSpeed.Default;
+
+  protected readonly flashing = new FlashingController(
+    this,
+    () => this.resolvedFlashingSpeed
+  );
+
+  get resolvedFlashingSpeed(): ResolvedFlashingSpeed {
+    // Caution and diagnostic have no flashing glyph pair, whatever the speed.
+    if (this.acknowledged || !this.icon) {
+      return FlashingSpeed.Fixed;
+    }
+    return resolveFlashingSpeed(
+      this.flashingSpeed,
+      this._effectiveType,
+      this.active === false ? AlertFlashPhase.Rectified : AlertFlashPhase.Active
+    );
+  }
+
+  private get _effectiveType(): AlertType {
+    if (this.type) {
+      return this.type;
+    }
+    return this.alertType;
+  }
+
+  private get bamType(): AlertType {
+    return getBamAlertTypeForBlinking(this._effectiveType);
+  }
+
+  private get _effectiveState(): AlertIconState {
+    if (this.active === false) {
+      return AlertIconState.Rectified;
+    } else if (this.acknowledged) {
+      return AlertIconState.Acknowledged;
+    } else if (this.silenced) {
+      return AlertIconState.Silenced;
+    } else if (this.active === true) {
+      return AlertIconState.Unacknowledged;
+    }
+    return AlertIconState.Unacknowledged;
+  }
 
   get icon() {
-    if (this.type === AlertType.Alarm) {
-      if (this.active === false) {
-        return mapping[AlertIconName.AlarmRectified];
-      } else if (this.acknowledged) {
-        return mapping[AlertIconName.AlarmSilenced];
-      } else {
-        return mapping[AlertIconName.AlarmUnack];
+    if (this._effectiveType === AlertType.LevelCritical) {
+      switch (this._effectiveState) {
+        case AlertIconState.Rectified:
+          return mapping[AlertIconName.CriticalRectified];
+        case AlertIconState.Silenced:
+          return mapping[AlertIconName.CriticalSilenced];
+        case AlertIconState.Unacknowledged:
+          return mapping[AlertIconName.CriticalUnack];
+        default:
+          return mapping[AlertIconName.Critical];
       }
-    } else {
+    } else if (this._effectiveType === AlertType.LevelLow) {
+      switch (this._effectiveState) {
+        case AlertIconState.Rectified:
+          return mapping[AlertIconName.LowRectified];
+        case AlertIconState.Silenced:
+          return mapping[AlertIconName.LowSilenced];
+        case AlertIconState.Unacknowledged:
+          return mapping[AlertIconName.LowUnack];
+        default:
+          return mapping[AlertIconName.LowUnack];
+      }
+    } else if (this.bamType === AlertType.Alarm) {
+      switch (this._effectiveState) {
+        case AlertIconState.Rectified:
+          return mapping[AlertIconName.AlarmRectified];
+        case AlertIconState.Silenced:
+          return mapping[AlertIconName.AlarmSilenced];
+        case AlertIconState.Unacknowledged:
+          return mapping[AlertIconName.AlarmUnack];
+        default:
+          return null;
+      }
+    } else if (this.bamType === AlertType.Warning) {
       if (this.active === false) {
         return mapping[AlertIconName.WarningRectified];
       } else if (this.acknowledged) {
@@ -110,45 +286,77 @@ export class ObcAlertIcon extends LitElement {
         return mapping[AlertIconName.WarningUnack];
       }
     }
+
+    return null;
+  }
+
+  private renderStaticIcon(): TemplateResult | typeof nothing {
+    // Caution and diagnostic always show a fixed symbol, regardless of state.
+    if (this._effectiveType === AlertType.Caution) {
+      return html`<obi-caution-color-iec usecsscolor></obi-caution-color-iec>`;
+    }
+    if (this._effectiveType === AlertType.LevelDiagnostic) {
+      return html`<obi-diagnostic-badge
+        style="color: var(--alert-diagnostic-color);"
+      ></obi-diagnostic-badge>`;
+    }
+    if (this._effectiveState === AlertIconState.Acknowledged) {
+      if (this._effectiveType === AlertType.LevelCritical) {
+        return html`${criticalAcknowledged}`;
+      }
+      if (this._effectiveType === AlertType.LevelLow) {
+        return html`${lowAcknowledged}`;
+      }
+      switch (this.bamType) {
+        case AlertType.Alarm:
+          return html`<obi-alarm-acknowledged-iec
+            usecsscolor
+          ></obi-alarm-acknowledged-iec>`;
+        case AlertType.Warning:
+          return html`<obi-warning-acknowledged-iec
+            usecsscolor
+          ></obi-warning-acknowledged-iec>`;
+        default:
+          return nothing;
+      }
+    } else if (this._effectiveState === AlertIconState.Rectified) {
+      if (this._effectiveType === AlertType.LevelCritical) {
+        return html`${criticalRectifiedB}`;
+      }
+      if (this._effectiveType === AlertType.LevelLow) {
+        return html`${lowRectifiedB}`;
+      }
+      switch (this.bamType) {
+        case AlertType.Alarm:
+          return html`<obi-alarm-rectified-outlined
+            usecsscolor
+          ></obi-alarm-rectified-outlined>`;
+        case AlertType.Warning:
+          return html`<obi-warning-rectified-outlined
+            usecsscolor
+          ></obi-warning-rectified-outlined>`;
+        default:
+          return nothing;
+      }
+    }
+    return nothing;
   }
 
   override render() {
-    if (!this.type) {
+    if (!this._effectiveType) {
       return html`<div>No alarm</div>`;
     }
-    let icon: TemplateResult | undefined;
-    if (this.outline) {
-      switch (this.type) {
-        case AlertType.Alarm:
-          icon = html`<obi-alarm-badge-outline></obi-alarm-badge-outline>`;
-          break;
-        case AlertType.Warning:
-          icon = html`<obi-warning-badge-outline></obi-warning-badge-outline>`;
-          break;
-        case AlertType.Caution:
-          icon = html`<obi-caution-badge-outline></obi-caution-badge-outline>`;
-          break;
-      }
-    } else if (this.type === AlertType.Caution) {
-      icon = html`<obi-caution-color-iec usecsscolor></obi-caution-color-iec>`;
-    } else if ([AlertType.Alarm, AlertType.Warning].includes(this.type)) {
-      const icons = this.icon;
-      const isWarning = this.type === AlertType.Warning;
+    const tempo = this.resolvedFlashingSpeed;
+    const icons = this.icon;
+    if (tempo !== FlashingSpeed.Fixed && icons) {
       return html`
-        <div
-          class=${classMap({
-            wrapper: true,
-            warning: isWarning,
-          })}
-        >
+        <div class=${classMap({wrapper: true, [`flash-${tempo}`]: true})}>
           <span class="a">${icons.a}</span>
           <span class="b">${icons.b}</span>
         </div>
       `;
-    } else {
-      return html`<div>No alarm</div>`;
     }
-    return html`<div class="wrapper">${icon}</div>`;
+    return html`<div class="wrapper">${this.renderStaticIcon()}</div>`;
   }
 
   static override styles = css`
@@ -156,32 +364,48 @@ export class ObcAlertIcon extends LitElement {
       height: 100%;
       width: 100%;
       position: relative;
-    }
-    .wrapper svg {
-      height: 100%;
-      width: 100%;
-      position: absolute;
-      top: 0;
-      left: 0;
-    }
 
-    :not(.warning) {
-      .a {
-        opacity: var(--alarm-blink-on);
+      obi-diagnostic-badge,
+      obi-critical-badge {
+        display: block;
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
       }
 
+      svg,
+      .a,
       .b {
-        opacity: var(--alarm-blink-off);
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
       }
-    }
-
-    .warning {
-      .a {
-        opacity: var(--warning-blink-on);
+      &.flash-fast .a {
+        opacity: var(--flash-fast-on);
       }
 
-      .b {
-        opacity: var(--warning-blink-off);
+      &.flash-fast .b {
+        opacity: var(--flash-fast-off);
+      }
+
+      &.flash-slow .a {
+        opacity: var(--flash-slow-on);
+      }
+
+      &.flash-slow .b {
+        opacity: var(--flash-slow-off);
+      }
+
+      &.flash-very-slow .a {
+        opacity: var(--flash-very-slow-on);
+      }
+
+      &.flash-very-slow .b {
+        opacity: var(--flash-very-slow-off);
       }
     }
   `;

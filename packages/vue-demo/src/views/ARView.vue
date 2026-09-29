@@ -35,7 +35,7 @@
 import 'video.js/dist/video-js.css'
 
 import { onMounted, ref, onBeforeUnmount, computed } from 'vue'
-import ObcPoiData from '@oicl/openbridge-webcomponents-vue/ar/poi-data/ObcPoiData.vue'
+import ObcPoiData from '@oicl/openbridge-webcomponents-vue/ar/poi/ObcPoiData.vue'
 import Hls from 'hls.js'
 
 const arVideo = ref<HTMLVideoElement | null>(null)
@@ -173,8 +173,8 @@ const setPosition = (
 ) => {
   if (f === null) throw new Error('f is null')
 
-  let x = frames[0]?.x ?? 0
-  let h = frames[0]?.h ?? 0
+  let x: number
+  let h: number
 
   if (frames[0] && t <= frames[0].t) {
     x = frames[0].x

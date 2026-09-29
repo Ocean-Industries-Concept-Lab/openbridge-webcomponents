@@ -5,6 +5,7 @@ import {styleMap} from 'lit/directives/style-map.js';
 import componentStyle from './progress-button.css?inline';
 import {customElement} from '../../decorator.js';
 import {CircularProgressMode} from '../../building-blocks/circular-progress/circular-progress.js';
+import {clamp} from '../../svghelpers/math.js';
 
 export enum ProgressButtonType {
   Linear = 'linear',
@@ -26,6 +27,99 @@ export interface ProgressButtonClickEvent {
   value: number;
 }
 
+/**
+ * `<obc-progress-button>` – A button with a built-in progress indicator for actions
+ * that take time to complete, such as uploads, downloads, or background processing.
+ *
+ * Combines a clickable button with an embedded progress visualization so a single
+ * control can both trigger a long-running action and communicate its ongoing status.
+ * The progress indicator is shown on demand (via `showProgress`) and can report either
+ * a known percentage or an open-ended "working" state.
+ *
+ * ## Features / Variants
+ *
+ * **Layout types (`type`)**
+ * - **Linear** (default): A text button (optionally with leading/trailing icons) with a
+ *   thin horizontal progress bar rendered above the label. Best for primary actions where
+ *   a descriptive label is helpful (e.g. "Upload File", "Download").
+ * - **Circular**: A compact icon-only button wrapped by a circular progress ring, with an
+ *   optional label rendered below it. Best for space-constrained or icon-driven actions.
+ *
+ * **Button styles (`buttonStyle`, Linear only)**
+ * - `regular` (default), `flat`, and `raised` elevation variants. The circular type always
+ *   uses a flat visual treatment.
+ *
+ * **Progress modes (`mode`)**
+ * - **Determinate** (default): Fills the bar/ring proportionally to `value` (0–100).
+ * - **Indeterminate**: Animated, looping indicator for work of unknown duration.
+ * - **Progressive indeterminate** (Circular only, via `progressiveIndeterminate`): A hybrid
+ *   ring that animates while still advancing toward `value`.
+ *
+ * **Other**
+ * - **Alert state** (`hasAlert`): Draws a red ring/border to flag an error or failed action.
+ * - **Disabled** (`disabled`): Blocks interaction; the `obc-click` event is suppressed.
+ *
+ * ## Usage Guidelines
+ *
+ * Use a progress button when a single action both starts and tracks a time-consuming task,
+ * keeping the trigger and its feedback in one place. Toggle `showProgress` on when the task
+ * begins and update `value` as it advances; switch to `mode="indeterminate"` (or
+ * `progressiveIndeterminate` for circular) when the duration or completion percentage is
+ * unknown. Choose the **linear** type when a text label aids comprehension, and the
+ * **circular** type for compact, icon-led actions. For a plain action with no progress
+ * tracking, prefer a standard button instead.
+ *
+ * ## Slots
+ *
+ * | Slot            | Renders When...                    | Purpose                                              |
+ * | --------------- | ---------------------------------- | ---------------------------------------------------- |
+ * | `leading-icon`  | `type="linear"` && `hasLeadingIcon`| Icon shown before the label.                         |
+ * | `trailing-icon` | `type="linear"` && `hasTrailingIcon`| Icon shown after the label.                          |
+ * | `icon`          | `type="circular"`                  | Central icon inside the circular progress ring.      |
+ *
+ * ## Events
+ *
+ * - `obc-click` – Fired when the button is activated (suppressed while `disabled`); the detail
+ *   carries the current progress `value`.
+ *
+ * @example
+ * ```html
+ * <obc-progress-button
+ *   type="linear"
+ *   buttonStyle="raised"
+ *   label="Upload File"
+ *   showProgress
+ *   mode="determinate"
+ *   value="45"
+ * >
+ *   <obi-placeholder slot="leading-icon"></obi-placeholder>
+ * </obc-progress-button>
+ * ```
+ *
+ * @property type - Layout type of the button: `linear` (label + bar) or `circular` (icon + ring).
+ * @property buttonStyle - Elevation style of the button surface.
+ * @availableWhen buttonStyle type==linear
+ * @property mode - Progress mode: `determinate` tracks `value`, `indeterminate` loops indefinitely.
+ * @availableWhen mode showProgress==true
+ * @property value - Progress percentage (0–100); clamped when rendered.
+ * @property label - Text shown in the button (linear) or below it (circular, when `showLabel`).
+ * @property disabled - Blocks interaction and suppresses the `obc-click` event.
+ * @property showProgress - Reveals the progress bar/ring.
+ * @property hasLeadingIcon - Renders the `leading-icon` slot.
+ * @availableWhen hasLeadingIcon type==linear
+ * @property hasTrailingIcon - Renders the `trailing-icon` slot.
+ * @availableWhen hasTrailingIcon type==linear
+ * @property hasAlert - Shows an alert (error) ring/border around the button.
+ * @property progressiveIndeterminate - Uses a progressive indeterminate ring that animates while advancing toward `value`.
+ * @availableWhen progressiveIndeterminate type==circular && showProgress==true
+ * @property showLabel - Shows the `label` below the circular button.
+ * @availableWhen showLabel type==circular
+ * @slot leading-icon - Icon before the label (`type="linear"` && `hasLeadingIcon`).
+ * @slot trailing-icon - Icon after the label (`type="linear"` && `hasTrailingIcon`).
+ * @slot icon - Central icon for the circular variant (`type="circular"`).
+ * @fires {CustomEvent<ProgressButtonClickEvent>} obc-click - When the button is activated; detail holds the current `value`.
+ * @stable
+ */
 @customElement('obc-progress-button')
 export class ObcProgressButton extends LitElement {
   @property({type: String}) type: ProgressButtonType =
@@ -68,54 +162,64 @@ export class ObcProgressButton extends LitElement {
         ?disabled="${this.disabled}"
         @click="${this.handleClick}"
         aria-label="${this.label}"
-        aria-busy="${this.showProgress &&
-        this.mode === ProgressMode.Indeterminate}"
-        aria-valuenow="${this.showProgress &&
-        this.mode === ProgressMode.Determinate
-          ? this.value
-          : nothing}"
-        aria-valuemin="${this.showProgress &&
-        this.mode === ProgressMode.Determinate
-          ? 0
-          : nothing}"
-        aria-valuemax="${this.showProgress &&
-        this.mode === ProgressMode.Determinate
-          ? 100
-          : nothing}"
+        aria-busy="${
+          this.showProgress && this.mode === ProgressMode.Indeterminate
+        }"
+        aria-valuenow="${
+          this.showProgress && this.mode === ProgressMode.Determinate
+            ? this.value
+            : nothing
+        }"
+        aria-valuemin="${
+          this.showProgress && this.mode === ProgressMode.Determinate
+            ? 0
+            : nothing
+        }"
+        aria-valuemax="${
+          this.showProgress && this.mode === ProgressMode.Determinate
+            ? 100
+            : nothing
+        }"
         role="button"
       >
         ${this.showProgress ? this.renderLinearProgress() : nothing}
 
         <div class="${classMap(visibleWrapperClasses)}">
           <div class="linear-label-icon-container">
-            ${this.hasLeadingIcon
-              ? html`<slot name="leading-icon"></slot>`
-              : nothing}
+            ${
+              this.hasLeadingIcon
+                ? html`<slot name="leading-icon"></slot>`
+                : nothing
+            }
             <span class="button-text">${this.label}</span>
           </div>
-          ${this.hasTrailingIcon
-            ? html`<slot name="trailing-icon"></slot>`
-            : nothing}
+          ${
+            this.hasTrailingIcon
+              ? html`<slot name="trailing-icon"></slot>`
+              : nothing
+          }
         </div>
       </button>
     `;
   }
 
   private renderLinearProgress() {
-    const clampedValue = Math.max(0, Math.min(100, this.value));
+    const clampedValue = clamp(this.value, 0, 100);
     const progressWidth = `${clampedValue}%`;
 
     return html`
       <div class="linear-progress-container">
         <div class="linear-progress-bar">
-          ${this.mode === ProgressMode.Determinate
-            ? html`
-                <div
-                  class="linear-progress-fill"
-                  style=${styleMap({width: progressWidth})}
-                ></div>
-              `
-            : html` <div class="linear-progress-indeterminate"></div> `}
+          ${
+            this.mode === ProgressMode.Determinate
+              ? html`
+                  <div
+                    class="linear-progress-fill"
+                    style=${styleMap({width: progressWidth})}
+                  ></div>
+                `
+              : html` <div class="linear-progress-indeterminate"></div> `
+          }
         </div>
       </div>
     `;
@@ -135,20 +239,28 @@ export class ObcProgressButton extends LitElement {
         ?disabled="${this.disabled}"
         @click="${this.handleClick}"
         aria-label="${this.label}"
-        aria-busy="${this.showProgress &&
-        this.getCircularProgressMode() !== CircularProgressMode.determinate}"
-        aria-valuenow="${this.showProgress &&
-        this.getCircularProgressMode() === CircularProgressMode.determinate
-          ? this.value
-          : nothing}"
-        aria-valuemin="${this.showProgress &&
-        this.getCircularProgressMode() === CircularProgressMode.determinate
-          ? 0
-          : nothing}"
-        aria-valuemax="${this.showProgress &&
-        this.getCircularProgressMode() === CircularProgressMode.determinate
-          ? 100
-          : nothing}"
+        aria-busy="${
+          this.showProgress &&
+          this.getCircularProgressMode() !== CircularProgressMode.determinate
+        }"
+        aria-valuenow="${
+          this.showProgress &&
+          this.getCircularProgressMode() === CircularProgressMode.determinate
+            ? this.value
+            : nothing
+        }"
+        aria-valuemin="${
+          this.showProgress &&
+          this.getCircularProgressMode() === CircularProgressMode.determinate
+            ? 0
+            : nothing
+        }"
+        aria-valuemax="${
+          this.showProgress &&
+          this.getCircularProgressMode() === CircularProgressMode.determinate
+            ? 100
+            : nothing
+        }"
         role="button"
       >
         <div class="circular-icon-container">
@@ -159,9 +271,11 @@ export class ObcProgressButton extends LitElement {
           </div>
         </div>
 
-        ${this.showLabel
-          ? html`<div class="circular-label">${this.label}</div>`
-          : nothing}
+        ${
+          this.showLabel
+            ? html`<div class="circular-label">${this.label}</div>`
+            : nothing
+        }
       </button>
     `;
   }
@@ -179,22 +293,24 @@ export class ObcProgressButton extends LitElement {
   private renderCircularProgress() {
     return html`
       <div class="circular-progress-svg-container">
-        ${this.hasAlert
-          ? html`<svg
-              class="circular-alert-svg"
-              viewBox="0 0 42 42"
-              preserveAspectRatio="xMidYMid meet"
-            >
-              <circle
-                class="circular-alert-ring"
-                cx="21"
-                cy="21"
-                r="20"
-                stroke-width="2"
-                fill="none"
-              />
-            </svg>`
-          : nothing}
+        ${
+          this.hasAlert
+            ? html`<svg
+                class="circular-alert-svg"
+                viewBox="0 0 42 42"
+                preserveAspectRatio="xMidYMid meet"
+              >
+                <circle
+                  class="circular-alert-ring"
+                  cx="21"
+                  cy="21"
+                  r="20"
+                  stroke-width="2"
+                  fill="none"
+                />
+              </svg>`
+            : nothing
+        }
         <obc-circular-progress
           .mode=${this.getCircularProgressMode()}
           .value=${this.value}

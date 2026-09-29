@@ -39,7 +39,7 @@ export enum ObcTitleContainerState {
  *   action order.
  *
  * **Best Practices**
- * - Keep actions deterministic in order to preserve stable event indexing.
+ * - Keep actions deterministic to preserve stable event indexing.
  * - Keep title and label concise to avoid truncation in narrow layouts.
  * - Use this component as a header boundary and keep business logic in parent
  *   containers.
@@ -61,7 +61,8 @@ export enum ObcTitleContainerState {
  * @slot title - Title text (overrides `titleValue` fallback).
  * @slot label - Label text (overrides `label` fallback).
  * @slot actions - Action elements rendered in the right section.
- * @fires action-click {CustomEvent<{action: number}>} Fired when a slotted action element is clicked.
+ * @fires {CustomEvent<{action: number}>} action-click - Fired when a slotted action element is clicked.
+ * @beta
  */
 @customElement('obc-title-container')
 export class ObcTitleContainer extends LitElement {

@@ -21,6 +21,9 @@ export enum SourceAlternativeIcon {
   sources05 = 'sources05',
 }
 
+/**
+ * @stable
+ */
 @customElement('obc-source')
 export class ObcSource extends ObcAbstractAutomationButtonSquared {
   @property({type: String}) alternativeIcon: SourceAlternativeIcon =
@@ -29,7 +32,7 @@ export class ObcSource extends ObcAbstractAutomationButtonSquared {
   override get icon() {
     switch (this.alternativeIcon) {
       case SourceAlternativeIcon.sources02:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-sources-02-on
               usecsscolor
               slot="icon"
@@ -49,7 +52,7 @@ export class ObcSource extends ObcAbstractAutomationButtonSquared {
             ></obi-sources-02-off>`;
         }
       case SourceAlternativeIcon.sources03:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-sources-03-on
               usecsscolor
               slot="icon"
@@ -69,7 +72,7 @@ export class ObcSource extends ObcAbstractAutomationButtonSquared {
             ></obi-sources-03-off>`;
         }
       case SourceAlternativeIcon.sources04:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-sources-04-on
               usecsscolor
               slot="icon"
@@ -89,7 +92,7 @@ export class ObcSource extends ObcAbstractAutomationButtonSquared {
             ></obi-sources-04-off>`;
         }
       case SourceAlternativeIcon.sources05:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-sources-05-on
               usecsscolor
               slot="icon"
@@ -109,7 +112,7 @@ export class ObcSource extends ObcAbstractAutomationButtonSquared {
             ></obi-sources-05-off>`;
         }
       default:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-sources-01-on
               usecsscolor
               slot="icon"

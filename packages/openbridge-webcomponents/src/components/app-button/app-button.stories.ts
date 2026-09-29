@@ -3,6 +3,7 @@ import {ObcAppButton, AppButtonSize} from './app-button.js';
 import './app-button.js';
 import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';
 import {html} from 'lit';
+import {expect} from 'storybook/test';
 
 const meta: Meta<typeof ObcAppButton> = {
   title: 'UI Components/Buttons/App Button',
@@ -78,6 +79,31 @@ export const SmallHideLabel: Story = {
 export const Integration: Story = {
   args: {
     integration: true,
+  },
+};
+
+export const IntegrationHoverUsesIntegrationColors: Story = {
+  args: {
+    integration: true,
+  },
+  play: async ({canvasElement}) => {
+    const button = canvasElement.querySelector<ObcAppButton>('obc-app-button')!;
+    const rules = button.shadowRoot!.adoptedStyleSheets.flatMap((sheet) =>
+      Array.from(sheet.cssRules)
+    );
+    const hoverRule = rules
+      .flatMap((rule) =>
+        rule instanceof CSSMediaRule ? Array.from(rule.cssRules) : [rule]
+      )
+      .find(
+        (rule): rule is CSSStyleRule =>
+          rule instanceof CSSStyleRule &&
+          rule.selectorText === '.wrapper.integration:hover'
+      );
+
+    expect(hoverRule?.style.backgroundColor).toContain(
+      '--integration-flat-hover-background-color'
+    );
   },
 };
 

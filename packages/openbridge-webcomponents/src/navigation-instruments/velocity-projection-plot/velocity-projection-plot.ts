@@ -11,6 +11,7 @@ import compentStyle from './velocity-projection-plot.css?inline';
 import '../watch/watch.js';
 import {VesselImage, VesselImageSize} from '../watch/watch.js';
 import {customElement} from '../../decorator.js';
+import {degToRad, clamp} from '../../svghelpers/math.js';
 
 export interface VelocityProjectionDatapoint {
   startAngleDeg: number;
@@ -19,23 +20,30 @@ export interface VelocityProjectionDatapoint {
   ratioTotalEnergy: number;
 }
 
+/**
+ * @experimental
+ */
 @customElement('obc-velocity-projection-plot')
 export class ObcVelocityProjectionPlot extends LitElement {
   @property({type: Array, attribute: false})
   dataPoints: VelocityProjectionDatapoint[] = [];
   @property({type: Number})
-  instantWindDirectionDeg: number | null = null;
+  currentWindFromDirection: number | null = null;
   @property({type: Number})
-  instantWindSpeedNumber: number | null = null;
+  currentWindSpeedKnots: number | null = null;
   @property({type: Number})
-  instantCurrentDirectionDeg: number | null = null;
+  currentFromDirection: number | null = null;
   @property({type: Number})
-  instantCurrentSpeedNumber: number | null = null;
+  currentSpeedKnots: number | null = null;
   @property({type: String})
   vesselImage: VesselImage = VesselImage.cargoWindTop;
   override render() {
     const width = 320;
     const viewBox = `-${width / 2} -${width / 2} ${width} ${width}`;
+    const currentLevel =
+      this.currentSpeedKnots == null
+        ? null
+        : clamp(Math.round(this.currentSpeedKnots), 0, 4);
 
     return html`
       <div class="container">
@@ -49,10 +57,10 @@ export class ObcVelocityProjectionPlot extends LitElement {
               transform: '',
             },
           ]}
-          .windFromDirectionDeg=${this.instantWindDirectionDeg}
-          .wind=${this.instantWindSpeedNumber}
-          .currentFromDirectionDeg=${this.instantCurrentDirectionDeg}
-          .current=${this.instantCurrentSpeedNumber}
+          .windFromDirectionDeg=${this.currentWindFromDirection}
+          .windKnots=${this.currentWindSpeedKnots}
+          .currentFromDirectionDeg=${this.currentFromDirection}
+          .current=${currentLevel}
           .padding=${70}
         >
         </obc-watch>
@@ -62,10 +70,10 @@ export class ObcVelocityProjectionPlot extends LitElement {
   }
 
   private isSelected(dp: VelocityProjectionDatapoint): boolean {
-    if (this.instantWindDirectionDeg != null) {
+    if (this.currentWindFromDirection != null) {
       return (
-        dp.startAngleDeg <= this.instantWindDirectionDeg &&
-        dp.endAngleDeg >= this.instantWindDirectionDeg
+        dp.startAngleDeg <= this.currentWindFromDirection &&
+        dp.endAngleDeg >= this.currentWindFromDirection
       );
     }
     return true;
@@ -102,8 +110,8 @@ export class ObcVelocityProjectionPlot extends LitElement {
     );
 
     const elements = dataPoints.map((dp) => {
-      const startAngle = (dp.startAngleDeg * Math.PI) / 180 - Math.PI / 2;
-      const endAngle = (dp.endAngleDeg * Math.PI) / 180 - Math.PI / 2;
+      const startAngle = degToRad(dp.startAngleDeg) - Math.PI / 2;
+      const endAngle = degToRad(dp.endAngleDeg) - Math.PI / 2;
 
       const c = this.color(dp);
 

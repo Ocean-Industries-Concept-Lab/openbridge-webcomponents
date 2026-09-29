@@ -25,9 +25,11 @@ import {
   createArcOuterLabelPlugin,
   calculateFixedHeightChartLayout,
   getChartTooltipOptions,
-  formatNumericValue,
+  formatChartNumber,
   generateLegendHTML,
+  observeLabelThreshold,
 } from '../../charthelpers/index.js';
+import type {FixedHeightChartDimensions} from '../../charthelpers/canvas-layout.js';
 
 type PolarScale = RadialLinearScaleType & {
   xCenter: number;
@@ -74,6 +76,11 @@ const POLAR_WATCHED_PROP_NAMES = [
   'fixedHeight',
   'showUnit',
 ] as const;
+
+export type PolarChartDataItem = {
+  label: string;
+  value: number;
+};
 
 /**
  * `<obc-polar-chart>` – A customizable polar area chart component for visualizing proportional data as sectors, with optional outer labels, angle display, and discrete color bands.
@@ -153,27 +160,29 @@ const POLAR_WATCHED_PROP_NAMES = [
  * </script>
  * ```
  *
- * @property {Array<{label: string, value: number}>} data - Chart data segments (set via JavaScript)
- * @property {string[]} colors - Custom segment colors (set via JavaScript) with fallback to theme palette
- * @property {boolean} monochrome - Use single color for all sectors (uses first color from array, default: false)
- * @property {boolean} discreteColorStops - Draw sectors as radial color bands from center outward using the colors array as threshold steps (default: false)
- * @property {boolean} trimToDiscreteStops - When true, visually trim sectors to the nearest discrete color band boundary. When false, show exact values with partial band fills (default: true)
- * @property {boolean} showSectorLabels - When true, display sector labels from data (e.g. "Sector A"). When false, display angle values (0°, 30°, etc.). Default: false
- * @property {boolean} showUnit - Whether to show unit in angle or outer labels, default: false
- * @property {boolean} showOuterLabels - Show outer labels, default: false
- * @property {string} outerLabelUnit - Unit string to append to outer labels, default: ""
- * @property {number} outerLabelMaxLength - Maximum character length for labels before trim (0 = no limit), default: 0
- * @property {number} outerLabelDecimalPlaces - Number of decimal places in labels, default: 0
- * @property {boolean} showDebugOverlay - Show debug overlay for development, default: false
- * @property {number} fixedHeight - Fixed height of the chart in pixels (mandatory, determines chart circumference), default: 320. The chart's circumference is always based on this fixed height to match other radial instruments.
- * @property {boolean} legend - Whether to display the legend below the chart, default: false
+ * @property data - Chart data segments (set via JavaScript)
+ * @property colors - Custom segment colors (set via JavaScript) with fallback to theme palette
+ * @property monochrome - Use single color for all sectors (uses first color from array, default: false)
+ * @availableWhen monochrome discreteColorStops==false
+ * @property discreteColorStops - Draw sectors as radial color bands from center outward using the colors array as threshold steps (default: false)
+ * @property showSectorLabels - When true, display sector labels from data (e.g. "Sector A"). When false, display angle values (0°, 30°, etc.). Default: false
+ * @property showUnit - Whether to show unit in angle or outer labels, default: false
+ * @property showOuterLabels - Show outer labels, default: false
+ * @property outerLabelUnit - Unit string to append to outer labels, default: "°"
+ * @property outerLabelMaxLength - Maximum character length for labels before trim (0 = no limit), default: 0
+ * @availableWhen outerLabelMaxLength showOuterLabels==true
+ * @property outerLabelDecimalPlaces - Number of decimal places in labels, default: 0
+ * @property fixedHeight - Fixed height of the chart in pixels (determines chart circumference), default: 320. The chart's circumference is always based on this fixed height to match other radial instruments.
+ * @property legend - Whether to display the legend below the chart, default: false
+ * @property showDebugOverlay - Show debug overlay for development, default: false
+ * @beta
  */
 @customElement('obc-polar-chart')
 export class ObcPolarChart extends LitElement {
-  @property({attribute: false})
-  data: {label: string; value: number}[] = [];
+  @property({type: Array, attribute: false})
+  data: PolarChartDataItem[] = [];
 
-  @property({attribute: false}) colors: string[] = [];
+  @property({type: Array, attribute: false}) colors: string[] = [];
 
   /** @internal */
   private centerFirstSector = false; // When false, first sector is centered at 12 o'clock position
@@ -222,14 +231,14 @@ export class ObcPolarChart extends LitElement {
   /** @internal */
   private chart?: Chart;
 
+  /** @internal - Latest layout dimensions computed by getChartOptions() */
+  private lastDimensions?: FixedHeightChartDimensions;
+
   /** @internal */
   private themeObserver?: MutationObserver;
 
   /** @internal - ResizeObserver for tracking height threshold crossings */
   private resizeObserver?: ResizeObserver;
-
-  /** @internal - Track previous state to detect threshold crossing */
-  private wasAboveThreshold = false;
 
   private hasAnyChanged(
     changed: PropertyValues,
@@ -273,33 +282,25 @@ export class ObcPolarChart extends LitElement {
   }
 
   /**
-   * Setup resize observer to detect height threshold crossings
-   * Recreates chart when crossing MIN_HEIGHT_WITH_LABELS (192px) to show/hide labels
+   * Crossing MIN_HEIGHT_WITH_LABELS changes the plugin set, so the chart is
+   * rebuilt rather than updated.
    */
   private setupResizeObserver() {
     if (!this.canvasEl) return;
 
-    this.resizeObserver = new ResizeObserver(() => {
-      const height = this.canvasEl?.clientHeight ?? 0;
-      const isAboveThreshold =
-        height >= CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS;
-
-      // Only recreate chart if we crossed the threshold (need to add/remove plugins)
-      if (isAboveThreshold !== this.wasAboveThreshold) {
-        this.wasAboveThreshold = isAboveThreshold;
-        this.chart?.destroy();
-        this.createChart();
-      } else {
-        // Height changed but didn't cross threshold - just update
-        this.updateChart();
+    this.resizeObserver = observeLabelThreshold(
+      this.canvasEl,
+      () =>
+        (this.canvasEl?.clientHeight ?? 0) >=
+        CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS,
+      {
+        rebuild: () => {
+          this.chart?.destroy();
+          this.createChart();
+        },
+        update: () => this.updateChart(),
       }
-    });
-
-    this.resizeObserver.observe(this.canvasEl);
-
-    // Initialize threshold state
-    const height = this.canvasEl.clientHeight;
-    this.wasAboveThreshold = height >= CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS;
+    );
   }
 
   private prepareChartData() {
@@ -369,6 +370,9 @@ export class ObcPolarChart extends LitElement {
       host: this,
     });
 
+    // Store dimensions for explicit canvas sizing in createChart/updateChart
+    this.lastDimensions = dimensions;
+
     // Store chart diameter for plugin use
     this.calculatedChartDiameter = dimensions.chartDiameter;
     this.formattedLabels = dimensions.formattedLabels;
@@ -404,9 +408,10 @@ export class ObcPolarChart extends LitElement {
     const startAngle = this.centerFirstSector ? 0 : -anglePerSector / 2;
 
     return {
-      responsive: true,
-      maintainAspectRatio: true,
-      aspectRatio: dimensions.aspectRatio,
+      // Chart.js responsive mode stays off — see the note in donut-chart.ts (#1061).
+      responsive: false,
+      maintainAspectRatio: false,
+      devicePixelRatio: window.devicePixelRatio,
       layout: {
         padding: dynamicPadding ?? POLAR_BAR_DIMENSIONS.CANVAS_PADDING,
       },
@@ -591,6 +596,13 @@ export class ObcPolarChart extends LitElement {
     // Get chart options (this will populate formattedLabels and check dimensions)
     const chartOptions = this.getChartOptions();
 
+    // Non-responsive mode: set the canvas render size explicitly from the
+    // computed layout; Chart.js applies devicePixelRatio scaling on top
+    if (this.lastDimensions) {
+      this.canvasEl.width = this.lastDimensions.calculatedWidth;
+      this.canvasEl.height = this.lastDimensions.actualHeight;
+    }
+
     // Only add outer labels plugin if enabled AND canvas is large enough
     // formattedLabels will be empty if too small or outer labels disabled
     if (this.showOuterLabels && this.formattedLabels.length > 0) {
@@ -648,6 +660,15 @@ export class ObcPolarChart extends LitElement {
       Object.assign(this.chart.options, latestOptions);
     }
 
+    // Non-responsive mode: apply the computed layout size explicitly
+    // (no-op when the size is unchanged)
+    if (this.lastDimensions) {
+      this.chart.resize(
+        this.lastDimensions.calculatedWidth,
+        this.lastDimensions.actualHeight
+      );
+    }
+
     this.chart.update();
 
     // Update legend after chart update completes to ensure metadata is ready
@@ -664,13 +685,11 @@ export class ObcPolarChart extends LitElement {
     // Guard: Check if chart metadata is available
     const meta = this.chart.getDatasetMeta(0);
     if (!meta || !meta.controller) {
-      // console.debug('[obc-polar-chart] updateLegend: skipped - chart metadata not yet initialized');
       return;
     }
 
     // Guard: Check if dataset has data
     if (!this.data || this.data.length === 0) {
-      // console.debug('[obc-polar-chart] updateLegend: skipped - no data available');
       this.legendDiv.innerHTML = '';
       return;
     }
@@ -695,7 +714,7 @@ export class ObcPolarChart extends LitElement {
           valueToFormat = item.value;
         }
 
-        const numericValue = formatNumericValue(
+        const numericValue = formatChartNumber(
           valueToFormat,
           denominator,
           isPercentage,

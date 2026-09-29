@@ -1,0 +1,153 @@
+* {
+  box-sizing: border-box;
+}
+
+:host {
+  display: inline-block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translateX(var(--obc-poi-x, 0px)) translateY(var(--obc-poi-y, 0px));
+}
+
+.wrapper {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  transform: translateX(var(--obc-poi-target-top-offset-x, 0px));
+  transition: transform var(--obc-poi-position-transition-duration, 0.1s)
+    ease-out;
+}
+
+.wrapper.no-motion {
+  transition: none;
+}
+
+.poi-button,
+::slotted([slot="button"]) {
+  z-index: 1;
+  transform: translateY(
+    calc(var(--obc-poi-button-y, 0px) + var(--obc-poi-button-projection-y, 0px))
+  );
+  transition: transform var(--obc-poi-position-transition-duration, 0.1s)
+    ease-out;
+}
+
+.wrapper.no-motion .poi-button,
+.wrapper.no-motion ::slotted([slot="button"]) {
+  transition: none;
+}
+
+.line {
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  transform: translateX(-50%) translateY(var(--obc-poi-line-projection-y, 0px));
+  z-index: 0;
+  opacity: var(--obc-poi-moving-line-opacity, 1);
+  transition:
+    transform var(--obc-poi-position-transition-duration, 0.1s) ease-out,
+    opacity 0.1s ease-out;
+}
+
+.pointer {
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  pointer-events: none;
+  transform: translate(
+    calc(-50% + var(--obc-poi-pointer-x, 0px)),
+    calc(var(--obc-poi-pointer-y, 0px) - 50%)
+  );
+  z-index: 0;
+  opacity: var(--obc-poi-moving-pointer-opacity, 1);
+  transition:
+    transform
+      var(
+        --obc-poi-forced-target-transition-duration,
+        var(--obc-poi-position-transition-duration, 0.1s)
+      )
+      ease-out,
+    opacity 0.1s ease-out;
+}
+
+.wrapper.no-motion .pointer {
+  transition: none;
+}
+
+.target-anchor {
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  transform: translate(
+    var(--obc-poi-pointer-x, 0px),
+    var(--obc-poi-pointer-y, 0px)
+  );
+  transition: transform
+    var(
+      --obc-poi-forced-target-transition-duration,
+      var(--obc-poi-position-transition-duration, 0.1s)
+    )
+    ease-out;
+}
+
+.wrapper.no-motion .target-anchor {
+  transition: none;
+}
+
+.line-graphic {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: var(--obc-poi-moving-line-opacity, 1);
+  transition:
+    transform
+      var(
+        --obc-poi-line-transform-transition-duration,
+        var(--obc-poi-position-transition-duration, 0.1s)
+      )
+      ease-out,
+    opacity 0.1s ease-out;
+}
+
+.wrapper.type-outside .line {
+  display: none;
+}
+
+.wrapper.type-outside .target-anchor {
+  display: none;
+}
+
+.wrapper.type-outside .line-graphic {
+  display: none;
+}
+
+.outside-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translateX(calc(-50% + var(--obc-poi-outside-arrow-x, 0px)))
+    translateY(calc(-50% + var(--obc-poi-outside-arrow-y, 0px)))
+    rotate(var(--obc-poi-outside-arrow-angle, 0deg));
+  z-index: 2;
+  opacity: var(--obc-poi-moving-outside-arrow-opacity, 1);
+  transition:
+    transform var(--obc-poi-position-transition-duration, 0.1s) ease-out,
+    opacity 0.1s ease-out;
+}
+
+.wrapper.no-motion .outside-arrow {
+  transition: none;
+}

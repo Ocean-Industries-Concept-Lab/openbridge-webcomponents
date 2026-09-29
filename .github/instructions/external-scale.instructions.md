@@ -2,9 +2,11 @@
 applyTo: "packages/openbridge-webcomponents/src/building-blocks/external-scale/**,packages/openbridge-webcomponents/src/building-blocks/bar-vertical/**,packages/openbridge-webcomponents/src/building-blocks/bar-horizontal/**,packages/openbridge-webcomponents/src/navigation-instruments/gauge-vertical/**,packages/openbridge-webcomponents/src/navigation-instruments/gauge-horizontal/**,packages/openbridge-webcomponents/src/navigation-instruments/gauge-trend/**"
 ---
 
-# GitHub Copilot Custom Instructions
+<!-- GENERATED FILE — DO NOT EDIT.
+     Source: docs/agents/external-scale.md
+     Regenerate: npm run agents:sync -w packages/openbridge-webcomponents -->
 
-## Path-Specific Instructions for External Scale & Bar/Gauge Components
+# External Scale & Bar/Gauge Components
 
 These instructions apply to the external scale renderer and its thin wrapper components (bar-vertical, bar-horizontal, gauge-vertical, gauge-horizontal, gauge-trend).
 
@@ -96,6 +98,11 @@ When adding new features or fixing bugs:
    - `side: 'left' | 'right' | 'top' | 'bottom'` controls which edge attaches to chart
    - The chart edge is always at perpendicular coordinate `0`
    - Scale expands outward into positive/negative perpendicular space
+   - `reverse` puts `minValue` at the top (vertical) or right (horizontal): one
+     mirror of the value inside the range in `valueToMainAxis()`, which every
+     consumer reads, so fill, ticks, labels, advice, setpoint and the dot follow.
+     All four wrappers and `gauge-trend` expose it; `reverse=false` is inert
+     (`external-scale.spec.ts`, #1211)
 
 5. **Layout Model (Three Bands)**:
 
@@ -190,7 +197,7 @@ When adding new features or fixing bugs:
    - Use `computeFixedAspectRatioScale()` to calculate the scale factor
 
 5. **Dimension Reporting**:
-   - Dispatch `scale-dimensions-changed` CustomEvent when layout-affecting properties change
+   - Dispatch `scale-dimensions-changed` CustomEvent when layout-affecting properties change, with `bubbles: true` and without `composed`: the chart listens on the slot the scale sits in, which receives the event either way, and `composed` would carry it out of every table, tank or instrument that renders a scale
    - Include `{side, thickness}` in event detail
    - Parent charts use this for padding integration
    - **IMPORTANT**: barThickness, tickThickness, labelThickness, hasBar, hasScale... all affect reported thickness and must be considered, especially in fixed aspect ratio mode.
@@ -227,7 +234,27 @@ When adding new features or fixing bugs:
 
 ### Setpoint Properties
 
-The setpoint marker rendering (including confirm animation) is handled inside `external-scale.ts` via `renderSingleSetpoint()`. For the full setpoint architecture (mixin vs bundle, animation, property cascade), see **`setpoint.instructions.md`**.
+The setpoint marker rendering (including confirm animation) is handled inside `external-scale.ts` via `renderSingleSetpoint()`. For the full setpoint architecture (mixin vs bundle, animation, property cascade), see **`setpoint.md`**.
+
+### Layout vs Rendering — Multiple Paths to Reason About
+
+The external-scale system has **several independent code paths** that compute "how much perpendicular space the scale needs". Forgetting any one of them produces clipped overlays, wrong chart insets, or whitespace gutters. When adding any property that affects the perpendicular footprint (bar, ticks, labels, advice, setpoint…), audit **all** of them:
+
+1. **`computeExternalScaleLayout()`** — produces `viewBoxThickness` for the SVG. Without space here, decorations get clipped at the SVG edge.
+2. **`computeScaleDimensionsForReport()`** — what each wrapper dispatches via `scale-dimensions-changed`; the parent chart uses this as `padding.right/left/top/bottom`. Without space here, the chart canvas overlaps the decoration.
+3. **Wrapper `reportDimensions()` triggers** — the `willUpdate` `layoutChanged` predicate in `bar-vertical.ts` / `bar-horizontal.ts`. If a new property affects layout but isn't in the predicate, the parent chart never re-insets when that property changes.
+4. **`chart-line-base.calculatePaddingFromScales()`** — fallback when no scale is slotted. Has its own constants (`CANVAS_PADDING`) independent of `computeExternalScaleLayout`. Must honor the same flags (e.g. `hasLabelPadding`).
+5. **`chart-line-base.updateScaleProperties()`** — pushes `showLabels` / padding down to the slotted bar based on chart-level toggles. New chart-level flags (e.g. `hasLabelPadding`) must cascade here too.
+6. **`getChartOptions()` / `buildScalesConfig()`** — Chart.js padding/tick options. Must honor the same flags so axis labels and grid hide consistently.
+7. **`renderExternalScale()` / `generateAdviceOverlays()` / `renderSingleSetpoint()`** — the actual SVG geometry. Decorations like advice pills have implicit perpendicular extents (e.g. pill = `offset + width` = 4+8 outside the bar) that must be reserved by (1) and (2).
+
+**Lesson from past bugs:**
+
+- `mainTickmarkLabels` labels the resolved main tickmarks (`resolveMainTickmarkValues()`: `mainTickmarks`, or min / 0 / max, inside the range) instead of the primary ladder, with the end labels turned inward so they stay inside the drawing length. It is what a chart cascades to a slotted scale below its label threshold as `showMainTickmarkLabels`; the band is still `labelThickness`, which the chart narrows to the measured labels while compact. A chart **borrows** both — it saves each scale's own value entering compact mode and restores it on the way out — so `showMainTickmarkLabels` is usable on a slotted scale at any size, not only a compact one.
+- A tick ladder is capped at `EXTERNAL_SCALE_MAX_TICKS` (1000) per level: `generateTickmarksAtInterval()` and `generateLabels()` skip a denser ladder and warn once per range/interval pair. The case that produced it was a chart cascading an epoch-millisecond range to a slotted scale whose interval was meant for minutes — 330 000 ticks, and the spread that collected them overflowed the call stack. The cap is the renderer's own guard; the chart side of the fix is in `line-area-charts.md`.
+- Advice pills don't render inside `barSpace + scaleSpace + labelSpace`; they need a dedicated allowance. `computeAdviceBandThickness()` solves this for the `hasAdvice` case — apply the same pattern for any future overlay that lives outside the bar.
+- Hiding labels via a chart-level flag (`hasLabelPadding=false`) requires **three** coordinated changes: (a) cascade `showLabels=false` to the slotted bar in `updateScaleProperties`, (b) honor the flag in `calculatePaddingFromScales`'s fallback constant, (c) honor it in `getChartOptions`/`buildScalesConfig`. Touching only one produces clipped labels or right-side gutters.
+- Positive-default boolean properties (e.g. `hasLabelPadding = true`) must be declared with `attribute: false` (see [`coding-standards.md`](../../docs/agents/coding-standards.md#boolean-property-naming)) and added to the watched-property list for change detection.
 
 ### Feature Goes in `external-scale.ts` If:
 
@@ -247,10 +274,12 @@ The setpoint marker rendering (including confirm animation) is handled inside `e
 1. [ ] Read full file context before editing
 2. [ ] Implement in `external-scale.ts` if applicable
 3. [ ] Add config property to `ExternalScaleConfig` interface if needed
-4. [ ] Update both bar-vertical AND bar-horizontal wrappers
-5. [ ] Update both gauge-vertical AND gauge-horizontal if applicable
-6. [ ] Test all orientations (vertical/horizontal) and sides (left/right/top/bottom)
-7. [ ] Verify fixed aspect ratio mode works correctly
+4. [ ] If the property affects perpendicular footprint, also add it (optional) to `ExternalScaleLayoutConfig` and account for it in `computeExternalScaleLayout`
+5. [ ] Update both bar-vertical AND bar-horizontal wrappers (props + render config + `reportDimensions` payload + `willUpdate` `layoutChanged` predicate)
+6. [ ] Update both gauge-vertical AND gauge-horizontal if applicable
+7. [ ] Test all orientations (vertical/horizontal) and sides (left/right/top/bottom)
+8. [ ] Verify fixed aspect ratio mode works correctly
+9. [ ] Verify the parent chart still insets correctly (no clipped overlays, no whitespace gutters)
 
 ---
 
@@ -302,8 +331,7 @@ private _dispatchDimensionsChanged() {
   }));
   this.dispatchEvent(new CustomEvent('scale-dimensions-changed', {
     detail: dims,
-    bubbles: true,
-    composed: true,
+    bubbles: true, // the chart's slot receives it; no composed, so it stays in the renderer's tree
   }));
 }
 ```

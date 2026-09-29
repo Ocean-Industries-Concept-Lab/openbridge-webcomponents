@@ -1,6 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
-import {ObcTag, TagColor} from './tag.js';
+import {ObcTag, TagColor, TagSize} from './tag.js';
 import './tag.js';
 import '../../icons/icon-placeholder.js';
 
@@ -17,6 +17,11 @@ const meta: Meta<ObcTag> = {
       options: Object.values(TagColor),
       description: 'Color variant of the tag',
     },
+    size: {
+      control: {type: 'select'},
+      options: Object.values(TagSize),
+      description: 'Size variant of the tag',
+    },
     hasIcon: {
       control: {type: 'boolean'},
       description: 'Whether to show the leading icon',
@@ -25,12 +30,16 @@ const meta: Meta<ObcTag> = {
   args: {
     label: 'Label',
     color: TagColor.gray,
+    size: TagSize.regular,
     hasIcon: true,
   },
 } satisfies Meta<ObcTag>;
 
 export default meta;
 type Story = StoryObj<ObcTag>;
+
+const tagColors = Object.values(TagColor);
+const tagSizes = Object.values(TagSize);
 
 export const Primary: Story = {
   args: {
@@ -41,10 +50,62 @@ export const Primary: Story = {
     <obc-tag
       label="${args.label}"
       color="${args.color}"
+      size="${args.size}"
       ?hasIcon="${args.hasIcon}"
     >
-      <obi-placeholder slot=""></obi-placeholder>
+      <obi-placeholder></obi-placeholder>
     </obc-tag>
+  `,
+};
+
+export const Large: Story = {
+  args: {
+    label: 'Label',
+    hasIcon: true,
+    size: TagSize.large,
+  },
+  render: (args) => html`
+    <obc-tag
+      label="${args.label}"
+      color="${args.color}"
+      size="${args.size}"
+      ?hasIcon="${args.hasIcon}"
+    >
+      <obi-placeholder></obi-placeholder>
+    </obc-tag>
+  `,
+};
+
+export const AllSizesAndColors: Story = {
+  args: {
+    label: 'Label',
+    hasIcon: true,
+  },
+  render: (args) => html`
+    <div
+      style="
+        display: grid;
+        grid-template-columns: repeat(${tagSizes.length}, max-content);
+        align-items: center;
+        gap: 16px 48px;
+        padding: 24px;
+      "
+    >
+      ${tagColors.map((color) =>
+        tagSizes.map(
+          (size) => html`
+            <obc-tag
+              label="${args.label}"
+              color="${color}"
+              size="${size}"
+              ?hasIcon="${args.hasIcon}"
+            >
+              <obi-placeholder></obi-placeholder>
+            </obc-tag>
+          `
+        )
+      )}
+    </div>
   `,
 };
 
@@ -57,6 +118,7 @@ export const WithoutIcon: Story = {
     <obc-tag
       label="${args.label}"
       color="${args.color}"
+      size="${args.size}"
       ?hasIcon="${args.hasIcon}"
     >
     </obc-tag>
@@ -73,6 +135,7 @@ export const Gray: Story = {
     <obc-tag
       label="${args.label}"
       color="${args.color}"
+      size="${args.size}"
       ?hasIcon="${args.hasIcon}"
     >
       <obi-placeholder></obi-placeholder>
@@ -90,6 +153,7 @@ export const Blue: Story = {
     <obc-tag
       label="${args.label}"
       color="${args.color}"
+      size="${args.size}"
       ?hasIcon="${args.hasIcon}"
     >
       <obi-placeholder></obi-placeholder>
@@ -107,6 +171,7 @@ export const Cyan: Story = {
     <obc-tag
       label="${args.label}"
       color="${args.color}"
+      size="${args.size}"
       ?hasIcon="${args.hasIcon}"
     >
       <obi-placeholder></obi-placeholder>
@@ -124,6 +189,7 @@ export const Teal: Story = {
     <obc-tag
       label="${args.label}"
       color="${args.color}"
+      size="${args.size}"
       ?hasIcon="${args.hasIcon}"
     >
       <obi-placeholder></obi-placeholder>
@@ -141,6 +207,7 @@ export const Green: Story = {
     <obc-tag
       label="${args.label}"
       color="${args.color}"
+      size="${args.size}"
       ?hasIcon="${args.hasIcon}"
     >
       <obi-placeholder></obi-placeholder>
@@ -158,6 +225,7 @@ export const Yellow: Story = {
     <obc-tag
       label="${args.label}"
       color="${args.color}"
+      size="${args.size}"
       ?hasIcon="${args.hasIcon}"
     >
       <obi-placeholder></obi-placeholder>
@@ -175,6 +243,7 @@ export const Orange: Story = {
     <obc-tag
       label="${args.label}"
       color="${args.color}"
+      size="${args.size}"
       ?hasIcon="${args.hasIcon}"
     >
       <obi-placeholder></obi-placeholder>
@@ -192,6 +261,7 @@ export const Red: Story = {
     <obc-tag
       label="${args.label}"
       color="${args.color}"
+      size="${args.size}"
       ?hasIcon="${args.hasIcon}"
     >
       <obi-placeholder></obi-placeholder>
@@ -209,6 +279,7 @@ export const Purple: Story = {
     <obc-tag
       label="${args.label}"
       color="${args.color}"
+      size="${args.size}"
       ?hasIcon="${args.hasIcon}"
     >
       <obi-placeholder></obi-placeholder>
@@ -226,6 +297,7 @@ export const Indigo: Story = {
     <obc-tag
       label="${args.label}"
       color="${args.color}"
+      size="${args.size}"
       ?hasIcon="${args.hasIcon}"
     >
       <obi-placeholder></obi-placeholder>

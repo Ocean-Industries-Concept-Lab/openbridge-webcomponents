@@ -6,6 +6,13 @@ import '../../components/scrollbar/scrollbar.js';
 import {ObcScrollbar} from '../../components/scrollbar/scrollbar.js';
 import {ObcAlertMenuItem} from '../../components/alert-menu-item/alert-menu-item.js';
 
+/**
+ * @slot - Default slot for the alert list items.
+ * @slot empty-icon - Icon shown when the list is empty.
+ * @slot empty-title - Title shown when the list is empty.
+ * @slot empty-description - Description shown when the list is empty.
+ * @stable
+ */
 @customElement('obc-alert-list')
 export class ObcAlertList extends LitElement {
   @property({attribute: false}) filter: (item: HTMLElement) => boolean = () =>
@@ -119,11 +126,11 @@ export class ObcAlertList extends LitElement {
   private handleElementsChange() {
     // Take records to ensure the observer is not triggered again
     this.mutationObserver?.takeRecords();
+    this.updateEmpty();
     if (!this.checkVisibility()) {
       return;
     }
 
-    this.updateEmpty();
     const elements = this.getAlertItems();
     // Animate the elements to their new positions
     const oldElementTop: Map<HTMLElement, number> = new Map(this.oldElementTop);
@@ -148,8 +155,7 @@ export class ObcAlertList extends LitElement {
         element.style.transform = `translateY(${diff}px)`;
         element.style.transition = 'none';
 
-        // Force a reflow to ensure the animation is applied
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions -- the read forces the reflow that restarts the transition
         element.offsetHeight;
 
         // Remove the transition after the animation is complete
@@ -196,19 +202,21 @@ export class ObcAlertList extends LitElement {
   override render() {
     return html` <obc-scrollbar class="alert-list" id="scrollbar">
       <slot @slotchange=${this.handleSlotChange}></slot>
-      ${this._empty
-        ? html` <div class="empty-list">
-            <div class="icon">
-              <slot name="empty-icon"></slot>
-            </div>
-            <div class="empty-title">
-              <slot name="empty-title"></slot>
-            </div>
-            <div class="empty-description">
-              <slot name="empty-description"></slot>
-            </div>
-          </div>`
-        : nothing}
+      ${
+        this._empty
+          ? html` <div class="empty-list">
+              <div class="icon">
+                <slot name="empty-icon"></slot>
+              </div>
+              <div class="empty-title">
+                <slot name="empty-title"></slot>
+              </div>
+              <div class="empty-description">
+                <slot name="empty-description"></slot>
+              </div>
+            </div>`
+          : nothing
+      }
     </obc-scrollbar>`;
   }
 

@@ -13,7 +13,7 @@ import '../../icons/icon-ship.js';
 const meta: Meta<ObcNotificationFloatingItem> = {
   title: 'Application Components/Notifications/Notification Floating Item',
   component: 'obc-notification-floating-item',
-  tags: ['6.0'],
+  tags: ['6.0', 'beta'],
   argTypes: {
     type: {
       control: 'select',
@@ -70,9 +70,11 @@ const template: NotificationFloatingItemTemplate = (args) => html`
     .action=${args.action}
     .action2=${args.action2}
   >
-    ${args.type === ObcFloatingItemType.Application
-      ? html`<div slot="primary-icon"><obi-ship></obi-ship></div>`
-      : ''}
+    ${
+      args.type === ObcFloatingItemType.Application
+        ? html`<div slot="primary-icon"><obi-ship></obi-ship></div>`
+        : ''
+    }
     <span slot="title">Notification title</span>
     <span slot="description">
       ${'A notification message with meaningful content for the user.'}
@@ -174,9 +176,11 @@ export const NotificationLongMessage: Story = {
       .action=${args.action}
       .action2=${args.action2}
     >
-      ${args.type === ObcFloatingItemType.Application
-        ? html`<div slot="primary-icon"><obi-ship></obi-ship></div>`
-        : ''}
+      ${
+        args.type === ObcFloatingItemType.Application
+          ? html`<div slot="primary-icon"><obi-ship></obi-ship></div>`
+          : ''
+      }
       <span slot="title">Important Notification</span>
       <span slot="description">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia

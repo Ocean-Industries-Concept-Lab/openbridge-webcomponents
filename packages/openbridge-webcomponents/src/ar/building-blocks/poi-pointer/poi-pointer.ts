@@ -9,6 +9,7 @@ import {
   ObcPoiSelectionFrameType,
 } from '../poi-selection-frame/poi-selection-frame.js';
 import '../poi-selection-frame/poi-selection-frame.js';
+import {clamp} from '../../../svghelpers/math.js';
 
 export enum ObcPoiPointerType {
   Point = 'point',
@@ -84,6 +85,7 @@ const BOX_FILTER_DEADBAND_PX = 0.25;
  *   box-height="8"
  * ></obc-poi-pointer>
  * ```
+ * @experimental
  */
 @customElement('obc-poi-pointer')
 export class ObcPoiPointer extends LitElement {
@@ -196,10 +198,7 @@ export class ObcPoiPointer extends LitElement {
 
     const dtSeconds =
       this.lastFilterTimestampMs > 0
-        ? Math.min(
-            0.25,
-            Math.max(1 / 120, (nowMs - this.lastFilterTimestampMs) / 1000)
-          )
+        ? clamp((nowMs - this.lastFilterTimestampMs) / 1000, 1 / 120, 0.25)
         : 1 / 60;
     this.lastFilterTimestampMs = nowMs;
 
@@ -367,12 +366,10 @@ export class ObcPoiPointer extends LitElement {
   }
 
   private renderCameraSelectionFrame() {
-    if (
-      !(
-        this.type === ObcPoiPointerType.Camera &&
-        this.state === ObcPoiPointerState.Selected
-      )
-    ) {
+    if (!(
+      this.type === ObcPoiPointerType.Camera &&
+      this.state === ObcPoiPointerState.Selected
+    )) {
       return nothing;
     }
 
@@ -383,10 +380,12 @@ export class ObcPoiPointer extends LitElement {
           .type=${ObcPoiSelectionFrameType.Button}
           .state=${ObcPoiSelectionFrameState.Regular}
           .customMode=${true}
-          .boxWidth=${CAMERA_SELECTION_FRAME_BOX_WIDTH_PX +
-          this.filteredBoxWidth}
-          .boxHeight=${CAMERA_SELECTION_FRAME_BOX_HEIGHT_PX +
-          this.filteredBoxHeight}
+          .boxWidth=${
+            CAMERA_SELECTION_FRAME_BOX_WIDTH_PX + this.filteredBoxWidth
+          }
+          .boxHeight=${
+            CAMERA_SELECTION_FRAME_BOX_HEIGHT_PX + this.filteredBoxHeight
+          }
         ></obc-poi-selection-frame>
       </div>
     `;
@@ -463,6 +462,7 @@ export class ObcPoiPointer extends LitElement {
         ${this.renderSquareSelectionFrame()}
         ${this.renderCameraSelectionFrame()} ${this.renderPoint()}
         ${this.renderButton()} ${this.renderCamera()}
+        <div class="anchor-point" aria-hidden="true"></div>
       </div>
     `;
   }

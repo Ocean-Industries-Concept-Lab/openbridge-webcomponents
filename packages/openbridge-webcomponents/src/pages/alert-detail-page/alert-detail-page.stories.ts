@@ -21,7 +21,7 @@ const alert: Alert = {
 
 const meta: Meta<typeof ObcAlertDetailPage> = {
   title: 'Pages/Alert Detail Page',
-  tags: ['6.0'],
+  tags: ['6.0', 'beta'],
   component: 'obc-alert-detail-page',
   args: {
     hasActions: true,
@@ -61,9 +61,11 @@ const meta: Meta<typeof ObcAlertDetailPage> = {
         .hasShelvingTimer=${args.hasShelvingTimer}
         .hasShelvedBy=${args.hasShelvedBy}
         .timeSinceFormatter=${args.timeSinceFormatter}
-        style="height: ${args.type === AlertDetailPageType.page
-          ? 'calc(100vh - 2rem)'
-          : 'unset'}; display: block;"
+        style="height: ${
+          args.type === AlertDetailPageType.page
+            ? 'calc(100vh - 2rem)'
+            : 'unset'
+        }; display: block;"
       >
         <div
           slot="readout-graph"

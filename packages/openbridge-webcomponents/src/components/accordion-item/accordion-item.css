@@ -2,6 +2,11 @@
   box-sizing: border-box;
 }
 
+:host {
+  /* TODO(designer): confirm the expand duration and curve. */
+  --_expand-duration: var(--obc-accordion-expand-duration, 200ms);
+}
+
 .wrapper {
   display: flex;
   flex-direction: column;
@@ -26,6 +31,9 @@
   cursor: pointer;
   overflow: hidden;
   position: relative;
+  /* The bottom corners square on open; without this they round again while
+     the panel is still sliding away. */
+  transition: border-radius var(--_expand-duration) ease;
 }
 
 .content {
@@ -87,7 +95,7 @@
   height: var(--menu-navigation-components-navigation-item-icon-size);
   flex-shrink: 0;
   position: relative;
-  transition: transform 0.2s ease;
+  transition: transform var(--_expand-duration) ease;
 }
 
 .divider {
@@ -104,24 +112,39 @@
   transform: rotate(-180deg);
 }
 
+.panel {
+  display: grid;
+  /* 0fr to 1fr is the only track that eases to content height in every engine. */
+  grid-template-rows: 0fr;
+  width: 100%;
+  transition: grid-template-rows var(--_expand-duration) ease;
+}
+
+.wrapper.open-true .panel {
+  grid-template-rows: 1fr;
+}
+
+.panel-inner {
+  /* The grid item cannot carry the frame: its border is left out of the open
+     track and clipped off. It clips here, the frame sits one level down. */
+  min-height: 0;
+  overflow: hidden;
+}
+
 .content-container {
   display: flex;
   flex-direction: column;
   width: 100%;
-  flex-shrink: 0;
-}
-
-.wrapper.open-true .content-button {
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-}
-
-.wrapper.open-true .content-container {
   background: var(--container-background-color);
   border: 1px solid var(--flat-enabled-border-color);
   border-top: none;
   border-bottom-left-radius: var(--ui-components-accordion-item-border-radius);
   border-bottom-right-radius: var(--ui-components-accordion-item-border-radius);
+}
+
+.wrapper.open-true .content-button {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
 }
 
 .wrapper.state-disabled .content-button {
@@ -131,4 +154,12 @@
 .wrapper.state-disabled .title,
 .wrapper.state-disabled .trailing-icon {
   color: var(--element-disabled-color);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel,
+  .content-button,
+  .trailing-icon {
+    transition: none;
+  }
 }

@@ -1,0 +1,329 @@
+---
+paths:
+  - "packages/openbridge-webcomponents/src/components/textbox/**"
+  - "packages/openbridge-webcomponents/src/building-blocks/readout-block/**"
+  - "packages/openbridge-webcomponents/src/navigation-instruments/readout-list-item/**"
+  - "packages/openbridge-webcomponents/src/navigation-instruments/readout-list/**"
+  - "packages/openbridge-webcomponents/src/navigation-instruments/readout/readout.ts"
+  - "packages/openbridge-webcomponents/src/navigation-instruments/readout/readout-formatters.ts"
+  - "packages/openbridge-webcomponents/src/navigation-instruments/readout/readout-shared.ts"
+---
+
+<!-- GENERATED FILE — DO NOT EDIT.
+     Source: docs/agents/readout-components.md
+     Regenerate: npm run agents:sync -w packages/openbridge-webcomponents -->
+
+# Readout Components
+
+These instructions apply to the **readout composition stack** — the primitives that
+render a value, and the two layout components built on them.
+
+> **⚠️ IMPORTANT: Four nested layers, one set of invariants**
+>
+> Every readout is the same primitive wrapped twice. A change to a lower layer
+> reaches every layer above it:
+>
+> ```text
+> obc-textbox                 components/textbox/
+>   └─ obc-readout-block      building-blocks/readout-block/
+>        ├─ obc-readout-list-item   navigation-instruments/readout-list-item/
+>        │    ├─ obc-readout-list   navigation-instruments/readout-list/
+>        │    └─ obc-transmitter-button   automation/transmitter-button/ (label-less)
+>        └─ obc-readout             navigation-instruments/readout/
+> ```
+>
+> `obc-transmitter-button` wraps a label-less list item in its chip (the Figma
+> "automation value"); `obc-transmitter` and `obc-transmitter-stack` render the
+> button, so a list-item change reaches all three.
+>
+> `obc-readout` is the same block in a different layout, used mostly **inside
+> radial instruments** (compass, gauge, pitch-roll, …) via
+> `instrument-readout.ts` / `center-readout.ts`. It is covered by
+> [`watch-radial-instruments.md`](../../docs/agents/watch-radial-instruments.md)
+> for its instrument-embedding concerns, and by this file for the value/format
+> contracts it shares with the list stack.
+>
+> **When changing a lower layer, verify the layer above it:**
+>
+> 1. `obc-textbox` — sizing/cap-height/`length`-slot changes affect **every**
+>    readout, plus non-readout consumers.
+> 2. `obc-readout-block` — owns formatting, hinted zeros, the reserver and the
+>    degree column. Both layout components render it.
+> 3. `obc-readout-list-item` / `obc-readout` — layout siblings over the same
+>    options API; behavioural changes usually belong in **both**, or in
+>    `readout-shared.ts`.
+> 4. `obc-readout-list` — computes shared reservers **across** rows and writes
+>    them back onto each row.
+
+---
+
+## Where logic lives
+
+| Concern                                                   | Home                     | Notes                                                                                                       |
+| --------------------------------------------------------- | ------------------------ | ----------------------------------------------------------------------------------------------------------- |
+| Cap-height box, `length`-slot width reserve, tabular nums | `obc-textbox`            | Display primitive; no readout knowledge                                                                     |
+| Number formatting, hinted zeros, degree, reserver, `off`  | `obc-readout-block`      | The only place a value becomes text                                                                         |
+| Value/format contracts, pure helpers                      | `readout-formatters.ts`  | No imports — safe for every layer                                                                           |
+| Behaviour shared by the two layouts                       | `readout-shared.ts`      | Setpoint compare, size mapping, data-quality classes                                                        |
+| CSS the two layouts share about the block                 | `src/mixins/readout.css` | `readout-block-color-bridge <prefix>` (the public colour vars onto the block's), `readout-block-slot-icons` |
+| Cross-row column alignment                                | `obc-readout-list`       | Owns and overwrites the rows' reservers                                                                     |
+
+`readout-formatters.ts` deliberately imports **nothing**. `readout-shared.ts`
+imports from `readout-block.ts`, so putting a shared helper there and importing
+it back into the block creates a circular import — put value/format helpers in
+`readout-formatters.ts` instead.
+
+---
+
+## Invariants that are easy to break
+
+### 1. Validate on every update, never gated on `changed`
+
+Contract assertions run in `willUpdate` **unconditionally**:
+
+```ts
+protected override willUpdate(changed: Map<string, unknown>): void {
+  super.willUpdate(changed);
+  assertReadoutValueType('obc-readout-block', this.value, this.valueType);
+  assertReadoutFractionDigits('obc-readout-block', this.fractionDigits);
+}
+```
+
+Do **not** re-introduce a `changed.has('value')` gate. When `willUpdate` throws,
+Lit's `performUpdate` catch calls `__markUpdated()`, which clears the
+changed-properties map — so the next update, driven by any other property (inside
+`obc-readout-list` that is `align()` writing the reservers), would see an empty
+map, skip the check, and render the invalid value as a plain dash. Loud once,
+then silent forever. Covered by `readout-block.spec.ts`.
+
+### 2. Throw for configuration mistakes, render for data conditions
+
+Two different failure classes, treated differently on purpose:
+
+| Input                                                                                             | Treatment                    | Why                                                                                                                                                                                              |
+| ------------------------------------------------------------------------------------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `valueType` typo, text under `valueType="number"`                                                 | **throws**                   | Programmer error, fixable only in code                                                                                                                                                           |
+| `fractionDigits` whose **effective precision** falls outside `0…100`                              | **throws**                   | Sets the PRECISION of a reading — silently clamping would drop decimals from a displayed value                                                                                                   |
+| `maxDigits` out of range                                                                          | **clamped**                  | Only reserves width; bounding changes no reading's meaning                                                                                                                                       |
+| `NaN` / `±Infinity` **value**                                                                     | renders the unavailable dash | Runtime data condition (sensor dropout, `0/0`) — throwing would take a display down over a transient reading                                                                                     |
+| A digit knob that **never arrived** (`NaN`/`null`/`undefined` in `fractionDigits` or `maxDigits`) | renders the unavailable dash | A failed runtime write must not masquerade as configuration: `0.4` formatted with a defaulted precision prints as a healthy-looking `0`, which an operator cannot tell apart from a real reading |
+
+"Effective precision" is what `toFixed` will actually read: `null`, `undefined`
+and `NaN` count as `0`, and a fractional count truncates — so `2.7` (→ 2),
+`100.9` (→ 100) and `-0.5` (→ -0) are all accepted, while `-1`, `101` and
+`±Infinity` throw. `assertReadoutFractionDigits` is unit-tested to accept
+exactly the set `toFixed` accepts, so the two cannot drift apart.
+
+Note the two layers: the **assertion** tolerates `NaN`/`null`/`undefined`
+(they are a runtime data condition, not a programmer error, so nothing
+throws), but the **rendering** treats them as missing —
+`isReadoutDigitCountMissing` — and dashes the reading instead of formatting
+with a precision the author never chose. The dash is the operator-facing
+signal that the readout cannot be trusted; an exception would never reach
+them.
+
+When adding a new numeric property, decide which column it belongs in before
+implementing.
+
+### 3. Counts handed to `repeat()` must be bounded
+
+`String.prototype.repeat` throws for `Infinity` and negatives, and builds an
+enormous string for a large finite count. Every digit count that reaches it goes
+through `resolveReadoutDigitCount()` first. There are **four** sites, and two do
+not call the formatter at all:
+
+- `formatNumericValue` → `toFixed`
+- `dashedGenerator` → `repeat`
+- `ObcReadoutBlock.reserverText` → `repeat` (**does not call the formatter**)
+- `ObcReadoutList.align()` → `repeat` (**does not call the formatter**)
+
+So normalise at the **property boundary**, not inside the formatter — a
+formatter-only fix leaves the last two throwing.
+
+### 4. The reserver getter is evaluated eagerly
+
+```ts
+const baseReserver = isTextMode
+  ? (this.spaceReserver ?? "")
+  : this.widerReserver(this.spaceReserver, this.reserverText);
+```
+
+`this.reserverText` is an **argument** to `widerReserver`, so the getter runs
+regardless of which result wins. The wider-one-wins rule decides which
+_result_ is used, never which getter _executes_ — setting `spaceReserver`
+does not route around a bad `maxDigits`. Keep input normalisation independent
+of this rule. It applies under `hintedZeros` too, so a sign-column reserver
+(`"-000.0"`, from `obc-readout-list` or a consumer) is honoured on hinted
+blocks; `hasSignSpacer` prefixes the sign column itself unless the explicit
+reserver already leads with one.
+
+### 4b. Hinted zeros and the sign never mix
+
+The sign never consumes a hinted zero: the integer part always fills to
+`maxDigits` and a negative value prepends its sign (`maxDigits` 3: `12.3` →
+`012.3`, `-12.3` → `-012.3`), so a negative reading is one character wider.
+Where the width must not change across zero, `hasSignSpacer` reserves a
+minus-sign column — an invisible ASCII `-` holds it open while the value is
+non-negative (`splitHintedValue` hoists a real sign ahead of the muted
+zeros). Inside `obc-readout-list` the shared column opens automatically once
+any row shows or declares a sign, and closes when none remains. An
+unavailable value is never padded with zeros; under `hintedZeros` its dashes
+fill the whole reserved width instead (see the decisions below).
+
+### 5. `obc-readout-list` owns the reservers
+
+`align()` recomputes and **overwrites** `valueOptions` / `setpointOptions` /
+`adviceOptions` / `unitOptions` / `srcOptions` on every pass — that is what clears
+stale state when rows change. A `spaceReserver` set directly on a row inside a
+list is therefore lost. Drive the data (`maxDigits` / `fractionDigits` / `unit` /
+`src`) instead.
+
+Text rows (`valueType="text"`) are excluded in **both** directions: they neither
+contribute to the numeric reserve nor receive it, so a long string cannot inflate
+the numeric column and a short one is not padded to a digit width.
+
+The unit reserver is honoured even by a row **without** a unit: the row renders
+the blank reserved trailing unit column so its value and degree stay on the same
+grid as its neighbours. `leading-unit` rows are the exception — they have no
+trailing unit column to reserve. Guarded by `Readout List Item →
+ColumnAlignment` (the unit-less Heading row) and `Readout List →
+LeadingSrcInline`.
+
+### 6. Lit lowercases attribute names — it does not kebab-case them
+
+`valueType` is the attribute `valuetype`, not `value-type`. `OBSERVED_ATTRIBUTES`
+in `readout-list.ts` still contains kebab-cased entries that are **inert** for
+this reason; do not copy that pattern, and do not "fix" them without checking
+what activating five dormant code paths does to alignment.
+
+---
+
+## Testing
+
+- Pure helpers in `readout-formatters.ts` / `readout-shared.ts` are unit-tested
+  (`*.spec.ts`). Prefer testing an invariant over an example — e.g. "the
+  assertion accepts exactly the values `toFixed` accepts" rather than a list
+  of inputs.
+- Behaviour with nothing to look at (a throw, a `console.warn`) is a
+  `*.spec.ts` beside the component, run by `npm run test:browser` in CI — not
+  a story whose canvas is empty. A test that needs a real throw must keep it
+  out of Lit's scheduler (an unhandled rejection fails the run even when the
+  assertions pass): drive `willUpdate` directly on a **detached** element, as
+  `readout-block.spec.ts` and `readout.spec.ts` do.
+- Visual behaviour is a story; the snapshot is the doc. Play functions are for
+  DOM assertions on a rendered story (`Readout List → TestTextRowAttributes`).
+- Run one component at a time; the filter must precede `--update`:
+  ```bash
+  npx vitest run --project storybook 'readout-block'
+  npx vitest run --project storybook 'readout-block' --update
+  npx vitest run --project storybook 'readout-block'   # always re-verify
+  ```
+- A change to `obc-readout-block` or `obc-textbox` can move instrument snapshots.
+  After touching either, also run the instruments that embed `obc-readout`:
+  ```bash
+  npx vitest run --project storybook compass heading gauge-radial rate-of-turn \
+    pitch-roll speed-gauge azimuth-thruster-labeled automation-tank
+  ```
+
+---
+
+## Figma 6.1 vocabulary map
+
+The 6.1 design file names the same stack differently — use this when reading
+design references: Figma `Actual` = the value block, `Title` = the label/unit
+meta zone (`Readout-block-label`), `Source` = src (`Readout-block-source`),
+`Readout-block-generic/-setpoint/-advice` = `obc-readout-block` variants. The
+setpoint-emphasis axis is `Primary secondary | Equal size | Flip flop | Pop
+up` = our `always-visible | equal-size | flip-flop | pop-up`. **The Figma
+pop-up variant hides the value and keeps the setpoint — that is a design-file
+animation convenience, not the intent**; the designer confirmed the
+implemented behaviour (value stays, setpoint fades) is correct.
+
+Decisions carried into code from the 6.1 review (2026-08):
+
+- Hinted zeros: `--element-disabled-color`, always regular weight.
+- Vertical readouts draw **no divider** above the source; horizontal keeps
+  its vertical source divider (so does the list item).
+- Marker icons size by the block's **rendered value size**, not the tier.
+- Label defaults: `s` on large `obc-readout` (scannability), `xs` in the
+  dense list item; SemiBold only when enhanced. Both overridable via
+  `labelOptions`.
+- Source placement in the list item is one `stacking` value per arrangement
+  (`leading-src` stacks the source under the label, `leading-src-inline`
+  keeps it on the label's line) rather than a generic primary/secondary
+  label block — the designer chose the per-variant form as easier to
+  maintain and to pick from. The inline reference row is a playground node
+  outside the official 6.1 sheets (Figma 46596:102880: label `s`, source
+  `xs`, 8px apart); the sheets' "Leading label + source" still trails the
+  source. The label default stays `xs` in that mode; pair it with
+  `labelOptions.size: 's'` to match the reference.
+- Degree renders on the **actual value only** in `obc-readout` — setpoint /
+  advice blocks never carry one (the unit is written once per readout; the
+  degree follows the same rule, 2026-08-18). `obc-readout-list-item`
+  deliberately keeps its own per-row convention.
+- The horizontal `obc-readout` exists in the **large tier only** — `size` is
+  ignored when `direction="horizontal"`, and a horizontal readout given any
+  other `size` warns once per element so the discard is never silent
+  (#1182). Its label+unit stack is pinned to
+  the value's container height (`--_readout-primary-height`,
+  space-between), so the label cap top and unit cap bottom align with the
+  value's cap edges.
+- Unavailable placeholder: short (`-.--` for `000.00`) without hinted zeros,
+  right-aligned in the reserved width; **with `hintedZeros` the dashes fill
+  the whole reserve** (`---.--`), taking the positions the zeros would. Both
+  drawn with U+2012 FIGURE DASH because it is digit-width
+  (`readout-formatters.ts` carries the measurements). Settled — do not
+  re-open the dash alternatives.
+- Hinted zeros + negatives (settled 2026-09): the sign is prepended and never
+  consumes a zero (`012.3` / `-012.3`); the opt-in sign column
+  (`hasSignSpacer`, mirrored by the list's automatic shared reserver) is what
+  keeps widths stable across zero — see invariant 4b.
+- No minimum height on `obc-readout`: the design file's `container-min-height`
+  tokens (48 px on the regular and enhanced tiers) are not applied, so a
+  readout is as tall as its rows — a small vertical readout is 44 px with a
+  label, 40 px as a meta-only stacked one. `readout.spec.ts` pins it (#1252).
+- Two icon systems, on purpose. An **alert frame** flap carries the
+  `obi-*-badge` glyphs — single-colour silhouettes on the flap's status
+  colour (triangle alarm, circle warning, square caution, hexagon critical),
+  exactly as the alert-frame sheet (Figma 2370:6884) draws them. The
+  token-coloured IEC icons belong to **advice categories** and the source
+  chips. A monochrome flap badge is not a missing `useCssColor`.
+- Source chips use `outline`, drawn outside the box, so any ancestor that
+  clips must leave 1px of clip margin — `.label-container` in the list item
+  does (`overflow: clip; overflow-clip-margin: 1px`) because a `leading-src`
+  chip sits on its left and bottom edges. The 1× snapshot does not catch a
+  regression here (the lost fringe is under the pixel threshold); check the
+  leading-src row of `Readout List Item → SourceStates` at 2×.
+- Picker sources render an **empty** context menu without slotted
+  `src-picker-content`; flyout sources only fire `source-flyout-click`. The
+  showcases slot demo items for the picker and expect nothing from the
+  flyout.
+
+## Open / in flux
+
+Do not treat these as settled when editing:
+
+- `obc-readout` and `obc-readout-list-item` are layout variants of one API and
+  **may merge**. Keep shared behaviour in `readout-shared.ts` so the merge stays
+  cheap — do not re-inline it per component.
+- Lifecycle: `obc-readout-list` is `@experimental` — the API for grouping rows
+  may still change. The four layers below it are `@stable`: their public API is
+  a compatibility promise now, so the merge above would ship as a major, and
+  the open design questions (#1151) may only be answered additively.
+- The large-tier label-`s` default and the regular-weight label are
+  **confirmed** by the design team (2026-08-17); only the medium-tier label
+  default remains unverified (`labelSize` carries the TODO).
+- Advice categories: for triggered optimal / eco the tint covers the whole
+  diamond (Figma tints only the inner plus — needs a two-tone asset), and the
+  advice `Enhanced` (indent chip) state is not implemented. The triggered
+  alert icons (`obi-*-iec`) are existing repo assets rendered with
+  `useCssColor` — that attribute selects their token-coloured variant; without
+  it the same icon is a single-colour `currentColor` silhouette (the resting
+  icons and the advice diamond stay on `currentColor` on purpose). Designer flagged
+  category icons/colours as "may change; structure stable".
+- Source: the Figma `Tag` type and the 4px chip padding are not implemented
+  (the chip hugs like the data-quality chip so live state flips don't shift
+  rows); picker/flyout sources carry no state/deviation yet.
+- Pop-up: whether the collapsed at-setpoint reading should keep a setpoint
+  arrow is an open designer question — the `SetpointPopUpWithValueArrow`
+  stories show the slot-based answer available today.

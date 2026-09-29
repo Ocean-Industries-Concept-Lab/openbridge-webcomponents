@@ -28,7 +28,7 @@ const sampleEvents: DateItemEvent[] = [
 
 const meta: Meta<EventListStoryArgs> = {
   title: 'Application Components/Calendar/Event List',
-  tags: ['6.0'],
+  tags: ['6.0', 'beta'],
   component: 'obc-event-list',
   decorators: [widthDecorator],
   argTypes: {

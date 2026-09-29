@@ -10,6 +10,10 @@ export enum ThreeWayLineDirection {
   left = 'left',
 }
 
+/**
+ * @deprecated The line components are deprecated and will be removed in future releases.
+ * Please use the `@oicl/connector-diagram` package instead.
+ */
 @customElement('obc-three-way-line')
 export class ObcThreeWayLine extends LitElement {
   @property({type: String}) medium: LineMedium = LineMedium.normal;

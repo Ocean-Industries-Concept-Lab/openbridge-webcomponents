@@ -10,6 +10,7 @@ import {
   YAxisPosition,
   LineMode,
   TimeDisplay,
+  type ChartLineDataset,
 } from './chart-line-base.js';
 import {AreaFillMode} from '../../bars-graphs/area-graph/area-graph.js';
 import {
@@ -21,6 +22,7 @@ import {
   BorderRadiusPosition,
 } from '../../navigation-instruments/types.js';
 import {AdviceType} from '../../navigation-instruments/watch/advice.js';
+import {classDocs} from '../../../.storybook/manifest-docs.js';
 
 const SAMPLE_DATA = [
   {label: 'Jan', value: 3.5},
@@ -85,82 +87,11 @@ const SAMPLE_MULTI_DATASETS = [
 const meta: Meta = {
   title: 'Building Blocks/Line Area Chart Base',
   component: 'obc-area-graph',
-  tags: ['autodocs', '6.0'],
+  tags: ['autodocs', '6.0', 'beta'],
   parameters: {
     docs: {
       description: {
-        component: `# Line-Area Chart Base (abstract base class)
-
-Abstract base class for line and area chart components built on Chart.js.
-
-## Features
-- **Single or multi-series**: Use \`data\` for simple single-series or \`datasets\` for multi-series charts
-- **Time and category axes**: Supports \`category\` x-axis (labels) and \`time\` x-axis (ISO dates or timestamps)
-- **Line styles**: Choose \`smooth\` (curved), \`straight\`, or \`stepped\` line rendering
-- **Fill modes**: Area fills with \`semitransparent\`, \`solid\`, or \`threshold\` (red/blue above/below midpoint)
-- **Stacked charts**: Enable \`stacked\` for multi-series datasets to stack values on y-axis
-- **Flexible axes**: Single y-axis via \`yAxisPosition\` or multi-axis via \`yAxes\` for complex charts
-- **Theme-aware**: Automatically updates colors on theme changes using CSS variables
-- **Responsive sizing**: Fixed height with 1.5:1 aspect ratio (e.g., 320px height → 480px width)
-- **Grid & ticks**: Toggle grid lines (\`showGrid\`, \`showGridX\`, \`showGridY\`) and tick marks (\`showTickMarks\`)
-- **Legend support**: Optional HTML legend showing series labels with \`legend\` property
-- **External axis support**: via slots
-
-## Size Behavior
-- Above 192px: Shows labels, tick marks, and grid lines with standard padding
-- Below 192px: Hides labels/ticks and uses edge-to-edge rendering for compact display
-
-## Concrete implementations
-- \`<obc-line-graph>\`: Line chart (non-filled)
-- \`<obc-area-graph>\`: Area chart with fill modes (semitransparent, solid, threshold)
-
-## Examples
-
-### Basic single-series with category axis
-\`\`\`html
-<obc-line-graph></obc-line-graph>
-<script>
-  const chart = document.querySelector('obc-line-graph');
-  chart.data = [
-    {label: 'Jan', value: 10},
-    {label: 'Feb', value: 14},
-    {label: 'Mar', value: 12}
-  ];
-  chart.unit = 'kW';
-  chart.height = 256;
-</script>
-\`\`\`
-
-### Multi-series with time axis and legend
-\`\`\`html
-<obc-line-graph></obc-line-graph>
-<script>
-  const chart = document.querySelector('obc-line-graph');
-  chart.xAxisType = 'time';
-  chart.timeDisplay = 'date';
-  chart.legend = true;
-  chart.datasets = [
-    {label: 'Temperature', data: [{x: '2025-01-01', y: 20}, {x: '2025-01-02', y: 22}]},
-    {label: 'Humidity', data: [{x: '2025-01-01', y: 65}, {x: '2025-01-02', y: 68}]}
-  ];
-</script>
-\`\`\`
-
-### Stacked area chart with solid fill
-\`\`\`html
-<obc-area-graph></obc-area-graph>
-<script>
-  const chart = document.querySelector('obc-area-graph');
-  chart.datasets = [
-    {label: 'Series A', data: [2, 3, 4, 3, 5]},
-    {label: 'Series B', data: [1, 2, 3, 2, 4]},
-    {label: 'Series C', data: [3, 2, 1, 2, 3]}
-  ];
-  chart.fillMode = 'solid';
-  chart.stacked = true;
-  chart.legend = true;
-</script>
-\`\`\``,
+        component: classDocs('ObcChartLineBase'),
       },
     },
   },
@@ -177,13 +108,13 @@ Abstract base class for line and area chart components built on Chart.js.
       .showGridX=${_args.showGridX}
       .showGridY=${_args.showGridY}
       .showTickMarks=${_args.showTickMarks}
+      .rangeLabels=${_args.rangeLabels}
       .xTicksLimit=${_args.xTicksLimit}
       .xStepSize=${_args.xStepSize}
       .yTicksLimit=${_args.yTicksLimit}
       .yStepSize=${_args.yStepSize}
       .showPoints=${_args.showPoints}
-      .fill=${_args.fill}
-      .fillMode=${_args.fillMode}
+      .fillMode=${_args.fill ? _args.fillMode : undefined}
       .stacked=${_args.stacked}
       .legend=${_args.legend}
       .priority=${_args.priority}
@@ -210,7 +141,7 @@ Abstract base class for line and area chart components built on Chart.js.
     // Axis and layout
     xAxisType: {
       control: {type: 'radio'},
-      options: [XAxisType.category, XAxisType.time],
+      options: [XAxisType.category, XAxisType.time, XAxisType.number],
     },
     yAxisPosition: {
       control: {type: 'radio'},
@@ -226,6 +157,10 @@ Abstract base class for line and area chart components built on Chart.js.
       description: 'Show horizontal grid lines (y-axis). Default: true',
     },
     showTickMarks: {control: 'boolean'},
+    rangeLabels: {
+      control: {type: 'radio'},
+      options: ['none', 'y', 'x', 'xy'],
+    },
     xTicksLimit: {
       control: {type: 'number'},
       description: 'Max number of x-axis ticks/grid lines (optional)',
@@ -255,7 +190,11 @@ Abstract base class for line and area chart components built on Chart.js.
       control: 'boolean',
       description: 'Show point markers (default: false)',
     },
-    fill: {control: 'boolean'},
+    fill: {
+      control: 'boolean',
+      description:
+        'Story-only toggle (not a component property): off leaves `fillMode` unset so the area renders unfilled; on applies `fillMode`.',
+    },
     fillMode: {
       control: {type: 'radio'},
       options: [
@@ -298,6 +237,7 @@ Abstract base class for line and area chart components built on Chart.js.
     showGridX: true, // Component defaults to false, but stories show grid by default
     showGridY: true, // Component defaults to false, but stories show grid by default
     showTickMarks: true, // Component defaults to false, but stories show tick marks by default
+    rangeLabels: 'none',
     xTicksLimit: undefined,
     xStepSize: undefined,
     yTicksLimit: undefined,
@@ -326,8 +266,7 @@ export const SingleSeries: Story = {
   play: async ({canvasElement}) => {
     await document.fonts.ready;
     const chart = canvasElement.querySelector('obc-area-graph') as
-      | (HTMLElement & {chart?: {update(): void}})
-      | null;
+      (HTMLElement & {chart?: {update(): void}}) | null;
     chart?.chart?.update();
   },
 };
@@ -402,6 +341,24 @@ export const MinHeight: Story = {
   args: {
     width: 72,
     height: 48,
+  },
+};
+
+export const MinHeightRangeLabels: Story = {
+  name: 'Minimal Height With Range Labels (48px)',
+  args: {
+    width: 120,
+    height: 48,
+    rangeLabels: 'xy',
+  },
+};
+
+export const BelowThresholdRangeLabels: Story = {
+  name: 'Below Threshold With Range Labels (191px, Y Only)',
+  args: {
+    width: 288,
+    height: 191,
+    rangeLabels: 'y',
   },
 };
 
@@ -625,7 +582,6 @@ export const ExternalScalesBottomRight: Story = {
       .showGridY=${true}
       .width=${480}
       .height=${320}
-      .fill=${true}
       .fillMode=${_args.fillMode}
       .showPoints=${_args.showPoints}
       .priority=${_args.priority}
@@ -795,24 +751,28 @@ export const ExternalScalesAllSides: Story = {
         .hasScale=${true}
         .showLabels=${_args.vScaleShowLabels}
         .hasBar=${_args.vScaleHasBar}
-        .fillMode=${_args.vScaleFillMode === 'fill'
-          ? FillMode.fill
-          : FillMode.tint}
+        .fillMode=${
+          _args.vScaleFillMode === 'fill' ? FillMode.fill : FillMode.tint
+        }
         .fillMin=${5.5}
         .fillMax=${7}
         .value=${_args.vScaleValue}
         .setpoint=${_args.vScaleSetpoint}
-        .advicePosition=${_args.vScaleAdvicePosition === 'inner'
-          ? AdvicePosition.inner
-          : _args.vScaleAdvicePosition === 'center'
-            ? AdvicePosition.center
-            : AdvicePosition.outer}
-        .advices=${_args.vScaleHasAdvice
-          ? [
-              {min: 3, max: 5, type: AdviceType.caution, hinted: true},
-              {min: 6, max: 7, type: AdviceType.advice, hinted: false},
-            ]
-          : []}
+        .advicePosition=${
+          _args.vScaleAdvicePosition === 'inner'
+            ? AdvicePosition.inner
+            : _args.vScaleAdvicePosition === 'center'
+              ? AdvicePosition.center
+              : AdvicePosition.outer
+        }
+        .advices=${
+          _args.vScaleHasAdvice
+            ? [
+                {min: 3, max: 5, type: AdviceType.caution, hinted: true},
+                {min: 6, max: 7, type: AdviceType.advice, hinted: false},
+              ]
+            : []
+        }
         .primaryTickmarkInterval=${1}
         .secondaryTickmarkInterval=${0.5}
         .tertiaryTickmarkInterval=${0.125}
@@ -827,24 +787,28 @@ export const ExternalScalesAllSides: Story = {
         .hasScale=${true}
         .showLabels=${_args.vScaleShowLabels}
         .hasBar=${_args.vScaleHasBar}
-        .fillMode=${_args.vScaleFillMode === 'fill'
-          ? FillMode.fill
-          : FillMode.tint}
+        .fillMode=${
+          _args.vScaleFillMode === 'fill' ? FillMode.fill : FillMode.tint
+        }
         .fillMin=${_args.vScaleFillMin}
         .fillMax=${_args.vScaleFillMax}
         .value=${_args.vScaleValue}
         .setpoint=${_args.vScaleSetpoint}
-        .advicePosition=${_args.vScaleAdvicePosition === 'inner'
-          ? AdvicePosition.inner
-          : _args.vScaleAdvicePosition === 'center'
-            ? AdvicePosition.center
-            : AdvicePosition.outer}
-        .advices=${_args.vScaleHasAdvice
-          ? [
-              {min: 3, max: 5, type: AdviceType.caution, hinted: true},
-              {min: 6, max: 7, type: AdviceType.advice, hinted: false},
-            ]
-          : []}
+        .advicePosition=${
+          _args.vScaleAdvicePosition === 'inner'
+            ? AdvicePosition.inner
+            : _args.vScaleAdvicePosition === 'center'
+              ? AdvicePosition.center
+              : AdvicePosition.outer
+        }
+        .advices=${
+          _args.vScaleHasAdvice
+            ? [
+                {min: 3, max: 5, type: AdviceType.caution, hinted: true},
+                {min: 6, max: 7, type: AdviceType.advice, hinted: false},
+              ]
+            : []
+        }
         .primaryTickmarkInterval=${1}
         .secondaryTickmarkInterval=${0.5}
         .tertiaryTickmarkInterval=${0.125}
@@ -859,24 +823,28 @@ export const ExternalScalesAllSides: Story = {
         .hasScale=${true}
         .showLabels=${_args.hScaleShowLabels}
         .hasBar=${_args.hScaleHasBar}
-        .fillMode=${_args.hScaleFillMode === 'fill'
-          ? FillMode.fill
-          : FillMode.tint}
+        .fillMode=${
+          _args.hScaleFillMode === 'fill' ? FillMode.fill : FillMode.tint
+        }
         .fillMin=${_args.hScaleFillMin}
         .fillMax=${_args.hScaleFillMax}
         .value=${_args.hScaleValue}
         .setpoint=${_args.hScaleSetpoint}
-        .advicePosition=${_args.hScaleAdvicePosition === 'inner'
-          ? AdvicePosition.inner
-          : _args.hScaleAdvicePosition === 'center'
-            ? AdvicePosition.center
-            : AdvicePosition.outer}
-        .advices=${_args.hScaleHasAdvice
-          ? [
-              {min: 3, max: 5, type: AdviceType.caution, hinted: true},
-              {min: 8, max: 10, type: AdviceType.advice, hinted: false},
-            ]
-          : []}
+        .advicePosition=${
+          _args.hScaleAdvicePosition === 'inner'
+            ? AdvicePosition.inner
+            : _args.hScaleAdvicePosition === 'center'
+              ? AdvicePosition.center
+              : AdvicePosition.outer
+        }
+        .advices=${
+          _args.hScaleHasAdvice
+            ? [
+                {min: 3, max: 5, type: AdviceType.caution, hinted: true},
+                {min: 8, max: 10, type: AdviceType.advice, hinted: false},
+              ]
+            : []
+        }
         .primaryTickmarkInterval=${2}
         .secondaryTickmarkInterval=${1}
         .tertiaryTickmarkInterval=${0.25}
@@ -891,24 +859,28 @@ export const ExternalScalesAllSides: Story = {
         .hasScale=${true}
         .showLabels=${_args.hScaleShowLabels}
         .hasBar=${_args.hScaleHasBar}
-        .fillMode=${_args.hScaleFillMode === 'fill'
-          ? FillMode.fill
-          : FillMode.tint}
+        .fillMode=${
+          _args.hScaleFillMode === 'fill' ? FillMode.fill : FillMode.tint
+        }
         .fillMin=${7}
         .fillMax=${11}
         .value=${_args.hScaleValue}
         .setpoint=${_args.hScaleSetpoint}
-        .advicePosition=${_args.hScaleAdvicePosition === 'inner'
-          ? AdvicePosition.inner
-          : _args.hScaleAdvicePosition === 'center'
-            ? AdvicePosition.center
-            : AdvicePosition.outer}
-        .advices=${_args.hScaleHasAdvice
-          ? [
-              {min: 3, max: 5, type: AdviceType.caution, hinted: true},
-              {min: 8, max: 10, type: AdviceType.advice, hinted: false},
-            ]
-          : []}
+        .advicePosition=${
+          _args.hScaleAdvicePosition === 'inner'
+            ? AdvicePosition.inner
+            : _args.hScaleAdvicePosition === 'center'
+              ? AdvicePosition.center
+              : AdvicePosition.outer
+        }
+        .advices=${
+          _args.hScaleHasAdvice
+            ? [
+                {min: 3, max: 5, type: AdviceType.caution, hinted: true},
+                {min: 8, max: 10, type: AdviceType.advice, hinted: false},
+              ]
+            : []
+        }
         .primaryTickmarkInterval=${2}
         .secondaryTickmarkInterval=${1}
         .tertiaryTickmarkInterval=${0.25}
@@ -950,7 +922,6 @@ export const ExternalScalesMinimal: Story = {
       .showGridY=${true}
       .width=${192}
       .height=${192}
-      .fill=${true}
       .fillMode=${_args.fillMode}
       .showPoints=${_args.showPoints}
       .priority=${_args.priority}
@@ -976,6 +947,106 @@ export const ExternalScalesMinimal: Story = {
         .side=${'bottom'}
         .hasScale=${true}
         .showLabels=${_args.showLabels}
+        .hasBar=${false}
+        .primaryTickmarkInterval=${2}
+        .secondaryTickmarkInterval=${1}
+        .priority=${_args.priority}
+      ></obc-bar-horizontal>
+    </obc-area-graph>
+  `,
+};
+
+export const ExternalScalesRangeLabels: Story = {
+  name: 'External Scales With Range Labels (160×160, Bottom + Right)',
+  play: async () => {
+    await new Promise((resolve) => setTimeout(resolve, 300));
+  },
+  argTypes: {
+    priority: {
+      control: 'select',
+      options: Object.values(Priority),
+    },
+  },
+  args: {
+    width: 160,
+    height: 160,
+    rangeLabels: 'xy',
+    priority: Priority.enhanced,
+  },
+  render: (_args) => html`
+    <obc-area-graph
+      .data=${SAMPLE_DATA}
+      .showGrid=${true}
+      .showGridX=${true}
+      .showGridY=${true}
+      .width=${_args.width}
+      .height=${_args.height}
+      .rangeLabels=${_args.rangeLabels}
+      .priority=${_args.priority}
+    >
+      <obc-bar-vertical
+        slot="right-scale"
+        .minValue=${0}
+        .maxValue=${10}
+        .height=${_args.height}
+        .side=${'right'}
+        .hasBar=${false}
+        .primaryTickmarkInterval=${2}
+        .secondaryTickmarkInterval=${1}
+        .priority=${_args.priority}
+      ></obc-bar-vertical>
+      <obc-bar-horizontal
+        slot="bottom-scale"
+        .minValue=${0}
+        .maxValue=${12}
+        .width=${_args.width}
+        .side=${'bottom'}
+        .hasBar=${false}
+        .primaryTickmarkInterval=${2}
+        .secondaryTickmarkInterval=${1}
+        .priority=${_args.priority}
+      ></obc-bar-horizontal>
+    </obc-area-graph>
+  `,
+};
+
+/**
+ * Below the label threshold the canvas is inset by each slotted scale's
+ * reported thickness; `chart-line-base.spec.ts` pins that. No snapshot: canvas
+ * anti-aliasing at the capture scale differs between CI runners.
+ */
+export const ExternalScalesBelowThreshold: Story = {
+  name: 'External Scales Below The Threshold (160×160, No Range Labels)',
+  tags: ['!snapshot'],
+  args: {
+    width: 160,
+    height: 160,
+    priority: Priority.enhanced,
+  },
+  render: (_args) => html`
+    <obc-area-graph
+      .data=${SAMPLE_DATA}
+      .width=${_args.width}
+      .height=${_args.height}
+      .priority=${_args.priority}
+    >
+      <obc-bar-vertical
+        slot="right-scale"
+        .minValue=${0}
+        .maxValue=${10}
+        .height=${_args.height}
+        .side=${'right'}
+        .hasBar=${false}
+        .primaryTickmarkInterval=${2}
+        .secondaryTickmarkInterval=${1}
+        .priority=${_args.priority}
+      ></obc-bar-vertical>
+      <obc-bar-horizontal
+        slot="bottom-scale"
+        .minValue=${0}
+        .maxValue=${12}
+        .width=${_args.width}
+        .side=${'bottom'}
         .hasBar=${false}
         .primaryTickmarkInterval=${2}
         .secondaryTickmarkInterval=${1}
@@ -1080,7 +1151,6 @@ export const FixedAspectRatioScaling: StoryObj = {
             .showGrid=${true}
             .showGridX=${true}
             .showGridY=${true}
-            .fill=${true}
             .fillMode=${'semitransparent'}
             .showPoints=${true}
             .priority=${Priority.regular}
@@ -1101,7 +1171,6 @@ export const FixedAspectRatioScaling: StoryObj = {
             .showGrid=${true}
             .showGridX=${true}
             .showGridY=${true}
-            .fill=${true}
             .fillMode=${'semitransparent'}
             .showPoints=${true}
             .priority=${Priority.enhanced}
@@ -1111,4 +1180,158 @@ export const FixedAspectRatioScaling: StoryObj = {
       </div>
     `;
   },
+};
+
+/** Distance along the x axis; negative is behind the origin, positive ahead. */
+const along = (
+  from: number,
+  to: number,
+  step: number,
+  f: (x: number) => number
+) =>
+  Array.from({length: Math.round((to - from) / step) + 1}, (_, i) => {
+    const x = from + i * step;
+    return {x, y: Math.round(f(x) * 10) / 10};
+  });
+const seabed = (x: number) => 60 + Math.sin(x / 23) * 6 + Math.cos(x / 7) * 2.5;
+
+const STYLED_DATASETS: ChartLineDataset[] = [
+  {
+    label: 'History',
+    data: along(-200, 0, 5, seabed),
+    fill: false,
+    order: 1,
+  },
+  {
+    label: 'Echo band',
+    data: along(
+      -200,
+      0,
+      5,
+      (x) => seabed(x) + 4 + Math.abs(Math.sin(x / 11)) * 4
+    ),
+    borderWidth: 0,
+    pointRadius: 0,
+    fill: 0,
+    order: 2,
+  },
+  {
+    label: 'Prediction',
+    data: along(0, 200, 5, (x) => seabed(x) - 4),
+    fill: false,
+    borderDash: [8, 4],
+  },
+  {
+    label: 'Past track',
+    data: along(-200, 0, 5, (x) => seabed(x) - 12),
+    fill: false,
+    borderDash: [0, 4],
+    borderCapStyle: 'round',
+  },
+];
+
+export const StyledDatasets: Story = {
+  name: 'Styled Datasets (Dashed, Dotted, Fill Between)',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Explicit Chart.js styling on a `datasets` entry wins over the derived defaults: `borderDash` and `borderCapStyle` give a dashed prediction and a dotted past track, `fill: 0` fills the band between the echo return and the line, and `fill: false` leaves the line unfilled.',
+      },
+    },
+  },
+  render: (_args) => html`
+    <obc-area-graph
+      .xAxisType=${XAxisType.number}
+      .xAxis=${{min: -200, max: 200}}
+      .yAxes=${[{id: 'y', position: 'left' as const, min: 0, max: 100}]}
+      .showGrid=${false}
+      .showTickMarks=${_args.showTickMarks}
+      .priority=${_args.priority}
+      .width=${_args.width}
+      .height=${_args.height}
+      .datasets=${STYLED_DATASETS}
+    ></obc-area-graph>
+  `,
+};
+
+const MARKER_DATASETS: ChartLineDataset[] = [
+  {label: 'History', data: along(-200, 0, 5, seabed), fill: false},
+  {
+    label: 'Prediction',
+    data: along(0, 200, 5, (x) => seabed(x) - 4),
+    fill: false,
+    borderDash: [8, 4],
+  },
+];
+
+export const Markers: Story = {
+  name: 'Markers (Now Line and Value Line)',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`xMarker` draws a solid line from the plot top down to the first dataset at `x`, a dotted line below it and a dot on the value; `yMarker` draws a 2px line across the plot at `y`. Both follow the dataset colour.',
+      },
+    },
+  },
+  render: (_args) => html`
+    <obc-area-graph
+      .xAxisType=${XAxisType.number}
+      .xAxis=${{min: -200, max: 200}}
+      .yAxes=${[{id: 'y', position: 'left' as const, min: 0, max: 100}]}
+      .showGrid=${false}
+      .showTickMarks=${_args.showTickMarks}
+      .priority=${_args.priority}
+      .width=${_args.width}
+      .height=${_args.height}
+      .datasets=${MARKER_DATASETS}
+      .xMarker=${{x: 0}}
+      .yMarker=${{y: seabed(0)}}
+    ></obc-area-graph>
+  `,
+};
+
+const CLIP_DATASETS: ChartLineDataset[] = [
+  {
+    label: 'Scan',
+    data: along(0, 250, 5, seabed),
+    fill: {value: 0},
+    ellipseClip: {x: 0, y: 0, rx: 150},
+  },
+  {
+    label: 'History',
+    data: along(-100, 0, 5, seabed),
+    fill: false,
+    borderDash: [0, 4],
+    borderCapStyle: 'round',
+  },
+];
+
+export const EllipseClip: Story = {
+  name: 'Ellipse Clip (Radial Range, Reversed Y)',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'A dataset with `ellipseClip` is drawn only inside the ellipse: centre and `rx` in data units (a 150-unit range around the origin at (0, 0)), round in pixels because `ry` is omitted. The fill to `{value: 0}` is cut by the arc; the y axis is reversed so 0 sits at the top.',
+      },
+    },
+  },
+  render: (_args) => html`
+    <obc-area-graph
+      .xAxisType=${XAxisType.number}
+      .xAxis=${{min: -100, max: 250}}
+      .yAxes=${[
+        {id: 'y', position: 'left' as const, min: 0, max: 100, reverse: true},
+      ]}
+      .showGrid=${false}
+      .showTickMarks=${_args.showTickMarks}
+      .priority=${_args.priority}
+      .width=${_args.width}
+      .height=${_args.height}
+      .datasets=${CLIP_DATASETS}
+      .xMarker=${{x: 0}}
+    ></obc-area-graph>
+  `,
 };

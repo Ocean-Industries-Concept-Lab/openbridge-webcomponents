@@ -74,29 +74,29 @@ export type ObcFilterChipChangeEvent = CustomEvent<{
  * ```
  * In this example, the chip is checked and displays a checkmark and a placeholder icon.
  *
+ * ### Keyboard
+ * [APG Checkbox](https://www.w3.org/WAI/ARIA/apg/patterns/checkbox/): the chip is
+ * a native button with checkbox semantics, so `Space` toggles it and `Enter`
+ * does too.
+ *
+ * Left out: nothing.
+ *
+ * @property disabled - Whether the chip is disabled (non-interactive). When true, the chip cannot be toggled and appears muted.
+ * @property label - The text label displayed on the chip. Should clearly describe the filter criterion.
+ * @property checked - Whether the chip is currently checked (selected/active). Toggles when the chip is clicked.
+ * @property showIcon - Whether to show a leading icon. If true, displays the icon placed in the default slot.
  * @slot - Default leading-icon slot (shown when `showIcon` is true)
- * @fires chip-toggle {ObcFilterChipChangeEvent} - Fired when the chip is toggled.
+ * @fires {ObcFilterChipChangeEvent} chip-toggle - Fired when the chip is toggled.
+ * @stable
  */
 @customElement('obc-filter-chip')
 export class ObcFilterChip extends LitElement {
-  /**
-   * Whether the chip is disabled (non-interactive). When true, the chip cannot be toggled and appears muted.
-   */
   @property({type: Boolean}) disabled = false;
 
-  /**
-   * The text label displayed on the chip. Should clearly describe the filter criterion.
-   */
   @property({type: String}) label = 'Label';
 
-  /**
-   * Whether the chip is currently checked (selected/active). Toggles when the chip is clicked.
-   */
   @property({type: Boolean}) checked = false;
 
-  /**
-   * Whether to show a leading icon. If true, displays the icon placed in the default slot.
-   */
   @property({type: Boolean}) showIcon = false;
 
   private handleClick() {
@@ -150,7 +150,7 @@ export class ObcFilterChip extends LitElement {
         @click=${this.handleClick}
         ?disabled=${this.disabled}
         aria-disabled=${this.disabled ? 'true' : 'false'}
-        aria-pressed=${this.checked}
+        aria-checked=${this.checked}
         aria-label=${this.label}
         role="checkbox"
       >

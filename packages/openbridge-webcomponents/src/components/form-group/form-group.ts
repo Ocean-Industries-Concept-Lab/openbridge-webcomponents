@@ -63,7 +63,8 @@ export enum ObcFormGroupType {
  * @slot subtitle - Subtitle text rendered in the title area.
  * @slot text - Description text rendered in the title area.
  * @slot - One or more `obc-form-item` elements.
- * @fires action-change {ObcFormItemActionChangeEvent} Fired when a nested form item checkbox state changes.
+ * @fires {ObcFormItemActionChangeEvent} action-change - Fired when a nested form item checkbox state changes.
+ * @beta
  */
 @customElement('obc-form-group')
 export class ObcFormGroup extends LitElement {

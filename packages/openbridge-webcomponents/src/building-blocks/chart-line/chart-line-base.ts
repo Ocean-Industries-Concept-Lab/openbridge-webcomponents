@@ -34,17 +34,29 @@ import {
   getCssVariableValue,
   getChartColorsOrDefault,
   observeThemeChanges,
-  formatNumericValue,
+  formatChartNumber,
   getChartTooltipOptions,
   generateLegendHTML,
   applyAlphaToColor,
+  normalizeXValue,
+  formatXValue,
+  XValueMode,
+  observeLabelThreshold,
+  measureRangeLabelGutters,
+  rangeLabelFontString,
+  rangeLabelLineHeight,
+  formatRangeValue,
+  yRangeLabelValues,
 } from '../../charthelpers/index.js';
+import type {RangeLabelFont} from '../../charthelpers/index.js';
+import type {ChartXValue} from '../../charthelpers/x-value.js';
 import {
   EXTERNAL_SCALE_BORDER_RADIUS_CSS_VAR,
   readExternalScaleBorderRadiusPx,
   startExternalScaleBorderRadiusObserver,
   ScaleType,
 } from '../external-scale/external-scale.js';
+import {clamp} from '../../svghelpers/math.js';
 
 // Register Chart.js components used by the line graph (scales, elements, plugins)
 Chart.register(
@@ -55,7 +67,6 @@ Chart.register(
   CategoryScale,
   LinearScale,
   TimeScale,
-  Filler,
   Tooltip
 );
 
@@ -76,6 +87,7 @@ export interface ExternalScaleDimensions {
 interface ExternalScaleElement extends HTMLElement {
   minValue?: number;
   maxValue?: number;
+  reverse?: boolean;
   height?: number;
   width?: number;
   paddingTop?: number;
@@ -86,6 +98,8 @@ interface ExternalScaleElement extends HTMLElement {
   paddingEnd?: number;
   primaryTickmarkInterval?: number;
   showLabels?: boolean;
+  showMainTickmarkLabels?: boolean;
+  labelThickness?: number;
   fixedAspectRatio?: boolean;
   scaleReferenceSize?: number;
   state?: InstrumentState;
@@ -94,9 +108,12 @@ interface ExternalScaleElement extends HTMLElement {
   borderRadiusPosition?: BorderRadiusPosition;
 }
 
+export type {ChartXValue, TemporalLike} from '../../charthelpers/x-value.js';
+
 export enum XAxisType {
   category = 'category',
   time = 'time',
+  number = 'number',
 }
 
 export enum YAxisPosition {
@@ -115,6 +132,134 @@ export enum TimeDisplay {
   date = 'date',
 }
 
+/** Which axes keep min / max labels below the label threshold. */
+export enum RangeLabels {
+  none = 'none',
+  y = 'y',
+  x = 'x',
+  xy = 'xy',
+}
+
+export type ChartLinePoint = number | {x: ChartXValue; y: number};
+
+export type ChartLineDataItem = {
+  /** Category label. Used when `xAxisType='category'` (the default). */
+  label?: string;
+  /**
+   * X-coordinate for `xAxisType='time'` (epoch ms, ISO string, Date, or
+   * Temporal object) or `xAxisType='number'` (plain number). When absent,
+   * `label` is parsed as a fallback.
+   */
+  x?: ChartXValue;
+  value: number;
+};
+
+export type ChartLineYAxisConfig = {
+  id?: string;
+  position?: 'left' | 'right';
+  min?: number;
+  max?: number;
+  /** Plot `min` at the top. Area fills still reach the visual bottom. */
+  reverse?: boolean;
+  grid?: boolean;
+};
+
+export type ChartLineXAxisConfig = {
+  min?: number;
+  max?: number;
+};
+
+/**
+ * Ellipse that clips one dataset's drawing (a radial range). Centre and `rx`
+ * are in data units; `ry` too when given, else the clip is a circle in pixels.
+ */
+export type ChartLineEllipseClip = {
+  x: number;
+  y: number;
+  rx: number;
+  ry?: number;
+};
+
+/** Fields the chart reads on a `datasets` entry beyond Chart.js' own. */
+export type ChartLineDatasetExtras = {
+  ellipseClip?: ChartLineEllipseClip;
+};
+
+export type ChartLineDataset = ChartDataset<'line', ChartLinePoint[]> &
+  ChartLineDatasetExtras;
+
+/**
+ * Vertical marker at an x value: a line from the plot top down to the
+ * dataset's value there, dotted from there to the plot bottom, and a dot.
+ */
+export type ChartLineXMarker = {
+  x: ChartXValue;
+  datasetIndex?: number;
+  showDot?: boolean;
+};
+
+/** Horizontal marker across the plot at a y value, in the dataset's colour. */
+export type ChartLineYMarker = {
+  y: number;
+  datasetIndex?: number;
+};
+
+/** Marker geometry, in CSS pixels. */
+const MARKER = {
+  lineWidth: 1,
+  dash: [1, 2],
+  dotRadius: 6,
+  dotRingWidth: 2,
+  valueLineWidth: 2,
+  ringColorVar: '--border-silhouette-color',
+} as const;
+
+/** Ellipse clips applied on the last draw, in pixels by dataset index. */
+const datasetClipRecords = new WeakMap<
+  Chart,
+  Record<number, ChartLineEllipseClip>
+>();
+
+/**
+ * Clips a dataset's drawing to its `ellipseClip`, mapped through the x scale
+ * and the dataset's y scale so the radii stay true to the data units.
+ * Registered globally ahead of `Filler`, whose `beforeDatasetDraw` paints the
+ * area fill: a chart-level plugin would clip only the line.
+ */
+const datasetClipPlugin = {
+  id: 'datasetClip',
+  beforeDraw: (chart: Chart) => {
+    datasetClipRecords.set(chart, {});
+  },
+  beforeDatasetDraw: (chart: Chart, args: {index: number}) => {
+    const ds = chart.data.datasets[args.index] as ChartLineDataset | undefined;
+    const clip = ds?.ellipseClip;
+    const xScale = chart.scales['x'];
+    const yScale = ds?.yAxisID ? chart.scales[ds.yAxisID] : undefined;
+    if (!clip || !xScale || !yScale) return;
+    const x = xScale.getPixelForValue(clip.x);
+    const y = yScale.getPixelForValue(clip.y);
+    const rx = Math.abs(xScale.getPixelForValue(clip.x + clip.rx) - x);
+    const ry =
+      clip.ry === undefined
+        ? rx
+        : Math.abs(yScale.getPixelForValue(clip.y + clip.ry) - y);
+    const ctx = chart.ctx;
+    ctx.save();
+    ctx.beginPath();
+    ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2);
+    ctx.clip();
+    const records = datasetClipRecords.get(chart) ?? {};
+    records[args.index] = {x, y, rx, ry};
+    datasetClipRecords.set(chart, records);
+  },
+  afterDatasetDraw: (chart: Chart, args: {index: number}) => {
+    if (datasetClipRecords.get(chart)?.[args.index]) chart.ctx.restore();
+  },
+};
+// Global plugins run in registration order: the clip must precede Filler.
+Chart.register(datasetClipPlugin, Filler);
+
 const LINE_GRAPH_WATCHED_PROP_NAMES = [
   'data',
   'datasets',
@@ -123,6 +268,9 @@ const LINE_GRAPH_WATCHED_PROP_NAMES = [
   'xAxisType',
   'yAxisPosition',
   'yAxes',
+  'xAxis',
+  'xMarker',
+  'yMarker',
   'showGrid',
   'showGridX',
   'showGridY',
@@ -142,10 +290,23 @@ const LINE_GRAPH_WATCHED_PROP_NAMES = [
   'width',
   'height',
   'fixedAspectRatioScaling', // Triggers responsive mode change
+  'hasLabelPadding', // Toggles edge-to-edge rendering and label visibility
+  'rangeLabels',
 ] as const;
 
 const LINE_GRAPH_RECREATE_PROP_NAMES = [
   'showDebugOverlay',
+  'width',
+  'height',
+  'fixedAspectRatioScaling',
+  'rangeLabels', // Adds or removes the range-labels plugin
+] as const;
+
+/**
+ * Properties that define the chart's reference size, and therefore invalidate
+ * the derived `computedWidth` / `computedHeight` pair.
+ */
+const LINE_GRAPH_DIMENSION_PROP_NAMES = [
   'width',
   'height',
   'fixedAspectRatioScaling',
@@ -154,9 +315,15 @@ const LINE_GRAPH_RECREATE_PROP_NAMES = [
 /**
  * Abstract base class for line and area chart components built on Chart.js.
  *
+ * ## Concrete implementations
+ * - `<obc-line-graph>`: Line chart (non-filled)
+ * - `<obc-area-graph>`: Area chart with fill modes (semitransparent, solid, threshold)
+ *
  * ## Features
  * - **Single or multi-series**: Use `data` for simple single-series or `datasets` for multi-series charts
- * - **Time and category axes**: Supports `category` x-axis (labels) and `time` x-axis (ISO dates or timestamps)
+ * - **Category, time and number axes**: `category` (labels, evenly spaced), `time` (epoch ms,
+ *   ISO strings, `Date` or Temporal objects — positioned proportionally, so uneven intervals
+ *   render unevenly) and `number` (plain numeric x-values on a linear scale)
  * - **Line styles**: Choose `smooth` (curved), `straight`, or `stepped` line rendering
  * - **Fill modes**: Area fills with `semitransparent`, `solid`, or `threshold` (red/blue above/below midpoint)
  * - **Stacked charts**: Enable `stacked` for multi-series datasets to stack values on y-axis
@@ -205,6 +372,36 @@ const LINE_GRAPH_RECREATE_PROP_NAMES = [
  * </script>
  * ```
  *
+ * Single-series with time axis (uneven intervals position proportionally;
+ * x accepts epoch ms, ISO strings, Date or Temporal objects):
+ * ```html
+ * <obc-line-graph></obc-line-graph>
+ * <script>
+ *   const chart = document.querySelector('obc-line-graph');
+ *   chart.xAxisType = 'time';
+ *   chart.timeDisplay = 'minutes';
+ *   chart.data = [
+ *     {x: '2026-07-06T10:00:00Z', value: 10},
+ *     {x: new Date('2026-07-06T10:03:00Z'), value: 14},
+ *     {x: Temporal.Instant.from('2026-07-06T10:15:00Z'), value: 12}
+ *   ];
+ * </script>
+ * ```
+ *
+ * Single-series with numeric x-axis:
+ * ```html
+ * <obc-line-graph></obc-line-graph>
+ * <script>
+ *   const chart = document.querySelector('obc-line-graph');
+ *   chart.xAxisType = 'number';
+ *   chart.data = [
+ *     {x: 0, value: 2},
+ *     {x: 2.5, value: 3},
+ *     {x: 10, value: 6}
+ *   ];
+ * </script>
+ * ```
+ *
  * Stacked area chart with solid fill:
  * ```html
  * <obc-line-graph></obc-line-graph>
@@ -215,7 +412,6 @@ const LINE_GRAPH_RECREATE_PROP_NAMES = [
  *     {label: 'Series B', data: [1, 2, 3, 2, 4]},
  *     {label: 'Series C', data: [3, 2, 1, 2, 3]}
  *   ];
- *   chart.fill = true;
  *   chart.fillMode = 'solid';
  *   chart.stacked = true;
  *   chart.legend = true;
@@ -228,7 +424,6 @@ const LINE_GRAPH_RECREATE_PROP_NAMES = [
  * <script>
  *   const chart = document.querySelector('obc-line-graph');
  *   chart.data = [{label: '1', value: 20}, {label: '2', value: 45}, {label: '3', value: 35}];
- *   chart.fill = true;
  *   chart.fillMode = 'threshold';
  * </script>
  * ```
@@ -249,121 +444,219 @@ const LINE_GRAPH_RECREATE_PROP_NAMES = [
  * </script>
  * ```
  *
- * @property {Array<{label: string, value: number}>} data - Single-series data array. Each object must have `label` (string) and `value` (number). Used when `datasets` is not provided.
- * @property {ChartDataset<'line', (number | {x: string|number|Date; y: number})[]>[]} datasets - Multi-series Chart.js datasets. Takes precedence over `data`. Each dataset can have `label`, `data` (numeric array or `{x, y}` points), and visual properties like `borderColor`, `backgroundColor`, `fill`, etc.
- * @property {(string|number)[]} labels - Explicit labels for category x-axis. If omitted, labels are derived from `data` property or dataset x-values.
- * @property {string[]} colors - Custom color palette (CSS variable names or color strings). Falls back to theme default colors if not provided.
- * @property {'category'|'time'} xAxisType - X-axis mode. `'category'` for labeled data points, `'time'` for time-based data (ISO strings or timestamps). Default: `'category'`.
- * @property {'minutes'|'date'} timeDisplay - Time axis label format when `xAxisType='time'`. `'date'` shows full date/time, `'minutes'` shows minutes relative to first data point. Default: `'date'`.
- * @property {'left'|'right'} yAxisPosition - Single y-axis position. Use this for simple charts with one y-axis. For multiple y-axes, use `yAxes` property instead. Default: `'left'`.
- * @property {Array<{id?: string; position?: 'left'|'right'; min?: number; max?: number; grid?: boolean}>} yAxes - Multiple y-axis definitions for complex charts. Each axis can specify `id` (referenced by dataset `yAxisID`), `position`, `min`/`max` range, and `grid` visibility.
- * @property {boolean} showGrid - Show vertical grid lines (x-axis). When combined with `showGridX` and `showGridY`, controls full grid visibility. Default: `false`.
- * @property {boolean} showGridX - Show vertical grid lines (x-axis). Set to `false` to hide only vertical lines while keeping horizontal lines. Default: `false`.
- * @property {boolean} showGridY - Show horizontal grid lines (y-axis). Set to `false` to hide only horizontal lines while keeping vertical lines. Default: `false`.
- * @property {boolean} showTickMarks - Show axis tick marks and labels. Automatically hidden below 192px height threshold. Default: `false`.
- * @property {boolean} showPoints - Show point markers on data points. Default: `false`.
- * @property {boolean} fill - Enable area fill under/between lines. Use with `fillMode` to control fill style. Default: `false`.
- * @property {'semitransparent'|'solid'|'threshold'} fillMode - Fill rendering mode. `'semitransparent'` uses 50% alpha, `'solid'` uses opaque fill, `'threshold'` (single-series only) fills above/below midpoint with red/blue gradient. Default: `'semitransparent'`.
- * @property {'smooth'|'straight'|'stepped'} lineMode - Line drawing style. `'smooth'` applies bezier curve tension, `'straight'` draws straight lines, `'stepped'` creates step-like lines. Default: `'smooth'`.
- * @property {boolean} stacked - Stack multi-series datasets vertically on y-axis. Ignored for single-series and threshold fill mode. Default: `false`.
- * @property {string} unit - Unit label displayed in tooltips (e.g., 'kW', 'kg', '%'). Default: empty string.
- * @property {number} xTicksLimit - Maximum number of x-axis ticks/grid lines. Useful for matching external axes. Optional.
- * @property {number} xStepSize - Force specific interval between x-axis ticks (e.g., 1, 2, 5). Useful for matching external axes. Optional.
- * @property {number} yTicksLimit - Maximum number of y-axis ticks/grid lines. Useful for matching external axes. Optional.
- * @property {number} yStepSize - Force specific interval between y-axis ticks (e.g., 2, 5, 10). Useful for matching external axes. Optional.
- * @property {boolean} legend - Show HTML legend below chart with series labels and colors. Default: `false`.
- * @property {number} height - Chart height in pixels. Determines chart size with 1.5:1 aspect ratio (width = height × 1.5). Default: `320`.
- * @property {boolean} showDebugOverlay - Development mode: show visual debug overlay with dimension guides. Shows blue border around canvas (axis area) and red border around chart grid (data area). Default: `false`.
- *
- * @ignore This is an abstract base class. Use concrete implementations like ObcLineGraph or ObcAreaGraph instead.
+ * @property data - Simple single-series data. `{label, value}` items for the category axis;
+ *   `{x, value}` items for time/number axes (x: epoch ms, ISO string, Date,
+ *   or Temporal object). Points are drawn in array order (no sorting).
+ * @property datasets - Chart.js-style datasets for multi-series use. If provided, takes precedence over `data`.
+ *   Explicit Chart.js styling on an entry (`borderColor`, `backgroundColor`, `borderDash`,
+ *   `borderCapStyle`, `fill`, `order`, `pointRadius`) wins over the derived defaults
+ *   (`fill: true` selects the chart's own `'start'`);
+ *   `ellipseClip` clips the entry's drawing to an ellipse: centre and `rx` in data
+ *   units, `ry` in data units when given, else round in pixels.
+ * @property labels - Optional explicit labels for the x-axis (category mode). If omitted labels are derived from `data`
+ * @property colors - Custom color palette (CSS variable names or color strings).
+ * @property legend - Show HTML legend below chart with series labels and colors.
+ * @property showDebugOverlay - Development mode: show visual debug overlay with dimension guides.
+ * @property width - Width of the chart in pixels. Default: 480.
+ * @property height - Height of the chart in pixels. Default: 320.
+ * @property fixedAspectRatioScaling - Enable fixed aspect ratio scaling mode.
+ *   When true, width/height properties define the aspect ratio (not actual pixels).
+ *   The component fills 100% of parent width and calculates height from aspect ratio.
+ *   When false (default), width/height are used as actual pixel dimensions.
+ * @property scaleReferenceSize - Reference size for external scales when using fixedAspectRatioScaling.
+ *   This value is passed down to external scales to determine their 1:1 Figma design size.
+ *   At this reference size, scales render at native size; above/below they scale proportionally.
+ *   Default: 384 (matches Figma design baseline).
+ * @property xAxisType - X-axis mode: 'category' for labeled, evenly spaced data points; 'time'
+ *   for time-based data positioned proportionally; 'number' for plain
+ *   numeric x-values.
+ * @property yAxisPosition - Single y-axis position ('left' or 'right'). For multiple y-axes, use yAxes instead.
+ * @property yAxes - Multiple y-axis definitions for complex multi-axis charts.
+ *   Each entry accepts `min`/`max` to pin the range and `reverse` to plot `min` at the
+ *   top; the primary axis' `reverse` cascades to slotted left/right scales.
+ * @property xAxis - Pinned x range (`min`/`max`) for time and number axes. Without it the
+ *   axis spans exactly the data, so a window that is still filling stretches across the
+ *   full width. In `minutes` display `max` is the `0min` reference.
+ * @availableWhen xAxis xAxisType!=category
+ * @property xMarker - Vertical marker at an x value: solid from the plot top to the
+ *   dataset's value there (`datasetIndex`, default 0), dotted below it, with a dot on
+ *   the value unless `showDot` is false. Drawn in the dataset's line colour.
+ * @property yMarker - Horizontal 2px marker across the plot at a y value, in the
+ *   dataset's line colour (`datasetIndex`, default 0).
+ * @property showGrid - Show grid lines.
+ * @property showGridX - Show vertical grid lines (x-axis). Default: false.
+ * @availableWhen showGridX showGrid==true
+ * @property showGridY - Show horizontal grid lines (y-axis). Default: false.
+ * @availableWhen showGridY showGrid==true
+ * @property showTickMarks - Show axis tick marks and labels.
+ * @property rangeLabels - Labels kept below the 192px threshold, where the axis labels are
+ *   otherwise hidden: 'y' draws min, max and (inside the range) 0 in a gutter on the
+ *   y-axis side; 'x' draws the first and last x value in a bottom gutter; 'xy' both.
+ *   Ignored when `hasLabelPadding` is false.
+ * @availableWhen rangeLabels hasLabelPadding==true
+ * @property showPoints - Show point markers on data points. Default: false.
+ * @property lineMode - Line drawing style: 'smooth' (curved), 'straight', or 'stepped'.
+ * @property unit - Unit label displayed in tooltips (e.g., 'kW', 'kg', '%').
+ * @property timeDisplay - Time axis label format: 'date' (full date/time) or 'minutes' (relative).
+ * @availableWhen timeDisplay xAxisType==time
+ * @property xTicksLimit - Max number of x-axis ticks/grid lines. Useful for matching external axes.
+ * @property xStepSize - Force x-axis tick interval. Useful for matching external axes.
+ * @property yTicksLimit - Max number of y-axis ticks/grid lines. Useful for matching external axes.
+ * @property yStepSize - Force y-axis tick interval. Useful for matching external axes.
+ * @property state - Instrument state affecting colors of external scales.
+ * @property priority - Color priority: enhanced uses blue palette instead of default gray.
+ * @property frameStyle - Frame style for chart and external scales.
+ * @property borderRadiusPosition - Border radius position for the chart's own border.
+ * @property borderRadiusPositionExternalScales - Border radius position for external scales based on layout.
+ * @property instrumentMode - When true, the chart is used inside an instrument (e.g., gauge-trend).
+ *   In this mode, only label font size responds to .obc-component-size-* CSS classes.
+ *   Border radius uses the explicit `borderRadius` property value (or defaults to 8px),
+ *   rather than reading from CSS variables.
+ * @property borderRadius - Explicit border radius value in pixels.
+ *   When instrumentMode=true, this value is used directly (defaults to 8px).
+ *   When instrumentMode=false, this is ignored and border radius is read from CSS variable.
+ * @availableWhen borderRadius instrumentMode==true
+ * @property hasLabelPadding - Reserves canvas padding for axis tick labels on the sides that have no
+ *   slotted external scale. `false` renders those sides edge-to-edge and hides
+ *   the tick labels so they cannot be clipped, and it also suppresses the
+ *   automatic edge-to-edge switch below the 192px threshold, removing the
+ *   padding jump at that crossing. Set it when a host owns the framing and
+ *   never wants axis labels, as `obc-automation-tank` does.
+ * @experimental
  */
 export class ObcChartLineBase extends LitElement {
-  /** Simple single-series data (array of {label, value}). */
-  @property({attribute: false})
-  data: {label: string; value: number}[] = [];
+  @property({type: Array, attribute: false})
+  data: ChartLineDataItem[] = [];
 
-  /** Chart.js-style datasets for multi-series use. If provided, takes precedence over `data`. */
-  @property({attribute: false})
-  datasets?: ChartDataset<
-    'line',
-    (number | {x: string | number | Date; y: number})[]
-  >[] = undefined;
+  @property({type: Array, attribute: false})
+  datasets?: ChartLineDataset[] = undefined;
 
-  /** Optional explicit labels for the x-axis (category mode). If omitted labels are derived from `data` */
-  @property({attribute: false})
+  @property({type: Array, attribute: false})
   labels?: (string | number)[] = undefined;
 
-  /** Custom color palette (CSS variable names or color strings). */
-  @property({attribute: false})
+  @property({type: Array, attribute: false})
   colors: string[] = [];
 
-  /** Show HTML legend below chart with series labels and colors. */
   @property({type: Boolean, reflect: true})
   legend = false;
 
-  /** Development mode: show visual debug overlay with dimension guides. */
   @property({type: Boolean, reflect: true})
   showDebugOverlay = false;
 
-  /** Width of the chart in pixels. Default: 480. */
   @property({type: Number, reflect: true})
   width = 480;
 
-  /** Height of the chart in pixels. Default: 320. */
   @property({type: Number, reflect: true})
   height = 320;
 
-  /**
-   * Enable fixed aspect ratio scaling mode.
-   * When true, width/height properties define the aspect ratio (not actual pixels).
-   * The component fills 100% of parent width and calculates height from aspect ratio.
-   * When false (default), width/height are used as actual pixel dimensions.
-   */
   @property({type: Boolean, reflect: true})
   fixedAspectRatioScaling = false;
 
-  /**
-   * Reference size for external scales when using fixedAspectRatioScaling.
-   * This value is passed down to external scales to determine their 1:1 Figma design size.
-   * At this reference size, scales render at native size; above/below they scale proportionally.
-   * Default: 384 (matches Figma design baseline).
-   */
   @property({type: Number})
   scaleReferenceSize = 384;
 
-  /** X-axis mode: 'category' for labeled data points, 'time' for time-based data. */
   @property({type: String})
   xAxisType: XAxisType = XAxisType.category;
 
-  /** Single y-axis position ('left' or 'right'). For multiple y-axes, use yAxes instead. */
   @property({type: String})
   yAxisPosition: YAxisPosition = YAxisPosition.left;
 
-  /** Multiple y-axis definitions for complex multi-axis charts. */
-  @property({attribute: false})
-  yAxes?: Array<{
-    id?: string;
-    position?: 'left' | 'right';
-    min?: number;
-    max?: number;
-    grid?: boolean;
-  }> = undefined;
+  @property({type: Array, attribute: false})
+  yAxes?: ChartLineYAxisConfig[] = undefined;
 
-  /** Show grid lines. */
+  @property({type: Object, attribute: false})
+  xAxis?: ChartLineXAxisConfig = undefined;
+
+  @property({type: Object, attribute: false})
+  xMarker?: ChartLineXMarker = undefined;
+
+  @property({type: Object, attribute: false})
+  yMarker?: ChartLineYMarker = undefined;
+
   @property({type: Boolean})
   showGrid = false;
 
-  /** Show vertical grid lines (x-axis). Default: false. */
   @property({type: Boolean})
   showGridX = false;
 
-  /** Show horizontal grid lines (y-axis). Default: false. */
   @property({type: Boolean})
   showGridY = false;
 
-  /** Show axis tick marks and labels. */
   @property({type: Boolean})
   showTickMarks = false;
+
+  @property({type: Boolean, attribute: false})
+  hasLabelPadding = true;
+
+  @property({type: String})
+  rangeLabels: RangeLabels = RangeLabels.none;
+
+  /** @internal - The y side wants range labels; an edge-to-edge chart never does. */
+  protected get rangeLabelsY(): boolean {
+    return (
+      this.hasLabelPadding &&
+      (this.rangeLabels === RangeLabels.y ||
+        this.rangeLabels === RangeLabels.xy)
+    );
+  }
+
+  /** @internal - The x side wants range labels; an edge-to-edge chart never does. */
+  protected get rangeLabelsX(): boolean {
+    return (
+      this.hasLabelPadding &&
+      (this.rangeLabels === RangeLabels.x ||
+        this.rangeLabels === RangeLabels.xy)
+    );
+  }
+
+  /** @internal - True when the x-axis positions points by numeric value. */
+  protected get isNumericXAxis(): boolean {
+    return (
+      this.xAxisType === XAxisType.time || this.xAxisType === XAxisType.number
+    );
+  }
+
+  /**
+   * Id of the y scale a dataset lands on when it names none. Chart.js would
+   * otherwise add a default `y` scale next to the configured ones and draw it.
+   */
+  private get primaryYAxisId(): string {
+    return this.yAxes?.length ? (this.yAxes[0].id ?? 'y0') : 'y';
+  }
+
+  /** @internal - Normalization mode for the current x-axis type. */
+  protected get xValueMode(): XValueMode {
+    return this.xAxisType === XAxisType.number
+      ? XValueMode.number
+      : XValueMode.time;
+  }
+
+  /**
+   * `reverse` of the axis a side follows: the first axis positioned on that
+   * side, else the first entry — the selection `resolveAxisRange()` makes.
+   */
+  protected isYAxisReversed(side: 'left' | 'right' = 'left'): boolean {
+    if (!this.yAxes?.length) return false;
+    const axis =
+      this.yAxes.find((a) => (a.position ?? 'left') === side) ?? this.yAxes[0];
+    return axis.reverse ?? false;
+  }
+
+  /** @internal - Last data/datasets reference already warned about. */
+  private lastWarnedXSource?: unknown;
+
+  /** @internal - Whether the `date`-display scale warning has been issued. */
+  private warnedDateDisplayScale = false;
+
+  /** @internal - Warn once per data assignment about unparseable x-values. */
+  private warnOnInvalidX(xValues: number[], sourceRef: unknown) {
+    const invalid = xValues.filter((x) => !Number.isFinite(x)).length;
+    if (invalid === 0 || this.lastWarnedXSource === sourceRef) return;
+    this.lastWarnedXSource = sourceRef;
+    console.warn(
+      `[obc-chart] ${invalid} x value(s) could not be parsed for xAxisType='${this.xAxisType}'; the points render as gaps.`
+    );
+  }
 
   // Internal default tension used when `lineMode` is 'smooth'. Not exposed as a property.
   private readonly DEFAULT_TENSION = 0.4;
@@ -371,73 +664,48 @@ export class ObcChartLineBase extends LitElement {
   // Internal default point radius when points are shown.
   private readonly POINT_RADIUS = 3;
 
-  /** Show point markers on data points. Default: false. */
   @property({type: Boolean})
   showPoints = false;
 
-  /** Line drawing style: 'smooth' (curved), 'straight', or 'stepped'. */
   @property({type: String})
   lineMode: LineMode = LineMode.smooth;
 
-  /** Unit label displayed in tooltips (e.g., 'kW', 'kg', '%'). */
   @property({type: String})
   unit = '';
 
-  /** Time axis label format: 'date' (full date/time) or 'minutes' (relative). */
   @property({type: String})
   timeDisplay: TimeDisplay = TimeDisplay.date;
 
-  /** Max number of x-axis ticks/grid lines. Useful for matching external axes. */
   @property({type: Number})
   xTicksLimit?: number = undefined;
 
-  /** Force x-axis tick interval. Useful for matching external axes. */
   @property({type: Number})
   xStepSize?: number = undefined;
 
-  /** Max number of y-axis ticks/grid lines. Useful for matching external axes. */
   @property({type: Number})
   yTicksLimit?: number = undefined;
 
-  /** Force y-axis tick interval. Useful for matching external axes. */
   @property({type: Number})
   yStepSize?: number = undefined;
 
-  /** Instrument state affecting colors of external scales. */
   @property({type: String})
   state: InstrumentState = InstrumentState.active;
 
-  /** Color priority: enhanced uses blue palette instead of default gray. */
   @property({type: String})
   priority: Priority = Priority.regular;
 
-  /** Frame style for chart and external scales. */
   @property({type: String})
   frameStyle: FrameStyle = FrameStyle.regular;
 
-  /** Border radius position for the chart's own border. */
   @property({type: String})
   borderRadiusPosition?: BorderRadiusPosition = undefined;
 
-  /** Border radius position for external scales based on layout. */
   @property({type: String})
   borderRadiusPositionExternalScales?: BorderRadiusPosition = undefined;
 
-  /**
-   * When true, the chart is used inside an instrument (e.g., gauge-trend).
-   * In this mode, only label font size responds to .obc-component-size-* CSS classes.
-   * Border radius uses the explicit `borderRadius` property value (or defaults to 8px),
-   * rather than reading from CSS variables.
-   * @default false
-   */
   @property({type: Boolean})
   instrumentMode = false;
 
-  /**
-   * Explicit border radius value in pixels.
-   * When instrumentMode=true, this value is used directly (defaults to 8px).
-   * When instrumentMode=false, this is ignored and border radius is read from CSS variable.
-   */
   @property({type: Number})
   borderRadius?: number = undefined;
 
@@ -461,9 +729,6 @@ export class ObcChartLineBase extends LitElement {
 
   /** @internal - ResizeObserver for tracking height threshold crossings (e.g. MIN_HEIGHT_WITH_LABELS = 192px) */
   private resizeObserver?: ResizeObserver;
-
-  /** @internal - Track previous state to detect threshold crossing */
-  private wasAboveThreshold = false;
 
   /** @internal - Track external scale dimensions */
   private externalScaleDimensions: Map<string, number> = new Map();
@@ -538,18 +803,436 @@ export class ObcChartLineBase extends LitElement {
    */
 
   /**
-   * Check if a slotted scale element is actually visible (renders content).
-   * For bar-vertical/bar-horizontal elements, checks hasBar and hasScale properties.
+   * @internal - Label band each slotted scale had before the chart narrowed
+   * it for compact labels, so it can be given back on the way out.
    */
-  private hasVisibleScale(side: 'left' | 'right' | 'top' | 'bottom'): boolean {
-    const slotMap = {
+  private savedLabelThickness = new WeakMap<ExternalScaleElement, number>();
+  private savedMainTickmarkLabels = new WeakMap<
+    ExternalScaleElement,
+    boolean
+  >();
+  /** Last known threshold side, to notice a crossing in `updated()`. */
+  private wasBelowThreshold?: boolean;
+
+  /**
+   * Label band a slotted scale needs for its compact labels, in the scale's
+   * own viewBox units. The scale prints the raw values, so those are what is
+   * measured; the x band is one text line.
+   */
+  private compactLabelThickness(axis: 'x' | 'y'): number | undefined {
+    const context = this.canvasEl?.getContext('2d');
+    if (!context) return undefined;
+    const font = this.rangeLabelFont();
+    let visual: number;
+    if (axis === 'y') {
+      const bounds = this.rangeLabelCache.bounds;
+      if (!bounds) return undefined;
+      const texts = yRangeLabelValues(bounds.min, bounds.max).map(String);
+      visual = measureRangeLabelGutters(context, font, texts, []).side + 4;
+    } else {
+      visual = measureRangeLabelGutters(context, font, [], ['x']).bottom + 8;
+    }
+    if (!this.fixedAspectRatioScaling) return Math.ceil(visual);
+    const effectiveLength =
+      axis === 'y' ? this.getEffectiveHeight() : this.getEffectiveWidth();
+    return Math.ceil((visual * this.scaleReferenceSize) / effectiveLength);
+  }
+
+  /** @internal - Labels the range-labels plugin drew last, for tests. */
+  lastRangeLabels: {axis: 'x' | 'y'; text: string; x: number; y: number}[] = [];
+
+  /** @internal - Marker pixels drawn last, for tests. */
+  lastMarkers: {x?: {x: number; y?: number; dot: boolean}; y?: {y: number}} =
+    {};
+
+  /** @internal - Ellipse clips applied last, in pixels by dataset index, for tests. */
+  get lastClips(): Record<number, ChartLineEllipseClip> {
+    return (this.chart && datasetClipRecords.get(this.chart)) ?? {};
+  }
+
+  /**
+   * Range labels for the current data and size, refreshed with every
+   * `getChartOptions()` so the plugin never rebuilds the datasets on a draw.
+   */
+  private rangeLabelCache: {
+    y: string[];
+    x: string[];
+    bounds?: {min: number; max: number};
+  } = {y: [], x: []};
+
+  private slotFor(
+    side: 'left' | 'right' | 'top' | 'bottom'
+  ): HTMLSlotElement | undefined {
+    return {
       left: this.leftScaleSlot,
       right: this.rightScaleSlot,
       top: this.topScaleSlot,
       bottom: this.bottomScaleSlot,
-    };
+    }[side];
+  }
 
-    const slot = slotMap[side];
+  private hasSlottedScale(side: 'left' | 'right' | 'top' | 'bottom'): boolean {
+    return (this.slotFor(side)?.assignedElements().length ?? 0) > 0;
+  }
+
+  /** @internal - Below the label threshold on either dimension. */
+  private isBelowThreshold(): boolean {
+    return (
+      this.getEffectiveWidth() <
+        RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS ||
+      this.getEffectiveHeight() <
+        RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS
+    );
+  }
+
+  private get ySide(): 'left' | 'right' {
+    const first = this.yAxes?.[0]?.position;
+    return (first ?? this.yAxisPosition) === 'right' ? 'right' : 'left';
+  }
+
+  private rangeLabelFont(): RangeLabelFont {
+    const sizePx = Number.parseFloat(
+      getCssVariableValue(this, LINE_GRAPH_LABEL_CONFIG.fontSizeVar)
+    );
+    return {
+      family: getCssVariableValue(this, LINE_GRAPH_LABEL_CONFIG.fontFamily),
+      sizePx: Number.isFinite(sizePx) ? sizePx : 12,
+      weight: getCssVariableValue(this, LINE_GRAPH_LABEL_CONFIG.fontWeightVar),
+    };
+  }
+
+  /**
+   * Extent of the prepared data: one for x, one per y scale id. Each y axis
+   * ranges from its own datasets, so a merged extent would label one axis
+   * with another's values.
+   */
+  private dataExtents(
+    prepared: ReturnType<ObcChartLineBase['prepareChartDataAndLabels']>
+  ): {
+    x?: {min: number; max: number};
+    y: Map<string, {min: number; max: number}>;
+  } {
+    const x = {min: Infinity, max: -Infinity};
+    const y = new Map<string, {min: number; max: number}>();
+    const take = (extent: {min: number; max: number}, v: number) => {
+      if (!Number.isFinite(v)) return;
+      extent.min = Math.min(extent.min, v);
+      extent.max = Math.max(extent.max, v);
+    };
+    prepared.datasets.forEach((dataset) => {
+      const id = dataset.yAxisID ?? this.primaryYAxisId;
+      const extent = y.get(id) ?? {min: Infinity, max: -Infinity};
+      y.set(id, extent);
+      (dataset.data as ChartLinePoint[]).forEach((point) => {
+        if (typeof point === 'number') {
+          take(extent, point);
+        } else if (point) {
+          take(x, point.x as number);
+          take(extent, point.y);
+        }
+      });
+    });
+    y.forEach((extent, id) => {
+      if (!(extent.min <= extent.max)) y.delete(id);
+    });
+    return {x: x.min <= x.max ? x : undefined, y};
+  }
+
+  /**
+   * Range the y labels describe. Below the threshold the axis runs on data
+   * bounds, so its datasets' extent is exact and needs no chart to read from.
+   */
+  private yRangeBounds(
+    extents: Map<string, {min: number; max: number}>
+  ): {min: number; max: number} | undefined {
+    let axis: ChartLineYAxisConfig | undefined;
+    let id = 'y';
+    if (this.yAxes?.length) {
+      const match = this.yAxes.findIndex(
+        (a) => (a.position ?? 'left') === this.ySide
+      );
+      const index = match === -1 ? 0 : match;
+      axis = this.yAxes[index];
+      id = axis.id ?? `y${index}`;
+    }
+    const extent = extents.get(id);
+    // Stacking makes the axis span the accumulated series, which a per-dataset
+    // extent cannot describe, so the laid-out scale is the only source for it.
+    const stackedScale = this.shouldStack()
+      ? this.chart?.scales[id]
+      : undefined;
+    const min = axis?.min ?? stackedScale?.min ?? extent?.min;
+    const max = axis?.max ?? stackedScale?.max ?? extent?.max;
+    return min !== undefined && max !== undefined ? {min, max} : undefined;
+  }
+
+  /** First and last x label, or nothing when there is no span to label. */
+  private xEdgeLabelTexts(
+    prepared: ReturnType<ObcChartLineBase['prepareChartDataAndLabels']>,
+    extent: {min: number; max: number} | undefined
+  ): string[] {
+    if (!this.isNumericXAxis) {
+      const labels = prepared.labels.map(String);
+      const first = labels[0];
+      const last = labels[labels.length - 1];
+      return labels.length > 1 && first !== last ? [first, last] : [];
+    }
+    const min = this.xAxis?.min ?? extent?.min;
+    const max = this.xAxis?.max ?? extent?.max;
+    if (min === undefined || max === undefined || min === max) return [];
+    const reference =
+      this.timeDisplay === TimeDisplay.minutes
+        ? this.computeTimeReference()
+        : undefined;
+    return [
+      formatXValue(min, this.xValueMode, reference),
+      formatXValue(max, this.xValueMode, reference),
+    ];
+  }
+
+  /**
+   * Recompute the range labels. A side with a slotted scale is labelled by
+   * the scale, so it gets no text here; the y bounds are kept regardless,
+   * since the scale's compact band is measured from them.
+   */
+  private refreshRangeLabels(): typeof this.rangeLabelCache {
+    const cache: typeof this.rangeLabelCache = {y: [], x: []};
+    if (this.isBelowThreshold() && (this.rangeLabelsY || this.rangeLabelsX)) {
+      // Prepared once: it restyles every dataset and reads CSS variables.
+      const prepared = this.prepareChartDataAndLabels();
+      const extents = this.dataExtents(prepared);
+      if (this.rangeLabelsY) {
+        cache.bounds = this.yRangeBounds(extents.y);
+        if (
+          cache.bounds &&
+          !this.hasSlottedScale('left') &&
+          !this.hasSlottedScale('right')
+        ) {
+          const {min, max} = cache.bounds;
+          cache.y = yRangeLabelValues(min, max).map((v) =>
+            formatRangeValue(v, min, max)
+          );
+        }
+      }
+      if (
+        this.rangeLabelsX &&
+        !this.hasSlottedScale('top') &&
+        !this.hasSlottedScale('bottom')
+      ) {
+        cache.x = this.xEdgeLabelTexts(prepared, extents.x);
+      }
+    }
+    this.rangeLabelCache = cache;
+    return cache;
+  }
+
+  /**
+   * Value cursors drawn after the datasets, in the dataset's own colour, so no
+   * annotation dependency is needed. A no-op while both markers are unset.
+   */
+  private createMarkersPlugin() {
+    return {
+      id: 'markers',
+      afterDatasetsDraw: (chart: Chart) => {
+        this.lastMarkers = {};
+        if (!this.xMarker && !this.yMarker) return;
+        const area = chart.chartArea;
+        const ctx = chart.ctx;
+        const datasetOf = (index = 0) =>
+          chart.data.datasets[index] as ChartLineDataset | undefined;
+        const yScaleOf = (ds?: ChartLineDataset) =>
+          chart.scales[ds?.yAxisID ?? this.primaryYAxisId];
+        const colorOf = (ds?: ChartLineDataset) =>
+          typeof ds?.borderColor === 'string'
+            ? ds.borderColor
+            : getCssVariableValue(this, LINE_GRAPH_LABEL_CONFIG.fontColorVar);
+        // Lines are clipped to the plot: a value outside the axis range maps
+        // outside it, and the canvas paints above the slotted scales.
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(
+          area.left,
+          area.top,
+          area.right - area.left,
+          area.bottom - area.top
+        );
+        ctx.clip();
+
+        let dot: {x: number; y: number; color: string} | undefined;
+        const xScale = chart.scales['x'];
+        if (this.xMarker && xScale) {
+          const ds = datasetOf(this.xMarker.datasetIndex);
+          // On a category axis a string marker names a label; a number is an index.
+          const xValue = this.isNumericXAxis
+            ? normalizeXValue(this.xMarker.x, this.xValueMode)
+            : typeof this.xMarker.x === 'number'
+              ? this.xMarker.x
+              : (chart.data.labels ?? []).indexOf(this.xMarker.x as string);
+          // A numeric axis may run negative; only a category index cannot.
+          const xValid =
+            Number.isFinite(xValue) && (this.isNumericXAxis || xValue >= 0);
+          if (xValid) {
+            const xPixel = xScale.getPixelForValue(xValue);
+            // Half-pixel alignment keeps the 1px line crisp.
+            const x = Math.round(xPixel) + 0.5;
+            // The rendered line, not the data: tension, stepped mode and gaps
+            // decide where the value sits, and a gap has no value.
+            const line = chart.getDatasetMeta(this.xMarker.datasetIndex ?? 0)
+              .dataset as LineElement | undefined;
+            const hit = line?.interpolate({x: xPixel, y: 0}, 'x');
+            const hitY = (Array.isArray(hit) ? hit[0] : hit)?.y;
+            const y = typeof hitY === 'number' ? hitY : undefined;
+            const color = colorOf(ds);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = MARKER.lineWidth;
+            ctx.setLineDash([]);
+            ctx.beginPath();
+            ctx.moveTo(x, area.top);
+            ctx.lineTo(x, y ?? area.top);
+            ctx.stroke();
+            ctx.setLineDash([...MARKER.dash]);
+            ctx.beginPath();
+            ctx.moveTo(x, y ?? area.top);
+            ctx.lineTo(x, area.bottom);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            // The dot is drawn whole, so only while its centre is on the plot.
+            const inside =
+              y !== undefined &&
+              xPixel >= area.left &&
+              xPixel <= area.right &&
+              y >= area.top &&
+              y <= area.bottom;
+            if (inside && (this.xMarker.showDot ?? true)) dot = {x, y, color};
+            this.lastMarkers.x = {x, y, dot: dot !== undefined};
+          }
+        }
+
+        if (this.yMarker) {
+          const ds = datasetOf(this.yMarker.datasetIndex);
+          const yScale = yScaleOf(ds);
+          if (yScale) {
+            const y = yScale.getPixelForValue(this.yMarker.y);
+            // The 1px silhouette below the line lifts it off a same-coloured fill.
+            ctx.lineWidth = MARKER.lineWidth;
+            ctx.strokeStyle = getCssVariableValue(this, MARKER.ringColorVar);
+            ctx.beginPath();
+            ctx.moveTo(area.left, y + MARKER.valueLineWidth / 2 + 0.5);
+            ctx.lineTo(area.right, y + MARKER.valueLineWidth / 2 + 0.5);
+            ctx.stroke();
+            ctx.lineWidth = MARKER.valueLineWidth;
+            ctx.strokeStyle = colorOf(ds);
+            ctx.beginPath();
+            ctx.moveTo(area.left, y);
+            ctx.lineTo(area.right, y);
+            ctx.stroke();
+            this.lastMarkers.y = {y};
+          }
+        }
+        ctx.restore();
+
+        if (dot) {
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(dot.x, dot.y, MARKER.dotRadius, 0, Math.PI * 2);
+          ctx.fillStyle = dot.color;
+          ctx.fill();
+          ctx.lineWidth = MARKER.dotRingWidth;
+          ctx.strokeStyle = getCssVariableValue(this, MARKER.ringColorVar);
+          ctx.stroke();
+          ctx.restore();
+        }
+      },
+    };
+  }
+
+  /**
+   * Paints min / 0 / max and first / last once Chart.js has drawn, inside the
+   * gutters `getChartOptions()` reserved. The end labels sit flush with the
+   * plot edges so no vertical padding is needed for them.
+   */
+  private createRangeLabelsPlugin() {
+    return {
+      id: 'rangeLabels',
+      afterDraw: (chart: Chart) => {
+        this.lastRangeLabels = [];
+        const {y: yTexts, x: xTexts, bounds} = this.rangeLabelCache;
+        if (!yTexts.length && !xTexts.length) return;
+        const area = chart.chartArea;
+        const ctx = chart.ctx;
+        const font = this.rangeLabelFont();
+        const lineHeight = rangeLabelLineHeight(font);
+        ctx.save();
+        ctx.font = rangeLabelFontString(font);
+        ctx.fillStyle = getCssVariableValue(
+          this,
+          LINE_GRAPH_LABEL_CONFIG.fontColorVar
+        );
+
+        const scale = chart.scales[this.primaryYAxisId];
+        if (yTexts.length && bounds && scale) {
+          const onRight = this.ySide === 'right';
+          const x = onRight ? area.right + 8 : area.left - 8;
+          ctx.textAlign = onRight ? 'left' : 'right';
+          const values = yRangeLabelValues(bounds.min, bounds.max);
+          const reversed = this.isYAxisReversed(this.ySide);
+          // Top-down, so the recorded order reads max, 0, min.
+          for (let i = values.length - 1; i >= 0; i--) {
+            const isMax = i === values.length - 1;
+            const isMin = i === 0;
+            const isEnd = isMax || isMin;
+            // Under a reversed axis the max end sits at the plot bottom.
+            const atTop = isMax !== reversed;
+            const y = isEnd
+              ? atTop
+                ? area.top
+                : area.bottom
+              : scale.getPixelForValue(values[i]);
+            // A 0 within a line of either end would collide with it.
+            if (
+              !isMax &&
+              !isMin &&
+              (y - area.top < lineHeight || area.bottom - y < lineHeight)
+            ) {
+              continue;
+            }
+            ctx.textBaseline = isEnd ? (atTop ? 'top' : 'bottom') : 'middle';
+            ctx.fillText(yTexts[i], x, y);
+            this.lastRangeLabels.push({axis: 'y', text: yTexts[i], x, y});
+          }
+        }
+
+        if (xTexts.length === 2) {
+          const y = area.bottom + 4;
+          ctx.textBaseline = 'top';
+          ctx.textAlign = 'left';
+          ctx.fillText(xTexts[0], area.left, y);
+          this.lastRangeLabels.push({
+            axis: 'x',
+            text: xTexts[0],
+            x: area.left,
+            y,
+          });
+          ctx.textAlign = 'right';
+          ctx.fillText(xTexts[1], area.right, y);
+          this.lastRangeLabels.push({
+            axis: 'x',
+            text: xTexts[1],
+            x: area.right,
+            y,
+          });
+        }
+        ctx.restore();
+      },
+    };
+  }
+
+  /**
+   * Check if a slotted scale element is actually visible (renders content).
+   * For bar-vertical/bar-horizontal elements, checks hasBar and hasScale properties.
+   */
+  private hasVisibleScale(side: 'left' | 'right' | 'top' | 'bottom'): boolean {
+    const slot = this.slotFor(side);
     const elements = slot?.assignedElements() ?? [];
 
     return elements.some((el: Element) => {
@@ -755,42 +1438,35 @@ export class ObcChartLineBase extends LitElement {
       // Guard: Avoid invalid paths
       if (width <= 0 || height <= 0) return;
 
-      const r = Math.max(
+      const r = clamp(
+        cornerRadius,
         0,
-        Math.min(cornerRadius, Math.min(width, height) / 2)
+        Math.max(0, Math.min(width, height) / 2)
       );
 
       // Start at top-left corner (accounting for radius)
       ctx.moveTo(x + (corners.topLeft ? r : 0), y);
 
-      // Top edge
       ctx.lineTo(x + width - (corners.topRight ? r : 0), y);
 
-      // Top-right corner
       if (corners.topRight) {
         ctx.arcTo(x + width, y, x + width, y + r, r);
       }
 
-      // Right edge
       ctx.lineTo(x + width, y + height - (corners.bottomRight ? r : 0));
 
-      // Bottom-right corner
       if (corners.bottomRight) {
         ctx.arcTo(x + width, y + height, x + width - r, y + height, r);
       }
 
-      // Bottom edge
       ctx.lineTo(x + (corners.bottomLeft ? r : 0), y + height);
 
-      // Bottom-left corner
       if (corners.bottomLeft) {
         ctx.arcTo(x, y + height, x, y + height - r, r);
       }
 
-      // Left edge
       ctx.lineTo(x, y + (corners.topLeft ? r : 0));
 
-      // Top-left corner
       if (corners.topLeft) {
         ctx.arcTo(x, y, x + r, y, r);
       }
@@ -879,9 +1555,10 @@ export class ObcChartLineBase extends LitElement {
         ctx.lineWidth = borderWidthPx;
 
         const {x, y, width, height} = rect;
-        const r = Math.max(
+        const r = clamp(
+          strokeRadius,
           0,
-          Math.min(strokeRadius, Math.min(width, height) / 2)
+          Math.max(0, Math.min(width, height) / 2)
         );
 
         // Draw border segments, skipping edges that have visible external scales
@@ -972,28 +1649,24 @@ export class ObcChartLineBase extends LitElement {
           }
 
           // Draw corners separately (only if adjacent edges are both drawn)
-          // Top-left corner
           if (!skipTop && !skipLeft && corners.topLeft) {
             ctx.beginPath();
             ctx.arc(x + r, y + r, r, Math.PI, Math.PI * 1.5);
             ctx.stroke();
           }
 
-          // Top-right corner
           if (!skipTop && !skipRight && corners.topRight) {
             ctx.beginPath();
             ctx.arc(x + width - r, y + r, r, Math.PI * 1.5, Math.PI * 2);
             ctx.stroke();
           }
 
-          // Bottom-right corner
           if (!skipRight && !skipBottom && corners.bottomRight) {
             ctx.beginPath();
             ctx.arc(x + width - r, y + height - r, r, 0, Math.PI * 0.5);
             ctx.stroke();
           }
 
-          // Bottom-left corner
           if (!skipBottom && !skipLeft && corners.bottomLeft) {
             ctx.beginPath();
             ctx.arc(x + r, y + height - r, r, Math.PI * 0.5, Math.PI);
@@ -1075,13 +1748,6 @@ export class ObcChartLineBase extends LitElement {
     const event = e as CustomEvent<ExternalScaleDimensions>;
     const {side, thickness} = event.detail;
 
-    // console.debug(`[chart-line-base] Scale dimension changed:`, {
-    //   side,
-    //   thickness,
-    //   previousThickness: this.externalScaleDimensions.get(side),
-    //   isUpdatingScales: this.isUpdatingScales,
-    // });
-
     // Update dimension tracking
     const previousThickness = this.externalScaleDimensions.get(side);
     if (previousThickness === thickness) return; // No change
@@ -1162,45 +1828,36 @@ export class ObcChartLineBase extends LitElement {
    * Synchronize scale and chart dimensions/data
    * This is the main coordination function
    */
-  private syncScalesAndChart() {
-    if (this.isUpdatingScales) return;
+  private syncScalesAndChart(): boolean {
+    if (this.isUpdatingScales) return false;
     this.isUpdatingScales = true;
 
-    // console.debug(`[chart-line-base] Syncing scales and chart`, {
-    //   width: this.width,
-    //   height: this.height,
-    //   scaleDimensions: Array.from(this.externalScaleDimensions.entries()),
-    // });
-
     try {
-      // Step 1: Calculate padding from scale dimensions
-      const padding = this.calculatePaddingFromScales();
+      // Step 1: The padding the chart itself will lay out with, so a slotted
+      // scale's drawing area lines up with the chart area on every side.
+      const padding = this.computeChartPadding();
 
-      // console.debug(`[chart-line-base] Calculated padding:`, padding);
-
-      // Step 2: Calculate effective chart area
-      const effectiveWidth = this.width - padding.left - padding.right;
-      const effectiveHeight = this.height - padding.top - padding.bottom;
-
-      // console.debug(`[chart-line-base] Effective dimensions:`, {
-      //   effectiveWidth,
-      //   effectiveHeight,
-      // });
+      // Step 2: The chart area left once the (visual) padding is taken from
+      // the visual size — the reference `width` / `height` would go negative
+      // in a container larger than the reference.
+      const effectiveWidth =
+        this.getEffectiveWidth() - padding.left - padding.right;
+      const effectiveHeight =
+        this.getEffectiveHeight() - padding.top - padding.bottom;
 
       // Guard against invalid dimensions
       if (effectiveWidth <= 0 || effectiveHeight <= 0) {
         console.warn('[chart-line-base] Invalid effective dimensions', {
-          width: this.width,
-          height: this.height,
+          width: this.getEffectiveWidth(),
+          height: this.getEffectiveHeight(),
           padding,
           effectiveWidth,
           effectiveHeight,
         });
-        return;
+        return false;
       }
 
       // Step 3: Update slotted scales with coordinated properties
-      // this.updateScaleProperties(padding, effectiveWidth, effectiveHeight);
       this.updateScaleProperties(padding);
 
       // Step 4: Force recreation of chart with new padding
@@ -1208,16 +1865,26 @@ export class ObcChartLineBase extends LitElement {
         this.chart.destroy();
       }
       this.createChart();
+      return true;
     } finally {
       this.isUpdatingScales = false;
     }
   }
 
   /**
-   * Calculate chart padding from external scale dimensions
+   * Calculate chart padding from external scale dimensions.
+   *
+   * For sides without an external scale, falls back to `CHART_DIMENSIONS.CANVAS_PADDING`
+   * (the chart's own padding to reserve room for axis tick labels). When
+   * `hasLabelPadding=false` that fallback is 0 so the chart renders edge-to-edge,
+   * and this same value is cascaded to slotted scales via `updateScaleProperties()`
+   * — so the bar's main-axis padding (`paddingTop`/`paddingBottom` for vertical bars)
+   * collapses with the chart's perpendicular padding and they stay visually aligned.
    */
   private calculatePaddingFromScales() {
-    const defaultPadding = CHART_DIMENSIONS.CANVAS_PADDING;
+    const defaultPadding = this.hasLabelPadding
+      ? CHART_DIMENSIONS.CANVAS_PADDING
+      : 0;
 
     const padding = {
       top: this.externalScaleDimensions.get('top') ?? defaultPadding,
@@ -1226,52 +1893,168 @@ export class ObcChartLineBase extends LitElement {
       left: this.externalScaleDimensions.get('left') ?? defaultPadding,
     };
 
-    // console.debug(`[chart-line-base] calculatePaddingFromScales:`, {
-    //   fixedAspectRatioScaling: this.fixedAspectRatioScaling,
-    //   scaleReferenceSize: this.scaleReferenceSize,
-    //   externalScaleDimensions: Object.fromEntries(this.externalScaleDimensions),
-    //   defaultPadding,
-    //   calculatedPadding: padding,
-    // });
-
     return padding;
+  }
+
+  /**
+   * Range a slotted scale on the given side has to cover.
+   *
+   * A range pinned in the axis configuration is used as is: it is the source
+   * of truth, and on the first sync there is no chart to read yet. Otherwise
+   * the live Chart.js scale is read under the id `buildScalesConfig()` gives
+   * it. A side with no axis of its own follows the first configured one.
+   */
+  private resolveAxisRange(side: 'left' | 'right' | 'x'): {
+    min: number;
+    max: number;
+  } {
+    let id = side === 'x' ? 'x' : 'y';
+    let configured: {min?: number; max?: number} | undefined;
+
+    if (side === 'x') {
+      configured = this.isNumericXAxis ? this.xAxis : undefined;
+    } else if (this.yAxes?.length) {
+      const match = this.yAxes.findIndex(
+        (axis) => (axis.position ?? 'left') === side
+      );
+      const index = match === -1 ? 0 : match;
+      const axis = this.yAxes[index];
+      id = axis.id ?? `y${index}`;
+      configured = axis;
+    }
+
+    if (configured?.min !== undefined && configured.max !== undefined) {
+      return {min: configured.min, max: configured.max};
+    }
+    const scale = this.chart?.scales[id];
+    return {
+      min: scale?.min ?? configured?.min ?? 0,
+      max: scale?.max ?? configured?.max ?? 100,
+    };
+  }
+
+  /**
+   * Range pushed to the top and bottom scales, or `undefined` to leave them
+   * alone. A scale prints its values verbatim, and on a `time` axis the raw
+   * range is epoch milliseconds. In `minutes` display the range is converted
+   * to the minutes the chart's own labels show; `date` display has no numeric
+   * equivalent, so the scale keeps its own range.
+   */
+  private resolveSlottedXRange(): {min: number; max: number} | undefined {
+    const range = this.resolveAxisRange('x');
+    if (this.xAxisType !== XAxisType.time) return range;
+
+    if (this.timeDisplay !== TimeDisplay.minutes) {
+      if (!this.warnedDateDisplayScale) {
+        this.warnedDateDisplayScale = true;
+        console.warn(
+          "[obc-chart] a slotted horizontal scale cannot label a time axis in 'date' display and keeps its own range; use timeDisplay='minutes' or a number axis."
+        );
+      }
+      return undefined;
+    }
+
+    const pinned =
+      this.xAxis?.min !== undefined && this.xAxis?.max !== undefined;
+    const reference = this.computeTimeReference();
+    if (reference === undefined || (!this.chart && !pinned)) return undefined;
+    const minute = 60_000;
+    return {
+      min: (range.min - reference) / minute,
+      max: (range.max - reference) / minute,
+    };
   }
 
   /**
    * Update properties on slotted scale elements
    */
-  private updateScaleProperties(
-    padding: {top: number; right: number; bottom: number; left: number}
-    // effectiveWidth: number,
-    // effectiveHeight: number
-  ) {
-    // Get chart scales for min/max values
-    const yMin = this.chart?.scales['y']?.min ?? 0;
-    const yMax = this.chart?.scales['y']?.max ?? 100;
-    const xMin = this.chart?.scales['x']?.min ?? 0;
-    const xMax = this.chart?.scales['x']?.max ?? 100;
+  private updateScaleProperties(padding: {
+    top: number;
+    right: number;
+    bottom: number;
+    left: number;
+  }) {
+    const leftRange = this.resolveAxisRange('left');
+    const rightRange = this.resolveAxisRange('right');
+    const xRange = this.resolveSlottedXRange();
 
     // Use effective dimensions for threshold checks
     const effectiveWidth = this.getEffectiveWidth();
     const effectiveHeight = this.getEffectiveHeight();
 
-    // Determine if we should show labels (above threshold)
-    const showLabels =
+    // Without label padding the slotted scales must hide their labels too:
+    // their `labelThickness` band would stay in the reported thickness, the
+    // chart would be re-padded inward, and the labels would clip on the
+    // canvas edge.
+    const aboveThreshold =
       effectiveWidth >= RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS &&
       effectiveHeight >= RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS;
+    const showLabels = this.hasLabelPadding && aboveThreshold;
+    // Below the threshold a ladder has no room, but min / 0 / max still has.
+    const compactY = !aboveThreshold && this.rangeLabelsY;
+    const compactX = !aboveThreshold && this.rangeLabelsX;
+    const compactYThickness = compactY
+      ? this.compactLabelThickness('y')
+      : undefined;
+    const compactXThickness = compactX
+      ? this.compactLabelThickness('x')
+      : undefined;
 
-    // Calculate viewBox padding for external scales.
-    // When fixedAspectRatioScaling is true, the chart's Canvas padding is scaled by
-    // scaleFactor = computedWidth / this.width. For external scales to match, their
-    // viewBox padding needs to be: basePadding * scaleReferenceSize / referenceSize
-    // This ensures the visual padding matches when the SVG scales to fill the container.
+    // Compact mode labels a slotted scale's main tickmarks; a scale the chart
+    // never compacted keeps whatever the consumer set.
+    const mainLabelsFor = (
+      scale: ExternalScaleElement,
+      compact: boolean
+    ): boolean | undefined => {
+      if (compact) {
+        if (!this.savedMainTickmarkLabels.has(scale)) {
+          this.savedMainTickmarkLabels.set(
+            scale,
+            scale.showMainTickmarkLabels ?? false
+          );
+        }
+        return true;
+      }
+      if (!this.savedMainTickmarkLabels.has(scale)) return undefined;
+      const saved = this.savedMainTickmarkLabels.get(scale);
+      this.savedMainTickmarkLabels.delete(scale);
+      return saved;
+    };
+
+    // Narrow a scale's label band to its compact labels, and give the scale
+    // its own band back once the chart leaves compact mode.
+    const bandFor = (
+      scale: ExternalScaleElement,
+      compact: boolean,
+      thickness: number | undefined
+    ): number | undefined => {
+      if (compact) {
+        if (
+          thickness === undefined ||
+          typeof scale.labelThickness !== 'number'
+        ) {
+          return undefined;
+        }
+        if (!this.savedLabelThickness.has(scale)) {
+          this.savedLabelThickness.set(scale, scale.labelThickness);
+        }
+        return thickness;
+      }
+      const saved = this.savedLabelThickness.get(scale);
+      this.savedLabelThickness.delete(scale);
+      return saved;
+    };
+
+    // Visual pixels into a viewBox stretched to the *effective* length; the
+    // reference `width` / `height` only matches in a reference-sized
+    // container, and every other one drifts.
     const verticalViewBoxPadding = this.fixedAspectRatioScaling
       ? {
           top: Math.round(
-            (padding.top * this.scaleReferenceSize) / this.height
+            (padding.top * this.scaleReferenceSize) / effectiveHeight
           ),
           bottom: Math.round(
-            (padding.bottom * this.scaleReferenceSize) / this.height
+            (padding.bottom * this.scaleReferenceSize) / effectiveHeight
           ),
         }
       : {top: padding.top, bottom: padding.bottom};
@@ -1279,27 +2062,13 @@ export class ObcChartLineBase extends LitElement {
     const horizontalViewBoxPadding = this.fixedAspectRatioScaling
       ? {
           left: Math.round(
-            (padding.left * this.scaleReferenceSize) / this.width
+            (padding.left * this.scaleReferenceSize) / effectiveWidth
           ),
           right: Math.round(
-            (padding.right * this.scaleReferenceSize) / this.width
+            (padding.right * this.scaleReferenceSize) / effectiveWidth
           ),
         }
       : {left: padding.left, right: padding.right};
-
-    // console.debug(`[chart-line-base] updateScaleProperties:`, {
-    //   fixedAspectRatioScaling: this.fixedAspectRatioScaling,
-    //   referenceWidth: this.width,
-    //   referenceHeight: this.height,
-    //   scaleReferenceSize: this.scaleReferenceSize,
-    //   effectiveWidth,
-    //   effectiveHeight,
-    //   scaleFactor: this.getScaleFactor(),
-    //   basePadding: padding,
-    //   verticalViewBoxPadding,
-    //   horizontalViewBoxPadding,
-    //   showLabels,
-    // });
 
     // Update each slotted scale
     const updates: Array<
@@ -1310,20 +2079,34 @@ export class ObcChartLineBase extends LitElement {
       ]
     > = [];
 
+    /** Empty on a side whose slotted scale carries a range of its own. */
+    const rangeProps = (
+      side: 'left' | 'right' | 'top' | 'bottom',
+      range: {min: number; max: number}
+    ): Partial<ExternalScaleElement> =>
+      this.ownsSlottedScaleRange(side)
+        ? {
+            minValue: range.min,
+            maxValue: range.max,
+            ...(side === 'left' || side === 'right'
+              ? {reverse: this.isYAxisReversed(side)}
+              : {}),
+          }
+        : {};
+
     // Left scale
     if (this.leftScaleSlot) {
       const scales =
         this.leftScaleSlot.assignedElements() as ExternalScaleElement[];
       scales.forEach((scale) => {
         const props: Partial<ExternalScaleElement> = {
-          minValue: yMin,
-          maxValue: yMax,
+          ...rangeProps('left', leftRange),
           height: effectiveHeight, // Use effective height for proper sizing
           paddingTop: verticalViewBoxPadding.top,
           paddingBottom: verticalViewBoxPadding.bottom,
           paddingStart: verticalViewBoxPadding.top,
           paddingEnd: verticalViewBoxPadding.bottom,
-          showLabels,
+          showLabels: showLabels || compactY,
           fixedAspectRatio: this.fixedAspectRatioScaling,
           // Use chart's scaleReferenceSize property for proportional scaling
           scaleReferenceSize: this.scaleReferenceSize,
@@ -1336,6 +2119,10 @@ export class ObcChartLineBase extends LitElement {
         if (this.yStepSize !== undefined) {
           props.primaryTickmarkInterval = this.yStepSize;
         }
+        const band = bandFor(scale, compactY, compactYThickness);
+        const mainLabels = mainLabelsFor(scale, compactY);
+        if (mainLabels !== undefined) props.showMainTickmarkLabels = mainLabels;
+        if (band !== undefined) props.labelThickness = band;
         updates.push([this.leftScaleSlot, scale, props]);
       });
     }
@@ -1346,14 +2133,13 @@ export class ObcChartLineBase extends LitElement {
         this.rightScaleSlot.assignedElements() as ExternalScaleElement[];
       scales.forEach((scale) => {
         const props: Partial<ExternalScaleElement> = {
-          minValue: yMin,
-          maxValue: yMax,
+          ...rangeProps('right', rightRange),
           height: effectiveHeight, // Use effective height for proper sizing
           paddingTop: verticalViewBoxPadding.top,
           paddingBottom: verticalViewBoxPadding.bottom,
           paddingStart: verticalViewBoxPadding.top,
           paddingEnd: verticalViewBoxPadding.bottom,
-          showLabels,
+          showLabels: showLabels || compactY,
           fixedAspectRatio: this.fixedAspectRatioScaling,
           // Use chart's scaleReferenceSize property for proportional scaling
           scaleReferenceSize: this.scaleReferenceSize,
@@ -1366,6 +2152,10 @@ export class ObcChartLineBase extends LitElement {
         if (this.yStepSize !== undefined) {
           props.primaryTickmarkInterval = this.yStepSize;
         }
+        const band = bandFor(scale, compactY, compactYThickness);
+        const mainLabels = mainLabelsFor(scale, compactY);
+        if (mainLabels !== undefined) props.showMainTickmarkLabels = mainLabels;
+        if (band !== undefined) props.labelThickness = band;
         updates.push([this.rightScaleSlot, scale, props]);
       });
     }
@@ -1376,14 +2166,13 @@ export class ObcChartLineBase extends LitElement {
         this.topScaleSlot.assignedElements() as ExternalScaleElement[];
       scales.forEach((scale) => {
         const props: Partial<ExternalScaleElement> = {
-          minValue: xMin,
-          maxValue: xMax,
+          ...xRange,
           width: effectiveWidth, // Use effective width for proper sizing
           paddingLeft: horizontalViewBoxPadding.left,
           paddingRight: horizontalViewBoxPadding.right,
           paddingStart: horizontalViewBoxPadding.left,
           paddingEnd: horizontalViewBoxPadding.right,
-          showLabels,
+          showLabels: showLabels || compactX,
           fixedAspectRatio: this.fixedAspectRatioScaling,
           // Use chart's scaleReferenceSize property for proportional scaling
           scaleReferenceSize: this.scaleReferenceSize,
@@ -1396,6 +2185,10 @@ export class ObcChartLineBase extends LitElement {
         if (this.xStepSize !== undefined) {
           props.primaryTickmarkInterval = this.xStepSize;
         }
+        const band = bandFor(scale, compactX, compactXThickness);
+        const mainLabels = mainLabelsFor(scale, compactX);
+        if (mainLabels !== undefined) props.showMainTickmarkLabels = mainLabels;
+        if (band !== undefined) props.labelThickness = band;
         updates.push([this.topScaleSlot, scale, props]);
       });
     }
@@ -1406,14 +2199,13 @@ export class ObcChartLineBase extends LitElement {
         this.bottomScaleSlot.assignedElements() as ExternalScaleElement[];
       scales.forEach((scale) => {
         const props: Partial<ExternalScaleElement> = {
-          minValue: xMin,
-          maxValue: xMax,
+          ...xRange,
           width: effectiveWidth, // Use effective width for proper sizing
           paddingLeft: horizontalViewBoxPadding.left,
           paddingRight: horizontalViewBoxPadding.right,
           paddingStart: horizontalViewBoxPadding.left,
           paddingEnd: horizontalViewBoxPadding.right,
-          showLabels,
+          showLabels: showLabels || compactX,
           fixedAspectRatio: this.fixedAspectRatioScaling,
           // Use chart's scaleReferenceSize property for proportional scaling
           scaleReferenceSize: this.scaleReferenceSize,
@@ -1426,16 +2218,57 @@ export class ObcChartLineBase extends LitElement {
         if (this.xStepSize !== undefined) {
           props.primaryTickmarkInterval = this.xStepSize;
         }
+        const band = bandFor(scale, compactX, compactXThickness);
+        const mainLabels = mainLabelsFor(scale, compactX);
+        if (mainLabels !== undefined) props.showMainTickmarkLabels = mainLabels;
+        if (band !== undefined) props.labelThickness = band;
         updates.push([this.bottomScaleSlot, scale, props]);
       });
     }
 
     // Apply all updates
-    // console.debug(`[chart-line-base] Applying ${updates.length} scale updates`);
     updates.forEach(([_slot, scale, props]) => {
-      // console.debug(`  - Updating scale:`, props);
       Object.assign(scale, props);
     });
+  }
+
+  /**
+   * Whether the chart's axis range is what a slotted scale on this side should
+   * describe. A subclass that slots a scale of its own and gives it a separate
+   * range returns false for that side, otherwise the sync below overwrites it.
+   */
+  protected ownsSlottedScaleRange(
+    _side: 'left' | 'right' | 'top' | 'bottom'
+  ): boolean {
+    return true;
+  }
+
+  /**
+   * Push the current axis ranges to the slotted scales. The full
+   * `updateScaleProperties()` cascade runs before the chart is (re)built and
+   * so reads the previous chart's ranges; this closes that gap once the new
+   * chart exists, and keeps auto-ranged scales in step with the data.
+   */
+  private syncSlottedScaleRanges() {
+    const apply = (
+      side: 'left' | 'right' | 'top' | 'bottom',
+      slot: HTMLSlotElement | undefined,
+      range: {min: number; max: number} | undefined
+    ) => {
+      if (!slot || !range || !this.ownsSlottedScaleRange(side)) return;
+      (slot.assignedElements() as ExternalScaleElement[]).forEach((scale) => {
+        scale.minValue = range.min;
+        scale.maxValue = range.max;
+        if (side === 'left' || side === 'right') {
+          scale.reverse = this.isYAxisReversed(side);
+        }
+      });
+    };
+    apply('left', this.leftScaleSlot, this.resolveAxisRange('left'));
+    apply('right', this.rightScaleSlot, this.resolveAxisRange('right'));
+    const xRange = this.resolveSlottedXRange();
+    apply('top', this.topScaleSlot, xRange);
+    apply('bottom', this.bottomScaleSlot, xRange);
   }
 
   private hasAnyChanged(
@@ -1474,9 +2307,7 @@ export class ObcChartLineBase extends LitElement {
     chart.data.datasets.forEach((ds, _idx) => {
       const dataset = ds as ChartDataset<'line'> & {
         fill?:
-          | boolean
-          | number
-          | {target: number; above: string; below: string};
+          boolean | number | {target: number; above: string; below: string};
         yAxisID?: string;
       };
 
@@ -1514,7 +2345,7 @@ export class ObcChartLineBase extends LitElement {
       if (!Number.isFinite(stop) || range === 0) {
         stop = 0.5; // Fallback to middle if calculation fails
       } else {
-        stop = Math.max(0, Math.min(1, stop));
+        stop = clamp(stop, 0, 1);
       }
 
       // Extract threshold color variables (used for both fill and border)
@@ -1547,6 +2378,35 @@ export class ObcChartLineBase extends LitElement {
 
     // Only update if watched properties changed
     if (!this.hasAnyChanged(changed, LINE_GRAPH_WATCHED_PROP_NAMES)) {
+      return;
+    }
+
+    // Refresh the derived size before the `hasLabelPadding` branch below:
+    // both can change in one update (the tank sets both on its embedded
+    // gauge-trend), and the label-padding path would then rebuild against a
+    // stale size. Nothing is lost — `updateComputedDimensions()` rebuilds via
+    // `syncScalesAndChart()`, the same `updateScaleProperties()` cascade.
+    if (this.hasAnyChanged(changed, LINE_GRAPH_DIMENSION_PROP_NAMES)) {
+      // Recreates the chart itself when the derived size actually moved.
+      if (this.updateComputedDimensions()) return;
+    }
+
+    // Only `syncScalesAndChart()` re-cascades to slotted scales, and these are
+    // the changes that need it: the two flags decide what a scale renders, and
+    // a threshold crossing reaches a plain rebuild in pixel mode.
+    const belowThreshold = this.isBelowThreshold();
+    const crossedThreshold =
+      this.wasBelowThreshold !== undefined &&
+      this.wasBelowThreshold !== belowThreshold;
+    this.wasBelowThreshold = belowThreshold;
+
+    if (
+      (changed.has('hasLabelPadding') ||
+        changed.has('rangeLabels') ||
+        crossedThreshold) &&
+      this.hasExternalScales()
+    ) {
+      this.syncScalesAndChart();
       return;
     }
 
@@ -1607,38 +2467,27 @@ export class ObcChartLineBase extends LitElement {
   }
 
   /**
-   * Setup resize observer to detect height threshold crossings
-   * Recreates chart when crossing MIN_HEIGHT_WITH_LABELS (192px) to show/hide labels
-   * Detect when height property changes programmatically (e.g., via Storybook controls or user code)
+   * Crossing MIN_HEIGHT_WITH_LABELS changes the plugin set, so the chart is
+   * rebuilt rather than updated.
    */
   private setupResizeObserver() {
     if (!this.canvasEl) return;
 
-    this.resizeObserver = new ResizeObserver(() => {
-      // Guard: Check if chart and canvas still exist (component may be disconnecting)
-      if (!this.chart || !this.canvasEl || !this.canvasEl.isConnected) return;
-
-      const height = this.canvasEl.clientHeight;
-      const isAboveThreshold =
-        height >= RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS;
-
-      // Only recreate chart if we crossed the threshold
-      if (isAboveThreshold !== this.wasAboveThreshold) {
-        this.wasAboveThreshold = isAboveThreshold;
-        this.chart.destroy();
-        this.createChart();
-      } else {
-        // Height changed but didn't cross threshold - just update
-        this.updateChart();
+    this.resizeObserver = observeLabelThreshold(
+      this.canvasEl,
+      () =>
+        (this.canvasEl?.clientHeight ?? 0) >=
+          RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS &&
+        (this.canvasEl?.clientWidth ?? 0) >=
+          RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS,
+      {
+        rebuild: () => {
+          this.chart?.destroy();
+          this.createChart();
+        },
+        update: () => this.updateChart(),
       }
-    });
-
-    this.resizeObserver.observe(this.canvasEl);
-
-    // Initialize threshold state
-    const height = this.canvasEl.clientHeight;
-    this.wasAboveThreshold =
-      height >= RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS;
+    );
   }
 
   /**
@@ -1661,24 +2510,31 @@ export class ObcChartLineBase extends LitElement {
   }
 
   /**
-   * Calculate actual dimensions based on parent width and aspect ratio.
-   * Only used when fixedAspectRatioScaling is true.
+   * Refresh `computedWidth` / `computedHeight`, the derived pixel size the
+   * chart and its slotted scales are laid out from.
+   *
+   * In pixel mode they mirror `width` / `height`. Only in
+   * `fixedAspectRatioScaling` mode are they derived — from the wrapper's
+   * measured width and the aspect ratio the `width` / `height` pair defines —
+   * and only then can this rebuild the chart.
+   *
+   * @returns `true` when the change was significant enough that the chart was
+   * rebuilt here, so the caller must not rebuild it a second time.
    */
-  private updateComputedDimensions() {
+  private updateComputedDimensions(): boolean {
     if (!this.fixedAspectRatioScaling) {
       // In pixel mode, use width/height directly
       this.computedWidth = this.width;
       this.computedHeight = this.height;
-      return;
+      return false;
     }
 
-    // Get the wrapper element
     const wrapper = this.renderRoot.querySelector('.wrapper') as HTMLElement;
-    if (!wrapper) return;
+    if (!wrapper) return false;
 
     // Get parent's available width
     const parentWidth = wrapper.clientWidth;
-    if (parentWidth <= 0) return;
+    if (parentWidth <= 0) return false;
 
     // Calculate aspect ratio from width/height properties
     const aspectRatio = this.width / this.height;
@@ -1686,18 +2542,6 @@ export class ObcChartLineBase extends LitElement {
     // Use parent width as actual width, calculate height from aspect ratio
     const newWidth = parentWidth;
     const newHeight = Math.round(parentWidth / aspectRatio);
-
-    // console.debug(`[chart-line-base] updateComputedDimensions:`, {
-    //   fixedAspectRatioScaling: this.fixedAspectRatioScaling,
-    //   referenceWidth: this.width,
-    //   referenceHeight: this.height,
-    //   scaleReferenceSize: this.scaleReferenceSize,
-    //   parentWidth,
-    //   aspectRatio,
-    //   newWidth,
-    //   newHeight,
-    //   scaleFactor: newWidth / this.width,
-    // });
 
     // Only update if dimensions changed
     if (this.computedWidth !== newWidth || this.computedHeight !== newHeight) {
@@ -1708,13 +2552,18 @@ export class ObcChartLineBase extends LitElement {
       // Note: syncScalesAndChart() handles chart destruction and creation internally,
       // so we only call createChart() directly when there are no external scales.
       if (this.hasExternalScales()) {
-        this.syncScalesAndChart();
+        // syncScalesAndChart() bails without rebuilding when a sync is already
+        // in flight or the effective chart area is degenerate; reporting its
+        // real outcome keeps the caller's own rebuild as the fallback.
+        return this.syncScalesAndChart();
       } else if (this.chart) {
         // No external scales - just recreate chart
         this.chart.destroy();
         this.createChart();
+        return true;
       }
     }
+    return false;
   }
 
   /**
@@ -1760,31 +2609,29 @@ export class ObcChartLineBase extends LitElement {
   protected buildDataset(
     data:
       | number[]
-      | ChartDataset<
-          'line',
-          (number | {x: string | number | Date; y: number})[]
-        >,
+      | {x: number; y: number}[]
+      | ChartDataset<'line', ChartLinePoint[]>,
     index: number,
     chartColors: string[],
     totalCount = 1
-  ): ChartDataset<
-    'line',
-    number[] | (number | {x: string | number | Date; y: number})[]
-  > {
+  ): ChartDataset<'line', ChartLinePoint[]> {
     const currentColor = chartColors[index % chartColors.length];
 
-    // Check if input is existing dataset (has 'data' property) or raw values array
-    const existingDataset =
-      'data' in (data as object)
-        ? (data as ChartDataset<
-            'line',
-            (number | {x: string | number | Date; y: number})[]
-          >)
-        : null;
-    const values = existingDataset ? null : (data as number[]);
+    // Raw input is an array (values or points); anything else is an existing dataset
+    const existingDataset = Array.isArray(data)
+      ? null
+      : (data as ChartDataset<'line', ChartLinePoint[]>);
+    const values = Array.isArray(data)
+      ? (data as number[] | {x: number; y: number}[])
+      : null;
 
     const borderColor = existingDataset?.borderColor ?? currentColor;
-    const fillFlag = existingDataset?.fill ?? this.shouldApplyFill();
+    const explicitFill = existingDataset?.fill;
+    // A dataset index target of 0 is a valid fill, so test for presence, not truth.
+    const fillFlag =
+      explicitFill !== undefined
+        ? explicitFill !== false
+        : this.shouldApplyFill();
     const tension = this.lineMode === 'smooth' ? this.DEFAULT_TENSION : 0;
 
     // For stacked mode, add divider lines between datasets (except the topmost one)
@@ -1813,8 +2660,9 @@ export class ObcChartLineBase extends LitElement {
     const result = {
       ...(existingDataset || {}),
       data: existingDataset?.data ?? values!,
+      yAxisID: existingDataset?.yAxisID ?? this.primaryYAxisId,
       borderColor,
-      backgroundColor,
+      backgroundColor: existingDataset?.backgroundColor ?? backgroundColor,
       borderWidth: existingDataset?.borderWidth ?? 2,
       showLine: existingDataset?.showLine ?? true,
       tension: existingDataset?.tension ?? tension,
@@ -1825,8 +2673,14 @@ export class ObcChartLineBase extends LitElement {
       pointBorderColor: existingDataset?.pointBorderColor ?? borderColor,
       pointBorderWidth: existingDataset?.pointBorderWidth ?? 2,
       stepped: existingDataset?.stepped ?? this.lineMode === 'stepped',
-      // Use 'start' to fill from chart bottom, not 'origin' (y=0)
-      fill: fillFlag ? 'start' : false,
+      // 'start' is the pixel bottom, not y=0; an explicit fill target (a
+      // dataset index, 'end', {value}) is the caller's and passes through.
+      fill:
+        explicitFill === undefined || explicitFill === true
+          ? fillFlag
+            ? 'start'
+            : false
+          : explicitFill,
       spanGaps: existingDataset?.spanGaps ?? true,
       // Add segment styling for stacked divider lines
       ...(needsDivider && {
@@ -1840,35 +2694,37 @@ export class ObcChartLineBase extends LitElement {
       }),
     };
 
-    return result as ChartDataset<
-      'line',
-      number[] | (number | {x: string | number | Date; y: number})[]
-    >;
+    return result as ChartDataset<'line', ChartLinePoint[]>;
   }
 
   /**
-   * Create threshold mode datasets: invisible baseline + main dataset with above/below fills
+   * Create threshold mode datasets: invisible baseline + main dataset with
+   * above/below fills. Accepts plain values (category mode) or {x, y} points
+   * (time/number mode); the baseline mirrors the input x-positions.
    */
   protected createThresholdDatasets(
-    values: number[],
+    values: number[] | {x: number; y: number}[],
     chartColors: string[]
-  ): ChartDataset<'line', number[]>[] {
-    const numericValues = values
-      .map((v) => Number(v))
+  ): ChartDataset<'line', ChartLinePoint[]>[] {
+    const yValues = values
+      .map((v) => (typeof v === 'number' ? v : v.y))
       .filter((n) => Number.isFinite(n));
-    const minV = numericValues.length ? Math.min(...numericValues) : 0;
-    const maxV = numericValues.length ? Math.max(...numericValues) : 100;
+    const minV = yValues.length ? Math.min(...yValues) : 0;
+    const maxV = yValues.length ? Math.max(...yValues) : 100;
     const threshold = (minV + maxV) / 2;
-    const baselineData = numericValues.map(() => threshold);
+    const baselineData: ChartLinePoint[] = values.map((v) =>
+      typeof v === 'number' ? threshold : {x: v.x, y: threshold}
+    );
 
     const lowRaw = LINE_GRAPH_GRID_CONFIG.thresholdLowColorVar;
     const highRaw = LINE_GRAPH_GRID_CONFIG.thresholdHighColorVar;
     const highFill = applyAlphaToColor(this, highRaw, 0.35);
     const lowFill = applyAlphaToColor(this, lowRaw, 0.35);
 
-    const baselineDataset: ChartDataset<'line', number[]> = {
+    const baselineDataset: ChartDataset<'line', ChartLinePoint[]> = {
       label: 'threshold-baseline',
       data: baselineData,
+      yAxisID: this.primaryYAxisId,
       borderColor: 'transparent',
       backgroundColor: 'transparent',
       borderWidth: 0,
@@ -1878,10 +2734,7 @@ export class ObcChartLineBase extends LitElement {
       spanGaps: true,
     };
 
-    const main = this.buildDataset(values, 0, chartColors) as ChartDataset<
-      'line',
-      number[]
-    >;
+    const main = this.buildDataset(values, 0, chartColors);
     (main as unknown as Record<string, unknown>).fill = {
       target: 0,
       above: highFill,
@@ -1894,7 +2747,9 @@ export class ObcChartLineBase extends LitElement {
   }
 
   /**
-   * Prepare normalized datasets for multi-series charts
+   * Prepare normalized datasets for multi-series charts.
+   * In time/number mode every point's x is normalized (epoch ms / number)
+   * so strings, Dates and Temporal objects position correctly.
    */
   protected prepareMultiSeriesDatasets() {
     const defaultPalette =
@@ -1907,19 +2762,48 @@ export class ObcChartLineBase extends LitElement {
       defaultPalette
     );
 
+    // Normalize first, then warn once per assignment with the aggregate
+    // count across ALL series — warning inside the per-dataset loop would
+    // either flood the console or (with ref-based dedup) silently swallow
+    // failures in every series after the first.
+    const normalized = this.datasets!.map((ds) => this.normalizeDatasetX(ds));
+    if (this.isNumericXAxis) {
+      this.warnOnInvalidX(
+        normalized.flatMap((ds) =>
+          (ds.data ?? []).map((pt) =>
+            pt && typeof pt === 'object' ? (pt.x as number) : 0
+          )
+        ),
+        this.datasets
+      );
+    }
+
     const totalCount = this.datasets!.length;
-    return this.datasets!.map((ds, i) =>
+    return normalized.map((ds, i) =>
       this.buildDataset(ds, i, chartColors, totalCount)
     );
   }
 
+  /** @internal - Return a copy of the dataset with normalized point x-values. */
+  private normalizeDatasetX(
+    ds: ChartDataset<'line', ChartLinePoint[]>
+  ): ChartDataset<'line', ChartLinePoint[]> {
+    if (!this.isNumericXAxis || !ds.data) return ds;
+    const data = ds.data.map((pt) =>
+      pt && typeof pt === 'object' && 'x' in pt
+        ? {...pt, x: normalizeXValue(pt.x, this.xValueMode)}
+        : pt
+    );
+    return {...ds, data};
+  }
+
   /**
-   * Prepare datasets for single-series charts
-   * Handles both regular and threshold fill modes
+   * Prepare datasets for single-series charts.
+   * Category mode: labels + numeric values (unchanged legacy path).
+   * Time/number mode: normalized {x, y} points on a linear scale.
+   * Handles both regular and threshold fill modes.
    */
   protected prepareSingleSeriesDatasets() {
-    const values = this.data.map((d) => d.value);
-    const labels = this.data.map((d) => d.label);
     const defaultPalette =
       this.priority === Priority.enhanced
         ? CHART_SECTOR_ENHANCED_COLORS
@@ -1932,12 +2816,87 @@ export class ObcChartLineBase extends LitElement {
     const fill = this.shouldApplyFill();
     const fillMode = this.getFillMode();
 
+    if (this.isNumericXAxis) {
+      const points = this.data.map((d) => ({
+        x: normalizeXValue(d.x ?? d.label ?? NaN, this.xValueMode),
+        y: d.value,
+      }));
+      this.warnOnInvalidX(
+        points.map((p) => p.x),
+        this.data
+      );
+      const datasets =
+        fill && fillMode === 'threshold'
+          ? this.createThresholdDatasets(points, chartColors)
+          : [this.buildDataset(points, 0, chartColors)];
+      return {datasets, labels: [] as (string | number)[]};
+    }
+
+    const values = this.data.map((d) => d.value);
+    const labels = this.data.map((d) => d.label ?? String(d.x ?? ''));
+
     const datasets =
       fill && fillMode === 'threshold'
         ? this.createThresholdDatasets(values, chartColors)
         : [this.buildDataset(values, 0, chartColors)];
 
     return {datasets, labels};
+  }
+
+  /**
+   * One padding source for the Chart.js layout and the slotted scales: two
+   * sources painted the canvas over a scale and inset a scale inside a chart.
+   */
+  private computeChartPadding(): {
+    top: number;
+    right: number;
+    bottom: number;
+    left: number;
+  } {
+    const isTooSmall = this.isBelowThreshold();
+    // Get scale factor for proportional scaling in fixed aspect ratio mode
+    const scaleFactor = this.getScaleFactor();
+
+    const defaultPaddingScaled = !this.hasLabelPadding
+      ? 0
+      : this.fixedAspectRatioScaling
+        ? Math.round(CHART_DIMENSIONS.CANVAS_PADDING * scaleFactor)
+        : CHART_DIMENSIONS.CANVAS_PADDING;
+
+    const {y: yTexts, x: xTexts} = this.refreshRangeLabels();
+    const context = this.canvasEl?.getContext('2d');
+    const gutters =
+      (yTexts.length || xTexts.length) && context
+        ? measureRangeLabelGutters(
+            context,
+            this.rangeLabelFont(),
+            yTexts,
+            xTexts
+          )
+        : {side: 0, bottom: 0};
+
+    const scalePadding = this.calculatePaddingFromScales();
+    const freeSide = (side: 'top' | 'right' | 'bottom' | 'left'): number => {
+      if (!isTooSmall) return defaultPaddingScaled;
+      if (side === 'bottom') return gutters.bottom;
+      return side === this.ySide ? gutters.side : 0;
+    };
+    const padding = {
+      top: this.externalScaleDimensions.has('top')
+        ? scalePadding.top
+        : freeSide('top'),
+      right: this.externalScaleDimensions.has('right')
+        ? scalePadding.right
+        : freeSide('right'),
+      bottom: this.externalScaleDimensions.has('bottom')
+        ? scalePadding.bottom
+        : freeSide('bottom'),
+      left: this.externalScaleDimensions.has('left')
+        ? scalePadding.left
+        : freeSide('left'),
+    };
+
+    return padding;
   }
 
   /**
@@ -1953,64 +2912,7 @@ export class ObcChartLineBase extends LitElement {
       effectiveWidth < RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS ||
       effectiveHeight < RECTANGULAR_CHART_DIMENSIONS.MIN_HEIGHT_WITH_LABELS;
 
-    // Get scale factor for proportional scaling in fixed aspect ratio mode
-    const scaleFactor = this.getScaleFactor();
-
-    // Calculate padding for the chart.
-    // External scales report their actual visual (scaled) thickness when in fixedAspectRatio mode,
-    // so we use those values directly without additional scaling.
-    // For sides without external scales, we apply the chart's scaleFactor to default padding.
-    let padding: {top: number; right: number; bottom: number; left: number};
-
-    if (isTooSmall) {
-      padding = {top: 0, right: 0, bottom: 0, left: 0};
-    } else if (this.hasExternalScales()) {
-      // External scales report their visual dimensions (already scaled when fixedAspectRatio=true)
-      const scalePadding = this.calculatePaddingFromScales();
-      // For sides with external scales, use their reported dimensions directly
-      // For sides without external scales, apply chart's scaleFactor to default padding
-      const defaultPaddingScaled = this.fixedAspectRatioScaling
-        ? Math.round(CHART_DIMENSIONS.CANVAS_PADDING * scaleFactor)
-        : CHART_DIMENSIONS.CANVAS_PADDING;
-      padding = {
-        top: this.externalScaleDimensions.has('top')
-          ? scalePadding.top
-          : defaultPaddingScaled,
-        right: this.externalScaleDimensions.has('right')
-          ? scalePadding.right
-          : defaultPaddingScaled,
-        bottom: this.externalScaleDimensions.has('bottom')
-          ? scalePadding.bottom
-          : defaultPaddingScaled,
-        left: this.externalScaleDimensions.has('left')
-          ? scalePadding.left
-          : defaultPaddingScaled,
-      };
-    } else {
-      // No external scales - apply scaleFactor to all default padding
-      const defaultPaddingScaled = this.fixedAspectRatioScaling
-        ? Math.round(CHART_DIMENSIONS.CANVAS_PADDING * scaleFactor)
-        : CHART_DIMENSIONS.CANVAS_PADDING;
-      padding = {
-        top: defaultPaddingScaled,
-        right: defaultPaddingScaled,
-        bottom: defaultPaddingScaled,
-        left: defaultPaddingScaled,
-      };
-    }
-
-    // console.debug(`[chart-line-base] getChartOptions:`, {
-    //   fixedAspectRatioScaling: this.fixedAspectRatioScaling,
-    //   referenceWidth: this.width,
-    //   referenceHeight: this.height,
-    //   effectiveWidth,
-    //   effectiveHeight,
-    //   scaleFactor,
-    //   scaleReferenceSize: this.scaleReferenceSize,
-    //   padding,
-    //   externalScaleDimensions: Object.fromEntries(this.externalScaleDimensions),
-    //   hasExternalScales: this.hasExternalScales(),
-    // });
+    const padding = this.computeChartPadding();
 
     // Set CSS variables for wrapper and canvas sizing
     if (this.fixedAspectRatioScaling) {
@@ -2051,13 +2953,22 @@ export class ObcChartLineBase extends LitElement {
           callbacks: {
             title: () => '',
             label: (context) => {
-              const label = context.label ?? '';
               const value =
                 typeof context.parsed === 'object' && context.parsed !== null
                   ? (context.parsed as {y: number}).y
                   : (context.parsed as number);
-              const numericValue = formatNumericValue(value, 1, false, 0);
+              const numericValue = formatChartNumber(value, 1, false, 0);
               const unit = this.unit ? `${this.unit}` : '';
+              let label = context.label ?? '';
+              if (this.isNumericXAxis) {
+                const x =
+                  typeof context.parsed === 'object' && context.parsed !== null
+                    ? (context.parsed as {x: number}).x
+                    : NaN;
+                const relativeTo =
+                  this.timeDisplay === TimeDisplay.minutes ? refTs : undefined;
+                label = formatXValue(x, this.xValueMode, relativeTo);
+              }
               return `${label} ${numericValue}${unit}`;
             },
           },
@@ -2071,24 +2982,36 @@ export class ObcChartLineBase extends LitElement {
   /**
    * Compute reference timestamp for time axis formatting.
    * Returns earliest timestamp for 'date' mode, latest for 'minutes' mode.
+   * A pinned x range supplies the reference instead, so the axis edge stays
+   * the reference while the data has not reached it yet.
    */
   private computeTimeReference(): number | undefined {
+    if (this.xAxisType !== XAxisType.time) return undefined;
+
+    const pinned =
+      this.timeDisplay === TimeDisplay.minutes
+        ? this.xAxis?.max
+        : this.xAxis?.min;
+    if (pinned !== undefined && Number.isFinite(pinned)) return pinned;
+
     const timestamps: number[] = [];
 
     // Collect timestamps from datasets
     if (this.datasets?.length) {
       this.datasets.forEach((ds) => {
         if (!ds.data) return;
-        (ds.data as (number | {x: unknown; y: number})[]).forEach((pt) => {
+        ds.data.forEach((pt) => {
           if (pt && typeof pt === 'object' && 'x' in pt) {
-            const xVal = (pt as {x: unknown}).x;
-            const ts =
-              typeof xVal === 'string'
-                ? new Date(String(xVal)).getTime()
-                : Number(xVal);
+            const ts = normalizeXValue(pt.x, XValueMode.time);
             if (Number.isFinite(ts)) timestamps.push(ts);
           }
         });
+      });
+    } else if (this.data?.length) {
+      // Collect timestamps from single-series data items
+      this.data.forEach((d) => {
+        const ts = normalizeXValue(d.x ?? d.label ?? NaN, XValueMode.time);
+        if (Number.isFinite(ts)) timestamps.push(ts);
       });
     }
 
@@ -2153,16 +3076,21 @@ export class ObcChartLineBase extends LitElement {
       LINE_GRAPH_LABEL_CONFIG.fontColorVar
     );
 
-    // Extract common values used for both x and y axes
-    const showLabels = showTickMarks && !isTooSmall;
-    const showTicks = showTickMarks && !isTooSmall;
+    // Extract common values used for both x and y axes.
+    // When hasLabelPadding=false the chart renders edge-to-edge, so labels are
+    // force-hidden to prevent clipping.
+    const showLabels = showTickMarks && !isTooSmall && this.hasLabelPadding;
+    const showTicks = showTickMarks && !isTooSmall && this.hasLabelPadding;
     const fontConfig = {family: fontFamily, size: fontSize, weight: fontWeight};
 
     const x = {
-      type: this.xAxisType === 'time' ? 'linear' : 'category',
+      type: this.xAxisType === XAxisType.category ? 'category' : 'linear',
       offset: false, // Always edge-to-edge (no padding on x-axis)
       grace: 0, // No extra margin
       bounds: 'data', // Use data bounds for edge-to-edge rendering
+      // A category axis has no numeric range to pin.
+      min: this.isNumericXAxis ? this.xAxis?.min : undefined,
+      max: this.isNumericXAxis ? this.xAxis?.max : undefined,
       grid: {
         display: this.showGrid && this.showGridX,
         color: gridColor,
@@ -2178,18 +3106,12 @@ export class ObcChartLineBase extends LitElement {
         maxTicksLimit: this.xTicksLimit,
         stepSize: this.xStepSize,
         callback: (value: unknown) => {
-          if (this.xAxisType !== 'time') return String(value);
+          if (!this.isNumericXAxis) return String(value);
           const n = Number(value);
           if (!Number.isFinite(n)) return String(value);
-          if (
-            this.timeDisplay === 'minutes' &&
-            minX !== undefined &&
-            Number.isFinite(minX)
-          ) {
-            const minutes = Math.round((n - minX) / 60000);
-            return `${minutes}min`;
-          }
-          return new Date(n).toLocaleDateString();
+          const relativeTo =
+            this.timeDisplay === TimeDisplay.minutes ? minX : undefined;
+          return formatXValue(n, this.xValueMode, relativeTo);
         },
       },
       border: {
@@ -2205,6 +3127,7 @@ export class ObcChartLineBase extends LitElement {
           position: axis.position ?? ('left' as 'left' | 'right'),
           min: axis.min,
           max: axis.max,
+          reverse: axis.reverse ?? false,
           gridDisplay: axis.grid ?? (this.showGrid && this.showGridY),
         }))
       : [
@@ -2213,17 +3136,19 @@ export class ObcChartLineBase extends LitElement {
             position: this.yAxisPosition,
             min: undefined,
             max: undefined,
+            reverse: false,
             gridDisplay: this.showGrid && this.showGridY,
           },
         ];
 
     const scalesRecord: Record<string, unknown> = {x};
 
-    yAxesConfig.forEach(({id, position, min, max, gridDisplay}) => {
+    yAxesConfig.forEach(({id, position, min, max, reverse, gridDisplay}) => {
       scalesRecord[id] = {
         type: 'linear',
         display: true,
         position,
+        reverse,
         stacked: this.shouldStack() && this.getFillMode() !== 'threshold',
         grace: isTooSmall ? 0 : undefined,
         bounds: isTooSmall ? 'data' : 'ticks',
@@ -2283,12 +3208,19 @@ export class ObcChartLineBase extends LitElement {
       type: 'line',
       data: {labels, datasets},
       options: this.getChartOptions(),
-      plugins: this.borderRadiusPosition ? [this.createBorderPlugin()] : [],
+      plugins: [
+        ...(this.borderRadiusPosition ? [this.createBorderPlugin()] : []),
+        ...(this.rangeLabels !== RangeLabels.none
+          ? [this.createRangeLabelsPlugin()]
+          : []),
+        this.createMarkersPlugin(),
+      ],
     } as ChartConfiguration<'line'>);
 
     // Defer legend update to next tick to ensure Chart.js metadata is initialized
     requestAnimationFrame(() => this.updateLegend());
     this.applyFillModes();
+    this.syncSlottedScaleRanges();
   }
 
   private updateChart() {
@@ -2305,6 +3237,7 @@ export class ObcChartLineBase extends LitElement {
 
     this.applyFillModes();
     this.chart.update();
+    this.syncSlottedScaleRanges();
 
     // Update legend after chart update completes to ensure metadata is ready
     requestAnimationFrame(() => this.updateLegend());
@@ -2337,7 +3270,6 @@ export class ObcChartLineBase extends LitElement {
 
     // Guard: Check if chart has datasets
     if (!this.chart.data.datasets || this.chart.data.datasets.length === 0) {
-      // console.debug('[chart-line-base] updateLegend: skipped - no datasets available');
       this.legendDiv.innerHTML = '';
       return;
     }
@@ -2349,7 +3281,6 @@ export class ObcChartLineBase extends LitElement {
 
           // Guard: Check if metadata and controller are available
           if (!meta || !meta.controller) {
-            // console.debug(`[chart-line-base] updateLegend: dataset ${i} metadata not yet initialized`);
             return null;
           }
 

@@ -43,9 +43,11 @@ const meta: Meta<typeof ObcNavigationItem> = {
       ?group=${args.group}
       .hasIcon=${args.icon}
     >
-      ${args.icon
-        ? iconIdToIconHtml(args.icon as unknown as string, {slot: 'icon'})
-        : ''}
+      ${
+        args.icon
+          ? iconIdToIconHtml(args.icon as unknown as string, {slot: 'icon'})
+          : ''
+      }
     </obc-navigation-item>`;
   },
 } satisfies Meta<ObcNavigationItem>;

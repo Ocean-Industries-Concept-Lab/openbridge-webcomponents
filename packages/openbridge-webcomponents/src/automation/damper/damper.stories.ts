@@ -1,6 +1,9 @@
 import type {Meta, StoryObj} from '@storybook/web-vite';
 import {ObcDamper} from './damper.js';
-import {AutomationButtonReadoutPosition} from '../automation-button/automation-button.js';
+import {
+  AutomationButtonOrientation,
+  AutomationButtonReadoutPosition,
+} from '../automation-button/automation-button.js';
 import {AutomationButtonReadoutStackSize} from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 import './damper.js';
 import {crossDecorator} from '../../storybook-util.js';
@@ -13,14 +16,13 @@ const meta: Meta<typeof ObcDamper> = {
   component: 'obc-damper',
   decorators: [crossDecorator],
   args: {
-    tag: '0012',
+    tag: '#0012',
     readoutPosition: AutomationButtonReadoutPosition.bottom,
     readoutSize: AutomationButtonReadoutStackSize.regular,
     alert: false,
     progress: false,
-    vertical: false,
+    orientation: AutomationButtonOrientation.horizontal,
     showReadoutStack: true,
-    hasIdTag: true,
   },
   argTypes: {
     ...argTypesAbstractAutomationButtonPassiveSquare,
@@ -33,12 +35,12 @@ type Story = StoryObj<ObcDamper>;
 
 export const On: Story = {
   args: {
-    on: true,
+    turnedOn: true,
   },
 };
 
 export const Off: Story = {
   args: {
-    on: false,
+    turnedOn: false,
   },
 };

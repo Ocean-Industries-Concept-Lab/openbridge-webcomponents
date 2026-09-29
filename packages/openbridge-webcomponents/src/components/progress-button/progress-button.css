@@ -156,20 +156,10 @@
   bottom: 0;
   background-color: var(--instrument-enhanced-secondary-color);
   border-radius: 2px;
-  animation: linear-indeterminate-slide 1.5s ease-in-out infinite;
+  animation: indeterminate-slide 1.5s ease-in-out infinite;
 }
 
-@keyframes linear-indeterminate-slide {
-  0% {
-    transform: translateX(-100%);
-  }
-  60% {
-    transform: translateX(100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
-}
+@mixin indeterminate-slide-keyframes;
 
 .circular-wrapper {
   @mixin style style=flat visibleWrapperClass=.circular-visible-wrapper;

@@ -18,6 +18,9 @@ export enum FilterAlternativeIcon {
   filter4 = 'filter4',
 }
 
+/**
+ * @stable
+ */
 @customElement('obc-filter')
 export class ObcFilter extends ObcAbstractAutomationButtonSquared {
   @property({type: String}) alternativeIcon: FilterAlternativeIcon =
@@ -26,7 +29,7 @@ export class ObcFilter extends ObcAbstractAutomationButtonSquared {
   override get icon() {
     switch (this.alternativeIcon) {
       case FilterAlternativeIcon.filter2:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-filter-2-on
               usecsscolor
               slot="icon"
@@ -46,7 +49,7 @@ export class ObcFilter extends ObcAbstractAutomationButtonSquared {
             ></obi-filter-2-off>`;
         }
       case FilterAlternativeIcon.filter3:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-filter-3-on
               usecsscolor
               slot="icon"
@@ -66,7 +69,7 @@ export class ObcFilter extends ObcAbstractAutomationButtonSquared {
             ></obi-filter-3-off>`;
         }
       case FilterAlternativeIcon.filter4:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-filter-4-on
               usecsscolor
               slot="icon"
@@ -86,7 +89,7 @@ export class ObcFilter extends ObcAbstractAutomationButtonSquared {
             ></obi-filter-4-off>`;
         }
       default:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-filter-1-on
               usecsscolor
               slot="icon"

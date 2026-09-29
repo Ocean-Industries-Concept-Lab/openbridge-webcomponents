@@ -60,6 +60,13 @@ export enum PointerDirection {
  *
  * ## Events
  * - `card-click`: Fired when the card surface is activated in interactive mode.
+ * - `close-click`: Fired when the header close button is pressed (`hasCloseButton` with the detailed header variant).
+ *
+ * ## CSS Parts
+ * - `wrapper`: Outer layout wrapper holding the pointer arrows and the card surface.
+ * - `content-box`: Card surface with background, border, and rounded corners.
+ * - `header`: The `obc-poi-card-header` element, rendered when `showHeader` is true.
+ * - `content`: Body area wrapping the default slot.
  *
  * ## Best Practices
  * - Keep `index` stable so event payloads remain predictable.
@@ -73,17 +80,38 @@ export enum PointerDirection {
  * </obc-poi-card>
  * ```
  *
+ * @property fixedSize - When true, uses fixed 256x256px size; otherwise sizes to content.
+ * @availableWhen headerVariant showHeader==true
+ * @availableWhen cardTitle showHeader==true && headerVariant!=tag
+ * @property description - Passed to header (detailed variant only).
+ * @availableWhen description showHeader==true && headerVariant==detailed
+ * @property source - Source badge text (e.g., "AIS", "RADAR"). Hidden when empty.
+ * @availableWhen source showHeader==true && headerVariant!=tag
+ * @property timestamp - Passed to header (detailed variant only).
+ * @availableWhen timestamp showHeader==true && headerVariant==detailed
+ * @property hasLeadingIcon - Enables the leading-icon slot (regular header variant only).
+ * @availableWhen hasLeadingIcon showHeader==true && headerVariant==regular
+ * @property hasCloseButton - Enables the close button (detailed header variant only).
+ * @availableWhen hasCloseButton showHeader==true && headerVariant==detailed
+ * @property interactive - Enables click events, keyboard focus, and alert border support.
+ * @property hasAlert - Shows alert/caution border rings. Requires `interactive` to be true.
+ * @availableWhen hasAlert interactive==true
  * @slot - Main card body content.
  * @slot leading-icon - Optional icon used by the regular header variant.
  * @slot poi-icon - Optional icon used by the detailed header variant.
- * @fires card-click {CustomEvent<PoiCardClickDetail>} Fired when the card is activated in interactive mode.
+ * @csspart wrapper - Outer layout wrapper holding the pointer arrows and the card surface.
+ * @csspart content-box - Card surface with background, border, and rounded corners.
+ * @csspart header - The `obc-poi-card-header` element, rendered when `showHeader` is true.
+ * @csspart content - Body area wrapping the default slot.
+ * @fires {CustomEvent<PoiCardClickDetail>} card-click - Fired when the card is activated in interactive mode.
+ * @fires {CustomEvent<void>} close-click - Passed on from the header when its close button is pressed (`hasCloseButton` with the detailed header variant).
+ * @experimental
  */
 @customElement('obc-poi-card')
 export class ObcPoiCard extends LitElement {
   @property({type: String}) pointerDirection: PointerDirection =
     PointerDirection.None;
 
-  /** When true, uses fixed 256x256px size; otherwise sizes to content. */
   @property({type: Boolean}) fixedSize = false;
 
   @property({type: Boolean, attribute: false}) showHeader = true;
@@ -95,25 +123,18 @@ export class ObcPoiCard extends LitElement {
 
   @property({type: String}) cardTitle = '';
 
-  /** Passed to header (detailed variant only). */
   @property({type: String}) description = '';
 
-  /** Source badge text (e.g., "AIS", "RADAR"). Hidden when empty. */
   @property({type: String}) source = '';
 
-  /** Passed to header (detailed variant only). */
   @property({type: String}) timestamp = '';
 
-  /** Enables the leading-icon slot (regular header variant only). */
   @property({type: Boolean}) hasLeadingIcon = false;
 
-  /** Enables the close button (detailed header variant only). */
   @property({type: Boolean}) hasCloseButton = false;
 
-  /** Enables click events, keyboard focus, and alert border support. */
   @property({type: Boolean}) interactive = false;
 
-  /** Shows alert/caution border rings. Requires `interactive` to be true. */
   @property({type: Boolean}) hasAlert = false;
 
   private handleCardClick() {
@@ -212,6 +233,7 @@ export class ObcPoiCard extends LitElement {
     if (!this.showHeader) return nothing;
     return html`
       <obc-poi-card-header
+        part="header"
         variant=${this.headerVariant}
         index=${this.index}
         cardTitle=${this.cardTitle}
@@ -242,6 +264,7 @@ export class ObcPoiCard extends LitElement {
   override render() {
     return html`
       <div
+        part="wrapper"
         class=${classMap({
           wrapper: true,
           'hug-content': !this.fixedSize,
@@ -253,6 +276,7 @@ export class ObcPoiCard extends LitElement {
         <div class="center">
           ${this.renderLeftPointer()}
           <div
+            part="content-box"
             class="content-box"
             role=${this.interactive ? 'button' : nothing}
             tabindex=${this.interactive ? '0' : nothing}
@@ -262,7 +286,7 @@ export class ObcPoiCard extends LitElement {
             @keyup=${this.handleKeyUp}
           >
             ${this.renderHeader()}
-            <div class="content">
+            <div part="content" class="content">
               <slot></slot>
             </div>
             ${this.renderAlertLayer()}

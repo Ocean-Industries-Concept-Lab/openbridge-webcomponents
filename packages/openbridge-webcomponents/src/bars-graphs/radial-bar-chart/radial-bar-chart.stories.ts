@@ -3,13 +3,15 @@ import {html} from 'lit';
 import './radial-bar-chart.js';
 import {ObcRadialBarChart} from './radial-bar-chart.js';
 import {Priority} from '../../navigation-instruments/types.js';
+import {expectChartCanvasToMatchComputedLayout} from '../../storybook-util.js';
+import {clamp} from '../../svghelpers/math.js';
 
 const SAMPLE_DATA = [70, 50, 30];
 
 const meta: Meta = {
   title: 'Bars and Graphs/Radial Bar Chart',
   component: 'obc-radial-bar-chart',
-  tags: ['autodocs', '6.0'],
+  tags: ['autodocs', '6.0', 'beta'],
   argTypes: {
     fixedHeight: {
       control: {type: 'range', min: 48, max: 512, step: 8},
@@ -104,6 +106,14 @@ export const WithLegend: Story = {
   args: {
     legend: true,
   },
+  // Regression test for issue #1061: the legend must not inflate the canvas
+  play: async ({canvasElement}) => {
+    await new Promise((resolve) => setTimeout(resolve, 600));
+    expectChartCanvasToMatchComputedLayout(
+      canvasElement,
+      'obc-radial-bar-chart'
+    );
+  },
 };
 
 export const CustomColors: Story = {
@@ -131,9 +141,10 @@ export const Realtime: Story = {
 
     setInterval(() => {
       const newData = chart.data.map((value) =>
-        Math.max(
+        clamp(
+          value + Math.floor(Math.random() * 20 - 10),
           1,
-          Math.min(args.max, value + Math.floor(Math.random() * 20 - 10))
+          Math.max(1, args.max)
         )
       );
       chart.data = newData;

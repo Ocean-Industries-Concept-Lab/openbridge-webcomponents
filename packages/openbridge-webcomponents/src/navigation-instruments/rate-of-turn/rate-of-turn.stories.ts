@@ -23,7 +23,17 @@ const meta: Meta<typeof ObcRateOfTurn> = {
     rotationsPerMinute: {
       control: {type: 'range', min: -10, max: 10, step: 0.1},
       description:
-        'rotations per minute. NB: storybook recreates the component on change, which resets the animation.',
+        '**Deprecated.** Use `rateOfTurnDegreesPerMinute` instead. NB: storybook recreates the component on change, which resets the animation.',
+    },
+    rateOfTurnDegreesPerMinute: {
+      control: {type: 'range', min: -180, max: 180, step: 1},
+      description:
+        'Measured rate of turn in degrees per minute (positive = starboard).',
+    },
+    rotDotAnimationFactor: {
+      control: {type: 'range', min: 1, max: 60, step: 1},
+      description:
+        'Visual amplification for the dot animation. Default `18` (≈1 rpm at 20°/min).',
     },
     rotType: {control: 'select', options: Object.values(RotType)},
     rotPosition: {control: 'select', options: Object.values(RotPosition)},
@@ -31,6 +41,13 @@ const meta: Meta<typeof ObcRateOfTurn> = {
     barStartAngle: {control: {type: 'range', min: -180, max: 180, step: 1}},
     barEndAngle: {control: {type: 'range', min: -180, max: 180, step: 1}},
     width: {control: {type: 'range', min: 100, max: 1000, step: 1}},
+    hasTrackBar: {control: 'boolean'},
+    rotMaxValue: {control: {type: 'range', min: 1, max: 180, step: 1}},
+    rotArcExtent: {control: {type: 'range', min: 10, max: 180, step: 5}},
+    hasReadout: {control: 'boolean'},
+    label: {control: 'text'},
+    unit: {control: 'text'},
+    fractionDigits: {control: 'number'},
     dotColor: {table: {disable: true}},
     barBgColor: {table: {disable: true}},
   },
@@ -99,6 +116,49 @@ export const BarEnhancedInnerCirclePortStarboardPort: Story = {
   },
 };
 
+export const WithReadout: Story = {
+  tags: ['6.1'],
+  args: {
+    rateOfTurnDegreesPerMinute: 20,
+    hasReadout: true,
+  },
+};
+
+export const WithTrackBar: Story = {
+  tags: ['6.1'],
+  args: {
+    hasTrackBar: true,
+    hasReadout: true,
+    rateOfTurnDegreesPerMinute: 45,
+    rotPosition: RotPosition.innerCircle,
+    watchCircleType: WatchCircleType.triple,
+  },
+};
+
+export const WithTrackBarEnhanced: Story = {
+  tags: ['6.1'],
+  args: {
+    hasTrackBar: true,
+    hasReadout: true,
+    rateOfTurnDegreesPerMinute: 45,
+    rotPosition: RotPosition.innerCircle,
+    watchCircleType: WatchCircleType.triple,
+    priority: Priority.enhanced,
+  },
+};
+
+export const WithTrackBarPortStarboard: Story = {
+  tags: ['6.1'],
+  args: {
+    hasTrackBar: true,
+    hasReadout: true,
+    rateOfTurnDegreesPerMinute: 45,
+    rotPosition: RotPosition.innerCircle,
+    watchCircleType: WatchCircleType.triple,
+    rotPortStarboard: true,
+  },
+};
+
 export const Demo: Story = {
   render: () => {
     const rateOfTurn = document.createElement('obc-rate-of-turn');
@@ -109,5 +169,19 @@ export const Demo: Story = {
       t += 1;
     }, 1000);
     return rateOfTurn;
+  },
+};
+
+export const RateOfTurnDegreesPerMinute: Story = {
+  tags: ['skip-test'],
+  args: {
+    rotType: RotType.bar,
+    rateOfTurnDegreesPerMinute: 20,
+    rotDotAnimationFactor: 18,
+    barStartAngle: 0,
+    barEndAngle: 30,
+    rotPosition: RotPosition.innerCircle,
+    watchCircleType: WatchCircleType.triple,
+    rotPortStarboard: true,
   },
 };

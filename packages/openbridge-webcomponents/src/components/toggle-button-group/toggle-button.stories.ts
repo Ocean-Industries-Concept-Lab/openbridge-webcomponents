@@ -3,6 +3,7 @@ import {ObcToggleButtonGroup} from './toggle-button-group.js';
 import './toggle-button-group.js';
 import '../toggle-button-option/toggle-button-option.js';
 import {html} from 'lit';
+import {ifDefined} from 'lit/directives/if-defined.js';
 import '../../icons/icon-placeholder.js';
 import {
   ObcToggleButtonOptionType,
@@ -15,6 +16,7 @@ const meta: Meta<typeof ObcToggleButtonGroup> = {
   tags: ['autodocs', '6.0'],
   component: 'obc-toggle-button-group',
   args: {
+    ariaLabel: 'Display mode',
     value: '1',
     hugText: false,
     variant: ObcToggleButtonOptionVariant.regular,
@@ -52,14 +54,20 @@ const meta: Meta<typeof ObcToggleButtonGroup> = {
     large: {
       control: {type: 'boolean'},
     },
+    allowEmptySelection: {
+      control: {type: 'boolean'},
+    },
   },
   render: (args) =>
     html` <div
-      style="width: ${args.type === ObcToggleButtonOptionType.iconText
-        ? 'fit-content'
-        : 'fit-content'}"
+      style="width: ${
+        args.type === ObcToggleButtonOptionType.iconText
+          ? 'fit-content'
+          : 'fit-content'
+      }"
     >
       <obc-toggle-button-group
+        aria-label=${ifDefined(args.ariaLabel ?? undefined)}
         value=${args.value}
         variant=${args.variant}
         type=${args.type}
@@ -257,6 +265,7 @@ export const DifferentTextLength: Story = {
   },
   render: (args) => html`
     <obc-toggle-button-group
+      aria-label=${ifDefined(args.ariaLabel ?? undefined)}
       value="${args.value}"
       variant="${args.variant}"
       type="${args.type}"
@@ -308,6 +317,7 @@ export const SelectionBehavior: Story = {
         One option must always be selected. Disabled options cannot be selected.
       </p>
       <obc-toggle-button-group
+        aria-label=${ifDefined(args.ariaLabel ?? undefined)}
         value="${args.value}"
         variant="${args.variant}"
         type="${args.type}"
@@ -337,6 +347,7 @@ export const MixedDisabledStates: Story = {
         selection moves to first available option.
       </p>
       <obc-toggle-button-group
+        aria-label=${ifDefined(args.ariaLabel ?? undefined)}
         value="${args.value}"
         variant="${args.variant}"
         type="${args.type}"
@@ -369,6 +380,7 @@ export const AllOptionsDisabled: Story = {
     <div style="display: flex; flex-direction: column; gap: 16px;">
       <p>When all options become disabled, the last selection is preserved.</p>
       <obc-toggle-button-group
+        aria-label=${ifDefined(args.ariaLabel ?? undefined)}
         value="${args.value}"
         variant="${args.variant}"
         type="${args.type}"
@@ -406,6 +418,7 @@ export const InitiallyDisabledSelected: Story = {
         see it fall back to Option 1.
       </p>
       <obc-toggle-button-group
+        aria-label=${ifDefined(args.ariaLabel ?? undefined)}
         value="${args.value}"
         variant="${args.variant}"
         type="${args.type}"
@@ -431,11 +444,14 @@ export const ExternalControlActivatedDemo: Story = {
   },
   render: (args) => html`
     <div
-      style="width: ${args.type === ObcToggleButtonOptionType.iconText
-        ? 'fit-content'
-        : 'fit-content'}"
+      style="width: ${
+        args.type === ObcToggleButtonOptionType.iconText
+          ? 'fit-content'
+          : 'fit-content'
+      }"
     >
       <obc-toggle-button-group
+        aria-label=${ifDefined(args.ariaLabel ?? undefined)}
         value=${args.value}
         variant=${args.variant}
         type=${args.type}
@@ -479,6 +495,35 @@ export const ExternalControlActivatedDemo: Story = {
           >Option 3
           <obi-placeholder slot="icon"></obi-placeholder>
         </obc-toggle-button-option>
+      </obc-toggle-button-group>
+    </div>
+  `,
+};
+
+export const EmptySelectionWhenUnmatched: Story = {
+  args: {
+    type: ObcToggleButtonOptionType.text,
+    variant: ObcToggleButtonOptionVariant.regular,
+    value: 'none',
+    allowEmptySelection: true,
+  },
+  render: (args) => html`
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+      <p>
+        With <code>allowEmptySelection</code> enabled, a value that does not
+        match any option (here <code>"none"</code>) leaves the group with no
+        option selected instead of defaulting to the first option.
+      </p>
+      <obc-toggle-button-group
+        aria-label=${ifDefined(args.ariaLabel ?? undefined)}
+        value="${args.value}"
+        variant="${args.variant}"
+        type="${args.type}"
+        .allowEmptySelection="${args.allowEmptySelection}"
+      >
+        <obc-toggle-button-option value="1">Option 1</obc-toggle-button-option>
+        <obc-toggle-button-option value="2">Option 2</obc-toggle-button-option>
+        <obc-toggle-button-option value="3">Option 3</obc-toggle-button-option>
       </obc-toggle-button-group>
     </div>
   `,

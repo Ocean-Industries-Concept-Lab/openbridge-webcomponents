@@ -1,6 +1,9 @@
 import type {Meta, StoryObj} from '@storybook/web-vite';
 import {ObcSwitch, SwitchAlternativeIcon} from './switch.js';
-import {AutomationButtonReadoutPosition} from '../automation-button/automation-button.js';
+import {
+  AutomationButtonOrientation,
+  AutomationButtonReadoutPosition,
+} from '../automation-button/automation-button.js';
 import {AutomationButtonReadoutStackSize} from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 import './switch.js';
 import {crossDecorator} from '../../storybook-util.js';
@@ -13,14 +16,13 @@ const meta: Meta<typeof ObcSwitch> = {
   component: 'obc-switch',
   decorators: [crossDecorator],
   args: {
-    tag: '0012',
+    tag: '#0012',
     readoutPosition: AutomationButtonReadoutPosition.bottom,
     readoutSize: AutomationButtonReadoutStackSize.regular,
     alert: false,
     progress: false,
-    vertical: false,
+    orientation: AutomationButtonOrientation.horizontal,
     showReadoutStack: true,
-    hasIdTag: true,
   },
   argTypes: {
     alternativeIcon: {
@@ -37,12 +39,26 @@ type Story = StoryObj<ObcSwitch>;
 
 export const On: Story = {
   args: {
-    on: true,
+    turnedOn: true,
   },
 };
 
 export const Off: Story = {
   args: {
-    on: false,
+    turnedOn: false,
+  },
+};
+
+export const OrientationVerticalRight: Story = {
+  args: {
+    turnedOn: false,
+    orientation: AutomationButtonOrientation.verticalRight,
+  },
+};
+
+export const OrientationVerticalLeft: Story = {
+  args: {
+    turnedOn: false,
+    orientation: AutomationButtonOrientation.verticalLeft,
   },
 };

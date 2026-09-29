@@ -1,3 +1,7 @@
+/**
+ * @module Instrument Linear
+ * @experimental
+ */
 import {svg, SVGTemplateResult, nothing} from 'lit';
 import {InstrumentState, Priority} from '../../navigation-instruments/types.js';
 
@@ -26,17 +30,19 @@ export function atSetpoint(
 }
 
 /**
- * @param height - The height of the thruster
- * @param value - The value of the thruster
- * @param colors - The colors of the thruster (box and container)
- * @param options - The options of the thruster
- *  - hideTicks - Whether to hide the ticks
- *  - flipAdicePattern - Whether to flip the advice pattern, to be used when the thruster is on the bottom
- *  - hideContainer - Whether to not render the rounded container/wrapper around the thruster,
- *                    used by the main engine
- *  - narrow - Whether to use the narrow version of the thruster
- * @param advice - The advice of the thruster
- * @returns - The thruster top single sided
+ * Linear watch-face gauge: a rounded pill with a bar lane and a tick lane,
+ * filled value boxes, an optional current-value line and advice zones.
+ * Consumed by `obc-heave`, `obc-draft-trim`, `obc-pitch-roll-heave` and
+ * `obc-surge-sway-yaw`.
+ *
+ * @param dims - Pill geometry and value range; `scaleWidth` is the tick lane at the +x edge
+ * @param box - Filled value ranges, drawn across the bar lane
+ * @param bar - Current-value line across the bar lane; `undefined` for none
+ * @param colors - Pill face fill
+ * @param options - Rendering switches; see the member docs
+ * @param tickmarks - Main tick values plus primary/secondary ladder intervals
+ * @param advice - Advice zones rendered along the scale
+ * @returns SVG fragments centred on the pill's origin
  */
 export function watchfaceLinear(
   {
@@ -59,12 +65,32 @@ export function watchfaceLinear(
     hideContainer: boolean;
     off: boolean;
     priority: Priority;
+    /**
+     * Id for the container clip mask. Only needs setting when a document holds
+     * more than one gauge — ids are document-scoped, so two gauges in the same
+     * shadow root would otherwise both resolve to the first one's mask.
+     */
+    maskId?: string;
+    /**
+     * Skip the secondary track fill behind the bar lane, for designs whose
+     * pill is a uniform face. Also the only valid mode when `scaleWidth`
+     * fills the whole width, where the track path would degenerate.
+     */
+    hideTrack?: boolean;
   },
   tickmarks: {
     /** Array of values where full-width main tickmarks are drawn. */
     mainTickmarks?: number[];
     primaryTickmarkInterval?: number;
     secondaryTickmarkInterval?: number;
+    /**
+     * Label the scale ends and the primary ladder, start-anchored
+     * `LINEAR_LABEL_GAP` outside the +x edge; the consumer reserves the room.
+     * Off by default so the existing gauges keep their geometry.
+     */
+    labels?: boolean;
+    /** Text for a labelled value; `formatLinearLabel()` when unset. */
+    labelFormatter?: (value: number) => string;
   },
   advice: LinearAdviceRaw[]
 ) {
@@ -89,7 +115,7 @@ export function watchfaceLinear(
       fill="none" 
       vector-effect="non-scaling-stroke"/>
   `;
-  if (options.off) {
+  if (options.off || options.hideTrack) {
     track = nothing;
   }
 
@@ -98,7 +124,7 @@ export function watchfaceLinear(
   );
 
   const tickmarksSvg: SVGTemplateResult[] = [];
-  const maskId = 'boxMask';
+  const maskId = options.maskId ?? 'boxMask';
   const mask = options.hideContainer
     ? nothing
     : svg`
@@ -121,6 +147,7 @@ export function watchfaceLinear(
   }
 
   const tickmarksX = width / 2 - scaleWidth + 4;
+  const labelValues = new Set<number>([maxValue, minValue]);
 
   if (
     tickmarks.primaryTickmarkInterval !== undefined &&
@@ -138,7 +165,19 @@ export function watchfaceLinear(
     });
     tickmarksSvg.push(...svgs);
     skipValues.push(...values);
+    values.forEach((v) => labelValues.add(v));
   }
+  const labelsSvg: SVGTemplateResult[] = tickmarks.labels
+    ? [...labelValues]
+        .sort((a, b) => b - a)
+        .map((v) =>
+          linearScaleLabel(
+            width / 2 + LINEAR_LABEL_GAP,
+            valueToY(v, minValue, maxValue, height),
+            (tickmarks.labelFormatter ?? formatLinearLabel)(v)
+          )
+        )
+    : [];
 
   if (
     tickmarks.secondaryTickmarkInterval !== undefined &&
@@ -179,6 +218,7 @@ export function watchfaceLinear(
     mask,
     containerStroke,
     svg`<g mask=${maskAttr}>${tickmarksSvg}${boxesSvg} </g>`,
+    labelsSvg,
     advicesSvg,
     barSvg,
   ];
@@ -187,6 +227,91 @@ export function watchfaceLinear(
   }
 
   return all;
+}
+
+/** Gap between a linear gauge's +x edge and the start of its labels. */
+export const LINEAR_LABEL_GAP = 4;
+
+/**
+ * Label text for a scale value. A ladder is built by repeated addition, so a
+ * value such as `0.30000000000000004` has to be rounded back to `0.3`.
+ */
+export function formatLinearLabel(value: number): string {
+  return String(Number(value.toPrecision(12)));
+}
+
+/**
+ * A scale label starting at `(x, y)`, vertically centred, in the tick-mark
+ * typography the linear and radial gauges share. Start-anchored like the
+ * external scale's right-side labels, so a long value grows outward.
+ */
+export function linearScaleLabel(
+  x: number,
+  y: number,
+  text: string
+): SVGTemplateResult {
+  return svg`<text class="linear-label" x=${x} y=${y} text-anchor="start" dominant-baseline="central" font-family="var(--font-family-main)" font-size="var(--global-typography-ui-label-font-size)" fill="var(--instrument-tick-mark-label-secondary-color)">${text}</text>`;
+}
+
+/**
+ * Tickmark configuration for a vertical draught-style scale spanning `±range`
+ * around a zero reference line: a full-width line at zero, plus a primary and
+ * a secondary ladder whose intervals step with the range — `1` / `0.5` for a
+ * range of 5 or less, `5` / `1` above that.
+ *
+ * Shared by `obc-heave` and `obc-draft-trim`, which render the same scale
+ * against different references (the heave datum, the waterline).
+ */
+export function verticalScaleTickmarks(range: number): {
+  mainTickmarks: number[];
+  primaryTickmarkInterval: number;
+  secondaryTickmarkInterval: number;
+} {
+  return {
+    mainTickmarks: [0],
+    primaryTickmarkInterval: range <= 5 ? 1 : 5,
+    secondaryTickmarkInterval: range <= 5 ? 0.5 : 1,
+  };
+}
+
+/**
+ * Smallest "nice" tick step (1-2-5 decade ladder) whose on-screen spacing on a
+ * `height`-tall, `±range` gauge is at least `minSpacing` SVG units.
+ *
+ * Lets a linear scale keep a readable tick density when its height is dictated
+ * by a surrounding layout rather than chosen for the scale. The default
+ * `minSpacing` of 16 reproduces the intervals `obc-heave` uses at its natural
+ * 336-unit height (1 at ±10, 0.5 at ±5) and matches the ~15-unit spacing of the
+ * 5° ladder on the radial inclinometer arcs, so a linear and a radial scale
+ * read at the same density side by side.
+ *
+ * Returns 0 when the inputs cannot produce a ladder, which the tickmark
+ * generators treat as "no ticks".
+ */
+export function linearTickInterval(
+  height: number,
+  range: number,
+  minSpacing = 16
+): number {
+  if (
+    !Number.isFinite(height) ||
+    !Number.isFinite(range) ||
+    !Number.isFinite(minSpacing) ||
+    height <= 0 ||
+    range <= 0 ||
+    minSpacing <= 0
+  ) {
+    return 0;
+  }
+  const unitsPerValue = height / (2 * range);
+  const needed = minSpacing / unitsPerValue;
+  const decade = Math.pow(10, Math.floor(Math.log10(needed)));
+  for (const step of [1, 2, 5, 10]) {
+    if (decade * step >= needed) {
+      return decade * step;
+    }
+  }
+  return decade * 10;
 }
 
 export function valueToY(

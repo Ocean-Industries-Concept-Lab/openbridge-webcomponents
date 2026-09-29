@@ -1,9 +1,12 @@
-import {LitElement, html, nothing, svg, unsafeCSS} from 'lit';
+import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import compentStyle from './speed-arrows.css?inline';
-import '../instrument-field/instrument-field.js';
-import {InstrumentFieldSize} from '../instrument-field/instrument-field.js';
+import '../readout/readout.js';
+import {ReadoutDirection, ReadoutSize} from '../readout/readout.js';
+import {Priority} from '../types.js';
 import {customElement} from '../../decorator.js';
+import {CHEVRON_PATHS, renderChevronBand} from './speed-arrows-art.js';
+import {stopPropagation} from '../../internal/events.js';
 
 export enum Direction {
   forward = 'forward',
@@ -18,6 +21,12 @@ export enum ActiveColor {
   Enhanced = 'Enhanced',
 }
 
+/**
+ * @availableWhen speedKnots readout==true
+ * @availableWhen maxDigits readout==true
+ * @availableWhen fractionDigits readout==true
+ * @beta
+ */
 @customElement('obc-speed-arrows')
 export class ObcSpeedArrows extends LitElement {
   @property({type: Number})
@@ -129,18 +138,27 @@ export class ObcSpeedArrows extends LitElement {
 
     return html`
       <div class="wrapper">
-        ${this.readout
-          ? html`<obc-instrument-field
-              class="readout"
-              .value=${this.speedKnots}
-              unit="KN"
-              tag="Speed"
-              .size=${InstrumentFieldSize.enhanced}
-              .fractionDigits=${this.fractionDigits}
-              .maxDigits=${this.maxDigits}
-              .neutralColor=${this.activeColor === ActiveColor.Regular}
-            ></obc-instrument-field>`
-          : nothing}
+        ${
+          this.readout
+            ? html`<obc-readout
+                class="readout"
+                @source-change=${stopPropagation}
+                @source-flyout-click=${stopPropagation}
+                .value=${this.speedKnots}
+                unit="KN"
+                label="Speed"
+                .size=${ReadoutSize.large}
+                .direction=${ReadoutDirection.vertical}
+                .fractionDigits=${this.fractionDigits}
+                .maxDigits=${this.maxDigits}
+                .priority=${
+                  this.activeColor === ActiveColor.Regular
+                    ? Priority.regular
+                    : Priority.enhanced
+                }
+              ></obc-readout>`
+            : nothing
+        }
         <div class="arrow-container">
           <svg
             width="96"
@@ -150,21 +168,33 @@ export class ObcSpeedArrows extends LitElement {
             xmlns="http://www.w3.org/2000/svg"
           >
             <g transform="rotate(${this.getRotation()}, 48, 48)">
-              ${this.tintedArrows || this.nActiveArrows > 0
-                ? svg`
-<path d="M48.0004 56L76.0004 72L76.0004 88L48.0004 72L20 88L20.0004 72L48.0004 56Z" fill=${this.getFillColor(this.nActiveArrows > 0, colors)}/>
-<path d="M48.0004 56L76.0004 72L76.0004 88L48.0004 72L20 88L20.0004 72L48.0004 56Z" vector-effect="non-scaling-stroke" stroke=${this.getStrokeColor(this.nActiveArrows > 0, colors)} stroke-linecap="square"/>`
-                : nothing}
-              ${this.tintedArrows || this.nActiveArrows > 1
-                ? svg`
-<path d="M76.0004 48L48.0004 32L20.0004 48L20 64L48.0004 48L76.0004 64L76.0004 48Z" fill=${this.getFillColor(this.nActiveArrows > 1, colors)}/>
-<path d="M76.0004 48L48.0004 32L20.0004 48L20 64L48.0004 48L76.0004 64L76.0004 48Z" vector-effect="non-scaling-stroke" stroke=${this.getStrokeColor(this.nActiveArrows > 1, colors)} stroke-linecap="square"/>`
-                : nothing}
-              ${this.tintedArrows || this.nActiveArrows > 2
-                ? svg`
-<path d="M76.0004 24L48.0004 8L20.0004 24L20 40L48.0004 24L76.0004 40L76.0004 24Z" fill=${this.getFillColor(this.nActiveArrows > 2, colors)}/>
-<path d="M76.0004 24L48.0004 8L20.0004 24L20 40L48.0004 24L76.0004 40L76.0004 24Z" vector-effect="non-scaling-stroke" stroke=${this.getStrokeColor(this.nActiveArrows > 2, colors)} stroke-linecap="square"/>`
-                : nothing}
+              ${
+                this.tintedArrows || this.nActiveArrows > 0
+                  ? renderChevronBand(
+                      CHEVRON_PATHS[0],
+                      this.getFillColor(this.nActiveArrows > 0, colors),
+                      this.getStrokeColor(this.nActiveArrows > 0, colors)
+                    )
+                  : nothing
+              }
+              ${
+                this.tintedArrows || this.nActiveArrows > 1
+                  ? renderChevronBand(
+                      CHEVRON_PATHS[1],
+                      this.getFillColor(this.nActiveArrows > 1, colors),
+                      this.getStrokeColor(this.nActiveArrows > 1, colors)
+                    )
+                  : nothing
+              }
+              ${
+                this.tintedArrows || this.nActiveArrows > 2
+                  ? renderChevronBand(
+                      CHEVRON_PATHS[2],
+                      this.getFillColor(this.nActiveArrows > 2, colors),
+                      this.getStrokeColor(this.nActiveArrows > 2, colors)
+                    )
+                  : nothing
+              }
             </g>
           </svg>
         </div>

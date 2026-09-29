@@ -186,139 +186,101 @@ export interface Attachment {
  *
  * ---
  *
+ * @property type - Field type: 'rich' (no send button) or 'message' (with send button).
+ * @property value - The current text value of the input field.
+ * @property rejectUpdatesOnFocus - If true, the textarea will not update its value from external changes while focused.
+ * @property rejectUpdates - If true, the value will only be initially set from the external model and not updated on subsequent changes.
+ * @property rejectDuplicateUpdates - If true, the textarea will not update its value if the value is the same as the previous value.
+ *   Useful to avoid React re-rendering resetting the value.
+ * @property placeholder - Placeholder text shown when the input is empty.
+ * @property label - Label text displayed above the input field.
+ * @property errorText - Error text displayed below the field when `error` is true.
+ * @availableWhen errorText error==true
+ * @property maxlength - Maximum number of characters allowed in the textarea.
+ * @property disabled - Disables the input field and all actions.
+ * @property error - Shows error state with visual highlight.
+ * @property required - Shows a required indicator next to the label.
+ * @property showLabel - Shows the label above the input field.
+ * @property showToolbar - Shows the toolbar with action buttons.
+ * @property showVoiceRecording - Shows the voice recording button.
+ * @property hasLeadingIcon - Shows a leading icon before the input field.
+ * @property recording - Whether voice recording is currently active.
+ *   When true, shows the audio-recording-item instead of textarea.
+ * @property recordingDuration - Current recording duration in seconds.
+ * @availableWhen recordingDuration recording==true
+ * @property audioLevels - Array of audio level values (0-1) for waveform visualization.
+ *   New values should be added to the end (right side) and old values shift left.
+ * @availableWhen audioLevels recording==true
+ * @property recordingStatus - Recording status passed to audio-recording-item.
+ *   Use 'recording' during active recording, and 'playback' when paused
+ *   to allow the user to preview the recorded audio with a slider.
+ *   Automatically reset to 'recording' when `recording` becomes false.
+ * @availableWhen recordingStatus recording==true
+ * @property playbackPosition - Current playback position (0-1) for playback mode.
+ *   Only relevant when recordingStatus is 'playback'.
+ * @availableWhen playbackPosition recording==true
+ * @property attachments - Array of file attachments displayed as removable chips.
  * @slot leading-icon - Displays a contextual icon before the input when `hasLeadingIcon` is true.
  *
- * @fires change {CustomEvent<{value: string}>} Fired on change when value has changed.
- * @fires input {CustomEvent<{value: string}>} Fired on input when value changes.
- * @fires blur {CustomEvent<void>} Fired on blur.
- * @fires send-click {CustomEvent<{value: string}>} Fired when the send button is clicked (Message type only).
- * @fires add-click {CustomEvent<void>} Fired when the add (+) button is clicked.
- * @fires screenshot-click {CustomEvent<void>} Fired when the screenshot button is clicked.
- * @fires image-click {CustomEvent<void>} Fired when the image button is clicked.
- * @fires attachment-click {CustomEvent<void>} Fired when the attachment button is clicked.
- * @fires voice-action {CustomEvent<VoiceActionDetail>} Fired for all voice recording actions. Check detail.action for the action type.
- * @fires attachment-remove {CustomEvent<{id: string}>} Fired when an attachment chip is removed.
+ * @fires {CustomEvent<{value: string}>} change - Fired on change when value has changed.
+ * @fires {CustomEvent<{value: string}>} input - Fired on input when value changes.
+ * @fires {CustomEvent<void>} blur - Fired on blur.
+ * @fires {CustomEvent<{value: string}>} send-click - Fired when the send button is clicked (Message type only).
+ * @fires {CustomEvent<void>} add-click - Fired when the add (+) button is clicked.
+ * @fires {CustomEvent<void>} screenshot-click - Fired when the screenshot button is clicked.
+ * @fires {CustomEvent<void>} image-click - Fired when the image button is clicked.
+ * @fires {CustomEvent<void>} attachment-click - Fired when the attachment button is clicked.
+ * @fires {CustomEvent<VoiceActionDetail>} voice-action - Fired for all voice recording actions. Check detail.action for the action type.
+ * @fires {CustomEvent<{id: string}>} attachment-remove - Fired when an attachment chip is removed.
+ * @stable
  */
 @customElement('obc-textarea-field')
 @localized()
 export class ObcTextareaField extends LitElement {
-  /**
-   * Field type: 'rich' (no send button) or 'message' (with send button).
-   */
   @property({type: String}) type: TextareaFieldType = TextareaFieldType.Rich;
 
-  /**
-   * The current text value of the input field.
-   */
   @property({type: String}) value = '';
 
-  /**
-   * If true, the textarea will not update its value from external changes while focused.
-   */
   @property({type: Boolean}) rejectUpdatesOnFocus = false;
 
-  /**
-   * If true, the value will only be initially set from the external model and not updated on subsequent changes.
-   */
   @property({type: Boolean}) rejectUpdates = false;
 
-  /**
-   * If true, the textarea will not update its value if the value is the same as the previous value.
-   * Useful to avoid React re-rendering resetting the value.
-   */
   @property({type: Boolean}) rejectDuplicateUpdates = false;
 
-  /**
-   * Placeholder text shown when the input is empty.
-   */
   @property({type: String}) placeholder = '';
 
-  /**
-   * Label text displayed above the input field.
-   */
   @property({type: String}) label = '';
 
-  /**
-   * Error text displayed below the field when `error` is true.
-   */
   @property({type: String}) errorText = '';
 
-  /**
-   * Maximum number of characters allowed in the textarea.
-   */
   @property({type: Number}) maxlength?: number;
 
-  /**
-   * Disables the input field and all actions.
-   */
   @property({type: Boolean}) disabled = false;
 
-  /**
-   * Shows error state with visual highlight.
-   */
   @property({type: Boolean}) error = false;
 
-  /**
-   * Shows a required indicator next to the label.
-   */
   @property({type: Boolean}) required = false;
 
-  /**
-   * Shows the label above the input field.
-   */
   @property({type: Boolean, attribute: false}) showLabel: boolean = true;
 
-  /**
-   * Shows the toolbar with action buttons.
-   */
   @property({type: Boolean, attribute: false}) showToolbar: boolean = true;
 
-  /**
-   * Shows the voice recording button.
-   */
   @property({type: Boolean, attribute: false}) showVoiceRecording: boolean =
     true;
 
-  /**
-   * Shows a leading icon before the input field.
-   */
   @property({type: Boolean}) hasLeadingIcon = false;
 
-  /**
-   * Whether voice recording is currently active.
-   * When true, shows the audio-recording-item instead of textarea.
-   */
   @property({type: Boolean}) recording = false;
 
-  /**
-   * Current recording duration in seconds.
-   */
   @property({type: Number}) recordingDuration = 0;
 
-  /**
-   * Array of audio level values (0-1) for waveform visualization.
-   * New values should be added to the end (right side) and old values shift left.
-   */
   @property({type: Array}) audioLevels: number[] = [];
 
-  /**
-   * Recording status passed to audio-recording-item.
-   * Use 'recording' during active recording, and 'playback' when paused
-   * to allow the user to preview the recorded audio with a slider.
-   * Automatically reset to 'recording' when `recording` becomes false.
-   */
   @property({type: String}) recordingStatus: AudioRecordingStatus =
     AudioRecordingStatus.Recording;
 
-  /**
-   * Current playback position (0-1) for playback mode.
-   * Only relevant when recordingStatus is 'playback'.
-   */
   @property({type: Number}) playbackPosition = 0;
 
-  /**
-   * Array of file attachments displayed as removable chips.
-   */
   @property({type: Array}) attachments: Attachment[] = [];
 
   @state() private _focused = false;
@@ -560,12 +522,14 @@ export class ObcTextareaField extends LitElement {
   private handleVoicePlaybackToggle(e: CustomEvent) {
     // The audio-recording-item emits the desired isPlaying state when toggled.
     // Update internal state and notify parent.
+    e.stopPropagation();
     const playing = e.detail.isPlaying as boolean;
     this._isPlayingRecording = playing;
     this.emitVoiceAction(VoiceAction.PlaybackToggle, playing);
   }
 
-  private handleAttachmentRemove(attachment: Attachment) {
+  private handleAttachmentRemove(event: Event, attachment: Attachment) {
+    event.stopPropagation();
     this.emitIfEnabled('attachment-remove', {id: attachment.id});
   }
 
@@ -575,9 +539,9 @@ export class ObcTextareaField extends LitElement {
     return html`
       <div class="title-text-container">
         <p id="title-text" class="title-text">${this.label}</p>
-        ${this.required
-          ? html`<div class="required-indicator"></div>`
-          : nothing}
+        ${
+          this.required ? html`<div class="required-indicator"></div>` : nothing
+        }
       </div>
     `;
   }
@@ -650,7 +614,8 @@ export class ObcTextareaField extends LitElement {
               .label=${attachment.label}
               .showIcon=${attachment.showIcon ?? false}
               ?disabled=${this.disabled}
-              @remove-chip=${() => this.handleAttachmentRemove(attachment)}
+              @remove-chip=${(event: Event) =>
+                this.handleAttachmentRemove(event, attachment)}
             ></obc-input-chip>
           `
         )}
@@ -678,81 +643,89 @@ export class ObcTextareaField extends LitElement {
 
     return html`
       <div class="tool-bar-container">
-        ${this.recording
-          ? this.renderRecordingToolbar()
-          : this.renderNormalToolbar()}
+        ${
+          this.recording
+            ? this.renderRecordingToolbar()
+            : this.renderNormalToolbar()
+        }
       </div>
     `;
   }
 
   private renderNormalToolbar() {
     return html`
-      ${this.showToolbar
-        ? html`
-            <div class="tool-container">
-              <div class="divider"></div>
-              <obc-icon-button
-                variant="flat"
-                @click=${this.handleAddClick}
-                ?disabled=${this.disabled}
-                aria-label="Add content"
-              >
-                <obi-up-iec></obi-up-iec>
-              </obc-icon-button>
-              <obc-icon-button
-                variant="flat"
-                @click=${this.handleScreenshotClick}
-                ?disabled=${this.disabled}
-                aria-label="Take screenshot"
-              >
-                <obi-screen-shot></obi-screen-shot>
-              </obc-icon-button>
-              <obc-icon-button
-                variant="flat"
-                @click=${this.handleImageClick}
-                ?disabled=${this.disabled}
-                aria-label="Add image"
-              >
-                <obi-image></obi-image>
-              </obc-icon-button>
-              <obc-icon-button
-                variant="flat"
-                @click=${this.handleAttachmentClick}
-                ?disabled=${this.disabled}
-                aria-label="Add attachment"
-              >
-                <obi-attachment></obi-attachment>
-              </obc-icon-button>
-            </div>
-          `
-        : nothing}
+      ${
+        this.showToolbar
+          ? html`
+              <div class="tool-container">
+                <div class="divider"></div>
+                <obc-icon-button
+                  variant="flat"
+                  @click=${this.handleAddClick}
+                  ?disabled=${this.disabled}
+                  aria-label="Add content"
+                >
+                  <obi-up-iec></obi-up-iec>
+                </obc-icon-button>
+                <obc-icon-button
+                  variant="flat"
+                  @click=${this.handleScreenshotClick}
+                  ?disabled=${this.disabled}
+                  aria-label="Take screenshot"
+                >
+                  <obi-screen-shot></obi-screen-shot>
+                </obc-icon-button>
+                <obc-icon-button
+                  variant="flat"
+                  @click=${this.handleImageClick}
+                  ?disabled=${this.disabled}
+                  aria-label="Add image"
+                >
+                  <obi-image></obi-image>
+                </obc-icon-button>
+                <obc-icon-button
+                  variant="flat"
+                  @click=${this.handleAttachmentClick}
+                  ?disabled=${this.disabled}
+                  aria-label="Add attachment"
+                >
+                  <obi-attachment></obi-attachment>
+                </obc-icon-button>
+              </div>
+            `
+          : nothing
+      }
 
       <div class="action-container ${this.isEmpty ? 'inactive' : ''}">
-        ${this.showVoiceRecording
-          ? html`
-              <obc-icon-button
-                variant="normal"
-                @click=${this.handleVoiceRecordingStart}
-                ?disabled=${this.disabled}
-                aria-label="Start voice recording"
-              >
-                <obi-com-microphone></obi-com-microphone>
-              </obc-icon-button>
-            `
-          : nothing}
-        ${this.isMessageType
-          ? html`
-              <obc-icon-button
-                class="send-button"
-                variant=${this.canSend && !this.disabled ? 'raised' : 'normal'}
-                @click=${this.handleSendClick}
-                ?disabled=${this.disabled || !this.canSend}
-                aria-label="Send message"
-              >
-                <obi-arrow-up-google></obi-arrow-up-google>
-              </obc-icon-button>
-            `
-          : nothing}
+        ${
+          this.showVoiceRecording
+            ? html`
+                <obc-icon-button
+                  variant="normal"
+                  @click=${this.handleVoiceRecordingStart}
+                  ?disabled=${this.disabled}
+                  aria-label="Start voice recording"
+                >
+                  <obi-com-microphone></obi-com-microphone>
+                </obc-icon-button>
+              `
+            : nothing
+        }
+        ${
+          this.isMessageType
+            ? html`
+                <obc-icon-button
+                  class="send-button"
+                  variant=${this.canSend && !this.disabled ? 'raised' : 'normal'}
+                  @click=${this.handleSendClick}
+                  ?disabled=${this.disabled || !this.canSend}
+                  aria-label="Send message"
+                >
+                  <obi-arrow-up-google></obi-arrow-up-google>
+                </obc-icon-button>
+              `
+            : nothing
+        }
       </div>
     `;
   }
@@ -768,17 +741,21 @@ export class ObcTextareaField extends LitElement {
     return html`
       <obc-icon-button
         variant="normal"
-        @click=${this.isPausedOrPlayback
-          ? this.handleVoiceRecordingResume
-          : this.handleVoiceRecordingPause}
+        @click=${
+          this.isPausedOrPlayback
+            ? this.handleVoiceRecordingResume
+            : this.handleVoiceRecordingPause
+        }
         ?disabled=${this.disabled}
-        aria-label=${this.isPausedOrPlayback
-          ? 'Resume recording'
-          : 'Pause recording'}
+        aria-label=${
+          this.isPausedOrPlayback ? 'Resume recording' : 'Pause recording'
+        }
       >
-        ${this.isPausedOrPlayback
-          ? html`<obi-com-microphone></obi-com-microphone>`
-          : html`<obi-media-pause></obi-media-pause>`}
+        ${
+          this.isPausedOrPlayback
+            ? html`<obi-com-microphone></obi-com-microphone>`
+            : html`<obi-media-pause></obi-media-pause>`
+        }
       </obc-icon-button>
     `;
   }

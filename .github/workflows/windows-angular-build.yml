@@ -1,0 +1,45 @@
+# Verifies that the Angular wrapper package can be built on Windows.
+#
+# The Angular wrapper (openbridge-webcomponents-ng) is generated from
+# openbridge-webcomponents by `@oicl-lit/*` tooling and then compiled with
+# ng-packagr. Windows has bitten this pipeline before (CRLF line endings,
+# backslash path separators leaking into generated import specifiers), so
+# this workflow runs the same build steps as the main Build workflow, but on
+# windows-latest, to catch platform-specific regressions early.
+name: Windows Angular Build
+
+on:
+  push:
+    branches: ["*"]
+  pull_request:
+    branches: ["*"]
+
+jobs:
+  build-angular-windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build openbridge-webcomponents
+        working-directory: ./packages/openbridge-webcomponents
+        run: npm run build:full
+
+      - name: Install wrapper dependencies
+        run: npm install
+
+      - name: Build openbridge-webcomponents-ng
+        working-directory: ./packages/openbridge-webcomponents-ng
+        run: npm run build

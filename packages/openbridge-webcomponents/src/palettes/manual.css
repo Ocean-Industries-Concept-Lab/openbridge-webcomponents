@@ -1,0 +1,374 @@
+:root[data-obc-theme="day"] {
+  --critical-enabled-background-color: rgb(196, 36, 183);
+  --critical-enabled-border-color: rgb(153, 0, 143);
+  --critical-hover-background-color: rgb(173, 5, 162);
+  --critical-hover-border-color: rgb(153, 0, 143);
+  --critical-pressed-background-color: rgb(153, 0, 143);
+  --critical-pressed-border-color: rgb(153, 0, 143);
+  --critical-focused-background-color: rgb(196, 36, 183);
+  --critical-focused-border-color: rgb(153, 0, 143);
+  --critical-disabled-background-color: rgb(196, 36, 183);
+  --critical-disabled-border-color: rgb(196, 36, 183);
+  --on-critical-color: rgb(255, 255, 255);
+  --on-critical-active-color: rgb(255, 255, 255);
+  --on-critical-neutral-color: rgb(254, 232, 250);
+  --on-critical-disabled-color: rgb(248, 155, 235);
+  --alert-critical-color: var(--critical-enabled-background-color);
+  --alert-critical-outline-color: var(--critical-enabled-border-color);
+  --alert-critical-container-background-color: rgb(254, 207, 246);
+  --alert-critical-container-border-color: rgb(248, 155, 235);
+  --alert-diagnostic-color: var(--notification-enabled-background-color);
+  --alert-diagnostic-outline-color: var(--notification-enabled-border-color);
+  --alert-notification-container-background-color: rgb(226, 240, 255);
+  --alert-notification-container-border-color: rgb(195, 223, 255);
+}
+
+:root[data-obc-theme="dusk"] {
+  --critical-enabled-background-color: rgb(189, 40, 190);
+  --critical-enabled-border-color: rgb(206, 65, 207);
+  --critical-hover-background-color: rgb(206, 65, 207);
+  --critical-hover-border-color: rgb(206, 65, 207);
+  --critical-pressed-background-color: rgb(218, 85, 218);
+  --critical-pressed-border-color: rgb(206, 65, 207);
+  --critical-focused-background-color: rgb(189, 40, 190);
+  --critical-focused-border-color: rgb(132, 179, 239);
+  --critical-disabled-background-color: rgb(189, 40, 190);
+  --critical-disabled-border-color: rgb(189, 40, 190);
+  --on-critical-color: rgb(255, 255, 255);
+  --on-critical-active-color: rgb(255, 255, 255);
+  --on-critical-neutral-color: rgb(255, 255, 255);
+  --on-critical-disabled-color: rgb(38, 38, 38);
+  --alert-critical-color: var(--critical-enabled-background-color);
+  --alert-critical-outline-color: var(--critical-enabled-border-color);
+  --alert-critical-container-background-color: rgb(85, 0, 86);
+  --alert-critical-container-border-color: rgb(102, 0, 104);
+  --alert-diagnostic-color: var(--notification-enabled-background-color);
+  --alert-diagnostic-outline-color: var(--notification-enabled-border-color);
+  --alert-notification-container-background-color: rgb(0, 35, 123);
+  --alert-notification-container-border-color: rgb(0, 44, 144);
+}
+
+:root[data-obc-theme="night"] {
+  --critical-enabled-background-color: rgb(195, 48, 196);
+  --critical-enabled-border-color: rgb(195, 48, 196);
+  --critical-hover-background-color: rgb(195, 48, 196);
+  --critical-hover-border-color: rgb(224, 100, 224);
+  --critical-pressed-background-color: rgb(181, 30, 182);
+  --critical-pressed-border-color: rgb(224, 100, 224);
+  --critical-focused-background-color: rgb(195, 48, 196);
+  --critical-focused-border-color: rgb(44, 131, 102);
+  --critical-disabled-background-color: rgb(161, 6, 163);
+  --critical-disabled-border-color: rgb(161, 6, 163);
+  --on-critical-color: rgb(0, 0, 0);
+  --on-critical-active-color: rgb(0, 0, 0);
+  --on-critical-neutral-color: rgb(0, 0, 0, 0.699999988079071);
+  --on-critical-disabled-color: rgb(0, 0, 0, 0.30000001192092896);
+  --alert-critical-color: var(--critical-enabled-background-color);
+  --alert-critical-outline-color: var(--critical-enabled-border-color);
+  --alert-critical-container-background-color: rgb(59, 0, 60);
+  --alert-critical-container-border-color: rgb(59, 0, 60);
+  --alert-diagnostic-color: var(--notification-enabled-background-color);
+  --alert-diagnostic-outline-color: var(--notification-enabled-border-color);
+  --alert-notification-container-background-color: rgb(16, 33, 26);
+  --alert-notification-container-border-color: rgb(16, 33, 26);
+}
+
+:root[data-obc-theme="bright"] {
+  --critical-enabled-background-color: rgb(196, 36, 183);
+  --critical-enabled-border-color: rgb(112, 0, 104);
+  --critical-hover-background-color: rgb(153, 0, 143);
+  --critical-hover-border-color: rgb(112, 0, 104);
+  --critical-pressed-background-color: rgb(112, 0, 104);
+  --critical-pressed-border-color: rgb(112, 0, 104);
+  --critical-focused-background-color: rgb(153, 0, 143);
+  --critical-focused-border-color: rgb(93, 143, 213);
+  --critical-disabled-background-color: rgb(196, 36, 183);
+  --critical-disabled-border-color: rgb(196, 36, 183);
+  --on-critical-color: rgb(255, 255, 255);
+  --on-critical-active-color: rgb(255, 255, 255);
+  --on-critical-neutral-color: rgb(255, 255, 255);
+  --on-critical-disabled-color: rgb(248, 155, 235);
+  --alert-critical-color: var(--critical-enabled-background-color);
+  --alert-critical-outline-color: var(--critical-enabled-border-color);
+  --alert-critical-container-background-color: rgb(252, 184, 242);
+  --alert-critical-container-border-color: rgb(252, 184, 242);
+  --alert-diagnostic-color: var(--notification-enabled-background-color);
+  --alert-diagnostic-outline-color: var(--notification-enabled-border-color);
+  --alert-notification-container-background-color: rgb(226, 240, 255);
+  --alert-notification-container-border-color: rgb(226, 240, 255);
+}
+
+/* Ten Color-categorical modes from Figma as classes, like the size classes; the
+   plugin export does not carry that collection yet (#1187). Every mode-dependent
+   token sits inside the class rule: a var() is substituted where it is declared,
+   so an alias on :root would freeze the neutral ramp for the whole tree. */
+:root,
+.obc-categorical-color-neutral {
+  --categorical-shade-050: var(--base-gray-050);
+  --categorical-shade-100: var(--base-gray-100);
+  --categorical-shade-200: var(--base-gray-200);
+  --categorical-shade-300: var(--base-gray-300);
+  --categorical-shade-400: var(--base-gray-400);
+  --categorical-shade-500: var(--base-gray-500);
+  --categorical-shade-600: var(--base-gray-600);
+  --categorical-shade-050-tint: var(--base-gray-050-tint);
+  --base-categorical-050: var(--categorical-shade-050);
+  --base-categorical-100: var(--categorical-shade-100);
+  --base-categorical-200: var(--categorical-shade-200);
+  --base-categorical-300: var(--categorical-shade-300);
+  --base-categorical-400: var(--categorical-shade-400);
+  --base-categorical-500: var(--categorical-shade-500);
+  --base-categorical-600: var(--categorical-shade-600);
+  --base-categorical-050-tint: var(--categorical-shade-050-tint);
+  --vessel-background-color: var(
+    --integration-selected-enabled-background-color
+  );
+  --vessel-border-color: var(--integration-selected-enabled-border-color);
+  --vessel-neutral-color: var(--integration-on-selected-neutral-color);
+  --vessel-active-color: var(--integration-on-selected-active-color);
+}
+
+.obc-categorical-color-blue {
+  --categorical-shade-050: var(--base-blue-050);
+  --categorical-shade-100: var(--base-blue-100);
+  --categorical-shade-200: var(--base-blue-200);
+  --categorical-shade-300: var(--base-blue-300);
+  --categorical-shade-400: var(--base-blue-400);
+  --categorical-shade-500: var(--base-blue-500);
+  --categorical-shade-600: var(--base-blue-600);
+  --categorical-shade-050-tint: var(--base-blue-050-tint);
+  --base-categorical-050: var(--categorical-shade-050);
+  --base-categorical-100: var(--categorical-shade-100);
+  --base-categorical-200: var(--categorical-shade-200);
+  --base-categorical-300: var(--categorical-shade-300);
+  --base-categorical-400: var(--categorical-shade-400);
+  --base-categorical-500: var(--categorical-shade-500);
+  --base-categorical-600: var(--categorical-shade-600);
+  --base-categorical-050-tint: var(--categorical-shade-050-tint);
+  --vessel-background-color: var(--base-blue-050);
+  --vessel-border-color: var(--base-blue-100);
+  --vessel-neutral-color: var(--base-blue-500);
+  --vessel-active-color: var(--base-blue-600);
+}
+
+.obc-categorical-color-cyan {
+  --categorical-shade-050: var(--base-cyan-050);
+  --categorical-shade-100: var(--base-cyan-100);
+  --categorical-shade-200: var(--base-cyan-200);
+  --categorical-shade-300: var(--base-cyan-300);
+  --categorical-shade-400: var(--base-cyan-400);
+  --categorical-shade-500: var(--base-cyan-500);
+  --categorical-shade-600: var(--base-cyan-600);
+  --categorical-shade-050-tint: var(--base-cyan-050-tint);
+  --base-categorical-050: var(--categorical-shade-050);
+  --base-categorical-100: var(--categorical-shade-100);
+  --base-categorical-200: var(--categorical-shade-200);
+  --base-categorical-300: var(--categorical-shade-300);
+  --base-categorical-400: var(--categorical-shade-400);
+  --base-categorical-500: var(--categorical-shade-500);
+  --base-categorical-600: var(--categorical-shade-600);
+  --base-categorical-050-tint: var(--categorical-shade-050-tint);
+  --vessel-background-color: var(--base-cyan-050);
+  --vessel-border-color: var(--base-cyan-100);
+  --vessel-neutral-color: var(--base-cyan-500);
+  --vessel-active-color: var(--base-cyan-600);
+}
+
+.obc-categorical-color-teal {
+  --categorical-shade-050: var(--base-teal-050);
+  --categorical-shade-100: var(--base-teal-100);
+  --categorical-shade-200: var(--base-teal-200);
+  --categorical-shade-300: var(--base-teal-300);
+  --categorical-shade-400: var(--base-teal-400);
+  --categorical-shade-500: var(--base-teal-500);
+  --categorical-shade-600: var(--base-teal-600);
+  --categorical-shade-050-tint: var(--base-teal-050-tint);
+  --base-categorical-050: var(--categorical-shade-050);
+  --base-categorical-100: var(--categorical-shade-100);
+  --base-categorical-200: var(--categorical-shade-200);
+  --base-categorical-300: var(--categorical-shade-300);
+  --base-categorical-400: var(--categorical-shade-400);
+  --base-categorical-500: var(--categorical-shade-500);
+  --base-categorical-600: var(--categorical-shade-600);
+  --base-categorical-050-tint: var(--categorical-shade-050-tint);
+  --vessel-background-color: var(--base-teal-050);
+  --vessel-border-color: var(--base-teal-100);
+  --vessel-neutral-color: var(--base-teal-500);
+  --vessel-active-color: var(--base-teal-600);
+}
+
+.obc-categorical-color-green {
+  --categorical-shade-050: var(--base-mint-050);
+  --categorical-shade-100: var(--base-mint-100);
+  --categorical-shade-200: var(--base-mint-200);
+  --categorical-shade-300: var(--base-mint-300);
+  --categorical-shade-400: var(--base-mint-400);
+  --categorical-shade-500: var(--base-mint-500);
+  --categorical-shade-600: var(--base-mint-600);
+  --categorical-shade-050-tint: var(--base-mint-050-tint);
+  --base-categorical-050: var(--categorical-shade-050);
+  --base-categorical-100: var(--categorical-shade-100);
+  --base-categorical-200: var(--categorical-shade-200);
+  --base-categorical-300: var(--categorical-shade-300);
+  --base-categorical-400: var(--categorical-shade-400);
+  --base-categorical-500: var(--categorical-shade-500);
+  --base-categorical-600: var(--categorical-shade-600);
+  --base-categorical-050-tint: var(--categorical-shade-050-tint);
+  --vessel-background-color: var(--base-mint-050);
+  --vessel-border-color: var(--base-mint-100);
+  --vessel-neutral-color: var(--base-mint-500);
+  --vessel-active-color: var(--base-mint-600);
+}
+
+.obc-categorical-color-yellow {
+  --categorical-shade-050: var(--base-yellow-050);
+  --categorical-shade-100: var(--base-yellow-100);
+  --categorical-shade-200: var(--base-yellow-200);
+  --categorical-shade-300: var(--base-yellow-300);
+  --categorical-shade-400: var(--base-yellow-400);
+  --categorical-shade-500: var(--base-yellow-500);
+  --categorical-shade-600: var(--base-yellow-600);
+  --categorical-shade-050-tint: var(--base-yellow-050-tint);
+  --base-categorical-050: var(--categorical-shade-050);
+  --base-categorical-100: var(--categorical-shade-100);
+  --base-categorical-200: var(--categorical-shade-200);
+  --base-categorical-300: var(--categorical-shade-300);
+  --base-categorical-400: var(--categorical-shade-400);
+  --base-categorical-500: var(--categorical-shade-500);
+  --base-categorical-600: var(--categorical-shade-600);
+  --base-categorical-050-tint: var(--categorical-shade-050-tint);
+  --vessel-background-color: var(--base-yellow-050);
+  --vessel-border-color: var(--base-yellow-100);
+  --vessel-neutral-color: var(--base-yellow-500);
+  --vessel-active-color: var(--base-yellow-600);
+}
+
+.obc-categorical-color-orange {
+  --categorical-shade-050: var(--base-orange-050);
+  --categorical-shade-100: var(--base-orange-100);
+  --categorical-shade-200: var(--base-orange-200);
+  --categorical-shade-300: var(--base-orange-300);
+  --categorical-shade-400: var(--base-orange-400);
+  --categorical-shade-500: var(--base-orange-500);
+  --categorical-shade-600: var(--base-orange-600);
+  --categorical-shade-050-tint: var(--base-orange-050-tint);
+  --base-categorical-050: var(--categorical-shade-050);
+  --base-categorical-100: var(--categorical-shade-100);
+  --base-categorical-200: var(--categorical-shade-200);
+  --base-categorical-300: var(--categorical-shade-300);
+  --base-categorical-400: var(--categorical-shade-400);
+  --base-categorical-500: var(--categorical-shade-500);
+  --base-categorical-600: var(--categorical-shade-600);
+  --base-categorical-050-tint: var(--categorical-shade-050-tint);
+  --vessel-background-color: var(--base-orange-050);
+  --vessel-border-color: var(--base-orange-100);
+  --vessel-neutral-color: var(--base-orange-500);
+  --vessel-active-color: var(--base-orange-600);
+}
+
+.obc-categorical-color-red {
+  --categorical-shade-050: var(--base-red-050);
+  --categorical-shade-100: var(--base-red-100);
+  --categorical-shade-200: var(--base-red-200);
+  --categorical-shade-300: var(--base-red-300);
+  --categorical-shade-400: var(--base-red-400);
+  --categorical-shade-500: var(--base-red-500);
+  --categorical-shade-600: var(--base-red-600);
+  --categorical-shade-050-tint: var(--base-red-050-tint);
+  --base-categorical-050: var(--categorical-shade-050);
+  --base-categorical-100: var(--categorical-shade-100);
+  --base-categorical-200: var(--categorical-shade-200);
+  --base-categorical-300: var(--categorical-shade-300);
+  --base-categorical-400: var(--categorical-shade-400);
+  --base-categorical-500: var(--categorical-shade-500);
+  --base-categorical-600: var(--categorical-shade-600);
+  --base-categorical-050-tint: var(--categorical-shade-050-tint);
+  --vessel-background-color: var(--base-red-050);
+  --vessel-border-color: var(--base-red-100);
+  --vessel-neutral-color: var(--base-red-500);
+  --vessel-active-color: var(--base-red-600);
+}
+
+.obc-categorical-color-purple {
+  --categorical-shade-050: var(--base-purple-050);
+  --categorical-shade-100: var(--base-purple-100);
+  --categorical-shade-200: var(--base-purple-200);
+  --categorical-shade-300: var(--base-purple-300);
+  --categorical-shade-400: var(--base-purple-400);
+  --categorical-shade-500: var(--base-purple-500);
+  --categorical-shade-600: var(--base-purple-600);
+  --categorical-shade-050-tint: var(--base-purple-050-tint);
+  --base-categorical-050: var(--categorical-shade-050);
+  --base-categorical-100: var(--categorical-shade-100);
+  --base-categorical-200: var(--categorical-shade-200);
+  --base-categorical-300: var(--categorical-shade-300);
+  --base-categorical-400: var(--categorical-shade-400);
+  --base-categorical-500: var(--categorical-shade-500);
+  --base-categorical-600: var(--categorical-shade-600);
+  --base-categorical-050-tint: var(--categorical-shade-050-tint);
+  --vessel-background-color: var(--base-purple-050);
+  --vessel-border-color: var(--base-purple-100);
+  --vessel-neutral-color: var(--base-purple-500);
+  --vessel-active-color: var(--base-purple-600);
+}
+
+.obc-categorical-color-indigo {
+  --categorical-shade-050: var(--base-indigo-050);
+  --categorical-shade-100: var(--base-indigo-100);
+  --categorical-shade-200: var(--base-indigo-200);
+  --categorical-shade-300: var(--base-indigo-300);
+  --categorical-shade-400: var(--base-indigo-400);
+  --categorical-shade-500: var(--base-indigo-500);
+  --categorical-shade-600: var(--base-indigo-600);
+  --categorical-shade-050-tint: var(--base-indigo-050-tint);
+  --base-categorical-050: var(--categorical-shade-050);
+  --base-categorical-100: var(--categorical-shade-100);
+  --base-categorical-200: var(--categorical-shade-200);
+  --base-categorical-300: var(--categorical-shade-300);
+  --base-categorical-400: var(--categorical-shade-400);
+  --base-categorical-500: var(--categorical-shade-500);
+  --base-categorical-600: var(--categorical-shade-600);
+  --base-categorical-050-tint: var(--categorical-shade-050-tint);
+  --vessel-background-color: var(--base-indigo-050);
+  --vessel-border-color: var(--base-indigo-100);
+  --vessel-neutral-color: var(--base-indigo-500);
+  --vessel-active-color: var(--base-indigo-600);
+}
+
+/* Animated per element by palettes/blinking.ts; registered so the numbers
+   feed calc() (#1224). */
+@property --flash-fast-on {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+
+@property --flash-fast-off {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --flash-slow-on {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+
+@property --flash-slow-off {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --flash-very-slow-on {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+
+@property --flash-very-slow-off {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}

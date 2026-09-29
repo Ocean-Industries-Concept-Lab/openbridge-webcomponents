@@ -4,7 +4,7 @@ import './watch-flat.js';
 
 const meta: Meta<typeof ObcWatchFlat> = {
   title: 'Building Blocks/Watch Flat',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'experimental'],
   component: 'obc-watch-flat',
   args: {},
 } satisfies Meta<ObcWatchFlat>;

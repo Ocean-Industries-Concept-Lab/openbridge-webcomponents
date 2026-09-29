@@ -8,6 +8,7 @@ import {widthDecorator} from '../../storybook-util.js';
 import {html} from 'lit';
 import {topVessels} from '../watch/vessels/storybook-helper.js';
 import {VesselImage} from '../watch/vessel.js';
+import {degToRad} from '../../svghelpers/math.js';
 
 function scaleGeneratedDataPoints(dataPoints: VelocityProjectionDatapoint[]) {
   const sum = dataPoints.reduce((acc, curr) => acc + curr.ratioTotalEnergy, 0);
@@ -19,7 +20,7 @@ function scaleGeneratedDataPoints(dataPoints: VelocityProjectionDatapoint[]) {
 
 const meta: Meta<typeof ObcVelocityProjectionPlot> = {
   title: 'Instruments/Velocity Projection',
-  tags: ['autodocs', '6.0'],
+  tags: ['autodocs', '6.0', 'experimental'],
   component: 'obc-velocity-projection-plot',
   decorators: [widthDecorator],
   args: {
@@ -38,16 +39,16 @@ const meta: Meta<typeof ObcVelocityProjectionPlot> = {
     steps: {
       control: {type: 'range', min: 1, max: 360, step: 1},
     },
-    instantWindDirectionDeg: {
+    currentWindFromDirection: {
       control: {type: 'range', min: 0, max: 360, step: 1},
     },
-    instantWindSpeedNumber: {
-      control: {type: 'range', min: 0, max: 12, step: 1},
+    currentWindSpeedKnots: {
+      control: {type: 'range', min: 0, max: 100, step: 1},
     },
-    instantCurrentDirectionDeg: {
+    currentFromDirection: {
       control: {type: 'range', min: 0, max: 360, step: 1},
     },
-    instantCurrentSpeedNumber: {
+    currentSpeedKnots: {
       control: {type: 'range', min: 0, max: 4, step: 1},
     },
     vesselImage: {
@@ -63,10 +64,10 @@ const meta: Meta<typeof ObcVelocityProjectionPlot> = {
     console.log(dataPoints);
     return html`<obc-velocity-projection-plot
       .dataPoints=${dataPoints}
-      .instantWindDirectionDeg=${args.instantWindDirectionDeg}
-      .instantWindSpeedNumber=${args.instantWindSpeedNumber}
-      .instantCurrentDirectionDeg=${args.instantCurrentDirectionDeg}
-      .instantCurrentSpeedNumber=${args.instantCurrentSpeedNumber}
+      .currentWindFromDirection=${args.currentWindFromDirection}
+      .currentWindSpeedKnots=${args.currentWindSpeedKnots}
+      .currentFromDirection=${args.currentFromDirection}
+      .currentSpeedKnots=${args.currentSpeedKnots}
       .vesselImage=${args.vesselImage}
     ></obc-velocity-projection-plot>`;
   },
@@ -81,10 +82,10 @@ export const Average: Story = {
 
 export const Instantaneous: Story = {
   args: {
-    instantWindDirectionDeg: 90,
-    instantWindSpeedNumber: 3,
-    instantCurrentDirectionDeg: 0,
-    instantCurrentSpeedNumber: 1,
+    currentWindFromDirection: 90,
+    currentWindSpeedKnots: 3,
+    currentFromDirection: 0,
+    currentSpeedKnots: 1,
   },
 };
 function generateDataPoints(
@@ -100,11 +101,11 @@ function generateDataPoints(
     const angleDeg = i;
     // use sine square wave to generate the data points
     const ratioWindEnergyOrExcessSpeed =
-      Math.pow(Math.sin(((angleDeg - peakAngleWindSpeed) * Math.PI) / 180), 2) *
+      Math.pow(Math.sin(degToRad(angleDeg - peakAngleWindSpeed)), 2) *
       peakValueWindSpeed;
     const ratioTotalEnergy =
       Math.pow(
-        Math.sin(((angleDeg - peakAngleTotalEnergy - 180) * Math.PI) / 180 / 2),
+        Math.sin(degToRad(angleDeg - peakAngleTotalEnergy - 180) / 2),
         10
       ) + 0.01;
 

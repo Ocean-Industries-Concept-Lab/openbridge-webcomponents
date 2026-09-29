@@ -54,13 +54,25 @@ export enum ObcTextInputFieldPlacement {
  *
  *
  *
+ * @availableWhen errorText error==true
+ * @property rejectUpdatesOnFocus - If true, the input field will not update its value on focus
+ * @property rejectUpdates - If true, the value will only be initially set, and not updated on change
+ * @property rejectDuplicateUpdates - If true, the input field will not update its value if the value is the same as the previous value
+ *   This is useful to avoid React re-rendering to reset the value.
+ * @property name - Name attribute for form integration
+ * @property maxlength - Maximum number of characters allowed
+ * @property minlength - Minimum number of characters required
+ * @property hasClearButton - Shows a clear button when the input has a value
+ * @availableWhen hasLabelIcon label!=''
+ * @availableWhen labelPlacement label!=''
  * @slot leading-icon - Icon displayed before the input value (when `hasLeadingIcon` is true)
  * @slot label-icon - Icon displayed before the label text (when `hasLabelIcon` is true)
  * @slot helper-icon - Icon displayed before helper or error text (when `hasHelperIcon` is true)
  * @fires input - Standard input event on value change
- * @fires change - Standard change event on value change
+ * @fires {CustomEvent<{value: string}>} change - Dispatched on value change, carrying the committed value
  * @fires clear - Fired when the clear button is clicked
  * @fires blur - Fired when the input field is blurred
+ * @stable
  */
 @customElement('obc-text-input-field')
 export class ObcTextInputField extends LitElement {
@@ -75,23 +87,15 @@ export class ObcTextInputField extends LitElement {
   @property({type: Boolean, reflect: true}) readonly = false;
   @property({type: Boolean, reflect: true}) error = false;
   @property({type: String}) errorText = '';
-  /** If true, the input field will not update its value on focus */
   @property({type: Boolean}) rejectUpdatesOnFocus = false;
-  /** If true, the value will only be initially set, and not updated on change */
   @property({type: Boolean}) rejectUpdates = false;
 
-  /** If true, the input field will not update its value if the value is the same as the previous value
-   * This is useful to avoid React re-rendering to reset the value.
-   */
   @property({type: Boolean}) rejectDuplicateUpdates = false;
 
-  /** Name attribute for form integration */
   @property({type: String}) name = '';
 
-  /** Maximum number of characters allowed */
   @property({type: Number}) maxlength?: number;
 
-  /** Minimum number of characters required */
   @property({type: Number}) minlength?: number;
 
   @property({type: String}) size: ObcTextInputFieldSize =
@@ -99,7 +103,6 @@ export class ObcTextInputField extends LitElement {
 
   @property({type: Boolean}) hasLeadingIcon = false;
 
-  /** Shows a clear button when the input has a value */
   @property({type: Boolean}) hasClearButton = false;
 
   @property({type: String}) helperText = '';
@@ -187,15 +190,22 @@ export class ObcTextInputField extends LitElement {
         [`helper-placement-${this.helperPlacement}`]: true,
       })}
     >
-      ${this.hasHelperIcon
-        ? html`<div class="helper-icon"><slot name="helper-icon"></slot></div>`
-        : nothing}
+      ${
+        this.hasHelperIcon
+          ? html`<div class="helper-icon">
+              <slot name="helper-icon"></slot>
+            </div>`
+          : nothing
+      }
       ${text}
     </div>`;
   }
 
-  private fireChangeEvent() {
-    this.dispatchEvent(new CustomEvent('change'));
+  private fireChangeEvent(e: Event) {
+    const target = e.target as HTMLInputElement;
+    this.dispatchEvent(
+      new CustomEvent('change', {detail: {value: target.value}})
+    );
   }
 
   private get shouldUpdateValue(): boolean {
@@ -205,6 +215,14 @@ export class ObcTextInputField extends LitElement {
       return false;
     }
     return true;
+  }
+
+  private get isEmpty(): boolean {
+    const currentValue =
+      !this.shouldUpdateValue && this.inputElement
+        ? this.inputElement.value
+        : this.value;
+    return currentValue.trim().length === 0;
   }
 
   override willUpdate(changedProperties: PropertyValues) {
@@ -231,7 +249,10 @@ export class ObcTextInputField extends LitElement {
     const hasHelperOrError =
       Boolean(this.helperText) || Boolean(this.error && this.errorText);
     const showClearButton =
-      this.hasClearButton && this.value.length > 0 && !this.disabled;
+      this.hasClearButton &&
+      this.value.length > 0 &&
+      !this.disabled &&
+      !this.readonly;
     const isPasswordField = this.type === HTMLInputTypeAttribute.Password;
     const showPasswordToggle = isPasswordField && !this.disabled;
     const isClearButtonVisible = showClearButton && !showPasswordToggle;
@@ -257,37 +278,47 @@ export class ObcTextInputField extends LitElement {
           [`size-${this.size}`]: true,
           error: this.error,
           disabled: this.disabled,
+          readonly: this.readonly,
+          empty: this.isEmpty,
           helpertext: hasHelperOrError,
           haslabel: Boolean(this.label),
           'has-trailing-button': hasTrailingButton,
         })}
       >
-        ${this.label
-          ? html`<div
-              class=${classMap({
-                'label-text-container': true,
-                [`label-placement-${this.labelPlacement}`]: true,
-              })}
-            >
-              ${this.hasLabelIcon
-                ? html`<div class="label-icon">
-                    <slot name="label-icon"></slot>
-                  </div>`
-                : nothing}
-              <span class="label-text">${this.label}</span>
-              ${this.required
-                ? html`<div class="required-indicator"></div>`
-                : nothing}
-            </div>`
-          : nothing}
+        ${
+          this.label
+            ? html`<div
+                class=${classMap({
+                  'label-text-container': true,
+                  [`label-placement-${this.labelPlacement}`]: true,
+                })}
+              >
+                ${
+                  this.hasLabelIcon
+                    ? html`<div class="label-icon">
+                        <slot name="label-icon"></slot>
+                      </div>`
+                    : nothing
+                }
+                <span class="label-text">${this.label}</span>
+                ${
+                  this.required
+                    ? html`<div class="required-indicator"></div>`
+                    : nothing
+                }
+              </div>`
+            : nothing
+        }
 
         <div class="horizontal-container">
           <div class="input-field-container">
-            ${this.hasLeadingIcon
-              ? html`<div class="leading-icon">
-                  <slot name="leading-icon"></slot>
-                </div>`
-              : nothing}
+            ${
+              this.hasLeadingIcon
+                ? html`<div class="leading-icon">
+                    <slot name="leading-icon"></slot>
+                  </div>`
+                : nothing
+            }
             <div class="label-container">
               <input
                 type=${effectiveType}
@@ -312,36 +343,44 @@ export class ObcTextInputField extends LitElement {
                 @change=${this.fireChangeEvent}
               />
             </div>
-            ${showPasswordToggle
-              ? html`<obc-icon-button
-                  variant="flat"
-                  class="trailing-icon-button"
-                  @click=${this.togglePasswordVisibility}
-                  aria-label=${this.passwordVisible
-                    ? 'Hide password'
-                    : 'Show password'}
-                >
-                  ${this.passwordVisible
-                    ? html`<obi-visibility-on-google></obi-visibility-on-google>`
-                    : html`<obi-visibility-off-google></obi-visibility-off-google>`}
-                </obc-icon-button>`
-              : nothing}
-            ${isClearButtonVisible
-              ? html`<obc-icon-button
-                  variant="flat"
-                  class="trailing-icon-button"
-                  @click=${this.handleClear}
-                  aria-label="Clear input"
-                >
-                  <obi-close-google></obi-close-google>
-                </obc-icon-button>`
-              : nothing}
+            ${
+              showPasswordToggle
+                ? html`<obc-icon-button
+                    variant="flat"
+                    class="trailing-icon-button"
+                    @click=${this.togglePasswordVisibility}
+                    aria-label=${
+                      this.passwordVisible ? 'Hide password' : 'Show password'
+                    }
+                  >
+                    ${
+                      this.passwordVisible
+                        ? html`<obi-visibility-on-google></obi-visibility-on-google>`
+                        : html`<obi-visibility-off-google></obi-visibility-off-google>`
+                    }
+                  </obc-icon-button>`
+                : nothing
+            }
+            ${
+              isClearButtonVisible
+                ? html`<obc-icon-button
+                    variant="flat"
+                    class="trailing-icon-button"
+                    @click=${this.handleClear}
+                    aria-label="Clear input"
+                  >
+                    <obi-close-google></obi-close-google>
+                  </obc-icon-button>`
+                : nothing
+            }
           </div>
         </div>
 
-        ${this.error && this.errorText
-          ? this.renderFooterText(this.errorText, true)
-          : this.renderFooterText(this.helperText, false)}
+        ${
+          this.error && this.errorText
+            ? this.renderFooterText(this.errorText, true)
+            : this.renderFooterText(this.helperText, false)
+        }
       </label>
     `;
   }

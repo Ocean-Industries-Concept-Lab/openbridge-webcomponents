@@ -86,52 +86,37 @@ export enum DateItemSize {
  * ></obc-date-item>
  * ```
  *
- * @fires {CustomEvent<{date: number, events: DateItemEvent[], isToday: boolean, checked: boolean}>} date-click - Fired when the date item is clicked.
+ * @property disabled - Whether the date item is disabled. When true, the button is visually muted and not interactive.
+ * @property events - Array of events to display on this date.
+ *   In small size, shows an event dot indicator.
+ *   In large size, displays event details using obc-event-item components.
+ * @property eventCount - Number of events to display from the events array. When 0, shows all events.
+ *   In small size, always caps at 2 dots regardless of this value.
+ * @property isToday - Whether the date item represents today.
+ *   When true, displays the "Today" label (in large size) and uses amplified styling.
+ * @property checked - Whether the date item is checked/selected.
+ *   When true, uses selected styling (blue filled background).
+ * @property size - Size of the date item: `small` (default) shows only the date and the event
+ *   dots, `large` shows titles and descriptions for as many events as its
+ *   height fits and aggregates the rest into a count.
  * @slot - No slots. All content is provided via properties.
+ * @fires {CustomEvent<{date: number, events: DateItemEvent[], isToday: boolean, checked: boolean}>} date-click - Fired when the date item is clicked.
+ * @fires {CustomEvent<{title: string, startTime: string, endTime: string}>} event-click - Passed on from the event items in the cell when one is clicked, with its title, start and end time.
+ * @beta
  */
 @customElement('obc-date-item')
 export class ObcDateItem extends LitElement {
-  /**
-   * The size of the date item, controlling its layout and whether event details are shown.
-   * - `small`: Compact, shows only the date and event dots.
-   * - `large`: Expands to show event titles and descriptions for up to two events.
-   * @default DateItemSize.Small
-   */
+  /** @default DateItemSize.Small */
   @property({type: String}) size = DateItemSize.Small;
 
-  /**
-   * Whether the date item is disabled. When true, the button is visually muted and not interactive.
-   * @default false
-   */
   @property({type: Boolean}) disabled = false;
 
-  /**
-   * Array of events to display on this date.
-   * In small size, shows an event dot indicator.
-   * In large size, displays event details using obc-event-item components.
-   * @default []
-   */
-  @property({attribute: false}) events: DateItemEvent[] = [];
+  @property({type: Array, attribute: false}) events: DateItemEvent[] = [];
 
-  /**
-   * Number of events to display from the events array. When 0, shows all events.
-   * In small size, always caps at 2 dots regardless of this value.
-   * @default 0
-   */
   @property({type: Number}) eventCount = 0;
 
-  /**
-   * Whether the date item represents today.
-   * When true, displays the "Today" label (in large size) and uses amplified styling.
-   * @default false
-   */
   @property({type: Boolean}) isToday = false;
 
-  /**
-   * Whether the date item is checked/selected.
-   * When true, uses selected styling (blue filled background).
-   * @default false
-   */
   @property({type: Boolean}) checked = false;
 
   @state() private _date = 1;
@@ -319,9 +304,11 @@ export class ObcDateItem extends LitElement {
         >
           <div class="date-container">
             <div class="date" aria-hidden="true">${this.date}</div>
-            ${hasAnyEvents
-              ? html`<div class="event-dot" aria-hidden="true"></div>`
-              : nothing}
+            ${
+              hasAnyEvents
+                ? html`<div class="event-dot" aria-hidden="true"></div>`
+                : nothing
+            }
           </div>
         </button>
       `;
@@ -347,42 +334,47 @@ export class ObcDateItem extends LitElement {
           </div>
         </div>
 
-        ${hasAnyEvents
-          ? html`
-              <div class="content-container">
-                ${repeat(
-                  visibleEvents,
-                  (event, index) =>
-                    `${event.title}-${event.startTime}-${event.endTime}-${index}`,
-                  (event) => html`
-                    <obc-event-item
-                      .title=${event.title}
-                      .description=${event.description ?? ''}
-                      .startTime=${event.startTime}
-                      .endTime=${event.endTime}
-                      .eventItemType=${event.eventItemType ??
-                      EventItemType.SingleLine}
-                      .hasArrow=${event.hasArrow ?? false}
-                      .hasTime=${event.hasTime ?? false}
-                      .hasEndTime=${event.hasEndTime ?? false}
-                      .aggregatedCount=${event.aggregatedCount ?? 0}
-                      .colorCoded=${event.colorCoded ?? false}
-                      .disabled=${this.disabled || !!event.disabled}
-                    ></obc-event-item>
-                  `
-                )}
-                ${aggregatedCount > 0
-                  ? html`
+        ${
+          hasAnyEvents
+            ? html`
+                <div class="content-container">
+                  ${repeat(
+                    visibleEvents,
+                    (event, index) =>
+                      `${event.title}-${event.startTime}-${event.endTime}-${index}`,
+                    (event) => html`
                       <obc-event-item
-                        .eventItemType=${EventItemType.Aggregated}
-                        .aggregatedCount=${aggregatedCount}
-                        ?disabled=${this.disabled}
+                        .title=${event.title}
+                        .description=${event.description ?? ''}
+                        .startTime=${event.startTime}
+                        .endTime=${event.endTime}
+                        .eventItemType=${
+                          event.eventItemType ?? EventItemType.SingleLine
+                        }
+                        .hasArrow=${event.hasArrow ?? false}
+                        .hasTime=${event.hasTime ?? false}
+                        .hasEndTime=${event.hasEndTime ?? false}
+                        .aggregatedCount=${event.aggregatedCount ?? 0}
+                        .colorCoded=${event.colorCoded ?? false}
+                        .disabled=${this.disabled || !!event.disabled}
                       ></obc-event-item>
                     `
-                  : nothing}
-              </div>
-            `
-          : nothing}
+                  )}
+                  ${
+                    aggregatedCount > 0
+                      ? html`
+                          <obc-event-item
+                            .eventItemType=${EventItemType.Aggregated}
+                            .aggregatedCount=${aggregatedCount}
+                            ?disabled=${this.disabled}
+                          ></obc-event-item>
+                        `
+                      : nothing
+                  }
+                </div>
+              `
+            : nothing
+        }
       </div>
     `;
   }

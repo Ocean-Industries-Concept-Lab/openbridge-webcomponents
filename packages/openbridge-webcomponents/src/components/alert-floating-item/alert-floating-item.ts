@@ -9,8 +9,24 @@ import {
   ObcFloatingItemType,
   ObcFloatingItemDirection,
   ObcFloatingItemLineType,
+  ObcFloatingItemLiveRole,
 } from '../floating-item/floating-item.js';
 
+/**
+ * `<obc-alert-floating-item>` – A floating alert message that overlays the interface with a built-in alert icon.
+ *
+ * @slot primary-icon - Custom main icon, projected into the child only when `type="application"` (the built-in alert icon is used otherwise).
+ * @slot title - Title or heading of the alert message.
+ * @slot description - Detailed message text.
+ * @slot time - Timestamp label (e.g., "09:12:46").
+ * @slot day - Day label (e.g., "Yesterday").
+ * @slot action - Primary action button label/content.
+ * @slot action2 - Secondary action button label/content.
+ * @fires {CustomEvent} action-click - When the primary action button is clicked.
+ * @fires {CustomEvent} action2-click - When the secondary action button is clicked.
+ * @fires {CustomEvent} dismiss-click - When the alert message is dismissed.
+ * @stable
+ */
 @customElement('obc-alert-floating-item')
 export class ObcAlertFloatingItem extends LitElement {
   @property({type: String}) type = ObcFloatingItemType.Regular;
@@ -32,6 +48,7 @@ export class ObcAlertFloatingItem extends LitElement {
 
     return html`
       <obc-floating-item
+        .liveRole=${ObcFloatingItemLiveRole.Alert}
         .type=${this.type}
         .direction=${this.direction}
         .hasTimestamp=${this.hasTimestamp}
@@ -52,20 +69,22 @@ export class ObcAlertFloatingItem extends LitElement {
             new CustomEvent('dismiss-click', {detail: e.detail})
           )}
       >
-        ${isApplication
-          ? html`
-              <slot name="primary-icon" slot="primary-icon"></slot>
-              <obi-alarm-unacknowledged-iec
-                slot="secondary-icon"
-                useCssColor
-              ></obi-alarm-unacknowledged-iec>
-            `
-          : html`
-              <obi-alarm-unacknowledged-iec
-                slot="primary-icon"
-                useCssColor
-              ></obi-alarm-unacknowledged-iec>
-            `}
+        ${
+          isApplication
+            ? html`
+                <slot name="primary-icon" slot="primary-icon"></slot>
+                <obi-alarm-unacknowledged-iec
+                  slot="secondary-icon"
+                  useCssColor
+                ></obi-alarm-unacknowledged-iec>
+              `
+            : html`
+                <obi-alarm-unacknowledged-iec
+                  slot="primary-icon"
+                  useCssColor
+                ></obi-alarm-unacknowledged-iec>
+              `
+        }
         <slot name="title" slot="title"></slot>
         <slot name="description" slot="description"></slot>
         <slot name="time" slot="time"></slot>

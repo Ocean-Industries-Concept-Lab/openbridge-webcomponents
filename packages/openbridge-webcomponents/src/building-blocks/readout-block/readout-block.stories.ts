@@ -1,0 +1,748 @@
+import type {Meta, StoryObj} from '@storybook/web-components-vite';
+import {html, nothing} from 'lit';
+import {
+  ReadoutBlockVariant,
+  ReadoutBlockSize,
+  ReadoutBlockDataQuality,
+  ReadoutAdviceCategory,
+  ObcTextboxFontWeight,
+  ObcTextboxAlignment,
+  ObcTextboxSize,
+  ReadoutValueType,
+} from './readout-block.js';
+import './readout-block.js';
+import '../../icons/icon-placeholder.js';
+import {
+  ObcAlertFrameMode,
+  ObcAlertFrameType,
+} from '../../components/alert-frame/alert-frame.js';
+import {AlertType} from '../../types.js';
+
+const NONE = 'none';
+
+type BlockArgs = {
+  variant: ReadoutBlockVariant;
+  value: number | string | null;
+  valueType: ReadoutValueType;
+  size: ReadoutBlockSize;
+  valueSize: ObcTextboxSize;
+  category: ReadoutAdviceCategory;
+  active: boolean;
+  enhanced: boolean;
+  weight: ObcTextboxFontWeight;
+  hasDegree: boolean;
+  hasIcon: boolean;
+  fractionDigits: number;
+  maxDigits: number;
+  hintedZeros: boolean;
+  hasSignSpacer: boolean;
+  spaceReserver: string;
+  off: boolean;
+  offText: string;
+  alignment: ObcTextboxAlignment;
+  dataQuality: ReadoutBlockDataQuality | typeof NONE;
+};
+
+// A faithful single-block render: colour comes from the host context, so a
+// standalone block shows the neutral tone. `value` is passed through as given,
+// not as `args.value ?? null` — one unavailable case IS `undefined`, and
+// coercing it here would quietly turn it into the `null` case.
+function renderBlock(args: Partial<BlockArgs>) {
+  return html`
+    <obc-readout-block
+      .variant=${args.variant ?? ReadoutBlockVariant.value}
+      .value=${args.value as number | string | null}
+      .valueType=${args.valueType ?? ReadoutValueType.number}
+      .size=${args.size ?? ReadoutBlockSize.small}
+      .valueSize=${args.valueSize}
+      .category=${args.category ?? ReadoutAdviceCategory.regular}
+      .active=${args.active ?? false}
+      .enhanced=${args.enhanced ?? false}
+      .weight=${args.weight ?? ObcTextboxFontWeight.regular}
+      .hasDegree=${args.hasDegree ?? false}
+      .hasIcon=${args.hasIcon ?? false}
+      .fractionDigits=${args.fractionDigits ?? 0}
+      .maxDigits=${args.maxDigits ?? 0}
+      .hintedZeros=${args.hintedZeros ?? false}
+      .hasSignSpacer=${args.hasSignSpacer ?? false}
+      .spaceReserver=${args.spaceReserver || undefined}
+      .off=${args.off ?? false}
+      .offText=${args.offText ?? 'OFF'}
+      .alignment=${args.alignment ?? ObcTextboxAlignment.Right}
+      .dataQuality=${args.dataQuality === NONE ? undefined : args.dataQuality}
+    >
+      ${
+        args.hasIcon
+          ? html`<obi-placeholder slot="icon"></obi-placeholder>`
+          : nothing
+      }
+    </obc-readout-block>
+  `;
+}
+
+const themedDecorator = (story: () => unknown) => html`
+  <div
+    data-obc-theme="day"
+    style="background: var(--container-background-color); padding: 24px; display: inline-block;"
+  >
+    ${story()}
+  </div>
+`;
+
+const showcaseStyle = `
+  .rb-grid { display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-end; }
+  .rb-card {
+    display: flex; flex-direction: column; gap: 8px; align-items: flex-start;
+    padding: 12px; border-radius: 8px; background: rgba(0, 0, 0, 0.03);
+  }
+  .rb-card-title {
+    font: 10px/1.2 var(--global-typography-ui-label-font-family, sans-serif);
+    text-transform: uppercase; letter-spacing: 0.06em; color: var(--element-neutral-color, #777);
+  }
+  .rb-cell { outline: 1px dashed rgba(0, 0, 0, 0.12); }
+`;
+
+type ShowcaseCard = {title: string; args: Partial<BlockArgs>};
+
+function renderShowcase(cards: ShowcaseCard[]) {
+  return html`
+    <style>
+      ${showcaseStyle}
+    </style>
+    <div class="rb-grid">
+      ${cards.map(
+        (card) => html`
+          <div class="rb-card">
+            <div class="rb-card-title">${card.title}</div>
+            <div class="rb-cell">${renderBlock(card.args)}</div>
+          </div>
+        `
+      )}
+    </div>
+  `;
+}
+
+const meta = {
+  title: 'Building Blocks/Readout Block',
+  tags: ['autodocs', '6.0'],
+  component: 'obc-readout-block',
+  decorators: [themedDecorator],
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'The most atomic readout primitive — a single cap-height, ' +
+          'width-reservable numeric segment (value / setpoint / advice). It is the ' +
+          'building block used inside `obc-readout-list-item` (and, in a future ' +
+          'refactor, inside `obc-readout`); it is not normally used on its own. ' +
+          'Colour is inherited from the host context, so standalone it shows the ' +
+          'neutral tone.',
+      },
+    },
+  },
+  render: (args) => renderBlock(args),
+  args: {
+    variant: ReadoutBlockVariant.value,
+    value: 123,
+    valueType: ReadoutValueType.number,
+    size: ReadoutBlockSize.small,
+    enhanced: false,
+    weight: ObcTextboxFontWeight.regular,
+    hasDegree: false,
+    hasIcon: false,
+    fractionDigits: 0,
+    maxDigits: 0,
+    hintedZeros: false,
+    hasSignSpacer: false,
+    spaceReserver: '',
+    off: false,
+    offText: 'OFF',
+    alignment: ObcTextboxAlignment.Right,
+    dataQuality: NONE,
+  },
+  argTypes: {
+    // Text control (not number) so both value types are exercisable. Under
+    // valueType=number a numeric string resolves back to a number; entering
+    // non-numeric text there throws, which is the intended contract.
+    value: {control: {type: 'text'}},
+    valueType: {
+      control: {type: 'inline-radio'},
+      options: Object.values(ReadoutValueType),
+    },
+    variant: {
+      control: {type: 'select'},
+      options: Object.values(ReadoutBlockVariant),
+    },
+    size: {
+      control: {type: 'select'},
+      options: Object.values(ReadoutBlockSize),
+    },
+    weight: {
+      control: {type: 'select'},
+      options: Object.values(ObcTextboxFontWeight),
+    },
+    alignment: {
+      control: {type: 'select'},
+      options: Object.values(ObcTextboxAlignment),
+    },
+    fractionDigits: {control: {type: 'number', min: 0, step: 1}},
+    maxDigits: {control: {type: 'number', min: 0, step: 1}},
+    spaceReserver: {control: {type: 'text'}},
+    offText: {control: {type: 'text'}},
+    dataQuality: {
+      control: {type: 'select'},
+      options: [NONE, ...Object.values(ReadoutBlockDataQuality)],
+    },
+  },
+} satisfies Meta<BlockArgs>;
+
+export default meta;
+type Story = StoryObj<BlockArgs>;
+
+export const Playground: Story = {};
+
+export const Variants: Story = {
+  render: () =>
+    renderShowcase([
+      {title: 'value', args: {variant: ReadoutBlockVariant.value, value: 123}},
+      {
+        title: 'setpoint',
+        args: {variant: ReadoutBlockVariant.setpoint, value: 120},
+      },
+      {
+        title: 'advice',
+        args: {variant: ReadoutBlockVariant.advice, value: 118},
+      },
+    ]),
+};
+
+export const Sizes: Story = {
+  render: () =>
+    renderShowcase(
+      [
+        ReadoutBlockSize.small,
+        ReadoutBlockSize.medium,
+        ReadoutBlockSize.large,
+      ].map((size) => ({
+        title: size,
+        args: {size, value: 123, hasDegree: true},
+      }))
+    ),
+};
+
+export const Tone: Story = {
+  render: () =>
+    renderShowcase([
+      {title: 'regular', args: {value: 123, enhanced: false}},
+      {title: 'enhanced', args: {value: 123, enhanced: true}},
+    ]),
+};
+
+export const Weight: Story = {
+  render: () =>
+    renderShowcase(
+      [
+        ObcTextboxFontWeight.regular,
+        ObcTextboxFontWeight.semibold,
+        ObcTextboxFontWeight.bold,
+      ].map((weight) => ({title: weight, args: {value: 123, weight}}))
+    ),
+};
+
+export const Degree: Story = {
+  render: () =>
+    renderShowcase([
+      {title: 'no degree', args: {value: 287}},
+      {title: 'degree', args: {value: 287, hasDegree: true}},
+    ]),
+};
+
+/**
+ * `off` renders `offText` (default `"OFF"`) in place of the value.
+ */
+export const OffText: Story = {
+  render: () =>
+    renderShowcase([
+      {title: 'OFF (default)', args: {off: true}},
+      {title: 'custom', args: {off: true, offText: 'unavailable'}},
+    ]),
+};
+
+/**
+ * `valueType="text"` renders `value` verbatim instead of formatting it as a
+ * number — for readings that are states rather than quantities.
+ *
+ * The numeric format options (`fractionDigits`, `maxDigits`, `hintedZeros`) are
+ * ignored in this mode; an explicit `spaceReserver` still applies. Passing text
+ * while `valueType` is `number` throws a `TypeError` rather than rendering
+ * `NaN`, while a numeric-looking string such as `"12.4"` is accepted and parsed
+ * so plain-HTML `value="12.4"` keeps working.
+ */
+export const TextValue: Story = {
+  render: () =>
+    renderShowcase([
+      {
+        title: 'text',
+        args: {value: 'Auto', valueType: ReadoutValueType.text},
+      },
+      {
+        title: 'longer text',
+        args: {value: 'Thermo On', valueType: ReadoutValueType.text},
+      },
+      {
+        title: 'verbatim "1.50"',
+        args: {
+          value: '1.50',
+          valueType: ReadoutValueType.text,
+          fractionDigits: 1,
+        },
+      },
+      {
+        title: 'maxDigits ignored',
+        args: {value: 'Auto', valueType: ReadoutValueType.text, maxDigits: 4},
+      },
+      {
+        title: 'spaceReserver honoured',
+        args: {
+          value: 'Auto',
+          valueType: ReadoutValueType.text,
+          spaceReserver: 'Thermo On',
+        },
+      },
+      {
+        title: 'null → dash',
+        args: {value: null, valueType: ReadoutValueType.text},
+      },
+      {
+        title: 'numeric string in number mode',
+        args: {value: '12.4', fractionDigits: 1},
+      },
+      {
+        title: 'text + degree',
+        args: {
+          value: 'Auto',
+          valueType: ReadoutValueType.text,
+          hasDegree: true,
+        },
+      },
+    ]),
+};
+
+/**
+ * Hinted zeros pad the integer part up to `maxDigits` as muted leading zeros.
+ *
+ * A **negative** value keeps them all: the sign is prepended and never
+ * consumes a zero (`maxDigits` 4: `12` → `0012`, `-12` → `-0012`), so a
+ * negative reading is one character wider than a positive one. Where the
+ * width must not change across zero, `hasSignSpacer` reserves a minus-sign
+ * column: an invisible sign placeholder holds it open while the value is
+ * non-negative and the real sign fills it when negative — the pair below
+ * shares one width. The wider of an explicit `spaceReserver` and the
+ * `maxDigits`-derived reserve always wins.
+ */
+export const HintedZeros: Story = {
+  render: () =>
+    renderShowcase([
+      {title: 'value 8, maxDigits 4', args: {value: 8, maxDigits: 4}},
+      {
+        title: 'hinted zeros',
+        args: {value: 8, maxDigits: 4, hintedZeros: true},
+      },
+      {
+        title: 'hinted zeros + fraction',
+        args: {value: 8, maxDigits: 4, fractionDigits: 1, hintedZeros: true},
+      },
+      {
+        title: 'negative — sign prepended, zeros kept',
+        args: {value: -8, maxDigits: 4, hintedZeros: true},
+      },
+      {
+        title: 'negative + fraction',
+        args: {value: -1.2, maxDigits: 3, fractionDigits: 1, hintedZeros: true},
+      },
+      {
+        title: 'sign column · positive',
+        args: {value: 8, maxDigits: 4, hintedZeros: true, hasSignSpacer: true},
+      },
+      {
+        title: 'sign column · negative',
+        args: {value: -8, maxDigits: 4, hintedZeros: true, hasSignSpacer: true},
+      },
+      {
+        title: 'wider reserver wins',
+        args: {
+          value: 8,
+          maxDigits: 4,
+          hintedZeros: true,
+          spaceReserver: '00000000',
+        },
+      },
+    ]),
+};
+
+/**
+ * The sign column without hinted zeros: `hasSignSpacer` reserves minus-sign
+ * width on any numeric block, so a value that crosses zero keeps its digits
+ * (and everything after them) in place. Works in every alignment — the
+ * placeholder is an invisible sign in the text flow, not only a wider
+ * reserve.
+ */
+export const SignSpacer: Story = {
+  render: () =>
+    renderShowcase([
+      {
+        title: 'positive · spacer holds the column',
+        args: {value: 12.3, fractionDigits: 1, hasSignSpacer: true},
+      },
+      {
+        title: 'negative · sign fills it',
+        args: {value: -12.3, fractionDigits: 1, hasSignSpacer: true},
+      },
+      {
+        title: 'unavailable · column kept',
+        args: {value: null, fractionDigits: 1, hasSignSpacer: true},
+      },
+      {
+        title: 'left-aligned pair',
+        args: {
+          value: 12.3,
+          fractionDigits: 1,
+          hasSignSpacer: true,
+          alignment: ObcTextboxAlignment.Left,
+        },
+      },
+      {
+        title: '(left-aligned, negative)',
+        args: {
+          value: -12.3,
+          fractionDigits: 1,
+          hasSignSpacer: true,
+          alignment: ObcTextboxAlignment.Left,
+        },
+      },
+    ]),
+};
+
+/**
+ * `maxDigits` reserves INTEGER digits only — independent of `fractionDigits`
+ * (the decimal point and fraction digits never count toward `maxDigits`).
+ */
+export const MaxDigitsAndFractionDigits: Story = {
+  render: () =>
+    renderShowcase([
+      {title: 'maxDigits 4', args: {value: 12, maxDigits: 4}},
+      {
+        title: 'maxDigits 4, frac 1',
+        args: {value: 12, maxDigits: 4, fractionDigits: 1},
+      },
+      {
+        title: 'maxDigits 4, frac 2',
+        args: {value: 12.5, maxDigits: 4, fractionDigits: 2},
+      },
+    ]),
+};
+
+export const Alignment: Story = {
+  render: () =>
+    renderShowcase(
+      [
+        ObcTextboxAlignment.Left,
+        ObcTextboxAlignment.Center,
+        ObcTextboxAlignment.Right,
+      ].map((alignment) => ({
+        title: alignment,
+        // A wide reserver makes the alignment within the reserved width visible.
+        args: {value: 12, alignment, spaceReserver: '00000'},
+      }))
+    ),
+};
+
+// The designer's specification: the plain unavailable placeholder stays SHORT
+// (`-.--`) at the right of the reserved width; with hinted zeros the dashes
+// fill every reserved position instead (`---.--`), matching the space the
+// zeros occupy. `format: 000.00` maps to maxDigits 3 + fractionDigits 2.
+const DESIGNER_SPEC_CASES: {
+  label: string;
+  expected: string;
+  args: Partial<BlockArgs>;
+}[] = [
+  {
+    label: 'readout',
+    expected: '12.30',
+    args: {value: 12.3, maxDigits: 3, fractionDigits: 2},
+  },
+  {
+    label: 'readout with hinted',
+    expected: '012.30',
+    args: {value: 12.3, maxDigits: 3, fractionDigits: 2, hintedZeros: true},
+  },
+  {
+    label: 'not available',
+    expected: '-.--',
+    args: {value: null, maxDigits: 3, fractionDigits: 2},
+  },
+  {
+    label: 'not available, hinted enabled',
+    expected: '---.--',
+    args: {value: null, maxDigits: 3, fractionDigits: 2, hintedZeros: true},
+  },
+];
+
+// Every input that reads as "no reading". All four of the first rows are the
+// same placeholder — that IS the point: whichever way a reading goes missing,
+// the readout looks identical.
+const UNAVAILABLE_CASES: {
+  label: string;
+  args: Partial<BlockArgs>;
+}[] = [
+  {
+    label: 'NaN',
+    args: {value: Number.NaN, maxDigits: 3, fractionDigits: 2},
+  },
+  {
+    label: 'Infinity',
+    args: {value: Number.POSITIVE_INFINITY, maxDigits: 3, fractionDigits: 2},
+  },
+  {
+    label: 'null',
+    args: {value: null, maxDigits: 3, fractionDigits: 2},
+  },
+  {
+    label: 'undefined — an unset value, same as null',
+    args: {value: undefined, maxDigits: 3, fractionDigits: 2},
+  },
+  {
+    label: 'null · no fraction digits',
+    args: {value: null, maxDigits: 3},
+  },
+  // The knobs, not the value: a `fractionDigits` written by a failed runtime
+  // (`NaN`) must not silently format with zero decimals — a critical 0.4
+  // printed as a plausible-looking "0" reads as healthy. The reading dashes
+  // instead. A missing `maxDigits` dashes too, for consistency; with the
+  // precision still known, the placeholder keeps its fraction shape.
+  {
+    label: 'value 0.4 · fractionDigits NaN — precision failed to arrive',
+    args: {value: 0.4, maxDigits: 3, fractionDigits: Number.NaN},
+  },
+  {
+    label: 'value 0.4 · maxDigits NaN — same, for consistency',
+    args: {value: 0.4, maxDigits: Number.NaN, fractionDigits: 1},
+  },
+];
+
+// Stacked in one column under identical settings so the decimal points and the
+// fraction positions can be checked against each other by eye.
+const ALIGNMENT_CASES: Partial<BlockArgs>[] = [
+  {value: 12.3, maxDigits: 3, fractionDigits: 2},
+  {value: 4.5, maxDigits: 3, fractionDigits: 2},
+  {value: null, maxDigits: 3, fractionDigits: 2},
+  {value: Number.NaN, maxDigits: 3, fractionDigits: 2},
+];
+
+/**
+ * **Unavailable values — for design review.**
+ *
+ * 1. **The plain placeholder is short.** `-.--` for `format: 000.00`:
+ *    `maxDigits` already reserves the width, so the dash sits at the right edge
+ *    of the reserve rather than spelling out every reserved digit position.
+ *    With **hinted zeros** the dashes fill the whole reserve instead
+ *    (`---.--`) — they stand in for the zeros that would otherwise mark those
+ *    positions.
+ * 2. **The dash is digit-width.** It is U+2012 FIGURE DASH, not the ASCII
+ *    hyphen-minus. Measured in Noto Sans with tabular figures, a digit is
+ *    13.02px and U+2012 is 13.02px, while U+002D is 7.02px — so with a hyphen
+ *    the placeholder's decimal point missed the reading's. `tabular-nums` does
+ *    not help here: it equalises figures with each other and leaves punctuation
+ *    untouched (measured identical with the feature on and off).
+ * 3. **`NaN` and `±Infinity` count as unavailable.** They would otherwise print
+ *    the literal text `NaN` / `Infinity` in place of a reading. They are a
+ *    runtime data condition (sensor dropout, `0/0`, a bad parse) rather than a
+ *    programmer error, so they resolve to the dash rather than throwing.
+ *
+ * 4. **A digit knob that never arrived dashes the reading too.** `NaN`,
+ *    `null` or `undefined` in `fractionDigits` / `maxDigits` is a runtime
+ *    failure of the writing system, and formatting with a default the author
+ *    never chose would let a critical `0.4` pass for a healthy `0`. Finite
+ *    out-of-range values are different: `fractionDigits` throws (programmer
+ *    error), `maxDigits` clamps (width-only).
+ *
+ * An unavailable value is never zero-padded — the hinted rendering swaps to
+ * the full-width dashes above, so nothing ever reads `000-.-` or `----Na.N`.
+ */
+export const UnavailableValues: Story = {
+  render: () => html`
+    <style>
+      .rb-unavail {
+        display: grid;
+        grid-template-columns: max-content max-content max-content;
+        gap: 8px 24px;
+        align-items: center;
+      }
+      .rb-unavail-2col {
+        grid-template-columns: max-content max-content;
+      }
+      .rb-unavail-head {
+        font: 10px/1.2 var(--global-typography-ui-label-font-family, sans-serif);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--element-neutral-color, #777);
+      }
+      .rb-unavail-label {
+        font: 12px/1.4 var(--global-typography-ui-label-font-family, sans-serif);
+        color: var(--element-neutral-color, #777);
+      }
+      .rb-unavail-spec {
+        margin: 20px 0 8px;
+        font: 12px/1.2 var(--global-typography-ui-label-font-family, sans-serif);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--element-neutral-color, #777);
+      }
+      .rb-unavail-spec-value {
+        font:
+          13px/1.4 ui-monospace,
+          monospace;
+        color: var(--element-neutral-color, #777);
+      }
+      .rb-unavail-now {
+        outline: 1px dashed rgba(0, 0, 0, 0.12);
+        width: max-content;
+      }
+      /* One column, so the decimal points can be compared down the stack. */
+      .rb-align {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+        width: max-content;
+        outline: 1px dashed rgba(0, 0, 0, 0.12);
+      }
+    </style>
+    <div class="rb-unavail-spec">Designer specification — format 000.00</div>
+    <div class="rb-unavail">
+      <div class="rb-unavail-head">Case</div>
+      <div class="rb-unavail-head">Specified</div>
+      <div class="rb-unavail-head">Rendered</div>
+      ${DESIGNER_SPEC_CASES.map(
+        (c) => html`
+          <div class="rb-unavail-label">${c.label}</div>
+          <div class="rb-unavail-spec-value">${c.expected}</div>
+          <div class="rb-unavail-now">
+            ${renderBlock({size: ReadoutBlockSize.medium, ...c.args})}
+          </div>
+        `
+      )}
+    </div>
+
+    <div class="rb-unavail-spec">
+      Alignment — decimal points and fraction positions line up
+    </div>
+    <div class="rb-align">
+      ${ALIGNMENT_CASES.map((args) =>
+        renderBlock({size: ReadoutBlockSize.medium, ...args})
+      )}
+    </div>
+
+    <div class="rb-unavail-spec">
+      Unavailable values — every unreadable input
+    </div>
+    <div class="rb-unavail rb-unavail-2col">
+      <div class="rb-unavail-head">Value</div>
+      <div class="rb-unavail-head">Rendered</div>
+      ${UNAVAILABLE_CASES.map(
+        (c) => html`
+          <div class="rb-unavail-label">${c.label}</div>
+          <div class="rb-unavail-now">
+            ${renderBlock({size: ReadoutBlockSize.medium, ...c.args})}
+          </div>
+        `
+      )}
+    </div>
+  `,
+};
+
+export const DataQuality: Story = {
+  render: () =>
+    renderShowcase([
+      {title: 'nominal', args: {value: 123}},
+      {
+        title: 'low-integrity',
+        args: {value: 123, dataQuality: ReadoutBlockDataQuality.lowIntegrity},
+      },
+      {
+        title: 'invalid',
+        args: {value: 123, dataQuality: ReadoutBlockDataQuality.invalid},
+      },
+      {title: 'null (dash)', args: {value: null}},
+    ]),
+};
+
+export const Alert: Story = {
+  render: () => html`
+    <style>
+      ${showcaseStyle}
+    </style>
+    <div class="rb-grid">
+      <div class="rb-card">
+        <div class="rb-card-title">value alert (warning)</div>
+        <div class="rb-cell">
+          <obc-readout-block
+            .variant=${ReadoutBlockVariant.value}
+            .value=${123}
+            .alert=${{
+              status: AlertType.Warning,
+              mode: ObcAlertFrameMode.ackedActive,
+              type: ObcAlertFrameType.Regular,
+            }}
+          ></obc-readout-block>
+        </div>
+      </div>
+    </div>
+  `,
+};
+
+/**
+ * Advice semantic categories (Figma 6.1 Readout-block-advice). Resting
+ * categories carry a neutral outline marker; `active` swaps in the filled /
+ * status icon: SemiBold + tinted diamond for regular / optimal / eco, the
+ * coloured IEC status icon + active text colour for the alert categories.
+ */
+export const AdviceCategories: Story = {
+  render: () =>
+    renderShowcase(
+      Object.values(ReadoutAdviceCategory).flatMap((category) =>
+        [false, true].map((active) => ({
+          title: `${category}${active ? ' / active' : ''}`,
+          args: {
+            variant: ReadoutBlockVariant.advice,
+            value: 118,
+            size: ReadoutBlockSize.medium,
+            category,
+            active,
+          },
+        }))
+      )
+    ),
+};
+
+/**
+ * The marker icon follows the block's rendered number size, not the readout
+ * tier (Figma 6.1): a large-tier readout whose setpoint is de-emphasised to
+ * `s` carries the 16px arrow, and the emphasised `l` setpoint the 24px one.
+ */
+export const MarkerIconSizes: Story = {
+  render: () =>
+    renderShowcase(
+      [ObcTextboxSize.s, ObcTextboxSize.m, ObcTextboxSize.l].map(
+        (valueSize) => ({
+          title: `large tier / valueSize ${valueSize}`,
+          args: {
+            variant: ReadoutBlockVariant.setpoint,
+            value: 120,
+            size: ReadoutBlockSize.large,
+            valueSize,
+          },
+        })
+      )
+    ),
+};

@@ -3,8 +3,6 @@ import { AdviceType } from '@oicl/openbridge-webcomponents/dist/navigation-instr
 import { onMounted, ref, onUnmounted } from 'vue'
 import ObcCard from '@oicl/openbridge-webcomponents-vue/components/card/ObcCard.vue'
 import ObcSpeedGauge from '@oicl/openbridge-webcomponents-vue/navigation-instruments/speed-gauge/ObcSpeedGauge.vue'
-import ObcInstrumentField from '@oicl/openbridge-webcomponents-vue/navigation-instruments/instrument-field/ObcInstrumentField.vue'
-import { InstrumentFieldSize } from '@oicl/openbridge-webcomponents/dist/navigation-instruments/instrument-field/instrument-field'
 import Propulsion from './PropulsionView.vue'
 import VesselMotion from './VesselMotion.vue'
 import { useSim } from '../composables/useSim'
@@ -80,14 +78,14 @@ onUnmounted(() => {
             { minSpeed: maxSpeed, maxSpeed: 25, type: AdviceType.caution, hinted: true }
           ]"
         />
-        <ObcInstrumentField
+        <obc-readout
           :value="sim.vessel.speedForwardThroughWaterKnots.value"
           unit="KN"
-          tag="STW"
-          :size="InstrumentFieldSize.enhanced"
-          neutral-color
-          :fraction-digits="1"
-          :max-digits="0"
+          label="STW"
+          :priority.prop="'regular'"
+          size="large"
+          :fractionDigits.prop="1"
+          :maxDigits.prop="2"
         />
       </div>
     </ObcCard>
@@ -105,13 +103,22 @@ onUnmounted(() => {
           :max-avg-roll="7"
           :min-avg-roll="-7"
         />
-        <ObcInstrumentField
+        <obc-readout
           :value="sim.pitchRoll.pitch.value"
           unit="DEG"
-          tag="Pitch"
-          neutral-color
+          label="Pitch"
+          size="medium"
+          :fractionDigits.prop="0"
+          :maxDigits.prop="2"
         />
-        <ObcInstrumentField :value="sim.pitchRoll.roll.value" unit="DEG" tag="Roll" neutral-color />
+        <obc-readout
+          :value="sim.pitchRoll.roll.value"
+          unit="DEG"
+          label="Roll"
+          size="medium"
+          :fractionDigits.prop="0"
+          :maxDigits.prop="2"
+        />
       </div>
     </ObcCard>
     <ObcCard class="weather">
@@ -143,7 +150,9 @@ onUnmounted(() => {
   box-sizing: border-box;
   display: grid;
   padding: 4px;
-  grid-template-columns: repeat(6, 1fr) 6fr 6fr;
+  /* a bare fr never shrinks below its content, and in Chromium the rudders'
+     aspect box widens the propulsion column to the whole page (#1213) */
+  grid-template-columns: repeat(6, minmax(0, 1fr)) minmax(0, 6fr) minmax(0, 6fr);
   grid-template-rows: 6fr repeat(6, 1fr);
   height: calc(100vh - var(--app-components-topbar-touch-target-size));
   width: 100%;
@@ -190,6 +199,45 @@ onUnmounted(() => {
 .propulsion {
   grid-column: -2 / -1;
   grid-row: 1 / -1;
+}
+
+/* Mobile: one card under the other, the page scrolls. 768px is
+   MOBILE_BREAKPOINT_PX in composables/useMobileLayout.ts. */
+@media screen and (max-width: 768px) {
+  .container {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    min-height: calc(100vh - var(--app-components-topbar-touch-target-size));
+    overflow-y: visible;
+  }
+
+  .container > * {
+    flex: none; /* each card keeps the height below instead of sharing the column */
+    height: 320px;
+  }
+
+  .own-ship {
+    height: 440px;
+  }
+
+  .pitch-roll,
+  .wind {
+    height: 360px;
+  }
+
+  .speed,
+  .weather {
+    height: 200px;
+  }
+
+  .vessel-motion {
+    height: 560px;
+  }
+
+  .propulsion {
+    height: 720px;
+  }
 }
 
 .tunnel1,

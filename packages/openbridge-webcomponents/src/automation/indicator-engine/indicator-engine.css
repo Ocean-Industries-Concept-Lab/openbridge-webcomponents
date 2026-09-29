@@ -1,0 +1,35 @@
+:host {
+  display: block;
+  width: 48px;
+  height: 48px;
+}
+
+svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.frame {
+  fill: var(--instrument-frame-primary-color);
+  stroke: var(--instrument-frame-tertiary-color);
+}
+
+.rail {
+  fill: var(--instrument-frame-tertiary-color);
+}
+
+.cylinder {
+  fill: var(--instrument-frame-tertiary-color);
+  stroke: var(--instrument-frame-tertiary-color);
+}
+
+:host([value="regular"]) .cylinder {
+  fill: var(--automation-device-secondary-color);
+  stroke: var(--element-neutral-color);
+}
+
+:host([value="enhanced"]) .cylinder {
+  fill: var(--base-blue-300);
+  stroke: var(--element-neutral-enhanced-color);
+}

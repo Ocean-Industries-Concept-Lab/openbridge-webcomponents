@@ -15,6 +15,10 @@ export type ObcToggleButtonVerticalGroupValueChangeEvent = CustomEvent<{
   previousValue: string;
 }>;
 
+export type ObcToggleButtonVerticalGroupChangeEvent = CustomEvent<{
+  value: string;
+}>;
+
 /**
  * `<obc-toggle-button-vertical-group>` – A vertically oriented segmented control for selecting a single option from a set.
  *
@@ -37,6 +41,10 @@ export type ObcToggleButtonVerticalGroupValueChangeEvent = CustomEvent<{
  * - **Layout behavior:**
  *   - By default, the group stretches to fill available container width, with options stacked vertically.
  *   - When `hugWidth` is true, the group shrinks to fit its content width instead of expanding.
+ * - **Empty selection mode:** When `allowEmptySelection` is true, a `value` that does not match any enabled
+ *   option leaves the group with no option selected, instead of defaulting to the first enabled option. Use
+ *   this when a selection may legitimately be absent (e.g. unset, loading, or error states) so the UI does not
+ *   imply a choice the user has not made.
  * - **Disabled state:** Setting `disabled` on the group disables all contained options at once. Individual
  *   options can also be disabled independently while the group remains enabled.
  * - **Divider management:** Automatically shows visual dividers between options and hides the divider after
@@ -102,39 +110,33 @@ export type ObcToggleButtonVerticalGroupValueChangeEvent = CustomEvent<{
  * </obc-toggle-button-vertical-group>
  * ```
  *
+ * @property value - The value of the currently selected option.
+ *   Setting this property programmatically updates the selection. If the value does not match any enabled option, the group selects the first available enabled option.
+ * @property type - Visual style for all options in the group.
+ *   One of: "flat", "regular", "normal".
+ * @property hugWidth - If true, the group shrinks to fit its content width instead of stretching to fill its container.
+ *   Defaults to false.
+ * @property disabled - Disables the entire group and all contained options.
+ *   When set to true, all options become non-interactive, regardless of their individual disabled state.
+ *   Defaults to false.
+ * @property allowEmptySelection - Lets the group hold no selection: a `value` matching no enabled option, or
+ *   a selected option that becomes disabled, clears the selection instead of
+ *   falling back to the first enabled option.
  * @slot - Place one or more `<obc-toggle-button-vertical-option>` elements here to define the selectable options.
- * @fires value {CustomEvent<{value: string, previousValue: string}>} Fired when the selected value changes.
+ * @fires {CustomEvent<{value: string, previousValue: string}>} value - Fired when the selected value changes.
+ * @fires {CustomEvent<{value: string}>} change - Fired when the selected value changes by user interaction.
+ * @stable
  */
 @customElement('obc-toggle-button-vertical-group')
 export class ObcToggleButtonVerticalGroup extends LitElement {
-  /**
-   * The value of the currently selected option.
-   *
-   * Setting this property programmatically updates the selection. If the value does not match any enabled option, the group selects the first available enabled option.
-   */
   @property({type: String}) value = '';
 
-  /**
-   * Visual style for all options in the group.
-   *
-   * One of: "flat", "regular", "normal".
-   */
   @property({type: String}) type = ObcToggleButtonVerticalOptionType.regular;
 
-  /**
-   * If true, the group shrinks to fit its content width instead of stretching to fill its container.
-   *
-   * Defaults to false.
-   */
   @property({type: Boolean}) hugWidth = false;
 
-  /**
-   * Disables the entire group and all contained options.
-   *
-   * When set to true, all options become non-interactive, regardless of their individual disabled state.
-   *
-   * Defaults to false.
-   */
+  @property({type: Boolean}) allowEmptySelection = false;
+
   @property({type: Boolean, reflect: true}) disabled = false;
 
   @queryAssignedElements({selector: 'obc-toggle-button-vertical-option'})
@@ -167,7 +169,11 @@ export class ObcToggleButtonVerticalGroup extends LitElement {
     return Array.from(this.options).find((opt) => !opt.disabled) || null;
   }
 
-  private updateSelection(newValue: string, emitEvent: boolean = true) {
+  private updateSelection(
+    newValue: string,
+    emitValueEvent: boolean = true,
+    emitChangeEvent: boolean = false
+  ) {
     const oldValue = this.value;
 
     if (!this.hasAnyEnabledOption()) {
@@ -186,8 +192,12 @@ export class ObcToggleButtonVerticalGroup extends LitElement {
         this.updateDividers();
         return;
       }
-      const fallback = this.getFirstSelectableOption();
-      newValue = fallback?.value || '';
+      if (this.allowEmptySelection) {
+        newValue = '';
+      } else {
+        const fallback = this.getFirstSelectableOption();
+        newValue = fallback?.value || '';
+      }
     }
 
     this.value = newValue;
@@ -198,7 +208,7 @@ export class ObcToggleButtonVerticalGroup extends LitElement {
 
     this.updateDividers();
 
-    if (emitEvent && oldValue !== newValue) {
+    if (emitValueEvent && oldValue !== newValue) {
       /**
        * Fired when the selected option changes.
        *
@@ -210,6 +220,22 @@ export class ObcToggleButtonVerticalGroup extends LitElement {
       this.dispatchEvent(
         new CustomEvent('value', {
           detail: {value: newValue, previousValue: oldValue},
+        })
+      );
+    }
+
+    if (emitChangeEvent && oldValue !== newValue) {
+      /**
+       * Fired when the selected value changes by user interaction.
+       *
+       * The event detail contains the new value:
+       * `{ value: string }`
+       *
+       * @event change
+       */
+      this.dispatchEvent(
+        new CustomEvent('change', {
+          detail: {value: newValue},
         })
       );
     }
@@ -253,9 +279,13 @@ export class ObcToggleButtonVerticalGroup extends LitElement {
     });
 
     if (!this.value || !this.getOptionByValue(this.value)) {
-      const firstSelectable = this.getFirstSelectableOption();
-      if (firstSelectable) {
-        this.updateSelection(firstSelectable.value, false);
+      if (this.allowEmptySelection) {
+        this.updateSelection('', false);
+      } else {
+        const firstSelectable = this.getFirstSelectableOption();
+        if (firstSelectable) {
+          this.updateSelection(firstSelectable.value, false);
+        }
       }
     } else {
       this.updateSelection(this.value, false);
@@ -265,6 +295,10 @@ export class ObcToggleButtonVerticalGroup extends LitElement {
   private handleOptionDisabledChange() {
     const currentOption = this.getOptionByValue(this.value);
     if (currentOption?.disabled && this.hasAnyEnabledOption()) {
+      if (this.allowEmptySelection) {
+        this.updateSelection('');
+        return;
+      }
       const firstSelectable = this.getFirstSelectableOption();
       if (firstSelectable) {
         this.updateSelection(firstSelectable.value);
@@ -303,6 +337,10 @@ export class ObcToggleButtonVerticalGroup extends LitElement {
 
     const currentOption = this.getOptionByValue(this.value);
     if (currentOption?.disabled && this.hasAnyEnabledOption()) {
+      if (this.allowEmptySelection) {
+        this.updateSelection('');
+        return;
+      }
       const firstSelectable = this.getFirstSelectableOption();
       if (firstSelectable) {
         this.updateSelection(firstSelectable.value);
@@ -319,7 +357,7 @@ export class ObcToggleButtonVerticalGroup extends LitElement {
 
   private onOptionSelected(e: Event): void {
     const {value} = (e as CustomEvent).detail;
-    this.updateSelection(value);
+    this.updateSelection(value, true, true);
   }
 
   override render() {

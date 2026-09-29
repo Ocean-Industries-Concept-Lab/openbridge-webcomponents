@@ -33,6 +33,7 @@
  * horizontal bar.
  */
 import {svg, SVGTemplateResult} from 'lit';
+import {degToRad, normalizeAngle, radToDeg} from '../../svghelpers/math.js';
 
 export enum RotType {
   dots = 'dots',
@@ -44,7 +45,7 @@ export enum RotPosition {
   innerCircle = 'innerCircle',
 }
 
-// TODO: RotStyle.port / RotStyle.starboard for port/starboard coloring
+// TODO(#1093): RotStyle.port / RotStyle.starboard for port/starboard colouring
 
 const DOT_COUNT = 5;
 const DOT_ANGLES = Array.from(
@@ -73,7 +74,7 @@ function getTrackRadius(position: RotPosition, radiusOffset = 0): number {
 }
 
 function dotOnTrack(angle: number, radius: number): {cx: number; cy: number} {
-  const rad = (angle * Math.PI) / 180;
+  const rad = degToRad(angle);
   return {
     cx: Math.sin(rad) * radius,
     cy: -Math.cos(rad) * radius,
@@ -100,8 +101,8 @@ function rotBarPath(
   const R = trackRadius + BAR_HALF_THICKNESS;
   const r = trackRadius - BAR_HALF_THICKNESS;
 
-  const a1 = (startAngle * Math.PI) / 180;
-  const a2 = (endAngle * Math.PI) / 180;
+  const a1 = degToRad(startAngle);
+  const a2 = degToRad(endAngle);
 
   const outerStartX = Math.sin(a1) * R;
   const outerStartY = -Math.cos(a1) * R;
@@ -140,7 +141,7 @@ export function shortestAngularDeltaDeg(
   startAngle: number,
   endAngle: number
 ): number {
-  const cw = (((endAngle - startAngle) % 360) + 360) % 360;
+  const cw = normalizeAngle(endAngle - startAngle);
   return cw <= 180 ? cw : 360 - cw;
 }
 
@@ -149,7 +150,7 @@ export function rotBarThresholdAngle(
   radiusOffset = 0
 ): number {
   const trackRadius = getTrackRadius(position, radiusOffset);
-  return (BAR_HALF_THICKNESS / trackRadius) * (180 / Math.PI);
+  return radToDeg(BAR_HALF_THICKNESS / trackRadius);
 }
 
 export function renderRotZeroPill(
@@ -275,7 +276,7 @@ export enum LinearRotPosition {
  * animated by `RateOfTurnController` in translate mode.
  *
  * Enough dots are generated to cover `visibleWidth` plus one full
- * animation cycle (`5 * dotSpacing`) on each side for seamless looping.
+ * animation cycle (`5 * dotSpacing`) on each side, so the loop has no visible seam.
  */
 function linearDotStrip(
   color: string,

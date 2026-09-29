@@ -50,7 +50,7 @@ const renderIconOnly = (args: StoryObj<ObcMenuButton>['args']) => html`
 
 const meta: Meta<ObcMenuButton> = {
   title: 'UI Components/Buttons/Menu Button',
-  tags: ['autodocs', '6.0'],
+  tags: ['autodocs', '6.0', 'beta'],
   component: 'obc-menu-button',
   argTypes: {
     label: {control: 'text', description: 'Constant label on the button'},

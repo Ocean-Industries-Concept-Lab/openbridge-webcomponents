@@ -12,7 +12,7 @@ import {crossDecorator} from '../../../storybook-util.js';
 import {html} from 'lit';
 const meta: Meta<ObcPoiLine> = {
   title: 'AR/Building Blocks/POI Line',
-  tags: ['autodocs', 'skip-test'],
+  tags: ['autodocs', 'experimental'],
   decorators: [crossDecorator],
   component: 'obc-poi-line',
   argTypes: {
@@ -81,9 +81,9 @@ export const AllStyles: Story = {
             .lineType=${variant.type}
             .height=${variant.type === POILineType.Dashed ? 96 : 160}
             .hasPointer=${false}
-            style="transform: translateY(-${variant.type === POILineType.Dashed
-              ? 96
-              : 160}px)"
+            style="transform: translateY(-${
+              variant.type === POILineType.Dashed ? 96 : 160
+            }px)"
           ></obc-poi-line>
         `
       )}
