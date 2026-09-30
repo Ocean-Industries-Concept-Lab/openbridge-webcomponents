@@ -121,10 +121,10 @@ export class TrueRelative extends LitElement {
         if (this.direction === TrueRelativeDirection.NorthUp) {
           return 0;
         }
-        else if (this.direction === TrueRelativeDirection.HeadingUp) {
+        else if (this.direction === TrueRelativeDirection.HeadingUp && this.isValidNumber(this.hdgDirection)) {
           return -this.hdgDirection;
         }
-        else if (this.direction === TrueRelativeDirection.CourseUp) {
+        else if (this.direction === TrueRelativeDirection.CourseUp && this.isValidNumber(this.cogDirection)) {
           return -this.cogDirection;
         }
         else {
