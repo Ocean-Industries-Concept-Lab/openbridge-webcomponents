@@ -400,8 +400,7 @@ export class ObcReadoutListItem extends LitElement {
   @property({type: String}) dataQuality?: ReadoutListItemDataQuality;
   // `boolean | …` (not `false | …`): the generated Angular wrapper widens a
   // literal-`false` union to `boolean`, which then won't assign back to a
-  // `false`-typed element property. `wrapWithAlertFrame` treats any non-object
-  // (incl. `true`) as "no frame", so accepting `boolean` is harmless.
+  // `false`-typed element property. `true` draws a default frame (`render`).
   @property({type: Object}) alert: boolean | AlertFrameConfig = false;
 
   // Per-block configuration — one object per block (see the Readout*Options types).

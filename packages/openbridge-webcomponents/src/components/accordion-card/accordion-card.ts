@@ -7,6 +7,7 @@ import {property} from 'lit/decorators.js';
 import '../../icons/icon-chevron-down-google.js';
 import '../alert-frame/alert-frame.js';
 import {
+  ObcAlertFrameMode,
   ObcAlertFrameThickness,
   ObcAlertFrameType,
 } from '../alert-frame/alert-frame.js';
@@ -57,7 +58,7 @@ export enum Position {
  * |-------------------|------------------------|-------------------------------------------------------|
  * | leading-icon      | `hasLeadingIcon` true  | Icon at the start of the header (e.g., `<obi-placeholder></obi-placeholder>`). |
  * | expanded-content  | Always                 | Content revealed when the accordion is expanded.      |
- * | alert-icon        | `hasAlert` true        | Icon for the alert overlay (slot="icon" in alert frame). |
+ * | alert-icon        | `hasAlert` and `showAlertIcon` true | Icon for the alert overlay (slot="icon" in alert frame). |
  * | alert-label       | `hasAlert` true        | Label text for the alert overlay (slot="label" in alert frame). |
  * | alert-timer       | `hasAlert` true        | Timer or duration text for the alert overlay (slot="timer" in alert frame). |
  *
@@ -73,7 +74,7 @@ export enum Position {
  * - `hasLeadingIcon` (boolean): Enables leading icon slot in header.
  * - `size` (`AccordionSize` enum): Layout variant, either `'single-line'` (default) or `'large'`.
  * - `position` (`Position` enum): Controls border radius for stacking (`'top'`, `'bottom'`, `'center'`, `'regular'`).
- * - `alertFrameType`, `alertFrameThickness`, `alertFrameStatus`: Configure the alert overlay's appearance (see `obc-alert-frame` for details).
+ * - `alertFrameType`, `alertFrameThickness`, `alertFrameStatus`, `alertFrameMode`, `showAlertCategoryIcon`, `showAlertIcon`: Configure the alert overlay's appearance (see `obc-alert-frame` for details).
  *
  * ### Events
  * - `accordion-toggle` – Fired when the accordion is expanded or collapsed. Event detail includes `{ expanded, cardTitle }`.
@@ -107,7 +108,7 @@ export enum Position {
  * @availableWhen statusLabel hasStatusLabel==true
  * @property expanded - Whether the accordion card is expanded (shows additional content).
  * @property disabled - Disables the accordion card, preventing user interaction and dimming its appearance.
- * @property hasAlert - Shows an alert overlay above the card when true. Configure appearance with `alertFrameType`, `alertFrameThickness`, and `alertFrameStatus`.
+ * @property hasAlert - Shows an alert overlay above the card when true. Configure appearance with `alertFrameType`, `alertFrameThickness`, `alertFrameStatus` and `alertFrameMode`.
  * @property hasDescription - Enables the description text in the header (only in large size).
  * @property hasStatusLabel - Enables the status label in the header.
  * @property hasLeadingIcon - Enables the leading icon slot in the header.
@@ -120,6 +121,13 @@ export enum Position {
  * @property alertFrameStatus - Status of the alert frame overlay (used when `hasAlert` is true).
  *   See `obc-alert-frame` for available statuses.
  * @availableWhen alertFrameStatus hasAlert==true
+ * @property alertFrameMode - Acknowledgement state of the alert: `acked-active` (default) is steady,
+ *   `unacked-active` flashes, `unacked-rectified` flashes a dashed frame.
+ * @availableWhen alertFrameMode hasAlert==true
+ * @property showAlertCategoryIcon - Shows the alert category icon in the flap; a small side flap without it is not drawn.
+ * @availableWhen showAlertCategoryIcon hasAlert==true && alertFrameType in [SmallSideFlip, LargeSideFlip, BottomFlip, TopFlip]
+ * @property showAlertIcon - Shows the `alert-icon` slot in a large side, bottom or top flap.
+ * @availableWhen showAlertIcon hasAlert==true && alertFrameType in [LargeSideFlip, BottomFlip, TopFlip]
  * @property position - Border radius for stacking: `regular` (default) rounds every corner,
  *   `top` flattens the bottom edge, `bottom` flattens the top edge, and
  *   `center` flattens both for a card in the middle of a stack.
@@ -127,7 +135,7 @@ export enum Position {
  *   `large` adds a description beneath the title.
  * @slot leading-icon - Icon at the start of the header (shown when `hasLeadingIcon` is true)
  * @slot expanded-content - Content revealed when the accordion is expanded
- * @slot alert-icon - Icon for the alert overlay (used when `hasAlert` is true)
+ * @slot alert-icon - Icon for the alert overlay (used when `hasAlert` and `showAlertIcon` are true)
  * @slot alert-label - Label text for the alert overlay (used when `hasAlert` is true)
  * @slot alert-timer - Timer/duration text for the alert overlay (used when `hasAlert` is true)
  * @fires {CustomEvent<{expanded: boolean, cardTitle: string}>} accordion-toggle - Fired when the accordion is expanded or collapsed
@@ -165,6 +173,13 @@ export class ObcAccordionCard extends LitElement {
     ObcAlertFrameThickness.Small;
 
   @property({type: String}) alertFrameStatus: AlertType = AlertType.Alarm;
+
+  @property({type: String}) alertFrameMode: ObcAlertFrameMode =
+    ObcAlertFrameMode.ackedActive;
+
+  @property({type: Boolean, attribute: false}) showAlertCategoryIcon = true;
+
+  @property({type: Boolean}) showAlertIcon = false;
 
   private get shouldShowDescription() {
     return (
@@ -317,6 +332,9 @@ export class ObcAccordionCard extends LitElement {
                   .type=${this.alertFrameType}
                   .thickness=${this.alertFrameThickness}
                   .status=${this.alertFrameStatus}
+                  .mode=${this.alertFrameMode}
+                  .showAlertCategoryIcon=${this.showAlertCategoryIcon}
+                  .showIcon=${this.showAlertIcon}
                 >
                   <slot name="alert-icon" slot="icon"></slot>
                   <slot name="alert-label" slot="label"></slot>
