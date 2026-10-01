@@ -106,7 +106,7 @@ export enum AutomationButtonPositioning {
  * @availableWhen alertFrameThickness alert==true
  * @availableWhen alertFrameStatus alert==true
  * @availableWhen alertFrameMode alert==true
- * @availableWhen showAlertCategoryIcon alert==true && alertFrameType in [LargeSideFlip, BottomFlip, TopFlip]
+ * @availableWhen showAlertCategoryIcon alert==true && alertFrameType in [SmallSideFlip, LargeSideFlip, BottomFlip, TopFlip]
  * @availableWhen showAlertIcon alert==true
  * @availableWhen progressMode progress==true
  * @availableWhen progressValue progress==true && progressMode in [determinate, progressive-indeterminate]

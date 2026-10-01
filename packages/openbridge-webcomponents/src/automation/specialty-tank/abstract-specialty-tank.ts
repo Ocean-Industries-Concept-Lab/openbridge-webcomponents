@@ -13,6 +13,7 @@ import {
 } from '../automation-button/abstract-automation-button.js';
 import '../../components/alert-frame/alert-frame.js';
 import {
+  ObcAlertFrameMode,
   ObcAlertFrameThickness,
   ObcAlertFrameType,
 } from '../../components/alert-frame/alert-frame.js';
@@ -94,6 +95,9 @@ export enum SpecialtyTankFrame {
  * @availableWhen alertFrameThickness alert==true
  * @property alertFrameStatus - Alert status the frame is coloured for.
  * @availableWhen alertFrameStatus alert==true
+ * @property alertFrameMode - Acknowledgement state of the alert: `acked-active` (default) is steady,
+ *   `unacked-active` flashes, `unacked-rectified` flashes a dashed frame.
+ * @availableWhen alertFrameMode alert==true
  * @property showAlertCategoryIcon - Shows the alert category icon inside the frame.
  * @availableWhen showAlertCategoryIcon alert==true
  * @property showAlertIcon - Shows the slotted alert icon inside the frame.
@@ -126,6 +130,8 @@ export class ObcAbstractSpecialtyTank extends LitElement {
   @property({type: String}) alertFrameThickness: ObcAlertFrameThickness =
     ObcAlertFrameThickness.Small;
   @property({type: String}) alertFrameStatus: AlertType = AlertType.Alarm;
+  @property({type: String}) alertFrameMode: ObcAlertFrameMode =
+    ObcAlertFrameMode.ackedActive;
   @property({type: Boolean, attribute: false}) showAlertCategoryIcon: boolean =
     true;
   @property({type: Boolean}) showAlertIcon: boolean = false;
@@ -368,6 +374,7 @@ export class ObcAbstractSpecialtyTank extends LitElement {
           .type=${this.alertFrameType}
           .thickness=${this.alertFrameThickness}
           .status=${this.alertFrameStatus}
+          .mode=${this.alertFrameMode}
           .showAlertCategoryIcon=${this.showAlertCategoryIcon}
           .showIcon=${this.showAlertIcon}
         >
