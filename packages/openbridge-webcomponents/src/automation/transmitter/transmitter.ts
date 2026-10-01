@@ -102,7 +102,7 @@ export enum TransmitterType {
  * @property showAlertCategoryIcon - Show the status badge in the flap; a small side flap without it is not drawn.
  * @availableWhen showAlertCategoryIcon hasAlert==true && alertFrameType in [SmallSideFlip, LargeSideFlip, BottomFlip, TopFlip]
  * @property showAlertIcon - Show the `alert-icon` slot in a large side, bottom or top flap.
- * @availableWhen showAlertIcon hasAlert==true
+ * @availableWhen showAlertIcon hasAlert==true && alertFrameType in [LargeSideFlip, BottomFlip, TopFlip]
  * @property adviceValue - Advisory value shown in the leading advice segment when `hasAdvice`.
  * @property setpointValue - Target value shown in the setpoint segment when `hasSetPoint`.
  * @property tag - Tag identifier shown when `type` is `indicator` (e.g. `TT`).

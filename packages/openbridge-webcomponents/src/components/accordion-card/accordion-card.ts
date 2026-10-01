@@ -127,7 +127,7 @@ export enum Position {
  * @property showAlertCategoryIcon - Shows the alert category icon in the flap; a small side flap without it is not drawn.
  * @availableWhen showAlertCategoryIcon hasAlert==true && alertFrameType in [SmallSideFlip, LargeSideFlip, BottomFlip, TopFlip]
  * @property showAlertIcon - Shows the `alert-icon` slot in a large side, bottom or top flap.
- * @availableWhen showAlertIcon hasAlert==true
+ * @availableWhen showAlertIcon hasAlert==true && alertFrameType in [LargeSideFlip, BottomFlip, TopFlip]
  * @property position - Border radius for stacking: `regular` (default) rounds every corner,
  *   `top` flattens the bottom edge, `bottom` flattens the top edge, and
  *   `center` flattens both for a card in the middle of a stack.

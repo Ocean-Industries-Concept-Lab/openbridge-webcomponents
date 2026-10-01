@@ -99,9 +99,9 @@ export enum SpecialtyTankFrame {
  *   `unacked-active` flashes, `unacked-rectified` flashes a dashed frame.
  * @availableWhen alertFrameMode alert==true
  * @property showAlertCategoryIcon - Shows the alert category icon inside the frame.
- * @availableWhen showAlertCategoryIcon alert==true
+ * @availableWhen showAlertCategoryIcon alert==true && alertFrameType in [SmallSideFlip, LargeSideFlip, BottomFlip, TopFlip]
  * @property showAlertIcon - Shows the slotted alert icon inside the frame.
- * @availableWhen showAlertIcon alert==true
+ * @availableWhen showAlertIcon alert==true && alertFrameType in [LargeSideFlip, BottomFlip, TopFlip]
  */
 export class ObcAbstractSpecialtyTank extends LitElement {
   @property({type: String}) medium: SpecialtyTankMedium =

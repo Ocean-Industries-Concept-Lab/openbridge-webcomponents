@@ -124,9 +124,9 @@ export enum TankChartMode {
  *   `unacked-active` flashes, `unacked-rectified` flashes a dashed frame.
  * @availableWhen alertFrameMode alert==true
  * @property showAlertCategoryIcon - Shows the alert category icon inside the frame.
- * @availableWhen showAlertCategoryIcon alert==true
+ * @availableWhen showAlertCategoryIcon alert==true && alertFrameType in [SmallSideFlip, LargeSideFlip, BottomFlip, TopFlip]
  * @property showAlertIcon - Shows the slotted alert icon inside the frame.
- * @availableWhen showAlertIcon alert==true
+ * @availableWhen showAlertIcon alert==true && alertFrameType in [LargeSideFlip, BottomFlip, TopFlip]
  * @property showTrendSymbol - Show the trend chevron / off icon next to the percent readout. Default
  *   `true` preserves existing behavior. Set to `false` to hide the trend
  *   indicator in both compact and non-compact readouts — useful when the
