@@ -239,3 +239,4 @@ Different components have different anchor points:
 ## Open
 
 - Shuffle selectors slide 100 ms on selection change; the Figma frames are WIP and specify no motion, so keep or remove is a designer call (#1171).
+- The abstract button base does not pass on the alert flap slots, so the 19 devices cannot fill a flap (#1334).
