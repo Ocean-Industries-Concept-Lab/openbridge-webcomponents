@@ -25,6 +25,7 @@ TypeScript.
 | Doc | Scope (globs) | Description |
 | --- | --- | --- |
 | [a11y](../docs/agents/a11y.md) | `packages/openbridge-webcomponents/src/{components,automation,internal}/**` | Accessibility (WCAG 2.1 AA + 2.2 § 2.5.8 target size) — keyboard nav, ARIA, focus |
+| [alerts](../docs/agents/alerts.md) | `packages/openbridge-webcomponents/src/alert-system/**`<br>`packages/openbridge-webcomponents/src/alert-filter*.ts`<br>`packages/openbridge-webcomponents/src/**/alert-*-experimental/**` | Alert standards, the experimental alert icon, filters and display order |
 | [ar](../docs/agents/ar.md) | `packages/openbridge-webcomponents/src/ar/**` | Augmented-reality POI overlay — controller, layer stack, overlap resolution, and the POI composition chain |
 | [automation-components](../docs/agents/automation-components.md) | `packages/openbridge-webcomponents/src/automation/**` | Automation devices, valves, lines, tanks, badges |
 | [building-blocks](../docs/agents/building-blocks.md) | `packages/openbridge-webcomponents/src/{building-blocks,svghelpers}/**` | SVG-based building block components and shared utilities |

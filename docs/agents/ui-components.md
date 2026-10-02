@@ -45,7 +45,8 @@ fast 400/400, slow 400/1200, very-slow 400/2800 ms on/off. The table lives in
 
 - `resolveFlashingSpeed(speed, type, phase)` in `src/alert-severity.ts` is the
   only place that maps an alert type to a tempo. Components map acknowledged
-  to `fixed` before calling it.
+  to `fixed` before calling it. The experimental components take the tempo
+  from the alert standard instead ([`alerts.md`](alerts.md)).
 - Components never call `el.animate` themselves: `FlashingController(host,
 () => host.resolvedFlashingSpeed)` (`src/palettes/flashing-controller.ts`)
   installs one animation per host and owns connect/disconnect. CSS reads
@@ -82,6 +83,20 @@ button item and Alert button (#1236).
   Attributes for Group Styling).
 - Guarded by `alert-button-item.spec.ts`, `alert-counter-item.spec.ts`,
   `alert-button.spec.ts` and `alert-severity.spec.ts`.
+
+## Alert lists, menu and page
+
+The alert list, the alert menu and the small alert list page keep what a twin
+would otherwise copy in shared code, so a twin overrides only its filtering.
+
+- `ObcAlertListBase` holds the list's scrolling, motion and empty state;
+  `obc-alert-list` adds only its `filter`.
+- `obc-alert-menu` exposes `tabs`, `renderList` and `offersAckAll` hooks;
+  `ObcAlertListPageSmallBase` holds the small page's action bar.
+- Shared bases are plain `Obc*Base` classes with default hooks, never TS
+  `abstract`: the React wrapper generator wraps every `LitElement` subclass,
+  and its `createComponent` rejects an abstract class.
+- The empty states share the `alert-list-empty` mixin.
 
 ## Slot Conventions
 
