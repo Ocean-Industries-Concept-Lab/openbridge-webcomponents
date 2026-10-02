@@ -89,6 +89,7 @@ export class ObcAlertListBase extends LitElement {
   }
 
   override disconnectedCallback() {
+    super.disconnectedCallback();
     if (this.mutationObserver) {
       this.mutationObserver.disconnect();
       this.mutationObserver = null;
