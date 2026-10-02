@@ -1,34 +1,53 @@
 import {describe, it, expect} from 'vitest';
 import {
-  FilterModes,
   ObcAlertListCellSlotsChangeEvent,
   ObcAlertListDetailsExperimental,
+  ackColumn,
   alertListCellSlotName,
   getAlertRows,
   statusColumn,
 } from './alert-list-details-experimental.js';
-import {Alert, AlertType} from '../../types.js';
+import {ObcTableCellType} from '../table/table.js';
+import {AlertFilterMode} from '../../alert-filter.js';
+import {AlertSetAside} from '../../alert-system/alert-system.js';
+import {
+  MaritimeAlertCriticality as Maritime,
+  MaritimeAlertState as MaritimeState,
+} from '../../alert-system/maritime-alert-system.js';
+import type {
+  StandardAlert,
+  StandardAlertFields,
+} from '../../alert-system/standard-alert.js';
 
-function alert(id: string, overrides: Partial<Alert> = {}): Alert {
+/** An unacknowledged IEC 62923 warning, unless the overrides say otherwise. */
+function alert(
+  id: string,
+  overrides: Partial<StandardAlertFields> & {
+    criticality?: Maritime;
+    state?: MaritimeState;
+  } = {}
+): StandardAlert {
   return {
+    standard: 'iec-62923',
+    criticality: Maritime.Warning,
+    state: MaritimeState.ActiveUnacknowledged,
     id,
     tagId: id,
     source: 'Source',
     text: id,
-    acknowledged: false,
-    active: true,
-    type: AlertType.Warning,
     time: new Date('2024-01-15T14:32:15Z'),
     ...overrides,
-  } as Alert;
+  };
 }
 
-const rowIds = (alerts: Alert[], filterMode = FilterModes.ALL) =>
+const RECTIFIED = {state: MaritimeState.RectifiedUnacknowledged};
+
+const rowIds = (alerts: StandardAlert[], filterMode = AlertFilterMode.All) =>
   getAlertRows(alerts, filterMode).map((row) => row.rowId);
 
 describe('getAlertRows', () => {
   it('gives an ungrouped alert its encoded id as row id', () => {
-    const rows = getAlertRows([alert('a/b')], FilterModes.ALL);
+    const rows = getAlertRows([alert('a/b')], AlertFilterMode.All);
     expect(rows).toEqual([
       {
         rowId: 'a%2Fb',
@@ -47,7 +66,7 @@ describe('getAlertRows', () => {
         alert('sensor', {memberOf: ['gyro']}),
         alert('drift', {memberOf: ['sensor']}),
       ],
-      FilterModes.ALL
+      AlertFilterMode.All
     );
     expect(
       rows.map(({rowId, level, expandable}) => [rowId, level, expandable])
@@ -70,11 +89,25 @@ describe('getAlertRows', () => {
 
   it('makes a member a root when the filter mode hides its group', () => {
     const alerts = [
-      alert('group', {active: {rectifiedTime: new Date()}}),
+      alert('group', RECTIFIED),
       alert('member', {memberOf: ['group']}),
     ];
-    expect(rowIds(alerts, FilterModes.ALL)).toEqual(['member']);
-    expect(rowIds(alerts, FilterModes.RECTIFIED)).toEqual(['group']);
+    expect(rowIds(alerts, AlertFilterMode.Active)).toEqual(['member']);
+    expect(rowIds(alerts, AlertFilterMode.Unacked)).toEqual([
+      'group',
+      'group/member',
+    ]);
+  });
+
+  it('filters with the custom predicate in custom mode', () => {
+    const alerts = [alert('active'), alert('rectified', RECTIFIED)];
+    expect(
+      getAlertRows(
+        alerts,
+        AlertFilterMode.Custom,
+        (a) => a.state === MaritimeState.RectifiedUnacknowledged
+      ).map((row) => row.rowId)
+    ).toEqual(['rectified']);
   });
 
   it('recovers a membership cycle with no root', () => {
@@ -84,6 +117,82 @@ describe('getAlertRows', () => {
         alert('pump-b', {memberOf: ['pump-a']}),
       ])
     ).toEqual(['pump-a', 'pump-a/pump-b']);
+  });
+});
+
+describe('filterMode', () => {
+  it('lists every alert by default', async () => {
+    const el = document.createElement('obc-alert-list-details-experimental');
+    el.alerts = [
+      alert('active'),
+      alert('rectified', RECTIFIED),
+      alert('shelved', {setAside: AlertSetAside.Shelved}),
+    ];
+    document.body.append(el);
+    await el.updateComplete;
+    const table = el.shadowRoot!.querySelector('obc-table')!;
+    expect(table.data.map((row) => row.id)).toEqual([
+      'active',
+      'rectified',
+      'shelved',
+    ]);
+    el.remove();
+  });
+
+  it('re-lists the cell slots when the custom predicate changes', async () => {
+    const el = document.createElement('obc-alert-list-details-experimental');
+    el.columns = [statusColumn(), {key: 'ack', label: 'ACK', slot: true}];
+    el.alerts = [alert('gyro'), alert('radar')];
+    el.filterMode = AlertFilterMode.Custom;
+    el.customFilter = (a) => a.id === 'gyro';
+    document.body.append(el);
+    await el.updateComplete;
+    expect(el.cellSlots.map((slot) => slot.name)).toEqual(['cell-ack:gyro']);
+
+    el.customFilter = (a) => a.id === 'radar';
+    await el.updateComplete;
+    expect(el.cellSlots.map((slot) => slot.name)).toEqual(['cell-ack:radar']);
+    el.remove();
+  });
+});
+
+describe('ackColumn', () => {
+  const cell = (overrides: Parameters<typeof alert>[1]) =>
+    ackColumn().cell(alert('a', overrides));
+
+  it('offers ACK on an unacked alert whose condition has cleared', () => {
+    expect(cell(RECTIFIED)).toEqual({
+      type: ObcTableCellType.Button,
+      text: 'ACK',
+    });
+  });
+
+  it('leaves the cell empty for a criticality that takes no ACK', () => {
+    expect(
+      cell({criticality: Maritime.Caution, state: MaritimeState.Active})
+    ).toEqual({
+      type: ObcTableCellType.Regular,
+    });
+  });
+
+  it('shows who acknowledged an alert, and the no-ACK glyph for a handed-over one', () => {
+    /** The first tag the cell's icon template draws. */
+    const iconTag = (data: unknown) =>
+      (data as {icon?: {strings: readonly string[]}}).icon?.strings[0].match(
+        /<([a-z-]+)/
+      )?.[1];
+    const acked = cell({
+      state: MaritimeState.ActiveAcknowledged,
+      acknowledgedBy: 'John Doe',
+    });
+    const transferred = cell({
+      criticality: Maritime.Alarm,
+      state: MaritimeState.ActiveResponsibilityTransferred,
+    });
+    expect([iconTag(acked), iconTag(transferred)]).toEqual([
+      'obc-user-button',
+      'obi-alarm-noack-iec',
+    ]);
   });
 });
 

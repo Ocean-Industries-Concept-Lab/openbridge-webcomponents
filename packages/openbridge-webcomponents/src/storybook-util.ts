@@ -8,6 +8,30 @@ import './icons/icon-close-google.js';
 import './icons/icon-ship.js';
 import {HTMLTemplateResult, TemplateResult, html} from 'lit';
 import {spread} from '@open-wc/lit-helpers';
+import {AlertCondition, AlertSetAside} from './alert-system/alert-system.js';
+import {alertSystem} from './alert-system/alert-systems.js';
+import {
+  MaritimeAlertCriticality,
+  MaritimeAlertState,
+} from './alert-system/maritime-alert-system.js';
+import {
+  AutomationAlertCriticality,
+  AutomationAlertState,
+} from './alert-system/automation-alert-system.js';
+import {presentAlert} from './alert-system/present-alert.js';
+import {getDefaultAlertStandard} from './alert-system/alert-standard.js';
+import {alertFilterState} from './alert-filter.js';
+import './components/alert-menu-item/alert-menu-item.js';
+import {
+  ObcAlertMenuItemStatus,
+  type ObcAlertMenuItem,
+} from './components/alert-menu-item/alert-menu-item.js';
+import './components/alert-icon-experimental/alert-icon-experimental.js';
+import {alertMenuItemStatus} from './building-blocks/alert-list-experimental/alert-menu-item-state.js';
+import type {
+  StandardAlert,
+  StandardAlertFields,
+} from './alert-system/standard-alert.js';
 
 export const iconIds = [
   'placeholder',
@@ -207,4 +231,225 @@ export function expectChartCanvasToMatchComputedLayout(
     );
   }
   return rect;
+}
+
+/**
+ * One alert in each state the alert filter modes tell apart, in the terms of
+ * `standard`, for the experimental alert list and menu stories. Each call
+ * returns new objects, because the stories acknowledge alerts in place.
+ */
+export function alertsInEveryState(
+  standard: 'iec-62923' | 'isa-18.2' = 'iec-62923'
+): StandardAlert[] {
+  const time = (minute: number) =>
+    new Date(`2024-01-15T14:${String(minute).padStart(2, '0')}:00Z`);
+  const acknowledged = {acknowledgedBy: 'John Doe', acknowledgedAt: time(40)};
+  const iec = standard === 'iec-62923';
+  const alarm = iec
+    ? MaritimeAlertCriticality.Alarm
+    : AutomationAlertCriticality.High;
+  const warning = iec
+    ? MaritimeAlertCriticality.Warning
+    : AutomationAlertCriticality.Medium;
+  const unacked = iec
+    ? MaritimeAlertState.ActiveUnacknowledged
+    : AutomationAlertState.Unacknowledged;
+  const alert = (
+    id: string,
+    text: string,
+    criticality: string,
+    state: string,
+    fields: Partial<StandardAlertFields> = {}
+  ) =>
+    ({
+      standard,
+      criticality,
+      state,
+      id,
+      tagId: id.toUpperCase(),
+      source: alertSystem(standard).label(criticality),
+      text,
+      time: time(30),
+      ...fields,
+    }) as StandardAlert;
+  return [
+    alert('unacked-active', 'Active, unacked', alarm, unacked, {
+      time: time(39),
+    }),
+    alert(
+      'acked-active',
+      'Active, acked',
+      alarm,
+      iec
+        ? MaritimeAlertState.ActiveAcknowledged
+        : AutomationAlertState.Acknowledged,
+      {...acknowledged, time: time(38)}
+    ),
+    alert(
+      'unacked-rectified',
+      iec ? 'Rectified, unacked' : 'Returned to normal, unacked',
+      alarm,
+      iec
+        ? MaritimeAlertState.RectifiedUnacknowledged
+        : AutomationAlertState.ReturnedToNormalUnacknowledged,
+      {time: time(37)}
+    ),
+    alert(
+      'normal',
+      iec ? 'Rectified, acked' : 'Normal',
+      alarm,
+      iec ? MaritimeAlertState.Normal : AutomationAlertState.Normal,
+      {...acknowledged, time: time(36)}
+    ),
+    alert(
+      'caution',
+      'Takes no ACK',
+      iec
+        ? MaritimeAlertCriticality.Caution
+        : AutomationAlertCriticality.Diagnostic,
+      iec ? MaritimeAlertState.Active : AutomationAlertState.Active,
+      {time: time(35)}
+    ),
+    alert('no-ack', 'ACK elsewhere', warning, unacked, {
+      noAck: true,
+      time: time(34),
+    }),
+    alert('shelved', 'Shelved', warning, unacked, {
+      setAside: AlertSetAside.Shelved,
+      time: time(33),
+    }),
+    alert('blocked', iec ? 'Blocked' : 'Suppressed', alarm, unacked, {
+      setAside: iec ? AlertSetAside.Blocked : AlertSetAside.Suppressed,
+      time: time(32),
+    }),
+  ];
+}
+
+/**
+ * Every criticality of a standard in every state it takes: one column per
+ * criticality, most severe first, and one row per state, with the cell left
+ * empty where the criticality does not take the state. The per-standard
+ * stories of the experimental alert components draw their cells through it.
+ */
+export function alertSystemMatrix(
+  standard: string,
+  cell: (criticality: string, state: string) => TemplateResult
+): TemplateResult {
+  const system = alertSystem(standard);
+  return html`<div
+    style="display: grid; grid-template-columns: auto repeat(${
+      system.criticalities.length
+    }, minmax(64px, auto)); gap: 8px 16px; align-items: center; justify-items: center; font: var(--font-ui-body, 14px sans-serif);"
+  >
+    <div></div>
+    ${system.criticalities.map(
+      (criticality) => html`<div>${system.label(criticality)}</div>`
+    )}
+    ${system.states.map(
+      (state) =>
+        html`<div style="justify-self: end">${state}</div>
+          ${system.criticalities.map((criticality) =>
+            system.statesOf(criticality).includes(state)
+              ? cell(criticality, state)
+              : html`<div></div>`
+          )}`
+    )}
+  </div>`;
+}
+
+/** The state each standard moves an alert to when it is acknowledged here. */
+const ACKNOWLEDGED_STATE: Record<string, Record<string, string>> = {
+  'iec-62923': {
+    [MaritimeAlertState.ActiveUnacknowledged]:
+      MaritimeAlertState.ActiveAcknowledged,
+    [MaritimeAlertState.ActiveSilenced]: MaritimeAlertState.ActiveAcknowledged,
+    [MaritimeAlertState.RectifiedUnacknowledged]: MaritimeAlertState.Normal,
+  },
+  'isa-18.2': {
+    [AutomationAlertState.Unacknowledged]: AutomationAlertState.Acknowledged,
+    [AutomationAlertState.ReturnedToNormalUnacknowledged]:
+      AutomationAlertState.Normal,
+    [AutomationAlertState.LatchedUnacknowledged]:
+      AutomationAlertState.LatchedAcknowledged,
+  },
+};
+
+/** The state an alert in `state` moves to when it is acknowledged here, if any. */
+export function acknowledgedState(
+  standard: string,
+  state: string
+): string | undefined {
+  return ACKNOWLEDGED_STATE[standard]?.[state];
+}
+
+/**
+ * Stands in for the application acknowledging alerts: the acknowledged ones
+ * move to the state their standard gives them, and those that are then
+ * normal leave the list.
+ */
+export function acknowledgeAlerts(
+  alerts: StandardAlert[],
+  ids: ReadonlySet<string>
+): StandardAlert[] {
+  return alerts.flatMap((alert) => {
+    const next = ids.has(alert.id)
+      ? acknowledgedState(alert.standard, alert.state)
+      : undefined;
+    if (!next) {
+      return [alert];
+    }
+    const acked = {
+      ...alert,
+      state: next,
+      acknowledgedBy: 'John Doe',
+      acknowledgedAt: new Date('2024-01-15T14:44:00Z'),
+    } as StandardAlert;
+    return presentAlert(acked).condition === AlertCondition.Normal
+      ? []
+      : [acked];
+  });
+}
+
+/** An `obc-alert-menu-item` for an alert, with its icon drawn by its standard. */
+export function alertMenuItem(
+  alert: StandardAlert,
+  onAck: (item: ObcAlertMenuItem) => void
+): TemplateResult {
+  const {shelved, blocked} = alertFilterState(alert);
+  return html`<obc-alert-menu-item
+    .status=${alertMenuItemStatus(alert)}
+    .shelved=${shelved}
+    .blocked=${blocked}
+    title=${alert.source}
+    description=${alert.text}
+    time=${alert.time.toISOString().slice(11, 19)}
+    @ack-click=${(e: Event) => onAck(e.currentTarget as ObcAlertMenuItem)}
+  >
+    <obc-alert-icon-experimental
+      slot="alert-icon"
+      .standard=${alert.standard}
+      .criticality=${alert.criticality}
+      .state=${alert.state}
+      .setAside=${alert.setAside}
+    ></obc-alert-icon-experimental>
+  </obc-alert-menu-item>`;
+}
+
+/**
+ * Stands in for the application acknowledging the alert of a menu item in
+ * place: the item's status and its icon's state move on.
+ */
+export function acknowledgeMenuItem(item: ObcAlertMenuItem): void {
+  const icon = item.querySelector('obc-alert-icon-experimental');
+  const next =
+    icon &&
+    acknowledgedState(icon.standard ?? getDefaultAlertStandard(), icon.state);
+  if (!icon || !next) {
+    return;
+  }
+  icon.state = next;
+  item.status =
+    item.status === ObcAlertMenuItemStatus.RectifiedUnacknowledged
+      ? ObcAlertMenuItemStatus.Rectified
+      : ObcAlertMenuItemStatus.Acknowledged;
 }
