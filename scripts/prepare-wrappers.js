@@ -29,6 +29,13 @@ for (const wrapper of wrappers) {
     fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + "\n");
     console.log(`Set ${pkg.name} to ${version} (core ^${version})`);
 
+    // A registry copy of the core nested here by the core's `npm version` step
+    // would shadow the workspace link (docs/agents/ci-and-release.md).
+    fs.rmSync(`${wrapper.path}/node_modules/${CORE_PACKAGE}`, {
+        recursive: true,
+        force: true,
+    });
+
     execSync("npm run build", { cwd: wrapper.path, stdio: "inherit" });
 
     // For Angular: inject version into the dist package.json too. ng-packagr

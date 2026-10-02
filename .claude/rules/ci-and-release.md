@@ -95,7 +95,12 @@ relying on it.
 `scripts/prepare-wrappers.js` stamps the release version into each wrapper
 package and builds it; the Angular wrapper additionally gets the version written
 into its `dist/package.json`. It runs only during a release and is invoked by
-path, not by an npm script — so it is easy to miss when grepping.
+path, not by an npm script — so it is easy to miss when grepping. Before each
+build it deletes the wrapper's nested `node_modules/@oicl/openbridge-webcomponents`:
+the core's `npm version` step reinstalls the workspace while the wrappers still
+ask for the old core range, and on a minor bump into a prerelease
+(`2.0.0` → `2.1.0-next.1`) npm fills that range from the registry, so the
+wrapper would compile against the last published core.
 
 Everything else lives in the singular `script/` directory. Adding release-time
 tooling to the wrong one silently does nothing.
