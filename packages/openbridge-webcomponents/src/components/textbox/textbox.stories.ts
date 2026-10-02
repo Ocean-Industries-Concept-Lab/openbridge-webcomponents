@@ -163,3 +163,27 @@ export const ReserveSpace: Story = {
     </div>
   `,
 };
+
+export const DescendersAndDiacritics: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'The box is a cap-to-baseline frame, not a clip: descenders (g, j, p) and diacritics (Å) paint past its edges at every size. An ancestor that clips must leave room for them.',
+      },
+    },
+  },
+  render: () => html`
+    <div
+      style="display: flex; flex-direction: column; align-items: flex-start; gap: 24px;"
+    >
+      ${Object.values(ObcTextboxSize).map(
+        (size) => html`
+          <obc-textbox .size=${size} style=${boxOutline}>
+            <div>${size.toUpperCase()} – Ågjp 123</div>
+          </obc-textbox>
+        `
+      )}
+    </div>
+  `,
+};
