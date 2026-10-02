@@ -243,13 +243,13 @@ export interface ReadoutReserverOptions {
  * Per-label ("readout-block-title") options.
  *
  * The label size follows the designer's Figma 6.1 title block, which carries an
- * `xs`/`s` primary-size axis: `s` is the default for stand-alone readouts (a
- * scannable label should not sit at the smallest permitted size), `xs` the
- * default for dense list rows. Values outside `xs`/`s` are not part of the
- * design and are not rejected, but their metrics are unspecified.
+ * `xs`/`s` primary-size axis: `xs` is the default in both `obc-readout` and
+ * `obc-readout-list-item`, and `s` is for a stand-alone readout whose label has
+ * to be scannable. Values outside `xs`/`s` are not part of the design and are
+ * not rejected, but their metrics are unspecified.
  */
 export interface ReadoutLabelOptions {
-  /** Label typography size — `xs` (dense rows) or `s` (stand-alone readouts). */
+  /** Label typography size — `xs` (default) or `s` (a scannable stand-alone label). */
   size?: ObcTextboxSize;
   /** Longest expected label to reserve width for (aligns stacked readouts). */
   spaceReserver?: string;

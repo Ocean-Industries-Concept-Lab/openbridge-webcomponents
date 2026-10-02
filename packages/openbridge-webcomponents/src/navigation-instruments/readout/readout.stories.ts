@@ -1630,29 +1630,29 @@ export const SetpointEqualSize: Story = {
 };
 
 /**
- * Label ("readout-block-title") options — Figma 6.1. Large readouts default
- * the label to textbox `s` (a scannable label should not sit at the smallest
- * size); `labelOptions.size` opts a tight layout back down to `xs`, and
- * `labelOptions.spaceReserver` aligns ragged labels across stacked readouts.
- * The label is SemiBold only on enhanced readouts.
+ * Label ("readout-block-title") options — Figma 6.1. Every tier defaults the
+ * label to textbox `xs`; `labelOptions.size: 's'` gives a stand-alone readout
+ * the larger, more scannable label, and `labelOptions.spaceReserver` aligns
+ * ragged labels across stacked readouts. The label is SemiBold only on
+ * enhanced readouts.
  */
 export const LabelOptions: Story = {
   render: () =>
     renderShowcase([
       {
-        title: 'Label size — tier default vs explicit',
+        title: 'Label size — default vs explicit',
         columns: 3,
         cases: [
           {
-            label: 'large / default (s)',
+            label: 'large / default (xs)',
             config: {options: {size: ReadoutSize.large}},
           },
           {
-            label: 'large / xs override',
+            label: 'large / s override',
             config: {
               options: {
                 size: ReadoutSize.large,
-                label: {size: ObcTextboxSize.xs},
+                label: {size: ObcTextboxSize.s},
               },
             },
           },
