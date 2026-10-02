@@ -15,7 +15,6 @@ import {ButtonVariant} from '../../components/button/button.js';
 import '../../components/dropdown-button/dropdown-button.js';
 import {ObcDropdownButtonChangeEvent} from '../../components/dropdown-button/dropdown-button.js';
 import '../../icons/icon-silence-iec.js';
-import {Alert} from '../../types.js';
 
 /** One entry of the mode dropdown. */
 export interface AlertListPageMode {
@@ -37,15 +36,16 @@ export interface AlertListPageMode {
  *   alerts `visibleAlerts()` returns, and the mode, in `ack-all-visible-click`.
  * - **Silence:** the icon button fires `silence-click`.
  *
+ * The base holds no alerts: each page declares `alerts` in the alert type it
+ * lists.
+ *
  * @property hasShelved - Whether the dropdown offers the shelved alerts.
- * @property alerts - Alerts to list.
  * @property showTime - Whether the list shows when each alert was raised.
  * @property timeFormatter - Formats the time the list shows.
  * @availableWhen timeFormatter showTime==true
  */
 export class ObcAlertListPageSmallBase extends LitElement {
   @property({type: Boolean}) hasShelved: boolean = false;
-  @property({type: Array}) alerts: Alert[] = [];
   @property({type: Boolean}) showTime: boolean = false;
   @property({attribute: false}) timeFormatter: (time: Date) => string = (
     time: Date
@@ -74,7 +74,7 @@ export class ObcAlertListPageSmallBase extends LitElement {
   }
 
   /** The alerts in view, which "ACK visible" reports. */
-  protected visibleAlerts(): Alert[] {
+  protected visibleAlerts(): unknown[] {
     return [];
   }
 
@@ -82,11 +82,11 @@ export class ObcAlertListPageSmallBase extends LitElement {
     return nothing;
   }
 
-  protected dispatchAckClick(alert: Alert) {
+  protected dispatchAckClick(alert: unknown) {
     this.dispatchEvent(new CustomEvent('ack-click', {detail: {alert}}));
   }
 
-  protected dispatchRowClick(alert: Alert) {
+  protected dispatchRowClick(alert: unknown) {
     this.dispatchEvent(new CustomEvent('row-click', {detail: {alert}}));
   }
 

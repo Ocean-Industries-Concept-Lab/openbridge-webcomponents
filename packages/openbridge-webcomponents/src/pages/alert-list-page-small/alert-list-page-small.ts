@@ -40,6 +40,7 @@ export type ObcRowClickEvent = CustomEvent<{
 }>;
 
 /**
+ * @property alerts - Alerts to list.
  * @fires {ObcAlertListPageAckAllClickEvent} ack-all-visible-click - Fired when the user clicks the "ACK visible" button.
  * @fires {ObcAckClickEvent} ack-click - Fired when the user clicks the "ACK" button.
  * @fires {ObcRowClickEvent} row-click - Fired when the user clicks a row.
@@ -48,6 +49,7 @@ export type ObcRowClickEvent = CustomEvent<{
  */
 @customElement('obc-alert-list-page-small')
 export class ObcAlertListPageSmall extends ObcAlertListPageSmallBase {
+  @property({type: Array}) alerts: Alert[] = [];
   @property({type: String}) selectedMode: AlertListMode = AlertListMode.ALL;
 
   @state() private _mode: AlertListMode = AlertListMode.ALL;
