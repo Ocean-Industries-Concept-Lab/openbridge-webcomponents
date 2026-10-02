@@ -21,6 +21,7 @@ import {
   AlertFilterMode,
   alertFilter,
   alertFilterModeData,
+  canAcknowledge,
 } from '../../alert-filter.js';
 import {
   AlertAcknowledgement,
@@ -135,7 +136,7 @@ export function ackColumn(
     label: 'ACK-status',
     cell: (alert) => {
       const {system, presentation} = resolveAlert(alert);
-      const {acknowledgement, transferred} = presentation;
+      const {acknowledgement} = presentation;
       if (acknowledgement === AlertAcknowledgement.Acked) {
         const ackedBy = alert.acknowledgedBy;
         if (!ackedBy || ackedBy.trim() === '')
@@ -155,19 +156,19 @@ export function ackColumn(
       if (acknowledgement !== AlertAcknowledgement.Unacked) {
         return {type: ObcTableCellType.Regular};
       }
-      if (alert.noAck || transferred) {
-        const icon =
-          system.noAckGlyph(alert.criticality) === NoAckGlyph.Alarm
-            ? html`<obi-alarm-noack-iec usecsscolor></obi-alarm-noack-iec>`
-            : html`<obi-warning-noack-iec usecsscolor></obi-warning-noack-iec>`;
-        return {
-          type: ObcTableCellType.Regular,
-          largeIcon: true,
-          icon,
-          align: 'center',
-        };
+      if (canAcknowledge(alert)) {
+        return {type: ObcTableCellType.Button, text: msg('ACK')};
       }
-      return {type: ObcTableCellType.Button, text: msg('ACK')};
+      const icon =
+        system.noAckGlyph(alert.criticality) === NoAckGlyph.Alarm
+          ? html`<obi-alarm-noack-iec usecsscolor></obi-alarm-noack-iec>`
+          : html`<obi-warning-noack-iec usecsscolor></obi-warning-noack-iec>`;
+      return {
+        type: ObcTableCellType.Regular,
+        largeIcon: true,
+        icon,
+        align: 'center',
+      };
     },
     ...options,
   };
