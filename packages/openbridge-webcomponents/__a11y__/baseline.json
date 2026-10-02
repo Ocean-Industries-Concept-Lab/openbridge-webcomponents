@@ -85,6 +85,9 @@
   "application-components-alerts-alert-menu-item--primary-action-none": [
     "nested-interactive"
   ],
+  "application-components-alerts-alert-menu-item--rectified-unacknowledged": [
+    "nested-interactive"
+  ],
   "application-components-alerts-alert-menu-item--secondary-action-disabled": [
     "nested-interactive"
   ],
