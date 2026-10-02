@@ -1,6 +1,7 @@
 import {
   CSSResultGroup,
   LitElement,
+  PropertyValues,
   TemplateResult,
   html,
   nothing,
@@ -148,7 +149,8 @@ export class ObcAlertMenu extends LitElement {
   @property({type: Boolean, attribute: false}) showAlertListButton: boolean =
     true;
 
-  @state() private _selectedTabIndex = 1;
+  /** The `name` of the tab the user picked; the second tab shows until then. */
+  @state() private _selectedTabName?: string;
 
   @query('.alert-list')
   private alertList!: ObcAlertListBase;
@@ -167,7 +169,16 @@ export class ObcAlertMenu extends LitElement {
   }
 
   private onTabChange(e: ObcTabbedCardChangeEvent) {
-    this._selectedTabIndex = e.detail.tab;
+    this._selectedTabName = this.tabs[e.detail.tab]?.name;
+  }
+
+  protected override willUpdate(changedProperties: PropertyValues<this>) {
+    super.willUpdate(changedProperties);
+    // A picked tab that goes away, as Shelved does when `hasShelved` turns
+    // off, gives way to the second tab, which stays when the tab returns.
+    if (!this.tabs.some((tab) => tab.name === this._selectedTabName)) {
+      this._selectedTabName = undefined;
+    }
   }
 
   /** Whether the menu offers "ACK visible" at all; `canAckAll` enables it. */
@@ -202,9 +213,15 @@ export class ObcAlertMenu extends LitElement {
     return tabs;
   }
 
+  /** Where the selected tab sits in `tabs`: the one the user picked, else the second. */
+  private selectedTabIndex(tabs: AlertMenuTab[]): number {
+    const index = tabs.findIndex((tab) => tab.name === this._selectedTabName);
+    return index === -1 ? 1 : index;
+  }
+
   private get selectedTab(): AlertMenuTab {
     const tabs = this.tabs;
-    return tabs[this._selectedTabIndex] ?? tabs[1];
+    return tabs[this.selectedTabIndex(tabs)];
   }
 
   /**
@@ -238,14 +255,15 @@ export class ObcAlertMenu extends LitElement {
 
   override render() {
     const tabs = this.tabs;
-    const t = this.selectedTab;
+    const selectedIndex = this.selectedTabIndex(tabs);
+    const t = tabs[selectedIndex];
 
     return html`
       <obc-tabbed-card
         .nTabs=${tabs.length}
         class="wrapper"
         part="wrapper"
-        .selectedTab=${this._selectedTabIndex}
+        .selectedTab=${selectedIndex}
         hasDefaultSlotOnly
         @tab-change=${this.onTabChange}
       >
