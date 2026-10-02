@@ -212,11 +212,13 @@ what activating five dormant code paths does to alignment.
   npx vitest run --project storybook 'readout-block' --update
   npx vitest run --project storybook 'readout-block'   # always re-verify
   ```
-- A change to `obc-readout-block` or `obc-textbox` can move instrument snapshots.
-  After touching either, also run the instruments that embed `obc-readout`:
+- A change to `obc-readout-block` or `obc-textbox` reaches about 70 component
+  directories: the instruments built on `watch.ts` or `instrument-field`, the
+  automation symbols and the transmitters. A filter list misses some, so run
+  the whole snapshot suite without `--update`, then regenerate only the stories
+  that moved, one filter at a time:
   ```bash
-  npx vitest run --project storybook compass heading gauge-radial rate-of-turn \
-    pitch-roll speed-gauge azimuth-thruster-labeled automation-tank
+  npx vitest run --project storybook
   ```
 
 ---
