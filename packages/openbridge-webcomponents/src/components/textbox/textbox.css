@@ -14,20 +14,17 @@
 }
 
 /* The inner-wrapper is the box: its height (--height) is the full textbox
-   height, padding included. The content is sized to the cap height and
-   vertically centered, which leaves the padding as equal space above and
-   below. In engines that support text-box-trim the content box collapses to
-   the cap height exactly; in Firefox (no text-box-trim) the content keeps its
-   natural line box, so align-items:center + overflow:hidden crops it to the
-   same height instead. No padding here – the centering provides it.
-   (A small top padding could be added later to nudge the text up in Firefox.) */
+   height, padding included. The content is trimmed to the cap height
+   (text-box-trim below) and vertically centred, which leaves the padding as
+   equal space above and below. Descenders and diacritics reach past the box
+   on purpose: it is a cap-to-baseline frame, not a clip, so `overflow` stays
+   visible and an ancestor that clips must leave room for them. */
 .inner-wrapper {
   box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: var(--alignment-justify, flex-end);
   height: var(--height);
-  overflow: hidden;
   /* Opt-in: animate a `size` change (height + font-size below). Defaults to 0s
      (instant, current behavior) so existing usages and snapshots are unchanged;
      a consumer sets `--obc-textbox-size-transition` (e.g. 300ms) to animate the
