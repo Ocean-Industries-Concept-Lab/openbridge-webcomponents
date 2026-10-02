@@ -43,3 +43,22 @@ export const Off: Story = {
     turnedOn: false,
   },
 };
+
+export const MultipleReadouts: Story = {
+  args: {
+    turnedOn: true,
+    showStatus: false,
+    readoutValues: [
+      {
+        value: 300,
+        unit: 'V',
+        nDigits: 3,
+      },
+      {
+        value: 20,
+        unit: 'A',
+        nDigits: 3,
+      },
+    ],
+  },
+};

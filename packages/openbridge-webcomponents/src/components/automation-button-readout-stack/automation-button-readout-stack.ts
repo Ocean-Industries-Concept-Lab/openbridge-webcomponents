@@ -56,6 +56,7 @@ export interface AutomationButtonReadoutStackValue {
   type: 'value';
   value: number;
   nDigits: number;
+  fractionDigits?: number;
   unit: string;
   direction: 'up' | 'down' | 'left' | 'right' | 'none';
   icon: 'none' | 'arrow' | 'chevron' | 'slot';
@@ -218,6 +219,7 @@ export class ObcAutomationButtonReadoutStack extends LitElement {
     const content = html`
       ${this.renderNumber(readout.value, {
         maxDigits: readout.nDigits,
+        fractionDigits: readout.fractionDigits,
         hintedZeros: true,
       })}
       <span class="unit">${readout.unit}</span>
