@@ -13,12 +13,9 @@
   letter-spacing: var(--global-typography-generic-l-letter-spacing);
 }
 
-/* The inner-wrapper is the box: its height (--height) is the full textbox
-   height, padding included. The content is trimmed to the cap height
-   (text-box-trim below) and vertically centred, which leaves the padding as
-   equal space above and below. Descenders and diacritics reach past the box
-   on purpose: it is a cap-to-baseline frame, not a clip, so `overflow` stays
-   visible and an ancestor that clips must leave room for them. */
+/* The box, never clipped: descenders and diacritics paint past its edges. The
+   centred content leaves equal padding above and below; without text-box-trim
+   the host's zero line-height keeps it centred to within about a pixel. */
 .inner-wrapper {
   box-sizing: border-box;
   display: flex;
