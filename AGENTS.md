@@ -96,7 +96,7 @@ Key points:
    No inline JSDoc above `@property()` fields (`npm run lint:comments` fails;
    `--fix` hoists them; the exceptions are in [`docs/agents/jsdoc.md`](docs/agents/jsdoc.md)).
    A tag naming a property that does not exist fails `npm run lint:slots`.
-7. **Tone:** Do NOT mention "maritime", "industrial", "bridge", or domain qualifiers; keep text domain-agnostic.
+7. **Tone:** Keep generic behaviour domain-neutral: no "maritime", "industrial" or "bridge" as decoration. Where the behaviour comes from a domain or a standard, name it, citing the standard by number (`IEC 62923`, `ISA-18.2`).
 8. If purpose is unclear, insert `**TODO(designer)**` instead of guessing.
 9. **`@availableWhen` for conditional properties** — see [`docs/agents/jsdoc.md`](docs/agents/jsdoc.md).
 10. **Exactly one lifecycle tag** on every `@customElement` class — see [`docs/agents/jsdoc.md`](docs/agents/jsdoc.md).
