@@ -285,6 +285,7 @@ The library uses **Noto Sans**. You should ensure it is available in your projec
 @font-face {
   font-family: 'Noto Sans';
   src: url('path/to/NotoSans.ttf');
+  font-weight: 400 700;
 }
 
 * {
