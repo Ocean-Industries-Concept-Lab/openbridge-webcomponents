@@ -62,11 +62,13 @@ const config: StorybookConfig = {
     @font-face {
     font-family: Noto Sans;
     src: url(./assets/NotoSans.ttf);
+    font-weight: 400 700;
     }
 
      @font-face {
     font-family: 'noto-sans';
     src: url(./assets/NotoSans.ttf);
+    font-weight: 400 700;
     }
 </style>
   `,
