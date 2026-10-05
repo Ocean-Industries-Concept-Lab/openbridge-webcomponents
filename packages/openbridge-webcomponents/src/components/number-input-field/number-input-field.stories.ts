@@ -211,6 +211,80 @@ export const AlignRightUnitOutside: Story = {
   },
 };
 
+export const AlignCenterEmpty: Story = {
+  args: {
+    placeholder: '00.0',
+    unit: '°C',
+    textAlign: ObcNumberInputFieldTextAlign.Center,
+  },
+};
+
+// =============================================================================
+// CARET UNDER ZOOM
+// =============================================================================
+
+/** Prints where the caret landed beside the field that was clicked. */
+const reportCaret = (event: Event) => {
+  const row = event.currentTarget as HTMLElement;
+  const field = row.querySelector('obc-number-input-field');
+  const readout = row.querySelector('.caret-readout');
+  if (!field || !readout) return;
+  setTimeout(() => {
+    const input = field.shadowRoot?.querySelector('input');
+    readout.textContent = input
+      ? `caret ${input.selectionStart} of ${input.value.length}`
+      : '';
+  });
+};
+
+const caretRow = (
+  zoom: number,
+  textAlign: ObcNumberInputFieldTextAlign
+) => html`
+  <div
+    style="display:flex; align-items:center; gap:16px; margin-bottom:16px;"
+    @click=${reportCaret}
+  >
+    <span style="width:120px; font:12px sans-serif;"
+      >zoom ${zoom} · ${textAlign}</span
+    >
+    <div style="width:320px;">
+      <obc-number-input-field
+        label="SV"
+        unit="m/s"
+        .value=${1234567.89}
+        .textAlign=${textAlign}
+      ></obc-number-input-field>
+    </div>
+    <code class="caret-readout" style="font:12px monospace; min-width:120px;"
+      >click a digit</code
+    >
+  </div>
+`;
+
+/**
+ * Hosts scale the page with CSS `zoom`, so the same fields repeat at four
+ * levels; a click on a digit must put the caret on that digit at every one.
+ * A live check rather than a snapshot: the readout prints where it landed.
+ */
+export const CaretUnderZoom: Story = {
+  tags: ['skip-test'],
+  render: () => html`
+    <div style="padding:8px;">
+      ${[0.5, 0.75, 1, 1.25].map(
+        (zoom) => html`
+          <div
+            style="zoom:${zoom}; border-bottom:1px dashed currentColor; padding:8px 0;"
+          >
+            ${caretRow(zoom, ObcNumberInputFieldTextAlign.Right)}
+            ${caretRow(zoom, ObcNumberInputFieldTextAlign.Center)}
+          </div>
+        `
+      )}
+    </div>
+  `,
+};
+
 // =============================================================================
 // DECIMAL SEPARATOR
 // =============================================================================
