@@ -1,7 +1,6 @@
 /**
  * Numeric helpers shared by the SVG instruments and the components that draw
- * with them: range clamping, angle wrapping, degree/radian conversion and
- * piecewise-linear interpolation between keyframes.
+ * with them: range clamping, angle wrapping and degree/radian conversion.
  *
  * Keep the operand order as written. `(deg * Math.PI) / 180` and
  * `deg * (Math.PI / 180)` differ in the last bit, and the instrument
@@ -55,27 +54,4 @@ export function degToRad(deg: number): number {
  */
 export function radToDeg(rad: number): number {
   return (rad * 180) / Math.PI;
-}
-
-/**
- * Piecewise-linear interpolation through keyframes, for geometry that has to
- * match a set of drawn icons at their steps and move smoothly between them.
- *
- * @param x - Position to read; below the first or above the last keyframe it takes that keyframe's value.
- * @param frames - `[x, y]` pairs sorted by ascending `x`, at least one.
- * @returns The interpolated `y`.
- */
-export function interpolate(
-  x: number,
-  frames: readonly (readonly [number, number])[]
-): number {
-  if (x <= frames[0][0]) return frames[0][1];
-  for (let i = 1; i < frames.length; i++) {
-    const [x1, y1] = frames[i];
-    if (x <= x1) {
-      const [x0, y0] = frames[i - 1];
-      return y0 + ((y1 - y0) * (x - x0)) / (x1 - x0);
-    }
-  }
-  return frames[frames.length - 1][1];
 }

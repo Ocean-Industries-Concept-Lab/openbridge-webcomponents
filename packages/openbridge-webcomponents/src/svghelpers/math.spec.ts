@@ -3,7 +3,6 @@ import {
   clamp,
   clampPercent,
   degToRad,
-  interpolate,
   normalizeAngle,
   radToDeg,
 } from './math.js';
@@ -83,29 +82,5 @@ describe('degToRad / radToDeg', () => {
 
   it('round-trips', () => {
     expect(radToDeg(degToRad(47.5))).toBeCloseTo(47.5, 12);
-  });
-});
-
-describe('interpolate', () => {
-  const frames = [
-    [0, 10],
-    [50, 20],
-    [100, 0],
-  ] as const;
-
-  it('returns the keyframe value at a keyframe', () => {
-    expect(interpolate(0, frames)).toBe(10);
-    expect(interpolate(50, frames)).toBe(20);
-    expect(interpolate(100, frames)).toBe(0);
-  });
-
-  it('interpolates linearly between keyframes', () => {
-    expect(interpolate(25, frames)).toBe(15);
-    expect(interpolate(75, frames)).toBe(10);
-  });
-
-  it('holds the end values outside the keyframes', () => {
-    expect(interpolate(-10, frames)).toBe(10);
-    expect(interpolate(150, frames)).toBe(0);
   });
 });

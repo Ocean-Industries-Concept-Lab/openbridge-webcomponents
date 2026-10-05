@@ -2,7 +2,7 @@ import {LitElement, html, svg, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import compentStyle from './valve-analog-two-way-icon.css?inline';
 import {customElement} from '../../decorator.js';
-import {clampPercent, interpolate} from '../../svghelpers/math.js';
+import {clampPercent} from '../../svghelpers/math.js';
 import '../../icons/icon-twoway-analog-closed.js';
 
 const OUTLINE =
@@ -10,43 +10,8 @@ const OUTLINE =
 const BODY =
   'M10.6972 12H13.3028L21 6.8685V19.1315L13.3028 14H10.6972L3 19.1315V6.8685L10.6972 12Z';
 
-/**
- * Geometry of the `obi-twoway-analog-*` icons, keyed by opening in percent:
- * the width of the shut band at each port end, and the handle's angle and
- * centre. The 0 % step continues the 10 % one to a vertical handle.
- */
-const BAND_WIDTH = [
-  [0, 7],
-  [10, 6],
-  [25, 4],
-  [50, 2],
-  [75, 1],
-  [100, 0],
-] as const;
-const HANDLE_ANGLE = [
-  [0, -90],
-  [10, -75],
-  [25, -60],
-  [50, -45],
-  [75, -15],
-  [100, 0],
-] as const;
-const HANDLE_X = [
-  [0, 12],
-  [10, 12.147],
-  [25, 11.75],
-  [50, 12.268],
-  [75, 11.915],
-  [100, 12],
-] as const;
-const HANDLE_Y = [
-  [0, 5.5],
-  [10, 4.915],
-  [25, 4.665],
-  [50, 4.268],
-  [75, 4.147],
-  [100, 3.5],
-] as const;
+/** Width of the shut band at each port end when the opening is 0 %, in icon units. */
+const BAND_RANGE = 7;
 
 const SECONDARY = 'fill: var(--automation-device-secondary-color)';
 const TERTIARY = 'fill: var(--automation-device-tertiary-color)';
@@ -56,13 +21,11 @@ const PRIMARY = 'fill: var(--automation-device-primary-color)';
  * Two-way analog valve symbol whose opening moves continuously from 0 to
  * 100 %.
  *
- * Draws the same symbol as the `obi-twoway-analog-*` icons and matches them
- * at their 10/25/50/75 % and open steps; between the steps the shut bands at
- * the port ends and the handle move smoothly. Used as the icon of
- * `obc-analog-valve`.
- *
- * TODO(designer): no icon is drawn below 10 %; the symbol continues the
- * 10 % step to a vertical handle at 0 %.
+ * Draws the same symbol as the `obi-twoway-analog-*` icons. The shut bands at
+ * the port ends and the handle are linear in the opening: exact at 100 %
+ * (`obi-twoway-analog-open`) and at 0 % (vertical handle, ports shut to the
+ * centre), and close to the icons' 10/25/50/75 % steps in between. Used as
+ * the icon of `obc-analog-valve`.
  *
  * @property value - Opening in percent (0–100).
  * @availableWhen value closed==false
@@ -88,10 +51,15 @@ export class ObcValveAnalogTwoWayIcon extends LitElement {
     </g>`;
   }
 
+  /**
+   * Horizontal at the top when open, turning to vertical and moving 2 units
+   * down as the valve shuts, matching `obi-twoway-analog-open` at 100 %.
+   */
   private renderHandle(value: number) {
-    const angle = interpolate(value, HANDLE_ANGLE);
-    const cx = interpolate(value, HANDLE_X);
-    const cy = interpolate(value, HANDLE_Y);
+    const shut = 1 - value / 100;
+    const angle = -90 * shut;
+    const cx = 12;
+    const cy = 3.5 + 2 * shut;
     return svg`<g transform="rotate(${angle} ${cx} ${cy})">
       <line x1=${cx - 2.5} y1=${cy} x2=${cx + 2.5} y2=${cy} stroke-width="3" stroke-linecap="round" style="stroke: var(--automation-device-tertiary-color)"/>
       <line x1=${cx - 2.5} y1=${cy} x2=${cx + 2.5} y2=${cy} stroke-width="1" stroke-linecap="round" style="stroke: var(--automation-device-primary-color)"/>
@@ -121,7 +89,7 @@ export class ObcValveAnalogTwoWayIcon extends LitElement {
           </defs>
           <path d=${OUTLINE} style=${TERTIARY} />
           <path d=${BODY} style=${PRIMARY} />
-          ${this.renderBands(interpolate(value, BAND_WIDTH))}
+          ${this.renderBands((BAND_RANGE * (100 - value)) / 100)}
           ${this.renderHandle(value)}
         </svg>
       </div>

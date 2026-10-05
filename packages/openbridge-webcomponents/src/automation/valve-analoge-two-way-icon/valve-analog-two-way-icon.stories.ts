@@ -55,7 +55,10 @@ export const Continuous: Story = {
   },
 };
 
-/** Top row: the `obi-twoway-analog-*` icons. Bottom row: this component at the same opening. */
+/**
+ * Top row: the `obi-twoway-analog-*` icons. Bottom row: this component at the
+ * same opening; open and closed match exactly, the steps between are close.
+ */
 export const MatchesIcons: Story = {
   play: async ({canvasElement}) => {
     const elements = [...canvasElement.querySelectorAll('*')].filter((el) =>
