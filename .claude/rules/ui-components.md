@@ -85,6 +85,20 @@ button item and Alert button (#1236).
 - Guarded by `alert-button-item.spec.ts`, `alert-counter-item.spec.ts`,
   `alert-button.spec.ts` and `alert-severity.spec.ts`.
 
+## Alert lists, menu and page
+
+The alert list, the alert menu and the small alert list page keep what a twin
+would otherwise copy in shared code, so a twin overrides only its filtering.
+
+- `ObcAlertListBase` holds the list's scrolling, motion and empty state;
+  `obc-alert-list` adds only its `filter`.
+- `obc-alert-menu` exposes `tabs`, `renderList` and `offersAckAll` hooks;
+  `ObcAlertListPageSmallBase` holds the small page's action bar.
+- Shared bases are plain `Obc*Base` classes with default hooks, never TS
+  `abstract`: the React wrapper generator wraps every `LitElement` subclass,
+  and its `createComponent` rejects an abstract class.
+- The empty states share the `alert-list-empty` mixin.
+
 ## Slot Conventions
 
 | Pattern                                      | Usage                                  |
