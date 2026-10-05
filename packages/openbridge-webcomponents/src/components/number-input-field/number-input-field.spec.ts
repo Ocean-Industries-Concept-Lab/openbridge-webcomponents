@@ -440,25 +440,33 @@ describe('obc-number-input-field', () => {
     const query = <T extends Element>(selector: string): T =>
       el.shadowRoot!.querySelector(selector) as T;
 
-    /** Focusing reformats the value in a follow-up render. */
+    /**
+     * Focusing reformats the value in a follow-up render, a frame later when
+     * the focus came from a click on the value.
+     */
     const settle = async () => {
+      await new Promise(requestAnimationFrame);
       await el.updateComplete;
       await el.updateComplete;
     };
 
     /**
-     * A real click a quarter of the way into character `index`, so the nearest
-     * caret boundary is `index`. The text is right-aligned and unpadded, so its
-     * last boundary is the input's right edge.
+     * A real click `fraction` of the way into character `index`, so the
+     * nearest caret boundary is `index` below a half and `index + 1` above.
+     * The text is right-aligned and unpadded, so its last boundary is the
+     * input's right edge.
      */
-    const clickIntoChar = async (index: number) => {
+    const clickIntoChar = async (index: number, fraction = 1 / 4) => {
       const box = input.getBoundingClientRect();
       const advances = textAdvances(input, input.value);
       const textLeft = box.right - advances[advances.length - 1];
       const from = textLeft + advances[index];
       const to = textLeft + advances[index + 1];
       await userEvent.click(input, {
-        position: {x: from + (to - from) / 4 - box.left, y: box.height / 2},
+        position: {
+          x: from + (to - from) * fraction - box.left,
+          y: box.height / 2,
+        },
       });
       await settle();
     };
@@ -515,16 +523,35 @@ describe('obc-number-input-field', () => {
       expect(input.selectionStart).toBe(4);
     });
 
-    it('keeps the clicked character through the ungrouping that focus applies', async () => {
-      el.groupSeparator = ',';
-      await settle();
-      expect(input.value).toBe('1,234,567.89');
+    for (const textAlign of [
+      ObcNumberInputFieldTextAlign.Right,
+      ObcNumberInputFieldTextAlign.Center,
+    ]) {
+      it(`keeps the clicked character through the ungrouping that focus applies (${textAlign})`, async () => {
+        el.textAlign = textAlign;
+        el.groupSeparator = ',';
+        await settle();
+        const grouped = input.value;
+        expect(grouped).toBe('1,234,567.89');
 
-      await clickIntoChar(10);
+        const missed: string[] = [];
+        for (let index = 0; index < grouped.length; index++) {
+          for (const fraction of [1 / 4, 3 / 4]) {
+            input.blur();
+            await settle();
+            await clickIntoChar(index, fraction);
+            const boundary = index + (fraction > 1 / 2 ? 1 : 0);
+            const expected = grouped.slice(0, boundary).replaceAll(',', '');
+            if (input.selectionStart !== expected.length) {
+              missed.push(`${boundary} → ${input.selectionStart}`);
+            }
+          }
+        }
 
-      expect(input.value).toBe('1234567.89');
-      expect(input.selectionStart).toBe(8);
-    });
+        expect(input.value).toBe('1234567.89');
+        expect(missed).toEqual([]);
+      });
+    }
 
     it('keeps focus and the unfinished edit when the unit is clicked mid-edit', async () => {
       const changes: number[] = [];

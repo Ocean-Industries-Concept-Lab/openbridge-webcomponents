@@ -125,6 +125,8 @@ export class ObcNumberInputField extends LitElement {
   @state() private previousDisplayText = '';
   @state() private lastCommittedValue = NaN;
 
+  private focusFromValueClick = false;
+
   @query('.value-input') private inputElement?: HTMLInputElement;
 
   get displayValue(): string {
@@ -197,6 +199,37 @@ export class ObcNumberInputField extends LitElement {
     // A read-only field has nothing to edit, so it keeps its formatted display
     // instead of switching to the ungrouped editing representation.
     if (this.readonly) return;
+    if (this.focusFromValueClick) {
+      this.focusFromValueClick = false;
+      requestAnimationFrame(() => void this.ungroupKeepingSelection());
+      return;
+    }
+    this.ungroupDisplay();
+  }
+
+  /**
+   * Ungroups a value the user clicked into, once the browser has placed the
+   * caret, and moves the caret with its digits. Ungrouping before that shifts
+   * the text under the pointer and the caret lands beside the clicked digit.
+   */
+  private async ungroupKeepingSelection() {
+    const input = this.inputElement;
+    if (!input || !this.hasFocus) return;
+    const grouped = input.value;
+    const offsetWithoutGrouping = (offset: number | null) =>
+      removeGroupingFromDisplay(
+        grouped.slice(0, offset ?? grouped.length),
+        this.getFormatOptions()
+      ).length;
+    const start = offsetWithoutGrouping(input.selectionStart);
+    const end = offsetWithoutGrouping(input.selectionEnd);
+    const direction = input.selectionDirection ?? undefined;
+    this.ungroupDisplay();
+    await this.updateComplete;
+    input.setSelectionRange(start, end, direction);
+  }
+
+  private ungroupDisplay() {
     const source = this.displayOverride || this.displayText;
     this.displayText = removeGroupingFromDisplay(
       source,
@@ -352,10 +385,16 @@ export class ObcNumberInputField extends LitElement {
    * Keeps focus where it is while the chrome around the value is clicked.
    * The wrapper is a `<label>`, so the click itself focuses the input; without
    * this the pointerdown would blur it first and commit an unfinished edit.
+   * A click on the value itself is the browser's; it is only noted, so the
+   * focus it causes ungroups the value without moving the caret.
    */
   private onPointerDown(e: PointerEvent) {
     if (this.disabled || this.readonly) return;
-    if (e.target !== this.inputElement) e.preventDefault();
+    if (e.target === this.inputElement) {
+      this.focusFromValueClick = !this.hasFocus;
+      return;
+    }
+    e.preventDefault();
   }
 
   override render() {
