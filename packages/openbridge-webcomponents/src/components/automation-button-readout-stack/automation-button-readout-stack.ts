@@ -71,12 +71,14 @@ export interface AutomationButtonReadoutStackStateOn {
   type: 'state-on';
   value: string;
   hasIcon: boolean;
+  direction?: 'up' | 'down' | 'left' | 'right' | 'none';
 }
 
 export interface AutomationButtonReadoutStackStateOff {
   type: 'state-off';
   value: string;
   hasIcon: boolean;
+  direction?: 'up' | 'down' | 'left' | 'right' | 'none';
 }
 
 export interface AutomationButtonReadoutStackButton {
@@ -166,30 +168,39 @@ export class ObcAutomationButtonReadoutStack extends LitElement {
     ></obc-readout-block>`;
   }
 
-  renderValue(readout: AutomationButtonReadoutStackValue): HTMLTemplateResult {
-    let directionIcon: HTMLTemplateResult | typeof nothing = nothing;
-    if (readout.icon == 'arrow') {
-      if (readout.direction == 'up') {
-        directionIcon = html`<obi-arrow-up-google
+  private renderArrow(
+    direction: 'up' | 'down' | 'left' | 'right' | 'none' | undefined
+  ): HTMLTemplateResult | typeof nothing {
+    switch (direction) {
+      case 'up':
+        return html`<obi-arrow-up-google
           class="icon"
           useCssColor
         ></obi-arrow-up-google>`;
-      } else if (readout.direction == 'down') {
-        directionIcon = html`<obi-arrow-down-google
+      case 'down':
+        return html`<obi-arrow-down-google
           class="icon"
           useCssColor
         ></obi-arrow-down-google>`;
-      } else if (readout.direction == 'left') {
-        directionIcon = html`<obi-arrow-left-google
+      case 'left':
+        return html`<obi-arrow-left-google
           class="icon"
           useCssColor
         ></obi-arrow-left-google>`;
-      } else if (readout.direction == 'right') {
-        directionIcon = html`<obi-arrow-right-google
+      case 'right':
+        return html`<obi-arrow-right-google
           class="icon"
           useCssColor
         ></obi-arrow-right-google>`;
-      }
+      default:
+        return nothing;
+    }
+  }
+
+  renderValue(readout: AutomationButtonReadoutStackValue): HTMLTemplateResult {
+    let directionIcon: HTMLTemplateResult | typeof nothing = nothing;
+    if (readout.icon == 'arrow') {
+      directionIcon = this.renderArrow(readout.direction);
     } else if (readout.icon == 'chevron') {
       if (readout.direction == 'up') {
         directionIcon = html`<obi-chevron-double-up-google
@@ -251,8 +262,10 @@ export class ObcAutomationButtonReadoutStack extends LitElement {
   renderStateOff(
     readout: AutomationButtonReadoutStackStateOff
   ): HTMLTemplateResult {
-    let offIcon: HTMLTemplateResult = html``;
-    if (readout.hasIcon) {
+    let offIcon: HTMLTemplateResult | typeof nothing = html``;
+    if (readout.direction && readout.direction !== 'none') {
+      offIcon = this.renderArrow(readout.direction);
+    } else if (readout.hasIcon) {
       offIcon = html`<obi-off class="icon" useCssColor></obi-off>`;
     }
 
@@ -263,8 +276,10 @@ export class ObcAutomationButtonReadoutStack extends LitElement {
   renderStateOn(
     readout: AutomationButtonReadoutStackStateOn
   ): HTMLTemplateResult {
-    let onIcon: HTMLTemplateResult = html``;
-    if (readout.hasIcon) {
+    let onIcon: HTMLTemplateResult | typeof nothing = html``;
+    if (readout.direction && readout.direction !== 'none') {
+      onIcon = this.renderArrow(readout.direction);
+    } else if (readout.hasIcon) {
       onIcon = html`<obi-on class="icon" useCssColor></obi-on>`;
     }
 
