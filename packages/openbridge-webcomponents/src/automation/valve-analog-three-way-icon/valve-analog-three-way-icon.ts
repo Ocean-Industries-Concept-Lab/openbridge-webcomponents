@@ -44,34 +44,6 @@ const PLUGGED: {outline: string; plug: string; ring: string; body: string}[] = [
   },
 ];
 
-/**
- * Handle centre at the 0/25/50/75/100 keyframes of the `inleft-left`,
- * `inleft-bottom` and `inleft-right` icons, indexed by the inlet port.
- */
-const HANDLE_CENTRES: [number, number][][] = [
-  [
-    [12, 5],
-    [12.543, 4.81],
-    [12.732, 4.268],
-    [12.19, 4.457],
-    [12, 5.5],
-  ],
-  [
-    [12, 5],
-    [11.543, 4.81],
-    [11.732, 4.268],
-    [12.19, 4.457],
-    [12, 5.5],
-  ],
-  [
-    [12, 5],
-    [11.457, 4.81],
-    [11.268, 4.268],
-    [11.81, 4.457],
-    [12, 5.5],
-  ],
-];
-
 /** The port whose share of the split turns the handle, per inlet port. */
 const SPLIT_PORT = [2, 0, 0];
 
@@ -93,21 +65,6 @@ const CLOSED = svg`
   <path fill-rule="evenodd" clip-rule="evenodd" d="M17 21H7L11.5 15H12.5L17 21ZM3 17L3 7L9 11.5V12.5L3 17ZM21 7V17L15 12.5V11.5L21 7ZM7 22H17C17.824 22 18.2944 21.0592 17.8 20.4L13.3 14.4C13.1111 14.1482 12.8148 14 12.5 14H11.5C11.1852 14 10.8889 14.1482 10.7 14.4L6.2 20.4C5.70557 21.0592 6.17595 22 7 22ZM2 17V7C2 6.17595 2.94076 5.70557 3.6 6.2L9.6 10.7C9.85181 10.8889 10 11.1852 10 11.5V12.5C10 12.8148 9.85181 13.1111 9.6 13.3L3.6 17.8C2.94076 18.2944 2 17.824 2 17ZM22 7V17C22 17.824 21.0592 18.2944 20.4 17.8L14.4 13.3C14.1482 13.1111 14 12.8148 14 12.5V11.5C14 11.1852 14.1482 10.8889 14.4 10.7L20.4 6.2C21.0592 5.70557 22 6.17595 22 7Z" style="fill: var(--automation-device-tertiary-inverted-color)"/>
   <path d="M13 3C13 2.44772 12.5523 2 12 2C11.4477 2 11 2.44772 11 3V8C11 8.55228 11.4477 9 12 9C12.5523 9 13 8.55228 13 8V3ZM14 8C14 9.10457 13.1046 10 12 10C10.8954 10 10 9.10457 10 8V3C10 1.89543 10.8954 1 12 1C13.1046 1 14 1.89543 14 3V8Z" style="fill: var(--automation-device-tertiary-inverted-color)"/>
 `;
-
-function lerp(a: number, b: number, t: number): number {
-  return a + (b - a) * t;
-}
-
-function handleCentre(inlet: number, split: number): [number, number] {
-  const frames = HANDLE_CENTRES[inlet];
-  const position = (split / 100) * (frames.length - 1);
-  const i = Math.min(Math.floor(position), frames.length - 2);
-  const t = position - i;
-  return [
-    lerp(frames[i][0], frames[i + 1][0], t),
-    lerp(frames[i][1], frames[i + 1][1], t),
-  ];
-}
 
 function renderHandle(cx: number, cy: number, angle: number) {
   return svg`<g transform="rotate(${angle} ${cx} ${cy})">
@@ -138,9 +95,10 @@ function renderBand(port: number, opening: number) {
  * Three-way analog valve symbol whose ports open continuously from 0 to
  * 100 %.
  *
- * Draws the same symbol as the `obi-threeway-analog-*` icons and matches them
- * at their 0/25/50/75/100 steps; between the steps every port and the handle
- * move smoothly. Used as the icon of `obc-analog-threeway-valve`, and on its
+ * Draws the same symbol as the `obi-threeway-analog-*` icons. The bands, the
+ * handle angle and the handle position are linear in the opening: exact at
+ * 0 and 100 %, within a fraction of a unit of the icons' 25/50/75 steps.
+ * Used as the icon of `obc-analog-threeway-valve`, and on its
  * own inside an `obc-automation-button`.
  *
  * ## Ports
@@ -240,7 +198,10 @@ export class ObcValveAnalogThreeWayIcon extends LitElement {
     const otherPort = 3 - inlet - splitPort;
     const split =
       (100 * ports[splitPort]) / (ports[splitPort] + ports[otherPort]);
-    const [cx, cy] = handleCentre(inlet, split);
+    // Linear between the obi icons' end steps: (12, 5) with the split port
+    // shut, (12, 5.5) with the other one shut.
+    const cx = 12;
+    const cy = 5 + (0.5 * split) / 100;
     const angle = (inlet === 0 ? -0.9 : 0.9) * split;
 
     return svg`

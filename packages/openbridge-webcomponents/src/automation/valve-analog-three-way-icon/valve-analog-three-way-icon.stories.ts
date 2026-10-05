@@ -101,6 +101,7 @@ export const MatchesIcons: Story = {
       description: {
         story:
           'Each column is one `obi-threeway-analog-inleft-*` icon above this component at the same openings. ' +
+          'The 0 and 100 % steps match exactly; the symbol is linear in between, so the 25/50/75 steps differ slightly. ' +
           'The `inleft-bottom` and `inleft-right` series are compared at their 25/50/75 steps and at the opposite end step, ' +
           'because their 0 and 100 steps are named the other way round.',
       },
