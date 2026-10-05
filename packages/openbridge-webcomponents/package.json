@@ -111,7 +111,7 @@
     "@topcli/prompts": "^4.0.0",
     "@types/node": "^26.6.1",
     "@typescript-eslint/eslint-plugin": "^8.70.0",
-    "@vitest/browser-playwright": "^4.1.11",
+    "@vitest/browser-playwright": "^5.0.3",
     "conventional-changelog-conventionalcommits": "^9.3.1",
     "dotenv": "^18.0.0",
     "eslint": "^10.11.0",
