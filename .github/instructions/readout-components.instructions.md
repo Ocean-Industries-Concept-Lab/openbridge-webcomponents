@@ -211,11 +211,13 @@ what activating five dormant code paths does to alignment.
   npx vitest run --project storybook 'readout-block' --update
   npx vitest run --project storybook 'readout-block'   # always re-verify
   ```
-- A change to `obc-readout-block` or `obc-textbox` can move instrument snapshots.
-  After touching either, also run the instruments that embed `obc-readout`:
+- A change to `obc-readout-block` or `obc-textbox` reaches about 70 component
+  directories: the instruments built on `watch.ts` or `instrument-field`, the
+  automation symbols and the transmitters. A filter list misses some, so run
+  the whole snapshot suite without `--update`, then regenerate only the stories
+  that moved, one filter at a time:
   ```bash
-  npx vitest run --project storybook compass heading gauge-radial rate-of-turn \
-    pitch-roll speed-gauge azimuth-thruster-labeled automation-tank
+  npx vitest run --project storybook
   ```
 
 ---
@@ -281,12 +283,18 @@ Decisions carried into code from the 6.1 review (2026-08):
   exactly as the alert-frame sheet (Figma 2370:6884) draws them. The
   token-coloured IEC icons belong to **advice categories** and the source
   chips. A monochrome flap badge is not a missing `useCssColor`.
+- The textbox is a cap-to-baseline frame, not a clip: its box spans the cap
+  top to the baseline plus the padding, and descenders and diacritics paint
+  past it (about 2 px below an `m` box, 6 px below `xl`, 4 px above it for
+  `Å`). No layer may clip it vertically. `.label-container` in the list item
+  clips a too-long label horizontally only (`overflow-x: clip`,
+  `overflow-y: visible`). `Textbox → DescendersAndDiacritics` pins it.
 - Source chips use `outline`, drawn outside the box, so any ancestor that
   clips must leave 1px of clip margin — `.label-container` in the list item
-  does (`overflow: clip; overflow-clip-margin: 1px`) because a `leading-src`
-  chip sits on its left and bottom edges. The 1× snapshot does not catch a
-  regression here (the lost fringe is under the pixel threshold); check the
-  leading-src row of `Readout List Item → SourceStates` at 2×.
+  does (`overflow-clip-margin: 1px`) because a `leading-src` chip sits on its
+  left edge. The 1× snapshot does not catch a regression here (the lost
+  fringe is under the pixel threshold); check the leading-src row of
+  `Readout List Item → SourceStates` at 2×.
 - Picker sources render an **empty** context menu without slotted
   `src-picker-content`; flyout sources only fire `source-flyout-click`. The
   showcases slot demo items for the picker and expect nothing from the
