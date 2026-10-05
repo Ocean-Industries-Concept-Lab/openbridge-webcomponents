@@ -33,8 +33,9 @@ export enum AnalogThreewayValveVariant {
  *   points to.
  * - **Flow readout:** `flows` lists one readout row per flow, each with an
  *   optional arrow direction and either a value with a unit (`%` when left out)
- *   or a state, `{open}`, shown as `Open` or `Closed`. Without flows
- *   the readout shows `Open` or `Closed`.
+ *   or a state, `{open}`, shown as `Open` or `Closed` after the arrow, or
+ *   after the on/off icon when there is no direction. Without flows the
+ *   readout shows `Open` or `Closed`.
  * - Badges, alert frame, progress and readout placement come from the shared
  *   automation button base.
  *
@@ -51,6 +52,11 @@ export enum AnalogThreewayValveVariant {
  * @property orientation - Side the stem points to.
  * @property flows - Readout rows, one per flow: an optional arrow direction with either a value and optional unit (default `%`) or `open` for an `Open`/`Closed` state.
  * @property variant - Visual style of the button surround.
+ * @slot badge-top-right - Content projected into the top-right badge position; overrides `badgeAlert`.
+ * @slot badge-top-left - Content projected into the top-left badge position; overrides `badgeControl`.
+ * @slot badge-bottom-left - Content projected into the bottom-left badge position; overrides `badgeInterlock`.
+ * @slot badge-bottom-right - Content projected into the bottom-right badge position; overrides `badgeCommandLocked`.
+ * @fires click - Fired when the valve is clicked.
  * @experimental
  */
 @customElement('obc-analog-threeway-valve')

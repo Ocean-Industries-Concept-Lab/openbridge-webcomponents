@@ -58,9 +58,12 @@ export interface ThreewayValveValueFlow {
   unit?: string;
 }
 
-/** A flow readout row with a state: `→ Open` or `→ Closed`. */
+/** A flow readout row with a state: `→ Open`, `→ Closed`, or the on/off icon without a direction. */
 export interface ThreewayValveStateFlow {
-  /** Arrow direction on screen; left out or `none` shows no icon. */
+  /**
+   * Arrow direction on screen; left out or `none` shows the on or off icon
+   * instead.
+   */
   direction?: AutomationButtonLabelDirection;
   open: boolean;
 }
