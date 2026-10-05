@@ -23,7 +23,7 @@ import {customElement} from '../../decorator.js';
  * - Enum-driven badges (`badgeControl`, `badgeAlert`, `badgeInterlock`,
  *   `badgeCommandLocked`) or the `badges` slot fill the badge row; it
  *   collapses when empty, as does the tag cell.
- * - Alert-frame overlay with the same six properties and three slots as
+ * - Alert-frame overlay with the same seven properties and three slots as
  *   `obc-automation-tank`.
  * - `positioning`, `clickable` and `activated` behave as on
  *   `obc-automation-tank`.

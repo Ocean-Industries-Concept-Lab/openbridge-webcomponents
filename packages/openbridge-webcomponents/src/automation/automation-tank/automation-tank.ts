@@ -31,6 +31,7 @@ import '../../building-blocks/bar-vertical/bar-vertical.js';
 import '../../components/alert-frame/alert-frame.js';
 import {Priority} from '../../navigation-instruments/types.js';
 import {
+  ObcAlertFrameMode,
   ObcAlertFrameThickness,
   ObcAlertFrameType,
 } from '../../components/alert-frame/alert-frame.js';
@@ -109,10 +110,23 @@ export enum TankChartMode {
  *   bar in `bar` mode.
  * @property hasAdvice - Show advice overlays (works in all `chartMode` variants).
  * @property alert - Show an `<obc-alert-frame>` overlay around the bordered tank area (the
- *   `.halo` wrapper). Mirrors the API of `obc-automation-button`: same six
+ *   `.halo` wrapper). Mirrors the API of `obc-automation-button`: same seven
  *   properties, same three slots (`alert-icon`, `alert-label`, `alert-timer`).
  *   The ring overlays `.halo` only, so the tag and readout that sit outside
  *   the halo in compact / static layouts remain unaffected.
+ * @property alertFrameType - Shape of the alert frame.
+ * @availableWhen alertFrameType alert==true
+ * @property alertFrameThickness - Thickness of the alert frame.
+ * @availableWhen alertFrameThickness alert==true
+ * @property alertFrameStatus - Alert status the frame is coloured for.
+ * @availableWhen alertFrameStatus alert==true
+ * @property alertFrameMode - Acknowledgement state of the alert: `acked-active` (default) is steady,
+ *   `unacked-active` flashes, `unacked-rectified` flashes a dashed frame.
+ * @availableWhen alertFrameMode alert==true
+ * @property showAlertCategoryIcon - Shows the alert category icon inside the frame.
+ * @availableWhen showAlertCategoryIcon alert==true && alertFrameType in [SmallSideFlip, LargeSideFlip, BottomFlip, TopFlip]
+ * @property showAlertIcon - Shows the slotted alert icon inside the frame.
+ * @availableWhen showAlertIcon alert==true && alertFrameType in [LargeSideFlip, BottomFlip, TopFlip]
  * @property showTrendSymbol - Show the trend chevron / off icon next to the percent readout. Default
  *   `true` preserves existing behavior. Set to `false` to hide the trend
  *   indicator in both compact and non-compact readouts — useful when the
@@ -208,6 +222,8 @@ export class ObcAutomationTank extends SetpointMixin(LitElement) {
   @property({type: String}) alertFrameThickness: ObcAlertFrameThickness =
     ObcAlertFrameThickness.Small;
   @property({type: String}) alertFrameStatus: AlertType = AlertType.Alarm;
+  @property({type: String}) alertFrameMode: ObcAlertFrameMode =
+    ObcAlertFrameMode.ackedActive;
   @property({type: Boolean, attribute: false}) showAlertCategoryIcon: boolean =
     true;
   @property({type: Boolean}) showAlertIcon: boolean = false;
@@ -744,6 +760,7 @@ export class ObcAutomationTank extends SetpointMixin(LitElement) {
           .type=${this.alertFrameType}
           .thickness=${this.alertFrameThickness}
           .status=${this.alertFrameStatus}
+          .mode=${this.alertFrameMode}
           .showAlertCategoryIcon=${this.showAlertCategoryIcon}
           .showIcon=${this.showAlertIcon}
         >

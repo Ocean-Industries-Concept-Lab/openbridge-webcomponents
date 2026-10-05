@@ -25,7 +25,7 @@ Choose the correct base class when creating a new automation device:
 
 All button-based components share `ObcAbstractAutomationButton` as root, which provides: positioning, readout stacks, badges, alert frames, tags, and label direction.
 
-> **Exception:** `obc-automation-tank` extends `LitElement` directly (not the abstract base) because its layout shell is fundamentally different (multi-cell readout/tag/halo grid, optional embedded `obc-gauge-trend`). It re-implements the alert-frame pattern locally — same 6 properties (`alert`, `alertFrameType`, `alertFrameThickness`, `alertFrameStatus`, `showAlertCategoryIcon`, `showAlertIcon`) and same 3 slots (`alert-icon`, `alert-label`, `alert-timer`) — and overlays the `<obc-alert-frame>` inside its `.halo` wrapper so the ring hugs the bordered tank area only. When changing the alert API on the abstract base, keep the tank in sync. The tank also adds `aria-live="polite" aria-atomic="true"` on its `.root` to announce slotted alert labels; the abstract base does not (yet) do this.
+> **Exception:** `obc-automation-tank` extends `LitElement` directly (not the abstract base) because its layout shell is fundamentally different (multi-cell readout/tag/halo grid, optional embedded `obc-gauge-trend`). It re-implements the alert-frame pattern locally — the shared properties and slots of § Alert frame properties — and overlays the `<obc-alert-frame>` inside its `.halo` wrapper so the ring hugs the bordered tank area only. The tank also adds `aria-live="polite" aria-atomic="true"` on its `.root` to announce slotted alert labels; the abstract base does not (yet) do this.
 
 > **Device-named gauge presets:** `obc-gauge-generator` and
 > `obc-gauge-motors-and-pumps` subclass `obc-gauge-proportional` (a navigation
@@ -187,6 +187,14 @@ of its invariants are invisible in the template.
 - **The diagonal split is one unit-viewBox SVG** with `preserveAspectRatio="none"` and non-scaling strokes, so borders and the gap keep their pixel widths at every aspect ratio. Keep it that way — a stretched viewBox with scaling strokes distorts them.
 - **Stories share `specialty-tank-story-meta.ts`**; add a story there so all three tiles get it.
 
+## Alert frame properties
+
+The abstract button base, `obc-automation-tank`, the specialty-tank base and `obc-transmitter` take one alert-frame API under the same names: the gate (`alert`, or `hasAlert` on the transmitter), `alertFrameType`, `alertFrameThickness`, `alertFrameStatus`, `alertFrameMode`, `showAlertCategoryIcon` and `showAlertIcon`, and the `alert-icon`, `alert-label` and `alert-timer` slots for the frame's flap, which the abstract button base does not forward yet. `obc-accordion-card` takes the same set behind `hasAlert`.
+
+- A property added to one member goes to all of them, with its `@availableWhen` line and its story control; a member without it cannot show that state.
+- The default `alertFrameType` follows the component: `small-side-flip` on the buttons and tanks, `regular` on the transmitter and the accordion card, whose frame wraps the whole element.
+- Story controls come from `argTypesAlertFrame` (`components/alert-frame/alert-frame-storybook-helpers.ts`), which the abstract-button helpers spread.
+
 ## Storybook Conventions
 
 - Use shared argTypes helpers: `argTypesAbstractAutomationButton`, `argTypesAbstractAutomationButtonMotorized`, `argTypesAbstractAutomationButtonPassiveSquare`
@@ -231,3 +239,4 @@ Different components have different anchor points:
 ## Open
 
 - Shuffle selectors slide 100 ms on selection change; the Figma frames are WIP and specify no motion, so keep or remove is a designer call (#1171).
+- The abstract button base does not pass on the alert flap slots, so the 19 devices cannot fill a flap (#1334).

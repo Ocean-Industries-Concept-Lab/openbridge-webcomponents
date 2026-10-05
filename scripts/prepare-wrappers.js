@@ -28,7 +28,23 @@ for (const wrapper of wrappers) {
 
     fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + "\n");
     console.log(`Set ${pkg.name} to ${version} (core ^${version})`);
+}
 
+// @semantic-release/npm bumps the core with `npm version`, which re-installs
+// the workspace while the wrappers still pin the previous release. When the
+// bump leaves that range (2.0.0 -> 2.1.0-next.1 does not satisfy ^2.0.0), npm
+// replaces the workspace link with the previous release from the registry, and
+// the wrappers would build against its types. Re-installing with the new ranges
+// rewrites the lockfile, but extracts from the old one first, so a copy can
+// survive in a wrapper's node_modules: delete them after the install, which
+// leaves the workspace link. `npm ls` exits non-zero on any copy left behind.
+execSync("npm install", { stdio: "inherit" });
+for (const wrapper of wrappers) {
+    fs.rmSync(`${wrapper.path}/node_modules/${CORE_PACKAGE}`, { recursive: true, force: true });
+}
+execSync(`npm ls ${CORE_PACKAGE}`, { stdio: "inherit" });
+
+for (const wrapper of wrappers) {
     execSync("npm run build", { cwd: wrapper.path, stdio: "inherit" });
 
     // For Angular: inject version into the dist package.json too. ng-packagr
