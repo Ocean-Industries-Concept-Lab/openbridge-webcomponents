@@ -9,6 +9,7 @@ body {
 @font-face {
   font-family: "Noto Sans";
   src: url(/NotoSans.ttf) format("truetype");
+  font-weight: 400 700;
 }
 
 obc-test::part(link) {

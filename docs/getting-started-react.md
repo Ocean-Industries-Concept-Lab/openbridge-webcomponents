@@ -145,6 +145,7 @@ Next this file must be loaded by the css. So add it to index.css:
 @font-face {
   font-family: "Noto Sans";
   src: url(/NotoSans.ttf) format("truetype");
+  font-weight: 400 700;
 }
 ```
 

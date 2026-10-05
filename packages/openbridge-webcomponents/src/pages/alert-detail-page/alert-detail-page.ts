@@ -154,7 +154,7 @@ export class ObcAlertDetailPage extends LitElement {
             isAcknowledged(this.alert) && isActive(this.alert),
           'status-unacknowledged':
             !isAcknowledged(this.alert) && isActive(this.alert),
-          'status-resolved': isActive(this.alert),
+          'status-resolved': !isActive(this.alert),
         })}
       >
         <div class="header">
