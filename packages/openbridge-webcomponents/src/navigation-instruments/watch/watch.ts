@@ -293,12 +293,32 @@ const WIND_ICON_OUTSIDE_RADIUS =
  * @property rotPriority - Override priority for ROT color derivation. When set, ROT colors use this instead of the main `priority`. Useful when the ROT element has independent priority (e.g. compass per-element priority).
  * @property rateOfTurnDegreesPerMinute - Measured rate of turn in degrees per minute (the maritime/AIS convention, see ES-TRIN 2025/1 Art. 3.02 and ITU-R M.1371). Sign controls direction (positive = starboard/clockwise). When defined, this drives both the dot animation (multiplied by `rotDotAnimationFactor`) and the port/starboard direction sign.
  * @property rotDotAnimationFactor - Visual amplification factor applied only to the spinning-dot animation (not to bar extent). Default `18` keeps the legacy visual feel (≈1 rpm at 20°/min).
+ * @property portStarboard - Enables the maritime PORT/STBD (red/green) color mode.
+ *   Additional to `priority`: parts not listed in `portStarboardElements` keep
+ *   their regular/enhanced colors, and the setpoint focus state never recolors.
+ *   Independent of `starboardPortIndicator`, which draws thin arcs on the scale
+ *   ring; this mode's `face` element tints the open face inside the rings. Both
+ *   may be enabled together. Do not enable `face` on an instrument that renders
+ *   a center readout — the tint would sit behind the text — nor with
+ *   `hasBackgroundCircle`, whose opaque face fill is painted over it.
  * @property portStarboardElements - Which parts take part while `portStarboard` is on.
  *   Defaults to everything except the setpoint.
  * @availableWhen portStarboardElements portStarboard==true
+ * @property setpointPortStarboardSign - Direction for the setpoint marker while the
+ *   `setpoint` element is enabled. Only the sign is read, so a raw setpoint value
+ *   works as well as `-1`/`1`; `0` (and any non-finite value) keeps the
+ *   priority-derived color. Declared as `number` rather than the narrower
+ *   `PortStarboardSign` because the framework wrapper generators type
+ *   `@property({type: Number})` setters as `number`.
+ * @availableWhen setpointPortStarboardSign portStarboard==true
  * @property portStarboardSides - Which halves the region tints (`face` and the three bands) paint. Defaults
  *   to both, i.e. a green starboard half and a red port half.
  * @availableWhen portStarboardSides portStarboard==true
+ * @property portStarboardValueSign - Direction of the instrument's own value, used only
+ *   by `portStarboardSides="active"` to pick the half to paint. Only the sign is
+ *   read, so a raw value works; `0` (or non-finite) paints both halves. Declared
+ *   as `number` for the same reason as `setpointPortStarboardSign`.
+ * @availableWhen portStarboardValueSign portStarboard==true && portStarboardSides==active
  * @experimental
  */
 @customElement('obc-watch')
@@ -365,48 +385,14 @@ export class ObcWatch extends LitElement {
   @property({type: Boolean}) currentIconCentered: boolean = false;
   @property({type: Number}) scaleCurrentIcon: number = 1;
   @property({type: Boolean}) starboardPortIndicator: boolean = false;
-  /**
-   * Enables the maritime PORT/STBD (red/green) color mode. Additional to
-   * `priority`: parts not listed in `portStarboardElements` keep their
-   * regular/enhanced colors, and the setpoint focus state never recolors.
-   *
-   * Independent of `starboardPortIndicator`, which draws thin arcs on the
-   * scale ring; this mode's `face` element tints the open face inside the
-   * rings. Both may be enabled together.
-   *
-   * Do not enable the `face` element on an instrument that renders a center
-   * readout — the tint would sit behind the text. It is likewise not
-   * combinable with `hasBackgroundCircle`, whose opaque face fill is painted
-   * over it.
-   */
   @property({type: Boolean}) portStarboard: boolean = false;
   @property({type: Array, attribute: false})
   portStarboardElements: PortStarboardElement[] = [
     ...PORT_STARBOARD_DEFAULT_ELEMENTS,
   ];
-  /**
-   * Direction for the setpoint marker while the `setpoint` element is enabled.
-   * Only the sign is read, so a raw setpoint value works as well as `-1`/`1`;
-   * `0` (and any non-finite value) keeps the priority-derived color.
-   *
-   * Declared as `number` rather than the narrower `PortStarboardSign` because
-   * the framework wrapper generators type `@property({type: Number})` setters
-   * as `number` — a union type alias here breaks the Angular package build.
-   * @availableWhen portStarboard==true
-   */
   @property({type: Number}) setpointPortStarboardSign: number = 0;
   @property({type: String}) portStarboardSides: PortStarboardSides =
     PortStarboardSides.both;
-  /**
-   * Direction of the instrument's own value, used only by
-   * `portStarboardSides="active"` to pick the half to paint. Only the sign is
-   * read, so a raw value works; `0` (or non-finite) paints both halves.
-   *
-   * Declared as `number` rather than `PortStarboardSign` for the same reason as
-   * `setpointPortStarboardSign` — the wrapper generators type `type: Number`
-   * setters as `number`.
-   * @availableWhen portStarboard==true && portStarboardSides==active
-   */
   @property({type: Number}) portStarboardValueSign: number = 0;
   @property({type: Number}) clipTop: number = 0;
   @property({type: Number}) clipBottom: number = 0;

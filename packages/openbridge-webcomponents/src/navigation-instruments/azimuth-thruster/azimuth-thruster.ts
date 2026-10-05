@@ -75,6 +75,11 @@ function mapAngle0to360(angle: number): number {
  * @property portStarboardElements - Which parts take part while `portStarboard` is on.
  *   Defaults to everything except the setpoint.
  * @availableWhen portStarboardElements portStarboard==true
+ * @property portStarboardSource - Which quantity decides the side: the thrust alone
+ *   (`value`, the default — green ahead, red astern), the pod orientation alone
+ *   (`orientation`), or the two combined into the direction actually being
+ *   pushed (`resultant`).
+ * @availableWhen portStarboardSource portStarboard==true
  * @property portStarboardSides - Which halves the region tints paint while `portStarboard` is on.
  * @availableWhen portStarboardSides portStarboard==true
  * @stable
@@ -166,14 +171,6 @@ export class ObcAzimuthThruster extends LitElement {
   portStarboardElements: PortStarboardElement[] = [
     ...PORT_STARBOARD_DEFAULT_ELEMENTS,
   ];
-  /**
-   * Which quantity decides the side: the thrust alone (`value`, the default —
-   * green ahead, red astern), the pod orientation alone (`orientation`), or the
-   * two combined into the direction actually being pushed (`resultant`).
-   *
-   * @availableWhen portStarboard==true
-   * @experimental
-   */
   @property({type: String}) portStarboardSource: PortStarboardSource =
     PortStarboardSource.value;
   @property({type: String}) portStarboardSides: PortStarboardSides =

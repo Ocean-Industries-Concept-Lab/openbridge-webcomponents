@@ -44,6 +44,10 @@ export enum AzimuthThrusterLabeledSize {
  * @property portStarboardElements - Which parts take part while `portStarboard` is on.
  *   Defaults to everything except the setpoint.
  * @availableWhen portStarboardElements portStarboard==true
+ * @property portStarboardSource - Which quantity decides the side on the embedded azimuth
+ *   thruster: the thrust alone (`value`, the default), the pod orientation alone
+ *   (`orientation`), or the two combined (`resultant`).
+ * @availableWhen portStarboardSource portStarboard==true
  * @deprecated The azimuth-thruster-labeled component is deprecated and will be removed in future releases.
  * Please make a combined component by using <obc-azimuth-thruster> in combination with <obc-readout> instead.
  */
@@ -89,14 +93,6 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
   portStarboardElements: PortStarboardElement[] = [
     ...PORT_STARBOARD_DEFAULT_ELEMENTS,
   ];
-  /**
-   * Which quantity decides the side on the embedded azimuth thruster: the
-   * thrust alone (`value`, the default), the pod orientation alone
-   * (`orientation`), or the two combined (`resultant`).
-   *
-   * @availableWhen portStarboard==true
-   * @experimental
-   */
   @property({type: String}) portStarboardSource: PortStarboardSource =
     PortStarboardSource.value;
 

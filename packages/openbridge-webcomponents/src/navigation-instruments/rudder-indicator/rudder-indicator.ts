@@ -259,6 +259,12 @@ function pointOnArc(
  * Use when the UI needs a compact rudder cue next to readouts or controls. Use
  * `obc-rudder` when the full semicircular scale, labels, and watch-based
  * setpoint treatment are required.
+ * @property portStarboard - Recolor the rudder cue with the maritime PORT/STBD
+ *   (red/green) palette instead of the state-derived gray/blue one. Parts left
+ *   out of `portStarboardElements` keep their state colors.
+ * @property portStarboardElements - Which parts take part while `portStarboard` is on.
+ *   Defaults to everything except the setpoint.
+ * @availableWhen portStarboardElements portStarboard==true
  * @stable
  */
 @customElement('obc-rudder-indicator')
@@ -275,22 +281,8 @@ export class ObcRudderIndicator extends LitElement {
 
   @property({type: Boolean}) hasSilhouette = false;
 
-  /**
-   * Recolor the rudder cue with the maritime PORT/STBD (red/green) palette
-   * instead of the state-derived gray/blue one. Parts left out of
-   * `portStarboardElements` keep their state colors.
-   *
-   * @experimental
-   */
   @property({type: Boolean}) portStarboard: boolean = false;
 
-  /**
-   * Which parts take part while `portStarboard` is on.
-   * Defaults to everything except the setpoint.
-   *
-   * @availableWhen portStarboard==true
-   * @experimental
-   */
   @property({type: Array, attribute: false})
   portStarboardElements: PortStarboardElement[] = [
     ...PORT_STARBOARD_DEFAULT_ELEMENTS,

@@ -111,6 +111,11 @@ function topCircleSideIntersection(
  *
  * @property portStarboard - Enables the maritime PORT/STBD (red/green) color mode: positive thrust
  *   renders green, negative red.
+ * @property portStarboardSource - Which quantity decides the side: the value alone
+ *   (`value`, the default), the azimuth orientation alone (`orientation`), or the
+ *   two combined into the direction actually being pushed (`resultant`). Mirrors
+ *   the option on `obc-azimuth-thruster`.
+ * @availableWhen portStarboardSource portStarboard==true
  * @stable
  */
 @customElement('obc-propulsion-azimuth-indicator')
@@ -128,15 +133,6 @@ export class ObcPropulsionAzimuthIndicator extends LitElement {
 
   @property({type: Boolean}) portStarboard = false;
 
-  /**
-   * Which quantity decides the side: the value alone (`value`, the default),
-   * the azimuth orientation alone (`orientation`), or the two combined into the
-   * direction actually being pushed (`resultant`). Mirrors the option on
-   * `obc-azimuth-thruster`.
-   *
-   * @availableWhen portStarboard==true
-   * @experimental
-   */
   @property({type: String}) portStarboardSource: PortStarboardSource =
     PortStarboardSource.value;
 
