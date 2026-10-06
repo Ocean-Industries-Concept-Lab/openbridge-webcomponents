@@ -1,3 +1,5 @@
+import type {ReactiveController, ReactiveControllerHost} from 'lit';
+
 /**
  * Create a MutationObserver to watch for theme changes
  *
@@ -34,4 +36,48 @@ export function observeThemeChanges(callback: () => void): MutationObserver {
   });
 
   return observer;
+}
+
+/** The palettes `data-obc-theme` selects. */
+export enum ObcPalette {
+  night = 'night',
+  dusk = 'dusk',
+  day = 'day',
+  bright = 'bright',
+}
+
+const PALETTES: readonly string[] = Object.values(ObcPalette);
+
+/** The palette on `<html>`; `day` when the attribute is missing or unknown, as in `variables.css`. */
+export function currentPalette(): ObcPalette {
+  const theme = document.documentElement.getAttribute('data-obc-theme');
+  return theme && PALETTES.includes(theme)
+    ? (theme as ObcPalette)
+    : ObcPalette.day;
+}
+
+/**
+ * Keeps `current` in step with `data-obc-theme` and re-renders the host when
+ * it changes, for content that cannot follow the palette through CSS.
+ */
+export class PaletteController implements ReactiveController {
+  current: ObcPalette = currentPalette();
+  private observer?: MutationObserver;
+
+  constructor(private readonly host: ReactiveControllerHost) {
+    host.addController(this);
+  }
+
+  hostConnected(): void {
+    this.current = currentPalette();
+    this.observer = observeThemeChanges(() => {
+      this.current = currentPalette();
+      this.host.requestUpdate();
+    });
+  }
+
+  hostDisconnected(): void {
+    this.observer?.disconnect();
+    this.observer = undefined;
+  }
 }

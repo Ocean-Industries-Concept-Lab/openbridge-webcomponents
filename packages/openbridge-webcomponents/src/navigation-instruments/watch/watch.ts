@@ -50,7 +50,17 @@ import {
   getLabelPositions,
   LabelPosition,
 } from './label.js';
-import {VesselImage, VesselImageSize, vesselImages} from './vessel.js';
+import {PaletteController} from '../../charthelpers/theme.js';
+import {
+  VesselImage,
+  VesselImageSize,
+  renderVesselArt,
+  vesselArt,
+  vesselImages,
+  vesselImageSrcFor,
+  type VesselArt,
+  type VesselImageSrc,
+} from './vessel.js';
 import {
   renderCurrent,
   renderCurrentCentered,
@@ -69,7 +79,16 @@ import {
   observeInnerBox,
   type RadialFrame,
 } from '../../svghelpers/radial-frame.js';
-export {VesselImage, VesselImageSize, vesselImages};
+export {
+  VesselImage,
+  VesselImageSize,
+  renderVesselArt,
+  vesselArt,
+  vesselImages,
+  vesselImageSrcFor,
+  type VesselArt,
+  type VesselImageSrc,
+};
 
 export enum WatchCircleType {
   single = 'single',
@@ -107,11 +126,19 @@ export interface WatchNeedle {
   length?: number;
 }
 
-export interface WatchVessel {
+export interface WatchVesselBuiltin {
   size: VesselImageSize;
   transform: string;
   vesselImage: VesselImage;
 }
+
+export interface WatchVesselCustom {
+  size: VesselImageSize;
+  transform: string;
+  customImage: VesselImageSrc;
+}
+
+export type WatchVessel = WatchVesselBuiltin | WatchVesselCustom;
 
 export const OUTER_RING_RADIUS = 368 / 2;
 const RING2_RADIUS = 320 / 2;
@@ -398,6 +425,7 @@ export class ObcWatch extends LitElement {
   }
 
   private _resizeController = new ResizeController(this, {});
+  private _palette = new PaletteController(this);
 
   override firstUpdated(changed: PropertyValues): void {
     super.firstUpdated(changed);
@@ -1413,7 +1441,7 @@ export class ObcWatch extends LitElement {
       }
 
       const scale = size / 160;
-      return svg`<g style="transform: ${v.transform} scale(${scale}) translate(-80px, -80px) ">${vesselImages[v.vesselImage]}</g>`;
+      return svg`<g style="transform: ${v.transform} scale(${scale}) translate(-80px, -80px) ">${renderVesselArt(v, this._palette.current)}</g>`;
     });
   }
 

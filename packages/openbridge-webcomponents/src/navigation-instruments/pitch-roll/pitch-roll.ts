@@ -1,14 +1,17 @@
 import {LitElement, css, html, nothing, svg} from 'lit';
+import {PaletteController} from '../../charthelpers/theme.js';
 import {property} from 'lit/decorators.js';
 import '../watch/watch.js';
 import {
   VesselImage,
   VesselImageSize,
+  vesselArt,
   WatchCircleType,
   type WatchArea,
   OUTER_RING_RADIUS,
   innerRingRadiusFor,
-  vesselImages,
+  renderVesselArt,
+  type VesselImageSrc,
 } from '../watch/watch.js';
 import {arcTickmarks, TickmarkType} from '../watch/tickmark.js';
 import {AdviceState, AdviceType, AngleAdviceRaw} from '../watch/advice.js';
@@ -90,6 +93,14 @@ const MIN_ARC_HALF_DEG = 2;
  *   need different angular extents.
  * @property rollArcAngle - Per-axis override for the roll arcs, left and right, falling back to
  *   `arcAngle` when undefined.
+ * @property vesselImageForeSrc - Image URLs per palette (`{bright, day, dusk, night}`, SVG, PNG or data URLs)
+ *   drawn instead of `vesselImageFore` in the same 160 × 160 box. A palette without a URL falls
+ *   back to the nearest one (see `VesselImageSrc`).
+ * @property vesselImageSideSrc - Image URLs per palette (`{bright, day, dusk, night}`, SVG, PNG or data URLs)
+ *   drawn instead of `vesselImageSide` in the same 160 × 160 box. A palette without a URL falls
+ *   back to the nearest one (see `VesselImageSrc`).
+ * @availableWhen vesselImageForeSrc hasReadout==false
+ * @availableWhen vesselImageSideSrc hasReadout==false
  * @stable
  */
 @customElement('obc-pitch-roll')
@@ -103,6 +114,12 @@ export class ObcPitchRoll extends LitElement {
   @property({type: Number}) maxAvgRoll = 0;
   @property({type: String}) vesselImageFore: VesselImage = VesselImage.psvFore;
   @property({type: String}) vesselImageSide: VesselImage = VesselImage.psvSide;
+  @property({type: Object, attribute: false})
+  vesselImageForeSrc: VesselImageSrc | undefined;
+  @property({type: Object, attribute: false})
+  vesselImageSideSrc: VesselImageSrc | undefined;
+
+  private readonly _palette = new PaletteController(this);
   @property({type: Number}) scaleForeImage = 1;
   @property({type: Number}) maxPitchAdvice: number | undefined = undefined;
   @property({type: Number}) maxRollAdvice: number | undefined = undefined;
@@ -258,12 +275,12 @@ export class ObcPitchRoll extends LitElement {
             <g
               style="transform: rotate(${this.pitch}deg) scale(${vesselScale}) translate(-80px, -80px);"
             >
-              ${this.zoomToFitArc ? vesselImages[this.vesselImageSide] : nothing}
+              ${this.zoomToFitArc ? renderVesselArt(vesselArt(this.vesselImageSide, this.vesselImageSideSrc), this._palette.current) : nothing}
             </g>
             <g
               style="transform: rotate(${this.roll}deg) scale(${vesselScale * this.normalizedScaleForeImage}) translate(-80px, -80px);"
             >
-              ${this.zoomToFitArc ? vesselImages[this.vesselImageFore] : nothing}
+              ${this.zoomToFitArc ? renderVesselArt(vesselArt(this.vesselImageFore, this.vesselImageForeSrc), this._palette.current) : nothing}
             </g>
           `
           }
@@ -766,12 +783,12 @@ export class ObcPitchRoll extends LitElement {
             : [
                 {
                   size: VesselImageSize.large,
-                  vesselImage: this.vesselImageSide,
+                  ...vesselArt(this.vesselImageSide, this.vesselImageSideSrc),
                   transform: `rotate(${this.pitch}deg)`,
                 },
                 {
                   size: VesselImageSize.large,
-                  vesselImage: this.vesselImageFore,
+                  ...vesselArt(this.vesselImageFore, this.vesselImageForeSrc),
                   transform: `rotate(${this.roll}deg) scale(${this.normalizedScaleForeImage})`,
                 },
               ]
