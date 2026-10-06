@@ -173,8 +173,17 @@ export const vesselImages: Record<VesselImage, SVGTemplateResult> = {
  * - `day`: day, bright, dusk, night
  * - `dusk`: dusk, night, day, bright
  * - `night`: night, dusk, day, bright
+ *
+ * An interface, not `Partial<Record<ObcPalette, string>>`: the wrapper
+ * generator expands a type alias and then imports `ObcPalette` by its
+ * source path, which breaks the Vue and Angular builds.
  */
-export type VesselImageSrc = Partial<Record<ObcPalette, string>>;
+export interface VesselImageSrc {
+  bright?: string;
+  day?: string;
+  dusk?: string;
+  night?: string;
+}
 
 const PALETTE_FALLBACK: Record<ObcPalette, readonly ObcPalette[]> = {
   [ObcPalette.bright]: [

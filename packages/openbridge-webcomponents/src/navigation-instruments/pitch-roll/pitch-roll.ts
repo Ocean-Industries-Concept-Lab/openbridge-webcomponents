@@ -96,10 +96,10 @@ const MIN_ARC_HALF_DEG = 2;
  * @property vesselImageForeSrc - Image URLs per palette (`{bright, day, dusk, night}`, SVG, PNG or data URLs)
  *   drawn instead of `vesselImageFore` in the same 160 × 160 box. A palette without a URL falls
  *   back to the nearest one (see `VesselImageSrc`).
+ * @availableWhen vesselImageForeSrc hasReadout==false
  * @property vesselImageSideSrc - Image URLs per palette (`{bright, day, dusk, night}`, SVG, PNG or data URLs)
  *   drawn instead of `vesselImageSide` in the same 160 × 160 box. A palette without a URL falls
  *   back to the nearest one (see `VesselImageSrc`).
- * @availableWhen vesselImageForeSrc hasReadout==false
  * @availableWhen vesselImageSideSrc hasReadout==false
  * @stable
  */
