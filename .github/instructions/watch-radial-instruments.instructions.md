@@ -643,7 +643,10 @@ All frame/viewBox geometry is centralized in `computeRadialFrame()`:
   font counter-scaling freeze at first paint whenever the host is not
   blockified by a parent (watch standalone was the visible case; inside
   `.container > * {position: absolute}` the host is blockified and the
-  host observation works).
+  host observation works). `obc-watch-flat` follows the same rule for its
+  label `--scale`, which falls back to 1:1 while the strip has no width;
+  without both, a strip mounted in a hidden container keeps `--scale: 0`
+  and `-Infinity` label offsets after it is shown (#1041).
 
 ### Host clipping & sector crops
 
