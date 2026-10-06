@@ -7,10 +7,8 @@ import {fileURLToPath} from 'node:url';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// The snapshot project again, with every story first rendered while hidden
-// (.storybook/vitest.hidden-mount.setup.ts). Same baselines, same tolerance
-// and retries: a story that differs from its baseline here only differs
-// because it mounted without a size.
+// The snapshot project with every story first rendered hidden, so a story
+// that differs from its baseline here differs only because of that.
 export default defineConfig({
   plugins: [
     storybookTest({

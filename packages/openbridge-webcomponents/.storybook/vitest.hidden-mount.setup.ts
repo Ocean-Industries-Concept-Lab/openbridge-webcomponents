@@ -1,11 +1,7 @@
 /**
- * Hidden-mount pass: every story renders inside a `display: none` canvas, is
- * shown, and must then match the baseline the snapshot project took of a
- * normal render. A story always mounts into a laid-out canvas, but a consumer
- * mounts components in closed tabs and dialogs too; a component that measures
- * itself while it has no size and never measures again passes every other
- * check (#1351). Every story is also held to finite SVG attributes: a `NaN` or
- * `Infinity` is an error in the console even when nothing visible moves.
+ * Hidden-mount pass: each story renders in a `display: none` canvas, is shown,
+ * then must match its snapshot baseline with finite attributes throughout.
+ * Why and how to read a failure: docs/agents/testing-visual.md (#1351).
  */
 import './vitest.setup.js';
 import {setProjectAnnotations} from '@storybook/web-components-vite';
