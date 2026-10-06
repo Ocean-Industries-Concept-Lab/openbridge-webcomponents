@@ -386,6 +386,21 @@ height only never fires one. In `updated()` that refresh runs **before** the
 rebuilding when a sync is in flight or the effective chart area is degenerate,
 and the caller's own rebuild is the fallback for those cases.
 
+**Pixel mode pins the canvas too.** `chart-line-base.css` gives pixel mode
+the same `!important` pin, to `--chart-width` / `--chart-height`. Without it
+the container shrink-wraps the canvas, so a chart created in a hidden container
+measures 0, Chart.js writes the 48 px `min-width` back inline, and the
+container keeps wrapping that: 48 × 24 for good. A chart created without a
+size is also rebuilt once when it gets one (`observeLabelThreshold()`), since
+a resized 0 × 0 chart keeps its plot a pixel off. `npm run test-hidden-mount`
+guards both (#1351).
+
+**Threshold gradients need one more update.** `applyFillModes()` builds them
+from laid-out scales, so it runs after `new Chart()` has already resolved the
+dataset colours. `createChart()` follows it with `chart.update('none')`;
+without that, a rebuild that nothing updates afterwards (a resize across
+192 px) draws the threshold line in one colour.
+
 **Before changing any of this**, open Storybook →
 **Building Blocks → Chart Sizing Battleground**. It renders every chart subject
 across nine container shapes and six zoom levels and prints a PASS/FAIL per
