@@ -70,6 +70,7 @@ export class PaletteController implements ReactiveController {
 
   hostConnected(): void {
     this.current = currentPalette();
+    this.host.requestUpdate();
     this.observer = observeThemeChanges(() => {
       this.current = currentPalette();
       this.host.requestUpdate();
