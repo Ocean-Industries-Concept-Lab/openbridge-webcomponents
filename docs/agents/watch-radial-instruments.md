@@ -196,8 +196,11 @@ When adding new features or fixing bugs:
   inclinometers) and build the vessel with `vesselArt()`. Anything drawing
   one calls `renderVesselArt(art, palette)` with the palette from a
   `PaletteController` (`charthelpers/theme.ts`), which re-renders on a theme
-  switch: `obc-watch`, plus the inclinometers' zoomed paths that draw the
-  vessel themselves.
+  switch: `obc-watch`, the inclinometers' zoomed paths that draw the vessel
+  themselves, `speed-directions`, and the instruments outside the core that
+  draw one (`heave`, `draft-trim`, `depth-actual`, `depth-top-band` fed by
+  `obc-depth`). `chart-object-vessel-button` is the one exception: its vessel
+  is HTML, so it keeps its `vessel-image` slot instead.
 - **Interval tick ladder** — `tickmark.ts`'s `buildIntervalTickmarks()` is
   the one value→tick implementation for interval-configured gauges
   (`instrument-radial`, `gauge-proportional`): primary/secondary/tertiary

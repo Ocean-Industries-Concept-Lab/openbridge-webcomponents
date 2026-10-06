@@ -37,6 +37,31 @@ const topVesselSvg = ({fill, stroke}: {fill: string; stroke: string}) => {
   );
 };
 
+const foreVesselSvg = ({fill, stroke}: {fill: string; stroke: string}) => {
+  const line = `stroke="${stroke}" stroke-width="1" stroke-linejoin="round" vector-effect="non-scaling-stroke"`;
+  return (
+    'data:image/svg+xml,' +
+    encodeURIComponent(
+      '<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160">' +
+        `<path d="M58 72 H102 V78 C102 84 92 87 80 87 C68 87 58 84 58 78 Z" fill="${fill}" ${line}/>` +
+        `<path d="M66 52 H94 V72 H66 Z" fill="${fill}" ${line}/>` +
+        `<path d="M70 42 H90 V52 H70 Z M80 36 V42" fill="none" ${line}/>` +
+        '</svg>'
+    )
+  );
+};
+
+/**
+ * A fore-view hull as SVG data URLs, one per palette, with the keel on the
+ * line the built-in fore silhouettes use (`obc-heave`, `obc-depth-actual`).
+ */
+export const customVesselForeSvgSrc: VesselImageSrc = {
+  bright: foreVesselSvg(vesselColors.bright),
+  day: foreVesselSvg(vesselColors.day),
+  dusk: foreVesselSvg(vesselColors.dusk),
+  night: foreVesselSvg(vesselColors.night),
+};
+
 /** A top-view hull as SVG data URLs, one per palette. */
 export const customVesselSvgSrc: VesselImageSrc = {
   bright: topVesselSvg(vesselColors.bright),
