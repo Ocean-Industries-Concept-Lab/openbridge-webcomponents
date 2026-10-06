@@ -61,8 +61,8 @@ export class ObcValveAnalogTwoWayIcon extends LitElement {
     const cx = 12;
     const cy = 3.5 + 2 * shut;
     return svg`<g transform="rotate(${angle} ${cx} ${cy})">
-      <line x1=${cx - 2.5} y1=${cy} x2=${cx + 2.5} y2=${cy} stroke-width="3" stroke-linecap="round" style="stroke: var(--automation-device-tertiary-color)"/>
-      <line x1=${cx - 2.5} y1=${cy} x2=${cx + 2.5} y2=${cy} stroke-width="1" stroke-linecap="round" style="stroke: var(--automation-device-primary-color)"/>
+      <rect x=${cx - 4} y=${cy - 1.5} width="8" height="3" rx="1.5" style=${TERTIARY}/>
+      <rect x=${cx - 3} y=${cy - 0.5} width="6" height="1" rx="0.5" style=${PRIMARY}/>
     </g>`;
   }
 
