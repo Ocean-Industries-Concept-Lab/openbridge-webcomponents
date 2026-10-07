@@ -6,7 +6,12 @@ import {
 } from '../../building-blocks/instrument-linear/instrument-linear.js';
 import {property} from 'lit/decorators.js';
 import {VesselImage} from '../watch/watch.js';
-import {vesselImages} from '../watch/vessel.js';
+import {
+  renderVesselArt,
+  vesselArt,
+  type VesselImageSrc,
+} from '../watch/vessel.js';
+import {PaletteController} from '../../charthelpers/theme.js';
 import {
   LinearAdvice,
   resolveLinearAdvice,
@@ -42,6 +47,10 @@ const BAR_VIEW_BOX = '-64 -192 128 384';
  * @availableWhen gainScale type==vessel
  * @availableWhen draftOffset type==vessel
  * @availableWhen vesselImage type==vessel
+ * @property vesselImageSrc - Image URLs per palette (`{bright, day, dusk, night}`, SVG, PNG or data URLs)
+ *   drawn instead of `vesselImage` in the same 160 × 160 box. A palette without a URL falls
+ *   back to the nearest one (see `VesselImageSrc`).
+ * @availableWhen vesselImageSrc type==vessel
  * @property type - `vessel` (default) frames the scale next to a vessel silhouette; `bar`
  *   renders the scale column on its own.
  * @stable
@@ -57,8 +66,12 @@ export class ObcHeave extends LitElement {
 
   @property({type: Number}) instrumentRange = 10;
   @property({type: String}) vesselImage: VesselImage = VesselImage.psvFore;
+  @property({type: Object, attribute: false})
+  vesselImageSrc: VesselImageSrc | undefined;
   @property({type: String}) priority: Priority = Priority.regular;
   @property({type: String}) type: ObcHeaveType = ObcHeaveType.vessel;
+
+  private readonly _palette = new PaletteController(this);
 
   private _toTranslatedValue(value: number) {
     return (value * (this._boxWidth / 2)) / this.instrumentRange;
@@ -112,7 +125,7 @@ export class ObcHeave extends LitElement {
               )}) scale(3)
             translate(${-this._gaugeWidth / 2 - 80 / 1.5} , ${-80})"
             >
-              ${this.vesselImage ? vesselImages[this.vesselImage] : nothing}
+              ${this.vesselImage ? renderVesselArt(vesselArt(this.vesselImage, this.vesselImageSrc), this._palette.current) : nothing}
             </g>
           </g>
     `;

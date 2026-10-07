@@ -187,6 +187,20 @@ When adding new features or fixing bugs:
   pass `hasOuterRing: false` rather than doubling that stroke. Spokes are
   emitted as diameters, half as many elements as spokes, so an even count
   leaves no seam at the centre.
+- **Custom vessel images** — `watch/vessel.ts`. A `WatchVessel` is either a
+  built-in silhouette (`vesselImage`) or `customImage`, a `VesselImageSrc`
+  holding one image URL per palette. An image loaded by URL cannot read the
+  palette variables, hence one per palette; `vesselImageSrcFor()` owns the
+  fallback order for a missing one. Instruments expose it as
+  `vesselImageSrc` (`vesselImageSideSrc` / `vesselImageForeSrc` on the
+  inclinometers) and build the vessel with `vesselArt()`. Anything drawing
+  one calls `renderVesselArt(art, palette)` with the palette from a
+  `PaletteController` (`charthelpers/theme.ts`), which re-renders on a theme
+  switch: `obc-watch`, the inclinometers' zoomed paths that draw the vessel
+  themselves, `speed-directions`, and the instruments outside the core that
+  draw one (`heave`, `draft-trim`, `depth-actual`, `depth-top-band` fed by
+  `obc-depth`). `chart-object-vessel-button` is the one exception: its vessel
+  is HTML, so it keeps its `vessel-image` slot instead.
 - **Interval tick ladder** — `tickmark.ts`'s `buildIntervalTickmarks()` is
   the one value→tick implementation for interval-configured gauges
   (`instrument-radial`, `gauge-proportional`): primary/secondary/tertiary
