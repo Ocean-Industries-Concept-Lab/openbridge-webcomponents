@@ -280,7 +280,10 @@ When adding new features or fixing bugs:
    `scale-dimensions-changed` thickness. Its `hasBar` / `hasScale` are `false`
    so the border plugin treats it as invisible and keeps drawing the chart's
    own frame under it. The silhouette is clamped inside the frame because the
-   condensed band is narrower than the design's.
+   condensed band is narrower than the design's. `obc-depth` forwards `vesselImage` and
+   `vesselImageSrc` to it; the band owns the `PaletteController` that keeps a
+   custom image on the current palette
+   ([`watch-radial-instruments.md` § Custom vessel images](watch-radial-instruments.md#shared-sibling-modules)).
 4. **Range**: `depth-shared.ts` holds the ladder (`DEPTH_RANGES`: 25 / 100 /
    1000 with tick pair, air fraction and vessel factor) and
    `resolveDepthRange()` — explicit `maxDepth` (a synthetic rung off the
