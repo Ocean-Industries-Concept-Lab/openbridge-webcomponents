@@ -28,9 +28,11 @@ import {
 import {
   VesselImage,
   VesselImageSize,
+  vesselArt,
   WatchCircleType,
   RotType,
   RotPosition,
+  type VesselImageSrc,
 } from '../watch/watch.js';
 import {SetpointBundle} from '../../svghelpers/setpoint-bundle.js';
 import {ROT_ZERO_DEADBAND_DEG} from '../rate-of-turn/rot-renderer.js';
@@ -154,6 +156,10 @@ export enum CompassPriorityElement {
  * @availableWhen currentFromDirection currentSpeed!=null
  * @property vesselImage - The image of the vessel. Hidden while `centerReadouts` is non-empty.
  * @availableWhen vesselImage centerReadouts==[]
+ * @property vesselImageSrc - Image URLs per palette (`{bright, day, dusk, night}`, SVG, PNG or data URLs)
+ *   drawn instead of `vesselImage` in the same 160 × 160 box. A palette without a URL falls
+ *   back to the nearest one (see `VesselImageSrc`).
+ * @availableWhen vesselImageSrc centerReadouts==[]
  * @property centerReadouts - Center readouts replacing the vessel: the first entry renders on top,
  *   the rest side by side below a horizontal divider. Values bind per entry
  *   `source` (`hdg` → `heading`, `cog` → `courseOverGround`, `rot` →
@@ -210,6 +216,8 @@ export class ObcCompass extends LitElement {
   @property({type: Number}) currentSpeed: number | null = null;
   @property({type: Number}) currentFromDirection: number | null = null;
   @property({type: String}) vesselImage: VesselImage = VesselImage.genericTop;
+  @property({type: Object, attribute: false})
+  vesselImageSrc: VesselImageSrc | undefined;
   @property({type: Array, attribute: false})
   centerReadouts: CompassCenterReadout[] = [];
   @property({type: String}) hdgArrowStyle: HdgArrowStyle =
@@ -407,7 +415,7 @@ export class ObcCompass extends LitElement {
               : [
                   {
                     size: VesselImageSize.medium,
-                    vesselImage: this.vesselImage,
+                    ...vesselArt(this.vesselImage, this.vesselImageSrc),
                     transform: `rotate(${this.heading}deg)`,
                   },
                 ]

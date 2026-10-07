@@ -1,4 +1,5 @@
-import {SVGTemplateResult} from 'lit';
+import {svg, SVGTemplateResult} from 'lit';
+import {ObcPalette} from '../../charthelpers/theme.js';
 
 // Import all vessel images statically
 import * as carFerryAft from './vessels/car-ferry-aft.js';
@@ -162,3 +163,86 @@ export const vesselImages: Record<VesselImage, SVGTemplateResult> = {
   [VesselImage.rovSideFaded]: rovSideFaded,
   [VesselImage.rovTop]: rovTop.default,
 };
+
+/**
+ * Image URLs (SVG, PNG or data URLs) for a custom vessel, one per palette.
+ * An image loaded by URL cannot follow the palette through CSS, so each
+ * palette gets its own. A missing palette falls back in this order:
+ *
+ * - `bright`: bright, day, dusk, night
+ * - `day`: day, bright, dusk, night
+ * - `dusk`: dusk, night, day, bright
+ * - `night`: night, dusk, day, bright
+ *
+ * An interface, not `Partial<Record<ObcPalette, string>>`: the wrapper
+ * generator expands a type alias and then imports `ObcPalette` by its
+ * source path, which breaks the Vue and Angular builds.
+ */
+export interface VesselImageSrc {
+  bright?: string;
+  day?: string;
+  dusk?: string;
+  night?: string;
+}
+
+const PALETTE_FALLBACK: Record<ObcPalette, readonly ObcPalette[]> = {
+  [ObcPalette.bright]: [
+    ObcPalette.bright,
+    ObcPalette.day,
+    ObcPalette.dusk,
+    ObcPalette.night,
+  ],
+  [ObcPalette.day]: [
+    ObcPalette.day,
+    ObcPalette.bright,
+    ObcPalette.dusk,
+    ObcPalette.night,
+  ],
+  [ObcPalette.dusk]: [
+    ObcPalette.dusk,
+    ObcPalette.night,
+    ObcPalette.day,
+    ObcPalette.bright,
+  ],
+  [ObcPalette.night]: [
+    ObcPalette.night,
+    ObcPalette.dusk,
+    ObcPalette.day,
+    ObcPalette.bright,
+  ],
+};
+
+/** The URL `src` gives for `palette`, following the fallback order. */
+export function vesselImageSrcFor(
+  src: VesselImageSrc,
+  palette: ObcPalette
+): string | undefined {
+  for (const p of PALETTE_FALLBACK[palette]) {
+    if (src[p]) return src[p];
+  }
+  return undefined;
+}
+
+/** The vessel drawing: a built-in silhouette, or images by URL per palette. */
+export type VesselArt =
+  {vesselImage: VesselImage} | {customImage: VesselImageSrc};
+
+/** `customImage` when it holds a URL, otherwise the built-in `vesselImage`. */
+export function vesselArt(
+  vesselImage: VesselImage,
+  customImage?: VesselImageSrc
+): VesselArt {
+  return customImage && Object.values(customImage).some(Boolean)
+    ? {customImage}
+    : {vesselImage};
+}
+
+/** Draws `art` for `palette` in the 160×160 box the built-in silhouettes use. */
+export function renderVesselArt(
+  art: VesselArt,
+  palette: ObcPalette
+): SVGTemplateResult {
+  if (!('customImage' in art)) return vesselImages[art.vesselImage];
+  const href = vesselImageSrcFor(art.customImage, palette) ?? '';
+  return svg`<image href=${href} width="160" height="160" preserveAspectRatio="xMidYMid meet"></image>`;
+}
