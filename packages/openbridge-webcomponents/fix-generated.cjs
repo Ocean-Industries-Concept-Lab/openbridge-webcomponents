@@ -68,6 +68,10 @@ function fixPackageJson(packageName, directory) {
   } else {
     delete packageJson.files;
     addNgPackageAssets(directory);
+    // ng-packagr's per-entry exports push dist/package.json past registry
+    // size limits; collapse them into one subpath pattern after each build.
+    packageJson.scripts.build =
+      'ng-packagr -p ng-package.json && node ../openbridge-webcomponents/script/compact-ng-exports.mjs dist/package.json';
   }
 
   if (packageName === 'vue') {
