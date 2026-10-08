@@ -3,9 +3,9 @@ import {property} from 'lit/decorators.js';
 import {customElement} from '../decorator.js';
 
 /**
- * `<obi-critical-transferred>` – hand-kept copy of the generated icon: the Icons file no longer
- * carries the critical alert set, and alert-frame / alert-icon render it.
- * TODO(designer): where did the critical-* icons move to?
+ * `<obi-critical-transferred>` – hand-kept: this icon has no Figma source yet, so the generated
+ * set cannot carry it, and alert-frame / alert-icon render it.
+ * TODO(designer): add it to the Icons file; the generated icon then replaces this.
  */
 @customElement('obi-critical-transferred')
 export class ObiCriticalTransferred extends LitElement {
