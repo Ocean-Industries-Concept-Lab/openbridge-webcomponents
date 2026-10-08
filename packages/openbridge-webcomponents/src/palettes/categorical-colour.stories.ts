@@ -21,7 +21,7 @@ const meta: Meta = {
   parameters: {
     docs: {
       description: {
-        component: `The ten \`Color-categorical\` modes from Figma are classes, \`obc-categorical-color-<mode>\`, like the size classes: put one on \`<html>\` for an app-wide default or on any ancestor for a subtree, and everything below that reads \`--base-categorical-*\` or \`--vessel-*\` follows it. \`neutral\` is the \`:root\` default. The block lives in \`src/palettes/manual.css\` until the plugin exports the collection (#1187).`,
+        component: `The ten \`Color-categorical\` modes from Figma are classes, \`obc-categorical-color-<mode>\`, like the size classes: put one on \`<html>\` for an app-wide default or on any ancestor for a subtree, and everything below that reads \`--base-categorical-*\` or \`--vessel-*\` follows it. \`neutral\` is the \`:root\` default. The classes come from the palette export in \`src/palettes/variables.css\`.`,
       },
     },
   },
