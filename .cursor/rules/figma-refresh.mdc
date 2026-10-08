@@ -204,10 +204,11 @@ the semantic diff (renamed, removed, changed per block) belong there too.
   that is fixed at the source. The blink keyframes and the root animation are
   gone as of the published release, and the `Color-categorical` modes now
   arrive as classes, so `manual.css` no longer bridges them.
-- An export can drop a group the file still defines, with nothing in the
-  output to say so: `Color/Automation/Device/*` and
-  `Color/Automation/{Button,Symbol}/On-*` resolve in Dev Mode and appear
-  under no name in the CSS. Read the semantic diff's removal list as the
-  question "did the design team mean to drop this?", and check the group in
-  Dev Mode before answering yes.
+- Two Figma variables can land on one custom property, and the export says
+  nothing: the three declarations sit in the same theme block and CSS
+  last-wins drops all but one, so a token resolves to another group's value
+  rather than failing. A name missing from the semantic diff's removal list
+  is not proof it survived — check the block for a repeat before concluding
+  the design team dropped it (plugin PR #10 adds the warning and fixes the
+  `On-` collapse that caused it).
 - Token typos in Figma (#985).
