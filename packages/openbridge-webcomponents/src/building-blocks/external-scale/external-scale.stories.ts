@@ -494,6 +494,19 @@ export const VerticalRightBasic: Story = {
   render: (args) => renderScale(toConfig(args)),
 };
 
+export const VerticalAlertAdvices: Story = {
+  name: 'Vertical (warning triggered, alarm hinted)',
+  args: {
+    ...VerticalRightBasic.args,
+    setpoint: 70,
+    advices: [
+      {min: 60, max: 80, type: AdviceType.warning, hinted: true},
+      {min: 85, max: 100, type: AdviceType.alarm, hinted: true},
+    ],
+  },
+  render: (args) => renderScale(toConfig(args)),
+};
+
 export const VerticalWithCurrentValueDot: Story = {
   name: 'Vertical (with highlightCurrentValue dot)',
   args: {
@@ -614,6 +627,19 @@ export const HorizontalBottomBasic: Story = {
     state: InstrumentState.active,
     advicePosition: AdvicePosition.inner,
     advices: [{min: 60, max: 80, type: AdviceType.caution, hinted: true}],
+  },
+  render: (args) => renderScale(toConfig(args)),
+};
+
+export const HorizontalAlertAdvices: Story = {
+  name: 'Horizontal (alarm triggered, warning regular)',
+  args: {
+    ...HorizontalBottomBasic.args,
+    setpoint: 90,
+    advices: [
+      {min: 60, max: 80, type: AdviceType.warning, hinted: false},
+      {min: 85, max: 100, type: AdviceType.alarm, hinted: true},
+    ],
   },
   render: (args) => renderScale(toConfig(args)),
 };

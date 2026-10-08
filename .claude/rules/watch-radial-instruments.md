@@ -485,15 +485,19 @@ WatchCircleType.doubleThin; // Two rings, thinner gap
 WatchCircleType.triple; // Three rings (compass)
 ```
 
-### 5. Advice/Caution Zones
+### 5. Advice/Alert Zones
 
 Location: `advice.ts` → `renderAdvice()` and `adviceMask()` functions
 
+`caution`, `warning` and `alarm` share the hatched band; only the triggered
+colours differ. `triggeredAlertAdviceColors()` is the single map, also read by
+the linear renderers (`external-scale`, `instrument-linear`, `thruster`).
+
 ```typescript
-// Colors based on state:
+// Hatch colour based on state:
 AdviceState.hinted    → 'var(--instrument-frame-tertiary-color)'
 AdviceState.regular   → 'var(--instrument-tick-mark-tertiary-color)'
-AdviceState.triggered → 'var(--on-caution-active-color)'
+AdviceState.triggered → 'var(--on-<type>-active-color)' over 'var(--alert-<type>-color)'
 ```
 
 ### 6. Adding a New Overlay Element

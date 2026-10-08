@@ -1,5 +1,9 @@
 import {SVGTemplateResult, nothing, svg} from 'lit';
-import {AdviceState, AdviceType} from '../watch/advice.js';
+import {
+  AdviceState,
+  AdviceType,
+  triggeredAlertAdviceColors,
+} from '../watch/advice.js';
 import {TickmarkStyle} from '../watch/tickmark.js';
 import {singleSidedTickmark} from './tickmark.js';
 
@@ -44,7 +48,8 @@ export function renderAdvice(
   advice: LinearAdviceRaw,
   flipDirection: boolean
 ): SVGTemplateResult {
-  if (advice.type === AdviceType.caution) {
+  const alertColors = triggeredAlertAdviceColors(advice.type);
+  if (alertColors) {
     let mainColor;
     let fillColor: string | null = null;
     if (advice.state === AdviceState.hinted) {
@@ -52,8 +57,8 @@ export function renderAdvice(
     } else if (advice.state === AdviceState.regular) {
       mainColor = 'var(--instrument-tick-mark-tertiary-color)';
     } else {
-      mainColor = 'var(--on-caution-active-color)';
-      fillColor = 'var(--alert-caution-color)';
+      mainColor = alertColors.stripe;
+      fillColor = alertColors.fill;
     }
     const pattern = [];
     const ypattern = flipDirection ? 50 : -50;
