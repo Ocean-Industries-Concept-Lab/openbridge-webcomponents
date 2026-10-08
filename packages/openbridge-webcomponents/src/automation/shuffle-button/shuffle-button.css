@@ -103,7 +103,7 @@ button.thumb {
   height: var(--global-size-spacing-visual-target-min);
   box-sizing: border-box;
   border-radius: var(--global-border-radius-border-radius-base);
-  color: var(--automation-device-secondary-color);
+  color: var(--automation-symbol-static-background-color);
 }
 
 .thumb.selected {
@@ -111,9 +111,9 @@ button.thumb {
 }
 
 .thumb.selected .visible-wrapper {
-  background-color: var(--automation-pipe-primary-color);
-  border: 1px solid var(--automation-pipe-tertiary-color);
-  color: var(--automation-device-tertiary-color);
+  background-color: var(--automation-connector-on-background-color);
+  border: 1px solid var(--automation-connector-on-border-color);
+  color: var(--automation-symbol-on-border-color);
 }
 
 .shuffle.vertical .visible-wrapper {
