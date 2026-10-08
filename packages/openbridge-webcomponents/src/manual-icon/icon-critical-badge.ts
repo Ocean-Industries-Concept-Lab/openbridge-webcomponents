@@ -2,6 +2,11 @@ import {LitElement, html, css, svg} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../decorator.js';
 
+/**
+ * `<obi-critical-badge>` – hand-kept copy of the generated icon: the Icons file no longer
+ * carries the critical alert set, and alert-frame / alert-icon render it.
+ * TODO(designer): where did the critical-* icons move to?
+ */
 @customElement('obi-critical-badge')
 export class ObiCriticalBadge extends LitElement {
   @property({type: Boolean}) useCssColor = false;

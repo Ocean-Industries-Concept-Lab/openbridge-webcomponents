@@ -19,14 +19,14 @@ export class ObiHydraulicPipe16 extends LitElement {
 `;
 
   private iconCss = svg`<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M20 39H15V48H9V39H4V33H20V39Z" style="fill: var(--automation-pipe-primary-color)"/>
-<path d="M44 39H39V48H33V39H28V33H44V39Z" style="fill: var(--automation-pipe-primary-color)"/>
-<path d="M15 9H20V15H4V9H9V0H15V9Z" style="fill: var(--automation-pipe-primary-color)"/>
-<path d="M39 0V9H44V15H28V9H33V0H39Z" style="fill: var(--automation-pipe-primary-color)"/>
-<path d="M20 39H15V48H14V38H19V34H5V38H10V48H9V39H4V33H20V39Z" style="fill: var(--automation-pipe-tertiary-color)"/>
-<path d="M44 39H39V48H38V38H43V34H29V38H34V48H33V39H28V33H44V39Z" style="fill: var(--automation-pipe-tertiary-color)"/>
-<path d="M10 10H5V14H19V10H14V0H15V9H20V15H4V9H9V0H10V10Z" style="fill: var(--automation-pipe-tertiary-color)"/>
-<path d="M34 0V10H29V14H43V10H38V0H39V9H44V15H28V9H33V0H34Z" style="fill: var(--automation-pipe-tertiary-color)"/>
+<path d="M20 39H15V48H9V39H4V33H20V39Z" style="fill: var(--automation-connector-on-background-color)"/>
+<path d="M44 39H39V48H33V39H28V33H44V39Z" style="fill: var(--automation-connector-on-background-color)"/>
+<path d="M15 9H20V15H4V9H9V0H15V9Z" style="fill: var(--automation-connector-on-background-color)"/>
+<path d="M39 0V9H44V15H28V9H33V0H39Z" style="fill: var(--automation-connector-on-background-color)"/>
+<path d="M20 39H15V48H14V38H19V34H5V38H10V48H9V39H4V33H20V39Z" style="fill: var(--automation-connector-on-border-color)"/>
+<path d="M44 39H39V48H38V38H43V34H29V38H34V48H33V39H28V33H44V39Z" style="fill: var(--automation-connector-on-border-color)"/>
+<path d="M10 10H5V14H19V10H14V0H15V9H20V15H4V9H9V0H10V10Z" style="fill: var(--automation-connector-on-border-color)"/>
+<path d="M34 0V10H29V14H43V10H38V0H39V9H44V15H28V9H33V0H34Z" style="fill: var(--automation-connector-on-border-color)"/>
 </svg>
 `;
 
