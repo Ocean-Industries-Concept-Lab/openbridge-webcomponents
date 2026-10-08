@@ -98,6 +98,7 @@ export enum AutomationButtonPositioning {
 
 /**
  * @property activated - Enables the activated background color, used to indicate that the button is activated/selected.
+ * @property selected - Paints the button with the selected (blue) colors, used to mark the device the user has picked. Takes precedence over `activated`.
  * @availableWhen readouts showReadoutStack==true
  * @availableWhen tag showReadoutStack==true
  * @availableWhen readoutPosition showReadoutStack==true
@@ -132,6 +133,7 @@ export class ObcAutomationButton extends LitElement {
     AutomationButtonState.open;
   @property({type: Boolean}) static: boolean = false;
   @property({type: Boolean}) activated: boolean = false;
+  @property({type: Boolean}) selected: boolean = false;
   @property({type: Boolean, attribute: false}) showReadoutStack: boolean = true;
   @property({type: Array, attribute: false})
   readouts: AutomationButtonReadoutStack[] = [];
@@ -184,6 +186,7 @@ export class ObcAutomationButton extends LitElement {
           progress: this.progress,
           static: this.static,
           activated: this.activated,
+          selected: this.selected,
         })}
       >
         <div class="icon-touch-target">
