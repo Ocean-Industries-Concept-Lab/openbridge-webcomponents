@@ -9,7 +9,7 @@ import '../user-button/user-button.js';
 import '../progress-bar/progress-bar.js';
 import '../navigation-item/navigation-item.js';
 import '../../icons/icon-calendar-google.js';
-import '../../icons/icon-log-open-google.js';
+import '../../icons/icon-log-open.js';
 import '../../icons/icon-settings-iec.js';
 import '../../icons/icon-user.js';
 import {
@@ -305,7 +305,7 @@ export class ObcUserMenu extends LitElement {
       case 'calendar':
         return html`<obi-calendar-google></obi-calendar-google>`;
       case 'log':
-        return html`<obi-log-open-google></obi-log-open-google>`;
+        return html`<obi-log-open></obi-log-open>`;
       case 'preferences':
         return html`<obi-settings-iec></obi-settings-iec>`;
       case 'user-account':

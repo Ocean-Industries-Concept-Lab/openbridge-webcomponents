@@ -2,19 +2,24 @@ import {LitElement, html, css, svg} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../decorator.js';
 
-@customElement('obi-critical-transferred')
-export class ObiCriticalTransferred extends LitElement {
+/**
+ * `<obi-critical-rectified>` – hand-kept: this icon has no Figma source yet, so the generated
+ * set cannot carry it, and alert-frame / alert-icon render it.
+ * TODO(designer): add it to the Icons file; the generated icon then replaces this.
+ */
+@customElement('obi-critical-rectified')
+export class ObiCriticalRectified extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 <path d="M7.28516 4L16.7139 4L21.4199 12L16.7139 20L7.28516 20L2.5791 12L7.28516 4Z" fill="currentColor" stroke="currentColor"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M13.2071 6.79297L18.4142 12.0001L13.2071 17.2072L11.7929 15.793L14.5858 13.0001H6V11.0001H14.5858L11.7929 8.20718L13.2071 6.79297Z" fill="currentColor"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M17.7071 9.70718L10.5 16.9143L5.79291 12.2072L7.20712 10.793L10.5 14.0859L16.2929 8.29297L17.7071 9.70718Z" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M7.28516 4L16.7139 4L21.4199 12L16.7139 20L7.28516 20L2.5791 12L7.28516 4Z" style="fill: var(--alert-critical-color); stroke: var(--alert-critical-outline-color)"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M13.2071 6.79297L18.4142 12.0001L13.2071 17.2072L11.7929 15.793L14.5858 13.0001H6V11.0001H14.5858L11.7929 8.20718L13.2071 6.79297Z" style="fill: var(--on-critical-active-color)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M17.7071 9.70718L10.5 16.9143L5.79291 12.2072L7.20712 10.793L10.5 14.0859L16.2929 8.29297L17.7071 9.70718Z" style="fill: var(--on-critical-active-color)"/>
 </svg>
 `;
 
@@ -39,6 +44,6 @@ export class ObiCriticalTransferred extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obi-critical-transferred': ObiCriticalTransferred;
+    'obi-critical-rectified': ObiCriticalRectified;
   }
 }
