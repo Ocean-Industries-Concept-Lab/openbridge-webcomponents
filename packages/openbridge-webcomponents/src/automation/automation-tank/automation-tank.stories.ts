@@ -12,7 +12,7 @@ import '../../navigation-instruments/readout-list/readout-list.js';
 import '../../navigation-instruments/readout-list-item/readout-list-item.js';
 import {html, nothing} from 'lit';
 import '../../icons/icon-tank.js';
-import '../../icons/icon-timer-google.js';
+import '../../icons/icon-timer.js';
 import {crossDecorator} from '../../storybook-util.js';
 import {AdviceType} from '../../navigation-instruments/watch/advice.js';
 import type {LinearAdvice} from '../../building-blocks/instrument-linear/advice.js';
@@ -622,7 +622,7 @@ export const WithAlertBottomFlip: Story = {
     >
       <obi-tank slot="alert-icon"></obi-tank>
       <span slot="alert-label">Level alarm</span>
-      <obi-timer-google slot="alert-timer"></obi-timer-google>
+      <obi-timer slot="alert-timer"></obi-timer>
     </obc-automation-tank>
   `,
 };
