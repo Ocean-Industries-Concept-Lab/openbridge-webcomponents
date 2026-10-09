@@ -93,6 +93,36 @@
   @mixin style style=flat;
   border-width: 0;
 
+  /* Written out instead of the selected mixin: the palette has no
+     selected-activated tokens, and selected must win over activated. */
+  &.selected {
+    --base-border-color: var(--selected-enabled-border-color);
+    --base-background-color: var(--selected-enabled-background-color);
+    border-color: var(--base-border-color);
+    background-color: var(--base-background-color);
+
+    @media (hover: hover) {
+      &:hover {
+        border-color: color-mix(
+          in srgb,
+          var(--selected-hover-border-color) calc(var(--obc-can-hover) * 100%),
+          var(--base-border-color)
+        );
+        background-color: color-mix(
+          in srgb,
+          var(--selected-hover-background-color)
+            calc(var(--obc-can-hover) * 100%),
+          var(--base-background-color)
+        );
+      }
+    }
+
+    &:active {
+      border-color: var(--selected-pressed-border-color);
+      background-color: var(--selected-pressed-background-color);
+    }
+  }
+
   &.label-top {
     flex-direction: column-reverse;
   }
