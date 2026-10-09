@@ -312,6 +312,49 @@ export const Advice: Story = {
   },
 };
 
+export const AlertAdvice: Story = {
+  args: {
+    advices: [
+      {
+        minAngle: 20,
+        maxAngle: 50,
+        type: AdviceType.warning,
+        state: AdviceState.hinted,
+      },
+      {
+        minAngle: 60,
+        maxAngle: 100,
+        type: AdviceType.warning,
+        state: AdviceState.regular,
+      },
+      {
+        minAngle: 110,
+        maxAngle: 140,
+        type: AdviceType.warning,
+        state: AdviceState.triggered,
+      },
+      {
+        minAngle: 190,
+        maxAngle: 230,
+        type: AdviceType.alarm,
+        state: AdviceState.hinted,
+      },
+      {
+        minAngle: 240,
+        maxAngle: 280,
+        type: AdviceType.alarm,
+        state: AdviceState.regular,
+      },
+      {
+        minAngle: 290,
+        maxAngle: 320,
+        type: AdviceType.alarm,
+        state: AdviceState.triggered,
+      },
+    ],
+  },
+};
+
 export const Tickmarks: Story = {
   args: {
     tickmarks: [

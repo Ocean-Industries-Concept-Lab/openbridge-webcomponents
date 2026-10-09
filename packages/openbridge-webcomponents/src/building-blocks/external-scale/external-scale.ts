@@ -133,6 +133,7 @@ import {
 import {
   AdviceState,
   AdviceType,
+  triggeredAlertAdviceColors,
 } from '../../navigation-instruments/watch/advice.js';
 import {
   tickmarkColor,
@@ -2756,7 +2757,8 @@ function renderAdvice(
   if (minBound) dash(advice.min);
   if (maxBound) dash(advice.max);
 
-  if (advice.type === AdviceType.caution) {
+  const alertColors = triggeredAlertAdviceColors(advice.type);
+  if (alertColors) {
     let mainColor: string;
     let fillColor: string = 'var(--instrument-frame-primary-color)';
 
@@ -2765,8 +2767,8 @@ function renderAdvice(
     } else if (advice.state === AdviceState.regular) {
       mainColor = 'var(--instrument-tick-mark-tertiary-color)';
     } else {
-      mainColor = 'var(--on-caution-active-color)';
-      fillColor = 'var(--alert-caution-color)';
+      mainColor = alertColors.stripe;
+      fillColor = alertColors.fill;
     }
 
     const pattern: SVGTemplateResult[] = [];
