@@ -14,9 +14,9 @@ export class ObiGenericLineOverlap extends LitElement {
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M0 11V13H9V11H0Z" style="fill: var(--automation-device-tertiary-color)"/>
-<path d="M11 24V0H13V24H11Z" style="fill: var(--automation-device-tertiary-color)"/>
-<path d="M15 13H24V11H15V13Z" style="fill: var(--automation-device-tertiary-color)"/>
+<path d="M0 11V13H9V11H0Z" style="fill: var(--automation-symbol-on-border-color)"/>
+<path d="M11 24V0H13V24H11Z" style="fill: var(--automation-symbol-on-border-color)"/>
+<path d="M15 13H24V11H15V13Z" style="fill: var(--automation-symbol-on-border-color)"/>
 </svg>
 `;
 

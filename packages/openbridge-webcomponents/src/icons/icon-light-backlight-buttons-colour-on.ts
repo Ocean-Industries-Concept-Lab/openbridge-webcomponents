@@ -19,12 +19,12 @@ export class ObiLightBacklightButtonsColourOn extends LitElement {
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <rect x="8" y="16" width="8" height="1" style="fill: var(--navigation-light-yellow-color)"/>
-<path d="M1 13V15H5V13H1Z" style="fill: var(--automation-device-tertiary-color)"/>
-<path d="M3.525 6.925L6.35 9.75L7.75 8.35L4.925 5.5L3.525 6.925Z" style="fill: var(--automation-device-tertiary-color)"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M7 15V18H17V15H7ZM16 16H8V17H16V16Z" style="fill: var(--automation-device-tertiary-color)"/>
-<path d="M11 3V7H13V3H11Z" style="fill: var(--automation-device-tertiary-color)"/>
-<path d="M16.25 8.35L17.65 9.75L20.5 6.925L19.075 5.525L16.25 8.35Z" style="fill: var(--automation-device-tertiary-color)"/>
-<path d="M19 13V15H23V13H19Z" style="fill: var(--automation-device-tertiary-color)"/>
+<path d="M1 13V15H5V13H1Z" style="fill: var(--automation-symbol-on-border-color)"/>
+<path d="M3.525 6.925L6.35 9.75L7.75 8.35L4.925 5.5L3.525 6.925Z" style="fill: var(--automation-symbol-on-border-color)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M7 15V18H17V15H7ZM16 16H8V17H16V16Z" style="fill: var(--automation-symbol-on-border-color)"/>
+<path d="M11 3V7H13V3H11Z" style="fill: var(--automation-symbol-on-border-color)"/>
+<path d="M16.25 8.35L17.65 9.75L20.5 6.925L19.075 5.525L16.25 8.35Z" style="fill: var(--automation-symbol-on-border-color)"/>
+<path d="M19 13V15H23V13H19Z" style="fill: var(--automation-symbol-on-border-color)"/>
 </svg>
 `;
 
