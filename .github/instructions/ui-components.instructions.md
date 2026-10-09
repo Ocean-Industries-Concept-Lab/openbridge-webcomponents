@@ -46,7 +46,8 @@ fast 400/400, slow 400/1200, very-slow 400/2800 ms on/off. The table lives in
 
 - `resolveFlashingSpeed(speed, type, phase)` in `src/alert-severity.ts` is the
   only place that maps an alert type to a tempo. Components map acknowledged
-  to `fixed` before calling it.
+  to `fixed` before calling it. The experimental components take the tempo
+  from the alert standard instead ([`alerts.md`](../../docs/agents/alerts.md)).
 - Components never call `el.animate` themselves: `FlashingController(host,
 () => host.resolvedFlashingSpeed)` (`src/palettes/flashing-controller.ts`)
   installs one animation per host and owns connect/disconnect. CSS reads

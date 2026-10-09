@@ -15,6 +15,9 @@
   "application-components-alerts-alert-list-details--small": [
     "aria-allowed-role"
   ],
+  "application-components-alerts-alert-list-details-experimental--alert-systems": [
+    "aria-allowed-role"
+  ],
   "application-components-alerts-alert-list-details-experimental--cycle-with-descendants": [
     "aria-allowed-role",
     "obc-composite-one-tab-stop"
@@ -22,6 +25,9 @@
   "application-components-alerts-alert-list-details-experimental--cyclic-grouping": [
     "aria-allowed-role",
     "obc-composite-one-tab-stop"
+  ],
+  "application-components-alerts-alert-list-details-experimental--filter-modes": [
+    "aria-allowed-role"
   ],
   "application-components-alerts-alert-list-details-experimental--grouped-alerts": [
     "aria-allowed-role",
@@ -47,6 +53,12 @@
   "application-components-alerts-alert-list-details-experimental--small": [
     "aria-allowed-role"
   ],
+  "application-components-alerts-alert-list-experimental--regular": [
+    "nested-interactive"
+  ],
+  "application-components-alerts-alert-list-experimental--unacked": [
+    "nested-interactive"
+  ],
   "application-components-alerts-alert-menu--ack-all-after-scroll-test": [
     "nested-interactive"
   ],
@@ -67,6 +79,15 @@
     "nested-interactive"
   ],
   "application-components-alerts-alert-menu--regular": ["nested-interactive"],
+  "application-components-alerts-alert-menu-experimental--automation": [
+    "nested-interactive"
+  ],
+  "application-components-alerts-alert-menu-experimental--regular": [
+    "nested-interactive"
+  ],
+  "application-components-alerts-alert-menu-experimental--tabs": [
+    "nested-interactive"
+  ],
   "application-components-alerts-alert-menu-item--default": [
     "nested-interactive"
   ],
@@ -535,6 +556,19 @@
   "pages-alert-list-small--no-shelf": ["aria-allowed-role", "select-name"],
   "pages-alert-list-small--one-item": ["aria-allowed-role", "select-name"],
   "pages-alert-list-small--regular": ["aria-allowed-role", "select-name"],
+  "pages-alert-list-small-experimental--automation": [
+    "aria-allowed-role",
+    "select-name"
+  ],
+  "pages-alert-list-small-experimental--empty": ["select-name"],
+  "pages-alert-list-small-experimental--regular": [
+    "aria-allowed-role",
+    "select-name"
+  ],
+  "pages-alert-list-small-experimental--unacked": [
+    "aria-allowed-role",
+    "select-name"
+  ],
   "ui-components-buttons-app-button--small-hide-label": ["button-name"],
   "ui-components-buttons-dropdown-button--disabled": ["select-name"],
   "ui-components-buttons-dropdown-button--disabled-with-icon": ["select-name"],
