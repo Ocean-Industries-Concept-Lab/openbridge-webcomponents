@@ -11,7 +11,8 @@ paths:
 
 Two registered elements — `obc-alert-list-page-small` and
 `obc-alert-detail-page` — that assemble many smaller components into a complete
-screen.
+screen. The small alert list page keeps its action bar in
+`ObcAlertListPageSmallBase`, so a twin page shares it rather than copying it.
 
 They are **compositions, not primitives**. Nothing else in the library depends
 on them, and they should not grow behaviour of their own: if a page needs a new

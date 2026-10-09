@@ -91,8 +91,8 @@ export interface AutomationButtonReadoutValue {
  * @availableWhen alertFrameThickness alert==true
  * @availableWhen alertFrameStatus alert==true
  * @availableWhen alertFrameMode alert==true
- * @availableWhen showAlertCategoryIcon alert==true
- * @availableWhen showAlertIcon alert==true
+ * @availableWhen showAlertCategoryIcon alert==true && alertFrameType in [SmallSideFlip, LargeSideFlip, BottomFlip, TopFlip]
+ * @availableWhen showAlertIcon alert==true && alertFrameType in [LargeSideFlip, BottomFlip, TopFlip]
  * @property progress - Shows a progress indicator, used to indicate that an user action is in progress
  * @availableWhen progressMode progress==true
  * @availableWhen progressValue progress==true && progressMode in [determinate, progressiveIndeterminate]

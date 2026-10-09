@@ -192,7 +192,7 @@ A property whose value only has an observable effect when **another** property i
  * @property alertFrameStatus - Alert status the frame is coloured for.
  * @availableWhen alertFrameStatus alert==true
  * @property showAlertCategoryIcon - Shows the alert category icon inside the frame.
- * @availableWhen showAlertCategoryIcon alert==true && alertFrameType in [LargeSideFlip, BottomFlip, TopFlip]
+ * @availableWhen showAlertCategoryIcon alert==true && alertFrameType in [SmallSideFlip, LargeSideFlip, BottomFlip, TopFlip]
  */
 @customElement('obc-automation-button')
 export class ObcAutomationButton extends LitElement {

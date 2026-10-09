@@ -2285,24 +2285,29 @@ export class ObcChartLineBase extends LitElement {
    * NOTE: For non-threshold modes (solid, semitransparent), backgroundColor is already
    * set correctly in buildDataset(). This method now only handles threshold gradients
    * which require Chart.js scales to be available.
+   *
+   * @returns Whether it set gradients; they reach the drawn chart on its next update.
    */
-  protected applyFillModes() {
+  protected applyFillModes(): boolean {
     // Guard: Verify chart and canvas exist and are connected
-    if (!this.chart || !this.canvasEl || !this.canvasEl.isConnected) return;
+    if (!this.chart || !this.canvasEl || !this.canvasEl.isConnected)
+      return false;
 
     const chart = this.chart; // Store reference for TypeScript
     const ctx = chart.ctx as CanvasRenderingContext2D;
 
     // Guard: Verify canvas context is available
-    if (!ctx) return;
+    if (!ctx) return false;
 
     const fill = this.shouldApplyFill();
     const fillMode = this.getFillMode();
 
     // Only process threshold mode - other modes already have correct backgroundColor from buildDataset()
     if (fillMode !== 'threshold' || !fill) {
-      return;
+      return false;
     }
+
+    let applied = false;
 
     chart.data.datasets.forEach((ds, _idx) => {
       const dataset = ds as ChartDataset<'line'> & {
@@ -2369,7 +2374,9 @@ export class ObcChartLineBase extends LitElement {
       const borderGradient = createGradient(0.8, 0.8);
       dataset.backgroundColor = fillGradient as unknown as string;
       dataset.borderColor = borderGradient as unknown as string;
+      applied = true;
     });
+    return applied;
   }
 
   // Update external library AFTER render
@@ -3219,7 +3226,11 @@ export class ObcChartLineBase extends LitElement {
 
     // Defer legend update to next tick to ensure Chart.js metadata is initialized
     requestAnimationFrame(() => this.updateLegend());
-    this.applyFillModes();
+    // The constructor has already resolved the dataset colours, so a chart
+    // rebuilt with nothing updating it after would keep its pre-gradient line.
+    if (this.applyFillModes()) {
+      this.chart.update('none');
+    }
     this.syncSlottedScaleRanges();
   }
 

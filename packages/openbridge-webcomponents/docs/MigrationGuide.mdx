@@ -47,7 +47,7 @@ The [Changelog](?path=/docs/introduction-changelog--docs) lists every change. If
 - **Svelte:** eight components renamed a snippet prop, and named slots no longer render a wrapping `div`. See [Svelte](#svelte).
 - **Alert flashing:** `--alarm-blink-*` and `--warning-blink-*` no longer animate; use `--flash-*` and `blinkingAll()`. See [Alert Flashing Variables](#alert-flashing-variables).
 - **CSS variables:** 141 were renamed or removed, and the old names fail without an error. See [Renamed CSS Variables](#renamed-css-variables).
-- **Component APIs:** properties were renamed, retyped or given new defaults, among them the [automation badges](#badges-take-values-silent), [wind speeds in knots](#wind-speed-in-knots-silent), [`obc-card` timeouts in seconds](#obc-card-timeouts-in-seconds-silent), [`obc-number-input-field` values as numbers](#obc-number-input-field-value-and-events) and [the motorized buttons' `on` as `turnedOn`](#on-is-now-turnedon-silent). See [Component Changes](#component-changes) and [API Mapping by Component](#api-mapping-by-component).
+- **Component APIs:** properties were renamed, retyped or given new defaults, among them the [automation badges](#badges-take-values-silent), [wind speeds in knots](#wind-speed-in-knots-silent), [`obc-card` timeouts in seconds](#obc-card-timeouts-in-seconds-silent) and [`obc-number-input-field` values as numbers](#obc-number-input-field-value-and-events). See [Component Changes](#component-changes) and [API Mapping by Component](#api-mapping-by-component).
 - **Keyboard:** the tab row, the toggle button group and the context menu are one tab stop each, with the arrow keys moving between their items, and the modals take focus when they connect. See [Keyboard, Focus and Events](#keyboard-focus-and-events).
 - **Icons:** 50 icons were renamed, and the wind icons ending in `-1`, `-5` and `-10` kept their names but show a different glyph. See [Icons](#icons).
 - **Deprecations:** 11 components are deprecated. They still work in 2.0. See [Deprecated Components](#deprecated-components).
@@ -139,12 +139,14 @@ The package still loads no font. `bundle/NotoSans.ttf` is no longer published, s
 @font-face {
   font-family: 'Noto Sans';
   src: url('/node_modules/@oicl/openbridge-webcomponents/bundle/NotoSans.ttf');
+  font-weight: 400 700;
 }
 
 /* 2.0 */
 @font-face {
   font-family: 'Noto Sans';
   src: url('/node_modules/@oicl/openbridge-webcomponents/dist/NotoSans.ttf');
+  font-weight: 400 700;
 }
 ```
 
@@ -399,12 +401,14 @@ The tank follows the OpenBridge 6.1 design and is larger at every size ([#862](h
 
 The value and setpoint rows under a device render through `obc-readout-block` ([#1097](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1097)). A missing value shows the figure dash `‒` instead of the text `NaN`, and hinted zeros are drawn in a dimmed color. The device icon colors moved from the pipe tokens to the automation button tokens, and the new `activated` property draws the selected background ([#967](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/967)).
 
-#### `on` Is Now `turnedOn` _(silent)_
+#### `on` Is Now `turnedOn`
 
-The run state of `obc-motor`, `obc-pump` and `obc-fan` is `turnedOn` ([#1090](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/issues/1090)). The old name begins with `on`, which Svelte and other frameworks read as an event binding, so `on={running}` in a Svelte template registered a listener for an empty event name and left the property at `false`. An `on` attribute is ignored in 2.0 and the device draws its off state.
+The on/off property of the seventeen two-state devices, `obc-fan`, `obc-motor`, `obc-pump` and the fourteen devices on the squared base, is `turnedOn` ([#1317](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1317)). `on` stays as a deprecated alias that sets `turnedOn`, so 1.x markup keeps working and the rename can wait until you next touch the page. Removing `on` is a 3.0 change.
+
+The old name begins with `on`, which Svelte compiles into an event listener, and Vue binds `on` followed by anything but a lowercase letter the same way, so `on={running}` in a template never reached the property. The new attribute is Lit's default, `turnedon`.
 
 ```html
-<!-- 1.0.1 -->
+<!-- 1.0.1, still works in 2.0 -->
 <obc-pump on></obc-pump>
 
 <!-- 2.0 -->
@@ -741,6 +745,7 @@ row.tabs = [
 - Buttons with and without a border share one visible height ([#830](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/830)).
 - `obc-top-bar` keeps its controls on screen and shortens the title first when space runs out ([#1213](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1213)).
 - `obc-navigation-menu` scrolls its items and keeps the footer and logo in place ([#895](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/895)).
+- `obc-accordion-card` and `obc-accordion-item` slide open and closed over `--obc-accordion-expand-duration` (200 ms), and `prefers-reduced-motion: reduce` switches instantly ([#1304](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1304)). 1.0.1 rendered no panel while collapsed; the panel is now always in the DOM, `inert` while closed, so a query or a test that expected the collapsed content to be absent finds it.
 
 ### Readouts
 
@@ -807,14 +812,25 @@ The point-of-interest components are experimental in 2.0. Besides the [import pa
 - `obc-poi-layer` reads the `is-selected` attribute instead of `isselected`.
 - `ObcPoiObjectAtonState` and `ObcPoiObjectDataState` are merged into `ObcPoiObjectState`, and `ObcPoiObjectDataStyle` is now `ObcPoiObjectStyle`. The old names are still exported from `dist/ar/poi-button/poi-button-aton.js` and `dist/ar/poi-button/poi-button-data.js`.
 
+The POI components also stopped touching the consumer's light DOM, and selection and grouping became public APIs ([#1060](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1060)):
+
+- `obc-poi-group` reads the `position-vertical` attribute instead of `positionvertical`.
+- A bare `obc-poi` places its button 192 px above the anchor instead of 96.
+- `--obc-poi-layer-line-length` is removed.
+- `obc-poi-layer-stack` leaves the selected target where you put it instead of moving it into the selected layer, and projects its button instead. Read `selectedTargets`, or listen for `selection-change`, in place of reading the DOM. `selectTarget`, `deselectTarget` and `clearSelection` drive the selection from script.
+- `obc-poi-layer` builds its auto-groups inside its own shadow DOM and assigns the members to them through slots. 1.0.1 inserted the group elements among the layer's own children, so a page that read them from its markup reads `layer.autoGroups` after `grouping-change` instead.
+- Header content slotted into a POI stays in your markup. 1.0.1 moved those nodes into the button the component renders inside its shadow DOM, so they left `poi.children`; 2.0 forwards them through a chain of `<slot name="header">` and leaves them where you wrote them. The markup does not change, only where the nodes are found.
+
 ```html
 <!-- 1.0.1 -->
 <obc-poi-data line-compensation-y="12"></obc-poi-data>
 <obc-poi-layer isSelected></obc-poi-layer>
+<obc-poi-group positionVertical="240px"></obc-poi-group>
 
 <!-- 2.0 -->
 <obc-poi-data></obc-poi-data>
 <obc-poi-layer is-selected></obc-poi-layer>
+<obc-poi-group position-vertical="240px"></obc-poi-group>
 ```
 
 ## Keyboard, Focus and Events

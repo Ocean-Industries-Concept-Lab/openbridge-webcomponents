@@ -84,6 +84,20 @@ button item and Alert button (#1236).
 - Guarded by `alert-button-item.spec.ts`, `alert-counter-item.spec.ts`,
   `alert-button.spec.ts` and `alert-severity.spec.ts`.
 
+## Alert lists, menu and page
+
+The alert list, the alert menu and the small alert list page keep what a twin
+would otherwise copy in shared code, so a twin overrides only its filtering.
+
+- `ObcAlertListBase` holds the list's scrolling, motion and empty state;
+  `obc-alert-list` adds only its `filter`.
+- `obc-alert-menu` exposes `tabs`, `renderList` and `offersAckAll` hooks;
+  `ObcAlertListPageSmallBase` holds the small page's action bar.
+- Shared bases are plain `Obc*Base` classes with default hooks, never TS
+  `abstract`: the React wrapper generator wraps every `LitElement` subclass,
+  and its `createComponent` rejects an abstract class.
+- The empty states share the `alert-list-empty` mixin.
+
 ## Slot Conventions
 
 | Pattern                                      | Usage                                  |
@@ -164,6 +178,21 @@ Components that participate in grouped layouts (e.g. form items) use host data a
 
 These attributes are set by a parent component — do not set them internally.
 
+## Input fields
+
+`obc-text-input-field` and `obc-number-input-field` wrap a native `<input>`
+in a `<label>`: a click on the label text, unit or icon focuses the input
+natively, and caret placement inside the value is the browser's. The number
+field only cancels `pointerdown` on that chrome, so an unfinished edit keeps
+its focus instead of committing (`number-input-field.spec.ts`, caret
+placement). Focus removes the group separators; after a click on the value
+it waits until the browser has placed the caret, then carries the caret over
+to the ungrouped text, so the digits never move under the pointer first.
+Never derive a caret position or a text width from glyph constants; the
+centred number input sizes itself with `field-sizing: content`, and where
+that is unsupported it fills the field, reading right-aligned rather than
+pushing the value out of a narrow box.
+
 ## Checkbox lists
 
 `obc-checkbox-item` rows are flat; depth is the numeric `level` (0 plain, 1
@@ -232,3 +261,44 @@ Four overlays still hand-roll dismissal, listed in #1293: `obc-split-button`
 and `obc-readout`'s source picker each run a `window` `pointerdown` listener,
 `obc-poi-group` renders a backdrop div, and `obc-navigation-item-group` has
 nothing at all.
+
+## Disclosure animation
+
+The accordions slide their panel open on a `grid-template-rows: 0fr → 1fr`
+track (#1291). It is the only technique that eases to content height in
+Chromium, Firefox and WebKit alike: `interpolate-size: allow-keywords` is
+Chromium-only, and a large `max-height` runs the easing against a number the
+content never reaches, so a short panel finishes early and a tall one is cut
+off. Follow it for any new collapsing component.
+
+- The panel is **always rendered** — a panel that only exists while open has
+  nothing to animate. `inert` on the panel, bound to the open state, is what
+  keeps the collapsed content out of the tab order, the accessibility tree and
+  find-in-page. It reaches slotted light-DOM content through the slot.
+- **Keyboard availability is not a visual property.** `visibility: hidden` also
+  removes content from the tab order, but transitioning it holds `visible` for
+  the whole close, so for the length of the animation a Tab press lands on a
+  control that is about to disappear, and focus falls to `<body>` when it does.
+  Anything driven by the transition is the wrong switch; `inert` flips with the
+  state instead, on the same render that starts the animation (#1291).
+- **Three levels, not two.** The grid item can carry neither padding nor a
+  border: padding holds the closed track open by its own height, and a border
+  is left out of the open track and clipped off. So `.panel` owns the track,
+  `.panel-inner` clips (`min-height: 0; overflow: hidden`), and the padded or
+  framed element sits inside that.
+- Anything else that changes with the state and would otherwise snap while the
+  panel is still moving — the corner radii, the card surface, the chevron —
+  transitions over the same duration. Components read it from
+  `--_expand-duration`, aliased from the consumer-settable
+  `--obc-accordion-expand-duration` so an ancestor can still set it.
+- **Hand focus back before the panel goes inert.** The browser blurs whatever
+  it makes inert, and focus lands on `<body>` two frames later — so a consumer
+  collapsing a panel while a slotted control has focus loses the user's place
+  and the next Tab starts from the top of the document. Both components move
+  focus to their header in `willUpdate`, through `releaseFocusBefore()` in
+  `internal/focus.ts`, which tries each fallback and checks whether focus
+  actually left — a `disabled` header takes none, so the shadow wrapper carries
+  `tabindex="-1"` as the last resort. The tabindex sits on the wrapper and never
+  on the host, so a parent still controls the tab order. A spec per component
+  pins both paths.
+- `prefers-reduced-motion: reduce` drops every one of those transitions.

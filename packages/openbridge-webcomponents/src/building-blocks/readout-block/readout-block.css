@@ -46,7 +46,7 @@
      inactive tone and NEVER inherit the value's weight — a bold value must not
      bold its hints. */
   color: var(--obc-readout-block-hinted-color, var(--element-disabled-color));
-  font-weight: var(--global-typography-generic-l-font-weight-regular);
+  font-weight: var(--global-typography-general-l-font-weight-regular);
 }
 
 .sign-spacer {

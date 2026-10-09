@@ -5,7 +5,12 @@ import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import {customElement} from '../../decorator.js';
 import componentStyle from './depth-top-band.css?inline';
 import {VesselImage} from '../watch/watch.js';
-import {vesselImages} from '../watch/vessel.js';
+import {
+  renderVesselArt,
+  vesselArt,
+  type VesselImageSrc,
+} from '../watch/vessel.js';
+import {PaletteController} from '../../charthelpers/theme.js';
 import {clamp} from '../../svghelpers/math.js';
 
 export enum DepthTopBandType {
@@ -51,6 +56,10 @@ const VESSEL_EDGE_MARGIN = 2;
  * @availableWhen now type==vessel
  * @property vesselImage - Side-view silhouette.
  * @availableWhen vesselImage type==vessel
+ * @property vesselImageSrc - Image URLs per palette (`{bright, day, dusk, night}`, SVG, PNG or data URLs)
+ *   drawn instead of `vesselImage` in the same 160 × 160 box. A palette without a URL falls
+ *   back to the nearest one (see `VesselImageSrc`).
+ * @availableWhen vesselImageSrc type==vessel
  * @property minValue - Start of the x range; pushed by the hosting chart.
  * @property maxValue - End of the x range; pushed by the hosting chart.
  * @property paddingLeft - Plot inset from the left edge; pushed by the hosting chart.
@@ -69,6 +78,8 @@ export class ObcDepthTopBand extends LitElement {
   @property({type: String}) type: DepthTopBandType = DepthTopBandType.vessel;
   @property({type: Number}) now?: number = undefined;
   @property({type: String}) vesselImage: VesselImage = VesselImage.psvSide;
+  @property({type: Object, attribute: false})
+  vesselImageSrc: VesselImageSrc | undefined;
   @property({type: Number}) minValue = 0;
   @property({type: Number}) maxValue = 0;
   @property({type: Number}) paddingLeft = 0;
@@ -85,6 +96,8 @@ export class ObcDepthTopBand extends LitElement {
   readonly hasScale = false;
 
   @state() private _width = 0;
+
+  private readonly _palette = new PaletteController(this);
 
   // @ts-expect-error - Controller is used for side effects, not accessed directly
   private _resizeController = new ResizeController(this, {
@@ -167,7 +180,7 @@ export class ObcDepthTopBand extends LitElement {
     return svg`
       <path d=${outline} fill="none" stroke="var(--instrument-frame-tertiary-color)" vector-effect="non-scaling-stroke" />
       <g transform="translate(${centre - artHalf}, ${height - (VESSEL_ART_SIZE * VESSEL_ART_SCALE) / 2}) scale(${VESSEL_ART_SCALE})">
-        ${vesselImages[this.vesselImage] ?? nothing}
+        ${renderVesselArt(vesselArt(this.vesselImage, this.vesselImageSrc), this._palette.current) ?? nothing}
       </g>
     `;
   }

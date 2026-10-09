@@ -1,4 +1,12 @@
-import {LitElement, html, nothing, unsafeCSS} from 'lit';
+import {
+  CSSResultGroup,
+  LitElement,
+  PropertyValues,
+  TemplateResult,
+  html,
+  nothing,
+  unsafeCSS,
+} from 'lit';
 import {property, query, state} from 'lit/decorators.js';
 import compentStyle from './alert-menu.css?inline';
 import '../button/button.js';
@@ -12,7 +20,7 @@ import '../tabbed-card/tabbed-card.js';
 import {localized, msg} from '@lit/localize';
 import {customElement} from '../../decorator.js';
 import '../../building-blocks/alert-list/alert-list.js';
-import {ObcAlertList} from '../../building-blocks/alert-list/alert-list.js';
+import type {ObcAlertListBase} from '../../building-blocks/alert-list/alert-list-base.js';
 import {ObcTabbedCardChangeEvent} from '../tabbed-card/tabbed-card.js';
 import {ObcAlertMenuItemStatus} from '../alert-menu-item/alert-menu-item.js';
 import {PopoverController} from '../../internal/popover-controller.js';
@@ -22,6 +30,20 @@ export type ObcAckAllVisibleClickEvent = CustomEvent<{
   tabName: 'shelved' | 'unacked' | 'all';
 }>;
 
+/** One tab of an alert menu: its name, its label and its empty state. */
+export interface AlertMenuTab {
+  /** Names the tab in `ack-all-visible-click` and in the `empty-<tab>-*` slots. */
+  name: string;
+  title: string;
+  emptyTitle: string;
+  emptyIcon: TemplateResult;
+}
+
+const WAITING_FOR_ACK: string[] = [
+  ObcAlertMenuItemStatus.Unacknowledged,
+  ObcAlertMenuItemStatus.RectifiedUnacknowledged,
+];
+
 /**
  * `<obc-alert-menu>` – A tabbed alert summary panel for displaying, acknowledging, and managing active alerts.
  *
@@ -29,7 +51,7 @@ export type ObcAckAllVisibleClickEvent = CustomEvent<{
  *
  * ### Features
  * - **Tabbed organization:** Switch between "Unacked", "Active", and (optionally) "Shelved" tabs for focused alert review.
- * - **Alert filtering:** Each tab displays only relevant alerts (e.g., "Unacked" shows only unacknowledged, non-shelved items).
+ * - **Alert filtering:** Each tab displays only relevant alerts: "Unacked" shows the non-shelved items still waiting for acknowledgment (`unacknowledged` or `rectified-unacknowledged`), "Active" every non-shelved item except the `rectified-unacknowledged` ones. A subclass changes the tabs and the list through the `tabs` and `renderList` hooks.
  * - **Bulk actions:** "ACK visible" button allows acknowledging all currently visible (filtered) alerts at once.
  * - **Silence and navigation:** Dedicated buttons to silence alerts or jump to the full alert list.
  * - **Dynamic content:** Supports any number of `<obc-alert-menu-item>` children, with automatic empty-state messaging and icons per tab.
@@ -127,10 +149,11 @@ export class ObcAlertMenu extends LitElement {
   @property({type: Boolean, attribute: false}) showAlertListButton: boolean =
     true;
 
-  @state() private _selectedTabIndex = 1;
+  /** The `name` of the tab the user picked; the second tab shows until then. */
+  @state() private _selectedTabName?: string;
 
-  @query('obc-alert-list')
-  private alertList!: ObcAlertList;
+  @query('.alert-list')
+  private alertList!: ObcAlertListBase;
 
   private handleAckAllVisibleClick() {
     const panel = this.alertList;
@@ -139,106 +162,146 @@ export class ObcAlertMenu extends LitElement {
       new CustomEvent('ack-all-visible-click', {
         detail: {
           visibleElements: visibleElements,
-          tabName: this.getSelectedTab().name,
+          tabName: this.selectedTab.name,
         },
       })
     );
   }
 
   private onTabChange(e: ObcTabbedCardChangeEvent) {
-    this._selectedTabIndex = e.detail.tab;
+    this._selectedTabName = this.tabs[e.detail.tab]?.name;
   }
 
-  private getSelectedTab() {
-    if (this._selectedTabIndex === 0) {
-      return {
-        name: 'unacked',
-        emptyTitle: msg('No unacknowledged alerts'),
-        emptyDescription: msg(
-          "Go to the 'Alert list' for more details or to manage existing alerts."
-        ),
-        emptyIcon: html`<obi-unacknowledged></obi-unacknowledged>`,
-        class: 'unacked',
-        filter: (item: HTMLElement) => {
-          return (
-            item.getAttribute('status') ===
-              ObcAlertMenuItemStatus.Unacknowledged &&
-            !item.hasAttribute('shelved')
-          );
-        },
-      };
-    } else if (this._selectedTabIndex === 2) {
-      return {
-        name: 'shelved',
-        emptyTitle: msg('No shelved alerts'),
-        emptyDescription: msg(
-          "Go to the 'Alert list' for more details or to manage existing alerts."
-        ),
-        emptyIcon: html`<obi-alerts-shelf></obi-alerts-shelf>`,
-        class: 'shelved',
-        filter: (item: HTMLElement) => {
-          return item.hasAttribute('shelved');
-        },
-      };
-    } else {
-      return {
-        name: 'all',
-        emptyTitle: msg('No active alerts'),
-        emptyDescription: msg(
-          "Go to the 'Alert list' for more details or to manage existing alerts."
-        ),
-        emptyIcon: html`<obi-alerts></obi-alerts>`,
-        class: 'all',
-        filter: (item: HTMLElement) => {
-          return !item.hasAttribute('shelved');
-        },
-      };
+  protected override willUpdate(changedProperties: PropertyValues<this>) {
+    super.willUpdate(changedProperties);
+    // A picked tab that goes away, as Shelved does when `hasShelved` turns
+    // off, gives way to the second tab, which stays when the tab returns.
+    if (!this.tabs.some((tab) => tab.name === this._selectedTabName)) {
+      this._selectedTabName = undefined;
     }
   }
 
+  /** Whether the menu offers "ACK visible" at all; `canAckAll` enables it. */
+  protected get offersAckAll(): boolean {
+    return true;
+  }
+
+  /** The tabs in display order; the menu opens on the second one. */
+  protected get tabs(): AlertMenuTab[] {
+    const tabs = [
+      {
+        name: 'unacked',
+        title: msg('Unacked'),
+        emptyTitle: msg('No unacknowledged alerts'),
+        emptyIcon: html`<obi-unacknowledged></obi-unacknowledged>`,
+      },
+      {
+        name: 'all',
+        title: msg('Active'),
+        emptyTitle: msg('No active alerts'),
+        emptyIcon: html`<obi-alerts></obi-alerts>`,
+      },
+    ];
+    if (this.hasShelved) {
+      tabs.push({
+        name: 'shelved',
+        title: msg('Shelved'),
+        emptyTitle: msg('No shelved alerts'),
+        emptyIcon: html`<obi-alerts-shelf></obi-alerts-shelf>`,
+      });
+    }
+    return tabs;
+  }
+
+  /** Where the selected tab sits in `tabs`: the one the user picked, else the second. */
+  private selectedTabIndex(tabs: AlertMenuTab[]): number {
+    const index = tabs.findIndex((tab) => tab.name === this._selectedTabName);
+    return index === -1 ? 1 : index;
+  }
+
+  private get selectedTab(): AlertMenuTab {
+    const tabs = this.tabs;
+    return tabs[this.selectedTabIndex(tabs)];
+  }
+
+  /**
+   * The list that shows the selected tab's items. The CSS hides the items the
+   * tab leaves out; the filter tells the list which ones those are.
+   */
+  protected renderList(
+    tab: AlertMenuTab,
+    content: TemplateResult
+  ): TemplateResult {
+    return html`<obc-alert-list
+      class="alert-list ${tab.name}"
+      .filter=${(item: HTMLElement) => this.tabFilter(tab.name, item)}
+      >${content}</obc-alert-list
+    >`;
+  }
+
+  private tabFilter(name: string, item: HTMLElement): boolean {
+    const status = item.getAttribute('status') ?? '';
+    if (name === 'unacked') {
+      return WAITING_FOR_ACK.includes(status) && !item.hasAttribute('shelved');
+    }
+    if (name === 'shelved') {
+      return item.hasAttribute('shelved');
+    }
+    return (
+      !item.hasAttribute('shelved') &&
+      status !== ObcAlertMenuItemStatus.RectifiedUnacknowledged
+    );
+  }
+
   override render() {
-    const t = this.getSelectedTab();
+    const tabs = this.tabs;
+    const selectedIndex = this.selectedTabIndex(tabs);
+    const t = tabs[selectedIndex];
 
     return html`
       <obc-tabbed-card
-        .nTabs=${this.hasShelved ? 3 : 2}
+        .nTabs=${tabs.length}
         class="wrapper"
         part="wrapper"
-        .selectedTab=${this._selectedTabIndex}
+        .selectedTab=${selectedIndex}
         hasDefaultSlotOnly
         @tab-change=${this.onTabChange}
       >
-        <span slot="tab-title-0">${msg('Unacked')}</span>
-        <span slot="tab-title-1">${msg('Active')}</span>
-        ${
-          this.hasShelved
-            ? html`<span slot="tab-title-2">${msg('Shelved')}</span>`
-            : nothing
-        }
+        ${tabs.map(
+          (tab, index) =>
+            html`<span slot="tab-title-${index}">${tab.title}</span>`
+        )}
         <div class="container">
-          <obc-alert-list class="alert-list ${t.class}" .filter=${t.filter}>
-            <slot></slot>
-            <slot name="empty-${t.name}-title" slot="empty-title"
-              >${t.emptyTitle}</slot
-            >
-            <slot name="empty-${t.name}-description" slot="empty-description"
-              >${t.emptyDescription}</slot
-            >
-            <slot name="empty-${t.name}-icon" slot="empty-icon"
-              >${t.emptyIcon}</slot
-            >
-          </obc-alert-list>
+          ${this.renderList(
+            t,
+            html`<slot></slot>
+              <slot name="empty-${t.name}-title" slot="empty-title"
+                >${t.emptyTitle}</slot
+              >
+              <slot name="empty-${t.name}-description" slot="empty-description"
+                >${msg(
+                  "Go to the 'Alert list' for more details or to manage existing alerts."
+                )}</slot
+              >
+              <slot name="empty-${t.name}-icon" slot="empty-icon"
+                >${t.emptyIcon}</slot
+              >`
+          )}
           <div class="action">
-            <obc-button
-              variant="raised"
-              .disabled=${!this.canAckAll}
-              fullWidth
-              class="btn"
-              data-testid="ack-all-visible-button"
-              @click=${this.handleAckAllVisibleClick}
-            >
-              ${msg('ACK visible')}
-            </obc-button>
+            ${
+              this.offersAckAll
+                ? html`<obc-button
+                    variant="raised"
+                    .disabled=${!this.canAckAll}
+                    fullWidth
+                    class="btn"
+                    data-testid="ack-all-visible-button"
+                    @click=${this.handleAckAllVisibleClick}
+                  >
+                    ${msg('ACK visible')}
+                  </obc-button>`
+                : nothing
+            }
             ${
               this.showSilenceButton
                 ? html`<obc-button
@@ -281,7 +344,7 @@ export class ObcAlertMenu extends LitElement {
     `;
   }
 
-  static override styles = unsafeCSS(compentStyle);
+  static override styles: CSSResultGroup = unsafeCSS(compentStyle);
 }
 
 declare global {

@@ -4,8 +4,10 @@ import compentStyle from './current.css?inline';
 import {
   VesselImage,
   VesselImageSize,
+  vesselArt,
   WatchCircleType,
   innerRingRadiusFor,
+  type VesselImageSrc,
 } from '../watch/watch.js';
 import {renderCurrentForcePattern} from '../watch/force-pattern.js';
 import {Priority} from '../types.js';
@@ -101,6 +103,10 @@ export function clampCurrentSpeed(value: number | null): number | null {
  * @availableWhen waveSpeed hasPattern==true && currentFromDirection!=null
  * @property vesselImage - The image of the vessel.
  * @availableWhen vesselImage type==vessel
+ * @property vesselImageSrc - Image URLs per palette (`{bright, day, dusk, night}`, SVG, PNG or data URLs)
+ *   drawn instead of `vesselImage` in the same 160 × 160 box. A palette without a URL falls
+ *   back to the nearest one (see `VesselImageSrc`).
+ * @availableWhen vesselImageSrc type==vessel
  * @property vesselHeadingDeg - Vessel heading in degrees.
  * @availableWhen vesselHeadingDeg type==vessel
  * @experimental
@@ -116,6 +122,8 @@ export class ObcCurrent extends LitElement {
   @property({type: Number}) waveHeight = 1;
   @property({type: Number}) waveSpeed = 0;
   @property({type: String}) vesselImage: VesselImage = VesselImage.genericTop;
+  @property({type: Object, attribute: false})
+  vesselImageSrc: VesselImageSrc | undefined;
   @property({type: Number}) vesselHeadingDeg: number = 0;
 
   private get isVesselType(): boolean {
@@ -136,7 +144,7 @@ export class ObcCurrent extends LitElement {
           {
             size: VesselImageSize.medium,
             transform: `rotate(${this.vesselHeadingDeg}deg)`,
-            vesselImage: this.vesselImage,
+            ...vesselArt(this.vesselImage, this.vesselImageSrc),
           },
         ]
       : [];

@@ -3,8 +3,10 @@ import {property} from 'lit/decorators.js';
 import {
   VesselImage,
   VesselImageSize,
-  vesselImages,
+  vesselArt,
+  renderVesselArt,
   type WatchVessel,
+  type VesselImageSrc,
 } from '../watch/watch.js';
 import {customElement} from '../../decorator.js';
 import {
@@ -37,6 +39,9 @@ export enum ObcPitchType {
  * @property fractionDigits - Number of fraction digits shown in the readout. Default `0`.
  * @property type - `single-scale` shows one arc on the right (default); `dual-scale` also
  *   shows the scale on the opposite (left) arc (the indicator's opposite end).
+ * @property vesselImageSideSrc - Image URLs per palette (`{bright, day, dusk, night}`, SVG, PNG or data URLs)
+ *   drawn instead of `vesselImageSide` in the same 160 × 160 box. A palette without a URL falls
+ *   back to the nearest one (see `VesselImageSrc`).
  * @stable
  */
 @customElement('obc-pitch')
@@ -45,6 +50,8 @@ export class ObcPitch extends SingleAxisInclinometer {
   @property({type: Number}) minAvgPitch = 0;
   @property({type: Number}) maxAvgPitch = 0;
   @property({type: String}) vesselImageSide: VesselImage = VesselImage.psvSide;
+  @property({type: Object, attribute: false})
+  vesselImageSideSrc: VesselImageSrc | undefined;
   @property({type: Number}) maxPitchAdvice: number | undefined = undefined;
   @property({type: Boolean}) triggerPitchAdvice = false;
   @property({type: String}) override label = 'Pitch';
@@ -80,7 +87,7 @@ export class ObcPitch extends SingleAxisInclinometer {
     return [
       {
         size: VesselImageSize.large,
-        vesselImage: this.vesselImageSide,
+        ...vesselArt(this.vesselImageSide, this.vesselImageSideSrc),
         transform: `rotate(${this.pitch}deg)`,
       },
     ];
@@ -108,7 +115,7 @@ export class ObcPitch extends SingleAxisInclinometer {
       <g
         style="transform: rotate(${this.pitch}deg) scale(${vesselScale}) translate(-80px, -80px);"
       >
-        ${this.zoomToFitArc ? vesselImages[this.vesselImageSide] : nothing}
+        ${this.zoomToFitArc ? renderVesselArt(vesselArt(this.vesselImageSide, this.vesselImageSideSrc), this.palette.current) : nothing}
       </g>
     `;
   }
