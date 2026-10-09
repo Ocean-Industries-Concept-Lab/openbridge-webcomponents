@@ -2,7 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcAlertIcon} from './alert-icon.js';
 import './alert-icon.js';
 import {html} from 'lit';
-import {AlertType} from '../../types.js';
+import {AlertType, FlashingSpeed} from '../../types.js';
 
 const meta: Meta<typeof ObcAlertIcon> = {
   title: 'Application Components/Alerts/Alert Icon',
@@ -12,12 +12,16 @@ const meta: Meta<typeof ObcAlertIcon> = {
     type: AlertType.Alarm,
     acknowledged: false,
     active: true,
-    silenced: false
+    outline: false,
+    flashingSpeed: FlashingSpeed.Default,
   },
   argTypes: {
+    flashingSpeed: {
+      options: Object.values(FlashingSpeed),
+      control: {type: 'select'},
+    },
     type: {
-      options: Object.values(AlertType),
-      control: {type: 'select'}
+      control: {type: 'select', options: Object.values(AlertType)},
     },
     acknowledged: {
       control: {type: 'boolean'},
@@ -25,9 +29,6 @@ const meta: Meta<typeof ObcAlertIcon> = {
     active: {
       control: {type: 'boolean'},
     },
-    silenced: {
-      control: {type: 'boolean'},
-    }
   },
   render: (args) =>
     html` <div style="width:64px;height:64px">
@@ -35,7 +36,7 @@ const meta: Meta<typeof ObcAlertIcon> = {
         .type=${args.type}
         .acknowledged=${args.acknowledged}
         .active=${args.active}
-        .silenced=${args.silenced}
+        .flashingSpeed=${args.flashingSpeed}
       ></obc-alert-icon>
     </div>`,
 } satisfies Meta<ObcAlertIcon>;
@@ -142,7 +143,7 @@ export const AlarmRectifiedNoAck: Story = {
 };
 
 export const ApiMatrix: Story = {
-  render: (args) =>
+  render: () =>
     html` <div
       style="display:grid;grid-template-columns: auto repeat(8,32px);gap:16px"
     >

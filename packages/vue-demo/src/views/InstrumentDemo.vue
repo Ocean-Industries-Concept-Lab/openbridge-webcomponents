@@ -150,7 +150,9 @@ onUnmounted(() => {
   box-sizing: border-box;
   display: grid;
   padding: 4px;
-  grid-template-columns: repeat(6, 1fr) 6fr 6fr;
+  /* a bare fr never shrinks below its content, and in Chromium the rudders'
+     aspect box widens the propulsion column to the whole page (#1213) */
+  grid-template-columns: repeat(6, minmax(0, 1fr)) minmax(0, 6fr) minmax(0, 6fr);
   grid-template-rows: 6fr repeat(6, 1fr);
   height: calc(100vh - var(--app-components-topbar-touch-target-size));
   width: 100%;
@@ -197,6 +199,45 @@ onUnmounted(() => {
 .propulsion {
   grid-column: -2 / -1;
   grid-row: 1 / -1;
+}
+
+/* Mobile: one card under the other, the page scrolls. 768px is
+   MOBILE_BREAKPOINT_PX in composables/useMobileLayout.ts. */
+@media screen and (max-width: 768px) {
+  .container {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    min-height: calc(100vh - var(--app-components-topbar-touch-target-size));
+    overflow-y: visible;
+  }
+
+  .container > * {
+    flex: none; /* each card keeps the height below instead of sharing the column */
+    height: 320px;
+  }
+
+  .own-ship {
+    height: 440px;
+  }
+
+  .pitch-roll,
+  .wind {
+    height: 360px;
+  }
+
+  .speed,
+  .weather {
+    height: 200px;
+  }
+
+  .vessel-motion {
+    height: 560px;
+  }
+
+  .propulsion {
+    height: 720px;
+  }
 }
 
 .tunnel1,

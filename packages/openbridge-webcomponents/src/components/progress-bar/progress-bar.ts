@@ -1,10 +1,15 @@
 import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
+import {classMap} from 'lit/directives/class-map.js';
 import {styleMap} from 'lit/directives/style-map.js';
 import componentStyle from './progress-bar.css?inline';
 import {customElement} from '../../decorator.js';
 import '../../icons/icon-placeholder.js';
 import {CircularProgressMode} from '../../building-blocks/circular-progress/circular-progress.js';
+import {Priority} from '../../navigation-instruments/types.js';
+import {clamp} from '../../svghelpers/math.js';
+
+export {Priority};
 
 export enum ProgressBarType {
   linear = 'linear',
@@ -44,6 +49,10 @@ export enum CircularProgressState {
  * - **Indeterminate**: Animated, looping fill for work of unknown duration; the label shows
  *   "Loading".
  *
+ * **Color priority (`priority`)**
+ * - **Enhanced** (default): Blue fill, for a bar that reads as the primary value.
+ * - **Regular**: Neutral gray fill, for a bar that should recede as ancillary status.
+ *
  * **Circular states (`circularState`)**
  * - **Determinate**: Ring fills to `value`, with the rounded number (and optional `%` unit) centered.
  * - **Indeterminate**: Animated ring with the `icon` slot centered.
@@ -79,65 +88,49 @@ export enum CircularProgressState {
  * ></obc-progress-bar>
  * ```
  *
+ * @property type - Layout type: `linear` (horizontal bar) or `circular` (ring).
+ * @property mode - Progress mode: `determinate` tracks `value`, `indeterminate` loops indefinitely.
+ * @availableWhen mode type==linear
+ * @property circularState - Circular display state: `determinate` (numeric ring), `indeterminate` (animated ring with
+ *   icon), or `icon` (ring framing the icon slot).
+ * @availableWhen circularState type==circular
+ * @property priority - Color emphasis of the bar fill: `regular` (gray) or `enhanced` (blue).
+ * @availableWhen priority type==linear
+ * @property value - Progress percentage (0–100); clamped when rendered.
+ * @property showValue - Shows the value label above the bar (percentage when determinate, "Loading" when indeterminate).
+ * @availableWhen showValue type==linear
+ * @property showUnit - Appends a `%` unit next to the centered value.
+ * @availableWhen showUnit type==circular && (progressiveIndeterminate==true || circularState==determinate)
+ * @property hasDescription - Shows the `description` text below the bar.
+ * @availableWhen hasDescription type==linear
+ * @property description - Description text rendered below the bar.
+ * @availableWhen description type==linear && hasDescription==true
+ * @property stateLabel - Text shown alongside the value when `showState` is enabled.
+ * @availableWhen stateLabel type==linear && showValue==true && mode==determinate && showState==true
+ * @property progressiveIndeterminate - Uses a progressive indeterminate ring (spinning arc that grows with `value`); takes
+ *   precedence over `circularState`.
+ * @availableWhen progressiveIndeterminate type==circular
+ * @property showState - Shows the `stateLabel` next to the value.
+ *   **TODO(designer):** Confirm the intended purpose of the state indicator — the story labels
+ *   this a "future feature".
+ * @availableWhen showState type==linear && showValue==true && mode==determinate
  * @slot icon - Centered icon for the circular `indeterminate` and `icon` states.
  * @stable
  */
 @customElement('obc-progress-bar')
 export class ObcProgressBar extends LitElement {
-  /** Layout type: `linear` (horizontal bar) or `circular` (ring). */
   @property({type: String}) type: ProgressBarType = ProgressBarType.linear;
-  /**
-   * Progress mode: `determinate` tracks `value`, `indeterminate` loops indefinitely.
-   * @availableWhen type==linear
-   */
   @property({type: String}) mode: ProgressBarMode = ProgressBarMode.determinate;
-  /**
-   * Circular display state: `determinate` (numeric ring), `indeterminate` (animated ring with
-   * icon), or `icon` (ring framing the icon slot).
-   * @availableWhen type==circular
-   */
   @property({type: String}) circularState: CircularProgressState =
     CircularProgressState.determinate;
-  /** Progress percentage (0–100); clamped when rendered. */
+  @property({type: String}) priority: Priority = Priority.enhanced;
   @property({type: Number}) value = 0;
-  /**
-   * Shows the value label above the bar (percentage when determinate, "Loading" when indeterminate).
-   * @availableWhen type==linear
-   */
   @property({type: Boolean}) showValue = false;
-  /**
-   * Appends a `%` unit next to the centered value.
-   * @availableWhen type==circular && (progressiveIndeterminate==true || circularState==determinate)
-   */
   @property({type: Boolean}) showUnit = false;
-  /**
-   * Shows the `description` text below the bar.
-   * @availableWhen type==linear
-   */
   @property({type: Boolean}) hasDescription = false;
-  /**
-   * Description text rendered below the bar.
-   * @availableWhen type==linear && hasDescription==true
-   */
   @property({type: String}) description = 'Description text';
-  /**
-   * Shows the `stateLabel` next to the value.
-   *
-   * **TODO(designer):** Confirm the intended purpose of the state indicator — the story labels
-   * this a "future feature".
-   * @availableWhen type==linear && showValue==true && mode==determinate
-   */
   @property({type: Boolean}) showState = false;
-  /**
-   * Text shown alongside the value when `showState` is enabled.
-   * @availableWhen type==linear && showValue==true && mode==determinate && showState==true
-   */
   @property({type: String}) stateLabel = 'Open';
-  /**
-   * Uses a progressive indeterminate ring (spinning arc that grows with `value`); takes
-   * precedence over `circularState`.
-   * @availableWhen type==circular
-   */
   @property({type: Boolean}) progressiveIndeterminate = false;
 
   override render() {
@@ -184,9 +177,9 @@ export class ObcProgressBar extends LitElement {
       return html`
         <div class="circular-label-container">
           <span class="circular-value">${Math.round(this.value)}</span>
-          ${this.showUnit
-            ? html`<span class="circular-unit">%</span>`
-            : nothing}
+          ${
+            this.showUnit ? html`<span class="circular-unit">%</span>` : nothing
+          }
         </div>
       `;
     }
@@ -195,9 +188,9 @@ export class ObcProgressBar extends LitElement {
       return html`
         <div class="circular-label-container">
           <span class="circular-value">${Math.round(this.value)}</span>
-          ${this.showUnit
-            ? html`<span class="circular-unit">%</span>`
-            : nothing}
+          ${
+            this.showUnit ? html`<span class="circular-unit">%</span>` : nothing
+          }
         </div>
       `;
     } else if (this.circularState === CircularProgressState.indeterminate) {
@@ -220,31 +213,39 @@ export class ObcProgressBar extends LitElement {
   }
 
   private renderLinearProgress() {
-    const clampedValue = Math.max(0, Math.min(100, this.value));
+    const clampedValue = clamp(this.value, 0, 100);
     const progressWidth = `${clampedValue}%`;
+    const barClasses = {
+      bar: true,
+      'priority-regular': this.priority === Priority.regular,
+    };
 
     return html`
       <div class="wrapper">
         ${this.showValue ? this.renderLabel() : ''}
 
-        <div class="bar">
-          ${this.mode === ProgressBarMode.determinate
-            ? html`
-                <div
-                  class="loaded"
-                  style=${styleMap({width: progressWidth})}
-                ></div>
-              `
-            : html` <div class="indeterminate-track"></div> `}
+        <div class=${classMap(barClasses)}>
+          ${
+            this.mode === ProgressBarMode.determinate
+              ? html`
+                  <div
+                    class="loaded"
+                    style=${styleMap({width: progressWidth})}
+                  ></div>
+                `
+              : html` <div class="indeterminate-track"></div> `
+          }
         </div>
 
-        ${this.hasDescription
-          ? html`
-              <div class="description-container">
-                <span class="description-text">${this.description}</span>
-              </div>
-            `
-          : nothing}
+        ${
+          this.hasDescription
+            ? html`
+                <div class="description-container">
+                  <span class="description-text">${this.description}</span>
+                </div>
+              `
+            : nothing
+        }
       </div>
     `;
   }
@@ -257,9 +258,11 @@ export class ObcProgressBar extends LitElement {
             <span class="value-number">${Math.round(this.value)}</span>
             <span class="value-unit">%</span>
           </div>
-          ${this.showState
-            ? html` <span class="state">${this.stateLabel}</span> `
-            : nothing}
+          ${
+            this.showState
+              ? html` <span class="state">${this.stateLabel}</span> `
+              : nothing
+          }
         </div>
       `;
     } else {

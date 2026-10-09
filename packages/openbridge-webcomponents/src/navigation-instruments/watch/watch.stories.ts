@@ -16,6 +16,11 @@ import {AdviceState, AdviceType} from './advice.js';
 import {InstrumentState, Priority} from '../types.js';
 import {TickmarkType} from './tickmark.js';
 import {html, svg} from 'lit';
+import {degToRad} from '../../svghelpers/math.js';
+import {
+  customVesselPngSrc,
+  customVesselSvgSrc,
+} from './vessels/storybook-helper.js';
 
 const meta: Meta<typeof ObcWatch> = {
   title: 'Building Blocks/Watch',
@@ -142,6 +147,25 @@ export const WithVesselImage: Story = {
   },
   argTypes: {
     angleSetpoint: {control: {type: 'range', min: 0, max: 360, step: 1}},
+  },
+};
+
+export const WithCustomVesselImage: Story = {
+  args: {
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
+    vessels: [
+      {
+        size: VesselImageSize.medium,
+        customImage: customVesselSvgSrc,
+        transform: 'translate(-60px, 0) rotate(30deg)',
+      },
+      {
+        size: VesselImageSize.medium,
+        customImage: customVesselPngSrc,
+        transform: 'translate(60px, 0) rotate(-30deg)',
+      },
+    ],
   },
 };
 
@@ -507,8 +531,8 @@ export const TickmarksTest: Story = {
         ${args.tickmarks.map(
           (tickmark) => svg`
           <line x1="200" y1="200" 
-            x2=${200 + Math.cos((tickmark.angle * Math.PI) / 180) * 200} 
-            y2=${200 + Math.sin((tickmark.angle * Math.PI) / 180) * 200} 
+            x2=${200 + Math.cos(degToRad(tickmark.angle)) * 200} 
+            y2=${200 + Math.sin(degToRad(tickmark.angle)) * 200} 
             stroke="darkgreen" stroke-width="2" opacity="0.5"/>
         `
         )}
@@ -572,8 +596,8 @@ export const TickmarksInsideTest: Story = {
           ${args.tickmarks.map(
             (tickmark) => svg`
           <line x1="200" y1="200" 
-            x2=${200 + Math.cos((tickmark.angle * Math.PI) / 180) * 200} 
-            y2=${200 + Math.sin((tickmark.angle * Math.PI) / 180) * 200} 
+            x2=${200 + Math.cos(degToRad(tickmark.angle)) * 200} 
+            y2=${200 + Math.sin(degToRad(tickmark.angle)) * 200} 
             stroke="darkgreen" stroke-width="2" opacity="0.5"/>
         `
           )}
@@ -650,8 +674,8 @@ export const TickmarksTestRotation: Story = {
           ${args.tickmarks.map(
             (tickmark) => svg`
           <line x1="200" y1="200" 
-            x2=${200 + Math.cos((tickmark.angle * Math.PI) / 180) * 200} 
-            y2=${200 + Math.sin((tickmark.angle * Math.PI) / 180) * 200} 
+            x2=${200 + Math.cos(degToRad(tickmark.angle)) * 200} 
+            y2=${200 + Math.sin(degToRad(tickmark.angle)) * 200} 
             stroke="hsl(${tickmark.angle}, 100%, 50%)" stroke-width="2" opacity="1"/>
         `
           )}
@@ -728,8 +752,8 @@ export const TickmarksTestInsideRotation: Story = {
           ${args.tickmarks.map(
             (tickmark) => svg`
           <line x1="200" y1="200" 
-            x2=${200 + Math.cos((tickmark.angle * Math.PI) / 180) * 200} 
-            y2=${200 + Math.sin((tickmark.angle * Math.PI) / 180) * 200} 
+            x2=${200 + Math.cos(degToRad(tickmark.angle)) * 200} 
+            y2=${200 + Math.sin(degToRad(tickmark.angle)) * 200} 
             stroke="darkgreen" stroke-width="2" opacity="0.5"/>
         `
           )}
@@ -853,9 +877,9 @@ export const SizingPlayground: StoryObj<SizingPlaygroundArgs> = {
                   .faceDiameter=${fd(index)}
                   .tickmarks=${g.ticks}
                   .areas=${g.areas ?? []}
-                  .watchCircleType=${g.areas
-                    ? WatchCircleType.double
-                    : WatchCircleType.single}
+                  .watchCircleType=${
+                    g.areas ? WatchCircleType.double : WatchCircleType.single
+                  }
                 ></obc-watch>
               `,
               {pinned: fd(index) !== undefined}

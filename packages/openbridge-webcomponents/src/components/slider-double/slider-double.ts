@@ -6,6 +6,7 @@ import componentStyle from './slider-double.css?inline';
 import '../icon-button/icon-button.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
+import {clamp} from '../../svghelpers/math.js';
 
 /**
  * Enum for slider double variants.
@@ -55,7 +56,7 @@ export type ObcSliderDoubleChangeEvent = CustomEvent<{
  * - **Step click adjustment:** Use `stepClick` to define increment/decrement amount for keyboard or button-based changes.
  * - **Seeking mode:** Enable `allowSeeking` to let users jump to a value by clicking on the track, with smooth animated transitions controlled by `seekingSpeed`.
  * - **Custom labels:** Display formatted value labels with unit (`labelUnit`), decimal precision (`labelDecimals`), and adjustable label width (`labelWidth`).
- * - **Hug container option:** Remove spacing between slider and container edges with the `hugcontainer` attribute for seamless layout integration.
+ * - **Hug container option:** Remove spacing between slider and container edges with the `hugcontainer` attribute, so the slider sits flush.
  * - **Custom readouts:** Replace the low/high value labels with custom content using the `left-readout` and `right-readout` slots.
  *
  * ## Usage Guidelines
@@ -124,6 +125,39 @@ export type ObcSliderDoubleChangeEvent = CustomEvent<{
  *
  * In this example, the slider allows selection of a percentage range from 0 to 100, with 5% increments, enhanced styling, and seeking enabled.
  *
+ * @property low - The current lower bound of the selected range.
+ *   Must be greater than or equal to `min` and less than or equal to `high`.
+ * @property high - The current upper bound of the selected range.
+ *   Must be less than or equal to `max` and greater than or equal to `low`.
+ * @property min - The minimum allowed value for the slider.
+ *   Default is 0.
+ * @property max - The maximum allowed value for the slider.
+ *   Default is 100.
+ * @property step - The increment for value changes.
+ *   If not set, defaults to 1.
+ * @property stepClick - Step size for keyboard or button-based changes.
+ *   Default is 10.
+ * @property allowSeeking - If true, clicking the slider track animates the thumb to the clicked position.
+ *   Enables seeking mode for rapid value changes.
+ * @property seekingSpeed - Animation speed for seeking, in inverse seconds.
+ *   The value will go from min to max in 1 / seekingSpeed seconds.
+ *   Default is 1/3 (i.e., 3 seconds for full range).
+ * @property labelUnit - Unit label appended to value labels (e.g., "%", "kn").
+ * @property labelDecimals - Number of decimal places to display in value labels.
+ * @property labelWidth - CSS width for value labels (e.g., "5ch", "60px").
+ * @property hugContainer - Removes spacing between the slider and its container edges so the
+ *   slider sits flush. Reflected to the `hugcontainer` HTML attribute.
+ * @property showLeftReadout - Whether to show the left (low) readout label.
+ *   When false, the left readout is hidden entirely. When true, the readout
+ *   renders the formatted `low` value or the content slotted into `left-readout`.
+ *   Default is true. Set via JavaScript property (no HTML attribute).
+ * @property showRightReadout - Whether to show the right (high) readout label.
+ *   When false, the right readout is hidden entirely. When true, the readout
+ *   renders the formatted `high` value or the content slotted into `right-readout`.
+ *   Default is true. Set via JavaScript property (no HTML attribute).
+ * @property variant - Visual and interaction style: `normal` (default) is the standard
+ *   appearance, `enhanced` has a larger track and thumb, and `no-input` is
+ *   read-only.
  * @slot left-readout - Custom content for the left (low) readout label (rendered when `showLeftReadout` is true)
  * @slot right-readout - Custom content for the right (high) readout label (rendered when `showRightReadout` is true)
  * @fires {ObcSliderDoubleValueEvent} value - Fires when the value is changed
@@ -132,106 +166,37 @@ export type ObcSliderDoubleChangeEvent = CustomEvent<{
  */
 @customElement('obc-slider-double')
 export class ObcSliderDouble extends LitElement {
-  /**
-   * The current lower bound of the selected range.
-   * Must be greater than or equal to `min` and less than or equal to `high`.
-   */
   @property({type: Number}) low = 0;
 
-  /**
-   * The current upper bound of the selected range.
-   * Must be less than or equal to `max` and greater than or equal to `low`.
-   */
   @property({type: Number}) high = 100;
 
-  /**
-   * The minimum allowed value for the slider.
-   * Default is 0.
-   */
   @property({type: Number}) min = 0;
 
-  /**
-   * The maximum allowed value for the slider.
-   * Default is 100.
-   */
   @property({type: Number}) max = 100;
 
-  /**
-   * The increment for value changes.
-   * If not set, defaults to 1.
-   */
   @property({type: Number}) step: number | undefined;
 
-  /**
-   * Step size for keyboard or button-based changes.
-   * Default is 10.
-   */
   @property({type: Number}) stepClick = 10;
 
-  /**
-   * Visual and interaction style of the slider.
-   * - `normal`: Standard appearance.
-   * - `enhanced`: Larger track and thumb.
-   * - `no-input`: Read-only, disables user interaction.
-   * Default is `normal`.
-   */
   @property({type: String}) variant: ObcSliderDoubleVariant =
     ObcSliderDoubleVariant.Normal;
 
-  /**
-   * If true, clicking the slider track animates the thumb to the clicked position.
-   * Enables seeking mode for rapid value changes.
-   */
   @property({type: Boolean}) allowSeeking = false;
 
   @property({type: Boolean}) disabled = false;
 
-  /**
-   * Animation speed for seeking, in inverse seconds.
-   * The value will go from min to max in 1 / seekingSpeed seconds.
-   * Default is 1/3 (i.e., 3 seconds for full range).
-   */
   @property({type: Number}) seekingSpeed = 1 / 3;
 
-  /**
-   * Unit label appended to value labels (e.g., "%", "kn").
-   */
   @property({type: String}) labelUnit = '';
 
-  /**
-   * Number of decimal places to display in value labels.
-   */
   @property({type: Number}) labelDecimals = 0;
 
-  /**
-   * CSS width for value labels (e.g., "5ch", "60px").
-   */
   @property({type: String}) labelWidth = '60px';
 
-  /**
-   * Whether to show the left (low) readout label.
-   *
-   * When false, the left readout is hidden entirely. When true, the readout
-   * renders the formatted `low` value or the content slotted into `left-readout`.
-   *
-   * Default is true. Set via JavaScript property (no HTML attribute).
-   */
   @property({type: Boolean, attribute: false}) showLeftReadout = true;
 
-  /**
-   * Whether to show the right (high) readout label.
-   *
-   * When false, the right readout is hidden entirely. When true, the readout
-   * renders the formatted `high` value or the content slotted into `right-readout`.
-   *
-   * Default is true. Set via JavaScript property (no HTML attribute).
-   */
   @property({type: Boolean, attribute: false}) showRightReadout = true;
 
-  /**
-   * Removes spacing between the slider and its container edges for seamless
-   * layout integration. Reflected to the `hugcontainer` HTML attribute.
-   */
   @property({type: Boolean, reflect: true, attribute: 'hugcontainer'})
   hugContainer = false;
 
@@ -248,7 +213,7 @@ export class ObcSliderDouble extends LitElement {
     if (!Number.isFinite(range) || range <= 0) return 0;
     const ratio = (value - this.min) / range;
     if (!Number.isFinite(ratio)) return 0;
-    return Math.max(0, Math.min(1, ratio));
+    return clamp(ratio, 0, 1);
   }
 
   private animationFrame: number | null = null;
@@ -423,15 +388,13 @@ export class ObcSliderDouble extends LitElement {
       this.targetValue = unroundedValue;
     }
     if (this.isTargetingLow) {
-      this.targetValue = Math.max(
+      this.targetValue = clamp(
+        this.targetValue,
         this.min,
-        Math.min(this.targetValue, this.high)
+        Math.max(this.min, this.high)
       );
     } else {
-      this.targetValue = Math.min(
-        this.max,
-        Math.max(this.targetValue, this.low)
-      );
+      this.targetValue = clamp(this.targetValue, this.low, this.max);
     }
   }
 
@@ -515,20 +478,22 @@ export class ObcSliderDouble extends LitElement {
 
   override render() {
     return html`
-      ${this.showLeftReadout
-        ? html`
-            <div
-              class=${classMap({
-                label: true,
-                min: true,
-                disabled: this.disabled,
-              })}
-              style="width: ${this.labelWidth};"
-            >
-              <slot name="left-readout">${this.formatLabel(this.low)}</slot>
-            </div>
-          `
-        : null}
+      ${
+        this.showLeftReadout
+          ? html`
+              <div
+                class=${classMap({
+                  label: true,
+                  min: true,
+                  disabled: this.disabled,
+                })}
+                style="width: ${this.labelWidth};"
+              >
+                <slot name="left-readout">${this.formatLabel(this.low)}</slot>
+              </div>
+            `
+          : null
+      }
       <div
         class=${classMap({
           wrapper: true,
@@ -553,8 +518,9 @@ export class ObcSliderDouble extends LitElement {
           class="slider min"
           step=${ifDefined(this.step)}
           .value=${this.low.toString()}
-          ?disabled=${this.variant === ObcSliderDoubleVariant.NoInput ||
-          this.disabled}
+          ?disabled=${
+            this.variant === ObcSliderDoubleVariant.NoInput || this.disabled
+          }
           @input=${this.onInput}
           @change=${() => this.fireChangeEvent()}
         />
@@ -565,8 +531,9 @@ export class ObcSliderDouble extends LitElement {
           max=${this.max}
           step=${ifDefined(this.step)}
           .value=${this.high.toString()}
-          ?disabled=${this.variant === ObcSliderDoubleVariant.NoInput ||
-          this.disabled}
+          ?disabled=${
+            this.variant === ObcSliderDoubleVariant.NoInput || this.disabled
+          }
           @input=${this.onInput}
           @change=${() => this.fireChangeEvent()}
         />
@@ -574,20 +541,22 @@ export class ObcSliderDouble extends LitElement {
         <div class="thumb min"></div>
         <div class="thumb max"></div>
       </div>
-      ${this.showRightReadout
-        ? html`
-            <div
-              class=${classMap({
-                label: true,
-                max: true,
-                disabled: this.disabled,
-              })}
-              style="width: ${this.labelWidth};"
-            >
-              <slot name="right-readout">${this.formatLabel(this.high)}</slot>
-            </div>
-          `
-        : null}
+      ${
+        this.showRightReadout
+          ? html`
+              <div
+                class=${classMap({
+                  label: true,
+                  max: true,
+                  disabled: this.disabled,
+                })}
+                style="width: ${this.labelWidth};"
+              >
+                <slot name="right-readout">${this.formatLabel(this.high)}</slot>
+              </div>
+            `
+          : null
+      }
     `;
   }
 

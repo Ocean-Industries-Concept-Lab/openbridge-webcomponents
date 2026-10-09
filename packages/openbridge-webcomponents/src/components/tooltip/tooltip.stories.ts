@@ -21,10 +21,12 @@ const meta: Meta<typeof ObcTooltip> = {
       label="${args.label}"
       .showIcon=${args.showIcon}
     >
-      ${args.type === TooltipType.icon ||
-      (args.type === TooltipType.label && args.showIcon)
-        ? html`<obi-placeholder slot="icon"></obi-placeholder>`
-        : nothing}
+      ${
+        args.type === TooltipType.icon ||
+        (args.type === TooltipType.label && args.showIcon)
+          ? html`<obi-placeholder slot="icon"></obi-placeholder>`
+          : nothing
+      }
     </obc-tooltip>`,
   argTypes: {
     type: {
@@ -45,12 +47,10 @@ const meta: Meta<typeof ObcTooltip> = {
       control: 'text',
       description:
         'Text content displayed in the tooltip (only used when type="label")',
-      if: {arg: 'type', eq: TooltipType.label},
     },
     showIcon: {
       control: 'boolean',
       description: 'Whether to show the leading icon when type="label"',
-      if: {arg: 'type', eq: TooltipType.label},
     },
   },
 } satisfies Meta<ObcTooltip>;

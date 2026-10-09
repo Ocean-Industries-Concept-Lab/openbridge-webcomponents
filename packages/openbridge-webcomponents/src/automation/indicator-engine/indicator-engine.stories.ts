@@ -7,7 +7,7 @@ import {IndicatorDirection} from '../indicator-shared/linear-indicator.js';
 const meta = {
   title: 'Automation/Indicators/Indicator Engine',
   component: 'obc-indicator-engine',
-  tags: ['autodocs', '6.0'],
+  tags: ['autodocs', '6.0', 'beta'],
   args: {
     value: IndicatorEngineValue.static,
     direction: IndicatorDirection.vertical,

@@ -65,22 +65,26 @@ const meta: Meta<typeof ObcCheckButton> = {
       .showIcon=${args.showIcon}
       .disabled=${args.disabled}
     >
-      ${args.type === CheckButtonType.regular && args.showIcon
-        ? iconIdToIconHtml(args.icon as unknown as string, {
-            size: '24',
-            slot: 'icon',
-          })
-        : ''}
-      ${args.type === CheckButtonType.checkbox
-        ? html`
-            <obi-checkbox-checked-filled
-              slot="checked-icon"
-            ></obi-checkbox-checked-filled>
-            <obi-checkbox-uncheck-google
-              slot="unchecked-icon"
-            ></obi-checkbox-uncheck-google>
-          `
-        : ''}
+      ${
+        args.type === CheckButtonType.regular && args.showIcon
+          ? iconIdToIconHtml(args.icon as unknown as string, {
+              size: '24',
+              slot: 'icon',
+            })
+          : ''
+      }
+      ${
+        args.type === CheckButtonType.checkbox
+          ? html`
+              <obi-checkbox-checked-filled
+                slot="checked-icon"
+              ></obi-checkbox-checked-filled>
+              <obi-checkbox-uncheck-google
+                slot="unchecked-icon"
+              ></obi-checkbox-uncheck-google>
+            `
+          : ''
+      }
       ${args.label}
     </obc-check-button>`,
 } satisfies Meta<ObcCheckButton>;

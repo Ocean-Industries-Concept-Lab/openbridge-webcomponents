@@ -19,7 +19,6 @@ import {
   removeGroupingFromDisplay,
   valuesEqual,
 } from './number-input-format.js';
-import {getCssVariableValue} from '../../charthelpers/colors.js';
 
 export type ObcNumberInputFieldInputEvent = CustomEvent<{value: number}>;
 export type ObcNumberInputFieldChangeEvent = CustomEvent<{value: number}>;
@@ -41,12 +40,28 @@ export enum ObcNumberInputFieldPlacement {
   Right = 'right',
 }
 
-const characterWidth = 9.15199279785156;
-const symbolWidth = 4.287994384765653;
-const baseFontSize = 16;
 /**
  * `<obc-number-input-field>` – A specialized input field for numerical values with optional unit display.
  *
+ * @availableWhen errorText error==true
+ * @property rejectUpdatesOnFocus - If true, the input field will not update its value on focus
+ * @property rejectUpdates - If true, the value will only be initially set, and not updated on change
+ * @property rejectDuplicateUpdates - If true, the input field will not update its value if the value is the same as the previous value
+ *   This is useful to avoid React re-rendering to reset the value.
+ * @property name - Name attribute for form integration
+ * @property maxlength - Maximum number of characters allowed
+ * @property minlength - Minimum number of characters required
+ * @availableWhen hasLabelIcon label!=''
+ * @availableWhen labelPlacement label!=''
+ * @availableWhen hasHelperIcon helperText!='' || (error==true && errorText!='')
+ * @availableWhen helperPlacement helperText!='' || (error==true && errorText!='')
+ * @property squared - Internal property for squared corners, used when input is used in stepper-box
+ * @property displayOverride - Optional display text override for controlled consumers (e.g. keyboard-numeric)
+ *   that manage formatted strings while the committed value may be NaN.
+ * @property validationPattern - Optional regex pattern. When set, any keystroke or paste whose resulting
+ *   value does not match this pattern is blocked at the `beforeinput` stage.
+ *   When unset, a permissive numeric filter (digits, sign, active separators,
+ *   whitespace) is applied instead.
  * @slot leading-icon - Icon displayed before the input value (when `hasLeadingIcon` is true)
  * @slot label-icon - Icon displayed before the label text (when `hasLabelIcon` is true)
  * @slot helper-icon - Icon displayed before helper or error text (when `hasHelperIcon` is true)
@@ -65,25 +80,16 @@ export class ObcNumberInputField extends LitElement {
   @property({type: Boolean, reflect: true}) disabled = false;
   @property({type: Boolean, reflect: true}) readonly = false;
   @property({type: Boolean, reflect: true}) error = false;
-  /** @availableWhen error==true */
   @property({type: String}) errorText = '';
-  /** If true, the input field will not update its value on focus */
   @property({type: Boolean}) rejectUpdatesOnFocus = false;
-  /** If true, the value will only be initially set, and not updated on change */
   @property({type: Boolean}) rejectUpdates = false;
 
-  /** If true, the input field will not update its value if the value is the same as the previous value
-   * This is useful to avoid React re-rendering to reset the value.
-   */
   @property({type: Boolean}) rejectDuplicateUpdates = false;
 
-  /** Name attribute for form integration */
   @property({type: String}) name = '';
 
-  /** Maximum number of characters allowed */
   @property({type: Number}) maxlength?: number;
 
-  /** Minimum number of characters required */
   @property({type: Number}) minlength?: number;
 
   @property({type: String}) size: ObcNumberInputFieldSize =
@@ -94,25 +100,16 @@ export class ObcNumberInputField extends LitElement {
 
   @property({type: String}) label = '';
   @property({type: Boolean}) required = false;
-  /** @availableWhen label!='' */
   @property({type: Boolean}) hasLabelIcon = false;
-  /** @availableWhen label!='' */
   @property({type: String}) labelPlacement: ObcNumberInputFieldPlacement =
     ObcNumberInputFieldPlacement.Left;
 
-  /** @availableWhen helperText!='' || (error==true && errorText!='') */
   @property({type: Boolean}) hasHelperIcon = false;
-  /** @availableWhen helperText!='' || (error==true && errorText!='') */
   @property({type: String}) helperPlacement: ObcNumberInputFieldPlacement =
     ObcNumberInputFieldPlacement.Left;
 
-  /** Internal property for squared corners, used when input is used in stepper-box */
   @property({type: Boolean}) squared = false;
 
-  /**
-   * Optional display text override for controlled consumers (e.g. keyboard-numeric)
-   * that manage formatted strings while the committed value may be NaN.
-   */
   @property({type: String, attribute: false}) displayOverride = '';
 
   @property({type: String}) decimalSeparator?: string;
@@ -120,12 +117,6 @@ export class ObcNumberInputField extends LitElement {
   @property({type: Number}) minFractionDigits = 0;
   @property({type: Number}) maxFractionDigits?: number | undefined;
 
-  /**
-   * Optional regex pattern. When set, any keystroke or paste whose resulting
-   * value does not match this pattern is blocked at the `beforeinput` stage.
-   * When unset, a permissive numeric filter (digits, sign, active separators,
-   * whitespace) is applied instead.
-   */
   @property({type: String}) validationPattern = '';
 
   @state() private hasFocus = false;
@@ -133,6 +124,8 @@ export class ObcNumberInputField extends LitElement {
   @state() private previousValue = NaN;
   @state() private previousDisplayText = '';
   @state() private lastCommittedValue = NaN;
+
+  private focusFromValueClick = false;
 
   @query('.value-input') private inputElement?: HTMLInputElement;
 
@@ -161,7 +154,6 @@ export class ObcNumberInputField extends LitElement {
     const parsed = parseNumberInput(raw);
     this.value = parsed;
     this.previousDisplayText = raw;
-    this.updateCenterAlignedInputWidth(raw);
     this.dispatchInput();
   }
 
@@ -207,6 +199,37 @@ export class ObcNumberInputField extends LitElement {
     // A read-only field has nothing to edit, so it keeps its formatted display
     // instead of switching to the ungrouped editing representation.
     if (this.readonly) return;
+    if (this.focusFromValueClick) {
+      this.focusFromValueClick = false;
+      requestAnimationFrame(() => void this.ungroupKeepingSelection());
+      return;
+    }
+    this.ungroupDisplay();
+  }
+
+  /**
+   * Ungroups a value the user clicked into, once the browser has placed the
+   * caret, and moves the caret with its digits. Ungrouping before that shifts
+   * the text under the pointer and the caret lands beside the clicked digit.
+   */
+  private async ungroupKeepingSelection() {
+    const input = this.inputElement;
+    if (!input || !this.hasFocus) return;
+    const grouped = input.value;
+    const offsetWithoutGrouping = (offset: number | null) =>
+      removeGroupingFromDisplay(
+        grouped.slice(0, offset ?? grouped.length),
+        this.getFormatOptions()
+      ).length;
+    const start = offsetWithoutGrouping(input.selectionStart);
+    const end = offsetWithoutGrouping(input.selectionEnd);
+    const direction = input.selectionDirection ?? undefined;
+    this.ungroupDisplay();
+    await this.updateComplete;
+    input.setSelectionRange(start, end, direction);
+  }
+
+  private ungroupDisplay() {
     const source = this.displayOverride || this.displayText;
     this.displayText = removeGroupingFromDisplay(
       source,
@@ -284,41 +307,11 @@ export class ObcNumberInputField extends LitElement {
     return this.displayText;
   }
 
-  private updateCenterAlignedInputWidth(value: string) {
-    if (this.textAlign !== ObcNumberInputFieldTextAlign.Center) {
-      this.style.removeProperty('--obc-number-input-center-width');
-      return;
-    }
-
-    const fontSize = Number.parseFloat(
-      getCssVariableValue(
-        this,
-        '--global-typography-instrument-value-regular-font-size'
-      )
-    );
-
-    const characters = value.replaceAll(/[.,]/g, '');
-    const symbols = value.length - characters.length;
-    // These values are based on the font size of 16px
-
-    const calculatedWidth =
-      characters.length * characterWidth + symbols * symbolWidth;
-
-    const measuredWidth = Math.ceil(
-      (calculatedWidth * fontSize) / baseFontSize
-    );
-    this.style.setProperty(
-      '--obc-number-input-center-width',
-      `${measuredWidth}px`
-    );
-  }
-
   override firstUpdated() {
     if (!this.displayText && !this.displayOverride) {
       this.displayText = this.formatValueForDisplay(this.value);
     }
     this.lastCommittedValue = this.value;
-    this.updateCenterAlignedInputWidth(this.getEffectiveDisplay());
   }
 
   private get isEmpty(): boolean {
@@ -363,8 +356,6 @@ export class ObcNumberInputField extends LitElement {
     ) {
       this.previousValue = this.value;
     }
-
-    this.updateCenterAlignedInputWidth(this.getEffectiveDisplay());
   }
 
   private renderFooterText(
@@ -379,52 +370,31 @@ export class ObcNumberInputField extends LitElement {
         [`helper-placement-${this.helperPlacement}`]: true,
       })}
     >
-      ${this.hasHelperIcon
-        ? html`<div class="helper-icon"><slot name="helper-icon"></slot></div>`
-        : nothing}
+      ${
+        this.hasHelperIcon
+          ? html`<div class="helper-icon">
+              <slot name="helper-icon"></slot>
+            </div>`
+          : nothing
+      }
       ${text}
     </div>`;
   }
 
+  /**
+   * Keeps focus where it is while the chrome around the value is clicked.
+   * The wrapper is a `<label>`, so the click itself focuses the input; without
+   * this the pointerdown would blur it first and commit an unfinished edit.
+   * A click on the value itself is the browser's; it is only noted, so the
+   * focus it causes ungroups the value without moving the caret.
+   */
   private onPointerDown(e: PointerEvent) {
-    if (this.disabled) return;
-    if (this.readonly) return;
-    if (this.inputElement) {
-      e.stopPropagation();
-      e.preventDefault();
-      this.inputElement.focus();
-      const inputBox = this.inputElement.getBoundingClientRect();
-      let selectionStart: number | undefined;
-      if (e.clientX < inputBox.left) {
-        // set marker at the left edge of the input
-        selectionStart = 0;
-      } else if (e.clientX > inputBox.right) {
-        // set marker at the right edge of the input
-        selectionStart = this.inputElement.value.length;
-      } else {
-        // set marker at the mouse position
-        // Start from the right side of the input and move left until the mouse position is found
-        // This is done to set the marker also at label touch.
-        // Starts from the right since the label is right aligned.
-        const mouseX = e.clientX;
-        let inputX = inputBox.right;
-        const text = this.inputElement.value;
-        for (let i = text.length - 1; i >= 0; i--) {
-          const char = text[i];
-          const isSymbol = char.match(/[.,]/);
-          const width = isSymbol ? symbolWidth : characterWidth;
-          if (mouseX > inputX - width / 2) {
-            selectionStart = i + 1;
-            break;
-          }
-          inputX -= width;
-        }
-        if (selectionStart === undefined) {
-          selectionStart = 0;
-        }
-      }
-      this.inputElement.setSelectionRange(selectionStart, selectionStart);
+    if (this.disabled || this.readonly) return;
+    if (e.target === this.inputElement) {
+      this.focusFromValueClick = !this.hasFocus;
+      return;
     }
+    e.preventDefault();
   }
 
   override render() {
@@ -455,32 +425,40 @@ export class ObcNumberInputField extends LitElement {
         })}
         @pointerdown=${this.onPointerDown}
       >
-        ${this.label
-          ? html`<div
-              class=${classMap({
-                'label-text-container': true,
-                [`label-placement-${this.labelPlacement}`]: true,
-              })}
-            >
-              ${this.hasLabelIcon
-                ? html`<div class="label-icon">
-                    <slot name="label-icon"></slot>
-                  </div>`
-                : nothing}
-              <span class="label-text">${this.label}</span>
-              ${this.required
-                ? html`<div class="required-indicator"></div>`
-                : nothing}
-            </div>`
-          : nothing}
+        ${
+          this.label
+            ? html`<div
+                class=${classMap({
+                  'label-text-container': true,
+                  [`label-placement-${this.labelPlacement}`]: true,
+                })}
+              >
+                ${
+                  this.hasLabelIcon
+                    ? html`<div class="label-icon">
+                        <slot name="label-icon"></slot>
+                      </div>`
+                    : nothing
+                }
+                <span class="label-text">${this.label}</span>
+                ${
+                  this.required
+                    ? html`<div class="required-indicator"></div>`
+                    : nothing
+                }
+              </div>`
+            : nothing
+        }
 
         <div class="horizontal-container">
           <div class="input-field-container" part="input-field-container">
-            ${this.hasLeadingIcon
-              ? html`<div class="leading-icon">
-                  <slot name="leading-icon"></slot>
-                </div>`
-              : nothing}
+            ${
+              this.hasLeadingIcon
+                ? html`<div class="leading-icon">
+                    <slot name="leading-icon"></slot>
+                  </div>`
+                : nothing
+            }
             <div class="label-container">
               <input
                 type="text"
@@ -504,19 +482,25 @@ export class ObcNumberInputField extends LitElement {
                 @beforeinput=${this.onBeforeInput}
                 @input=${this.onInput}
               />
-              ${unitInside
-                ? html`<span class="unit-text">${this.unit}</span>`
-                : nothing}
+              ${
+                unitInside
+                  ? html`<span class="unit-text">${this.unit}</span>`
+                  : nothing
+              }
             </div>
           </div>
-          ${unitOutside
-            ? html`<span class="unit-text external">${this.unit}</span>`
-            : nothing}
+          ${
+            unitOutside
+              ? html`<span class="unit-text external">${this.unit}</span>`
+              : nothing
+          }
         </div>
 
-        ${this.error && this.errorText
-          ? this.renderFooterText(this.errorText, true)
-          : this.renderFooterText(this.helperText, false)}
+        ${
+          this.error && this.errorText
+            ? this.renderFooterText(this.errorText, true)
+            : this.renderFooterText(this.helperText, false)
+        }
       </label>
     `;
   }

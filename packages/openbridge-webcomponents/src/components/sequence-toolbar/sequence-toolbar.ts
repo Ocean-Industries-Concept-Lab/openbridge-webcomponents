@@ -67,6 +67,7 @@ export enum SequenceToolbarType {
  * </obc-sequence-toolbar>
  * ```
  *
+ * @availableWhen hasAdd type!=sequential
  * @slot - Step items rendered in the toolbar center.
  * @slot start - Content for the built-in start control label.
  * @slot end - Content for the built-in end control label.
@@ -82,7 +83,6 @@ export enum SequenceToolbarType {
 export class ObcSequenceToolbar extends LitElement {
   @property({type: String, reflect: true}) type: SequenceToolbarType =
     SequenceToolbarType.unordered;
-  /** @availableWhen type!=sequential */
   @property({type: Boolean}) hasAdd = false;
 
   static override styles = unsafeCSS(style);

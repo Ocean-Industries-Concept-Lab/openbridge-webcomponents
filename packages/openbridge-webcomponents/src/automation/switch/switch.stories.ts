@@ -39,26 +39,26 @@ type Story = StoryObj<ObcSwitch>;
 
 export const On: Story = {
   args: {
-    on: true,
+    turnedOn: true,
   },
 };
 
 export const Off: Story = {
   args: {
-    on: false,
+    turnedOn: false,
   },
 };
 
 export const OrientationVerticalRight: Story = {
   args: {
-    on: false,
+    turnedOn: false,
     orientation: AutomationButtonOrientation.verticalRight,
   },
 };
 
 export const OrientationVerticalLeft: Story = {
   args: {
-    on: false,
+    turnedOn: false,
     orientation: AutomationButtonOrientation.verticalLeft,
   },
 };

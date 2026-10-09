@@ -23,7 +23,6 @@ function findComponentFiles(
       '**/_test-utils.ts',
     ],
   });
-  const rootPath = path.join(process.cwd());
 
   for (const item of items) {
     if (
@@ -32,9 +31,15 @@ function findComponentFiles(
       !excludeFiles.includes(item)
     ) {
       const filename = item.replace('.ts', '');
-      const relativePath = filename.replace(rootPath, '');
+      // `glob` always returns forward-slash paths, even on Windows, while
+      // `path.relative` returns the platform's native separator. Normalize
+      // to forward slashes so the generated import specifiers are valid.
+      const relativePath = path
+        .relative(process.cwd(), filename)
+        .split(path.sep)
+        .join('/');
 
-      components.push(relativePath);
+      components.push(`/${relativePath}`);
     }
   }
 

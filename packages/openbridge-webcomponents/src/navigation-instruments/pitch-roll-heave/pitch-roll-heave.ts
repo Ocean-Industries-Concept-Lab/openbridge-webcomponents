@@ -1,14 +1,17 @@
 import {LitElement, css, html, nothing, svg, type SVGTemplateResult} from 'lit';
+import {PaletteController} from '../../charthelpers/theme.js';
 import {property} from 'lit/decorators.js';
 import '../watch/watch.js';
 import {
   VesselImage,
   VesselImageSize,
+  vesselArt,
   WatchCircleType,
   type WatchArea,
   OUTER_RING_RADIUS,
   innerRingRadiusFor,
-  vesselImages,
+  renderVesselArt,
+  type VesselImageSrc,
 } from '../watch/watch.js';
 import {arcTickmarks, TickmarkType, type Tickmark} from '../watch/tickmark.js';
 import {AdviceState, AdviceType, type AngleAdviceRaw} from '../watch/advice.js';
@@ -33,6 +36,7 @@ import type {
   LinearAdvice,
   LinearAdviceRaw,
 } from '../../building-blocks/instrument-linear/advice.js';
+import {degToRad, radToDeg, clamp} from '../../svghelpers/math.js';
 
 export enum ObcPitchRollHeaveType {
   /** Pitch on the right, roll at the bottom, heave in the left band slot. */
@@ -97,7 +101,7 @@ interface HeaveBand {
 function heaveColumnSize(band: HeaveBand): {width: number; height: number} {
   return {
     width: band.outerR - band.innerR,
-    height: 2 * band.capRadius * Math.sin((band.pitchDeg * Math.PI) / 180),
+    height: 2 * band.capRadius * Math.sin(degToRad(band.pitchDeg)),
   };
 }
 
@@ -139,6 +143,37 @@ function distanceToRect(
  * available space.
  *
  * @element obc-pitch-roll-heave
+ *
+ * @property heaveRange - Half-extent of the heave scale in metres; the column spans `±heaveRange`.
+ * @property pitchArcAngle - Half-extent of the pitch arc in degrees. Also drives the heave column
+ *   height, which is `2 · outerRadius · sin(pitchArcAngle)` so the column's
+ *   edges stay level with the pitch arc's end caps.
+ * @property rollArcAngle - Half-extent of the roll arc in degrees.
+ * @property hasReadout - Replaces the centre content with stacked pitch, roll and heave readouts.
+ *   Ignored when `type` is `dual-scale`, where the heave column occupies the
+ *   centre.
+ * @availableWhen hasReadout type==singleScale
+ * @availableWhen pitchLabel hasReadout==true
+ * @availableWhen rollLabel hasReadout==true
+ * @availableWhen heaveLabel hasReadout==true
+ * @property unit - Unit shown in the pitch and roll readouts.
+ * @availableWhen unit hasReadout==true
+ * @property heaveUnit - Unit shown in the heave readout.
+ * @availableWhen heaveUnit hasReadout==true
+ * @availableWhen fractionDigits hasReadout==true
+ * @availableWhen vesselImageFore type==singleScale && hasReadout==false
+ * @availableWhen vesselImageSide type==singleScale && hasReadout==false
+ * @property vesselImageForeSrc - Image URLs per palette (`{bright, day, dusk, night}`, SVG, PNG or data URLs)
+ *   drawn instead of `vesselImageFore` in the same 160 × 160 box. A palette without a URL falls
+ *   back to the nearest one (see `VesselImageSrc`).
+ * @availableWhen vesselImageForeSrc type==singleScale && hasReadout==false
+ * @property vesselImageSideSrc - Image URLs per palette (`{bright, day, dusk, night}`, SVG, PNG or data URLs)
+ *   drawn instead of `vesselImageSide` in the same 160 × 160 box. A palette without a URL falls
+ *   back to the nearest one (see `VesselImageSrc`).
+ * @availableWhen vesselImageSideSrc type==singleScale && hasReadout==false
+ * @availableWhen scaleForeImage type==singleScale && hasReadout==false
+ * @availableWhen triggerPitchAdvice maxPitchAdvice!=undefined
+ * @availableWhen triggerRollAdvice maxRollAdvice!=undefined
  * @experimental
  */
 @customElement('obc-pitch-roll-heave')
@@ -155,57 +190,33 @@ export class ObcPitchRollHeave extends LitElement {
   @property({type: Number}) maxAvgRoll = 0;
   @property({type: Number}) minTrendHeave = 0;
   @property({type: Number}) maxTrendHeave = 0;
-  /** Half-extent of the heave scale in metres; the column spans `±heaveRange`. */
   @property({type: Number}) heaveRange = 10;
 
-  /**
-   * Half-extent of the pitch arc in degrees. Also drives the heave column
-   * height, which is `2 · outerRadius · sin(pitchArcAngle)` so the column's
-   * edges stay level with the pitch arc's end caps.
-   */
   @property({type: Number}) pitchArcAngle = 30;
-  /** Half-extent of the roll arc in degrees. */
   @property({type: Number}) rollArcAngle = 45;
   @property({type: Boolean}) zoomToFitArc = false;
 
-  /**
-   * Replaces the centre content with stacked pitch, roll and heave readouts.
-   * Ignored when `type` is `dual-scale`, where the heave column occupies the
-   * centre.
-   * @availableWhen type==singleScale
-   */
   @property({type: Boolean}) hasReadout = false;
-  /** @availableWhen hasReadout==true */
   @property({type: String}) pitchLabel = 'Pitch';
-  /** @availableWhen hasReadout==true */
   @property({type: String}) rollLabel = 'Roll';
-  /** @availableWhen hasReadout==true */
   @property({type: String}) heaveLabel = 'Heave';
-  /**
-   * Unit shown in the pitch and roll readouts.
-   * @availableWhen hasReadout==true
-   */
   @property({type: String}) unit = 'DEG';
-  /**
-   * Unit shown in the heave readout.
-   * @availableWhen hasReadout==true
-   */
   @property({type: String}) heaveUnit = 'm';
-  /** @availableWhen hasReadout==true */
   @property({type: Number}) fractionDigits = 0;
 
-  /** @availableWhen type==singleScale && hasReadout==false */
   @property({type: String}) vesselImageFore: VesselImage = VesselImage.psvFore;
-  /** @availableWhen type==singleScale && hasReadout==false */
   @property({type: String}) vesselImageSide: VesselImage = VesselImage.psvSide;
-  /** @availableWhen type==singleScale && hasReadout==false */
+  @property({type: Object, attribute: false})
+  vesselImageForeSrc: VesselImageSrc | undefined;
+  @property({type: Object, attribute: false})
+  vesselImageSideSrc: VesselImageSrc | undefined;
+
+  private readonly _palette = new PaletteController(this);
   @property({type: Number}) scaleForeImage = 1;
 
   @property({type: Number}) maxPitchAdvice: number | undefined = undefined;
   @property({type: Number}) maxRollAdvice: number | undefined = undefined;
-  /** @availableWhen maxPitchAdvice!=undefined */
   @property({type: Boolean}) triggerPitchAdvice = false;
-  /** @availableWhen maxRollAdvice!=undefined */
   @property({type: Boolean}) triggerRollAdvice = false;
   @property({type: Array}) heaveAdvice: LinearAdvice[] = [];
 
@@ -240,7 +251,7 @@ export class ObcPitchRollHeave extends LitElement {
     if (!Number.isFinite(this.scaleForeImage)) {
       return 1;
     }
-    return Math.max(0, Math.min(2, this.scaleForeImage));
+    return clamp(this.scaleForeImage, 0, 2);
   }
 
   private get isDualScale(): boolean {
@@ -271,7 +282,7 @@ export class ObcPitchRollHeave extends LitElement {
   private get requestedRollArcAngle(): number {
     const roll = normalizeArcAngle(this.rollArcAngle, 45);
     const headroom = 90 - this.requestedPitchArcAngle;
-    return Math.max(MIN_ARC_HALF_DEG, Math.min(roll, headroom));
+    return clamp(roll, MIN_ARC_HALF_DEG, headroom);
   }
 
   override render() {
@@ -294,53 +305,59 @@ export class ObcPitchRollHeave extends LitElement {
         <svg viewBox=${overlayViewBox}>
           ${this.showsReadout ? nothing : this.renderCrosshair()}
           ${this.renderOverlayVessels()}
-          ${this.zoomToFitArc || this.isDualScale
-            ? nothing
-            : this.renderComplement(pitchReq)}
+          ${
+            this.zoomToFitArc || this.isDualScale
+              ? nothing
+              : this.renderComplement(pitchReq)
+          }
           ${this.renderHeaveColumn(band)}
         </svg>
-        ${layout
-          ? this.renderZoomedArcs(layout)
-          : this.renderFullWatch(pitchReq, rollReq)}
-        ${this.showsReadout
-          ? html`<div class="readout">
-              ${renderCenterReadouts(
-                [
-                  {
-                    value: this.pitch,
-                    label: this.pitchLabel,
-                    unit: this.unit,
-                    fractionDigits: this.fractionDigits,
-                    size: ReadoutSize.large,
-                    priority: this.priorityFor(
-                      PitchRollHeavePriorityElement.pitch
-                    ),
-                  },
-                  {
-                    value: this.roll,
-                    label: this.rollLabel,
-                    unit: this.unit,
-                    fractionDigits: this.fractionDigits,
-                    size: ReadoutSize.large,
-                    priority: this.priorityFor(
-                      PitchRollHeavePriorityElement.roll
-                    ),
-                  },
-                  {
-                    value: this.heave,
-                    label: this.heaveLabel,
-                    unit: this.heaveUnit,
-                    fractionDigits: this.fractionDigits,
-                    size: ReadoutSize.large,
-                    priority: this.priorityFor(
-                      PitchRollHeavePriorityElement.heave
-                    ),
-                  },
-                ],
-                CenterReadoutArrangement.stacked
-              )}
-            </div>`
-          : nothing}
+        ${
+          layout
+            ? this.renderZoomedArcs(layout)
+            : this.renderFullWatch(pitchReq, rollReq)
+        }
+        ${
+          this.showsReadout
+            ? html`<div class="readout">
+                ${renderCenterReadouts(
+                  [
+                    {
+                      value: this.pitch,
+                      label: this.pitchLabel,
+                      unit: this.unit,
+                      fractionDigits: this.fractionDigits,
+                      size: ReadoutSize.large,
+                      priority: this.priorityFor(
+                        PitchRollHeavePriorityElement.pitch
+                      ),
+                    },
+                    {
+                      value: this.roll,
+                      label: this.rollLabel,
+                      unit: this.unit,
+                      fractionDigits: this.fractionDigits,
+                      size: ReadoutSize.large,
+                      priority: this.priorityFor(
+                        PitchRollHeavePriorityElement.roll
+                      ),
+                    },
+                    {
+                      value: this.heave,
+                      label: this.heaveLabel,
+                      unit: this.heaveUnit,
+                      fractionDigits: this.fractionDigits,
+                      size: ReadoutSize.large,
+                      priority: this.priorityFor(
+                        PitchRollHeavePriorityElement.heave
+                      ),
+                    },
+                  ],
+                  CenterReadoutArrangement.stacked
+                )}
+              </div>`
+            : nothing
+        }
       </div>
     `;
   }
@@ -387,10 +404,10 @@ export class ObcPitchRollHeave extends LitElement {
     const vesselScale = 224 / 160;
     return svg`
       <g style="transform: rotate(${this.pitch}deg) scale(${vesselScale}) translate(-80px, -80px);">
-        ${vesselImages[this.vesselImageSide]}
+        ${renderVesselArt(vesselArt(this.vesselImageSide, this.vesselImageSideSrc), this._palette.current)}
       </g>
       <g style="transform: rotate(${this.roll}deg) scale(${vesselScale * this.normalizedScaleForeImage}) translate(-80px, -80px);">
-        ${vesselImages[this.vesselImageFore]}
+        ${renderVesselArt(vesselArt(this.vesselImageFore, this.vesselImageForeSrc), this._palette.current)}
       </g>
     `;
   }
@@ -404,7 +421,7 @@ export class ObcPitchRollHeave extends LitElement {
    */
   private renderComplement(pitchDeg: number): SVGTemplateResult {
     const r = OUTER_RING_RADIUS;
-    const rad = (pitchDeg * Math.PI) / 180;
+    const rad = degToRad(pitchDeg);
     // Ring runs clockwise from (270 + pitchDeg) through 0 to (90 - pitchDeg).
     const x1 = -r * Math.cos(rad);
     const y1 = -r * Math.sin(rad);
@@ -541,7 +558,6 @@ export class ObcPitchRollHeave extends LitElement {
     const rollFrame = buildFrame(rollReq);
 
     const OR = OUTER_RING_RADIUS;
-    const toRad = (deg: number) => (deg * Math.PI) / 180;
     const signedDist = (
       px: number,
       py: number,
@@ -574,8 +590,8 @@ export class ObcPitchRollHeave extends LitElement {
       );
     };
 
-    let aP = toRad(pitchReq);
-    let aR = toRad(rollReq);
+    let aP = degToRad(pitchReq);
+    let aR = degToRad(rollReq);
     if (minGap(aP, aR) < CORNER_GAP_PX) {
       let lo = 0;
       let hi = 1;
@@ -590,8 +606,8 @@ export class ObcPitchRollHeave extends LitElement {
       aP *= lo;
       aR *= lo;
     }
-    const pitchClampedDeg = Math.max(MIN_ARC_HALF_DEG, (aP * 180) / Math.PI);
-    let rollClampedDeg = Math.max(MIN_ARC_HALF_DEG, (aR * 180) / Math.PI);
+    const pitchClampedDeg = Math.max(MIN_ARC_HALF_DEG, radToDeg(aP));
+    let rollClampedDeg = Math.max(MIN_ARC_HALF_DEG, radToDeg(aR));
 
     const bandFor = (pitchDeg: number): HeaveBand => ({
       outerR: OR,
@@ -621,12 +637,12 @@ export class ObcPitchRollHeave extends LitElement {
           distanceToRect(innerX, innerY, x0, -y1, x1, y1)
         );
       };
-      if (heaveGap(toRad(rollClampedDeg)) < CORNER_GAP_PX) {
+      if (heaveGap(degToRad(rollClampedDeg)) < CORNER_GAP_PX) {
         let lo = 0;
         let hi = rollClampedDeg;
         for (let i = 0; i < 40; i++) {
           const mid = (lo + hi) / 2;
-          if (heaveGap(toRad(mid)) >= CORNER_GAP_PX) {
+          if (heaveGap(degToRad(mid)) >= CORNER_GAP_PX) {
             lo = mid;
           } else {
             hi = mid;
@@ -671,7 +687,7 @@ export class ObcPitchRollHeave extends LitElement {
     ): string => {
       const oxPct = (-frame.x / frame.width) * 100;
       const oyPct = (-frame.y / frame.height) * 100;
-      const dxPct = oyPct * Math.tan((halfDeg * Math.PI) / 180);
+      const dxPct = oyPct * Math.tan(degToRad(halfDeg));
       const lx = Math.max(0, oxPct - dxPct);
       const rx = Math.min(100, oxPct + dxPct);
       return `polygon(${oxPct}% ${oyPct}%, ${lx}% 0%, ${rx}% 0%)`;
@@ -753,9 +769,11 @@ export class ObcPitchRollHeave extends LitElement {
 
     return html`
       ${subWatch(90, pitchAxis)} ${subWatch(180, rollAxis)}
-      ${this.isDualScale
-        ? html`${subWatch(270, pitchAxis)} ${subWatch(0, rollAxis)}`
-        : nothing}
+      ${
+        this.isDualScale
+          ? html`${subWatch(270, pitchAxis)} ${subWatch(0, rollAxis)}`
+          : nothing
+      }
     `;
   }
 
@@ -870,20 +888,22 @@ export class ObcPitchRollHeave extends LitElement {
         .areas=${areas}
         .barAreas=${barAreas}
         .needles=${needles}
-        .vessels=${this.isDualScale || this.showsReadout
-          ? []
-          : [
-              {
-                size: VesselImageSize.large,
-                vesselImage: this.vesselImageSide,
-                transform: `rotate(${this.pitch}deg)`,
-              },
-              {
-                size: VesselImageSize.large,
-                vesselImage: this.vesselImageFore,
-                transform: `rotate(${this.roll}deg) scale(${this.normalizedScaleForeImage})`,
-              },
-            ]}
+        .vessels=${
+          this.isDualScale || this.showsReadout
+            ? []
+            : [
+                {
+                  size: VesselImageSize.large,
+                  ...vesselArt(this.vesselImageSide, this.vesselImageSideSrc),
+                  transform: `rotate(${this.pitch}deg)`,
+                },
+                {
+                  size: VesselImageSize.large,
+                  ...vesselArt(this.vesselImageFore, this.vesselImageForeSrc),
+                  transform: `rotate(${this.roll}deg) scale(${this.normalizedScaleForeImage})`,
+                },
+              ]
+        }
         .tickmarks=${tickmarks}
         .advices=${this.advices(pitchDeg, rollDeg)}
       ></obc-watch>

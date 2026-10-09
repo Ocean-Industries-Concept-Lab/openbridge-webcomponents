@@ -37,8 +37,24 @@
       @mixin font-subtitle;
     }
 
+    .user-label {
+      @mixin font-body;
+    }
+
+    .user-sublabel {
+      @mixin font-body;
+    }
+
+    &.has-sublabel .user-label {
+      @mixin font-body-active;
+    }
+
     &.style-selected .user-initials {
       @mixin font-title;
+    }
+
+    &.style-selected .user-label {
+      @mixin font-body-active;
     }
 
     &.state-static {
@@ -55,7 +71,17 @@
     color: var(--element-active-color);
   }
 
-  &:disabled .user-label {
+  .user-sublabel {
+    @mixin font-label;
+    color: var(--element-active-color);
+  }
+
+  &.has-sublabel .user-label {
+    @mixin font-label-active;
+  }
+
+  &:disabled .user-label,
+  &:disabled .user-sublabel {
     color: var(--element-disabled-color);
   }
 

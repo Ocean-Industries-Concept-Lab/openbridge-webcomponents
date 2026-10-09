@@ -42,8 +42,8 @@ const currentApp = computed(() => {
 
 <template>
   <AppMenu
-    v-if="showAppMenu"
-    ref="appMenu"
+    soft-dismiss
+    :open="showAppMenu"
     class="app-menu"
     @search="(e) => (appSearch = e.detail)"
   >

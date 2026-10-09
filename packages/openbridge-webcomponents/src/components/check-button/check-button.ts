@@ -88,6 +88,26 @@ export enum CheckButtonCheckboxAppearance {
  * * `check-button-click` – Fired after user toggles the control.  Detail:
  *   `{ checked: boolean, type: 'regular' | 'checkbox' }`.
  *
+ * @property disabled - Disables the button, preventing user interaction and applying disabled styling.
+ * @property fullWidth - If false, button width adapts to its content (fit-content).
+ *   If true, uses the `width` property (if set) or expands to 100% of parent.
+ * @property width - Specific width for the button (e.g., "200px", "10rem").
+ *   Only applies when `fullWidth` is true.
+ * @availableWhen width fullWidth==true
+ * @property showIcon - Whether to show the icon in regular mode (icon slot).
+ *   Ignored in checkbox mode.
+ * @availableWhen showIcon type==regular
+ * @property hasCheckedIcon - If true, uses the `checked-icon` slot for the checked state in checkbox mode.
+ *   Otherwise, uses the default checked icon.
+ * @availableWhen hasCheckedIcon type==checkbox
+ * @property hasUncheckedIcon - If true, uses the `unchecked-icon` slot for the unchecked state in checkbox mode.
+ *   Otherwise, uses the default unchecked icon.
+ * @availableWhen hasUncheckedIcon type==checkbox
+ * @property checked - Whether the button is currently checked (selected/on).
+ *   When clicked, this state toggles and the `check-button-click` event is fired.
+ * @property type - Visual style and toggle behaviour: `regular` (default) is a standard
+ *   button with an optional icon and label, `checkbox` is a checkbox-style
+ *   toggle with checked and unchecked icons.
  * @slot - Default slot for button label/content
  * @slot icon - Icon before label (regular mode, if showIcon is true)
  * @slot checked-icon - Custom icon for checked state (checkbox mode)
@@ -97,72 +117,21 @@ export enum CheckButtonCheckboxAppearance {
  */
 @customElement('obc-check-button')
 export class ObcCheckButton extends LitElement {
-  /**
-   * Determines the visual style and toggle behavior of the button.
-   * - `regular`: Standard button with optional icon and label.
-   * - `checkbox`: Checkbox-style toggle with checked/unchecked icons.
-   *
-   * @default 'regular'
-   */
+  /** @default 'regular' */
   @property({type: String}) type: CheckButtonType = CheckButtonType.regular;
 
-  /**
-   * Whether the button is currently checked (selected/on).
-   *
-   * When clicked, this state toggles and the `check-button-click` event is fired.
-   *
-   * @default false
-   */
   @property({type: Boolean}) checked = false;
 
-  /**
-   * Disables the button, preventing user interaction and applying disabled styling.
-   *
-   * @default false
-   */
   @property({type: Boolean}) disabled = false;
 
-  /**
-   * If false, button width adapts to its content (fit-content).
-   * If true, uses the `width` property (if set) or expands to 100% of parent.
-   *
-   * @default false
-   */
   @property({type: Boolean}) fullWidth = false;
 
-  /**
-   * Specific width for the button (e.g., "200px", "10rem").
-   * Only applies when `fullWidth` is true.
-   *
-   * @default ''
-   * @availableWhen fullWidth==true
-   */
   @property({type: String}) width = '';
 
-  /**
-   * Whether to show the icon in regular mode (icon slot).
-   * Ignored in checkbox mode.
-   *
-   * @availableWhen type==regular
-   */
   @property({type: Boolean}) showIcon = false;
 
-  /**
-   * If true, uses the `checked-icon` slot for the checked state in checkbox mode.
-   * Otherwise, uses the default checked icon.
-   *
-   * @default false
-   * @availableWhen type==checkbox
-   */
   @property({type: Boolean}) hasCheckedIcon = false;
 
-  /**
-   * If true, uses the `unchecked-icon` slot for the unchecked state in checkbox mode.
-   * Otherwise, uses the default unchecked icon.
-   *
-   * @default false
-   * @availableWhen type==checkbox
-   */
   @property({type: Boolean}) hasUncheckedIcon = false;
 
   /**
@@ -213,9 +182,9 @@ export class ObcCheckButton extends LitElement {
     if (this.type === CheckButtonType.checkbox) {
       return html`
         <div class="icon-container">
-          ${this.checked
-            ? this.renderCheckedIcon()
-            : this.renderUncheckedIcon()}
+          ${
+            this.checked ? this.renderCheckedIcon() : this.renderUncheckedIcon()
+          }
         </div>
       `;
     }

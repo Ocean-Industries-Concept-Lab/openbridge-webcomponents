@@ -3,7 +3,6 @@
   width: fit-content;
   height: fit-content;
   min-width: var(--ui-components-keyboard-numeric-component-width-min);
-  min-height: var(--ui-components-keyboard-numeric-component-height-min);
   flex-direction: column;
   align-items: flex-start;
   border-radius: var(--ui-components-keyboard-numeric-border-radius);
@@ -114,7 +113,7 @@ obc-icon-button.calculation-button::part(visible-wrapper) {
 
 .key-button {
   flex: 1 0 0;
-  min-width: var(--ui-components-keyboard-numeric-touch-target-size);
+  min-width: var(--ui-components-keyboard-numeric-button-size-min);
   min-height: var(--ui-components-keyboard-numeric-button-size-min);
   height: var(--ui-components-keyboard-numeric-button-size-min);
 }
@@ -123,7 +122,7 @@ obc-button.key-button::part(visible-wrapper) {
   box-sizing: border-box;
   display: flex;
   flex: 1 0 0;
-  min-width: var(--ui-components-keyboard-numeric-touch-target-size);
+  min-width: var(--ui-components-keyboard-numeric-button-size-min);
   min-height: var(--ui-components-keyboard-numeric-button-size-min);
   height: 100%;
   align-items: center;

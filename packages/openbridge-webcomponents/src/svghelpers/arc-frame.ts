@@ -1,4 +1,5 @@
 import type {WatchArea} from '../navigation-instruments/watch/watch.js';
+import {degToRad, normalizeAngle, clamp} from './math.js';
 
 export interface ArcViewBox {
   x: number;
@@ -10,6 +11,14 @@ export interface ArcViewBox {
 
 export interface ZoomToFitArcFrame extends ArcViewBox {
   radiusOffset: number;
+}
+
+/** Shape of the zoom viewBox. */
+export enum ArcFrameFit {
+  /** Square around the arc — what instruments with a round face expect. */
+  square = 'square',
+  /** The arc's own bounding box, which crops a flat arc's empty height. */
+  bbox = 'bbox',
 }
 
 /**
@@ -28,7 +37,7 @@ export function normalizeArcAngle(
   fallback: number
 ): number {
   const v = Number.isFinite(value) ? (value as number) : fallback;
-  return Math.min(180, Math.max(2, v));
+  return clamp(v, 2, 180);
 }
 
 /**
@@ -67,6 +76,7 @@ export function computeZoomToFitArcFrame(options: {
   targetSize: number;
   margin?: number;
   includeBox?: {xMin: number; yMin: number; xMax: number; yMax: number};
+  fit?: ArcFrameFit;
 }): ZoomToFitArcFrame {
   const {
     areas,
@@ -76,6 +86,7 @@ export function computeZoomToFitArcFrame(options: {
     targetSize,
     margin = 0.06,
     includeBox,
+    fit = ArcFrameFit.square,
   } = options;
 
   if (areas.length === 0) {
@@ -92,12 +103,10 @@ export function computeZoomToFitArcFrame(options: {
 
   const available = targetSize * (1 - 2 * margin);
 
-  // The binary search uses the arc-only bbox. `includeBox` is intentionally
-  // NOT applied here: forcing a fixed central region into the measured size
-  // would cap how large the arc can grow for narrow `arcAngle` values
-  // (the origin-to-arc distance would dominate). `includeBox` is applied
-  // only to the FINAL viewBox so the arc grows freely while the central
-  // element remains inside the visible viewport.
+  // The search measures the arc-only bbox: folding `includeBox` in here would
+  // let the origin-to-arc distance dominate and cap how far the arc can grow
+  // at narrow `arcAngle`. It is applied to the final viewBox instead, so the
+  // arc grows freely and the central element still fits.
   const measureSize = (radiusOffset: number) => {
     const bbox = computeAnnularArcBBox(
       areas,
@@ -140,15 +149,19 @@ export function computeZoomToFitArcFrame(options: {
   const rawW = bbox.xMax - bbox.xMin;
   const rawH = bbox.yMax - bbox.yMin;
   const side = Math.max(rawW, rawH);
-  const padded = side * (1 + margin * 2);
+  const pad = side * margin;
 
   const cx = (bbox.xMin + bbox.xMax) / 2;
   const cy = (bbox.yMin + bbox.yMax) / 2;
 
-  const x = round4(cx - padded / 2);
-  const y = round4(cy - padded / 2);
-  const w = round4(padded);
-  const h = round4(padded);
+  // 'bbox' hugs the arc; a flat arc in a square box is mostly empty.
+  const boxW = fit === ArcFrameFit.bbox ? rawW + pad * 2 : side + pad * 2;
+  const boxH = fit === ArcFrameFit.bbox ? rawH + pad * 2 : side + pad * 2;
+
+  const x = round4(cx - boxW / 2);
+  const y = round4(cy - boxH / 2);
+  const w = round4(boxW);
+  const h = round4(boxH);
 
   return {
     radiusOffset,
@@ -188,20 +201,20 @@ function computeAnnularArcBBox(
   };
 
   for (const area of areas) {
-    const startRad = (area.startAngle * Math.PI) / 180;
-    const endRad = (area.endAngle * Math.PI) / 180;
+    const startRad = degToRad(area.startAngle);
+    const endRad = degToRad(area.endAngle);
 
     for (const R of [R_vis, R_in]) {
       expand(R * Math.sin(startRad), -R * Math.cos(startRad));
       expand(R * Math.sin(endRad), -R * Math.cos(endRad));
     }
 
-    const startNorm = ((area.startAngle % 360) + 360) % 360;
-    const endNorm = ((area.endAngle % 360) + 360) % 360;
+    const startNorm = normalizeAngle(area.startAngle);
+    const endNorm = normalizeAngle(area.endAngle);
     const axes = [0, 90, 180, 270];
     for (const axis of axes) {
       if (arcContainsAngle(startNorm, endNorm, axis)) {
-        const axisRad = (axis * Math.PI) / 180;
+        const axisRad = degToRad(axis);
         for (const R of [R_vis, R_in]) {
           expand(R * Math.sin(axisRad), -R * Math.cos(axisRad));
         }
@@ -285,9 +298,9 @@ function arcContainsAngle(
   endDeg: number,
   testDeg: number
 ): boolean {
-  const s = ((startDeg % 360) + 360) % 360;
-  const e = ((endDeg % 360) + 360) % 360;
-  const t = ((testDeg % 360) + 360) % 360;
+  const s = normalizeAngle(startDeg);
+  const e = normalizeAngle(endDeg);
+  const t = normalizeAngle(testDeg);
   if (s <= e) {
     return t >= s && t <= e;
   }

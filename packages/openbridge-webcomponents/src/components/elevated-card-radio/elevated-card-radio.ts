@@ -80,6 +80,20 @@ import {ObcRadio} from '../radio/radio.js';
  * ```
  * In this example, two card radios form a group; only one can be selected at a time.
  *
+ * @property position - Controls the card's layout position. Accepts values from `ObcElevatedCardPosition` enum.
+ *   Default is `Regular`.
+ * @property size - Sets the card's size. Accepts values from `ObcElevatedCardSize` enum.
+ *   Default is `SingleLine`.
+ * @property graphicBorder - If true, displays a graphic border around the card for emphasis.
+ *   Default is false.
+ * @property border - If true, displays a standard border around the card.
+ *   Default is false.
+ * @property name - The radio group name. Radios with the same name are grouped and only one can be selected at a time.
+ * @property value - The value submitted with the form when this radio is selected.
+ * @property label - The label text displayed next to the radio button.
+ * @property checked - Whether this radio is currently selected.
+ * @property disabled - Disables the radio button and prevents user interaction.
+ * @property required - Marks the radio as required for form validation.
  * @fires change - Fired when the radio is changed.
  * @stable
  */
@@ -87,60 +101,26 @@ import {ObcRadio} from '../radio/radio.js';
 export class ObcElevatedCardRadio extends LitElement {
   private static counter = 0;
 
-  /**
-   * Controls the card's layout position. Accepts values from `ObcElevatedCardPosition` enum.
-   * Default is `Regular`.
-   */
   @property({type: String}) position: ObcElevatedCardPosition =
     ObcElevatedCardPosition.Regular;
 
-  /**
-   * Sets the card's size. Accepts values from `ObcElevatedCardSize` enum.
-   * Default is `SingleLine`.
-   */
   @property({type: String}) size: ObcElevatedCardSize =
     ObcElevatedCardSize.SingleLine;
 
-  /**
-   * If true, displays a graphic border around the card for emphasis.
-   * Default is false.
-   */
   @property({type: Boolean}) graphicBorder = false;
 
-  /**
-   * If true, displays a standard border around the card.
-   * Default is false.
-   */
   @property({type: Boolean}) border = false;
 
-  /**
-   * The radio group name. Radios with the same name are grouped and only one can be selected at a time.
-   */
   @property({type: String}) name = '';
 
-  /**
-   * The value submitted with the form when this radio is selected.
-   */
   @property({type: String}) value = '';
 
-  /**
-   * The label text displayed next to the radio button.
-   */
   @property({type: String}) label = '';
 
-  /**
-   * Whether this radio is currently selected.
-   */
   @property({type: Boolean}) checked: boolean = false;
 
-  /**
-   * Disables the radio button and prevents user interaction.
-   */
   @property({type: Boolean}) disabled: boolean = false;
 
-  /**
-   * Marks the radio as required for form validation.
-   */
   @property({type: Boolean}) required: boolean = false;
 
   private instanceId: string;

@@ -5,8 +5,10 @@ import '../watch/watch.js';
 import {
   VesselImage,
   VesselImageSize,
+  vesselArt,
   WatchCircleType,
   type WatchVessel,
+  type VesselImageSrc,
 } from '../watch/watch.js';
 import {Tickmark, TickmarkType} from '../watch/tickmark.js';
 import {customElement} from '../../decorator.js';
@@ -17,6 +19,8 @@ import {
   measureContainerPx,
   observeInnerBox,
 } from '../../svghelpers/radial-frame.js';
+import {degToRad} from '../../svghelpers/math.js';
+import {concentricGrid} from '../watch/concentric-grid.js';
 
 export enum PitchRollYawType {
   /** Combined attitude dot only — no vessel image. */
@@ -37,8 +41,6 @@ export interface PitchRollSample {
 const PITCH_ROLL_SCALE_RADIUS = 160;
 /** Number of evenly spaced polar-grid divisions inside the ring. */
 const GRID_DIVISIONS = 4;
-/** Radius of the small circle marking the face centre. */
-const CENTER_CIRCLE_RADIUS = 12;
 /** Centre radius of the yaw band/dot track on the scale (matches the ROT bar). */
 const SCALE_TRACK_RADIUS = 172;
 /** Half thickness of the yaw trend band. */
@@ -82,44 +84,44 @@ const LABEL_TEXTS = ['0', '90', '180', '-90'] as const;
  * `obc-pitch-roll-heave`; for heading against a compass card use
  * `obc-compass`.
  *
+ * @property pitch - Pitch in degrees; positive moves the attitude dot up.
+ * @property roll - Roll in degrees; positive moves the attitude dot right.
+ * @property yaw - Yaw deviation in degrees on the ±180° scale (0° = top, positive =
+ *   clockwise). Shown as a dot on the scale in the `level` and
+ *   `historical-motion` variants and as the end of the live yaw bar in the
+ *   `actual-motion` variant.
+ * @availableWhen minAvgYaw type!='actual-motion'
+ * @availableWhen maxAvgYaw type!='actual-motion'
+ * @property range - Pitch/roll value at the outermost grid circle. Default `20`.
+ * @property motionRadius - Radius of the motion-envelope circle in the same unit as `pitch`/`roll`.
+ *   Hidden when `0`.
+ * @availableWhen motionRadius type=='actual-motion'
+ * @property motionHistory - Past attitude samples, oldest first; rendered as a fading trail.
+ * @availableWhen motionHistory type=='historical-motion'
+ * @availableWhen vesselImage type!='level'
+ * @property vesselImageSrc - Image URLs per palette (`{bright, day, dusk, night}`, SVG, PNG or data URLs)
+ *   drawn instead of `vesselImage` in the same 160 × 160 box. A palette without a URL falls
+ *   back to the nearest one (see `VesselImageSrc`).
+ * @availableWhen vesselImageSrc type!='level'
+ * @property showLabels - When `true`, shows 0/90/180/-90 labels outside the scale.
  * @experimental
  */
 @customElement('obc-pitch-roll-yaw')
 export class ObcPitchRollYaw extends LitElement {
   @property({type: String}) type: PitchRollYawType = PitchRollYawType.level;
-  /** Pitch in degrees; positive moves the attitude dot up. */
   @property({type: Number}) pitch = 0;
-  /** Roll in degrees; positive moves the attitude dot right. */
   @property({type: Number}) roll = 0;
-  /**
-   * Yaw deviation in degrees on the ±180° scale (0° = top, positive =
-   * clockwise). Shown as a dot on the scale in the `level` and
-   * `historical-motion` variants and as the end of the live yaw bar in the
-   * `actual-motion` variant.
-   */
   @property({type: Number}) yaw = 0;
-  /** @availableWhen type!='actual-motion' */
   @property({type: Number}) minAvgYaw = 0;
-  /** @availableWhen type!='actual-motion' */
   @property({type: Number}) maxAvgYaw = 0;
-  /** Pitch/roll value at the outermost grid circle. Default `20`. */
   @property({type: Number}) range = 20;
-  /**
-   * Radius of the motion-envelope circle in the same unit as `pitch`/`roll`.
-   * Hidden when `0`.
-   * @availableWhen type=='actual-motion'
-   */
   @property({type: Number}) motionRadius = 0;
-  /**
-   * Past attitude samples, oldest first; rendered as a fading trail.
-   * @availableWhen type=='historical-motion'
-   */
   @property({type: Array, attribute: false})
   motionHistory: PitchRollSample[] = [];
-  /** @availableWhen type!='level' */
   @property({type: String}) vesselImage: VesselImage = VesselImage.psvTop;
+  @property({type: Object, attribute: false})
+  vesselImageSrc: VesselImageSrc | undefined;
   @property({type: String}) priority: Priority = Priority.regular;
-  /** When `true`, shows 0/90/180/-90 labels outside the scale. */
   @property({type: Boolean}) showLabels = false;
 
   private _resizeController = new ResizeController(this, {});
@@ -163,7 +165,7 @@ export class ObcPitchRollYaw extends LitElement {
   }
 
   private scalePoint(angle: number): {x: number; y: number} {
-    const rad = (angle * Math.PI) / 180;
+    const rad = degToRad(angle);
     return {
       x: SCALE_TRACK_RADIUS * Math.sin(rad),
       y: -SCALE_TRACK_RADIUS * Math.cos(rad),
@@ -172,47 +174,12 @@ export class ObcPitchRollYaw extends LitElement {
 
   /** Polar reference grid: evenly spaced circles, centre circle, crosshair. */
   private renderGrid() {
-    const stroke = 'var(--instrument-frame-tertiary-color)';
-    const circles = [];
-    for (let i = 1; i < GRID_DIVISIONS; i++) {
-      circles.push(svg`
-        <circle
-          cx="0"
-          cy="0"
-          r=${(PITCH_ROLL_SCALE_RADIUS * i) / GRID_DIVISIONS}
-          fill="none"
-          stroke=${stroke}
-          vector-effect="non-scaling-stroke"
-        />
-      `);
-    }
-    return svg`
-      ${circles}
-      <circle
-        cx="0"
-        cy="0"
-        r=${CENTER_CIRCLE_RADIUS}
-        fill="none"
-        stroke=${stroke}
-        vector-effect="non-scaling-stroke"
-      />
-      <line
-        x1=${-PITCH_ROLL_SCALE_RADIUS}
-        y1="0"
-        x2=${PITCH_ROLL_SCALE_RADIUS}
-        y2="0"
-        stroke=${stroke}
-        vector-effect="non-scaling-stroke"
-      />
-      <line
-        x1="0"
-        y1=${-PITCH_ROLL_SCALE_RADIUS}
-        x2="0"
-        y2=${PITCH_ROLL_SCALE_RADIUS}
-        stroke=${stroke}
-        vector-effect="non-scaling-stroke"
-      />
-    `;
+    return concentricGrid({
+      radius: PITCH_ROLL_SCALE_RADIUS,
+      divisions: GRID_DIVISIONS,
+      // The ring band's inner edge already sits on the outermost division.
+      hasOuterRing: false,
+    });
   }
 
   private renderMotionEnvelope() {
@@ -372,7 +339,7 @@ export class ObcPitchRollYaw extends LitElement {
         : [
             {
               size: VesselImageSize.medium,
-              vesselImage: this.vesselImage,
+              ...vesselArt(this.vesselImage, this.vesselImageSrc),
               transform: '',
             },
           ];

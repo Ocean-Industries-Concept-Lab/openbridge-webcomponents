@@ -62,7 +62,10 @@ const FRAME_PATH =
  * | ------ | ----------------------------- | ------------------------------ |
  * | `icon` | `hasIcon` and `variant='bar'` | Icon overlay (`obi-*` element) |
  *
+ * @property level - Current level, 0-100 (%)
+ * @property data - History samples, 0-100 (%) each, oldest first
  * @slot icon - Centered icon overlay, defaults to `obi-tank`
+ * @beta
  */
 @customElement('obc-indicator-tank-atmospheric')
 export class ObcIndicatorTankAtmospheric extends LitElement {
@@ -73,9 +76,7 @@ export class ObcIndicatorTankAtmospheric extends LitElement {
     IndicatorTankAtmosphericVariant.bar;
   @property({type: String, reflect: true})
   value: IndicatorTankAtmosphericValue = IndicatorTankAtmosphericValue.regular;
-  /** Current level, 0-100 (%) */
   @property({type: Number}) level = 0;
-  /** History samples, 0-100 (%) each, oldest first */
   @property({type: Array}) data: number[] = [];
   @property({type: Boolean}) hasIcon = false;
 
@@ -110,21 +111,25 @@ export class ObcIndicatorTankAtmospheric extends LitElement {
         <g transform=${frameTransform}>
           <path class="frame" d=${FRAME_PATH} />
         </g>
-        ${this.variant === IndicatorTankAtmosphericVariant.trend
-          ? renderTrendGraph(
-              barRect,
-              this.data,
-              this.level,
-              this.scheme,
-              'tank'
-            )
-          : renderLinearBar(barRect, this.level, this.scheme, 'tank')}
+        ${
+          this.variant === IndicatorTankAtmosphericVariant.trend
+            ? renderTrendGraph(
+                barRect,
+                this.data,
+                this.level,
+                this.scheme,
+                'tank'
+              )
+            : renderLinearBar(barRect, this.level, this.scheme, 'tank')
+        }
       </svg>
-      ${showIcon
-        ? html`<div class="icon-wrapper">
-            <slot name="icon"><obi-tank usecsscolor></obi-tank></slot>
-          </div>`
-        : nothing}
+      ${
+        showIcon
+          ? html`<div class="icon-wrapper">
+              <slot name="icon"><obi-tank usecsscolor></obi-tank></slot>
+            </div>`
+          : nothing
+      }
     `;
   }
 

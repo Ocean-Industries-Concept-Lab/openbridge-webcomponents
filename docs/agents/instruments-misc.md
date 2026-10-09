@@ -41,11 +41,28 @@ They are also not bound by the watch viewBox contract — they own their own
 viewBox and coordinate system, so the "match the viewBox exactly" rule from the
 watch family does not apply here.
 
+A custom vessel image follows the watch family's contract: `vesselImageSrc`
+on `heave`, `draft-trim` and `depth-actual`, drawn with `renderVesselArt()`
+under the component's own `PaletteController`
+([`watch-radial-instruments.md` § Custom vessel images](watch-radial-instruments.md#shared-sibling-modules)).
+
 `obc-azimuth-thruster-labeled` is the composite of the group: it pulls in
 `badge-command`, `readout` and `thruster` alongside the watch helpers. Treat it
 as a layout shell over those parts rather than an instrument in its own right.
 
 `obc-main-engine` builds on `thruster` and shares its thrust-bar vocabulary.
+
+`obc-depth-actual` takes its range from `navigation-instruments/depth/depth-shared.ts`
+(`ranges`, `maxDepth`, `autoRange`; `instrumentRange` is a deprecated alias):
+the rung sets the scale maximum, the tick pair, the air band above the
+waterline and the vessel factor, which is what the design's Shallow / Regular /
+Deep variants differ in (Figma `Depth-actual` 21150-180494). The frame is 336
+units in a 384 box; with `showLabels` (the default) the box grows by the
+design's 20-unit label spacing on every side, the `hasLabelSpacing` variant,
+so the start-anchored label column fits inside it the way the external scale
+reserves its label band. Labels come from `watchfaceLinear`'s opt-in `labels`;
+the air band above the waterline carries none. A depth at or past the range
+end draws no marker, as in the design's Deep example.
 
 ## Group 2 — no watch involvement
 

@@ -59,9 +59,9 @@ const meta: Meta<typeof ObcPivotItem> = {
             ?hasLabel=${args.hasLabel}
             ?disabled=${args.disabled}
           >
-            ${args.hasLeadingIcon
-              ? html`<obi-home slot="icon"></obi-home>`
-              : ''}
+            ${
+              args.hasLeadingIcon ? html`<obi-home slot="icon"></obi-home>` : ''
+            }
           </obc-pivot-item>
           <obc-pivot-item
             value="settings"
@@ -71,9 +71,11 @@ const meta: Meta<typeof ObcPivotItem> = {
             ?hasLabel=${args.hasLabel}
             ?disabled=${args.disabled}
           >
-            ${args.hasLeadingIcon
-              ? html`<obi-settings-iec slot="icon"></obi-settings-iec>`
-              : ''}
+            ${
+              args.hasLeadingIcon
+                ? html`<obi-settings-iec slot="icon"></obi-settings-iec>`
+                : ''
+            }
           </obc-pivot-item>
           <obc-pivot-item
             value="profile"
@@ -83,9 +85,9 @@ const meta: Meta<typeof ObcPivotItem> = {
             ?hasLabel=${args.hasLabel}
             ?disabled=${args.disabled}
           >
-            ${args.hasLeadingIcon
-              ? html`<obi-user slot="icon"></obi-user>`
-              : ''}
+            ${
+              args.hasLeadingIcon ? html`<obi-user slot="icon"></obi-user>` : ''
+            }
           </obc-pivot-item>
         </obc-pivot-item-group>
       </div>

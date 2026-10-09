@@ -162,12 +162,16 @@ const renderLinearButton = (args: ProgressButtonArgs) => html`
     .hasTrailingIcon=${args.hasTrailingIcon}
     .hasAlert=${args.hasAlert}
   >
-    ${args.hasLeadingIcon
-      ? html`<obi-placeholder slot="leading-icon"></obi-placeholder>`
-      : ''}
-    ${args.hasTrailingIcon
-      ? html`<obi-placeholder slot="trailing-icon"></obi-placeholder>`
-      : ''}
+    ${
+      args.hasLeadingIcon
+        ? html`<obi-placeholder slot="leading-icon"></obi-placeholder>`
+        : ''
+    }
+    ${
+      args.hasTrailingIcon
+        ? html`<obi-placeholder slot="trailing-icon"></obi-placeholder>`
+        : ''
+    }
   </obc-progress-button>
 `;
 

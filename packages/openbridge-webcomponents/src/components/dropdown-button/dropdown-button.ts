@@ -75,6 +75,19 @@ export type DropdownButtonOption = {
  * ></obc-dropdown-button>
  * ```
  *
+ * @property value - The value of the currently selected option. If not set, defaults to the first option in the list
+ *   unless `allowEmptySelection` is true.
+ * @property fullWidth - If true, the select expands to fill the width of its container. Default is false.
+ * @property allowEmptySelection - If true, a `value` that does not match any option leaves the button with no option selected,
+ *   showing `placeholder` instead of defaulting to the first option. Default is false.
+ * @property placeholder - Text shown when nothing is selected and `allowEmptySelection` is true. Default is an empty string.
+ * @property openTop - If true, the dropdown menu opens above the button.
+ * @property integration - If true, the select is integration style. Default is false, only for integration bar.
+ * @property options - Selectable options, each with a `value`, a `label` and an optional `level`
+ *   that indents it under the preceding option — `{value: 'xc90', label: 'XC
+ *   90', level: 2}` renders as a child row.
+ * @property type - Display type: `label` (default) is text only, `icon` is the icon alone,
+ *   `label-icon` puts the icon before the label.
  * @slot - (No named slots; all content is provided via properties)
  * @slot icon - Icon displayed at the start of the button when `type` is `icon` or `label-icon`.
  * @fires {ObcDropdownButtonChangeEvent} dropdown-change - Fires when the value of the select changes
@@ -83,55 +96,21 @@ export type DropdownButtonOption = {
  */
 @customElement('obc-dropdown-button')
 export class ObcDropdownButton extends LitElement {
-  /**
-   * List of selectable options. Each option is an object with a `value` (string), `label` (string), and optional `level` (number) for indentation/grouping.
-   *
-   * Example:
-   * [
-   *   { value: 'volvo', label: 'Volvo' },
-   *   { value: 'xc90', label: 'XC 90', level: 2 }
-   * ]
-   */
   @property({type: Array}) options: DropdownButtonOption[] = [];
 
-  /**
-   * The value of the currently selected option. If not set, defaults to the first option in the list.
-   */
   @property({type: String}) value: string | undefined;
   @property({type: Boolean}) disabled: boolean = false;
 
-  /**
-   * If true, the select expands to fill the width of its container. Default is false.
-   */
   @property({type: Boolean}) fullWidth = false;
 
-  /**
-   * If true, a `value` that does not match any option leaves the button with no option selected,
-   * showing `placeholder` instead of defaulting to the first option. Default is false.
-   */
   @property({type: Boolean}) allowEmptySelection = false;
 
-  /**
-   * Text shown when nothing is selected and `allowEmptySelection` is true. Default is an empty string.
-   */
   @property({type: String}) placeholder = '';
 
-  /**
-   * Controls the button's display type.
-   * - `label`: Text label only (default)
-   * - `icon`: Icon only, no label
-   * - `label-icon`: Icon before the label
-   */
   @property({type: String}) type: DropdownButtonType = DropdownButtonType.label;
 
-  /**
-   * If true, the dropdown menu opens above the button.
-   */
   @property({type: Boolean}) openTop = false;
 
-  /**
-   * If true, the select is integration style. Default is false, only for integration bar.
-   */
   @property({type: Boolean}) integration = false;
 
   @property({type: Boolean}) flat = false;
@@ -186,22 +165,30 @@ export class ObcDropdownButton extends LitElement {
         })}
       >
         <div class="visible-wrapper">
-          ${this.type !== DropdownButtonType.label
-            ? html`<div class="icon-container"><slot name="icon"></slot></div>`
-            : nothing}
-          ${this.type !== DropdownButtonType.icon
-            ? html`<div class="label">${this.selectedLabel}</div>`
-            : nothing}
+          ${
+            this.type !== DropdownButtonType.label
+              ? html`<div class="icon-container">
+                  <slot name="icon"></slot>
+                </div>`
+              : nothing
+          }
+          ${
+            this.type !== DropdownButtonType.icon
+              ? html`<div class="label">${this.selectedLabel}</div>`
+              : nothing
+          }
           <div class="icon">
             <obi-drop-down-google></obi-drop-down-google>
           </div>
         </div>
         <select @change=${this.changeHandler} ?disabled=${this.disabled}>
-          ${this.allowEmptySelection && this.selectedValue === ''
-            ? html`<option value="" disabled selected hidden>
-                ${this.placeholder}
-              </option>`
-            : nothing}
+          ${
+            this.allowEmptySelection && this.selectedValue === ''
+              ? html`<option value="" disabled selected hidden>
+                  ${this.placeholder}
+                </option>`
+              : nothing
+          }
           ${this.options.map((item) => {
             const indent = item.level ? (item.level - 1) * 2 : 0;
             const indentText = [];

@@ -759,3 +759,35 @@ export const MixedIcons: Story = {
     ],
   },
 };
+
+export const SetpointRow: Story = {
+  args: {
+    size: AutomationButtonReadoutStackSize.regular,
+    idTagOrientation: IdTagOrientation.bottom,
+    tag: '#0001',
+    readouts: [
+      {type: 'setpoint', value: 65, nDigits: 3},
+      {
+        type: 'value',
+        value: 42,
+        nDigits: 3,
+        unit: '%',
+        direction: 'right',
+        icon: 'arrow',
+      },
+    ],
+  },
+};
+
+/** An on-state row with `direction` shows the arrow in place of the on icon. */
+export const StateWithDirection: Story = {
+  args: {
+    size: AutomationButtonReadoutStackSize.regular,
+    idTagOrientation: IdTagOrientation.bottom,
+    tag: '#0012',
+    readouts: [
+      {type: 'state-on', value: 'Open', hasIcon: true, direction: 'left'},
+      {type: 'state-on', value: 'Open', hasIcon: true, direction: 'up'},
+    ],
+  },
+};

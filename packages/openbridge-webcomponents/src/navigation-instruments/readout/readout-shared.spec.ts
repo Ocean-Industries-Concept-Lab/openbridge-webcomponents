@@ -13,6 +13,8 @@ import {
   isDisplayedAtSetpoint,
   readoutPrimarySize,
   readoutSecondarySize,
+  readoutSetpointSize,
+  readoutValueSize,
   readoutSetpointWeight,
   readoutDataQualityClasses,
   resolveSetpointHidePhase,
@@ -88,6 +90,54 @@ describe('readoutPrimarySize / readoutSecondarySize', () => {
       ObcTextboxSize.s
     );
     expect(readoutSecondarySize(ReadoutBlockSize.large)).toBe(ObcTextboxSize.s);
+  });
+});
+
+describe('readoutSetpointSize', () => {
+  const sizes = {primary: ObcTextboxSize.l, secondary: ObcTextboxSize.s};
+
+  it('is secondary at rest (primary-secondary convention)', () => {
+    expect(
+      readoutSetpointSize({...sizes, emphasized: false, equalSize: false})
+    ).toBe(ObcTextboxSize.s);
+  });
+
+  it('is primary while emphasised OR in equal-size, including both at once', () => {
+    expect(
+      readoutSetpointSize({...sizes, emphasized: true, equalSize: false})
+    ).toBe(ObcTextboxSize.l);
+    expect(
+      readoutSetpointSize({...sizes, emphasized: false, equalSize: true})
+    ).toBe(ObcTextboxSize.l);
+    // Touching an equal-size setpoint must not demote it.
+    expect(
+      readoutSetpointSize({...sizes, emphasized: true, equalSize: true})
+    ).toBe(ObcTextboxSize.l);
+  });
+});
+
+describe('readoutValueSize', () => {
+  const sizes = {primary: ObcTextboxSize.l, secondary: ObcTextboxSize.s};
+
+  it('is primary at rest and secondary while the setpoint is emphasised', () => {
+    expect(
+      readoutValueSize({...sizes, setpointEmphasized: false, equalSize: false})
+    ).toBe(ObcTextboxSize.l);
+    expect(
+      readoutValueSize({...sizes, setpointEmphasized: true, equalSize: false})
+    ).toBe(ObcTextboxSize.s);
+  });
+
+  it('never demotes in equal-size — not even while touching', () => {
+    // Both blocks holding the primary size IS the mode; a touch-driven
+    // demotion would silently turn equal-size into primary-secondary for the
+    // whole adjustment.
+    expect(
+      readoutValueSize({...sizes, setpointEmphasized: true, equalSize: true})
+    ).toBe(ObcTextboxSize.l);
+    expect(
+      readoutValueSize({...sizes, setpointEmphasized: false, equalSize: true})
+    ).toBe(ObcTextboxSize.l);
   });
 });
 

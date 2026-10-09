@@ -85,16 +85,18 @@ const renderPoiVessel = (args: ObcPoiVessel) => html`
     .vesselState=${args.vesselState}
     .vesselInteractive=${args.vesselInteractive}
   >
-    ${args.hasHeader
-      ? html`<obc-poi-header
-          slot="header"
-          content="V1"
-          type="id"
-          state="selected"
-          size="regular"
-          has-indicator
-        ></obc-poi-header>`
-      : html``}
+    ${
+      args.hasHeader
+        ? html`<obc-poi-header
+            slot="header"
+            content="V1"
+            type="id"
+            state="selected"
+            size="regular"
+            has-indicator
+          ></obc-poi-header>`
+        : html``
+    }
     <span style="transform: rotate(${args.relativeDirection}deg);">
       <obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>
     </span>

@@ -71,14 +71,16 @@ const meta: Meta = {
         }
       </style>
       <div class="canvas">
-        ${args.lineType === LineType.connector
-          ? nothing
-          : html` <obc-end-point-line
-              medium=${args.medium}
-              lineType=${args.lineType}
-              direction="top"
-              id="end1"
-            ></obc-end-point-line>`}
+        ${
+          args.lineType === LineType.connector
+            ? nothing
+            : html` <obc-end-point-line
+                medium=${args.medium}
+                lineType=${args.lineType}
+                direction="top"
+                id="end1"
+              ></obc-end-point-line>`
+        }
         <obc-vertical-line
           medium=${args.medium}
           lineType=${args.lineType}

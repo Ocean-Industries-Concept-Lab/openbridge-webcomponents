@@ -77,6 +77,10 @@
   transition: width 0.3s ease-in-out;
 }
 
+.bar.priority-regular .loaded {
+  background-color: var(--instrument-regular-secondary-color);
+}
+
 .indeterminate-track {
   position: absolute;
   top: 0;
@@ -88,17 +92,11 @@
   animation: indeterminate-slide 1.5s ease-in-out infinite;
 }
 
-@keyframes indeterminate-slide {
-  0% {
-    transform: translateX(-100%);
-  }
-  60% {
-    transform: translateX(100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
+.bar.priority-regular .indeterminate-track {
+  background-color: var(--instrument-regular-secondary-color);
 }
+
+@mixin indeterminate-slide-keyframes;
 
 .description-container {
   display: flex;

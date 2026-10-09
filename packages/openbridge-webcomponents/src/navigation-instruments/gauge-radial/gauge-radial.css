@@ -21,16 +21,9 @@
 
   position: relative;
 
-  /* The dial is the largest box of its sector's aspect ratio that fits inside
-     *both* the available width and height of the (full-size) host. `width: auto`
-     stretches the block to the host width, then `aspect-ratio` + `max-height`
-     transfer the constraint back, shrinking it to fit a short host too — see
-     issue #992. The host always fills its container, so the gauge can be
-     positioned within the leftover space via the alignment classes below. */
-  width: auto;
-  height: auto;
-  max-width: 100%;
-  max-height: 100%;
+  /* The host always fills its container, so the gauge can be positioned within
+     the leftover space via the alignment classes below. */
+  @mixin contain-aspect;
   /* --gauge-radial-aspect is set from TS only when the frame lowered a crop
      for the label drop (frame.clipsAdjusted); otherwise the static sector
      aspect below applies. */

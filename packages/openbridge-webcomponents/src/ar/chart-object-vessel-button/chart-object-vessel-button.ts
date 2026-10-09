@@ -9,6 +9,7 @@ import {
   VesselImage,
   vesselImages,
 } from '../../navigation-instruments/watch/vessel.js';
+import {degToRad} from '../../svghelpers/math.js';
 
 export enum SpeedIndicator {
   Stopped = 'stopped',
@@ -83,6 +84,11 @@ export enum Type {
  * </obc-chart-object-vessel-button>
  * ```
  *
+ * @property heading - Heading in degrees
+ * @property course - Course over ground in degrees
+ * @availableWhen course courseArrowPx!=undefined
+ * @availableWhen speedIndicator type in [ButtonSpeedRot, FlatSpeedRot]
+ * @availableWhen turnRate type in [ButtonSpeedRot, FlatSpeedRot]
  * @slot - Primary vessel icon.
  * @slot silhouette - Optional secondary vessel silhouette icon.
  * @slot number - Optional content for the number badge.
@@ -92,16 +98,9 @@ export enum Type {
  */
 @customElement('obc-chart-object-vessel-button')
 export class ObcChartObjectVesselButton extends LitElement {
-  /** Heading in degrees */
   @property({type: Number}) heading = 0;
-  /**
-   * Course over ground in degrees
-   * @availableWhen courseArrowPx!=undefined
-   */
   @property({type: Number}) course = 0;
-  /** @availableWhen type in [ButtonSpeedRot, FlatSpeedRot] */
   @property({type: String}) speedIndicator: SpeedIndicator = SpeedIndicator.Two;
-  /** @availableWhen type in [ButtonSpeedRot, FlatSpeedRot] */
   @property({type: Number}) turnRate = 0; // -100 (PORT) to 100 (STBD)
   @property({type: Number}) number: number | undefined = undefined;
   @property({type: String}) name: string | undefined = undefined;
@@ -235,10 +234,12 @@ export class ObcChartObjectVesselButton extends LitElement {
     if (!hasTurnRate) {
       return nothing;
     }
-    const deg = (this.turnRate / 100) * 12;
+    // A binding that passes `undefined` would put NaN in the arc path.
+    const turnRate = Number.isFinite(this.turnRate) ? this.turnRate : 0;
+    const deg = (turnRate / 100) * 12;
     const R = 24;
-    const x = -R * Math.cos((deg * Math.PI) / 180) + R + 3;
-    const y = R * Math.sin((deg * Math.PI) / 180) + 8;
+    const x = -R * Math.cos(degToRad(deg)) + R + 3;
+    const y = R * Math.sin(degToRad(deg)) + 8;
 
     return html`
       <svg

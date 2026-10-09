@@ -8,6 +8,7 @@ import {widthDecorator} from '../../storybook-util.js';
 import {html} from 'lit';
 import {topVessels} from '../watch/vessels/storybook-helper.js';
 import {VesselImage} from '../watch/vessel.js';
+import {degToRad} from '../../svghelpers/math.js';
 
 function scaleGeneratedDataPoints(dataPoints: VelocityProjectionDatapoint[]) {
   const sum = dataPoints.reduce((acc, curr) => acc + curr.ratioTotalEnergy, 0);
@@ -100,11 +101,11 @@ function generateDataPoints(
     const angleDeg = i;
     // use sine square wave to generate the data points
     const ratioWindEnergyOrExcessSpeed =
-      Math.pow(Math.sin(((angleDeg - peakAngleWindSpeed) * Math.PI) / 180), 2) *
+      Math.pow(Math.sin(degToRad(angleDeg - peakAngleWindSpeed)), 2) *
       peakValueWindSpeed;
     const ratioTotalEnergy =
       Math.pow(
-        Math.sin(((angleDeg - peakAngleTotalEnergy - 180) * Math.PI) / 180 / 2),
+        Math.sin(degToRad(angleDeg - peakAngleTotalEnergy - 180) / 2),
         10
       ) + 0.01;
 

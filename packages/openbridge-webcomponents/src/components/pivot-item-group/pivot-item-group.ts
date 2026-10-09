@@ -49,6 +49,12 @@ import {ObcPivotItemDirection, ObcPivotItem} from '../pivot-item/pivot-item.js';
  * </obc-pivot-item-group>
  * ```
  *
+ * @property selectedValue - The value of the currently selected pivot item.
+ *   Set this to control selection programmatically, or listen for the `change` event to react to user selection.
+ *   Defaults to empty string (no selection).
+ * @property allowDeselect - If true, allows the user to deselect the currently selected item by clicking it again (resulting in no selection).
+ *   If false (default), one item is always selected unless `selectedValue` is empty.
+ * @availableWhen allowDeselect selectedValue!=''
  * @slot - Default slot for one or more `<obc-pivot-item>` elements.
  * @fires {CustomEvent<{selectedValue: string}>} change - Fired when the selected value changes.
  * @stable
@@ -64,19 +70,8 @@ export class ObcPivotItemGroup extends LitElement {
   @property({type: String}) direction: ObcPivotItemDirection =
     ObcPivotItemDirection.horizontal;
 
-  /**
-   * The value of the currently selected pivot item.
-   * Set this to control selection programmatically, or listen for the `change` event to react to user selection.
-   * Defaults to empty string (no selection).
-   */
   @property({type: String}) selectedValue = '';
 
-  /**
-   * If true, allows the user to deselect the currently selected item by clicking it again (resulting in no selection).
-   * If false (default), one item is always selected unless `selectedValue` is empty.
-   *
-   * @availableWhen selectedValue!=''
-   */
   @property({type: Boolean}) allowDeselect = false;
 
   private handleItemSelected(event: CustomEvent) {

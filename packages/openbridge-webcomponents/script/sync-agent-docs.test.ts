@@ -3,7 +3,9 @@ import {describe, expect, it} from 'vitest';
 import {parseAgentDoc, type AgentDoc} from './agent-docs/frontmatter.js';
 import {
   ROUTING_MARKER,
+  compactGlobs,
   renderClaudeMd,
+  renderClaudeRule,
   renderCopilotInstructions,
   renderCursorRule,
   renderInstructionsFile,
@@ -40,6 +42,15 @@ describe('parseAgentDoc', () => {
 
   it('returns the body without the frontmatter', () => {
     const doc = parseAgentDoc(VALID, 'docs/agents/a11y.md');
+    expect(doc.body).toBe('# Accessibility Instructions\n\nBody text.\n');
+  });
+
+  it('parses frontmatter checked out with CRLF line endings', () => {
+    const doc = parseAgentDoc(
+      VALID.replace(/\n/g, '\r\n'),
+      'docs/agents/a11y.md'
+    );
+    expect(doc.name).toBe('a11y');
     expect(doc.body).toBe('# Accessibility Instructions\n\nBody text.\n');
   });
 
@@ -133,13 +144,42 @@ describe('renderInstructionsFile', () => {
   });
 });
 
+describe('compactGlobs', () => {
+  it('groups siblings that share a parent and a suffix, in first-seen order', () => {
+    expect(
+      compactGlobs(['a/x/**', 'b/q.ts', 'a/y/**', '!a/z/**', 'b/r.ts'])
+    ).toEqual(['a/{x,y}/**', 'b/{q.ts,r.ts}', '!a/z/**']);
+  });
+
+  it('leaves single patterns and root-level files alone', () => {
+    expect(compactGlobs(['package.json', 'src/**/*.css'])).toEqual([
+      'package.json',
+      'src/**/*.css',
+    ]);
+  });
+});
+
 describe('renderRoutingTable', () => {
-  it('emits one row per doc with description and globs', () => {
-    const table = renderRoutingTable([DOC]);
+  it('emits one row per doc with description and grouped globs', () => {
+    const table = renderRoutingTable([
+      {
+        ...DOC,
+        globs: [
+          'packages/openbridge-webcomponents/src/components/**',
+          'packages/openbridge-webcomponents/src/automation/**',
+        ],
+      },
+    ]);
     expect(table).toContain('[a11y](docs/agents/a11y.md)');
     expect(table).toContain('Accessibility (WCAG 2.1 AA)');
     expect(table).toContain(
-      '`packages/openbridge-webcomponents/src/components/**`'
+      '`packages/openbridge-webcomponents/src/{components,automation}/**`'
+    );
+  });
+
+  it('prefixes the doc links for a table rendered outside the repo root', () => {
+    expect(renderRoutingTable([DOC], '../')).toContain(
+      '[a11y](../docs/agents/a11y.md)'
     );
   });
 
@@ -158,7 +198,8 @@ describe('renderCopilotInstructions', () => {
   it('points at AGENTS.md and carries the routing table but no bodies', () => {
     const out = renderCopilotInstructions([DOC]);
     expect(out).toContain('AGENTS.md');
-    expect(out).toContain('[a11y](docs/agents/a11y.md)');
+    // The file lives in .github/, so the links climb one level.
+    expect(out).toContain('[a11y](../docs/agents/a11y.md)');
     expect(out).not.toContain('Body.');
   });
 });
@@ -294,5 +335,34 @@ describe('rewriteSiblingLinks', () => {
     expect(renderCursorRule(doc, siblings)).toContain(
       '](../../docs/agents/jsdoc.md)'
     );
+  });
+});
+
+describe('renderClaudeRule', () => {
+  it('emits a paths: front-matter with the positive globs only', () => {
+    const doc = parseAgentDoc(
+      VALID.replace(
+        '  - packages/openbridge-webcomponents/src/automation/**',
+        "  - packages/openbridge-webcomponents/src/automation/**\n  - '!packages/openbridge-webcomponents/src/automation/skip/**'"
+      ),
+      'docs/agents/a11y.md'
+    );
+    const out = renderClaudeRule(doc);
+    expect(
+      out.startsWith(
+        '---\npaths:\n  - "packages/openbridge-webcomponents/src/components/**"\n  - "packages/openbridge-webcomponents/src/automation/**"\n---\n'
+      )
+    ).toBe(true);
+    expect(out).not.toContain('skip/**');
+    expect(out).toContain('# Accessibility Instructions');
+  });
+});
+
+describe('renderRoutingTable', () => {
+  it('is wrapped in prettier range-ignore comments', () => {
+    const doc = parseAgentDoc(VALID, 'docs/agents/a11y.md');
+    const table = renderRoutingTable([doc]);
+    expect(table.startsWith('<!-- prettier-ignore-start -->\n')).toBe(true);
+    expect(table.endsWith('\n<!-- prettier-ignore-end -->')).toBe(true);
   });
 });

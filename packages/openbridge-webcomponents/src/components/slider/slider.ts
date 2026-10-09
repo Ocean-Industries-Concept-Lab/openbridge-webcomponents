@@ -6,6 +6,7 @@ import componentStyle from './slider.css?inline';
 import '../icon-button/icon-button.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
+import {clamp} from '../../svghelpers/math.js';
 
 /**
  * Enum of slider visual and interaction variants.
@@ -124,6 +125,34 @@ export type ObcSliderChangeEvent = CustomEvent<number>;
  *
  * In this example, the slider allows selection from 0 to 100 in steps of 10, with left/right arrow icons for quick adjustments.
  *
+ * @property value - The current value of the slider.
+ *   Updates as the user drags the thumb, clicks the track (if `allowSeeking`), or uses the increment/decrement buttons.
+ * @property min - The minimum allowed value for the slider.
+ *   Default is 0.
+ * @property max - The maximum allowed value for the slider.
+ *   Default is 100.
+ * @property step - The step granularity for slider value changes.
+ *   If set, the slider will snap to multiples of this value between min and max.
+ *   Optional; if not set, the slider is continuous.
+ * @property stepClick - The amount to increment or decrement the value when clicking the left/right icon buttons.
+ *   Default is 10.
+ * @availableWhen stepClick hasLeftIcon==true || hasRightIcon==true
+ * @property hasLeftIcon - Whether to display a left icon button for decrementing the value.
+ *   When true, the `icon-left` slot is rendered as a button.
+ * @property hasRightIcon - Whether to display a right icon button for incrementing the value.
+ *   When true, the `icon-right` slot is rendered as a button.
+ * @property allowSeeking - Moves the value straight to the position clicked or dragged to. Left off, the value animates there instead, at `seekingSpeed`.
+ *   Default is false.
+ * @availableWhen allowSeeking variant!=no-input && disabled==false
+ * @property seekingSpeed - The speed of the smooth animation that moves the value to the clicked position (used when `allowSeeking` is false).
+ *   Expressed as the inverse of seconds to go from min to max (e.g., 1/3 means 3 seconds for full range).
+ *   Default is 1/3.
+ * @availableWhen seekingSpeed allowSeeking==false && variant!=no-input && disabled==false
+ * @property variant - Visual and interaction style: `normal` (default) is the standard
+ *   appearance, `enhanced` has a larger track and thumb for emphasis, and
+ *   `no-input` is read-only.
+ * @property decrementLabel - Accessible name of the left step button; the slotted icon carries none.
+ * @property incrementLabel - Accessible name of the right step button; the slotted icon carries none.
  * @slot icon-left - Slot for the left icon button (shown when `hasLeftIcon` is true)
  * @slot icon-right - Slot for the right icon button (shown when `hasRightIcon` is true)
  * @attr hugcontainer - If set, the slider will not have any spacing between the slider icons and the container
@@ -133,83 +162,28 @@ export type ObcSliderChangeEvent = CustomEvent<number>;
  */
 @customElement('obc-slider')
 export class ObcSlider extends LitElement {
-  /**
-   * The current value of the slider.
-   *
-   * Updates as the user drags the thumb, clicks the track (if `allowSeeking`), or uses the increment/decrement buttons.
-   */
   @property({type: Number}) value = 50;
 
-  /**
-   * The minimum allowed value for the slider.
-   *
-   * Default is 0.
-   */
   @property({type: Number}) min = 0;
 
-  /**
-   * The maximum allowed value for the slider.
-   *
-   * Default is 100.
-   */
   @property({type: Number}) max = 100;
 
-  /**
-   * The step granularity for slider value changes.
-   *
-   * If set, the slider will snap to multiples of this value between min and max.
-   * Optional; if not set, the slider is continuous.
-   */
   @property({type: Number}) step: number | undefined;
 
-  /**
-   * The amount to increment or decrement the value when clicking the left/right icon buttons.
-   *
-   * Default is 10.
-   * @availableWhen hasLeftIcon==true || hasRightIcon==true
-   */
   @property({type: Number}) stepClick = 10;
 
-  /**
-   * The visual and interaction style of the slider.
-   *
-   * - `normal`: Standard appearance.
-   * - `enhanced`: Larger track and thumb for emphasis.
-   * - `no-input`: Read-only; disables all user input.
-   *
-   * Default is `normal`.
-   */
   @property({type: String}) variant: ObcSliderVariant = ObcSliderVariant.Normal;
 
-  /**
-   * Whether to display a left icon button for decrementing the value.
-   *
-   * When true, the `icon-left` slot is rendered as a button.
-   */
   @property({type: Boolean}) hasLeftIcon = false;
 
-  /**
-   * Whether to display a right icon button for incrementing the value.
-   *
-   * When true, the `icon-right` slot is rendered as a button.
-   */
   @property({type: Boolean}) hasRightIcon = false;
 
-  /**
-   * Enables animated seeking: clicking or dragging along the track will set the value to the clicked position, animating smoothly.
-   *
-   * Default is false.
-   * @availableWhen variant!=no-input && disabled==false
-   */
+  @property({type: String}) decrementLabel = 'Decrease';
+
+  @property({type: String}) incrementLabel = 'Increase';
+
   @property({type: Boolean}) allowSeeking = false;
 
-  /**
-   * The speed of the smooth animation that moves the value to the clicked position (used when `allowSeeking` is false).
-   *
-   * Expressed as the inverse of seconds to go from min to max (e.g., 1/3 means 3 seconds for full range).
-   * Default is 1/3.
-   * @availableWhen allowSeeking==false && variant!=no-input && disabled==false
-   */
   @property({type: Number}) seekingSpeed = 1 / 3;
 
   @property({type: Boolean}) disabled = false;
@@ -219,7 +193,7 @@ export class ObcSlider extends LitElement {
     if (!Number.isFinite(range) || range <= 0) return 0;
     const ratio = (this.value - this.min) / range;
     if (!Number.isFinite(ratio)) return 0;
-    return Math.max(0, Math.min(1, ratio));
+    return clamp(ratio, 0, 1);
   }
 
   private animationFrame: number | null = null;
@@ -445,15 +419,18 @@ export class ObcSlider extends LitElement {
 
   override render() {
     return html`
-      ${this.hasLeftIcon
-        ? html` <obc-icon-button
-            ?disabled=${this.disabled}
-            @click=${this.onReduceClick}
-            variant="normal"
-          >
-            <slot name="icon-left"></slot>
-          </obc-icon-button>`
-        : null}
+      ${
+        this.hasLeftIcon
+          ? html` <obc-icon-button
+              ?disabled=${this.disabled}
+              aria-label=${this.decrementLabel}
+              @click=${this.onReduceClick}
+              variant="normal"
+            >
+              <slot name="icon-left"></slot>
+            </obc-icon-button>`
+          : null
+      }
       <div
         class=${classMap({
           wrapper: true,
@@ -471,8 +448,9 @@ export class ObcSlider extends LitElement {
           max=${this.max}
           step=${ifDefined(this.step)}
           .value=${this.value.toString()}
-          ?disabled=${this.variant === ObcSliderVariant.NoInput ||
-          this.disabled}
+          ?disabled=${
+            this.variant === ObcSliderVariant.NoInput || this.disabled
+          }
           class="slider"
           @input=${(event: Event) => {
             this.value = Number((event.target as HTMLInputElement).value);
@@ -509,15 +487,18 @@ export class ObcSlider extends LitElement {
         <div class="interactive-track"></div>
         <div class="thumb"></div>
       </div>
-      ${this.hasRightIcon
-        ? html`<obc-icon-button
-            ?disabled=${this.disabled}
-            @click=${this.onIncreaseClick}
-            variant="normal"
-          >
-            <slot name="icon-right"></slot>
-          </obc-icon-button>`
-        : null}
+      ${
+        this.hasRightIcon
+          ? html`<obc-icon-button
+              ?disabled=${this.disabled}
+              aria-label=${this.incrementLabel}
+              @click=${this.onIncreaseClick}
+              variant="normal"
+            >
+              <slot name="icon-right"></slot>
+            </obc-icon-button>`
+          : null
+      }
     `;
   }
 

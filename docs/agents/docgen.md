@@ -10,11 +10,11 @@ globs:
 `script/docgen/` is a small CLI that drafts JSDoc for a source file using an
 OpenAI model.
 
-| File                | Role                                                        |
-| ------------------- | ----------------------------------------------------------- |
-| `docs-gen.ts`       | The CLI itself                                              |
-| `prompt-system.txt` | The shared system prompt                                    |
-| `README.md`         | Setup, dependencies and usage                               |
+| File                | Role                          |
+| ------------------- | ----------------------------- |
+| `docs-gen.ts`       | The CLI itself                |
+| `prompt-system.txt` | The shared system prompt      |
+| `README.md`         | Setup, dependencies and usage |
 
 It reads the `.ts` plus its sibling `.stories.ts` and `.css`, auto-detects which
 of the three documentation patterns applies (concrete component, pure function

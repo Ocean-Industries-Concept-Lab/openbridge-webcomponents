@@ -24,22 +24,26 @@ interface SystemMenuStoryArgs {
 function interactiveRender(args: SystemMenuStoryArgs) {
   return html`<obc-system-menu
     .wifiState=${args.wifiState}
-    .audioState=${args.audioState
-      ? {
-          ...args.audioState,
-          ...(args.audioControlMode !== undefined
-            ? {controlMode: args.audioControlMode}
-            : {}),
-        }
-      : undefined}
-    .microphoneState=${args.microphoneState
-      ? {
-          ...args.microphoneState,
-          ...(args.microphoneControlMode !== undefined
-            ? {controlMode: args.microphoneControlMode}
-            : {}),
-        }
-      : undefined}
+    .audioState=${
+      args.audioState
+        ? {
+            ...args.audioState,
+            ...(args.audioControlMode !== undefined
+              ? {controlMode: args.audioControlMode}
+              : {}),
+          }
+        : undefined
+    }
+    .microphoneState=${
+      args.microphoneState
+        ? {
+            ...args.microphoneState,
+            ...(args.microphoneControlMode !== undefined
+              ? {controlMode: args.microphoneControlMode}
+              : {}),
+          }
+        : undefined
+    }
     .batteryState=${args.batteryState}
     .condensed=${args.condensed ?? false}
     .showSettingsButton=${args.showSettingsButton ?? false}

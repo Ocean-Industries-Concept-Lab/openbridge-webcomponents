@@ -21,8 +21,8 @@ export class ObiHydraulic12Static extends LitElement {
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g clip-path="url(#clip0_8040_1528)">
-<path d="M16 7H12.9922V17.0002H16L12 23.0002L8 17.0002H10.9922L10.9959 12.0001L10.9922 7H8L12 1L16 7Z" style="fill: var(--automation-device-secondary-color)"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M0 0V24H24V0H0ZM1 23L1 1L23 1V23H1Z" style="fill: var(--automation-device-secondary-color)"/>
+<path d="M16 7H12.9922V17.0002H16L12 23.0002L8 17.0002H10.9922L10.9959 12.0001L10.9922 7H8L12 1L16 7Z" style="fill: var(--automation-symbol-static-background-color)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M0 0V24H24V0H0ZM1 23L1 1L23 1V23H1Z" style="fill: var(--automation-symbol-static-background-color)"/>
 </g>
 <defs>
 <clipPath id="clip0_8040_1528">

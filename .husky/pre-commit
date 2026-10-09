@@ -1,1 +1,7 @@
 npx lint-staged
+
+# The staged-file hook cannot see across files. The three source checks that
+# do run whole, in under a second, when a component file is staged.
+if git diff --cached --name-only --diff-filter=ACMR | grep -q '^packages/openbridge-webcomponents/src/.*\.ts$'; then
+  (cd packages/openbridge-webcomponents && npm run -s lint:slots && npm run -s lint:events && npm run -s lint:apg)
+fi

@@ -7,6 +7,9 @@ const scriptDirectory = path.dirname(scriptPath);
 const packageRoot = path.resolve(scriptDirectory, '..');
 const sourcePackagePath = path.join(packageRoot, 'package.json');
 const fullBundlePackageRoot = path.join(packageRoot, '.full-bundle-publish');
+
+// LICENSE.txt refers to the other two by filename, so all three have to ship.
+const licenseFiles = ['LICENSE.txt', 'LICENSE-AGPL.txt', 'LICENSE-APACHE.txt'];
 const sourcePackage = JSON.parse(fs.readFileSync(sourcePackagePath, 'utf-8'));
 const releaseVersion = process.argv[2] ?? sourcePackage.version;
 const {scripts: _scripts, ...sourcePackageWithoutScripts} = sourcePackage;
@@ -52,6 +55,7 @@ const fullBundlePackage = {
     'fix-js-extensions.mjs',
     'vitest.browser.config.ts',
     'vitest.config.ts',
+    ...licenseFiles,
   ],
 };
 
@@ -88,6 +92,7 @@ for (const file of [
   'fix-js-extensions.mjs',
   'vitest.browser.config.ts',
   'vitest.config.ts',
+  ...licenseFiles,
 ]) {
   fs.copyFileSync(
     path.join(packageRoot, file),

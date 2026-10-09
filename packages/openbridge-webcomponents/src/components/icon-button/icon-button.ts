@@ -2,7 +2,9 @@ import {LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import iconStyle from './icon-button.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
+import {ifDefined} from 'lit/directives/if-defined.js';
 import {customElement} from '../../decorator.js';
+import {degToRad} from '../../svghelpers/math.js';
 
 /**
  * The available visual variants for `<obc-icon-button>`.
@@ -36,7 +38,7 @@ export enum IconButtonVariant {
  * - **Label Support:**
  *   - Optionally displays a text label below the icon when `hasLabel` is true and content is provided in the `label` slot.
  * - **Corner Alignment:**
- *   - `cornerLeft` and `cornerRight` adjust the button's border radius and alignment for seamless placement at the start or end of a container.
+ *   - `cornerLeft` and `cornerRight` adjust the button's border radius and alignment for flush placement at the start or end of a container.
  * - **Active State:**
  *   - `activated` visually highlights the button as selected or toggled.
  *   - `activeColor` applies an accent color for emphasis.
@@ -80,6 +82,26 @@ export enum IconButtonVariant {
  * </obc-icon-button>
  * ```
  *
+ * @property activated - Whether the button is in an activated (selected/toggled) state.
+ *   Visually highlights the button to indicate selection.
+ * @property cornerLeft - If true, aligns the button to the left edge and removes left border radius.
+ *   Useful for grouping or edge-aligned layouts.
+ * @property cornerRight - If true, aligns the button to the right edge and removes right border radius.
+ *   Useful for grouping or edge-aligned layouts.
+ * @property activeColor - Applies an accent color to the button for emphasis.
+ *   Used to visually distinguish active or important actions.
+ * @property wide - Increases the button's width for larger touch targets or visual balance.
+ * @property disabled - Disables the button, preventing user interaction and dimming its appearance.
+ * @property progress - Shows a circular progress indicator overlay when set (0–100).
+ *   Use to indicate ongoing actions or loading states.
+ *   If undefined, no progress indicator is shown.
+ * @property hasLabel - If true, displays a label below the icon using the `label` slot.
+ * @property showDivider - If false, and cornerLeft or cornerRight is true, the divider is not shown.
+ * @property ariaLabel - Accessible name forwarded to the inner `<button>`, mapped to the `aria-label` attribute. `aria-labelledby` is not supported: ID references cannot cross the shadow boundary.
+ * @property focusable - Whether the button is in the tab sequence. Turn it off for a button inside a
+ *   composite widget that owns the tab stop, and give the widget a key for the action.
+ * @property variant - Visual style: `normal` (default) is the standard appearance, `raised` adds
+ *   a shadow, `flat` drops the background.
  * @slot - Icon slot (default): Place an icon such as <obi-search> here.
  * @slot label - Optional label shown below the icon when `hasLabel` is true.
  * @fires click - Fired when the button is clicked (if not disabled).
@@ -87,63 +109,32 @@ export enum IconButtonVariant {
  */
 @customElement('obc-icon-button')
 export class ObcIconButton extends LitElement {
-  /**
-   * Visual style of the button.
-   * - `normal`: Standard appearance (default).
-   * - `raised`: Elevated with shadow.
-   * - `flat`: Minimal, backgroundless style.
-   */
   @property({type: String}) variant: IconButtonVariant =
     IconButtonVariant.normal;
 
-  /**
-   * Whether the button is in an activated (selected/toggled) state.
-   * Visually highlights the button to indicate selection.
-   */
   @property({type: Boolean}) activated = false;
 
-  /**
-   * If true, aligns the button to the left edge and removes left border radius.
-   * Useful for grouping or edge-aligned layouts.
-   */
   @property({type: Boolean}) cornerLeft = false;
 
-  /**
-   * If true, aligns the button to the right edge and removes right border radius.
-   * Useful for grouping or edge-aligned layouts.
-   */
   @property({type: Boolean}) cornerRight = false;
 
-  /**
-   * Applies an accent color to the button for emphasis.
-   * Used to visually distinguish active or important actions.
-   */
   @property({type: Boolean}) activeColor = false;
 
-  /**
-   * Increases the button's width for larger touch targets or visual balance.
-   */
   @property({type: Boolean}) wide = false;
 
-  /**
-   * Disables the button, preventing user interaction and dimming its appearance.
-   */
   @property({type: Boolean}) disabled = false;
 
-  /**
-   * Shows a circular progress indicator overlay when set (0–100).
-   * Use to indicate ongoing actions or loading states.
-   * If undefined, no progress indicator is shown.
-   */
   @property({type: Number}) progress: undefined | number = undefined;
 
-  /**
-   * If true, displays a label below the icon using the `label` slot.
-   */
   @property({type: Boolean}) hasLabel: boolean = false;
 
-  /** If false, and cornerLeft or cornerRight is true, the divider is not shown. */
   @property({type: Boolean, attribute: false}) showDivider = true;
+
+  @property({type: Boolean, attribute: false}) focusable = true;
+
+  // Reactive so a consumer swapping the name (Play → Pause) re-renders the shadow button.
+  @property({type: String, attribute: 'aria-label'})
+  override ariaLabel: string | null = null;
 
   get progressSpinner() {
     if (this.progress === undefined) {
@@ -169,7 +160,7 @@ export class ObcIconButton extends LitElement {
         </svg>
       </div>`;
     }
-    const angleRad = (this.progress * 0.95 * 3.6 * Math.PI) / 180;
+    const angleRad = degToRad(this.progress * 0.95 * 3.6);
     const x = 20 + 18 * Math.sin(angleRad);
     const y = 20 - 18 * Math.cos(angleRad);
     const largeArcFlag = angleRad > Math.PI ? 1 : 0;
@@ -215,6 +206,8 @@ export class ObcIconButton extends LitElement {
           'hide-divider': !this.showDivider,
         })}
         ?disabled=${this.disabled}
+        aria-label=${ifDefined(this.ariaLabel ?? undefined)}
+        tabindex=${ifDefined(this.focusable ? undefined : -1)}
         part="wrapper"
       >
         ${this.progress !== undefined ? this.progressSpinner : nothing}
@@ -223,11 +216,13 @@ export class ObcIconButton extends LitElement {
             <slot></slot>
           </div>
         </div>
-        ${this.hasLabel
-          ? html`<div class="label" part="label">
-              <slot name="label"></slot>
-            </div>`
-          : nothing}
+        ${
+          this.hasLabel
+            ? html`<div class="label" part="label">
+                <slot name="label"></slot>
+              </div>`
+            : nothing
+        }
       </button>
     `;
   }

@@ -1,5 +1,6 @@
-import {LitElement, PropertyValues, css, html, nothing, svg} from 'lit';
+import {LitElement, PropertyValues, html, nothing, svg, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
+import componentStyle from './rudder.css?inline';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import '../watch/watch.js';
 import {Tickmark, TickmarkStyle, TickmarkType} from '../watch/tickmark.js';
@@ -8,6 +9,8 @@ import {InstrumentState, Priority} from '../types.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
 import {customElement} from '../../decorator.js';
+import {degToRad} from '../../svghelpers/math.js';
+import {ArcFrameFit} from '../../svghelpers/arc-frame.js';
 import {
   applyPinnedHostSize,
   computeRadialFrame,
@@ -80,6 +83,13 @@ export enum ObcRudderVariant {
  * ```
  *
  * @element obc-rudder
+ *
+ * @property tickmarksInside - Whether to render tickmarks inside the ring.
+ * @property faceDiameter - Outer-ring diameter in CSS pixels. When set, the instrument renders at a
+ *   fixed intrinsic size derived from the ring, arc shape and label reserve —
+ *   so instruments sharing the same value have identical ring circumference
+ *   regardless of label width or arc extent (like obc-donut-chart's
+ *   fixedHeight). When unset (default), the instrument fills its container.
  * @stable
  */
 @customElement('obc-rudder')
@@ -88,7 +98,6 @@ export class ObcRudder extends SetpointMixin(LitElement) {
   @property({type: String}) variant: ObcRudderVariant = ObcRudderVariant.Bar;
   @property({type: Number}) maxAngle = 90;
   @property({type: Boolean}) showLabels: boolean = false;
-  /** Whether to render tickmarks inside the ring. */
   @property({type: Boolean}) tickmarksInside: boolean = false;
   @property({type: String}) state: InstrumentState = InstrumentState.active;
   @property({type: String}) priority: Priority = Priority.regular;
@@ -96,13 +105,6 @@ export class ObcRudder extends SetpointMixin(LitElement) {
     TickmarkStyle.regular;
   @property({type: Array, attribute: false}) advices: AngleAdvice[] = [];
   @property({type: Boolean}) zoomToFitArc: boolean = false;
-  /**
-   * Outer-ring diameter in CSS pixels. When set, the instrument renders at a
-   * fixed intrinsic size derived from the ring, arc shape and label reserve —
-   * so instruments sharing the same value have identical ring circumference
-   * regardless of label width or arc extent (like obc-donut-chart's
-   * fixedHeight). When unset (default), the instrument fills its container.
-   */
   @property({type: Number, attribute: 'face-diameter'})
   faceDiameter: number | undefined;
 
@@ -121,11 +123,45 @@ export class ObcRudder extends SetpointMixin(LitElement) {
 
   override updated(changed: PropertyValues): void {
     super.updated(changed);
+    // The host IS the canvas, so its box follows the frame the render used.
+    const frame = this._frame;
+    if (frame) {
+      this.style.setProperty(
+        '--obc-rudder-aspect',
+        `${frame.width} / ${frame.height}`
+      );
+    }
     this._hostSizePinned = applyPinnedHostSize(
       this,
       this._frame,
       this._hostSizePinned
     );
+  }
+
+  /**
+   * Radial reach of the needle path about the watch centre, and its half
+   * width — the zoomed arc's own box stops short of the inner end.
+   */
+  private static readonly NEEDLE_INNER_RADIUS = -16.5;
+  private static readonly NEEDLE_OUTER_RADIUS = 160.65;
+  private static readonly NEEDLE_HALF_WIDTH = 16.5;
+
+  /** Box the zoomed frame must keep visible, in SVG units. */
+  private _needleIncludeBox(radiusOffset: number) {
+    if (this.variant !== ObcRudderVariant.Needle) {
+      return undefined;
+    }
+    const rad = degToRad(this.getAngle(this.angle));
+    const u = {x: Math.sin(rad), y: -Math.cos(rad)};
+    const inner = ObcRudder.NEEDLE_INNER_RADIUS + radiusOffset;
+    const outer = ObcRudder.NEEDLE_OUTER_RADIUS + radiusOffset;
+    const w = ObcRudder.NEEDLE_HALF_WIDTH;
+    return {
+      xMin: Math.min(inner * u.x, outer * u.x) - w,
+      xMax: Math.max(inner * u.x, outer * u.x) + w,
+      yMin: Math.min(inner * u.y, outer * u.y) - w,
+      yMax: Math.max(inner * u.y, outer * u.y) + w,
+    };
   }
 
   private get _needleTransform(): string {
@@ -272,7 +308,7 @@ export class ObcRudder extends SetpointMixin(LitElement) {
       };
     });
 
-    const frame = computeRadialFrame({
+    const frameOptions = {
       basePadding: 48,
       labelWidthPx: this.tickmarksInside
         ? 0
@@ -283,9 +319,20 @@ export class ObcRudder extends SetpointMixin(LitElement) {
       containerPx: measureContainerPx(this),
       faceDiameter: this.faceDiameter,
       zoomToFitArc: this.zoomToFitArc,
+      // The zoomed arc is flat; a square box would be mostly empty height.
+      zoomFit: ArcFrameFit.bbox,
       areas,
       innerRadius: innerRingRadiusFor(WatchCircleType.double),
-    });
+    };
+    // `includeBox` never feeds the radius search, so the offset the first pass
+    // returns is the one the needle box is drawn against.
+    const probe = computeRadialFrame(frameOptions);
+    const zoomIncludeBox = this.zoomToFitArc
+      ? this._needleIncludeBox(probe.radiusOffset)
+      : undefined;
+    const frame = zoomIncludeBox
+      ? computeRadialFrame({...frameOptions, zoomIncludeBox})
+      : probe;
     this._radiusOffset = frame.radiusOffset;
     this._frame = frame;
     const shownTickmarks = frame.labelsHidden
@@ -300,9 +347,9 @@ export class ObcRudder extends SetpointMixin(LitElement) {
           .arcFrame=${frame}
           .areas=${areas}
           .angleSetpoint=${setpointAngle}
-          .newAngleSetpoint=${this.newSetpoint !== undefined
-            ? 180 - this.newSetpoint
-            : undefined}
+          .newAngleSetpoint=${
+            this.newSetpoint !== undefined ? 180 - this.newSetpoint : undefined
+          }
           .atAngleSetpoint=${this.computeAtSetpoint(this.angle)}
           .angleSetpointAtZeroDeadband=${this.setpointAtZeroDeadband}
           .setpointOverride=${this.setpointOverride}
@@ -321,25 +368,7 @@ export class ObcRudder extends SetpointMixin(LitElement) {
     `;
   }
 
-  static override styles = css`
-    * {
-      box-sizing: border-box;
-    }
-
-    .container {
-      position: relative;
-      width: 100%;
-      height: 100%;
-    }
-
-    .container > * {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
-  `;
+  static override styles = unsafeCSS(componentStyle);
 }
 
 declare global {

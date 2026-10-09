@@ -12,6 +12,7 @@ import {
   observeInnerBox,
 } from '../../svghelpers/radial-frame.js';
 import {directionIndicator, setpointMarker} from './shapes.js';
+import {clamp} from '../../svghelpers/math.js';
 
 export enum PositionDeviationOrientation {
   /** North stays at the top; the heading arrow rotates. */
@@ -122,6 +123,13 @@ const PALETTES: Record<PositionDeviationPriority, DeviationPalette> = {
  *   (chart-style displays); choose `headingUp` when the operator monitors
  *   drift relative to the vessel's own heading (conning-style displays).
  *
+ * @property heading - Heading in degrees (0 = north, clockwise).
+ * @property deviation - Distance from the current position to the setpoint, in the same unit as the limits.
+ * @property setpointBearing - Bearing from the current position towards the setpoint in degrees (0 = north, clockwise).
+ * @property cautionLimit - Deviation at which the dotted caution ring is drawn; hidden when not a positive finite number.
+ * @property alarmLimit - Deviation at which the solid alarm ring is drawn; hidden when not a positive finite number.
+ * @property hasAlarmLimit - When `false`, hides the alarm ring and anchors the scale to the caution ring.
+ * @property showLabels - When `true`, shows the N/E/S/W labels on the compass card.
  * @experimental
  */
 @customElement('obc-position-deviation')
@@ -131,19 +139,12 @@ export class ObcPositionDeviation extends LitElement {
     PositionDeviationOrientation.northUp;
   @property({type: String})
   priority: PositionDeviationPriority = PositionDeviationPriority.regular;
-  /** Heading in degrees (0 = north, clockwise). */
   @property({type: Number}) heading = 0;
-  /** Distance from the current position to the setpoint, in the same unit as the limits. */
   @property({type: Number}) deviation = 0;
-  /** Bearing from the current position towards the setpoint in degrees (0 = north, clockwise). */
   @property({type: Number}) setpointBearing = 0;
-  /** Deviation at which the dotted caution ring is drawn; hidden when not a positive finite number. */
   @property({type: Number}) cautionLimit = 15;
-  /** Deviation at which the solid alarm ring is drawn; hidden when not a positive finite number. */
   @property({type: Number}) alarmLimit = 20;
-  /** When `false`, hides the alarm ring and anchors the scale to the caution ring. */
   @property({type: Boolean, attribute: false}) hasAlarmLimit = true;
-  /** When `true`, shows the N/E/S/W labels on the compass card. */
   @property({type: Boolean, attribute: false}) showLabels = true;
 
   private _resizeController = new ResizeController(this, {});
@@ -200,7 +201,7 @@ export class ObcPositionDeviation extends LitElement {
 
   private toRadius(value: number): number {
     const radius = Number.isFinite(value) ? value * this.radiusPerUnit : 0;
-    return Math.min(Math.max(radius, 0), MAX_DEVIATION_RADIUS);
+    return clamp(radius, 0, MAX_DEVIATION_RADIUS);
   }
 
   private renderDeviationZone() {

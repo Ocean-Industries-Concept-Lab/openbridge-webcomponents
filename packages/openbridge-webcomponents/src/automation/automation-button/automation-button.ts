@@ -97,6 +97,21 @@ export enum AutomationButtonPositioning {
 }
 
 /**
+ * @property activated - Enables the activated background color, used to indicate that the button is activated/selected.
+ * @availableWhen readouts showReadoutStack==true
+ * @availableWhen tag showReadoutStack==true
+ * @availableWhen readoutPosition showReadoutStack==true
+ * @availableWhen readoutSize showReadoutStack==true
+ * @availableWhen alertFrameType alert==true
+ * @availableWhen alertFrameThickness alert==true
+ * @availableWhen alertFrameStatus alert==true
+ * @availableWhen alertFrameMode alert==true
+ * @availableWhen showAlertCategoryIcon alert==true && alertFrameType in [SmallSideFlip, LargeSideFlip, BottomFlip, TopFlip]
+ * @availableWhen showAlertIcon alert==true && alertFrameType in [LargeSideFlip, BottomFlip, TopFlip]
+ * @availableWhen progressMode progress==true
+ * @availableWhen progressValue progress==true && progressMode in [determinate, progressive-indeterminate]
+ * @availableWhen direction variant in [double, forward, flatForward]
+ * @property hasBadgeSpacer - Badge spacer should be set to true if there is a badge on the same side as the label
  * @slot badge-top-right - Content projected into the top-right badge position of the button.
  * @slot badge-top-left - Content projected into the top-left badge position of the button.
  * @slot badge-bottom-left - Content projected into the bottom-left badge position of the button.
@@ -116,52 +131,37 @@ export class ObcAutomationButton extends LitElement {
   @property({type: String}) state: AutomationButtonState =
     AutomationButtonState.open;
   @property({type: Boolean}) static: boolean = false;
-  /** Enables the activated background color, used to indicate that the button is activated/selected. */
   @property({type: Boolean}) activated: boolean = false;
   @property({type: Boolean, attribute: false}) showReadoutStack: boolean = true;
-  /** @availableWhen showReadoutStack==true */
   @property({type: Array, attribute: false})
   readouts: AutomationButtonReadoutStack[] = [];
-  /** @availableWhen showReadoutStack==true */
   @property({type: String})
   tag: string | null = null;
-  /** @availableWhen showReadoutStack==true */
   @property({type: String}) readoutPosition: AutomationButtonReadoutPosition =
     AutomationButtonReadoutPosition.bottom;
-  /** @availableWhen showReadoutStack==true */
   @property({type: String}) readoutSize: AutomationButtonReadoutStackSize =
     AutomationButtonReadoutStackSize.regular;
   @property({type: Boolean}) alert: boolean = false;
-  /** @availableWhen alert==true */
   @property({type: String}) alertFrameType: ObcAlertFrameType =
     ObcAlertFrameType.SmallSideFlip;
-  /** @availableWhen alert==true */
   @property({type: String}) alertFrameThickness: ObcAlertFrameThickness =
     ObcAlertFrameThickness.Small;
-  /** @availableWhen alert==true */
   @property({type: String}) alertFrameStatus: AlertType = AlertType.Alarm;
-  /** @availableWhen alert==true */
   @property({type: String}) alertFrameMode: ObcAlertFrameMode =
     ObcAlertFrameMode.ackedActive;
-  /** @availableWhen alert==true && alertFrameType in [LargeSideFlip, BottomFlip, TopFlip] */
   @property({type: Boolean, attribute: false}) showAlertCategoryIcon: boolean =
     true;
-  /** @availableWhen alert==true */
   @property({type: Boolean}) showAlertIcon: boolean = false;
   @property({type: Boolean}) progress: boolean = false;
-  /** @availableWhen progress==true */
   @property({type: String}) progressMode: CircularProgressMode =
     CircularProgressMode.indeterminate;
-  /** @availableWhen progress==true && progressMode in [determinate, progressive-indeterminate] */
   @property({type: Number}) progressValue: number = 0;
-  /** @availableWhen variant in [double, forward, flatForward] */
   @property({type: String}) direction: AutomationButtonDirection =
     AutomationButtonDirection.forward;
   @property({type: String}) positioning: AutomationButtonPositioning =
     AutomationButtonPositioning.point;
   @property({type: String}) orientation: AutomationButtonOrientation =
     AutomationButtonOrientation.horizontal;
-  /** Badge spacer should be set to true if there is a badge on the same side as the label */
   @property({type: Boolean}) hasBadgeSpacer: boolean = false;
 
   override render() {
@@ -201,32 +201,36 @@ export class ObcAutomationButton extends LitElement {
             <slot name="badge-bottom-right"></slot>
           </div>
         </div>
-        ${this.showReadoutStack
-          ? html`
-              <div class="badge-spacer"></div>
-              <obc-automation-button-readout-stack
-                .readouts=${this.readouts}
-                .tag=${this.tag}
-                .size=${this.readoutSize}
-                .idTagOrientation=${this.getIdTagOrientation()}
-              ></obc-automation-button-readout-stack>
-            `
-          : nothing}
-        ${this.alert && this.positioning === AutomationButtonPositioning.point
-          ? html` <obc-alert-frame
-              class="alert-frame"
-              .type=${this.alertFrameType}
-              .thickness=${this.alertFrameThickness}
-              .status=${this.alertFrameStatus}
-              .mode=${this.alertFrameMode}
-              .showAlertCategoryIcon=${this.showAlertCategoryIcon}
-              .showIcon=${this.showAlertIcon}
-            >
-              <span slot="icon"><slot name="alert-icon"></slot></span>
-              <span slot="label"><slot name="alert-label"></slot></span>
-              <span slot="timer"><slot name="alert-timer"></slot></span>
-            </obc-alert-frame>`
-          : nothing}
+        ${
+          this.showReadoutStack
+            ? html`
+                <div class="badge-spacer"></div>
+                <obc-automation-button-readout-stack
+                  .readouts=${this.readouts}
+                  .tag=${this.tag}
+                  .size=${this.readoutSize}
+                  .idTagOrientation=${this.getIdTagOrientation()}
+                ></obc-automation-button-readout-stack>
+              `
+            : nothing
+        }
+        ${
+          this.alert && this.positioning === AutomationButtonPositioning.point
+            ? html` <obc-alert-frame
+                class="alert-frame"
+                .type=${this.alertFrameType}
+                .thickness=${this.alertFrameThickness}
+                .status=${this.alertFrameStatus}
+                .mode=${this.alertFrameMode}
+                .showAlertCategoryIcon=${this.showAlertCategoryIcon}
+                .showIcon=${this.showAlertIcon}
+              >
+                <span slot="icon"><slot name="alert-icon"></slot></span>
+                <span slot="label"><slot name="alert-label"></slot></span>
+                <span slot="timer"><slot name="alert-timer"></slot></span>
+              </obc-alert-frame>`
+            : nothing
+        }
       </button>
     `);
   }
@@ -299,16 +303,20 @@ export class ObcAutomationButton extends LitElement {
     ].includes(effectiveVariant);
     return html`<div class=${iconHolderClasses}>
       ${direction}
-      ${showIcon
-        ? html`<div class="icon-primary">
-              <slot name="icon"></slot>
-            </div>
-            ${effectiveVariant === AutomationButtonVariant.flat
-              ? html` <div class="icon-silhouette">
-                  <slot name="icon-silhouette"></slot>
-                </div>`
-              : nothing} `
-        : nothing}
+      ${
+        showIcon
+          ? html`<div class="icon-primary">
+                <slot name="icon"></slot>
+              </div>
+              ${
+                effectiveVariant === AutomationButtonVariant.flat
+                  ? html` <div class="icon-silhouette">
+                      <slot name="icon-silhouette"></slot>
+                    </div>`
+                  : nothing
+              } `
+          : nothing
+      }
       ${progressRing}
     </div>`;
   }
@@ -348,8 +356,8 @@ export class ObcAutomationButton extends LitElement {
       >
         <path
           d="M8 5 v 14 L 20 12Z"
-          stroke="var(--automation-device-tertiary-color)"
-          fill="var(--automation-device-primary-color)"
+          stroke="var(--automation-symbol-on-border-color)"
+          fill="var(--automation-symbol-on-background-color)"
           vector-effect="non-scaling-stroke"
         />
       </svg> `;
@@ -364,8 +372,8 @@ export class ObcAutomationButton extends LitElement {
       >
         <path
           d="M3.5 5 v 14 l 8.5 -7 Z M14.5 5 v 14 l 8.5 -7 Z"
-          stroke="var(--automation-device-tertiary-color)"
-          fill="var(--automation-device-primary-color)"
+          stroke="var(--automation-symbol-on-border-color)"
+          fill="var(--automation-symbol-on-background-color)"
           vector-effect="non-scaling-stroke"
         />
       </svg> `;
@@ -380,8 +388,8 @@ export class ObcAutomationButton extends LitElement {
       >
         <path
           d="M8 5 v 14 L 20 12Z"
-          fill="var(--automation-device-tertiary-color)"
-          stroke="var(--automation-device-tertiary-inverted-color)"
+          fill="var(--automation-symbol-on-border-color)"
+          stroke="var(--automation-symbol-off-border-color)"
           vector-effect="non-scaling-stroke"
         />
       </svg> `;
@@ -396,8 +404,8 @@ export class ObcAutomationButton extends LitElement {
       >
         <path
           d="M16 5 v 14 L 4 12Z"
-          stroke="var(--automation-device-tertiary-color)"
-          fill="var(--automation-device-primary-color)"
+          stroke="var(--automation-symbol-on-border-color)"
+          fill="var(--automation-symbol-on-background-color)"
           vector-effect="non-scaling-stroke"
         />
       </svg>`;
@@ -412,8 +420,8 @@ export class ObcAutomationButton extends LitElement {
       >
         <path
           d="M20.5 5 v 14 l -8.5 -7 Z M9.5 5 v 14 l -8.5 -7 Z"
-          stroke="var(--automation-device-tertiary-color)"
-          fill="var(--automation-device-primary-color)"
+          stroke="var(--automation-symbol-on-border-color)"
+          fill="var(--automation-symbol-on-background-color)"
           vector-effect="non-scaling-stroke"
         />
       </svg>`;
@@ -428,8 +436,8 @@ export class ObcAutomationButton extends LitElement {
       >
         <path
           d="M16 5 v 14 L 4 12Z"
-          fill="var(--automation-device-tertiary-color)"
-          stroke="var(--automation-device-tertiary-inverted-color)"
+          fill="var(--automation-symbol-on-border-color)"
+          stroke="var(--automation-symbol-off-border-color)"
           vector-effect="non-scaling-stroke"
         />
       </svg> `;

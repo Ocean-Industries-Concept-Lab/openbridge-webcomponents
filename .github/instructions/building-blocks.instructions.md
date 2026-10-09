@@ -126,6 +126,13 @@ When working with building block components in this directory:
       for a range of 5 or less, `5`/`1` above that.
     - `linearTickInterval(height, range, minSpacing)` picks a 1-2-5 tick step by
       on-screen spacing, for scales whose height is dictated by a surrounding layout.
+    - `tickmarks.labels` (with an optional `labelFormatter`; the default is
+      `formatLinearLabel()`, which strips floating-point noise) labels both ends
+      and the primary ladder, start-anchored `LINEAR_LABEL_GAP` outside the +x
+      edge like the external scale's right-side labels; the consumer reserves
+      the room (`obc-depth-actual` grows its box by the design's label spacing).
+      `linearScaleLabel()` is the shared text fragment. Off by default, so the
+      gauges that never asked for labels keep their geometry.
     - `watchfaceLinear`'s `options.maskId` overrides the container clip-mask id.
       **Ids are document-scoped**, so any component rendering more than one gauge in
       a single shadow root MUST give each a distinct id — otherwise every gauge
@@ -149,6 +156,7 @@ When working with SVG helper utilities:
    - `rectangular.ts`: Helpers for rectangular shapes and layouts
    - `circle.ts`: Helpers for circular/radial shapes
    - `roundedArch.ts`: Helpers for rounded arch paths
+   - `math.ts`: `clamp`, `clampPercent`, `normalizeAngle`, `degToRad`, `radToDeg` — import them rather than inlining the idiom
    - `setpoint.ts`, `setpoint-mixin.ts`, `setpoint-bundle.ts`: Setpoint marker design layer, state management, and animation. See `setpoint.md` for full documentation.
    - `index.ts`: Export all helpers for convenient importing
    - Organize helpers by shape/concept, not by component
@@ -158,7 +166,7 @@ When working with SVG helper utilities:
    - Strokes are centered on paths, extending ±strokeWidth/2 from center
    - At viewBox boundaries, half the stroke can be clipped
    - Solution: reduce logical dimensions and shift coordinates inward by half-stroke
-   - Document the problem and solution clearly in comments
+   - Document the contract in the function JSDoc
 
 4. **Coordinate Transformations**:
    - Provide bidirectional mapping: value ↔ coordinate
@@ -184,11 +192,7 @@ When working with SVG helper utilities:
    - Provide clear return types for functions
 
 8. **Documentation**:
-   - Include comprehensive JSDoc comments with problem/solution descriptions
    - Document parameters with `@param` and return values with `@returns`
-   - Provide visual ASCII diagrams where helpful (e.g., stroke clipping illustration)
-   - Include usage examples in function comments
-   - Explain non-obvious calculations inline
 
 9. **Error Handling**:
    - Validate input parameters where necessary

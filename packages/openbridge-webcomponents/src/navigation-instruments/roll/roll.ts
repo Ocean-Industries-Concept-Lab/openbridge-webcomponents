@@ -3,14 +3,17 @@ import {property} from 'lit/decorators.js';
 import {
   VesselImage,
   VesselImageSize,
-  vesselImages,
+  vesselArt,
+  renderVesselArt,
   type WatchVessel,
+  type VesselImageSrc,
 } from '../watch/watch.js';
 import {customElement} from '../../decorator.js';
 import {
   SingleAxisInclinometer,
   INCLINOMETER_WATCH_RADIUS,
 } from '../../building-blocks/single-axis-inclinometer/single-axis-inclinometer.js';
+import {degToRad, clamp} from '../../svghelpers/math.js';
 
 const watchRadius = INCLINOMETER_WATCH_RADIUS;
 
@@ -30,6 +33,15 @@ export enum ObcRollType {
  * individual properties for details.
  *
  * @element obc-roll
+ *
+ * @property label - Readout label. Default `Roll`.
+ * @property unit - Readout unit. Default `DEG`.
+ * @property fractionDigits - Number of fraction digits shown in the readout. Default `0`.
+ * @property type - `single-scale` shows one arc at the bottom (default); `dual-scale` also
+ *   shows the scale on the top arc (the indicator's opposite end).
+ * @property vesselImageForeSrc - Image URLs per palette (`{bright, day, dusk, night}`, SVG, PNG or data URLs)
+ *   drawn instead of `vesselImageFore` in the same 160 × 160 box. A palette without a URL falls
+ *   back to the nearest one (see `VesselImageSrc`).
  * @stable
  */
 @customElement('obc-roll')
@@ -38,26 +50,21 @@ export class ObcRoll extends SingleAxisInclinometer {
   @property({type: Number}) minAvgRoll = 0;
   @property({type: Number}) maxAvgRoll = 0;
   @property({type: String}) vesselImageFore: VesselImage = VesselImage.psvFore;
+  @property({type: Object, attribute: false})
+  vesselImageForeSrc: VesselImageSrc | undefined;
   @property({type: Number}) scaleForeImage = 1;
   @property({type: Number}) maxRollAdvice: number | undefined = undefined;
   @property({type: Boolean}) triggerRollAdvice = false;
-  /** Readout label. Default `Roll`. */
   @property({type: String}) override label = 'Roll';
-  /** Readout unit. Default `DEG`. */
   @property({type: String}) override unit = 'DEG';
-  /** Number of fraction digits shown in the readout. Default `0`. */
   @property({type: Number}) override fractionDigits = 0;
-  /**
-   * `single-scale` shows one arc at the bottom (default); `dual-scale` also
-   * shows the scale on the top arc (the indicator's opposite end).
-   */
   @property({type: String}) type: ObcRollType = ObcRollType.singleScale;
 
   private get normalizedScaleForeImage(): number {
     if (!Number.isFinite(this.scaleForeImage)) {
       return 1;
     }
-    return Math.max(0, Math.min(2, this.scaleForeImage));
+    return clamp(this.scaleForeImage, 0, 2);
   }
 
   protected override get centerAngle(): number {
@@ -88,7 +95,7 @@ export class ObcRoll extends SingleAxisInclinometer {
     return [
       {
         size: VesselImageSize.large,
-        vesselImage: this.vesselImageFore,
+        ...vesselArt(this.vesselImageFore, this.vesselImageForeSrc),
         transform: `rotate(${this.roll}deg) scale(${this.normalizedScaleForeImage})`,
       },
     ];
@@ -116,7 +123,7 @@ export class ObcRoll extends SingleAxisInclinometer {
       <g
         style="transform: rotate(${this.roll}deg) scale(${vesselScale * this.normalizedScaleForeImage}) translate(-80px, -80px);"
       >
-        ${this.zoomToFitArc ? vesselImages[this.vesselImageFore] : nothing}
+        ${this.zoomToFitArc ? renderVesselArt(vesselArt(this.vesselImageFore, this.vesselImageForeSrc), this.palette.current) : nothing}
       </g>
     `;
   }
@@ -125,8 +132,8 @@ export class ObcRoll extends SingleAxisInclinometer {
     // Outer thin-ring complement endpoints. The arc band is centred at watch
     // angle 180° (bottom) and spans 180° ± arcAngle, so its edges sit at SVG
     // coords (±R·sin(arcAngle), R·cos(arcAngle)).
-    const x = watchRadius * Math.sin((arcAngle * Math.PI) / 180);
-    const y = watchRadius * Math.cos((arcAngle * Math.PI) / 180);
+    const x = watchRadius * Math.sin(degToRad(arcAngle));
+    const y = watchRadius * Math.cos(degToRad(arcAngle));
     return svg`
       <path
         d="M ${-x} ${y} A ${watchRadius} ${watchRadius} 0 1 1 ${x} ${y}"

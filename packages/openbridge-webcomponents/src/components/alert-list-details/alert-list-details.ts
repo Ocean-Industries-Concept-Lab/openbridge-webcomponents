@@ -111,6 +111,7 @@ export function canAckFilter(filter: (alert: Alert) => boolean) {
 }
 
 /**
+ * @availableWhen timeFormatter showTime==true
  * @fires {ObcAckClickEvent} ack-click - Fired when the user clicks the "ACK" button.
  * @fires {ObcRowClickEvent} row-click - Fired when the user clicks a row.
  * @stable
@@ -120,7 +121,6 @@ export class ObcAlertListDetails extends LitElement {
   @property({type: String}) selectedMode: AlertListMode = AlertListMode.ALL;
   @property({type: Array}) alerts: Alert[] = [];
   @property({type: Boolean}) showTime: boolean = false;
-  /** @availableWhen showTime==true */
   @property({attribute: false}) timeFormatter: (time: Date) => string = (
     time: Date
   ) => time.toLocaleTimeString(undefined, {hour12: false});
@@ -162,7 +162,7 @@ export class ObcAlertListDetails extends LitElement {
     if (this.small) {
       const columns: ObcTableColumn<ObcTableCellData, ObcTableRow>[] = [
         {
-          label: 'status',
+          label: 'Status',
           key: 'status',
           sortDirection: 'desc',
           sortable: true,
@@ -190,7 +190,7 @@ export class ObcAlertListDetails extends LitElement {
     } else {
       const columns: ObcTableColumn<ObcTableCellData, ObcTableRow>[] = [
         {
-          label: 'status',
+          label: 'Status',
           key: 'status',
           sortDirection: 'desc',
           sortable: true,
@@ -320,21 +320,23 @@ export class ObcAlertListDetails extends LitElement {
 
     return html`
       <div class="wrapper ${this.small ? 'small' : ''}">
-        ${data.length > 0
-          ? html` <obc-table
-                class="alert-list"
-                .data=${data}
-                .columns=${this.columns}
-                .striped=${true}
-                .showHeader=${!this.small}
-                @row-click=${this.onRowClick}
-                @cell-button-click=${this.onCellButtonClick}
-              ></obc-table>
-              <div class="spacer"></div>`
-          : html` <div class="empty-list">
-              <div class="icon">${selectedList.emptyIcon}</div>
-              <div class="empty-title">${selectedList.emptyTitle}</div>
-            </div>`}
+        ${
+          data.length > 0
+            ? html` <obc-table
+                  class="alert-list"
+                  .data=${data}
+                  .columns=${this.columns}
+                  .striped=${true}
+                  .showHeader=${!this.small}
+                  @row-click=${this.onRowClick}
+                  @cell-button-click=${this.onCellButtonClick}
+                ></obc-table>
+                <div class="spacer"></div>`
+            : html` <div class="empty-list">
+                <div class="icon">${selectedList.emptyIcon}</div>
+                <div class="empty-title">${selectedList.emptyTitle}</div>
+              </div>`
+        }
       </div>
     `;
   }

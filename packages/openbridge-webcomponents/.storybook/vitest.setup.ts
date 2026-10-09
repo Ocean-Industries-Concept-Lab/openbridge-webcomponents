@@ -1,5 +1,6 @@
 import {setProjectAnnotations} from '@storybook/web-components-vite';
-import {beforeEach} from 'vitest';
+import {afterEach, beforeEach} from 'vitest';
+import {commands} from 'vitest/browser';
 import * as projectAnnotations from './preview.js';
 import {vis, visAnnotations} from 'storybook-addon-vis/vitest-setup';
 
@@ -23,6 +24,25 @@ setProjectAnnotations([projectAnnotations, visAnnotations]);
 
 // storybook-addon-vis captures and compares the screenshot in an afterEach hook.
 vis.setup();
+
+// Chromium hovers whatever sits under the pointer's starting point, (0, 0).
+// @storybook/addon-vitest registers this command to move the pointer off the
+// page, but only calls it when browser mode is on in the root config, not here.
+const storybookCommands = commands as typeof commands & {
+  resetMousePosition: () => Promise<void>;
+};
+beforeEach(() => storybookCommands.resetMousePosition());
+
+// Web Animations ignore the zeroed CSS durations above. Park every animation
+// 100 ms into its cycle, inside the on phase of all alert flash tempos, so a
+// snapshot never lands in an off phase. Registered after vis.setup(): Vitest
+// runs afterEach hooks last-registered first, so this precedes the capture.
+afterEach(() => {
+  for (const animation of document.getAnimations()) {
+    animation.currentTime = 100;
+    animation.pause();
+  }
+});
 
 // Flaky visual snapshots are retried via Vitest's `test.retry` (configured in
 // vitest.config.ts). A retry re-runs the whole test, which re-renders the story

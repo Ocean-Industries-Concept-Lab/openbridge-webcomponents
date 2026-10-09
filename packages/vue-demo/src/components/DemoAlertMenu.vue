@@ -13,7 +13,8 @@ import { ObcAlertMenuItemStatus } from '@oicl/openbridge-webcomponents/dist/comp
 import AlertIcon from './AlertIcon.vue'
 import type { App } from '@/router'
 
-const model = defineModel<boolean>()
+defineProps<{ open: boolean }>()
+const emit = defineEmits<{ (e: 'goToList'): void }>()
 
 const alertStore = useAlertStore()
 
@@ -23,9 +24,7 @@ const route = useRoute()
 function onAlertListClick() {
   const app = route.meta.app as App | undefined
   router.push({ name: app?.name + '-alert' })
-  if (model.value) {
-    model.value = false
-  }
+  emit('goToList')
 }
 
 function onAckAllVisibleClick(event: ObcAckAllVisibleClickEvent) {
@@ -46,7 +45,8 @@ function onAckAllVisibleClick(event: ObcAckAllVisibleClickEvent) {
 
 <template>
   <AlertMenu
-    v-if="model"
+    soft-dismiss
+    :open="open"
     class="alert-menu"
     :can-ack-all="alertStore.unackedAlerts.length > 0"
     can-silence

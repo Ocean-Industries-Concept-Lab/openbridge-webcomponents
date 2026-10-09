@@ -87,9 +87,11 @@ const meta: Meta<typeof ObcTopBar> = {
       <obc-command-button slot="command-button"></obc-command-button>
       <obc-topbar-message-item
         .type=${ObcTopbarMessageItemType.WithButton}
-        .size=${args.tall
-          ? ObcTopbarMessageItemSize.Tall
-          : ObcTopbarMessageItemSize.Regular}
+        .size=${
+          args.tall
+            ? ObcTopbarMessageItemSize.Tall
+            : ObcTopbarMessageItemSize.Regular
+        }
         slot="alerts"
         class="alert-notifications"
       >
@@ -114,9 +116,9 @@ const meta: Meta<typeof ObcTopBar> = {
         blinking
         showSilenceButton
         silenceButtonDisabled
-        .type=${args.inactive
-          ? ObcAlertButtonType.Flat
-          : ObcAlertButtonType.Normal}
+        .type=${
+          args.inactive ? ObcAlertButtonType.Flat : ObcAlertButtonType.Normal
+        }
         ?large=${args.tall}
         .flatMaxBreakpointPx=${args.flatMaxBreakpointPx}
         .silenceButtonMinBreakpointPx=${args.silenceButtonMinBreakpointPx}

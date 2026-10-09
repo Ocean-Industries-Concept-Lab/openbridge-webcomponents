@@ -138,7 +138,7 @@ export class ObcAutomationBadge extends LitElement {
     </svg>`;
   }
 
-  // TODO: replace the typo 'siluette' with 'silhouette', probably in Figma as well
+  // TODO(designer): rename the 'siluette' typo to 'silhouette', in Figma too
   private getIcon() {
     if (this.type === ObcAutomationBadgeType.Auto) {
       return html`<obi-auto class="icon siluette"></obi-auto

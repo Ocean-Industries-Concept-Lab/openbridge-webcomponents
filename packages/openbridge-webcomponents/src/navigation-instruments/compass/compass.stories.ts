@@ -19,7 +19,11 @@ import {
 } from '../../storybook-util.js';
 import {AdviceType} from '../watch/advice.js';
 import {VesselImage} from '../watch/watch.js';
-import {topVessels} from '../watch/vessels/storybook-helper.js';
+import {
+  customVesselPngSrc,
+  customVesselSvgSrc,
+  topVessels,
+} from '../watch/vessels/storybook-helper.js';
 import {InstrumentState, Priority} from '../types.js';
 import {RotPosition} from '../rate-of-turn/rot-renderer.js';
 
@@ -153,6 +157,19 @@ export const HeadingUpInCommand: Story = {
 export const CourseUpInCommand: Story = {
   args: {
     direction: CompassDirection.CourseUp,
+  },
+};
+
+export const WithCustomVesselImageSvg: Story = {
+  args: {
+    direction: CompassDirection.HeadingUp,
+    vesselImageSrc: customVesselSvgSrc,
+  },
+};
+
+export const WithCustomVesselImagePng: Story = {
+  args: {
+    vesselImageSrc: customVesselPngSrc,
   },
 };
 

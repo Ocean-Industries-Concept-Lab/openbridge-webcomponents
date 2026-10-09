@@ -32,7 +32,7 @@ export class ObcResistor extends ObcAbstractAutomationButtonSquared {
   override get icon() {
     switch (this.alternativeIcon) {
       case ResistorAlternativeIcon.resistor2:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-resistor-2-on
               usecsscolor
               slot="icon"
@@ -52,7 +52,7 @@ export class ObcResistor extends ObcAbstractAutomationButtonSquared {
             ></obi-resistor-2-off>`;
         }
       case ResistorAlternativeIcon.resistor3:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-resistor-3-on
               usecsscolor
               slot="icon"
@@ -72,7 +72,7 @@ export class ObcResistor extends ObcAbstractAutomationButtonSquared {
             ></obi-resistor-3-off>`;
         }
       case ResistorAlternativeIcon.resistor4:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-resistor-4-on
               usecsscolor
               slot="icon"
@@ -92,7 +92,7 @@ export class ObcResistor extends ObcAbstractAutomationButtonSquared {
             ></obi-resistor-4-off>`;
         }
       case ResistorAlternativeIcon.resistor5:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-resistor-5-on
               usecsscolor
               slot="icon"
@@ -112,7 +112,7 @@ export class ObcResistor extends ObcAbstractAutomationButtonSquared {
             ></obi-resistor-5-off>`;
         }
       default:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-resistor-1-on
               usecsscolor
               slot="icon"

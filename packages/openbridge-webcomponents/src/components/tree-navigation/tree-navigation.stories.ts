@@ -21,7 +21,7 @@ const meta: Meta<typeof ObcTreeNavigation> = {
   tags: ['autodocs', '6.0', 'beta'],
   component: 'obc-tree-navigation',
   render: () => html`
-    <obc-tree-navigation>
+    <obc-tree-navigation aria-label="Systems">
       <obc-tree-navigation-group
         label="Vessel"
         .alerts=${{combine: true, countLevelHigh: 3}}
@@ -141,7 +141,7 @@ class TreeNavigationSelectionDemo extends LitElement {
 
   override render() {
     return html`
-      <obc-tree-navigation>
+      <obc-tree-navigation aria-label="Systems">
         <obc-tree-navigation-group label="Vessel" expanded>
           ${iconIdToIconHtml('placeholder', {slot: 'icon'})}
           <obc-tree-navigation-group label="Engine room" expanded>
@@ -287,7 +287,7 @@ function renderAlertNode(node: AlertNode, combine: boolean): TemplateResult {
  */
 export const AggregatedAlertCounts: Story = {
   render: () =>
-    html`<obc-tree-navigation>
+    html`<obc-tree-navigation aria-label="Systems">
       ${renderAlertNode(ALERT_TREE, true)}
     </obc-tree-navigation>`,
 };
@@ -301,7 +301,7 @@ export const AggregatedAlertCounts: Story = {
  */
 export const PerSeverityAlertCounts: Story = {
   render: () =>
-    html`<obc-tree-navigation>
+    html`<obc-tree-navigation aria-label="Systems">
       ${renderAlertNode(ALERT_TREE, false)}
     </obc-tree-navigation>`,
 };

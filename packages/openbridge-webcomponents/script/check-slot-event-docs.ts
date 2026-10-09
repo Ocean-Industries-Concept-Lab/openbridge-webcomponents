@@ -36,16 +36,19 @@
  *   `slot="name"` *projection attribute* in the template does NOT suppress this
  *   (it exposes nothing); only a genuine imperative read of the consumer's
  *   children (e.g. `getAttribute('slot') === 'name'`) counts as a real slot.
- * - **Empty description (warning):** a `@slot`/`@fires` tag with only a name and
+ * - **Empty description (error):** a `@slot`/`@fires` tag with only a name and
  *   no descriptive text. These become blank cells in the manifest / Storybook
- *   controls; warnings do not fail CI.
- * - **Class-level `@property` tag (error):** properties must be documented
- *   inline above their field declarations (AGENTS.md §3.6). A tag in the class
- *   JSDoc block overrides the inline doc and can inject a ghost member for a
- *   non-existent property (issue #1043). A short allowlist covers documented
- *   exceptions (property-injecting mixins, one legacy chart-base tag). A
- *   class-level `@attr`/`@attribute` that documents a CSS-only attribute with
- *   no backing `@property` field is allowed and is not flagged.
+ *   controls.
+ * - **Ghost class-level `@property` tag (error):** class-level `@property`
+ *   tags are the documentation home for properties (AGENTS.md §3.6). A
+ *   `@property`/`@prop` tag in the class JSDoc whose name is not a
+ *   `@property()`-decorated field anywhere in `src/` (a global set — mixins
+ *   and base classes count) injects a ghost member into `custom-elements.json`
+ *   (issue #1043). The field set is global rather than per class: a tag
+ *   passes as soon as some class in `src/` declares a field of that name, so a
+ *   tag on the wrong class is not caught. A class-level `@attr`/`@attribute`
+ *   that documents a CSS-only attribute with no backing `@property` field is
+ *   allowed and is not flagged.
  *
  * There is deliberately no phantom-`@fires` *error*: unlike slots (which must be
  * a `<slot>` element in the component's own shadow DOM), a documented event may
@@ -259,7 +262,6 @@ async function run(): Promise<void> {
   });
 
   const errors: Finding[] = [];
-  const warnings: Finding[] = [];
   let componentCount = 0;
 
   for (const rel of files.sort()) {
@@ -335,18 +337,18 @@ async function run(): Promise<void> {
       }
     }
 
-    // Empty description (warning) — a @slot/@fires tag with only a name produces
-    // a blank cell in the manifest / Storybook controls. Class-level tags only.
+    // Empty description — a @slot/@fires tag with only a name produces a blank
+    // cell in the manifest / Storybook controls. Class-level tags only.
     const classDocs = topLevelDocblocks(source);
     for (const tag of parseSlotTags(classDocs)) {
       if (!tag.hasDescription) {
         const label = tag.name === '-' ? 'default slot' : `@slot ${tag.name}`;
-        warnings.push({file: rel, message: `${label} has no description`});
+        errors.push({file: rel, message: `${label} has no description`});
       }
     }
     for (const tag of parseEventTags(classDocs)) {
       if (!tag.hasDescription) {
-        warnings.push({
+        errors.push({
           file: rel,
           message: `@fires ${tag.name} has no description`,
         });
@@ -354,31 +356,27 @@ async function run(): Promise<void> {
     }
   }
 
-  // Class-level @property / @attr JSDoc tags (AGENTS.md §3.6): properties must be
-  // documented inline above their field declarations. A class-level tag overrides
-  // the inline doc and can inject a ghost member for a property that does not
-  // exist (issue #1043). Allowlisted files are documented exceptions: mixins that
-  // inject properties into consumers, and one legacy `fill` tag on the chart base.
-  const PROPERTY_TAG_ALLOWLIST = [
-    'svghelpers/setpoint-mixin.ts',
-    'svghelpers/setpoint-bundle.ts',
-    'building-blocks/chart-line/chart-line-base.ts',
-  ];
-  // Only `@property` is flagged. `@attr`/`@attribute` in a class block is the
-  // legitimate way to document a CSS-only attribute that has no backing
-  // `@property` field (e.g. slider's `hugcontainer`), so it is not an error.
-  // Matches both the multi-line (` * @property`) and single-line
-  // (`/** @property`) JSDoc block-comment forms.
-  const propTagRe = /^[ \t]*(?:\/\*\*|\*)[ \t]*@property\b/gm;
-  for (const rel of files.sort()) {
-    if (PROPERTY_TAG_ALLOWLIST.some((a) => rel.endsWith(a))) continue;
+  // Class-level `@property` tags are the documentation home for properties
+  // (AGENTS.md § 3.6). A tag naming a property that exists nowhere injects a
+  // ghost member into custom-elements.json (issue #1043) — error.
+  const decoratedFieldRe =
+    /@property\([^)]*\)\s*(?:accessor\s+|override\s+|public\s+|readonly\s+)*([\w$]+)[?!]?\s*[:=;]/g;
+  const knownFields = new Set<string>();
+  for (const rel of files) {
     const source = fs.readFileSync(path.join(cwd, rel), 'utf8');
-    const matches = source.match(propTagRe);
-    if (matches && matches.length > 0) {
-      errors.push({
-        file: rel,
-        message: `has ${matches.length} class-level @property JSDoc tag(s) — document each property inline above its field declaration instead (AGENTS.md §3.6; these override inline docs and can create ghost manifest members)`,
-      });
+    for (const m of source.matchAll(decoratedFieldRe)) knownFields.add(m[1]);
+  }
+  const headerPropRe =
+    /^[ \t]*(?:\/\*\*|\*)[ \t]*@(property|prop)\s+(?:\{[^}]*\}\s+)?([\w$]+)/gm;
+  for (const rel of files.sort()) {
+    const source = fs.readFileSync(path.join(cwd, rel), 'utf8');
+    for (const m of source.matchAll(headerPropRe)) {
+      if (!knownFields.has(m[2])) {
+        errors.push({
+          file: rel,
+          message: `class-level @${m[1]} "${m[2]}" names no @property() field in src/ — ghost manifest member (AGENTS.md §3.6)`,
+        });
+      }
     }
   }
 
@@ -401,27 +399,18 @@ async function run(): Promise<void> {
     }
   };
 
-  if (warnings.length > 0) {
-    console.warn(
-      `\n⚠️  ${warnings.length} empty-description warning(s) (non-blocking):`
-    );
-    printByFile(warnings, (m) => console.warn(m));
-  }
-
   if (errors.length > 0) {
     console.error(`\nFound ${errors.length} issue(s):`);
     printByFile(errors, (m) => console.error(m));
     console.error(
       `\n❌ Slot & event documentation audit failed. Add the missing @slot/@fires ` +
-        `tags (or remove the phantom ones). See docs/agents/jsdoc.md.`
+        `tags, describe the empty ones, or remove the phantom ones. See docs/agents/jsdoc.md.`
     );
     process.exitCode = 1;
     return;
   }
 
-  const suffix =
-    warnings.length > 0 ? ` (${warnings.length} non-blocking warning(s))` : '';
-  console.log(`\n✅ Slot & event documentation audit passed.${suffix}`);
+  console.log('\n✅ Slot & event documentation audit passed.');
 }
 
 run().catch((error: unknown) => {

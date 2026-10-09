@@ -1,0 +1,11 @@
+| Element                                                                                | 1.0.1                                              | 2.0                                                         |
+| -------------------------------------------------------------------------------------- | -------------------------------------------------- | ----------------------------------------------------------- |
+| all automation devices                                                                 | `badgeAlertOff`                                    | `badgeAlert="silence"`                                      |
+| all automation devices                                                                 | `badgeAuto`                                        | `badgeControl="auto"`                                       |
+| all automation devices                                                                 | `badgeCommandLocked`: `boolean`                    | `badgeCommandLocked`: `AutomationButtonBadgeCommandLocked`  |
+| all automation devices                                                                 | `badgeDuty`                                        | `badgeInterlock="interlock"`                                |
+| all automation devices except `obc-fan`, `obc-motor` and `obc-pump`                    | `direction`                                        | removed; only `obc-motor`, `obc-pump` and `obc-fan` have it |
+| all automation devices, `obc-automation-button`, `obc-automation-button-readout-stack` | `hasIdTag`                                         | removed; set `tag`, or leave it unset to hide the tag       |
+| all automation devices                                                                 | `tag` = `''`                                       | `tag` = `null`                                              |
+| `obc-automation-button`, `obc-automation-button-readout-stack`                         | `tag`: `AutomationButtonReadoutStackTag` or `null` | `tag`: `string` or `null`                                   |
+| `obc-automation-tank`                                                                  | `variant`                                          | `orientation`; `variant="compact"` is now `compact`         |

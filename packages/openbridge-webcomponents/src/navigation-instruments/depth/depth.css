@@ -1,0 +1,22 @@
+:host {
+  display: block;
+  aspect-ratio: 1; /* the design is square; a parent that sets both sizes still wins */
+  width: 100%;
+}
+
+.container {
+  position: relative; /* containing block for the chart cell */
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* The chart derives its pixel size from the box it measures, so it is taken
+ * out of flow and pinned to the cell the host's box already decided on. */
+.container > obc-gauge-trend {
+  display: block;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}

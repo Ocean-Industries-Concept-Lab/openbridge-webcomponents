@@ -1,0 +1,8 @@
+/* Design footprint (Figma "Heat exhange"); positioning="button" keeps its ratio. */
+:host {
+  width: 56px;
+  height: 142px;
+}
+:host([positioning="button"]) {
+  aspect-ratio: 56 / 142;
+}

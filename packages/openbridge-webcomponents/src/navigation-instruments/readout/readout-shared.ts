@@ -47,12 +47,9 @@ export function readoutNumericFormatOptions(
   fractionDigits: number
 ): ReadoutNumericFormatOptions {
   return {
-    // Comparison-only (see `isDisplayedAtSetpoint`), which returns early unless
-    // both operands are finite numbers — so `formatNumericValue` never reaches
-    // its unavailable-dash branch here and the padding would have no effect.
-    // `obc-readout-block` sets it to `false` for rendering as well, since the
-    // unavailable placeholder is deliberately short rather than filled out to
-    // `maxDigits`. Nothing enables it today.
+    // Comparison-only: `isDisplayedAtSetpoint` returns early for non-finite
+    // operands, so the dash branch is never reached here. `obc-readout-block`
+    // renders with `false` too — the placeholder stays short on purpose.
     showZeroPadding: false,
     minValueLength: maxDigits,
     fractionDigits,
@@ -72,13 +69,9 @@ export function isDisplayedAtSetpoint(
   if (value === null || setpoint === undefined) {
     return false;
   }
-  // An unavailable reading is never "at" the setpoint. Callers normalise
-  // `value` (via `resolveReadoutNumericValue`) but pass `setpoint` raw, so a
-  // non-finite setpoint would otherwise be formatted as the literal "NaN" /
-  // "Infinity" and compared as a string. The comparison result happens to be
-  // correct either way — a normalised `value` can never also format to "NaN" —
-  // but guarding both keeps the two operands symmetric and the invariant below
-  // honest.
+  // An unavailable reading is never "at" the setpoint. `setpoint` arrives raw
+  // (only `value` is normalised by callers), so guard both operands rather
+  // than compare a formatted "NaN" string.
   if (!Number.isFinite(value) || !Number.isFinite(setpoint)) {
     return false;
   }
@@ -110,6 +103,39 @@ export function readoutSecondarySize(size: ReadoutBlockSize): ObcTextboxSize {
     default:
       return ObcTextboxSize.xs;
   }
+}
+
+/**
+ * The setpoint block's typography size: primary while emphasised (touching /
+ * flip-flop away from setpoint) or in the `equal-size` interaction, secondary
+ * otherwise.
+ */
+export function readoutSetpointSize(options: {
+  primary: ObcTextboxSize;
+  secondary: ObcTextboxSize;
+  emphasized: boolean;
+  equalSize: boolean;
+}): ObcTextboxSize {
+  return options.emphasized || options.equalSize
+    ? options.primary
+    : options.secondary;
+}
+
+/**
+ * The value block's typography size: secondary while the setpoint is the
+ * focus of attention (touching / flip-flop away from setpoint) — EXCEPT in
+ * the `equal-size` interaction, whose whole point is that both blocks hold
+ * the primary size; there the value never demotes, not even while touching.
+ */
+export function readoutValueSize(options: {
+  primary: ObcTextboxSize;
+  secondary: ObcTextboxSize;
+  setpointEmphasized: boolean;
+  equalSize: boolean;
+}): ObcTextboxSize {
+  return options.setpointEmphasized && !options.equalSize
+    ? options.secondary
+    : options.primary;
 }
 
 /** Setpoint is SemiBold only while emphasised, otherwise regular weight. */

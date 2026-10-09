@@ -59,10 +59,16 @@
 }
 
 .wrapper.align-center .value-input {
-  width: var(--obc-number-input-center-width, auto);
-  min-width: var(--obc-number-input-center-width, 40px);
+  field-sizing: content; /* the unit hugs the value */
+  width: auto;
   text-align: right;
   flex: 0 0 auto;
+}
+
+@supports not (field-sizing: content) {
+  .wrapper.align-center .value-input {
+    flex: 1 1 auto; /* the 20-character default width would push the value out of a narrow field */
+  }
 }
 
 .wrapper.align-right .label-container,

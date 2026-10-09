@@ -1,5 +1,6 @@
 import {Poi} from '../poi/poi.js';
 import {getEffectivePoiX} from '../poi/poi-position.js';
+import {clamp} from '../../svghelpers/math.js';
 
 interface UpdateCrossingModeParams {
   targets: Poi[];
@@ -106,7 +107,7 @@ function updateCrossingModeState({
         const gap = Math.abs(nearest.center - movingItem.center);
         if (gap < minGap) {
           hasActiveOverlaps = true;
-          const ratio = Math.min(1, Math.max(0, 1 - gap / minGap));
+          const ratio = clamp(1 - gap / minGap, 0, 1);
           const push = (minGap - gap) * smoothstep(ratio);
           targetOffsets.set(movingItem.target, -push * travelDir);
         }

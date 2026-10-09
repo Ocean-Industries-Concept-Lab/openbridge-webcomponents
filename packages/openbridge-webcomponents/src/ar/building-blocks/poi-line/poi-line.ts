@@ -74,8 +74,9 @@ export class ObcPoiLine extends LitElement {
 
     return html`
       <div
-        class="offset-wrapper poi-style-${this.poiStyle} line-type-${this
-          .lineType}${this.animatePosition ? ' animate-position' : ''}"
+        class="offset-wrapper poi-style-${this.poiStyle} line-type-${
+          this.lineType
+        }${this.animatePosition ? ' animate-position' : ''}"
       >
         <div
           class="container"
@@ -87,17 +88,19 @@ export class ObcPoiLine extends LitElement {
             .lineType=${this.lineType}
             .offset=${this.offset}
           ></obc-poi-graphic-line>
-          ${this.hasPointer
-            ? renderPointerDot({
-                lineStyle: this.poiStyle,
-                centerX: centerX + (this.offset > 0 ? this.offset : 0),
-                centerY: lineHeight + centerYOffset,
-                width: style.width + (this.offset > 0 ? this.offset : 0),
-                vbHeight: totalHeight,
-                lineColor: style.lineColor,
-                outlineColor: style.outlineColor,
-              })
-            : nothing}
+          ${
+            this.hasPointer
+              ? renderPointerDot({
+                  lineStyle: this.poiStyle,
+                  centerX: centerX + (this.offset > 0 ? this.offset : 0),
+                  centerY: lineHeight + centerYOffset,
+                  width: style.width + (this.offset > 0 ? this.offset : 0),
+                  vbHeight: totalHeight,
+                  lineColor: style.lineColor,
+                  outlineColor: style.outlineColor,
+                })
+              : nothing
+          }
         </div>
       </div>
     `;

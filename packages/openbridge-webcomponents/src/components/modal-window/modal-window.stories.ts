@@ -56,9 +56,11 @@ const template: ModalWindowTemplate = (args) => html`
     @done-click=${() => console.log('Done clicked')}
     @option-click=${() => console.log('Option clicked')}
   >
-    ${args.hasLeadingIcon
-      ? html`<obi-placeholder slot="leading-icon"></obi-placeholder>`
-      : ''}
+    ${
+      args.hasLeadingIcon
+        ? html`<obi-placeholder slot="leading-icon"></obi-placeholder>`
+        : ''
+    }
     <span slot="title">Modal Title</span>
     <div slot="content" style="padding: 24px;">
       <p>This is the content area of the modal window.</p>

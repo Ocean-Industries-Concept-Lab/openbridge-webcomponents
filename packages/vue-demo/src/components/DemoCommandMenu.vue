@@ -1,9 +1,12 @@
 <template>
   <ObcCommandMenu
     class="command-menu"
+    :soft-dismiss="softDismiss"
+    :open="open"
     :in-command="demoConfigStore.hasCommand"
     :hide-location="demoConfigStore.hasCommand"
     @change="$emit('change', $event)"
+    @close="$emit('close')"
   >
     <div slot="command-icon">
       <obi-joystick v-if="demoConfigStore.hasCommand"></obi-joystick>
@@ -27,8 +30,11 @@
 import ObcCommandMenu from '@oicl/openbridge-webcomponents-vue/components/command-menu/ObcCommandMenu.vue'
 import { useDemoConfigStore } from '../stores/demoConfig'
 
+defineProps<{ softDismiss?: boolean; open?: boolean }>()
+
 defineEmits<{
   change: [event: CustomEvent]
+  close: []
 }>()
 
 const demoConfigStore = useDemoConfigStore()

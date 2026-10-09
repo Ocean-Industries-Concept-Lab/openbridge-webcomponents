@@ -2,6 +2,7 @@ import {LitElement, html, nothing, svg, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import componentStyle from './gauge-trend-indicator.css?inline';
 import {customElement} from '../../decorator.js';
+import {clamp} from '../../svghelpers/math.js';
 
 export enum ObcGaugeTrendIndicatorType {
   Fill = 'Fill',
@@ -22,10 +23,6 @@ const GRAPH_WIDTH = 28;
 const DIVIDER_X = FRAME_X + GRAPH_WIDTH;
 const POINTER_RADIUS = 2;
 const FRAME_PATH = createFramePath();
-
-function clamp(value: number, min: number, max: number): number {
-  return Math.min(Math.max(value, min), max);
-}
 
 function createFramePath() {
   const left = FRAME_X;
@@ -397,29 +394,35 @@ export class ObcGaugeTrendIndicator extends LitElement {
           vector-effect="non-scaling-stroke"
         />
 
-        ${type === ObcGaugeTrendIndicatorType.Point && areaPath
-          ? svg`<path
+        ${
+          type === ObcGaugeTrendIndicatorType.Point && areaPath
+            ? svg`<path
               d=${areaPath}
               class="area"
               clip-path="url(#${frameClipId})"
             />`
-          : nothing}
-        ${linePath
-          ? svg`<path
+            : nothing
+        }
+        ${
+          linePath
+            ? svg`<path
               d=${linePath}
               class="line"
               clip-path="url(#${frameClipId})"
               vector-effect="non-scaling-stroke"
             />`
-          : nothing}
+            : nothing
+        }
         <path
           d="M${DIVIDER_X} ${FRAME_Y}V${FRAME_Y + FRAME_HEIGHT}"
           class="divider"
           vector-effect="non-scaling-stroke"
         />
-        ${type === ObcGaugeTrendIndicatorType.Fill
-          ? this.renderFill()
-          : this.renderPoint()}
+        ${
+          type === ObcGaugeTrendIndicatorType.Fill
+            ? this.renderFill()
+            : this.renderPoint()
+        }
 
         <path
           d=${FRAME_PATH}

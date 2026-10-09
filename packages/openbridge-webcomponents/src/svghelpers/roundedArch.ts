@@ -1,3 +1,5 @@
+import {degToRad} from './math.js';
+
 export function roundedArch({
   startAngle,
   endAngle,
@@ -17,8 +19,8 @@ export function roundedArch({
    * flat cut edge vanishes and the end becomes an inscribed round tip. */
   roundRadius?: number;
 }) {
-  const a1 = (startAngle * Math.PI) / 180;
-  const a2 = (endAngle * Math.PI) / 180;
+  const a1 = degToRad(startAngle);
+  const a2 = degToRad(endAngle);
 
   const X1 = Math.sin(a1) * R;
   const Y1 = -Math.cos(a1) * R;

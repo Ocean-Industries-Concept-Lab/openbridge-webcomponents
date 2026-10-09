@@ -60,6 +60,11 @@ export enum AppButtonSize {
  * </obc-app-button>
  * ```
  *
+ * @property checked - If true, applies the "checked" visual style to indicate selection or active state.
+ * @property showLabel - If true, shows the button's label.
+ * @property integration - If true, applies integration styles for the integration app bar.
+ * @property label - Sets the button's text label.
+ * @availableWhen label showLabel==true
  * @fires click - Fired when the button is clicked (if not disabled).
  *
  * @slot icon - Displays the leading icon for the button.
@@ -67,29 +72,12 @@ export enum AppButtonSize {
  */
 @customElement('obc-app-button')
 export class ObcAppButton extends LitElement {
-  /**
-   * Sets the button's text label.
-   * @default "Button"
-   * @availableWhen showLabel==true
-   */
   @property({type: String}) label = 'Button';
 
-  /**
-   * If true, applies the "checked" visual style to indicate selection or active state.
-   * @default false
-   */
   @property({type: Boolean}) checked = false;
 
-  /**
-   * If true, shows the button's label.
-   * @default true
-   */
   @property({type: Boolean, attribute: false}) showLabel: boolean = true;
 
-  /**
-   * If true, applies integration styles for the integration app bar.
-   * @default false
-   */
   @property({type: Boolean}) integration = false;
 
   /**
@@ -116,7 +104,15 @@ export class ObcAppButton extends LitElement {
           <slot name="icon"></slot>
         </span>
       </div>
-      ${this.showLabel ? html`<div class="label">${this.label}</div>` : nothing}
+      ${
+        this.showLabel
+          ? html`<div class="label">
+              ${this.label}<span class="label-width-reserve" aria-hidden="true"
+                >${this.label}</span
+              >
+            </div>`
+          : nothing
+      }
     </button>`;
   }
 

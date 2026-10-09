@@ -12,7 +12,7 @@ export class ObiGround2 extends LitElement {
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M14 4H12V9H6L4 16H6L7.42857 11H11.4286L10 16H12L13.4286 11H17.4286L16 16H18L20 9H14V4Z" style="fill: var(--automation-device-secondary-color)"/>
+<path d="M14 4H12V9H6L4 16H6L7.42857 11H11.4286L10 16H12L13.4286 11H17.4286L16 16H18L20 9H14V4Z" style="fill: var(--automation-symbol-static-background-color)"/>
 </svg>
 `;
 

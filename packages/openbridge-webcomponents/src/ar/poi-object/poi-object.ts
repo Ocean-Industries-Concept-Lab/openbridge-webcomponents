@@ -94,6 +94,7 @@ export enum ObcPoiObjectState {
  * </obc-poi-object>
  * ```
  *
+ * @availableWhen interactive state!=overlapped
  * @slot - Icon/content displayed inside the marker frame.
  * @experimental
  */
@@ -108,7 +109,6 @@ export class ObcPoiObject extends LitElement {
   @property({type: String}) state: ObcPoiObjectState =
     ObcPoiObjectState.Unchecked;
 
-  /** @availableWhen state!=overlapped */
   @property({type: Boolean}) interactive = false;
 
   @state() private hasPlaceholderIcon = false;
@@ -238,24 +238,30 @@ export class ObcPoiObject extends LitElement {
         @keydown=${this.handleKeyDown}
         @keyup=${this.handleKeyUp}
       >
-        ${this.isActivated
-          ? html`<div class="activated-frame" part="activated-frame"></div>`
-          : nothing}
-        ${!this.isIndicator || this.isOverlapped || this.isInteractive
-          ? html`<div class="background-frame" part="background-frame"></div>`
-          : nothing}
+        ${
+          this.isActivated
+            ? html`<div class="activated-frame" part="activated-frame"></div>`
+            : nothing
+        }
+        ${
+          !this.isIndicator || this.isOverlapped || this.isInteractive
+            ? html`<div class="background-frame" part="background-frame"></div>`
+            : nothing
+        }
 
         <div class="icon-container" part="icon-container">
-          ${this.isIndicator && this.hasPlaceholderIcon
-            ? html`<svg
-                class="indicator-placeholder-fill"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-                focusable="false"
-              >
-                <path d="M12 3L3 12L12 21L21 12L12 3Z"></path>
-              </svg>`
-            : nothing}
+          ${
+            this.isIndicator && this.hasPlaceholderIcon
+              ? html`<svg
+                  class="indicator-placeholder-fill"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  focusable="false"
+                >
+                  <path d="M12 3L3 12L12 21L21 12L12 3Z"></path>
+                </svg>`
+              : nothing
+          }
           <slot @slotchange=${this.handleSlotChange}></slot>
         </div>
       </div>

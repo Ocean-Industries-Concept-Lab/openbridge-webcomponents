@@ -20,30 +20,29 @@
   &.tall {
     height: var(--app-components-topbar-touch-target-tall);
   }
+
+  &.inactive {
+    padding-left: calc(
+      var(--app-components-topbar-margin-global) +
+        var(--app-components-topbar-padding-left-small)
+    ); /* no menu button: inset the title instead */
+  }
 }
 
-.group {
-  display: flex;
-  align-items: center;
+/* ---- One flex line ----
+   Flattened because a squeeze must reach the texts, not a group: a shrinkable
+   left group collapses under an unshrinkable alert and covers the menu button. */
 
-  &.right {
-    justify-content: flex-end;
-    flex-grow: 1;
-  }
+.group {
+  display: contents;
 
   .settings &.left > * {
     margin-right: 0;
     margin-left: 0;
   }
 
-  &.left {
-    & .title {
-      padding-right: var(--app-components-topbar-label-spacing);
-    }
-  }
-
-  .inactive &.left {
-    padding-left: var(--app-components-topbar-padding-left-small);
+  &.left .title {
+    padding-right: var(--app-components-topbar-label-spacing);
   }
 
   &.left .menu-button {
@@ -65,21 +64,48 @@
   }
 }
 
+/* Controls never shrink: a squeeze reaches the texts, then overflows the end */
+.menu-button,
+.app-icon,
+.left-more-button,
+.dimming-button,
+.user-button,
+.apps-button,
+::slotted([slot="command-button"]),
+::slotted([slot="clock"]) {
+  flex-shrink: 0;
+}
+
 .alert-container {
   display: flex;
-  flex-grow: 1;
+  flex: 1 1 0; /* zero basis: fills what the texts leave, holds its min-content in a squeeze */
   gap: var(--app-components-topbar-label-spacing);
   align-items: center;
   justify-content: right;
 }
 
-.title {
+/* ---- Text gives way first ---- */
+
+.title,
+.page-name {
+  overflow: hidden;
   color: var(--element-active-color, #1a1a1a);
+}
+
+.title {
+  flex-shrink: 3; /* the app title gives way before the page name */
+  min-width: 2em; /* room for "A…": narrower boxes paint a clipped glyph instead */
+  white-space: nowrap;
+  text-overflow: ellipsis;
   @mixin font-body;
 }
 
 .page-name {
-  color: var(--element-active-color, #1a1a1a);
+  min-width: 0; /* shrink below the longest word instead of pushing buttons out */
+  display: -webkit-box; /* two lines, then an ellipsis */
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   @mixin font-body-active;
 }
 

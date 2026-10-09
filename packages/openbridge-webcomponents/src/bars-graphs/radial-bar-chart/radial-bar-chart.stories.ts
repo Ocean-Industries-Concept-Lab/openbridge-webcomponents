@@ -4,6 +4,7 @@ import './radial-bar-chart.js';
 import {ObcRadialBarChart} from './radial-bar-chart.js';
 import {Priority} from '../../navigation-instruments/types.js';
 import {expectChartCanvasToMatchComputedLayout} from '../../storybook-util.js';
+import {clamp} from '../../svghelpers/math.js';
 
 const SAMPLE_DATA = [70, 50, 30];
 
@@ -140,9 +141,10 @@ export const Realtime: Story = {
 
     setInterval(() => {
       const newData = chart.data.map((value) =>
-        Math.max(
+        clamp(
+          value + Math.floor(Math.random() * 20 - 10),
           1,
-          Math.min(args.max, value + Math.floor(Math.random() * 20 - 10))
+          Math.max(1, args.max)
         )
       );
       chart.data = newData;

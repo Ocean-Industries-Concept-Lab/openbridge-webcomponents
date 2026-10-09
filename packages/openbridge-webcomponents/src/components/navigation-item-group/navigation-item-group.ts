@@ -58,66 +58,57 @@ import {
  * </obc-navigation-item-group>
  * ```
  *
+ * @property label - The label text displayed for the navigation group.
+ * @property href - Optional URL to navigate to when the group label is clicked.
+ *   If set, clicking the group label will navigate to this URL.
+ * @property checked - Whether the group is currently checked/selected.
+ *   Use to highlight the group as active.
+ * @property variant - Visual variant of the navigation group.
+ *   Accepts values from `ObcNavigationMenuVariant` (e.g., 'full', 'compact').
+ *   Controls the styling and layout of the group and its flyout.
+ * @property hug - If true, the flyout panel appears tightly anchored to the group label with compact styling.
+ * @property treeMode - Set by `obc-navigation-menu` in its Tree variant — renders the group as a tree row.
+ * @property treeBranches - Indentation columns for tree mode, assigned by `obc-navigation-menu`.
+ * @property terminalType - Terminal type for the group header in the Tree variant — one of `regular`
+ *   (default), `aggregated-header`, or `group-header`. No effect in flat variants.
+ * @property focusable - Whether the group header is in the tab order. A menu that owns a roving tabindex, such as
+ *   `obc-context-menu-input`, manages this (one item focusable at a time); a standalone group stays tabbable.
+ * @property defaultOpen - Whether the group starts expanded. Useful for trees that open by default.
+ * @property alerts - Per-severity alert counts shown as trailing badges on the group header, in
+ *   the Tree variant only and only while the group is collapsed — an expanded
+ *   group shows its rows' own badges instead. A header usually sets `combine`
+ *   so it totals the rows beneath it.
  * @slot icon - Custom icon displayed next to the group label.
  * @slot - Default slot for flyout content (typically navigation items).
  * @fires {CustomEvent<void>} open - When the group is expanded and the flyout is shown.
+ * @stable
  */
 @customElement('obc-navigation-item-group')
 export class ObcNavigationItemGroup extends LitElement {
-  /**
-   * The label text displayed for the navigation group.
-   */
   @property({type: String}) label = 'Label';
 
-  /**
-   * Optional URL to navigate to when the group label is clicked.
-   * If set, clicking the group label will navigate to this URL.
-   */
   @property({type: String}) href: string | undefined;
 
-  /**
-   * Whether the group is currently checked/selected.
-   * Use to highlight the group as active.
-   */
   @property({type: Boolean}) checked = false;
 
-  /**
-   * Visual variant of the navigation group.
-   * Accepts values from `ObcNavigationMenuVariant` (e.g., 'full', 'compact').
-   * Controls the styling and layout of the group and its flyout.
-   */
   @property({type: String}) variant: ObcNavigationMenuVariant =
     ObcNavigationMenuVariant.Full;
 
-  /**
-   * If true, the flyout panel appears tightly anchored to the group label with compact styling.
-   */
   @property({type: Boolean}) hug = false;
 
   @property({type: Boolean}) hasIcon = false;
 
-  /** Set by `obc-navigation-menu` in its Tree variant — renders the group as a tree row. */
   @property({type: Boolean}) treeMode = false;
 
-  /** Indentation columns for tree mode, assigned by `obc-navigation-menu`. */
   @property({type: Array}) treeBranches: TreeBranchType[] = [];
 
-  /**
-   * Terminal type for the group header in the Tree variant — one of `regular`
-   * (default), `aggregated-header`, or `group-header`. No effect in flat variants.
-   */
   @property({type: String}) terminalType: string = TreeTerminalType.regular;
 
-  /**
-   * Per-severity alert counts shown as trailing badge(s) on the group header
-   * (Tree variant only). Forwarded to the underlying `obc-tree-navigation-item`;
-   * typically `{combine: true, ...}` so the header totals the rows beneath it.
-   * See {@link TreeNavigationItemAlerts}.
-   */
   @property({type: Object}) alerts?: TreeNavigationItemAlerts;
 
-  /** Whether the group starts expanded. Useful for trees that open by default. */
   @property({type: Boolean}) defaultOpen = false;
+
+  @property({type: Boolean, attribute: false}) focusable = true;
 
   @state() private openContainer = false;
 
@@ -180,9 +171,9 @@ export class ObcNavigationItemGroup extends LitElement {
           .alerts=${this.expanded ? undefined : this.alerts}
           @expand-toggle=${this.onClickGroup}
         >
-          ${this.hasIcon
-            ? html`<slot name="icon" slot="icon"></slot>`
-            : nothing}
+          ${
+            this.hasIcon ? html`<slot name="icon" slot="icon"></slot>` : nothing
+          }
         </obc-tree-navigation-item>
         <div part="children" role="group" ?hidden=${!this.openContainer}>
           <slot></slot>
@@ -193,6 +184,7 @@ export class ObcNavigationItemGroup extends LitElement {
     return html`
       <obc-navigation-item
         @click=${this.onClickGroup}
+        .focusable=${this.focusable}
         .checked=${this.checked}
         .groupSelected=${this.openContainer}
         .href=${this.href}

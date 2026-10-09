@@ -2,6 +2,7 @@ import {LitElement, html, svg, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import componentStyle from './heading-indicator.css?inline';
 import {customElement} from '../../decorator.js';
+import {normalizeAngle, clamp} from '../../svghelpers/math.js';
 
 const COMPASS_NORTH_MARKER_PATH =
   'M23.5929 1.56961L19.5645 7.20938C19.3281 7.54031 19.5646 8 19.9713 8L28.0281 8C28.4348 8 28.6714 7.54031 28.435 7.20938L24.4066 1.56961C24.2072 1.29044 23.7923 1.29044 23.5929 1.56961Z';
@@ -17,10 +18,6 @@ const HDG_COMPACT_ARROW_HEAD_PATH =
   'M3.42969 0.817383C3.68447 0.394063 4.3157 0.393867 4.57031 0.817383L4.61816 0.915039L7.10449 7.02539C7.41674 7.79394 6.55693 8.4421 5.89746 8.0459V8.04492L3.99902 6.91504L2.10059 8.04492L2.10156 8.0459C1.44206 8.44186 0.583033 7.79395 0.895508 7.02539L3.38086 0.915039L3.42969 0.817383Z';
 const XTD_FRAME_PATH =
   'M30.5 0.500001C31.6046 0.500001 32.5 1.39543 32.5 2.5L32.5 30.5C32.5 31.6046 31.6046 32.5 30.5 32.5H2.5C1.39543 32.5 0.5 31.6046 0.5 30.5L0.500001 2.5C0.500001 1.39543 1.39543 0.5 2.5 0.5L30.5 0.500001Z';
-
-function normalizeAngle(angle: number): number {
-  return ((angle % 360) + 360) % 360;
-}
 
 export enum HeadingIndicatorType {
   HDG = 'HDG',
@@ -42,6 +39,8 @@ export enum HeadingIndicatorType {
  *
  * - Use `type="HDG"` for the compass-style heading cue.
  * - Use `type="XTD"` for the split-frame cross-track cue.
+ *
+ * @property xtd - Cross-track deviation in the range [-1, 1].
  * @stable
  */
 @customElement('obc-heading-indicator')
@@ -54,7 +53,6 @@ export class ObcHeadingIndicator extends LitElement {
   @property({type: Number})
   angle = 0;
 
-  /** Cross-track deviation in the range [-1, 1]. */
   @property({type: Number})
   xtd = 0;
 
@@ -198,7 +196,7 @@ export class ObcHeadingIndicator extends LitElement {
       XTD_FRAME_X + XTD_FRAME_INNER_WIDTH - XTD_ARROW_WIDTH - XTD_ARROW_X_BASE
     );
     const xtd = Number.isFinite(this.xtd) ? this.xtd : 0;
-    const clampedXtd = Math.max(-1, Math.min(1, xtd));
+    const clampedXtd = clamp(xtd, -1, 1);
     const offsetPx = clampedXtd * maxOffsetPx;
     const arrowX = XTD_ARROW_X_BASE + offsetPx;
     const arrowCenterX = arrowX + XTD_ARROW_WIDTH / 2;
@@ -230,8 +228,9 @@ export class ObcHeadingIndicator extends LitElement {
           />
         </svg>
         <g
-          transform="rotate(${this
-            .normalizedAngle}, ${arrowCenterX}, ${arrowCenterY})"
+          transform="rotate(${
+            this.normalizedAngle
+          }, ${arrowCenterX}, ${arrowCenterY})"
         >
           <svg
             x=${arrowX}

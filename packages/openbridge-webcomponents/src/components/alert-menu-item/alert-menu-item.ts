@@ -18,6 +18,7 @@ export enum ObcAlertMenuItemStatus {
   NoAckAlarm = 'no-ack-alarm',
   NoAckWarning = 'no-ack-warning',
   Rectified = 'rectified',
+  RectifiedUnacknowledged = 'rectified-unacknowledged',
 }
 
 /**
@@ -40,12 +41,13 @@ export enum ObcAlertMenuItemActionState {
  * ### Features
  * - **Status Variants:** Supports multiple alert states via the `status` property:
  *   - **Unacknowledged:** Shows an action button (ACK) for user acknowledgment.
+ *   - **RectifiedUnacknowledged:** The situation that raised the alert has cleared, but the alert still waits for acknowledgment, so the ACK action stays.
  *   - **Caution, Acknowledged, Rectified:** Display different visual cues for alert progression.
  *   - **NoAckAlarm / NoAckWarning:** Show special icons indicating unacknowledged alarms or warnings.
  * - **Icon Support:** Optional secondary icon (e.g., system or source) and a primary alert icon. Tertiary "shelved" icon appears if the alert is shelved.
  * - **Time and Day Display:** Optionally shows day and/or time for the alert occurrence.
  * - **Expandable:** Can be toggled open/closed for additional details (via click).
- * - **Action Buttons:** Displays an "ACK" button for unacknowledged alerts and an optional secondary action (label set via `secondaryActionLabel`); each triggers an event when clicked.
+ * - **Action Buttons:** Displays an "ACK" button for the statuses that still wait for acknowledgment (`unacknowledged` and `rectified-unacknowledged`) and an optional secondary action (label set via `secondaryActionLabel`); each triggers an event when clicked.
  *   - Each action's appearance is controlled independently via `primaryActionState` / `secondaryActionState` (`enabled`, `disabled`, or `none`).
  * - **Animated Intro:** Optional animation when the item appears.
  * - **Size Options:** Supports single-line or multi-line layouts (see `size` property).
@@ -59,7 +61,9 @@ export enum ObcAlertMenuItemActionState {
  * - Only show the "ACK" action for alerts that require acknowledgment.
  * - Provide `secondaryActionLabel` to add a second action alongside ACK.
  * - Use `primaryActionState` / `secondaryActionState` to temporarily disable an action (`disabled`) or remove it without leaving a gap (`none`).
- * - Use the `shelved` property to indicate alerts that are temporarily deferred.
+ * - Use the `shelved` property to indicate alerts that are temporarily deferred, and `blocked` for alerts another system has set aside. The alert menus sort items into their tabs by `status` and `shelved`; `blocked` is there for menus that list blocked alerts apart.
+ *
+ * **TODO(designer):** Should a blocked alert show a marker, as a shelved one shows the shelf icon?
  *
  * ### Slots
  * | Slot Name     | Renders When...                | Purpose                                              |
@@ -95,6 +99,37 @@ export enum ObcAlertMenuItemActionState {
  * </obc-alert-menu-item>
  * ```
  *
+ * @property hasIcon - Whether to display a secondary icon (e.g., system/source) in the item.
+ *   When true, the `icon` slot is rendered.
+ * @property shelved - Indicates if the alert is shelved (temporarily deferred).
+ *   When true, a tertiary icon is shown to represent the shelved state.
+ * @property blocked - Indicates that another system has blocked the alert as not relevant here.
+ *   For menus that list blocked alerts apart; the item itself shows no marker for it yet.
+ * @property title - The title of the alert.
+ * @property description - The description of the alert.
+ * @property day - The day label for the alert (e.g., "Yesterday").
+ * @property time - The time label for the alert (e.g., "14:30").
+ * @property status - The current status of the alert item.
+ *   Determines visual style, icon, and action button visibility.
+ *   Possible values: 'unacknowledged', 'caution', 'acknowledged', 'no-ack-alarm', 'no-ack-warning', 'rectified', 'rectified-unacknowledged'.
+ *   'unacknowledged' and 'rectified-unacknowledged' show the ACK action; the other values show a trailing icon instead.
+ *   Default is 'unacknowledged'.
+ * @property open - Whether the item is expanded/open to show additional details.
+ *   Toggled by clicking the item.
+ * @property size - Layout size of the menu item.
+ *   Controls whether content is single-line or multi-line.
+ *   Possible values: 'single-line', 'multi-line'.
+ *   Default is 'single-line'.
+ * @property animateIntro - Whether to animate the item's appearance (intro animation).
+ * @property secondaryActionLabel - The label for the secondary action button.
+ *   Unlike the primary (ACK) action, the secondary label is not derived from
+ *   `status`; it must be provided explicitly. The secondary action is only
+ *   shown when a non-empty label is set and `secondaryActionState` is not
+ *   `none`.
+ * @property primaryActionState - Appearance of the primary (ACK) action: `enabled`, `disabled` or `none`,
+ *   which hides it.
+ * @property secondaryActionState - Appearance of the secondary action: `enabled`, `disabled` or `none`, which
+ *   hides it.
  * @slot alert-icon - The main alert icon representing the alert type.
  * @slot title - Title content; falls back to the `title` property when empty.
  * @slot description - Description content; falls back to the `description` property when empty.
@@ -107,95 +142,50 @@ export enum ObcAlertMenuItemActionState {
  */
 @customElement('obc-alert-menu-item')
 export class ObcAlertMenuItem extends LitElement {
-  /**
-   * Whether to display a secondary icon (e.g., system/source) in the item.
-   * When true, the `icon` slot is rendered.
-   */
   @property({type: Boolean}) hasIcon = false;
 
-  /**
-   * Indicates if the alert is shelved (temporarily deferred).
-   * When true, a tertiary icon is shown to represent the shelved state.
-   */
   @property({type: Boolean, reflect: true}) shelved = false;
 
-  /**
-   * The title of the alert.
-   */
+  @property({type: Boolean, reflect: true}) blocked = false;
+
   @property({type: String}) override title = '';
 
-  /**
-   * The description of the alert.
-   */
   @property({type: String}) description = '';
 
-  /**
-   * The day label for the alert (e.g., "Yesterday").
-   */
   @property({type: String}) day = '';
 
-  /**
-   * The time label for the alert (e.g., "14:30").
-   */
   @property({type: String}) time = '';
 
-  /**
-   * The current status of the alert item.
-   * Determines visual style, icon, and action button visibility.
-   * Possible values: 'unacknowledged', 'caution', 'acknowledged', 'no-ack-alarm', 'no-ack-warning', 'rectified'.
-   * Default is 'unacknowledged'.
-   */
   @property({type: String, reflect: true}) status =
     ObcAlertMenuItemStatus.Unacknowledged;
 
-  /**
-   * Whether the item is expanded/open to show additional details.
-   * Toggled by clicking the item.
-   */
   @property({type: Boolean}) open = false;
 
-  /**
-   * Layout size of the menu item.
-   * Controls whether content is single-line or multi-line.
-   * Possible values: 'single-line', 'multi-line'.
-   * Default is 'single-line'.
-   */
   @property({type: String}) size: ObcMessageMenuItemSize =
     ObcMessageMenuItemSize.SingleLine;
 
-  /**
-   * Whether to animate the item's appearance (intro animation).
-   */
   @property({type: Boolean}) animateIntro = false;
 
-  /**
-   * The label for the secondary action button.
-   * Unlike the primary (ACK) action, the secondary label is not derived from
-   * `status`; it must be provided explicitly. The secondary action is only
-   * shown when a non-empty label is set and `secondaryActionState` is not
-   * `none`.
-   */
   @property({type: String}) secondaryActionLabel = '';
 
-  /**
-   * Controls the appearance of the primary (ACK) action.
-   * See {@link ObcAlertMenuItemActionState} for the available states.
-   */
   @property({type: String}) primaryActionState: ObcAlertMenuItemActionState =
     ObcAlertMenuItemActionState.Enabled;
 
-  /**
-   * Controls the appearance of the secondary action.
-   * See {@link ObcAlertMenuItemActionState} for the available states.
-   */
   @property({type: String}) secondaryActionState: ObcAlertMenuItemActionState =
     ObcAlertMenuItemActionState.None;
+
+  private get canAck() {
+    return (
+      this.status === ObcAlertMenuItemStatus.Unacknowledged ||
+      this.status === ObcAlertMenuItemStatus.RectifiedUnacknowledged
+    );
+  }
 
   private get primaryActionLabel() {
     if (this.primaryActionState === ObcAlertMenuItemActionState.None) {
       return '';
     }
-    return this.status === ObcAlertMenuItemStatus.Unacknowledged ? 'ACK' : '';
+    return this.canAck ? 'ACK' : '';
   }
 
   private get secondaryActionLabelToShow() {
@@ -215,19 +205,22 @@ export class ObcAlertMenuItem extends LitElement {
 
   private get hasTrailingIcon() {
     // True when we need the action container but don't have an ACK button
-    return this.status !== ObcAlertMenuItemStatus.Unacknowledged;
+    return !this.canAck;
   }
 
-  private handleMessageClick() {
+  private handleMessageClick(event: Event) {
+    event.stopPropagation();
     this.dispatchEvent(new CustomEvent('item-click'));
     this.open = !this.open;
   }
 
-  private handleActionClick() {
+  private handleActionClick(event: Event) {
+    event.stopPropagation();
     this.dispatchEvent(new CustomEvent('ack-click'));
   }
 
-  private handleSecondaryActionClick() {
+  private handleSecondaryActionClick(event: Event) {
+    event.stopPropagation();
     this.dispatchEvent(new CustomEvent('ack-secondary-click'));
   }
 
@@ -256,9 +249,11 @@ export class ObcAlertMenuItem extends LitElement {
         <slot name="alert-icon" slot="primary-icon"></slot>
         <slot name="title" slot="title">${this.title}</slot>
         <slot name="description" slot="description">${this.description}</slot>
-        ${this.hasIcon
-          ? html`<slot name="icon" slot="secondary-icon"></slot>`
-          : nothing}
+        ${
+          this.hasIcon
+            ? html`<slot name="icon" slot="secondary-icon"></slot>`
+            : nothing
+        }
         ${choose(this.status, [
           [
             ObcAlertMenuItemStatus.NoAckAlarm,
@@ -286,6 +281,6 @@ export class ObcAlertMenuItem extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'ob-alert-menu-item': ObcAlertMenuItem;
+    'obc-alert-menu-item': ObcAlertMenuItem;
   }
 }

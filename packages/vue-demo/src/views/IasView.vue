@@ -1,164 +1,158 @@
 <template>
-  <div class="container">
-    <!-- From tank 1 to pump -->
-    <ObcVerticalLine
-      :medium="fill"
-      :type="lineType"
-      :length="2.5"
-      style="top: calc(24px * 16.5); left: calc(24px * 6)"
-    >
-    </ObcVerticalLine>
-    <ObcCornerLine
-      :direction="CornerLineDirection.topRight"
-      :medium="fill"
-      :type="lineType"
-      style="top: calc(24px * 19.5); left: calc(24px * 6)"
-    ></ObcCornerLine>
-    <ObcHorizontalLine
-      :medium="fill"
-      :type="lineType"
-      :length="2.5"
-      style="top: calc(24px * 19.5); left: calc(24px * 6.5)"
-    ></ObcHorizontalLine>
+  <div class="scroll-box">
+    <div class="container">
+      <!-- From tank 1 to pump -->
+      <ObcVerticalLine
+        :medium="fill"
+        :type="lineType"
+        :length="2.5"
+        style="top: calc(24px * 16.5); left: calc(24px * 6)"
+      >
+      </ObcVerticalLine>
+      <ObcCornerLine
+        :direction="CornerLineDirection.topRight"
+        :medium="fill"
+        :type="lineType"
+        style="top: calc(24px * 19.5); left: calc(24px * 6)"
+      ></ObcCornerLine>
+      <ObcHorizontalLine
+        :medium="fill"
+        :type="lineType"
+        :length="2.5"
+        style="top: calc(24px * 19.5); left: calc(24px * 6.5)"
+      ></ObcHorizontalLine>
 
-    <!-- Tank 1 -->
-    <ObcAutomationTank
-      :value="tank1"
-      :medium="fill"
-      :max="tank1Max"
-      :trend="tank1Trend"
-      :show-trend-symbol="true"
-      :type="TankType.atmospheric"
-      :positioning="TankPositioning.point"
-      style="top: 72px; left: calc(24px * 6)"
-    >
-    </ObcAutomationTank>
+      <!-- Tank 1 -->
+      <ObcAutomationTank
+        :value="tank1"
+        :medium="fill"
+        :max="tank1Max"
+        :trend="tank1Trend"
+        :show-trend-symbol="true"
+        :type="TankType.atmospheric"
+        :positioning="TankPositioning.point"
+        style="top: 72px; left: calc(24px * 6)"
+      >
+      </ObcAutomationTank>
 
-    <!-- From pump to three-way valve -->
-    <ObcHorizontalLine
-      :medium="fill"
-      :type="lineType"
-      :length="6.5"
-      style="top: calc(24px * 19.5); left: calc(24px * 8)"
-    >
-    </ObcHorizontalLine>
+      <!-- From pump to three-way valve -->
+      <ObcHorizontalLine
+        :medium="fill"
+        :type="lineType"
+        :length="6.5"
+        style="top: calc(24px * 19.5); left: calc(24px * 8)"
+      >
+      </ObcHorizontalLine>
 
-    <!-- Pump -->
-    <ObcAutomationButton
-      :variant="buttonVariant"
-      :state="motorOn ? AutomationButtonState.open : AutomationButtonState.closed"
-      :direction="
-        motorOn ? AutomationButtonDirection.forward : AutomationButtonDirection.forwardStopped
-      "
-      style="top: calc(24px * 19.5); left: calc(24px * 8)"
-    >
-      <template #icon>
-        <ObiPumpOnHorisontal v-if="motorOn" use-css-color></ObiPumpOnHorisontal>
-        <ObiPumpOffHorisontal v-else use-css-color></ObiPumpOffHorisontal>
-      </template>
-      <template #icon-silhouette>
-        <ObiPumpOnHorisontal v-if="motorOn" use-css-color></ObiPumpOnHorisontal>
-        <ObiPumpOffHorisontal v-else use-css-color></ObiPumpOffHorisontal>
-      </template>
-    </ObcAutomationButton>
+      <!-- Pump -->
+      <ObcAutomationButton
+        :variant="buttonVariant"
+        :state="motorOn ? AutomationButtonState.open : AutomationButtonState.closed"
+        :direction="
+          motorOn ? AutomationButtonDirection.forward : AutomationButtonDirection.forwardStopped
+        "
+        style="top: calc(24px * 19.5); left: calc(24px * 8)"
+      >
+        <template #icon>
+          <ObiPumpOnHorisontal v-if="motorOn" use-css-color></ObiPumpOnHorisontal>
+          <ObiPumpOffHorisontal v-else use-css-color></ObiPumpOffHorisontal>
+        </template>
+        <template #icon-silhouette>
+          <ObiPumpOnHorisontal v-if="motorOn" use-css-color></ObiPumpOnHorisontal>
+          <ObiPumpOffHorisontal v-else use-css-color></ObiPumpOffHorisontal>
+        </template>
+      </ObcAutomationButton>
 
-    <!-- From three-way valve to tank 2  -->
-    <ObcHorizontalLine
-      :medium="tank2inPipe"
-      :type="lineType"
-      :length="3"
-      style="top: calc(24px * 19.5); left: calc(24px * 15.5)"
-    ></ObcHorizontalLine>
-    <ObcCornerLine
-      :direction="CornerLineDirection.bottomLeft"
-      :medium="tank2inPipe"
-      :type="lineType"
-      style="top: calc(24px * 19.5); left: calc(24px * 19)"
-    ></ObcCornerLine>
-    <ObcVerticalLine
-      :medium="tank2inPipe"
-      :type="lineType"
-      :length="1.5"
-      style="top: calc(24px * 20); left: calc(24px * 19)"
-    ></ObcVerticalLine>
+      <!-- From three-way valve to tank 2  -->
+      <ObcHorizontalLine
+        :medium="tank2inPipe"
+        :type="lineType"
+        :length="3"
+        style="top: calc(24px * 19.5); left: calc(24px * 15.5)"
+      ></ObcHorizontalLine>
+      <ObcCornerLine
+        :direction="CornerLineDirection.bottomLeft"
+        :medium="tank2inPipe"
+        :type="lineType"
+        style="top: calc(24px * 19.5); left: calc(24px * 19)"
+      ></ObcCornerLine>
+      <ObcVerticalLine
+        :medium="tank2inPipe"
+        :type="lineType"
+        :length="1.5"
+        style="top: calc(24px * 20); left: calc(24px * 19)"
+      ></ObcVerticalLine>
 
-    <!-- From three-way valve to tank 3  -->
-    <ObcVerticalLine
-      :medium="tank3inPipe"
-      :type="lineType"
-      :length="2.5"
-      style="top: calc(24px * 17); left: calc(24px * 15)"
-    ></ObcVerticalLine>
-    <ObcCornerLine
-      :direction="CornerLineDirection.bottomRight"
-      :medium="tank3inPipe"
-      :type="lineType"
-      style="top: calc(24px * 16.5); left: calc(24px * 15)"
-    ></ObcCornerLine>
-    <ObcHorizontalLine
-      :medium="tank3inPipe"
-      :type="lineType"
-      :length="15"
-      style="top: calc(24px * 16.5); left: calc(24px * 15.5)"
-    ></ObcHorizontalLine>
-    <ObcCornerLine
-      :direction="CornerLineDirection.bottomLeft"
-      :medium="tank3inPipe"
-      :type="lineType"
-      style="top: calc(24px * 16.5); left: calc(24px * 31)"
-    ></ObcCornerLine>
-    <ObcVerticalLine
-      :medium="tank3inPipe"
-      :type="lineType"
-      :length="5"
-      style="top: calc(24px * 17); left: calc(24px * 31)"
-    >
-    </ObcVerticalLine>
+      <!-- From three-way valve to tank 3  -->
+      <ObcVerticalLine
+        :medium="tank3inPipe"
+        :type="lineType"
+        :length="2.5"
+        style="top: calc(24px * 17); left: calc(24px * 15)"
+      ></ObcVerticalLine>
+      <ObcCornerLine
+        :direction="CornerLineDirection.bottomRight"
+        :medium="tank3inPipe"
+        :type="lineType"
+        style="top: calc(24px * 16.5); left: calc(24px * 15)"
+      ></ObcCornerLine>
+      <ObcHorizontalLine
+        :medium="tank3inPipe"
+        :type="lineType"
+        :length="15"
+        style="top: calc(24px * 16.5); left: calc(24px * 15.5)"
+      ></ObcHorizontalLine>
+      <ObcCornerLine
+        :direction="CornerLineDirection.bottomLeft"
+        :medium="tank3inPipe"
+        :type="lineType"
+        style="top: calc(24px * 16.5); left: calc(24px * 31)"
+      ></ObcCornerLine>
+      <ObcVerticalLine
+        :medium="tank3inPipe"
+        :type="lineType"
+        :length="5"
+        style="top: calc(24px * 17); left: calc(24px * 31)"
+      >
+      </ObcVerticalLine>
 
-    <ObcAutomationButton
-      style="top: calc(24px * 19.5); left: calc(24px * 15)"
-      :variant="buttonVariant"
-    >
-      <template #icon>
-        <obc-valve-analog-three-way-icon
-          :value="valve1"
-          :value2="valve2"
-        ></obc-valve-analog-three-way-icon>
-      </template>
-      <template #icon-silhouette>
-        <obc-valve-analog-three-way-icon
-          :value="valve1"
-          :value2="valve2"
-        ></obc-valve-analog-three-way-icon>
-      </template>
-    </ObcAutomationButton>
-    <ObcAutomationTank
-      tag="#002"
-      :value="tank2"
-      :medium="fill"
-      :max="tank2Max"
-      :trend="tank2Trend"
-      :show-trend-symbol="true"
-      :type="TankType.pressurized"
-      :chart-mode="TankChartMode.graphAndBar"
-      :chart-data="tank2History"
-      :positioning="TankPositioning.point"
-      style="top: calc(24px * 21.5); left: calc(24px * 19)"
-    >
-    </ObcAutomationTank>
-    <ObcAutomationTank
-      tag="#003"
-      :value="tank3"
-      :medium="fill"
-      :max="tank3Max"
-      :trend="tank3Trend"
-      :show-trend-symbol="true"
-      :type="TankType.generic"
-      :chart-mode="TankChartMode.graph"
-      :chart-data="tank3History"
-      :positioning="TankPositioning.point"
-      style="top: calc(24px * 21.5); left: calc(24px * 31)"
-    ></ObcAutomationTank>
+      <ObcAnalogThreewayValve
+        style="top: calc(24px * 19.5); left: calc(24px * 15)"
+        :variant="valveVariant"
+        :orientation="ThreewayValveOrientation.top"
+        :open1="valve1"
+        :open2="valve2"
+        :open3="100"
+        :show-readout-stack="false"
+      ></ObcAnalogThreewayValve>
+      <ObcAutomationTank
+        tag="#002"
+        :value="tank2"
+        :medium="fill"
+        :max="tank2Max"
+        :trend="tank2Trend"
+        :show-trend-symbol="true"
+        :type="TankType.pressurized"
+        :chart-mode="TankChartMode.graphAndBar"
+        :chart-data="tank2History"
+        :positioning="TankPositioning.point"
+        style="top: calc(24px * 21.5); left: calc(24px * 19)"
+      >
+      </ObcAutomationTank>
+      <ObcAutomationTank
+        tag="#003"
+        :value="tank3"
+        :medium="fill"
+        :max="tank3Max"
+        :trend="tank3Trend"
+        :show-trend-symbol="true"
+        :type="TankType.generic"
+        :chart-mode="TankChartMode.graph"
+        :chart-data="tank3History"
+        :positioning="TankPositioning.point"
+        style="top: calc(24px * 21.5); left: calc(24px * 31)"
+      ></ObcAutomationTank>
+    </div>
   </div>
 </template>
 
@@ -180,10 +174,13 @@ import { CornerLineDirection } from '@oicl/openbridge-webcomponents/dist/automat
 import ObcAutomationButton from '@oicl/openbridge-webcomponents-vue/automation/automation-button/ObcAutomationButton.vue'
 import {
   AutomationButtonDirection,
-  AutomationButtonState
+  AutomationButtonState,
+  AutomationButtonVariant
 } from '@oicl/openbridge-webcomponents/dist/automation/automation-button/automation-button'
 
-import ObcValveAnalogThreeWayIcon from '@oicl/openbridge-webcomponents-vue/automation/valve-analog-three-way-icon/ObcValveAnalogThreeWayIcon.vue'
+import ObcAnalogThreewayValve from '@oicl/openbridge-webcomponents-vue/automation/analog-threeway-valve/ObcAnalogThreewayValve.vue'
+import { AnalogThreewayValveVariant } from '@oicl/openbridge-webcomponents/dist/automation/analog-threeway-valve/analog-threeway-valve'
+import { ThreewayValveOrientation } from '@oicl/openbridge-webcomponents/dist/automation/threeway-valve-shared/threeway-valve-shared'
 import ObiPumpOnHorisontal from '@oicl/openbridge-webcomponents-vue/icons/ObiPumpOnHorizontal.vue'
 import ObiPumpOffHorisontal from '@oicl/openbridge-webcomponents-vue/icons/ObiPumpOffHorizontal.vue'
 
@@ -195,6 +192,10 @@ const lineType = LineType.fluid
 
 const demoConfigStore = useDemoConfigStore()
 const buttonVariant = demoConfigStore.iasVariants
+const valveVariant =
+  buttonVariant === AutomationButtonVariant.flat
+    ? AnalogThreewayValveVariant.flat
+    : AnalogThreewayValveVariant.regular
 
 const tank1Max = 5_000
 const tank1 = ref(1_000)
@@ -260,6 +261,12 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.scroll-box {
+  width: 100%;
+  height: 100%; /* keeps the horizontal scrollbar at the page bottom */
+  overflow: auto; /* the fixed 1000px diagram pans here instead of widening the page */
+}
+
 .container {
   width: 1000px;
   height: 1000px;

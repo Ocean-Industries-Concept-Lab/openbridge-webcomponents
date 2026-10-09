@@ -50,7 +50,11 @@ const meta: Meta<ObcAttachmentListItem> = {
         <obc-tag slot="tag" label="Label" hasIcon>
           <obi-placeholder></obi-placeholder>
         </obc-tag>
-        <obc-icon-button slot="trailing-action" variant="flat">
+        <obc-icon-button
+          slot="trailing-action"
+          variant="flat"
+          aria-label="Open"
+        >
           <obi-placeholder></obi-placeholder>
         </obc-icon-button>
       </obc-attachment-list-item>
@@ -115,7 +119,11 @@ export const AllStates: Story = {
         showDivider
       >
         <obi-placeholder slot="leading-icon"></obi-placeholder>
-        <obc-icon-button slot="trailing-action" variant="flat">
+        <obc-icon-button
+          slot="trailing-action"
+          variant="flat"
+          aria-label="Open"
+        >
           <obi-placeholder></obi-placeholder>
         </obc-icon-button>
       </obc-attachment-list-item>
@@ -134,7 +142,11 @@ export const AllStates: Story = {
         <obc-tag slot="tag" label="Label" hasIcon>
           <obi-placeholder></obi-placeholder>
         </obc-tag>
-        <obc-icon-button slot="trailing-action" variant="flat">
+        <obc-icon-button
+          slot="trailing-action"
+          variant="flat"
+          aria-label="Open"
+        >
           <obi-placeholder></obi-placeholder>
         </obc-icon-button>
       </obc-attachment-list-item>
@@ -148,7 +160,11 @@ export const AllStates: Story = {
         amplified
       >
         <obi-placeholder slot="leading-icon"></obi-placeholder>
-        <obc-icon-button slot="trailing-action" variant="flat">
+        <obc-icon-button
+          slot="trailing-action"
+          variant="flat"
+          aria-label="Open"
+        >
           <obi-placeholder></obi-placeholder>
         </obc-icon-button>
       </obc-attachment-list-item>

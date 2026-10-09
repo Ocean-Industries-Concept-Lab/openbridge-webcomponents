@@ -1,0 +1,15 @@
+:host {
+  display: inline-block;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--app-components-alert-counter-item-badge-spacing);
+}
+
+obi-alerts-shelf {
+  display: block; /* fills the badge icon box that sizes the badge-icon slot */
+  width: 100%;
+  height: 100%;
+}

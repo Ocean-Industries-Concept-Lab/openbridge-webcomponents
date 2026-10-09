@@ -19,6 +19,7 @@ export {ObcPoiObjectState as ObcPoiObjectAtonState};
  * Inherits all selection frame, header, data, and alert behavior from
  * `obc-poi-button`.
  *
+ * @availableWhen atonInteractive atonState!=overlapped && (atonState!=null || value!=overlapped)
  * @slot - Icon content forwarded to the inner aton diamond.
  * @slot header - Optional header content.
  * @slot relation - Optional relation icon/content in data mode.
@@ -35,7 +36,6 @@ export class ObcPoiButtonAton extends ObcPoiButton {
   @property({type: String, attribute: 'aton-state'})
   atonState: ObcPoiObjectState | null = null;
 
-  /** @availableWhen atonState!=overlapped && (atonState!=null || value!=overlapped) */
   @property({type: Boolean, attribute: 'aton-interactive'})
   atonInteractive = false;
 

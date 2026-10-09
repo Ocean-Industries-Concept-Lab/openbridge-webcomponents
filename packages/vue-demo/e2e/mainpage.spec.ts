@@ -1,26 +1,39 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test'
 
-test('Has page title', async ({ page }) => {
-  await page.goto('/');
-  const appName = "Demo";
-  let pageName = "Conning";
-  expect(page.locator('header .title')).toHaveText(appName);
-  expect(page.locator('header .page-name')).toHaveText(pageName);
+// The demo opens with its top bar inactive: title, alert button and clock
+// only. A pointer move or a key press wakes it.
+async function wake(page: Page): Promise<void> {
+  await page.mouse.move(10, 300)
+  await page.mouse.move(20, 320)
+}
 
-  await page.locator('.menu-button').first().click();
-  await page.getByRole('link', { name: 'Azimuth Clock' }).locator('a').click();
+test('names the app and the page, and navigates from the menu', async ({ page }) => {
+  await page.goto('/')
+  await expect(page.locator('header .title')).toHaveText('OpenBridge')
+  await expect(page.locator('header .page-name')).toHaveText('Conning PSV')
 
-  pageName = "Clock";
-  await expect(page.locator('header .title')).toHaveText(appName);
-  await expect(page.locator('header .page-name')).toHaveText(pageName);
-});
+  await wake(page)
+  await page.getByRole('banner').getByRole('button', { name: 'Menu' }).click()
+  await page.locator('.navigation-menu').getByText('Conning ferry').click()
 
-test('Can ack alerts', async ({ page }) => {
-  await page.goto('/');
-  await expect(page.getByText('GPS 1 Signal Lost').first()).toBeVisible();
-  await page.getByRole('button', { name: '1 1', exact: true }).click();
-  expect(await page.getByText('GPS 1 Signal Lost').count()).toBe(2);
-  await page.getByRole('main').getByRole('button', { name: 'ACK', exact: true }).click();
-  await expect(page.getByText('GPS 1 Signal Lost').first()).not.toBeVisible();
-  expect(await page.getByText('No active alerts').count()).toBe(2);
-});
+  await expect(page).toHaveURL(/\/ferry$/)
+  await expect(page.locator('header .page-name')).toHaveText('Conning ferry')
+})
+
+test('acknowledges a simulated alert from the alert menu', async ({ page }) => {
+  await page.goto('/')
+  // S starts the simulated alerts; the first warning arrives after 2 s.
+  await page.keyboard.press('s')
+  await page
+    .getByRole('banner')
+    .getByRole('button', { name: /^Alerts/ })
+    .click()
+
+  const warning = page.locator('.alert-menu').getByRole('button', { name: /^High Voltage Warning/ })
+  await expect(warning).toBeVisible({ timeout: 10_000 })
+  await warning.getByRole('button', { name: 'ACK', exact: true }).click()
+
+  await expect(warning.getByRole('button', { name: 'ACK', exact: true })).toHaveCount(0)
+  await page.getByRole('tab', { name: 'Unacked' }).click()
+  await expect(warning).toBeHidden()
+})

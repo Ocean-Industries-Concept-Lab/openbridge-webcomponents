@@ -1,4 +1,4 @@
-import { test } from '@playwright/test'
+import { test, expect } from '@playwright/test'
 import { freezeAndStub, gotoSettled, openOverlay, snapshot } from './helpers'
 
 // Visual smoke tests for the vue-demo screens.
@@ -17,7 +17,11 @@ const routes: { name: string; url: string; waitFor: string }[] = [
   { name: 'conning-psv', url: '/', waitFor: 'header' },
   { name: 'conning-ferry', url: '/ferry', waitFor: 'header' },
   { name: 'ias', url: '/ias', waitFor: '.container' },
-  { name: 'small-screen-azimuth-thruster', url: '/small-screen/azimuth-thruster', waitFor: 'header' },
+  {
+    name: 'small-screen-azimuth-thruster',
+    url: '/small-screen/azimuth-thruster',
+    waitFor: 'header'
+  },
   { name: 'screen-control-apps', url: '/screen-control/apps', waitFor: 'header' },
   { name: 'icons', url: '/icons', waitFor: '.icon-list-container' },
   { name: 'zoom-calibrate', url: '/zoom-calibrate', waitFor: 'header' },
@@ -44,14 +48,22 @@ for (const r of routes) {
 test('overlay: command menu open', async ({ page }) => {
   await freezeAndStub(page)
   await gotoSettled(page, '/', 'header')
-  await openOverlay(page, (p) => p.locator('.command-button button').first().click(), '.command-menu')
+  await openOverlay(
+    page,
+    (p) => p.locator('.command-button button').first().click(),
+    '.command-menu'
+  )
   await snapshot(page, 'overlay-command-menu.png')
 })
 
 test('overlay: alert menu open', async ({ page }) => {
   await freezeAndStub(page)
   await gotoSettled(page, '/', 'header')
-  await openOverlay(page, (p) => p.locator('obc-alert-button button').first().click(), '.alert-menu')
+  await openOverlay(
+    page,
+    (p) => p.locator('obc-alert-button button').first().click(),
+    '.alert-menu'
+  )
   await snapshot(page, 'overlay-alert-menu.png')
 })
 
@@ -60,4 +72,37 @@ test('overlay: depth dialog open', async ({ page }) => {
   await gotoSettled(page, '/', 'header')
   await openOverlay(page, (p) => p.locator('.depth').first().click(), '.dialog-content')
   await snapshot(page, 'overlay-depth-dialog.png')
+})
+
+// Phone-width pass over the screens that carry a mobile layout: the conning
+// grid stacks its cards, the top bar keeps a full clock, screen tiles wrap.
+// /ecdis is skipped here for the same reason as above.
+test.describe('mobile', () => {
+  test.use({ viewport: { width: 390, height: 844 } })
+
+  const mobileRoutes: { name: string; url: string; waitFor: string }[] = [
+    { name: 'mobile-conning-psv', url: '/', waitFor: 'header' },
+    { name: 'mobile-ias', url: '/ias', waitFor: '.container' },
+    { name: 'mobile-screen-control-apps', url: '/screen-control/apps', waitFor: 'header' },
+    { name: 'mobile-conning-alert', url: '/conning/alert', waitFor: 'header' }
+  ]
+
+  for (const r of mobileRoutes) {
+    test(`route: ${r.name}`, async ({ page }) => {
+      await freezeAndStub(page)
+      await gotoSettled(page, r.url, r.waitFor)
+      await snapshot(page, `${r.name}.png`)
+    })
+  }
+
+  // The top bar only shows its buttons once the demo leaves the inactive state,
+  // so wake it with a pointer move before capturing the fitted bar.
+  test('route: mobile-conning-psv-active', async ({ page }) => {
+    await freezeAndStub(page)
+    await gotoSettled(page, '/', 'header')
+    await page.mouse.move(10, 300)
+    await page.mouse.move(20, 320)
+    await expect(page.locator('header .menu-button').first()).toBeVisible()
+    await snapshot(page, 'mobile-conning-psv-active.png')
+  })
 })

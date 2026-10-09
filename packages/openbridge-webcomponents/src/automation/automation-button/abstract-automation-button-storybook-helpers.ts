@@ -1,9 +1,4 @@
-import {
-  ObcAlertFrameStatus,
-  ObcAlertFrameThickness,
-  ObcAlertFrameType,
-  ObcAlertFrameMode,
-} from '../../components/alert-frame/alert-frame.js';
+import {argTypesAlertFrame} from '../../components/alert-frame/alert-frame-storybook-helpers.js';
 import {MotorizedVariant} from './abstract-automation-button-motorized.js';
 import {
   AutomationButtonDirection,
@@ -31,22 +26,7 @@ export const argTypesAbstractAutomationButton = {
     options: ['small', 'regular', 'enhanced'],
     control: {type: 'radio'},
   },
-  alertFrameType: {
-    options: Object.values(ObcAlertFrameType),
-    control: {type: 'radio'},
-  },
-  alertFrameMode: {
-    options: Object.values(ObcAlertFrameMode),
-    control: {type: 'radio'},
-  },
-  alertFrameThickness: {
-    options: Object.values(ObcAlertFrameThickness),
-    control: {type: 'radio'},
-  },
-  alertFrameStatus: {
-    options: Object.values(ObcAlertFrameStatus),
-    control: {type: 'radio'},
-  },
+  ...argTypesAlertFrame,
   positioning: {
     options: Object.values(AutomationButtonPositioning),
     control: {type: 'select'},
@@ -88,6 +68,7 @@ export const argTypesAbstractAutomationButtonPassiveRound = {
 
 export const argTypesAbstractAutomationButtonPassiveSquare = {
   ...argTypesAbstractAutomationButton,
+  on: {table: {disable: true}, control: false},
   variant: {
     options: ['square', 'flat'],
     control: {type: 'radio'},
@@ -100,6 +81,7 @@ export const argTypesAbstractAutomationButtonPassiveSquare = {
 
 export const argTypesAbstractAutomationButtonMotorized = {
   ...argTypesAbstractAutomationButton,
+  on: {table: {disable: true}, control: false},
   speedInPercent: {
     control: {type: 'range', min: 0, max: 100, step: 1},
     description: 'Deprecated, use `speed` together with `speedUnit` instead.',

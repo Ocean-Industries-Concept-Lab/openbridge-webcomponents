@@ -4,10 +4,12 @@ import {ObcAccordionCard, AccordionSize, Position} from './accordion-card.js';
 import './accordion-card.js';
 import '../../icons/icon-placeholder.js';
 import {
+  ObcAlertFrameMode,
   ObcAlertFrameStatus,
   ObcAlertFrameThickness,
   ObcAlertFrameType,
 } from '../alert-frame/alert-frame.js';
+import {argTypesAlertFrame} from '../alert-frame/alert-frame-storybook-helpers.js';
 
 const meta: Meta<ObcAccordionCard> = {
   title: 'UI Components/Sections/Accordion Card',
@@ -54,18 +56,7 @@ const meta: Meta<ObcAccordionCard> = {
       control: {type: 'select'},
       options: Object.values(Position),
     },
-    alertFrameType: {
-      control: {type: 'select'},
-      options: Object.values(ObcAlertFrameType),
-    },
-    alertFrameThickness: {
-      control: {type: 'select'},
-      options: Object.values(ObcAlertFrameThickness),
-    },
-    alertFrameStatus: {
-      control: {type: 'select'},
-      options: Object.values(ObcAlertFrameStatus),
-    },
+    ...argTypesAlertFrame,
   },
   args: {
     cardTitle: 'Title',
@@ -82,6 +73,9 @@ const meta: Meta<ObcAccordionCard> = {
     alertFrameType: ObcAlertFrameType.Regular,
     alertFrameThickness: ObcAlertFrameThickness.Small,
     alertFrameStatus: ObcAlertFrameStatus.Alarm,
+    alertFrameMode: ObcAlertFrameMode.ackedActive,
+    showAlertCategoryIcon: true,
+    showAlertIcon: false,
   },
   render: (args) => html`
     <div style="width: 320px;">
@@ -100,6 +94,9 @@ const meta: Meta<ObcAccordionCard> = {
         .alertFrameType="${args.alertFrameType}"
         .alertFrameThickness="${args.alertFrameThickness}"
         .alertFrameStatus="${args.alertFrameStatus}"
+        .alertFrameMode="${args.alertFrameMode}"
+        .showAlertCategoryIcon="${args.showAlertCategoryIcon}"
+        .showAlertIcon="${args.showAlertIcon}"
       >
         <div slot="expanded-content">
           Lorem Ipsum is simply dummy text of the printing and typesetting
@@ -208,6 +205,9 @@ export const WithAlert: Story = {
         .alertFrameType="${args.alertFrameType}"
         .alertFrameThickness="${args.alertFrameThickness}"
         .alertFrameStatus="${args.alertFrameStatus}"
+        .alertFrameMode="${args.alertFrameMode}"
+        .showAlertCategoryIcon="${args.showAlertCategoryIcon}"
+        .showAlertIcon="${args.showAlertIcon}"
       >
         <div slot="expanded-content">Content with alert frame overlay</div>
         <span slot="alert-icon"><obi-placeholder></obi-placeholder></span>
@@ -287,6 +287,9 @@ export const Disabled: Story = {
         .alertFrameType="${args.alertFrameType}"
         .alertFrameThickness="${args.alertFrameThickness}"
         .alertFrameStatus="${args.alertFrameStatus}"
+        .alertFrameMode="${args.alertFrameMode}"
+        .showAlertCategoryIcon="${args.showAlertCategoryIcon}"
+        .showAlertIcon="${args.showAlertIcon}"
       >
       </obc-accordion-card>
     </div>

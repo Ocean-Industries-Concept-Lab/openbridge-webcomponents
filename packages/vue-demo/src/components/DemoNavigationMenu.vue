@@ -31,6 +31,7 @@ interface Props {
 
 interface Emits {
   (e: 'hideAll'): void
+  (e: 'close'): void
 }
 
 const props = defineProps<Props>()
@@ -48,6 +49,10 @@ function hideAll() {
   emit('hideAll')
 }
 
+/* Only the full-width menu covers the page. The narrow rails sit beside the
+   content, so there is nothing to close. */
+const isOverlay = computed(() => props.navigationMenuVariant === ObcNavigationMenuVariant.Full)
+
 function openVendorLink() {
   window.open('https://www.oicl.no/', '_blank')
 }
@@ -57,9 +62,12 @@ function openVendorLink() {
   <NavigationMenu
     v-show="!props.inactive"
     v-if="props.showNavigationMenu"
+    :soft-dismiss="isOverlay"
+    open
     :variant="props.navigationMenuVariant"
     :small-screen="props.smallScreen"
     class="navigation-menu"
+    @close="emit('close')"
   >
     <template v-if="app" #main>
       <DemoRouterLink

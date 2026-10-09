@@ -95,32 +95,34 @@ const renderSequenceModal = (args: SequenceModalStoryArgs) => {
             Instance swap with custom components
           </div>
         </div>
-        ${args.hasActions
-          ? html`
-              <obc-button
-                slot="actions"
-                variant="normal"
-                .showLeadingIcon=${true}
-                @click=${(event: PointerEvent) => onAction1Click(event)}
-              >
-                <span slot="leading-icon">
-                  <obi-placeholder></obi-placeholder>
-                </span>
-                Label
-              </obc-button>
-              <obc-button
-                slot="actions"
-                variant="raised"
-                .showLeadingIcon=${true}
-                @click=${(event: PointerEvent) => onAction2Click(event)}
-              >
-                <span slot="leading-icon">
-                  <obi-placeholder></obi-placeholder>
-                </span>
-                Label
-              </obc-button>
-            `
-          : nothing}
+        ${
+          args.hasActions
+            ? html`
+                <obc-button
+                  slot="actions"
+                  variant="normal"
+                  .showLeadingIcon=${true}
+                  @click=${(event: PointerEvent) => onAction1Click(event)}
+                >
+                  <span slot="leading-icon">
+                    <obi-placeholder></obi-placeholder>
+                  </span>
+                  Label
+                </obc-button>
+                <obc-button
+                  slot="actions"
+                  variant="raised"
+                  .showLeadingIcon=${true}
+                  @click=${(event: PointerEvent) => onAction2Click(event)}
+                >
+                  <span slot="leading-icon">
+                    <obi-placeholder></obi-placeholder>
+                  </span>
+                  Label
+                </obc-button>
+              `
+            : nothing
+        }
       </obc-sequence-modal>
     </div>
   `;

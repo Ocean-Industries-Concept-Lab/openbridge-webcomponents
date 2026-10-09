@@ -110,6 +110,18 @@ export type ObcToggleButtonVerticalGroupChangeEvent = CustomEvent<{
  * </obc-toggle-button-vertical-group>
  * ```
  *
+ * @property value - The value of the currently selected option.
+ *   Setting this property programmatically updates the selection. If the value does not match any enabled option, the group selects the first available enabled option.
+ * @property type - Visual style for all options in the group.
+ *   One of: "flat", "regular", "normal".
+ * @property hugWidth - If true, the group shrinks to fit its content width instead of stretching to fill its container.
+ *   Defaults to false.
+ * @property disabled - Disables the entire group and all contained options.
+ *   When set to true, all options become non-interactive, regardless of their individual disabled state.
+ *   Defaults to false.
+ * @property allowEmptySelection - Lets the group hold no selection: a `value` matching no enabled option, or
+ *   a selected option that becomes disabled, clears the selection instead of
+ *   falling back to the first enabled option.
  * @slot - Place one or more `<obc-toggle-button-vertical-option>` elements here to define the selectable options.
  * @fires {CustomEvent<{value: string, previousValue: string}>} value - Fired when the selected value changes.
  * @fires {CustomEvent<{value: string}>} change - Fired when the selected value changes by user interaction.
@@ -117,45 +129,14 @@ export type ObcToggleButtonVerticalGroupChangeEvent = CustomEvent<{
  */
 @customElement('obc-toggle-button-vertical-group')
 export class ObcToggleButtonVerticalGroup extends LitElement {
-  /**
-   * The value of the currently selected option.
-   *
-   * Setting this property programmatically updates the selection. If the value does not match any enabled option, the group selects the first available enabled option.
-   */
   @property({type: String}) value = '';
 
-  /**
-   * Visual style for all options in the group.
-   *
-   * One of: "flat", "regular", "normal".
-   */
   @property({type: String}) type = ObcToggleButtonVerticalOptionType.regular;
 
-  /**
-   * If true, the group shrinks to fit its content width instead of stretching to fill its container.
-   *
-   * Defaults to false.
-   */
   @property({type: Boolean}) hugWidth = false;
 
-  /**
-   * If true, a `value` that does not match any enabled option leaves the group with no option selected
-   * instead of defaulting to the first enabled option.
-   *
-   * This also applies when the currently selected option becomes disabled: the group clears its selection
-   * rather than falling back to another option.
-   *
-   * Defaults to false (the first enabled option is selected when the value does not match).
-   */
   @property({type: Boolean}) allowEmptySelection = false;
 
-  /**
-   * Disables the entire group and all contained options.
-   *
-   * When set to true, all options become non-interactive, regardless of their individual disabled state.
-   *
-   * Defaults to false.
-   */
   @property({type: Boolean, reflect: true}) disabled = false;
 
   @queryAssignedElements({selector: 'obc-toggle-button-vertical-option'})

@@ -289,8 +289,9 @@ const renderDiagram = ({
               .stepStyle=${step.stepStyle ?? SequenceStyle.regular}
               .stepValue=${step.value}
               .showStepInputConnector=${showInputConnector ?? index !== 0}
-              .showStepOutputConnector=${showOutputConnector ??
-              index !== steps.length - 1}
+              .showStepOutputConnector=${
+                showOutputConnector ?? index !== steps.length - 1
+              }
               .stepHasIcon=${step.stepHasIcon ?? false}
             ></obc-sequence-item>
           </div>
@@ -338,10 +339,12 @@ const renderStepSequence = (
             .hasIcon=${showIcon}
           >
             ${iconTemplate}
-            ${step.stepLabel ??
-            ((step.stepStyle ?? SequenceStyle.regular) === SequenceStyle.point
-              ? '1'
-              : 'Label')}
+            ${
+              step.stepLabel ??
+              ((step.stepStyle ?? SequenceStyle.regular) === SequenceStyle.point
+                ? '1'
+                : 'Label')
+            }
           </obc-sequence-step>
         `;
       })}

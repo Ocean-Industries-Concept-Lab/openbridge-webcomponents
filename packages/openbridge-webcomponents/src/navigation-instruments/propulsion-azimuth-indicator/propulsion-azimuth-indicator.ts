@@ -1,6 +1,12 @@
 import {LitElement, css, html, svg} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
+import {
+  degToRad,
+  normalizeAngle,
+  radToDeg,
+  clamp,
+} from '../../svghelpers/math.js';
 import {InstrumentState} from '../types.js';
 
 export enum PropulsionAzimuthIndicatorType {
@@ -11,7 +17,6 @@ export enum PropulsionAzimuthIndicatorType {
 const VIEW_SIZE = 48;
 const CX = VIEW_SIZE / 2;
 const CY = VIEW_SIZE / 2;
-const DEG_TO_RAD = Math.PI / 180;
 
 const LUBBER_PATH =
   'M4.12242 0.209381L0.0940147 5.84915C-0.142367 6.18008 0.0941955 6.63977 0.500882 6.63977H8.55769C8.96438 6.63977 9.20094 6.18008 8.96456 5.84915L4.93615 0.209381C4.73674 -0.0697936 4.32183 -0.0697937 4.12242 0.209381Z';
@@ -41,12 +46,8 @@ const BAR_MAX_CY = TRACK_H - BAR_END_INSET - BAR_HALF;
 const BAR_CENTER_NEUTRAL = (BAR_MIN_CY + BAR_MAX_CY) / 2;
 const BAR_HALF_SPAN = (BAR_MAX_CY - BAR_MIN_CY) / 2;
 
-function normalizeAngle360(angle: number): number {
-  return ((angle % 360) + 360) % 360;
-}
-
 function circlePoint(radius: number, angle: number): {x: number; y: number} {
-  const radians = (angle - 90) * DEG_TO_RAD;
+  const radians = degToRad(angle - 90);
   return {
     x: CX + radius * Math.cos(radians),
     y: CY + radius * Math.sin(radians),
@@ -60,7 +61,7 @@ function arcSegmentPath(
 ): string {
   const start = circlePoint(radius, startAngle);
   const end = circlePoint(radius, endAngle);
-  const delta = (endAngle - startAngle + 360) % 360;
+  const delta = normalizeAngle(endAngle - startAngle);
   const largeArcFlag = delta > 180 ? 1 : 0;
 
   return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} 1 ${end.x} ${end.y}`;
@@ -82,7 +83,7 @@ function topCircleSideIntersection(
   return {
     deltaX,
     y,
-    angle: Math.asin(deltaX / radius) / DEG_TO_RAD,
+    angle: radToDeg(Math.asin(deltaX / radius)),
   };
 }
 
@@ -144,7 +145,7 @@ export class ObcPropulsionAzimuthIndicator extends LitElement {
 
   private get barCenterLocalY(): number {
     const v = Number.isFinite(this.value) ? this.value : 0;
-    const clamped = Math.max(-1, Math.min(1, v));
+    const clamped = clamp(v, -1, 1);
     return BAR_CENTER_NEUTRAL + clamped * BAR_HALF_SPAN;
   }
 
@@ -278,7 +279,7 @@ export class ObcPropulsionAzimuthIndicator extends LitElement {
 
   override render() {
     const azimuth = Number.isFinite(this.azimuth) ? this.azimuth : 0;
-    const rotation = normalizeAngle360(azimuth);
+    const rotation = normalizeAngle(azimuth);
     return html`
       <svg
         viewBox="0 0 ${VIEW_SIZE} ${VIEW_SIZE}"

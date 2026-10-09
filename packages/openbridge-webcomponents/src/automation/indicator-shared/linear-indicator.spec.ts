@@ -1,29 +1,10 @@
 import {describe, it, expect} from 'vitest';
 import {
-  clampPercent,
   expandRect,
   fillHeight,
   trendPolylinePoints,
   roundedLeftRectPath,
 } from './linear-indicator.js';
-
-describe('clampPercent', () => {
-  it('clamps below 0 to 0', () => {
-    expect(clampPercent(-5)).toBe(0);
-  });
-
-  it('clamps above 100 to 100', () => {
-    expect(clampPercent(140)).toBe(100);
-  });
-
-  it('maps NaN to 0', () => {
-    expect(clampPercent(Number.NaN)).toBe(0);
-  });
-
-  it('passes through in-range values', () => {
-    expect(clampPercent(39.29)).toBeCloseTo(39.29);
-  });
-});
 
 describe('expandRect', () => {
   it('grows the rect by the amount on every side', () => {

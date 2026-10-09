@@ -8,6 +8,7 @@ import {
   ObcAlertMenuItemActionState,
   ObcAlertMenuItemStatus,
 } from './alert-menu-item.js';
+import {AlertType} from '../../types.js';
 
 const meta: Meta<ObcAlertMenuItem> = {
   title: 'Application Components/Alerts/Alert Menu Item',
@@ -21,6 +22,7 @@ const meta: Meta<ObcAlertMenuItem> = {
     status: ObcAlertMenuItemStatus.Unacknowledged,
     hasIcon: false,
     shelved: false,
+    open: false,
     secondaryActionLabel: '',
     primaryActionState: ObcAlertMenuItemActionState.Enabled,
     secondaryActionState: ObcAlertMenuItemActionState.Enabled,
@@ -33,6 +35,7 @@ const meta: Meta<ObcAlertMenuItem> = {
       .time=${args.time}
       .shelved=${args.shelved}
       .hasIcon=${args.hasIcon}
+      .open=${args.open}
       .status=${args.status}
       .secondaryActionLabel=${args.secondaryActionLabel}
       .primaryActionState=${args.primaryActionState}
@@ -53,6 +56,7 @@ const meta: Meta<ObcAlertMenuItem> = {
     },
     hasIcon: {control: 'boolean'},
     shelved: {control: 'boolean'},
+    open: {control: 'boolean'},
     secondaryActionLabel: {control: 'text'},
     primaryActionState: {
       control: 'select',
@@ -67,6 +71,27 @@ const meta: Meta<ObcAlertMenuItem> = {
 
 export default meta;
 type Story = StoryObj<ObcAlertMenuItem>;
+
+const renderInNarrowContainer: Story['render'] = (args) => html`
+  <div style="width: 480px">
+    <obc-alert-menu-item
+      .title=${args.title}
+      .description=${args.description}
+      .day=${args.day}
+      .time=${args.time}
+      .shelved=${args.shelved}
+      .hasIcon=${args.hasIcon}
+      .open=${args.open}
+      .status=${args.status}
+      .secondaryActionLabel=${args.secondaryActionLabel}
+      .primaryActionState=${args.primaryActionState}
+      .secondaryActionState=${args.secondaryActionState}
+    >
+      <obc-alert-icon slot="alert-icon" type="alarm" active></obc-alert-icon>
+      ${args.hasIcon ? html`<obi-engine slot="icon"></obi-engine>` : nothing}
+    </obc-alert-menu-item>
+  </div>
+`;
 
 export const Default: Story = {
   args: {},
@@ -103,6 +128,27 @@ export const NoAckWarning: Story = {
   },
 };
 
+export const RectifiedUnacknowledged: Story = {
+  args: {
+    status: ObcAlertMenuItemStatus.RectifiedUnacknowledged,
+  },
+  render: (args) => html`
+    <obc-alert-menu-item
+      .title=${args.title}
+      .description=${args.description}
+      .time=${args.time}
+      .status=${args.status}
+      .primaryActionState=${args.primaryActionState}
+    >
+      <obc-alert-icon
+        slot="alert-icon"
+        .alertType=${AlertType.Alarm}
+        .active=${false}
+      ></obc-alert-icon>
+    </obc-alert-menu-item>
+  `,
+};
+
 export const WithSecondaryAction: Story = {
   args: {
     secondaryActionLabel: 'Mute',
@@ -121,4 +167,50 @@ export const PrimaryActionNone: Story = {
     secondaryActionLabel: 'Mute',
     primaryActionState: ObcAlertMenuItemActionState.None,
   },
+};
+
+export const OpenWithLongText: Story = {
+  args: {
+    open: true,
+    title:
+      'A title that is far too long to fit on a single line in a narrow list',
+    description:
+      'A description that is long enough to span several lines once the item is expanded, so the text has to wrap inside the available width instead of making the item wider.',
+  },
+  render: renderInNarrowContainer,
+};
+
+export const OpenWithLongWord: Story = {
+  args: {
+    open: true,
+    title: 'Averylongunbrokenwordthatdoesnotfitthecolumnwidth',
+    description:
+      'A description ending in averylongunbrokenwordthatdoesnotfitthecolumnwidth',
+  },
+  render: renderInNarrowContainer,
+};
+
+export const OpenShelvedWithLongText: Story = {
+  args: {
+    open: true,
+    shelved: true,
+    title:
+      'A title that is far too long to fit on a single line in a narrow list',
+    description:
+      'A description that is long enough to span several lines once the item is expanded, so the text has to wrap inside the available width instead of making the item wider.',
+  },
+  render: renderInNarrowContainer,
+};
+
+export const OpenShelvedWithSecondaryAction: Story = {
+  args: {
+    open: true,
+    shelved: true,
+    secondaryActionLabel: 'Mute',
+    title:
+      'A title that is far too long to fit on a single line in a narrow list',
+    description:
+      'A description that is long enough to span several lines once the item is expanded, so the text has to wrap inside the available width instead of making the item wider.',
+  },
+  render: renderInNarrowContainer,
 };

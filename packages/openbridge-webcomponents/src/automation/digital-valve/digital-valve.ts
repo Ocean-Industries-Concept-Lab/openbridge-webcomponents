@@ -30,6 +30,10 @@ export class ObcDigitalValve extends ObcAbstractAutomationButton {
   }
 
   override get extraReadouts(): AutomationButtonReadoutStack[] {
+    if (!this.showStatus) {
+      return [];
+    }
+
     if (this.open) {
       return [
         {

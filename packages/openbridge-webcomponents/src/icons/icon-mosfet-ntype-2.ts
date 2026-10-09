@@ -15,10 +15,10 @@ export class ObiMosfetNtype2 extends LitElement {
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M9 9H11V15H9V9Z" style="fill: var(--automation-device-secondary-color)"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M4.75 18.25H1V19.75H6.25V5H4.75V18.25Z" style="fill: var(--automation-device-secondary-color)"/>
-<path d="M11 1H9V6H11V4.75H23V3.25H11V1Z" style="fill: var(--automation-device-secondary-color)"/>
-<path d="M12 12L18 8V11.25H21.25V19.25H23V20.75H11V23H9V18H11V19.25H19.75V12.75H18V16L12 12Z" style="fill: var(--automation-device-secondary-color)"/>
+<path d="M9 9H11V15H9V9Z" style="fill: var(--automation-symbol-static-background-color)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M4.75 18.25H1V19.75H6.25V5H4.75V18.25Z" style="fill: var(--automation-symbol-static-background-color)"/>
+<path d="M11 1H9V6H11V4.75H23V3.25H11V1Z" style="fill: var(--automation-symbol-static-background-color)"/>
+<path d="M12 12L18 8V11.25H21.25V19.25H23V20.75H11V23H9V18H11V19.25H19.75V12.75H18V16L12 12Z" style="fill: var(--automation-symbol-static-background-color)"/>
 </svg>
 `;
 

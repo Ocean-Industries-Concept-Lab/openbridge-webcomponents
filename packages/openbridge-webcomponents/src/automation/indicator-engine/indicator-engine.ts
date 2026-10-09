@@ -26,6 +26,7 @@ const VERTICAL_CYLINDER_CENTERS = [12, 20, 28, 36];
  * Use as a static engine presence/state glyph in dashboards and lists.
  * It carries no numeric value; pair it with readouts or other indicators
  * when quantities must be shown.
+ * @beta
  */
 @customElement('obc-indicator-engine')
 export class ObcIndicatorEngine extends LitElement {
@@ -61,9 +62,11 @@ export class ObcIndicatorEngine extends LitElement {
   override render() {
     return html`
       <svg viewBox="0 0 48 48" aria-hidden="true">
-        ${this.direction === IndicatorDirection.horizontal
-          ? this.renderHorizontal()
-          : this.renderVertical()}
+        ${
+          this.direction === IndicatorDirection.horizontal
+            ? this.renderHorizontal()
+            : this.renderVertical()
+        }
       </svg>
     `;
   }

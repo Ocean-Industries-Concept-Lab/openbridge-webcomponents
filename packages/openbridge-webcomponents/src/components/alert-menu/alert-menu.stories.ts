@@ -1,4 +1,3 @@
-// eslint-disable lit/no-unknown-slot
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcAckAllVisibleClickEvent, ObcAlertMenu} from './alert-menu.js';
 import './alert-menu.js';

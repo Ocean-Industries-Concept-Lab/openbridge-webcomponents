@@ -11,7 +11,7 @@ import {IndicatorDirection} from '../indicator-shared/linear-indicator.js';
 const meta = {
   title: 'Automation/Indicators/Indicator Battery',
   component: 'obc-indicator-battery',
-  tags: ['autodocs', '6.0'],
+  tags: ['autodocs', '6.0', 'beta'],
   args: {
     direction: IndicatorDirection.vertical,
     variant: IndicatorBatteryVariant.bar,

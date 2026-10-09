@@ -96,13 +96,15 @@ export const Default: Story = {
       .state=${args.state}
       .interactive=${args.interactive}
     >
-      ${args.type === ObcPoiObjectVesselType.Indicator
-        ? html`<obi-vessel-type-psv-filled
-            useCssColor
-          ></obi-vessel-type-psv-filled>`
-        : args.type === ObcPoiObjectVesselType.SpeedRot
-          ? speedRotSlots
-          : html`<obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>`}
+      ${
+        args.type === ObcPoiObjectVesselType.Indicator
+          ? html`<obi-vessel-type-psv-filled
+              useCssColor
+            ></obi-vessel-type-psv-filled>`
+          : args.type === ObcPoiObjectVesselType.SpeedRot
+            ? speedRotSlots
+            : html`<obi-vessel-type-psv-outlined></obi-vessel-type-psv-outlined>`
+      }
     </obc-poi-object-vessel>
   `,
 };

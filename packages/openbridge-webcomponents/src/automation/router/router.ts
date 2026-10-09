@@ -23,7 +23,7 @@ export class ObcRouter extends ObcAbstractAutomationButtonSquared {
   override get icon() {
     switch (this.alternativeIcon) {
       case RouterAlternativeIcon.router2:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-router-2-on
               usecsscolor
               slot="icon"
@@ -43,7 +43,7 @@ export class ObcRouter extends ObcAbstractAutomationButtonSquared {
             ></obi-router-2-off>`;
         }
       default:
-        if (this.on) {
+        if (this.turnedOn) {
           return html`<obi-router-on usecsscolor slot="icon"></obi-router-on>
             <obi-router-on usecsscolor slot="icon-silhouette"></obi-router-on>`;
         } else {

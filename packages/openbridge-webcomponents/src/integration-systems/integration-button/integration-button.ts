@@ -24,6 +24,19 @@ export enum IntegrationButtonType {
 /**
  * `<obc-integration-button>` – A button component for integration systems.
  *
+ * @property hasTrailingIcon - Shows the `trailing-icon` slot.
+ * @property hasTrailingIcon2 - Shows the `trailing-icon2` slot.
+ * @availableWhen hasTrailingIcon2 hasTrailingIcon==true
+ * @property hasLeadingIcon - Shows the `leading-icon` slot.
+ * @property hasStatus - Shows the `status` slot.
+ * @property readouts - List of readout items shown in the rich type.
+ * @property disabled - Disables the internal button.
+ * @property activated - Applies active state styling while a selection is pending.
+ * @property selected - Applies selected state styling.
+ * @property dividerBottom - Shows a bottom divider under the button.
+ * @property dividerRight - Shows a right divider to separate from adjacent buttons.
+ * @property variant - Visual variant (`normal` or `flat`).
+ * @property type - Layout type (`hug`, `regular`, or `rich`).
  * @slot leading-icon - Icon before label (shown when `hasLeadingIcon` is true); rendered at the large icon size when `hasStatus` is true
  * @slot trailing-icon - Icon after label (shown when `hasTrailingIcon` is true)
  * @slot trailing-icon2 - Icon after label (shown when `hasTrailingIcon2` is true)
@@ -39,34 +52,19 @@ export enum IntegrationButtonType {
  */
 @customElement('obc-integration-button')
 export class ObcIntegrationButton extends LitElement {
-  /** Shows the `trailing-icon` slot. */
   @property({type: Boolean}) hasTrailingIcon = false;
-  /**
-   * Shows the `trailing-icon2` slot.
-   * @availableWhen hasTrailingIcon==true
-   */
   @property({type: Boolean}) hasTrailingIcon2 = false;
-  /** Shows the `leading-icon` slot. */
   @property({type: Boolean}) hasLeadingIcon = false;
-  /** Shows the `status` slot. */
   @property({type: Boolean}) hasStatus = false;
-  /** List of readout items shown in the rich type. */
   @property({type: Array, attribute: false})
   readouts: IntegrationButtonReadout[] = [];
-  /** Disables the internal button. */
   @property({type: Boolean}) disabled = false;
-  /** Applies active state styling while a selection is pending. */
   @property({type: Boolean}) activated = false;
-  /** Applies selected state styling. */
   @property({type: Boolean}) selected = false;
-  /** Shows a bottom divider under the button. */
   @property({type: Boolean}) dividerBottom = false;
-  /** Shows a right divider to separate from adjacent buttons. */
   @property({type: Boolean}) dividerRight = false;
-  /** Visual variant (`normal` or `flat`). */
   @property({type: String}) variant: IntegrationButtonVariant =
     IntegrationButtonVariant.normal;
-  /** Layout type (`hug`, `regular`, or `rich`). */
   @property({type: String}) type: IntegrationButtonType =
     IntegrationButtonType.regular;
 
@@ -96,30 +94,38 @@ export class ObcIntegrationButton extends LitElement {
           >
             <div class="content-container">
               <div class="main-container">
-                ${this.hasLeadingIcon
-                  ? html`<div class="icon leading">
-                      <slot name="leading-icon"></slot>
-                    </div>`
-                  : nothing}
+                ${
+                  this.hasLeadingIcon
+                    ? html`<div class="icon leading">
+                        <slot name="leading-icon"></slot>
+                      </div>`
+                    : nothing
+                }
                 <div class="text-container">
                   <div class="label"><slot name="label"></slot></div>
-                  ${this.hasStatus
-                    ? html`<div class="status">
-                        <slot name="status"></slot>
-                      </div>`
-                    : nothing}
+                  ${
+                    this.hasStatus
+                      ? html`<div class="status">
+                          <slot name="status"></slot>
+                        </div>`
+                      : nothing
+                  }
                 </div>
-                ${this.hasTrailingIcon
-                  ? html`<div class="icon-container">
-                      ${this.hasTrailingIcon2
-                        ? html`<slot
-                            name="trailing-icon2"
-                            class="icon trailing"
-                          ></slot>`
-                        : nothing}
-                      <slot name="trailing-icon" class="icon trailing"></slot>
-                    </div>`
-                  : nothing}
+                ${
+                  this.hasTrailingIcon
+                    ? html`<div class="icon-container">
+                        ${
+                          this.hasTrailingIcon2
+                            ? html`<slot
+                                name="trailing-icon2"
+                                class="icon trailing"
+                              ></slot>`
+                            : nothing
+                        }
+                        <slot name="trailing-icon" class="icon trailing"></slot>
+                      </div>`
+                    : nothing
+                }
               </div>
               <div class="info-container">
                 <div class="info-item">
@@ -138,16 +144,20 @@ export class ObcIntegrationButton extends LitElement {
               </div>
             </div>
           </button>
-          ${this.dividerRight
-            ? html`<div class="divider-right"></div>`
-            : html`<div
-                class="divider-right"
-                style="visibility: hidden;"
-              ></div>`}
+          ${
+            this.dividerRight
+              ? html`<div class="divider-right"></div>`
+              : html`<div
+                  class="divider-right"
+                  style="visibility: hidden;"
+                ></div>`
+          }
         </div>
-        ${this.dividerBottom
-          ? html`<div class="divider-bottom"></div>`
-          : nothing}
+        ${
+          this.dividerBottom
+            ? html`<div class="divider-bottom"></div>`
+            : nothing
+        }
       </div>
       <div
         class=${classMap({
@@ -169,33 +179,46 @@ export class ObcIntegrationButton extends LitElement {
           ?disabled=${this.disabled}
         >
           <div class="content-container">
-            ${this.hasLeadingIcon
-              ? html`<div class="icon leading">
-                  <slot name="leading-icon"></slot>
-                </div>`
-              : nothing}
+            ${
+              this.hasLeadingIcon
+                ? html`<div class="icon leading">
+                    <slot name="leading-icon"></slot>
+                  </div>`
+                : nothing
+            }
             <div class="text-container">
               <div class="label"><slot name="label"></slot></div>
-              ${this.hasStatus
-                ? html`<div class="status"><slot name="status"></slot></div>`
-                : nothing}
+              ${
+                this.hasStatus
+                  ? html`<div class="status"><slot name="status"></slot></div>`
+                  : nothing
+              }
             </div>
-            ${this.hasTrailingIcon
-              ? html`<div class="icon-container">
-                  ${this.hasTrailingIcon2
-                    ? html`<slot
-                        name="trailing-icon2"
-                        class="icon trailing"
-                      ></slot>`
-                    : nothing}
-                  <slot name="trailing-icon" class="icon trailing"></slot>
-                </div>`
-              : nothing}
+            ${
+              this.hasTrailingIcon
+                ? html`<div class="icon-container">
+                    ${
+                      this.hasTrailingIcon2
+                        ? html`<slot
+                            name="trailing-icon2"
+                            class="icon trailing"
+                          ></slot>`
+                        : nothing
+                    }
+                    <slot name="trailing-icon" class="icon trailing"></slot>
+                  </div>`
+                : nothing
+            }
           </div>
         </button>
-        ${this.dividerRight
-          ? html`<div class="divider-right"></div>`
-          : html`<div class="divider-right" style="visibility: hidden;"></div>`}
+        ${
+          this.dividerRight
+            ? html`<div class="divider-right"></div>`
+            : html`<div
+                class="divider-right"
+                style="visibility: hidden;"
+              ></div>`
+        }
       </div>
       <div
         class=${classMap({
@@ -217,33 +240,46 @@ export class ObcIntegrationButton extends LitElement {
           ?disabled=${this.disabled}
         >
           <div class="content-container">
-            ${this.hasLeadingIcon
-              ? html`<div class="icon leading">
-                  <slot name="leading-icon"></slot>
-                </div>`
-              : nothing}
+            ${
+              this.hasLeadingIcon
+                ? html`<div class="icon leading">
+                    <slot name="leading-icon"></slot>
+                  </div>`
+                : nothing
+            }
             <div class="text-container">
               <div class="label"><slot name="label"></slot></div>
-              ${this.hasStatus
-                ? html`<div class="status"><slot name="status"></slot></div>`
-                : nothing}
+              ${
+                this.hasStatus
+                  ? html`<div class="status"><slot name="status"></slot></div>`
+                  : nothing
+              }
             </div>
-            ${this.hasTrailingIcon
-              ? html`<div class="icon-container">
-                  ${this.hasTrailingIcon2
-                    ? html`<slot
-                        name="trailing-icon2"
-                        class="icon trailing"
-                      ></slot>`
-                    : nothing}
-                  <slot name="trailing-icon" class="icon trailing"></slot>
-                </div>`
-              : nothing}
+            ${
+              this.hasTrailingIcon
+                ? html`<div class="icon-container">
+                    ${
+                      this.hasTrailingIcon2
+                        ? html`<slot
+                            name="trailing-icon2"
+                            class="icon trailing"
+                          ></slot>`
+                        : nothing
+                    }
+                    <slot name="trailing-icon" class="icon trailing"></slot>
+                  </div>`
+                : nothing
+            }
           </div>
         </button>
-        ${this.dividerRight
-          ? html`<div class="divider-right"></div>`
-          : html`<div class="divider-right" style="visibility: hidden;"></div>`}
+        ${
+          this.dividerRight
+            ? html`<div class="divider-right"></div>`
+            : html`<div
+                class="divider-right"
+                style="visibility: hidden;"
+              ></div>`
+        }
       </div>
       <div
         class=${classMap({

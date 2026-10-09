@@ -1,148 +1,194 @@
-import fs from 'fs';
-import path from 'path';
+/**
+ * Interactive component scaffolder — `npm run new:component`.
+ *
+ * Writes a component, its story and an empty stylesheet that already pass
+ * `npm run lint` and `npm run format:check`, so the first run of the gates
+ * reports the author's work rather than the scaffold's. Name derivation and the
+ * templates live in `script/new-component/scaffold.ts`, which is unit-tested.
+ *
+ * It stops short of the rest of the creation checklist (AGENTS.md § 5) and
+ * prints it instead: the JSDoc body, the keyboard spec for an interactive
+ * component, and `npm run analyze` are the author's, and a generated
+ * placeholder test would assert nothing.
+ */
+import fs from 'node:fs';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
 
 import {question, select, multiselect} from '@topcli/prompts';
+import {globSync} from 'glob';
+import * as prettier from 'prettier';
+
+import {
+  FAMILIES,
+  NAME_PATTERN,
+  TAG_PATTERN,
+  baseName,
+  componentDir,
+  rejectUnless,
+  renderFiles,
+  toDefaultTitle,
+  toKebabCase,
+  type ComponentType,
+  type Lifecycle,
+} from './script/new-component/scaffold.js';
+
+const ROOT = path.dirname(fileURLToPath(import.meta.url));
+const SRC = path.join(ROOT, 'src');
+
+/** Every tag already registered, so a collision is refused rather than shadowed. */
+function registeredTags(): Set<string> {
+  const files = globSync('**/*.ts', {
+    cwd: SRC,
+    ignore: ['icons/**', 'generated/**'],
+    nodir: true,
+    absolute: true,
+  });
+  const tags = new Set<string>();
+  for (const file of files) {
+    for (const match of fs
+      .readFileSync(file, 'utf8')
+      .matchAll(/@customElement\('([^']+)'\)/g)) {
+      tags.add(match[1]);
+    }
+  }
+  return tags;
+}
 
 const name = await question(
-  'Component name (without obc prefix, and UpperCamelCase) ?',
+  'Component name (without the Obc prefix, UpperCamelCase)',
   {
     validators: [
       {
-        validate: (value) => /^[A-Z][a-zA-Z0-9]+$/.test(value),
-        message: 'Component name must be UpperCamelCase',
-      },
-      {
-        message: 'Component name is required',
-        validate: (value) => !!value,
+        validate: (value) =>
+          rejectUnless(
+            NAME_PATTERN.test(value),
+            'Must be UpperCamelCase, e.g. HydraulicValveX2'
+          ),
       },
     ],
   }
 );
-const componentType = await select('Type of component', {
+
+const type = await select<ComponentType>('Family', {
+  choices: Object.entries(FAMILIES).map(([value, family]) => ({
+    value: value as ComponentType,
+    label: family.label,
+  })),
+  maxVisible: 10,
+});
+
+// Acronyms and digit groups make the derived tag a suggestion, not a result:
+// `Valve43` is as likely to be `valve-4-3` as `valve-43`.
+const suggestedTag = `obc-${toKebabCase(name)}`;
+const tag =
+  (await question(`Element tag [${suggestedTag}]`, {
+    defaultValue: suggestedTag,
+    validators: [
+      {
+        validate: (value) =>
+          rejectUnless(
+            !value || TAG_PATTERN.test(value),
+            'Must look like obc-hydraulic-valve-x-2'
+          ),
+      },
+    ],
+  })) || suggestedTag;
+
+// Checked here rather than in a validator: accepting the suggested tag with
+// Enter returns the default without running them.
+const dir = path.join(SRC, componentDir({tag, type}));
+const clash = registeredTags().has(tag)
+  ? `${tag} is already registered`
+  : fs.existsSync(dir)
+    ? `${path.relative(ROOT, dir)} already exists`
+    : null;
+if (clash) {
+  console.error(`\n${clash}. Pick another name, or delete it first.`);
+  process.exit(1);
+}
+
+// `deprecated` is the fourth tag the lint contract accepts, deliberately not
+// offered: a component is deprecated once it exists, never scaffolded as one.
+const lifecycle = await select<Lifecycle>('Lifecycle (class JSDoc tag)', {
   choices: [
-    'ui (input, label, tables)',
-    'instrument (compass, azimuth)',
-    'indicator (bearing, speed, rot)',
-    'page',
-    'ar',
-    'automation',
-    'integration system',
-    'building-block',
-    'bars-graphs (line, area, donut, pie)',
+    {value: 'experimental', label: 'experimental — early stage, API will move'},
+    {value: 'beta', label: 'beta — feature-complete, API may still change'},
+    {value: 'stable', label: 'stable — production-ready'},
   ],
 });
-const files = await multiselect('Create files', {
-  choices: ['css', 'storybook'],
-  preSelectedChoices: ['css', 'storybook'],
+
+const version = await select('Design version tag', {
+  choices: [
+    {value: '6.1', label: '6.1'},
+    {value: '6.0', label: '6.0'},
+    {value: 'none', label: 'none — not tied to a design release'},
+  ],
 });
 
-// Convert name to kebab-case
-const componentName = name.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
+const defaultTitle = toDefaultTitle(name);
+const title = await question(
+  `Storybook title under ${FAMILIES[type].group}/ (Title Case)`,
+  {
+    defaultValue: defaultTitle,
+    validators: [
+      {
+        // The title is also the class JSDoc summary, where this ends the block.
+        validate: (value) =>
+          rejectUnless(!value.includes('*/'), 'Cannot contain */'),
+      },
+    ],
+  }
+);
 
-let parentDir: string;
-if (componentType === 'ui (input, label, tables)') {
-  parentDir = 'components';
-} else if (componentType === 'indicator (bearing, speed, rot)') {
-  parentDir = 'navigation-instruments';
-} else if (componentType === 'instrument (compass, azimuth)') {
-  parentDir = 'navigation-instruments';
-} else if (componentType === 'ar') {
-  parentDir = 'ar';
-} else if (componentType === 'automation') {
-  parentDir = 'automation';
-} else if (componentType === 'page') {
-  parentDir = 'pages';
-} else if (componentType === 'building-block') {
-  parentDir = 'building-blocks';
-} else if (componentType === 'integration system') {
-  parentDir = 'integration-systems';
-} else if (componentType === 'bars-graphs (line, area, donut, pie)') {
-  parentDir = 'bars-graphs';
-} else {
-  throw new Error('Invalid component type');
+const files = await multiselect('Create files', {
+  choices: ['css'],
+  preSelectedChoices: ['css'],
+});
+
+const spec = {
+  name,
+  tag,
+  type,
+  lifecycle,
+  title: title || defaultTitle,
+  version: version === 'none' ? undefined : version,
+  hasCss: files.includes('css'),
+};
+
+/** Format with the repo's own config, so `format:check` cannot disagree. */
+async function format(content: string, absPath: string): Promise<string> {
+  if (!content.trim()) return content;
+  const config = await prettier.resolveConfig(absPath);
+  return prettier.format(content, {...config, filepath: absPath});
 }
-const dir = path.join('src', parentDir, componentName);
-// Create directory
+
+// Everything is formatted before anything is written: prettier throws on a
+// template it cannot parse, and a half-written directory would then block the
+// next run with "already exists".
+const formatted: [string, string][] = [];
+for (const [relPath, content] of Object.entries(renderFiles(spec))) {
+  const absPath = path.join(SRC, relPath);
+  formatted.push([absPath, await format(content, absPath)]);
+}
+
 fs.mkdirSync(dir, {recursive: true});
+const written = formatted.map(([absPath, content]) => {
+  fs.writeFileSync(absPath, content);
+  return path.relative(ROOT, absPath);
+});
 
-// Create files
-// Create lit file
-const hasCss = files.includes('css');
-const litFile = path.join(dir, `${componentName}.ts`);
-const content = `import {LitElement, html${hasCss ? `, unsafeCSS` : ``}} from 'lit';
-import {customElement} from '../../decorator.js';
-${hasCss ? `import componentStyle from './${componentName}.css?inline';` : ''}
-
-@customElement('obc-${componentName}')
-export class Obc${name} extends LitElement {
-
-  override render() {
-    return html\`
-      <div class="wrapper">
-      </div>
-    \`;
-  }
-
-${hasCss ? `  static override styles = unsafeCSS(componentStyle);` : ''}
-}
-
-declare global {
-  interface HTMLElementTagNameMap {
-    'obc-${componentName}': Obc${name};
-  }
-}
-`;
-fs.writeFileSync(litFile, content);
-
-// Create css file
-if (files.includes('css')) {
-  const cssFile = path.join(dir, `${componentName}.css`);
-  const content = ``;
-  fs.writeFileSync(cssFile, content);
-}
-
-// Create storybook file
-if (files.includes('storybook')) {
-  let storybookGroup = '';
-  if (componentType === 'ar') {
-    storybookGroup = 'AR';
-  } else if (componentType === 'automation') {
-    storybookGroup = 'Automation';
-  } else if (componentType === 'building-block') {
-    storybookGroup = 'Building Blocks';
-  } else if (componentType === 'page') {
-    storybookGroup = 'Pages';
-  } else if (componentType === 'integration system') {
-    storybookGroup = 'Integration Systems';
-  } else if (componentType === 'indicator (bearing, speed, rot)') {
-    storybookGroup = 'Indicators';
-  } else if (componentType === 'instrument (compass, azimuth)') {
-    storybookGroup = 'Instruments';
-  } else if (componentType === 'bars-graphs (line, area, donut, pie)') {
-    storybookGroup = 'Bars and Graphs';
-  } else {
-    storybookGroup = await question('Storybook group ');
-  }
-  const storybookTitle = await question('Storybook title ');
-  const storybookFile = path.join(dir, `${componentName}.stories.ts`);
-  const content = `import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {Obc${name}} from './${componentName}.js';
-import './${componentName}.js';
-
-const meta: Meta<typeof Obc${name}> = {
-  title: '${storybookGroup}/${storybookTitle}',
-  tags: ['autodocs', '6.0'],
-  component: 'obc-${componentName}',
-  args: {
-  },
-} satisfies Meta<Obc${name}>;
-
-export default meta;
-type Story = StoryObj<Obc${name}>;
-
-export const Primary: Story = {
-  args: {
-  },
-};`;
-  fs.writeFileSync(storybookFile, content);
-}
+const base = baseName(spec);
+console.log(`\nCreated:\n${written.map((file) => `  ${file}`).join('\n')}`);
+console.log(`
+Next (AGENTS.md § 5):
+  1. Read the nearest sibling in src/${FAMILIES[type].dir}/ before writing —
+     it carries the mixins, the story set and the JSDoc shape to follow.
+  2. Replace the TODO(designer) block in ${base}.ts with the real JSDoc, and
+     document each public property with an @property tag in that class block.
+  3. Interactive? Name the APG pattern in the JSDoc and pin its keys in
+     ${base}-keyboard.spec.ts (docs/agents/a11y.md § 1, § 9).
+  4. npm run analyze     # story args reach the element only through the manifest
+  5. npm run lint && npm run typecheck
+  6. npx vitest run --project storybook ${base} --update   # then again without --update
+`);

@@ -9,6 +9,7 @@ import {
   ObcFloatingItemType,
   ObcFloatingItemDirection,
   ObcFloatingItemLineType,
+  ObcFloatingItemLiveRole,
 } from '../floating-item/floating-item.js';
 
 /**
@@ -74,6 +75,21 @@ import {
  * </obc-advice-floating-item>
  * ```
  *
+ * @property hasTimestamp - If true, displays a timestamp label (e.g., "09:12:46") in the advice message.
+ *   Default: false.
+ * @property hasDay - If true (and `hasTimestamp` is also true), displays a day label (e.g., "Yesterday") in addition to the timestamp.
+ *   Default: false.
+ * @property action - If true, renders a primary action button in the advice message.
+ *   Default: false.
+ * @property action2 - If true, renders a secondary action button in the advice message.
+ *   Note: The secondary action is only shown if the primary action (`action`) is also enabled.
+ *   Default: false.
+ * @property type - Variant of the advice message: `regular` (default) shows a single advice
+ *   icon, `application` adds a second application icon.
+ * @property direction - Layout direction: `horizontal` (default) puts content and icons
+ *   side-by-side, `vertical` stacks them.
+ * @property lineType - Content line type: `single-line` (default) is a compact one-line message,
+ *   `multi-line` allows longer advice text to wrap.
  * @slot primary-icon - Custom main icon, projected into the child only when `type="application"` (the built-in advice icon is used otherwise).
  * @slot title - Title or heading of the advice message.
  * @slot description - Detailed advice or message text.
@@ -88,53 +104,18 @@ import {
  */
 @customElement('obc-advice-floating-item')
 export class ObcAdviceFloatingItem extends LitElement {
-  /**
-   * Defines the visual and behavioral variant of the advice message.
-   * - `regular`: Standard advice message with a single advice icon.
-   * - `application`: Application-type advice message with an additional icon.
-   * Default: `regular`.
-   */
   @property({type: String}) type = ObcFloatingItemType.Regular;
 
-  /**
-   * Sets the layout direction of the advice message.
-   * - `horizontal`: Content and icons are arranged side-by-side.
-   * - `vertical`: Content and icons are stacked vertically.
-   * Default: `horizontal`.
-   */
   @property({type: String}) direction = ObcFloatingItemDirection.horizontal;
 
-  /**
-   * If true, displays a timestamp label (e.g., "09:12:46") in the advice message.
-   * Default: false.
-   */
   @property({type: Boolean}) hasTimestamp = false;
 
-  /**
-   * If true (and `hasTimestamp` is also true), displays a day label (e.g., "Yesterday") in addition to the timestamp.
-   * Default: false.
-   */
   @property({type: Boolean}) hasDay = false;
 
-  /**
-   * If true, renders a primary action button in the advice message.
-   * Default: false.
-   */
   @property({type: Boolean}) action = false;
 
-  /**
-   * If true, renders a secondary action button in the advice message.
-   * Note: The secondary action is only shown if the primary action (`action`) is also enabled.
-   * Default: false.
-   */
   @property({type: Boolean}) action2 = false;
 
-  /**
-   * Sets the content line type for the advice message.
-   * - `singleLine`: Compact, one-line message.
-   * - `multiLine`: Allows for longer, multi-line advice text.
-   * Default: `singleLine`.
-   */
   @property({type: String}) lineType = ObcFloatingItemLineType.singleLine;
 
   protected override render() {
@@ -142,6 +123,7 @@ export class ObcAdviceFloatingItem extends LitElement {
 
     return html`
       <obc-floating-item
+        .liveRole=${ObcFloatingItemLiveRole.Status}
         .type=${this.type}
         .direction=${this.direction}
         .hasTimestamp=${this.hasTimestamp}
@@ -162,20 +144,22 @@ export class ObcAdviceFloatingItem extends LitElement {
             new CustomEvent('dismiss-click', {detail: e.detail})
           )}
       >
-        ${isApplication
-          ? html`
-              <slot name="primary-icon" slot="primary-icon"></slot>
-              <obi-notification-advice-active
-                slot="secondary-icon"
-                style="color: var(--instrument-starboard-primary-color)"
-              ></obi-notification-advice-active>
-            `
-          : html`
-              <obi-notification-advice-active
-                slot="primary-icon"
-                style="color: var(--instrument-starboard-primary-color)"
-              ></obi-notification-advice-active>
-            `}
+        ${
+          isApplication
+            ? html`
+                <slot name="primary-icon" slot="primary-icon"></slot>
+                <obi-notification-advice-active
+                  slot="secondary-icon"
+                  style="color: var(--instrument-starboard-primary-color)"
+                ></obi-notification-advice-active>
+              `
+            : html`
+                <obi-notification-advice-active
+                  slot="primary-icon"
+                  style="color: var(--instrument-starboard-primary-color)"
+                ></obi-notification-advice-active>
+              `
+        }
         <slot name="title" slot="title"></slot>
         <slot name="description" slot="description"></slot>
         <slot name="time" slot="time"></slot>

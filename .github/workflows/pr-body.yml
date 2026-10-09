@@ -1,0 +1,22 @@
+name: PR body
+on:
+  pull_request:
+    # `edited` re-runs the check when the body changes.
+    types: [opened, edited, synchronize, reopened]
+jobs:
+  pr-body:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          # the diff against the base branch needs its history
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      # The script reads the body from the event file. Never interpolate the
+      # body into the command: it is text anyone opening a PR controls.
+      - name: Check the PR body against the template and the diff
+        run: node packages/openbridge-webcomponents/script/check-pr-body.ts

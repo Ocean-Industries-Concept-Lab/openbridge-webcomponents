@@ -1,4 +1,6 @@
 import {LitElement, html, unsafeCSS} from 'lit';
+import {property} from 'lit/decorators.js';
+import {ifDefined} from 'lit/directives/if-defined.js';
 import componentStyle from './tree-navigation.css?inline';
 import {customElement} from '../../decorator.js';
 import {
@@ -61,11 +63,28 @@ function isRow(el: Element): el is TreeRow {
  * |-----------|-----------------|----------------------------------------------------|
  * | (default) | Always          | Top-level rows (`obc-tree-navigation-group`/`-item`). |
  *
+ * ### Keyboard
+ * [APG Tree View](https://www.w3.org/WAI/ARIA/apg/patterns/treeview/): the tree
+ * is one tab stop. `Up` and `Down` move between visible items, `Right` opens a
+ * closed group or moves into an open one, `Left` closes an open group or moves
+ * to its parent, and `Home` and `End` go to the first and last visible item;
+ * the items handle `Enter` and `Space`. Name the tree with `aria-label`.
+ *
+ * Left out: type-ahead, and `*` to expand every group at one level. The
+ * `group` that holds a parent's children is a sibling of the parent's row,
+ * not inside its `treeitem`, and `aria-owns` cannot reach across the shadow
+ * boundary to say so.
+ *
  * @slot - Top-level tree rows (groups and items).
+ * @property ariaLabel - Accessible name of the tree, mapped to the `aria-label` attribute and forwarded to the `role="tree"` element. `aria-labelledby` is not supported: ID references cannot cross the shadow boundary.
  * @beta
  */
 @customElement('obc-tree-navigation')
 export class ObcTreeNavigation extends LitElement {
+  // Reactive so a consumer changing the name re-renders the tree.
+  @property({type: String, attribute: 'aria-label'})
+  override ariaLabel: string | null = null;
+
   private mutationObserver?: MutationObserver;
 
   /** The focusable header item for a row: a leaf is itself; a group's is its shadow header. */
@@ -75,7 +94,7 @@ export class ObcTreeNavigation extends LitElement {
       : row;
   }
 
-  private readonly navigator = new TreeRovingNavigator<TreeRow>(this, {
+  private readonly navigator = new TreeRovingNavigator<TreeRow>({
     getRows: () => this.childRows(this),
     childRows: (row) => this.childRows(row),
     isGroup: (row) => isGroup(row),
@@ -174,7 +193,10 @@ export class ObcTreeNavigation extends LitElement {
   }
 
   override render() {
-    return html`<div role="tree">
+    return html`<div
+      role="tree"
+      aria-label=${ifDefined(this.ariaLabel ?? undefined)}
+    >
       <slot @slotchange=${() => this.updateBranches()}></slot>
     </div>`;
   }

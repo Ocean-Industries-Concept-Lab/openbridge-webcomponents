@@ -78,6 +78,7 @@
  */
 
 import {SVGTemplateResult, svg} from 'lit';
+import {normalizeAngle} from './math.js';
 
 // ============================================================================
 // Visual State Enums (Design Layer)
@@ -246,7 +247,7 @@ export function getSetpointAnimationDurationMs(el: Element): number {
  * two headings.
  */
 export function shortestAngularDistance(from: number, to: number): number {
-  const rawDiff = Math.abs(((to - from) % 360) + 360) % 360;
+  const rawDiff = normalizeAngle(to - from);
   return rawDiff > 180 ? 360 - rawDiff : rawDiff;
 }
 
@@ -287,8 +288,8 @@ export function cssSafeAngle(
   prevCssAngle: number,
   targetAngle: number
 ): number {
-  const normTarget = ((targetAngle % 360) + 360) % 360;
-  const normPrev = ((prevCssAngle % 360) + 360) % 360;
+  const normTarget = normalizeAngle(targetAngle);
+  const normPrev = normalizeAngle(prevCssAngle);
   let delta = normTarget - normPrev;
   if (delta > 180) delta -= 360;
   if (delta < -180) delta += 360;

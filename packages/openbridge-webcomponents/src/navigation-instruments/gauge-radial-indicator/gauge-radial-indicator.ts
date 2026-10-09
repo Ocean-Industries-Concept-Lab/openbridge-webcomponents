@@ -1,6 +1,7 @@
 import {LitElement, html, nothing, svg, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
+import {clamp, degToRad} from '../../svghelpers/math.js';
 import componentStyle from './gauge-radial-indicator.css?inline';
 import '../../icons/icon.js';
 import '../../icons/icon-placeholder.js';
@@ -37,15 +38,11 @@ export enum GaugeRadialIndicatorStyle {
   Flat = 'flat',
 }
 
-function clamp(value: number, min: number, max: number): number {
-  return Math.min(Math.max(value, min), max);
-}
-
 function pointOnCircle(
   angle: number,
   radius = TRACK_RADIUS
 ): {x: number; y: number} {
-  const radians = (angle * Math.PI) / 180;
+  const radians = degToRad(angle);
   return {
     x: CENTER + Math.sin(radians) * radius,
     y: CENTER - Math.cos(radians) * radius,
@@ -702,15 +699,16 @@ export class ObcGaugeRadialIndicator extends LitElement {
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
-          ${this.usesExactRegular270Track
-            ? this.renderExactRegular270Track()
-            : this.usesExactRegular180Track
-              ? this.renderExactRegular180Track()
-              : this.usesExactFlat270Track
-                ? this.renderExactFlat270Track()
-                : this.usesExactFlat180Track
-                  ? this.renderExactFlat180Track()
-                  : svg`
+          ${
+            this.usesExactRegular270Track
+              ? this.renderExactRegular270Track()
+              : this.usesExactRegular180Track
+                ? this.renderExactRegular180Track()
+                : this.usesExactFlat270Track
+                  ? this.renderExactFlat270Track()
+                  : this.usesExactFlat180Track
+                    ? this.renderExactFlat180Track()
+                    : svg`
                 <defs>
                   <mask
                     id="${this.needleClipId}"
@@ -753,20 +751,25 @@ export class ObcGaugeRadialIndicator extends LitElement {
                 ${this.renderGenericTrack(trackPath)}
                 ${this.renderGenericActiveTrack()}
                 ${this.renderGenericTrackOutline(trackPath)}
-              `}
-          ${this.usesExactFlat270Track || this.usesExactFlat180Track
-            ? this.renderFlatNeedle()
-            : this.usesExactRegular270Track || this.usesExactRegular180Track
-              ? this.renderNeedle()
-              : this.renderNeedle()}
+              `
+          }
+          ${
+            this.usesExactFlat270Track || this.usesExactFlat180Track
+              ? this.renderFlatNeedle()
+              : this.usesExactRegular270Track || this.usesExactRegular180Track
+                ? this.renderNeedle()
+                : this.renderNeedle()
+          }
         </svg>
-        ${this.hasIcon
-          ? html`
-              <div class="gauge-radial-indicator-icon">
-                <slot name="icon">${this.renderDefaultIcon()}</slot>
-              </div>
-            `
-          : nothing}
+        ${
+          this.hasIcon
+            ? html`
+                <div class="gauge-radial-indicator-icon">
+                  <slot name="icon">${this.renderDefaultIcon()}</slot>
+                </div>
+              `
+            : nothing
+        }
       </div>
     `;
   }

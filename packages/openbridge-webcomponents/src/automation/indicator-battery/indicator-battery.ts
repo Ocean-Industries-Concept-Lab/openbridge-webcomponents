@@ -65,7 +65,10 @@ const VERTICAL_TIP_PATH = 'M18 6 V4 A2 2 0 0 1 20 2 H28 A2 2 0 0 1 30 4 V6 Z';
  * | ------ | ----------------------------- | ------------------------------ |
  * | `icon` | `hasIcon` and `variant='bar'` | Icon overlay (`obi-*` element) |
  *
+ * @property level - Current charge, 0-100 (%)
+ * @property data - History samples, 0-100 (%) each, oldest first
  * @slot icon - Centered icon overlay, defaults to `obi-energy-battery`
+ * @beta
  */
 @customElement('obc-indicator-battery')
 export class ObcIndicatorBattery extends LitElement {
@@ -75,9 +78,7 @@ export class ObcIndicatorBattery extends LitElement {
     IndicatorBatteryVariant.bar;
   @property({type: String, reflect: true}) value: IndicatorBatteryValue =
     IndicatorBatteryValue.regular;
-  /** Current charge, 0-100 (%) */
   @property({type: Number}) level = 0;
-  /** History samples, 0-100 (%) each, oldest first */
   @property({type: Array}) data: number[] = [];
   @property({type: Boolean}) hasIcon = false;
 
@@ -119,23 +120,27 @@ export class ObcIndicatorBattery extends LitElement {
           height=${shell.height}
           rx="4"
         />
-        ${this.variant === IndicatorBatteryVariant.trend
-          ? renderTrendGraph(
-              barRect,
-              this.data,
-              this.level,
-              this.scheme,
-              'battery'
-            )
-          : renderLinearBar(barRect, this.level, this.scheme, 'battery')}
+        ${
+          this.variant === IndicatorBatteryVariant.trend
+            ? renderTrendGraph(
+                barRect,
+                this.data,
+                this.level,
+                this.scheme,
+                'battery'
+              )
+            : renderLinearBar(barRect, this.level, this.scheme, 'battery')
+        }
       </svg>
-      ${showIcon
-        ? html`<div class="icon-wrapper">
-            <slot name="icon">
-              <obi-energy-battery usecsscolor></obi-energy-battery>
-            </slot>
-          </div>`
-        : nothing}
+      ${
+        showIcon
+          ? html`<div class="icon-wrapper">
+              <slot name="icon">
+                <obi-energy-battery usecsscolor></obi-energy-battery>
+              </slot>
+            </div>`
+          : nothing
+      }
     `;
   }
 

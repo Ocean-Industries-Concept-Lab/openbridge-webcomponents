@@ -4,13 +4,16 @@ import compentStyle from './wind.css?inline';
 import {
   VesselImage,
   VesselImageSize,
+  vesselArt,
   WatchCircleType,
   innerRingRadiusFor,
+  type VesselImageSrc,
 } from '../watch/watch.js';
 import {WIND_ICON_TIP_TO_BOX_INNER} from '../watch/environment.js';
 import {renderWindForcePattern} from '../watch/force-pattern.js';
 import {Priority} from '../types.js';
 import {customElement} from '../../decorator.js';
+import {degToRad} from '../../svghelpers/math.js';
 
 export interface WindHistogramData {
   direction: number;
@@ -30,9 +33,7 @@ export enum WindVisualization {
 }
 
 type ResolvedWindVariant =
-  | WindVariant.small
-  | WindVariant.medium
-  | WindVariant.large;
+  WindVariant.small | WindVariant.medium | WindVariant.large;
 
 const WIND_SMALL_MAX_PX_DEFAULT = 96;
 const WIND_MEDIUM_MAX_PX_DEFAULT = 200;
@@ -41,6 +42,11 @@ const WIND_PATTERN_SCALE_DOUBLE = 0.875;
 const WIND_PATTERN_SCALE_SINGLE = 1.28125;
 
 /**
+ * @property visualization - Center visualization: wind histogram (default) or the force-graphics streak field.
+ * @property priority - Color priority: `Priority.enhanced` uses the blue/enhanced palette (default: `Priority.regular`).
+ * @property vesselImageSrc - Image URLs per palette (`{bright, day, dusk, night}`, SVG, PNG or data URLs)
+ *   drawn instead of `vesselImage` in the same 160 × 160 box. A palette without a URL falls
+ *   back to the nearest one (see `VesselImageSrc`).
  * @stable
  */
 @customElement('obc-wind')
@@ -50,14 +56,14 @@ export class ObcWind extends LitElement {
   @property({type: Array, attribute: false})
   windHistogramData: WindHistogramData[] = [];
   @property({type: String}) vesselImage: VesselImage = VesselImage.genericTop;
+  @property({type: Object, attribute: false})
+  vesselImageSrc: VesselImageSrc | undefined;
   @property({type: Number}) vesselHeadingDeg: number = 0;
   @property({type: String}) variant: WindVariant = WindVariant.auto;
   @property({type: Number}) smallVariantMaxPx = WIND_SMALL_MAX_PX_DEFAULT;
   @property({type: Number}) mediumVariantMaxPx = WIND_MEDIUM_MAX_PX_DEFAULT;
-  /** Center visualization: wind histogram (default) or the force-graphics streak field. */
   @property({type: String}) visualization: WindVisualization =
     WindVisualization.histogram;
-  /** Color priority: `Priority.enhanced` uses the blue/enhanced palette (default: `Priority.regular`). */
   @property({type: String}) priority: Priority = Priority.regular;
 
   @state() private _autoVariant: ResolvedWindVariant = WindVariant.medium;
@@ -154,7 +160,7 @@ export class ObcWind extends LitElement {
             {
               size: VesselImageSize.medium,
               transform: `rotate(${this.vesselHeadingDeg}deg)`,
-              vesselImage: this.vesselImage,
+              ...vesselArt(this.vesselImage, this.vesselImageSrc),
             },
           ];
     const {windSymbolRadius, scaleWindIcon} =
@@ -167,9 +173,11 @@ export class ObcWind extends LitElement {
           .priority=${this.priority}
           .windKnots=${this.currentWindSpeedKnots}
           .windFromDirectionDeg=${this.currentWindFromDirection}
-          .windColor=${this.priority === Priority.enhanced
-            ? 'var(--instrument-enhanced-secondary-color)'
-            : undefined}
+          .windColor=${
+            this.priority === Priority.enhanced
+              ? 'var(--instrument-enhanced-secondary-color)'
+              : undefined
+          }
           .windSymbolRadius=${windSymbolRadius}
           .scaleWindIcon=${scaleWindIcon}
           crosshairEnabled
@@ -247,7 +255,7 @@ export class ObcWind extends LitElement {
     // Create SVG path for each degree
     let outerPathPoints = '';
     for (let deg = 0; deg < 360; deg++) {
-      const angle = ((deg - 90) * Math.PI) / 180;
+      const angle = degToRad(deg - 90);
       const occ = interpolated[deg];
       const radius = hasValidScale
         ? maxRadius - (occ / maxOccurrences) * (maxRadius - minRadius)

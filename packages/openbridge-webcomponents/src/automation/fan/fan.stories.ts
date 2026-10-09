@@ -37,7 +37,7 @@ type Story = StoryObj<ObcFan>;
 
 export const FanOn: Story = {
   args: {
-    on: true,
+    turnedOn: true,
     direction: AutomationButtonDirection.forward,
     labelDirection: AutomationButtonLabelDirection.up,
   },
@@ -45,7 +45,7 @@ export const FanOn: Story = {
 
 export const FanOff: Story = {
   args: {
-    on: false,
+    turnedOn: false,
     direction: AutomationButtonDirection.backwardFast,
     labelDirection: AutomationButtonLabelDirection.left,
   },
@@ -53,7 +53,7 @@ export const FanOff: Story = {
 
 export const FanComponentSize: Story = {
   args: {
-    on: true,
+    turnedOn: true,
     direction: AutomationButtonDirection.forward,
     labelDirection: AutomationButtonLabelDirection.up,
     variant: AutomationButtonVariant.double,

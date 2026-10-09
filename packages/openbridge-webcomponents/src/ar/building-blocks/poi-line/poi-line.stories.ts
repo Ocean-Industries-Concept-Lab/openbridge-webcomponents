@@ -81,9 +81,9 @@ export const AllStyles: Story = {
             .lineType=${variant.type}
             .height=${variant.type === POILineType.Dashed ? 96 : 160}
             .hasPointer=${false}
-            style="transform: translateY(-${variant.type === POILineType.Dashed
-              ? 96
-              : 160}px)"
+            style="transform: translateY(-${
+              variant.type === POILineType.Dashed ? 96 : 160
+            }px)"
           ></obc-poi-line>
         `
       )}

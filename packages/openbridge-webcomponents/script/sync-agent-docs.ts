@@ -6,6 +6,7 @@ import {parseAgentDoc, type AgentDoc} from './agent-docs/frontmatter.js';
 import {
   ROUTING_MARKER,
   renderClaudeMd,
+  renderClaudeRule,
   renderCopilotInstructions,
   renderCursorRule,
   renderInstructionsFile,
@@ -17,6 +18,7 @@ const ROOT = path.resolve(import.meta.dirname, '../../..');
 const AGENTS_DIR = path.join(ROOT, 'docs/agents');
 const INSTRUCTIONS_DIR = path.join(ROOT, '.github/instructions');
 const CURSOR_RULES_DIR = path.join(ROOT, '.cursor/rules');
+const CLAUDE_RULES_DIR = path.join(ROOT, '.claude/rules');
 const CHECK = process.argv.includes('--check');
 
 const problems: string[] = [];
@@ -38,10 +40,17 @@ function loadDocs(): AgentDoc[] {
     .sort()
     .map((f) => {
       const rel = path.posix.join('docs/agents', f);
-      return parseAgentDoc(
+      const doc = parseAgentDoc(
         fs.readFileSync(path.join(AGENTS_DIR, f), 'utf8'),
         rel
       );
+      const lineCount = doc.body.split('\n').length;
+      if (CHECK && lineCount > 300) {
+        console.warn(
+          `agent-docs: ${doc.sourcePath} has ${lineCount} lines — target is under 300 (split by sub-family)`
+        );
+      }
+      return doc;
     });
 }
 
@@ -62,6 +71,7 @@ function checkOrphans(docs: AgentDoc[]): void {
   const adapters: [string, string, string][] = [
     [INSTRUCTIONS_DIR, '.instructions.md', '.github/instructions'],
     [CURSOR_RULES_DIR, '.mdc', '.cursor/rules'],
+    [CLAUDE_RULES_DIR, '.md', '.claude/rules'],
   ];
   for (const [dir, ext, rel] of adapters) {
     if (!fs.existsSync(dir)) continue;
@@ -92,6 +102,10 @@ for (const doc of routable) {
     path.join(CURSOR_RULES_DIR, `${doc.name}.mdc`),
     renderCursorRule(doc, docNames)
   );
+  plan(
+    path.join(CLAUDE_RULES_DIR, `${doc.name}.md`),
+    renderClaudeRule(doc, docNames)
+  );
 }
 plan(
   path.join(ROOT, '.github/copilot-instructions.md'),
@@ -99,14 +113,25 @@ plan(
 );
 
 const agentsPath = path.join(ROOT, 'AGENTS.md');
-plan(
-  agentsPath,
-  replaceMarkedBlock(
-    fs.readFileSync(agentsPath, 'utf8'),
-    ROUTING_MARKER,
-    renderRoutingTable(routable)
-  )
+const agentsMd = replaceMarkedBlock(
+  fs.readFileSync(agentsPath, 'utf8'),
+  ROUTING_MARKER,
+  renderRoutingTable(routable)
 );
+plan(agentsPath, agentsMd);
+
+/**
+ * Check 5 — AGENTS.md fits the smallest reader. OpenAI Codex stops reading
+ * at `project_doc_max_bytes` (32 KiB by default), so every rule past that
+ * line is silently dropped for it; a routing row costs about 250 bytes.
+ */
+const AGENTS_MD_MAX_BYTES = 32 * 1024;
+const agentsMdBytes = Buffer.byteLength(agentsMd, 'utf8');
+if (agentsMdBytes > AGENTS_MD_MAX_BYTES) {
+  problems.push(
+    `AGENTS.md is ${agentsMdBytes} bytes; agents that stop at ${AGENTS_MD_MAX_BYTES} skip the rest — trim it (compress a § 8 rule that duplicates a family doc into a pointer)`
+  );
+}
 
 plan(path.join(ROOT, 'CLAUDE.md'), renderClaudeMd());
 

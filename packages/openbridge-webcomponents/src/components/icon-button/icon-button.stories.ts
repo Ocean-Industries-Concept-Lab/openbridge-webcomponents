@@ -11,9 +11,11 @@ const meta: Meta<typeof ObcIconButton> = {
   component: 'obc-icon-button',
   args: {
     icon: 'placeholder',
+    ariaLabel: 'Placeholder',
   },
   render: (args) => html`
     <obc-icon-button
+      aria-label=${args.ariaLabel}
       variant=${args.variant}
       ?cornerleft=${args.cornerLeft}
       ?cornerright=${args.cornerRight}

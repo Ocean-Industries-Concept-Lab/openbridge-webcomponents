@@ -1,6 +1,7 @@
 import type {Plugin, Chart, ChartDataset} from 'chart.js';
 import {OUTER_LABEL_CONFIG} from './constants.js';
 import {getCssVariableValue} from './colors.js';
+import {degToRad} from '../svghelpers/math.js';
 
 /**
  * Configuration for outer label plugin (arc and polar)
@@ -46,7 +47,7 @@ function drawOuterLabel(
   anchorX: number,
   anchorY: number
 ) {
-  const THRESHOLD = 5 * (Math.PI / 180); // 5 degrees in radians
+  const THRESHOLD = degToRad(5);
   const normalizedAngle =
     ((middleAngle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
 
@@ -164,8 +165,7 @@ export function createArcOuterLabelPlugin(
       // Arc (pie/donut) chart logic
       if (!options.type || options.type === 'arc') {
         const dataset = chart.data.datasets?.[0] as
-          | ChartDataset<'pie' | 'doughnut', number[]>
-          | undefined;
+          ChartDataset<'pie' | 'doughnut', number[]> | undefined;
         const labels = chart.data.labels ?? [];
         if (!dataset) return;
 
@@ -173,9 +173,7 @@ export function createArcOuterLabelPlugin(
         if (!meta?.data.length) return;
 
         const values = (Array.isArray(dataset.data) ? dataset.data : []) as (
-          | number
-          | null
-          | undefined
+          number | null | undefined
         )[];
 
         meta.data.forEach((element, index) => {

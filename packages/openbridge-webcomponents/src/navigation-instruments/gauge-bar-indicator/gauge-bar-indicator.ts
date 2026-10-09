@@ -2,6 +2,7 @@ import {LitElement, html, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {styleMap} from 'lit/directives/style-map.js';
 import {customElement} from '../../decorator.js';
+import {clamp} from '../../svghelpers/math.js';
 import componentStyle from './gauge-bar-indicator.css?inline';
 
 const FRAME_LENGTH = 36;
@@ -14,10 +15,6 @@ export type GaugeBarIndicatorDirection =
 
 export const gaugeBarIndicatorTypes = ['fill', 'tinted'] as const;
 export type GaugeBarIndicatorType = (typeof gaugeBarIndicatorTypes)[number];
-
-function clamp(value: number, min: number, max: number): number {
-  return Math.min(Math.max(value, min), max);
-}
 
 /**
  * `<obc-gauge-bar-indicator>` – Compact bar gauge indicator for quick value cues.
@@ -126,9 +123,11 @@ export class ObcGaugeBarIndicator extends LitElement {
               style=${unfilledStyle}
             ></div>
             <div class=${fillClasses} part="fill" style=${fillStyle}>
-              ${type === 'tinted'
-                ? html`<div class=${pointerClasses} part="pointer"></div>`
-                : null}
+              ${
+                type === 'tinted'
+                  ? html`<div class=${pointerClasses} part="pointer"></div>`
+                  : null
+              }
             </div>
           </div>
         </div>

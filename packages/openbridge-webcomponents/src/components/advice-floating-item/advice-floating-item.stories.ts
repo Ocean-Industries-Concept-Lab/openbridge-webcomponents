@@ -70,9 +70,11 @@ const template: AdviceFloatingItemTemplate = (args) => html`
     .action=${args.action}
     .action2=${args.action2}
   >
-    ${args.type === ObcFloatingItemType.Application
-      ? html`<div slot="primary-icon"><obi-ship></obi-ship></div>`
-      : ''}
+    ${
+      args.type === ObcFloatingItemType.Application
+        ? html`<div slot="primary-icon"><obi-ship></obi-ship></div>`
+        : ''
+    }
     <span slot="title">Advice title</span>
     <span slot="description">
       ${'An advice message with meaningful content for the user.'}
@@ -174,9 +176,11 @@ export const AdviceLongMessage: Story = {
       .action=${args.action}
       .action2=${args.action2}
     >
-      ${args.type === ObcFloatingItemType.Application
-        ? html`<div slot="primary-icon"><obi-ship></obi-ship></div>`
-        : ''}
+      ${
+        args.type === ObcFloatingItemType.Application
+          ? html`<div slot="primary-icon"><obi-ship></obi-ship></div>`
+          : ''
+      }
       <span slot="title">Important Advice</span>
       <span slot="description">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia

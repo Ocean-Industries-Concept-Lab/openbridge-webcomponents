@@ -1,5 +1,19 @@
-import { computed, ref, type Ref } from 'vue'
+import { ref, type Ref } from 'vue'
 
+export type MenuName =
+  'navigation' | 'brilliance' | 'appMenu' | 'alertMenu' | 'moreMenu' | 'commandMenu'
+
+/**
+ * Which top bar menu is open.
+ *
+ * The menus close themselves now, so these flags exist only to keep the top
+ * bar's buttons looking pressed while their menu is up. `onMenuClose` is what
+ * puts a flag back when a menu closed on its own.
+ *
+ * Nothing here guards against a second click on the same button. While a
+ * menu is open it covers the page, that button included, so the click that
+ * closes the menu never reaches the top bar.
+ */
 export function useWindowHandling() {
   const showNavigation = ref(false)
   const showBrilliance = ref(false)
@@ -7,31 +21,33 @@ export function useWindowHandling() {
   const showAlertMenu = ref(false)
   const showMoreMenu = ref(false)
   const showCommandMenu = ref(false)
+
+  const menus: Record<MenuName, Ref<boolean>> = {
+    navigation: showNavigation,
+    brilliance: showBrilliance,
+    appMenu: showAppMenu,
+    alertMenu: showAlertMenu,
+    moreMenu: showMoreMenu,
+    commandMenu: showCommandMenu
+  }
+  const all = Object.values(menus)
+
   function toggleAndhideOthers(value: Ref<boolean>) {
-    const prevValue = value.value
+    const wasOpen = value.value
     hideAll()
-    value.value = !prevValue
+    value.value = !wasOpen
   }
 
   function hideAll() {
-    showNavigation.value = false
-    showBrilliance.value = false
-    showAppMenu.value = false
-    showAlertMenu.value = false
-    showMoreMenu.value = false
-    showCommandMenu.value = false
+    for (const menu of all) {
+      menu.value = false
+    }
   }
 
-  const showBackdrop = computed(() => {
-    return (
-      showNavigation.value ||
-      showBrilliance.value ||
-      showAppMenu.value ||
-      showAlertMenu.value ||
-      showMoreMenu.value ||
-      showCommandMenu.value
-    )
-  })
+  /** A menu closed on its own; let its button stop looking pressed. */
+  function onMenuClose(name: MenuName) {
+    menus[name].value = false
+  }
 
   function toggleNavigation() {
     toggleAndhideOthers(showNavigation)
@@ -63,9 +79,9 @@ export function useWindowHandling() {
     showAppMenu,
     showAlertMenu,
     showMoreMenu,
-    showBackdrop,
     showCommandMenu,
     hideAll,
+    onMenuClose,
     toggleNavigation,
     toggleBrilliance,
     toggleAppMenu,

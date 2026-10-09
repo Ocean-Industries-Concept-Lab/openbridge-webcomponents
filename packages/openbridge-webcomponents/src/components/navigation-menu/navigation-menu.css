@@ -1,3 +1,5 @@
+@mixin soft-dismiss;
+
 .wrapper {
   display: flex;
   flex-direction: column;

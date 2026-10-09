@@ -14,6 +14,7 @@ import {LinearAdvice} from '../thruster/advice.js';
 import {PropellerType} from '../thruster/propeller.js';
 import {TickmarkStyle} from '../watch/tickmark.js';
 import {customElement} from '../../decorator.js';
+import {stopPropagation} from '../../internal/events.js';
 
 export enum AzimuthThrusterLabeledSize {
   medium = 'medium',
@@ -21,7 +22,20 @@ export enum AzimuthThrusterLabeledSize {
 }
 
 /**
- * @deprecated
+ * @availableWhen newAngleSetpoint angleSetpoint!=undefined
+ * @availableWhen atAngleSetpoint angleSetpoint!=undefined && autoAtAngleSetpoint==false
+ * @availableWhen angleSetpointAtZeroDeadband angleSetpoint!=undefined
+ * @availableWhen angleSetpointOverride angleSetpoint!=undefined
+ * @availableWhen autoAtAngleSetpoint angleSetpoint!=undefined
+ * @availableWhen autoAtAngleSetpointDeadband angleSetpoint!=undefined && autoAtAngleSetpoint==true
+ * @availableWhen touching angleSetpoint!=undefined || thrustSetpoint!=undefined
+ * @availableWhen atThrustSetpoint thrustSetpoint!=undefined && autoAtThrustSetpoint==false
+ * @availableWhen autoAtThrustSetpoint thrustSetpoint!=undefined
+ * @availableWhen autoAtThrustSetpointDeadband thrustSetpoint!=undefined && autoAtThrustSetpoint==true
+ * @availableWhen thrustSetpointAtZeroDeadband thrustSetpoint!=undefined
+ * @availableWhen thrustSetpointOverride thrustSetpoint!=undefined
+ * @deprecated The azimuth-thruster-labeled component is deprecated and will be removed in future releases.
+ * Please make a combined component by using <obc-azimuth-thruster> in combination with <obc-readout> instead.
  */
 @customElement('obc-azimuth-thruster-labeled')
 export class ObcAzimuthThrusterLabeled extends LitElement {
@@ -34,36 +48,24 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
     ReadoutBlockSize.large;
   @property({type: Number}) angle = 0;
   @property({type: Number}) angleSetpoint?: number;
-  /** @availableWhen angleSetpoint!=undefined */
   @property({type: Number}) newAngleSetpoint: number | undefined;
-  /** @availableWhen angleSetpoint!=undefined && autoAtAngleSetpoint==false */
   @property({type: Boolean})
   atAngleSetpoint: boolean = false;
-  /** @availableWhen angleSetpoint!=undefined */
   @property({type: Number}) angleSetpointAtZeroDeadband: number = 0.5;
-  /** @availableWhen angleSetpoint!=undefined */
   @property({type: Boolean}) angleSetpointOverride: boolean = false;
-  /** @availableWhen angleSetpoint!=undefined */
   @property({type: Boolean, attribute: false}) autoAtAngleSetpoint: boolean =
     true;
-  /** @availableWhen angleSetpoint!=undefined && autoAtAngleSetpoint==true */
   @property({type: Number}) autoAtAngleSetpointDeadband: number = 2;
-  /** @availableWhen angleSetpoint!=undefined || thrustSetpoint!=undefined */
   @property({type: Boolean}) touching: boolean = false;
 
   @property({type: Number}) thrust = 0;
   @property({type: Number}) thrustSetpoint?: number;
-  /** @availableWhen thrustSetpoint!=undefined && autoAtThrustSetpoint==false */
   @property({type: Boolean})
   atThrustSetpoint: boolean = false;
-  /** @availableWhen thrustSetpoint!=undefined */
   @property({type: Boolean, attribute: false}) autoAtThrustSetpoint: boolean =
     true;
-  /** @availableWhen thrustSetpoint!=undefined && autoAtThrustSetpoint==true */
   @property({type: Number}) autoAtThrustSetpointDeadband: number = 1;
-  /** @availableWhen thrustSetpoint!=undefined */
   @property({type: Number}) thrustSetpointAtZeroDeadband: number = 0.1;
-  /** @availableWhen thrustSetpoint!=undefined */
   @property({type: Boolean}) thrustSetpointOverride: boolean = false;
   @property({type: Array, attribute: false}) angleAdvices: AngleAdvice[] = [];
   @property({type: Array, attribute: false}) thrustAdvices: LinearAdvice[] = [];
@@ -107,6 +109,8 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
         </div>
         <obc-readout
           class="readout-angle"
+          @source-change=${stopPropagation}
+          @source-flyout-click=${stopPropagation}
           .size=${effectiveReadoutSize}
           .direction=${ReadoutDirection.vertical}
           .hasSetpoint=${true}
@@ -132,6 +136,8 @@ export class ObcAzimuthThrusterLabeled extends LitElement {
         </obc-readout>
         <obc-readout
           class="readout-power"
+          @source-change=${stopPropagation}
+          @source-flyout-click=${stopPropagation}
           .size=${effectiveReadoutSize}
           .direction=${ReadoutDirection.vertical}
           .hasSetpoint=${true}

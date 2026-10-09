@@ -123,6 +123,31 @@ export enum ToggletipVariant {
  * </obc-toggletip>
  * ```
  *
+ * @property title - Title text displayed in the header.
+ * @property description - Description text shown in the content area.
+ * @property hasContent - If true, shows the content slot area.
+ *   Use the `content` slot to provide custom content.
+ * @property hasActions - If true, shows the action buttons container.
+ *   Both primary and secondary buttons are shown if labels are provided.
+ *   TODO(designer): Should both buttons always be shown, or is one preferred as primary?
+ * @property hasLeadingIcon - If true, shows the leading icon in the header.
+ *   The icon adapts to the current `variant` by default, or can be overridden via the `leading-icon` slot.
+ * @availableWhen hasLeadingIcon title!=''
+ * @property hasTrailingIcon - If true, shows the trailing icon in the header.
+ *   Use the `trailing-icon` slot to provide a custom icon.
+ * @availableWhen hasTrailingIcon title!=''
+ * @property customWidth - Sets a custom width for the toggletip in pixels.
+ *   If not set, defaults to 400px.
+ * @property primaryButtonLabel - Label for the primary action button.
+ *   Only shown if `hasActions` is true.
+ * @availableWhen primaryButtonLabel hasActions==true
+ * @property secondaryButtonLabel - Label for the secondary action button.
+ *   Only shown if `hasActions` is true.
+ * @availableWhen secondaryButtonLabel hasActions==true
+ * @property variant - Visual style and meaning: `normal` (default) is informational, `raised`
+ *   carries a dark header for higher importance, `enhanced` marks primary
+ *   information, `eco-feedback` positive environmental feedback, and
+ *   `caution`, `warning` and `alarm` the three alert severities.
  * @slot leading-icon - Main icon representing the message type or context (shown when `hasLeadingIcon` is true)
  * @slot trailing-icon - Additional icon for secondary context or actions (shown when `hasTrailingIcon` is true)
  * @slot content - Custom content area for rich or interactive elements (shown when `hasContent` is true)
@@ -133,74 +158,24 @@ export enum ToggletipVariant {
  */
 @customElement('obc-toggletip')
 export class ObcToggletip extends LitElement {
-  /**
-   * Visual style and semantic meaning of the toggletip.
-   *
-   * - `normal` (default): Standard informational toggletip.
-   * - `raised`: Elevated importance with dark header.
-   * - `enhanced`: Used for enhanced or primary information.
-   * - `eco-feedback`: Environmental or positive feedback messaging.
-   * - `caution`: Indicates caution or minor issues.
-   * - `warning`: Highlights warnings or potential problems.
-   * - `alarm`: Signals critical or urgent conditions.
-   */
   @property({type: String}) variant = 'normal' as ToggletipVariant;
 
-  /**
-   * Title text displayed in the header.
-   */
   @property({type: String}) override title: string = '';
 
-  /**
-   * Description text shown in the content area.
-   */
   @property({type: String}) description: string | undefined;
 
-  /**
-   * If true, shows the content slot area.
-   * Use the `content` slot to provide custom content.
-   */
   @property({type: Boolean}) hasContent = false;
 
-  /**
-   * If true, shows the action buttons container.
-   * Both primary and secondary buttons are shown if labels are provided.
-   * TODO(designer): Should both buttons always be shown, or is one preferred as primary?
-   */
   @property({type: Boolean}) hasActions = false;
 
-  /**
-   * If true, shows the leading icon in the header.
-   * The icon adapts to the current `variant` by default, or can be overridden via the `leading-icon` slot.
-   * @availableWhen title!=''
-   */
   @property({type: Boolean}) hasLeadingIcon = false;
 
-  /**
-   * If true, shows the trailing icon in the header.
-   * Use the `trailing-icon` slot to provide a custom icon.
-   * @availableWhen title!=''
-   */
   @property({type: Boolean}) hasTrailingIcon = false;
 
-  /**
-   * Sets a custom width for the toggletip in pixels.
-   * If not set, defaults to 400px.
-   */
   @property({type: Number}) customWidth?: number;
 
-  /**
-   * Label for the primary action button.
-   * Only shown if `hasActions` is true.
-   * @availableWhen hasActions==true
-   */
   @property({type: String}) primaryButtonLabel = 'Label';
 
-  /**
-   * Label for the secondary action button.
-   * Only shown if `hasActions` is true.
-   * @availableWhen hasActions==true
-   */
   @property({type: String}) secondaryButtonLabel = 'Label';
 
   /**
@@ -290,63 +265,75 @@ export class ObcToggletip extends LitElement {
         style=${style}
       >
         <div class="container">
-          ${this.title.length > 0
-            ? html`
-                <div class="container-header">
-                  <div class="title-container">
-                    ${this.hasLeadingIcon
-                      ? html`
-                          <div class="leading-icon">
-                            ${this.renderLeadingIcon()}
-                          </div>
-                        `
-                      : ''}
-                    <div class="container-title">
-                      <div class="title">${this.title}</div>
+          ${
+            this.title.length > 0
+              ? html`
+                  <div class="container-header">
+                    <div class="title-container">
+                      ${
+                        this.hasLeadingIcon
+                          ? html`
+                              <div class="leading-icon">
+                                ${this.renderLeadingIcon()}
+                              </div>
+                            `
+                          : ''
+                      }
+                      <div class="container-title">
+                        <div class="title">${this.title}</div>
+                      </div>
                     </div>
+                    ${
+                      this.hasTrailingIcon
+                        ? html`
+                            <div class="trailing-icon">
+                              <slot name="trailing-icon"></slot>
+                            </div>
+                          `
+                        : ''
+                    }
                   </div>
-                  ${this.hasTrailingIcon
-                    ? html`
-                        <div class="trailing-icon">
-                          <slot name="trailing-icon"></slot>
-                        </div>
-                      `
-                    : ''}
-                </div>
-              `
-            : nothing}
+                `
+              : nothing
+          }
 
           <div class="content-container">
-            ${this.description !== undefined
-              ? html` <div class="description">${this.description}</div> `
-              : nothing}
-            ${this.hasContent
-              ? html`
-                  <div class="content">
-                    <slot name="content"> </slot>
-                  </div>
-                `
-              : nothing}
-            ${this.hasActions
-              ? html`
-                  <div class="action-container">
-                    <div class="action-button">
-                      <obc-button
-                        ?fullWidth=${true}
-                        @click=${this.handlePrimaryAction}
-                        >${this.primaryButtonLabel}</obc-button
-                      >
+            ${
+              this.description !== undefined
+                ? html` <div class="description">${this.description}</div> `
+                : nothing
+            }
+            ${
+              this.hasContent
+                ? html`
+                    <div class="content">
+                      <slot name="content"> </slot>
                     </div>
-                    <div class="action-button">
-                      <obc-button
-                        ?fullWidth=${true}
-                        @click=${this.handleSecondaryAction}
-                        >${this.secondaryButtonLabel}</obc-button
-                      >
+                  `
+                : nothing
+            }
+            ${
+              this.hasActions
+                ? html`
+                    <div class="action-container">
+                      <div class="action-button">
+                        <obc-button
+                          ?fullWidth=${true}
+                          @click=${this.handlePrimaryAction}
+                          >${this.primaryButtonLabel}</obc-button
+                        >
+                      </div>
+                      <div class="action-button">
+                        <obc-button
+                          ?fullWidth=${true}
+                          @click=${this.handleSecondaryAction}
+                          >${this.secondaryButtonLabel}</obc-button
+                        >
+                      </div>
                     </div>
-                  </div>
-                `
-              : nothing}
+                  `
+                : nothing
+            }
           </div>
         </div>
 

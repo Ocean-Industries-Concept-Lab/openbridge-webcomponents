@@ -1,0 +1,35 @@
+# License
+
+Copyright (c) OpenBridge Components AS
+
+This software is licensed under the GNU Affero General Public License
+v3.0 only (see LICENSE-AGPL), subject to the additional permission below.
+
+## Change License
+
+Each version of this software, and each commit in the Licensor's
+official repository at
+https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents,
+becomes additionally available under the Apache License, Version 2.0
+(see LICENSE-APACHE) 180 days after the date it was first made
+publicly available by the Licensor, whether as a release on
+npmjs.com, a tag or release on GitHub, or a commit pushed to the
+official repository, whichever occurs first ("Change Date").
+
+This grant is irrevocable. From the Change Date you may use that
+version or commit under either license, at your option. Code first
+made available after that date is not covered until its own
+Change Date.
+
+## Commercial License
+
+Before the Change Date, you may obtain a commercial license that
+permits use of this software without the obligations of the AGPL.
+A commercial license does not grant the right to redistribute the
+software under the Apache License or any other open source license
+before the Change Date. Commercial licenses are available to
+supporters of the project. Contact us:
+
+- Form: https://docs.google.com/forms/d/e/1FAIpQLSc6JVRyyIease2PkUArirNkG0DeTB__YnWEovjVwISlaYdktA/viewform
+- Email: torstein.bo@openstudio.no
+- Slack: https://join.slack.com/t/openbridgegroup/shared_invite/zt-2e4clvl6s-uZLkN5L3g8O~c1UZCN1reQ
