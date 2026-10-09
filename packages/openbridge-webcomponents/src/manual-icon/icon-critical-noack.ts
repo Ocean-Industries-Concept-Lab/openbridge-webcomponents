@@ -2,6 +2,11 @@ import {LitElement, html, css, svg} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../decorator.js';
 
+/**
+ * `<obi-critical-noack>` – hand-kept: this icon has no Figma source yet, so the generated
+ * set cannot carry it, and alert-frame / alert-icon render it.
+ * TODO(designer): add it to the Icons file; the generated icon then replaces this.
+ */
 @customElement('obi-critical-noack')
 export class ObiCriticalNoack extends LitElement {
   @property({type: Boolean}) useCssColor = false;

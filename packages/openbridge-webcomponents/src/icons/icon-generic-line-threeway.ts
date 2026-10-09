@@ -12,7 +12,7 @@ export class ObiGenericLineThreeway extends LitElement {
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M0 11V13H11V24H13V13H24V11H0Z" style="fill: var(--automation-device-tertiary-color)"/>
+<path d="M0 11V13H11V24H13V13H24V11H0Z" style="fill: var(--automation-symbol-on-border-color)"/>
 </svg>
 `;
 
