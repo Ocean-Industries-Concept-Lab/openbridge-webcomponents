@@ -25,7 +25,13 @@ import {
   NSWE_LABEL_WIDTH_PX,
   type RadialFrame,
 } from '../../svghelpers/radial-frame.js';
-import {VesselImage, VesselImageSize, WatchCircleType} from '../watch/watch.js';
+import {
+  VesselImage,
+  VesselImageSize,
+  WatchCircleType,
+  vesselArt,
+  type VesselImageSrc,
+} from '../watch/watch.js';
 import {SetpointBundle} from '../../svghelpers/setpoint-bundle.js';
 import {Priority} from '../types.js';
 import {customElement} from '../../decorator.js';
@@ -109,6 +115,11 @@ export enum HeadingPriorityElement {
  *   unset (default) no vessel is shown; hidden while `centerReadouts` is
  *   non-empty.
  * @availableWhen vesselImage centerReadouts==[]
+ * @property vesselImageSrc - Image URLs per palette (`{bright, day, dusk, night}`, SVG, PNG or data URLs)
+ *   drawn instead of `vesselImage` in the same 160 × 160 box. A palette without a URL falls
+ *   back to the nearest one (see `VesselImageSrc`). Setting it shows the vessel even when
+ *   `vesselImage` is unset.
+ * @availableWhen vesselImageSrc centerReadouts==[]
  * @property centerReadouts - Center readouts replacing the vessel: the first entry renders on top,
  *   the rest side by side below a horizontal divider. Values bind per entry
  *   `source` (`hdg` → `heading`, `cog` → `courseOverGround`; `rot` has no
@@ -148,6 +159,8 @@ export class ObcHeading extends LitElement {
   @property({type: Array, attribute: false})
   priorityElements: HeadingPriorityElement[] = [HeadingPriorityElement.hdg];
   @property({type: String}) vesselImage: VesselImage | undefined;
+  @property({type: Object, attribute: false})
+  vesselImageSrc: VesselImageSrc | undefined;
   @property({type: Array, attribute: false})
   centerReadouts: CompassCenterReadout[] = [];
   @property({type: String}) hdgArrowStyle: HdgArrowStyle = HdgArrowStyle.needle;
@@ -249,8 +262,12 @@ export class ObcHeading extends LitElement {
    * The face gains the double-band ring while center content (vessel or
    * readouts) is shown, per the design's vessel/center-label faces.
    */
+  private get hasVessel(): boolean {
+    return this.vesselImage !== undefined || !!this.vesselImageSrc;
+  }
+
   private get watchCircleType(): WatchCircleType {
-    return this.vesselImage !== undefined || this.hasCenterReadouts
+    return this.hasVessel || this.hasCenterReadouts
       ? WatchCircleType.double
       : WatchCircleType.single;
   }
@@ -292,11 +309,14 @@ export class ObcHeading extends LitElement {
           .tickmarks=${tickmarks}
           .watchCircleType=${this.watchCircleType}
           .vessels=${
-            this.vesselImage !== undefined && !this.hasCenterReadouts
+            this.hasVessel && !this.hasCenterReadouts
               ? [
                   {
                     size: VesselImageSize.medium,
-                    vesselImage: this.vesselImage,
+                    ...vesselArt(
+                      this.vesselImage ?? VesselImage.genericTop,
+                      this.vesselImageSrc
+                    ),
                     transform: `rotate(${this.heading}deg)`,
                   },
                 ]

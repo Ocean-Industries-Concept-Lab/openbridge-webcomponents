@@ -43,4 +43,32 @@ describe('observeLabelThreshold', () => {
 
     expect(events).toEqual(['update', 'rebuild', 'update', 'rebuild']);
   });
+
+  it('rebuilds once when a target created without a size gets one', async () => {
+    const parent = document.createElement('div');
+    parent.style.display = 'none';
+    el = document.createElement('div');
+    el.style.height = '100px';
+    parent.append(el);
+    document.body.append(parent);
+    const events: string[] = [];
+
+    observer = observeLabelThreshold(
+      el,
+      () => (el?.clientHeight ?? 0) >= THRESHOLD_PX,
+      {
+        rebuild: () => events.push('rebuild'),
+        update: () => events.push('update'),
+      }
+    );
+    await settle();
+
+    parent.style.display = 'block';
+    await settle();
+    el.style.height = '120px';
+    await settle();
+    parent.remove();
+
+    expect(events).toEqual(['update', 'rebuild', 'update']);
+  });
 });

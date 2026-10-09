@@ -92,6 +92,14 @@ package and builds it; the Angular wrapper additionally gets the version written
 into its `dist/package.json`. It runs only during a release and is invoked by
 path, not by an npm script — so it is easy to miss when grepping.
 
+The Angular wrapper's `build` script (set by `fix-generated.cjs`) runs
+`script/compact-ng-exports.mjs` after ng-packagr. ng-packagr writes one
+`exports` entry per secondary entry point (~2400, ~445 kB), past the 384000-byte
+`package.json` cap some npm-compatible registries enforce; the script folds them
+into a single `./*` pattern that resolves to the same files. Build the wrapper
+with `npm run build`, not a bare `ng-packagr`, or the publish carries the
+oversized manifest.
+
 Everything else lives in the singular `script/` directory. Adding release-time
 tooling to the wrong one silently does nothing.
 

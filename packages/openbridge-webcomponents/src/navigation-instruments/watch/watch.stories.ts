@@ -17,6 +17,10 @@ import {InstrumentState, Priority} from '../types.js';
 import {TickmarkType} from './tickmark.js';
 import {html, svg} from 'lit';
 import {degToRad} from '../../svghelpers/math.js';
+import {
+  customVesselPngSrc,
+  customVesselSvgSrc,
+} from './vessels/storybook-helper.js';
 
 const meta: Meta<typeof ObcWatch> = {
   title: 'Building Blocks/Watch',
@@ -143,6 +147,25 @@ export const WithVesselImage: Story = {
   },
   argTypes: {
     angleSetpoint: {control: {type: 'range', min: 0, max: 360, step: 1}},
+  },
+};
+
+export const WithCustomVesselImage: Story = {
+  args: {
+    state: InstrumentState.active,
+    priority: Priority.enhanced,
+    vessels: [
+      {
+        size: VesselImageSize.medium,
+        customImage: customVesselSvgSrc,
+        transform: 'translate(-60px, 0) rotate(30deg)',
+      },
+      {
+        size: VesselImageSize.medium,
+        customImage: customVesselPngSrc,
+        transform: 'translate(60px, 0) rotate(-30deg)',
+      },
+    ],
   },
 };
 

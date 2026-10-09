@@ -5,8 +5,10 @@ import '../watch/watch.js';
 import {
   VesselImage,
   VesselImageSize,
+  vesselArt,
   WatchCircleType,
   type WatchVessel,
+  type VesselImageSrc,
 } from '../watch/watch.js';
 import {Tickmark, TickmarkType} from '../watch/tickmark.js';
 import {customElement} from '../../decorator.js';
@@ -97,6 +99,10 @@ const LABEL_TEXTS = ['0', '90', '180', '-90'] as const;
  * @property motionHistory - Past attitude samples, oldest first; rendered as a fading trail.
  * @availableWhen motionHistory type=='historical-motion'
  * @availableWhen vesselImage type!='level'
+ * @property vesselImageSrc - Image URLs per palette (`{bright, day, dusk, night}`, SVG, PNG or data URLs)
+ *   drawn instead of `vesselImage` in the same 160 × 160 box. A palette without a URL falls
+ *   back to the nearest one (see `VesselImageSrc`).
+ * @availableWhen vesselImageSrc type!='level'
  * @property showLabels - When `true`, shows 0/90/180/-90 labels outside the scale.
  * @experimental
  */
@@ -113,6 +119,8 @@ export class ObcPitchRollYaw extends LitElement {
   @property({type: Array, attribute: false})
   motionHistory: PitchRollSample[] = [];
   @property({type: String}) vesselImage: VesselImage = VesselImage.psvTop;
+  @property({type: Object, attribute: false})
+  vesselImageSrc: VesselImageSrc | undefined;
   @property({type: String}) priority: Priority = Priority.regular;
   @property({type: Boolean}) showLabels = false;
 
@@ -331,7 +339,7 @@ export class ObcPitchRollYaw extends LitElement {
         : [
             {
               size: VesselImageSize.medium,
-              vesselImage: this.vesselImage,
+              ...vesselArt(this.vesselImage, this.vesselImageSrc),
               transform: '',
             },
           ];

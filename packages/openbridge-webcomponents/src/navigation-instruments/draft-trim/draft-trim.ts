@@ -10,7 +10,12 @@ import {
   resolveLinearAdvice,
 } from '../../building-blocks/instrument-linear/advice.js';
 import {VesselImage} from '../watch/watch.js';
-import {vesselImages} from '../watch/vessel.js';
+import {
+  renderVesselArt,
+  vesselArt,
+  type VesselImageSrc,
+} from '../watch/vessel.js';
+import {PaletteController} from '../../charthelpers/theme.js';
 import {Priority} from '../types.js';
 
 /** Height of the scales and of the centre panel, in SVG units. */
@@ -61,6 +66,9 @@ const VESSEL_OFFSET_Y = 4.5;
  *   waterline, so the upper half reads as freeboard.
  * @property advice - Advice zones, in the same positive-below-the-waterline units as the
  *   draughts. Applied to both scales; each is triggered by its own draught.
+ * @property vesselImageSrc - Image URLs per palette (`{bright, day, dusk, night}`, SVG, PNG or data URLs)
+ *   drawn instead of `vesselImage` in the same 160 × 160 box. A palette without a URL falls
+ *   back to the nearest one (see `VesselImageSrc`).
  * @experimental
  */
 @customElement('obc-draft-trim')
@@ -70,7 +78,11 @@ export class ObcDraftTrim extends LitElement {
   @property({type: Number}) instrumentRange = 10;
   @property({type: Array}) advice: LinearAdvice[] = [];
   @property({type: String}) vesselImage: VesselImage = VesselImage.psvSide;
+  @property({type: Object, attribute: false})
+  vesselImageSrc: VesselImageSrc | undefined;
   @property({type: String}) priority: Priority = Priority.regular;
+
+  private readonly _palette = new PaletteController(this);
 
   /**
    * Scale value for a draught. The scales run positive-up like `obc-heave`,
@@ -138,7 +150,7 @@ export class ObcDraftTrim extends LitElement {
     const scale = VESSEL_SIZE / 160;
     return svg`
       <g transform="translate(0, ${VESSEL_OFFSET_Y}) scale(${scale}) translate(-80, -80)">
-        ${this.vesselImage ? vesselImages[this.vesselImage] : nothing}
+        ${this.vesselImage ? renderVesselArt(vesselArt(this.vesselImage, this.vesselImageSrc), this._palette.current) : nothing}
       </g>
     `;
   }

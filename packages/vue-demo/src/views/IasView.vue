@@ -116,23 +116,15 @@
       >
       </ObcVerticalLine>
 
-      <ObcAutomationButton
+      <ObcAnalogThreewayValve
         style="top: calc(24px * 19.5); left: calc(24px * 15)"
-        :variant="buttonVariant"
-      >
-        <template #icon>
-          <obc-valve-analog-three-way-icon
-            :value="valve1"
-            :value2="valve2"
-          ></obc-valve-analog-three-way-icon>
-        </template>
-        <template #icon-silhouette>
-          <obc-valve-analog-three-way-icon
-            :value="valve1"
-            :value2="valve2"
-          ></obc-valve-analog-three-way-icon>
-        </template>
-      </ObcAutomationButton>
+        :variant="valveVariant"
+        :orientation="ThreewayValveOrientation.top"
+        :open1="valve1"
+        :open2="valve2"
+        :open3="100"
+        :show-readout-stack="false"
+      ></ObcAnalogThreewayValve>
       <ObcAutomationTank
         tag="#002"
         :value="tank2"
@@ -182,10 +174,13 @@ import { CornerLineDirection } from '@oicl/openbridge-webcomponents/dist/automat
 import ObcAutomationButton from '@oicl/openbridge-webcomponents-vue/automation/automation-button/ObcAutomationButton.vue'
 import {
   AutomationButtonDirection,
-  AutomationButtonState
+  AutomationButtonState,
+  AutomationButtonVariant
 } from '@oicl/openbridge-webcomponents/dist/automation/automation-button/automation-button'
 
-import ObcValveAnalogThreeWayIcon from '@oicl/openbridge-webcomponents-vue/automation/valve-analog-three-way-icon/ObcValveAnalogThreeWayIcon.vue'
+import ObcAnalogThreewayValve from '@oicl/openbridge-webcomponents-vue/automation/analog-threeway-valve/ObcAnalogThreewayValve.vue'
+import { AnalogThreewayValveVariant } from '@oicl/openbridge-webcomponents/dist/automation/analog-threeway-valve/analog-threeway-valve'
+import { ThreewayValveOrientation } from '@oicl/openbridge-webcomponents/dist/automation/threeway-valve-shared/threeway-valve-shared'
 import ObiPumpOnHorisontal from '@oicl/openbridge-webcomponents-vue/icons/ObiPumpOnHorizontal.vue'
 import ObiPumpOffHorisontal from '@oicl/openbridge-webcomponents-vue/icons/ObiPumpOffHorizontal.vue'
 
@@ -197,6 +192,10 @@ const lineType = LineType.fluid
 
 const demoConfigStore = useDemoConfigStore()
 const buttonVariant = demoConfigStore.iasVariants
+const valveVariant =
+  buttonVariant === AutomationButtonVariant.flat
+    ? AnalogThreewayValveVariant.flat
+    : AnalogThreewayValveVariant.regular
 
 const tank1Max = 5_000
 const tank1 = ref(1_000)

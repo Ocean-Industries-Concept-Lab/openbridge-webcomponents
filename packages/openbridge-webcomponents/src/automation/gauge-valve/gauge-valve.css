@@ -110,10 +110,8 @@
  * light halo, per the Figma Off master) instead of the default inverted grays
  * that closed/off `obi-*` icon variants ship with. */
 .root.priority-off .icon {
-  --automation-device-primary-inverted-color: var(--element-active-color);
-  --automation-device-tertiary-inverted-color: var(
-    --instrument-frame-tertiary-color
-  );
+  --automation-symbol-off-background-color: var(--element-active-color);
+  --automation-symbol-off-border-color: var(--instrument-frame-tertiary-color);
 }
 
 .icon ::slotted(*) {
