@@ -70,6 +70,32 @@ export const Negative: Story = {
   },
 };
 
+export const PortStarboardPositive: Story = {
+  args: {
+    value: 60,
+    maxValue: 100,
+    minValue: -100,
+    getAngle: (v: number) => (v / 100) * 135,
+    showLabels: true,
+    type: ObcGaugeRadialType.bar,
+    priority: Priority.enhanced,
+    portStarboard: true,
+  },
+};
+
+export const PortStarboardNegative: Story = {
+  args: {
+    value: -60,
+    maxValue: 100,
+    minValue: -100,
+    getAngle: (v: number) => (v / 100) * 135,
+    showLabels: true,
+    type: ObcGaugeRadialType.bar,
+    priority: Priority.enhanced,
+    portStarboard: true,
+  },
+};
+
 export const EnhancedFilled: Story = {
   args: {
     value: 50,

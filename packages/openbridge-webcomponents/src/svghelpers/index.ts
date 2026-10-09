@@ -4,3 +4,4 @@ export * from './setpoint.js';
 export * from './setpoint-mixin.js';
 export * from './setpoint-bundle.js';
 export * from './rounded-rect.js';
+export * from './port-starboard.js';
