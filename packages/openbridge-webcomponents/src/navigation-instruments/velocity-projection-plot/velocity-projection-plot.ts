@@ -9,7 +9,12 @@ import {
 import {property} from 'lit/decorators.js';
 import compentStyle from './velocity-projection-plot.css?inline';
 import '../watch/watch.js';
-import {VesselImage, VesselImageSize} from '../watch/watch.js';
+import {
+  VesselImage,
+  VesselImageSize,
+  vesselArt,
+  type VesselImageSrc,
+} from '../watch/watch.js';
 import {customElement} from '../../decorator.js';
 import {degToRad, clamp} from '../../svghelpers/math.js';
 
@@ -21,6 +26,9 @@ export interface VelocityProjectionDatapoint {
 }
 
 /**
+ * @property vesselImageSrc - Image URLs per palette (`{bright, day, dusk, night}`, SVG, PNG or data URLs)
+ *   drawn instead of `vesselImage` in the same 160 × 160 box. A palette without a URL falls
+ *   back to the nearest one (see `VesselImageSrc`).
  * @experimental
  */
 @customElement('obc-velocity-projection-plot')
@@ -37,6 +45,8 @@ export class ObcVelocityProjectionPlot extends LitElement {
   currentSpeedKnots: number | null = null;
   @property({type: String})
   vesselImage: VesselImage = VesselImage.cargoWindTop;
+  @property({type: Object, attribute: false})
+  vesselImageSrc: VesselImageSrc | undefined;
   override render() {
     const width = 320;
     const viewBox = `-${width / 2} -${width / 2} ${width} ${width}`;
@@ -53,7 +63,7 @@ export class ObcVelocityProjectionPlot extends LitElement {
           .vessels=${[
             {
               size: VesselImageSize.small,
-              vesselImage: this.vesselImage,
+              ...vesselArt(this.vesselImage, this.vesselImageSrc),
               transform: '',
             },
           ]}

@@ -85,6 +85,9 @@
   "application-components-alerts-alert-menu-item--primary-action-none": [
     "nested-interactive"
   ],
+  "application-components-alerts-alert-menu-item--rectified-unacknowledged": [
+    "nested-interactive"
+  ],
   "application-components-alerts-alert-menu-item--secondary-action-disabled": [
     "nested-interactive"
   ],
@@ -871,10 +874,6 @@
   ],
   "ui-components-messages-and-notifications-progress-button--linear-with-progress": [
     "aria-allowed-attr"
-  ],
-  "ui-components-sections-accordion-card--expanded": ["aria-valid-attr-value"],
-  "ui-components-sections-accordion-card--with-custom-content": [
-    "aria-valid-attr-value"
   ],
   "ui-components-sections-sequence-card--playground": ["aria-required-parent"],
   "ui-components-sections-sequence-card--regular-centered": [

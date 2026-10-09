@@ -3,7 +3,10 @@ import {ObcPitch, ObcPitchType} from './pitch.js';
 import './pitch.js';
 import {Priority} from '../types.js';
 import {widthDecorator} from '../../storybook-util.js';
-import {sideVessels} from '../watch/vessels/storybook-helper.js';
+import {
+  customVesselSidePngSrc,
+  sideVessels,
+} from '../watch/vessels/storybook-helper.js';
 
 const meta: Meta<typeof ObcPitch> = {
   title: 'Instruments/Pitch',
@@ -76,5 +79,18 @@ export const DualScale: Story = {
 export const Enhanced: Story = {
   args: {
     priority: Priority.enhanced,
+  },
+};
+
+export const WithCustomVesselImage: Story = {
+  args: {
+    vesselImageSideSrc: customVesselSidePngSrc,
+  },
+};
+
+export const WithCustomVesselImageZoomedIn: Story = {
+  args: {
+    vesselImageSideSrc: customVesselSidePngSrc,
+    zoomToFitArc: true,
   },
 };

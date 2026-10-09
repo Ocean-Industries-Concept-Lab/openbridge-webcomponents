@@ -4,7 +4,10 @@ import './draft-trim.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {Priority} from '../types.js';
 import {AdviceType} from '../watch/advice.js';
-import {sideVessels} from '../watch/vessels/storybook-helper.js';
+import {
+  customVesselSidePngSrc,
+  sideVessels,
+} from '../watch/vessels/storybook-helper.js';
 
 const meta: Meta<typeof ObcDraftTrim> = {
   title: 'Instruments/Draft Trim',
@@ -63,5 +66,11 @@ export const Advice: Story = {
       {min: 6, max: 10, type: AdviceType.caution, hinted: true},
       {min: -10, max: -6, type: AdviceType.caution, hinted: true},
     ],
+  },
+};
+
+export const WithCustomVesselImage: Story = {
+  args: {
+    vesselImageSrc: customVesselSidePngSrc,
   },
 };

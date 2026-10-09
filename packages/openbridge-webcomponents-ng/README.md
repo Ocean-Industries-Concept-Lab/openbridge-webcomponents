@@ -12,7 +12,9 @@ This package is **automatically generated** from the [core library](https://gith
 
 ## 🚀 Project Status
 
-**v1.0.0 is now released!** The code was officially opened by **Prince Sverre Magnus of Norway**, and the library is now stable and publicly available.
+**v2.0.0 is out,** with improved stability, close to 60 new components, about 100 fixes, and keyboard navigation and accessibility tested on every change. Coming from 1.x? The [migration guide](https://openbridge-storybook.web.app/?path=/docs/introduction-migration-guide--docs) shows what to update.
+
+v1.0.0 was the first stable release. The code was officially opened by **Prince Sverre Magnus of Norway**, and the library is publicly available.
 
 ## 🏷️ Tag Strategy
 

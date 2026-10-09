@@ -8,9 +8,14 @@ import {
   unsafeCSS,
 } from 'lit';
 import {property} from 'lit/decorators.js';
+import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import compentStyle from './watch-flat.css?inline';
 import {Tickmark, TickmarkStyle, tickmark} from './tickmark-flat.js';
 import {rect} from '../../svghelpers/rectangular.js';
+import {
+  measureContainerPx,
+  observeInnerBox,
+} from '../../svghelpers/radial-frame.js';
 import {Label} from '../compass-flat/compass-flat.js';
 import {customElement} from '../../decorator.js';
 import {Priority} from '../types.js';
@@ -113,6 +118,7 @@ export class ObcWatchFlat extends LitElement {
 
   private _legacyRotationsPerMinute = 0;
   private _rotController?: RateOfTurnController;
+  private _resizeController = new ResizeController(this, {});
 
   private get _effectiveRpm(): number {
     if (this.rateOfTurnDegreesPerMinute != null) {
@@ -121,6 +127,16 @@ export class ObcWatchFlat extends LitElement {
       );
     }
     return this._legacyRotationsPerMinute;
+  }
+
+  /**
+   * Rendered px per user-space unit; the labels divide by it to keep their
+   * on-screen size. 1:1 while the strip has no width yet (hidden, or not laid
+   * out), until the ResizeController re-renders it.
+   */
+  private scaleFor(viewBoxWidth: number): number {
+    const scale = measureContainerPx(this).width / viewBoxWidth;
+    return Number.isFinite(scale) && scale > 0 ? scale : 1;
   }
 
   private get totalHeight(): number {
@@ -390,6 +406,11 @@ export class ObcWatchFlat extends LitElement {
       : nothing;
   }
 
+  override firstUpdated(changed: PropertyValues): void {
+    super.firstUpdated(changed);
+    observeInnerBox(this._resizeController, this.renderRoot);
+  }
+
   override updated(changed: PropertyValues): void {
     super.updated(changed);
     const el = this.rotType
@@ -433,7 +454,7 @@ export class ObcWatchFlat extends LitElement {
     const width = (this.width / 2 + this.padding) * 2;
     const th = this.totalHeight;
     const viewBox = `-${width / 2} -${th / 2} ${width} ${th}`;
-    const scale = this.clientWidth / width;
+    const scale = this.scaleFor(width);
 
     const contentOffsetY = this.bottomBar ? -this.ticksHeight / 2 : 0;
 

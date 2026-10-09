@@ -7,6 +7,14 @@ canvas {
   position: relative;
 }
 
+/* Pixel mode: pin the canvas to the requested size. Chart.js writes its
+   measured size back inline, so a chart created in a hidden container would
+   otherwise keep the 48 px minimum it measured there. */
+:host(:not([fixedaspectratioscaling])) canvas {
+  width: var(--chart-width, 100%) !important;
+  height: var(--chart-height, auto) !important;
+}
+
 /* Scale slots - absolutely positioned at edges */
 slot[name="top-scale"],
 slot[name="bottom-scale"],

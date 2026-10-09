@@ -4,7 +4,9 @@ This monorepo contains the OpenBridge design system implemented as web component
 
 ## 🚀 Project Status
 
-**v1.0.0 is now released!** It has been an incredibly productive first year, with more than 200 components already implemented. The code was officially opened by **Prince Sverre Magnus of Norway** and is now publicly available, marking our first stable milestone.
+**v2.0.0 is out.** It adds close to 60 components, among them motion and depth instruments, propulsion and hydraulic automation symbols, tree navigation and a new readout family, together with about 100 fixes. Keyboard navigation and accessibility are now tested on every change, next to the visual snapshots, so what works in your application keeps working. Coming from 1.x? The [migration guide](https://openbridge-storybook.web.app/?path=/docs/introduction-migration-guide--docs) shows what to update.
+
+v1.0.0 closed an incredibly productive first year, with more than 200 components implemented. The code was officially opened by **Prince Sverre Magnus of Norway** and is publicly available, marking our first stable milestone.
 
 ## 🌿 Branching Strategy
 
