@@ -38,13 +38,9 @@ import '../../icons/icon-display-brilliance-iec.js';
 import '../../icons/icon-palette-day-night-iec.js';
 import {clamp} from '../../svghelpers/math.js';
 import {PopoverController} from '../../internal/popover-controller.js';
+import {ObcPalette} from '../../charthelpers/theme.js';
 
-export enum ObcPalette {
-  night = 'night',
-  dusk = 'dusk',
-  day = 'day',
-  bright = 'bright',
-}
+export {ObcPalette};
 
 export enum ObcBrillianceMenuVariant {
   normal = 'normal',

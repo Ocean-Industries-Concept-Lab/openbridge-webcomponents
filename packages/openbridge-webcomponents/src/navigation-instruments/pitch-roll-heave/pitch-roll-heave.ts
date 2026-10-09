@@ -1,14 +1,17 @@
 import {LitElement, css, html, nothing, svg, type SVGTemplateResult} from 'lit';
+import {PaletteController} from '../../charthelpers/theme.js';
 import {property} from 'lit/decorators.js';
 import '../watch/watch.js';
 import {
   VesselImage,
   VesselImageSize,
+  vesselArt,
   WatchCircleType,
   type WatchArea,
   OUTER_RING_RADIUS,
   innerRingRadiusFor,
-  vesselImages,
+  renderVesselArt,
+  type VesselImageSrc,
 } from '../watch/watch.js';
 import {arcTickmarks, TickmarkType, type Tickmark} from '../watch/tickmark.js';
 import {AdviceState, AdviceType, type AngleAdviceRaw} from '../watch/advice.js';
@@ -160,6 +163,14 @@ function distanceToRect(
  * @availableWhen fractionDigits hasReadout==true
  * @availableWhen vesselImageFore type==singleScale && hasReadout==false
  * @availableWhen vesselImageSide type==singleScale && hasReadout==false
+ * @property vesselImageForeSrc - Image URLs per palette (`{bright, day, dusk, night}`, SVG, PNG or data URLs)
+ *   drawn instead of `vesselImageFore` in the same 160 × 160 box. A palette without a URL falls
+ *   back to the nearest one (see `VesselImageSrc`).
+ * @availableWhen vesselImageForeSrc type==singleScale && hasReadout==false
+ * @property vesselImageSideSrc - Image URLs per palette (`{bright, day, dusk, night}`, SVG, PNG or data URLs)
+ *   drawn instead of `vesselImageSide` in the same 160 × 160 box. A palette without a URL falls
+ *   back to the nearest one (see `VesselImageSrc`).
+ * @availableWhen vesselImageSideSrc type==singleScale && hasReadout==false
  * @availableWhen scaleForeImage type==singleScale && hasReadout==false
  * @availableWhen triggerPitchAdvice maxPitchAdvice!=undefined
  * @availableWhen triggerRollAdvice maxRollAdvice!=undefined
@@ -195,6 +206,12 @@ export class ObcPitchRollHeave extends LitElement {
 
   @property({type: String}) vesselImageFore: VesselImage = VesselImage.psvFore;
   @property({type: String}) vesselImageSide: VesselImage = VesselImage.psvSide;
+  @property({type: Object, attribute: false})
+  vesselImageForeSrc: VesselImageSrc | undefined;
+  @property({type: Object, attribute: false})
+  vesselImageSideSrc: VesselImageSrc | undefined;
+
+  private readonly _palette = new PaletteController(this);
   @property({type: Number}) scaleForeImage = 1;
 
   @property({type: Number}) maxPitchAdvice: number | undefined = undefined;
@@ -387,10 +404,10 @@ export class ObcPitchRollHeave extends LitElement {
     const vesselScale = 224 / 160;
     return svg`
       <g style="transform: rotate(${this.pitch}deg) scale(${vesselScale}) translate(-80px, -80px);">
-        ${vesselImages[this.vesselImageSide]}
+        ${renderVesselArt(vesselArt(this.vesselImageSide, this.vesselImageSideSrc), this._palette.current)}
       </g>
       <g style="transform: rotate(${this.roll}deg) scale(${vesselScale * this.normalizedScaleForeImage}) translate(-80px, -80px);">
-        ${vesselImages[this.vesselImageFore]}
+        ${renderVesselArt(vesselArt(this.vesselImageFore, this.vesselImageForeSrc), this._palette.current)}
       </g>
     `;
   }
@@ -877,12 +894,12 @@ export class ObcPitchRollHeave extends LitElement {
             : [
                 {
                   size: VesselImageSize.large,
-                  vesselImage: this.vesselImageSide,
+                  ...vesselArt(this.vesselImageSide, this.vesselImageSideSrc),
                   transform: `rotate(${this.pitch}deg)`,
                 },
                 {
                   size: VesselImageSize.large,
-                  vesselImage: this.vesselImageFore,
+                  ...vesselArt(this.vesselImageFore, this.vesselImageForeSrc),
                   transform: `rotate(${this.roll}deg) scale(${this.normalizedScaleForeImage})`,
                 },
               ]

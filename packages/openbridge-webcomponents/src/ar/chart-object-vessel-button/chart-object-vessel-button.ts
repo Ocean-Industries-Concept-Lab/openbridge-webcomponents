@@ -234,7 +234,9 @@ export class ObcChartObjectVesselButton extends LitElement {
     if (!hasTurnRate) {
       return nothing;
     }
-    const deg = (this.turnRate / 100) * 12;
+    // A binding that passes `undefined` would put NaN in the arc path.
+    const turnRate = Number.isFinite(this.turnRate) ? this.turnRate : 0;
+    const deg = (turnRate / 100) * 12;
     const R = 24;
     const x = -R * Math.cos(degToRad(deg)) + R + 3;
     const y = R * Math.sin(degToRad(deg)) + 8;

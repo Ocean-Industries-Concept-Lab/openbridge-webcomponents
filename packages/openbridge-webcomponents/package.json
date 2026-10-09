@@ -1,6 +1,6 @@
 {
   "name": "@oicl/openbridge-webcomponents",
-  "version": "2.1.0-next.1",
+  "version": "2.1.0-next.7",
   "type": "module",
   "repository": {
     "type": "git",
@@ -24,6 +24,7 @@
     "test-storybook:watch": "vitest --project=storybook --watch",
     "test-a11y": "vitest run --config vitest.a11y.config.ts && tsx ./script/check-a11y-baseline.ts",
     "test-a11y:update": "vitest run --config vitest.a11y.config.ts && tsx ./script/check-a11y-baseline.ts --update",
+    "test-hidden-mount": "vitest run --config vitest.hidden-mount.config.ts",
     "test-storybook:docker": "docker run -it --user $(id -u):$(id -g) -v $(pwd):/app/packages/openbridge-webcomponents -w /app/packages/openbridge-webcomponents openbridge-webcomponents-storybook npm run test-storybook",
     "build-storybook": "storybook build",
     "storybook:server": "http-server -p 6006 storybook-static",

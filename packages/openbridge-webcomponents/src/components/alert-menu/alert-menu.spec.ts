@@ -58,6 +58,46 @@ describe('obc-alert-menu', () => {
     });
   });
 
+  it('falls back to Active, selected and tabbable, when the selected Shelved tab goes', async () => {
+    const screen = render(
+      html`<obc-alert-menu hasShelved canAckAll>
+        <obc-alert-menu-item
+          id="active-unacked"
+          status=${ObcAlertMenuItemStatus.Unacknowledged}
+        ></obc-alert-menu-item>
+      </obc-alert-menu>`
+    );
+    const el = screen.container.querySelector('obc-alert-menu') as ObcAlertMenu;
+    await el.updateComplete;
+    const tabs = el.shadowRoot!.querySelector(
+      'obc-tabbed-card'
+    ) as ObcTabbedCard;
+    const headers = () =>
+      [...tabs.shadowRoot!.querySelectorAll('[role="tab"]')].map(
+        (tab) =>
+          `${tab.id} ${tab.getAttribute('aria-selected')} ${tab.getAttribute('tabindex')}`
+      );
+    (tabs.shadowRoot!.querySelector('#tab-2') as HTMLElement).click();
+    await el.updateComplete;
+    expect(clickAckVisible(el).tabName).toBe('shelved');
+
+    el.hasShelved = false;
+    await el.updateComplete;
+    await tabs.updateComplete;
+    expect([clickAckVisible(el).tabName, headers()]).toEqual([
+      'all',
+      ['tab-0 false -1', 'tab-1 true 0'],
+    ]);
+
+    el.hasShelved = true;
+    await el.updateComplete;
+    await tabs.updateComplete;
+    expect([clickAckVisible(el).tabName, headers()]).toEqual([
+      'all',
+      ['tab-0 false -1', 'tab-1 true 0', 'tab-2 false -1'],
+    ]);
+  });
+
   it('lists a rectified-unacknowledged item in the Unacked tab', async () => {
     const el = await setup();
     const tabs = el.shadowRoot!.querySelector(

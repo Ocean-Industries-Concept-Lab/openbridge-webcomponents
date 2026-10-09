@@ -180,6 +180,21 @@ Components that participate in grouped layouts (e.g. form items) use host data a
 
 These attributes are set by a parent component — do not set them internally.
 
+## Input fields
+
+`obc-text-input-field` and `obc-number-input-field` wrap a native `<input>`
+in a `<label>`: a click on the label text, unit or icon focuses the input
+natively, and caret placement inside the value is the browser's. The number
+field only cancels `pointerdown` on that chrome, so an unfinished edit keeps
+its focus instead of committing (`number-input-field.spec.ts`, caret
+placement). Focus removes the group separators; after a click on the value
+it waits until the browser has placed the caret, then carries the caret over
+to the ungrouped text, so the digits never move under the pointer first.
+Never derive a caret position or a text width from glyph constants; the
+centred number input sizes itself with `field-sizing: content`, and where
+that is unsupported it fills the field, reading right-aligned rather than
+pushing the value out of a narrow box.
+
 ## Checkbox lists
 
 `obc-checkbox-item` rows are flat; depth is the numeric `level` (0 plain, 1
