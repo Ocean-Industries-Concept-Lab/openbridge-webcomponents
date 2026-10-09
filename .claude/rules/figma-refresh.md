@@ -165,7 +165,7 @@ Unresolved ids, by cause:
 - **The token exists, the map lacks it** — re-run `variables map` on the
   icons file, replace the JSON, re-run the download.
 - **The token is not in the palette yet** — file it with the design team
-  and wait; the palette export comes first (#1187 is one). Shipping the
+  and wait; the palette export comes first. Shipping the
   icon anyway means `OBC_ALLOW_UNRESOLVED_VARS=1` to let the run finish and
   an explicit allowlist entry for that icon and attribute in
   `script/check-icon-hex-leaks.ts`, since the hex it leaves behind fails
@@ -205,17 +205,16 @@ the semantic diff (renamed, removed, changed per block) belong there too.
 
 ## Open
 
-- The plugin still emits the blink keyframes and root animation, and modes
-  with spaces in their names; `palette:strip` covers for it until both are
-  fixed at the source.
-- `--base-categorical-*` is absent from the palette export because the plugin
-  skips aliases into the ten-mode `Color-categorical` collection; the block in
-  `src/palettes/manual.css` bridges it until the plugin emits the modes as
-  classes (#1187, obc-figma-plugin#5). The first export made with that plugin
-  release carries the classes itself, under the same public names: in that
-  export's PR delete the `manual.css` block (grep `#1187`) and the
-  "hand-written … until" sentences in `css-postcss.md` and in
-  `IMPLEMENTATION_GUIDELINES.md` § Categorical Colour Classes. The story
-  "Palettes/Categorical Colour" must not move a pixel; if it does, the export
-  and the block disagree.
+- The plugin still emits `Component-size` modes the package does not ship,
+  two of them with spaces in their names; `palette:strip` covers for it until
+  that is fixed at the source. The blink keyframes and the root animation are
+  gone as of the published release, and the `Color-categorical` modes now
+  arrive as classes, so `manual.css` no longer bridges them.
+- Two Figma variables can land on one custom property, and the export says
+  nothing: the three declarations sit in the same theme block and CSS
+  last-wins drops all but one, so a token resolves to another group's value
+  rather than failing. A name missing from the semantic diff's removal list
+  is not proof it survived — check the block for a repeat before concluding
+  the design team dropped it (plugin PR #10 adds the warning and fixes the
+  `On-` collapse that caused it).
 - Token typos in Figma (#985).

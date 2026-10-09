@@ -14,9 +14,9 @@ export class ObiLogic03 extends LitElement {
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M20 1H4V23H20V1ZM4 0C3.44772 0 3 0.447716 3 1V23C3 23.5523 3.44772 24 4 24H20C20.5523 24 21 23.5523 21 23V1C21 0.447715 20.5523 0 20 0H4Z" style="fill: var(--automation-device-secondary-color)"/>
-<path d="M6.14881 12.272V11H11.9688V12.272H6.14881ZM6.14881 14.552V13.268H11.9688V14.552H6.14881Z" style="fill: var(--automation-device-secondary-color)"/>
-<path d="M17.456 17H15.644V12.044C15.644 11.908 15.644 11.74 15.644 11.54C15.652 11.34 15.66 11.132 15.668 10.916C15.676 10.7 15.684 10.508 15.692 10.34C15.652 10.388 15.564 10.476 15.428 10.604C15.3 10.724 15.18 10.832 15.068 10.928L14.084 11.72L13.208 10.628L15.968 8.432H17.456V17Z" style="fill: var(--automation-device-secondary-color)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M20 1H4V23H20V1ZM4 0C3.44772 0 3 0.447716 3 1V23C3 23.5523 3.44772 24 4 24H20C20.5523 24 21 23.5523 21 23V1C21 0.447715 20.5523 0 20 0H4Z" style="fill: var(--automation-symbol-static-background-color)"/>
+<path d="M6.14881 12.272V11H11.9688V12.272H6.14881ZM6.14881 14.552V13.268H11.9688V14.552H6.14881Z" style="fill: var(--automation-symbol-static-background-color)"/>
+<path d="M17.456 17H15.644V12.044C15.644 11.908 15.644 11.74 15.644 11.54C15.652 11.34 15.66 11.132 15.668 10.916C15.676 10.7 15.684 10.508 15.692 10.34C15.652 10.388 15.564 10.476 15.428 10.604C15.3 10.724 15.18 10.832 15.068 10.928L14.084 11.72L13.208 10.628L15.968 8.432H17.456V17Z" style="fill: var(--automation-symbol-static-background-color)"/>
 </svg>
 `;
 

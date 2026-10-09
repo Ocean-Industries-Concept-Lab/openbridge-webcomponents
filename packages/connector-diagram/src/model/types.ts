@@ -7,7 +7,7 @@ export type Direction = 'top' | 'right' | 'bottom' | 'left'
 export type PipeValue =
   | 'open-flow'       // Tertiary-color outline + Primary-color fill (grey border, white fill)
   | 'open-generic'    // Same colors as open-flow
-  | 'empty'           // Tertiary-inverted outline + Primary-inverted fill
+  | 'empty'           // Connector no-flow border + background
   | 'medium-flow'     // Generic-border outline + Generic-background fill (teal)
   | 'enhanced'        // Enhanced-border outline + Enhanced-background fill (blue)
   | 'running'         // Running-border outline + Running-background fill (green)
@@ -285,10 +285,10 @@ export type {Point, Segment, Straight, Corner, CornerDirection, Endpoint, Arrow,
  */
 export interface ThemeVars {
   // Color/Automation/Pipe/*
-  pipeOutlineColor: string       // Tertiary-color       rgb(83,83,83)
-  pipeFillColor: string          // Primary-color        rgb(255,255,255)
-  pipeOutlineInverted: string    // Tertiary-inverted    rgb(142,142,142)
-  pipeFillInverted: string       // Primary-inverted     rgb(205,205,205)
+  pipeOutlineColor: string       // Connector on border          rgb(82,82,82)
+  pipeFillColor: string          // Connector on background      rgb(255,255,255)
+  pipeOutlineInverted: string    // Connector no-flow border     rgb(111,111,111)
+  pipeFillInverted: string       // Connector no-flow background rgb(221,221,221)
   // Color/Automation/Medium/*
   genericBorder: string          // Generic-border       rgb(0,67,70)
   genericBackground: string      // Generic-background   rgb(128,202,205)
