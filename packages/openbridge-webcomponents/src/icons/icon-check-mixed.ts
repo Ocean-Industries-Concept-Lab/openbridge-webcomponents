@@ -7,12 +7,12 @@ export class ObiCheckMixed extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M18.9998 13.0002H4.99976V11.0002H18.9998V13.0002Z" fill="currentColor"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M18.9998 13.0001H4.99976V11.0001H18.9998V13.0001Z" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M18.9998 13.0002H4.99976V11.0002H18.9998V13.0002Z" style="fill: var(--element-active-color)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M18.9998 13.0001H4.99976V11.0001H18.9998V13.0001Z" style="fill: var(--element-active-color)"/>
 </svg>
 `;
 

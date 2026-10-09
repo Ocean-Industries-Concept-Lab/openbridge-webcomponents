@@ -1,5 +1,5 @@
 import {userEvent} from '@vitest/browser/context';
-import {deepActiveElement} from './focus.js';
+import {composedContains, deepActiveElement} from './focus.js';
 
 /**
  * Focus and key helpers for keyboard specs.
@@ -12,20 +12,11 @@ import {deepActiveElement} from './focus.js';
 export {deepActiveElement};
 
 /**
- * Whether `node` sits under `ancestor`, crossing shadow boundaries.
+ * Whether `node` sits under `ancestor`, crossing shadow boundaries and slots.
  * `Element.contains()` stops at a shadow root, so a host never "contains"
  * the control it renders.
  */
-export function containsDeep(ancestor: Element, node: Node | null): boolean {
-  let current: Node | null = node;
-  while (current) {
-    if (current === ancestor) return true;
-    current =
-      current.parentNode ??
-      (current instanceof ShadowRoot ? current.host : null);
-  }
-  return false;
-}
+export const containsDeep = composedContains;
 
 /** Presses Tab `count` times and records where focus lands each time. */
 export async function tabStops(count: number): Promise<(Element | null)[]> {

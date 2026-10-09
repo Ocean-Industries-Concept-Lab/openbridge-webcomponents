@@ -563,9 +563,8 @@ at or below the element carrying `data-obc-theme`:
 </div>
 ```
 
-The block is hand-written in `src/palettes/manual.css` until the plugin
-exports the collection (#1187); the story _Palettes/Categorical Colour_ renders
-every mode.
+The classes come from the palette export; the story _Palettes/Categorical
+Colour_ renders every mode.
 
 ---
 

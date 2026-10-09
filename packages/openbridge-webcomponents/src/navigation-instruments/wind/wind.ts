@@ -4,8 +4,10 @@ import compentStyle from './wind.css?inline';
 import {
   VesselImage,
   VesselImageSize,
+  vesselArt,
   WatchCircleType,
   innerRingRadiusFor,
+  type VesselImageSrc,
 } from '../watch/watch.js';
 import {WIND_ICON_TIP_TO_BOX_INNER} from '../watch/environment.js';
 import {renderWindForcePattern} from '../watch/force-pattern.js';
@@ -42,6 +44,9 @@ const WIND_PATTERN_SCALE_SINGLE = 1.28125;
 /**
  * @property visualization - Center visualization: wind histogram (default) or the force-graphics streak field.
  * @property priority - Color priority: `Priority.enhanced` uses the blue/enhanced palette (default: `Priority.regular`).
+ * @property vesselImageSrc - Image URLs per palette (`{bright, day, dusk, night}`, SVG, PNG or data URLs)
+ *   drawn instead of `vesselImage` in the same 160 × 160 box. A palette without a URL falls
+ *   back to the nearest one (see `VesselImageSrc`).
  * @stable
  */
 @customElement('obc-wind')
@@ -51,6 +56,8 @@ export class ObcWind extends LitElement {
   @property({type: Array, attribute: false})
   windHistogramData: WindHistogramData[] = [];
   @property({type: String}) vesselImage: VesselImage = VesselImage.genericTop;
+  @property({type: Object, attribute: false})
+  vesselImageSrc: VesselImageSrc | undefined;
   @property({type: Number}) vesselHeadingDeg: number = 0;
   @property({type: String}) variant: WindVariant = WindVariant.auto;
   @property({type: Number}) smallVariantMaxPx = WIND_SMALL_MAX_PX_DEFAULT;
@@ -153,7 +160,7 @@ export class ObcWind extends LitElement {
             {
               size: VesselImageSize.medium,
               transform: `rotate(${this.vesselHeadingDeg}deg)`,
-              vesselImage: this.vesselImage,
+              ...vesselArt(this.vesselImage, this.vesselImageSrc),
             },
           ];
     const {windSymbolRadius, scaleWindIcon} =

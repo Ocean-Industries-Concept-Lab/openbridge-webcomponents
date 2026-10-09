@@ -1,17 +1,15 @@
-import {LitElement, PropertyValues, html, unsafeCSS} from 'lit';
+import {PropertyValues, html} from 'lit';
 import {customElement} from '../../decorator.js';
-import compentStyle from './alert-list-page-small.css?inline';
 import {msg} from '@lit/localize';
 import {property, query, state} from 'lit/decorators.js';
+import {
+  ObcAlertListPageSmallBase,
+  type AlertListPageMode,
+} from './alert-list-page-small-base.js';
 import '../../building-blocks/alert-list/alert-list.js';
-import '../../components/icon-button/icon-button.js';
-import '../../components/button/button.js';
-import '../../icons/icon-silence-iec.js';
 import '../../icons/icon-alerts.js';
 import '../../icons/icon-alerts-shelf.js';
 import '../../icons/icon-unacknowledged.js';
-import '../../components/dropdown-button/dropdown-button.js';
-import {ObcDropdownButtonChangeEvent} from '../../components/dropdown-button/dropdown-button.js';
 import '../../icons/icon-alarm-noack-iec.js';
 import '../../icons/icon-warning-noack-iec.js';
 import {Alert} from '../../types.js';
@@ -21,7 +19,6 @@ import {
   getAlertListModeData,
   ObcAlertListDetails,
 } from '../../components/alert-list-details/alert-list-details.js';
-import {ButtonVariant} from '../../components/button/button.js';
 
 export enum AlertListMode {
   UNACKED = 'unacked',
@@ -43,6 +40,7 @@ export type ObcRowClickEvent = CustomEvent<{
 }>;
 
 /**
+ * @property alerts - Alerts to list.
  * @fires {ObcAlertListPageAckAllClickEvent} ack-all-visible-click - Fired when the user clicks the "ACK visible" button.
  * @fires {ObcAckClickEvent} ack-click - Fired when the user clicks the "ACK" button.
  * @fires {ObcRowClickEvent} row-click - Fired when the user clicks a row.
@@ -50,14 +48,9 @@ export type ObcRowClickEvent = CustomEvent<{
  * @beta
  */
 @customElement('obc-alert-list-page-small')
-export class ObcAlertListPageSmall extends LitElement {
-  @property({type: Boolean}) hasShelved: boolean = false;
-  @property({type: String}) selectedMode: AlertListMode = AlertListMode.ALL;
+export class ObcAlertListPageSmall extends ObcAlertListPageSmallBase {
   @property({type: Array}) alerts: Alert[] = [];
-  @property({type: Boolean}) showTime: boolean = false;
-  @property({attribute: false}) timeFormatter: (time: Date) => string = (
-    time: Date
-  ) => time.toLocaleTimeString(undefined, {hour12: false});
+  @property({type: String}) selectedMode: AlertListMode = AlertListMode.ALL;
 
   @state() private _mode: AlertListMode = AlertListMode.ALL;
 
@@ -73,117 +66,55 @@ export class ObcAlertListPageSmall extends LitElement {
     }
   }
 
-  private handleAckAllVisibleClick() {
-    const tabName = this.selectedMode;
-    const visibleElements = this.alertList.getVisibleAlerts();
-    this.dispatchEvent(
-      new CustomEvent('ack-all-visible-click', {
-        detail: {
-          alerts: visibleElements,
-          mode: tabName,
-        },
-      }) as ObcAlertListPageAckAllClickEvent
+  protected override get modes(): AlertListPageMode[] {
+    const modes = [
+      {value: AlertListMode.ALL, label: msg('All')},
+      {value: AlertListMode.UNACKED, label: msg('Unacked')},
+    ];
+    if (this.hasShelved) {
+      modes.push({value: AlertListMode.SHELVED, label: msg('Shelved')});
+    }
+    return modes;
+  }
+
+  protected override get mode(): AlertListMode {
+    return this._mode;
+  }
+
+  protected override selectMode(mode: string) {
+    this._mode = mode as AlertListMode;
+  }
+
+  protected override get canAckAll(): boolean {
+    return this.alerts.some(
+      canAckFilter(getAlertListModeData(this._mode).filter)
     );
   }
 
-  private onModeSelect(e: ObcDropdownButtonChangeEvent) {
-    this._mode = e.detail.value as AlertListMode;
-  }
-
-  private get metadata() {
-    return getAlertListModeData(this.selectedMode);
+  protected override visibleAlerts(): Alert[] {
+    return this.alertList.getVisibleAlerts();
   }
 
   private onAckClick(e: ObcAckClickEvent) {
-    this.dispatchEvent(
-      new CustomEvent('ack-click', {
-        detail: {
-          alert: e.detail.alert,
-        },
-      }) as ObcAckClickEvent
-    );
+    this.dispatchAckClick(e.detail.alert);
   }
 
   private onRowClick(e: ObcRowClickEvent) {
-    this.dispatchEvent(
-      new CustomEvent('row-click', {
-        detail: {alert: e.detail.alert},
-      }) as ObcRowClickEvent
-    );
+    this.dispatchRowClick(e.detail.alert);
   }
 
-  override render() {
-    const lists = [
-      {
-        name: AlertListMode.ALL,
-        title: msg('All'),
-      },
-      {
-        name: AlertListMode.UNACKED,
-        title: msg('Unacked'),
-      },
-    ];
-    if (this.hasShelved) {
-      lists.push({
-        name: AlertListMode.SHELVED,
-        title: msg('Shelved'),
-      });
-    }
-
-    const metadata = this.metadata;
-    const canAckAll = this.alerts.some(canAckFilter(metadata.filter));
-
-    return html`
-      <div class="wrapper">
-        <obc-alert-list-details
-          class="alert-list"
-          .small=${true}
-          .alerts=${this.alerts}
-          .selectedMode=${this._mode}
-          .showTime=${this.showTime}
-          .timeFormatter=${this.timeFormatter}
-          @ack-click=${this.onAckClick}
-          @row-click=${this.onRowClick}
-        ></obc-alert-list-details>
-        <div class="action">
-          <div class="btn-group">
-            <obc-dropdown-button
-              .value=${this._mode}
-              @change=${this.onModeSelect}
-              .options=${lists.map((v) => ({
-                value: v.name,
-                label: v.title,
-              }))}
-            >
-            </obc-dropdown-button>
-          </div>
-
-          <div class="btn-group">
-            <obc-icon-button
-              variant="normal"
-              @click=${() =>
-                this.dispatchEvent(new CustomEvent('silence-click'))}
-              aria-label=${msg('Silence')}
-            >
-              <obi-silence-iec></obi-silence-iec>
-            </obc-icon-button>
-            <obc-button
-              .variant=${ButtonVariant.raised}
-              .disabled=${!canAckAll}
-              fullWidth
-              class="btn"
-              data-testid="ack-all-visible-button"
-              @click=${() => this.handleAckAllVisibleClick()}
-            >
-              ${msg('ACK visible')}
-            </obc-button>
-          </div>
-        </div>
-      </div>
-    `;
+  protected override renderList() {
+    return html`<obc-alert-list-details
+      class="alert-list"
+      .small=${true}
+      .alerts=${this.alerts}
+      .selectedMode=${this._mode}
+      .showTime=${this.showTime}
+      .timeFormatter=${this.timeFormatter}
+      @ack-click=${this.onAckClick}
+      @row-click=${this.onRowClick}
+    ></obc-alert-list-details>`;
   }
-
-  static override styles = unsafeCSS(compentStyle);
 }
 
 declare global {

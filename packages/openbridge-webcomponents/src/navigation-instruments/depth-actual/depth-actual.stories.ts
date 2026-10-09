@@ -3,7 +3,10 @@ import {ObcDepthActual} from './depth-actual.js';
 import './depth-actual.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {VesselImage} from '../watch/watch.js';
-import {foreVessels} from '../watch/vessels/storybook-helper.js';
+import {
+  customVesselForeSvgSrc,
+  foreVessels,
+} from '../watch/vessels/storybook-helper.js';
 import {AdviceType} from '../watch/advice.js';
 import {Priority} from '../types.js';
 
@@ -129,5 +132,11 @@ export const AutoRangeLive: Story = {
     });
     observer.observe(document.body, {childList: true, subtree: true});
     return el;
+  },
+};
+
+export const WithCustomVesselImage: Story = {
+  args: {
+    vesselImageSrc: customVesselForeSvgSrc,
   },
 };

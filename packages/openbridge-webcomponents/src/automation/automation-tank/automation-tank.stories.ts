@@ -17,10 +17,12 @@ import {crossDecorator} from '../../storybook-util.js';
 import {AdviceType} from '../../navigation-instruments/watch/advice.js';
 import type {LinearAdvice} from '../../building-blocks/instrument-linear/advice.js';
 import {
+  ObcAlertFrameMode,
   ObcAlertFrameStatus,
   ObcAlertFrameThickness,
   ObcAlertFrameType,
 } from '../../components/alert-frame/alert-frame.js';
+import {argTypesAlertFrame} from '../../components/alert-frame/alert-frame-storybook-helpers.js';
 import {Priority} from '../../navigation-instruments/types.js';
 import {
   AutomationButtonBadgeAlert,
@@ -86,12 +88,12 @@ const renderRichReadout = () => html`
   </obc-readout-list>
 `;
 
-// `richReadout` is slotted into `slot="rich"`; defaults to `nothing` so most
-// stories render no detail rows. Kept as a separate helper (not the meta
-// `render`) because Storybook calls `render(args, context)` with a second
-// argument — `renderTank` below wraps it so that extra arg can't leak in as
-// slotted content.
-const renderTankEl = (args: StoryArgs, richReadout: unknown = nothing) => html`
+// `slotted` is the light-DOM content (the rich readout rows, an alert label);
+// defaults to `nothing` so most stories slot none. Kept as a separate helper
+// (not the meta `render`) because Storybook calls `render(args, context)`
+// with a second argument — `renderTank` below wraps it so that extra arg
+// can't leak in as slotted content.
+const renderTankEl = (args: StoryArgs, slotted: unknown = nothing) => html`
   <obc-automation-tank
     .value=${args.value}
     .max=${args.max}
@@ -115,6 +117,7 @@ const renderTankEl = (args: StoryArgs, richReadout: unknown = nothing) => html`
     .alertFrameType=${args.alertFrameType}
     .alertFrameThickness=${args.alertFrameThickness}
     .alertFrameStatus=${args.alertFrameStatus}
+    .alertFrameMode=${args.alertFrameMode}
     .showAlertCategoryIcon=${args.showAlertCategoryIcon}
     .showAlertIcon=${args.showAlertIcon}
     .badgeControl=${args.badgeControl}
@@ -126,7 +129,7 @@ const renderTankEl = (args: StoryArgs, richReadout: unknown = nothing) => html`
     .touching=${args.touching}
     .priority=${args.priority}
   >
-    ${richReadout}
+    ${slotted}
   </obc-automation-tank>
 `;
 
@@ -159,6 +162,7 @@ const meta: Meta<StoryArgs> = {
     alertFrameType: ObcAlertFrameType.SmallSideFlip,
     alertFrameThickness: ObcAlertFrameThickness.Small,
     alertFrameStatus: ObcAlertFrameStatus.Alarm,
+    alertFrameMode: ObcAlertFrameMode.ackedActive,
     showAlertCategoryIcon: true,
     showAlertIcon: false,
     badgeControl: AutomationButtonBadgeControl.None,
@@ -271,18 +275,7 @@ const meta: Meta<StoryArgs> = {
       control: {type: 'select'},
     },
     alert: {control: {type: 'boolean'}},
-    alertFrameType: {
-      options: Object.values(ObcAlertFrameType),
-      control: {type: 'select'},
-    },
-    alertFrameThickness: {
-      options: Object.values(ObcAlertFrameThickness),
-      control: {type: 'select'},
-    },
-    alertFrameStatus: {
-      options: Object.values(ObcAlertFrameStatus),
-      control: {type: 'select'},
-    },
+    ...argTypesAlertFrame,
     showAlertCategoryIcon: {control: {type: 'boolean'}},
     showAlertIcon: {control: {type: 'boolean'}},
   },
@@ -589,36 +582,8 @@ export const WithAlertAlarm: Story = {
     alertFrameStatus: ObcAlertFrameStatus.Alarm,
     alertFrameType: ObcAlertFrameType.SmallSideFlip,
   },
-  render: (args) => html`
-    <obc-automation-tank
-      .value=${args.value}
-      .max=${args.max}
-      .trend=${args.trend}
-      .tag=${args.tag}
-      .type=${args.type}
-      .orientation=${args.orientation}
-      .compact=${args.compact}
-      .static=${args.static}
-      .clickable=${args.clickable}
-      .positioning=${args.positioning}
-      .chartMode=${args.chartMode}
-      .chartData=${args.chartData}
-      .advice=${args.advice}
-      .hasAdvice=${args.hasAdvice}
-      .hasGraphIcon=${args.hasGraphIcon}
-      .showTrendSymbol=${args.showTrendSymbol}
-      .percentFractionDigits=${args.percentFractionDigits}
-      ?alert=${args.alert}
-      .alertFrameType=${args.alertFrameType}
-      .alertFrameThickness=${args.alertFrameThickness}
-      .alertFrameStatus=${args.alertFrameStatus}
-      .showAlertCategoryIcon=${args.showAlertCategoryIcon}
-      .showAlertIcon=${args.showAlertIcon}
-      .priority=${args.priority}
-    >
-      <span slot="alert-label">Fire alert</span>
-    </obc-automation-tank>
-  `,
+  render: (args) =>
+    renderTankEl(args, html`<span slot="alert-label">Fire alert</span>`),
 };
 
 export const WithAlertBottomFlip: Story = {
@@ -876,6 +841,7 @@ export const Responsive: Story = {
           .alertFrameType=${args.alertFrameType}
           .alertFrameThickness=${args.alertFrameThickness}
           .alertFrameStatus=${args.alertFrameStatus}
+          .alertFrameMode=${args.alertFrameMode}
           .showAlertCategoryIcon=${args.showAlertCategoryIcon}
           .showAlertIcon=${args.showAlertIcon}
           .badgeControl=${args.badgeControl}

@@ -4,7 +4,9 @@ The core library of the OpenBridge design system, implemented as Lit-based web c
 
 ## 🚀 Project Status
 
-**v1.0.0 is now released!** The code was officially opened by **Prince Sverre Magnus of Norway**, and the library is now stable and publicly available.
+**v2.0.0 is out,** with improved stability, close to 60 new components, about 100 fixes, and keyboard navigation and accessibility tested on every change. Coming from 1.x? The [migration guide](https://openbridge-storybook.web.app/?path=/docs/introduction-migration-guide--docs) shows what to update.
+
+v1.0.0 was the first stable release. The code was officially opened by **Prince Sverre Magnus of Norway**, and the library is publicly available.
 
 ## 🏷️ Tag Strategy
 
@@ -66,7 +68,7 @@ terminal.
     <!-- The OpenBridge colour palettes -->
     <link
       rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@oicl/openbridge-webcomponents@next/dist/openbridge.css"
+      href="https://cdn.jsdelivr.net/npm/@oicl/openbridge-webcomponents@latest/dist/openbridge.css"
     />
     <!-- The font OpenBridge is designed with -->
     <link
@@ -76,7 +78,7 @@ terminal.
     <!-- Every OpenBridge component, in one file -->
     <script
       type="module"
-      src="https://cdn.jsdelivr.net/npm/@oicl/openbridge-webcomponents@next/bundle/openbridge-webcomponents.bundle.js"
+      src="https://cdn.jsdelivr.net/npm/@oicl/openbridge-webcomponents@latest/bundle/openbridge-webcomponents.bundle.js"
     ></script>
 
     <style>
@@ -224,9 +226,9 @@ Two things to know when writing plain HTML:
   presence means on (`showdimmingbutton`, `checked`). Richer values such as
   lists and objects have to be set from JavaScript.
 
-> **Which version?** The example uses the `next` channel because the current
-> `latest` bundle fails to load in a browser. A channel always serves the newest
-> release on it, which is what a getting-started page wants; pin an exact
+> **Which version?** The example uses the `latest` channel; swap in `next` to
+> try the development releases. A channel always serves the newest release on
+> it, which is what a getting-started page wants; pin an exact
 > version in anything you keep. The bundle holds every component
 > (~1.4 MB gzipped), which is ideal for trying things out; for a real
 > application install the package instead, so your build ships only what you
@@ -283,6 +285,7 @@ The library uses **Noto Sans**. You should ensure it is available in your projec
 @font-face {
   font-family: 'Noto Sans';
   src: url('path/to/NotoSans.ttf');
+  font-weight: 400 700;
 }
 
 * {
@@ -334,7 +337,7 @@ file, straight from a CDN:
 ```html
 <script
   type="module"
-  src="https://cdn.jsdelivr.net/npm/@oicl/openbridge-webcomponents@next/bundle/openbridge-webcomponents.bundle.js"
+  src="https://cdn.jsdelivr.net/npm/@oicl/openbridge-webcomponents@latest/bundle/openbridge-webcomponents.bundle.js"
 ></script>
 ```
 
