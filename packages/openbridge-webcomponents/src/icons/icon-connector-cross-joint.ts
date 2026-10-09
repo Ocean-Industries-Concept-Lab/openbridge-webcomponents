@@ -20,15 +20,15 @@ export class ObiConnectorCrossJoint extends LitElement {
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M11.5 0V2H12.5V0H11.5Z" style="fill: var(--automation-device-tertiary-color)"/>
-<path d="M11.5 4V8H12.5V4H11.5Z" style="fill: var(--automation-device-tertiary-color)"/>
-<path d="M0 12.5H2V11.5H0V12.5Z" style="fill: var(--automation-device-tertiary-color)"/>
-<path d="M8 12.5H4V11.5H8V12.5Z" style="fill: var(--automation-device-tertiary-color)"/>
-<path d="M16 12.5H20V11.5H16V12.5Z" style="fill: var(--automation-device-tertiary-color)"/>
-<path d="M24 12.5H22V11.5H24V12.5Z" style="fill: var(--automation-device-tertiary-color)"/>
-<path d="M11.5 16V20H12.5V16H11.5Z" style="fill: var(--automation-device-tertiary-color)"/>
-<path d="M11.5 24V22H12.5V24H11.5Z" style="fill: var(--automation-device-tertiary-color)"/>
-<path d="M12 14C13.1046 14 14 13.1046 14 12C14 10.8954 13.1046 10 12 10C10.8954 10 10 10.8954 10 12C10 13.1046 10.8954 14 12 14Z" style="fill: var(--automation-device-tertiary-color)"/>
+<path d="M11.5 0V2H12.5V0H11.5Z" style="fill: var(--automation-symbol-on-border-color)"/>
+<path d="M11.5 4V8H12.5V4H11.5Z" style="fill: var(--automation-symbol-on-border-color)"/>
+<path d="M0 12.5H2V11.5H0V12.5Z" style="fill: var(--automation-symbol-on-border-color)"/>
+<path d="M8 12.5H4V11.5H8V12.5Z" style="fill: var(--automation-symbol-on-border-color)"/>
+<path d="M16 12.5H20V11.5H16V12.5Z" style="fill: var(--automation-symbol-on-border-color)"/>
+<path d="M24 12.5H22V11.5H24V12.5Z" style="fill: var(--automation-symbol-on-border-color)"/>
+<path d="M11.5 16V20H12.5V16H11.5Z" style="fill: var(--automation-symbol-on-border-color)"/>
+<path d="M11.5 24V22H12.5V24H11.5Z" style="fill: var(--automation-symbol-on-border-color)"/>
+<path d="M12 14C13.1046 14 14 13.1046 14 12C14 10.8954 13.1046 10 12 10C10.8954 10 10 10.8954 10 12C10 13.1046 10.8954 14 12 14Z" style="fill: var(--automation-symbol-on-border-color)"/>
 </svg>
 `;
 

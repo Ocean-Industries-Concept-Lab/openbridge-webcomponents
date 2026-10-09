@@ -359,8 +359,8 @@ export class ObcAutomationButton extends LitElement {
       >
         <path
           d="M8 5 v 14 L 20 12Z"
-          stroke="var(--automation-device-tertiary-color)"
-          fill="var(--automation-device-primary-color)"
+          stroke="var(--automation-symbol-on-border-color)"
+          fill="var(--automation-symbol-on-background-color)"
           vector-effect="non-scaling-stroke"
         />
       </svg> `;
@@ -375,8 +375,8 @@ export class ObcAutomationButton extends LitElement {
       >
         <path
           d="M3.5 5 v 14 l 8.5 -7 Z M14.5 5 v 14 l 8.5 -7 Z"
-          stroke="var(--automation-device-tertiary-color)"
-          fill="var(--automation-device-primary-color)"
+          stroke="var(--automation-symbol-on-border-color)"
+          fill="var(--automation-symbol-on-background-color)"
           vector-effect="non-scaling-stroke"
         />
       </svg> `;
@@ -391,8 +391,8 @@ export class ObcAutomationButton extends LitElement {
       >
         <path
           d="M8 5 v 14 L 20 12Z"
-          fill="var(--automation-device-tertiary-color)"
-          stroke="var(--automation-device-tertiary-inverted-color)"
+          fill="var(--automation-symbol-on-border-color)"
+          stroke="var(--automation-symbol-off-border-color)"
           vector-effect="non-scaling-stroke"
         />
       </svg> `;
@@ -407,8 +407,8 @@ export class ObcAutomationButton extends LitElement {
       >
         <path
           d="M16 5 v 14 L 4 12Z"
-          stroke="var(--automation-device-tertiary-color)"
-          fill="var(--automation-device-primary-color)"
+          stroke="var(--automation-symbol-on-border-color)"
+          fill="var(--automation-symbol-on-background-color)"
           vector-effect="non-scaling-stroke"
         />
       </svg>`;
@@ -423,8 +423,8 @@ export class ObcAutomationButton extends LitElement {
       >
         <path
           d="M20.5 5 v 14 l -8.5 -7 Z M9.5 5 v 14 l -8.5 -7 Z"
-          stroke="var(--automation-device-tertiary-color)"
-          fill="var(--automation-device-primary-color)"
+          stroke="var(--automation-symbol-on-border-color)"
+          fill="var(--automation-symbol-on-background-color)"
           vector-effect="non-scaling-stroke"
         />
       </svg>`;
@@ -439,8 +439,8 @@ export class ObcAutomationButton extends LitElement {
       >
         <path
           d="M16 5 v 14 L 4 12Z"
-          fill="var(--automation-device-tertiary-color)"
-          stroke="var(--automation-device-tertiary-inverted-color)"
+          fill="var(--automation-symbol-on-border-color)"
+          stroke="var(--automation-symbol-off-border-color)"
           vector-effect="non-scaling-stroke"
         />
       </svg> `;

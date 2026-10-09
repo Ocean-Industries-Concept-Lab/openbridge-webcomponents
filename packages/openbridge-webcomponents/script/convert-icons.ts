@@ -281,6 +281,22 @@ function rgbaToHexOrColorName(rgba: RGBA): string {
   }
 }
 
+// Paint styles the Icons file still carries under the automation names the
+// palette replaced: the variables were renamed Device -> Symbol, the styles
+// were not, and two icons bind the style rather than the variable.
+// TODO(designer): rebind those icons to the variables, or rename the styles.
+const LEGACY_STYLE_TOKENS: {[styleClass: string]: string} = {
+  'automation-device-primary-color': 'automation-symbol-on-background-color',
+  'automation-device-secondary-color':
+    'automation-symbol-static-background-color',
+  'automation-device-tertiary-color': 'automation-symbol-on-border-color',
+  'automation-device-tertiary-inverted-color':
+    'automation-symbol-off-border-color',
+  'automation-device-primary-inverted-color':
+    'automation-symbol-off-background-color',
+};
+
 function styleToCssClass(style: Style): string {
-  return style.name.replace(/[/ ]/g, '-').toLocaleLowerCase();
+  const cssClass = style.name.replace(/[/ ]/g, '-').toLocaleLowerCase();
+  return LEGACY_STYLE_TOKENS[cssClass] ?? cssClass;
 }

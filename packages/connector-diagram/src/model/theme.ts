@@ -5,34 +5,34 @@ import type {MediumColor, ThemeVars} from './types.js'
  * collection (see ThemeVars in types.ts for the token→variable mapping).
  */
 export const DEFAULT_THEME: ThemeVars = {
-  pipeOutlineColor: 'rgb(83,83,83)',
+  pipeOutlineColor: 'rgb(82,82,82)',
   pipeFillColor: 'rgb(255,255,255)',
-  pipeOutlineInverted: 'rgb(142,142,142)',
-  pipeFillInverted: 'rgb(205,205,205)',
-  genericBorder: 'rgb(0,67,70)',
-  genericBackground: 'rgb(128,202,205)',
-  enhancedBorder: 'rgb(45,84,139)',
-  enhancedBackground: 'rgb(93,143,213)',
-  runningBorder: 'rgb(0,98,0)',
-  runningBackground: 'rgb(57,162,52)',
-  pipeDirectionHalo: 'rgb(247,247,247)',
+  pipeOutlineInverted: 'rgb(111,111,111)',
+  pipeFillInverted: 'rgb(221,221,221)',
+  genericBorder: 'rgb(0,64,64)',
+  genericBackground: 'rgb(126,200,198)',
+  enhancedBorder: 'rgb(40,83,136)',
+  enhancedBackground: 'rgb(90,144,212)',
+  runningBorder: 'rgb(0,96,0)',
+  runningBackground: 'rgb(24,129,0)',
+  pipeDirectionHalo: 'rgb(240,240,240)',
   // Named medium colours for open pipes (medium-flow): background = the OB
   // day palette's --base-<family>-200, border = --base-<family>-600. These are
   // FALLBACKS for contexts without the OpenBridge stylesheet — live rendering
   // resolves the CSS variables instead (mediumColorsFromCss below) so palette
   // updates and theme switches apply without touching this table.
   mediumColors: {
-    Neutral: {border: 'rgb(61,61,61)',   background: 'rgb(190,190,190)'},
-    Enhanced: {border: 'rgb(45,84,139)', background: 'rgb(93,143,213)'},
-    Blue:    {border: 'rgb(29,60,103)',  background: 'rgb(156,193,245)'},
-    Cyan:    {border: 'rgb(0,65,91)',    background: 'rgb(130,199,230)'},
-    Teal:    {border: 'rgb(0,67,70)',    background: 'rgb(128,202,205)'},
-    Green:   {border: 'rgb(0,71,0)',     background: 'rgb(143,206,138)'},
-    Yellow:  {border: 'rgb(72,58,0)',    background: 'rgb(202,187,121)'},
-    Orange:  {border: 'rgb(91,49,0)',    background: 'rgb(230,176,129)'},
-    Red:     {border: 'rgb(98,41,41)',   background: 'rgb(242,168,165)'},
-    Purple:  {border: 'rgb(87,44,82)',   background: 'rgb(225,169,215)'},
-    Indigo:  {border: 'rgb(63,51,101)',  background: 'rgb(190,179,242)'},
+    Neutral: {border: 'rgb(57,57,57)',   background: 'rgb(187,187,187)'},
+    Enhanced: {border: 'rgb(40,83,136)', background: 'rgb(90,144,212)'},
+    Blue:    {border: 'rgb(24,58,97)',   background: 'rgb(148,190,243)'},
+    Cyan:    {border: 'rgb(0,62,84)',    background: 'rgb(125,197,225)'},
+    Teal:    {border: 'rgb(0,64,64)',    background: 'rgb(126,200,198)'},
+    Green:   {border: 'rgb(0,67,0)',     background: 'rgb(144,201,135)'},
+    Yellow:  {border: 'rgb(63,58,0)',    background: 'rgb(194,190,123)'},
+    Orange:  {border: 'rgb(87,47,0)',    background: 'rgb(230,176,130)'},
+    Red:     {border: 'rgb(95,39,46)',   background: 'rgb(241,168,172)'},
+    Purple:  {border: 'rgb(80,43,83)',   background: 'rgb(215,173,217)'},
+    Indigo:  {border: 'rgb(56,51,98)',   background: 'rgb(185,181,243)'},
   },
 }
 
@@ -141,10 +141,12 @@ const PIPE_CSS_VAR: Record<
   Exclude<keyof ThemeVars, 'mediumColors' | 'genericBorder' | 'genericBackground'>,
   string
 > = {
-  pipeOutlineColor: '--automation-pipe-tertiary-color',
-  pipeFillColor: '--automation-pipe-primary-color',
-  pipeOutlineInverted: '--automation-pipe-tertiary-inverted-color',
-  pipeFillInverted: '--automation-pipe-primary-inverted-color',
+  pipeOutlineColor: '--automation-connector-on-border-color',
+  pipeFillColor: '--automation-connector-on-background-color',
+  // TODO(designer): the empty pipe read the pipe-*-inverted pair, which the
+  // Symbol/Connector restructure dropped; no-flow is the nearest role.
+  pipeOutlineInverted: '--automation-connector-no-flow-border-color',
+  pipeFillInverted: '--automation-connector-no-flow-background-color',
   enhancedBorder: '--automation-medium-enhanced-border',
   enhancedBackground: '--automation-medium-enhanced-background',
   runningBorder: '--automation-medium-running-border',

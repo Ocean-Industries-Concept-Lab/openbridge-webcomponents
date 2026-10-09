@@ -15,10 +15,10 @@ export class ObiHydraulicPipe15 extends LitElement {
 `;
 
   private iconCss = svg`<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M32 39H27V48H21V39H16V33H32V39Z" style="fill: var(--automation-pipe-primary-color)"/>
-<path d="M27 0V9H32V15H16V9H21V0H27Z" style="fill: var(--automation-pipe-primary-color)"/>
-<path d="M32 39H27V48H26V38H31V34H17V38H22V48H21V39H16V33H32V39Z" style="fill: var(--automation-pipe-tertiary-color)"/>
-<path d="M22 0V10H17V14H31V10H26V0H27V9H32V15H16V9H21V0H22Z" style="fill: var(--automation-pipe-tertiary-color)"/>
+<path d="M32 39H27V48H21V39H16V33H32V39Z" style="fill: var(--automation-connector-on-background-color)"/>
+<path d="M27 0V9H32V15H16V9H21V0H27Z" style="fill: var(--automation-connector-on-background-color)"/>
+<path d="M32 39H27V48H26V38H31V34H17V38H22V48H21V39H16V33H32V39Z" style="fill: var(--automation-connector-on-border-color)"/>
+<path d="M22 0V10H17V14H31V10H26V0H27V9H32V15H16V9H21V0H22Z" style="fill: var(--automation-connector-on-border-color)"/>
 </svg>
 `;
 
