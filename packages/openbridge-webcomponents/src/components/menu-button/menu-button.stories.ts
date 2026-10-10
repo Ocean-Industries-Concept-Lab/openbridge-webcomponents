@@ -165,6 +165,11 @@ export const OpenTop: Story = {
     const menu = el.shadowRoot!.querySelector<HTMLElement>('.positioned-menu')!;
     await userEvent.click(trigger);
     await waitFor(() => expect(menu.matches(':popover-open')).toBe(true));
+    const triggerBottom = trigger.getBoundingClientRect().bottom;
+    await expect(menu.getBoundingClientRect().bottom).toBeCloseTo(
+      triggerBottom,
+      0
+    );
   },
 };
 
