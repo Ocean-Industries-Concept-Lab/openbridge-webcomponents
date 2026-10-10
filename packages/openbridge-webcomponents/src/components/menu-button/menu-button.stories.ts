@@ -1,4 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
+import {expect, waitFor} from 'storybook/test';
 import {ObcMenuButton} from './menu-button.js';
 import './menu-button.js';
 import {html} from 'lit';
@@ -156,7 +157,15 @@ export const OpenTop: Story = {
     hasIcon: true,
     openTop: true,
   },
-  render: renderWithIcon,
+  render: (args) =>
+    html`<div style="padding-top: 160px">${renderWithIcon(args)}</div>`,
+  play: async ({canvasElement, userEvent}) => {
+    const el = canvasElement.querySelector('obc-menu-button')!;
+    const trigger = el.shadowRoot!.querySelector<HTMLElement>('.wrapper')!;
+    const menu = el.shadowRoot!.querySelector<HTMLElement>('.positioned-menu')!;
+    await userEvent.click(trigger);
+    await waitFor(() => expect(menu.matches(':popover-open')).toBe(true));
+  },
 };
 
 /** Default regular context menu button with icon and label. */
