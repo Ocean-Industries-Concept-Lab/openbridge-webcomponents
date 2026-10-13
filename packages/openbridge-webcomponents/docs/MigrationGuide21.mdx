@@ -5,7 +5,7 @@ import automationTokens from './migration-guide-2-1/automation-tokens.md?raw';
 
 # Migrating from 2.0 to 2.1
 
-2.1 is a minor release: no element, property, attribute, event or slot was removed or renamed, so an app that compiles against 2.0 compiles against 2.1. What needs a change is the design-token refresh ([#1353](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1353)): 62 CSS variables and 15 PostCSS mixins have new names. Two icons were renamed as well and their old names are kept as aliases, and 711 palette values moved without any API change.
+2.1 is a minor release for the components: no element, property, attribute, event or slot was removed or renamed, so markup and TypeScript that use them need no change. The design tokens are where the work is ([#1353](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1353)). Two things to do before upgrading: rename the 62 CSS variables you override, which go quiet rather than failing, and the 15 PostCSS mixins if your build compiles the sources from the full-bundle package, which fail the build until you do. Two icons were renamed as well, with their old names kept as aliases, and 711 palette values moved without any API change.
 
 Coming from 1.0.1? Read [Migrating from 1.x to 2.0](?path=/docs/introduction-migration-guide--docs) first; this page is what changed after it. The [Changelog](?path=/docs/introduction-changelog--docs) lists every change.
 

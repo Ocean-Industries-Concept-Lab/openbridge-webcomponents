@@ -1,5 +1,9 @@
 import {describe, expect, it} from 'vitest';
-import {RENAMED_ICONS, renamedIconAlias} from './icon-aliases.js';
+import {
+  RENAMED_ICONS,
+  planRenamedIconAliases,
+  renamedIconAlias,
+} from './icon-aliases.js';
 
 describe('renamedIconAlias', () => {
   const source = renamedIconAlias('log-open-google', 'log-open');
@@ -34,5 +38,40 @@ describe('RENAMED_ICONS', () => {
       expect(from).not.toBe(to);
       expect(RENAMED_ICONS[to]).toBeUndefined();
     }
+  });
+});
+
+describe('planRenamedIconAliases', () => {
+  it('pairs every entry with the icon it extends', () => {
+    expect(
+      planRenamedIconAliases(['log-open', 'timer', 'anchor'], {
+        'log-open-google': 'log-open',
+        'timer-google': 'timer',
+      })
+    ).toEqual([
+      {oldName: 'log-open-google', currentName: 'log-open'},
+      {oldName: 'timer-google', currentName: 'timer'},
+    ]);
+  });
+
+  it('fails when the export has no icon under the current name', () => {
+    expect(() =>
+      planRenamedIconAliases(['timer'], {'log-open-google': 'log-open'})
+    ).toThrow(/obi-log-open, which this export does not have/);
+  });
+
+  it('fails when the export carries the old name again', () => {
+    expect(() =>
+      planRenamedIconAliases(['log-open', 'log-open-google'], {
+        'log-open-google': 'log-open',
+      })
+    ).toThrow(/carries obi-log-open-google again/);
+  });
+
+  it('plans the committed map against the generated set', () => {
+    const generated = Object.values(RENAMED_ICONS);
+    expect(planRenamedIconAliases(generated, RENAMED_ICONS)).toHaveLength(
+      Object.keys(RENAMED_ICONS).length
+    );
   });
 });
