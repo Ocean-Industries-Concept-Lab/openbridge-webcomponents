@@ -83,4 +83,23 @@ for (const host of HOSTS) {
       expect(spinner()?.playState).toBe('running');
     });
   });
+
+  describe(`${host.tag} with rateOfTurnDegreesPerMinute set`, () => {
+    it('spins the dots', async () => {
+      const {el, watch, spinner} = await mount(host);
+      el.rateOfTurnDegreesPerMinute = 360;
+      await el.updateComplete;
+      await watch.updateComplete;
+      expect(spinner()?.playState).toBe('running');
+    });
+
+    it('wins over the deprecated rotationsPerMinute', async () => {
+      const {el, watch, spinner} = await mount(host);
+      el.rotationsPerMinute = 1;
+      el.rateOfTurnDegreesPerMinute = 0;
+      await el.updateComplete;
+      await watch.updateComplete;
+      expect(spinner()?.playState).toBe('paused');
+    });
+  });
 }
