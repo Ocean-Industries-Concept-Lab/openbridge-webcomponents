@@ -17,6 +17,7 @@ import {
   kebabToUpperCamelCase,
   writeUnresolvedFigmaVariablesReport,
 } from './convert-icons.js';
+import {RENAMED_ICONS, renamedIconAlias} from './icon-aliases.js';
 
 dotenv.config();
 
@@ -354,6 +355,19 @@ declare global {
     fileImport.push(`import './icon-${name}.js';`);
 
     scriptMapping.push(`'${icon.name}': ['${icon.categories.join("', '")}']`);
+  }
+
+  for (const [oldName, currentName] of Object.entries(RENAMED_ICONS)) {
+    if (!fs.existsSync(`./src/icons/icon-${currentName}.ts`)) {
+      throw new Error(
+        `[download-icons] RENAMED_ICONS points obi-${oldName} at obi-${currentName}, which this export does not have. Point it at the current name or drop the entry.`
+      );
+    }
+    fs.writeFileSync(
+      `./src/icons/icon-${oldName}.ts`,
+      renamedIconAlias(oldName, currentName)
+    );
+    fileImport.push(`import './icon-${oldName}.js';`);
   }
 
   // write script

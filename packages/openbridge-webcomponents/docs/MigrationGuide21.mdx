@@ -5,7 +5,7 @@ import automationTokens from './migration-guide-2-1/automation-tokens.md?raw';
 
 # Migrating from 2.0 to 2.1
 
-2.1 is a minor release: no element, property, attribute, event or slot was removed or renamed, so an app that compiles against 2.0 compiles against 2.1. What needs a change is the design-token refresh ([#1353](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1353)): 62 CSS variables and 15 PostCSS mixins have new names, two icons were redrawn under new names, and 711 palette values moved without any API change.
+2.1 is a minor release: no element, property, attribute, event or slot was removed or renamed, so an app that compiles against 2.0 compiles against 2.1. What needs a change is the design-token refresh ([#1353](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1353)): 62 CSS variables and 15 PostCSS mixins have new names. Two icons were renamed as well and their old names are kept as aliases, and 711 palette values moved without any API change.
 
 Coming from 1.0.1? Read [Migrating from 1.x to 2.0](?path=/docs/introduction-migration-guide--docs) first; this page is what changed after it. The [Changelog](?path=/docs/introduction-changelog--docs) lists every change.
 
@@ -21,6 +21,8 @@ Coming from 1.0.1? Read [Migrating from 1.x to 2.0](?path=/docs/introduction-mig
 ## Renamed CSS Variables
 
 62 names are gone from `openbridge.css`. A `var()` that names one resolves to nothing, and an override that sets one no longer reaches the component; neither raises an error, so search your stylesheets for the old names.
+
+The palette variables are the library's own theming tokens rather than part of the stable component API, which is why a refresh of them lands in a minor release. They are listed here because an override that names one stops working without saying so.
 
 ### Automation Colors
 
@@ -80,12 +82,14 @@ Eight `font-dev-code-*` and `font-dev-console-*` mixins are new.
 
 ## Icons
 
-Two icon elements were redrawn and renamed. A tag that no longer exists renders nothing:
+Two icons were redrawn under new names, and both old names keep working as deprecated aliases, so markup and deep imports written against 2.0 still resolve:
 
 - `obi-log-open-google` is `obi-log-open`
 - `obi-timer-google` is `obi-timer`
 
-`obc-user-menu` follows the new names on its own. 553 icons changed their drawing and 15 arrived; the seven `obi-critical-*` alert icons are now kept by hand in the repository rather than generated from Figma, and their names and drawings are unchanged.
+An alias draws what the current icon draws, so the drawing changed even under the old name. The old names are left out of `iconIds`, so a picker built from it lists every icon once, under its current name. `obc-user-menu` uses the new names.
+
+553 icons changed their drawing and 15 arrived. The seven `obi-critical-*` alert icons are now kept by hand in the repository rather than generated from Figma; their names and drawings are unchanged.
 
 ## Palette Values
 
