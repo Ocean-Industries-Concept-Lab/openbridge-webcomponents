@@ -12,7 +12,7 @@ import {isa182AlertStandard} from '../../alert-system/isa-18-2-alert-standard.js
 
 const meta: Meta<typeof ObcAlertIconExperimental> = {
   title: 'Application Components/Alerts/Alert Icon Experimental',
-  tags: ['autodocs', '6.0', 'experimental'],
+  tags: ['6.0', 'experimental'],
   component: 'obc-alert-icon-experimental',
   beforeEach: () => setAlertStandard(iec62923AlertStandard),
   args: {
