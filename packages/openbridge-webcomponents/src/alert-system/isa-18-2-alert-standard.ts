@@ -32,7 +32,7 @@ import {
 import {
   IEC_62923_ALARM_GLYPHS,
   IEC_62923_WARNING_GLYPHS,
-} from './iec-62923-alert-standard.js';
+} from './iec-62923-alert-glyphs.js';
 import {
   criticalUnacknowledgedA,
   criticalUnacknowledgedB,
