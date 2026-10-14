@@ -65,8 +65,9 @@ several alerts).
 `defineAlertStandard()` keeps the criticality and state names as types and
 rejects a state that names a filter or an action the standard lacks, and
 `setAlertStandard()` draws by it.
-`alert-system/stories/iec-60601-1-8-alert-standard.ts` defines IEC 60601-1-8
-that way, with glyphs of its own; the library does not ship it.
+The Custom Standard stories of the icon and the details list each define
+IEC 60601-1-8 that way, in the story file, with glyphs of their own, to show
+a standard the application writes; the library does not ship it.
 
 ## The alert
 
@@ -104,8 +105,8 @@ other out of its bundle.
 - Stories are usage documentation: alerts are plain object literals typed
   with `StandardAlertOf`, menu items are plain markup, and what the
   application does on an action is `alert-system/stories/state-after-action.ts`.
-  Story-only standards and helpers live in `alert-system/stories/`, which
-  the library build leaves out.
+  Story-only helpers live in `alert-system/stories/`, which the library
+  build leaves out.
 
 ## The components
 
