@@ -15,7 +15,7 @@
   "application-components-alerts-alert-list-details--small": [
     "aria-allowed-role"
   ],
-  "application-components-alerts-alert-list-details-experimental--alert-systems": [
+  "application-components-alerts-alert-list-details-experimental--custom-standard": [
     "aria-allowed-role"
   ],
   "application-components-alerts-alert-list-details-experimental--cycle-with-descendants": [
@@ -119,6 +119,12 @@
     "nested-interactive"
   ],
   "application-components-alerts-alert-menu-item--with-secondary-action": [
+    "nested-interactive"
+  ],
+  "application-components-alerts-alert-menu-item-experimental--regular": [
+    "nested-interactive"
+  ],
+  "application-components-alerts-alert-menu-item-experimental--two-actions": [
     "nested-interactive"
   ],
   "application-components-calendar-calendar--empty-calendar": ["select-name"],
