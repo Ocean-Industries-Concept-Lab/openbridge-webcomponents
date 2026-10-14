@@ -64,7 +64,9 @@ export class AlertStandardController implements ReactiveController {
   private readonly requestHostUpdateWithPreviousAlertStandard = (
     previousAlertStandard: AlertStandard | undefined
   ) =>
-    this.host.requestUpdate(ALERT_STANDARD_CHANGE_KEY, previousAlertStandard);
+    this.host.requestUpdate(ALERT_STANDARD_CHANGE_KEY, previousAlertStandard, {
+      hasChanged: () => true,
+    });
 
   constructor(private readonly host: ReactiveElement) {
     host.addController(this);

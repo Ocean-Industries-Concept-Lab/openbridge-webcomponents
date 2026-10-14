@@ -26,9 +26,7 @@ const ISA_18_2_ITEMS: [id: string, criticality: string, state: string][] = [
   ['out-of-service', 'low', 'out-of-service'],
 ];
 
-async function setup(
-  standard: AlertStandard | undefined = isa182AlertStandard
-) {
+async function setup(standard: AlertStandard | undefined) {
   setAlertStandard(standard);
   const screen = render(
     html`<obc-alert-menu-experimental canAckAll>
@@ -97,7 +95,7 @@ describe('obc-alert-menu-experimental', () => {
   });
 
   it('opens on the second tab, listing the alerts its filter includes', async () => {
-    const el = await setup();
+    const el = await setup(isa182AlertStandard);
     expect(clickAckVisible(el)).toEqual({
       tabName: 'active',
       ids: ['unacknowledged', 'acknowledged', 'diagnostic'],
@@ -105,7 +103,7 @@ describe('obc-alert-menu-experimental', () => {
   });
 
   it('lists what each other filter includes in its own tab', async () => {
-    const el = await setup();
+    const el = await setup(isa182AlertStandard);
     await selectTab(el, 0);
     expect(clickAckVisible(el)).toEqual({
       tabName: 'unacked',

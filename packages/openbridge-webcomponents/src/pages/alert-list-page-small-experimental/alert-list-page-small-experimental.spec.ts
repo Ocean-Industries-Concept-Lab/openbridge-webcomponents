@@ -39,9 +39,7 @@ afterEach(() => {
   setAlertStandard(undefined);
 });
 
-async function renderPage(
-  standard: AlertStandard | undefined = isa182AlertStandard
-) {
+async function renderPage(standard: AlertStandard | undefined) {
   setAlertStandard(standard);
   page = document.createElement('obc-alert-list-page-small-experimental');
   page.alerts = [ACKNOWLEDGED, RETURNED_TO_NORMAL_UNACKNOWLEDGED];
@@ -77,7 +75,7 @@ async function chooseFilter(
 
 describe('obc-alert-list-page-small-experimental', () => {
   it('opens on the first filter its standard declares, offering all of them', async () => {
-    const el = await renderPage();
+    const el = await renderPage(isa182AlertStandard);
     expect(dropdown(el).value).toBe('unacked');
     expect(dropdown(el).options.map((option) => option.label)).toEqual([
       'Unacked',
@@ -89,7 +87,7 @@ describe('obc-alert-list-page-small-experimental', () => {
   });
 
   it('enables ACK visible when the filter lists an alert that offers acknowledge', async () => {
-    const el = await renderPage();
+    const el = await renderPage(isa182AlertStandard);
     await chooseFilter(el, 'active');
     expect(ackVisibleButton(el).disabled).toBe(true);
 
@@ -99,7 +97,7 @@ describe('obc-alert-list-page-small-experimental', () => {
   });
 
   it('reports the chosen filter with ACK visible', async () => {
-    const el = await renderPage();
+    const el = await renderPage(isa182AlertStandard);
     const list = await chooseFilter(el, 'unacked');
     // obc-table slides a new row in, and a row counts as in view once it lands.
     await vi.waitFor(() => expect(list.getVisibleAlerts()).toHaveLength(1));
@@ -118,7 +116,7 @@ describe('obc-alert-list-page-small-experimental', () => {
   });
 
   it('reports a click on an action button as action-click, with the action', async () => {
-    const el = await renderPage();
+    const el = await renderPage(isa182AlertStandard);
     const clicked: [string, string][] = [];
     el.addEventListener('action-click', (e) => {
       const {alert, actionId} = (
