@@ -1,83 +1,56 @@
 /**
- * `standard-alert` – One alert in the terms of the standard it follows: the
- * experimental counterpart of `Alert`.
+ * `standard-alert` – One alert as the experimental alert components need it:
+ * an id, and the standard, criticality and state that decide everything else.
  *
- * The standard is part of the alert, and the criticality and state are that
- * standard's own. So `high` cannot mean two things, and the state is the one
- * source of truth for whether an alert is active or acknowledged.
+ * The components read nothing more, so an application passes its own alert
+ * objects as they are, with whatever other fields they carry. The columns of
+ * `obc-alert-list-details-experimental` each name the extra fields they read.
  *
- * Features:
- * - `AlertStandards`: the criticality and state of each standard, keyed by
- *   its id. A standard from outside the library adds its entry by
- *   declaration merging.
- * - `StandardAlert`: one alert, a union keyed by `standard`.
- *
- * Usage:
+ * A standard registered from outside the library adds itself to
+ * `RegisteredAlertStandards`, so its alerts type-check:
  * ```ts
- * const alert: StandardAlert = {
- *   standard: 'isa-18.2',
- *   criticality: AutomationAlertCriticality.High,
- *   state: AutomationAlertState.Unacknowledged,
- *   id: 'p1',
- *   tagId: 'P1',
- *   source: 'Pump 1',
- *   text: 'Discharge pressure low',
- *   time: new Date(),
- * };
+ * declare module '<path to>/alert-system/standard-alert.js' {
+ *   interface RegisteredAlertStandards {
+ *     'my-standard': typeof myStandard;
+ *   }
+ * }
  * ```
  */
-import type {AlertCategory} from '../types.js';
-import type {AlertSetAside} from './alert-system.js';
-import type {
-  MaritimeAlertCriticality,
-  MaritimeAlertState,
-} from './maritime-alert-system.js';
-import type {
-  AutomationAlertCriticality,
-  AutomationAlertState,
-} from './automation-alert-system.js';
+import type {AlertStandard} from './alert-standard.js';
+import type {iec62923AlertStandard} from './iec-62923-alert-standard.js';
+import type {isa182AlertStandard} from './isa-18-2-alert-standard.js';
 
-/**
- * The criticality and state of every standard an alert can follow, keyed by
- * the standard's id. A registered standard adds itself:
- * `declare module '<path>/standard-alert.js' { interface AlertStandards { 'my-standard': {criticality: MyCriticality; state: MyState} } }`.
- */
-export interface AlertStandards {
-  'iec-62923': {
-    criticality: MaritimeAlertCriticality;
-    state: MaritimeAlertState;
-  };
-  'isa-18.2': {
-    criticality: AutomationAlertCriticality;
-    state: AutomationAlertState;
-  };
+export interface RegisteredAlertStandards {
+  'iec-62923': typeof iec62923AlertStandard;
+  'isa-18.2': typeof isa182AlertStandard;
 }
 
-/** What every alert carries, whatever its standard. */
-export interface StandardAlertFields {
+/** Every criticality of a standard paired with a state that criticality defines. */
+export type AlertCriticalityAndStateOf<Standard extends AlertStandard> = {
+  [Criticality in keyof Standard['criticalities'] & string]: {
+    criticality: Criticality;
+    state: keyof Standard['criticalities'][Criticality]['states'] & string;
+  };
+}[keyof Standard['criticalities'] & string];
+
+export interface StandardAlertCoreFields {
   id: string;
-  tagId: string;
-  source: string;
-  text: string;
-  note?: string;
-  time: Date;
-  lastModified?: Date;
-  /** Who acknowledged the alert, and when; the state says whether it is. */
-  acknowledgedBy?: string;
-  acknowledgedAt?: Date;
-  /** Why the alert is set aside, so the lists of active and unacked alerts leave it out. */
-  setAside?: AlertSetAside;
-  /** The alert is acknowledged somewhere else, never from here. */
-  noAck?: boolean;
-  category?: AlertCategory;
   /** Ids of the alerts this one is grouped under. */
   memberOf?: string[];
 }
 
+export type StandardAlertOf<StandardId extends keyof RegisteredAlertStandards> =
+  StandardAlertCoreFields & {standard: StandardId} & AlertCriticalityAndStateOf<
+      RegisteredAlertStandards[StandardId]
+    >;
+
 export type StandardAlert = {
-  [S in keyof AlertStandards]: StandardAlertFields & {
-    standard: S;
-    criticality: AlertStandards[S]['criticality'];
-    state: AlertStandards[S]['state'];
-  };
-}[keyof AlertStandards];
+  [StandardId in keyof RegisteredAlertStandards]: StandardAlertOf<StandardId>;
+}[keyof RegisteredAlertStandards];
+
+/** What names a state definition; an alert, or the properties of an icon. */
+export interface AlertStandardCriticalityAndState {
+  standard: string;
+  criticality: string;
+  state: string;
+}

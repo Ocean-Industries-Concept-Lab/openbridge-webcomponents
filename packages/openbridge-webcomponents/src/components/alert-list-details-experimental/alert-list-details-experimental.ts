@@ -2,14 +2,13 @@ import {LitElement, PropertyValues, html, unsafeCSS} from 'lit';
 import {ifDefined} from 'lit/directives/if-defined.js';
 import {customElement} from '../../decorator.js';
 import compentStyle from './alert-list-details-experimental.css?inline';
-import {msg} from '@lit/localize';
+import {localized, msg} from '@lit/localize';
 import {property, query, state} from 'lit/decorators.js';
 import {repeat} from 'lit/directives/repeat.js';
 import '../icon-button/icon-button.js';
 import '../button/button.js';
 import '../../icons/icon-silence-iec.js';
-import '../../icons/icon-alarm-noack-iec.js';
-import '../../icons/icon-warning-noack-iec.js';
+import '../../icons/icon-alerts.js';
 import '../alert-icon-experimental/alert-icon-experimental.js';
 import {
   StyleType,
@@ -17,17 +16,15 @@ import {
   initialsFromName,
 } from '../user-button/user-button.js';
 import type {StandardAlert} from '../../alert-system/standard-alert.js';
+import {ownEntryOf} from '../../alert-system/alert-standard.js';
+import {AlertStandardController} from '../../alert-system/alert-standard-registry.js';
 import {
-  AlertFilterMode,
-  alertFilter,
-  alertFilterModeData,
-  canAcknowledge,
-} from '../../alert-filter.js';
-import {
-  AlertAcknowledgement,
-  NoAckGlyph,
-} from '../../alert-system/alert-system.js';
-import {compareAlerts, resolveAlert} from '../../alert-system/present-alert.js';
+  alertActionLabel,
+  compareAlertsBySortingRank,
+  findAlertStateDefinition,
+  isAlertIncludedInFilter,
+  offeredAlertActionIds,
+} from '../../alert-system/read-standard-alert.js';
 import {
   ObcTable,
   ObcTableCellClickEvent,
@@ -44,7 +41,37 @@ export type ObcAlertListCellClickEvent = CustomEvent<{
   alert: StandardAlert;
   columnKey: string;
   rowId: string;
+  /** The action of the clicked button, when its column says which. */
+  actionId?: string;
 }>;
+
+/** The fields `statusColumn()` reads beside the standard, criticality and state. */
+export interface AlertDescriptionFields {
+  text: string;
+  source?: string;
+}
+
+/** The field `timeColumn()` reads. */
+export interface AlertTimeField {
+  time: Date;
+}
+
+/** The field `tagIdColumn()` reads. */
+export interface AlertTagIdField {
+  tagId: string;
+}
+
+/** The field `actionColumn()` reads for an alert that offers no action. */
+export interface AlertAcknowledgedByField {
+  acknowledgedBy?: string;
+}
+
+/** An alert with every field the standard column factories read. */
+export type StandardAlertWithColumnFields = StandardAlert &
+  AlertDescriptionFields &
+  AlertTimeField &
+  AlertTagIdField &
+  AlertAcknowledgedByField;
 
 export type ObcRowClickEvent = CustomEvent<{
   alert: StandardAlert;
@@ -60,12 +87,23 @@ export interface AlertListColumnBase {
   dividerRight?: boolean;
 }
 
-/** A column whose cells the list renders from `cell(alert)`. */
-export interface AlertListDataColumn extends AlertListColumnBase {
-  cell: (alert: StandardAlert) => ObcTableCellData | undefined;
+/**
+ * A column whose cells the list renders from `cell(alert)`.
+ *
+ * `cell`, `compare` and `actionIdOfCellButton` are declared as methods so
+ * that a column reading extra fields of the alert, such as
+ * `AlertListDataColumn<StandardAlert & AlertTimeField>`, fits in `columns`.
+ * The application then passes alerts that carry those fields.
+ */
+export interface AlertListDataColumn<
+  Alert extends StandardAlert = StandardAlert,
+> extends AlertListColumnBase {
+  cell(alert: Alert): ObcTableCellData | undefined;
   /** Makes the column sortable. */
-  compare?: (a: StandardAlert, b: StandardAlert) => number;
+  compare?(a: Alert, b: Alert): number;
   sortDirection?: 'asc' | 'desc';
+  /** The action a click on the cell's button stands for; reported in `cell-click`. */
+  actionIdOfCellButton?(alert: Alert): string | undefined;
 }
 
 /** A column whose cells the consumer supplies through `cell-<key>:<rowId>` slots. */
@@ -101,15 +139,18 @@ export function alertListCellSlotName(columnKey: string, rowId: string) {
   return `cell-${encodeURIComponent(columnKey)}:${rowId}`;
 }
 
-/** Alert icon, text and source; sorted by priority. */
+/**
+ * Alert icon, text and source. Sorts by the sorting rank each alert's
+ * standard gives its state, the lowest rank on top.
+ */
 export function statusColumn(
   options: AlertListColumnOptions = {}
-): AlertListDataColumn {
+): AlertListDataColumn<StandardAlert & AlertDescriptionFields> {
   return {
     key: 'status',
     label: 'Status',
     sortDirection: 'desc',
-    compare: compareAlerts,
+    compare: (a, b) => compareAlertsBySortingRank(b, a),
     cell: (alert) => ({
       type: ObcTableCellType.Regular,
       largeIcon: true,
@@ -120,53 +161,59 @@ export function statusColumn(
         .standard=${alert.standard}
         .criticality=${alert.criticality}
         .state=${alert.state}
-        .setAside=${alert.setAside}
       ></obc-alert-icon-experimental>`,
     }),
     ...options,
   };
 }
 
-/** ACK button, or the no-ack icon, for alerts that await acknowledgement. The button fires `cell-click`. */
-export function ackColumn(
+function firstOfferedActionId(alert: StandardAlert): string | undefined {
+  return offeredAlertActionIds(alert)[0];
+}
+
+/**
+ * A button for the first action the alert's state offers, which fires
+ * `cell-click` with the action's id. A state that offers no action shows the
+ * glyph its standard defines for that, else the initials of `acknowledgedBy`.
+ */
+export function actionColumn(
   options: AlertListColumnOptions = {}
-): AlertListDataColumn {
+): AlertListDataColumn<StandardAlert & AlertAcknowledgedByField> {
   return {
-    key: 'ack',
-    label: 'ACK-status',
+    key: 'action',
+    label: 'Action',
+    actionIdOfCellButton: firstOfferedActionId,
     cell: (alert) => {
-      const {system, presentation} = resolveAlert(alert);
-      const {acknowledgement} = presentation;
-      if (acknowledgement === AlertAcknowledgement.Acked) {
-        const ackedBy = alert.acknowledgedBy;
-        if (!ackedBy || ackedBy.trim() === '')
-          return {type: ObcTableCellType.Regular};
+      const actionId = firstOfferedActionId(alert);
+      if (actionId !== undefined) {
+        return {
+          type: ObcTableCellType.Button,
+          text: alertActionLabel(alert.standard, actionId),
+        };
+      }
+      const glyphShownInsteadOfActions =
+        findAlertStateDefinition(alert)?.glyphShownInsteadOfActions;
+      if (glyphShownInsteadOfActions) {
         return {
           type: ObcTableCellType.Regular,
           largeIcon: true,
-          icon: html`<obc-user-button
-            .variant=${Variant.initials}
-            .initials=${initialsFromName(ackedBy)}
-            .static=${true}
-            .styleType=${StyleType.normal}
-          ></obc-user-button>`,
+          icon: glyphShownInsteadOfActions,
           align: 'center',
         };
       }
-      if (acknowledgement !== AlertAcknowledgement.Unacked) {
+      const acknowledgedBy = alert.acknowledgedBy?.trim();
+      if (!acknowledgedBy) {
         return {type: ObcTableCellType.Regular};
       }
-      if (canAcknowledge(alert)) {
-        return {type: ObcTableCellType.Button, text: msg('ACK')};
-      }
-      const icon =
-        system.noAckGlyph(alert.criticality) === NoAckGlyph.Alarm
-          ? html`<obi-alarm-noack-iec usecsscolor></obi-alarm-noack-iec>`
-          : html`<obi-warning-noack-iec usecsscolor></obi-warning-noack-iec>`;
       return {
         type: ObcTableCellType.Regular,
         largeIcon: true,
-        icon,
+        icon: html`<obc-user-button
+          .variant=${Variant.initials}
+          .initials=${initialsFromName(acknowledgedBy)}
+          .static=${true}
+          .styleType=${StyleType.normal}
+        ></obc-user-button>`,
         align: 'center',
       };
     },
@@ -181,7 +228,7 @@ export function timeColumn({
   ...options
 }: AlertListColumnOptions & {
   formatter?: (time: Date) => string;
-} = {}): AlertListDataColumn {
+} = {}): AlertListDataColumn<StandardAlert & AlertTimeField> {
   return {
     key: 'time',
     label: 'Activated',
@@ -199,7 +246,7 @@ export function timeColumn({
 /** Tag ID prefixed with `#`; sorted alphabetically. */
 export function tagIdColumn(
   options: AlertListColumnOptions = {}
-): AlertListDataColumn {
+): AlertListDataColumn<StandardAlert & AlertTagIdField> {
   return {
     key: 'tagId',
     label: 'Tag ID',
@@ -305,18 +352,30 @@ function walkAlertRows(
   return rows;
 }
 
+function alertsTheListShows(
+  alerts: StandardAlert[],
+  filterId: string | undefined,
+  customFilter: ((alert: StandardAlert) => boolean) | undefined
+): StandardAlert[] {
+  return alerts.filter(
+    (alert) =>
+      isAlertIncludedInFilter(alert, filterId) &&
+      (customFilter?.(alert) ?? true)
+  );
+}
+
 /**
  * Every row `obc-alert-list-details-experimental` can show for these alerts
- * and filter mode, rows inside collapsed groups included. An alert that is a member
+ * and filter, rows inside collapsed groups included. An alert that is a member
  * of several groups gets one row, and one `rowId`, under each.
  */
 export function getAlertRows(
   alerts: StandardAlert[],
-  filterMode: AlertFilterMode,
+  filterId?: string,
   customFilter?: (alert: StandardAlert) => boolean
 ): AlertListRow[] {
   return walkAlertRows(
-    alerts.filter(alertFilter(filterMode, customFilter)),
+    alertsTheListShows(alerts, filterId, customFilter),
     () => true
   );
 }
@@ -329,13 +388,18 @@ export function getAlertRows(
  * - **Columns:** `columns` sets which columns show and in what order. A data
  *   column renders each cell from `cell(alert)`; a slot column renders
  *   whatever the consumer places in the cell's slot.
- * - **Column factories:** `statusColumn()`, `ackColumn()`, `timeColumn()` and
- *   `tagIdColumn()` build the standard data columns; each takes overrides
+ * - **Alerts:** an alert needs only `id`, `standard`, `criticality` and
+ *   `state`; its alert standard (`alert-system/`) decides its icon, where it
+ *   sorts, which filters include it and which actions it offers. Each column
+ *   names the other fields it reads, and the application's own alert objects
+ *   can carry any more.
+ * - **Column factories:** `statusColumn()`, `actionColumn()`, `timeColumn()`
+ *   and `tagIdColumn()` build the standard data columns; each takes overrides
  *   such as `label`, `width` or `dividerRight`.
- * - **Filter modes:** `filterMode` lists every alert, the active or the
- *   unacked ones, the shelved or the blocked ones, or the ones
- *   `customFilter` accepts, with an empty state per filter mode. The modes
- *   mean the same in every alert list (`AlertFilterMode` in `alert-filter.ts`).
+ * - **Filter:** `filterId` names a filter of the alerts' standards, such as
+ *   `active` or `unacked`, and the list shows the alerts whose state is
+ *   included in it; every alert shows without one. `customFilter` narrows the
+ *   list further. The empty state is the one `standard` gives the filter.
  * - **Grouping:** an alert listing group ids in `memberOf` renders under each
  *   of those groups; groups nest and can be collapsed.
  * - **Selection:** `selectedRowId` highlights one row. When a collapsed group
@@ -350,7 +414,7 @@ export function getAlertRows(
  *   changes. The Svelte wrapper renders its `cell` snippet once per entry. An
  *   alert in two groups has two rows, so it gets two entries.
  * - Without a wrapper, build the names from
- *   `getAlertRows(alerts, filterMode, customFilter)` and
+ *   `getAlertRows(alerts, filterId, customFilter)` and
  *   `alertListCellSlotName(key, rowId)`, or read `cellSlots`.
  * - Clicks on buttons, links and inputs in a cell do not fire `row-click`.
  * - The consumer owns the selection: set `selectedRowId` from `row-click`, and
@@ -365,40 +429,44 @@ export function getAlertRows(
  * ```
  * with `columns` set to `[statusColumn(), {key: 'ack', label: 'ACK-status', slot: true}]`.
  *
- * @property filterMode - Which alerts to list: `all`, `active` or `unacked` (both without shelved and blocked alerts), `shelved`, `blocked`, or `custom`.
- * @property customFilter - Predicate that picks the alerts to list in `custom` mode. Every alert is listed without one.
- * @availableWhen customFilter filterMode==custom
- * @property alerts - Alerts to list.
+ * @property filterId - The filter whose alerts to list; every alert is listed when unset.
+ * @property customFilter - Predicate an alert must also pass to be listed.
+ * @property standard - The standard whose filter supplies the empty state; the default standard (`setDefaultAlertStandard`) when unset.
+ * @property alerts - Alerts to list, each naming its own standard.
  * @property columns - Columns in display order.
  * @property showHeader - Whether to show the column header row.
  * @property defaultExpanded - Whether groups start expanded. Set false to open the list collapsed.
  * @property selectedRowId - Row id to highlight, as given by `row-click` or `getAlertRows()`. Nothing is highlighted when no row has this id.
  * @property ariaLabel - Accessible name of the list, mapped to the `aria-label` attribute and forwarded to its table. `aria-labelledby` is not supported: ID references cannot cross the shadow boundary.
  * @slot cell-<key>:<rowId> - Content of the cell in slot column `<key>` for row `<rowId>`.
- * @fires {ObcAlertListCellClickEvent} cell-click - Fired when the user clicks a button rendered by a data column, such as the one from `ackColumn()`.
+ * @fires {ObcAlertListCellClickEvent} cell-click - Fired when the user clicks a button rendered by a data column, such as the one from `actionColumn()`, which adds the id of the action.
  * @fires {ObcRowClickEvent} row-click - Fired when the user clicks a row.
  * @fires {ObcAlertListCellSlotsChangeEvent} cell-slots-change - Fired when `cellSlots` changes; the detail is the new list.
  * @experimental
  */
 @customElement('obc-alert-list-details-experimental')
+@localized()
 export class ObcAlertListDetailsExperimental extends LitElement {
   // Reactive so a consumer changing the name re-renders the table.
   @property({type: String, attribute: 'aria-label'})
   override ariaLabel: string | null = null;
 
-  @property({type: String}) filterMode: AlertFilterMode = AlertFilterMode.All;
+  @property({type: String}) filterId?: string;
   @property({attribute: false}) customFilter?: (
     alert: StandardAlert
   ) => boolean;
+  @property({type: String}) standard?: string;
   @property({type: Array}) alerts: StandardAlert[] = [];
   @property({type: Array, attribute: false}) columns: AlertListColumn[] = [
     statusColumn(),
-    ackColumn({dividerRight: true}),
+    actionColumn({dividerRight: true}),
     tagIdColumn(),
   ];
   @property({type: Boolean, attribute: false}) showHeader: boolean = true;
   @property({type: Boolean, attribute: false}) defaultExpanded: boolean = true;
   @property({type: String}) selectedRowId?: string;
+
+  private readonly standardController = new AlertStandardController(this);
 
   @query('obc-table')
   private alertList!: ObcTable;
@@ -420,12 +488,12 @@ export class ObcAlertListDetailsExperimental extends LitElement {
     if (
       !changed.has('alerts') &&
       !changed.has('columns') &&
-      !changed.has('filterMode') &&
+      !changed.has('filterId') &&
       !changed.has('customFilter')
     ) {
       return;
     }
-    const rows = getAlertRows(this.alerts, this.filterMode, this.customFilter);
+    const rows = getAlertRows(this.alerts, this.filterId, this.customFilter);
     this.allRowIds = new Set(rows.map((row) => row.rowId));
     const slotColumns = this.columns.filter(isSlotColumn);
     const next = rows.flatMap((row) =>
@@ -488,16 +556,20 @@ export class ObcAlertListDetailsExperimental extends LitElement {
   }
 
   private onCellButtonClick(e: ObcTableCellClickEvent) {
-    const {rowId, columnKey} = e.detail;
+    const {rowId} = e.detail;
+    const columnKey = e.detail.columnKey.slice(TABLE_KEY_PREFIX.length);
     const alert = this.alertByRowId.get(rowId);
     if (alert) {
+      const column = this.columns.find(
+        (candidate) => candidate.key === columnKey
+      );
+      const actionId =
+        column && !isSlotColumn(column)
+          ? column.actionIdOfCellButton?.(alert)
+          : undefined;
       this.dispatchEvent(
         new CustomEvent('cell-click', {
-          detail: {
-            alert,
-            columnKey: columnKey.slice(TABLE_KEY_PREFIX.length),
-            rowId,
-          },
+          detail: {alert, columnKey, rowId, actionId},
           bubbles: false,
         }) as ObcAlertListCellClickEvent
       );
@@ -565,7 +637,7 @@ export class ObcAlertListDetailsExperimental extends LitElement {
 
   private buildVisibleRows(): ObcTableRow[] {
     const rows = walkAlertRows(
-      this.alerts.filter(alertFilter(this.filterMode, this.customFilter)),
+      alertsTheListShows(this.alerts, this.filterId, this.customFilter),
       (rowId) => this.isExpanded(rowId)
     );
     this.alertByRowId = new Map(rows.map((row) => [row.rowId, row.alert]));
@@ -616,8 +688,20 @@ export class ObcAlertListDetailsExperimental extends LitElement {
     );
   }
 
+  private get emptyState(): {icon: unknown; title: string} {
+    const filter = ownEntryOf(
+      this.standardController.standard?.filters,
+      this.filterId
+    );
+    return {
+      icon:
+        filter?.iconWhenNoAlertIsIncluded ?? html`<obi-alerts></obi-alerts>`,
+      title: filter?.titleWhenNoAlertIsIncluded() ?? msg('No alerts'),
+    };
+  }
+
   override render() {
-    const selectedList = alertFilterModeData(this.filterMode);
+    const emptyState = this.emptyState;
     const data = this.buildVisibleRows();
 
     return html`
@@ -645,8 +729,8 @@ export class ObcAlertListDetailsExperimental extends LitElement {
                 </obc-table>
                 <div class="spacer"></div>`
             : html` <div class="empty-list">
-                <div class="icon">${selectedList.emptyIcon}</div>
-                <div class="empty-title">${selectedList.emptyTitle}</div>
+                <div class="icon">${emptyState.icon}</div>
+                <div class="empty-title">${emptyState.title}</div>
               </div>`
         }
       </div>

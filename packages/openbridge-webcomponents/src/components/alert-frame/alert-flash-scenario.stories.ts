@@ -10,7 +10,7 @@ import {
 import './alert-frame.js';
 import '../alert-button/alert-button.js';
 import '../alert-icon/alert-icon.js';
-import '../alert-menu-experimental/alert-menu-experimental.js';
+import '../alert-menu/alert-menu.js';
 import {ObcAlertMenuItemStatus} from '../alert-menu-item/alert-menu-item.js';
 import '../alert-menu-item/alert-menu-item.js';
 import {ButtonVariant} from '../button/button.js';
@@ -293,20 +293,12 @@ function needsAcknowledgement(
   );
 }
 
-/** A caution takes no ACK, so once rectified it is back to normal. */
 function menuStatus(
   panel: ScenarioPanel,
   alert: AlertState
 ): ObcAlertMenuItemStatus {
   if (!requiresAcknowledgement(panel.alertType)) {
-    return alert.active
-      ? ObcAlertMenuItemStatus.Caution
-      : ObcAlertMenuItemStatus.Rectified;
-  }
-  if (!alert.active) {
-    return alert.acknowledged
-      ? ObcAlertMenuItemStatus.Rectified
-      : ObcAlertMenuItemStatus.RectifiedUnacknowledged;
+    return ObcAlertMenuItemStatus.Caution;
   }
   return alert.acknowledged
     ? ObcAlertMenuItemStatus.Acknowledged
@@ -524,7 +516,7 @@ class AlertFlashScenarioStory extends LitElement {
     const pending = visible.filter((panel) =>
       needsAcknowledgement(panel, this.alerts[panel.id])
     );
-    return html`<obc-alert-menu-experimental
+    return html`<obc-alert-menu
       .hasShelved=${false}
       .showSilenceButton=${false}
       .showAlertListButton=${false}
@@ -546,7 +538,7 @@ class AlertFlashScenarioStory extends LitElement {
             ${this.renderIcon(panel, 'alert-icon')}
           </obc-alert-menu-item>`
       )}
-    </obc-alert-menu-experimental>`;
+    </obc-alert-menu>`;
   }
 
   private renderStatus(): TemplateResult {

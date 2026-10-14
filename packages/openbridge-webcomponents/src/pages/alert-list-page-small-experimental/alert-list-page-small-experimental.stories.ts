@@ -2,35 +2,39 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
 import './alert-list-page-small-experimental.js';
 import {
-  ObcAlertListPageSmallExperimentalAckClickEvent,
   ObcAlertListPageSmallExperimental,
   ObcAlertListPageSmallExperimentalAckAllClickEvent,
+  ObcAlertListPageSmallExperimentalActionClickEvent,
 } from './alert-list-page-small-experimental.js';
-import {AlertFilterMode, canAcknowledge} from '../../alert-filter.js';
+import {ALERT_ACTION_ID_APPLIED_BY_ACK_VISIBLE_BUTTON} from '../../alert-system/alert-standard.js';
 import type {StandardAlert} from '../../alert-system/standard-alert.js';
+import {
+  alertsInEveryKindOfState,
+  applyActionToAlerts,
+  type StoryAlert,
+} from '../../storybook-util.js';
 
-/** The standards the `standard` control offers, both built into the library. */
-type BuiltInStandard = 'iec-62923' | 'isa-18.2' | undefined;
-import {acknowledgeAlerts, alertsInEveryState} from '../../storybook-util.js';
-
-const ack = (
+const applyAction = (
   page: ObcAlertListPageSmallExperimental,
-  acked: StandardAlert[]
+  alerts: StandardAlert[],
+  actionId: string
 ) => {
-  const ids = new Set(
-    acked.filter((alert) => canAcknowledge(alert)).map((alert) => alert.id)
+  page.alerts = applyActionToAlerts(
+    page.alerts as StoryAlert[],
+    new Set(alerts.map((alert) => alert.id)),
+    actionId
   );
-  page.alerts = acknowledgeAlerts(page.alerts, ids);
 };
+
+const alertsOfStandard = (standard: string | undefined): StandardAlert[] =>
+  alertsInEveryKindOfState(standard === 'isa-18.2' ? 'isa-18.2' : 'iec-62923');
 
 const meta: Meta<ObcAlertListPageSmallExperimental> = {
   title: 'Pages/Alert List Small Experimental',
   tags: ['6.0', 'experimental'],
   component: 'obc-alert-list-page-small-experimental',
   args: {
-    filterMode: AlertFilterMode.Active,
-    hasShelved: true,
-    hasBlocked: true,
+    filterId: 'active',
     showTime: true,
   },
   argTypes: {
@@ -38,34 +42,28 @@ const meta: Meta<ObcAlertListPageSmallExperimental> = {
       control: {type: 'select'},
       options: ['iec-62923', 'isa-18.2'],
     },
-    filterMode: {
-      control: {type: 'select'},
-      options: [
-        AlertFilterMode.Active,
-        AlertFilterMode.Unacked,
-        AlertFilterMode.Shelved,
-        AlertFilterMode.Blocked,
-      ],
-    },
   },
   render: (args) =>
     html`<obc-alert-list-page-small-experimental
       .standard=${args.standard}
-      .filterMode=${args.filterMode}
-      .hasShelved=${args.hasShelved}
-      .hasBlocked=${args.hasBlocked}
+      .filterId=${args.filterId}
       .showTime=${args.showTime}
-      .alerts=${alertsInEveryState(args.standard as BuiltInStandard)}
-      @ack-click=${(e: ObcAlertListPageSmallExperimentalAckClickEvent) =>
-        ack(e.currentTarget as ObcAlertListPageSmallExperimental, [
-          e.detail.alert,
-        ])}
-      @ack-all-visible-click=${(
-        e: ObcAlertListPageSmallExperimentalAckAllClickEvent
+      .alerts=${alertsOfStandard(args.standard)}
+      @action-click=${(
+        event: ObcAlertListPageSmallExperimentalActionClickEvent
       ) =>
-        ack(
-          e.currentTarget as ObcAlertListPageSmallExperimental,
-          e.detail.alerts
+        applyAction(
+          event.currentTarget as ObcAlertListPageSmallExperimental,
+          [event.detail.alert],
+          event.detail.actionId
+        )}
+      @ack-all-visible-click=${(
+        event: ObcAlertListPageSmallExperimentalAckAllClickEvent
+      ) =>
+        applyAction(
+          event.currentTarget as ObcAlertListPageSmallExperimental,
+          event.detail.alerts,
+          ALERT_ACTION_ID_APPLIED_BY_ACK_VISIBLE_BUTTON
         )}
       style="height: 100vh; display: block; max-height: 100%;"
     ></obc-alert-list-page-small-experimental>`,
@@ -82,21 +80,19 @@ export const Automation: Story = {
     docs: {
       description: {
         story:
-          'ISA-18.2 lets several alarms be acknowledged at once, so the page offers ACK visible. Under IEC 62923, the default, it does not: MSC.302 9.9 asks for one alarm at a time.',
+          'ISA-18.2 lets several alarms be acknowledged at once, so the page offers ACK visible, and its dropdown lists the five filters the standard declares. Under IEC 62923, the default, there is no ACK visible: MSC.302 9.9 asks for one alarm at a time.',
       },
     },
   },
 };
 
 export const Unacked: Story = {
-  args: {filterMode: AlertFilterMode.Unacked},
+  args: {filterId: 'unacked'},
 };
 
 export const Empty: Story = {
   render: () =>
     html`<obc-alert-list-page-small-experimental
-      hasShelved
-      hasBlocked
       style="height: 100vh; display: block;"
     ></obc-alert-list-page-small-experimental>`,
 };

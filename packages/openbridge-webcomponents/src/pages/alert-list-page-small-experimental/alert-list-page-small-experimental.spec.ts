@@ -3,39 +3,32 @@ import './alert-list-page-small-experimental.js';
 import {
   ObcAlertListPageSmallExperimental,
   ObcAlertListPageSmallExperimentalAckAllClickEvent,
-  type ObcAlertListPageSmallExperimentalAckClickEvent as ObcAckClickEvent,
+  type ObcAlertListPageSmallExperimentalActionClickEvent,
 } from './alert-list-page-small-experimental.js';
 import type {ObcButton} from '../../components/button/button.js';
 import type {ObcDropdownButton} from '../../components/dropdown-button/dropdown-button.js';
-import {AlertFilterMode} from '../../alert-filter.js';
-import {setDefaultAlertStandard} from '../../alert-system/alert-standard.js';
-import {
-  MaritimeAlertCriticality,
-  MaritimeAlertState,
-} from '../../alert-system/maritime-alert-system.js';
-import type {StandardAlert} from '../../alert-system/standard-alert.js';
+import type {StandardAlertWithColumnFields} from '../../components/alert-list-details-experimental/alert-list-details-experimental.js';
+import {setDefaultAlertStandard} from '../../alert-system/alert-standard-registry.js';
 
-const ACKED: StandardAlert = {
-  standard: 'iec-62923',
-  criticality: MaritimeAlertCriticality.Alarm,
-  state: MaritimeAlertState.ActiveAcknowledged,
-  id: 'acked',
-  tagId: 'acked',
-  source: 'Source',
-  text: 'Acked',
+const ACKNOWLEDGED: StandardAlertWithColumnFields = {
+  standard: 'isa-18.2',
+  criticality: 'high',
+  state: 'acknowledged',
+  id: 'acknowledged',
+  tagId: 'acknowledged',
+  text: 'Acknowledged',
   acknowledgedBy: 'Operator',
-  acknowledgedAt: new Date(),
   time: new Date('2024-01-15T14:32:15Z'),
 };
 
-const UNACKED_RECTIFIED: StandardAlert = {
-  ...ACKED,
-  state: MaritimeAlertState.RectifiedUnacknowledged,
-  id: 'unacked-rectified',
-  tagId: 'unacked-rectified',
-  text: 'Rectified, unacked',
-  acknowledgedBy: undefined,
-  acknowledgedAt: undefined,
+const RETURNED_TO_NORMAL_UNACKNOWLEDGED: StandardAlertWithColumnFields = {
+  standard: 'isa-18.2',
+  criticality: 'high',
+  state: 'returned-to-normal-unacknowledged',
+  id: 'returned-to-normal',
+  tagId: 'returned-to-normal',
+  text: 'Returned to normal, unacknowledged',
+  time: new Date('2024-01-15T14:32:15Z'),
 };
 
 let page: ObcAlertListPageSmallExperimental;
@@ -45,17 +38,10 @@ afterEach(() => {
   setDefaultAlertStandard('iec-62923');
 });
 
-/** Automation by default, whose standard offers "ACK visible". */
-async function renderPage(
-  {standard}: {standard?: string} = {
-    standard: 'isa-18.2',
-  }
-) {
+async function renderPage(standard: string | undefined = 'isa-18.2') {
   page = document.createElement('obc-alert-list-page-small-experimental');
   page.standard = standard;
-  page.hasShelved = true;
-  page.hasBlocked = true;
-  page.alerts = [ACKED, UNACKED_RECTIFIED];
+  page.alerts = [ACKNOWLEDGED, RETURNED_TO_NORMAL_UNACKNOWLEDGED];
   page.style.height = '480px';
   page.style.display = 'block';
   document.body.append(page);
@@ -71,45 +57,47 @@ const ackVisibleButton = (el: ObcAlertListPageSmallExperimental) =>
     '[data-testid="ack-all-visible-button"]'
   )!;
 
-async function chooseMode(
+const alertList = (el: ObcAlertListPageSmallExperimental) =>
+  el.shadowRoot!.querySelector('obc-alert-list-details-experimental')!;
+
+async function chooseFilter(
   el: ObcAlertListPageSmallExperimental,
-  mode: AlertFilterMode
+  filterId: string
 ) {
   dropdown(el).dispatchEvent(
-    new CustomEvent('change', {detail: {value: mode}})
+    new CustomEvent('change', {detail: {value: filterId}})
   );
   await el.updateComplete;
-  const list = el.shadowRoot!.querySelector(
-    'obc-alert-list-details-experimental'
-  )!;
-  await list.updateComplete;
-  return list;
+  await alertList(el).updateComplete;
+  return alertList(el);
 }
 
 describe('obc-alert-list-page-small-experimental', () => {
-  it('opens on Active, offering the modes it has tabs for', async () => {
+  it('opens on the first filter its standard declares, offering all of them', async () => {
     const el = await renderPage();
-    expect(dropdown(el).value).toBe(AlertFilterMode.Active);
+    expect(dropdown(el).value).toBe('unacked');
     expect(dropdown(el).options.map((option) => option.label)).toEqual([
-      'Active',
       'Unacked',
+      'Active',
       'Shelved',
-      'Blocked',
+      'Suppressed',
+      'Out of service',
     ]);
   });
 
-  it('enables ACK visible when the mode lists an alert still to acknowledge', async () => {
+  it('enables ACK visible when the filter lists an alert that offers acknowledge', async () => {
     const el = await renderPage();
+    await chooseFilter(el, 'active');
     expect(ackVisibleButton(el).disabled).toBe(true);
 
-    await chooseMode(el, AlertFilterMode.Unacked);
+    await chooseFilter(el, 'unacked');
 
     expect(ackVisibleButton(el).disabled).toBe(false);
   });
 
-  it('reports the chosen mode with ACK visible', async () => {
+  it('reports the chosen filter with ACK visible', async () => {
     const el = await renderPage();
-    const list = await chooseMode(el, AlertFilterMode.Unacked);
+    const list = await chooseFilter(el, 'unacked');
     // obc-table slides a new row in, and a row counts as in view once it lands.
     await vi.waitFor(() => expect(list.getVisibleAlerts()).toHaveLength(1));
     let detail:
@@ -120,37 +108,42 @@ describe('obc-alert-list-page-small-experimental', () => {
 
     ackVisibleButton(el).shadowRoot!.querySelector('button')!.click();
 
-    expect(detail?.mode).toBe(AlertFilterMode.Unacked);
+    expect(detail?.mode).toBe('unacked');
     expect(detail?.alerts.map((alert) => alert.id)).toEqual([
-      'unacked-rectified',
+      'returned-to-normal',
     ]);
   });
 
-  it('reports a click in the ACK column as ack-click', async () => {
+  it('reports a click on an action button as action-click, with the action', async () => {
     const el = await renderPage();
-    const acked: string[] = [];
-    el.addEventListener('ack-click', (e) =>
-      acked.push((e as ObcAckClickEvent).detail.alert.id)
-    );
-    const list = el.shadowRoot!.querySelector(
-      'obc-alert-list-details-experimental'
-    )!;
-    for (const columnKey of ['status', 'ack']) {
-      list.dispatchEvent(
+    const clicked: [string, string][] = [];
+    el.addEventListener('action-click', (e) => {
+      const {alert, actionId} = (
+        e as ObcAlertListPageSmallExperimentalActionClickEvent
+      ).detail;
+      clicked.push([alert.id, actionId]);
+    });
+    for (const actionId of [undefined, 'acknowledge']) {
+      alertList(el).dispatchEvent(
         new CustomEvent('cell-click', {
-          detail: {alert: UNACKED_RECTIFIED, columnKey, rowId: 'x'},
+          detail: {
+            alert: RETURNED_TO_NORMAL_UNACKNOWLEDGED,
+            columnKey: 'action',
+            rowId: 'x',
+            actionId,
+          },
         })
       );
     }
-    expect(acked).toEqual(['unacked-rectified']);
+    expect(clicked).toEqual([['returned-to-normal', 'acknowledge']]);
   });
 
   it('leaves out ACK visible where the standard acknowledges one alert at a time', async () => {
-    const maritime = await renderPage({standard: 'iec-62923'});
-    expect(ackVisibleButton(maritime)).toBeNull();
-    maritime.remove();
+    const iec = await renderPage('iec-62923');
+    expect(ackVisibleButton(iec)).toBeNull();
+    iec.remove();
 
-    const following = await renderPage({});
+    const following = await renderPage(undefined);
     expect(ackVisibleButton(following)).toBeNull();
     setDefaultAlertStandard('isa-18.2');
     await following.updateComplete;

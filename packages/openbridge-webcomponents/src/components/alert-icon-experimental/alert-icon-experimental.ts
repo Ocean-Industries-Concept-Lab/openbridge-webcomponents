@@ -4,29 +4,25 @@ import {customElement} from '../../decorator.js';
 import componentStyle from './alert-icon-experimental.css?inline';
 import {FlashingSpeed, type ResolvedFlashingSpeed} from '../../types.js';
 import {FlashingController} from '../../palettes/flashing-controller.js';
-import type {
-  AlertPresentation,
-  AlertSetAside,
-} from '../../alert-system/alert-system.js';
-import {AlertStandardController} from '../../alert-system/alert-systems.js';
+import type {AlertStateDefinition} from '../../alert-system/alert-standard.js';
+import {AlertStandardController} from '../../alert-system/alert-standard-registry.js';
+import {findAlertStateDefinition} from '../../alert-system/read-standard-alert.js';
 
 /**
- * `<obc-alert-icon-experimental>` – The icon of one alert, drawn by the alert
- * standard it follows.
+ * `<obc-alert-icon-experimental>` – The icon of one alert, drawn with the
+ * glyph its alert standard defines.
  *
- * The standard supplies the glyph for a criticality and a state, a second
+ * The standard supplies the glyph of a criticality in a state, a second
  * frame when it flashes, and the tempo (`alert-system/`). The icon only
  * cross-fades the two frames through `FlashingController`, so every flashing
- * element lights up together, and knows no standard of its own. A standard
- * registered from outside the library draws through it unchanged.
+ * element lights up together. A standard registered from outside the library
+ * draws through it unchanged.
  *
  * ### Features
  * - **Standard:** `standard` names it, or the default standard
  *   (`setDefaultAlertStandard`) applies.
  * - **Glyph:** `criticality` and `state`, in the terms of that standard.
- *   Nothing renders for a criticality or a state the standard does not have.
- * - **Set aside:** `setAside` lets a standard stop the flash, as ISA-18.2 does
- *   for a shelved or suppressed alarm.
+ *   Nothing renders for a pair the standard does not define.
  * - **Tempo:** `flashingSpeed` `default` takes the standard's tempo; `fast`,
  *   `slow` and `very-slow` force one while the icon flashes, and `fixed`
  *   holds it steady.
@@ -38,7 +34,6 @@ import {AlertStandardController} from '../../alert-system/alert-systems.js';
  * @property standard - The standard of `criticality` and `state`, such as `iec-62923` or `isa-18.2`; the default standard when unset.
  * @property criticality - How critical the alert is, in the terms of its standard.
  * @property state - Where the alert stands, in the terms of its standard.
- * @property setAside - Why the alert is set aside; some standards stop its flash then.
  * @property flashingSpeed - `default` takes the standard's tempo; `fast`, `slow` and `very-slow` force one while the icon flashes; `fixed` holds it steady.
  * @experimental
  */
@@ -47,7 +42,6 @@ export class ObcAlertIconExperimental extends LitElement {
   @property({type: String}) standard?: string;
   @property({type: String}) criticality = '';
   @property({type: String}) state = '';
-  @property({type: String}) setAside?: AlertSetAside;
   @property({type: String}) flashingSpeed: FlashingSpeed =
     FlashingSpeed.Default;
 
@@ -58,39 +52,35 @@ export class ObcAlertIconExperimental extends LitElement {
     () => this.resolvedFlashingSpeed
   );
 
-  private get presentation(): AlertPresentation | undefined {
-    const {system} = this.standardController;
-    if (
-      !system.criticalities.includes(this.criticality) ||
-      !system.states.includes(this.state)
-    ) {
-      return undefined;
-    }
-    return system.present(this.criticality, this.state, {
-      setAside: this.setAside,
+  private get stateDefinition(): AlertStateDefinition | undefined {
+    return findAlertStateDefinition({
+      standard: this.standardController.standardId,
+      criticality: this.criticality,
+      state: this.state,
     });
   }
 
   get resolvedFlashingSpeed(): ResolvedFlashingSpeed {
-    const presentation = this.presentation;
+    const stateDefinition = this.stateDefinition;
+    const speedOfStandard =
+      stateDefinition?.flashingSpeed ?? FlashingSpeed.Fixed;
     if (
-      !presentation ||
-      presentation.flash === FlashingSpeed.Fixed ||
-      presentation.glyph.flashFrame === undefined
+      speedOfStandard === FlashingSpeed.Fixed ||
+      stateDefinition?.glyph.flashFrame === undefined
     ) {
       return FlashingSpeed.Fixed;
     }
     return this.flashingSpeed === FlashingSpeed.Default
-      ? presentation.flash
+      ? speedOfStandard
       : this.flashingSpeed;
   }
 
   override render() {
-    const presentation = this.presentation;
-    if (!presentation) {
+    const stateDefinition = this.stateDefinition;
+    if (!stateDefinition) {
       return nothing;
     }
-    const {frame, flashFrame} = presentation.glyph;
+    const {frame, flashFrame} = stateDefinition.glyph;
     const tempo = this.resolvedFlashingSpeed;
     if (tempo === FlashingSpeed.Fixed) {
       return html`<div class="wrapper"><div class="frame">${frame}</div></div>`;

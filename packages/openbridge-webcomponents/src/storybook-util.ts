@@ -8,29 +8,21 @@ import './icons/icon-close-google.js';
 import './icons/icon-ship.js';
 import {HTMLTemplateResult, TemplateResult, html} from 'lit';
 import {spread} from '@open-wc/lit-helpers';
-import {AlertCondition, AlertSetAside} from './alert-system/alert-system.js';
-import {alertSystem} from './alert-system/alert-systems.js';
+import {FlashingSpeed} from './types.js';
+import {defineAlertStandard} from './alert-system/alert-standard.js';
 import {
-  MaritimeAlertCriticality,
-  MaritimeAlertState,
-} from './alert-system/maritime-alert-system.js';
-import {
-  AutomationAlertCriticality,
-  AutomationAlertState,
-} from './alert-system/automation-alert-system.js';
-import {presentAlert} from './alert-system/present-alert.js';
-import {getDefaultAlertStandard} from './alert-system/alert-standard.js';
-import {alertFilterState} from './alert-filter.js';
-import './components/alert-menu-item/alert-menu-item.js';
-import {
-  ObcAlertMenuItemStatus,
-  type ObcAlertMenuItem,
-} from './components/alert-menu-item/alert-menu-item.js';
-import './components/alert-icon-experimental/alert-icon-experimental.js';
-import {alertMenuItemStatus} from './building-blocks/alert-list-experimental/alert-menu-item-state.js';
+  findAlertStandard,
+  getDefaultAlertStandardId,
+} from './alert-system/alert-standard-registry.js';
+import './components/alert-menu-item-experimental/alert-menu-item-experimental.js';
 import type {
-  StandardAlert,
-  StandardAlertFields,
+  ObcAlertMenuItemExperimental,
+  ObcAlertMenuItemExperimentalActionClickEvent,
+} from './components/alert-menu-item-experimental/alert-menu-item-experimental.js';
+import type {StandardAlertWithColumnFields} from './components/alert-list-details-experimental/alert-list-details-experimental.js';
+import type {
+  AlertCriticalityAndStateOf,
+  RegisteredAlertStandards,
 } from './alert-system/standard-alert.js';
 
 export const iconIds = [
@@ -233,123 +225,310 @@ export function expectChartCanvasToMatchComputedLayout(
   return rect;
 }
 
+const healthAlarmGlyphFrame = (
+  colourToken: string,
+  filled: boolean
+): TemplateResult =>
+  html`<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <rect
+      x="3"
+      y="3"
+      width="18"
+      height="18"
+      rx="5"
+      fill=${filled ? `var(${colourToken})` : 'none'}
+      stroke="var(${colourToken})"
+      stroke-width="2"
+    />
+    <path
+      d="M12 7v10M7 12h10"
+      stroke=${filled ? 'var(--container-background-color)' : `var(${colourToken})`}
+      stroke-width="2.5"
+      stroke-linecap="round"
+    />
+  </svg>`;
+
+const flashingHealthAlarmGlyph = (colourToken: string) => ({
+  frame: healthAlarmGlyphFrame(colourToken, true),
+  flashFrame: healthAlarmGlyphFrame(colourToken, false),
+});
+
+const steadyHealthAlarmGlyph = (colourToken: string, filled: boolean) => ({
+  frame: healthAlarmGlyphFrame(colourToken, filled),
+});
+
 /**
- * One alert in each state the alert filter modes tell apart, in the terms of
- * `standard`, for the experimental alert list and menu stories. Each call
- * returns new objects, because the stories acknowledge alerts in place.
+ * IEC 60601-1-8, the alarms of medical equipment, as a standard from outside
+ * the library: its own priorities, states, glyphs and filter. An alarm keeps
+ * flashing after its sound is silenced, and a latched alarm stays until it
+ * is reset. The standard asks 1.4 to 2.8 Hz for a high priority; `fast`, at
+ * 1.25 Hz, is the quickest tempo the library has.
  */
-export function alertsInEveryState(
+export const iec6060118StoryAlertStandard = defineAlertStandard({
+  id: 'iec-60601-1-8',
+  filters: {
+    present: {
+      label: () => 'Present',
+      titleWhenNoAlertIsIncluded: () => 'No alarm condition present',
+      iconWhenNoAlertIsIncluded: html`<obi-placeholder></obi-placeholder>`,
+    },
+    latched: {
+      label: () => 'Latched',
+      titleWhenNoAlertIsIncluded: () => 'No latched alarms',
+      iconWhenNoAlertIsIncluded: html`<obi-placeholder></obi-placeholder>`,
+    },
+  },
+  actions: {
+    'silence-audio': {label: () => 'Silence'},
+    reset: {label: () => 'Reset', canBeAppliedToSeveralAlertsAtOnce: true},
+  },
+  criticalities: {
+    high: {
+      states: {
+        present: {
+          glyph: flashingHealthAlarmGlyph('--alert-alarm-color'),
+          sortingRank: 15,
+          flashingSpeed: FlashingSpeed.Fast,
+          includedInFilters: ['present'],
+          offeredActions: ['silence-audio'],
+        },
+        'present-audio-silenced': {
+          glyph: flashingHealthAlarmGlyph('--alert-alarm-color'),
+          sortingRank: 16,
+          flashingSpeed: FlashingSpeed.Fast,
+          includedInFilters: ['present'],
+        },
+        latched: {
+          glyph: steadyHealthAlarmGlyph('--alert-alarm-color', false),
+          sortingRank: 150,
+          includedInFilters: ['latched'],
+          offeredActions: ['reset'],
+        },
+      },
+    },
+    medium: {
+      states: {
+        present: {
+          glyph: flashingHealthAlarmGlyph('--alert-warning-color'),
+          sortingRank: 35,
+          flashingSpeed: FlashingSpeed.Slow,
+          includedInFilters: ['present'],
+          offeredActions: ['silence-audio'],
+        },
+        'present-audio-silenced': {
+          glyph: flashingHealthAlarmGlyph('--alert-warning-color'),
+          sortingRank: 36,
+          flashingSpeed: FlashingSpeed.Slow,
+          includedInFilters: ['present'],
+        },
+        latched: {
+          glyph: steadyHealthAlarmGlyph('--alert-warning-color', false),
+          sortingRank: 151,
+          includedInFilters: ['latched'],
+          offeredActions: ['reset'],
+        },
+      },
+    },
+    low: {
+      states: {
+        present: {
+          glyph: steadyHealthAlarmGlyph('--alert-caution-color', true),
+          sortingRank: 105,
+          includedInFilters: ['present'],
+        },
+      },
+    },
+  },
+});
+
+declare module './alert-system/standard-alert.js' {
+  interface RegisteredAlertStandards {
+    'iec-60601-1-8': typeof iec6060118StoryAlertStandard;
+  }
+}
+
+/** An alert with every field the stories' columns and menu items show. */
+export type StoryAlert = StandardAlertWithColumnFields;
+
+/** An alert of a built-in standard, raised at the given minute past 14:00. */
+export function storyAlert<StandardId extends keyof RegisteredAlertStandards>(
+  standard: StandardId,
+  criticalityAndState: AlertCriticalityAndStateOf<
+    RegisteredAlertStandards[StandardId]
+  >,
+  id: string,
+  text: string,
+  minute: number,
+  otherFields: Partial<StoryAlert> = {}
+): StoryAlert {
+  return {
+    standard,
+    ...criticalityAndState,
+    id,
+    tagId: id.toUpperCase(),
+    source: criticalityAndState.criticality,
+    text,
+    time: new Date(`2024-01-15T14:${String(minute).padStart(2, '0')}:00Z`),
+    ...otherFields,
+  } as StoryAlert;
+}
+
+/**
+ * One alert in each kind of state a built-in standard has, for the
+ * experimental alert list, menu and page stories. Each call returns new
+ * objects, because the stories change the alerts they are given.
+ */
+export function alertsInEveryKindOfState(
   standard: 'iec-62923' | 'isa-18.2' = 'iec-62923'
-): StandardAlert[] {
-  const time = (minute: number) =>
-    new Date(`2024-01-15T14:${String(minute).padStart(2, '0')}:00Z`);
-  const acknowledged = {acknowledgedBy: 'John Doe', acknowledgedAt: time(40)};
-  const iec = standard === 'iec-62923';
-  const alarm = iec
-    ? MaritimeAlertCriticality.Alarm
-    : AutomationAlertCriticality.High;
-  const warning = iec
-    ? MaritimeAlertCriticality.Warning
-    : AutomationAlertCriticality.Medium;
-  const unacked = iec
-    ? MaritimeAlertState.ActiveUnacknowledged
-    : AutomationAlertState.Unacknowledged;
-  const alert = (
-    id: string,
-    text: string,
-    criticality: string,
-    state: string,
-    fields: Partial<StandardAlertFields> = {}
-  ) =>
-    ({
-      standard,
-      criticality,
-      state,
-      id,
-      tagId: id.toUpperCase(),
-      source: alertSystem(standard).label(criticality),
-      text,
-      time: time(30),
-      ...fields,
-    }) as StandardAlert;
+): StoryAlert[] {
+  if (standard === 'isa-18.2') {
+    return [
+      storyAlert(
+        'isa-18.2',
+        {criticality: 'high', state: 'unacknowledged'},
+        'unacknowledged',
+        'Unacknowledged',
+        39
+      ),
+      storyAlert(
+        'isa-18.2',
+        {criticality: 'high', state: 'acknowledged'},
+        'acknowledged',
+        'Acknowledged',
+        38,
+        {acknowledgedBy: 'John Doe'}
+      ),
+      storyAlert(
+        'isa-18.2',
+        {criticality: 'high', state: 'returned-to-normal-unacknowledged'},
+        'returned-to-normal',
+        'Returned to normal, unacknowledged',
+        37
+      ),
+      storyAlert(
+        'isa-18.2',
+        {criticality: 'high', state: 'normal'},
+        'normal',
+        'Normal',
+        36
+      ),
+      storyAlert(
+        'isa-18.2',
+        {criticality: 'diagnostic', state: 'active'},
+        'diagnostic',
+        'Diagnostic, takes no ACK',
+        35
+      ),
+      storyAlert(
+        'isa-18.2',
+        {criticality: 'medium', state: 'shelved'},
+        'shelved',
+        'Shelved',
+        34
+      ),
+      storyAlert(
+        'isa-18.2',
+        {criticality: 'critical', state: 'suppressed-by-design'},
+        'suppressed',
+        'Suppressed by design',
+        33
+      ),
+      storyAlert(
+        'isa-18.2',
+        {criticality: 'low', state: 'out-of-service'},
+        'out-of-service',
+        'Out of service',
+        32
+      ),
+    ];
+  }
   return [
-    alert('unacked-active', 'Active, unacked', alarm, unacked, {
-      time: time(39),
-    }),
-    alert(
-      'acked-active',
-      'Active, acked',
-      alarm,
-      iec
-        ? MaritimeAlertState.ActiveAcknowledged
-        : AutomationAlertState.Acknowledged,
-      {...acknowledged, time: time(38)}
+    storyAlert(
+      'iec-62923',
+      {criticality: 'alarm', state: 'active-unacknowledged'},
+      'unacknowledged',
+      'Active, unacknowledged',
+      39
     ),
-    alert(
-      'unacked-rectified',
-      iec ? 'Rectified, unacked' : 'Returned to normal, unacked',
-      alarm,
-      iec
-        ? MaritimeAlertState.RectifiedUnacknowledged
-        : AutomationAlertState.ReturnedToNormalUnacknowledged,
-      {time: time(37)}
+    storyAlert(
+      'iec-62923',
+      {criticality: 'alarm', state: 'active-acknowledged'},
+      'acknowledged',
+      'Active, acknowledged',
+      38,
+      {acknowledgedBy: 'John Doe'}
     ),
-    alert(
+    storyAlert(
+      'iec-62923',
+      {criticality: 'alarm', state: 'rectified-unacknowledged'},
+      'rectified',
+      'Rectified, unacknowledged',
+      37
+    ),
+    storyAlert(
+      'iec-62923',
+      {criticality: 'alarm', state: 'normal'},
       'normal',
-      iec ? 'Rectified, acked' : 'Normal',
-      alarm,
-      iec ? MaritimeAlertState.Normal : AutomationAlertState.Normal,
-      {...acknowledged, time: time(36)}
+      'Normal',
+      36
     ),
-    alert(
+    storyAlert(
+      'iec-62923',
+      {criticality: 'caution', state: 'active'},
       'caution',
-      'Takes no ACK',
-      iec
-        ? MaritimeAlertCriticality.Caution
-        : AutomationAlertCriticality.Diagnostic,
-      iec ? MaritimeAlertState.Active : AutomationAlertState.Active,
-      {time: time(35)}
+      'Caution, takes no ACK',
+      35
     ),
-    alert('no-ack', 'ACK elsewhere', warning, unacked, {
-      noAck: true,
-      time: time(34),
-    }),
-    alert('shelved', 'Shelved', warning, unacked, {
-      setAside: AlertSetAside.Shelved,
-      time: time(33),
-    }),
-    alert('blocked', iec ? 'Blocked' : 'Suppressed', alarm, unacked, {
-      setAside: iec ? AlertSetAside.Blocked : AlertSetAside.Suppressed,
-      time: time(32),
-    }),
+    storyAlert(
+      'iec-62923',
+      {
+        criticality: 'warning',
+        state: 'active-unacknowledged-acknowledge-not-allowed',
+      },
+      'acknowledge-not-allowed',
+      'Acknowledged elsewhere',
+      34
+    ),
+    storyAlert(
+      'iec-62923',
+      {criticality: 'warning', state: 'active-responsibility-transferred'},
+      'transferred',
+      'Responsibility transferred',
+      33
+    ),
   ];
 }
 
 /**
- * Every criticality of a standard in every state it takes: one column per
- * criticality, most severe first, and one row per state, with the cell left
- * empty where the criticality does not take the state. The per-standard
- * stories of the experimental alert components draw their cells through it.
+ * Every criticality of a standard in every state it defines: one column per
+ * criticality and one row per state name, with the cell left empty where
+ * the criticality does not define the state.
  */
-export function alertSystemMatrix(
-  standard: string,
+export function alertStandardMatrix(
+  standardId: string,
   cell: (criticality: string, state: string) => TemplateResult
 ): TemplateResult {
-  const system = alertSystem(standard);
+  const criticalities = findAlertStandard(standardId)?.criticalities ?? {};
+  const criticalityNames = Object.keys(criticalities);
+  const stateNames = [
+    ...new Set(
+      criticalityNames.flatMap((criticality) =>
+        Object.keys(criticalities[criticality].states)
+      )
+    ),
+  ];
   return html`<div
     style="display: grid; grid-template-columns: auto repeat(${
-      system.criticalities.length
+      criticalityNames.length
     }, minmax(64px, auto)); gap: 8px 16px; align-items: center; justify-items: center; font: var(--font-ui-body, 14px sans-serif);"
   >
     <div></div>
-    ${system.criticalities.map(
-      (criticality) => html`<div>${system.label(criticality)}</div>`
-    )}
-    ${system.states.map(
+    ${criticalityNames.map((criticality) => html`<div>${criticality}</div>`)}
+    ${stateNames.map(
       (state) =>
         html`<div style="justify-self: end">${state}</div>
-          ${system.criticalities.map((criticality) =>
-            system.statesOf(criticality).includes(state)
+          ${criticalityNames.map((criticality) =>
+            state in criticalities[criticality].states
               ? cell(criticality, state)
               : html`<div></div>`
           )}`
@@ -357,99 +536,90 @@ export function alertSystemMatrix(
   </div>`;
 }
 
-/** The state each standard moves an alert to when it is acknowledged here. */
-const ACKNOWLEDGED_STATE: Record<string, Record<string, string>> = {
+/**
+ * The state an action moves an alert to, per standard and action. Stands in
+ * for the application's alert system, which owns the transitions.
+ */
+const STATE_AFTER_ACTION: Record<
+  string,
+  Record<string, Record<string, string>>
+> = {
   'iec-62923': {
-    [MaritimeAlertState.ActiveUnacknowledged]:
-      MaritimeAlertState.ActiveAcknowledged,
-    [MaritimeAlertState.ActiveSilenced]: MaritimeAlertState.ActiveAcknowledged,
-    [MaritimeAlertState.RectifiedUnacknowledged]: MaritimeAlertState.Normal,
+    acknowledge: {
+      'active-unacknowledged': 'active-acknowledged',
+      'active-silenced': 'active-acknowledged',
+      'rectified-unacknowledged': 'normal',
+    },
   },
   'isa-18.2': {
-    [AutomationAlertState.Unacknowledged]: AutomationAlertState.Acknowledged,
-    [AutomationAlertState.ReturnedToNormalUnacknowledged]:
-      AutomationAlertState.Normal,
-    [AutomationAlertState.LatchedUnacknowledged]:
-      AutomationAlertState.LatchedAcknowledged,
+    acknowledge: {
+      unacknowledged: 'acknowledged',
+      'returned-to-normal-unacknowledged': 'normal',
+    },
+    shelve: {
+      unacknowledged: 'shelved',
+      acknowledged: 'shelved',
+    },
+    unshelve: {
+      shelved: 'unacknowledged',
+    },
   },
 };
 
-/** The state an alert in `state` moves to when it is acknowledged here, if any. */
-export function acknowledgedState(
-  standard: string,
+function stateAfterAction(
+  standardId: string,
+  actionId: string,
   state: string
 ): string | undefined {
-  return ACKNOWLEDGED_STATE[standard]?.[state];
+  return STATE_AFTER_ACTION[standardId]?.[actionId]?.[state];
 }
 
-/**
- * Stands in for the application acknowledging alerts: the acknowledged ones
- * move to the state their standard gives them, and those that are then
- * normal leave the list.
- */
-export function acknowledgeAlerts(
-  alerts: StandardAlert[],
-  ids: ReadonlySet<string>
-): StandardAlert[] {
-  return alerts.flatMap((alert) => {
-    const next = ids.has(alert.id)
-      ? acknowledgedState(alert.standard, alert.state)
+/** The alerts after `actionId` was applied to the ones named by `ids`. */
+export function applyActionToAlerts<Alert extends StoryAlert>(
+  alerts: Alert[],
+  ids: ReadonlySet<string>,
+  actionId: string
+): Alert[] {
+  return alerts.map((alert) => {
+    const nextState = ids.has(alert.id)
+      ? stateAfterAction(alert.standard, actionId, alert.state)
       : undefined;
-    if (!next) {
-      return [alert];
+    if (nextState === undefined) {
+      return alert;
     }
-    const acked = {
-      ...alert,
-      state: next,
-      acknowledgedBy: 'John Doe',
-      acknowledgedAt: new Date('2024-01-15T14:44:00Z'),
-    } as StandardAlert;
-    return presentAlert(acked).condition === AlertCondition.Normal
-      ? []
-      : [acked];
+    return {...alert, state: nextState, acknowledgedBy: 'John Doe'} as Alert;
   });
 }
 
-/** An `obc-alert-menu-item` for an alert, with its icon drawn by its standard. */
-export function alertMenuItem(
-  alert: StandardAlert,
-  onAck: (item: ObcAlertMenuItem) => void
-): TemplateResult {
-  const {shelved, blocked} = alertFilterState(alert);
-  return html`<obc-alert-menu-item
-    .status=${alertMenuItemStatus(alert)}
-    .shelved=${shelved}
-    .blocked=${blocked}
-    title=${alert.source}
-    description=${alert.text}
-    time=${alert.time.toISOString().slice(11, 19)}
-    @ack-click=${(e: Event) => onAck(e.currentTarget as ObcAlertMenuItem)}
-  >
-    <obc-alert-icon-experimental
-      slot="alert-icon"
-      .standard=${alert.standard}
-      .criticality=${alert.criticality}
-      .state=${alert.state}
-      .setAside=${alert.setAside}
-    ></obc-alert-icon-experimental>
-  </obc-alert-menu-item>`;
+/** Moves a menu item to the state `actionId` gives its alert. */
+export function applyActionToMenuItem(
+  item: ObcAlertMenuItemExperimental,
+  actionId: string
+): void {
+  const nextState = stateAfterAction(
+    item.standard ?? getDefaultAlertStandardId(),
+    actionId,
+    item.state
+  );
+  if (nextState !== undefined) {
+    item.state = nextState;
+  }
 }
 
-/**
- * Stands in for the application acknowledging the alert of a menu item in
- * place: the item's status and its icon's state move on.
- */
-export function acknowledgeMenuItem(item: ObcAlertMenuItem): void {
-  const icon = item.querySelector('obc-alert-icon-experimental');
-  const next =
-    icon &&
-    acknowledgedState(icon.standard ?? getDefaultAlertStandard(), icon.state);
-  if (!icon || !next) {
-    return;
-  }
-  icon.state = next;
-  item.status =
-    item.status === ObcAlertMenuItemStatus.RectifiedUnacknowledged
-      ? ObcAlertMenuItemStatus.Rectified
-      : ObcAlertMenuItemStatus.Acknowledged;
+/** An `obc-alert-menu-item-experimental` that applies the action a click asks for. */
+export function alertMenuItem(alert: StoryAlert): TemplateResult {
+  return html`<obc-alert-menu-item-experimental
+    id=${alert.id}
+    .standard=${alert.standard}
+    .criticality=${alert.criticality}
+    .state=${alert.state}
+    title=${alert.source ?? ''}
+    description=${alert.text}
+    time=${alert.time.toISOString().slice(11, 19)}
+    @action-click=${(event: ObcAlertMenuItemExperimentalActionClickEvent) =>
+      applyActionToMenuItem(
+        event.currentTarget as ObcAlertMenuItemExperimental,
+        event.detail.actionId
+      )}
+  ></obc-alert-menu-item-experimental>`;
 }

@@ -3,7 +3,7 @@ import {
   ObcAlertListCellClickEvent,
   ObcAlertListDetailsExperimental,
   ObcRowClickEvent,
-  ackColumn,
+  actionColumn,
   alertListCellSlotName,
   getAlertRows,
   statusColumn,
@@ -11,44 +11,36 @@ import {
   timeColumn,
 } from './alert-list-details-experimental.js';
 import type {ObcButton} from '../button/button.js';
-import '../alert-icon-experimental/alert-icon-experimental.js';
-import '../../icons/icon-alarm-unacknowledged-iec.js';
-import '../../icons/icon-warning-unacknowledged-iec.js';
-import '../../icons/icon-caution-color-iec.js';
-import '../../icons/icon-alarm-acknowledged-iec.js';
-
 import {html} from 'lit';
-import {AlertFilterMode, canAcknowledge} from '../../alert-filter.js';
-import {acknowledgeAlerts, alertsInEveryState} from '../../storybook-util.js';
 import {
-  AlertCondition,
-  AlertSetAside,
-} from '../../alert-system/alert-system.js';
-import {presentAlert} from '../../alert-system/present-alert.js';
-import type {
-  StandardAlert,
-  StandardAlertFields,
-} from '../../alert-system/standard-alert.js';
-import {
-  MaritimeAlertCriticality as Maritime,
-  MaritimeAlertState as MaritimeState,
-} from '../../alert-system/maritime-alert-system.js';
-import {
-  AutomationAlertCriticality as Automation,
-  AutomationAlertState as AutomationState,
-} from '../../alert-system/automation-alert-system.js';
+  alertsInEveryKindOfState,
+  applyActionToAlerts,
+  iec6060118StoryAlertStandard,
+  storyAlert,
+  type StoryAlert,
+} from '../../storybook-util.js';
+import {ALERT_ACTION_ID_APPLIED_BY_ACK_VISIBLE_BUTTON} from '../../alert-system/alert-standard.js';
+import {registerAlertStandard} from '../../alert-system/alert-standard-registry.js';
+import {isAlertActionOffered} from '../../alert-system/read-standard-alert.js';
+import type {StandardAlert} from '../../alert-system/standard-alert.js';
 
-// Handler for ACK clicks, this is a demo solution for the storybook
-// Normally the click is handled by the backend and the component is updated
-const handleAck = (e: ObcAlertListCellClickEvent) => {
-  if (e.detail.columnKey === 'ack') {
-    ack(e.detail.alert);
+registerAlertStandard(iec6060118StoryAlertStandard);
+
+/**
+ * Stands in for the application: it applies the clicked action and hands the
+ * list the alerts in their new states.
+ */
+const applyClickedAction = (event: ObcAlertListCellClickEvent) => {
+  const {alert, actionId} = event.detail;
+  if (actionId === undefined) {
+    return;
   }
-};
-
-const ack = (item: StandardAlert) => {
-  const list = document.querySelector('obc-alert-list-details-experimental')!;
-  list.alerts = acknowledgeAlerts(list.alerts, new Set([item.id]));
+  const list = event.currentTarget as ObcAlertListDetailsExperimental;
+  list.alerts = applyActionToAlerts(
+    list.alerts as StoryAlert[],
+    new Set([alert.id]),
+    actionId
+  );
 };
 
 const meta: Meta<typeof ObcAlertListDetailsExperimental> = {
@@ -56,137 +48,110 @@ const meta: Meta<typeof ObcAlertListDetailsExperimental> = {
   tags: ['6.0', 'experimental'],
   component: 'obc-alert-list-details-experimental',
   args: {
-    filterMode: AlertFilterMode.All,
     showHeader: true,
     columns: [
       statusColumn(),
-      ackColumn({dividerRight: true}),
+      actionColumn({dividerRight: true}),
       timeColumn(),
       tagIdColumn(),
     ],
     alerts: [
-      {
-        id: '1',
-        tagId: '1',
-        source: 'ECDIS',
-        text: 'Risk of collision with vessel MV NORDIC at CPA 0.2nm',
-        standard: 'iec-62923',
-        criticality: Maritime.Alarm,
-        state: MaritimeState.ActiveUnacknowledged,
-        time: new Date('2024-01-15T14:32:15Z'),
-      },
-      {
-        id: '2',
-        tagId: '2',
-        source: 'ECDIS',
-        text: 'Vessel has deviated from planned route by 0.5nm',
-        acknowledgedBy: 'John Doe',
-        acknowledgedAt: new Date('2024-01-15T14:34:00Z'),
-        standard: 'iec-62923',
-        criticality: Maritime.Warning,
-        state: MaritimeState.ActiveAcknowledged,
-        time: new Date('2024-01-15T13:45:22Z'),
-        noAck: true,
-      },
-      {
-        id: '3',
-        tagId: '3',
-        source: 'ME 1',
-        text: 'Port main engine load exceeds 95% of MCR',
-        acknowledgedBy: 'John Doe',
-        acknowledgedAt: new Date('2024-01-15T14:34:00Z'),
-        standard: 'iec-62923',
-        criticality: Maritime.Alarm,
-        state: MaritimeState.ActiveAcknowledged,
-        time: new Date('2024-01-15T12:18:47Z'),
-      },
-      {
-        id: '4',
-        tagId: '4',
-        source: 'ECDIS',
-        text: 'Under keel clearance below safety margin: 2.5m',
-        standard: 'iec-62923',
-        criticality: Maritime.Warning,
-        state: MaritimeState.ActiveUnacknowledged,
-        time: new Date('2024-01-15T11:52:33Z'),
-        noAck: true,
-      },
-      {
-        id: '5',
-        tagId: '5',
-        source: 'Weather',
-        text: 'True wind speed 35kts exceeds operational limit',
-        standard: 'iec-62923',
-        criticality: Maritime.Warning,
-        state: MaritimeState.ActiveUnacknowledged,
-        time: new Date('2024-01-15T10:27:08Z'),
-      },
-      {
-        id: '6',
-        tagId: '6',
-        source: 'GPS',
-        text: 'Position source switched to secondary GPS',
-        standard: 'iec-62923',
-        criticality: Maritime.Warning,
-        state: MaritimeState.ActiveUnacknowledged,
-        time: new Date('2024-01-15T09:14:55Z'),
-      },
-      {
-        id: '7',
-        tagId: '7',
-        source: 'ME 1',
-        text: 'HFO temperature approaching lower limit: 115°C',
-        standard: 'iec-62923',
-        criticality: Maritime.Caution,
-        state: MaritimeState.Active,
-        time: new Date('2024-01-15T08:39:42Z'),
-      },
-      {
-        id: '8',
-        tagId: '8',
-        source: 'AlertList',
-        text: 'This alert is acked but has no acknowledgedBy information',
-        acknowledgedBy: '',
-        acknowledgedAt: new Date('2024-01-15T14:34:00Z'),
-        standard: 'iec-62923',
-        criticality: Maritime.Warning,
-        state: MaritimeState.ActiveAcknowledged,
-        time: new Date('2024-01-15T13:45:22Z'),
-        noAck: true,
-      },
-    ] as StandardAlert[],
+      storyAlert(
+        'iec-62923',
+        {criticality: 'alarm', state: 'active-unacknowledged'},
+        '1',
+        'Risk of collision with vessel MV NORDIC at CPA 0.2nm',
+        32,
+        {source: 'ECDIS'}
+      ),
+      storyAlert(
+        'iec-62923',
+        {criticality: 'warning', state: 'active-acknowledged'},
+        '2',
+        'Vessel has deviated from planned route by 0.5nm',
+        31,
+        {source: 'ECDIS', acknowledgedBy: 'John Doe'}
+      ),
+      storyAlert(
+        'iec-62923',
+        {criticality: 'alarm', state: 'active-acknowledged'},
+        '3',
+        'Port main engine load exceeds 95% of MCR',
+        30,
+        {source: 'ME 1', acknowledgedBy: 'John Doe'}
+      ),
+      storyAlert(
+        'iec-62923',
+        {
+          criticality: 'warning',
+          state: 'active-unacknowledged-acknowledge-not-allowed',
+        },
+        '4',
+        'Under keel clearance below safety margin: 2.5m',
+        29,
+        {source: 'ECDIS'}
+      ),
+      storyAlert(
+        'iec-62923',
+        {criticality: 'warning', state: 'active-unacknowledged'},
+        '5',
+        'True wind speed 35kts exceeds operational limit',
+        28,
+        {source: 'Weather'}
+      ),
+      storyAlert(
+        'iec-62923',
+        {criticality: 'warning', state: 'active-unacknowledged'},
+        '6',
+        'Position source switched to secondary GPS',
+        27,
+        {source: 'GPS'}
+      ),
+      storyAlert(
+        'iec-62923',
+        {criticality: 'caution', state: 'active'},
+        '7',
+        'HFO temperature approaching lower limit: 115°C',
+        26,
+        {source: 'ME 1'}
+      ),
+      storyAlert(
+        'iec-62923',
+        {criticality: 'warning', state: 'active-acknowledged'},
+        '8',
+        'This alert is acknowledged but has no acknowledgedBy information',
+        25,
+        {source: 'AlertList'}
+      ),
+    ],
   },
   parameters: {
     layout: 'fullscreen',
   },
   argTypes: {
     columns: {control: false},
-    filterMode: {
+    filterId: {
       control: {type: 'select'},
-      options: Object.values(AlertFilterMode),
+      options: [undefined, 'unacked', 'active'],
     },
   },
-  render: (args) => {
-    return html` <obc-alert-list-details-experimental
+  render: (args) =>
+    html`<obc-alert-list-details-experimental
       aria-label="Alerts"
-      data-testid="alert-menu"
-      .filterMode=${args.filterMode}
+      .filterId=${args.filterId}
       .columns=${args.columns}
       .showHeader=${args.showHeader}
-      @cell-click=${handleAck}
       .alerts=${args.alerts}
+      .selectedRowId=${args.selectedRowId}
+      @cell-click=${applyClickedAction}
       style="height: 100vh; display: block; max-height: 100%;"
-    >
-    </obc-alert-list-details-experimental>`;
-  },
+    ></obc-alert-list-details-experimental>`,
 } satisfies Meta<ObcAlertListDetailsExperimental>;
 
 export default meta;
 type Story = StoryObj<ObcAlertListDetailsExperimental>;
 
-export const Regular: Story = {
-  args: {},
-};
+export const Regular: Story = {};
 
 export const Small: Story = {
   args: {
@@ -194,7 +159,7 @@ export const Small: Story = {
     columns: [
       statusColumn(),
       timeColumn(),
-      ackColumn({
+      actionColumn({
         width:
           'var(--app-components-alert-table-row-ack-container-width-small)',
       }),
@@ -203,9 +168,8 @@ export const Small: Story = {
 };
 
 export const Empty: Story = {
-  args: {},
   render: () =>
-    html` <obc-alert-list-details-experimental
+    html`<obc-alert-list-details-experimental
       aria-label="Alerts"
       style="height: 100vh; display: block;"
     ></obc-alert-list-details-experimental>`,
@@ -213,203 +177,148 @@ export const Empty: Story = {
 
 export const OneItem: Story = {
   args: {
-    alerts: [
-      {
-        id: '1',
-        tagId: '1',
-        source: 'ME 1',
-        text: 'Port main engine temperature exceeds normal operating range',
-        standard: 'iec-62923',
-        criticality: Maritime.Alarm,
-        state: MaritimeState.ActiveUnacknowledged,
-        time: new Date('2024-01-15T14:32:15Z'),
-      },
+    columns: [
+      statusColumn(),
+      actionColumn({dividerRight: true}),
+      tagIdColumn(),
     ],
-  },
-  render: (args) => {
-    return html` <obc-alert-list-details-experimental
-      aria-label="Alerts"
-      @cell-click=${handleAck}
-      .filterMode=${args.filterMode}
-      .alerts=${args.alerts}
-      style="height: 100vh; display: block;"
-    >
-    </obc-alert-list-details-experimental>`;
+    alerts: [
+      storyAlert(
+        'iec-62923',
+        {criticality: 'alarm', state: 'active-unacknowledged'},
+        '1',
+        'Port main engine temperature exceeds normal operating range',
+        32,
+        {source: 'ME 1'}
+      ),
+    ],
   },
 };
 
 export const LevelCategories: Story = {
   args: {
     alerts: [
-      {
-        id: 'level-1',
-        tagId: 'CRIT-01',
-        source: 'PCS',
-        text: 'Emergency shutdown condition detected',
-        standard: 'isa-18.2',
-        criticality: Automation.Critical,
-        state: AutomationState.Unacknowledged,
-        time: new Date('2024-01-15T14:32:15Z'),
-      },
-      {
-        id: 'level-2',
-        tagId: 'HIGH-02',
-        source: 'ME 1',
-        text: 'Main engine overspeed',
-        standard: 'isa-18.2',
-        criticality: Automation.High,
-        state: AutomationState.Unacknowledged,
-        time: new Date('2024-01-15T14:30:00Z'),
-      },
-      {
-        id: 'level-3',
-        tagId: 'MED-03',
-        source: 'Tank 1',
-        text: 'Tank level approaching high limit',
-        standard: 'isa-18.2',
-        criticality: Automation.Medium,
-        state: AutomationState.Unacknowledged,
-        time: new Date('2024-01-15T14:28:00Z'),
-      },
-      {
-        id: 'level-4',
-        tagId: 'LOW-04',
-        source: 'HVAC',
-        text: 'Filter maintenance due',
-        standard: 'isa-18.2',
-        criticality: Automation.Low,
-        state: AutomationState.Unacknowledged,
-        time: new Date('2024-01-15T14:25:00Z'),
-      },
-      {
-        id: 'level-5',
-        tagId: 'DIAG-05',
-        source: 'Network',
-        text: 'Redundant link diagnostic message',
-        standard: 'isa-18.2',
-        criticality: Automation.Diagnostic,
-        state: AutomationState.Active,
-        time: new Date('2024-01-15T14:20:00Z'),
-      },
+      storyAlert(
+        'isa-18.2',
+        {criticality: 'critical', state: 'unacknowledged'},
+        'level-1',
+        'Emergency shutdown condition detected',
+        32,
+        {source: 'PCS', tagId: 'CRIT-01'}
+      ),
+      storyAlert(
+        'isa-18.2',
+        {criticality: 'high', state: 'unacknowledged'},
+        'level-2',
+        'Main engine overspeed',
+        30,
+        {source: 'ME 1', tagId: 'HIGH-02'}
+      ),
+      storyAlert(
+        'isa-18.2',
+        {criticality: 'medium', state: 'unacknowledged'},
+        'level-3',
+        'Tank level approaching high limit',
+        28,
+        {source: 'Tank 1', tagId: 'MED-03'}
+      ),
+      storyAlert(
+        'isa-18.2',
+        {criticality: 'low', state: 'unacknowledged'},
+        'level-4',
+        'Filter maintenance due',
+        25,
+        {source: 'HVAC', tagId: 'LOW-04'}
+      ),
+      storyAlert(
+        'isa-18.2',
+        {criticality: 'diagnostic', state: 'active'},
+        'level-5',
+        'Redundant link diagnostic message',
+        20,
+        {source: 'Network', tagId: 'DIAG-05'}
+      ),
     ],
-  },
-  render: (args) => {
-    return html` <obc-alert-list-details-experimental
-      aria-label="Alerts"
-      @cell-click=${handleAck}
-      .filterMode=${args.filterMode}
-      .alerts=${args.alerts}
-      .columns=${args.columns}
-      style="height: 100vh; display: block;"
-    >
-    </obc-alert-list-details-experimental>`;
   },
 };
 
+const groupedAlerts = (): StoryAlert[] => [
+  storyAlert(
+    'iec-62923',
+    {
+      criticality: 'alarm',
+      state: 'active-unacknowledged-acknowledge-not-allowed',
+    },
+    'gyro',
+    'Gyroscope group',
+    32,
+    {source: 'Gyroscope', tagId: 'GYRO-01'}
+  ),
+  storyAlert(
+    'iec-62923',
+    {criticality: 'alarm', state: 'active-unacknowledged'},
+    'heading',
+    'Heading deviation',
+    32,
+    {source: 'Gyroscope', tagId: 'GYRO-02', memberOf: ['gyro']}
+  ),
+  storyAlert(
+    'iec-62923',
+    {criticality: 'alarm', state: 'active-unacknowledged'},
+    'sensor',
+    'Sensor group, nested under the gyroscope group',
+    33,
+    {source: 'Sensor', tagId: 'SENS-01', memberOf: ['gyro']}
+  ),
+  storyAlert(
+    'iec-62923',
+    {criticality: 'warning', state: 'active-unacknowledged'},
+    'drift',
+    'Sensor drift out of range',
+    34,
+    {source: 'Sensor', tagId: 'SENS-02', memberOf: ['sensor']}
+  ),
+  storyAlert(
+    'iec-62923',
+    {criticality: 'warning', state: 'active-unacknowledged'},
+    'radar',
+    'Radar group',
+    35,
+    {source: 'Radar', tagId: 'RADAR-01'}
+  ),
+  storyAlert(
+    'iec-62923',
+    {criticality: 'caution', state: 'active'},
+    'power',
+    'Supply voltage low, a member of both groups',
+    36,
+    {source: 'Power', tagId: 'PWR-01', memberOf: ['gyro', 'radar']}
+  ),
+  storyAlert(
+    'iec-62923',
+    {criticality: 'warning', state: 'active-unacknowledged'},
+    'ecdis',
+    'Ungrouped alert',
+    37,
+    {source: 'ECDIS', tagId: 'ECDIS-01'}
+  ),
+];
+
 export const GroupedAlerts: Story = {
-  args: {
-    alerts: [
-      {
-        id: 'gyro',
-        tagId: 'GYRO-01',
-        source: 'Gyroscope',
-        text: 'Gyroscope group',
-        standard: 'iec-62923',
-        criticality: Maritime.Alarm,
-        state: MaritimeState.ActiveUnacknowledged,
-        time: new Date('2024-01-15T14:32:15Z'),
-        noAck: true,
-      },
-      {
-        id: 'heading',
-        tagId: 'GYRO-02',
-        source: 'Gyroscope',
-        text: 'Heading deviation',
-        standard: 'iec-62923',
-        criticality: Maritime.Alarm,
-        state: MaritimeState.ActiveUnacknowledged,
-        time: new Date('2024-01-15T14:32:15Z'),
-        memberOf: ['gyro'],
-      },
-      {
-        id: 'sensor',
-        tagId: 'SENS-01',
-        source: 'Sensor',
-        text: 'Sensor group, nested under the gyroscope group',
-        standard: 'iec-62923',
-        criticality: Maritime.Alarm,
-        state: MaritimeState.ActiveUnacknowledged,
-        time: new Date('2024-01-15T14:33:15Z'),
-        memberOf: ['gyro'],
-      },
-      {
-        id: 'drift',
-        tagId: 'SENS-02',
-        source: 'Sensor',
-        text: 'Sensor drift out of range',
-        standard: 'iec-62923',
-        criticality: Maritime.Warning,
-        state: MaritimeState.ActiveUnacknowledged,
-        time: new Date('2024-01-15T14:34:15Z'),
-        memberOf: ['sensor'],
-      },
-      {
-        id: 'radar',
-        tagId: 'RADAR-01',
-        source: 'Radar',
-        text: 'Radar group',
-        standard: 'iec-62923',
-        criticality: Maritime.Warning,
-        state: MaritimeState.ActiveUnacknowledged,
-        time: new Date('2024-01-15T14:35:15Z'),
-      },
-      {
-        id: 'power',
-        tagId: 'PWR-01',
-        source: 'Power',
-        text: 'Supply voltage low, a member of both groups',
-        standard: 'iec-62923',
-        criticality: Maritime.Caution,
-        state: MaritimeState.Active,
-        time: new Date('2024-01-15T14:36:15Z'),
-        memberOf: ['gyro', 'radar'],
-      },
-      {
-        id: 'ecdis',
-        tagId: 'ECDIS-01',
-        source: 'ECDIS',
-        text: 'Ungrouped alert',
-        standard: 'iec-62923',
-        criticality: Maritime.Warning,
-        state: MaritimeState.ActiveUnacknowledged,
-        time: new Date('2024-01-15T14:37:15Z'),
-      },
-    ] as StandardAlert[],
-  },
+  args: {alerts: groupedAlerts()},
   parameters: {
     docs: {
       description: {
         story:
-          'Alerts are grouped through `memberOf`, which names the alerts a given alert is a member of. Groups nest, and `PWR-01` lists two groups so it appears under both. The `GYRO-01` group row sets `noAck`, so it shows no ACK button of its own.',
+          'Alerts are grouped through `memberOf`, which names the alerts a given alert is a member of. Groups nest, and `PWR-01` lists two groups so it appears under both. The `GYRO-01` group row is in an acknowledge-not-allowed state, so it shows that glyph instead of an ACK button.',
       },
     },
-  },
-  render: (args) => {
-    return html` <obc-alert-list-details-experimental
-      aria-label="Alerts"
-      @cell-click=${handleAck}
-      .filterMode=${args.filterMode}
-      .alerts=${args.alerts}
-      .columns=${args.columns}
-      style="height: 100vh; display: block;"
-    >
-    </obc-alert-list-details-experimental>`;
   },
 };
 
 export const SelectedRow: Story = {
   args: {
-    alerts: GroupedAlerts.args?.alerts as StandardAlert[],
+    alerts: groupedAlerts(),
     selectedRowId: 'gyro/sensor',
   },
   parameters: {
@@ -428,56 +337,46 @@ export const SelectedRow: Story = {
           ? undefined
           : event.detail.rowId;
     };
-    return html` <obc-alert-list-details-experimental
+    return html`<obc-alert-list-details-experimental
       aria-label="Alerts"
-      @cell-click=${handleAck}
+      @cell-click=${applyClickedAction}
       @row-click=${toggleSelection}
-      .filterMode=${args.filterMode}
       .alerts=${args.alerts}
       .columns=${args.columns}
       .selectedRowId=${args.selectedRowId}
       style="height: 100vh; display: block;"
-    >
-    </obc-alert-list-details-experimental>`;
+    ></obc-alert-list-details-experimental>`;
   },
 };
 
 export const CyclicGrouping: Story = {
   args: {
     alerts: [
-      {
-        id: 'standalone',
-        tagId: 'ECDIS-01',
-        source: 'ECDIS',
-        text: 'Ungrouped alert, the only natural root',
-        standard: 'iec-62923',
-        criticality: Maritime.Warning,
-        state: MaritimeState.ActiveUnacknowledged,
-        time: new Date('2024-01-15T14:32:15Z'),
-      },
-      {
-        id: 'pump-a',
-        tagId: 'PUMP-01',
-        source: 'Pump A',
-        text: 'Recovered as a root: a member of Pump B',
-        standard: 'iec-62923',
-        criticality: Maritime.Alarm,
-        state: MaritimeState.ActiveUnacknowledged,
-        time: new Date('2024-01-15T14:33:15Z'),
-        memberOf: ['pump-b'],
-      },
-      {
-        id: 'pump-b',
-        tagId: 'PUMP-02',
-        source: 'Pump B',
-        text: 'Recovered under Pump A, which it also groups',
-        standard: 'iec-62923',
-        criticality: Maritime.Alarm,
-        state: MaritimeState.ActiveUnacknowledged,
-        time: new Date('2024-01-15T14:34:15Z'),
-        memberOf: ['pump-a'],
-      },
-    ] as StandardAlert[],
+      storyAlert(
+        'iec-62923',
+        {criticality: 'warning', state: 'active-unacknowledged'},
+        'standalone',
+        'Ungrouped alert, the only natural root',
+        32,
+        {source: 'ECDIS', tagId: 'ECDIS-01'}
+      ),
+      storyAlert(
+        'iec-62923',
+        {criticality: 'alarm', state: 'active-unacknowledged'},
+        'pump-a',
+        'Recovered as a root: a member of Pump B',
+        33,
+        {source: 'Pump A', tagId: 'PUMP-01', memberOf: ['pump-b']}
+      ),
+      storyAlert(
+        'iec-62923',
+        {criticality: 'alarm', state: 'active-unacknowledged'},
+        'pump-b',
+        'Recovered under Pump A, which it also groups',
+        34,
+        {source: 'Pump B', tagId: 'PUMP-02', memberOf: ['pump-a']}
+      ),
+    ],
   },
   parameters: {
     docs: {
@@ -487,89 +386,67 @@ export const CyclicGrouping: Story = {
       },
     },
   },
-  render: (args) => {
-    return html` <obc-alert-list-details-experimental
-      aria-label="Alerts"
-      @cell-click=${handleAck}
-      .filterMode=${args.filterMode}
-      .alerts=${args.alerts}
-      .columns=${args.columns}
-      style="height: 100vh; display: block;"
-    >
-    </obc-alert-list-details-experimental>`;
-  },
 };
 
 export const CycleWithDescendants: Story = {
   args: {
     alerts: [
-      {
-        id: 'reachable-group',
-        tagId: 'GYRO-01',
-        source: 'Gyroscope',
-        text: 'Reachable group, renders with its whole cycle below it',
-        standard: 'iec-62923',
-        criticality: Maritime.Alarm,
-        state: MaritimeState.ActiveUnacknowledged,
-        time: new Date('2024-01-15T14:30:15Z'),
-        noAck: true,
-      },
-      {
-        id: 'reachable-child',
-        tagId: 'GYRO-02',
-        source: 'Gyroscope',
-        text: 'Member of the group, and of its own child below',
-        standard: 'iec-62923',
-        criticality: Maritime.Alarm,
-        state: MaritimeState.ActiveUnacknowledged,
-        time: new Date('2024-01-15T14:31:15Z'),
-        memberOf: ['reachable-group', 'reachable-grandchild'],
-      },
-      {
-        id: 'reachable-grandchild',
-        tagId: 'GYRO-03',
-        source: 'Gyroscope',
-        text: 'Closes the cycle back to its own parent',
-        standard: 'iec-62923',
-        criticality: Maritime.Alarm,
-        state: MaritimeState.ActiveUnacknowledged,
-        time: new Date('2024-01-15T14:32:15Z'),
-        memberOf: ['reachable-child'],
-      },
-      {
-        id: 'pump-a',
-        tagId: 'PUMP-01',
-        source: 'Pump A',
-        text: 'Recovered as a root: a member of Pump B',
-        standard: 'iec-62923',
-        criticality: Maritime.Warning,
-        state: MaritimeState.ActiveUnacknowledged,
-        time: new Date('2024-01-15T14:33:15Z'),
-        memberOf: ['pump-b'],
-      },
-      {
-        id: 'pump-b',
-        tagId: 'PUMP-02',
-        source: 'Pump B',
-        text: 'Recovered under Pump A, which it also groups',
-        standard: 'iec-62923',
-        criticality: Maritime.Warning,
-        state: MaritimeState.ActiveUnacknowledged,
-        time: new Date('2024-01-15T14:34:15Z'),
-        memberOf: ['pump-a'],
-      },
-      {
-        id: 'pump-sensor',
-        tagId: 'PUMP-03',
-        source: 'Pump sensor',
-        text: 'Recovered, and not itself cyclic: a member of Pump A',
-        standard: 'iec-62923',
-        criticality: Maritime.Caution,
-        state: MaritimeState.Active,
-        time: new Date('2024-01-15T14:35:15Z'),
-        memberOf: ['pump-a'],
-      },
-    ] as StandardAlert[],
+      storyAlert(
+        'iec-62923',
+        {
+          criticality: 'alarm',
+          state: 'active-unacknowledged-acknowledge-not-allowed',
+        },
+        'reachable-group',
+        'Reachable group, renders with its whole cycle below it',
+        30,
+        {source: 'Gyroscope', tagId: 'GYRO-01'}
+      ),
+      storyAlert(
+        'iec-62923',
+        {criticality: 'alarm', state: 'active-unacknowledged'},
+        'reachable-child',
+        'Member of the group, and of its own child below',
+        31,
+        {
+          source: 'Gyroscope',
+          tagId: 'GYRO-02',
+          memberOf: ['reachable-group', 'reachable-grandchild'],
+        }
+      ),
+      storyAlert(
+        'iec-62923',
+        {criticality: 'alarm', state: 'active-unacknowledged'},
+        'reachable-grandchild',
+        'Closes the cycle back to its own parent',
+        32,
+        {source: 'Gyroscope', tagId: 'GYRO-03', memberOf: ['reachable-child']}
+      ),
+      storyAlert(
+        'iec-62923',
+        {criticality: 'warning', state: 'active-unacknowledged'},
+        'pump-a',
+        'Recovered as a root: a member of Pump B',
+        33,
+        {source: 'Pump A', tagId: 'PUMP-01', memberOf: ['pump-b']}
+      ),
+      storyAlert(
+        'iec-62923',
+        {criticality: 'warning', state: 'active-unacknowledged'},
+        'pump-b',
+        'Recovered under Pump A, which it also groups',
+        34,
+        {source: 'Pump B', tagId: 'PUMP-02', memberOf: ['pump-a']}
+      ),
+      storyAlert(
+        'iec-62923',
+        {criticality: 'caution', state: 'active'},
+        'pump-sensor',
+        'Recovered, and not itself cyclic: a member of Pump A',
+        35,
+        {source: 'Pump sensor', tagId: 'PUMP-03', memberOf: ['pump-a']}
+      ),
+    ],
   },
   parameters: {
     docs: {
@@ -579,22 +456,11 @@ export const CycleWithDescendants: Story = {
       },
     },
   },
-  render: (args) => {
-    return html` <obc-alert-list-details-experimental
-      aria-label="Alerts"
-      @cell-click=${handleAck}
-      .filterMode=${args.filterMode}
-      .alerts=${args.alerts}
-      .columns=${args.columns}
-      style="height: 100vh; display: block;"
-    >
-    </obc-alert-list-details-experimental>`;
-  },
 };
 
 export const SlottedAckButtons: Story = {
   args: {
-    alerts: GroupedAlerts.args?.alerts as StandardAlert[],
+    alerts: groupedAlerts(),
     columns: [
       statusColumn(),
       {key: 'ack', label: 'ACK-status', slot: true, dividerRight: true},
@@ -606,7 +472,7 @@ export const SlottedAckButtons: Story = {
     docs: {
       description: {
         story:
-          'The ACK column is a slot column. The consumer creates each button, gives it its own `id`, and places it in slot `cell-ack:<rowId>`, with the row ids from `getAlertRows()`. `PWR-01` is a member of two groups, so it has two rows and two buttons. Clicking ACK looks up every button for that alert in the DOM and disables it.',
+          'The ACK column is a slot column. The consumer creates each button, gives it its own `id`, and places it in slot `cell-ack:<rowId>`, with the row ids from `getAlertRows()`. `PWR-01` is a member of two groups, so it has two rows; it is a caution, which offers no acknowledge action, so neither row gets a button. Clicking ACK looks up every button for that alert in the DOM and disables it.',
       },
     },
   },
@@ -618,15 +484,19 @@ export const SlottedAckButtons: Story = {
         )
         .forEach((button) => (button.disabled = true));
     };
-    return html` <obc-alert-list-details-experimental
+    return html`<obc-alert-list-details-experimental
       aria-label="Alerts"
-      .filterMode=${args.filterMode}
       .alerts=${args.alerts}
       .columns=${args.columns}
       style="height: 100vh; display: block;"
     >
-      ${getAlertRows(args.alerts, args.filterMode)
-        .filter(({alert}) => canAcknowledge(alert))
+      ${getAlertRows(args.alerts)
+        .filter(({alert}) =>
+          isAlertActionOffered(
+            alert,
+            ALERT_ACTION_ID_APPLIED_BY_ACK_VISIBLE_BUTTON
+          )
+        )
         .map(
           (row) =>
             html`<obc-button
@@ -642,166 +512,151 @@ export const SlottedAckButtons: Story = {
   },
 };
 
+const ISA_18_2_FILTER_IDS = [
+  undefined,
+  'unacked',
+  'active',
+  'shelved',
+  'suppressed-by-design',
+  'out-of-service',
+];
+
+const isa182AlertsInEveryKindOfState: StandardAlert[] =
+  alertsInEveryKindOfState('isa-18.2');
+
 export const FilterModes: Story = {
+  name: 'Filters',
   parameters: {
     docs: {
       description: {
         story:
-          'The same alerts, one in each state, in every filter mode. `active` and `unacked` leave shelved and blocked alerts out; `unacked` keeps an alert whose condition has cleared until it is acked. The `custom` list here shows the alerts whose condition has cleared.',
+          'The same ISA-18.2 alarms, one in each kind of state, without a filter and under each filter the standard declares. A filter lists the alarms whose state is included in it.',
       },
     },
   },
   render: () =>
     html`<style>
-        .filter-modes {
+        .filters {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
           gap: 16px;
           padding: 16px;
         }
-        .filter-modes obc-alert-list-details-experimental {
+        .filters obc-alert-list-details-experimental {
           display: block;
           height: 440px;
         }
       </style>
-      <div class="filter-modes">
-        ${Object.values(AlertFilterMode).map(
-          (mode) =>
+      <div class="filters">
+        ${ISA_18_2_FILTER_IDS.map(
+          (filterId) =>
             html`<section>
-              <h4>${mode}</h4>
+              <h4>${filterId ?? 'no filter'}</h4>
               <obc-alert-list-details-experimental
-                aria-label=${`${mode} alerts`}
-                .filterMode=${mode}
-                .customFilter=${(alert: StandardAlert) =>
-                  presentAlert(alert).condition !== AlertCondition.Active}
-                .alerts=${alertsInEveryState()}
-                .columns=${[statusColumn(), ackColumn()]}
+                aria-label=${`${filterId ?? 'all'} alerts`}
+                standard="isa-18.2"
+                .filterId=${filterId}
+                .alerts=${isa182AlertsInEveryKindOfState}
+                .columns=${[statusColumn(), actionColumn()]}
                 .showHeader=${false}
-                @cell-click=${handleAck}
+                @cell-click=${applyClickedAction}
               ></obc-alert-list-details-experimental>
             </section>`
         )}
       </div>`,
 };
 
-const standardAlert = (
-  alert: Pick<StandardAlert, 'standard' | 'criticality' | 'state'>,
-  id: string,
-  source: string,
-  text: string,
-  minute: number,
-  fields: Partial<StandardAlertFields> = {}
-): StandardAlert =>
-  ({
-    ...alert,
-    id,
-    tagId: id.toUpperCase(),
-    source,
-    text,
-    time: new Date(`2024-01-15T14:${String(minute).padStart(2, '0')}:00Z`),
-    ...fields,
-  }) as StandardAlert;
-
 export const AlertSystems: Story = {
+  name: 'Alert Standards',
   parameters: {
     docs: {
       description: {
         story:
-          'Alerts of two standards in one list, each by its own `standard`, `criticality` and `state`, sorted by the rank each standard gives them.',
+          'Alerts of three standards in one list, each by its own `standard`, `criticality` and `state`, sorted by the sorting rank each standard gives the state. IEC 60601-1-8 is not part of the library: `storybook-util.ts` defines it and this story registers it.',
       },
     },
   },
   args: {
     alerts: [
-      standardAlert(
-        {
-          standard: 'iec-62923',
-          criticality: Maritime.EmergencyAlarm,
-          state: MaritimeState.Active,
-        },
+      storyAlert(
+        'iec-62923',
+        {criticality: 'emergency-alarm', state: 'active'},
         'm-1',
-        'ECDIS',
         'Emergency alarm',
-        30
+        30,
+        {source: 'ECDIS'}
       ),
-      standardAlert(
-        {
-          standard: 'iec-62923',
-          criticality: Maritime.Alarm,
-          state: MaritimeState.ActiveSilenced,
-        },
+      storyAlert(
+        'iec-62923',
+        {criticality: 'alarm', state: 'active-silenced'},
         'm-2',
-        'Radar',
         'Alarm, silenced',
-        31
+        31,
+        {source: 'Radar'}
       ),
-      standardAlert(
-        {
-          standard: 'iec-62923',
-          criticality: Maritime.Warning,
-          state: MaritimeState.ActiveResponsibilityTransferred,
-        },
+      storyAlert(
+        'iec-62923',
+        {criticality: 'warning', state: 'active-responsibility-transferred'},
         'm-3',
-        'Gyro',
-        'Warning, handed over',
-        32
+        'Warning, responsibility transferred',
+        32,
+        {source: 'Gyro'}
       ),
-      standardAlert(
-        {
-          standard: 'iec-62923',
-          criticality: Maritime.Alarm,
-          state: MaritimeState.ActiveAcknowledged,
-        },
+      storyAlert(
+        'iec-62923',
+        {criticality: 'alarm', state: 'active-acknowledged'},
         'm-4',
-        'Steering',
         'Alarm, acknowledged',
         29,
-        {acknowledgedBy: 'John Doe'}
+        {source: 'Steering', acknowledgedBy: 'John Doe'}
       ),
-      standardAlert(
-        {
-          standard: 'isa-18.2',
-          criticality: Automation.Critical,
-          state: AutomationState.Unacknowledged,
-        },
+      storyAlert(
+        'isa-18.2',
+        {criticality: 'critical', state: 'unacknowledged'},
         'a-1',
-        'Pump A',
         'Critical, unacknowledged',
-        33
+        33,
+        {source: 'Pump A'}
       ),
-      standardAlert(
-        {
-          standard: 'isa-18.2',
-          criticality: Automation.High,
-          state: AutomationState.LatchedUnacknowledged,
-        },
+      storyAlert(
+        'isa-18.2',
+        {criticality: 'high', state: 'shelved'},
         'a-2',
-        'Tank 3',
-        'High, latched until reset',
-        34
+        'High, shelved',
+        34,
+        {source: 'Tank 3'}
       ),
-      standardAlert(
-        {
-          standard: 'isa-18.2',
-          criticality: Automation.Medium,
-          state: AutomationState.Unacknowledged,
-        },
+      storyAlert(
+        'isa-18.2',
+        {criticality: 'medium', state: 'suppressed-by-design'},
         'a-3',
-        'Valve 7',
         'Medium, suppressed by design',
         35,
-        {setAside: AlertSetAside.Suppressed}
+        {source: 'Valve 7'}
       ),
-      standardAlert(
-        {
-          standard: 'isa-18.2',
-          criticality: Automation.Low,
-          state: AutomationState.Unacknowledged,
-        },
+      storyAlert(
+        'isa-18.2',
+        {criticality: 'low', state: 'unacknowledged'},
         'a-4',
-        'Filter',
         'Low, unacknowledged',
-        36
+        36,
+        {source: 'Filter'}
+      ),
+      storyAlert(
+        'iec-60601-1-8',
+        {criticality: 'high', state: 'present'},
+        'h-1',
+        'High priority, present',
+        37,
+        {source: 'Patient monitor'}
+      ),
+      storyAlert(
+        'iec-60601-1-8',
+        {criticality: 'medium', state: 'latched'},
+        'h-2',
+        'Medium priority, latched until reset',
+        38,
+        {source: 'Infusion pump'}
       ),
     ],
   },

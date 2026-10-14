@@ -6,31 +6,32 @@ import {
   ObcAlertMenuExperimental,
   ObcAlertMenuExperimentalAckAllVisibleClickEvent,
 } from './alert-menu-experimental.js';
-import type {ObcAlertMenuItem} from '../alert-menu-item/alert-menu-item.js';
+import type {ObcAlertMenuItemExperimental} from '../alert-menu-item-experimental/alert-menu-item-experimental.js';
 import type {ObcTabbedCard} from '../tabbed-card/tabbed-card.js';
+import {ALERT_ACTION_ID_APPLIED_BY_ACK_VISIBLE_BUTTON} from '../../alert-system/alert-standard.js';
 import {
-  acknowledgeMenuItem,
   alertMenuItem,
-  alertsInEveryState,
+  alertsInEveryKindOfState,
+  applyActionToMenuItem,
+  type StoryAlert,
 } from '../../storybook-util.js';
-import type {StandardAlert} from '../../alert-system/standard-alert.js';
 
-/** The standards the `standard` control offers, both built into the library. */
-type BuiltInStandard = 'iec-62923' | 'isa-18.2' | undefined;
-
-const handleAckAllVisible = (
-  e: ObcAlertMenuExperimentalAckAllVisibleClickEvent
+const acknowledgeVisibleItems = (
+  event: ObcAlertMenuExperimentalAckAllVisibleClickEvent
 ) => {
-  for (const {element} of e.detail.visibleElements) {
-    acknowledgeMenuItem(element as ObcAlertMenuItem);
+  for (const {element} of event.detail.visibleElements) {
+    applyActionToMenuItem(
+      element as ObcAlertMenuItemExperimental,
+      ALERT_ACTION_ID_APPLIED_BY_ACK_VISIBLE_BUTTON
+    );
   }
 };
 
-const renderItems = (alerts: StandardAlert[]) =>
+const renderItems = (alerts: StoryAlert[]) =>
   repeat(
     alerts,
     (alert) => alert.id,
-    (alert) => alertMenuItem(alert, acknowledgeMenuItem)
+    (alert) => alertMenuItem(alert)
   );
 
 const meta: Meta<ObcAlertMenuExperimental> = {
@@ -38,8 +39,6 @@ const meta: Meta<ObcAlertMenuExperimental> = {
   tags: ['6.0', 'experimental'],
   component: 'obc-alert-menu-experimental',
   args: {
-    hasShelved: true,
-    hasBlocked: true,
     canAckAll: true,
     showSilenceButton: true,
     showAlertListButton: true,
@@ -53,14 +52,16 @@ const meta: Meta<ObcAlertMenuExperimental> = {
   render: (args) =>
     html`<obc-alert-menu-experimental
       .standard=${args.standard}
-      .hasShelved=${args.hasShelved}
-      .hasBlocked=${args.hasBlocked}
       .canAckAll=${args.canAckAll}
       .showSilenceButton=${args.showSilenceButton}
       .showAlertListButton=${args.showAlertListButton}
-      @ack-all-visible-click=${handleAckAllVisible}
+      @ack-all-visible-click=${acknowledgeVisibleItems}
     >
-      ${renderItems(alertsInEveryState(args.standard as BuiltInStandard))}
+      ${renderItems(
+        alertsInEveryKindOfState(
+          args.standard === 'isa-18.2' ? 'isa-18.2' : 'iec-62923'
+        )
+      )}
     </obc-alert-menu-experimental>`,
 };
 
@@ -75,7 +76,7 @@ export const Automation: Story = {
     docs: {
       description: {
         story:
-          'ISA-18.2 lets several alarms be acknowledged at once, so the menu offers ACK visible. Under IEC 62923, the default, it does not: MSC.302 9.9 asks for one alarm at a time.',
+          'ISA-18.2 declares five filters, so the menu has five tabs, and it lets several alarms be acknowledged at once, so the menu offers ACK visible. Under IEC 62923, the default, it does not: MSC.302 9.9 asks for one alarm at a time.',
       },
     },
   },
@@ -83,18 +84,17 @@ export const Automation: Story = {
 
 export const Empty: Story = {
   render: () =>
-    html`<obc-alert-menu-experimental
-      hasShelved
-      hasBlocked
-    ></obc-alert-menu-experimental>`,
+    html`<obc-alert-menu-experimental></obc-alert-menu-experimental>`,
 };
+
+const ISA_18_2_FILTER_COUNT = 5;
 
 export const Tabs: Story = {
   parameters: {
     docs: {
       description: {
         story:
-          'The same alerts, one in each state, with each tab selected. Unacked keeps an alert whose condition has cleared until it is acked; Active and Unacked leave shelved and blocked alerts out.',
+          'The same ISA-18.2 alarms, one in each kind of state, with each tab selected. Each tab is a filter the standard declares, and shows the alarms whose state is included in it.',
       },
     },
   },
@@ -111,16 +111,16 @@ export const Tabs: Story = {
         }
       </style>
       <div class="menu-tabs">
-        ${[0, 1, 2, 3].map(
+        ${Array.from(
+          {length: ISA_18_2_FILTER_COUNT},
           () =>
             html`<obc-alert-menu-experimental
-              hasShelved
-              hasBlocked
+              standard="isa-18.2"
               canAckAll
               .showSilenceButton=${false}
               .showAlertListButton=${false}
             >
-              ${renderItems(alertsInEveryState())}
+              ${renderItems(alertsInEveryKindOfState('isa-18.2'))}
             </obc-alert-menu-experimental>`
         )}
       </div>`,

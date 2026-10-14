@@ -1,4 +1,4 @@
-import {describe, expect, it} from 'vitest';
+import {afterEach, describe, expect, it} from 'vitest';
 import {render} from 'vitest-browser-lit';
 import {html} from 'lit';
 import './alert-menu-experimental.js';
@@ -6,54 +6,36 @@ import {
   ObcAlertMenuExperimental,
   ObcAlertMenuExperimentalAckAllVisibleClickEvent,
 } from './alert-menu-experimental.js';
-import '../alert-menu-item/alert-menu-item.js';
-import {ObcAlertMenuItemStatus} from '../alert-menu-item/alert-menu-item.js';
+import '../alert-menu-item-experimental/alert-menu-item-experimental.js';
 import type {ObcTabbedCard} from '../tabbed-card/tabbed-card.js';
 import type {ObcButton} from '../button/button.js';
+import {defineAlertStandard} from '../../alert-system/alert-standard.js';
+import {
+  registerAlertStandard,
+  setDefaultAlertStandard,
+} from '../../alert-system/alert-standard-registry.js';
 
-/** Automation by default, whose standard offers "ACK visible". */
-async function setup(hasShelved = true, standard = 'isa-18.2') {
+const ISA_18_2_ITEMS: [id: string, criticality: string, state: string][] = [
+  ['unacknowledged', 'high', 'unacknowledged'],
+  ['acknowledged', 'high', 'acknowledged'],
+  ['returned-to-normal', 'high', 'returned-to-normal-unacknowledged'],
+  ['diagnostic', 'diagnostic', 'active'],
+  ['shelved', 'medium', 'shelved'],
+  ['out-of-service', 'low', 'out-of-service'],
+];
+
+async function setup(standard: string | undefined = 'isa-18.2') {
   const screen = render(
-    html`<obc-alert-menu-experimental
-      canAckAll
-      .hasShelved=${hasShelved}
-      .standard=${standard}
-      hasBlocked
-    >
-      <obc-alert-menu-item
-        id="active-unacked"
-        status=${ObcAlertMenuItemStatus.Unacknowledged}
-      ></obc-alert-menu-item>
-      <obc-alert-menu-item
-        id="active-acked"
-        status=${ObcAlertMenuItemStatus.Acknowledged}
-      ></obc-alert-menu-item>
-      <obc-alert-menu-item
-        id="rectified-unacked"
-        status=${ObcAlertMenuItemStatus.RectifiedUnacknowledged}
-      ></obc-alert-menu-item>
-      <obc-alert-menu-item
-        id="rectified-acked"
-        status=${ObcAlertMenuItemStatus.Rectified}
-      ></obc-alert-menu-item>
-      <obc-alert-menu-item
-        id="no-ack"
-        status=${ObcAlertMenuItemStatus.NoAckAlarm}
-      ></obc-alert-menu-item>
-      <obc-alert-menu-item
-        id="caution"
-        status=${ObcAlertMenuItemStatus.Caution}
-      ></obc-alert-menu-item>
-      <obc-alert-menu-item
-        id="shelved"
-        status=${ObcAlertMenuItemStatus.Unacknowledged}
-        shelved
-      ></obc-alert-menu-item>
-      <obc-alert-menu-item
-        id="blocked"
-        status=${ObcAlertMenuItemStatus.Unacknowledged}
-        blocked
-      ></obc-alert-menu-item>
+    html`<obc-alert-menu-experimental canAckAll .standard=${standard}>
+      ${ISA_18_2_ITEMS.map(
+        ([id, criticality, state]) =>
+          html`<obc-alert-menu-item-experimental
+            id=${id}
+            standard="isa-18.2"
+            criticality=${criticality}
+            state=${state}
+          ></obc-alert-menu-item-experimental>`
+      )}
     </obc-alert-menu-experimental>`
   );
   const el = screen.container.querySelector(
@@ -67,11 +49,21 @@ function tabbedCard(el: ObcAlertMenuExperimental) {
   return el.shadowRoot!.querySelector('obc-tabbed-card') as ObcTabbedCard;
 }
 
+const tabTitles = (el: ObcAlertMenuExperimental) =>
+  [...tabbedCard(el).querySelectorAll('[slot^="tab-title-"]')].map(
+    (title) => title.textContent
+  );
+
 async function selectTab(el: ObcAlertMenuExperimental, index: number) {
   const tabs = tabbedCard(el);
   (tabs.shadowRoot!.querySelector(`#tab-${index}`) as HTMLElement).click();
   await el.updateComplete;
 }
+
+const ackVisibleButton = (el: ObcAlertMenuExperimental) =>
+  el.shadowRoot!.querySelector<ObcButton>(
+    '[data-testid="ack-all-visible-button"]'
+  );
 
 function clickAckVisible(el: ObcAlertMenuExperimental) {
   let detail:
@@ -79,56 +71,76 @@ function clickAckVisible(el: ObcAlertMenuExperimental) {
   el.addEventListener('ack-all-visible-click', (e) => {
     detail = (e as ObcAlertMenuExperimentalAckAllVisibleClickEvent).detail;
   });
-  const button = el.shadowRoot!.querySelector(
-    '[data-testid="ack-all-visible-button"]'
-  ) as ObcButton;
-  button.shadowRoot!.querySelector('button')!.click();
+  ackVisibleButton(el)!.shadowRoot!.querySelector('button')!.click();
   return {
     tabName: detail?.tabName,
     ids: detail?.visibleElements.map(({element}) => element.id),
   };
 }
 
+afterEach(() => setDefaultAlertStandard('iec-62923'));
+
 describe('obc-alert-menu-experimental', () => {
-  it('opens on the Active tab, listing what is still active', async () => {
+  it('has one tab per filter its standard declares', async () => {
+    const isa = await setup('isa-18.2');
+    const iec = await setup('iec-62923');
+    expect([tabTitles(isa), tabTitles(iec)]).toEqual([
+      ['Unacked', 'Active', 'Shelved', 'Suppressed', 'Out of service'],
+      ['Unacked', 'Active'],
+    ]);
+  });
+
+  it('opens on the second tab, listing the alerts its filter includes', async () => {
     const el = await setup();
     expect(clickAckVisible(el)).toEqual({
       tabName: 'active',
-      ids: ['active-unacked', 'active-acked', 'no-ack', 'caution'],
+      ids: ['unacknowledged', 'acknowledged', 'diagnostic'],
     });
   });
 
-  it('lists unacked alerts, active or rectified, in the Unacked tab', async () => {
+  it('lists what each other filter includes in its own tab', async () => {
     const el = await setup();
     await selectTab(el, 0);
     expect(clickAckVisible(el)).toEqual({
       tabName: 'unacked',
-      ids: ['active-unacked', 'rectified-unacked', 'no-ack'],
+      ids: ['unacknowledged', 'returned-to-normal'],
+    });
+    await selectTab(el, 2);
+    expect(clickAckVisible(el)).toEqual({tabName: 'shelved', ids: ['shelved']});
+    await selectTab(el, 4);
+    expect(clickAckVisible(el)).toEqual({
+      tabName: 'out-of-service',
+      ids: ['out-of-service'],
     });
   });
 
-  it('lists shelved and blocked alerts only in their own tabs', async () => {
-    const el = await setup();
-    await selectTab(el, 2);
-    expect(clickAckVisible(el)).toEqual({tabName: 'shelved', ids: ['shelved']});
-    await selectTab(el, 3);
-    expect(clickAckVisible(el)).toEqual({tabName: 'blocked', ids: ['blocked']});
-  });
-
-  it('moves the Blocked tab up when there is no Shelved tab', async () => {
-    const el = await setup(false);
-    const titles = [
-      ...tabbedCard(el).querySelectorAll('[slot^="tab-title-"]'),
-    ].map((title) => title.textContent);
-    expect(titles).toEqual(['Unacked', 'Active', 'Blocked']);
-    await selectTab(el, 2);
-    expect(clickAckVisible(el).tabName).toBe('blocked');
-  });
-
   it('leaves out ACK visible where the standard acknowledges one alert at a time', async () => {
-    const el = await setup(true, 'iec-62923');
-    expect(
-      el.shadowRoot!.querySelector('[data-testid="ack-all-visible-button"]')
-    ).toBeNull();
+    const el = await setup('iec-62923');
+    expect(ackVisibleButton(el)).toBeNull();
+  });
+
+  it('follows the default standard unless it names its own', async () => {
+    const el = await setup(undefined);
+    expect(tabTitles(el)).toEqual(['Unacked', 'Active']);
+    setDefaultAlertStandard('isa-18.2');
+    await el.updateComplete;
+    expect(tabTitles(el)).toHaveLength(5);
+  });
+
+  it('shows one tab with every alert for a standard that declares no filter', async () => {
+    registerAlertStandard(
+      defineAlertStandard({
+        id: 'menu-spec-standard-without-filters',
+        filters: {},
+        actions: {},
+        criticalities: {},
+      })
+    );
+    const el = await setup('menu-spec-standard-without-filters');
+    expect(tabTitles(el)).toEqual(['All']);
+    const hiddenItems = [
+      ...el.querySelectorAll('obc-alert-menu-item-experimental'),
+    ].filter((item) => item.hidden);
+    expect(hiddenItems).toEqual([]);
   });
 });

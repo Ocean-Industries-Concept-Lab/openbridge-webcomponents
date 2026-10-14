@@ -216,7 +216,7 @@ export class ObcAlertMenu extends LitElement {
   /** Where the selected tab sits in `tabs`: the one the user picked, else the second. */
   private selectedTabIndex(tabs: AlertMenuTab[]): number {
     const index = tabs.findIndex((tab) => tab.name === this._selectedTabName);
-    return index === -1 ? 1 : index;
+    return index === -1 ? Math.min(1, tabs.length - 1) : index;
   }
 
   private get selectedTab(): AlertMenuTab {

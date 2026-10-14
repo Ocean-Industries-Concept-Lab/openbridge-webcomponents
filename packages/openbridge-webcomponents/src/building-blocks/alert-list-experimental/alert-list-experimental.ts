@@ -1,69 +1,92 @@
 import {PropertyValues, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
+import {localized, msg} from '@lit/localize';
 import {customElement} from '../../decorator.js';
 import compentStyle from './alert-list-experimental.css?inline';
 import {
   ObcAlertListBase,
   type AlertListEmptyFallback,
 } from '../alert-list/alert-list-base.js';
-import {alertMenuItemState} from './alert-menu-item-state.js';
+import {ownEntryOf} from '../../alert-system/alert-standard.js';
 import {
-  AlertFilterMode,
-  alertFilterModeData,
-  matchesAlertFilter,
-} from '../../alert-filter.js';
+  AlertStandardController,
+  getDefaultAlertStandardId,
+} from '../../alert-system/alert-standard-registry.js';
+import {isAlertIncludedInFilter} from '../../alert-system/read-standard-alert.js';
+import type {AlertStandardCriticalityAndState} from '../../alert-system/standard-alert.js';
+
+function standardCriticalityAndStateOfItem(
+  item: HTMLElement
+): AlertStandardCriticalityAndState {
+  const properties = item as Partial<AlertStandardCriticalityAndState>;
+  return {
+    standard:
+      properties.standard ??
+      item.getAttribute('standard') ??
+      getDefaultAlertStandardId(),
+    criticality:
+      properties.criticality ?? item.getAttribute('criticality') ?? '',
+    state: properties.state ?? item.getAttribute('state') ?? '',
+  };
+}
 
 /**
  * `<obc-alert-list-experimental>` – Scrolling list of alert items that shows
- * the ones its filter mode lists and hides the rest.
+ * the ones a filter of their alert standard includes and hides the rest.
  *
  * ### Features
- * - **Filter modes:** `filterMode` shows every item, the active or the unacked
- *   ones, the shelved or the blocked ones, or the ones `customFilter` accepts.
- *   The modes mean the same as in `obc-alert-list-details-experimental`
- *   (`AlertFilterMode` in `alert-filter.ts`); an item's state is read from its
- *   `status`, `shelved` and `blocked` properties.
- * - **Hiding:** the list sets the `hidden` attribute of every item the filter
- *   mode leaves out, and clears it on the others.
- * - **Empty state:** the filter mode's icon and title show when no item
- *   matches, unless the `empty-*` slots are filled.
- * - **Motion:** items slide to their new place, and new items play their intro
- *   animation once the list has been seen.
+ * - **Filter:** `filterId` names a filter, such as `active` or `unacked`. An
+ *   item shows when the state its `standard`, `criticality` and `state`
+ *   name is included in that filter (`alert-system/`). Every item shows
+ *   without a `filterId`.
+ * - **Custom filter:** `customFilter` narrows what shows further.
+ * - **Hiding:** the list sets the `hidden` attribute of every item it leaves
+ *   out, and clears it on the others.
+ * - **Empty state:** the icon and title the standard gives the filter show
+ *   when no item matches, unless the `empty-*` slots are filled.
+ * - **Motion:** items slide to their new place, and new items play their
+ *   intro animation once the list has been seen.
  *
  * ### Usage Guidelines
- * `obc-alert-menu-experimental` renders one for its selected tab; use it on its
- * own for `obc-alert-menu-item` elements outside the menu. The list owns the
- * `hidden` attribute of its items, so do not bind `hidden` on them.
- * `obc-alert-list` counts items by a predicate instead and leaves hiding them
- * to the consumer's CSS.
+ * `obc-alert-menu-experimental` renders one for its selected tab; use it on
+ * its own for `obc-alert-menu-item-experimental` elements outside the menu.
+ * The list owns the `hidden` attribute of its items, so do not bind `hidden`
+ * on them.
  *
- * @property filterMode - Which items to show: `all`, `active` or `unacked` (both without shelved and blocked items), `shelved`, `blocked`, or `custom`.
- * @property customFilter - Predicate that picks the items to show in `custom` mode. Every item shows without one.
- * @availableWhen customFilter filterMode==custom
- * @slot - The alert items, as `obc-alert-menu-item` elements.
- * @slot empty-icon - Icon shown when no item matches; the filter mode's icon when left empty.
- * @slot empty-title - Title shown when no item matches; the filter mode's title when left empty.
+ * @property filterId - The filter whose alerts show; every item shows when unset.
+ * @property customFilter - Predicate an item must also pass to show.
+ * @property standard - The standard whose filter supplies the empty state; the default standard when unset.
+ * @slot - The alert items, as `obc-alert-menu-item-experimental` elements.
+ * @slot empty-icon - Icon shown when no item matches; the filter's icon when left empty.
+ * @slot empty-title - Title shown when no item matches; the filter's title when left empty.
  * @slot empty-description - Description shown when no item matches.
  * @experimental
  */
 @customElement('obc-alert-list-experimental')
+@localized()
 export class ObcAlertListExperimental extends ObcAlertListBase {
-  @property({type: String}) filterMode: AlertFilterMode = AlertFilterMode.All;
+  @property({type: String}) filterId?: string;
   @property({attribute: false}) customFilter?: (item: HTMLElement) => boolean;
+  @property({type: String}) standard?: string;
+
+  private readonly standardController = new AlertStandardController(this);
 
   protected override get observedItemAttributes(): string[] {
-    return ['status', 'shelved', 'blocked'];
+    return ['standard', 'criticality', 'state'];
   }
 
   protected override matchesFilter(item: HTMLElement): boolean {
-    if (this.filterMode === AlertFilterMode.Custom) {
-      return this.customFilter?.(item) ?? true;
-    }
-    return matchesAlertFilter(alertMenuItemState(item), this.filterMode);
+    return (
+      isAlertIncludedInFilter(
+        standardCriticalityAndStateOfItem(item),
+        this.filterId
+      ) &&
+      (this.customFilter?.(item) ?? true)
+    );
   }
 
   protected override filterChanged(changed: PropertyValues): boolean {
-    return changed.has('filterMode') || changed.has('customFilter');
+    return changed.has('filterId') || changed.has('customFilter');
   }
 
   protected override applyFilter() {
@@ -74,8 +97,14 @@ export class ObcAlertListExperimental extends ObcAlertListBase {
   }
 
   protected override get emptyFallback(): AlertListEmptyFallback {
-    const {emptyIcon, emptyTitle} = alertFilterModeData(this.filterMode);
-    return {icon: emptyIcon, title: emptyTitle};
+    const filter = ownEntryOf(
+      this.standardController.standard?.filters,
+      this.filterId
+    );
+    return {
+      icon: filter?.iconWhenNoAlertIsIncluded,
+      title: filter?.titleWhenNoAlertIsIncluded() ?? msg('No alerts'),
+    };
   }
 
   static override styles = [ObcAlertListBase.styles, unsafeCSS(compentStyle)];

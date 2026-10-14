@@ -1,43 +1,41 @@
 import {afterEach, describe, expect, it} from 'vitest';
 import './alert-list-experimental.js';
 import {ObcAlertListExperimental} from './alert-list-experimental.js';
-import '../../components/alert-menu-item/alert-menu-item.js';
-import {
-  ObcAlertMenuItem,
-  ObcAlertMenuItemStatus,
-} from '../../components/alert-menu-item/alert-menu-item.js';
-import {AlertFilterMode} from '../../alert-filter.js';
+import '../../components/alert-menu-item-experimental/alert-menu-item-experimental.js';
+import type {ObcAlertMenuItemExperimental} from '../../components/alert-menu-item-experimental/alert-menu-item-experimental.js';
 
-const ITEMS: [string, ObcAlertMenuItemStatus, Partial<ObcAlertMenuItem>][] = [
-  ['unacked', ObcAlertMenuItemStatus.Unacknowledged, {}],
-  ['acked', ObcAlertMenuItemStatus.Acknowledged, {}],
-  ['unacked-rectified', ObcAlertMenuItemStatus.RectifiedUnacknowledged, {}],
-  ['normal', ObcAlertMenuItemStatus.Rectified, {}],
-  ['caution', ObcAlertMenuItemStatus.Caution, {}],
-  ['no-ack', ObcAlertMenuItemStatus.NoAckAlarm, {}],
-  ['shelved', ObcAlertMenuItemStatus.Unacknowledged, {shelved: true}],
-  ['blocked', ObcAlertMenuItemStatus.Unacknowledged, {blocked: true}],
+const ISA_18_2_ITEMS: [id: string, criticality: string, state: string][] = [
+  ['unacknowledged', 'high', 'unacknowledged'],
+  ['acknowledged', 'high', 'acknowledged'],
+  ['returned-to-normal', 'high', 'returned-to-normal-unacknowledged'],
+  ['normal', 'high', 'normal'],
+  ['diagnostic', 'diagnostic', 'active'],
+  ['shelved', 'medium', 'shelved'],
+  ['suppressed', 'critical', 'suppressed-by-design'],
+  ['not-defined', 'diagnostic', 'shelved'],
 ];
 
 let list: ObcAlertListExperimental;
 
 async function renderList(
   configure: (el: ObcAlertListExperimental) => void,
-  items = ITEMS
+  items = ISA_18_2_ITEMS
 ) {
   list = document.createElement('obc-alert-list-experimental');
+  list.standard = 'isa-18.2';
   configure(list);
-  for (const [id, status, properties] of items) {
-    const item = document.createElement('obc-alert-menu-item');
+  for (const [id, criticality, state] of items) {
+    const item = document.createElement('obc-alert-menu-item-experimental');
     item.id = id;
-    item.status = status;
-    Object.assign(item, properties);
+    item.standard = 'isa-18.2';
+    item.criticality = criticality;
+    item.state = state;
     list.append(item);
   }
   document.body.append(list);
   await list.updateComplete;
   await Promise.all(
-    [...list.querySelectorAll('obc-alert-menu-item')].map(
+    [...list.querySelectorAll('obc-alert-menu-item-experimental')].map(
       (item) => item.updateComplete
     )
   );
@@ -45,7 +43,7 @@ async function renderList(
 }
 
 const shownIds = (el: HTMLElement) =>
-  [...el.querySelectorAll('obc-alert-menu-item')]
+  [...el.querySelectorAll('obc-alert-menu-item-experimental')]
     .filter((item) => !item.hidden)
     .map((item) => item.id);
 
@@ -53,48 +51,48 @@ afterEach(() => list?.remove());
 
 describe('obc-alert-list-experimental', () => {
   it.each([
-    [AlertFilterMode.All, ITEMS.map(([id]) => id)],
-    [AlertFilterMode.Active, ['unacked', 'acked', 'caution', 'no-ack']],
-    [AlertFilterMode.Unacked, ['unacked', 'unacked-rectified', 'no-ack']],
-    [AlertFilterMode.Shelved, ['shelved']],
-    [AlertFilterMode.Blocked, ['blocked']],
-  ])('%s shows %j and hides the rest', async (mode, expected) => {
-    const el = await renderList((l) => (l.filterMode = mode));
+    [undefined, ISA_18_2_ITEMS.map(([id]) => id)],
+    ['active', ['unacknowledged', 'acknowledged', 'diagnostic']],
+    ['unacked', ['unacknowledged', 'returned-to-normal']],
+    ['shelved', ['shelved']],
+    ['suppressed-by-design', ['suppressed']],
+    ['not-declared', []],
+  ])('filter %s shows %j and hides the rest', async (filterId, expected) => {
+    const el = await renderList((l) => (l.filterId = filterId));
     expect(shownIds(el)).toEqual(expected);
   });
 
-  it('follows a filter mode change', async () => {
-    const el = await renderList(
-      (l) => (l.filterMode = AlertFilterMode.Shelved)
-    );
-    el.filterMode = AlertFilterMode.Blocked;
+  it('follows a filter change', async () => {
+    const el = await renderList((l) => (l.filterId = 'shelved'));
+    el.filterId = 'suppressed-by-design';
     await el.updateComplete;
-    expect(shownIds(el)).toEqual(['blocked']);
+    expect(shownIds(el)).toEqual(['suppressed']);
   });
 
-  it('hides an item once it is blocked', async () => {
-    const el = await renderList((l) => (l.filterMode = AlertFilterMode.Active));
-    const item = el.querySelector<ObcAlertMenuItem>('#acked')!;
-    item.blocked = true;
+  it('hides an item once its state leaves the filter', async () => {
+    const el = await renderList((l) => (l.filterId = 'active'));
+    const item =
+      el.querySelector<ObcAlertMenuItemExperimental>('#acknowledged')!;
+    item.state = 'shelved';
     await item.updateComplete;
     await new Promise((resolve) => setTimeout(resolve));
-    expect(shownIds(el)).toEqual(['unacked', 'caution', 'no-ack']);
+    expect(shownIds(el)).toEqual(['unacknowledged', 'diagnostic']);
   });
 
-  it('runs the custom predicate in custom mode', async () => {
+  it('narrows the filter with the custom predicate', async () => {
     const el = await renderList((l) => {
-      l.filterMode = AlertFilterMode.Custom;
-      l.customFilter = (item) => item.id.startsWith('no');
+      l.filterId = 'active';
+      l.customFilter = (item) => item.id !== 'diagnostic';
     });
-    expect(shownIds(el)).toEqual(['normal', 'no-ack']);
+    expect(shownIds(el)).toEqual(['unacknowledged', 'acknowledged']);
   });
 
-  it("shows the filter mode's empty state when nothing matches", async () => {
+  it('shows the empty state its standard gives the filter', async () => {
     const el = await renderList(
-      (l) => (l.filterMode = AlertFilterMode.Unacked),
-      [['acked', ObcAlertMenuItemStatus.Acknowledged, {}]]
+      (l) => (l.filterId = 'shelved'),
+      [['acknowledged', 'high', 'acknowledged']]
     );
     const title = el.shadowRoot!.querySelector('slot[name="empty-title"]');
-    expect(title?.textContent?.trim()).toBe('No unacknowledged alerts');
+    expect(title?.textContent?.trim()).toBe('No shelved alerts');
   });
 });
