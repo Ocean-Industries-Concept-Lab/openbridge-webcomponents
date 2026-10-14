@@ -1,46 +1,182 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
-import {repeat} from 'lit/directives/repeat.js';
 import './alert-menu-experimental.js';
 import {
   ObcAlertMenuExperimental,
   ObcAlertMenuExperimentalAckAllVisibleClickEvent,
 } from './alert-menu-experimental.js';
-import type {ObcAlertMenuItemExperimental} from '../alert-menu-item-experimental/alert-menu-item-experimental.js';
+import '../alert-menu-item-experimental/alert-menu-item-experimental.js';
+import type {
+  ObcAlertMenuItemExperimental,
+  ObcAlertMenuItemExperimentalActionClickEvent,
+} from '../alert-menu-item-experimental/alert-menu-item-experimental.js';
 import type {ObcTabbedCard} from '../tabbed-card/tabbed-card.js';
 import {ALERT_ACTION_ID_APPLIED_BY_ACK_VISIBLE_BUTTON} from '../../alert-system/alert-standard.js';
+import {setAlertStandard} from '../../alert-system/configured-alert-standard.js';
+import {iec62923AlertStandard} from '../../alert-system/iec-62923-alert-standard.js';
+import {isa182AlertStandard} from '../../alert-system/isa-18-2-alert-standard.js';
 import {
-  alertMenuItem,
-  alertsInEveryKindOfState,
-  alertsInEveryKindOfStateOfTheConfiguredStandard,
-  applyActionToMenuItem,
-  drawStoryWithAlertStandard,
-  type StoryAlert,
-} from '../../storybook-util.js';
+  iec62923StateAfterAction,
+  isa182StateAfterAction,
+} from '../../alert-system/stories/state-after-action.js';
 
-const acknowledgeVisibleItems = (
+function moveIec62923ItemToStateAfterAction(
+  event: ObcAlertMenuItemExperimentalActionClickEvent
+) {
+  const item = event.currentTarget as ObcAlertMenuItemExperimental;
+  item.state = iec62923StateAfterAction(item.state, event.detail.actionId);
+}
+
+function moveIsa182ItemToStateAfterAction(
+  event: ObcAlertMenuItemExperimentalActionClickEvent
+) {
+  const item = event.currentTarget as ObcAlertMenuItemExperimental;
+  item.state = isa182StateAfterAction(item.state, event.detail.actionId);
+}
+
+function acknowledgeVisibleIsa182Items(
   event: ObcAlertMenuExperimentalAckAllVisibleClickEvent
-) => {
+) {
   for (const {element} of event.detail.visibleElements) {
-    applyActionToMenuItem(
-      element as ObcAlertMenuItemExperimental,
+    const item = element as ObcAlertMenuItemExperimental;
+    item.state = isa182StateAfterAction(
+      item.state,
       ALERT_ACTION_ID_APPLIED_BY_ACK_VISIBLE_BUTTON
     );
   }
-};
+}
 
-const renderItems = (alerts: StoryAlert[]) =>
-  repeat(
-    alerts,
-    (alert) => alert.id,
-    (alert) => alertMenuItem(alert)
-  );
+const iec62923ItemsInEveryKindOfState = html`
+  <obc-alert-menu-item-experimental
+    criticality="alarm"
+    state="active-unacknowledged"
+    title="alarm"
+    description="Active, unacknowledged"
+    time="14:39:00"
+    @action-click=${moveIec62923ItemToStateAfterAction}
+  ></obc-alert-menu-item-experimental>
+  <obc-alert-menu-item-experimental
+    criticality="alarm"
+    state="active-acknowledged"
+    title="alarm"
+    description="Active, acknowledged"
+    time="14:38:00"
+    @action-click=${moveIec62923ItemToStateAfterAction}
+  ></obc-alert-menu-item-experimental>
+  <obc-alert-menu-item-experimental
+    criticality="alarm"
+    state="rectified-unacknowledged"
+    title="alarm"
+    description="Rectified, unacknowledged"
+    time="14:37:00"
+    @action-click=${moveIec62923ItemToStateAfterAction}
+  ></obc-alert-menu-item-experimental>
+  <obc-alert-menu-item-experimental
+    criticality="alarm"
+    state="normal"
+    title="alarm"
+    description="Normal"
+    time="14:36:00"
+    @action-click=${moveIec62923ItemToStateAfterAction}
+  ></obc-alert-menu-item-experimental>
+  <obc-alert-menu-item-experimental
+    criticality="caution"
+    state="active"
+    title="caution"
+    description="Caution, takes no ACK"
+    time="14:35:00"
+    @action-click=${moveIec62923ItemToStateAfterAction}
+  ></obc-alert-menu-item-experimental>
+  <obc-alert-menu-item-experimental
+    criticality="warning"
+    state="active-unacknowledged-acknowledge-not-allowed"
+    title="warning"
+    description="Acknowledged elsewhere"
+    time="14:34:00"
+    @action-click=${moveIec62923ItemToStateAfterAction}
+  ></obc-alert-menu-item-experimental>
+  <obc-alert-menu-item-experimental
+    criticality="warning"
+    state="active-responsibility-transferred"
+    title="warning"
+    description="Responsibility transferred"
+    time="14:33:00"
+    @action-click=${moveIec62923ItemToStateAfterAction}
+  ></obc-alert-menu-item-experimental>
+`;
+
+const isa182ItemsInEveryKindOfState = html`
+  <obc-alert-menu-item-experimental
+    criticality="high"
+    state="unacknowledged"
+    title="high"
+    description="Unacknowledged"
+    time="14:39:00"
+    @action-click=${moveIsa182ItemToStateAfterAction}
+  ></obc-alert-menu-item-experimental>
+  <obc-alert-menu-item-experimental
+    criticality="high"
+    state="acknowledged"
+    title="high"
+    description="Acknowledged"
+    time="14:38:00"
+    @action-click=${moveIsa182ItemToStateAfterAction}
+  ></obc-alert-menu-item-experimental>
+  <obc-alert-menu-item-experimental
+    criticality="high"
+    state="returned-to-normal-unacknowledged"
+    title="high"
+    description="Returned to normal, unacknowledged"
+    time="14:37:00"
+    @action-click=${moveIsa182ItemToStateAfterAction}
+  ></obc-alert-menu-item-experimental>
+  <obc-alert-menu-item-experimental
+    criticality="high"
+    state="normal"
+    title="high"
+    description="Normal"
+    time="14:36:00"
+    @action-click=${moveIsa182ItemToStateAfterAction}
+  ></obc-alert-menu-item-experimental>
+  <obc-alert-menu-item-experimental
+    criticality="diagnostic"
+    state="active"
+    title="diagnostic"
+    description="Diagnostic, takes no ACK"
+    time="14:35:00"
+    @action-click=${moveIsa182ItemToStateAfterAction}
+  ></obc-alert-menu-item-experimental>
+  <obc-alert-menu-item-experimental
+    criticality="medium"
+    state="shelved"
+    title="medium"
+    description="Shelved"
+    time="14:34:00"
+    @action-click=${moveIsa182ItemToStateAfterAction}
+  ></obc-alert-menu-item-experimental>
+  <obc-alert-menu-item-experimental
+    criticality="critical"
+    state="suppressed-by-design"
+    title="critical"
+    description="Suppressed by design"
+    time="14:33:00"
+    @action-click=${moveIsa182ItemToStateAfterAction}
+  ></obc-alert-menu-item-experimental>
+  <obc-alert-menu-item-experimental
+    criticality="low"
+    state="out-of-service"
+    title="low"
+    description="Out of service"
+    time="14:32:00"
+    @action-click=${moveIsa182ItemToStateAfterAction}
+  ></obc-alert-menu-item-experimental>
+`;
 
 const meta: Meta<ObcAlertMenuExperimental> = {
   title: 'Application Components/Alerts/Alert Menu Experimental',
   tags: ['6.0', 'experimental'],
   component: 'obc-alert-menu-experimental',
-  beforeEach: drawStoryWithAlertStandard('iec-62923'),
+  beforeEach: () => setAlertStandard(iec62923AlertStandard),
   args: {
     canAckAll: true,
     showSilenceButton: true,
@@ -51,9 +187,8 @@ const meta: Meta<ObcAlertMenuExperimental> = {
       .canAckAll=${args.canAckAll}
       .showSilenceButton=${args.showSilenceButton}
       .showAlertListButton=${args.showAlertListButton}
-      @ack-all-visible-click=${acknowledgeVisibleItems}
     >
-      ${renderItems(alertsInEveryKindOfStateOfTheConfiguredStandard())}
+      ${iec62923ItemsInEveryKindOfState}
     </obc-alert-menu-experimental>`,
 };
 
@@ -63,7 +198,7 @@ type Story = StoryObj<ObcAlertMenuExperimental>;
 export const Regular: Story = {};
 
 export const Automation: Story = {
-  beforeEach: drawStoryWithAlertStandard('isa-18.2'),
+  beforeEach: () => setAlertStandard(isa182AlertStandard),
   parameters: {
     docs: {
       description: {
@@ -72,6 +207,15 @@ export const Automation: Story = {
       },
     },
   },
+  render: (args) =>
+    html`<obc-alert-menu-experimental
+      .canAckAll=${args.canAckAll}
+      .showSilenceButton=${args.showSilenceButton}
+      .showAlertListButton=${args.showAlertListButton}
+      @ack-all-visible-click=${acknowledgeVisibleIsa182Items}
+    >
+      ${isa182ItemsInEveryKindOfState}
+    </obc-alert-menu-experimental>`,
 };
 
 export const Empty: Story = {
@@ -82,7 +226,7 @@ export const Empty: Story = {
 const ISA_18_2_FILTER_COUNT = 5;
 
 export const Tabs: Story = {
-  beforeEach: drawStoryWithAlertStandard('isa-18.2'),
+  beforeEach: () => setAlertStandard(isa182AlertStandard),
   parameters: {
     docs: {
       description: {
@@ -111,8 +255,9 @@ export const Tabs: Story = {
               canAckAll
               .showSilenceButton=${false}
               .showAlertListButton=${false}
+              @ack-all-visible-click=${acknowledgeVisibleIsa182Items}
             >
-              ${renderItems(alertsInEveryKindOfState('isa-18.2'))}
+              ${isa182ItemsInEveryKindOfState}
             </obc-alert-menu-experimental>`
         )}
       </div>`,
@@ -131,7 +276,7 @@ export const Tabs: Story = {
 };
 
 export const NoAlertStandard: Story = {
-  beforeEach: drawStoryWithAlertStandard(undefined),
+  beforeEach: () => setAlertStandard(undefined),
   parameters: {
     docs: {
       description: {

@@ -3,18 +3,17 @@ import {html} from 'lit';
 import {ObcAlertIconExperimental} from './alert-icon-experimental.js';
 import './alert-icon-experimental.js';
 import {FlashingSpeed} from '../../types.js';
-import {
-  STORY_ALERT_STANDARDS,
-  alertStandardMatrix,
-  drawStoryWithAlertStandard,
-  type StoryAlertStandardName,
-} from '../../storybook-util.js';
+import {alertStandardMatrix} from '../../storybook-util.js';
+import {setAlertStandard} from '../../alert-system/configured-alert-standard.js';
+import {iec62923AlertStandard} from '../../alert-system/iec-62923-alert-standard.js';
+import {isa182AlertStandard} from '../../alert-system/isa-18-2-alert-standard.js';
+import {iec6060118AlertStandard} from '../../alert-system/stories/iec-60601-1-8-alert-standard.js';
 
 const meta: Meta<typeof ObcAlertIconExperimental> = {
   title: 'Application Components/Alerts/Alert Icon Experimental',
   tags: ['autodocs', '6.0', 'experimental'],
   component: 'obc-alert-icon-experimental',
-  beforeEach: drawStoryWithAlertStandard('iec-62923'),
+  beforeEach: () => setAlertStandard(iec62923AlertStandard),
   args: {
     criticality: 'alarm',
     state: 'active-unacknowledged',
@@ -42,61 +41,77 @@ type Story = StoryObj<ObcAlertIconExperimental>;
 export const Primary: Story = {};
 
 export const AutomationHigh: Story = {
-  beforeEach: drawStoryWithAlertStandard('isa-18.2'),
+  beforeEach: () => setAlertStandard(isa182AlertStandard),
   args: {
     criticality: 'high',
     state: 'returned-to-normal-unacknowledged',
   },
 };
 
-const standardStory = (
-  name: string,
-  standardName: StoryAlertStandardName,
-  stateNamesInRowOrder: string[],
-  story: string
-): Story => ({
-  name,
-  parameters: {docs: {description: {story}}},
-  beforeEach: drawStoryWithAlertStandard(standardName),
+const iconOfCriticalityAndState = (criticality: string, state: string) =>
+  html`<div style="width: 32px; height: 32px">
+    <obc-alert-icon-experimental
+      .criticality=${criticality}
+      .state=${state}
+    ></obc-alert-icon-experimental>
+  </div>`;
+
+export const Iec62923: Story = {
+  name: 'IEC 62923',
+  beforeEach: () => setAlertStandard(iec62923AlertStandard),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Every criticality of IEC 62923 in every state it defines. An emergency alarm and a caution take no acknowledgement, so they are only active or normal.',
+      },
+    },
+  },
   render: () =>
     alertStandardMatrix(
-      STORY_ALERT_STANDARDS[standardName],
-      stateNamesInRowOrder,
-      (criticality, state) =>
-        html`<div style="width: 32px; height: 32px">
-          <obc-alert-icon-experimental
-            .criticality=${criticality}
-            .state=${state}
-          ></obc-alert-icon-experimental>
-        </div>`
+      iec62923AlertStandard,
+      [
+        'active',
+        'active-unacknowledged',
+        'active-silenced',
+        'active-acknowledged',
+        'active-responsibility-transferred',
+        'rectified-unacknowledged',
+        'normal',
+      ],
+      iconOfCriticalityAndState
     ),
-});
+};
 
-export const Iec62923 = standardStory(
-  'IEC 62923',
-  'iec-62923',
-  [
-    'active',
-    'active-unacknowledged',
-    'active-silenced',
-    'active-acknowledged',
-    'active-responsibility-transferred',
-    'rectified-unacknowledged',
-    'normal',
-  ],
-  'Every criticality of IEC 62923 in every state it defines. An emergency alarm and a caution take no acknowledgement, so they are only active or normal.'
-);
+export const Isa182: Story = {
+  name: 'ISA-18.2',
+  beforeEach: () => setAlertStandard(isa182AlertStandard),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Every priority of ISA-18.2 in every state it defines. A diagnostic alert takes no acknowledgement, so it is only active or normal.',
+      },
+    },
+  },
+  render: () =>
+    alertStandardMatrix(
+      isa182AlertStandard,
+      ['active', 'normal', 'unacknowledged', 'acknowledged'],
+      iconOfCriticalityAndState
+    ),
+};
 
-export const Isa182 = standardStory(
-  'ISA-18.2',
-  'isa-18.2',
-  ['active', 'normal', 'unacknowledged', 'acknowledged'],
-  'Every priority of ISA-18.2 in every state it defines. A diagnostic alert takes no acknowledgement, so it is only active or normal.'
-);
-
-export const CustomStandard = standardStory(
-  'Custom Standard',
-  'iec-60601-1-8',
-  [],
-  'A standard from outside the library: IEC 60601-1-8, the alarms of medical equipment, defined in `storybook-util.ts` with `defineAlertStandard()` and set with `setAlertStandard()`. It brings its own priorities, states, glyphs and tempo; no component changes.'
-);
+export const CustomStandard: Story = {
+  beforeEach: () => setAlertStandard(iec6060118AlertStandard),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'A standard from outside the library: IEC 60601-1-8, the alarms of medical equipment, defined in `alert-system/stories/iec-60601-1-8-alert-standard.ts` with `defineAlertStandard()` and set with `setAlertStandard()`. It brings its own priorities, states, glyphs and tempo; no component changes.',
+      },
+    },
+  },
+  render: () =>
+    alertStandardMatrix(iec6060118AlertStandard, [], iconOfCriticalityAndState),
+};

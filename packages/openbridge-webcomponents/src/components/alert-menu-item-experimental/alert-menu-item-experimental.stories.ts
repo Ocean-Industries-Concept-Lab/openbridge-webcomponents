@@ -6,24 +6,33 @@ import {
   type ObcAlertMenuItemExperimentalActionClickEvent,
 } from './alert-menu-item-experimental.js';
 import {ObcMessageMenuItemSize} from '../message-menu-item/message-menu-item.js';
+import {setAlertStandard} from '../../alert-system/configured-alert-standard.js';
+import {iec62923AlertStandard} from '../../alert-system/iec-62923-alert-standard.js';
+import {isa182AlertStandard} from '../../alert-system/isa-18-2-alert-standard.js';
 import {
-  applyActionToMenuItem,
-  drawStoryWithAlertStandard,
-} from '../../storybook-util.js';
+  iec62923StateAfterAction,
+  isa182StateAfterAction,
+} from '../../alert-system/stories/state-after-action.js';
 
-const applyClickedAction = (
+function moveIec62923ItemToStateAfterAction(
   event: ObcAlertMenuItemExperimentalActionClickEvent
-) =>
-  applyActionToMenuItem(
-    event.currentTarget as ObcAlertMenuItemExperimental,
-    event.detail.actionId
-  );
+) {
+  const item = event.currentTarget as ObcAlertMenuItemExperimental;
+  item.state = iec62923StateAfterAction(item.state, event.detail.actionId);
+}
+
+function moveIsa182ItemToStateAfterAction(
+  event: ObcAlertMenuItemExperimentalActionClickEvent
+) {
+  const item = event.currentTarget as ObcAlertMenuItemExperimental;
+  item.state = isa182StateAfterAction(item.state, event.detail.actionId);
+}
 
 const meta: Meta<ObcAlertMenuItemExperimental> = {
   title: 'Application Components/Alerts/Alert Menu Item Experimental',
   tags: ['6.0', 'experimental'],
   component: 'obc-alert-menu-item-experimental',
-  beforeEach: drawStoryWithAlertStandard('iec-62923'),
+  beforeEach: () => setAlertStandard(iec62923AlertStandard),
   args: {
     criticality: 'alarm',
     state: 'active-unacknowledged',
@@ -46,7 +55,7 @@ const meta: Meta<ObcAlertMenuItemExperimental> = {
       .description=${args.description}
       .time=${args.time}
       .size=${args.size}
-      @action-click=${applyClickedAction}
+      @action-click=${moveIec62923ItemToStateAfterAction}
       style="width: 480px"
     ></obc-alert-menu-item-experimental>`,
 };
@@ -72,11 +81,7 @@ export const AcknowledgeNotAllowed: Story = {
 };
 
 export const TwoActions: Story = {
-  beforeEach: drawStoryWithAlertStandard('isa-18.2'),
-  args: {
-    criticality: 'high',
-    state: 'unacknowledged',
-  },
+  beforeEach: () => setAlertStandard(isa182AlertStandard),
   parameters: {
     docs: {
       description: {
@@ -85,4 +90,15 @@ export const TwoActions: Story = {
       },
     },
   },
+  render: (args) =>
+    html`<obc-alert-menu-item-experimental
+      criticality="high"
+      state="unacknowledged"
+      .title=${args.title}
+      .description=${args.description}
+      .time=${args.time}
+      .size=${args.size}
+      @action-click=${moveIsa182ItemToStateAfterAction}
+      style="width: 480px"
+    ></obc-alert-menu-item-experimental>`,
 };

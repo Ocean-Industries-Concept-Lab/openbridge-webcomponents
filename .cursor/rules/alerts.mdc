@@ -65,7 +65,8 @@ several alerts).
 
 `defineAlertStandard()` keeps the criticality and state names as types and
 rejects a state that names a filter or an action the standard lacks, and
-`setAlertStandard()` draws by it. `storybook-util.ts` defines IEC 60601-1-8
+`setAlertStandard()` draws by it.
+`alert-system/stories/iec-60601-1-8-alert-standard.ts` defines IEC 60601-1-8
 that way, with glyphs of its own; the library does not ship it.
 
 ## The alert
@@ -81,7 +82,7 @@ fields they read (`text`, `time`, `tagId`, `acknowledgedBy`), and
 `read-standard-alert.ts` is the only reader: `findAlertStateDefinition()`,
 `compareAlertsBySortingRank()`, `isAlertIncludedInFilter()` and
 `isAlertActionOffered()`. The state transitions belong to the application;
-the stories stand in for it with a table in `storybook-util.ts`.
+the stories stand in for it with `alert-system/stories/state-after-action.ts`.
 
 ## One standard per application
 
@@ -97,9 +98,15 @@ other out of its bundle.
 - `AlertStandardController` re-renders a component when the standard
   changes, and reports the change in `changedProperties` under
   `ALERT_STANDARD_CHANGE_KEY` so a list filters again.
-- A story sets its standard in `beforeEach` with
-  `drawStoryWithAlertStandard()`, which clears it after the story. Two
-  standards cannot meet in one story.
+- A story sets its standard with the call an application makes,
+  `beforeEach: () => setAlertStandard(iec62923AlertStandard)`; the global
+  `beforeEach` in `.storybook/preview.tsx` clears it first. Two standards
+  cannot meet in one story.
+- Stories are usage documentation: alerts are plain object literals typed
+  with `StandardAlertOf`, menu items are plain markup, and what the
+  application does on an action is `alert-system/stories/state-after-action.ts`.
+  Story-only standards and helpers live in `alert-system/stories/`, which
+  the library build leaves out.
 
 ## The components
 
