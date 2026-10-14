@@ -1,0 +1,100 @@
+import { css } from 'lit';
+export const speedometerStyles = css`
+
+  .container {
+    height: 100%;
+    width: 100%;
+  }
+    
+  .container > svg {
+    height: 100%;
+    width: 100%;
+  }
+
+  .speed-gauge-value {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    font-size: 64;
+    align-items: center;
+    justify-content: center;
+
+    // border: 1px solid var(--element-inactive-color);
+    // border-radius: 6px;
+  }
+
+  .ob-main-value {
+    position: relative;
+    transform: scale(2.25);
+    transform-origin: top;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 350px;
+
+    // border: 1px solid var(--element-inactive-color);
+    // border-radius: 6px;
+
+  }
+
+  .ob-secondary-value {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transform: scale(1.5);
+    transform-origin: top;
+  }
+
+  .satellite-label {
+    fill: var(--element-active-inverted-color);
+    font-size: 16px;
+    font-family: sans-serif;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    pointer-events: none;
+  }
+
+  .ring {
+    fill: var(--instrument-enhanced-secondary-color);
+  }
+
+  .ring-dark {
+    fill-opacity: 0.75;
+  }
+
+  .ring-mid {
+    fill-opacity: 0.55;
+  }
+
+  .ring-light {
+    fill-opacity: 0.35;
+  }
+
+  .circle-dashed {
+    fill: none;
+    stroke: var(--instrument-frame-primary-color);
+    stroke-width: 1.2;
+    stroke-dasharray: 6 6;
+  }
+
+  .circle-solid {
+    fill: none;
+    stroke: var(--element-active-color);
+    stroke-width: 2;
+  }
+
+  .axis {
+    stroke: var(--instrument-frame-primary-color);
+    stroke-width: 1.4;
+  }
+
+  .label {
+    fill: var(--element-active-color);
+    font-size: 14px;
+    font-family: sans-serif;
+    text-anchor: middle;
+    dominant-baseline: middle;
+  }
+`;
