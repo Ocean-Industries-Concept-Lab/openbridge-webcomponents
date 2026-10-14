@@ -139,6 +139,19 @@ describe('obc-alert-list-page-small-experimental', () => {
     expect(clicked).toEqual([['returned-to-normal', 'acknowledge']]);
   });
 
+  it('falls back to the first filter when the new standard lacks the chosen one', async () => {
+    const el = await renderPage(isa182AlertStandard);
+    await chooseFilter(el, 'shelved');
+    expect(alertList(el).filterId).toBe('shelved');
+
+    setAlertStandard(iec62923AlertStandard);
+    await el.updateComplete;
+    expect([dropdown(el).value, alertList(el).filterId]).toEqual([
+      'unacked',
+      'unacked',
+    ]);
+  });
+
   it('leaves out ACK visible where the standard acknowledges one alert at a time', async () => {
     const el = await renderPage(iec62923AlertStandard);
     expect(ackVisibleButton(el)).toBeNull();

@@ -97,8 +97,13 @@ export class ObcAlertListPageSmallExperimental extends ObcAlertListPageSmallBase
     return Object.keys(this.alertStandardController.standard?.filters ?? {});
   }
 
+  /** The chosen filter while the standard declares it, else the standard's first. */
   private get filterIdTheListShows(): string | undefined {
-    return this.filterIdChosenInDropdown ?? this.filterIdsOfStandard[0];
+    const filterIds = this.filterIdsOfStandard;
+    const chosen = this.filterIdChosenInDropdown;
+    return chosen !== undefined && filterIds.includes(chosen)
+      ? chosen
+      : filterIds[0];
   }
 
   protected override get modes(): AlertListPageMode[] {
