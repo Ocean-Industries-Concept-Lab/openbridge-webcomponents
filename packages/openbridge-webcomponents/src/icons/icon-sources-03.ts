@@ -20,7 +20,7 @@ export class ObiSources03 extends LitElement {
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g clip-path="url(#clip0_2228_2716)">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M12.0001 24.0001L0 12L12 0L24.0001 12.0001L12.0001 24.0001ZM3.82843 11L12 2.82843L20.1716 11L3.82843 11ZM3.82843 13L12.0001 21.1716L20.1717 13L3.82843 13Z" style="fill: var(--automation-device-secondary-color)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M12.0001 24.0001L0 12L12 0L24.0001 12.0001L12.0001 24.0001ZM3.82843 11L12 2.82843L20.1716 11L3.82843 11ZM3.82843 13L12.0001 21.1716L20.1717 13L3.82843 13Z" style="fill: var(--automation-symbol-static-background-color)"/>
 </g>
 <defs>
 <clipPath id="clip0_2228_2716">

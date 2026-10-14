@@ -13,9 +13,9 @@ const BODY =
 /** Width of the shut band at each port end when the opening is 0 %, in icon units. */
 const BAND_RANGE = 7;
 
-const SECONDARY = 'fill: var(--automation-device-secondary-color)';
-const TERTIARY = 'fill: var(--automation-device-tertiary-color)';
-const PRIMARY = 'fill: var(--automation-device-primary-color)';
+const SECONDARY = 'fill: var(--automation-symbol-static-background-color)';
+const TERTIARY = 'fill: var(--automation-symbol-on-border-color)';
+const PRIMARY = 'fill: var(--automation-symbol-on-background-color)';
 
 /**
  * Two-way analog valve symbol whose opening moves continuously from 0 to

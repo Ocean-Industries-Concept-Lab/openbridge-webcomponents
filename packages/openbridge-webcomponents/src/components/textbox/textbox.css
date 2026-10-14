@@ -10,7 +10,7 @@
   --height: 24px;
   --padding: 4px;
   font-family: var(--font-family-main);
-  letter-spacing: var(--global-typography-generic-l-letter-spacing);
+  letter-spacing: var(--global-typography-general-l-letter-spacing);
 }
 
 /* The box, never clipped: descenders and diacritics paint past its edges. The
@@ -82,15 +82,15 @@
 }
 
 .wrapper.font-weight-regular {
-  font-weight: var(--global-typography-generic-l-font-weight-regular);
+  font-weight: var(--global-typography-general-l-font-weight-regular);
 }
 
 .wrapper.font-weight-semibold {
-  font-weight: var(--global-typography-generic-l-font-weight-medium);
+  font-weight: var(--global-typography-general-l-font-weight-medium);
 }
 
 .wrapper.font-weight-bold {
-  font-weight: var(--global-typography-generic-l-font-weight-bold);
+  font-weight: var(--global-typography-general-l-font-weight-bold);
 }
 
 .wrapper.alignment-left {

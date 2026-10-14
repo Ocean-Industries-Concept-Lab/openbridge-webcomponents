@@ -13,8 +13,8 @@ export class ObiAntenna extends LitElement {
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M19.0309 5.5H4.96913L11 13.3401V20H13V13.3401L19.0309 5.5ZM14.9691 7.5L13 10.0599V7.5H14.9691ZM11 10.0599V7.5H9.03086L11 10.0599Z" style="fill: var(--automation-device-secondary-color)"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M23 12C23 18.0751 18.0751 23 12 23C5.92487 23 1 18.0751 1 12C1 5.92487 5.92487 1 12 1C18.0751 1 23 5.92487 23 12ZM22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z" style="fill: var(--automation-device-secondary-color)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M19.0309 5.5H4.96913L11 13.3401V20H13V13.3401L19.0309 5.5ZM14.9691 7.5L13 10.0599V7.5H14.9691ZM11 10.0599V7.5H9.03086L11 10.0599Z" style="fill: var(--automation-symbol-static-background-color)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M23 12C23 18.0751 18.0751 23 12 23C5.92487 23 1 18.0751 1 12C1 5.92487 5.92487 1 12 1C18.0751 1 23 5.92487 23 12ZM22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z" style="fill: var(--automation-symbol-static-background-color)"/>
 </svg>
 `;
 

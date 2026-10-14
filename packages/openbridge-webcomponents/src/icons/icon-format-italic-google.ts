@@ -2,21 +2,17 @@ import {LitElement, html, css, svg} from 'lit';
 import {property} from 'lit/decorators.js';
 import {customElement} from '../decorator.js';
 
-@customElement('obi-critical-acknowledged')
-export class ObiCriticalAcknowledged extends LitElement {
+@customElement('obi-format-italic-google')
+export class ObiFormatItalicGoogle extends LitElement {
   @property({type: Boolean}) useCssColor = false;
 
   private icon = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-<path d="M7.28516 4L16.7139 4L21.4199 12L16.7139 20L7.28516 20L2.5791 12L7.28516 4Z" fill="currentColor" stroke="currentColor"/>
-<path d="M11 14V6H13V14H11Z" fill="currentColor"/>
-<path d="M13 16H11V18H13V16Z" fill="currentColor"/>
+<path d="M5 19V16.5H9L12 7.5H8V5H18V7.5H14.5L11.5 16.5H15V19H5Z" fill="currentColor"/>
 </svg>
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M7.28516 4L16.7139 4L21.4199 12L16.7139 20L7.28516 20L2.5791 12L7.28516 4Z" style="fill: var(--alert-critical-color); stroke: var(--alert-critical-outline-color)"/>
-<path d="M11 14V6H13V14H11Z" style="fill: var(--on-critical-active-color)"/>
-<path d="M13 16H11V18H13V16Z" style="fill: var(--on-critical-active-color)"/>
+<path d="M5 19V16.5H9L12 7.5H8V5H18V7.5H14.5L11.5 16.5H15V19H5Z" style="fill: var(--element-active-color)"/>
 </svg>
 `;
 
@@ -41,6 +37,6 @@ export class ObiCriticalAcknowledged extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'obi-critical-acknowledged': ObiCriticalAcknowledged;
+    'obi-format-italic-google': ObiFormatItalicGoogle;
   }
 }

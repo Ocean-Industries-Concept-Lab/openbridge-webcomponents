@@ -12,7 +12,7 @@ export class ObiSources01 extends LitElement {
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M23 12C23 18.0751 18.0751 23 12 23C5.92487 23 1 18.0751 1 12C1 5.92487 5.92487 1 12 1C18.0751 1 23 5.92487 23 12ZM20.9451 13C20.4476 17.5 16.6326 21 12 21C7.36745 21 3.55237 17.5 3.05493 13L20.9451 13ZM20.9451 11C20.4476 6.50005 16.6326 3 12 3C7.36745 3 3.55237 6.50005 3.05493 11L20.9451 11Z" style="fill: var(--automation-device-secondary-color)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M23 12C23 18.0751 18.0751 23 12 23C5.92487 23 1 18.0751 1 12C1 5.92487 5.92487 1 12 1C18.0751 1 23 5.92487 23 12ZM20.9451 13C20.4476 17.5 16.6326 21 12 21C7.36745 21 3.55237 17.5 3.05493 13L20.9451 13ZM20.9451 11C20.4476 6.50005 16.6326 3 12 3C7.36745 3 3.55237 6.50005 3.05493 11L20.9451 11Z" style="fill: var(--automation-symbol-static-background-color)"/>
 </svg>
 `;
 
