@@ -1,10 +1,12 @@
-import {afterEach, describe, expect, it} from 'vitest';
+import {afterEach, beforeEach, describe, expect, it} from 'vitest';
 import {render} from 'vitest-browser-lit';
 import {html} from 'lit';
 import './alert-icon-experimental.js';
 import type {ObcAlertIconExperimental} from './alert-icon-experimental.js';
 import {FlashingSpeed} from '../../types.js';
-import {setDefaultAlertStandard} from '../../alert-system/alert-standard-registry.js';
+import {setAlertStandard} from '../../alert-system/configured-alert-standard.js';
+import {iec62923AlertStandard} from '../../alert-system/iec-62923-alert-standard.js';
+import {isa182AlertStandard} from '../../alert-system/isa-18-2-alert-standard.js';
 
 function durations(el: HTMLElement): number[] {
   return el
@@ -14,15 +16,11 @@ function durations(el: HTMLElement): number[] {
 
 async function setup(
   props: Partial<
-    Pick<
-      ObcAlertIconExperimental,
-      'standard' | 'criticality' | 'state' | 'flashingSpeed'
-    >
+    Pick<ObcAlertIconExperimental, 'criticality' | 'state' | 'flashingSpeed'>
   >
 ) {
   const screen = render(
     html`<obc-alert-icon-experimental
-      .standard=${props.standard}
       .criticality=${props.criticality ?? ''}
       .state=${props.state ?? ''}
       .flashingSpeed=${props.flashingSpeed ?? FlashingSpeed.Default}
@@ -41,7 +39,8 @@ const frames = (el: ObcAlertIconExperimental) => [
   el.shadowRoot!.querySelector('.flash-frame > *')?.localName,
 ];
 
-afterEach(() => setDefaultAlertStandard('iec-62923'));
+beforeEach(() => setAlertStandard(iec62923AlertStandard));
+afterEach(() => setAlertStandard(undefined));
 
 describe('obc-alert-icon-experimental', () => {
   it('cross-fades the frames its standard supplies, at its tempo', async () => {
@@ -102,20 +101,13 @@ describe('obc-alert-icon-experimental', () => {
     expect([width, height]).toEqual([24, 24]);
   });
 
-  it('follows the default standard unless it names its own', async () => {
-    const own = await setup({
-      standard: 'isa-18.2',
-      criticality: 'critical',
-      state: 'unacknowledged',
-    });
-    const following = await setup({
-      criticality: 'critical',
-      state: 'unacknowledged',
-    });
-    expect(following.shadowRoot!.querySelector('.wrapper')).toBeNull();
+  it('draws nothing while no standard is set, and redraws once one is', async () => {
+    setAlertStandard(undefined);
+    const el = await setup({criticality: 'critical', state: 'unacknowledged'});
+    expect(el.shadowRoot!.querySelector('.wrapper')).toBeNull();
 
-    setDefaultAlertStandard('isa-18.2');
-    await following.updateComplete;
-    expect([durations(following), durations(own)]).toEqual([[800], [800]]);
+    setAlertStandard(isa182AlertStandard);
+    await el.updateComplete;
+    expect(durations(el)).toEqual([800]);
   });
 });

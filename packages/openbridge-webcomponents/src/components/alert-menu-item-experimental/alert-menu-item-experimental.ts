@@ -6,7 +6,7 @@ import '../message-menu-item/message-menu-item.js';
 import '../alert-icon-experimental/alert-icon-experimental.js';
 import {ObcMessageMenuItemSize} from '../message-menu-item/message-menu-item.js';
 import {customElement} from '../../decorator.js';
-import {AlertStandardController} from '../../alert-system/alert-standard-registry.js';
+import {AlertStandardController} from '../../alert-system/configured-alert-standard.js';
 import {
   alertActionLabel,
   findAlertStateDefinition,
@@ -18,11 +18,12 @@ export type ObcAlertMenuItemExperimentalActionClickEvent = CustomEvent<{
 
 /**
  * `<obc-alert-menu-item-experimental>` – One alert in an alert menu, drawn by
- * the alert standard it follows.
+ * the configured alert standard.
  *
- * The item takes the alert's `standard`, `criticality` and `state`, and reads
- * the rest from the standard (`alert-system/`): the icon, the actions the
- * alert offers as buttons, and the glyph shown where it offers none.
+ * The item takes the alert's `criticality` and `state`, and reads the rest
+ * from the standard (`setAlertStandard()`, `alert-system/`): the icon, the
+ * actions the alert offers as buttons, and the glyph shown where it offers
+ * none.
  *
  * ### Features
  * - **Icon:** `obc-alert-icon-experimental` for the criticality and state.
@@ -40,7 +41,6 @@ export type ObcAlertMenuItemExperimentalActionClickEvent = CustomEvent<{
  * their states are included in. Update `state` when the alert changes; the
  * item never changes it itself.
  *
- * @property standard - The standard of `criticality` and `state`, such as `iec-62923` or `isa-18.2`; the default standard when unset.
  * @property criticality - How critical the alert is, in the terms of its standard.
  * @property state - Where the alert stands, in the terms of its standard.
  * @property title - The title of the alert.
@@ -61,7 +61,6 @@ export type ObcAlertMenuItemExperimentalActionClickEvent = CustomEvent<{
 @customElement('obc-alert-menu-item-experimental')
 @localized()
 export class ObcAlertMenuItemExperimental extends LitElement {
-  @property({type: String, reflect: true}) standard?: string;
   @property({type: String, reflect: true}) criticality = '';
   @property({type: String, reflect: true}) state = '';
   @property({type: String}) override title = '';
@@ -74,11 +73,12 @@ export class ObcAlertMenuItemExperimental extends LitElement {
     ObcMessageMenuItemSize.SingleLine;
   @property({type: Boolean}) animateIntro = false;
 
-  private readonly standardController = new AlertStandardController(this);
+  protected readonly alertStandardController = new AlertStandardController(
+    this
+  );
 
   private get stateDefinition() {
     return findAlertStateDefinition({
-      standard: this.standardController.standardId,
       criticality: this.criticality,
       state: this.state,
     });
@@ -90,9 +90,7 @@ export class ObcAlertMenuItemExperimental extends LitElement {
 
   private labelOfActionButton(index: number): string {
     const actionId = this.actionIdsShownAsButtons[index];
-    return actionId === undefined
-      ? ''
-      : alertActionLabel(this.standardController.standardId, actionId);
+    return actionId === undefined ? '' : alertActionLabel(actionId);
   }
 
   private handleMessageClick(event: Event) {
@@ -141,7 +139,6 @@ export class ObcAlertMenuItemExperimental extends LitElement {
       >
         <obc-alert-icon-experimental
           slot="primary-icon"
-          .standard=${this.standard}
           .criticality=${this.criticality}
           .state=${this.state}
         ></obc-alert-icon-experimental>

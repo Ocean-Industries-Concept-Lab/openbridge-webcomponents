@@ -1,29 +1,29 @@
 /**
- * `read-standard-alert` – Looks an alert up in its standard.
+ * `read-standard-alert` – Looks an alert up in the configured alert standard.
  *
  * The experimental alert components draw, sort and filter through this
- * module, so an alert means the same thing in each of them. An alert whose
- * standard is not registered, or whose criticality or state its standard
- * does not define, has no state definition: it draws no icon, sorts last,
- * offers no action and is in no filter.
+ * module, so an alert means the same thing in each of them. While no
+ * standard is set, or when the standard does not define the alert's
+ * criticality or state, the alert has no state definition: it draws no
+ * icon, sorts last, offers no action and is in no filter. While no standard
+ * is set it is not listed at all.
  */
 import {ownEntryOf, type AlertStateDefinition} from './alert-standard.js';
-import {findAlertStandard} from './alert-standard-registry.js';
-import type {AlertStandardCriticalityAndState} from './standard-alert.js';
+import {getAlertStandard} from './configured-alert-standard.js';
+import type {AlertCriticalityAndState} from './standard-alert.js';
 
 export function findAlertStateDefinition({
-  standard,
   criticality,
   state,
-}: AlertStandardCriticalityAndState): AlertStateDefinition | undefined {
+}: AlertCriticalityAndState): AlertStateDefinition | undefined {
   const criticalityDefinition = ownEntryOf(
-    findAlertStandard(standard)?.criticalities,
+    getAlertStandard()?.criticalities,
     criticality
   );
   return ownEntryOf(criticalityDefinition?.states, state);
 }
 
-function sortingRankOf(alert: AlertStandardCriticalityAndState): number {
+function sortingRankOf(alert: AlertCriticalityAndState): number {
   return (
     findAlertStateDefinition(alert)?.sortingRank ?? Number.POSITIVE_INFINITY
   );
@@ -31,19 +31,22 @@ function sortingRankOf(alert: AlertStandardCriticalityAndState): number {
 
 /** Orders alerts lowest sorting rank first. */
 export function compareAlertsBySortingRank(
-  a: AlertStandardCriticalityAndState,
-  b: AlertStandardCriticalityAndState
+  a: AlertCriticalityAndState,
+  b: AlertCriticalityAndState
 ): number {
   const rankOfA = sortingRankOf(a);
   const rankOfB = sortingRankOf(b);
   return rankOfA === rankOfB ? 0 : rankOfA - rankOfB;
 }
 
-/** Every alert is included when no filter is named. */
+/** Every alert is included when no filter is named, as long as a standard is set. */
 export function isAlertIncludedInFilter(
-  alert: AlertStandardCriticalityAndState,
+  alert: AlertCriticalityAndState,
   filterId: string | undefined
 ): boolean {
+  if (getAlertStandard() === undefined) {
+    return false;
+  }
   if (filterId === undefined) {
     return true;
   }
@@ -54,21 +57,18 @@ export function isAlertIncludedInFilter(
 }
 
 export function offeredAlertActionIds(
-  alert: AlertStandardCriticalityAndState
+  alert: AlertCriticalityAndState
 ): readonly string[] {
   return findAlertStateDefinition(alert)?.offeredActions ?? [];
 }
 
 export function isAlertActionOffered(
-  alert: AlertStandardCriticalityAndState,
+  alert: AlertCriticalityAndState,
   actionId: string
 ): boolean {
   return offeredAlertActionIds(alert).includes(actionId);
 }
 
-export function alertActionLabel(standardId: string, actionId: string): string {
-  return (
-    ownEntryOf(findAlertStandard(standardId)?.actions, actionId)?.label() ??
-    actionId
-  );
+export function alertActionLabel(actionId: string): string {
+  return ownEntryOf(getAlertStandard()?.actions, actionId)?.label() ?? actionId;
 }

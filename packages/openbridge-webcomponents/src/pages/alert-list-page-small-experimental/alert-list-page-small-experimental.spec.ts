@@ -8,10 +8,12 @@ import {
 import type {ObcButton} from '../../components/button/button.js';
 import type {ObcDropdownButton} from '../../components/dropdown-button/dropdown-button.js';
 import type {StandardAlertWithColumnFields} from '../../components/alert-list-details-experimental/alert-list-details-experimental.js';
-import {setDefaultAlertStandard} from '../../alert-system/alert-standard-registry.js';
+import type {AlertStandard} from '../../alert-system/alert-standard.js';
+import {setAlertStandard} from '../../alert-system/configured-alert-standard.js';
+import {iec62923AlertStandard} from '../../alert-system/iec-62923-alert-standard.js';
+import {isa182AlertStandard} from '../../alert-system/isa-18-2-alert-standard.js';
 
 const ACKNOWLEDGED: StandardAlertWithColumnFields = {
-  standard: 'isa-18.2',
   criticality: 'high',
   state: 'acknowledged',
   id: 'acknowledged',
@@ -22,7 +24,6 @@ const ACKNOWLEDGED: StandardAlertWithColumnFields = {
 };
 
 const RETURNED_TO_NORMAL_UNACKNOWLEDGED: StandardAlertWithColumnFields = {
-  standard: 'isa-18.2',
   criticality: 'high',
   state: 'returned-to-normal-unacknowledged',
   id: 'returned-to-normal',
@@ -35,12 +36,14 @@ let page: ObcAlertListPageSmallExperimental;
 
 afterEach(() => {
   page?.remove();
-  setDefaultAlertStandard('iec-62923');
+  setAlertStandard(undefined);
 });
 
-async function renderPage(standard: string | undefined = 'isa-18.2') {
+async function renderPage(
+  standard: AlertStandard | undefined = isa182AlertStandard
+) {
+  setAlertStandard(standard);
   page = document.createElement('obc-alert-list-page-small-experimental');
-  page.standard = standard;
   page.alerts = [ACKNOWLEDGED, RETURNED_TO_NORMAL_UNACKNOWLEDGED];
   page.style.height = '480px';
   page.style.display = 'block';
@@ -139,14 +142,16 @@ describe('obc-alert-list-page-small-experimental', () => {
   });
 
   it('leaves out ACK visible where the standard acknowledges one alert at a time', async () => {
-    const iec = await renderPage('iec-62923');
-    expect(ackVisibleButton(iec)).toBeNull();
-    iec.remove();
+    const el = await renderPage(iec62923AlertStandard);
+    expect(ackVisibleButton(el)).toBeNull();
+  });
 
-    const following = await renderPage(undefined);
-    expect(ackVisibleButton(following)).toBeNull();
-    setDefaultAlertStandard('isa-18.2');
-    await following.updateComplete;
-    expect(ackVisibleButton(following)).not.toBeNull();
+  it('offers no filter and leaves out ACK visible while no standard is set', async () => {
+    const el = await renderPage(undefined);
+    expect([dropdown(el).options, ackVisibleButton(el)]).toEqual([[], null]);
+
+    setAlertStandard(isa182AlertStandard);
+    await el.updateComplete;
+    expect(ackVisibleButton(el)).not.toBeNull();
   });
 });

@@ -153,7 +153,6 @@ const WARNING_ACKNOWLEDGE_NOT_ALLOWED_GLYPH = html`<obi-warning-noack-iec
 ></obi-warning-noack-iec>`;
 
 export const iec62923AlertStandard = defineAlertStandard({
-  id: 'iec-62923',
   filters: {
     [Unacknowledged]: {
       label: () => msg('Unacked'),

@@ -1,28 +1,31 @@
 /**
  * `standard-alert` – One alert as the experimental alert components need it:
- * an id, and the standard, criticality and state that decide everything else.
+ * an id, and the criticality and state that the configured alert standard
+ * turns into everything else.
  *
  * The components read nothing more, so an application passes its own alert
  * objects as they are, with whatever other fields they carry. The columns of
  * `obc-alert-list-details-experimental` each name the extra fields they read.
  *
- * A standard registered from outside the library adds itself to
- * `RegisteredAlertStandards`, so its alerts type-check:
+ * `StandardAlertOf<typeof myStandard>` narrows `criticality` and `state` to
+ * the pairs a standard defines:
  * ```ts
- * declare module '<path to>/alert-system/standard-alert.js' {
- *   interface RegisteredAlertStandards {
- *     'my-standard': typeof myStandard;
- *   }
- * }
+ * const alerts: StandardAlertOf<typeof iec62923AlertStandard>[] = [
+ *   {id: 'radar', criticality: 'alarm', state: 'active-unacknowledged'},
+ * ];
  * ```
  */
 import type {AlertStandard} from './alert-standard.js';
-import type {iec62923AlertStandard} from './iec-62923-alert-standard.js';
-import type {isa182AlertStandard} from './isa-18-2-alert-standard.js';
 
-export interface RegisteredAlertStandards {
-  'iec-62923': typeof iec62923AlertStandard;
-  'isa-18.2': typeof isa182AlertStandard;
+export interface AlertCriticalityAndState {
+  criticality: string;
+  state: string;
+}
+
+export interface StandardAlert extends AlertCriticalityAndState {
+  id: string;
+  /** Ids of the alerts this one is grouped under. */
+  memberOf?: string[];
 }
 
 /** Every criticality of a standard paired with a state that criticality defines. */
@@ -33,24 +36,8 @@ export type AlertCriticalityAndStateOf<Standard extends AlertStandard> = {
   };
 }[keyof Standard['criticalities'] & string];
 
-export interface StandardAlertCoreFields {
-  id: string;
-  /** Ids of the alerts this one is grouped under. */
-  memberOf?: string[];
-}
-
-export type StandardAlertOf<StandardId extends keyof RegisteredAlertStandards> =
-  StandardAlertCoreFields & {standard: StandardId} & AlertCriticalityAndStateOf<
-      RegisteredAlertStandards[StandardId]
-    >;
-
-export type StandardAlert = {
-  [StandardId in keyof RegisteredAlertStandards]: StandardAlertOf<StandardId>;
-}[keyof RegisteredAlertStandards];
-
-/** What names a state definition; an alert, or the properties of an icon. */
-export interface AlertStandardCriticalityAndState {
-  standard: string;
-  criticality: string;
-  state: string;
-}
+export type StandardAlertOf<Standard extends AlertStandard> = Omit<
+  StandardAlert,
+  keyof AlertCriticalityAndState
+> &
+  AlertCriticalityAndStateOf<Standard>;

@@ -9,21 +9,23 @@ import './icons/icon-ship.js';
 import {HTMLTemplateResult, TemplateResult, html} from 'lit';
 import {spread} from '@open-wc/lit-helpers';
 import {FlashingSpeed} from './types.js';
-import {defineAlertStandard} from './alert-system/alert-standard.js';
 import {
-  findAlertStandard,
-  getDefaultAlertStandardId,
-} from './alert-system/alert-standard-registry.js';
+  defineAlertStandard,
+  type AlertStandard,
+} from './alert-system/alert-standard.js';
+import {
+  getAlertStandard,
+  setAlertStandard,
+} from './alert-system/configured-alert-standard.js';
+import {iec62923AlertStandard} from './alert-system/iec-62923-alert-standard.js';
+import {isa182AlertStandard} from './alert-system/isa-18-2-alert-standard.js';
 import './components/alert-menu-item-experimental/alert-menu-item-experimental.js';
 import type {
   ObcAlertMenuItemExperimental,
   ObcAlertMenuItemExperimentalActionClickEvent,
 } from './components/alert-menu-item-experimental/alert-menu-item-experimental.js';
 import type {StandardAlertWithColumnFields} from './components/alert-list-details-experimental/alert-list-details-experimental.js';
-import type {
-  AlertCriticalityAndStateOf,
-  RegisteredAlertStandards,
-} from './alert-system/standard-alert.js';
+import type {AlertCriticalityAndStateOf} from './alert-system/standard-alert.js';
 
 export const iconIds = [
   'placeholder',
@@ -265,7 +267,6 @@ const steadyHealthAlarmGlyph = (colourToken: string, filled: boolean) => ({
  * 1.25 Hz, is the quickest tempo the library has.
  */
 export const iec6060118StoryAlertStandard = defineAlertStandard({
-  id: 'iec-60601-1-8',
   filters: {
     present: {
       label: () => 'Present',
@@ -341,36 +342,56 @@ export const iec6060118StoryAlertStandard = defineAlertStandard({
   },
 });
 
-declare module './alert-system/standard-alert.js' {
-  interface RegisteredAlertStandards {
-    'iec-60601-1-8': typeof iec6060118StoryAlertStandard;
-  }
+export const STORY_ALERT_STANDARDS = {
+  'iec-62923': iec62923AlertStandard,
+  'isa-18.2': isa182AlertStandard,
+  'iec-60601-1-8': iec6060118StoryAlertStandard,
+} satisfies Record<string, AlertStandard>;
+
+export type StoryAlertStandardName = keyof typeof STORY_ALERT_STANDARDS;
+
+export const STORY_ALERT_STANDARD_NAMES = Object.keys(
+  STORY_ALERT_STANDARDS
+) as StoryAlertStandardName[];
+
+/** For a story's `beforeEach`: draws the story with the named standard, or none, and none after it. */
+export function drawStoryWithAlertStandard(
+  name: StoryAlertStandardName | undefined
+) {
+  return () => {
+    setAlertStandard(
+      name === undefined ? undefined : STORY_ALERT_STANDARDS[name]
+    );
+    return () => setAlertStandard(undefined);
+  };
 }
 
 /** An alert with every field the stories' columns and menu items show. */
 export type StoryAlert = StandardAlertWithColumnFields;
 
-/** An alert of a built-in standard, raised at the given minute past 14:00. */
-export function storyAlert<StandardId extends keyof RegisteredAlertStandards>(
-  standard: StandardId,
-  criticalityAndState: AlertCriticalityAndStateOf<
-    RegisteredAlertStandards[StandardId]
-  >,
+type CriticalityAndStateOfAnyStoryAlertStandard = {
+  [Name in StoryAlertStandardName]: AlertCriticalityAndStateOf<
+    (typeof STORY_ALERT_STANDARDS)[Name]
+  >;
+}[StoryAlertStandardName];
+
+/** An alert raised on 15 January 2024 at `timeOfDay`, such as `'14:32:15'` (UTC). */
+export function storyAlert(
+  criticalityAndState: CriticalityAndStateOfAnyStoryAlertStandard,
   id: string,
   text: string,
-  minute: number,
+  timeOfDay: string,
   otherFields: Partial<StoryAlert> = {}
 ): StoryAlert {
   return {
-    standard,
     ...criticalityAndState,
     id,
     tagId: id.toUpperCase(),
     source: criticalityAndState.criticality,
     text,
-    time: new Date(`2024-01-15T14:${String(minute).padStart(2, '0')}:00Z`),
+    time: new Date(`2024-01-15T${timeOfDay}Z`),
     ...otherFields,
-  } as StoryAlert;
+  };
 }
 
 /**
@@ -379,143 +400,143 @@ export function storyAlert<StandardId extends keyof RegisteredAlertStandards>(
  * objects, because the stories change the alerts they are given.
  */
 export function alertsInEveryKindOfState(
-  standard: 'iec-62923' | 'isa-18.2' = 'iec-62923'
+  standard: 'iec-62923' | 'isa-18.2'
 ): StoryAlert[] {
   if (standard === 'isa-18.2') {
     return [
       storyAlert(
-        'isa-18.2',
         {criticality: 'high', state: 'unacknowledged'},
         'unacknowledged',
         'Unacknowledged',
-        39
+        '14:39:00'
       ),
       storyAlert(
-        'isa-18.2',
         {criticality: 'high', state: 'acknowledged'},
         'acknowledged',
         'Acknowledged',
-        38,
+        '14:38:00',
         {acknowledgedBy: 'John Doe'}
       ),
       storyAlert(
-        'isa-18.2',
         {criticality: 'high', state: 'returned-to-normal-unacknowledged'},
         'returned-to-normal',
         'Returned to normal, unacknowledged',
-        37
+        '14:37:00'
       ),
       storyAlert(
-        'isa-18.2',
         {criticality: 'high', state: 'normal'},
         'normal',
         'Normal',
-        36
+        '14:36:00'
       ),
       storyAlert(
-        'isa-18.2',
         {criticality: 'diagnostic', state: 'active'},
         'diagnostic',
         'Diagnostic, takes no ACK',
-        35
+        '14:35:00'
       ),
       storyAlert(
-        'isa-18.2',
         {criticality: 'medium', state: 'shelved'},
         'shelved',
         'Shelved',
-        34
+        '14:34:00'
       ),
       storyAlert(
-        'isa-18.2',
         {criticality: 'critical', state: 'suppressed-by-design'},
         'suppressed',
         'Suppressed by design',
-        33
+        '14:33:00'
       ),
       storyAlert(
-        'isa-18.2',
         {criticality: 'low', state: 'out-of-service'},
         'out-of-service',
         'Out of service',
-        32
+        '14:32:00'
       ),
     ];
   }
   return [
     storyAlert(
-      'iec-62923',
       {criticality: 'alarm', state: 'active-unacknowledged'},
       'unacknowledged',
       'Active, unacknowledged',
-      39
+      '14:39:00'
     ),
     storyAlert(
-      'iec-62923',
       {criticality: 'alarm', state: 'active-acknowledged'},
       'acknowledged',
       'Active, acknowledged',
-      38,
+      '14:38:00',
       {acknowledgedBy: 'John Doe'}
     ),
     storyAlert(
-      'iec-62923',
       {criticality: 'alarm', state: 'rectified-unacknowledged'},
       'rectified',
       'Rectified, unacknowledged',
-      37
+      '14:37:00'
     ),
     storyAlert(
-      'iec-62923',
       {criticality: 'alarm', state: 'normal'},
       'normal',
       'Normal',
-      36
+      '14:36:00'
     ),
     storyAlert(
-      'iec-62923',
       {criticality: 'caution', state: 'active'},
       'caution',
       'Caution, takes no ACK',
-      35
+      '14:35:00'
     ),
     storyAlert(
-      'iec-62923',
       {
         criticality: 'warning',
         state: 'active-unacknowledged-acknowledge-not-allowed',
       },
       'acknowledge-not-allowed',
       'Acknowledged elsewhere',
-      34
+      '14:34:00'
     ),
     storyAlert(
-      'iec-62923',
       {criticality: 'warning', state: 'active-responsibility-transferred'},
       'transferred',
       'Responsibility transferred',
-      33
+      '14:33:00'
     ),
   ];
+}
+
+/** `alertsInEveryKindOfState()` of the standard the story is drawn with. */
+export function alertsInEveryKindOfStateOfTheConfiguredStandard(): StoryAlert[] {
+  return alertsInEveryKindOfState(
+    getAlertStandard() === isa182AlertStandard ? 'isa-18.2' : 'iec-62923'
+  );
+}
+
+function criticalityAsColumnHeading(criticality: string): string {
+  const words = criticality.replaceAll('-', ' ');
+  return words.charAt(0).toUpperCase() + words.slice(1);
 }
 
 /**
  * Every criticality of a standard in every state it defines: one column per
  * criticality and one row per state name, with the cell left empty where
- * the criticality does not define the state.
+ * the criticality does not define the state. Rows follow
+ * `stateNamesInRowOrder`, then any state it leaves out.
  */
 export function alertStandardMatrix(
-  standardId: string,
+  standard: AlertStandard,
+  stateNamesInRowOrder: string[],
   cell: (criticality: string, state: string) => TemplateResult
 ): TemplateResult {
-  const criticalities = findAlertStandard(standardId)?.criticalities ?? {};
+  const criticalities = standard.criticalities;
   const criticalityNames = Object.keys(criticalities);
   const stateNames = [
-    ...new Set(
-      criticalityNames.flatMap((criticality) =>
+    ...new Set([
+      ...stateNamesInRowOrder,
+      ...criticalityNames.flatMap((criticality) =>
         Object.keys(criticalities[criticality].states)
-      )
-    ),
+      ),
+    ]),
   ];
   return html`<div
     style="display: grid; grid-template-columns: auto repeat(${
@@ -523,7 +544,10 @@ export function alertStandardMatrix(
     }, minmax(64px, auto)); gap: 8px 16px; align-items: center; justify-items: center; font: var(--font-ui-body, 14px sans-serif);"
   >
     <div></div>
-    ${criticalityNames.map((criticality) => html`<div>${criticality}</div>`)}
+    ${criticalityNames.map(
+      (criticality) =>
+        html`<div>${criticalityAsColumnHeading(criticality)}</div>`
+    )}
     ${stateNames.map(
       (state) =>
         html`<div style="justify-self: end">${state}</div>
@@ -540,38 +564,44 @@ export function alertStandardMatrix(
  * The state an action moves an alert to, per standard and action. Stands in
  * for the application's alert system, which owns the transitions.
  */
-const STATE_AFTER_ACTION: Record<
-  string,
+const STATE_AFTER_ACTION = new Map<
+  AlertStandard,
   Record<string, Record<string, string>>
-> = {
-  'iec-62923': {
-    acknowledge: {
-      'active-unacknowledged': 'active-acknowledged',
-      'active-silenced': 'active-acknowledged',
-      'rectified-unacknowledged': 'normal',
+>([
+  [
+    iec62923AlertStandard,
+    {
+      acknowledge: {
+        'active-unacknowledged': 'active-acknowledged',
+        'active-silenced': 'active-acknowledged',
+        'rectified-unacknowledged': 'normal',
+      },
     },
-  },
-  'isa-18.2': {
-    acknowledge: {
-      unacknowledged: 'acknowledged',
-      'returned-to-normal-unacknowledged': 'normal',
+  ],
+  [
+    isa182AlertStandard,
+    {
+      acknowledge: {
+        unacknowledged: 'acknowledged',
+        'returned-to-normal-unacknowledged': 'normal',
+      },
+      shelve: {
+        unacknowledged: 'shelved',
+        acknowledged: 'shelved',
+      },
+      unshelve: {
+        shelved: 'unacknowledged',
+      },
     },
-    shelve: {
-      unacknowledged: 'shelved',
-      acknowledged: 'shelved',
-    },
-    unshelve: {
-      shelved: 'unacknowledged',
-    },
-  },
-};
+  ],
+]);
 
-function stateAfterAction(
-  standardId: string,
-  actionId: string,
-  state: string
-): string | undefined {
-  return STATE_AFTER_ACTION[standardId]?.[actionId]?.[state];
+function stateAfterAction(actionId: string, state: string): string | undefined {
+  const configuredAlertStandard = getAlertStandard();
+  if (configuredAlertStandard === undefined) {
+    return undefined;
+  }
+  return STATE_AFTER_ACTION.get(configuredAlertStandard)?.[actionId]?.[state];
 }
 
 /** The alerts after `actionId` was applied to the ones named by `ids`. */
@@ -582,12 +612,12 @@ export function applyActionToAlerts<Alert extends StoryAlert>(
 ): Alert[] {
   return alerts.map((alert) => {
     const nextState = ids.has(alert.id)
-      ? stateAfterAction(alert.standard, actionId, alert.state)
+      ? stateAfterAction(actionId, alert.state)
       : undefined;
     if (nextState === undefined) {
       return alert;
     }
-    return {...alert, state: nextState, acknowledgedBy: 'John Doe'} as Alert;
+    return {...alert, state: nextState, acknowledgedBy: 'John Doe'};
   });
 }
 
@@ -596,11 +626,7 @@ export function applyActionToMenuItem(
   item: ObcAlertMenuItemExperimental,
   actionId: string
 ): void {
-  const nextState = stateAfterAction(
-    item.standard ?? getDefaultAlertStandardId(),
-    actionId,
-    item.state
-  );
+  const nextState = stateAfterAction(actionId, item.state);
   if (nextState !== undefined) {
     item.state = nextState;
   }
@@ -610,7 +636,6 @@ export function applyActionToMenuItem(
 export function alertMenuItem(alert: StoryAlert): TemplateResult {
   return html`<obc-alert-menu-item-experimental
     id=${alert.id}
-    .standard=${alert.standard}
     .criticality=${alert.criticality}
     .state=${alert.state}
     title=${alert.source ?? ''}

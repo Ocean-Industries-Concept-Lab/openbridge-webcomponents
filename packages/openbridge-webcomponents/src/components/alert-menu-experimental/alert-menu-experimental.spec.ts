@@ -9,11 +9,13 @@ import {
 import '../alert-menu-item-experimental/alert-menu-item-experimental.js';
 import type {ObcTabbedCard} from '../tabbed-card/tabbed-card.js';
 import type {ObcButton} from '../button/button.js';
-import {defineAlertStandard} from '../../alert-system/alert-standard.js';
 import {
-  registerAlertStandard,
-  setDefaultAlertStandard,
-} from '../../alert-system/alert-standard-registry.js';
+  defineAlertStandard,
+  type AlertStandard,
+} from '../../alert-system/alert-standard.js';
+import {setAlertStandard} from '../../alert-system/configured-alert-standard.js';
+import {iec62923AlertStandard} from '../../alert-system/iec-62923-alert-standard.js';
+import {isa182AlertStandard} from '../../alert-system/isa-18-2-alert-standard.js';
 
 const ISA_18_2_ITEMS: [id: string, criticality: string, state: string][] = [
   ['unacknowledged', 'high', 'unacknowledged'],
@@ -24,14 +26,16 @@ const ISA_18_2_ITEMS: [id: string, criticality: string, state: string][] = [
   ['out-of-service', 'low', 'out-of-service'],
 ];
 
-async function setup(standard: string | undefined = 'isa-18.2') {
+async function setup(
+  standard: AlertStandard | undefined = isa182AlertStandard
+) {
+  setAlertStandard(standard);
   const screen = render(
-    html`<obc-alert-menu-experimental canAckAll .standard=${standard}>
+    html`<obc-alert-menu-experimental canAckAll>
       ${ISA_18_2_ITEMS.map(
         ([id, criticality, state]) =>
           html`<obc-alert-menu-item-experimental
             id=${id}
-            standard="isa-18.2"
             criticality=${criticality}
             state=${state}
           ></obc-alert-menu-item-experimental>`
@@ -78,15 +82,17 @@ function clickAckVisible(el: ObcAlertMenuExperimental) {
   };
 }
 
-afterEach(() => setDefaultAlertStandard('iec-62923'));
+afterEach(() => setAlertStandard(undefined));
 
 describe('obc-alert-menu-experimental', () => {
-  it('has one tab per filter its standard declares', async () => {
-    const isa = await setup('isa-18.2');
-    const iec = await setup('iec-62923');
-    expect([tabTitles(isa), tabTitles(iec)]).toEqual([
-      ['Unacked', 'Active', 'Shelved', 'Suppressed', 'Out of service'],
-      ['Unacked', 'Active'],
+  it('has one tab per filter the standard declares', async () => {
+    const el = await setup(isa182AlertStandard);
+    expect(tabTitles(el)).toEqual([
+      'Unacked',
+      'Active',
+      'Shelved',
+      'Suppressed',
+      'Out of service',
     ]);
   });
 
@@ -115,28 +121,22 @@ describe('obc-alert-menu-experimental', () => {
   });
 
   it('leaves out ACK visible where the standard acknowledges one alert at a time', async () => {
-    const el = await setup('iec-62923');
+    const el = await setup(iec62923AlertStandard);
     expect(ackVisibleButton(el)).toBeNull();
   });
 
-  it('follows the default standard unless it names its own', async () => {
+  it('has one tab saying no standard is set, until one is', async () => {
     const el = await setup(undefined);
-    expect(tabTitles(el)).toEqual(['Unacked', 'Active']);
-    setDefaultAlertStandard('isa-18.2');
+    expect(tabTitles(el)).toEqual(['All']);
+    setAlertStandard(iec62923AlertStandard);
     await el.updateComplete;
-    expect(tabTitles(el)).toHaveLength(5);
+    expect(tabTitles(el)).toEqual(['Unacked', 'Active']);
   });
 
   it('shows one tab with every alert for a standard that declares no filter', async () => {
-    registerAlertStandard(
-      defineAlertStandard({
-        id: 'menu-spec-standard-without-filters',
-        filters: {},
-        actions: {},
-        criticalities: {},
-      })
+    const el = await setup(
+      defineAlertStandard({filters: {}, actions: {}, criticalities: {}})
     );
-    const el = await setup('menu-spec-standard-without-filters');
     expect(tabTitles(el)).toEqual(['All']);
     const hiddenItems = [
       ...el.querySelectorAll('obc-alert-menu-item-experimental'),

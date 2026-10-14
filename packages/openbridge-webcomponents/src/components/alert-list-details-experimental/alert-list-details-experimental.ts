@@ -17,7 +17,10 @@ import {
 } from '../user-button/user-button.js';
 import type {StandardAlert} from '../../alert-system/standard-alert.js';
 import {ownEntryOf} from '../../alert-system/alert-standard.js';
-import {AlertStandardController} from '../../alert-system/alert-standard-registry.js';
+import {
+  ALERT_STANDARD_CHANGE_KEY,
+  AlertStandardController,
+} from '../../alert-system/configured-alert-standard.js';
 import {
   alertActionLabel,
   compareAlertsBySortingRank,
@@ -45,7 +48,7 @@ export type ObcAlertListCellClickEvent = CustomEvent<{
   actionId?: string;
 }>;
 
-/** The fields `statusColumn()` reads beside the standard, criticality and state. */
+/** The fields `statusColumn()` reads beside the criticality and state. */
 export interface AlertDescriptionFields {
   text: string;
   source?: string;
@@ -140,8 +143,8 @@ export function alertListCellSlotName(columnKey: string, rowId: string) {
 }
 
 /**
- * Alert icon, text and source. Sorts by the sorting rank each alert's
- * standard gives its state, the lowest rank on top.
+ * Alert icon, text and source. Sorts by the sorting rank the alert standard
+ * gives each alert's state, the lowest rank on top.
  */
 export function statusColumn(
   options: AlertListColumnOptions = {}
@@ -158,7 +161,6 @@ export function statusColumn(
       title: alert.source,
       noWrap: true,
       icon: html`<obc-alert-icon-experimental
-        .standard=${alert.standard}
         .criticality=${alert.criticality}
         .state=${alert.state}
       ></obc-alert-icon-experimental>`,
@@ -174,21 +176,21 @@ function firstOfferedActionId(alert: StandardAlert): string | undefined {
 /**
  * A button for the first action the alert's state offers, which fires
  * `cell-click` with the action's id. A state that offers no action shows the
- * glyph its standard defines for that, else the initials of `acknowledgedBy`.
+ * glyph the standard defines for that, else the initials of `acknowledgedBy`.
  */
 export function actionColumn(
   options: AlertListColumnOptions = {}
 ): AlertListDataColumn<StandardAlert & AlertAcknowledgedByField> {
   return {
     key: 'action',
-    label: 'Action',
+    label: 'ACK-status',
     actionIdOfCellButton: firstOfferedActionId,
     cell: (alert) => {
       const actionId = firstOfferedActionId(alert);
       if (actionId !== undefined) {
         return {
           type: ObcTableCellType.Button,
-          text: alertActionLabel(alert.standard, actionId),
+          text: alertActionLabel(actionId),
         };
       }
       const glyphShownInsteadOfActions =
@@ -388,18 +390,21 @@ export function getAlertRows(
  * - **Columns:** `columns` sets which columns show and in what order. A data
  *   column renders each cell from `cell(alert)`; a slot column renders
  *   whatever the consumer places in the cell's slot.
- * - **Alerts:** an alert needs only `id`, `standard`, `criticality` and
- *   `state`; its alert standard (`alert-system/`) decides its icon, where it
+ * - **Alerts:** an alert needs only `id`, `criticality` and `state`; the
+ *   configured alert standard (`setAlertStandard()`, `alert-system/`)
+ *   decides its icon, where it
  *   sorts, which filters include it and which actions it offers. Each column
  *   names the other fields it reads, and the application's own alert objects
  *   can carry any more.
  * - **Column factories:** `statusColumn()`, `actionColumn()`, `timeColumn()`
  *   and `tagIdColumn()` build the standard data columns; each takes overrides
  *   such as `label`, `width` or `dividerRight`.
- * - **Filter:** `filterId` names a filter of the alerts' standards, such as
- *   `active` or `unacked`, and the list shows the alerts whose state is
- *   included in it; every alert shows without one. `customFilter` narrows the
- *   list further. The empty state is the one `standard` gives the filter.
+ * - **Filter:** `filterId` names a filter of the standard, such as `active`
+ *   or `unacked`, and the list shows the alerts whose state is included in
+ *   it; every alert shows without one. `customFilter` narrows the list
+ *   further. The empty state is the one the standard gives the filter.
+ * - **No standard:** while no alert standard is set, the list shows no
+ *   alert and says that no standard is set.
  * - **Grouping:** an alert listing group ids in `memberOf` renders under each
  *   of those groups; groups nest and can be collapsed.
  * - **Selection:** `selectedRowId` highlights one row. When a collapsed group
@@ -431,8 +436,7 @@ export function getAlertRows(
  *
  * @property filterId - The filter whose alerts to list; every alert is listed when unset.
  * @property customFilter - Predicate an alert must also pass to be listed.
- * @property standard - The standard whose filter supplies the empty state; the default standard (`setDefaultAlertStandard`) when unset.
- * @property alerts - Alerts to list, each naming its own standard.
+ * @property alerts - Alerts to list.
  * @property columns - Columns in display order.
  * @property showHeader - Whether to show the column header row.
  * @property defaultExpanded - Whether groups start expanded. Set false to open the list collapsed.
@@ -455,7 +459,6 @@ export class ObcAlertListDetailsExperimental extends LitElement {
   @property({attribute: false}) customFilter?: (
     alert: StandardAlert
   ) => boolean;
-  @property({type: String}) standard?: string;
   @property({type: Array}) alerts: StandardAlert[] = [];
   @property({type: Array, attribute: false}) columns: AlertListColumn[] = [
     statusColumn(),
@@ -466,7 +469,7 @@ export class ObcAlertListDetailsExperimental extends LitElement {
   @property({type: Boolean, attribute: false}) defaultExpanded: boolean = true;
   @property({type: String}) selectedRowId?: string;
 
-  private readonly standardController = new AlertStandardController(this);
+  private readonly alertStandardController = new AlertStandardController(this);
 
   @query('obc-table')
   private alertList!: ObcTable;
@@ -489,7 +492,8 @@ export class ObcAlertListDetailsExperimental extends LitElement {
       !changed.has('alerts') &&
       !changed.has('columns') &&
       !changed.has('filterId') &&
-      !changed.has('customFilter')
+      !changed.has('customFilter') &&
+      !(changed as PropertyValues).has(ALERT_STANDARD_CHANGE_KEY)
     ) {
       return;
     }
@@ -689,10 +693,14 @@ export class ObcAlertListDetailsExperimental extends LitElement {
   }
 
   private get emptyState(): {icon: unknown; title: string} {
-    const filter = ownEntryOf(
-      this.standardController.standard?.filters,
-      this.filterId
-    );
+    const standard = this.alertStandardController.standard;
+    if (standard === undefined) {
+      return {
+        icon: html`<obi-alerts></obi-alerts>`,
+        title: msg('No alert standard is set'),
+      };
+    }
+    const filter = ownEntryOf(standard.filters, this.filterId);
     return {
       icon:
         filter?.iconWhenNoAlertIsIncluded ?? html`<obi-alerts></obi-alerts>`,

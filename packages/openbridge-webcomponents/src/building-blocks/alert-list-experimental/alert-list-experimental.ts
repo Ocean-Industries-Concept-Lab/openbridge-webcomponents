@@ -9,21 +9,17 @@ import {
 } from '../alert-list/alert-list-base.js';
 import {ownEntryOf} from '../../alert-system/alert-standard.js';
 import {
+  ALERT_STANDARD_CHANGE_KEY,
   AlertStandardController,
-  getDefaultAlertStandardId,
-} from '../../alert-system/alert-standard-registry.js';
+} from '../../alert-system/configured-alert-standard.js';
 import {isAlertIncludedInFilter} from '../../alert-system/read-standard-alert.js';
-import type {AlertStandardCriticalityAndState} from '../../alert-system/standard-alert.js';
+import type {AlertCriticalityAndState} from '../../alert-system/standard-alert.js';
 
-function standardCriticalityAndStateOfItem(
+function criticalityAndStateOfItem(
   item: HTMLElement
-): AlertStandardCriticalityAndState {
-  const properties = item as Partial<AlertStandardCriticalityAndState>;
+): AlertCriticalityAndState {
+  const properties = item as Partial<AlertCriticalityAndState>;
   return {
-    standard:
-      properties.standard ??
-      item.getAttribute('standard') ??
-      getDefaultAlertStandardId(),
     criticality:
       properties.criticality ?? item.getAttribute('criticality') ?? '',
     state: properties.state ?? item.getAttribute('state') ?? '',
@@ -32,13 +28,15 @@ function standardCriticalityAndStateOfItem(
 
 /**
  * `<obc-alert-list-experimental>` – Scrolling list of alert items that shows
- * the ones a filter of their alert standard includes and hides the rest.
+ * the ones a filter of the configured alert standard includes and hides the
+ * rest.
  *
  * ### Features
  * - **Filter:** `filterId` names a filter, such as `active` or `unacked`. An
- *   item shows when the state its `standard`, `criticality` and `state`
- *   name is included in that filter (`alert-system/`). Every item shows
- *   without a `filterId`.
+ *   item shows when the state its `criticality` and `state` name is included
+ *   in that filter (`alert-system/`). Every item shows without a `filterId`.
+ * - **No standard:** while `setAlertStandard()` has not been called, no item
+ *   shows and the empty state says that no alert standard is set.
  * - **Custom filter:** `customFilter` narrows what shows further.
  * - **Hiding:** the list sets the `hidden` attribute of every item it leaves
  *   out, and clears it on the others.
@@ -55,7 +53,6 @@ function standardCriticalityAndStateOfItem(
  *
  * @property filterId - The filter whose alerts show; every item shows when unset.
  * @property customFilter - Predicate an item must also pass to show.
- * @property standard - The standard whose filter supplies the empty state; the default standard when unset.
  * @slot - The alert items, as `obc-alert-menu-item-experimental` elements.
  * @slot empty-icon - Icon shown when no item matches; the filter's icon when left empty.
  * @slot empty-title - Title shown when no item matches; the filter's title when left empty.
@@ -67,26 +64,26 @@ function standardCriticalityAndStateOfItem(
 export class ObcAlertListExperimental extends ObcAlertListBase {
   @property({type: String}) filterId?: string;
   @property({attribute: false}) customFilter?: (item: HTMLElement) => boolean;
-  @property({type: String}) standard?: string;
 
-  private readonly standardController = new AlertStandardController(this);
+  private readonly alertStandardController = new AlertStandardController(this);
 
   protected override get observedItemAttributes(): string[] {
-    return ['standard', 'criticality', 'state'];
+    return ['criticality', 'state'];
   }
 
   protected override matchesFilter(item: HTMLElement): boolean {
     return (
-      isAlertIncludedInFilter(
-        standardCriticalityAndStateOfItem(item),
-        this.filterId
-      ) &&
+      isAlertIncludedInFilter(criticalityAndStateOfItem(item), this.filterId) &&
       (this.customFilter?.(item) ?? true)
     );
   }
 
   protected override filterChanged(changed: PropertyValues): boolean {
-    return changed.has('filterId') || changed.has('customFilter');
+    return (
+      changed.has('filterId') ||
+      changed.has('customFilter') ||
+      changed.has(ALERT_STANDARD_CHANGE_KEY)
+    );
   }
 
   protected override applyFilter() {
@@ -97,10 +94,11 @@ export class ObcAlertListExperimental extends ObcAlertListBase {
   }
 
   protected override get emptyFallback(): AlertListEmptyFallback {
-    const filter = ownEntryOf(
-      this.standardController.standard?.filters,
-      this.filterId
-    );
+    const standard = this.alertStandardController.standard;
+    if (standard === undefined) {
+      return {title: msg('No alert standard is set')};
+    }
+    const filter = ownEntryOf(standard.filters, this.filterId);
     return {
       icon: filter?.iconWhenNoAlertIsIncluded,
       title: filter?.titleWhenNoAlertIsIncluded() ?? msg('No alerts'),

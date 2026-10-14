@@ -1,4 +1,4 @@
-import {describe, it, expect} from 'vitest';
+import {afterEach, beforeEach, describe, it, expect} from 'vitest';
 import {
   ObcAlertListCellClickEvent,
   ObcAlertListCellSlotsChangeEvent,
@@ -11,6 +11,9 @@ import {
 } from './alert-list-details-experimental.js';
 import {ObcTableCellType} from '../table/table.js';
 import type {StandardAlert} from '../../alert-system/standard-alert.js';
+import {setAlertStandard} from '../../alert-system/configured-alert-standard.js';
+import {iec62923AlertStandard} from '../../alert-system/iec-62923-alert-standard.js';
+import {isa182AlertStandard} from '../../alert-system/isa-18-2-alert-standard.js';
 
 const RECTIFIED_WARNING = {
   criticality: 'warning',
@@ -23,7 +26,6 @@ function alert(
   overrides: Partial<StandardAlertWithColumnFields> = {}
 ): StandardAlertWithColumnFields {
   return {
-    standard: 'iec-62923',
     criticality: 'warning',
     state: 'active-unacknowledged',
     id,
@@ -32,8 +34,11 @@ function alert(
     text: id,
     time: new Date('2024-01-15T14:32:15Z'),
     ...overrides,
-  } as StandardAlertWithColumnFields;
+  };
 }
+
+beforeEach(() => setAlertStandard(iec62923AlertStandard));
+afterEach(() => setAlertStandard(undefined));
 
 const rowIds = (alerts: StandardAlert[], filterId?: string) =>
   getAlertRows(alerts, filterId).map((row) => row.rowId);
@@ -110,15 +115,12 @@ describe('getAlertRows', () => {
 });
 
 describe('filterId', () => {
-  it('lists every alert by default, one of an unregistered standard included', async () => {
+  it('lists every alert by default, one the standard does not define included', async () => {
     const el = document.createElement('obc-alert-list-details-experimental');
     el.alerts = [
       alert('active'),
       alert('rectified', RECTIFIED_WARNING),
-      {
-        ...alert('unknown'),
-        standard: 'not-registered',
-      } as unknown as StandardAlert,
+      alert('unknown', {criticality: 'not-defined'}),
     ];
     document.body.append(el);
     await el.updateComplete;
@@ -146,9 +148,27 @@ describe('filterId', () => {
     el.remove();
   });
 
-  it('shows the empty state its standard gives the filter', async () => {
+  it('lists no alert while no standard is set, and says so', async () => {
+    setAlertStandard(undefined);
     const el = document.createElement('obc-alert-list-details-experimental');
-    el.standard = 'isa-18.2';
+    el.alerts = [alert('active')];
+    document.body.append(el);
+    await el.updateComplete;
+    expect(
+      el.shadowRoot!.querySelector('.empty-title')?.textContent?.trim()
+    ).toBe('No alert standard is set');
+
+    setAlertStandard(iec62923AlertStandard);
+    await el.updateComplete;
+    expect(
+      el.shadowRoot!.querySelector('obc-table')!.data.map((row) => row.id)
+    ).toEqual(['active']);
+    el.remove();
+  });
+
+  it('shows the empty state the standard gives the filter', async () => {
+    setAlertStandard(isa182AlertStandard);
+    const el = document.createElement('obc-alert-list-details-experimental');
     el.filterId = 'shelved';
     document.body.append(el);
     await el.updateComplete;
@@ -184,10 +204,10 @@ describe('actionColumn', () => {
     )?.[1];
 
   it('offers the first action of the state, labelled by the standard', () => {
-    expect([
-      cell(RECTIFIED_WARNING),
-      cell({standard: 'isa-18.2', criticality: 'high', state: 'shelved'}),
-    ]).toEqual([
+    const acknowledgeCell = cell(RECTIFIED_WARNING);
+    setAlertStandard(isa182AlertStandard);
+    const unshelveCell = cell({criticality: 'high', state: 'shelved'});
+    expect([acknowledgeCell, unshelveCell]).toEqual([
       {type: ObcTableCellType.Button, text: 'ACK'},
       {type: ObcTableCellType.Button, text: 'Unshelve'},
     ]);

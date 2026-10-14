@@ -1,5 +1,4 @@
 import {TemplateResult, html, unsafeCSS} from 'lit';
-import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import compentStyle from './alert-menu-experimental.css?inline';
 import {ObcAlertMenu, type AlertMenuTab} from '../alert-menu/alert-menu.js';
@@ -8,7 +7,7 @@ import {
   ALERT_ACTION_ID_APPLIED_BY_ACK_VISIBLE_BUTTON,
   ownEntryOf,
 } from '../../alert-system/alert-standard.js';
-import {AlertStandardController} from '../../alert-system/alert-standard-registry.js';
+import {AlertStandardController} from '../../alert-system/configured-alert-standard.js';
 import {msg} from '@lit/localize';
 import '../../icons/icon-alerts.js';
 
@@ -22,10 +21,11 @@ export type ObcAlertMenuExperimentalAckAllVisibleClickEvent = CustomEvent<{
 
 /**
  * `<obc-alert-menu-experimental>` – Tabbed alert summary panel whose tabs are
- * the filters of an alert standard.
+ * the filters of the configured alert standard.
  *
  * Works like `obc-alert-menu`, with the tabs and the filtering taken from the
- * standard (`alert-system/`).
+ * standard (`setAlertStandard()`, `alert-system/`). While no standard is set,
+ * the menu has one tab that says so and shows no item.
  *
  * ### Features
  * - **Tabs:** one per filter the standard declares, in its order, opening on
@@ -45,7 +45,6 @@ export type ObcAlertMenuExperimentalAckAllVisibleClickEvent = CustomEvent<{
  * - Set `canAckAll` when an item in view can still be acknowledged.
  * - `hasShelved` has no effect here: the standard decides the tabs.
  *
- * @property standard - The standard whose filters are the tabs; the default standard (`setDefaultAlertStandard`) when unset.
  * @slot - The alert items, as `obc-alert-menu-item-experimental` elements.
  * @slot empty-<filterId>-title - Custom empty-state title for the tab of a filter.
  * @slot empty-<filterId>-description - Custom empty-state description for the tab of a filter.
@@ -58,34 +57,37 @@ export type ObcAlertMenuExperimentalAckAllVisibleClickEvent = CustomEvent<{
  */
 @customElement('obc-alert-menu-experimental')
 export class ObcAlertMenuExperimental extends ObcAlertMenu {
-  @property({type: String}) standard?: string;
-
-  private readonly standardController = new AlertStandardController(this);
+  private readonly alertStandardController = new AlertStandardController(this);
 
   protected override get offersAckAll(): boolean {
     return (
       ownEntryOf(
-        this.standardController.standard?.actions,
+        this.alertStandardController.standard?.actions,
         ALERT_ACTION_ID_APPLIED_BY_ACK_VISIBLE_BUTTON
       )?.canBeAppliedToSeveralAlertsAtOnce === true
     );
   }
 
   protected override get tabs(): AlertMenuTab[] {
-    const filters = this.standardController.standard?.filters ?? {};
-    const tabsOfFilters = Object.entries(filters).map(([filterId, filter]) => ({
-      name: filterId,
-      title: filter.label(),
-      emptyTitle: filter.titleWhenNoAlertIsIncluded(),
-      emptyIcon: filter.iconWhenNoAlertIsIncluded,
-    }));
+    const standard = this.alertStandardController.standard;
+    const tabsOfFilters = Object.entries(standard?.filters ?? {}).map(
+      ([filterId, filter]) => ({
+        name: filterId,
+        title: filter.label(),
+        emptyTitle: filter.titleWhenNoAlertIsIncluded(),
+        emptyIcon: filter.iconWhenNoAlertIsIncluded,
+      })
+    );
     return tabsOfFilters.length > 0
       ? tabsOfFilters
       : [
           {
             name: NAME_OF_TAB_LISTING_EVERY_ALERT,
             title: msg('All'),
-            emptyTitle: msg('No alerts'),
+            emptyTitle:
+              standard === undefined
+                ? msg('No alert standard is set')
+                : msg('No alerts'),
             emptyIcon: html`<obi-alerts></obi-alerts>`,
           },
         ];
@@ -100,7 +102,6 @@ export class ObcAlertMenuExperimental extends ObcAlertMenu {
       .filterId=${
         tab.name === NAME_OF_TAB_LISTING_EVERY_ALERT ? undefined : tab.name
       }
-      .standard=${this.standard}
       >${content}</obc-alert-list-experimental
     >`;
   }

@@ -5,24 +5,23 @@ import componentStyle from './alert-icon-experimental.css?inline';
 import {FlashingSpeed, type ResolvedFlashingSpeed} from '../../types.js';
 import {FlashingController} from '../../palettes/flashing-controller.js';
 import type {AlertStateDefinition} from '../../alert-system/alert-standard.js';
-import {AlertStandardController} from '../../alert-system/alert-standard-registry.js';
+import {AlertStandardController} from '../../alert-system/configured-alert-standard.js';
 import {findAlertStateDefinition} from '../../alert-system/read-standard-alert.js';
 
 /**
  * `<obc-alert-icon-experimental>` – The icon of one alert, drawn with the
- * glyph its alert standard defines.
+ * glyph the configured alert standard defines.
  *
- * The standard supplies the glyph of a criticality in a state, a second
- * frame when it flashes, and the tempo (`alert-system/`). The icon only
- * cross-fades the two frames through `FlashingController`, so every flashing
- * element lights up together. A standard registered from outside the library
- * draws through it unchanged.
+ * The standard (`setAlertStandard()`, `alert-system/`) supplies the glyph of
+ * a criticality in a state, a second frame when it flashes, and the tempo.
+ * The icon only cross-fades the two frames through `FlashingController`, so
+ * every flashing element lights up together. A standard defined outside the
+ * library draws through it unchanged.
  *
  * ### Features
- * - **Standard:** `standard` names it, or the default standard
- *   (`setDefaultAlertStandard`) applies.
- * - **Glyph:** `criticality` and `state`, in the terms of that standard.
- *   Nothing renders for a pair the standard does not define.
+ * - **Glyph:** `criticality` and `state`, in the terms of the standard.
+ *   Nothing renders while no standard is set, or for a pair the standard
+ *   does not define.
  * - **Tempo:** `flashingSpeed` `default` takes the standard's tempo; `fast`,
  *   `slow` and `very-slow` force one while the icon flashes, and `fixed`
  *   holds it steady.
@@ -31,7 +30,6 @@ import {findAlertStateDefinition} from '../../alert-system/read-standard-alert.j
  * Like the stable `obc-alert-icon`, the icon fills the box it sits in, such
  * as a menu item's icon slot or a table cell; size that box.
  *
- * @property standard - The standard of `criticality` and `state`, such as `iec-62923` or `isa-18.2`; the default standard when unset.
  * @property criticality - How critical the alert is, in the terms of its standard.
  * @property state - Where the alert stands, in the terms of its standard.
  * @property flashingSpeed - `default` takes the standard's tempo; `fast`, `slow` and `very-slow` force one while the icon flashes; `fixed` holds it steady.
@@ -39,13 +37,14 @@ import {findAlertStateDefinition} from '../../alert-system/read-standard-alert.j
  */
 @customElement('obc-alert-icon-experimental')
 export class ObcAlertIconExperimental extends LitElement {
-  @property({type: String}) standard?: string;
   @property({type: String}) criticality = '';
   @property({type: String}) state = '';
   @property({type: String}) flashingSpeed: FlashingSpeed =
     FlashingSpeed.Default;
 
-  private readonly standardController = new AlertStandardController(this);
+  protected readonly alertStandardController = new AlertStandardController(
+    this
+  );
 
   protected readonly flashing = new FlashingController(
     this,
@@ -54,7 +53,6 @@ export class ObcAlertIconExperimental extends LitElement {
 
   private get stateDefinition(): AlertStateDefinition | undefined {
     return findAlertStateDefinition({
-      standard: this.standardController.standardId,
       criticality: this.criticality,
       state: this.state,
     });

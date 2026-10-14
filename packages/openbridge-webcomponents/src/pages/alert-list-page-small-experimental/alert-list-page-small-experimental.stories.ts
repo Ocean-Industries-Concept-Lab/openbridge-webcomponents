@@ -9,8 +9,9 @@ import {
 import {ALERT_ACTION_ID_APPLIED_BY_ACK_VISIBLE_BUTTON} from '../../alert-system/alert-standard.js';
 import type {StandardAlert} from '../../alert-system/standard-alert.js';
 import {
-  alertsInEveryKindOfState,
+  alertsInEveryKindOfStateOfTheConfiguredStandard,
   applyActionToAlerts,
+  drawStoryWithAlertStandard,
   type StoryAlert,
 } from '../../storybook-util.js';
 
@@ -26,29 +27,23 @@ const applyAction = (
   );
 };
 
-const alertsOfStandard = (standard: string | undefined): StandardAlert[] =>
-  alertsInEveryKindOfState(standard === 'isa-18.2' ? 'isa-18.2' : 'iec-62923');
+const alertsOfTheConfiguredStandard = (): StandardAlert[] =>
+  alertsInEveryKindOfStateOfTheConfiguredStandard();
 
 const meta: Meta<ObcAlertListPageSmallExperimental> = {
   title: 'Pages/Alert List Small Experimental',
   tags: ['6.0', 'experimental'],
   component: 'obc-alert-list-page-small-experimental',
+  beforeEach: drawStoryWithAlertStandard('iec-62923'),
   args: {
     filterId: 'active',
     showTime: true,
   },
-  argTypes: {
-    standard: {
-      control: {type: 'select'},
-      options: ['iec-62923', 'isa-18.2'],
-    },
-  },
   render: (args) =>
     html`<obc-alert-list-page-small-experimental
-      .standard=${args.standard}
       .filterId=${args.filterId}
       .showTime=${args.showTime}
-      .alerts=${alertsOfStandard(args.standard)}
+      .alerts=${alertsOfTheConfiguredStandard()}
       @action-click=${(
         event: ObcAlertListPageSmallExperimentalActionClickEvent
       ) =>
@@ -75,12 +70,12 @@ type Story = StoryObj<ObcAlertListPageSmallExperimental>;
 export const Regular: Story = {};
 
 export const Automation: Story = {
-  args: {standard: 'isa-18.2'},
+  beforeEach: drawStoryWithAlertStandard('isa-18.2'),
   parameters: {
     docs: {
       description: {
         story:
-          'ISA-18.2 lets several alarms be acknowledged at once, so the page offers ACK visible, and its dropdown lists the five filters the standard declares. Under IEC 62923, the default, there is no ACK visible: MSC.302 9.9 asks for one alarm at a time.',
+          'ISA-18.2 lets several alarms be acknowledged at once, so the page offers ACK visible, and its dropdown lists the five filters the standard declares. Under IEC 62923, as in the other stories, there is no ACK visible: MSC.302 9.9 asks for one alarm at a time.',
       },
     },
   },

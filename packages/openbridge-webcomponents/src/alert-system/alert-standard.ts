@@ -11,7 +11,6 @@
  * Usage:
  * ```ts
  * const myStandard = defineAlertStandard({
- *   id: 'my-standard',
  *   filters: {},
  *   actions: {},
  *   criticalities: {
@@ -22,7 +21,7 @@
  *     },
  *   },
  * });
- * registerAlertStandard(myStandard);
+ * setAlertStandard(myStandard);
  * ```
  */
 import type {HTMLTemplateResult, SVGTemplateResult, TemplateResult} from 'lit';
@@ -67,7 +66,6 @@ export interface AlertActionDefinition {
 }
 
 export interface AlertStandard {
-  id: string;
   criticalities: Record<string, AlertCriticalityDefinition>;
   /** In the order the tabs and the dropdown show them. */
   filters: Record<string, AlertFilterDefinition>;
@@ -91,11 +89,10 @@ export const ALERT_ACTION_ID_APPLIED_BY_ACK_VISIBLE_BUTTON = 'acknowledge';
 
 /**
  * Returns the definition unchanged. It keeps the criticality and state names
- * as types, so `StandardAlert` rejects a pair the standard does not define,
+ * as types, so `StandardAlertOf` rejects a pair the standard does not define,
  * and it rejects a state that names a filter or an action the standard lacks.
  */
 export function defineAlertStandard<
-  const StandardId extends string,
   FilterId extends string,
   ActionId extends string,
   Criticalities extends Record<
@@ -103,7 +100,6 @@ export function defineAlertStandard<
     AlertCriticalityDefinition<NoInfer<FilterId>, NoInfer<ActionId>>
   >,
 >(definition: {
-  id: StandardId;
   filters: Record<FilterId, AlertFilterDefinition>;
   actions: Record<ActionId, AlertActionDefinition>;
   criticalities: Criticalities;

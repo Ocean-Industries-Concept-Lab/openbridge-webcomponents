@@ -1,8 +1,10 @@
-import {afterEach, describe, expect, it} from 'vitest';
+import {afterEach, beforeEach, describe, expect, it} from 'vitest';
 import './alert-list-experimental.js';
 import {ObcAlertListExperimental} from './alert-list-experimental.js';
 import '../../components/alert-menu-item-experimental/alert-menu-item-experimental.js';
 import type {ObcAlertMenuItemExperimental} from '../../components/alert-menu-item-experimental/alert-menu-item-experimental.js';
+import {setAlertStandard} from '../../alert-system/configured-alert-standard.js';
+import {isa182AlertStandard} from '../../alert-system/isa-18-2-alert-standard.js';
 
 const ISA_18_2_ITEMS: [id: string, criticality: string, state: string][] = [
   ['unacknowledged', 'high', 'unacknowledged'],
@@ -22,12 +24,10 @@ async function renderList(
   items = ISA_18_2_ITEMS
 ) {
   list = document.createElement('obc-alert-list-experimental');
-  list.standard = 'isa-18.2';
   configure(list);
   for (const [id, criticality, state] of items) {
     const item = document.createElement('obc-alert-menu-item-experimental');
     item.id = id;
-    item.standard = 'isa-18.2';
     item.criticality = criticality;
     item.state = state;
     list.append(item);
@@ -47,7 +47,12 @@ const shownIds = (el: HTMLElement) =>
     .filter((item) => !item.hidden)
     .map((item) => item.id);
 
-afterEach(() => list?.remove());
+beforeEach(() => setAlertStandard(isa182AlertStandard));
+
+afterEach(() => {
+  list?.remove();
+  setAlertStandard(undefined);
+});
 
 describe('obc-alert-list-experimental', () => {
   it.each([
@@ -94,5 +99,23 @@ describe('obc-alert-list-experimental', () => {
     );
     const title = el.shadowRoot!.querySelector('slot[name="empty-title"]');
     expect(title?.textContent?.trim()).toBe('No shelved alerts');
+  });
+
+  it('shows no item while no standard is set, and says so', async () => {
+    setAlertStandard(undefined);
+    const el = await renderList((l) => (l.filterId = undefined));
+    const title = el.shadowRoot!.querySelector('slot[name="empty-title"]');
+    expect([shownIds(el), title?.textContent?.trim()]).toEqual([
+      [],
+      'No alert standard is set',
+    ]);
+  });
+
+  it('filters again once a standard is set', async () => {
+    setAlertStandard(undefined);
+    const el = await renderList((l) => (l.filterId = 'shelved'));
+    setAlertStandard(isa182AlertStandard);
+    await el.updateComplete;
+    expect(shownIds(el)).toEqual(['shelved']);
   });
 });

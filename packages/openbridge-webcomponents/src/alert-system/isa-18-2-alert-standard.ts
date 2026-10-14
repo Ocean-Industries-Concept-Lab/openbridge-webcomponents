@@ -102,7 +102,6 @@ const DIAGNOSTIC_GLYPH: AlertGlyph = {
 };
 
 export const isa182AlertStandard = defineAlertStandard({
-  id: 'isa-18.2',
   filters: {
     [Unacknowledged]: {
       label: () => msg('Unacked'),

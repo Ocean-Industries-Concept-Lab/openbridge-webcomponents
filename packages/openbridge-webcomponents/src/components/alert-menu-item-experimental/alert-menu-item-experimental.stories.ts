@@ -6,7 +6,10 @@ import {
   type ObcAlertMenuItemExperimentalActionClickEvent,
 } from './alert-menu-item-experimental.js';
 import {ObcMessageMenuItemSize} from '../message-menu-item/message-menu-item.js';
-import {applyActionToMenuItem} from '../../storybook-util.js';
+import {
+  applyActionToMenuItem,
+  drawStoryWithAlertStandard,
+} from '../../storybook-util.js';
 
 const applyClickedAction = (
   event: ObcAlertMenuItemExperimentalActionClickEvent
@@ -20,8 +23,8 @@ const meta: Meta<ObcAlertMenuItemExperimental> = {
   title: 'Application Components/Alerts/Alert Menu Item Experimental',
   tags: ['6.0', 'experimental'],
   component: 'obc-alert-menu-item-experimental',
+  beforeEach: drawStoryWithAlertStandard('iec-62923'),
   args: {
-    standard: 'iec-62923',
     criticality: 'alarm',
     state: 'active-unacknowledged',
     title: 'ME 1',
@@ -30,10 +33,6 @@ const meta: Meta<ObcAlertMenuItemExperimental> = {
     size: ObcMessageMenuItemSize.SingleLine,
   },
   argTypes: {
-    standard: {
-      control: {type: 'select'},
-      options: ['iec-62923', 'isa-18.2'],
-    },
     size: {
       control: {type: 'select'},
       options: Object.values(ObcMessageMenuItemSize),
@@ -41,7 +40,6 @@ const meta: Meta<ObcAlertMenuItemExperimental> = {
   },
   render: (args) =>
     html`<obc-alert-menu-item-experimental
-      .standard=${args.standard}
       .criticality=${args.criticality}
       .state=${args.state}
       .title=${args.title}
@@ -74,8 +72,8 @@ export const AcknowledgeNotAllowed: Story = {
 };
 
 export const TwoActions: Story = {
+  beforeEach: drawStoryWithAlertStandard('isa-18.2'),
   args: {
-    standard: 'isa-18.2',
     criticality: 'high',
     state: 'unacknowledged',
   },

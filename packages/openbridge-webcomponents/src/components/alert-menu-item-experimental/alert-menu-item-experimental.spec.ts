@@ -1,4 +1,4 @@
-import {describe, expect, it} from 'vitest';
+import {afterEach, describe, expect, it} from 'vitest';
 import {render} from 'vitest-browser-lit';
 import {html} from 'lit';
 import './alert-menu-item-experimental.js';
@@ -7,11 +7,19 @@ import type {
   ObcAlertMenuItemExperimentalActionClickEvent,
 } from './alert-menu-item-experimental.js';
 import type {ObcMessageMenuItem} from '../message-menu-item/message-menu-item.js';
+import type {AlertStandard} from '../../alert-system/alert-standard.js';
+import {setAlertStandard} from '../../alert-system/configured-alert-standard.js';
+import {iec62923AlertStandard} from '../../alert-system/iec-62923-alert-standard.js';
+import {isa182AlertStandard} from '../../alert-system/isa-18-2-alert-standard.js';
 
-async function setup(standard: string, criticality: string, state: string) {
+async function setup(
+  standard: AlertStandard,
+  criticality: string,
+  state: string
+) {
+  setAlertStandard(standard);
   const screen = render(
     html`<obc-alert-menu-item-experimental
-      .standard=${standard}
       .criticality=${criticality}
       .state=${state}
     ></obc-alert-menu-item-experimental>`
@@ -31,29 +39,33 @@ const actionButtonLabels = (messageItem: ObcMessageMenuItem) => [
   messageItem.secondaryActionLabel,
 ];
 
+afterEach(() => setAlertStandard(undefined));
+
 describe('obc-alert-menu-item-experimental', () => {
-  it('shows a button for each action its state offers', async () => {
-    const acknowledgeOnly = await setup(
-      'iec-62923',
+  it('shows one button where its state offers one action', async () => {
+    const {messageItem} = await setup(
+      iec62923AlertStandard,
       'alarm',
       'active-unacknowledged'
     );
-    const acknowledgeAndShelve = await setup(
-      'isa-18.2',
+    expect(actionButtonLabels(messageItem)).toEqual(['ACK', '']);
+  });
+
+  it('shows two buttons where its state offers two actions', async () => {
+    const {messageItem} = await setup(
+      isa182AlertStandard,
       'high',
       'unacknowledged'
     );
-    expect([
-      actionButtonLabels(acknowledgeOnly.messageItem),
-      actionButtonLabels(acknowledgeAndShelve.messageItem),
-    ]).toEqual([
-      ['ACK', ''],
-      ['ACK', 'Shelve'],
-    ]);
+    expect(actionButtonLabels(messageItem)).toEqual(['ACK', 'Shelve']);
   });
 
   it('reports the id of the clicked action', async () => {
-    const {el, messageItem} = await setup('isa-18.2', 'high', 'unacknowledged');
+    const {el, messageItem} = await setup(
+      isa182AlertStandard,
+      'high',
+      'unacknowledged'
+    );
     const clickedActionIds: string[] = [];
     el.addEventListener('action-click', (event) =>
       clickedActionIds.push(
@@ -67,7 +79,7 @@ describe('obc-alert-menu-item-experimental', () => {
 
   it('shows the glyph its standard defines where the state offers no action', async () => {
     const {el, messageItem} = await setup(
-      'iec-62923',
+      iec62923AlertStandard,
       'warning',
       'active-unacknowledged-acknowledge-not-allowed'
     );
@@ -79,18 +91,14 @@ describe('obc-alert-menu-item-experimental', () => {
   });
 
   it('draws the icon of its criticality and state', async () => {
-    const {el} = await setup('iec-62923', 'caution', 'active');
+    const {el} = await setup(iec62923AlertStandard, 'caution', 'active');
     const icon = el.shadowRoot!.querySelector('obc-alert-icon-experimental')!;
-    expect([icon.standard, icon.criticality, icon.state]).toEqual([
-      'iec-62923',
-      'caution',
-      'active',
-    ]);
+    expect([icon.criticality, icon.state]).toEqual(['caution', 'active']);
   });
 
   it('follows a state change', async () => {
     const {el, messageItem} = await setup(
-      'iec-62923',
+      iec62923AlertStandard,
       'alarm',
       'active-unacknowledged'
     );

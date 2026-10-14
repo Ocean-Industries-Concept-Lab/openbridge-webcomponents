@@ -41,44 +41,39 @@ several alerts).
   that derives states from flags hides the special cases a standard is made
   of. An alert that is shelved while unacknowledged is a state of its own if
   the standard tells the two apart.
-- A pair the tree does not define does not exist: `StandardAlert` rejects it
-  at compile time, and at run time the alert draws no icon, sorts last,
-  offers no action and is in no filter. Nothing falls back to another
-  standard.
-- Sorting ranks are compared as they are across standards. The built-in ones
-  share a scale: 10 to 100 for what IEC 62923-1 6.4.2.1 orders, 200 to 230
-  for alarms set aside, 300 and up for normal.
+- A pair the tree does not define does not exist: `StandardAlertOf` rejects
+  it at compile time, and at run time the alert draws no icon, sorts last,
+  offers no action and is in no filter.
+- The built-in sorting ranks run 10 to 100 for what IEC 62923-1 6.4.2.1
+  orders, 200 to 230 for alarms set aside, 300 and up for normal.
 - The components know one id, `acknowledge`
   (`ALERT_ACTION_ID_APPLIED_BY_ACK_VISIBLE_BUTTON`): the action the "ACK
-  visible" buttons apply. They know no filter id. Each standard writes its
-  own, and alerts of two standards meet in one tab where the ids match, as
-  `unacked` and `active` do in the built-in ones.
+  visible" buttons apply. They know no filter id.
 
-| Id          | Module                        | Criticalities                            |
-| ----------- | ----------------------------- | ---------------------------------------- |
-| `iec-62923` | `iec-62923-alert-standard.ts` | emergency alarm, alarm, warning, caution |
-| `isa-18.2`  | `isa-18-2-alert-standard.ts`  | critical, high, medium, low, diagnostic  |
+| Constant                | Module                        | Criticalities                            |
+| ----------------------- | ----------------------------- | ---------------------------------------- |
+| `iec62923AlertStandard` | `iec-62923-alert-standard.ts` | emergency alarm, alarm, warning, caution |
+| `isa182AlertStandard`   | `isa-18-2-alert-standard.ts`  | critical, high, medium, low, diagnostic  |
 
-- `iec-62923` has the filters Unacked and Active, and acknowledges one alert
+- IEC 62923 has the filters Unacked and Active, and acknowledges one alert
   at a time (MSC.302 9.9). Its `-acknowledge-not-allowed` states are for an
   alert acknowledged elsewhere, such as a category C alert.
-- `isa-18.2` follows Figure 3 of the standard: shelved, suppressed by design
+- ISA-18.2 follows Figure 3 of the standard: shelved, suppressed by design
   and out of service are states, each with a filter of its own (11.2.4), and
   none of them flashes.
 
 ## Adding a standard
 
 `defineAlertStandard()` keeps the criticality and state names as types and
-rejects a state that names a filter or an action the standard lacks.
-`registerAlertStandard()` makes it drawable, and an entry in
-`RegisteredAlertStandards` (`standard-alert.ts`) by declaration merging makes
-its alerts type-check. `storybook-util.ts` defines IEC 60601-1-8 that way,
-with glyphs of its own; the library does not ship it.
+rejects a state that names a filter or an action the standard lacks, and
+`setAlertStandard()` draws by it. `storybook-util.ts` defines IEC 60601-1-8
+that way, with glyphs of its own; the library does not ship it.
 
 ## The alert
 
-`StandardAlert` is `id`, `standard`, `criticality`, `state` and an optional
-`memberOf`. An application passes its own alert objects as they are. The
+`StandardAlert` is `id`, `criticality`, `state` and an optional `memberOf`;
+`StandardAlertOf<typeof aStandard>` narrows the pair to what the standard
+defines. An application passes its own alert objects as they are. The
 column factories of `obc-alert-list-details-experimental` each name the extra
 fields they read (`text`, `time`, `tagId`, `acknowledgedBy`), and
 `AlertListDataColumn` declares `cell` as a method so such a column fits in
@@ -89,26 +84,36 @@ fields they read (`text`, `time`, `tagId`, `acknowledgedBy`), and
 `isAlertActionOffered()`. The state transitions belong to the application;
 the stories stand in for it with a table in `storybook-util.ts`.
 
-## The default standard
+## One standard per application
 
-`setDefaultAlertStandard()` (`alert-standard-registry.ts`) is for what draws
-without naming a standard: a menu deciding its tabs, or an icon given only a
-criticality and a state. A component's own `standard` overrides it, and
-`AlertStandardController` re-renders the component when the default or the
-registry changes.
+`setAlertStandard()` (`configured-alert-standard.ts`) sets the one standard
+every component draws by; no component or alert names a standard. An
+application uses one standard, and importing only the one it sets keeps the
+other out of its bundle.
+
+- Nothing is set until the application sets it. Until then no alert is
+  drawn or listed, the lists, the menu and the page say "No alert standard
+  is set", and the console says once how to set one. Nothing throws, so an
+  application may set the standard after the elements connect.
+- `AlertStandardController` re-renders a component when the standard
+  changes, and reports the change in `changedProperties` under
+  `ALERT_STANDARD_CHANGE_KEY` so a list filters again.
+- A story sets its standard in `beforeEach` with
+  `drawStoryWithAlertStandard()`, which clears it after the story. Two
+  standards cannot meet in one story.
 
 ## The components
 
 - `obc-alert-icon-experimental` cross-fades the two frames of a glyph through
   `FlashingController`. It fills the box it sits in, like the stable
   `obc-alert-icon`: its host stays inline, and a spec pins it.
-- `obc-alert-menu-item-experimental` takes `standard`, `criticality` and
+- `obc-alert-menu-item-experimental` takes `criticality` and
   `state`, draws the icon itself, shows the first two offered actions as
   buttons and fires `action-click` with the action's id.
 - `obc-alert-list-experimental` filters its slotted items by `filterId` and
   owns their `hidden` attribute; a host that gives slotted items
   `display: block` adds `::slotted([hidden]) { display: none; }`.
-- `obc-alert-menu-experimental` has one tab per filter of its standard, and
+- `obc-alert-menu-experimental` has one tab per filter of the standard, and
   `obc-alert-list-page-small-experimental` one dropdown entry, opening on
   the first unless `filterId` is set. Both offer
   "ACK visible" only where `acknowledge` may apply to several alerts at once.

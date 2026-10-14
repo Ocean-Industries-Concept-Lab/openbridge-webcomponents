@@ -10,7 +10,7 @@ import {
   ALERT_ACTION_ID_APPLIED_BY_ACK_VISIBLE_BUTTON,
   ownEntryOf,
 } from '../../alert-system/alert-standard.js';
-import {AlertStandardController} from '../../alert-system/alert-standard-registry.js';
+import {AlertStandardController} from '../../alert-system/configured-alert-standard.js';
 import {
   isAlertActionOffered,
   isAlertIncludedInFilter,
@@ -46,7 +46,8 @@ export type ObcAlertListPageSmallExperimentalRowClickEvent = CustomEvent<{
  * silence button and "ACK visible".
  *
  * Works like `obc-alert-list-page-small`, with the filters and actions taken
- * from an alert standard (`alert-system/`).
+ * from the configured alert standard (`setAlertStandard()`, `alert-system/`).
+ * While no standard is set, the page lists no alert and says so.
  *
  * ### Features
  * - **Filters:** the dropdown offers the filters the standard declares, and
@@ -67,8 +68,7 @@ export type ObcAlertListPageSmallExperimentalRowClickEvent = CustomEvent<{
  * effect here: the standard decides the filters.
  *
  * @property filterId - The filter the dropdown shows when the page opens, and again whenever `filterId` is set; the standard's first filter when unset.
- * @property alerts - Alerts to list, each naming its own standard.
- * @property standard - The standard whose filters the dropdown offers and that decides whether "ACK visible" shows; the default standard (`setDefaultAlertStandard`) when unset.
+ * @property alerts - Alerts to list.
  * @fires {ObcAlertListPageSmallExperimentalAckAllClickEvent} ack-all-visible-click - Fired when the user clicks the "ACK visible" button, with the alerts in view and the chosen filter as `mode`.
  * @fires {ObcAlertListPageSmallExperimentalActionClickEvent} action-click - Fired when the user clicks the action button of a row, with the id of the action.
  * @fires {ObcAlertListPageSmallExperimentalRowClickEvent} row-click - Fired when the user clicks a row.
@@ -79,9 +79,8 @@ export type ObcAlertListPageSmallExperimentalRowClickEvent = CustomEvent<{
 export class ObcAlertListPageSmallExperimental extends ObcAlertListPageSmallBase {
   @property({type: String}) filterId?: string;
   @property({type: Array}) alerts: StandardAlert[] = [];
-  @property({type: String}) standard?: string;
 
-  private readonly standardController = new AlertStandardController(this);
+  private readonly alertStandardController = new AlertStandardController(this);
 
   @state() private filterIdChosenInDropdown?: string;
 
@@ -95,7 +94,7 @@ export class ObcAlertListPageSmallExperimental extends ObcAlertListPageSmallBase
   }
 
   private get filterIdsOfStandard(): string[] {
-    return Object.keys(this.standardController.standard?.filters ?? {});
+    return Object.keys(this.alertStandardController.standard?.filters ?? {});
   }
 
   private get filterIdTheListShows(): string | undefined {
@@ -103,7 +102,7 @@ export class ObcAlertListPageSmallExperimental extends ObcAlertListPageSmallBase
   }
 
   protected override get modes(): AlertListPageMode[] {
-    const filters = this.standardController.standard?.filters ?? {};
+    const filters = this.alertStandardController.standard?.filters ?? {};
     return Object.entries(filters).map(([filterId, filter]) => ({
       value: filterId,
       label: filter.label(),
@@ -121,7 +120,7 @@ export class ObcAlertListPageSmallExperimental extends ObcAlertListPageSmallBase
   protected override get offersAckAll(): boolean {
     return (
       ownEntryOf(
-        this.standardController.standard?.actions,
+        this.alertStandardController.standard?.actions,
         ALERT_ACTION_ID_APPLIED_BY_ACK_VISIBLE_BUTTON
       )?.canBeAppliedToSeveralAlertsAtOnce === true
     );
@@ -174,7 +173,6 @@ export class ObcAlertListPageSmallExperimental extends ObcAlertListPageSmallBase
       class="alert-list"
       .alerts=${this.alerts}
       .filterId=${this.filterIdTheListShows}
-      .standard=${this.standard}
       .columns=${this.columns}
       .showHeader=${false}
       @cell-click=${this.onCellClick}

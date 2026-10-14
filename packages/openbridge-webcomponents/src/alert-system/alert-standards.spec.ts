@@ -1,4 +1,4 @@
-import {afterEach, describe, expect, it} from 'vitest';
+import {afterEach, beforeEach, describe, expect, it} from 'vitest';
 import {html} from 'lit';
 import {
   defineAlertStandard,
@@ -6,11 +6,9 @@ import {
   type AlertStateDefinition,
 } from './alert-standard.js';
 import {
-  findAlertStandard,
-  getDefaultAlertStandardId,
-  registerAlertStandard,
-  setDefaultAlertStandard,
-} from './alert-standard-registry.js';
+  getAlertStandard,
+  setAlertStandard,
+} from './configured-alert-standard.js';
 import {iec62923AlertStandard} from './iec-62923-alert-standard.js';
 import {isa182AlertStandard} from './isa-18-2-alert-standard.js';
 import {
@@ -20,11 +18,11 @@ import {
   isAlertActionOffered,
   isAlertIncludedInFilter,
 } from './read-standard-alert.js';
-import type {StandardAlert} from './standard-alert.js';
+import type {StandardAlertOf} from './standard-alert.js';
 
-const BUILT_IN_STANDARDS: AlertStandard[] = [
-  iec62923AlertStandard,
-  isa182AlertStandard,
+const BUILT_IN_STANDARDS: {name: string; standard: AlertStandard}[] = [
+  {name: 'iec-62923', standard: iec62923AlertStandard},
+  {name: 'isa-18.2', standard: isa182AlertStandard},
 ];
 
 function everyStateDefinitionOf(
@@ -41,9 +39,9 @@ function everyStateDefinitionOf(
   );
 }
 
-afterEach(() => setDefaultAlertStandard('iec-62923'));
+afterEach(() => setAlertStandard(undefined));
 
-describe.each(BUILT_IN_STANDARDS)('the $id standard', (standard) => {
+describe.each(BUILT_IN_STANDARDS)('the $name standard', ({standard}) => {
   it('names only filters and actions it declares', () => {
     for (const [name, definition] of everyStateDefinitionOf(standard)) {
       for (const filterId of definition.includedInFilters ?? []) {
@@ -65,9 +63,10 @@ describe.each(BUILT_IN_STANDARDS)('the $id standard', (standard) => {
 });
 
 describe('iec-62923', () => {
+  beforeEach(() => setAlertStandard(iec62923AlertStandard));
+
   const rank = (criticality: string, state: string) =>
-    findAlertStateDefinition({standard: 'iec-62923', criticality, state})
-      ?.sortingRank;
+    findAlertStateDefinition({criticality, state})?.sortingRank;
 
   it('ranks its states in the display order of IEC 62923-1 6.4.2.1', () => {
     const ranksInDisplayOrder = [
@@ -95,9 +94,8 @@ describe('iec-62923', () => {
   });
 
   it('offers no acknowledge where acknowledging is not allowed, and shows a glyph instead', () => {
-    const alert: StandardAlert = {
+    const alert: StandardAlertOf<typeof iec62923AlertStandard> = {
       id: 'a',
-      standard: 'iec-62923',
       criticality: 'warning',
       state: 'active-unacknowledged-acknowledge-not-allowed',
     };
@@ -116,13 +114,11 @@ describe('iec-62923', () => {
 });
 
 describe('isa-18.2', () => {
+  beforeEach(() => setAlertStandard(isa182AlertStandard));
+
   it('lists shelved, suppressed and out-of-service alarms each in a filter of their own', () => {
     const filtersOf = (state: string) =>
-      findAlertStateDefinition({
-        standard: 'isa-18.2',
-        criticality: 'high',
-        state,
-      })?.includedInFilters;
+      findAlertStateDefinition({criticality: 'high', state})?.includedInFilters;
     expect([
       filtersOf('shelved'),
       filtersOf('suppressed-by-design'),
@@ -133,11 +129,8 @@ describe('isa-18.2', () => {
   it('holds an alarm steady once it is shelved, suppressed or out of service', () => {
     for (const state of ['shelved', 'suppressed-by-design', 'out-of-service']) {
       expect(
-        findAlertStateDefinition({
-          standard: 'isa-18.2',
-          criticality: 'critical',
-          state,
-        })?.flashingSpeed,
+        findAlertStateDefinition({criticality: 'critical', state})
+          ?.flashingSpeed,
         state
       ).toBeUndefined();
     }
@@ -145,15 +138,16 @@ describe('isa-18.2', () => {
 });
 
 describe('reading an alert', () => {
-  const unknownAlerts = [
-    {standard: 'not-registered', criticality: 'alarm', state: 'active'},
-    {standard: 'iec-62923', criticality: 'not-defined', state: 'active'},
-    {standard: 'iec-62923', criticality: 'caution', state: 'active-silenced'},
-    {standard: 'iec-62923', criticality: 'toString', state: 'toString'},
+  beforeEach(() => setAlertStandard(iec62923AlertStandard));
+
+  const alertsTheStandardDoesNotDefine = [
+    {criticality: 'not-defined', state: 'active'},
+    {criticality: 'caution', state: 'active-silenced'},
+    {criticality: 'toString', state: 'toString'},
   ];
 
-  it.each(unknownAlerts)(
-    'finds no state definition for $standard $criticality $state',
+  it.each(alertsTheStandardDoesNotDefine)(
+    'finds no state definition for $criticality $state',
     (alert) => {
       expect(findAlertStateDefinition(alert)).toBeUndefined();
       expect(isAlertIncludedInFilter(alert, 'active')).toBe(false);
@@ -162,39 +156,42 @@ describe('reading an alert', () => {
     }
   );
 
-  it('sorts by sorting rank across standards, an unknown alert last', () => {
+  it('sorts by sorting rank, an alert the standard does not define last', () => {
     const alerts = [
-      unknownAlerts[0],
-      {standard: 'iec-62923', criticality: 'caution', state: 'active'},
-      {standard: 'isa-18.2', criticality: 'critical', state: 'unacknowledged'},
-      {standard: 'iec-62923', criticality: 'emergency-alarm', state: 'active'},
-      {standard: 'isa-18.2', criticality: 'medium', state: 'unacknowledged'},
+      {criticality: 'not-defined', state: 'active'},
+      {criticality: 'caution', state: 'active'},
+      {criticality: 'emergency-alarm', state: 'active'},
+      {criticality: 'warning', state: 'active-unacknowledged'},
     ];
     expect(
       [...alerts]
         .sort(compareAlertsBySortingRank)
-        .map(({standard, criticality}) => `${standard} ${criticality}`)
-    ).toEqual([
-      'iec-62923 emergency-alarm',
-      'isa-18.2 critical',
-      'isa-18.2 medium',
-      'iec-62923 caution',
-      'not-registered alarm',
-    ]);
+        .map((alert) => alert.criticality)
+    ).toEqual(['emergency-alarm', 'warning', 'caution', 'not-defined']);
   });
 
-  it('labels an action as its standard does, and an unknown one by its id', () => {
+  it('labels an action as the standard does, and an unknown one by its id', () => {
+    setAlertStandard(isa182AlertStandard);
     expect([
-      alertActionLabel('isa-18.2', 'shelve'),
-      alertActionLabel('isa-18.2', 'not-declared'),
+      alertActionLabel('shelve'),
+      alertActionLabel('not-declared'),
     ]).toEqual(['Shelve', 'not-declared']);
   });
 });
 
-describe('the registry', () => {
-  it('takes a standard with one criticality, one state and nothing else', () => {
+describe('while no alert standard is set', () => {
+  const alert = {criticality: 'alarm', state: 'active-unacknowledged'};
+
+  it('finds no state definition and lists no alert, not even without a filter', () => {
+    expect(getAlertStandard()).toBeUndefined();
+    expect(findAlertStateDefinition(alert)).toBeUndefined();
+    expect(isAlertIncludedInFilter(alert, undefined)).toBe(false);
+  });
+});
+
+describe('a standard defined outside the library', () => {
+  it('takes one criticality, one state and nothing else', () => {
     const minimalStandard = defineAlertStandard({
-      id: 'minimal-spec-standard',
       filters: {},
       actions: {},
       criticalities: {
@@ -205,21 +202,11 @@ describe('the registry', () => {
         },
       },
     });
-    registerAlertStandard(minimalStandard);
+    setAlertStandard(minimalStandard);
 
-    expect(findAlertStandard('minimal-spec-standard')).toBe(minimalStandard);
     expect(
-      findAlertStateDefinition({
-        standard: 'minimal-spec-standard',
-        criticality: 'fault',
-        state: 'present',
-      })?.sortingRank
+      findAlertStateDefinition({criticality: 'fault', state: 'present'})
+        ?.sortingRank
     ).toBe(1);
-  });
-
-  it('follows iec-62923 until another default is set', () => {
-    expect(getDefaultAlertStandardId()).toBe('iec-62923');
-    setDefaultAlertStandard('isa-18.2');
-    expect(getDefaultAlertStandardId()).toBe('isa-18.2');
   });
 });

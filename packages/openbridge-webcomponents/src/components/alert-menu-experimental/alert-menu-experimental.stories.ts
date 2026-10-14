@@ -12,7 +12,9 @@ import {ALERT_ACTION_ID_APPLIED_BY_ACK_VISIBLE_BUTTON} from '../../alert-system/
 import {
   alertMenuItem,
   alertsInEveryKindOfState,
+  alertsInEveryKindOfStateOfTheConfiguredStandard,
   applyActionToMenuItem,
+  drawStoryWithAlertStandard,
   type StoryAlert,
 } from '../../storybook-util.js';
 
@@ -38,30 +40,20 @@ const meta: Meta<ObcAlertMenuExperimental> = {
   title: 'Application Components/Alerts/Alert Menu Experimental',
   tags: ['6.0', 'experimental'],
   component: 'obc-alert-menu-experimental',
+  beforeEach: drawStoryWithAlertStandard('iec-62923'),
   args: {
     canAckAll: true,
     showSilenceButton: true,
     showAlertListButton: true,
   },
-  argTypes: {
-    standard: {
-      control: {type: 'select'},
-      options: ['iec-62923', 'isa-18.2'],
-    },
-  },
   render: (args) =>
     html`<obc-alert-menu-experimental
-      .standard=${args.standard}
       .canAckAll=${args.canAckAll}
       .showSilenceButton=${args.showSilenceButton}
       .showAlertListButton=${args.showAlertListButton}
       @ack-all-visible-click=${acknowledgeVisibleItems}
     >
-      ${renderItems(
-        alertsInEveryKindOfState(
-          args.standard === 'isa-18.2' ? 'isa-18.2' : 'iec-62923'
-        )
-      )}
+      ${renderItems(alertsInEveryKindOfStateOfTheConfiguredStandard())}
     </obc-alert-menu-experimental>`,
 };
 
@@ -71,12 +63,12 @@ type Story = StoryObj<ObcAlertMenuExperimental>;
 export const Regular: Story = {};
 
 export const Automation: Story = {
-  args: {standard: 'isa-18.2'},
+  beforeEach: drawStoryWithAlertStandard('isa-18.2'),
   parameters: {
     docs: {
       description: {
         story:
-          'ISA-18.2 declares five filters, so the menu has five tabs, and it lets several alarms be acknowledged at once, so the menu offers ACK visible. Under IEC 62923, the default, it does not: MSC.302 9.9 asks for one alarm at a time.',
+          'ISA-18.2 declares five filters, so the menu has five tabs, and it lets several alarms be acknowledged at once, so the menu offers ACK visible. Under IEC 62923, as in the other stories, it does not: MSC.302 9.9 asks for one alarm at a time.',
       },
     },
   },
@@ -90,6 +82,7 @@ export const Empty: Story = {
 const ISA_18_2_FILTER_COUNT = 5;
 
 export const Tabs: Story = {
+  beforeEach: drawStoryWithAlertStandard('isa-18.2'),
   parameters: {
     docs: {
       description: {
@@ -115,7 +108,6 @@ export const Tabs: Story = {
           {length: ISA_18_2_FILTER_COUNT},
           () =>
             html`<obc-alert-menu-experimental
-              standard="isa-18.2"
               canAckAll
               .showSilenceButton=${false}
               .showAlertListButton=${false}
@@ -135,5 +127,17 @@ export const Tabs: Story = {
       card.shadowRoot!.querySelector<HTMLElement>(`#tab-${index}`)!.click();
       await menu.updateComplete;
     }
+  },
+};
+
+export const NoAlertStandard: Story = {
+  beforeEach: drawStoryWithAlertStandard(undefined),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Until the application calls `setAlertStandard()`, the menu has one tab, shows none of its items and says that no alert standard is set. The console says how to set one.',
+      },
+    },
   },
 };
