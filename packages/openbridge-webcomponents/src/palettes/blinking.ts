@@ -1,20 +1,21 @@
 import {FlashingSpeed, type FlashTempo} from '../types.js';
 
-/** Shared on phase: every tempo lights up for the first 400 ms of its cycle. */
-export const FLASH_ON_MS: Record<FlashTempo, number> = {
-  [FlashingSpeed.Fast]: 400,
-  [FlashingSpeed.Slow]: 400,
-  [FlashingSpeed.VerySlow]: 400,
-};
-
 /**
- * The off phase carries the tempo. The cycles (800/1600/3200 ms) nest, so
- * every tempo lights up together at the start of the longest one (#1224).
+ * The on phase carries the tempo, so a flashing alert stays coloured for most
+ * of its cycle. The cycles (800/1600/3200 ms) nest, so every tempo lights up
+ * together at the start of the longest one and goes off with it (#1367).
  */
-export const FLASH_OFF_MS: Record<FlashTempo, number> = {
+export const FLASH_ON_MS: Record<FlashTempo, number> = {
   [FlashingSpeed.Fast]: 400,
   [FlashingSpeed.Slow]: 1200,
   [FlashingSpeed.VerySlow]: 2800,
+};
+
+/** Shared off phase: every tempo goes off for the last 400 ms of its cycle. */
+export const FLASH_OFF_MS: Record<FlashTempo, number> = {
+  [FlashingSpeed.Fast]: 400,
+  [FlashingSpeed.Slow]: 400,
+  [FlashingSpeed.VerySlow]: 400,
 };
 
 export const FLASH_TEMPOS: readonly FlashTempo[] = [
