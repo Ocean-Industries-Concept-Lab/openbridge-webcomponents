@@ -11,6 +11,10 @@
  * - Shelved, suppressed-by-design and out-of-service alarms each have a
  *   filter of their own (ISA-18.2 11.2.4), and do not flash.
  * - Several alarms may be acknowledged at once.
+ *
+ * ISA-18.2 is published by the International Society of Automation, which
+ * is not affiliated with this project and has not endorsed it; supporting
+ * the standard's states implies no certification.
  */
 import {html} from 'lit';
 import {msg} from '@lit/localize';

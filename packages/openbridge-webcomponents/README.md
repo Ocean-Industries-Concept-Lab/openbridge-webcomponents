@@ -345,6 +345,32 @@ From an installed package the same file lives at
 `node_modules/@oicl/openbridge-webcomponents/bundle/openbridge-webcomponents.bundle.js`.
 See [Hello World](#-hello-world) for a complete page built on it.
 
+### Alert Standards (Experimental)
+
+The experimental alert components (`obc-alert-icon-experimental`,
+`obc-alert-menu-item-experimental`, `obc-alert-list-experimental`,
+`obc-alert-menu-experimental`, `obc-alert-list-details-experimental` and
+`obc-alert-list-page-small-experimental`) draw, sort and filter alerts by one
+alert standard, which the application sets once:
+
+```javascript
+import {setAlertStandard} from '@oicl/openbridge-webcomponents/dist/alert-system/configured-alert-standard.js';
+import {iec62923AlertStandard} from '@oicl/openbridge-webcomponents/dist/alert-system/iec-62923-alert-standard.js';
+
+setAlertStandard(iec62923AlertStandard);
+```
+
+`iec62923AlertStandard` supports the alert states of IEC 62923 and IMO
+MSC.302, and `isa182AlertStandard` those of ANSI/ISA-18.2 and IEC 62682;
+`defineAlertStandard()` writes a standard of your own. Until a standard is
+set, the components draw no alert.
+
+IEC 62923 and IEC 62682 are published by the International Electrotechnical
+Commission, and ISA-18.2 by the International Society of Automation. This
+project is not affiliated with or endorsed by either organisation, and
+support for a standard's alert states does not imply that an application
+built with these components is certified or compliant.
+
 ## 📦 Framework Wrappers
 
 For the best experience in your framework of choice, use our auto-generated wrappers:

@@ -60,6 +60,12 @@ several alerts).
 - ISA-18.2 follows Figure 3 of the standard: shelved, suppressed by design
   and out of service are states, each with a filter of its own (11.2.4), and
   none of them flashes.
+- A standard's name is used to say what the states follow, never more:
+  "supports the alert states of ANSI/ISA-18.2", not "compliant" or
+  "certified". The library is not affiliated with or endorsed by a
+  standard's publisher, and the package README says so. The standard's own
+  text is copyrighted: describe its states in your own words, and paste no
+  definition, table or figure from it.
 
 ## Adding a standard
 
