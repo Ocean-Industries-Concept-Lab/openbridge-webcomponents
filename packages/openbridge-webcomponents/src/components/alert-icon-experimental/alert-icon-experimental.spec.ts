@@ -101,6 +101,19 @@ describe('obc-alert-icon-experimental', () => {
     expect([width, height]).toEqual([24, 24]);
   });
 
+  it('redraws on reconnect when the standard changed while it was detached', async () => {
+    const el = await setup({
+      criticality: 'alarm',
+      state: 'active-unacknowledged',
+    });
+    const parent = el.parentElement!;
+    el.remove();
+    setAlertStandard(isa182AlertStandard);
+    parent.append(el);
+    await el.updateComplete;
+    expect(el.shadowRoot!.querySelector('.wrapper')).toBeNull();
+  });
+
   it('draws nothing while no standard is set, and redraws once one is', async () => {
     setAlertStandard(undefined);
     const el = await setup({criticality: 'critical', state: 'unacknowledged'});

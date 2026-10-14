@@ -57,10 +57,14 @@ function reportMissingAlertStandardOnce() {
 export const ALERT_STANDARD_CHANGE_KEY = 'alertStandard';
 
 /**
- * Re-renders its host when the configured alert standard changes, and
- * reports a missing one in the console.
+ * Re-renders its host when the configured alert standard changes, also one
+ * that was disconnected while it changed, and reports a missing one in the
+ * console.
  */
 export class AlertStandardController implements ReactiveController {
+  /** What the host last rendered by, so a reconnect can tell whether it is stale. */
+  private alertStandardAtLastUpdate: AlertStandard | undefined;
+
   private readonly requestHostUpdateWithPreviousAlertStandard = (
     previousAlertStandard: AlertStandard | undefined
   ) =>
@@ -80,6 +84,14 @@ export class AlertStandardController implements ReactiveController {
     listenersToAlertStandardChanges.add(
       this.requestHostUpdateWithPreviousAlertStandard
     );
+    if (
+      this.host.hasUpdated &&
+      configuredAlertStandard !== this.alertStandardAtLastUpdate
+    ) {
+      this.requestHostUpdateWithPreviousAlertStandard(
+        this.alertStandardAtLastUpdate
+      );
+    }
   }
 
   hostDisconnected() {
@@ -89,6 +101,7 @@ export class AlertStandardController implements ReactiveController {
   }
 
   hostUpdate() {
+    this.alertStandardAtLastUpdate = configuredAlertStandard;
     if (configuredAlertStandard === undefined) {
       reportMissingAlertStandardOnce();
     }

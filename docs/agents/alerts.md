@@ -95,15 +95,17 @@ the stories stand in for it with `alert-system/stories/state-after-action.ts`.
 `setAlertStandard()` (`configured-alert-standard.ts`) sets the one standard
 every component draws by; no component or alert names a standard. An
 application uses one standard, and importing only the one it sets keeps the
-other out of its bundle.
+other out of its bundle: the alarm and warning glyphs ISA-18.2 borrows live
+in `iec-62923-alert-glyphs.ts`, apart from the IEC 62923 standard.
 
 - Nothing is set until the application sets it. Until then no alert is
   drawn or listed, the lists, the menu and the page say "No alert standard
   is set", and the console says once how to set one. Nothing throws, so an
   application may set the standard after the elements connect.
 - `AlertStandardController` re-renders a component when the standard
-  changes, and reports the change in `changedProperties` under
-  `ALERT_STANDARD_CHANGE_KEY` so a list filters again.
+  changes, also one that was disconnected while it changed, and reports the
+  change in `changedProperties` under `ALERT_STANDARD_CHANGE_KEY` so a list
+  filters again.
 - A story sets its standard with the call an application makes,
   `beforeEach: () => setAlertStandard(iec62923AlertStandard)`; the global
   `beforeEach` in `.storybook/preview.tsx` clears it first. Two standards
