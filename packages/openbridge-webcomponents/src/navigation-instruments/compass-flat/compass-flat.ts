@@ -118,7 +118,7 @@ export class ObcCompassFlat extends LitElement {
    * @deprecated Use `rateOfTurnDegreesPerMinute` instead.
    * @availableWhen rotType!=undefined
    */
-  @property({type: Number}) rotationsPerMinute: number = 1;
+  @property({type: Number}) rotationsPerMinute: number = 0;
   @property({type: Number}) rotMaxValue: number = 60;
   @property({type: Number}) rotArcExtent: number = 60;
   @property({type: Boolean}) rotPortStarboard: boolean = false;
