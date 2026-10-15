@@ -241,7 +241,7 @@ its button as an event. The consumer side is three bindings, and the
   as events (`obc-top-bar`, `obc-integration-bar`) needs no binding: the
   consumer flips a flag of its own from the event, binds it to `open` and
   resets it on `close`. Toggling the panel's own `open` from that event gets
-  out of step, since the browser has already written it back to `false`;
+  out of step, since the controller has already mirrored the close into `open`;
   `popover-controller.spec.ts` pins the flag wiring against the integration
   bar, and `vue-demo`'s `window-handling.ts` is the app-side shape.
 - The click outside is swallowed. The controller keeps a transparent cover
