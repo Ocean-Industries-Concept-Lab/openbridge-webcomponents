@@ -25,7 +25,7 @@ svg {
 }
 
 :host([value="regular"]) .cylinder {
-  fill: var(--automation-device-secondary-color);
+  fill: var(--automation-symbol-static-background-color);
   stroke: var(--element-neutral-color);
 }
 

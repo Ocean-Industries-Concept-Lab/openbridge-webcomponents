@@ -3,8 +3,10 @@ import {property} from 'lit/decorators.js';
 import {
   VesselImage,
   VesselImageSize,
-  vesselImages,
+  vesselArt,
+  renderVesselArt,
   type WatchVessel,
+  type VesselImageSrc,
 } from '../watch/watch.js';
 import {customElement} from '../../decorator.js';
 import {
@@ -37,6 +39,9 @@ export enum ObcRollType {
  * @property fractionDigits - Number of fraction digits shown in the readout. Default `0`.
  * @property type - `single-scale` shows one arc at the bottom (default); `dual-scale` also
  *   shows the scale on the top arc (the indicator's opposite end).
+ * @property vesselImageForeSrc - Image URLs per palette (`{bright, day, dusk, night}`, SVG, PNG or data URLs)
+ *   drawn instead of `vesselImageFore` in the same 160 × 160 box. A palette without a URL falls
+ *   back to the nearest one (see `VesselImageSrc`).
  * @stable
  */
 @customElement('obc-roll')
@@ -45,6 +50,8 @@ export class ObcRoll extends SingleAxisInclinometer {
   @property({type: Number}) minAvgRoll = 0;
   @property({type: Number}) maxAvgRoll = 0;
   @property({type: String}) vesselImageFore: VesselImage = VesselImage.psvFore;
+  @property({type: Object, attribute: false})
+  vesselImageForeSrc: VesselImageSrc | undefined;
   @property({type: Number}) scaleForeImage = 1;
   @property({type: Number}) maxRollAdvice: number | undefined = undefined;
   @property({type: Boolean}) triggerRollAdvice = false;
@@ -88,7 +95,7 @@ export class ObcRoll extends SingleAxisInclinometer {
     return [
       {
         size: VesselImageSize.large,
-        vesselImage: this.vesselImageFore,
+        ...vesselArt(this.vesselImageFore, this.vesselImageForeSrc),
         transform: `rotate(${this.roll}deg) scale(${this.normalizedScaleForeImage})`,
       },
     ];
@@ -116,7 +123,7 @@ export class ObcRoll extends SingleAxisInclinometer {
       <g
         style="transform: rotate(${this.roll}deg) scale(${vesselScale * this.normalizedScaleForeImage}) translate(-80px, -80px);"
       >
-        ${this.zoomToFitArc ? vesselImages[this.vesselImageFore] : nothing}
+        ${this.zoomToFitArc ? renderVesselArt(vesselArt(this.vesselImageFore, this.vesselImageForeSrc), this.palette.current) : nothing}
       </g>
     `;
   }

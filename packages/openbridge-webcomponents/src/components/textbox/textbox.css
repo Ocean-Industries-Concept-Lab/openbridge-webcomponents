@@ -10,24 +10,18 @@
   --height: 24px;
   --padding: 4px;
   font-family: var(--font-family-main);
-  letter-spacing: var(--global-typography-generic-l-letter-spacing);
+  letter-spacing: var(--global-typography-general-l-letter-spacing);
 }
 
-/* The inner-wrapper is the box: its height (--height) is the full textbox
-   height, padding included. The content is sized to the cap height and
-   vertically centered, which leaves the padding as equal space above and
-   below. In engines that support text-box-trim the content box collapses to
-   the cap height exactly; in Firefox (no text-box-trim) the content keeps its
-   natural line box, so align-items:center + overflow:hidden crops it to the
-   same height instead. No padding here – the centering provides it.
-   (A small top padding could be added later to nudge the text up in Firefox.) */
+/* The box, never clipped: descenders and diacritics paint past its edges. The
+   centred content leaves equal padding above and below; without text-box-trim
+   the host's zero line-height keeps it centred to within about a pixel. */
 .inner-wrapper {
   box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: var(--alignment-justify, flex-end);
   height: var(--height);
-  overflow: hidden;
   /* Opt-in: animate a `size` change (height + font-size below). Defaults to 0s
      (instant, current behavior) so existing usages and snapshots are unchanged;
      a consumer sets `--obc-textbox-size-transition` (e.g. 300ms) to animate the
@@ -88,15 +82,15 @@
 }
 
 .wrapper.font-weight-regular {
-  font-weight: var(--global-typography-generic-l-font-weight-regular);
+  font-weight: var(--global-typography-general-l-font-weight-regular);
 }
 
 .wrapper.font-weight-semibold {
-  font-weight: var(--global-typography-generic-l-font-weight-medium);
+  font-weight: var(--global-typography-general-l-font-weight-medium);
 }
 
 .wrapper.font-weight-bold {
-  font-weight: var(--global-typography-generic-l-font-weight-bold);
+  font-weight: var(--global-typography-general-l-font-weight-bold);
 }
 
 .wrapper.alignment-left {

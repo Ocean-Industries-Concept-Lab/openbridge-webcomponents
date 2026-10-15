@@ -2,7 +2,10 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcSpeedDirections} from './speed-directions.js';
 import './speed-directions.js';
 import {widthDecorator} from '../../storybook-util.js';
-import {topVessels} from '../watch/vessels/storybook-helper.js';
+import {
+  customVesselSvgSrc,
+  topVessels,
+} from '../watch/vessels/storybook-helper.js';
 import {VesselImage} from '../watch/vessel.js';
 import {
   SpeedDirectionsType,
@@ -164,5 +167,14 @@ export const BarsMaxClamped: Story = {
     speedAlongKnots: 25,
     speedAthwartBowKnots: 5,
     speedAthwartSternKnots: -5,
+  },
+};
+
+export const WithCustomVesselImage: Story = {
+  args: {
+    vesselImageSrc: customVesselSvgSrc,
+    speedAlongKnots: 4.2,
+    speedAthwartBowKnots: 0.8,
+    speedAthwartSternKnots: -0.6,
   },
 };

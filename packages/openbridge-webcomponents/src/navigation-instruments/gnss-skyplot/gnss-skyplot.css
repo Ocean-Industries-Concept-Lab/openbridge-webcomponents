@@ -75,12 +75,12 @@
 }
 
 .marker-id {
-  @mixin font-generic-beta-xs-semibold;
+  @mixin font-general-xs-semibold;
   /* The number holds its on-screen size as the instrument scales, like a tick
      label — but only while three digits still fit the disc. Past that it
      shrinks with the marker instead of spilling over it. */
   font-size: min(
-    calc(var(--global-typography-generic-xs-font-size) / var(--scale, 1)),
+    calc(var(--global-typography-general-xs-font-size) / var(--scale, 1)),
     13px
   );
   /* Lining, tabular figures keep two- and three-digit numbers centred alike. */
@@ -120,6 +120,6 @@
 }
 
 .legend-label {
-  @mixin font-generic-beta-xs-regular;
+  @mixin font-general-xs-regular;
   color: var(--element-neutral-color);
 }

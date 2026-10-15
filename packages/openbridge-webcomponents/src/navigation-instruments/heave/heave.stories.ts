@@ -3,7 +3,10 @@ import {ObcHeave, ObcHeaveType} from './heave.js';
 import './heave.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {VesselImage} from '../watch/watch.js';
-import {foreVessels} from '../watch/vessels/storybook-helper.js';
+import {
+  customVesselForeSvgSrc,
+  foreVessels,
+} from '../watch/vessels/storybook-helper.js';
 import {AdviceType} from '../watch/advice.js';
 import {Priority} from '../types.js';
 
@@ -83,5 +86,11 @@ export const BarAdvice: Story = {
       {min: -10, max: -2, type: AdviceType.caution, hinted: true},
       {min: 2, max: 10, type: AdviceType.caution, hinted: true},
     ],
+  },
+};
+
+export const WithCustomVesselImage: Story = {
+  args: {
+    vesselImageSrc: customVesselForeSvgSrc,
   },
 };

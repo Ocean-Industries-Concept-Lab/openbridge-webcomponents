@@ -14,9 +14,9 @@ export class ObiConnectorComingFrom extends LitElement {
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M10.6667 11.5L14 9V15L10.6667 12.5H9.16667V11.5H10.6667Z" style="fill: var(--automation-device-tertiary-color)"/>
-<path d="M0 12.5H1.83333V11.5H0V12.5Z" style="fill: var(--automation-device-tertiary-color)"/>
-<path d="M3.66667 12.5H7.33333V11.5H3.66667V12.5Z" style="fill: var(--automation-device-tertiary-color)"/>
+<path d="M10.6667 11.5L14 9V15L10.6667 12.5H9.16667V11.5H10.6667Z" style="fill: var(--automation-symbol-on-border-color)"/>
+<path d="M0 12.5H1.83333V11.5H0V12.5Z" style="fill: var(--automation-symbol-on-border-color)"/>
+<path d="M3.66667 12.5H7.33333V11.5H3.66667V12.5Z" style="fill: var(--automation-symbol-on-border-color)"/>
 </svg>
 `;
 

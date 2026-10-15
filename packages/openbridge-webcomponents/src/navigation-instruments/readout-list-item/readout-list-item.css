@@ -116,7 +116,8 @@ obc-readout-block {
   gap: var(--global-size-spacing-target-padding);
   flex: 1 1 auto;
   min-inline-size: 0;
-  overflow: clip;
+  overflow-x: clip;
+  overflow-y: visible; /* a label's descenders and diacritics paint past its cap-to-baseline box */
   /* a leading-src chip's 1px outline is drawn outside its box at the container edge */
   overflow-clip-margin: 1px;
 }

@@ -8,6 +8,7 @@ import {
   ObcAlertMenuItemActionState,
   ObcAlertMenuItemStatus,
 } from './alert-menu-item.js';
+import {AlertType} from '../../types.js';
 
 const meta: Meta<ObcAlertMenuItem> = {
   title: 'Application Components/Alerts/Alert Menu Item',
@@ -125,6 +126,27 @@ export const NoAckWarning: Story = {
   args: {
     status: ObcAlertMenuItemStatus.NoAckWarning,
   },
+};
+
+export const RectifiedUnacknowledged: Story = {
+  args: {
+    status: ObcAlertMenuItemStatus.RectifiedUnacknowledged,
+  },
+  render: (args) => html`
+    <obc-alert-menu-item
+      .title=${args.title}
+      .description=${args.description}
+      .time=${args.time}
+      .status=${args.status}
+      .primaryActionState=${args.primaryActionState}
+    >
+      <obc-alert-icon
+        slot="alert-icon"
+        .alertType=${AlertType.Alarm}
+        .active=${false}
+      ></obc-alert-icon>
+    </obc-alert-menu-item>
+  `,
 };
 
 export const WithSecondaryAction: Story = {

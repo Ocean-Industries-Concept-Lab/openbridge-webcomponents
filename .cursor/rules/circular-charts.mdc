@@ -50,7 +50,7 @@ When working with circular chart components in this directory:
      - State with `@state()`
      - Canvas with `@query('canvas')`
      - Chart instance as `private chart?: Chart`
-     - Observers as `private themeObserver?: MutationObserver` and `private resizeObserver?: ResizeObserver`; the latter comes from `observeLabelThreshold()` in `charthelpers/label-threshold.ts` (rebuild on a label-threshold crossing, update in place otherwise). The chart supplies only its threshold test; never hand-roll that observer
+     - Observers as `private themeObserver?: MutationObserver` and `private resizeObserver?: ResizeObserver`; the latter comes from `observeLabelThreshold()` in `charthelpers/label-threshold.ts` (rebuild on a label-threshold crossing or when the canvas first gets a size, update in place otherwise). The chart supplies only its threshold test; never hand-roll that observer
 
 5. **Component Lifecycle**:
    - `willUpdate()` is useful for calculating derived state (e.g., totals, percentages)
@@ -98,7 +98,7 @@ When working with chart helper utilities:
      - `constants.ts`: Chart dimensions, padding, color defaults, label configs
      - `colors.ts`: CSS variable reading, color resolution
      - `theme.ts`: Theme change observation
-     - `label-threshold.ts`: the resize observer that tells a threshold crossing (rebuild) from any other resize (update)
+     - `label-threshold.ts`: the resize observer that tells a threshold crossing or a first size (rebuild) from any other resize (update)
    - `index.ts` exports helpers for convenient importing
    - Consider organizing new helpers in separate files with clear responsibilities
    - Export new helpers from `index.ts` for consistency
