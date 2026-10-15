@@ -201,6 +201,8 @@ export class ObcStartStopSwitch extends LitElement {
       e.preventDefault();
     }
     this.dragCurrentX = clientX;
+    // clientX is viewport px; the thumb's `left`/`right` are CSS px, which an
+    // ancestor `zoom` scales again, so the delta is divided by that zoom.
     this.dragOffset =
       (this.dragCurrentX - this.dragStartX) / (this.currentCSSZoom ?? 1);
     const percent = Math.abs(

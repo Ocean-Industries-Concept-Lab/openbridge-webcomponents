@@ -194,6 +194,17 @@ centred number input sizes itself with `field-sizing: content`, and where
 that is unsupported it fills the field, reading right-aligned rather than
 pushing the value out of a narrow box.
 
+## Pointer drags
+
+`obc-start-stop-switch` and `obc-slide-button` move their thumb by the
+`clientX` delta of the pointer, which is viewport px, and position it with a
+CSS `left`/`right`, which an ancestor `zoom` scales again. The delta is
+divided by `currentCSSZoom` and the track and thumb are measured with
+`offsetWidth`, never `getBoundingClientRect()` (zoom-scaled), so offset,
+widths, clamp and threshold share one coordinate space (#1371; both specs
+drag at zoom 1, 1.687 and 0.75). `obc-slider` takes a ratio of two rect
+values and needs no conversion.
+
 ## Checkbox lists
 
 `obc-checkbox-item` rows are flat; depth is the numeric `level` (0 plain, 1
