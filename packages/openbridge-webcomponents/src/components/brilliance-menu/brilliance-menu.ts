@@ -130,8 +130,8 @@ const PALETTE_TAB_ID = 'palette';
  * @property brightnessInputVariant - The variant of the brightness input.
  * @property showScreenControlLink - If true, displays the screen control link.
  * @property showAdditionalScreenControls - If true, displays the additional screen controls slot.
- * @property softDismiss - Let the browser close this menu on its own: on a click outside it, on `Escape`, or when another menu opens. Leave it off to keep showing and hiding the menu yourself.
- * @property open - Whether the menu is showing.
+ * @property softDismiss - Lets the menu close itself: a click outside it, `Escape`, or another menu opening closes it, and the closing click does nothing else. Wire it with three bindings: set `softDismiss`, bind `open` to a flag you keep, and reset that flag on `close`. The button that opens the menu needs no wiring of its own: flip the flag from its click, or from the button event of `obc-top-bar` or `obc-integration-bar`. The user menu's *Soft Dismiss From A Bar Button* story shows that wiring, the brilliance menu's *Soft Dismiss* story the one for a button you hold yourself (`bindPopoverTrigger`), and the vue demo runs its top bar this way. Leave it off to show and hide the menu yourself.
+ * @property open - Whether the menu is showing. Bind it to a flag you keep rather than toggling it from the menu's own value: when the menu closes itself, `open` is written back to `false` before the button's click reaches your handler, so `menu.open = !menu.open` gets out of step. Reset the flag on `close`.
  * @availableWhen open softDismiss==true
  * @slot additional-screen-controls - Consumer-defined controls, placed after the screen control link; rendered when `showAdditionalScreenControls` is true
  * @fires {ObcPaletteChangeEvent} palette-changed - When the palette is changed
@@ -139,7 +139,7 @@ const PALETTE_TAB_ID = 'palette';
  * @fires {ObcLinkPaletteChangeEvent} link-palette-changed - When the link palette toggle is changed
  * @fires {ObcLinkBrightnessChangeEvent} link-brightness-changed - When the link brightness toggle is changed
  * @fires {CustomEvent} screen-control-link-clicked - When the screen control link is clicked
- * @fires {CustomEvent<void>} close - Fired when the menu closed on its own, from a click outside, `Escape`, or another menu opening. `open` is already `false` by the time it arrives.
+ * @fires {CustomEvent<void>} close - Fired when the menu closed on its own, from a click outside, `Escape`, or another menu opening. `open` is already `false` by the time it arrives; reset the flag you bind to `open` here, or the next click on the button finds it still set and asks a closed menu to close.
  */
 @localized()
 /**

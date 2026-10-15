@@ -87,8 +87,8 @@ export type ObcCommandMenuChangeEvent = CustomEvent<{inCommand: boolean}>;
  *   Controls the toggle and visual state.
  * @property showLocation - Whether to display the location slot.
  *   If false, the location is omitted from the menu.
- * @property softDismiss - Let the browser close this menu on its own: on a click outside it, on `Escape`, or when another menu opens. Leave it off to keep showing and hiding the menu yourself.
- * @property open - Whether the menu is showing.
+ * @property softDismiss - Lets the menu close itself: a click outside it, `Escape`, or another menu opening closes it, and the closing click does nothing else. Wire it with three bindings: set `softDismiss`, bind `open` to a flag you keep, and reset that flag on `close`. The button that opens the menu needs no wiring of its own: flip the flag from its click, or from the button event of `obc-top-bar` or `obc-integration-bar`. The user menu's *Soft Dismiss From A Bar Button* story shows that wiring, the brilliance menu's *Soft Dismiss* story the one for a button you hold yourself (`bindPopoverTrigger`), and the vue demo runs its top bar this way. Leave it off to show and hide the menu yourself.
+ * @property open - Whether the menu is showing. Bind it to a flag you keep rather than toggling it from the menu's own value: when the menu closes itself, `open` is written back to `false` before the button's click reaches your handler, so `menu.open = !menu.open` gets out of step. Reset the flag on `close`.
  * @availableWhen open softDismiss==true
  * @slot command-icon - Main icon representing the current command state.
  * @slot command-status - Status label (e.g., "Joystick", "NO CMD").
@@ -100,7 +100,7 @@ export type ObcCommandMenuChangeEvent = CustomEvent<{inCommand: boolean}>;
  * @slot toogle-state-no-command-label - Status label when in "no command" state.
  * @slot toogle-state-in-command-icon - Icon for the "in command" state (defaults to `<obi-command-in>`).
  * @fires {CustomEvent<{inCommand: boolean}>} change - Fired when the command state is toggled.
- * @fires {CustomEvent<void>} close - Fired when the menu closed on its own, from a click outside, `Escape`, or another menu opening. `open` is already `false` by the time it arrives.
+ * @fires {CustomEvent<void>} close - Fired when the menu closed on its own, from a click outside, `Escape`, or another menu opening. `open` is already `false` by the time it arrives; reset the flag you bind to `open` here, or the next click on the button finds it still set and asks a closed menu to close.
  * @beta
  */
 @customElement('obc-command-menu')
