@@ -17,6 +17,7 @@ import {
   kebabToUpperCamelCase,
   writeUnresolvedFigmaVariablesReport,
 } from './convert-icons.js';
+import {planRenamedIconAliases, renamedIconAlias} from './icon-aliases.js';
 
 dotenv.config();
 
@@ -354,6 +355,17 @@ declare global {
     fileImport.push(`import './icon-${name}.js';`);
 
     scriptMapping.push(`'${icon.name}': ['${icon.categories.join("', '")}']`);
+  }
+
+  const aliases = planRenamedIconAliases(
+    icons.map((icon) => icon.name.toLowerCase())
+  );
+  for (const {oldName, currentName} of aliases) {
+    fs.writeFileSync(
+      `./src/icons/icon-${oldName}.ts`,
+      renamedIconAlias(oldName, currentName)
+    );
+    fileImport.push(`import './icon-${oldName}.js';`);
   }
 
   // write script

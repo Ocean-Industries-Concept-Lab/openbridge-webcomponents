@@ -1,6 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcUserMenu, ObcUserMenuSize, ObcUserMenuType} from './user-menu.js';
 import './user-menu.js';
+import '../../integration-systems/integration-bar/integration-bar.js';
 import {html} from 'lit';
 import {withActions} from 'storybook/actions/decorator';
 
@@ -244,5 +245,72 @@ export const SignInWithoutRecentUsers: Story = {
     size: ObcUserMenuSize.small,
     hasRecentlySignedIn: true,
     recentUsers: [],
+  },
+};
+
+/**
+ * A menu opened from a bar's own button, the way `obc-top-bar` and
+ * `obc-integration-bar` report theirs: as an event, with no button element to
+ * hand. Three bindings do it (#1293):
+ *
+ * - `softDismiss` on the menu;
+ * - `open` bound to a flag the app keeps, flipped from the bar's
+ *   `user-button-clicked` event; the same flag drives `userButtonActivated`;
+ * - `close` resets that flag, so the button stops looking pressed when the
+ *   menu closed on its own, and its next click opens the menu again.
+ *
+ * The bar stays reachable while the menu is up, so a click on its button
+ * closes the menu: one click, not two. The rest of the page is covered, so
+ * the button below is not pressed by the click that closes the menu.
+ * `bindPopoverTrigger` is not involved; it is for a button the app holds
+ * itself, as in the brilliance menu's *Soft Dismiss* story. The vue demo runs
+ * its top bar this way (`packages/vue-demo/src/App.vue`).
+ */
+export const SoftDismissFromABarButton: Story = {
+  // Nothing to snapshot: the story is about what the clicks do, not about
+  // how the menu looks.
+  tags: ['skip-test'],
+  parameters: {layout: 'fullscreen'},
+  args: {
+    type: ObcUserMenuType.signedIn,
+    size: ObcUserMenuSize.small,
+    softDismiss: true,
+  },
+  render: (args) => {
+    const bar = document.createElement('obc-integration-bar');
+    bar.showUserButton = true;
+
+    const menu = document.createElement('obc-user-menu');
+    Object.assign(menu, args);
+    // Under the bar's right end, where its user button sits.
+    menu.style.cssText =
+      'position: fixed; right: 4px;' +
+      'top: calc(var(--app-components-topbar-touch-target-size) + 4px);';
+
+    let open = false;
+    const apply = () => {
+      menu.open = open;
+      bar.userButtonActivated = open;
+    };
+    bar.addEventListener('user-button-clicked', () => {
+      open = !open;
+      apply();
+    });
+    menu.addEventListener('close', () => {
+      open = false;
+      apply();
+    });
+
+    let hits = 0;
+    const behind = document.createElement('button');
+    behind.textContent = 'a button behind the menu';
+    behind.style.cssText = 'display: block; margin: 240px 16px 0 auto;';
+    behind.addEventListener('click', () => {
+      behind.textContent = `clicked ${++hits} time${hits === 1 ? '' : 's'}`;
+    });
+
+    const root = document.createElement('div');
+    root.append(bar, menu, behind);
+    return root;
   },
 };
