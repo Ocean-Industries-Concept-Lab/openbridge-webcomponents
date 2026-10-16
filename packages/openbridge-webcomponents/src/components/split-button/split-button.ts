@@ -236,6 +236,9 @@ export class ObcSplitButton extends LitElement {
 
   private async focusMenuAfterOpen() {
     await this.updateComplete;
+    // The menu is created on open; its items can take focus only once it has
+    // rendered them, which this host's own update does not wait for.
+    await this.menu?.updateComplete;
     if (!this.isDropdownOpen) return;
 
     if (this.menuFocusStrategy === 'last') {
@@ -403,7 +406,9 @@ export class ObcSplitButton extends LitElement {
           aria-haspopup="menu"
         >
           <slot name="dropdown-icon">
-            <obi-arrow-flyout-google></obi-arrow-flyout-google>
+            <obi-arrow-flyout-google
+              aria-hidden="true"
+            ></obi-arrow-flyout-google>
           </slot>
         </obc-icon-button>
 

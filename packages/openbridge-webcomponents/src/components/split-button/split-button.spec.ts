@@ -45,6 +45,27 @@ async function openMenu(el: ObcSplitButton, dropdown: ObcIconButton) {
   return menu;
 }
 
+const nextTask = () => new Promise((resolve) => setTimeout(resolve, 0));
+
+/**
+ * A key on the dropdown's native button. The split button listens on the
+ * icon button's host, so the event has to be composed to cross its shadow
+ * root, as a real key press is.
+ */
+async function pressOnDropdown(
+  el: ObcSplitButton,
+  dropdown: ObcIconButton,
+  key: string
+) {
+  dropdown
+    .shadowRoot!.querySelector('button')!
+    .dispatchEvent(
+      new KeyboardEvent('keydown', {key, bubbles: true, composed: true})
+    );
+  await el.updateComplete;
+  await nextTask();
+}
+
 describe('obc-split-button dropdown icon', () => {
   it('renders the chevron when nothing fills the dropdown-icon slot', async () => {
     const {el} = await setup(
@@ -108,12 +129,7 @@ describe('obc-split-button halves disabled separately', () => {
     await userEvent.click(primary.shadowRoot!.querySelector('button')!);
     expect(clicks).toEqual(['primary']);
 
-    dropdown
-      .shadowRoot!.querySelector('button')!
-      .dispatchEvent(
-        new KeyboardEvent('keydown', {key: 'ArrowDown', bubbles: true})
-      );
-    await el.updateComplete;
+    await pressOnDropdown(el, dropdown, 'ArrowDown');
     expect(menuOf(el)).toBeNull();
   });
 
@@ -138,6 +154,36 @@ describe('obc-split-button halves disabled separately', () => {
 
     await userEvent.tab();
 
+    expect(containsDeep(dropdown, deepActiveElement())).toBe(true);
+  });
+});
+
+describe('obc-split-button keyboard', () => {
+  it('ArrowDown on the dropdown opens the menu on its first item', async () => {
+    const {el, dropdown} = await setup(
+      html`<obc-split-button .options=${options}></obc-split-button>`
+    );
+
+    await pressOnDropdown(el, dropdown, 'ArrowDown');
+
+    const menu = menuOf(el);
+    expect(menu).not.toBeNull();
+    expect(containsDeep(menu!, deepActiveElement())).toBe(true);
+  });
+
+  it('Escape closes the menu and returns focus to the dropdown half', async () => {
+    const {el, dropdown} = await setup(
+      html`<obc-split-button .options=${options}></obc-split-button>`
+    );
+    const menu = await openMenu(el, dropdown);
+    await nextTask();
+    expect(containsDeep(menu, deepActiveElement())).toBe(true);
+
+    await userEvent.keyboard('{Escape}');
+    await el.updateComplete;
+    await nextTask();
+
+    expect(menuOf(el)).toBeNull();
     expect(containsDeep(dropdown, deepActiveElement())).toBe(true);
   });
 });
