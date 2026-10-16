@@ -44,8 +44,12 @@ semantic-release reads, so the title matters more than the individual commits.
 
 `release.yml` runs on push to **`develop`** or **`stable`**, and on manual
 `workflow_dispatch`, so merging a PR into `stable` publishes to `latest`.
-After a stable release, merge `stable` back into `develop`: until develop
-carries the new tag, its next prerelease is numbered against the old one.
+After a stable release, the workflow merges `stable` back into `develop` with
+a merge commit: until develop carries the new tag, its next prerelease is
+numbered against the old one. Never do the back-merge as a pull request. The
+ruleset squashes it, which leaves the tag out of develop's history, and the
+release commit's `[skip ci]` keeps the required checks from ever reporting.
+If the merge conflicts, the step fails and the merge is done by hand.
 A release commits back as `chore(release): <version> [skip ci]`, updating
 `packages/openbridge-webcomponents/CHANGELOG.md`, the core `package.json`, and
 `package-lock.json`.
@@ -67,7 +71,7 @@ wrapper versions are synced first by `scripts/prepare-wrappers.js` (see below).
 | `pr-title-lint.yml`                        | PR opened / edited / synchronize / reopened | Conventional Commits check on the PR title                                                                                                 |
 | `pr-body.yml`                              | PR opened / edited / synchronize / reopened | the PR body against the template and the diff: sections, Docs boxes, named baselines, axe entries and opt-out tags, no `CHANGELOG.md` edit |
 | `windows-angular-build.yml`                | push + PR, all branches                     | the Angular wrapper built on `windows-latest` — CRLF and backslash path separators have leaked into generated imports before               |
-| `release.yml`                              | push to `develop` / `stable`, or manual     | `build:full` then `semantic-release`                                                                                                       |
+| `release.yml`                              | push to `develop` / `stable`, or manual     | `build:full` then `semantic-release`; on `stable`, merges `stable` back into `develop`                                                     |
 | `firebase-hosting-merge.yml`               | after `release.yml` on `develop` / `stable` | deploys Storybook and the vue demo from the branch tip: develop to `openbridge-next-*`, stable to `openbridge-*`                           |
 | `firebase-hosting-pull-request.yml`        | PR                                          | builds the demo preview                                                                                                                    |
 | `firebase-hosting-pull-request-deploy.yml` | after the build workflow completes          | publishes the preview                                                                                                                      |
