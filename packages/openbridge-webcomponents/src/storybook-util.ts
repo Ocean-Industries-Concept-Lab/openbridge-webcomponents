@@ -8,6 +8,7 @@ import './icons/icon-close-google.js';
 import './icons/icon-ship.js';
 import {HTMLTemplateResult, TemplateResult, html} from 'lit';
 import {spread} from '@open-wc/lit-helpers';
+import type {AlertStandard} from './alert-system/alert-standard.js';
 
 export const iconIds = [
   'placeholder',
@@ -207,4 +208,52 @@ export function expectChartCanvasToMatchComputedLayout(
     );
   }
   return rect;
+}
+
+function criticalityAsColumnHeading(criticality: string): string {
+  const words = criticality.replaceAll('-', ' ');
+  return words.charAt(0).toUpperCase() + words.slice(1);
+}
+
+/**
+ * Every criticality of a standard in every state it defines: one column per
+ * criticality and one row per state name, with the cell left empty where
+ * the criticality does not define the state. Rows follow
+ * `stateNamesInRowOrder`, then any state it leaves out.
+ */
+export function alertStandardMatrix(
+  standard: AlertStandard,
+  stateNamesInRowOrder: string[],
+  cell: (criticality: string, state: string) => TemplateResult
+): TemplateResult {
+  const criticalities = standard.criticalities;
+  const criticalityNames = Object.keys(criticalities);
+  const stateNames = [
+    ...new Set([
+      ...stateNamesInRowOrder,
+      ...criticalityNames.flatMap((criticality) =>
+        Object.keys(criticalities[criticality].states)
+      ),
+    ]),
+  ];
+  return html`<div
+    style="display: grid; grid-template-columns: auto repeat(${
+      criticalityNames.length
+    }, minmax(64px, auto)); gap: 8px 16px; align-items: center; justify-items: center; font: var(--font-ui-body, 14px sans-serif);"
+  >
+    <div></div>
+    ${criticalityNames.map(
+      (criticality) =>
+        html`<div>${criticalityAsColumnHeading(criticality)}</div>`
+    )}
+    ${stateNames.map(
+      (state) =>
+        html`<div style="justify-self: end">${state}</div>
+          ${criticalityNames.map((criticality) =>
+            state in criticalities[criticality].states
+              ? cell(criticality, state)
+              : html`<div></div>`
+          )}`
+    )}
+  </div>`;
 }

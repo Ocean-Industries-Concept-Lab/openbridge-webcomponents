@@ -1,0 +1,3 @@
+::slotted([hidden]) {
+  display: none; /* beats the display: block every slotted item gets */
+}
