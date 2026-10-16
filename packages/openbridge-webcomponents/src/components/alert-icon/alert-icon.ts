@@ -31,7 +31,7 @@ import '../../icons/icon-alarm-acknowledged-outlined.js';
 import '../../icons/icon-warning-unacknowledged-iec.js';
 import '../../icons/icon-warning-unacknowledged-outlined.js';
 
-import '../../icons/icon-critical-badge.js';
+import '../../manual-icon/icon-critical-badge.js';
 import '../alert-frame/diagnostic-badge.js';
 import {criticalA, criticalB} from './icons/icon-critical.js';
 import {
@@ -278,12 +278,15 @@ export class ObcAlertIcon extends LitElement {
           return null;
       }
     } else if (this.bamType === AlertType.Warning) {
-      if (this.active === false) {
-        return mapping[AlertIconName.WarningRectified];
-      } else if (this.acknowledged) {
-        return mapping[AlertIconName.WarningSilenced];
-      } else {
-        return mapping[AlertIconName.WarningUnack];
+      switch (this._effectiveState) {
+        case AlertIconState.Rectified:
+          return mapping[AlertIconName.WarningRectified];
+        case AlertIconState.Silenced:
+          return mapping[AlertIconName.WarningSilenced];
+        case AlertIconState.Unacknowledged:
+          return mapping[AlertIconName.WarningUnack];
+        default:
+          return null;
       }
     }
 
@@ -339,7 +342,8 @@ export class ObcAlertIcon extends LitElement {
           return nothing;
       }
     }
-    return nothing;
+    // Steady but still owed an ACK, such as with a `fixed` flashing speed.
+    return this.icon ? html`${this.icon.a}` : nothing;
   }
 
   override render() {

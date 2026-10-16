@@ -173,14 +173,15 @@ obc-readout-block {
 }
 
 /* ---------- Value alert overlay ----------
- * Reserves no space, so toggling the frame never shifts content. The box sits
- * on the 4px/2px padding line, where obc-alert-frame centres its stroke. */
+ * Reserves no space, so toggling the frame never shifts content. The box shares
+ * the reading's top and bottom edges, as the design pins the frame to the
+ * readout block (Figma 46282:102156); the inline padding keeps the stroke off
+ * the digits. */
 .value-alert-overlay {
   --_readout-value-frame-padding-horizontal: 4px;
-  --_readout-value-frame-padding-vertical: 2px;
   position: absolute;
   inset-inline: calc(-1 * var(--_readout-value-frame-padding-horizontal));
-  inset-block: calc(-1 * var(--_readout-value-frame-padding-vertical));
+  inset-block: 0;
   pointer-events: none;
 }
 

@@ -778,3 +778,16 @@ export const SetpointRow: Story = {
     ],
   },
 };
+
+/** An on-state row with `direction` shows the arrow in place of the on icon. */
+export const StateWithDirection: Story = {
+  args: {
+    size: AutomationButtonReadoutStackSize.regular,
+    idTagOrientation: IdTagOrientation.bottom,
+    tag: '#0012',
+    readouts: [
+      {type: 'state-on', value: 'Open', hasIcon: true, direction: 'left'},
+      {type: 'state-on', value: 'Open', hasIcon: true, direction: 'up'},
+    ],
+  },
+};

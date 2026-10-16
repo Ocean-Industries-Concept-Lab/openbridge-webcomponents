@@ -1,11 +1,11 @@
 /* Noto Sans is the OpenBridge typeface. The webcomponents package ships the
    font file but declares no @font-face, so the consumer does it. This is the
-   variable font, hence the 100-900 weight range from one file. Vite rewrites
+   variable font, hence the 400-700 weight range from one file. Vite rewrites
    the node_modules URL at serve/build time. */
 @font-face {
   font-family: noto-sans;
   src: url('@oicl/openbridge-webcomponents/dist/NotoSans.ttf') format('truetype-variations');
-  font-weight: 100 900;
+  font-weight: 400 700;
   font-style: normal;
   font-display: swap;
 }

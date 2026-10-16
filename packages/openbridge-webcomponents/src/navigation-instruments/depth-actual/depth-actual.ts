@@ -7,7 +7,12 @@ import {
 import {property, state} from 'lit/decorators.js';
 import type {PropertyValues} from 'lit';
 import {VesselImage} from '../watch/watch.js';
-import {vesselImages} from '../watch/vessel.js';
+import {
+  renderVesselArt,
+  vesselArt,
+  type VesselImageSrc,
+} from '../watch/vessel.js';
+import {PaletteController} from '../../charthelpers/theme.js';
 import {
   LinearAdvice,
   LinearAdviceRaw,
@@ -54,6 +59,9 @@ const VESSEL_ART_HALF = 80;
  * @property vesselScale - Factor on the range's vessel size.
  * @availableWhen vesselScale vesselImage!=''
  * @property vesselImage - Fore-view silhouette.
+ * @property vesselImageSrc - Image URLs per palette (`{bright, day, dusk, night}`, SVG, PNG or data URLs)
+ *   drawn instead of `vesselImage` in the same 160 × 160 box. A palette without a URL falls
+ *   back to the nearest one (see `VesselImageSrc`).
  * @property priority - `enhanced` draws the fills and lines in the enhanced palette.
  * @property showLabels - Label the scale ends and the primary ladder beside the frame.
  * @property ranges - Range ladder shared with `obc-depth`.
@@ -71,6 +79,8 @@ export class ObcDepthActual extends LitElement {
   @property({type: Array}) advice: LinearAdvice[] = [];
   @property({type: Number}) vesselScale = 1;
   @property({type: String}) vesselImage: VesselImage = VesselImage.psvFore;
+  @property({type: Object, attribute: false})
+  vesselImageSrc: VesselImageSrc | undefined;
   @property({type: String}) priority: Priority = Priority.regular;
   @property({type: Boolean, attribute: false}) showLabels = true;
 
@@ -91,6 +101,8 @@ export class ObcDepthActual extends LitElement {
   }
 
   @state() private _range: DepthRange = DEPTH_RANGES[1];
+
+  private readonly _palette = new PaletteController(this);
 
   override willUpdate(changed: PropertyValues) {
     if (
@@ -239,7 +251,7 @@ export class ObcDepthActual extends LitElement {
                 toY(this.draft) - VESSEL_KEEL_OFFSET * vesselFactor
               }) scale(${vesselFactor}) translate(${-VESSEL_ART_HALF}, ${-VESSEL_ART_HALF})"
             >
-              ${this.vesselImage ? vesselImages[this.vesselImage] : nothing}
+              ${this.vesselImage ? renderVesselArt(vesselArt(this.vesselImage, this.vesselImageSrc), this._palette.current) : nothing}
             </g>
             <line
               class="draft-line"

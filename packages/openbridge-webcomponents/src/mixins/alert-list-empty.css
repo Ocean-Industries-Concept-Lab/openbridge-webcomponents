@@ -1,0 +1,32 @@
+/* The empty state of an alert list: an icon, a title and an optional
+ * description, centred in the space the list would fill.
+ *
+ * Every alert list shows the same empty state, so it is defined once here.
+ * Apply it to the element that wraps the three parts; it styles the
+ * `.icon`, `.empty-title` and `.empty-description` children inside it. The
+ * icon's colour is left to each list. */
+@define-mixin alert-list-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: var(--app-components-alert-menu-button-spacing);
+
+  .icon {
+    height: 96px;
+    width: 96px;
+  }
+
+  .empty-title {
+    color: var(--element-active-color);
+    @mixin font-body-active;
+  }
+
+  .empty-description {
+    color: var(--element-neutral-color);
+    @mixin font-body;
+    max-width: 344px;
+    text-align: center;
+  }
+}

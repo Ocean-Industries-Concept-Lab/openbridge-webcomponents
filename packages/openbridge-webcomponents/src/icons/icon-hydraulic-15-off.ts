@@ -21,8 +21,8 @@ export class ObiHydraulic15Off extends LitElement {
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g clip-path="url(#clip0_8040_1479)">
-<path d="M11 7H9V9H15V7H13V1H23V23H13V17H15V15H9V17H11V23H1V1H11V7Z" style="fill: var(--automation-device-primary-inverted-color)"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M0 0V24H24V0H0ZM11 23H1L1 1H11V7H9V9H15V7H13V1L23 1V23H13V17H15V15H9V17H11V23Z" style="fill: var(--automation-device-tertiary-inverted-color)"/>
+<path d="M11 7H9V9H15V7H13V1H23V23H13V17H15V15H9V17H11V23H1V1H11V7Z" style="fill: var(--automation-symbol-off-background-color)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M0 0V24H24V0H0ZM11 23H1L1 1H11V7H9V9H15V7H13V1L23 1V23H13V17H15V15H9V17H11V23Z" style="fill: var(--automation-symbol-off-border-color)"/>
 </g>
 <defs>
 <clipPath id="clip0_8040_1479">

@@ -78,10 +78,10 @@ describe('themeFromCss — OB automation variables → full pipe theme', () => {
   it('reads each pipe token from its --automation-* variable', () => {
     const out = themeFromCss(
       css({
-        '--automation-pipe-tertiary-color': 'rgb(1, 1, 1)',
-        '--automation-pipe-primary-color': 'rgb(2, 2, 2)',
-        '--automation-pipe-tertiary-inverted-color': 'rgb(3, 3, 3)',
-        '--automation-pipe-primary-inverted-color': 'rgb(4, 4, 4)',
+        '--automation-connector-on-border-color': 'rgb(1, 1, 1)',
+        '--automation-connector-on-background-color': 'rgb(2, 2, 2)',
+        '--automation-connector-no-flow-border-color': 'rgb(3, 3, 3)',
+        '--automation-connector-no-flow-background-color': 'rgb(4, 4, 4)',
         '--automation-medium-enhanced-border': 'rgb(5, 5, 5)',
         '--automation-medium-enhanced-background': 'rgb(6, 6, 6)',
         '--automation-medium-running-border': 'rgb(7, 7, 7)',

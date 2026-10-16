@@ -340,8 +340,7 @@ export class ObcReadout extends LitElement {
   @property({type: String}) dataQuality?: ReadoutDataQuality;
   // `boolean | …` (not `false | …`): the generated Angular wrapper widens a
   // literal-`false` union to `boolean`, which then won't assign back to a
-  // `false`-typed element property. `wrapWithAlertFrame` treats any non-object
-  // (incl. `true`) as "no frame", so accepting `boolean` is harmless.
+  // `false`-typed element property. `true` draws a default frame (`render`).
   @property({type: Object}) alert: boolean | AlertFrameConfig = false;
 
   // Per-block configuration — one object per block (see the Readout*Options types).
@@ -839,10 +838,9 @@ export class ObcReadout extends LitElement {
   /**
    * The value alert frame, drawn as a pure overlay around the value reading
    * (value + degree). It reserves no space — the `obc-alert-frame` sits in an
-   * absolutely-positioned box offset outward (see `.value-alert-overlay` in the
-   * CSS) so its stroke is centred on the 4px/2px padding line and toggling it
-   * never shifts content. Renders only when `valueOptions.alert` is a config
-   * object.
+   * absolutely-positioned box on the reading's edges, padded inline only (see
+   * `.value-alert-overlay` in the CSS), so toggling it never shifts content.
+   * Renders only when `valueOptions.alert` is a config object.
    */
   private renderValueAlertOverlay(): TemplateResult | typeof nothing {
     const alert = this.valueOptions?.alert;

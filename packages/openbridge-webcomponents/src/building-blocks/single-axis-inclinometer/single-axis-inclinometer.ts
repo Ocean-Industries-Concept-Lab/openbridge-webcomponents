@@ -1,5 +1,6 @@
 import {LitElement, css, html, nothing, svg, type SVGTemplateResult} from 'lit';
 import {property} from 'lit/decorators.js';
+import {PaletteController} from '../../charthelpers/theme.js';
 import '../../navigation-instruments/watch/watch.js';
 import {
   OUTER_RING_RADIUS,
@@ -67,6 +68,9 @@ export class SingleAxisInclinometer extends LitElement {
   @property({type: Boolean}) hasReadout: boolean = false;
   @property({type: String}) priority: Priority = Priority.regular;
   @property({type: Number}) arcAngle: number = 45;
+
+  /** The current palette, for vessel images that cannot follow it through CSS. */
+  protected readonly palette = new PaletteController(this);
 
   protected _arcFrame: ZoomToFitArcFrame | undefined;
 

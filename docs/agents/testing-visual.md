@@ -137,6 +137,25 @@ Web Animations (alert flashing) ignore the zeroed CSS durations, so an
 on phase of every flash tempo; snapshots of flashing elements always show the
 on state.
 
+## Hidden-mount pass
+
+`npm run test-hidden-mount` (the `hidden-mount` job in `visual-testing.yml`)
+runs the snapshot suite again with every story rendered inside a
+`display: none` canvas, then shown and compared with the same baselines. It
+catches a component that measures itself before it has a size and never
+measures again. Closed tabs, dialogs and collapsed panels mount components
+that way, and a story in a laid-out canvas never does (#1351). The pass also
+fails on a `NaN` or `Infinity` in any attribute, hidden or shown, because the
+browser logs each one as an error even when no pixel moves.
+
+- A story with a `play` function renders visible, so only the attribute check
+  applies to it.
+- A story that fails here and passes in `test-storybook` froze its first-paint
+  size. Re-measure on resize in the component (`observeInnerBox()`,
+  `observeLabelThreshold()`); never work around it in the story.
+- Baselines belong to the snapshot project: never run this pass with
+  `--update`.
+
 ## Manifest-driven docs and controls
 
 `.storybook/manifest-docs-core.ts` holds the helpers; `manifest-docs.ts` binds

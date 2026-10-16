@@ -101,7 +101,7 @@
   }
 
   &.open-top {
-    .positioned-menu {
+    & + .positioned-menu {
       bottom: anchor(bottom);
       top: unset;
     }

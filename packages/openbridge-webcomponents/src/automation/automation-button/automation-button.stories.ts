@@ -28,10 +28,12 @@ import '../valve-analog-three-way-icon/valve-analog-three-way-icon.js';
 import '../../icons/icon-command-locked-f.js';
 import {crossDecorator} from '../../storybook-util.js';
 import {
+  ObcAlertFrameMode,
   ObcAlertFrameStatus,
   ObcAlertFrameThickness,
   ObcAlertFrameType,
 } from '../../components/alert-frame/alert-frame.js';
+import {argTypesAlertFrame} from '../../components/alert-frame/alert-frame-storybook-helpers.js';
 import {CircularProgressMode} from '../../building-blocks/circular-progress/circular-progress.js';
 
 const meta: Meta<typeof ObcAutomationButton> = {
@@ -202,31 +204,13 @@ export const SwitchActivated: Story = {
 };
 
 export const ValveAlert: Story = {
-  argTypes: {
-    alertFrameType: {
-      options: Object.values(ObcAlertFrameType),
-      control: {
-        type: 'select',
-      },
-    },
-    alertFrameThickness: {
-      options: Object.values(ObcAlertFrameThickness),
-      control: {
-        type: 'select',
-      },
-    },
-    alertFrameStatus: {
-      options: Object.values(ObcAlertFrameStatus),
-      control: {
-        type: 'select',
-      },
-    },
-  },
+  argTypes: argTypesAlertFrame,
   args: {
     alert: true,
     alertFrameType: ObcAlertFrameType.LargeSideFlip,
     alertFrameThickness: ObcAlertFrameThickness.Small,
     alertFrameStatus: ObcAlertFrameStatus.Alarm,
+    alertFrameMode: ObcAlertFrameMode.ackedActive,
   },
   render(args) {
     const readouts: AutomationButtonReadoutStack[] = [];
@@ -239,6 +223,7 @@ export const ValveAlert: Story = {
       .alertFrameStatus=${args.alertFrameStatus}
       .alertFrameThickness=${args.alertFrameThickness}
       .alertFrameType=${args.alertFrameType}
+      .alertFrameMode=${args.alertFrameMode}
       .showAlertCategoryIcon=${args.showAlertCategoryIcon}
       .showAlertIcon=${args.showAlertIcon}
       .positioning=${args.positioning}

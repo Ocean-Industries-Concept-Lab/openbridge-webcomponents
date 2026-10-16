@@ -5,10 +5,13 @@ import {customElement} from '../../decorator.js';
 import componentStyle from './speed-directions.css?inline';
 import {
   VesselImage,
-  vesselImages,
+  renderVesselArt,
+  vesselArt,
   WatchCircleType,
   innerRingRadiusFor,
+  type VesselImageSrc,
 } from '../watch/watch.js';
+import {PaletteController} from '../../charthelpers/theme.js';
 import {Tickmark, TickmarkType} from '../watch/tickmark.js';
 import {rect} from '../../svghelpers/rectangular.js';
 import {
@@ -78,6 +81,9 @@ const COMPASS_TICKMARKS: Tickmark[] = [45, 135, 225, 315].map((angle) => ({
  * @availableWhen tintedArrows type!=alongAthwartBars
  * @property vesselImage - Vessel image drawn at the center of the instrument. The standalone style
  *   draws it at twice the size for the chevron types, as in the design.
+ * @property vesselImageSrc - Image URLs per palette (`{bright, day, dusk, night}`, SVG, PNG or data URLs)
+ *   drawn instead of `vesselImage` in the same 160 × 160 box. A palette without a URL falls
+ *   back to the nearest one (see `VesselImageSrc`).
  * @experimental The API of this component is under design review and may
  * change in a future release.
  */
@@ -123,6 +129,11 @@ export class ObcSpeedDirections extends LitElement {
   @property({type: String})
   vesselImage: VesselImage = VesselImage.psvTop;
 
+  @property({type: Object, attribute: false})
+  vesselImageSrc: VesselImageSrc | undefined;
+
+  private readonly _palette = new PaletteController(this);
+
   private get isLongLat(): boolean {
     return this.type === SpeedDirectionsType.longLatArrows;
   }
@@ -166,7 +177,7 @@ export class ObcSpeedDirections extends LitElement {
     const standalone = this.frameStyle === SpeedDirectionsFrameStyle.standalone;
     const bars = this.type === SpeedDirectionsType.alongAthwartBars;
     const scale = standalone && !bars ? 2 : 1;
-    return svg`<g transform="translate(0 ${VESSEL_CENTER_Y}) scale(${scale}) translate(-80 -80)">${vesselImages[this.vesselImage]}</g>`;
+    return svg`<g transform="translate(0 ${VESSEL_CENTER_Y}) scale(${scale}) translate(-80 -80)">${renderVesselArt(vesselArt(this.vesselImage, this.vesselImageSrc), this._palette.current)}</g>`;
   }
 
   private renderContent() {

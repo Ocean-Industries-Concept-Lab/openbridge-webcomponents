@@ -5,6 +5,7 @@ import {DepthType, type DepthDataItem} from './depth.js';
 import type {ChartLineDataItem} from '../../building-blocks/chart-line/chart-line-base.js';
 import {AdviceType} from '../watch/advice.js';
 import {VesselImage} from '../watch/watch.js';
+import {customVesselSidePngSrc} from '../watch/vessels/storybook-helper.js';
 import {InstrumentState, Priority} from '../types.js';
 
 /** Seabed profile along the track; x is minutes ago or metres from the vessel. */
@@ -109,6 +110,7 @@ const meta: Meta = {
         .hasAdvice=${args.hasAdvice}
         .advice=${[{min: 0, max: 15, type: AdviceType.caution, hinted: false}]}
         .vesselImage=${args.vesselImage}
+        .vesselImageSrc=${args.vesselImageSrc}
         .priority=${args.priority}
         .state=${args.state}
       ></obc-depth>
@@ -136,6 +138,14 @@ export const RegularCondensed: Story = {
 
 export const RegularVesselScale: Story = {
   args: {hasScale: true, showVessel: true},
+};
+
+export const WithCustomVesselImage: Story = {
+  args: {
+    hasScale: true,
+    showVessel: true,
+    vesselImageSrc: customVesselSidePngSrc,
+  },
 };
 
 export const Prediction: Story = {

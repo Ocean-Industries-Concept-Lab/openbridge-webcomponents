@@ -13,8 +13,8 @@ export class ObiMosfetNtype4 extends LitElement {
 `;
 
   private iconCss = svg`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M11 1H13V6.25H23V7.75H13V16.25L23 16.25V17.75L13 17.75V23H11V1Z" style="fill: var(--automation-device-secondary-color)"/>
-<path d="M5 21L11 17L5 13V16.25H1V17.75H5V21Z" style="fill: var(--automation-device-secondary-color)"/>
+<path d="M11 1H13V6.25H23V7.75H13V16.25L23 16.25V17.75L13 17.75V23H11V1Z" style="fill: var(--automation-symbol-static-background-color)"/>
+<path d="M5 21L11 17L5 13V16.25H1V17.75H5V21Z" style="fill: var(--automation-symbol-static-background-color)"/>
 </svg>
 `;
 

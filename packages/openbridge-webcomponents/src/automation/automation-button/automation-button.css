@@ -224,7 +224,7 @@
 
 .progress .icon-holder {
   border-color: transparent !important;
-  background: var(--automation-pipe-primary-color) !important;
+  background: var(--automation-connector-on-background-color) !important;
 
   .icon-primary {
     width: var(--automation-components-button-icon-size);
@@ -238,8 +238,8 @@
 }
 
 .state-open .icon-holder {
-  border-color: var(--on-border-color);
-  background: var(--on-background-color);
+  border-color: var(--automation-button-on-border-color);
+  background: var(--automation-button-on-background-color);
 }
 
 .static .icon-holder {

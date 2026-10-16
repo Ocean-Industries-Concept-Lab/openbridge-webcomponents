@@ -3,10 +3,12 @@ import {html, literal} from 'lit/static-html.js';
 import type {StaticValue} from 'lit/static-html.js';
 import {crossDecorator} from '../../storybook-util.js';
 import {
+  ObcAlertFrameMode,
   ObcAlertFrameStatus,
   ObcAlertFrameThickness,
   ObcAlertFrameType,
 } from '../../components/alert-frame/alert-frame.js';
+import {argTypesAlertFrame} from '../../components/alert-frame/alert-frame-storybook-helpers.js';
 import {
   AutomationButtonBadgeAlert,
   AutomationButtonBadgeCommandLocked,
@@ -59,6 +61,7 @@ export function specialtyTankMeta(tag: StaticValue): {
       alertFrameType: ObcAlertFrameType.SmallSideFlip,
       alertFrameThickness: ObcAlertFrameThickness.Small,
       alertFrameStatus: ObcAlertFrameStatus.Alarm,
+      alertFrameMode: ObcAlertFrameMode.ackedActive,
       showAlertCategoryIcon: true,
       showAlertIcon: false,
     },
@@ -87,18 +90,7 @@ export function specialtyTankMeta(tag: StaticValue): {
         options: Object.values(AutomationButtonBadgeCommandLocked),
         control: {type: 'select'},
       },
-      alertFrameType: {
-        options: Object.values(ObcAlertFrameType),
-        control: {type: 'select'},
-      },
-      alertFrameThickness: {
-        options: Object.values(ObcAlertFrameThickness),
-        control: {type: 'select'},
-      },
-      alertFrameStatus: {
-        options: Object.values(ObcAlertFrameStatus),
-        control: {type: 'select'},
-      },
+      ...argTypesAlertFrame,
     },
     decorators: [crossDecorator],
     render: (args) => html`
@@ -118,6 +110,7 @@ export function specialtyTankMeta(tag: StaticValue): {
         .alertFrameType=${args.alertFrameType}
         .alertFrameThickness=${args.alertFrameThickness}
         .alertFrameStatus=${args.alertFrameStatus}
+        .alertFrameMode=${args.alertFrameMode}
         .showAlertCategoryIcon=${args.showAlertCategoryIcon}
         .showAlertIcon=${args.showAlertIcon}
       ></${tag}>

@@ -16,13 +16,15 @@ export function lineColor(medium: LineMedium): {
   inner: string;
   outer: string;
 } {
-  let innerColor = '--automation-pipe-primary-color';
+  let innerColor = '--automation-connector-on-background-color';
   if (medium === LineMedium.empty) {
-    innerColor = '--automation-pipe-primary-inverted-color';
+    // TODO(designer): which Connector role is an empty pipe? Nothing in the
+    // palette names one; no-flow is the nearest.
+    innerColor = '--automation-connector-no-flow-background-color';
   } else if (medium === LineMedium.water || medium === LineMedium.air) {
     innerColor = '--automation-fresh-water';
   }
-  return {inner: innerColor, outer: '--automation-pipe-tertiary-color'};
+  return {inner: innerColor, outer: '--automation-connector-on-border-color'};
 }
 
 export function lineWidth(lineType: LineType): number {

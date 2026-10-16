@@ -25,7 +25,7 @@ import {
 import {normalizeXValue, XValueMode} from '../../charthelpers/x-value.js';
 import type {LinearAdvice} from '../../building-blocks/instrument-linear/advice.js';
 import {InstrumentState, Priority} from '../types.js';
-import {VesselImage} from '../watch/watch.js';
+import {VesselImage, type VesselImageSrc} from '../watch/watch.js';
 import {
   DEPTH_RANGES,
   resolveDepthRange,
@@ -121,6 +121,10 @@ function deepest(...series: (number | undefined)[][]): number {
  * @property showVessel - Frame band with the vessel silhouette above the chart (Figma style "Vessel scale").
  * @property vesselImage - Side-view silhouette in the vessel band.
  * @availableWhen vesselImage showVessel==true
+ * @property vesselImageSrc - Image URLs per palette (`{bright, day, dusk, night}`, SVG, PNG or data URLs)
+ *   drawn instead of `vesselImage` in the same 160 × 160 box. A palette without a URL falls
+ *   back to the nearest one (see `VesselImageSrc`).
+ * @availableWhen vesselImageSrc showVessel==true
  * @property hasAdvice - Advice overlays on the right band.
  * @property advice - Advice zones in depth units.
  * @availableWhen advice hasAdvice==true
@@ -151,6 +155,8 @@ export class ObcDepth extends LitElement {
   @property({type: Boolean}) hasScale = false;
   @property({type: Boolean}) showVessel = false;
   @property({type: String}) vesselImage: VesselImage = VesselImage.psvSide;
+  @property({type: Object, attribute: false})
+  vesselImageSrc: VesselImageSrc | undefined;
   @property({type: Boolean}) hasAdvice = false;
   @property({type: Array, attribute: false}) advice: LinearAdvice[] = [];
   @property({type: String}) priority: Priority = Priority.regular;
@@ -399,6 +405,7 @@ export class ObcDepth extends LitElement {
       .type=${type}
       .now=${this.now}
       .vesselImage=${this.vesselImage}
+      .vesselImageSrc=${this.vesselImageSrc}
     ></obc-depth-top-band>`;
   }
 

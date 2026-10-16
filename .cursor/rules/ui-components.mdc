@@ -42,7 +42,7 @@ Most interactive components support elevation variants (`flat`, `normal`, `raise
 ## Alert flashing
 
 Alert frame, alert icon and alert button flash on one tempo table (#1224):
-fast 400/400, slow 400/1200, very-slow 400/2800 ms on/off. The table lives in
+fast 400/400, slow 1200/400, very-slow 2800/400 ms on/off. The table lives in
 `src/palettes/blinking.ts` and nowhere else.
 
 - `resolveFlashingSpeed(speed, type, phase)` in `src/alert-severity.ts` is the
@@ -84,6 +84,20 @@ button item and Alert button (#1236).
   Attributes for Group Styling).
 - Guarded by `alert-button-item.spec.ts`, `alert-counter-item.spec.ts`,
   `alert-button.spec.ts` and `alert-severity.spec.ts`.
+
+## Alert lists, menu and page
+
+The alert list, the alert menu and the small alert list page keep what a twin
+would otherwise copy in shared code, so a twin overrides only its filtering.
+
+- `ObcAlertListBase` holds the list's scrolling, motion and empty state;
+  `obc-alert-list` adds only its `filter`.
+- `obc-alert-menu` exposes `tabs`, `renderList` and `offersAckAll` hooks;
+  `ObcAlertListPageSmallBase` holds the small page's action bar.
+- Shared bases are plain `Obc*Base` classes with default hooks, never TS
+  `abstract`: the React wrapper generator wraps every `LitElement` subclass,
+  and its `createComponent` rejects an abstract class.
+- The empty states share the `alert-list-empty` mixin.
 
 ## Slot Conventions
 
@@ -165,6 +179,32 @@ Components that participate in grouped layouts (e.g. form items) use host data a
 
 These attributes are set by a parent component — do not set them internally.
 
+## Input fields
+
+`obc-text-input-field` and `obc-number-input-field` wrap a native `<input>`
+in a `<label>`: a click on the label text, unit or icon focuses the input
+natively, and caret placement inside the value is the browser's. The number
+field only cancels `pointerdown` on that chrome, so an unfinished edit keeps
+its focus instead of committing (`number-input-field.spec.ts`, caret
+placement). Focus removes the group separators; after a click on the value
+it waits until the browser has placed the caret, then carries the caret over
+to the ungrouped text, so the digits never move under the pointer first.
+Never derive a caret position or a text width from glyph constants; the
+centred number input sizes itself with `field-sizing: content`, and where
+that is unsupported it fills the field, reading right-aligned rather than
+pushing the value out of a narrow box.
+
+## Pointer drags
+
+`obc-start-stop-switch` and `obc-slide-button` move their thumb by the
+`clientX` delta of the pointer, which is viewport px, and position it with a
+CSS `left`/`right`, which an ancestor `zoom` scales again. The delta is
+divided by `currentCSSZoom` and the track and thumb are measured with
+`offsetWidth`, never `getBoundingClientRect()` (zoom-scaled), so offset,
+widths, clamp and threshold share one coordinate space (#1371; both specs
+drag at zoom 1, 1.687 and 0.75). `obc-slider` takes a ratio of two rect
+values and needs no conversion.
+
 ## Checkbox lists
 
 `obc-checkbox-item` rows are flat; depth is the numeric `level` (0 plain, 1
@@ -188,7 +228,10 @@ cover over the page while the panel is open (#1293).
 
 Adopting it takes three things on the host: a `softDismiss` boolean, an `open`
 boolean, and `@mixin soft-dismiss;` in the component CSS. `obc-brilliance-menu`
-is the reference.
+is the reference; its _Soft Dismiss_ story shows a trigger the app holds, and
+`obc-user-menu`'s _Soft Dismiss From A Bar Button_ story a bar that reports
+its button as an event. The consumer side is three bindings, and the
+`@property softDismiss` text on every panel says so.
 
 - `softDismiss` is opt-in because `[popover]` is `display: none` until shown.
   On by default it would hide every panel a consumer already positions and
@@ -206,7 +249,13 @@ is the reference.
   own flag.
 - `popovertarget` does not cross shadow roots, so a trigger inside one
   component cannot declare a panel that lives in another tree. That is what
-  `bindPopoverTrigger(trigger, panel)` is for.
+  `bindPopoverTrigger(trigger, panel)` is for. A bar that reports its buttons
+  as events (`obc-top-bar`, `obc-integration-bar`) needs no binding: the
+  consumer flips a flag of its own from the event, binds it to `open` and
+  resets it on `close`. Toggling the panel's own `open` from that event gets
+  out of step, since the controller has already mirrored the close into `open`;
+  `popover-controller.spec.ts` pins the flag wiring against the integration
+  bar, and `vue-demo`'s `window-handling.ts` is the app-side shape.
 - The click outside is swallowed. The controller keeps a transparent cover
   (`part="backdrop"`) over the whole page while the panel is open, stacked
   just under it, so the first click only closes the panel and the page gets

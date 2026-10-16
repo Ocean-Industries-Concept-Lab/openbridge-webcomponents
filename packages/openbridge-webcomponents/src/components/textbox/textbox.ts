@@ -50,6 +50,9 @@ export enum ObcTextboxFontWeight {
  * - **Reserved width:** content placed in the `length` slot reserves a minimum
  *   width invisibly, so the box does not resize as the visible text changes.
  *   The box always shows all content – it never crops.
+ * - **Cap-to-baseline frame:** the box spans the cap top to the baseline plus
+ *   the padding; descenders and diacritics paint past its edges, so an
+ *   ancestor that clips must leave room for them.
  *
  * ## Usage Guidelines
  * - Pass the longest expected string to the `length` slot (e.g. `"888.8"` or

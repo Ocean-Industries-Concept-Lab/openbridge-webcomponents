@@ -129,3 +129,42 @@ describe('obc-alert-icon flashing lifecycle', () => {
     expect(el.getAnimations()).toHaveLength(initial);
   });
 });
+
+describe('obc-alert-icon glyphs', () => {
+  async function setup(
+    props: Partial<
+      Pick<ObcAlertIcon, 'alertType' | 'silenced' | 'flashingSpeed'>
+    >
+  ) {
+    const screen = render(
+      html`<obc-alert-icon
+        .alertType=${props.alertType ?? AlertType.Alarm}
+        .silenced=${props.silenced}
+        .flashingSpeed=${props.flashingSpeed ?? FlashingSpeed.Default}
+      ></obc-alert-icon>`
+    );
+    const el = screen.container.querySelector('obc-alert-icon') as ObcAlertIcon;
+    await el.updateComplete;
+    return el;
+  }
+
+  /** The flashing layer's glyph, or the steady one. */
+  const glyph = (el: ObcAlertIcon) =>
+    (
+      el.shadowRoot!.querySelector('.a > *') ??
+      el.shadowRoot!.querySelector('.wrapper > *')
+    )?.localName;
+
+  it('draws a silenced warning with the warning silenced glyph', async () => {
+    const el = await setup({alertType: AlertType.Warning, silenced: true});
+    expect(glyph(el)).toBe('obi-warning-silenced-iec');
+  });
+
+  it('draws an unacknowledged alarm held steady by a fixed speed', async () => {
+    const el = await setup({flashingSpeed: FlashingSpeed.Fixed});
+    expect([durations(el), glyph(el)]).toEqual([
+      [],
+      'obi-alarm-unacknowledged-iec',
+    ]);
+  });
+});

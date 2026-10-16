@@ -41,6 +41,11 @@ They are also not bound by the watch viewBox contract — they own their own
 viewBox and coordinate system, so the "match the viewBox exactly" rule from the
 watch family does not apply here.
 
+A custom vessel image follows the watch family's contract: `vesselImageSrc`
+on `heave`, `draft-trim` and `depth-actual`, drawn with `renderVesselArt()`
+under the component's own `PaletteController`
+([`watch-radial-instruments.md` § Custom vessel images](watch-radial-instruments.md#shared-sibling-modules)).
+
 `obc-azimuth-thruster-labeled` is the composite of the group: it pulls in
 `badge-command`, `readout` and `thruster` alongside the watch helpers. Treat it
 as a layout shell over those parts rather than an instrument in its own right.
