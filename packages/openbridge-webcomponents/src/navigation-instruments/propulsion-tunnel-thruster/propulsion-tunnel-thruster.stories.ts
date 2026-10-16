@@ -15,6 +15,7 @@ type TunnelThrusterStoryArgs = {
   storyState: TunnelStoryStateLabel;
   value: number;
   hasSilhouette: boolean;
+  portStarboard?: boolean;
 };
 
 function labelToTunnelState(label: TunnelStoryStateLabel): TunnelThrusterState {
@@ -45,6 +46,7 @@ function renderTunnelThruster(args: TunnelThrusterStoryArgs) {
     .state=${labelToTunnelState(args.storyState)}
     .value=${args.value}
     .hasSilhouette=${args.hasSilhouette}
+    .portStarboard=${args.portStarboard ?? false}
   ></obc-tunnel-thruster>`;
 }
 
@@ -86,6 +88,24 @@ export const InCommand = {
     storyState: TunnelStoryStateLabel.inCommand,
     value: -0.33,
     hasSilhouette: false,
+  },
+} satisfies Story;
+
+export const PortStarboardPositive = {
+  args: {
+    storyState: TunnelStoryStateLabel.inCommand,
+    value: 0.33,
+    hasSilhouette: false,
+    portStarboard: true,
+  },
+} satisfies Story;
+
+export const PortStarboardNegative = {
+  args: {
+    storyState: TunnelStoryStateLabel.inCommand,
+    value: -0.33,
+    hasSilhouette: false,
+    portStarboard: true,
   },
 } satisfies Story;
 
