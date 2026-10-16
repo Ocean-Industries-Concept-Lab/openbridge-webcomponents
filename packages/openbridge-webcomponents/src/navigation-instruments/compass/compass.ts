@@ -235,7 +235,7 @@ export class ObcCompass extends LitElement {
    * `rotDotAnimationFactor`) instead. Takes effect only when
    * `rateOfTurnDegreesPerMinute` is `undefined`.
    */
-  @property({type: Number}) rotationsPerMinute: number = 1;
+  @property({type: Number}) rotationsPerMinute: number = 0;
   @property({type: String}) rotType: RotType = RotType.dots;
   @property({type: String}) rotPosition: RotPosition = RotPosition.innerCircle;
   @property({type: Number}) rotMaxValue: number = 60;
