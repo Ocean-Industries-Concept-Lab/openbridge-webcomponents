@@ -217,7 +217,10 @@ cover over the page while the panel is open (#1293).
 
 Adopting it takes three things on the host: a `softDismiss` boolean, an `open`
 boolean, and `@mixin soft-dismiss;` in the component CSS. `obc-brilliance-menu`
-is the reference.
+is the reference; its _Soft Dismiss_ story shows a trigger the app holds, and
+`obc-user-menu`'s _Soft Dismiss From A Bar Button_ story a bar that reports
+its button as an event. The consumer side is three bindings, and the
+`@property softDismiss` text on every panel says so.
 
 - `softDismiss` is opt-in because `[popover]` is `display: none` until shown.
   On by default it would hide every panel a consumer already positions and
@@ -235,7 +238,13 @@ is the reference.
   own flag.
 - `popovertarget` does not cross shadow roots, so a trigger inside one
   component cannot declare a panel that lives in another tree. That is what
-  `bindPopoverTrigger(trigger, panel)` is for.
+  `bindPopoverTrigger(trigger, panel)` is for. A bar that reports its buttons
+  as events (`obc-top-bar`, `obc-integration-bar`) needs no binding: the
+  consumer flips a flag of its own from the event, binds it to `open` and
+  resets it on `close`. Toggling the panel's own `open` from that event gets
+  out of step, since the controller has already mirrored the close into `open`;
+  `popover-controller.spec.ts` pins the flag wiring against the integration
+  bar, and `vue-demo`'s `window-handling.ts` is the app-side shape.
 - The click outside is swallowed. The controller keeps a transparent cover
   (`part="backdrop"`) over the whole page while the panel is open, stacked
   just under it, so the first click only closes the panel and the page gets
