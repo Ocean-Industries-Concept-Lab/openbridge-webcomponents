@@ -98,6 +98,18 @@ export const InterlockInhibit: Story = {
   },
 };
 
+export const AlertShelved: Story = {
+  args: {
+    type: ObcAutomationBadgeType.AlertShelved,
+  },
+};
+
+export const Simulation: Story = {
+  args: {
+    type: ObcAutomationBadgeType.Simulation,
+  },
+};
+
 export const SlottedIcon: Story = {
   render(args) {
     return html`<obc-automation-badge .mode=${args.mode}>

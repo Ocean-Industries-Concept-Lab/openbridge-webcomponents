@@ -209,9 +209,9 @@ The abstract base exposes four **enum-driven** badge properties (defined in `abs
 | Property             | Enum                                 | Values                                                         | Corner       |
 | -------------------- | ------------------------------------ | -------------------------------------------------------------- | ------------ |
 | `badgeControl`       | `AutomationButtonBadgeControl`       | `none`, `local`, `local-only`, `manual`, `manual-only`, `auto` | top-left     |
-| `badgeAlert`         | `AutomationButtonBadgeAlert`         | `none`, `silence`, `caution`, `warning`, `alarm`               | top-right    |
-| `badgeInterlock`     | `AutomationButtonBadgeInterlock`     | `none`, `interlock`, `interlock-inhibit`                       | bottom-left  |
-| `badgeCommandLocked` | `AutomationButtonBadgeCommandLocked` | `none`, `command-locked`                                       | bottom-right |
+| `badgeAlert`         | `AutomationButtonBadgeAlert`         | `none`, `silence`, `shelved`, `caution`, `warning`, `alarm`    | top-right    |
+| `badgeInterlock`     | `AutomationButtonBadgeInterlock`     | `none`, `interlock`, `interlock-inhibit`, `simulation`         | bottom-left  |
+| `badgeCommandLocked` | `AutomationButtonBadgeCommandLocked` | `none`, `command-locked`, `simulation`                         | bottom-right |
 
 Badge spacer logic is computed from readout position and which badges are present (enum-resolved or slotted). Do not hard-code spacer visibility.
 
