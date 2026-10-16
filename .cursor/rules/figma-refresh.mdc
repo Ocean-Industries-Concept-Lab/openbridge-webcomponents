@@ -206,11 +206,14 @@ the semantic diff (renamed, removed, changed per block) belong there too.
   arrive as classes, so `manual.css` no longer bridges them.
 - The export opens with a warning block; read it before pasting.
   - **Name collision**: two Figma variables export as one custom property,
-    and CSS last-wins keeps only the later value. One stands:
+    and CSS last-wins keeps only the later value. If anything reads that
+    property (`grep -rn -- '--<name>' packages/*/src`), the export waits until
+    the design team renames one; if nothing does, list it for them and go on.
+    One unread collision stands:
     `Instrument-components/Watchface/Label-container-height` and
     `…/Watchface/Label/container-height` both become
     `--instrument-components-watchface-label-container-height` (16 px and
-    24 px). Nothing reads it; which variable stays is the design team's call.
+    24 px).
   - **Mode fallback**: the plugin's `VariableModes` map names a mode the
     collection lacks, so the collection's default mode is exported instead.
     The dusk, night and bright primitives export that way (`WCAG`,
