@@ -5,6 +5,36 @@ import {degToRad, normalizeAngle} from '../../svghelpers/math.js';
 export enum AdviceType {
   advice = 'advice',
   caution = 'caution',
+  warning = 'warning',
+  alarm = 'alarm',
+}
+
+const alertAdviceColors: Partial<
+  Record<AdviceType, {fill: string; stripe: string}>
+> = {
+  [AdviceType.caution]: {
+    fill: 'var(--alert-caution-color)',
+    stripe: 'var(--on-caution-active-color)',
+  },
+  [AdviceType.warning]: {
+    fill: 'var(--alert-warning-color)',
+    stripe: 'var(--on-warning-active-color)',
+  },
+  [AdviceType.alarm]: {
+    fill: 'var(--alert-alarm-color)',
+    stripe: 'var(--on-alarm-active-color)',
+  },
+};
+
+/**
+ * The fill and stripe colours of a hatched alert advice (caution, warning or
+ * alarm) in the triggered state, or `undefined` for a plain advice. Shared by
+ * the radial and linear advice renderers.
+ */
+export function triggeredAlertAdviceColors(
+  type: AdviceType
+): {fill: string; stripe: string} | undefined {
+  return alertAdviceColors[type];
 }
 
 export enum AdviceState {
@@ -73,7 +103,8 @@ export function renderAdvice(
   advice: AngleAdviceRaw,
   radiusOffset = 0
 ): SVGTemplateResult | typeof nothing {
-  if (advice.type === AdviceType.caution) {
+  const alertColors = triggeredAlertAdviceColors(advice.type);
+  if (alertColors) {
     let mainColor;
     let fillColor: string | null = null;
     if (advice.state === AdviceState.hinted) {
@@ -81,8 +112,8 @@ export function renderAdvice(
     } else if (advice.state === AdviceState.regular) {
       mainColor = 'var(--instrument-tick-mark-tertiary-color)';
     } else {
-      mainColor = 'var(--on-caution-active-color)';
-      fillColor = 'var(--alert-caution-color)';
+      mainColor = alertColors.stripe;
+      fillColor = alertColors.fill;
     }
     const radialPattern = [];
     if (radiusOffset > 0) {
