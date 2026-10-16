@@ -37,10 +37,11 @@ export type ObcSplitButtonChangeEvent = CustomEvent<{
  * - **Multi-select and group selection:** Allows single or multiple selections in the dropdown, with optional grouping and per-group selection logic.
  * - **Customizable menu content:** Accepts an array of options or column groups, supports icons, subtitles, and multi-column layouts for complex menus.
  * - **Optional icon in primary button:** Add a leading icon to the main button using the `hasIcon` property and `icon` slot.
+ * - **Replaceable dropdown icon:** The dropdown button shows a chevron; fill the `dropdown-icon` slot to show another symbol, for example one that says what the menu holds.
  * - **Title bar and menu title:** Optionally display a title bar with close button and custom title text in the dropdown.
  * - **Full width mode:** Can stretch to fill its container using the `fullWidth` property.
- * - **Disabled state:** Disables both the primary and dropdown buttons when `disabled` is true.
- * - **Dropdown positioning:** Menu can open above or below the button (`openTop`).
+ * - **Disabled state:** `disabled` disables both halves; `primaryDisabled` and `dropdownDisabled` disable one half each, so the primary action can be unavailable while the menu stays in use.
+ * - **Dropdown positioning:** The menu opens below the button and extends to the right. `openTop` opens it above and `openLeft` extends it to the left, for a button near the bottom or the right edge of its container.
  * - **Selection persistence:** Optionally keeps the selected state visually persistent in the menu.
  * - **Keyboard and pointer accessibility:** Follows standard button and menu accessibility patterns.
  *
@@ -62,13 +63,24 @@ export type ObcSplitButtonChangeEvent = CustomEvent<{
  * - **TODO(designer):** Confirm best practices for when to use multi-select vs. single-select, and any recommended limits on number of options or columns.
  *
  * ### Slots
- * | Slot Name   | Renders When...      | Purpose                                             |
- * |-------------|---------------------|-----------------------------------------------------|
- * | `icon`      | `hasIcon` is true   | Leading icon in the primary button (e.g., `<obi-placeholder></obi-placeholder>`) |
+ * | Slot Name       | Renders When...      | Purpose                                             |
+ * |-----------------|---------------------|-----------------------------------------------------|
+ * | `icon`          | `hasIcon` is true   | Leading icon in the primary button (e.g., `<obi-placeholder></obi-placeholder>`) |
+ * | `dropdown-icon` | Always              | Icon of the dropdown button; the chevron when empty |
  *
  * ### Events
  * - `click` – Fired when either the primary or dropdown button is clicked. The event detail includes `{action: 'primary' | 'dropdown'}` to distinguish which part was activated.
  * - `change` – Fired when the menu selection changes. The event detail includes `{selectedValues, selectedOptions}`.
+ *
+ * ### Keyboard
+ * The primary half is a plain button. The dropdown half follows the
+ * [APG Menu Button](https://www.w3.org/WAI/ARIA/apg/patterns/menu-button/):
+ * `Enter` and `Space` open the menu, `ArrowDown` and `Home` open it on the
+ * first item, `ArrowUp` and `End` on the last, and `Escape` closes it and
+ * returns focus to the dropdown half. The menu is `obc-context-menu-input`.
+ *
+ * Left out: `Enter` and `Space` land on the selected item rather than the
+ * first, so a reopened selection menu starts where the user left it.
  *
  * ### Best Practices & Constraints
  * - Only use multi-select when the menu type and use case require it; otherwise, prefer single selection for clarity.
@@ -120,13 +132,23 @@ export type ObcSplitButtonChangeEvent = CustomEvent<{
  *   When true, the component stretches horizontally.
  * @property disabled - Whether both parts of the button are disabled.
  *   When true, disables both the primary and dropdown buttons.
+ * @property primaryDisabled - Disables the primary button alone, for an action the user
+ *   cannot take right now while the menu stays in use, for example to ask for the access
+ *   the action needs.
+ * @availableWhen primaryDisabled disabled==false
+ * @property dropdownDisabled - Disables the dropdown button alone, leaving the primary action.
+ * @availableWhen dropdownDisabled disabled==false
  * @property openTop - Open context menu dropdown above (`true`) or below (`false`) the button.
  *   Useful for placement near the bottom of the viewport.
+ * @property openLeft - Extend the menu to the left of the dropdown button (`true`), its right
+ *   edge on the button's right edge, instead of to the right. For a button near the right
+ *   edge of its container; combines with `openTop`.
  * @property columnGroups - Array of column group definitions for multi-column/grouped menus.
  *   Use instead of `options` for grouped or subtitle layouts.
  * @availableWhen columnGroups menuType==MultiWithSubtitles
  * @property dropdownLabel - Accessible name of the dropdown button; the chevron carries none.
  * @slot icon - Leading icon for the primary button (shown when `hasIcon` is true)
+ * @slot dropdown-icon - Icon of the dropdown button; the chevron when empty.
  * @fires {ObcSplitButtonClickEvent} click - Fired when the primary or dropdown button is clicked.
  * @fires {ObcSplitButtonChangeEvent} change - Fired when the dropdown menu selection changes.
  * @beta
@@ -159,7 +181,13 @@ export class ObcSplitButton extends LitElement {
 
   @property({type: Boolean}) disabled = false;
 
+  @property({type: Boolean}) primaryDisabled = false;
+
+  @property({type: Boolean}) dropdownDisabled = false;
+
   @property({type: Boolean}) openTop = false;
+
+  @property({type: Boolean}) openLeft = false;
 
   @property({type: Array}) columnGroups: ColumnGroup[] = [];
 
@@ -172,6 +200,14 @@ export class ObcSplitButton extends LitElement {
   @query('obc-context-menu-input') private menu?: ObcContextMenuInput;
 
   @query('.dropdown-button') private dropdownButton?: HTMLElement;
+
+  private get isPrimaryDisabled(): boolean {
+    return this.disabled || this.primaryDisabled;
+  }
+
+  private get isDropdownDisabled(): boolean {
+    return this.disabled || this.dropdownDisabled;
+  }
 
   private handlePrimaryClick = (e: Event) => {
     e.stopPropagation();
@@ -214,7 +250,7 @@ export class ObcSplitButton extends LitElement {
   }
 
   private handleDropdownKeydown = (event: KeyboardEvent) => {
-    if (this.disabled) return;
+    if (this.isDropdownDisabled) return;
 
     switch (event.key) {
       case 'ArrowDown':
@@ -334,6 +370,7 @@ export class ObcSplitButton extends LitElement {
           'full-width': this.fullWidth,
           'is-open': this.isDropdownOpen,
           'open-top': this.openTop,
+          'open-left': this.openLeft,
         })}
       >
         <obc-button
@@ -341,7 +378,7 @@ export class ObcSplitButton extends LitElement {
           .variant=${'normal'}
           .segmentPosition=${segmentPosition.start}
           .showLeadingIcon=${this.hasIcon}
-          .disabled=${this.disabled}
+          .disabled=${this.isPrimaryDisabled}
           @click=${this.handlePrimaryClick}
           .fullWidth=${this.fullWidth}
         >
@@ -357,7 +394,7 @@ export class ObcSplitButton extends LitElement {
           class="dropdown-button"
           .variant=${'normal'}
           .cornerRight=${true}
-          .disabled=${this.disabled}
+          .disabled=${this.isDropdownDisabled}
           .activated=${this.isDropdownOpen}
           aria-label=${this.dropdownLabel}
           @click=${this.handleDropdownClick}
@@ -365,7 +402,9 @@ export class ObcSplitButton extends LitElement {
           aria-expanded=${this.isDropdownOpen}
           aria-haspopup="menu"
         >
-          <obi-arrow-flyout-google></obi-arrow-flyout-google>
+          <slot name="dropdown-icon">
+            <obi-arrow-flyout-google></obi-arrow-flyout-google>
+          </slot>
         </obc-icon-button>
 
         <!-- Context Menu -->
