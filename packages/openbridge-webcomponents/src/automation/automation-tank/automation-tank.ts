@@ -38,6 +38,7 @@ import {
 import {AlertType} from '../../types.js';
 import type {ChartLineDataItem} from '../../building-blocks/chart-line/chart-line-base.js';
 import type {LinearAdvice} from '../../building-blocks/instrument-linear/advice.js';
+import {AdviceTrigger} from '../../navigation-instruments/watch/advice.js';
 import {
   AdvicePosition,
   ExternalScaleSide,
@@ -109,6 +110,10 @@ export enum TankChartMode {
  *   `graph` / `graph-and-bar` modes, or rendered as pills over the static
  *   bar in `bar` mode.
  * @property hasAdvice - Show advice overlays (works in all `chartMode` variants).
+ * @property adviceTrigger - Which reading triggers an advice: `both` (default)
+ *   when the value or the setpoint is inside the range; `value` uses only the
+ *   value; `setpoint` uses only the setpoint.
+ * @availableWhen adviceTrigger hasAdvice==true
  * @property alert - Show an `<obc-alert-frame>` overlay around the bordered tank area (the
  *   `.halo` wrapper). Mirrors the API of `obc-automation-button`: same seven
  *   properties, same three slots (`alert-icon`, `alert-label`, `alert-timer`).
@@ -213,6 +218,7 @@ export class ObcAutomationTank extends SetpointMixin(LitElement) {
   advice: LinearAdvice[] = [];
 
   @property({type: Boolean}) hasAdvice = false;
+  @property({type: String}) adviceTrigger: AdviceTrigger = AdviceTrigger.both;
 
   @property({type: Boolean, attribute: false}) hasGraphIcon = false;
 
@@ -790,6 +796,7 @@ export class ObcAutomationTank extends SetpointMixin(LitElement) {
                   .chartFill=${true}
                   .hasAdvice=${this.hasAdvice}
                   .advice=${this.advice}
+                  .adviceTrigger=${this.adviceTrigger}
                   .width=${this._cellWidth}
                   .height=${this._cellHeight}
                   .setpoint=${this.setpoint}
@@ -858,6 +865,7 @@ export class ObcAutomationTank extends SetpointMixin(LitElement) {
         .instrumentMode=${true}
         .borderRadius=${2}
         .advices=${this.hasAdvice ? this.advice : []}
+        .adviceTrigger=${this.adviceTrigger}
         .advicePosition=${AdvicePosition.inner}
         .setpoint=${this.setpoint}
         .newSetpoint=${this.newSetpoint}

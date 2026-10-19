@@ -14,7 +14,13 @@ import componentStyle from './gauge-proportional.css?inline';
 import {customElement} from '../../decorator.js';
 import {InstrumentState, Priority} from '../types.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
-import {AdviceState, AdviceType, AngleAdviceRaw} from '../watch/advice.js';
+import {
+  AdviceState,
+  AdviceTrigger,
+  AdviceType,
+  AngleAdviceRaw,
+  adviceTriggerValues,
+} from '../watch/advice.js';
 import '../watch/watch.js';
 import {OUTER_RING_RADIUS, WatchCircleType} from '../watch/watch.js';
 import {
@@ -227,6 +233,9 @@ const FULL_CIRCLE_EPSILON_DEG = 0.05;
  *   fixed intrinsic size; when unset (default), it fills its container.
  * @availableWhen alignment large==true
  * @availableWhen fractionDigits hasReadout==true
+ * @property adviceTrigger - Which reading triggers an advice: `both` (default)
+ *   when the value or the setpoint is inside the range; `value` uses only the
+ *   value; `setpoint` uses only the setpoint.
  * @property large - The design's Large variant: `alignment`-controlled scale labels, in-dial
  *   readouts and the name row. When `false` (default), the Small variant
  *   renders — the face cropped to the dial with icon-only center content and
@@ -263,6 +272,7 @@ export class ObcGaugeProportional extends SetpointMixin(LitElement) {
     TickmarkStyle.regular;
   @property({type: Array, attribute: false})
   advices: GaugeProportionalAdvice[] = [];
+  @property({type: String}) adviceTrigger: AdviceTrigger = AdviceTrigger.both;
   @property({type: Boolean}) hasReadout = false;
   @property({type: String}) label = '';
   @property({type: String}) unit = '';
@@ -491,12 +501,18 @@ export class ObcGaugeProportional extends SetpointMixin(LitElement) {
   }
 
   private get _advices(): AngleAdviceRaw[] {
-    const value = this.clampedValue;
+    const triggerValues = adviceTriggerValues(
+      this.adviceTrigger,
+      this.clampedValue,
+      this.setpoint
+    );
     return this.advices.map((advice) => {
       const minAngle = this.mapAngle(advice.minValue);
       const maxAngle = this.mapAngle(advice.maxValue);
       let state = advice.hinted ? AdviceState.hinted : AdviceState.regular;
-      if (value >= advice.minValue && value <= advice.maxValue) {
+      if (
+        triggerValues.some((v) => v >= advice.minValue && v <= advice.maxValue)
+      ) {
         state = AdviceState.triggered;
       }
       return {

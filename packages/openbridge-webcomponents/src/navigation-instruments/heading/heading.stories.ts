@@ -18,7 +18,7 @@ import {
   storyHint,
   widthDecorator,
 } from '../../storybook-util.js';
-import {AdviceType} from '../watch/advice.js';
+import {AdviceTrigger, AdviceType} from '../watch/advice.js';
 import {Priority} from '../types.js';
 
 const meta: Meta<typeof ObcHeading> = {
@@ -44,6 +44,7 @@ const meta: Meta<typeof ObcHeading> = {
     priorityElements: [HeadingPriorityElement.hdg],
   },
   argTypes: {
+    adviceTrigger: {control: 'select', options: Object.values(AdviceTrigger)},
     width: {control: {type: 'range', min: 32, max: 1028, step: 1}},
     faceDiameter: {
       control: {type: 'range', min: 100, max: 600, step: 10},

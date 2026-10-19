@@ -6,7 +6,7 @@ import {
 } from './compass-sector.js';
 import './compass-sector.js';
 import {widthDecorator} from '../../storybook-util.js';
-import {AdviceType} from '../watch/advice.js';
+import {AdviceTrigger, AdviceType} from '../watch/advice.js';
 import {InstrumentState, Priority} from '../types.js';
 import {RotPosition} from '../rate-of-turn/rot-renderer.js';
 
@@ -32,6 +32,7 @@ const meta: Meta<typeof ObcCompassSector> = {
     zoomToFitArc: true,
   },
   argTypes: {
+    adviceTrigger: {control: 'select', options: Object.values(AdviceTrigger)},
     width: {control: {type: 'range', min: 32, max: 1028, step: 1}},
     heading: {control: {type: 'range', min: 0, max: 360, step: 1}},
     courseOverGround: {control: {type: 'range', min: 0, max: 360, step: 1}},

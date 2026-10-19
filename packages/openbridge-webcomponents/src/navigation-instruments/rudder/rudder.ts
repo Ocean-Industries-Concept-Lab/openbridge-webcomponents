@@ -7,7 +7,13 @@ import {Tickmark, TickmarkStyle, TickmarkType} from '../watch/tickmark.js';
 import {WatchCircleType, innerRingRadiusFor} from '../watch/watch.js';
 import {InstrumentState, Priority} from '../types.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
-import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
+import {
+  AdviceState,
+  AdviceTrigger,
+  AngleAdvice,
+  AngleAdviceRaw,
+  adviceTriggerValues,
+} from '../watch/advice.js';
 import {customElement} from '../../decorator.js';
 import {degToRad} from '../../svghelpers/math.js';
 import {ArcFrameFit} from '../../svghelpers/arc-frame.js';
@@ -49,8 +55,8 @@ export enum ObcRudderVariant {
  *   `autoAtSetpointDeadband`, `setpointOverride`, and all other setpoint
  *   properties are provided by `SetpointMixin` and forwarded to `<obc-watch>`.
  * - **Advice zones**: Pass an array of `AngleAdvice` objects to render
- *   caution/alert arcs; triggered state is derived from whether the setpoint
- *   falls inside the advice range.
+ *   caution/alert arcs; an advice is triggered when the reading chosen by
+ *   `adviceTrigger` falls inside its range.
  *
  * ## Usage Guidelines
  *
@@ -85,6 +91,9 @@ export enum ObcRudderVariant {
  * @element obc-rudder
  *
  * @property tickmarksInside - Whether to render tickmarks inside the ring.
+ * @property adviceTrigger - Which reading triggers an advice: `both` (default)
+ *   when the angle or the setpoint is inside the range; `value` uses only the
+ *   angle; `setpoint` uses only the setpoint.
  * @property faceDiameter - Outer-ring diameter in CSS pixels. When set, the instrument renders at a
  *   fixed intrinsic size derived from the ring, arc shape and label reserve —
  *   so instruments sharing the same value have identical ring circumference
@@ -104,6 +113,7 @@ export class ObcRudder extends SetpointMixin(LitElement) {
   @property({type: String}) tickmarkStyle: TickmarkStyle =
     TickmarkStyle.regular;
   @property({type: Array, attribute: false}) advices: AngleAdvice[] = [];
+  @property({type: String}) adviceTrigger: AdviceTrigger = AdviceTrigger.both;
   @property({type: Boolean}) zoomToFitArc: boolean = false;
   @property({type: Number, attribute: 'face-diameter'})
   faceDiameter: number | undefined;
@@ -285,13 +295,17 @@ export class ObcRudder extends SetpointMixin(LitElement) {
       tickmarks.push({angle: 180 + helpAngle, type: TickmarkType.primary});
     }
 
+    const triggerValues = adviceTriggerValues(
+      this.adviceTrigger,
+      this.angle,
+      this.setpoint
+    );
     const advices = this.advices.map<AngleAdviceRaw>((adv): AngleAdviceRaw => {
       const startAngle = 180 - adv.maxAngle;
       const endAngle = 180 - adv.minAngle;
-      const isInRange =
-        this.setpoint !== undefined &&
-        this.setpoint >= adv.minAngle &&
-        this.setpoint <= adv.maxAngle;
+      const isInRange = triggerValues.some(
+        (v) => v >= adv.minAngle && v <= adv.maxAngle
+      );
       let state;
       if (isInRange) {
         state = AdviceState.triggered;

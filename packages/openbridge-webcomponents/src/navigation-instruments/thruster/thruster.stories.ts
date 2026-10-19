@@ -3,7 +3,7 @@ import {ObcThruster} from './thruster.js';
 import './thruster.js';
 import {InstrumentState, Priority} from '../types.js';
 import {widthDecorator} from '../../storybook-util.js';
-import {AdviceType} from '../watch/advice.js';
+import {AdviceTrigger, AdviceType} from '../watch/advice.js';
 import {PropellerType} from './propeller.js';
 
 const meta: Meta<typeof ObcThruster> = {
@@ -12,6 +12,7 @@ const meta: Meta<typeof ObcThruster> = {
   component: 'obc-thruster',
   args: {width: 320},
   argTypes: {
+    adviceTrigger: {control: 'select', options: Object.values(AdviceTrigger)},
     width: {control: {type: 'range', min: 32, max: 1028, step: 1}},
     thrust: {control: {type: 'range', min: -100, max: 100, step: 1}},
     setpoint: {control: {type: 'range', min: -100, max: 100, step: 1}},
