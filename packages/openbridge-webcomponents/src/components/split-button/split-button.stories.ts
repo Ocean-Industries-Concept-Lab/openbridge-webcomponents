@@ -1,11 +1,16 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
+import {expect, waitFor} from 'storybook/test';
 import {ObcSplitButton} from './split-button.js';
 import './split-button.js';
-import {html} from 'lit';
+import {html, nothing, type TemplateResult} from 'lit';
 import '../../icons/icon-placeholder.js';
+import '../../icons/icon-command-request.js';
 import {ContextMenuType} from '../context-menu-input/context-menu-input.js';
 
-const renderWithIcon = (args: StoryObj<ObcSplitButton>['args']) => html`
+const renderSplitButton = (
+  args: StoryObj<ObcSplitButton>['args'],
+  dropdownIcon: TemplateResult | typeof nothing = nothing
+) => html`
   <obc-split-button
     .label=${args?.label || ''}
     .hasIcon=${args?.hasIcon || false}
@@ -19,12 +24,46 @@ const renderWithIcon = (args: StoryObj<ObcSplitButton>['args']) => html`
     .menuTitle=${args?.menuTitle || ''}
     .fullWidth=${args?.fullWidth || false}
     .disabled=${args?.disabled || false}
+    .primaryDisabled=${args?.primaryDisabled || false}
+    .dropdownDisabled=${args?.dropdownDisabled || false}
     .openTop=${args?.openTop || false}
+    .openLeft=${args?.openLeft || false}
     .columnGroups=${args?.columnGroups || []}
   >
     <obi-placeholder slot="icon"></obi-placeholder>
+    ${dropdownIcon}
   </obc-split-button>
 `;
+
+const renderWithIcon = (args: StoryObj<ObcSplitButton>['args']) =>
+  renderSplitButton(args);
+
+const renderWithDropdownIcon = (args: StoryObj<ObcSplitButton>['args']) =>
+  renderSplitButton(
+    args,
+    html`<obi-command-request slot="dropdown-icon"></obi-command-request>`
+  );
+
+/** A toolbar end: the button sits on the right edge of its container. */
+const rightAligned = (inner: TemplateResult) =>
+  html`<div style="display: flex; justify-content: flex-end">${inner}</div>`;
+
+/** Opens the menu and checks that it ends on the button's right edge. */
+const openLeftPlay: Story['play'] = async ({canvasElement, userEvent}) => {
+  const el = canvasElement.querySelector('obc-split-button')!;
+  const dropdown = el
+    .shadowRoot!.querySelector('obc-icon-button')!
+    .shadowRoot!.querySelector('button')!;
+  await userEvent.click(dropdown);
+  await waitFor(() =>
+    expect(el.shadowRoot!.querySelector('.positioned-menu')).not.toBeNull()
+  );
+  const menu = el.shadowRoot!.querySelector<HTMLElement>('.positioned-menu')!;
+  await expect(menu.getBoundingClientRect().right).toBeCloseTo(
+    el.getBoundingClientRect().right,
+    0
+  );
+};
 
 const meta: Meta<ObcSplitButton> = {
   title: 'UI Components/Buttons/Split Button',
@@ -67,9 +106,21 @@ const meta: Meta<ObcSplitButton> = {
       description: 'Make button fill container width',
     },
     disabled: {control: 'boolean', description: 'Disable both buttons'},
+    primaryDisabled: {
+      control: 'boolean',
+      description: 'Disable the primary button alone',
+    },
+    dropdownDisabled: {
+      control: 'boolean',
+      description: 'Disable the dropdown button alone',
+    },
     openTop: {
       control: 'boolean',
       description: 'Open the dropdown above the button',
+    },
+    openLeft: {
+      control: 'boolean',
+      description: 'Extend the dropdown to the left of the button',
     },
     selectPerGroup: {
       control: 'boolean',
@@ -93,7 +144,10 @@ const meta: Meta<ObcSplitButton> = {
     menuTitle: '',
     fullWidth: false,
     disabled: false,
+    primaryDisabled: false,
+    dropdownDisabled: false,
     openTop: false,
+    openLeft: false,
     selectPerGroup: false,
   },
 } satisfies Meta<ObcSplitButton>;
@@ -177,6 +231,68 @@ export const Disabled: Story = {
     ],
   },
   render: renderWithIcon,
+};
+
+/** Only the primary action is disabled; the menu stays in use. */
+export const PrimaryDisabled: Story = {
+  args: {
+    label: 'Primary Disabled',
+    hasIcon: true,
+    primaryDisabled: true,
+  },
+  render: renderWithIcon,
+};
+
+/** Only the dropdown is disabled; the primary action stays in use. */
+export const DropdownDisabled: Story = {
+  args: {
+    label: 'Dropdown Disabled',
+    hasIcon: true,
+    dropdownDisabled: true,
+  },
+  render: renderWithIcon,
+};
+
+/** A slotted icon replaces the chevron on the dropdown button. */
+export const DropdownIcon: Story = {
+  args: {
+    label: 'Dropdown Icon',
+  },
+  render: renderWithDropdownIcon,
+};
+
+/**
+ * The menu extends to the left, ending on the button's right edge, so a button
+ * at the right edge of its container keeps the whole menu on screen.
+ */
+export const OpenLeft: Story = {
+  args: {
+    label: 'Open Left',
+    hasIcon: true,
+    openLeft: true,
+  },
+  render: (args) => rightAligned(renderWithIcon(args)),
+  play: openLeftPlay,
+};
+
+/**
+ * Access control at the end of a toolbar: the action is disabled while the
+ * user lacks the access it needs, and the dropdown, with its own icon, offers
+ * the ways to request it (#1381).
+ */
+export const CommandAccess: Story = {
+  args: {
+    label: 'Set Heading',
+    hasIcon: true,
+    primaryDisabled: true,
+    openLeft: true,
+    options: [
+      {value: 'button', label: 'Request access to button'},
+      {value: 'page', label: 'Request access to page'},
+    ],
+  },
+  render: (args) => rightAligned(renderWithDropdownIcon(args)),
+  play: openLeftPlay,
 };
 
 /** Complex flyout menu example. */

@@ -178,6 +178,26 @@ Components that participate in grouped layouts (e.g. form items) use host data a
 
 These attributes are set by a parent component — do not set them internally.
 
+## Button stacks
+
+Button-shaped components join into one control through their corner options:
+`segmentPosition` on `obc-button` (`start`, `middle`, `end`) and `cornerLeft`
+/ `cornerRight` on `obc-icon-button` square the touching corners.
+`obc-split-button` (an action and a menu) and `obc-stepper-box` (two actions
+around a field) are the shipped stacks; a new one composes the same parts
+rather than restyling a button.
+
+- The halves of the split button disable separately (`primaryDisabled`,
+  `dropdownDisabled`) and `disabled` still takes both, so an action the user
+  may not take yet keeps its menu in use, for example to request the access
+  the action needs (#1381).
+- The dropdown glyph is the `dropdown-icon` slot with the chevron as fallback
+  content: an empty slot reserves nothing, so it needs no boolean gate.
+- Menu placement is explicit, never measured: `openTop` and `openLeft` each
+  flip one axis of the default (below the button, extending right) and
+  combine. Figma node 2633-8700 draws only the vertical pair; the horizontal
+  one is a code-side option for a button at the right edge of its container.
+
 ## Input fields
 
 `obc-text-input-field` and `obc-number-input-field` wrap a native `<input>`
