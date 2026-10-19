@@ -464,6 +464,9 @@
   "building-blocks-instrument-radial--equal-circumference-mixed-digits": [
     "scrollable-region-focusable"
   ],
+  "building-blocks-watch--port-starboard-face-rotated": [
+    "scrollable-region-focusable"
+  ],
   "building-blocks-watch--tickmarks-test-rotation": [
     "scrollable-region-focusable"
   ],
