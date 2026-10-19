@@ -136,6 +136,11 @@ export class ObcIconButton extends LitElement {
   @property({type: String, attribute: 'aria-label'})
   override ariaLabel: string | null = null;
 
+  /** Focus lands on the button inside, not on the host. */
+  public override focus(options?: FocusOptions): void {
+    this.shadowRoot?.querySelector('button')?.focus(options);
+  }
+
   get progressSpinner() {
     if (this.progress === undefined) {
       return nothing;
