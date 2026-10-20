@@ -413,7 +413,9 @@ export class ObcTopBar extends LitElement {
 
     const breakpointMoreButton = Math.max(
       this.appButtonBreakpointPx,
-      this.dimmingButtonBreakpointPx
+      this.dimmingButtonBreakpointPx,
+      this.userButtonBreakpointPx,
+      this.appIconBreakpointPx
     );
 
     return html`
@@ -520,7 +522,7 @@ export class ObcTopBar extends LitElement {
             !this.inactive
               ? html`<obc-icon-button
                   class="left-more-button"
-                  part="left-more-button"
+                  part="left-more-button more-button"
                   variant="flat"
                   aria-label=${msg('More')}
                   @click=${this.leftMoreButtonClicked}
