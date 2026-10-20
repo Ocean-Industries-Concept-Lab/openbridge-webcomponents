@@ -11,10 +11,10 @@ const ISA_18_2_ITEMS: [id: string, criticality: string, state: string][] = [
   ['acknowledged', 'high', 'acknowledged'],
   ['returned-to-normal', 'high', 'returned-to-normal-unacknowledged'],
   ['normal', 'high', 'normal'],
-  ['diagnostic', 'diagnostic', 'active'],
-  ['shelved', 'medium', 'shelved'],
-  ['suppressed', 'critical', 'suppressed-by-design'],
-  ['not-defined', 'diagnostic', 'shelved'],
+  ['low-acknowledged', 'low', 'acknowledged'],
+  ['shelved', 'medium', 'shelved-active'],
+  ['suppressed', 'critical', 'suppressed-by-design-not-active'],
+  ['not-defined', 'high', 'shelved'],
 ];
 
 let list: ObcAlertListExperimental;
@@ -57,7 +57,7 @@ afterEach(() => {
 describe('obc-alert-list-experimental', () => {
   it.each([
     [undefined, ISA_18_2_ITEMS.map(([id]) => id)],
-    ['active', ['unacknowledged', 'acknowledged', 'diagnostic']],
+    ['active', ['unacknowledged', 'acknowledged', 'low-acknowledged']],
     ['unacked', ['unacknowledged', 'returned-to-normal']],
     ['shelved', ['shelved']],
     ['suppressed-by-design', ['suppressed']],
@@ -78,16 +78,16 @@ describe('obc-alert-list-experimental', () => {
     const el = await renderList((l) => (l.filterId = 'active'));
     const item =
       el.querySelector<ObcAlertMenuItemExperimental>('#acknowledged')!;
-    item.state = 'shelved';
+    item.state = 'shelved-active';
     await item.updateComplete;
     await new Promise((resolve) => setTimeout(resolve));
-    expect(shownIds(el)).toEqual(['unacknowledged', 'diagnostic']);
+    expect(shownIds(el)).toEqual(['unacknowledged', 'low-acknowledged']);
   });
 
   it('narrows the filter with the custom predicate', async () => {
     const el = await renderList((l) => {
       l.filterId = 'active';
-      l.customFilter = (item) => item.id !== 'diagnostic';
+      l.customFilter = (item) => item.id !== 'low-acknowledged';
     });
     expect(shownIds(el)).toEqual(['unacknowledged', 'acknowledged']);
   });

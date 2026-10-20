@@ -206,7 +206,7 @@ describe('actionColumn', () => {
   it('offers the first action of the state, labelled by the standard', () => {
     const acknowledgeCell = cell(RECTIFIED_WARNING);
     setAlertStandard(isa182AlertStandard);
-    const unshelveCell = cell({criticality: 'high', state: 'shelved'});
+    const unshelveCell = cell({criticality: 'high', state: 'shelved-active'});
     expect([acknowledgeCell, unshelveCell]).toEqual([
       {type: ObcTableCellType.Button, text: 'ACK'},
       {type: ObcTableCellType.Button, text: 'Unshelve'},

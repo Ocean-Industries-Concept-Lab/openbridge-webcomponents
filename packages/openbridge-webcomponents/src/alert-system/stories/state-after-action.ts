@@ -20,11 +20,32 @@ const ISA_18_2_STATE_AFTER_ACTION: Record<string, Record<string, string>> = {
     'returned-to-normal-unacknowledged': 'normal',
   },
   shelve: {
-    unacknowledged: 'shelved',
-    acknowledged: 'shelved',
+    unacknowledged: 'shelved-active',
+    acknowledged: 'shelved-active',
+    'returned-to-normal-unacknowledged': 'shelved-not-active',
   },
   unshelve: {
-    shelved: 'unacknowledged',
+    'shelved-active': 'acknowledged',
+    'shelved-not-active': 'normal',
+  },
+};
+
+const ISA_18_2_SERVICE_VIEW_STATE_AFTER_ACTION: Record<
+  string,
+  Record<string, string>
+> = {
+  'remove-from-service': {
+    unacknowledged: 'out-of-service-active',
+    acknowledged: 'out-of-service-active',
+    'returned-to-normal-unacknowledged': 'out-of-service-not-active',
+    'shelved-active': 'out-of-service-active',
+    'shelved-not-active': 'out-of-service-not-active',
+    'suppressed-by-design-active': 'out-of-service-active',
+    'suppressed-by-design-not-active': 'out-of-service-not-active',
+  },
+  'return-to-service': {
+    'out-of-service-active': 'unacknowledged',
+    'out-of-service-not-active': 'normal',
   },
 };
 
@@ -40,4 +61,11 @@ export function isa182StateAfterAction(
   actionId: string
 ): string {
   return ISA_18_2_STATE_AFTER_ACTION[actionId]?.[state] ?? state;
+}
+
+export function isa182ServiceViewStateAfterAction(
+  state: string,
+  actionId: string
+): string {
+  return ISA_18_2_SERVICE_VIEW_STATE_AFTER_ACTION[actionId]?.[state] ?? state;
 }

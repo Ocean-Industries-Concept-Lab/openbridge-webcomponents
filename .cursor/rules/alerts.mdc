@@ -52,14 +52,18 @@ several alerts).
 | Constant                | Module                        | Criticalities                            |
 | ----------------------- | ----------------------------- | ---------------------------------------- |
 | `iec62923AlertStandard` | `iec-62923-alert-standard.ts` | emergency alarm, alarm, warning, caution |
-| `isa182AlertStandard`   | `isa-18-2-alert-standard.ts`  | critical, high, medium, low, diagnostic  |
+| `isa182AlertStandard`   | `isa-18-2-alert-standard.ts`  | critical, high, medium, low              |
 
 - IEC 62923 has the filters Unacked and Active, and acknowledges one alert
   at a time (MSC.302 9.9). Its `-acknowledge-not-allowed` states are for an
   alert acknowledged elsewhere, such as a category C alert.
 - ISA-18.2 follows Figure 3 of the standard: shelved, suppressed by design
   and out of service are states, each with a filter of its own (11.2.4), and
-  none of them flashes.
+  none of them flashes. Each is two states, `-active` and `-not-active`,
+  because their lists show which (11.7.4, 11.8.3, 11.9.4). Out of service
+  offers the operator no action: maintenance takes an alarm out and returns
+  it. The Service View story of the details list extends the standard with
+  those actions and a diagnostic priority, the way an application would.
 - A standard's name is used to say what the states follow, never more:
   "supports the alert states of ANSI/ISA-18.2", not "compliant" or
   "certified". The library is not affiliated with or endorsed by a

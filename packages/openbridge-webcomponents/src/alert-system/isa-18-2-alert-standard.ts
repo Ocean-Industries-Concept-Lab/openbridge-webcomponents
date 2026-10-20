@@ -3,14 +3,24 @@
  * define them.
  *
  * Features:
- * - Priorities: critical, high, medium, low, and diagnostic.
+ * - Priorities: critical, high, medium and low.
  * - An alarm follows the states of ISA-18.2 Figure 3: unacknowledged,
  *   acknowledged, returned to normal unacknowledged, shelved, suppressed by
- *   design, out of service and normal. A diagnostic alert is only active or
- *   normal.
+ *   design, out of service and normal. A shelved, suppressed or out-of-service
+ *   alarm is still active or not active, and is a state of its own for each,
+ *   since their lists show which (ISA-18.2 11.7.4, 11.8.3, 11.9.4).
  * - Shelved, suppressed-by-design and out-of-service alarms each have a
  *   filter of their own (ISA-18.2 11.2.4), and do not flash.
  * - Several alarms may be acknowledged at once.
+ *
+ * Usage Guidelines:
+ * - The application moves alarms between states. An alarm the operator
+ *   unshelves goes to acknowledged while active and to normal otherwise; one
+ *   unshelved by its time limit goes to unacknowledged while active
+ *   (ISA-18.2 11.7.3).
+ * - Taking an alarm out of service and returning it is maintenance's work, so
+ *   the operator is offered neither. An application that gives maintenance a
+ *   view of its own extends this standard with those actions.
  *
  * ISA-18.2 is published by the International Society of Automation, which
  * is not affiliated with this project and has not endorsed it; supporting
@@ -22,7 +32,6 @@ import '../icons/icon-alerts.js';
 import '../icons/icon-alerts-active.js';
 import '../icons/icon-alerts-shelf.js';
 import '../icons/icon-unacknowledged.js';
-import '../components/alert-frame/diagnostic-badge.js';
 import {FlashingSpeed} from '../types.js';
 import {
   ALERT_ACTION_ID_APPLIED_BY_ACK_VISIBLE_BUTTON,
@@ -99,12 +108,6 @@ const LOW_GLYPHS = {
   normal: {frame: lowRectifiedB},
 } satisfies Record<string, AlertGlyph>;
 
-const DIAGNOSTIC_GLYPH: AlertGlyph = {
-  frame: html`<obi-diagnostic-badge
-    style="color: var(--alert-diagnostic-color)"
-  ></obi-diagnostic-badge>`,
-};
-
 export const isa182AlertStandard = defineAlertStandard({
   filters: {
     [Unacknowledged]: {
@@ -123,8 +126,8 @@ export const isa182AlertStandard = defineAlertStandard({
       iconWhenNoAlertIsIncluded: html`<obi-alerts-shelf></obi-alerts-shelf>`,
     },
     [SuppressedByDesign]: {
-      label: () => msg('Suppressed'),
-      titleWhenNoAlertIsIncluded: () => msg('No suppressed alerts'),
+      label: () => msg('Suppressed by design'),
+      titleWhenNoAlertIsIncluded: () => msg('No alerts suppressed by design'),
       iconWhenNoAlertIsIncluded: html`<obi-alerts-active></obi-alerts-active>`,
     },
     [OutOfService]: {
@@ -156,7 +159,7 @@ export const isa182AlertStandard = defineAlertStandard({
           sortingRank: 40,
           flashingSpeed: FlashingSpeed.VerySlow,
           includedInFilters: [Unacknowledged],
-          offeredActions: [Acknowledge],
+          offeredActions: [Acknowledge, Shelve],
         },
         acknowledged: {
           glyph: CRITICAL_GLYPHS.acknowledged,
@@ -164,20 +167,36 @@ export const isa182AlertStandard = defineAlertStandard({
           includedInFilters: [Active],
           offeredActions: [Shelve],
         },
-        shelved: {
+        'shelved-active': {
           glyph: CRITICAL_GLYPHS.acknowledged,
           sortingRank: 200,
           includedInFilters: [Shelved],
           offeredActions: [Unshelve],
         },
-        'suppressed-by-design': {
+        'shelved-not-active': {
+          glyph: CRITICAL_GLYPHS.acknowledged,
+          sortingRank: 204,
+          includedInFilters: [Shelved],
+          offeredActions: [Unshelve],
+        },
+        'suppressed-by-design-active': {
           glyph: CRITICAL_GLYPHS.acknowledged,
           sortingRank: 210,
           includedInFilters: [SuppressedByDesign],
         },
-        'out-of-service': {
+        'suppressed-by-design-not-active': {
+          glyph: CRITICAL_GLYPHS.acknowledged,
+          sortingRank: 214,
+          includedInFilters: [SuppressedByDesign],
+        },
+        'out-of-service-active': {
           glyph: CRITICAL_GLYPHS.acknowledged,
           sortingRank: 220,
+          includedInFilters: [OutOfService],
+        },
+        'out-of-service-not-active': {
+          glyph: CRITICAL_GLYPHS.acknowledged,
+          sortingRank: 224,
           includedInFilters: [OutOfService],
         },
         normal: {
@@ -200,7 +219,7 @@ export const isa182AlertStandard = defineAlertStandard({
           sortingRank: 41,
           flashingSpeed: FlashingSpeed.VerySlow,
           includedInFilters: [Unacknowledged],
-          offeredActions: [Acknowledge],
+          offeredActions: [Acknowledge, Shelve],
         },
         acknowledged: {
           glyph: HIGH_GLYPHS.acknowledged,
@@ -208,20 +227,36 @@ export const isa182AlertStandard = defineAlertStandard({
           includedInFilters: [Active],
           offeredActions: [Shelve],
         },
-        shelved: {
+        'shelved-active': {
           glyph: HIGH_GLYPHS.acknowledged,
           sortingRank: 201,
           includedInFilters: [Shelved],
           offeredActions: [Unshelve],
         },
-        'suppressed-by-design': {
+        'shelved-not-active': {
+          glyph: HIGH_GLYPHS.acknowledged,
+          sortingRank: 205,
+          includedInFilters: [Shelved],
+          offeredActions: [Unshelve],
+        },
+        'suppressed-by-design-active': {
           glyph: HIGH_GLYPHS.acknowledged,
           sortingRank: 211,
           includedInFilters: [SuppressedByDesign],
         },
-        'out-of-service': {
+        'suppressed-by-design-not-active': {
+          glyph: HIGH_GLYPHS.acknowledged,
+          sortingRank: 215,
+          includedInFilters: [SuppressedByDesign],
+        },
+        'out-of-service-active': {
           glyph: HIGH_GLYPHS.acknowledged,
           sortingRank: 221,
+          includedInFilters: [OutOfService],
+        },
+        'out-of-service-not-active': {
+          glyph: HIGH_GLYPHS.acknowledged,
+          sortingRank: 225,
           includedInFilters: [OutOfService],
         },
         normal: {
@@ -244,7 +279,7 @@ export const isa182AlertStandard = defineAlertStandard({
           sortingRank: 51,
           flashingSpeed: FlashingSpeed.VerySlow,
           includedInFilters: [Unacknowledged],
-          offeredActions: [Acknowledge],
+          offeredActions: [Acknowledge, Shelve],
         },
         acknowledged: {
           glyph: MEDIUM_GLYPHS.acknowledged,
@@ -252,20 +287,36 @@ export const isa182AlertStandard = defineAlertStandard({
           includedInFilters: [Active],
           offeredActions: [Shelve],
         },
-        shelved: {
+        'shelved-active': {
           glyph: MEDIUM_GLYPHS.acknowledged,
           sortingRank: 202,
           includedInFilters: [Shelved],
           offeredActions: [Unshelve],
         },
-        'suppressed-by-design': {
+        'shelved-not-active': {
+          glyph: MEDIUM_GLYPHS.acknowledged,
+          sortingRank: 206,
+          includedInFilters: [Shelved],
+          offeredActions: [Unshelve],
+        },
+        'suppressed-by-design-active': {
           glyph: MEDIUM_GLYPHS.acknowledged,
           sortingRank: 212,
           includedInFilters: [SuppressedByDesign],
         },
-        'out-of-service': {
+        'suppressed-by-design-not-active': {
+          glyph: MEDIUM_GLYPHS.acknowledged,
+          sortingRank: 216,
+          includedInFilters: [SuppressedByDesign],
+        },
+        'out-of-service-active': {
           glyph: MEDIUM_GLYPHS.acknowledged,
           sortingRank: 222,
+          includedInFilters: [OutOfService],
+        },
+        'out-of-service-not-active': {
+          glyph: MEDIUM_GLYPHS.acknowledged,
+          sortingRank: 226,
           includedInFilters: [OutOfService],
         },
         normal: {
@@ -288,7 +339,7 @@ export const isa182AlertStandard = defineAlertStandard({
           sortingRank: 52,
           flashingSpeed: FlashingSpeed.VerySlow,
           includedInFilters: [Unacknowledged],
-          offeredActions: [Acknowledge],
+          offeredActions: [Acknowledge, Shelve],
         },
         acknowledged: {
           glyph: LOW_GLYPHS.acknowledged,
@@ -296,38 +347,41 @@ export const isa182AlertStandard = defineAlertStandard({
           includedInFilters: [Active],
           offeredActions: [Shelve],
         },
-        shelved: {
+        'shelved-active': {
           glyph: LOW_GLYPHS.acknowledged,
           sortingRank: 203,
           includedInFilters: [Shelved],
           offeredActions: [Unshelve],
         },
-        'suppressed-by-design': {
+        'shelved-not-active': {
+          glyph: LOW_GLYPHS.acknowledged,
+          sortingRank: 207,
+          includedInFilters: [Shelved],
+          offeredActions: [Unshelve],
+        },
+        'suppressed-by-design-active': {
           glyph: LOW_GLYPHS.acknowledged,
           sortingRank: 213,
           includedInFilters: [SuppressedByDesign],
         },
-        'out-of-service': {
+        'suppressed-by-design-not-active': {
+          glyph: LOW_GLYPHS.acknowledged,
+          sortingRank: 217,
+          includedInFilters: [SuppressedByDesign],
+        },
+        'out-of-service-active': {
           glyph: LOW_GLYPHS.acknowledged,
           sortingRank: 223,
+          includedInFilters: [OutOfService],
+        },
+        'out-of-service-not-active': {
+          glyph: LOW_GLYPHS.acknowledged,
+          sortingRank: 227,
           includedInFilters: [OutOfService],
         },
         normal: {
           glyph: LOW_GLYPHS.normal,
           sortingRank: 343,
-        },
-      },
-    },
-    diagnostic: {
-      states: {
-        active: {
-          glyph: DIAGNOSTIC_GLYPH,
-          sortingRank: 101,
-          includedInFilters: [Active],
-        },
-        normal: {
-          glyph: DIAGNOSTIC_GLYPH,
-          sortingRank: 344,
         },
       },
     },

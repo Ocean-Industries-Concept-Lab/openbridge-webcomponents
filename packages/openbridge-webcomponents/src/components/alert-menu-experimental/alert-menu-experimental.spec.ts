@@ -21,9 +21,9 @@ const ISA_18_2_ITEMS: [id: string, criticality: string, state: string][] = [
   ['unacknowledged', 'high', 'unacknowledged'],
   ['acknowledged', 'high', 'acknowledged'],
   ['returned-to-normal', 'high', 'returned-to-normal-unacknowledged'],
-  ['diagnostic', 'diagnostic', 'active'],
-  ['shelved', 'medium', 'shelved'],
-  ['out-of-service', 'low', 'out-of-service'],
+  ['low-acknowledged', 'low', 'acknowledged'],
+  ['shelved', 'medium', 'shelved-not-active'],
+  ['out-of-service', 'low', 'out-of-service-active'],
 ];
 
 async function setup(standard: AlertStandard | undefined) {
@@ -89,7 +89,7 @@ describe('obc-alert-menu-experimental', () => {
       'Unacked',
       'Active',
       'Shelved',
-      'Suppressed',
+      'Suppressed by design',
       'Out of service',
     ]);
   });
@@ -98,7 +98,7 @@ describe('obc-alert-menu-experimental', () => {
     const el = await setup(isa182AlertStandard);
     expect(clickAckVisible(el)).toEqual({
       tabName: 'active',
-      ids: ['unacknowledged', 'acknowledged', 'diagnostic'],
+      ids: ['unacknowledged', 'acknowledged', 'low-acknowledged'],
     });
   });
 

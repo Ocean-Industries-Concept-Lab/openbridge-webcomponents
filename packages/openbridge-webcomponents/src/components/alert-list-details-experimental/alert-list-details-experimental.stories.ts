@@ -27,12 +27,19 @@ import type {
 } from '../../alert-system/standard-alert.js';
 import {
   iec62923StateAfterAction,
+  isa182ServiceViewStateAfterAction,
   isa182StateAfterAction,
 } from '../../alert-system/stories/state-after-action.js';
+import type {AlertStateDefinition} from '../../alert-system/alert-standard.js';
+import '../alert-frame/diagnostic-badge.js';
 
 type Iec62923Alert = StandardAlertOf<typeof iec62923AlertStandard> &
   StandardAlertWithColumnFields;
 type Isa182Alert = StandardAlertOf<typeof isa182AlertStandard> &
+  StandardAlertWithColumnFields;
+type Isa182ServiceViewAlert = StandardAlertOf<
+  typeof isa182ServiceViewStandardDefinedByTheApplication
+> &
   StandardAlertWithColumnFields;
 type Iec6060118Alert = StandardAlertOf<
   typeof iec6060118AlertStandardDefinedByTheApplication
@@ -267,15 +274,6 @@ const isa182AlertsOfEveryPriority: Isa182Alert[] = [
     text: 'Filter maintenance due',
     tagId: 'LOW-04',
     time: new Date('2024-01-15T14:25:00Z'),
-  },
-  {
-    id: 'level-5',
-    criticality: 'diagnostic',
-    state: 'active',
-    source: 'Network',
-    text: 'Redundant link diagnostic message',
-    tagId: 'DIAG-05',
-    time: new Date('2024-01-15T14:20:00Z'),
   },
 ];
 
@@ -613,38 +611,29 @@ const isa182AlertsInEveryKindOfState: Isa182Alert[] = [
     time: new Date('2024-01-15T14:36:00Z'),
   },
   {
-    id: 'diagnostic',
-    criticality: 'diagnostic',
-    state: 'active',
-    source: 'diagnostic',
-    text: 'Diagnostic, takes no ACK',
-    tagId: 'DIAGNOSTIC',
-    time: new Date('2024-01-15T14:35:00Z'),
-  },
-  {
     id: 'shelved',
     criticality: 'medium',
-    state: 'shelved',
+    state: 'shelved-active',
     source: 'medium',
-    text: 'Shelved',
+    text: 'Shelved, active',
     tagId: 'SHELVED',
     time: new Date('2024-01-15T14:34:00Z'),
   },
   {
     id: 'suppressed',
     criticality: 'critical',
-    state: 'suppressed-by-design',
+    state: 'suppressed-by-design-not-active',
     source: 'critical',
-    text: 'Suppressed by design',
+    text: 'Suppressed by design, not active',
     tagId: 'SUPPRESSED',
     time: new Date('2024-01-15T14:33:00Z'),
   },
   {
     id: 'out-of-service',
     criticality: 'low',
-    state: 'out-of-service',
+    state: 'out-of-service-active',
     source: 'low',
-    text: 'Out of service',
+    text: 'Out of service, active',
     tagId: 'OUT-OF-SERVICE',
     time: new Date('2024-01-15T14:32:00Z'),
   },
@@ -701,6 +690,341 @@ export const FilterModes: Story = {
             </section>`
         )}
       </div>`,
+};
+
+const RemoveFromService = 'remove-from-service';
+const ReturnToService = 'return-to-service';
+
+const offeringOnly = <State extends AlertStateDefinition>(
+  state: State,
+  actionId: typeof RemoveFromService | typeof ReturnToService
+) => ({...state, offeredActions: [actionId]});
+
+const isa182 = isa182AlertStandard.criticalities;
+
+// TODO(designer): the diagnostic badge has no second frame to flash with, so
+// a diagnostic alarm stays steady in every state.
+const diagnosticGlyph = {
+  frame: html`<obi-diagnostic-badge
+    style="color: var(--alert-diagnostic-color)"
+  ></obi-diagnostic-badge>`,
+};
+
+/**
+ * ISA-18.2 as a maintenance console sees it, defined by the application on
+ * top of the library's standard. Maintenance takes alarms out of service and
+ * returns them, and does not acknowledge or shelve; instrument and system
+ * faults get a diagnostic priority below low.
+ */
+const isa182ServiceViewStandardDefinedByTheApplication = defineAlertStandard({
+  filters: isa182AlertStandard.filters,
+  actions: {
+    ...isa182AlertStandard.actions,
+    [RemoveFromService]: {label: () => 'Remove from service'},
+    [ReturnToService]: {label: () => 'Return to service'},
+  },
+  criticalities: {
+    critical: {
+      states: {
+        unacknowledged: offeringOnly(
+          isa182.critical.states.unacknowledged,
+          RemoveFromService
+        ),
+        'returned-to-normal-unacknowledged': offeringOnly(
+          isa182.critical.states['returned-to-normal-unacknowledged'],
+          RemoveFromService
+        ),
+        acknowledged: offeringOnly(
+          isa182.critical.states.acknowledged,
+          RemoveFromService
+        ),
+        'shelved-active': offeringOnly(
+          isa182.critical.states['shelved-active'],
+          RemoveFromService
+        ),
+        'shelved-not-active': offeringOnly(
+          isa182.critical.states['shelved-not-active'],
+          RemoveFromService
+        ),
+        'suppressed-by-design-active': offeringOnly(
+          isa182.critical.states['suppressed-by-design-active'],
+          RemoveFromService
+        ),
+        'suppressed-by-design-not-active': offeringOnly(
+          isa182.critical.states['suppressed-by-design-not-active'],
+          RemoveFromService
+        ),
+        'out-of-service-active': offeringOnly(
+          isa182.critical.states['out-of-service-active'],
+          ReturnToService
+        ),
+        'out-of-service-not-active': offeringOnly(
+          isa182.critical.states['out-of-service-not-active'],
+          ReturnToService
+        ),
+        normal: offeringOnly(isa182.critical.states.normal, RemoveFromService),
+      },
+    },
+    high: {
+      states: {
+        unacknowledged: offeringOnly(
+          isa182.high.states.unacknowledged,
+          RemoveFromService
+        ),
+        'returned-to-normal-unacknowledged': offeringOnly(
+          isa182.high.states['returned-to-normal-unacknowledged'],
+          RemoveFromService
+        ),
+        acknowledged: offeringOnly(
+          isa182.high.states.acknowledged,
+          RemoveFromService
+        ),
+        'shelved-active': offeringOnly(
+          isa182.high.states['shelved-active'],
+          RemoveFromService
+        ),
+        'shelved-not-active': offeringOnly(
+          isa182.high.states['shelved-not-active'],
+          RemoveFromService
+        ),
+        'suppressed-by-design-active': offeringOnly(
+          isa182.high.states['suppressed-by-design-active'],
+          RemoveFromService
+        ),
+        'suppressed-by-design-not-active': offeringOnly(
+          isa182.high.states['suppressed-by-design-not-active'],
+          RemoveFromService
+        ),
+        'out-of-service-active': offeringOnly(
+          isa182.high.states['out-of-service-active'],
+          ReturnToService
+        ),
+        'out-of-service-not-active': offeringOnly(
+          isa182.high.states['out-of-service-not-active'],
+          ReturnToService
+        ),
+        normal: offeringOnly(isa182.high.states.normal, RemoveFromService),
+      },
+    },
+    medium: {
+      states: {
+        unacknowledged: offeringOnly(
+          isa182.medium.states.unacknowledged,
+          RemoveFromService
+        ),
+        'returned-to-normal-unacknowledged': offeringOnly(
+          isa182.medium.states['returned-to-normal-unacknowledged'],
+          RemoveFromService
+        ),
+        acknowledged: offeringOnly(
+          isa182.medium.states.acknowledged,
+          RemoveFromService
+        ),
+        'shelved-active': offeringOnly(
+          isa182.medium.states['shelved-active'],
+          RemoveFromService
+        ),
+        'shelved-not-active': offeringOnly(
+          isa182.medium.states['shelved-not-active'],
+          RemoveFromService
+        ),
+        'suppressed-by-design-active': offeringOnly(
+          isa182.medium.states['suppressed-by-design-active'],
+          RemoveFromService
+        ),
+        'suppressed-by-design-not-active': offeringOnly(
+          isa182.medium.states['suppressed-by-design-not-active'],
+          RemoveFromService
+        ),
+        'out-of-service-active': offeringOnly(
+          isa182.medium.states['out-of-service-active'],
+          ReturnToService
+        ),
+        'out-of-service-not-active': offeringOnly(
+          isa182.medium.states['out-of-service-not-active'],
+          ReturnToService
+        ),
+        normal: offeringOnly(isa182.medium.states.normal, RemoveFromService),
+      },
+    },
+    low: {
+      states: {
+        unacknowledged: offeringOnly(
+          isa182.low.states.unacknowledged,
+          RemoveFromService
+        ),
+        'returned-to-normal-unacknowledged': offeringOnly(
+          isa182.low.states['returned-to-normal-unacknowledged'],
+          RemoveFromService
+        ),
+        acknowledged: offeringOnly(
+          isa182.low.states.acknowledged,
+          RemoveFromService
+        ),
+        'shelved-active': offeringOnly(
+          isa182.low.states['shelved-active'],
+          RemoveFromService
+        ),
+        'shelved-not-active': offeringOnly(
+          isa182.low.states['shelved-not-active'],
+          RemoveFromService
+        ),
+        'suppressed-by-design-active': offeringOnly(
+          isa182.low.states['suppressed-by-design-active'],
+          RemoveFromService
+        ),
+        'suppressed-by-design-not-active': offeringOnly(
+          isa182.low.states['suppressed-by-design-not-active'],
+          RemoveFromService
+        ),
+        'out-of-service-active': offeringOnly(
+          isa182.low.states['out-of-service-active'],
+          ReturnToService
+        ),
+        'out-of-service-not-active': offeringOnly(
+          isa182.low.states['out-of-service-not-active'],
+          ReturnToService
+        ),
+        normal: offeringOnly(isa182.low.states.normal, RemoveFromService),
+      },
+    },
+    diagnostic: {
+      states: {
+        unacknowledged: {
+          glyph: diagnosticGlyph,
+          sortingRank: 33,
+          includedInFilters: ['unacked', 'active'],
+          offeredActions: [RemoveFromService],
+        },
+        'returned-to-normal-unacknowledged': {
+          glyph: diagnosticGlyph,
+          sortingRank: 53,
+          includedInFilters: ['unacked'],
+          offeredActions: [RemoveFromService],
+        },
+        acknowledged: {
+          glyph: diagnosticGlyph,
+          sortingRank: 83,
+          includedInFilters: ['active'],
+          offeredActions: [RemoveFromService],
+        },
+        'shelved-active': {
+          glyph: diagnosticGlyph,
+          sortingRank: 208,
+          includedInFilters: ['shelved'],
+          offeredActions: [RemoveFromService],
+        },
+        'shelved-not-active': {
+          glyph: diagnosticGlyph,
+          sortingRank: 209,
+          includedInFilters: ['shelved'],
+          offeredActions: [RemoveFromService],
+        },
+        'suppressed-by-design-active': {
+          glyph: diagnosticGlyph,
+          sortingRank: 218,
+          includedInFilters: ['suppressed-by-design'],
+          offeredActions: [RemoveFromService],
+        },
+        'suppressed-by-design-not-active': {
+          glyph: diagnosticGlyph,
+          sortingRank: 219,
+          includedInFilters: ['suppressed-by-design'],
+          offeredActions: [RemoveFromService],
+        },
+        'out-of-service-active': {
+          glyph: diagnosticGlyph,
+          sortingRank: 228,
+          includedInFilters: ['out-of-service'],
+          offeredActions: [ReturnToService],
+        },
+        'out-of-service-not-active': {
+          glyph: diagnosticGlyph,
+          sortingRank: 229,
+          includedInFilters: ['out-of-service'],
+          offeredActions: [ReturnToService],
+        },
+        normal: {
+          glyph: diagnosticGlyph,
+          sortingRank: 344,
+          offeredActions: [RemoveFromService],
+        },
+      },
+    },
+  },
+});
+
+const isa182ServiceViewAlerts: Isa182ServiceViewAlert[] = [
+  {
+    id: 'pressure-transmitter',
+    criticality: 'high',
+    state: 'unacknowledged',
+    source: 'PT-101',
+    text: 'Separator pressure high',
+    tagId: 'PT-101',
+    time: new Date('2024-01-15T14:39:00Z'),
+  },
+  {
+    id: 'level-transmitter',
+    criticality: 'medium',
+    state: 'acknowledged',
+    source: 'LT-204',
+    text: 'Tank level high',
+    tagId: 'LT-204',
+    time: new Date('2024-01-15T14:37:00Z'),
+    acknowledgedBy: 'John Doe',
+  },
+  {
+    id: 'flow-transmitter-fault',
+    criticality: 'diagnostic',
+    state: 'unacknowledged',
+    source: 'FT-310',
+    text: 'Flow transmitter signal out of range',
+    tagId: 'FT-310',
+    time: new Date('2024-01-15T14:35:00Z'),
+  },
+  {
+    id: 'temperature-transmitter',
+    criticality: 'low',
+    state: 'out-of-service-not-active',
+    source: 'TT-115',
+    text: 'Cooling water temperature low, sensor under repair',
+    tagId: 'TT-115',
+    time: new Date('2024-01-15T13:10:00Z'),
+  },
+  {
+    id: 'gas-detector',
+    criticality: 'critical',
+    state: 'out-of-service-active',
+    source: 'GD-402',
+    text: 'Gas detector high, under calibration',
+    tagId: 'GD-402',
+    time: new Date('2024-01-15T12:45:00Z'),
+  },
+];
+
+export const ServiceView: Story = {
+  name: 'Service View - Customized Alert Standard',
+  beforeEach: () =>
+    setAlertStandard(isa182ServiceViewStandardDefinedByTheApplication),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "The library's ISA-18.2 standard extended by the application for a maintenance console. ISA-18.2 puts taking an alarm out of service and returning it under the control of maintenance, so the library offers the operator neither. This story spreads `isa182AlertStandard` into a standard of its own that offers only Remove from service and Return to service, and adds a diagnostic priority for instrument and system faults.",
+      },
+    },
+  },
+  args: {
+    columns: [
+      statusColumn(),
+      actionColumn({dividerRight: true}),
+      timeColumn(),
+      tagIdColumn(),
+    ],
+    alerts: isa182ServiceViewAlerts,
+  },
+  render: (args) => renderAlertList(args, isa182ServiceViewStateAfterAction),
 };
 
 const healthAlarmGlyphFrame = (

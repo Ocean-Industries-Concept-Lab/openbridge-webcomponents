@@ -116,21 +116,62 @@ describe('iec-62923', () => {
 describe('isa-18.2', () => {
   beforeEach(() => setAlertStandard(isa182AlertStandard));
 
-  it('lists shelved, suppressed and out-of-service alarms each in a filter of their own', () => {
+  const statesSetAsideWhileActiveOrNot = [
+    'shelved-active',
+    'shelved-not-active',
+    'suppressed-by-design-active',
+    'suppressed-by-design-not-active',
+    'out-of-service-active',
+    'out-of-service-not-active',
+  ];
+
+  it('lists shelved, suppressed and out-of-service alarms each in a filter of their own, active or not', () => {
     const filtersOf = (state: string) =>
       findAlertStateDefinition({criticality: 'high', state})?.includedInFilters;
-    expect([
-      filtersOf('shelved'),
-      filtersOf('suppressed-by-design'),
-      filtersOf('out-of-service'),
-    ]).toEqual([['shelved'], ['suppressed-by-design'], ['out-of-service']]);
+    expect(statesSetAsideWhileActiveOrNot.map(filtersOf)).toEqual([
+      ['shelved'],
+      ['shelved'],
+      ['suppressed-by-design'],
+      ['suppressed-by-design'],
+      ['out-of-service'],
+      ['out-of-service'],
+    ]);
   });
 
   it('holds an alarm steady once it is shelved, suppressed or out of service', () => {
-    for (const state of ['shelved', 'suppressed-by-design', 'out-of-service']) {
+    for (const state of statesSetAsideWhileActiveOrNot) {
       expect(
         findAlertStateDefinition({criticality: 'critical', state})
           ?.flashingSpeed,
+        state
+      ).toBeUndefined();
+    }
+  });
+
+  it('offers shelving from every annunciated state, and unshelving from both shelved states', () => {
+    const alarmIn = (state: string) => ({criticality: 'low', state});
+    for (const state of [
+      'unacknowledged',
+      'acknowledged',
+      'returned-to-normal-unacknowledged',
+    ]) {
+      expect(isAlertActionOffered(alarmIn(state), 'shelve'), state).toBe(true);
+    }
+    for (const state of ['shelved-active', 'shelved-not-active']) {
+      expect(isAlertActionOffered(alarmIn(state), 'unshelve'), state).toBe(
+        true
+      );
+    }
+  });
+
+  it('offers the operator no action on an alarm out of service', () => {
+    for (const state of [
+      'out-of-service-active',
+      'out-of-service-not-active',
+    ]) {
+      expect(
+        findAlertStateDefinition({criticality: 'medium', state})
+          ?.offeredActions,
         state
       ).toBeUndefined();
     }

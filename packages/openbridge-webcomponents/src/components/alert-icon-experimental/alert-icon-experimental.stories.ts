@@ -91,14 +91,14 @@ export const Isa182: Story = {
     docs: {
       description: {
         story:
-          'Every priority of ISA-18.2 in every state it defines. A diagnostic alert takes no acknowledgement, so it is only active or normal.',
+          'Every priority of ISA-18.2 in every state it defines. A shelved, suppressed or out-of-service alarm is a state of its own while active and while not active.',
       },
     },
   },
   render: () =>
     alertStandardMatrix(
       isa182AlertStandard,
-      ['active', 'normal', 'unacknowledged', 'acknowledged'],
+      ['normal', 'unacknowledged', 'acknowledged'],
       iconOfCriticalityAndState
     ),
 };

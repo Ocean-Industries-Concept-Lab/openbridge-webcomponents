@@ -139,34 +139,26 @@ const isa182ItemsInEveryKindOfState = html`
     @action-click=${moveIsa182ItemToStateAfterAction}
   ></obc-alert-menu-item-experimental>
   <obc-alert-menu-item-experimental
-    criticality="diagnostic"
-    state="active"
-    title="diagnostic"
-    description="Diagnostic, takes no ACK"
-    time="14:35:00"
-    @action-click=${moveIsa182ItemToStateAfterAction}
-  ></obc-alert-menu-item-experimental>
-  <obc-alert-menu-item-experimental
     criticality="medium"
-    state="shelved"
+    state="shelved-active"
     title="medium"
-    description="Shelved"
+    description="Shelved, active"
     time="14:34:00"
     @action-click=${moveIsa182ItemToStateAfterAction}
   ></obc-alert-menu-item-experimental>
   <obc-alert-menu-item-experimental
     criticality="critical"
-    state="suppressed-by-design"
+    state="suppressed-by-design-not-active"
     title="critical"
-    description="Suppressed by design"
+    description="Suppressed by design, not active"
     time="14:33:00"
     @action-click=${moveIsa182ItemToStateAfterAction}
   ></obc-alert-menu-item-experimental>
   <obc-alert-menu-item-experimental
     criticality="low"
-    state="out-of-service"
+    state="out-of-service-active"
     title="low"
-    description="Out of service"
+    description="Out of service, active"
     time="14:32:00"
     @action-click=${moveIsa182ItemToStateAfterAction}
   ></obc-alert-menu-item-experimental>

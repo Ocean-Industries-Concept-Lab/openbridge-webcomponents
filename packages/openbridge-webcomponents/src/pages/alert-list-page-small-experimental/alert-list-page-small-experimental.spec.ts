@@ -81,7 +81,7 @@ describe('obc-alert-list-page-small-experimental', () => {
       'Unacked',
       'Active',
       'Shelved',
-      'Suppressed',
+      'Suppressed by design',
       'Out of service',
     ]);
   });
