@@ -67,7 +67,7 @@
 /* Controls never shrink: a squeeze reaches the texts, then overflows the end */
 .menu-button,
 .app-icon,
-.left-more-button,
+.more-button,
 .dimming-button,
 .user-button,
 .apps-button,
@@ -109,7 +109,7 @@
   @mixin font-body-active;
 }
 
-.left-more-button {
+.more-button {
   display: none;
 }
 
