@@ -720,8 +720,8 @@ const isa182ServiceViewStandardDefinedByTheApplication = defineAlertStandard({
   filters: isa182AlertStandard.filters,
   actions: {
     ...isa182AlertStandard.actions,
-    [RemoveFromService]: {label: () => 'Remove from service'},
-    [ReturnToService]: {label: () => 'Return to service'},
+    [RemoveFromService]: {label: () => 'Disable'},
+    [ReturnToService]: {label: () => 'Enable'},
   },
   criticalities: {
     critical: {
@@ -1011,14 +1011,14 @@ export const ServiceView: Story = {
     docs: {
       description: {
         story:
-          "The library's ISA-18.2 standard extended by the application for a maintenance console. ISA-18.2 puts taking an alarm out of service and returning it under the control of maintenance, so the library offers the operator neither. This story spreads `isa182AlertStandard` into a standard of its own that offers only Remove from service and Return to service, and adds a diagnostic priority for instrument and system faults.",
+          "The library's ISA-18.2 standard extended by the application for a maintenance console. ISA-18.2 puts taking an alarm out of service and returning it under the control of maintenance, so the library offers the operator neither. This story spreads `isa182AlertStandard` into a standard of its own that offers only Disable (remove from service) and Enable (return to service) in an OOSRV column, and adds a diagnostic priority for instrument and system faults.",
       },
     },
   },
   args: {
     columns: [
       statusColumn(),
-      actionColumn({dividerRight: true}),
+      actionColumn({label: 'OOSRV', dividerRight: true}),
       timeColumn(),
       tagIdColumn(),
     ],
