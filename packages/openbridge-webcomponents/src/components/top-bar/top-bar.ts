@@ -1,4 +1,4 @@
-import {LitElement, html, unsafeCSS} from 'lit';
+import {LitElement, PropertyValues, html, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {msg} from '@lit/localize';
@@ -81,7 +81,8 @@ export enum ObcTopBarMenuButtonIcon {
  * - `menu-button-clicked` – Fired when the menu button is clicked.
  * - `dimming-button-clicked` – Fired when the dimming (day/night) button is clicked.
  * - `apps-button-clicked` – Fired when the apps button is clicked.
- * - `left-more-button-clicked` – Fired when the left more button is clicked.
+ * - `more-button-clicked` – Fired when the more button is clicked.
+ * - `left-more-button-clicked` – Deprecated alias of `more-button-clicked`, fired with it; removed in 4.0.0.
  * - `user-button-clicked` – Fired when the user/profile button is clicked.
  * - `close` – Fired in settings mode when the close button is clicked.
  * - `back` – Fired in settings mode when the back button is clicked.
@@ -132,8 +133,8 @@ export enum ObcTopBarMenuButtonIcon {
  * @availableWhen dimmingButtonActivated showDimmingButton==true && inactive==false
  * @property appsButtonActivated - Highlights the apps button as active.
  * @availableWhen appsButtonActivated showAppsButton==true && inactive==false
- * @property leftMoreButtonActivated - Highlights the left more button as active.
- * @availableWhen leftMoreButtonActivated inactive==false
+ * @property moreButtonActivated - Highlights the more button as active.
+ * @availableWhen moreButtonActivated inactive==false
  * @property userButtonActivated - Highlights the user/profile button as active.
  * @availableWhen userButtonActivated showUserButton==true && inactive==false
  * @property userButtonDisabled - Disables the user/profile button.
@@ -163,13 +164,16 @@ export enum ObcTopBarMenuButtonIcon {
  * @fires menu-button-clicked - Fired when the menu button is clicked
  * @fires dimming-button-clicked - Fired when the dimming (day/night) button is clicked
  * @fires apps-button-clicked - Fired when the apps button is clicked
- * @fires left-more-button-clicked - Fired when the left more button is clicked
+ * @fires more-button-clicked - Fired when the more button is clicked
+ * @fires left-more-button-clicked - Deprecated: listen to `more-button-clicked` instead. Fired together with it; removed in 4.0.0.
  * @fires user-button-clicked - Fired when the user/profile button is clicked
  * @fires close - Fired in settings mode when the close button is clicked
  * @fires back - Fired in settings mode when the back button is clicked
  * @fires emergency-brightness-start - Fired when the menu button is held for 500ms. This should increase the brightness of the screen slowly. Used when the screen is too dark.
  * @fires emergency-brightness-stop - Fired when the menu button is released.
  * @fires {BreadcrumbClickEvent} breadcrumb-click - Fired when a breadcrumb item is clicked.
+ * @csspart more-button - The more button shown below the breakpoints.
+ * @csspart left-more-button - Deprecated alias of the `more-button` part; removed in 4.0.0.
  * @stable
  */
 @customElement('obc-top-bar')
@@ -190,7 +194,13 @@ export class ObcTopBar extends LitElement {
   appsButtonActivated = false;
 
   @property({type: Boolean})
-  leftMoreButtonActivated = false;
+  moreButtonActivated = false;
+
+  /**
+   * @deprecated Use `moreButtonActivated`. Removed in 4.0.0.
+   */
+  @property({type: Boolean})
+  leftMoreButtonActivated?: boolean;
 
   @property({type: Boolean})
   userButtonActivated = false;
@@ -253,9 +263,30 @@ export class ObcTopBar extends LitElement {
     this.dispatchEvent(new CustomEvent('apps-button-clicked'));
   }
 
-  private leftMoreButtonClicked() {
+  /**
+   * Copies the deprecated `leftMoreButtonActivated` into
+   * `moreButtonActivated`. A plain field rather than a getter/setter alias:
+   * the Vue wrapper writes every prop back on its second render, and a getter
+   * would then write `false` over the new property.
+   */
+  override willUpdate(changed: PropertyValues<this>): void {
+    super.willUpdate(changed);
+    if (
+      changed.has('leftMoreButtonActivated') &&
+      this.leftMoreButtonActivated !== undefined
+    ) {
+      this.moreButtonActivated = this.leftMoreButtonActivated;
+    }
+  }
+
+  private moreButtonClicked() {
     /**
-     * Fired when the left more button is clicked.
+     * Fired when the more button is clicked.
+     * @event more-button-clicked
+     */
+    this.dispatchEvent(new CustomEvent('more-button-clicked'));
+    /**
+     * Deprecated alias of `more-button-clicked`; removed in 4.0.0.
      * @event left-more-button-clicked
      */
     this.dispatchEvent(new CustomEvent('left-more-button-clicked'));
@@ -419,7 +450,7 @@ export class ObcTopBar extends LitElement {
     return html`
       <style>
         @media (max-width: ${breakpointMoreButton}px) {
-          .left-more-button {
+          .more-button {
             display: revert !important;
           }
 
@@ -519,12 +550,12 @@ export class ObcTopBar extends LitElement {
           ${
             !this.inactive
               ? html`<obc-icon-button
-                  class="left-more-button"
-                  part="left-more-button"
+                  class="more-button"
+                  part="more-button left-more-button"
                   variant="flat"
                   aria-label=${msg('More')}
-                  @click=${this.leftMoreButtonClicked}
-                  ?activated=${this.leftMoreButtonActivated}
+                  @click=${this.moreButtonClicked}
+                  ?activated=${this.moreButtonActivated}
                 >
                   <obi-more-vertical-google></obi-more-vertical-google>
                 </obc-icon-button>`
