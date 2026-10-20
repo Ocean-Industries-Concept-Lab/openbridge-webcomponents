@@ -78,7 +78,7 @@ export class ObcAbstractAutomationButtonMotorized extends ObcAbstractAutomationB
         {
           type: 'state-off',
           value: 'Off',
-          hasIcon: true,
+          hasIcon: this.showStateIcon,
         },
       ];
     }

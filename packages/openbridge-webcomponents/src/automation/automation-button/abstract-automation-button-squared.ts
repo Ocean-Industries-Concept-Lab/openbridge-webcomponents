@@ -50,7 +50,7 @@ export class ObcAbstractAutomationButtonSquared extends ObcAbstractAutomationBut
         {
           type: 'state-on',
           value: 'On',
-          hasIcon: true,
+          hasIcon: this.showStateIcon,
         },
       ];
     } else {
@@ -58,7 +58,7 @@ export class ObcAbstractAutomationButtonSquared extends ObcAbstractAutomationBut
         {
           type: 'state-off',
           value: 'Off',
-          hasIcon: true,
+          hasIcon: this.showStateIcon,
         },
       ];
     }

@@ -160,6 +160,9 @@ export enum GaugeValveStyle {
  * @availableWhen tag large==false && hasLabelStack==true
  * @property hasLabelStack - Render the readout stack below the face in the compact variant.
  * @availableWhen hasLabelStack large==false
+ * @property showStateIcon - Show the on/off symbol before the `Off` state text in the compact
+ *   readout stack. Hidden by default.
+ * @availableWhen showStateIcon large==false && hasLabelStack==true
  * @property faceDiameter - Ring diameter in CSS pixels. When set, the face renders at a fixed
  *   intrinsic size (equal circumference across instruments sharing the
  *   value); when unset (default), the face contain-fits its container.
@@ -182,6 +185,7 @@ export class ObcGaugeValve extends SetpointMixin(LitElement) {
   @property({type: String}) unit = '';
   @property({type: String}) tag = '';
   @property({type: Boolean, attribute: false}) hasLabelStack = true;
+  @property({type: Boolean}) showStateIcon = false;
   @property({type: Number, attribute: 'face-diameter', reflect: true})
   faceDiameter: number | undefined;
 
@@ -276,7 +280,7 @@ export class ObcGaugeValve extends SetpointMixin(LitElement) {
 
   private get labelStackReadouts(): AutomationButtonReadoutStack[] {
     if (this.isOff) {
-      return [{type: 'state-off', value: 'Off', hasIcon: true}];
+      return [{type: 'state-off', value: 'Off', hasIcon: this.showStateIcon}];
     }
     const readouts: AutomationButtonReadoutStack[] = [];
     if (this.setpoint !== undefined) {

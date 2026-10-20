@@ -48,7 +48,7 @@ export class ObcAnalogValve extends ObcAbstractAutomationButton {
         {
           type: 'state-off',
           value: 'Off',
-          hasIcon: true,
+          hasIcon: this.showStateIcon,
         },
       ];
     }

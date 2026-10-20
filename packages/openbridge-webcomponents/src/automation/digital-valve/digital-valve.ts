@@ -39,7 +39,7 @@ export class ObcDigitalValve extends ObcAbstractAutomationButton {
         {
           type: 'state-on',
           value: 'On',
-          hasIcon: true,
+          hasIcon: this.showStateIcon,
         },
       ];
     } else {
@@ -47,7 +47,7 @@ export class ObcDigitalValve extends ObcAbstractAutomationButton {
         {
           type: 'state-off',
           value: 'Off',
-          hasIcon: true,
+          hasIcon: this.showStateIcon,
         },
       ];
     }
