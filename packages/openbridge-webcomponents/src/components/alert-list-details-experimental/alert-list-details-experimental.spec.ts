@@ -20,6 +20,11 @@ const RECTIFIED_WARNING = {
   state: 'rectified-unacknowledged',
 } as const;
 
+const ACKNOWLEDGED_WARNING = {
+  criticality: 'warning',
+  state: 'active-acknowledged',
+} as const;
+
 /** An unacknowledged IEC 62923 warning, unless the overrides say otherwise. */
 function alert(
   id: string,
@@ -84,21 +89,21 @@ describe('getAlertRows', () => {
 
   it('makes a member a root when the filter hides its group', () => {
     const alerts = [
-      alert('group', RECTIFIED_WARNING),
+      alert('group', ACKNOWLEDGED_WARNING),
       alert('member', {memberOf: ['group']}),
     ];
-    expect(rowIds(alerts, 'active')).toEqual(['member']);
-    expect(rowIds(alerts, 'unacked')).toEqual(['group', 'group/member']);
+    expect(rowIds(alerts, 'unacked')).toEqual(['member']);
+    expect(rowIds(alerts, 'active')).toEqual(['group', 'group/member']);
   });
 
   it('narrows the filter with the custom predicate', () => {
     const alerts = [
       alert('gyro'),
       alert('radar'),
-      alert('rectified', RECTIFIED_WARNING),
+      alert('acknowledged', ACKNOWLEDGED_WARNING),
     ];
     expect(
-      getAlertRows(alerts, 'active', (a) => a.id !== 'radar').map(
+      getAlertRows(alerts, 'unacked', (a) => a.id !== 'radar').map(
         (row) => row.rowId
       )
     ).toEqual(['gyro']);

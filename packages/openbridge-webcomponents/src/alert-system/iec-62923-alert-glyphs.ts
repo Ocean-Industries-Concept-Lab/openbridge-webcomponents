@@ -8,7 +8,6 @@
  */
 import {html} from 'lit';
 import '../icons/icon-alarm-unacknowledged-iec.js';
-import '../icons/icon-alarm-acknowledged-outlined.js';
 import '../icons/icon-alarm-silenced-iec.js';
 import '../icons/icon-alarm-silenced-outlined.js';
 import '../icons/icon-alarm-acknowledged-iec.js';
@@ -30,9 +29,7 @@ export const IEC_62923_ALARM_GLYPHS = {
     frame: html`<obi-alarm-unacknowledged-iec
       usecsscolor
     ></obi-alarm-unacknowledged-iec>`,
-    flashFrame: html`<obi-alarm-acknowledged-outlined
-      usecsscolor
-    ></obi-alarm-acknowledged-outlined>`,
+    flashFrame: html``,
   },
   silenced: {
     frame: html`<obi-alarm-silenced-iec usecsscolor></obi-alarm-silenced-iec>`,

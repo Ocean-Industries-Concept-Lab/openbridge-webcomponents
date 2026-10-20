@@ -123,14 +123,14 @@ export const iec62923AlertStandard = defineAlertStandard({
           glyph: IEC_62923_ALARM_GLYPHS.rectified,
           sortingRank: 40,
           flashingSpeed: FlashingSpeed.VerySlow,
-          includedInFilters: [Unacknowledged],
+          includedInFilters: [Unacknowledged, Active],
           offeredActions: [Acknowledge],
         },
         'rectified-unacknowledged-acknowledge-not-allowed': {
           glyph: IEC_62923_ALARM_GLYPHS.rectified,
           sortingRank: 40,
           flashingSpeed: FlashingSpeed.VerySlow,
-          includedInFilters: [Unacknowledged],
+          includedInFilters: [Unacknowledged, Active],
           glyphShownInsteadOfActions: ALARM_ACKNOWLEDGE_NOT_ALLOWED_GLYPH,
         },
         'active-acknowledged': {
@@ -183,14 +183,14 @@ export const iec62923AlertStandard = defineAlertStandard({
           glyph: IEC_62923_WARNING_GLYPHS.rectified,
           sortingRank: 50,
           flashingSpeed: FlashingSpeed.VerySlow,
-          includedInFilters: [Unacknowledged],
+          includedInFilters: [Unacknowledged, Active],
           offeredActions: [Acknowledge],
         },
         'rectified-unacknowledged-acknowledge-not-allowed': {
           glyph: IEC_62923_WARNING_GLYPHS.rectified,
           sortingRank: 50,
           flashingSpeed: FlashingSpeed.VerySlow,
-          includedInFilters: [Unacknowledged],
+          includedInFilters: [Unacknowledged, Active],
           glyphShownInsteadOfActions: WARNING_ACKNOWLEDGE_NOT_ALLOWED_GLYPH,
         },
         'active-acknowledged': {

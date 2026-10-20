@@ -46,11 +46,11 @@ describe('obc-alert-icon-experimental', () => {
   it('cross-fades the frames its standard supplies, at its tempo', async () => {
     const el = await setup({
       criticality: 'alarm',
-      state: 'active-unacknowledged',
+      state: 'active-silenced',
     });
     expect([durations(el), frames(el)]).toEqual([
       [800],
-      ['obi-alarm-unacknowledged-iec', 'obi-alarm-acknowledged-outlined'],
+      ['obi-alarm-silenced-iec', 'obi-alarm-silenced-outlined'],
     ]);
   });
 
