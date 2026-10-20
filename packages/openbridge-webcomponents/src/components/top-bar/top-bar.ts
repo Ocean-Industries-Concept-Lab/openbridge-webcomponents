@@ -522,7 +522,7 @@ export class ObcTopBar extends LitElement {
             !this.inactive
               ? html`<obc-icon-button
                   class="left-more-button"
-                  part="left-more-button more-button"
+                  part="left-more-button"
                   variant="flat"
                   aria-label=${msg('More')}
                   @click=${this.leftMoreButtonClicked}
