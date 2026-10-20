@@ -413,7 +413,9 @@ export class ObcTopBar extends LitElement {
 
     const breakpointMoreButton = Math.max(
       this.appButtonBreakpointPx,
-      this.dimmingButtonBreakpointPx
+      this.dimmingButtonBreakpointPx,
+      this.userButtonBreakpointPx,
+      this.appIconBreakpointPx
     );
 
     return html`
