@@ -8,7 +8,13 @@ import '../watch/watch.js';
 import {WatchCircleType} from '../watch/watch.js';
 import {SailType, sailTypeImages} from '../watch/sail-type.js';
 import componentStyle from './wind-propulsion.css?inline';
-import {AngleAdvice, AngleAdviceRaw, AdviceState} from '../watch/advice.js';
+import {
+  AngleAdvice,
+  AngleAdviceRaw,
+  AdviceState,
+  AdviceTrigger,
+  adviceTriggerValues,
+} from '../watch/advice.js';
 import {Tickmark, TickmarkStyle, TickmarkType} from '../watch/tickmark.js';
 import {renderForceBar} from './force-bar.js';
 import {customElement} from '../../decorator.js';
@@ -40,7 +46,8 @@ export enum WindPropulsionPriorityElement {
  *   filled proportionally to `force / maxForce`.
  * - **Sail angle setpoint**: Optional setpoint marker on the watch ring with
  *   auto at-setpoint detection and confirm animation support.
- * - **Advice zones**: Configurable caution/alert arcs on the watch ring.
+ * - **Advice zones**: Configurable caution/alert arcs on the watch ring,
+ *   triggered by the reading chosen with `adviceTrigger`.
  * - **Wind overlay**: Optional wind speed/direction indicator (pass-through to watch).
  * - **Labels**: Toggleable 0°/90°/180°/–90° tickmark labels.
  * - **Priority elements**: Selectively apply the enhanced color palette to
@@ -58,6 +65,9 @@ export enum WindPropulsionPriorityElement {
  *   proportionally (default 100).
  * - For a full-circle compass, use `<obc-compass>` instead.
  *
+ * @property adviceTrigger - Which reading triggers a sail angle advice: `both`
+ *   (default) when `sailAngle` or `sailAngleSetpoint` is inside the range;
+ *   `value` uses only `sailAngle`; `setpoint` uses only `sailAngleSetpoint`.
  * @beta
  */
 @customElement('obc-wind-propulsion')
@@ -96,6 +106,7 @@ export class ObcWindPropulsion extends LitElement {
 
   @property({type: Array, attribute: false}) sailAngleAdvices: AngleAdvice[] =
     [];
+  @property({type: String}) adviceTrigger: AdviceTrigger = AdviceTrigger.both;
 
   private _forceBarMaskId = `wp-fb-${Math.random().toString(36).slice(2, 9)}`;
 
@@ -151,11 +162,17 @@ export class ObcWindPropulsion extends LitElement {
   }
 
   private get angleAdviceRaw(): AngleAdviceRaw[] {
+    const triggerValues = adviceTriggerValues(
+      this.adviceTrigger,
+      this.sailAngle,
+      this.sailAngleSetpoint
+    );
     return this.sailAngleAdvices.map((advice) => {
-      const triggered =
-        this.sailAngleSetpoint !== undefined &&
-        mapAngle0to360(this.sailAngleSetpoint - advice.minAngle) <=
-          mapAngle0to360(advice.maxAngle - advice.minAngle);
+      const triggered = triggerValues.some(
+        (v) =>
+          mapAngle0to360(v - advice.minAngle) <=
+          mapAngle0to360(advice.maxAngle - advice.minAngle)
+      );
       let state: AdviceState;
       if (triggered) {
         state = AdviceState.triggered;

@@ -15,7 +15,13 @@ import {
   renderCenterReadouts,
   resolveCompassCenterReadouts,
 } from '../readout/center-readout.js';
-import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
+import {
+  AdviceState,
+  AdviceTrigger,
+  AngleAdvice,
+  AngleAdviceRaw,
+  adviceTriggerValues,
+} from '../watch/advice.js';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import {
   applyPinnedHostSize,
@@ -135,6 +141,9 @@ export enum HeadingPriorityElement {
  *   so instruments sharing the same value have identical ring circumference
  *   regardless of label width or arc extent (like obc-donut-chart's
  *   fixedHeight). When unset (default), the instrument fills its container.
+ * @property adviceTrigger - Which reading triggers an advice: `both` (default)
+ *   when `heading` or `headingSetpoint` is inside the range; `value` uses only
+ *   `heading`; `setpoint` uses only `headingSetpoint`.
  * @stable
  */
 @customElement('obc-heading')
@@ -153,6 +162,7 @@ export class ObcHeading extends LitElement {
   @property({type: Boolean}) animateSetpoint: boolean = false;
   @property({type: Boolean}) touching: boolean = false;
   @property({type: Array, attribute: false}) headingAdvices: AngleAdvice[] = [];
+  @property({type: String}) adviceTrigger: AdviceTrigger = AdviceTrigger.both;
   @property({type: String}) direction: CompassDirection =
     CompassDirection.NorthUp;
   @property({type: String}) priority: Priority = Priority.regular;
@@ -226,13 +236,17 @@ export class ObcHeading extends LitElement {
   }
 
   private get angleAdviceRaw(): AngleAdviceRaw[] {
+    const triggerValues = adviceTriggerValues(
+      this.adviceTrigger,
+      this.heading,
+      this.headingSetpoint
+    );
     return this.headingAdvices.map(({minAngle, maxAngle, hinted, type}) => {
-      const state =
-        this.heading >= minAngle && this.heading <= maxAngle
-          ? AdviceState.triggered
-          : hinted
-            ? AdviceState.hinted
-            : AdviceState.regular;
+      const state = triggerValues.some((v) => v >= minAngle && v <= maxAngle)
+        ? AdviceState.triggered
+        : hinted
+          ? AdviceState.hinted
+          : AdviceState.regular;
       return {minAngle, maxAngle, type, state};
     });
   }

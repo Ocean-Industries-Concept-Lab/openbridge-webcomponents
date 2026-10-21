@@ -11,7 +11,13 @@ import {ReadoutSize} from '../readout/readout.js';
 import instrumentReadoutStyle from '../readout/instrument-readout.css?inline';
 import {Tickmark, TickmarkType, TickmarkStyle} from '../watch/tickmark.js';
 import {arrow, ArrowStyle} from '../compass/arrow.js';
-import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
+import {
+  AdviceState,
+  AdviceTrigger,
+  AngleAdvice,
+  AngleAdviceRaw,
+  adviceTriggerValues,
+} from '../watch/advice.js';
 import {
   WatchCircleType,
   WatchArea,
@@ -155,6 +161,9 @@ function tickDensityForFOV(fov: number): TickDensity {
  *   ±`ARC_HALF_EXTENT` arc when the measured rate of turn reaches
  *   ±`rotMaxValue`. The default `60` aligns with ES-TRIN 2025/1 Art. 3.02.
  * @availableWhen rotMaxValue rotType==bar
+ * @property adviceTrigger - Which reading triggers an advice: `both` (default)
+ *   when `heading` or `headingSetpoint` is inside the range; `value` uses only
+ *   `heading`; `setpoint` uses only `headingSetpoint`.
  * @stable
  */
 @customElement('obc-compass-sector')
@@ -172,6 +181,7 @@ export class ObcCompassSector extends LitElement {
   @property({type: Boolean}) animateSetpoint: boolean = false;
   @property({type: Boolean}) touching: boolean = false;
   @property({type: Array, attribute: false}) headingAdvices: AngleAdvice[] = [];
+  @property({type: String}) adviceTrigger: AdviceTrigger = AdviceTrigger.both;
 
   @property({type: Number}) minFOV: number = 30;
 
@@ -283,7 +293,12 @@ export class ObcCompassSector extends LitElement {
       this._cachedTickmarks = this._buildTickmarks();
     }
 
-    if (arcInputsChanged || changed.has('headingAdvices')) {
+    if (
+      arcInputsChanged ||
+      changed.has('headingAdvices') ||
+      changed.has('headingSetpoint') ||
+      changed.has('adviceTrigger')
+    ) {
       this._cachedAdvices = this._buildAdvices();
     }
   }
@@ -458,8 +473,15 @@ export class ObcCompassSector extends LitElement {
   }
 
   private _buildAdvices(): AngleAdviceRaw[] {
+    const triggerValues = adviceTriggerValues(
+      this.adviceTrigger,
+      this.heading,
+      this.headingSetpoint
+    );
     return this.headingAdvices.map(({minAngle, maxAngle, hinted, type}) => {
-      const state = this._angleInRange(this.heading, minAngle, maxAngle)
+      const state = triggerValues.some((v) =>
+        this._angleInRange(v, minAngle, maxAngle)
+      )
         ? AdviceState.triggered
         : hinted
           ? AdviceState.hinted

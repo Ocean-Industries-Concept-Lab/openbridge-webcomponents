@@ -10,7 +10,7 @@ import './gauge-proportional.js';
 import '../../icons/icon-placeholder-device-on.js';
 import '../../icons/icon-placeholder-device-off-f.js';
 import {widthDecorator} from '../../storybook-util.js';
-import {AdviceType} from '../watch/advice.js';
+import {AdviceTrigger, AdviceType} from '../watch/advice.js';
 
 type GaugeProportionalStoryArgs = Partial<ObcGaugeProportional> & {
   width?: number;
@@ -38,6 +38,7 @@ const meta = {
     hasIcon: true,
   },
   argTypes: {
+    adviceTrigger: {control: 'select', options: Object.values(AdviceTrigger)},
     width: {control: {type: 'range', min: 100, max: 1000, step: 1}},
     height: {control: {type: 'range', min: 100, max: 1000, step: 1}},
     sector: {
@@ -97,6 +98,7 @@ const meta = {
       .primaryTickmarkInterval=${args.primaryTickmarkInterval ?? 50}
       .secondaryTickmarkInterval=${args.secondaryTickmarkInterval ?? 10}
       .advices=${args.advices ?? []}
+      .adviceTrigger=${args.adviceTrigger ?? AdviceTrigger.both}
       .faceDiameter=${args.faceDiameter}
       .large=${args.large ?? false}
       .hasLabelStack=${args.hasLabelStack ?? true}

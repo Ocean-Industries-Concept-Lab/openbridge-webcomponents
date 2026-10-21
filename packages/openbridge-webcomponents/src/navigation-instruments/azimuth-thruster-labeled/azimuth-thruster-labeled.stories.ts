@@ -6,7 +6,7 @@ import {
 import './azimuth-thruster-labeled.js';
 import {html} from 'lit';
 import {CommandStatus} from '../badge-command/badge-command.js';
-import {AdviceType} from '../watch/advice.js';
+import {AdviceTrigger, AdviceType} from '../watch/advice.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {PropellerType} from '../thruster/propeller.js';
 import {TickmarkStyle} from '../watch/tickmark.js';
@@ -39,6 +39,7 @@ function renderAzimuthThrusterLabeled(
       .thrustSetpointOverride=${args.thrustSetpointOverride ?? false}
       .angleAdvices=${args.angleAdvices ?? []}
       .thrustAdvices=${args.thrustAdvices ?? []}
+      .adviceTrigger=${args.adviceTrigger ?? AdviceTrigger.both}
       .tickmarkStyle=${args.tickmarkStyle ?? TickmarkStyle.regular}
       .singleDirection=${args.singleDirection ?? false}
       .topPropeller=${args.topPropeller ?? PropellerType.none}
@@ -71,6 +72,7 @@ const meta: Meta<typeof ObcAzimuthThrusterLabeled> = {
   },
   decorators: [widthDecorator],
   argTypes: {
+    adviceTrigger: {control: 'select', options: Object.values(AdviceTrigger)},
     commandStatus: {
       options: Object.values(CommandStatus),
     },

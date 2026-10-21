@@ -3,7 +3,7 @@ import {ObcWindPropulsion} from './wind-propulsion.js';
 import './wind-propulsion.js';
 import {InstrumentState, Priority} from '../types.js';
 import {widthDecorator} from '../../storybook-util.js';
-import {AdviceType} from '../watch/advice.js';
+import {AdviceTrigger, AdviceType} from '../watch/advice.js';
 import {TickmarkStyle} from '../watch/tickmark.js';
 import {SailType} from '../watch/sail-type.js';
 import {WindPropulsionPriorityElement} from './wind-propulsion.js';
@@ -13,6 +13,7 @@ const meta: Meta<typeof ObcWindPropulsion> = {
   tags: ['autodocs', '6.0', 'beta'],
   component: 'obc-wind-propulsion',
   argTypes: {
+    adviceTrigger: {control: 'select', options: Object.values(AdviceTrigger)},
     forceAngle: {control: {type: 'range', min: -180, max: 180, step: 1}},
     sailAngle: {control: {type: 'range', min: -180, max: 180, step: 1}},
     sailAngleSetpoint: {

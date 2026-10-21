@@ -4,8 +4,10 @@ import {ResizeController} from '@lit-labs/observers/resize-controller.js';
 import {customElement} from '../../decorator.js';
 import {
   AdviceState,
+  AdviceTrigger,
   AdviceType,
   AngleAdviceRaw,
+  adviceTriggerValues,
 } from '../../navigation-instruments/watch/advice.js';
 import {WatchCircleType} from '../../navigation-instruments/watch/watch.js';
 import {Tickmark} from '../../navigation-instruments/watch/tickmark.js';
@@ -115,6 +117,9 @@ function defaultGaugeAngle(
  *   so instruments sharing the same value have identical ring circumference
  *   regardless of label width or arc extent (like obc-donut-chart's
  *   fixedHeight). When unset (default), the instrument fills its container.
+ * @property adviceTrigger - Which reading triggers an advice: `both` (default)
+ *   when the value or the setpoint is inside the range; `value` uses only the
+ *   value; `setpoint` uses only the setpoint.
  * @fires {CustomEvent<RadialFrame>} frame-changed - Fired after render when the
  *   computed radial frame changed (viewBox, label visibility, or pinned host
  *   size). Wrappers use it to align sibling overlays/readouts with the dial.
@@ -148,6 +153,7 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
   @property({type: String}) tickmarkStyle: TickmarkStyle =
     TickmarkStyle.regular;
   @property({type: Array, attribute: false}) advices: GaugeRadialAdvice[] = [];
+  @property({type: String}) adviceTrigger: AdviceTrigger = AdviceTrigger.both;
   @property({type: Number}) clipTop: number = 0; // in percent of height
   @property({type: Number}) clipBottom: number = 0; // in percent of height
   @property({type: Number}) clipLeft: number = 0; // in percent of width
@@ -400,13 +406,19 @@ export class ObcInstrumentRadial extends SetpointMixin(LitElement) {
   }
 
   private get _advices(): AngleAdviceRaw[] {
-    const value = this.clampedValue;
+    const triggerValues = adviceTriggerValues(
+      this.adviceTrigger,
+      this.clampedValue,
+      this.setpoint
+    );
 
     return this.advices.map((advice) => {
       const minAngle = this.mapAngle(advice.minValue);
       const maxAngle = this.mapAngle(advice.maxValue);
       let state = advice.hinted ? AdviceState.hinted : AdviceState.regular;
-      if (value >= advice.minValue && value <= advice.maxValue) {
+      if (
+        triggerValues.some((v) => v >= advice.minValue && v <= advice.maxValue)
+      ) {
         state = AdviceState.triggered;
       }
 

@@ -1,7 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
 import './gauge-trend.js';
-import {AdviceType} from '../watch/advice.js';
+import {AdviceTrigger, AdviceType} from '../watch/advice.js';
 import {
   FillMode,
   BorderRadiusPosition,
@@ -69,6 +69,7 @@ const meta: Meta = {
   ],
 
   argTypes: {
+    adviceTrigger: {control: 'select', options: Object.values(AdviceTrigger)},
     // ═══════════════════════════════════════════════════════════════════════════
     // HIDDEN INHERITED PROPERTIES (from ObcChartLineBase)
     // These are locked/internal and should not be exposed in Storybook
@@ -220,6 +221,7 @@ const meta: Meta = {
       .hasBar=${args.hasBar}
       .hasScale=${args.hasScale}
       .hasAdvice=${args.hasAdvice}
+      .adviceTrigger=${args.adviceTrigger}
       .fillMode=${args.fillMode}
       .fillMin=${args.fillMin}
       .fillMax=${args.fillMax ?? undefined}
@@ -264,6 +266,7 @@ export const GaugeTrend: Story = {
       .hasBar=${_args.hasBar}
       .hasScale=${_args.hasScale}
       .hasAdvice=${_args.hasAdvice}
+      .adviceTrigger=${_args.adviceTrigger}
       .fillMode=${_args.fillMode}
       .fillMin=${_args.fillMin}
       .fillMax=${_args.fillMax}
@@ -350,6 +353,7 @@ export const GaugeTrendScaleReferenceSize: Story = {
       .hasBar=${_args.hasBar}
       .hasScale=${_args.hasScale}
       .hasAdvice=${_args.hasAdvice}
+      .adviceTrigger=${_args.adviceTrigger}
       .fillMode=${_args.fillMode}
       .fillMin=${_args.fillMin}
       .fillMax=${_args.fillMax}
@@ -568,6 +572,7 @@ export const GaugeTrendWithoutScale: Story = {
       .hasBar=${_args.hasBar}
       .hasScale=${_args.hasScale}
       .hasAdvice=${_args.hasAdvice}
+      .adviceTrigger=${_args.adviceTrigger}
       .fillMode=${_args.fillMode}
       .fillMin=${_args.fillMin}
       .fillMax=${_args.fillMax}
@@ -613,6 +618,7 @@ export const GaugeTrendWithoutBar: Story = {
       .hasBar=${_args.hasBar}
       .hasScale=${_args.hasScale}
       .hasAdvice=${_args.hasAdvice}
+      .adviceTrigger=${_args.adviceTrigger}
       .fillMode=${_args.fillMode}
       .fillMin=${_args.fillMin}
       .fillMax=${_args.fillMax}
@@ -659,6 +665,7 @@ export const GaugeTrendWithAdvice: Story = {
       .hasBar=${_args.hasBar}
       .hasScale=${_args.hasScale}
       .hasAdvice=${_args.hasAdvice}
+      .adviceTrigger=${_args.adviceTrigger}
       .fillMode=${_args.fillMode}
       .fillMin=${_args.fillMin}
       .fillMax=${_args.fillMax}
@@ -751,6 +758,7 @@ export const GaugeTrendCustomScaleRange: Story = {
       .hasBar=${_args.hasBar}
       .hasScale=${_args.hasScale}
       .hasAdvice=${_args.hasAdvice}
+      .adviceTrigger=${_args.adviceTrigger}
       .fillMode=${_args.fillMode}
       .fillMin=${_args.fillMin}
       .fillMax=${_args.fillMax}
@@ -794,6 +802,7 @@ export const GaugeTrendLabelsOnly: Story = {
       .hasBar=${_args.hasBar}
       .hasScale=${_args.hasScale}
       .hasAdvice=${_args.hasAdvice}
+      .adviceTrigger=${_args.adviceTrigger}
       .fillMode=${_args.fillMode}
       .fillMin=${_args.fillMin}
       .fillMax=${_args.fillMax}
@@ -1226,6 +1235,7 @@ export const DepthProfile: Story = {
       .hasBar=${args.hasBar}
       .hasScale=${args.hasScale}
       .hasAdvice=${args.hasAdvice}
+      .adviceTrigger=${args.adviceTrigger}
       .fillMode=${args.fillMode}
       .fillMin=${args.fillMin}
       .fillMax=${args.fillMax}
@@ -1301,6 +1311,7 @@ export const DatasetsAndMarkers: Story = {
       .hasBar=${args.hasBar}
       .hasScale=${args.hasScale}
       .hasAdvice=${args.hasAdvice}
+      .adviceTrigger=${args.adviceTrigger}
       .primaryTickmarkInterval=${25}
       .secondaryTickmarkInterval=${5}
       .scaleType=${ScaleType.condensed}
@@ -1350,6 +1361,7 @@ export const MinMaxLabels: Story = {
       .hasScale=${args.hasScale}
       .showMainTickmarkLabels=${true}
       .hasAdvice=${args.hasAdvice}
+      .adviceTrigger=${args.adviceTrigger}
       .primaryTickmarkInterval=${0}
       .secondaryTickmarkInterval=${0}
       .scaleType=${ScaleType.condensed}

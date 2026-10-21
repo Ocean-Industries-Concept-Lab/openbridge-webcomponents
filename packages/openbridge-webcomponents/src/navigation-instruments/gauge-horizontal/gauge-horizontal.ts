@@ -30,6 +30,7 @@ import {
 } from '../../building-blocks/external-scale/external-scale.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import type {LinearAdvice} from '../../building-blocks/instrument-linear/advice.js';
+import {AdviceTrigger} from '../../navigation-instruments/watch/advice.js';
 
 // Re-export shared enums for convenience
 export {
@@ -142,6 +143,9 @@ export {
  * @property value - Current value (bar fill level)
  * @property state - Instrument state: active, loading, or off
  * @property advices - Advice/alert overlays with min, max, type, and hinted state. When undefined or empty, no advice shown.
+ * @property adviceTrigger - Which reading triggers an advice: `both` (default)
+ *   when the value or the setpoint is inside the range; `value` uses only the
+ *   value; `setpoint` uses only the setpoint.
  * @property highlightCurrentValue - When true, displays a dot indicator at the current value position.
  *   The dot is rendered in the scale band, touching its inner edge (towards the chart).
  *   This provides an alternative to bar fill for highlighting the current value.
@@ -254,6 +258,7 @@ export class ObcGaugeHorizontal extends SetpointMixin(LitElement, {
 
   private readonly advicePosition: AdvicePosition = AdvicePosition.inner;
   @property({type: Array, attribute: false}) advices?: LinearAdvice[] = [];
+  @property({type: String}) adviceTrigger: AdviceTrigger = AdviceTrigger.both;
 
   @property({type: Boolean}) highlightCurrentValue = false;
 
@@ -300,6 +305,7 @@ export class ObcGaugeHorizontal extends SetpointMixin(LitElement, {
       setpointOverride: this.setpointOverride,
       advicePosition: this.advicePosition,
       advices: this.advices as ExternalScaleAdvice[],
+      adviceTrigger: this.adviceTrigger,
       fixedAspectRatio: this.fixedAspectRatio,
       // Gauges are always in instrument mode - they use fixed borderRadius (8px)
       // and don't respond to .obc-component-size-* CSS classes for border radius

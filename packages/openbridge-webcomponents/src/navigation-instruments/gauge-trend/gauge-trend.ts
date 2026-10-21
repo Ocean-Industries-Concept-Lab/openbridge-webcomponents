@@ -15,6 +15,7 @@ import {
   ScaleType,
 } from '../../building-blocks/bar-vertical/bar-vertical.js';
 import type {LinearAdvice} from '../../building-blocks/instrument-linear/advice.js';
+import {AdviceTrigger} from '../../navigation-instruments/watch/advice.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import '../../building-blocks/bar-vertical/bar-vertical.js';
 import type {ObcBarVertical} from '../../building-blocks/bar-vertical/bar-vertical.js';
@@ -171,6 +172,10 @@ export {FillMode, ScaleType};
  * @availableWhen fillMin hasBar==true && value!=undefined
  * @property advice - Advice/alert overlays for the vertical scale.
  * @availableWhen advice hasAdvice==true
+ * @property adviceTrigger - Which reading triggers an advice: `both` (default)
+ *   when the value or the setpoint is inside the range; `value` uses only the
+ *   value; `setpoint` uses only the setpoint.
+ * @availableWhen adviceTrigger hasAdvice==true
  * @property primaryTickmarkInterval - Primary tick interval for the vertical scale (longest ticks with labels).
  * @property secondaryTickmarkInterval - Secondary tick interval for the vertical scale (medium ticks).
  * @availableWhen secondaryTickmarkInterval hasScale==true
@@ -337,6 +342,7 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
     barVertical.advicePosition = AdvicePosition.inner;
     // obc-bar-vertical uses 'advices' (plural), not 'advice' or 'hasAdvice'
     barVertical.advices = this.hasAdvice ? this.advice : [];
+    barVertical.adviceTrigger = this.adviceTrigger;
     barVertical.primaryTickmarkInterval = this.primaryTickmarkInterval;
     barVertical.secondaryTickmarkInterval = this.secondaryTickmarkInterval;
     barVertical.tertiaryTickmarkInterval = this.tertiaryTickmarkInterval;
@@ -415,6 +421,8 @@ export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
 
   @property({type: Array, attribute: false})
   advice: LinearAdvice[] = [];
+
+  @property({type: String}) adviceTrigger: AdviceTrigger = AdviceTrigger.both;
 
   @property({type: Number})
   primaryTickmarkInterval?: number = undefined;

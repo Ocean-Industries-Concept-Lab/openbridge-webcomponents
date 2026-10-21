@@ -3,6 +3,7 @@ import {ObcMainEngine} from './main-engine.js';
 import './main-engine.js';
 import {widthDecorator} from '../../storybook-util.js';
 import {InstrumentState, Priority} from '../types.js';
+import {AdviceTrigger} from '../watch/advice.js';
 
 const meta: Meta<typeof ObcMainEngine> = {
   title: 'Instruments/Main Engine',
@@ -16,6 +17,7 @@ const meta: Meta<typeof ObcMainEngine> = {
     speedSetpoint: 30,
   },
   argTypes: {
+    adviceTrigger: {control: 'select', options: Object.values(AdviceTrigger)},
     width: {control: {type: 'range', min: 32, max: 1028, step: 1}},
     thrust: {control: {type: 'range', min: -100, max: 100, step: 1}},
     thrustSetpoint: {control: {type: 'range', min: -100, max: 100, step: 1}},

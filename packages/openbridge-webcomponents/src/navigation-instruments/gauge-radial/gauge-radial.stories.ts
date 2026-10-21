@@ -14,7 +14,7 @@ import {
   storyHint,
   widthDecorator,
 } from '../../storybook-util.js';
-import {AdviceType} from '../watch/advice.js';
+import {AdviceTrigger, AdviceType} from '../watch/advice.js';
 import {TickmarkStyle} from '../watch/tickmark.js';
 import {InstrumentState, Priority} from '../types.js';
 
@@ -34,6 +34,7 @@ const meta = {
     width: 400,
   },
   argTypes: {
+    adviceTrigger: {control: 'select', options: Object.values(AdviceTrigger)},
     width: {control: {type: 'range', min: 100, max: 1000, step: 1}},
     height: {control: {type: 'range', min: 100, max: 1000, step: 1}},
     type: {control: 'select', options: Object.values(ObcGaugeRadialType)},
