@@ -80,7 +80,7 @@ export class ObcAnalogThreewayValve extends ObcAbstractAutomationButton {
     if (!this.showStatus) {
       return [];
     }
-    return threewayValveReadouts(this._on, this.flows);
+    return threewayValveReadouts(this._on, this.flows, this.showStateIcon);
   }
 
   private renderIcon(slot: string) {

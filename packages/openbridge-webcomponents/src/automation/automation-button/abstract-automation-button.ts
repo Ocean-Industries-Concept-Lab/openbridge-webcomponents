@@ -74,6 +74,9 @@ export enum AutomationButtonBadgeCommandLocked {
  *
  * @availableWhen readoutPosition showReadoutStack==true
  * @availableWhen showStatus showReadoutStack==true
+ * @property showStateIcon - Show the on/off symbol before the `On`, `Off`,
+ *   `Open` and `Closed` state text. Hidden by default.
+ * @availableWhen showStateIcon showReadoutStack==true && showStatus==true
  * @availableWhen readoutSize showReadoutStack==true
  * @availableWhen tag showReadoutStack==true
  * @property activated - Enables the activated background color, used to indicate that the button is activated/selected.
@@ -92,6 +95,7 @@ export class ObcAbstractAutomationButton extends LitElement {
   @property({type: String}) readoutPosition: AutomationButtonReadoutPosition =
     AutomationButtonReadoutPosition.bottom;
   @property({type: Boolean, attribute: false}) showStatus: boolean = true;
+  @property({type: Boolean}) showStateIcon: boolean = false;
   @property({type: String}) readoutSize: AutomationButtonReadoutStackSize =
     AutomationButtonReadoutStackSize.regular;
   @property({type: String}) tag: string | null = null;
