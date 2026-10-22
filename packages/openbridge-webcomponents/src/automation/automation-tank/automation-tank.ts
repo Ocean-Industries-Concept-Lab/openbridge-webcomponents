@@ -271,6 +271,8 @@ export class ObcAutomationTank extends SetpointMixin(LitElement) {
     switch (this.badgeAlert) {
       case AutomationButtonBadgeAlert.Silence:
         return ObcAutomationBadgeType.AlertSilenced;
+      case AutomationButtonBadgeAlert.Shelved:
+        return ObcAutomationBadgeType.AlertShelved;
       case AutomationButtonBadgeAlert.Caution:
         return ObcAutomationBadgeType.Caution;
       case AutomationButtonBadgeAlert.Warning:
@@ -315,19 +317,22 @@ export class ObcAutomationTank extends SetpointMixin(LitElement) {
         return ObcAutomationBadgeType.Interlock;
       case AutomationButtonBadgeInterlock.InterlockInhibit:
         return ObcAutomationBadgeType.InterlockInhibit;
+      case AutomationButtonBadgeInterlock.Simulation:
+        return ObcAutomationBadgeType.Simulation;
       default:
         return null;
     }
   }
 
   private _badgeCommandLockedType(): ObcAutomationBadgeType | null {
-    if (
-      this.badgeCommandLocked ===
-      AutomationButtonBadgeCommandLocked.CommandLocked
-    ) {
-      return ObcAutomationBadgeType.CommandLocked;
+    switch (this.badgeCommandLocked) {
+      case AutomationButtonBadgeCommandLocked.CommandLocked:
+        return ObcAutomationBadgeType.CommandLocked;
+      case AutomationButtonBadgeCommandLocked.Simulation:
+        return ObcAutomationBadgeType.Simulation;
+      default:
+        return null;
     }
-    return null;
   }
 
   private get _usesGaugeTrend(): boolean {
