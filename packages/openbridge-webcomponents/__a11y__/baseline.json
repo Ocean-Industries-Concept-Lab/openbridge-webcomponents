@@ -46,6 +46,9 @@
     "aria-allowed-role",
     "obc-composite-one-tab-stop"
   ],
+  "application-components-alerts-alert-list-details-experimental--service-view": [
+    "aria-allowed-role"
+  ],
   "application-components-alerts-alert-list-details-experimental--slotted-ack-buttons": [
     "aria-allowed-role",
     "obc-composite-one-tab-stop"
