@@ -1,13 +1,12 @@
 import {css} from 'lit';
 export const vesselStyles = css`
   .container {
-    height: 100%;
     width: 100%;
-  }
-
-  .container > svg {
-    height: 100%;
-    width: 100%;
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    //border: 1px solid green;
   }
 
   .satellite-label {
@@ -62,10 +61,9 @@ export const vesselStyles = css`
   }
 
   .both-views {
-    width: 400px;
-    overflow-x: hidden;
-
+    //background-color: yellow;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
   }
@@ -79,7 +77,87 @@ export const vesselStyles = css`
     align-items: center;
   }
 
+  .side-view {
+    //background-color: yellow;
+    position: relative;
+  }
+
+  .side-view svg {
+    display: block;
+  }
+
+  .sensor-heights {
+    position: absolute;
+    top: 32px;
+    right: -62px;
+  }
+
+  .keel-arrow-lines {
+    position: absolute;
+    top: 32px;
+    right: -6px;
+  }
+
+  .keel-line-horizontal {
+    position: absolute;
+    left: 0;
+    top: 174px;
+    width: 100%;
+  }
+
+  .draft-line-horizontal {
+    position: absolute;
+    left: 0;
+    top: 162px;
+    width: 100%;
+  }
+
+  .vertical-ccrp-line {
+    position: absolute;
+    top: 16px;
+  }
+
+  .sensor-positioning-side-view {
+    position: absolute;
+  }
+
+  .mast-line {
+    position: absolute;
+    top: 50px;
+    z-index: -1;
+    //background-color: red;
+  }
+
   .top-down-view {
-    margin-left: 60px;
+    position: relative;
+    //background-color: yellow;
+  }
+
+  .top-down-view svg {
+    display: block;
+  }
+
+  .total-vessel-width {
+    position: absolute;
+    top: 0px;
+    left: -17px;
+  }
+
+  .horizontal-ccrp-line {
+    position: absolute;
+    top: 21px;
+  }
+
+  .port-starboard-side {
+    position: absolute;
+    top: 0px;
+    right: -30px;
+    z-index: -1;
+  }
+
+  .sensor-positioning-top-down-view {
+    position: absolute;
+    //background-color: violet;
+    //top: 0px;
   }
 `;

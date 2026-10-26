@@ -1,6 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {widthDecorator} from '../../storybook-util.js';
-import {Vessel, VesselTypes, ViewType} from './vessel.js';
+import {Vessel, VesselTypes, ViewType, SensorType} from './vessel.js';
 import './vessel.js';
 
 const meta: Meta<typeof Vessel> = {
@@ -25,12 +25,31 @@ const meta: Meta<typeof Vessel> = {
         VesselTypes.TANKER,
         VesselTypes.FISHING,
         VesselTypes.CAR_FERRY,
+        VesselTypes.CARGO_WIND,
+        VesselTypes.SOV,
+        VesselTypes.PSV,
+        VesselTypes.CRUISE,
+      ],
+      control: {type: 'select'},
+    },
+    sensorType: {
+      options: [
+        SensorType.EML,
+        SensorType.ECHO,
+        SensorType.SATLOG,
+        SensorType.DOPPLER,
       ],
       control: {type: 'select'},
     },
     viewMode: {
       options: [ViewType.SIDE, ViewType.TOP, ViewType.BOTH],
       control: {type: 'select'},
+    },
+    vesselDraftLevel: {
+      control: {
+        type: 'number',
+        step: 0.1,
+      },
     },
   },
   decorators: [widthDecorator],
@@ -43,17 +62,19 @@ export const Vessel_tanker: Story = {
   args: {
     // width: 512,
     vesselHeight: 40,
-
-    bowToCCRP: 50,
-    sternToCCRP: 50,
-    sensorToCCRP: 0,
-    sensorHeightOverKeel: 50,
+    vesselDraftLevel: 3.1,
+    bowToCCRP: 24,
+    sternToCCRP: 25,
+    sensorToCCRP: 11,
+    sensorHeightOverKeel: 2,
     portToCCRP: 15,
-    starboardToCCRP: 15,
+    starboardToCCRP: 16,
     sensorPortStarboardOffset: 0,
-    vesselType: VesselTypes.CARGO,
-    viewMode: ViewType.SIDE,
-    toggleSLAndDLSensor: true,
+    vesselType: 'TANKER',
+    sensorType: 'ECHO',
+    viewMode: 'BOTH',
+    toggleSensorA: true,
+    toggleSLAndDLSensor: false,
   },
 };
 
