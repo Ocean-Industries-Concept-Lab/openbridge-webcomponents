@@ -59,12 +59,14 @@ describe('obc-alert-counter-item', () => {
     ]);
   });
 
-  it('adds the shelved count last', async () => {
+  it('adds the shelved count last, with the shelf icon in both types', async () => {
     const filled = await setup({countAlarm: 2}, {shelvedCount: 9});
-    expect([lastBadge(filled).type, lastBadge(filled).number]).toEqual([
-      'regular',
-      9,
-    ]);
+    expect([
+      lastBadge(filled).type,
+      lastBadge(filled).number,
+      lastBadge(filled).showIcon,
+    ]).toEqual(['regular', 9, true]);
+    expect(lastBadge(filled).querySelector('obi-alerts-shelf')).not.toBeNull();
 
     const level = await setup(
       {countAlarm: 2},
