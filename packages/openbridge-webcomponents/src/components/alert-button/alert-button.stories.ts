@@ -14,6 +14,7 @@ const meta: Meta<typeof ObcAlertButton> = {
   component: 'obc-alert-button',
   args: {
     counter: true,
+    globalCounter: false, // the gate arg, so the global counter controls follow it
     width: 72,
   },
   argTypes: {

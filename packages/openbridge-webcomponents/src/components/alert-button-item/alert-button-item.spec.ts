@@ -40,9 +40,6 @@ async function setup(props: ItemProps = {}) {
       .nAlerts=${props.nAlerts ?? 3}
       .counter=${props.counter ?? true}
       .globalCounter=${props.globalCounter ?? false}
-      .globalCounterType=${
-        props.globalCounterType ?? ObcAlertCounterItemType.Badges
-      }
       .counts=${props.counts ?? {}}
       .shelvedCount=${props.shelvedCount ?? 0}
       .blinking=${props.blinking ?? false}
@@ -52,6 +49,10 @@ async function setup(props: ItemProps = {}) {
   const el = screen.container.querySelector(
     'obc-alert-button-item'
   ) as ObcAlertButtonItem;
+  // Set only when given, so the default case exercises the element's own default.
+  if (props.globalCounterType !== undefined) {
+    el.globalCounterType = props.globalCounterType;
+  }
   await el.updateComplete;
   return el;
 }
