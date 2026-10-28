@@ -491,6 +491,9 @@ function keelLineHorizontal() {
 }
 
 function mastLine(sideViewParams: getSideViewParams) {
+  // const mastHeight = Math.abs(
+  //   sideViewParams.mastEndY - (sideViewParams.sensorY + 18)
+  // );
   const mastHeight = Math.abs(
     sideViewParams.mastEndY - (sideViewParams.sensorY + 18)
   );
@@ -507,7 +510,7 @@ function mastLine(sideViewParams: getSideViewParams) {
         y1="0"
         x2="2"
         y2="${mastHeight}"
-        stroke="${Colors.elementSymbolColor}"
+        stroke="red"
         stroke-width="2"
         stroke-linecap="round"
       />
@@ -535,12 +538,20 @@ export function getSideView(
       ? html` <div
           class="mast-line"
           style="left:${sideViewParams.sensorX - 2}px;
-                                                            top:${sideViewParams.sensorY +
-          18}px;"
+                          top:${sideViewParams.sensorY + 18}px;"
         >
           ${mastLine(sideViewParams)}
         </div>`
       : nothing}
+
+    <div class="vertical-ccrp-line" style="left:${sideViewParams.ccrpX - 17}px">
+      ${verticalCCRPLine()}
+    </div>
+    <div class="draft-line-horizontal">${draftLine()}</div>
+    <div class="keel-line-horizontal">${keelLineHorizontal()}</div>
+    <div class="keel-arrow-lines">
+      ${keelArrowLinesVertical(upArrowDim, sideViewParams.toggleSLAndDLSensor)}
+    </div>
     ${toggleSensorA
       ? html` <div
           class="sensor-positioning-side-view"
@@ -550,14 +561,6 @@ export function getSideView(
           ${sensorTypeSelector(sensorType, SensorView.SIDE)}
         </div>`
       : nothing}
-    <div class="vertical-ccrp-line" style="left:${sideViewParams.ccrpX - 17}px">
-      ${verticalCCRPLine()}
-    </div>
-    <div class="draft-line-horizontal">${draftLine()}</div>
-    <div class="keel-line-horizontal">${keelLineHorizontal()}</div>
-    <div class="keel-arrow-lines">
-      ${keelArrowLinesVertical(upArrowDim, sideViewParams.toggleSLAndDLSensor)}
-    </div>
     <div class="sensor-heights">${sensorHeights(sideViewParams)}</div>
     <div class="stern-ccrp-bow">${sternCCRPBowDimLine(sideViewParams)}</div>
     <div class="sensor-to-ccrp">
