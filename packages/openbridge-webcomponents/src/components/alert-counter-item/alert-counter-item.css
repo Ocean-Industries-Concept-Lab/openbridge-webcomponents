@@ -8,7 +8,7 @@
   gap: var(--app-components-alert-counter-item-badge-spacing);
 }
 
-obi-alerts-shelf {
+obi-timer-2 {
   display: block; /* fills the badge icon box that sizes the badge-icon slot */
   width: 100%;
   height: 100%;
