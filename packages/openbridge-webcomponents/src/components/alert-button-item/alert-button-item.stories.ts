@@ -2,6 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
 import {ObcAlertButtonItem, ObcAlertButtonType} from './alert-button-item.js';
 import './alert-button-item.js';
+import {ObcAlertCounterItemType} from '../alert-counter-item/alert-counter-item.js';
 import {AlertType, FlashingSpeed, type AlertCounts} from '../../types.js';
 
 type ItemArgs = Pick<
@@ -11,6 +12,7 @@ type ItemArgs = Pick<
   | 'nAlerts'
   | 'counter'
   | 'globalCounter'
+  | 'globalCounterType'
   | 'counts'
   | 'shelvedCount'
   | 'blinking'
@@ -33,6 +35,9 @@ const renderItem = (args: Partial<ItemArgs>) =>
     .nAlerts=${args.nAlerts ?? 0}
     .counter=${args.counter ?? false}
     .globalCounter=${args.globalCounter ?? false}
+    .globalCounterType=${
+      args.globalCounterType ?? ObcAlertCounterItemType.Badges
+    }
     .counts=${args.counts ?? {}}
     .shelvedCount=${args.shelvedCount ?? 0}
     .blinking=${args.blinking ?? false}
@@ -59,6 +64,10 @@ const meta: Meta<ItemArgs> = {
     },
     alertType: {control: {type: 'select'}, options: Object.values(AlertType)},
     nAlerts: {control: {type: 'number', min: 0}},
+    globalCounterType: {
+      control: {type: 'inline-radio'},
+      options: Object.values(ObcAlertCounterItemType),
+    },
     counts: {control: {type: 'object'}},
     shelvedCount: {control: {type: 'number', min: 0}},
     flashingSpeed: {
@@ -145,6 +154,25 @@ export const GlobalCounter: Story = {
 export const GlobalCounterWithShelved: Story = {
   args: {
     globalCounter: true,
+    nAlerts: 12,
+    counts: SEVERITY_COUNTS,
+    shelvedCount: 9,
+  },
+};
+
+export const GlobalCounterAlertLevel: Story = {
+  args: {
+    globalCounter: true,
+    globalCounterType: ObcAlertCounterItemType.AlertLevel,
+    nAlerts: 12,
+    counts: SEVERITY_COUNTS,
+  },
+};
+
+export const GlobalCounterAlertLevelWithShelved: Story = {
+  args: {
+    globalCounter: true,
+    globalCounterType: ObcAlertCounterItemType.AlertLevel,
     nAlerts: 12,
     counts: SEVERITY_COUNTS,
     shelvedCount: 9,

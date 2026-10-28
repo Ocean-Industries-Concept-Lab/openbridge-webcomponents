@@ -161,6 +161,12 @@
       min-height: var(--ui-components-badge-icon-size);
     }
 
+    /* Figma binds the flat large icon frame to the badge height, not icon-size-large */
+    &.size-large .icon {
+      width: var(--ui-components-badge-min-size-large);
+      height: var(--ui-components-badge-min-size-large);
+    }
+
     .icon.type-alarm {
       color: unset;
       border-color: var(--alert-alarm-outline-color);

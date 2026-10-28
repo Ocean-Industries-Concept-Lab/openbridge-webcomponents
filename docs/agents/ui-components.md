@@ -73,8 +73,13 @@ button item and Alert button (#1236).
 - `obc-alert-button-item` draws the bell, the counter and the global
   counter, and holds the alert button's `FlashingController`.
   `obc-alert-button` forwards its properties to the item, the global counter
-  included (a flat button drops it), and adds the silence button and the
-  breakpoints; it never draws a bell of its own.
+  and its `globalCounterType` included (a flat button drops it), and adds the
+  silence button and the breakpoints; it never draws a bell of its own.
+- `globalCounterType` is the counter item's `type`, the Figma Alert counter
+  item's `Type` axis: `badges` or `alert-level` (the Unacked type is #1237).
+  The shelved count is a neutral badge with the shelf icon in both types, and
+  the flat large badge draws its icon in a `min-size-large` box, as the Alert
+  level counter binds it (#1389).
 - `rankAlertCounts(counts, combine)` in `src/alert-severity.ts` is the only
   per-severity count ranking, over the shared `AlertCounts` shape
   (`src/types.ts`); the tree navigation badges and the counter item call it.

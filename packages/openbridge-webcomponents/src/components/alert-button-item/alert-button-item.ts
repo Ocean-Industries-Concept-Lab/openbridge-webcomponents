@@ -60,7 +60,8 @@ export enum ObcAlertButtonType {
  *   `nAlerts` of 0 shows the idle bell.
  * - **Counter:** `counter` shows `nAlerts` next to the bell, except in `flat`.
  * - **Global counter:** `globalCounter` shows the per-severity `counts` as
- *   badges, then the bell and `nAlerts`, always in the normal style.
+ *   badges, then the bell and `nAlerts`, always in the normal style;
+ *   `globalCounterType` picks filled badges or the severity shapes.
  * - **Flashing:** `blinking` flashes the bell at the tempo `flashingSpeed`
  *   resolves (#1224).
  * - **Fill height:** `fillHeight` stretches the visible button to the host
@@ -104,6 +105,8 @@ export enum ObcAlertButtonType {
  * @property counter - Shows `nAlerts` next to the bell (not in `flat`).
  * @availableWhen counter globalCounter==false
  * @property globalCounter - Shows the per-severity counts, the bell and the total instead of a single alert status.
+ * @property globalCounterType - How the global counter draws each count: `badges` (filled severity badges, default) or `alert-level` (the severity shape beside the count).
+ * @availableWhen globalCounterType globalCounter==true
  * @property counts - Alert count per severity for the global counter badges.
  * @availableWhen counts globalCounter==true
  * @property shelvedCount - Number of shelved alerts, shown after the global counter badges.
@@ -126,6 +129,8 @@ export class ObcAlertButtonItem extends LitElement {
   @property({type: Number}) nAlerts = 0;
   @property({type: Boolean}) counter = false;
   @property({type: Boolean}) globalCounter = false;
+  @property({type: String}) globalCounterType: ObcAlertCounterItemType =
+    ObcAlertCounterItemType.Badges;
   @property({type: Object, attribute: false}) counts: AlertCounts = {};
   @property({type: Number}) shelvedCount = 0;
   @property({type: Boolean}) blinking = false;
@@ -235,7 +240,7 @@ export class ObcAlertButtonItem extends LitElement {
       return nothing;
     }
     return html`<obc-alert-counter-item
-      .type=${ObcAlertCounterItemType.Badges}
+      .type=${this.globalCounterType}
       .counts=${this.counts}
       .shelvedCount=${this.shelvedCount}
     ></obc-alert-counter-item>`;
