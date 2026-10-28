@@ -279,7 +279,7 @@ function vesselLengthDimLine(sideViewParams: getSideViewParams) {
         <rect width="260" height="16"/>
         <g id="vessel-diagram/distance">
           <path id="line" d="M12.5 13L17.5 15.8868V10.1132L12.5 13ZM247.5 13L242.5 10.1132V15.8868L247.5 13ZM17 13V13.5L243 13.5V13V12.5L17 12.5V13Z" fill="${Colors.elementSymbolColor}"/>
-          <text id="00.0 m" transform="translate(123.5 -4)" fill="${Colors.instrumentActiveColor}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" letter-spacing="0px"><tspan x="0.0546875" y="12.656">${sideViewParams.vesselLengthComputed}</tspan></text>
+          <text id="00.0 m" transform="translate(123.5 -4)" fill="${Colors.elementActiveColor}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" letter-spacing="0px"><tspan x="0.0546875" y="12.656">${sideViewParams.vesselLengthComputed}</tspan></text>
         </g>
       </g>
     </svg>
@@ -310,7 +310,7 @@ function sternCCRPBowDimLine(sternBowDimParams: getSideViewParams) {
               x="${stern.textX}"
               y="11"
               text-anchor="middle"
-              fill="${Colors.instrumentActiveColor}"
+              fill="${Colors.elementActiveColor}"
               font-size="12">
                 ${sternBowDimParams.sternToCCRP}
             </text>
@@ -334,7 +334,7 @@ function sternCCRPBowDimLine(sternBowDimParams: getSideViewParams) {
             x="${bow.textX}"
             y="11"
             text-anchor="middle"
-            fill="${Colors.instrumentActiveColor}"
+            fill="${Colors.elementActiveColor}"
             font-size="12">
             ${sternBowDimParams.bowToCCRP}
           </text>
@@ -395,20 +395,20 @@ function sensorHeights(sensorHeightsParams: getSideViewParams) {
           !sensorHeightsParams.toggleSLAndDLSensor
             ? svg`
           <g id="top">
-            <text id="A: 14.7" fill="${Colors.instrumentActiveColor}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" letter-spacing="0px"><tspan x="1" y="13.656">A: ${sensorHeightsParams.sensorHeightOverKeel}</tspan></text>
+            <text id="A: 14.7" fill="${Colors.elementActiveColor}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" letter-spacing="0px"><tspan x="1" y="13.656">A: ${sensorHeightsParams.sensorHeightOverKeel}</tspan></text>
           </g>
           `
             : nothing
         }
         <g id="bottom">
-          <text id="Draft: 2.1" fill="${Colors.instrumentActiveColor}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" letter-spacing="0px"><tspan x="1" y="131.656">Draft: ${sensorHeightsParams.vesselDraftLine}</tspan></text>
-          <text id="Keel: 0" fill="${Colors.instrumentActiveColor}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" letter-spacing="0px"><tspan x="1" y="143.656">Keel: 0</tspan></text>
+          <text id="Draft: 2.1" fill="${Colors.elementActiveColor}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" letter-spacing="0px"><tspan x="1" y="131.656">Draft: ${sensorHeightsParams.vesselDraftLine}</tspan></text>
+          <text id="Keel: 0" fill="${Colors.elementActiveColor}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" letter-spacing="0px"><tspan x="1" y="143.656">Keel: 0</tspan></text>
         </g>
         <g id="below">
          ${
            sensorHeightsParams.toggleSLAndDLSensor
              ? svg`
-            <text id="H: -1.4 m" fill="${Colors.instrumentActiveColor}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" letter-spacing="0px"><tspan x="1" y="157.656">A: ${sensorHeightsParams.sensorBelowKeel} m</tspan></text>
+            <text id="H: -1.4 m" fill="${Colors.elementActiveColor}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" letter-spacing="0px"><tspan x="1" y="157.656">A: ${sensorHeightsParams.sensorBelowKeel} m</tspan></text>
           `
              : nothing
          }
@@ -435,21 +435,21 @@ function sensorToCCRPDim(sensorToCCRPParams: getSideViewParams) {
                     L${dim.endX - 5} ${SENSOR_DIM_Y + 3}
                     Z
                     "
-                    fill="${Colors.instrumentActiveColor}"
+                    fill="${Colors.elementActiveColor}"
                   />
                   <line
                     x1="${dim.startX + 5}"
                     y1="${SENSOR_DIM_Y}"
                     x2="${dim.endX - 5}"
                     y2="${SENSOR_DIM_Y}"
-                    stroke="${Colors.instrumentActiveColor}"
+                    stroke="${Colors.elementActiveColor}"
                     stroke-width="1.5"
                   />
                   <text
                     x="${dim.textX}"
                     y="16"
                     text-anchor="middle"
-                    fill="${Colors.instrumentActiveColor}"
+                    fill="${Colors.elementActiveColor}"
                     font-size="12"
                     font-family="Noto Sans"
                     >
@@ -465,7 +465,7 @@ function verticalCCRPLine() {
     <svg xmlns="http://www.w3.org/2000/svg" width="35" height="205" viewBox="0 0 35 205" fill="none">
       <g id="stern-CCRP-bow-line">
         <rect width="35" height="205" fill="none" fill-opacity="0.5"/>
-        <text id="CCRP" fill="${Colors.instrumentActiveColor}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" font-weight="bold" letter-spacing="0em"><tspan x="2.30078" y="12.656">CCRP</tspan></text>
+        <text id="CCRP" fill="${Colors.elementActiveColor}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" font-weight="bold" letter-spacing="0em"><tspan x="2.30078" y="12.656">CCRP</tspan></text>
         <g id="CCRP_2">
           <line id="line" x1="17.5" y1="19.5" x2="17.5" y2="200.5" stroke="${Colors.elementNeutralColor}" stroke-linecap="round" stroke-dasharray="4 6"/>
         </g>
