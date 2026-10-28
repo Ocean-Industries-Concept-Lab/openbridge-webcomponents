@@ -278,8 +278,8 @@ function vesselLengthDimLine(sideViewParams: getSideViewParams) {
       <g id="vessel-total-length">
         <rect width="260" height="16"/>
         <g id="vessel-diagram/distance">
-          <path id="line" d="M12.5 13L17.5 15.8868V10.1132L12.5 13ZM247.5 13L242.5 10.1132V15.8868L247.5 13ZM17 13V13.5L243 13.5V13V12.5L17 12.5V13Z" fill="${Colors.instrumentRegularSecondaryDif}"/>
-          <text id="00.0 m" transform="translate(123.5 -4)" fill="${Colors.instrumentRegularSecondaryDif}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" letter-spacing="0px"><tspan x="0.0546875" y="12.656">${sideViewParams.vesselLengthComputed}</tspan></text>
+          <path id="line" d="M12.5 13L17.5 15.8868V10.1132L12.5 13ZM247.5 13L242.5 10.1132V15.8868L247.5 13ZM17 13V13.5L243 13.5V13V12.5L17 12.5V13Z" fill="${Colors.elementSymbolColor}"/>
+          <text id="00.0 m" transform="translate(123.5 -4)" fill="${Colors.instrumentActiveColor}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" letter-spacing="0px"><tspan x="0.0546875" y="12.656">${sideViewParams.vesselLengthComputed}</tspan></text>
         </g>
       </g>
     </svg>
@@ -295,40 +295,52 @@ function sternCCRPBowDimLine(sternBowDimParams: getSideViewParams) {
       <g id="stern-CCRP-bow">
         <rect width="260" height="26" fill=""/>
         <g id="stern-to-ccrp">
-          <path d="${stern.arrowPath}" fill="${Colors.instrumentRegularSecondaryDif}"/>
-          <line
-            x1="${stern.startX + 1}"
-            y1="${stern.y}"
-            x2="${stern.endX + 1}"
-            y2="${stern.y}"
-            stroke="${Colors.instrumentRegularSecondaryDif}"
-          />
-          <text
-            x="${stern.textX}"
-            y="11"
-            text-anchor="middle"
-            fill="${Colors.instrumentRegularSecondaryDif}"
-            font-size="12">
-            ${sternBowDimParams.sternToCCRP}
-          </text>
+          ${
+            sternBowDimParams.sternToCCRP > 0
+              ? svg`
+            <path d="${stern.arrowPath}" fill="${Colors.elementSymbolColor}"/>
+            <line
+              x1="${stern.startX + 2}"
+              y1="${stern.y}"
+              x2="${stern.endX - 2}"
+              y2="${stern.y}"
+              stroke="${Colors.elementSymbolColor}"
+            />
+            <text
+              x="${stern.textX}"
+              y="11"
+              text-anchor="middle"
+              fill="${Colors.instrumentActiveColor}"
+              font-size="12">
+                ${sternBowDimParams.sternToCCRP}
+            </text>
+          `
+              : nothing
+          }
         </g>
         <g id="ccrp-to-bow">
-          <path d="${bow.arrowPath}" fill="${Colors.instrumentRegularSecondaryDif}"/>
+        ${
+          sternBowDimParams.bowToCCRP > 0
+            ? svg`
+          <path d="${bow.arrowPath}" fill="${Colors.elementSymbolColor}"/>
           <line
-            x1="${bow.startX + 1}"
+            x1="${bow.startX + 2}"
             y1="${bow.y}"
-            x2="${bow.endX + 1}"
+            x2="${bow.endX - 2}"
             y2="${bow.y}"
-            stroke="${Colors.instrumentRegularSecondaryDif}"
+            stroke="${Colors.elementSymbolColor}"
           />
           <text
             x="${bow.textX}"
             y="11"
             text-anchor="middle"
-            fill="${Colors.instrumentRegularSecondaryDif}"
+            fill="${Colors.instrumentActiveColor}"
             font-size="12">
             ${sternBowDimParams.bowToCCRP}
           </text>
+          `
+            : nothing
+        } 
         </g>
       </g>
     </svg>
@@ -354,7 +366,7 @@ function keelArrowLinesVertical(
             L5.88676 ${upArrowDim.arrowTipY + 5}
             Z
             "
-            fill="${Colors.instrumentRegularSecondary}"
+            fill="${Colors.elementSymbolColor}"
             fill-opacity="0.97"
           />
           <line
@@ -362,11 +374,11 @@ function keelArrowLinesVertical(
             y1="${upArrowDim.arrowTipY + 4.5}"
             x2="3"
             y2="${upArrowDim.fixedBottomY}"
-            stroke="${Colors.instrumentRegularSecondary}"
+            stroke="${Colors.elementSymbolColor}"
             stroke-width="1"
           />`
               : svg`
-          <path id="down" d="M3.5 145C3.5 144.724 3.27614 144.5 3 144.5C2.72386 144.5 2.5 144.724 2.5 145L3 145L3.5 145ZM3 174L5.88675 169L0.113247 169L3 174ZM3 145L2.5 145L2.5 169.5L3 169.5L3.5 169.5L3.5 145L3 145Z" fill="${Colors.instrumentRegularSecondary}" fill-opacity="0.97"/>
+          <path id="down" d="M3.5 145C3.5 144.724 3.27614 144.5 3 144.5C2.72386 144.5 2.5 144.724 2.5 145L3 145L3.5 145ZM3 174L5.88675 169L0.113247 169L3 174ZM3 145L2.5 145L2.5 169.5L3 169.5L3.5 169.5L3.5 145L3 145Z" fill="${Colors.elementSymbolColor}" fill-opacity="0.97"/>
           `
           }
         </g>
@@ -383,20 +395,20 @@ function sensorHeights(sensorHeightsParams: getSideViewParams) {
           !sensorHeightsParams.toggleSLAndDLSensor
             ? svg`
           <g id="top">
-            <text id="A: 14.7" fill="${Colors.instrumentRegularSecondaryDif}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" letter-spacing="0px"><tspan x="1" y="13.656">A: ${sensorHeightsParams.sensorHeightOverKeel}</tspan></text>
+            <text id="A: 14.7" fill="${Colors.instrumentActiveColor}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" letter-spacing="0px"><tspan x="1" y="13.656">A: ${sensorHeightsParams.sensorHeightOverKeel}</tspan></text>
           </g>
           `
             : nothing
         }
         <g id="bottom">
-          <text id="Draft: 2.1" fill="${Colors.instrumentRegularSecondaryDif}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" letter-spacing="0px"><tspan x="1" y="131.656">Draft: ${sensorHeightsParams.vesselDraftLine}</tspan></text>
-          <text id="Keel: 0" fill="${Colors.instrumentRegularSecondaryDif}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" letter-spacing="0px"><tspan x="1" y="143.656">Keel: 0</tspan></text>
+          <text id="Draft: 2.1" fill="${Colors.instrumentActiveColor}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" letter-spacing="0px"><tspan x="1" y="131.656">Draft: ${sensorHeightsParams.vesselDraftLine}</tspan></text>
+          <text id="Keel: 0" fill="${Colors.instrumentActiveColor}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" letter-spacing="0px"><tspan x="1" y="143.656">Keel: 0</tspan></text>
         </g>
         <g id="below">
          ${
            sensorHeightsParams.toggleSLAndDLSensor
              ? svg`
-            <text id="H: -1.4 m" fill="${Colors.instrumentRegularSecondaryDif}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" letter-spacing="0px"><tspan x="1" y="157.656">A: ${sensorHeightsParams.sensorBelowKeel} m</tspan></text>
+            <text id="H: -1.4 m" fill="${Colors.instrumentActiveColor}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" letter-spacing="0px"><tspan x="1" y="157.656">A: ${sensorHeightsParams.sensorBelowKeel} m</tspan></text>
           `
              : nothing
          }
@@ -423,21 +435,21 @@ function sensorToCCRPDim(sensorToCCRPParams: getSideViewParams) {
                     L${dim.endX - 5} ${SENSOR_DIM_Y + 3}
                     Z
                     "
-                    fill="${Colors.instrumentRegularSecondary}"
+                    fill="${Colors.instrumentActiveColor}"
                   />
                   <line
                     x1="${dim.startX + 5}"
                     y1="${SENSOR_DIM_Y}"
                     x2="${dim.endX - 5}"
                     y2="${SENSOR_DIM_Y}"
-                    stroke="${Colors.instrumentRegularSecondary}"
+                    stroke="${Colors.instrumentActiveColor}"
                     stroke-width="1.5"
                   />
                   <text
                     x="${dim.textX}"
                     y="16"
                     text-anchor="middle"
-                    fill="${Colors.instrumentRegularSecondaryDif}"
+                    fill="${Colors.instrumentActiveColor}"
                     font-size="12"
                     font-family="Noto Sans"
                     >
@@ -453,9 +465,9 @@ function verticalCCRPLine() {
     <svg xmlns="http://www.w3.org/2000/svg" width="35" height="205" viewBox="0 0 35 205" fill="none">
       <g id="stern-CCRP-bow-line">
         <rect width="35" height="205" fill="none" fill-opacity="0.5"/>
-        <text id="CCRP" fill="${Colors.instrumentRegularSecondaryDif}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" font-weight="bold" letter-spacing="0em"><tspan x="2.30078" y="12.656">CCRP</tspan></text>
+        <text id="CCRP" fill="${Colors.instrumentActiveColor}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" font-weight="bold" letter-spacing="0em"><tspan x="2.30078" y="12.656">CCRP</tspan></text>
         <g id="CCRP_2">
-          <line id="line" x1="17.5" y1="19.5" x2="17.5" y2="200.5" stroke="${Colors.instrumentRegularSecondaryDif}" stroke-linecap="round" stroke-dasharray="4 6"/>
+          <line id="line" x1="17.5" y1="19.5" x2="17.5" y2="200.5" stroke="${Colors.elementNeutralColor}" stroke-linecap="round" stroke-dasharray="4 6"/>
         </g>
       </g>
     </svg>
@@ -465,7 +477,7 @@ function verticalCCRPLine() {
 function draftLine() {
   return svg`
     <svg xmlns="http://www.w3.org/2000/svg" width="260" height="1" viewBox="0 0 260 1" fill="none">
-      <path id="draft-line" d="M0.5 0.5L259.5 0.5" stroke="${Colors.instrumentRegularSecondaryDif}" stroke-linecap="round" stroke-dasharray="4 4"/>
+      <path id="draft-line" d="M0.5 0.5L259.5 0.5" stroke="${Colors.elementSymbolColor}" stroke-linecap="round" stroke-dasharray="4 4"/>
     </svg>
   `;
 }
@@ -473,7 +485,7 @@ function draftLine() {
 function keelLineHorizontal() {
   return svg`
     <svg xmlns="http://www.w3.org/2000/svg" width="260" height="1" viewBox="0 0 260 1" fill="none">
-      <path id="draft-line" d="M0.5 0.5L259.5 0.5" stroke="${Colors.instrumentRegularSecondaryDif}" stroke-linecap="round" stroke-dasharray="4 4"/>
+      <path id="draft-line" d="M0.5 0.5L259.5 0.5" stroke="${Colors.elementSymbolColor}" stroke-linecap="round" stroke-dasharray="4 4"/>
     </svg>
   `;
 }
@@ -495,7 +507,7 @@ function mastLine(sideViewParams: getSideViewParams) {
         y1="0"
         x2="2"
         y2="${mastHeight}"
-        stroke="${Colors.instrumentRegularSecondaryDif}"
+        stroke="${Colors.elementSymbolColor}"
         stroke-width="2"
         stroke-linecap="round"
       />
@@ -513,7 +525,8 @@ export function getSideView(
   sensorType: SensorType
 ) {
   const VESSEL_TYPE = getVesselType(vesselType);
-  return html`<div class="side-view">
+  const sensorTypeOffset = sensorType === SensorType.DOPPLER ? 15 : 12;
+  return html` <div class="side-view">
     <div class="total-vessel-length">
       ${vesselLengthDimLine(sideViewParams)}
     </div>
@@ -522,7 +535,8 @@ export function getSideView(
       ? html` <div
           class="mast-line"
           style="left:${sideViewParams.sensorX - 2}px;
-                            top:${sideViewParams.sensorY + 18}px;"
+                                                            top:${sideViewParams.sensorY +
+          18}px;"
         >
           ${mastLine(sideViewParams)}
         </div>`
@@ -530,8 +544,8 @@ export function getSideView(
     ${toggleSensorA
       ? html` <div
           class="sensor-positioning-side-view"
-          style="left:${sideViewParams.sensorX - 12}px;
-                              top:${sideViewParams.sensorY}px;"
+          style="left:${sideViewParams.sensorX - sensorTypeOffset}px;
+                               top:${sideViewParams.sensorY}px;"
         >
           ${sensorTypeSelector(sensorType, SensorView.SIDE)}
         </div>`
@@ -694,8 +708,8 @@ function totalVesselWidth(vesselWidth: number) {
       <g id="total-vessel-width">
         <rect width="17" height="73" fill="none"/>
         <g id="vessel-width">
-          <path id="line" d="M13 62L15.8868 57H10.1132L13 62ZM13 11L10.1132 16H15.8868L13 11ZM13 57.5H13.5L13.5 15.5H13H12.5L12.5 57.5H13Z" fill="${Colors.instrumentRegularSecondaryDif}" fill-opacity="0.97"/>
-          <text id="00.0 m" transform="translate(-4 42) rotate(-90)" fill="${Colors.instrumentRegularSecondaryDif}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" letter-spacing="0px"><tspan x="0.0546875" y="12.656">${vesselWidth}</tspan></text>
+          <path id="line" d="M13 62L15.8868 57H10.1132L13 62ZM13 11L10.1132 16H15.8868L13 11ZM13 57.5H13.5L13.5 15.5H13H12.5L12.5 57.5H13Z" fill="${Colors.elementSymbolColor}" fill-opacity="0.97"/>
+          <text id="00.0 m" transform="translate(-4 42) rotate(-90)" fill="${Colors.elementActiveColor}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" letter-spacing="0px"><tspan x="0.0546875" y="12.656">${vesselWidth}</tspan></text>
         </g>
       </g>
     </svg>
@@ -707,9 +721,9 @@ function horizontalCCRPLine() {
     <svg xmlns="http://www.w3.org/2000/svg" width="296" height="31" viewBox="0 0 296 31" fill="none">
       <g id="horizontal-ccrp-line">
         <g clip-path="url(#clip0_2070_125396)">
-          <text id="CCRP" transform="translate(264 7)" fill="${Colors.instrumentRegularSecondaryDif}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" font-weight="bold" letter-spacing="0em"><tspan x="0.300781" y="12.656">CCRP</tspan></text>
+          <text id="CCRP" transform="translate(264 7)" fill="${Colors.elementActiveColor}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" font-weight="bold" letter-spacing="0em"><tspan x="0.300781" y="12.656">CCRP</tspan></text>
           <g id="CCRP_2">
-            <line id="line" x1="258.5" y1="15.5" x2="6.5" y2="15.5" stroke="${Colors.instrumentRegularSecondaryDif}" stroke-linecap="round" stroke-dasharray="4 6"/>
+            <line id="line" x1="258.5" y1="15.5" x2="6.5" y2="15.5" stroke="${Colors.elementSymbolColor}" stroke-linecap="round" stroke-dasharray="4 6"/>
           </g>
         </g>
         <rect x="295.5" y="0.5" width="30" height="295" transform="rotate(90 295.5 0.5)"/>
@@ -729,12 +743,12 @@ function portStarboardDimLines(topDownViewParams: getTopDownViewParams) {
       <g id="port-starboard-side">
         <rect width="30" height="73" fill="none"/>
         <g id="port-side-ccrp">
-          <path id="line" d="M4 34L6.88675 29H1.11325L4 34ZM4 13L1.11325 18H6.88675L4 13ZM4 29.5H4.5L4.5 17.5H4H3.5L3.5 29.5H4Z" fill="${Colors.instrumentRegularSecondaryDif}" fill-opacity="0.97"/>
-          <text id="00.0 m" transform="translate(8 15)" fill="${Colors.instrumentRegularSecondaryDif}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" letter-spacing="0px"><tspan x="0" y="12.656">${topDownViewParams.portToCCRP}</tspan></text>
+          <path id="line" d="M4 34L6.88675 29H1.11325L4 34ZM4 13L1.11325 18H6.88675L4 13ZM4 29.5H4.5L4.5 17.5H4H3.5L3.5 29.5H4Z" fill="${Colors.elementSymbolColor}" fill-opacity="0.97"/>
+          <text id="00.0 m" transform="translate(8 15)" fill="${Colors.elementActiveColor}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" letter-spacing="0px"><tspan x="0" y="12.656">${topDownViewParams.portToCCRP}</tspan></text>
         </g>
         <g id="ccrp-starboard-side">
-          <path id="line_2" d="M4 60L6.88675 55H1.11325L4 60ZM4 39L1.11325 44H6.88675L4 39ZM4 55.5H4.5L4.5 43.5H4H3.5L3.5 55.5H4Z" fill="${Colors.instrumentRegularSecondaryDif}" fill-opacity="0.97"/>
-          <text id="00.0 m_2" transform="translate(8 41)" fill="${Colors.instrumentRegularSecondaryDif}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" letter-spacing="0px"><tspan x="0" y="12.656">${topDownViewParams.starboardToCCRP}</tspan></text>
+          <path id="line_2" d="M4 60L6.88675 55H1.11325L4 60ZM4 39L1.11325 44H6.88675L4 39ZM4 55.5H4.5L4.5 43.5H4H3.5L3.5 55.5H4Z" fill="${Colors.elementSymbolColor}" fill-opacity="0.97"/>
+          <text id="00.0 m_2" transform="translate(8 41)" fill="${Colors.elementActiveColor}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" letter-spacing="0px"><tspan x="0" y="12.656">${topDownViewParams.starboardToCCRP}</tspan></text>
         </g>
       </g>
     </svg>
@@ -753,13 +767,14 @@ export function getTopDownView(
   sensorType: SensorType
 ): TemplateResult {
   const VESSEL_TYPE = getVesselType(vesselType);
-  return html`<div class="top-down-view">
+  return html` <div class="top-down-view">
     ${VESSEL_TYPE.topDown}
     ${toggleSensorA
       ? html` <div
           class="sensor-positioning-top-down-view"
           style="left:${sensorPosTopDownParams.sensorX - 12}px;
-                           top:${sensorPosTopDownParams.sensorYTopView - 12}px;"
+                                       top:${sensorPosTopDownParams.sensorYTopView -
+          12}px;"
         >
           ${sensorTypeSelector(sensorType, SensorView.TOP)}
         </div>`
@@ -1089,7 +1104,7 @@ function getVesselPSV(): {
   PSV_TOP_DOWN_VIEW: TemplateResult;
 } {
   const PSV_SIDE_VIEW = svg`
-    <svg xmlns="http://www.w3.org/2000/svg" width="260" height="190" viewBox="0 0 260 190" fill="none">
+    <svg xmlns="http://www.w3.org/2000/svg" width="260" height="190" viewBox="0 0 260 190" fill="red">
       <g id="skipper-Vessel">
         <rect x="0.5" y="0.5" width="259" height="189"/>
         <g id="Frame 5583">
