@@ -1,3 +1,7 @@
+:host {
+  line-height: 0; /* in a flex row, the host's text line adds the font's descent under an icon-first badge */
+}
+
 .wrapper {
   user-select: none;
   display: flex;

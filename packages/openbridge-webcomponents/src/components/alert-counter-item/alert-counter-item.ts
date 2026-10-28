@@ -6,7 +6,7 @@ import componentStyle from './alert-counter-item.css?inline';
 import {customElement} from '../../decorator.js';
 import '../badge/badge.js';
 import {BadgeSize, BadgeType, BadgeVariant} from '../badge/badge.js';
-import '../../icons/icon-alerts-shelf.js';
+import '../../icons/icon-timer-2.js';
 import type {AlertCounts} from '../../types.js';
 import {alertCountsLabel, rankAlertCounts} from '../../alert-severity.js';
 
@@ -35,8 +35,8 @@ export enum ObcAlertCounterItemType {
  *   `alert-level` draws flat badges with the severity glyph.
  * - **Every severity:** `counts` takes the whole `AlertType` vocabulary,
  *   including the `level-*` family, ordered by `ALERT_SEVERITY_PRIORITY`.
- * - **Shelved count:** `shelvedCount` adds a neutral badge with the shelf icon
- *   at the end.
+ * - **Shelved count:** `shelvedCount` adds a neutral badge with the timer icon
+ *   at the end, the icon the Figma counter swaps into its shelved badge.
  * - **Accessible summary:** the row is announced as one image labelled with
  *   the counts, e.g. "2 Alarm, 4 Warning, 6 Caution".
  *
@@ -68,7 +68,7 @@ export enum ObcAlertCounterItemType {
  *
  * @property type - How each count is drawn: `badges` (filled severity badges, default) or `alert-level` (flat badges with the severity glyph).
  * @property counts - Alert count per severity (`countAlarm`, `countWarning`, `countCaution` and the `level-*` counts); counts of zero or less are not shown.
- * @property shelvedCount - Number of shelved alerts, shown as a neutral badge with the shelf icon after the severities; hidden at zero.
+ * @property shelvedCount - Number of shelved alerts, shown as a neutral badge with the timer icon after the severities; hidden at zero.
  * @experimental
  */
 @customElement('obc-alert-counter-item')
@@ -113,7 +113,7 @@ export class ObcAlertCounterItem extends LitElement {
                 showIcon
                 .number=${this.shelvedCount}
               >
-                <obi-alerts-shelf slot="badge-icon"></obi-alerts-shelf>
+                <obi-timer-2 slot="badge-icon"></obi-timer-2>
               </obc-badge>`
             : nothing
         }
