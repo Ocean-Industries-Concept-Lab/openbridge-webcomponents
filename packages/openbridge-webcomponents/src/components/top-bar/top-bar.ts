@@ -75,8 +75,8 @@ export enum ObcTopBarMenuButtonIcon {
  * | Slot Name        | Renders When...                 | Purpose                                                        |
  * |------------------|---------------------------------|----------------------------------------------------------------|
  * | `app-icon`       | `showAppIcon` is true           | Custom icon representing the application or brand.             |
- * | `command-button` | Always (if provided)            | Primary command or action button for the current context.      |
- * | `asset-picker`   | Always (if provided)            | Control that switches the asset the page shows; its label is the current asset. |
+ * | `command-button` | `settings` is false (if provided) | Primary command or action button for the current context.      |
+ * | `asset-picker`   | `settings` is false (if provided) | Control that switches the asset the page shows; its label is the current asset. |
  * | `alerts`         | Always (if provided)            | Area for alert indicators, notification badges, or alert items.|
  * | `clock`          | Always (if provided)            | Clock component for displaying the current time.              |
  *
@@ -162,7 +162,7 @@ export enum ObcTopBarMenuButtonIcon {
  * @availableWhen breadcrumbItems settings==true
  * @slot app-icon - Custom icon representing the application or brand (shown when `showAppIcon` is true)
  * @slot command-button - Primary command/action button for the current context
- * @slot asset-picker - Control that switches the asset the page shows, with the current asset as its label; an `obc-dropdown-button` fits
+ * @slot asset-picker - Control that switches the asset the page shows, with the current asset as its label; an `obc-dropdown-button` fits (regular layout only, not in settings mode)
  * @slot alerts - Area for alert indicators, notification badges, or alert items
  * @slot clock - Clock component for displaying the current time (shown when `showClock` is true)
  * @fires menu-button-clicked - Fired when the menu button is clicked
