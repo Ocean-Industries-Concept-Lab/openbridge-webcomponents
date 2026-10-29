@@ -83,6 +83,12 @@ button item and Alert button (#1236).
   the icon the Figma counter swaps into its shelved badges, and the flat large
   badge draws its icon in a `min-size-large` box, as the Alert level counter
   binds it (#1389).
+- The item's `icon` slot replaces the bell and switches flashing off, since
+  the flash cross-fades two bells; `activated` draws the selected style for a
+  button whose panel is showing (the CSS class is `selected`: the style
+  mixin's own `activated` state has no selected tokens).
+  `obc-diagnostic-button` is the item with `obi-diagnostic-badge` in that
+  slot and a name of its own (#1396).
 - `obc-badge`'s host has `line-height: 0`. In a flex row the host holds the
   badge on a text line, and an icon-first badge has its baseline at the
   icon's foot, so the font's descent made its host 2 px taller and lifted it
@@ -109,6 +115,10 @@ would otherwise copy in shared code, so a twin overrides only its filtering.
   `abstract`: the React wrapper generator wraps every `LitElement` subclass,
   and its `createComponent` rejects an abstract class.
 - The empty states share the `alert-list-empty` mixin.
+- `obc-diagnostic-menu` is a sibling of the alert menu, not a subclass: a
+  title row instead of tabs, `obc-message-menu-item` rows in an unfiltered
+  `obc-alert-list`, and an ACK and a list button; it keeps the alert menu's
+  box so the two line up under one bar (#1396).
 
 ## Slot Conventions
 
@@ -209,6 +219,10 @@ rather than restyling a button.
   flip one axis of the default (below the button, extending right) and
   combine. Figma node 2633-8700 draws only the vertical pair; the horizontal
   one is a code-side option for a button at the right edge of its container.
+- `obc-alert-subsystem-button` composes `obc-alert-subsystem-counter` (its
+  frame stripped through `part="frame"`) and `obc-alert-counter-item` inside
+  a native button, next to an `obc-icon-button cornerRight`; the halves
+  disable separately like the split button's (#1396).
 
 ## Input fields
 
