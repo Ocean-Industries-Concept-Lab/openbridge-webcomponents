@@ -1,4 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
+import {useArgs} from 'storybook/preview-api';
 import {ObcTopBar, ObcTopBarMenuButtonIcon} from './top-bar.js';
 import './top-bar.js';
 import '../topbar-message-item/topbar-message-item.js';
@@ -9,6 +10,7 @@ import '../../icons/icon-ship.js';
 import '../alert-icon/alert-icon.js';
 import '../command-button/command-button.js';
 import '../dropdown-button/dropdown-button.js';
+import type {ObcDropdownButtonChangeEvent} from '../dropdown-button/dropdown-button.js';
 import {html, nothing} from 'lit';
 import {
   ObcTopbarMessageItemSize,
@@ -56,100 +58,109 @@ const meta: Meta<typeof ObcTopBar> = {
       options: Object.values(ObcTopBarMenuButtonIcon),
     },
   },
-  render: (args) => html`
-    <style>
-      .alert-notifications {
-        display: none;
-      }
-
-      @media (min-width: ${args.alertBreakpoint + 'px'}) {
+  render: (args) => {
+    // The app owns the picked asset: the story writes the pick back into its
+    // arg the way an app writes it to its state, so a re-render keeps it.
+    const [, updateArgs] = useArgs();
+    return html`
+      <style>
         .alert-notifications {
-          display: revert !important;
+          display: none;
         }
-      }
-    </style>
-    <obc-top-bar
-      ?showappsbutton=${args.showAppsButton}
-      ?showdimmingbutton=${args.showDimmingButton}
-      ?showclock=${args.showClock}
-      ?widemenubutton=${args.wideMenuButton}
-      ?inactive=${args.inactive}
-      ?settings=${args.settings}
-      ?showappicon=${args.showAppIcon}
-      ?showdate=${args.showDate}
-      ?showuserbutton=${args.showUserButton}
-      ?userbuttondisabled=${args.userButtonDisabled}
-      ?menuButtonActivated=${args.menuButtonActivated}
-      ?tall=${args.tall}
-      .appButtonBreakpointPx=${args.appButtonBreakpointPx}
-      .appTitleBreakpointPx=${args.appTitleBreakpointPx}
-      .dimmingButtonBreakpointPx=${args.dimmingButtonBreakpointPx}
-      .userButtonBreakpointPx=${args.userButtonBreakpointPx}
-      .appIconBreakpointPx=${args.appIconBreakpointPx}
-      .breadcrumbItems=${args.breadcrumbItems}
-      .menuButtonIcon=${args.menuButtonIcon}
-    >
-      <obi-ship slot="app-icon"></obi-ship>
-      ${
-        args.assets.length
-          ? html`<obc-dropdown-button
-              slot="asset-picker"
-              .options=${args.assets.map(({key, label}: TopBarStoryAsset) => ({
-                value: key,
-                label,
-              }))}
-              .value=${args.selectedAssetKey}
-            ></obc-dropdown-button>`
-          : nothing
-      }
-      <obc-command-button slot="command-button"></obc-command-button>
-      <obc-topbar-message-item
-        .type=${ObcTopbarMessageItemType.WithButton}
-        .size=${
-          args.tall
-            ? ObcTopbarMessageItemSize.Tall
-            : ObcTopbarMessageItemSize.Regular
+
+        @media (min-width: ${args.alertBreakpoint + 'px'}) {
+          .alert-notifications {
+            display: revert !important;
+          }
         }
-        slot="alerts"
-        class="alert-notifications"
+      </style>
+      <obc-top-bar
+        ?showappsbutton=${args.showAppsButton}
+        ?showdimmingbutton=${args.showDimmingButton}
+        ?showclock=${args.showClock}
+        ?widemenubutton=${args.wideMenuButton}
+        ?inactive=${args.inactive}
+        ?settings=${args.settings}
+        ?showappicon=${args.showAppIcon}
+        ?showdate=${args.showDate}
+        ?showuserbutton=${args.showUserButton}
+        ?userbuttondisabled=${args.userButtonDisabled}
+        ?menuButtonActivated=${args.menuButtonActivated}
+        ?tall=${args.tall}
+        .appButtonBreakpointPx=${args.appButtonBreakpointPx}
+        .appTitleBreakpointPx=${args.appTitleBreakpointPx}
+        .dimmingButtonBreakpointPx=${args.dimmingButtonBreakpointPx}
+        .userButtonBreakpointPx=${args.userButtonBreakpointPx}
+        .appIconBreakpointPx=${args.appIconBreakpointPx}
+        .breadcrumbItems=${args.breadcrumbItems}
+        .menuButtonIcon=${args.menuButtonIcon}
       >
-        <obc-alert-icon
-          slot="primary-icon"
-          type="alarm"
-          active
-        ></obc-alert-icon>
-        <obi-placeholder slot="secondary-icon"></obi-placeholder>
-        <div slot="title">Alert title</div>
-        <div slot="description">
-          Description here. This alert has been triggered due to a detected
-        </div>
-        <div slot="time">09:12:46</div>
-        <div slot="action-text">ACK</div>
-      </obc-topbar-message-item>
-      <obc-alert-button
-        class="alert-button ${args.inactive ? 'inactive' : ''}"
-        nAlerts="1"
-        alertType="alarm"
-        counter
-        blinking
-        showSilenceButton
-        silenceButtonDisabled
-        .type=${
-          args.inactive ? ObcAlertButtonType.Flat : ObcAlertButtonType.Normal
+        <obi-ship slot="app-icon"></obi-ship>
+        ${
+          args.assets.length
+            ? html`<obc-dropdown-button
+                slot="asset-picker"
+                .options=${args.assets.map(
+                  ({key, label}: TopBarStoryAsset) => ({
+                    value: key,
+                    label,
+                  })
+                )}
+                .value=${args.selectedAssetKey}
+                @dropdown-change=${(event: ObcDropdownButtonChangeEvent) =>
+                  updateArgs({selectedAssetKey: event.detail.value})}
+              ></obc-dropdown-button>`
+            : nothing
         }
-        ?large=${args.tall}
-        .flatMaxBreakpointPx=${args.flatMaxBreakpointPx}
-        .silenceButtonMinBreakpointPx=${args.silenceButtonMinBreakpointPx}
-        slot="alerts"
-      >
-      </obc-alert-button>
-      <obc-clock
-        slot="clock"
-        .date=${args.date}
-        .blinkOnlyBreakpointPx=${args.clockMinimizeBreakpointPx}
-      ></obc-clock>
-    </obc-top-bar>
-  `,
+        <obc-command-button slot="command-button"></obc-command-button>
+        <obc-topbar-message-item
+          .type=${ObcTopbarMessageItemType.WithButton}
+          .size=${
+            args.tall
+              ? ObcTopbarMessageItemSize.Tall
+              : ObcTopbarMessageItemSize.Regular
+          }
+          slot="alerts"
+          class="alert-notifications"
+        >
+          <obc-alert-icon
+            slot="primary-icon"
+            type="alarm"
+            active
+          ></obc-alert-icon>
+          <obi-placeholder slot="secondary-icon"></obi-placeholder>
+          <div slot="title">Alert title</div>
+          <div slot="description">
+            Description here. This alert has been triggered due to a detected
+          </div>
+          <div slot="time">09:12:46</div>
+          <div slot="action-text">ACK</div>
+        </obc-topbar-message-item>
+        <obc-alert-button
+          class="alert-button ${args.inactive ? 'inactive' : ''}"
+          nAlerts="1"
+          alertType="alarm"
+          counter
+          blinking
+          showSilenceButton
+          silenceButtonDisabled
+          .type=${
+            args.inactive ? ObcAlertButtonType.Flat : ObcAlertButtonType.Normal
+          }
+          ?large=${args.tall}
+          .flatMaxBreakpointPx=${args.flatMaxBreakpointPx}
+          .silenceButtonMinBreakpointPx=${args.silenceButtonMinBreakpointPx}
+          slot="alerts"
+        >
+        </obc-alert-button>
+        <obc-clock
+          slot="clock"
+          .date=${args.date}
+          .blinkOnlyBreakpointPx=${args.clockMinimizeBreakpointPx}
+        ></obc-clock>
+      </obc-top-bar>
+    `;
+  },
 } satisfies Meta<ObcTopBar>;
 
 export default meta;
@@ -226,9 +237,9 @@ export const HomeButtonIcon: Story = {
 /**
  * The `asset-picker` slot takes the control that switches the asset the page
  * shows. An `obc-dropdown-button` fits: its label is the selected asset, a
- * click opens the list, and its `change` carries the key of the pick. The app
- * owns the list and the selection and binds them in; here they are the story
- * args `assets` and `selectedAssetKey`.
+ * click opens the list, and its `dropdown-change` carries the key of the pick.
+ * The app owns the list and the selection: it binds them in and writes the pick
+ * back, as the story does with its args `assets` and `selectedAssetKey`.
  *
  * TODO(designer): Figma OpenBridge-ALPHA 703-29119 draws the picker as a plain
  * button without a chevron; the dropdown-button rows of the same exploration
