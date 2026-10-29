@@ -316,6 +316,19 @@ describe('obc-alert-button-item accessibility', () => {
     expect(button(el).getAttribute('aria-label')).toBe('Engine alerts');
   });
 
+  it('forwards aria-expanded to the inner button, absent until set', async () => {
+    const el = await setup();
+    expect(button(el).hasAttribute('aria-expanded')).toBe(false);
+
+    el.setAttribute('aria-expanded', 'true');
+    await el.updateComplete;
+    expect(button(el).getAttribute('aria-expanded')).toBe('true');
+
+    el.ariaExpanded = 'false';
+    await el.updateComplete;
+    expect(button(el).getAttribute('aria-expanded')).toBe('false');
+  });
+
   it('activates with Enter and Space', async () => {
     const el = await setup();
     let clicks = 0;

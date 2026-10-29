@@ -88,7 +88,10 @@ button item and Alert button (#1236).
   button whose panel is showing (the CSS class is `selected`: the style
   mixin's own `activated` state has no selected tokens).
   `obc-diagnostic-button` is the item with `obi-diagnostic-badge` in that
-  slot and a name of its own (#1396).
+  slot and a name of its own (#1396). Both forward `aria-expanded` to the
+  inner button and derive nothing from `activated`: the consumer that wires
+  the panel sets the two together, and a button that opens no panel stays
+  silent about one.
 - `obc-badge`'s host has `line-height: 0`. In a flex row the host holds the
   badge on a text line, and an icon-first badge has its baseline at the
   icon's foot, so the font's descent made its host 2 px taller and lifted it

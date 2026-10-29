@@ -57,6 +57,17 @@ describe('obc-diagnostic-button', () => {
     ).toBe('Health');
   });
 
+  it('forwards aria-expanded to its button, absent until set', async () => {
+    const {el, item, button} = await setup();
+    expect(button.hasAttribute('aria-expanded')).toBe(false);
+
+    el.setAttribute('aria-expanded', 'true');
+    await el.updateComplete;
+    await item.updateComplete;
+
+    expect(button.getAttribute('aria-expanded')).toBe('true');
+  });
+
   it('reports a click', async () => {
     const {el, button} = await setup();
     let clicks = 0;

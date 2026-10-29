@@ -1,5 +1,6 @@
 import {LitElement, html, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
+import {ifDefined} from 'lit/directives/if-defined.js';
 import {localized, msg} from '@lit/localize';
 import componentStyle from './diagnostic-button.css?inline';
 import {customElement} from '../../decorator.js';
@@ -30,8 +31,8 @@ import '../alert-frame/diagnostic-badge.js';
  * - Slot it into `obc-top-bar`'s `diagnostics` slot, after the alert button,
  *   or place it in a toolbar on its own.
  * - Open the menu from `click` the way a bar button opens a menu: flip a
- *   flag of your own, bind it to the menu's `open` and to `activated`, and
- *   reset it on the menu's `close`.
+ *   flag of your own, bind it to the menu's `open`, to `activated` and to
+ *   `aria-expanded`, and reset it on the menu's `close`.
  * - A native button, so Enter and Space activate it
  *   ([APG button pattern](https://www.w3.org/WAI/ARIA/apg/patterns/button/)).
  *   Left out: nothing.
@@ -51,6 +52,7 @@ import '../alert-frame/diagnostic-badge.js';
  * @property nAlerts - Number of diagnostics, drawn as the counter; 0 shows the asterisk alone.
  * @property activated - Draws the selected style while the diagnostic menu is showing; bind it to the flag that drives the menu's `open`.
  * @property ariaLabel - Accessible name forwarded to the inner `<button>`, mapped to the `aria-label` attribute; replaces the generated "Diagnostics, 3". `aria-labelledby` is not supported: ID references cannot cross the shadow boundary.
+ * @property ariaExpanded - Whether the diagnostic menu is showing, forwarded to the inner `<button>` as `aria-expanded`; mapped to the `aria-expanded` attribute. Bind it with `activated`; left unset, the button announces no menu.
  * @fires click - Fired when the button is clicked.
  * @experimental
  */
@@ -63,6 +65,9 @@ export class ObcDiagnosticButton extends LitElement {
   // Reactive so a consumer changing the name re-renders the inner button.
   @property({type: String, attribute: 'aria-label'})
   override ariaLabel: string | null = null;
+
+  @property({type: String, attribute: 'aria-expanded'})
+  override ariaExpanded: string | null = null;
 
   private get accessibleName(): string {
     if (this.ariaLabel) {
@@ -80,6 +85,7 @@ export class ObcDiagnosticButton extends LitElement {
       counter
       .activated=${this.activated}
       aria-label=${this.accessibleName}
+      aria-expanded=${ifDefined(this.ariaExpanded ?? undefined)}
       ><obi-diagnostic-badge slot="icon"></obi-diagnostic-badge
     ></obc-alert-button-item>`;
   }

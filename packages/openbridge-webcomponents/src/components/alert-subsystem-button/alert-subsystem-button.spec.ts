@@ -15,6 +15,7 @@ type ButtonProps = Partial<
     | 'counts'
     | 'hasAlert'
     | 'label'
+    | 'emptyText'
     | 'disabled'
     | 'counterDisabled'
     | 'listDisabled'
@@ -27,6 +28,7 @@ async function setup(props: ButtonProps = {}) {
       .counts=${props.counts ?? {countCaution: 2}}
       .hasAlert=${props.hasAlert ?? true}
       .label=${props.label ?? ''}
+      .emptyText=${props.emptyText ?? 'No alerts'}
       .disabled=${props.disabled ?? false}
       .counterDisabled=${props.counterDisabled ?? false}
       .listDisabled=${props.listDisabled ?? false}
@@ -111,6 +113,12 @@ describe('obc-alert-subsystem-button', () => {
 
     expect(counterButton.getAttribute('aria-label')).toBe('HVAC, No alerts');
     expect(counter.hasAlert).toBe(false);
+  });
+
+  it('names the counter half "Alerts" when it has neither label nor empty text', async () => {
+    const {counterButton} = await setup({hasAlert: false, emptyText: ''});
+
+    expect(counterButton.getAttribute('aria-label')).toBe('Alerts');
   });
 
   it('is two tab stops', async () => {

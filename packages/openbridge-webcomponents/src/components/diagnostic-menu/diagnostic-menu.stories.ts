@@ -78,9 +78,9 @@ export const NoDiagnosticListButton: Story = {
 /**
  * The menu opened from the top bar's diagnostic button, with the three
  * bindings every soft-dismiss menu needs: a flag the app keeps, bound to
- * `open` and to the button's `activated`, flipped on the button's `click`
- * and reset on `close`. A click outside closes the menu and reaches nothing
- * else; the bar stays clickable.
+ * `open` and to the button's `activated` and `aria-expanded`, flipped on
+ * the button's `click` and reset on `close`. A click outside closes the
+ * menu and reaches nothing else; the bar stays clickable.
  */
 export const SoftDismissFromATopBarButton: Story = {
   // Nothing to snapshot: the story is about what the clicks do.
@@ -110,6 +110,7 @@ export const SoftDismissFromATopBarButton: Story = {
     const apply = () => {
       menu.open = open;
       button.activated = open;
+      button.ariaExpanded = String(open);
     };
     button.addEventListener('click', () => {
       open = !open;

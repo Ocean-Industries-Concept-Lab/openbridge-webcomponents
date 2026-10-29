@@ -25,11 +25,17 @@ type Story = StoryObj<ObcAlertSubsystemButton>;
 export const Default: Story = {};
 
 export const WithLabel: Story = {
-  render: () =>
+  args: {label: 'HVAC', counts: {countAlarm: 1, countCaution: 2}},
+  // A hand-written render for the slotted icon, so it binds every arg itself.
+  render: (args) =>
     html`<obc-alert-subsystem-button
-      label="HVAC"
-      hasAlert
-      .counts=${{countAlarm: 1, countCaution: 2}}
+      .counts=${args.counts}
+      ?hasAlert=${args.hasAlert}
+      .label=${args.label}
+      .emptyText=${args.emptyText}
+      ?disabled=${args.disabled}
+      ?counterDisabled=${args.counterDisabled}
+      ?listDisabled=${args.listDisabled}
       ><obi-placeholder slot="icon"></obi-placeholder
     ></obc-alert-subsystem-button>`,
 };

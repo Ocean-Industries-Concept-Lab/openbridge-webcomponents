@@ -60,13 +60,12 @@ import {alertCountsLabel, rankAlertCounts} from '../../alert-severity.js';
  * @availableWhen counts hasAlert==true
  * @property hasAlert - Whether the subsystem has active alerts: `true` draws the badges, `false` the `emptyText`; `true` with nothing counted shows the `emptyText` as well.
  * @property label - The subsystem label, before the badges.
- * @property emptyText - Text shown instead of the badges when `hasAlert` is `false`.
- * @availableWhen emptyText hasAlert==false
+ * @property emptyText - Text shown instead of the badges when `hasAlert` is `false` or nothing is counted.
  * @property disabled - Disables both halves.
  * @property counterDisabled - Disables the counter half alone.
  * @property listDisabled - Disables the list half alone.
  * @property listButtonLabel - Accessible name of the list half; "Alert list" when left empty.
- * @property ariaLabel - Accessible name of the counter half, mapped to the `aria-label` attribute; replaces the generated "HVAC, 2 Caution". `aria-labelledby` is not supported: ID references cannot cross the shadow boundary.
+ * @property ariaLabel - Accessible name of the counter half, mapped to the `aria-label` attribute; replaces the generated "HVAC, 2 Caution", or "Alerts" when the half has neither a label nor text. `aria-labelledby` is not supported: ID references cannot cross the shadow boundary.
  * @slot icon - Leading icon of the counter half.
  * @slot list-icon - Icon of the list half; the alert list icon when empty.
  * @fires {CustomEvent<void>} counter-click - Fired when the counter half is clicked.
@@ -101,7 +100,10 @@ export class ObcAlertSubsystemButton extends LitElement {
     const state = this.showsCounts
       ? alertCountsLabel(this.counts)
       : this.emptyText;
-    return [this.label, state].filter((part) => part !== '').join(', ');
+    return (
+      [this.label, state].filter((part) => part !== '').join(', ') ||
+      msg('Alerts')
+    );
   }
 
   private handleCounterClick = (e: Event) => {

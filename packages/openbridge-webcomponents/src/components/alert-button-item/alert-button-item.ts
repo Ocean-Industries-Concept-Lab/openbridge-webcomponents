@@ -1,6 +1,7 @@
 import {LitElement, PropertyValues, html, nothing, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
+import {ifDefined} from 'lit/directives/if-defined.js';
 import {localized, msg} from '@lit/localize';
 import componentStyle from './alert-button-item.css?inline';
 import {customElement} from '../../decorator.js';
@@ -122,6 +123,7 @@ export enum ObcAlertButtonType {
  * @property fillHeight - Stretches the visible button to the host height instead of the 32 px visual target.
  * @property activated - Draws the button in the selected style, for a button whose panel is showing.
  * @property ariaLabel - Accessible name forwarded to the inner `<button>`, mapped to the `aria-label` attribute; replaces the generated label. `aria-labelledby` is not supported: ID references cannot cross the shadow boundary.
+ * @property ariaExpanded - Whether the panel the button opens is showing, forwarded to the inner `<button>` as `aria-expanded`; mapped to the `aria-expanded` attribute. Set it with `activated` from the flag that drives the panel; left unset, the button announces no panel.
  * @slot icon - Replaces the bell. The flash cross-fades two bells, so a slotted icon never flashes and `blinking` has no effect while the slot is filled.
  * @fires click - Fired when the button is clicked.
  * @experimental
@@ -148,6 +150,9 @@ export class ObcAlertButtonItem extends LitElement {
   // Reactive so a consumer changing the name re-renders the shadow button.
   @property({type: String, attribute: 'aria-label'})
   override ariaLabel: string | null = null;
+
+  @property({type: String, attribute: 'aria-expanded'})
+  override ariaExpanded: string | null = null;
 
   private hasSlottedIcon = false;
 
@@ -285,6 +290,9 @@ export class ObcAlertButtonItem extends LitElement {
           [`flash-${tempo}`]: true,
         })}
         aria-label=${this.accessibleName}
+        aria-expanded=${ifDefined(
+          this.ariaExpanded == null ? undefined : this.ariaExpanded === 'true'
+        )}
       >
         ${
           tempo === FlashingSpeed.Fixed

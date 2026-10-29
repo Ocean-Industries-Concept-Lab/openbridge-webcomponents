@@ -165,6 +165,7 @@ const meta: Meta<typeof ObcTopBar> = {
                 slot="diagnostics"
                 .nAlerts=${args.nDiagnostics}
                 ?activated=${args.diagnosticMenuOpen}
+                aria-expanded=${args.diagnosticMenuOpen ? 'true' : 'false'}
               ></obc-diagnostic-button>`
             : nothing
         }
