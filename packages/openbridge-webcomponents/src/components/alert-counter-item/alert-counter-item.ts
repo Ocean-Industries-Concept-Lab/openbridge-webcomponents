@@ -6,7 +6,7 @@ import componentStyle from './alert-counter-item.css?inline';
 import {customElement} from '../../decorator.js';
 import '../badge/badge.js';
 import {BadgeSize, BadgeType, BadgeVariant} from '../badge/badge.js';
-import '../../icons/icon-alerts-shelf.js';
+import '../../icons/icon-timer-2.js';
 import type {AlertCounts} from '../../types.js';
 import {alertCountsLabel, rankAlertCounts} from '../../alert-severity.js';
 
@@ -35,8 +35,8 @@ export enum ObcAlertCounterItemType {
  *   `alert-level` draws flat badges with the severity glyph.
  * - **Every severity:** `counts` takes the whole `AlertType` vocabulary,
  *   including the `level-*` family, ordered by `ALERT_SEVERITY_PRIORITY`.
- * - **Shelved count:** `shelvedCount` adds a neutral badge at the end, with
- *   the shelf icon in `alert-level`.
+ * - **Shelved count:** `shelvedCount` adds a neutral badge with the timer icon
+ *   at the end, the icon the Figma counter swaps into its shelved badge.
  * - **Accessible summary:** the row is announced as one image labelled with
  *   the counts, e.g. "2 Alarm, 4 Warning, 6 Caution".
  *
@@ -51,6 +51,9 @@ export enum ObcAlertCounterItemType {
  *   `obc-alert-subsystem-counter`.
  * - **TODO(designer):** the Figma component also has an Unacked counter type;
  *   how its icons map to counts is not defined yet.
+ * - **TODO(designer):** the Figma component draws alarm, warning and caution;
+ *   critical and diagnostic use the `level-critical` and `level-diagnostic`
+ *   badges of `obc-badge` (#1389).
  *
  * ---
  *
@@ -65,7 +68,7 @@ export enum ObcAlertCounterItemType {
  *
  * @property type - How each count is drawn: `badges` (filled severity badges, default) or `alert-level` (flat badges with the severity glyph).
  * @property counts - Alert count per severity (`countAlarm`, `countWarning`, `countCaution` and the `level-*` counts); counts of zero or less are not shown.
- * @property shelvedCount - Number of shelved alerts, shown as a neutral badge after the severities; hidden at zero.
+ * @property shelvedCount - Number of shelved alerts, shown as a neutral badge with the timer icon after the severities; hidden at zero.
  * @experimental
  */
 @customElement('obc-alert-counter-item')
@@ -107,16 +110,10 @@ export class ObcAlertCounterItem extends LitElement {
                 size=${BadgeSize.large}
                 type=${BadgeType.regular}
                 .variant=${variant}
-                .showIcon=${alertLevel}
+                showIcon
                 .number=${this.shelvedCount}
               >
-                ${
-                  alertLevel
-                    ? html`<obi-alerts-shelf
-                        slot="badge-icon"
-                      ></obi-alerts-shelf>`
-                    : nothing
-                }
+                <obi-timer-2 slot="badge-icon"></obi-timer-2>
               </obc-badge>`
             : nothing
         }

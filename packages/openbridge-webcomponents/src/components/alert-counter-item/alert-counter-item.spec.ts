@@ -1,6 +1,7 @@
 import {describe, expect, it} from 'vitest';
 import {render} from 'vitest-browser-lit';
 import {html} from 'lit';
+import '../../main.css';
 import './alert-counter-item.js';
 import {
   ObcAlertCounterItem,
@@ -36,6 +37,15 @@ function lastBadge(el: ObcAlertCounterItem): ObcBadge {
   return all[all.length - 1];
 }
 
+/** Top and bottom edge of each drawn badge box, in CSS px. */
+function badgeEdges(el: ObcAlertCounterItem): [number, number][] {
+  return badges(el).map((badge) => {
+    const box = badge.shadowRoot!.querySelector('.wrapper')!;
+    const {top, bottom} = box.getBoundingClientRect();
+    return [top, bottom];
+  });
+}
+
 describe('obc-alert-counter-item', () => {
   it('renders one filled badge per positive count, most severe first', async () => {
     const el = await setup({countCaution: 6, countAlarm: 2, countWarning: 0});
@@ -59,18 +69,34 @@ describe('obc-alert-counter-item', () => {
     ]);
   });
 
-  it('adds the shelved count last', async () => {
+  it('adds the shelved count last, with the timer icon in both types', async () => {
     const filled = await setup({countAlarm: 2}, {shelvedCount: 9});
-    expect([lastBadge(filled).type, lastBadge(filled).number]).toEqual([
-      'regular',
-      9,
-    ]);
+    expect([
+      lastBadge(filled).type,
+      lastBadge(filled).number,
+      lastBadge(filled).showIcon,
+    ]).toEqual(['regular', 9, true]);
+    expect(lastBadge(filled).querySelector('obi-timer-2')).not.toBeNull();
 
     const level = await setup(
       {countAlarm: 2},
       {type: ObcAlertCounterItemType.AlertLevel, shelvedCount: 9}
     );
-    expect(lastBadge(level).querySelector('obi-alerts-shelf')).not.toBeNull();
+    expect(lastBadge(level).querySelector('obi-timer-2')).not.toBeNull();
+  });
+
+  it('draws every badge box on the same top and bottom edge', async () => {
+    for (const type of Object.values(ObcAlertCounterItemType)) {
+      const el = await setup(
+        {countAlarm: 2, countWarning: 4, countCaution: 6},
+        {type, shelvedCount: 9}
+      );
+      const [first, ...rest] = badgeEdges(el);
+
+      for (const edges of rest) {
+        expect(edges, type).toEqual(first);
+      }
+    }
   });
 
   it('renders nothing when nothing is counted', async () => {
