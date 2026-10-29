@@ -1,4 +1,4 @@
-import {LitElement, html, nothing, unsafeCSS} from 'lit';
+import {LitElement, PropertyValues, html, nothing, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {localized, msg} from '@lit/localize';
@@ -66,6 +66,10 @@ export enum ObcAlertButtonType {
  *   resolves (#1224).
  * - **Fill height:** `fillHeight` stretches the visible button to the host
  *   height, as the tall `obc-alert-button` does.
+ * - **Icon slot:** the `icon` slot replaces the bell with any icon; the item
+ *   then never flashes.
+ * - **Activated:** `activated` draws the selected style, for a button whose
+ *   panel is showing.
  *
  * ---
  *
@@ -116,7 +120,9 @@ export enum ObcAlertButtonType {
  * @property flashingSpeed - Flash tempo while `blinking` is on: `default` resolves from `alertType`, `fast`, `slow`, `very-slow` force a tempo, `fixed` never flashes.
  * @availableWhen flashingSpeed blinking==true
  * @property fillHeight - Stretches the visible button to the host height instead of the 32 px visual target.
+ * @property activated - Draws the button in the selected style, for a button whose panel is showing.
  * @property ariaLabel - Accessible name forwarded to the inner `<button>`, mapped to the `aria-label` attribute; replaces the generated label. `aria-labelledby` is not supported: ID references cannot cross the shadow boundary.
+ * @slot icon - Replaces the bell. The flash cross-fades two bells, so a slotted icon never flashes and `blinking` has no effect while the slot is filled.
  * @fires click - Fired when the button is clicked.
  * @experimental
  */
@@ -137,10 +143,20 @@ export class ObcAlertButtonItem extends LitElement {
   @property({type: String}) flashingSpeed: FlashingSpeed =
     FlashingSpeed.Default;
   @property({type: Boolean}) fillHeight = false;
+  @property({type: Boolean}) activated = false;
 
   // Reactive so a consumer changing the name re-renders the shadow button.
   @property({type: String, attribute: 'aria-label'})
   override ariaLabel: string | null = null;
+
+  private hasSlottedIcon = false;
+
+  protected override willUpdate(changedProperties: PropertyValues<this>) {
+    super.willUpdate(changedProperties);
+    // Read before the first paint, so the flash is never installed for an
+    // icon that replaces the bell; the slot's change event re-runs it.
+    this.hasSlottedIcon = this.querySelector(':scope > [slot="icon"]') !== null;
+  }
 
   protected readonly flashing = new FlashingController(
     this,
@@ -150,6 +166,7 @@ export class ObcAlertButtonItem extends LitElement {
   get resolvedFlashingSpeed(): ResolvedFlashingSpeed {
     if (
       this.globalCounter ||
+      this.hasSlottedIcon ||
       !this.blinking ||
       this.nAlerts <= 0 ||
       this.alertType === undefined
@@ -264,6 +281,7 @@ export class ObcAlertButtonItem extends LitElement {
           counter: showCount && !this.globalCounter,
           'global-counter': this.globalCounter,
           'fill-height': this.fillHeight,
+          selected: this.activated,
           [`flash-${tempo}`]: true,
         })}
         aria-label=${this.accessibleName}
@@ -281,7 +299,9 @@ export class ObcAlertButtonItem extends LitElement {
         <div class="visible-wrapper">
           ${this.globalCounter ? this.renderCounts() : nothing}
           <div class="content">
-            ${this.renderIcon(styleType, false)}
+            <slot name="icon" @slotchange=${() => this.requestUpdate()}
+              >${this.renderIcon(styleType, false)}</slot
+            >
             ${showCount ? this.renderCount() : nothing}
           </div>
         </div>

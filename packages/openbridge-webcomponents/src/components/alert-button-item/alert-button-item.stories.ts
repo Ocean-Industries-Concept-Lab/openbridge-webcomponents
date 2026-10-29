@@ -4,6 +4,7 @@ import {ObcAlertButtonItem, ObcAlertButtonType} from './alert-button-item.js';
 import './alert-button-item.js';
 import {ObcAlertCounterItemType} from '../alert-counter-item/alert-counter-item.js';
 import {AlertType, FlashingSpeed, type AlertCounts} from '../../types.js';
+import '../../icons/icon-placeholder.js';
 
 type ItemArgs = Pick<
   ObcAlertButtonItem,
@@ -18,6 +19,7 @@ type ItemArgs = Pick<
   | 'blinking'
   | 'flashingSpeed'
   | 'fillHeight'
+  | 'activated'
 >;
 
 const SEVERITY_COUNTS: AlertCounts = {
@@ -43,6 +45,7 @@ const renderItem = (args: Partial<ItemArgs>) =>
     .blinking=${args.blinking ?? false}
     .flashingSpeed=${args.flashingSpeed ?? FlashingSpeed.Default}
     .fillHeight=${args.fillHeight ?? false}
+    .activated=${args.activated ?? false}
   ></obc-alert-button-item>`;
 
 const meta: Meta<ItemArgs> = {
@@ -203,4 +206,14 @@ export const FillHeight: Story = {
         fillHeight: true,
       })}
     </div>`,
+};
+
+export const Activated: Story = {args: {activated: true}};
+
+/** The slot takes any icon; the item then never flashes. */
+export const SlottedIcon: Story = {
+  render: () =>
+    html`<obc-alert-button-item nAlerts="3" counter
+      ><obi-placeholder slot="icon"></obi-placeholder
+    ></obc-alert-button-item>`,
 };
