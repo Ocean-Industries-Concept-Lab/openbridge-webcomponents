@@ -291,7 +291,9 @@ export class ObcAlertButtonItem extends LitElement {
         })}
         aria-label=${this.accessibleName}
         aria-expanded=${ifDefined(
-          this.ariaExpanded == null ? undefined : this.ariaExpanded === 'true'
+          this.ariaExpanded === 'true' || this.ariaExpanded === 'false'
+            ? this.ariaExpanded
+            : undefined
         )}
       >
         ${

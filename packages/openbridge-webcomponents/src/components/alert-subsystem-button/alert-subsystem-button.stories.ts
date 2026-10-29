@@ -29,7 +29,7 @@ export const WithLabel: Story = {
   // A hand-written render for the slotted icon, so it binds every arg itself.
   render: (args) =>
     html`<obc-alert-subsystem-button
-      .counts=${args.counts}
+      .counts=${args.counts ?? {}}
       ?hasAlert=${args.hasAlert}
       .label=${args.label}
       .emptyText=${args.emptyText}

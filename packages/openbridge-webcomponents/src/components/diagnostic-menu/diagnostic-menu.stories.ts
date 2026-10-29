@@ -120,6 +120,7 @@ export const SoftDismissFromATopBarButton: Story = {
       open = false;
       apply();
     });
+    apply();
 
     let hits = 0;
     const behind = document.createElement('button');
