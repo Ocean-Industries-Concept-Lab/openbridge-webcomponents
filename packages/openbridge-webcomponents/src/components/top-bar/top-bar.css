@@ -71,9 +71,14 @@
 .dimming-button,
 .user-button,
 .apps-button,
+::slotted([slot="asset-picker"]),
 ::slotted([slot="command-button"]),
 ::slotted([slot="clock"]) {
   flex-shrink: 0;
+}
+
+::slotted([slot="asset-picker"]) {
+  margin: 0 var(--app-components-topbar-label-spacing); /* Figma pads the picker 8 px each side; a dropdown button brings no gutter of its own */
 }
 
 .alert-container {

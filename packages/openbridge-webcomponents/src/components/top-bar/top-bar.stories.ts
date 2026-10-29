@@ -8,12 +8,16 @@ import '../../icons/icon-alarm-unacknowledged-iec.js';
 import '../../icons/icon-ship.js';
 import '../alert-icon/alert-icon.js';
 import '../command-button/command-button.js';
-import {html} from 'lit';
+import '../dropdown-button/dropdown-button.js';
+import {html, nothing} from 'lit';
 import {
   ObcTopbarMessageItemSize,
   ObcTopbarMessageItemType,
 } from '../topbar-message-item/topbar-message-item.js';
 import {ObcAlertButtonType} from '../alert-button/alert-button.js';
+
+/** An entry of the story's asset list, in the shape an app would hold it. */
+type TopBarStoryAsset = {label: string; key: string};
 
 const meta: Meta<typeof ObcTopBar> = {
   title: 'Application Components/Top Elements/TopBar',
@@ -40,6 +44,8 @@ const meta: Meta<typeof ObcTopBar> = {
     appIconBreakpointPx: 0,
     menuButtonIcon: ObcTopBarMenuButtonIcon.Menu,
     date: '2024-12-12T11:11:12.111Z',
+    assets: [],
+    selectedAssetKey: '',
   },
   argTypes: {
     showDate: {
@@ -84,6 +90,18 @@ const meta: Meta<typeof ObcTopBar> = {
       .menuButtonIcon=${args.menuButtonIcon}
     >
       <obi-ship slot="app-icon"></obi-ship>
+      ${
+        args.assets.length
+          ? html`<obc-dropdown-button
+              slot="asset-picker"
+              .options=${args.assets.map(({key, label}: TopBarStoryAsset) => ({
+                value: key,
+                label,
+              }))}
+              .value=${args.selectedAssetKey}
+            ></obc-dropdown-button>`
+          : nothing
+      }
       <obc-command-button slot="command-button"></obc-command-button>
       <obc-topbar-message-item
         .type=${ObcTopbarMessageItemType.WithButton}
@@ -202,5 +220,28 @@ export const Reponsive: Story = {
 export const HomeButtonIcon: Story = {
   args: {
     menuButtonIcon: ObcTopBarMenuButtonIcon.Home,
+  },
+};
+
+/**
+ * The `asset-picker` slot takes the control that switches the asset the page
+ * shows. An `obc-dropdown-button` fits: its label is the selected asset, a
+ * click opens the list, and its `change` carries the key of the pick. The app
+ * owns the list and the selection and binds them in; here they are the story
+ * args `assets` and `selectedAssetKey`.
+ *
+ * TODO(designer): Figma OpenBridge-ALPHA 703-29119 draws the picker as a plain
+ * button without a chevron; the dropdown-button rows of the same exploration
+ * (699-90973) draw one, and so does `obc-dropdown-button`.
+ */
+export const AssetPicker: Story = {
+  args: {
+    alertBreakpoint: 1_000_000, // the long message item would squeeze the texts out at 1280 px
+    assets: [
+      {label: 'Merd A', key: 'merd-a'},
+      {label: 'Merd B', key: 'merd-b'},
+      {label: 'Merd C', key: 'merd-c'},
+    ],
+    selectedAssetKey: 'merd-b',
   },
 };
