@@ -106,13 +106,19 @@ export class ObcAlertSubsystemCounter extends LitElement {
   override render() {
     return html`
       <div
+        part="frame"
         class=${classMap({
           frame: true,
           ['orientation-' + this.orientation]: true,
           'has-alert': this.hasAlert,
         })}
       >
-        <div class="leading-container">
+        <div
+          class=${classMap({
+            'leading-container': true,
+            'no-leading': !this.hasIcon && this.label === '',
+          })}
+        >
           <div class=${classMap({icon: true, 'no-icon': !this.hasIcon})}>
             <slot name="icon" @slotchange=${this.handleIconSlotChange}></slot>
           </div>
