@@ -73,6 +73,7 @@
 .apps-button,
 ::slotted([slot="asset-picker"]),
 ::slotted([slot="command-button"]),
+::slotted([slot="diagnostics"]),
 ::slotted([slot="clock"]) {
   flex-shrink: 0;
 }
