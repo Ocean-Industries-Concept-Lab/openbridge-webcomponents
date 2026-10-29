@@ -10,6 +10,9 @@ import '../../icons/icon-ship.js';
 import '../alert-icon/alert-icon.js';
 import '../command-button/command-button.js';
 import '../dropdown-button/dropdown-button.js';
+import '../diagnostic-button/diagnostic-button.js';
+import '../diagnostic-menu/diagnostic-menu.js';
+import '../message-menu-item/message-menu-item.js';
 import type {ObcDropdownButtonChangeEvent} from '../dropdown-button/dropdown-button.js';
 import {html, nothing} from 'lit';
 import {
@@ -48,6 +51,9 @@ const meta: Meta<typeof ObcTopBar> = {
     date: '2024-12-12T11:11:12.111Z',
     assets: [],
     selectedAssetKey: '',
+    showDiagnosticButton: false,
+    nDiagnostics: 3,
+    diagnosticMenuOpen: false,
   },
   argTypes: {
     showDate: {
@@ -153,15 +159,54 @@ const meta: Meta<typeof ObcTopBar> = {
           slot="alerts"
         >
         </obc-alert-button>
+        ${
+          args.showDiagnosticButton
+            ? html`<obc-diagnostic-button
+                slot="diagnostics"
+                .nAlerts=${args.nDiagnostics}
+                ?activated=${args.diagnosticMenuOpen}
+              ></obc-diagnostic-button>`
+            : nothing
+        }
         <obc-clock
           slot="clock"
           .date=${args.date}
           .blinkOnlyBreakpointPx=${args.clockMinimizeBreakpointPx}
         ></obc-clock>
       </obc-top-bar>
+      ${
+        args.diagnosticMenuOpen
+          ? html`<obc-diagnostic-menu
+              canAckAll
+              style="position: fixed; right: 4px; top: calc(var(--app-components-topbar-touch-target-size) + 4px);"
+              >${diagnosticRows()}</obc-diagnostic-menu
+            >`
+          : nothing
+      }
     `;
   },
 } satisfies Meta<ObcTopBar>;
+
+const DIAGNOSTIC_DESCRIPTION =
+  'A long notification message of more than one line of text and meaningful content. Sometimes it might be quite long and that is ok.';
+
+const diagnosticRow = (title: string, open = false) =>
+  html`<obc-message-menu-item
+    title=${title}
+    description=${DIAGNOSTIC_DESCRIPTION}
+    day="Yesterday"
+    time="09:12:34"
+    primaryActionLabel="Action"
+    hasPrimaryIcon
+    ?open=${open}
+    ><obi-placeholder slot="primary-icon"></obi-placeholder
+  ></obc-message-menu-item>`;
+
+/** The five rows of the design, the third expanded. */
+const diagnosticRows = () =>
+  html`${diagnosticRow('Simulate')} ${diagnosticRow('Title')}
+  ${diagnosticRow('Title', true)} ${diagnosticRow('Title')}
+  ${diagnosticRow('Title')}`;
 
 export default meta;
 type Story = StoryObj<ObcTopBar>;
@@ -254,5 +299,17 @@ export const AssetPicker: Story = {
       {label: 'Merd C', key: 'merd-c'},
     ],
     selectedAssetKey: 'merd-b',
+  },
+};
+
+/**
+ * The diagnostic button after the alert area, with its menu showing, as the
+ * design places them (Figma scratch file `Qit0iy9CQO8bvNqbcUgzXc`, 213-31927).
+ */
+export const Diagnostics: Story = {
+  args: {
+    showDiagnosticButton: true,
+    diagnosticMenuOpen: true,
+    alertBreakpoint: 1_000_000, // the long message item would squeeze the texts out at 1280 px
   },
 };
