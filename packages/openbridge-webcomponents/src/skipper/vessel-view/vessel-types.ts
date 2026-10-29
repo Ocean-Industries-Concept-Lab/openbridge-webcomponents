@@ -494,7 +494,9 @@ function mastLine(sideViewParams: getSideViewParams) {
   // const mastHeight = Math.abs(
   //   sideViewParams.mastEndY - (sideViewParams.sensorY + 18)
   // );
-  const mastHeight = Math.abs(
+
+  const mastHeight = Math.max(
+    0,
     sideViewParams.mastEndY - (sideViewParams.sensorY + 18)
   );
 
@@ -510,7 +512,7 @@ function mastLine(sideViewParams: getSideViewParams) {
         y1="0"
         x2="2"
         y2="${mastHeight}"
-        stroke="red"
+        stroke="${Colors.elementSymbolColor}"
         stroke-width="2"
         stroke-linecap="round"
       />
@@ -772,6 +774,7 @@ export function getTopDownView(
   const VESSEL_TYPE = getVesselType(vesselType);
   return html` <div class="top-down-view">
     ${VESSEL_TYPE.topDown}
+    <div class="horizontal-ccrp-line">${horizontalCCRPLine()}</div>
     ${toggleSensorA
       ? html` <div
           class="sensor-positioning-top-down-view"
@@ -785,7 +788,6 @@ export function getTopDownView(
     <div class="total-vessel-width">
       ${totalVesselWidth(topDownViewParams.vesselWidthComputed)}
     </div>
-    <div class="horizontal-ccrp-line">${horizontalCCRPLine()}</div>
     <div class="port-starboard-side">
       ${portStarboardDimLines(topDownViewParams)}
     </div>
@@ -1122,9 +1124,9 @@ function getVesselPSV(): {
       <g id="skipper-Vessel">
         <rect x="259.5" y="0.5" width="72" height="259" transform="rotate(90 259.5 0.5)" />
         <g id="Vessel">
-          <path id="Vector 488" d="M137.666 10.9502L192.287 10.9502C247.866 10.9502 247.866 35.5877 247.866 35.5877C247.866 35.5877 247.866 60.2252 192.287 60.2252L119.459 60.2252L14.1328 60.2252C13.0282 60.2252 12.1328 59.3298 12.1328 58.2252L12.1328 54.0658L12.1328 17.1096L12.1328 12.9502C12.1328 11.8456 13.0282 10.9502 14.1328 10.9502L137.666 10.9502Z" fill="${Colors.instrumentFramePrimary}" stroke="${Colors.instrumentTickMarkSecondary}"/>
-          <path id="Vector 489" d="M174.416 20.0746L174.416 7.75586L190.016 7.75586L197.816 20.0746L217.316 28.2871L217.316 44.7121L197.816 52.9246L190.016 65.2434L174.416 65.2434L174.416 52.9246L168.566 46.7652L168.566 26.234L174.416 20.0746Z" fill="${Colors.instrumentFramePrimary}" stroke="${Colors.instrumentTickMarkSecondary}"/>
-          <path id="Vector 490" d="M184.384 46.7656L174.634 46.7656L172.684 42.6594L172.684 30.3406L174.634 26.2344L184.384 26.2344L178.534 30.3406L178.534 42.6594L184.384 46.7656Z" fill="${Colors.instrumentFramePrimary}" stroke="${Colors.instrumentTickMarkSecondary}"/>
+          <path id="Vector 488" d="M137.666 10.9502L192.287 10.9502C247.866 10.9502 247.866 35.5877 247.866 35.5877C247.866 35.5877 247.866 60.2252 192.287 60.2252L119.459 60.2252L14.1328 60.2252C13.0282 60.2252 12.1328 59.3298 12.1328 58.2252L12.1328 54.0658L12.1328 17.1096L12.1328 12.9502C12.1328 11.8456 13.0282 10.9502 14.1328 10.9502L137.666 10.9502Z" fill="${Colors.instrumentFramePrimary}" stroke="${Colors.instrumentTickMarkSecondary}" stroke-width="1"/>
+          <path id="Vector 489" d="M174.416 20.0746L174.416 7.75586L190.016 7.75586L197.816 20.0746L217.316 28.2871L217.316 44.7121L197.816 52.9246L190.016 65.2434L174.416 65.2434L174.416 52.9246L168.566 46.7652L168.566 26.234L174.416 20.0746Z" fill="red}" stroke="${Colors.instrumentTickMarkSecondary}" stroke-width="1"/>
+          <path id="Vector 490" d="M184.384 46.7656L174.634 46.7656L172.684 42.6594L172.684 30.3406L174.634 26.2344L184.384 26.2344L178.534 30.3406L178.534 42.6594L184.384 46.7656Z" fill="yellow}" stroke="${Colors.instrumentTickMarkSecondary}" stroke-width="1"/>
         </g>
       </g>
     </svg>
