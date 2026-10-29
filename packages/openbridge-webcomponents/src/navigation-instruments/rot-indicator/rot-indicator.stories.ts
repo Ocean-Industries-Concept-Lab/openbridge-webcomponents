@@ -43,8 +43,25 @@ type Story = StoryObj<ObcRotIndicator>;
 export const Radial: Story = {
   args: {type: RotIndicatorType.radial, rotationsPerMinute: 1},
 };
+/** Not turning: the marker sits centered and stays neutral gray. */
 export const Linear: Story = {
   args: {type: RotIndicatorType.linear, rotationsPerMinute: 0},
+};
+
+/** Turning to starboard: the marker moves right and takes the starboard green. */
+export const LinearStarboard: Story = {
+  args: {
+    type: RotIndicatorType.linear,
+    rateOfTurnDegreesPerMinute: 40,
+  },
+};
+
+/** Turning to port: the marker moves left and takes the port red. */
+export const LinearPort: Story = {
+  args: {
+    type: RotIndicatorType.linear,
+    rateOfTurnDegreesPerMinute: -40,
+  },
 };
 
 export const RateOfTurnDegreesPerMinute: Story = {
