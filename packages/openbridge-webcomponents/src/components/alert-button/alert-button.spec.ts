@@ -2,7 +2,11 @@ import {describe, expect, it} from 'vitest';
 import {render} from 'vitest-browser-lit';
 import {html, type TemplateResult} from 'lit';
 import './alert-button.js';
-import {ObcAlertButton, ObcAlertButtonType} from './alert-button.js';
+import {
+  ObcAlertButton,
+  ObcAlertButtonType,
+  ObcAlertCounterItemType,
+} from './alert-button.js';
 import type {ObcAlertButtonItem} from '../alert-button-item/alert-button-item.js';
 import {AlertType, FlashingSpeed} from '../../types.js';
 
@@ -64,16 +68,18 @@ describe('obc-alert-button', () => {
     const {el, item} = await setup(
       html`<obc-alert-button
         globalCounter
+        .globalCounterType=${ObcAlertCounterItemType.AlertLevel}
         .nAlerts=${26}
         .counts=${counts}
         .shelvedCount=${9}
       ></obc-alert-button>`
     );
-    expect([item.globalCounter, item.counts, item.shelvedCount]).toEqual([
-      true,
-      counts,
-      9,
-    ]);
+    expect([
+      item.globalCounter,
+      item.globalCounterType,
+      item.counts,
+      item.shelvedCount,
+    ]).toEqual([true, ObcAlertCounterItemType.AlertLevel, counts, 9]);
 
     el.flatMaxBreakpointPx = window.innerWidth + 1;
     await el.updateComplete;

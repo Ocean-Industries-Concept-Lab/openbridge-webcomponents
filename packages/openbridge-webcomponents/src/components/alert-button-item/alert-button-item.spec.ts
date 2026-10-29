@@ -4,7 +4,10 @@ import {userEvent} from '@vitest/browser/context';
 import {html} from 'lit';
 import './alert-button-item.js';
 import {ObcAlertButtonItem, ObcAlertButtonType} from './alert-button-item.js';
-import type {ObcAlertCounterItem} from '../alert-counter-item/alert-counter-item.js';
+import {
+  ObcAlertCounterItemType,
+  type ObcAlertCounterItem,
+} from '../alert-counter-item/alert-counter-item.js';
 import {AlertType, FlashingSpeed, type AlertCounts} from '../../types.js';
 
 type ItemProps = Partial<
@@ -15,6 +18,7 @@ type ItemProps = Partial<
     | 'nAlerts'
     | 'counter'
     | 'globalCounter'
+    | 'globalCounterType'
     | 'counts'
     | 'shelvedCount'
     | 'blinking'
@@ -45,6 +49,10 @@ async function setup(props: ItemProps = {}) {
   const el = screen.container.querySelector(
     'obc-alert-button-item'
   ) as ObcAlertButtonItem;
+  // Set only when given, so the default case exercises the element's own default.
+  if (props.globalCounterType !== undefined) {
+    el.globalCounterType = props.globalCounterType;
+  }
   await el.updateComplete;
   return el;
 }
@@ -171,6 +179,27 @@ describe('obc-alert-button-item global counter', () => {
     expect(
       el.shadowRoot!.querySelector('.visible-wrapper .count')!.textContent
     ).toBe('12');
+  });
+
+  it('passes the counter type on, badges by default', async () => {
+    const counterType = async (props: ItemProps) =>
+      (
+        (
+          await setup({globalCounter: true, nAlerts: 12, ...props})
+        ).shadowRoot!.querySelector(
+          'obc-alert-counter-item'
+        ) as ObcAlertCounterItem
+      ).type;
+
+    expect(await counterType({counts: SEVERITY_COUNTS})).toBe(
+      ObcAlertCounterItemType.Badges
+    );
+    expect(
+      await counterType({
+        counts: SEVERITY_COUNTS,
+        globalCounterType: ObcAlertCounterItemType.AlertLevel,
+      })
+    ).toBe(ObcAlertCounterItemType.AlertLevel);
   });
 
   it('uses the normal style whatever the type', async () => {
