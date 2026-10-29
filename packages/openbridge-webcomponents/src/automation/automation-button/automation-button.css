@@ -254,3 +254,54 @@
   left: 0;
   bottom: 0;
 }
+
+/* ---- Handle and self-actuation line ---- */
+
+/* 0×0 at the icon centre: both children are drawn for a handle on top, and the frame turns them */
+.handle-frame {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  --handle-size: 24px;
+  --handle-offset: calc(
+    var(--automation-components-button-new-visual-target-round) / 2 - 8px
+  );
+
+  .variant-flat & {
+    --handle-offset: 0px;
+  }
+}
+
+.handle-frame-right {
+  transform: rotate(90deg);
+}
+
+.handle-frame-bottom {
+  transform: rotate(180deg);
+}
+
+.handle-frame-left {
+  transform: rotate(-90deg);
+}
+
+.handle {
+  position: absolute;
+  left: calc(var(--handle-size) / -2);
+  bottom: var(--handle-offset);
+  width: var(--handle-size);
+  height: var(--handle-size);
+}
+
+/* the line's stroke and end dot sit half a pixel off the svg box so they land on whole pixels */
+.self-actuation-line {
+  position: absolute;
+  left: -0.5px;
+  bottom: -3.5px;
+
+  &.mirrored {
+    transform: scaleX(-1);
+    transform-origin: 0.5px 0;
+  }
+}
