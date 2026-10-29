@@ -40,7 +40,3 @@
   border-radius: 0;
   padding: 0; /* the counter's own frame gives way to the button's */
 }
-
-.list-button::part(visible-wrapper) {
-  box-sizing: border-box;
-}

@@ -65,6 +65,7 @@ export type ObcDiagnosticMenuAckAllVisibleClickEvent = CustomEvent<{
  *
  * @property menuTitle - Title of the menu; "Diagnostics" when left empty.
  * @property canAckAll - Enables the "ACK all visible" button; set it while a row in view can be acknowledged.
+ * @availableWhen canAckAll showAckAllButton==true
  * @property showAckAllButton - Shows the "ACK all visible" button in the footer.
  * @property showDiagnosticListButton - Shows the "Diagnostics list" button in the footer.
  * @property softDismiss - Lets the menu close itself on a click outside it, on `Escape`, or when another menu opens. The page is covered while the menu is open, so the closing click reaches nothing there; only the top bar's strip stays clickable, which is how its buttons switch or close menus in one click. Wire it with three bindings: set `softDismiss`, bind `open` to a flag you keep, and reset that flag on `close`. The button that opens the menu needs no wiring of its own: flip the flag from its click. Leave it off to show and hide the menu yourself.

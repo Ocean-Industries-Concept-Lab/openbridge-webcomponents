@@ -6,6 +6,7 @@ import './alert-subsystem-button.js';
 import type {ObcAlertSubsystemButton} from './alert-subsystem-button.js';
 import type {ObcIconButton} from '../icon-button/icon-button.js';
 import type {ObcAlertCounterItem} from '../alert-counter-item/alert-counter-item.js';
+import type {ObcAlertSubsystemCounter} from '../alert-subsystem-counter/alert-subsystem-counter.js';
 import {tabStops} from '../../internal/_test-utils.js';
 
 type ButtonProps = Partial<
@@ -96,6 +97,20 @@ describe('obc-alert-subsystem-button', () => {
     expect(empty.counterButton.getAttribute('aria-label')).toBe(
       'HVAC, No alerts'
     );
+  });
+
+  it('falls back to the empty state when hasAlert comes without counts', async () => {
+    const {el, counterButton} = await setup({
+      label: 'HVAC',
+      hasAlert: true,
+      counts: {},
+    });
+    const counter = el.shadowRoot!.querySelector(
+      'obc-alert-subsystem-counter'
+    ) as ObcAlertSubsystemCounter;
+
+    expect(counterButton.getAttribute('aria-label')).toBe('HVAC, No alerts');
+    expect(counter.hasAlert).toBe(false);
   });
 
   it('is two tab stops', async () => {

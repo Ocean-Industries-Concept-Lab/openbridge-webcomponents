@@ -8,7 +8,7 @@ import '../alert-counter-item/alert-counter-item.js';
 import '../icon-button/icon-button.js';
 import '../../icons/icon-alert-list.js';
 import type {AlertCounts} from '../../types.js';
-import {alertCountsLabel} from '../../alert-severity.js';
+import {alertCountsLabel, rankAlertCounts} from '../../alert-severity.js';
 
 /**
  * `<obc-alert-subsystem-button>` – A subsystem's alert counts as a split
@@ -23,8 +23,8 @@ import {alertCountsLabel} from '../../alert-severity.js';
  * ---
  *
  * ### Features
- * - **Counts:** `counts` per severity, drawn as badges; `hasAlert` off shows
- *   `emptyText` instead.
+ * - **Counts:** `counts` per severity, drawn as badges; `hasAlert` off, or
+ *   on with nothing counted, shows `emptyText` instead.
  * - **Label and icon:** `label` and the `icon` slot, as on the counter.
  * - **Two halves:** `counter-click` from the counts, `alert-list-click` from
  *   the list icon; `counterDisabled` and `listDisabled` disable one half,
@@ -42,6 +42,9 @@ import {alertCountsLabel} from '../../alert-severity.js';
  * - **TODO(designer):** the design draws an empty placeholder badge for each
  *   zero count; no counter in the library does, so only non-zero counts are
  *   drawn (#1396).
+ * - **TODO(designer):** a disabled counter half dims its frame, while the
+ *   severity badges keep their colour and the label its active colour; the
+ *   design has no disabled variant.
  *
  * ---
  *
@@ -55,7 +58,7 @@ import {alertCountsLabel} from '../../alert-severity.js';
  *
  * @property counts - Alert count per severity, drawn as badges in the counter half.
  * @availableWhen counts hasAlert==true
- * @property hasAlert - Whether the subsystem has active alerts: `true` draws the badges, `false` the `emptyText`.
+ * @property hasAlert - Whether the subsystem has active alerts: `true` draws the badges, `false` the `emptyText`; `true` with nothing counted shows the `emptyText` as well.
  * @property label - The subsystem label, before the badges.
  * @property emptyText - Text shown instead of the badges when `hasAlert` is `false`.
  * @availableWhen emptyText hasAlert==false
@@ -86,11 +89,16 @@ export class ObcAlertSubsystemButton extends LitElement {
   @property({type: String, attribute: 'aria-label'})
   override ariaLabel: string | null = null;
 
+  /** The flag the counter gets: `hasAlert` with nothing to draw reads as none. */
+  private get showsCounts(): boolean {
+    return this.hasAlert && rankAlertCounts(this.counts).length > 0;
+  }
+
   private get counterName(): string {
     if (this.ariaLabel) {
       return this.ariaLabel;
     }
-    const state = this.hasAlert
+    const state = this.showsCounts
       ? alertCountsLabel(this.counts)
       : this.emptyText;
     return [this.label, state].filter((part) => part !== '').join(', ');
@@ -120,7 +128,7 @@ export class ObcAlertSubsystemButton extends LitElement {
             <obc-alert-subsystem-counter
               class="counter"
               .label=${this.label}
-              .hasAlert=${this.hasAlert}
+              .hasAlert=${this.showsCounts}
               .emptyText=${this.emptyText}
             >
               <slot name="icon" slot="icon"></slot>

@@ -36,7 +36,8 @@ export enum ObcAlertSubsystemCounterOrientation {
  * - **Configurable empty text:** Customize the message shown when there are no
  *   alerts via `emptyText`.
  * - **Optional leading icon:** Provide an icon through the `icon` slot; omit it
- *   and the leading box collapses with no empty gap.
+ *   and the leading box collapses with no empty gap; with no label either, the
+ *   whole leading column goes and the badges take the frame.
  *
  * ---
  *
@@ -85,6 +86,7 @@ export enum ObcAlertSubsystemCounterOrientation {
  * @property emptyText - Text shown in the trailing area when `hasAlert` is `false`.
  * @availableWhen emptyText hasAlert==false
  * @slot icon - Optional leading 24px icon.
+ * @csspart frame - The framed box, for a host that draws its own frame around the counter.
  * @slot badges - Count badges shown when `hasAlert` is true.
  * @beta
  */
