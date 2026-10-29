@@ -388,7 +388,7 @@ function keelArrowLinesVertical(
 
 function sensorHeights(sensorHeightsParams: getSideViewParams) {
   return svg`
-    <svg xmlns="http://www.w3.org/2000/svg" width="56" height="174" viewBox="0 0 56 174" fill="none">
+    <svg xmlns="http://www.w3.org/2000/svg" width="70" height="174" viewBox="0 0 70 174" fill="none">
       <g id="sensor-heights">
         <rect x="0.5" y="0.5" width="55" height="173"/>
         ${
@@ -485,7 +485,7 @@ function draftLine() {
 function keelLineHorizontal() {
   return svg`
     <svg xmlns="http://www.w3.org/2000/svg" width="260" height="1" viewBox="0 0 260 1" fill="none">
-      <path id="draft-line" d="M0.5 0.5L259.5 0.5" stroke="${Colors.elementSymbolColor}" stroke-linecap="round" stroke-dasharray="4 4"/>
+      <path id="draft-line" d="M0.5 0.5L259.5 0.5" stroke="${Colors.elementSymbolColor}" stroke-width="1" stroke-linecap="round" stroke-dasharray="4 4"/>
     </svg>
   `;
 }
@@ -535,6 +535,8 @@ export function getSideView(
     <div class="total-vessel-length">
       ${vesselLengthDimLine(sideViewParams)}
     </div>
+    <div class="draft-line-horizontal">${draftLine()}</div>
+    <div class="keel-line-horizontal">${keelLineHorizontal()}</div>
     ${VESSEL_TYPE.side}
     ${!sideViewParams.toggleSLAndDLSensor
       ? html` <div
@@ -549,8 +551,6 @@ export function getSideView(
     <div class="vertical-ccrp-line" style="left:${sideViewParams.ccrpX - 17}px">
       ${verticalCCRPLine()}
     </div>
-    <div class="draft-line-horizontal">${draftLine()}</div>
-    <div class="keel-line-horizontal">${keelLineHorizontal()}</div>
     <div class="keel-arrow-lines">
       ${keelArrowLinesVertical(upArrowDim, sideViewParams.toggleSLAndDLSensor)}
     </div>

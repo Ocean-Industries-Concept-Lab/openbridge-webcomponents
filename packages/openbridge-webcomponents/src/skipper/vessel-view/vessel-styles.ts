@@ -6,7 +6,7 @@ export const vesselStyles = css`
     display: flex;
     align-items: center;
     justify-content: center;
-    //border: 1px solid green;
+    // border: 1px solid green;
   }
 
   .satellite-label {
@@ -61,7 +61,9 @@ export const vesselStyles = css`
   }
 
   .both-views {
-    //background-color: yellow;
+    position: relative;
+    left: -5%;
+    width: auto;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -89,7 +91,7 @@ export const vesselStyles = css`
   .sensor-heights {
     position: absolute;
     top: 32px;
-    right: -62px;
+    right: -76px;
   }
 
   .keel-arrow-lines {
@@ -101,8 +103,9 @@ export const vesselStyles = css`
   .keel-line-horizontal {
     position: absolute;
     left: 0;
-    top: 174px;
+    top: 173.35px;
     width: 100%;
+    z-index: -1;
   }
 
   .draft-line-horizontal {
@@ -110,6 +113,7 @@ export const vesselStyles = css`
     left: 0;
     top: 162px;
     width: 100%;
+    z-index: -1;
   }
 
   .vertical-ccrp-line {
