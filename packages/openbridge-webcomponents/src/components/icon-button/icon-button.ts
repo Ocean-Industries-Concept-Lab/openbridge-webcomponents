@@ -186,7 +186,7 @@ export class ObcIconButton extends LitElement {
           fill="none"
         />
         <path
-          d="M18 2 A18 18 0 ${largeArcFlag} 1 ${x} ${y}"
+          d="M20 2 A18 18 0 ${largeArcFlag} 1 ${x} ${y}"
           stroke="var(--instrument-enhanced-secondary-color)"
           stroke-width="4"
           stroke-linecap="round"

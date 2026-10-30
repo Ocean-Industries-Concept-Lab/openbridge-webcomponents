@@ -1,5 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
-import {html} from 'lit-html';
+import {html} from 'lit';
+import {ref} from 'lit/directives/ref.js';
 import {IconButtonVariant, ObcIconButton} from './icon-button.js';
 import './icon-button.js';
 import {iconIds, iconIdToIconHtml} from '../../storybook-util.js';
@@ -159,4 +160,42 @@ export const Progress: Story = {
     variant: IconButtonVariant.flat,
     progress: 50,
   },
+};
+
+const PROGRESS_DURATION_MS = 5000;
+const PROGRESS_HOLD_MS = 1000;
+
+/** Drives `progress` from 0 to 100 over five seconds, holds at 100, then restarts. */
+function animateProgress(element: Element | undefined) {
+  if (!(element instanceof ObcIconButton)) return;
+  const button = element;
+  let start: number | undefined;
+  const tick = (now: number) => {
+    if (!button.isConnected) return;
+    start ??= now;
+    const elapsed = (now - start) % (PROGRESS_DURATION_MS + PROGRESS_HOLD_MS);
+    button.progress = Math.min(
+      100,
+      Math.round((elapsed / PROGRESS_DURATION_MS) * 100)
+    );
+    requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+
+export const ProgressAnimated: Story = {
+  tags: ['skip-test'],
+  args: {
+    variant: IconButtonVariant.flat,
+  },
+  render: (args) => html`
+    <obc-icon-button
+      ${ref(animateProgress)}
+      aria-label=${args.ariaLabel}
+      variant=${args.variant}
+      .progress=${0}
+    >
+      ${iconIdToIconHtml(args.icon)}
+    </obc-icon-button>
+  `,
 };
