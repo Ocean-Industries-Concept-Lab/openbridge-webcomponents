@@ -163,9 +163,11 @@ export const Progress: Story = {
 };
 
 const PROGRESS_DURATION_MS = 5000;
-const PROGRESS_HOLD_MS = 1000;
 
-/** Drives `progress` from 0 to 100 over five seconds, holds at 100, then restarts. */
+/**
+ * Drives `progress` from 0 to 100 over five seconds, then stops at 100.
+ * One run, so nothing on the page keeps moving (WCAG 2.2.2).
+ */
 function animateProgress(element: Element | undefined) {
   if (!(element instanceof ObcIconButton)) return;
   const button = element;
@@ -173,12 +175,12 @@ function animateProgress(element: Element | undefined) {
   const tick = (now: number) => {
     if (!button.isConnected) return;
     start ??= now;
-    const elapsed = (now - start) % (PROGRESS_DURATION_MS + PROGRESS_HOLD_MS);
+    const elapsed = now - start;
     button.progress = Math.min(
       100,
       Math.round((elapsed / PROGRESS_DURATION_MS) * 100)
     );
-    requestAnimationFrame(tick);
+    if (elapsed < PROGRESS_DURATION_MS) requestAnimationFrame(tick);
   };
   requestAnimationFrame(tick);
 }
@@ -188,11 +190,20 @@ export const ProgressAnimated: Story = {
   args: {
     variant: IconButtonVariant.flat,
   },
+  argTypes: {
+    progress: {table: {disable: true}},
+  },
   render: (args) => html`
     <obc-icon-button
       ${ref(animateProgress)}
       aria-label=${args.ariaLabel}
       variant=${args.variant}
+      ?cornerleft=${args.cornerLeft}
+      ?cornerright=${args.cornerRight}
+      ?activecolor=${args.activeColor}
+      ?activated=${args.activated}
+      ?wide=${args.wide}
+      ?disabled=${args.disabled}
       .progress=${0}
     >
       ${iconIdToIconHtml(args.icon)}

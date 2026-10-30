@@ -158,7 +158,7 @@ export class ObcIconButton extends LitElement {
             cx="20"
             cy="20"
             r="18"
-            stroke="#325B9A"
+            stroke="var(--instrument-enhanced-secondary-color)"
             stroke-width="4"
             fill="none"
           />
