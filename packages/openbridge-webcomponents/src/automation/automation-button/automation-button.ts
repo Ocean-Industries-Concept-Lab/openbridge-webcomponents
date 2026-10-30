@@ -210,6 +210,7 @@ export class ObcAutomationButton extends LitElement {
           static: this.static,
           activated: this.activated,
           ['orientation-' + this.orientation]: true,
+          ['handle-position-' + this.handlePosition]: true
         })}
       >
         <div class="icon-touch-target">

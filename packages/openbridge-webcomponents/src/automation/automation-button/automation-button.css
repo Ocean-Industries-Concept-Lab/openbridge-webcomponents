@@ -2,6 +2,11 @@
   box-sizing: border-box;
 }
 
+:host {
+  --handle-size: 24px;
+  --handle-offset: 8px;
+}
+
 .point-wrapper {
   width: 0;
   height: 0;
@@ -68,10 +73,41 @@
     position: absolute;
   }
 
+  &.handle-position-top {
+    padding-top: var(--handle-offset);
+    margin-top: calc(var(--handle-offset) * -1);
+  }
+  &.handle-position-bottom{
+    padding-bottom: var(--handle-offset);  
+    margin-bottom: calc(var(--handle-offset) * -1);
+  }
+  &.handle-position-left {
+    padding-left: var(--handle-offset);  
+    margin-left: calc(var(--handle-offset) * -1);
+  }
+
+  &.handle-position-right {
+    padding-right: var(--handle-offset);  
+    margin-right: calc(var(--handle-offset) * -1);
+  }
+
   .badge-spacer {
     width: 0;
     height: 0;
     transition: all 0.1s ease-in-out;
+
+    .label-top.handle-position-top & {
+      height: var(--handle-offset);
+    }
+    .label-bottom.handle-position-bottom & {
+      height: var(--handle-offset);
+    }
+    .label-left.handle-position-left & {
+      width: var(--handle-offset);
+    }
+    .label-right.handle-position-right & {
+      width: var(--handle-offset);
+    }
   }
 
   &.has-badge-spacer .badge-spacer {
@@ -112,6 +148,31 @@
     width: calc(100% + 2px);
     height: calc(100% + 2px);
   }
+}
+
+/* a child's side margin does not reach the frame's box, so the frame takes the margin and spans the handle space */
+obc-alert-frame > .wrapper[class*="handle-position-"] {
+  margin: 0;
+}
+
+obc-alert-frame:has(> .wrapper:not(.handle-position-none)) {
+  display: block; /* the margins below do nothing on the frame's default inline box */
+}
+
+obc-alert-frame:has(> .handle-position-top) {
+  margin-top: calc(var(--handle-offset) * -1);
+}
+
+obc-alert-frame:has(> .handle-position-bottom) {
+  margin-bottom: calc(var(--handle-offset) * -1);
+}
+
+obc-alert-frame:has(> .handle-position-left) {
+  margin-left: calc(var(--handle-offset) * -1);
+}
+
+obc-alert-frame:has(> .handle-position-right) {
+  margin-right: calc(var(--handle-offset) * -1);
 }
 
 .badge-top-right,
@@ -264,7 +325,7 @@
   left: 50%;
   width: 0;
   height: 0;
-  --handle-size: 24px;
+
   --handle-offset: calc(
     var(--automation-components-button-new-visual-target-round) / 2 - 8px
   );

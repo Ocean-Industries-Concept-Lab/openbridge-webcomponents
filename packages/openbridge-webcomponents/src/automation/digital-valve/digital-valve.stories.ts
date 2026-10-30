@@ -9,7 +9,7 @@ import {AutomationButtonReadoutStackSize} from '../../components/automation-butt
 import './digital-valve.js';
 import {crossDecorator} from '../../storybook-util.js';
 import {argTypesAbstractAutomationButtonPassiveRound} from '../automation-button/abstract-automation-button-storybook-helpers.js';
-import { Direction } from '../../types.js';
+import {Direction} from '../../types.js';
 
 const meta: Meta<typeof ObcDigitalValve> = {
   title: 'Automation/Automation Devices/Digital Valve',
@@ -78,5 +78,32 @@ export const ManualLeft: Story = {
     flowDirection: Direction.Left,
     handle: ObcValveHandle.manual,
     open: true,
+  },
+};
+
+export const ManualSymbol: Story = {
+  args: {
+    tag: '#0012',
+    readoutSize: 'regular',
+    alert: true,
+    progress: false,
+    vertical: false,
+    showReadoutStack: true,
+    handle: 'manual',
+    positioning: 'symbol',
+  },
+};
+
+export const ManualSymbolUp: Story = {
+  args: {
+    tag: '#0012',
+    readoutSize: 'regular',
+    alert: true,
+    progress: false,
+    vertical: false,
+    showReadoutStack: true,
+    handle: 'manual',
+    positioning: 'symbol',
+    flowDirection: 'up',
   },
 };

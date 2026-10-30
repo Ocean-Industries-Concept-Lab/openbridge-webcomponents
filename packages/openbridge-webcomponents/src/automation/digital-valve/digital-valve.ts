@@ -70,12 +70,22 @@ export function digitalValveReadouts(
 @customElement('obc-digital-valve')
 export class ObcDigitalValve extends ObcAbstractAutomationButton {
   @property({type: Boolean}) open: boolean = false;
-  // @deprecated - use flowDirection instead
+  /**
+   * Draw the valve for a vertical pipe; used only while `flowDirection` is unset.
+   * @deprecated Use `flowDirection`.
+   */
   @property({type: Boolean}) vertical: boolean = false;
-  // Standard flow direction through the valve.
+  /**
+   * Direction the medium flows through the valve; the symbol turns with it.
+   * When unset, `vertical` picks `down`, otherwise `right`.
+   */
   @property({type: String}) flowDirection: Direction | undefined = undefined;
+  /**
+   * `manual` draws a manual handle. It sits on top when the flow is to the
+   * right and turns with the flow.
+   */
   @property({type: String}) handle: ObcValveHandle = ObcValveHandle.none;
-  // The handle is on top if the flow is to the right, and is rotated with the flow. The position can be inverted with `invertHandlePosition`.
+  /** Put the handle on the other side of the valve. */
   @property({type: Boolean}) invertHandlePosition: boolean = false;
 
   @property({type: String}) variant: DigitalValveVariant =
