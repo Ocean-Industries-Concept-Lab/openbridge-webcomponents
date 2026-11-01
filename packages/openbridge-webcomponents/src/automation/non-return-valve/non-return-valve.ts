@@ -1,7 +1,7 @@
 import {html} from 'lit';
 import {customElement} from '../../decorator.js';
 import {ObcDirectionValveBase} from '../direction-valve-shared/direction-valve-shared.js';
-import {AutomationButtonHandlePosition, AutomationButtonOrientation, AutomationButtonReadoutPosition} from '../automation-button/automation-button.js';
+import {AutomationButtonOrientation} from '../automation-button/automation-button.js';
 import {Direction} from '../../types.js';
 
 const ROTATION: Record<Direction, number> = {
@@ -47,24 +47,6 @@ export class ObcNonReturnValve extends ObcDirectionValveBase {
   override get _orientation(): AutomationButtonOrientation {
     return AutomationButtonOrientation.horizontal;
   }
-
-    override get _readoutPosition(): AutomationButtonReadoutPosition {
-      if (this.readoutPosition !== undefined) {
-        return this.readoutPosition;
-      }
-      switch (this.flowDirection) {
-        case Direction.Left:
-          return AutomationButtonReadoutPosition.top;
-        case Direction.Up:
-          return AutomationButtonReadoutPosition.right;
-        case Direction.Right:
-          return AutomationButtonReadoutPosition.bottom;
-        case Direction.Down:
-          return AutomationButtonReadoutPosition.left;
-        default:
-          return AutomationButtonReadoutPosition.bottom;
-      }
-    }
 
   override get icon() {
     const style = `display: block; width: 100%; height: 100%; line-height: 0; transform: rotate(${ROTATION[this.flowDirection]}deg);`;

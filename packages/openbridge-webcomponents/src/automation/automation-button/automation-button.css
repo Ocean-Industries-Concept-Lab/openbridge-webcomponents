@@ -4,7 +4,7 @@
 
 :host {
   --handle-size: 24px;
-  --handle-offset: 8px;
+  --handle-offset: 12px;
 }
 
 .point-wrapper {
@@ -73,41 +73,56 @@
     position: absolute;
   }
 
-  &.handle-position-top {
-    padding-top: var(--handle-offset);
-    margin-top: calc(var(--handle-offset) * -1);
-  }
-  &.handle-position-bottom{
-    padding-bottom: var(--handle-offset);  
-    margin-bottom: calc(var(--handle-offset) * -1);
-  }
-  &.handle-position-left {
-    padding-left: var(--handle-offset);  
-    margin-left: calc(var(--handle-offset) * -1);
-  }
+  &.handle-space-box {
+    &.handle-position-top {
+      padding-top: var(--handle-offset);
+      margin-top: calc(var(--handle-offset) * -1);
+    }
 
-  &.handle-position-right {
-    padding-right: var(--handle-offset);  
-    margin-right: calc(var(--handle-offset) * -1);
+    &.handle-position-bottom {
+      padding-bottom: var(--handle-offset);
+      margin-bottom: calc(var(--handle-offset) * -1);
+    }
+
+    &.handle-position-left {
+      padding-left: var(--handle-offset);
+      margin-left: calc(var(--handle-offset) * -1);
+    }
+
+    &.handle-position-right {
+      padding-right: var(--handle-offset);
+      margin-right: calc(var(--handle-offset) * -1);
+    }
+
+    /* the -50% centring also takes half of the one-sided padding: give it back to keep the symbol on the anchor */
+    &.positioning-point:is(.label-top, .label-bottom):is(
+        .handle-position-left,
+        .handle-position-right
+      ) {
+      left: calc(var(--handle-offset) / 2);
+    }
+
+    &.positioning-point:is(.label-left, .label-right):is(
+        .handle-position-top,
+        .handle-position-bottom
+      ) {
+      top: calc(var(--handle-offset) / 2);
+    }
   }
 
   .badge-spacer {
     width: 0;
     height: 0;
     transition: all 0.1s ease-in-out;
+  }
 
-    .label-top.handle-position-top & {
-      height: var(--handle-offset);
-    }
-    .label-bottom.handle-position-bottom & {
-      height: var(--handle-offset);
-    }
-    .label-left.handle-position-left & {
-      width: var(--handle-offset);
-    }
-    .label-right.handle-position-right & {
-      width: var(--handle-offset);
-    }
+  /* min-*: a badge spacer can be larger than the handle space and must keep its size */
+  &.handle-space-spacer:is(.label-top, .label-bottom) .badge-spacer {
+    min-height: var(--handle-offset);
+  }
+
+  &.handle-space-spacer:is(.label-left, .label-right) .badge-spacer {
+    min-width: var(--handle-offset);
   }
 
   &.has-badge-spacer .badge-spacer {
@@ -151,27 +166,27 @@
 }
 
 /* a child's side margin does not reach the frame's box, so the frame takes the margin and spans the handle space */
-obc-alert-frame > .wrapper[class*="handle-position-"] {
+obc-alert-frame > .wrapper.handle-space-box[class*="handle-position-"] {
   margin: 0;
 }
 
-obc-alert-frame:has(> .wrapper:not(.handle-position-none)) {
+obc-alert-frame:has(> .handle-space-box) {
   display: block; /* the margins below do nothing on the frame's default inline box */
 }
 
-obc-alert-frame:has(> .handle-position-top) {
+obc-alert-frame:has(> .handle-space-box.handle-position-top) {
   margin-top: calc(var(--handle-offset) * -1);
 }
 
-obc-alert-frame:has(> .handle-position-bottom) {
+obc-alert-frame:has(> .handle-space-box.handle-position-bottom) {
   margin-bottom: calc(var(--handle-offset) * -1);
 }
 
-obc-alert-frame:has(> .handle-position-left) {
+obc-alert-frame:has(> .handle-space-box.handle-position-left) {
   margin-left: calc(var(--handle-offset) * -1);
 }
 
-obc-alert-frame:has(> .handle-position-right) {
+obc-alert-frame:has(> .handle-space-box.handle-position-right) {
   margin-right: calc(var(--handle-offset) * -1);
 }
 
@@ -232,19 +247,14 @@ obc-alert-frame:has(> .handle-position-right) {
   .variant-flat-forward & {
     background-color: transparent !important;
     border-color: transparent !important;
-
-    .icon-primary {
-      width: var(--automation-components-button-icon-size-flat);
-      height: var(--automation-components-button-icon-size-flat);
-    }
   }
 
   .icon-silhouette {
     stroke: var(--border-silhouette-color);
     stroke-width: 2;
     position: absolute;
-    width: var(--automation-components-button-icon-size-flat);
-    height: var(--automation-components-button-icon-size-flat);
+    width: var(--automation-components-button-icon-size);
+    height: var(--automation-components-button-icon-size);
     z-index: -1;
   }
 
@@ -305,7 +315,7 @@ obc-alert-frame:has(> .handle-position-right) {
 
 .static .icon-holder {
   border-color: var(--automation-button-static-border-color);
-  background: var(--automation-button-static-background-color);
+  background: var(--container-background-color);
 }
 
 .alert-frame {
@@ -327,12 +337,27 @@ obc-alert-frame:has(> .handle-position-right) {
   height: 0;
 
   --handle-offset: calc(
-    var(--automation-components-button-new-visual-target-round) / 2 - 8px
+    var(--automation-components-button-new-visual-target-round) / 2 - 6px
   );
 
-  .variant-flat & {
+  .variant-flat &,
+  .variant-flat-forward & {
     --handle-offset: 0px;
   }
+}
+
+/* a small handle's stem ends in the middle of its box, which the design puts on the icon centre */
+.variant-flat.handle-size-small .handle-frame,
+.variant-flat-forward.handle-size-small .handle-frame {
+  --handle-offset: -12px;
+}
+
+/* TODO(designer): small is only drawn on a bare symbol; around a button the stem stops 3px inside the edge */
+.wrapper:not(.variant-flat, .variant-flat-forward).handle-size-small
+  .handle-frame {
+  --handle-offset: calc(
+    var(--automation-components-button-new-visual-target-round) / 2 - 15px
+  );
 }
 
 .handle-frame-right {
@@ -355,14 +380,24 @@ obc-alert-frame:has(> .handle-position-right) {
   height: var(--handle-size);
 }
 
-/* the line's stroke and end dot sit half a pixel off the svg box so they land on whole pixels */
+/* TODO(designer): Figma ends the line 3.5px above the icon centre; the end dot sits on the pipe's centre line here */
 .self-actuation-line {
   position: absolute;
-  left: -0.5px;
-  bottom: -3.5px;
+  left: 0;
+  bottom: -3px; /* puts the 31px svg's end dot, 3px above its bottom edge, on the icon centre */
 
   &.mirrored {
     transform: scaleX(-1);
-    transform-origin: 0.5px 0;
+    transform-origin: 0 0;
+  }
+
+  /* the line's stroke and end dot sit half a pixel off the svg box so they land on whole pixels */
+  &.flat {
+    left: -0.5px;
+    bottom: -3.5px;
+
+    &.mirrored {
+      transform-origin: 0.5px 0;
+    }
   }
 }

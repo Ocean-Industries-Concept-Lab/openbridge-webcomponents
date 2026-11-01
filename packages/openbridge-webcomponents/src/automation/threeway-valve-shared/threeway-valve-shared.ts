@@ -19,7 +19,10 @@
  *
  * @module
  */
-import {AutomationButtonLabelDirection} from '../automation-button/automation-button.js';
+import {
+  AutomationButtonLabelDirection,
+  AutomationButtonReadoutPosition,
+} from '../automation-button/automation-button.js';
 import {AutomationButtonReadoutStack} from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 
 /**
@@ -46,6 +49,22 @@ export function threewayValveRotation(
       return 270;
     default:
       return 0;
+  }
+}
+
+/** The side without a port, opposite the stem: the readout there covers no pipe. */
+export function threewayValveOpenSide(
+  orientation: ThreewayValveOrientation
+): AutomationButtonReadoutPosition {
+  switch (orientation) {
+    case ThreewayValveOrientation.left:
+      return AutomationButtonReadoutPosition.right;
+    case ThreewayValveOrientation.top:
+      return AutomationButtonReadoutPosition.bottom;
+    case ThreewayValveOrientation.right:
+      return AutomationButtonReadoutPosition.left;
+    default:
+      return AutomationButtonReadoutPosition.top;
   }
 }
 

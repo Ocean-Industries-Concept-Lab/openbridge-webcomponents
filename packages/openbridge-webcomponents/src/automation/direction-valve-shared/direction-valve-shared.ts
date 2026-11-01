@@ -1,11 +1,10 @@
-import {html} from 'lit';
 import {property} from 'lit/decorators.js';
 import {ObcAbstractAutomationButton} from '../automation-button/abstract-automation-button.js';
 import {AutomationButtonReadoutStack} from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 import {
   AutomationButtonHandlePosition,
+  AutomationButtonHandleSize,
   AutomationButtonOrientation,
-  AutomationButtonReadoutPosition,
   AutomationButtonSelfActuationLine,
 } from '../automation-button/automation-button.js';
 import {
@@ -13,6 +12,7 @@ import {
   digitalValveReadouts,
 } from '../digital-valve/digital-valve.js';
 import {Direction} from '../../types.js';
+import {ObcValveHandle} from '../automation-button/valve-handle.js';
 
 export enum DirectionValveVariant {
   regular = 'regular',
@@ -24,8 +24,8 @@ export enum DirectionValveVariant {
  * `obc-pressure-reduction-valve`, `obc-pressure-sustain-valve` and
  * `obc-non-return-valve`.
  *
- * The symbol turns with `flowDirection`, and the readout defaults to the side
- * opposite the handle.
+ * The symbol turns with `flowDirection`. The readout defaults to below the
+ * valve on a horizontal pipe and to its left on a vertical one.
  *
  * ## Usage Guidelines
  *
@@ -44,22 +44,11 @@ export class ObcDirectionValveBase extends ObcAbstractAutomationButton {
     return true;
   }
 
-  override get _readoutPosition(): AutomationButtonReadoutPosition {
-    if (this.readoutPosition !== undefined) {
-      return this.readoutPosition;
-    }
-    switch (this._handlePosition) {
-      case AutomationButtonHandlePosition.top:
-        return AutomationButtonReadoutPosition.bottom;
-      case AutomationButtonHandlePosition.right:
-        return AutomationButtonReadoutPosition.left;
-      case AutomationButtonHandlePosition.bottom:
-        return AutomationButtonReadoutPosition.top;
-      case AutomationButtonHandlePosition.left:
-        return AutomationButtonReadoutPosition.right;
-      default:
-        return AutomationButtonReadoutPosition.bottom;
-    }
+  protected override get _isVertical(): boolean {
+    return (
+      this.flowDirection === Direction.Up ||
+      this.flowDirection === Direction.Down
+    );
   }
 
   override get _orientation(): AutomationButtonOrientation {
@@ -74,11 +63,11 @@ export class ObcDirectionValveBase extends ObcAbstractAutomationButton {
   }
 
   override get extraReadouts(): AutomationButtonReadoutStack[] {
-    return digitalValveReadouts(true, false);
+    return digitalValveReadouts(true, false, false);
   }
 
   override get icon() {
-    return digitalValveIcon(true);
+    return digitalValveIcon(true, this.static);
   }
 }
 
@@ -97,9 +86,12 @@ export class ObcDirectionValveBase extends ObcAbstractAutomationButton {
  * the line senses through `sensesDownstream`.
  *
  * @property invertHandlePosition - Puts the actuator on the opposite side of the pipe.
+ * @property handleSize - Size of the handle: `small` draws it from the symbol's centre, for symbols without a button around them.
  */
 export class ObcPressureValveBase extends ObcDirectionValveBase {
   @property({type: Boolean}) invertHandlePosition: boolean = false;
+  @property({type: String}) handleSize: AutomationButtonHandleSize =
+    AutomationButtonHandleSize.regular;
 
   /** True when the line senses the outlet, false when it senses the inlet. */
   protected get sensesDownstream(): boolean {
@@ -147,38 +139,11 @@ export class ObcPressureValveBase extends ObcDirectionValveBase {
     return (this.sensesDownstream ? downstream : upstream)[this.flowDirection];
   }
 
+  override get _handleSize(): AutomationButtonHandleSize {
+    return this.handleSize;
+  }
+
   override get _handle() {
-    return html`<svg
-      slot="handle"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <defs>
-        <path
-          id="actuator"
-          d="M21 12C21.5523 12 22.0052 11.5512 21.95 11.0017C21.8526 10.0309 21.6135 9.07783 21.2388 8.17317C20.7362 6.95991 19.9997 5.85752 19.0711 4.92893C18.1425 4.00035 17.0401 3.26375 15.8268 2.7612C14.6136 2.25866 13.3132 2 12 2C10.6868 2 9.38642 2.25866 8.17317 2.7612C6.95991 3.26375 5.85752 4.00035 4.92893 4.92893C4.00035 5.85752 3.26375 6.95991 2.7612 8.17317C2.38648 9.07783 2.14736 10.0309 2.04996 11.0017C1.99482 11.5512 2.44772 12 3 12L12 12H21Z"
-        />
-        <mask id="actuator-inside" fill="white">
-          <use href="#actuator" />
-        </mask>
-      </defs>
-      <path
-        d="M12 24L12 12"
-        stroke="var(--element-neutral-color)"
-        vector-effect="non-scaling-stroke"
-      />
-      <use
-        href="#actuator"
-        fill="var(--automation-symbol-on-background-color)"
-      />
-      <use
-        href="#actuator"
-        stroke-width="2"
-        stroke="var(--element-active-color)"
-        mask="url(#actuator-inside)"
-        vector-effect="non-scaling-stroke"
-      />
-    </svg>`;
+    return this.renderValveHandle(ObcValveHandle.pneumatic);
   }
 }

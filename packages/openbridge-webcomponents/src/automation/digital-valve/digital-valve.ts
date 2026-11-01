@@ -2,28 +2,47 @@ import {html, TemplateResult} from 'lit';
 import {property} from 'lit/decorators.js';
 import '../../icons/icon-twoway-digital-open.js';
 import '../../icons/icon-twoway-digital-closed.js';
+import '../../icons/icon-twoway-digital-static.js';
 import {customElement} from '../../decorator.js';
 import {ObcAbstractAutomationButton} from '../automation-button/abstract-automation-button.js';
 import {AutomationButtonReadoutStack} from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 import {
   AutomationButtonHandlePosition,
+  AutomationButtonHandleSize,
   AutomationButtonOrientation,
-  AutomationButtonReadoutPosition,
 } from '../automation-button/automation-button.js';
-import { Direction } from '../../types.js';
+import {Direction} from '../../types.js';
+import {ObcValveHandle} from '../automation-button/valve-handle.js';
 
 export enum DigitalValveVariant {
   regular = 'regular',
   flat = 'flat',
 }
 
-export enum ObcValveHandle {
-  none = 'none',
-  manual = 'manual',
-}
+export {ObcValveHandle};
 
-/** The two-way on/off icon, in both icon slots of the automation button. */
-export function digitalValveIcon(open: boolean): TemplateResult {
+/**
+ * The two-way on/off icon, in both icon slots of the automation button.
+ *
+ * TODO(designer): a static closed valve keeps the closed icon: `twoway-digital-static-closed`
+ * is a plain frame in the icons file, so `download:icons` cannot generate it until it is a component.
+ */
+export function digitalValveIcon(
+  open: boolean,
+  isStatic: boolean = false
+): TemplateResult {
+  if (open && isStatic) {
+    return html` <obi-twoway-digital-static
+        usecsscolor
+        slot="icon"
+        style="display: block; line-height: 0;"
+      ></obi-twoway-digital-static>
+      <obi-twoway-digital-static
+        usecsscolor
+        slot="icon-silhouette"
+        style="display: block; line-height: 0;"
+      ></obi-twoway-digital-static>`;
+  }
   if (open) {
     return html` <obi-twoway-digital-open
         usecsscolor
@@ -51,20 +70,29 @@ export function digitalValveIcon(open: boolean): TemplateResult {
 /** The On / Off status row of a two-way on/off valve. */
 export function digitalValveReadouts(
   open: boolean,
-  showStatus: boolean
+  showStatus: boolean,
+  showStatusIcon: boolean
 ): AutomationButtonReadoutStack[] {
   if (!showStatus) {
     return [];
   }
   return open
-    ? [{type: 'state-on', value: 'On', hasIcon: true}]
-    : [{type: 'state-off', value: 'Off', hasIcon: true}];
+    ? [{type: 'state-on', value: 'On', hasIcon: showStatusIcon}]
+    : [{type: 'state-off', value: 'Off', hasIcon: showStatusIcon}];
 }
 
 /**
  * @ignition-base-height: 82px
  * @ignition-base-width: 66px
  * @ignition-center
+ *
+ * @property flowDirection - Direction the medium flows through the valve; the symbol turns with it.
+ *   When unset, `vertical` picks `down`, otherwise `right`.
+ * @property handle - The handle or actuator drawn on the valve. It sits on top when the flow is to the
+ *   right and turns with the flow.
+ * @property invertHandlePosition - Put the handle on the other side of the valve.
+ * @property handleSize - Size of the handle: `small` draws it from the symbol's centre, for symbols without a button around them.
+ * @availableWhen handleSize handle!=none
  * @stable
  */
 @customElement('obc-digital-valve')
@@ -75,52 +103,17 @@ export class ObcDigitalValve extends ObcAbstractAutomationButton {
    * @deprecated Use `flowDirection`.
    */
   @property({type: Boolean}) vertical: boolean = false;
-  /**
-   * Direction the medium flows through the valve; the symbol turns with it.
-   * When unset, `vertical` picks `down`, otherwise `right`.
-   */
   @property({type: String}) flowDirection: Direction | undefined = undefined;
-  /**
-   * `manual` draws a manual handle. It sits on top when the flow is to the
-   * right and turns with the flow.
-   */
   @property({type: String}) handle: ObcValveHandle = ObcValveHandle.none;
-  /** Put the handle on the other side of the valve. */
   @property({type: Boolean}) invertHandlePosition: boolean = false;
+  @property({type: String}) handleSize: AutomationButtonHandleSize =
+    AutomationButtonHandleSize.regular;
 
   @property({type: String}) variant: DigitalValveVariant =
     DigitalValveVariant.regular;
 
   override get _on(): boolean {
     return this.open;
-  }
-
-  override get _readoutPosition() {
-    if (this.readoutPosition) {
-      return this.readoutPosition;
-    }
-    if (this.invertHandlePosition) {
-      switch (this._flowDirection) {
-        case Direction.Right:
-          return AutomationButtonReadoutPosition.top;
-        case Direction.Left:
-          return AutomationButtonReadoutPosition.bottom;
-        case Direction.Up:
-          return AutomationButtonReadoutPosition.left;
-        case Direction.Down:
-          return AutomationButtonReadoutPosition.right;
-      }
-    }
-    switch (this._flowDirection) {
-      case Direction.Right:
-        return AutomationButtonReadoutPosition.bottom;
-      case Direction.Left:
-        return AutomationButtonReadoutPosition.top;
-      case Direction.Up:
-        return AutomationButtonReadoutPosition.right;
-      case Direction.Down:
-        return AutomationButtonReadoutPosition.left;
-    }
   }
 
   get _flowDirection(): Direction {
@@ -131,6 +124,13 @@ export class ObcDigitalValve extends ObcAbstractAutomationButton {
       return Direction.Down;
     }
     return Direction.Right;
+  }
+
+  protected override get _isVertical(): boolean {
+    return (
+      this._flowDirection === Direction.Up ||
+      this._flowDirection === Direction.Down
+    );
   }
 
   override get _orientation() {
@@ -145,7 +145,7 @@ export class ObcDigitalValve extends ObcAbstractAutomationButton {
   }
 
   override get _handlePosition(): AutomationButtonHandlePosition {
-    if (this.handle === ObcValveHandle.manual) {
+    if (this.handle !== ObcValveHandle.none) {
       if (this.invertHandlePosition) {
         switch (this._flowDirection) {
           case Direction.Right:
@@ -173,37 +173,24 @@ export class ObcDigitalValve extends ObcAbstractAutomationButton {
     return AutomationButtonHandlePosition.none;
   }
 
+  override get _handleSize(): AutomationButtonHandleSize {
+    return this.handleSize;
+  }
+
   override get _handle() {
-    if (this.handle !== ObcValveHandle.manual) {
-      return false;
-    }
-    return html`<svg
-      slot="handle"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M6 8H18"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke="var(--element-active-color)"
-        vector-effect="non-scaling-stroke"
-      />
-      <path
-        d="M12 24V8"
-        stroke="var(--element-active-color)"
-        vector-effect="non-scaling-stroke"
-      />
-    </svg>`;
+    return this.renderValveHandle(this.handle);
   }
 
   override get extraReadouts(): AutomationButtonReadoutStack[] {
-    return digitalValveReadouts(this.open, this.showStatus);
+    return digitalValveReadouts(
+      this.open,
+      this.showStatus,
+      this.showStatusIcon
+    );
   }
 
   override get icon() {
-    return digitalValveIcon(this.open);
+    return digitalValveIcon(this.open, this.static);
   }
 }
 declare global {

@@ -104,6 +104,11 @@ export enum AutomationButtonHandlePosition {
   right = 'right',
 }
 
+export enum AutomationButtonHandleSize {
+  regular = 'regular',
+  small = 'small',
+}
+
 export enum AutomationButtonSelfActuationLine {
   left = 'left',
   right = 'right',
@@ -129,6 +134,8 @@ export enum AutomationButtonSelfActuationLine {
  * @availableWhen direction variant in [double, forward, flatForward]
  * @property hasBadgeSpacer - Badge spacer should be set to true if there is a badge on the same side as the label
  * @property handlePosition - Side of the symbol the handle sits on; `none` hides the handle and the self-actuation line.
+ * @property handleSize - `small` draws the handle from the symbol's centre, for symbols without a button around them.
+ * @availableWhen handleSize handlePosition!=none
  * @property selfActuationLine - Side of the symbol the self-actuation line runs to from the handle. Drawn only on a side next to the handle.
  * @availableWhen selfActuationLine handlePosition!=none
  * @slot badge-top-right - Content projected into the top-right badge position of the button.
@@ -185,6 +192,8 @@ export class ObcAutomationButton extends LitElement {
   @property({type: Boolean}) hasBadgeSpacer: boolean = false;
   @property({type: String}) handlePosition: AutomationButtonHandlePosition =
     AutomationButtonHandlePosition.none;
+  @property({type: String}) handleSize: AutomationButtonHandleSize =
+    AutomationButtonHandleSize.regular;
   @property({type: String})
   selfActuationLine: AutomationButtonSelfActuationLine =
     AutomationButtonSelfActuationLine.none;
@@ -210,7 +219,10 @@ export class ObcAutomationButton extends LitElement {
           static: this.static,
           activated: this.activated,
           ['orientation-' + this.orientation]: true,
-          ['handle-position-' + this.handlePosition]: true
+          ['handle-position-' + this.handlePosition]: true,
+          ['handle-size-' + this.handleSize]: true,
+          'handle-space-box': this.handleSpace === 'box',
+          'handle-space-spacer': this.handleSpace === 'spacer',
         })}
       >
         <div class="icon-touch-target">
@@ -299,6 +311,26 @@ export class ObcAutomationButton extends LitElement {
       return AutomationButtonVariant.regular;
     }
     return this.variant;
+  }
+
+  /**
+   * Where the room for the handle comes from: flat symbols are small enough to
+   * hold it in their touch target, on the readout's side the gap to the readout
+   * makes the room, and elsewhere the button box grows around it.
+   */
+  private get handleSpace(): 'none' | 'spacer' | 'box' {
+    const effectiveVariant = this.effectiveVariant;
+    if (
+      this.handlePosition === AutomationButtonHandlePosition.none ||
+      effectiveVariant === AutomationButtonVariant.flat ||
+      effectiveVariant === AutomationButtonVariant.flatForward
+    ) {
+      return 'none';
+    }
+    return this.showReadoutStack &&
+      String(this.handlePosition) === this.readoutPosition
+      ? 'spacer'
+      : 'box';
   }
 
   private renderIconHolder(): HTMLTemplateResult {
@@ -509,8 +541,10 @@ export class ObcAutomationButton extends LitElement {
     }
     const className = classMap({
       'self-actuation-line': true,
+      flat: this.variant === AutomationButtonVariant.flat,
       mirrored: step === 3,
     });
+    // TODO(designer): the flat line keeps its older shape; the updated design only draws the regular one.
     if (this.variant === AutomationButtonVariant.flat) {
       return html`<svg
         class=${className}
@@ -533,19 +567,19 @@ export class ObcAutomationButton extends LitElement {
     }
     return html`<svg
       class=${className}
-      width="36"
-      height="36"
-      viewBox="0 0 36 36"
+      width="27"
+      height="31"
+      viewBox="0 0 27 31"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
-        d="M35 32.5C35 33.8807 33.8807 35 32.5 35C31.1193 35 30 33.8807 30 32.5C30 31.1193 31.1193 30 32.5 30C33.8807 30 35 31.1193 35 32.5Z"
+        d="M26.5 28C26.5 29.3807 25.3807 30.5 24 30.5C22.6193 30.5 21.5 29.3807 21.5 28C21.5 26.6193 22.6193 25.5 24 25.5C25.3807 25.5 26.5 26.6193 26.5 28Z"
         fill="var(--element-active-color)"
         stroke="var(--border-silhouette-color)"
       />
       <path
-        d="M1.49984 0.767657C1.79405 0.59743 2.13565 0.5 2.5 0.5H3.53704M4.57407 0.5H6.64815M7.68519 0.5H9.75926M10.7963 0.5H12.8704M13.9074 0.5H15.9815M17.0185 0.5H19.0926M20.1296 0.5H22.2037M23.2407 0.5H25.3148M26.3519 0.5H28.4259M29.463 0.5H30.5C30.8644 0.5 31.206 0.597429 31.5002 0.767657M32.2323 1.49984C32.4026 1.79405 32.5 2.13565 32.5 2.5V3.5M32.5 4.5V6.5M32.5 7.5V9.5M32.5 10.5V12.5M32.5 13.5V15.5M32.5 16.5V18.5M32.5 19.5V21.5M32.5 22.5V24.5M32.5 25.5V27.5M32.5 28.5V30.5"
+        d="M0 0.5H1.04762M24 25.5476V23.4524M2.09524 0.5H4.19048M5.2381 0.5H7.33333M8.38095 0.5H10.4762M11.5238 0.5H13.619M14.6667 0.5H16.7619M17.8095 0.5H19.9048M20.9524 0.5H22C22.3644 0.5 22.706 0.597429 23.0002 0.767657M23.7323 1.49984C23.9026 1.79405 24 2.13565 24 2.5V3.54762M24 4.59524V6.69048M24 7.7381V9.83333M24 10.881V12.9762M24 14.0238V16.119M24 17.1667V19.2619M24 20.3095V22.4048"
         stroke="var(--element-active-color)"
       />
     </svg>`;

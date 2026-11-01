@@ -1,4 +1,9 @@
 import {
+  ObcValveHandle,
+  ValveHandleState,
+  valveHandleIcon,
+} from './valve-handle.js';
+import {
   HTMLTemplateResult,
   LitElement,
   TemplateResult,
@@ -10,6 +15,7 @@ import '../automation-button/automation-button.js';
 import {
   AutomationButtonDirection,
   AutomationButtonHandlePosition,
+  AutomationButtonHandleSize,
   AutomationButtonOrientation,
   AutomationButtonPositioning,
   AutomationButtonReadoutPosition,
@@ -80,6 +86,7 @@ export enum AutomationButtonBadgeCommandLocked {
  * and `ObcAbstractAutomationButtonMotorized` extend it further;
  * `obc-analog-valve` and `obc-digital-valve` extend it directly.
  *
+ * @property static - Draws the device as present with its state unknown: a grey button, and the static icon where the device has one.
  * @availableWhen readoutPosition showReadoutStack==true
  * @availableWhen showStatus showReadoutStack==true
  * @availableWhen readoutSize showReadoutStack==true
@@ -97,8 +104,11 @@ export enum AutomationButtonBadgeCommandLocked {
  */
 export class ObcAbstractAutomationButton extends LitElement {
   @property({type: Boolean, attribute: false}) showReadoutStack: boolean = true;
-  @property({type: String}) readoutPosition: AutomationButtonReadoutPosition | undefined = undefined;
+  @property({type: Boolean}) static: boolean = false;
+  @property({type: String}) readoutPosition:
+    AutomationButtonReadoutPosition | undefined = undefined;
   @property({type: Boolean, attribute: false}) showStatus: boolean = true;
+  @property({type: Boolean, attribute: false}) showStatusIcon: boolean = false;
   @property({type: String}) readoutSize: AutomationButtonReadoutStackSize =
     AutomationButtonReadoutStackSize.regular;
   @property({type: String}) tag: string | null = null;
@@ -164,8 +174,28 @@ export class ObcAbstractAutomationButton extends LitElement {
     return AutomationButtonHandlePosition.none;
   }
 
+  get _handleSize(): AutomationButtonHandleSize {
+    return AutomationButtonHandleSize.regular;
+  }
+
   get _handle(): HTMLTemplateResult | false {
     return false;
+  }
+
+  /** The given handle on this device's side, in the colours of its state. */
+  protected renderValveHandle(
+    handle: ObcValveHandle
+  ): HTMLTemplateResult | false {
+    let state = this._on ? ValveHandleState.on : ValveHandleState.off;
+    if (this.static) {
+      state = ValveHandleState.static;
+    }
+    return valveHandleIcon(
+      handle,
+      this._handlePosition,
+      state,
+      this._handleSize
+    );
   }
 
   get _selfActuationLine(): AutomationButtonSelfActuationLine {
@@ -185,7 +215,17 @@ export class ObcAbstractAutomationButton extends LitElement {
     if (this.readoutPosition) {
       return this.readoutPosition;
     }
-    return AutomationButtonReadoutPosition.bottom;
+    return this._isVertical
+      ? AutomationButtonReadoutPosition.left
+      : AutomationButtonReadoutPosition.bottom;
+  }
+
+  /** True when the device sits on a vertical pipe, which puts the default readout on the left. */
+  protected get _isVertical(): boolean {
+    return (
+      this._orientation !== AutomationButtonOrientation.horizontal ||
+      ('vertical' in this && Boolean(this.vertical))
+    );
   }
 
   private getBadgeSpacer(): boolean {
@@ -210,7 +250,9 @@ export class ObcAbstractAutomationButton extends LitElement {
       return bottomLeft || bottomRight;
     } else if (this._readoutPosition === AutomationButtonReadoutPosition.left) {
       return topLeft || bottomLeft;
-    } else if (this._readoutPosition === AutomationButtonReadoutPosition.right) {
+    } else if (
+      this._readoutPosition === AutomationButtonReadoutPosition.right
+    ) {
       return topRight || bottomRight;
     }
     return false;
@@ -310,6 +352,8 @@ export class ObcAbstractAutomationButton extends LitElement {
       .orientation=${this._orientation}
       .hasBadgeSpacer=${this.getBadgeSpacer()}
       .handlePosition=${this._handlePosition}
+      .static=${this.static}
+      .handleSize=${this._handleSize}
       .positioning=${this.positioning}
       .selfActuationLine=${this._selfActuationLine}
       ?activated=${this.activated}
