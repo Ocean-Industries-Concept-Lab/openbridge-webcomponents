@@ -297,6 +297,10 @@
   "application-components-notifications-notification-menu-item--with-one-action": [
     "nested-interactive"
   ],
+  "application-components-top-elements-topbar--asset-picker": [
+    "button-name",
+    "select-name"
+  ],
   "application-components-top-elements-topbar--home-button-icon": [
     "button-name"
   ],
