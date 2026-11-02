@@ -7,7 +7,10 @@ import {
   AutomationButtonOrientation,
   AutomationButtonSelfActuationLine,
 } from '../automation-button/automation-button.js';
-import {digitalValveIcon} from '../digital-valve/digital-valve.js';
+import {
+  digitalValveIcon,
+  flowHandlePosition,
+} from '../digital-valve/digital-valve.js';
 import {Direction} from '../../types.js';
 import {ObcValveHandle} from '../automation-button/valve-handle.js';
 
@@ -106,28 +109,7 @@ export class ObcPressureValveBase extends ObcDirectionValveBase {
   }
 
   override get _handlePosition(): AutomationButtonHandlePosition {
-    if (this.invertHandlePosition) {
-      switch (this.flowDirection) {
-        case Direction.Up:
-          return AutomationButtonHandlePosition.right;
-        case Direction.Down:
-          return AutomationButtonHandlePosition.left;
-        case Direction.Left:
-          return AutomationButtonHandlePosition.top;
-        default:
-          return AutomationButtonHandlePosition.bottom;
-      }
-    }
-    switch (this.flowDirection) {
-      case Direction.Up:
-        return AutomationButtonHandlePosition.left;
-      case Direction.Down:
-        return AutomationButtonHandlePosition.right;
-      case Direction.Left:
-        return AutomationButtonHandlePosition.bottom;
-      default:
-        return AutomationButtonHandlePosition.top;
-    }
+    return flowHandlePosition(this.flowDirection, this.invertHandlePosition);
   }
 
   override get _selfActuationLine(): AutomationButtonSelfActuationLine {

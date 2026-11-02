@@ -81,6 +81,35 @@ export function digitalValveReadouts(
     : [{type: 'state-off', value: 'Off', hasIcon: showStatusIcon}];
 }
 
+/** The side of a two-way valve its handle sits on: on top with flow to the right, turning with the flow. */
+export function flowHandlePosition(
+  direction: Direction,
+  inverted: boolean
+): AutomationButtonHandlePosition {
+  if (inverted) {
+    switch (direction) {
+      case Direction.Right:
+        return AutomationButtonHandlePosition.bottom;
+      case Direction.Left:
+        return AutomationButtonHandlePosition.top;
+      case Direction.Up:
+        return AutomationButtonHandlePosition.right;
+      case Direction.Down:
+        return AutomationButtonHandlePosition.left;
+    }
+  }
+  switch (direction) {
+    case Direction.Right:
+      return AutomationButtonHandlePosition.top;
+    case Direction.Left:
+      return AutomationButtonHandlePosition.bottom;
+    case Direction.Up:
+      return AutomationButtonHandlePosition.left;
+    case Direction.Down:
+      return AutomationButtonHandlePosition.right;
+  }
+}
+
 /**
  * @ignition-base-height: 82px
  * @ignition-base-width: 66px
@@ -147,29 +176,7 @@ export class ObcDigitalValve extends ObcAbstractAutomationButton {
 
   override get _handlePosition(): AutomationButtonHandlePosition {
     if (this.handle !== ObcValveHandle.none) {
-      if (this.invertHandlePosition) {
-        switch (this._flowDirection) {
-          case Direction.Right:
-            return AutomationButtonHandlePosition.bottom;
-          case Direction.Left:
-            return AutomationButtonHandlePosition.top;
-          case Direction.Up:
-            return AutomationButtonHandlePosition.right;
-          case Direction.Down:
-            return AutomationButtonHandlePosition.left;
-        }
-      } else {
-        switch (this._flowDirection) {
-          case Direction.Right:
-            return AutomationButtonHandlePosition.top;
-          case Direction.Left:
-            return AutomationButtonHandlePosition.bottom;
-          case Direction.Up:
-            return AutomationButtonHandlePosition.left;
-          case Direction.Down:
-            return AutomationButtonHandlePosition.right;
-        }
-      }
+      return flowHandlePosition(this._flowDirection, this.invertHandlePosition);
     }
     return AutomationButtonHandlePosition.none;
   }
