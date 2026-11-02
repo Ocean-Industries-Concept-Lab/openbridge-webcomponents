@@ -206,6 +206,12 @@ A valve can carry a handle or actuator next to its symbol: `obc-digital-valve` t
 - **The art and the actuators are its own** (`norvar-valve-art.ts`, `NorvarValveActuator`), so they stay out of `ObcValveHandle` and of the standard valves.
 - **The triangles show the alarm, the middle field the position.** `progress` draws the middle position, which the design file calls `NORVAR-valve-caution`.
 
+`norvar-water-station` and `norvar-wastewater-station` follow the same rule and take their symbols from the same report. They share `ObcNorvarStationBase` and `norvar-station-art.ts`.
+
+- **The shape follows the network:** water is square, wastewater round, and the symbols are drawn for that shape.
+- **The state colours the symbol, not the button:** `state` gives black, green or grey, `alert` red. There is no state row. `flat` is the default, like `norvar-valve`.
+- **`static` shows the medium:** light blue for water; brown or grey for wastewater, chosen by `medium`.
+
 ## Alert frame properties
 
 The abstract button base, `obc-automation-tank`, the specialty-tank base and `obc-transmitter` take one alert-frame API under the same names: the gate (`alert`, or `hasAlert` on the transmitter), `alertFrameType`, `alertFrameThickness`, `alertFrameStatus`, `alertFrameMode`, `showAlertCategoryIcon` and `showAlertIcon`, and the `alert-icon`, `alert-label` and `alert-timer` slots for the frame's flap, which the abstract button base does not forward yet. `obc-accordion-card` takes the same set behind `hasAlert`.

@@ -38,19 +38,19 @@ export interface NorvarValveSymbolState {
   isStatic: boolean;
 }
 
-interface Paint {
+export interface Paint {
   line: string;
   fill: string;
   border: string;
 }
 
-const ON_PAINT: Paint = {
+export const ON_PAINT: Paint = {
   line: 'var(--automation-symbol-on-line-color)',
   fill: 'var(--automation-symbol-on-background-color)',
   border: 'var(--automation-symbol-on-border-color)',
 };
 
-const STATIC_PAINT: Paint = {
+export const STATIC_PAINT: Paint = {
   line: 'var(--automation-symbol-static-line-color)',
   fill: 'var(--automation-symbol-static-background-color)',
   border: 'var(--automation-symbol-static-border-color)',
