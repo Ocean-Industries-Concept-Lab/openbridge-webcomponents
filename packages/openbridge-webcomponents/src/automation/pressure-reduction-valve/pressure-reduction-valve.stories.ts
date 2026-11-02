@@ -1,4 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/web-components-vite';
+import {html} from 'lit';
 import {ObcPressureReductionValve} from './pressure-reduction-valve.js';
 import {DirectionValveVariant} from '../direction-valve-shared/direction-valve-shared.js';
 import {AutomationButtonReadoutStackSize} from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
@@ -9,7 +10,7 @@ import {argTypesAbstractAutomationButtonPassiveRound} from '../automation-button
 
 const meta: Meta<typeof ObcPressureReductionValve> = {
   title: 'Automation/Automation Devices/Pressure Reduction Valve',
-  tags: ['autodocs', 'experimental'],
+  tags: ['experimental'],
   component: 'obc-pressure-reduction-valve',
   decorators: [crossDecorator],
   args: {
@@ -90,4 +91,27 @@ export const FlatFlowDown: Story = {
     variant: DirectionValveVariant.flat,
     flowDirection: Direction.Down,
   },
+};
+
+export const FlatWithProgress: Story = {
+  args: {
+    variant: DirectionValveVariant.flat,
+    progress: true,
+  },
+};
+
+export const SizeClasses: Story = {
+  render: () => html`
+    <div style="display: flex; gap: 200px; padding: 120px;">
+      ${['medium', 'large', 'xl'].map(
+        (size) => html`
+          <div class="obc-component-size-${size}">
+            <obc-pressure-reduction-valve
+              tag=${size}
+            ></obc-pressure-reduction-valve>
+          </div>
+        `
+      )}
+    </div>
+  `,
 };

@@ -384,7 +384,29 @@ obc-alert-frame:has(> .handle-space-box.handle-position-right) {
 .self-actuation-line {
   position: absolute;
   left: 0;
-  bottom: -3px; /* puts the 31px svg's end dot, 3px above its bottom edge, on the icon centre */
+  bottom: -3px; /* puts the 31px line's end dot, 3px above its bottom edge, on the icon centre */
+
+  /* grows with the button radius: the actuator moves out with it, and the dot stays on the icon centre */
+  &:not(.flat) {
+    --line-growth: calc(
+      (var(--automation-components-button-new-visual-target-round) - 36px) / 2
+    );
+
+    width: calc(27px + var(--line-growth));
+    height: calc(31px + var(--line-growth));
+  }
+
+  .self-actuation-run {
+    display: block; /* an inline svg leaves a gap under it, which would move the dot */
+    width: 100%;
+    height: 100%;
+  }
+
+  .self-actuation-dot {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+  }
 
   &.mirrored {
     transform: scaleX(-1);

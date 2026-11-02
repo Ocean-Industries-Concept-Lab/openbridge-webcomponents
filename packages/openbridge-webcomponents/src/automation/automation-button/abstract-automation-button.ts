@@ -170,6 +170,11 @@ export class ObcAbstractAutomationButton extends LitElement {
     return [];
   }
 
+  /** Name of a device that can render with no text of its own. */
+  get _accessibleName(): string | null {
+    return null;
+  }
+
   get _handlePosition(): AutomationButtonHandlePosition {
     return AutomationButtonHandlePosition.none;
   }
@@ -334,6 +339,7 @@ export class ObcAbstractAutomationButton extends LitElement {
       }
       .readouts=${readouts}
       .tag=${this.tag}
+      .accessibleName=${this._accessibleName}
       .showReadoutStack=${this.showReadoutStack}
       .readoutPosition=${this._readoutPosition}
       .readoutSize=${this.readoutSize}

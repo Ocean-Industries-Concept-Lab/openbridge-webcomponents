@@ -43,6 +43,10 @@ const DISC =
  */
 @customElement('obc-non-return-valve')
 export class ObcNonReturnValve extends ObcDirectionValveBase {
+  protected override get equipmentName(): string {
+    return 'Non-return valve';
+  }
+
   /** The icon is not symmetric, so it turns through all four directions itself. */
   override get _orientation(): AutomationButtonOrientation {
     return AutomationButtonOrientation.horizontal;

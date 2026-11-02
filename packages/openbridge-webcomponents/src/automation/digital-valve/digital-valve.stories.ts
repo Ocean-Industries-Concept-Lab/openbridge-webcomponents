@@ -212,3 +212,21 @@ export const SmallHandles: Story = {
     </div>
   `,
 };
+
+export const LetterHandlesInSizeClasses: Story = {
+  render: () => html`
+    <div style="display: flex; gap: 200px; padding: 120px;">
+      ${['medium', 'large', 'xl'].map(
+        (size) => html`
+          <div class="obc-component-size-${size}">
+            <obc-digital-valve
+              open
+              tag=${size}
+              handle=${ObcValveHandle.solenoid}
+            ></obc-digital-valve>
+          </div>
+        `
+      )}
+    </div>
+  `,
+};

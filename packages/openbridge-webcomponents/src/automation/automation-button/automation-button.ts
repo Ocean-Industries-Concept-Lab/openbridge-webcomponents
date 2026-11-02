@@ -2,6 +2,7 @@ import {HTMLTemplateResult, LitElement, html, nothing, unsafeCSS} from 'lit';
 import {property} from 'lit/decorators.js';
 import componentStyle from './automation-button.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
+import {ifDefined} from 'lit/directives/if-defined.js';
 import '../../icons/icon-forward.js';
 import '../../icons/icon-forward-fast.js';
 import '../../icons/icon-forward-stopped.js';
@@ -138,6 +139,7 @@ export enum AutomationButtonSelfActuationLine {
  * @availableWhen handleSize handlePosition!=none
  * @property selfActuationLine - Side of the symbol the self-actuation line runs to from the handle. Drawn only on a side next to the handle.
  * @availableWhen selfActuationLine handlePosition!=none
+ * @property accessibleName - Name for assistive technology when the button shows no text of its own, such as a symbol without a tag.
  * @slot badge-top-right - Content projected into the top-right badge position of the button.
  * @slot badge-top-left - Content projected into the top-left badge position of the button.
  * @slot badge-bottom-left - Content projected into the bottom-left badge position of the button.
@@ -198,6 +200,8 @@ export class ObcAutomationButton extends LitElement {
   selfActuationLine: AutomationButtonSelfActuationLine =
     AutomationButtonSelfActuationLine.none;
 
+  @property({type: String}) accessibleName: string | null = null;
+
   override render() {
     const effectiveVariant = this.effectiveVariant;
 
@@ -206,6 +210,7 @@ export class ObcAutomationButton extends LitElement {
 
     return this.wrapContent(html`
       <button
+        aria-label=${ifDefined(this.accessibleName ?? undefined)}
         class=${classMap({
           wrapper: true,
           ['positioning-' + this.positioning]: true,
@@ -539,13 +544,14 @@ export class ObcAutomationButton extends LitElement {
     if (step !== 1 && step !== 3) {
       return nothing;
     }
+    const flat = this.effectiveVariant === AutomationButtonVariant.flat;
     const className = classMap({
       'self-actuation-line': true,
-      flat: this.variant === AutomationButtonVariant.flat,
+      flat,
       mirrored: step === 3,
     });
     // TODO(designer): the flat line keeps its older shape; the updated design only draws the regular one.
-    if (this.variant === AutomationButtonVariant.flat) {
+    if (flat) {
       return html`<svg
         class=${className}
         width="20"
@@ -565,24 +571,35 @@ export class ObcAutomationButton extends LitElement {
         />
       </svg>`;
     }
-    return html`<svg
-      class=${className}
-      width="27"
-      height="31"
-      viewBox="0 0 27 31"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M26.5 28C26.5 29.3807 25.3807 30.5 24 30.5C22.6193 30.5 21.5 29.3807 21.5 28C21.5 26.6193 22.6193 25.5 24 25.5C25.3807 25.5 26.5 26.6193 26.5 28Z"
-        fill="var(--element-active-color)"
-        stroke="var(--border-silhouette-color)"
-      />
-      <path
-        d="M0 0.5H1.04762M24 25.5476V23.4524M2.09524 0.5H4.19048M5.2381 0.5H7.33333M8.38095 0.5H10.4762M11.5238 0.5H13.619M14.6667 0.5H16.7619M17.8095 0.5H19.9048M20.9524 0.5H22C22.3644 0.5 22.706 0.597429 23.0002 0.767657M23.7323 1.49984C23.9026 1.79405 24 2.13565 24 2.5V3.54762M24 4.59524V6.69048M24 7.7381V9.83333M24 10.881V12.9762M24 14.0238V16.119M24 17.1667V19.2619M24 20.3095V22.4048"
-        stroke="var(--element-active-color)"
-      />
-    </svg>`;
+    return html`<div class=${className}>
+      <svg
+        class="self-actuation-run"
+        viewBox="0 0 27 31"
+        preserveAspectRatio="none"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M0 0.5H1.04762M24 25.5476V23.4524M2.09524 0.5H4.19048M5.2381 0.5H7.33333M8.38095 0.5H10.4762M11.5238 0.5H13.619M14.6667 0.5H16.7619M17.8095 0.5H19.9048M20.9524 0.5H22C22.3644 0.5 22.706 0.597429 23.0002 0.767657M23.7323 1.49984C23.9026 1.79405 24 2.13565 24 2.5V3.54762M24 4.59524V6.69048M24 7.7381V9.83333M24 10.881V12.9762M24 14.0238V16.119M24 17.1667V19.2619M24 20.3095V22.4048"
+          stroke="var(--element-active-color)"
+          vector-effect="non-scaling-stroke"
+        />
+      </svg>
+      <svg
+        class="self-actuation-dot"
+        width="6"
+        height="6"
+        viewBox="21 25 6 6"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M26.5 28C26.5 29.3807 25.3807 30.5 24 30.5C22.6193 30.5 21.5 29.3807 21.5 28C21.5 26.6193 22.6193 25.5 24 25.5C25.3807 25.5 26.5 26.6193 26.5 28Z"
+          fill="var(--element-active-color)"
+          stroke="var(--border-silhouette-color)"
+        />
+      </svg>
+    </div>`;
   }
 }
 

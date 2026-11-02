@@ -194,6 +194,7 @@ A valve can carry a handle or actuator next to its symbol: `obc-digital-valve` t
 - **The room for a handle comes from one place** (`handleSpace` in `automation-button.ts`): flat symbols hold it in the touch target, on the readout's side the badge spacer holds it, and elsewhere the button box grows around it. A point button keeps the symbol on the anchor in all three.
 - **`handleSize`** lives on the subclasses that have a handle. `small` puts the stem's end on the symbol's centre, as the design draws it on a bare symbol.
 - **The default readout is below the symbol, or to its left on a vertical pipe** (`_isVertical`). Three-way valves put it on the side without a port.
+- **The directional valves show no state row:** they act on their own, so the system has no open or closed state to report. Without a tag their button takes its name from `equipmentName`.
 - **`--automation-symbol-*-line-color`** is hand-written in `manual.css` until the next palette export carries it; remove it there then.
 
 ## Alert frame properties

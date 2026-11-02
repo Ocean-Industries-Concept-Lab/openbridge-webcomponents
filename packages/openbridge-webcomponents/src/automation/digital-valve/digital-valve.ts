@@ -91,6 +91,7 @@ export function digitalValveReadouts(
  * @property handle - The handle or actuator drawn on the valve. It sits on top when the flow is to the
  *   right and turns with the flow.
  * @property invertHandlePosition - Put the handle on the other side of the valve.
+ * @availableWhen invertHandlePosition handle!=none
  * @property handleSize - Size of the handle: `small` draws it from the symbol's centre, for symbols without a button around them.
  * @availableWhen handleSize handle!=none
  * @stable

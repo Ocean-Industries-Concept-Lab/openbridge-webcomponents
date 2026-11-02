@@ -9,7 +9,7 @@ import {argTypesAbstractAutomationButtonPassiveRound} from '../automation-button
 
 const meta: Meta<typeof ObcNonReturnValve> = {
   title: 'Automation/Automation Devices/Non Return Valve',
-  tags: ['autodocs', 'experimental'],
+  tags: ['experimental'],
   component: 'obc-non-return-valve',
   decorators: [crossDecorator],
   args: {

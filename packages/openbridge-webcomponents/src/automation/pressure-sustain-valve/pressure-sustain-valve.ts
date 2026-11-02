@@ -32,6 +32,10 @@ import {ObcPressureValveBase} from '../direction-valve-shared/direction-valve-sh
  */
 @customElement('obc-pressure-sustain-valve')
 export class ObcPressureSustainValve extends ObcPressureValveBase {
+  protected override get equipmentName(): string {
+    return 'Pressure sustain valve';
+  }
+
   protected override get sensesDownstream(): boolean {
     return false;
   }

@@ -86,7 +86,7 @@ function letter(
     dominant-baseline="central"
     fill=${color}
     transform="rotate(${UPRIGHT_ANGLE[position] ?? 0} 12 8)"
-    style="font-family: var(--global-typography-font-family); font-size: var(--global-typography-general-xs-font-size); font-weight: var(--global-typography-general-xs-font-weight-semibold);"
+    style="font-family: var(--global-typography-font-family); font-size: var(--typography-primitives-font-size-071); font-weight: var(--typography-primitives-font-weight-600);"
   >
     ${text}
   </text>`;

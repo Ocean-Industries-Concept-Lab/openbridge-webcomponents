@@ -9,7 +9,7 @@ import {argTypesAbstractAutomationButtonPassiveRound} from '../automation-button
 
 const meta: Meta<typeof ObcPressureSustainValve> = {
   title: 'Automation/Automation Devices/Pressure Sustain Valve',
-  tags: ['autodocs', 'experimental'],
+  tags: ['experimental'],
   component: 'obc-pressure-sustain-valve',
   decorators: [crossDecorator],
   args: {

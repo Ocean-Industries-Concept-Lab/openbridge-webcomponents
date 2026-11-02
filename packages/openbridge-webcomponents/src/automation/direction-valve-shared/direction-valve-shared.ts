@@ -7,10 +7,7 @@ import {
   AutomationButtonOrientation,
   AutomationButtonSelfActuationLine,
 } from '../automation-button/automation-button.js';
-import {
-  digitalValveIcon,
-  digitalValveReadouts,
-} from '../digital-valve/digital-valve.js';
+import {digitalValveIcon} from '../digital-valve/digital-valve.js';
 import {Direction} from '../../types.js';
 import {ObcValveHandle} from '../automation-button/valve-handle.js';
 
@@ -62,8 +59,18 @@ export class ObcDirectionValveBase extends ObcAbstractAutomationButton {
     }
   }
 
+  /** The valve acts on its own, so the system has no open or closed state to show. */
   override get extraReadouts(): AutomationButtonReadoutStack[] {
-    return digitalValveReadouts(true, false, false);
+    return [];
+  }
+
+  /** Name of the valve for assistive technology while no tag is visible. */
+  protected get equipmentName(): string {
+    throw new Error('"equipmentName" must be implemented in the subclass');
+  }
+
+  override get _accessibleName(): string | null {
+    return this.showReadoutStack && this.tag ? null : this.equipmentName;
   }
 
   override get icon() {
