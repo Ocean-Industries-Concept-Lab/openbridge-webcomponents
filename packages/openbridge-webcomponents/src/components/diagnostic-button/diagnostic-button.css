@@ -1,0 +1,7 @@
+:host {
+  display: inline-flex;
+}
+
+.item {
+  flex-grow: 1; /* fills the width a parent gives the host, as the item does inside the alert button */
+}
