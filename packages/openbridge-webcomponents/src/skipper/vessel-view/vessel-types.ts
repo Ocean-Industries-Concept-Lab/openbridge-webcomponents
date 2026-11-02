@@ -279,7 +279,7 @@ function vesselLengthDimLine(sideViewParams: getSideViewParams) {
         <rect width="260" height="16"/>
         <g id="vessel-diagram/distance">
           <path id="line" d="M12.5 13L17.5 15.8868V10.1132L12.5 13ZM247.5 13L242.5 10.1132V15.8868L247.5 13ZM17 13V13.5L243 13.5V13V12.5L17 12.5V13Z" fill="${Colors.elementSymbolColor}"/>
-          <text id="00.0 m" transform="translate(123.5 -4)" fill="${Colors.elementActiveColor}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" letter-spacing="0px"><tspan x="0.0546875" y="12.656">${sideViewParams.vesselLengthComputed}</tspan></text>
+          <text id="00.0 m" transform="translate(123.5 -4)" fill="${Colors.elementActiveColor}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" letter-spacing="0px"><tspan x="0.0546875" y="12.656">${sideViewParams.vesselLengthComputed} m</tspan></text>
         </g>
       </g>
     </svg>
@@ -395,14 +395,14 @@ function sensorHeights(sensorHeightsParams: getSideViewParams) {
           !sensorHeightsParams.toggleSLAndDLSensor
             ? svg`
           <g id="top">
-            <text id="A: 14.7" fill="${Colors.elementActiveColor}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" letter-spacing="0px"><tspan x="1" y="13.656">A: ${sensorHeightsParams.sensorHeightOverKeel}</tspan></text>
+            <text id="A: 14.7" fill="${Colors.elementActiveColor}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" letter-spacing="0px"><tspan x="1" y="13.656">A: ${sensorHeightsParams.sensorHeightOverKeel} m</tspan></text>
           </g>
           `
             : nothing
         }
         <g id="bottom">
-          <text id="Draft: 2.1" fill="${Colors.elementActiveColor}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" letter-spacing="0px"><tspan x="1" y="131.656">Draft: ${sensorHeightsParams.vesselDraftLine}</tspan></text>
-          <text id="Keel: 0" fill="${Colors.elementActiveColor}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" letter-spacing="0px"><tspan x="1" y="143.656">Keel: 0</tspan></text>
+          <text id="Draft: 2.1" fill="${Colors.elementActiveColor}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" letter-spacing="0px"><tspan x="1" y="131.656">Draft: ${sensorHeightsParams.vesselDraftLine} m</tspan></text>
+          <text id="Keel: 0" fill="${Colors.elementActiveColor}" style="white-space: pre" xml:space="preserve" font-family="Noto Sans" font-size="12" letter-spacing="0px"><tspan x="1" y="143.656">Keel: 0 m</tspan></text>
         </g>
         <g id="below">
          ${

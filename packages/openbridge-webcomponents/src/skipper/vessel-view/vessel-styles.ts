@@ -6,6 +6,7 @@ export const vesselStyles = css`
     display: flex;
     align-items: center;
     justify-content: center;
+    margin: auto;
     // border: 1px solid green;
   }
 
@@ -62,26 +63,25 @@ export const vesselStyles = css`
 
   .both-views {
     position: relative;
-    left: -5%;
-    width: auto;
+    // left: -5%;
+    width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
   }
 
-  .both-views-inner {
-    transform: scale(0.69);
-    transform-origin: center;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  .side-view-container {
+    // padding-right: 10%;
+    // border: 1px solid blue;
+    // width: 100%;
+    // position: relative;
   }
 
   .side-view {
     //background-color: yellow;
     position: relative;
+    left: -30px;
   }
 
   .side-view svg {
@@ -134,7 +134,14 @@ export const vesselStyles = css`
 
   .top-down-view {
     position: relative;
+    left: -30px;
+    // left: -5%;
     //background-color: yellow;
+  }
+
+  .top-down-only > div {
+    position: relative;
+    left: 0px;
   }
 
   .top-down-view svg {

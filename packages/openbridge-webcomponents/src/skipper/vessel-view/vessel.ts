@@ -472,13 +472,13 @@ export class Vessel extends LitElement {
       return SIDE_VIEW;
     }
     if (this.viewMode === ViewType.TOP) {
-      return TOP_DOWN_VIEW;
+      return html`<div class="top-down-only">${TOP_DOWN_VIEW}</div>`;
     }
 
     return html`
       <div class="both-views">
-        <div>${SIDE_VIEW}</div>
-        <div class="top-down-view">${TOP_DOWN_VIEW}</div>
+        <div class="side-view-container">${SIDE_VIEW}</div>
+        <div class="top-down-view-container">${TOP_DOWN_VIEW}</div>
       </div>
     `;
   }
