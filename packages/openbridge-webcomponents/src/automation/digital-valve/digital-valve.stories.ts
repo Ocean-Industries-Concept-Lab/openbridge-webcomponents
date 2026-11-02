@@ -172,14 +172,14 @@ export const HandleColors: Story = {
     <div style="display: grid; gap: 24px;">
       ${handleStateRows.map(
         ({open, isStatic}) =>
-          html`<div style="display: flex; gap: 32px;">
+          html`<div style="display: flex; gap: 16px;">
             ${allHandleValues.map(
               (handle) =>
                 html`<obc-digital-valve
                   positioning="button"
                   .open=${open}
                   .static=${isStatic}
-                  .showReadoutStack=${false}
+                  tag=${handle}
                   .handle=${handle}
                 ></obc-digital-valve>`
             )}
@@ -194,7 +194,7 @@ export const SmallHandles: Story = {
     <div style="display: grid; gap: 24px;">
       ${handleStateRows.map(
         ({open, isStatic}) =>
-          html`<div style="display: flex; gap: 8px;">
+          html`<div style="display: flex; gap: 16px;">
             ${allHandleValues.map(
               (handle) =>
                 html`<obc-digital-valve
@@ -202,7 +202,7 @@ export const SmallHandles: Story = {
                   .variant=${DigitalValveVariant.flat}
                   .open=${open}
                   .static=${isStatic}
-                  .showReadoutStack=${false}
+                  tag=${handle}
                   .handle=${handle}
                   .handleSize=${AutomationButtonHandleSize.small}
                 ></obc-digital-valve>`
