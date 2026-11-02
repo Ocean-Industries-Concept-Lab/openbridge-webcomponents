@@ -6,7 +6,10 @@ import {
   digitalValveReadouts,
   flowHandlePosition,
 } from '../digital-valve/digital-valve.js';
-import {ObcDirectionValveBase} from '../direction-valve-shared/direction-valve-shared.js';
+import {
+  DirectionValveVariant,
+  ObcDirectionValveBase,
+} from '../direction-valve-shared/direction-valve-shared.js';
 import {
   NorvarValveActuator,
   NorvarValvePosition,
@@ -40,6 +43,7 @@ export {NorvarValveActuator};
  * Use where a diagram has to follow the symbols of the report. Everywhere else
  * use `obc-digital-valve`.
  *
+ * @property variant - `flat` draws only the symbol, `regular` adds the round button.
  * @property open - Whether the valve is open.
  * @property actuator - The operating device: `manual` (HV), `motor` (MV), `pneumatic` (PV), `hydraulic` (VH), `solenoid` (SV) or `control` (RV).
  * @property invertHandlePosition - Puts the actuator on the opposite side of the pipe.
@@ -51,6 +55,8 @@ export {NorvarValveActuator};
  */
 @customElement('norvar-valve')
 export class ObcNorvarValve extends ObcDirectionValveBase {
+  @property({type: String}) override variant: DirectionValveVariant =
+    DirectionValveVariant.flat;
   @property({type: Boolean}) open: boolean = false;
   @property({type: String}) actuator: NorvarValveActuator =
     NorvarValveActuator.none;

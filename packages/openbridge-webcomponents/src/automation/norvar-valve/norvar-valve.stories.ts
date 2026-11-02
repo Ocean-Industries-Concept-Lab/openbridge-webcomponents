@@ -43,6 +43,8 @@ export const Alarm: Story = {args: {alert: true}};
 
 export const Static: Story = {args: {static: true}};
 
+export const Regular: Story = {args: {open: true, variant: 'regular'}};
+
 const states = [
   {label: 'Closed', open: false, alert: false, progress: false},
   {label: 'Open', open: true, alert: false, progress: false},
@@ -64,7 +66,6 @@ export const AllActuators: Story = {
               (actuator) =>
                 html`<norvar-valve
                   positioning="button"
-                  variant="flat"
                   .open=${open}
                   .alert=${alert}
                   .progress=${progress}
