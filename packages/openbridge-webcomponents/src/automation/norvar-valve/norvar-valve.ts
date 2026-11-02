@@ -2,10 +2,7 @@ import {property} from 'lit/decorators.js';
 import {customElement} from '../../decorator.js';
 import {AutomationButtonReadoutStack} from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 import {AutomationButtonHandlePosition} from '../automation-button/automation-button.js';
-import {
-  digitalValveReadouts,
-  flowHandlePosition,
-} from '../digital-valve/digital-valve.js';
+import {flowHandlePosition} from '../digital-valve/digital-valve.js';
 import {
   DirectionValveVariant,
   ObcDirectionValveBase,
@@ -71,11 +68,12 @@ export class ObcNorvarValve extends ObcDirectionValveBase {
   }
 
   override get extraReadouts(): AutomationButtonReadoutStack[] {
-    return digitalValveReadouts(
-      this.open,
-      this.showStatus,
-      this.showStatusIcon
-    );
+    if (!this.showStatus) {
+      return [];
+    }
+    return this.open
+      ? [{type: 'state-on', value: 'Open', hasIcon: this.showStatusIcon}]
+      : [{type: 'state-off', value: 'Closed', hasIcon: this.showStatusIcon}];
   }
 
   override get _handlePosition(): AutomationButtonHandlePosition {
