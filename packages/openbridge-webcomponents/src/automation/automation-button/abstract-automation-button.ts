@@ -1,11 +1,25 @@
-import {LitElement, TemplateResult, html, nothing} from 'lit';
+import {
+  ObcValveHandle,
+  ValveHandleState,
+  valveHandleIcon,
+} from './valve-handle.js';
+import {
+  HTMLTemplateResult,
+  LitElement,
+  TemplateResult,
+  html,
+  nothing,
+} from 'lit';
 import {property, queryAssignedElements} from 'lit/decorators.js';
 import '../automation-button/automation-button.js';
 import {
   AutomationButtonDirection,
+  AutomationButtonHandlePosition,
+  AutomationButtonHandleSize,
   AutomationButtonOrientation,
   AutomationButtonPositioning,
   AutomationButtonReadoutPosition,
+  AutomationButtonSelfActuationLine,
   AutomationButtonState,
   AutomationButtonVariant,
 } from '../automation-button/automation-button.js';
@@ -72,6 +86,7 @@ export enum AutomationButtonBadgeCommandLocked {
  * and `ObcAbstractAutomationButtonMotorized` extend it further;
  * `obc-analog-valve` and `obc-digital-valve` extend it directly.
  *
+ * @property static - Draws the device as present with its state unknown: a grey button, and the static icon where the device has one.
  * @availableWhen readoutPosition showReadoutStack==true
  * @availableWhen showStatus showReadoutStack==true
  * @availableWhen readoutSize showReadoutStack==true
@@ -89,9 +104,11 @@ export enum AutomationButtonBadgeCommandLocked {
  */
 export class ObcAbstractAutomationButton extends LitElement {
   @property({type: Boolean, attribute: false}) showReadoutStack: boolean = true;
-  @property({type: String}) readoutPosition: AutomationButtonReadoutPosition =
-    AutomationButtonReadoutPosition.bottom;
+  @property({type: Boolean}) static: boolean = false;
+  @property({type: String}) readoutPosition:
+    AutomationButtonReadoutPosition | undefined = undefined;
   @property({type: Boolean, attribute: false}) showStatus: boolean = true;
+  @property({type: Boolean, attribute: false}) showStatusIcon: boolean = false;
   @property({type: String}) readoutSize: AutomationButtonReadoutStackSize =
     AutomationButtonReadoutStackSize.regular;
   @property({type: String}) tag: string | null = null;
@@ -153,6 +170,43 @@ export class ObcAbstractAutomationButton extends LitElement {
     return [];
   }
 
+  /** Name of a device that can render with no text of its own. */
+  get _accessibleName(): string | null {
+    return null;
+  }
+
+  get _handlePosition(): AutomationButtonHandlePosition {
+    return AutomationButtonHandlePosition.none;
+  }
+
+  get _handleSize(): AutomationButtonHandleSize {
+    return AutomationButtonHandleSize.regular;
+  }
+
+  get _handle(): HTMLTemplateResult | false {
+    return false;
+  }
+
+  /** The given handle on this device's side, in the colours of its state. */
+  protected renderValveHandle(
+    handle: ObcValveHandle
+  ): HTMLTemplateResult | false {
+    let state = this._on ? ValveHandleState.on : ValveHandleState.off;
+    if (this.static) {
+      state = ValveHandleState.static;
+    }
+    return valveHandleIcon(
+      handle,
+      this._handlePosition,
+      state,
+      this._handleSize
+    );
+  }
+
+  get _selfActuationLine(): AutomationButtonSelfActuationLine {
+    return AutomationButtonSelfActuationLine.none;
+  }
+
   @queryAssignedElements({slot: 'badge-top-right'})
   badgeTopRight!: HTMLElement[];
   @queryAssignedElements({slot: 'badge-top-left'})
@@ -161,6 +215,23 @@ export class ObcAbstractAutomationButton extends LitElement {
   badgeBottomLeft!: HTMLElement[];
   @queryAssignedElements({slot: 'badge-bottom-right'})
   badgeBottomRight!: HTMLElement[];
+
+  protected get _readoutPosition(): AutomationButtonReadoutPosition {
+    if (this.readoutPosition) {
+      return this.readoutPosition;
+    }
+    return this._isVertical
+      ? AutomationButtonReadoutPosition.left
+      : AutomationButtonReadoutPosition.bottom;
+  }
+
+  /** True when the device sits on a vertical pipe, which puts the default readout on the left. */
+  protected get _isVertical(): boolean {
+    return (
+      this._orientation !== AutomationButtonOrientation.horizontal ||
+      ('vertical' in this && Boolean(this.vertical))
+    );
+  }
 
   private getBadgeSpacer(): boolean {
     if (!this.showReadoutStack) {
@@ -176,15 +247,17 @@ export class ObcAbstractAutomationButton extends LitElement {
     const bottomRight =
       this.badgeBottomRight.length > 0 ||
       this.getBadgeCommandLockedType() !== null;
-    if (this.readoutPosition === AutomationButtonReadoutPosition.top) {
+    if (this._readoutPosition === AutomationButtonReadoutPosition.top) {
       return topRight || topLeft;
     } else if (
-      this.readoutPosition === AutomationButtonReadoutPosition.bottom
+      this._readoutPosition === AutomationButtonReadoutPosition.bottom
     ) {
       return bottomLeft || bottomRight;
-    } else if (this.readoutPosition === AutomationButtonReadoutPosition.left) {
+    } else if (this._readoutPosition === AutomationButtonReadoutPosition.left) {
       return topLeft || bottomLeft;
-    } else if (this.readoutPosition === AutomationButtonReadoutPosition.right) {
+    } else if (
+      this._readoutPosition === AutomationButtonReadoutPosition.right
+    ) {
       return topRight || bottomRight;
     }
     return false;
@@ -266,8 +339,9 @@ export class ObcAbstractAutomationButton extends LitElement {
       }
       .readouts=${readouts}
       .tag=${this.tag}
+      .accessibleName=${this._accessibleName}
       .showReadoutStack=${this.showReadoutStack}
-      .readoutPosition=${this.readoutPosition}
+      .readoutPosition=${this._readoutPosition}
       .readoutSize=${this.readoutSize}
       ?alert=${this.alert}
       .alertFrameType=${this.alertFrameType}
@@ -283,7 +357,11 @@ export class ObcAbstractAutomationButton extends LitElement {
       .direction=${this._direction}
       .orientation=${this._orientation}
       .hasBadgeSpacer=${this.getBadgeSpacer()}
+      .handlePosition=${this._handlePosition}
+      .static=${this.static}
+      .handleSize=${this._handleSize}
       .positioning=${this.positioning}
+      .selfActuationLine=${this._selfActuationLine}
       ?activated=${this.activated}
     >
       ${this.icon}
@@ -339,6 +417,7 @@ export class ObcAbstractAutomationButton extends LitElement {
             : nothing
         }
       </slot>
+      ${this._handle !== false ? this._handle : nothing}
     </obc-automation-button>`;
   }
 }

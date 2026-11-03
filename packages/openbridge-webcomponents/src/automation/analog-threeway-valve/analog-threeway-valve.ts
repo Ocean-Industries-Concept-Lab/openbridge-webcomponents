@@ -3,10 +3,12 @@ import {property} from 'lit/decorators.js';
 import '../valve-analog-three-way-icon/valve-analog-three-way-icon.js';
 import {customElement} from '../../decorator.js';
 import {ObcAbstractAutomationButton} from '../automation-button/abstract-automation-button.js';
+import {AutomationButtonReadoutPosition} from '../automation-button/automation-button.js';
 import {AutomationButtonReadoutStack} from '../../components/automation-button-readout-stack/automation-button-readout-stack.js';
 import {
   ThreewayValveFlow,
   ThreewayValveOrientation,
+  threewayValveOpenSide,
   threewayValveReadouts,
 } from '../threeway-valve-shared/threeway-valve-shared.js';
 
@@ -76,11 +78,15 @@ export class ObcAnalogThreewayValve extends ObcAbstractAutomationButton {
     );
   }
 
+  override get _readoutPosition(): AutomationButtonReadoutPosition {
+    return this.readoutPosition ?? threewayValveOpenSide(this.orientation);
+  }
+
   override get extraReadouts(): AutomationButtonReadoutStack[] {
     if (!this.showStatus) {
       return [];
     }
-    return threewayValveReadouts(this._on, this.flows);
+    return threewayValveReadouts(this._on, this.flows, this.showStatusIcon);
   }
 
   private renderIcon(slot: string) {
