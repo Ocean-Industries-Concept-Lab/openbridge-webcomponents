@@ -64,7 +64,7 @@ export function norvarStationPaint(
 
 /** The design's running line colour has no token; the running border colour carries the same value. */
 export const NORVAR_RUNNING_COLOR =
-  'var(--automation-symbol-running-border-color)';
+  'var(--alert-running-color)';
 export const NORVAR_ALARM_COLOR = 'var(--alert-alarm-color)';
 export const NORVAR_ALARM_OUTLINE_COLOR = 'var(--alert-alarm-outline-color)';
 export const NORVAR_UNMONITORED_COLOR =
