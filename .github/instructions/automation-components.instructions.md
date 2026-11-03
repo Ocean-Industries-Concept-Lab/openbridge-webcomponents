@@ -198,6 +198,19 @@ A valve can carry a handle or actuator next to its symbol: `obc-digital-valve` t
 - **The directional valves show no state row:** they act on their own, so the system has no open or closed state to report. Without a tag their button takes its name from `equipmentName`.
 - **`--automation-symbol-*-line-color`** is hand-written in `manual.css` until the next palette export carries it; remove it there then.
 
+## NORVAR valve
+
+`norvar-valve` draws the symbols of NORVAR report 153/2007 from Norsk Vann BA. It is not part of the OpenBridge standard, so the tag has no `obc-` prefix. The class keeps it, because `script/sort-custom-element-manifest.ts` drops every class not named `Obc…` from the manifest.
+
+- **The art and the actuators are its own** (`norvar-valve-art.ts`, `NorvarValveActuator`), so they stay out of `ObcValveHandle` and of the standard valves.
+- **The triangles show the alarm, the middle field the position.** `progress` draws the middle position, which the design file calls `NORVAR-valve-caution`.
+
+`norvar-water-station`, `norvar-wastewater-station` and `norvar-map-symbol` follow the same rule and take their symbols from the same report. They share `ObcNorvarStationBase` and `norvar-station-art.ts`.
+
+- **The shape follows the network:** water is square, wastewater round, and the symbols are drawn for that shape. `norvar-map-symbol` holds the symbols of neither network and takes the shape from the symbol: the discharge point is round, the rest square.
+- **The state colours the symbol:** `state` gives black, green or grey, `alert` red with a darker outline. An unmonitored symbol also gets the grey button of a static device, through the base's `_static` getter. There is no state row. `flat` is the default, like `norvar-valve`.
+- **`static` shows the medium:** light blue for water; brown or grey for wastewater, chosen by `medium`; grey for the map symbols, which carry none.
+
 ## Alert frame properties
 
 The abstract button base, `obc-automation-tank`, the specialty-tank base and `obc-transmitter` take one alert-frame API under the same names: the gate (`alert`, or `hasAlert` on the transmitter), `alertFrameType`, `alertFrameThickness`, `alertFrameStatus`, `alertFrameMode`, `showAlertCategoryIcon` and `showAlertIcon`, and the `alert-icon`, `alert-label` and `alert-timer` slots for the frame's flap, which the abstract button base does not forward yet. `obc-accordion-card` takes the same set behind `hasAlert`.
