@@ -55,6 +55,7 @@ Rules:
 - Provide both horizontal and vertical icon variants when `this.vertical` is true
 - Apply rotation via a wrapper `div` with `style="transform: rotate(90deg)"`, not on the icon itself
 - Switch between on/off icon variants based on `this.turnedOn`
+- A two-state device (`ObcAbstractAutomationButtonSquared`) keeps a `SquaredDeviceIcons` table per `alternativeIcon` and renders it with `renderDeviceIcon()`, which shows the `static` icon when `static` is set. Leave `static` out of an entry only when the icons file has no static symbol, and say so in a `TODO(designer)`
 
 ## State and Readout Getters
 
