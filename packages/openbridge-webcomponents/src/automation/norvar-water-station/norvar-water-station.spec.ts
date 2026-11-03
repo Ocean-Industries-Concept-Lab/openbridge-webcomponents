@@ -63,16 +63,36 @@ describe('norvar-water-station', () => {
     [{}, '--automation-symbol-on-border-color'],
     [
       {state: NorvarStationState.running},
-      '--automation-symbol-running-background-color',
+      '--automation-symbol-running-border-color',
     ],
     [
       {state: NorvarStationState.unmonitored},
-      '--automation-symbol-static-background-color',
+      '--automation-symbol-static-line-color',
     ],
     [{state: NorvarStationState.running, alert: true}, '--alert-alarm-color'],
     [{alert: true, static: true}, '--automation-medium-fresh-water'],
   ])('colours the symbol for %o', async (props, color) => {
     const root = await mount(props);
     expect(root.querySelector('svg[slot="icon"]')!.innerHTML).toContain(color);
+  });
+
+  it('outlines a filled symbol in alarm with the alarm outline colour', async () => {
+    const root = await mount({
+      alert: true,
+      variant: NorvarWaterStationVariant.square,
+    });
+    expect(root.querySelector('svg[slot="icon"]')!.innerHTML).toContain(
+      '--alert-alarm-outline-color'
+    );
+  });
+
+  it.each([
+    [{}, false],
+    [{state: NorvarStationState.unmonitored}, true],
+    [{state: NorvarStationState.unmonitored, alert: true}, false],
+    [{static: true}, true],
+  ])('greys the button for %o: %s', async (props, isStatic) => {
+    const root = await mount(props);
+    expect(root.querySelector('obc-automation-button')!.static).toBe(isStatic);
   });
 });

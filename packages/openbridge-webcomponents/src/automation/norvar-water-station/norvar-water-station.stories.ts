@@ -94,6 +94,7 @@ export const AllStates: Story = {
               (stationType) =>
                 html`<norvar-water-station
                   positioning="button"
+                  .variant=${NorvarWaterStationVariant.square}
                   .state=${state}
                   .alert=${alert}
                   .static=${isStatic}

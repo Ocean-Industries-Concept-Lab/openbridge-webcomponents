@@ -69,11 +69,11 @@ describe('norvar-wastewater-station', () => {
     [{}, '--automation-symbol-on-border-color'],
     [
       {state: NorvarStationState.running},
-      '--automation-symbol-running-background-color',
+      '--automation-symbol-running-border-color',
     ],
     [
       {state: NorvarStationState.unmonitored},
-      '--automation-symbol-static-background-color',
+      '--automation-symbol-static-line-color',
     ],
     [{state: NorvarStationState.running, alert: true}, '--alert-alarm-color'],
     [{alert: true, static: true}, '--automation-medium-masses'],
@@ -88,7 +88,7 @@ describe('norvar-wastewater-station', () => {
       medium: NorvarWastewaterMedium.surfaceWater,
     });
     expect(root.querySelector('svg[slot="icon"]')!.innerHTML).toContain(
-      '--automation-symbol-static-background-color'
+      '--automation-symbol-static-line-color'
     );
   });
 });

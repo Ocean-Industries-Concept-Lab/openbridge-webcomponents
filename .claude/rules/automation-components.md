@@ -206,11 +206,11 @@ A valve can carry a handle or actuator next to its symbol: `obc-digital-valve` t
 - **The art and the actuators are its own** (`norvar-valve-art.ts`, `NorvarValveActuator`), so they stay out of `ObcValveHandle` and of the standard valves.
 - **The triangles show the alarm, the middle field the position.** `progress` draws the middle position, which the design file calls `NORVAR-valve-caution`.
 
-`norvar-water-station` and `norvar-wastewater-station` follow the same rule and take their symbols from the same report. They share `ObcNorvarStationBase` and `norvar-station-art.ts`.
+`norvar-water-station`, `norvar-wastewater-station` and `norvar-map-symbol` follow the same rule and take their symbols from the same report. They share `ObcNorvarStationBase` and `norvar-station-art.ts`.
 
-- **The shape follows the network:** water is square, wastewater round, and the symbols are drawn for that shape.
-- **The state colours the symbol, not the button:** `state` gives black, green or grey, `alert` red. There is no state row. `flat` is the default, like `norvar-valve`.
-- **`static` shows the medium:** light blue for water; brown or grey for wastewater, chosen by `medium`.
+- **The shape follows the network:** water is square, wastewater round, and the symbols are drawn for that shape. `norvar-map-symbol` holds the symbols of neither network and takes the shape from the symbol: the discharge point is round, the rest square.
+- **The state colours the symbol:** `state` gives black, green or grey, `alert` red with a darker outline. An unmonitored symbol also gets the grey button of a static device, through the base's `_static` getter. There is no state row. `flat` is the default, like `norvar-valve`.
+- **`static` shows the medium:** light blue for water; brown or grey for wastewater, chosen by `medium`; grey for the map symbols, which carry none.
 
 ## Alert frame properties
 

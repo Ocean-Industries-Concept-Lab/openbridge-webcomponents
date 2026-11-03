@@ -43,7 +43,7 @@ export enum NorvarWastewaterMedium {
  * side of the network use `norvar-water-station`.
  *
  * @property stationType - What the facility is: `detention-basin`, `pump-station`, `treatment-plant`, `metering-station`, `discharge`, `overflow` or `manhole`.
- * @property state - The operating state: `ready` (black), `running` (green) or `unmonitored` (grey). `alert` draws the alarm state in red.
+ * @property state - The operating state: `ready` (black), `running` (green) or `unmonitored` (grey, in a grey button). `alert` draws the alarm state in red.
  * @property medium - What a static symbol carries: `sewage` (brown) or `surface-water` (grey).
  * @availableWhen medium static==true
  * @property variant - `flat` draws the framed symbol, `regular` adds the round button.

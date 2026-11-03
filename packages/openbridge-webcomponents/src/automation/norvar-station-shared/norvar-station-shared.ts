@@ -4,6 +4,7 @@ import {AutomationButtonVariant} from '../automation-button/automation-button.js
 import {ON_PAINT, Paint} from '../norvar-valve/norvar-valve-art.js';
 import {
   NORVAR_ALARM_COLOR,
+  NORVAR_ALARM_OUTLINE_COLOR,
   NORVAR_RUNNING_COLOR,
   NORVAR_UNMONITORED_COLOR,
   NorvarStationArt,
@@ -13,13 +14,15 @@ import {
 } from './norvar-station-art.js';
 
 /**
- * Shared base of `norvar-water-station` and `norvar-wastewater-station`.
+ * Shared base of `norvar-water-station`, `norvar-wastewater-station` and
+ * `norvar-map-symbol`.
  *
  * Not part of the OpenBridge standard. Based on NORVAR report 153/2007 from
  * Norsk Vann BA.
  *
  * The state colours the whole symbol. `static` wins over `alert`, which wins
- * over `state`. The button keeps its on colours and adds no state row.
+ * over `state`. An unmonitored symbol sits in the grey button of a static
+ * device; the others keep the on colours. There is no state row.
  *
  * ## Usage Guidelines
  *
@@ -35,6 +38,13 @@ export class ObcNorvarStationBase extends ObcAbstractAutomationButton {
 
   override get _on(): boolean {
     return true;
+  }
+
+  override get _static(): boolean {
+    return (
+      this.static ||
+      (!this.alert && this.state === NorvarStationState.unmonitored)
+    );
   }
 
   /** Name of the station for assistive technology while no tag is visible. */
@@ -56,7 +66,7 @@ export class ObcNorvarStationBase extends ObcAbstractAutomationButton {
       return norvarStationPaint(this.staticColor);
     }
     if (this.alert) {
-      return norvarStationPaint(NORVAR_ALARM_COLOR);
+      return norvarStationPaint(NORVAR_ALARM_COLOR, NORVAR_ALARM_OUTLINE_COLOR);
     }
     switch (this.state) {
       case NorvarStationState.running:

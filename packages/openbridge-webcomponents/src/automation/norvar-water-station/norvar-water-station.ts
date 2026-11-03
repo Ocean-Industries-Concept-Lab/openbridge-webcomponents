@@ -36,7 +36,7 @@ export enum NorvarWaterStationVariant {
  * side of the network use `norvar-wastewater-station`.
  *
  * @property stationType - What the facility is: `reservoir`, `pump-station`, `treatment-plant`, `metering-station`, `reduction-chamber`, `dam`, `overflow` or `manhole`.
- * @property state - The operating state: `ready` (black), `running` (green) or `unmonitored` (grey). `alert` draws the alarm state in red.
+ * @property state - The operating state: `ready` (black), `running` (green) or `unmonitored` (grey, in a grey button). `alert` draws the alarm state in red.
  * @property variant - `flat` draws the framed symbol, `square` adds the rounded square button.
  * @ignition-base-height: 82px
  * @ignition-base-width: 66px
