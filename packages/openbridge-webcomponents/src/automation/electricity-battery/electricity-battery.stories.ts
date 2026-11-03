@@ -39,3 +39,9 @@ export const Off: Story = {
     turnedOn: false,
   },
 };
+
+export const Static: Story = {
+  args: {
+    static: true,
+  },
+};

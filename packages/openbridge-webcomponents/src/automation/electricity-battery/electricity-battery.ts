@@ -1,4 +1,3 @@
-import {html} from 'lit';
 import '../../icons/icon-electricity-battery-on.js';
 import '../../icons/icon-electricity-battery-off.js';
 import {customElement} from '../../decorator.js';
@@ -16,29 +15,18 @@ import {ObcAbstractAutomationButtonSquared} from '../automation-button/abstract-
  * charge level, use `obc-indicator-battery`; for a battery tank with a fill
  * level, use `obc-automation-tank`.
  *
+ * **TODO(designer):** the icons file has no static battery symbol, so a
+ * `static` battery keeps its on or off icon.
+ *
  * @experimental
  */
 @customElement('obc-electricity-battery')
 export class ObcElectricityBattery extends ObcAbstractAutomationButtonSquared {
   override get icon() {
-    if (this.turnedOn) {
-      return html`<obi-electricity-battery-on
-          usecsscolor
-          slot="icon"
-        ></obi-electricity-battery-on>
-        <obi-electricity-battery-on
-          usecsscolor
-          slot="icon-silhouette"
-        ></obi-electricity-battery-on>`;
-    }
-    return html`<obi-electricity-battery-off
-        usecsscolor
-        slot="icon"
-      ></obi-electricity-battery-off>
-      <obi-electricity-battery-off
-        usecsscolor
-        slot="icon-silhouette"
-      ></obi-electricity-battery-off>`;
+    return this.renderDeviceIcon({
+      on: 'electricity-battery-on',
+      off: 'electricity-battery-off',
+    });
   }
 }
 

@@ -1,15 +1,21 @@
-import {html} from 'lit';
 import {property} from 'lit/decorators.js';
 import '../../icons/icon-filter-1-on.js';
 import '../../icons/icon-filter-1-off.js';
+import '../../icons/icon-filter-1.js';
 import '../../icons/icon-filter-2-on.js';
 import '../../icons/icon-filter-2-off.js';
+import '../../icons/icon-filter-2.js';
 import '../../icons/icon-filter-3-on.js';
 import '../../icons/icon-filter-3-off.js';
+import '../../icons/icon-filter-3.js';
 import '../../icons/icon-filter-4-on.js';
 import '../../icons/icon-filter-4-off.js';
+import '../../icons/icon-filter-4.js';
 import {customElement} from '../../decorator.js';
-import {ObcAbstractAutomationButtonSquared} from '../automation-button/abstract-automation-button-squared.js';
+import {
+  ObcAbstractAutomationButtonSquared,
+  SquaredDeviceIcons,
+} from '../automation-button/abstract-automation-button-squared.js';
 
 export enum FilterAlternativeIcon {
   filter1 = 'filter1',
@@ -17,6 +23,29 @@ export enum FilterAlternativeIcon {
   filter3 = 'filter3',
   filter4 = 'filter4',
 }
+
+const icons: Record<FilterAlternativeIcon, SquaredDeviceIcons> = {
+  [FilterAlternativeIcon.filter1]: {
+    on: 'filter-1-on',
+    off: 'filter-1-off',
+    static: 'filter-1',
+  },
+  [FilterAlternativeIcon.filter2]: {
+    on: 'filter-2-on',
+    off: 'filter-2-off',
+    static: 'filter-2',
+  },
+  [FilterAlternativeIcon.filter3]: {
+    on: 'filter-3-on',
+    off: 'filter-3-off',
+    static: 'filter-3',
+  },
+  [FilterAlternativeIcon.filter4]: {
+    on: 'filter-4-on',
+    off: 'filter-4-off',
+    static: 'filter-4',
+  },
+};
 
 /**
  * @stable
@@ -27,88 +56,9 @@ export class ObcFilter extends ObcAbstractAutomationButtonSquared {
     FilterAlternativeIcon.filter1;
 
   override get icon() {
-    switch (this.alternativeIcon) {
-      case FilterAlternativeIcon.filter2:
-        if (this.turnedOn) {
-          return html`<obi-filter-2-on
-              usecsscolor
-              slot="icon"
-            ></obi-filter-2-on>
-            <obi-filter-2-on
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-filter-2-on>`;
-        } else {
-          return html`<obi-filter-2-off
-              usecsscolor
-              slot="icon"
-            ></obi-filter-2-off>
-            <obi-filter-2-off
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-filter-2-off>`;
-        }
-      case FilterAlternativeIcon.filter3:
-        if (this.turnedOn) {
-          return html`<obi-filter-3-on
-              usecsscolor
-              slot="icon"
-            ></obi-filter-3-on>
-            <obi-filter-3-on
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-filter-3-on>`;
-        } else {
-          return html`<obi-filter-3-off
-              usecsscolor
-              slot="icon"
-            ></obi-filter-3-off>
-            <obi-filter-3-off
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-filter-3-off>`;
-        }
-      case FilterAlternativeIcon.filter4:
-        if (this.turnedOn) {
-          return html`<obi-filter-4-on
-              usecsscolor
-              slot="icon"
-            ></obi-filter-4-on>
-            <obi-filter-4-on
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-filter-4-on>`;
-        } else {
-          return html`<obi-filter-4-off
-              usecsscolor
-              slot="icon"
-            ></obi-filter-4-off>
-            <obi-filter-4-off
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-filter-4-off>`;
-        }
-      default:
-        if (this.turnedOn) {
-          return html`<obi-filter-1-on
-              usecsscolor
-              slot="icon"
-            ></obi-filter-1-on>
-            <obi-filter-1-on
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-filter-1-on>`;
-        } else {
-          return html`<obi-filter-1-off
-              usecsscolor
-              slot="icon"
-            ></obi-filter-1-off>
-            <obi-filter-1-off
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-filter-1-off>`;
-        }
-    }
+    return this.renderDeviceIcon(
+      icons[this.alternativeIcon] ?? icons[FilterAlternativeIcon.filter1]
+    );
   }
 }
 

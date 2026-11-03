@@ -1,23 +1,33 @@
-import {html} from 'lit';
 import {property} from 'lit/decorators.js';
 import '../../icons/icon-converter-dcdc-on.js';
 import '../../icons/icon-converter-dcdc-off.js';
+import '../../icons/icon-converter-dcdc.js';
 import '../../icons/icon-converter-dcac-on.js';
 import '../../icons/icon-converter-dcac-off.js';
+import '../../icons/icon-converter-dcac.js';
 import '../../icons/icon-converter-acdc-on.js';
 import '../../icons/icon-converter-acdc-off.js';
+import '../../icons/icon-converter-acdc.js';
 import '../../icons/icon-converter-acac-on.js';
 import '../../icons/icon-converter-acac-off.js';
+import '../../icons/icon-converter-acac-static.js';
 import '../../icons/icon-converter-acvac-on.js';
 import '../../icons/icon-converter-acvac-off.js';
+import '../../icons/icon-converter-acvac-static.js';
 import '../../icons/icon-converter-vacac-on.js';
 import '../../icons/icon-converter-vacac-off.js';
+import '../../icons/icon-converter-vacac-static.js';
 import '../../icons/icon-converter-vacvac-on.js';
 import '../../icons/icon-converter-vacvac-off.js';
+import '../../icons/icon-converter-vacvac-static.js';
 import '../../icons/icon-converter-filter-1-on.js';
 import '../../icons/icon-converter-filter-1-off.js';
+import '../../icons/icon-converter-filter-1.js';
 import {customElement} from '../../decorator.js';
-import {ObcAbstractAutomationButtonSquared} from '../automation-button/abstract-automation-button-squared.js';
+import {
+  ObcAbstractAutomationButtonSquared,
+  SquaredDeviceIcons,
+} from '../automation-button/abstract-automation-button-squared.js';
 
 export enum ConverterAlternativeIcon {
   converterDcdc = 'converterDcdc',
@@ -30,6 +40,49 @@ export enum ConverterAlternativeIcon {
   converterFilter1 = 'converterFilter1',
 }
 
+const icons: Record<ConverterAlternativeIcon, SquaredDeviceIcons> = {
+  [ConverterAlternativeIcon.converterDcdc]: {
+    on: 'converter-dcdc-on',
+    off: 'converter-dcdc-off',
+    static: 'converter-dcdc',
+  },
+  [ConverterAlternativeIcon.converterDcac]: {
+    on: 'converter-dcac-on',
+    off: 'converter-dcac-off',
+    static: 'converter-dcac',
+  },
+  [ConverterAlternativeIcon.converterAcdc]: {
+    on: 'converter-acdc-on',
+    off: 'converter-acdc-off',
+    static: 'converter-acdc',
+  },
+  [ConverterAlternativeIcon.converterAcac]: {
+    on: 'converter-acac-on',
+    off: 'converter-acac-off',
+    static: 'converter-acac-static',
+  },
+  [ConverterAlternativeIcon.converterAcvac]: {
+    on: 'converter-acvac-on',
+    off: 'converter-acvac-off',
+    static: 'converter-acvac-static',
+  },
+  [ConverterAlternativeIcon.converterVacac]: {
+    on: 'converter-vacac-on',
+    off: 'converter-vacac-off',
+    static: 'converter-vacac-static',
+  },
+  [ConverterAlternativeIcon.converterVacvac]: {
+    on: 'converter-vacvac-on',
+    off: 'converter-vacvac-off',
+    static: 'converter-vacvac-static',
+  },
+  [ConverterAlternativeIcon.converterFilter1]: {
+    on: 'converter-filter-1-on',
+    off: 'converter-filter-1-off',
+    static: 'converter-filter-1',
+  },
+};
+
 /**
  * @stable
  */
@@ -39,168 +92,10 @@ export class ObcConverter extends ObcAbstractAutomationButtonSquared {
     ConverterAlternativeIcon.converterDcdc;
 
   override get icon() {
-    switch (this.alternativeIcon) {
-      case ConverterAlternativeIcon.converterDcac:
-        if (this.turnedOn) {
-          return html`<obi-converter-dcac-on
-              usecsscolor
-              slot="icon"
-            ></obi-converter-dcac-on>
-            <obi-converter-dcac-on
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-converter-dcac-on>`;
-        } else {
-          return html`<obi-converter-dcac-off
-              usecsscolor
-              slot="icon"
-            ></obi-converter-dcac-off>
-            <obi-converter-dcac-off
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-converter-dcac-off>`;
-        }
-      case ConverterAlternativeIcon.converterAcdc:
-        if (this.turnedOn) {
-          return html`<obi-converter-acdc-on
-              usecsscolor
-              slot="icon"
-            ></obi-converter-acdc-on>
-            <obi-converter-acdc-on
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-converter-acdc-on>`;
-        } else {
-          return html`<obi-converter-acdc-off
-              usecsscolor
-              slot="icon"
-            ></obi-converter-acdc-off>
-            <obi-converter-acdc-off
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-converter-acdc-off>`;
-        }
-      case ConverterAlternativeIcon.converterAcac:
-        if (this.turnedOn) {
-          return html`<obi-converter-acac-on
-              usecsscolor
-              slot="icon"
-            ></obi-converter-acac-on>
-            <obi-converter-acac-on
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-converter-acac-on>`;
-        } else {
-          return html`<obi-converter-acac-off
-              usecsscolor
-              slot="icon"
-            ></obi-converter-acac-off>
-            <obi-converter-acac-off
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-converter-acac-off>`;
-        }
-      case ConverterAlternativeIcon.converterAcvac:
-        if (this.turnedOn) {
-          return html`<obi-converter-acvac-on
-              usecsscolor
-              slot="icon"
-            ></obi-converter-acvac-on>
-            <obi-converter-acvac-on
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-converter-acvac-on>`;
-        } else {
-          return html`<obi-converter-acvac-off
-              usecsscolor
-              slot="icon"
-            ></obi-converter-acvac-off>
-            <obi-converter-acvac-off
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-converter-acvac-off>`;
-        }
-      case ConverterAlternativeIcon.converterVacac:
-        if (this.turnedOn) {
-          return html`<obi-converter-vacac-on
-              usecsscolor
-              slot="icon"
-            ></obi-converter-vacac-on>
-            <obi-converter-vacac-on
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-converter-vacac-on>`;
-        } else {
-          return html`<obi-converter-vacac-off
-              usecsscolor
-              slot="icon"
-            ></obi-converter-vacac-off>
-            <obi-converter-vacac-off
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-converter-vacac-off>`;
-        }
-      case ConverterAlternativeIcon.converterVacvac:
-        if (this.turnedOn) {
-          return html`<obi-converter-vacvac-on
-              usecsscolor
-              slot="icon"
-            ></obi-converter-vacvac-on>
-            <obi-converter-vacvac-on
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-converter-vacvac-on>`;
-        } else {
-          return html`<obi-converter-vacvac-off
-              usecsscolor
-              slot="icon"
-            ></obi-converter-vacvac-off>
-            <obi-converter-vacvac-off
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-converter-vacvac-off>`;
-        }
-      case ConverterAlternativeIcon.converterFilter1:
-        if (this.turnedOn) {
-          return html`<obi-converter-filter-1-on
-              usecsscolor
-              slot="icon"
-            ></obi-converter-filter-1-on>
-            <obi-converter-filter-1-on
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-converter-filter-1-on>`;
-        } else {
-          return html`<obi-converter-filter-1-off
-              usecsscolor
-              slot="icon"
-            ></obi-converter-filter-1-off>
-            <obi-converter-filter-1-off
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-converter-filter-1-off>`;
-        }
-      default:
-        if (this.turnedOn) {
-          return html`<obi-converter-dcdc-on
-              usecsscolor
-              slot="icon"
-            ></obi-converter-dcdc-on>
-            <obi-converter-dcdc-on
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-converter-dcdc-on>`;
-        } else {
-          return html`<obi-converter-dcdc-off
-              usecsscolor
-              slot="icon"
-            ></obi-converter-dcdc-off>
-            <obi-converter-dcdc-off
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-converter-dcdc-off>`;
-        }
-    }
+    return this.renderDeviceIcon(
+      icons[this.alternativeIcon] ??
+        icons[ConverterAlternativeIcon.converterDcdc]
+    );
   }
 }
 

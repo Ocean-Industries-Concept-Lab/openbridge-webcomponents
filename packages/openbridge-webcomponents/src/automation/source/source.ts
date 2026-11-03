@@ -1,17 +1,24 @@
-import {html} from 'lit';
 import {property} from 'lit/decorators.js';
 import '../../icons/icon-sources-01-on.js';
 import '../../icons/icon-sources-01-off.js';
+import '../../icons/icon-sources-01.js';
 import '../../icons/icon-sources-02-on.js';
 import '../../icons/icon-sources-02-off.js';
+import '../../icons/icon-sources-02.js';
 import '../../icons/icon-sources-03-on.js';
 import '../../icons/icon-sources-03-off.js';
+import '../../icons/icon-sources-03.js';
 import '../../icons/icon-sources-04-on.js';
 import '../../icons/icon-sources-04-off.js';
+import '../../icons/icon-sources-04.js';
 import '../../icons/icon-sources-05-on.js';
 import '../../icons/icon-sources-05-off.js';
+import '../../icons/icon-sources-05.js';
 import {customElement} from '../../decorator.js';
-import {ObcAbstractAutomationButtonSquared} from '../automation-button/abstract-automation-button-squared.js';
+import {
+  ObcAbstractAutomationButtonSquared,
+  SquaredDeviceIcons,
+} from '../automation-button/abstract-automation-button-squared.js';
 
 export enum SourceAlternativeIcon {
   sources01 = 'sources01',
@@ -20,6 +27,34 @@ export enum SourceAlternativeIcon {
   sources04 = 'sources04',
   sources05 = 'sources05',
 }
+
+const icons: Record<SourceAlternativeIcon, SquaredDeviceIcons> = {
+  [SourceAlternativeIcon.sources01]: {
+    on: 'sources-01-on',
+    off: 'sources-01-off',
+    static: 'sources-01',
+  },
+  [SourceAlternativeIcon.sources02]: {
+    on: 'sources-02-on',
+    off: 'sources-02-off',
+    static: 'sources-02',
+  },
+  [SourceAlternativeIcon.sources03]: {
+    on: 'sources-03-on',
+    off: 'sources-03-off',
+    static: 'sources-03',
+  },
+  [SourceAlternativeIcon.sources04]: {
+    on: 'sources-04-on',
+    off: 'sources-04-off',
+    static: 'sources-04',
+  },
+  [SourceAlternativeIcon.sources05]: {
+    on: 'sources-05-on',
+    off: 'sources-05-off',
+    static: 'sources-05',
+  },
+};
 
 /**
  * @stable
@@ -30,108 +65,9 @@ export class ObcSource extends ObcAbstractAutomationButtonSquared {
     SourceAlternativeIcon.sources01;
 
   override get icon() {
-    switch (this.alternativeIcon) {
-      case SourceAlternativeIcon.sources02:
-        if (this.turnedOn) {
-          return html`<obi-sources-02-on
-              usecsscolor
-              slot="icon"
-            ></obi-sources-02-on>
-            <obi-sources-02-on
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-sources-02-on>`;
-        } else {
-          return html`<obi-sources-02-off
-              usecsscolor
-              slot="icon"
-            ></obi-sources-02-off>
-            <obi-sources-02-off
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-sources-02-off>`;
-        }
-      case SourceAlternativeIcon.sources03:
-        if (this.turnedOn) {
-          return html`<obi-sources-03-on
-              usecsscolor
-              slot="icon"
-            ></obi-sources-03-on>
-            <obi-sources-03-on
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-sources-03-on>`;
-        } else {
-          return html`<obi-sources-03-off
-              usecsscolor
-              slot="icon"
-            ></obi-sources-03-off>
-            <obi-sources-03-off
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-sources-03-off>`;
-        }
-      case SourceAlternativeIcon.sources04:
-        if (this.turnedOn) {
-          return html`<obi-sources-04-on
-              usecsscolor
-              slot="icon"
-            ></obi-sources-04-on>
-            <obi-sources-04-on
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-sources-04-on>`;
-        } else {
-          return html`<obi-sources-04-off
-              usecsscolor
-              slot="icon"
-            ></obi-sources-04-off>
-            <obi-sources-04-off
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-sources-04-off>`;
-        }
-      case SourceAlternativeIcon.sources05:
-        if (this.turnedOn) {
-          return html`<obi-sources-05-on
-              usecsscolor
-              slot="icon"
-            ></obi-sources-05-on>
-            <obi-sources-05-on
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-sources-05-on>`;
-        } else {
-          return html`<obi-sources-05-off
-              usecsscolor
-              slot="icon"
-            ></obi-sources-05-off>
-            <obi-sources-05-off
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-sources-05-off>`;
-        }
-      default:
-        if (this.turnedOn) {
-          return html`<obi-sources-01-on
-              usecsscolor
-              slot="icon"
-            ></obi-sources-01-on>
-            <obi-sources-01-on
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-sources-01-on>`;
-        } else {
-          return html`<obi-sources-01-off
-              usecsscolor
-              slot="icon"
-            ></obi-sources-01-off>
-            <obi-sources-01-off
-              usecsscolor
-              slot="icon-silhouette"
-            ></obi-sources-01-off>`;
-        }
-    }
+    return this.renderDeviceIcon(
+      icons[this.alternativeIcon] ?? icons[SourceAlternativeIcon.sources01]
+    );
   }
 }
 
