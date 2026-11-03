@@ -11,7 +11,13 @@ import {
 } from '../../svghelpers/radial-frame.js';
 import {Tickmark, TickmarkStyle, TickmarkType} from '../watch/tickmark.js';
 import {WatchCircleType} from '../watch/watch.js';
-import {AdviceType, AngleAdviceRaw, AdviceState} from '../watch/advice.js';
+import {
+  AdviceType,
+  AngleAdviceRaw,
+  AdviceState,
+  AdviceTrigger,
+  adviceTriggerValues,
+} from '../watch/advice.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import {Priority} from '../types.js';
 import {renderInstrumentReadout} from '../readout/instrument-readout.js';
@@ -103,6 +109,9 @@ export interface SpeedAdvice {
  *   so instruments sharing the same value have identical ring circumference
  *   regardless of label width or arc extent (like obc-donut-chart's
  *   fixedHeight). When unset (default), the instrument fills its container.
+ * @property adviceTrigger - Which reading triggers an advice: `both` (default)
+ *   when `speed` or the setpoint is inside the range; `value` uses only
+ *   `speed`; `setpoint` uses only the setpoint.
  * @stable
  */
 @customElement('obc-speed-gauge')
@@ -117,6 +126,7 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
   @property({type: String}) needleType: ObcSpeedGaugeNeedleType =
     ObcSpeedGaugeNeedleType.full;
   @property({type: Array, attribute: false}) speedAdvices: SpeedAdvice[] = [];
+  @property({type: String}) adviceTrigger: AdviceTrigger = AdviceTrigger.both;
   @property({type: String}) tickmarkStyle: TickmarkStyle =
     TickmarkStyle.regular;
   @property({type: Boolean}) hasReadout: boolean = false;
@@ -308,13 +318,19 @@ export class ObcSpeedGauge extends SetpointMixin(LitElement) {
   }
 
   get _advices(): AngleAdviceRaw[] {
+    const triggerValues = adviceTriggerValues(
+      this.adviceTrigger,
+      this.speed,
+      this.setpoint
+    );
     return this.speedAdvices.map((speedAdvice) => {
       const minAngle = this.getAngle(speedAdvice.minSpeed);
       const maxAngle = this.getAngle(speedAdvice.maxSpeed);
       let state = speedAdvice.hinted ? AdviceState.hinted : AdviceState.regular;
       if (
-        this.speed >= speedAdvice.minSpeed &&
-        this.speed <= speedAdvice.maxSpeed
+        triggerValues.some(
+          (v) => v >= speedAdvice.minSpeed && v <= speedAdvice.maxSpeed
+        )
       ) {
         state = AdviceState.triggered;
       }

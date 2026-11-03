@@ -11,6 +11,7 @@ import {
   Priority,
 } from '../../navigation-instruments/types.js';
 import type {LinearAdvice} from '../instrument-linear/advice.js';
+import {AdviceTrigger} from '../../navigation-instruments/watch/advice.js';
 import type {
   ExternalScaleAdvice,
   ExternalScaleConfig,
@@ -122,6 +123,9 @@ export {
  * @availableWhen advicePosition hasBar==true
  * @property advices - Advice/alert overlays with state and positioning.
  *   When undefined or empty, no advice shown.
+ * @property adviceTrigger - Which reading triggers an advice: `both` (default)
+ *   when the value or the setpoint is inside the range; `value` uses only the
+ *   value; `setpoint` uses only the setpoint.
  * @property highlightCurrentValue - When true, displays a dot indicator at the current value position.
  *   The dot is rendered in the scale band, touching its inner edge (towards the chart).
  *   This provides an alternative to bar fill for highlighting the current value.
@@ -236,6 +240,7 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
   @property({type: String}) advicePosition: AdvicePosition =
     AdvicePosition.inner;
   @property({type: Array, attribute: false}) advices?: LinearAdvice[] = [];
+  @property({type: String}) adviceTrigger: AdviceTrigger = AdviceTrigger.both;
 
   @property({type: Boolean}) highlightCurrentValue = false;
 
@@ -297,6 +302,7 @@ export class ObcBarVertical extends SetpointMixin(LitElement, {
       touching: this.touching,
       advicePosition: this.advicePosition,
       advices: this.advices as ExternalScaleAdvice[],
+      adviceTrigger: this.adviceTrigger,
       fixedAspectRatio: this.fixedAspectRatio,
       instrumentMode: this.instrumentMode,
       highlightCurrentValue: this.highlightCurrentValue,

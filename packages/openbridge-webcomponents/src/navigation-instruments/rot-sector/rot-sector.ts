@@ -1,7 +1,7 @@
 import {LitElement, html, css, nothing, unsafeCSS} from 'lit';
 import {customElement} from '../../decorator.js';
 import {property} from 'lit/decorators.js';
-import {AdviceType} from '../watch/advice.js';
+import {AdviceTrigger, AdviceType} from '../watch/advice.js';
 import {Priority} from '../types.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import '../../building-blocks/instrument-radial/instrument-radial.js';
@@ -97,6 +97,9 @@ export interface GaugeRadialAdvice {
  * @property label - Readout label. Default `ROT`.
  * @property unit - Readout unit. Default `DEG/min`.
  * @property fractionDigits - Number of fraction digits shown in the readout. Default `0`.
+ * @property adviceTrigger - Which reading triggers an advice: `both` (default)
+ *   when the value or the setpoint is inside the range; `value` uses only the
+ *   value; `setpoint` uses only the setpoint.
  * @stable
  */
 @customElement('obc-rot-sector')
@@ -141,6 +144,7 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
   @property({type: String}) tickmarkStyle: TickmarkStyle =
     TickmarkStyle.regular;
   @property({type: Array, attribute: false}) advices: GaugeRadialAdvice[] = [];
+  @property({type: String}) adviceTrigger: AdviceTrigger = AdviceTrigger.both;
   @property({type: Boolean}) zoomToFitArc: boolean = false;
   @property({type: Number}) rotArcExtent: number = 60;
   @property({type: Boolean}) hasReadout: boolean = false;
@@ -218,6 +222,7 @@ export class ObcRotSector extends SetpointMixin(LitElement) {
         .type=${this._type}
         .needleType=${this._type}
         .advices=${this.advices}
+        .adviceTrigger=${this.adviceTrigger}
         .clipBottom=${50}
         .zoomToFitArc=${this.zoomToFitArc}
       >

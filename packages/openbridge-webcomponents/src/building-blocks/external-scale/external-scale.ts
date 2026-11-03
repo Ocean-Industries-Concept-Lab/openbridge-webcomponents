@@ -132,7 +132,9 @@ import {
 } from '../../navigation-instruments/types.js';
 import {
   AdviceState,
+  AdviceTrigger,
   AdviceType,
+  adviceTriggerValues,
 } from '../../navigation-instruments/watch/advice.js';
 import {
   tickmarkColor,
@@ -569,6 +571,8 @@ export interface ExternalScaleConfig {
   advicePosition: AdvicePosition;
   /** Array of advice ranges (min/max/type/hinted). */
   advices?: ExternalScaleAdvice[];
+  /** Which reading triggers an advice; `AdviceTrigger.both` when unset. */
+  adviceTrigger?: AdviceTrigger;
 
   /**
    * When true, freezes all internal calculations and scales the entire component
@@ -1153,11 +1157,10 @@ function colors(config: ExternalScaleConfig): {
 
 function convertAdvices(
   advices: ExternalScaleAdvice[],
-  setpoint: number | undefined
+  triggerValues: number[]
 ): ExternalScaleAdviceRaw[] {
   return advices.map((a) => {
-    const triggered =
-      setpoint !== undefined && setpoint >= a.min && setpoint <= a.max;
+    const triggered = triggerValues.some((v) => v >= a.min && v <= a.max);
 
     const state = triggered
       ? AdviceState.triggered
@@ -2867,7 +2870,14 @@ function generateAdviceOverlays(
   config: ExternalScaleConfig
 ): SVGTemplateResult[] {
   if (!config.advices || !config.advices.length) return [];
-  const raw = convertAdvices(config.advices, config.setpoint);
+  const raw = convertAdvices(
+    config.advices,
+    adviceTriggerValues(
+      config.adviceTrigger ?? AdviceTrigger.both,
+      config.value,
+      config.setpoint
+    )
+  );
   return raw.map((a) => renderAdvice(config, a));
 }
 

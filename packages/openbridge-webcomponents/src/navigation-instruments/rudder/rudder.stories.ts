@@ -9,6 +9,7 @@ import {
   widthDecorator,
 } from '../../storybook-util.js';
 import {TickmarkStyle} from '../watch/tickmark.js';
+import {AdviceTrigger} from '../watch/advice.js';
 import {InstrumentState, Priority} from '../types.js';
 const meta: Meta<typeof ObcRudder> = {
   title: 'Instruments/Rudder',
@@ -25,6 +26,7 @@ const meta: Meta<typeof ObcRudder> = {
     zoomToFitArc: false,
   },
   argTypes: {
+    adviceTrigger: {control: 'select', options: Object.values(AdviceTrigger)},
     width: {control: {type: 'range', min: 32, max: 1028, step: 1}},
     faceDiameter: {
       control: {type: 'range', min: 100, max: 600, step: 10},

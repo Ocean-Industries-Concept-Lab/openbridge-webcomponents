@@ -2,7 +2,10 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {html} from 'lit';
 import './bar-horizontal.js';
 import '../../bars-graphs/line-graph/line-graph.js';
-import {AdviceType} from '../../navigation-instruments/watch/advice.js';
+import {
+  AdviceTrigger,
+  AdviceType,
+} from '../../navigation-instruments/watch/advice.js';
 import {
   ScaleType,
   FrameStyle,
@@ -34,6 +37,7 @@ const meta: Meta = {
   tags: ['autodocs', '6.0', 'beta'],
   component: 'obc-bar-horizontal',
   argTypes: {
+    adviceTrigger: {control: 'select', options: Object.values(AdviceTrigger)},
     minValue: {control: {type: 'range', min: -100, max: 100}},
     maxValue: {control: {type: 'range', min: 0, max: 1000}},
     reverse: {control: {type: 'boolean'}},
@@ -159,6 +163,7 @@ const meta: Meta = {
       .side=${args.side}
       .advicePosition=${args.advicePosition}
       .advices=${args.advices}
+      .adviceTrigger=${args.adviceTrigger}
     >
     </obc-bar-horizontal>
   `,

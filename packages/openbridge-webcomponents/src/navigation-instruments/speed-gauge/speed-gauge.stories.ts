@@ -8,7 +8,7 @@ import {
   storyHint,
   widthDecorator,
 } from '../../storybook-util.js';
-import {AdviceType} from '../watch/advice.js';
+import {AdviceTrigger, AdviceType} from '../watch/advice.js';
 import {TickmarkStyle} from '../watch/tickmark.js';
 import {Priority} from '../types.js';
 
@@ -25,6 +25,7 @@ const meta: Meta<typeof ObcSpeedGauge> = {
     touching: false,
   },
   argTypes: {
+    adviceTrigger: {control: 'select', options: Object.values(AdviceTrigger)},
     width: {control: {type: 'range', min: 32, max: 1028, step: 1}},
     speed: {control: {type: 'range', min: -20, max: 100, step: 1}},
     minSpeed: {control: {type: 'range', min: -20, max: 0, step: 1}},

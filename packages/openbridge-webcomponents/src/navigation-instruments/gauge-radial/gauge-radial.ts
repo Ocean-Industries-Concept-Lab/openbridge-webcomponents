@@ -4,7 +4,7 @@ import componentStyle from './gauge-radial.css?inline';
 import {customElement} from '../../decorator.js';
 import {property, query} from 'lit/decorators.js';
 import type {RadialFrame} from '../../svghelpers/radial-frame.js';
-import {AdviceType} from '../watch/advice.js';
+import {AdviceTrigger, AdviceType} from '../watch/advice.js';
 import {InstrumentState, Priority} from '../types.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import '../../building-blocks/instrument-radial/instrument-radial.js';
@@ -143,6 +143,9 @@ const READOUT_META_Y_180 = -73.472;
  *   so instruments sharing the same value have identical ring circumference
  *   regardless of label width or arc extent (like obc-donut-chart's
  *   fixedHeight). When unset (default), the instrument fills its container.
+ * @property adviceTrigger - Which reading triggers an advice: `both` (default)
+ *   when the value or the setpoint is inside the range; `value` uses only the
+ *   value; `setpoint` uses only the setpoint.
  * @stable
  */
 @customElement('obc-gauge-radial')
@@ -163,6 +166,7 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
   @property({type: String}) tickmarkStyle: TickmarkStyle =
     TickmarkStyle.regular;
   @property({type: Array, attribute: false}) advices: GaugeRadialAdvice[] = [];
+  @property({type: String}) adviceTrigger: AdviceTrigger = AdviceTrigger.both;
   @property({type: String, reflect: true}) sector: GaugeRadialSector =
     GaugeRadialSector.deg270;
   @property({type: String})
@@ -384,6 +388,7 @@ export class ObcGaugeRadial extends SetpointMixin(LitElement) {
           .tickmarksInside=${this.tickmarksInside}
           .tickmarkStyle=${this.tickmarkStyle}
           .advices=${this.isSector90 ? [] : this.advices}
+          .adviceTrigger=${this.adviceTrigger}
           .clipTop=${clips.top}
           .clipBottom=${clips.bottom}
           .clipLeft=${clips.left}

@@ -8,7 +8,10 @@ import {
   storyHint,
   widthDecorator,
 } from '../../storybook-util.js';
-import {AdviceType} from '../../navigation-instruments/watch/advice.js';
+import {
+  AdviceTrigger,
+  AdviceType,
+} from '../../navigation-instruments/watch/advice.js';
 import {InstrumentState, Priority} from '../../navigation-instruments/types.js';
 
 type InstrumentRadialStoryArgs = Partial<ObcInstrumentRadial> & {
@@ -31,6 +34,7 @@ const meta: Meta<InstrumentRadialStoryArgs> = {
     getAngle: (v: number) => (v / 100) * 270 - 135,
   },
   argTypes: {
+    adviceTrigger: {control: 'select', options: Object.values(AdviceTrigger)},
     state: {control: 'select', options: Object.values(InstrumentState)},
     priority: {control: 'select', options: Object.values(Priority)},
     tickmarksInside: {control: 'boolean'},

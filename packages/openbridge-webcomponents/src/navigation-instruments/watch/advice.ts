@@ -13,6 +13,36 @@ export enum AdviceState {
   triggered = 'triggered',
 }
 
+/**
+ * Which reading an instrument checks against its advice ranges.
+ *
+ * `both` triggers when the value or the setpoint is inside the range;
+ * `value` and `setpoint` use only that one.
+ */
+export enum AdviceTrigger {
+  both = 'both',
+  value = 'value',
+  setpoint = 'setpoint',
+}
+
+/**
+ * The readings an advice range is checked against; an advice triggers when
+ * any of them is inside it, so an empty list triggers nothing.
+ */
+export function adviceTriggerValues(
+  trigger: AdviceTrigger,
+  value: number | undefined,
+  setpoint: number | null | undefined
+): number[] {
+  const readings =
+    trigger === AdviceTrigger.value
+      ? [value]
+      : trigger === AdviceTrigger.setpoint
+        ? [setpoint]
+        : [value, setpoint];
+  return readings.filter((r): r is number => r !== undefined && r !== null);
+}
+
 export interface AngleAdviceRaw {
   minAngle: number;
   maxAngle: number;

@@ -10,9 +10,13 @@ import {
   renderThrusterSetpoint,
 } from '../thruster/thruster.js';
 import {LinearAdvice} from '../thruster/advice.js';
+import {AdviceTrigger, adviceTriggerValues} from '../watch/advice.js';
 import {customElement} from '../../decorator.js';
 
 /**
+ * @property adviceTrigger - Which reading triggers a thrust advice: `both`
+ *   (default) when `thrust` or `thrustSetpoint` is inside the range; `value`
+ *   uses only `thrust`; `setpoint` uses only `thrustSetpoint`.
  * @stable
  */
 @customElement('obc-main-engine')
@@ -39,6 +43,7 @@ export class ObcMainEngine extends LitElement {
   @property({type: String}) state: InstrumentState = InstrumentState.active;
   @property({type: String}) priority: Priority = Priority.regular;
   @property({type: Array}) thrustAdvices: LinearAdvice[] = [];
+  @property({type: String}) adviceTrigger: AdviceTrigger = AdviceTrigger.both;
 
   override render() {
     const thrustAtSetpoint = atSetpoint(this.thrust, this.thrustSetpoint, {
@@ -75,7 +80,14 @@ export class ObcMainEngine extends LitElement {
     const frameRight = svg`<rect x="8" y="-176" width="48" height="352" fill="var(--instrument-frame-secondary-color)" vector-effect="non-scaling-stroke" stroke="var(--instrument-frame-secondary-color)"/>`;
     const thrustCenter = svg`<rect x="8" y="-2" height="4" width="72" fill="${cThrust.zeroLineColor}" stroke=${cThrust.zeroLineColor} vector-effect="non-scaling-stroke"/>`;
     const {topAdvices: topThrustAdvice, bottomAdvices: bottomThrustAdvice} =
-      convertThrustAdvices(this.thrustAdvices, this.thrustSetpoint);
+      convertThrustAdvices(
+        this.thrustAdvices,
+        adviceTriggerValues(
+          this.adviceTrigger,
+          this.thrust,
+          this.thrustSetpoint
+        )
+      );
     const thrustTop = svg`<g transform="translate(44, 0)">
       ${thrusterTopSingleSided(
         174,

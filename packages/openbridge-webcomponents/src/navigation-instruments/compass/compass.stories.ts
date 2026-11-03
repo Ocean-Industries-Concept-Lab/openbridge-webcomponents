@@ -17,7 +17,7 @@ import {
   storyHint,
   widthDecorator,
 } from '../../storybook-util.js';
-import {AdviceType} from '../watch/advice.js';
+import {AdviceTrigger, AdviceType} from '../watch/advice.js';
 import {VesselImage} from '../watch/watch.js';
 import {
   customVesselPngSrc,
@@ -61,6 +61,7 @@ const meta: Meta<typeof ObcCompass> = {
     priorityElements: [CompassPriorityElement.hdg],
   },
   argTypes: {
+    adviceTrigger: {control: 'select', options: Object.values(AdviceTrigger)},
     width: {control: {type: 'range', min: 32, max: 1028, step: 1}},
     faceDiameter: {
       control: {type: 'range', min: 100, max: 600, step: 10},

@@ -2,7 +2,11 @@ import {LitElement, svg, html, css, nothing, SVGTemplateResult} from 'lit';
 import {property} from 'lit/decorators.js';
 import {InstrumentState, Priority} from '../types.js';
 import {LinearAdvice, LinearAdviceRaw, renderAdvice} from './advice.js';
-import {AdviceState} from '../watch/advice.js';
+import {
+  AdviceState,
+  AdviceTrigger,
+  adviceTriggerValues,
+} from '../watch/advice.js';
 import {TickmarkStyle} from '../watch/tickmark.js';
 import {singleSidedTickmark} from './tickmark.js';
 import {PropellerType, bottomPropeller, topPropeller} from './propeller.js';
@@ -23,6 +27,9 @@ import {customElement} from '../../decorator.js';
  * @property thrust - The thrust of the thruster in percent (-100 - +100)
  * @property touching - Highlight the thruster when the lever is being touched
  * @property priority - Color priority: `Priority.enhanced` uses the blue/enhanced color palette, `Priority.regular` (default) uses the standard palette.
+ * @property adviceTrigger - Which reading triggers an advice: `both` (default)
+ *   when the thrust or the setpoint is inside the range; `value` uses only the
+ *   thrust; `setpoint` uses only the setpoint.
  * @stable
  */
 @customElement('obc-thruster')
@@ -39,6 +46,7 @@ export class ObcThruster extends SetpointMixin(LitElement, {
   @property({type: Boolean}) singleDirection: boolean = false;
   @property({type: Boolean}) singleDirectionHalfSize: boolean = false;
   @property({type: Array}) advices: LinearAdvice[] = [];
+  @property({type: String}) adviceTrigger: AdviceTrigger = AdviceTrigger.both;
   @property({type: String}) topPropeller: PropellerType = PropellerType.none;
   @property({type: String}) bottomPropeller: PropellerType = PropellerType.none;
 
@@ -53,6 +61,7 @@ export class ObcThruster extends SetpointMixin(LitElement, {
         touching: this.touching,
         singleSided: this.singleSided,
         advices: this.advices,
+        adviceTrigger: this.adviceTrigger,
         singleDirection: this.singleDirection,
         singleDirectionHalfSize: this.singleDirectionHalfSize,
         topPropeller: this.topPropeller,
@@ -595,6 +604,8 @@ export function thruster(
     autoAtSetpointDeadband: number;
     touching: boolean;
     advices: LinearAdvice[];
+    /** Which reading triggers an advice; `AdviceTrigger.both` when unset. */
+    adviceTrigger?: AdviceTrigger;
     topPropeller: PropellerType;
     bottomPropeller: PropellerType;
     narrow: boolean;
@@ -637,7 +648,11 @@ export function thruster(
 
   const {topAdvices, bottomAdvices} = convertThrustAdvices(
     options.advices,
-    setpoint
+    adviceTriggerValues(
+      options.adviceTrigger ?? AdviceTrigger.both,
+      thrust,
+      setpoint
+    )
   );
 
   const thrusterSvg = [];
@@ -782,15 +797,17 @@ declare global {
   }
 }
 
+/**
+ * Splits thrust advices into the top and bottom halves and marks the ones
+ * containing any of `triggerValues` as triggered; resolve them with
+ * `adviceTriggerValues()`.
+ */
 export function convertThrustAdvices(
   advices: LinearAdvice[],
-  thrustSetpoint: number | undefined
+  triggerValues: number[]
 ): {topAdvices: LinearAdviceRaw[]; bottomAdvices: LinearAdviceRaw[]} {
   const rawAdvices: LinearAdviceRaw[] = advices.map((a) => {
-    const triggered =
-      thrustSetpoint !== undefined &&
-      thrustSetpoint >= a.min &&
-      thrustSetpoint <= a.max;
+    const triggered = triggerValues.some((v) => v >= a.min && v <= a.max);
     let state: AdviceState;
     if (triggered) {
       state = AdviceState.triggered;

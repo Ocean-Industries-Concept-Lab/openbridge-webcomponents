@@ -2,7 +2,7 @@ import type {Meta, StoryObj} from '@storybook/web-components-vite';
 import {ObcRotSector} from './rot-sector.js';
 import './rot-sector.js';
 import {widthDecorator} from '../../storybook-util.js';
-import {AdviceType} from '../watch/advice.js';
+import {AdviceTrigger, AdviceType} from '../watch/advice.js';
 import {TickmarkStyle} from '../watch/tickmark.js';
 import {Priority} from '../types.js';
 
@@ -19,6 +19,7 @@ const meta: Meta<typeof ObcRotSector> = {
   },
 
   argTypes: {
+    adviceTrigger: {control: 'select', options: Object.values(AdviceTrigger)},
     width: {
       control: {type: 'range', min: 100, max: 1000, step: 50},
     },

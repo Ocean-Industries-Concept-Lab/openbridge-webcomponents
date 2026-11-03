@@ -9,7 +9,7 @@ import {
   storyHint,
   widthDecorator,
 } from '../../storybook-util.js';
-import {AdviceType} from '../watch/advice.js';
+import {AdviceTrigger, AdviceType} from '../watch/advice.js';
 import {TickmarkStyle} from '../watch/tickmark.js';
 import {PropellerType} from '../thruster/propeller.js';
 
@@ -18,6 +18,7 @@ const meta: Meta<typeof ObcAzimuthThruster> = {
   tags: ['autodocs', '6.0'],
   component: 'obc-azimuth-thruster',
   argTypes: {
+    adviceTrigger: {control: 'select', options: Object.values(AdviceTrigger)},
     faceDiameter: {
       control: {type: 'range', min: 100, max: 600, step: 10},
       description:

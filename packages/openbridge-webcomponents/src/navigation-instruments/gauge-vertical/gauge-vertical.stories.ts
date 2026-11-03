@@ -3,7 +3,7 @@ import {html} from 'lit';
 import './gauge-vertical.js';
 import '../../bars-graphs/line-graph/line-graph.js';
 import '../../bars-graphs/area-graph/area-graph.js';
-import {AdviceType} from '../watch/advice.js';
+import {AdviceTrigger, AdviceType} from '../watch/advice.js';
 import {
   FillMode,
   BorderRadiusPosition,
@@ -16,6 +16,7 @@ const meta: Meta = {
   tags: ['autodocs', '6.0'],
   component: 'obc-gauge-vertical',
   argTypes: {
+    adviceTrigger: {control: 'select', options: Object.values(AdviceTrigger)},
     minValue: {control: {type: 'range', min: -100, max: 100}},
     maxValue: {control: {type: 'range', min: 0, max: 1000}},
     reverse: {control: {type: 'boolean'}},
@@ -100,6 +101,7 @@ const meta: Meta = {
       .state=${args.state}
       .side=${args.side}
       .advices=${args.advices}
+      .adviceTrigger=${args.adviceTrigger}
     >
     </obc-gauge-vertical>
   `,

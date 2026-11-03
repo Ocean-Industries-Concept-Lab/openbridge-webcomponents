@@ -15,7 +15,13 @@ import {SetpointBundle} from '../../svghelpers/setpoint-bundle.js';
 import {thruster} from '../thruster/thruster.js';
 import '../watch/watch.js';
 import componentStyle from './azimuth-thruster.css?inline';
-import {AdviceState, AngleAdvice, AngleAdviceRaw} from '../watch/advice.js';
+import {
+  AdviceState,
+  AdviceTrigger,
+  AngleAdvice,
+  AngleAdviceRaw,
+  adviceTriggerValues,
+} from '../watch/advice.js';
 import {Tickmark, TickmarkStyle, TickmarkType} from '../watch/tickmark.js';
 import {LinearAdvice} from '../thruster/advice.js';
 import {PropellerType} from '../thruster/propeller.js';
@@ -57,6 +63,10 @@ function mapAngle0to360(angle: number): number {
  *   so instruments sharing the same value have identical ring circumference
  *   regardless of label width or arc extent (like obc-donut-chart's
  *   fixedHeight). When unset (default), the instrument fills its container.
+ * @property adviceTrigger - Which reading triggers an angle or thrust advice:
+ *   `both` (default) when the current reading or its setpoint is inside the
+ *   range; `value` uses only the current angle or thrust; `setpoint` uses only
+ *   the setpoint.
  * @stable
  */
 @customElement('obc-azimuth-thruster')
@@ -135,6 +145,7 @@ export class ObcAzimuthThruster extends LitElement {
   @property({type: Boolean, attribute: false}) hasLabelSpacer: boolean = true;
   @property({type: Array, attribute: false}) angleAdvices: AngleAdvice[] = [];
   @property({type: Array, attribute: false}) thrustAdvices: LinearAdvice[] = [];
+  @property({type: String}) adviceTrigger: AdviceTrigger = AdviceTrigger.both;
   @property({type: Boolean}) singleDirection: boolean = false;
   @property({type: String}) topPropeller: PropellerType = PropellerType.none;
   @property({type: String}) bottomPropeller: PropellerType = PropellerType.none;
@@ -166,11 +177,17 @@ export class ObcAzimuthThruster extends LitElement {
   }
 
   private get angleAdviceRaw(): AngleAdviceRaw[] {
+    const triggerValues = adviceTriggerValues(
+      this.adviceTrigger,
+      this.angle,
+      this.angleSetpoint
+    );
     return this.angleAdvices.map((advice) => {
-      const triggered =
-        this.angleSetpoint !== undefined &&
-        mapAngle0to360(this.angleSetpoint - advice.minAngle) < 180 &&
-        mapAngle0to360(this.angleSetpoint - advice.maxAngle) > 180;
+      const triggered = triggerValues.some(
+        (v) =>
+          mapAngle0to360(v - advice.minAngle) < 180 &&
+          mapAngle0to360(v - advice.maxAngle) > 180
+      );
       let state: AdviceState;
       if (triggered) {
         state = AdviceState.triggered;
@@ -318,6 +335,7 @@ export class ObcAzimuthThruster extends LitElement {
                 setpointAtZeroDeadband: this.thrustSetpointAtZeroDeadband,
                 touching: this.touching,
                 advices: this.thrustAdvices,
+                adviceTrigger: this.adviceTrigger,
                 topPropeller: this.topPropeller,
                 bottomPropeller: this.bottomPropeller,
                 narrow: true,

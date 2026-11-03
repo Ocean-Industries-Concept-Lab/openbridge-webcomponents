@@ -12,7 +12,10 @@ import '../../navigation-instruments/readout-list/readout-list.js';
 import '../../navigation-instruments/readout-list-item/readout-list-item.js';
 import {html, nothing} from 'lit';
 import {crossDecorator} from '../../storybook-util.js';
-import {AdviceType} from '../../navigation-instruments/watch/advice.js';
+import {
+  AdviceTrigger,
+  AdviceType,
+} from '../../navigation-instruments/watch/advice.js';
 import type {LinearAdvice} from '../../building-blocks/instrument-linear/advice.js';
 import {
   ObcAlertFrameMode,
@@ -108,6 +111,7 @@ const renderTankEl = (args: StoryArgs, slotted: unknown = nothing) => html`
     .chartData=${args.chartData}
     .advice=${args.advice}
     .hasAdvice=${args.hasAdvice}
+    .adviceTrigger=${args.adviceTrigger}
     .hasGraphIcon=${args.hasGraphIcon}
     .showTrendSymbol=${args.showTrendSymbol}
     .percentFractionDigits=${args.percentFractionDigits}
@@ -173,6 +177,7 @@ const meta: Meta<StoryArgs> = {
     priority: Priority.regular,
   },
   argTypes: {
+    adviceTrigger: {control: 'select', options: Object.values(AdviceTrigger)},
     trend: {
       options: Object.values(TankTrend),
       control: {type: 'radio'},
@@ -556,6 +561,7 @@ export const WithFractionDigits: Story = {
       .chartData=${args.chartData}
       .advice=${args.advice}
       .hasAdvice=${args.hasAdvice}
+      .adviceTrigger=${args.adviceTrigger}
       .hasGraphIcon=${args.hasGraphIcon}
       .showTrendSymbol=${args.showTrendSymbol}
       .priority=${args.priority}
@@ -791,6 +797,7 @@ export const Responsive: Story = {
           .chartData=${args.chartData}
           .advice=${args.advice}
           .hasAdvice=${args.hasAdvice}
+          .adviceTrigger=${args.adviceTrigger}
           .hasGraphIcon=${args.hasGraphIcon}
           .showTrendSymbol=${args.showTrendSymbol}
           .percentFractionDigits=${args.percentFractionDigits}
