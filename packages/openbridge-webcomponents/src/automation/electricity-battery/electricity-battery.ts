@@ -18,10 +18,22 @@ import {ObcAbstractAutomationButtonSquared} from '../automation-button/abstract-
  * **TODO(designer):** the icons file has no static battery symbol, so a
  * `static` battery keeps its on or off icon.
  *
+ * Without a visible tag or state row the button is named `Battery`.
+ *
+ * @slot badge-top-right - Content projected into the top-right badge position; overrides `badgeAlert`.
+ * @slot badge-top-left - Content projected into the top-left badge position; overrides `badgeControl`.
+ * @slot badge-bottom-left - Content projected into the bottom-left badge position; overrides `badgeInterlock`.
+ * @slot badge-bottom-right - Content projected into the bottom-right badge position; overrides `badgeCommandLocked`.
+ * @fires click - Fired when the battery is clicked.
  * @experimental
  */
 @customElement('obc-electricity-battery')
 export class ObcElectricityBattery extends ObcAbstractAutomationButtonSquared {
+  override get _accessibleName(): string | null {
+    const hasText = this.showReadoutStack && (!!this.tag || this.showStatus);
+    return hasText ? null : 'Battery';
+  }
+
   override get icon() {
     return this.renderDeviceIcon({
       on: 'electricity-battery-on',
