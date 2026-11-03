@@ -6,6 +6,14 @@ import '../../icons/icon-converter-dcac-on.js';
 import '../../icons/icon-converter-dcac-off.js';
 import '../../icons/icon-converter-acdc-on.js';
 import '../../icons/icon-converter-acdc-off.js';
+import '../../icons/icon-converter-acac-on.js';
+import '../../icons/icon-converter-acac-off.js';
+import '../../icons/icon-converter-acvac-on.js';
+import '../../icons/icon-converter-acvac-off.js';
+import '../../icons/icon-converter-vacac-on.js';
+import '../../icons/icon-converter-vacac-off.js';
+import '../../icons/icon-converter-vacvac-on.js';
+import '../../icons/icon-converter-vacvac-off.js';
 import '../../icons/icon-converter-filter-1-on.js';
 import '../../icons/icon-converter-filter-1-off.js';
 import {customElement} from '../../decorator.js';
@@ -15,6 +23,10 @@ export enum ConverterAlternativeIcon {
   converterDcdc = 'converterDcdc',
   converterDcac = 'converterDcac',
   converterAcdc = 'converterAcdc',
+  converterAcac = 'converterAcac',
+  converterAcvac = 'converterAcvac',
+  converterVacac = 'converterVacac',
+  converterVacvac = 'converterVacvac',
   converterFilter1 = 'converterFilter1',
 }
 
@@ -67,6 +79,86 @@ export class ObcConverter extends ObcAbstractAutomationButtonSquared {
               usecsscolor
               slot="icon-silhouette"
             ></obi-converter-acdc-off>`;
+        }
+      case ConverterAlternativeIcon.converterAcac:
+        if (this.turnedOn) {
+          return html`<obi-converter-acac-on
+              usecsscolor
+              slot="icon"
+            ></obi-converter-acac-on>
+            <obi-converter-acac-on
+              usecsscolor
+              slot="icon-silhouette"
+            ></obi-converter-acac-on>`;
+        } else {
+          return html`<obi-converter-acac-off
+              usecsscolor
+              slot="icon"
+            ></obi-converter-acac-off>
+            <obi-converter-acac-off
+              usecsscolor
+              slot="icon-silhouette"
+            ></obi-converter-acac-off>`;
+        }
+      case ConverterAlternativeIcon.converterAcvac:
+        if (this.turnedOn) {
+          return html`<obi-converter-acvac-on
+              usecsscolor
+              slot="icon"
+            ></obi-converter-acvac-on>
+            <obi-converter-acvac-on
+              usecsscolor
+              slot="icon-silhouette"
+            ></obi-converter-acvac-on>`;
+        } else {
+          return html`<obi-converter-acvac-off
+              usecsscolor
+              slot="icon"
+            ></obi-converter-acvac-off>
+            <obi-converter-acvac-off
+              usecsscolor
+              slot="icon-silhouette"
+            ></obi-converter-acvac-off>`;
+        }
+      case ConverterAlternativeIcon.converterVacac:
+        if (this.turnedOn) {
+          return html`<obi-converter-vacac-on
+              usecsscolor
+              slot="icon"
+            ></obi-converter-vacac-on>
+            <obi-converter-vacac-on
+              usecsscolor
+              slot="icon-silhouette"
+            ></obi-converter-vacac-on>`;
+        } else {
+          return html`<obi-converter-vacac-off
+              usecsscolor
+              slot="icon"
+            ></obi-converter-vacac-off>
+            <obi-converter-vacac-off
+              usecsscolor
+              slot="icon-silhouette"
+            ></obi-converter-vacac-off>`;
+        }
+      case ConverterAlternativeIcon.converterVacvac:
+        if (this.turnedOn) {
+          return html`<obi-converter-vacvac-on
+              usecsscolor
+              slot="icon"
+            ></obi-converter-vacvac-on>
+            <obi-converter-vacvac-on
+              usecsscolor
+              slot="icon-silhouette"
+            ></obi-converter-vacvac-on>`;
+        } else {
+          return html`<obi-converter-vacvac-off
+              usecsscolor
+              slot="icon"
+            ></obi-converter-vacvac-off>
+            <obi-converter-vacvac-off
+              usecsscolor
+              slot="icon-silhouette"
+            ></obi-converter-vacvac-off>`;
         }
       case ConverterAlternativeIcon.converterFilter1:
         if (this.turnedOn) {
