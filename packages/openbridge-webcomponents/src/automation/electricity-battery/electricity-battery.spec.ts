@@ -31,6 +31,16 @@ describe('electricity battery accessible name', () => {
     expect(mounted.button.getAttribute('aria-label')).toBe('Battery');
   });
 
+  it('names the button and its state with only the state row', async () => {
+    const on = await mount({tag: null, turnedOn: true});
+    battery = on.battery;
+    expect(on.button.getAttribute('aria-label')).toBe('Battery On');
+    battery.remove();
+    const off = await mount({tag: null, turnedOn: false});
+    battery = off.battery;
+    expect(off.button.getAttribute('aria-label')).toBe('Battery Off');
+  });
+
   it('names the button without a tag or state row', async () => {
     const mounted = await mount({tag: null, showStatus: false});
     battery = mounted.battery;
