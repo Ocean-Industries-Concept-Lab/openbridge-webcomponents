@@ -23,7 +23,13 @@ import {
 } from '../../alert-system/configured-alert-standard.js';
 import {
   alertActionLabel,
-  compareAlertsBySortingRank,
+  alertLabelOnTheDisplay,
+  alertTextOnTheDisplay,
+  alertTimeFormatOnTheDisplay,
+  alertTimeHeadingOnTheDisplay,
+  alertTimeOnTheDisplay,
+  alertTypeOnTheDisplay,
+  compareAlertsInDisplayOrder,
   findAlertStateDefinition,
   isAlertIncludedInFilter,
   offeredAlertActionIds,
@@ -48,13 +54,13 @@ export type ObcAlertListCellClickEvent = CustomEvent<{
   actionId?: string;
 }>;
 
-/** The fields `statusColumn()` reads beside the criticality and state. */
+/** The fields `statusColumn()` reads while the standard names no `display` fields. */
 export interface AlertDescriptionFields {
   text: string;
   source?: string;
 }
 
-/** The field `timeColumn()` reads. */
+/** The field `timeColumn()` reads while the standard names no `display` fields. */
 export interface AlertTimeField {
   time: Date;
 }
@@ -143,22 +149,24 @@ export function alertListCellSlotName(columnKey: string, rowId: string) {
 }
 
 /**
- * Alert icon, text and source. Sorts by the sorting rank the alert standard
- * gives each alert's state, the lowest rank on top.
+ * Alert icon, with the text and label the standard's `display` names, or the
+ * alert's own `text` and `source` for a standard that names none. Sorts by
+ * the sorting rank of each alert's state, the lowest rank on top, and within
+ * a rank by the latest time where the standard asks for it.
  */
 export function statusColumn(
   options: AlertListColumnOptions = {}
-): AlertListDataColumn<StandardAlert & AlertDescriptionFields> {
+): AlertListDataColumn<StandardAlert & Partial<AlertDescriptionFields>> {
   return {
     key: 'status',
     label: 'Status',
     sortDirection: 'desc',
-    compare: (a, b) => compareAlertsBySortingRank(b, a),
+    compare: (a, b) => compareAlertsInDisplayOrder(b, a),
     cell: (alert) => ({
       type: ObcTableCellType.Regular,
       largeIcon: true,
-      text: alert.text,
-      title: alert.source,
+      text: alertTextOnTheDisplay(alert) ?? alert.text,
+      title: alertLabelOnTheDisplay(alert) ?? alert.source,
       noWrap: true,
       icon: html`<obc-alert-icon-experimental
         .criticality=${alert.criticality}
@@ -223,22 +231,72 @@ export function actionColumn(
   };
 }
 
-/** Activation time; sorted by time. */
-export function timeColumn({
-  formatter = (time: Date) =>
-    time.toLocaleTimeString(undefined, {hour12: false}),
-  ...options
-}: AlertListColumnOptions & {
+export type AlertListTimeColumnOptions = AlertListColumnOptions & {
   formatter?: (time: Date) => string;
-} = {}): AlertListDataColumn<StandardAlert & AlertTimeField> {
+};
+
+function formatTimeOnTheLocalClock(time: Date): string {
+  return time.toLocaleTimeString(undefined, {hour12: false});
+}
+
+/**
+ * The time the standard's `display` names, or the alert's own `time` for a
+ * standard that names none; sorted by time. Headed and formatted by the
+ * standard unless `label` or `formatter` is passed. An alert without a time
+ * leaves the cell empty and sorts first.
+ */
+export function timeColumn({
+  formatter,
+  ...options
+}: AlertListTimeColumnOptions = {}): AlertListDataColumn<
+  StandardAlert & Partial<AlertTimeField>
+> {
+  const timeOf = (alert: StandardAlert & Partial<AlertTimeField>) =>
+    alertTimeOnTheDisplay(alert) ?? alert.time;
+  const millisecondsOf = (alert: StandardAlert & Partial<AlertTimeField>) => {
+    const time = timeOf(alert);
+    return time === undefined
+      ? Number.NEGATIVE_INFINITY
+      : new Date(time).getTime();
+  };
   return {
     key: 'time',
-    label: 'Activated',
-    compare: (a, b) => new Date(a.time).getTime() - new Date(b.time).getTime(),
+    // A getter, so the heading follows the standard set when the list renders.
+    get label() {
+      return alertTimeHeadingOnTheDisplay() ?? 'Activated';
+    },
+    compare: (a, b) => {
+      const difference = millisecondsOf(a) - millisecondsOf(b);
+      return Number.isNaN(difference) ? 0 : difference;
+    },
+    cell: (alert) => {
+      const time = timeOf(alert);
+      const format =
+        formatter ?? alertTimeFormatOnTheDisplay() ?? formatTimeOnTheLocalClock;
+      return {
+        type: ObcTableCellType.Regular,
+        text: time === undefined ? undefined : format(new Date(time)),
+        noWrap: true,
+        align: 'center',
+        neutral: true,
+      };
+    },
+    ...options,
+  };
+}
+
+/** The kind of condition the alert detects, as the standard's `display` names it; sorted alphabetically. */
+export function typeColumn(
+  options: AlertListColumnOptions = {}
+): AlertListDataColumn {
+  const typeOf = (alert: StandardAlert) => alertTypeOnTheDisplay(alert) ?? '';
+  return {
+    key: 'type',
+    label: 'Type',
+    compare: (a, b) => typeOf(a).localeCompare(typeOf(b)),
     cell: (alert) => ({
       type: ObcTableCellType.Regular,
-      text: formatter(alert.time),
-      align: 'center',
+      text: typeOf(alert),
       neutral: true,
     }),
     ...options,
@@ -398,7 +456,12 @@ export function getAlertRows(
  *   can carry any more.
  * - **Column factories:** `statusColumn()`, `actionColumn()`, `timeColumn()`
  *   and `tagIdColumn()` build the standard data columns; each takes overrides
- *   such as `label`, `width` or `dividerRight`.
+ *   such as `label`, `width` or `dividerRight`. `typeColumn()` adds the
+ *   alert type, for a standard whose lists show one.
+ * - **Display fields:** the status, time and type columns read the fields
+ *   the standard's `display` names, such as `alertTitle` under IEC 62923 or
+ *   `tagName` under ISA-18.2. Under a standard that names none they read the
+ *   alert's own `text`, `source` and `time`.
  * - **Filter:** `filterId` names a filter of the standard, such as `active`
  *   or `unacked`, and the list shows the alerts whose state is included in
  *   it; every alert shows without one. `customFilter` narrows the list

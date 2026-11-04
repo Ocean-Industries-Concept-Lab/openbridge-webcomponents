@@ -12,6 +12,7 @@ import {
 } from '../../alert-system/alert-standard.js';
 import {AlertStandardController} from '../../alert-system/configured-alert-standard.js';
 import {
+  alertTimeFormatOnTheDisplay,
   isAlertActionOffered,
   isAlertIncludedInFilter,
 } from '../../alert-system/read-standard-alert.js';
@@ -62,10 +63,13 @@ export type ObcAlertListPageSmallExperimentalRowClickEvent = CustomEvent<{
  *
  * ### Usage Guidelines
  * Set `alerts` and handle `action-click` and `ack-all-visible-click`; the
- * page shows whatever the alerts say once they are updated. The alerts carry
- * `text`, and `time` when `showTime` is set. For other columns or grouping,
- * use `obc-alert-list-details-experimental` directly. `hasShelved` has no
- * effect here: the standard decides the filters.
+ * page shows whatever the alerts say once they are updated. The alerts
+ * carry the fields the standard's `display` names, or `text` and, when
+ * `showTime` is set, `time` under a standard that names none. A standard
+ * that formats its time, such as IEC 62923 in UTC, does so instead of
+ * `timeFormatter`. For other columns or grouping, use
+ * `obc-alert-list-details-experimental` directly. `hasShelved` has no effect
+ * here: the standard decides the filters.
  *
  * @property filterId - The filter the dropdown shows when the page opens, and again whenever `filterId` is set; the standard's first filter when unset.
  * @property alerts - Alerts to list.
@@ -147,9 +151,13 @@ export class ObcAlertListPageSmallExperimental extends ObcAlertListPageSmallBase
   }
 
   private get columns(): AlertListColumn[] {
+    const formatter =
+      alertTimeFormatOnTheDisplay() === undefined
+        ? this.timeFormatter
+        : undefined;
     return [
       statusColumn(),
-      ...(this.showTime ? [timeColumn({formatter: this.timeFormatter})] : []),
+      ...(this.showTime ? [timeColumn({formatter})] : []),
       actionColumn({
         width:
           'var(--app-components-alert-table-row-ack-container-width-small)',

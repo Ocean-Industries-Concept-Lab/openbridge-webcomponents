@@ -36,12 +36,19 @@ import {FlashingSpeed} from '../types.js';
 import {
   ALERT_ACTION_ID_APPLIED_BY_ACK_VISIBLE_BUTTON,
   defineAlertStandard,
+  ownEntryOf,
   type AlertGlyph,
+  type AlertStandard,
 } from './alert-standard.js';
 import {
   IEC_62923_ALARM_GLYPHS,
   IEC_62923_WARNING_GLYPHS,
 } from './iec-62923-alert-glyphs.js';
+import type {
+  AlertCriticalityAndState,
+  AlertCriticalityAndStateOf,
+  StandardAlert,
+} from './standard-alert.js';
 import {
   criticalUnacknowledgedA,
   criticalUnacknowledgedB,
@@ -386,4 +393,92 @@ export const isa182AlertStandard = defineAlertStandard({
       },
     },
   },
+  display: {
+    textOf: (alarm: AlarmWithIsa182Fields) => alarm.alarmDescription,
+    labelOf: (alarm: AlarmWithIsa182Fields) => alarm.tagName,
+    typeOf: (alarm: AlarmWithIsa182Fields) => alarm.alarmType,
+    timeOf: timeTheStateShows,
+    timeHeading: () => msg('Time'),
+  },
 });
+
+/** The fields an ISA-18.2 alarm display shows beside the priority and state (ISA-18.2 11.6.2.2). */
+export interface Isa182AlarmFields {
+  /** The tag the alarm belongs to. */
+  tagName: string;
+  /** What the alarm is about; the tag description can stand in for it. */
+  alarmDescription: string;
+  /** The kind of condition the alarm detects, such as high, deviation or rate of change. */
+  alarmType: string;
+}
+
+/**
+ * The time field each state's list shows: when the alarm became active on the
+ * alarm summary, and when it was set aside on the lists of shelved,
+ * suppressed-by-design and out-of-service alarms (ISA-18.2 11.7.4, 11.8.3,
+ * 11.9.4). A normal alarm shows no time.
+ */
+export const ISA_18_2_TIME_FIELD_EACH_STATE_SHOWS = {
+  unacknowledged: 'timeAlarmBecameActive',
+  'returned-to-normal-unacknowledged': 'timeAlarmBecameActive',
+  acknowledged: 'timeAlarmBecameActive',
+  'shelved-active': 'timeAlarmWasShelved',
+  'shelved-not-active': 'timeAlarmWasShelved',
+  'suppressed-by-design-active': 'timeAlarmWasSuppressed',
+  'suppressed-by-design-not-active': 'timeAlarmWasSuppressed',
+  'out-of-service-active': 'timeAlarmWasPlacedOutOfService',
+  'out-of-service-not-active': 'timeAlarmWasPlacedOutOfService',
+} as const;
+
+type Isa182StateThatShowsATime =
+  keyof typeof ISA_18_2_TIME_FIELD_EACH_STATE_SHOWS;
+
+export type Isa182TimeFieldName =
+  (typeof ISA_18_2_TIME_FIELD_EACH_STATE_SHOWS)[Isa182StateThatShowsATime];
+
+type TimeFieldTheStateRequires<State> = State extends Isa182StateThatShowsATime
+  ? {[Field in (typeof ISA_18_2_TIME_FIELD_EACH_STATE_SHOWS)[State]]: Date}
+  : unknown;
+
+type OnePairPerStateWithTheTimeItShows<Criticality, State> =
+  State extends string
+    ? {
+        criticality: Criticality;
+        state: State;
+      } & TimeFieldTheStateRequires<State>
+    : never;
+
+type WithTheTimeItsStateShows<Pair> = Pair extends {
+  criticality: infer Criticality;
+  state: infer State;
+}
+  ? OnePairPerStateWithTheTimeItShows<Criticality, State>
+  : never;
+
+/**
+ * An alarm of a standard built on ISA-18.2, with the fields its display shows.
+ * Each state requires the time its list shows, so a shelved alarm without
+ * `timeAlarmWasShelved` does not compile.
+ */
+export type Isa182AlertOf<Standard extends AlertStandard> = Omit<
+  StandardAlert,
+  keyof AlertCriticalityAndState
+> &
+  Isa182AlarmFields &
+  WithTheTimeItsStateShows<AlertCriticalityAndStateOf<Standard>>;
+
+/** An alarm of the ISA-18.2 standard, with the fields its display shows. */
+export type Isa182Alert = Isa182AlertOf<typeof isa182AlertStandard>;
+
+type AlarmWithIsa182Fields = StandardAlert &
+  Isa182AlarmFields &
+  Partial<Record<Isa182TimeFieldName, Date>>;
+
+/** When the alarm became active, or when it was set aside; nothing while normal. */
+function timeTheStateShows(alarm: AlarmWithIsa182Fields): Date | undefined {
+  const timeField = ownEntryOf<Isa182TimeFieldName>(
+    ISA_18_2_TIME_FIELD_EACH_STATE_SHOWS,
+    alarm.state
+  );
+  return timeField === undefined ? undefined : alarm[timeField];
+}

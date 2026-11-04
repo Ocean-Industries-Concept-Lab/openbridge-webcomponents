@@ -6,89 +6,83 @@ import {
   ObcAlertListPageSmallExperimentalAckAllClickEvent,
   ObcAlertListPageSmallExperimentalActionClickEvent,
 } from './alert-list-page-small-experimental.js';
-import type {
-  AlertAcknowledgedByField,
-  AlertDescriptionFields,
-  AlertTimeField,
-} from '../../components/alert-list-details-experimental/alert-list-details-experimental.js';
+import type {AlertAcknowledgedByField} from '../../components/alert-list-details-experimental/alert-list-details-experimental.js';
 import {ALERT_ACTION_ID_APPLIED_BY_ACK_VISIBLE_BUTTON} from '../../alert-system/alert-standard.js';
 import {setAlertStandard} from '../../alert-system/configured-alert-standard.js';
-import {iec62923AlertStandard} from '../../alert-system/iec-62923-alert-standard.js';
-import {isa182AlertStandard} from '../../alert-system/isa-18-2-alert-standard.js';
-import type {
-  StandardAlert,
-  StandardAlertOf,
-} from '../../alert-system/standard-alert.js';
 import {
-  iec62923StateAfterAction,
-  isa182StateAfterAction,
+  iec62923AlertStandard,
+  type Iec62923Alert,
+} from '../../alert-system/iec-62923-alert-standard.js';
+import {
+  isa182AlertStandard,
+  type Isa182Alert,
+} from '../../alert-system/isa-18-2-alert-standard.js';
+import type {StandardAlert} from '../../alert-system/standard-alert.js';
+import {
+  iec62923AlertAfterAction,
+  isa182AlertAfterAction,
 } from '../../alert-system/stories/state-after-action.js';
 
-type PageAlertFields = AlertDescriptionFields &
-  AlertTimeField &
-  AlertAcknowledgedByField;
-type Iec62923PageAlert = StandardAlertOf<typeof iec62923AlertStandard> &
-  PageAlertFields;
-type Isa182PageAlert = StandardAlertOf<typeof isa182AlertStandard> &
-  PageAlertFields;
+type Iec62923PageAlert = Iec62923Alert & AlertAcknowledgedByField;
+type Isa182PageAlert = Isa182Alert & AlertAcknowledgedByField;
 
 const iec62923Alerts: Iec62923PageAlert[] = [
   {
     id: 'unacknowledged',
     criticality: 'alarm',
     state: 'active-unacknowledged',
-    source: 'alarm',
-    text: 'Active, unacknowledged',
-    time: new Date('2024-01-15T14:39:00Z'),
+    alertSource: 'alarm',
+    alertTitle: 'Active, unacknowledged',
+    timeOfLastStateChange: new Date('2024-01-15T14:39:00Z'),
   },
   {
     id: 'acknowledged',
     criticality: 'alarm',
     state: 'active-acknowledged',
-    source: 'alarm',
-    text: 'Active, acknowledged',
-    time: new Date('2024-01-15T14:38:00Z'),
+    alertSource: 'alarm',
+    alertTitle: 'Active, acknowledged',
+    timeOfLastStateChange: new Date('2024-01-15T14:38:00Z'),
     acknowledgedBy: 'John Doe',
   },
   {
     id: 'rectified',
     criticality: 'alarm',
     state: 'rectified-unacknowledged',
-    source: 'alarm',
-    text: 'Rectified, unacknowledged',
-    time: new Date('2024-01-15T14:37:00Z'),
+    alertSource: 'alarm',
+    alertTitle: 'Rectified, unacknowledged',
+    timeOfLastStateChange: new Date('2024-01-15T14:37:00Z'),
   },
   {
     id: 'normal',
     criticality: 'alarm',
     state: 'normal',
-    source: 'alarm',
-    text: 'Normal',
-    time: new Date('2024-01-15T14:36:00Z'),
+    alertSource: 'alarm',
+    alertTitle: 'Normal',
+    timeOfLastStateChange: new Date('2024-01-15T14:36:00Z'),
   },
   {
     id: 'caution',
     criticality: 'caution',
     state: 'active',
-    source: 'caution',
-    text: 'Caution, takes no ACK',
-    time: new Date('2024-01-15T14:35:00Z'),
+    alertSource: 'caution',
+    alertTitle: 'Caution, takes no ACK',
+    timeOfLastStateChange: new Date('2024-01-15T14:35:00Z'),
   },
   {
     id: 'acknowledge-not-allowed',
     criticality: 'warning',
     state: 'active-unacknowledged-acknowledge-not-allowed',
-    source: 'warning',
-    text: 'Acknowledged elsewhere',
-    time: new Date('2024-01-15T14:34:00Z'),
+    alertSource: 'warning',
+    alertTitle: 'Acknowledged elsewhere',
+    timeOfLastStateChange: new Date('2024-01-15T14:34:00Z'),
   },
   {
     id: 'transferred',
     criticality: 'warning',
     state: 'active-responsibility-transferred',
-    source: 'warning',
-    text: 'Responsibility transferred',
-    time: new Date('2024-01-15T14:33:00Z'),
+    alertSource: 'warning',
+    alertTitle: 'Responsibility transferred',
+    timeOfLastStateChange: new Date('2024-01-15T14:33:00Z'),
   },
 ];
 
@@ -97,91 +91,93 @@ const isa182Alerts: Isa182PageAlert[] = [
     id: 'unacknowledged',
     criticality: 'high',
     state: 'unacknowledged',
-    source: 'high',
-    text: 'Unacknowledged',
-    time: new Date('2024-01-15T14:39:00Z'),
+    tagName: 'TAG-01',
+    alarmDescription: 'Unacknowledged',
+    alarmType: 'High',
+    timeAlarmBecameActive: new Date('2024-01-15T14:39:00Z'),
   },
   {
     id: 'acknowledged',
     criticality: 'high',
     state: 'acknowledged',
-    source: 'high',
-    text: 'Acknowledged',
-    time: new Date('2024-01-15T14:38:00Z'),
+    tagName: 'TAG-02',
+    alarmDescription: 'Acknowledged',
+    alarmType: 'High',
+    timeAlarmBecameActive: new Date('2024-01-15T14:38:00Z'),
     acknowledgedBy: 'John Doe',
   },
   {
     id: 'returned-to-normal',
     criticality: 'high',
     state: 'returned-to-normal-unacknowledged',
-    source: 'high',
-    text: 'Returned to normal, unacknowledged',
-    time: new Date('2024-01-15T14:37:00Z'),
+    tagName: 'TAG-03',
+    alarmDescription: 'Returned to normal, unacknowledged',
+    alarmType: 'High',
+    timeAlarmBecameActive: new Date('2024-01-15T14:37:00Z'),
   },
   {
     id: 'normal',
     criticality: 'high',
     state: 'normal',
-    source: 'high',
-    text: 'Normal',
-    time: new Date('2024-01-15T14:36:00Z'),
+    tagName: 'TAG-04',
+    alarmDescription: 'Normal',
+    alarmType: 'High',
   },
   {
     id: 'shelved',
     criticality: 'medium',
     state: 'shelved-active',
-    source: 'medium',
-    text: 'Shelved, active',
-    time: new Date('2024-01-15T14:34:00Z'),
+    tagName: 'TAG-05',
+    alarmDescription: 'Shelved, active',
+    alarmType: 'Deviation',
+    timeAlarmWasShelved: new Date('2024-01-15T14:34:00Z'),
   },
   {
     id: 'suppressed',
     criticality: 'critical',
     state: 'suppressed-by-design-not-active',
-    source: 'critical',
-    text: 'Suppressed by design, not active',
-    time: new Date('2024-01-15T14:33:00Z'),
+    tagName: 'TAG-06',
+    alarmDescription: 'Suppressed by design, not active',
+    alarmType: 'High-high',
+    timeAlarmWasSuppressed: new Date('2024-01-15T14:33:00Z'),
   },
   {
     id: 'out-of-service',
     criticality: 'low',
     state: 'out-of-service-active',
-    source: 'low',
-    text: 'Out of service, active',
-    time: new Date('2024-01-15T14:32:00Z'),
+    tagName: 'TAG-07',
+    alarmDescription: 'Out of service, active',
+    alarmType: 'Low',
+    timeAlarmWasPlacedOutOfService: new Date('2024-01-15T14:32:00Z'),
   },
 ];
 
 /** Your application moves the alerts to their next state and hands the page the result. */
-function applyActionToPageAlerts(
+function applyActionToPageAlerts<
+  Alert extends StandardAlert & AlertAcknowledgedByField,
+>(
   page: ObcAlertListPageSmallExperimental,
   alertsActedOn: StandardAlert[],
   actionId: string,
-  stateAfterAction: (state: string, actionId: string) => string
+  alertAfterAction: (alert: Alert, actionId: string) => Alert
 ) {
   const idsOfAlertsActedOn = new Set(alertsActedOn.map((alert) => alert.id));
-  page.alerts = (page.alerts as Array<StandardAlert & PageAlertFields>).map(
-    (alert) => {
-      if (!idsOfAlertsActedOn.has(alert.id)) {
-        return alert;
-      }
-      const acknowledgedBy =
-        actionId === ALERT_ACTION_ID_APPLIED_BY_ACK_VISIBLE_BUTTON
-          ? 'John Doe'
-          : alert.acknowledgedBy;
-      return {
-        ...alert,
-        state: stateAfterAction(alert.state, actionId),
-        acknowledgedBy,
-      };
+  page.alerts = (page.alerts as Alert[]).map((alert) => {
+    if (!idsOfAlertsActedOn.has(alert.id)) {
+      return alert;
     }
-  );
+    const acknowledgedBy =
+      actionId === ALERT_ACTION_ID_APPLIED_BY_ACK_VISIBLE_BUTTON
+        ? 'John Doe'
+        : alert.acknowledgedBy;
+    return {...alertAfterAction(alert, actionId), acknowledgedBy};
+  });
 }
 
-function renderPage(
+function renderPage<Alert extends StandardAlert & AlertAcknowledgedByField>(
   args: ObcAlertListPageSmallExperimental,
-  alerts: StandardAlert[],
-  stateAfterAction: (state: string, actionId: string) => string
+  alerts: Alert[],
+  alertAfterAction: (alert: Alert, actionId: string) => Alert
 ) {
   return html`<obc-alert-list-page-small-experimental
     .filterId=${args.filterId}
@@ -194,7 +190,7 @@ function renderPage(
         event.currentTarget as ObcAlertListPageSmallExperimental,
         [event.detail.alert],
         event.detail.actionId,
-        stateAfterAction
+        alertAfterAction
       )}
     @ack-all-visible-click=${(
       event: ObcAlertListPageSmallExperimentalAckAllClickEvent
@@ -203,7 +199,7 @@ function renderPage(
         event.currentTarget as ObcAlertListPageSmallExperimental,
         event.detail.alerts,
         ALERT_ACTION_ID_APPLIED_BY_ACK_VISIBLE_BUTTON,
-        stateAfterAction
+        alertAfterAction
       )}
     style="height: 100vh; display: block; max-height: 100%;"
   ></obc-alert-list-page-small-experimental>`;
@@ -218,7 +214,7 @@ const meta: Meta<ObcAlertListPageSmallExperimental> = {
     filterId: 'active',
     showTime: true,
   },
-  render: (args) => renderPage(args, iec62923Alerts, iec62923StateAfterAction),
+  render: (args) => renderPage(args, iec62923Alerts, iec62923AlertAfterAction),
 };
 
 export default meta;
@@ -236,7 +232,10 @@ export const Automation: Story = {
       },
     },
   },
-  render: (args) => renderPage(args, isa182Alerts, isa182StateAfterAction),
+  render: (args) =>
+    renderPage(args, isa182Alerts, (alarm: Isa182PageAlert, actionId) =>
+      isa182AlertAfterAction(alarm, actionId)
+    ),
 };
 
 export const Unacked: Story = {

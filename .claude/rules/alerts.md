@@ -31,10 +31,12 @@ lists the states it can be in, and each state is defined on its own:
 | `glyphShownInsteadOfActions` | what the action column shows for a state that offers no action |
 
 Beside the tree a standard declares its `filters` (label and empty state, in
-tab order) and its `actions` (label, and whether one click may apply it to
-several alerts).
+tab order), its `actions` (label, and whether one click may apply it to
+several alerts) and, optionally, its `display`: which fields of the alert a
+list shows (§ The alert).
 
-- The components know nothing else about an alert. Acknowledgement, shelving
+- Beyond the tree and `display`, the components know nothing about an
+  alert. Acknowledgement, shelving
   and categories are not concepts of the library: a standard that has them
   writes states for them, and one that does not leaves them out.
 - Every state is written out, also where two differ in one field. A helper
@@ -91,9 +93,37 @@ fields they read (`text`, `time`, `tagId`, `acknowledgedBy`), and
 `AlertListDataColumn` declares `cell` as a method so such a column fits in
 `columns`.
 
+A standard's `display` names the fields a list shows, by the names its
+document gives them, so the list stays generic: `statusColumn()`,
+`timeColumn()` and `typeColumn()` read text, label, time and type through it.
+A standard without `display` shows the alert's own `text`, `source` and
+`time`, as the Custom Standard story does. Each built-in standard requires
+its fields in its alert type:
+
+| Type            | Text                                   | Label         | Time                                      | Type        |
+| --------------- | -------------------------------------- | ------------- | ----------------------------------------- | ----------- |
+| `Iec62923Alert` | `alertTitle` – `alertDescriptionText?` | `alertSource` | `timeOfLastStateChange`, in UTC           | —           |
+| `Isa182Alert`   | `alarmDescription`                     | `tagName`     | the one its state's list shows, see below | `alarmType` |
+
+- `display` also heads and formats the time, and can put the latest time
+  first within a sorting rank, as IEC 62923 does (6.4.2.1). A `formatter`
+  passed to `timeColumn()` wins; the small page passes its `timeFormatter`
+  only under a standard that formats no time.
+- ISA-18.2 shows when an alarm became active, and on the lists of alarms set
+  aside when it was shelved, suppressed or taken out of service
+  (`ISA_18_2_TIME_FIELD_EACH_STATE_SHOWS`). Each state requires its field: a
+  shelved alarm without `timeAlarmWasShelved` does not compile. A normal
+  alarm shows no time.
+- `Isa182AlertOf<typeof aStandard>` gives a standard built on ISA-18.2 the
+  same fields; the Service View story also reuses `isa182AlertStandard.display`.
+- Showing these fields does not by itself make an application meet the
+  standard: that depends on its whole display.
+
 `read-standard-alert.ts` is the only reader: `findAlertStateDefinition()`,
-`compareAlertsBySortingRank()`, `isAlertIncludedInFilter()` and
-`isAlertActionOffered()`. The state transitions belong to the application;
+`compareAlertsBySortingRank()`, `compareAlertsInDisplayOrder()`,
+`isAlertIncludedInFilter()`, `isAlertActionOffered()`, and the
+`alert…OnTheDisplay()` readers, which return `undefined` while the standard
+names no `display`. The state transitions belong to the application;
 the stories stand in for it with `alert-system/stories/state-after-action.ts`.
 
 ## One standard per application

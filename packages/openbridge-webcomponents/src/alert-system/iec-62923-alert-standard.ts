@@ -30,6 +30,34 @@ import {
   IEC_62923_ALARM_GLYPHS,
   IEC_62923_WARNING_GLYPHS,
 } from './iec-62923-alert-glyphs.js';
+import type {StandardAlert, StandardAlertOf} from './standard-alert.js';
+
+/** The fields an IEC 62923 alert display shows beside the priority and state. */
+export interface Iec62923AlertFields {
+  /** What the operational problem is (IEC 62923-1 6.4.2.1). */
+  alertTitle: string;
+  /** Guidance on how to respond, shown after the title. */
+  alertDescriptionText?: string;
+  /** The equipment that raised the alert, which a central alert display names (IEC 62923-1 7.2.1.5). */
+  alertSource: string;
+  /**
+   * When the alert last changed state, in UTC. Silencing and the end of a
+   * silence leave it alone. Within a priority the newest change is listed
+   * first (IEC 62923-1 6.4.2.1).
+   */
+  timeOfLastStateChange: Date;
+}
+
+/** An alert of the IEC 62923 standard, with the fields its display shows. */
+export type Iec62923Alert = StandardAlertOf<typeof iec62923AlertStandard> &
+  Iec62923AlertFields;
+
+type AlertWithIec62923Fields = StandardAlert & Iec62923AlertFields;
+
+/** The time in UTC, marked as such (IEC 62923-1 7.2.1.10). */
+function formatTimeInUtc(time: Date): string {
+  return `${time.toISOString().slice(11, 19)} UTC`;
+}
 
 const Unacknowledged = 'unacked';
 const Active = 'active';
@@ -222,5 +250,16 @@ export const iec62923AlertStandard = defineAlertStandard({
         },
       },
     },
+  },
+  display: {
+    textOf: (alert: AlertWithIec62923Fields) =>
+      alert.alertDescriptionText
+        ? `${alert.alertTitle} – ${alert.alertDescriptionText}`
+        : alert.alertTitle,
+    labelOf: (alert: AlertWithIec62923Fields) => alert.alertSource,
+    timeOf: (alert: AlertWithIec62923Fields) => alert.timeOfLastStateChange,
+    timeHeading: () => msg('Last change'),
+    formatTime: formatTimeInUtc,
+    latestTimeFirstWithinASortingRank: true,
   },
 });
