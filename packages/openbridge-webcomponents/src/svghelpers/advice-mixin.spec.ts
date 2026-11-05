@@ -1,20 +1,27 @@
 import {describe, it, expect} from 'vitest';
 import {LitElement} from 'lit';
-import {AdviceMixin} from './advice-mixin.js';
+import {AdviceMixin, type AdviceMixinInterface} from './advice-mixin.js';
 import {AdviceBundle} from './advice-bundle.js';
 import {AdviceState, AdviceTrigger} from './advice.js';
 
-class AdviceHost extends AdviceMixin(LitElement) {}
-customElements.define('test-advice-host', AdviceHost);
-
-class AngularAdviceHost extends AdviceMixin(LitElement, {
-  angularWraparound: true,
-}) {}
-customElements.define('test-angular-advice-host', AngularAdviceHost);
+// Registered on first use rather than at module scope: the wrapper
+// generators read every module-level element definition, specs included.
+function adviceHost(angularWraparound = false) {
+  const tag = angularWraparound
+    ? 'test-angular-advice-host'
+    : 'test-advice-host';
+  if (!customElements.get(tag)) {
+    customElements.define(
+      tag,
+      class extends AdviceMixin(LitElement, {angularWraparound}) {}
+    );
+  }
+  return document.createElement(tag) as LitElement & AdviceMixinInterface;
+}
 
 describe('AdviceMixin', () => {
   it('triggers on the value by default and keeps the configured state otherwise', () => {
-    const host = new AdviceHost();
+    const host = adviceHost();
     host.advices = [
       {min: 20, max: 40, category: 'caution', hinted: true},
       {min: 60, max: 80, category: 'optimal'},
@@ -25,7 +32,7 @@ describe('AdviceMixin', () => {
   });
 
   it('follows the trigger mode', () => {
-    const host = new AdviceHost();
+    const host = adviceHost();
     host.advices = [{min: 20, max: 40, category: 'caution'}];
     host.adviceTrigger = AdviceTrigger.setpoint;
     expect(host.resolveAdvices(30, undefined)[0].state).toBe(
@@ -35,7 +42,7 @@ describe('AdviceMixin', () => {
   });
 
   it('applies the emphasis rules when switched on', () => {
-    const host = new AdviceHost();
+    const host = adviceHost();
     host.advices = [
       {min: 20, max: 40, category: 'caution'},
       {min: 60, max: 80, category: 'optimal'},
@@ -48,7 +55,7 @@ describe('AdviceMixin', () => {
   });
 
   it('wraps angles when configured', () => {
-    const host = new AngularAdviceHost();
+    const host = adviceHost(true);
     host.advices = [{minAngle: 350, maxAngle: 10, type: 'caution'}];
     expect(host.resolveAdvices(0)[0].state).toBe(AdviceState.triggered);
   });
