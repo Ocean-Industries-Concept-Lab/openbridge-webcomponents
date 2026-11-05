@@ -440,6 +440,24 @@ export const BarWithAdvice: Story = {
 };
 
 /**
+ * The 6.1 categories on a tank: an alarm band with its area on the chart,
+ * a caution band above it, and the optimal range the level sits in.
+ */
+export const AdviceUseCase: Story = {
+  name: 'Advice Use Case (categories and area)',
+  args: {
+    type: TankType.atmospheric,
+    chartMode: TankChartMode.graphAndBar,
+    hasAdvice: true,
+    advice: [
+      {min: 0, max: 1_500, category: 'alarm', showArea: true},
+      {min: 1_500, max: 3_000, category: 'caution'},
+      {min: 7_000, max: 9_500, category: 'optimal', state: 'active'},
+    ],
+  },
+};
+
+/**
  * Setpoint marker on the compact tank bar — the marker renders on the SVG bar
  * via the shared setpoint system. Values share the tank's `value` / `max`
  * scale. Matches the Figma "Tank Generic" small variant, which includes a

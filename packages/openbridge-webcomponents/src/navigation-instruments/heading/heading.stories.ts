@@ -18,7 +18,6 @@ import {
   storyHint,
   widthDecorator,
 } from '../../storybook-util.js';
-import {AdviceType} from '../watch/advice.js';
 import {Priority} from '../types.js';
 
 const meta: Meta<typeof ObcHeading> = {
@@ -30,14 +29,7 @@ const meta: Meta<typeof ObcHeading> = {
     heading: 311,
     courseOverGround: 338,
     showLabels: true,
-    headingAdvices: [
-      {
-        minAngle: 20,
-        maxAngle: 50,
-        type: AdviceType.advice,
-        hinted: false,
-      },
-    ],
+    advices: [{min: 20, max: 50, category: 'optimal'}],
     headingSetpoint: 311,
     direction: CompassDirection.NorthUp,
     touching: false,

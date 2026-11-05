@@ -235,6 +235,59 @@ export const WithAdviceArea: Story = {
   `,
 };
 
+const HISTORY_DATA = [
+  {x: '2026-07-06T10:00:00Z', value: 4.1},
+  {x: '2026-07-06T10:01:00Z', value: 4.4},
+  {x: '2026-07-06T10:02:00Z', value: 5.2},
+  {x: '2026-07-06T10:03:00Z', value: 6.3},
+  {x: '2026-07-06T10:04:00Z', value: 7.1},
+  {x: '2026-07-06T10:05:00Z', value: 6.6},
+  {x: '2026-07-06T10:06:00Z', value: 5.4},
+  {x: '2026-07-06T10:07:00Z', value: 4.6},
+  {x: '2026-07-06T10:08:00Z', value: 4.2},
+  {x: '2026-07-06T10:09:00Z', value: 3.8},
+  {x: '2026-07-06T10:10:00Z', value: 4.0},
+];
+
+/**
+ * The area layer on a history: the trace crossed into the caution band and
+ * came back, which the limit lines make readable after the fact. The tint
+ * comes with a hit, and a plain line graph has no reading, so the states
+ * stay the configured ones.
+ */
+export const HistoricalAdvice: Story = {
+  name: 'Historical Advice Areas (time axis)',
+  play: async ({canvasElement}) => {
+    await document.fonts.ready;
+    const chart = canvasElement.querySelector('obc-line-graph') as
+      (HTMLElement & {chart?: {update(): void}}) | null;
+    chart?.chart?.update();
+  },
+  render: (_args) => html`
+    <obc-line-graph
+      .data=${HISTORY_DATA}
+      .xAxisType=${XAxisType.time}
+      .timeDisplay=${TimeDisplay.minutes}
+      .lineMode=${_args.lineMode}
+      .showGrid=${_args.showGrid}
+      .showTickMarks=${_args.showTickMarks}
+      .priority=${_args.priority}
+      .width=${_args.width}
+      .height=${_args.height}
+      .advices=${[
+        {
+          min: 3.5,
+          max: 5,
+          category: 'optimal',
+          state: 'active',
+          showArea: true,
+        },
+        {min: 6, max: 8, category: 'caution', showArea: true},
+      ]}
+    ></obc-line-graph>
+  `,
+};
+
 const UNEVEN_TIME_DATA = [
   {x: '2026-07-06T10:00:00Z', value: 10},
   {x: '2026-07-06T10:02:00Z', value: 14},
