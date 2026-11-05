@@ -14,8 +14,11 @@ import {
   BarContainerStyle,
   ScaleType,
 } from '../../building-blocks/bar-vertical/bar-vertical.js';
-import {AdviceMixin} from '../../svghelpers/advice-mixin.js';
-import type {AdviceInput} from '../../svghelpers/advice.js';
+import type {
+  AdviceInput,
+  AdviceReading,
+  ResolvedAdvice,
+} from '../../svghelpers/advice.js';
 import {SetpointMixin} from '../../svghelpers/setpoint-mixin.js';
 import '../../building-blocks/bar-vertical/bar-vertical.js';
 import type {ObcBarVertical} from '../../building-blocks/bar-vertical/bar-vertical.js';
@@ -204,9 +207,7 @@ export {FillMode, ScaleType};
  * @stable
  */
 @customElement('obc-gauge-trend')
-export class ObcGaugeTrend extends AdviceMixin(
-  SetpointMixin(ObcChartLineBase)
-) {
+export class ObcGaugeTrend extends SetpointMixin(ObcChartLineBase) {
   private _barVerticalElement?: ObcBarVertical;
   private _isFirstUpdate = false;
   private _explicitXAxisType = false;
@@ -456,6 +457,16 @@ export class ObcGaugeTrend extends AdviceMixin(
    */
   protected override getFillMode(): string | undefined {
     return this.chartFill ? 'semitransparent' : undefined;
+  }
+
+  /** The scale's value and setpoint also trigger the chart's advice areas. */
+  protected override adviceReadings(): [AdviceReading, AdviceReading] {
+    return [this.value, this.setpoint];
+  }
+
+  /** `hasAdvice` gates the chart areas as it gates the scale's bands. */
+  protected override chartAdvices(): ResolvedAdvice[] {
+    return this.hasAdvice ? super.chartAdvices() : [];
   }
 
   /**

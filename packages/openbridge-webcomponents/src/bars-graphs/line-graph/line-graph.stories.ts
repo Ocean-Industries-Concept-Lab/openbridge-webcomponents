@@ -193,6 +193,48 @@ export const SingleSeries: Story = {
   `,
 };
 
+export const WithAdviceArea: Story = {
+  name: 'With Advice Areas',
+  play: async ({canvasElement}) => {
+    await document.fonts.ready;
+    const chart = canvasElement.querySelector('obc-line-graph') as
+      (HTMLElement & {chart?: {update(): void}}) | null;
+    chart?.chart?.update();
+  },
+  render: (_args) => html`
+    <obc-line-graph
+      .data=${_args.data}
+      .lineMode=${_args.lineMode}
+      .colors=${_args.colors}
+      .xAxisType=${_args.xAxisType}
+      .yAxisPosition=${_args.yAxisPosition}
+      .showGrid=${_args.showGrid}
+      .showTickMarks=${_args.showTickMarks}
+      .showPoints=${_args.showPoints}
+      .priority=${_args.priority}
+      .width=${_args.width}
+      .height=${_args.height}
+      .advices=${[
+        {
+          min: 3.5,
+          max: 4.5,
+          category: 'optimal',
+          state: 'active',
+          showArea: true,
+        },
+        {
+          min: 6,
+          max: 7,
+          category: 'caution',
+          state: 'triggered',
+          showArea: true,
+        },
+        {value: 5, category: 'alarm', showArea: true},
+      ]}
+    ></obc-line-graph>
+  `,
+};
+
 const UNEVEN_TIME_DATA = [
   {x: '2026-07-06T10:00:00Z', value: 10},
   {x: '2026-07-06T10:02:00Z', value: 14},
