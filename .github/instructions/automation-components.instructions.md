@@ -54,6 +54,7 @@ Rules:
 - Provide both horizontal and vertical icon variants when `this.vertical` is true
 - Apply rotation via a wrapper `div` with `style="transform: rotate(90deg)"`, not on the icon itself
 - Switch between on/off icon variants based on `this.turnedOn`
+- A two-state device (`ObcAbstractAutomationButtonSquared`) keeps a `SquaredDeviceIcons` table per `alternativeIcon` and renders it with `renderDeviceIcon()`, which shows the `static` icon when `static` is set. Leave `static` out of an entry only when the icons file has no static symbol, and say so in a `TODO(designer)`
 
 ## State and Readout Getters
 
@@ -186,6 +187,17 @@ of its invariants are invisible in the template.
 - **`medium` mirrors the Figma `has Medium` property** — `regular` is one grey area, `graphic` two grey halves, `medium` hot/cold halves; the fourth value, Static, is the `static` property. The "divider" is a 4px gap between two bordered halves, not a painted bar. Colours: `--instrument-frame-secondary-color` / `--border-outline-color` when grey, `--base-red-200` + `--base-red-300` and `--base-blue-200` + `--base-blue-300` when medium.
 - **The diagonal split is one unit-viewBox SVG** with `preserveAspectRatio="none"` and non-scaling strokes, so borders and the gap keep their pixel widths at every aspect ratio. Keep it that way — a stretched viewBox with scaling strokes distorts them.
 - **Stories share `specialty-tank-story-meta.ts`**; add a story there so all three tiles get it.
+
+## Handles and readout position
+
+A valve can carry a handle or actuator next to its symbol: `obc-digital-valve` through `handle`, the pressure valves with a fixed pneumatic one. The art is in `automation-button/valve-handle.ts`, drawn for the `top` side; `obc-automation-button` turns it to `handlePosition`.
+
+- **The colours follow the state:** `on`, `off`, or `static` when `static` is set. `renderValveHandle()` on the abstract base picks it, so a subclass only names the handle.
+- **The room for a handle comes from one place** (`handleSpace` in `automation-button.ts`): flat symbols hold it in the touch target, on the readout's side the badge spacer holds it, and elsewhere the button box grows around it. A point button keeps the symbol on the anchor in all three.
+- **`handleSize`** lives on the subclasses that have a handle. `small` puts the stem's end on the symbol's centre, as the design draws it on a bare symbol.
+- **The default readout is below the symbol, or to its left on a vertical pipe** (`_isVertical`). Three-way valves put it on the side without a port.
+- **The directional valves show no state row:** they act on their own, so the system has no open or closed state to report. Without a tag their button takes its name from `equipmentName`.
+- **`--automation-symbol-*-line-color`** is hand-written in `manual.css` until the next palette export carries it; remove it there then.
 
 ## Alert frame properties
 

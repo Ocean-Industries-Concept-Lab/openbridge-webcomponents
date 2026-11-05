@@ -136,6 +136,11 @@ export class ObcIconButton extends LitElement {
   @property({type: String, attribute: 'aria-label'})
   override ariaLabel: string | null = null;
 
+  /** Focus lands on the button inside, not on the host. */
+  public override focus(options?: FocusOptions): void {
+    this.shadowRoot?.querySelector('button')?.focus(options);
+  }
+
   get progressSpinner() {
     if (this.progress === undefined) {
       return nothing;
@@ -153,7 +158,7 @@ export class ObcIconButton extends LitElement {
             cx="20"
             cy="20"
             r="18"
-            stroke="#325B9A"
+            stroke="var(--instrument-enhanced-secondary-color)"
             stroke-width="4"
             fill="none"
           />
@@ -181,7 +186,7 @@ export class ObcIconButton extends LitElement {
           fill="none"
         />
         <path
-          d="M18 2 A18 18 0 ${largeArcFlag} 1 ${x} ${y}"
+          d="M20 2 A18 18 0 ${largeArcFlag} 1 ${x} ${y}"
           stroke="var(--instrument-enhanced-secondary-color)"
           stroke-width="4"
           stroke-linecap="round"

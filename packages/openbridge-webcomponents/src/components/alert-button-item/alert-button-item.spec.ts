@@ -2,9 +2,14 @@ import {describe, expect, it} from 'vitest';
 import {render} from 'vitest-browser-lit';
 import {userEvent} from '@vitest/browser/context';
 import {html} from 'lit';
+import '../../main.css';
 import './alert-button-item.js';
+import '../../icons/icon-placeholder.js';
 import {ObcAlertButtonItem, ObcAlertButtonType} from './alert-button-item.js';
-import type {ObcAlertCounterItem} from '../alert-counter-item/alert-counter-item.js';
+import {
+  ObcAlertCounterItemType,
+  type ObcAlertCounterItem,
+} from '../alert-counter-item/alert-counter-item.js';
 import {AlertType, FlashingSpeed, type AlertCounts} from '../../types.js';
 
 type ItemProps = Partial<
@@ -15,6 +20,7 @@ type ItemProps = Partial<
     | 'nAlerts'
     | 'counter'
     | 'globalCounter'
+    | 'globalCounterType'
     | 'counts'
     | 'shelvedCount'
     | 'blinking'
@@ -45,6 +51,10 @@ async function setup(props: ItemProps = {}) {
   const el = screen.container.querySelector(
     'obc-alert-button-item'
   ) as ObcAlertButtonItem;
+  // Set only when given, so the default case exercises the element's own default.
+  if (props.globalCounterType !== undefined) {
+    el.globalCounterType = props.globalCounterType;
+  }
   await el.updateComplete;
   return el;
 }
@@ -173,6 +183,27 @@ describe('obc-alert-button-item global counter', () => {
     ).toBe('12');
   });
 
+  it('passes the counter type on, badges by default', async () => {
+    const counterType = async (props: ItemProps) =>
+      (
+        (
+          await setup({globalCounter: true, nAlerts: 12, ...props})
+        ).shadowRoot!.querySelector(
+          'obc-alert-counter-item'
+        ) as ObcAlertCounterItem
+      ).type;
+
+    expect(await counterType({counts: SEVERITY_COUNTS})).toBe(
+      ObcAlertCounterItemType.Badges
+    );
+    expect(
+      await counterType({
+        counts: SEVERITY_COUNTS,
+        globalCounterType: ObcAlertCounterItemType.AlertLevel,
+      })
+    ).toBe(ObcAlertCounterItemType.AlertLevel);
+  });
+
   it('uses the normal style whatever the type', async () => {
     const el = await setup({
       globalCounter: true,
@@ -285,6 +316,28 @@ describe('obc-alert-button-item accessibility', () => {
     expect(button(el).getAttribute('aria-label')).toBe('Engine alerts');
   });
 
+  it('forwards aria-expanded to the inner button, absent until set', async () => {
+    const el = await setup();
+    expect(button(el).hasAttribute('aria-expanded')).toBe(false);
+
+    el.setAttribute('aria-expanded', 'true');
+    await el.updateComplete;
+    expect(button(el).getAttribute('aria-expanded')).toBe('true');
+
+    el.ariaExpanded = 'false';
+    await el.updateComplete;
+    expect(button(el).getAttribute('aria-expanded')).toBe('false');
+  });
+
+  it('forwards only the true and false tokens of aria-expanded', async () => {
+    const el = await setup();
+    for (const value of ['undefined', '', 'yes']) {
+      el.setAttribute('aria-expanded', value);
+      await el.updateComplete;
+      expect(button(el).hasAttribute('aria-expanded'), value).toBe(false);
+    }
+  });
+
   it('activates with Enter and Space', async () => {
     const el = await setup();
     let clicks = 0;
@@ -311,5 +364,50 @@ describe('obc-alert-button-item announcement', () => {
     await el.updateComplete;
 
     expect(region?.textContent?.trim()).toBe('Alerts, 4, Alarm');
+  });
+});
+
+describe('obc-alert-button-item icon slot and activated', () => {
+  it('a slotted icon replaces the bell and never flashes', async () => {
+    const screen = render(
+      html`<obc-alert-button-item
+        .alertType=${AlertType.Alarm}
+        .nAlerts=${3}
+        counter
+        blinking
+        ><obi-placeholder slot="icon"></obi-placeholder
+      ></obc-alert-button-item>`
+    );
+    const el = screen.container.querySelector(
+      'obc-alert-button-item'
+    ) as ObcAlertButtonItem;
+    await el.updateComplete;
+    const slot =
+      el.shadowRoot!.querySelector<HTMLSlotElement>('slot[name="icon"]')!;
+
+    expect(slot.assignedElements().map((e) => e.tagName)).toEqual([
+      'OBI-PLACEHOLDER',
+    ]);
+    expect(durations(el)).toEqual([]);
+    expect(el.shadowRoot!.querySelector('.blink')).toBeNull();
+  });
+
+  it('activated draws the selected style', async () => {
+    const el = await setup();
+    el.activated = true;
+    await el.updateComplete;
+    const probe = document.createElement('div');
+    probe.style.backgroundColor = 'var(--selected-enabled-background-color)';
+    document.body.append(probe);
+    const wrapper = el.shadowRoot!.querySelector('.visible-wrapper')!;
+
+    expect(button(el).classList.contains('selected')).toBe(true);
+    expect(getComputedStyle(probe).backgroundColor).not.toBe(
+      'rgba(0, 0, 0, 0)'
+    );
+    expect(getComputedStyle(wrapper).backgroundColor).toBe(
+      getComputedStyle(probe).backgroundColor
+    );
+    probe.remove();
   });
 });

@@ -277,6 +277,13 @@ Decisions carried into code from the 6.1 review (2026-08):
   tokens (48 px on the regular and enhanced tiers) are not applied, so a
   readout is as tall as its rows — a small vertical readout is 44 px with a
   label, 40 px as a meta-only stacked one. `readout.spec.ts` pins it (#1252).
+- The value alert frame (`valueOptions.alert`) sits on the value reading's
+  own box in both layouts: the stroke straddles the reading's top and bottom
+  edges, so touching rows share one stroke, and only a 4 px inline padding
+  keeps it off the digits. The design pins the frame to the readout block
+  with no vertical padding (Figma 46282:102156, `has Alert-frame`). A
+  vertical overhang here makes stacked value frames cross; the list-item and
+  readout specs pin the geometry.
 - Two icon systems, on purpose. An **alert frame** flap carries the
   `obi-*-badge` glyphs — single-colour silhouettes on the flap's status
   colour (triangle alarm, circle warning, square caution, hexagon critical),

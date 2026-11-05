@@ -3,6 +3,7 @@ import './textarea-field.js';
 import {ObcTextareaField} from './textarea-field.js';
 import {render} from 'vitest-browser-lit';
 import {html} from 'lit';
+import {containsDeep, deepActiveElement} from '../../internal/_test-utils.js';
 
 describe('obc-textarea-field', () => {
   let el: ObcTextareaField;
@@ -129,6 +130,35 @@ describe('obc-textarea-field', () => {
       await el.updateComplete;
 
       expect(changeHandler).toHaveBeenCalled();
+    });
+  });
+
+  describe('recording focus', () => {
+    // The hand-off runs a frame after the update, then the focused control
+    // sits inside the icon button's shadow root.
+    const afterFrame = () =>
+      new Promise((resolve) =>
+        requestAnimationFrame(() => setTimeout(resolve))
+      );
+
+    it('moves focus to the first action button when recording starts, and back to the textarea when it ends', async () => {
+      el.showVoiceRecording = true;
+      el.recording = true;
+      await el.updateComplete;
+      await afterFrame();
+
+      const firstAction = el.shadowRoot!.querySelector(
+        '.action-container obc-icon-button'
+      )!;
+      expect(containsDeep(firstAction, deepActiveElement())).toBe(true);
+
+      el.recording = false;
+      await el.updateComplete;
+      await afterFrame();
+
+      expect(deepActiveElement()).toBe(
+        el.shadowRoot!.querySelector('.input-field')
+      );
     });
   });
 });

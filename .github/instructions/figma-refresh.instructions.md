@@ -203,11 +203,23 @@ the semantic diff (renamed, removed, changed per block) belong there too.
   that is fixed at the source. The blink keyframes and the root animation are
   gone as of the published release, and the `Color-categorical` modes now
   arrive as classes, so `manual.css` no longer bridges them.
-- Two Figma variables can land on one custom property, and the export says
-  nothing: the three declarations sit in the same theme block and CSS
-  last-wins drops all but one, so a token resolves to another group's value
-  rather than failing. A name missing from the semantic diff's removal list
-  is not proof it survived — check the block for a repeat before concluding
-  the design team dropped it (plugin PR #10 adds the warning and fixes the
-  `On-` collapse that caused it).
+- The export opens with a warning block; read it before pasting.
+  - **Name collision**: two Figma variables export as one custom property,
+    and CSS last-wins keeps only the later value. Search for the property the
+    warning names, outside the palette that declares it; if anything reads
+    it, the export waits until the design team renames one variable, and if
+    nothing does, list it for them and go on. One unread collision stands:
+    `Instrument-components/Watchface/Label-container-height` and
+    `…/Watchface/Label/container-height` both become
+    `--instrument-components-watchface-label-container-height` (16 px and
+    24 px):
+    ```bash
+    grep -rn -- '--instrument-components-watchface-label-container-height' \
+      packages/*/src | grep -v palettes/variables.css   # empty: nothing reads it
+    ```
+  - **Mode fallback**: the plugin's `VariableModes` map names a mode the
+    collection lacks, so the collection's default mode is exported instead.
+    The dusk, night and bright primitives export that way (`WCAG`,
+    `WCAG Amber`, `WCAG AAA`); whether those are the intended modes is open
+    with the design team.
 - Token typos in Figma (#985).

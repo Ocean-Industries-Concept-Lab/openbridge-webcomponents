@@ -1,0 +1,124 @@
+import {Meta, Markdown} from '@storybook/addon-docs/blocks';
+import automationTokens from './migration-guide-2-1/automation-tokens.md?raw';
+
+<Meta title="Introduction/Migration Guide 2.0 to 2.1" />
+
+# Migrating from 2.0 to 2.1
+
+2.1 is a minor release for the components: no element, property, attribute, event or slot was removed or renamed, so markup and TypeScript that use them need no change. The design tokens are where the work is ([#1353](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1353)). Two things to do before upgrading: rename the 62 CSS variables you override, which go quiet rather than failing, and the 15 PostCSS mixins if your build compiles the sources from the full-bundle package, which fail the build until you do. Two icons were renamed as well, with their old names kept as aliases, and 711 palette values moved without any API change.
+
+Coming from 1.0.1? Read [Migrating from 1.x to 2.0](?path=/docs/introduction-migration-guide--docs) first; this page is what changed after it. The [Changelog](?path=/docs/introduction-changelog--docs) lists every change.
+
+## Contents
+
+1. [Renamed CSS Variables](#renamed-css-variables)
+2. [Font Mixins](#font-mixins)
+3. [Icons](#icons)
+4. [Palette Values](#palette-values)
+5. [Deprecated Properties](#deprecated-properties)
+6. [Fixes You May See](#fixes-you-may-see)
+
+## Renamed CSS Variables
+
+62 names are gone from `openbridge.css`. A `var()` that names one resolves to nothing, and an override that sets one no longer reaches the component; neither raises an error, so search your stylesheets for the old names.
+
+The palette variables are the library's own theming tokens rather than part of the stable component API, which is why a refresh of them lands in a minor release. They are listed here because an override that names one stops working without saying so.
+
+### Automation Colors
+
+The automation colors moved from tone-based names to state-based ones: `device` became `symbol` and the pipes became `connector`, and `primary`, `secondary`, `tertiary` and their inverted pairs became the states `on`, `off`, `static` and `no-flow` with a background and a border role each. The whole family was recolored in the same change, so the pairs below match by the role each token plays, not by value.
+
+<div style={{overflowX: 'auto'}}>
+
+<Markdown>{automationTokens}</Markdown>
+
+</div>
+
+The inverted pipe pair has no exact successor; `no-flow` is the nearest role and is what the library and `@oicl/connector-diagram` now read. `--automation-device-secondary-inverted-color`, `--automation-pipe-secondary-color` and `--automation-pipe-secondary-inverted-color` are gone with no successor: nothing in the library read them.
+
+```css
+/* 2.0 */
+obc-pump {
+  --automation-device-primary-color: #2b6ad6;
+}
+
+/* 2.1 */
+obc-pump {
+  --automation-symbol-on-background-color: #2b6ad6;
+}
+```
+
+### Typography
+
+47 `--global-typography-generic-*` variables are `--global-typography-general-*`. Only that word changes:
+
+```css
+/* 2.0 */
+font-size: var(--global-typography-generic-m-font-size);
+
+/* 2.1 */
+font-size: var(--global-typography-general-m-font-size);
+```
+
+The font-weight primitives were renumbered in the same refresh and every pointer into them was shifted to compensate, so the weight you get from a typography token is unchanged.
+
+## Font Mixins
+
+The PostCSS mixins ship with the sources in `@oicl/openbridge-webcomponents-full-bundle`, so this applies only if your build uses them. The 15 `font-generic-beta-*` mixins are `font-general-*`, with the same five sizes and three weights:
+
+```css
+/* 2.0 */
+.label {
+  @mixin font-generic-beta-m-semibold;
+}
+
+/* 2.1 */
+.label {
+  @mixin font-general-m-semibold;
+}
+```
+
+Eight `font-dev-code-*` and `font-dev-console-*` mixins are new.
+
+## Icons
+
+Two icons were redrawn under new names, and both old names keep working as deprecated aliases, so markup and deep imports written against 2.0 still resolve:
+
+- `obi-log-open-google` is `obi-log-open`
+- `obi-timer-google` is `obi-timer`
+
+An alias draws what the current icon draws, so the drawing changed even under the old name. The old names are left out of `iconIds`, so a picker built from it lists every icon once, under its current name. `obc-user-menu` uses the new names.
+
+553 icons changed their drawing and 15 arrived. The seven `obi-critical-*` alert icons are now kept by hand in the repository rather than generated from Figma; their names and drawings are unchanged.
+
+## Palette Values
+
+711 resolved values moved, 80 of them steps in the `--base-*` ramps. No code needs to change, but screenshot tests will show differences. The two visible groups:
+
+- The automation devices and connectors carry the design team's recolor.
+- `obc-integration-app-bar` and `obc-integration-bar-dropdown` read `--integration-container-global-color`, the same token `obc-integration-bar` reads, instead of `--integration-container-background-color`. The two values were a shade apart and are now the same, darker one.
+
+To keep the 2.0 appearance of those two bars, point the token they now read back at the one they read before:
+
+```css
+obc-integration-app-bar,
+obc-integration-bar-dropdown {
+  --integration-container-global-color: var(
+    --integration-container-background-color
+  );
+}
+```
+
+## Deprecated Properties
+
+`obc-valve-analog-three-way-icon` gained `open1`, `open2`, `open3` and `orientation` ([#1346](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1346)). `value`, `value2` and `horisontal` are deprecated in favor of them, and `closed` in favor of setting every opening to `0`. All four still work. The two new elements built on it, `obc-analog-threeway-valve` and `obc-digital-threeway-valve`, are experimental.
+
+## Fixes You May See
+
+These need no change, but they change what you see or what a test asserts:
+
+- A component that first renders inside a hidden container, such as a closed tab, a dialog or a collapsed panel, draws correctly once it is shown ([#1351](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1351)). `obc-watch-flat`, `obc-rot-linear`, `obc-line-graph` and `obc-area-graph` were blank or mis-scaled in that case, so a workaround that forced a resize can go.
+- `obc-textbox` paints descenders and diacritics instead of clipping them at the cap-height box ([#1338](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1338)).
+- `obc-number-input-field` lets the browser place the caret and sizes a centered value to its content ([#1239](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1239)).
+- `obc-analog-valve` draws its icon from the `obi-twoway-analog` set ([#1347](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1347)).
+- `obc-alert-icon` draws a silenced warning with the warning's silenced glyph, and an unacknowledged alert held steady by `flashingSpeed="fixed"`; both drew the wrong thing or nothing ([#1340](https://github.com/Ocean-Industries-Concept-Lab/openbridge-webcomponents/pull/1340)). An `obc-alert-menu-item` with the `rectified-unacknowledged` status keeps its ACK action and lists under Unacked.

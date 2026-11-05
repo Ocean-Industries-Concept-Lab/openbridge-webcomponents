@@ -838,10 +838,9 @@ export class ObcReadout extends LitElement {
   /**
    * The value alert frame, drawn as a pure overlay around the value reading
    * (value + degree). It reserves no space — the `obc-alert-frame` sits in an
-   * absolutely-positioned box offset outward (see `.value-alert-overlay` in the
-   * CSS) so its stroke is centred on the 4px/2px padding line and toggling it
-   * never shifts content. Renders only when `valueOptions.alert` is a config
-   * object.
+   * absolutely-positioned box on the reading's edges, padded inline only (see
+   * `.value-alert-overlay` in the CSS), so toggling it never shifts content.
+   * Renders only when `valueOptions.alert` is a config object.
    */
   private renderValueAlertOverlay(): TemplateResult | typeof nothing {
     const alert = this.valueOptions?.alert;

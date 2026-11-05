@@ -115,8 +115,8 @@ const WAITING_FOR_ACK: string[] = [
  *   When hidden, the "ACK visible" button expands to fill the freed space.
  * @property showAlertListButton - If true, shows the "Alerts" navigation button in the action bar.
  *   When hidden, the "ACK visible" button expands to fill the freed space.
- * @property softDismiss - Let the browser close this menu on its own: on a click outside it, on `Escape`, or when another menu opens. Leave it off to keep showing and hiding the menu yourself.
- * @property open - Whether the menu is showing.
+ * @property softDismiss - Lets the menu close itself on a click outside it, on `Escape`, or when another menu opens. The page is covered while the menu is open, so the closing click reaches nothing there; only the top bar's strip stays clickable, which is how its buttons switch or close menus in one click. Wire it with three bindings: set `softDismiss`, bind `open` to a flag you keep, and reset that flag on `close`. The button that opens the menu needs no wiring of its own: flip the flag from its click, or from the button event of `obc-top-bar` or `obc-integration-bar`. The user menu's *Soft Dismiss From A Bar Button* story shows that wiring, the brilliance menu's *Soft Dismiss* story the one for a button you hold yourself (`bindPopoverTrigger`), and the vue demo runs its top bar this way. Leave it off to show and hide the menu yourself.
+ * @property open - Whether the menu is showing. Bind it to a flag you keep rather than toggling it from the menu's own value: when the menu closes itself, `open` is written back to `false` before the button's click reaches your handler, so `menu.open = !menu.open` gets out of step. Reset the flag on `close`.
  * @availableWhen open softDismiss==true
  * @slot - The alerts items as ObcAlertMenuItem
  * @slot empty-<tab>-title - Custom empty-state title for the selected tab (`<tab>` is one of `unacked`, `all`, `shelved`)
@@ -125,7 +125,7 @@ const WAITING_FOR_ACK: string[] = [
  * @fires {ObcAckAllVisibleClickEvent} ack-all-visible-click - Fired when the ack all visible button is clicked
  * @fires {CustomEvent} silence-click - Fired when the silence button is clicked
  * @fires {CustomEvent} go-to-alert-list-click - Fired when the go to alert list button is clicked
- * @fires {CustomEvent<void>} close - Fired when the menu closed on its own, from a click outside, `Escape`, or another menu opening. `open` is already `false` by the time it arrives.
+ * @fires {CustomEvent<void>} close - Fired when the menu closed on its own, from a click outside, `Escape`, or another menu opening. `open` is already `false` by the time it arrives; reset the flag you bind to `open` here, or the next click on the button finds it still set and asks a closed menu to close.
  */
 @localized()
 /**

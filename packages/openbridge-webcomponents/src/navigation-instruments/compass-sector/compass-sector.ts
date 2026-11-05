@@ -185,7 +185,7 @@ export class ObcCompassSector extends LitElement {
    * `rateOfTurnDegreesPerMinute` is `undefined`.
    * @availableWhen rotType!=undefined && rateOfTurnDegreesPerMinute==undefined
    */
-  @property({type: Number}) rotationsPerMinute: number = 1;
+  @property({type: Number}) rotationsPerMinute: number = 0;
   @property({type: Number}) rotMaxValue: number = 60;
   @property({type: Boolean}) rotPortStarboard: boolean = false;
   @property({type: Number}) rotAtZeroDeadband: number = ROT_ZERO_DEADBAND_DEG;

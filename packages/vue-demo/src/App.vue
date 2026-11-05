@@ -217,12 +217,12 @@ function onMoreMenuChange(event: ObcContextMenuInputChangeEvent) {
       :menu-button-activated="showNavigation"
       :dimming-button-activated="showBrilliance"
       :apps-button-activated="showAppMenu"
-      :left-more-button-activated="showMoreMenu"
+      :more-button-activated="showMoreMenu"
       :settings="settingsTopBar"
       @menu-button-clicked="toggleNavigation"
       @dimming-button-clicked="toggleBrilliance"
       @apps-button-clicked="toggleAppMenu"
-      @left-more-button-clicked="toggleMoreMenu"
+      @more-button-clicked="toggleMoreMenu"
       @close="goToPreviousPage"
     >
       <template v-if="app?.showInCommandMenu" #command-button>
@@ -388,7 +388,7 @@ header {
   right: 4px;
 }
 
-.topbar::part(left-more-button) {
+.topbar::part(more-button) {
   anchor-name: --more-menu-button;
 }
 

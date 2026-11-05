@@ -182,17 +182,8 @@ export class ObcStartStopSwitch extends LitElement {
       this.dragStartX = e.touches[0].clientX;
     }
     this.dragCurrentX = this.dragStartX;
-
-    const trackRect = this.trackRef?.getBoundingClientRect();
-    const buttonRect = this.buttonRef?.getBoundingClientRect();
-
-    if (trackRect && buttonRect) {
-      this.trackWidth = trackRect.width;
-      this.buttonWidth = buttonRect.width;
-    } else {
-      this.trackWidth = this.trackRef?.offsetWidth || 0;
-      this.buttonWidth = this.buttonRef?.offsetWidth || 0;
-    }
+    this.trackWidth = this.trackRef?.offsetWidth || 0;
+    this.buttonWidth = this.buttonRef?.offsetWidth || 0;
 
     window.addEventListener('mousemove', this.onDragMove);
     window.addEventListener('touchmove', this.onDragMove, {passive: false});
@@ -210,7 +201,10 @@ export class ObcStartStopSwitch extends LitElement {
       e.preventDefault();
     }
     this.dragCurrentX = clientX;
-    this.dragOffset = this.dragCurrentX - this.dragStartX;
+    // clientX is viewport px; the thumb's `left`/`right` are CSS px, which an
+    // ancestor `zoom` scales again, so the delta is divided by that zoom.
+    this.dragOffset =
+      (this.dragCurrentX - this.dragStartX) / (this.currentCSSZoom ?? 1);
     const percent = Math.abs(
       this.dragOffset / (this.trackWidth - this.buttonWidth)
     );

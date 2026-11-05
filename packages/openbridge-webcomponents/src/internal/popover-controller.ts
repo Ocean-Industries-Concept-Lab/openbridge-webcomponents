@@ -225,6 +225,10 @@ export class PopoverController implements ReactiveController {
  *
  * HTML can pair a button with a popover on its own, but only inside the same
  * component. Reach for this when the button and the menu live apart.
+ *
+ * A bar that reports its buttons as events, `obc-top-bar` or
+ * `obc-integration-bar`, needs none of this: flip a flag of your own from the
+ * event, bind it to `open` and reset it on `close`.
  */
 export function bindPopoverTrigger(
   trigger: HTMLElement,

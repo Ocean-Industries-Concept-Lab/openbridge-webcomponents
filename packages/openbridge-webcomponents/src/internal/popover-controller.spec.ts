@@ -5,6 +5,8 @@ import '../main.css';
 import {afterEach, describe, expect, it} from 'vitest';
 import '../components/brilliance-menu/brilliance-menu.js';
 import type {ObcBrillianceMenu} from '../components/brilliance-menu/brilliance-menu.js';
+import '../components/user-menu/user-menu.js';
+import '../integration-systems/integration-bar/integration-bar.js';
 import {bindPopoverTrigger} from './popover-controller.js';
 
 /**
@@ -353,6 +355,90 @@ describe('bindPopoverTrigger', () => {
     await userEvent.click(trigger);
     await nextTask();
     expect(isOpen(panel)).toBe(false);
+  });
+});
+
+describe('a bar that reports its button as an event', () => {
+  /**
+   * The wiring the user menu's "Soft Dismiss From A Bar Button" story shows:
+   * a flag of the app's own, flipped from the bar's event and reset on
+   * `close`. The app never holds the button, so `bindPopoverTrigger` is out.
+   */
+  async function barFixture() {
+    const root = document.createElement('div');
+    root.style.cssText = 'position:fixed;inset:0;z-index:1';
+    root.innerHTML = `
+      <obc-integration-bar showUserButton></obc-integration-bar>
+      <button id="outside" style="position:fixed;left:4px;top:200px">outside</button>
+      <obc-user-menu type="signed-in" size="small"></obc-user-menu>`;
+    document.body.append(root);
+    cleanup.push(() => root.remove());
+
+    const bar = root.querySelector('obc-integration-bar')!;
+    const menu = root.querySelector('obc-user-menu')!;
+    menu.style.cssText =
+      'position:fixed;right:4px;top:var(--app-components-topbar-touch-target-size)';
+    menu.softDismiss = true;
+
+    let open = false;
+    const apply = () => {
+      menu.open = open;
+      bar.userButtonActivated = open;
+    };
+    bar.addEventListener('user-button-clicked', () => {
+      open = !open;
+      apply();
+    });
+    menu.addEventListener('close', () => {
+      open = false;
+      apply();
+    });
+    await bar.updateComplete;
+    await menu.updateComplete;
+
+    const userButton = bar.shadowRoot!.querySelector('[part="user-button"]')!;
+    return {
+      bar,
+      menu,
+      userButton,
+      outside: root.querySelector<HTMLButtonElement>('#outside')!,
+    };
+  }
+
+  it('opens, closes and reopens from the bar, one click each', async () => {
+    const {bar, menu, userButton} = await barFixture();
+
+    await userEvent.click(userButton);
+    await nextTask();
+    expect(isOpen(menu)).toBe(true);
+    expect(bar.userButtonActivated).toBe(true);
+
+    // The bar sits in the strip the cover leaves open, so this click reaches
+    // the button after the browser has already closed the menu. The flag,
+    // not the menu's own `open`, is what keeps the two in step.
+    await userEvent.click(userButton);
+    await nextTask();
+    expect(isOpen(menu)).toBe(false);
+    expect(bar.userButtonActivated).toBe(false);
+
+    await userEvent.click(userButton);
+    await nextTask();
+    expect(isOpen(menu)).toBe(true);
+  });
+
+  it('a click outside releases the button, and the next click opens again', async () => {
+    const {bar, menu, userButton, outside} = await barFixture();
+
+    await userEvent.click(userButton);
+    await nextTask();
+    await clickSpot(outside);
+    await nextTask();
+    expect(isOpen(menu)).toBe(false);
+    expect(bar.userButtonActivated).toBe(false);
+
+    await userEvent.click(userButton);
+    await nextTask();
+    expect(isOpen(menu)).toBe(true);
   });
 });
 

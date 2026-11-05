@@ -9,7 +9,7 @@ import {
   flashVariable,
   installFlashing,
 } from './blinking.js';
-import {FlashingSpeed} from '../types.js';
+import {FlashingSpeed, type FlashTempo} from '../types.js';
 
 describe('installFlashing', () => {
   const hosts: HTMLElement[] = [];
@@ -46,20 +46,32 @@ describe('installFlashing', () => {
     }
   );
 
-  it('follows the tempo table: on for 400 ms, off for 400, 1200 or 2800 ms', () => {
+  it('follows the tempo table: on for 400, 1200 or 2800 ms, off for 400 ms', () => {
     expect(
       FLASH_TEMPOS.map((tempo) => [FLASH_ON_MS[tempo], FLASH_OFF_MS[tempo]])
     ).toEqual([
       [400, 400],
-      [400, 1200],
-      [400, 2800],
+      [1200, 400],
+      [2800, 400],
     ]);
   });
 
-  it('nests the cycles so every tempo lights up together', () => {
+  it('nests the cycles so every tempo lights up together and goes off together', () => {
     expect(flashPeriodMs(FlashingSpeed.Fast)).toBe(800);
     expect(flashPeriodMs(FlashingSpeed.Slow)).toBe(1600);
     expect(flashPeriodMs(FlashingSpeed.VerySlow)).toBe(3200);
+    const lit = (tempo: FlashTempo, time: number) =>
+      time % flashPeriodMs(tempo) < FLASH_ON_MS[tempo];
+    expect(FLASH_TEMPOS.map((tempo) => lit(tempo, 100))).toEqual([
+      true,
+      true,
+      true,
+    ]);
+    expect(FLASH_TEMPOS.map((tempo) => lit(tempo, 3100))).toEqual([
+      false,
+      false,
+      false,
+    ]);
   });
 
   it.each(FLASH_TEMPOS)(
@@ -73,10 +85,12 @@ describe('installFlashing', () => {
           .getPropertyValue(flashVariable(tempo, phase))
           .trim();
       const period = flashPeriodMs(tempo);
+      const onTime = FLASH_ON_MS[tempo];
       anim.pause();
       for (const [time, lit] of [
         [100, true],
-        [500, false],
+        [onTime - 100, true],
+        [onTime + 100, false],
         [period - 100, false],
         [period + 100, true],
       ] as const) {

@@ -9,10 +9,11 @@ import '../../icons/icon-notification-advice-active.js';
 import '../../icons/icon-silence-iec.js';
 import '../alert-button-item/alert-button-item.js';
 import {ObcAlertButtonType} from '../alert-button-item/alert-button-item.js';
+import {ObcAlertCounterItemType} from '../alert-counter-item/alert-counter-item.js';
 import {AlertType, FlashingSpeed, type AlertCounts} from '../../types.js';
 import {customElement} from '../../decorator.js';
 
-export {ObcAlertButtonType};
+export {ObcAlertButtonType, ObcAlertCounterItemType};
 
 /**
  * `<obc-alert-button>` – A compact, icon-based button for displaying alert or notification status and count.
@@ -29,7 +30,7 @@ export {ObcAlertButtonType};
  *   - **Enhanced:** Visually prominent button for high-priority alerts, with accent styling.
  * - **Alert Types:** Supports `alarm`, `warning`, `caution`, or no alert (idle). Icon and color adapt to the alert type.
  * - **Alert Counter:** Optional badge displays the number of active alerts (except in flat mode).
- * - **Global Counter:** `globalCounter` shows the per-severity `counts` and an optional `shelvedCount` before the bell and the total, as `obc-alert-button-item` draws them.
+ * - **Global Counter:** `globalCounter` shows the per-severity `counts` and an optional `shelvedCount` before the bell and the total, as `obc-alert-button-item` draws them; `globalCounterType` picks filled badges or the severity shapes.
  * - **Silence Button:** Optional secondary button to mute or silence alerts, shown when enabled and at sufficient width.
  * - **Blinking Animation:** Can animate (blink) to draw attention to active alerts (except for caution type).
  * - **Responsive Layout:** Automatically switches to flat mode below a configurable width, and hides the silence button below another configurable width.
@@ -87,6 +88,8 @@ export {ObcAlertButtonType};
  * @availableWhen silenceButtonDisabled showSilenceButton==true
  * @property counter - Shows the alert counter when there are active alerts and the button is not flat.
  * @property globalCounter - Shows the per-severity counts and the shelved count before the bell and the total (the item's global counter); a flat button shows the plain bell.
+ * @property globalCounterType - How the global counter draws each count: `badges` (filled severity badges, default) or `alert-level` (the severity shape beside the count).
+ * @availableWhen globalCounterType globalCounter==true
  * @property counts - Alert count per severity for the global counter badges (`countAlarm`, `countWarning`, `countCaution` and the `level-*` counts).
  * @availableWhen counts globalCounter==true
  * @property shelvedCount - Number of shelved alerts, shown after the global counter badges; hidden at zero.
@@ -113,6 +116,8 @@ export class ObcAlertButton extends LitElement {
   @property({type: Boolean}) silenceButtonDisabled = false;
   @property({type: Boolean}) counter = false;
   @property({type: Boolean}) globalCounter = false;
+  @property({type: String}) globalCounterType: ObcAlertCounterItemType =
+    ObcAlertCounterItemType.Badges;
   @property({type: Object, attribute: false}) counts: AlertCounts = {};
   @property({type: Number}) shelvedCount = 0;
   @property({type: Boolean}) blinking = false;
@@ -173,6 +178,7 @@ export class ObcAlertButton extends LitElement {
           .globalCounter=${
             this.globalCounter && this.activeType !== ObcAlertButtonType.Flat
           }
+          .globalCounterType=${this.globalCounterType}
           .counts=${this.counts}
           .shelvedCount=${this.shelvedCount}
           .blinking=${this.blinking}
