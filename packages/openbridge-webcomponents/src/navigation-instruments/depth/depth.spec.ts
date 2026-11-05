@@ -61,6 +61,7 @@ describe('obc-depth composition', () => {
     expect(chart.datasets?.map((d) => d.label)).toEqual(['history', 'echo']);
     expect(chart.datasets?.[1].fill).toBe(0);
     expect(chart.value).toBe(40);
+    expect(chart.highlightCurrentValue).toBe(true);
     expect(chart.xMarker).toBeUndefined();
     expect(chart.querySelector('obc-depth-top-band')).toBeNull();
   });
@@ -78,7 +79,9 @@ describe('obc-depth composition', () => {
     ]);
     expect(chart.datasets?.[2].borderDash).toEqual([8, 4]);
     expect(chart.xMarker).toEqual({x: 0, datasetIndex: 0});
-    expect(chart.value).toBeUndefined();
+    // The reading still triggers the advice bands; only the dot is hidden.
+    expect(chart.value).toBe(40);
+    expect(chart.highlightCurrentValue).toBe(false);
     expect(chart.xAxis).toEqual({min: -200, max: 200});
     const band = chart.querySelector('obc-depth-top-band') as ObcDepthTopBand;
     expect(band.type).toBe(DepthTopBandType.labels);
@@ -94,6 +97,8 @@ describe('obc-depth composition', () => {
     });
     const labels = chart.datasets?.map((d) => d.label);
     expect(labels).toEqual(['scan', 'history', 'echo', 'predicted']);
+    expect(chart.value).toBe(40);
+    expect(chart.highlightCurrentValue).toBe(false);
     expect(chart.datasets?.[0].fill).toEqual({value: 0});
     expect(chart.datasets?.[0].ellipseClip).toEqual({
       x: 0,
