@@ -24,13 +24,12 @@ import {
 import {InstrumentState, Priority} from '../types.js';
 import compentStyle from './watch.css?inline';
 import {ResizeController} from '@lit-labs/observers/resize-controller.js';
+import {adviceMask, renderAdvice, renderAdviceArea} from './advice.js';
 import {
-  adviceMask,
-  AngleAdviceRaw,
-  renderAdvice,
-  renderAdviceArea,
-} from './advice.js';
-import {asResolvedAdvice, nextAdviceMaskId} from '../../svghelpers/advice.js';
+  asResolvedAdvice,
+  nextAdviceMaskId,
+  type AdviceInput,
+} from '../../svghelpers/advice.js';
 import {Tickmark, TickmarkStyle, tickmark} from './tickmark.js';
 export {TickmarkStyle};
 import {
@@ -362,7 +361,7 @@ export class ObcWatch extends LitElement {
   @property({type: Boolean}) tickmarksInside: boolean = false;
   @property({type: String}) tickmarkStyle: TickmarkStyle =
     TickmarkStyle.regular;
-  @property({type: Array, attribute: false}) advices: AngleAdviceRaw[] = [];
+  @property({type: Array, attribute: false}) advices: AdviceInput[] = [];
 
   // Mask and pattern ids are document-scoped, so each watch names its own.
   private readonly _adviceIdPrefix = nextAdviceMaskId('watch');
