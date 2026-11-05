@@ -5,8 +5,12 @@
 import {svg, SVGTemplateResult, nothing} from 'lit';
 import {InstrumentState, Priority} from '../../navigation-instruments/types.js';
 
-import {LinearAdviceRaw} from '../../navigation-instruments/thruster/advice.js';
 import {renderAdvice} from './advice.js';
+import {
+  nextAdviceMaskId,
+  type AdviceInput,
+  type ResolvedAdvice,
+} from '../../svghelpers/advice.js';
 
 export function atSetpoint(
   thrust: number,
@@ -92,7 +96,7 @@ export function watchfaceLinear(
     /** Text for a labelled value; `formatLinearLabel()` when unset. */
     labelFormatter?: (value: number) => string;
   },
-  advice: LinearAdviceRaw[]
+  advice: (AdviceInput | ResolvedAdvice)[]
 ) {
   const r = 8;
   const path = `M -${width / 2} 0  V -${height / 2 - 8}  a 8 8 0 0 1 8 -8 h ${width - r * 2} a 8 8 0 0 1 8 8 V ${height / 2 - r} a 8 8 0 0 1 -8 8 h -${width - 2 * r} a 8 8 0 0 1 -8 -8 Z`;
@@ -206,8 +210,19 @@ export function watchfaceLinear(
     return svg`<rect width=${boxWidth} height=${boxHeight} x=${boxX} y=${boxY} fill=${b.fill ?? boxFill} stroke=${b.fill ?? boxStroke} vector-effect="non-scaling-stroke"/>`;
   });
 
-  const advicesSvg = advice.map((a) =>
-    renderAdvice(height, minValue, maxValue, width, scaleWidth, a)
+  const advicePrefix = options.maskId
+    ? `${options.maskId}-advice`
+    : nextAdviceMaskId('linear');
+  const advicesSvg = advice.map((a, i) =>
+    renderAdvice(
+      height,
+      minValue,
+      maxValue,
+      width,
+      scaleWidth,
+      a,
+      `${advicePrefix}-${i}`
+    )
   );
   const barSvg = bar
     ? svg`

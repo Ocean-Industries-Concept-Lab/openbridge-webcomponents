@@ -32,10 +32,11 @@ import {
   linearTickInterval,
   watchfaceLinear,
 } from '../../building-blocks/instrument-linear/instrument-linear.js';
-import type {
-  LinearAdvice,
-  LinearAdviceRaw,
+import {
+  resolveLinearAdvice,
+  type LinearAdvice,
 } from '../../building-blocks/instrument-linear/advice.js';
+import type {ResolvedAdvice} from '../../svghelpers/advice.js';
 import {degToRad, radToDeg, clamp} from '../../svghelpers/math.js';
 
 export enum ObcPitchRollHeaveType {
@@ -493,17 +494,12 @@ export class ObcPitchRollHeave extends LitElement {
     return svg`<g transform="translate(${offsetX}, 0)${mirror}">${gauge}</g>`;
   }
 
-  private get heaveAdvices(): LinearAdviceRaw[] {
-    return this.heaveAdvice.map((advice) => {
-      const isActive =
-        this.maxTrendHeave >= advice.min && this.minTrendHeave <= advice.max;
-      const state = isActive
-        ? AdviceState.triggered
-        : advice.hinted
-          ? AdviceState.hinted
-          : AdviceState.regular;
-      return {...advice, state} satisfies LinearAdviceRaw;
-    });
+  private get heaveAdvices(): ResolvedAdvice[] {
+    return resolveLinearAdvice(
+      this.heaveAdvice,
+      this.minTrendHeave,
+      this.maxTrendHeave
+    );
   }
 
   /**

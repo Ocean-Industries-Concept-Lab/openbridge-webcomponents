@@ -13,11 +13,8 @@ import {
   type VesselImageSrc,
 } from '../watch/vessel.js';
 import {PaletteController} from '../../charthelpers/theme.js';
-import {
-  LinearAdvice,
-  LinearAdviceRaw,
-} from '../../building-blocks/instrument-linear/advice.js';
-import {AdviceState} from '../watch/advice.js';
+import {LinearAdvice} from '../../building-blocks/instrument-linear/advice.js';
+import {resolveAdvices, type ResolvedAdvice} from '../../svghelpers/advice.js';
 import {Priority} from '../types.js';
 import {
   DEPTH_RANGES,
@@ -131,21 +128,16 @@ export class ObcDepthActual extends LitElement {
     return -value;
   }
 
-  private _getAdvice(): LinearAdviceRaw[] {
-    return this.advice.map((advice) => {
-      const isActive = this.depth >= advice.min && this.depth <= advice.max;
-      const state = isActive
-        ? AdviceState.triggered
-        : advice.hinted
-          ? AdviceState.hinted
-          : AdviceState.regular;
-      return {
-        ...advice,
-        min: this._toValue(advice.max),
-        max: this._toValue(advice.min),
-        state,
-      } satisfies LinearAdviceRaw;
-    });
+  private _getAdvice(): ResolvedAdvice[] {
+    // Scale space is positive-up and depth grows downward, so a resolved
+    // range is negated and its ends swap.
+    return resolveAdvices(this.advice, [this.depth]).map((a) => ({
+      ...a,
+      min: this._toValue(a.max),
+      max: this._toValue(a.min),
+      flatStart: a.flatEnd,
+      flatEnd: a.flatStart,
+    }));
   }
 
   override render() {
