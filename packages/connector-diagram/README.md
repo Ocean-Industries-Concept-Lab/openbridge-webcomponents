@@ -36,7 +36,10 @@ stroke weights.
 
 - `npm install`
 - `npm run example` — serves `example/`: three OpenBridge automation components
-  with pipes drawn behind them.
+  with pipes drawn behind them. It imports the core's built `dist/`, so build
+  the core first (`npm run build -w packages/openbridge-webcomponents` from the
+  repo root); otherwise Vite fails to resolve
+  `@oicl/openbridge-webcomponents/dist/...`.
 - `npm run build` — compile to `dist/`.
 - `npm test` — unit tests.
 - `npm run storybook` — visual sandbox for every connector shape (all pipe
