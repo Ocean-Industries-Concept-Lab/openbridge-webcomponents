@@ -40,6 +40,7 @@ import {CircularProgressMode} from '../../building-blocks/circular-progress/circ
 export enum AutomationButtonBadgeAlert {
   None = 'none',
   Silence = 'silence',
+  Shelved = 'shelved',
   Caution = 'caution',
   Warning = 'warning',
   Alarm = 'alarm',
@@ -54,6 +55,7 @@ export enum AutomationButtonBadgeInterlock {
   None = 'none',
   Interlock = 'interlock',
   InterlockInhibit = 'interlock-inhibit',
+  Simulation = 'simulation',
 }
 
 export enum AutomationButtonBadgeControl {
@@ -68,6 +70,7 @@ export enum AutomationButtonBadgeControl {
 export enum AutomationButtonBadgeCommandLocked {
   None = 'none',
   CommandLocked = 'command-locked',
+  Simulation = 'simulation',
 }
 
 /**
@@ -270,6 +273,8 @@ export class ObcAbstractAutomationButton extends LitElement {
   private getBadgeAlertType(): ObcAutomationBadgeType | null {
     if (this.badgeAlert === AutomationButtonBadgeAlert.Silence) {
       return ObcAutomationBadgeType.AlertSilenced;
+    } else if (this.badgeAlert === AutomationButtonBadgeAlert.Shelved) {
+      return ObcAutomationBadgeType.AlertShelved;
     } else if (this.badgeAlert === AutomationButtonBadgeAlert.Caution) {
       return ObcAutomationBadgeType.Caution;
     } else if (this.badgeAlert === AutomationButtonBadgeAlert.Warning) {
@@ -312,6 +317,10 @@ export class ObcAbstractAutomationButton extends LitElement {
       this.badgeInterlock === AutomationButtonBadgeInterlock.InterlockInhibit
     ) {
       return ObcAutomationBadgeType.InterlockInhibit;
+    } else if (
+      this.badgeInterlock === AutomationButtonBadgeInterlock.Simulation
+    ) {
+      return ObcAutomationBadgeType.Simulation;
     }
     return null;
   }
@@ -322,6 +331,10 @@ export class ObcAbstractAutomationButton extends LitElement {
       AutomationButtonBadgeCommandLocked.CommandLocked
     ) {
       return ObcAutomationBadgeType.CommandLocked;
+    } else if (
+      this.badgeCommandLocked === AutomationButtonBadgeCommandLocked.Simulation
+    ) {
+      return ObcAutomationBadgeType.Simulation;
     }
     return null;
   }

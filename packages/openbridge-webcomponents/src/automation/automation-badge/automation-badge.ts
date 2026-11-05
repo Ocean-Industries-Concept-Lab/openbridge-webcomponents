@@ -4,6 +4,7 @@ import compentStyle from './automation-badge.css?inline';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../../decorator.js';
 import '../../icons/icon-alert-off-filled.js';
+import '../../icons/icon-alerts-shelf.js';
 import '../../icons/icon-auto.js';
 import '../../icons/icon-manual.js';
 import '../../icons/icon-manual-only.js';
@@ -29,6 +30,8 @@ export enum ObcAutomationBadgeType {
   Interlock = 'interlock',
   InterlockInhibit = 'interlock-inhibit',
   AlertSilenced = 'alert-silenced',
+  AlertShelved = 'alert-shelved',
+  Simulation = 'simulation',
   Caution = 'caution',
   Warning = 'warning',
   Alarm = 'alarm',
@@ -138,6 +141,26 @@ export class ObcAutomationBadge extends LitElement {
     </svg>`;
   }
 
+  private renderSimulationIcon(className: string) {
+    return html`<svg
+      class=${className}
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M4 5V15H20V5C21.1046 5 22 5.89543 22 7V15C22 16.1046 21.1046 17 20 17H14V19H16V21H8V19H10V17H4C2.89543 17 2 16.1046 2 15V7C2 5.89543 2.89543 5 4 5Z"
+      />
+      <path
+        fill-rule="evenodd"
+        clip-rule="evenodd"
+        d="M12.714 1.387L17.214 3.824A1.5 1.5 0 0 1 18 5.143L18 10.357A1.5 1.5 0 0 1 17.214 11.676L12.714 14.113A1.5 1.5 0 0 1 11.286 14.113L6.786 11.676A1.5 1.5 0 0 1 6 10.357L6 5.143A1.5 1.5 0 0 1 6.786 3.824L11.286 1.387A1.5 1.5 0 0 1 12.714 1.387ZM12 3.25L14.923 4.833L12 6.417L9.077 4.833ZM8 6.5L11 8.125L11 11.708L8 10.083ZM16 6.5L16 10.083L13 11.708L13 8.125Z"
+      />
+    </svg>`;
+  }
+
   // TODO(designer): rename the 'siluette' typo to 'silhouette', in Figma too
   private getIcon() {
     if (this.type === ObcAutomationBadgeType.Auto) {
@@ -171,6 +194,13 @@ export class ObcAutomationBadge extends LitElement {
           class="icon siluette"
         ></obi-alert-off-filled
         ><obi-alert-off-filled class="icon"></obi-alert-off-filled>`;
+    } else if (this.type === ObcAutomationBadgeType.AlertShelved) {
+      return html`<obi-alerts-shelf class="icon siluette"></obi-alerts-shelf
+        ><obi-alerts-shelf class="icon"></obi-alerts-shelf>`;
+    } else if (this.type === ObcAutomationBadgeType.Simulation) {
+      return html`${this.renderSimulationIcon(
+        'icon siluette'
+      )}${this.renderSimulationIcon('icon')}`;
     } else if (this.type === ObcAutomationBadgeType.LevelCritical) {
       return this.renderLevelCriticalIcon(
         this.effectiveMode === ObcAutomationBadgeMode.Flat

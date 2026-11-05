@@ -76,3 +76,11 @@ export const WithBadges: Story = {
     badgeCommandLocked: AutomationButtonBadgeCommandLocked.CommandLocked,
   },
 };
+
+export const WithSimulationBadge: Story = {
+  args: {
+    open: true,
+    value: 20,
+    badgeCommandLocked: AutomationButtonBadgeCommandLocked.Simulation,
+  },
+};
