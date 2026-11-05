@@ -166,7 +166,11 @@ const meta: Meta<typeof ObcAlertListDetailsExperimental> = {
   beforeEach: () => setAlertStandard(iec62923AlertStandard),
   args: {
     showHeader: true,
-    columns: [statusColumn(), actionColumn({dividerRight: true}), timeColumn()],
+    columns: [
+      statusColumn(),
+      actionColumn({label: 'ACK-status', dividerRight: true}),
+      timeColumn(),
+    ],
     alerts: bridgeAlerts,
   },
   parameters: {
@@ -223,7 +227,10 @@ const oneItemAlerts: Iec62923ListAlert[] = [
 
 export const OneItem: Story = {
   args: {
-    columns: [statusColumn(), actionColumn({dividerRight: true})],
+    columns: [
+      statusColumn(),
+      actionColumn({label: 'ACK-status', dividerRight: true}),
+    ],
     alerts: oneItemAlerts,
   },
 };

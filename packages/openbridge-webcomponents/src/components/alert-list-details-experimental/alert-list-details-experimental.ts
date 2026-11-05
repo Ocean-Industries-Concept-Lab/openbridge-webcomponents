@@ -185,15 +185,17 @@ function firstOfferedActionId(alert: StandardAlert): string | undefined {
  * A button for the first action the alert's state offers, which fires
  * `cell-click` with the action's id. A state that offers no action shows the
  * glyph the standard defines for that, else the initials of `acknowledgedBy`.
- * Showing who acknowledged is an offer of this list, not something a
- * standard asks for, so no standard's `display` names it.
+ * The heading is "Action" whatever the standard; pass a `label` such as
+ * "ACK-status" where every action is an acknowledgement. Showing who
+ * acknowledged is an offer of this list, not something a standard asks for,
+ * so no standard's `display` names it.
  */
 export function actionColumn(
   options: AlertListColumnOptions = {}
 ): AlertListDataColumn<StandardAlert & AlertAcknowledgedByField> {
   return {
     key: 'action',
-    label: 'ACK-status',
+    label: 'Action',
     actionIdOfCellButton: firstOfferedActionId,
     cell: (alert) => {
       const actionId = firstOfferedActionId(alert);
