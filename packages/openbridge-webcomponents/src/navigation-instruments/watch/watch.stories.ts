@@ -312,6 +312,65 @@ export const Advice: Story = {
   },
 };
 
+export const AdviceCategories: Story = {
+  args: {
+    advices: [
+      {min: 10, max: 45, category: 'optimal', state: 'triggered'},
+      {min: 55, max: 90, category: 'running', state: 'triggered'},
+      {min: 100, max: 135, category: 'eco', state: 'triggered'},
+      {min: 145, max: 180, category: 'caution', state: 'triggered'},
+      {min: 190, max: 225, category: 'warning', state: 'triggered'},
+      {min: 235, max: 270, category: 'alarm', state: 'triggered'},
+      {min: 280, max: 315, category: 'exclusion', state: 'triggered'},
+    ],
+  },
+};
+
+export const AdviceStates: Story = {
+  args: {
+    advices: [
+      {min: 10, max: 40, category: 'optimal', state: 'hinted'},
+      {min: 50, max: 80, category: 'optimal', state: 'enabled'},
+      {min: 90, max: 120, category: 'optimal', state: 'active'},
+      {min: 130, max: 160, category: 'optimal', state: 'triggered'},
+      {min: 190, max: 220, category: 'caution', state: 'hinted'},
+      {min: 230, max: 260, category: 'caution', state: 'enabled'},
+      {min: 270, max: 300, category: 'caution', state: 'active'},
+      {min: 310, max: 340, category: 'caution', state: 'triggered'},
+    ],
+  },
+};
+
+export const AdvicePointAndArea: Story = {
+  args: {
+    advices: [
+      {value: 30, category: 'optimal', state: 'active', showArea: true},
+      {value: 120, category: 'caution', state: 'triggered', showArea: true},
+      {value: 200, category: 'alarm'},
+      {
+        min: 250,
+        max: 300,
+        category: 'warning',
+        state: 'triggered',
+        showArea: true,
+      },
+      {min: 320, max: 350, category: 'exclusion', showArea: true},
+    ],
+  },
+};
+
+export const AdviceChained: Story = {
+  args: {
+    advices: [
+      {min: 20, max: 60, category: 'optimal', state: 'active'},
+      {min: 60, max: 90, category: 'caution'},
+      {min: 90, max: 120, category: 'alarm', state: 'triggered'},
+      {min: 200, max: 240, category: 'eco', state: 'triggered'},
+      {min: 240, max: 270, category: 'warning', hideMaxTickmark: true},
+    ],
+  },
+};
+
 export const Tickmarks: Story = {
   args: {
     tickmarks: [

@@ -99,10 +99,6 @@ export interface AdviceInput {
   hideMaxTickmark?: boolean;
   /** Draws the area layer (tint, limit lines, pattern) over the face, bar or chart as well as the band. */
   showArea?: boolean;
-  /** Icon tag drawn at the band centre, such as `obi-advice-optimal`. */
-  icon?: string;
-  /** Label drawn at the band centre. */
-  label?: string;
 }
 
 /** An advice after {@link normalizeAdvice} and {@link resolveAdvices}: what a renderer draws. */
@@ -116,8 +112,6 @@ export interface ResolvedAdvice {
   hideMinTickmark: boolean;
   hideMaxTickmark: boolean;
   showArea: boolean;
-  icon?: string;
-  label?: string;
   /** The start meets another band: the cap is a flat cut. */
   flatStart: boolean;
   /** The end meets another band: the cap is a flat cut. */
@@ -195,11 +189,26 @@ export function normalizeAdvice(input: AdviceInput): ResolvedAdvice {
     hideMinTickmark: input.hideMinTickmark ?? false,
     hideMaxTickmark: input.hideMaxTickmark ?? false,
     showArea: input.showArea ?? false,
-    icon: input.icon,
-    label: input.label,
     flatStart: false,
     flatEnd: false,
   };
+}
+
+/** Whether a value already went through {@link resolveAdvices} or {@link normalizeAdvice}. */
+export function isResolvedAdvice(
+  a: AdviceInput | ResolvedAdvice
+): a is ResolvedAdvice {
+  return (
+    typeof (a as ResolvedAdvice).point === 'boolean' &&
+    typeof (a as ResolvedAdvice).flatStart === 'boolean'
+  );
+}
+
+/** A renderer's input, resolved once whichever shape it arrived in. */
+export function asResolvedAdvice(
+  a: AdviceInput | ResolvedAdvice
+): ResolvedAdvice {
+  return isResolvedAdvice(a) ? a : normalizeAdvice(a);
 }
 
 /**
