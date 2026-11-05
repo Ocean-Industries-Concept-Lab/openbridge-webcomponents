@@ -234,3 +234,49 @@ export const AdviceRange: Story = {
     ],
   },
 };
+
+export const AlertAdviceRange: Story = {
+  args: {
+    min: -50,
+    max: 50,
+    value: 0,
+    advice: [
+      {
+        min: 80,
+        max: 100,
+        type: AdviceType.warning,
+        state: AdviceState.triggered,
+      },
+      {
+        min: 50,
+        max: 70,
+        type: AdviceType.warning,
+        state: AdviceState.regular,
+      },
+      {
+        min: 20,
+        max: 40,
+        type: AdviceType.warning,
+        state: AdviceState.hinted,
+      },
+      {
+        min: -20,
+        max: 20,
+        type: AdviceType.alarm,
+        state: AdviceState.triggered,
+      },
+      {
+        min: -40,
+        max: -20,
+        type: AdviceType.alarm,
+        state: AdviceState.regular,
+      },
+      {
+        min: -60,
+        max: -40,
+        type: AdviceType.alarm,
+        state: AdviceState.hinted,
+      },
+    ],
+  },
+};

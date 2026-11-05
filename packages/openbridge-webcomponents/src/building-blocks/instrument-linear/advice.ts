@@ -2,6 +2,7 @@ import {SVGTemplateResult, nothing, svg} from 'lit';
 import {
   AdviceState,
   AdviceType,
+  triggeredAlertAdviceColors,
 } from '../../navigation-instruments/watch/advice.js';
 import {
   tickmarkColor,
@@ -132,7 +133,8 @@ export function renderAdvice(
                     stroke-dasharray="4 4"/>`);
   }
 
-  if (advice.type === AdviceType.caution) {
+  const alertColors = triggeredAlertAdviceColors(advice.type);
+  if (alertColors) {
     let mainColor;
     let fillColor: string = 'var(--instrument-frame-primary-color)';
     if (advice.state === AdviceState.hinted) {
@@ -140,8 +142,8 @@ export function renderAdvice(
     } else if (advice.state === AdviceState.regular) {
       mainColor = 'var(--instrument-tick-mark-tertiary-color)';
     } else {
-      mainColor = 'var(--on-caution-active-color)';
-      fillColor = 'var(--alert-caution-color)';
+      mainColor = alertColors.stripe;
+      fillColor = alertColors.fill;
     }
     const pattern = [];
     const ypattern = 50;
