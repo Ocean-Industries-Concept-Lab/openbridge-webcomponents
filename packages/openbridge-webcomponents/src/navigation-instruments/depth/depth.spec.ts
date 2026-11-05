@@ -7,6 +7,8 @@ import type {ObcGaugeTrend} from '../gauge-trend/gauge-trend.js';
 import type {ObcDepthTopBand} from './depth-top-band.js';
 import {DepthTopBandType} from './depth-top-band.js';
 import {DEPTH_RANGES} from './depth-shared.js';
+import type {ObcBarVertical} from '../../building-blocks/bar-vertical/bar-vertical.js';
+import {AdviceCategory, AdviceState} from '../../svghelpers/advice.js';
 
 const mounted: HTMLElement[] = [];
 afterEach(() => mounted.splice(0).forEach((el) => el.remove()));
@@ -71,6 +73,8 @@ describe('obc-depth composition', () => {
       el.type = DepthType.prediction;
       el.data = track(-200, 0, () => 40);
       el.prediction = track(0, 200, () => 50);
+      el.hasAdvice = true;
+      el.advices = [{min: 30, max: 50, category: AdviceCategory.optimal}];
     });
     expect(chart.datasets?.map((d) => d.label)).toEqual([
       'history',
@@ -79,9 +83,12 @@ describe('obc-depth composition', () => {
     ]);
     expect(chart.datasets?.[2].borderDash).toEqual([8, 4]);
     expect(chart.xMarker).toEqual({x: 0, datasetIndex: 0});
-    // The reading still triggers the advice bands; only the dot is hidden.
     expect(chart.value).toBe(40);
     expect(chart.highlightCurrentValue).toBe(false);
+    const bar = chart.querySelector('obc-bar-vertical') as ObcBarVertical;
+    expect(bar.value).toBe(40);
+    expect(bar.highlightCurrentValue).toBe(false);
+    expect(bar.resolveAdvices(bar.value)[0].state).toBe(AdviceState.triggered);
     expect(chart.xAxis).toEqual({min: -200, max: 200});
     const band = chart.querySelector('obc-depth-top-band') as ObcDepthTopBand;
     expect(band.type).toBe(DepthTopBandType.labels);
