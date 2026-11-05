@@ -16,6 +16,7 @@ import {
   InstrumentState,
   Priority,
 } from '../../navigation-instruments/types.js';
+import {AdviceTrigger} from '../../svghelpers/advice.js';
 
 const bottomScale = (
   overrides: Partial<ExternalScaleConfig>
@@ -203,5 +204,65 @@ describe('reverse (#1211)', () => {
     );
     expect(parts.barFill).not.toBe(nothing);
     expect(parts.currentValueDot).not.toBe(nothing);
+  });
+});
+
+describe('advice overlays', () => {
+  const html = (overrides: Partial<ExternalScaleConfig>) => {
+    const host = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    render(
+      svg`${renderExternalScale(bottomScale(overrides)).adviceOverlays}`,
+      host
+    );
+    return host.innerHTML;
+  };
+
+  it('triggers on the value under the default trigger, with no setpoint', () => {
+    const out = html({
+      advices: [{min: 20, max: 40, category: 'caution'}],
+      value: 30,
+      setpoint: undefined,
+    });
+    expect(out).toContain('var(--alert-caution-color)');
+  });
+
+  it('ignores the value when the trigger is the setpoint', () => {
+    const out = html({
+      advices: [{min: 20, max: 40, category: 'caution'}],
+      value: 30,
+      setpoint: undefined,
+      adviceTrigger: AdviceTrigger.setpoint,
+    });
+    expect(out).not.toContain('var(--alert-caution-color)');
+  });
+
+  it('still reads a legacy entry', () => {
+    const out = html({
+      advices: [{min: 20, max: 40, type: 'advice', hinted: true}],
+      value: 50,
+    });
+    expect(out).toContain('var(--instrument-tick-mark-tertiary-color)');
+  });
+
+  it('draws a point and an area', () => {
+    const out = html({
+      advices: [
+        {value: 30, category: 'optimal'},
+        {min: 60, max: 80, category: 'alarm', showArea: true},
+      ],
+      value: 50,
+      hasBar: true,
+      barThickness: 24,
+    });
+    expect(out).toContain('<circle');
+    expect(out).toContain('fill="url(#');
+  });
+
+  it('names its masks after the configured prefix', () => {
+    const out = html({
+      advices: [{min: 20, max: 40, category: 'caution'}],
+      adviceMaskPrefix: 'bar-7',
+    });
+    expect(out).toContain('id="bar-7-0"');
   });
 });

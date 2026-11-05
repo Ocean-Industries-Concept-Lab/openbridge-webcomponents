@@ -13,10 +13,11 @@ import {ADVICE_DOT, ADVICE_HAIRLINE_WIDTH, ADVICE_STRIPE} from './advice.js';
 const STRIPE_TILE = ADVICE_STRIPE.pitch * Math.SQRT2;
 
 /**
- * Parallel 45° lines, `width` units wide on the design's pitch; a hairline
- * when `width` is {@link ADVICE_HAIRLINE_WIDTH}. The line runs corner to
- * corner of a square tile whose side is the pitch along the axis, with the
- * two half lines at the opposite corners completing the neighbours.
+ * Parallel 45° lines from top-left to bottom-right, `width` units wide on
+ * the design's pitch; a hairline when `width` is
+ * {@link ADVICE_HAIRLINE_WIDTH}. The line runs corner to corner of a square
+ * tile whose side is the pitch along the axis, with the two half lines at the
+ * opposite corners completing the neighbours.
  */
 export function stripePattern(
   id: string,
@@ -25,7 +26,7 @@ export function stripePattern(
 ): SVGTemplateResult {
   const t = STRIPE_TILE;
   return svg`<pattern id=${id} patternUnits="userSpaceOnUse" width=${t} height=${t}>
-    <path d="M 0 ${t} L ${t} 0 M ${-t / 2} ${t / 2} L ${t / 2} ${-t / 2} M ${t / 2} ${(3 * t) / 2} L ${(3 * t) / 2} ${t / 2}" stroke=${color} stroke-width=${width} stroke-linecap="square"/>
+    <path d="M 0 0 L ${t} ${t} M ${t / 2} ${-t / 2} L ${(3 * t) / 2} ${t / 2} M ${-t / 2} ${t / 2} L ${t / 2} ${(3 * t) / 2}" stroke=${color} stroke-width=${width} stroke-linecap="square"/>
   </pattern>`;
 }
 

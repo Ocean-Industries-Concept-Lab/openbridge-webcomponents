@@ -56,7 +56,6 @@
  *   type ExternalScaleConfig,
  * } from './external-scale.js';
  * import {FrameStyle, InstrumentState, Priority} from '../../navigation-instruments/types.js';
- * import {AdviceType} from '../../navigation-instruments/watch/advice.js';
  *
  * const config: ExternalScaleConfig = {
  *   orientation: ExternalScaleOrientation.vertical,
@@ -91,7 +90,7 @@
  *   setpointAtZeroDeadband: 0.5,
  *   state: InstrumentState.active,
  *   advicePosition: AdvicePosition.inner,
- *   advices: [{min: 60, max: 80, type: AdviceType.caution, hinted: true}],
+ *   advices: [{min: 60, max: 80, category: 'caution', state: 'hinted'}],
  * };
  *
  * const layout = computeExternalScaleLayout(config);
@@ -131,9 +130,19 @@ import {
   BorderRadiusPosition,
 } from '../../navigation-instruments/types.js';
 import {
-  AdviceState,
-  AdviceType,
-} from '../../navigation-instruments/watch/advice.js';
+  AdviceTrigger,
+  adviceStyle,
+  adviceTriggerReadings,
+  nextAdviceMaskId,
+  resolveAdvices,
+  type AdviceInput,
+  type ResolvedAdvice,
+} from '../../svghelpers/advice.js';
+import {
+  renderLinearAdviceArea,
+  renderLinearAdviceBand,
+  renderLinearAdvicePoint,
+} from '../../svghelpers/advice-linear.js';
 import {
   tickmarkColor,
   TickmarkStyle,
@@ -381,22 +390,11 @@ export function computeExternalScaleEffectiveTickThickness(
   return tt;
 }
 
-export interface ExternalScaleAdvice {
-  /** Range start value (in scale units). */
-  min: number;
-  /** Range end value (in scale units). */
-  max: number;
-  type: AdviceType;
-  /** When true, renders in a "hinted" state unless the setpoint is inside the range. */
-  hinted: boolean;
-}
+/** @deprecated Use {@link AdviceInput}; `type` and `hinted` are still read. */
+export type ExternalScaleAdvice = AdviceInput & {min: number; max: number};
 
-export interface ExternalScaleAdviceRaw {
-  min: number;
-  max: number;
-  type: AdviceType;
-  state: AdviceState;
-}
+/** @deprecated Use {@link ResolvedAdvice}. */
+export type ExternalScaleAdviceRaw = ResolvedAdvice;
 
 export interface ExternalScaleConfig {
   /** Main axis orientation used for value-to-coordinate mapping. */
@@ -567,8 +565,17 @@ export interface ExternalScaleConfig {
   // Advice
   /** Where advice overlays are drawn relative to the bar/tick bands. */
   advicePosition: AdvicePosition;
-  /** Array of advice ranges (min/max/type/hinted). */
-  advices?: ExternalScaleAdvice[];
+  /** Advice ranges and points along the scale; see `svghelpers/advice.ts` for the shape. */
+  advices?: AdviceInput[];
+  /** Which readings trigger an advice: the value, the setpoint, or either (the default). */
+  adviceTrigger?: AdviceTrigger;
+  /** The design's emphasis rules between go-to and no-go bands; off by default. */
+  adviceEmphasis?: boolean;
+  /**
+   * Prefix for the advice mask ids, unique per rendering element. Mask ids
+   * are document-scoped, so two scales in one document must not share one.
+   */
+  adviceMaskPrefix?: string;
 
   /**
    * When true, freezes all internal calculations and scales the entire component
@@ -1149,24 +1156,6 @@ function colors(config: ExternalScaleConfig): {
   }
 
   return {barFillColor, markerFillColor, markerStrokeColor, setpointColor};
-}
-
-function convertAdvices(
-  advices: ExternalScaleAdvice[],
-  setpoint: number | undefined
-): ExternalScaleAdviceRaw[] {
-  return advices.map((a) => {
-    const triggered =
-      setpoint !== undefined && setpoint >= a.min && setpoint <= a.max;
-
-    const state = triggered
-      ? AdviceState.triggered
-      : a.hinted
-        ? AdviceState.hinted
-        : AdviceState.regular;
-
-    return {min: a.min, max: a.max, type: a.type, state};
-  });
 }
 
 function mainAxisOffset(config: ExternalScaleConfig): number {
@@ -2658,208 +2647,102 @@ function singleSidedTickmark(
   return svg`<line x1=${pos} x2=${pos} y1=${start} y2=${end} stroke=${color} stroke-width="1" vector-effect="non-scaling-stroke"/>`;
 }
 
-function advicePill(
-  config: ExternalScaleConfig,
-  advice: ExternalScaleAdviceRaw,
-  x1: number,
-  fill: string,
-  stroke: string
-): SVGTemplateResult {
-  const width = 8;
+/**
+ * The perpendicular coordinate of the advice band's near edge for the
+ * configured position: `inner` sits on the tick band 4 off the bar edge,
+ * `outer` on the far side of the tick band, `center` in the middle of the
+ * bar. Without a bar the band is always `inner`.
+ */
+function advicePerpStart(config: ExternalScaleConfig): number {
+  const tickBase = tickBasePerp(config);
+  const position = config.hasBar ? config.advicePosition : 'inner';
   const offset = 4;
-  const r = width / 2;
-  const inset = 4;
-
-  if (isVertical(config)) {
-    const yMin = valueToMainAxis(config, advice.min);
-    const yMax = valueToMainAxis(config, advice.max);
-    const yL = Math.min(yMin, yMax);
-    const yH = Math.max(yMin, yMax);
-
-    const x = x1 + offset;
-    const y = yL + inset;
-    const h = Math.max(0, yH - yL - inset * 2);
-
-    return svg`<rect x=${x} y=${y} width=${width} height=${h} rx=${r} ry=${r} fill=${fill} stroke=${stroke} stroke-width="1" vector-effect="non-scaling-stroke"/>`;
+  const outward = isOutwardPositive(config);
+  if (position === 'center') {
+    const centerOffset = config.barThickness / 2 - 4;
+    return (
+      (outward ? centerOffset : -config.barThickness + centerOffset) -
+      4 +
+      offset
+    );
   }
-
-  const xMin = valueToMainAxis(config, advice.min);
-  const xMax = valueToMainAxis(config, advice.max);
-  const xL = Math.min(xMin, xMax);
-  const xH = Math.max(xMin, xMax);
-
-  const x = xL + inset;
-  const y = x1 + offset;
-  const w = Math.max(0, xH - xL - inset * 2);
-
-  return svg`<rect x=${x} y=${y} width=${w} height=${width} rx=${r} ry=${r} fill=${fill} stroke=${stroke} stroke-width="1" vector-effect="non-scaling-stroke"/>`;
+  if (position === 'inner') {
+    return (outward ? tickBase : tickBase - 16) + offset;
+  }
+  return (
+    (outward
+      ? config.barThickness + 10
+      : -config.barThickness -
+        computeExternalScaleEffectiveTickThickness(config) +
+        14) + offset
+  );
 }
 
 function renderAdvice(
   config: ExternalScaleConfig,
-  advice: ExternalScaleAdviceRaw
+  advice: ResolvedAdvice,
+  maskId: string
 ): SVGTemplateResult {
   const tickBase = tickBasePerp(config);
-  const hasBarArea = config.hasBar;
-  const effectiveAdvicePosition = hasBarArea ? config.advicePosition : 'inner';
-
-  // Determine x1 (perpendicular) position for the 8px mask
-  let x1: number;
-
-  if (effectiveAdvicePosition === 'center') {
-    const adviceWidth = 8;
-    const centerOffset = config.barThickness / 2 - adviceWidth / 2;
-
-    if (isVertical(config)) {
-      x1 = isOutwardPositive(config)
-        ? centerOffset - 4
-        : -config.barThickness + centerOffset - 4;
-    } else {
-      x1 = isOutwardPositive(config)
-        ? centerOffset - 4
-        : -config.barThickness + centerOffset - 4;
-    }
-  } else if (effectiveAdvicePosition === 'inner') {
-    x1 = isOutwardPositive(config) ? tickBase : tickBase - 16;
-  } else {
-    x1 = isOutwardPositive(config)
-      ? config.barThickness + 10
-      : -config.barThickness -
-        computeExternalScaleEffectiveTickThickness(config) +
-        14;
-  }
-
-  // Dashed boundary tickmarks across the bar band
-  const ticks: SVGTemplateResult[] = [];
-
-  const dashStroke = 'var(--instrument-frame-tertiary-color)';
-
-  const minBound = advice.min > config.minValue;
-  const maxBound = advice.max < config.maxValue;
-
+  const vertical = isVertical(config);
+  const perpStart = advicePerpStart(config);
+  const mainStart = valueToMainAxis(config, advice.min);
+  const mainEnd = valueToMainAxis(config, advice.max);
   const barStart = isOutwardPositive(config) ? 0 : -config.barThickness;
   const barEnd = isOutwardPositive(config) ? config.barThickness : 0;
+  const style = adviceStyle(advice.category, advice.state);
+  const tickmarkStyle = style.tickStyle as TickmarkStyle;
 
-  const dash = (v: number) => {
-    const p = valueToMainAxis(config, v);
-    if (isVertical(config)) {
-      ticks.push(
-        svg`<line x1=${barStart} x2=${barEnd} y1=${p} y2=${p} stroke=${dashStroke} stroke-width="1" vector-effect="non-scaling-stroke" stroke-dasharray="4 4"/>`
-      );
-    } else {
-      ticks.push(
-        svg`<line x1=${p} x2=${p} y1=${barStart} y2=${barEnd} stroke=${dashStroke} stroke-width="1" vector-effect="non-scaling-stroke" stroke-dasharray="4 4"/>`
-      );
-    }
-  };
-
-  if (minBound) dash(advice.min);
-  if (maxBound) dash(advice.max);
-
-  if (advice.type === AdviceType.caution) {
-    let mainColor: string;
-    let fillColor: string = 'var(--instrument-frame-primary-color)';
-
-    if (advice.state === AdviceState.hinted) {
-      mainColor = 'var(--instrument-frame-tertiary-color)';
-    } else if (advice.state === AdviceState.regular) {
-      mainColor = 'var(--instrument-tick-mark-tertiary-color)';
-    } else {
-      mainColor = 'var(--on-caution-active-color)';
-      fillColor = 'var(--alert-caution-color)';
-    }
-
-    const pattern: SVGTemplateResult[] = [];
-    const ypattern = 50;
-
-    const aMin = valueToMainAxis(config, advice.min);
-    const aMax = valueToMainAxis(config, advice.max);
-    const mainMin = Math.min(aMin, aMax);
-    const mainMax = Math.max(aMin, aMax);
-    const span = mainMax - mainMin;
-
-    // Tile across the advice's main-axis span so hatch reaches the full advice region.
-    if (isVertical(config)) {
-      // Center the 50px tile on the 8px pill thickness.
-      const xOffset = x1 + 8 - 25;
-      // Start a bit before the advice, then tile across its full height.
-      const yStart = mainMin - 25;
-
-      for (let i = -64; i < span + 64; i += 16) {
-        const transform = `translate(${xOffset} ${yStart + i})`;
-        const path = `M 50 0 L 0 ${ypattern}`;
-        pattern.push(
-          svg`<g transform=${transform}><path d=${path} stroke=${mainColor} stroke-width="6"/></g>`
-        );
-      }
-    } else {
-      // Center the 50px tile on the 8px pill thickness.
-      const yOffset = x1 + 8 - 25;
-      // Start a bit before the advice, then tile across its full width.
-      const xStart = mainMin - 25;
-
-      for (let i = -64; i < span + 64; i += 16) {
-        const transform = `translate(${xStart + i} ${yOffset})`;
-        const path = `M 0 50 L ${ypattern} 0`;
-        pattern.push(
-          svg`<g transform=${transform}><path d=${path} stroke=${mainColor} stroke-width="6"/></g>`
-        );
-      }
-    }
-
-    const maskId = `externalScaleAdviceMask-${advice.min}-${advice.max}-${Math.random().toString(36).slice(2)}`;
-
-    let tickmarkStyle = TickmarkStyle.regular;
-    if (advice.state === AdviceState.regular)
-      tickmarkStyle = TickmarkStyle.regular;
-    else if (advice.state === AdviceState.triggered)
-      tickmarkStyle = TickmarkStyle.enhanced;
-
-    return svg`
-      <defs>
-        <mask id=${maskId} maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="-4096" y="-4096" width="8192" height="8192">
-          ${advicePill(config, advice, x1, 'white', 'none')}
-        </mask>
-      </defs>
-      <g mask="url(#${maskId})">
-        ${
-          fillColor
-            ? svg`<rect x="-2048" y="-2048" width="4096" height="4096" fill=${fillColor}/>`
-            : nothing
-        }
-        ${pattern}
-      </g>
-      ${advicePill(config, advice, x1, 'none', mainColor)}
-      ${singleSidedTickmark(config, advice.min, tickmarkStyle, tickBase) ?? nothing}
-      ${singleSidedTickmark(config, advice.max, tickmarkStyle, tickBase) ?? nothing}
-      ${ticks}
-    `;
-  }
-
-  // Advice type
-  let strokeColor: string;
-  let tickmarkStyle: TickmarkStyle;
-  let fillColor: string;
-
-  if (advice.state === AdviceState.hinted) {
-    strokeColor = 'var(--instrument-frame-tertiary-color)';
-    fillColor = 'var(--instrument-frame-primary-color)';
-    tickmarkStyle = TickmarkStyle.regular;
-  } else if (advice.state === AdviceState.regular) {
-    strokeColor = 'var(--instrument-regular-secondary-color)';
-    fillColor = 'var(--instrument-frame-primary-color)';
-    tickmarkStyle = TickmarkStyle.regular;
+  // The limit lines across the bar: the area layer draws them in the
+  // category's dash, otherwise they stay the dashed tertiary guides.
+  const bounds: SVGTemplateResult[] = [];
+  if (advice.showArea && config.hasBar) {
+    bounds.push(
+      renderLinearAdviceArea({
+        vertical,
+        mainStart,
+        mainEnd,
+        perpStart: barStart,
+        perpEnd: barEnd,
+        advice,
+        patternId: `${maskId}-area`,
+      })
+    );
   } else {
-    strokeColor = 'var(--instrument-enhanced-secondary-color)';
-    fillColor = strokeColor;
-    tickmarkStyle = TickmarkStyle.regular;
+    const dashStroke = 'var(--instrument-frame-tertiary-color)';
+    const dash = (v: number) => {
+      const p = valueToMainAxis(config, v);
+      bounds.push(
+        vertical
+          ? svg`<line x1=${barStart} x2=${barEnd} y1=${p} y2=${p} stroke=${dashStroke} stroke-width="1" vector-effect="non-scaling-stroke" stroke-dasharray="4 4"/>`
+          : svg`<line x1=${p} x2=${p} y1=${barStart} y2=${barEnd} stroke=${dashStroke} stroke-width="1" vector-effect="non-scaling-stroke" stroke-dasharray="4 4"/>`
+      );
+    };
+    if (advice.min > config.minValue) dash(advice.min);
+    if (!advice.point && advice.max < config.maxValue) dash(advice.max);
   }
+
+  const marker = advice.point
+    ? renderLinearAdvicePoint({
+        vertical,
+        main: mainStart,
+        perpCenter: perpStart + 4,
+        advice,
+      })
+    : renderLinearAdviceBand({
+        vertical,
+        mainStart,
+        mainEnd,
+        perpStart,
+        advice,
+        maskId,
+      });
 
   return svg`
-    ${advicePill(config, advice, x1, fillColor, strokeColor)}
-    ${singleSidedTickmark(config, advice.min, tickmarkStyle, tickBase) ?? nothing}
-    ${singleSidedTickmark(config, advice.max, tickmarkStyle, tickBase) ?? nothing}
-    ${ticks}
+    ${bounds}
+    ${marker}
+    ${advice.hideMinTickmark ? nothing : (singleSidedTickmark(config, advice.min, tickmarkStyle, tickBase) ?? nothing)}
+    ${advice.point || advice.hideMaxTickmark ? nothing : (singleSidedTickmark(config, advice.max, tickmarkStyle, tickBase) ?? nothing)}
   `;
 }
 
@@ -2867,8 +2750,16 @@ function generateAdviceOverlays(
   config: ExternalScaleConfig
 ): SVGTemplateResult[] {
   if (!config.advices || !config.advices.length) return [];
-  const raw = convertAdvices(config.advices, config.setpoint);
-  return raw.map((a) => renderAdvice(config, a));
+  const readings = adviceTriggerReadings(
+    config.adviceTrigger ?? AdviceTrigger.both,
+    config.value,
+    config.setpoint
+  );
+  const resolved = resolveAdvices(config.advices, readings, {
+    emphasis: config.adviceEmphasis,
+  });
+  const prefix = config.adviceMaskPrefix ?? nextAdviceMaskId('scale');
+  return resolved.map((a, i) => renderAdvice(config, a, `${prefix}-${i}`));
 }
 
 /**
